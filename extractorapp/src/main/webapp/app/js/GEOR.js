@@ -83,17 +83,55 @@ Ext.namespace("GEOR");
     };
 
     /**
+     * Handler for oversized coverage extraction size
+     */
+    var oversizedCoveragesHandler = function(b) {
+        var spec = GEOR.layerstree.getSpec(),
+            oversized = [];
+
+        Ext.each(spec.layers, function(l) {
+            if (l.owsType == "WCS") {
+                var res = l.resolution || spec.globalProperties.resolution,
+                    bbox = l.bbox || spec.globalProperties.bbox;
+                if (GEOR.util.checkOversized(bbox, res)) {
+                    oversized.push(l.layerName);
+                }
+            }
+        });
+
+        if (oversized.length > 0) {
+            var dialog = Ext.Msg.confirm(tr("Oversized coverage extraction"),
+            tr([
+                "Extraction area for layers LAYERS is too large.<br/>",
+                "We cannot produce images with more than MAX million RGB pixels.",
+                "Continue anyway ?"
+            ].join('<br/>'), {
+                'MAX': Math.round(GEOR.config.MAX_COVERAGE_EXTRACTION_SIZE/3000000),
+                'LAYERS': oversized.join(', ')
+            }), function(btn, text){
+                if (btn == 'yes'){
+                    extractHandler(b);
+                } else {
+                    dialog.hide();
+                }
+            }, this);
+        } else {
+            extractHandler(b);
+        }
+    };
+
+    /**
      * Handler for extract button.
      */
     var extractBtnHandler = function() {
         if (GEOR.layerstree.getSelectedLayersCount() > 0) {
-            extractHandler(this);
+            oversizedCoveragesHandler(this);
         } else {
             var dialog = Ext.Msg.confirm(tr("No layer in the cart"),
             tr("You did not select any layer for extracting. Extract all ?"), function(btn, text){
                 if (btn == 'yes'){
                     GEOR.layerstree.selectAllLayers();
-                    extractHandler(this);
+                    oversizedCoveragesHandler(this);
                 } else {
                     dialog.hide();
                 }

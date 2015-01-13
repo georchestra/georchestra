@@ -30,6 +30,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Loading...": "Cargando...",
     "File": "Archivo",
     "Layer": "Capa",
+    "layers": "capas",
     "Description": "Descripción",
     "Error": "Error",
     "Server": "Servidor",
@@ -39,6 +40,9 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "verificar si el archivo es valido",
     "Type": "Tipo",
     "Title": "Título",
+    "Actions": "Acciones",
+    "Incorrect server response.": "Respuesta incorrecta del servidor.",
+    "No features found.": "No se encontró ningún objeto geográfico.",
     /* GEOR.js strings */
     "Cities": "Ciudades",
     "Recentering on GeoNames cities":
@@ -109,6 +113,8 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "la variable DEFAULT_THESAURUS_KEY no corresponde a ningún " +
         "valor exportado por GeoNetwork",
     /* GEOR_cswquerier.js strings */
+    "cswquerier.help.title": "Ayuda para consulta avanzada",
+    "cswquerier.help.message": '<ul><li><b>@carretera</b> busca "carretera" en el nombre de la organización.</li><li><b>#carretera</b> busca "carretera" en las palabras-clave de los metadatos.</li><li><b>?carretera</b> abre la búsqueda de "carretera" a todos los campos de los metadatos.</li></ul>',
     "NAME layer on VALUE": "Capa ${NAME} sobre ${VALUE}",
     "Show metadata sheet in a new window":
         "Mostrar la ficha de metadatos en una nueva ventana",
@@ -149,8 +155,6 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "fileupload_error_projectionError": "Error al leer las coordenadas geográficas.",
     "server upload error: ERROR":
         "El archivo local no pudó ser subido. ${ERROR}",
-    "Incorrect server response.": "Respuesta incorrecta del servidor.",
-    "No features found.": "No se encontró ningún objeto geográfico.",
     /* GEOR_geonames.js strings */
     /* GEOR_getfeatureinfo.js strings */
     "<div>Searching...</div>": "<div>Buscando...</div>",
@@ -160,14 +164,13 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
          "Haga clic sobre el mapa.</div>",
     "WMS GetFeatureInfo at ": "GetFeatureInfo WMS sobre ",
     /* GEOR_layerfinder.js strings */
+    "metadata": "metadatos",
     "Add layers from local files": "Añadir capas a partir de archivos locales",
     "Find layers searching in metadata":
         "Encontrar capas buscando en los metadatos",
     "Find layers from keywords": "Encontrar capas desde palabras clave",
-    "Find layers querying WMS servers":
-        "Encontrar capas interrogando servicios WMS",
-    "Find layers querying WFS servers":
-        "Encontrar capas interrogando servicios WFS",
+    "Find layers querying OGC services":
+        "Encontrar capas interrogando servicios OGC",
     "layerfinder.layer.unavailable":
         "La capa ${NAME} no pudo ser encontrada en el servicio WMS.<br/<br/>" +
         "Tiene el derecho de acceder a esta capa ? " +
@@ -181,22 +184,24 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Malformed URL": "URL mal formada.",
     "Queryable": "Interrogable",
     "Opaque": "Opaco",
-    "Choose a WMS server: ": "Elija un servicio WMS: ",
-    "... or enter its address: ": "... o llene su dirección: ",
+    "OGC server": "OGC servicio",
+    "I'm looking for ...": "Estoy buscando ...",
+    "Service type": "Tipo de servicio",
+    "Choose a server": "Elija un servicio",
+    "... or enter its address": "... o llene su dirección",
     "The server is publishing one layer with an incompatible projection":
         "El servicio está publicando una capa cuya proyección no es compatible",
     "The server is publishing NB layers with an incompatible projection":
         "El servicio esta publicando ${NB} capas cuya proyección no es " +
         "compatible",
-    "WMS server": "Servicio WMS",
-    "Choose a WMTS server: ": "Elija un servicio WMTS: ",
-    "WMTS server": "Servicio WMTS",
-    "Choose a WFS server: ": "Elija un servicio WFS: ",
+    "This server does not support HTTP POST": "Este servicio no admite HTTP POST",
     "Unreachable server or insufficient rights": "Respuesta del servidor " +
         "invalida. Razones posibles: datos demasiado pesados, derechos insuficientes, " +
         "servidor inalcanzable, etc.",
-    "WFS server": "Servicio WFS",
     /* GEOR_managelayers.js strings */
+    "Service": "Service",
+    "Protocol": "Servicio",
+    "About this layer": "Sobre esta capa",
     "Set as overlay": "Pasar en capa de superposición",
     "Set as baselayer": "Pasar en capa de fondo",
     "Confirm NAME layer deletion ?":
@@ -222,9 +227,10 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Push up this layer": "Subir esta capa",
     "Push down this layer": "Bajar esta capa",
     "Add layers": "Añadir capas",
+    "Remove all layers": "Retirar todas las capas",
+    "Are you sure you want to remove all layers ?": "¿Seguro que desea retirar todas las capas?",
     "source: ": "fuente: ",
     "unknown": "desconocido",
-    "Actions": "Acciones",
     "Draw new point": "Dibujar un nuevo punto",
     "Draw new line": "Dibujar una nueva línea",
     "Draw new polygon": "Dibujar un nuevo polígono",
@@ -260,6 +266,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "The provided context is not valid": "El contexto proveído no es valido",
     "The default context is not defined (and it is a BIG problem!)":
         "El contexto por omisión no está definido ",
+    "Error while loading file": "Error al cargar el archivo",
     /* GEOR_mappanel.js strings */
     "Coordinates in ": "Coordenadas en ",
     "scale picker": "Escala",
@@ -289,6 +296,10 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "print.unknown.resolution":
          "Error de configuración: DEFAULT_PRINT_RESOLUTION " +
          "${RESOLUTION} no se encuentra en las resoluciones de impresión",
+    "print.unknown.format":
+        "Error de configuración: " +
+        "${FORMAT} no se encuentra en los formatos de impresión",
+    "Pick an output format": "Seleccione un formato de salida",
     "Comments": "Comentarios",
     "Scale: ": "Escala: ",
     "Date: ": "Fecha: ",
@@ -330,6 +341,17 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "One result": "1 resultado",
     "No result": "Ningún resultado",
     "Clean": "Quitar",
+    "All": "Todos",
+    "None": "Ninguno",
+    "Invert selection": "Invertir la selección",
+    "Actions on the selection or on all results if no row is selected":
+        "Acciones en la selección o en todos los resultados, si no se selecciona ninguna fila",
+    "Store the geometry": 
+        "Guardar la geometría",
+    "Aggregates the geometries of the selected features and stores it in your browser for later use in the querier": 
+        "La geometría de los objetos seleccionados se almacenan en el navegador para su uso posterior en consultas",
+    "Geometry successfully stored in this browser": 
+        "La geometría fue registrada correctamente en el navegador",
     "Clean all results on the map and in the table": "Quitar los resultados" +
         "del mapa y en la tabla",
     "Zoom": "Zoom",
@@ -412,6 +434,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Available tools:": "Herramientas disponibles:",
     "Click to select or deselect the tool": "Haga clic para (de)seleccionar la herramienta",
     "Could not load addon ADDONNAME": "No se pudo cargar el addon ${ADDONNAME}",
+    "Your new tools are now available in the tools menu.": 'Sus nuevos herramientas ya están disponibles en el menú "herramientas"',
     /* GEOR_util.js strings */
     "Characters": "Caracteres",
     "Digital": "Digital",
@@ -425,14 +448,19 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
 		"El archivo proveido no es un contexto OGC valido",
     "Warning: trying to restore WMC with a different projection (PROJCODE1, while map SRS is PROJCODE2). Strange things might occur !": "Advertencia: para cargar el contexto WMC, se necesita reproyectar desde ${PROJCODE1} hacía la proyección del mapa ${PROJCODE2}. ¡El resultado puede ser diferente de lo esperado!",
     /* GEOR_wmcbrowser.js strings */
+    "all contexts": "todos los contextos",
     "Could not find WMC file": "El contexto WMC especificado no existe",
-    "... or a custom context": "... o un contexto personalizado",
-    "Replace current map composition with one of these contexts:":
-		"Remplazar la composición actual del mapa por uno de estos contextos:",
+    "... or a local context": "... o un contexto local",
+    //"Load or add the layers from one of these map contexts:" :
+	//	"Remplazar la composición actual del mapa por uno de estos contextos:",
     "A unique OSM layer": "Una capa OpenStreetMap única",
     "default viewer context": "contexto por omisión",
     "(default)": "<br/>(contexto por omisión actual)",
     /* GEOR_workspace.js strings */
+    "Save to metadata": "Crear metadatos",
+    "in group": "en el grupo",
+    "The context title is mandatory": "Se requiere que el título contexto",
+    "There was an error creating the metadata.": "Se ha producido un error al crear los metadatos.",
     "Share this map": "Comparte este mapa",
     /*
     "Mobile viewer": "Visualiseur mobile",

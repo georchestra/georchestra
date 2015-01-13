@@ -40,7 +40,7 @@ GEOR.layerfinder = (function() {
     /**
      * Property: currentTab
      * {String} a local cache of the currently active tab
-     * (one of "cswquerier", "cswbrowser", "wms", "wfs", "file")
+     * (one of "cswquerier", "cswbrowser", "file")
      */
     var currentTab = "cswquerier";
 
@@ -51,8 +51,8 @@ GEOR.layerfinder = (function() {
     var panels = {
         "cswquerier": null,
         "cswbrowser": null,
-        "wmts": null,
         "wms": null,
+        "wmts": null,
         "wfs": null,
         "file": null
     };
@@ -64,8 +64,8 @@ GEOR.layerfinder = (function() {
     var selectedRecords = {
         "cswquerier": [],
         "cswbrowser": [],
-        "wmts": [],
         "wms": [],
+        "wmts": [],
         "wfs": [],
         "file": []
     };
@@ -83,6 +83,45 @@ GEOR.layerfinder = (function() {
     var tr = null;
 
     /**
+     * Property: cardPanel
+     * {Ext.Panel} the panel whose 3 items are the OGC panels
+     */
+    var cardPanel = null;
+
+    /**
+     * Method: onServiceTypeChange
+     * Triggered on "service type" radio buttons change detected
+     */
+    var onServiceTypeChange = function(rg, checked) {
+        // update currentTab value (required for addSelectedlLayer to work)
+        currentTab = checked.inputValue;
+        // clear selections:
+        panels["wms"].clearSelection();
+        panels["wfs"].clearSelection();
+        panels["wmts"].clearSelection();
+        // switch card:
+        cardPanel.layout.setActiveItem(currentTab.toUpperCase());
+    };
+
+    /**
+     * Method: selectionChangedListener
+     *
+     */
+    var selectionChangedListener = function(tab) {
+        return function(records) {
+            selectedRecords[tab] = records;
+            if (records.length) {
+                addButton.enable();
+                //addButton.getEl().parent().highlight();
+                addButton.setText(tr("Add")+ ' ('+records.length+')');
+            } else {
+                addButton.setText(tr("Add"));
+                addButton.disable();
+            }
+        };
+    };
+
+    /**
      * Method: createTabPanel
      * Return the main tab panel.
      *
@@ -91,19 +130,6 @@ GEOR.layerfinder = (function() {
      */
     var createTabPanel = function() {
 
-        var selectionChangedListener = function(tab) {
-            return function(records) {
-                selectedRecords[tab] = records;
-                if (records.length) {
-                    addButton.enable();
-                    //addButton.getEl().parent().highlight();
-                    addButton.setText(tr("Add")+ ' ('+records.length+')');
-                } else {
-                    addButton.setText(tr("Add"));
-                    addButton.disable();
-                }
-            };
-        };
         GEOR.cswbrowser.events.on({
             "selectionchanged": selectionChangedListener.call(this, "cswbrowser")
         });
@@ -114,18 +140,12 @@ GEOR.layerfinder = (function() {
             "selectionchanged": selectionChangedListener.call(this, "file")
         });
 
-
         panels["cswquerier"] = GEOR.cswquerier.getPanel({
             tabTip: tr("Find layers searching in metadata")
         });
         panels["cswbrowser"] = GEOR.cswbrowser.getPanel({
             tabTip: tr("Find layers from keywords")
         });
-
-        var r = function(val) {
-            return (val ? '<img src="'+GEOR.config.PATHNAME+'/app/img/famfamfam/tick.gif" alt="' + tr("Yes") + '">' : 
-                '<img src="'+GEOR.config.PATHNAME+'/app/img/nope.gif" alt="' + tr("No") + '">');
-        };
 
         var mapSRS = layerStore.map.getProjection(),
         commonStoreOptions = {
@@ -139,43 +159,15 @@ GEOR.layerfinder = (function() {
                 field: 'title',
                 direction: 'ASC'
             }
-        },
-        layerColumn = {
-            header: tr("Layer"), 
-            dataIndex: "title", 
-            sortable: true, 
-            width: 200
-        },
-        descriptionColumn = {
-            id: "description", 
-            header: tr("Description"), 
-            dataIndex: "abstract"
-        },
-        queryableColumn = {
-            id: "queryable", 
-            header: tr("Queryable"), 
-            dataIndex: "queryable", 
-            sortable: true, 
-            width: 75,
-            align: "center",
-            renderer: r
         };
 
         // WMTS
         panels["wmts"] = new GEOR.LayerBrowser({
-            title: tr("WMTS server"),
-            tabTip: tr("Find layers querying WMTS servers"),
-            fieldLabel: tr("Choose a WMTS server: "),
+            id: "WMTS",
             store: new GEOR.ows.WMTSCapabilities({
                 mapSRS: mapSRS,
                 storeOptions: commonStoreOptions
             }),
-            servers: GEOR.config.WMTS_SERVERS,
-            columns: [
-                layerColumn,
-                queryableColumn,
-                descriptionColumn
-            ],
             listeners: {
                 "selectionchanged": selectionChangedListener.call(this, "wmts")
             }
@@ -183,31 +175,19 @@ GEOR.layerfinder = (function() {
 
         // WMS
         panels["wms"] = new GEOR.LayerBrowser({
-            title: tr("WMS server"),
-            tabTip: tr("Find layers querying WMS servers"),
-            fieldLabel: tr("Choose a WMS server: "),
+            id: "WMS",
             store: new GEOR.ows.WMSCapabilities({
                 storeOptions: commonStoreOptions
             }),
-            servers: GEOR.config.WMS_SERVERS,
             mapSRS: mapSRS,
-            columns: [
-                layerColumn,
-                queryableColumn,
-                {id: "opaque", header: tr("Opaque"), dataIndex: "opaque", sortable: true, width: 50, align: "center", renderer: r},
-                descriptionColumn
-            ],
             listeners: {
                 "selectionchanged": selectionChangedListener.call(this, "wms")
             }
         });
 
-        
         // WFS
         panels["wfs"] = new GEOR.LayerBrowser({
-            title: tr("WFS server"),
-            tabTip: tr("Find layers querying WFS servers"),
-            fieldLabel: tr("Choose a WFS server: "),
+            id: "WFS",
             store: new GEOR.ows.WFSCapabilities({
                 storeOptions: Ext.apply({
                     layerOptions: function() {
@@ -251,18 +231,29 @@ GEOR.layerfinder = (function() {
                     }
                 }, commonStoreOptions)
             }),
-            servers: GEOR.config.WFS_SERVERS,
-            columns: [
-                layerColumn,
-                descriptionColumn
-            ],
             listeners: {
                 "selectionchanged": selectionChangedListener.call(this, "wfs")
             }
         });
+
         panels["file"] = GEOR.fileupload.getPanel({
             srs: mapSRS,
             tabTip: tr("Add layers from local files")
+        });
+
+        var default_svt = GEOR.config.DEFAULT_SERVICE_TYPE;
+        cardPanel = new Ext.Panel({
+            region: 'center',
+            layout: 'card',
+            activeItem: default_svt,
+            defaults: {
+                border: false
+            },
+            items: [
+                panels["wms"],
+                panels["wmts"],
+                panels["wfs"]
+            ]
         });
 
         return new Ext.TabPanel({
@@ -272,8 +263,47 @@ GEOR.layerfinder = (function() {
             deferredRender: true,
             items: [
                 panels["cswquerier"], panels["cswbrowser"], 
-                panels["wmts"], panels["wms"], panels["wfs"], 
-                panels["file"]
+                {
+                    title: tr("OGC server"),
+                    tabTip: tr("Find layers querying OGC services"),
+                    layout: 'border',
+                    border: false,
+                    defaults: {
+                        border: false
+                    },
+                    items: [{
+                        region: 'north',
+                        layout: 'form',
+                        labelSeparator: tr("labelSeparator"),
+                        labelWidth: 170,
+                        bodyStyle: 'padding: 5px;',
+                        height: 26,
+                        items: [{
+                            xtype: 'radiogroup',
+                            fieldLabel: tr("Service type"),
+                            items: [{
+                                boxLabel: 'WMS',
+                                name: 'svtype',
+                                inputValue: 'wms',
+                                checked: default_svt == "WMS"
+                            },{
+                                boxLabel: 'WMTS',
+                                name: 'svtype',
+                                inputValue: 'wmts',
+                                checked: default_svt == "WMTS"
+                            },{
+                                boxLabel: 'WFS',
+                                name: 'svtype',
+                                inputValue: 'wfs',
+                                checked: default_svt == "WFS"
+                            }],
+                            listeners: {
+                                "change": onServiceTypeChange,
+                                scope: this
+                            }
+                        }]
+                    }, cardPanel]
+                }, panels["file"]
             ],
             listeners: {
                 'tabchange': function (tp, p) {
@@ -284,17 +314,12 @@ GEOR.layerfinder = (function() {
                     case panels["cswbrowser"]:
                         currentTab = "cswbrowser";
                         break;
-                    case panels["wmts"]:
-                        currentTab = "wmts";
-                        break;
-                    case panels["wms"]:
-                        currentTab = "wms";
-                        break;
-                    case panels["wfs"]:
-                        currentTab = "wfs";
-                        break;
                     case panels["file"]:
                         currentTab = "file";
+                        break;
+                    default:
+                        var radios = this.findByType("radiogroup");
+                        currentTab = radios[0].items.get(0).getGroupValue();
                         break;
                     }
                     if (selectedRecords[currentTab].length>0) {
@@ -491,19 +516,13 @@ GEOR.layerfinder = (function() {
                     case "cswquerier":
                         GEOR.cswquerier.clearSelection();
                         break;
-                    case "wmts":
-                        panels["wmts"].clearSelection();
-                        break;
-                    case "wms":
-                        panels["wms"].clearSelection();
-                        break;
-                    case "wfs":
-                        panels["wfs"].clearSelection();
-                        break;
                     case "file":
                         GEOR.fileupload.clearSelection();
                         break;
                     default:
+                        panels["wms"].clearSelection();
+                        panels["wfs"].clearSelection();
+                        panels["wmts"].clearSelection();
                         break;
                     }
                 },
@@ -515,18 +534,17 @@ GEOR.layerfinder = (function() {
                 layout: 'fit',
                 animateTarget: GEOR.config.ANIMATE_WINDOWS && animateFrom,
                 width: 650,
-                height: 450,
+                minWidth: 630,
+                height: 500,
                 closeAction: 'hide',
                 modal: false,
                 items: createTabPanel(),
-                buttons: [
-                    {
-                        text: tr("Close"),
-                        handler: function() {
-                            win.hide();
-                        }
-                    }, addButton
-                ]
+                buttons: [{
+                    text: tr("Close"),
+                    handler: function() {
+                        win.hide();
+                    }
+                }, addButton]
             });
             return win;
         }

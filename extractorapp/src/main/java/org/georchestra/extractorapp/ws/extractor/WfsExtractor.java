@@ -144,7 +144,8 @@ public class WfsExtractor {
         final HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 
         HttpClientContext localContext = HttpClientContext.create();
-        final HttpHost httpHost = new HttpHost(capabilitiesURL.getHost(), capabilitiesURL.getPort());
+        final HttpHost httpHost = new HttpHost(capabilitiesURL.getHost(), capabilitiesURL.getPort(), capabilitiesURL.getProtocol());
+
     	HttpGet get = new HttpGet(capabilitiesURL.toExternalForm());
         if(username != null && (secureHost.equalsIgnoreCase(request._url.getHost())
                 || "127.0.0.1".equalsIgnoreCase(request._url.getHost())

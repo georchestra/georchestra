@@ -30,6 +30,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Loading...": "im Aufbau...",
     "File": "Datei",
     "Layer": "Layer",
+    "layers": "layers",
     "Description": "Beschreibung",
     "Error": "Fehler",
     "Server": "Server",
@@ -38,6 +39,9 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "File submission failed or invalid file": "Sendung abgebrochen - fehlerhafte Datei",
     "Type": "Typ",
     "Title": "Titel",
+    "Actions": "Aktionen",
+    "Incorrect server response.": "Server Antwort fehlerhaft.",
+    "No features found.": "Kein Betreff gefunden.",
     /* GEOR.js strings */
     "Cities": "Standorte",
     "Recentering on GeoNames cities": "Auf die Standorte der GeoNames <br />Datenbasis neu ausrichten",
@@ -106,6 +110,8 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
         "die Variable DEFAULT_THESAURUS_KEY entspricht keinem" +
         " von GeoNetwork exportierten Wert",
     /* GEOR_cswquerier.js strings */
+    "cswquerier.help.title": "Hinweise zur erweiterten Suche",
+    "cswquerier.help.message": '<ul><li><b>@suchwort</b> Suche im Organisationsnamen.</li><li><b>#suchwort</b> Suche in den Metadaten-Tags.</li><li><b>?suchwort</b> Erweitert die Suche auf alle Metadaten-Felder.</li></ul>',
     "NAME layer on VALUE": "Layer ${NAME} auf ${VALUE}",
     "Show metadata sheet in a new window":
         "Metadatei in neuem Fenster öffnen",
@@ -129,7 +135,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     /* GEOR_fileupload.js strings */
     "2D only": "nur 2D",
     "Local file": "Datei",
-    "The service is inactive": "Dienstleistung ist nicht aktiv",
+    "The service is inactive": "Service ist nicht aktiv",
     "Upload a vector data file.": "Laden einer Datei mit vektoriellen Daten",
     "The allowed formats are the following: ": "folgende Formate sind gestattet : ",
     "Use ZIP compression for multifiles formats, such as": "Benützen Sie ZIP um Multidatei-Format zu komprimieren wie",
@@ -144,8 +150,6 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "fileupload_error_projectionError": "Lesefehler der geografischen Koordinaten. Überprüfen Sie die Projektionsinformation.",
     "server upload error: ERROR":
         "Fehler beim Dateihochladen. ${ERROR}",
-    "Incorrect server response.": "Server Antwort fehlerhaft.",
-    "No features found.": "Kein Betreff gefunden.",
     /* GEOR_geonames.js strings */
     /* GEOR_getfeatureinfo.js strings */
     "<div>Searching...</div>": "<div>suchen...</div>",
@@ -155,14 +159,13 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
          "klicken Sie auf die Karte.</div>",
     "WMS GetFeatureInfo at ": "GetFeatureInfo WMS auf ",
     /* GEOR_layerfinder.js strings */
+    "metadata": "Metadaten",
     "Add layers from local files": "Layer aus lokalen Daten hinzufügen",
     "Find layers searching in metadata":
         "Layer finden durch Suche in Metadaten",
     "Find layers from keywords": "Layer finden durch Suche mit Schlüsselwörtern",
-    "Find layers querying WMS servers":
-        "Layer finden durch Abfrage des Servers WMS",
-    "Find layers querying WFS servers":
-        "Layer finden durch Abfrage des Servers WFS",
+    "Find layers querying OGC services":
+        "Layer finden durch Abfrage des Servers OGC",
     "layerfinder.layer.unavailable":
         "Layer ${NAME} im WMS Service nicht gefunden.<br/<br/>" +
         "Mögliche Gründe : " +
@@ -176,21 +179,24 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Malformed URL": "URL ungültig.",
     "Queryable": "abfragbar",
     "Opaque": "nicht Transparent",
-    "Choose a WMS server: ": "Wählen Sie einen WMS Server: ",
+    "OGC server": "OGC Server",
+    "I'm looking for ...": "Ich suche ...",
+    "Service type": "Art der Server",
+    "Choose a server": "Wählen Sie einen Server",
+    "... or enter its address": "... oder geben Sie Ihre",
     "The server is publishing one layer with an incompatible projection":
         "der Server zeigt Layer mit nicht kompatibler Projektion",
     "The server is publishing NB layers with an incompatible projection":
         "der Server zeigt  ${NB} Layers mit nicht kompatibler Projektion",
     "WMS server": "WMS Server",
-    "Choose a WMTS server: ": "Wählen Sie einen WMTS Server: ",
-    "WMTS server": "WMTS Server",
-    "Choose a WFS server: ": "Wählen Sie einen WFS Server: ",
-    "... or enter its address: ": "... oder geben Sie Ihre:",
+    "This server does not support HTTP POST": "Dieser Server unterstützt keine POST Requests",
     "Unreachable server or insufficient rights": "Server nicht erreichbar " +
         " oder nicht ausreichende Zugriffsrechte, " +
         "Datenmenge zu groß...",
-    "WFS server": "WFS Server",
     /* GEOR_managelayers.js strings */
+    "Service": "Service",
+    "Protocol": "Protokoll",
+    "About this layer": "Über dieser Schicht",
     "Set as overlay": "Wechseln in nächsthöhere Schicht",
     "Set as baselayer": "Wechseln in nächsttiefere Schicht",
     "Confirm NAME layer deletion ?":
@@ -216,9 +222,10 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Push up this layer": "Layer darüberlegen",
     "Push down this layer": "Layer darunterlegen",
     "Add layers": "Layer hinzufügen",
+    "Remove all layers": "Alle Layers löschen",
+    "Are you sure you want to remove all layers ?": "Sind Sie sicher, dass Sie alle Layers löschen wollen ?",
     "source: ": "Quelle : ",
     "unknown": "Unbekannt",
-    "Actions": "Aktionen",
     "Draw new point": "Neuen Punkt zeichnen",
     "Draw new line": "Neue Linie zeichnen",
     "Draw new polygon": "Neuen Polygon zeichnen",
@@ -258,12 +265,13 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "The provided context is not valid": "WMC ungültig",
     "The default context is not defined (and it is a BIG problem!)":
         "Standard WMC nicht definiert(and it is a BIG problem!)",
+    "Error while loading file": "Fehler beim Laden der Datei",
     /* GEOR_mappanel.js strings */
     "Coordinates in ": "Koordinaten im ",
     "scale picker": "Maβstab",
     /* GEOR_ows.js strings */
     "The NAME layer was not found in WMS service.":
-        "Layer ${NAME} im WMS Servier nicht gefunden.",
+        "Layer ${NAME} im WMS Service nicht gefunden.",
     /* GEOR_print.js strings */
     "Sources: ": "Quellen : ",
     "Source: ": "Quelle : ",
@@ -285,6 +293,10 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "print.unknown.resolution":
         "Konfigurationsfehler: DEFAULT_PRINT_RESOLUTION " +
         "${RESOLUTION} befindet sich nicht in der Druckbildauflösungsliste",
+    "print.unknown.format":
+        "Konfigurationsfehler: " +
+        "${FORMAT} befindet sich nicht in der Druckformatliste",
+    "Pick an output format": "Wählen Sie ein Ausgabeformat",
     "Comments": "Kommentare",
     "Scale: ": "Maβstab : ",
     "Date: ": "Datum : ",
@@ -324,6 +336,17 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "One result": "1 Ergebnis",
     "No result": "kein Ergebnis",
     "Clean": "löchen",
+    "All": "Alle",
+    "None": "Keiner",
+    "Invert selection": "Auswahl umkehren",
+    "Actions on the selection or on all results if no row is selected":
+        "Aktien an der Auswahl oder an alle Ergebnisse, wenn keine Zeile ausgewählt ist",
+    "Store the geometry": 
+        "Geometrie speichern",
+    "Aggregates the geometries of the selected features and stores it in your browser for later use in the querier":
+        "Das ausgewählte Geometrieobjekt ist für eine künftige Benutzung im Suchfilter gespeichert",
+    "Geometry successfully stored in this browser": 
+        "Geometrie erfolgreich im Webbrowser gespeichert.",
     "Clean all results on the map and in the table": "Löschen " +
         "der aufgezeichneten Ergebnisse auf Karte und Liste",
     "Zoom": "Zoom",
@@ -391,15 +414,16 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "distance measure": "Distanz messen",
     "area measure": "Oberfläche messen",
     "Measure": "Maß",
-    "Tools": "Werkzeug",
+    "Tools": "Werkzeuge",
     "tools": "Werkzeuge",
-    "tool": "Werkzeuge",
-    "No tool": "kein Tool",
+    "tool": "Werkzeug",
+    "No tool": "Keine Werkzeuge",
     "Manage tools": "Werkzeuge verwalten",
     "remember the selection": "Erinnern der Selektion",
     "Available tools:": "Werkzeuge vorhanden :",
-    "Click to select or deselect the tool": "Klicken um das Tool abzuwählen",
-    "Could not load addon ADDONNAME": "${ADDONNAME} Addon laden unmöglich ",
+    "Click to select or deselect the tool": "Klicken um das Werkzeug abzuwählen",
+    "Could not load addon ADDONNAME": "${ADDONNAME} Addon laden unmöglich",
+    "Your new tools are now available in the tools menu.": 'Ihre neuen Werkzeuge sind jetzt im Werkzeuge-Menu verfügbar',
     /* GEOR_util.js strings */
     "Characters": "Zeichen",
     "Digital": "Digital",
@@ -412,13 +436,18 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "The provided file is not a valid OGC context": "OGC entspricht nicht dieser Datei",
     "Warning: trying to restore WMC with a different projection (PROJCODE1, while map SRS is PROJCODE2). Strange things might occur !": "Achtung: die wiederhergestellte Karte wurde mit ${PROJCODE1} abgespeichert, die aktuelle Karte mit ${PROJCODE2}. Unerwartete Probleme können auftreten.",
     /* GEOR_wmcbrowser.js strings */
+    "all contexts": "alle Karten",
     "Could not find WMC file": "Gewählte Karte nicht vorhanden",
-    "... or a custom context": "... oder einer personalisierten Karte",
-    "Replace current map composition with one of these contexts:": "Aktuelle Karte ersetzen durch :",
+    "... or a local context": "... oder einer lokal Karte",
+    //"Load or add the layers from one of these map contexts:" : "Aktuelle Karte ersetzen durch :",
     "A unique OSM layer": "Ein einziger Layer OpenStreetMap",
     "default viewer context": "Standarteinstellung",
     "(default)": "<br/>(Standardeinstellung)",
     /* GEOR_workspace.js strings */
+    "Save to metadata": "Metadaten Erstellen",
+    "in group": "in der Gruppe",
+    "The context title is mandatory": "Der Kontext Titel ist erforderlich",
+    "There was an error creating the metadata.": "Es gab einen Fehler beim Erstellen der Metadaten.",
     "Share this map": "Karte teilen",
     "Mobile viewer": "Kartenviewer für mobile Technologie",
     "Mobile compatible viewer on sdi.georchestra.org": "Kartenviewer für mobile Technologie auf sdi.georchestra.org",

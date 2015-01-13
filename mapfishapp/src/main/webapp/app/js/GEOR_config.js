@@ -49,8 +49,8 @@ GEOR.config = (function() {
         DEFAULT_WMC: function() {
             if (GEOR.config.CONTEXTS &&
                 GEOR.config.CONTEXTS[0] &&
-                GEOR.config.CONTEXTS[0][2]) {
-                return GEOR.config.CONTEXTS[0][2];
+                GEOR.config.CONTEXTS[0]["wmc"]) {
+                return GEOR.config.CONTEXTS[0]["wmc"];
             }
             alert("Administrator: "+
                 "GEOR.config.CONTEXTS is not configured as expected !");
@@ -121,27 +121,24 @@ GEOR.config = (function() {
 
         /**
          * Constant: CONTEXTS
-         * {Array} the array of arrays describing the available contexts
+         * {Array} the array describing the available contexts
          *
-         * Each "context array" consists of 4 mandatory fields:
-         *   * the first field is the label which appears in the UI
-         *   * the second one is the path to the thumbnail
-         *   * the third one is the path to the context (WMC) file
-         *   * the last one is a comment which will be shown on thumbnail hovering
+         * Each "context object" consists of 5 mandatory fields:
+         *   * the label which appears in the UI
+         *   * the path to the thumbnail
+         *   * the path to the context (WMC) file
+         *   * the comment which will be shown on thumbnail hovering
+         *   * the keywords used to filter the view
          *
-         * Example config :
-         *   [
-         *      ["OpenStreetMap", "app/img/contexts/osm.png", "default.wmc", "A unique OSM layer"],
-         *      ["Orthophoto", "app/img/contexts/ortho.png", "context/ortho.wmc", "Orthophoto 2009"],
-         *      ["Forêts", "app/img/contexts/forets.png", "context/forets.wmc", "Les 3 couches forêts sur fond OSM"]
-         *   ]
-         *
-         * Defaults to ["OpenStreetMap", "app/img/contexts/osm.png", "default.wmc", "A unique OSM layer"]
          * Should *not* be empty !
          */
-        CONTEXTS: getCustomParameter("CONTEXTS", [
-            ["OpenStreetMap", "app/img/contexts/osm.png", "default.wmc", "A unique OSM layer"]
-        ]),
+        CONTEXTS: getCustomParameter("CONTEXTS", [{
+            label: "OpenStreetMap",
+            thumbnail: "app/img/contexts/osm.png",
+            wmc: "default.wmc",
+            tip: "A unique OSM layer",
+            keywords: ["OpenStreetMap", "Basemap"]
+        }]),
 
         /**
          * Constant: GEOSERVER_WFS_URL
@@ -513,6 +510,31 @@ GEOR.config = (function() {
         DISPLAY_VISIBILITY_RANGE: getCustomParameter("DISPLAY_VISIBILITY_RANGE", true),
 
         /**
+         * Constant: LAYER_INFO_TEMPLATE
+         * {String} The template used to format the layer tooltip
+         * The available variables are those of a GeoExt record 
+         * and protocol, protocol_color, protocol_version, service, layername and short_abstract
+         */
+        LAYER_INFO_TEMPLATE: getCustomParameter("LAYER_INFO_TEMPLATE", [
+            '<div style="width:250px;">',
+                '<span style="background:{protocol_color};padding:0 0.2em;margin:0 0.4em 0 0;',
+                'border-radius:0.2em;color:#fff;border:0;float:right;">{protocol}</span>',
+                '<b>{title}</b>',
+                '<br/><br/>',
+                '{short_abstract}',
+            '</div>'].join('')),
+
+        /**
+         * Constant: PROTOCOL_COLOR
+         * {Object} Association between protocol and color displayed by LAYER_INFO_TEMPLATE
+         */
+        PROTOCOL_COLOR: getCustomParameter("PROTOCOL_COLOR", {
+            "WMS": "#009d00",
+            "WFS": "#ff0243",
+            "WMTS":"#55006a"
+        }),
+
+        /**
          * Constant: ROLES_FOR_STYLER
          * {Array} roles required for the styler to show up
          * Empty array means the module is available for everyone
@@ -598,6 +620,15 @@ GEOR.config = (function() {
             "http://cms.geobretagne.fr/assistance"),
 
         /**
+         * Constant: CONTEXT_LOADED_INDICATOR_DURATION
+         * {Integer} - If set to 0, do not display the popup
+         * displaying context information (title + abstract)
+         * Defaults to 5 seconds.
+         */
+        CONTEXT_LOADED_INDICATOR_DURATION: getCustomParameter("CONTEXT_LOADED_INDICATOR_DURATION",
+            5),
+
+        /**
          * Constant: DISPLAY_SELECTED_OWS_URL
          * {Boolean} - If set to false, do not display the selected WMS/WFS server URL
          * in the second field from the "Add layers" popup window.
@@ -651,49 +682,22 @@ GEOR.config = (function() {
         ]),
 
         /**
-         * Constant: WMTS_SERVERS
-         * {Array} List of externals WMTS to display in the WMTS servers tab.
-         */
-        WMTS_SERVERS: getCustomParameter("WMTS_SERVERS", [
-            {"name": "GéoBretagne rasters", "url": "http://tile.geobretagne.fr/gwc02/service/wmts"},
-            {"name": "GéoBretagne OSM", "url": "http://osm.geobretagne.fr/gwc01/service/wmts"}
-        ]),
+         * Constant: OGC_SERVERS_URL
+         * {Object} associates OGC interface names with resource file URLs
+         *          (relative to viewer or complete) where the servers are enlisted
+         **/
+        OGC_SERVERS_URL: getCustomParameter("OGC_SERVERS_URL", {
+            "WMS": "wms.servers.json",
+            "WFS": "wfs.servers.json",
+            "WMTS": "wmts.servers.json"
+        }),
 
         /**
-         * Constant: WMS_SERVERS
-         * {Array} List of externals WMS to display in the WMS servers tab.
-         */
-        WMS_SERVERS: getCustomParameter("WMS_SERVERS", [
-            {"name": "GéoBretagne", "url": "http://geobretagne.fr/geoserver/wms"},
-            {"name": "Région Bretagne", "url": "http://kartenn.region-bretagne.fr/geoserver/wms"},
-            {"name": "Sandre/zonages", "url": "http://services.sandre.eaufrance.fr/geo/zonage"},
-            {"name": "Sandre/ouvrages", "url": "http://services.sandre.eaufrance.fr/geo/ouvrage"},
-            {"name": "Sandre/stations", "url": "http://services.sandre.eaufrance.fr/geo/stations"},
-            {"name": "BRGM/géologie", "url": "http://geoservices.brgm.fr/geologie"},
-            {"name": "BRGM/risques", "url": "http://geoservices.brgm.fr/risques"},
-            {"name": "Cartorisque35, risques naturels", "url": "http://cartorisque.prim.net/wms/35"},
-            {"name": "Cartorisque22, risques naturels", "url": "http://cartorisque.prim.net/wms/22"},
-            {"name": "Cartorisque29, risques naturels", "url": "http://cartorisque.prim.net/wms/29"},
-            {"name": "Cartorisque56, risques naturels", "url": "http://cartorisque.prim.net/wms/56"},
-            {"name": "Carmen", "url": "http://ws.carmen.application.developpement-durable.gouv.fr/WFS/10/Nature_Paysage"},
-            {"name": "GeoSignal", "url": "http://www.geosignal.org/cgi-bin/wmsmap"},
-            {"name": "Corine Land Cover", "url": "http://sd1878-2.sivit.org/geoserver/wms"},
-            {"name": "GeoLittoral", "url": "http://geolittoral.application.equipement.gouv.fr/wms/metropole"},
-            {"name": "Gest'Eau", "url": "http://gesteau.oieau.fr/service"},
-            {"name": "BMO/OpenStreetMap", "url": "http://bmo.openstreetmap.fr/wms"},
-            {"name": "IFREMER/littoral", "url": "http://www.ifremer.fr/services/wms1"},
-            {"name": "Cartelie/CETE Ouest", "url": "http://mapserveur.application.developpement-durable.gouv.fr/map/mapserv?map%3D%2Fopt%2Fdata%2Fcarto%2Fcartelie%2Fprod%2FCETE_Ouest%2Fxdtyr36laj.www.map"}
-        ]),
-
-        /**
-         * Constant: WFS_SERVERS
-         * {Array} List of externals WFS to display in the WFS servers tab.
-         */
-        WFS_SERVERS: getCustomParameter("WFS_SERVERS", [
-            {"name": "GéoBretagne", "url": "http://geobretagne.fr/geoserver/wfs"},
-            {"name": "BMO/OpenStreetMap", "url": "http://bmo.openstreetmap.fr/ows"},
-            {"name": "Corine Land Cover", "url": "http://sd1878-2.sivit.org/geoserver/wfs"}
-        ])
-    // No trailing comma for the last line (or IE will complain)
+         * Constant: DEFAULT_SERVICE_TYPE
+         * {String} The default service type for the "Add layer" window OGC tab.
+         * Defaults to "WMS"
+         **/
+        DEFAULT_SERVICE_TYPE: getCustomParameter("DEFAULT_SERVICE_TYPE", "WMS")
+        // No trailing comma for the last line (or IE will complain)
     };
 })();

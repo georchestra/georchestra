@@ -4,8 +4,6 @@ import java.io.IOException;
 
 import javax.servlet.ServletContext;
 
-import org.georchestra.lib.mailservice.AbstractEmailFactory;
-
 /**
  * Creates the e-mails required for this application.
  *

@@ -38,10 +38,12 @@ GEOR.ls = (function() {
                 try {
                     localStorage.setItem(key, value);
                 } catch (e) {
-                    if (e == QUOTA_EXCEEDED_ERR) {
+                    if (e.name.toUpperCase() === 'QUOTA_EXCEEDED_ERR' || 
+                        e.name.toUpperCase() === 'NS_ERROR_DOM_QUOTA_REACHED') {
+
                         alert('localStorage quota exceeded !');
                     } else {
-                        alert('localStorage setItem failed');
+                        alert('localStorage failed to store value.');
                     }
                 }
             }

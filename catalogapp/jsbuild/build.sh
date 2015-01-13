@@ -1,4 +1,3 @@
-set -x
 #
 # Variables
 # 
@@ -37,8 +36,13 @@ ${mkdir} -p ${releasepath} ${releasepath}/lang
 
  echo "running jsbuild for main app..."
  ${venv}/bin/jsbuild -o "${releasepath}" main.cfg
- echo "done.")
+ echo "done."
+)
 
+if [ ! -e ${releasepath}/catalogapp.js ]; then
+    echo "\033[01;31m[NOK]\033[00m jsbuild failure"
+    exit 1
+fi;
 #
 # OpenLayers resources
 #

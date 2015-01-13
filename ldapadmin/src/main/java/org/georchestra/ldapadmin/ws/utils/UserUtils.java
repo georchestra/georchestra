@@ -1,16 +1,11 @@
-/**
- * 
- */
 package org.georchestra.ldapadmin.ws.utils;
 
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 
-import org.georchestra.ldapadmin.ws.utils.Validation;
-
 /**
- * Contains useful method that are used in the form validation.  
- * 
+ * Contains useful method that are used in the form validation.
+ *
  * @author Mauricio Pazos
  *
  */
@@ -19,9 +14,9 @@ public class UserUtils {
 	private UserUtils(){
 			// utility class
 	}
-	
+
 	public static void validate(String uid, String firstName, String surname, Errors errors) {
-		
+
 		// uid validation
 		if( !StringUtils.hasLength(uid) && Validation.isFieldRequired("uid") ){
 			errors.rejectValue("uid", "uid.error.required", "required");
@@ -35,16 +30,16 @@ public class UserUtils {
 		// name validation
 		validate(firstName, surname, errors);
 	}
-	
+
 	/**
-	 * An user identifier (uid) valid only can contain characters, numbers, dot, hyphen. It must begin with a character.
-	 * 
+	 * A valid user identifier (uid) can only contain characters, numbers, hyphens or dot. It must begin with a character.
+	 *
 	 * @param uid user identifier
 	 * @return true if the uid is valid
 	 */
 	private static boolean isUidValid(String uid) {
 
-		char firstChar = uid.charAt(0); 
+		char firstChar = uid.charAt(0);
 		if(!Character.isLetter(firstChar)){
 			return false;
 		}
@@ -53,17 +48,17 @@ public class UserUtils {
 			if( !(Character.isLetter( uid.charAt(i)) ||  Character.isDigit( uid.charAt(i)) || ( uid.charAt(i) == '.') || ( uid.charAt(i) == '-')) ){
 				
 				return false;
-			} 
+			}
 		}
 		return true;
 	}
 
 	public static void validate(String firstName, String surname, Errors errors) {
-		
+
 		if( !StringUtils.hasLength(firstName) && Validation.isFieldRequired("firstName") ){
 			errors.rejectValue("firstName", "firstName.error.required", "required");
 		}
-		
+
 		if( !StringUtils.hasLength( surname ) && Validation.isFieldRequired("surname") ){
 			errors.rejectValue("surname", "surname.error.required", "required");
 		}

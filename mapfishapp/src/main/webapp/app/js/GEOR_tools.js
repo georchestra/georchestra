@@ -15,6 +15,11 @@
 /*
  * @include GeoExt/widgets/Popup.js
  * @include OpenLayers/Format/JSON.js
+ * @include OpenLayers/Control/Measure.js
+ * @include OpenLayers/Handler/Path.js
+ * @include OpenLayers/Handler/Polygon.js
+ * @include OpenLayers/StyleMap.js
+ * @include OpenLayers/Rule.js
  * @include GEOR_waiter.js
  * @include GEOR_config.js
  * @include GEOR_localStorage.js
@@ -203,9 +208,11 @@ GEOR.tools = (function() {
      *
      * Parameters:
      * records - {Array} an array of tool records
+     * silent - {Boolean} silence mode (no help info) - defaults to false
      */
-    var fetchAndLoadTools = function(records) {
+    var fetchAndLoadTools = function(records, silent) {
         var newState = {};
+        silent = silent || false;
         store.each(function(r) {
             newState[r.id] = (records.indexOf(r) > -1);
         });
@@ -230,12 +237,14 @@ GEOR.tools = (function() {
             r.set("_loaded", false);
         });
         // load new addons:
-        GEOR.waiter.show(incoming.length);
+        var count = incoming.length;
+        GEOR.waiter.show(count);
         Ext.each(incoming, function(r) {
             var addonName = r.get("name"),
                 addonPath = GEOR.config.PATHNAME + "/app/addons/" +
                     addonName.toLowerCase() + "/",
                 failure = function() {
+                    count -= 1;
                     // if an addon fails to load properly, update previousState accordingly
                     previousState[r.id] = false;
                     // unselect node corresponding to record in dataview:
@@ -247,6 +256,10 @@ GEOR.tools = (function() {
                             {'ADDONNAME': addonName}
                         )
                     });
+                    if (count == 0 && !silent) {
+                        GEOR.helper.msg(tr("Tools"), 
+                            tr("Your new addons are now available in the tools menu."));
+                    }
                 };
             // get corresponding manifest.json 
             OpenLayers.Request.GET({
@@ -256,7 +269,7 @@ GEOR.tools = (function() {
                         failure.call(this);
                         return;
                     }
-                    // TODO: handle repeated files (eg: same addon with different parameters)
+                    count -= 1;
                     var js = [], 
                         o = (new OpenLayers.Format.JSON()).read(
                             response.responseText
@@ -305,6 +318,11 @@ GEOR.tools = (function() {
                             menu.insert(i + 2, addon.item);
                         }, this, true);
                     }
+                    // inform user:
+                    if (count == 0 && !silent) {
+                        GEOR.helper.msg(tr("Tools"), 
+                            tr("Your new tools are now available in the tools menu."));
+                    }
                 },
                 failure: failure
             });
@@ -318,7 +336,7 @@ GEOR.tools = (function() {
      */
     var loadBtnHandler = function() {
         win && win.hide();
-        fetchAndLoadTools(dataview.getSelectedRecords());
+        fetchAndLoadTools(dataview.getSelectedRecords(), false);
     };
 
 
@@ -587,13 +605,13 @@ GEOR.tools = (function() {
             if (!str) {
                 fetchAndLoadTools(store.queryBy(function(r) {
                     return (r.get('preloaded') == true);
-                }));
+                }), true);
             }
             else {
                 var ids = str.split(',');
                 fetchAndLoadTools(store.queryBy(function(r) {
                     return (ids.indexOf(r.id) > -1);
-                }));
+                }), true);
             }
         }
     };

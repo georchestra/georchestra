@@ -160,6 +160,40 @@ GEOR.selectfeature = (function() {
         },
 
         /**
+         * APIMethod: deactivate
+         *
+         */
+        deactivate: function() {
+            if (ctrl) {
+                // we need to collapse the south panel.
+                observable.fireEvent("shutdown");
+
+                if (ctrl.events !== null) {
+                    observable.fireEvent("searchresults", {
+                        features: [],
+                        addLayerToMap: false
+                    });
+                    selectedFeatures = {};
+                    ctrl.unselectAll();
+                    ctrl.deactivate();
+                }
+
+                if (ctrl.layer && ctrl.layer.events) {
+                    ctrl.layer.events.un({
+                        "featureselected": onFeatureselected,
+                        "featureunselected": onFeatureunselected,
+                        "visibilitychanged": onLayerVisibilitychanged,
+                        scope: this
+                    });
+                }
+                map.events.un({
+                    "removelayer": onLayerRemoved,
+                    scope: this
+                });
+            }
+        },
+
+        /**
          * APIMethod: toggle
          *
          * Parameters:
@@ -238,8 +272,8 @@ GEOR.selectfeature = (function() {
                         ctrl.unselectAll();
                         ctrl.deactivate();
                     }
-                    // we need to collapse the south panel.
                     if (collapse) {
+                        // we need to collapse the south panel.
                         observable.fireEvent("shutdown");
                     }
                 } else {

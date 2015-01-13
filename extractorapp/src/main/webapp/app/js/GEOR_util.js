@@ -26,6 +26,16 @@ GEOR.util = (function() {
     var tr = OpenLayers.i18n;
 
     return {
+        /**
+         * API: uomMetricRatio
+         * converts gco uom (unity of measure) to metric ratios
+         */
+        uomMetricRatio: {
+            "mm": 0.001,
+            "cm": 0.01,
+            "m": 1,
+            "km": 1000
+        },
 
         /**
          * APIMethod: shortenLayerName
@@ -209,6 +219,45 @@ GEOR.util = (function() {
                     return unescape(y);
                 }
             }
+        },
+
+        /**
+         * APIMethod: mdNSResolver
+         * Metadata Namespaces resolver
+         *
+         * Parameters:
+         * prefix - {String} the namespace alias
+         *
+         * Returns:
+         * {String} the full namespace URI
+         */
+        mdNSResolver: function (prefix) {
+            var ns = {
+                'gmd': 'http://www.isotc211.org/2005/gmd',
+                'gco': 'http://www.isotc211.org/2005/gco'
+            };
+            return ns[prefix] || null;
+        },
+
+        /**
+         * APIMethod: checkOversized
+         * checks if for a given res and bbox on 3 bands, 
+         * the number of pixels is > GEOR.config.MAX_COVERAGE_EXTRACTION_SIZE
+         *
+         * Parameters:
+         * bbox - {Object}
+         * res - {Float} numeric value of extraction pixel size in meters
+         *
+         * Returns:
+         * {Boolean} True if oversized
+         */
+        checkOversized: function(bbox, res) {
+            var geometry = new OpenLayers.Bounds(bbox.value[0], bbox.value[1], bbox.value[2], bbox.value[3]).toGeometry(),
+                pixelArea = res * res,
+                area = geometry.getGeodesicArea(
+                    new OpenLayers.Projection(bbox.srs)
+                );
+            return (area/pixelArea > GEOR.config.MAX_COVERAGE_EXTRACTION_SIZE/3);
         }
     };
 })();

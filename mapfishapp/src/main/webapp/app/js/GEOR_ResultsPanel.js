@@ -84,12 +84,6 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
     _model: null,
 
     /**
-     * Private: layerBounds
-     * {OpenLayers.Bounds} The cached vector layer bounds
-     */
-    _layerBounds: null,
-
-    /**
      * Method: _csvExportBtnHandler
      * Triggers the download dialog for CSV export of the store's content
      */
@@ -99,13 +93,27 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
             return;
         }
         GEOR.waiter.show();
-        var data = new Array(t), att, fields = this._model.getFields();
+        var data = [], att, record, raw,
+            fields = this._model.getFields(),
+            grid = this.findByType("grid")[0];
+        if (!grid) {
+            return;
+        }
+        var sm = grid.getSelectionModel(),
+            bypass = false;
+        if (sm.getCount() == 0) {
+            bypass = true;
+        }
         for (var i=0; i<t; i++) {
-            data[i] = [];
-            att = this._store.getAt(i).get('feature').attributes;
-            // see http://applis-bretagne.fr/redmine/issues/4084
-            for (var j=0, ll=fields.length; j<ll; j++) {
-                data[i].push(att[fields[j]] || '');
+            record = this._store.getAt(i);
+            if (bypass || sm.isSelected(record)) {
+                raw = [];
+                att = record.get('feature').attributes;
+                // see http://applis-bretagne.fr/redmine/issues/4084
+                for (var j=0, ll=fields.length; j<ll; j++) {
+                    raw.push(att[fields[j]] || '');
+                }
+                data.push(raw);
             }
         }
         var format = new OpenLayers.Format.JSON();
@@ -158,20 +166,6 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
         } else if (bounds.getWidth() === 0 && bounds.getHeight() === 0) {
             map.setCenter(bounds.getCenterLonLat());
         }
-        this._layerBounds = layerBounds;
-    },
-
-    /**
-     * Method: _zoomToLayerExtent
-     * Sets the map extent in order to see all results
-     * Caches the vector layer extent if required
-     */
-    _zoomToLayerExtent: function() {
-        if (!this._layerBounds) {
-            this._layerBounds = this._zoomToFeatures(this._vectorLayer.features);
-        } else {
-            this._vectorLayer.map.zoomToExtent(this._layerBounds);
-        }
     },
 
     /**
@@ -179,12 +173,57 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
      *
      */
     _createVectorLayer: function() {
-        this._vectorLayer = new OpenLayers.Layer.Vector("search_results_"+this.id, {
+        this._vectorLayer = new OpenLayers.Layer.Vector("__georchestra_results_"+this.id, {
             displayInLayerSwitcher: false,
             styleMap: GEOR.util.getStyleMap(),
             rendererOptions: {
                 zIndexing: true
             }
+        });
+    },
+
+    /**
+     * Method: _storeGeometry
+     * Aggregates selected features' geometries and stores it in LocalStorage
+     * for later use in querier.
+     *
+     */
+    _storeGeometry: function() {
+        // compute aggregation of geometries
+        var features = (this._vectorLayer.selectedFeatures.length ? 
+            this._vectorLayer.selectedFeatures : this._vectorLayer.features),
+            components = [], type;
+        Ext.each(features, function(feature) {
+            if (/OpenLayers\.Geometry\.Multi.*/.test(feature.geometry.CLASS_NAME)) {
+                // multi-geometry
+                Ext.each(feature.geometry.components, function(cmp) {
+                    // check that we are not adding pears with bananas
+                    if (!type) {
+                        type = cmp.CLASS_NAME;
+                        components.push(cmp.clone());
+                    } else if (cmp.CLASS_NAME == type){
+                        components.push(cmp.clone());
+                    }
+                });
+            } else {
+                // simple geometry
+                if (!type) {
+                    type = feature.geometry.CLASS_NAME;
+                    components.push(feature.geometry.clone());
+                } else if (feature.geometry.CLASS_NAME == type){
+                    components.push(feature.geometry.clone());
+                }
+            }
+        });
+        // store the geometry for later use
+        var singleType = type.substr(type.lastIndexOf('.')+1),
+            geometry = new OpenLayers.Geometry["Multi"+singleType](components);
+        var provider = Ext.state.Manager.getProvider();
+        provider.set('geometry',
+            provider.encodeValue(geometry.toString())
+        );
+        GEOR.util.infoDialog({
+            msg: OpenLayers.i18n("Geometry successfully stored in this browser")
         });
     },
 
@@ -220,21 +259,89 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
                 disabled: this.noDelete === true,
                 handler: function() {
                     this._vectorLayer.destroyFeatures();
-                    this._layerBounds = null;
                     tbtext.hide();
                 },
                 scope: this
-            }, tbtext, '->', {
-                text: tr("Zoom"),
-                tooltip: tr("Zoom to results extent"),
-                handler: this._zoomToLayerExtent,
-                scope: this
-            },{
-                text: tr("CSV Export"),
-                tooltip: tr("Export results as CSV"),
-                handler: this._csvExportBtnHandler,
-                scope: this
-            }
+            }, 
+            '->', tbtext, '-',
+            {
+                text: tr("Select"),
+                menu: new Ext.menu.Menu({
+                    items: [{
+                        text: tr("All"),
+                        handler: function() {
+                            var grid = this.findByType("grid")[0];
+                            if (grid) {
+                                grid.getSelectionModel().selectAll();
+                            }
+                        },
+                        scope: this
+                    },{
+                        text: tr("None"),
+                        handler: function() {
+                            var grid = this.findByType("grid")[0];
+                            if (grid) {
+                                grid.getSelectionModel().clearSelections();
+                            }
+                        },
+                        scope: this
+                    },{
+                        text: tr("Invert selection"),
+                        handler: function() {
+                            var grid = this.findByType("grid")[0];
+                            if (grid) {
+                                var sm = grid.getSelectionModel(),                            
+                                    recordsToSelect = [];
+                                this._store.each(function(record) {
+                                    if (!sm.isSelected(record)) {
+                                        recordsToSelect.push(record);
+                                    }
+                                });
+                                sm.clearSelections();
+                                sm.selectRecords(recordsToSelect);
+                            }
+                        },
+                        scope: this
+                    }]
+                })
+            }, '-', {
+                text: tr("Actions"),
+                tooltip: tr("Actions on the selection or on all results if no row is selected"),
+                menu: new Ext.menu.Menu({
+                    items: [{
+                        text: tr("Zoom"),
+                        iconCls: 'geor-btn-zoom',
+                        tooltip: tr("Zoom to results extent"),
+                        handler: function() {
+                            var grid = this.findByType("grid")[0];
+                            if (grid) {
+                                var sm = grid.getSelectionModel(),
+                                    selectedFeatures = [],
+                                    bypass = (sm.getCount() == 0);
+                                this._store.each(function(record) {
+                                    if (bypass || sm.isSelected(record)) {
+                                        selectedFeatures.push(record.get("feature"));
+                                    }
+                                });
+                                this._zoomToFeatures(selectedFeatures);
+                            }
+                        },
+                        scope: this
+                    },{
+                        text: tr("CSV Export"),
+                        iconCls: 'geor-csv-export',
+                        tooltip: tr("Export results as CSV"),
+                        handler: this._csvExportBtnHandler,
+                        scope: this
+                    },{
+                        text: tr("Store the geometry"),
+                        iconCls: 'geor-geom-save',
+                        tooltip: tr("Aggregates the geometries of the selected features and stores it in your browser for later use in the querier"),
+                        handler: this._storeGeometry,
+                        scope: this
+                    }]
+                })
+            } 
         ];
 
         if (!this.sfControl) {
@@ -275,7 +382,6 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
                 },
                 "beforedestroy": function() {
                     me._vectorLayer.destroyFeatures();
-                    me._layerBounds = null;
                     this.selModel.unbind(); // required to handle issue 256
                     // http://applis-bretagne.fr/redmine/issues/show/256
                     // this deactivates Feature handler,
@@ -296,9 +402,6 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
      */
     populate: function(options) {
         var tr = OpenLayers.i18n;
-
-        // we clear the bounds cache:
-        this._layerBounds = null;
 
         var features = options.features;
         if (!features || features.length === 0) {
@@ -375,7 +478,6 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
     clean: function() {
         if (this._vectorLayer) {
             this._vectorLayer.setVisibility(false);
-            this._layerBounds = null;
         }
     },
 

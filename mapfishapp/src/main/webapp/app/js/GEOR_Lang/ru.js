@@ -28,6 +28,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Loading...": "Идёт загрузка...",
     "File": "Файл",
     "Layer": "Слой",
+    //"layers": "Слой",
     "Description": "Описание",
     "Error": "EОшибка",
     "Server": "Сервер",
@@ -36,6 +37,9 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "File submission failed or invalid file": "Ошибка отправки файла – возможно, что файл недействителен",
     "Type": "Тип",
     "Title": "Заголовок",
+    "Actions": "Действия",
+    // TODO "Incorrect server response.": "Incorrect server response.",
+    // TODO "No features found.": "No features found.",
     /* GEOR.js strings */
     "Cities": "Населённые пункты",
     "Recentering on GeoNames cities": "Переориентация на населённые пункты<br /> GeoNames.",
@@ -87,6 +91,8 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Thesaurus:": "Тезаурус",
     "cswbrowser.default.thesaurus.mismatch": "Администратор : проблема конфигурации переменная DEFAULT_THESAURUS_KEY не соответствует никакому из значений, отосланных GeoNetwork",
     /* GEOR_cswquerier.js strings */
+    "cswquerier.help.title": "Hints for advanced query",
+    "cswquerier.help.message": '<ul><li><b>@word</b> looks for "word" in the organization name.</li><li><b>#word</b> looks for "word" in the metadata keywords.</li><li><b>?word</b> broadens the search by looking for "word" in any metadata field.</li></ul>',
     "Show metadata sheet in a new window": "Показать список метаданных в новом окне",
     "more": "более, ещё...",
     "Click to select or deselect the layer": "Нажать, чтобы выбрать или отменить выделение слоя.",
@@ -121,18 +127,16 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "fileupload_error_sizeError": "This file is too large to be uploaded.",
     "fileupload_error_unsupportedFormat": "This format is not supported.",*/
     // TODO "server upload error: ERROR": "Upload failed. ${ERROR}",
-    // TODO "Incorrect server response.": "Incorrect server response.",
-    // TODO "No features found.": "No features found.",
     /* GEOR_geonames.js strings */
     /* GEOR_getfeatureinfo.js strings */
     "<div>Searching...</div>": "<div>Идёт поиск...</div>",
     "<div>Search on objects active for NAME layer. Click on the map.</div>": "<div>Поиск объектов запущен на слое ${NAME}. Щёлкните мышкой на карте.</div>",
     /* GEOR_layerfinder.js strings */
+    //"metadata": "métadonnée",
     "Add layers from local files": "Добавить слои из локальных файлов.",
     "Find layers searching in metadata": "Найти слои, проводя поиск в базе метаданных.",
     "Find layers from keywords": "Отыщите слои посредством ключевых слов.",
-    "Find layers querying WMS servers": "Отыщите слои, опрашивая серверы WMS (Web Map Service - Сервис Веб-Карт).",
-    "Find layers querying WFS servers": "Отыщите слои, опрашивая серверы WFS (Web Feature Service - Сервис Веб-Возможностей)",
+    "Find layers querying OGC services": "Отыщите слои, опрашивая серверы OGC",
     "layerfinder.layer.unavailable": "Cлой ${NAME} не был найден на сервисе WMS.<br/<br/>Возможно, вы не обладаете правом доступа к нему или же, этот слой отсутствует",
     "Layer projection is not compatible": "Проекция слоя не совместима. ou Отображение слоя не совместимо",
     "The NAME layer does not contain a valid geometry column": "Слой$ ${NAME} не обладает действительным геометрическим столбцом",
@@ -141,17 +145,19 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Malformed URL": "URL не соответствует требованиям.",
     "Queryable": "Cпособный дать ответ на вопрос",
     "Opaque": "Hепрозрачный",
-    "Choose a WMS server: ": "Выберите сервер WMS : ",
+    "OGC server": "OGC сервер",
+    //"I'm looking for ...": "Je recherche ...",
+    //"Service type": "Type de service",
+    "Choose a server": "Выберите сервер",
+    "... or enter its address": "...или введите его адрес",
     "The server is publishing one layer with an incompatible projection": "Сервер публикует один слой с проекцией, которая не совместима",
     "The server is publishing NB layers with an incompatible projection": "Сервер публикует ${NB} число слоёв с несовместимой проекцией.",
-    "WMS server": "Сервер WMS",
-    "Choose a WMTS server: ": "Выберите сервер WMTS : ",
-    "WMTS server": "Сервер WMTS",
-    "Choose a WFS server: ": "Выберите сервер WFS : ",
-    "... or enter its address: ": "...или введите его адрес : ",
+    //"This server does not support HTTP POST": "Ce serveur ne supporte pas HTTP POST",
     "Unreachable server or insufficient rights": "Ответ сервера недействителен. Возможные причины : недостаточные права, сервер недостижим, слишком много данных, и т.д...",
-    "WFS server": "Сервер WFS",
     /* GEOR_managelayers.js strings */
+    //"Service": "Service",
+    //"Protocol": "Protocole",
+    //"About this layer": "A propos de cette couche",
     //"Set as overlay": "Passer en calque",
     //"Set as baselayer": "Passer en couche de fond",
     "Confirm NAME layer deletion ?": "Вы действительно хотите удалить слой${NAME} ?",
@@ -173,9 +179,10 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Push up this layer": "Переместить этот слой вверх",
     "Push down this layer": "Опустить этот слой",
     "Add layers": "Добавить слои",
+    //"Remove all layers": "Supprimer toutes les couches", // TODO: translate
+    //"Are you sure you want to remove all layers ?": "Voulez vous réellement supprimer toutes les couches ?", // TODO: translate
     "source: ": "источник : ",
     "unknown": "неизвестный",
-    "Actions": "Действия",
     //"Draw new point": "Dessiner un nouveau point",
     //"Draw new line": "Dessiner une nouvelle ligne",
     //"Draw new polygon": "Dessiner un nouveau polygone",
@@ -206,6 +213,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "No layer imported": "Не закачано ни одного слоя.",
     "The provided context is not valid": "Предложенный контекст недействителен",
     "The default context is not defined (and it is a BIG problem!)": "Контекст по умолчанию не определён. Это представляет собой серьёзную проблему!",
+    //"Error while loading file": "Erreur au chargement du fichier",
     /* GEOR_mappanel.js strings */
     "Coordinates in ": "Координаты в ",
     "scale picker": "масштаб",
@@ -226,6 +234,12 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "The print server is currently unreachable": "Сервер печати временно недоступен.",
     "print.unknown.layout": "Ошибка конфигурации : DEFAULT_PRINT_LAYOUT ${LAYOUT} отсутствует в списке печатных форматов",
     "print.unknown.resolution": "Ошибка конфигурации : DEFAULT_PRINT_RESOLUTION ${RESOLUTION} не находится в списке резолюций печати.",
+    /*
+    "print.unknown.format":
+        "Erreur de configuration: le format " +
+        "${FORMAT} n'est pas supporté par le serveur d'impression",
+    "Pick an output format": "Choisissez un format de sortie",
+    */
     "Comments": "Комментарии",
     "Scale: ": "Масштаб",
     "Date: ": "Дата : ",
@@ -256,6 +270,17 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "One result": "Один результат",
     "No result": "Никакого результата нет",
     "Clean": "Стереть",
+    //"All": "Tous", // TODO: translate
+    //"None": "Aucun",
+    //"Invert selection": "Inverser la sélection",
+    //"Actions on the selection or on all results if no row is selected":
+    //    "Actions sur la sélection ou sur tous les résultats si aucun n'est sélectionné",
+    //"Store the geometry": 
+    //    "Enregistrer la géométrie",
+    //"Aggregates the geometries of the selected features and stores it in your browser for later use in the querier": 
+    //    "La géométrie des objets sélectionnés est enregistrée pour un usage ultérieur dans le requêteur",
+    //"Geometry successfully stored in this browser": 
+    //    "Géométrie enregistrée avec succès sur ce navigateur",
     "Clean all results on the map and in the table": "Удалить все результаты с карты и таблицы.",
     "Zoom": "Zoom",
     "Zoom to results extent": "Применить величину зума карты на результаты.",
@@ -321,6 +346,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Available tools:": "Инструменты в распоряжении",
     "Click to select or deselect the tool": "Щёлкните для того, чтобы выбрать инструмент или отменить его",
     "Could not load addon ADDONNAME": "Невозможно загрузить аддон ${ADDONNAME}",
+    //"Your new tools are now available in the tools menu.": 'Vos nouveaux outils sont disponibles dans le menu "outils"',
     /* GEOR_util.js strings */
     "Characters": "Письменность",
     "Digital": "Цифровой",
@@ -333,12 +359,17 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "The provided file is not a valid OGC context": "Данный файл не является действительным контекстом OGC",
     "Warning: trying to restore WMC with a different projection (PROJCODE1, while map SRS is PROJCODE2). Strange things might occur !": "Предупреждение : попытка восстановления WMC в одной проекции ${PROJCODE1}, тогда как данная карта SRS находится в другой ${PROJCODE2}. Здесь возможны непредвиденные обстоятельства",
 /* GEOR_wmcbrowser.js strings */
+    //"all contexts": "tous les contextes",
     "Could not find WMC file": "Невозможно найти WMC файл",
-    "... or a custom context": "...или индивидуальный контекст",
-    "Replace current map composition with one of these contexts:": "Заменить составляющую текущей карты одним из предложенных контекстов:",
+    //"... or a local context": "...или индивидуальный контекст", // TODO: update translation
+    //"Load or add the layers from one of these map contexts:" : "Заменить составляющую текущей карты одним из предложенных контекстов:",
     "A unique OSM layer": "Единый слой OpenStreetMap",
     "default viewer context": "контекст вьюера по умолчанию",
     /* GEOR_workspace.js strings */
+    //"Save to metadata": "Créer une métadonnée",
+    //"in group": "dans le groupe",
+    //"The context title is mandatory": "Le titre du contexte est obligatoire",
+    //"There was an error creating the metadata.": "La création de la métadonnée a échoué.",
     //"Share this map": "Partager cette carte",
     //"Mobile viewer": "Visualiseur mobile",
     //"Mobile compatible viewer on sdi.georchestra.org": "Visualiseur mobile sur sdi.georchestra.org",

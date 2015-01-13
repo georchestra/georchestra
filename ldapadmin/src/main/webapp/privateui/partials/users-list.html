@@ -1,9 +1,9 @@
 <div class="toolbar">
-  <span ng-class="{hide: selectedGroup == null}">
+  <span ng-class="{hide: selectedGroup == null || selectedGroup == 'none'}">
     Group: <b>{{selectedGroup.cn}}</b>
   </span>
   <div class="btn-group">
-    <a class="actions btn btn-mini dropdown-toggle" ng-class="{hide: selectedGroup == null}" data-toggle="dropdown">
+    <a class="actions btn btn-mini dropdown-toggle" ng-class="{hide: selectedGroup == null || selectedGroup == 'none'}" data-toggle="dropdown">
       <span class="caret"></span>
     </a>
     <ul class="dropdown-menu">
@@ -25,7 +25,7 @@
     <div groups-dropdown></div>
   </div>
 </div>
-<div id="noone" ng-hide="!selectedGroup || selectedGroup.users.length">
+<div id="noone" ng-hide="!selectedGroup || selectedGroup.users.length || selectedGroup == 'none'">
   There are no users in this group.
 </div>
 <div id="users">

@@ -57,6 +57,77 @@ GEOR.util = (function() {
     return {
 
         /**
+         * ISO639 correspondance hash
+         */
+        ISO639: {
+            'de': 'ger', 
+            'en': 'eng', 
+            'es': 'spa', 
+            'fr': 'fre', 
+            'ru': 'rus'
+        },
+
+        /**
+         * APIMethod: getProtocol
+         * Returns the protocol name for a layer
+         *
+         * Parameters:
+         * layer - {GeoExt.data.LayerRecord | OpenLayers.Layer}
+         */
+        getProtocol: function(layer) {
+            if (layer instanceof OpenLayers.Layer.WMS) {
+                return {
+                    protocol: "WMS", 
+                    version: layer.params.VERSION,
+                    service: layer.url,
+                    layer: layer.params.LAYERS
+                };
+            } else if (layer instanceof OpenLayers.Layer.WMTS) {
+                return {
+                    protocol: "WMTS", 
+                    version: layer.version,
+                    service: layer.url,
+                    layer: layer.layer
+                };
+            } else if (layer instanceof OpenLayers.Layer.Vector &&
+                layer.protocol &&
+                /OpenLayers\.Protocol\.WFS/.test(layer.protocol.CLASS_NAME)) {
+                    return {
+                        protocol: "WFS", 
+                        version: layer.protocol.version,
+                        service: layer.protocol.url,
+                        layer: layer.protocol.featureType
+                    };
+            } else if (layer instanceof GeoExt.data.LayerRecord) {
+                return GEOR.util.getProtocol(layer.get('layer'));
+            }
+        },
+
+        /**
+         * APIMethod: sortFn
+         * Function used to sort alphabetically
+         */
+        sortFn: function(a, b) {
+            var aa = a.toLowerCase(),
+                bb = b.toLowerCase();
+            if (aa > bb) return 1;
+            if (aa < bb) return -1;
+            return 0;
+        },
+
+        /**
+         * APIMethod: shorten
+         * Returns a shorter string to a given length
+         *
+         * Parameters:
+         * t - {String}
+         * length - {Integer}
+         */
+        shorten: function(t, length) {
+            return ((t.length > length) ? t.substr(0, length-3) + '...' : t);
+        },
+
+        /**
          * APIMethod: shortenLayerName
          * Returns a shorter string for a layer name (if required).
          *
@@ -76,7 +147,7 @@ GEOR.util = (function() {
                 // there's a pb, we silently ignore it
                 return '';
             }
-            return ((t.length > 40) ? t.substr(0,37) + '...' : t);
+            return GEOR.util.shorten(t, 40);
         },
 
         /**
@@ -118,12 +189,34 @@ GEOR.util = (function() {
          * {String}
          */
         stringDeaccentuate: function(str) {
-            str = str.replace(/ç/, 'c');
-            str = str.replace(/(á|à|ä|â|å|Â|Ä|Á|À|Ã)/, 'a');
-            str = str.replace(/(é|è|ë|ê|Ê|Ë|É|È|Ę)/, 'e');
-            str = str.replace(/(í|ì|ï|î|Î|Ï|Í|Ì|Į)/, 'i');
-            str = str.replace(/(ó|ò|ö|ô|ø|Ô|Ö|Ó|Ò)/, 'o');
-            return str.replace(/(ú|ù|ü|û|Û|Ü|Ú|Ù|Ų)/, 'u');
+            str = str.replace(/ç/g, 'c');
+            str = str.replace(/(á|à|ä|â|å|Â|Ä|Á|À|Ã)/g, 'a');
+            str = str.replace(/(é|è|ë|ê|Ê|Ë|É|È|Ę)/g, 'e');
+            str = str.replace(/(í|ì|ï|î|Î|Ï|Í|Ì|Į)/g, 'i');
+            str = str.replace(/(ó|ò|ö|ô|ø|Ô|Ö|Ó|Ò)/g, 'o');
+            return str.replace(/(ú|ù|ü|û|Û|Ü|Ú|Ù|Ų)/g, 'u');
+        },
+
+        /**
+         * APIProperty: specialCharsRegExp
+         */
+        specialCharsRegExp: new RegExp("[,;:/%()!*.\\[\\]~&=-]","g"),
+
+        /**
+         * APIMethod: prepareString
+         * Returns a string without accents or special chars, uppercased
+         *
+         * Parameters:
+         * str - {String}
+         *
+         * Returns:
+         * {String}
+         */
+        prepareString: function(str) {
+            // remove special chars and spaces
+            var t = str.replace(GEOR.util.specialCharsRegExp, '').replace(/ /g, '');
+            // substitue accents & uppercase:
+            return GEOR.util.stringDeaccentuate(t).toUpperCase();
         },
 
         /**
@@ -173,6 +266,33 @@ GEOR.util = (function() {
                 window.location.protocol, '//', window.location.host,
                 GEOR.config.PATHNAME, '/', input
             ].join('');
+        },
+
+        /**
+         * APIMethod: setMetadataURL
+         * Given a layer, and a bunch of metadataURLs, sets the best metadata url
+         *
+         * Parameters:
+         * layer - {OpenLayers.Layer}
+         * metadataURLs - {Array}
+         *
+         * Returns:
+         * {String} the "best" metadataURL for WMC storage
+         */
+        setMetadataURL: function(layer, metadataURLs) {
+            if (metadataURLs && metadataURLs.length > 0) {
+                var murl = metadataURLs[0];
+                // default to first entry
+                layer.metadataURL = (murl.href) ? murl.href : murl;
+                Ext.each(metadataURLs, function(murl) {
+                    // prefer text/html format if found
+                    if (murl.format && murl.format == 'text/html') {
+                        layer.metadataURL = (murl.href) ? murl.href : murl;
+                        return false; // stop looping
+                    }
+                });
+            }
+            return layer.metadataURL;
         },
 
         /**

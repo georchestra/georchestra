@@ -9,7 +9,6 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.lib.mailservice.Email;
 
 /**
  * Manages the change password email. This mail is send when a user has lost his password.

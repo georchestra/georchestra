@@ -268,19 +268,7 @@ GEOR.map = (function() {
             // so that this can be saved in a WMC context.
             // Saving the first occurence whose format matches text/html
             // see https://github.com/georchestra/georchestra/issues/454
-            var murls = r.get("metadataURLs");
-            if (murls && murls.length > 0) {
-                var murl = murls[0];
-                // default to first entry
-                layer.metadataURL = (murl.href) ? murl.href : murl;
-                Ext.each(murls, function(murl) {
-                    // prefer text/html format if found
-                    if (murl.format && murl.format == 'text/html') {
-                        layer.metadataURL = (murl.href) ? murl.href : murl;
-                        return false; // stop looping
-                    }
-                });
-            }
+            GEOR.util.setMetadataURL(r.getLayer(), r.get("metadataURLs"));
 
             // we discard WMS layers without a valid URL (see https://github.com/georchestra/georchestra/issues/759)
             if (!(layer.CLASS_NAME === "OpenLayers.Layer.WMS" && !layer.url)) {

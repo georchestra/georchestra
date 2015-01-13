@@ -42,7 +42,21 @@ GEOR.managelayers = (function() {
      */
     var LayerNode = Ext.extend(GeoExt.tree.LayerNode, {
         constructor: function(config) {
-            config.qtip = config.layer.name;
+            var record = config.layerStore.getById(config.layer.id);
+            // Apply template for tooltip:
+            if (record) {
+                var p = GEOR.util.getProtocol(config.layer),
+                data = Ext.applyIf({
+                    "title": record.get("title") || config.layer.name,
+                    "protocol": (p && p.protocol) || "File",
+                    "protocol_color": (p && GEOR.config.PROTOCOL_COLOR[p.protocol]) || "",
+                    "protocol_version": (p && p.version) || "",
+                    "service": (p && p.service) || OpenLayers.i18n("local"),
+                    "layername": (p && p.layer) || config.layer.name,
+                    "short_abstract": GEOR.util.shorten(record.get("abstract") || "", 300)
+                }, record.data);
+                config.qtip = (new Ext.Template(GEOR.config.LAYER_INFO_TEMPLATE)).apply(data);
+            }
             LayerNode.superclass.constructor.apply(this, [config]);
             this.on("rendernode", function(node) {
                 if (config.layer.transitionEffect == 'resize') {
@@ -63,7 +77,12 @@ GEOR.managelayers = (function() {
          * Event: selectstyle
          * Fires when a new wms layer style has been selected
          */
-        "selectstyle"
+        "selectstyle",
+        /**
+         * Event: beforecontextcleared
+         * Fired before all layers are removed from map
+         */
+        "beforecontextcleared"
     );
 
     /**
@@ -147,12 +166,12 @@ GEOR.managelayers = (function() {
                     ),
                     width: 360,
                     yesCallback: function() {
-                        layer.destroy();
+                        layer.map.removeLayer(layer);
                     },
                     scope: this
                 });
             } else {
-                layer.destroy();
+                layer.map.removeLayer(layer);
             }
             break;
         }
@@ -309,8 +328,6 @@ GEOR.managelayers = (function() {
         };
     };
 
-
-
     /**
      * Method: createFormatMenu
      *
@@ -401,12 +418,11 @@ GEOR.managelayers = (function() {
             if (styles && styles.length > 0) {
                 styles = styles.concat([]); // to prevent modification of original styles
                 var defaultStyleName = styles[0].name;
-                styles.sort(function(a,b) {
-                    var aa = (a.name || a.title).toLowerCase(),
-                        bb = (b.name || b.title).toLowerCase();
-                    if (aa > bb) return 1;
-                    if (aa < bb) return -1;
-                    return 0;
+                styles.sort(function(a, b){
+                    return GEOR.util.sortFn(
+                        a.name || a.title, 
+                        b.name || b.title
+                    );
                 });
                 var checked, style, text, cfg;
                 for (var i=0, len=styles.length; i<len; i++) {
@@ -598,6 +614,7 @@ GEOR.managelayers = (function() {
             isWMS = type === "WMS",
             isWMTS = type === "WMTS",
             isWFS = type === "WFS",
+            isOGC = isWMS || isWMTS || isWFS,
             hasEquivalentWFS = (type === "WMS") ?
                 layerRecord.hasEquivalentWFS() : false,
             hasEquivalentWCS = (type === "WMS") ?
@@ -705,20 +722,7 @@ GEOR.managelayers = (function() {
                 sepInserted = true;
             }
         };
-        
-        // metadata action
-        if (layer.metadataURL) {
-            insertSep();
-            menuItems.push({
-                iconCls: 'geor-btn-metadata',
-                text: tr("Show metadata"),
-                listeners: {
-                    "click": function(btn, pressed) {
-                        window.open(layer.metadataURL);
-                    }
-                }
-            });
-        }
+
         if (GEOR.styler && hasEquivalentWFS) {
             insertSep();
             menuItems.push({
@@ -820,7 +824,107 @@ GEOR.managelayers = (function() {
                 }
             });
         }
+
+        // metadata action
+        if (layer.metadataURL || isOGC) {
+            menuItems.push("-");
+        }
+        if (layer.metadataURL) {
+            menuItems.push({
+                iconCls: 'geor-btn-metadata',
+                text: tr("Show metadata"),
+                listeners: {
+                    "click": function(btn, pressed) {
+                        window.open(layer.metadataURL);
+                    }
+                }
+            });
+        }
+        if (isOGC) {
+            menuItems.push({
+                iconCls: 'geor-btn-layerinfo',
+                text: tr("About this layer"),
+                handler: function() {
+                    var p = GEOR.util.getProtocol(layer),
+                    o = OpenLayers.Util.createUrlObject(p.service),
+                    port = o.port == "80" ? "" : ":" + o.port,
+                    caps = OpenLayers.Util.urlAppend([
+                        o.protocol,
+                        "//",
+                        o.host,
+                        port,
+                        o.pathname
+                    ].join(''), OpenLayers.Util.getParameterString(
+                        Ext.apply(
+                            OpenLayers.Util.upperCaseObject(o.args), 
+                            {
+                                SERVICE: p.protocol,
+                                REQUEST: "GetCapabilities"
+                            }
+                        )
+                    )),
+                    win = new Ext.Window({
+                        title: GEOR.util.shorten(layerRecord.get("title"), 70),
+                        layout: "fit",
+                        width: 650,
+                        height: 150,
+                        closeAction: 'close',
+                        constrainHeader: true,
+                        animateTarget: GEOR.config.ANIMATE_WINDOWS && this.el,
+                        modal: false,
+                        items: {
+                            layout: 'form',
+                            labelSeparator: tr("labelSeparator"),
+                            bodyStyle: 'padding:5px;',
+                            border: false,
+                            items: [{
+                                xtype: 'displayfield',
+                                fieldLabel: tr("Service"),
+                                value: '<a href="'+caps+'">'+caps+'</a>'
+                            },{
+                                xtype: 'displayfield',
+                                fieldLabel: tr("FeatureType"),
+                                value: p.layer
+                            },{
+                                xtype: 'displayfield',
+                                fieldLabel: tr("Protocol"),
+                                value: p.protocol + " " + p.version
+                            }]
+                        },
+                        buttons: [{
+                            text: tr("Close"),
+                            handler: function() {
+                                win.close();
+                            }
+                        }]
+                    });
+                    win.show();
+                }
+            });
+        }
+
         return menuItems;
+    };
+
+    /**
+     * Method: removeAllLayers
+     *
+     * Parameters:
+     * map - {OpenLayers.Map}
+     */
+    var removeAllLayers = function(map) {
+        // warn other modules about what's goign on
+        // (gfi, selectfeature, querier, editor, styler)
+        // so that they can properly shutdown.
+        observable.fireEvent("beforecontextcleared");
+        // remove layers except the lowest index one
+        // (our fake base layer) and "our" layers (eg: measure, print, etc)
+        var re = /^(__georchestra|OpenLayers.Handler)/;
+        for (var i = map.layers.length - 1; i >= 1; i--) {
+            if (!re.test(map.layers[i].name)) {
+                map.removeLayer(map.layers[i]);
+            }
+        }
     };
 
     /**
@@ -1143,6 +1247,26 @@ GEOR.managelayers = (function() {
                 rootVisible: false,
                 root: layerContainer,
                 buttons: [{
+                    text: "",
+                    tooltip: tr("Remove all layers"),
+                    iconCls: 'btn-removeall',
+                    handler: function() {
+                        if (GEOR.config.CONFIRM_LAYER_REMOVAL) {
+                            GEOR.util.confirmDialog({
+                                msg: tr(
+                                    "Are you sure you want to remove all layers ?"
+                                ),
+                                width: 360,
+                                yesCallback: function() {
+                                    removeAllLayers(layerStore.map);
+                                },
+                                scope: this
+                            });
+                        } else {
+                            removeAllLayers(layerStore.map);
+                        }
+                    }
+                }, {
                     text: tr("Add layers"),
                     iconCls: 'btn-add',
                     handler: function() {

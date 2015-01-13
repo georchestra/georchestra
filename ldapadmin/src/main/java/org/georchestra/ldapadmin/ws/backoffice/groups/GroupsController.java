@@ -30,7 +30,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -62,11 +61,18 @@ public class GroupsController {
 	private GroupDao groupDao;
 	private ProtectedUserFilter filter;
 
-	/**
-	 * Builds a JSON response in case of error.
-	 * @param mesg a descriptive message of the encountered error.
-	 * @return a string of the response.
-	 */
+        /**
+     * Builds a JSON response in case of error.
+     *
+     * @param mesg
+     *            a descriptive message of the encountered error.
+     * @return a string of the response.
+     *
+     * TODO: This code sounds pretty similar to what is done in
+     * ResponseUtil.java:buildResponseMessage() and might deserve
+     * a refactor.
+     */
+
 	private String buildErrorResponse(String mesg) {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("success", false);
@@ -149,6 +155,10 @@ public class GroupsController {
 			ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
 					HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			throw new IOException(e);
+		} catch (IllegalArgumentException e) {
+	          LOG.error(e.getMessage());
+              ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()), HttpServletResponse.SC_NOT_FOUND);
+	          return;
 		}
 
 		// sets the group data in the response object
@@ -265,7 +275,7 @@ public class GroupsController {
 	 * The request format is:
 	 * [BASE_MAPPING]/groups/{cn}
 	 *
-	 * Where <b>cn</b> is the name of group to delete.
+	 * Where <b>cn</b> is the name of group to update.
 	 * </pre>
 	 * <p>
 	 * The request body should contains a the fields to modify using the JSON syntax.
@@ -306,8 +316,8 @@ public class GroupsController {
 			ResponseUtil.writeError(response, NOT_FOUND);
 
 			return;
-
 		} catch (DataServiceException e) {
+		    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			throw new IOException(e);
 		}
 
@@ -344,7 +354,7 @@ public class GroupsController {
 	/**
 	 * Updates the users of group. This method will add or delete the group of users from the list of groups.
 	 *
-	 * @param request	request [BASE_MAPPING]/groups_users/{cn} body request {"users": [u1,ud,u3], "PUT": [g1,g2], "DELETE":[g3,g4] }
+	 * @param request	request [BASE_MAPPING]/groups_users body request {"users": [u1,u2,u3], "PUT": [g1,g2], "DELETE":[g3,g4] }
 	 * @param response
 	 * @throws IOException
 	 */
@@ -462,6 +472,14 @@ public class GroupsController {
 			throw new IOException(e);
 		}
 	}
+
+	/**
+	 * Method used for testing convenience.
+	 * @param gd
+	 */
+    public void setGroupDao(GroupDao gd) {
+        groupDao = gd;
+    }
 
 
 }

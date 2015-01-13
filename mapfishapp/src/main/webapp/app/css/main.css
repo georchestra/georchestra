@@ -109,6 +109,9 @@ div.olMapViewport {
 .geor-btn-style {
     background-image: url(../img/famfamfam/map_edit.png) !important;
 }
+.geor-btn-layerinfo {
+    background-image: url(../img/fugue/question-white.png) !important;
+}
 .geor-btn-zoom {
     background-image: url(../img/famfamfam/arrow_out.png) !important;
 }
@@ -136,12 +139,17 @@ div.olMapViewport {
 .x-btn .btn-add {
     background-image: url(../img/famfamfam/add.png);
 }
-
+.x-btn .btn-removeall {
+    background-image: url(../img/famfamfam/cross.gif);
+}
 .geor-save-map {
     background-image: url(../img/famfamfam/folder_page.gif) !important;
 }
 .geor-load-map {
     background-image: url(../img/famfamfam/map_go.gif) !important;
+}
+.geor-add-map {
+    background-image: url(../img/famfamfam/map_add.png) !important;
 }
 .geor-load-tools {
     background-image: url(../img/fugue/wrench--plus.png) !important;
@@ -155,7 +163,12 @@ div.olMapViewport {
 .geor-edit-osm {
     background-image: url(../img/osm_logo.png) !important;
 }
-
+.geor-csv-export {
+    background-image: url(../img/famfamfam/table_save.png) !important;
+}
+.geor-geom-save {
+    background-image: url(../img/famfamfam/disk.png) !important;
+}
 /* make sure that menu width is correct in IE8 strict mode (See http://extjs.com/forum/showthread.php?t=70701) */
 .x-layer[style]{
  width: auto !important;
@@ -337,6 +350,9 @@ div.olMapViewport {
 	padding: 5px;
 	border: 1px solid #bbb;
 	max-width: 180px; /* to cope with larger images (geonetwork has 180px thumbnails)*/
+}
+.x-list a {
+	color: #777;
 }
 
 /* Bold layer names in layer manager http://applis-bretagne.fr/redmine/issues/4532 */

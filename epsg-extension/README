@@ -1,7 +1,0 @@
-extractor app and geoserver both use different versions of this plugin because of dependencies.  extractorapp uses Geotools 2.6.2 but GeoServer uses 2.5-SNAPSHOT.  So this plugin must be build with the correct parameters.
-
-mvn install -Dgt.version=2.6.2
-
-
-
-The cockpit script builds them correctly when deploying extractorapp and GeoServer

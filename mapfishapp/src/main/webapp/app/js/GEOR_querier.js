@@ -41,6 +41,7 @@
  * @include GeoExt/data/LayerRecord.js
  * @include GeoExt/data/AttributeStore.js
  * @include Styler/widgets/FilterBuilder.js
+ * @include Ext.state.LocalStorageProvider.js
  * @include GEOR_waiter.js
  * @include GEOR_ows.js
  * @include GEOR_util.js
@@ -121,7 +122,7 @@ GEOR.querier = (function() {
     
     /**
      * Property: cp
-     * {Ext.state.CookieProvider} the cookie provider
+     * {Ext.state.Provider} the state provider
      */  
     var cp = null;
     
@@ -264,7 +265,7 @@ GEOR.querier = (function() {
             map: map,
             attributes: attStore,
             allowSpatial: true,
-            vectorLayer: new OpenLayers.Layer.Vector('filter_builder',{
+            vectorLayer: new OpenLayers.Layer.Vector('__georchestra_filterbuilder',{
                 displayInLayerSwitcher: false,
                 styleMap: styleMap
             })
@@ -289,9 +290,9 @@ GEOR.querier = (function() {
             map = m;
             tr = OpenLayers.i18n;
             
-            // Cookie storage !
-            cp = new Ext.state.CookieProvider({
-                expires: new Date(new Date().getTime()+(1000*60*60*24*30)) // 30 days
+            // storage !
+            cp = new Ext.state.LocalStorageProvider({
+                prefix: "geor-viewer-"
             });
             Ext.state.Manager.setProvider(cp);
             

@@ -107,32 +107,6 @@ GEOR.layeroptions = (function() {
     };
 
     /**
-     * Method: getNumberField
-     * Return the numberfield corresponding to ref
-     * {Ext.form.NumberField}
-     */
-    var getNumberField = function(ref, options) {
-        if(!numberfields[ref]) {
-            var opts = {
-                anchor: '-20',
-                decimalPrecision: 2
-            };
-            numberfields[ref] = new Ext.form.NumberField(
-                Ext.apply(opts, options));
-            numberfields[ref].showAll = function() {
-                numberfields[ref].getEl().up('div.x-form-item').show();
-            };
-            numberfields[ref].hideAll = function() {
-                numberfields[ref].getEl().up('div.x-form-item').hide();
-            };
-            numberfields[ref].isAllVisible = function() {
-                numberfields[ref].getEl().up('div.x-form-item').isVisible();
-            };
-        }
-        return numberfields[ref];
-    };
-
-    /**
      * Method: getFieldSet
      * Return the fieldset corresponding to ref
      * {Ext.form.FieldSet}
@@ -181,18 +155,20 @@ GEOR.layeroptions = (function() {
          */
         getOptions: function() {
             // for each widget, get its value
-            var options = {};
+            var options = {}, res;
             if(layerOptionsPanel.getLayout().activeItem.id == 'globalLayerOptions') {
                 // global properties
                 options.projection = getCombo('globalProjections').getValue();
-                options.resolution = getNumberField('globalResolution').getValue();
+                res = getCombo('globalResolution').getValue();
+                options.resolution = res ? parseFloat(res) : null;
                 options.globalRasterFormat = getCombo('globalRasterFormats').getValue();
                 options.globalVectorFormat = getCombo('globalVectorFormats').getValue();
                 options.bbox = getFieldSet('globalBbox').items.itemAt(0).getBbox();
             }
             else if(layerOptionsPanel.getLayout().activeItem.id == 'customLayerOptions') {
                 options.projection = getCombo('customProjections').getValue();
-                options.resolution = getNumberField('customResolution').getValue();
+                res = getCombo('customResolution').getValue();
+                options.resolution = res ? parseFloat(res) : null;
                 options.format = getCombo('customFormats').getValue();
                 options.bbox = getFieldSet('customBbox').items.itemAt(0).getBbox();
                 options.bboxFromGlobal = getFieldSet('customBbox').collapsed;
@@ -212,6 +188,31 @@ GEOR.layeroptions = (function() {
                 var fieldset = (layerOptionsPanel.getLayout().activeItem.id == "globalLayerOptions") ?
                     getFieldSet('globalBbox') : getFieldSet('customBbox');
                 !fieldset.collapsed && fieldset.items.itemAt(0).setBbox(bounds);
+            }
+        },
+
+        /**
+         * APIMethod: getGlobalResolution
+         * Gets the global resolution
+         *
+         * Returns:
+         * res - {Float} resolution (in meters)
+         */
+        getGlobalResolution: function() {
+            return getCombo('globalResolution').getValue();
+        },
+
+        /**
+         * APIMethod: setGlobalResolution
+         * Sets the global resolution
+         *
+         * Parameters:
+         * res - {Float} resolution to set (in meters)
+         */
+        setGlobalResolution: function(res) {
+            if (res && (res > 0)) {
+                var combo = getCombo('globalResolution');
+                combo.setValue(res);
             }
         },
 
@@ -237,7 +238,7 @@ GEOR.layeroptions = (function() {
 
                 // restore combo values
                 options.projection && getCombo('globalProjections').setValue(options.projection);
-                options.resolution && getNumberField('globalResolution').setValue(options.resolution);
+                options.resolution && getCombo('globalResolution').setValue(options.resolution);
                 options.globalRasterFormats && getCombo('globalRasterFormats').setValue(options.globalRasterFormat);
                 options.globalVectorFormats && getCombo('globalVectorFormats').setValue(options.globalVectorFormat);
                 vectorLayer.setVisibility(true);
@@ -248,10 +249,10 @@ GEOR.layeroptions = (function() {
                 var formats, projections = GEOR.config.SUPPORTED_REPROJECTIONS;
                 if(options.owsType == "WFS") {
                     formats = GEOR.config.SUPPORTED_VECTOR_FORMATS;
-                    getNumberField('customResolution').hideAll();
+                    getCombo('customResolution').hide();
                 } else {
                     formats = GEOR.config.SUPPORTED_RASTER_FORMATS;
-                    getNumberField('customResolution').showAll();
+                    getCombo('customResolution').show();
                 }
                 getCombo('customFormats').getStore().loadData(formats);
                 getCombo('customFormats').clearValue();
@@ -260,7 +261,7 @@ GEOR.layeroptions = (function() {
 
                 // restore values
                 getCombo('customProjections').setValue(options.projection);
-                getNumberField('customResolution').setValue(options.resolution);
+                getCombo('customResolution').setValue(options.resolution);
                 getCombo('customFormats').setValue(options.format);
                 getFieldSet('customBbox').items.itemAt(0).setBbox(options.bbox);
                 var collapsedState = (options.bboxFromGlobal == undefined) ?
@@ -332,10 +333,14 @@ GEOR.layeroptions = (function() {
                                         store_data: GEOR.config.SUPPORTED_REPROJECTIONS,
                                         value: GEOR.config.GLOBAL_EPSG
                                     }),
-                                    getNumberField('globalResolution', {
+                                    getCombo('globalResolution', {
                                         fieldLabel: tr('Raster resolution (m/pixel)'),
-                                        //value: GEOR.config.GLOBAL_MAX_EXTENT.getWidth() / GEOR.config.DEFAULT_WCS_EXTRACTION_WIDTH
-                                        value: 0.5,
+                                        value: GEOR.config.DEFAULT_RESOLUTION,
+                                        // Note: value will be lowered if 
+                                        // a raster layer linked metadata says its resolution is lower.
+                                        editable: true,
+                                        forceSelection: false,
+                                        store_data: GEOR.config.SUPPORTED_RESOLUTIONS,
                                         allowBlank: false,
                                         listeners: {
                                             // TODO: remove following direct validation, and create a
@@ -395,8 +400,11 @@ GEOR.layeroptions = (function() {
                                         twin: true,
                                         fieldLabel: tr('Output projection')
                                     }),
-                                    getNumberField('customResolution', {
+                                    getCombo('customResolution', {
                                         fieldLabel: tr('Raster resolution (m/pixel)'),
+                                        editable: true,
+                                        forceSelection: false,
+                                        store_data: GEOR.config.SUPPORTED_RESOLUTIONS,
                                         value: null
                                     })
                                 ]

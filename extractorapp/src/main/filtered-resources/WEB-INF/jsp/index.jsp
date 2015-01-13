@@ -103,7 +103,7 @@ if(sec_roles != null) {
     <script type="text/javascript" src="resources/app/js/GEOR_custom.js"></script>
 
     <c:choose>
-        <c:when test='${c.debug}'>
+        <c:when test='<%= request.getParameter("debug") != null %>'>
     <%@ include file="debug-includes.jsp" %>
         </c:when>
         <c:otherwise>
@@ -131,7 +131,6 @@ if(sec_roles != null) {
         %>
         // set proxy host
         OpenLayers.ProxyHost = '<%= proxyHost %>';
-        GEOR.data.debug = ${c.debug};
         GEOR.data.jettyrun = <%= jettyrun %>;
     <c:choose>
         <c:when test='${c.fake}'>
@@ -147,6 +146,8 @@ if(sec_roles != null) {
         GEOR.config.LAYERS_CHECKED = true;
         </c:otherwise>
     </c:choose>
+
+        GEOR.config.MAX_COVERAGE_EXTRACTION_SIZE = ${c.maxCoverageExtractionSize};
     </script>
 
     <c:choose>

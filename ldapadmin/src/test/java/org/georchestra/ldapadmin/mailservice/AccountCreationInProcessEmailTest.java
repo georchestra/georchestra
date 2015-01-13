@@ -1,28 +1,30 @@
 package org.georchestra.ldapadmin.mailservice;
 
-import org.georchestra.lib.mailservice.Email;
+import javax.servlet.ServletContext;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.mock.web.MockServletContext;
 
 public class AccountCreationInProcessEmailTest extends EmailTest {
 
 
-
     @Before
-    public void setUp() throws Exception {
-        Email m = new AccountCreationInProcessEmail(null, null, null, 0, null, null, null, null, null, null, null, null);
-        mail = m;
+    public void setUp() {
+        doSetUp();
+
+        ServletContext sc = new MockServletContext();
+        mail = new AccountCreationInProcessEmail(recipients, emailSubject, smtpHost, smtpPort,
+                emailHtml, replyTo, from, bodyEncoding,
+                subjectEncoding, languages, fileTemplate, sc);
+
     }
 
     @After
     public void tearDown() throws Exception {
     }
 
-    @Test
-    public void testToAbsoltuPath() {
-        //fail("Not yet implemented");
-    }
 
     @Test
     public void testAccountCreationInProcessEmail() {

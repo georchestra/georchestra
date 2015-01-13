@@ -99,7 +99,7 @@ GEOR.cswbrowser = (function() {
 
     /**
      * Method: filterCswRecord
-     * Keep only WMS-1.1.1 records with a correct layer name and server URL
+     * Keep only WMS records with a correct layer name and server URL
      *
      * Parameters:
      * records - {Array} array of records
@@ -140,17 +140,18 @@ GEOR.cswbrowser = (function() {
                                 rights.push(r.value);
                             });
                         }
-                        this.push({
+                        var out = {
                             name: name,
                             layer_name: item.name,
                             service_url: item.value,
                             metadataURL: metadataURL,
                             rights: rights.join(' - ') || "",
-                            abstract: record.abstract ?
-                                record.abstract[0] : "",
                             source: (record.source && record.source[0]) ?
                                 record.source[0].value : ""
-                        });
+                        };
+                        out["abstract"] = record.hasOwnProperty("abstract") ?
+                                record["abstract"][0] : "";
+                        this.push(out);
                     }
                 }, this);
             }
@@ -379,25 +380,8 @@ GEOR.cswbrowser = (function() {
          */
         getPanel: function(options) {
             tr = OpenLayers.i18n;
-            var ISO639 = {
-                'ar': 'ara', 
-                'ca': 'cat', 
-                'cn': 'chi', 
-                'de': 'ger', 
-                'en': 'eng', 
-                'es': 'spa', 
-                'fr': 'fre', 
-                'it': 'ita', 
-                'nl': 'dut', 
-                'no': 'nor',
-                'pl': 'pol', 
-                'pt': 'por', 
-                'ru': 'rus',
-                'fi': 'fin',
-                'tr': 'tur'
-            };
             GEONETWORK_URL = GEOR.config.GEONETWORK_BASE_URL 
-                + '/srv/' + ISO639[GEOR.config.LANG];
+                + '/srv/' + GEOR.util.ISO639[GEOR.config.LANG];
             tree = new Ext.tree.TreePanel({
                 region: 'center',
                 useArrows:true,

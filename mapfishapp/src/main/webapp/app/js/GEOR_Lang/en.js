@@ -44,6 +44,8 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
         "the DEFAULT_THESAURUS_KEY variable does not match " +
         "any value exported by GeoNetwork",
     /* GEOR_cswquerier.js strings */
+    "cswquerier.help.title": "Hints for advanced query",
+    "cswquerier.help.message": '<ul><li><b>@word</b> looks for "word" in the organization name.</li><li><b>#word</b> looks for "word" in the metadata keywords.</li><li><b>?word</b> broadens the search by looking for "word" in any metadata field.</li></ul>',
     "NAME layer on VALUE": "${NAME} layer on ${VALUE}",
     "Open the URL url in a new window":
         "Open the ${URL} url in a new window",
@@ -105,6 +107,9 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
     "print.unknown.resolution":
          "Configuration error: DEFAULT_PRINT_RESOLUTION " +
          "${RESOLUTION} not found in print capabilities",
+    "print.unknown.format":
+        "Configuration error: the " +
+        "${FORMAT} format is not supported by the print server",
     /* GEOR_querier.js strings */
     "Request on NAME": "Request on ${NAME}",
     "querier.layer.no.geom":

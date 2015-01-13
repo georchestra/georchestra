@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.georchestra.mapfishapp.ws.upload;
 
@@ -10,16 +10,17 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.referencing.operation.projection.ProjectionException;
+import org.json.JSONArray;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Defines the abstract interface (Bridge Pattern). This class is responsible of
  * create the implementation OGR or Geotools for the feature reader. Thus the
  * client don't need to create a specific reader implementation.
- * 
+ *
  * @author Mauricio Pazos
  */
-class AbstractFeatureGeoFileReader implements FeatureGeoFileReader {
+public class AbstractFeatureGeoFileReader implements FeatureGeoFileReader {
 
     private static final Log       LOG        = LogFactory
                                                       .getLog(AbstractFeatureGeoFileReader.class
@@ -44,11 +45,11 @@ class AbstractFeatureGeoFileReader implements FeatureGeoFileReader {
 
     /**
      * Creates a new instance of {@link AbstractFeatureGeoFileReader}.
-     * 
+     *
      * <p>
      * The default implementation will be OGR if it was installed in the system.
      * </p>
-     * 
+     *
      * @param basedir
      *            file to read
      * @param fileFormat
@@ -61,7 +62,7 @@ class AbstractFeatureGeoFileReader implements FeatureGeoFileReader {
     /**
      * Creates a new instance of {@link AbstractFeatureGeoFileReader}. The
      * reader will use the implementation provided as parameter.
-     * 
+     *
      * @param impl
      */
     public AbstractFeatureGeoFileReader(FeatureGeoFileReader impl) {
@@ -75,20 +76,29 @@ class AbstractFeatureGeoFileReader implements FeatureGeoFileReader {
      */
     @Override
     public FileFormat[] getFormatList() {
-
         return getReaderImpl().getFormatList();
+    }
+
+    public JSONArray getFormatListAsJSON() {
+        JSONArray ret = new JSONArray();
+
+        FileFormat[] ff = getFormatList();
+        for (FileFormat f: ff) {
+            ret.put(f.toString());
+        }
+        return ret;
     }
 
     /**
      * Returns the feature collection contained by the file.
-     * 
+     *
      * @param file
      * @param fileFormat
      * @param targetCrs
      *            crs used to reproject the returned feature collection
-     * 
+     *
      * @return {@link SimpleFeatureCollection}
-     * 
+     *
      * @throws IOException
      * @throws UnsupportedGeofileFormatException
      */
@@ -103,13 +113,13 @@ class AbstractFeatureGeoFileReader implements FeatureGeoFileReader {
     /**
      * Returns the feature collection contained by the file. The features will
      * be reprojected to the target CRS
-     * 
+     *
      * @param file
      *            path and file name
      * @param fileFormat
      * @param targetCrs
      *            crs used to reproject the returned feature collection
-     * 
+     *
      * @return {@link SimpleFeatureCollection}
      * @throws IOException
      * @throws UnsupportedGeofileFormatException
@@ -182,7 +192,7 @@ class AbstractFeatureGeoFileReader implements FeatureGeoFileReader {
                 LOG.info("It cannot create OGR implementation, Geotools will be set.");
             }
         }
-        // if the ogr implementation cannot be created the use the Geotools
+        // if the ogr implementation cannot be created, then use the Geotools
         // implementation.
         if (ogrReader == null) {
             return new GeotoolsFeatureReader();

@@ -21,32 +21,7 @@
 Ext.namespace("GeoExt.data");
 
 // TODO: rely on geoext trunk for this
-
-GeoExt.data.CSWRecord = Ext.data.Record.create([
-    {name: "audience"},
-    {name: "contributor"},
-    {name: "coverage"},
-    {name: "creator"},
-    {name: "date"},
-    {name: "description"},
-    {name: "format"},
-    {name: "identifier"},
-    {name: "language"},
-    {name: "provenance"},
-    {name: "publisher"},
-    {name: "relation"},
-    {name: "rights"},
-    {name: "rightsHolder"},
-    {name: "source"},
-    {name: "subject"},
-    {name: "title"},
-    {name: "type"},
-    {name: "URI"},
-    {name: "abstract"},
-    {name: "modified"},
-    {name: "spatial"},
-    {name: "BoundingBox", mapping: "bounds"}
-]);
+GeoExt.data.CSWRecord = Ext.data.Record.create([]);
 
 /** api: classmethod[create]
  *  :param o: ``Array`` Field definition as in ``Ext.data.Record.create``. Can
@@ -126,7 +101,13 @@ Ext.extend(GeoExt.data.CSWRecordsReader, Ext.data.DataReader, {
             return (r ? r.join(' / ') : OpenLayers.i18n("no abstract"));
         },
         "identifier": function(r) {
-            return ((r && r[0] && r[0].value) ? r[0].value : '');
+            out = '';
+            if (r && r[0] && r[0].value) {
+                out = r[0].value
+            } else if (r && r["characterString"]) {
+                out = r["characterString"];
+            }
+            return out;
         },
         "bounds": function(b) {
             if (!b || !(b instanceof OpenLayers.Bounds)) {
@@ -170,18 +151,15 @@ Ext.extend(GeoExt.data.CSWRecordsReader, Ext.data.DataReader, {
             var fields = this.recordType.prototype.fields;
             for (var i=0, l=rs.length; i<l; i++) {
                 r = rs[i];
-                if (r.title && r.title instanceof Array && r.title[0]) {
-                    values = {};
-                    for (var j=0, lj=fields.length; j<lj; j++) {
-                        field = fields.items[j];
-                        v = this.parseField(field.name, (r[field.mapping || field.name])) ||
-                            field.defaultValue;
-                        v = field.convert(v);
-                        values[field.name] = v;
-                    }
-
-                    records.push(new this.recordType(values, values.identifier));
+                values = {};
+                for (var j=0, lj=fields.length; j<lj; j++) {
+                    field = fields.items[j];
+                    v = this.parseField(field.name, (r[field.mapping || field.name])) ||
+                        field.defaultValue;
+                    v = field.convert(v);
+                    values[field.name] = v;
                 }
+                records.push(new this.recordType(values, values.identifier));
             }
         }
 

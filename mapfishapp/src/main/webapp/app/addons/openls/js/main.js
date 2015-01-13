@@ -23,7 +23,7 @@ GEOR.Addons.OpenLS.prototype = {
         this._format = new OpenLayers.Format.GML({
             xy: this.options.xy
         });
-        this.layer = new OpenLayers.Layer.Vector("addon_openls_vectors", {
+        this.layer = new OpenLayers.Layer.Vector("__georchestra_openls", {
             displayInLayerSwitcher: false,
             styleMap: new OpenLayers.StyleMap({
                 "default": {

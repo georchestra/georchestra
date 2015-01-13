@@ -199,7 +199,7 @@ GEOR.Annotation = Ext.extend(Ext.util.Observable, {
                 displayInLayerSwitcher: false
             }
         );
-        layer = new OpenLayers.Layer.Vector("Annotation", layerOptions);
+        layer = new OpenLayers.Layer.Vector("__georchestra_annotations", layerOptions);
         this.layer = layer;
         this.map.addLayer(layer);
 

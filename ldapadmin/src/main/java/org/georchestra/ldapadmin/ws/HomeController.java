@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.georchestra.ldapadmin.ws;
 
@@ -19,9 +19,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * Display the home page 
- * 
- * 
+ * Display the home page
+ *
+ *
  * @author Mauricio Pazos
  *
  */
@@ -30,29 +30,29 @@ public class HomeController {
 
 	private static final Log LOG = LogFactory.getLog(HomeController.class.getName());
 	private ExpiredTokenManagement tokenManagement;
-	
+
 	private Configuration config;
-	
+
 	@Autowired
 	public HomeController(ExpiredTokenManagement tokenManagment, Configuration cfg) {
 		if(LOG.isDebugEnabled()){
 			LOG.debug("home controller initialization");
 		}
 		this.config = cfg;
-		
+
 		this.tokenManagement = tokenManagment;
 		this.tokenManagement.start();
 	}
-	
+
 	@RequestMapping(value="/")
 	public void root(HttpServletRequest request, HttpServletResponse response) throws IOException{
-		
+
 		String roles = request.getHeader("sec-roles");
-		
+
 		if(roles != null && !roles.equals("ROLE_ANONYMOUS")) {
 			String redirectUrl;
 			List<String> rolesList = Arrays.asList(roles.split(","));
-			
+
 			if(rolesList.contains("ROLE_MOD_LDAPADMIN")) {
 				redirectUrl = "/privateui/";
 			}
@@ -65,7 +65,7 @@ public class HomeController {
 			}
 			response.sendRedirect(config.getPublicContextPath() + redirectUrl);
 		} else {
-			/* TODO: send a 403 error */
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return;
 		}
 	}

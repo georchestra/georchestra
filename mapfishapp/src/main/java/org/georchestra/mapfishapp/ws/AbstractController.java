@@ -7,8 +7,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.georchestra.mapfishapp.ws.UpLoadGeoFileController;
-
+import org.georchestra.mapfishapp.ws.upload.AbstractFeatureGeoFileReader;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,12 +46,12 @@ public class AbstractController {
             radius = null;
         }
         model.put("radius", radius);
-        UpLoadGeoFileController controller = new UpLoadGeoFileController();
-        model.put("fileFormatList", controller.fileFormatListToJSON());
+        model.put("fileFormatList", new AbstractFeatureGeoFileReader().getFormatListAsJSON());
         model.put("debug", Boolean.parseBoolean(request.getParameter("debug")));
-    
+
         return model;
     }
+
 
     Map<String, Object> createModel(HttpServletRequest request, String str) {
         JSONObject jsonData;
@@ -62,7 +61,7 @@ public class AbstractController {
         } catch (JSONException e) {
             throw new RuntimeException("Cannot parse the json post data", e);
         }
-    
+
         boolean debug;
         if (request.getParameter("debug") == null) {
             try {
@@ -76,9 +75,9 @@ public class AbstractController {
 
         try {
             JSONArray jsonLayers, jsonServices;
-    
+
             jsonLayers = jsonData.optJSONArray("layers");
-            
+
             jsonServices = jsonData.optJSONArray("services");
             if (jsonLayers == null) {
                 jsonLayers = jsonServices;
@@ -100,7 +99,7 @@ public class AbstractController {
         } catch (JSONException e) {
             data = "[]";
         }
-    
+
         Map<String, Object> model = new HashMap<String, Object>();
         model.put("debug", debug);
         model.put("bbox", request.getParameter("bbox"));
@@ -113,16 +112,16 @@ public class AbstractController {
             radius = null;
         }
         model.put("radius", radius);
-        UpLoadGeoFileController controller = new UpLoadGeoFileController();
-        model.put("fileFormatList", controller.fileFormatListToJSON());
+
+        model.put("fileFormatList", new AbstractFeatureGeoFileReader().getFormatListAsJSON());
         model.put("data", data);
-    
+
         return model;
     }
 
     protected String getPostData(HttpServletRequest request) throws IOException {
         String str = request.getParameter("data");
-    
+
         if (str == null) {
             // there is no "data" param: we should parse raw post data
             BufferedReader postData = request.getReader();

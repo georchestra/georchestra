@@ -18,6 +18,7 @@
  * @include OpenLayers/Format/JSON.js
  * @include OpenLayers/Format/GeoJSON.js
  * @include OpenLayers/Layer/Vector.js
+ * @include GeoExt/data/LayerRecord.js
  */
 
 Ext.namespace("GEOR");

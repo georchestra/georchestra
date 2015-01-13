@@ -120,7 +120,8 @@ Commit and propagate the changes:
 ```
 git add geonetwork
 git commit -am "13.12 release"
-git push origin master
+git tag v13.12
+git push origin master --tags
 ```
 
 Now, let's create the maintenance branch for geOrchestra 13.12:
