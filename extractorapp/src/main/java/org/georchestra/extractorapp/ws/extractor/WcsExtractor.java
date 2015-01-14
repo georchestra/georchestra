@@ -70,7 +70,8 @@ public class WcsExtractor {
 
         final CloseableHttpClient httpclient = httpClientBuilder.build();
         String capabilities = FileUtils.asString(httpclient.execute(httpHost, get, localContext).getEntity().getContent());
-        Pattern regex = Pattern.compile("(?m)<Layer[^>]*>(\\\\n|\\s)*<Name>\\s*" + Pattern.quote(request._layerName) + "\\s*</Name>");
+
+        Pattern regex = Pattern.compile("(?m)<Layer[^>]*>(\\\\n|\\s)*<Name>\\s*(\\w*:)?" + Pattern.quote(request._layerName) + "\\s*</Name>");
         boolean permitted = regex.matcher(capabilities).find();
 
         if (!permitted) {
