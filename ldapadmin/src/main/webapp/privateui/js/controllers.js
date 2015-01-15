@@ -98,7 +98,8 @@ angular.module('ldapadmin.controllers', [])
           return groups[0].users.indexOf(item.uid) == -1 &&
             groups[1].users.indexOf(item.uid) == -1 &&
             groups[2].users.indexOf(item.uid) == -1 &&
-            groups[3].users.indexOf(item.uid) == -1;
+            groups[3].users.indexOf(item.uid) == -1 &&
+            groups[4].users.indexOf(item.uid) == -1;
         };
         $rootScope.selectedGroup = "none";
         $scope.allSelected = false;
