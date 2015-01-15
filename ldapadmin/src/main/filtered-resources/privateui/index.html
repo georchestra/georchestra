@@ -67,6 +67,13 @@
               <div class="accordion" ng-repeat="data in groups_tree" ng-include="'group_item_renderer.html'">
               </div>
             </div>
+            
+            <br />
+            <i class="icon-blank"></i>
+            <a href="#/groups/none" ng-class="{active: selectedGroup == 'none'}">
+              Users with no access
+            </a>
+            
           </div>
         </div>
         <div id="content" class="span9" ng-view>

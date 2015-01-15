@@ -88,6 +88,7 @@ angular.module('ldapadmin.controllers', [])
       //$scope.users is inherited from UsersCtrl's scope
       if ($routeParams.group == 'none') {
         var groups = [
+          $scope.groups[findByAttr($scope.groups, 'cn', 'ADMINISTRATOR')],
           $scope.groups[findByAttr($scope.groups, 'cn', 'SV_ADMIN')],
           $scope.groups[findByAttr($scope.groups, 'cn', 'SV_REVIEWER')],
           $scope.groups[findByAttr($scope.groups, 'cn', 'SV_EDITOR')],
