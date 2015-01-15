@@ -281,15 +281,17 @@ JAVA_OPTS="$JAVA_OPTS \
             -XX:NewRatio=2 \
             -XX:+AggressiveOpts"
 ```
-... where /path/to/your/geoserver_data_dir is a directory owned by tomcat6, created by checking out this repository [georchestra/geoserver_minimal_datadir](https://github.com/georchestra/geoserver_minimal_datadir):
+This allocates 2Gb of your server RAM to GeoServer.
+
+The ```/path/to/your/geoserver_data_dir``` directory should be owned by tomcat6, and created by checking out this repository [georchestra/geoserver_minimal_datadir](https://github.com/georchestra/geoserver_minimal_datadir):
 
 Example:
 ```
 sudo git clone https://github.com/georchestra/geoserver_minimal_datadir.git /opt/geoserver_data_dir
 sudo chown -R tomcat6 /opt/geoserver_data_dir
 ```
+Note that this data dir holds several branches: please refer to the repository [README](https://github.com/georchestra/geoserver_minimal_datadir/blob/master/README.md) for more information about this.
 
-This allocates 2Gb of your server RAM to GeoServer.
 
 As before (change the STOREPASSWORD string):
 ```
