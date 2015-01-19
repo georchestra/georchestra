@@ -148,6 +148,9 @@ ProxyPassReverse /proxy/ http://localhost:8180/proxy/
 * ```cas.conf```:
 
 ```
+RewriteCond %{HTTPS} off
+RewriteCond %{REQUEST_URI} ^/cas/?.*$ 
+RewriteRule ^/(.*)$ https://%{SERVER_NAME}/$1 [R=301,L]
 RewriteRule ^/cas$ /cas/ [R]
 <Proxy http://localhost:8180/cas/*>
     Order deny,allow
@@ -162,6 +165,9 @@ For the other ones, pick only those you need, depending on the modules you plan 
 * ```analytics.conf```:
 
 ```
+RewriteCond %{HTTPS} off
+RewriteCond %{REQUEST_URI} ^/analytics/?.*$ 
+RewriteRule ^/(.*)$ https://%{SERVER_NAME}/$1 [R=301,L]
 RewriteRule ^/analytics$ /analytics/ [R]
 <Proxy http://localhost:8180/analytics/*>
     Order deny,allow
@@ -174,6 +180,9 @@ ProxyPassReverse /analytics/ http://localhost:8180/analytics/
 * ```catalogapp.conf```:
 
 ```
+RewriteCond %{HTTPS} on
+RewriteCond %{REQUEST_URI} ^/catalogapp/?.*$ 
+RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
 RewriteRule ^/catalogapp$ /catalogapp/ [R]
 <Proxy http://localhost:8180/catalogapp/*>
     Order deny,allow
@@ -186,6 +195,9 @@ ProxyPassReverse /catalogapp/ http://localhost:8180/catalogapp/
 * ```downloadform.conf```:
 
 ```
+RewriteCond %{HTTPS} off
+RewriteCond %{REQUEST_URI} ^/downloadform/?.*$ 
+RewriteRule ^/(.*)$ https://%{SERVER_NAME}/$1 [R=301,L]
 RewriteRule ^/downloadform$ /downloadform/ [R]
 <Proxy http://localhost:8180/downloadform/*>
     Order deny,allow
@@ -198,6 +210,9 @@ ProxyPassReverse /downloadform/ http://localhost:8180/downloadform/
 * ```extractorapp.conf```:
 
 ```
+RewriteCond %{HTTPS} on
+RewriteCond %{REQUEST_URI} ^/extractorapp/?.*$ 
+RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
 RewriteRule ^/extractorapp$ /extractorapp/ [R]
 RewriteRule ^/extractorapp/admin$ /extractorapp/admin/ [R]
 <Proxy http://localhost:8180/extractorapp/*>
@@ -211,6 +226,9 @@ ProxyPassReverse /extractorapp/ http://localhost:8180/extractorapp/
 * ```geonetwork.conf```:
 
 ```
+RewriteCond %{HTTPS} on
+RewriteCond %{REQUEST_URI} ^/geonetwork/?.*$ 
+RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
 RewriteRule ^/geonetwork$ /geonetwork/ [R]
 <Proxy http://localhost:8180/geonetwork/*>
     Order deny,allow
@@ -223,6 +241,9 @@ ProxyPassReverse /geonetwork/ http://localhost:8180/geonetwork/
 * ```geoserver.conf```:
 
 ```
+RewriteCond %{HTTPS} on
+RewriteCond %{REQUEST_URI} ^/geoserver/?.*$ 
+RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
 RewriteRule ^/geoserver$ /geoserver/ [R]
 <Proxy http://localhost:8180/geoserver/*>
     Order deny,allow
@@ -239,6 +260,9 @@ ProxyPassReverse /geoserver/ http://localhost:8180/geoserver/
 * ```geofence.conf```:
 
 ```
+RewriteCond %{HTTPS} on
+RewriteCond %{REQUEST_URI} ^/geofence/?.*$ 
+RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
 RewriteRule ^/geofence$ /geofence/ [R]
 <Proxy http://localhost:8180/geofence/*>
     Order deny,allow
@@ -251,6 +275,9 @@ ProxyPassReverse /geofence/ http://localhost:8180/geofence/
 * ```geowebcache.conf```:
 
 ```
+RewriteCond %{HTTPS} on
+RewriteCond %{REQUEST_URI} ^/geowebcache/?.*$ 
+RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
 RewriteRule ^/geowebcache$ /geowebcache/ [R]
 <Proxy http://localhost:8180/geowebcache/*>
     Order deny,allow
@@ -275,6 +302,9 @@ ProxyPassReverse /header/ http://localhost:8180/header/
 * ```ldapadmin.conf```:
 
 ```
+RewriteCond %{HTTPS} off
+RewriteCond %{REQUEST_URI} ^/ldapadmin/?.*$
+RewriteRule ^/(.*)$ https://%{SERVER_NAME}/$1 [R=301,L]
 RewriteRule ^/ldapadmin$ /ldapadmin/ [R]
 RewriteRule ^/ldapadmin/privateui$ /ldapadmin/privateui/ [R]
 <Proxy http://localhost:8180/ldapadmin/*>
@@ -288,6 +318,9 @@ ProxyPassReverse /ldapadmin/ http://localhost:8180/ldapadmin/
 * ```mapfishapp.conf```:
 
 ```
+RewriteCond %{HTTPS} on
+RewriteCond %{REQUEST_URI} ^/mapfishapp/?.*$ 
+RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
 RewriteRule ^/mapfishapp$ /mapfishapp/ [R]
 <Proxy http://localhost:8180/mapfishapp/*>
     Order deny,allow
