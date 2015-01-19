@@ -21,8 +21,9 @@
         <s:intercept-url pattern="/ldapadmin/privateui/.*" access="ROLE_MOD_LDAPADMIN" />
         <!-- ldapadmin private ui web services: -->
         <s:intercept-url pattern="/ldapadmin/private/.*" access="ROLE_MOD_LDAPADMIN" />
-        <!-- ldapadmin userdetails and changePassword pages: -->
-        <s:intercept-url pattern="/ldapadmin/account/.*" access="IS_AUTHENTICATED_FULLY" />
+        <!-- ldapadmin pages: -->
+        <s:intercept-url pattern="/ldapadmin/account/userdetails" access="IS_AUTHENTICATED_FULLY" />
+        <s:intercept-url pattern="/ldapadmin/account/changePassword" access="IS_AUTHENTICATED_FULLY" />
         <!-- testPage for the gateway -->
         <s:intercept-url pattern="/testPage" access="IS_AUTHENTICATED_FULLY" />
         <!-- the integrated ogc proxy should not be used on production systems -->
