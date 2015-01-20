@@ -46,7 +46,7 @@ if(sec_roles != null) {
             //response.setHeader("Cache-Control", "public, max-age=31536000");
             break;
         }
-        if (roles[i].equals("ROLE_SV_EDITOR") || roles[i].equals("ROLE_SV_REVIEWER") || roles[i].equals("ROLE_SV_ADMIN") || roles[i].equals("ROLE_SV_ADMINISTRATOR") || roles[i].equals("ROLE_SV_USER")) {
+        if (roles[i].equals("ROLE_SV_EDITOR") || roles[i].equals("ROLE_SV_REVIEWER") || roles[i].equals("ROLE_SV_ADMIN") || roles[i].equals("ROLE_ADMINISTRATOR") || roles[i].equals("ROLE_SV_USER")) {
             anonymous = false;
         }
         if (roles[i].equals("ROLE_MOD_EXTRACTORAPP")) {
