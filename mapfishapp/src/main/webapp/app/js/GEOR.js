@@ -191,6 +191,7 @@ Ext.namespace("GEOR");
                 // this panel contains the components for
                 // recentering the map
                 region: "south",
+                id: "tabs",
                 collapseMode: "mini",
                 collapsible: true,
                 deferredRender: false,

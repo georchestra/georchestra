@@ -159,6 +159,7 @@ GEOR.mappanel = (function() {
         map.addControl(mpControl);
 
         return {
+            id: "bbar",
             items: items
         };
     };

@@ -61,3 +61,57 @@ If the addon instance exposes a public property named ```item```, the referenced
 
 
 If developing a new addon, you might want to start from a simple example, eg the [magnifier](magnifier/README.md) addon.
+
+### How to create an addon which adds its own components into an existing component ?
+
+Here's an example which inserts a textfield into the top toolbar:
+```js
+Ext.namespace("GEOR.Addons");
+
+GEOR.Addons.Test = function(map, options) {
+    this.map = map;
+    this.options = options;
+    this.cmps = null;
+    this.parent = null;
+};
+
+GEOR.Addons.Test.prototype = {
+    /**
+     * Method: init
+     *
+     * Parameters:
+     * record - {Ext.data.record} a record with the addon parameters
+     */
+    init: function(record) {
+        // attach to top toolbar:
+        this.parent = GeoExt.MapPanel.guess().getTopToolbar();
+        this.cmps = this.parent.insertButton(11, ['-', {
+            xtype: 'textfield',
+            value: "inserted"
+        }]);
+        this.parent.doLayout();
+    },
+
+    /**
+     * Method: destroy
+     * Called by GEOR_tools when deselecting this addon
+     */
+    destroy: function() {
+        if (Ext.isArray(this.cmps)) {
+            var p = this.parent;
+            Ext.each(this.cmps, function(cmp) {
+                p.remove(cmp);
+            });
+        } else {
+            this.parent.remove(this.cmps);
+        }
+        this.cmp = null;
+        this.map = null;
+    }
+};
+```
+
+For the bottom toolbar, you would use:
+```
+this.parent = GeoExt.MapPanel.guess().getBottomToolbar();
+```
