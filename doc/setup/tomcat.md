@@ -265,22 +265,33 @@ Finally, edit the ```/etc/init.d/tomcat-geoserver0``` script, find the following
 
 ### Customize Java options
 
-In ```/etc/default/tomcat-geoserver0```, we need to remove the ```-Xmx128m``` option: 
+In ```/etc/default/tomcat-geoserver0```, we need to change: 
 ```
-JAVA_OPTS="-Djava.awt.headless=true -XX:+UseConcMarkSweepGC"
+JAVA_OPTS="-Djava.awt.headless=true -Xmx128m -XX:+UseConcMarkSweepGC"
+```
+...into:
+```
+JAVA_OPTS="-Djava.awt.headless=true"
 ```
 
 And later add these lines:
 ```
 JAVA_OPTS="$JAVA_OPTS \
-            -Xms2G -Xmx2G -XX:PermSize=256m -XX:MaxPermSize=256m \
             -DGEOSERVER_DATA_DIR=/path/to/your/geoserver_data_dir \
-            -DGEOWEBCACHE_CACHE_DIR=/path/to/your/geowebcache_cache_dir \
+            -DGEOWEBCACHE_CACHE_DIR=/path/to/your/geowebcache_cache_dir"
+
+JAVA_OPTS="$JAVA_OPTS \
             -Dfile.encoding=UTF8 \
             -Djavax.servlet.request.encoding=UTF-8 \
-            -Djavax.servlet.response.encoding=UTF-8 \
+            -Djavax.servlet.response.encoding=UTF-8"
+
+JAVA_OPTS="$JAVA_OPTS \
+            -Xms2G -Xmx2G -XX:PermSize=256M -XX:MaxPermSize=256M"
+
+JAVA_OPTS="$JAVA_OPTS \
             -server \
-            -XX:+UseParNewGC -XX:ParallelGCThreads=2 \
+            -XX:+UseParNewGC \
+            -XX:ParallelGCThreads=2 \
             -XX:SoftRefLRUPolicyMSPerMB=36000 \
             -XX:NewRatio=2 \
             -XX:+AggressiveOpts"
