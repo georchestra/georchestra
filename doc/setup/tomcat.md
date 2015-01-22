@@ -186,6 +186,10 @@ JAVA_OPTS="$JAVA_OPTS \
 JAVA_OPTS="$JAVA_OPTS \
               -Djavax.net.ssl.trustStore=/etc/tomcat6/keystore \
               -Djavax.net.ssl.trustStorePassword=STOREPASSWORD"
+
+JAVA_OPTS="$JAVA_OPTS \              
+              -Djava.util.prefs.userRoot=/tmp \
+              -Djava.util.prefs.systemRoot=/tmp"
 ```
 This allocates 2Gb of your server RAM to all geOrchestra webapps (except proxy, cas and geoserver).
 
