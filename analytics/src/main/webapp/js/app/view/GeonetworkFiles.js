@@ -36,6 +36,7 @@ Ext.define('Analytics.view.GeonetworkFiles', {
                 tr('from metadata'),
                 rec.get('metadata_id')
             ].join(' '),
+            closeAction: 'hide',
             width: 800,
             height: 400,
             layout: 'fit',

@@ -29,6 +29,7 @@ Ext.define('Analytics.view.GeonetworkUsers', {
         new Ext.Window({
             title: tr("Files downloaded by the user")+" "+
                 rec.get('username'),
+            closeAction: 'hide',
             width: 800,
             height: 400,
             layout: 'fit',

@@ -29,6 +29,7 @@ Ext.define('Analytics.view.OGCUsers', {
         new Ext.Window({
             title: tr("The layers have been downloaded by the user")+" "+
                 rec.get('user_name'),
+            closeAction: 'hide',
             width: 800,
             height: 400,
             layout: 'fit',

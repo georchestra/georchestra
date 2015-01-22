@@ -41,6 +41,7 @@ Ext.define('Analytics.view.ExtractorLayers', {
                 tr('from service'),
                 rec.get('ows_url')
             ].join(' '),
+            closeAction: 'hide',
             width: 800,
             height: 400,
             layout: 'fit',

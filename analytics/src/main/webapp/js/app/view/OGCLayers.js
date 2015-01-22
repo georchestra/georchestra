@@ -39,6 +39,7 @@ Ext.define('Analytics.view.OGCLayers', {
                 tr('from service'),
                 rec.get('service')
             ].join(' '),
+            closeAction: 'hide',
             width: 800,
             height: 400,
             layout: 'fit',
