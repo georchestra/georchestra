@@ -305,7 +305,7 @@ Example:
 sudo git clone -b master https://github.com/georchestra/geoserver_minimal_datadir.git /opt/geoserver_data_dir
 sudo chown -R tomcat6 /opt/geoserver_data_dir
 ```
-Note that this data dir holds several branches: please refer to the repository [README](https://github.com/georchestra/geoserver_minimal_datadir/blob/master/README.md) for more information about this.
+Note that this data dir holds **several branches**: please refer to the repository [README](https://github.com/georchestra/geoserver_minimal_datadir/blob/master/README.md) in order to **choose the correct one**.
 
 
 As before (change the ```STOREPASSWORD``` string):
