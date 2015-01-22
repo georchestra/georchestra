@@ -82,12 +82,12 @@ Finally, edit the ```/etc/init.d/tomcat-proxycas``` script, find the following l
 
 ### Customize Java options
 
-In /etc/default/tomcat-proxycas, we need to remove the -Xmx128m option: 
+In ```/etc/default/tomcat-proxycas```, we need to remove the ```-Xmx128m``` option: 
 ```
 JAVA_OPTS="-Djava.awt.headless=true -XX:+UseConcMarkSweepGC"
 ```
 
-And later add these lines (change the STOREPASSWORD string):
+And later add these lines (change the ```STOREPASSWORD``` string):
 ```
 JAVA_OPTS="$JAVA_OPTS \
               -Xms256m \
@@ -110,7 +110,7 @@ JAVA_OPTS="$JAVA_OPTS \
 
 ### Configure connectors 
 
-In /var/lib/tomcat-proxycas/conf/server.xml, find the place where the HTTP connector is defined, and change it into:
+In ```/var/lib/tomcat-proxycas/conf/server.xml```, find the place where the HTTP connector is defined, and change it into:
 ```
     <Connector port="8180" protocol="HTTP/1.1" 
                connectionTimeout="20000" 
@@ -131,7 +131,7 @@ In /var/lib/tomcat-proxycas/conf/server.xml, find the place where the HTTP conne
                noCompressionUserAgents="gozilla, traviata"
                compressableMimeType="text/html,text/xml,application/xml,text/javascript,application/x-javascript,application/javascript,text/css" />
 ```
-... in which you also take care of changing the STOREPASSWORD string.
+... in which you also take care of changing the ```STOREPASSWORD``` string.
 
 
 ### Start the instance
@@ -171,12 +171,12 @@ Finally, edit the ```/etc/init.d/tomcat-georchestra``` script, find the followin
 
 ### Customize Java options
 
-In /etc/default/tomcat-georchestra, we need to remove the -Xmx128m option: 
+In ```/etc/default/tomcat-georchestra```, we need to remove the ```-Xmx128m``` option: 
 ```
 JAVA_OPTS="-Djava.awt.headless=true -XX:+UseConcMarkSweepGC"
 ```
 
-And later add these lines (change the STOREPASSWORD string):
+And later add these lines (change the ```STOREPASSWORD``` string):
 ```
 JAVA_OPTS="$JAVA_OPTS \
               -Xms2G \
@@ -200,7 +200,7 @@ JAVA_OPTS="$JAVA_OPTS \
               -Dgeonetwork.schema.dir=/path/to/your/geonetwork_data_dir/config/schema_plugins \
               -Dgeonetwork.jeeves.configuration.overrides.file=/var/lib/tomcat-georchestra/webapps/geonetwork/WEB-INF/config-overrides-georchestra.xml"
 ```
-... where /path/to/your/geonetwork_data_dir is a directory owned by tomcat6, created by checking out this repository [georchestra/geonetwork_minimal_datadir](https://github.com/georchestra/geonetwork_minimal_datadir)
+... where ```/path/to/your/geonetwork_data_dir``` is a directory owned by tomcat6, created by checking out this repository [georchestra/geonetwork_minimal_datadir](https://github.com/georchestra/geonetwork_minimal_datadir)
 
 Example:
 ```
@@ -214,9 +214,9 @@ JAVA_OPTS="$JAVA_OPTS \
                -Dorg.geotools.referencing.forceXY=true \
                -Dextractor.storage.dir=/path/to/temporary/extracts/"
 ```
-... where /path/to/temporary/extracts/ is a directory owned by tomcat6 in a dedicated server partition.
+... where ```/path/to/temporary/extracts/``` is a directory owned by tomcat6 in a dedicated server partition.
 
-In case your connection to the internet is proxied, you should also add the -Dhttp.proxy* options here.
+In case your connection to the internet is proxied, you should also add the ```-Dhttp.proxy*``` options here.
 
 
 ### Configure connector
@@ -265,7 +265,7 @@ Finally, edit the ```/etc/init.d/tomcat-geoserver0``` script, find the following
 
 ### Customize Java options
 
-In /etc/default/tomcat-geoserver0, we need to remove the -Xmx128m option: 
+In ```/etc/default/tomcat-geoserver0```, we need to remove the ```-Xmx128m``` option: 
 ```
 JAVA_OPTS="-Djava.awt.headless=true -XX:+UseConcMarkSweepGC"
 ```
@@ -291,20 +291,20 @@ The ```/path/to/your/geoserver_data_dir``` directory should be owned by tomcat6,
 
 Example:
 ```
-sudo git clone https://github.com/georchestra/geoserver_minimal_datadir.git /opt/geoserver_data_dir
+sudo git clone -b master https://github.com/georchestra/geoserver_minimal_datadir.git /opt/geoserver_data_dir
 sudo chown -R tomcat6 /opt/geoserver_data_dir
 ```
 Note that this data dir holds several branches: please refer to the repository [README](https://github.com/georchestra/geoserver_minimal_datadir/blob/master/README.md) for more information about this.
 
 
-As before (change the STOREPASSWORD string):
+As before (change the ```STOREPASSWORD``` string):
 ```
 JAVA_OPTS="$JAVA_OPTS \
               -Djavax.net.ssl.trustStore=/etc/tomcat6/keystore \
               -Djavax.net.ssl.trustStorePassword=STOREPASSWORD"
 ```
 
-In case your connection to the internet is proxied, you should also add the -Dhttp.proxy* options here.
+In case your connection to the internet is proxied, you should also add the ```-Dhttp.proxy*``` options here.
 
 ### Configure connector
 
