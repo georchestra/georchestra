@@ -162,6 +162,14 @@ SetEnvIf Referer "^http://my\.sdi\.org/" mysdi
 </Proxy>
 ```
 
+There's also another improvement when your SDI is not globally accessed through https: securing your communications to the ldapadmin webapp through the following:
+```
+RewriteCond %{HTTPS} off
+RewriteCond %{REQUEST_URI} ^/ldapadmin/?.*$
+RewriteRule ^/(.*)$ https://%{SERVER_NAME}/$1 [R=301,L]
+```
+This can also be used to secure other modules, eg analytics, downloadform...
+
 **building**
 
 If you experience build issues, please clear your local maven repository (rm -rf ~/.m2/repository/), then try again.  
