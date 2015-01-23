@@ -34,7 +34,7 @@ More is better !
 
 If you need more information, please ask on the [geOrchestra mailing list](https://groups.google.com/forum/#!forum/georchestra). 
 
-For help setting up your instance, or for dev-related questions, use our [dev/tech list](https://groups.google.com/forum/#!forum/georchestra-dev).
+For help setting up your instance, or for dev-related questions, use the [#georchestra](https://kiwiirc.com/client/irc.freenode.net/georchestra) IRC channel or the [dev/tech list](https://groups.google.com/forum/#!forum/georchestra-dev).
 
 ## More
 
