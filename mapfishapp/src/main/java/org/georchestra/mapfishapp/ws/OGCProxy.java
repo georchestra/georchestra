@@ -128,9 +128,9 @@ public class OGCProxy {
             }
 
             // HTTP protocol is required
-            if (!"http".equalsIgnoreCase(url.getProtocol())) {
+            if (!("http".equalsIgnoreCase(url.getProtocol()) || "https".equalsIgnoreCase(url.getProtocol()))) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST,
-                        "HTTP protocol expected. \"" + url.getProtocol() + "\" used.");
+                        "HTTP(s) protocol expected. \"" + url.getProtocol() + "\" used.");
                 return;
             }
 
