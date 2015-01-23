@@ -10,7 +10,7 @@ Version 15.06 (development version)
 Not yet funded, but would be **really nice** to have:
  * georchestra: generic wars, see [#94](https://github.com/georchestra/georchestra/issues/94),
  * georchestra: use the browser-advertised preferred language by default (and give the user a chance to select the correct one with a combobox in the header) - see [#589](https://github.com/georchestra/georchestra/issues/589),
- * georchestra: validate on Tomcat 7/8 - see [#504](https://github.com/georchestra/georchestra/issues/504),
+ * proxy: validate on Tomcat 7/8 - see [#504](https://github.com/georchestra/georchestra/issues/504),
  * geonetwork: integration of version 3,
  * mapfishapp: support read/write WMTS layer types from/to OWSContext - see [#360](https://github.com/georchestra/georchestra/issues/360) & [#399](https://github.com/georchestra/georchestra/issues/399),
  * config: make it easy to have different jdbc parameters for each module - see [#716](https://github.com/georchestra/georchestra/issues/716),
