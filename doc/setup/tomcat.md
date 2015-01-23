@@ -19,7 +19,7 @@ sudo service tomcat6 stop
 
 ## Keystore
 
-To create a Keystore, enter the following:
+To create a keystore, enter the following:
 ```
 sudo keytool -genkey \
     -alias georchestra_localhost \
@@ -32,10 +32,30 @@ sudo keytool -genkey \
 ```
 ... where ```STOREPASSWORD``` is a password you choose, and the ```dname``` string is customized.
 
+### CA certificates
 
-In case the LDAP connection uses SSL (which is not the default in the geOrchestra template configuration), the certificate must be added to the keystore. 
+If the geOrchestra webapps have to communicate with remote HTTPS services, our keystore/trustore has to include CA certificates.
 
-First get the public key:
+This will be the case when:
+ * the proxy has to relay an https service
+ * geonetwork will harvest remote https nodes
+ * geoserver will proxy remote https ogc services
+
+To do this:
+```
+sudo keytool -importkeystore \
+    -srckeystore /etc/ssl/certs/java/cacerts \
+    -destkeystore /etc/tomcat6/keystore
+```
+
+
+### LDAP SSL
+
+In case the LDAP connection uses SSL (which is not the default in the geOrchestra template configuration), its certificate must be added to the keystore. 
+
+Here's how:
+
+First get the public key.
 ```
 echo "" | openssl s_client -connect LDAPHOST:LDAPPORT -showcerts 2>/dev/null | openssl x509 -out /tmp/certfile.txt
 ```
