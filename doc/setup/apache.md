@@ -4,7 +4,7 @@
 ## Modules setup
 
 ```
-sudo a2enmod proxy_connect proxy_http proxy ssl rewrite headers
+sudo a2enmod proxy proxy_http ssl rewrite headers deflate
 sudo service apache2 restart
 ```
 
@@ -97,10 +97,10 @@ Three of these files are required:
 
 RewriteEngine On
 
-SetEnv no-gzip on
+AddOutputFilterByType DEFLATE text/html text/plain text/xml application/xml text/css text/javascript application/javascript
 
 ProxyRequests Off
-ProxyTimeout 999999999
+ProxyTimeout 86400
 
 AddType application/vnd.ogc.context+xml .wmc
 
