@@ -111,8 +111,6 @@ ErrorDocument 503 /errors/50x.html
 * ```proxy.conf```: replace the ```http://my\.sdi\.org``` string with your server address in the following:
 
 ```
-RewriteRule ^/proxy$ /proxy/ [R]
-
 ProxyPass /casfailed.jsp http://localhost:8180/casfailed.jsp
 ProxyPassReverse /casfailed.jsp http://localhost:8180/casfailed.jsp
 
@@ -147,17 +145,20 @@ ProxyPassReverse /proxy/ http://localhost:8180/proxy/
 
 * ```cas.conf```:
 
+The cas module should be accessed only through https.
 ```
-RewriteCond %{HTTPS} off
-RewriteCond %{REQUEST_URI} ^/cas/?.*$ 
-RewriteRule ^/(.*)$ https://%{SERVER_NAME}/$1 [R=301,L]
 RewriteRule ^/cas$ /cas/ [R]
+
 <Proxy http://localhost:8180/cas/*>
     Order deny,allow
     Allow from all
 </Proxy>
 ProxyPass /cas/ http://localhost:8180/cas/ 
 ProxyPassReverse /cas/ http://localhost:8180/cas/
+
+RewriteCond %{HTTPS} off
+RewriteCond %{REQUEST_URI} ^/cas/?.*$ 
+RewriteRule ^/(.*)$ https://%{SERVER_NAME}/$1 [R=301,L]
 ```
 
 For the other ones, pick only those you need, depending on the modules you plan to install:
@@ -165,9 +166,6 @@ For the other ones, pick only those you need, depending on the modules you plan 
 * ```analytics.conf```:
 
 ```
-RewriteCond %{HTTPS} off
-RewriteCond %{REQUEST_URI} ^/analytics/?.*$ 
-RewriteRule ^/(.*)$ https://%{SERVER_NAME}/$1 [R=301,L]
 RewriteRule ^/analytics$ /analytics/ [R]
 <Proxy http://localhost:8180/analytics/*>
     Order deny,allow
@@ -177,12 +175,23 @@ ProxyPass /analytics/ http://localhost:8180/analytics/
 ProxyPassReverse /analytics/ http://localhost:8180/analytics/
 ```
 
+In addition, if you would like to encrypt all communications to the analytics webapp, you have to add the following:
+```
+RewriteCond %{HTTPS} off
+RewriteCond %{REQUEST_URI} ^/analytics/?.*$ 
+RewriteRule ^/(.*)$ https://%{SERVER_NAME}/$1 [R=301,L]
+```
+
+Or if you prefer to access analytics through http only, choose the following:
+```
+RewriteCond %{HTTPS} on
+RewriteCond %{REQUEST_URI} ^/analytics/?.*$ 
+RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
+```
+
 * ```catalogapp.conf```:
 
 ```
-RewriteCond %{HTTPS} on
-RewriteCond %{REQUEST_URI} ^/catalogapp/?.*$ 
-RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
 RewriteRule ^/catalogapp$ /catalogapp/ [R]
 <Proxy http://localhost:8180/catalogapp/*>
     Order deny,allow
@@ -192,12 +201,16 @@ ProxyPass /catalogapp/ http://localhost:8180/catalogapp/
 ProxyPassReverse /catalogapp/ http://localhost:8180/catalogapp/
 ```
 
+And if your SDI is primarily accessed through unsecured http:
+```
+RewriteCond %{HTTPS} on
+RewriteCond %{REQUEST_URI} ^/catalogapp/?.*$ 
+RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
+```
+
 * ```downloadform.conf```:
 
 ```
-RewriteCond %{HTTPS} off
-RewriteCond %{REQUEST_URI} ^/downloadform/?.*$ 
-RewriteRule ^/(.*)$ https://%{SERVER_NAME}/$1 [R=301,L]
 RewriteRule ^/downloadform$ /downloadform/ [R]
 <Proxy http://localhost:8180/downloadform/*>
     Order deny,allow
@@ -207,12 +220,24 @@ ProxyPass /downloadform/ http://localhost:8180/downloadform/
 ProxyPassReverse /downloadform/ http://localhost:8180/downloadform/
 ```
 
+In addition, if you would like to encrypt all communications to the downloadform webapp, you have to add the following:
+```
+RewriteCond %{HTTPS} off
+RewriteCond %{REQUEST_URI} ^/downloadform/?.*$ 
+RewriteRule ^/(.*)$ https://%{SERVER_NAME}/$1 [R=301,L]
+```
+
+Or if you prefer to access downloadform through http only, choose the following:
+```
+RewriteCond %{HTTPS} on
+RewriteCond %{REQUEST_URI} ^/downloadform/?.*$ 
+RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
+```
+
+
 * ```extractorapp.conf```:
 
 ```
-RewriteCond %{HTTPS} on
-RewriteCond %{REQUEST_URI} ^/extractorapp/?.*$ 
-RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
 RewriteRule ^/extractorapp$ /extractorapp/ [R]
 RewriteRule ^/extractorapp/admin$ /extractorapp/admin/ [R]
 <Proxy http://localhost:8180/extractorapp/*>
@@ -223,12 +248,16 @@ ProxyPass /extractorapp/ http://localhost:8180/extractorapp/
 ProxyPassReverse /extractorapp/ http://localhost:8180/extractorapp/
 ```
 
+And if your SDI is primarily accessed through unsecured http:
+```
+RewriteCond %{HTTPS} on
+RewriteCond %{REQUEST_URI} ^/extractorapp/?.*$ 
+RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
+```
+
 * ```geonetwork.conf```:
 
 ```
-RewriteCond %{HTTPS} on
-RewriteCond %{REQUEST_URI} ^/geonetwork/?.*$ 
-RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
 RewriteRule ^/geonetwork$ /geonetwork/ [R]
 <Proxy http://localhost:8180/geonetwork/*>
     Order deny,allow
@@ -238,12 +267,16 @@ ProxyPass /geonetwork/ http://localhost:8180/geonetwork/
 ProxyPassReverse /geonetwork/ http://localhost:8180/geonetwork/
 ```
 
+And if your SDI is primarily accessed through unsecured http:
+```
+RewriteCond %{HTTPS} on
+RewriteCond %{REQUEST_URI} ^/geonetwork/?.*$ 
+RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
+```
+
 * ```geoserver.conf```:
 
 ```
-RewriteCond %{HTTPS} on
-RewriteCond %{REQUEST_URI} ^/geoserver/?.*$ 
-RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
 RewriteRule ^/geoserver$ /geoserver/ [R]
 <Proxy http://localhost:8180/geoserver/*>
     Order deny,allow
@@ -257,12 +290,16 @@ ProxyPass /geoserver/ http://localhost:8180/geoserver/
 ProxyPassReverse /geoserver/ http://localhost:8180/geoserver/
 ```
 
+And if your SDI is primarily accessed through unsecured http:
+```
+RewriteCond %{HTTPS} on
+RewriteCond %{REQUEST_URI} ^/geoserver/?.*$ 
+RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
+```
+
 * ```geofence.conf```:
 
 ```
-RewriteCond %{HTTPS} on
-RewriteCond %{REQUEST_URI} ^/geofence/?.*$ 
-RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
 RewriteRule ^/geofence$ /geofence/ [R]
 <Proxy http://localhost:8180/geofence/*>
     Order deny,allow
@@ -272,12 +309,16 @@ ProxyPass /geofence/ http://localhost:8180/geofence/
 ProxyPassReverse /geofence/ http://localhost:8180/geofence/
 ```
 
+And if your SDI is primarily accessed through unsecured http:
+```
+RewriteCond %{HTTPS} on
+RewriteCond %{REQUEST_URI} ^/geofence/?.*$ 
+RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
+```
+
 * ```geowebcache.conf```:
 
 ```
-RewriteCond %{HTTPS} on
-RewriteCond %{REQUEST_URI} ^/geowebcache/?.*$ 
-RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
 RewriteRule ^/geowebcache$ /geowebcache/ [R]
 <Proxy http://localhost:8180/geowebcache/*>
     Order deny,allow
@@ -285,6 +326,13 @@ RewriteRule ^/geowebcache$ /geowebcache/ [R]
 </Proxy>
 ProxyPass /geowebcache/ http://localhost:8180/geowebcache/ 
 ProxyPassReverse /geowebcache/ http://localhost:8180/geowebcache/
+```
+
+And if your SDI is primarily accessed through unsecured http:
+```
+RewriteCond %{HTTPS} on
+RewriteCond %{REQUEST_URI} ^/geowebcache/?.*$ 
+RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
 ```
 
 * ```header.conf```:
@@ -299,28 +347,31 @@ ProxyPass /header/ http://localhost:8180/header/
 ProxyPassReverse /header/ http://localhost:8180/header/
 ```
 
+Note that the Header module may be accessed through http or https, we're not forcing anything here.
+
+
 * ```ldapadmin.conf```:
 
+Since the ldapadmin webapp handles user accounts, all communications should be encrypted here.
 ```
-RewriteCond %{HTTPS} off
-RewriteCond %{REQUEST_URI} ^/ldapadmin/?.*$
-RewriteRule ^/(.*)$ https://%{SERVER_NAME}/$1 [R=301,L]
 RewriteRule ^/ldapadmin$ /ldapadmin/ [R]
 RewriteRule ^/ldapadmin/privateui$ /ldapadmin/privateui/ [R]
+
 <Proxy http://localhost:8180/ldapadmin/*>
     Order deny,allow
     Allow from all
 </Proxy>
 ProxyPass /ldapadmin/ http://localhost:8180/ldapadmin/
 ProxyPassReverse /ldapadmin/ http://localhost:8180/ldapadmin/
+
+RewriteCond %{HTTPS} off
+RewriteCond %{REQUEST_URI} ^/ldapadmin/?.*$
+RewriteRule ^/(.*)$ https://%{SERVER_NAME}/$1 [R=301,L]
 ```
 
 * ```mapfishapp.conf```:
 
 ```
-RewriteCond %{HTTPS} on
-RewriteCond %{REQUEST_URI} ^/mapfishapp/?.*$ 
-RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
 RewriteRule ^/mapfishapp$ /mapfishapp/ [R]
 <Proxy http://localhost:8180/mapfishapp/*>
     Order deny,allow
@@ -328,6 +379,13 @@ RewriteRule ^/mapfishapp$ /mapfishapp/ [R]
 </Proxy>
 ProxyPass /mapfishapp/ http://localhost:8180/mapfishapp/ 
 ProxyPassReverse /mapfishapp/ http://localhost:8180/mapfishapp/
+```
+
+And if your SDI is primarily accessed through unsecured http:
+```
+RewriteCond %{HTTPS} on
+RewriteCond %{REQUEST_URI} ^/mapfishapp/?.*$ 
+RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
 ```
 
 
