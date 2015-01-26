@@ -23,6 +23,7 @@
  * @include GEOR_waiter.js
  * @include GEOR_config.js
  * @include GEOR_localStorage.js
+ * @include GEOR_addons.js
  * @include GEOR_util.js
  */
 

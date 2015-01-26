@@ -71,11 +71,12 @@ Ext.namespace("GEOR.Addons");
 GEOR.Addons.Test = function(map, options) {
     this.map = map;
     this.options = options;
-    this.cmps = null;
-    this.parent = null;
 };
 
 GEOR.Addons.Test.prototype = {
+    cmps: null,
+    parent: null,
+
     /**
      * Method: init
      *

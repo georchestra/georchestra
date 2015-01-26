@@ -1,23 +1,6 @@
 Ext.namespace("GEOR.Addons");
 
-GEOR.Addons.Cadastre = function(map, options) {
-    this.map = map;
-    this.options = options;
-};
-
-GEOR.Addons.Cadastre.BaseComboConfig = {
-    forceSelection: false,
-    width: 190,
-    itemSelector: '.x-combo-list-item'
-};
-GEOR.Addons.Cadastre.BaseFormConfig = {
-    labelWidth: 80,
-    labelSeparator: OpenLayers.i18n("labelSeparator"),
-    bodyStyle: 'padding: 10px',
-    height: 110
-};
-
-GEOR.Addons.Cadastre.prototype = {
+GEOR.Addons.Cadastre = Ext.extend(GEOR.Addons.Base, {
     item: null,
     stores: {},
     layer: null,
@@ -87,15 +70,26 @@ GEOR.Addons.Cadastre.prototype = {
                 fields: fields
             });
         }, this);
-        // return menu item:
-        this.item = new Ext.menu.Item({
-            text: record.get("title")[lang] || record.get("title")["en"],
-            qtip: record.get("description")[lang] || record.get("description")["en"],
-            iconCls: 'cadastre-icon',
-            handler: this.showWindow,
-            scope: this
-        });
-        return this.item;
+        
+        if (this.target) {
+            this.components = this.target.insertButton(this.position, {
+                xtype: 'button',
+                iconCls: 'cadastre-icon',
+                tooltip: this.getTooltip(record),
+                handler: this.showWindow,
+                scope: this
+            });
+            this.target.doLayout();
+        } else {
+            // return menu item:
+            this.item = new Ext.menu.Item({
+                text: this.getText(record),
+                qtip: this.getQtip(record),
+                iconCls: 'cadastre-icon',
+                handler: this.showWindow,
+                scope: this
+            });
+        }
     },
 
 
@@ -537,10 +531,22 @@ GEOR.Addons.Cadastre.prototype = {
         }, GEOR.Addons.Cadastre.BaseFormConfig));
     },
 
-
     destroy: function() {
-        this.win.hide();
+        this.win && this.win.hide();
         this.layer = null;
-        this.map = null;
+
+        GEOR.Addons.Base.prototype.destroy.call(this);
     }
+});
+
+GEOR.Addons.Cadastre.BaseComboConfig = {
+    forceSelection: false,
+    width: 190,
+    itemSelector: '.x-combo-list-item'
+};
+GEOR.Addons.Cadastre.BaseFormConfig = {
+    labelWidth: 80,
+    labelSeparator: OpenLayers.i18n("labelSeparator"),
+    bodyStyle: 'padding: 10px',
+    height: 110
 };
