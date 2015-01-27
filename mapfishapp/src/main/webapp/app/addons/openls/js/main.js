@@ -1,11 +1,6 @@
 Ext.namespace("GEOR.Addons");
 
-GEOR.Addons.OpenLS = function(map, options) {
-    this.map = map;
-    this.options = options;
-};
-
-GEOR.Addons.OpenLS.prototype = {
+GEOR.Addons.OpenLS = Ext.extend(GEOR.Addons.Base, {
     win: null,
     addressField: null,
     layer: null,
@@ -56,6 +51,8 @@ GEOR.Addons.OpenLS.prototype = {
                     this.popup && this.popup.hide();
                     this.layer.destroyFeatures();
                     this.map.removeLayer(this.layer);
+                    this.item && this.item.setChecked(false);
+                    this.components && this.components.toggle(false);
                 },
                 "show": function() {
                     this.map.addLayer(this.layer);
@@ -63,16 +60,27 @@ GEOR.Addons.OpenLS.prototype = {
                 scope: this
             }
         });
-        var lang = OpenLayers.Lang.getCode(),
-            item = new Ext.menu.Item({
-                text: record.get("title")[lang] || record.get("title")["en"],
-                qtip: record.get("description")[lang] || record.get("description")["en"],
+
+        if (this.target) {
+            // create a button to be inserted in toolbar:
+            this.components = this.target.insertButton(this.position, {
+                xtype: 'button',
+                tooltip: this.getTooltip(record),
+                iconCls: 'addon-openls',
+                handler: this.showWindow,
+                scope: this
+            });
+            this.target.doLayout();
+        } else {
+            // create a menu item for the "tools" menu:
+            this.item =  new Ext.menu.CheckItem({
+                text: this.getText(record),
+                qtip: this.getQtip(record),
                 iconCls: "addon-openls",
                 handler: this.showWindow,
                 scope: this
             });
-        this.item = item;
-        return item;
+        }
     },
 
     /**
@@ -265,6 +273,7 @@ GEOR.Addons.OpenLS.prototype = {
         this.popup.destroy();
         this.popup = null;
         this.layer = null;
-        this.map = null;
+        
+        GEOR.Addons.Base.prototype.destroy.call(this);
     }
-};
+});

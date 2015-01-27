@@ -49,23 +49,25 @@ Starting from geOrchestra 14.12, addons are able to escape the "tools" menu to w
 This is achieved through the use of the optional ```target``` property in their configuration options.
 
 Example ```init``` method taking into account the target property:
-```
+```js
     init: function(record) {
         if (this.target) {
             // addon placed in toolbar
             this.components = this.target.insertButton(this.position, {
                 xtype: 'button',
-                tooltip: this.getTooltip(record),
+                tooltip: this.getTooltip(record), // method provided by GEOR.Addons.Base
                 iconCls: 'addon-xxx',
-                handler: ...
+                handler: ...,
+                scope: this
             });
             this.target.doLayout();
         } else {
             // addon placed in "tools menu"
             this.item = new Ext.menu.Item({
-                text: this.getText(record),
-                qtip: this.getQtip(record),
-                handler: this.showWindow,
+                text: this.getText(record), // method provided by GEOR.Addons.Base
+                qtip: this.getQtip(record), // method provided by GEOR.Addons.Base
+                iconCls: 'addon-xxx',
+                handler: ...,
                 scope: this
             });
         }
@@ -89,7 +91,7 @@ Example configuration:
     }
 ```
 With the above configuration (```"target": "tbar_11"```), the addon button will be inserted in the top toolbar, at position 11.
-At the moment, the target can be one of ```tbar```, ```bbar``` for the bottom tollbar, ```tabs``` for the tabpanel in the lower right corner of the screen.
+At the moment, the target can be one of ```tbar```, ```bbar``` for the bottom toolbar, ```tabs``` for the tabpanel in the lower right corner of the screen.
 
 If no target is specified, the addon will have the default behavior (as before) and it's component will be placed inside the "tools" menu.
 

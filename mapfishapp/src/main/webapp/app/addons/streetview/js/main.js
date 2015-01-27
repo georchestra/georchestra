@@ -1,11 +1,6 @@
 Ext.namespace("GEOR.Addons");
 
-GEOR.Addons.Streetview = function(map, options) {
-    this.map = map;
-    this.options = options;
-};
-
-GEOR.Addons.Streetview.prototype = {
+GEOR.Addons.Streetview = Ext.extend(GEOR.Addons.Base, {
     _layer: null,
     _fovLayer: null,
     _modifyControl: null,
@@ -120,7 +115,8 @@ GEOR.Addons.Streetview.prototype = {
             }],
             listeners: {
                 "hide": function() {
-                    item.setChecked(false);
+                    this.item && this.item.setChecked(false);
+                    this.components && this.components.toggle(false);
                 },
                 "resize": this._updateView,
                 "show": {
@@ -133,10 +129,25 @@ GEOR.Addons.Streetview.prototype = {
                 scope: this
             }
         });
-        var lang = OpenLayers.Lang.getCode(),
-            item = new Ext.menu.CheckItem({
-                text: record.get("title")[lang] || record.get("title")["en"],
-                qtip: record.get("description")[lang] || record.get("description")["en"],
+
+        if (this.target) {
+            // create a button to be inserted in toolbar:
+            this.components = this.target.insertButton(this.position, {
+                xtype: 'button',
+                enableToggle: true,
+                tooltip: this.getTooltip(record),
+                iconCls: "addon-streetview",
+                listeners: {
+                    "toggle": this._onCheckchange,
+                    scope: this
+                }
+            });
+            this.target.doLayout();
+        } else {
+            // create a menu item for the "tools" menu:
+            this.item =  new Ext.menu.CheckItem({
+                text: this.getText(record),
+                qtip: this.getQtip(record),
                 iconCls: "addon-streetview",
                 checked: false,
                 listeners: {
@@ -144,8 +155,7 @@ GEOR.Addons.Streetview.prototype = {
                     scope: this
                 }
             });
-        this.item = item;
-        return item;
+        }
     },
 
     /**
@@ -357,6 +367,7 @@ GEOR.Addons.Streetview.prototype = {
         this._window = null;
         this._layer = null;
         this._fovLayer = null;
-        this.map = null;
+        
+        GEOR.Addons.Base.prototype.destroy.call(this);
     }
-};
+});
