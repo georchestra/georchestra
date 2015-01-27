@@ -41,6 +41,62 @@ Each addon comes with a ```manifest.json``` file which:
 The ```default_options``` from the manifest are overriden by the addon-config-specific ```options``` set in your own GEOR_custom.js file.
 Again, an example is worth a hundred words, please refer to the typical [extractor addon config](extractor/README.md).
 
+
+Addon placement
+===============
+
+Starting from geOrchestra 14.12, addons are able to escape the "tools" menu to which they were confined before.
+This is achieved through the use of the optional ```target``` property in their configuration options.
+
+Example ```init``` method taking into account the target property:
+```
+    init: function(record) {
+        if (this.target) {
+            // addon placed in toolbar
+            this.components = this.target.insertButton(this.position, {
+                xtype: 'button',
+                tooltip: this.getTooltip(record),
+                iconCls: 'addon-xxx',
+                handler: ...
+            });
+            this.target.doLayout();
+        } else {
+            // addon placed in "tools menu"
+            this.item = new Ext.menu.Item({
+                text: this.getText(record),
+                qtip: this.getQtip(record),
+                handler: this.showWindow,
+                scope: this
+            });
+        }
+    }
+```
+
+Example configuration:
+```js
+    {
+        "id": "test_0",
+        "name": "Test",
+        "options": {
+            "target": "tbar_11"
+        },
+        "title": {
+            "en": "My addon title"
+        },
+        "description": {
+            "en": "My addon description"
+        }
+    }
+```
+With the above configuration (```"target": "tbar_11"```), the addon button will be inserted in the top toolbar, at position 11.
+At the moment, the target can be one of ```tbar```, ```bbar``` for the bottom tollbar, ```tabs``` for the tabpanel in the lower right corner of the screen.
+
+If no target is specified, the addon will have the default behavior (as before) and it's component will be placed inside the "tools" menu.
+
+In order to achieve this, addons are supposed to inherit from the ```GEOR.Addons.Base``` class. 
+Older addons still work, but they will not take advantage of the newer capability.
+
+
 Developers' corner
 ===================
 
@@ -61,58 +117,3 @@ If the addon instance exposes a public property named ```item```, the referenced
 
 
 If developing a new addon, you might want to start from a simple example, eg the [magnifier](magnifier/README.md) addon.
-
-### How to create an addon which adds its own components into an existing component ?
-
-Here's an example which inserts a textfield into the top toolbar:
-```js
-Ext.namespace("GEOR.Addons");
-
-GEOR.Addons.Test = function(map, options) {
-    this.map = map;
-    this.options = options;
-};
-
-GEOR.Addons.Test.prototype = {
-    cmps: null,
-    parent: null,
-
-    /**
-     * Method: init
-     *
-     * Parameters:
-     * record - {Ext.data.record} a record with the addon parameters
-     */
-    init: function(record) {
-        // attach to top toolbar:
-        this.parent = GeoExt.MapPanel.guess().getTopToolbar();
-        this.cmps = this.parent.insertButton(11, ['-', {
-            xtype: 'textfield',
-            value: "inserted"
-        }]);
-        this.parent.doLayout();
-    },
-
-    /**
-     * Method: destroy
-     * Called by GEOR_tools when deselecting this addon
-     */
-    destroy: function() {
-        if (Ext.isArray(this.cmps)) {
-            var p = this.parent;
-            Ext.each(this.cmps, function(cmp) {
-                p.remove(cmp);
-            });
-        } else {
-            this.parent.remove(this.cmps);
-        }
-        this.cmp = null;
-        this.map = null;
-    }
-};
-```
-
-For the bottom toolbar, you would use:
-```
-this.parent = GeoExt.MapPanel.guess().getBottomToolbar();
-```

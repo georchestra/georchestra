@@ -18,7 +18,6 @@ GEOR.Addons.Cadastre = Ext.extend(GEOR.Addons.Base, {
      * record - {Ext.data.record} a record with the addon parameters
      */
     init: function(record) {
-        var lang = OpenLayers.Lang.getCode();
         Ext.iterate(this.options.tab1, function(k, v) {
             this.fieldNames.push(k);
         }, this);

@@ -16,7 +16,7 @@ GEOR.Addons.Magnifier = Ext.extend(GEOR.Addons.Base, {
      */
     init: function(record) {
         if (this.target) {
-            // create button to be inserted in toolbar:
+            // create a button to be inserted in toolbar:
             this.components = this.target.insertButton(this.position, {
                 xtype: 'button',
                 enableToggle: true,
@@ -29,7 +29,7 @@ GEOR.Addons.Magnifier = Ext.extend(GEOR.Addons.Base, {
             });
             this.target.doLayout();
         } else {
-            // create menu item for the "tools" menu:
+            // create a menu item for the "tools" menu:
             this.item =  new Ext.menu.CheckItem({
                 text: this.getText(record),
                 qtip: this.getQtip(record),
