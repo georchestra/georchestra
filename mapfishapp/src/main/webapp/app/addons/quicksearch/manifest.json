@@ -1,0 +1,43 @@
+{
+    "js": [
+        "js/main.js"
+    ],
+    "default_options": {
+        "target": "tbar_11",
+        "searches": [{
+            "pattern": "([0-9]+ .+)",
+            "service": "https://opendata.agglo-lepuyenvelay.fr/geoserver/geoloc/wfs",
+            "layer": "geoloc:geo_adresse",
+            "field": "label",
+            "filter": "{pattern}*",
+            "template": "<b>{label}</b>"
+        }, {
+            "pattern": "d ([0-9]+)",
+            "service": "https://opendata.agglo-lepuyenvelay.fr/geoserver/wfs",
+            "layer": "TODO",
+            "field": "TODO",
+            "filter": "TODO",
+            "template": "TODO"
+        }, {
+            "service": "https://opendata.agglo-lepuyenvelay.fr/geoserver/geoloc/wfs",
+            "layer": "geoloc:geo_voie",
+            "field": "label",
+            "filter": "{pattern}*",
+            "template": "<b>{label}</b>"
+        }]
+    },
+    "i18n": {
+        "en": {
+            "addon_qs_qtip": "Quick lookup for a reference."
+        },
+        "es": {
+            "addon_qs_qtip": "Quick lookup for a reference."
+        },
+        "fr": {
+            "addon_qs_qtip": "<b>Recherche rapide d'une référence</b><br>Tapez \"d numero_de_dossier\" pour obtenir l'affichage du dossier"
+        },
+        "de": {
+            "addon_qs_qtip": "Quick lookup for a reference."
+        }
+    }
+}
