@@ -1,16 +1,11 @@
 Ext.namespace("GEOR.Addons");
 
-GEOR.Addons.Annotation = function(map, options) {
-    this.map = map;
-    this.options = options;
-    this.control = null;
-    this.item = null;
-    this.window = null;
-};
+GEOR.Addons.Annotation = Ext.extend(GEOR.Addons.Base, {
 
-// If required, may extend or compose with Ext.util.Observable
-//Ext.extend(GEOR.Addons.Annotation, Ext.util.Observable, {
-GEOR.Addons.Annotation.prototype = {
+    control: null,
+
+    window: null,
+
     /**
      * Method: init
      *
@@ -18,7 +13,6 @@ GEOR.Addons.Annotation.prototype = {
      * record - {Ext.data.record} a record with the addon parameters
      */
     init: function(record) {
-
         var annotation = new GEOR.Annotation({
             map: this.map,
             popupOptions: {unpinnable: false, draggable: true}
@@ -38,32 +32,43 @@ GEOR.Addons.Annotation.prototype = {
             }],
             listeners: {
                 "hide": function() {
-                    item.setChecked(false);
+                    this.item && this.item.setChecked(false);
+                    this.components && this.components.toggle(false);
                 },
                 scope: this
             }
         });
-
-        var lang = OpenLayers.Lang.getCode(),
-            item = new Ext.menu.CheckItem({
-                text: record.get("title")[lang] || record.get("title")["en"],
-                qtip: record.get("description")[lang] || record.get("description")["en"],
+  
+        if (this.target) {
+            // create a button to be inserted in toolbar:
+            this.components = this.target.insertButton(this.position, {
+                xtype: 'button',
+                tooltip: this.getTooltip(record),
+                iconCls: "addon-annotation",
+                handler: this._onCheckchange,
+                scope: this
+            });
+            this.target.doLayout();
+        } else {
+            // create a menu item for the "tools" menu:
+            this.item =  new Ext.menu.CheckItem({
+                text: this.getText(record),
+                qtip: this.getQtip(record),
                 iconCls: "addon-annotation",
                 checked: false,
                 listeners: {
-                    "checkchange": this.onCheckchange,
+                    "checkchange": this._onCheckchange,
                     scope: this
                 }
             });
-        this.item = item;
-        return item;
+        }
     },
 
     /**
-     * Method: onCheckchange
+     * Method: _onCheckchange
      * Callback on checkbox state changed
      */
-    onCheckchange: function(item, checked) {
+    _onCheckchange: function(item, checked) {
         if (checked) {
             this.window.show();
             this.window.alignTo(
@@ -84,6 +89,7 @@ GEOR.Addons.Annotation.prototype = {
     destroy: function() {
         this.window.hide();
         this.control = null;
-        this.map = null;
+
+        GEOR.Addons.Base.prototype.destroy.call(this);
     }
-};
+});

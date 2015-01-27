@@ -23,6 +23,7 @@
  * @include GEOR_waiter.js
  * @include GEOR_config.js
  * @include GEOR_localStorage.js
+ * @include GEOR_addons.js
  * @include GEOR_util.js
  */
 
@@ -231,8 +232,10 @@ GEOR.tools = (function() {
         Ext.each(outgoing, function(r) {
             var addon = addonsCache[r.id],
                 item = addon.item;
-            menu.remove(item, true);
-            addon.destroy();
+            if (item) {
+                menu.remove(item, true);
+            }
+            addon.destroy(); // will be used by the addon to remove its component
             delete addonsCache[r.id];
             r.set("_loaded", false);
         });
@@ -273,7 +276,8 @@ GEOR.tools = (function() {
                     var js = [], 
                         o = (new OpenLayers.Format.JSON()).read(
                             response.responseText
-                        );
+                        ),
+                        popmsg = false; // no message popping down by default
                     // handle i18n
                     if (o.i18n) {
                         Ext.iterate(o.i18n, function(k, v) {
@@ -312,14 +316,23 @@ GEOR.tools = (function() {
                                     break;
                                 }
                             }
-                            // handle menuitem qtip:
-                            addon.item.on('afterrender', GEOR.util.registerTip);
-                            // here we know it should be inserted at position i from the beginning
-                            menu.insert(i + 2, addon.item);
+                            if (addon.item) {
+                                // "one addon hidden in the tools menu" means
+                                // that the popping down message has to be displayed:
+                                popmsg = true;
+                                // handle menuitem qtip:
+                                addon.item.on('afterrender', GEOR.util.registerTip);
+                                // here we know it should be inserted at position i from the beginning
+                                menu.insert(i + 5, addon.item);
+                            } else {
+                                // if there is no addon.item, it means the addon takes care of 
+                                // inserting his own component into the viewport
+                                // and calling doLayout on the parent component.
+                            }
                         }, this, true);
                     }
                     // inform user:
-                    if (count == 0 && !silent) {
+                    if (popmsg && count == 0 && !silent) {
                         GEOR.helper.msg(tr("Tools"), 
                             tr("Your new tools are now available in the tools menu."));
                     }
@@ -562,6 +575,12 @@ GEOR.tools = (function() {
             menu = new Ext.menu.Menu({
                 defaultAlign: "tr-br",
                 items: [
+                    {
+                        text: tr("Manage tools"),
+                        hideOnClick: false,
+                        iconCls: "add",
+                        handler: showToolSelection
+                    }, '-',
                     new Ext.menu.CheckItem(
                         new GeoExt.Action({
                             text: tr("distance measure"),
@@ -578,12 +597,7 @@ GEOR.tools = (function() {
                             group: "_measure",
                             iconCls: "measure_area"
                         })
-                    ), '-', {
-                        text: tr("Manage tools"),
-                        hideOnClick: false,
-                        iconCls: "add",
-                        handler: showToolSelection
-                    }
+                    ), '-'
                 ]
             });
             return new Ext.Button({

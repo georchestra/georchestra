@@ -1,15 +1,13 @@
 Ext.namespace("GEOR.Addons");
 
-GEOR.Addons.Magnifier = function(map, options) {
-    this.map = map;
-    this.options = options;
-    this.control = null;
-    this.item = null;
-};
+GEOR.Addons.Magnifier = Ext.extend(GEOR.Addons.Base, {
 
-// If required, may extend or compose with Ext.util.Observable
-//Ext.extend(GEOR.Addons.Magnifier, Ext.util.Observable, { 
-GEOR.Addons.Magnifier.prototype = {
+    /**
+     * Property: control
+     * {OpenLayers.Control.Magnifier}
+     */
+    control: null,
+
     /**
      * Method: init
      *
@@ -17,19 +15,31 @@ GEOR.Addons.Magnifier.prototype = {
      * record - {Ext.data.record} a record with the addon parameters
      */
     init: function(record) {
-        var lang = OpenLayers.Lang.getCode(),
-            item = new Ext.menu.CheckItem({
-                text: record.get("title")[lang] || record.get("title")["en"],
-                qtip: record.get("description")[lang] || record.get("description")["en"],
-                //iconCls: "addon-magnifier",
+        if (this.target) {
+            // create a button to be inserted in toolbar:
+            this.components = this.target.insertButton(this.position, {
+                xtype: 'button',
+                enableToggle: true,
+                tooltip: this.getTooltip(record),
+                iconCls: 'addon-magnifier',
+                listeners: {
+                    "toggle": this.onCheckchange,
+                    scope: this
+                }
+            });
+            this.target.doLayout();
+        } else {
+            // create a menu item for the "tools" menu:
+            this.item =  new Ext.menu.CheckItem({
+                text: this.getText(record),
+                qtip: this.getQtip(record),
                 checked: false,
                 listeners: {
                     "checkchange": this.onCheckchange,
                     scope: this
                 }
             });
-        this.item = item;
-        return item;
+        }
     },
 
     /**
@@ -54,6 +64,7 @@ GEOR.Addons.Magnifier.prototype = {
     destroy: function() {
         this.control && this.control.destroy();
         this.control = null;
-        this.map = null;
+
+        GEOR.Addons.Base.prototype.destroy.call(this);
     }
-};
+});

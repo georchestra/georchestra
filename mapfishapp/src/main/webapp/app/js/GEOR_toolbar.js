@@ -62,7 +62,7 @@ GEOR.toolbar = (function() {
      * {Ext.Toolbar} The toolbar.
      */
     var createTbar = function(layerStore) {
-        var map = layerStore.map, tbar = new Ext.Toolbar(), ctrl, items = [];
+        var map = layerStore.map, tbar = new Ext.Toolbar({id: "tbar"}), ctrl, items = [];
 
         ctrl = new OpenLayers.Control.ZoomToMaxExtent();
         items.push(new GeoExt.Action({

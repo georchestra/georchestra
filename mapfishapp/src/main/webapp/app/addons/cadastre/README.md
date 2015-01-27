@@ -31,15 +31,15 @@ Typical configuration to include in your GEOR_custom.js file:
             "tab1": {
                 "field1": {
                     "file": "cities.json",
-                    "valuefield": "code_insee",
-                    "displayfield": "nom_com",
-                    "template": "<b>{nom_com}</b> ({code_dep})"
+                    "valuefield": "INSE",
+                    "displayfield": "COMMUNE",
+                    "template": "<b>{COMMUNE}</b> ({INSE})"
                 },
                 "field2": {
                     "wfs": "http://ids.pigma.org/geoserver/ign/wfs",
                     "typename": "ign:ign_bdparcellaire_sections",
                     "matchingproperties": {
-                        "field1": "code_insee"
+                        "field1": "INSE"
                     },
                     "valuefield": "section",
                     "displayfield": "section",
@@ -59,7 +59,7 @@ Typical configuration to include in your GEOR_custom.js file:
             },
             "tab2": {
                 "field2": {
-                    "wfs": "http://ids.pigma.org/geoserver/cadastre/wfs",
+                    "wfs": "https://ids.pigma.org/geoserver/cadastre/wfs",
                     "typename": "cadastre:localisants_bdparc_majic2012",
                     "matchingproperties": {
                         "field1": "code_insee"

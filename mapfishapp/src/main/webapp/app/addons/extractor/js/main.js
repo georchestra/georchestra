@@ -1,10 +1,5 @@
 Ext.namespace("GEOR.Addons");
 
-GEOR.Addons.Extractor = function(map, options) {
-    this.map = map;
-    this.options = options;
-};
-
 /*
  * TODO: 
  * - handle dlform
@@ -12,7 +7,7 @@ GEOR.Addons.Extractor = function(map, options) {
  * - wizard (1 choose layers (NOK report here) 2 choose extent 3 choose formats 4 enter email )
  * - modifyFeature control improved: non symetrical mode when OpenLayers.Control.ModifyFeature.RESIZE
  */
-GEOR.Addons.Extractor.prototype = {
+GEOR.Addons.Extractor = Ext.extend(GEOR.Addons.Base, {
     win: null,
     jsonFormat: null,
     layer: null,
@@ -23,6 +18,7 @@ GEOR.Addons.Extractor.prototype = {
     rasterFormatField: null,
     resField: null,
     emailField: null,
+
     /**
      * Method: init
      *
@@ -30,7 +26,6 @@ GEOR.Addons.Extractor.prototype = {
      * record - {Ext.data.record} a record with the addon parameters
      */
     init: function(record) {
-        var lang = OpenLayers.Lang.getCode();
         this.jsonFormat = new OpenLayers.Format.JSON();
         var style = {
             externalGraphic: GEOR.config.PATHNAME + "/app/addons/extractor/img/shading.png",
@@ -59,14 +54,27 @@ GEOR.Addons.Extractor.prototype = {
                 OpenLayers.Control.ModifyFeature.DRAG,
             autoActivate: true
         });
-        this.item = new Ext.menu.Item({
-            text: record.get("title")[lang] || record.get("title")["en"],
-            qtip: record.get("description")[lang] || record.get("description")["en"],
-            iconCls: 'extractor-icon',
-            handler: this.showWindow,
-            scope: this
-        });
-        return this.item;
+
+        if (this.target) {
+            // create a button to be inserted in toolbar:
+            this.components = this.target.insertButton(this.position, {
+                xtype: 'button',
+                tooltip: this.getTooltip(record),
+                iconCls: 'extractor-icon',
+                handler: this.showWindow,
+                scope: this
+            });
+            this.target.doLayout();
+        } else {
+            // create a menu item for the "tools" menu:
+            this.item =  new Ext.menu.CheckItem({
+                text: this.getText(record),
+                qtip: this.getQtip(record),
+                iconCls: 'extractor-icon',
+                handler: this.showWindow,
+                scope: this
+            });
+        }
     },
     
     createWindow: function() {
@@ -178,6 +186,8 @@ GEOR.Addons.Extractor.prototype = {
                     this.map.removeLayer(this.layer);
                     this.modifyControl.unselectFeature(this.layer.features[0]);
                     this.map.removeControl(this.modifyControl);
+                    this.item && this.item.setChecked(false);
+                    this.components && this.components.toggle(false);
                 },
                 scope: this
             }
@@ -284,10 +294,11 @@ GEOR.Addons.Extractor.prototype = {
     },
 
     destroy: function() {
-        this.win.hide();
+        this.win && this.win.hide();
         this.layer = null;
-        this.map = null;
         this.jsonFormat = null;
         this.modifyControl = null;
+        
+        GEOR.Addons.Base.prototype.destroy.call(this);
     }
-};
+});
