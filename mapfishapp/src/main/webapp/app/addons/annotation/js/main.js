@@ -43,13 +43,10 @@ GEOR.Addons.Annotation = Ext.extend(GEOR.Addons.Base, {
             // create a button to be inserted in toolbar:
             this.components = this.target.insertButton(this.position, {
                 xtype: 'button',
-                enableToggle: true,
                 tooltip: this.getTooltip(record),
                 iconCls: "addon-annotation",
-                listeners: {
-                    "checkchange": this._onCheckchange,
-                    scope: this
-                }
+                handler: this._onCheckchange,
+                scope: this
             });
             this.target.doLayout();
         } else {

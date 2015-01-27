@@ -77,7 +77,7 @@ GEOR.Addons.Streetview = Ext.extend(GEOR.Addons.Base, {
             title: OpenLayers.i18n("StreetView"),
             closable: true,
             x: 0,
-            y: 0,
+            y: 120,
             minHeight: 200,
             minWidth: 200,
             boxMaxHeight: 640,

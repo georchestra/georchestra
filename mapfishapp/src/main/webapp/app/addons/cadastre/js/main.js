@@ -81,7 +81,7 @@ GEOR.Addons.Cadastre = Ext.extend(GEOR.Addons.Base, {
             this.target.doLayout();
         } else {
             // return menu item:
-            this.item = new Ext.menu.Item({
+            this.item = new Ext.menu.CheckItem({
                 text: this.getText(record),
                 qtip: this.getQtip(record),
                 iconCls: 'cadastre-icon',
@@ -167,6 +167,8 @@ GEOR.Addons.Cadastre = Ext.extend(GEOR.Addons.Base, {
                 listeners: {
                     "hide": function() {
                         this.map.removeLayer(this.layer);
+                        this.item && this.item.setChecked(false);
+                        this.components && this.components.toggle(false);
                     },
                     scope: this
                 }
