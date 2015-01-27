@@ -270,7 +270,7 @@ GEOR.Addons.OpenLS = Ext.extend(GEOR.Addons.Base, {
      */
     destroy: function() {
         this.win.hide();
-        this.popup.destroy();
+        this.popup && this.popup.destroy();
         this.popup = null;
         this.layer = null;
         

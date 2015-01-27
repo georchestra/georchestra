@@ -323,7 +323,7 @@ GEOR.tools = (function() {
                                 // handle menuitem qtip:
                                 addon.item.on('afterrender', GEOR.util.registerTip);
                                 // here we know it should be inserted at position i from the beginning
-                                menu.insert(i + 2, addon.item);
+                                menu.insert(i + 5, addon.item);
                             } else {
                                 // if there is no addon.item, it means the addon takes care of 
                                 // inserting his own component into the viewport
@@ -575,6 +575,12 @@ GEOR.tools = (function() {
             menu = new Ext.menu.Menu({
                 defaultAlign: "tr-br",
                 items: [
+                    {
+                        text: tr("Manage tools"),
+                        hideOnClick: false,
+                        iconCls: "add",
+                        handler: showToolSelection
+                    }, '-',
                     new Ext.menu.CheckItem(
                         new GeoExt.Action({
                             text: tr("distance measure"),
@@ -591,12 +597,7 @@ GEOR.tools = (function() {
                             group: "_measure",
                             iconCls: "measure_area"
                         })
-                    ), '-', {
-                        text: tr("Manage tools"),
-                        hideOnClick: false,
-                        iconCls: "add",
-                        handler: showToolSelection
-                    }
+                    ), '-'
                 ]
             });
             return new Ext.Button({

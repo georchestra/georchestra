@@ -361,8 +361,8 @@ GEOR.Addons.Streetview = Ext.extend(GEOR.Addons.Base, {
         this._drawControl = null;
         this._modifyControl && this._modifyControl.destroy();
         this._modifyControl = null;
-        this.map.removeLayer(this._layer);
-        this.map.removeLayer(this._fovLayer);
+        this._layer.map && this.map.removeLayer(this._layer);
+        this._fovLayer.map && this.map.removeLayer(this._fovLayer);
         this._window.destroy();
         this._window = null;
         this._layer = null;

@@ -294,7 +294,7 @@ GEOR.Addons.Extractor = Ext.extend(GEOR.Addons.Base, {
     },
 
     destroy: function() {
-        this.win.hide();
+        this.win && this.win.hide();
         this.layer = null;
         this.jsonFormat = null;
         this.modifyControl = null;
