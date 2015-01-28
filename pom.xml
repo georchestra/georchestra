@@ -331,6 +331,22 @@
       </modules>
     </profile>
     <profile>
+      <id>travis</id>
+      <build>
+        <plugins>
+          <!-- skip it, since this fails on travis-ci -->
+          <plugin>
+            <groupId>pl.project13.maven</groupId>
+            <artifactId>git-commit-id-plugin</artifactId>
+            <version>2.1.10</version>
+            <configuration>
+              <skip>true</skip>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
       <id>all</id>
       <activation>
         <file>
