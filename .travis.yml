@@ -1,5 +1,5 @@
+language: java
 git:
   submodules: true
-language: java
-script: mvn site -Ptravis,generate-site
-
+install: mvn install -Ptravis
+script: mvn test -Ptravis
