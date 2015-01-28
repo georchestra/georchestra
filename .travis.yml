@@ -3,6 +3,6 @@ git:
   submodules: true
 before_install:
   - sudo apt-get update
-  - sudo apt-get -y install ant ant-optional python-virtualenv pip
+  - sudo apt-get -y install ant ant-optional python-virtualenv python-pip
 install: mvn install -Ptravis
 script: mvn test -Ptravis
