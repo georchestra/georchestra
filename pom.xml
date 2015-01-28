@@ -345,6 +345,15 @@
           </plugin>
         </plugins>
       </build>
+      <modules>
+        <module>extractorapp</module>
+        <module>ldapadmin</module>
+        <module>mapfishapp</module>
+        <module>security-proxy</module>
+        <module>downloadform</module>
+        <module>analytics</module>
+        <module>header</module>
+      </modules>
     </profile>
     <profile>
       <id>all</id>

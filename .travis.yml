@@ -4,5 +4,5 @@ git:
 before_install:
   - sudo apt-get update
   - sudo apt-get -y install ant ant-optional python-virtualenv python-pip
-install: mvn install -DskipTests -Ptravis,generate-site
-script: mvn test -Ptravis,generate-site
+install: mvn install -DskipTests -Ptravis
+script: mvn test -Ptravis
