@@ -45,7 +45,7 @@ New features:
  * mapfishapp: revamp of the "add layers" window - see [#718](https://github.com/georchestra/georchestra/issues/718),
  * mapfishapp: help message popping down when tools are loaded and available,
  * mapfishapp: if filled, wmc title and abstract are now displayed on context restored - see [#816](https://github.com/georchestra/georchestra/issues/816),
- * mapfishapp: sort contexts by keywords - see [#866](https://github.com/georchestra/georchestra/issues/866).
+ * mapfishapp: filter contexts by keywords - see [#866](https://github.com/georchestra/georchestra/issues/866).
  
 Enhancements:
  * extractorapp: editable combobox for resolution selection - see [#726](https://github.com/georchestra/georchestra/issues/726),
