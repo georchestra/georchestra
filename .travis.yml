@@ -5,7 +5,6 @@ before_install:
   - sudo apt-get update
   - sudo apt-get -y install ant ant-optional python-virtualenv python-pip
   - wget http://sdi.georchestra.org/~pmauduit/geor-m2.tar
-  - tar xvf geor-m2.tar
-  - pwd
+  - tar xvf geor-m2.tar > /dev/null
 install: mvn install -DskipTests -P-all,travis
 script: mvn install -P-all,travis

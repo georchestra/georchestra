@@ -378,6 +378,16 @@
         <module>analytics</module>
         <module>header</module>
       </modules>
+      <repositories>
+        <repository>
+          <snapshots>
+            <enabled>true</enabled>
+            <checksumPolicy>ignore</checksumPolicy>
+          </snapshots>
+          <id>travis-bootstrapped-repo</id>
+          <url>file:///${basedir}/.m2</url>
+        </repository>
+      </repositories>
     </profile>
     <profile>
       <id>all</id>
