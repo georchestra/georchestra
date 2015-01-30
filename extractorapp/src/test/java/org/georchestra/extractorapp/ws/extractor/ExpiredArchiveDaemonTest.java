@@ -9,6 +9,7 @@ import java.io.IOException;
 
 import org.georchestra.extractorapp.ws.extractor.task.ExtractionManager;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class ExpiredArchiveDaemonTest {
@@ -35,6 +36,7 @@ public class ExpiredArchiveDaemonTest {
 	}
 
 	@Test
+	@Ignore
 	public void testExpiredArchiveDaemonFileDeletion() {
 		ExpiredArchiveDaemon ead = new ExpiredArchiveDaemon();
 		ead.startup();
