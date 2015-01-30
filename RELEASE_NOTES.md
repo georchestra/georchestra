@@ -22,7 +22,7 @@ Not yet funded, but would be **really nice** to have:
 Version 14.12 (stable version)
 ==============================
 
-This release received contributions from the GeoBretagne, GéoPicardie, CIGALsace, Rennes Métropole, Le Puy en Velay and Université de Franche-Comté projects.
+This release received contributions from the GeoBretagne, GéoPicardie, CIGALsace, CRAIG, Rennes Métropole, Le Puy en Velay and Université de Franche-Comté projects.
 It comes with an improved [install documentation](README.md).
 
 According to our release policy, geOrchestra 13.09 is not supported anymore.
@@ -45,7 +45,7 @@ New features:
  * mapfishapp: revamp of the "add layers" window - see [#718](https://github.com/georchestra/georchestra/issues/718),
  * mapfishapp: help message popping down when tools are loaded and available,
  * mapfishapp: if filled, wmc title and abstract are now displayed on context restored - see [#816](https://github.com/georchestra/georchestra/issues/816),
- * mapfishapp: sort contexts by keywords - see [#866](https://github.com/georchestra/georchestra/issues/866).
+ * mapfishapp: filter contexts by keywords - see [#866](https://github.com/georchestra/georchestra/issues/866).
  
 Enhancements:
  * extractorapp: editable combobox for resolution selection - see [#726](https://github.com/georchestra/georchestra/issues/726),
@@ -60,6 +60,7 @@ Enhancements:
  * mapfishapp: i18n neutral nopreview image for csw querier - see [#775](https://github.com/georchestra/georchestra/issues/775),
  * mapfishapp: load data from catalog improvement - see [#756](https://github.com/georchestra/georchestra/issues/756),
  * mapfishapp: advanced csw querier syntax help - see [#478](https://github.com/georchestra/georchestra/issues/478),
+ * mapfishapp: addons can be placed in toolbars now - see [#132](https://github.com/georchestra/georchestra/issues/132),
  * proxy: handle a list of servers for which the x-forwarded headers should not be sent (typically geo.admin.ch) - see [#782](https://github.com/georchestra/georchestra/issues/782),
  * georchestra: german translations generalized - see [#777](https://github.com/georchestra/georchestra/issues/777),
  * georchestra: the maven build is now aware of the javascript build outcome - see [#809](https://github.com/georchestra/georchestra/issues/809).
@@ -67,15 +68,19 @@ Enhancements:
 Bug fixes:
  * analytics: fixed global csv export - see [#835](https://github.com/georchestra/georchestra/issues/835),
  * analytics: fixed log4j config issue - see [#785](https://github.com/georchestra/georchestra/issues/785),
+ * analytics:  fixed broken double click to see details - see [#883](https://github.com/georchestra/georchestra/issues/883),
  * build: fixed by migrating from OpenGeo to Boundless repository and also by setting up our own repository,
  * cas: fixed "after logging in from /cas/login the header does not show the connected user" - see [#837](https://github.com/georchestra/georchestra/issues/837),
  * catalogapp: fixed missing log4j configuration file - see [#861](https://github.com/georchestra/georchestra/issues/861),
  * config: fixed proxy targets wrong connector for geoserver - see [c2dca7](https://github.com/georchestra/template/commit/c2dca72c647e9e33662655232212601fb5f5ac45),
  * epsg-extension: fixed the EPSG:27572 SRS for use in mapfishapp and extractorapp - see [#379](https://github.com/georchestra/georchestra/issues/379),
+ * extractorapp: workaround a geoserver issue for EPSG:4326 bboxes,
+ * extractorapp: fixed WCS specific regexp in checkPermission method,
  * geonetwork: fixed LDAP sync - see [6a7e69](https://github.com/georchestra/geonetwork/commit/6a7e692daaabe3b27793b4c75de2bc91ffe43840),
  * geonetwork: in associated resource panel from editor, fixed failure to add link to service metadata record,
  * geonetwork: schema iso / fra - fixed missing description for "funder",
  * ldapadmin: fixed renaming group name leads to corrupted LDAP entry - see [#810](https://github.com/georchestra/georchestra/issues/810),
+ * ldapadmin: fixed unescaped quotes in translations - see [#890](https://github.com/georchestra/georchestra/issues/890),
  * mapfishapp: fixed js error on vector layer selection - see [#785](https://github.com/georchestra/georchestra/issues/785),
  * mapfishapp: fixed missing SLD_VERSION WMS parameter, which is mandatory from version 1.3.0 on - see [#636](https://github.com/georchestra/georchestra/issues/636),
  * mapfishapp: modified MAP_DOTS_PER_INCH value in order to fix WMS/WMTS layer overlay - see [#736](https://github.com/georchestra/georchestra/issues/736),
@@ -87,7 +92,7 @@ Bug fixes:
  * mapfishapp: fixed the csw queryable "Type" case,
  * mapfishapp: fixed erroneous area measurements - see [#838](https://github.com/georchestra/georchestra/issues/838),
  * mapfishapp: fixed spanish lang file formatting - see [043ef1](https://github.com/georchestra/georchestra/commit/043ef1eeee0865a3e4028cc1509ae5d9f4526bd9),
- * proxy: Fix for a vulnerability where client could access localhost resources via proxy url, see [5c9b4d](https://github.com/georchestra/georchestra/commit/5c9b4db1a8c004a582d2be4f2a909c68843cad59),
+ * proxy: fixed a vulnerability where client could access localhost resources via proxy url, see [5c9b4d](https://github.com/georchestra/georchestra/commit/5c9b4db1a8c004a582d2be4f2a909c68843cad59),
  * proxy: prevented the use of the ogcproxy in production (it is required for development purposes only),
  * proxy: restored access to public layers through qgis, udig and arcgis clients - see [b077f8](https://github.com/georchestra/georchestra/commit/b077f8e6695ea807d18342b35c63c1843f457ee0),
  * proxy: checkhealth now targets the main geOrchestra database by default, see [a1d825](https://github.com/georchestra/template/commit/a1d825ecdda2c1f89ec78039d95ab17ba2f47310),
