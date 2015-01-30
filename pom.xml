@@ -311,21 +311,18 @@
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-site-plugin</artifactId>
               <version>3.4</version>
+              <executions>
+                <execution>
+                  <id>attach-descriptor</id>
+                  <goals>
+                    <goal>attach-descriptor</goal>
+                  </goals>
+                </execution>
+              </executions>
             </plugin>
           </plugins>
         </pluginManagement>
         <plugins>
-          <plugin>
-            <artifactId>maven-site-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>attach-descriptor</id>
-                <goals>
-                  <goal>attach-descriptor</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-dependency-plugin</artifactId>
@@ -358,7 +355,7 @@
       <id>travis</id>
       <build>
         <plugins>
-          <!-- skip it, since this fails on travis-ci -->
+          <!-- skip plugin, since this fails on travis-ci and this is useless -->
           <plugin>
             <groupId>pl.project13.maven</groupId>
             <artifactId>git-commit-id-plugin</artifactId>
@@ -370,6 +367,9 @@
         </plugins>
       </build>
       <modules>
+        <module>config</module>
+        <module>server-deploy-support</module>
+        <module>ogc-server-statistics</module>
         <module>extractorapp</module>
         <module>ldapadmin</module>
         <module>mapfishapp</module>

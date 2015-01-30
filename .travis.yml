@@ -4,5 +4,5 @@ git:
 before_install:
   - sudo apt-get update
   - sudo apt-get -y install ant ant-optional python-virtualenv python-pip
-install: travis_retry mvn install -DskipTests -P-all,travis
-script: mvn test -P-all,travis
+install: travis_retry mvn install -DskipTests
+script: mvn install -P-all,travis
