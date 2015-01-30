@@ -2,7 +2,7 @@
 
 geOrchestra is a complete **Spatial Data Infrastructure** solution.
 
-It features a **metadata catalog** (GeoNetwork 2.10), an **OGC server** (GeoServer 2.3.2 and GeoWebCache 1.5.1) with fine-grained access control (based on GeoFence), an **advanced viewer and editor**, an **extractor** and **many more** (security and auth system based on proxy/CAS/LDAP, analytics, admin UIs, ...)
+It features a **metadata catalog** (GeoNetwork 2.10), an **OGC server** (GeoServer 2.5.4 and GeoWebCache 1.5.4) with fine-grained access control (based on GeoFence), an **advanced viewer and editor**, an **extractor** and **many more** (security and auth system based on proxy/CAS/LDAP, analytics, admin UIs, ...)
 
 ## Releases
 
@@ -12,7 +12,7 @@ Before downloading, you might be interested in the [release notes](RELEASE_NOTES
 
 ## Download
 
-To download the latest stable version (currently 14.06), use the following command line:
+To download the latest stable version (currently 14.12), use the following command line:
 ```
 git clone --recursive https://github.com/georchestra/georchestra.git ~/georchestra
 ```
@@ -39,7 +39,7 @@ For help setting up your instance, or for dev-related questions, use the [#georc
 ## More
 
 Additional information can be found in the [georchestra.org](http://www.georchestra.org/) website and in the following links:
- * [catalog](https://github.com/georchestra/geonetwork/blob/georchestra-14.06/README.md): standard GeoNetwork with a light customization, 
+ * [catalog](https://github.com/georchestra/geonetwork/blob/georchestra-14.12/README.md): standard GeoNetwork with a light customization, 
  * [viewer](mapfishapp/README.md) (aka mapfishapp): a robust, OGC-compliant webgis with editing capabilities,
  * [extractor](extractorapp/README.md) (aka extractorapp): able to create zips from data served through OGC web services and send an email when your extraction is done, 
  * [geoserver](http://geoserver.org/): the reference implementation for many OGC web services,
