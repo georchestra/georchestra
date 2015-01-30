@@ -22,7 +22,7 @@ Not yet funded, but would be **really nice** to have:
 Version 14.12 (stable version)
 ==============================
 
-This release received contributions from the GeoBretagne, GéoPicardie, CIGALsace, Rennes Métropole, Le Puy en Velay and Université de Franche-Comté projects.
+This release received contributions from the GeoBretagne, GéoPicardie, CIGALsace, CRAIG, Rennes Métropole, Le Puy en Velay and Université de Franche-Comté projects.
 It comes with an improved [install documentation](README.md).
 
 According to our release policy, geOrchestra 13.09 is not supported anymore.
