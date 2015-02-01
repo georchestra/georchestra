@@ -370,6 +370,7 @@
         <module>config</module>
         <module>server-deploy-support</module>
         <module>ogc-server-statistics</module>
+        <module>catalogapp</module>
         <module>extractorapp</module>
         <module>ldapadmin</module>
         <module>mapfishapp</module>
