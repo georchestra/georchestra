@@ -10,6 +10,13 @@
   <organization>
     <name>geOrchestra</name>
   </organization>
+  <distributionManagement>
+    <site>
+      <id>geOrchestra-generated-site</id>
+      <name>geOrchestra maven generated site</name>
+      <url>file:///tmp/georchestra-generated-site/</url>
+    </site>
+  </distributionManagement>
   <properties>
     <gt.version>9.2</gt.version>
     <spring.version>2.5.6.SEC01</spring.version>
@@ -236,7 +243,13 @@
           <reportSet>
             <reports>
               <report>dependencies</report>
+              <report>project-team</report>
+              <report>mailing-list</report>
+              <report>cim</report>
+              <report>issue-tracking</report>
+              <report>license</report>
               <report>scm</report>
+              <report>index</report>
             </reports>
           </reportSet>
         </reportSets>
