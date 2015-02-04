@@ -332,7 +332,7 @@ class BoundWcsRequest extends WcsReaderRequest {
 			AuthCache authCache = new BasicAuthCache();
 			// Generate BASIC scheme object and add it to the local auth cache
 			BasicScheme basicAuth = new BasicScheme();
-			authCache.put(new HttpHost(wcsUrl.getHost(), wcsUrl.getPort()), basicAuth);
+			authCache.put(new HttpHost(wcsUrl.getHost(), wcsUrl.getPort(), wcsUrl.getProtocol()), basicAuth);
 
 			// Add AuthCache to the execution context
 			localcontext.setAttribute(ClientContext.AUTH_CACHE, authCache);
