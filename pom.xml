@@ -5,7 +5,7 @@
   <artifactId>root</artifactId>
   <packaging>pom</packaging>
   <version>15.06-SNAPSHOT</version>
-  <name>Root project of the geOrchestra project</name>
+  <name>Root project of the geOrchestra SDI</name>
   <url>http://maven.apache.org</url>
   <organization>
     <name>geOrchestra</name>
@@ -41,6 +41,32 @@
 
 ]]></postTreatmentScript>
   </properties>
+  <mailingLists>
+    <mailingList>
+      <name>User List</name>
+      <archive>https://groups.google.com/forum/#!forum/georchestra</archive>
+    </mailingList>
+    <mailingList>
+      <name>Dev List</name>
+      <archive>https://groups.google.com/forum/#!forum/georchestra-dev</archive>
+    </mailingList>
+  </mailingLists>
+  <issueManagement>
+    <url>https://github.com/georchestra/georchestra/issues</url>
+    <system>GitHub Issues</system>
+  </issueManagement>
+  <licenses>
+    <license>
+      <name>GPL</name>
+      <url>http://opensource.org/licenses/GPL-3.0</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <scm>
+    <url>https://github.com/georchestra/georchestra</url>
+    <connection>scm:git:git://github.com/georchestra/georchestra.git</connection>
+    <developerConnection>scm:git:git@github.com:georchestra/georchestra.git</developerConnection>
+  </scm>
   <modules>
     <module>config</module>
     <!-- <module>gt-ogr</module> now the geotools implementation is used -->
