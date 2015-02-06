@@ -4,6 +4,7 @@ QuickSearch ADDON
 This addon allows users to query layer objects across different services using "typeahead" search.
 author: @fvanderbiest
 
+Compatibility: geOrchestra >= 14.12
 
 Example addon config:
 
