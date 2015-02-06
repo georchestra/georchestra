@@ -30,7 +30,7 @@ Example addon config:
                 "featureNS": "http://opendata.agglo-lepuyenvelay.fr/geoserver/geoloc",
                 "featureType": "geo_adresse"
             },{
-                // last search has no pattern means that it catches all requests which do not match any of the above patterns
+                // search with no pattern means that it catches all requests which do not match any of the above patterns
                 "service": "https://opendata.agglo-lepuyenvelay.fr/geoserver/wfs",
                 "featureNS": "http://opendata.agglo-lepuyenvelay.fr/geoserver/geoloc",
                 "featureType": "geo_voie"

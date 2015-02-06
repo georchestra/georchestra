@@ -94,9 +94,10 @@ GEOR.Addons.Quicksearch = Ext.extend(GEOR.Addons.Base, {
      *
      */
     _onBeforeLoad: function(store, options) {
-        var doQuery = false;
+        var doQuery = false, elseSearch;
         Ext.each(this._searches, function(search) {
             if (!search.pattern) {
+                elseSearch = search;
                 return;
             }
             var r = store.baseParams.query.match(search.pattern);
@@ -112,11 +113,9 @@ GEOR.Addons.Quicksearch = Ext.extend(GEOR.Addons.Base, {
                 return false; // breaks the loop
             }
         }, this);
-        var elseSearch = this._searches[this._searches.length-1]; // TODO: improve so that no need for it to be the last filter
-        if (doQuery == false && !elseSearch.pattern) {
+        if (doQuery == false && elseSearch) {
             // means we have tested the input against all rules
-            // and that the last rule has no pattern
-            // => use the last rule
+            // and that we have a rule with no pattern
             doQuery = true;
             elseSearch.protocol.defaultFilter = this._createFilter(store.baseParams.query);
             store.proxy.protocol = elseSearch.protocol;
