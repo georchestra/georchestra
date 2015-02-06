@@ -50,14 +50,14 @@ Example addon config:
         "title": {
             "en": "Quick Search",
             "fr": "Recherche rapide",
-            "es": "Quick Search",
-            "de": "Quick Search"
+            "es": "Búsqueda rápida",
+            "de": "Schnellsuche"
         },
         "description": {
             "en": "Quick search your favorite objects",
-            "fr": "Quick search your favorite objects",
-            "es": "Quick search your favorite objects",
-            "de": "Quick search your favorite objects"
+            "fr": "Trouvez en quelques secondes vos objets",
+            "de": "Finden Sie Ihre Artikel innerhalb von Sekunden",
+            "es": "Encuentra tus artículos en segundos"
         }
     }
 ```
