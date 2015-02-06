@@ -60,7 +60,7 @@ GEOR.Addons.Quicksearch = Ext.extend(GEOR.Addons.Base, {
                     new Ext.ToolTip({
                         target: c.getEl(),
                         trackMouse: true,
-                        html: tr("addon_qs_tip")
+                        html: this.options.tip[this.lang]
                     });
                 },
                 "select": this._onComboSelect,
