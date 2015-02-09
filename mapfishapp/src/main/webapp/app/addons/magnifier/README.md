@@ -14,12 +14,14 @@ In this case, the addon config should look like this:
         "title": {
             "en": "Aerial imagery magnifier",
             "es": "Lupa ortofoto",
-            "fr": "Loupe orthophoto"
+            "fr": "Loupe orthophoto",
+            "de": "Orthophoto Lupe"
         },
         "description": {
             "en": "A tool which allows to zoom in an aerial image on a map portion",
             "es": "Una herramienta que te permite hacer un zoom sobre una parte del mapa ortofoto",
-            "fr": "Un outil qui permet de zoomer dans une orthophoto sur une portion de la carte"
+            "fr": "Un outil qui permet de zoomer dans une orthophoto sur une portion de la carte",
+            "de": "Werkzeug erlaubt Zoom mittels Orthophoto auf Kartenbereich"
         },
         "options": {
             "baseLayerConfig": {
@@ -40,12 +42,14 @@ For a dynamic magnifier (which means that the magnifier will zoom into the curre
         "title": {
             "en": "Aerial imagery magnifier",
             "es": "Lupa ortofoto",
-            "fr": "Loupe orthophoto"
+            "fr": "Loupe orthophoto",
+            "de": "Orthophoto Lupe"
         },
         "description": {
             "en": "A tool which allows to zoom in an aerial image on a map portion",
             "es": "Una herramienta que te permite hacer un zoom sobre una parte del mapa ortofoto",
-            "fr": "Un outil qui permet de zoomer dans une orthophoto sur une portion de la carte"
+            "fr": "Un outil qui permet de zoomer dans une orthophoto sur une portion de la carte",
+            "de": "Werkzeug erlaubt Zoom mittels Orthophoto auf Kartenbereich"
         },
         "options": {
             "mode": "dynamic",
