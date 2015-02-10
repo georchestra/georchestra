@@ -14,14 +14,14 @@ The addon config should look like this:
         "title": {
             "en": "Drawing tools",
             "es": "Herramientas de dibujo",
-            "fr": "Outils de dessin"
+            "fr": "Outils de dessin",
+            "de": "Zeichenwerkzeug"
         },
         "description": {
             "en": "A bunch of tools to annotate the map by drawing different kind of shapes.",
-            "es": "A bunch of tools to annotate the map by drawing different kind of shapes.",
-            "fr": "Une série d'outils pour annoter la carte en dessinant différentes formes."
-        },
-        "options": {
+            "es": "Una serie de herramientas para anotar el mapa dibujando diferentes formas.",
+            "fr": "Une série d'outils pour annoter la carte en dessinant différentes formes.",
+            "de": "Utensilienauswahl zur Kartenmarkierung mittels unterschiedlicher Formen"
         }
     }
 

@@ -2,7 +2,7 @@
 <html lang="en" ng-app="ldapadmin">
   <head>
     <meta charset="UTF-8">
-    <title>geOrchestra LDAP users manager</title>
+    <title>LDAPadmin - @shared.instance.name@</title>
     <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" href="css/main.css" />
   </head>
@@ -10,7 +10,7 @@
     <script type="text/javascript" src="/header/js/header.js"></script>
     <div id="go_head">
         <!-- see http://stackoverflow.com/questions/1037839/how-to-force-link-from-iframe-to-be-opened-in-the-parent-window -->
-        <iframe src="/header/?active=ldapadmin" style="width:100%;height:${headerHeight}px;border:none;overflow:hidden;" scrolling="no" onload="_headerOnLoad(this)"></iframe>
+        <iframe src="/header/?active=ldapadmin" style="width:100%;height:@shared.header.height@px;border:none;overflow:hidden;" scrolling="no" onload="_headerOnLoad(this)"></iframe>
     </div>
 
     <div id="container" class="container-fluid" ng-controller="UsersCtrl">
