@@ -193,4 +193,9 @@ public final class NewAccountFormController {
 			throw new IOException(e);
 		}
 	}
+	
+	@ModelAttribute("accountFormBean")
+	public AccountFormBean getAccountFormBean() {
+		return new AccountFormBean();
+	}
 }
