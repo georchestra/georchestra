@@ -220,4 +220,9 @@ public class EditUserDetailsFormController {
 	public void setAccountBackup(Account a) {
 	    this.accountBackup = a;
 	}
+	
+	@ModelAttribute("editUserDetailsFormBean")
+	public EditUserDetailsFormBean getEditUserDetailsFormBean() {
+		return new EditUserDetailsFormBean();
+	}
 }
