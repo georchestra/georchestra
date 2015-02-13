@@ -48,7 +48,7 @@ public class WcsExtractor {
         final HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 
         HttpClientContext localContext = HttpClientContext.create();
-        final HttpHost httpHost = new HttpHost(capabilitiesURL.getHost(), capabilitiesURL.getPort(), capabilitiesURL.getProtocol());
+        final HttpHost httpHost = new HttpHost(capabilitiesURL.getHost(), capabilitiesURL.getPort());
         HttpGet get = new HttpGet(capabilitiesURL.toExternalForm());
         if (username != null && (secureHost.equalsIgnoreCase(request._url.getHost())
             || "127.0.0.1".equalsIgnoreCase(request._url.getHost())

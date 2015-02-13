@@ -1,15 +1,15 @@
 package org.georchestra.extractorapp.ws.extractor;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
-
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpHost;
@@ -25,7 +25,7 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.geotools.data.DataStore;
-import org.geotools.data.DataStoreFinder;
+import org.geotools.data.DataStoreFactorySpi;
 import org.geotools.data.Query;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.wfs.WFSDataStoreFactory;
@@ -46,16 +46,15 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.ProgressListener;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Obtains data from a WFS and write the data out to the filesystem
@@ -106,6 +105,7 @@ public class WfsExtractor {
     }
 
     private final File          _basedir;
+    private final DataStoreFactorySpi _datastoreFactory;
     private final String _adminUsername;
     private final String _adminPassword;
     private final String _secureHost;
@@ -115,20 +115,24 @@ public class WfsExtractor {
      * Should only be used by tests
      *
      */
-    public WfsExtractor (File basedir) {
-        this(basedir, "", "", "localhost");
+    public WfsExtractor (File basedir, DataStoreFactorySpi datastoreFactory) {
+        this(basedir, datastoreFactory, "", "", "localhost");
     }
 
     /**
      *
      * @param basedir
      *            the directory that the extracted files will be written in
+     * @param datastoreFactory
+     *            the datastore factory to use for connecting to the remote WFS.
+     *            This is mainly to simplify testing
      * @param adminUsername username that give admin access to geoserver
      * @param adminPassword password the the admin user
      * @param secureHost
      */
-    public WfsExtractor (File basedir, String adminUsername, String adminPassword, String secureHost) {
+    public WfsExtractor (File basedir, DataStoreFactorySpi datastoreFactory, String adminUsername, String adminPassword, String secureHost) {
         this._basedir = basedir;
+        this._datastoreFactory = datastoreFactory;
         this._adminPassword = adminPassword;
         this._adminUsername = adminUsername;
         this._secureHost = secureHost;
@@ -217,10 +221,12 @@ public class WfsExtractor {
         	LOG.debug("WfsExtractor.extract - Non Secured Server");
         }
 
-        DataStore sourceDs = DataStoreFinder.getDataStore(params);
+        DataStore sourceDs = _datastoreFactory.createDataStore (params);
+
         SimpleFeatureType sourceSchema = sourceDs.getSchema (request.getWFSName());
         Query query = createQuery(request, sourceSchema);
-		SimpleFeatureCollection features = sourceDs.getFeatureSource(request.getWFSName()).getFeatures(query);
+		SimpleFeatureCollection features = sourceDs.getFeatureSource(request.getWFSName())
+														.getFeatures(query);
 
         ProgressListener progressListener = new NullProgressListener () {
             @Override
