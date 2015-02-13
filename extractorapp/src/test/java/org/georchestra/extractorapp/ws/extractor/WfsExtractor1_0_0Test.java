@@ -84,7 +84,7 @@ public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
 
     @Test(expected = SecurityException.class)
     public void testCheckPermission_Illegal_Layer() throws Exception {
-        WfsExtractor wfsExtractor = new WfsExtractor(testDir.getRoot());
+        WfsExtractor wfsExtractor = new WfsExtractor(testDir.getRoot(), factory);
         final String layerName = "layerName";
 
         ExtractorLayerRequest request = createLayerRequestObject(layerName);
@@ -96,7 +96,7 @@ public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
 
     @Test
     public void testCheckPermission_Legal_Layer() throws Exception {
-        WfsExtractor wfsExtractor = new WfsExtractor(testDir.getRoot());
+        WfsExtractor wfsExtractor = new WfsExtractor(testDir.getRoot(), factory);
 
         ExtractorLayerRequest request = createLayerRequestObject("sf:archsites");
         wfsExtractor.checkPermission(request, "localhost", null, null);
@@ -125,7 +125,7 @@ public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
             }
         });
 
-        WfsExtractor wfsExtractor = new WfsExtractor(testDir.getRoot(), extractorappUsername, extractorappPassword, "localhost");
+        WfsExtractor wfsExtractor = new WfsExtractor(testDir.getRoot(), factory, extractorappUsername, extractorappPassword, "localhost");
 
         ExtractorLayerRequest request = createLayerRequestObject("sf:archsites");
         wfsExtractor.checkPermission(request, "localhost", impUser, "ROLE_SV_ADMIN");
@@ -136,7 +136,7 @@ public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
     @Test
     public void testExtract_1_0_0_ShapeOutput() throws Exception {
 
-        WfsExtractor wfsExtractor = new WfsExtractor(testDir.getRoot());
+        WfsExtractor wfsExtractor = new WfsExtractor(testDir.getRoot(), factory);
         ExtractorLayerRequest request = createLayerRequestObject("sf:archsites");
 
         final File extract = wfsExtractor.extract(request);
@@ -181,7 +181,7 @@ public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
     public void testExtract_1_0_0_KmlOutput() throws Exception {
         assumeOgrPresent();
 
-        WfsExtractor wfsExtractor = new WfsExtractor(testDir.getRoot());
+        WfsExtractor wfsExtractor = new WfsExtractor(testDir.getRoot(), factory);
         ExtractorLayerRequest request = createLayerRequestObject("sf:archsites", "kml");
 
         final File extract = wfsExtractor.extract(request);
@@ -212,7 +212,7 @@ public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
     @Test
     public void testExtract_1_0_0_Tab() throws Exception {
 
-        WfsExtractor wfsExtractor = new WfsExtractor(testDir.getRoot());
+        WfsExtractor wfsExtractor = new WfsExtractor(testDir.getRoot(), factory);
         ExtractorLayerRequest request = createLayerRequestObject("sf:archsites", "tab");
 
         File extract = null;
@@ -294,7 +294,7 @@ public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
     @Ignore("Currently MIF export always fails")
     public void testExtract_1_0_0_Mif() throws Exception {
 
-        WfsExtractor wfsExtractor = new WfsExtractor(testDir.getRoot());
+        WfsExtractor wfsExtractor = new WfsExtractor(testDir.getRoot(), factory);
         ExtractorLayerRequest request = createLayerRequestObject("sf:archsites", "mif");
 
         File extract = null;
