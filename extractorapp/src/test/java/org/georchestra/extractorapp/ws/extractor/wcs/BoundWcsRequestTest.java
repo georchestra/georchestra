@@ -1,5 +1,14 @@
 package org.georchestra.extractorapp.ws.extractor.wcs;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Set;
+
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
@@ -17,15 +26,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Set;
-
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class BoundWcsRequestTest {
 	private InputStream describeCoverageSample;
@@ -95,6 +95,7 @@ public class BoundWcsRequestTest {
 
 		// DescribeCoverage related tests
 		setOutputDocument(describeCoverageSample);
+
 		bwr.getCoverage();
 
 		// supported formats

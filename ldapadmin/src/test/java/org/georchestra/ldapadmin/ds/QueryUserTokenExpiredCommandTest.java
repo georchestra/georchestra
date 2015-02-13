@@ -1,5 +1,6 @@
 package org.georchestra.ldapadmin.ds;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
@@ -12,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.georchestra.ogcservstatistics.dataservices.DataCommandException;
+import org.georchestra.lib.sqlcommand.DataCommandException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,10 +56,10 @@ public class QueryUserTokenExpiredCommandTest {
 
         Map<String,Object> ret = query.getRow(resultSet);
 
-        assertTrue(ret.size() == 3);
-        assertTrue(ret.get(DatabaseSchema.UID_COLUMN).equals("uid"));
-        assertTrue(ret.get(DatabaseSchema.TOKEN_COLUMN).equals("token"));
-        assertTrue(ret.get(DatabaseSchema.CREATION_DATE_COLUMN).toString().equals("1970-01-01 01:00:00.0"));
+        assertEquals(ret.size(), 3);
+        assertEquals(ret.get(DatabaseSchema.UID_COLUMN), "uid");
+        assertEquals(ret.get(DatabaseSchema.TOKEN_COLUMN), "token");
+        assertEquals(0L, ((Timestamp) ret.get(DatabaseSchema.CREATION_DATE_COLUMN)).getTime());
 
     }
 
@@ -83,10 +84,10 @@ public class QueryUserTokenExpiredCommandTest {
 
         // We should retrieve the mocked objects
         // [{creation_date=1970-01-01 01:00:00.0, uid=uid, token=token}]
-        assertTrue(ret.get(0).get(DatabaseSchema.CREATION_DATE_COLUMN).toString().equals("1970-01-01 01:00:00.0"));
-        assertTrue(ret.get(0).get(DatabaseSchema.UID_COLUMN).equals("uid"));
-        assertTrue(ret.get(0).get(DatabaseSchema.TOKEN_COLUMN).equals("token"));
-        assertTrue(ret.get(0).size() == 3);
+        assertEquals(0L, ((Timestamp) ret.get(0).get(DatabaseSchema.CREATION_DATE_COLUMN)).getTime());
+        assertEquals(ret.get(0).get(DatabaseSchema.UID_COLUMN), "uid");
+        assertEquals(ret.get(0).get(DatabaseSchema.TOKEN_COLUMN),"token");
+        assertEquals(ret.get(0).size(), 3);
     }
 
 

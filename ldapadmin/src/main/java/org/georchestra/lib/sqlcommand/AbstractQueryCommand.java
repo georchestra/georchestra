@@ -10,8 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.georchestra.ogcservstatistics.dataservices.AbstractDataCommand;
-import org.georchestra.ogcservstatistics.dataservices.DataCommandException;
 
 /**
  * Maintains the abstract behavior required to execute a SQL query.
