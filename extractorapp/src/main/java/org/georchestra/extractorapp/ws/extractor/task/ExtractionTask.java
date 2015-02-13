@@ -17,7 +17,6 @@ import org.georchestra.extractorapp.ws.extractor.RequestConfiguration;
 import org.georchestra.extractorapp.ws.extractor.WcsExtractor;
 import org.georchestra.extractorapp.ws.extractor.WfsExtractor;
 import org.georchestra.extractorapp.ws.extractor.csw.CSWExtractor;
-import org.geotools.data.wfs.WFSDataStoreFactory;
 import org.json.JSONException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -385,7 +384,6 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 			throws IOException, TransformException, FactoryException {
 
 		WfsExtractor extractor = new WfsExtractor(requestBaseDir,
-				new WFSDataStoreFactory(),
 				requestConfig.adminCredentials.getUserName(),
 				requestConfig.adminCredentials.getPassword(),
 				requestConfig.secureHost);

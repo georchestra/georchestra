@@ -25,7 +25,6 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.geotools.data.DataStore;
-import org.geotools.data.DataStoreFactorySpi;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.Query;
 import org.geotools.data.simple.SimpleFeatureCollection;
@@ -107,7 +106,6 @@ public class WfsExtractor {
     }
 
     private final File          _basedir;
-    private final DataStoreFactorySpi _datastoreFactory;
     private final String _adminUsername;
     private final String _adminPassword;
     private final String _secureHost;
@@ -117,24 +115,20 @@ public class WfsExtractor {
      * Should only be used by tests
      *
      */
-    public WfsExtractor (File basedir, DataStoreFactorySpi datastoreFactory) {
-        this(basedir, datastoreFactory, "", "", "localhost");
+    public WfsExtractor (File basedir) {
+        this(basedir, "", "", "localhost");
     }
 
     /**
      *
      * @param basedir
      *            the directory that the extracted files will be written in
-     * @param datastoreFactory
-     *            the datastore factory to use for connecting to the remote WFS.
-     *            This is mainly to simplify testing
      * @param adminUsername username that give admin access to geoserver
      * @param adminPassword password the the admin user
      * @param secureHost
      */
-    public WfsExtractor (File basedir, DataStoreFactorySpi datastoreFactory, String adminUsername, String adminPassword, String secureHost) {
+    public WfsExtractor (File basedir, String adminUsername, String adminPassword, String secureHost) {
         this._basedir = basedir;
-        this._datastoreFactory = datastoreFactory;
         this._adminPassword = adminPassword;
         this._adminUsername = adminUsername;
         this._secureHost = secureHost;
@@ -222,8 +216,7 @@ public class WfsExtractor {
         	LOG.debug("WfsExtractor.extract - Non Secured Server");
         }
 
-        DataStore sourceDs = // _datastoreFactory.createDataStore (params);
-                DataStoreFinder.getDataStore(params);
+        DataStore sourceDs = DataStoreFinder.getDataStore(params);
         SimpleFeatureType sourceSchema = sourceDs.getSchema (request.getWFSName());
         Query query = createQuery(request, sourceSchema);
 		SimpleFeatureCollection features = sourceDs.getFeatureSource(request.getWFSName()).getFeatures(query);
