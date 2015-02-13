@@ -41,8 +41,13 @@ public class ExpiredArchiveDaemonTest {
 		ead.startup();
 		ead.setExtractionManager(new ExtractionManager());
 		File storageFile = FileUtils.storageFile("");
+
 		File testFile = new File(storageFile + File.separator + "sample" + ExtractorController.EXTRACTION_ZIP_EXT);
+
 		try {
+	        if (! storageFile.exists()) {
+                org.apache.commons.io.FileUtils.forceMkdir(storageFile);
+	        }
 			testFile.createNewFile();
 		} catch (IOException e) {
 			fail("Unexpected exception: " + e.getMessage());
