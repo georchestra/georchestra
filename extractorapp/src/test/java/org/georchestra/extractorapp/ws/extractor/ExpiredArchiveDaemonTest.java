@@ -36,7 +36,6 @@ public class ExpiredArchiveDaemonTest {
 	}
 
 	@Test
-	@Ignore
 	public void testExpiredArchiveDaemonFileDeletion() {
 		ExpiredArchiveDaemon ead = new ExpiredArchiveDaemon();
 		ead.startup();
