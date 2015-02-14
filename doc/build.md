@@ -51,6 +51,7 @@ Note that if you're connecting to the internet through proxies, you need to [tel
 Building your SDI is just a command-line away:
 ```
 cd ~/georchestra
+export MAVEN_OPTS="-XX:MaxPermSize=256M"
 ./mvn -Dmaven.test.skip=true -Dserver=myprofile clean install
 ```
 
