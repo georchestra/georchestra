@@ -1,5 +1,6 @@
 language: java
 git:
+  depth: 1
   submodules: true
 before_install:
   - sudo apt-get update
