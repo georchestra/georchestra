@@ -1,8 +1,0 @@
-language: node_js
-node_js:
-  - "0.6"
-
-git:
-  submodules: false
-install: npm install esprima async
-script: "node tests/nodejs/js_code_review.js catalogapp/src/main/webapp/app/js/GEOR_Lang/ extractorapp/src/main/webapp/app/js/GEOR_Lang/  mapfishapp/src/main/webapp/app/js/GEOR_Lang/"
