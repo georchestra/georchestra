@@ -25,7 +25,7 @@ Before creating the LDAP tree, you should have a look at the [users and groups](
 The file **georchestra-bootstrap.ldif** creates the database and an administrator account (```cn=admin,dc=georchestra,dc=org```) with a password set by default to ```secret```. You should change it.
 
 ```
-wget https://raw.githubusercontent.com/georchestra/LDAP/YY.MM/georchestra-bootstrap.ldif -O /tmp/bootstrap.ldif
+wget --no-check-certificate https://raw.githubusercontent.com/georchestra/LDAP/YY.MM/georchestra-bootstrap.ldif -O /tmp/bootstrap.ldif
 sudo ldapadd -Y EXTERNAL -H ldapi:/// -f /tmp/bootstrap.ldif
 ```
 ... where YY.MM stands for the georchestra version you're using (eg: 14.12). 
@@ -38,7 +38,7 @@ If successful, the above command should display: ```adding new entry "olcDatabas
 To create the root DN, use the **georchestra-root.ldif** file:
 
 ```
-wget https://raw.githubusercontent.com/georchestra/LDAP/YY.MM/georchestra-root.ldif -O /tmp/root.ldif
+wget --no-check-certificate https://raw.githubusercontent.com/georchestra/LDAP/YY.MM/georchestra-root.ldif -O /tmp/root.ldif
 ldapadd -D"cn=admin,dc=georchestra,dc=org" -W -f /tmp/root.ldif
 ```
 
@@ -50,7 +50,7 @@ This will ask the password for the ```cn=admin,dc=georchestra,dc=org``` dn, whic
 The **georchestra.ldif** file creates the default geOrchestra users & groups:
 
 ```
-wget https://raw.githubusercontent.com/georchestra/LDAP/YY.MM/georchestra.ldif -O /tmp/georchestra.ldif
+wget --no-check-certificate https://raw.githubusercontent.com/georchestra/LDAP/YY.MM/georchestra.ldif -O /tmp/georchestra.ldif
 ldapadd -D"cn=admin,dc=georchestra,dc=org" -W -f /tmp/georchestra.ldif
 ```
 
@@ -66,7 +66,7 @@ The optional "memberof" overlay is great to check if a user is a member of a giv
 Use the **georchestra-memberof.ldif** file to add the module and configure the overlay.
 
 ```
-wget https://raw.githubusercontent.com/georchestra/LDAP/YY.MM/georchestra-memberof.ldif -O /tmp/memberof.ldif
+wget --no-check-certificate https://raw.githubusercontent.com/georchestra/LDAP/YY.MM/georchestra-memberof.ldif -O /tmp/memberof.ldif
 sudo ldapadd -Y EXTERNAL -H ldapi:/// -f /tmp/memberof.ldif 
 ```
 
