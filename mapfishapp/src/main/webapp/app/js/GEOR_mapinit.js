@@ -313,7 +313,7 @@ GEOR.mapinit = (function() {
         var records = [], record;
         var errors = [], count = 0;
         Ext.each(initState, function(item) {
-            if (item.type == "WMSLayer" || item.type == "WFSLayer") {
+            if ( (item.type == "WMSLayer" || item.type == "WFSLayer") && item.type == type+'Layer' ) {
                 record = stores[item.url].queryBy(function(r) {
                     return (r.get('name') == item.name);
                 }).first();
