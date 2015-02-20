@@ -318,6 +318,18 @@ GEOR.mapinit = (function() {
                     return (r.get('name') == item.name);
                 }).first();
                 if (record) {
+                    // handle cql_filter param in JSON POST
+                    if( type == "WFS" ) {
+                        if ( !(typeof item.cql_filter === 'undefined') ) {
+                            var format = new OpenLayers.Format.CQL();
+                            record.data.layer.filter = format.read(item.cql_filter);
+                        }
+                    } else {
+                        if ( !(typeof item.cql_filter === 'undefined') ) {
+                            record.data.layer.params.CQL_FILTER = item.cql_filter;
+                        }
+                    }
+                    
                     // set metadataURLs in record, data comes from GeoNetwork
                     if (item.metadataURL) {
                         record.set("metadataURLs", [item.metadataURL]);
