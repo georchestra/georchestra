@@ -2,6 +2,7 @@
 # (unless you know what you're doing)
 
 public_host=@shared.server.name@
+scheme=@shared.url.scheme@
 
 #LDAP config
 ldapUrl=@shared.ldapUrl@
