@@ -135,7 +135,9 @@ public class ChangePasswordFormController {
 
 		}
 	}
-
-
-
+	
+	@ModelAttribute("changePasswordFormBean")
+	public ChangePasswordFormBean getChangePasswordFormBean() {
+		return new ChangePasswordFormBean();
+	}
 }

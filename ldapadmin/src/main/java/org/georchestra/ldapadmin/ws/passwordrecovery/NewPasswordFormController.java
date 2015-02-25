@@ -143,5 +143,9 @@ public class NewPasswordFormController {
 			
 		} 
 	}
-
+	
+	@ModelAttribute("newPasswordFormBean")
+	public NewPasswordFormBean getNewPasswordFormBean() {
+		return new NewPasswordFormBean();
+	}
 }
