@@ -50,7 +50,7 @@ public class PreAuthFilterTest {
         final String roleAdmin = "ROLE_ADMINISTRATOR";
         final String roleOther = "ROLE_OTHER";
 
-        request.addHeader("sec-roles", roleAdmin + "," + roleOther);
+        request.addHeader("sec-roles", roleAdmin + ";" + roleOther);
 
         chain = Mockito.mock(FilterChain.class);
         preAuthFilter.doFilter(request, response, chain);

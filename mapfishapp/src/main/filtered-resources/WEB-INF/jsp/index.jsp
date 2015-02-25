@@ -29,7 +29,7 @@ javax.servlet.jsp.jstl.core.Config.set(
 String sec_roles = request.getHeader("sec-roles");
 String js_roles = "";
 if(sec_roles != null) {
-    String[] roles = sec_roles.split(",");
+    String[] roles = sec_roles.split(";");
     String[] js_roles_array = new String[roles.length];
     for (int i = 0; i < roles.length; i++) {
         // ROLE_ANONYMOUS is added by the security proxy:

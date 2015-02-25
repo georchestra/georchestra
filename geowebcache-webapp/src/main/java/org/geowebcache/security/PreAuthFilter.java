@@ -60,7 +60,7 @@ public class PreAuthFilter implements Filter {
         final String rolesString = httpServletRequest.getHeader(SEC_ROLES);
         Set<String> roles = new LinkedHashSet<String>();
         if (rolesString != null) {
-            roles.addAll(Arrays.asList(rolesString.split(",")));
+            roles.addAll(Arrays.asList(rolesString.split(";")));
         }
         return new PreAuthToken(username, roles);
     }
