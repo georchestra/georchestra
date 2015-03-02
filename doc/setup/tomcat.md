@@ -48,6 +48,7 @@ sudo keytool -importkeystore \
     -destkeystore /etc/tomcat6/keystore
 ```
 
+The srckeystore is "changeit" by default, and should be modified in /etc/default/cacerts.
 
 ### LDAP SSL
 
