@@ -36,37 +36,24 @@ public class TaskControllers implements ServletContextAware {
     	OutputStream outpStr = null;
     	
     	try {
-    		String roles = request.getHeader("sec-roles");
     		outpStr = response.getOutputStream();
-    		
-    		if ((roles == null) || (! roles.contains("ROLE_SV_ADMIN"))) {
-    			
-    			LOG.info("Error: unauthorized access");
+            LOG.debug("printing output of ExtractionManager state");
 
-    			ret.put("status", "error");
-    			ret.put("message", "unauthorized: only administrators can access this service.");
+            JSONArray jsarr = new JSONArray();
+            List<ExecutionMetadata> lst = extractionManager.getTaskQueue();
 
-    			// Note: we could as well use a 403 as response HTTP code
-    			// but it would be intercepted by the Security-proxy
+            for (ExecutionMetadata elem : lst) {
+                JSONObject task = new JSONObject();
+                task.put("uuid", elem.getUuid());
+                task.put("state", elem.getState());
+                task.put("priority", elem.getPriority());
 
-    		} else {
-    			LOG.debug("printing output of ExtractionManager state");
+                jsarr.put(task);
+            }
+            ret.put("tasks", jsarr);
+            
+            ret.put("status", "success");
 
-    			JSONArray jsarr = new JSONArray();
-    			List<ExecutionMetadata> lst = extractionManager.getTaskQueue();
-
-    			for (ExecutionMetadata elem : lst) {
-    				JSONObject task = new JSONObject();
-    				task.put("uuid", elem.getUuid());
-    				task.put("state", elem.getState());
-    				task.put("priority", elem.getPriority());
-
-    				jsarr.put(task);
-    			}
-    			ret.put("tasks", jsarr);
-    			
-    			ret.put("status", "success");
-    		}
     	} catch (Exception e) {
     		LOG.error("Exception caught while running '/jobs/list' controller: ", e);
   		
