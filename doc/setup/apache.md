@@ -395,8 +395,8 @@ The SSL certificate is absolutely required, at least for the CAS module, if not 
 
 * Generate a private key (enter a good passphrase and keep it safe !)
 ```
-sudo openssl genrsa -des3 2048 \
-    -out /var/www/georchestra/ssl/georchestra.key
+sudo openssl genrsa -des3 \
+    -out /var/www/georchestra/ssl/georchestra.key 2048
 ```
 
 Protect it with:
