@@ -14,6 +14,7 @@
         <s:intercept-url pattern=".*\?.*login.*" access="ROLE_SV_USER,ROLE_SV_EDITOR,ROLE_SV_REVIEWER,ROLE_SV_ADMIN,ROLE_ADMINISTRATOR" />
         <s:intercept-url pattern=".*\?.*casLogin.*" access="ROLE_SV_USER,ROLE_SV_EDITOR,ROLE_SV_REVIEWER,ROLE_SV_ADMIN,ROLE_ADMINISTRATOR" />
         <s:intercept-url pattern="/extractorapp/admin/.*" access="ROLE_ADMINISTRATOR" />
+        <s:intercept-url pattern="/extractorapp/jobs/.*" access="ROLE_ADMINISTRATOR" />
         <s:intercept-url pattern="/extractorapp/.*" access="ROLE_MOD_EXTRACTORAPP" />
         <s:intercept-url pattern="/geofence/.*" access="ROLE_ADMINISTRATOR" />
         <s:intercept-url pattern="/analytics/.*" access="ROLE_MOD_ANALYTICS" />
