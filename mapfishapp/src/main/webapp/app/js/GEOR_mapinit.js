@@ -322,8 +322,7 @@ GEOR.mapinit = (function() {
                     // handle cql_filter param in JSON POST
                     if( type == "WFS" ) {
                         if ( item.hasOwnProperty("cql_filter") ) {
-                            var format = new OpenLayers.Format.CQL();
-                            record.getLayer().filter = format.read(item.cql_filter);
+                            record.getLayer().filter = (new OpenLayers.Format.CQL()).read(item.cql_filter);
                         }
                     } else {
                         if ( item.hasOwnProperty("cql_filter") ) {
