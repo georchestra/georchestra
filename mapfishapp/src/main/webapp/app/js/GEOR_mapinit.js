@@ -320,13 +320,13 @@ GEOR.mapinit = (function() {
                 if (record) {
                     // handle cql_filter param in JSON POST
                     if( type == "WFS" ) {
-                        if ( !(typeof item.cql_filter === 'undefined') ) {
+                        if ( item.hasOwnProperty("cql_filter") ) {
                             var format = new OpenLayers.Format.CQL();
-                            record.data.layer.filter = format.read(item.cql_filter);
+                            record.getLayer().filter = format.read(item.cql_filter);
                         }
                     } else {
-                        if ( !(typeof item.cql_filter === 'undefined') ) {
-                            record.data.layer.params.CQL_FILTER = item.cql_filter;
+                        if ( item.hasOwnProperty("cql_filter") ) {
+                            record.getLayer().params.CQL_FILTER = item.cql_filter;
                         }
                     }
                     
