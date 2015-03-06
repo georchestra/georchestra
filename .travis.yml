@@ -7,5 +7,13 @@ before_install:
   - sudo apt-get -y install ant ant-optional python-virtualenv python-pip
   - wget http://build.georchestra.org/m2.tar
   - tar xvf m2.tar -C ~ > /dev/null
+notifications:
+  irc:
+    on_success: change
+    on_failure: change
+    channels:
+      - irc.freenode.net#georchestra
+    template:
+      - "%{repository}#%{build_number} (%{branch}) %{message} %{build_url}"
 install: mvn install -DskipTests -P-all,travis
 script: mvn integration-test -P-all,travis
