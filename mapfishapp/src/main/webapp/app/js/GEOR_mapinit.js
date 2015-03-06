@@ -22,6 +22,7 @@
  * @include OpenLayers/Projection.js
  * @include OpenLayers/Format/JSON.js
  * @include OpenLayers/Format/GeoJSON.js
+ * @include OpenLayers/Format/CQL.js
  * @include GeoExt/data/LayerRecord.js
  * @include GeoExt/data/LayerStore.js
  * @include GeoExt/data/WMSCapabilitiesReader.js
