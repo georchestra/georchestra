@@ -48,6 +48,12 @@ sudo keytool -importkeystore \
     -destkeystore /etc/tomcat6/keystore
 ```
 
+### SSL
+
+As the SSL certificate is absolutely required, at least for the CAS module, you must add it to the keystore.
+```
+keytool -import -alias cert_ssl -file /var/www/georchestra/ssl/georchestra.crt -keystore /etc/tomcat6/keystore
+```
 
 ### LDAP SSL
 
@@ -64,7 +70,8 @@ echo "" | openssl s_client -connect LDAPHOST:LDAPPORT -showcerts 2>/dev/null | o
 sudo keytool -import -alias cert_ldap -file /tmp/certfile.txt -keystore /etc/tomcat6/keystore
 ```
 
-Finally, verify the list of keys in keystore:
+### Finally, 
+verify the list of keys in keystore:
 ```
 keytool -keystore /etc/tomcat6/keystore -list
 ```
