@@ -165,7 +165,7 @@ In ```/var/lib/tomcat-proxycas/conf/server.xml```, find the place where the HTTP
 
 Finally, we make the instance start by default with the OS, and check it works:
 ```
-sudo update-rc.d tomcat-proxycas defaults 90
+sudo insserv tomcat-proxycas
 sudo service tomcat-proxycas start
 ```
 
@@ -260,7 +260,7 @@ In ```/var/lib/tomcat-georchestra/conf/server.xml```:
 ### Start the instance
 
 ```
-sudo update-rc.d tomcat-georchestra defaults 90
+sudo insserv tomcat-georchestra
 sudo service tomcat-georchestra start
 ```
 
@@ -363,7 +363,7 @@ In ```/var/lib/tomcat-geoserver0/conf/server.xml```:
 ### Start the instance
 
 ```
-sudo update-rc.d tomcat-geoserver0 defaults 90
+sudo insserv tomcat-geoserver0
 sudo service tomcat-geoserver0 start
 ```
 
