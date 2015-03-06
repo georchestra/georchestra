@@ -48,6 +48,8 @@ sudo keytool -importkeystore \
     -destkeystore /etc/tomcat6/keystore
 ```
 
+The password of the srckeystore is "changeit" by default, and should be modified in /etc/default/cacerts.
+
 ### SSL
 
 As the SSL certificate is absolutely required, at least for the CAS module, you must add it to the keystore.
