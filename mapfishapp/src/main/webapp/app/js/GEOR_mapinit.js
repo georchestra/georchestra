@@ -22,6 +22,7 @@
  * @include OpenLayers/Projection.js
  * @include OpenLayers/Format/JSON.js
  * @include OpenLayers/Format/GeoJSON.js
+ * @include OpenLayers/Format/CQL.js
  * @include GeoExt/data/LayerRecord.js
  * @include GeoExt/data/LayerStore.js
  * @include GeoExt/data/WMSCapabilitiesReader.js
@@ -313,11 +314,22 @@ GEOR.mapinit = (function() {
         var records = [], record;
         var errors = [], count = 0;
         Ext.each(initState, function(item) {
-            if (item.type == "WMSLayer" || item.type == "WFSLayer") {
+            if ( (item.type == "WMSLayer" || item.type == "WFSLayer") && item.type == type+'Layer' ) {
                 record = stores[item.url].queryBy(function(r) {
                     return (r.get('name') == item.name);
                 }).first();
                 if (record) {
+                    // handle cql_filter param in JSON POST
+                    if( type == "WFS" ) {
+                        if ( item.hasOwnProperty("cql_filter") ) {
+                            record.getLayer().filter = (new OpenLayers.Format.CQL()).read(item.cql_filter);
+                        }
+                    } else {
+                        if ( item.hasOwnProperty("cql_filter") ) {
+                            record.getLayer().params.CQL_FILTER = item.cql_filter;
+                        }
+                    }
+                    
                     // set metadataURLs in record, data comes from GeoNetwork
                     if (item.metadataURL) {
                         record.set("metadataURLs", [item.metadataURL]);
