@@ -369,4 +369,30 @@ sudo insserv tomcat-geoserver0
 sudo service tomcat-geoserver0 start
 ```
 
+## Be careful
 
+Remenber that the georchestra binaries must be build according to this configuration of the above 3 Tomcats.
+
+As we assume that :
+ - proxy and cas are served by an http connector on localhost, port 8180 ;
+ - georchestra webapps, except geoserver, proxy and cas, are served by an http connector on port 8280 ;
+ - geoserver is served by an http connector on port 8380 ;
+you should verify that your GenerateConfig.groovy file is set with the right ports.
+
+```
+def proxyDefaultTarget = "http://localhost:8280"
+
+properties['proxy.mapping'] = """
+<entry key="analytics"     value="proxyDefaultTarget/analytics/" />
+<entry key="catalogapp"    value="proxyDefaultTarget/catalogapp/" />
+<entry key="downloadform"  value="proxyDefaultTarget/downloadform/" />
+<entry key="extractorapp"  value="proxyDefaultTarget/extractorapp/" />
+<entry key="geonetwork"    value="proxyDefaultTarget/geonetwork/" />
+<entry key="geoserver"     value="http://localhost:8380/geoserver/" />
+<entry key="geowebcache"   value="proxyDefaultTarget/geowebcache/" />
+<entry key="geofence"      value="proxyDefaultTarget/geofence/" />
+<entry key="header"        value="proxyDefaultTarget/header/" />
+<entry key="ldapadmin"     value="proxyDefaultTarget/ldapadmin/" />
+<entry key="mapfishapp"    value="proxyDefaultTarget/mapfishapp/" />
+<entry key="static"        value="proxyDefaultTarget/header/" />""".replaceAll("\n|\t","").replaceAll("proxyDefaultTarget",proxyDefaultTarget)
+```
