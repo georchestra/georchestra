@@ -43,7 +43,7 @@ sudo a2dissite default 000-default default-ssl
 In ```/etc/apache2/sites-available/georchestra```:
 ```
 <VirtualHost *:80>
-    ServerName vm-georchestra
+    ServerName vm-georchestra.myorganisation.com
     DocumentRoot /var/www/georchestra/htdocs
     LogLevel warn
     ErrorLog /var/www/georchestra/logs/error.log
@@ -52,7 +52,7 @@ In ```/etc/apache2/sites-available/georchestra```:
     ServerSignature Off
 </VirtualHost>
 <VirtualHost *:443>
-    ServerName vm-georchestra
+    ServerName vm-georchestra.myorganisation.com
     DocumentRoot /var/www/georchestra/htdocs
     LogLevel warn
     ErrorLog /var/www/georchestra/logs/error.log
@@ -69,7 +69,7 @@ In ```/etc/apache2/sites-available/georchestra```:
 
 Update your hosts files (in /etc/hosts):
 ```
-127.0.0.1       vm-georchestra
+127.0.0.1       vm-georchestra.myorganisation.com       vm-georchestra
 ```
 
 Once this is done, enable the georchestra site with:
@@ -408,12 +408,12 @@ sudo chmod 400 /var/www/georchestra/ssl/georchestra.key
 ```
 sudo openssl req \
     -key /var/www/georchestra/ssl/georchestra.key \
-    -subj "/C=FR/ST=None/L=None/O=None/OU=None/CN=vm-georchestra" \
+    -subj "/C=FR/ST=None/L=None/O=None/OU=None/CN=vm-georchestra.myorganisation.com" \
     -newkey rsa:2048 -sha256 \
     -out /var/www/georchestra/ssl/georchestra.csr
 ```
 
-Be sure to replace the ```/C=FR/ST=None/L=None/O=None/OU=None/CN=vm-georchestra``` string with something more relevant:
+Be sure to replace the ```/C=FR/ST=None/L=None/O=None/OU=None/CN=vm-georchestra.myorganisation.com``` string with something more relevant:
  * ```C``` is the 2 letter Country Name code
  * ```ST``` is the State or Province Name
  * ```L``` is the Locality Name (eg, city)
