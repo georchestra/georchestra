@@ -28,9 +28,11 @@ sudo keytool -genkey \
     -keypass STOREPASSWORD \
     -keyalg RSA \
     -keysize 2048 \
-    -dname "CN=localhost, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=FR" 
+    -dname "CN=vm-georchestra.myorganisation.org, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=FR" 
 ```
 ... where ```STOREPASSWORD``` is a password you choose, and the ```dname``` string is customized.
+
+ The above command has created the keystore AND the server certificate, stored in the keystore file. The keystore et the certificate are protected with the same password : STOREPASSWORD. Note that you must use the same password.
 
 ### CA certificates
 
@@ -50,12 +52,11 @@ sudo keytool -importkeystore \
 
 The password of the srckeystore is "changeit" by default, and should be modified in /etc/default/cacerts.
 
+
 ### SSL
 
-As the SSL certificate is absolutely required, at least for the CAS module, you must add it to the keystore.
-```
-keytool -import -alias cert_ssl -file /var/www/georchestra/ssl/georchestra.crt -keystore /etc/tomcat6/keystore
-```
+You have nothing to do here. Apache will use the openssl certificate, but tomcat does not.
+
 
 ### LDAP SSL
 
