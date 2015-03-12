@@ -371,15 +371,20 @@ sudo service tomcat-geoserver0 start
 
 ## Be careful
 
-Remenber that the georchestra binaries must be build according to this configuration of the above 3 Tomcats.
+Remember that the geOrchestra binaries must be built according to the tomcat configuration described above.
+By default, forking the template configuration should guarantee this.
 
-As we assume that :
- - proxy and cas are served by an http connector on localhost, port 8180 ;
- - georchestra webapps, except geoserver, proxy and cas, are served by an http connector on port 8280 ;
- - geoserver is served by an http connector on port 8380 ;
-you should verify that your GenerateConfig.groovy file is set with the right ports.
+Since we assume that :
+ - proxy and cas are served by an http connector on localhost, port 8180
+ - the geOrchestra webapps, except GeoServer, proxy and cas, are served by an http connector on port 8280
+ - GeoServer is served by an http connector on port 8380
 
-```
+... you should verify that:
+
+1. your reverse proxy points to port 8180 (proxy)
+1. your GenerateConfig.groovy file correctly configures your proxy to point to the webapps, namely:
+
+```groovy
 def proxyDefaultTarget = "http://localhost:8280"
 
 properties['proxy.mapping'] = """
