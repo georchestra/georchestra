@@ -3,6 +3,10 @@
 "http://tuckey.org/res/dtds/urlrewrite3.0.dtd">
 
 <urlrewrite>
+	<rule>
+		<from>^/context/(.*)$</from>
+		<to type="forward" last="true">/ws/context/$1</to>
+	</rule>
     <rule>
         <from>^/map/(\d{19})/?$</from>
         <to type="forward" last="true">/ws/home?wmc=ws/wmc/geodoc$1.wmc</to>
