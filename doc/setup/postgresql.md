@@ -16,6 +16,7 @@ Note 2: PostGIS extensions are not required in the georchestra database, unless 
 If **geonetwork** is to be deployed, you need to create a dedicated user and schema:
 ```
 createuser -SDRIP geonetwork (the default setup expects that the geonetwork user password is www-data)
+grant www-data to geonetwork
 psql -d georchestra -c 'CREATE SCHEMA geonetwork;'
 psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA geonetwork TO "geonetwork";'
 ```
