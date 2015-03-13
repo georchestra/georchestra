@@ -66,8 +66,10 @@ If the **downloadform** module is deployed and ```shared.download_form.activated
 wget --no-check-certificate https://raw.githubusercontent.com/georchestra/georchestra/14.12/downloadform/database.sql -O /tmp/downloadform.sql
 psql -d georchestra -f /tmp/downloadform.sql
 psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA downloadform TO "www-data";'
+psql -d georchestra -c 'GRANT USAGE ON SCHEMA downloadform TO "geonetwork";'
 psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA downloadform TO "www-data";'
 psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA downloadform TO "www-data";'
+psql -d georchestra -c 'GRANT SELECT ON downloadform.geonetwork_log TO "geonetwork";'
 ```
 
 ## OGC statistics schema
