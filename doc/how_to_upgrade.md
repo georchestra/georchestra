@@ -8,7 +8,7 @@ We suppose that your configuration is versioned with git, and that it has two re
  * **origin** points to your own private repository
  * **upstream** points to the template georchestra configuration
 
-When typing ```git remote -v``` in your config folder, you should see something like this:
+When typing ```git remote -v``` in your config folder (either ```~/myprofile``` or ```~/georchestra/config/configurations/myprofile```), you should see something like this:
 ```
 origin	https://gitlab.com/user/myprofile.git (fetch)
 origin	https://gitlab.com/user/myprofile.git (push)
