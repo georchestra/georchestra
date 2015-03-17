@@ -155,7 +155,7 @@ git remote add origin https://gitlab.com/user/myprofile.git
 
 ... and push the changes:
 ```
-git push origin master
+git push origin
 ```
 
 Congrats !  
