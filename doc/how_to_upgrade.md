@@ -10,13 +10,13 @@ We suppose that your configuration is versioned with git, and that it has two re
 
 When typing ```git remote -v``` in your config folder, you should see something like this:
 ```
-origin	git@gitlab.com:user/myprofile.git (fetch)
-origin	git@gitlab.com:user/myprofile.git (push)
-upstream	git@github.com:georchestra/template.git (fetch)
-upstream	git@github.com:georchestra/template.git (push)
+origin	https://gitlab.com/user/myprofile.git (fetch)
+origin	https://gitlab.com/user/myprofile.git (push)
+upstream	https://github.com/georchestra/template.git (fetch)
+upstream	https://github.com/georchestra/template.git (push)
 ```
 
-If one remote is missing, you may add it with, eg ```git remote add upstream git@github.com:georchestra/template.git```.
+If one remote is missing, you may add it with, eg ```git remote add upstream https://github.com/georchestra/template.git```.
 
 
 ## Upgrade your configuration directory
