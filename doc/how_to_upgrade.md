@@ -16,7 +16,10 @@ upstream	https://github.com/georchestra/template.git (fetch)
 upstream	https://github.com/georchestra/template.git (push)
 ```
 
-If one remote is missing, you may add it with, eg ```git remote add upstream https://github.com/georchestra/template.git```.
+If one remote is missing, you may add it with, eg: 
+```
+git remote add upstream https://github.com/georchestra/template.git
+```
 
 
 ## Upgrade your configuration directory
