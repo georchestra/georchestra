@@ -9,8 +9,6 @@ before_install:
   - tar xvf m2.tar -C ~ > /dev/null
 notifications:
   irc:
-    on_success: change
-    on_failure: change
     channels:
       - irc.freenode.net#georchestra
     template:
