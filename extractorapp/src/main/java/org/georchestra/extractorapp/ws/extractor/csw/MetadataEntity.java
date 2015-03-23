@@ -12,7 +12,11 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.AbstractHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.georchestra.extractorapp.ws.extractor.FileUtils;
 
@@ -72,6 +76,20 @@ final class MetadataEntity {
 
         	HttpGet get = new HttpGet(this.request.buildURI() );
         	DefaultHttpClient httpclient = new DefaultHttpClient();
+
+            // if credentials are actually provided, use them to configure
+            // the HttpClient object.
+            try {
+                if (this.request.getUser() != null  && request.getPassword() != null) {
+                    Credentials credentials = new UsernamePasswordCredentials(request.getUser(), request.getPassword());
+                    AuthScope authScope = new AuthScope(get.getURI().getHost(), get.getURI().getPort());
+                    if (httpclient instanceof AbstractHttpClient) {
+                        ((AbstractHttpClient) httpclient).getCredentialsProvider().setCredentials(authScope, credentials);
+                    }
+               }
+            } catch (Exception e) {
+                LOG.error("Unable to set basic-auth on http client to get the Metadata remotely, trying without ...", e);
+            }
             content = httpclient.execute(get).getEntity().getContent();
             reader = new BufferedReader(new InputStreamReader(content));
 
