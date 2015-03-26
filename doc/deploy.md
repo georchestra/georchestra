@@ -27,6 +27,9 @@ Once your system is ready, collect WAR files in a dedicated directory and rename
     mv ldapadmin-${VERSION}-${PROFILE}.war ldapadmin.war
     mv mapfishapp-${VERSION}-${PROFILE}.war mapfishapp.war
     mv header-${VERSION}-${PROFILE}.war header.war
+    
+Optionally, if you do not plan to use GeoServer's integrated GeoWebCache, you can deploy a standalone version:
+
     mv geowebcache-webapp-${VERSION}-${PROFILE}.war geowebcache.war
 
 Finally, dispatch geOrchestra webapps into your 3 Tomcat instances:
