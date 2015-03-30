@@ -113,11 +113,10 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
                     }
                 }
                 // filter out records from services supporting only GET
-                if (this.id == "WFS") {
-                    var supportsPOST;
+                if (this.id == "WFS" && this.store.getCount() > 0) {
+                    var supportsPOST = !!this.store.getAt(0).getLayer().protocol.url;
                     // check records do not have an undefined protocol url:
                     this.store.filterBy(function(r) {
-                        supportsPOST = !!r.get("layer").protocol.url;
                         return supportsPOST;
                     });
                     if (!supportsPOST) {
