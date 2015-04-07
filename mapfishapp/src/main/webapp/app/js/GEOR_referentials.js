@@ -259,8 +259,7 @@ GEOR.referentials = (function() {
             return new OpenLayers.Filter.Comparison({
                 type: OpenLayers.Filter.Comparison.LIKE,
                 property: stringAttributes[0],
-                value: filterValue,
-                matchCase: false
+                value: filterValue
             });
         } else {
             var filters = new Array(l);
@@ -268,8 +267,7 @@ GEOR.referentials = (function() {
                 filters[i] = new OpenLayers.Filter.Comparison({
                     type: OpenLayers.Filter.Comparison.LIKE,
                     property: stringAttributes[i],
-                    value: filterValue,
-                    matchCase: false
+                    value: filterValue
                 });
             }
             return new OpenLayers.Filter.Logical({
