@@ -133,9 +133,7 @@ final class OGRFeatureReader implements FeatureGeoFileReader {
                 }
 
             } catch (Error e) { // catch all exception in the OGR
-                LOG.warn(
-                        "the ogr installed in the system doesn't have the drivers required by mapfish",
-                        e);
+                LOG.warn("the OGR version installed on the system does not have the drivers required by mapfishapp", e);
                 throw new IOException();
             }
         }
