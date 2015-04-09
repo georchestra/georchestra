@@ -133,11 +133,11 @@ class KmlFeatureSource {
                     if(version.equals("2.2")){
                         configuration = new org.geotools.kml.v22.KMLConfiguration();
                         throw new SAXException(new FundKMLVersionException() );
-                    } else if (version.equals("2.1") ){
+                    } else if (version.equals("2.1") || (version.equals("2.0"))){
                         configuration = new org.geotools.kml.KMLConfiguration();
                         throw new SAXException(new FundKMLVersionException() );
                     } else {
-                        final String message = "It was found the kml version " + version + ". There is not binding for this kml version";
+                        final String message = "KML version detected: " + version + ". There is no available binding for this version";
                         LOG.error(message);
                         throw new SAXException(message);
                     }
