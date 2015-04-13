@@ -58,6 +58,12 @@
                 <value>.*Apache-HttpClient.*</value> <!-- Extractorapp client -->
             </list>
         </property>
+        <!-- List of hosts for which the filter will be discarded -->
+        <property name="blacklistedHosts">
+            <list>
+                <value>217.108.210.153</value> <!-- IP address of the géocatalogue -->
+            </list>
+        </property>
         <property name="ignoreHttps" value="true" />
         <property name="ignoreFailure" value="false"/>
         <property name="credentialsCharset" value="UTF-8"/>
