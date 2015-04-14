@@ -133,9 +133,13 @@ ldap_auth_method: bind
 ```
 
 Some explanations:
+
 ldap_servers: Active Directory Server IP
+
 ldap_search_base: Basic prefix of AD
+
 ldap_filter: filter that going to link the login geOrchestra and that of AD
+
 ldap_bind_dn: the user used to connect to the AD
 
 And restart SASL service : 
