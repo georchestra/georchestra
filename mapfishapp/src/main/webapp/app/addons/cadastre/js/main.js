@@ -198,6 +198,8 @@ GEOR.Addons.Cadastre = Ext.extend(GEOR.Addons.Base, {
 				element.clearValue();
 			}
 		);
+		
+		this.layer.removeAllFeatures();
 	},
 
 
