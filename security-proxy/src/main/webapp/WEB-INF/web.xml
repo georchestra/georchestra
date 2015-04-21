@@ -119,5 +119,10 @@
         <error-code>403</error-code>
         <location>/403.jsp</location>
     </error-page>
+    <error-page>
+        <error-code>503</error-code>
+        <location>/503.jsp</location>
+    </error-page>
+
 </web-app>
 

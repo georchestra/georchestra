@@ -612,7 +612,13 @@ public class Proxy {
             }
         } catch (IOException e) {
             // connection problem with the host
-            e.printStackTrace();
+            logger.error("Exception occured when trying to connect to the remote host: ", e);
+            try {
+                finalResponse.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+            } catch (IOException e2) {
+                // error occured while trying to return the "service unavailable status"
+                finalResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
         } finally {
             httpclient.getConnectionManager().shutdown();
         }
