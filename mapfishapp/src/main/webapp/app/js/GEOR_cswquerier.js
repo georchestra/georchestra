@@ -852,11 +852,23 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
         });
         
         // spatial filter
-        bySpatial.push(new OpenLayers.Filter.Spatial({
-                type: OpenLayers.Filter.Spatial.BBOX,
-                value: new OpenLayers.Bounds(GEOR.config.CSW_FILTER_SPATIAL)
-            })
-        );
+        if (GEOR.config.CSW_FILTER_SPATIAL.length===4) {
+            bySpatial.push(new OpenLayers.Filter.Spatial({
+                    type: OpenLayers.Filter.Spatial.BBOX,
+                    value: new OpenLayers.Bounds(GEOR.config.CSW_FILTER_SPATIAL)
+                })
+            );
+        }
+        // TODO auto filter based on map extent, bad way
+        else {
+            var map = GeoExt.MapPanel.guess().map;
+            var bbox = map.getExtent().clone();
+            bySpatial.push(new OpenLayers.Filter.Spatial({
+                    type: OpenLayers.Filter.Spatial.BBOX,
+                    value: bbox.transform(map.projection, new OpenLayers.Projection("EPSG:4326"))
+                })
+            );
+        }
 
         // combine all filters alltogether
         finalFilters = [byTypes];
