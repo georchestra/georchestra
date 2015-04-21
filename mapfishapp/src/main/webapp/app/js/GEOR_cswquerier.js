@@ -17,6 +17,7 @@
  * @include OpenLayers/Format/CSWGetRecords/v2_0_2.js
  * @include OpenLayers/Filter/Comparison.js
  * @include OpenLayers/Filter/Logical.js
+ * @include OpenLayers/Filter/Spatial.js
  * @include GEOR_util.js
  * @include GEOR_helper.js
  * @include GEOR_config.js
@@ -193,6 +194,13 @@ GEOR.cswquerier = (function() {
      * {Array} a cache of csw records for "plan B"
      */
     var uuidsToDig = null;
+    
+    /**
+     * Property: map
+     * {OpenLayers.Map} The map instance.
+     */
+    var map = null;
+    
 
     /**
      * Method: onServicesStoreLoad
@@ -462,6 +470,17 @@ GEOR.cswquerier = (function() {
          * Observable object
          */
         events: observable,
+        
+        /**
+         * APIMethod: init
+         * Initialize this module 
+         *
+         * Parameters:
+         * m - {OpenLayers.Map} The map instance.
+         */
+        init: function(m) { 
+            map = m;
+        },
 
         /**
          * APIMethod: getPanel
@@ -544,6 +563,7 @@ GEOR.cswquerier = (function() {
                 });
 
                 textField = new Ext.app.FreetextField({
+                    map: map,
                     store: CSWRecordsStore,
                     callback: function(r, options, success) {
                         if (!success) {
@@ -582,7 +602,7 @@ GEOR.cswquerier = (function() {
                     items: [{
                         html: tr("Find"),
                         bodyStyle: 'padding: 0 10px 0 0;font: 12px tahoma,arial,helvetica,sans-serif;'
-                    }, textField, {
+                    },textField, {
                         html: tr("in"),
                         bodyStyle: 'padding: 0 10px;font: 12px tahoma,arial,helvetica,sans-serif;'
                     }, {
@@ -751,7 +771,12 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
                 ]
             }),
             // word filters
-            byWords = [];
+            byWords = [],
+            // spatial filters
+            bySpatial = [],
+            // final filters, and logical operator
+            finalFilters = [];
+            
         Ext.each(words, function(word) {
             if (word) {
                 // #word : search in keywords, use _ for space
@@ -825,33 +850,43 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
                 }
             }
         });
-
-        if (byWords.length > 0) {
-            // combine filters alltogether
-            return new OpenLayers.Filter.Logical({
-                type: "&&",
-                filters: [
-                    // data types
-                    byTypes,
-                    // query
-                    new OpenLayers.Filter.Logical({
-                        type: "||",
-                        filters: [
-                            // exact matches
-                            byIds,
-                            // word matches
-                            new OpenLayers.Filter.Logical({
-                                type: "&&",
-                                filters: byWords
-                            })
-                        ]
-                    })
-                ]
+        
+        // spatial filter
+        bySpatial.push(new OpenLayers.Filter.Spatial({
+                type: OpenLayers.Filter.Spatial.BBOX,
+                value: new OpenLayers.Bounds(GEOR.config.CSW_FILTER_SPATIAL)
             })
+        );
+
+        // combine all filters alltogether
+        finalFilters = [byTypes];
+        finalFilters.push(new OpenLayers.Filter.Logical({
+                type: "&&",
+                filters: bySpatial
+            })
+        );
+        
+        if (byWords.length > 0) {
+            finalFilters.push(new OpenLayers.Filter.Logical({
+                    type: "||",
+                    filters: [
+                        // exact matches
+                        byIds,
+                        // word matches
+                        new OpenLayers.Filter.Logical({
+                            type: "&&",
+                            filters: byWords
+                        })
+                    ]
+                })
+            );
         }
-        else {
-            return byTypes;
-        }
+
+        return new OpenLayers.Filter.Logical({
+            type: "&&",
+            filters: finalFilters
+        });
+
     },
 
     // search

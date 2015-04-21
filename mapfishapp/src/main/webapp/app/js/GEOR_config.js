@@ -227,7 +227,15 @@ GEOR.config = (function() {
             'Subject',
             'OrganisationName'
         ]),
-
+        
+        /**
+         * Constant: CSW_FILTER_SPATIAL
+         * An optional extent in latlon to restrict metadata search on a specific extent.
+         * Defaults to [-180,-90,180,90]
+         * ie whole world
+         */
+        CSW_FILTER_SPATIAL: getCustomParameter("CSW_FILTER_SPATIAL", [-180,-90,180,90]),
+        
         /**
          * Constant: NO_THUMBNAIL_IMAGE_URL
          * URL to a thumbnail image shown when none is provided by the CSW service
