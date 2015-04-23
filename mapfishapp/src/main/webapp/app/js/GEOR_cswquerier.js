@@ -678,7 +678,8 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
         this.on('focus', function() {
             GEOR.helper.msg(
                 OpenLayers.i18n("cswquerier.help.title"), 
-                OpenLayers.i18n("cswquerier.help.message")
+                OpenLayers.i18n("cswquerier.help.message"),
+                10
             );
         }, this);
     },
