@@ -200,7 +200,6 @@ GEOR.cswquerier = (function() {
      * {OpenLayers.Map} The map instance.
      */
     var map = null;
-    
 
     /**
      * Method: onServicesStoreLoad
@@ -679,8 +678,7 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
         this.on('focus', function() {
             GEOR.helper.msg(
                 OpenLayers.i18n("cswquerier.help.title"), 
-                OpenLayers.i18n("cswquerier.help.message"), 
-                10
+                OpenLayers.i18n("cswquerier.help.message")
             );
         }, this);
     },
@@ -772,10 +770,9 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
             }),
             // word filters
             byWords = [],
-            // spatial filters
-            bySpatial = [],
             // final filters, and logical operator
             finalFilters = [];
+
             
         Ext.each(words, function(word) {
             if (word) {
@@ -850,34 +847,27 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
                 }
             }
         });
+
+        // combine all filters alltogether
+        finalFilters.push(byTypes);
         
         // spatial filter
-        if (GEOR.config.CSW_FILTER_SPATIAL.length===4) {
-            bySpatial.push(new OpenLayers.Filter.Spatial({
+        if (GEOR.config.CSW_FILTER_SPATIAL.length!==4) {
+            finalFilters.push(new OpenLayers.Filter.Spatial({
+                    type: OpenLayers.Filter.Spatial.BBOX,
+                    value: this.map.getExtent().clone()
+                        .transform(this.map.getProjectionObject(), new OpenLayers.Projection("EPSG:4326"))
+                })
+            );
+        }
+        else {
+            finalFilters.push(new OpenLayers.Filter.Spatial({
                     type: OpenLayers.Filter.Spatial.BBOX,
                     value: new OpenLayers.Bounds(GEOR.config.CSW_FILTER_SPATIAL)
                 })
             );
         }
-        // TODO auto filter based on map extent, bad way
-        else {
-            var map = GeoExt.MapPanel.guess().map;
-            var bbox = map.getExtent().clone();
-            bySpatial.push(new OpenLayers.Filter.Spatial({
-                    type: OpenLayers.Filter.Spatial.BBOX,
-                    value: bbox.transform(map.projection, new OpenLayers.Projection("EPSG:4326"))
-                })
-            );
-        }
 
-        // combine all filters alltogether
-        finalFilters = [byTypes];
-        finalFilters.push(new OpenLayers.Filter.Logical({
-                type: "&&",
-                filters: bySpatial
-            })
-        );
-        
         if (byWords.length > 0) {
             finalFilters.push(new OpenLayers.Filter.Logical({
                     type: "||",
@@ -904,7 +894,6 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
     // search
     onTrigger2Click: function() {
         this.cancelRequest();
-
         this.store.load({
             params: {
                 xmlData: new OpenLayers.Format.CSWGetRecords().write({

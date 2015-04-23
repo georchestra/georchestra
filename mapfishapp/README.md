@@ -130,6 +130,17 @@ CSWquerier will always add those filters to this end:
   OR ResourceIdentifier='searchphrase' 
 ```
 
+### Spatial filter
+
+Metadata search may be restricted to a specific extent using the ```CSW_FILTER_SPATIAL``` parameter, for example :
+
+``` 
+    CSW_FILTER_SPATIAL = [-5,45,0,55]
+```
+
+If an empty array is provided, the filter will automatically accomodate the current map extent, thus exclude datas not intersecting
+the map extent.
+
 
 Recenter on referentials
 ========================

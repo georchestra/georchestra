@@ -231,10 +231,10 @@ GEOR.config = (function() {
         /**
          * Constant: CSW_FILTER_SPATIAL
          * An optional extent in latlon to restrict metadata search on a specific extent (latlon)
-         * Defaults to [], means that bbox comes from the map current view
-         * Use [-90,-180,180,90] to cover the world.
+         * Defaults to [-180,-90,180,90] to cover the world.
+         * If the parameter is not an array of 4, the filter uses the current map extent.
          */
-        CSW_FILTER_SPATIAL: getCustomParameter("CSW_FILTER_SPATIAL", []),
+        CSW_FILTER_SPATIAL: getCustomParameter("CSW_FILTER_SPATIAL", [-180,-90,180,90]),
         
         /**
          * Constant: NO_THUMBNAIL_IMAGE_URL
