@@ -448,6 +448,10 @@ GEOR.cswquerier = (function() {
             } else {
                 text += tr("NB layers found.", {'NB': wmsCount});
             }
+            if (!(GEOR.config.CSW_FILTER_SPATIAL instanceof Array)) {
+                text += " ";
+                text += tr("Search limited to current map extent.");
+            }
 
             // a better indicator would be numberOfRecordsMatched > numberOfRecordsReturned
             // but it is more difficult to obtain than mdCount.
@@ -678,7 +682,7 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
         this.on('focus', function() {
             GEOR.helper.msg(
                 OpenLayers.i18n("cswquerier.help.title"), 
-                OpenLayers.i18n("cswquerier.help.message"),
+                OpenLayers.i18n("cswquerier.help.message"), 
                 10
             );
         }, this);
@@ -771,10 +775,9 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
             }),
             // word filters
             byWords = [],
-            // final filters, and logical operator
+            // final filters, AND operator
             finalFilters = [];
 
-            
         Ext.each(words, function(word) {
             if (word) {
                 // #word : search in keywords, use _ for space
@@ -853,7 +856,7 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
         finalFilters.push(byTypes);
         
         // spatial filter
-        if (GEOR.config.CSW_FILTER_SPATIAL.length!==4) {
+        if (!(GEOR.config.CSW_FILTER_SPATIAL instanceof Array)) {
             finalFilters.push(new OpenLayers.Filter.Spatial({
                     type: OpenLayers.Filter.Spatial.BBOX,
                     value: this.map.getExtent().clone()
@@ -889,7 +892,6 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
             type: "&&",
             filters: finalFilters
         });
-
     },
 
     // search
