@@ -200,6 +200,12 @@ GEOR.cswquerier = (function() {
      * {OpenLayers.Map} The map instance.
      */
     var map = null;
+    
+    /**
+     * Property: isLimitExtent
+     * {Boolean} limit metadata results to map extent
+     */
+    var isLimitExtent = false;
 
     /**
      * Method: onServicesStoreLoad
@@ -448,7 +454,7 @@ GEOR.cswquerier = (function() {
             } else {
                 text += tr("NB layers found.", {'NB': wmsCount});
             }
-            if (!(GEOR.config.CSW_FILTER_SPATIAL instanceof Array)) {
+            if (isLimitExtent) {
                 text += " ";
                 text += tr("Search limited to current map extent.");
             }
@@ -483,6 +489,31 @@ GEOR.cswquerier = (function() {
          */
         init: function(m) { 
             map = m;
+        },
+
+        /**
+         * APIMethod: getSpatialFilter
+         * Return the search extent to build a csw search filter
+         *
+         * Returns:
+         * {OpenLayers.Filter.Spatial} bbox filter
+         */
+        getSpatialFilter: function() {
+            var f;
+            if (isLimitExtent) {
+                f = new OpenLayers.Filter.Spatial({
+                    type: OpenLayers.Filter.Spatial.BBOX,
+                    value: map.getExtent().clone()
+                        .transform(map.getProjectionObject(), new OpenLayers.Projection("EPSG:4326"))
+                });
+            }
+            else {
+                f= new OpenLayers.Filter.Spatial({
+                        type: OpenLayers.Filter.Spatial.BBOX,
+                        value: new OpenLayers.Bounds(GEOR.config.CSW_FILTER_SPATIAL)
+                });
+            }
+            return f;
         },
 
         /**
@@ -631,6 +662,19 @@ GEOR.cswquerier = (function() {
                                 CSWRecordsStore.proxy.setUrl(rec.get('url'), true);
                                 servicesStore.proxy.setUrl(rec.get('url'), true);
                                 // then trigger search, if first field has search.
+                                if (textField.hasSearch) {
+                                    textField.onTrigger2Click.call(textField);
+                                }
+                            }
+                        }
+                    }, {
+                        xtype: 'checkbox',
+                        boxLabel: tr("Limit to map extent"),
+                        name: 'limitExtent',
+                        checked: isLimitExtent,
+                        listeners: {
+                            "check": function(cb, checked) {
+                                isLimitExtent = checked;
                                 if (textField.hasSearch) {
                                     textField.onTrigger2Click.call(textField);
                                 }
@@ -856,21 +900,7 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
         finalFilters.push(byTypes);
         
         // spatial filter
-        if (!(GEOR.config.CSW_FILTER_SPATIAL instanceof Array)) {
-            finalFilters.push(new OpenLayers.Filter.Spatial({
-                    type: OpenLayers.Filter.Spatial.BBOX,
-                    value: this.map.getExtent().clone()
-                        .transform(this.map.getProjectionObject(), new OpenLayers.Projection("EPSG:4326"))
-                })
-            );
-        }
-        else {
-            finalFilters.push(new OpenLayers.Filter.Spatial({
-                    type: OpenLayers.Filter.Spatial.BBOX,
-                    value: new OpenLayers.Bounds(GEOR.config.CSW_FILTER_SPATIAL)
-                })
-            );
-        }
+        finalFilters.push(GEOR.cswquerier.getSpatialFilter());
 
         if (byWords.length > 0) {
             finalFilters.push(new OpenLayers.Filter.Logical({
