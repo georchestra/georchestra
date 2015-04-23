@@ -227,7 +227,7 @@ GEOR.config = (function() {
             'Subject',
             'OrganisationName'
         ]),
-        
+
         /**
          * Constant: CSW_FILTER_SPATIAL
          * An optional extent in latlon to restrict metadata search on a specific extent (latlon)

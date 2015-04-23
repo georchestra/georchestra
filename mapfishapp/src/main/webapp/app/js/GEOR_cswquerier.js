@@ -601,7 +601,7 @@ GEOR.cswquerier = (function() {
                     items: [{
                         html: tr("Find"),
                         bodyStyle: 'padding: 0 10px 0 0;font: 12px tahoma,arial,helvetica,sans-serif;'
-                    },textField, {
+                    }, textField, {
                         html: tr("in"),
                         bodyStyle: 'padding: 0 10px;font: 12px tahoma,arial,helvetica,sans-serif;'
                     }, {
@@ -894,6 +894,7 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
     // search
     onTrigger2Click: function() {
         this.cancelRequest();
+
         this.store.load({
             params: {
                 xmlData: new OpenLayers.Format.CSWGetRecords().write({
