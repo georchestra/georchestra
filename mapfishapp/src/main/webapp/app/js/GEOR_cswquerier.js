@@ -206,6 +206,12 @@ GEOR.cswquerier = (function() {
      * {Boolean} limit metadata results to map extent
      */
     var isLimitExtent = false;
+    
+    /**
+     * Property: isTooltip
+     * {Boolean} display search tooltip only once
+     */
+    var isTooltip = true;
 
     /**
      * Method: onServicesStoreLoad
@@ -515,6 +521,21 @@ GEOR.cswquerier = (function() {
             }
             return f;
         },
+        
+        /**
+         * APIMethod: seachTooltip
+         * Displays the search tooltip only once
+         */
+        searchTooltip: function() {
+            if (isTooltip) {
+                isTooltip=false;
+                GEOR.helper.msg(
+                    OpenLayers.i18n("cswquerier.help.title"), 
+                    OpenLayers.i18n("cswquerier.help.message"), 
+                    10
+                );
+            }
+        },
 
         /**
          * APIMethod: getPanel
@@ -744,11 +765,7 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
             }
         }, this);
         this.on('focus', function() {
-            GEOR.helper.msg(
-                OpenLayers.i18n("cswquerier.help.title"), 
-                OpenLayers.i18n("cswquerier.help.message"), 
-                10
-            );
+            GEOR.cswquerier.searchTooltip();
         }, this);
     },
 
