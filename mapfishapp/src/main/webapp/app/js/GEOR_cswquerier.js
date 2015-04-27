@@ -208,10 +208,10 @@ GEOR.cswquerier = (function() {
     var isLimitExtent = false;
     
     /**
-     * Property: isTooltip
+     * Property: isTipDisplayed
      * {Boolean} display search tooltip only once
      */
-    var isTooltip = true;
+    var isTipDisplayed = true;
 
     /**
      * Method: onServicesStoreLoad
@@ -495,6 +495,7 @@ GEOR.cswquerier = (function() {
          */
         init: function(m) { 
             map = m;
+            isLimitExtent = (GEOR.config.CSW_FILTER_SPATIAL===null);
         },
 
         /**
@@ -505,30 +506,27 @@ GEOR.cswquerier = (function() {
          * {OpenLayers.Filter.Spatial} bbox filter
          */
         getSpatialFilter: function() {
-            var f;
-            if (isLimitExtent) {
-                f = new OpenLayers.Filter.Spatial({
-                    type: OpenLayers.Filter.Spatial.BBOX,
-                    value: map.getExtent().clone()
-                        .transform(map.getProjectionObject(), new OpenLayers.Projection("EPSG:4326"))
-                });
-            }
-            else {
-                f= new OpenLayers.Filter.Spatial({
-                        type: OpenLayers.Filter.Spatial.BBOX,
-                        value: new OpenLayers.Bounds(GEOR.config.CSW_FILTER_SPATIAL)
-                });
-            }
-            return f;
+            return new OpenLayers.Filter.Spatial({
+                type: OpenLayers.Filter.Spatial.BBOX,
+                value:  (isLimitExtent) ?
+                    map.getExtent().clone()
+                        .transform(
+                            map.getProjectionObject(),
+                            new OpenLayers.Projection("EPSG:4326")
+                    ) :
+                    new OpenLayers.Bounds(
+                        GEOR.config.CSW_FILTER_SPATIAL
+                    )
+            });
         },
         
         /**
-         * APIMethod: seachTooltip
+         * APIMethod: displayTip
          * Displays the search tooltip only once
          */
-        searchTooltip: function() {
-            if (isTooltip) {
-                isTooltip=false;
+        displayTip: function() {
+            if (isTipDisplayed) {
+                isTipDisplayed=false;
                 GEOR.helper.msg(
                     OpenLayers.i18n("cswquerier.help.title"), 
                     OpenLayers.i18n("cswquerier.help.message"), 
@@ -765,7 +763,7 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
             }
         }, this);
         this.on('focus', function() {
-            GEOR.cswquerier.searchTooltip();
+            GEOR.cswquerier.displayTip();
         }, this);
     },
 
