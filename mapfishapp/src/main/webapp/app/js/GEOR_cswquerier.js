@@ -202,10 +202,10 @@ GEOR.cswquerier = (function() {
     var map = null;
     
     /**
-     * Property: isLimitExtent
+     * Property: isDynamicSpatialFilter
      * {Boolean} limit metadata results to map extent
      */
-    var isLimitExtent;
+    var isDynamicSpatialFilter;
     
     /**
      * Property: isTipDisplayed
@@ -460,7 +460,7 @@ GEOR.cswquerier = (function() {
             } else {
                 text += tr("NB layers found.", {'NB': wmsCount});
             }
-            if (isLimitExtent) {
+            if (isDynamicSpatialFilter) {
                 text += " ";
                 text += tr("Search limited to current map extent.");
             }
@@ -495,7 +495,7 @@ GEOR.cswquerier = (function() {
          */
         init: function(m) { 
             map = m;
-            isLimitExtent = (GEOR.config.CSW_FILTER_SPATIAL===null);
+            isDynamicSpatialFilter = (GEOR.config.CSW_FILTER_SPATIAL===null);
             isTipDisplayed = true;
         },
 
@@ -509,7 +509,7 @@ GEOR.cswquerier = (function() {
         getSpatialFilter: function() {
             return new OpenLayers.Filter.Spatial({
                 type: OpenLayers.Filter.Spatial.BBOX,
-                value:  (isLimitExtent) ?
+                value:  (isDynamicSpatialFilter) ?
                     map.getExtent().clone()
                         .transform(
                             map.getProjectionObject(),
@@ -710,10 +710,10 @@ GEOR.cswquerier = (function() {
                         }, {
                             xtype: 'checkbox',
                             name: 'limitExtent',
-                            checked: isLimitExtent,
+                            checked: isDynamicSpatialFilter,
                             listeners: {
                                 "check": function(cb, checked) {
-                                    isLimitExtent = checked;
+                                    isDynamicSpatialFilter = checked;
                                     if (textField.hasSearch) {
                                         textField.onTrigger2Click.call(textField);
                                     }
