@@ -60,7 +60,10 @@ GEOR.ajaxglobal = (function() {
      */
     var handleFailure = function(options) {
         var text, width = 400;
-        if (GEOR.ajaxglobal.disableAllErrors) {
+        if (GEOR.ajaxglobal.disableAllErrors ||
+            // ignoring all errors when it comes to DescribeLayer
+            // see https://github.com/georchestra/georchestra/issues/898
+            /DescribeLayer/i.test(options.requestUrl)) {
             return;
         }
         switch(options.request.status) {
