@@ -597,7 +597,6 @@ GEOR.cswquerier = (function() {
                 });
 
                 textField = new Ext.app.FreetextField({
-                    map: map,
                     store: CSWRecordsStore,
                     callback: function(r, options, success) {
                         if (!success) {
@@ -623,63 +622,84 @@ GEOR.cswquerier = (function() {
                 layout: 'border',
                 items: [{
                     region: 'north',
-                    layout: 'hbox',
-                    layoutConfig: {
-                        align: 'middle'
-                    },
+                    layout: 'auto',
                     border: false,
-                    height: 35,
+                    height: 60,
                     bodyStyle: 'padding: 5px;',
                     defaults: {
                         border: false
                     },
                     items: [{
-                        html: tr("Find"),
-                        bodyStyle: 'padding: 0 10px 0 0;font: 12px tahoma,arial,helvetica,sans-serif;'
-                    }, textField, {
-                        html: tr("in"),
-                        bodyStyle: 'padding: 0 10px;font: 12px tahoma,arial,helvetica,sans-serif;'
-                    }, {
-                        xtype: 'combo',
-                        store: new Ext.data.ArrayStore({
-                            fields: ['url', 'name'],
-                            data: GEOR.config.CATALOGS
-                        }),
-                        value: GEOR.config.DEFAULT_CSW_URL,
-                        mode: 'local',
-                        triggerAction: 'all',
-                        editable: false,
-                        valueField: 'url',
-                        displayField: 'name',
-                        width: 200,
-                        tpl: new Ext.XTemplate(
-                            '<tpl for=".">',
-                                '<div ext:qtip="{url}" class="x-combo-list-item">{name}</div>',
-                            '</tpl>'
-                        ),
-                        listeners: {
-                            "select": function(cb, rec) {
-                                CSWRecordsStore.proxy.setUrl(rec.get('url'), true);
-                                servicesStore.proxy.setUrl(rec.get('url'), true);
-                                // then trigger search, if first field has search.
-                                if (textField.hasSearch) {
-                                    textField.onTrigger2Click.call(textField);
+                        layout : 'hbox',
+                        layoutConfig : {
+                            align: 'middle'
+                        },
+                        defaults :{
+                            border: false,
+                            height: 30,
+                            bodyStyle: 'padding: 5px 5px 0 5px;',
+                        },
+                        items : [{
+                            html: tr("Find"),
+                            bodyStyle: 'padding: 0 10px 0 0;font: 12px tahoma,arial,helvetica,sans-serif;'
+                        }, textField, {
+                            html: tr("in"),
+                            bodyStyle: 'padding: 0 10px;font: 12px tahoma,arial,helvetica,sans-serif;'
+                        }, {
+                            xtype: 'combo',
+                            store: new Ext.data.ArrayStore({
+                                fields: ['url', 'name'],
+                                data: GEOR.config.CATALOGS
+                            }),
+                            value: GEOR.config.DEFAULT_CSW_URL,
+                            mode: 'local',
+                            triggerAction: 'all',
+                            editable: false,
+                            valueField: 'url',
+                            displayField: 'name',
+                            width: 200,
+                            tpl: new Ext.XTemplate(
+                                '<tpl for=".">',
+                                    '<div ext:qtip="{url}" class="x-combo-list-item">{name}</div>',
+                                '</tpl>'
+                            ),
+                            listeners: {
+                                "select": function(cb, rec) {
+                                    CSWRecordsStore.proxy.setUrl(rec.get('url'), true);
+                                    servicesStore.proxy.setUrl(rec.get('url'), true);
+                                    // then trigger search, if first field has search.
+                                    if (textField.hasSearch) {
+                                        textField.onTrigger2Click.call(textField);
+                                    }
                                 }
                             }
-                        }
+                        }]
                     }, {
-                        xtype: 'checkbox',
-                        boxLabel: tr("Limit to map extent"),
-                        name: 'limitExtent',
-                        checked: isLimitExtent,
-                        listeners: {
-                            "check": function(cb, checked) {
-                                isLimitExtent = checked;
-                                if (textField.hasSearch) {
-                                    textField.onTrigger2Click.call(textField);
+                        layout : 'hbox',
+                        layoutConfig : {
+                            align: 'middle'
+                        },
+                        defaults :{
+                            border: false,
+                            height: 30,
+                            bodyStyle: 'padding: 0 5px 5px 5px;',
+                        },
+                        items : [{
+                            html: tr("Limit to map extent"),
+                            bodyStyle: 'padding: 0 10px 0 0;font: 12px tahoma,arial,helvetica,sans-serif;'
+                        }, {
+                            xtype: 'checkbox',
+                            name: 'limitExtent',
+                            checked: isLimitExtent,
+                            listeners: {
+                                "check": function(cb, checked) {
+                                    isLimitExtent = checked;
+                                    if (textField.hasSearch) {
+                                        textField.onTrigger2Click.call(textField);
+                                    }
                                 }
                             }
-                        }
+                        }]
                     }]
                 }, {
                     region: 'center',
