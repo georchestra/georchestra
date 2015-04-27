@@ -205,13 +205,13 @@ GEOR.cswquerier = (function() {
      * Property: isLimitExtent
      * {Boolean} limit metadata results to map extent
      */
-    var isLimitExtent = false;
+    var isLimitExtent;
     
     /**
      * Property: isTipDisplayed
      * {Boolean} display search tooltip only once
      */
-    var isTipDisplayed = true;
+    var isTipDisplayed;
 
     /**
      * Method: onServicesStoreLoad
@@ -496,6 +496,7 @@ GEOR.cswquerier = (function() {
         init: function(m) { 
             map = m;
             isLimitExtent = (GEOR.config.CSW_FILTER_SPATIAL===null);
+            isTipDisplayed = true;
         },
 
         /**
