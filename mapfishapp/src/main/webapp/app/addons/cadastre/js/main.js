@@ -161,12 +161,10 @@ GEOR.Addons.Cadastre = Ext.extend(GEOR.Addons.Base, {
                     this.cbx, 
                     '->', 
                     {
-						text: OpenLayers.i18n("Clean"),
-						handler: function() {
-							this.cleanActiveFields();
-						},
-						scope: this
-					},
+		        text: OpenLayers.i18n("Clean"),
+			handler: this.cleanActiveFields,
+			scope: this
+		    },
                     {
                         text: OpenLayers.i18n("Close"),
                         handler: function() {
@@ -191,16 +189,16 @@ GEOR.Addons.Cadastre = Ext.extend(GEOR.Addons.Base, {
     },
     
     cleanActiveFields: function() {
-		var fields = this.win.items.items[0].activeTab.form.items.items;
+	var fields = this.win.items.items[0].activeTab.form.items.items;
 	
-		fields.forEach(
-			function(element) {
-				element.clearValue();
-			}
-		);
+	fields.forEach(
+	    function(element) {
+		element.clearValue();
+	    }
+	);
 		
-		this.layer.removeAllFeatures();
-	},
+	this.layer.removeAllFeatures();
+    },
 
 
     issuePOST: function(options) {
