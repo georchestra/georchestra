@@ -189,9 +189,7 @@ GEOR.Addons.Cadastre = Ext.extend(GEOR.Addons.Base, {
     },
     
     cleanActiveFields: function() {
-	var fields = this.win.items.items[0].activeTab.form.items.items;
-	
-	fields.forEach(
+	this.fields.forEach(
 	    function(element) {
 		element.clearValue();
 	    }
