@@ -17,6 +17,7 @@
  * @include OpenLayers/Format/CSWGetRecords/v2_0_2.js
  * @include OpenLayers/Filter/Comparison.js
  * @include OpenLayers/Filter/Logical.js
+ * @include OpenLayers/Filter/Spatial.js
  * @include GEOR_util.js
  * @include GEOR_helper.js
  * @include GEOR_config.js
@@ -193,6 +194,24 @@ GEOR.cswquerier = (function() {
      * {Array} a cache of csw records for "plan B"
      */
     var uuidsToDig = null;
+    
+    /**
+     * Property: map
+     * {OpenLayers.Map} The map instance.
+     */
+    var map = null;
+    
+    /**
+     * Property: isDynamicSpatialFilter
+     * {Boolean} limit metadata results to map extent
+     */
+    var isDynamicSpatialFilter;
+    
+    /**
+     * Property: isTipDisplayed
+     * {Boolean} display search tooltip only once
+     */
+    var isTipDisplayed;
 
     /**
      * Method: onServicesStoreLoad
@@ -441,6 +460,10 @@ GEOR.cswquerier = (function() {
             } else {
                 text += tr("NB layers found.", {'NB': wmsCount});
             }
+            if (isDynamicSpatialFilter) {
+                text += " ";
+                text += tr("Search limited to current map extent.");
+            }
 
             // a better indicator would be numberOfRecordsMatched > numberOfRecordsReturned
             // but it is more difficult to obtain than mdCount.
@@ -462,6 +485,56 @@ GEOR.cswquerier = (function() {
          * Observable object
          */
         events: observable,
+        
+        /**
+         * APIMethod: init
+         * Initialize this module 
+         *
+         * Parameters:
+         * m - {OpenLayers.Map} The map instance.
+         */
+        init: function(m) { 
+            map = m;
+            isDynamicSpatialFilter = (GEOR.config.CSW_FILTER_SPATIAL===null);
+            isTipDisplayed = true;
+        },
+
+        /**
+         * APIMethod: getSpatialFilter
+         * Return the search extent to build a csw search filter
+         *
+         * Returns:
+         * {OpenLayers.Filter.Spatial} bbox filter
+         */
+        getSpatialFilter: function() {
+            return new OpenLayers.Filter.Spatial({
+                type: OpenLayers.Filter.Spatial.BBOX,
+                value:  (isDynamicSpatialFilter) ?
+                    map.getExtent().clone()
+                        .transform(
+                            map.getProjectionObject(),
+                            new OpenLayers.Projection("EPSG:4326")
+                    ) :
+                    new OpenLayers.Bounds(
+                        GEOR.config.CSW_FILTER_SPATIAL
+                    )
+            });
+        },
+        
+        /**
+         * APIMethod: displayTip
+         * Displays the search tooltip only once
+         */
+        displayTip: function() {
+            if (isTipDisplayed) {
+                isTipDisplayed=false;
+                GEOR.helper.msg(
+                    OpenLayers.i18n("cswquerier.help.title"), 
+                    OpenLayers.i18n("cswquerier.help.message"), 
+                    10
+                );
+            }
+        },
 
         /**
          * APIMethod: getPanel
@@ -569,50 +642,84 @@ GEOR.cswquerier = (function() {
                 layout: 'border',
                 items: [{
                     region: 'north',
-                    layout: 'hbox',
-                    layoutConfig: {
-                        align: 'middle'
-                    },
+                    layout: 'auto',
                     border: false,
-                    height: 35,
+                    height: 60,
                     bodyStyle: 'padding: 5px;',
                     defaults: {
                         border: false
                     },
                     items: [{
-                        html: tr("Find"),
-                        bodyStyle: 'padding: 0 10px 0 0;font: 12px tahoma,arial,helvetica,sans-serif;'
-                    }, textField, {
-                        html: tr("in"),
-                        bodyStyle: 'padding: 0 10px;font: 12px tahoma,arial,helvetica,sans-serif;'
-                    }, {
-                        xtype: 'combo',
-                        store: new Ext.data.ArrayStore({
-                            fields: ['url', 'name'],
-                            data: GEOR.config.CATALOGS
-                        }),
-                        value: GEOR.config.DEFAULT_CSW_URL,
-                        mode: 'local',
-                        triggerAction: 'all',
-                        editable: false,
-                        valueField: 'url',
-                        displayField: 'name',
-                        width: 200,
-                        tpl: new Ext.XTemplate(
-                            '<tpl for=".">',
-                                '<div ext:qtip="{url}" class="x-combo-list-item">{name}</div>',
-                            '</tpl>'
-                        ),
-                        listeners: {
-                            "select": function(cb, rec) {
-                                CSWRecordsStore.proxy.setUrl(rec.get('url'), true);
-                                servicesStore.proxy.setUrl(rec.get('url'), true);
-                                // then trigger search, if first field has search.
-                                if (textField.hasSearch) {
-                                    textField.onTrigger2Click.call(textField);
+                        layout : 'hbox',
+                        layoutConfig : {
+                            align: 'middle'
+                        },
+                        defaults :{
+                            border: false,
+                            height: 30,
+                            bodyStyle: 'padding: 5px 5px 0 5px;',
+                        },
+                        items : [{
+                            html: tr("Find"),
+                            bodyStyle: 'padding: 0 10px 0 0;font: 12px tahoma,arial,helvetica,sans-serif;'
+                        }, textField, {
+                            html: tr("in"),
+                            bodyStyle: 'padding: 0 10px;font: 12px tahoma,arial,helvetica,sans-serif;'
+                        }, {
+                            xtype: 'combo',
+                            store: new Ext.data.ArrayStore({
+                                fields: ['url', 'name'],
+                                data: GEOR.config.CATALOGS
+                            }),
+                            value: GEOR.config.DEFAULT_CSW_URL,
+                            mode: 'local',
+                            triggerAction: 'all',
+                            editable: false,
+                            valueField: 'url',
+                            displayField: 'name',
+                            width: 200,
+                            tpl: new Ext.XTemplate(
+                                '<tpl for=".">',
+                                    '<div ext:qtip="{url}" class="x-combo-list-item">{name}</div>',
+                                '</tpl>'
+                            ),
+                            listeners: {
+                                "select": function(cb, rec) {
+                                    CSWRecordsStore.proxy.setUrl(rec.get('url'), true);
+                                    servicesStore.proxy.setUrl(rec.get('url'), true);
+                                    // then trigger search, if first field has search.
+                                    if (textField.hasSearch) {
+                                        textField.onTrigger2Click.call(textField);
+                                    }
                                 }
                             }
-                        }
+                        }]
+                    }, {
+                        layout : 'hbox',
+                        layoutConfig : {
+                            align: 'middle'
+                        },
+                        defaults :{
+                            border: false,
+                            height: 30,
+                            bodyStyle: 'padding: 0 5px 5px 5px;',
+                        },
+                        items : [{
+                            html: tr("Limit to map extent"),
+                            bodyStyle: 'padding: 0 10px 0 0;font: 12px tahoma,arial,helvetica,sans-serif;'
+                        }, {
+                            xtype: 'checkbox',
+                            name: 'limitExtent',
+                            checked: isDynamicSpatialFilter,
+                            listeners: {
+                                "check": function(cb, checked) {
+                                    isDynamicSpatialFilter = checked;
+                                    if (textField.hasSearch) {
+                                        textField.onTrigger2Click.call(textField);
+                                    }
+                                }
+                            }
+                        }]
                     }]
                 }, {
                     region: 'center',
@@ -657,11 +764,7 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
             }
         }, this);
         this.on('focus', function() {
-            GEOR.helper.msg(
-                OpenLayers.i18n("cswquerier.help.title"), 
-                OpenLayers.i18n("cswquerier.help.message"), 
-                10
-            );
+            GEOR.cswquerier.displayTip();
         }, this);
     },
 
@@ -751,7 +854,10 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
                 ]
             }),
             // word filters
-            byWords = [];
+            byWords = [],
+            // final filters, AND operator
+            finalFilters = [];
+
         Ext.each(words, function(word) {
             if (word) {
                 // #word : search in keywords, use _ for space
@@ -826,32 +932,32 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
             }
         });
 
+        // combine all filters alltogether
+        finalFilters.push(byTypes);
+        
+        // spatial filter
+        finalFilters.push(GEOR.cswquerier.getSpatialFilter());
+
         if (byWords.length > 0) {
-            // combine filters alltogether
-            return new OpenLayers.Filter.Logical({
-                type: "&&",
-                filters: [
-                    // data types
-                    byTypes,
-                    // query
-                    new OpenLayers.Filter.Logical({
-                        type: "||",
-                        filters: [
-                            // exact matches
-                            byIds,
-                            // word matches
-                            new OpenLayers.Filter.Logical({
-                                type: "&&",
-                                filters: byWords
-                            })
-                        ]
-                    })
-                ]
-            })
+            finalFilters.push(new OpenLayers.Filter.Logical({
+                    type: "||",
+                    filters: [
+                        // exact matches
+                        byIds,
+                        // word matches
+                        new OpenLayers.Filter.Logical({
+                            type: "&&",
+                            filters: byWords
+                        })
+                    ]
+                })
+            );
         }
-        else {
-            return byTypes;
-        }
+
+        return new OpenLayers.Filter.Logical({
+            type: "&&",
+            filters: finalFilters
+        });
     },
 
     // search
