@@ -258,6 +258,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Fields of filters with a red mark are mandatory": "Поля фильтров, помеченные красным цветом, являются обязательными для заполнения.",
     "Request on NAME": "Сделать запрос о ${NAME}",
     "Search": "Искать",
+    "Filter": "фильтр",
     "querier.layer.no.geom": "Слой не имеет геометрического столбца.<br />Геометрический запросчик не будет работать.",
     "querier.layer.error": "получить характеристику запрошенного слоя.<br />Запросчик не будет доступен.",
     /* GEOR_referentials.js strings */
