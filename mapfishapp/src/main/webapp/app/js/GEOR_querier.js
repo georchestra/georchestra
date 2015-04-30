@@ -29,7 +29,6 @@
  * @requires OpenLayers/Filter/Comparison.js
  * @requires OpenLayers/Filter/Spatial.js
  * @include OpenLayers/Filter/Logical.js
- * @include OpenLayers/Format/CQL.js
  * @include OpenLayers/Format/Filter.js
  * @include OpenLayers/Format/XML.js
  // see https://github.com/georchestra/georchestra/issues/482 :
@@ -289,10 +288,19 @@ GEOR.querier = (function() {
         var layers = map.getLayersBy('id',record.id);
         
         if( layers.length > 0 ) {
-            if( filter.CLASS_NAME == "OpenLayers.Filter.Spatial" || filter.CLASS_NAME == "OpenLayers.Filter.Comparison" || ('filters' in filter && filter.filters.length > 0) ) {
-                layers[0].mergeNewParams({'CQL_FILTER': (new OpenLayers.Format.CQL()).write(filter)});
-            } else {
-                layers[0].mergeNewParams({'CQL_FILTER': null});
+            if( layers[0].CLASS_NAME == "OpenLayers.Layer.WMS" ) {
+                if( filter.CLASS_NAME == "OpenLayers.Filter.Spatial" || filter.CLASS_NAME == "OpenLayers.Filter.Comparison" || ('filters' in filter && filter.filters.length > 0) ) {
+                    layers[0].params["FILTER"] = (new OpenLayers.Format.XML()).write((new OpenLayers.Format.Filter()).write(filter));
+                } else {
+                    layers[0].params["FILTER"] = null;
+                }
+                
+                layers[0].mergeNewParams({
+                    nocache: new Date().valueOf()
+                });
+            } else if( layers[0].CLASS_NAME == "OpenLayers.Layer.Vector" ) {
+                layers[0].filter = filter;
+                layers[0].refresh();
             }
         }
     }
