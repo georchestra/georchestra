@@ -320,6 +320,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Request on NAME": "Consultas sobre ${NAME}",
     "WFS GetFeature on filter": "GetFeature WFS sobre un filtro",
     "Search": "Búsqueda",
+    "Filter": "Filtro",
     "querier.layer.no.geom":
         "La capa no contiene ninguna columna geométrica." +
         "<br />El módulo de consultas geométricas no funcionará.",
