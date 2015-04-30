@@ -29,6 +29,7 @@
  * @requires OpenLayers/Filter/Comparison.js
  * @requires OpenLayers/Filter/Spatial.js
  * @include OpenLayers/Filter/Logical.js
+ * @include OpenLayers/Format/CQL.js
  * @include OpenLayers/Format/Filter.js
  * @include OpenLayers/Format/XML.js
  // see https://github.com/georchestra/georchestra/issues/482 :
@@ -258,10 +259,16 @@ GEOR.querier = (function() {
             deactivable: true,
             cookieProvider: cp,
             autoScroll: true,
-            buttons: [{
-                text: tr("Search"),
-                handler: search
-            }],
+            buttons: [
+                {
+                    text: tr("Search"),
+                    handler: search
+                },
+                {
+                    text: tr("Filter"),
+                    handler: filterLayer
+                }
+            ],
             map: map,
             attributes: attStore,
             allowSpatial: true,
@@ -271,6 +278,24 @@ GEOR.querier = (function() {
             })
         });
     };
+    
+    var filterLayer = function() {
+        var filterbuilder = this.findParentByType("gx_filterbuilder");
+        var filter = filterbuilder.getFilter();
+        if (!checkFilter(filter)) {
+            return;
+        }
+        
+        var layers = map.getLayersBy('id',record.id);
+        
+        if( layers.length > 0 ) {
+            if( filter.CLASS_NAME == "OpenLayers.Filter.Spatial" || filter.CLASS_NAME == "OpenLayers.Filter.Comparison" || ('filters' in filter && filter.filters.length > 0) ) {
+                layers[0].mergeNewParams({'CQL_FILTER': (new OpenLayers.Format.CQL()).write(filter)});
+            } else {
+                layers[0].mergeNewParams({'CQL_FILTER': null});
+            }
+        }
+    }
 
     return {
     
