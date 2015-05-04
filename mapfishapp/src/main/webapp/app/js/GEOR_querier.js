@@ -285,7 +285,7 @@ GEOR.querier = (function() {
             return;
         }
         
-        var layers = map.getLayersBy('id',record.id);
+        var layer = record.getLayer();
         
         if( layers.length > 0 ) {
             if( layers[0].CLASS_NAME == "OpenLayers.Layer.WMS" ) {
