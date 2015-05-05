@@ -1,7 +1,7 @@
     <script type="text/javascript" src="resources/lib/externals/geoext/lib/overrides/override-ext-ajax.js"></script>
     <script type="text/javascript" src="resources/lib/externals/ext/ext-all-debug.js"></script>
     <script type="text/javascript" src="resources/lib/Ext.ux/lib/Ext.ux.js"></script>
-    <script type="text/javascript" src="resources/lib/proj4js/lib/proj4js-compressed.js"></script>
+    <script type="text/javascript" src="resources/lib/proj4js/lib/proj4js-combined.js"></script>
     <script type="text/javascript" src="resources/lib/externals/openlayers/lib/OpenLayers.js"></script>
     <script type="text/javascript" src="resources/lib/externals/openlayers/lib/OpenLayers/Lang/<%= lang %>.js"></script>
     <script type="text/javascript" src="resources/lib/externals/geoext/lib/GeoExt.js"></script>
