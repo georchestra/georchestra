@@ -410,7 +410,8 @@ GEOR.Addons.Cadastre = Ext.extend(GEOR.Addons.Base, {
             title: OpenLayers.i18n("tab1title"),
             items: fields,
             listeners: {
-                "afterrender": function(form) {
+                "beforeshow": function(form) {
+                    this.fields = fields;
                     this.fields[0].focus('', 50);
                 },
                 scope: this
@@ -543,8 +544,9 @@ GEOR.Addons.Cadastre = Ext.extend(GEOR.Addons.Base, {
             title: OpenLayers.i18n("tab2title"),
             items: fields,
             listeners: {
-                "afterrender": function(form) {
-                    fields[0].focus('', 50);
+                "beforeshow": function(form) {
+                    this.fields = fields;
+                    this.fields[0].focus('', 50);
                 },
                 scope: this
             }
