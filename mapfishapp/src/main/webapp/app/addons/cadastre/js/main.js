@@ -147,7 +147,7 @@ GEOR.Addons.Cadastre = Ext.extend(GEOR.Addons.Base, {
             this.win = new Ext.Window({
                 closable: true,
                 closeAction: 'hide',
-                width: 330,
+                width: 380,
                 title: OpenLayers.i18n("addon_cadastre_popup_title"),
                 border: false,
                 buttonAlign: 'left',
@@ -157,13 +157,22 @@ GEOR.Addons.Cadastre = Ext.extend(GEOR.Addons.Base, {
                     activeTab: 0,
                     items: this.getTabs()
                 }],
-                fbar: [this.cbx, '->', {
-                    text: OpenLayers.i18n("Close"),
-                    handler: function() {
-                        this.win.hide();
-                    },
-                    scope: this
-                }],
+                fbar: [
+                    this.cbx, 
+                    '->', 
+                    {
+		        text: OpenLayers.i18n("Clean"),
+			handler: this.cleanActiveFields,
+			scope: this
+		    },
+                    {
+                        text: OpenLayers.i18n("Close"),
+                        handler: function() {
+                            this.win.hide();
+                        },
+                        scope: this
+                    }
+                ],
                 listeners: {
                     "hide": function() {
                         this.map.removeLayer(this.layer);
@@ -177,6 +186,16 @@ GEOR.Addons.Cadastre = Ext.extend(GEOR.Addons.Base, {
         }
         this.map.addLayer(this.layer);
         this.win.show();
+    },
+    
+    cleanActiveFields: function() {
+	this.fields.forEach(
+	    function(element) {
+		element.clearValue();
+	    }
+	);
+		
+	this.layer.removeAllFeatures();
     },
 
 
