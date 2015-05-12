@@ -139,6 +139,7 @@ GEOR.edit = (function() {
                 hover: true,
                 click: false,
                 single: true,
+                maxFeatures: 5,
                 clickTolerance: 7,
                 eventListeners: {
                     "hoverfeature": function(e) {
