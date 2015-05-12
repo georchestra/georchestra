@@ -1,5 +1,11 @@
 package org.georchestra.extractorapp.ws.extractor;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.regex.Pattern;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpHost;
@@ -15,12 +21,6 @@ import org.geotools.referencing.CRS;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.regex.Pattern;
 
 
 /**
@@ -71,15 +71,35 @@ public class WcsExtractor {
         final CloseableHttpClient httpclient = httpClientBuilder.build();
         String capabilities = FileUtils.asString(httpclient.execute(httpHost, get, localContext).getEntity().getContent());
 
-        Pattern regex = Pattern.compile("(?m)<Layer[^>]*>(\\\\n|\\s)*<Name>\\s*(\\w*:)?" + Pattern.quote(request._layerName) + "\\s*</Name>");
-        boolean permitted = regex.matcher(capabilities).find();
+
+        String queriedLayer = request._layerName;
+
+        boolean permitted = isLayerPresent(capabilities, queriedLayer);
 
         if (!permitted) {
-            throw new SecurityException("User does not have sufficient privileges to access the Layer: " + request._layerName + ". " +
-                                        "\n\nCapabilties:  " + capabilities);
+            throw new SecurityException("User does not have sufficient privileges to access the Layer: " + queriedLayer + ". " +
+                                        "\n\nCapabilities:  " + capabilities);
         }
     }
-	
+	/**
+	 * Checks if the user has access to the requested layer
+	 *
+	 * @param getCapabilitiesDocument the GetCapabilities response of the remote server
+	 * @return true if the current user has access, else false.
+	 */
+	private boolean isLayerPresent(String getCapabilitiesDocument, String layerName) {
+        // if the layer name is prefixed, then remove it, the regexp should take care of it.
+        String queriedLayer = layerName;
+        if (queriedLayer.contains(":")) {
+            String[] tmpLayer = queriedLayer.split(":");
+            queriedLayer = tmpLayer[tmpLayer.length - 1];
+        }
+
+        Pattern regex = Pattern.compile("(?m)<Layer[^>]*>(\\\\n|\\s)*<Name>\\s*(\\w*:)?" + Pattern.quote(queriedLayer) + "\\s*</Name>");
+        return regex.matcher(getCapabilitiesDocument).find();
+	}
+
+
 	/**
 	 * Creates a directory where the layer is extracted.
 	 * 
