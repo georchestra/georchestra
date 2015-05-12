@@ -2,10 +2,12 @@ package org.georchestra.extractorapp.ws.extractor;
 
 import static java.lang.String.valueOf;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -22,6 +24,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.opengis.referencing.FactoryException;
+import org.springframework.util.ReflectionUtils;
 
 import com.google.common.io.Files;
 import com.sun.net.httpserver.Headers;
@@ -62,6 +65,48 @@ public class WcsExtractorTest extends AbstractTestWithServer {
         ExtractorLayerRequest request = createLayerRequestObject("nurc:Arc_Sample", "geotiff");
         wcsExtractor.checkPermission(request, "localhost", null, null);
         assertTrue(this.serverWasCalled);
+    }
+
+    @Test
+    public void testisLayerPresent() {
+        final String ilpGetCap = "<WMS_Capabilities><Capability><Layer><Name>prefixed:MY_LAYER</Name></Layer></Capability></WMS_Capabilities>";
+        final String ilpGetCapNoPrefix = "<WMS_Capabilities>"
+                + "  <Capability>"
+                + "    <Layer>\n"
+                + "      <Name>MY_LAYER</Name>\n"
+                + "    </Layer>"
+                + "  </Capability>"
+                + "</WMS_Capabilities>";
+
+        RequestConfiguration requestConfig = createRequestConfiguration(null, null);
+        WcsExtractor wcsExtractor = new WcsExtractor(testDir.getRoot(), requestConfig);
+        Class[] params = { String.class, String.class };
+
+        Method ilpm = ReflectionUtils.findMethod(WcsExtractor.class, "isLayerPresent", params);
+        ilpm.setAccessible(true);
+
+        // Testing with a GetCapabilities containing a prefix
+        String[] p1 = { ilpGetCap, "prefixed:MY_LAYER" };
+        String[] p2 = { ilpGetCap, "MY_LAYER" };
+        String[] p3 = { ilpGetCap, "NOT_EXISTING" };
+        String[] p4 = { ilpGetCap, "prefixed:NOT_EXISTING" };
+
+        assertTrue("Expected true, got false (prefixed:MY_LAYER)", Boolean.parseBoolean(ReflectionUtils.invokeMethod(ilpm, wcsExtractor, p1).toString()));
+        assertTrue("Expected true, got false (MY_LAYER)", Boolean.parseBoolean(ReflectionUtils.invokeMethod(ilpm, wcsExtractor, p2).toString()));
+        assertFalse("Expected false, got true (NOT_EXISTING)", Boolean.parseBoolean(ReflectionUtils.invokeMethod(ilpm, wcsExtractor, p3).toString()));
+        assertFalse("Expected false, got true (prefixed:NOT_EXISTING)", Boolean.parseBoolean(ReflectionUtils.invokeMethod(ilpm, wcsExtractor, p4).toString()));
+
+        // Testing with a GetCapabilities containing no prefix
+        String[] p5 = { ilpGetCapNoPrefix, "prefixed:MY_LAYER" };
+        String[] p6 = { ilpGetCapNoPrefix, "MY_LAYER" };
+        String[] p7 = { ilpGetCapNoPrefix, "NOT_EXISTING" };
+        String[] p8 = { ilpGetCapNoPrefix, "prefixed:NOT_EXISTING" };
+
+        assertTrue("Expected true, got false (prefixed:MY_LAYER)", Boolean.parseBoolean(ReflectionUtils.invokeMethod(ilpm, wcsExtractor, p5).toString()));
+        assertTrue("Expected true, got false (MY_LAYER)", Boolean.parseBoolean(ReflectionUtils.invokeMethod(ilpm, wcsExtractor, p6).toString()));
+        assertFalse("Expected false, got true (NOT_EXISTING)", Boolean.parseBoolean(ReflectionUtils.invokeMethod(ilpm, wcsExtractor, p7).toString()));
+        assertFalse("Expected false, got true (prefixed:NOT_EXISTING)", Boolean.parseBoolean(ReflectionUtils.invokeMethod(ilpm, wcsExtractor, p8).toString()));
+
     }
 
     @Test
