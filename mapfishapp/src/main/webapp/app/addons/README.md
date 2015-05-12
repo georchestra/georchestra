@@ -14,6 +14,7 @@ We currently have the following addons available:
  * [extractor](extractor/README.md) which relies on the services offered by the [extractorapp](/extractorapp/README.md) geOrchestra module.
  * [magnifier](magnifier/README.md) which allows one to explore a map area with configured imagery.
  * [openls](openls/README.md) which allows one to locate an address on the map.
+ * [quicksearch](quicksearch/README.md) is an all-in-one search tool.
  * [streetview](streetview/README.md) ... obviously based on the Google Street View Image API.
 
 
