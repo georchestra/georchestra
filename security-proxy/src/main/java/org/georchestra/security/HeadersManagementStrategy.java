@@ -158,14 +158,21 @@ public class HeadersManagementStrategy {
             String currentPath = null;
             String currentId = null;
             for (String path : jessionIds.keySet()) {
+                // see https://www.owasp.org/index.php/HttpOnly
+                // removing extra suffixes for JSESSIONID cookie ("; HttpOnly")
+                // This is related to some issues with newer versions of tomcat
+                // and session loss, e.g.:
+                // https://github.com/georchestra/georchestra/pull/913
+                String actualPath  = path.split(";")[0].trim();
+
                 // the cookie we will use is the cookie with the longest matching path
-                if(requestPath.startsWith(path)) {
+                if(requestPath.startsWith(actualPath)) {
                     if(logger.isDebugEnabled()) {
-                        logger.debug("Found possible matching JSessionId: Path = "+path+" id="+jessionIds.get(path)+" for "+requestPath+" of uri "+proxyRequest.getURI());
+                        logger.debug("Found possible matching JSessionId: Path = "+actualPath+" id="+jessionIds.get(actualPath)+" for "+requestPath+" of uri "+proxyRequest.getURI());
                     }
-                    if(currentPath==null || currentPath.length()<path.length()) {
-                        currentPath=path;
-                        currentId = jessionIds.get(path);
+                    if(currentPath==null || currentPath.length()<actualPath.length()) {
+                        currentPath=actualPath;
+                        currentId = jessionIds.get(actualPath);
                     }
                 }
             }
