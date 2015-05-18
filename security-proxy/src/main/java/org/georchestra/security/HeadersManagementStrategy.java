@@ -168,11 +168,11 @@ public class HeadersManagementStrategy {
                 // the cookie we will use is the cookie with the longest matching path
                 if(requestPath.startsWith(actualPath)) {
                     if(logger.isDebugEnabled()) {
-                        logger.debug("Found possible matching JSessionId: Path = "+actualPath+" id="+jessionIds.get(actualPath)+" for "+requestPath+" of uri "+proxyRequest.getURI());
+                        logger.debug("Found possible matching JSessionId: Path = "+actualPath+" id="+jessionIds.get(path)+" for "+requestPath+" of uri "+proxyRequest.getURI());
                     }
                     if(currentPath==null || currentPath.length()<actualPath.length()) {
                         currentPath=actualPath;
-                        currentId = jessionIds.get(actualPath);
+                        currentId = jessionIds.get(path);
                     }
                 }
             }
