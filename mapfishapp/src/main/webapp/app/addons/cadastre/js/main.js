@@ -192,8 +192,9 @@ GEOR.Addons.Cadastre = Ext.extend(GEOR.Addons.Base, {
     cleanActiveFields: function() {
 	var cleanFields = function(element, index) {
 	    element.clearValue();
-	    if( index > 0 )
+	    if( index > 0 ) {
 	        element.disable();
+	    }
 	};
 	
 	this.tab1Fields.forEach(cleanFields);
