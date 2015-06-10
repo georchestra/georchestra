@@ -93,7 +93,7 @@ The implementation of SASL protocol with LDAP allows to delegate verification of
 ## Prerequisites
 
 ```
-sudo sasl2-bin
+sudo apt-get install sasl2-bin
 ```
 
 You can check that ldap is in the sasl's list of supported services :
