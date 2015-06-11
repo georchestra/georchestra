@@ -1,128 +1,93 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" 
-"http://java.sun.com/dtd/web-app_2_3.dtd">
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
 <web-app>
-
-    <!-- security related filters and listeners  -->
-    <context-param>
-        <param-name>contextConfigLocation</param-name>
-        <param-value>
+  <!-- security related filters and listeners  -->
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>
             /WEB-INF/applicationContext-security.xml
         </param-value>
-    </context-param>
-
-    <filter>
-        <filter-name>UTF8Filter</filter-name>
-        <filter-class>org.georchestra.security.UTF8Filter</filter-class>
-    </filter>
-
-    <filter>
-        <filter-name>UrlRewriteFilter</filter-name>
-        <filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
-    
-        <!-- set the amount of seconds the conf file will be checked for reload
+  </context-param>
+  <filter>
+    <filter-name>UTF8Filter</filter-name>
+    <filter-class>org.georchestra.security.UTF8Filter</filter-class>
+  </filter>
+  <filter>
+    <filter-name>UrlRewriteFilter</filter-name>
+    <filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
+    <!-- set the amount of seconds the conf file will be checked for reload
         can be a valid integer (0 denotes check every time,
         -1 denotes no reload check, default -1) -->
-        <init-param>
-            <param-name>confReloadCheckInterval</param-name>
-            <param-value>10</param-value>
-        </init-param>
-        
-           <init-param>
-            <param-name>logLevel</param-name>
-            <param-value>OFF</param-value>
-        </init-param>
-        <init-param>
-          <param-name>statusPath</param-name>
-          <param-value>/rewrite-status</param-value>
-      </init-param>
     <init-param>
-        <param-name>statusEnabled</param-name>
-        <param-value>false</param-value>
+      <param-name>confReloadCheckInterval</param-name>
+      <param-value>10</param-value>
     </init-param>
-    </filter>
-
-<!--    <filter>-->
-<!--       <filter-name>CAS Single Sign Out Filter</filter-name>-->
-<!--       <filter-class>org.jasig.cas.client.session.SingleSignOutFilter</filter-class>-->
-<!--    </filter>-->
-
-    <filter>
-      <filter-name>springSecurityFilterChain</filter-name>
-      <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-    </filter>
-
-<!--  <filter-mapping>-->
-<!--     <filter-name>CAS Single Sign Out Filter</filter-name>-->
-<!--     <url-pattern>/*</url-pattern>-->
-<!--  </filter-mapping>-->
-
+    <init-param>
+      <param-name>logLevel</param-name>
+      <param-value>OFF</param-value>
+    </init-param>
+    <init-param>
+      <param-name>statusPath</param-name>
+      <param-value>/rewrite-status</param-value>
+    </init-param>
+    <init-param>
+      <param-name>statusEnabled</param-name>
+      <param-value>false</param-value>
+    </init-param>
+  </filter>
+  <filter>
+    <filter-name>springSecurityFilterChain</filter-name>
+    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+  </filter>
   <filter-mapping>
     <filter-name>UTF8Filter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
-
-
-    <filter-mapping>
-        <filter-name>springSecurityFilterChain</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-
-    <filter-mapping>
-      <filter-name>UrlRewriteFilter</filter-name>
-      <url-pattern>/*</url-pattern>
-      <dispatcher>REQUEST</dispatcher>
-      <dispatcher>FORWARD</dispatcher>
+  <filter-mapping>
+    <filter-name>springSecurityFilterChain</filter-name>
+    <url-pattern>/*</url-pattern>
   </filter-mapping>
-<!--  <listener>-->
-<!--          <listener-class>org.jasig.cas.client.session.SingleSignOutHttpSessionListener</listener-class>-->
-<!--  </listener>-->
-    <!--
+  <filter-mapping>
+    <filter-name>UrlRewriteFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>FORWARD</dispatcher>
+  </filter-mapping>
+  <!--
       - Loads the root application context of this web app at startup.
       - The application context is then available via
       - WebApplicationContextUtils.getWebApplicationContext(servletContext).
     -->
-    <listener>
-        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-    </listener>
-
-    <!--
-      - Publishes events for session creation and destruction through the application
-      - context. Optional unless concurrent session control is being used.
-    <listener>
-      <listener-class>org.springframework.security.ui.session.HttpSessionEventPublisher</listener-class>
-    </listener>
-    -->
-
-	<!-- servlets -->
-    <servlet>
-        <servlet-name>proxy</servlet-name>
-        <servlet-class>
-            org.springframework.web.servlet.DispatcherServlet
-        </servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-    <!-- url mapping -->
-    <servlet-mapping>
-        <servlet-name>proxy</servlet-name>
-        <url-pattern>/sec/*</url-pattern>
-    </servlet-mapping>
-    <session-config>
-        <session-timeout>60</session-timeout>
-    </session-config>
-
-    <error-page>
-        <error-code>404</error-code>
-        <location>/404.jsp</location>
-    </error-page>
-    <error-page>
-        <error-code>403</error-code>
-        <location>/403.jsp</location>
-    </error-page>
-    <error-page>
-        <error-code>503</error-code>
-        <location>/503.jsp</location>
-    </error-page>
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  <!-- servlets -->
+  <servlet>
+    <servlet-name>proxy</servlet-name>
+    <servlet-class>
+      org.springframework.web.servlet.DispatcherServlet
+    </servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <!-- url mapping -->
+  <servlet-mapping>
+    <servlet-name>proxy</servlet-name>
+    <url-pattern>/sec/*</url-pattern>
+  </servlet-mapping>
+  <session-config>
+    <session-timeout>60</session-timeout>
+  </session-config>
+  <error-page>
+    <error-code>404</error-code>
+    <location>/404.jsp</location>
+  </error-page>
+  <error-page>
+    <error-code>403</error-code>
+    <location>/403.jsp</location>
+  </error-page>
+  <error-page>
+    <error-code>503</error-code>
+    <location>/503.jsp</location>
+  </error-page>
 
 </web-app>
-
