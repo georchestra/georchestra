@@ -3,7 +3,8 @@
 The "georchestra" database hosts several schemas, which are specific to the deployed modules:
 ```
 createdb -E UTF8 -T template0 georchestra
-createuser -SDRIP www-data (the default setup expects that the www-data user password is www-data)
+createuser -SDRI www-data
+psql -d georchestra -c "ALTER USER \"www-data\" WITH PASSWORD 'www-data';"
 psql -d georchestra -c 'GRANT ALL PRIVILEGES ON DATABASE georchestra TO "www-data";'
 ```
 
@@ -15,7 +16,8 @@ Note 2: PostGIS extensions are not required in the georchestra database, unless 
 
 If **geonetwork** is to be deployed, you need to create a dedicated user and schema:
 ```
-createuser -SDRIP geonetwork (the default setup expects that the geonetwork user password is www-data)
+createuser -SDRI geonetwork
+psql -d georchestra -c "ALTER USER geonetwork WITH PASSWORD 'www-data';"
 psql -d georchestra -c 'CREATE SCHEMA geonetwork;'
 psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA geonetwork TO "geonetwork";'
 ```
@@ -53,7 +55,13 @@ psql -d georchestra -c 'GRANT SELECT ON public.spatial_ref_sys to "www-data";'
 psql -d georchestra -c 'GRANT SELECT,INSERT,DELETE ON public.geometry_columns to "www-data";'
 wget --no-check-certificate https://raw.githubusercontent.com/georchestra/geofence/georchestra-14.12/doc/setup/sql/002_create_schema_postgres.sql -O /tmp/geofence.sql
 psql -d georchestra -f /tmp/geofence.sql
-psql -d georchestra -c 'INSERT INTO geofence.gf_gsinstance (id, baseURL, dateCreation, description, "name", "password", username) values (0, 'http(s)://@shared.server.name@/geoserver', 'now', 'locale geoserver', 'default-gs', '@shared.privileged.geoserver.pass@', '@shared.privileged.geoserver.user@');'
+```
+in the next query, replace every '@...@' with the values of your shared.maven.filters!
+```
+psql -d georchestra -c "INSERT INTO geofence.gf_gsinstance (id, baseURL, dateCreation, description, name, password, username) values (0, 'http(s)://@shared.server.name@/geoserver', 'now', 'locale geoserver', 'default-gs', '@shared.privileged.geoserver.pass@', '@shared.privileged.geoserver.user@');"
+```
+and continue
+```
 psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA geofence TO "www-data";'
 psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA geofence TO "www-data";'
 psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA geofence TO "www-data";'
