@@ -55,7 +55,7 @@ export MAVEN_OPTS="-XX:MaxPermSize=256M"
 ./mvn -Dmaven.test.skip=true -Dserver=myprofile clean install
 ```
 
-Note: this will build **all modules**.  
+Note: this will build **all modules** (except GeoFence).
 In case you only want to build one module or a collection, the syntax is a bit different:
 ```
 ./mvn -Dmaven.test.skip=true -Dserver=myprofile -P-all,module1,module2 clean install
