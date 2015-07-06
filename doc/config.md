@@ -149,12 +149,13 @@ Ready ?
 Let's add the remote to your config directory:  
 ```
 cd ~/myprofile
-git remote add origin git@gitlab.com:USER/myprofile.git (where USER stands for your GitLab username)
+git remote add origin https://gitlab.com/user/myprofile.git
 ```
+(where ```user``` stands for your GitLab username)
 
 ... and push the changes:
 ```
-git push origin master
+git push origin
 ```
 
 Congrats !  

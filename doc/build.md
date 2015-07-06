@@ -31,7 +31,7 @@ Since you want to build against your configuration rather than the template one,
 Let's do this with git instead:
 ```
 cd ~/georchestra/config/configurations/
-git clone git@gitlab.com:USER/myprofile.git
+git clone https://gitlab.com/user/myprofile.git
 ```
 
 Now, you should have your own configuration in ```~/georchestra/config/configurations/myprofile```.  
@@ -51,6 +51,7 @@ Note that if you're connecting to the internet through proxies, you need to [tel
 Building your SDI is just a command-line away:
 ```
 cd ~/georchestra
+export MAVEN_OPTS="-XX:MaxPermSize=256M"
 ./mvn -Dmaven.test.skip=true -Dserver=myprofile clean install
 ```
 

@@ -44,11 +44,7 @@
         <to type="forward" last="true">/$1</to>
     </rule>
     <rule>
-        <from>^/(jquery-min.js|empty|cas-logout.jsp|casfailed.jsp|favicon.ico|receptor|j_spring_security_logout|j_spring_cas_security_check|_static/.*)$</from>
-        <to type="forward" last="true">/$1</to>
-    </rule>
-    <rule>
-        <from>^/(?!sec/)(.+)</from>
+        <from>^/(?!sec/|favicon.ico|receptor|j_spring_security_logout|j_spring_cas_security_check|header.jsp|_static/|cas-logout.jsp|403.jsp|404.jsp|casfailed.jsp)(.*)$</from>
         <to type="forward" last="true">/sec/$1</to>
     </rule>
 

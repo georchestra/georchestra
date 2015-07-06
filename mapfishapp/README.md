@@ -40,7 +40,8 @@ It is also possible to POST a JSON string to the home controller, for instance :
         "layers": [{
             "layername": "ign:ign_bdtopo_departement",
             "owstype": "WMS",
-            "owsurl": "http://ids.pigma.org/geoserver/ign/wms"
+            "owsurl": "http://ids.pigma.org/geoserver/ign/wms",
+            "cql_filter": "id_dept = 47"
         }, {
             "layername": "ign:ign_bdtopo_region",
             "owstype": "WMS",
@@ -48,7 +49,7 @@ It is also possible to POST a JSON string to the home controller, for instance :
         }]
     }
 
-In response, the viewer will add the above two layers to the map, and display a dialog window showing the layers from the http://ids.pigma.org/geoserver/ign_r/wms WMS server.
+In response, the viewer will add the above two layers to the map, and display a dialog window showing the layers from the http://ids.pigma.org/geoserver/ign_r/wms WMS server. The department will only display features which have id_dept equals to 47.
 
 
 CSWquerier
@@ -128,6 +129,16 @@ CSWquerier will always add those filters to this end:
   OR Identifier='searchphrase' 
   OR ResourceIdentifier='searchphrase' 
 ```
+
+### Spatial filter
+
+Metadata search may be restricted to a specific extent using the ```CSW_FILTER_SPATIAL``` parameter, for example :
+
+``` 
+    CSW_FILTER_SPATIAL = [-5,45,0,55]
+```
+
+A null value activates the auto extent mode, excluding datas not intersecting the map extent.
 
 
 Recenter on referentials

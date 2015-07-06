@@ -418,7 +418,7 @@
                     <filtersfile file="${confdir}/${project.artifactId}/maven.filter"/>
                   </filterset>
                 </copy>
-                <copy todir="${basedir}/src/main/webapp/" overwrite="true" verbose="true" failonerror="true">
+                <copy todir="${basedir}/src/main/webapp/" overwrite="true" verbose="true" failonerror="false">
                   <fileset dir="${confdir}/${project.artifactId}">
                     <exclude name="**/maven.filter"/>
                   </fileset>
@@ -460,9 +460,8 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.12</version>
+        <version>2.18.1</version>
         <configuration>
-          <printSummary>false</printSummary>
           <redirectTestOutputToFile>true</redirectTestOutputToFile>
           <excludes>
             <exclude>**/*_Roo_*</exclude>

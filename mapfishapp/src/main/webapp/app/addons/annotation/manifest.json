@@ -2,9 +2,9 @@
     "js": [
         "js/Annotation.js",
         "js/FeaturePanel.js",
-        "js/main.js",
-        "../../../lib/externals/ext/examples/ux/Spinner.js",
-        "../../../lib/externals/ext/examples/ux/SpinnerField.js"
+        "js/Spinner.js",
+        "js/SpinnerField.js",
+        "js/main.js"
     ],
     "css": [
         "resources/css/annotation.css"

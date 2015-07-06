@@ -1,0 +1,31 @@
+{
+    "js": [
+        "js/main.js"
+    ],
+    "default_options": {
+        "target": "tbar_11",
+        "minChars": 4,
+        "maxResults": 10,
+        "graphicStyle": {
+            "graphicName": "cross",
+            "pointRadius": 16,
+            "strokeColor": "fuchsia",
+            "strokeWidth": 2,
+            "fillOpacity": 0
+        }
+    },
+    "i18n": {
+        "en": {
+            "addon_qs_emptyText": "Quick search..."
+        },
+        "es": {
+            "addon_qs_emptyText": "Búsqueda rápida..."
+        },
+        "fr": {
+            "addon_qs_emptyText": "Chercher..."
+        },
+        "de": {
+            "addon_qs_emptyText": "Suchen..."
+        }
+    }
+}

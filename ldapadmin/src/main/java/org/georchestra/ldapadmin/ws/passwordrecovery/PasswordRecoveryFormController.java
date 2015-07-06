@@ -189,4 +189,9 @@ public class PasswordRecoveryFormController  {
 		
 		return url;
 	}
+	
+	@ModelAttribute("passwordRecoveryFormBean")
+	public PasswordRecoveryFormBean getPasswordRecoveryFormBean() {
+		return new PasswordRecoveryFormBean();
+	}
 }

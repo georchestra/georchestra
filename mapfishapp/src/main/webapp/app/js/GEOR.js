@@ -139,6 +139,7 @@ Ext.namespace("GEOR");
         GEOR.selectfeature.init(map);
         GEOR.waiter.init();
         GEOR.wmcbrowser.init();
+        GEOR.cswquerier.init(map);
 
         var recenteringItems = [
             Ext.apply({

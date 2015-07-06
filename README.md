@@ -1,4 +1,5 @@
 # geOrchestra
+[![Build Status](https://travis-ci.org/georchestra/georchestra.svg?branch=master)](https://travis-ci.org/georchestra/georchestra)
 
 geOrchestra is a complete **Spatial Data Infrastructure** solution.
 

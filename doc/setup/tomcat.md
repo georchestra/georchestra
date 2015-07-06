@@ -48,6 +48,14 @@ sudo keytool -importkeystore \
     -destkeystore /etc/tomcat6/keystore
 ```
 
+The password of the srckeystore is "changeit" by default, and should be modified in /etc/default/cacerts.
+
+### SSL
+
+As the SSL certificate is absolutely required, at least for the CAS module, you must add it to the keystore.
+```
+keytool -import -alias cert_ssl -file /var/www/georchestra/ssl/georchestra.crt -keystore /etc/tomcat6/keystore
+```
 
 ### LDAP SSL
 
@@ -64,7 +72,8 @@ echo "" | openssl s_client -connect LDAPHOST:LDAPPORT -showcerts 2>/dev/null | o
 sudo keytool -import -alias cert_ldap -file /tmp/certfile.txt -keystore /etc/tomcat6/keystore
 ```
 
-Finally, verify the list of keys in keystore:
+### Finally, 
+verify the list of keys in keystore:
 ```
 keytool -keystore /etc/tomcat6/keystore -list
 ```
@@ -158,7 +167,7 @@ In ```/var/lib/tomcat-proxycas/conf/server.xml```, find the place where the HTTP
 
 Finally, we make the instance start by default with the OS, and check it works:
 ```
-sudo update-rc.d tomcat-proxycas defaults 90
+sudo insserv tomcat-proxycas
 sudo service tomcat-proxycas start
 ```
 
@@ -250,10 +259,17 @@ In ```/var/lib/tomcat-georchestra/conf/server.xml```:
 
 ```
 
+If the ldapadmin webapp is deployed, the connector must also include these options:
+```
+               proxyName="georchestra.mydomain.org"
+               proxyPort="80"
+```
+(where ```georchestra.mydomain.org``` is your server FQDN)
+
 ### Start the instance
 
 ```
-sudo update-rc.d tomcat-georchestra defaults 90
+sudo insserv tomcat-georchestra
 sudo service tomcat-georchestra start
 ```
 
@@ -356,8 +372,39 @@ In ```/var/lib/tomcat-geoserver0/conf/server.xml```:
 ### Start the instance
 
 ```
-sudo update-rc.d tomcat-geoserver0 defaults 90
+sudo insserv tomcat-geoserver0
 sudo service tomcat-geoserver0 start
 ```
 
+## Be careful
 
+Remember that the geOrchestra binaries must be built according to the tomcat configuration described above.
+By default, forking the template configuration should guarantee this.
+
+Since we assume that :
+ - proxy and cas are served by an http connector on localhost, port 8180
+ - the geOrchestra webapps, except GeoServer, proxy and cas, are served by an http connector on port 8280
+ - GeoServer is served by an http connector on port 8380
+
+... you should verify that:
+
+1. your reverse proxy points to port 8180 (proxy)
+1. your GenerateConfig.groovy file correctly configures your proxy to point to the webapps, namely:
+
+```groovy
+def proxyDefaultTarget = "http://localhost:8280"
+
+properties['proxy.mapping'] = """
+<entry key="analytics"     value="proxyDefaultTarget/analytics/" />
+<entry key="catalogapp"    value="proxyDefaultTarget/catalogapp/" />
+<entry key="downloadform"  value="proxyDefaultTarget/downloadform/" />
+<entry key="extractorapp"  value="proxyDefaultTarget/extractorapp/" />
+<entry key="geonetwork"    value="proxyDefaultTarget/geonetwork/" />
+<entry key="geoserver"     value="http://localhost:8380/geoserver/" />
+<entry key="geowebcache"   value="proxyDefaultTarget/geowebcache/" />
+<entry key="geofence"      value="proxyDefaultTarget/geofence/" />
+<entry key="header"        value="proxyDefaultTarget/header/" />
+<entry key="ldapadmin"     value="proxyDefaultTarget/ldapadmin/" />
+<entry key="mapfishapp"    value="proxyDefaultTarget/mapfishapp/" />
+<entry key="static"        value="proxyDefaultTarget/header/" />""".replaceAll("\n|\t","").replaceAll("proxyDefaultTarget",proxyDefaultTarget)
+```

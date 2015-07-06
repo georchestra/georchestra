@@ -130,10 +130,10 @@ class BoundWcsRequest extends WcsReaderRequest {
      */
     public Set<String> getSupportedResponseCRSs () throws IOException {
         if (responseCrss == null) {
-            NodeList nodes = select ("//wcs:requestResponseCRSs|//wcs:responseCRSs|//wcs:nativeCRSs", getDescribeCoverage());
+            NodeList nodes = select ("//wcs:requestResponseCRSs/text()|//wcs:responseCRSs/text()|//wcs:nativeCRSs/text()", getDescribeCoverage());
             responseCrss = new HashSet<String> ();
             for (int i = 0; i < nodes.getLength (); i++) {
-                responseCrss.add ("" + nodes.item (i).getTextContent ().trim ().toUpperCase ());
+                responseCrss.add ("" + nodes.item (i).getNodeValue ().trim ().toUpperCase ());
             }
         }
 
@@ -159,11 +159,11 @@ class BoundWcsRequest extends WcsReaderRequest {
      */
     public Set<String> getSupportedRequestCRSs () throws IOException {
         if (requestCrss == null) {
-            NodeList nodes = select ("//wcs:requestResponseCRSs|//wcs:requestCRSs|//wcs:nativeCRSs", getDescribeCoverage());
+            NodeList nodes = select ("//wcs:requestResponseCRSs/text()|//wcs:requestCRSs/text()|//wcs:nativeCRSs/text()", getDescribeCoverage());
             requestCrss = new HashSet<String> ();
             for (int i = 0; i < nodes.getLength (); i++) {
                 Node item = nodes.item (i);
-				requestCrss.add ("" + item.getTextContent ().trim ().toUpperCase ());
+				requestCrss.add ("" + item.getNodeValue ().trim ().toUpperCase ());
             }
         }
 
@@ -176,15 +176,15 @@ class BoundWcsRequest extends WcsReaderRequest {
      */
     public Set<String> getNativeCRSs () throws IOException {
         if (nativeCRSs == null) {
-            NodeList nodes = select ("//wcs:nativeCRSs", getDescribeCoverage());
+            NodeList nodes = select ("//wcs:nativeCRSs/text()", getDescribeCoverage());
             nativeCRSs = new HashSet<String> ();
             for (int i = 0; i < nodes.getLength (); i++) {
-                nativeCRSs.add (nodes.item (i).getTextContent ().trim ().toUpperCase ());
+                nativeCRSs.add (nodes.item (i).getNodeValue ().trim ().toUpperCase ());
             }
 
             nodes = select ("//wcs:spatialDomain/*/@srsName", getDescribeCoverage());
             for (int i = 0; i < nodes.getLength (); i++) {
-                nativeCRSs.add (nodes.item (i).getTextContent ().trim ().toUpperCase ());
+                nativeCRSs.add (nodes.item (i).getNodeValue ().trim ().toUpperCase ());
             }
 
         }
@@ -253,11 +253,13 @@ class BoundWcsRequest extends WcsReaderRequest {
     private Set<String> getUnaliasedFormats () throws IOException {
         if (formats == null) {
         	// NOTE: seems only available in v1.0.0 of WCS
-            NodeList nodes = select ("//wcs:formats", getDescribeCoverage());
+            NodeList nodes = select ("//wcs:formats/text()", getDescribeCoverage());
             formats = new HashSet<String> ();
             for (int i = 0; i < nodes.getLength (); i++) {
-                String format = nodes.item (i).getTextContent ().trim ().toLowerCase ();
-                formats.add (format);
+                Node curNode = nodes.item(i);
+                String format = curNode.getNodeValue();
+
+                formats.add (format.trim().toLowerCase());
             }
             formats = Collections.unmodifiableSet (formats);
         }
@@ -348,7 +350,7 @@ class BoundWcsRequest extends WcsReaderRequest {
 		int statusCode = response.getStatusLine().getStatusCode();
 		LOG.debug("WCS response status : " + statusCode);
 		if( statusCode != 200) {
-            throw new ExtractorException("Error from server while fetching coverage: Response Satus Code not valide -> "+statusCode);
+            throw new ExtractorException("Error from server while fetching coverage: Response Satus Code not valid -> "+statusCode);
 		}
         if(hasContentType(response,XML_ERROR_TYPE)){
             String error = FileUtils.asString(response.getEntity().getContent());
@@ -441,7 +443,7 @@ class BoundWcsRequest extends WcsReaderRequest {
         double xmax = requestBbox.getMaxX();
         double ymin = requestBbox.getMinY();
         double ymax = requestBbox.getMaxY();
-        double size = ((xmax - xmin) / groundResolutionX) * ((ymax - ymin) / groundResolutionX) * (double)numBands();
+        double size = ((xmax - xmin) / groundResolutionX) * ((ymax - ymin) / groundResolutionX) * numBands();
 
         LOG.debug("Raster to extract => xSize : " + (xmax - xmin) / groundResolutionX +
         	" - ySize : " + (ymax - ymin) / groundResolutionX + " - nbBands : " + (double)numBands() +

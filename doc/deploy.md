@@ -10,7 +10,7 @@ You could just start with the viewer alone or the viewer and proxy + cas if you 
 Once your system is ready, collect WAR files in a dedicated directory and rename them:
 
     PROFILE=myprofile
-    VERSION=14.06
+    VERSION=14.12
     
     mkdir -p /tmp/georchestra
     cd /tmp/georchestra
@@ -27,6 +27,10 @@ Once your system is ready, collect WAR files in a dedicated directory and rename
     mv ldapadmin-${VERSION}-${PROFILE}.war ldapadmin.war
     mv mapfishapp-${VERSION}-${PROFILE}.war mapfishapp.war
     mv header-${VERSION}-${PROFILE}.war header.war
+    
+Optionally, if you do not plan to use GeoServer's integrated GeoWebCache, you can deploy a standalone version:
+
+    mv geowebcache-webapp-${VERSION}-${PROFILE}.war geowebcache.war
 
 Finally, dispatch geOrchestra webapps into your 3 Tomcat instances:
 
@@ -76,6 +80,7 @@ However, this requires the build process to happen on the production host (or a 
     sudo ln -s ~/.m2/repository/org/georchestra/ldapadmin/${VERSION}-SNAPSHOT/ldapadmin-${VERSION}-SNAPSHOT-${PROFILE}.war ldapadmin.war
     sudo ln -s ~/.m2/repository/org/georchestra/mapfishapp/${VERSION}-SNAPSHOT/mapfishapp-${VERSION}-SNAPSHOT-${PROFILE}.war mapfishapp.war
     sudo ln -s ~/.m2/repository/org/georchestra/header/${VERSION}-SNAPSHOT/header-${VERSION}-SNAPSHOT-${PROFILE}.war header.war
+    sudo ln -s ~/.m2/repository/org/georchestra/geowebcache-webapp/${VERSION}-SNAPSHOT/geowebcache-webapp-${VERSION}-SNAPSHOT-${PROFILE}.war geowebcache.war
     sudo service tomcat-georchestra start
 
 
