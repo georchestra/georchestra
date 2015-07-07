@@ -387,6 +387,8 @@ div.olMapViewport {
     display: block;
     overflow: hidden;
     text-align: center;
+    text-overflow: ellipsis;
+    width: 116px;
 }
 
 .context-selector .x-view-over {
