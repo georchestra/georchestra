@@ -508,7 +508,7 @@
         <checksumPolicy>ignore</checksumPolicy>
       </snapshots>
       <id>georchestra</id>
-      <url>http://sdi.georchestra.org/maven/repository</url>
+      <url>http://build.georchestra.org/maven/repository</url>
     </repository>
     <repository>
       <snapshots>
