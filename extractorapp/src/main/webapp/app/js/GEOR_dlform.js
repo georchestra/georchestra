@@ -126,21 +126,19 @@ GEOR.dlform = (function() {
             fieldLabel: tr("Comments"),
             name: 'comment',
             height: 150
+        }, 
+        // check box
+        {
+            xtype:'checkboxgroup',
+            allowBlank: false,
+            blankText: tr("dlform.blanktext"),
+            columns: 1,
+            items: [{
+                boxLabel: tr("dlform.checkbox",
+                        {"URL": GEOR.config.PDF_URL}),
+                name: 'ok'
+            }]
         }];
-
-        if (GEOR.config.PDF_URL) {
-            formPanelItems.push({
-                xtype:'checkboxgroup',
-                allowBlank: false,
-                blankText: tr("dlform.blanktext"),
-                columns: 1,
-                items: [{
-                    boxLabel: tr("dlform.checkbox",
-                                 {"URL": GEOR.config.PDF_URL}),
-                    name: 'ok'
-                }]
-            });
-        }
 
         return new Ext.FormPanel({
             region: 'center',
