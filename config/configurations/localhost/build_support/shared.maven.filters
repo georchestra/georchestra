@@ -121,7 +121,7 @@ shared.email.html=false
 # geOrchestra redirects logs to the shared.log.dir directory.
 # This directory must exist and must be writeable by the tomcat user
 # + example +
-# shared.log.dir=/var/log/tomcat6
+# shared.log.dir=/var/log/tomcat8
 #
 # Here we use /tmp because we want to prevent this kind of error 
 # http://applis-bretagne.fr/redmine/issues/4311 when Tomcat is not installed
@@ -187,7 +187,7 @@ shared.psql.geonetwork.db=geonetwork
 # TO BE DOCUMENTED
 # --------------------------------------------------
 
-shared.tomcat.dir=/var/lib/tomcat6
+shared.tomcat.dir=/var/lib/tomcat8
 shared.apache.conf.dir=/dev/null
 
 

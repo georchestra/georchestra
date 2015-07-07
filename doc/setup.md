@@ -10,7 +10,7 @@ So, here are the steps:
 
  * first, install the dependencies:
 ```
-sudo apt-get install postgresql-9.1-postgis postgis slapd ldap-utils apache2 tomcat6 tomcat6-user libgdal1 postfix
+sudo apt-get install postgresql-9.4-postgis-2.1 slapd ldap-utils apache2 ca-certificates tomcat8 tomcat8-user libgdal1h libgdal-java postfix
 ```
  
  * [set up the application database](setup/postgresql.md)
@@ -26,4 +26,7 @@ sudo apt-get install postgresql-9.1-postgis postgis slapd ldap-utils apache2 tom
 
  * install the [native libs](setup/native_libs.md)
 
-Note: geOrchestra has been extensively tested on Debian 6 and 7 with Tomcat6 (version 7 is not yet compatible, see [#504](https://github.com/georchestra/georchestra/issues/504)). This guide assumes the OS is Debian's latest stable (Wheezy).
+Notes: 
+ 
+ * geOrchestra >= 15.06 has been tested on Debian 8 with Tomcat 6, 7 and 8. This guide assumes Tomcat 8 is used and the OS is Debian's latest stable (Jessie).
+ * geOrchestra <= 14.12 has been extensively tested on Debian 6 and 7 with Tomcat 6. It is known not to work with Tomcat > 6.

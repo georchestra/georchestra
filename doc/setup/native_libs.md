@@ -40,7 +40,7 @@ Next, you have to:
  - create a GDAL_DATA environment variable (eg: export GDAL_DATA="/var/sig/gdal/data")
 
 ```
-sudo nano /etc/default/tomcat6
+sudo nano /etc/default/tomcat8
 ```
 
 ```

@@ -22,10 +22,10 @@ If you're creating a new geoserver instance, you should really start from the "d
 
 ```
 sudo mkdir /opt/geoserver_data_dir
-sudo chown tomcat6 /opt/geoserver_data_dir
-sudo -u tomcat6 git clone https://github.com/georchestra/geoserver_minimal_data_dir.git /opt/geoserver_data_dir
+sudo chown tomcat8 /opt/geoserver_data_dir
+sudo -u tomcat8 git clone https://github.com/georchestra/geoserver_minimal_data_dir.git /opt/geoserver_data_dir
 cd /opt/geoserver_data_dir
-sudo -u tomcat6 git remote rename origin upstream
+sudo -u tomcat8 git remote rename origin upstream
 ```
 
 At this stage, you already have a local repository for your geoserver "data dir".
@@ -35,14 +35,14 @@ At this stage, you already have a local repository for your geoserver "data dir"
 In case you're starting from an existing "data dir":
 ```
 cd /path/to/your/geoserver_data_dir
-sudo -u tomcat6 git init
-sudo -u tomcat6 git add --all .
-sudo -u tomcat6 git commit -m "initial repository state"
+sudo -u tomcat8 git init
+sudo -u tomcat8 git add --all .
+sudo -u tomcat8 git commit -m "initial repository state"
 ```
 
 Let's also ignore the changes to the ```logs```, ```temp```, ```gwc``` folders:
 ```
-sudo -u tomcat6 cat > /path/to/your/geoserver_data_dir/.gitignore << EOF
+sudo -u tomcat8 cat > /path/to/your/geoserver_data_dir/.gitignore << EOF
 logs
 temp
 gwc
@@ -53,8 +53,8 @@ Also exclude folders containing datas if you don't want them to be versioned.
 Finally:
 ```
 cd /path/to/your/geoserver_data_dir
-sudo -u tomcat6 git add .gitignore
-sudo -u tomcat6 git commit -m "git ignores temp, logs and gwc folders"
+sudo -u tomcat8 git add .gitignore
+sudo -u tomcat8 git commit -m "git ignores temp, logs and gwc folders"
 ```
 
 ## Managing the repository
@@ -68,20 +68,20 @@ There are two strategies: either you're doing it manually (but this may soon bec
 
 ```
 cd /path/to/your/geoserver_data_dir
-sudo -u tomcat6 git add --all .
-sudo -u tomcat6 git commit -m "my commit message"
+sudo -u tomcat8 git add --all .
+sudo -u tomcat8 git commit -m "my commit message"
 ```
 
 ### Viewing changes
 
 To view the commit history:
 ```
-sudo -u tomcat6 git log
+sudo -u tomcat8 git log
 ```
 
 To identify the changes introduced by a revision:
 ```
-sudo -u tomcat6 git diff xxxxxx
+sudo -u tomcat8 git diff xxxxxx
 ```
 ... where xxxxxx is the commit hash.
 
@@ -91,14 +91,14 @@ sudo -u tomcat6 git diff xxxxxx
 Let's say you want to temporarily rollback to a given revision.
 First commit your working state (see above). Then:
 ```
-sudo -u tomcat6 git checkout xxxxxx
+sudo -u tomcat8 git checkout xxxxxx
 ```
 Don't forget you have to reload the geoserver catalog from the data dir.
 This is done in the geoserver web interface with the "reload config" button.
 
 To go back to the latest state:
 ```
-sudo -u tomcat6 git checkout master
+sudo -u tomcat8 git checkout master
 ```
 ... and reload the configuration again.
 
@@ -107,7 +107,7 @@ sudo -u tomcat6 git checkout master
 
 This is achieved with:
 ```
-sudo -u tomcat6 git reset --hard xxxxxx --force
+sudo -u tomcat8 git reset --hard xxxxxx --force
 ```
 ... where xxxxxx is the revision hash you want to go to.
 
@@ -121,7 +121,7 @@ If your repository has a ```remote``` where you have the right to push to, git c
 Check your remotes with:
 ```
 cd /path/to/your/geoserver_data_dir
-sudo -u tomcat6 git remote -v
+sudo -u tomcat8 git remote -v
 ```
 
 Either you have no remote or you may see something like this (in case you're starting from our minimal data dir):
@@ -132,13 +132,13 @@ upstream	https://github.com/georchestra/geoserver_minimal_data_dir.git (push)
 
 In case you do not see any remote, you may add one with, eg: (adapt user and repository)
 ```
-sudo -u tomcat6 git remote add origin https://gitlab.com/user/myprofile.git
+sudo -u tomcat8 git remote add origin https://gitlab.com/user/myprofile.git
 ```
 
 Once your "origin" remote is setup, you don't have to do this anymore.  
 Just push the changes with:
 ```
-sudo -u tomcat6 git push origin
+sudo -u tomcat8 git push origin
 ```
 
 In case you opt for automatic backups with git, a cron job should regularly:
