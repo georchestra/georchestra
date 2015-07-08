@@ -1,5 +1,5 @@
 
-# Setup remote AD authentication via SASL
+# Setup remote AD or LDAP authentication via SASL
 
 The implementation of SASL protocol with LDAP allows to delegate verification of the password of a user to a remote Active Directory. This can be useful if you already have accounts and want users to keep the same password within geOrchestra.
 
