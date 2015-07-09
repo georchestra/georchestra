@@ -91,6 +91,7 @@ This provides an easy way to customize stylesheets and images, but also to pass 
 The most important files to customize are probably:
  * ```~/myprofile/extractorapp/app/js/GEOR_custom.js``` - client-side parameters for the extractor
  * ```~/myprofile/mapfishapp/app/js/GEOR_custom.js``` - client-side parameters for the viewer
+ * ```~/myprofile/mapfishapp/*.servers.json``` - OGC servers lists for the viewer (3 files)
  * ```~/myprofile/mapfishapp/WEB-INF/print/config.yaml``` - print layouts for the viewer
  * ```~/myprofile/geonetwork-client/apps/georchestra/js/Settings.js``` - client-side parameters for the catalog
  * ```~/myprofile/geonetwork-client/apps/georchestra/js/map/Settings.js``` - client-side parameters for the catalog mini-map
