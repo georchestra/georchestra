@@ -254,8 +254,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
+        <version>2.6</version>
         <configuration>
           <warName>mapfishapp</warName>
+          <packagingExcludes>**/ext/src/**,**/ext/examples/**,**/ext/pkgs/**,**/docs/**,**/openlayers/examples/**,**/openlayers/tests/**</packagingExcludes>
         </configuration>
       </plugin>
       <plugin>
