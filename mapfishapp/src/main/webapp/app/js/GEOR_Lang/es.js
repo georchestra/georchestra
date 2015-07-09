@@ -487,7 +487,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "with JOSM": "con JOSM",
     "JOSM must be started with the remote control option": "Usted tiene " +
         "que lanzar JOSM y activar el control remoto",
-    "with Potlatch": "con Potlatch",
+    "with iD": "con iD",
     "Recommended scale is 1:10.000": "La escala de trabajo recomendada es " +
         "1:10.000",
     "with Potlatch2": "con Potlatch2",

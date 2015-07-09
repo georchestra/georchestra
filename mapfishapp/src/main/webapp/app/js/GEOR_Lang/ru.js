@@ -392,7 +392,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Edit in OSM": "Редактировать в OSM (OpenStreetMap)",
     "with JOSM": "c JOSM",
     "JOSM must be started with the remote control option": "Необходимо запустить JOSM с опцией дистанционного контроля",
-    "with Potlatch": "c редактором Potlatch",
+    "with iD": "c редактором iD",
     "Recommended scale is 1:10.000": "Рекомендуемый масштаб - 1:10.000",
     "with Potlatch2": "c редактором Potlatch2",
     "with Walking Papers": "при помощи Walking Papers",
