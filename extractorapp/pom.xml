@@ -308,8 +308,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
+        <version>2.6</version>
         <configuration>
           <warName>extractorapp</warName>
+          <packagingExcludes>**/docs/**,admin/extjs/examples/**,admin/extjs/src/**,admin/extjs/pkgs/**,lib/externals/ext/examples/**,lib/externals/ext/src/**,lib/externals/ext/pkgs/**,PostTreatment.groovy</packagingExcludes>
         </configuration>
       </plugin>
       <plugin>
