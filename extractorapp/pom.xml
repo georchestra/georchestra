@@ -311,7 +311,7 @@
         <version>2.6</version>
         <configuration>
           <warName>extractorapp</warName>
-          <packagingExcludes>**/docs/**,admin/extjs/examples/**,admin/extjs/src/**,admin/extjs/pkgs/**,lib/externals/ext/examples/**,lib/externals/ext/src/**,lib/externals/ext/pkgs/**,PostTreatment.groovy</packagingExcludes>
+          <packagingExcludes>**/docs/**,admin/extjs/examples/**,admin/extjs/src/**,admin/extjs/pkgs/**,lib/externals/ext/examples/**,lib/externals/ext/pkgs/**,PostTreatment.groovy</packagingExcludes>
         </configuration>
       </plugin>
       <plugin>
