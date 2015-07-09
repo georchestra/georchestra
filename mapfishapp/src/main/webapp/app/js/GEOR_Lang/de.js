@@ -132,6 +132,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Precise your request.": "Präzisieren Sie Ihre Suche",
     "No metadata matches the query.":
         "Keine Metadaten entsprechen der Anfrage.",
+    "Search limited to current map extent.": "Suche beschränkt auf aktuellen Kartenausschnitt.",
     /* GEOR_fileupload.js strings */
     "2D only": "nur 2D",
     "Local file": "Datei",

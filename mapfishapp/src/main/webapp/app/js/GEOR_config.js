@@ -231,10 +231,11 @@ GEOR.config = (function() {
         /**
          * Constant: CSW_FILTER_SPATIAL
          * An optional extent in latlon to restrict metadata search on a specific extent (latlon)
-         * Defaults to [-180,-90,180,90] to cover the world.
-         * If the parameter equals null, the filter uses the current map extent.
+         * Defaults to [-180, -90, 180, 90] to cover the world.
+         * If the parameter is set to null, the filter uses the current map extent by default.
          */
-        CSW_FILTER_SPATIAL: getCustomParameter("CSW_FILTER_SPATIAL", [-180,-90,180,90]),
+        CSW_FILTER_SPATIAL: getCustomParameter("CSW_FILTER_SPATIAL",
+            [-180, -90, 180, 90]),
 
         /**
          * Constant: NO_THUMBNAIL_IMAGE_URL

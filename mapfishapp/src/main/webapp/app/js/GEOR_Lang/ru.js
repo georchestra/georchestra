@@ -110,6 +110,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Precise your request.": "Précisez votre requête.",
     "No metadata matches the query.":
         "Aucune métadonnée ne correspond à la requête.",
+    "Search limited to current map extent.": "Recherche limitée à l'étendue de la carte.",
     */    
     /* GEOR_fileupload.js strings */
     "2D only": "2D",

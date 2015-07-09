@@ -135,6 +135,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Precise your request.": "Precise su consulta.",
     "No metadata matches the query.":
         "Ningún metadato coincida con la consulta.",
+    "Search limited to current map extent.": "Búsqueda limitada al extensión del mapa.",
     /* GEOR_fileupload.js strings */
     "2D only": "2D",
     "Local file": "Archivo local",

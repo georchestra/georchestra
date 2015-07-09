@@ -495,7 +495,7 @@ GEOR.cswquerier = (function() {
          */
         init: function(m) { 
             map = m;
-            isDynamicSpatialFilter = (GEOR.config.CSW_FILTER_SPATIAL===null);
+            isDynamicSpatialFilter = GEOR.config.CSW_FILTER_SPATIAL === null;
             isTipDisplayed = true;
         },
 
@@ -505,19 +505,24 @@ GEOR.cswquerier = (function() {
          *
          * Returns:
          * {OpenLayers.Filter.Spatial} bbox filter
+         *
+         * FIXME: should not be public ...
          */
         getSpatialFilter: function() {
+            var bbox;
+            if (isDynamicSpatialFilter) {
+                bbox = map.getExtent().transform(
+                    map.getProjectionObject(),
+                    new OpenLayers.Projection("EPSG:4326")
+                );
+            } else {
+                bbox = new OpenLayers.Bounds(
+                    GEOR.config.CSW_FILTER_SPATIAL
+                );
+            }
             return new OpenLayers.Filter.Spatial({
                 type: OpenLayers.Filter.Spatial.BBOX,
-                value:  (isDynamicSpatialFilter) ?
-                    map.getExtent().clone()
-                        .transform(
-                            map.getProjectionObject(),
-                            new OpenLayers.Projection("EPSG:4326")
-                    ) :
-                    new OpenLayers.Bounds(
-                        GEOR.config.CSW_FILTER_SPATIAL
-                    )
+                value: bbox
             });
         },
         
@@ -695,21 +700,21 @@ GEOR.cswquerier = (function() {
                             }
                         }]
                     }, {
-                        layout : 'hbox',
-                        layoutConfig : {
+                        layout: 'hbox',
+                        layoutConfig: {
                             align: 'middle'
                         },
-                        defaults :{
+                        defaults: {
                             border: false,
-                            height: 30,
-                            bodyStyle: 'padding: 0 5px 5px 5px;',
+                            height: 20
                         },
-                        items : [{
+                        items: [{
                             html: tr("Limit to map extent"),
-                            bodyStyle: 'padding: 0 10px 0 0;font: 12px tahoma,arial,helvetica,sans-serif;'
+                            bodyStyle: 'padding: 3px 10px 0 0;font: 12px tahoma,arial,helvetica,sans-serif;'
                         }, {
                             xtype: 'checkbox',
                             name: 'limitExtent',
+                            bodyStyle: 'padding: 0 5px 5px 5px;',
                             checked: isDynamicSpatialFilter,
                             listeners: {
                                 "check": function(cb, checked) {
