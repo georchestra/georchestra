@@ -329,6 +329,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
         "Geometrische Spalte nicht auffindbar",
     "Choose a referential": "Wählen Sie die Referenzen",
     /* GEOR_resultspanel.js strings */
+    //"Export is not possible: features have no geometry": "Export impossible : absence de géométries",
     "resultspanel.maxfeature.reached":
         "<span ext:qtip=\  Leistungsfähigeren Navigator benützen " +
         "um Anzahl darstellbarer Objekte zu erhöhen\">" +
@@ -352,8 +353,8 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
         "der aufgezeichneten Ergebnisse auf Karte und Liste",
     "Zoom": "Zoom",
     "Zoom to results extent": "Zoom auf Ergebnis",
-    "CSV Export": "CSV exportieren",
-    "Export results as CSV": "Exportieren der Gesamtergebnisse aus CSV",
+    "Export": "Exportieren",
+    "Export results as": "Exportieren der Gesamtergebnisse aus",
     "<p>No result for this request.</p>": "<p>Kein Ergebnis zu Ihrer Anfrage.</p>",
     /* GEOR_scalecombo.js strings */
     /* GEOR_selectfeature.js strings */

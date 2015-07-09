@@ -334,6 +334,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "geométrica",
     "Choose a referential": "Elija una unidad administrativa",
     /* GEOR_resultspanel.js strings */
+    //"Export is not possible: features have no geometry": "Export impossible : absence de géométries",
     "resultspanel.maxfeature.reached":
         " <span ext:qtip=\"Utilice un navegador más potente " +
         "para aumentar el número de objetos visibles\">" +
@@ -357,8 +358,8 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "del mapa y en la tabla",
     "Zoom": "Zoom",
     "Zoom to results extent": "Zoom sobre la extensión de los resultados",
-    "CSV Export": "Exportar en CSV",
-    "Export results as CSV": "Exportar todos los resultados en CSV",
+    "Export": "Exportar",
+    "Export results as": "Exportar todos los resultados en",
     "<p>No result for this request.</p>": "<p>Ningún objeto " +
         "corresponde a su consulta.</p>",
     /* GEOR_scalecombo.js strings */

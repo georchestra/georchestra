@@ -266,6 +266,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "There is no geometry column in the selected referential": "В выделенной ссылке отсутствует геометрический столбец.",
     "Choose a referential": "Выбрать ссылку",
     /* GEOR_resultspanel.js strings */
+    //"Export is not possible: features have no geometry": "Export impossible : absence de géométries",
     "resultspanel.maxfeature.reached": " <span ext:qtip=\"Используйте более совершенный навигатор для того, чтобы увеличить число фигурирующих на странице объектов.\">Максимальное число объектов достигнуто ${NB}</span>", 
     "NB results": "${NB} результатов",
     "One result": "Один результат",
@@ -285,8 +286,8 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Clean all results on the map and in the table": "Удалить все результаты с карты и таблицы.",
     "Zoom": "Zoom",
     "Zoom to results extent": "Применить величину зума карты на результаты.",
-    "CSV Export": "Экспорт CSV (Comma-Separated Values - значения, разделённые запятыми : текстовый формат)",
-    "Export results as CSV": "Выслать все результаты в текстовом формате CSV",
+    "Export": "Экспорт",
+    "Export results as": "Выслать все результаты в текстовом формате",
     "<p>No result for this request.</p>": "<p>Никакой объект не соответствует вашему запросу.</p>",
     /* GEOR_scalecombo.js strings */
     /* GEOR_styler.js strings */
