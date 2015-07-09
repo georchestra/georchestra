@@ -51,7 +51,7 @@ if(sec_roles != null) {
 <head>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
     <link rel="stylesheet" type="text/css" href="resources/lib/externals/ext/resources/css/ext-all.css" />
-    <link rel="stylesheet" type="text/css" href="resources/lib/externals/ext/examples/ux/css/MultiSelect.css"/>
+    <link rel="stylesheet" type="text/css" href="resources/lib/Ext.ux/css/MultiSelect.css"/>
     <link rel="stylesheet" type="text/css" href="resources/lib/externals/ext/resources/css/xtheme-gray.css" />
     <link rel="stylesheet" type="text/css" href="resources/app/openlayers_gray_theme/style.css" />
     <style type="text/css">
