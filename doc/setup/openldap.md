@@ -6,6 +6,7 @@ There are 2 main ways of having OpenLDAP configured :
 
 We document here the second case (slapd.d-style configuration).
 
+Note : It's also possible to delegate the authentication of certain users to a remote Active Directory or LDAP, see the [SASL Doc page](https://github.com/jusabatier/georchestra/blob/patch-3/doc/setup/sasl.md).
 
 ## Prerequisites
 
