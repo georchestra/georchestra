@@ -1,5 +1,16 @@
 # Setting up Apache
 
+Basically, there are two options here:
+ 1. either your whole SDI is all-HTTPS
+ 2. or it is mostly HTTP, but some parts of it use HTTPS (typically CAS & LDAPadmin webapps)
+
+Option 1 is achieved through the following apache configuration:
+```
+RewriteCond %{HTTPS} off 
+RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} 
+```
+
+Option 2 is described in detail below.
 
 ## Modules setup
 
