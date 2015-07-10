@@ -29,7 +29,7 @@ The file **georchestra-bootstrap.ldif** creates the database and an administrato
 wget --no-check-certificate https://raw.githubusercontent.com/georchestra/LDAP/YY.MM/georchestra-bootstrap.ldif -O /tmp/bootstrap.ldif
 sudo ldapadd -Y EXTERNAL -H ldapi:/// -f /tmp/bootstrap.ldif
 ```
-... where YY.MM stands for the georchestra version you're using (eg: 14.12). 
+... where YY.MM stands for the georchestra version you're using (eg: 15.06). 
 
 If successful, the above command should display: ```adding new entry "olcDatabase=hdb,cn=config"```.
 
