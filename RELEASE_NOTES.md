@@ -8,9 +8,9 @@ Version 15.06
 =============
 
 This release brings several key enhancements:
- * support for the newer Debian 8 "Jessie", including tomcat 7 and 8 & apache 2.4,
+ * support for the newer Debian 8 "Jessie", including tomcat 7, 8 & apache 2.4,
  * standard geoserver artifacts can now be used instead of the "geOrchestra flavoured geoserver",
- * travis-ci service integration, with improved test coverage,
+ * [travis-ci](https://travis-ci.org/georchestra/georchestra) service integration, with improved test coverage,
  * lighter artifacts.
 
 Other enhancements include:
@@ -21,9 +21,7 @@ Other enhancements include:
  * proxy: intercepts "connection refused" errors - see [#963](https://github.com/georchestra/georchestra/pull/963),
  * doc: added SASL configuration for remote AD - see [#958](https://github.com/georchestra/georchestra/pull/958).
 
-Many issues  [15 issues](https://github.com/georchestra/georchestra/issues?q=milestone%3A15.06+is%3Aclosed+label%3Abug+is%3Aissue) closed.
-
-Full list on GitHub issue tracker, [Milestone 15.06](https://github.com/georchestra/georchestra/issues?q=milestone%3A15.06)
+Full list of issues on GitHub issue tracker, tagged with milestone [15.06](https://github.com/georchestra/georchestra/issues?q=milestone%3A15.06).
 
 Please note that:
  * the protocol between the security proxy and the apps was slightly modified as a result of [#920](https://github.com/georchestra/georchestra/issues/920). This means that the proxy and webapps from this release are not backward-compatible: you cannot use mapfishapp from 15.06 with a 14.12 security-proxy.
