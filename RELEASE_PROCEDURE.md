@@ -23,6 +23,10 @@ git push origin 13.12
 
 There's nothing more to do here !
 
+## LDAP
+
+Same as above !
+We have to create a dedicated branch for the new release.
 
 ## GeoNetwork
 
