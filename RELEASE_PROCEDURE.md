@@ -23,6 +23,10 @@ git push origin 13.12
 
 There's nothing more to do here !
 
+## LDAP
+
+Same as above !
+We have to create a dedicated branch for the new release.
 
 ## GeoNetwork
 
@@ -160,4 +164,5 @@ git push origin master
 
 geOrchestra 13.12 is now released, congrats !
 
-Finally, change the default branch to latest stable in the [georchestra](https://github.com/georchestra/georchestra/settings), [template](https://github.com/georchestra/template/settings) and [LDAP](https://github.com/georchestra/LDAP/settings) repositories
+Finally, change the default branch to latest stable in the [georchestra](https://github.com/georchestra/georchestra/settings), [geonetwork](https://github.com/georchestra/geonetwork/settings), [template](https://github.com/georchestra/template/settings) and [LDAP](https://github.com/georchestra/LDAP/settings) repositories.
+... and eventually in the geoserver and geofence repositories too.
