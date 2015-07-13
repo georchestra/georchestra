@@ -661,15 +661,15 @@ GEOR.cswquerier = (function() {
                         },
                         defaults :{
                             border: false,
-                            height: 30,
+                            height: 20,
                             bodyStyle: 'padding: 5px 5px 0 5px;',
                         },
                         items : [{
                             html: tr("Find"),
-                            bodyStyle: 'padding: 0 10px 0 0;font: 12px tahoma,arial,helvetica,sans-serif;'
+                            bodyStyle: 'padding: 4px 10px 0 0;font: 12px tahoma,arial,helvetica,sans-serif;'
                         }, textField, {
                             html: tr("in"),
-                            bodyStyle: 'padding: 0 10px;font: 12px tahoma,arial,helvetica,sans-serif;'
+                            bodyStyle: 'padding: 4px 10px;font: 12px tahoma,arial,helvetica,sans-serif;'
                         }, {
                             xtype: 'combo',
                             store: new Ext.data.ArrayStore({
