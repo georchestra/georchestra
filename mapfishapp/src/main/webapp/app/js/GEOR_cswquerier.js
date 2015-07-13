@@ -661,7 +661,7 @@ GEOR.cswquerier = (function() {
                         },
                         defaults :{
                             border: false,
-                            height: 20,
+                            height: 30,
                             bodyStyle: 'padding: 5px 5px 0 5px;',
                         },
                         items : [{
