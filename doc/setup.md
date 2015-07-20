@@ -3,7 +3,7 @@
 In this section, you will learn how to install and setup the foundations of your geOrchestra SDI, according to the recommended architecture:
 ![architecture](https://cloud.githubusercontent.com/assets/265319/5538326/ea5a8e32-8ab1-11e4-8d21-00685457a912.png)
 
-The HAProxy / distributed GeoServer setup (in orange) is an alternative setup for high availability or high performance purposes, which will be documented later on.
+The HAProxy / distributed GeoServer setup (in orange) is an alternative setup for high availability or high performance purposes, which is documented [here](https://github.com/georchestra/georchestra/blob/15.06/doc/gs_cluster.md).
 
 
 So, here are the steps:
