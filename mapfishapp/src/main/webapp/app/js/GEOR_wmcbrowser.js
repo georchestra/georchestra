@@ -271,7 +271,7 @@ GEOR.wmcbrowser = (function() {
      * {Ext.Window} 
      */
     var createPopup = function(animateFrom) {
-        var storeData = GEOR.config.CONTEXTS.slice(0); // array cloning
+        var storeData = filterContexts(GEOR.config.CONTEXTS);
         var store = new Ext.data.JsonStore({
             fields: ['label', 'thumbnail', 'wmc', 'tip', 'keywords'],
             data: storeData
@@ -418,6 +418,30 @@ GEOR.wmcbrowser = (function() {
             }, view, formPanel]
         });
     };
+    
+    /**
+     * Method: filterContexts
+     * Return the list of allowed contexts for current user
+     *
+     * Parameters:
+     * storeData - {Array} The list of contexts to filter
+     */
+    var filterContexts = function(storeData) {
+	var filteredStoreData = [];
+	Ext.each(storeData, function(data) {
+	    if( data.roles == undefined || data.roles.length === 0 ) {
+		filteredStoreData.push(data);
+		return true;
+	    }
+	    Ext.each(data.roles, function(role) {
+		if (GEOR.config.ROLES.indexOf(role) >= 0) {
+		    filteredStoreData.push(data);
+		    return false;
+		}
+	    });
+	});
+	return filteredStoreData;
+    }
 
     /*
      * Public
@@ -437,8 +461,8 @@ GEOR.wmcbrowser = (function() {
             tr = OpenLayers.i18n;
             // create array of unique keywords
             keywords = [];
-            var K = {};
-            Ext.each(GEOR.config.CONTEXTS, function(c) {
+            var K = {}, storeData = filterContexts(GEOR.config.CONTEXTS);
+            Ext.each(storeData, function(c) {
                 Ext.each(c.keywords, function(k) {
                     K[k] = true;
                 });
