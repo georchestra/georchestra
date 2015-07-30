@@ -749,26 +749,7 @@ GEOR.managelayers = (function() {
                             GEOR.querier.events.fireEvent("showrequest");
                             return;
                         }
-                        var layer = layerRecord.get('layer'), data;
-                        var name = layerRecord.get('title') || layer.name || '';
-                        var recordType = GeoExt.data.LayerRecord.create([
-                            {name: "featureNS", type: "string"},
-                            {name: "owsURL", type: "string"},
-                            {name: "typeName", type: "string"}
-                        ]);
-                        if (isWFS) {
-                            data = {
-                                "featureNS": layerRecord.get("namespace"),
-                                "owsURL": layer.protocol.url,
-                                "typeName": layerRecord.get("name")
-                            };
-                        } else { // WMS layer with WFS equivalence
-                            data = {
-                                "owsURL": layerRecord.get("WFS_URL"),
-                                "typeName": layerRecord.get("WFS_typeName")
-                            };
-                        }
-                        GEOR.querier.create(name, new recordType(data, layer.id), function() {
+                        GEOR.querier.create(layerRecord, function() {
                             // optional success callback
                             querierRecord = layerRecord;
                         });

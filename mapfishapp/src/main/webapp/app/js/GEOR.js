@@ -434,6 +434,10 @@ Ext.namespace("GEOR");
                     });
                     southPanel.insert(southPanel.items.length-1, tab);
                     southPanel.setActiveTab(tab);
+                },
+                "sldready": function(layerRecord, sld) {
+                    updateLayerParams(layerRecord, sld, null);
+                    GEOR.managelayers.unselectStyles(layerRecord);
                 }
             });
         }

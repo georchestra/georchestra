@@ -501,7 +501,9 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "quiere modificar, o seleccionar \"nuevo objeto\" en el menú " +
         " de edición",
     /* GeoExt.data.CSW.js */
-    "no abstract": "ningún abstracto"
+    "no abstract": "ningún abstracto",
+    "Style to use for filter": "Estilo de usar para el filtro",
+    "Filter": "Filtrar"
     // no trailing comma
 });
 

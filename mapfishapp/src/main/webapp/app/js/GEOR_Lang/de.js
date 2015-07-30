@@ -482,7 +482,9 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Edit activated": "Bearbeitung aktiviert", 
     "Hover the feature you wish to edit, or choose \"new feature\" in the edit menu": "Uberfliegen der zu verändernden Layerobjekte, oder wählen Sie \"neues Objekt\" im Layermenü",
     /* GeoExt.data.CSW.js */
-    "no abstract": "Keine Zusammenfassung"
+    "no abstract": "Keine Zusammenfassung",
+    "Style to use for filter": "Stil um Filter zu verwenden",
+    "Filter": "Filter"
     // no trailing comma
 });
 

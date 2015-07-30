@@ -146,5 +146,7 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
     "(default)": "<br/>(current default context)",
     /* GEOR_edit.js */
     /* GEOR_workspace.js strings */
+    "Style to use for filter": "Style to use for filter",
+    "Filter": "Filter"
     // no trailing comma
 });
