@@ -67,7 +67,7 @@ public final class CheckPostgresConnectionsTest {
 	
 	@Ignore // ignored to avoid break the build
 	public void testConnectionsData() throws Exception{
-		List<Map<String, Object>> findConnections = CheckPostgresConnections.findConnections("postgres","postgres", "admin", "testCase");
+		List<Map<String, Object>> findConnections = CheckPostgresConnections.findConnections("localhost", 5432, "postgres","postgres", "admin", "testCase");
 		for (Map<String, Object> conn : findConnections) {
 			LOGGER.info(conn);
 		}
