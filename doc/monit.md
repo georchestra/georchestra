@@ -1,6 +1,6 @@
 # Setup monit for monitoring Georchestra
 
-Monit is a powerfull tool which allow you to watch the activity of your georchestra instance, with it you can :
+Monit is a powerful tool which allow you to watch the activity of your georchestra instance, with it you can :
 
 - See the CPU, RAM, Swap, Network, ... utilisation
 - Be alerted when it exceed a defined value
