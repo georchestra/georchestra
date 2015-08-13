@@ -27,7 +27,7 @@ public class SecurityRequestHeaderProvider extends HeaderProvider {
         headers.add(new BasicHeader(HeaderNames.SEC_USERNAME, authentication.getName()));
         StringBuilder roles = new StringBuilder();
         for (GrantedAuthority grantedAuthority : authorities) {
-            if (roles.length() != 0) roles.append(",");
+            if (roles.length() != 0) roles.append(";");
 
             roles.append(grantedAuthority.getAuthority());
         }

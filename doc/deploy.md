@@ -10,7 +10,7 @@ You could just start with the viewer alone or the viewer and proxy + cas if you 
 Once your system is ready, collect WAR files in a dedicated directory and rename them:
 
     PROFILE=myprofile
-    VERSION=14.12
+    VERSION=15.06
     
     mkdir -p /tmp/georchestra
     cd /tmp/georchestra

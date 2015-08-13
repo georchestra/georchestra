@@ -11,7 +11,7 @@ cd ~/myprofile
 git remote rename origin upstream
 ```
 
-First thing to note is that you end up in the stable branch (14.12) matching the latest stable geOrchestra version (also 14.12). 
+First thing to note is that you end up in the stable branch (15.06) matching the latest stable geOrchestra version (also 15.06).
 This is exactly what we want, nice !
 
 Remember: every stable geOrchestra version has its own template configuration, hosted in a branch named by the release version.
@@ -23,7 +23,7 @@ This is something to keep in mind when [upgrading](how_to_upgrade.md).
 Let's see what the template configuration looks like:
 
 ```
-user@computer:~/myprofile (14.12)$ tree -L 1
+user@computer:~/myprofile (15.06)$ tree -L 1
 .
 ├── analytics
 ├── build_support
@@ -91,6 +91,7 @@ This provides an easy way to customize stylesheets and images, but also to pass 
 The most important files to customize are probably:
  * ```~/myprofile/extractorapp/app/js/GEOR_custom.js``` - client-side parameters for the extractor
  * ```~/myprofile/mapfishapp/app/js/GEOR_custom.js``` - client-side parameters for the viewer
+ * ```~/myprofile/mapfishapp/*.servers.json``` - OGC servers lists for the viewer (3 files)
  * ```~/myprofile/mapfishapp/WEB-INF/print/config.yaml``` - print layouts for the viewer
  * ```~/myprofile/geonetwork-client/apps/georchestra/js/Settings.js``` - client-side parameters for the catalog
  * ```~/myprofile/geonetwork-client/apps/georchestra/js/map/Settings.js``` - client-side parameters for the catalog mini-map

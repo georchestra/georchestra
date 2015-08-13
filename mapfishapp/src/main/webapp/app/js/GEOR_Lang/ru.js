@@ -110,6 +110,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Precise your request.": "Précisez votre requête.",
     "No metadata matches the query.":
         "Aucune métadonnée ne correspond à la requête.",
+    "Search limited to current map extent.": "Recherche limitée à l'étendue de la carte.",
     */    
     /* GEOR_fileupload.js strings */
     "2D only": "2D",
@@ -265,6 +266,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "There is no geometry column in the selected referential": "В выделенной ссылке отсутствует геометрический столбец.",
     "Choose a referential": "Выбрать ссылку",
     /* GEOR_resultspanel.js strings */
+    //"Export is not possible: features have no geometry": "Export impossible : absence de géométries",
     "resultspanel.maxfeature.reached": " <span ext:qtip=\"Используйте более совершенный навигатор для того, чтобы увеличить число фигурирующих на странице объектов.\">Максимальное число объектов достигнуто ${NB}</span>", 
     "NB results": "${NB} результатов",
     "One result": "Один результат",
@@ -284,8 +286,8 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Clean all results on the map and in the table": "Удалить все результаты с карты и таблицы.",
     "Zoom": "Zoom",
     "Zoom to results extent": "Применить величину зума карты на результаты.",
-    "CSV Export": "Экспорт CSV (Comma-Separated Values - значения, разделённые запятыми : текстовый формат)",
-    "Export results as CSV": "Выслать все результаты в текстовом формате CSV",
+    "Export": "Экспорт",
+    "Export results as": "Выслать все результаты в текстовом формате",
     "<p>No result for this request.</p>": "<p>Никакой объект не соответствует вашему запросу.</p>",
     /* GEOR_scalecombo.js strings */
     /* GEOR_styler.js strings */
@@ -390,7 +392,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Edit in OSM": "Редактировать в OSM (OpenStreetMap)",
     "with JOSM": "c JOSM",
     "JOSM must be started with the remote control option": "Необходимо запустить JOSM с опцией дистанционного контроля",
-    "with Potlatch": "c редактором Potlatch",
+    "with iD": "c редактором iD",
     "Recommended scale is 1:10.000": "Рекомендуемый масштаб - 1:10.000",
     "with Potlatch2": "c редактором Potlatch2",
     "with Walking Papers": "при помощи Walking Papers",

@@ -163,7 +163,7 @@ div.olMapViewport {
 .geor-edit-osm {
     background-image: url(../img/osm_logo.png) !important;
 }
-.geor-csv-export {
+.geor-export {
     background-image: url(../img/famfamfam/table_save.png) !important;
 }
 .geor-geom-save {
@@ -387,6 +387,8 @@ div.olMapViewport {
     display: block;
     overflow: hidden;
     text-align: center;
+    text-overflow: ellipsis;
+    width: 116px;
 }
 
 .context-selector .x-view-over {

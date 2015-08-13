@@ -7,7 +7,8 @@ GEOR.Addons.Cadastre = Ext.extend(GEOR.Addons.Base, {
     win: null,
     jsonFormat: null,
     geojsonFormat: null,
-    fields: null,
+    tab1Fields: null,
+    tab2Fields: null,
     cbx: null,
     fieldNames: [],
 
@@ -189,12 +190,15 @@ GEOR.Addons.Cadastre = Ext.extend(GEOR.Addons.Base, {
     },
     
     cleanActiveFields: function() {
-	this.fields.forEach(
-	    function(element) {
-		element.clearValue();
+	var cleanFields = function(element, index) {
+	    element.clearValue();
+	    if( index > 0 ) {
+	        element.disable();
 	    }
-	);
-		
+	};
+	
+	this.tab1Fields.forEach(cleanFields);
+	this.tab2Fields.forEach(cleanFields);
 	this.layer.removeAllFeatures();
     },
 
@@ -220,7 +224,7 @@ GEOR.Addons.Cadastre = Ext.extend(GEOR.Addons.Base, {
                 filters.push([
                     '<ogc:PropertyIsEqualTo>',
                         '<ogc:PropertyName>', matchingproperty, '</ogc:PropertyName>',
-                        '<ogc:Literal>', this.fields[this.fieldNames.indexOf(name)].getValue(), '</ogc:Literal>',
+                        '<ogc:Literal>', this.tab1Fields[this.fieldNames.indexOf(name)].getValue(), '</ogc:Literal>',
                     '</ogc:PropertyIsEqualTo>',
                 ].join(''));
             }, this);
@@ -231,10 +235,10 @@ GEOR.Addons.Cadastre = Ext.extend(GEOR.Addons.Base, {
             }
             filter = '<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">' + filter + '</ogc:Filter>';
         }
-        if (this.fields) {
+        if (this.tab1Fields) {
             // hack to mimic a "remote" mode combobox loading:
-            this.fields[fieldNameIdx].expand();
-            this.fields[fieldNameIdx].onBeforeLoad();
+            this.tab1Fields[fieldNameIdx].expand();
+            this.tab1Fields[fieldNameIdx].onBeforeLoad();
         }
         if (n.hasOwnProperty("file")) {
             OpenLayers.Request.GET({
@@ -349,7 +353,7 @@ GEOR.Addons.Cadastre = Ext.extend(GEOR.Addons.Base, {
         var currentField = combo.name,
             nextFieldIdx = this.fieldNames.indexOf(currentField) + 1,
             nextFieldName = this.fieldNames[nextFieldIdx],
-            nextField = this.fields[nextFieldIdx],
+            nextField = this.tab1Fields[nextFieldIdx],
             field;
 
         this.getGeometry(record, this.options.tab1[currentField], function(geom, box) {
@@ -370,8 +374,8 @@ GEOR.Addons.Cadastre = Ext.extend(GEOR.Addons.Base, {
             this.loadStore(nextFieldName);
         }, this, {single: true});
         // reset & disable all other fields
-        for (var i = nextFieldIdx + 1, l = this.fields.length; i < l; i++) {
-            field = this.fields[i];
+        for (var i = nextFieldIdx + 1, l = this.tab1Fields.length; i < l; i++) {
+            field = this.tab1Fields[i];
             field.reset();
             field.disable();
         }
@@ -405,13 +409,13 @@ GEOR.Addons.Cadastre = Ext.extend(GEOR.Addons.Base, {
                 }, GEOR.Addons.Cadastre.BaseComboConfig))
             );
         }, this);
-        this.fields = fields;
+        this.tab1Fields = fields;
         return new Ext.FormPanel(Ext.apply({
             title: OpenLayers.i18n("tab1title"),
             items: fields,
             listeners: {
                 "afterrender": function(form) {
-                    this.fields[0].focus('', 50);
+                    this.tab1Fields[0].focus('', 50);
                 },
                 scope: this
             }
@@ -538,13 +542,13 @@ GEOR.Addons.Cadastre = Ext.extend(GEOR.Addons.Base, {
                 scope: this
             }
         }, GEOR.Addons.Cadastre.BaseComboConfig)));
-
+        this.tab2Fields = fields;
         return new Ext.FormPanel(Ext.apply({
             title: OpenLayers.i18n("tab2title"),
             items: fields,
             listeners: {
                 "afterrender": function(form) {
-                    fields[0].focus('', 50);
+                    this.tab2Fields[0].focus('', 50);
                 },
                 scope: this
             }

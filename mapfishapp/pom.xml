@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.georchestra</groupId>
     <artifactId>root</artifactId>
-    <version>15.06-SNAPSHOT</version>
+    <version>15.12-SNAPSHOT</version>
   </parent>
   <artifactId>mapfishapp</artifactId>
   <packaging>war</packaging>
@@ -254,8 +254,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
+        <version>2.6</version>
         <configuration>
           <warName>mapfishapp</warName>
+          <packagingExcludes>**/ext/examples/**,**/ext/pkgs/**,**/docs/**,**/openlayers/examples/**,**/openlayers/tests/**,PostTreatment.groovy</packagingExcludes>
         </configuration>
       </plugin>
       <plugin>

@@ -333,6 +333,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         "Le référentiel sélectionné ne possède pas de colonne géométrique",
     "Choose a referential": "Choisissez un référentiel",
     /* GEOR_resultspanel.js strings */
+    "Export is not possible: features have no geometry": "Export impossible : absence de géométries",
     "resultspanel.maxfeature.reached":
         " <span ext:qtip=\"Utilisez un navigateur plus performant " +
         "pour augmenter le nombre d'objets affichables\">" +
@@ -357,8 +358,8 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Zoom": "Zoom",
     "Zoom to results extent": "Cadrer l'étendue de la carte sur celle " +
         "des résultats",
-    "CSV Export": "Export CSV",
-    "Export results as CSV": "Exporter l'ensemble des résultats en CSV",
+    "Export": "Export",
+    "Export results as": "Exporter l'ensemble des résultats en",
     "<p>No result for this request.</p>": "<p>Aucun objet ne " +
         "correspond à votre requête.</p>",
     /* GEOR_scalecombo.js strings */
@@ -481,7 +482,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "with JOSM": "avec JOSM",
     "JOSM must be started with the remote control option": "Il vous faut " +
         "auparavant lancer JOSM et activer le contrôle à distance",
-    "with Potlatch": "avec Potlatch",
+    "with iD": "avec iD",
     "Recommended scale is 1:10.000": "Il est recommandé de travailler à des " +
         "échelles proches de 1:10.000",
     "with Potlatch2": "avec Potlatch2",

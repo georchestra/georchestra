@@ -27,4 +27,4 @@
     <script type="text/javascript" src="resources/app/js/GEOR.js"></script>
     <script type="text/javascript" src="resources/app/js/GEOR_Lang/<%= lang %>.js"></script>
     
-    <script type="text/javascript" src="resources/lib/externals/ext/examples/ux/MultiSelect.js"></script>
+    <script type="text/javascript" src="resources/lib/Ext.ux/lib/Ext.ux/form/MultiSelect.js"></script>

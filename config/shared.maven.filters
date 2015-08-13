@@ -36,7 +36,7 @@ shared.psql.pass=www-data
 shared.psql.jdbc.driver=org.postgresql.Driver
 shared.psql.jdbc.driver.url=postgresql
 
-shared.log.dir=/var/log/tomcat6
+shared.log.dir=/var/log/tomcat8
 shared.default.log.level=WARN
 other.framework.log.level=WARN
 

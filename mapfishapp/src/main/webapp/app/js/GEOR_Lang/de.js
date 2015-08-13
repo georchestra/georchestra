@@ -132,6 +132,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Precise your request.": "Präzisieren Sie Ihre Suche",
     "No metadata matches the query.":
         "Keine Metadaten entsprechen der Anfrage.",
+    "Search limited to current map extent.": "Suche beschränkt auf aktuellen Kartenausschnitt.",
     /* GEOR_fileupload.js strings */
     "2D only": "nur 2D",
     "Local file": "Datei",
@@ -328,6 +329,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
         "Geometrische Spalte nicht auffindbar",
     "Choose a referential": "Wählen Sie die Referenzen",
     /* GEOR_resultspanel.js strings */
+    //"Export is not possible: features have no geometry": "Export impossible : absence de géométries",
     "resultspanel.maxfeature.reached":
         "<span ext:qtip=\  Leistungsfähigeren Navigator benützen " +
         "um Anzahl darstellbarer Objekte zu erhöhen\">" +
@@ -351,8 +353,8 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
         "der aufgezeichneten Ergebnisse auf Karte und Liste",
     "Zoom": "Zoom",
     "Zoom to results extent": "Zoom auf Ergebnis",
-    "CSV Export": "CSV exportieren",
-    "Export results as CSV": "Exportieren der Gesamtergebnisse aus CSV",
+    "Export": "Exportieren",
+    "Export results as": "Exportieren der Gesamtergebnisse aus",
     "<p>No result for this request.</p>": "<p>Kein Ergebnis zu Ihrer Anfrage.</p>",
     /* GEOR_scalecombo.js strings */
     /* GEOR_selectfeature.js strings */
@@ -470,7 +472,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "with JOSM": "mit JOSM",
     "JOSM must be started with the remote control option": "Bitte " +
         "vorher JOSM und Distanzkontrolle aktivieren",
-    "with Potlatch": "mit Potlatch",
+    "with iD": "mit iD",
     "Recommended scale is 1:10.000": "Empfohlener Maßstab 1:10000",
     "with Potlatch2": "mit Potlatch2",
     "with Walking Papers": "mit Walking Papers",

@@ -4,7 +4,7 @@
   <groupId>org.georchestra</groupId>
   <artifactId>root</artifactId>
   <packaging>pom</packaging>
-  <version>15.06-SNAPSHOT</version>
+  <version>15.12-SNAPSHOT</version>
   <name>Root project of the geOrchestra SDI</name>
   <url>http://maven.apache.org</url>
   <organization>
@@ -508,7 +508,7 @@
         <checksumPolicy>ignore</checksumPolicy>
       </snapshots>
       <id>georchestra</id>
-      <url>http://sdi.georchestra.org/maven/repository</url>
+      <url>http://build.georchestra.org/maven/repository</url>
     </repository>
     <repository>
       <snapshots>

@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.georchestra</groupId>
 		<artifactId>root</artifactId>
-		<version>15.06-SNAPSHOT</version>
+		<version>15.12-SNAPSHOT</version>
 	</parent>
 	<artifactId>security-proxy</artifactId>
 	<packaging>war</packaging>
@@ -146,7 +146,7 @@
 			<groupId>taglibs</groupId>
 			<artifactId>standard</artifactId>
 			<version>1.1.2</version>
-			</dependency>
+		</dependency>
 		<dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>

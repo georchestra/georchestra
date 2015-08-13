@@ -1,26 +1,37 @@
 The development branch is master. It can be used for testing and reporting errors.
 
-For production systems, you are advised to use the stable branch (currently 14.12).
+For production systems, you are advised to use the stable branch (currently 15.06).
 This branch receives bug fixes as they arrive, during 6 months at least.
 
 
-Version 15.06 (development version)
-===================================
+Version 15.06
+=============
 
-Not yet funded, but would be **really nice** to have:
- * georchestra: generic wars, see [#94](https://github.com/georchestra/georchestra/issues/94),
- * georchestra: use the browser-advertised preferred language by default (and give the user a chance to select the correct one with a combobox in the header) - see [#589](https://github.com/georchestra/georchestra/issues/589),
- * proxy: validate on Tomcat 7/8 - see [#504](https://github.com/georchestra/georchestra/issues/504),
- * geonetwork: integration of version 3,
- * mapfishapp: support read/write WMTS layer types from/to OWSContext - see [#360](https://github.com/georchestra/georchestra/issues/360) & [#399](https://github.com/georchestra/georchestra/issues/399),
- * config: make it easy to have different jdbc parameters for each module - see [#716](https://github.com/georchestra/georchestra/issues/716),
- * mapfishapp: use google closure compiler for faster loading times - see [#378](https://github.com/georchestra/georchestra/issues/378),
- * ldapadmin: delegated administrators - see [#786](https://github.com/georchestra/georchestra/issues/786)
+This release brings several key enhancements:
+ * support for the newer Debian 8 "Jessie", including tomcat 7, 8 & apache 2.4,
+ * standard geoserver artifacts can now be used instead of the "geOrchestra flavoured geoserver",
+ * [travis-ci](https://travis-ci.org/georchestra/georchestra) service integration, with improved test coverage,
+ * lighter artifacts.
 
-[Contact us](mailto:psc@georchestra.org) if you're interested in these improvements.
+Other enhancements include:
+ * mapfishapp: redirect to iD as OSM editor - see [#992](https://github.com/georchestra/georchestra/issues/992),
+ * mapfishapp: gml & kml export of results - see [#995](https://github.com/georchestra/georchestra/pull/995),
+ * mapfishapp: the admin may restrict all metadata searches to a specific extent, while the user may now restrict his search to the current map extent - see [#964](https://github.com/georchestra/georchestra/pull/964),
+ * mapfishapp: added possibility to filter visible features in POSTed layers with CQL - see [#921](https://github.com/georchestra/georchestra/pull/921),
+ * proxy: intercepts "connection refused" errors - see [#963](https://github.com/georchestra/georchestra/pull/963),
+ * doc: added SASL configuration for remote AD - see [#958](https://github.com/georchestra/georchestra/pull/958).
 
-Version 14.12 (stable version)
-==============================
+Full list of issues on GitHub issue tracker, tagged with milestone [15.06](https://github.com/georchestra/georchestra/issues?q=milestone%3A15.06).
+
+Please note that:
+ * the protocol between the security proxy and the apps was slightly modified as a result of [#920](https://github.com/georchestra/georchestra/issues/920). This means that the proxy and webapps from this release are not backward-compatible: you cannot use mapfishapp from 15.06 with a 14.12 security-proxy.
+ * geOrchestra 14.01 is not supported anymore.
+
+Many thanks to all contributors for this great release !
+
+
+Version 14.12 
+=============
 
 This release received contributions from the GeoBretagne, GéoPicardie, CIGALsace, CRAIG, Rennes Métropole, Le Puy en Velay and Université de Franche-Comté projects.
 It comes with an improved [install documentation](README.md).

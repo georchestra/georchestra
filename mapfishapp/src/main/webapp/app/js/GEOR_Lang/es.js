@@ -135,6 +135,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Precise your request.": "Precise su consulta.",
     "No metadata matches the query.":
         "Ningún metadato coincida con la consulta.",
+    "Search limited to current map extent.": "Búsqueda limitada al extensión del mapa.",
     /* GEOR_fileupload.js strings */
     "2D only": "2D",
     "Local file": "Archivo local",
@@ -333,6 +334,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "geométrica",
     "Choose a referential": "Elija una unidad administrativa",
     /* GEOR_resultspanel.js strings */
+    //"Export is not possible: features have no geometry": "Export impossible : absence de géométries",
     "resultspanel.maxfeature.reached":
         " <span ext:qtip=\"Utilice un navegador más potente " +
         "para aumentar el número de objetos visibles\">" +
@@ -356,8 +358,8 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "del mapa y en la tabla",
     "Zoom": "Zoom",
     "Zoom to results extent": "Zoom sobre la extensión de los resultados",
-    "CSV Export": "Exportar en CSV",
-    "Export results as CSV": "Exportar todos los resultados en CSV",
+    "Export": "Exportar",
+    "Export results as": "Exportar todos los resultados en",
     "<p>No result for this request.</p>": "<p>Ningún objeto " +
         "corresponde a su consulta.</p>",
     /* GEOR_scalecombo.js strings */
@@ -485,7 +487,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "with JOSM": "con JOSM",
     "JOSM must be started with the remote control option": "Usted tiene " +
         "que lanzar JOSM y activar el control remoto",
-    "with Potlatch": "con Potlatch",
+    "with iD": "con iD",
     "Recommended scale is 1:10.000": "La escala de trabajo recomendada es " +
         "1:10.000",
     "with Potlatch2": "con Potlatch2",

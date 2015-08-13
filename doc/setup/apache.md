@@ -1,5 +1,16 @@
 # Setting up Apache
 
+Basically, there are two options here:
+ 1. either your whole SDI is all-HTTPS
+ 2. or it is mostly HTTP, but some parts of it use HTTPS (typically CAS & LDAPadmin webapps)
+
+Option 1 is achieved through the following apache configuration:
+```
+RewriteCond %{HTTPS} off 
+RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} 
+```
+
+Option 2 is described in detail below.
 
 ## Modules setup
 
@@ -40,7 +51,7 @@ Let's first deactivate the default virtualhosts, and create ours:
 sudo a2dissite default 000-default default-ssl
 ```
 
-In ```/etc/apache2/sites-available/georchestra```:
+In ```/etc/apache2/sites-available/georchestra.conf```:
 ```
 <VirtualHost *:80>
     ServerName georchestra.mydomain.org
@@ -127,17 +138,14 @@ ProxyPass /testPage http://localhost:8180/testPage
 ProxyPassReverse /testPage http://localhost:8180/testPage
 
 <Proxy http://localhost:8180/_static/*>
-    Order deny,allow
-    Allow from all
+    Require all granted
 </Proxy>
 ProxyPass /_static/ http://localhost:8180/_static/
 ProxyPassReverse /_static/ http://localhost:8180/_static/
 
 SetEnvIf Referer "^http://my\.sdi\.org/" mysdi
 <Proxy http://localhost:8180/proxy/*>
-    Order deny,allow
-    Deny from all
-    Allow from env=mysdi
+    Require env mysdi
 </Proxy>
 ProxyPass /proxy/ http://localhost:8180/proxy/ 
 ProxyPassReverse /proxy/ http://localhost:8180/proxy/
@@ -150,8 +158,7 @@ The cas module should be accessed only through https.
 RewriteRule ^/cas$ /cas/ [R]
 
 <Proxy http://localhost:8180/cas/*>
-    Order deny,allow
-    Allow from all
+    Require all granted
 </Proxy>
 ProxyPass /cas/ http://localhost:8180/cas/ 
 ProxyPassReverse /cas/ http://localhost:8180/cas/
@@ -168,8 +175,7 @@ For the other ones, pick only those you need, depending on the modules you plan 
 ```
 RewriteRule ^/analytics$ /analytics/ [R]
 <Proxy http://localhost:8180/analytics/*>
-    Order deny,allow
-    Allow from all
+    Require all granted
 </Proxy>
 ProxyPass /analytics/ http://localhost:8180/analytics/ 
 ProxyPassReverse /analytics/ http://localhost:8180/analytics/
@@ -194,8 +200,7 @@ RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
 ```
 RewriteRule ^/catalogapp$ /catalogapp/ [R]
 <Proxy http://localhost:8180/catalogapp/*>
-    Order deny,allow
-    Allow from all
+    Require all granted
 </Proxy>
 ProxyPass /catalogapp/ http://localhost:8180/catalogapp/ 
 ProxyPassReverse /catalogapp/ http://localhost:8180/catalogapp/
@@ -213,8 +218,7 @@ RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
 ```
 RewriteRule ^/downloadform$ /downloadform/ [R]
 <Proxy http://localhost:8180/downloadform/*>
-    Order deny,allow
-    Allow from all
+    Require all granted
 </Proxy>
 ProxyPass /downloadform/ http://localhost:8180/downloadform/ 
 ProxyPassReverse /downloadform/ http://localhost:8180/downloadform/
@@ -241,8 +245,7 @@ RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
 RewriteRule ^/extractorapp$ /extractorapp/ [R]
 RewriteRule ^/extractorapp/admin$ /extractorapp/admin/ [R]
 <Proxy http://localhost:8180/extractorapp/*>
-    Order deny,allow
-    Allow from all
+    Require all granted
 </Proxy>
 ProxyPass /extractorapp/ http://localhost:8180/extractorapp/ 
 ProxyPassReverse /extractorapp/ http://localhost:8180/extractorapp/
@@ -260,8 +263,7 @@ RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
 ```
 RewriteRule ^/geonetwork$ /geonetwork/ [R]
 <Proxy http://localhost:8180/geonetwork/*>
-    Order deny,allow
-    Allow from all
+    Require all granted
 </Proxy>
 ProxyPass /geonetwork/ http://localhost:8180/geonetwork/ 
 ProxyPassReverse /geonetwork/ http://localhost:8180/geonetwork/
@@ -279,8 +281,7 @@ RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
 ```
 RewriteRule ^/geoserver$ /geoserver/ [R]
 <Proxy http://localhost:8180/geoserver/*>
-    Order deny,allow
-    Allow from all
+    Require all granted
 </Proxy>
 <Location /geoserver>
   Header set Access-Control-Allow-Origin "*"
@@ -302,8 +303,7 @@ RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
 ```
 RewriteRule ^/geofence$ /geofence/ [R]
 <Proxy http://localhost:8180/geofence/*>
-    Order deny,allow
-    Allow from all
+    Require all granted
 </Proxy>
 ProxyPass /geofence/ http://localhost:8180/geofence/ 
 ProxyPassReverse /geofence/ http://localhost:8180/geofence/
@@ -321,8 +321,7 @@ RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
 ```
 RewriteRule ^/geowebcache$ /geowebcache/ [R]
 <Proxy http://localhost:8180/geowebcache/*>
-    Order deny,allow
-    Allow from all
+    Require all granted
 </Proxy>
 ProxyPass /geowebcache/ http://localhost:8180/geowebcache/ 
 ProxyPassReverse /geowebcache/ http://localhost:8180/geowebcache/
@@ -340,8 +339,7 @@ RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
 ```
 RewriteRule ^/header$ /header/ [R]
 <Proxy http://localhost:8180/header/*>
-    Order deny,allow
-    Allow from all
+    Require all granted
 </Proxy>
 ProxyPass /header/ http://localhost:8180/header/
 ProxyPassReverse /header/ http://localhost:8180/header/
@@ -358,8 +356,7 @@ RewriteRule ^/ldapadmin$ /ldapadmin/ [R]
 RewriteRule ^/ldapadmin/privateui$ /ldapadmin/privateui/ [R]
 
 <Proxy http://localhost:8180/ldapadmin/*>
-    Order deny,allow
-    Allow from all
+    Require all granted
 </Proxy>
 ProxyPass /ldapadmin/ http://localhost:8180/ldapadmin/
 ProxyPassReverse /ldapadmin/ http://localhost:8180/ldapadmin/
@@ -374,8 +371,7 @@ RewriteRule ^/(.*)$ https://%{SERVER_NAME}/$1 [R=301,L]
 ```
 RewriteRule ^/mapfishapp$ /mapfishapp/ [R]
 <Proxy http://localhost:8180/mapfishapp/*>
-    Order deny,allow
-    Allow from all
+    Require all granted
 </Proxy>
 ProxyPass /mapfishapp/ http://localhost:8180/mapfishapp/ 
 ProxyPassReverse /mapfishapp/ http://localhost:8180/mapfishapp/
