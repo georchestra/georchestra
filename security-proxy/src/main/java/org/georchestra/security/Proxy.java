@@ -133,6 +133,8 @@ public class Proxy {
     /*  ----------  Required for  DatabaseHealthCenter -------------------- */
     
     private static Boolean checkHealth = false;
+    private String host;
+    private Integer port;
     private String database;
     private String user;
     private String password;
@@ -494,7 +496,7 @@ public class Proxy {
         httpclient.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, false);
 
         if( isCheckHealth() ){
-            DatabaseHealthCenter.getInstance(this.database, this.user, this.password, Proxy.class.getSimpleName())
+            DatabaseHealthCenter.getInstance(this.host, this.port, this.database, this.user, this.password, Proxy.class.getSimpleName())
 				.checkConnections(this.maxDatabaseConnections);
         }
 
@@ -1142,6 +1144,14 @@ public class Proxy {
     }
     public void setHeaderManagement(HeadersManagementStrategy headerManagement) {
         this.headerManagement = headerManagement;
+    }
+
+    public void setHost(String host){
+        this.host = host;
+    }
+
+    public void setPort(Integer port){
+        this.port = port;
     }
 
     public void setDatabase(String database){
