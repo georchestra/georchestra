@@ -14,7 +14,6 @@ ADDONS: [...,
 {
     "id": "osm2geor_0",
     "name": "Osm2Geor",
-    "enabled": true,
     "title": {
         "fr": "osm2geor",
         "en": "osm2geor",
