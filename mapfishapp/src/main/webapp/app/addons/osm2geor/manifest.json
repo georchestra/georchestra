@@ -1,0 +1,19 @@
+{
+    "js": [
+        "js/main.js",
+        "js/OpenLayers.Format.OSM.js"
+    ],
+    "css": [
+        "css/main.css"
+    ],
+    "i18n": {
+        "en": {
+       },
+        "es": {
+       },
+        "fr": {
+       },
+        "de": {
+       }
+    }
+}
