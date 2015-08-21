@@ -7,13 +7,32 @@
         "css/main.css"
     ],
     "i18n": {
-        "en": {
-       },
         "es": {
-       },
+            "OSM data": "Données OSM",
+            "This addon allows you to display OSM data in your map": "Cet addon vous permet d'afficher des données OSM dans votre carte",
+            "OSM to geOrchestra": "OSM vers geOrchestra",
+            "Query": "Requête",
+            "Style": "Style",
+            "Keep previously loaded features": "Conserver les objets existants",
+            "Execute": "Exécuter"
+        },
         "fr": {
-       },
+            "OSM data": "Données OSM",
+            "This addon allows you to display OSM data in your map": "Cet addon vous permet d'afficher des données OSM dans votre carte",
+            "OSM to geOrchestra": "OSM vers geOrchestra",
+            "Query": "Requête",
+            "Style": "Style",
+            "Keep previously loaded features": "Conserver les objets existants",
+            "Execute": "Exécuter"
+        },
         "de": {
-       }
+            "OSM data": "Données OSM",
+            "This addon allows you to display OSM data in your map": "Cet addon vous permet d'afficher des données OSM dans votre carte",
+            "OSM to geOrchestra": "OSM vers geOrchestra",
+            "Query": "Requête",
+            "Style": "Style",
+            "Keep previously loaded features": "Conserver les objets existants",
+            "Execute": "Exécuter"
+        }
     }
 }
