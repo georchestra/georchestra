@@ -3,7 +3,6 @@ Ext.namespace("GEOR.Addons");
 /*
  * TODO :
  * simple / advanced tab
- * help button or link
  * translations to spanish and german
  */
 GEOR.Addons.Osm2Geor = Ext.extend(GEOR.Addons.Base, {
@@ -31,6 +30,10 @@ GEOR.Addons.Osm2Geor = Ext.extend(GEOR.Addons.Base, {
         });
     },
 
+    /**
+     * Method: tr
+     *
+     */
     tr: function(a) {
         return OpenLayers.i18n(a);
     },
@@ -84,6 +87,19 @@ out skel qt;'
                     this._styleTextArea
                 ]
             },
+            tools: [{
+                id: 'help',
+                handler: function() {
+                    window.open(this.tr("Osm2Geor_HELP_URL"));
+                },
+                scope: this
+            }, {
+                id: 'close',
+                handler: function() {
+                    this.win.hide();
+                },
+                scope: this
+            }],
             listeners: {
                 'show': function() {
                     if (OpenLayers.Util.indexOf(this.map.layers, this.layer) < 0) {

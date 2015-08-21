@@ -7,6 +7,9 @@
         "css/main.css"
     ],
     "i18n": {
+        "en": {
+            "Osm2Geor_HELP_URL": "http://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide"
+        },
         "es": {
             "OSM data": "Données OSM",
             "This addon allows you to display OSM data in your map": "Cet addon vous permet d'afficher des données OSM dans votre carte",
@@ -14,7 +17,8 @@
             "Query": "Requête",
             "Style": "Style",
             "Keep previously loaded features": "Conserver les objets existants",
-            "Execute": "Exécuter"
+            "Execute": "Exécuter",
+            "Osm2Geor_HELP_URL": "http://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide"
         },
         "fr": {
             "OSM data": "Données OSM",
@@ -23,7 +27,8 @@
             "Query": "Requête",
             "Style": "Style",
             "Keep previously loaded features": "Conserver les objets existants",
-            "Execute": "Exécuter"
+            "Execute": "Exécuter",
+            "Osm2Geor_HELP_URL": "http://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide"
         },
         "de": {
             "OSM data": "Données OSM",
@@ -32,7 +37,8 @@
             "Query": "Requête",
             "Style": "Style",
             "Keep previously loaded features": "Conserver les objets existants",
-            "Execute": "Exécuter"
+            "Execute": "Exécuter",
+            "Osm2Geor_HELP_URL": "http://wiki.openstreetmap.org/wiki/DE:Overpass_API/Language_Guide"
         }
     }
 }
