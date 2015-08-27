@@ -4,9 +4,16 @@ First of all: thanks for contributing!
 
 ## Code conventions
 
-* Javascript: four space indents. No tabs.
-* Java: tab indents. No spaces. No trailing spaces or tabs.
+* Javascript: 
+  * Four space indents.
+  * No tabs.
+  * Always use brackets after a test even if there's a single line of code.
+* Java: 
+  * Tab indents.
+  * No spaces.
+  * No trailing spaces or tabs.
 * XML:
+  * TODO
 
 ## Commits policy
 
