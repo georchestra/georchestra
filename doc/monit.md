@@ -57,9 +57,10 @@ check process tomcat8 with pidfile /run/tomcat8.pid
   as uid tomcat8 gid tomcat8
   if cpu > 95% for 5 cycles then alert
   if totalmem > 80% then alert
-  if failed port 8080 protocol http and request /mapfishapp then alert
-  if failed port 8080 protocol http and request /geoserver then alert
-  if failed port 8080 protocol http and request /geonetwork then alert
+  if failed port 8080 protocol http and request /mapfishapp/contexts/default.wmc then alert
+   if failed port 8080 protocol http and request /cas/images/services/true.gif then alert
+  if failed port 8080 protocol http and request /geoserver/public/wms?request=describelayer&layers=administrations&version=1.1.1 then alert
+  if failed port 8080 protocol http and request /geonetwork/srv/fre/xml.info then alert
   if failed port 8080 for 5 cycles then restart
 ```
 
@@ -84,6 +85,8 @@ check process tomcat8 with pidfile /run/tomcat8.pid
 This one will test availability of /geoserver/public/wms?request=describelayer&layers=administrations&version=1.1.1 and alert if unreachable, or restart geoserver if unreachable for 3 times.
 
 In order to receive alert by mail, you'll have to configure your mailserver on each instance.
+
+You can see a lot of rules example on the M/Monit wiki : https://mmonit.com/wiki/Monit/ConfigurationExamples
 
 
 ## Centralize administration with M/Monit (Not free)
@@ -166,7 +169,7 @@ set logfile syslog facility log_daemon
 set mailserver localhost
 set mail-format { from: monit@example.fr }
 set alert <email-adress-to-alert>
-set mmonit http://monit:kp12trA0#xH74@<mmonit-server-IP>:8080/collector
+set mmonit http://monit:<monit_password>@<mmonit-server-IP>:8080/collector
 set httpd port 2812 and use address <monit-server-IP>
 allow localhost
 allow <mmonit-server-IP>
