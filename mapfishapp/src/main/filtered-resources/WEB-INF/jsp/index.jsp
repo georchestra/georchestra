@@ -4,19 +4,50 @@
 <%@ page import="java.util.*" %>
 <%@ page import="org.georchestra.mapfishapp.ws.Utf8ResourceBundle" %>
 <%@ page import="org.apache.commons.lang.StringUtils" %>
+<%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
+<%@ page import="org.springframework.context.ApplicationContext" %>
+<%@ page import="org.springframework.web.servlet.support.RequestContextUtils" %>
+<%@ page import="org.georchestra.commons.configuration.GeorchestraConfiguration" %>
+
+
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ page pageEncoding="UTF-8" %>
 <%@ page isELIgnored="false" %>
 <%
 Boolean anonymous = true;
 Boolean admin = false;
+Boolean georDatadirActivated = false;
+
+String instanceName = null;
+String defaultLanguage = null;
+String georCustomPath = "/app/js/GEOR_custom.js";
+
+try {
+  ApplicationContext ctx = RequestContextUtils.getWebApplicationContext(request);
+  instanceName = ctx.getBean(GeorchestraConfiguration.class).getProperty("instance");
+  defaultLanguage = ctx.getBean(GeorchestraConfiguration.class).getProperty("language");
+  if ((ctx.getBean(GeorchestraConfiguration.class) != null)
+    && (((GeorchestraConfiguration) ctx.getBean(GeorchestraConfiguration.class)).activated())) {
+      georDatadirActivated = true;
+      georCustomPath = "/ws/app/js/GEOR_custom.js";
+    }
+} catch (Exception e) {
+}
 
 // the context path (might not be the public context path ! -> to be improved with https://github.com/georchestra/georchestra/issues/227)
 String context = request.getContextPath().split("-")[0]; // eg /mapfishapp
 
 String lang = request.getParameter("lang");
 if (lang == null || (!lang.equals("en") && !lang.equals("es") && !lang.equals("ru") && !lang.equals("fr") && !lang.equals("de"))) {
+  if (defaultLanguage != null) {
+    lang = defaultLanguage;
+  }
+  else {
     lang = "${language}";
+  }
+}
+if (instanceName == null) {
+  instanceName = "${instance}";
 }
 Locale l = new Locale(lang);
 ResourceBundle resource = org.georchestra.mapfishapp.ws.Utf8ResourceBundle.getBundle("mapfishapp.i18n.index",l);
@@ -75,7 +106,7 @@ if(sec_roles != null) {
             font: normal 12px arial,tahoma,sans-serif;
         }
     </style>
-    <title lang="<%= lang %>" dir="ltr"><fmt:message key="title.visual"/> - ${instance}</title>
+    <title lang="<%= lang %>" dir="ltr"><fmt:message key="title.visual"/> - <%= instanceName %></title>
 
     <link rel="stylesheet" type="text/css" href="<%= context %>/lib/externals/ext/resources/css/ext-all.css" />
     <link rel="stylesheet" type="text/css" href="<%= context %>/lib/externals/ext/resources/css/xtheme-gray.css" />
@@ -113,7 +144,7 @@ if(sec_roles != null) {
     <!--
         loading custom parameters (see build profile)
     -->
-    <script type="text/javascript" src="<%= context %>/app/js/GEOR_custom.js"></script>
+    <script type="text/javascript" src="<%= context %><%= georCustomPath %>"></script>
     
     <c:choose>
         <c:when test='<%= request.getParameter("debug") != null %>'>
@@ -174,6 +205,13 @@ if(sec_roles != null) {
     </c:choose>
         GEOR.config.ROLES = [<%= js_roles %>];
         GEOR.config.PATHNAME = '<%= context %>';
+    <c:choose>
+        <c:when test='<%= georDatadirActivated == true %>'>
+        GEOR.config.CONTEXTS = ${c.contexts};
+        GEOR.config.ADDONS = ${c.addons};
+        </c:when>
+    </c:choose>
+        
     </script>
     <noscript><p><fmt:message key="need.javascript"/></p></noscript>
 </body>

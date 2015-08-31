@@ -1,0 +1,38 @@
+{
+    "js": [
+        "js/OpenLayers.Control.StreetviewModifyFeature.js",
+        "js/main.js"
+    ],
+    "css": [
+        "css/main.css"
+    ],
+    "default_options": {
+        "api_key": "AIzaSyDSPmOyzuhJA_tM5_RF0tLLIuQFV6sBJ1U",
+        "initial_window_size": 400,
+        "initial_fov": 90,
+        "initial_pitch": 0
+    },
+    "i18n": {
+        "de": {
+            "StreetView": "StreetView",
+            "Fullscreen in a new window": "In einem neuen Fenster Vollbild",
+            "Recenter on the marker": "Zentrieren auf den Marker",
+            "Move the marker to update the view": "Bewegen Sie die Markierung, um die Ansicht zu aktualisieren",
+            "Click on the map to get a glimpse of the surroundings": "Klicken Sie auf die Karte, um einen Eindruck der Umgebung zu bekommen"
+        },
+        "es": {
+            "StreetView": "StreetView",
+            "Fullscreen in a new window": "Pantalla Completa en una nueva ventana",
+            "Recenter on the marker": "Centrar nuevamente en el marcador",
+            "Move the marker to update the view": "Mover el marcador para actualizar la vista",
+            "Click on the map to get a glimpse of the surroundings": "Haga clic en el mapa para obtener una visión de los alrededores"
+        },
+        "fr": {
+            "StreetView": "StreetView",
+            "Fullscreen in a new window": "Vue plein écran dans une nouvelle fenêtre",
+            "Recenter on the marker": "Recentrer la carte sur le marqueur",
+            "Move the marker to update the view": "Déplacez le marqueur pour mettre à jour la vue",
+            "Click on the map to get a glimpse of the surroundings": "Cliquez sur la carte pour obtenir une vue de l'endroit"
+        }
+    }
+}

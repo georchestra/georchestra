@@ -1,0 +1,110 @@
+{
+    "js": [
+        "js/main.js"
+    ],
+    "css": [
+        "css/main.css"
+    ],
+    "default_options": {
+        "editableCombos": true,
+        "roles": {
+            "tab1": [],
+            "tab2": ["ROLE_SV_ADMIN"]
+        },
+        "tab1": {
+            "field1": {
+                "file": "cities.json",
+                "geometry": "the_geom",
+                "wfs": "http://geobretagne.fr/geoserver/geob_loc/wfs",
+                "typename": "geob_loc:COMMUNE",
+                "valuefield": "INSE",
+                "displayfield": "COMMUNE",
+                "template": "<b>{COMMUNE}</b> ({INSE})"
+            },
+            "field2": {
+                "wfs": "http://geobretagne.fr/geoserver/ref/wfs",
+                "typename": "ref:cadastre_section",
+                "geometry": "the_geom",
+                "matchingproperties": {
+                    "field1": "insee"
+                },
+                "valuefield": "texnumsect",
+                "displayfield": "texnumsect",
+                "template": "<b>{texnumsect}</b>"
+            },
+            "field3": {
+                "wfs": "http://geobretagne.fr/geoserver/ref/wfs",
+                "typename": "ref:cadastre_parcelle",
+                "geometry": "the_geom",
+                "matchingproperties": {
+                    "field1": "insee",
+                    "field2": "section"
+                },
+                "valuefield": "texnumparc",
+                "displayfield": "texnumparc",
+                "template": "<b>{texnumparc}</b> {section}"
+            }
+        },
+        "tab2": {
+            "field1": {
+                "this field": "is currently the same as field1 from tab1",
+                "no config option here": "is taken into account"
+            }, 
+            "field2": {
+                "wfs": "http://ids.pigma.org/geoserver/cadastre/wfs",
+                "typename": "cadastre:localisants_bdparc_majic2012",
+                "matchingproperties": {
+                    "field1": "code_insee"
+                },
+                "valuefield": "majic_ddenom",
+                "displayfield": "majic_ddenom"
+            }
+        }
+    },
+    "i18n": {
+        "en": {
+            "addon_cadastre_popup_title": "Parcel lookup",
+            "sync map extent": "sync map extent",
+            "tab1title": "by reference",
+            "tab2title": "by owner",
+            "tab1field1label": "City",
+            "tab2field1label": "City",
+            "tab1field2label": "Section",
+            "tab2field2label": "Owner",
+            "tab1field3label": "Parcel"
+        },
+        "es": {
+            "addon_cadastre_popup_title": "Parcel lookup",
+            "sync map extent": "sync map extent",
+            "tab1title": "by reference",
+            "tab2title": "by owner",
+            "tab1field1label": "Ciudad",
+            "tab2field1label": "Ciudad",
+            "tab1field2label": "Sección",
+            "tab2field2label": "Propietario",
+            "tab1field3label": "Parcela"
+        },
+        "fr": {
+            "addon_cadastre_popup_title": "Recherche de parcelle",
+            "sync map extent": "synchroniser l'étendue de la carte",
+            "tab1title": "par référence",
+            "tab2title": "par propriétaire",
+            "tab1field1label": "Commune",
+            "tab2field1label": "Commune",
+            "tab1field2label": "Section",
+            "tab2field2label": "Propriétaire",
+            "tab1field3label": "Parcelle"
+        },
+        "de": {
+            "addon_cadastre_popup_title": "Parzellensuche",
+            "sync map extent": "Synchronisieren der Kartenausdehnung",
+            "tab1title": "mittels Referenz",
+            "tab2title": "mittels Eigentümer",
+            "tab1field1label": "Kommune",
+            "tab2field1label": "Kommune",
+            "tab1field2label": "Sektion",
+            "tab2field2label": "Eigentümer",
+            "tab1field3label": "Parzelle"
+        }
+    }
+}

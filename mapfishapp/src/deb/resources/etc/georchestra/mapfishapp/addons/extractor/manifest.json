@@ -1,0 +1,73 @@
+{
+    "js": [
+        "js/main.js"
+    ],
+    "css": [
+        "css/main.css"
+    ],
+    "default_options": {
+        "serviceURL": "/extractorapp/extractor/initiate",
+        "srsData": [
+            ["EPSG:4326", "WGS84 (EPSG:4326)"],
+            ["EPSG:3857", "Spherical Mercator (EPSG:3857)"]
+        ],
+        "defaultSRS": "EPSG:4326",
+        "vectorFormatData": [
+            ["shp", "Shapefile"],
+            ["mif", "Mif/Mid"],
+            ["tab", "TAB"],
+            ["kml", "KML"]
+        ],
+        "defaultVectorFormat": "shp",
+        "rasterFormatData": [
+            ["geotiff", "GeoTiff"],
+            ["tiff", "Tif + TFW"]
+        ],
+        "defaultRasterFormat": "geotiff",
+        "defaultRasterResolution": 50
+    },
+    "i18n": {
+        "en": {
+            "addon_extractor_popup_title": "Extraction parameters"
+        },
+        "es": {
+            "addon_extractor_popup_title": "Extraction parameters",
+            "Close": "Close",
+            "Extract": "Extract",
+            "The extraction request succeeded, check your email.": "The extraction request succeeded, check your email.",
+            "The extraction request failed.": "El pedido de extracción falló.",
+            "SRS": "SRS",
+            "Format for vectors": "Format for vectors",
+            "Format for rasters": "Format for rasters",
+            "Resolution for rasters (cm)": "Resolution for rasters (cm)",
+            "Email": "Email",
+            "This field should be an e-mail address in the format user@domain.com": "This field should be an e-mail address in the format user@domain.com"
+        },
+        "fr": {
+            "addon_extractor_popup_title": "Paramètres d'extraction",
+            "Close": "Fermer",
+            "Extract": "Extraire",
+            "The extraction request succeeded, check your email.": "La demande d'extraction a été prise en compte. Surveillez votre courriel.",
+            "The extraction request failed.": "La demande d'extraction a échoué.",
+            "SRS": "Projection de sortie",
+            "Format for vectors": "Format des couches vectorielles",
+            "Format for rasters": "Format des couches rasters",
+            "Resolution for rasters (cm)": "Résolution des couches rasters (en cm)",
+            "Email": "Courriel",
+            "This field should be an e-mail address in the format user@domain.com": "Ce champ doit être une adresse email au format utilisateur@domaine.com"
+        },
+         "de": {
+            "addon_extractor_popup_title": "Extraktions-parameter",
+            "Close": "Schließen",
+            "Extract": "extrahieren",
+            "The extraction request succeeded, check your email.": "erfolgreiche Extraktion. E-mail folgt.",
+            "The extraction request failed.": "extraktion nicht erfolgt.",
+            "SRS": "SRS",
+            "Format for vectors": "Format des Layervectors",
+            "Format for rasters": "Format des Layerrasters",
+            "Resolution for rasters (cm)": "Layer auflösung in cm",
+            "Email": "Email Adresse",
+            "This field should be an e-mail address in the format user@domain.com": "Formularfeld muss eine e-mailadresse beinhalten"
+        }
+    }
+}

@@ -1,0 +1,1 @@
+public domain image got from http://en.wikipedia.org/wiki/File:Information_magnifier_icon.png

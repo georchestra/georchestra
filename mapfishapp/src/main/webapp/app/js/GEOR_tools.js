@@ -244,7 +244,7 @@ GEOR.tools = (function() {
         GEOR.waiter.show(count);
         Ext.each(incoming, function(r) {
             var addonName = r.get("name"),
-                addonPath = GEOR.config.PATHNAME + "/app/addons/" +
+                addonPath = GEOR.config.PATHNAME + "/ws/addons/" +
                     addonName.toLowerCase() + "/",
                 failure = function() {
                     count -= 1;
@@ -425,7 +425,7 @@ GEOR.tools = (function() {
                     return v[key].hasOwnProperty(lang) ? v[key][lang] : v[key]["en"];
                 },
                 thumb: function(v) {
-                    var base = GEOR.config.PATHNAME+"/app/addons/"+v.name.toLowerCase()+"/";
+                    var base = GEOR.config.PATHNAME+"/ws/addons/"+v.name.toLowerCase()+"/";
                     return base + ((v.thumbnail) ? v.thumbnail : "img/thumbnail.png");
                 }
             }),
