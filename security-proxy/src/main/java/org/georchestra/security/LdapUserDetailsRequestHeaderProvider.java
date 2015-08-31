@@ -1,9 +1,11 @@
 package org.georchestra.security;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.naming.NamingEnumeration;
 import javax.naming.directory.Attribute;
@@ -14,6 +16,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
+import org.georchestra.commons.configuration.GeorchestraConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,7 +28,7 @@ import org.springframework.util.Assert;
 /**
  * Reads information from a user node in LDAP and adds the information as
  * headers to the request.
- * 
+ *
  * @author jeichar
  */
 public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
@@ -33,12 +37,25 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
 
     private LdapUserSearch      _userSearch;
     private Map<String, String> _headerMapping;
-    
+
+    @Autowired
+    private GeorchestraConfiguration georchestraConfiguration;
+
     public LdapUserDetailsRequestHeaderProvider(LdapUserSearch userSearch, Map<String, String> headerMapping) {
         Assert.notNull(userSearch, "userSearch must not be null");
         Assert.notNull(headerMapping, "headerMapping must not be null");
         this._userSearch = userSearch;
         this._headerMapping = headerMapping;
+    }
+
+    public void init() throws IOException {
+        if ((georchestraConfiguration != null) && (georchestraConfiguration.activated())) {
+            Properties pHmap = georchestraConfiguration.loadCustomPropertiesFile("headers-mapping");
+            _headerMapping.clear();
+            for (String key: pHmap.stringPropertyNames()) {
+                _headerMapping.put(key, pHmap.getProperty(key));
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -59,7 +76,7 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
 				try {
 					headers = (Collection<Header>) session.getAttribute("security-proxy-cached-attrs");
 					String expectedUsername = (String) session.getAttribute("security-proxy-cached-username");
-					
+
 					if (username.equals(expectedUsername)) {
 						return headers;
 					}

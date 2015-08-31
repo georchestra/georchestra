@@ -1,9 +1,10 @@
 package org.georchestra.security;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.regex.Pattern;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -12,10 +13,12 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.georchestra.commons.configuration.GeorchestraConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 /**
  * If the user-agent of the client is one of the supported user-agents then send a basic authentication request.
@@ -36,6 +39,22 @@ public class BasicAuthChallengeByUserAgent extends BasicAuthenticationFilter {
     private boolean ignoreHttps = false;
     private static final Log LOGGER = LogFactory.getLog(BasicAuthChallengeByUserAgent.class.getPackage().getName());
     private AuthenticationException _exception = new AuthenticationException("No basic authentication credentials provided") {};
+
+    @Autowired
+    private GeorchestraConfiguration georchestraConfiguration;
+
+    public void init() throws IOException {
+        if ((georchestraConfiguration != null) && (georchestraConfiguration.activated())) {
+            Properties uaProps = georchestraConfiguration.loadCustomPropertiesFile("user-agents");
+            int i = 0;
+            String ua;
+            _userAgents.clear();
+            while ((ua = uaProps.getProperty("useragent" + i + ".value")) != null) {
+                _userAgents.add(Pattern.compile(ua));
+                i++;
+            }
+        }
+    }
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {

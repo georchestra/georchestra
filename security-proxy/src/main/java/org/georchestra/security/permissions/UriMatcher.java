@@ -1,13 +1,12 @@
 package org.georchestra.security.permissions;
 
-import com.google.common.collect.Sets;
-
 import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.HashSet;
 import java.util.regex.Pattern;
 
+import com.google.common.collect.Sets;
 /**
  * @author Jesse on 8/15/2014.
  */
