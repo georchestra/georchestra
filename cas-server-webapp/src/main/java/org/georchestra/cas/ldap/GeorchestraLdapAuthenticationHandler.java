@@ -1,5 +1,11 @@
 package org.georchestra.cas.ldap;
 
+import java.security.GeneralSecurityException;
+import java.util.Collection;
+
+import javax.security.auth.login.AccountException;
+import javax.validation.constraints.NotNull;
+
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.LdapAuthenticationHandler;
 import org.jasig.cas.authentication.PreventedException;
@@ -15,26 +21,45 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
 import org.ldaptive.auth.Authenticator;
 
-import java.security.GeneralSecurityException;
-import java.util.Collection;
-import javax.security.auth.login.AccountException;
-import javax.validation.constraints.NotNull;
-
 /**
  * Extends Ldap authentication handler by checking whether the user is pending or valid.
  *
  * @author Jesse on 6/26/2014.
  */
 public class GeorchestraLdapAuthenticationHandler extends LdapAuthenticationHandler {
-    private final String adminUser;
-    private final String adminPassword;
-    private final String baseDn;
-    private final String groupSearchFilter;
-    private final String groupRoleAttribute;
-    private final String pendingGroupName;
+
+    private String adminUser;
+    private String adminPassword;
+    private String baseDn;
+    private String groupSearchFilter;
+    private String groupRoleAttribute;
+    private String pendingGroupName;
 
     private DefaultConnectionFactory connectionFactory;
 
+    public void setAdminUser(String adminUser) {
+        this.adminUser = adminUser;
+    }
+
+    public void setAdminPassword(String adminPassword) {
+        this.adminPassword = adminPassword;
+    }
+
+    public void setBaseDn(String baseDn) {
+        this.baseDn = baseDn;
+    }
+
+    public void setGroupSearchFilter(String groupSearchFilter) {
+        this.groupSearchFilter = groupSearchFilter;
+    }
+
+    public void setGroupRoleAttribute(String groupRoleAttribute) {
+        this.groupRoleAttribute = groupRoleAttribute;
+    }
+
+    public void setPendingGroupName(String pendingGroupName) {
+        this.pendingGroupName = pendingGroupName;
+    }
     /**
      * Creates a new authentication handler that delegates to the given authenticator.
      *
