@@ -10,10 +10,15 @@
     <context:annotation-config/>
 
     <bean id="defaultcontroller" class="org.georchestra._header.DefaultController"/>
-	
+
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"></property>
         <property name="prefix" value="/WEB-INF/jsp/"></property>
         <property name="suffix" value=".jsp"></property>
     </bean>
+
+    <bean id="georchestraConfiguration" class="org.georchestra.commons.configuration.GeorchestraConfiguration">
+        <constructor-arg value="header" />
+    </bean>
+
 </beans>
