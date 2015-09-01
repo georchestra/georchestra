@@ -107,7 +107,7 @@ public class AddonController implements ServletContextAware {
         if ((georchestraConfiguration != null) && (georchestraConfiguration.activated())) {
             path = new File(georchestraConfiguration.getContextDataDir(), "addons").getAbsolutePath();
         } else {
-            path = context.getRealPath("/addons");
+            path = context.getRealPath("/app/addons");
         }
         return path;
     }
