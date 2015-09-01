@@ -6,6 +6,10 @@
 
 <urlrewrite>
     <rule>
+        <from>^/$</from>
+        <to type="forward">/ws/index.jsp</to>
+    </rule>
+    <rule>
         <from>^/ws/(.*)$</from>
         <to type="forward">/ws/$1</to>
     </rule>
@@ -13,5 +17,8 @@
         <from>^/resources/(.*)$</from>
         <to type="forward">/$1</to>
     </rule>
-
+    <rule>
+        <from>^/index.jsp$</from>
+        <to type="forward">/ws/index.jsp</to>
+    </rule>
 </urlrewrite>
