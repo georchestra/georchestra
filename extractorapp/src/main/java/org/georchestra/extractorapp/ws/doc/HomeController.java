@@ -10,9 +10,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,28 +22,44 @@ import org.springframework.web.servlet.ModelAndView;
 
 
 /**
- * Main controller that display the extractor home page
- * 
- * @author bruno.binet@camptocamp.com
+ * Main controller which displays the extractor home page.
+ *
+ * @author Bruno Binet
  */
-    
+
 
 @Controller
 @RequestMapping("/")
 public class HomeController {
+
     private static final String SESSION_POST_DATA_STORE = "SESSION_POST_DATA_STORE";
 
 	private long maxCoverageExtractionSize = Long.MAX_VALUE;
+
+    @Autowired
+    private GeorchestraConfiguration georConfig;
+
 	public void setMaxCoverageExtractionSize(long maxCoverageExtractionSize) {
 		this.maxCoverageExtractionSize = maxCoverageExtractionSize;
+	}
+
+	/**
+	 * initialization method
+	 *
+	 * This method is called once the bean finished its autoconfiguration process.
+	 */
+	public void init() {
+	  if ((georConfig != null) && (georConfig.activated())) {
+	      maxCoverageExtractionSize = Long.parseLong(georConfig.getProperty("maxCoverageExtractionSize"));
+	  }
 	}
 
     /**
      * POST entry point.
      * @param request. Must contains information from the layers and services to be extracted
      * @param response.
-     * @return 
-     * @throws IOException 
+     * @return
+     * @throws IOException
      */
     @RequestMapping(method=RequestMethod.POST)
     public ModelAndView handlePOSTRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -70,7 +88,7 @@ public class HomeController {
      * GET entry point.
      * @param request.
      * @param response.
-     * @return 
+     * @return
      */
     @RequestMapping(method=RequestMethod.GET)
     public ModelAndView handleGETRequest(HttpServletRequest request, HttpServletResponse response) {
@@ -89,12 +107,12 @@ public class HomeController {
         } else {
             session.setAttribute(SESSION_POST_DATA_STORE, str);
         }
-        
+
         if(str == null || str.trim() == ""){
             session.setAttribute(SESSION_POST_DATA_STORE, null);
             str = null;
         }
-        
+
         Map<String, Object> model;
         if(str != null) {
             model = createModelFromString(request, str);
@@ -138,5 +156,5 @@ public class HomeController {
         model.put("services", services);
         return model;
     }
-    
+
 }

@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.extractorapp.ws.AbstractEmailFactory;
 import org.georchestra.extractorapp.ws.Email;
 import org.georchestra.extractorapp.ws.acceptance.CheckFormAcceptance;
@@ -29,6 +30,7 @@ import org.georchestra.extractorapp.ws.extractor.task.ExecutionPriority;
 import org.georchestra.extractorapp.ws.extractor.task.ExtractionManager;
 import org.georchestra.extractorapp.ws.extractor.task.ExtractionTask;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -71,8 +73,29 @@ public class ExtractorController implements ServletContextAware {
 
 	private ExtractionManager           extractionManager;
 
+	@Autowired
+	private GeorchestraConfiguration georConfig;
+
 	public void validateConfig() {
-		if(extractionManager==null) {
+	    if ((georConfig != null) && (georConfig.activated())) {
+	        LOG.info("geOrchestra datadir: reconfiguring bean ...");
+	        servletUrl = georConfig.getProperty("servletUrl");
+	        secureHost = georConfig.getProperty("secureHost");
+	        maxCoverageExtractionSize = Long.parseLong(georConfig.getProperty("maxCoverageExtractionSize"));
+	        remoteReproject = Boolean.parseBoolean(georConfig.getProperty("remoteReproject"));
+	        useCommandLineGDAL = Boolean.parseBoolean(georConfig.getProperty("useCommandLineGDAL"));
+	        extractionFolderPrefix = georConfig.getProperty("extractionFolderPrefix");
+	        String username = georConfig.getProperty("privileged_admin_name");
+            String password = georConfig.getProperty("privileged_admin_pass");
+            // Recreating a Credentials object
+            adminCredentials = new UsernamePasswordCredentials(username, password);
+            boolean dlFormActivated = Boolean.parseBoolean(georConfig.getProperty("dlformactivated"));
+            String dlformJdbcUrl = georConfig.getProperty("dlformjdbcurl");
+            // Recreating a CheckFormAcceptance object
+            checkFormAcceptance = new CheckFormAcceptance(dlFormActivated, dlformJdbcUrl);
+            LOG.info("geOrchestra datadir: done.");
+	    }
+		if(extractionManager == null) {
 			throw new AssertionError("A extractionManager needs to be defined in spring configuration");
 		}
 		File storageFile = FileUtils.storageFile("");

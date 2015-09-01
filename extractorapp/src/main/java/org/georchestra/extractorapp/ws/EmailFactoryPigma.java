@@ -33,7 +33,7 @@ public class EmailFactoryPigma extends AbstractEmailFactory {
 				this.from,
 				this.bodyEncoding,
 				this.subjectEncoding,
-				this.languages
+				this.languages, this.georConfig
 		) {
 			public void sendDone(List<String> successes, List<String> failures,
 		            List<String> oversized, long fileSize) throws MessagingException {

@@ -3,18 +3,20 @@ package org.georchestra.extractorapp.ws.acceptance;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.extractorapp.ws.extractor.task.ExtractionTask;
+import org.georchestra.commons.configuration.GeorchestraConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class CheckFormAcceptance {
 
     private BasicDataSource basicDataSource;
     private boolean activated = false;
 
-    private static final Log LOG = LogFactory.getLog(ExtractionTask.class
+    private static final Log LOG = LogFactory.getLog(CheckFormAcceptance.class
             .getPackage().getName());
 
     private final static String CHECK_FORM_ACCEPTANCE_QUERY = "SELECT "
@@ -24,6 +26,45 @@ public class CheckFormAcceptance {
             + "WHERE "
             + "           (username = null AND sessionid = ?) OR (username = ?  AND username IS NOT null) "
             + "AND " + "           json_spec = ?;";
+
+    @Autowired
+    private GeorchestraConfiguration georConfig;
+
+    public void init() {
+        if ((georConfig != null) && (georConfig.activated())) {
+            boolean newActivated = Boolean.parseBoolean(georConfig.getProperty("dlformactivated"));
+
+            // Was activated, and is deactivated in the geOrchestra datadir
+            if ((activated == true) && (newActivated == false)) {
+                LOG.info("georchestra datadir: de-activating the form agreement check");
+                activated = newActivated;
+                try {
+                    basicDataSource.close();
+                } catch (SQLException e) {
+                   LOG.error("Error while trying to close JDBC datasource connection.", e);
+                }
+            }
+
+            // Was disabled, but activated in the datadir
+            else if ((activated == false) && (newActivated == true)) {
+                LOG.info("georchestra datadir: activating the form agreement check");
+                activated = newActivated;
+                basicDataSource = new BasicDataSource();
+
+                basicDataSource.setDriverClassName("org.postgresql.Driver");
+
+                basicDataSource.setTestOnBorrow(true);
+
+                basicDataSource.setPoolPreparedStatements(true);
+                basicDataSource.setMaxOpenPreparedStatements(-1);
+
+                basicDataSource.setDefaultReadOnly(false);
+                basicDataSource.setDefaultAutoCommit(false);
+
+                basicDataSource.setUrl(georConfig.getProperty("dlformjdbcurl"));
+            }
+        }
+    }
 
     public CheckFormAcceptance(boolean _activated, String jdbcUrl) {
 

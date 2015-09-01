@@ -26,10 +26,10 @@ dlformactivated=@shared.download_form.activated@
 
 
 # filled by GenerateConfig.groovy:
-maxCoverageExtractionSize=
-maxExtractions=
-remoteReproject=
-useCommandLineGDAL=
-extractionFolderPrefix=
-emailfactory=
-emailsubject=
+maxCoverageExtractionSize=99999999
+maxExtractions=100
+remoteReproject=true
+useCommandLineGDAL=false
+extractionFolderPrefix='proj-extract-'
+emailfactory=org.georchestra.extractorapp.ws.EmailFactoryDefault
+emailsubject=[geOrchestra] Your extraction request
