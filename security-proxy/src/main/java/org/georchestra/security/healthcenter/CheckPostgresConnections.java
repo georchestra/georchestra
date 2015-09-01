@@ -23,13 +23,13 @@ final class CheckPostgresConnections {
     private static final Log LOGGER = LogFactory.getLog(CheckPostgresConnections.class.getPackage().getName());
     
 
-	public static List<Map<String, Object>> findConnections(String database, String user, String password, String clientName) throws IOException {
+	public static List<Map<String, Object>> findConnections(String host, Integer port, String database, String user, String password, String clientName) throws IOException {
 
 		List<Map<String, Object>> connectionList; 
 		Connection  connection = null;
 		try {
 			
-			DBConnectionProvider connProvider = PostgresConnectionProvider.getInstance(database ,user, password, clientName);
+			DBConnectionProvider connProvider = PostgresConnectionProvider.getInstance(host, port, database ,user, password, clientName);
 			connection = connProvider.getConnection();
 		
 			ConnectionStatsCommand cmd = new ConnectionStatsCommand();
