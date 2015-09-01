@@ -20,8 +20,6 @@ public final class Configuration {
 
 	protected static final Log LOG = LogFactory.getLog(Configuration.class.getName());
 
-	public static final String FAKE_USER = "fakeuser";
-
 	private String publicContextPath;
 
 	public String getPublicContextPath() {

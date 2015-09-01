@@ -118,7 +118,7 @@ public class GroupDaoImpl implements GroupDao {
 		Name dn = buildGroupDn(groupID);
 		DirContextOperations context = ldapTemplate.lookupContext(dn);
 
-		context.setAttributeValues("objectclass", new String[] { "top", "groupOfNames" });
+		context.setAttributeValues("objectclass", new String[] { "top", "groupOfMembers" });
 
 		try {
 
@@ -152,7 +152,7 @@ public class GroupDaoImpl implements GroupDao {
 		Name dnSvUser = buildGroupDn(groupName);
 
 		DirContextOperations ctx = ldapTemplate.lookupContext(dnSvUser);
-		ctx.setAttributeValues("objectclass", new String[] { "top", "groupOfNames" });
+		ctx.setAttributeValues("objectclass", new String[] { "top", "groupOfMembers" });
 		ctx.removeAttributeValue("member", buildUserDn(uid).toString());
 
 		this.ldapTemplate.modifyAttributes(ctx);
@@ -160,7 +160,7 @@ public class GroupDaoImpl implements GroupDao {
 
 	public List<Group> findAll() throws DataServiceException {
 
-		EqualsFilter filter = new EqualsFilter("objectClass", "groupOfNames");
+		EqualsFilter filter = new EqualsFilter("objectClass", "groupOfMembers");
 		List<Group> groupList = ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(),
 				new GroupContextMapper());
 
@@ -279,7 +279,7 @@ public class GroupDaoImpl implements GroupDao {
 		}
 
 
-        EqualsFilter filter = new EqualsFilter("objectClass", "groupOfNames");
+        EqualsFilter filter = new EqualsFilter("objectClass", "groupOfMembers");
         Integer uniqueNumber = AccountDaoImpl.findUniqueNumber(filter, uniqueNumberField, this.uniqueNumberCounter, ldapTemplate);
 
         // inserts the new group
@@ -298,7 +298,7 @@ public class GroupDaoImpl implements GroupDao {
 
 	private void mapToContext(Integer uniqueNumber, Group group, DirContextOperations context) {
 
-		context.setAttributeValues("objectclass", new String[] { "top", "groupOfNames" });
+		context.setAttributeValues("objectclass", new String[] { "top", "groupOfMembers" });
 
         // person attributes
         if (uniqueNumber != null) {
@@ -309,13 +309,7 @@ public class GroupDaoImpl implements GroupDao {
 
 		setAccountField(context, GroupSchema.DESCRIPTION_KEY, group.getDescription());
 
-		// groupOfNames objects need to have at least one member at creation
-		if (group.getUserList().size() == 0) {
-		    String FakeUserUid = String.format("uid=%s", Configuration.FAKE_USER);
-		    setAccountField(context, GroupSchema.MEMBER_KEY, FakeUserUid);
-		} else {
-		    setMemberField(context, GroupSchema.MEMBER_KEY, group.getUserList());
-		}
+		setMemberField(context, GroupSchema.MEMBER_KEY, group.getUserList());
 
 	}
 
