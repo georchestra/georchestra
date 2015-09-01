@@ -2,19 +2,47 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page language="java" %>
 <%@ page import="java.util.*" %>
+<%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
+<%@ page import="org.springframework.context.ApplicationContext" %>
+<%@ page import="org.springframework.web.servlet.support.RequestContextUtils" %>
+<%@ page import="org.georchestra.commons.configuration.GeorchestraConfiguration" %>
 <%@ page import="org.georchestra.catalogapp.Utf8ResourceBundle" %>
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ page pageEncoding="UTF-8"%>
 <%@ page isELIgnored="false" %>
 <%
+
 Boolean anonymous = true;
 Boolean admin = false;
 Boolean editor = false;
 
+String instanceName = null;
+String defaultLanguage = null;
+String georCustomPath  = "/app/js/GEOR_custom.js";
+
+try {
+  ApplicationContext ctx = RequestContextUtils.getWebApplicationContext(request);
+  instanceName = ctx.getBean(GeorchestraConfiguration.class).getProperty("instance");
+  defaultLanguage = ctx.getBean(GeorchestraConfiguration.class).getProperty("language");
+  if (ctx.getBean(GeorchestraConfiguration.class).activated()) {
+    georCustomPath = "/ws" + georCustomPath ;
+  }
+} catch (Exception e) {}
+
 String lang = request.getParameter("lang");
 if (lang == null || (!lang.equals("en") && !lang.equals("es") && !lang.equals("fr") && !lang.equals("de"))) {
+  if (defaultLanguage != null) {
+    lang = defaultLanguage;
+  }
+  else {
     lang = "${language}";
+  }
 }
+
+if (instanceName == null) {
+  instanceName = "${instance}";
+}
+
 Locale l = new Locale(lang);
 ResourceBundle resource = Utf8ResourceBundle.getBundle("catalogapp.i18n.index",l);
 javax.servlet.jsp.jstl.core.Config.set(
@@ -46,11 +74,9 @@ if(sec_roles != null) {
 
 <head>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
-    <title lang="<%= lang %>" dir="ltr"><fmt:message key="title.catalogue"/> - ${instance}</title>
+    <title lang="<%= lang %>" dir="ltr"><fmt:message key="title.catalogue"/> - <%= instanceName %></title>
     <link rel="stylesheet" type="text/css" href="lib/externals/ext/resources/css/ext-all.css" />
     <link rel="stylesheet" type="text/css" href="lib/externals/ext/resources/css/xtheme-gray.css" />
-    <!--
-    <link rel="stylesheet" type="text/css" href="app/openlayers_gray_theme/style.css" />-->
     <style type="text/css">
         body {
             background: #ffffff;
@@ -92,21 +118,21 @@ if(sec_roles != null) {
     <script type="text/javascript">
         document.getElementById('loading-msg').innerHTML = '<fmt:message key="loading"/>';
     </script>
-    
+
     <script type="text/javascript" src="lib/externals/ext/adapter/ext/ext-base.js"></script>
-    
+
     <!--
         loading custom parameters (see build profile)
     -->
-    <script type="text/javascript" src="app/js/GEOR_custom.js"></script>
+    <script type="text/javascript" src="<%= georCustomPath %>"></script>
     <c:choose>
         <c:when test='<%= request.getParameter("debug") != null %>'>
-    <%@ include file="debug-includes.jsp" %>
-            </c:when>
+            <%@ include file="debug-includes.jsp" %>
+        </c:when>
         <c:otherwise>
-    <script type="text/javascript" src="lib/externals/ext/ext-all.js"></script>
-    <script type="text/javascript" src="build/catalogapp.js"></script>
-    <script type="text/javascript" src="build/lang/<%= lang %>.js"></script>
+            <script type="text/javascript" src="lib/externals/ext/ext-all.js"></script>
+            <script type="text/javascript" src="build/catalogapp.js"></script>
+            <script type="text/javascript" src="build/lang/<%= lang %>.js"></script>
         </c:otherwise>
     </c:choose>
 
@@ -114,7 +140,7 @@ if(sec_roles != null) {
         // remove the loading element
         Ext.get("loading").remove();
 
-        <% 
+        <%
           String proxyHost = "/proxy/?url=";
           if(request.getHeader("sec-proxy") == null) {
             proxyHost = "ws/ogcproxy/?url=";
@@ -123,7 +149,7 @@ if(sec_roles != null) {
 
         // set proxy host
         OpenLayers.ProxyHost = '<%= proxyHost %>';
-        
+
         // lang
         GEOR.config.LANG = '<%= lang %>';
     </script>
