@@ -8,6 +8,9 @@ import java.net.InetAddress;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.georchestra.commons.configuration.GeorchestraConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
+
 // TODO REFACTOR this package was copied from extractrapp.
 // It should be refactored in a new module in order to share it.
 
@@ -26,6 +29,9 @@ public abstract class AbstractEmailFactory {
 	protected String  emailSubject;
 
     private boolean frozen = false;
+
+    @Autowired
+    protected GeorchestraConfiguration georConfig;
 
     public AbstractEmailFactory() {
         // this is the default constructor for use by spring

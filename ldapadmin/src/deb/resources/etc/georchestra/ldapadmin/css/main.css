@@ -1,0 +1,123 @@
+#container {
+  bottom: 0;
+  width: 100%;
+  top: 90px;
+  position: absolute;
+  margin: 0;
+  padding: 0;
+}
+#container>.row-fluid {
+  height: 100%;
+}
+#content {
+  height: 100%;
+  position: relative;
+}
+#sidebar {
+  height: 100%;
+  position: relative;
+}
+#sidebar .toolbar {
+  padding-top: 42px;
+}
+#sidebar>div {
+  padding-left: 10px;
+}
+#sidebar .content {
+  overflow: auto;
+  width: 100%;
+  top: 84px;
+  bottom: 0;
+  position: absolute;
+}
+#sidebar a {
+  color: black;
+}
+#sidebar a.active {
+  font-weight: bold;
+  color: #08c;
+}
+.alert {
+  position: absolute;
+}
+.alert.in {
+  display: block;
+}
+
+#users {
+  width: 100%;
+  position: absolute;
+  top: 76px;
+  bottom: 0;
+  overflow: auto;
+  z-index: 0;
+}
+
+#users .table td {
+  border-top: 0;
+  border-bottom: 1px solid #ddd;
+}
+#noone {
+  margin-top: 40px;
+}
+
+.toolbar {
+  height: 30px;
+  line-height: 20px;
+  padding-bottom: 4px;
+  padding-top: 4px;
+}
+.toolbar .checkbox-wrap {
+  padding: 4px 20px 4px 4px;
+  display: inline-block;
+}
+.toolbar.shadow {
+  box-shadow: 0 10px 10px -10px grey;
+  position: relative;
+  z-index: 1;
+}
+.groups li a i {
+  display: inline-block;
+  width: 14px;
+}
+.dropdown-menu>li>a.group {
+  padding-left: 3px;
+}
+
+.form-fixed {
+  width: 600px;
+}
+
+.form-horizontal .control-label {
+  width: 90px;
+}
+.form-horizontal .controls {
+  margin-left: 110px;
+}
+
+.accordion {
+  margin: 0;
+}
+.accordion-group {
+  border: none;
+}
+.accordion-heading .accordion-toggle {
+  padding: 0;
+}
+.accordion-body {
+  padding-left: 10px;
+}
+.accordion-inner {
+  border: none;
+  padding: 0;
+}
+
+i.icon-blank {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-top: 1px;
+  line-height: 14px;
+  vertical-align: text-top;
+}
+

@@ -1,6 +1,7 @@
 package org.georchestra.ldapadmin.mailservice;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,8 +16,12 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.georchestra.commons.configuration.GeorchestraConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class Email {
 
@@ -37,10 +42,12 @@ public abstract class Email {
 
 	private String emailBody;
 
+	protected GeorchestraConfiguration georConfig;
+	
     public Email( String[] recipients,
 			final String emailSubject, final String smtpHost, final int smtpPort, final String emailHtml,
 			final String replyTo, final String from, final String bodyEncoding,
-			final String subjectEncoding, final String[] languages, String fileTemplate) {
+			final String subjectEncoding, final String[] languages, String fileTemplate, GeorchestraConfiguration georConfig) {
 
 		this.recipients = recipients;
 		this.subject = emailSubject;
@@ -53,6 +60,7 @@ public abstract class Email {
 		this.subjectEncoding = subjectEncoding;
 		this.languages = languages;
 		this.fileTemplate = fileTemplate;
+		this.georConfig = georConfig;
 
 		if(LOG.isDebugEnabled()){
 			LOG.debug("Email instanciated: " + this.toString());
@@ -96,6 +104,15 @@ public abstract class Email {
      * @throws IOException
      */
     private String loadBody(final String fileName) {
+
+        if ((georConfig != null) && (georConfig.activated())) {
+            try {
+                String basename = FilenameUtils.getName(fileName);
+                return FileUtils.readFileToString(new File(georConfig.getContextDataDir(), "templates/" + basename));
+            } catch (IOException e) {
+                LOG.error("Unable to get the template from geOrchestra datadir. Falling back on the default template provided by the webapp.", e);
+            }
+        }
 
     	BufferedReader reader = null;
     	String body = null;

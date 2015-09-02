@@ -1,0 +1,11 @@
+Dear admin,
+
+A new account has been created on https://georchestra.mydomain.org/ and is waiting for validation.
+
+User name: {name}
+User ID: {uid}
+
+Visit https://georchestra.mydomain.org/ldapadmin/privateui/#/groups/PENDING_USERS to review the pending users.
+
+---
+Sent by geOrchestra (https://georchestra.mydomain.org)

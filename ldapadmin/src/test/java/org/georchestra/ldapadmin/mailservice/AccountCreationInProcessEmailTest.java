@@ -17,7 +17,7 @@ public class AccountCreationInProcessEmailTest extends EmailTest {
         ServletContext sc = new MockServletContext();
         mail = new AccountCreationInProcessEmail(recipients, emailSubject, smtpHost, smtpPort,
                 emailHtml, replyTo, from, bodyEncoding,
-                subjectEncoding, languages, fileTemplate, sc);
+                subjectEncoding, languages, fileTemplate, sc, null);
 
     }
 

@@ -31,6 +31,10 @@
         <servlet-name>ldapadmin</servlet-name>
         <url-pattern>/</url-pattern>
         <url-pattern>/privateui/</url-pattern>
+        <!--  main.css and config.js can be served from the datadir -->
+        <url-pattern>/privateui/css/main.css</url-pattern>
+        <url-pattern>/privateui/js/config.js</url-pattern>
+        
     </servlet-mapping>
 
     <servlet-mapping>

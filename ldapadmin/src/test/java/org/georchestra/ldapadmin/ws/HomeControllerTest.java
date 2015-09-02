@@ -32,14 +32,15 @@ public class HomeControllerTest {
     }
 
     @Test
-    public void testHomeControllerForbidden() throws Exception {
+    public void testHomeControllerAnonymousRedirectToCas() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         ctrl.root(request, response);
 
-        assertTrue(response.getStatus() == HttpServletResponse.SC_FORBIDDEN);
-
+        assertTrue("expected 302, got " + response.getStatus(), response.getStatus() == HttpServletResponse.SC_FOUND);
+        assertTrue("bad redirectUrl, got " + response.getRedirectedUrl(),
+                response.getRedirectedUrl().contains("/account/userdetails?login"));
     }
 
     @Test
@@ -50,8 +51,9 @@ public class HomeControllerTest {
         request.addHeader("sec-roles", "ROLE_ANONYMOUS");
         ctrl.root(request, response);
 
-        assertTrue(response.getStatus() == HttpServletResponse.SC_FORBIDDEN);
-
+        assertTrue("expected 302, got " + response.getStatus(), response.getStatus() == HttpServletResponse.SC_FOUND);
+        assertTrue("bad redirectUrl, got " + response.getRedirectedUrl(),
+                response.getRedirectedUrl().contains("/account/userdetails?login"));
     }
 
     @Test

@@ -554,10 +554,10 @@ public final class AccountDaoImpl implements AccountDao {
     @Override
     public void changePassword(final String uid, final String password) throws DataServiceException {
 
-        if (uid.length() == 0) {
+        if (StringUtils.isEmpty(uid)) {
             throw new IllegalArgumentException("uid is required");
         }
-        if (password.length() == 0) {
+        if (StringUtils.isEmpty(password)) {
             throw new IllegalArgumentException("password is required");
         }
 
