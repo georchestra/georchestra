@@ -75,7 +75,7 @@
         <s:authentication-provider ref='ldapAuthenticationProvider' />
     </s:authentication-manager>
 
-    <bean id="basicAuthChallengeByUserAgent" class="org.georchestra.security.BasicAuthChallengeByUserAgent">
+    <bean id="basicAuthChallengeByUserAgent" class="org.georchestra.security.BasicAuthChallengeByUserAgent" init-method="init">
         <property name="challengeUserAgents">
             <list>
             	<!-- uncomment the lines for which you want a preemptive basic auth -->
