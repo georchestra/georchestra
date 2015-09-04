@@ -3,11 +3,13 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:context="http://www.springframework.org/schema/context"
     xsi:schemaLocation="
-http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
   <description>
    Bean configuration file for the gwc-web module
   </description>
+
+  <context:annotation-config/>
 
   <import resource="geowebcache-core-context.xml"/>
   <import resource="geowebcache-georss-context.xml"/>
@@ -21,20 +23,20 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 
   <import resource="geowebcache-diskquota-context.xml"/>
   <import resource="geowebcache-arcgiscache-context.xml"/>
-    
+
   <bean id="gwcUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
     <property name="alwaysUseFullPath" value="true"/>
     <property name="mappings">
-      <props> 
+      <props>
         <prop key="/service/**">geowebcacheDispatcher</prop>
         <prop key="/demo/**">geowebcacheDispatcher</prop>
-	    <prop key="/proxy/**">gwcProxyDispatcher</prop>
-	    <prop key="/home">geowebcacheDispatcher</prop>
+        <prop key="/proxy/**">gwcProxyDispatcher</prop>
+        <prop key="/home">geowebcacheDispatcher</prop>
       </props>
     </property>
   </bean>
     <!-- controller for handling all incoming requests -->
-    <bean id="geowebcacheDispatcher" class="org.geowebcache.GeorchestraGeoWebCacheDispatcher" destroy-method="destroy">
+    <bean id="geowebcacheDispatcher" class="org.geowebcache.GeorchestraGeoWebCacheDispatcher" destroy-method="destroy" init-method="init">
         <constructor-arg ref="gwcTLDispatcher"/>
         <constructor-arg ref="gwcGridSetBroker"/>
         <constructor-arg ref="gwcStorageBroker"/>
@@ -48,5 +50,12 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
         <constructor-arg value="${contextPath}" />
     </bean>
 
+    <!-- geOrchestra Commons -->
+    <bean id="georchestraConfiguration" class="org.georchestra.commons.configuration.GeorchestraConfiguration">
+      <constructor-arg value="geowebcache" />
+    </bean>
+
     <context:property-placeholder location="classpath:gwc.properties" />
+    <context:property-placeholder location="file:#{systemProperties['georchestra.datadir']}/geowebcache/geowebcache.properties"
+      ignore-resource-not-found="true" ignore-unresolvable="true"  order="0" />
 </beans>
