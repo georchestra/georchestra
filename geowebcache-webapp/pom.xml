@@ -298,7 +298,7 @@
                     <source>
                       <location>${project.build.directory}</location>
                       <includes>
-                        <include>${project.artifactId}-generic.war</include>
+                        <include>geowebcache-generic.war</include>
                       </includes>
                     </source>
                   </sources>
