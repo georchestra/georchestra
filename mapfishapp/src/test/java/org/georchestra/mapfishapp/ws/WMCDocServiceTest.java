@@ -1,8 +1,10 @@
 package org.georchestra.mapfishapp.ws;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 
@@ -15,6 +17,9 @@ public class WMCDocServiceTest {
 
     @Test
     public void testXEEOnExtractRealFileName() {
+        assumeTrue("file /etc/passwd does not exist, which is unlikely if you are running the testsuite under linux. Skipping test",
+                new File("/etc/passwd").exists());
+
         final String xeeVuln = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n"
                 + "<!DOCTYPE foo [<!ELEMENT foo ANY ><!ENTITY xxe SYSTEM \"file:///etc/passwd\" >]>\n"
                 +"<wmc><Title>&xxe;</Title></wmc>";

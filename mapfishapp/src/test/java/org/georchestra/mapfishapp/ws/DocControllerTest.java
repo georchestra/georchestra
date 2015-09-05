@@ -2,6 +2,7 @@ package org.georchestra.mapfishapp.ws;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -216,6 +217,9 @@ public class DocControllerTest {
 
     @Test
     public void testIndentDataXee() throws Exception {
+        assumeTrue("file does not exist, which is unlikely if you are running the testsuite under linux. Skipping test",
+                new File("/etc/passwd").exists());
+
         final String xeeVuln = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n"
  + "<!DOCTYPE foo [<!ELEMENT foo ANY ><!ENTITY xxe SYSTEM \"file:///etc/passwd\" >]><foo>&xxe;</foo>";
 
