@@ -1,11 +1,9 @@
 package org.georchestra.mapfishapp.ws;
 
 import java.io.ByteArrayInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,12 +11,11 @@ import java.io.StringReader;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Random;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Random;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.Source;
@@ -29,13 +26,13 @@ import javax.xml.validation.Validator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.georchestra.mapfishapp.model.ConnectionPool;
 import org.jdom.Document;
 import org.jdom.JDOMException;
-import org.xml.sax.SAXException;
-import org.georchestra.mapfishapp.model.ConnectionPool;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
+import org.xml.sax.SAXException;
 
 
 /**
@@ -128,6 +125,14 @@ public abstract class A_DocService {
         setTempDirectory(docTempDirectory);
     }
 
+    private String indentData(String data) throws JDOMException, IOException {
+        SAXBuilder sb = new SAXBuilder();
+        sb.setExpandEntities(false);
+        Document doc = sb.build(new StringReader(data));
+        XMLOutputter xop = new XMLOutputter();
+        xop.setFormat(Format.getPrettyFormat());
+        return xop.outputString(doc);
+    }
     /**
      * Store the given data
      * @param data raw data to be stored
@@ -135,18 +140,14 @@ public abstract class A_DocService {
      * @return file name
      * @throws DocServiceException
      */
-    public String saveData(final String data, final String username) throws DocServiceException {
+    protected String saveData(final String data, final String username) throws DocServiceException {
 
         _content = data;
 
         // Tries to indent the document before saving it
         try {
-            SAXBuilder sb = new SAXBuilder();
-            Document doc = sb.build(new StringReader(data));
-            XMLOutputter xop = new XMLOutputter();
-            xop.setFormat(Format.getPrettyFormat());
-            String docPrettyPrinted = xop.outputString(doc);
-            _content = docPrettyPrinted;
+            _content = indentData(data);
+
         } catch (Exception e1) {
             // actually give up (if malformed, or if another issue
             // has been caught), keeping the old behaviour.

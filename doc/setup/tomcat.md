@@ -245,6 +245,13 @@ JAVA_OPTS="$JAVA_OPTS \
 ```
 ... where ```/path/to/temporary/extracts/``` is a directory owned by tomcat8 in a dedicated server partition.
 
+If one of geonetwork or extractorapp is deployed:
+```
+JAVA_OPTS="$JAVA_OPTS \
+               -Djava.util.prefs.userRoot=/var/lib/tomcat-georchestra/temp \
+               -Djava.util.prefs.systemRoot=/var/lib/tomcat-georchestra/temp"
+```
+
 In case your connection to the internet is proxied, you should also add the ```-Dhttp.proxy*``` options here.
 
 

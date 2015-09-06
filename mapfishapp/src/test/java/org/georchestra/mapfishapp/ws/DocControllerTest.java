@@ -1,8 +1,11 @@
 package org.georchestra.mapfishapp.ws;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 import java.io.File;
+import java.lang.reflect.Method;
 
 import org.georchestra.mapfishapp.ws.classif.MockWFSDataStoreFactory;
 import org.json.JSONArray;
@@ -11,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.util.ReflectionUtils;
 
 
 /**
@@ -209,6 +213,25 @@ public class DocControllerTest {
         _controller.doSLDPost(_requestPost, _responsePost);
 
         assertEquals(200, _responseGet.getStatus()); // 200 OK
+    }
 
+    @Test
+    public void testIndentDataXee() throws Exception {
+        assumeTrue("file does not exist, which is unlikely if you are running the testsuite under linux. Skipping test",
+                new File("/etc/passwd").exists());
+
+        final String xeeVuln = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n"
+ + "<!DOCTYPE foo [<!ELEMENT foo ANY ><!ENTITY xxe SYSTEM \"file:///etc/passwd\" >]><foo>&xxe;</foo>";
+
+        A_DocService ads = new A_DocService("xml", "application/xml", "/tmp", null) {};
+
+        Method id = ReflectionUtils.findMethod(ads.getClass(), "indentData", String.class);
+        id.setAccessible(true);
+
+        String ret = (String) ReflectionUtils.invokeMethod(id, ads, xeeVuln);
+
+        // Length expected of the string (without external entity resolution < 150 chars)
+        assertTrue("XML generated seems too long, vulnerable to XEE attacks ?",
+                ret.length() < 150);
     }
 }
