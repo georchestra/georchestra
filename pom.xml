@@ -80,6 +80,7 @@
     <module>epsg-extension</module>
     <module>ogc-server-statistics</module>
     <module>server-deploy-support</module>
+    <module>commons</module>
   </modules>
   <build>
     <plugins>
@@ -408,6 +409,12 @@
         <module>downloadform</module>
         <module>analytics</module>
         <module>header</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>commons</id>
+      <modules>
+        <module>commons</module>
       </modules>
     </profile>
     <profile>
