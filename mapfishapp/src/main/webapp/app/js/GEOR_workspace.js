@@ -72,15 +72,15 @@ GEOR.workspace = (function() {
                         GEOR.config.GEONETWORK_BASE_URL,
                         "/srv/",
                         GEOR.util.ISO639[GEOR.config.LANG],
-                        "/wmc.import"
+                        "/map.import"
                     ].join(''),
                     headers: {
                         "Content-Type": "application/x-www-form-urlencoded"
                     },
                     data: OpenLayers.Util.getParameterString({
                         "group_id": this.group_id,
-                        "wmc_string": wmc_string,
-                        "wmc_url": wmc_url,
+                        "map_string": wmc_string,
+                        "map_url": wmc_url,
                         "viewer_url": GEOR.util.getValidURI("?wmc="+encodeURIComponent(wmc_url))
                     }),
                     success: function(resp) {
