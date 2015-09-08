@@ -476,8 +476,8 @@
               <packageName>georchestra-mapfishapp</packageName>
               <packageDescription>Debian package for the geOrchestra's Viewer</packageDescription>
               <projectOrganization>geOrchestra</projectOrganization>
-              <maintainerName>Pierre Mauduit</maintainerName>
-              <maintainerEmail>pierre.mauduit@gmail.com</maintainerEmail>
+              <maintainerName>PSC</maintainerName>
+              <maintainerEmail>psc@georchestra.org</maintainerEmail>
               <excludeAllArtifacts>true</excludeAllArtifacts>
             </configuration>
           </plugin>
