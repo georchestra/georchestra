@@ -1,4 +1,3 @@
----
 # Reference URL:
 # http://www.mapfish.org/doc/print/configuration.html
 
@@ -38,7 +37,7 @@ scales:
   - 559082264
 
 # see https://github.com/georchestra/georchestra/issues/362
-brokenUrlPlaceholder: http://upload.wikimedia.org/wikipedia/commons/c/ce/Transparent.gif
+brokenUrlPlaceholder: http://sdi.georchestra.org/public/transparent.gif
 
 #===========================================================================
 # printing protected layers
@@ -1023,4 +1022,5 @@ layouts:
               classIndentation: 3
               classSpace: 5
               backgroundColor: white
-              layerFontSize: 9  
+              layerFontSize: 9
+
