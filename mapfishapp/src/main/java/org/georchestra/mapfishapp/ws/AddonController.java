@@ -3,6 +3,7 @@ package org.georchestra.mapfishapp.ws;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.HashMap;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -73,21 +74,75 @@ public class AddonController implements ServletContextAware {
     public void getAddonFile(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String pathInfo = request.getPathInfo().replaceFirst("/addons/", "");
         String path = getMfappAddonPath();
+        
+        // Step 1: checks in the webapp directory
 
-        Path reqPath = new File(path, pathInfo).toPath();
+        // First check if the file is in the webapp directory
+        String officialAddonPath = context.getRealPath("/app/addons/") + File.separator + pathInfo;
+        officialAddonPath = FilenameUtils.normalize(officialAddonPath);
+        if (officialAddonPath == null) {
+            LOG.error("Unexpected file requested (not in datadir): " + pathInfo);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;            
+        }
+        Path officialAddonFile = new File(officialAddonPath).toPath();
+        Path officialWebappPath = new File(context.getRealPath("/app/addons/")).toPath();
+        // user input security check
+        if (! officialAddonFile.toAbsolutePath().toString()
+                .startsWith(officialWebappPath.toAbsolutePath().toString())) {
+            LOG.error("Unexpected file requested (not in datadir): " + officialAddonFile.toString());
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+        File officialFile = officialAddonFile.toFile();
+
+        if (officialFile.exists()) {
+            dumpFile(response, officialFile);
+            return;
+        } else if (path == null) {
+            // File not found
+            LOG.error("requested file does not exist: " + officialFile);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        // Step 2: checks in the datadir (if available)
+        String checkedPath = FilenameUtils.normalize(path + File.separator + pathInfo);
+        if (checkedPath == null) {
+            LOG.error("Unexpected file requested (not in datadir): " + checkedPath);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;            
+        }
+
+        Path reqPath = new File(checkedPath).toPath();
         Path datadir = new File(path).toPath();
 
-        if (! reqPath.toAbsolutePath().toString().startsWith(datadir.toAbsolutePath().toString())) {
+        // same user input security check
+        if (!reqPath.toAbsolutePath().toString().startsWith(datadir.toAbsolutePath().toString())) {
             LOG.error("Unexpected file requested (not in datadir): " + reqPath.toString());
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
-        File actualFile = new File(String.format("%s%s%s", datadir, File.separator, pathInfo));
+
+        // checks that the file exists
+        File actualFile = reqPath.toFile();
         if (! actualFile.exists()) {
             LOG.error("requested file does not exist: " + actualFile);
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
+        dumpFile(response, actualFile);
+    }
+    
+    /**
+     * This actually dumps the file to the user.
+     *
+     * @param response the HttpServletResponse object
+     * @param actualFile the File object to dump
+     *
+     * @throws IOException
+     */
+    private void dumpFile(HttpServletResponse response, File actualFile) throws IOException {
         String ext = FilenameUtils.getExtension(actualFile.getAbsolutePath());
 
         if ("css".equalsIgnoreCase(ext)) {
@@ -96,25 +151,38 @@ public class AddonController implements ServletContextAware {
             response.setContentType("application/javascript; charset: UTF-8");
         } else if ("png".equalsIgnoreCase(ext)) {
             response.setContentType("image/png");
+        } else if (("jpg".equalsIgnoreCase(ext)) || ("jpeg".equalsIgnoreCase(ext))) {
+            response.setContentType("image/jpeg");
         } else {
             response.setContentType("text/plain");
         }
         response.getOutputStream().write(FileUtils.readFileToByteArray(actualFile));
     }
 
+    /**
+     * Get the addon path if the georchestra.datadir is available.
+     * @return the addon path as a string if datadir is activated, else returns null.
+     */
     private String getMfappAddonPath() {
         String path;
         if ((georchestraConfiguration != null) && (georchestraConfiguration.activated())) {
             path = new File(georchestraConfiguration.getContextDataDir(), "addons").getAbsolutePath();
         } else {
-            path = context.getRealPath("/app/addons");
+            // No georchestra.datadir available, return null
+            return null;
         }
         return path;
     }
 
-    public JSONArray constructAddonsSpec() {
-        String path = getMfappAddonPath();
-
+    /**
+     * Get the official path to the addons, i.e. the ones that are provided in the webapp.
+     * @return the path to the addons directory in the webapp.
+     */
+    private String getMfappOfficialAddonsPath() {
+        return context.getRealPath("/app/addons");
+    }
+    
+    private JSONArray buildAddonSpecs(String path) {
         JSONArray addons = new JSONArray();
         String[] files = new File(path).list(DirectoryFileFilter.INSTANCE);
         for (int i = 0; i < files.length; i++) {
@@ -145,6 +213,52 @@ public class AddonController implements ServletContextAware {
             }
         }
         return addons;
+    }
+    
+    /**
+     * Constructs the array of addons specifications. This is similar with what was defined statically in the GEOR_custom.js file.
+     * It first scans the official addons, before scanning (if activated and available) the addons from the datadir.
+     * 
+     * @return a JSON array with the addons specifications.
+     * @throws JSONException
+     */
+    public JSONArray constructAddonsSpec() throws JSONException {
+        JSONArray addons = new JSONArray();
+        
+        // First, looks up the addons in the webapp dir
+        String path1 = getMfappOfficialAddonsPath();
+        addons = buildAddonSpecs(path1);
+        
+        
+        String path2 = getMfappAddonPath();
+        
+        JSONArray addons2 = new JSONArray();
+        
+        if (path2 != null) {
+            addons2 = buildAddonSpecs(path2);
+        }
+
+        HashMap<String, JSONObject> instanceAddon = new HashMap<String, JSONObject>();
+        // elements from addons2 override the one from addons
+        for (int i = 0; i < addons2.length(); ++i) {
+            JSONObject cur = addons2.getJSONObject(i);
+            instanceAddon.put(cur.getString("id"), cur);
+        }
+        // same loop onto the "official" addons
+        for (int i = 0; i < addons.length(); ++i) {
+            JSONObject cur = addons.getJSONObject(i);
+            String currentInstanceId = cur.getString("id");
+            // only adds the addon if not overridden in the datadir
+            if (instanceAddon.get(currentInstanceId) == null) {
+                instanceAddon.put(cur.getString("id"), cur);       
+            }
+        }
+
+        JSONArray finalAddonArray = new JSONArray();
+        for (String key : instanceAddon.keySet()) {
+            finalAddonArray.put(instanceAddon.get(key));
+        }
+        return finalAddonArray;
     }
 
     /**

@@ -14,7 +14,7 @@
             "fr": "Obtenez une vue détaillée d'un endroit que vous choisissez sur la carte",
             "de": "Sehen Sie eine Detailansicht eines Ortes, den Sie auf der Karte auswählen"
         },
-        options: {
+        "options": {
             "api_key": "AIzaSyDSPmOyzuhJA_tM5_RF0tLLIuQFV6sBJ1U",
             "initial_window_size": 640
         }
