@@ -45,11 +45,10 @@ public abstract class AbstractEmailFactory {
     public void freeze() {
         this.frozen = true;
         try {
-            if (!InetAddress.getByName(smtpHost).isReachable(3000)) {
-                throw new IllegalStateException(smtpHost + " is not a reachable address");
-            }
+            // just ensure smtpHost resolves to a valid ip
+            InetAddress ip = InetAddress.getByName(smtpHost);
         } catch (IOException e) {
-            throw new IllegalStateException(smtpHost + " is not a reachable address");
+            throw new IllegalStateException(smtpHost + " doesnt resolve");
         }
         if (smtpPort < 0) {
             throw new IllegalStateException(smtpPort + " is not a legal port make sure it is correctly configured");
