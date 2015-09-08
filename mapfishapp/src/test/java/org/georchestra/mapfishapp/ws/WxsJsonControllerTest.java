@@ -88,7 +88,7 @@ public class WxsJsonControllerTest {
         URL url = this.getClass().getResource("/");
         String testResPath = url.toURI().getPath();
         assumeTrue("resource test file wms.servers.json not found, skipping test",
-                new File(testResPath, "/js/wms.servers.json").exists());
+                new File(testResPath, "/wms.servers.json").exists());
 
         GeorchestraConfiguration gc = Mockito.mock(GeorchestraConfiguration.class);
         Mockito.when(gc.activated()).thenReturn(true);
@@ -100,7 +100,8 @@ public class WxsJsonControllerTest {
 
         ctrl.wxsServerJson("wms", req, res);
 
-        assertTrue("Expected SC_OK", res.getStatus() == HttpServletResponse.SC_OK);
+        assertTrue("Expected SC_OK, received " + res.getStatus(),
+                res.getStatus() == HttpServletResponse.SC_OK);
         assertTrue(String.format("Unexpected message: %s", res.getContentAsString()),
                 res.getContentAsString().contains("json to test WxsJsonController"));
     }

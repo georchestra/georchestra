@@ -58,7 +58,7 @@ public class WxsJsonController {
             return;
         }
 
-        String wxsJsonPath = String.format("%s/js/%s.servers.json", georConfig.getContextDataDir(),
+        String wxsJsonPath = String.format("%s/%s.servers.json", georConfig.getContextDataDir(),
                 proto.toLowerCase());
         File wxsJsonF = new File(wxsJsonPath);
 
