@@ -105,7 +105,7 @@ angular.module('ldapadmin.controllers', [])
         $scope.allSelected = false;
       } else {
         var index = findByAttr($scope.groups, 'cn', $routeParams.group);
-        var group = $scope.groups[index];
+        group = $scope.groups[index];
         $scope.groupFilter = function(item) {
           if (group) {
             return group.users && group.users.indexOf(item.uid) != -1;
