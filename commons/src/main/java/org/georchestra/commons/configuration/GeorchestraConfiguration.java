@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.xml.DOMConfigurator;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.ServletContextAware;
@@ -73,11 +74,10 @@ public class GeorchestraConfiguration implements ServletContextAware {
             String log4jConfigurationFile = null;
             if (log4jProperties.exists()) {
                 log4jConfigurationFile = log4jProperties.getAbsolutePath();
+                PropertyConfigurator.configure(log4jConfigurationFile);
             } else if (log4jXml.exists()) {
                 log4jConfigurationFile = log4jXml.getAbsolutePath();
-            }
-            if (log4jConfigurationFile != null) {
-                PropertyConfigurator.configure(log4jConfigurationFile);
+                DOMConfigurator.configure(log4jConfigurationFile);
             }
             // everything went well
             activated = true;
