@@ -6,6 +6,8 @@
     
     <description>ldapadmin application</description>
     
+    <distributable/>
+
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>classpath*:META-INF/spring/applicationContext*.xml</param-value>
