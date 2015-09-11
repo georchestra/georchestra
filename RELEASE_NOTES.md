@@ -343,7 +343,8 @@ This is not the case anymore. This implies that the security proxy now resides i
 **LDAP:**
 
 The [LDAP repository](https://github.com/georchestra/LDAP) holds branches for the 13.09, 14.01 and 14.06 releases.
-In 13.09, groups are instances of posixGroup. From 14.01 on, they are instances of groupOfNames.
+In 13.09, groups are instances of posixGroup. From 14.01 to 15.06, they are instances of groupOfNames.
+Since 15.12, they are instances of groupOfMembers which allows to have empty groups.
 
 Between 14.01 and 14.06 branches, here are the differences:
  - the ```MOD_EXTRACTORAPP``` group was created. You should assign to it the users which already had access to extractorapp (typically members of ```SV_USER```)

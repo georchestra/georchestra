@@ -45,6 +45,15 @@ ldapadd -D"cn=admin,dc=georchestra,dc=org" -W -f /tmp/root.ldif
 
 This will ask the password for the ```cn=admin,dc=georchestra,dc=org``` dn, which was set with the previous command.
 
+## groupOfMembers objectClass
+
+Groups in georchestra are instances of groupOfMembers objects, which allows empty groups (contrary to groupOfNames).
+This objectClass comes from rfc2307bis and is not available by default in OpenLDAP, so we need to import its structure into the ```cn=config``` database using the file **georchestra-groupofmembers.ldif**.
+
+```
+wget --no-check-certificate https://raw.githubusercontent.com/georchestra/LDAP/YY.MM/georchestra-groupofmembers.ldif -O /tmp/groupofmembers.ldif
+ldapadd -Y EXTERNAL -H ldapi:/// -f /tmp/groupofmembers.ldif
+```
 
 ## geOrchestra users and groups
 
