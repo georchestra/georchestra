@@ -197,9 +197,7 @@ public class AddonController implements ServletContextAware {
                 JSONArray parsed = new JSONArray(FileUtils.readFileToString(curConfig));
                 for (int j = 0; j < parsed.length(); ++j) {
                     JSONObject addonInstance = parsed.getJSONObject(j);
-                    if (addonInstance.getBoolean("enabled")) {
-                        addons.put(addonInstance);
-                    }
+                    addons.put(addonInstance);
                 }
             } catch (IOException e) {
                 LOG.error(String.format("Addon %s does not have a readable config.json configuration file, skipping it.", files[i]), e);
@@ -212,6 +210,7 @@ public class AddonController implements ServletContextAware {
                 continue;
             }
         }
+
         return addons;
     }
     
@@ -256,7 +255,19 @@ public class AddonController implements ServletContextAware {
 
         JSONArray finalAddonArray = new JSONArray();
         for (String key : instanceAddon.keySet()) {
-            finalAddonArray.put(instanceAddon.get(key));
+            // do not add the addon if it is not enabled
+            JSONObject curAddon = instanceAddon.get(key);
+            boolean enabled;
+            try {
+                enabled = curAddon.getBoolean("enabled");
+            } catch (JSONException e) {
+                LOG.warn("No flag \"enabled\" found in the config.json specification for addon \"" + key
+                        + "\", considering as disabled. Please check your addon configuration.");
+                enabled = false;
+            }
+            if (enabled) {
+                finalAddonArray.put(curAddon);
+            }
         }
         return finalAddonArray;
     }
