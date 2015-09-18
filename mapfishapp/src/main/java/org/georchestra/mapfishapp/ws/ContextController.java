@@ -61,14 +61,18 @@ public class ContextController implements ServletContextAware {
         // defaulting to default.png
         String image = "context/image/default.png";
 
-        Collection<File> files = FileUtils.listFiles(new File(pathCtx, "images"), new String[] {"PNG", "png", "jpeg", "JPEG", "jpg", "JPG"} ,  false);
-        for (File curImgFile : files) {
-            if (FilenameUtils.getBaseName(curImgFile.toString()).equalsIgnoreCase(title)) {
-                image = "context/image/" + FilenameUtils.getName(curImgFile.toString());
-                break;
+        File imagePath = new File(pathCtx, "images");
+        if (! imagePath.isDirectory()) {
+            LOG.error("No \"images\" subdirectory found into \"" + pathCtx + "\". Please check your setup, using default image for context \"" + title + "\".");
+        } else {
+            Collection<File> files = FileUtils.listFiles(imagePath, new String[] { "PNG", "png", "jpeg", "JPEG", "jpg", "JPG" }, false);
+            for (File curImgFile : files) {
+                if (FilenameUtils.getBaseName(curImgFile.toString()).equalsIgnoreCase(title)) {
+                    image = "context/image/" + FilenameUtils.getName(curImgFile.toString());
+                    break;
+                }
             }
         }
-
         // filename
         String wmcUrl = "context/" + f.getName();
 
