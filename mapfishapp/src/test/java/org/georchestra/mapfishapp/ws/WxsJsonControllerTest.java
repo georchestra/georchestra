@@ -8,9 +8,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.FilenameUtils;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.junit.After;
 import org.junit.Before;
@@ -22,16 +22,17 @@ import org.springframework.mock.web.MockHttpServletResponse;
 public class WxsJsonControllerTest {
 
     @Before
-    public void setUp() throws Exception {
-    }
+    public void setUp() throws Exception {}
 
     @After
-    public void tearDown() throws Exception {
-    }
+    public void tearDown() throws Exception {}
 
     @Test
-    public final void testNoDatadir() throws IOException {
+    public final void testNoDatadirBadProto() throws Exception {
         WxsJsonController ctrl = new WxsJsonController();
+        ServletContext ctx = Mockito.mock(ServletContext.class);
+        Mockito.when(ctx.getRealPath("/")).thenReturn(this.getClass().getResource("/").toURI().toString());
+        ctrl.setServletContext(ctx);
         MockHttpServletRequest req = new MockHttpServletRequest();
         MockHttpServletResponse res = new MockHttpServletResponse();
 
@@ -39,9 +40,23 @@ public class WxsJsonControllerTest {
 
         assertTrue("Expected BAD_REQUEST", res.getStatus() == HttpServletResponse.SC_BAD_REQUEST);
         assertTrue(String.format("Unexpected message: %s", res.getContentAsString()),
-                res.getContentAsString().contains("GeorchestraConfiguration is not present"));
+                res.getContentAsString().contains("Bad parameter value"));
     }
 
+    @Test
+    public final void testNoDatadirLegitProto() throws Exception {
+        WxsJsonController ctrl = new WxsJsonController();
+        ServletContext ctx = Mockito.mock(ServletContext.class);
+        Mockito.when(ctx.getRealPath("/")).thenReturn(new File(this.getClass().getResource("/").toURI()).toString());
+        ctrl.setServletContext(ctx);
+        MockHttpServletRequest req = new MockHttpServletRequest();
+        MockHttpServletResponse res = new MockHttpServletResponse();
+
+        ctrl.wxsServerJson("wms", req, res);
+
+        assertTrue("Unexpected HTTP status code, expected 200 OK", res.getStatus() == HttpServletResponse.SC_OK);
+        assertTrue("Unexpected content received", res.getContentAsString().contains("json to test WxsJsonController"));
+    }
     @Test
     public final void testWrongProto() throws IOException {
         GeorchestraConfiguration gc = Mockito.mock(GeorchestraConfiguration.class);

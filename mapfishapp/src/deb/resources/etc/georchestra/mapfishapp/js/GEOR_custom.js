@@ -661,9 +661,9 @@ GEOR.custom = {
      *          (relative to viewer or complete) where the servers are enlisted
      *
     OGC_SERVERS_URL: {
-        "WMS": "wms.servers.json",
-        "WFS": "wfs.servers.json",
-        "WMTS": "wmts.servers.json"
+        "WMS": "ws/wms.servers.json",
+        "WFS": "ws/wfs.servers.json",
+        "WMTS": "ws/wmts.servers.json"
     },*/
 
     /**

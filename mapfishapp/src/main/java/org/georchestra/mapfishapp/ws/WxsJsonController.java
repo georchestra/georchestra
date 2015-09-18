@@ -3,6 +3,7 @@ package org.georchestra.mapfishapp.ws;
 import java.io.File;
 import java.io.IOException;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.context.ServletContextAware;
 
 /**
  * This controller allows the retrieval of the 3 files needed
@@ -26,10 +28,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
  *
  */
 @Controller
-public class WxsJsonController {
+public class WxsJsonController implements ServletContextAware {
 
     @Autowired
     private GeorchestraConfiguration georConfig;
+
+    private ServletContext context;
 
     // used for testing
     public void setGeorchestraConfiguration(GeorchestraConfiguration georConfig) {
@@ -40,13 +44,11 @@ public class WxsJsonController {
     public void wxsServerJson(@PathVariable("wxs") String proto, HttpServletRequest request,
             HttpServletResponse response) throws IOException {
 
+        String contextDir = "";
         if ((georConfig == null) || (! georConfig.activated())) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            String msg = "GeorchestraConfiguration is not present or " +
-                    " wrongly configured, please check configuration.";
-            response.getOutputStream().write(msg.getBytes());
-            return;
-        }
+            contextDir = context.getRealPath("/");
+        } else
+            contextDir = georConfig.getContextDataDir();
 
         if ((StringUtils.isEmpty(proto)) ||
                 ((! "wms".equalsIgnoreCase(proto)) &&
@@ -58,7 +60,7 @@ public class WxsJsonController {
             return;
         }
 
-        String wxsJsonPath = String.format("%s/%s.servers.json", georConfig.getContextDataDir(),
+        String wxsJsonPath = String.format("%s/%s.servers.json", contextDir,
                 proto.toLowerCase());
         File wxsJsonF = new File(wxsJsonPath);
 
@@ -71,5 +73,10 @@ public class WxsJsonController {
         byte[] wxsJson = FileUtils.readFileToByteArray(wxsJsonF);
         response.getOutputStream().write(wxsJson);
         return;
+    }
+
+    @Override
+    public void setServletContext(ServletContext servletContext) {
+       this.context = servletContext;
     }
 }
