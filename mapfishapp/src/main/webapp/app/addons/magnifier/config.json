@@ -1,5 +1,5 @@
 [{
-        "id": "magnifier_0", // unique & stable string identifier for this addon instance
+        "id": "magnifier_0",
         "name": "Magnifier",
         "enabled": true,
         "title": {

@@ -21,8 +21,8 @@
                 ["EPSG:3857", "Spherical Mercator (EPSG:3857)"]
             ],
             "defaultSRS": "EPSG:4326",
-            "defaultVectorFormat": "shp", // must be one of shp, mif, tab, kml
-            "defaultRasterFormat": "geotiff", // must be one of geotiff, tiff
-            "defaultRasterResolution": 50 // in centimeters
+            "defaultVectorFormat": "shp",
+            "defaultRasterFormat": "geotiff",
+            "defaultRasterResolution": 50
         }
 }]

@@ -1,5 +1,5 @@
 [{
-        "id": "annotation_0", // unique & stable string identifier for this addon instance
+        "id": "annotation_0",
         "name": "Annotation",
         "enabled": true,
         "title": {
