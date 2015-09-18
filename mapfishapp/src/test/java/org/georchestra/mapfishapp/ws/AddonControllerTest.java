@@ -1,8 +1,10 @@
 package org.georchestra.mapfishapp.ws;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 import java.io.File;
+import java.lang.reflect.Method;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
@@ -14,6 +16,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.util.ReflectionUtils;
 
 public class AddonControllerTest {
 
@@ -113,5 +116,19 @@ public class AddonControllerTest {
                 resp.getStatus() == HttpServletResponse.SC_OK);
         assertTrue("Expected config.json containing \"annotation_0\", not found in the response sent.",
                 resp.getContentAsString().contains("annotation_0"));
+    }
+
+    @Test
+    public void testUnexistingDatadir() throws Exception {
+        File nonExistingPath = new File("/this/path/does/not/exist");
+        assumeTrue(! nonExistingPath.exists());
+        AddonController ac = new AddonController();
+        Method m = ReflectionUtils.findMethod(ac.getClass(), "buildAddonSpecs", String.class);
+        m.setAccessible(true);
+
+        JSONArray ret = (JSONArray) ReflectionUtils.invokeMethod(m, ac, nonExistingPath.toString());
+
+        assertTrue("Expected to get an empty array", ret.length() == 0);
+
     }
 }

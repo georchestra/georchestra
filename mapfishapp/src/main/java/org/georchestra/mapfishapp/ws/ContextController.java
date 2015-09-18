@@ -2,6 +2,7 @@ package org.georchestra.mapfishapp.ws;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Iterator;
 
 import javax.servlet.ServletContext;
@@ -59,10 +60,13 @@ public class ContextController implements ServletContextAware {
         // image
         // defaulting to default.png
         String image = "context/image/default.png";
-        String imagePath = "images" + File.separator + title + ".png";
-        File imageF = new File(pathCtx, imagePath);
-        if (imageF.exists()) {
-            image = "context/image/"+ title +".png";
+
+        Collection<File> files = FileUtils.listFiles(new File(pathCtx, "images"), new String[] {"PNG", "png", "jpeg", "JPEG", "jpg", "JPG"} ,  false);
+        for (File curImgFile : files) {
+            if (FilenameUtils.getBaseName(curImgFile.toString()).equalsIgnoreCase(title)) {
+                image = "context/image/" + FilenameUtils.getName(curImgFile.toString());
+                break;
+            }
         }
 
         // filename
@@ -154,6 +158,11 @@ public class ContextController implements ServletContextAware {
         String ctxDir = guessContextDirectory();
 
         if (ctxDir != null) {
+            File ctxCtxPath = new File(ctxDir, "contexts");
+            if (! ctxCtxPath.isDirectory()) {
+                LOG.error("No context sub-directory found in \"" + ctxDir + "\". Returning an empty array of contexts. Please check your setup.");
+                return ret;
+            }
             Iterator<File> wmcs = FileUtils.iterateFiles(new File(ctxDir, "contexts"), new String[] {"wmc"}, false);
             while (wmcs.hasNext()) {
                 File f = wmcs.next();
@@ -184,13 +193,24 @@ public class ContextController implements ServletContextAware {
             }
         }
     }
-    @RequestMapping(value="/context/image/{contextName}.png")
-    public void getContextImage(HttpServletRequest request, HttpServletResponse response, @PathVariable String contextName) throws Exception {
+    @RequestMapping(value="/context/image/{contextName}.{imgFmt}")
+    public void getContextImage(HttpServletRequest request, HttpServletResponse response,
+            @PathVariable String contextName, @PathVariable String imgFmt) throws Exception {
+        if (! imgFmt.equalsIgnoreCase("png")
+                && ! imgFmt.equalsIgnoreCase("jpg")
+                && ! imgFmt.equalsIgnoreCase("jpeg")) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
         String ctxDir = guessContextDirectory();
-        response.setContentType("image/png");
+        if (imgFmt.equalsIgnoreCase("png")) {
+            response.setContentType("image/png");
+        } else {
+            response.setContentType("image/jpeg");
+        }
         if (ctxDir != null) {
             try {
-             File imgFile = new File(ctxDir, File.separator + "contexts" + File.separator + "images" + File.separator + contextName + ".png");
+             File imgFile = new File(ctxDir, File.separator + "contexts" + File.separator + "images" + File.separator + contextName + "." + imgFmt);
              byte[] ret = FileUtils.readFileToByteArray(imgFile);
              response.getOutputStream().write(ret);
             } catch (IOException e) {

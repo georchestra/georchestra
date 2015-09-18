@@ -185,6 +185,9 @@ public class AddonController implements ServletContextAware {
     private JSONArray buildAddonSpecs(String path) {
         JSONArray addons = new JSONArray();
         String[] files = new File(path).list(DirectoryFileFilter.INSTANCE);
+        if (files == null) {
+            return addons;
+        }
         for (int i = 0; i < files.length; i++) {
             File curConfig = new File(String.format("%s%s%s%s%s", path,
                     File.separator, files[i], File.separator, "config.json"));
