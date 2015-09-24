@@ -37,13 +37,13 @@
             "Osm2Geor_HELP_URL": "http://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide"
         },
         "de": {
-            "OSM data": "Données OSM",
-            "This addon allows you to display OSM data in your map": "Cet addon vous permet d'afficher des données OSM dans votre carte",
-            "OSM to geOrchestra": "OSM vers geOrchestra",
-            "Query": "Requête",
+            "OSM data": "OSM-Daten",
+            "This addon allows you to display OSM data in your map": "Dieses Add-on ermöglicht es die OSM-Daten in Ihrer Karte anzuzeigen",
+            "OSM to geOrchestra": "OSM zu geOrchestra",
+            "Query": "Abfrage",
             "Style": "Style",
-            "Keep previously loaded features": "Conserver les objets existants",
-            "Execute": "Exécuter",
+            "Keep previously loaded features": "Zuvor hinzugeladene Objekte beibehalten",
+            "Execute": "Ausführen",
             "Osm2Geor_HELP_URL": "http://wiki.openstreetmap.org/wiki/DE:Overpass_API/Language_Guide"
         }
     }

@@ -3,7 +3,7 @@ Ext.namespace("GEOR.Addons");
 /*
  * TODO :
  * simple / advanced tab
- * translations to german
+ * query store (drop down list)
  */
 GEOR.Addons.Osm2Geor = Ext.extend(GEOR.Addons.Base, {
     win: null,
@@ -204,7 +204,9 @@ GEOR.Addons.Osm2Geor = Ext.extend(GEOR.Addons.Base, {
                 this.layer.addFeatures(features);
             },
             failure: function() {
-                // TODO
+                GEOR.util.errorDialog({
+                    msg: tr("Unreachable server")
+                });
             },
             scope: this
         });
