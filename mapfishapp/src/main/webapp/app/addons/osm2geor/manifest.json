@@ -6,6 +6,12 @@
     "css": [
         "css/main.css"
     ],
+    "default_options": {
+        "API_URL": "http://overpass-api.de/api/interpreter",
+        "defaultStyle": "{\"strokeColor\": \"#ffff00\", \"fillColor\": \"#ffff00\"}",
+        "defaultQuery": "node[\"amenity\"]{{BBOX}};way[\"amenity\"]{{BBOX}};",
+        "formatOptions": {}
+    },
     "i18n": {
         "en": {
             "Osm2Geor_HELP_URL": "http://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide"

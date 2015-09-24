@@ -3,7 +3,7 @@ Ext.namespace("GEOR.Addons");
 /*
  * TODO :
  * simple / advanced tab
- * translations to spanish and german
+ * translations to german
  */
 GEOR.Addons.Osm2Geor = Ext.extend(GEOR.Addons.Base, {
     win: null,
@@ -12,21 +12,38 @@ GEOR.Addons.Osm2Geor = Ext.extend(GEOR.Addons.Base, {
     _queryTextArea: null,
     _styleTextArea: null,
     _keepPreviousFeatures: null,
+    _jsonFormat: null,
 
     /**
      * Method: init
      *
      */
     init: function(record) {
-        this.layer = new OpenLayers.Layer.Vector(this.tr("OSM data"), {
-            displayInLayerSwitcher: true
-        });
+        this.layer = this.createLayer();
+        this._jsonFormat = new OpenLayers.Format.JSON();
+        // TODO: allow a different target 
         this.item = new Ext.menu.Item({
             text: this.tr('OSM to geOrchestra'),
             qtip: this.tr('This addon allows you to display OSM data in your map'),
             iconCls: 'osm2geor-icon',
             handler: this.showWindow,
             scope: this
+        });
+    },
+
+    /**
+     * Method: createLayer
+     *
+     */
+    createLayer: function() {
+        return new OpenLayers.Layer.Vector(this.tr("OSM data"), {
+            displayInLayerSwitcher: true,
+            eventListeners: {
+                "removed": function(){
+                    this.win.hide();
+                },
+                scope: this
+            }
         });
     },
 
@@ -39,6 +56,30 @@ GEOR.Addons.Osm2Geor = Ext.extend(GEOR.Addons.Base, {
     },
 
     /**
+     * Method: prettify
+     *
+     */
+    prettify: function(a) {
+        return this._jsonFormat.write(
+            this._jsonFormat.read(a),
+            true
+        );
+    },
+
+    /**
+     * Method: validator
+     *
+     */
+    validator: function(v) {
+        try {
+            this.prettify(v);
+            return true;
+        } catch (e) {
+            return "syntax error";
+        }
+    },
+
+    /**
      * Method: createWindow
      *
      */
@@ -48,20 +89,25 @@ GEOR.Addons.Osm2Geor = Ext.extend(GEOR.Addons.Base, {
             width: 375,
             height: 150,
             fieldLabel: this.tr('Query'),
-            value: '[timeout:25];(        \n \
-    node["highway"]{{BBOX}};      \n \
-    way["highway"]{{BBOX}};       \n \
-);                              \n \
-out body;                       \n \
->;                              \n \
-out skel qt;'
+            value: this.options.defaultQuery.replace(";", ";\n")
         });
         this._styleTextArea = new Ext.form.TextArea({
             name: 'olStyle',
             fieldLabel: this.tr('Style'),
-            value: '{"strokeWidth": 2, "strokeColor": "#ddd","fillColor": "#ddd"}',
+            value: this.prettify(this.options.defaultStyle),
             width: 375,
-            height: 150
+            height: 150,
+            validator: this.validator.createDelegate(this),
+            listeners: {
+                "blur": function(f) {
+                    var s = f.getValue();
+                    try {
+                        s = this.prettify(s);
+                        f.setValue(s);
+                    } catch (e) {}
+                },
+                scope: this
+            }
         });
         this._keepPreviousFeatures = new Ext.form.Checkbox({
            boxLabel: this.tr('Keep previously loaded features'),
@@ -124,35 +170,43 @@ out skel qt;'
         var ex = this.map.getExtent().transform(
             this.map.getProjectionObject(), 
             new OpenLayers.Projection("EPSG:4326")
-        ), query = this._queryTextArea.getValue();
+        ), 
+        query = [
+            '[timeout:25];(',
+            this._queryTextArea.getValue(),
+            '); out body; >; out skel qt;'
+        ].join('');
+        GEOR.waiter.show();
         Ext.Ajax.request({
-            scope: this,
-            url: GEOR.Addons.Osm2Geor.API_URL,
             method: 'POST',
+            url: this.options.API_URL,
             xmlData: query.replace(/{{BBOX}}/g, 
                 '(' + ex.bottom +',' +ex.left + ',' + ex.top +',' + ex.right +')'
             ),
             success: function(response) {
                 if (this._styleTextArea.getValue() != "") {
-                    var jsStyle = new OpenLayers.Format.JSON().read(this._styleTextArea.getValue());
-                    var customStyle = new OpenLayers.Style(jsStyle);
-                    this.layer.styleMap = new OpenLayers.StyleMap(customStyle);
-                } else {
-                    this.layer.styleMap = new OpenLayers.StyleMap();
+                    var s = this._jsonFormat.read(this._styleTextArea.getValue());
+                    this.layer.styleMap = GEOR.util.getStyleMap({
+                        "default": s,
+                        "select": Ext.applyIf({
+                            strokeWidth: 5
+                        }, s)
+                    });
                 }
                 this.layer.redraw();
-                var features = (new OpenLayers.Format.OSM({
+                var features = (new OpenLayers.Format.OSM(Ext.applyIf({
                     externalProjection: new OpenLayers.Projection("EPSG:4326"),
                     internalProjection: this.map.getProjectionObject()
-                })).read(response.responseText);
-                if (this._keepPreviousFeatures.checked == false) {
+                }, this.options.formatOptions))).read(response.responseText);
+                if (!this._keepPreviousFeatures.checked) {
                     this.layer.removeAllFeatures();
                 }
                 this.layer.addFeatures(features);
             },
             failure: function() {
                 // TODO
-            }
+            },
+            scope: this
         });
     },
 
@@ -161,6 +215,9 @@ out skel qt;'
      *
      */
     showWindow: function() {
+        if (!this.layer) {
+            this.layer = this.createLayer();
+        }
         if (!this.win) {
             this.win = this.createWindow();
         }
@@ -173,9 +230,8 @@ out skel qt;'
      */
     destroy: function() {
         this.win && this.win.hide();
+        this.layer.destroy();
         this.layer = null;
         GEOR.Addons.Base.prototype.destroy.call(this);
     }
 });
-
-GEOR.Addons.Osm2Geor.API_URL = 'http://overpass-api.de/api/interpreter';
