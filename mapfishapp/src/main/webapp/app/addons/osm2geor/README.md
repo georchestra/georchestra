@@ -38,12 +38,44 @@ With the ```options``` property, you can customize a bit more the way this addon
             "checkTags": true,
             ...
         },
-        "defaultStyle": "{\"strokeColor\": \"#ffff00\", \"fillColor\": \"#ffff00\"}",
-        "defaultQuery": "node[\"amenity\"]{{BBOX}};way[\"amenity\"]{{BBOX}};",
+        "queries": [{
+            "name": {
+                "en": "Amenities",
+                "es": "Comodidades",
+                "fr": "Equipements",
+                "de": "Ausstattung"
+            },
+            "query": "node[\"amenity\"]{{BBOX}};way[\"amenity\"]{{BBOX}};"
+        }, {
+            "name": {
+                "en": "Roads",
+                "es": "Carreteras",
+                "fr": "Routes",
+                "de": "Strassen"
+            },
+            "query": "way[\"highway\"]{{BBOX}};"
+        }],
+        "styles": [{
+            "name": {
+                "en": "Yellow",
+                "es": "Amarillo",
+                "fr": "Jaune",
+                "de": "Gelb"
+            },
+            "style": "{\"strokeColor\": \"#ffff00\", \"fillColor\": \"#ffff00\"}"
+        }, {
+            "name": {
+                "en": "Red",
+                "es": "Rojo",
+                "fr": "Rouge",
+                "de": "Rot"
+            },
+            "style": "{\"strokeColor\": \"#ff0000\", \"fillColor\": \"#ff0000\"}"
+        }]
     },
 ```
 
  * ```API_URL``` defaults to "http://overpass-api.de/api/interpreter"
  * ```formatOptions``` relates to the [OpenLayers OSM format](https://github.com/openlayers/openlayers/blob/master/lib/OpenLayers/Format/OSM.js), see it's [source](https://github.com/openlayers/openlayers/blob/master/lib/OpenLayers/Format/OSM.js) for detailed options.
- * ```defaultStyle``` is to customize the default style applied to features. Please refer to [OpenLayers/Feature/Vector.js](https://github.com/openlayers/openlayers/blob/release-2.13/lib/OpenLayers/Feature/Vector.js#L436-L458) for a list of all possible properties. 
- * ```defaultQuery``` is the default OSM OverPass API query. See the [Overpass API language guide](http://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide) for more information.
+ * ```styles``` is to provide default styles for OSM features. Please refer to [OpenLayers/Feature/Vector.js](https://github.com/openlayers/openlayers/blob/release-2.13/lib/OpenLayers/Feature/Vector.js#L436-L458) for a list of all possible properties. 
+ * ```queries``` lists some OSM OverPass API queries. See the [Overpass API language guide](http://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide) for more information.

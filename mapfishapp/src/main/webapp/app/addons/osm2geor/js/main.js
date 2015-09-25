@@ -3,7 +3,6 @@ Ext.namespace("GEOR.Addons");
 /*
  * TODO :
  * simple / advanced tab
- * query store (drop down list)
  */
 GEOR.Addons.Osm2Geor = Ext.extend(GEOR.Addons.Base, {
     win: null,
@@ -43,6 +42,20 @@ GEOR.Addons.Osm2Geor = Ext.extend(GEOR.Addons.Base, {
                 scope: this
             });
         }
+        this._queryComboStore = [];
+        Ext.each(this.options.queries, function(q){
+            this._queryComboStore.push({
+                name: q.name[this.lang],
+                query: q.query
+            });
+        }, this);
+        this._styleComboStore = [];
+        Ext.each(this.options.styles, function(s){
+            this._styleComboStore.push({
+                name: s.name[this.lang],
+                style: s.style
+            });
+        }, this);
     },
 
     /**
@@ -98,17 +111,63 @@ GEOR.Addons.Osm2Geor = Ext.extend(GEOR.Addons.Base, {
      *
      */
     createWindow: function() {
+        this._queryCombo = new Ext.form.ComboBox({
+            editable: false,
+            triggerAction: 'all',
+            height: 30,
+            anchor: '95%',
+            fieldLabel: this.tr('osm2geor_query'),
+            loadingText: tr("Loading..."),
+            mode: 'local',
+            store: new Ext.data.JsonStore({
+                data: this._queryComboStore,
+                fields: ['name', 'query']
+            }),
+            value: this._queryComboStore[0].query,
+            listeners: {
+                "select": function(c, r) {
+                    this._queryTextArea.setValue(r.get("query"));
+                },
+                scope: this
+            },
+            valueField: 'query',
+            displayField: 'name',
+            tpl: '<tpl for="."><div ext:qtip="<b>{name}</b><br/>{url}" class="x-combo-list-item">{name}</div></tpl>'
+        });
         this._queryTextArea = new Ext.form.TextArea({
             name: 'overpassApiQuery',
             height: 100,
             anchor: '95%',
-            fieldLabel: this.tr('osm2geor_query'),
-            value: this.options.defaultQuery.replace(";", ";\n")
+            fieldLabel: "",
+            value: this._queryComboStore[0].query
+        });
+        this._styleCombo = new Ext.form.ComboBox({
+            editable: false,
+            triggerAction: 'all',
+            height: 30,
+            anchor: '95%',
+            fieldLabel: this.tr('osm2geor_style'),
+            loadingText: tr("Loading..."),
+            mode: 'local',
+            store: new Ext.data.JsonStore({
+                data: this._styleComboStore,
+                fields: ['name', 'style']
+            }),
+            value: this._styleComboStore[0].style,
+            listeners: {
+                "select": function(c, r) {
+                    this._styleTextArea.setValue(r.get("style"));
+                },
+                scope: this
+            },
+            valueField: 'style',
+            displayField: 'name',
+            tpl: '<tpl for="."><div ext:qtip="<b>{name}</b><br/>{url}" class="x-combo-list-item">{name}</div></tpl>'
         });
         this._styleTextArea = new Ext.form.TextArea({
             name: 'olStyle',
-            fieldLabel: this.tr('osm2geor_style'),
-            value: this.prettify(this.options.defaultStyle),
+            fieldLabel: "",
+            value: this._styleComboStore[0].style,
             height: 100,
             anchor: '95%',
             validator: this.validator.createDelegate(this),
@@ -132,10 +191,10 @@ GEOR.Addons.Osm2Geor = Ext.extend(GEOR.Addons.Base, {
             closable: true,
             closeAction: 'hide',
             constrainHeader: true,
-            width: 400,
-            height: 300,
-            minHeight: 300,
-            maxHeight: 300,
+            width: 450,
+            height: 350,
+            minHeight: 350,
+            maxHeight: 350,
             title: this._title,
             border: false,
             buttonAlign: 'left',
@@ -146,7 +205,9 @@ GEOR.Addons.Osm2Geor = Ext.extend(GEOR.Addons.Base, {
                 labelSeparator: this.tr("labelSeparator"),
                 bodyStyle: 'padding: 5px;',
                 items: [
+                    this._queryCombo,
                     this._queryTextArea,
+                    this._styleCombo,
                     this._styleTextArea
                 ]
             },

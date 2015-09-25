@@ -8,8 +8,40 @@
     ],
     "default_options": {
         "API_URL": "http://overpass-api.de/api/interpreter",
-        "defaultStyle": "{\"strokeColor\": \"#ffff00\", \"fillColor\": \"#ffff00\"}",
-        "defaultQuery": "node[\"amenity\"]{{BBOX}};way[\"amenity\"]{{BBOX}};"
+        "queries": [{
+            "name": {
+                "en": "Amenities",
+                "es": "Comodidades",
+                "fr": "Equipements",
+                "de": "Ausstattung"
+            },
+            "query": "node[\"amenity\"]{{BBOX}};way[\"amenity\"]{{BBOX}};"
+        }, {
+            "name": {
+                "en": "Roads",
+                "es": "Carreteras",
+                "fr": "Routes",
+                "de": "Strassen"
+            },
+            "query": "way[\"highway\"]{{BBOX}};"
+        }],
+        "styles": [{
+            "name": {
+                "en": "Yellow",
+                "es": "Amarillo",
+                "fr": "Jaune",
+                "de": "Gelb"
+            },
+            "style": "{\"strokeColor\": \"#ffff00\", \"fillColor\": \"#ffff00\"}"
+        }, {
+            "name": {
+                "en": "Red",
+                "es": "Rojo",
+                "fr": "Rouge",
+                "de": "Rot"
+            },
+            "style": "{\"strokeColor\": \"#ff0000\", \"fillColor\": \"#ff0000\"}"
+        }]
     },
     "i18n": {
         "en": {
