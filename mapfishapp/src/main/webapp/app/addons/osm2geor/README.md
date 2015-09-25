@@ -14,15 +14,34 @@ ADDONS: [...,
 {
     "id": "osm2geor_0",
     "name": "Osm2Geor",
+    "options": {},
     "title": {
-        "fr": "osm2geor",
-        "en": "osm2geor",
-        "es": "osm2geor"
+        "fr": "OSM vers geOrchestra",
+        "en": "OSM to geOrchestra",
+        "es": "OSM a geOrchestra",
+        "de": "OSM zu geOrchestra"
     },
     "description": {
-        "fr": "osm2geOr est un greffon permettant de requêter l'overpass-API OpenStreetMap et de charger une nouvelle couche",
-        "en": "osm2geOr is an addon which allows querying the OSM overpass-API and to load the result as a new layer",
-        "es": "osm2geOr es un plugin para interrogar el OSM overpass-API y cargar el resultado como un nuevo layer"
+        "fr": "Cet addon permet de charger une nouvelle couche de données en provenance de la base OpenStreetMap",
+        "en": "This addon allows you to load OSM data as a new layer in your map",
+        "es": "Esta herramienta le permite mostrar datos OSM en su mapa",
+        "de": "Dieses Add-on ermöglicht es die OSM-Daten in Ihrer Karte anzuzeigen"
     }
 }], ...
 ```
+
+With the ```options``` property, you can customize a bit more the way this addon works, eg:
+```js
+    "options": {
+        "formatOptions": {
+            "checkTags": true,
+            ...
+        },
+        "defaultStyle": "{\"strokeColor\": \"#ffff00\", \"fillColor\": \"#ffff00\"}",
+        "defaultQuery": "node[\"amenity\"]{{BBOX}};way[\"amenity\"]{{BBOX}};",
+    },
+```
+
+ * ```formatOptions``` relates to the [OpenLayers OSM format](https://github.com/openlayers/openlayers/blob/master/lib/OpenLayers/Format/OSM.js), see it's [source](https://github.com/openlayers/openlayers/blob/master/lib/OpenLayers/Format/OSM.js) for detailed options.
+ * ```defaultStyle``` is to customize the default style applied to features. Please refer to [OpenLayers/Feature/Vector.js](https://github.com/openlayers/openlayers/blob/release-2.13/lib/OpenLayers/Feature/Vector.js#L436-L458) for a list of all possible properties. 
+ * ```defaultQuery``` is the default OSM OverPass API query. See the [Overpass API language guide](http://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide) for more information.

@@ -21,14 +21,26 @@ GEOR.Addons.Osm2Geor = Ext.extend(GEOR.Addons.Base, {
     init: function(record) {
         this.layer = this.createLayer();
         this._jsonFormat = new OpenLayers.Format.JSON();
-        // TODO: allow a different target 
-        this.item = new Ext.menu.Item({
-            text: this.tr('OSM to geOrchestra'),
-            qtip: this.tr('This addon allows you to display OSM data in your map'),
-            iconCls: 'osm2geor-icon',
-            handler: this.showWindow,
-            scope: this
-        });
+        if (this.target) {
+            // addon placed in toolbar
+            this.components = this.target.insertButton(this.position, {
+                xtype: 'button',
+                tooltip: this.getTooltip(record),
+                iconCls: 'osm2geor-icon',
+                handler: this.showWindow,
+                scope: this
+            });
+            this.target.doLayout();
+        } else {
+            // addon placed in "tools menu"
+            this.item = new Ext.menu.Item({
+                text: this.getText(record),
+                qtip: this.getQtip(record),
+                iconCls: 'osm2geor-icon',
+                handler: this.showWindow,
+                scope: this
+            });
+        }
     },
 
     /**
@@ -189,7 +201,8 @@ GEOR.Addons.Osm2Geor = Ext.extend(GEOR.Addons.Base, {
                     this.layer.styleMap = GEOR.util.getStyleMap({
                         "default": s,
                         "select": Ext.applyIf({
-                            strokeWidth: 5
+                            strokeWidth: 5,
+                            strokeColor: "blue"
                         }, s)
                     });
                 }
