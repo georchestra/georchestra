@@ -9,36 +9,40 @@
     "default_options": {
         "API_URL": "http://overpass-api.de/api/interpreter",
         "defaultStyle": "{\"strokeColor\": \"#ffff00\", \"fillColor\": \"#ffff00\"}",
-        "defaultQuery": "node[\"amenity\"]{{BBOX}};way[\"amenity\"]{{BBOX}};",
-        "formatOptions": {}
+        "defaultQuery": "node[\"amenity\"]{{BBOX}};way[\"amenity\"]{{BBOX}};"
     },
     "i18n": {
         "en": {
-            "Osm2Geor_HELP_URL": "http://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide"
+            "osm2geor_layername": "OSM data",
+            "osm2geor_query": "Query",
+            "osm2geor_style": "Style",
+            "osm2geor_keepfeatures": "Keep previously loaded features",
+            "osm2geor_run": "Execute",
+            "osm2geor_help_url": "http://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide"
         },
         "es": {
-            "OSM data": "Datos OSM",
-            "Query": "Consulta",
-            "Style": "Estilo",
-            "Keep previously loaded features": "Conservar los objetos existentes",
-            "Execute": "Ejecutar",
-            "Osm2Geor_HELP_URL": "http://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide"
+            "osm2geor_layername": "Datos OSM",
+            "osm2geor_query": "Consulta",
+            "osm2geor_style": "Estilo",
+            "osm2geor_keepfeatures": "Conservar los objetos existentes",
+            "osm2geor_run": "Ejecutar",
+            "osm2geor_help_url": "http://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide"
         },
         "fr": {
-            "OSM data": "Données OSM",
-            "Query": "Requête",
-            "Style": "Style",
-            "Keep previously loaded features": "Conserver les objets existants",
-            "Execute": "Exécuter",
-            "Osm2Geor_HELP_URL": "http://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide"
+            "osm2geor_layername": "Données OSM",
+            "osm2geor_query": "Requête",
+            "osm2geor_style": "Style",
+            "osm2geor_keepfeatures": "Conserver les objets existants",
+            "osm2geor_run": "Exécuter",
+            "osm2geor_help_url": "http://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide"
         },
         "de": {
-            "OSM data": "OSM-Daten",
-            "Query": "Abfrage",
-            "Style": "Style",
-            "Keep previously loaded features": "Zuvor hinzugeladene Objekte beibehalten",
-            "Execute": "Ausführen",
-            "Osm2Geor_HELP_URL": "http://wiki.openstreetmap.org/wiki/DE:Overpass_API/Language_Guide"
+            "osm2geor_layername": "OSM-Daten",
+            "osm2geor_query": "Abfrage",
+            "osm2geor_style": "Style",
+            "osm2geor_keepfeatures": "Zuvor hinzugeladene Objekte beibehalten",
+            "osm2geor_run": "Ausführen",
+            "osm2geor_help_url": "http://wiki.openstreetmap.org/wiki/DE:Overpass_API/Language_Guide"
         }
     }
 }

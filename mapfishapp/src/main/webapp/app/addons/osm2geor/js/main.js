@@ -13,6 +13,7 @@ GEOR.Addons.Osm2Geor = Ext.extend(GEOR.Addons.Base, {
     _styleTextArea: null,
     _keepPreviousFeatures: null,
     _jsonFormat: null,
+    _title: null,
 
     /**
      * Method: init
@@ -21,6 +22,7 @@ GEOR.Addons.Osm2Geor = Ext.extend(GEOR.Addons.Base, {
     init: function(record) {
         this.layer = this.createLayer();
         this._jsonFormat = new OpenLayers.Format.JSON();
+        this._title = this.getText(record);
         if (this.target) {
             // addon placed in toolbar
             this.components = this.target.insertButton(this.position, {
@@ -34,7 +36,7 @@ GEOR.Addons.Osm2Geor = Ext.extend(GEOR.Addons.Base, {
         } else {
             // addon placed in "tools menu"
             this.item = new Ext.menu.Item({
-                text: this.getText(record),
+                text: this._title,
                 qtip: this.getQtip(record),
                 iconCls: 'osm2geor-icon',
                 handler: this.showWindow,
@@ -48,7 +50,7 @@ GEOR.Addons.Osm2Geor = Ext.extend(GEOR.Addons.Base, {
      *
      */
     createLayer: function() {
-        return new OpenLayers.Layer.Vector(this.tr("OSM data"), {
+        return new OpenLayers.Layer.Vector(this.tr("osm2geor_layername"), {
             displayInLayerSwitcher: true,
             eventListeners: {
                 "removed": function(){
@@ -100,12 +102,12 @@ GEOR.Addons.Osm2Geor = Ext.extend(GEOR.Addons.Base, {
             name: 'overpassApiQuery',
             width: 375,
             height: 150,
-            fieldLabel: this.tr('Query'),
+            fieldLabel: this.tr('osm2geor_query'),
             value: this.options.defaultQuery.replace(";", ";\n")
         });
         this._styleTextArea = new Ext.form.TextArea({
             name: 'olStyle',
-            fieldLabel: this.tr('Style'),
+            fieldLabel: this.tr('osm2geor_style'),
             value: this.prettify(this.options.defaultStyle),
             width: 375,
             height: 150,
@@ -122,7 +124,7 @@ GEOR.Addons.Osm2Geor = Ext.extend(GEOR.Addons.Base, {
             }
         });
         this._keepPreviousFeatures = new Ext.form.Checkbox({
-           boxLabel: this.tr('Keep previously loaded features'),
+           boxLabel: this.tr('osm2geor_keepfeatures'),
            checked: false
         });
 
@@ -131,7 +133,7 @@ GEOR.Addons.Osm2Geor = Ext.extend(GEOR.Addons.Base, {
             closeAction: 'hide',
             width: 500,
             height: 400,
-            title: this.tr("OSM to geOrchestra"),
+            title: this._title,
             border: false,
             buttonAlign: 'left',
             layout: 'fit',
@@ -148,7 +150,7 @@ GEOR.Addons.Osm2Geor = Ext.extend(GEOR.Addons.Base, {
             tools: [{
                 id: 'help',
                 handler: function() {
-                    window.open(this.tr("Osm2Geor_HELP_URL"));
+                    window.open(this.tr("osm2geor_help_url"));
                 },
                 scope: this
             }, {
@@ -167,7 +169,7 @@ GEOR.Addons.Osm2Geor = Ext.extend(GEOR.Addons.Base, {
                 scope: this
             },
             fbar: [this._keepPreviousFeatures, '->', {
-                text: this.tr("Execute"),
+                text: this.tr("osm2geor_run"),
                 handler: this.queryFeatures,
                 scope: this
             }]

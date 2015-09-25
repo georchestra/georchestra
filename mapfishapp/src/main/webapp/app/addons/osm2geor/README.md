@@ -33,6 +33,7 @@ ADDONS: [...,
 With the ```options``` property, you can customize a bit more the way this addon works, eg:
 ```js
     "options": {
+        "API_URL": "..."
         "formatOptions": {
             "checkTags": true,
             ...
@@ -42,6 +43,7 @@ With the ```options``` property, you can customize a bit more the way this addon
     },
 ```
 
+ * ```API_URL``` defaults to "http://overpass-api.de/api/interpreter"
  * ```formatOptions``` relates to the [OpenLayers OSM format](https://github.com/openlayers/openlayers/blob/master/lib/OpenLayers/Format/OSM.js), see it's [source](https://github.com/openlayers/openlayers/blob/master/lib/OpenLayers/Format/OSM.js) for detailed options.
  * ```defaultStyle``` is to customize the default style applied to features. Please refer to [OpenLayers/Feature/Vector.js](https://github.com/openlayers/openlayers/blob/release-2.13/lib/OpenLayers/Feature/Vector.js#L436-L458) for a list of all possible properties. 
  * ```defaultQuery``` is the default OSM OverPass API query. See the [Overpass API language guide](http://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide) for more information.
