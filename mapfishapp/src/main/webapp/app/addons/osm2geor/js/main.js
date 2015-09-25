@@ -100,8 +100,8 @@ GEOR.Addons.Osm2Geor = Ext.extend(GEOR.Addons.Base, {
     createWindow: function() {
         this._queryTextArea = new Ext.form.TextArea({
             name: 'overpassApiQuery',
-            width: 375,
-            height: 150,
+            height: 100,
+            anchor: '95%',
             fieldLabel: this.tr('osm2geor_query'),
             value: this.options.defaultQuery.replace(";", ";\n")
         });
@@ -109,8 +109,8 @@ GEOR.Addons.Osm2Geor = Ext.extend(GEOR.Addons.Base, {
             name: 'olStyle',
             fieldLabel: this.tr('osm2geor_style'),
             value: this.prettify(this.options.defaultStyle),
-            width: 375,
-            height: 150,
+            height: 100,
+            anchor: '95%',
             validator: this.validator.createDelegate(this),
             listeners: {
                 "blur": function(f) {
@@ -131,8 +131,11 @@ GEOR.Addons.Osm2Geor = Ext.extend(GEOR.Addons.Base, {
         return new Ext.Window({
             closable: true,
             closeAction: 'hide',
-            width: 500,
-            height: 400,
+            constrainHeader: true,
+            width: 400,
+            height: 300,
+            minHeight: 300,
+            maxHeight: 300,
             title: this._title,
             border: false,
             buttonAlign: 'left',
