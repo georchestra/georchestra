@@ -89,7 +89,7 @@ GEOR.Addons.Osm2Geor = Ext.extend(GEOR.Addons.Base, {
             this.prettify(v);
             return true;
         } catch (e) {
-            return "syntax error";
+            return this.tr("osm2geor_syntaxerror");
         }
     },
 

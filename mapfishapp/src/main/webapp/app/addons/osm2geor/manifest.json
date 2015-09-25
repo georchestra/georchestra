@@ -18,6 +18,7 @@
             "osm2geor_style": "Style",
             "osm2geor_keepfeatures": "Keep previously loaded features",
             "osm2geor_run": "Execute",
+            "osm2geor_syntaxerror": "syntax error",
             "osm2geor_help_url": "http://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide"
         },
         "es": {
@@ -26,6 +27,7 @@
             "osm2geor_style": "Estilo",
             "osm2geor_keepfeatures": "Conservar los objetos existentes",
             "osm2geor_run": "Ejecutar",
+            "osm2geor_syntaxerror": "error de sintaxis",
             "osm2geor_help_url": "http://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide"
         },
         "fr": {
@@ -34,6 +36,7 @@
             "osm2geor_style": "Style",
             "osm2geor_keepfeatures": "Conserver les objets existants",
             "osm2geor_run": "Exécuter",
+            "osm2geor_syntaxerror": "erreur de syntaxe",
             "osm2geor_help_url": "http://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide"
         },
         "de": {
@@ -42,6 +45,7 @@
             "osm2geor_style": "Style",
             "osm2geor_keepfeatures": "Zuvor hinzugeladene Objekte beibehalten",
             "osm2geor_run": "Ausführen",
+            "osm2geor_syntaxerror": "Syntax-Fehler",
             "osm2geor_help_url": "http://wiki.openstreetmap.org/wiki/DE:Overpass_API/Language_Guide"
         }
     }
