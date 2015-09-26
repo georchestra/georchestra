@@ -176,7 +176,7 @@
                 "fr": "Jaune avec étiquettes",
                 "de": "Gelb mit Etikette"
             },
-            "style": "{\"strokeColor\": \"#ffff00\", \"fillColor\": \"#ffff00\", \"label\": \"${name}\", \"labelYOffset\": \"15\",\"labelOutlineColor\": \"white\", \"labelOutlineWidth\": 3}"
+            "style": "{\"strokeColor\": \"#ffff00\", \"fillColor\": \"#ffff00\", \"label\": \"${_name}\", \"labelYOffset\": \"15\",\"labelOutlineColor\": \"white\", \"labelOutlineWidth\": 3}"
         }, {
             "name": {
                 "en": "Red",
@@ -192,7 +192,7 @@
                 "fr": "Rouge avec étiquettes",
                 "de": "Rot mit Etikette"
             },
-            "style": "{\"strokeColor\": \"#ff0000\", \"fillColor\": \"#ff0000\", \"label\": \"${name}\", \"labelYOffset\": \"15\",\"labelOutlineColor\": \"white\", \"labelOutlineWidth\": 3}"
+            "style": "{\"strokeColor\": \"#ff0000\", \"fillColor\": \"#ff0000\", \"label\": \"${_name}\", \"labelYOffset\": \"15\",\"labelOutlineColor\": \"white\", \"labelOutlineWidth\": 3}"
         }, {
             "name": {
                 "en": "OpenLayers",
@@ -208,7 +208,7 @@
                 "fr": "OpenLayers avec étiquettes",
                 "de": "OpenLayers mit Etikette"
             },
-            "style": "{\"fillColor\": \"#ee9900\", \"fillOpacity\": 0.4, \"strokeColor\": \"#ee9900\", \"strokeOpacity\": 1, \"strokeWidth\": 1, \"strokeLinecap\": \"round\", \"strokeDashstyle\": \"solid\", \"pointRadius\": 6, \"label\": \"${name}\", \"labelYOffset\": \"15\",\"labelOutlineColor\": \"white\", \"labelOutlineWidth\": 3}"
+            "style": "{\"fillColor\": \"#ee9900\", \"fillOpacity\": 0.4, \"strokeColor\": \"#ee9900\", \"strokeOpacity\": 1, \"strokeWidth\": 1, \"strokeLinecap\": \"round\", \"strokeDashstyle\": \"solid\", \"pointRadius\": 6, \"label\": \"${_name}\", \"labelYOffset\": \"15\",\"labelOutlineColor\": \"white\", \"labelOutlineWidth\": 3}"
         }]
     },
     "i18n": {
