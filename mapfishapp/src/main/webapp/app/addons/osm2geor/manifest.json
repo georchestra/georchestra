@@ -18,12 +18,60 @@
             "query": "node[\"amenity\"]{{BBOX}};way[\"amenity\"]{{BBOX}};"
         }, {
             "name": {
+                "en": "Shops",
+                "es": "Compras",
+                "fr": "Commerces",
+                "de": "Geschäfte"
+            },
+            "query": "node[\"shop\"]{{BBOX}};way[\"shop\"]{{BBOX}};"
+        }, {
+            "name": {
                 "en": "Roads",
                 "es": "Carreteras",
                 "fr": "Routes",
                 "de": "Strassen"
             },
             "query": "way[\"highway\"]{{BBOX}};"
+        }, {
+            "name": {
+                "en": "",
+                "es": "",
+                "fr": "Objet ponctuel par son nom exact",
+                "de": ""
+            },
+            "query": "node[\"name\"=\"Hôtel du Lion d'Or\"]{{BBOX}};"
+        }, {
+            "name": {
+                "en": "",
+                "es": "",
+                "fr": "Objet ponctuel, connaissant le début de son nom",
+                "de": ""
+            },
+            "query": "node[\"name\"~\"^Hôtel\"]{{BBOX}};"
+        }, {
+            "name": {
+                "en": "",
+                "es": "",
+                "fr": "Objet ponctuel, connaissant le début de son nom, insensible à la casse",
+                "de": ""
+            },
+            "query": "node[\"name\"~\"[hH]ôtel\"]{{BBOX}};"
+        }, {
+            "name": {
+                "en": "",
+                "es": "",
+                "fr": "Tous les arrêts de bus avec un abris",
+                "de": ""
+            },
+            "query": "node[\"highway\"=\"bus_stop\"][\"shelter\"=\"yes\"]{{BBOX}};"
+        }, {
+            "name": {
+                "en": "",
+                "es": "",
+                "fr": "Tous les points avec un nom, qui ne sont pas des équipements",
+                "de": ""
+            },
+            "query": "node[\"name\"!~\"\"][\"amenity\"!~\".\"]{{BBOX}};"
         }],
         "styles": [{
             "name": {
