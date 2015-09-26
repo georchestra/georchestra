@@ -26,6 +26,94 @@
             "query": "node[\"shop\"]{{BBOX}};way[\"shop\"]{{BBOX}};"
         }, {
             "name": {
+                "en": "Historic",
+                "es": "Patrimonio",
+                "fr": "Patrimoine",
+                "de": "Heritage"
+            },
+            "query": "node[\"historic\"]{{BBOX}};way[\"historic\"]{{BBOX}};"
+        }, {
+            "name": {
+                "en": "Leisures",
+                "es": "Intereses",
+                "fr": "Loisirs",
+                "de": "Interessen"
+            },
+            "query": "node[\"leisure\"]{{BBOX}};way[\"leisure\"]{{BBOX}};"
+        }, {
+            "name": {
+                "en": "Emergencies",
+                "es": "Emergencias",
+                "fr": "Urgences",
+                "de": "Notfälle"
+            },
+            "query": "node[\"emergency\"]{{BBOX}};way[\"emergency\"]{{BBOX}};"
+        }, {
+            "name": {
+                "en": "Man made",
+                "es": "Edificios",
+                "fr": "Edifices",
+                "de": "Gebäude"
+            },
+            "query": "node[\"man_made\"]{{BBOX}};way[\"man_made\"]{{BBOX}};"
+        }, {
+            "name": {
+                "en": "Natural",
+                "es": "",
+                "fr": "Nature",
+                "de": ""
+            },
+            "query": "node[\"natural\"]{{BBOX}};way[\"natural\"]{{BBOX}};"
+        }, {
+            "name": {
+                "en": "Places",
+                "es": "Toponimia",
+                "fr": "Toponymie",
+                "de": "Toponymy"
+            },
+            "query": "node[\"place\"]{{BBOX}};way[\"place\"]{{BBOX}};"
+        }, {
+            "name": {
+                "en": "Power",
+                "es": "Poder",
+                "fr": "Energie",
+                "de": "Macht"
+            },
+            "query": "node[\"power\"]{{BBOX}};way[\"power\"]{{BBOX}};"
+        }, {
+            "name": {
+                "en": "Railways",
+                "es": "Ferrocarriles",
+                "fr": "Voies ferrées",
+                "de": "Eisenbahnen"
+            },
+            "query": "node[\"railway\"]{{BBOX}};way[\"railway\"]{{BBOX}};"
+        }, {
+            "name": {
+                "en": "Sports",
+                "es": "Deportes",
+                "fr": "Sports",
+                "de": "Sport"
+            },
+            "query": "node[\"sport\"]{{BBOX}};way[\"sport\"]{{BBOX}};"
+        }, {
+            "name": {
+                "en": "Tourism",
+                "es": "Turismo",
+                "fr": "Tourisme",
+                "de": "Tourismus"
+            },
+            "query": "node[\"tourism\"]{{BBOX}};way[\"tourism\"]{{BBOX}};"
+        }, {
+            "name": {
+                "en": "Waterways",
+                "es": "Cursos de agua",
+                "fr": "Cours d'eau",
+                "de": "Wasserstraßen"
+            },
+            "query": "node[\"waterway\"]{{BBOX}};way[\"waterway\"]{{BBOX}};"
+        }, {
+            "name": {
                 "en": "Roads",
                 "es": "Carreteras",
                 "fr": "Routes",
@@ -34,42 +122,42 @@
             "query": "way[\"highway\"]{{BBOX}};"
         }, {
             "name": {
-                "en": "",
-                "es": "",
+                "en": "Point object by its proper name",
+                "es": "Punto objeto por su nombre propio",
                 "fr": "Objet ponctuel par son nom exact",
-                "de": ""
+                "de": "Point-Objekt beim Namen"
             },
             "query": "node[\"name\"=\"Hôtel du Lion d'Or\"]{{BBOX}};"
         }, {
             "name": {
-                "en": "",
-                "es": "",
+                "en": "Point Object, knowing the beginning of its name",
+                "es": "Objeto Point, sabiendo el comienzo de su nombre",
                 "fr": "Objet ponctuel, connaissant le début de son nom",
-                "de": ""
+                "de": "Punktobjekt, zu wissen, den Anfang seines Namens"
             },
             "query": "node[\"name\"~\"^Hôtel\"]{{BBOX}};"
         }, {
             "name": {
-                "en": "",
-                "es": "",
+                "en": "Point Object, knowing the beginning of its name, case insensitive",
+                "es": "Objeto Point, sabiendo el inicio de su nombre, mayúsculas y minúsculas",
                 "fr": "Objet ponctuel, connaissant le début de son nom, insensible à la casse",
-                "de": ""
+                "de": "Punktobjekt, zu wissen, den Anfang seines Namens, Groß- und Kleinschreibung"
             },
             "query": "node[\"name\"~\"[hH]ôtel\"]{{BBOX}};"
         }, {
             "name": {
-                "en": "",
-                "es": "",
-                "fr": "Tous les arrêts de bus avec un abris",
-                "de": ""
+                "en": "All bus stops with shelters",
+                "es": "Todas las paradas de autobús con refugios",
+                "fr": "Tous les arrêts de bus avec abris",
+                "de": "Alle Bushaltestellen mit Unterständen"
             },
             "query": "node[\"highway\"=\"bus_stop\"][\"shelter\"=\"yes\"]{{BBOX}};"
         }, {
             "name": {
-                "en": "",
-                "es": "",
+                "en": "All points with a name, which are not amenities",
+                "es": "Todos los puntos con un nombre, que no son equipos",
                 "fr": "Tous les points avec un nom, qui ne sont pas des équipements",
-                "de": ""
+                "de": "Alle Punkte mit einem Namen, der nicht Geräte sind"
             },
             "query": "node[\"name\"!~\"\"][\"amenity\"!~\".\"]{{BBOX}};"
         }],
@@ -83,6 +171,14 @@
             "style": "{\"strokeColor\": \"#ffff00\", \"fillColor\": \"#ffff00\"}"
         }, {
             "name": {
+                "en": "Yellow with label",
+                "es": "Amarillo con etiqueta",
+                "fr": "Jaune avec étiquettes",
+                "de": "Gelb mit Etikette"
+            },
+            "style": "{\"strokeColor\": \"#ffff00\", \"fillColor\": \"#ffff00\", \"label\": \"${name}\", \"labelYOffset\": \"15\",\"labelOutlineColor\": \"white\", \"labelOutlineWidth\": 3}"
+        }, {
+            "name": {
                 "en": "Red",
                 "es": "Rojo",
                 "fr": "Rouge",
@@ -91,12 +187,28 @@
             "style": "{\"strokeColor\": \"#ff0000\", \"fillColor\": \"#ff0000\"}"
         }, {
             "name": {
+                "en": "Red with label",
+                "es": "Rojo con etiqueta",
+                "fr": "Rouge avec étiquettes",
+                "de": "Rot mit Etikette"
+            },
+            "style": "{\"strokeColor\": \"#ff0000\", \"fillColor\": \"#ff0000\", \"label\": \"${name}\", \"labelYOffset\": \"15\",\"labelOutlineColor\": \"white\", \"labelOutlineWidth\": 3}"
+        }, {
+            "name": {
                 "en": "OpenLayers",
                 "es": "OpenLayers",
                 "fr": "OpenLayers",
                 "de": "OpenLayers"
             },
             "style": "{\"fillColor\": \"#ee9900\", \"fillOpacity\": 0.4, \"strokeColor\": \"#ee9900\", \"strokeOpacity\": 1, \"strokeWidth\": 1, \"strokeLinecap\": \"round\", \"strokeDashstyle\": \"solid\", \"pointRadius\": 6}"
+        }, {
+            "name": {
+                "en": "OpenLayers with label",
+                "es": "OpenLayers con etiqueta",
+                "fr": "OpenLayers avec étiquettes",
+                "de": "OpenLayers mit Etikette"
+            },
+            "style": "{\"fillColor\": \"#ee9900\", \"fillOpacity\": 0.4, \"strokeColor\": \"#ee9900\", \"strokeOpacity\": 1, \"strokeWidth\": 1, \"strokeLinecap\": \"round\", \"strokeDashstyle\": \"solid\", \"pointRadius\": 6, \"label\": \"${name}\", \"labelYOffset\": \"15\",\"labelOutlineColor\": \"white\", \"labelOutlineWidth\": 3}"
         }]
     },
     "i18n": {
