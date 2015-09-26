@@ -41,6 +41,14 @@
                 "de": "Rot"
             },
             "style": "{\"strokeColor\": \"#ff0000\", \"fillColor\": \"#ff0000\"}"
+        }, {
+            "name": {
+                "en": "OpenLayers",
+                "es": "OpenLayers",
+                "fr": "OpenLayers",
+                "de": "OpenLayers"
+            },
+            "style": "{\"fillColor\": \"#ee9900\", \"fillOpacity\": 0.4, \"strokeColor\": \"#ee9900\", \"strokeOpacity\": 1, \"strokeWidth\": 1, \"strokeLinecap\": \"round\", \"strokeDashstyle\": \"solid\", \"pointRadius\": 6}"
         }]
     },
     "i18n": {

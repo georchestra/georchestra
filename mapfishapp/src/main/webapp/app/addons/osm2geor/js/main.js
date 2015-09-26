@@ -46,7 +46,7 @@ GEOR.Addons.Osm2Geor = Ext.extend(GEOR.Addons.Base, {
         Ext.each(this.options.queries, function(q){
             this._queryComboStore.push({
                 name: q.name[this.lang],
-                query: q.query
+                query: q.query.replace(";", ";\n")
             });
         }, this);
         this._styleComboStore = [];
@@ -156,7 +156,9 @@ GEOR.Addons.Osm2Geor = Ext.extend(GEOR.Addons.Base, {
             value: this._styleComboStore[0].style,
             listeners: {
                 "select": function(c, r) {
-                    this._styleTextArea.setValue(r.get("style"));
+                    this._styleTextArea.setValue(
+                        this.prettify(r.get("style"))
+                    );
                 },
                 scope: this
             },
@@ -167,7 +169,7 @@ GEOR.Addons.Osm2Geor = Ext.extend(GEOR.Addons.Base, {
         this._styleTextArea = new Ext.form.TextArea({
             name: 'olStyle',
             fieldLabel: "",
-            value: this._styleComboStore[0].style,
+            value: this.prettify(this._styleComboStore[0].style),
             height: 100,
             anchor: '95%',
             validator: this.validator.createDelegate(this),
