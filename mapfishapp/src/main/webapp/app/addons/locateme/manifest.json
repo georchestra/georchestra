@@ -1,0 +1,39 @@
+{
+    "js": [
+        "js/main.js"
+    ],
+    "css": [
+        "css/main.css"
+    ],
+    "i18n": {
+        "en": {
+            "locateme_nosupport": "Your browser does not support geolocation",
+            "locateme_denied": "User denied the request for Geolocation",
+            "locateme_unavailable": "Location information is unavailable",
+            "locateme_timedout": "The request to get user location timed out",
+            "locateme_unknownerror": "An unknown error occurred"
+        },
+        "es": {
+            "locateme_nosupport": "Su navegador no soporta geolocalización",
+            "locateme_denied": "User denied the request for Geolocation",
+            "locateme_unavailable": "Location information is unavailable",
+            "locateme_timedout": "The request to get user location timed out",
+            "locateme_unknownerror": "An unknown error occurred"
+        },
+        "fr": {
+            "locateme_nosupport": "Votre navigateur ne supporte pas la géolocalisation",
+            "locateme_denied": "Géolocalisation désactivée par l'utilisateur",
+            "locateme_unavailable": "Localisation non disponible",
+            "locateme_timedout": "La requête a dépassé le délai fixé",
+            "locateme_unknownerror": "Erreur inconnue"
+        },
+        "de": {
+            "locateme_nosupport": "Ihr Browser unterstützt keine Geolokalisierung",
+            "locateme_denied": "User denied the request for Geolocation",
+            "locateme_unavailable": "Location information is unavailable",
+            "locateme_timedout": "The request to get user location timed out",
+            "locateme_unknownerror": "An unknown error occurred"
+        }
+    }
+}
+
