@@ -286,7 +286,7 @@ GEOR.Addons.Osm2Geor = Ext.extend(GEOR.Addons.Base, {
             },
             failure: function() {
                 GEOR.util.errorDialog({
-                    msg: tr("Unreachable server")
+                    msg: tr("osm2geor_cannotget")
                 });
             },
             scope: this

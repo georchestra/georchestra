@@ -195,18 +195,18 @@
             "style": "{\"strokeColor\": \"#ff0000\", \"fillColor\": \"#ff0000\", \"label\": \"${_name}\", \"labelYOffset\": \"15\",\"labelOutlineColor\": \"white\", \"labelOutlineWidth\": 3}"
         }, {
             "name": {
-                "en": "OpenLayers",
-                "es": "OpenLayers",
-                "fr": "OpenLayers",
-                "de": "OpenLayers"
+                "en": "Orange",
+                "es": "Anaranjado",
+                "fr": "Orange",
+                "de": "Orange"
             },
             "style": "{\"fillColor\": \"#ee9900\", \"fillOpacity\": 0.4, \"strokeColor\": \"#ee9900\", \"strokeOpacity\": 1, \"strokeWidth\": 1, \"strokeLinecap\": \"round\", \"strokeDashstyle\": \"solid\", \"pointRadius\": 6}"
         }, {
             "name": {
-                "en": "OpenLayers with label",
-                "es": "OpenLayers con etiqueta",
-                "fr": "OpenLayers avec étiquettes",
-                "de": "OpenLayers mit Etikette"
+                "en": "Orange with label",
+                "es": "Anaranjado con etiqueta",
+                "fr": "Orange avec étiquettes",
+                "de": "Orange mit Etikette"
             },
             "style": "{\"fillColor\": \"#ee9900\", \"fillOpacity\": 0.4, \"strokeColor\": \"#ee9900\", \"strokeOpacity\": 1, \"strokeWidth\": 1, \"strokeLinecap\": \"round\", \"strokeDashstyle\": \"solid\", \"pointRadius\": 6, \"label\": \"${_name}\", \"labelYOffset\": \"15\",\"labelOutlineColor\": \"white\", \"labelOutlineWidth\": 3}"
         }]
@@ -219,6 +219,7 @@
             "osm2geor_keepfeatures": "Keep previously loaded features",
             "osm2geor_run": "Execute",
             "osm2geor_syntaxerror": "syntax error",
+            "osm2geor_cannotget": "Could not get the features from the OSM database",
             "osm2geor_help_url": "http://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide"
         },
         "es": {
@@ -228,6 +229,7 @@
             "osm2geor_keepfeatures": "Conservar los objetos existentes",
             "osm2geor_run": "Ejecutar",
             "osm2geor_syntaxerror": "error de sintaxis",
+            "osm2geor_cannotget": "No se puede obtener objetos de la base de OSM",
             "osm2geor_help_url": "http://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide"
         },
         "fr": {
@@ -237,6 +239,7 @@
             "osm2geor_keepfeatures": "Conserver les objets existants",
             "osm2geor_run": "Exécuter",
             "osm2geor_syntaxerror": "erreur de syntaxe",
+            "osm2geor_cannotget": "Impossible d'obtenir les objets depuis la base OSM",
             "osm2geor_help_url": "http://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide"
         },
         "de": {
@@ -246,6 +249,7 @@
             "osm2geor_keepfeatures": "Zuvor hinzugeladene Objekte beibehalten",
             "osm2geor_run": "Ausführen",
             "osm2geor_syntaxerror": "Syntax-Fehler",
+            "osm2geor_cannotget": "Konnte nicht die Vektorobjekte aus der OSM-Datenbank erhalten",
             "osm2geor_help_url": "http://wiki.openstreetmap.org/wiki/DE:Overpass_API/Language_Guide"
         }
     }
