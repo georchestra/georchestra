@@ -122,6 +122,14 @@
             "query": "way[\"highway\"]{{BBOX}};"
         }, {
             "name": {
+                "en": "Pictures",
+                "es": "Imágenes",
+                "fr": "Images",
+                "de": "Bilder"
+            },
+            "query": "node[\"image\"]{{BBOX}};"
+        }, {
+            "name": {
                 "en": "Point object by its proper name",
                 "es": "Punto objeto por su nombre propio",
                 "fr": "Objet ponctuel par son nom exact",
@@ -209,6 +217,14 @@
                 "de": "Orange mit Etikette"
             },
             "style": "{\"fillColor\": \"#ee9900\", \"fillOpacity\": 0.4, \"strokeColor\": \"#ee9900\", \"strokeOpacity\": 1, \"strokeWidth\": 1, \"strokeLinecap\": \"round\", \"strokeDashstyle\": \"solid\", \"pointRadius\": 6, \"label\": \"${_name}\", \"labelYOffset\": \"15\",\"labelOutlineColor\": \"white\", \"labelOutlineWidth\": 3}"
+        }, {
+            "name": {
+                "en": "Pictures",
+                "es": "Imágenes",
+                "fr": "Images",
+                "de": "Bilder"
+            },
+            "style": "\"externalGraphic\": \"${image}\",\"graphicWidth\": 100,\"graphicHeight\": 100,\"graphicOpacity\": 1"
         }]
     },
     "i18n": {
