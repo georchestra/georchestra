@@ -515,6 +515,11 @@ GEOR.util = (function() {
                 OpenLayers.Feature.Vector.style['default']);
             var selStyle = OpenLayers.Util.extend({},
                 OpenLayers.Feature.Vector.style['select']);
+            var c = {
+                "_name": function(feature) {
+                    return feature.attributes.name ? feature.attributes.name : "";
+                }
+            };
             return new OpenLayers.StyleMap({
                 "default": new OpenLayers.Style(
                     Ext.apply(defStyle, Ext.apply({
@@ -522,7 +527,7 @@ GEOR.util = (function() {
                         fillOpacity: 0.1,
                         strokeWidth: 3
                     }, override["default"] || {}))
-                ),
+                , {context: c}),
                 "select": new OpenLayers.Style(
                     Ext.apply(selStyle, Ext.apply({
                         cursor: "pointer",
@@ -530,7 +535,7 @@ GEOR.util = (function() {
                         fillOpacity: 0.1,
                         graphicZIndex: 1000
                     }, override["select"] || {}))
-                )
+                , {context: c})
             });
         },
 
