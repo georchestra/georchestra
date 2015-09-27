@@ -56,6 +56,7 @@ public class OGCProxy {
     private String[] _validContentTypes =
                                     {
                                         "application/xml", "text/xml",
+                                        "application/osm3s+xml",                // OSM XML
                                         "application/vnd.ogc.se_xml",           // OGC Service Exception
                                         "application/vnd.ogc.se+xml",           // OGC Service Exception
                                         "application/vnd.ogc.success+xml",      // OGC Success (SLD Put)

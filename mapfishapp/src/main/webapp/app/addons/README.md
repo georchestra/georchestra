@@ -16,6 +16,7 @@ We currently have the following addons available:
  * [openls](openls/README.md) which allows one to locate an address on the map.
  * [quicksearch](quicksearch/README.md) is an all-in-one search tool.
  * [streetview](streetview/README.md) ... obviously based on the Google Street View Image API.
+ * [osm2geor](osm2geor/README.md) display vector data from OSM (got from the Overpass API) into a vector layer
 
 
 Finding more addons

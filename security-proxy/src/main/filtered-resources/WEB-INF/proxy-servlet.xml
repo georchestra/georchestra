@@ -31,6 +31,8 @@ ${proxy.mapping}
             <list>
                 <value>application/xml</value>
                 <value>text/xml</value>
+                <!-- OSM XML -->
+                <value>application/osm3s+xml</value>
                 <!-- OGC Service Exception -->
                 <value>application/vnd.ogc.se_xml</value>
                 <value>application/vnd.ogc.se+xml</value>
