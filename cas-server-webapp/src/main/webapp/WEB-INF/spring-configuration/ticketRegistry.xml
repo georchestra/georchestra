@@ -21,6 +21,8 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:util="http://www.springframework.org/schema/util"
        xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
     <description>
@@ -44,4 +46,30 @@
 		p:jobDetail-ref="jobDetailTicketRegistryCleaner"
 		p:startDelay="20000"
 		p:repeatInterval="5000000" />
+
+	<!-- example alternative configuration for storing tickets in MemcacheTicketRegistry
+             See http://jasig.github.io/cas/4.0.x/installation/Memcached-Ticket-Registry.html for property details
+             Make sure to disable the quartz ticket registry cleaner since memcached takes care of expiring tickets
+             Use repcached patch if you want replication between several memcached instances
+
+	<bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.MemCacheTicketRegistry"
+		c:client-ref="memcachedClient"
+		c:ticketGrantingTicketTimeOut="${tgt.maxTimeToLiveInSeconds:28800}"
+		c:serviceTicketTimeOut="${st.timeToKillInSeconds:7200}" />
+
+	<bean id="memcachedClient" class="net.spy.memcached.spring.MemcachedClientFactoryBean"
+		p:servers="localhost:11211"
+		p:protocol="BINARY"
+		p:locatorType="ARRAY_MOD"
+		p:failureMode="Redistribute"
+		p:transcoder-ref="kryoTranscoder">
+		<property name="hashAlg">
+			<value type="net.spy.memcached.DefaultHashAlgorithm">FNV1_64_HASH</value>
+		</property>
+	</bean>
+
+	<bean id="kryoTranscoder" class="org.jasig.cas.ticket.registry.support.kryo.KryoTranscoder"
+		init-method="initialize"
+		c:initialBufferSize="8192" />
+	-->
 </beans>
