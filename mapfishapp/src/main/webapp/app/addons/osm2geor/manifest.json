@@ -224,7 +224,7 @@
                 "fr": "Images",
                 "de": "Bilder"
             },
-            "style": "\"externalGraphic\": \"${image}\",\"graphicWidth\": 100,\"graphicHeight\": 100,\"graphicOpacity\": 1"
+            "style": "{\"externalGraphic\": \"${image}\", \"graphicWidth\": 100, \"graphicHeight\": 100, \"graphicOpacity\": 1}"
         }]
     },
     "i18n": {
@@ -236,6 +236,9 @@
             "osm2geor_run": "Execute",
             "osm2geor_syntaxerror": "syntax error",
             "osm2geor_cannotget": "Could not get the features from the OSM database",
+            "osm2geor_nostoredgeom": "Cannot use {{GEOMETRY}} since no geometry is currently stored",
+            "osm2geor_nopolygon": "Cannot perform query with a linear or point geometry",
+            "osm2geor_multipolygon": "Cannot perform query with a multipolygon, sorry !",
             "osm2geor_help_url": "http://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide"
         },
         "es": {
@@ -246,6 +249,9 @@
             "osm2geor_run": "Ejecutar",
             "osm2geor_syntaxerror": "error de sintaxis",
             "osm2geor_cannotget": "No se puede obtener objetos de la base de OSM",
+            "osm2geor_nostoredgeom": "Cannot use {{GEOMETRY}} since no geometry is currently stored",
+            "osm2geor_nopolygon": "Cannot perform query with a linear or point geometry",
+            "osm2geor_multipolygon": "Cannot perform query with a multipolygon, sorry !",
             "osm2geor_help_url": "http://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide"
         },
         "fr": {
@@ -256,6 +262,9 @@
             "osm2geor_run": "Exécuter",
             "osm2geor_syntaxerror": "erreur de syntaxe",
             "osm2geor_cannotget": "Impossible d'obtenir les objets depuis la base OSM",
+            "osm2geor_nostoredgeom": "Il n'est pas possible d'utiliser {{GEOMETRY}} car il n'y a pas de géométrie stockée actuellement",
+            "osm2geor_nopolygon": "Impossible d'exécuter la requête par intersection avec un point ou une ligne",
+            "osm2geor_multipolygon": "Impossible de requêter selon un multipolygone, désolé !",
             "osm2geor_help_url": "http://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide"
         },
         "de": {
@@ -266,6 +275,9 @@
             "osm2geor_run": "Ausführen",
             "osm2geor_syntaxerror": "Syntax-Fehler",
             "osm2geor_cannotget": "Konnte nicht die Vektorobjekte aus der OSM-Datenbank erhalten",
+            "osm2geor_nostoredgeom": "Cannot use {{GEOMETRY}} since no geometry is currently stored",
+            "osm2geor_nopolygon": "Cannot perform query with a linear or point geometry",
+            "osm2geor_multipolygon": "Cannot perform query with a multipolygon, sorry !",
             "osm2geor_help_url": "http://wiki.openstreetmap.org/wiki/DE:Overpass_API/Language_Guide"
         }
     }

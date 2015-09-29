@@ -3,6 +3,7 @@ Ext.namespace("GEOR.Addons");
 /*
  * TODO :
  * simple / advanced tab
+ * show bbox of request
  */
 GEOR.Addons.Osm2Geor = Ext.extend(GEOR.Addons.Base, {
     win: null,
@@ -243,26 +244,84 @@ GEOR.Addons.Osm2Geor = Ext.extend(GEOR.Addons.Base, {
     },
 
     /**
+     * Method: getGeometryString
+     *
+     */
+    getGeometryString: function(query) {
+        var mapExtent = this.map.getExtent().transform(
+            this.map.getProjectionObject(), 
+            new OpenLayers.Projection("EPSG:4326")
+        );
+        if (/{{BBOX}}/g.test(query)) {
+            query = query.replace(/{{BBOX}}/g, [
+                '(', mapExtent.bottom, 
+                ',', mapExtent.left,
+                ',', mapExtent.top,
+                ',', mapExtent.right, ')'
+            ].join(''));
+        }
+        if (/{{GEOMETRY}}/g.test(query)) {
+            // we have to create the corresponding string
+            var provider = Ext.state.Manager.getProvider(),
+            wkt = provider.decodeValue(provider.get('geometry'));
+            if (!wkt) {
+                GEOR.util.errorDialog({
+                    msg: tr("osm2geor_nostoredgeom")
+                });
+                return;
+            }
+            var geom = (new OpenLayers.Format.WKT()).read(wkt).geometry;
+            if (!/.*Polygon.*/.test(geom.CLASS_NAME)) {
+                GEOR.util.errorDialog({
+                    msg: tr("osm2geor_nopolygon")
+                });
+                return;
+            }
+            if (/.*MultiPolygon.*/.test(geom.CLASS_NAME)) {
+                if (geom.components.length == 1) {
+                    geom = geom.components[0];
+                } else {
+                    GEOR.util.errorDialog({
+                        msg: tr("osm2geor_multipolygon")
+                    });
+                    return;
+                }
+            }
+            // getting exterior linear ring and setting the right projection 
+            geom = geom.components[0].transform(
+                this.map.getProjectionObject(), 
+                new OpenLayers.Projection("EPSG:4326")
+            );
+            var s = new Array(2 * geom.components.length);
+            Ext.each(geom.components, function(pt, i) {
+                s[2 * i] = pt.y;
+                s[2 * i + 1] = pt.x;
+            });
+            query = query.replace(/{{GEOMETRY}}/g, '(poly:"' + s.join(" ") +'")');
+        }
+        return query;
+    },
+
+    /**
      * Method: queryFeatures
      *
      */
     queryFeatures: function() {
-        var ex = this.map.getExtent().transform(
-            this.map.getProjectionObject(), 
-            new OpenLayers.Projection("EPSG:4326")
-        ), 
-        query = [
+        var query = [
             '[timeout:25];(',
             this._queryTextArea.getValue(),
             '); out body; >; out skel qt;'
         ].join('');
+        var q = this.getGeometryString(query);
+        if (!q) {
+            // error while decoding query => aborting
+            return;
+        }
         GEOR.waiter.show();
         Ext.Ajax.request({
             method: 'POST',
             url: this.options.API_URL,
-            xmlData: query.replace(/{{BBOX}}/g, 
-                '(' + ex.bottom +',' +ex.left + ',' + ex.top +',' + ex.right +')'
-            ),
+            xmlData: q,
             success: function(response) {
                 if (this._styleTextArea.getValue() != "") {
                     var s = this._jsonFormat.read(this._styleTextArea.getValue());
