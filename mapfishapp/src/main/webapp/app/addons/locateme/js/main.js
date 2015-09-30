@@ -1,5 +1,8 @@
 Ext.namespace("GEOR.Addons");
 
+/**
+ * TODO: while pressed, follow user location
+ **/
 GEOR.Addons.LocateMe = Ext.extend(GEOR.Addons.Base, {
     layer: null,
     item: null,
@@ -9,14 +12,23 @@ GEOR.Addons.LocateMe = Ext.extend(GEOR.Addons.Base, {
      *
      */
     init: function(record) {
-        this.layer = this.createLayer();
         if (this.target) {
             // addon placed in toolbar
             this.components = this.target.insertButton(this.position, {
                 xtype: 'button',
+                enableToggle: true,
                 tooltip: this.getTooltip(record),
                 iconCls: 'locateme-icon',
-                handler: this.locateme,
+                listeners: {
+                    "toggle": function(b, pressed) {
+                        if (pressed) {
+                            this.locateme();
+                        } else {
+                            this.layer.destroyFeatures();
+                        }
+                    },
+                    scope: this
+                },
                 scope: this
             });
             this.target.doLayout();
@@ -30,16 +42,13 @@ GEOR.Addons.LocateMe = Ext.extend(GEOR.Addons.Base, {
                 scope: this
             });
         }
-    },
-
-    /**
-     * Method: createLayer
-     *
-     */
-    createLayer: function() {
-        return new OpenLayers.Layer.Vector("locateme_layername", {
-            displayInLayerSwitcher: false
+        this.layer = new OpenLayers.Layer.Vector("__georchestra_locateme", {
+            displayInLayerSwitcher: false,
+            styleMap: new OpenLayers.StyleMap({
+                "default": this.options.graphicStyle
+            })
         });
+        this.map.addLayer(this.layer);
     },
 
     /**
@@ -55,7 +64,7 @@ GEOR.Addons.LocateMe = Ext.extend(GEOR.Addons.Base, {
         }
         navigator.geolocation.getCurrentPosition(
             this.showLocation.createDelegate(this),
-            this.errorHandling
+            this.errorHandling.createDelegate(this)
         );
     },
 
@@ -64,12 +73,18 @@ GEOR.Addons.LocateMe = Ext.extend(GEOR.Addons.Base, {
      *
      */
     showLocation: function(pos) {
-        // TODO: vector layer position ...
-        alert("Latitude: " + pos.coords.latitude + " - Longitude: " + pos.coords.longitude); 
+        var c = pos.coords,
+        geom = (new OpenLayers.Geometry.Point(c.longitude, c.latitude)).transform(
+            new OpenLayers.Projection("EPSG:4326"),
+            this.map.getProjectionObject()
+        );
+        this.layer.destroyFeatures();
+        this.layer.addFeatures([new OpenLayers.Feature.Vector(geom)]);
+        this.map.setCenter([geom.x, geom.y]);
     },
 
     /**
-     * Method: showLocation
+     * Method: errorHandling
      *
      */
     errorHandling: function (error) {
@@ -103,7 +118,7 @@ GEOR.Addons.LocateMe = Ext.extend(GEOR.Addons.Base, {
      *
      */
     destroy: function() {
-        this.layer.destroy();
+        this.map.removeLayer(this.layer);
         this.layer = null;
         GEOR.Addons.Base.prototype.destroy.call(this);
     }

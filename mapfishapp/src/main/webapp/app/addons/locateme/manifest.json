@@ -5,6 +5,16 @@
     "css": [
         "css/main.css"
     ],
+    "default_options": {
+        "target": "bbar_7",
+        "graphicStyle": {
+            "graphicName": "cross",
+            "pointRadius": 16,
+            "strokeColor": "fuchsia",
+            "strokeWidth": 2,
+            "fillOpacity": 0
+        }
+    },
     "i18n": {
         "en": {
             "locateme_nosupport": "Your browser does not support geolocation",
