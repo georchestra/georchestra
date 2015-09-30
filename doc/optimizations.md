@@ -10,8 +10,15 @@ Please refer to a recent "[GeoServer on steroids](http://fr.slideshare.net/geoso
 By default, GeoServer ship with the java JAI classes which run everywhere, but are not as fast as the native ones.  
 Raster operations will be ~ two times faster when the native JAI and imageio are installed, so: 
 
+Add 'non-free' to your sourcelist : 
 ```
-sudo apt-get install libjai-core-java libjai-imageio-core-java
+deb http://ftp.fr.debian.org/debian jessie main non-free
+```
+
+And install the library :
+```
+apt-get update
+apt-get install libjai-imageio-core-java
 ```
 
 Then, make sure that the following 5 jars are loaded by your geoserver and geowebcache tomcat classloaders:
@@ -23,12 +30,12 @@ This is usually done by symlinking them from their original location (something 
 eg:
 ```
 cd /var/lib/tomcat-geoserver0/lib
-sudo ln -s /usr/share/java/jai_core.jar .
-sudo ln -s /usr/share/java/jai_codec.jar .
-sudo ln -s /usr/share/java/mlibwrapper_jai.jar .
-sudo ln -s /usr/share/java/jai_imageio.jar .
-sudo ln -s /usr/share/java/clibwrapper_jiio.jar .
-sudo service tomcat-geoserver0 restart
+ln -s /usr/share/java/jai_core.jar .
+ln -s /usr/share/java/jai_codec.jar .
+ln -s /usr/share/java/mlibwrapper_jai.jar .
+ln -s /usr/share/java/jai_imageio.jar .
+ln -s /usr/share/java/clibwrapper_jiio.jar .
+service tomcat-geoserver0 restart
 ```
 
 To see if they are correctly installed, open the GeoServer "server status" page (````/geoserver/web/?wicket:bookmarkablePage=:org.geoserver.web.admin.StatusPage```) and check that the "Native JAI" and "Native JAI ImageIO" values are set to true.
@@ -45,7 +52,7 @@ Installing the libjpeg-turbo map encoder improves the throughput of your service
 It requires:
  * native libs installed with eg. the [libjpeg-turbo-official debian package](http://sourceforge.net/projects/libjpeg-turbo/files/).
 ```
-sudo dpkg -i libjpeg-turbo-official_1.3.1_amd64.deb
+sudo dpkg -i libjpeg-turbo-official_1.4.2_amd64.deb
 ```
 installs the following files:
 ```
@@ -75,12 +82,12 @@ Note that it only works on recent versions of Oracle and OpenJDK (>= 7).
 
 Installing it is not difficult:
  * [grab the latest release](https://github.com/bourgesl/marlin-renderer/releases)
- * put the ```marlin-0.4.4.jar``` file into ```/usr/share/tomcat8/lib/``` (don't forget to chmod a+r marlin*.jar)
+ * put the ```marlin-0.4.5.jar``` file into ```/usr/share/tomcat8/lib/``` (don't forget to chmod a+r marlin*.jar)
  * in ```/etc/defaults/tomcat-geoserver0```, add the following:
 
 ```
 JAVA_OPTS="$JAVA_OPTS \
-            -Xbootclasspath/a:"/usr/share/tomcat8/lib/marlin-0.4.4.jar" \
+            -Xbootclasspath/a:"/usr/share/tomcat8/lib/marlin-0.4.5.jar" \
             -Dsun.java2d.renderer=org.marlin.pisces.PiscesRenderingEngine"
 ```
 
@@ -102,6 +109,22 @@ If you have followed this guide, your geoserver probably also uses our recommend
 If not, you should create a custom ```controlflow.properties``` file in your geoserver "data dir".  
 Please refer to the [control-flow module documentation](http://docs.geoserver.org/latest/en/user/extensions/controlflow/index.html) for the syntax.
 
+### More fonts
+
+Add 'contrib' to your sourcelist : 
+```
+deb http://ftp.fr.debian.org/debian jessie main contrib
+```
+
+And install the fonts : 
+```
+apt-get update
+apt-get install ttf-mscorefonts-installer
+```
+
+And restart Geoserver : `service tomcat-geoserver0 restart`
+
+To see if they are correctly installed, open the GeoServer "server status" page (````/geoserver/web/?wicket:bookmarkablePage=:org.geoserver.web.admin.StatusPage```) and check that there are 72 fonts available.
 
 ### Fine tuning
 
