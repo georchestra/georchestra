@@ -33,7 +33,7 @@ Those commands will install TC8 and optimisation for GS like TurboJPEG, Marlin R
 Then open the */etc/default/tomcat8* file and set **JAVA_OPTS** to : 
 
 ```
--Djava.awt.headless=true -XX:+UseConcMarkSweepGC -Xms2G -Xmx2G -XX:PermSize=256m -DGEOSERVER_DATA_DIR=/opt/geoserver_datadir -Dfile.encoding=UTF8 -Djavax.servlet.request.encoding=UTF-8 -Djavax.servlet.response.encoding=UTF-8 -server -XX:+UseParNewGC -XX:ParallelGCThreads=2 -XX:SoftRefLRUPolicyMSPerMB=36000 -XX:NewRatio=2 -XX:+AggressiveOpts -Djava.library.path=/usr/lib/jni:/opt/libjpeg-turbo/lib64
+-Djava.awt.headless=true -Xms2G -Xmx2G -XX:PermSize=256m -DGEOSERVER_DATA_DIR=/opt/geoserver_datadir -Dfile.encoding=UTF8 -Djavax.servlet.request.encoding=UTF-8 -Djavax.servlet.response.encoding=UTF-8 -server -XX:+UseParNewGC -XX:ParallelGCThreads=2 -XX:SoftRefLRUPolicyMSPerMB=36000 -XX:NewRatio=2 -XX:+AggressiveOpts -Djava.library.path=/usr/lib/jni:/opt/libjpeg-turbo/lib64
 ```
 
 After that you'll have to upload your compiled war of GS in tomcat webapp directory, unzip it and replace the GDAL's wars by those we installed :
