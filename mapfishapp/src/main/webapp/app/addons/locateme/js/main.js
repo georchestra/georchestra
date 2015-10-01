@@ -1,8 +1,5 @@
 Ext.namespace("GEOR.Addons");
 
-/**
- * TODO: while pressed, follow user location
- **/
 GEOR.Addons.LocateMe = Ext.extend(GEOR.Addons.Base, {
     layer: null,
     item: null,
@@ -20,13 +17,7 @@ GEOR.Addons.LocateMe = Ext.extend(GEOR.Addons.Base, {
                 tooltip: this.getTooltip(record),
                 iconCls: 'locateme-icon',
                 listeners: {
-                    "toggle": function(b, pressed) {
-                        if (pressed) {
-                            this.locateme();
-                        } else {
-                            this.layer.destroyFeatures();
-                        }
-                    },
+                    "toggle": this.onToggle,
                     scope: this
                 },
                 scope: this
@@ -34,12 +25,15 @@ GEOR.Addons.LocateMe = Ext.extend(GEOR.Addons.Base, {
             this.target.doLayout();
         } else {
             // addon placed in "tools menu"
-            this.item = new Ext.menu.Item({
+            this.item = new Ext.menu.CheckItem({
                 text: this.getText(record),
                 qtip: this.getQtip(record),
                 iconCls: 'locateme-icon',
-                handler: this.locateme,
-                scope: this
+                checked: false,
+                listeners: {
+                    "checkchange": this.onToggle,
+                    scope: this
+                }
             });
         }
         this.layer = new OpenLayers.Layer.Vector("__georchestra_locateme", {
@@ -49,6 +43,21 @@ GEOR.Addons.LocateMe = Ext.extend(GEOR.Addons.Base, {
             })
         });
         this.map.addLayer(this.layer);
+    },
+
+    /**
+     * Method: onToggle
+     *
+     */
+    onToggle: function(b, pressed) {
+        if (pressed) {
+            this.locateme();
+        } else {
+            this.layer.destroyFeatures();
+            if (navigator.geolocation && this.watchId) {
+                navigator.geolocation.clearWatch(this.watchId);
+            }
+        }
     },
 
     /**
@@ -62,9 +71,10 @@ GEOR.Addons.LocateMe = Ext.extend(GEOR.Addons.Base, {
             });
             return;
         }
-        navigator.geolocation.getCurrentPosition(
+        this.watchId = navigator.geolocation.watchPosition(
             this.showLocation.createDelegate(this),
-            this.errorHandling.createDelegate(this)
+            this.errorHandling.createDelegate(this), 
+            this.options.watchPosition
         );
     },
 

@@ -7,6 +7,11 @@
     ],
     "default_options": {
         "target": "bbar_7",
+        "watchPosition": {
+            "maximumAge": 2000,
+            "timeout": 30000,
+            "enableHighAccuracy": true
+        },
         "graphicStyle": {
             "graphicName": "cross",
             "pointRadius": 16,
