@@ -17,7 +17,7 @@ We currently have the following addons available:
  * [quicksearch](quicksearch/README.md) is an all-in-one search tool.
  * [streetview](streetview/README.md) ... obviously based on the Google Street View Image API.
  * [osm2geor](osm2geor/README.md) displays vector data from the OSM "live" database into a vector layer.
- * [locateme](locateme/README.md) shows the user's current location.
+ * [locateme](locateme/README.md) allows users to track their location on the map.
 
 
 Finding more addons

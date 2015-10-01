@@ -1,6 +1,6 @@
 # LocateMe
 
-This addon allows users to display their position on the map.
+This addon, when enabled and active, allows users to track their location on the map.
 author: @fvanderbiest
 
 ## Setup
@@ -29,3 +29,23 @@ ADDONS: [...,
     }
 }], ...
 ```
+
+Note that several configuration options are available, eg:
+```js
+    "options": {
+        "target": "bbar_7",
+        "watchPosition": {
+            "maximumAge": 2000,
+            "timeout": 30000,
+            "enableHighAccuracy": true
+        },
+        "graphicStyle": {
+            "graphicName": "cross",
+            "pointRadius": 16,
+            "strokeColor": "fuchsia",
+            "strokeWidth": 2,
+            "fillOpacity": 0
+        }
+    },
+```
+The ```watchPosition``` options are documented on this page: [https://developer.mozilla.org/en-US/docs/Web/API/PositionOptions](https://developer.mozilla.org/en-US/docs/Web/API/PositionOptions)
