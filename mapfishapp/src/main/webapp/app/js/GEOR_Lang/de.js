@@ -413,9 +413,6 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Contextual help": "Hinweise",
     "Activate or deactivate contextual help bubbles": "Aktivieren der Hinweisblasen",
     /* GEOR_tools.js strings */
-    "distance measure": "Distanz messen",
-    "area measure": "Oberfläche messen",
-    "Measure": "Maß",
     "Tools": "Werkzeuge",
     "tools": "Werkzeuge",
     "tool": "Werkzeug",
