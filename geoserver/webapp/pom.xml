@@ -762,50 +762,6 @@
             </configuration>
           </plugin>
           <plugin>
-            <artifactId>maven-resources-plugin</artifactId>
-            <version>2.3</version>
-            <executions>
-              <execution>
-                <id>copy-deb-resources</id>
-                <phase>process-resources</phase>
-                <goals><goal>copy-resources</goal></goals>
-                <configuration>
-                  <overwrite>true</overwrite>
-                  <outputDirectory>${basedir}/target/deb</outputDirectory>
-                  <resources>
-                    <resource>
-                      <directory>src/deb/resources</directory>
-                    </resource>
-                  </resources>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-antrun-plugin</artifactId>
-            <version>1.6</version>
-            <executions>
-              <execution>
-                <id>fix-permissions</id>
-                <phase>package</phase>
-                <configuration>
-                  <target>
-                    <chmod perm="ugo+x">
-                      <fileset dir="${basedir}/target/deb">
-                        <include name="**/bin/**"/>
-                        <include name="**/sbin/**"/>
-                        <include name="DEBIAN/post*"/>
-                        <include name="DEBIAN/pre*"/>
-                      </fileset>
-                    </chmod>
-                  </target>
-                </configuration>
-                <goals><goal>run</goal></goals>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
             <groupId>net.sf.debian-maven</groupId>
             <artifactId>debian-maven-plugin</artifactId>
             <version>1.0.6</version>
@@ -863,14 +819,6 @@
                       <includes>
                         <include>geoserver-generic.war</include>
                       </includes>
-                    </source>
-                  </sources>
-                </mapping>
-                <mapping>
-                  <directory>/</directory>
-                  <sources>
-                    <source>
-                      <location>${basedir}/src/deb/resources</location>
                     </source>
                   </sources>
                 </mapping>
