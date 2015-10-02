@@ -13,18 +13,6 @@ The proxy base URL should be set to something like this: http(s)://your.server.f
 After saving the form, you should check in the WMS capabilities that the service URLs are as expected.
 
 
-### Fonts
-
-GeoServer uses the fonts available to the JVM for WMS styling through SLD.
-To get more fonts than what the JVM offers by default, you should install the "core fonts for the web":
-
-```
-sudo apt-get install ttf-mscorefonts-installer
-```
-
-Restart tomcat-geoserver0 and check on the ```/geoserver/web/?wicket:bookmarkablePage=:org.geoserver.web.admin.JVMFontsPage``` page that more fonts are loaded.
-
-
 ### Supported SRS
 
 By default, GeoServer supports more than 2000 spatial reference systems.  
