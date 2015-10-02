@@ -44,23 +44,23 @@ In order to compile we'll need some compiler packages :
 apt-get install build-essential
 ```
 
-#### Enable ECW support
+#### Enable ECW support (optional)
+
+Note : a carefully crafted GeoTiff pyramid is as fast as ECW.
 
 For example, in order to enable the support of ECW format, we need to install it. We will explain how to install the version 2-3.3 of the ECW SDK, but this isn't the newer version and you can choose one more recent if you need but remember there are limits for the uses of this SDK with no licence.
 
-First search `libecwj2-3.3-2006-09-06.zip` on Google in order to found the SDK. (no link because it always change)
+First search `libecwj2-3.3-2006-09-06.zip` on any search engine in order to found the SDK. (no link because it always change)
 
 After you get this zip simply, we'll need to apply some patch to correct the jp2K support and som other bugs and then compile the sources and install it : 
 ```
 unzip libecwj2-3.3-2006-09-06.zip
 rm libecwj2-3.3-2006-09-06.zip
-wget http://trac.osgeo.org/gdal/raw-attachment/ticket/3162/libecwj2-3.3-msvc90-fixes.patch
-patch -p0 < libecwj2-3.3-msvc90-fixes.patch
-wget http://osgeo-org.1560.x6.nabble.com/attachment/5001530/0/libecwj2-3.3-wcharfix.patch
-wget http://trac.osgeo.org/gdal/raw-attachment/ticket/3366/libecwj2-3.3-NCSPhysicalMemorySize-Linux.patch
+git clone https://gist.github.com/2935204d4d8a2a77b4a9.git patches
+patch -p0 < patches/libecwj2-3.3-msvc90-fixes.patch
 cd libecwj2-3.3/
-patch -p0 < ../libecwj2-3.3-NCSPhysicalMemorySize-Linux.patch
-patch -p1 < ../libecwj2-3.3-wcharfix.patch
+patch -p0 < ../patches/libecwj2-3.3-NCSPhysicalMemorySize-Linux.patch
+patch -p1 < ../patches/libecwj2-3.3-wcharfix.patch
 ./configure
 make
 make install
