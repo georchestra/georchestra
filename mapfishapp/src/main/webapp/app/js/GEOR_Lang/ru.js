@@ -337,9 +337,6 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Activate or deactivate contextual help bubbles": "Activer ou désactiver les bulles d'aide contextuelle",
     */
     /* GEOR_tools.js strings */
-    "distance measure": "Измерение расстояния.",
-    "area measure": "Измерение площади",
-    "Measure": "Измерение ou Мера",
     "Tools": "Инструменты",
     "tool": "Инструмент",
     "No tool": "Никакого инструмента",
