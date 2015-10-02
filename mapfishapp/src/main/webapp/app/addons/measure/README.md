@@ -22,10 +22,10 @@ ADDONS: [...,
         "de": "Messwerkzeuge"
     },
     "description": {
-        "en": "Simple distance and area measuring tools",
-        "es": "Herramientas simples de medición de superficies y distancias",
-        "fr": "Outils de mesure de distances et de surfaces très simple",
-        "de": "..."
+        "en": "Distance and area measuring tools",
+        "es": "Herramientas de medición de superficies y distancias",
+        "fr": "Outils de mesure de distances et de surfaces",
+        "de": "Werkzeuge zum Messen von Entfernungen und Flächen"
     }
 }], ...
 ```
