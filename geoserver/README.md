@@ -1,0 +1,47 @@
+# geOrchestra specific GeoServer build documentations
+
+## GeoServer
+
+Into `geoserver-submodule/src` subdirectory
+
+### GeoServer without GeoFence
+
+```
+$ cd geoserver-submodule/src
+# without GeoFence:
+$ mvn clean install
+```
+
+### GeoServer with GeoFence, without the internal UI
+
+```
+$ mvn clean install -Pgeofence
+```
+
+### GeoServer with GeoFence and the internal UI
+
+```
+$ mvn clean install -Pgeofence -Pgeofence-server
+
+```
+
+## Building the geOrchestra debian package for GeoServer
+
+Into this directory
+
+```
+$ mvn clean package deb:package -PdebianPackage -pl webapp
+```
+
+
+## Building the external GeoFence webapp
+
+Into `geofence/src` subdirectory
+
+```
+$ mvn clean install
+$ mvn package deb:package -Ppostgis -PdebianPackage -pl gui/web
+```
+
+
+
