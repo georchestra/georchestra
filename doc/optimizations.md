@@ -52,7 +52,7 @@ Installing the libjpeg-turbo map encoder improves the throughput of your service
 It requires:
  * native libs installed with eg. the [libjpeg-turbo-official debian package](http://sourceforge.net/projects/libjpeg-turbo/files/).
 ```
-sudo dpkg -i libjpeg-turbo-official_1.4.2_amd64.deb
+dpkg -i libjpeg-turbo-official_1.4.2_amd64.deb
 ```
 installs the following files:
 ```
