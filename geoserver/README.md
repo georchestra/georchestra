@@ -42,6 +42,16 @@ Into `geofence/src` subdirectory
 $ mvn clean install
 $ mvn package deb:package -Ppostgis -PdebianPackage -pl gui/web
 ```
+## Extra properties needed for GeoFence
+
+If using GeoFence, make sure the following environment variable is defined before launching your application server:
+
+```
+-DGEOSERVER_XSTREAM_WHITELIST=org.geoserver.geoserver.authentication.auth.GeoFenceAuthenticationProviderConfig
+```
+
+And also the `georchestra.datadir` variable.
+
 
 
 
