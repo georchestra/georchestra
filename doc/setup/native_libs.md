@@ -50,9 +50,9 @@ Note : a carefully crafted GeoTiff pyramid is as fast as ECW.
 
 For example, in order to enable the support of ECW format, we need to install it. We will explain how to install the version 2-3.3 of the ECW SDK, but this isn't the newer version and you can choose one more recent if you need but remember there are limits for the uses of this SDK with no licence.
 
-First search `libecwj2-3.3-2006-09-06.zip` on any search engine in order to found the SDK. (no link because it always change)
+First search `libecwj2-3.3-2006-09-06.zip` on any search engine in order to find the SDK. (no link because it always change)
 
-After you get this zip simply, we'll need to apply some patch to correct the jp2K support and som other bugs and then compile the sources and install it : 
+After you get this zip simply, we'll need to apply some patch to correct the jp2K support and some other bugs and then compile the sources and install it : 
 ```
 unzip libecwj2-3.3-2006-09-06.zip
 rm libecwj2-3.3-2006-09-06.zip
