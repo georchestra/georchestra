@@ -43,10 +43,10 @@
         },
         "de": {
             "locateme_nosupport": "Ihr Browser unterstützt keine Geolokalisierung",
-            "locateme_denied": "User denied the request for Geolocation",
-            "locateme_unavailable": "Location information is unavailable",
-            "locateme_timedout": "The request to get user location timed out",
-            "locateme_unknownerror": "An unknown error occurred"
+            "locateme_denied": "Benutzer erlaubt Geolokalisierung nicht",
+            "locateme_unavailable": "Position konnte nicht ermittelt werden",
+            "locateme_timedout": "Timeout während der Geolokalisierung",
+            "locateme_unknownerror": "Ein unbekannter Fehler ist aufgetreten"
         }
     }
 }
