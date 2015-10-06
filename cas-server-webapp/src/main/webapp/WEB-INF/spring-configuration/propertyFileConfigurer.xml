@@ -32,5 +32,10 @@
 		can be moved between tiers without modification.
 	</description>
     
-    <context:property-placeholder location="/WEB-INF/cas.properties"/> 
+        <context:property-placeholder location="/WEB-INF/cas.properties" order="2" ignore-unresolvable="true" />
+
+        <!-- using the one from the geOrchestra datadir first (if available) -->
+        <context:property-placeholder location="file:${georchestra.datadir}/cas/cas.properties"
+          ignore-resource-not-found="true" ignore-unresolvable="true"  order="1" />
+
 </beans>
