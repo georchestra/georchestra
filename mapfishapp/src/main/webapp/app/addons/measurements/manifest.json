@@ -1,0 +1,66 @@
+{
+    "js": [
+        "js/main.js",
+        "js/OpenLayers.Control.Measure.js",
+        "js/OpenLayers.Control.DynamicMeasure.js"
+    ],
+    "css": [
+        "css/main.css"
+    ],
+    "default_options": {
+        "graphicStyle": {
+            "Point": {
+                "pointRadius": 4,
+                "graphicName": "square",
+                "fillColor": "white",
+                "fillOpacity": 1,
+                "strokeWidth": 1,
+                "strokeOpacity": 1,
+                "strokeColor": "#333333"
+            },
+            "Line": {
+                "strokeWidth": 3,
+                "strokeOpacity": 1,
+                "strokeColor": "#666666",
+                "strokeDashstyle": "dash"
+            },
+            "Polygon": {
+                "strokeWidth": 2,
+                "strokeOpacity": 1,
+                "strokeColor": "#666666",
+                "fillColor": "white",
+                "fillOpacity": 0.3
+            }
+        }
+    },
+    "i18n": {
+        "en": {
+            "measurements.tools": "Measurement tools",
+            "measurements.distance": "Distance",
+            "measurements.area": "Area",
+            "measurements.distance.tooltip": "Distance measure",
+            "measurements.area.tooltip": "Area measure"
+        },
+        "es": {
+            "measurements.tools": "Medida",
+            "measurements.distance": "Distancia",
+            "measurements.area": "Area",
+            "measurements.distance.tooltip": "Medir una distancia",
+            "measurements.area.tooltip": "Medir un área"
+        },
+        "fr": {
+            "measurements.tools": "Mesure",
+            "measurements.distance": "Distance",
+            "measurements.area": "Surface",
+            "measurements.distance.tooltip": "Mesure de distance",
+            "measurements.area.tooltip": "Mesure de surface"
+        },
+        "de": {
+            "measurements.tools": "Maß",
+            "measurements.distance": "Distanz",
+            "measurements.area": "Oberfläche",
+            "measurements.distance.tooltip": "Distanz messen",
+            "measurements.area.tooltip": "Oberfläche messen"
+        }
+    }
+}
