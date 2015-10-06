@@ -240,7 +240,7 @@ GEOR.tools = (function() {
                                 // inserting his own component into the viewport
                                 // and calling doLayout on the parent component.
                             }
-                        }, this, true);
+                        }, this, true); // preserveOrder set to true is important to be able to extend classes
                     }
                     // inform user:
                     if (popmsg && count == 0 && !silent) {
