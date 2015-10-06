@@ -18,6 +18,7 @@ We currently have the following addons available:
  * [streetview](streetview/README.md) ... obviously based on the Google Street View Image API.
  * [osm2geor](osm2geor/README.md) display vector data from OSM (got from the Overpass API) into a vector layer.
  * [measure](measure/README.md) to perform simple distance and area measurements (that cannot be printed).
+ * [locateme](locateme/README.md) allows users to track their location on the map.
 
 
 Finding more addons
