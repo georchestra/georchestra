@@ -820,14 +820,14 @@
             <version>1.0.6</version>
             <configuration>
               <packageName>georchestra-geoserver</packageName>
-              <packageDescription>Debian package for the geOrchestra's GeoServer</packageDescription>
+              <packageDescription>geOrchestra GeoServer</packageDescription>
               <packageDependencies>
                 <packageDependency>debconf</packageDependency>
               </packageDependencies>
               <projectUrl>http://www.georchestra.org/</projectUrl>
               <projectOrganization>geOrchestra</projectOrganization>
-              <maintainerName>Pierre Mauduit</maintainerName>
-              <maintainerEmail>pierre.mauduit@gmail.com</maintainerEmail>
+              <maintainerName>PSC</maintainerName>
+              <maintainerEmail>psc@georchestra.org</maintainerEmail>
               <excludeAllArtifacts>true</excludeAllArtifacts>
             </configuration>
           </plugin>
@@ -844,7 +844,6 @@
             <version>2.1.1</version>
             <configuration>
               <classifier>generic</classifier>
-              <packagingExcludes>**/docs/**,**/openlayers/examples/**,**/openlayers/tests/**</packagingExcludes>
             </configuration>
           </plugin>
           <plugin>
