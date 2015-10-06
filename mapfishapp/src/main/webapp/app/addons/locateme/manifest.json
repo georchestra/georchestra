@@ -29,10 +29,10 @@
         },
         "es": {
             "locateme_nosupport": "Su navegador no soporta geolocalización",
-            "locateme_denied": "User denied the request for Geolocation",
-            "locateme_unavailable": "Location information is unavailable",
-            "locateme_timedout": "The request to get user location timed out",
-            "locateme_unknownerror": "An unknown error occurred"
+            "locateme_denied": "Usuario negó la solicitud de geolocalización",
+            "locateme_unavailable": "La información de ubicación no está disponible",
+            "locateme_timedout": "La solicitud para obtener la ubicación del usuario tiempo de espera agotado",
+            "locateme_unknownerror": "Un error desconocido ocurrió"
         },
         "fr": {
             "locateme_nosupport": "Votre navigateur ne supporte pas la géolocalisation",
