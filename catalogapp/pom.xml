@@ -283,7 +283,7 @@
             <version>1.0.6</version>
             <configuration>
               <packageName>georchestra-catalogapp</packageName>
-              <packageDescription>geOrchestra Catalogapp Debian package.</packageDescription>
+              <packageDescription>geOrchestra Catalogapp (CSW frontend)</packageDescription>
               <projectOrganization>geOrchestra</projectOrganization>
               <maintainerName>PSC</maintainerName>
               <maintainerEmail>psc@georchestra.org</maintainerEmail>
