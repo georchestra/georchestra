@@ -283,10 +283,10 @@
             <version>1.0.6</version>
             <configuration>
               <packageName>georchestra-catalogapp</packageName>
-              <packageDescription>Debian package for the geOrchestra's Catalogapp (CSW frontend).</packageDescription>
+              <packageDescription>geOrchestra Catalogapp Debian package.</packageDescription>
               <projectOrganization>geOrchestra</projectOrganization>
-              <maintainerName>Pierre Mauduit</maintainerName>
-              <maintainerEmail>pierre.mauduit@gmail.com</maintainerEmail>
+              <maintainerName>PSC</maintainerName>
+              <maintainerEmail>psc@georchestra.org</maintainerEmail>
               <excludeAllArtifacts>true</excludeAllArtifacts>
             </configuration>
           </plugin>

@@ -18,14 +18,14 @@ Boolean editor = false;
 
 String instanceName = null;
 String defaultLanguage = null;
-String georCustomPath  = "/app/js/GEOR_custom.js";
+String georCustomPath  = "app/js/GEOR_custom.js";
 
 try {
   ApplicationContext ctx = RequestContextUtils.getWebApplicationContext(request);
   instanceName = ctx.getBean(GeorchestraConfiguration.class).getProperty("instance");
   defaultLanguage = ctx.getBean(GeorchestraConfiguration.class).getProperty("language");
   if (ctx.getBean(GeorchestraConfiguration.class).activated()) {
-    georCustomPath = "/ws" + georCustomPath ;
+    georCustomPath = "ws" + georCustomPath ;
   }
 } catch (Exception e) {}
 
