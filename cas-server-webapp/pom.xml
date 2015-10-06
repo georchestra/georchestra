@@ -226,7 +226,7 @@
             <version>1.0.6</version>
             <configuration>
               <packageName>georchestra-cas</packageName>
-              <packageDescription>Debian package for geOrchestra CAS server</packageDescription>
+              <packageDescription>geOrchestra CAS server</packageDescription>
               <projectOrganization>geOrchestra</projectOrganization>
               <maintainerName>PSC</maintainerName>
               <maintainerEmail>psc@georchestra.org</maintainerEmail>
