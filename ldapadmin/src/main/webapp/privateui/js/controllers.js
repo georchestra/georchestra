@@ -215,6 +215,11 @@ angular.module('ldapadmin.controllers', [])
         );
       }
     };
+    
+    $scope.exportAsCsv = function() {
+      var uids = _.pluck($scope.selectedUsers(), 'uid');
+      console.log(uids);
+    }
   })
 
   /**
