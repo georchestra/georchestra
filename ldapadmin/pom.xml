@@ -391,10 +391,10 @@
       </exclusions>
     </dependency>
     <dependency>
-	   <groupId>com.googlecode.ez-vcard</groupId>
-	   <artifactId>ez-vcard</artifactId>
-	   <version>0.9.7</version>
-	</dependency>
+      <groupId>com.googlecode.ez-vcard</groupId>
+      <artifactId>ez-vcard</artifactId>
+      <version>0.9.7</version>
+    </dependency>
     <!-- geOrchestra commons -->
     <dependency>
       <groupId>org.georchestra</groupId>

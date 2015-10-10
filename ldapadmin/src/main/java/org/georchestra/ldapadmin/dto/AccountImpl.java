@@ -7,6 +7,13 @@ import java.io.Serializable;
 
 import org.springframework.security.authentication.encoding.LdapShaPasswordEncoder;
 
+import ezvcard.VCard;
+import ezvcard.parameter.EmailType;
+import ezvcard.parameter.TelephoneType;
+import ezvcard.property.Address;
+import ezvcard.property.FormattedName;
+import ezvcard.property.Organization;
+
 /**
  * Account this is a Data transfer Object.
  *
@@ -84,6 +91,29 @@ class AccountImpl implements Serializable, Account, Comparable<Account>{
 				+ organizationalUnit + ", homePostalAddres=" + homePostalAddres
 				+ "]";
 	}
+
+	@Override
+	public String toVcf() {
+	    VCard v = new VCard();
+	    FormattedName f = new FormattedName(givenName + " " + surname);
+	    v.addFormattedName(f);
+	    Organization org = new Organization();
+	    org.addValue(this.org);
+	    org.addValue(this.organizationalUnit);
+	    v.addEmail(email, EmailType.WORK);
+	    v.addTelephoneNumber(phone, TelephoneType.WORK);
+	    v.addTitle(title);
+	    Address a = new Address();
+	    a.setPostalCode(postalCode);
+	    a.setStreetAddress(postalAddress);
+	    a.setPoBox(postOfficeBox);
+	    a.setLocality(locality);
+	    v.addAddress(a);
+	    v.addTelephoneNumber(mobile, TelephoneType.CELL);
+
+	    return v.write();
+	}
+
 	@Override
 	public void setUid(String uid) {
 		this.uid = uid;
