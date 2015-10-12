@@ -236,11 +236,16 @@ if(sec_roles != null) {
                 if (/\/cas\//.test(url)) {
                     a.href = "/cas/login";
                 } else {
+                    // removing any existing anchor from URL first:
+                    // see https://github.com/georchestra/georchestra/issues/1032
+                    var p = url.split('#', 2),
                     /* Taken from https://github.com/openlayers/openlayers/blob/master/lib/OpenLayers/Util.js#L557 */
-                    var paramStr="login", parts = (url + " ").split(/[?&]/);
-                    a.href = url + (parts.pop() === " " ?
+                    paramStr = "login", parts = (p[0] + " ").split(/[?&]/);
+                    a.href = p[0] + (parts.pop() === " " ?
                         paramStr :
-                        parts.length ? "&" + paramStr : "?" + paramStr);
+                        parts.length ? "&" + paramStr : "?" + paramStr) +
+                        // adding potential anchor
+                        (p.length == 2 ? "#" + p[1] : "");
                 }
             }
 
