@@ -119,4 +119,6 @@ public interface Account {
 	String getHomePostalAddress();
 
     String toVcf();
+
+    String toCsv();
 }

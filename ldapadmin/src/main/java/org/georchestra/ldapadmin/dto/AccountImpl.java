@@ -21,7 +21,7 @@ import ezvcard.property.Organization;
  * @author Mauricio Pazos
  *
  */
-class AccountImpl implements Serializable, Account, Comparable<Account>{
+public class AccountImpl implements Serializable, Account, Comparable<Account>{
 
 	private static final long serialVersionUID = -8022496448991887664L;
 
@@ -112,6 +112,11 @@ class AccountImpl implements Serializable, Account, Comparable<Account>{
 	    v.addTelephoneNumber(mobile, TelephoneType.CELL);
 
 	    return v.write();
+	}
+
+	@Override
+	public String toCsv() {
+		return null;
 	}
 
 	@Override
@@ -421,5 +426,4 @@ class AccountImpl implements Serializable, Account, Comparable<Account>{
     public int compareTo(Account o) {
 		return this.uid.compareTo(o.getUid());
     }
-
 }

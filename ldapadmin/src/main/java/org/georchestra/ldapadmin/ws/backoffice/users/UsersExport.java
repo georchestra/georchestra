@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class UsersExport {
 
     private AccountDao accountDao;
-    private UserRule userRule;
 
     private static final Log LOG = LogFactory.getLog(UsersController.class.getName());
 
