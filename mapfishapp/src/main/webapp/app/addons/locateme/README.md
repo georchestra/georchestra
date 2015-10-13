@@ -1,7 +1,10 @@
 # LocateMe
 
 This addon, when enabled and active, allows users to track their location on the map.
+
 author: @fvanderbiest
+
+Important note: browsers are more and more [considering HTTP as insecure](https://sites.google.com/a/chromium.org/dev/Home/chromium-security/deprecating-powerful-features-on-insecure-origins) and will refuse to execute the location request if your SDI is not accessed through HTTPS.
 
 ## Setup
 
