@@ -6,14 +6,43 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ page pageEncoding="UTF-8"%>
 <%@ page isELIgnored="false" %>
+<%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
+<%@ page import="org.springframework.context.ApplicationContext" %>
+<%@ page import="org.springframework.web.servlet.support.RequestContextUtils" %>
+<%@ page import="org.georchestra.commons.configuration.GeorchestraConfiguration" %>
+
 <%
-    String lang = request.getParameter("lang");
-    if (lang == null || (!lang.equals("en") && !lang.equals("es") && !lang.equals("fr") && !lang.equals("de"))) {
-        lang = "${language}";
-    }
-    Locale l = new Locale(lang);
-    ResourceBundle resource = Utf8ResourceBundle.getBundle("analytics.i18n.index",l);
-    javax.servlet.jsp.jstl.core.Config.set(
+String defaultLanguage = null, defaultInstanceName = null, instanceName = null;
+
+String defaultConfigJs = "resources/js/app/config.js";
+try {
+  ApplicationContext ctx = RequestContextUtils.getWebApplicationContext(request);
+  if (ctx.getBean(GeorchestraConfiguration.class).activated()) {
+    defaultLanguage = ctx.getBean(GeorchestraConfiguration.class).getProperty("language");
+    defaultInstanceName = ctx.getBean(GeorchestraConfiguration.class).getProperty("instance");
+    defaultConfigJs = "ws/app/js/GEOR_custom.js";
+  }
+} catch (Exception e) {}
+
+
+String lang = request.getParameter("lang");
+if (lang == null || (!lang.equals("en") && !lang.equals("es") && !lang.equals("fr") && !lang.equals("de"))) {
+  if (defaultLanguage == null) {
+    lang = "${language}";
+  } else {
+    lang = defaultLanguage;
+  }
+}
+
+if (defaultInstanceName == null) {
+  instanceName = "${instance}";
+} else {
+  instanceName = defaultInstanceName;
+}
+
+Locale l = new Locale(lang);
+ResourceBundle resource = Utf8ResourceBundle.getBundle("analytics.i18n.index",l);
+javax.servlet.jsp.jstl.core.Config.set(
             request,
             javax.servlet.jsp.jstl.core.Config.FMT_LOCALIZATION_CONTEXT,
             new javax.servlet.jsp.jstl.fmt.LocalizationContext(resource));
@@ -25,7 +54,7 @@
 
     <head>
         <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
-        <title lang="<%= lang%>" dir="ltr"><fmt:message key="title.analytics"/> - ${instance}</title>
+        <title lang="<%= lang%>" dir="ltr"><fmt:message key="title.analytics"/> - <%= instanceName %></title>
         <link rel="stylesheet" type="text/css" href="resources/js/lib/external/ext/resources/css/ext-all-gray.css" />
         <link rel="stylesheet" type="text/css" href="resources/css/app.css" />
         <style type="text/css">
@@ -69,7 +98,7 @@
             });
         </script>
         <script type="text/javascript" src="resources/js/app/Application.js"></script>
-        <script type="text/javascript" src="resources/js/app/config.js"></script>
+        <script type="text/javascript" src="<%= defaultConfigJs %>"></script>
 
         <noscript><p><fmt:message key="need.javascript"/></p></noscript>
     </body>
