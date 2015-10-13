@@ -1,37 +1,58 @@
 package org.geowebcache;
 
-import org.acegisecurity.context.SecurityContextHolder;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
+
+import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.geowebcache.config.Configuration;
 import org.geowebcache.demo.Demo;
 import org.geowebcache.grid.GridSetBroker;
 import org.geowebcache.layer.TileLayerDispatcher;
 import org.geowebcache.stats.RuntimeStats;
 import org.geowebcache.storage.StorageBroker;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.ModelAndView;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.net.URL;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
 
 /**
  * @author Jesse on 4/25/2014.
  */
 public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher {
 
-    private static Log log = LogFactory.getLog(GeorchestraGeoWebCacheDispatcher.class);
-    private final String rawHeader;
     private final TileLayerDispatcher tileLayerDispatcher;
     private final GridSetBroker gridSetBroker;
 
+    @Autowired
+    private GeorchestraConfiguration georchestraConfiguration;
+    
+    private String georHeaderInclude = "<html>"
++"  <head>"
++"    <title>GeoWebCache - @instance.name@</title>"
++"    <style type=\"text/css\">"
++"      body, td {"
++"        font-family: Verdana,Arial,'Bitstream Vera Sans',Helvetica,sans-serif;"
++"        font-size: 0.85em;"
++"        vertical-align: top;"
++"      }"
++"      a#logo {"
++"        display:none;"
++"      }"
++"    </style>"
++"  </head>"
++"  <body>"
++"    <!-- geOrchestra header -->"
++"    <script type=\"text/javascript\" src=\"/header/js/header.js\"></script>"
++"    <div id=\"go_head\">"
++"      <!-- see http://stackoverflow.com/questions/1037839/how-to-force-link-from-iframe-to-be-opened-in-the-parent-window -->"
++"      <iframe src=\"/header/?active=geowebcache\" style=\"width:100%;height:@header.height@px;border:none;overflow:hidden;\" scrolling=\"no\" frameborder=\"0\" onload=\"_headerOnLoad(this)\"></iframe>"
++"    </div>"
++"    <!-- end of geOrchestra header -->";
     /**
      * Should be invoked through Spring.
      *
@@ -50,9 +71,30 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher {
         super(tileLayerDispatcher, gridSetBroker, storageBroker, mainConfiguration, runtimeStats);
         this.tileLayerDispatcher = tileLayerDispatcher;
         this.gridSetBroker = gridSetBroker;
-        this.rawHeader = IOUtils.toString(GeorchestraGeoWebCacheDispatcher.class.getResourceAsStream("/georchestraHeader.html"));
     }
 
+    protected void init() throws IOException {
+        if ((georchestraConfiguration != null) && (georchestraConfiguration.activated())) {
+            String instanceName = georchestraConfiguration.getProperty("instance.name");
+            String headerHeight = georchestraConfiguration.getProperty("header.height");
+            georHeaderInclude = georHeaderInclude.replace("@instance.name@", instanceName);
+            georHeaderInclude = georHeaderInclude.replace("@header.height@", headerHeight);
+        } else {
+            // Default values (nested into the gwc.properties)
+            InputStream defaultGwcProp = this.getClass().getResourceAsStream("/gwc.properties");
+            
+            try {
+                Properties prop = new Properties();
+                prop.load(defaultGwcProp);
+                georHeaderInclude = georHeaderInclude.replace("@instance.name@", prop.getProperty("instance.name", "geOrchestra"));
+                georHeaderInclude = georHeaderInclude.replace("@header.height@", prop.getProperty("header.height", "90"));
+            } finally {
+                if (defaultGwcProp != null)
+                    defaultGwcProp.close();
+            }
+        }
+    }
+    
     @Override
     protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -125,7 +167,7 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher {
         final String bodyTag = "<body>";
         final String htmlBody = html.substring(html.indexOf(bodyTag) + bodyTag.length());
 
-        StringBuilder builder = new StringBuilder(this.rawHeader);
+        StringBuilder builder = new StringBuilder(georHeaderInclude);
         builder.append(htmlBody);
         final byte[] bytes = builder.toString().getBytes("UTF-8");
         response.setContentLength(bytes.length);
