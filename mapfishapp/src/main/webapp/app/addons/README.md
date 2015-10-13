@@ -34,16 +34,37 @@ There are other places where one can find contributed addons:
 Deploying addons
 =================
 
-Deploying addons is just a matter of inserting a few lines of code in your configuration files.
-An example is provided in the template configuration, here: [georchestra/template/mapfishapp/app/js/GEOR_custom.js](https://github.com/georchestra/template/blob/master/mapfishapp/app/js/GEOR_custom.js#L47).
 
-Each addon comes with a ```manifest.json``` file which:
+
+
+## Without georchestra.datadir
+
+Deploying addons is just a matter of inserting a few lines of code in your configuration files.
+
+Each addon comes with two files: ```manifest.json``` and ```config.json```.
+
+```manifest.json``` addresses the following needs:
  * describes the files to load,
  * lists the addon options (see for instance the ```default_options``` [key](extractor/manifest.json#L8) in the extractor addon) and their most common values,
  * ships the translated strings.
 
 The ```default_options``` from the manifest are overriden by the addon-config-specific ```options``` set in your own GEOR_custom.js file.
 Again, an example is worth a hundred words, please refer to the typical [extractor addon config](extractor/README.md).
+
+```config.json``` contains the following informations:
+
+ * the unique identifier for the addon (an id)
+ * the addon name,
+ * a boolean indicating whether the addon is activated or not (i.e. available as the addon selection tool in the interface),
+ * some extra infos (title, description) translated in several languages
+
+Typically, the config.json block was previously contained in the GEOR_custom.js file, and is now dynamically sourced from a controller server-side.
+
+## Using georchestra.datadir
+
+If you are using the georchestra.datadir environment variable, the previous
+behaviour applies, but if other addons are available into the
+georchestra.datadir, they can override the default ones provided in the webapp.
 
 
 Addon placement

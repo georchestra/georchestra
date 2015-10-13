@@ -1,0 +1,17 @@
+[{
+  "id": "annotation_0", // unique & stable string identifier for this addon instance
+  "name": "Annotation",
+  "enabled": true,
+  "title": {
+    "en": "Drawing tools",
+    "es": "Herramientas de dibujo",
+    "fr": "Outils de dessin",
+    "de": "Malutensilien"
+  },
+  "description": {
+    "en": "A bunch of tools to annotate the map by drawing different kind of shapes.",
+    "es": "Una serie de herramientas para anotar el mapa dibujando diferentes formas.",
+    "fr": "Une série d'outils pour annoter la carte en dessinant différentes formes.",
+    "de": "Utensilienauswahl zur Kartenmarkierung mittels unterschiedlicher Formen"
+  }
+}]

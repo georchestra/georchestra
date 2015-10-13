@@ -1,0 +1,17 @@
+[{
+        "id": "magnifier_0",
+        "name": "Magnifier",
+        "enabled": true,
+        "title": {
+            "en": "Aerial imagery magnifier",
+            "es": "Lupa ortofoto",
+            "fr": "Loupe orthophoto",
+            "de": "Ortofoto Lupe"
+        },
+        "description": {
+            "en": "A tool which allows to zoom in an aerial image on a map portion",
+            "es": "Una herramienta que permite hacer un zoom sobre una parte del mapa ortofoto",
+            "fr": "Un outil qui permet de zoomer dans une orthophoto sur une portion de la carte",
+            "de": "Utensil erlaubt Zoom mittels orthofoto auf Kartenbereich"
+        }
+}]
