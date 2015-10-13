@@ -206,7 +206,6 @@
             <version>2.6</version>
             <configuration>
               <classifier>generic</classifier>
-              <packagingExcludes>**/ext/src/**,**/ext/examples/**,**/ext/pkgs/**,**/docs/**,**/openlayers/examples/**,**/openlayers/tests/**,PostTreatment.groovy</packagingExcludes>
             </configuration>
           </plugin>
           <plugin>
@@ -259,7 +258,7 @@
             <version>1.0.6</version>
             <configuration>
               <packageName>georchestra-geowebcache</packageName>
-              <packageDescription>GeoWebCache standalone for geOrchestra</packageDescription>
+              <packageDescription>Standalone GeoWebCache for geOrchestra.</packageDescription>
               <projectOrganization>geOrchestra</projectOrganization>
               <maintainerName>geOrchestra PSC</maintainerName>
               <maintainerEmail>psc@georchestra.org</maintainerEmail>
@@ -279,7 +278,6 @@
             <version>2.6</version>
             <configuration>
               <classifier>generic</classifier>
-              <packagingExcludes>**/ext/src/**,**/ext/examples/**,**/ext/pkgs/**,**/docs/**,**/openlayers/examples/**,**/openlayers/tests/**,PostTreatment.groovy</packagingExcludes>
             </configuration>
           </plugin>
           <plugin>
