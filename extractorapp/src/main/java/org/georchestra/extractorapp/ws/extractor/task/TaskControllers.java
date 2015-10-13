@@ -24,17 +24,13 @@ public class TaskControllers implements ServletContextAware {
 	private ServletContext servletContext;
 	private ExtractionManager extractionManager;
     private static final Log LOG = LogFactory.getLog(ExtractionTask.class.getPackage().getName());
-	
-	public void init() {
-		
-	}
-	
+
     @RequestMapping(value = "/jobs/list", method = RequestMethod.GET)
     public void list(HttpServletRequest request, HttpServletResponse response) throws IOException {
     	LOG.debug("Into /jobs/list");
     	JSONObject ret = new JSONObject();
     	OutputStream outpStr = null;
-    	
+
     	try {
     		outpStr = response.getOutputStream();
             LOG.debug("printing output of ExtractionManager state");
@@ -51,26 +47,26 @@ public class TaskControllers implements ServletContextAware {
                 jsarr.put(task);
             }
             ret.put("tasks", jsarr);
-            
+
             ret.put("status", "success");
 
     	} catch (Exception e) {
     		LOG.error("Exception caught while running '/jobs/list' controller: ", e);
-  		
+
     	} finally {
-   
-			outpStr.write(ret.toString().getBytes());    		
+
+			outpStr.write(ret.toString().getBytes());
     		if (outpStr != null) outpStr.close();
-    		
+
     	}
     	return;
     }
-    
+
     @RequestMapping(value = "/job/change_priority", method = RequestMethod.POST)
     public void results(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    
+
     }
-    
+
 	@Override
 	public void setServletContext(ServletContext _servletContext) {
 		servletContext = _servletContext;

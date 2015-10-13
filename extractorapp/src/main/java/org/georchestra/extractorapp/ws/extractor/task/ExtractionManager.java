@@ -18,6 +18,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.georchestra.commons.configuration.GeorchestraConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 public class ExtractionManager {
@@ -43,7 +45,15 @@ public class ExtractionManager {
     /** maintains the paused tasks. They can be selected by the user in random way */
     private Map<String, ExtractionTask> pausedTasks = Collections.synchronizedMap(new HashMap<String, ExtractionTask>());
     
+    @Autowired
+    private GeorchestraConfiguration georConfig ;
+
     public synchronized void init() {
+        if ((georConfig != null) && (georConfig.activated())) {
+            maxExtractions = Integer.parseInt(georConfig.getProperty("maxExtractions"));
+            minThreads = Integer.parseInt(georConfig.getProperty("minThreads"));
+        }
+
         BlockingQueue<Runnable> workQueue = new PriorityBlockingQueue<Runnable>();
         ThreadFactory threadFactory = new ThreadFactory() {
             @Override

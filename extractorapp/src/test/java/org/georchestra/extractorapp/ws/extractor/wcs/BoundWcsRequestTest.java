@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Set;
 
 import org.apache.http.Header;
@@ -101,7 +102,10 @@ public class BoundWcsRequestTest {
 		// supported formats
 		Set<String> fmts = bwr.getSupportedFormats();
 		String[] expectedFmts =  {"jpg", "geotiff", "tif", "jpeg", "png", "gif", "tiff"};
-		assertArrayEquals(expectedFmts, fmts.toArray());
+		Arrays.sort(expectedFmts);
+		Object[] fmtArray = fmts.toArray();
+		Arrays.sort(fmtArray);
+		assertArrayEquals(expectedFmts, fmtArray);
 
 		// supported response CRS
 		Set<String> supportedResponseCrs = bwr.getSupportedResponseCRSs();
