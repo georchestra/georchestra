@@ -1,14 +1,11 @@
 /**
  * Sample geOrchestra extractor config file
  *
- * Instructions: copy this buffer into GEOR_custom.js,	
- * uncomment lines you wish to modify and 
+ * Instructions: uncomment lines you wish to modify and
  * modify the corresponding values to suit your needs.
  */
-	
 Ext.namespace("GEOR");
 
-	
 GEOR.custom = {
 
     /**
@@ -30,7 +27,7 @@ GEOR.custom = {
      * String: the URL to the downloaded data Terms Of Use
      * Defaults to /header/cgu.pdf (see shared.download_form.pdf_url var in shared.maven.filters file)
      */
-    PDF_URL: "//header/cgu.pdf",
+    PDF_URL: "/header/cgu.pdf",
 
     /***** Beginning of config options which can be set in this file *****/
 
@@ -81,7 +78,7 @@ GEOR.custom = {
      * Constant: GEOSERVER_WMS_URL
      * The URL to GeoServer WMS.
      */
-    GEOSERVER_WMS_URL: "//geoserver/wms",
+    GEOSERVER_WMS_URL: "/geoserver/wms",
 
     /**
      * Constant: GEOSERVER_WFS_URL

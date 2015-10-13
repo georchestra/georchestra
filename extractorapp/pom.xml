@@ -474,10 +474,10 @@
             <version>1.0.6</version>
             <configuration>
               <packageName>georchestra-extractorapp</packageName>
-              <packageDescription>Debian package for the geOrchestra's Extractor</packageDescription>
+              <packageDescription>geOrchestra Extractor.</packageDescription>
               <projectOrganization>geOrchestra</projectOrganization>
-              <maintainerName>Pierre Mauduit</maintainerName>
-              <maintainerEmail>pierre.mauduit@gmail.com</maintainerEmail>
+              <maintainerName>PSC</maintainerName>
+              <maintainerEmail>psc@georchestra.org</maintainerEmail>
               <excludeAllArtifacts>true</excludeAllArtifacts>
             </configuration>
           </plugin>
