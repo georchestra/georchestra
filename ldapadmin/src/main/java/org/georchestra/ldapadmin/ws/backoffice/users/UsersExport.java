@@ -1,7 +1,5 @@
 package org.georchestra.ldapadmin.ws.backoffice.users;
 
-import java.io.StringWriter;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.ldapadmin.ds.AccountDao;
@@ -14,15 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.supercsv.cellprocessor.FmtBool;
-import org.supercsv.cellprocessor.FmtDate;
-import org.supercsv.cellprocessor.Optional;
-import org.supercsv.cellprocessor.constraint.LMinMax;
-import org.supercsv.cellprocessor.constraint.NotNull;
-import org.supercsv.cellprocessor.ift.CellProcessor;
-import org.supercsv.io.CsvBeanWriter;
-import org.supercsv.io.ICsvBeanWriter;
-import org.supercsv.prefs.CsvPreference;
 
 @Controller
 public class UsersExport {
