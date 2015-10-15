@@ -62,6 +62,7 @@ javax.servlet.jsp.jstl.core.Config.set(
 );
 
 Boolean extractor = false;
+Boolean ldapadmin = false;
 String sec_roles = request.getHeader("sec-roles");
 if(sec_roles != null) {
     String[] roles = sec_roles.split(";");
@@ -76,6 +77,9 @@ if(sec_roles != null) {
         }
         if (roles[i].equals("ROLE_MOD_EXTRACTORAPP")) {
             extractor = true;
+        }
+        if (roles[i].equals("ROLE_MOD_LDAPADMIN")) {
+            ldapadmin = true;
         }
     }
 }
@@ -234,6 +238,19 @@ if(sec_roles != null) {
             <c:otherwise>
             <li><a href="/geoserver/web/"><fmt:message key="services"/></a></li>
             </c:otherwise>
+        </c:choose>
+
+        <c:choose>
+            <c:when test='<%= ldapadmin == true %>'>
+            <c:choose>
+                <c:when test='<%= active.equals("ldapadmin") %>'>
+            <li class="active"><a><fmt:message key="ldapadmin"/></a></li>
+                </c:when>
+                <c:otherwise>
+            <li><a href="<%=ldapadm %>/privateui/"><fmt:message key="ldapadmin"/></a></li>
+                </c:otherwise>
+            </c:choose>
+            </c:when>
         </c:choose>
 
         </ul>
