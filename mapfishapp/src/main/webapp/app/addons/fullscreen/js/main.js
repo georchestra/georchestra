@@ -44,7 +44,7 @@ GEOR.Addons.Fullscreen = Ext.extend(GEOR.Addons.Base, {
                 this.map.div.childNodes[0]
             );
         } else {
-            var p = GeoExt.MapPanel.guess().ownerCt;
+            var p = this.mapPanel.ownerCt;
             p.items.get(0).setSize(0, 0); 
             p.items.get(p.items.getCount() - 2).collapse();
             p.doLayout();

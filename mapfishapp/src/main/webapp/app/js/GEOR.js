@@ -124,11 +124,12 @@ Ext.namespace("GEOR");
         /*
          * Initialize the application.
          */
-        var layerStore = GEOR.map.create();
-        var map = layerStore.map;
+        var layerStore = GEOR.map.create(),
+            map = layerStore.map,
+            mapPanel = GEOR.mappanel.create(layerStore);
 
         GEOR.wmc.init(layerStore);
-        GEOR.tools.init(layerStore);
+        GEOR.tools.init(mapPanel);
         if (GEOR.edit) {
             GEOR.edit.init(map);
         }
@@ -283,9 +284,7 @@ Ext.namespace("GEOR");
 
         vpItems.push(
             // the map panel
-            Ext.apply({
-                region: "center"
-            }, GEOR.mappanel.create(layerStore)), {
+            mapPanel, {
             // the east side
             region: "east",
             layout: "border",
