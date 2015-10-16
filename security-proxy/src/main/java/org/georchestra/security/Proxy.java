@@ -296,7 +296,6 @@ public class Proxy {
                 return;
             }
             handleRequest(request, response, type, sURL, false);
-            handleRequest(request, response, type, sURL, false);
         } else {
             handlePathEncodedRequests(request, response, type);
         }
