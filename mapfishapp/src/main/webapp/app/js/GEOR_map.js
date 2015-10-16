@@ -281,15 +281,25 @@ GEOR.map = (function() {
                     GEOR.waiter.show();
                     GEOR.ows.WMSDescribeLayer(r, {
                         success: function(store, records) {
-                            var wfsRecord = GEOR.ows.getWfsInfo(records);
-                            if (wfsRecord) {
-                                r.set("WFS_typeName", wfsRecord.get("typeName"));
-                                r.set("WFS_URL", wfsRecord.get("owsURL"));
-                            }
-                            var wcsRecord = GEOR.ows.getWcsInfo(records);
-                            if (wcsRecord) {
-                                r.set("WCS_typeName", wcsRecord.get("typeName"));
-                                r.set("WCS_URL", wcsRecord.get("owsURL"));
+                            if (records.length > 1) {
+                                // this is a layergroup: no styling, no extractions, no queries
+                                r.set("WFS_typeName", "");
+                                r.set("WFS_URL", "");
+                                r.set("WCS_typeName", "");
+                                r.set("WCS_URL", "");
+                                // specific record field for layergroups:
+                                r.set("layergroup", true);
+                            } else {
+                                var wfsRecord = GEOR.ows.getWfsInfo(records);
+                                if (wfsRecord) {
+                                    r.set("WFS_typeName", wfsRecord.get("typeName"));
+                                    r.set("WFS_URL", wfsRecord.get("owsURL"));
+                                }
+                                var wcsRecord = GEOR.ows.getWcsInfo(records);
+                                if (wcsRecord) {
+                                    r.set("WCS_typeName", wcsRecord.get("typeName"));
+                                    r.set("WCS_URL", wcsRecord.get("owsURL"));
+                                }
                             }
                             r.set("_described", true);
                             // fire event to let the whole app know about it.

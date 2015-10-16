@@ -196,6 +196,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         "serveur. Raisons possibles : droits insuffisants, " +
         "serveur injoignable, trop de données, etc.",
     /* GEOR_managelayers.js strings */
+    "layergroup": "couche composite",
     "Service": "Service",
     "Protocol": "Protocole",
     "About this layer": "A propos de cette couche",
