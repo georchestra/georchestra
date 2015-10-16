@@ -66,6 +66,7 @@ GEOR.ows = (function() {
         {name: "WFS_URL", type: "string"},
         {name: "geometryType", type: "string", defaultValue: "unknown"}, // Line, Point, Polygon
         {name: "multiGeometry", type: "boolean"},
+        {name: "layergroup", type: "boolean", defaultValue: false},
         // end geOrchestra use
         {name: "name", type: "string"},
         {name: "title", type: "string"},
@@ -169,6 +170,9 @@ GEOR.ows = (function() {
         store.load();
     };
 
+    /**
+     * Method: getWxsInfo
+     */
     var getWxsInfo = function(records, owsType) {
         var i, len = records.length, r;
         for (i=0; i<len; i++) {
