@@ -635,7 +635,10 @@ public class Proxy {
                 for (Header originalHeader : originalHeaders) {
                     org = originalHeader.getValue();
                 }
-                statsLogger.info(OGCServiceMessageFormatter.format(authentication.getName(), sURL, org));
+                // no OGC SERVICE log if request going through /proxy/?url=
+                if (!request.getRequestURI().startsWith("/sec/proxy/")) {
+                    statsLogger.info(OGCServiceMessageFormatter.format(authentication.getName(), sURL, org));
+                }
             } catch (Exception e) {
                 logger.error("Unable to log the request into the statistics logger", e);
             }
