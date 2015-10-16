@@ -845,7 +845,8 @@ GEOR.managelayers = (function() {
                 iconCls: 'geor-btn-layerinfo',
                 text: tr("About this layer"),
                 handler: function() {
-                    var p = GEOR.util.getProtocol(layer),
+                    var isLayergroup = layerRecord.get('layergroup'),
+                    p = GEOR.util.getProtocol(layer),
                     o = OpenLayers.Util.createUrlObject(p.service),
                     port = o.port == "80" ? "" : ":" + o.port,
                     caps = OpenLayers.Util.urlAppend([
@@ -880,15 +881,16 @@ GEOR.managelayers = (function() {
                             items: [{
                                 xtype: 'displayfield',
                                 fieldLabel: tr("Service"),
-                                value: '<a href="'+caps+'">'+caps+'</a>'
+                                value: '<b><a href="'+caps+'">'+caps+'</a></b>'
                             },{
                                 xtype: 'displayfield',
                                 fieldLabel: tr("FeatureType"),
-                                value: p.layer
+                                value: '<b>' + p.layer + '</b>' + 
+                                    (isLayergroup ? " (" + tr("layergroup") + ")" : "")
                             },{
                                 xtype: 'displayfield',
                                 fieldLabel: tr("Protocol"),
-                                value: p.protocol + " " + p.version
+                                value: '<b>' + p.protocol + " " + p.version + '</b>'
                             }]
                         },
                         buttons: [{
