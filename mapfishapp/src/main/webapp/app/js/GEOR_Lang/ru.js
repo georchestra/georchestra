@@ -155,6 +155,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     //"This server does not support HTTP POST": "Ce serveur ne supporte pas HTTP POST",
     "Unreachable server or insufficient rights": "Ответ сервера недействителен. Возможные причины : недостаточные права, сервер недостижим, слишком много данных, и т.д...",
     /* GEOR_managelayers.js strings */
+    //"layergroup": "couche composite",
     //"Service": "Service",
     //"Protocol": "Protocole",
     //"About this layer": "A propos de cette couche",

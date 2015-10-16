@@ -199,6 +199,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "invalida. Razones posibles: datos demasiado pesados, derechos insuficientes, " +
         "servidor inalcanzable, etc.",
     /* GEOR_managelayers.js strings */
+    "layergroup": "Capa Grupo",
     "Service": "Service",
     "Protocol": "Servicio",
     "About this layer": "Sobre esta capa",

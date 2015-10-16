@@ -194,6 +194,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
         " oder nicht ausreichende Zugriffsrechte, " +
         "Datenmenge zu groß...",
     /* GEOR_managelayers.js strings */
+    "layergroup": "Layergruppe",
     "Service": "Service",
     "Protocol": "Protokoll",
     "About this layer": "Über dieser Schicht",
