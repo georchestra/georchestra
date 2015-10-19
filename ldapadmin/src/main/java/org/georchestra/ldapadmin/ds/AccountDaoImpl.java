@@ -11,6 +11,7 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.ldapadmin.dto.Account;
@@ -446,7 +447,16 @@ public final class AccountDaoImpl implements AccountDao {
 
         if (!isNullValue(value)) {
             context.setAttributeValue(fieldName, value);
-        }
+        } else {
+            Object[] values = context.getObjectAttributes(fieldName);
+            if(values != null){
+            if (values.length == 1) {
+                LOG.info("Removing attribue " + fieldName);
+                context.removeAttributeValue(fieldName, values[0]);
+            } else {
+                LOG.error("Multiple values encountered for field " + fieldName +", expected a single value");
+            }
+        }}
     }
 
     private static class AccountContextMapper implements ContextMapper {
@@ -533,7 +543,7 @@ public final class AccountDaoImpl implements AccountDao {
         if (value == null)
             return true;
 
-        if (value instanceof String && (((String) value).length() == 0)) {
+        if (value instanceof String && (StringUtils.isEmpty(value.toString()))) {
             return true;
         }
 
