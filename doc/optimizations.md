@@ -75,12 +75,12 @@ Note that it only works on recent versions of Oracle and OpenJDK (>= 7).
 
 Installing it is not difficult:
  * [grab the latest release](https://github.com/bourgesl/marlin-renderer/releases)
- * put the ```marlin-0.4.4.jar``` file into ```/usr/share/tomcat8/lib/``` (don't forget to chmod a+r marlin*.jar)
+ * put the ```marlin-0.X.Y.jar``` file into ```/usr/share/tomcat8/lib/``` (don't forget to chmod a+r marlin*.jar)
  * in ```/etc/defaults/tomcat-geoserver0```, add the following:
 
 ```
 JAVA_OPTS="$JAVA_OPTS \
-            -Xbootclasspath/a:"/usr/share/tomcat8/lib/marlin-0.4.4.jar" \
+            -Xbootclasspath/a:"/usr/share/tomcat8/lib/marlin-0.X.Y.jar" \
             -Dsun.java2d.renderer=org.marlin.pisces.PiscesRenderingEngine"
 ```
 
