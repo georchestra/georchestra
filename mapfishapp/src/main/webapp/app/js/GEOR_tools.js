@@ -46,6 +46,12 @@ GEOR.tools = (function() {
     var map;
 
     /**
+     * Property: map
+     * {GeoExt.MapPanel} The map panel object
+     */
+    var mapPanel;
+
+    /**
      * Property: menu
      * {Ext.menu.Menu}
      */
@@ -198,7 +204,7 @@ GEOR.tools = (function() {
                                 return;
                             }
                             // init addon
-                            var addon = new GEOR.Addons[addonName](map, Ext.apply({}, 
+                            var addon = new GEOR.Addons[addonName](mapPanel, Ext.apply({}, 
                                 r.get("options") || {}, 
                                 o.default_options || {}
                             ));
@@ -433,12 +439,13 @@ GEOR.tools = (function() {
          * Initialize this module
          *
          * Parameters:
-         * layerStore - {GeoExt.data.LayerStore} The application's layer store.
+         * mp - {GeoExt.MapPanel} The application's map panel.
          *
          */
-        init: function(layerStore) {
+        init: function(mp) {
             tr = OpenLayers.i18n;
-            map = layerStore.map;
+            mapPanel = mp;
+            map = mp.map;
             // filter out restricted addons:
             var allowedAddons = [];
             Ext.each(GEOR.config.ADDONS, function(addon) {
@@ -476,12 +483,12 @@ GEOR.tools = (function() {
          * Returns:
          * {Ext.Button} the toolbar button holding the menu
          */
-        create: function(layerStore) {
+        create: function() {
             menu = new Ext.menu.Menu({
                 defaultAlign: "tr-br",
                 items: [
                     {
-                        text: tr("Manage tools"),
+                        text: OpenLayers.i18n("Manage tools"),
                         hideOnClick: false,
                         iconCls: "add",
                         handler: showToolSelection
@@ -489,7 +496,7 @@ GEOR.tools = (function() {
                 ]
             });
             return new Ext.Button({
-                text: tr("Tools"),
+                text: OpenLayers.i18n("Tools"),
                 menu: menu
             });
         },
