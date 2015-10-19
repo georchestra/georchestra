@@ -336,8 +336,7 @@ JAVA_OPTS="$JAVA_OPTS \
             -XX:+UseParNewGC \
             -XX:ParallelGCThreads=2 \
             -XX:SoftRefLRUPolicyMSPerMB=36000 \
-            -XX:+UseConcMarkSweepGC \
-            -XX:ParallelGCThreads=4"
+            -XX:+UseConcMarkSweepGC"
 ```
 This allocates 2Gb of your server RAM to GeoServer.
 
