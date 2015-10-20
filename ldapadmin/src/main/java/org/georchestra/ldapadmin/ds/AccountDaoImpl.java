@@ -449,14 +449,15 @@ public final class AccountDaoImpl implements AccountDao {
             context.setAttributeValue(fieldName, value);
         } else {
             Object[] values = context.getObjectAttributes(fieldName);
-            if(values != null){
-            if (values.length == 1) {
-                LOG.info("Removing attribue " + fieldName);
-                context.removeAttributeValue(fieldName, values[0]);
-            } else {
-                LOG.error("Multiple values encountered for field " + fieldName +", expected a single value");
+            if (values != null) {
+                if (values.length == 1) {
+                    LOG.info("Removing attribue " + fieldName);
+                    context.removeAttributeValue(fieldName, values[0]);
+                } else {
+                    LOG.error("Multiple values encountered for field " + fieldName + ", expected a single value");
+                }
             }
-        }}
+        }
     }
 
     private static class AccountContextMapper implements ContextMapper {
