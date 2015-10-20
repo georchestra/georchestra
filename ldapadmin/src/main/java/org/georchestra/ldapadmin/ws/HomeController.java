@@ -92,28 +92,4 @@ public class HomeController {
         return "forbidden";
     }
 
-    @RequestMapping(value = "/privateui/css/main.css")
-    public void mainCss(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        byte[] mainCss ;
-        if ((georConfig != null) && (georConfig.activated())) {
-            mainCss =  FileUtils.readFileToByteArray(new File(georConfig.getContextDataDir(), "css/main.css"));
-        } else {
-            URL t = context.getResource("/privateui/css/main.css");
-            mainCss = FileUtils.readFileToByteArray(new File(t.toURI()));
-        }
-        response.getOutputStream().write(mainCss);
-    }
-
-    @RequestMapping(value = "/privateui/js/config.js")
-    public void configJs(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        byte[] configJs;
-        if ((georConfig != null) && (georConfig.activated())) {
-            configJs =  FileUtils.readFileToByteArray(new File(georConfig.getContextDataDir(), "js/config.js"));
-        } else {
-            URL t = context.getResource("/privateui/js/config.js");
-            configJs = FileUtils.readFileToByteArray(new File(t.toURI()));
-        }
-        response.getOutputStream().write(configJs);
-    }
-
 }

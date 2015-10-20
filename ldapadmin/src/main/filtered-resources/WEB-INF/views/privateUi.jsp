@@ -1,17 +1,29 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ page pageEncoding="UTF-8" %>
 <%@ page isELIgnored="false" %>
+<%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
 <%@ page import="org.springframework.context.ApplicationContext" %>
 <%@ page import="org.springframework.web.servlet.support.RequestContextUtils" %>
+<%@ page import="org.georchestra.commons.configuration.GeorchestraConfiguration" %>
+
 <%
-// the context path (might not be the public context path ! -> to be improved with https://github.com/georchestra/georchestra/issues/227)
-String context = request.getContextPath().split("-")[0]; // eg /ldapadmin
+String instanceName = "${instanceName}";
+try {
+  ApplicationContext ctx = RequestContextUtils.getWebApplicationContext(request);
+  if ((ctx.getBean(GeorchestraConfiguration.class) != null)
+        && (((GeorchestraConfiguration) ctx.getBean(GeorchestraConfiguration.class)).activated())) {
+        instanceName = ctx.getBean(GeorchestraConfiguration.class).getProperty("instanceName");
+  }
+} catch (Exception e) {}
+
 %>
+
+
 <!DOCTYPE html>
 <html lang="en" ng-app="ldapadmin">
   <head>
     <meta charset="UTF-8">
-    <title>LDAPadmin - geOrchestra</title> <!-- TODO: dynamic instance name -->
+    <title>LDAPadmin - <%= instanceName %></title>
     <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.min.css" />
 
     <link rel="stylesheet" href="css/main.css" />
@@ -96,7 +108,7 @@ String context = request.getContextPath().split("-")[0]; // eg /ldapadmin
     <script src="lib/angular-flash.min.js"></script>
     <script type="text/javascript">
     var GEOR_config = {
-        publicContextPath: "<%= context %>"
+        publicContextPath: "<%= contextPath %>"
     };
     </script>
     <script src="js/app.js"></script>
