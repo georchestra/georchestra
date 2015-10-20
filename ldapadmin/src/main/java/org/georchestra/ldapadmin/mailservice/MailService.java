@@ -7,6 +7,7 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -21,6 +22,8 @@ public final class MailService {
 
 	private EmailFactoryImpl emailFactory;
 
+	@Autowired
+	private GeorchestraConfiguration georchestraConfiguration;
 	
 	@Autowired
 	public MailService(EmailFactoryImpl emailFactory) {

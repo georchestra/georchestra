@@ -1,196 +1,181 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:context="http://www.springframework.org/schema/context"
-    xmlns:mvc="http://www.springframework.org/schema/mvc"
-    xmlns:p="http://www.springframework.org/schema/p"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="
-        http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/context
-        http://www.springframework.org/schema/context/spring-context.xsd
-        http://www.springframework.org/schema/mvc
-        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+        xmlns:context="http://www.springframework.org/schema/context"
+        xmlns:mvc="http://www.springframework.org/schema/mvc"
+        xmlns:p="http://www.springframework.org/schema/p"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context-3.0.xsd
+            http://www.springframework.org/schema/mvc
+            http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-	<mvc:annotation-driven />
+  <mvc:annotation-driven/>
 
-    <bean id="properties-loader"
-        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
-        p:locations="/WEB-INF/spring/ldapadmin.properties" />
+  <context:annotation-config/>
 
-	<!-- The controllers are autodetected POJOs labeled with the @Controller 
-		annotation. -->
-	<context:component-scan base-package="org.georchestra.ldapadmin.ws" />
+  <!--  First provided ldapadmin.properties from webapp with prio  2 -->
+  <context:property-placeholder location="/WEB-INF/spring/ldapadmin.properties" ignore-resource-not-found="true" ignore-unresolvable="true" order="2"/>
 
-	<!-- Resolves views selected for rendering by @Controllers to .jsp resources 
-		in the /WEB-INF/views directory -->
+  <!--  Then the one from datadir with prio  1 -->
+  <context:property-placeholder location="file:${georchestra.datadir}/ldapadmin/ldapadmin.properties" ignore-resource-not-found="true" ignore-unresolvable="true" order="1"/>
+
+  <context:component-scan base-package="org.georchestra.ldapadmin"/>
+
+  <!-- Resolves views selected for rendering by @Controllers to .jsp resources
+	   in the /WEB-INF/views directory
+  -->
+  <bean class="org.georchestra.ldapadmin.Configuration">
+    <property name="publicContextPath" value="${publicContextPath}"/>
+  </bean>
+
+  <mvc:interceptors>
+    <bean class="org.georchestra.ldapadmin.ConfigurationInterceptor"/>
+  </mvc:interceptors>
+
+  <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" p:prefix="/WEB-INF/views/" p:suffix=".jsp" />
+
+  <bean id="recaptcha" class="net.tanesha.recaptcha.ReCaptchaImpl">
+    <property name="privateKey" value="${privateKey}"/>
+  </bean>
+
+  <bean id="reCaptchaParameters" class="org.georchestra.ldapadmin.bs.ReCaptchaParameters">
+    <property name="publicKey" value="${publicKey}"/>
+  </bean>
+
+  <!-- LDAP connection -->
+  <bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
+    <property name="url" value="${ldapUrl}"/>
+    <property name="base" value="${baseDN}"/>
+    <property name="userDn" value="${ldapAdminDn}"/>
+    <property name="password" value="${ldap.admin.password}"/>
+  </bean>
+
+  <bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate">
+    <constructor-arg ref="contextSource"/>
+  </bean>
+
+  <bean id="groupDao" class="org.georchestra.ldapadmin.ds.GroupDaoImpl">
+    <property name="ldapTemplate" ref="ldapTemplate"/>
+    <property name="uniqueNumberField" value="${groupUniqueNumberField}"/>
+    <property name="userSearchBaseDN" value="${userSearchBaseDN}"/>
+    <property name="groupSearchBaseDN" value="${groupSearchBaseDN}"/>
+  </bean>
+
+  <bean id="accountDao" class="org.georchestra.ldapadmin.ds.AccountDaoImpl">
+    <constructor-arg ref="ldapTemplate"/>
+    <constructor-arg ref="groupDao"/>
+    <property name="uniqueNumberField" value="${accountUniqueNumberField}"/>
+    <property name="userSearchBaseDN" value="${userSearchBaseDN}"/>
+  </bean>
+
+  <!-- userTokenDao  -->
+  <bean class="org.georchestra.ldapadmin.ws.backoffice.users.UserRule">
+    <property name="listOfprotectedUsers">
+      <description>Add one or more user identifiers (uid) of protected user</description>
+      <list>
+        <value>geoserver_privileged_user</value>
+        <!--  to define an other uid you should add a value like is shown in the following example-->
+        <!--  <value>${protectedUser.uid2}</value> -->
+      </list>
+    </property>
+  </bean>
+
+  <bean id="userTokenDao" class="org.georchestra.ldapadmin.ds.UserTokenDao"/>
+
+  <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+    <property name="url" value="${psql.url}"/>
+    <property name="username" value="${psql.user}"/>
+    <property name="password" value="${psql.pass}"/>
+    <property name="driverClassName" value="org.postgresql.Driver"/>
+    <property name="testOnBorrow" value="true"/>
+    <property name="poolPreparedStatements" value="true"/>
+    <property name="maxOpenPreparedStatements" value="-1"/>
+    <property name="defaultReadOnly" value="false"/>
+    <property name="defaultAutoCommit" value="true"/>
+  </bean>
+
+  <bean id="expiredTokenCleanTask" class="org.georchestra.ldapadmin.bs.ExpiredTokenCleanTask"/>
+
+  <!-- Resolves localized messages*.properties and application.properties
+		files in the application to allow for internationalization.
 		
-    <bean class='org.georchestra.ldapadmin.Configuration'>
-        <property name='publicContextPath' value='${publicContextPath}' />
-    </bean>
+		The messages*.properties files translate Roo generated messages which are part
+		of the admin interface, the application.properties resource bundle localizes
+		all application specific messages such as entity names and menu items.
+  -->
+  <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource"
+    p:basenames="WEB-INF/i18n/messages,WEB-INF/i18n/application"
+    p:defaultEncoding="UTF-8"
+    p:fallbackToSystemLocale="false" />
 
-	<mvc:interceptors>
-		<bean class="org.georchestra.ldapadmin.ConfigurationInterceptor" />
-	</mvc:interceptors>
-    		
-	<bean
-		class="org.springframework.web.servlet.view.InternalResourceViewResolver"
-		p:prefix="/WEB-INF/views/" p:suffix=".jsp">
-	</bean>
-	<bean id='recaptcha' class='net.tanesha.recaptcha.ReCaptchaImpl'>
-		<property name='privateKey' value='${privateKey}' />
-	</bean>
-	<bean id="reCaptchaParameters" class="org.georchestra.ldapadmin.bs.ReCaptchaParameters">
-		<property name='publicKey' value='${publicKey}' />
-	</bean>
+  <bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor"/>
 
-	<!-- LDAP connection -->
-	<bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
-		<property name="url"      value="${ldapUrl}" />
-		<property name="base"     value="${baseDN}" />
-		<property name="userDn"   value="${ldapAdminDn}" />
-		<property name="password" value="${ldap.admin.password}" />
-	</bean>
-	
+  <!-- Store preferred language configuration in a cookie -->
+  <bean class="org.springframework.web.servlet.i18n.CookieLocaleResolver" id="localeResolver" p:cookieName="locale"/>
 
-	<bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate">
-		<constructor-arg ref="contextSource" />
-	</bean>
-	<bean id="groupDao" class="org.georchestra.ldapadmin.ds.GroupDaoImpl">
-		<property name="ldapTemplate" ref="ldapTemplate" />
-        <property name="uniqueNumberField" value="${groupUniqueNumberField}"/>
-		<property name="userSearchBaseDN" value="${userSearchBaseDN}"/>
-		<property name="groupSearchBaseDN" value="${groupSearchBaseDN}"/>
-	</bean>
+  <!-- Resolves localized <theme_name>.properties files in the classpath to allow for theme support -->
+  <bean class="org.springframework.ui.context.support.ResourceBundleThemeSource" id="themeSource"/>
 
-	<bean id="accountDao" class="org.georchestra.ldapadmin.ds.AccountDaoImpl">
-        <constructor-arg ref="ldapTemplate" />
-        <constructor-arg ref="groupDao" />
-        <property name="uniqueNumberField" value="${accountUniqueNumberField}"/>
-		<property name="userSearchBaseDN" value="${userSearchBaseDN}"/>
-	</bean>
+  <!-- Store preferred theme configuration in a cookie -->
+  <bean class="org.springframework.web.servlet.theme.CookieThemeResolver" id="themeResolver" p:cookieName="theme" p:defaultThemeName="standard"/>
 
-    <!-- userTokenDao  -->
-    <bean class="org.georchestra.ldapadmin.ws.backoffice.users.UserRule">
-    
-        <property name="listOfprotectedUsers">
-            <description>Add one or more user identifiers (uid) of protected user</description>
-            <list>
-                <value>geoserver_privileged_user</value>
-                <!--  to define an other uid you should add a value like is shown in the following example-->
-                <!--  <value>${protectedUser.uid2}</value> -->
-            </list> 
-        </property>
-    
-    </bean>
-    
-    <bean id="userTokenDao" class="org.georchestra.ldapadmin.ds.UserTokenDao" />
+  <!-- This bean resolves specific types of exceptions to corresponding logical
+        - view names for error views. The default behaviour of DispatcherServlet
+        - is to propagate all exceptions to the servlet container: this will happen
+        - here with all other types of exceptions.
+  -->
+  <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver" p:defaultErrorView="uncaughtException">
+    <property name="exceptionMappings">
+      <props>
+        <prop key=".DataAccessException">dataAccessFailure</prop>
+        <prop key=".NoSuchRequestHandlingMethodException">resourceNotFound</prop>
+        <prop key=".TypeMismatchException">resourceNotFound</prop>
+        <prop key=".MissingServletRequestParameterException">resourceNotFound</prop>
+      </props>
+    </property>
+  </bean>
 
-	  <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
-	    <property name="url" value="${psql.url}" />
-	    <property name="username" value="${psql.user}" />
-	    <property name="password" value="${psql.pass}" />
-	    <property name="driverClassName" value="org.postgresql.Driver" />
-	    <property name="testOnBorrow" value="true"/>
-	    <property name="poolPreparedStatements" value="true"/>
-	    <property name="maxOpenPreparedStatements" value="-1"/>
-	    <property name="defaultReadOnly" value="false"/>
-	    <property name="defaultAutoCommit" value="true"/>
-	  </bean>	
+  <!-- Email Factory configuration -->
+  <bean id="emailFactory" class="org.georchestra.ldapadmin.mailservice.EmailFactoryImpl" init-method="freeze">
+    <property name="smtpHost" value="${smtpHost}"/>
+    <property name="smtpPort" value="${smtpPort}"/>
+    <property name="emailHtml" value="${emailHtml}"/>
+    <property name="replyTo" value="${replyTo}"/>
+    <property name="from" value="${from}"/>
+    <property name="bodyEncoding" value="UTF-8"/>
+    <property name="subjectEncoding" value="UTF-8"/>
+    <property name="languages" value="${language}"/>
+    <property name="accountWasCreatedEmailFile" value="/WEB-INF/templates/newaccount-was-created-template.txt"/>
+    <property name="accountWasCreatedEmailSubject" value="${subject.account.created}"/>
+    <property name="accountCreationInProcessEmailFile" value="/WEB-INF/templates/account-creation-in-progress-template.txt"/>
+    <property name="accountCreationInProcessEmailSubject" value="${subject.account.in.process}"/>
+    <property name="newAccountRequiresModerationEmailFile" value="/WEB-INF/templates/newaccount-requires-moderation-template.txt"/>
+    <property name="newAccountRequiresModerationEmailSubject" value="${subject.requires.moderation}"/>
+    <property name="changePasswordEmailFile" value="/WEB-INF/templates/changepassword-email-template.txt"/>
+    <property name="changePasswordEmailSubject" value="${subject.change.password}"/>
+  </bean>
 
-    <bean id="expiredTokenCleanTask" class="org.georchestra.ldapadmin.bs.ExpiredTokenCleanTask"/>
-    
+  <bean id="mailService" class="org.georchestra.ldapadmin.mailservice.MailService">
+    <constructor-arg ref="emailFactory"/>
+  </bean>
 
-	<!-- Resolves localized messages*.properties and application.properties 
-		files in the application to allow for internationalization. The messages*.properties 
-		files translate Roo generated messages which are part of the admin interface, 
-		the application.properties resource bundle localizes all application specific 
-		messages such as entity names and menu items. -->
-	<bean
-	    id="messageSource"
-	    class="org.springframework.context.support.ReloadableResourceBundleMessageSource"
-		p:basenames="WEB-INF/i18n/messages,WEB-INF/i18n/application"
-		p:defaultEncoding="UTF-8"
-		p:fallbackToSystemLocale="false">
-	</bean>
-    <bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor" />
-	<!-- Store preferred language configuration in a cookie -->
-	<bean class="org.springframework.web.servlet.i18n.CookieLocaleResolver"
-		id="localeResolver" p:cookieName="locale" />
+  <bean id="moderator" class="org.georchestra.ldapadmin.bs.Moderator">
+    <property name="moderatedSignup" value="${moderatedSignup}"/>
+    <property name="moderatorEmail" value="${moderatorEmail}"/>
+  </bean>
 
-	<!-- Resolves localized <theme_name>.properties files in the classpath to 
-		allow for theme support -->
-	<bean
-		class="org.springframework.ui.context.support.ResourceBundleThemeSource"
-		id="themeSource" />
+  <bean id="expiredTokenManagement" class="org.georchestra.ldapadmin.bs.ExpiredTokenManagement">
+    <property name="delayInDays" value="${delayInDays}"/>
+  </bean>
 
-	<!-- Store preferred theme configuration in a cookie -->
-	<bean class="org.springframework.web.servlet.theme.CookieThemeResolver"
-		id="themeResolver" p:cookieName="theme" p:defaultThemeName="standard" />
+  <bean id="validation" class="org.georchestra.ldapadmin.ws.utils.Validation">
+    <property name="requiredFields" value="${requiredFields}"/>
+  </bean>
 
-	<!-- This bean resolves specific types of exceptions to corresponding logical 
-		- view names for error views. The default behaviour of DispatcherServlet 
-		- is to propagate all exceptions to the servlet container: this will happen 
-		- here with all other types of exceptions. -->
-	<bean
-		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver"
-		p:defaultErrorView="uncaughtException">
-		<property name="exceptionMappings">
-			<props>
-				<prop key=".DataAccessException">dataAccessFailure</prop>
-				<prop key=".NoSuchRequestHandlingMethodException">resourceNotFound</prop>
-				<prop key=".TypeMismatchException">resourceNotFound</prop>
-				<prop key=".MissingServletRequestParameterException">resourceNotFound</prop>
-			</props>
-		</property>
-	</bean>
+  <bean id="georchestraConfiguration" class="org.georchestra.commons.configuration.GeorchestraConfiguration">
+    <constructor-arg value="ldapadmin"/>
+  </bean>
 
-	<!-- Email Factory configuration -->
-    <bean id="emailFactory" class="org.georchestra.ldapadmin.mailservice.EmailFactoryImpl" init-method="freeze">
-        <property name="smtpHost" value="${smtpHost}" />
-        <property name="smtpPort" value="${smtpPort}" />
-        <property name="emailHtml" value="${emailHtml}" />
-        <property name="replyTo" value="${replyTo}" />
-        <property name="from" value="${from}" />
-        <property name="bodyEncoding" value="UTF-8" />
-        <property name="subjectEncoding" value="UTF-8" />
-        <property name="languages" value="${language}" />
-        
-        <property name="accountWasCreatedEmailFile"
-            value="/WEB-INF/templates/newaccount-was-created-template.txt" />
-        <property name="accountWasCreatedEmailSubject"
-            value="${subject.account.created}" />
-
-        <property name="accountCreationInProcessEmailFile"
-            value="/WEB-INF/templates/account-creation-in-progress-template.txt" />
-        <property name="accountCreationInProcessEmailSubject"
-            value="${subject.account.in.process}" />
-            
-        <property name="newAccountRequiresModerationEmailFile"
-            value="/WEB-INF/templates/newaccount-requires-moderation-template.txt" />
-        <property name="newAccountRequiresModerationEmailSubject"
-            value="${subject.requires.moderation}" />
-
-        <property name="changePasswordEmailFile"
-            value="/WEB-INF/templates/changepassword-email-template.txt" />
-        <property name="changePasswordEmailSubject"
-            value="${subject.change.password}" />
-    </bean>
-
-	<bean id="mailService" class="org.georchestra.ldapadmin.mailservice.MailService">
-		<constructor-arg ref="emailFactory" />
-	</bean>
-
-    <bean id="moderator" class="org.georchestra.ldapadmin.bs.Moderator">
-        <property name="moderatedSignup" value="${moderatedSignup}" />
-        <property name="moderatorEmail" value="${moderatorEmail}" />
-    </bean>
-    
-    <bean id="expiredTokenManagement" class="org.georchestra.ldapadmin.bs.ExpiredTokenManagement">
-        <property name="delayInDays" value="${delayInDays}" />
-    </bean>
-    
-    <bean id="validation" class="org.georchestra.ldapadmin.ws.utils.Validation">
-        <property name="requiredFields" value="${requiredFields}" />
-    </bean>
 </beans>

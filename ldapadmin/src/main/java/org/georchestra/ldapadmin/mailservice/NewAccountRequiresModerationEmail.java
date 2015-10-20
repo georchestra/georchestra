@@ -9,6 +9,7 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.georchestra.commons.configuration.GeorchestraConfiguration;
 
 /**
  * This mail is sent to the moderator when a new account is created.
@@ -32,10 +33,12 @@ class NewAccountRequiresModerationEmail extends Email {
 			String bodyEncoding, 
 			String subjectEncoding, 
 			String[] languages, 
-			String fileBodyTemplate, ServletContext servletContext) {
+			String fileBodyTemplate,
+			ServletContext servletContext,
+			GeorchestraConfiguration georConfig) {
 	
 		super(recipients, emailSubject, smtpHost, smtpPort, emailHtml, replyTo, from,
-				bodyEncoding, subjectEncoding, languages, fileBodyTemplate);
+				bodyEncoding, subjectEncoding, languages, fileBodyTemplate, georConfig);
 		
 		this.servletContext = servletContext;
 

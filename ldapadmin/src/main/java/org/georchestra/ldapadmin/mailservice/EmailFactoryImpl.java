@@ -57,7 +57,7 @@ public class EmailFactoryImpl extends AbstractEmailFactory {
 	}
 
 	public ChangePasswordEmail createChangePasswordEmail(ServletContext servletContext, String[] recipients) throws IOException {
-		super.emailSubject =this.changePasswordEmailSubject;
+	    super.emailSubject = this.changePasswordEmailSubject;
 		ChangePasswordEmail mail =  new ChangePasswordEmail(
 				recipients,
 				super.emailSubject,
@@ -70,7 +70,8 @@ public class EmailFactoryImpl extends AbstractEmailFactory {
 				this.subjectEncoding,
 				this.languages,
 				this.changePasswordEmailFile,
-				servletContext);
+				servletContext,
+				this.georConfig);
 
 		return mail;
 	}
@@ -85,7 +86,8 @@ public class EmailFactoryImpl extends AbstractEmailFactory {
 	 * @throws IOException
 	 */
 	public NewAccountRequiresModerationEmail createNewAccountRequiresModerationEmail(ServletContext servletContext, String from, String[] recipients) throws IOException {
-
+	    // TODO: What is the purpose of this affectation ? Unused aftewards, and isn't it dangerous in a
+	    // context of a bean (only one instance shared at runtime ?) ?
 		super.emailSubject =this.newAccountRequiresModerationEmailSubject;
 
 		NewAccountRequiresModerationEmail mail =  new NewAccountRequiresModerationEmail(
@@ -100,7 +102,8 @@ public class EmailFactoryImpl extends AbstractEmailFactory {
 				this.subjectEncoding,
 				this.languages,
 				this.newAccountRequiresModerationEmailFile,
-				servletContext );
+				servletContext,
+				this.georConfig);
 
 		return mail;
 	}
@@ -129,14 +132,15 @@ public class EmailFactoryImpl extends AbstractEmailFactory {
 				this.subjectEncoding,
 				this.languages,
 				this.accountCreationInProcessEmailFile,
-				servletContext );
+				servletContext,
+				this.georConfig);
 
 		return mail;
 	}
 
 	public AccountWasCreatedEmail createAccountWasCreatedEmail(ServletContext servletContext, String[] recipients) {
 
-		super.emailSubject =this.accountWasCreatedEmailSubject;
+		super.emailSubject = this.accountWasCreatedEmailSubject;
 
 		AccountWasCreatedEmail mail =  new AccountWasCreatedEmail(
 				recipients,
@@ -150,7 +154,8 @@ public class EmailFactoryImpl extends AbstractEmailFactory {
 				this.subjectEncoding,
 				this.languages,
 				this.accountWasCreatedEmailFile,
-				servletContext );
+				servletContext,
+				this.georConfig);
 
 		return mail;
 

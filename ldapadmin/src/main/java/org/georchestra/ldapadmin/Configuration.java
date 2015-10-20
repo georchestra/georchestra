@@ -3,8 +3,11 @@
  */
 package org.georchestra.ldapadmin;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.georchestra.commons.configuration.GeorchestraConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Configurations
@@ -22,26 +25,25 @@ public final class Configuration {
 
 	private String publicContextPath;
 
+	@Autowired
+	private GeorchestraConfiguration georConfig;
+
 	public String getPublicContextPath() {
 
-		checkConfiguration();
+	    if ((georConfig != null) && (georConfig.activated())) {
+	        LOG.debug("GeorchestraConfiguration activated, using publicContextPath from the geOrchestra datadir.");
+	        return georConfig.getProperty("publicContextPath");
+	    }
 
+	    // Falls back on the original behaviour
+		checkConfiguration();
 		return this.publicContextPath;
 	}
 
 	private void checkConfiguration() {
 
-		String message = "password recovery context was not configured.";
-
-		if(this.publicContextPath == null){
-
-			LOG.warn(message);
-
-			return;
-		}
-		if(this.publicContextPath.length() == 0){
-
-			LOG.warn(message);
+		if (StringUtils.isEmpty(this.publicContextPath)) {
+			LOG.warn("password recovery context was not configured.");
 			return;
 		}
 
