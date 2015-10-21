@@ -48,7 +48,7 @@ This will ask the password for the ```cn=admin,dc=georchestra,dc=org``` dn, whic
 ## groupOfMembers objectClass
 
 Groups in geOrchestra are instances of groupOfMembers objects, which allows empty groups (contrary to groupOfNames, which were used in previous geOrchestra releases).
-This objectClass comes from rfc2307bis and is not available by default in OpenLDAP. As a result, we need to import its structure into the ```cn=config``` database, using the file **georchestra-groupofmembers.ldif**:
+This objectClass comes from rfc2307bis and is not available by default in OpenLDAP. As a result, we need to import its structure into the ```cn=config``` database, using the **georchestra-groupofmembers.ldif** file:
 
 ```
 wget --no-check-certificate https://raw.githubusercontent.com/georchestra/LDAP/YY.MM/georchestra-groupofmembers.ldif -O /tmp/groupofmembers.ldif
