@@ -18,9 +18,7 @@ You should install the required packages:
 sudo apt-get install python-virtualenv openjdk-7-jdk ant ant-optional
 ```
 
-Notes: 
- * openjdk-6-jdk works too 
- * GeoServer is [known](http://research.geodan.nl/2012/10/openjdk7-vs-oracle-jdk7-with-geoserver/) to perform better with Oracle JDK.
+Note that ```openjdk-6-jdk``` works too (but it's not as fast, at least for GeoServer).
 
 
 ## Install your configuration
