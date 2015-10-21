@@ -31,7 +31,7 @@ sudo ldapadd -Y EXTERNAL -H ldapi:/// -f /tmp/bootstrap.ldif
 ```
 ... where YY.MM stands for the georchestra version you're using (eg: 15.06). 
 
-If successful, the above command should display: ```adding new entry "olcDatabase=hdb,cn=config"```.
+If successful, the above command should display: ```adding new entry "olcDatabase=mdb,cn=config"```.
 
 
 ## Root DN
