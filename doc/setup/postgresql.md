@@ -2,10 +2,9 @@
 
 The "georchestra" database hosts several schemas, which are specific to the deployed modules:
 ```
-createdb -E UTF8 -T template0 georchestra
 createuser -SDRI www-data
+createdb -E UTF8 -T template0 -O www-data georchestra
 psql -d georchestra -c "ALTER USER \"www-data\" WITH PASSWORD 'www-data';"
-psql -d georchestra -c 'GRANT ALL PRIVILEGES ON DATABASE georchestra TO "www-data";'
 ```
 
 Note 1: It is of course possible to store webapp-specific schemas in separate databases, taking advantage of geOrchestra's extreme configurability.
@@ -18,8 +17,7 @@ If **geonetwork** is to be deployed, you need to create a dedicated user and sch
 ```
 createuser -SDRI geonetwork
 psql -d georchestra -c "ALTER USER geonetwork WITH PASSWORD 'www-data';"
-psql -d georchestra -c 'CREATE SCHEMA geonetwork;'
-psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA geonetwork TO "geonetwork";'
+psql -d georchestra -c 'CREATE SCHEMA AUTHORIZATION geonetwork;'
 ```
 
 ## Viewer schema
@@ -48,7 +46,6 @@ psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA ldapadmi
 
 If **geofence** is deployed: (make sure to set the correct values for the ```baseURL```, ```username``` and ```password``` fields in the ```geofence.gf_gsinstance``` table)
 ```
-createlang plpgsql georchestra
 psql -d georchestra -c 'CREATE EXTENSION postgis;'
 psql -d georchestra -c 'GRANT SELECT ON public.spatial_ref_sys to "www-data";'
 psql -d georchestra -c 'GRANT SELECT,INSERT,DELETE ON public.geometry_columns to "www-data";'

@@ -2,6 +2,8 @@
 -- PostgreSQL database
 --
 
+BEGIN;
+
 CREATE SCHEMA ogcstatistics;
 
 SET search_path TO ogcstatistics,public,pg_catalog;
@@ -22,3 +24,5 @@ CREATE INDEX user_name_index ON ogc_services_log USING btree (user_name);
 CREATE INDEX date_index ON ogc_services_log USING btree (date);
 CREATE INDEX service_index ON ogc_services_log USING btree (service);
 CREATE INDEX layer_index ON ogc_services_log USING btree (layer);
+
+COMMIT;
