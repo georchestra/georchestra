@@ -2,7 +2,7 @@
 
 There are 2 main ways of having OpenLDAP configured :
  * One using a single conf file (on debian/ubuntu systems, located in /etc/ldap/sldapd.conf)
- * A new one which tends to store the configuration into a specific LDAP branch (name cn=config), and composed of several files located generally into /etc/ldap/slapd.d).hd
+ * A new one which tends to store the configuration into a specific LDAP branch (name cn=config), and composed of several files located generally into /etc/ldap/slapd.d).
 
 We document here the second case (slapd.d-style configuration).
 
