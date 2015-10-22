@@ -380,8 +380,6 @@ public final class AccountDaoImpl implements AccountDao {
 
         setAccountField(context, UserSchema.TELEPHONE_KEY, account.getPhone());
 
-        setAccountField(context, UserSchema.USER_PASSWORD_KEY, account.getPassword());
-
         setAccountField(context, UserSchema.MOBILE_KEY, account.getMobile());
 
         // organizationalPerson attributes
@@ -418,6 +416,8 @@ public final class AccountDaoImpl implements AccountDao {
         setAccountField(context, UserSchema.STATE_OR_PROVINCE_KEY, account.getStateOrProvince());
 
         setAccountField(context, UserSchema.ORG_UNIT_KEY, account.getOrganizationalUnit());
+        
+        setAccountField(context, UserSchema.HOME_POSTAL_ADDRESS_KEY, account.getHomePostalAddress());
     }
 
     private void setAccountField(DirContextOperations context, String fieldName, Object value) {
