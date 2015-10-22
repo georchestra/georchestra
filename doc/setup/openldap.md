@@ -2,11 +2,11 @@
 
 There are 2 main ways of having OpenLDAP configured :
  * One using a single conf file (on debian/ubuntu systems, located in /etc/ldap/sldapd.conf)
- * A new one which tends to store the configuration into a specific LDAP branch (name cn=config), and composed of several files located generally into /etc/ldap/slapd.d).
+ * A new one which tends to store the configuration into a specific LDAP branch (name cn=config), and composed of several files located generally into /etc/ldap/slapd.d).hd
 
 We document here the second case (slapd.d-style configuration).
 
-Note : It's also possible to delegate the authentication of certain users to a remote Active Directory or LDAP, see the [SASL Doc page](https://github.com/jusabatier/georchestra/blob/patch-3/doc/setup/sasl.md).
+Note : It's also possible to delegate the authentication of certain users to a remote Active Directory or LDAP, see the [SASL Doc page](sasl.md).
 
 ## Prerequisites
 
@@ -31,7 +31,7 @@ sudo ldapadd -Y EXTERNAL -H ldapi:/// -f /tmp/bootstrap.ldif
 ```
 ... where YY.MM stands for the georchestra version you're using (eg: 15.06). 
 
-If successful, the above command should display: ```adding new entry "olcDatabase=hdb,cn=config"```.
+If successful, the above command should display: ```adding new entry "olcDatabase=mdb,cn=config"```.
 
 
 ## Root DN
@@ -80,7 +80,7 @@ wget --no-check-certificate https://raw.githubusercontent.com/georchestra/LDAP/Y
 sudo ldapadd -Y EXTERNAL -H ldapi:/// -f /tmp/memberof.ldif 
 ```
 
-Caution: by default, we're adding the overlay to the ```{1}hdb,cn=config``` database. You may have to customize this if your setup is different (having a look at the ```/etc/ldap/slapd.d/cn=config/``` directory).
+Caution: by default, we're adding the overlay to the ```{1}mdb,cn=config``` database. You may have to customize this if your setup is different (having a look at the ```/etc/ldap/slapd.d/cn=config/``` directory).
 
 
 # Managing the directory

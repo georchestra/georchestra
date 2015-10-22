@@ -50,8 +50,6 @@ If **geofence** is deployed: (make sure to set the correct values for the ```bas
 ```
 createlang plpgsql georchestra
 psql -d georchestra -c 'CREATE EXTENSION postgis;'
-psql -f /usr/share/postgresql/9.4/contrib/postgis-2.1/postgis.sql georchestra
-psql -f /usr/share/postgresql/9.4/contrib/postgis-2.1/spatial_ref_sys.sql georchestra
 psql -d georchestra -c 'GRANT SELECT ON public.spatial_ref_sys to "www-data";'
 psql -d georchestra -c 'GRANT SELECT,INSERT,DELETE ON public.geometry_columns to "www-data";'
 wget --no-check-certificate https://raw.githubusercontent.com/georchestra/geofence/georchestra-15.06/doc/setup/sql/002_create_schema_postgres.sql -O /tmp/geofence.sql
