@@ -14,7 +14,7 @@ import org.springframework.security.authentication.encoding.LdapShaPasswordEncod
  * @author Mauricio Pazos
  *
  */
-class AccountImpl implements Serializable, Account, Comparable<Account>{
+public class AccountImpl implements Serializable, Account, Comparable<Account>{
 
 	private static final long serialVersionUID = -8022496448991887664L;
 
