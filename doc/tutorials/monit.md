@@ -1,13 +1,12 @@
-# Setup monit for monitoring Georchestra
+# Monit
 
-Monit is a powerful tool which allow you to watch the activity of your georchestra instance, with it you can :
+Monit is a powerful tool to monitor your geOrchestra instance.
 
-- See the CPU, RAM, Swap, Network, ... utilisation
-- Be alerted when it exceed a defined value
-- Check the accessibility of yours differents services
-- Be alerted when some are offline
-- Restart them automatically or do every treatments you think appropriate
-- A lot more...
+It is able to:
+ * watch the CPU, RAM, swap, network use
+ * check services availability, eventually restarting them when required
+ * alert when metrics exceed a predefined value, or when a service is down
+ * and lots more...
 
 ## Monit installation
 
