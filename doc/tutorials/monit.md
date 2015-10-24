@@ -100,7 +100,7 @@ check process tomcat-geoserver0 with pidfile /var/run/tomcat-geoserver0.pid
 ```
 
 Feel free to customize these examples according to your setup (particularly the RAM limits).
-There are lots of other [configuration examples](https://mmonit.com/wiki/Monit/ConfigurationExamples) in the M/Monit wiki.
+There are lots of other [configuration examples](https://mmonit.com/wiki/Monit/ConfigurationExamples) in the Monit wiki.
 
 With Monit comes [M/Monit](https://mmonit.com/), a proprietary solution to centralize all Monit UIs in a unique web-portal.
 This can be handy if your SDI is spread over a large number of servers.
