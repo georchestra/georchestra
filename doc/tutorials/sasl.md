@@ -1,4 +1,4 @@
-# Setup remote AD or LDAP authentication via SASL
+# Remote AD/LDAP authentication with SASL
 
 The SASL protocol is used to delegate password validation to a remote Active Directory or LDAP. 
 This is particularly handy when you already have an AD or LDAP instance and your users should authenticate against it.

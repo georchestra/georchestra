@@ -1,6 +1,6 @@
 # Monit
 
-Monit is a powerful tool to monitor your geOrchestra instance.
+Monit is a powerful tool to monitor geOrchestra instances.
 
 It is able to:
  * watch the CPU, RAM, swap, network use
@@ -8,176 +8,99 @@ It is able to:
  * alert when metrics exceed a predefined value, or when a service is down
  * and lots more...
 
-## Monit installation
 
-Monit has to be installed on each server you want to monitor, so on all of your instance server do the following :
+## Setup
 
+On every server to monitor:
 ```
 apt-get install monit
-cp /etc/monit/monitrc /etc/monit/monitrc_orig
-cat /dev/null > /etc/monit/monitrc
 ```
 
-And edit the **/etc/monit/monitrc** file as follow : 
-
+In the ```/etc/monit/monitrc``` file: 
 ```
 set daemon 60
 set logfile syslog facility log_daemon
-set mailserver localhost
+set mailserver localhost port 25
 set mail-format { from: monit@example.fr }
-set alert <email-adress-to-alert>
-set httpd port 2812 and use address <server-IP>
-allow admin:swordfish
+set alert <email-adress-to-alert> but not on { instance, pid, ppid }
+set httpd port 2812 and use address localhost allow XXXX
+include /etc/monit/conf.enabled/*
+```
+... where:
+ * ```set daemon``` value corresponds to the interval between checks in seconds
+ * ```set mailserver``` allows one to use a specific email server (for alerts)
+ * ```set mail-format``` allows email customization (read the [doc](https://mmonit.com/monit/documentation/monit.html#Message-format) or have a look at a [better email template](https://gist.github.com/fvanderbiest/af59a8431af5e3f751e0#file-monitrc))
+ * ```set alert``` configures when and who to alert. 
+ * ```set httpd``` configures an embedded web service to listen on the given port. Access to this service is restricted to host named XXXX or protected with a basic auth if XXXX = admin:randompassword
+
+Once the service is restarted (```service monit restart```), the UI should be visible on http://\<server-ip\>:2812.
+
+
+## Checks
+
+With the above configuration, files describing checks belong to the ```/etc/monit/conf.enabled/``` directory.
+
+Eg, in ```/etc/monit/conf.enabled/tomcat-proxycas```:
+```
+check process tomcat-proxycas with pidfile /var/run/tomcat-proxycas.pid
+    start program = "/etc/init.d/tomcat-proxycas start"
+    with uid tomcat8 gid tomcat8
+    stop program = "/etc/init.d/tomcat-proxycas stop"
+    with uid tomcat8 gid tomcat8
+
+    if failed host 127.0.0.1 port 8180 for 3 cycles then restart
+    if memory is greater than 1 GB then restart
+    if cpu usage > 99% for 3 cycles then restart
+
+    # restart security proxy if cas/login page is not ok
+    if failed (url http://127.0.0.1:8180/cas/login
+        and content = "html")
+        for 3 cycles
+    then restart
 ```
 
-Replace some elements to suit your own configuration.
-
-**set daemon** correspond to the interval between checks.
-
-And now use :
-
+In ```/etc/monit/conf.enabled/tomcat-georchestra```:
 ```
-service monit restart
-```
+check process tomcat-georchestra with pidfile /var/run/tomcat-georchestra.pid
+    start program = "/etc/init.d/tomcat-georchestra start"
+    with uid tomcat8 gid tomcat8
+    stop program = "/etc/init.d/tomcat-georchestra stop"
+    with uid tomcat8 gid tomcat8
 
-After what you can access your monit by **http://\<server-ip\>:2812** with login *admin* and password *swordfish*.
+    if failed host 127.0.0.1 port 8280 for 3 cycles then restart
+    if memory is greater than 2 GB then restart
+    if cpu usage > 99% for 10 cycles then restart
 
-## Configure Monit monitoring rules
-
-Previously, I gave you the mininmal Monit config in **/etc/monit/monitrc** file, but if you want Monit to perform checks, alerts and treatments, you'll need to say him what to to.
-
-For that you have to append some rules in this **/etc/monit/monitrc** file, for example :
-
-```
-check process tomcat8 with pidfile /run/tomcat8.pid
-  start program = "/etc/init.d/tomcat8 start"
-  as uid tomcat8 gid tomcat8
-  stop program = "/etc/init.d/tomcat stop"
-  as uid tomcat8 gid tomcat8
-  if cpu > 95% for 5 cycles then alert
-  if totalmem > 80% then alert
-  if failed port 8080 protocol http and request /mapfishapp/contexts/default.wmc then alert
-   if failed port 8080 protocol http and request /cas/images/services/true.gif then alert
-  if failed port 8080 protocol http and request /geoserver/public/wms?request=describelayer&layers=administrations&version=1.1.1 then alert
-  if failed port 8080 protocol http and request /geonetwork/srv/fre/xml.info then alert
-  if failed port 8080 for 5 cycles then restart
+    # restart if csw getrecords fails
+    if failed (url http://127.0.0.1:8280/geonetwork/srv/eng/csw?service=CSW&version=2.0.2&request=GetRecords&constraintlanguage=CQL_TEXT
+        and content = "SearchResults")
+        for 3 cycles
+    then restart
 ```
 
-On the Security Proxy server running SP on port 8080, this rule will check if tomcat8 is running.
-If CPU usage is over 95% for more than 5 conscutives checks it'll send an alert, also if memory usage is over 80% or if one of /mapfishapp, /geoserver or /geonetwork is unreachable.
-If port 8080 doesn't respond for 5 cycles, it'll restart the security-proxy
-
-We can have a similar one for geoserver's server : 
-
+In ```/etc/monit/conf.enabled/tomcat-geoserver0```:
 ```
-check process tomcat8 with pidfile /run/tomcat8.pid
-  start program = "/etc/init.d/tomcat8 start"
-  as uid tomcat8 gid tomcat8
-  stop program = "/etc/init.d/tomcat stop"
-  as uid tomcat8 gid tomcat8
-  if cpu > 95% for 5 cycles then alert
-  if totalmem > 80% then alert
-  if failed port 8080 protocol http and request /geoserver/public/wms?request=describelayer&layers=administrations&version=1.1.1 then alert
-  if failed port 8080 protocol http and request /geoserver/public/wms?request=describelayer&layers=administrations&version=1.1.1 for 3 cycles then restart
-```
+check process tomcat-geoserver0 with pidfile /var/run/tomcat-geoserver0.pid
+    start program = "/etc/init.d/tomcat-geoserver0 start"
+    with uid tomcat8 gid tomcat8
+    stop program = "/etc/init.d/tomcat-geoserver0 stop"
+    with uid tomcat8 gid tomcat8
 
-This one will test availability of /geoserver/public/wms?request=describelayer&layers=administrations&version=1.1.1 and alert if unreachable, or restart geoserver if unreachable for 3 times.
+    if totalmem > 80% then alert
 
-In order to receive alert by mail, you'll have to configure your mailserver on each instance.
+    if failed host 127.0.0.1 port 8380 for 3 cycles then restart
+    if memory is greater than 2 GB then restart
+    if cpu usage > 99% for 10 cycles then restart
 
-You can see a lot of rules example on the M/Monit wiki : https://mmonit.com/wiki/Monit/ConfigurationExamples
-
-
-## Centralize administration with M/Monit (Not free)
-
-Over Monit, there is a non-free solution to centralize all of your monit instance in a web-portal by which you can manage your server :
-
-- Generate utilisation charts
-- Configure email notifications and users
-- See the state of all your monit instances
-- ...
-
-You can get a free trial (1 month) of this on : https://mmonit.com/
-
-### Install M/Monit
-
-To install M/Monit, on a dedicated server (the way I did that, but you can also put it on an existing one) :
-
-Get last M/Monit version
-```
-wget https://mmonit.com/dist/mmonit-3.5-linux-x64.tar.gz
+    # restart geoserver if capabilities are wrong
+    if failed (url http://127.0.0.1:8380/geoserver/geor/wms?SERVICE=WMS&REQUEST=GetCapabilities
+        and content = "WMS_Capabilities")
+        for 3 cycles
+    then restart
 ```
 
-Install it :
-```
-tar zxvf mmonit-3.5-linux-x64.tar.gz
-rm mmonit-3.5-linux-x64.tar.gz
-mv mmonit-3.5/ /opt/mmonit
-```
+Feel free to customize these examples according to your setup (particularly the RAM limits).
+There are lots of other [configuration examples](https://mmonit.com/wiki/Monit/ConfigurationExamples) in the M/Monit wiki.
 
-Enable at startup : 
-
-Create the file **/etc/init.d/mmonit** as follow : 
-```
-#! /bin/sh
-# /etc/init.d/mmonit
-
-case "$1" in
-  start)
-    echo "Starting mmonit"
-    /opt/mmonit/bin/mmonit -d
-    echo "mmonit is alive"
-    ;;
-  stop)
-    echo "Stopping mmonit"
-    /opt/mmonit/bin/mmonit stop
-    echo "mmonit is dead"
-    ;;
-  *)
-    echo "Usage: /etc/init.d/foobar {start|stop}"
-    exit 1
-    ;;
-esac
-
-exit 0
-```
-
-And use those commands : 
-```
-chmod 755 /etc/init.d/mmonit
-update-rc.d mmonit defaults
-```
-
-And finnally start M/Monit : 
-```
-/opt/mmonit/bin/mmonit -d
-```
-
-You can access to your M/Monit portal by **http://<mmonit-server>:8080**, login *admin* password *swordfish*
-Think about change default passwords in the admin panel.
-
-### Add a Monit instance to M/Monit
-
-In order to add new Monit instances to M/Monit, you have to redefine the **monit** user password in M/Monit admin panel (default is monit, so not secure).
-
-After what in your Monit server you have to update the **/etc/monit/monitrc** file as follow :
-
-```
-set daemon 60
-set logfile syslog facility log_daemon
-set mailserver localhost
-set mail-format { from: monit@example.fr }
-set alert <email-adress-to-alert>
-set mmonit http://monit:<monit_password>@<mmonit-server-IP>:8080/collector
-set httpd port 2812 and use address <monit-server-IP>
-allow localhost
-allow <mmonit-server-IP>
-allow admin:swordfish
-```
-
-And restart your monit instance, on monit server : 
-```
-service monit restart
-```
-
-Wait monit to restart and register automatically to M/Monit, after what you can refresh your M/Monit webpage and your new host shoud appear.
+With Monit comes [M/Monit](https://mmonit.com/), a proprietary solution to centralize all Monit UIs in a unique web-portal.
+This can be handy if your SDI is spread over a large number of servers.
