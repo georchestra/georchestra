@@ -39,15 +39,15 @@ GEOR.Addons.Fullscreen = Ext.extend(GEOR.Addons.Base, {
      */
     onClick: function() {
         var api = window.fullScreenApi;
-        if (api.supportsFullScreen) {
-            api.requestFullScreen(
-                this.map.div.childNodes[0]
-            );
-        } else {
-            var p = GeoExt.MapPanel.guess().ownerCt;
+        if (this.options.toolbars || !api.supportsFullScreen) {
+            var p = GeoExt.MapPanel.guess().ownerCt; // TODO: improve this for 15.12, with https://github.com/georchestra/georchestra/issues/1006
             p.items.get(0).setSize(0, 0); 
             p.items.get(p.items.getCount() - 2).collapse();
             p.doLayout();
+        } else if (api.supportsFullScreen) {
+            api.requestFullScreen(
+                this.map.div.childNodes[0]
+            );
         }
     },
 
