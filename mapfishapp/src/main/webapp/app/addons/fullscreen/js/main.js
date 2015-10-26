@@ -39,15 +39,15 @@ GEOR.Addons.Fullscreen = Ext.extend(GEOR.Addons.Base, {
      */
     onClick: function() {
         var api = window.fullScreenApi;
-        if (api.supportsFullScreen) {
-            api.requestFullScreen(
-                this.map.div.childNodes[0]
-            );
-        } else {
+        if (this.options.toolbars || !api.supportsFullScreen) {
             var p = this.mapPanel.ownerCt;
             p.items.get(0).setSize(0, 0); 
             p.items.get(p.items.getCount() - 2).collapse();
             p.doLayout();
+        } else if (api.supportsFullScreen) {
+            api.requestFullScreen(
+                this.map.div.childNodes[0]
+            );
         }
     },
 
