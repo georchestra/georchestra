@@ -121,4 +121,7 @@ public interface Account {
     String toVcf();
 
     String toCsv();
+    
+    String toFormatedString(String data);
+    
 }

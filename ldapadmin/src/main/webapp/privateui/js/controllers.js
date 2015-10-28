@@ -214,13 +214,38 @@ angular.module('ldapadmin.controllers', [])
           }
         );
       }
-    };
-    
-    $scope.exportAsCsv = function() {
-      var uids = _.pluck($scope.selectedUsers(), 'uid');
-      console.log(uids);
-    }
-  })
+      };
+
+      $scope.exportAsCsv = function() {
+        var uids = _.pluck($scope.selectedUsers(), 'uid');
+        var url = GEOR_config.publicContextPath + "private/users.csv";
+
+        var form = $('<form> </form>').attr("action", url).attr("method", 'POST').attr("id", '#exportAsCsvForm');
+        var input = $('<input >').attr("name", 'users');
+
+        $(document).ready(function() {
+          form.append(input).appendTo('body')
+        });
+        form.find("input[name=users]").val(JSON.stringify(uids));
+        form.submit();
+        form.remove();
+      }
+
+      $scope.exportAsVcard = function() {
+        var uids = _.pluck($scope.selectedUsers(), 'uid');
+        var url = GEOR_config.publicContextPath + "private/users.vcf";
+
+        var form = $('<form> </form>').attr("action", url).attr("method", 'POST').attr("id", '#exportAsVcfForm');
+        var input = $('<input >').attr("name", 'users');
+
+        $(document).ready(function() {
+          form.append(input).appendTo('body')
+        });
+        form.find("input[name=users]").val(JSON.stringify(uids));
+        form.submit();
+        form.remove();
+      }
+    })
 
   /**
    * User Edit

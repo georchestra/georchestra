@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -51,7 +52,7 @@ public class UsersExport {
     @RequestMapping(value = "/private/users.csv", method = RequestMethod.POST,
             produces = "text/csv; charset=utf-8")
     @ResponseBody
-    public String getUsersAsCsv(@RequestBody String users) throws Exception {
+    public String getUsersAsCsv(@RequestParam(value="users") String users) throws Exception {
         JSONArray jsonUsers = new JSONArray(users);
         StringBuilder ret1 = new StringBuilder();
         ret1.append(OUTLOOK_CSV_HEADER); // add csv outlook header
@@ -71,10 +72,10 @@ public class UsersExport {
 
     
 
-    @RequestMapping(value = "private/users.vcf", method = RequestMethod.POST,
+    @RequestMapping(value = "/private/users.vcf", method = RequestMethod.POST,
             produces = "text/x-vcard; charset=utf-8")
     @ResponseBody
-    public String getUsersAsVcard(@RequestBody String users) throws Exception {
+    public String getUsersAsVcard(@RequestParam(value="users") String users) throws Exception {
         JSONArray usersAr = new JSONArray(users);
         StringBuilder ret = new StringBuilder();
         for (int i = 0; i < usersAr.length(); ++ i) {
@@ -87,6 +88,7 @@ public class UsersExport {
         }
 
         return ret.toString();
+        
     }
 
     
