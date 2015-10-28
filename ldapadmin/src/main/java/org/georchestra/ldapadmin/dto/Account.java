@@ -118,10 +118,10 @@ public interface Account {
 
 	String getHomePostalAddress();
 
-    String toVcf();
+	String toVcf();
 
-    String toCsv();
-    
-    String toFormatedString(String data);
-    
+	String toCsv();
+	
+	String toFormatedString(String data);
+
 }

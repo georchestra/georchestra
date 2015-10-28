@@ -198,54 +198,51 @@ angular.module('ldapadmin.controllers', [])
     };
     $scope.deleteGroup = function(group) {
       if (confirm('Do you really want to remove group "' + group + '"?')) {
-        Restangular.one('groups', group).remove().then(
-          function() {
-            var index = findByAttr($scope.groups, 'cn', $routeParams.group);
+        Restangular.one('groups', group).remove().then(function() {
+          var index = findByAttr($scope.groups, 'cn', $routeParams.group);
 
-            if (index !== false) {
-              $scope.groups = $scope.groups.splice(index, 1);
-              removeNode($scope.groups_tree, group);
-            }
-            window.location = '#/users';
-            flash.success = 'Group correctly removed';
-          },
-          function errorCallback() {
-            flash.error = 'Error removing the group';
+          if (index !== false) {
+            $scope.groups = $scope.groups.splice(index, 1);
+            removeNode($scope.groups_tree, group);
           }
-        );
-      }
-      };
-
-      $scope.exportAsCsv = function() {
-        var uids = _.pluck($scope.selectedUsers(), 'uid');
-        var url = GEOR_config.publicContextPath + "private/users.csv";
-
-        var form = $('<form> </form>').attr("action", url).attr("method", 'POST').attr("id", '#exportAsCsvForm');
-        var input = $('<input >').attr("name", 'users');
-
-        $(document).ready(function() {
-          form.append(input).appendTo('body')
+          window.location = '#/users';
+          flash.success = 'Group correctly removed';
+        }, function errorCallback() {
+          flash.error = 'Error removing the group';
         });
-        form.find("input[name=users]").val(JSON.stringify(uids));
-        form.submit();
-        form.remove();
       }
+    };
 
-      $scope.exportAsVcard = function() {
-        var uids = _.pluck($scope.selectedUsers(), 'uid');
-        var url = GEOR_config.publicContextPath + "private/users.vcf";
+    $scope.exportAsCsv = function() {
+      var uids = _.pluck($scope.selectedUsers(), 'uid');
+      var url = GEOR_config.publicContextPath + "private/users.csv";
+  
+      var form = $('<form> </form>').attr("action", url).attr("method", 'POST').attr("id", '#exportAsCsvForm');
+      var input = $('<input >').attr("name", 'users');
+  
+      $(document).ready(function() {
+        form.append(input).appendTo('body')
+      });
+      form.find("input[name=users]").val(JSON.stringify(uids));
+      form.submit();
+      form.remove();
+    }
 
-        var form = $('<form> </form>').attr("action", url).attr("method", 'POST').attr("id", '#exportAsVcfForm');
-        var input = $('<input >').attr("name", 'users');
+    $scope.exportAsVcard = function() {
+      var uids = _.pluck($scope.selectedUsers(), 'uid');
+      var url = GEOR_config.publicContextPath + "private/users.vcf";
 
-        $(document).ready(function() {
-          form.append(input).appendTo('body')
-        });
-        form.find("input[name=users]").val(JSON.stringify(uids));
-        form.submit();
-        form.remove();
-      }
-    })
+      var form = $('<form> </form>').attr("action", url).attr("method", 'POST').attr("id", '#exportAsVcfForm');
+      var input = $('<input >').attr("name", 'users');
+
+      $(document).ready(function() {
+        form.append(input).appendTo('body')
+      });
+      form.find("input[name=users]").val(JSON.stringify(uids));
+      form.submit();
+      form.remove();
+    }
+  })
 
   /**
    * User Edit
