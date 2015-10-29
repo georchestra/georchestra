@@ -1,9 +1,12 @@
 # Fullscreen
 
 When this addon is loaded and activated, the map is shown fullscreen. 
-If the fullscreen API is not supported by the browser, or if the ```toolbars``` options is set to ```true```, side panels are collapsed.
+If the fullscreen API is not supported by the browser, or if the ```toolbars``` options is set to ```true```, side panels are collapsed.  
+This addon also adds a new behavior to mapfishapp: when loaded, it detects if the ```fullscreen``` GET parameter is set to ```true``` and updates the viewer layout accordingly.
 
-Note: requestFullscreen is deprecated on insecure origins, and support will be removed in the future. You should consider switching your SDI to a secure origin, such as HTTPS. See https://goo.gl/rStTGz for more details.
+Note: requestFullscreen is deprecated on insecure origins, and support will be removed in the future. 
+You should consider switching your SDI to a secure origin, such as HTTPS. 
+See https://goo.gl/rStTGz for more details.
 
 author: @fvanderbiest
 
@@ -36,7 +39,7 @@ ADDONS: [...,
 }], ...
 ```
 
-This addon supports toolbar integration, with eg:
+This addon supports [toolbar integration](../README.md#addon-placement), with eg:
 ```
     "options": {
         "target": "tbar_11"
