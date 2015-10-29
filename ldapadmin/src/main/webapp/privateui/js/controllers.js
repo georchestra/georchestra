@@ -219,10 +219,8 @@ angular.module('ldapadmin.controllers', [])
   
       var form = $('<form> </form>').attr("action", url).attr("method", 'POST').attr("id", '#exportAsCsvForm');
       var input = $('<input >').attr("name", 'users');
-  
-      $(document).ready(function() {
-        form.append(input).appendTo('body')
-      });
+      
+      form.append(input).appendTo('body');
       form.find("input[name=users]").val(JSON.stringify(uids));
       form.submit();
       form.remove();
@@ -235,9 +233,7 @@ angular.module('ldapadmin.controllers', [])
       var form = $('<form> </form>').attr("action", url).attr("method", 'POST').attr("id", '#exportAsVcfForm');
       var input = $('<input >').attr("name", 'users');
 
-      $(document).ready(function() {
-        form.append(input).appendTo('body')
-      });
+      form.append(input).appendTo('body');
       form.find("input[name=users]").val(JSON.stringify(uids));
       form.submit();
       form.remove();
