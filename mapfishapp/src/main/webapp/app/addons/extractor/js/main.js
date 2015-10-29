@@ -75,6 +75,9 @@ GEOR.Addons.Extractor = Ext.extend(GEOR.Addons.Base, {
                 scope: this
             });
         }
+        if (this.options.showWindowOnStartup == true) {
+            this.showWindow();
+        }
     },
     
     createWindow: function() {
