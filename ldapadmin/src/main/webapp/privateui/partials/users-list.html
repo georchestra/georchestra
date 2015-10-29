@@ -24,6 +24,17 @@
     </a>
     <div groups-dropdown></div>
   </div>
+  <div class="btn-group">
+    <a class="groups btn dropdown-toggle" ng-class="{hide: selectedUsers().length == 0}" data-toggle="dropdown">
+      <i class="icon-share-alt"></i>
+      Export
+      <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+      <li><a ng-click="exportAsCsv()" href>CSV</a></li>
+      <li><a ng-click="exportAsVcard()" href>VCard</a></li>
+    </ul>
+  </div>
 </div>
 <div id="noone" ng-hide="!selectedGroup || selectedGroup.users.length || selectedGroup == 'none'">
   There are no users in this group.
