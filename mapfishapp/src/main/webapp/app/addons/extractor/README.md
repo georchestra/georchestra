@@ -2,6 +2,7 @@ Extractor ADDON
 ================
 
 This addon allows users to extract layers very easily.
+
 author: @fvanderbiest
 
 Typical configuration to include in your GEOR_custom.js file:
@@ -23,6 +24,7 @@ Typical configuration to include in your GEOR_custom.js file:
             "ROLE_MOD_EXTRACTORAPP"
         ],
         "options": {
+            "showWindowOnStartup": false,
             "srsData": [
                 ["EPSG:4326", "WGS84 (EPSG:4326)"],
                 ["EPSG:3857", "Spherical Mercator (EPSG:3857)"]
@@ -35,3 +37,5 @@ Typical configuration to include in your GEOR_custom.js file:
     }
 
 The above options are the defaults. Feel free to customize their values.
+
+If ```showWindowOnStartup``` is set to true, the extractor window pops up as soon as the addon is loaded.
