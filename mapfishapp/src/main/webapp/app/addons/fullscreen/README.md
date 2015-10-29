@@ -34,7 +34,7 @@ ADDONS: [...,
 }], ...
 ```
 
-This addon supports toolbar integration, with eg:
+This addon supports [toolbar integration](../README.md#addon-placement), with eg:
 ```
     "options": {
         "target": "tbar_11"
