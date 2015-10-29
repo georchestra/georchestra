@@ -7,6 +7,7 @@ GEOR.Addons.Fullscreen = Ext.extend(GEOR.Addons.Base, {
      *
      */
     init: function(record) {
+        this.api = window.fullScreenApi;
         if (this.target) {
             // addon placed in toolbar
             this.components = this.target.insertButton(this.position, {
@@ -40,6 +41,13 @@ GEOR.Addons.Fullscreen = Ext.extend(GEOR.Addons.Base, {
         Ext.EventManager.addListener(document, 'mozfullscreenchange', this.onFullscreenChange.createDelegate(this));
         Ext.EventManager.addListener(document, 'MSFullscreenChange', this.onFullscreenChange.createDelegate(this));
         Ext.EventManager.addListener(document, 'fullscreenchange', this.onFullscreenChange.createDelegate(this));
+        // detecting if viewer should start fullscreen: (?fullscreen=true)
+        var o = GEOR.util.splitURL(window.location.href);
+        if (o.params.FULLSCREEN == "true" && 
+            // requestFullScreen can only be initiated by a user gesture:
+            (this.options.toolbars == true || !this.api.supportsFullScreen)) {
+            this.goFullscreen();
+        }
     },
 
     /**
@@ -47,7 +55,7 @@ GEOR.Addons.Fullscreen = Ext.extend(GEOR.Addons.Base, {
      * taking care of deactivating the CheckItem in the tools menu
      */
     onFullscreenChange: function() {
-        var api = window.fullScreenApi,
+        var api = this.api,
             item = this.item;
         if (!item) {
             // we have components, not an item.
@@ -71,7 +79,7 @@ GEOR.Addons.Fullscreen = Ext.extend(GEOR.Addons.Base, {
      *
      */
     goFullscreen: function() {
-        var api = window.fullScreenApi;
+        var api = this.api;
         if (this.options.toolbars == true || !api.supportsFullScreen) {
             var p = GeoExt.MapPanel.guess().ownerCt; // TODO: improve this for 15.12, with https://github.com/georchestra/georchestra/issues/1006
             this.size = p.items.get(0).getSize();

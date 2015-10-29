@@ -3,6 +3,8 @@
 When this addon is loaded and activated, the map is shown fullscreen. 
 If the fullscreen API is not supported by the browser, or if the ```toolbars``` options is set to ```true```, side panels are collapsed.
 
+This addon also adds a new behavior to mapfishapp: when loaded, it detects if the ```fullscreen``` GET parameter is set to ```true``` and updates the viewer layout accordingly.
+
 author: @fvanderbiest
 
 Credits to Google for the icons - https://github.com/google/material-design-icons (CC BY 4.0)
