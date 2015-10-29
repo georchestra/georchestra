@@ -215,7 +215,7 @@ angular.module('ldapadmin.controllers', [])
 
     $scope.exportAsCsv = function() {
       var uids = _.pluck($scope.selectedUsers(), 'uid');
-      var url = GEOR_config.publicContextPath + "private/users.csv";
+      var url = GEOR_config.publicContextPath + "/private/users.csv";
   
       var form = $('<form> </form>').attr("action", url).attr("method", 'POST').attr("id", '#exportAsCsvForm');
       var input = $('<input >').attr("name", 'users');
@@ -228,7 +228,7 @@ angular.module('ldapadmin.controllers', [])
 
     $scope.exportAsVcard = function() {
       var uids = _.pluck($scope.selectedUsers(), 'uid');
-      var url = GEOR_config.publicContextPath + "private/users.vcf";
+      var url = GEOR_config.publicContextPath + "/private/users.vcf";
 
       var form = $('<form> </form>').attr("action", url).attr("method", 'POST').attr("id", '#exportAsVcfForm');
       var input = $('<input >').attr("name", 'users');
