@@ -28,7 +28,7 @@ ADDONS: [...,
         "de": "Vollbild"
     },
     "options": {
-        "toolbars": "true" // remove this for a true fullscreen map
+        "toolbars": true // remove this for a true fullscreen map
     },
     "description": {
         "en": "Make the map go fullscreen",
@@ -59,7 +59,7 @@ ADDONS: [...,
         "de": "Vollbild mit Symbolleisten"
     },
     "options": {
-        "toolbars": "true" // remove this for a true fullscreen map
+        "toolbars": true // remove this for a true fullscreen map
     },
     "description": {
         "en": "Make the map go fullscreen, keeping the toolbars",
