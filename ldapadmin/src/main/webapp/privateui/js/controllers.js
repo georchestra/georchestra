@@ -269,17 +269,17 @@ angular.module('ldapadmin.controllers', [])
 
             // uid modified
             if (newUserId != prevUserId) {
-                window.location = '#/users/' + newUserId;
+              window.location = '#/users/' + newUserId;
 
-                // Update the groups the user belongs to
-                var i,
-                    len = $scope.groups.length;
-                for (i=0; i < len; i++) {
-                  var index2 = _.indexOf($scope.groups[i].users, prevUserId);
-                  if (index2 != -1) {
-                      $scope.groups[i].users[index2] = newUserId;
-                  }
+              // Update the groups the user belongs to
+              var i,
+                  len = $scope.groups.length;
+              for (i=0; i < len; i++) {
+                var index2 = _.indexOf($scope.groups[i].users, prevUserId);
+                if (index2 != -1) {
+                  $scope.groups[i].users[index2] = newUserId;
                 }
+              }
             }
           }
         }, function(args) {

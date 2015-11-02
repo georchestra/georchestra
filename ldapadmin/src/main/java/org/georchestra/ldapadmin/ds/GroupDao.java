@@ -64,15 +64,15 @@ public interface GroupDao {
 	 */
 	void deleteUser(String groupName, String uid) throws DataServiceException;
 
-    /**
-     * Modifies the user (e.g. rename) from the group
-     *
-     * @param groupName
-     * @param oldUid
-     * @param newUid
-     * @throws DataServiceException
-     */
-    void modifyUser(String groupName, String oldUid, String newUid) throws DataServiceException;
+	/**
+	 * Modifies the user (e.g. rename) from the group
+	 *
+	 * @param groupName
+	 * @param oldUid
+	 * @param newUid
+	 * @throws DataServiceException
+	 */
+	void modifyUser(String groupName, String oldUid, String newUid) throws DataServiceException;
 
 	/**
 	 * Adds the group
