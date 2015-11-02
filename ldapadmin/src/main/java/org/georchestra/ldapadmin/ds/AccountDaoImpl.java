@@ -191,7 +191,7 @@ public final class AccountDaoImpl implements AccountDao {
      * @see {@link AccountDao#update(Account)}
      */
     @Override
-    public void update(final Account account) throws DataServiceException, DuplicatedEmailException {
+    public synchronized void update(final Account account) throws DataServiceException, DuplicatedEmailException {
 
         // checks mandatory fields
         if (account.getUid().length() == 0) {
@@ -238,7 +238,7 @@ public final class AccountDaoImpl implements AccountDao {
      * @see {@link AccountDao#update(Account, Account)}
      */
     @Override
-    public void update(Account account, Account modified) throws DataServiceException, DuplicatedEmailException, NotFoundException {
+    public synchronized void update(Account account, Account modified) throws DataServiceException, DuplicatedEmailException, NotFoundException {
        if (! account.getUid().equals(modified.getUid())) {
            ldapTemplate.rename(buildDn(account.getUid()), buildDn(modified.getUid()));
            for (Group g : groupDao.findAllForUser(account.getUid())) {
@@ -254,7 +254,7 @@ public final class AccountDaoImpl implements AccountDao {
      * @see {@link AccountDao#delete(Account)}
      */
     @Override
-    public void delete(final String uid) throws DataServiceException, NotFoundException {
+    public synchronized void delete(final String uid) throws DataServiceException, NotFoundException {
         this.ldapTemplate.unbind(buildDn(uid), true);
 
         this.groupDao.deleteUser(uid);

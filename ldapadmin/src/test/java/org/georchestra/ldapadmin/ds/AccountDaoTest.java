@@ -5,14 +5,18 @@ import static org.junit.Assume.assumeTrue;
 
 import java.util.HashMap;
 
+import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
+import javax.naming.directory.BasicAttribute;
 import javax.naming.ldap.LdapName;
 
 import org.georchestra.ldapadmin.dto.Account;
+import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.ldap.core.AuthenticationSource;
+
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
 
@@ -20,6 +24,7 @@ import org.springframework.ldap.core.support.LdapContextSource;
 public class AccountDaoTest {
 
     private AccountDao us;
+    private GroupDaoImpl groupDao;
     private LdapContextSource contextSource;
     
     @Before
@@ -48,8 +53,12 @@ public class AccountDaoTest {
         contextSource.setAuthenticationSource(authsrc);
 
         LdapTemplate ldapTemplate = new LdapTemplate(contextSource);
-
-        us = new AccountDaoImpl(ldapTemplate, null);
+        groupDao = new GroupDaoImpl();
+        groupDao.setLdapTemplate(ldapTemplate);
+        groupDao.setGroupSearchBaseDN("ou=groups");
+        groupDao.setUniqueNumberField("ou");
+        groupDao.setUserSearchBaseDN("ou=users");
+        us = new AccountDaoImpl(ldapTemplate, groupDao);
         ((AccountDaoImpl) us).setUserSearchBaseDN("ou=users");
     }
 
@@ -74,6 +83,37 @@ public class AccountDaoTest {
         assertTrue("No userPassword found for testadmin, expected one", hasStillUserPassword);
         assertTrue("Found a 'o' attribute, expeceted none", noOrgAnymore);
         
+    }
+
+    @Test
+    public void testUpdateAcountAccount() throws Exception {
+        Account testadminAc  = us.findByUID("testadmin");
+        String oldUid = testadminAc.getUid();
+
+        Account newTestAdminAc = AccountFactory.create(testadminAc);
+        assertTrue(newTestAdminAc.getUid().equals(testadminAc.getUid()));
+
+        newTestAdminAc.setUid("testadminblah");
+
+        us.update(testadminAc, newTestAdminAc);
+
+        Attributes attrs = contextSource.getReadWriteContext().getAttributes(new LdapName("uid=testadminblah,ou=users"));
+        Object o = attrs.get("uid");
+        boolean correctlyrenamed = ((BasicAttribute) o).get(0).toString().equals("testadminblah");
+        boolean encounteredNamingEx = false;
+        try {
+            Attributes oldAttrs = contextSource.getReadWriteContext().getAttributes(new LdapName("uid=testadmin,ou=users"));
+        } catch (NamingException e) {
+            encounteredNamingEx = true;
+        }
+
+
+        // restoring testadmin in its initial state
+        us.update(newTestAdminAc, testadminAc);
+
+        assertTrue("Was able to find testadmin back (found some attributes), none expected", encounteredNamingEx);
+        assertTrue("Wrong uid encountered (found " + o.toString() + " instead of testadminblah", correctlyrenamed);
+
     }
  
 }
