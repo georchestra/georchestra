@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.naming.InvalidNameException;
 import javax.naming.Name;
+import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
@@ -158,6 +159,17 @@ public class GroupDaoImpl implements GroupDao {
 		this.ldapTemplate.modifyAttributes(ctx);
 	}
 
+    @Override
+    public void modifyUser(String groupName, String oldUid, String newUid) throws DataServiceException {
+        Name dnGroup = buildGroupDn(groupName);
+        String oldUserDn = buildUserDn(oldUid).toString();
+        String newUserDn = buildUserDn(newUid).toString();
+        DirContextOperations ctx = ldapTemplate.lookupContext(dnGroup);
+        ctx.removeAttributeValue("member", oldUserDn);
+        ctx.addAttributeValue("member", newUserDn);
+        this.ldapTemplate.modifyAttributes(ctx);
+    }
+
 	public List<Group> findAll() throws DataServiceException {
 
 		EqualsFilter filter = new EqualsFilter("objectClass", "groupOfMembers");
@@ -170,6 +182,16 @@ public class GroupDaoImpl implements GroupDao {
 		}
 
 		return new LinkedList<Group>(sorted);
+	}
+
+	public List<Group> findAllForUser(String userId) {
+		EqualsFilter grpFilter = new EqualsFilter("objectClass", "groupOfMembers");
+		AndFilter filter = new AndFilter();
+		filter.and(grpFilter);
+
+		filter.and(new EqualsFilter("member", buildUserDn(userId).toString()));
+		return ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(),
+				new GroupContextMapper());
 	}
 
 	public List<String> findUsers(final String groupName) throws DataServiceException{
@@ -457,6 +479,5 @@ public class GroupDaoImpl implements GroupDao {
 		}
 
 	}
-
 
 }

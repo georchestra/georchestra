@@ -16,6 +16,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
+import org.georchestra.ldapadmin.dto.Group;
 import org.georchestra.ldapadmin.dto.UserSchema;
 import org.georchestra.ldapadmin.ws.newaccount.UidGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -231,6 +232,20 @@ public final class AccountDaoImpl implements AccountDao {
         mapToContext(null /* don't update number */, account, context);
 
         ldapTemplate.modifyAttributes(context);
+    }
+
+    /**
+     * @see {@link AccountDao#update(Account, Account)}
+     */
+    @Override
+    public void update(Account account, Account modified) throws DataServiceException, DuplicatedEmailException, NotFoundException {
+       if (! account.getUid().equals(modified.getUid())) {
+           ldapTemplate.rename(buildDn(account.getUid()), buildDn(modified.getUid()));
+           for (Group g : groupDao.findAllForUser(account.getUid())) {
+               groupDao.modifyUser(g.getName(), account.getUid(), modified.getUid());
+           }
+       }
+       update(modified);
     }
 
     /**
@@ -572,5 +587,4 @@ public final class AccountDaoImpl implements AccountDao {
 
         return newUid;
     }
-
 }

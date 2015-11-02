@@ -24,15 +24,15 @@ public class AccountDaoTest {
     
     @Before
     public void setUp() throws Exception {
-        assumeTrue(System.getProperty("ldapadmin.test.ldapUrl") != null
-                && System.getProperty("ldapadmin.test.ldapBaseDn") != null
-                && System.getProperty("ldapadmin.test.ldapAdminDn") != null
-                && System.getProperty("ldapadmin.test.ldapAdminDnPw") != null);
+        assumeTrue(System.getProperty("ldapadmin.test.openldap.ldapurl") != null
+                && System.getProperty("ldapadmin.test.openldap.basedn") != null
+                && System.getProperty("ldapadmin.test.openldap.binddn") != null
+                && System.getProperty("ldapadmin.test.openldap.password") != null);
 
-        String ldapUrl = System.getProperty("ldapadmin.test.ldapUrl");
-        String baseDn = System.getProperty("ldapadmin.test.ldapBaseDn");
-        String ldapAdminDn = System.getProperty("ldapadmin.test.ldapAdminDn");
-        String ldapAdminDnPw = System.getProperty("ldapadmin.test.ldapAdminDnPw");
+        String ldapUrl = System.getProperty("ldapadmin.test.openldap.ldapurl");
+        String baseDn = System.getProperty("ldapadmin.test.openldap.basedn");
+        String ldapAdminDn = System.getProperty("ldapadmin.test.openldap.binddn");
+        String ldapAdminDnPw = System.getProperty("ldapadmin.test.openldap.password");
 
         contextSource = new LdapContextSource();
         contextSource.setBase(baseDn);

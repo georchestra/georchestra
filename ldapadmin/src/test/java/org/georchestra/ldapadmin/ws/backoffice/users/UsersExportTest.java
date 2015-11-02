@@ -46,11 +46,11 @@ public class UsersExportTest {
     }
 
     private void setUpAgainstRealLdap() {
-        assumeTrue(System.getProperty("ldapadmin.test.ldapUrl") != null
-                && System.getProperty("ldapadmin.test.ldapBaseDn") != null);
+        assumeTrue(System.getProperty("ldapadmin.test.openldap.ldapurl") != null
+                && System.getProperty("ldapadmin.test.openldap.basedn") != null);
 
-        String ldapUrl = System.getProperty("ldapadmin.test.ldapUrl");
-        String baseDn = System.getProperty("ldapadmin.test.ldapBaseDn");
+        String ldapUrl = System.getProperty("ldapadmin.test.openldap.ldapurl");
+        String baseDn = System.getProperty("ldapadmin.test.openldap.basedn");
 
         DefaultSpringSecurityContextSource contextSource = new DefaultSpringSecurityContextSource(ldapUrl + baseDn);
         contextSource.setBase(baseDn);
