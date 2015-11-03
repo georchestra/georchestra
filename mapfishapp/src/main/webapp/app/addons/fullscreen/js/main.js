@@ -81,7 +81,11 @@ GEOR.Addons.Fullscreen = Ext.extend(GEOR.Addons.Base, {
     goFullscreen: function() {
         var api = this.api;
         if (this.options.toolbars == true || !api.supportsFullScreen) {
-            var p = GeoExt.MapPanel.guess().ownerCt; // TODO: improve this for 15.12, with https://github.com/georchestra/georchestra/issues/1006
+            var mp = GeoExt.MapPanel.guess(); // TODO: improve this for 15.12, with https://github.com/georchestra/georchestra/issues/1006
+            // put the mappanel up-front:
+            mp.el.dom.style.zIndex = 9999;
+            // (this is for those with drop down menus in header)
+            var p = mp.ownerCt; 
             this.size = p.items.get(0).getSize();
             p.items.get(0).setSize(0, 0);
             p.items.get(p.items.getCount() - 2).collapse();
@@ -99,7 +103,10 @@ GEOR.Addons.Fullscreen = Ext.extend(GEOR.Addons.Base, {
      */
     restoreLayout: function() {
         if (this.options.toolbars == true) {
-            var p = GeoExt.MapPanel.guess().ownerCt; // TODO: improve this for 15.12, with https://github.com/georchestra/georchestra/issues/1006
+            var mp = GeoExt.MapPanel.guess(); // TODO: improve this for 15.12, with https://github.com/georchestra/georchestra/issues/1006
+            // put the mappanel back in place:
+            mp.el.dom.style.zIndex = 1;
+            var p = mp.ownerCt;
             p.items.get(0).setSize(this.size);
             p.items.get(p.items.getCount() - 2).expand();
             p.doLayout();
