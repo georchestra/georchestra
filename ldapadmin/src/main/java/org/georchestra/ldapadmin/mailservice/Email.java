@@ -83,8 +83,7 @@ public abstract class Email {
 
 	/**
      * Read the body from template
-     * @param servletContext
-     * @return
+     * @return String the formatted message
      */
     protected String getBodyTemplate() {
 

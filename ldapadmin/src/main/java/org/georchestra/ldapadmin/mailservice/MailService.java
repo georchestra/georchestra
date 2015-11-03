@@ -64,6 +64,21 @@ public final class MailService {
 		
 	}
 	
+	public void sendAccountUidRenamed(final ServletContext servletContext, final String newUid, final String commonName, final String userEmail) {
+		if(LOG.isDebugEnabled()){
+			LOG.debug("Send mail to warn user [email: " + userEmail + "] for its new identifier: " + newUid);
+		}
+		try{
+			AccountUidRenamedEmail email = this.emailFactory.createAccountUidRenamedEmail(servletContext, new String[]{userEmail});
+			
+			email.sendMsg(commonName, newUid );
+			
+		} catch (Exception e) {
+			
+			LOG.error(e);
+		} 
+	}
+	
 
 	public void sendAccountWasCreated(final ServletContext servletContext, final String uid, final String commonName, final String userEmail) {
 

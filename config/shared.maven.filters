@@ -61,6 +61,7 @@ shared.download_form.pdfurl=
 shared.ldapadmin.contextpath=/ldapadmin
 shared.ldapadmin.db=georchestra
 shared.ldapadmin.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.ldapadmin.db@
+shared.ldapadmin.warnifuidmodified=true
 
 shared.mapfishapp.db=georchestra
 shared.mapfishapp.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.mapfishapp.db@

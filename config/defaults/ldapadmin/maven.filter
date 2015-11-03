@@ -36,7 +36,7 @@ smtpPort=@shared.smtp.port@
 replyTo=@shared.email.replyTo@
 from=@shared.email.from@
 emailHtml=@shared.email.html@
-
+warnUserIfUidModified=@shared.ldapadmin.warnifuidmodified@
 # Moderation (enabled by default - we do not want people to be able to gain access to resources without the admin's consent)
 moderatorEmail=@shared.administrator.email@
 
@@ -47,6 +47,7 @@ subject.account.created=
 subject.account.in.process=
 subject.requires.moderation=
 subject.change.password=
+subject.account.uid.renamed=
 moderatedSignup=
 delayInDays=
 requiredFields=

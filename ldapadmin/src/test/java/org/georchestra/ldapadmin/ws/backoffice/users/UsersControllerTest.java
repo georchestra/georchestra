@@ -414,7 +414,9 @@ public class UsersControllerTest {
     public void testUpdateBadJSON() throws Exception {
         request.setRequestURI("/ldapadmin/users/pmauduit");
         request.setContent("{[this is ] } not valid JSON obviously ....".getBytes());
-
+        Mockito.when(ldapTemplate.lookup(Mockito.any(Name.class), Mockito.any(ContextMapper.class))).thenReturn(
+              AccountFactory.createBrief("pmauduit", "monkey123", "Pierre", "Mauduit",
+              "pmt@c2c.com", "+123", "+456", "developer", "developer"));
         try {
             usersCtrl.update(request, response);
         } catch (Throwable e) {
