@@ -23,6 +23,17 @@ public class EmailFactoryImpl extends AbstractEmailFactory {
 
 	private String changePasswordEmailFile;
 	private String changePasswordEmailSubject;
+	
+	private String accountUidRenamedEmailFile;
+	private String accountUidRenamedEmailSubject;
+	
+	public void setAccountUidRenamedEmailSubject(String accountUidRenamedEmailSubject) {
+		this.accountUidRenamedEmailSubject = accountUidRenamedEmailSubject;
+	}
+
+	public void setAccountUidRenamedEmailFile(String accountUidRenamedEmailFile) {
+		this.accountUidRenamedEmailFile = accountUidRenamedEmailFile;
+	}
 
 	public void setAccountWasCreatedEmailFile(String accountWasCreatedEmailFile) {
 		this.accountWasCreatedEmailFile = accountWasCreatedEmailFile;
@@ -159,5 +170,28 @@ public class EmailFactoryImpl extends AbstractEmailFactory {
 
 		return mail;
 
+	}
+	
+	public AccountUidRenamedEmail createAccountUidRenamedEmail(ServletContext servletContext, String[] recipients) {
+
+		super.emailSubject = this.accountUidRenamedEmailSubject;
+
+		AccountUidRenamedEmail mail = new AccountUidRenamedEmail(
+				recipients,
+				super.emailSubject,
+				this.smtpHost,
+				this.smtpPort,
+				this.emailHtml,
+				this.replyTo,
+				this.from,
+				this.bodyEncoding,
+				this.subjectEncoding,
+				this.languages,
+				this.accountUidRenamedEmailFile,
+				servletContext,
+				this.georConfig
+				);
+
+		return mail;
 	}
 }

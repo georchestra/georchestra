@@ -25,6 +25,7 @@ import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.georchestra.ldapadmin.dto.AccountImpl;
 import org.georchestra.ldapadmin.dto.Group;
 import org.georchestra.ldapadmin.dto.UserSchema;
+import org.georchestra.ldapadmin.mailservice.MailService;
 import org.georchestra.ldapadmin.ws.backoffice.utils.RequestUtil;
 import org.georchestra.ldapadmin.ws.backoffice.utils.ResponseUtil;
 import org.georchestra.lib.file.FileUtils;
@@ -60,9 +61,23 @@ public class UsersController {
 
 	private AccountDao accountDao;
 	private UserRule userRule;
+	
+	@Autowired
+	private MailService mailService;
+
+	public void setMailService(MailService mailService) {
+		this.mailService = mailService;
+	}
 
 	@Autowired
-	public UsersController( AccountDao dao, UserRule userRule){
+	private Boolean warnUserIfUidModified = false;
+
+	public void setWarnUserIfUidModified(boolean warnUserIfUidModified) {
+		this.warnUserIfUidModified = warnUserIfUidModified;
+	}
+
+	@Autowired
+	public UsersController(AccountDao dao, UserRule userRule){
 		this.accountDao = dao;
 		this.userRule = userRule;
 	}
@@ -383,7 +398,10 @@ public class UsersController {
 		try{
 			final Account modified = modifyAccount(AccountFactory.create(account), request.getInputStream());
 			this.accountDao.update(account, modified);
-
+			if (warnUserIfUidModified) {
+				this.mailService.sendAccountUidRenamed(request.getSession().getServletContext(),
+						modified.getUid(), modified.getCommonName(), modified.getEmail());
+			}
 			ResponseUtil.writeSuccess(response);
 
 		} catch (DuplicatedEmailException e) {
