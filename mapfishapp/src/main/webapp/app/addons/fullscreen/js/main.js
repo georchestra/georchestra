@@ -81,7 +81,10 @@ GEOR.Addons.Fullscreen = Ext.extend(GEOR.Addons.Base, {
     goFullscreen: function() {
         var api = this.api;
         if (this.options.toolbars == true || !api.supportsFullScreen) {
-            var p = this.mapPanel.guess().ownerCt;
+            // put the mappanel up-front:
+            this.mapPanel.el.dom.style.zIndex = 9999;
+            // (this is for those with drop down menus in header)
+            var p = this.mapPanel.ownerCt; 
             this.size = p.items.get(0).getSize();
             p.items.get(0).setSize(0, 0);
             p.items.get(p.items.getCount() - 2).collapse();
@@ -99,6 +102,8 @@ GEOR.Addons.Fullscreen = Ext.extend(GEOR.Addons.Base, {
      */
     restoreLayout: function() {
         if (this.options.toolbars == true) {
+            // put the mappanel back in place:
+            this.mapPanel.el.dom.style.zIndex = 1;
             var p = this.mapPanel.ownerCt;
             p.items.get(0).setSize(this.size);
             p.items.get(p.items.getCount() - 2).expand();
