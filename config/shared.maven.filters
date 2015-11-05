@@ -20,7 +20,7 @@ shared.ldap.userSearchFilter=@shared.ldap.uid@=%u
 shared.ldap.groupSearchBaseDN=ou=groups
 shared.ldap.admin.dn=cn=admin,@shared.ldap.baseDn@
 shared.ldap.groupSearchFilter=(member=uid={1},@shared.ldap.userSearchBaseDN@,@shared.ldap.baseDn@)
-shared.ldap.ldapPendingGroupName=PENDING_USERS
+shared.ldap.ldapPendingGroupName=PENDING
 shared.ldap.groupRoleAttribute=cn
 
 shared.psql.host=localhost

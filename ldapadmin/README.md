@@ -45,7 +45,7 @@ Once submitted, the form disappears and a (configurable) message says something 
 
 What happens here ? 
  * Depending on a "MODERATED_SIGNUP" config option, new users will be recorded in the LDAP and affected to :
-   * the PENDING_USERS group if MODERATED_SIGNUP = true. An admin will then be able to move them to SV_USERS group.
+   * the PENDING group if MODERATED_SIGNUP = true. An admin will then be able to move them to SV_USERS group.
    * the SV_USERS group if MODERATED_SIGNUP = false.
  * An email will be sent to one email address (configurable), saying that new users need an account.
 
