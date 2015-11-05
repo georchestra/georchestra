@@ -41,6 +41,9 @@ GEOR.Addons.Fullscreen = Ext.extend(GEOR.Addons.Base, {
         Ext.EventManager.addListener(document, 'mozfullscreenchange', this.onFullscreenChange.createDelegate(this));
         Ext.EventManager.addListener(document, 'MSFullscreenChange', this.onFullscreenChange.createDelegate(this));
         Ext.EventManager.addListener(document, 'fullscreenchange', this.onFullscreenChange.createDelegate(this));
+        // store original header iframe zindex:
+        this.headerIframe = Ext.get("go_head").query('iframe')[0];
+        this.originalZIndex = this.headerIframe.style.zIndex;
         // detecting if viewer should start fullscreen: (?fullscreen=true)
         var o = GEOR.util.splitURL(window.location.href);
         if (o.params.FULLSCREEN == "true" && 
@@ -81,11 +84,10 @@ GEOR.Addons.Fullscreen = Ext.extend(GEOR.Addons.Base, {
     goFullscreen: function() {
         var api = this.api;
         if (this.options.toolbars == true || !api.supportsFullScreen) {
-            var mp = GeoExt.MapPanel.guess(); // TODO: improve this for 15.12, with https://github.com/georchestra/georchestra/issues/1006
-            // put the mappanel up-front:
-            mp.el.dom.style.zIndex = 9999;
+            // put the header in the back:
+            this.headerIframe.style.zIndex = 0;
             // (this is for those with drop down menus in header)
-            var p = mp.ownerCt; 
+            var p = GeoExt.MapPanel.guess().ownerCt; 
             this.size = p.items.get(0).getSize();
             p.items.get(0).setSize(0, 0);
             p.items.get(p.items.getCount() - 2).collapse();
@@ -103,10 +105,9 @@ GEOR.Addons.Fullscreen = Ext.extend(GEOR.Addons.Base, {
      */
     restoreLayout: function() {
         if (this.options.toolbars == true) {
-            var mp = GeoExt.MapPanel.guess(); // TODO: improve this for 15.12, with https://github.com/georchestra/georchestra/issues/1006
-            // put the mappanel back in place:
-            mp.el.dom.style.zIndex = 1;
-            var p = mp.ownerCt;
+            // put the header to the front:
+            this.headerIframe.style.zIndex = this.originalZIndex;
+            var p = GeoExt.MapPanel.guess().ownerCt;
             p.items.get(0).setSize(this.size);
             p.items.get(p.items.getCount() - 2).expand();
             p.doLayout();
