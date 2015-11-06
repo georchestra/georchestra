@@ -155,6 +155,20 @@
       </plugin>
       <!-- needed for jetty:run maven target -->
       <plugin>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>9.2.11.v20150529</version>
+        <configuration>
+          <scanIntervalSeconds>10</scanIntervalSeconds>
+          <webApp>
+            <contextPath>/cas</contextPath>
+          </webApp>
+          <httpConnector>
+            <port>8181</port>
+          </httpConnector>
+        </configuration>
+      </plugin>
+      <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
         <executions>
           <execution>
