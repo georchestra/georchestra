@@ -266,16 +266,20 @@
           <packagingExcludes>**/ext/examples/**,**/ext/pkgs/**,**/docs/**,**/openlayers/examples/**,**/openlayers/tests/**,PostTreatment.groovy</packagingExcludes>
         </configuration>
       </plugin>
+      <!-- needed for jetty:run maven target -->
       <plugin>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>maven-jetty-plugin</artifactId>
-        <version>6.1.26</version>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>9.2.11.v20150529</version>
         <configuration>
-          <scanIntervalSeconds>5</scanIntervalSeconds>
+          <scanIntervalSeconds>10</scanIntervalSeconds>
           <scanTargets>
             <scanTarget>src/main/java</scanTarget>
             <scanTarget>src/main/resources</scanTarget>
           </scanTargets>
+          <httpConnector>
+            <port>8287</port>
+          </httpConnector>
           <systemProperties>
             <systemProperty>
               <name>org.geotools.referencing.forceXY</name>
