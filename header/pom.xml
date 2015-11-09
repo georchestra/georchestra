@@ -78,13 +78,19 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>maven-jetty-plugin</artifactId>
-        <version>6.1.10</version>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>9.2.11.v20150529</version>
         <configuration>
-          <scanIntervalSeconds>10</scanIntervalSeconds>
-          <stopKey>foo</stopKey>
-          <stopPort>9999</stopPort>
+          <webApp><contextPath>/header/</contextPath></webApp>
+          <scanIntervalSeconds>5</scanIntervalSeconds>
+          <scanTargets>
+            <scanTarget>src/main/java</scanTarget>
+            <scanTarget>src/main/resources</scanTarget>
+          </scanTargets>
+          <httpConnector>
+            <port>8285</port>
+          </httpConnector>
         </configuration>
       </plugin>
       <plugin>

@@ -76,6 +76,18 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>9.2.11.v20150529</version>
+        <configuration>
+          <webApp><contextPath>/catalogapp/</contextPath></webApp>
+          <scanIntervalSeconds>5</scanIntervalSeconds>
+          <httpConnector>
+            <port>8281</port>
+          </httpConnector>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
       </plugin>
