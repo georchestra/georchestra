@@ -264,6 +264,7 @@
               <resourcesAsCSV>${basedir}/src/main/webapp,${basedir}/target/generated-configs/</resourcesAsCSV>
             </baseResource>
           </webApp>
+          <scanIntervalSeconds>5</scanIntervalSeconds>
           <stopKey>JETTY_TOP</stopKey>
           <stopPort>8090</stopPort>
           <reload>manual</reload>
