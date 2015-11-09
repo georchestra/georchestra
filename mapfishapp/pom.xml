@@ -272,6 +272,7 @@
         <artifactId>jetty-maven-plugin</artifactId>
         <version>9.2.11.v20150529</version>
         <configuration>
+          <webApp><contextPath>/mapfishapp/</contextPath></webApp>
           <scanIntervalSeconds>10</scanIntervalSeconds>
           <scanTargets>
             <scanTarget>src/main/java</scanTarget>

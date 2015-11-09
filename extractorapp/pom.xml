@@ -360,6 +360,7 @@
         <artifactId>jetty-maven-plugin</artifactId>
         <version>9.2.11.v20150529</version>
         <configuration>
+          <webApp><contextPath>/extractorapp/</contextPath></webApp>
           <!--<webApp>${basedir}/target/extractorapp.war</webApp>-->
           <httpConnector>
             <port>8283</port>
