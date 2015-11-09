@@ -356,16 +356,14 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>maven-jetty-plugin</artifactId>
-        <version>6.1.26</version>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>9.2.11.v20150529</version>
         <configuration>
-          <webApp>${basedir}/target/extractorapp.war</webApp>
-          <scanIntervalSeconds>5</scanIntervalSeconds>
-          <scanTargets>
-            <scanTarget>src/main/java</scanTarget>
-            <scanTarget>src/main/resources</scanTarget>
-          </scanTargets>
+          <!--<webApp>${basedir}/target/extractorapp.war</webApp>-->
+          <httpConnector>
+            <port>8283</port>
+          </httpConnector>
           <systemProperties>
             <systemProperty>
               <name>org.geotools.referencing.forceXY</name>
