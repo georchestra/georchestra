@@ -144,8 +144,8 @@ public class PasswordRecoveryFormController  {
 
 			
 			for (Group g : group) {
-				if (g.getName().equals("PENDING_USERS")) {
-					throw new NotFoundException("User in PENDING_USER group");
+				if (g.getName().equals("PENDING")) {
+					throw new NotFoundException("User in PENDING group");
 				}
 			}
 			

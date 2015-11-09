@@ -181,15 +181,15 @@ public class PasswordRecoveryFormControllerTest {
         Mockito.when(rec.checkAnswer(Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
             .thenReturn(rer);
         ArrayList<Group> pendingUsersGroupList = new ArrayList();
-        pendingUsersGroupList.add(GroupFactory.create("PENDING_USERS", "groups of pending users"));
         
+        pendingUsersGroupList.add(GroupFactory.create("PENDING", "groups of pending users"));
         Mockito.when(gdao.findAllForUser(Mockito.anyString())).thenReturn(pendingUsersGroupList);
         String ret = ctrl.generateToken(request, formBean, result, status);
+        
         assertTrue(ret.equals("passwordRecoveryForm"));
         for (Group g : pendingUsersGroupList){
-        assertTrue(g.getName().equals("PENDING_USERS"));
+        assertTrue(g.getName().equals("PENDING"));
 
         }
-    }
-    
+    } 
 }
