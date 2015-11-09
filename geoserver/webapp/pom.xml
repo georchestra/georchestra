@@ -96,24 +96,15 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>maven-jetty-plugin</artifactId>
-        <version>6.1.26</version>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>9.2.11.v20150529</version>
         <configuration>
-          <contextPath>geoserver</contextPath>
-          <webApp>${basedir}/target/geoserver.war</webApp>
-          <connectors>
-            <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
-              <port>18080</port>
-              <maxIdleTime>10000</maxIdleTime>
-            </connector>
-          </connectors>
-          <contextPath>geoserver</contextPath>
-          <!-- uncomment following to set a GEOSERVER_DATA_DIR -->
-          <!--
-						<systemProperties> <systemProperty> <name>GEOSERVER_DATA_DIR</name>
-						<value>/home/ak/geoserver_data</value> </systemProperty> </systemProperties>
-					-->
+          <webApp><contextPath>/geoserver/</contextPath></webApp>
+          <scanIntervalSeconds>5</scanIntervalSeconds>
+          <httpConnector>
+            <port>8380</port>
+          </httpConnector>
         </configuration>
       </plugin>
     </plugins>

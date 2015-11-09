@@ -159,7 +159,7 @@
         <artifactId>jetty-maven-plugin</artifactId>
         <version>9.2.11.v20150529</version>
         <configuration>
-          <scanIntervalSeconds>10</scanIntervalSeconds>
+          <scanIntervalSeconds>5</scanIntervalSeconds>
           <webApp>
             <contextPath>/cas</contextPath>
           </webApp>
