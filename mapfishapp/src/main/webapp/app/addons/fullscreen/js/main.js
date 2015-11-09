@@ -8,12 +8,18 @@ GEOR.Addons.Fullscreen = Ext.extend(GEOR.Addons.Base, {
      */
     init: function(record) {
         this.api = window.fullScreenApi;
+        // detecting if viewer should start fullscreen: (?fullscreen=true)
+        var o = GEOR.util.splitURL(window.location.href),
+            isFullscreen = (o.params.FULLSCREEN == "true") &&
+                // requestFullScreen can only be initiated by a user gesture:
+                (this.options.toolbars == true || !this.api.supportsFullScreen);
         if (this.target) {
             // addon placed in toolbar
             this.components = this.target.insertButton(this.position, {
                 xtype: 'button',
                 // toggle mode enabled if toolbars = true
                 enableToggle: !!this.options.toolbars,
+                pressed: isFullscreen,
                 tooltip: this.getTooltip(record),
                 iconCls: 'fullscreen-icon',
                 listeners: {
@@ -27,6 +33,7 @@ GEOR.Addons.Fullscreen = Ext.extend(GEOR.Addons.Base, {
             // addon placed in "tools menu"
             this.item = new Ext.menu.CheckItem({
                 text: this.getText(record),
+                checked: isFullscreen,
                 qtip: this.getQtip(record),
                 iconCls: 'fullscreen-icon',
                 listeners: {
@@ -44,11 +51,7 @@ GEOR.Addons.Fullscreen = Ext.extend(GEOR.Addons.Base, {
         // store original header iframe zindex:
         this.headerIframe = Ext.get("go_head").query('iframe')[0];
         this.originalZIndex = this.headerIframe.style.zIndex;
-        // detecting if viewer should start fullscreen: (?fullscreen=true)
-        var o = GEOR.util.splitURL(window.location.href);
-        if (o.params.FULLSCREEN == "true" && 
-            // requestFullScreen can only be initiated by a user gesture:
-            (this.options.toolbars == true || !this.api.supportsFullScreen)) {
+        if (isFullscreen) {
             this.goFullscreen();
         }
     },
