@@ -3,21 +3,22 @@ package org.georchestra.ldapadmin.ws.passwordrecovery;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import net.tanesha.recaptcha.ReCaptcha;
-import net.tanesha.recaptcha.ReCaptchaResponse;
-
 import org.georchestra.ldapadmin.Configuration;
 import org.georchestra.ldapadmin.bs.ReCaptchaParameters;
 import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
+import org.georchestra.ldapadmin.ds.GroupDao;
 import org.georchestra.ldapadmin.ds.NotFoundException;
 import org.georchestra.ldapadmin.ds.UserTokenDao;
 import org.georchestra.ldapadmin.dto.Account;
+import org.georchestra.ldapadmin.dto.Group;
+import org.georchestra.ldapadmin.dto.GroupFactory;
 import org.georchestra.ldapadmin.mailservice.EmailFactoryImpl;
 import org.georchestra.ldapadmin.mailservice.MailService;
 import org.junit.After;
@@ -30,10 +31,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.support.SessionStatus;
 
+import net.tanesha.recaptcha.ReCaptcha;
+import net.tanesha.recaptcha.ReCaptchaResponse;
+
 public class PasswordRecoveryFormControllerTest {
 
     private PasswordRecoveryFormController ctrl ;
     private AccountDao dao = Mockito.mock(AccountDao.class);
+    private GroupDao gdao = Mockito.mock(GroupDao.class);
     private EmailFactoryImpl efi = Mockito.mock(EmailFactoryImpl.class);
     private MailService srv = new MailService(efi);
     private ReCaptchaParameters rep = new ReCaptchaParameters();
@@ -49,7 +54,7 @@ public class PasswordRecoveryFormControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        ctrl = new PasswordRecoveryFormController(dao, srv, utd, cfg, rec, rep);
+        ctrl = new PasswordRecoveryFormController(dao,gdao, srv, utd, cfg, rec, rep);
     }
 
     @After
@@ -115,6 +120,7 @@ public class PasswordRecoveryFormControllerTest {
         String ret = ctrl.generateToken(request, formBean, result, status);
         assertTrue(ret.equals("passwordRecoveryForm"));
     }
+    
 
     @Test
     public void testGenerateTokenBadEmail() throws Exception {
@@ -163,6 +169,27 @@ public class PasswordRecoveryFormControllerTest {
         assertTrue(b.toString().equals("PasswordRecoveryFormBean [email=test@localhost.com, "
                 + "recaptcha_challenge_field=valid, recaptcha_response_field=valid]"));
 
-
     }
+    /**
+     * test for recovery password when user is a PENDING USER
+     * @throws Exception 
+    */ 
+    @Test
+    public void testPasswordRecoveryWithPendingUser() throws Exception {
+        prepareLegitRequest();
+        Mockito.when(result.hasErrors()).thenReturn(false);
+        Mockito.when(rec.checkAnswer(Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
+            .thenReturn(rer);
+        ArrayList<Group> pendingUsersGroupList = new ArrayList();
+        pendingUsersGroupList.add(GroupFactory.create("PENDING_USERS", "groups of pending users"));
+        
+        Mockito.when(gdao.findAllForUser(Mockito.anyString())).thenReturn(pendingUsersGroupList);
+        String ret = ctrl.generateToken(request, formBean, result, status);
+        assertTrue(ret.equals("passwordRecoveryForm"));
+        for (Group g : pendingUsersGroupList){
+        assertTrue(g.getName().equals("PENDING_USERS"));
+
+        }
+    }
+    
 }
