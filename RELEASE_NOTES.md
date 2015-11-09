@@ -3,6 +3,31 @@ The development branch is master. It can be used for testing and reporting error
 For production systems, you are advised to use the stable branch (currently 15.06).
 This branch receives bug fixes as they arrive, during 6 months at least.
 
+Version 15.12
+=============
+
+
+
+### UPGRADING:
+ * As a result of [#1040](https://github.com/georchestra/georchestra/pull/1040), LDAP groups are now ```groupOfMembers``` instances rather than ```groupOfNames``` instances. In addition, the ```PENDING_USERS``` group was renamed. You have to migrate your LDAP tree, according to the following procedure (please change the ```dc=georchestra,dc=org``` string for your own base DN and provide a suitable password):
+   * dump your ldap **groups** with:
+   ```
+   ldapsearch -H ldap://localhost:389 -xLLL -D "cn=admin,dc=georchestra,dc=org" -w your_ldap_password -b "ou=groups,dc=georchestra,dc=org" > /tmp/groups.ldif
+   ```
+   * migration:
+   ```
+   sed -i 's/PENDING_USERS/PENDING/' /tmp/groups.ldif
+   sed -i 's/groupOfNames/groupOfMembers/' /tmp/groups.ldif
+   sed -i '/fakeuser/d' /tmp/groups.ldif
+   ```
+   * load the groupOfMembers definition:
+   ```
+    wget --no-check-certificate https://raw.githubusercontent.com/georchestra/LDAP/YY.MM/georchestra-groupofmembers.ldif -O /tmp/groupofmembers.ldif
+    sudo ldapadd -Y EXTERNAL -H ldapi:/// -f /tmp/groupofmembers.ldif
+   ```
+   * drop your groups organizationalUnit (```ou```)
+   * import the updated groups.ldif file.
+
 
 Version 15.06
 =============
