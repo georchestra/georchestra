@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import javax.naming.Name;
 import javax.servlet.http.HttpServletResponse;
 
@@ -24,6 +23,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.http.HttpMethod;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextOperations;
@@ -463,6 +463,7 @@ public class UsersControllerTest {
         assertTrue(response.getStatus() == HttpServletResponse.SC_OK);
         assertTrue(ret.getBoolean("success"));
 
+
     }
 
     @Test
@@ -545,11 +546,16 @@ public class UsersControllerTest {
         assertTrue(response.getStatus() == HttpServletResponse.SC_NOT_FOUND);
         assertFalse(ret.getBoolean("success"));
         assertTrue(ret.getString("error").equals("not_found"));
+        
     }
+    
 
     @Test
-    public void testDelete() throws Exception {
-
-
+    public void testResquestProducesDelete() throws Exception {
+        request.setRequestURI("/private/users/pmaudui");
+        request.setMethod(HttpMethod.DELETE.toString());
+        usersCtrl.delete(request, response);
+        assertTrue(response.getContentType().equals("application/json; charset=UTF-8"));
+        
     }
 }

@@ -28,7 +28,7 @@ public class GroupResponse {
 		this.group = group;
 		this.filter = filter;
 	}
-	@RequestMapping(produces = "application/json; charset=utf-8")
+	
 	public String asJsonString() throws IOException {
 		try{
 			JSONObject jsonGroup = new JSONObject();

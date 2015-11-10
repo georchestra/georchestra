@@ -29,7 +29,7 @@ final class GroupListResponse {
 		this.groupList = list;
 		this.filter = filter;
 	}
-	@RequestMapping(produces = "application/json; charset=utf-8")
+	
 	public String asJsonString() throws JSONException {
 		JSONArray jsonGroupArray = new JSONArray();
 		int i = 0;
