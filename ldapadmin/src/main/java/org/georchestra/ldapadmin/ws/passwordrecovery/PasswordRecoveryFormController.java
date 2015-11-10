@@ -4,13 +4,12 @@
 package org.georchestra.ldapadmin.ws.passwordrecovery;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.servlet.ServletContext;
-
-import net.tanesha.recaptcha.ReCaptcha;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,9 +17,11 @@ import org.georchestra.ldapadmin.Configuration;
 import org.georchestra.ldapadmin.bs.ReCaptchaParameters;
 import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
+import org.georchestra.ldapadmin.ds.GroupDao;
 import org.georchestra.ldapadmin.ds.NotFoundException;
 import org.georchestra.ldapadmin.ds.UserTokenDao;
 import org.georchestra.ldapadmin.dto.Account;
+import org.georchestra.ldapadmin.dto.Group;
 import org.georchestra.ldapadmin.mailservice.MailService;
 import org.georchestra.ldapadmin.ws.utils.EmailUtils;
 import org.georchestra.ldapadmin.ws.utils.RecaptchaUtils;
@@ -36,6 +37,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
+
+import net.tanesha.recaptcha.ReCaptcha;
 
 /**
  * Manage the user interactions required to implement the lost password workflow: 
@@ -60,20 +63,25 @@ public class PasswordRecoveryFormController  {
 	
 	// collaborations 
 	private AccountDao accountDao;
+	private GroupDao groupDao;
 	private MailService mailService;
 	private UserTokenDao userTokenDao;
 	private Configuration config;
 	private ReCaptcha reCaptcha;
 	private ReCaptchaParameters reCaptchaParameters;
+	
 
 	@Autowired
-	public PasswordRecoveryFormController( AccountDao dao, MailService mailSrv, UserTokenDao userTokenDao, Configuration cfg, ReCaptcha reCaptcha, ReCaptchaParameters reCaptchaParameters){
+	public PasswordRecoveryFormController( AccountDao dao,GroupDao gDao, MailService mailSrv, UserTokenDao userTokenDao,
+			Configuration cfg, ReCaptcha reCaptcha, ReCaptchaParameters reCaptchaParameters){
 		this.accountDao = dao;
+		this.groupDao = gDao;
 		this.mailService = mailSrv;
 		this.userTokenDao = userTokenDao;
 		this.config = cfg;
 		this.reCaptcha = reCaptcha;
 		this.reCaptchaParameters = reCaptchaParameters;
+		
 	}
 	
 	@InitBinder
@@ -120,6 +128,8 @@ public class PasswordRecoveryFormController  {
 			return "passwordRecoveryForm";
 		}
 
+		
+		
 		String remoteAddr = request.getRemoteAddr();
 		new RecaptchaUtils(remoteAddr, this.reCaptcha).validate(formBean.getRecaptcha_challenge_field(), formBean.getRecaptcha_response_field(), resultErrors);
 		if(resultErrors.hasErrors()){
@@ -127,10 +137,21 @@ public class PasswordRecoveryFormController  {
 		}
 		
 		try {
-			// Finds the user using the email as key, if it exists a new token is generated to include in the unique http URL.
 			Account account = this.accountDao.findByEmail(formBean.getEmail());
+			List<Group> group = this.groupDao.findAllForUser(account.getUid());
+			// Finds the user using the email as key, if it exists a new token is generated to include in the unique http URL.
+			
+
+			
+			for (Group g : group) {
+				if (g.getName().equals("PENDING")) {
+					throw new NotFoundException("User in PENDING group");
+				}
+			}
 			
 			String token = UUID.randomUUID().toString();
+
+		
 			
 			// if there is a previous token it is removed
 			if( this.userTokenDao.exist(account.getUid()) ) {
