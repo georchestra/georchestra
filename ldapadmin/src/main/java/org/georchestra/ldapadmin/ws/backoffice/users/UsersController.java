@@ -3,6 +3,7 @@
  */
 package org.georchestra.ldapadmin.ws.backoffice.users;
 
+
 import java.io.IOException;
 import java.text.Normalizer;
 import java.util.List;
@@ -32,9 +33,11 @@ import org.georchestra.lib.file.FileUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.condition.ProducesRequestCondition;
 
 /**
  * Web Services to maintain the User information.
@@ -101,7 +104,7 @@ public class UsersController {
 	 * @param response
 	 * @throws IOException
 	 */
-	@RequestMapping(value=REQUEST_MAPPING, method=RequestMethod.GET,produces = "application/json; charset=utf-8")
+	@RequestMapping(value=REQUEST_MAPPING, method=RequestMethod.GET)
 	public void findAll( HttpServletRequest request, HttpServletResponse response ) throws IOException{
 
 		try {
@@ -140,7 +143,7 @@ public class UsersController {
 	 * @param response Returns the detailed information of the user as json
 	 * @throws IOException
 	 */
-	@RequestMapping(value=REQUEST_MAPPING+"/*", method=RequestMethod.GET, produces = "application/json; charset=utf-8")
+	@RequestMapping(value=REQUEST_MAPPING+"/*", method=RequestMethod.GET)
 	public void findByUid( HttpServletRequest request, HttpServletResponse response) throws IOException{
 
 		String uid = RequestUtil.getKeyFromPathVariable(request).toLowerCase();
@@ -247,7 +250,7 @@ public class UsersController {
 	 * @param response
 	 * @throws IOException
 	 */
-	@RequestMapping(value=REQUEST_MAPPING, method=RequestMethod.POST, produces = "application/json; charset=utf-8")
+	@RequestMapping(value=REQUEST_MAPPING, method=RequestMethod.POST)
 	public void create( HttpServletRequest request, HttpServletResponse response ) throws IOException{
 
 		try{
@@ -361,7 +364,7 @@ public class UsersController {
 	 *
 	 * @throws IOException if the uid does not exist or fails to access to the LDAP store.
 	 */
-	@RequestMapping(value=REQUEST_MAPPING+ "/*", method=RequestMethod.PUT, produces = "application/json; charset=utf-8")
+	@RequestMapping(value=REQUEST_MAPPING+ "/*", method=RequestMethod.PUT)
 	public void update( HttpServletRequest request, HttpServletResponse response) throws IOException{
 
 		final String uid = RequestUtil.getKeyFromPathVariable(request).toLowerCase();
@@ -434,11 +437,10 @@ public class UsersController {
 	 * @param response
 	 * @throws IOException
 	 */
-	@RequestMapping(value=REQUEST_MAPPING + "/*", method=RequestMethod.DELETE, produces = "application/json; charset=utf-8")
+	@RequestMapping(value=REQUEST_MAPPING + "/*", method=RequestMethod.DELETE)
 	public void delete( HttpServletRequest request, HttpServletResponse response) throws IOException{
 		try{
 			final String uid = RequestUtil.getKeyFromPathVariable(request).toLowerCase();
-
 			if(this.userRule.isProtected(uid) ){
 
 				String message = "The user is protected, it cannot be deleted: " + uid;

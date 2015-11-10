@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @author Mauricio Pazos
  *
  */
-@RequestMapping(produces = "application/json; charset=utf-8")
+
 
 class UserResponse {
 	
