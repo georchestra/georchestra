@@ -10,6 +10,8 @@ import org.georchestra.ldapadmin.dto.UserSchema;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * 
@@ -23,6 +25,7 @@ import org.json.JSONObject;
  * @author Mauricio Pazos
  *
  */
+@RequestMapping(produces = "application/json; charset=utf-8")
 final class UserListResponse {
 	
 	private List<Account> accountList;
@@ -52,6 +55,7 @@ final class UserListResponse {
 	 * 
 	 * @throws JSONException
 	 */
+
 	public String asJsonString() throws JSONException {
 
 		JSONArray jsonArray = new JSONArray();

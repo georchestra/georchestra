@@ -6,6 +6,7 @@ import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.UserSchema;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 
 /**
@@ -15,6 +16,8 @@ import org.json.JSONObject;
  * @author Mauricio Pazos
  *
  */
+@RequestMapping(produces = "application/json; charset=utf-8")
+
 class UserResponse {
 	
 	private Account account;

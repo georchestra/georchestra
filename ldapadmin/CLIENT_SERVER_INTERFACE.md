@@ -261,7 +261,7 @@ Response
 
 Curl can be used to test the client-server interface. To get the list of users:
 
-    curl -H "Content-Type: text/xml" --request GET http://georchestra.mydomain.org/ldapadmin/private/users/
+    curl -H "Content-Type: application/json" --request GET http://georchestra.mydomain.org/ldapadmin/private/users/
 
 To create a new group
 
@@ -280,4 +280,4 @@ nano /tmp/newgroup.json
 
 *  post this file
 
-    curl -H "Content-Type: text/xml" -d @/tmp/newgroup.json --request POST http://georchestra.mydomain.org/ldapadmin/private/groups
+    curl -H "Content-Type: application/json" -d @/tmp/newgroup.json --request POST http://georchestra.mydomain.org/ldapadmin/private/groups

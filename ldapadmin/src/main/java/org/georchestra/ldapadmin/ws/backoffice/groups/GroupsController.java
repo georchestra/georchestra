@@ -42,6 +42,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  */
 
 @Controller
+@RequestMapping(produces = "application/json; charset=utf-8")
 public class GroupsController {
 
 	private static final Log LOG = LogFactory.getLog(GroupsController.class.getName());
