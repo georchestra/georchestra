@@ -11,6 +11,7 @@ import org.georchestra.ldapadmin.dto.GroupSchema;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * Returns the list of users / groups membership.
@@ -18,6 +19,7 @@ import org.json.JSONObject;
  * @author Mauricio Pazos
  *
  */
+
 final class GroupListResponse {
 
 	private List<Group> groupList;
@@ -27,7 +29,7 @@ final class GroupListResponse {
 		this.groupList = list;
 		this.filter = filter;
 	}
-
+	@RequestMapping(produces = "application/json; charset=utf-8")
 	public String asJsonString() throws JSONException {
 		JSONArray jsonGroupArray = new JSONArray();
 		int i = 0;

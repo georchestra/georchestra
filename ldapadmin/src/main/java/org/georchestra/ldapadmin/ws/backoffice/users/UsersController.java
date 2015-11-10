@@ -101,7 +101,7 @@ public class UsersController {
 	 * @param response
 	 * @throws IOException
 	 */
-	@RequestMapping(value=REQUEST_MAPPING, method=RequestMethod.GET)
+	@RequestMapping(value=REQUEST_MAPPING, method=RequestMethod.GET,produces = "application/json; charset=utf-8")
 	public void findAll( HttpServletRequest request, HttpServletResponse response ) throws IOException{
 
 		try {
@@ -140,7 +140,7 @@ public class UsersController {
 	 * @param response Returns the detailed information of the user as json
 	 * @throws IOException
 	 */
-	@RequestMapping(value=REQUEST_MAPPING+"/*", method=RequestMethod.GET)
+	@RequestMapping(value=REQUEST_MAPPING+"/*", method=RequestMethod.GET, produces = "application/json")
 	public void findByUid( HttpServletRequest request, HttpServletResponse response) throws IOException{
 
 		String uid = RequestUtil.getKeyFromPathVariable(request).toLowerCase();
@@ -247,7 +247,7 @@ public class UsersController {
 	 * @param response
 	 * @throws IOException
 	 */
-	@RequestMapping(value=REQUEST_MAPPING, method=RequestMethod.POST)
+	@RequestMapping(value=REQUEST_MAPPING, method=RequestMethod.POST, produces = "application/json; charset=utf-8")
 	public void create( HttpServletRequest request, HttpServletResponse response ) throws IOException{
 
 		try{
@@ -361,7 +361,7 @@ public class UsersController {
 	 *
 	 * @throws IOException if the uid does not exist or fails to access to the LDAP store.
 	 */
-	@RequestMapping(value=REQUEST_MAPPING+ "/*", method=RequestMethod.PUT)
+	@RequestMapping(value=REQUEST_MAPPING+ "/*", method=RequestMethod.PUT, produces = "application/json; charset=utf-8")
 	public void update( HttpServletRequest request, HttpServletResponse response) throws IOException{
 
 		final String uid = RequestUtil.getKeyFromPathVariable(request).toLowerCase();
@@ -434,7 +434,7 @@ public class UsersController {
 	 * @param response
 	 * @throws IOException
 	 */
-	@RequestMapping(value=REQUEST_MAPPING + "/*", method=RequestMethod.DELETE)
+	@RequestMapping(value=REQUEST_MAPPING + "/*", method=RequestMethod.DELETE, produces = "application/json; charset=utf-8")
 	public void delete( HttpServletRequest request, HttpServletResponse response) throws IOException{
 		try{
 			final String uid = RequestUtil.getKeyFromPathVariable(request).toLowerCase();
