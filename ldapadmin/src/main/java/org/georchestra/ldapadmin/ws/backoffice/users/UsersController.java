@@ -140,7 +140,7 @@ public class UsersController {
 	 * @param response Returns the detailed information of the user as json
 	 * @throws IOException
 	 */
-	@RequestMapping(value=REQUEST_MAPPING+"/*", method=RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value=REQUEST_MAPPING+"/*", method=RequestMethod.GET, produces = "application/json; charset=utf-8")
 	public void findByUid( HttpServletRequest request, HttpServletResponse response) throws IOException{
 
 		String uid = RequestUtil.getKeyFromPathVariable(request).toLowerCase();

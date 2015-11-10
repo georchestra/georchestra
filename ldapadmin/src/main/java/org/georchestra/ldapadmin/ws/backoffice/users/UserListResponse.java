@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @author Mauricio Pazos
  *
  */
-@RequestMapping(produces = "application/json")
+@RequestMapping(produces = "application/json; charset=utf-8")
 final class UserListResponse {
 	
 	private List<Account> accountList;
