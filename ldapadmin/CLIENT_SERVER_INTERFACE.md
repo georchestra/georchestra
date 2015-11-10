@@ -280,4 +280,4 @@ nano /tmp/newgroup.json
 
 *  post this file
 
-    curl -H "Content-Type: text/xml" -d @/tmp/newgroup.json --request POST http://georchestra.mydomain.org/ldapadmin/private/groups
+    curl -H "Content-Type: application/json" -d @/tmp/newgroup.json --request POST http://georchestra.mydomain.org/ldapadmin/private/groups
