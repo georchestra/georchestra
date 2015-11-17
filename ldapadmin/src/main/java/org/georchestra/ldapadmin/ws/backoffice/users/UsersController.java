@@ -401,7 +401,8 @@ public class UsersController {
 		try{
 			final Account modified = modifyAccount(AccountFactory.create(account), request.getInputStream());
 			this.accountDao.update(account, modified);
-			if (warnUserIfUidModified) {
+			boolean uidChanged = ( ! modified.getUid().equals(account.getUid()));
+			if ((uidChanged) && (warnUserIfUidModified)) {
 				this.mailService.sendAccountUidRenamed(request.getSession().getServletContext(),
 						modified.getUid(), modified.getCommonName(), modified.getEmail());
 			}
