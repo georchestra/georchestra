@@ -1,19 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-        xmlns:context="http://www.springframework.org/schema/context"
-        xmlns:mvc="http://www.springframework.org/schema/mvc"
-        xmlns:p="http://www.springframework.org/schema/p"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:p="http://www.springframework.org/schema/p"
+
+
         xsi:schemaLocation="http://www.springframework.org/schema/beans
-            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+            http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+            http://www.springframework.org/schema/data/jpa
+            http://www.springframework.org/schema/data/jpa/spring-jpa-1.0.xsd
             http://www.springframework.org/schema/context
             http://www.springframework.org/schema/context/spring-context-3.0.xsd
             http://www.springframework.org/schema/mvc
             http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-  <mvc:annotation-driven/>
+    <!-- Directory to scan for repository classes -->
+    <jpa:repositories base-package="org.georchestra.ldapadmin.dao" />
+
+
+    <mvc:annotation-driven/>
 
   <context:annotation-config/>
+
 
   <!--  First provided ldapadmin.properties from webapp with prio  2 -->
   <context:property-placeholder location="/WEB-INF/spring/ldapadmin.properties" ignore-resource-not-found="true" ignore-unresolvable="true" order="2"/>
@@ -84,17 +97,47 @@
 
   <bean id="userTokenDao" class="org.georchestra.ldapadmin.ds.UserTokenDao"/>
 
-  <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
-    <property name="url" value="${psql.url}"/>
-    <property name="username" value="${psql.user}"/>
-    <property name="password" value="${psql.pass}"/>
-    <property name="driverClassName" value="org.postgresql.Driver"/>
-    <property name="testOnBorrow" value="true"/>
-    <property name="poolPreparedStatements" value="true"/>
-    <property name="maxOpenPreparedStatements" value="-1"/>
-    <property name="defaultReadOnly" value="false"/>
-    <property name="defaultAutoCommit" value="true"/>
-  </bean>
+<!-- TODO re-apply specific params on new dataSource :  testOnBorrow, poolPreparedStatements, ... -->
+    <!--<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">-->
+        <!--<property name="url" value="${psql.url}"/>-->
+        <!--<property name="username" value="${psql.user}"/>-->
+        <!--<property name="password" value="${psql.pass}"/>-->
+        <!--<property name="driverClassName" value="org.postgresql.Driver"/>-->
+        <!--<property name="testOnBorrow" value="true"/>-->
+        <!--<property name="poolPreparedStatements" value="true"/>-->
+        <!--<property name="maxOpenPreparedStatements" value="-1"/>-->
+        <!--<property name="defaultReadOnly" value="false"/>-->
+        <!--<property name="defaultAutoCommit" value="true"/>-->
+    <!--</bean>-->
+
+   <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+       <property name="driverClassName" value="org.postgresql.Driver"/>
+       <property name="url" value="${psql.url}"/>
+       <property name="username" value="${psql.user}"/>
+       <property name="password" value="${psql.pass}"/>
+   </bean>
+
+   <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+       <property name="dataSource" ref="dataSource" />
+       <property name="persistenceUnitName" value="myPU" />
+       <property name="persistenceXmlLocation" value="classpath:persistence.xml"/>
+       <property name="jpaVendorAdapter">
+           <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+       </property>
+       <property name="jpaProperties">
+           <props>
+               <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL94Dialect</prop>
+               <prop key="hibernate.show_sql">false</prop>
+               <prop key="hibernate.format_sql">false</prop>
+               <prop key="hibernate.hbm2ddl.auto">update</prop>
+           </props>
+       </property>
+   </bean>
+
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
+
 
   <bean id="expiredTokenCleanTask" class="org.georchestra.ldapadmin.bs.ExpiredTokenCleanTask"/>
 
