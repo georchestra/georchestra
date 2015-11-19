@@ -10,6 +10,7 @@ import org.georchestra.ldapadmin.model.Attachment;
 import org.georchestra.ldapadmin.model.EmailEntry;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -39,10 +40,11 @@ public class EmailController {
     @ResponseBody
     public String emailsList(@PathVariable String recipient) throws JSONException {
 
-        List<EmailEntry> emails = emailRepository.findByRecipient(UUID.fromString(recipient));
-        JSONArray res = new JSONArray();
-        for(EmailEntry email : emails)
-            res.put(email.toJSON());
+        JSONArray emails = new JSONArray();
+        for(EmailEntry email : emailRepository.findByRecipient(UUID.fromString(recipient)))
+            emails.put(email.toJSON());
+        JSONObject res = new JSONObject();
+        res.put("emails", emails);
 
         return res.toString();
     }
@@ -85,7 +87,5 @@ public class EmailController {
 
     }
 
-
-
-
+  
 }
