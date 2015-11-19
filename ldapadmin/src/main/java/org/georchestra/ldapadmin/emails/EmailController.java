@@ -52,7 +52,7 @@ public class EmailController {
     public String sendEmail(@PathVariable String recipient,
                             @RequestParam("subject") String subject,
                             @RequestParam("content") String content,
-                            @RequestParam("attachments[]") String[] attachmentsIds,
+                            @RequestParam("attachments") String attachmentsIds,
                             HttpServletRequest request) throws NotFoundException, DataServiceException {
 
 
@@ -63,7 +63,8 @@ public class EmailController {
         email.setSubject(subject);
         email.setBody(content);
         List<Attachment> attachments = new LinkedList<Attachment>();
-        for(String attId : attachmentsIds)
+        String[] attachmentsIdsList = attachmentsIds.split("\\s?,\\s?");
+        for(String attId : attachmentsIdsList)
             attachments.add(attachmentRepo.findOne(Long.parseLong(attId)));
         email.setAttachments(attachments);
 
@@ -78,8 +79,7 @@ public class EmailController {
                 "recipient : " + recipient + "<br>" +
                 "subject : <input type='test' name='subject'><br>" +
                 "content : <textarea name='content'></textarea><br>" +
-                "first attachment <input type='text' name='attachments[]'><br>" +
-                "second attachment <input type='text' name='attachments[]'><br>" +
+                "comma separated list of attachment identifier <input type='text' name='attachments'><br>" +
                 "<input type='submit'>" +
                 "</form>";
 
