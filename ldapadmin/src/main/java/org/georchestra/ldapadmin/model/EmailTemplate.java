@@ -6,8 +6,8 @@ import org.json.JSONObject;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "ldapadmin.adminattachments")
-public class Attachment {
+@Table(name = "ldapadmin.emailtemplate")
+public class EmailTemplate {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
@@ -15,9 +15,9 @@ public class Attachment {
     private String name;
     private String content;
 
-    public Attachment() {}
+    public EmailTemplate() {}
 
-    public Attachment(long id, String name, String content) {
+    public EmailTemplate(long id, String name, String content) {
         this.id = id;
         this.name = name;
         this.content = content;
@@ -51,6 +51,7 @@ public class Attachment {
         JSONObject res = new JSONObject();
         res.put("id", this.getId());
         res.put("name", this.getName());
+        res.put("content", this.getContent());
         return res;
     }
 }

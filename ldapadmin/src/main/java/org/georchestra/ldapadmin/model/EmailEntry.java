@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "adminEmails")
+@Table(name = "ldapadmin.adminemails")
 public class EmailEntry {
 
     @Id
