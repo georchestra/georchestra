@@ -12,7 +12,6 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.ldapadmin.ds.AccountDao;
@@ -23,7 +22,6 @@ import org.georchestra.ldapadmin.ds.NotFoundException;
 import org.georchestra.ldapadmin.ds.ProtectedUserFilter;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
-import org.georchestra.ldapadmin.dto.AccountImpl;
 import org.georchestra.ldapadmin.dto.Group;
 import org.georchestra.ldapadmin.dto.UserSchema;
 import org.georchestra.ldapadmin.mailservice.MailService;
@@ -33,11 +31,9 @@ import org.georchestra.lib.file.FileUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.mvc.condition.ProducesRequestCondition;
 
 /**
  * Web Services to maintain the User information.
@@ -559,7 +555,7 @@ public class UsersController {
 				account.getGivenName(), account.getSurname());
 
 		account.setCommonName(commonName);
-		String uid = RequestUtil.getFieldValue(json, UserSchema.UUID_KEY);
+		String uid = RequestUtil.getFieldValue(json, UserSchema.UID_KEY);
 		if (uid != null) {
 			account.setUid(uid);
 		}

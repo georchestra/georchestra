@@ -6,7 +6,6 @@ import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.UserSchema;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 
 /**
@@ -32,7 +31,7 @@ class UserResponse {
 		try{
 			JSONObject jsonAccount = new JSONObject();
 			
-			jsonAccount.put(UserSchema.UUID_KEY, account.getUid());
+			jsonAccount.put(UserSchema.UID_KEY, account.getUid());
 			jsonAccount.put(UserSchema.STREET_KEY, account.getStreet());
 			jsonAccount.put(UserSchema.TITLE_KEY, account.getTitle());
 			

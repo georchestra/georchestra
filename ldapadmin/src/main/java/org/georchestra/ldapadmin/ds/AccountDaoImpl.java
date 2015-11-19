@@ -10,6 +10,7 @@ import javax.naming.Name;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
+import javax.naming.directory.SearchControls;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -266,9 +267,11 @@ public final class AccountDaoImpl implements AccountDao {
      */
     @Override
     public List<Account> findAll() throws DataServiceException {
-
+        SearchControls sc = new SearchControls();
+        sc.setReturningAttributes(UserSchema.ATTR_TO_RETRIEVE);
+        sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
         EqualsFilter filter = new EqualsFilter("objectClass", "person");
-        return ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(), new AccountContextMapper());
+        return ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(), sc, new AccountContextMapper());
     }
 
     @Override
@@ -289,7 +292,7 @@ public final class AccountDaoImpl implements AccountDao {
 
         try {
             DistinguishedName dn = buildDn(uid.toLowerCase());
-            Account a = (Account) ldapTemplate.lookup(dn, new AccountContextMapper());
+            Account a = (Account) ldapTemplate.lookup(dn, UserSchema.ATTR_TO_RETRIEVE, new AccountContextMapper());
 
             return a;
 
@@ -306,13 +309,17 @@ public final class AccountDaoImpl implements AccountDao {
     @Override
     public Account findByEmail(final String email) throws DataServiceException, NotFoundException {
 
+        SearchControls sc = new SearchControls();
+        sc.setReturningAttributes(UserSchema.ATTR_TO_RETRIEVE);
+        sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
+
         AndFilter filter = new AndFilter();
         filter.and(new EqualsFilter("objectClass", "inetOrgPerson"));
         filter.and(new EqualsFilter("objectClass", "organizationalPerson"));
         filter.and(new EqualsFilter("objectClass", "person"));
         filter.and(new EqualsFilter("mail", email));
 
-        List<Account> accountList = ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(),
+        List<Account> accountList = ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(),sc,
                 new AccountContextMapper());
         if (accountList.isEmpty()) {
             throw new NotFoundException("There is no user with this email: " + email);
@@ -411,7 +418,7 @@ public final class AccountDaoImpl implements AccountDao {
         // inetOrgPerson attributes
         setAccountField(context, UserSchema.GIVEN_NAME_KEY, account.getGivenName());
 
-        setAccountField(context, UserSchema.UUID_KEY, account.getUid().toLowerCase());
+        setAccountField(context, UserSchema.UID_KEY, account.getUid().toLowerCase());
 
         setAccountField(context, UserSchema.MAIL_KEY, account.getEmail());
 
@@ -459,7 +466,7 @@ public final class AccountDaoImpl implements AccountDao {
 
             DirContextAdapter context = (DirContextAdapter) ctx;
 
-            Account account = AccountFactory.createFull(context.getStringAttribute(UserSchema.UUID_KEY),
+            Account account = AccountFactory.createFull(context.getStringAttribute(UserSchema.UID_KEY),
                     context.getStringAttribute(UserSchema.COMMON_NAME_KEY),
                     context.getStringAttribute(UserSchema.SURNAME_KEY),
                     context.getStringAttribute(UserSchema.GIVEN_NAME_KEY),
@@ -486,6 +493,8 @@ public final class AccountDaoImpl implements AccountDao {
                     context.getStringAttribute(UserSchema.MOBILE_KEY),
                     context.getStringAttribute(UserSchema.ROOM_NUMBER_KEY),
                     context.getStringAttribute(UserSchema.STATE_OR_PROVINCE_KEY));
+
+            account.setUUID(context.getStringAttribute(UserSchema.UUID_KEY));
 
             return account;
         }

@@ -124,4 +124,8 @@ public interface Account {
 	
 	String toFormatedString(String data);
 
+	void setUUID(String uuid);
+
+	String getUUID();
+
 }

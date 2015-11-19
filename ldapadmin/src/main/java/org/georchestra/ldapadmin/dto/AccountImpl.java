@@ -72,6 +72,7 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 
 
 	private String homePostalAddres;
+	private String uuid;
 
 
 	@Override
@@ -125,7 +126,7 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 	    return ret;
 	}
 
-    private final String CSV_DELIMITER = ",";
+	private final String CSV_DELIMITER = ",";
    
    
 	@Override
@@ -472,10 +473,21 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 		this.stateOrProvince = stateOrProvince;
 	}
 
+
+	@Override
+	public void setUUID(String uuid) {
+		this.uuid = uuid;
+	}
+
+	@Override
+	public String getUUID() {
+		return uuid;
+	}
+
 	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-    @Override
+     * @see java.lang.Object#hashCode()
+     */
+	@Override
     public int hashCode() {
 	    final int prime = 31;
 	    int result = 1;

@@ -2,22 +2,20 @@ package org.georchestra.ldapadmin.emails;
 
 import org.georchestra.ldapadmin.dao.AttachmentDao;
 import org.georchestra.ldapadmin.dao.EmailDao;
+import org.georchestra.ldapadmin.ds.AccountDao;
+import org.georchestra.ldapadmin.ds.DataServiceException;
+import org.georchestra.ldapadmin.ds.NotFoundException;
+import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.model.Attachment;
 import org.georchestra.ldapadmin.model.EmailEntry;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -29,7 +27,10 @@ public class EmailController {
     private EmailDao emailRepository;
 
     @Autowired
-	private AttachmentDao attachmentRepo;
+    private AttachmentDao attachmentRepo;
+
+    @Autowired
+	private AccountDao accountDao;
 
 
     @RequestMapping(value="/{recipient}/emails",
@@ -46,20 +47,18 @@ public class EmailController {
         return res.toString();
     }
 
-
     @RequestMapping(value="{recipient}/sendEmail", method = RequestMethod.POST)
-    @Transactional
     @ResponseBody
     public String sendEmail(@PathVariable String recipient,
                             @RequestParam("subject") String subject,
                             @RequestParam("content") String content,
-                            @RequestParam("attachments[]") String[] attachmentsIds){
+                            @RequestParam("attachments[]") String[] attachmentsIds,
+                            HttpServletRequest request) throws NotFoundException, DataServiceException {
 
 
         EmailEntry email = new EmailEntry();
-
-        // TODO : récupérer le sender depuis l'env de sécurité (utilisateur connecté)
-        //email.setSender(...);
+        Account sender = this.accountDao.findByUID(request.getHeader("sec-username"));
+        email.setSender(UUID.fromString(sender.getUUID()));
         email.setRecipient(UUID.fromString(recipient));
         email.setSubject(subject);
         email.setBody(content);
