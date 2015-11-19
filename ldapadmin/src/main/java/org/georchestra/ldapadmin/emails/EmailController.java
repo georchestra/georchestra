@@ -2,12 +2,14 @@ package org.georchestra.ldapadmin.emails;
 
 import org.georchestra.ldapadmin.dao.AttachmentDao;
 import org.georchestra.ldapadmin.dao.EmailDao;
+import org.georchestra.ldapadmin.dao.EmailTemplateDao;
 import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.NotFoundException;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.model.Attachment;
 import org.georchestra.ldapadmin.model.EmailEntry;
+import org.georchestra.ldapadmin.model.EmailTemplate;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,6 +31,9 @@ public class EmailController {
 
     @Autowired
     private AttachmentDao attachmentRepo;
+
+    @Autowired
+    private EmailTemplateDao emailTemplateRepo;
 
     @Autowired
 	private AccountDao accountDao;
@@ -101,6 +106,25 @@ public class EmailController {
 
         JSONObject res = new JSONObject();
         res.put("attachments", attachments);
+        return res.toString();
+
+    }
+
+    @RequestMapping(value="/emailTemplates", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String emailTemplates() throws JSONException {
+        List<Long> ids = new LinkedList<Long>();
+        JSONArray emailTemplates = new JSONArray();
+        for(EmailTemplate temp : this.emailTemplateRepo.findAll()){
+            JSONObject attachment = new JSONObject();
+            attachment.put("id", temp.getId());
+            attachment.put("name", temp.getName());
+            attachment.put("content", temp.getContent());
+            emailTemplates.put(attachment);
+        }
+
+        JSONObject res = new JSONObject();
+        res.put("templates", emailTemplates);
         return res.toString();
 
     }
