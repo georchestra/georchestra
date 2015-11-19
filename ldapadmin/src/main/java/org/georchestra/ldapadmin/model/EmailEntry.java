@@ -1,5 +1,9 @@
 package org.georchestra.ldapadmin.model;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import javax.persistence.*;
 
 import java.util.List;
@@ -17,12 +21,12 @@ public class EmailEntry {
     private String subject;
     private String body;
 
-    @ManyToMany(targetEntity = Attachment.class)
-    private List<Integer> attachments;
+    @ManyToMany(targetEntity = Attachment.class, fetch = FetchType.EAGER)
+    private List<Attachment> attachments;
 
     public EmailEntry(){}
 
-    public EmailEntry(long id, UUID sender, UUID recipient, String subject, String body, List<Integer> attachments) {
+    public EmailEntry(long id, UUID sender, UUID recipient, String subject, String body, List<Attachment> attachments) {
         this.id = id;
         this.sender = sender;
         this.recipient = recipient;
@@ -48,7 +52,7 @@ public class EmailEntry {
         return this.body;
     }
 
-    public List<Integer> getAttachments() {
+    public List<Attachment> getAttachments() {
         return this.attachments;
     }
 
@@ -68,7 +72,22 @@ public class EmailEntry {
         this.body = body;
     }
 
-    public void setAttachments(List<Integer> attachments) {
+    public void setAttachments(List<Attachment> attachments) {
         this.attachments = attachments;
     }
+
+    public JSONObject toJSON() throws JSONException {
+        JSONObject res = new JSONObject();
+        res.put("id", this.getId());
+        res.put("sender", this.getSender());
+        res.put("recipient", this.getRecipient());
+        res.put("subject", this.getSubject());
+        res.put("body", this.getBody());
+        JSONArray array = new JSONArray();
+        for(Attachment att : this.getAttachments())
+            array.put(att.toJSON());
+        res.put("attachments", array);
+        return res;
+    }
+
 }

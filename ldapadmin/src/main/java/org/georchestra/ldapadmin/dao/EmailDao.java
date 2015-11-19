@@ -12,5 +12,6 @@ import java.util.UUID;
 public interface EmailDao extends CrudRepository<EmailEntry, Long> {
 
     List<EmailEntry> findBySender(UUID sender);
+    List<EmailEntry> findByRecipient(UUID recipient);
 
 }
