@@ -87,5 +87,24 @@ public class EmailController {
 
     }
 
-  
+    @RequestMapping(value="/attachments", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String attachments() throws JSONException {
+        List<Long> ids = new LinkedList<Long>();
+        JSONArray attachments = new JSONArray();
+        for(Attachment att : this.attachmentRepo.findAll()){
+            JSONObject attachment = new JSONObject();
+            attachment.put("id",att.getId());
+            attachment.put("name",att.getName());
+            attachments.put(attachment);
+        }
+
+        JSONObject res = new JSONObject();
+        res.put("attachments", attachments);
+        return res.toString();
+
+    }
+
+
+
 }
