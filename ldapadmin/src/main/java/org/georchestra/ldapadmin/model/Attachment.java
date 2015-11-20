@@ -6,7 +6,7 @@ import org.json.JSONObject;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "ldapadmin.adminattachments")
+@Table(schema = "ldapadmin", name = "admin_attachments")
 public class Attachment {
 
     @Id

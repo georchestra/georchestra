@@ -6,7 +6,7 @@ import org.json.JSONObject;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "ldapadmin.emailtemplate")
+@Table(schema = "ldapadmin", name = "email_template")
 public class EmailTemplate {
 
     @Id

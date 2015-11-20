@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "ldapadmin.adminemails")
+@Table(schema = "ldapadmin", name = "admin_emails")
 public class EmailEntry {
 
     @Id
@@ -22,6 +22,7 @@ public class EmailEntry {
     private String body;
 
     @ManyToMany(targetEntity = Attachment.class, fetch = FetchType.EAGER)
+    @JoinTable(schema = "ldapadmin", name="admin_emails_attchments")
     private List<Attachment> attachments;
 
     public EmailEntry(){}
