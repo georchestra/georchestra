@@ -30,6 +30,7 @@ There are other places where one can find contributed addons:
  * https://github.com/geobolivia/addons
  * https://github.com/geobretagne/addons
  * https://github.com/geosas/
+ * https://github.com/jusabatier/nominatim
 
 
 Deploying addons

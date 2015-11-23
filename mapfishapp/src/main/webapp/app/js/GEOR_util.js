@@ -427,7 +427,8 @@ GEOR.util = (function() {
                 {ignorePort80: true}
             );
             var u = o.protocol + "//" +  o.host;
-            if (o.port) {
+            // https forces port 443, no need to add it:
+            if (o.port && o.protocol != "https") {
                 u += ":" + o.port;
             }
             u += o.pathname;

@@ -31,7 +31,7 @@
     <div class="span6">
       <div class="control-group">
         <label for="mail">Password</label>
-        <a href="{{publicContextPath}}/account/passwordRecovery?email={{user.mail}}">Reset password</a>
+        <a href="{{publicContextPath}}/account/passwordRecovery?email={{user.mail | encodeURIComponent}}">Reset password</a>
       </div>
     </div>
   </div>
