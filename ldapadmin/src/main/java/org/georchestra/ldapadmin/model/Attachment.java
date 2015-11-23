@@ -3,6 +3,7 @@ package org.georchestra.ldapadmin.model;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.activation.MimeType;
 import javax.persistence.*;
 
 @Entity
@@ -13,15 +14,30 @@ public class Attachment {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private long id;
     private String name;
-    private String content;
+    @Lob
+    private byte[] content;
+    private String mimeType;
 
     public Attachment() {}
 
-    public Attachment(long id, String name, String content) {
-        this.id = id;
+    public Attachment(String name, String mimeType, byte[] content) {
         this.name = name;
+        this.mimeType = mimeType;
         this.content = content;
     }
+
+    public JSONObject toJSON() throws JSONException {
+        JSONObject res = new JSONObject();
+        res.put("id", this.getId());
+        res.put("name", this.getName());
+        res.put("mimeType", this.getMimeType());
+        res.put("size", this.content.length);
+        return res;
+    }
+
+    /*
+     * Generic getter, setter
+     */
 
     public long getId() {
         return id;
@@ -31,26 +47,17 @@ public class Attachment {
         this.id = id;
     }
 
-    public String getContent() {
-        return content;
-    }
+    public byte[] getContent() { return content; }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
+    public void setContent(byte[] content) { this.content = content; }
 
-    public String getName() {
-        return name;
-    }
+    public String getName() { return name; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public void setName(String name) { this.name = name; }
 
-    public JSONObject toJSON() throws JSONException {
-        JSONObject res = new JSONObject();
-        res.put("id", this.getId());
-        res.put("name", this.getName());
-        return res;
-    }
+    public String getMimeType() { return mimeType; }
+
+    public void setMimeType(String mimeType) { this.mimeType = mimeType; }
+
+
 }

@@ -6,6 +6,7 @@ import org.json.JSONObject;
 
 import javax.persistence.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,6 +20,7 @@ public class EmailEntry {
     private UUID sender;
     private UUID recipient;
     private String subject;
+    private Date date;
     private String body;
 
     @ManyToMany(targetEntity = Attachment.class, fetch = FetchType.EAGER)
@@ -27,15 +29,41 @@ public class EmailEntry {
 
     public EmailEntry(){}
 
-    public EmailEntry(long id, UUID sender, UUID recipient, String subject, String body, List<Attachment> attachments) {
+    public EmailEntry(long id, UUID sender, UUID recipient, String subject, Date date, String body, List<Attachment> attachments) {
         this.id = id;
         this.sender = sender;
         this.recipient = recipient;
         this.subject = subject;
+        this.date = date;
         this.body = body;
         this.attachments = attachments;
     }
+
+
+    public JSONObject toJSON() throws JSONException {
+        JSONObject res = new JSONObject();
+        res.put("id", this.getId());
+        res.put("sender", this.getSender());
+        res.put("recipient", this.getRecipient());
+        res.put("subject", this.getSubject());
+        res.put("date", this.getDate());
+        res.put("body", this.getBody());
+        JSONArray array = new JSONArray();
+        for(Attachment att : this.getAttachments())
+            array.put(att.toJSON());
+        res.put("attachments", array);
+        return res;
+    }
+
+
+    /*
+     * Generic getter, setter
+     */
     public long getId() { return this.id; }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public UUID getSender() {
         return this.sender;
@@ -77,18 +105,12 @@ public class EmailEntry {
         this.attachments = attachments;
     }
 
-    public JSONObject toJSON() throws JSONException {
-        JSONObject res = new JSONObject();
-        res.put("id", this.getId());
-        res.put("sender", this.getSender());
-        res.put("recipient", this.getRecipient());
-        res.put("subject", this.getSubject());
-        res.put("body", this.getBody());
-        JSONArray array = new JSONArray();
-        for(Attachment att : this.getAttachments())
-            array.put(att.toJSON());
-        res.put("attachments", array);
-        return res;
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
 }

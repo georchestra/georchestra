@@ -4,6 +4,7 @@
 package org.georchestra.ldapadmin.ds;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.naming.Name;
@@ -301,6 +302,23 @@ public final class AccountDaoImpl implements AccountDao {
             throw new NotFoundException("There is no user with this identifier (uid): " + uid);
         }
 
+    }
+
+    /**
+     * @see {@link AccountDao#findByUID(String)}
+     */
+    @Override
+    public Account findByUUID(final UUID uuid) throws DataServiceException, NotFoundException {
+        SearchControls sc = new SearchControls();
+        sc.setReturningAttributes(UserSchema.ATTR_TO_RETRIEVE);
+        sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
+        EqualsFilter filter = new EqualsFilter("entryUUID", uuid.toString());
+        List<Account> accounts = ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(), sc, new AccountContextMapper());
+        if(accounts.size() < 1)
+            throw new NotFoundException("Cannot find Ldap entry with UUID = " + uuid);
+        if(accounts.size() > 1)
+            throw new DataServiceException("Invalid response from ldap server, entryUUID should be unique");
+        return accounts.get(0);
     }
 
     /**
