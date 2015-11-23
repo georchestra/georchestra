@@ -16,4 +16,7 @@ angular.module('ldapadmin', ['ldapadmin.filters', 'ldapadmin.controllers', 'ldap
   ])
   .config(function(RestangularProvider) {
     RestangularProvider.setBaseUrl("/ldapadmin/private");
+  })
+  .filter('encodeURIComponent', function() {
+    return window.encodeURIComponent;
   });
