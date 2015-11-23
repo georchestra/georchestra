@@ -62,7 +62,11 @@ javax.servlet.jsp.jstl.core.Config.set(
 );
 
 Boolean extractor = false;
+Boolean admin = false;
+Boolean catadmin = false;
 Boolean ldapadmin = false;
+Boolean analyticsadmin = false;
+Boolean extractorappadmin = false;
 String sec_roles = request.getHeader("sec-roles");
 if(sec_roles != null) {
     String[] roles = sec_roles.split(";");
@@ -79,7 +83,20 @@ if(sec_roles != null) {
             extractor = true;
         }
         if (roles[i].equals("ROLE_MOD_LDAPADMIN")) {
+            admin = true;
             ldapadmin = true;
+        }
+        if (roles[i].equals("ROLE_SV_ADMIN")) {
+            admin = true;
+            catadmin = true;
+        }
+        if (roles[i].equals("ROLE_ADMINISTRATOR")) {
+            admin = true;
+            extractorappadmin = true;
+        }
+        if (roles[i].equals("ROLE_MOD_ANALYTICS")) {
+            admin = true;
+            analyticsadmin = true;
         }
     }
 }
@@ -122,9 +139,14 @@ if(sec_roles != null) {
             display    : inline;
         }
         #go_head li {
-            margin  : 0;
-            padding : 0;
-            display : inline-block;
+            right      : 100%;
+            left       : 0;
+            margin     : 0;
+            padding    : 0;
+            position   : relative;
+            display    : inline-block;
+            transition : right .3s ease, left .3s ease, background .3s ease;
+            background : transparent;
         }
         #go_head li a {
             color              : #666;
@@ -137,13 +159,7 @@ if(sec_roles != null) {
             line-height        : 52px;
             text-decoration    : none;
             border-radius      : .3em .3em 0 0;
-            -moz-transition    : background .3s ease-in;
-            -webkit-transition : background .3s ease-in;
-            -o-transition      : background .3s ease-in;
             transition         : background .3s ease-in;
-            -moz-transition-property    : background,color,border-radius;
-            -webkit-transition-property : background,color,border-radius;
-            -o-transition-property      : background,color,border-radius;
             transition-property         : background,color,border-radius;
         }
         #go_head li a:hover {
@@ -187,6 +203,42 @@ if(sec_roles != null) {
         #go_head .logged a {
             text-decoration : underline;
             color           : rgb(84, 0, 105);
+        }
+        #go_head ul ul {
+            display: none;
+        }
+        #go_head li li {
+            right: auto;
+        }
+        #go_head .expanded {
+            position    : absolute;
+            right       : 0;
+            left        : 200px;
+            top         : 20px;
+            background  : white;
+            z-index     : 1;
+            min-width   : 20em;
+        }
+        #go_head .expanded ul{
+            display: block;
+        }
+        #go_head .expanded > a,
+        #go_head .expanded ul{
+            margin-top: 0;
+            float: right;
+        }
+        #go_head .expanded > a {
+            color: white;
+            background: #666;
+        }
+        #go_head .group > a:after {
+            content: ' »';
+        }
+        #go_head .expanded > a:before {
+            content: '« ';
+        }
+        #go_head .expanded > a:after {
+            content: '';
         }
     </style>
 
@@ -241,19 +293,69 @@ if(sec_roles != null) {
         </c:choose>
 
         <c:choose>
-            <c:when test='<%= ldapadmin == true %>'>
-            <c:choose>
-                <c:when test='<%= active.equals("ldapadmin") %>'>
-            <li class="active"><a><fmt:message key="ldapadmin"/></a></li>
-                </c:when>
-                <c:otherwise>
-            <li><a href="<%=ldapadm %>/privateui/"><fmt:message key="ldapadmin"/></a></li>
-                </c:otherwise>
-            </c:choose>
+            <c:when test='<%= admin == true %>'>
+            <li class="group"> 
+                <a href="#admin"><fmt:message key="admin"/></a>
+                <ul>
+
+                    <c:choose>
+                        <c:when test='<%= catadmin == true %>'>
+                        <c:choose>
+                            <c:when test='<%= active.equals("geonetwork") %>'>
+                        <li class="active"><a href="/geonetwork/srv/eng/admin"><fmt:message key="catalogue"/></a></li>
+                            </c:when>
+                            <c:otherwise>
+                        <li><a href="/geonetwork/srv/<%= lang %>/admin"><fmt:message key="catalogue"/></a></li> <!-- FIXME: GN3 -->
+                            </c:otherwise>
+                        </c:choose>
+                        </c:when>
+                    </c:choose>
+
+                    <c:choose>
+                        <c:when test='<%= extractorappadmin == true %>'>
+                        <c:choose>
+                            <c:when test='<%= active.equals("extractorappadmin") %>'>
+                        <li class="active"><a href="/extractorapp/admin/"><fmt:message key="extractor"/></a></li>
+                            </c:when>
+                            <c:otherwise>
+                        <li><a href="/extractorapp/admin/"><fmt:message key="extractor"/></a></li>
+                            </c:otherwise>
+                        </c:choose>
+                        </c:when>
+                    </c:choose>
+
+                    <c:choose>
+                        <c:when test='<%= analyticsadmin == true %>'>
+                        <c:choose>
+                            <c:when test='<%= active.equals("analytics") %>'>
+                        <li class="active"><a href="/analytics/">analytics</a></li>
+                            </c:when>
+                            <c:otherwise>
+                        <li><a href="/analytics/">analytics</a></li>
+                            </c:otherwise>
+                        </c:choose>
+                        </c:when>
+                    </c:choose>
+
+                    <c:choose>
+                        <c:when test='<%= ldapadmin == true %>'>
+                        <c:choose>
+                            <c:when test='<%= active.equals("ldapadmin") %>'>
+                        <li class="active"><a><fmt:message key="users"/></a></li>
+                            </c:when>
+                            <c:otherwise>
+                        <li><a href="<%= ldapadm %>/privateui/"><fmt:message key="users"/></a></li>
+                            </c:otherwise>
+                        </c:choose>
+                        </c:when>
+                    </c:choose>
+
+                </ul>
+            </li>
             </c:when>
         </c:choose>
-
         </ul>
+
         <c:choose>
             <c:when test='<%= anonymous == false %>'>
         <p class="logged">
@@ -298,13 +400,22 @@ if(sec_roles != null) {
                     callback(els[i]);
                 }
             }
-            each(document.querySelectorAll('#go_head li a'), function(li){
-                li.addEventListener('click', function(e) {
+            each(document.querySelectorAll('#go_head li a'), function(a){
+                var li = a.parentNode;
+                var ul = li.querySelectorAll('ul');
+                a.addEventListener('click', function(e) {
                     each(
                         document.querySelectorAll('#go_head li'),
-                        function(l){ l.className = '';}
+                        function(l){ l.classList.remove('active');}
                     );
-                    li.parentNode.className = 'active';
+                    if (ul[0]) {
+                        e.stopImmediatePropagation();
+                        e.stopPropagation();
+                        e.preventDefault();
+                        li.classList.toggle('expanded');
+                    } else {
+                        a.parentNode.className = 'active';
+                    }
                 });
             });
         })();
