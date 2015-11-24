@@ -75,6 +75,7 @@ GEOR.Addons.OSMSearchPlaces = Ext.extend(GEOR.Addons.Base, {
         
         if( event.query.length < event.combo.minChars ) {
             return false;
+        }
         
         var overpassQuery = 'way["name"~"'+this._computeQuery(event.query)+'"]';
         overpassQuery += '('+this.options.boundingbox.minlat+','+this.options.boundingbox.minlon+','
