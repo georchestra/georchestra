@@ -3,7 +3,7 @@
         "js/main.js"
     ],
     "default_options": {
-		"comboTemplate": "{display}",
+        "comboTemplate": "{display}",
         "limit": 50
     },
     "i18n": {
