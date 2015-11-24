@@ -7,6 +7,7 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -21,6 +22,8 @@ public final class MailService {
 
 	private EmailFactoryImpl emailFactory;
 
+	@Autowired
+	private GeorchestraConfiguration georchestraConfiguration;
 	
 	@Autowired
 	public MailService(EmailFactoryImpl emailFactory) {
@@ -59,6 +62,21 @@ public final class MailService {
 			LOG.error(e);
 		} 
 		
+	}
+	
+	public void sendAccountUidRenamed(final ServletContext servletContext, final String newUid, final String commonName, final String userEmail) {
+		if(LOG.isDebugEnabled()){
+			LOG.debug("Send mail to warn user [email: " + userEmail + "] for its new identifier: " + newUid);
+		}
+		try{
+			AccountUidRenamedEmail email = this.emailFactory.createAccountUidRenamedEmail(servletContext, new String[]{userEmail});
+			
+			email.sendMsg(commonName, newUid );
+			
+		} catch (Exception e) {
+			
+			LOG.error(e);
+		} 
 	}
 	
 

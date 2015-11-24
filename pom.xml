@@ -4,7 +4,7 @@
   <groupId>org.georchestra</groupId>
   <artifactId>root</artifactId>
   <packaging>pom</packaging>
-  <version>15.06</version>
+  <version>15.12-SNAPSHOT</version>
   <name>Root project of the geOrchestra SDI</name>
   <url>http://maven.apache.org</url>
   <organization>
@@ -80,6 +80,7 @@
     <module>epsg-extension</module>
     <module>ogc-server-statistics</module>
     <module>server-deploy-support</module>
+    <module>commons</module>
   </modules>
   <build>
     <plugins>
@@ -408,6 +409,12 @@
         <module>downloadform</module>
         <module>analytics</module>
         <module>header</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>commons</id>
+      <modules>
+        <module>commons</module>
       </modules>
     </profile>
     <profile>

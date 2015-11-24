@@ -42,6 +42,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  */
 
 @Controller
+
 public class GroupsController {
 
 	private static final Log LOG = LogFactory.getLog(GroupsController.class.getName());

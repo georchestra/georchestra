@@ -24,6 +24,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.mapfishapp.ws.upload.FileDescriptor;
 import org.georchestra.mapfishapp.ws.upload.UpLoadFileManagement;
 import org.geotools.referencing.CRS;
@@ -33,6 +34,7 @@ import org.json.JSONException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -93,6 +95,25 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 
     private static final int MEGABYTE = 1048576;
 
+    @Autowired
+    private GeorchestraConfiguration georConfig;
+
+    public void init() {
+        if ((georConfig != null) && (georConfig.activated())) {
+            String baseTmpDirectory = georConfig.getProperty("docTempDir");
+            File tmpDir = new File(baseTmpDirectory, "/geoFileUploadsCache");
+            if (! tmpDir.exists()) {
+                try {
+                FileUtils.forceMkdir(tmpDir);
+                } catch (Exception e) {
+                    LOG.error("Unable to create default upload directory, please check configuration", e);
+                    // Using default (webapp-provided in ws-servlet.xml)
+                    return;
+                }
+            }
+            tempDirectory = tmpDir.getAbsolutePath();
+        }
+    }
     /**
      * Status of the upload process
      *

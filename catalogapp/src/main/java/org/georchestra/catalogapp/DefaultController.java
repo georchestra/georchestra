@@ -1,7 +1,6 @@
 package org.georchestra.catalogapp;
 
 import java.io.IOException;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,7 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @RequestMapping("/home")
 public class DefaultController {
-	
+
     @RequestMapping(method = RequestMethod.POST)
     public ModelAndView handlePOSTRequest(HttpServletRequest request, HttpServletResponse response)
     throws IOException {
@@ -26,5 +25,5 @@ public class DefaultController {
     public ModelAndView handleGETRequest(HttpServletRequest request, HttpServletResponse response) {
         return new ModelAndView("index");
     }
-	
+
 }

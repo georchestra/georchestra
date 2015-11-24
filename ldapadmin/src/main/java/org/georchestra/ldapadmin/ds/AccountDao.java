@@ -59,6 +59,19 @@ public interface AccountDao {
 	void update(final Account account) throws DataServiceException, DuplicatedEmailException;
 
 	/**
+	 * Updates the user account, given the old and the new state of the account
+	 * Needed if a DN update is required (modifying the uid).
+	 *
+	 * @param account
+	 * @param modified
+	 *
+	 * @throws DuplicatedEmailException
+	 * @throws DataServiceException
+	 * @throws NotFoundException
+	 */
+	void update(Account account, Account modified) throws DataServiceException, DuplicatedEmailException, NotFoundException;
+
+	/**
 	 * Changes the user password
 	 * 
 	 * @param uid
@@ -123,8 +136,4 @@ public interface AccountDao {
 	 */
 	String generateUid(String uid) throws DataServiceException;
 
-	
-
-
-	
 }

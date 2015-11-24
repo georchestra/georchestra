@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.georchestra</groupId>
     <artifactId>root</artifactId>
-    <version>15.06</version>
+    <version>15.12-SNAPSHOT</version>
   </parent>
   <artifactId>header</artifactId>
   <packaging>war</packaging>
@@ -63,17 +63,34 @@
       <type>jar</type>
       <scope>runtime</scope>
     </dependency>
+    <!-- geOrchestra commons -->
+    <dependency>
+      <groupId>org.georchestra</groupId>
+      <artifactId>georchestra-commons</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20080701</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
       <plugin>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>maven-jetty-plugin</artifactId>
-        <version>6.1.10</version>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>9.2.11.v20150529</version>
         <configuration>
-          <scanIntervalSeconds>10</scanIntervalSeconds>
-          <stopKey>foo</stopKey>
-          <stopPort>9999</stopPort>
+          <webApp><contextPath>/header/</contextPath></webApp>
+          <scanIntervalSeconds>5</scanIntervalSeconds>
+          <scanTargets>
+            <scanTarget>src/main/java</scanTarget>
+            <scanTarget>src/main/resources</scanTarget>
+          </scanTargets>
+          <httpConnector>
+            <port>8285</port>
+          </httpConnector>
         </configuration>
       </plugin>
       <plugin>
@@ -129,4 +146,110 @@
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>debianPackage</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-war-plugin</artifactId>
+            <version>2.1.1</version>
+            <configuration>
+              <classifier>generic</classifier>
+            </configuration>
+          </plugin>
+          <plugin>
+            <artifactId>maven-resources-plugin</artifactId>
+            <version>2.3</version>
+            <executions>
+              <execution>
+                <id>copy-deb-resources</id>
+                <phase>process-resources</phase>
+                <goals><goal>copy-resources</goal></goals>
+                <configuration>
+                  <overwrite>true</overwrite>
+                  <outputDirectory>${basedir}/target/deb</outputDirectory>
+                  <resources>
+                    <resource>
+                      <directory>src/deb/resources</directory>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>net.sf.debian-maven</groupId>
+            <artifactId>debian-maven-plugin</artifactId>
+            <version>1.0.6</version>
+            <configuration>
+              <packageName>georchestra-header</packageName>
+              <packageDescription>geOrchestra header webapp</packageDescription>
+              <projectOrganization>geOrchestra</projectOrganization>
+              <maintainerName>PSC</maintainerName>
+              <maintainerEmail>psc@georchestra.org</maintainerEmail>
+              <excludeAllArtifacts>true</excludeAllArtifacts>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>rpmPackage</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-war-plugin</artifactId>
+            <version>2.1.1</version>
+            <configuration>
+              <classifier>generic</classifier>
+              <packagingExcludes>**/docs/**,**/openlayers/examples/**,**/openlayers/tests/**</packagingExcludes>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>rpm-maven-plugin</artifactId>
+            <version>2.1.3</version>
+            <executions>
+              <execution>
+                <id>generate-rpm</id>
+                <goals>
+                  <goal>rpm</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <name>georchestra-${project.artifactId}</name>
+              <sourceEncoding>UTF-8</sourceEncoding>
+              <group>Applications/Internet</group>
+              <keyname>${rpm.gpg.key}</keyname>
+              <mappings>
+                <mapping>
+                  <directory>/usr/share/lib/georchestra-${project.artifactId}</directory>
+                  <sources>
+                    <source>
+                      <location>${project.build.directory}</location>
+                      <includes>
+                        <include>${project.artifactId}-generic.war</include>
+                      </includes>
+                    </source>
+                  </sources>
+                </mapping>
+                <mapping>
+                  <directory>/</directory>
+                  <sources>
+                    <source>
+                      <location>${basedir}/src/deb/resources</location>
+                    </source>
+                  </sources>
+                </mapping>
+              </mappings>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

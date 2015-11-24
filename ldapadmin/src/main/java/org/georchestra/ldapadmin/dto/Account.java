@@ -117,4 +117,11 @@ public interface Account {
 	void setHomePostalAddress(String homePostalAddres);
 
 	String getHomePostalAddress();
+
+	String toVcf();
+
+	String toCsv();
+	
+	String toFormatedString(String data);
+
 }

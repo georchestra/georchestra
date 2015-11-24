@@ -6,17 +6,16 @@ import java.util.Properties;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.georchestra.commons.configuration.GeorchestraConfiguration;
 
 public abstract class Email {
 
@@ -37,12 +36,14 @@ public abstract class Email {
     private String[] languages;
     private String[] recipients;
     private String subject;
+    
+    protected GeorchestraConfiguration georConfig;
 
     public Email(HttpServletRequest request, String[] recipients,
             final String emailSubject, final String smtpHost,
             final int smtpPort, final String emailHtml, final String replyTo,
             final String from, final String bodyEncoding,
-            final String subjectEncoding, final String[] languages) {
+            final String subjectEncoding, final String[] languages, GeorchestraConfiguration georConfig) {
 
         this.recipients = recipients;
         this.subject = emailSubject;
@@ -54,12 +55,12 @@ public abstract class Email {
         this.bodyEncoding = bodyEncoding;
         this.subjectEncoding = subjectEncoding;
         this.languages = languages;
+        this.georConfig = georConfig;
     }
 
     public abstract void sendAck() throws AddressException, MessagingException;
 
-    public abstract void sendDone(List<String> successes,
-            List<String> failures, List<String> oversized, long fileSize)
+    public abstract void sendDone(List<String> successes, List<String> failures, List<String> oversized, long fileSize)
             throws MessagingException;
 
     protected void sendMsg(final String msg) throws AddressException,

@@ -16,6 +16,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
+import org.georchestra.ldapadmin.dto.Group;
 import org.georchestra.ldapadmin.dto.UserSchema;
 import org.georchestra.ldapadmin.ws.newaccount.UidGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -190,7 +191,7 @@ public final class AccountDaoImpl implements AccountDao {
      * @see {@link AccountDao#update(Account)}
      */
     @Override
-    public void update(final Account account) throws DataServiceException, DuplicatedEmailException {
+    public synchronized void update(final Account account) throws DataServiceException, DuplicatedEmailException {
 
         // checks mandatory fields
         if (account.getUid().length() == 0) {
@@ -234,12 +235,26 @@ public final class AccountDaoImpl implements AccountDao {
     }
 
     /**
+     * @see {@link AccountDao#update(Account, Account)}
+     */
+    @Override
+    public synchronized void update(Account account, Account modified) throws DataServiceException, DuplicatedEmailException, NotFoundException {
+       if (! account.getUid().equals(modified.getUid())) {
+           ldapTemplate.rename(buildDn(account.getUid()), buildDn(modified.getUid()));
+           for (Group g : groupDao.findAllForUser(account.getUid())) {
+               groupDao.modifyUser(g.getName(), account.getUid(), modified.getUid());
+           }
+       }
+       update(modified);
+    }
+
+    /**
      * Removes the user account and the reference included in the group
      *
      * @see {@link AccountDao#delete(Account)}
      */
     @Override
-    public void delete(final String uid) throws DataServiceException, NotFoundException {
+    public synchronized void delete(final String uid) throws DataServiceException, NotFoundException {
         this.ldapTemplate.unbind(buildDn(uid), true);
 
         this.groupDao.deleteUser(uid);
@@ -491,10 +506,10 @@ public final class AccountDaoImpl implements AccountDao {
     @Override
     public void changePassword(final String uid, final String password) throws DataServiceException {
 
-        if (uid.length() == 0) {
+        if (StringUtils.isEmpty(uid)) {
             throw new IllegalArgumentException("uid is required");
         }
-        if (password.length() == 0) {
+        if (StringUtils.isEmpty(password)) {
             throw new IllegalArgumentException("password is required");
         }
 
@@ -572,5 +587,4 @@ public final class AccountDaoImpl implements AccountDao {
 
         return newUid;
     }
-
 }

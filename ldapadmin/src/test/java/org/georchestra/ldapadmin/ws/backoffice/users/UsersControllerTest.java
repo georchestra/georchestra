@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import javax.naming.Name;
 import javax.servlet.http.HttpServletResponse;
 
@@ -24,6 +23,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.http.HttpMethod;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextOperations;
@@ -414,7 +414,9 @@ public class UsersControllerTest {
     public void testUpdateBadJSON() throws Exception {
         request.setRequestURI("/ldapadmin/users/pmauduit");
         request.setContent("{[this is ] } not valid JSON obviously ....".getBytes());
-
+        Mockito.when(ldapTemplate.lookup(Mockito.any(Name.class), Mockito.any(ContextMapper.class))).thenReturn(
+              AccountFactory.createBrief("pmauduit", "monkey123", "Pierre", "Mauduit",
+              "pmt@c2c.com", "+123", "+456", "developer", "developer"));
         try {
             usersCtrl.update(request, response);
         } catch (Throwable e) {
@@ -460,6 +462,7 @@ public class UsersControllerTest {
         JSONObject ret = new JSONObject(response.getContentAsString());
         assertTrue(response.getStatus() == HttpServletResponse.SC_OK);
         assertTrue(ret.getBoolean("success"));
+
 
     }
 
@@ -543,11 +546,16 @@ public class UsersControllerTest {
         assertTrue(response.getStatus() == HttpServletResponse.SC_NOT_FOUND);
         assertFalse(ret.getBoolean("success"));
         assertTrue(ret.getString("error").equals("not_found"));
+        
     }
+    
 
     @Test
-    public void testDelete() throws Exception {
-
-
+    public void testResquestProducesDelete() throws Exception {
+        request.setRequestURI("/private/users/pmaudui");
+        request.setMethod(HttpMethod.DELETE.toString());
+        usersCtrl.delete(request, response);
+        assertTrue(response.getContentType().equals("application/json; charset=UTF-8"));
+        
     }
 }

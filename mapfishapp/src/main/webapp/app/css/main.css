@@ -35,14 +35,6 @@ div.olMapViewport {
   width: 160px;
 }
 
-.measure_path {
-  background-image: url(../img/ruler.png) !important;
-}
-
-.measure_area {
-  background-image: url(../img/ruler_square.png) !important;
-}
-
 .x-menu-item .add {
 	background-image: url(../img/famfamfam/add.png);
 }

@@ -11,12 +11,17 @@ import org.georchestra.mapfishapp.ws.upload.AbstractFeatureGeoFileReader;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
-public class AbstractController {
+public class AbstractController implements ApplicationContextAware {
 
     public AbstractController() {
         super();
     }
+    protected ApplicationContext context;
+
 
     protected Map<String, Object> createModelFromString(HttpServletRequest request, String str) {
         Map<String, Object> model;
@@ -49,7 +54,28 @@ public class AbstractController {
         model.put("fileFormatList", new AbstractFeatureGeoFileReader().getFormatListAsJSON());
         model.put("debug", Boolean.parseBoolean(request.getParameter("debug")));
 
+        addContextsToModel(model);
+        addAddonsToModel(model);
+
         return model;
+    }
+
+    private void addContextsToModel(Map model) {
+        try {
+            ContextController cc = context.getBean(ContextController.class);
+            model.put("contexts", cc.getContexts());
+        } catch (Exception e) {
+            model.put("contexts", new JSONArray());
+        }
+    }
+
+    private void addAddonsToModel(Map model) {
+        try {
+            AddonController ac = context.getBean(AddonController.class);
+            model.put("addons", ac.constructAddonsSpec());
+        } catch (Exception e) {
+            model.put("addons", new JSONArray());
+        }
     }
 
 
@@ -116,6 +142,9 @@ public class AbstractController {
         model.put("fileFormatList", new AbstractFeatureGeoFileReader().getFormatListAsJSON());
         model.put("data", data);
 
+        addContextsToModel(model);
+        addAddonsToModel(model);
+
         return model;
     }
 
@@ -135,6 +164,11 @@ public class AbstractController {
             }
         }
         return str;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.context = applicationContext;
     }
 
 }

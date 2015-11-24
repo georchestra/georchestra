@@ -3,6 +3,7 @@
  */
 package org.georchestra.ldapadmin.ws.backoffice.users;
 
+
 import java.io.IOException;
 import java.text.Normalizer;
 import java.util.List;
@@ -11,6 +12,7 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.ldapadmin.ds.AccountDao;
@@ -21,17 +23,21 @@ import org.georchestra.ldapadmin.ds.NotFoundException;
 import org.georchestra.ldapadmin.ds.ProtectedUserFilter;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
+import org.georchestra.ldapadmin.dto.AccountImpl;
 import org.georchestra.ldapadmin.dto.Group;
 import org.georchestra.ldapadmin.dto.UserSchema;
+import org.georchestra.ldapadmin.mailservice.MailService;
 import org.georchestra.ldapadmin.ws.backoffice.utils.RequestUtil;
 import org.georchestra.ldapadmin.ws.backoffice.utils.ResponseUtil;
 import org.georchestra.lib.file.FileUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.condition.ProducesRequestCondition;
 
 /**
  * Web Services to maintain the User information.
@@ -58,9 +64,23 @@ public class UsersController {
 
 	private AccountDao accountDao;
 	private UserRule userRule;
+	
+	@Autowired
+	private MailService mailService;
+
+	public void setMailService(MailService mailService) {
+		this.mailService = mailService;
+	}
 
 	@Autowired
-	public UsersController( AccountDao dao, UserRule userRule){
+	private Boolean warnUserIfUidModified = false;
+
+	public void setWarnUserIfUidModified(boolean warnUserIfUidModified) {
+		this.warnUserIfUidModified = warnUserIfUidModified;
+	}
+
+	@Autowired
+	public UsersController(AccountDao dao, UserRule userRule){
 		this.accountDao = dao;
 		this.userRule = userRule;
 	}
@@ -379,10 +399,13 @@ public class UsersController {
 
 		// modifies the account data
 		try{
-			final Account modified = modifyAccount( account, request.getInputStream());
-
-			this.accountDao.update(modified);
-
+			final Account modified = modifyAccount(AccountFactory.create(account), request.getInputStream());
+			this.accountDao.update(account, modified);
+			boolean uidChanged = ( ! modified.getUid().equals(account.getUid()));
+			if ((uidChanged) && (warnUserIfUidModified)) {
+				this.mailService.sendAccountUidRenamed(request.getSession().getServletContext(),
+						modified.getUid(), modified.getCommonName(), modified.getEmail());
+			}
 			ResponseUtil.writeSuccess(response);
 
 		} catch (DuplicatedEmailException e) {
@@ -390,13 +413,16 @@ public class UsersController {
 
 			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
 		} catch (IOException e) {
-	          String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, PARAMS_NOT_UNDERSTOOD);
-              ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_BAD_REQUEST);
-              throw e;
+			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, PARAMS_NOT_UNDERSTOOD);
+			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_BAD_REQUEST);
+			throw e;
 		} catch (DataServiceException e){
 			LOG.error(e.getMessage());
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			throw new IOException(e);
+		} catch (NotFoundException e) {
+			LOG.error(e.getMessage());
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		}
 	}
 
@@ -416,7 +442,6 @@ public class UsersController {
 	public void delete( HttpServletRequest request, HttpServletResponse response) throws IOException{
 		try{
 			final String uid = RequestUtil.getKeyFromPathVariable(request).toLowerCase();
-
 			if(this.userRule.isProtected(uid) ){
 
 				String message = "The user is protected, it cannot be deleted: " + uid;
@@ -529,16 +554,18 @@ public class UsersController {
 			account.setDescription(description);
 		}
 
+
+
 		String commonName = AccountFactory.formatCommonName(
 				account.getGivenName(), account.getSurname());
 
 		account.setCommonName(commonName);
-
+		String uid = RequestUtil.getFieldValue(json, UserSchema.UUID_KEY);
+		if (uid != null) {
+			account.setUid(uid);
+		}
 		return account;
-
 	}
-
-
 
 	/**
 	 * Create a new account from the body request.

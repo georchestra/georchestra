@@ -3,6 +3,31 @@ The development branch is master. It can be used for testing and reporting error
 For production systems, you are advised to use the stable branch (currently 15.06).
 This branch receives bug fixes as they arrive, during 6 months at least.
 
+Version 15.12
+=============
+
+
+
+### UPGRADING:
+ * As a result of [#1040](https://github.com/georchestra/georchestra/pull/1040), LDAP groups are now ```groupOfMembers``` instances rather than ```groupOfNames``` instances. In addition, the ```PENDING_USERS``` group was renamed. You have to migrate your LDAP tree, according to the following procedure (please change the ```dc=georchestra,dc=org``` string for your own base DN and provide a suitable password):
+   * dump your ldap **groups** with:
+   ```
+   ldapsearch -H ldap://localhost:389 -xLLL -D "cn=admin,dc=georchestra,dc=org" -w your_ldap_password -b "ou=groups,dc=georchestra,dc=org" > /tmp/groups.ldif
+   ```
+   * migration:
+   ```
+   sed -i 's/PENDING_USERS/PENDING/' /tmp/groups.ldif
+   sed -i 's/groupOfNames/groupOfMembers/' /tmp/groups.ldif
+   sed -i '/fakeuser/d' /tmp/groups.ldif
+   ```
+   * load the groupOfMembers definition:
+   ```
+    wget --no-check-certificate https://raw.githubusercontent.com/georchestra/LDAP/YY.MM/georchestra-groupofmembers.ldif -O /tmp/groupofmembers.ldif
+    sudo ldapadd -Y EXTERNAL -H ldapi:/// -f /tmp/groupofmembers.ldif
+   ```
+   * drop your groups organizationalUnit (```ou```)
+   * import the updated groups.ldif file.
+
 
 Version 15.06
 =============
@@ -343,7 +368,8 @@ This is not the case anymore. This implies that the security proxy now resides i
 **LDAP:**
 
 The [LDAP repository](https://github.com/georchestra/LDAP) holds branches for the 13.09, 14.01 and 14.06 releases.
-In 13.09, groups are instances of posixGroup. From 14.01 on, they are instances of groupOfNames.
+In 13.09, groups are instances of posixGroup. From 14.01 to 15.06, they are instances of groupOfNames.
+Since 15.12, they are instances of groupOfMembers which allows to have empty groups.
 
 Between 14.01 and 14.06 branches, here are the differences:
  - the ```MOD_EXTRACTORAPP``` group was created. You should assign to it the users which already had access to extractorapp (typically members of ```SV_USER```)
