@@ -1,0 +1,27 @@
+{
+    "js": [
+        "js/main.js"
+    ],
+    "default_options": {
+		"comboTemplate": "{display}",
+        "limit": 50
+    },
+    "i18n": {
+        "en": {
+            "osmsearchplaces.window_title": "Search places over OSM",
+            "osmsearchplaces.field_emptytext": "Search terms"
+        },
+        "es": {
+            "osmsearchplaces.window_title": "Buscar lugares a través OSM",
+            "osmsearchplaces.field_emptytext": "Términos de búsqueda"
+        },
+        "fr": {
+            "osmsearchplaces.window_title": "Recherche de lieux sur OSM",
+            "osmsearchplaces.field_emptytext": "Termes de recherche"
+        },
+        "de": {
+            "osmsearchplaces.window_title": "Suchen von Orten in OSM",
+            "osmsearchplaces.field_emptytext": "Suchbegriffe"
+        }
+    }
+}
