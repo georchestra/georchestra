@@ -374,7 +374,8 @@ if(sec_roles != null) {
         (function(){
             // required to get the correct redirect after login, see https://github.com/georchestra/georchestra/issues/170
             var url,
-                a = document.getElementById("login_a");
+                a = document.getElementById("login_a"),
+                cnxblk = document.querySelector('#go_head p.logged');
             if (a !== null) {
                 url = parent.window.location.href;
                 if (/\/cas\//.test(url)) {
@@ -413,6 +414,9 @@ if(sec_roles != null) {
                         e.stopPropagation();
                         e.preventDefault();
                         li.classList.toggle('expanded');
+                        // hide/show connexion block:
+                        cnxblk.style.visibility = 
+                            cnxblk.style.visibility == '' ? 'hidden' : '';
                     } else {
                         a.parentNode.className = 'active';
                     }
