@@ -108,10 +108,14 @@ public class EmailController {
         email.setSubject(subject);
         email.setDate(new Date());
         email.setBody(content);
+
+        attachmentsIds = attachmentsIds.trim();
         List<Attachment> attachments = new LinkedList<Attachment>();
-        String[] attachmentsIdsList = attachmentsIds.split("\\s?,\\s?");
-        for(String attId : attachmentsIdsList)
-            attachments.add(this.attachmentRepo.findOne(Long.parseLong(attId)));
+        if(attachmentsIds.length() > 0) {
+            String[] attachmentsIdsList = attachmentsIds.split("\\s?,\\s?");
+            for (String attId : attachmentsIdsList)
+                attachments.add(this.attachmentRepo.findOne(Long.parseLong(attId)));
+        }
         email.setAttachments(attachments);
         this.send(email);
 
