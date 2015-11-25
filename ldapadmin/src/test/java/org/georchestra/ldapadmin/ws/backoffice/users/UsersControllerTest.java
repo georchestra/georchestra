@@ -95,7 +95,7 @@ public class UsersControllerTest {
     @Test
     public void testFindByUidEmpty() throws Exception {
 
-            usersCtrl.findByUid(request, response);
+            usersCtrl.findByUid("nonexistentuser", response);
 
             JSONObject ret = new JSONObject(response.getContentAsString());
             assertTrue(response.getStatus() == HttpServletResponse.SC_NOT_FOUND);
@@ -106,9 +106,7 @@ public class UsersControllerTest {
 
     @Test
     public void testFindByUidProtected() throws Exception {
-        request.setRequestURI("/ldapadmin/users/geoserver_privileged_user");
-
-        usersCtrl.findByUid(request, response);
+        usersCtrl.findByUid("geoserver_privileged_user", response);
 
         JSONObject ret = new JSONObject(response.getContentAsString());
         assertTrue(response.getStatus() == HttpServletResponse.SC_CONFLICT);
@@ -118,10 +116,9 @@ public class UsersControllerTest {
 
     @Test
     public void testFindByUidNotFound() throws Exception {
-        request.setRequestURI("/ldapadmin/users/notfounduser");
         Mockito.doThrow(NotFoundException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (ContextMapper) Mockito.any());
 
-        usersCtrl.findByUid(request, response);
+        usersCtrl.findByUid("notfounduser", response);
 
         JSONObject ret = new JSONObject(response.getContentAsString());
         assertTrue(response.getStatus() == HttpServletResponse.SC_NOT_FOUND);
@@ -131,11 +128,10 @@ public class UsersControllerTest {
 
     @Test
     public void testFindByUidDataServiceException() throws Exception {
-        request.setRequestURI("/ldapadmin/users/failingUser");
         Mockito.doThrow(DataServiceException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (ContextMapper) Mockito.any());
 
         try {
-            usersCtrl.findByUid(request, response);
+            usersCtrl.findByUid("failingUser", response);
         } catch (Throwable e) {
             assertTrue(e instanceof IOException);
             assertTrue(response.getStatus() == HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -144,12 +140,11 @@ public class UsersControllerTest {
 
     @Test
     public void testFindByUid() throws Exception {
-        request.setRequestURI("/ldapadmin/users/pmauduit");
         Account pmauduit = AccountFactory.createBrief("pmauduit", "monkey123", "Pierre", "Mauduit",
                 "pmauduit@localhost", "+33123456789", "geOrchestra Project Steering Committee", "developer", "");
         Mockito.when(ldapTemplate.lookup((Name) Mockito.any(), (ContextMapper) Mockito.any())).thenReturn(pmauduit);
 
-        usersCtrl.findByUid(request, response);
+        usersCtrl.findByUid("pmauduit", response);
 
         JSONObject ret = new JSONObject(response.getContentAsString());
         assertTrue(response.getStatus() == HttpServletResponse.SC_OK);
