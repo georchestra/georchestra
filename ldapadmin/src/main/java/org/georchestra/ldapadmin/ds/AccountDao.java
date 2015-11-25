@@ -147,4 +147,13 @@ public interface AccountDao {
 	 */
 	String generateUid(String uid) throws DataServiceException;
 
+
+	/**
+	 * users in LDAP directory with shadowExpire field filled
+	 *
+	 * @return List of Account that have a shadowExpire attribute
+	 */
+
+	List<Account> findByShadowExpire();
+
 }

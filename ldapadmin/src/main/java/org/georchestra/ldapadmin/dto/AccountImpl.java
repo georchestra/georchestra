@@ -4,8 +4,13 @@
 package org.georchestra.ldapadmin.dto;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.security.authentication.encoding.LdapShaPasswordEncoder;
 
 import ezvcard.VCard;
@@ -49,31 +54,24 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 	private String postOfficeBox; // postOfficeBox
 	private String physicalDeliveryOfficeName; //physicalDeliveryOfficeName
 
-
 	private String street;
-
 
 	private String locality; // l
 
-
 	private String facsimile;
-
 
 	private String mobile;
 
-
 	private String roomNumber;
-
 
 	private String stateOrProvince; // st
 
-
 	private String organizationalUnit; // ou
-
 
 	private String homePostalAddres;
 	private String uuid;
 
+	private Date shadowExpire;
 
 	@Override
 	public String toString() {
@@ -91,6 +89,7 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 				+ ", roomNumber=" + roomNumber + ", stateOrProvince="
 				+ stateOrProvince + ", organizationalUnit="
 				+ organizationalUnit + ", homePostalAddres=" + homePostalAddres
+				+ ", UUID=" + this.uuid + ", shadowExpire=" + String.valueOf(this.shadowExpire)
 				+ "]";
 	}
 	
@@ -243,7 +242,43 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 		csv.append("\r\n"); // CRLF
 		return csv.toString();
 
-	};
+	}
+
+	@Override
+	public JSONObject toJSON() throws JSONException {
+		JSONObject res = new JSONObject();
+		res.put("uid", this.uid);
+		res.put("commonName", this.commonName);
+		res.put("surname", this.surname);
+		res.put("org", this.org);
+		res.put("email", this.email);
+		res.put("phone", this.phone);
+		res.put("description", this.description);
+		res.put("givenName", this.givenName);
+		res.put("title", this.title);
+		res.put("postalAddress", this.postalAddress);
+		res.put("postalCode", this.postalCode);
+		res.put("registeredAddress", this.registeredAddress);
+		res.put("postOfficeBox", this.postOfficeBox);
+		res.put("physicalDeliveryOfficeName", this.physicalDeliveryOfficeName);
+		res.put("street", this.street);
+		res.put("locality", this.locality);
+		res.put("facsimile", this.facsimile);
+		res.put("mobile", this.mobile);
+		res.put("roomNumber", this.roomNumber);
+		res.put("stateOrProvince", this.stateOrProvince);
+		res.put("organizationalUnit", this.organizationalUnit);
+		res.put("homePostalAddres", this.homePostalAddres);
+		res.put("uuid", this.uuid);
+		if(this.shadowExpire != null) {
+			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+			res.put("shadowExpire", dateFormat.format(this.shadowExpire));
+		}
+
+		return res;
+	}
+
+	;
 
 	@Override
 	public void setUid(String uid) {
@@ -483,6 +518,12 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 	public String getUUID() {
 		return uuid;
 	}
+
+	@Override
+	public void setShadowExpire(Date expireDate) { this.shadowExpire = expireDate; }
+
+	@Override
+	public Date getShadowExpire() { return this.shadowExpire; }
 
 	/* (non-Javadoc)
      * @see java.lang.Object#hashCode()

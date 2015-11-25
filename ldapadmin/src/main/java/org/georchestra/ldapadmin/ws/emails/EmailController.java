@@ -1,4 +1,4 @@
-package org.georchestra.ldapadmin.emails;
+package org.georchestra.ldapadmin.ws.emails;
 
 import org.georchestra.ldapadmin.dao.AttachmentDao;
 import org.georchestra.ldapadmin.dao.EmailDao;
@@ -15,7 +15,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -187,6 +186,21 @@ public class EmailController {
 
         JSONObject res = new JSONObject();
         res.put("templates", emailTemplates);
+        return res.toString();
+    }
+
+
+    @RequestMapping(value="/testShadowExpire", method = RequestMethod.GET)
+    @ResponseBody
+    public String testAttachments() throws JSONException {
+
+        List<Account> accounts = this.accountDao.findByShadowExpire();
+        JSONObject res = new JSONObject();
+        JSONArray tempAccounts = new JSONArray();
+        for(Account acc : accounts)
+            tempAccounts.put(acc.toJSON());
+        res.put("temporaryAccounts",tempAccounts);
+
         return res.toString();
     }
 

@@ -3,4 +3,4 @@
  *
  * Email can contains attachment stored in DB
  */
-package org.georchestra.ldapadmin.emails;
+package org.georchestra.ldapadmin.ws.emails;

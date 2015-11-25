@@ -3,6 +3,9 @@
  */
 package org.georchestra.ldapadmin.ds;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -33,6 +36,7 @@ import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.filter.AbstractFilter;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
+import org.springframework.ldap.filter.PresentFilter;
 import org.springframework.security.authentication.encoding.LdapShaPasswordEncoder;
 
 /**
@@ -513,6 +517,12 @@ public final class AccountDaoImpl implements AccountDao {
                     context.getStringAttribute(UserSchema.STATE_OR_PROVINCE_KEY));
 
             account.setUUID(context.getStringAttribute(UserSchema.UUID_KEY));
+            String rawShadowExpire = context.getStringAttribute(UserSchema.SHADOW_EXPIRE);
+            if(rawShadowExpire != null){
+                Long shadowExpire = Long.parseLong(rawShadowExpire);
+                shadowExpire *= 1000; // Convert to milliseconds
+                account.setShadowExpire(new Date(shadowExpire));
+            }
 
             return account;
         }
@@ -613,5 +623,24 @@ public final class AccountDaoImpl implements AccountDao {
         }
 
         return newUid;
+    }
+
+
+    @Override
+    public List<Account> findByShadowExpire() {
+
+        SearchControls sc = new SearchControls();
+        sc.setReturningAttributes(UserSchema.ATTR_TO_RETRIEVE);
+        sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
+
+        AndFilter filter = new AndFilter();
+        filter.and(new EqualsFilter("objectClass", "shadowAccount"));
+        filter.and(new EqualsFilter("objectClass", "inetOrgPerson"));
+        filter.and(new EqualsFilter("objectClass", "organizationalPerson"));
+        filter.and(new EqualsFilter("objectClass", "person"));
+        filter.and(new PresentFilter("shadowExpire"));
+
+        return ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(),sc, new AccountContextMapper());
+
     }
 }

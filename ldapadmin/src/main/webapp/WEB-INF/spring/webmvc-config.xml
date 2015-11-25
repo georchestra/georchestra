@@ -19,14 +19,12 @@
             http://www.springframework.org/schema/mvc
             http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-    <!-- Directory to scan for repository classes -->
-    <jpa:repositories base-package="org.georchestra.ldapadmin.dao" />
+  <!-- Directory to scan for repository classes -->
+  <jpa:repositories base-package="org.georchestra.ldapadmin.dao" />
 
-
-    <mvc:annotation-driven/>
+  <mvc:annotation-driven/>
 
   <context:annotation-config/>
-
 
   <!--  First provided ldapadmin.properties from webapp with prio  2 -->
   <context:property-placeholder location="/WEB-INF/spring/ldapadmin.properties" ignore-resource-not-found="true" ignore-unresolvable="true" order="2"/>

@@ -6,6 +6,8 @@ import org.json.JSONObject;
 
 import javax.persistence.*;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -46,7 +48,8 @@ public class EmailEntry {
         res.put("sender", this.getSender());
         res.put("recipient", this.getRecipient());
         res.put("subject", this.getSubject());
-        res.put("date", this.getDate());
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        res.put("date", dateFormat.format(this.getDate()));
         res.put("body", this.getBody());
         JSONArray array = new JSONArray();
         for(Attachment att : this.getAttachments())

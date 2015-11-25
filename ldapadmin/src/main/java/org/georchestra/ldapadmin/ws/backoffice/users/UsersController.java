@@ -32,8 +32,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * Web Services to maintain the User information.
@@ -135,55 +137,38 @@ public class UsersController {
 	 * Example: [BASE_MAPPING]/users/hsimpson
 	 * </p>
 	 *
-	 * @param request the request includes the user identifier required
 	 * @param response Returns the detailed information of the user as json
 	 * @throws IOException
 	 */
-	@RequestMapping(value=REQUEST_MAPPING+"/*", method=RequestMethod.GET)
-	public void findByUid( HttpServletRequest request, HttpServletResponse response) throws IOException{
+	@RequestMapping(value=REQUEST_MAPPING+"/{uid}", method=RequestMethod.GET,
+					produces = "application/json; charset=UTF-8")
+	@ResponseBody
+	public String findByUid(@PathVariable String uid, HttpServletResponse response) throws IOException, JSONException {
 
-		String uid = RequestUtil.getKeyFromPathVariable(request).toLowerCase();
-		if (uid.isEmpty()) {
-	        ResponseUtil.buildResponse(response,
-	                ResponseUtil.buildResponseMessage(false, "not_found_uid_empty"),
-	                HttpServletResponse.SC_NOT_FOUND);
-	        return;
-		}
 		if(this.userRule.isProtected(uid) ){
-
-			String message = "The user is protected: " + uid;
-			LOG.warn(message );
-
-			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, message);
-
-			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
-
-			return;
+			response.setStatus(HttpServletResponse.SC_CONFLICT);
+			JSONObject res = new JSONObject();
+			res.put("success", "false");
+			res.put("error", "The user is protected: " + uid);
+			return res.toString();
 		}
-
 
 		// searches the account
 		Account account = null;
 		try {
 			account = this.accountDao.findByUID(uid);
-
 		} catch (NotFoundException e) {
-
-			ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(Boolean.FALSE, NOT_FOUND), HttpServletResponse.SC_NOT_FOUND);
-
-			return;
-
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			JSONObject res = new JSONObject();
+			res.put("success", "false");
+			res.put("error", NOT_FOUND);
+			return res.toString();
 		} catch (DataServiceException e) {
 		    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			throw new IOException(e);
 		}
 
-		// sets the account data in the response object
-		UserResponse userResponse = new UserResponse(account);
-
-		String jsonAccount = userResponse.asJsonString();
-
-		ResponseUtil.buildResponse(response, jsonAccount, HttpServletResponse.SC_OK);
+		return account.toJSON().toString();
 
 	}
 
