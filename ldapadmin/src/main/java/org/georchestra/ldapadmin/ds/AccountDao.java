@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.georchestra.ldapadmin.dto.Account;
+import org.springframework.ldap.filter.Filter;
 
 /**
  * Defines the operations to maintain the set of account.
@@ -155,5 +156,13 @@ public interface AccountDao {
 	 */
 
 	List<Account> findByShadowExpire();
+
+	/**
+	 * Finds all accounts given a list of blacklisted users and a LDAP filter
+	 *
+	 * @return List of Account that are not in the ProtectedUserFilter, and which
+	 * complies with the provided LDAP filter.
+	 */
+	List<Account> find(final ProtectedUserFilter uidFilter, Filter f);
 
 }

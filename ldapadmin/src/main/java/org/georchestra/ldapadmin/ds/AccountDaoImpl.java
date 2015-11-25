@@ -36,6 +36,7 @@ import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.filter.AbstractFilter;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
+import org.springframework.ldap.filter.Filter;
 import org.springframework.ldap.filter.PresentFilter;
 import org.springframework.security.authentication.encoding.LdapShaPasswordEncoder;
 
@@ -277,6 +278,18 @@ public final class AccountDaoImpl implements AccountDao {
         sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
         EqualsFilter filter = new EqualsFilter("objectClass", "person");
         return ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(), sc, new AccountContextMapper());
+    }
+    
+    @Override
+    public List<Account> find(final ProtectedUserFilter filterProtected, Filter f) {
+        SearchControls sc = new SearchControls();
+        sc.setReturningAttributes(UserSchema.ATTR_TO_RETRIEVE);
+        sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
+        AndFilter and = new AndFilter();
+        and.and( new EqualsFilter("objectClass", "person"));
+        and.and(f);
+        List<Account> l = ldapTemplate.search(DistinguishedName.EMPTY_PATH, and.encode(), sc, new AccountContextMapper());
+        return filterProtected.filterUsersList(l);
     }
 
     @Override

@@ -4,6 +4,7 @@
 package org.georchestra.ldapadmin.ws.backoffice.users;
 
 
+
 import java.io.IOException;
 import java.text.Normalizer;
 import java.util.List;
@@ -28,9 +29,11 @@ import org.georchestra.ldapadmin.mailservice.MailService;
 import org.georchestra.ldapadmin.ws.backoffice.utils.RequestUtil;
 import org.georchestra.ldapadmin.ws.backoffice.utils.ResponseUtil;
 import org.georchestra.lib.file.FileUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ldap.filter.LikeFilter;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -120,8 +123,31 @@ public class UsersController {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			throw new IOException(e);
 		}
-
-
+	}
+	
+	/**
+	 * Looks up a list of user given a pattern to search against the LDAP tree.
+	 * The returned format is the same as for the findAll operation.
+	 *
+	 * @param response Returns the detailed information of the user as json
+	 * @throws IOException
+	 */
+	@RequestMapping(value=BASE_MAPPING+"/usersearch/{userPattern}", method=RequestMethod.GET, produces="application/json; charset=utf-8")
+	@ResponseBody
+	public String findWithPattern(@PathVariable String userPattern, HttpServletResponse response) throws IOException, JSONException {
+		try {
+			ProtectedUserFilter filter = new ProtectedUserFilter( this.userRule.getListUidProtected() );
+			List<Account> list = this.accountDao.find(filter, new LikeFilter("uid", "*" + userPattern + "*"));
+			JSONArray ret = new JSONArray();
+			for (Account a: list) {
+				ret.put(a.toJSON());
+			}
+			return new JSONObject().put("users", ret).toString();
+		} catch (Exception e) {
+			LOG.error(e.getMessage());
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			throw new IOException(e);
+		}
 	}
 
 	/**
