@@ -478,7 +478,7 @@
             <version>1.0.6</version>
             <configuration>
               <packageName>georchestra-extractorapp</packageName>
-              <packageDescription>geOrchestra Extractor.</packageDescription>
+              <packageDescription>geOrchestra Extractor</packageDescription>
               <projectOrganization>geOrchestra</projectOrganization>
               <maintainerName>PSC</maintainerName>
               <maintainerEmail>psc@georchestra.org</maintainerEmail>

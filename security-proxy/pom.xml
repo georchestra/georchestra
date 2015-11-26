@@ -338,7 +338,7 @@
             <version>1.0.6</version>
             <configuration>
               <packageName>georchestra-security-proxy</packageName>
-              <packageDescription>Debian package for the geOrchestra's Security Proxy</packageDescription>
+              <packageDescription>geOrchestra Security Proxy</packageDescription>
               <packageDependencies>
                 <packageDependency>debconf</packageDependency>
               </packageDependencies>
