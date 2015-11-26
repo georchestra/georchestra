@@ -94,26 +94,25 @@
   </bean>
 
   <bean id="userTokenDao" class="org.georchestra.ldapadmin.ds.UserTokenDao"/>
+    
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="url" value="${psql.url}"/>
+        <property name="username" value="${psql.user}"/>
+        <property name="password" value="${psql.pass}"/>
+        <property name="driverClassName" value="org.postgresql.Driver"/>
+        <property name="testOnBorrow" value="true"/>
+        <property name="poolPreparedStatements" value="true"/>
+        <property name="maxOpenPreparedStatements" value="-1"/>
+        <property name="defaultReadOnly" value="false"/>
+        <property name="defaultAutoCommit" value="true"/>
+    </bean>
 
-<!-- TODO re-apply specific params on new dataSource :  testOnBorrow, poolPreparedStatements, ... -->
-    <!--<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">-->
-        <!--<property name="url" value="${psql.url}"/>-->
-        <!--<property name="username" value="${psql.user}"/>-->
-        <!--<property name="password" value="${psql.pass}"/>-->
-        <!--<property name="driverClassName" value="org.postgresql.Driver"/>-->
-        <!--<property name="testOnBorrow" value="true"/>-->
-        <!--<property name="poolPreparedStatements" value="true"/>-->
-        <!--<property name="maxOpenPreparedStatements" value="-1"/>-->
-        <!--<property name="defaultReadOnly" value="false"/>-->
-        <!--<property name="defaultAutoCommit" value="true"/>-->
-    <!--</bean>-->
-
-   <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-       <property name="driverClassName" value="org.postgresql.Driver"/>
-       <property name="url" value="${psql.url}"/>
-       <property name="username" value="${psql.user}"/>
-       <property name="password" value="${psql.pass}"/>
-   </bean>
+   <!--<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">-->
+       <!--<property name="driverClassName" value="org.postgresql.Driver"/>-->
+       <!--<property name="url" value="${psql.url}"/>-->
+       <!--<property name="username" value="${psql.user}"/>-->
+       <!--<property name="password" value="${psql.pass}"/>-->
+   <!--</bean>-->
 
    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
        <property name="dataSource" ref="dataSource" />
