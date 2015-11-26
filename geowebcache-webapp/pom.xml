@@ -258,7 +258,7 @@
             <version>1.0.6</version>
             <configuration>
               <packageName>georchestra-geowebcache</packageName>
-              <packageDescription>Standalone GeoWebCache for geOrchestra.</packageDescription>
+              <packageDescription>geOrchestra standalone GeoWebCache</packageDescription>
               <projectOrganization>geOrchestra</projectOrganization>
               <maintainerName>geOrchestra PSC</maintainerName>
               <maintainerEmail>psc@georchestra.org</maintainerEmail>

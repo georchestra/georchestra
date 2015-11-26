@@ -185,7 +185,7 @@
             <version>1.0.6</version>
             <configuration>
               <packageName>georchestra-header</packageName>
-              <packageDescription>geOrchestra header webapp</packageDescription>
+              <packageDescription>geOrchestra Header</packageDescription>
               <projectOrganization>geOrchestra</projectOrganization>
               <maintainerName>PSC</maintainerName>
               <maintainerEmail>psc@georchestra.org</maintainerEmail>

@@ -479,7 +479,7 @@
             <version>1.0.6</version>
             <configuration>
               <packageName>georchestra-mapfishapp</packageName>
-              <packageDescription>Debian package for the geOrchestra's Viewer</packageDescription>
+              <packageDescription>geOrchestra Viewer</packageDescription>
               <projectOrganization>geOrchestra</projectOrganization>
               <maintainerName>PSC</maintainerName>
               <maintainerEmail>psc@georchestra.org</maintainerEmail>
