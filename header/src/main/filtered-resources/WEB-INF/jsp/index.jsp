@@ -25,8 +25,8 @@ String georLdapadminPublicContextPath = null;
 String ldapadm = null;
 try {
   ApplicationContext ctx = RequestContextUtils.getWebApplicationContext(request);
-  georLanguage = ((GeorchestraConfiguration) ctx.getBean(GeorchestraConfiguration.class.toString())).getProperty("language");
-  georLdapadminPublicContextPath = ((GeorchestraConfiguration) ctx.getBean(GeorchestraConfiguration.class.toString())).getProperty("ldapadminPublicContextPath");
+  georLanguage = ctx.getBean(GeorchestraConfiguration.class).getProperty("language");
+  georLdapadminPublicContextPath = ctx.getBean(GeorchestraConfiguration.class).getProperty("ldapadminPublicContextPath");
 } catch (Exception e) {}
 
 // to prevent problems with proxies, and for now:
