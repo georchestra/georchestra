@@ -8,7 +8,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.security.authentication.encoding.LdapShaPasswordEncoder;
@@ -68,7 +67,7 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 
 	private String organizationalUnit; // ou
 
-	private String homePostalAddres;
+	private String homePostalAddress;
 	private String uuid;
 
 	private Date shadowExpire;
@@ -88,7 +87,7 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 				+ ", facsimile=" + facsimile + ", mobile=" + mobile
 				+ ", roomNumber=" + roomNumber + ", stateOrProvince="
 				+ stateOrProvince + ", organizationalUnit="
-				+ organizationalUnit + ", homePostalAddres=" + homePostalAddres
+				+ organizationalUnit + ", homePostalAddress=" + homePostalAddress
 				+ ", UUID=" + this.uuid + ", shadowExpire=" + String.valueOf(this.shadowExpire)
 				+ "]";
 	}
@@ -162,7 +161,7 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 		csv.append(CSV_DELIMITER); // Mobile Phone
 		csv.append(CSV_DELIMITER);// Pager
 		csv.append(CSV_DELIMITER);// Home Fax
-		csv.append(toFormatedString(homePostalAddres));
+		csv.append(toFormatedString(homePostalAddress));
 		csv.append(CSV_DELIMITER);// Home Address
 		csv.append(CSV_DELIMITER);// Home Street
 		csv.append(CSV_DELIMITER);// Home Street 2
@@ -268,7 +267,7 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 		res.put("roomNumber", this.roomNumber);
 		res.put("stateOrProvince", this.stateOrProvince);
 		res.put("organizationalUnit", this.organizationalUnit);
-		res.put("homePostalAddres", this.homePostalAddres);
+		res.put("homePostalAddress", this.homePostalAddress);
 		res.put("uuid", this.uuid);
 		if(this.shadowExpire != null) {
 			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
@@ -592,13 +591,13 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 	}
 
 	@Override
-	public void setHomePostalAddress(String homePostalAddres) {
-		this.homePostalAddres = homePostalAddres;
+	public void setHomePostalAddress(String homePostalAddress) {
+		this.homePostalAddress = homePostalAddress;
 	}
 
 	@Override
 	public String getHomePostalAddress() {
-		return this.homePostalAddres;
+		return this.homePostalAddress;
 	}
 	@Override
     public int compareTo(Account o) {
