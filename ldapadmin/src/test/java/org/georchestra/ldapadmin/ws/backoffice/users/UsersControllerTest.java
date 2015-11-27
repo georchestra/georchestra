@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.naming.Name;
+import javax.naming.directory.SearchControls;
 import javax.servlet.http.HttpServletResponse;
 
 import org.georchestra.ldapadmin.ds.AccountDaoImpl;
@@ -96,11 +97,11 @@ public class UsersControllerTest {
     public void testFindByUidEmpty() throws Exception {
 
             usersCtrl.findByUid("nonexistentuser", response);
-
+            String a = response.getContentAsString();
             JSONObject ret = new JSONObject(response.getContentAsString());
             assertTrue(response.getStatus() == HttpServletResponse.SC_NOT_FOUND);
             assertFalse(ret.getBoolean("success"));
-            assertTrue(ret.getString("error").equals("not_found_uid_empty"));
+            assertTrue(ret.getString("error").equals("not_found"));
 
     }
 
@@ -442,14 +443,14 @@ public class UsersControllerTest {
         Account fakedAccount = AccountFactory.createBrief("pmauduit", "monkey123", "Pierre",
                 "pmauduit", "pmauduit@georchestra.org", "+33123456789", "geOrchestra",
                 "developer & sysadmin", "dev&ops");
-        Mockito.doReturn(fakedAccount).when(ldapTemplate).lookup((Name) Mockito.any(), (ContextMapper) Mockito.any());
+        Mockito.doReturn(fakedAccount).when(ldapTemplate).lookup((Name) Mockito.any(), (String[]) Mockito.any(), (ContextMapper) Mockito.any());
         // Returns the same account when searching it back
         String mFilter = "(&(objectClass=inetOrgPerson)(objectClass=organizationalPerson)"
                 + "(objectClass=person)(mail=tomcat2@localhost))";
         List<Account> listFakedAccount = new ArrayList<Account>();
         listFakedAccount.add(fakedAccount);
         Mockito.doReturn(listFakedAccount).when(ldapTemplate).search(eq(DistinguishedName.EMPTY_PATH),
-                eq(mFilter), (ContextMapper) Mockito.any());
+                eq(mFilter), (SearchControls) Mockito.any(), (ContextMapper) Mockito.any());
         Mockito.doReturn(Mockito.mock(DirContextOperations.class)).when(ldapTemplate).lookupContext((Name) Mockito.any());
 
         usersCtrl.update(request, response);

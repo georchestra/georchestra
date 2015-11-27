@@ -503,5 +503,14 @@ public class GroupsController {
         groupDao = gd;
     }
 
+	/**
+	 * Method used for testing convenience.
+	 * @param ad
+	 */
+    public void setAccountDao(AccountDao ad) {
+        this.accountDao = ad;
+    }
+
+
 
 }

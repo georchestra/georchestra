@@ -6,6 +6,7 @@ package org.georchestra.ldapadmin.ws.backoffice.users;
 
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.Normalizer;
 import java.util.List;
 
@@ -168,33 +169,35 @@ public class UsersController {
 	 */
 	@RequestMapping(value=REQUEST_MAPPING+"/{uid}", method=RequestMethod.GET,
 					produces = "application/json; charset=UTF-8")
-	@ResponseBody
-	public String findByUid(@PathVariable String uid, HttpServletResponse response) throws IOException, JSONException {
+	public void findByUid(@PathVariable String uid, HttpServletResponse response) throws IOException, JSONException {
 
+		// Check for protected accounts
 		if(this.userRule.isProtected(uid) ){
+
 			response.setStatus(HttpServletResponse.SC_CONFLICT);
 			JSONObject res = new JSONObject();
 			res.put("success", "false");
 			res.put("error", "The user is protected: " + uid);
-			return res.toString();
-		}
+			response.getWriter().write(res.toString());
 
-		// searches the account
-		Account account = null;
-		try {
-			account = this.accountDao.findByUID(uid);
-		} catch (NotFoundException e) {
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			JSONObject res = new JSONObject();
-			res.put("success", "false");
-			res.put("error", NOT_FOUND);
-			return res.toString();
-		} catch (DataServiceException e) {
-		    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			throw new IOException(e);
-		}
+		} else {
 
-		return account.toJSON().toString();
+			// searches the account
+			Account account = null;
+			try {
+				account = this.accountDao.findByUID(uid);
+				response.getWriter().write(account.toJSON().toString());
+			} catch (NotFoundException e) {
+				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+				JSONObject res = new JSONObject();
+				res.put("success", "false");
+				res.put("error", NOT_FOUND);
+				response.getWriter().write(res.toString());
+			} catch (DataServiceException e) {
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				throw new IOException(e);
+			}
+		}
 
 	}
 
