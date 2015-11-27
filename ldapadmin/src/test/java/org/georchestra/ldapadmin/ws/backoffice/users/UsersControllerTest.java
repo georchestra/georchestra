@@ -19,6 +19,7 @@ import org.georchestra.ldapadmin.ds.GroupDaoImpl;
 import org.georchestra.ldapadmin.ds.NotFoundException;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
+import org.georchestra.ldapadmin.dto.UserSchema;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
@@ -31,6 +32,8 @@ import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.DistinguishedName;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
+import org.springframework.ldap.filter.AndFilter;
+import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -143,8 +146,8 @@ public class UsersControllerTest {
     public void testFindByUid() throws Exception {
         Account pmauduit = AccountFactory.createBrief("pmauduit", "monkey123", "Pierre", "Mauduit",
                 "pmauduit@localhost", "+33123456789", "geOrchestra Project Steering Committee", "developer", "");
-        Mockito.when(ldapTemplate.lookup((Name) Mockito.any(), (ContextMapper) Mockito.any())).thenReturn(pmauduit);
 
+        Mockito.when(ldapTemplate.lookup(Mockito.any(DistinguishedName.class), eq(UserSchema.ATTR_TO_RETRIEVE), (ContextMapper) Mockito.any())).thenReturn(pmauduit);
         usersCtrl.findByUid("pmauduit", response);
 
         JSONObject ret = new JSONObject(response.getContentAsString());
@@ -251,11 +254,12 @@ public class UsersControllerTest {
         request.setContent(reqUsr.toString().getBytes());
         //Mockito.doThrow(DataServiceException.class).when(ldapTemplate).lookup((Name) Mockito.any());
         Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup((Name) Mockito.any());
-        Mockito.doThrow(DataServiceException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (ContextMapper) Mockito.any());
+        Mockito.doThrow(DataServiceException.class).when(ldapTemplate).lookup((Name) Mockito.any(), eq(UserSchema.ATTR_TO_RETRIEVE), (ContextMapper) Mockito.any());
 
 
         try {
             usersCtrl.create(request, response);
+            assertTrue(false);
         } catch (Throwable e) {
             JSONObject ret = new JSONObject(response.getContentAsString());
             assertTrue(e instanceof IOException);
@@ -369,12 +373,19 @@ public class UsersControllerTest {
                 "developer & sysadmin", "dev&ops");
         Mockito.doReturn(fakedAccount).when(ldapTemplate).lookup((Name) Mockito.any(), (ContextMapper) Mockito.any());
         // Returns the same account when searching it back
-        String mFilter = "(&(objectClass=inetOrgPerson)(objectClass=organizationalPerson)"
-                + "(objectClass=person)(mail=tomcat2@localhost))";
+        AndFilter filter = new AndFilter();
+        filter.and(new EqualsFilter("objectClass", "inetOrgPerson"));
+        filter.and(new EqualsFilter("objectClass", "organizationalPerson"));
+        filter.and(new EqualsFilter("objectClass", "person"));
+        filter.and(new EqualsFilter("mail", "tomcat2@localhost"));
+
         List<Account> listFakedAccount = new ArrayList<Account>();
         listFakedAccount.add(fakedAccount2);
         Mockito.doReturn(listFakedAccount).when(ldapTemplate).search(eq(DistinguishedName.EMPTY_PATH),
-                eq(mFilter), (ContextMapper) Mockito.any());
+                eq(filter.encode()), Mockito.any(SearchControls.class), (ContextMapper) Mockito.any());
+
+        Mockito.doReturn(fakedAccount).when(ldapTemplate).lookup(Mockito.any(DistinguishedName.class),
+                eq(UserSchema.ATTR_TO_RETRIEVE), (ContextMapper) Mockito.any());
 
         usersCtrl.update(request, response);
 
@@ -482,14 +493,19 @@ public class UsersControllerTest {
                 "pmauduit", "pmauduit@georchestra.org", "+33123456789", "geOrchestra",
                 "developer & sysadmin", "dev&ops");
         Mockito.doReturn(fakedAccount).when(ldapTemplate).
-            lookup((Name) Mockito.any(), (ContextMapper) Mockito.any());
+            lookup((Name) Mockito.any(), eq(UserSchema.ATTR_TO_RETRIEVE), (ContextMapper) Mockito.any());
         // Returns the same account when searching it back
-        String mFilter = "(&(objectClass=inetOrgPerson)(objectClass=organizationalPerson)"
-                + "(objectClass=person)(mail=tomcat2@localhost))";
+        AndFilter filter = new AndFilter();
+        filter.and(new EqualsFilter("objectClass", "inetOrgPerson"));
+        filter.and(new EqualsFilter("objectClass", "organizationalPerson"));
+        filter.and(new EqualsFilter("objectClass", "person"));
+        filter.and(new EqualsFilter("mail", "tomcat2@localhost"));
+
+
         List<Account> listFakedAccount = new ArrayList<Account>();
         listFakedAccount.add(fakedAccount);
         Mockito.doReturn(listFakedAccount).when(ldapTemplate).search(eq(DistinguishedName.EMPTY_PATH),
-                eq(mFilter), (ContextMapper) Mockito.any());
+                eq(filter.encode()), Mockito.any(SearchControls.class), (ContextMapper) Mockito.any());
         Mockito.doReturn(Mockito.mock(DirContextOperations.class)).
             when(ldapTemplate).lookupContext((Name) Mockito.any());
 

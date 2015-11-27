@@ -251,7 +251,7 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 		res.put("sn", this.surname);
 		res.put("o", this.org);
 		res.put("mail", this.email);
-		res.put("phone", this.phone);
+		res.put("telephoneNumber", this.phone);
 		res.put("description", this.description);
 		res.put("givenName", this.givenName);
 		res.put("title", this.title);
