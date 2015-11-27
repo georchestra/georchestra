@@ -249,9 +249,9 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 		JSONObject res = new JSONObject();
 		res.put("uid", this.uid);
 		res.put("commonName", this.commonName);
-		res.put("surname", this.surname);
-		res.put("org", this.org);
-		res.put("email", this.email);
+		res.put("sn", this.surname);
+		res.put("o", this.org);
+		res.put("mail", this.email);
 		res.put("phone", this.phone);
 		res.put("description", this.description);
 		res.put("givenName", this.givenName);
