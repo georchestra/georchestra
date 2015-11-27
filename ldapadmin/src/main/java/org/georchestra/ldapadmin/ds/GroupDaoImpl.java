@@ -116,6 +116,15 @@ public class GroupDaoImpl implements GroupDao {
 	@Override
 	public void addUser(final String groupID, final String userId) throws NotFoundException, DataServiceException {
 
+
+		/* TODO Add hierarchic behaviour here :
+			* if configuration flag hierarchic_groups is set and,
+			* if group name contain separator (also found in config)
+			* then remove last suffix of current group DSI_RENNES_AGRO_SCENE_VOITURE --> DSI_RENNES_AGRO_SCENE,
+			* and re-call this method addUser(DSI_RENNES_AGRO_SCENE, ...)
+		 */
+
+
 		Name dn = buildGroupDn(groupID);
 		DirContextOperations context = ldapTemplate.lookupContext(dn);
 
@@ -149,6 +158,7 @@ public class GroupDaoImpl implements GroupDao {
 	}
 
 	public void deleteUser(String groupName, String uid) throws DataServiceException {
+		/* TODO Add hierarchic behaviour here like addUser method */
 
 		Name dnSvUser = buildGroupDn(groupName);
 
