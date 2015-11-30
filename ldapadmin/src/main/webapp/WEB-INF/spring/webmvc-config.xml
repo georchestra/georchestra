@@ -81,15 +81,11 @@
     <property name="userSearchBaseDN" value="${userSearchBaseDN}"/>
   </bean>
 
-  <!-- userTokenDao  -->
   <bean class="org.georchestra.ldapadmin.ws.backoffice.users.UserRule">
     <property name="listOfprotectedUsers">
-      <description>Add one or more user identifiers (uid) of protected user</description>
-      <list>
-        <value>geoserver_privileged_user</value>
-        <!--  to define an other uid you should add a value like is shown in the following example-->
-        <!--  <value>${protectedUser.uid2}</value> -->
-      </list>
+      <description>Comma separated list of one or more user identifiers (uid) of protected user</description>
+        <!-- Users are defined as a comma separated list of uid and can be override in data dir with "protectedUserList" key-->
+      <value>${protectedUserList:geoserver_privileged_user}</value>
     </property>
   </bean>
 
