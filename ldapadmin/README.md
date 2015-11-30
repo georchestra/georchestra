@@ -61,7 +61,7 @@ Two pages:
  * LDAP Server
  * Postgresql
 
-For the web container: Tomcat 6, or Maven Jetty (no need to install)
+For the web container: Tomcat 7, or Maven Jetty (no need to install)
 
 
 ### Get a pair of ReCaptcha keys
@@ -109,7 +109,7 @@ Create the eclipse project
 
 Testing purpose: 
 
- * deploy in Tomcat6
+ * deploy in Tomcat7
  * Then add the following url in your Internet navigator:
    http://localhost:8080/ldapadmin/privateui/
 
@@ -129,43 +129,37 @@ Alternatively, run with jetty:
   $ cd ../ldapadmin
   $ ../mvn -Dmaven.test.skip=true -Ptemplate jetty:run
   ```
+ * Then point your navigator to the following address :
+   http://localhost:8286/ldapadmin/privateui/
+   
+ Running ldapadmin with jetty will change web server port to *8286* (in order to integrate with others georchestra 
+ instance : CAS, security proxy, ...)
+   
+### Protected Users
 
-### Privileged User
+You can specify several user accounts that you want to protect against deletion or modification. For this purpose, you 
+have 'listOfprotectedUsers' property. This property holds a comma separated list of uid corresponding to users accounts 
+that should be protected.
 
-Add one or more user identifiers (uid) of those protected users. The protected user wont be available to access or modify operations.
- 
-    <bean class="org.georchestra.ldapadmin.ws.backoffice.users.UserRule">
+Default value is : 'geoserver_privileged_user' (which is a privileged user, internally used) but you can override this 
+in config template with key : "protectedUserList"
+
+Example : 
+
+    protectedUserList=geoserver_privileged_user,hidden_admin_user,hidden_admin_user_trash,hidden_admin_user_backup
+
+(Note that there is no space around comma !)
     
-        <property name="listOfprotectedUsers">
-            <description></description>
-            <list>
-            <value> ${protectedUser.uid1} </value>
-            <value> ${protectedUser.uid2} </value>
-            <value> ${protectedUser.uid3} </value>
-            <value> ${protectedUser.uid4} </value>
-            </list> 
-        </property>
-    </bean>
-    
-Example: configure geoserver_privileged_user as protected 
+This will add following users to default protected list of users :
+  * hidden_admin_user
+  * hidden_admin_user_trash
+  * hidden_admin_user_backup
 
-/config/defaults/ldapadmin/maven.filter
-
-protectedUser.uid1=@shared.privileged.geoserver.user@
-
-Thus only one uid is required in the spring configuration file
-/WEB-INF/spring/webmvc-config.xml
-
-    <bean class="org.georchestra.ldapadmin.ws.backoffice.users.UserRule">
-    
-        <property name="listOfprotectedUsers">
-            <description></description>
-            <list>
-            <value> ${protectedUser.uid1} </value>
-            </list> 
-        </property>
-    </bean>
-
+So final list of protected users will be :
+  * geoserver_privileged_user
+  * hidden_admin_user
+  * hidden_admin_user_trash
+  * hidden_admin_user_backup
 
 Private UI
 ----------
