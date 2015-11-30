@@ -215,7 +215,7 @@ Once this is done, running mapfishapp is pretty simple with Jetty:
     $ cd mapfishapp
     $ ../mvn -Ptemplate jetty:run
 
-Then, point your browser to [http://localhost:8080/mapfishapp/?noheader=true](http://localhost:8080/mapfishapp/?noheader=true).
+Then, point your browser to [http://localhost:8287/mapfishapp/?noheader=true](http://localhost:8287/mapfishapp/?noheader=true).
 
 Please note that if you make changes to your configuration, you have to run this command again:
 
