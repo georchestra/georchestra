@@ -7,7 +7,6 @@ import java.sql.Array;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Map;
-import static java.lang.System.out;
 
 /**
  * Insert an ogc service log
@@ -24,7 +23,7 @@ public final class InsertCommand extends AbstractDataCommand {
 	public final static String LAYER_COLUMN = "layer";
 	public final static String REQUEST_COLUMN = "request";
 	public final static String ORG_COLUMN = "org";
-	public final static String SECROLE_COLUMN = "secrole";
+	public final static String SECROLE_COLUMN = "roles";
 
 	
 	private static final String SQL_INSERT= "INSERT INTO ogcstatistics.ogc_services_log("+USER__COLUMN+","+ DATE_COLUMN+ ","+  SERVICE_COLUMN+ "," +LAYER_COLUMN+ "," +REQUEST_COLUMN+ "," +ORG_COLUMN+ ","+SECROLE_COLUMN+") VALUES (?, ?, ?, ?, ?, ?, string_to_array(?, ','))";
