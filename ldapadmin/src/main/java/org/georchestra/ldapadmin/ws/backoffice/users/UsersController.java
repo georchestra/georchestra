@@ -3,7 +3,10 @@
  */
 package org.georchestra.ldapadmin.ws.backoffice.users;
 
+
+
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.Normalizer;
 import java.util.List;
 
@@ -23,15 +26,20 @@ import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.georchestra.ldapadmin.dto.Group;
 import org.georchestra.ldapadmin.dto.UserSchema;
+import org.georchestra.ldapadmin.mailservice.MailService;
 import org.georchestra.ldapadmin.ws.backoffice.utils.RequestUtil;
 import org.georchestra.ldapadmin.ws.backoffice.utils.ResponseUtil;
 import org.georchestra.lib.file.FileUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ldap.filter.LikeFilter;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * Web Services to maintain the User information.
@@ -58,9 +66,23 @@ public class UsersController {
 
 	private AccountDao accountDao;
 	private UserRule userRule;
+	
+	@Autowired
+	private MailService mailService;
+
+	public void setMailService(MailService mailService) {
+		this.mailService = mailService;
+	}
 
 	@Autowired
-	public UsersController( AccountDao dao, UserRule userRule){
+	private Boolean warnUserIfUidModified = false;
+
+	public void setWarnUserIfUidModified(boolean warnUserIfUidModified) {
+		this.warnUserIfUidModified = warnUserIfUidModified;
+	}
+
+	@Autowired
+	public UsersController(AccountDao dao, UserRule userRule){
 		this.accountDao = dao;
 		this.userRule = userRule;
 	}
@@ -102,8 +124,31 @@ public class UsersController {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			throw new IOException(e);
 		}
-
-
+	}
+	
+	/**
+	 * Looks up a list of user given a pattern to search against the LDAP tree.
+	 * The returned format is the same as for the findAll operation.
+	 *
+	 * @param response Returns the detailed information of the user as json
+	 * @throws IOException
+	 */
+	@RequestMapping(value=BASE_MAPPING+"/usersearch/{userPattern}", method=RequestMethod.GET, produces="application/json; charset=utf-8")
+	@ResponseBody
+	public String findWithPattern(@PathVariable String userPattern, HttpServletResponse response) throws IOException, JSONException {
+		try {
+			ProtectedUserFilter filter = new ProtectedUserFilter( this.userRule.getListUidProtected() );
+			List<Account> list = this.accountDao.find(filter, new LikeFilter("uid", "*" + userPattern + "*"));
+			JSONArray ret = new JSONArray();
+			for (Account a: list) {
+				ret.put(a.toJSON());
+			}
+			return new JSONObject().put("users", ret).toString();
+		} catch (Exception e) {
+			LOG.error(e.getMessage());
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			throw new IOException(e);
+		}
 	}
 
 	/**
@@ -119,55 +164,40 @@ public class UsersController {
 	 * Example: [BASE_MAPPING]/users/hsimpson
 	 * </p>
 	 *
-	 * @param request the request includes the user identifier required
 	 * @param response Returns the detailed information of the user as json
 	 * @throws IOException
 	 */
-	@RequestMapping(value=REQUEST_MAPPING+"/*", method=RequestMethod.GET)
-	public void findByUid( HttpServletRequest request, HttpServletResponse response) throws IOException{
+	@RequestMapping(value=REQUEST_MAPPING+"/{uid}", method=RequestMethod.GET,
+					produces = "application/json; charset=UTF-8")
+	public void findByUid(@PathVariable String uid, HttpServletResponse response) throws IOException, JSONException {
 
-		String uid = RequestUtil.getKeyFromPathVariable(request).toLowerCase();
-		if (uid.isEmpty()) {
-	        ResponseUtil.buildResponse(response,
-	                ResponseUtil.buildResponseMessage(false, "not_found_uid_empty"),
-	                HttpServletResponse.SC_NOT_FOUND);
-	        return;
-		}
+		// Check for protected accounts
 		if(this.userRule.isProtected(uid) ){
 
-			String message = "The user is protected: " + uid;
-			LOG.warn(message );
+			response.setStatus(HttpServletResponse.SC_CONFLICT);
+			JSONObject res = new JSONObject();
+			res.put("success", "false");
+			res.put("error", "The user is protected: " + uid);
+			response.getWriter().write(res.toString());
 
-			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, message);
+		} else {
 
-			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
-
-			return;
+			// searches the account
+			Account account = null;
+			try {
+				account = this.accountDao.findByUID(uid);
+				response.getWriter().write(account.toJSON().toString());
+			} catch (NotFoundException e) {
+				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+				JSONObject res = new JSONObject();
+				res.put("success", "false");
+				res.put("error", NOT_FOUND);
+				response.getWriter().write(res.toString());
+			} catch (DataServiceException e) {
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				throw new IOException(e);
+			}
 		}
-
-
-		// searches the account
-		Account account = null;
-		try {
-			account = this.accountDao.findByUID(uid);
-
-		} catch (NotFoundException e) {
-
-			ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(Boolean.FALSE, NOT_FOUND), HttpServletResponse.SC_NOT_FOUND);
-
-			return;
-
-		} catch (DataServiceException e) {
-		    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			throw new IOException(e);
-		}
-
-		// sets the account data in the response object
-		UserResponse userResponse = new UserResponse(account);
-
-		String jsonAccount = userResponse.asJsonString();
-
-		ResponseUtil.buildResponse(response, jsonAccount, HttpServletResponse.SC_OK);
 
 	}
 
@@ -379,10 +409,12 @@ public class UsersController {
 
 		// modifies the account data
 		try{
-			final Account modified = modifyAccount( account, request.getInputStream());
-
-			this.accountDao.update(modified);
-
+			final Account modified = modifyAccount(AccountFactory.create(account), request.getInputStream());
+			this.accountDao.update(account, modified);
+			if (warnUserIfUidModified) {
+				this.mailService.sendAccountUidRenamed(request.getSession().getServletContext(),
+						modified.getUid(), modified.getCommonName(), modified.getEmail());
+			}
 			ResponseUtil.writeSuccess(response);
 
 		} catch (DuplicatedEmailException e) {
@@ -390,13 +422,16 @@ public class UsersController {
 
 			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
 		} catch (IOException e) {
-	          String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, PARAMS_NOT_UNDERSTOOD);
-              ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_BAD_REQUEST);
-              throw e;
+			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, PARAMS_NOT_UNDERSTOOD);
+			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_BAD_REQUEST);
+			throw e;
 		} catch (DataServiceException e){
 			LOG.error(e.getMessage());
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			throw new IOException(e);
+		} catch (NotFoundException e) {
+			LOG.error(e.getMessage());
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		}
 	}
 
@@ -416,7 +451,6 @@ public class UsersController {
 	public void delete( HttpServletRequest request, HttpServletResponse response) throws IOException{
 		try{
 			final String uid = RequestUtil.getKeyFromPathVariable(request).toLowerCase();
-
 			if(this.userRule.isProtected(uid) ){
 
 				String message = "The user is protected, it cannot be deleted: " + uid;
@@ -529,16 +563,18 @@ public class UsersController {
 			account.setDescription(description);
 		}
 
+
+
 		String commonName = AccountFactory.formatCommonName(
 				account.getGivenName(), account.getSurname());
 
 		account.setCommonName(commonName);
-
+		String uid = RequestUtil.getFieldValue(json, UserSchema.UID_KEY);
+		if (uid != null) {
+			account.setUid(uid);
+		}
 		return account;
-
 	}
-
-
 
 	/**
 	 * Create a new account from the body request.

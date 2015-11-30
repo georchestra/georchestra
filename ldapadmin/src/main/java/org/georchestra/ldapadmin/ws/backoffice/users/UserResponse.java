@@ -15,6 +15,8 @@ import org.json.JSONObject;
  * @author Mauricio Pazos
  *
  */
+
+
 class UserResponse {
 	
 	private Account account;
@@ -29,7 +31,7 @@ class UserResponse {
 		try{
 			JSONObject jsonAccount = new JSONObject();
 			
-			jsonAccount.put(UserSchema.UUID_KEY, account.getUid());
+			jsonAccount.put(UserSchema.UID_KEY, account.getUid());
 			jsonAccount.put(UserSchema.STREET_KEY, account.getStreet());
 			jsonAccount.put(UserSchema.TITLE_KEY, account.getTitle());
 			

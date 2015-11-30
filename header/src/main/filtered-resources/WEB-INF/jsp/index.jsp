@@ -4,6 +4,11 @@
 <%@ page language="java" %>
 <%@ page import="java.util.*" %>
 <%@ page import="org.georchestra._header.Utf8ResourceBundle" %>
+<%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
+<%@ page import="org.springframework.context.ApplicationContext" %>
+<%@ page import="org.springframework.web.servlet.support.RequestContextUtils" %>
+<%@ page import="org.georchestra.commons.configuration.GeorchestraConfiguration" %>
+
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ page isELIgnored="false" %>
 <%
@@ -13,6 +18,16 @@ Boolean anonymous = true;
 response.setDateHeader("Expires", 31536000);
 response.setHeader("Cache-Control", "private, max-age=31536000");
 */
+
+// Using georchestra autoconf
+String georLanguage = null;
+String georLdapadminPublicContextPath = null;
+String ldapadm = null;
+try {
+  ApplicationContext ctx = RequestContextUtils.getWebApplicationContext(request);
+  georLanguage = ((GeorchestraConfiguration) ctx.getBean(GeorchestraConfiguration.class.toString())).getProperty("language");
+  georLdapadminPublicContextPath = ((GeorchestraConfiguration) ctx.getBean(GeorchestraConfiguration.class.toString())).getProperty("ldapadminPublicContextPath");
+} catch (Exception e) {}
 
 // to prevent problems with proxies, and for now:
 response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
@@ -26,8 +41,18 @@ if (active == null) {
 
 String lang = request.getParameter("lang");
 if (lang == null || (!lang.equals("en") && !lang.equals("es") && !lang.equals("ru") && !lang.equals("fr") && !lang.equals("de"))) {
-    lang = "${language}";
+    if (georLanguage != null)
+        lang = georLanguage;
+    else
+        lang = "${language}";
 }
+
+if (georLdapadminPublicContextPath != null)
+    ldapadm = georLdapadminPublicContextPath;
+else
+    ldapadm = "${ldapadminPublicContextPath}";
+
+
 Locale l = new Locale(lang);
 ResourceBundle resource = org.georchestra._header.Utf8ResourceBundle.getBundle("_header.i18n.index",l);
 javax.servlet.jsp.jstl.core.Config.set(
@@ -37,6 +62,7 @@ javax.servlet.jsp.jstl.core.Config.set(
 );
 
 Boolean extractor = false;
+Boolean ldapadmin = false;
 String sec_roles = request.getHeader("sec-roles");
 if(sec_roles != null) {
     String[] roles = sec_roles.split(";");
@@ -51,6 +77,9 @@ if(sec_roles != null) {
         }
         if (roles[i].equals("ROLE_MOD_EXTRACTORAPP")) {
             extractor = true;
+        }
+        if (roles[i].equals("ROLE_MOD_LDAPADMIN")) {
+            ldapadmin = true;
         }
     }
 }
@@ -173,10 +202,10 @@ if(sec_roles != null) {
         <ul>
         <c:choose>
             <c:when test='<%= active.equals("geonetwork") %>'>
-            <li class="active"><a href="/geonetwork/apps/georchestra/"><fmt:message key="catalogue"/></a></li>
+            <li class="active"><a href="/geonetwork/"><fmt:message key="catalogue"/></a></li>
             </c:when>
             <c:otherwise>
-            <li><a href="/geonetwork/apps/georchestra/"><fmt:message key="catalogue"/></a></li>
+            <li><a href="/geonetwork/"><fmt:message key="catalogue"/></a></li>
             </c:otherwise>
         </c:choose>
 
@@ -211,11 +240,24 @@ if(sec_roles != null) {
             </c:otherwise>
         </c:choose>
 
+        <c:choose>
+            <c:when test='<%= ldapadmin == true %>'>
+            <c:choose>
+                <c:when test='<%= active.equals("ldapadmin") %>'>
+            <li class="active"><a><fmt:message key="ldapadmin"/></a></li>
+                </c:when>
+                <c:otherwise>
+            <li><a href="<%=ldapadm %>/privateui/"><fmt:message key="ldapadmin"/></a></li>
+                </c:otherwise>
+            </c:choose>
+            </c:when>
+        </c:choose>
+
         </ul>
         <c:choose>
             <c:when test='<%= anonymous == false %>'>
         <p class="logged">
-            <a href="${ldapadminPublicContextPath}/account/userdetails"><%=request.getHeader("sec-username") %></a><span class="light"> | </span><a href="/j_spring_security_logout"><fmt:message key="logout"/></a>
+            <a href="<%=ldapadm %>account/userdetails"><%=request.getHeader("sec-username") %></a><span class="light"> | </span><a href="/j_spring_security_logout"><fmt:message key="logout"/></a>
         </p>
             </c:when>
             <c:otherwise>
@@ -236,11 +278,16 @@ if(sec_roles != null) {
                 if (/\/cas\//.test(url)) {
                     a.href = "/cas/login";
                 } else {
+                    // removing any existing anchor from URL first:
+                    // see https://github.com/georchestra/georchestra/issues/1032
+                    var p = url.split('#', 2),
                     /* Taken from https://github.com/openlayers/openlayers/blob/master/lib/OpenLayers/Util.js#L557 */
-                    var paramStr="login", parts = (url + " ").split(/[?&]/);
-                    a.href = url + (parts.pop() === " " ?
+                    paramStr = "login", parts = (p[0] + " ").split(/[?&]/);
+                    a.href = p[0] + (parts.pop() === " " ?
                         paramStr :
-                        parts.length ? "&" + paramStr : "?" + paramStr);
+                        parts.length ? "&" + paramStr : "?" + paramStr) +
+                        // adding potential anchor
+                        (p.length == 2 ? "#" + p[1] : "");
                 }
             }
 

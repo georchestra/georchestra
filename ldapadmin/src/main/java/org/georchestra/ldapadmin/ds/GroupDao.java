@@ -30,7 +30,14 @@ public interface GroupDao {
 	 * @return list of {@link Group}
 	 */
 	List<Group> findAll() throws DataServiceException;
-	
+
+	/**
+	 * Returns all groups for a given uid.
+	 *
+	 * @return list of {@link Group}
+	 */
+	List<Group> findAllForUser(String userId) throws DataServiceException;
+
 	/**
 	 * Returns the group's users
 	 * 
@@ -38,25 +45,34 @@ public interface GroupDao {
 	 */
 	List<String> findUsers(final String groupName) throws DataServiceException;
 
-
 	/**
 	 * Deletes the user from all groups 
-	 * 
+	 *
 	 * @param uid
 	 * @throws DataServiceException
 	 */
 	void deleteUser(String uid) throws DataServiceException;
-	
+
 	void deleteUsers(String cn, List<String> deleteList) throws DataServiceException, NotFoundException;
-	
+
 	/**
-	 * Deletes the user from the user
+	 * Deletes the user from the group
 	 * 
 	 * @param groupName
 	 * @param uid
 	 * @throws DataServiceException
 	 */
 	void deleteUser(String groupName, String uid) throws DataServiceException;
+
+	/**
+	 * Modifies the user (e.g. rename) from the group
+	 *
+	 * @param groupName
+	 * @param oldUid
+	 * @param newUid
+	 * @throws DataServiceException
+	 */
+	void modifyUser(String groupName, String oldUid, String newUid) throws DataServiceException;
 
 	/**
 	 * Adds the group

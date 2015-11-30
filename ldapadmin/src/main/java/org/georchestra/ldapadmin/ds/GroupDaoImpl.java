@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.naming.InvalidNameException;
 import javax.naming.Name;
+import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
@@ -115,10 +116,19 @@ public class GroupDaoImpl implements GroupDao {
 	@Override
 	public void addUser(final String groupID, final String userId) throws NotFoundException, DataServiceException {
 
+
+		/* TODO Add hierarchic behaviour here :
+			* if configuration flag hierarchic_groups is set and,
+			* if group name contain separator (also found in config)
+			* then remove last suffix of current group DSI_RENNES_AGRO_SCENE_VOITURE --> DSI_RENNES_AGRO_SCENE,
+			* and re-call this method addUser(DSI_RENNES_AGRO_SCENE, ...)
+		 */
+
+
 		Name dn = buildGroupDn(groupID);
 		DirContextOperations context = ldapTemplate.lookupContext(dn);
 
-		context.setAttributeValues("objectclass", new String[] { "top", "groupOfNames" });
+		context.setAttributeValues("objectclass", new String[] { "top", "groupOfMembers" });
 
 		try {
 
@@ -148,19 +158,31 @@ public class GroupDaoImpl implements GroupDao {
 	}
 
 	public void deleteUser(String groupName, String uid) throws DataServiceException {
+		/* TODO Add hierarchic behaviour here like addUser method */
 
 		Name dnSvUser = buildGroupDn(groupName);
 
 		DirContextOperations ctx = ldapTemplate.lookupContext(dnSvUser);
-		ctx.setAttributeValues("objectclass", new String[] { "top", "groupOfNames" });
+		ctx.setAttributeValues("objectclass", new String[] { "top", "groupOfMembers" });
 		ctx.removeAttributeValue("member", buildUserDn(uid).toString());
 
 		this.ldapTemplate.modifyAttributes(ctx);
 	}
 
+    @Override
+    public void modifyUser(String groupName, String oldUid, String newUid) throws DataServiceException {
+        Name dnGroup = buildGroupDn(groupName);
+        String oldUserDn = buildUserDn(oldUid).toString();
+        String newUserDn = buildUserDn(newUid).toString();
+        DirContextOperations ctx = ldapTemplate.lookupContext(dnGroup);
+        ctx.removeAttributeValue("member", oldUserDn);
+        ctx.addAttributeValue("member", newUserDn);
+        this.ldapTemplate.modifyAttributes(ctx);
+    }
+
 	public List<Group> findAll() throws DataServiceException {
 
-		EqualsFilter filter = new EqualsFilter("objectClass", "groupOfNames");
+		EqualsFilter filter = new EqualsFilter("objectClass", "groupOfMembers");
 		List<Group> groupList = ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(),
 				new GroupContextMapper());
 
@@ -170,6 +192,16 @@ public class GroupDaoImpl implements GroupDao {
 		}
 
 		return new LinkedList<Group>(sorted);
+	}
+
+	public List<Group> findAllForUser(String userId) {
+		EqualsFilter grpFilter = new EqualsFilter("objectClass", "groupOfMembers");
+		AndFilter filter = new AndFilter();
+		filter.and(grpFilter);
+
+		filter.and(new EqualsFilter("member", buildUserDn(userId).toString()));
+		return ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(),
+				new GroupContextMapper());
 	}
 
 	public List<String> findUsers(final String groupName) throws DataServiceException{
@@ -279,7 +311,7 @@ public class GroupDaoImpl implements GroupDao {
 		}
 
 
-        EqualsFilter filter = new EqualsFilter("objectClass", "groupOfNames");
+        EqualsFilter filter = new EqualsFilter("objectClass", "groupOfMembers");
         Integer uniqueNumber = AccountDaoImpl.findUniqueNumber(filter, uniqueNumberField, this.uniqueNumberCounter, ldapTemplate);
 
         // inserts the new group
@@ -298,7 +330,7 @@ public class GroupDaoImpl implements GroupDao {
 
 	private void mapToContext(Integer uniqueNumber, Group group, DirContextOperations context) {
 
-		context.setAttributeValues("objectclass", new String[] { "top", "groupOfNames" });
+		context.setAttributeValues("objectclass", new String[] { "top", "groupOfMembers" });
 
         // person attributes
         if (uniqueNumber != null) {
@@ -309,13 +341,7 @@ public class GroupDaoImpl implements GroupDao {
 
 		setAccountField(context, GroupSchema.DESCRIPTION_KEY, group.getDescription());
 
-		// groupOfNames objects need to have at least one member at creation
-		if (group.getUserList().size() == 0) {
-		    String FakeUserUid = String.format("uid=%s", Configuration.FAKE_USER);
-		    setAccountField(context, GroupSchema.MEMBER_KEY, FakeUserUid);
-		} else {
-		    setMemberField(context, GroupSchema.MEMBER_KEY, group.getUserList());
-		}
+		setMemberField(context, GroupSchema.MEMBER_KEY, group.getUserList());
 
 	}
 
@@ -463,6 +489,5 @@ public class GroupDaoImpl implements GroupDao {
 		}
 
 	}
-
 
 }

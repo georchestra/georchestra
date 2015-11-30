@@ -184,4 +184,38 @@ public class AccountFactory {
 		return a;
 	}
 
+	/**
+	 * Creates an account object from another one, given as argument.
+	 *
+	 * @param o other account to copy
+	 */
+	public static Account create(Account o) {
+		Account a = new AccountImpl();
+		a.setUid(o.getUid());
+		a.setCommonName(o.getCommonName());
+		a.setSurname(o.getSurname());
+		a.setOrg(o.getOrg());
+		a.setEmail(o.getEmail());
+		a.setPhone(o.getPhone());
+		a.setDescription(o.getDescription());
+		// passwords / new passwords fields voluntarily omitted:
+		// the password update process should not go through this.
+		a.setGivenName(o.getGivenName());
+		a.setTitle(o.getTitle());
+		a.setPostalAddress(o.getPostalAddress());
+		a.setPostalCode(o.getPostalCode());
+		a.setRegisteredAddress(o.getRegisteredAddress());
+		a.setPostOfficeBox(o.getPostOfficeBox());
+		a.setPhysicalDeliveryOfficeName(o.getPhysicalDeliveryOfficeName());
+		a.setStreet(o.getStreet());
+		a.setLocality(o.getLocality());
+		a.setFacsimile(o.getFacsimile());
+		a.setMobile(o.getMobile());
+		a.setRoomNumber(o.getRoomNumber());
+		a.setStateOrProvince(o.getStateOrProvince());
+		a.setOrganizationalUnit(o.getOrganizationalUnit());
+		a.setHomePostalAddress(o.getHomePostalAddress());
+		return a;
+	}
+
 }

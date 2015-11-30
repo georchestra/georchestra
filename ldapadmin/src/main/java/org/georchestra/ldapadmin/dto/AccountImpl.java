@@ -4,8 +4,20 @@
 package org.georchestra.ldapadmin.dto;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.security.authentication.encoding.LdapShaPasswordEncoder;
+
+import ezvcard.VCard;
+import ezvcard.parameter.EmailType;
+import ezvcard.parameter.TelephoneType;
+import ezvcard.property.Address;
+import ezvcard.property.FormattedName;
+import ezvcard.property.Organization;
 
 /**
  * Account this is a Data transfer Object.
@@ -41,30 +53,24 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 	private String postOfficeBox; // postOfficeBox
 	private String physicalDeliveryOfficeName; //physicalDeliveryOfficeName
 
-
 	private String street;
-
 
 	private String locality; // l
 
-
 	private String facsimile;
-
 
 	private String mobile;
 
-
 	private String roomNumber;
-
 
 	private String stateOrProvince; // st
 
-
 	private String organizationalUnit; // ou
 
+	private String homePostalAddress;
+	private String uuid;
 
-	private String homePostalAddres;
-
+	private Date shadowExpire;
 
 	@Override
 	public String toString() {
@@ -81,9 +87,198 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 				+ ", facsimile=" + facsimile + ", mobile=" + mobile
 				+ ", roomNumber=" + roomNumber + ", stateOrProvince="
 				+ stateOrProvince + ", organizationalUnit="
-				+ organizationalUnit + ", homePostalAddres=" + homePostalAddres
+				+ organizationalUnit + ", homePostalAddress=" + homePostalAddress
+				+ ", UUID=" + this.uuid + ", shadowExpire=" + String.valueOf(this.shadowExpire)
 				+ "]";
 	}
+	
+	
+	@Override
+	public String toVcf() {
+	    VCard v = new VCard();
+	    FormattedName f = new FormattedName(givenName + " " + surname);
+	    v.addFormattedName(f);
+	    Organization org = new Organization();
+	    org.addValue(this.org);
+	    org.addValue(this.organizationalUnit);
+	    v.addEmail(email, EmailType.WORK);
+	    v.addTelephoneNumber(phone, TelephoneType.WORK);
+	    v.addTitle(title);
+	    Address a = new Address();
+	    a.setPostalCode(postalCode);
+	    a.setStreetAddress(postalAddress);
+	    a.setPoBox(postOfficeBox);
+	    a.setLocality(locality);
+	    v.addAddress(a);
+	    v.addTelephoneNumber(mobile, TelephoneType.CELL);
+
+	    return v.write();
+	}
+	@Override
+	public String toFormatedString(String data) {
+
+	    String ret = new String("");
+	    if (data != null) {
+	        ret = data.replace(",",".");
+	    }
+	    return ret;
+	}
+
+	private final String CSV_DELIMITER = ",";
+   
+   
+	@Override
+	public String toCsv() {
+
+		StringBuilder csv = new StringBuilder();
+
+		csv.append(toFormatedString(commonName));
+		csv.append(CSV_DELIMITER);
+		csv.append(CSV_DELIMITER);// Middle Name
+		csv.append(toFormatedString(surname));
+		csv.append(CSV_DELIMITER);
+		csv.append(toFormatedString(title));
+		csv.append(CSV_DELIMITER);
+		csv.append(CSV_DELIMITER);// Suffix
+		csv.append(CSV_DELIMITER); // Initials
+		csv.append(CSV_DELIMITER);// Web Page
+		csv.append(CSV_DELIMITER); // Gender
+		csv.append(CSV_DELIMITER);// Birthday
+		csv.append(CSV_DELIMITER); // Anniversary
+		csv.append(CSV_DELIMITER);// Location
+		csv.append(CSV_DELIMITER); // Language
+		csv.append(CSV_DELIMITER);// Internet Free Busy
+		csv.append(CSV_DELIMITER); // Notes
+		csv.append(toFormatedString(email));
+		csv.append(CSV_DELIMITER);
+		csv.append(CSV_DELIMITER);// E-mail 2 Address
+		csv.append(CSV_DELIMITER); // E-mail 3 Address
+		csv.append(toFormatedString(phone));// primary phone
+		csv.append(CSV_DELIMITER);
+		csv.append(CSV_DELIMITER);// Home Phone
+		csv.append(CSV_DELIMITER); // Home Phone 2
+		csv.append(toFormatedString(mobile));
+		csv.append(CSV_DELIMITER); // Mobile Phone
+		csv.append(CSV_DELIMITER);// Pager
+		csv.append(CSV_DELIMITER);// Home Fax
+		csv.append(toFormatedString(homePostalAddress));
+		csv.append(CSV_DELIMITER);// Home Address
+		csv.append(CSV_DELIMITER);// Home Street
+		csv.append(CSV_DELIMITER);// Home Street 2
+		csv.append(CSV_DELIMITER);// Home Street 3
+		csv.append(CSV_DELIMITER);// Home Address PO Box
+		csv.append(CSV_DELIMITER); // locality
+		csv.append(CSV_DELIMITER); // Home City
+		csv.append(CSV_DELIMITER);// Home State
+		csv.append(CSV_DELIMITER); // Home Postal Code
+		csv.append(CSV_DELIMITER);// Home Country
+		csv.append(CSV_DELIMITER);// Spouse
+		csv.append(CSV_DELIMITER);// Children
+		csv.append(CSV_DELIMITER); // Manager's Name
+		csv.append(CSV_DELIMITER);// Assistant's Name
+		csv.append(CSV_DELIMITER); // Referred By
+		csv.append(CSV_DELIMITER);// Company Main Phone
+		csv.append(CSV_DELIMITER);// Business Phone
+		csv.append(CSV_DELIMITER);// Business Phone 2
+		csv.append(toFormatedString(facsimile));
+		csv.append(CSV_DELIMITER); // Business Fax
+		csv.append(CSV_DELIMITER);// Assistant's Phone
+		csv.append(toFormatedString(org));
+		csv.append(CSV_DELIMITER); // Company
+		csv.append(toFormatedString(description));
+		csv.append(CSV_DELIMITER);// Job Title
+		csv.append(CSV_DELIMITER);// Department
+		csv.append(CSV_DELIMITER);// Office Location
+		csv.append(CSV_DELIMITER);// Organizational ID Number
+		csv.append(CSV_DELIMITER);// Profession
+		csv.append(CSV_DELIMITER); // Account
+		csv.append(toFormatedString(postalAddress));
+		csv.append(CSV_DELIMITER);// Business Address
+		csv.append(toFormatedString(street));
+		csv.append(CSV_DELIMITER);// Business Street
+		csv.append(CSV_DELIMITER);// Business Street 2
+		csv.append(CSV_DELIMITER); // Business Street 3
+		csv.append(toFormatedString(postOfficeBox));
+		csv.append(CSV_DELIMITER);// Business Address PO Box
+		csv.append(CSV_DELIMITER);// Business City
+		csv.append(CSV_DELIMITER);// Business State
+		csv.append(toFormatedString(postalCode));
+		csv.append(CSV_DELIMITER); // Business Postal Code
+		csv.append(toFormatedString(stateOrProvince));
+		csv.append(CSV_DELIMITER);// Business Country
+		csv.append(CSV_DELIMITER);// Other Phone
+		csv.append(CSV_DELIMITER);// Other Fax
+		csv.append(toFormatedString(registeredAddress));
+		csv.append(CSV_DELIMITER); // Other Address
+		csv.append(toFormatedString(physicalDeliveryOfficeName));
+		csv.append(CSV_DELIMITER);// Other Street
+		csv.append(CSV_DELIMITER);// Other Street 2
+		csv.append(CSV_DELIMITER);// Other Street 3
+		csv.append(CSV_DELIMITER);// Other Address PO Box
+		csv.append(CSV_DELIMITER); // Other City
+		csv.append(CSV_DELIMITER);// Other State
+		csv.append(CSV_DELIMITER);// Other Postal Code
+		csv.append(CSV_DELIMITER);// Other Country
+		csv.append(CSV_DELIMITER); // Callback
+		csv.append(CSV_DELIMITER);// Car Phone
+		csv.append(CSV_DELIMITER);// ISDN
+		csv.append(CSV_DELIMITER);// Radio Phone
+		csv.append(CSV_DELIMITER);// TTY/TDD Phone
+		csv.append(CSV_DELIMITER); // Telex
+		csv.append(CSV_DELIMITER);// User 1
+		csv.append(CSV_DELIMITER);// User 2
+		csv.append(CSV_DELIMITER);// User 3
+		csv.append(CSV_DELIMITER); // User 4
+		csv.append(CSV_DELIMITER);// Keywords
+		csv.append(CSV_DELIMITER);// Mileage
+		csv.append(CSV_DELIMITER);// Hobby
+		csv.append(CSV_DELIMITER);// Billing Information
+		csv.append(CSV_DELIMITER); // Directory Server
+		csv.append(CSV_DELIMITER);// Sensitivity
+		csv.append(CSV_DELIMITER);// Priority
+		csv.append(CSV_DELIMITER);// Private
+		csv.append(CSV_DELIMITER); // Categories
+		csv.append("\r\n"); // CRLF
+		return csv.toString();
+
+	}
+
+	@Override
+	public JSONObject toJSON() throws JSONException {
+		JSONObject res = new JSONObject();
+		res.put("uid", this.uid);
+		res.put("commonName", this.commonName);
+		res.put("sn", this.surname);
+		res.put("o", this.org);
+		res.put("mail", this.email);
+		res.put("telephoneNumber", this.phone);
+		res.put("description", this.description);
+		res.put("givenName", this.givenName);
+		res.put("title", this.title);
+		res.put("postalAddress", this.postalAddress);
+		res.put("postalCode", this.postalCode);
+		res.put("registeredAddress", this.registeredAddress);
+		res.put("postOfficeBox", this.postOfficeBox);
+		res.put("physicalDeliveryOfficeName", this.physicalDeliveryOfficeName);
+		res.put("street", this.street);
+		res.put("locality", this.locality);
+		res.put("facsimile", this.facsimile);
+		res.put("mobile", this.mobile);
+		res.put("roomNumber", this.roomNumber);
+		res.put("stateOrProvince", this.stateOrProvince);
+		res.put("organizationalUnit", this.organizationalUnit);
+		res.put("homePostalAddress", this.homePostalAddress);
+		res.put("uuid", this.uuid);
+		if(this.shadowExpire != null) {
+			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+			res.put("shadowExpire", dateFormat.format(this.shadowExpire));
+		}
+
+		return res;
+	}
+
+	;
+
 	@Override
 	public void setUid(String uid) {
 		this.uid = uid;
@@ -312,10 +507,27 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 		this.stateOrProvince = stateOrProvince;
 	}
 
+
+	@Override
+	public void setUUID(String uuid) {
+		this.uuid = uuid;
+	}
+
+	@Override
+	public String getUUID() {
+		return uuid;
+	}
+
+	@Override
+	public void setShadowExpire(Date expireDate) { this.shadowExpire = expireDate; }
+
+	@Override
+	public Date getShadowExpire() { return this.shadowExpire; }
+
 	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-    @Override
+     * @see java.lang.Object#hashCode()
+     */
+	@Override
     public int hashCode() {
 	    final int prime = 31;
 	    int result = 1;
@@ -379,17 +591,16 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 	}
 
 	@Override
-	public void setHomePostalAddress(String homePostalAddres) {
-		this.homePostalAddres = homePostalAddres;
+	public void setHomePostalAddress(String homePostalAddress) {
+		this.homePostalAddress = homePostalAddress;
 	}
 
 	@Override
 	public String getHomePostalAddress() {
-		return this.homePostalAddres;
+		return this.homePostalAddress;
 	}
 	@Override
     public int compareTo(Account o) {
 		return this.uid.compareTo(o.getUid());
     }
-
 }

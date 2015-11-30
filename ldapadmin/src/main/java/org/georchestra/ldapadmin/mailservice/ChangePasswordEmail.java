@@ -9,6 +9,7 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.georchestra.commons.configuration.GeorchestraConfiguration;
 
 /**
  * Manages the change password email. This mail is send when a user has lost his password.
@@ -34,10 +35,11 @@ class ChangePasswordEmail extends Email {
 			String subjectEncoding, 
 			String[] languages, 
 			String fileTemplate, 
-			ServletContext servletContext) {
+			ServletContext servletContext,
+			GeorchestraConfiguration georConfig) {
 
 		super(recipients, emailSubject, smtpHost, smtpPort, emailHtml, replyTo, from,
-				bodyEncoding, subjectEncoding, languages, fileTemplate);
+				bodyEncoding, subjectEncoding, languages, fileTemplate, georConfig);
 
 		this.servletContext = servletContext;
 	}

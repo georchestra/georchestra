@@ -3,8 +3,7 @@
  */
 package org.georchestra.ldapadmin.ws.backoffice.users;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,14 +25,18 @@ public class UserRule {
 
 	private static final Log LOG = LogFactory.getLog(UserRule.class.getName());
 	
-	private List<String> listOfprotectedUsers = new LinkedList<String>(); 
+	private Set<String> listOfprotectedUsers = new HashSet<String>();
 	
-	public List<String> getListOfprotectedUsers() {
+	public Set<String> getListOfprotectedUsers() {
 		return listOfprotectedUsers;
 	}
 
-	public void setListOfprotectedUsers(List<String> listOfprotectedUsers) {
-		this.listOfprotectedUsers = listOfprotectedUsers;
+	public void setListOfprotectedUsers(String[] listOfprotectedUsers) {
+
+		HashSet<String> res = new HashSet<String>();
+		res.addAll(Arrays.asList(listOfprotectedUsers));
+		this.listOfprotectedUsers = res;
+
 	}
 
 	public UserRule(){}
@@ -59,8 +62,10 @@ public class UserRule {
 		if(this.listOfprotectedUsers.isEmpty()){
 			LOG.warn("There isn't any protected user configured");
 		}
-		
-		return this.listOfprotectedUsers;
+		LinkedList<String> res = new LinkedList<String>();
+		res.addAll(this.listOfprotectedUsers);
+
+		return res;
 	}
 
 }

@@ -11,6 +11,7 @@ import org.georchestra.ldapadmin.dto.GroupSchema;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * Returns the list of users / groups membership.
@@ -18,6 +19,7 @@ import org.json.JSONObject;
  * @author Mauricio Pazos
  *
  */
+
 final class GroupListResponse {
 
 	private List<Group> groupList;
@@ -27,10 +29,9 @@ final class GroupListResponse {
 		this.groupList = list;
 		this.filter = filter;
 	}
-
-	public String asJsonString() throws JSONException {
+	
+	public JSONArray toJsonArray() throws JSONException {
 		JSONArray jsonGroupArray = new JSONArray();
-		int i = 0;
     	for (Group group: this.groupList) {
 
     		JSONObject jsonGroup = new JSONObject();
@@ -43,20 +44,15 @@ final class GroupListResponse {
     		List<String> list = filter.filterStringList(group.getUserList());
 
     		JSONArray membersArray = new JSONArray();
-    		int j = 0;
-    		for(String userUid: list){
 
-    			membersArray.put(j, userUid);
-    			j++;
-    		}
+    		for(String userUid: list)
+    			membersArray.put(userUid);
+
     		jsonGroup.put("users", membersArray);
 
-    		jsonGroupArray.put(i, jsonGroup);
-    		i++;
+    		jsonGroupArray.put(jsonGroup);
 		}
-		String strTaskQueue = jsonGroupArray.toString();
-
-		return strTaskQueue;
+		return jsonGroupArray;
 	}
 
 }

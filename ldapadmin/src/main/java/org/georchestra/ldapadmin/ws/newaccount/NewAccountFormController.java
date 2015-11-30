@@ -99,7 +99,7 @@ public final class NewAccountFormController {
 	}
 
 	/**
-	 * Creates a new account in ldap. If the application was configured as "moderator singnup" the new account is added in the PENDING_USERS group,
+	 * Creates a new account in ldap. If the application was configured as "moderator singnup" the new account is added in the PENDING group,
 	 * in other case, it will be inserted in the SV_USER group
 	 *
 	 *
@@ -148,7 +148,7 @@ public final class NewAccountFormController {
 					formBean.getTitle(),
 					formBean.getDescription() );
 
-			String groupID = this.moderator.moderatedSignup() ? Group.PENDING_USERS : Group.SV_USER;
+			String groupID = this.moderator.moderatedSignup() ? Group.PENDING : Group.SV_USER;
 
 			this.accountDao.insert(account, groupID);
 

@@ -1,0 +1,20 @@
+{
+    "servers": [
+        {
+            "name": "geOrchestra demo",
+            "url": "http://sdi.georchestra.org/geoserver/gwc/service/wmts"
+        },
+        {
+            "name": "GéoBretagne OSM",
+            "url": "http://osm.geobretagne.fr/gwc01/service/wmts"
+        },
+        {
+            "name": "GéoBretagne rasters",
+            "url": "http://tile.geobretagne.fr/gwc02/service/wmts"
+        },
+        {
+            "name": "IGN GéoPortail",
+            "url": "http://wxs.ign.fr/opbnnt8s6esy6680ptjfqmwo/geoportail/wmts"
+        }
+    ]
+}
