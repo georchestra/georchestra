@@ -52,7 +52,7 @@ public class UsersControllerTest {
     @Before
     public void setUp() throws Exception {
         userRule = new UserRule();
-        userRule.setListOfprotectedUsers(Arrays.asList(new String[] { "geoserver_privileged_user" }));
+        userRule.setListOfprotectedUsers(new String[] { "geoserver_privileged_user" });
 
         ldapTemplate = Mockito.mock(LdapTemplate.class);
         contextSource = Mockito.mock(LdapContextSource.class);
@@ -177,7 +177,7 @@ public class UsersControllerTest {
                 put("o", "GeoServer");
         request.setRequestURI("/ldapadmin/users/geoserver");
         // geoserver_privileged_user is not a valid username automatically generated
-        userRule.setListOfprotectedUsers(Arrays.asList(new String[]{"geoserver_privileged_user", "ggeoserverprivilegeduser"}));
+        userRule.setListOfprotectedUsers(new String[]{"geoserver_privileged_user", "ggeoserverprivilegeduser"});
         request.setContent(reqUsr.toString().getBytes());
         Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup((Name) Mockito.any());
 

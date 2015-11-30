@@ -3,10 +3,7 @@
  */
 package org.georchestra.ldapadmin.ds;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.naming.InvalidNameException;
@@ -15,13 +12,16 @@ import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
+import javax.naming.directory.SearchControls;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.ldapadmin.Configuration;
-import org.georchestra.ldapadmin.dto.Group;
-import org.georchestra.ldapadmin.dto.GroupFactory;
-import org.georchestra.ldapadmin.dto.GroupSchema;
+import org.georchestra.ldapadmin.dao.AdminLogDao;
+import org.georchestra.ldapadmin.dto.*;
+import org.georchestra.ldapadmin.model.AdminLogEntry;
+import org.georchestra.ldapadmin.model.AdminLogType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.ContextMapper;
@@ -43,11 +43,12 @@ import org.springframework.ldap.filter.EqualsFilter;
  */
 public class GroupDaoImpl implements GroupDao {
 
-
-
 	private static final Log LOG = LogFactory.getLog(GroupDaoImpl.class.getName());
 
 	private LdapTemplate ldapTemplate;
+
+	@Autowired
+	private AdminLogDao logDao;
 
     private String uniqueNumberField = "ou";
 
@@ -66,14 +67,31 @@ public class GroupDaoImpl implements GroupDao {
     public void setUniqueNumberField(String uniqueNumberField) {
         this.uniqueNumberField = uniqueNumberField;
     }
-
 	public void setGroupSearchBaseDN(String groupSearchBaseDN) {
 		this.groupSearchBaseDN = new LdapRdn(groupSearchBaseDN);
 	}
 	public void setUserSearchBaseDN(String userSearchBaseDN) {
 		this.userSearchBaseDN = new LdapRdn(userSearchBaseDN);
 	}
+	public void setLogDao(AdminLogDao logDao){ this.logDao = logDao; }
 
+
+	/**
+	 * Retrieve immutable identifier (UUID) from Ldap
+	 *
+	 * @param uid Muttable identifier of account
+	 * @return immutable identifier
+	 */
+
+	private UUID findUUID(String uid){
+ 		String[] attRet =  UserSchema.ATTR_TO_RETRIEVE;
+		AccountDaoImpl.AccountContextMapper acm = new AccountDaoImpl.AccountContextMapper();
+		DistinguishedName dn = new DistinguishedName();
+		dn.add(userSearchBaseDN);
+		dn.add("uid", uid);
+		Account a = (Account) ldapTemplate.lookup(dn,attRet, acm);
+		return UUID.fromString(a.getUUID());
+	}
 
     /**
 	 * Create an ldap entry for the group
@@ -114,7 +132,7 @@ public class GroupDaoImpl implements GroupDao {
 	 * @see org.georchestra.ldapadmin.ds.GroupDao#addUser(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void addUser(final String groupID, final String userId) throws NotFoundException, DataServiceException {
+	public void addUser(final String groupID, final String userId, final String originUUID) throws NotFoundException, DataServiceException {
 
 
 		/* TODO Add hierarchic behaviour here :
@@ -123,7 +141,6 @@ public class GroupDaoImpl implements GroupDao {
 			* then remove last suffix of current group DSI_RENNES_AGRO_SCENE_VOITURE --> DSI_RENNES_AGRO_SCENE,
 			* and re-call this method addUser(DSI_RENNES_AGRO_SCENE, ...)
 		 */
-
 
 		Name dn = buildGroupDn(groupID);
 		DirContextOperations context = ldapTemplate.lookupContext(dn);
@@ -135,6 +152,17 @@ public class GroupDaoImpl implements GroupDao {
 			context.addAttributeValue("member", buildUserDn(userId).toString(), false);
 			this.ldapTemplate.modifyAttributes(context);
 
+			// Add log entry for this modification
+			if(originUUID != null) {
+				UUID admin = UUID.fromString(originUUID);
+				UUID target = this.findUUID(userId);
+				//AdminLogType logType = protectedGroups.isProtected(groupID) ? AdminLogType.SYSTEM_GROUP_CHANGE : AdminLogType.OTHER_GROUP_CHANGE;
+				AdminLogType logType = null;
+
+				AdminLogEntry log = new AdminLogEntry(admin, target, logType, new Date());
+				this.logDao.save(log);
+			}
+
 		} catch (Exception e) {
 			LOG.error(e);
 			throw new DataServiceException(e);
@@ -145,19 +173,20 @@ public class GroupDaoImpl implements GroupDao {
 	/**
 	 * Removes the uid from all groups
 	 *
-	 * @param uid
+	 * @param uid user to remove
+	 * @param originUUID UUID of admin that make request
 	 */
 	@Override
-	public void deleteUser(String uid) throws DataServiceException {
+	public void deleteUser(String uid, final String originUUID) throws DataServiceException {
 
 		List<Group> allGroups = findAll();
 
 		for (Group group : allGroups) {
-			deleteUser(group.getName(), uid);
+			deleteUser(group.getName(), uid, originUUID);
 		}
 	}
 
-	public void deleteUser(String groupName, String uid) throws DataServiceException {
+	public void deleteUser(String groupName, String uid, final String originUUID) throws DataServiceException {
 		/* TODO Add hierarchic behaviour here like addUser method */
 
 		Name dnSvUser = buildGroupDn(groupName);
@@ -167,6 +196,17 @@ public class GroupDaoImpl implements GroupDao {
 		ctx.removeAttributeValue("member", buildUserDn(uid).toString());
 
 		this.ldapTemplate.modifyAttributes(ctx);
+
+		// Add log entry for this modification
+		if(originUUID != null) {
+			UUID admin = UUID.fromString(originUUID);
+			UUID target = this.findUUID(uid);
+			//AdminLogType logType = protectedGroups.isProtected(groupID) ? AdminLogType.SYSTEM_GROUP_CHANGE : AdminLogType.OTHER_GROUP_CHANGE;
+			AdminLogType logType = null;
+
+			AdminLogEntry log = new AdminLogEntry(admin, target, logType, new Date());
+			this.logDao.save(log);
+		}
 	}
 
     @Override
@@ -383,11 +423,11 @@ public class GroupDaoImpl implements GroupDao {
 	/**
 	 * Updates the field of group in the LDAP store
 	 *
-	 *
-	 * @param groupName groupName to modify
-	 * @param modified new values
+	 * @param groupName
+	 * @param group
+	 * @throws DataServiceException
 	 * @throws NotFoundException
-	 *
+	 * @throws DuplicatedCommonNameException
 	 */
 	@Override
 	public synchronized void update(final String groupName, final Group group) throws DataServiceException, NotFoundException, DuplicatedCommonNameException {
@@ -451,10 +491,10 @@ public class GroupDaoImpl implements GroupDao {
 	}
 
 	@Override
-	public void addUsers(String groupName, List<String> addList) throws NotFoundException, DataServiceException {
+	public void addUsers(String groupName, List<String> addList, final String originUUID) throws NotFoundException, DataServiceException {
 
 		for (String uid : addList) {
-			addUser(groupName, uid);
+			addUser(groupName, uid, originUUID);
 		}
 	}
 
@@ -469,13 +509,13 @@ public class GroupDaoImpl implements GroupDao {
 	}
 
 	@Override
-	public void addUsersInGroups(List<String> putGroup, List<String> users)
+	public void addUsersInGroups(List<String> putGroup, List<String> users, final String originUUID)
 			throws DataServiceException, NotFoundException {
 
 
 		for (String groupName : putGroup) {
 
-			addUsers(groupName, users);
+			addUsers(groupName, users, originUUID);
 		}
 	}
 
@@ -489,5 +529,4 @@ public class GroupDaoImpl implements GroupDao {
 		}
 
 	}
-
 }

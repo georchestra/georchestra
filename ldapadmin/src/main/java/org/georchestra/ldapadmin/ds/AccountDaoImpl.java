@@ -87,10 +87,10 @@ public final class AccountDaoImpl implements AccountDao {
     }
 
     /**
-     * @see {@link AccountDao#insert(Account, String)}
+     * @see {@link AccountDao#insert(Account, String, String)}
      */
     @Override
-    public synchronized void insert(final Account account, final String groupID) throws DataServiceException,
+    public synchronized void insert(final Account account, final String groupID, final String originUUID) throws DataServiceException,
             DuplicatedUidException, DuplicatedEmailException {
 
         assert account != null;
@@ -137,7 +137,7 @@ public final class AccountDaoImpl implements AccountDao {
 
             this.ldapTemplate.bind(dn, context, null);
 
-            this.groupDao.addUser(groupID, account.getUid());
+            this.groupDao.addUser(groupID, account.getUid(), originUUID);
 
         } catch (NotFoundException e) {
             throw new DataServiceException(e);
@@ -258,13 +258,16 @@ public final class AccountDaoImpl implements AccountDao {
     /**
      * Removes the user account and the reference included in the group
      *
-     * @see {@link AccountDao#delete(Account)}
+     * @param uid user to delete from LDAP
+     * @param originUUID  UUID of admin that request deletion
+     *
+     * @see {@link AccountDao#delete(String, String)}
      */
     @Override
-    public synchronized void delete(final String uid) throws DataServiceException, NotFoundException {
+    public synchronized void delete(final String uid, final String originUUID) throws DataServiceException, NotFoundException {
         this.ldapTemplate.unbind(buildDn(uid), true);
 
-        this.groupDao.deleteUser(uid);
+        this.groupDao.deleteUser(uid, originUUID);
 
     }
 
@@ -392,18 +395,18 @@ public final class AccountDaoImpl implements AccountDao {
 
         // required by the account entry
         if (a.getUid().length() <= 0) {
-            throw new IllegalArgumentException("uid is requird");
+            throw new IllegalArgumentException("uid is required");
         }
 
         // required field in Person object
         if (a.getGivenName().length() <= 0) {
-            throw new IllegalArgumentException("Given name (cn) is requird");
+            throw new IllegalArgumentException("Given name (cn) is required");
         }
         if (a.getSurname().length() <= 0) {
-            throw new IllegalArgumentException("surname name (sn) is requird");
+            throw new IllegalArgumentException("surname name (sn) is required");
         }
         if (a.getEmail().length() <= 0) {
-            throw new IllegalArgumentException("email is requird");
+            throw new IllegalArgumentException("email is required");
         }
 
     }
@@ -489,7 +492,7 @@ public final class AccountDaoImpl implements AccountDao {
         }
     }
 
-    private static class AccountContextMapper implements ContextMapper {
+    public static class AccountContextMapper implements ContextMapper {
 
         @Override
         public Object mapFromContext(Object ctx) {

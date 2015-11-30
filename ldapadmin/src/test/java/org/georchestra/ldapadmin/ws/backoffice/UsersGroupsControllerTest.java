@@ -199,8 +199,7 @@ public class UsersGroupsControllerTest {
             setUpMockedObjects();
         }
         userRule = new UserRule();
-        userRule.setListOfprotectedUsers(Arrays
-                .asList(new String[] { "geoserver_privileged_user" }));
+        userRule.setListOfprotectedUsers(new String[] { "geoserver_privileged_user" });
 
 
         // Configures groupDao

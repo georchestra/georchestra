@@ -160,7 +160,7 @@ public class NewAccountFormControllerTest {
     public void testCreateDuplicatedEmail() throws Exception {
         configureLegitFormBean();
         Mockito.doThrow(new DuplicatedEmailException("User already exists")).
-            when(dao).insert((Account) Mockito.any(), Mockito.anyString());
+            when(dao).insert((Account) Mockito.any(), Mockito.anyString(), Mockito.anyString());
 
         String ret = ctrl.create(request, formBean, result, status);
 
@@ -172,7 +172,7 @@ public class NewAccountFormControllerTest {
     public void testCreateUserWithError() throws Exception {
         configureLegitFormBean();
         Mockito.doThrow(new DataServiceException("Something went wrong when dealing with LDAP")).
-            when(dao).insert((Account) Mockito.any(), Mockito.anyString());
+            when(dao).insert((Account) Mockito.any(), Mockito.anyString(), Mockito.anyString());
 
         try {
             ctrl.create(request, formBean, result, status);
@@ -190,7 +190,7 @@ public class NewAccountFormControllerTest {
     public void testCreateDuplicatedUid() throws Exception {
         configureLegitFormBean();
         Mockito.doThrow(new DuplicatedUidException("User ID already exists")).
-            when(dao).insert((Account) Mockito.any(), Mockito.anyString());
+            when(dao).insert((Account) Mockito.any(), Mockito.anyString(), Mockito.anyString());
 
         String ret = ctrl.create(request, formBean, result, status);
 

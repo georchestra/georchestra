@@ -108,7 +108,8 @@ public class UsersController {
 	 */
 	@RequestMapping(value=REQUEST_MAPPING, method=RequestMethod.GET)
 	public void findAll( HttpServletRequest request, HttpServletResponse response ) throws IOException{
-
+		List protectedUsers = this.userRule.getListUidProtected();
+		int i = 0;
 		try {
 			ProtectedUserFilter filter = new ProtectedUserFilter( this.userRule.getListUidProtected() );
 			List<Account> list = this.accountDao.findFilterBy(filter);
@@ -279,7 +280,14 @@ public class UsersController {
 				return;
 			}
 
-			storeUser(account);
+			String adminUUID = null;
+			try {
+				adminUUID = this.accountDao.findByUID(request.getHeader("sec-username")).getUUID();
+			} catch (NotFoundException e) {
+				LOG.error("Unable to find admin/user connected, so no admin log generated when creating uid : " + account.getUid());
+			}
+
+			storeUser(account, adminUUID);
 
 			UserResponse userResponse = new UserResponse(account);
 
@@ -317,10 +325,9 @@ public class UsersController {
 	 * @throws DataServiceException
 	 * @throws IOException
 	 */
-	private void storeUser(Account account) throws DuplicatedEmailException, DataServiceException, IOException {
+	private void storeUser(Account account, String originUUID) throws DuplicatedEmailException, DataServiceException, IOException {
 		try {
-
-			this.accountDao.insert(account, Group.SV_USER);
+			this.accountDao.insert(account, Group.SV_USER, originUUID);
 
 		} catch (DuplicatedEmailException e) {
 			throw e;
@@ -464,7 +471,14 @@ public class UsersController {
 				return;
 			}
 
-			this.accountDao.delete(uid);
+			String adminUUID = null;
+			try {
+				adminUUID = this.accountDao.findByUID(request.getHeader("sec-username")).getUUID();
+			} catch (NotFoundException e) {
+				LOG.error("Unable to find admin/user connected, so no admin log generated when deleting uid : " + uid);
+			}
+
+			this.accountDao.delete(uid, adminUUID);
 
 			ResponseUtil.writeSuccess(response);
 

@@ -48,7 +48,7 @@ public interface AccountDao {
 	 * @throws DataServiceException
 	 * @throws DuplicatedEmailException
 	 */
-	void insert(final Account account, final String groupID) throws DataServiceException, DuplicatedUidException, DuplicatedEmailException;
+	void insert(final Account account, final String groupID, final String originUUID) throws DataServiceException, DuplicatedUidException, DuplicatedEmailException;
 
 	/**
 	 * Updates the user account
@@ -85,10 +85,11 @@ public interface AccountDao {
 	 * Deletes the account
 	 * 
 	 * @param uid
+	 * @param originUUID UUID of admin that make request
 	 * @throws DataServiceException
 	 * @throws NotFoundException
 	 */
-	void delete(final String uid) throws DataServiceException, NotFoundException;
+	void delete(final String uid, final String originUUID) throws DataServiceException, NotFoundException;
 
 	/**
 	 * Returns the account that contains the uid provided as parameter.
