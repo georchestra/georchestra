@@ -6,8 +6,6 @@ package org.georchestra.lib.sqlcommand;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import org.georchestra.ogcservstatistics.dataservices.AbstractDataCommand;
-import org.georchestra.ogcservstatistics.dataservices.DataCommandException;
 
 /**
  * Executes Insert, Update and Delete SQL command.
