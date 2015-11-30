@@ -1,5 +1,10 @@
 package org.georchestra.ldapadmin.dto;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Date;
+
 /**
  * Account data transfer object.
  *
@@ -114,14 +119,24 @@ public interface Account {
 
 	String getOrganizationalUnit();
 
-	void setHomePostalAddress(String homePostalAddres);
+	void setHomePostalAddress(String homePostalAddress);
 
 	String getHomePostalAddress();
 
 	String toVcf();
 
 	String toCsv();
+
+	JSONObject toJSON() throws JSONException;
 	
 	String toFormatedString(String data);
+
+	void setUUID(String uuid);
+
+	String getUUID();
+
+	void setShadowExpire(Date expireDate);
+
+	Date getShadowExpire();
 
 }

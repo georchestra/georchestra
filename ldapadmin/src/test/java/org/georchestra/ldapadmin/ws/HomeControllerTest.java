@@ -38,7 +38,7 @@ public class HomeControllerTest {
 
         ctrl.root(request, response);
 
-        assertTrue("expected 302, got " + response.getStatus(), response.getStatus() == HttpServletResponse.SC_FOUND);
+        assertTrue("expected 302, got " + response.getStatus(), response.getStatus() == HttpServletResponse.SC_MOVED_TEMPORARILY);
         assertTrue("bad redirectUrl, got " + response.getRedirectedUrl(),
                 response.getRedirectedUrl().contains("/account/userdetails?login"));
     }
@@ -51,7 +51,7 @@ public class HomeControllerTest {
         request.addHeader("sec-roles", "ROLE_ANONYMOUS");
         ctrl.root(request, response);
 
-        assertTrue("expected 302, got " + response.getStatus(), response.getStatus() == HttpServletResponse.SC_FOUND);
+        assertTrue("expected 302, got " + response.getStatus(), response.getStatus() == HttpServletResponse.SC_MOVED_TEMPORARILY);
         assertTrue("bad redirectUrl, got " + response.getRedirectedUrl(),
                 response.getRedirectedUrl().contains("/account/userdetails?login"));
     }

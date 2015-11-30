@@ -10,8 +10,6 @@ import org.georchestra.ldapadmin.dto.UserSchema;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * 
@@ -63,7 +61,7 @@ final class UserListResponse {
     	for (Account account: this.accountList) {
     		
     		JSONObject jsonAccount = new JSONObject();
-    		jsonAccount.put(UserSchema.UUID_KEY, account.getUid());
+    		jsonAccount.put(UserSchema.UID_KEY, account.getUid());
     		jsonAccount.put(UserSchema.GIVEN_NAME_KEY, account.getGivenName());
     		jsonAccount.put(UserSchema.SURNAME_KEY, account.getSurname());
     		jsonAccount.put(UserSchema.ORG_KEY, account.getOrg());

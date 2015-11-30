@@ -14,11 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.ldapadmin.ds.DataServiceException;
-import org.georchestra.ldapadmin.ds.DuplicatedCommonNameException;
-import org.georchestra.ldapadmin.ds.GroupDao;
-import org.georchestra.ldapadmin.ds.NotFoundException;
-import org.georchestra.ldapadmin.ds.ProtectedUserFilter;
+import org.georchestra.ldapadmin.ds.*;
+import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.Group;
 import org.georchestra.ldapadmin.dto.GroupFactory;
 import org.georchestra.ldapadmin.dto.GroupSchema;
@@ -58,6 +55,12 @@ public class GroupsController {
 
 	private static final String USER_NOT_FOUND = "user_not_found";
 
+	private static final String VIRTUAL_TEMPORARY_GROUP_NAME = "TEMPORARY_USER";
+	private static final String VIRTUAL_TEMPORARY_GROUP_DESCRIPTION = "Virtual group that contains all temporary users";
+
+
+	@Autowired
+	private AccountDao accountDao;
 
 	private GroupDao groupDao;
 	private ProtectedUserFilter filter;
@@ -102,9 +105,10 @@ public class GroupsController {
 
 			GroupListResponse listResponse = new GroupListResponse(list, this.filter);
 
-			String jsonList = listResponse.asJsonString();
+			JSONArray jsonList = listResponse.toJsonArray();
+			jsonList.put(this.extractTemporaryGroupInformation());
 
-			ResponseUtil.buildResponse(response, jsonList, HttpServletResponse.SC_OK);
+			ResponseUtil.buildResponse(response, jsonList.toString(4), HttpServletResponse.SC_OK);
 
 		} catch (Exception e) {
 
@@ -136,9 +140,12 @@ public class GroupsController {
 	 * @throws IOException
 	 */
 	@RequestMapping(value=REQUEST_MAPPING+"/*", method=RequestMethod.GET)
-	public void findByCN( HttpServletRequest request, HttpServletResponse response) throws IOException{
+	public void findByCN( HttpServletRequest request, HttpServletResponse response) throws IOException, JSONException {
 
 		String cn = RequestUtil.getKeyFromPathVariable(request);
+
+		if(cn.equals(GroupsController.VIRTUAL_TEMPORARY_GROUP_NAME))
+			ResponseUtil.buildResponse(response, this.extractTemporaryGroupInformation().toString(), HttpServletResponse.SC_OK);
 
 		// searches the group
 		Group group = null;
@@ -169,6 +176,20 @@ public class GroupsController {
 
 		ResponseUtil.buildResponse(response, jsonGroup, HttpServletResponse.SC_OK);
 
+	}
+
+	private JSONObject extractTemporaryGroupInformation() throws JSONException {
+		JSONObject res = new JSONObject();
+		res.put("cn", GroupsController.VIRTUAL_TEMPORARY_GROUP_NAME);
+		res.put("description", GroupsController.VIRTUAL_TEMPORARY_GROUP_DESCRIPTION);
+
+		// Search temporary users in LDAP
+		JSONArray temporaryUsers = new JSONArray();
+		for(Account a : this.accountDao.findByShadowExpire())
+			temporaryUsers.put(a.getUid());
+		res.put("users",temporaryUsers);
+
+		return res;
 	}
 
 	/**
@@ -481,6 +502,15 @@ public class GroupsController {
     public void setGroupDao(GroupDao gd) {
         groupDao = gd;
     }
+
+	/**
+	 * Method used for testing convenience.
+	 * @param ad
+	 */
+    public void setAccountDao(AccountDao ad) {
+        this.accountDao = ad;
+    }
+
 
 
 }
