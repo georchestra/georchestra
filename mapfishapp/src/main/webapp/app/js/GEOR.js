@@ -40,9 +40,10 @@
 
 Ext.namespace("GEOR");
 
-(function() {
+// monkey patching before app loads
+(function(){
 
-    // monkey patching OpenLayers XML format to add the XML prolog
+    // OpenLayers XML format: adding the XML prolog
     // see http://applis-bretagne.fr/redmine/issues/4536
     var p = OpenLayers.Format.XML.prototype, fn = p.write;
     p.write = function(node) {
@@ -58,6 +59,30 @@ Ext.namespace("GEOR");
             node.setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:xlink', this.namespaces.xlink);
         }
     };
+
+    // Initialize doc classes, see https://github.com/georchestra/georchestra/issues/539
+    // to workaround an ExtJS bug.
+    var initExtCss = function() {
+        // find the body element
+        var bd = document.body || document.getElementsByTagName('body')[0];
+        if (!bd) {
+            return false;
+        }
+        var cls = [];
+        if (Ext.isGecko) {
+            cls.push('ext-gecko');
+        }
+        Ext.fly(bd, '_internal').addClass(cls);
+        return true;
+    };
+    if (!initExtCss()) {
+        Ext.onReady(initExtCss);
+    }
+})();
+
+
+
+(function() {
 
     var checkRoles = function(module, okRoles) {
         // module is available for everyone 
@@ -559,25 +584,4 @@ Ext.namespace("GEOR");
             }
         });
     });
-})();
-
-//Initialize doc classes, see https://github.com/georchestra/georchestra/issues/539
-// to workaround an ExtJS bug.
-(function(){
-    var initExtCss = function() {
-        // find the body element
-        var bd = document.body || document.getElementsByTagName('body')[0];
-        if (!bd) {
-            return false;
-        }
-        var cls = [];
-        if (Ext.isGecko) {
-            cls.push('ext-gecko');
-        }
-        Ext.fly(bd, '_internal').addClass(cls);
-        return true;
-    };
-    if (!initExtCss()) {
-        Ext.onReady(initExtCss);
-    }
 })();
