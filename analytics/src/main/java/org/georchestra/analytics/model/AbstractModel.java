@@ -7,19 +7,20 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class AbstractModel {
 
-	protected PostGresqlConnection postgresqlConnection;
+	@Autowired
+	protected DataSource jpaDataSource;
 
 	private final String countQ = "SELECT count(*) from (@query@) as res;";
 
-	public AbstractModel(PostGresqlConnection pgpool) {
-		postgresqlConnection = pgpool;
-	}
 
 	/**
 	 * Prepares the statement with controller attributes
@@ -161,9 +162,8 @@ public class AbstractModel {
 
 
 		try {
-			//String q = addFilters(query, filter);
+			con = jpaDataSource.getConnection();
 
-			con = postgresqlConnection.getConnection();
 			int count = getCount(con, q, month, year, sort, extraFilters);
 			st = prepareStatement(con, q, month, year, start, limit, sort, extraFilters);
 			rs = st.executeQuery();

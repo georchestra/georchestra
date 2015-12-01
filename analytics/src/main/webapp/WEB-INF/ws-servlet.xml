@@ -9,36 +9,57 @@
 
     <context:annotation-config/>
 
+	<!--  JPA & Database-related beans -->
+    <bean id="jpaDataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="url" value="${dlJdbcUrlOGC}"/>
+        <property name="driverClassName" value="org.postgresql.Driver"/>
+        <property name="testOnBorrow" value="true"/>
+        <property name="poolPreparedStatements" value="true"/>
+        <property name="maxOpenPreparedStatements" value="-1"/>
+        <property name="defaultReadOnly" value="false"/>
+        <property name="defaultAutoCommit" value="true"/>
+    </bean>
+
+   <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+       <property name="dataSource" ref="jpaDataSource" />
+       <property name="persistenceUnitName" value="statsPersistenceUnit" />
+       <property name="persistenceXmlLocation" value="classpath:persistence.xml"/>
+       <property name="jpaVendorAdapter">
+           <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+       </property>
+       <property name="jpaProperties">
+           <props>
+               <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL94Dialect</prop>
+               <prop key="hibernate.show_sql">false</prop>
+               <prop key="hibernate.format_sql">false</prop>
+               <prop key="hibernate.hbm2ddl.auto">update</prop>
+           </props>
+       </property>
+   </bean>
+
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
+
     <bean id="homecontroller" class="org.georchestra.analytics.HomeController"/>
 
     <bean name="ogc_stats" class="org.georchestra.analytics.OGCStats">
         <constructor-arg ref="ogc_model" /> 
     </bean>
 
-    <bean name="ogc_model" class="org.georchestra.analytics.model.OGCStatsModel">
-        <constructor-arg ref="postgresqlconnectionOGC" /> 
-    </bean>
+    <bean name="ogc_model" class="org.georchestra.analytics.model.OGCStatsModel" />
 
     <bean name="geonetwork_stats" class="org.georchestra.analytics.GeonetworkStats">
         <constructor-arg ref="geonetwork_model" /> 
     </bean>
-    <bean name="geonetwork_model" class="org.georchestra.analytics.model.GeonetworkStatsModel">
-        <constructor-arg ref="postgresqlconnectionDLForm" /> 
-    </bean>
+
+    <bean name="geonetwork_model" class="org.georchestra.analytics.model.GeonetworkStatsModel" />
 
     <bean name="extractor_stats" class="org.georchestra.analytics.ExtractorStats">
         <constructor-arg ref="extractor_model" /> 
     </bean>
-      <bean name="extractor_model" class="org.georchestra.analytics.model.ExtractorStatsModel">
-        <constructor-arg ref="postgresqlconnectionDLForm" /> 
-    </bean>
 
-    <bean name="postgresqlconnectionOGC" class="org.georchestra.analytics.model.PostGresqlConnection">
-        <constructor-arg value="${dlJdbcUrlOGC}" /> 
-    </bean>
-    <bean name="postgresqlconnectionDLForm" class="org.georchestra.analytics.model.PostGresqlConnection">
-        <constructor-arg value="${dlJdbcUrlDLForm}" /> 
-    </bean>
+    <bean name="extractor_model" class="org.georchestra.analytics.model.ExtractorStatsModel" />
 
     <bean id="viewResolver"
           class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -55,6 +76,8 @@
     <context:property-placeholder
         location="file:${georchestra.datadir}/analytics/analytics.properties"
         ignore-resource-not-found="true" ignore-unresolvable="true" order="1" />
+
+    <bean id="statisticsController" class="org.georchestra.analytics.StatisticsController" />
 
     <bean id="georchestraConfiguration" class="org.georchestra.commons.configuration.GeorchestraConfiguration">
         <constructor-arg value="analytics" />
