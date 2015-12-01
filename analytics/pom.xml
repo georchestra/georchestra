@@ -17,6 +17,7 @@
   <properties>
     <spring.version>4.2.3.RELEASE</spring.version>
     <spring_data.version>1.11.1.RELEASE</spring_data.version>
+    <postgres.version>9.4-1205-jdbc41</postgres.version>
   </properties>
   <dependencies>
     <dependency>
@@ -123,9 +124,9 @@
       <version>1.1.2</version>
     </dependency>
     <dependency>
-      <groupId>postgresql</groupId>
+      <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
-      <version>9.1-901.jdbc4</version>
+      <version>${postgres.version}</version>
     </dependency>
     <dependency>
       <groupId>commons-dbcp</groupId>
