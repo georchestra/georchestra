@@ -1,5 +1,6 @@
 package org.georchestra.ldapadmin.ws.emails;
 
+import org.georchestra.ldapadmin.dao.AdminLogDao;
 import org.georchestra.ldapadmin.dao.AttachmentDao;
 import org.georchestra.ldapadmin.dao.EmailDao;
 import org.georchestra.ldapadmin.dao.EmailTemplateDao;
@@ -8,9 +9,7 @@ import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.NotFoundException;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.mailservice.EmailFactoryImpl;
-import org.georchestra.ldapadmin.model.Attachment;
-import org.georchestra.ldapadmin.model.EmailEntry;
-import org.georchestra.ldapadmin.model.EmailTemplate;
+import org.georchestra.ldapadmin.model.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,6 +42,9 @@ public class EmailController {
 
     @Autowired
     private EmailFactoryImpl emailFactory;
+
+    @Autowired
+    private AdminLogDao logRepo;
 
 
     /*
@@ -112,11 +114,18 @@ public class EmailController {
         List<Attachment> attachments = new LinkedList<Attachment>();
         if(attachmentsIds.length() > 0) {
             String[] attachmentsIdsList = attachmentsIds.split("\\s?,\\s?");
-            for (String attId : attachmentsIdsList)
-                attachments.add(this.attachmentRepo.findOne(Long.parseLong(attId)));
+            for (String attId : attachmentsIdsList) {
+                Attachment att = this.attachmentRepo.findOne(Long.parseLong(attId));
+                if(att == null)
+                    throw new NotFoundException("Unable to find attachment with ID : " + attId);
+                attachments.add(att);
+            }
         }
         email.setAttachments(attachments);
         this.send(email);
+
+        AdminLogEntry log = new AdminLogEntry(UUID.fromString(sender.getUUID()), UUID.fromString(recipient), AdminLogType.EMAIL_SENT, new Date());
+        this.logRepo.save(log);
 
         return "OK : " + this.emailRepository.save(email).getId();
     }
