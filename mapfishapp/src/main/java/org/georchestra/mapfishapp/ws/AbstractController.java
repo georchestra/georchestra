@@ -100,7 +100,8 @@ public class AbstractController implements ApplicationContextAware {
         }
 
         try {
-            JSONArray jsonLayers, jsonServices, jsonSearch;
+            JSONArray jsonLayers, jsonServices;
+            JSONObject jsonSearch;
 
             jsonLayers = jsonData.optJSONArray("layers");
 
@@ -123,7 +124,7 @@ public class AbstractController implements ApplicationContextAware {
                 data = "[]";
             }
             
-            jsonSearch = jsonData.optJSONArray("search");
+            jsonSearch = jsonData.optJSONObject("search");
             if (jsonSearch != null) {
                 search = jsonLayers.toString(1);
             } else {
