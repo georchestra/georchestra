@@ -46,10 +46,20 @@ It is also possible to POST a JSON string to the home controller, for instance :
             "layername": "ign:ign_bdtopo_region",
             "owstype": "WMS",
             "owsurl": "http://ids.pigma.org/geoserver/ign/wms"
-        }]
+        }],
+        "search":{
+    		"owsurl":"http://ids.pigma.org/geoserver/ows",
+    		"cql_filter": "id_dept = 48",
+    		"featurens":"http://ids.pigma.org/geoserver/ign",
+    		"typename":"ign_bdtopo_departement"
+    	}
     }
 
-In response, the viewer will add the above two layers to the map, and display a dialog window showing the layers from the http://ids.pigma.org/geoserver/ign_r/wms WMS server. The department will only display features which have id_dept equals to 47.
+In response, the viewer will :
+* add the above two layers to the map
+* display a dialog window showing the layers from the http://ids.pigma.org/geoserver/ign_r/wms WMS server.
+* The department will only display features which have id_dept equals to 47
+* A searchbar will open with features which have id_dept equals to 48 and recenter on the result extent.
 
 
 CSWquerier
