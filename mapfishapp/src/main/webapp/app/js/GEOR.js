@@ -392,8 +392,8 @@ Ext.namespace("GEOR");
         // but by the mapinit module, which handles them more appropriately
         
         if (GEOR.mapinit) {
-			GEOR.mapinit.events.on({
-				"searchresults": function(options) {
+	    GEOR.mapinit.events.on({
+	        "searchresults": function(options) {
                     removeActiveTab();
                     var tab = new GEOR.ResultsPanel({
                         html: tr("resultspanel.emptytext"),
@@ -408,11 +408,11 @@ Ext.namespace("GEOR");
                     });
                     southPanel.insert(southPanel.items.length-1, tab);
                     southPanel.setActiveTab(tab);
-					southPanel.expand();
-					tab._zoomToFeatures(options.features);
+		    southPanel.expand();
+		    tab._zoomToFeatures(options.features);
                 }
-			});
-		}
+	    });
+	}
         
         if (GEOR.querier) {
             var querierTitle;
