@@ -127,7 +127,7 @@ public class AbstractController implements ApplicationContextAware {
             
             jsonSearch = jsonData.optJSONObject("search");
             if (jsonSearch != null) {
-                search = jsonLayers.toString(1);
+                search = jsonSearch.toString(1);
             } else {
                 search = "{}";
             }
