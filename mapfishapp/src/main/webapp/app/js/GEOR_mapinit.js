@@ -35,6 +35,10 @@ GEOR.mapinit = (function() {
     /*
      * Private
      */
+    var observable = new Ext.util.Observable();
+    observable.addEvents(
+        "searchresults"
+    );
 
     /**
      * Property: layerStore
@@ -47,6 +51,12 @@ GEOR.mapinit = (function() {
      * {Array} shorthand for GEOR.initstate
      */
     var initState = null;
+    
+    /**
+     * Property: initSearch
+     * {Object} shorthand for GEOR.initsearch
+     */
+    var initSearch = null;
 
     /**
      * Property: cb
@@ -340,6 +350,67 @@ GEOR.mapinit = (function() {
                 }
             }
         });
+        
+        // support for JSON search parameter
+        if( initSearch.hasOwnProperty('typename') && initSearch.hasOwnProperty('featurens') 
+            && initSearch.hasOwnProperty('owsurl') && initSearch.hasOwnProperty('cql_filter') ) {
+            var record = {
+                typeName: initSearch.typename,
+                featureNS: initSearch.featurens,
+                owsURL: initSearch.owsurl,
+                WFSversion : "1.1.0"
+            }
+            var filter = (new OpenLayers.Format.CQL()).read(initSearch.cql_filter);
+            
+            var attStore = GEOR.ows.WFSDescribeFeatureType(record, {
+                extractFeatureNS: true,
+                success: function() {
+                    var geometryName;
+                    // we list all fields, including the geometry
+                    layerFields = attStore.collect('name');
+                    // we get the geometry column name
+                    var idx = attStore.find('type', GEOR.ows.matchGeomProperty);
+                    if (idx > -1) {
+                        // we have a geometry
+                        var r = attStore.getAt(idx);
+                        geometryName = r.get('name');
+                        
+                        GEOR.ows.WFSProtocol(record, layerStore.map, {geometryName: geometryName}).read({
+                            maxFeatures: GEOR.config.MAX_FEATURES,
+                            propertyNames: layerFields || [],
+                            filter: filter,
+                            callback: function(response) {
+                                if (!response.success()) {
+                                    return;
+                                }
+                                
+                                var model =  (attStore.getCount() > 0) ? new GEOR.FeatureDataModel({
+                                    attributeStore: attStore
+                                }) : null;
+                                
+                                observable.fireEvent("searchresults", {
+                                    features: response.features,
+                                    model: model,
+                                    tooltip: initSearch.typename + " - " + tr("WFS GetFeature on filter"),
+                                    title: GEOR.util.shortenLayerName(initSearch.typename)
+                                });
+                            },
+                            scope: this
+                        });
+                    } else {
+                        GEOR.util.infoDialog({
+                            msg: tr("querier.layer.no.geom")
+                        });
+                    }
+                },
+                failure: function() {
+                    GEOR.util.errorDialog({
+                        msg: tr("querier.layer.error")
+                    });
+                },
+                scope: this
+            });
+        }
 
         // check their srs against map's srs
         var srs = layerStore.map.getProjection();
@@ -511,7 +582,11 @@ GEOR.mapinit = (function() {
     };
 
     return {
-
+        /*
+         * Observable object
+         */
+        events: observable,
+        
         /**
          * APIMethod: init
          * Initialize this module
@@ -572,6 +647,7 @@ GEOR.mapinit = (function() {
             }
 
             initState = GEOR.initstate;
+            initSearch = GEOR.initsearch;
             // Based on GEOR.initstate, determine whether
             // to load WMC or WxS layers or WxS services
             if (initState.length == 1 && initState[0].type == "WMC" &&
