@@ -128,11 +128,11 @@ public class AbstractController implements ApplicationContextAware {
             if (jsonSearch != null) {
                 search = jsonLayers.toString(1);
             } else {
-                search = "[]";
+                search = "{}";
             }
         } catch (JSONException e) {
             data = "[]";
-            search = "[]";
+            search = "{}";
         }
 
         Map<String, Object> model = new HashMap<String, Object>();
