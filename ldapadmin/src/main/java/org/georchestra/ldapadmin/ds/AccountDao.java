@@ -53,10 +53,11 @@ public interface AccountDao {
 	/**
 	 * Updates the user account
 	 * @param account
+	 * @param originUUID UUID of admin that issue this modification
 	 * @throws DataServiceException
 	 * @throws DuplicatedEmailException
 	 */
-	void update(final Account account) throws DataServiceException, DuplicatedEmailException;
+	void update(final Account account, String originUUID) throws DataServiceException, DuplicatedEmailException;
 
 	/**
 	 * Updates the user account, given the old and the new state of the account
@@ -64,12 +65,13 @@ public interface AccountDao {
 	 *
 	 * @param account
 	 * @param modified
+	 * @param originUUID UUID of admin that issue this modification
 	 *
 	 * @throws DuplicatedEmailException
 	 * @throws DataServiceException
 	 * @throws NotFoundException
 	 */
-	void update(Account account, Account modified) throws DataServiceException, DuplicatedEmailException, NotFoundException;
+	void update(Account account, Account modified, String originUUID) throws DataServiceException, DuplicatedEmailException, NotFoundException;
 
 	/**
 	 * Changes the user password

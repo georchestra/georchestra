@@ -417,7 +417,14 @@ public class UsersController {
 		// modifies the account data
 		try{
 			final Account modified = modifyAccount(AccountFactory.create(account), request.getInputStream());
-			this.accountDao.update(account, modified);
+			String adminUUID;
+			try {
+				Account adminAccount = this.accountDao.findByUID(request.getHeader("sec-username"));
+				adminUUID = adminAccount == null ? null : adminAccount.getUUID();
+			} catch (NotFoundException ex){
+				adminUUID = null;
+			}
+			this.accountDao.update(account, modified, adminUUID);
 			boolean uidChanged = ( ! modified.getUid().equals(account.getUid()));
 			if ((uidChanged) && (warnUserIfUidModified)) {
 				this.mailService.sendAccountUidRenamed(request.getSession().getServletContext(),

@@ -19,10 +19,13 @@ import javax.naming.directory.SearchControls;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.georchestra.ldapadmin.dao.AdminLogDao;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.georchestra.ldapadmin.dto.Group;
 import org.georchestra.ldapadmin.dto.UserSchema;
+import org.georchestra.ldapadmin.model.AdminLogEntry;
+import org.georchestra.ldapadmin.model.AdminLogType;
 import org.georchestra.ldapadmin.ws.newaccount.UidGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
@@ -52,6 +55,8 @@ public final class AccountDaoImpl implements AccountDao {
     private String uniqueNumberField = "employeeNumber";
     private LdapRdn userSearchBaseDN;
     private AtomicInteger uniqueNumberCounter = new AtomicInteger(-1);
+    @Autowired
+    private AdminLogDao logDao;
 
     private static final Log LOG = LogFactory.getLog(AccountDaoImpl.class.getName());
 
@@ -84,6 +89,10 @@ public final class AccountDaoImpl implements AccountDao {
 
     public void setUserSearchBaseDN(String userSearchBaseDN) {
         this.userSearchBaseDN = new LdapRdn(userSearchBaseDN);
+    }
+
+    public void setLogDao(AdminLogDao logDao) {
+        this.logDao = logDao;
     }
 
     /**
@@ -195,10 +204,10 @@ public final class AccountDaoImpl implements AccountDao {
     }
 
     /**
-     * @see {@link AccountDao#update(Account)}
+     * @see {@link AccountDao#update(Account, String)}
      */
     @Override
-    public synchronized void update(final Account account) throws DataServiceException, DuplicatedEmailException {
+    public synchronized void update(final Account account, String originUUID) throws DataServiceException, DuplicatedEmailException {
 
         // checks mandatory fields
         if (account.getUid().length() == 0) {
@@ -239,20 +248,28 @@ public final class AccountDaoImpl implements AccountDao {
         mapToContext(null /* don't update number */, account, context);
 
         ldapTemplate.modifyAttributes(context);
+
+        // Add log entry for this modification
+        if(originUUID != null) {
+            UUID admin = UUID.fromString(originUUID);
+            UUID target = UUID.fromString(account.getUUID());
+            AdminLogEntry log = new AdminLogEntry(admin, target, AdminLogType.LDAP_ATTRIBUTE_CHANGE, new Date());
+            this.logDao.save(log);
+        }
     }
 
     /**
-     * @see {@link AccountDao#update(Account, Account)}
+     * @see {@link AccountDao#update(Account, Account, String)}
      */
     @Override
-    public synchronized void update(Account account, Account modified) throws DataServiceException, DuplicatedEmailException, NotFoundException {
+    public synchronized void update(Account account, Account modified, String originUUID) throws DataServiceException, DuplicatedEmailException, NotFoundException {
        if (! account.getUid().equals(modified.getUid())) {
            ldapTemplate.rename(buildDn(account.getUid()), buildDn(modified.getUid()));
            for (Group g : groupDao.findAllForUser(account.getUid())) {
                groupDao.modifyUser(g.getName(), account.getUid(), modified.getUid());
            }
        }
-       update(modified);
+       update(modified, originUUID);
     }
 
     /**
