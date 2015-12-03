@@ -419,7 +419,7 @@ public class GroupsController {
 			this.groupDao.addUsersInGroups(putGroup, users, adminUUID);
 
 			List<String> deleteGroup = createUserList(json, "DELETE");
-			this.groupDao.deleteUsersInGroups(deleteGroup, users);
+			this.groupDao.deleteUsersInGroups(deleteGroup, users, adminUUID);
 
 			ResponseUtil.writeSuccess(response);
 

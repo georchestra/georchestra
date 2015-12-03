@@ -521,11 +521,11 @@ public class GroupDaoImpl implements GroupDao {
 	}
 
 	@Override
-	public void deleteUsers(String groupName, List<String> deleteList)
+	public void deleteUsers(String groupName, List<String> deleteList, final String originUUID)
 			throws DataServiceException, NotFoundException {
 
 		for (String uid : deleteList) {
-			deleteUser(groupName, uid);
+			deleteUser(groupName, uid, originUUID);
 		}
 
 	}
@@ -542,12 +542,12 @@ public class GroupDaoImpl implements GroupDao {
 	}
 
 	@Override
-	public void deleteUsersInGroups(List<String> deleteGroup, List<String> users)
+	public void deleteUsersInGroups(List<String> deleteGroup, List<String> users, final String originUUID)
 			throws DataServiceException, NotFoundException {
 
 		for (String groupName : deleteGroup) {
 
-			deleteUsers(groupName, users);
+			deleteUsers(groupName, users, originUUID);
 		}
 
 	}

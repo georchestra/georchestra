@@ -57,7 +57,7 @@ public interface GroupDao {
 	 */
 	void deleteUser(String uid, final String originUUID) throws DataServiceException;
 
-	void deleteUsers(String cn, List<String> deleteList) throws DataServiceException, NotFoundException;
+	void deleteUsers(String cn, List<String> deleteList, String originUUID) throws DataServiceException, NotFoundException;
 
 	/**
 	 * Deletes the user from the group
@@ -117,9 +117,10 @@ public interface GroupDao {
 	 */
 	void update(String groupName, Group modified) throws DataServiceException, NotFoundException, DuplicatedCommonNameException;
 
+
 	void addUsersInGroups(List<String> putGroup, List<String> users, final String originUUID)  throws DataServiceException, NotFoundException;
 
-	void deleteUsersInGroups(List<String> deleteGroup, List<String> users) throws DataServiceException, NotFoundException;
+	void deleteUsersInGroups(List<String> deleteGroup, List<String> users, final String originUUID) throws DataServiceException, NotFoundException;
 
 
 	
