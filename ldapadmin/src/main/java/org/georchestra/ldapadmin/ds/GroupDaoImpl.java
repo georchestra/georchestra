@@ -8,15 +8,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.naming.InvalidNameException;
 import javax.naming.Name;
-import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
-import javax.naming.directory.SearchControls;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.ldapadmin.Configuration;
 import org.georchestra.ldapadmin.dao.AdminLogDao;
 import org.georchestra.ldapadmin.dto.*;
 import org.georchestra.ldapadmin.model.AdminLogEntry;
@@ -55,7 +52,8 @@ public class GroupDaoImpl implements GroupDao {
 	@Autowired
 	private GroupProtected groups;
 
-    
+	private String PENDING_GROUP_NAME = "PENDING";
+
 	private String uniqueNumberField = "ou";
 
     private LdapRdn groupSearchBaseDN;
@@ -172,9 +170,7 @@ public class GroupDaoImpl implements GroupDao {
 			if(originUUID != null) {
 				UUID admin = UUID.fromString(originUUID);
 				UUID target = this.findUUID(userId);
-				//AdminLogType logType = protectedGroups.isProtected(groupID) ? AdminLogType.SYSTEM_GROUP_CHANGE : AdminLogType.OTHER_GROUP_CHANGE;
-				AdminLogType logType = null;
-
+				AdminLogType logType = this.groups.isProtected(groupID) ? AdminLogType.SYSTEM_GROUP_CHANGE : AdminLogType.OTHER_GROUP_CHANGE;
 				AdminLogEntry log = new AdminLogEntry(admin, target, logType, new Date());
 				this.logDao.save(log);
 			}
@@ -217,9 +213,14 @@ public class GroupDaoImpl implements GroupDao {
 		if(originUUID != null) {
 			UUID admin = UUID.fromString(originUUID);
 			UUID target = this.findUUID(uid);
-			//AdminLogType logType = protectedGroups.isProtected(groupID) ? AdminLogType.SYSTEM_GROUP_CHANGE : AdminLogType.OTHER_GROUP_CHANGE;
-			AdminLogType logType = null;
-
+			AdminLogType logType;
+			if(groupName.equals(PENDING_GROUP_NAME)){
+				logType = AdminLogType.ACCOUNT_MODERATION;
+			} else if(this.groups.isProtected(groupName)){
+				logType = AdminLogType.SYSTEM_GROUP_CHANGE;
+			} else {
+				logType = AdminLogType.OTHER_GROUP_CHANGE;
+			}
 			AdminLogEntry log = new AdminLogEntry(admin, target, logType, new Date());
 			this.logDao.save(log);
 		}
