@@ -52,8 +52,6 @@ public class GroupDaoImpl implements GroupDao {
 	@Autowired
 	private GroupProtected groups;
 
-	private String PENDING_GROUP_NAME = "PENDING";
-
 	private String uniqueNumberField = "ou";
 
     private LdapRdn groupSearchBaseDN;
@@ -214,7 +212,7 @@ public class GroupDaoImpl implements GroupDao {
 			UUID admin = UUID.fromString(originUUID);
 			UUID target = this.findUUID(uid);
 			AdminLogType logType;
-			if(groupName.equals(PENDING_GROUP_NAME)){
+			if(groupName.equals(Group.PENDING)){
 				logType = AdminLogType.ACCOUNT_MODERATION;
 			} else if(this.groups.isProtected(groupName)){
 				logType = AdminLogType.SYSTEM_GROUP_CHANGE;

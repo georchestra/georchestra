@@ -142,9 +142,8 @@ public class PasswordRecoveryFormController  {
 			// Finds the user using the email as key, if it exists a new token is generated to include in the unique http URL.
 			
 
-			
 			for (Group g : group) {
-				if (g.getName().equals("PENDING")) {
+				if (g.getName().equals(Group.PENDING)) {
 					throw new NotFoundException("User in PENDING group");
 				}
 			}
