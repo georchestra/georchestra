@@ -507,6 +507,13 @@ GEOR.tools = (function() {
          *
          */
         restore: function() {
+            var o = GEOR.util.splitURL(window.location.href);
+            if (o.params.hasOwnProperty("ADDONS")) {
+                fetchAndLoadTools(store.queryBy(function(r) {
+                    return (o.params.ADDONS.indexOf(r.id) > -1);
+                }), true);
+                return;
+            }
             if (!GEOR.ls.available) {
                 return;
             }
