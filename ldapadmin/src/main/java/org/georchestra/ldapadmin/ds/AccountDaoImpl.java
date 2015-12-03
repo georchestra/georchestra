@@ -311,6 +311,9 @@ public final class AccountDaoImpl implements AccountDao {
     @Override
     public Account findByUID(final String uid) throws DataServiceException, NotFoundException {
 
+        if(uid == null)
+            throw new NotFoundException("Cannot find user with uid : " + uid + " in LDAP server");
+
         Account a = (Account) ldapTemplate.lookup(buildDn(uid.toLowerCase()), UserSchema.ATTR_TO_RETRIEVE, new AccountContextMapper());
         if(a == null)
             throw new NotFoundException("Cannot find user with uid : " + uid + " in LDAP server");

@@ -1,6 +1,7 @@
 package org.georchestra.ldapadmin.ws.newaccount;
 
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.eq;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -13,11 +14,10 @@ import net.tanesha.recaptcha.ReCaptchaResponse;
 
 import org.georchestra.ldapadmin.bs.Moderator;
 import org.georchestra.ldapadmin.bs.ReCaptchaParameters;
-import org.georchestra.ldapadmin.ds.AccountDao;
-import org.georchestra.ldapadmin.ds.DataServiceException;
-import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
-import org.georchestra.ldapadmin.ds.DuplicatedUidException;
+import org.georchestra.ldapadmin.ds.*;
 import org.georchestra.ldapadmin.dto.Account;
+import org.georchestra.ldapadmin.dto.AccountFactory;
+import org.georchestra.ldapadmin.dto.UserSchema;
 import org.georchestra.ldapadmin.mailservice.EmailFactoryImpl;
 import org.georchestra.ldapadmin.mailservice.MailService;
 import org.georchestra.ldapadmin.ws.utils.Validation;
@@ -25,6 +25,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.ldap.core.DistinguishedName;
+import org.springframework.ldap.core.LdapRdn;
+import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -42,7 +45,10 @@ public class NewAccountFormControllerTest {
     private ReCaptcha  rec = Mockito.mock(ReCaptcha.class);
     private ReCaptchaParameters rep = new ReCaptchaParameters();
     private ReCaptchaResponse rer = Mockito.mock(ReCaptchaResponse.class);
-    private HttpServletRequest request = new MockHttpServletRequest();
+    private MockHttpServletRequest request = new MockHttpServletRequest();
+    private LdapTemplate ldapTemplate = Mockito.mock(LdapTemplate.class);
+
+    private Account adminAccount;
 
 
     AccountFormBean formBean = Mockito.mock(AccountFormBean.class);
@@ -74,6 +80,23 @@ public class NewAccountFormControllerTest {
     @Before
     public void setUp() throws Exception {
         ctrl = new NewAccountFormController(dao, srv, mod, rec, rep);
+
+        // Mock admin account
+        DistinguishedName dn = new DistinguishedName();
+        dn.add(new LdapRdn("ou=users"));
+        dn.add("uid", "testadmin");
+        this.adminAccount =  AccountFactory.createBrief("testadmin", "monkey123", "Test", "ADmin",
+                "postmastrer@localhost", "+33123456789", "geOrchestra Project Steering Committee", "admin", "");
+        this.adminAccount.setUUID("3a35deb6-18d0-1035-9273-1163820b7a58");
+        this.request.addHeader("sec-username", "testadmin"); // Set user connected through http header
+        try {
+            Mockito.when(this.dao.findByUID(eq("testadmin"))).thenReturn(this.adminAccount);
+        } catch (DataServiceException e) {
+            assertTrue(false);
+        } catch (NotFoundException e) {
+            assertTrue(false);
+        }
+
     }
 
     @After

@@ -76,6 +76,9 @@ public class GroupsControllerTest {
 		request = new MockHttpServletRequest();
 		response = new MockHttpServletResponse();
 
+        // Set user connected through http header
+        request.addHeader("sec-username", "testadmin");
+
 	}
 
     @Test
