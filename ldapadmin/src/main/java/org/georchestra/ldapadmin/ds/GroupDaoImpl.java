@@ -21,6 +21,7 @@ import org.georchestra.ldapadmin.dao.AdminLogDao;
 import org.georchestra.ldapadmin.dto.*;
 import org.georchestra.ldapadmin.model.AdminLogEntry;
 import org.georchestra.ldapadmin.model.AdminLogType;
+import org.georchestra.ldapadmin.ws.backoffice.groups.GroupProtected;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.AttributesMapper;
@@ -33,6 +34,7 @@ import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
+
 
 /**
  * Maintains the group of users in the ldap store.
@@ -49,37 +51,51 @@ public class GroupDaoImpl implements GroupDao {
 
 	@Autowired
 	private AdminLogDao logDao;
+	
+	@Autowired
+	private GroupProtected groups;
 
-    private String uniqueNumberField = "ou";
+    
+	private String uniqueNumberField = "ou";
 
     private LdapRdn groupSearchBaseDN;
     private LdapRdn userSearchBaseDN;
 
     private AtomicInteger uniqueNumberCounter = new AtomicInteger(-1);
 
-    public LdapTemplate getLdapTemplate() {
+	public LdapTemplate getLdapTemplate() {
 		return ldapTemplate;
 	}
 
 	public void setLdapTemplate(LdapTemplate ldapTemplate) {
 		this.ldapTemplate = ldapTemplate;
 	}
-    public void setUniqueNumberField(String uniqueNumberField) {
-        this.uniqueNumberField = uniqueNumberField;
-    }
+
+	public void setUniqueNumberField(String uniqueNumberField) {
+		this.uniqueNumberField = uniqueNumberField;
+	}
+
 	public void setGroupSearchBaseDN(String groupSearchBaseDN) {
 		this.groupSearchBaseDN = new LdapRdn(groupSearchBaseDN);
 	}
+
 	public void setUserSearchBaseDN(String userSearchBaseDN) {
 		this.userSearchBaseDN = new LdapRdn(userSearchBaseDN);
 	}
-	public void setLogDao(AdminLogDao logDao){ this.logDao = logDao; }
 
+	public void setLogDao(AdminLogDao logDao) {
+		this.logDao = logDao;
+	}
+
+	public void setGroups(GroupProtected groups) {
+		this.groups = groups;
+	}
 
 	/**
 	 * Retrieve immutable identifier (UUID) from Ldap
 	 *
-	 * @param uid Muttable identifier of account
+	 * @param uid
+	 *            Muttable identifier of account
 	 * @return immutable identifier
 	 */
 
@@ -288,14 +304,20 @@ public class GroupDaoImpl implements GroupDao {
 	 *
 	 */
 	@Override
-	public void delete(final String commonName) throws DataServiceException, NotFoundException{
-	    try {
-	        this.ldapTemplate.unbind(buildGroupDn(commonName), true);
-	    } catch (NameNotFoundException e) {
-	        throw new NotFoundException(e);
-	    }
-	}
+	public void delete(final String commonName) throws DataServiceException, NotFoundException {
 
+		if (!this.groups.isProtected(commonName)) {
+			try {
+				this.ldapTemplate.unbind(buildGroupDn(commonName), true);
+			} catch (NameNotFoundException e) {
+				throw new NotFoundException(e);
+			}
+		} else {
+
+			throw new DataServiceException("Group " + commonName + " is a protected group");
+		}
+
+	}
 
 	private static class GroupContextMapper implements ContextMapper {
 

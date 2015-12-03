@@ -32,6 +32,13 @@
   <!--  Then the one from datadir with prio  1 -->
   <context:property-placeholder location="file:${georchestra.datadir}/ldapadmin/ldapadmin.properties" ignore-resource-not-found="true" ignore-unresolvable="true" order="1"/>
 
+ <!--  First provided protectedgroups.properties from webapp with prio  2 -->
+  <context:property-placeholder location="/WEB-INF/spring/protectedgroups.properties" ignore-resource-not-found="true" ignore-unresolvable="true" order="2"/>
+
+  <!--  Then the one from datadir with prio  1 -->
+  <context:property-placeholder location="file:${georchestra.datadir}/ldapadmin/protectedgroups.properties" ignore-resource-not-found="true" ignore-unresolvable="true" order="1"/>
+
+
   <context:component-scan base-package="org.georchestra.ldapadmin"/>
 
   <!-- Resolves views selected for rendering by @Controllers to .jsp resources
@@ -88,7 +95,15 @@
       <value>${protectedUserList:geoserver_privileged_user}</value>
     </property>
   </bean>
-
+  
+  <bean class="org.georchestra.ldapadmin.ws.backoffice.groups.GroupProtected">
+    <property name="listOfprotectedGroups">
+      <description>Comma separated list of one or more protected Groups</description>
+        <!-- Groups are defined as a comma separated list of Groups name and can be override in data dir with "protectedGroupList" key-->
+      <value>${protectedGroupList:ADMINISTRATOR,SV_.*,MOD_.*}</value>
+    </property>
+  </bean>
+  
   <bean id="userTokenDao" class="org.georchestra.ldapadmin.ds.UserTokenDao"/>
     
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
