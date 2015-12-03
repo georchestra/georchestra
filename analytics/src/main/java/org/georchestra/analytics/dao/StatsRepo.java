@@ -11,10 +11,28 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface StatsRepo extends PagingAndSortingRepository<Stats, Long> {
 
-    public List getRequestCountForUserBetweenStartDateAndEndDate(@Param("user") String user,
-    		@Param("startDate") Date startDate, @Param("endDate") Date endDate);
-    
-    public List getRequestCountForGroupBetweenStartDateAndEndDate(@Param("group") String user,
-    		@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+	public List getRequestCountForUserBetweenStartDateAndEndDateByHour(@Param("user") String user,
+			@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+
+	public List getRequestCountForUserBetweenStartDateAndEndDateByDay(@Param("user") String user,
+			@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+
+	public List getRequestCountForUserBetweenStartDateAndEndDateByWeek(@Param("user") String user,
+			@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+
+	public List getRequestCountForUserBetweenStartDateAndEndDateByMonth(@Param("user") String user,
+			@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+
+	public List getRequestCountForGroupBetweenStartDateAndEndDateByHour(@Param("group") String group,
+			@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+
+	public List getRequestCountForGroupBetweenStartDateAndEndDateByDay(@Param("group") String group,
+			@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+
+	public List getRequestCountForGroupBetweenStartDateAndEndDateByWeek(@Param("group") String group,
+			@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+
+	public List getRequestCountForGroupBetweenStartDateAndEndDateByMonth(@Param("group") String group,
+			@Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
 }
