@@ -14,6 +14,27 @@ import org.hibernate.annotations.Type;
 
 @Entity
 @NamedNativeQueries({
+// no user / group filter
+@NamedNativeQuery(name="Stats.getRequestCountBetweenStartDateAndEndDateByHour",
+query = "SELECT COUNT(*) AS count,	to_char(date, 'YYYY-mm-dd hh') FROM ogcstatistics.ogc_services_log WHERE "
+		+ "date >= :startDate  AND date < :endDate "
+		+ "GROUP BY to_char(date, 'YYYY-mm-dd hh') ORDER BY to_char(date, 'YYYY-mm-dd hh')"),
+
+@NamedNativeQuery(name="Stats.getRequestCountBetweenStartDateAndEndDateByDay",
+query = "SELECT COUNT(*) AS count,	to_char(date, 'YYYY-mm-dd') FROM ogcstatistics.ogc_services_log WHERE "
+		+ "date >= :startDate  AND date < :endDate "
+		+ "GROUP BY to_char(date, 'YYYY-mm-dd') ORDER BY to_char(date, 'YYYY-mm-dd')"),
+
+@NamedNativeQuery(name="Stats.getRequestCountBetweenStartDateAndEndDateByWeek",
+query = "SELECT COUNT(*) AS count,	 to_char(date, 'YYYY-WW') FROM ogcstatistics.ogc_services_log WHERE "
+		+ "date >= :startDate  AND date < :endDate "
+		+ "GROUP BY to_char(date, 'YYYY-WW') ORDER BY to_char(date, 'YYYY-WW')"),
+
+@NamedNativeQuery(name="Stats.getRequestCountBetweenStartDateAndEndDateByMonth",
+query = "SELECT COUNT(*) AS count,	 to_char(date, 'YYYY-mm') FROM ogcstatistics.ogc_services_log WHERE "
+		+ "date >= :startDate  AND date < :endDate "
+		+ "GROUP BY to_char(date, 'YYYY-mm') ORDER BY to_char(date, 'YYYY-mm')"),
+	
 // users
 @NamedNativeQuery(name="Stats.getRequestCountForUserBetweenStartDateAndEndDateByHour",
 query = "SELECT COUNT(*) AS count,	to_char(date, 'YYYY-mm-dd hh') FROM ogcstatistics.ogc_services_log WHERE "
@@ -54,7 +75,40 @@ query = "SELECT COUNT(*) AS count,	 to_char(date, 'YYYY-WW') FROM ogcstatistics.
 @NamedNativeQuery(name="Stats.getRequestCountForGroupBetweenStartDateAndEndDateByMonth",
 query = "SELECT COUNT(*) AS count, to_char(date, 'YYYY-mm') FROM ogcstatistics.ogc_services_log WHERE "
 		+ ":group = ANY (roles) AND date >= :startDate  AND date < :endDate "
-		+ "GROUP BY to_char(date, 'YYYY-mm') ORDER BY to_char(date, 'YYYY-mm')")
+		+ "GROUP BY to_char(date, 'YYYY-mm') ORDER BY to_char(date, 'YYYY-mm')"),
+
+// distinct users
+@NamedNativeQuery(name="Stats.getDistinctUsersByGroup",
+query = "SELECT DISTINCT user_name FROM ogcstatistics.ogc_services_log WHERE "
+		+ ":group = ANY (roles) AND date >= :startDate  AND date < :endDate "),
+@NamedNativeQuery(name="Stats.getDistinctUsers",
+query = "SELECT DISTINCT user_name FROM ogcstatistics.ogc_services_log WHERE "
+		+ " date >= :startDate  AND date < :endDate "),
+
+// layer stats
+@NamedNativeQuery(name="Stats.getLayersStatisticsForUser",
+query = "SELECT DISTINCT layer, COUNT(*) FROM ogcstatistics.ogc_services_log WHERE "
+		+ " date >= :startDate  AND date < :endDate AND user = :user AND layer != '' GROUP BY layer ORDER BY COUNT(*) DESC"),
+
+@NamedNativeQuery(name="Stats.getLayersStatisticsForUserLimit",
+query = "SELECT DISTINCT layer, COUNT(*) FROM ogcstatistics.ogc_services_log WHERE "
+		+ " date >= :startDate  AND date < :endDate AND user = :user AND layer != '' GROUP BY layer ORDER BY COUNT(*) DESC LIMIT :limit"),
+
+@NamedNativeQuery(name="Stats.getLayersStatisticsForGroup",
+query = "SELECT DISTINCT layer, COUNT(*) FROM ogcstatistics.ogc_services_log WHERE "
+		+ " date >= :startDate  AND date < :endDate AND :group = ANY(roles) AND layer != '' GROUP BY layer ORDER BY COUNT(*) DESC"),
+
+@NamedNativeQuery(name="Stats.getLayersStatisticsForGroupLimit",
+query = "SELECT DISTINCT layer, COUNT(*) FROM ogcstatistics.ogc_services_log WHERE "
+		+ " date >= :startDate  AND date < :endDate AND :group = ANY(roles) AND layer != '' GROUP BY layer ORDER BY COUNT(*) DESC LIMIT :limit"),
+
+@NamedNativeQuery(name="Stats.getLayersStatistics",
+query = "SELECT DISTINCT layer, COUNT(*) FROM ogcstatistics.ogc_services_log WHERE "
+		+ " date >= :startDate  AND date < :endDate AND layer != '' GROUP BY layer ORDER BY COUNT(*) DESC"),
+
+@NamedNativeQuery(name="Stats.getLayersStatisticsLimit",
+query = "SELECT DISTINCT layer, COUNT(*) FROM ogcstatistics.ogc_services_log WHERE "
+		+ " date >= :startDate  AND date < :endDate AND layer != '' GROUP BY layer ORDER BY COUNT(*) DESC LIMIT :limit"),
 })
 @Table(schema="ogcstatistics", name="ogc_services_log")
 public class Stats {

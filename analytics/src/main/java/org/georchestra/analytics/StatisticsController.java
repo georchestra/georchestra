@@ -56,6 +56,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
  *    ]
  * }
  * </pre>
+ * 
+ * If neither user nor group is set, global statistics are returned.
  *
  * where granularity will depend on the submitted date, following the algorithm:
  *  if datediff < 1 day    then granularity by hour
@@ -63,6 +65,55 @@ import org.springframework.web.bind.annotation.ResponseBody;
  *  if datediff < 1 month  then granularity by day
  *  if datediff < 3 months then granularity by week
  *  if datediff < 1 year   then granularity by month
+ *
+ * - The entry point "/layersUsage" receives a JSON object as follows:
+ * <pre>
+ * {
+ *   "user"|"group": "user|group",
+ *   "limit": integer,
+ *   "startDate": "YYYY-mm-dd",
+ *   "endDate": "YYYY-mm-dd"
+ * }
+ * </pre>
+ * User, group and limit are optional parameters.
+ * 
+ * The returned JSON object will follow the pattern:
+ * <pre>
+ * { "results": [
+ *   {
+ *       "count": 831,
+ *       "layer": "layername1"
+ *   },
+ *   {
+ *       "count": 257,
+ *       "layer": "layername2"
+ *   }, ...
+ *   ]
+ * }
+ * </pre>
+ *
+ * - the entry point "/distinctUsers" receives a JSON object as follows:
+ *  
+ * <pre>
+ * {
+ *   "group": "group",
+ *   "startDate": "YYYY-mm-dd",
+ *   "endDate": "YYY-mm-dd"
+ * }
+ * </pre>
+ *
+ * group is optional. If not set, global statistics are returned.
+ *
+ * The returned object will follow the pattern:
+ * <pre>
+ * {
+ *   "results": [
+ *     "user1",
+ *     "user2",
+ *     ...
+ *   ]
+ * }
+ * </pre>
  *
  * @author pmauduit
  * @since 15.12
@@ -73,6 +124,7 @@ public class StatisticsController {
     @Autowired
     private StatsRepo statsRepository;
 
+    /** Granularity used for the returned date type in combined requests statistics */
 	public static enum GRANULARITY { HOUR, DAY, WEEK, MONTH }
 
 	/**
@@ -117,9 +169,8 @@ public class StatisticsController {
 		if (input.has("group")) {
 			groupId = input.getString("group");
 		}
-		// Either group or user is mandatory, but not both
-		if (((userId == null) && (groupId == null)
-				|| ((userId != null) && (groupId != null)))) {
+		// not both group and user can be defined at the same time
+		if ((userId != null) && (groupId != null)) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return null;
 		}
@@ -143,7 +194,7 @@ public class StatisticsController {
 						endDate);
 				break;
 			}
-		} else {
+		} else if (groupId != null){
 			switch (g) {
 			case HOUR:
 				lst = statsRepository.getRequestCountForGroupBetweenStartDateAndEndDateByHour(groupId, startDate,
@@ -161,12 +212,25 @@ public class StatisticsController {
 						endDate);
 				break;
 			}
+		} else {
+			switch (g) {
+			case HOUR:
+				lst = statsRepository.getRequestCountBetweenStartDateAndEndDateByHour(startDate, endDate);
+				break;
+			case DAY:
+				lst = statsRepository.getRequestCountBetweenStartDateAndEndDateByDay(startDate, endDate);
+				break;
+			case WEEK:
+				lst = statsRepository.getRequestCountBetweenStartDateAndEndDateByWeek(startDate, endDate);
+				break;
+			case MONTH:
+				lst = statsRepository.getRequestCountBetweenStartDateAndEndDateByMonth(startDate, endDate);
+				break;
+			}
 		}
 		JSONArray results = new JSONArray();
 		for (Object o : lst) {
 			Object[] row = (Object[]) o;
-			// o[0] is a Long
-			// o[1] is a String
 			results.put(new JSONObject().put("count", row[0]).put("date", row[1]));
 		}
 		return new JSONObject().put("results", results)
@@ -174,6 +238,129 @@ public class StatisticsController {
 				.toString(4);
 	}
 
+	/**
+	 * Gets statistics for layers consumption.
+	 *
+	 * Test by group:
+	   curl -XPOST --data-binary '{"group": "ADMINISTRATOR", "startDate": "2015-01-01", "endDate": "2015-12-01" }' \
+           -H'Content-Type: application/json'   http://localhost:8280/analytics/ws/layersUsage -i
+           
+	   curl -XPOST --data-binary '{"user": "testadmin", "limit": 10, "startDate": "2015-01-01", "endDate": "2015-12-01" }' \
+           -H'Content-Type: application/json'   http://localhost:8280/analytics/ws/layersUsage -i
+           
+  	   curl -XPOST --data-binary '{"limit": 10, "startDate": "2015-01-01", "endDate": "2015-12-01" }' \
+           -H'Content-Type: application/json'   http://localhost:8280/analytics/ws/layersUsage -i
+	 * @param payload the JSON object containing the input parameters
+	 * @param response the HttpServletResponse object.
+	 * @return a JSON string containing the requested aggregated statistics.
+	 *
+	 * @throws JSONException 
+	 */
+	@RequestMapping(value="/layersUsage", method=RequestMethod.POST, produces= "application/json; charset=utf-8")
+	@ResponseBody
+	public String layersUsage(@RequestBody String payload, HttpServletResponse response) throws JSONException {
+		JSONObject input = null;
+		String userId  = null, groupId = null;
+		Date startDate = null, endDate = null;
+		int limit = -1;
+
+		try {
+			input = new JSONObject(payload);
+			if (!input.has("startDate") || !input.has("endDate")) {
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				return null;
+			}
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			startDate = sdf.parse(input.getString("startDate"));
+			endDate = sdf.parse(input.getString("endDate"));
+			if (input.has("limit")) {
+				limit = input.getInt("limit");
+			}
+			if (input.has("user")) {
+				userId = input.getString("user");
+			}
+			if (input.has("group")) {
+				groupId = input.getString("group");
+			}
+		} catch (Throwable e) {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			return null;
+		}
+		List lst = null;
+		if (userId != null) {
+			if (limit > 0)
+				lst = statsRepository.getLayersStatisticsForUserLimit(userId, startDate, endDate, limit);
+			else
+				lst = statsRepository.getLayersStatisticsForUser(userId, startDate, endDate);				
+		} else if (groupId != null) {
+			if (limit > 0)
+				lst = statsRepository.getLayersStatisticsForGroupLimit(groupId, startDate, endDate, limit);
+			else
+				lst = statsRepository.getLayersStatisticsForGroup(groupId, startDate, endDate);				
+		} else {
+			if (limit > 0)
+				lst = statsRepository.getLayersStatisticsLimit(startDate, endDate, limit);
+			else
+				lst = statsRepository.getLayersStatistics(startDate, endDate);							
+		}
+		JSONArray results = new JSONArray();
+		for (Object o : lst) {
+			Object[] row = (Object[]) o;
+			results.put(new JSONObject().put("layer", row[0]).put("count", row[1]));
+		}
+		return new JSONObject().put("results", results)
+				.toString(4);
+	}
+	
+	/**
+	 * 
+	 * @param payload the JSON object containing the parameters
+	 * @param response the HTTP Servlet Response object, used to set the 40x HTTP code in case of errors.
+	 *
+	 * curl -XPOST --data-binary '{"group": "ADMINISTRATOR", "startDate": "2015-01-01", "endDate": "2015-12-01" }' \
+	   -H'Content-Type: application/json'   http://localhost:8280/analytics/ws/distinctUsers -i
+	 *
+	 * @return A string representing a JSON object with the requested datas.
+	 * @throws JSONException
+	 */
+	@RequestMapping(value="/distinctUsers", method=RequestMethod.POST, produces= "application/json; charset=utf-8")
+	@ResponseBody
+	public String distinctUsers(@RequestBody String payload, HttpServletResponse response) throws JSONException {
+		JSONObject input = null;
+		String groupId = null;
+		Date startDate = null, endDate = null;
+
+		try {
+			input = new JSONObject(payload);
+			if (!input.has("startDate") || !input.has("endDate")) {
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				return null;
+			}
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			startDate = sdf.parse(input.getString("startDate"));
+			endDate = sdf.parse(input.getString("endDate"));
+			if (input.has("group")) {
+				groupId = input.getString("group");
+			}
+		} catch (Throwable e) {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			return null;
+		}
+		List<String> lst = null;
+		if (groupId != null) {
+			lst = statsRepository.getDistinctUsersByGroup(groupId, startDate,
+					endDate);
+		} else {
+			lst = statsRepository.getDistinctUsers(startDate, endDate);
+		}
+		JSONArray results = new JSONArray();
+		for (String o : lst) {
+			results.put(o);
+		}
+		return new JSONObject().put("results", results)
+				.toString(4);
+	}
+	
 	/**
 	 * Calculates the appropriate granularity given the begin date and end date.
 	 *
