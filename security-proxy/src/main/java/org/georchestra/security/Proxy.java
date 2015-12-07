@@ -637,8 +637,18 @@ public class Proxy {
                 }
                 // no OGC SERVICE log if request going through /proxy/?url=
                 if (!request.getRequestURI().startsWith("/sec/proxy/")) {
-                    statsLogger.info(OGCServiceMessageFormatter.format(authentication.getName(), sURL, org));
+                	String [] roles = null;
+                	try{
+                	Header[] rolesHeaders = proxyingRequest.getHeaders("sec-roles");
+                	roles = rolesHeaders[0].getValue().split(";");
+                	
+                	} catch (Exception e) {
+                        logger.error("Unable to compute roles", e);
+                    }
+                    statsLogger.info(OGCServiceMessageFormatter.format(authentication.getName(), sURL, org, roles));
+                
                 }
+                	
             } catch (Exception e) {
                 logger.error("Unable to log the request into the statistics logger", e);
             }

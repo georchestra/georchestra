@@ -9,11 +9,6 @@ import org.json.JSONObject;
 
 public class GeonetworkStatsModel extends AbstractModel  {
 
-
-	public GeonetworkStatsModel(PostGresqlConnection pgpool) {
-		super(pgpool);
-	}
-
 	private final String selectFilesQ = "SELECT "
 	        + "    filename "
 	        + "    , metadata_id "
