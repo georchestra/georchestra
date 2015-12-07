@@ -75,7 +75,7 @@ ALTER TABLE ogcstatistics.ogc_services_log RENAME TO ogc_services_log_old;
 -- Create new version of ogc_services_log table
 CREATE TABLE ogcstatistics.ogc_services_log(
   user_name character varying(255),
-  date date,
+  date timestamp without time zone,
   service character varying(5),
   layer character varying(255),
   id bigserial,
