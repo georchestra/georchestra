@@ -124,7 +124,16 @@ public class StatisticsController {
     @Autowired
     private StatsRepo statsRepository;
 
-    /** Granularity used for the returned date type in combined requests statistics */
+    /**
+     * Setter used mainly for testing purposes.
+     * @param statsRepository
+     */
+    public void setStatsRepository(StatsRepo statsRepository) {
+		this.statsRepository = statsRepository;
+	}
+	
+
+	/** Granularity used for the returned date type in combined requests statistics */
 	public static enum GRANULARITY { HOUR, DAY, WEEK, MONTH }
 
 	/**
