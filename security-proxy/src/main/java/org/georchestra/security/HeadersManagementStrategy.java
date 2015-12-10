@@ -217,7 +217,6 @@ public class HeadersManagementStrategy {
      */
     public synchronized void copyResponseHeaders(HttpServletRequest originalRequest, String originalRequestURI, HttpResponse proxyResponse, HttpServletResponse finalResponse, Map<String,String> proxyTargets) {
         HttpSession session = originalRequest.getSession(true);
-        session.setMaxInactiveInterval(Integer.MAX_VALUE);
 
         StringBuilder headersLog = new StringBuilder("Response Headers:\n");
         headersLog
