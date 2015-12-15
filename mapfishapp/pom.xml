@@ -545,5 +545,35 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>docker</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.spotify</groupId>
+            <artifactId>docker-maven-plugin</artifactId>
+            <version>0.3.8</version>
+            <configuration>
+              <imageName>${project.artifactId}</imageName>
+              <baseImage>tomcat</baseImage>
+              <resources>
+                <resource>
+                  <targetPath>/usr/local/tomcat/webapps</targetPath>
+                  <directory>${project.build.directory}</directory>
+                  <include>${project.artifactId}.war</include>
+                </resource>
+              </resources>
+            </configuration>
+            <dependencies>
+              <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>19.0</version>
+              </dependency>
+            </dependencies>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 </project>
