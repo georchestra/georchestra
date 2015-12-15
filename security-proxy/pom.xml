@@ -252,7 +252,6 @@
           <target>1.6</target>
         </configuration>
       </plugin>
-
       <plugin>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
@@ -344,8 +343,8 @@
               </packageDependencies>
               <projectUrl>http://www.georchestra.org/</projectUrl>
               <projectOrganization>geOrchestra</projectOrganization>
-              <maintainerName>Pierre Mauduit</maintainerName>
-              <maintainerEmail>pierre.mauduit@gmail.com</maintainerEmail>
+              <maintainerName>PSC</maintainerName>
+              <maintainerEmail>psc@georchestra.org</maintainerEmail>
               <excludeAllArtifacts>true</excludeAllArtifacts>
             </configuration>
           </plugin>
