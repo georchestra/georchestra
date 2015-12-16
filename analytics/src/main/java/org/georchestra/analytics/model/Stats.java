@@ -5,9 +5,11 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedNativeQueries;
 import javax.persistence.NamedNativeQuery;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
@@ -113,7 +115,9 @@ query = "SELECT DISTINCT layer, COUNT(*) FROM ogcstatistics.ogc_services_log WHE
 @Table(schema="ogcstatistics", name="ogc_services_log")
 public class Stats {
 	@Id
-	@GeneratedValue
+	@SequenceGenerator(name="stats_seq", sequenceName="stats_seq",
+		schema="ogcstatistics", initialValue=1, allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "stats_seq")
 	private long id;
 	@Column(name="user_name")
 	private String user;
