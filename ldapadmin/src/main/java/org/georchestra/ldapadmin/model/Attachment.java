@@ -11,7 +11,8 @@ import javax.persistence.*;
 public class Attachment {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @SequenceGenerator(name="admin_attachments_seq", schema = "ldapadmin", sequenceName="admin_attachments_seq", initialValue=1, allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "admin_attachments_seq")
     private long id;
     private String name;
     @Lob

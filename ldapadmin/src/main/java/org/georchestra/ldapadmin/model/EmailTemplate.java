@@ -10,7 +10,8 @@ import javax.persistence.*;
 public class EmailTemplate {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @SequenceGenerator(name="email_template_seq", schema = "ldapadmin", sequenceName="email_template_seq", initialValue=1, allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "email_template_seq")
     private long id;
     private String name;
     private String content;

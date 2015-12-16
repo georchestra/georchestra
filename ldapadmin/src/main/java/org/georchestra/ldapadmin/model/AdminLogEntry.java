@@ -8,7 +8,8 @@ import java.util.UUID;
 public class AdminLogEntry {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @SequenceGenerator(name="admin_log_seq", schema = "ldapadmin", sequenceName="admin_log_seq", initialValue=1, allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "admin_log_seq")
     private long id;
     private UUID admin;
     private UUID target;

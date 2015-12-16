@@ -17,7 +17,8 @@ import java.util.UUID;
 public class EmailEntry {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @SequenceGenerator(name="admin_emails_seq", schema = "ldapadmin", sequenceName="admin_emails_seq", initialValue=1, allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "admin_emails_seq")
     private long id;
     private UUID sender;
     private UUID recipient;
