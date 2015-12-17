@@ -41,6 +41,7 @@ public class AbstractController implements ApplicationContextAware {
         Map<String, Object> model;
         model = new HashMap<String, Object>();
         model.put("data", "null");
+        model.put("search", "null");
         model.put("bbox", request.getParameter("bbox"));
         model.put("lat", request.getParameter("lat"));
         model.put("lon", request.getParameter("lon"));
@@ -126,7 +127,7 @@ public class AbstractController implements ApplicationContextAware {
             
             jsonSearch = jsonData.optJSONObject("search");
             if (jsonSearch != null) {
-                search = jsonLayers.toString(1);
+                search = jsonSearch.toString(1);
             } else {
                 search = "{}";
             }
