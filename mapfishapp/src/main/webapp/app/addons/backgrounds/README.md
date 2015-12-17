@@ -12,48 +12,48 @@ Edit the `GEOR_custom.js` file to add the required configuration:
 
 ```js
 {
-	"id": "backgrounds_0",
-	"name": "Backgrounds",
-	"title": {
-		"en": "Background layers",
-		"es": "Capas de fondo",
-		"fr": "Fonds de plan"
-	},
-	"description": {
-		"en": "Select a background layer",
-		"es": "Seleccione una capa de fondo",
-		"fr": "Sélectionnez une couche de fond"
-	},
-	"options": {
-		"target": "tbar_12",
-		"layers_groups": [
-			{
-				"title": "OpenStreetMap - GéoBretagne",
-				"layers": [
-					{
-						"name": "Google",
-						"url": "http://osm.geobretagne.fr/service/wmts/",
-						"layer": "osm:google"
-					},
-					{
-						"name": "Bing",
-						"url": "http://osm.geobretagne.fr/service/wmts/",
-						"layer": "osm:bing"
-					},
-					{
-						"name": "Défaut",
-						"url": "http://osm.geobretagne.fr/service/wmts/",
-						"layer": "osm:map"
-					}
-				]
-			},
-			{
-			  "title": "...",
-			  "layers": []
-			}
-		]
-	},
-	"preloaded": true
+    "id": "backgrounds_0",
+    "name": "Backgrounds",
+    "title": {
+        "en": "Background layers",
+        "es": "Capas de fondo",
+        "fr": "Fonds de plan"
+    },
+    "description": {
+        "en": "Select a background layer",
+        "es": "Seleccione una capa de fondo",
+        "fr": "Sélectionnez une couche de fond"
+    },
+    "options": {
+        "target": "tbar_12",
+        "layers_groups": [
+            {
+                "title": "OpenStreetMap - GéoBretagne",
+                "layers": [
+                    {
+                        "name": "Google",
+                        "url": "http://osm.geobretagne.fr/service/wmts/",
+                        "layer": "osm:google"
+                    },
+                    {
+                        "name": "Bing",
+                        "url": "http://osm.geobretagne.fr/service/wmts/",
+                        "layer": "osm:bing"
+                    },
+                    {
+                        "name": "Défaut",
+                        "url": "http://osm.geobretagne.fr/service/wmts/",
+                        "layer": "osm:map"
+                    }
+                ]
+            },
+            {
+              "title": "...",
+              "layers": []
+            }
+        ]
+    },
+    "preloaded": true
 }
 ```
 

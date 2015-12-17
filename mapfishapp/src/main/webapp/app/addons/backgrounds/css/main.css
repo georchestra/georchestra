@@ -1,27 +1,27 @@
 #backgrounds-addon-trigger {
-  position: absolute;
-  top: -2px;
-  left: 0px;
+    position: absolute;
+    top: -2px;
+    left: 0px;
 }
 
 .addon-backgrounds {
-  background-image: url(../img/icon.png);
+    background-image: url(../img/icon.png);
 }
 
 .backgrounds-field {
-  visibility: hidden;
-  width: 0;
-  padding: 0;
-  margin: 0;
-  border: 0;
+    visibility: hidden;
+    width: 0;
+    padding: 0;
+    margin: 0;
+    border: 0;
 }
 
 .grouped-list .x-boundlist-item {
-  padding: 1px 3px 0 10px
+    padding: 1px 3px 0 10px
 }
 
 .grouped-list .group-header {
-  padding: 4px;
-  font-weight: bold;
-  border-bottom: 1px solid #ddd;
+    padding: 4px;
+    font-weight: bold;
+    border-bottom: 1px solid #ddd;
 }

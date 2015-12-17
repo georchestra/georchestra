@@ -1,46 +1,46 @@
 {
-	"js": [
-		"js/main.js"
-	],
-	"css": [
-		"css/main.css"
-	],
-	"default_options": {
-		"layers_groups": [
-			{
-				"title": "OpenStreetMap - GéoBretagne",
-				"layers": [
-					{
-						"name": "Google",
-						"url": "http://osm.geobretagne.fr/service/wmts/",
-						"layer": "osm:google"
-					},
-					{
-						"name": "Bing",
-						"url": "http://osm.geobretagne.fr/service/wmts/",
-						"layer": "osm:bing"
-					},
-					{
-						"name": "Défaut",
-						"url": "http://osm.geobretagne.fr/service/wmts/",
-						"layer": "osm:map"
-					}
-				]
-			}
-		]
-	},
-	"i18n": {
-		"en": {
-			"backgrounds.reset": "None"
-		},
-		"es": {
-			"backgrounds.reset": "Ninguno"
-		},
-		"fr": {
-			"backgrounds.reset": "Aucun"
-		},
-		"de": {
-			"backgrounds.reset": "Keine"
-		}
-	}
+    "js": [
+        "js/main.js"
+    ],
+    "css": [
+        "css/main.css"
+    ],
+    "default_options": {
+        "layers_groups": [
+            {
+                "title": "OpenStreetMap - GéoBretagne",
+                "layers": [
+                    {
+                        "name": "Google",
+                        "url": "http://osm.geobretagne.fr/service/wmts/",
+                        "layer": "osm:google"
+                    },
+                    {
+                        "name": "Bing",
+                        "url": "http://osm.geobretagne.fr/service/wmts/",
+                        "layer": "osm:bing"
+                    },
+                    {
+                        "name": "Défaut",
+                        "url": "http://osm.geobretagne.fr/service/wmts/",
+                        "layer": "osm:map"
+                    }
+                ]
+            }
+        ]
+    },
+    "i18n": {
+        "en": {
+            "backgrounds.reset": "None"
+        },
+        "es": {
+            "backgrounds.reset": "Ninguno"
+        },
+        "fr": {
+            "backgrounds.reset": "Aucun"
+        },
+        "de": {
+            "backgrounds.reset": "Keine"
+        }
+    }
 }
