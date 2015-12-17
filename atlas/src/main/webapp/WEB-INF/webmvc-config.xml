@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:p="http://www.springframework.org/schema/p"
+
+
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+            http://www.springframework.org/schema/data/jpa
+            http://www.springframework.org/schema/data/jpa/spring-jpa-1.0.xsd
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context-3.0.xsd
+            http://www.springframework.org/schema/mvc
+            http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+  <!-- Directory to scan for repository classes -->
+  <jpa:repositories base-package="org.georchestra.atlas.dao" />
+
+  <mvc:annotation-driven/>
+
+  <context:annotation-config/>
+
+  <context:component-scan base-package="org.georchestra.atlas"/>
+
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>WEB-INF/atlas.properties</value>
+            </list>
+        </property>
+  </bean>
+
+
+  <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" p:prefix="/WEB-INF/views/" p:suffix=".jsp" />
+
+   <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+       <property name="dataSource" ref="dataSource" />
+       <property name="persistenceUnitName" value="myPU" />
+       <property name="persistenceXmlLocation" value="classpath:persistence.xml"/>
+       <property name="jpaVendorAdapter">
+           <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+       </property>
+       <property name="jpaProperties">
+           <props>
+               <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL94Dialect</prop>
+               <prop key="hibernate.show_sql">false</prop>
+               <prop key="hibernate.format_sql">false</prop>
+               <prop key="hibernate.hbm2ddl.auto">update</prop>
+           </props>
+       </property>
+   </bean>
+
+
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="url" value="${psql.url}"/>
+        <property name="username" value="${psql.user}"/>
+        <property name="password" value="${psql.pass}"/>
+        <property name="driverClassName" value="org.postgresql.Driver"/>
+        <property name="testOnBorrow" value="true"/>
+        <property name="poolPreparedStatements" value="true"/>
+        <property name="maxOpenPreparedStatements" value="-1"/>
+        <property name="defaultReadOnly" value="false"/>
+        <property name="defaultAutoCommit" value="true"/>
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
+
+
+ 
+  <!-- This bean resolves specific types of exceptions to corresponding logical
+        - view names for error views. The default behaviour of DispatcherServlet
+        - is to propagate all exceptions to the servlet container: this will happen
+        - here with all other types of exceptions.
+  -->
+  <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver" p:defaultErrorView="uncaughtException">
+    <property name="exceptionMappings">
+      <props>
+        <prop key=".DataAccessException">dataAccessFailure</prop>
+        <prop key=".NoSuchRequestHandlingMethodException">resourceNotFound</prop>
+        <prop key=".TypeMismatchException">resourceNotFound</prop>
+        <prop key=".MissingServletRequestParameterException">resourceNotFound</prop>
+      </props>
+    </property>
+  </bean>
+
+
+  <!-- <bean id="georchestraConfiguration" class="org.georchestra.commons.configuration.GeorchestraConfiguration"> -->
+  <!--   <constructor-arg value="atlas"/> -->
+  <!-- </bean> -->
+
+</beans>

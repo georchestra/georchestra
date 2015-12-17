@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+                           http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                           http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.5.xsd
+                           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+                           http://camel.apache.org/schema/spring
+                           http://camel.apache.org/schema/spring/camel-spring-2.16.1.xsd">
+    <!--
+        This will automatically locate any and all property files you have
+        within your classpath, provided they fall under the META-INF/spring
+        directory. The located property files are parsed and their values can
+        then be used within application context files in the form of
+        ${propertyKey}.
+    -->
+
+    <!--<context:property-placeholder location="classpath*:"/>-->
+    <!--
+        Turn on AspectJ @Configurable support. As a result, any time you
+        instantiate an object, Spring will attempt to perform dependency
+        injection on that object. This occurs for instantiation via the "new"
+        keyword, as well as via reflection. This is possible because AspectJ
+        is used to "weave" Roo-based applications at compile time. In effect
+        this feature allows dependency injection of any object at all in your
+        system, which is a very useful feature (without @Configurable you'd
+        only be able to dependency inject objects acquired from Spring or
+        subsequently presented to a specific Spring dependency injection
+        method). Roo applications use this useful feature in a number of
+        areas, such as @PersistenceContext injection into entities.
+    -->
+    <context:spring-configured/>
+    <!--
+        This declaration will cause Spring to locate every @Component,
+        @Repository and @Service in your application. In practical terms this
+        allows you to write a POJO and then simply annotate the new POJO as an
+        @Service and Spring will automatically detect, instantiate and
+        dependency inject your service at startup time. Importantly, you can
+        then also have your new service injected into any other class that
+        requires it simply by declaring a field for your service inside the
+        relying class and Spring will inject it. Note that two exclude filters
+        are declared. The first ensures that Spring doesn't spend time
+        introspecting Roo-specific ITD aspects. The second ensures Roo doesn't
+        instantiate your @Controller classes, as these should be instantiated
+        by a web tier application context. Refer to web.xml for more details
+        about the web tier application context setup services.
+        
+        Furthermore, this turns on @Autowired, @PostConstruct etc support. These 
+        annotations allow you to use common Spring and Java Enterprise Edition 
+        annotations in your classes without needing to do any special configuration. 
+        The most commonly used annotation is @Autowired, which instructs Spring to
+        dependency inject an object into your class.
+    -->
+    <context:component-scan base-package="org.georchestra.atlas"/>
+
+    <!-- bean to marshall/unmashall json -->
+    <bean id="gson" class="org.apache.camel.component.gson.GsonDataFormat">
+        <property name="fieldNamingPolicy" value="LOWER_CASE_WITH_UNDERSCORES"/>
+    </bean>
+
+    <bean id="printMerge" class="org.georchestra.atlas.PrintMerge"/>
+
+    <!-- A context component that has some utility components to handle typical tasks -->
+    <camelContext id="mapfish" xmlns="http://camel.apache.org/schema/spring"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+        <!--
+        Route for requesting Mapfish Print to generate a PDF.
+        Inputs:
+            - the body must contain the JSON request.
+            - property.printBase must have the base URL of the Mapfish Print service.
+        -->
+        <rest>
+            <post uri="/atlas" consumes="application/json" produces="application/json" enableCORS="true">
+                <to uri="direct:atlas"/>
+            </post>
+        </rest>
+
+        <route id="atlas">
+            <from uri="direct:atlas"/>
+
+            <!-- Backup original Json-->
+            <setProperty propertyName="rawJson">
+                <simple>${body}</simple>
+            </setProperty>
+
+            <!-- parse json -->
+            <unmarshal ref="gson"/>
+
+            <setProperty propertyName="layout">
+                <simple>${body[layout]}</simple>
+            </setProperty>
+
+            <setProperty propertyName="dpi">
+                <simple>${body[dpi]}</simple>
+            </setProperty>
+
+            <setProperty propertyName="displayLegend">
+                <simple>${body[displayLegend]}</simple>
+            </setProperty>
+
+            <setProperty propertyName="couche_support">
+                <simple>${body[couche_support]}</simple>
+            </setProperty>
+
+            <setProperty propertyName="couche_support">
+                <simple>${body[couche_support]}</simple>
+            </setProperty>
+
+            <!-- Store parsed Json-->
+            <setProperty propertyName="rootJson">
+                <simple>${body}</simple>
+            </setProperty>
+
+            <split>
+                <simple>${body[pages]}</simple>
+
+                <!-- Add layers property -->
+                <to uri="bean:printMerge"/>
+
+                <transform>
+                    <simple>
+                        { "layout": "${exchangeProperty.rootJson[layout]}",
+                          "outputFormat": "${exchangeProperty.rootJson[outputFormat]}",
+                          "attributes": {
+                            "map": {
+                              "projection": "${exchangeProperty.rootJson[srs]}",
+                              "dpi": ${exchangeProperty.rootJson[dpi]},
+                              "center": ${body[center]},
+                              "scale": ${body[scale]},
+                              "layers": ${exchangeProperty.layers}
+                            }
+                          }
+                        }
+                    </simple>
+                </transform>
+
+                <!-- Test Json validity -->
+                <!--<marshal ref="gson"/>-->
+                <!--<marshal ref="gson"/>-->
+                <log message="${body}" loggingLevel="ERROR"/>
+
+                <!--<marshal ref="gson"/>-->
+                <to uri="file:///tmp/log?autoCreate=true"/>
+            </split>
+
+        </route>
+
+        <!--<route>-->
+            <!--<from uri="direct:print"/>-->
+            <!--<setHeader headerName="CamelHttpMethod">-->
+                <!--<constant>POST</constant>-->
+            <!--</setHeader>-->
+            <!--<setHeader headerName="Exchange.HTTP_URI">-->
+                <!--<simple>${property.printBase}/report.pdf?bridgeEndpoint=true</simple>-->
+            <!--</setHeader>-->
+            <!--<to uri="http4://dummy"/>-->
+            <!--<log message="posted print request" loggingLevel="ERROR"/>-->
+            <!--<unmarshal ref="gson"/>-->
+            <!--<setProperty propertyName="printRef">-->
+                <!--<simple>${body[ref]}</simple>-->
+            <!--</setProperty>-->
+            <!--<setHeader headerName="CamelHttpMethod">-->
+                <!--<constant>GET</constant>-->
+            <!--</setHeader>-->
+            <!--<setHeader headerName="Exchange.HTTP_URI">-->
+                <!--<simple>${property.printBase}/status/${body[ref]}.json</simple>-->
+            <!--</setHeader>-->
+            <!--<bean ref="mfTimeout" method="start(*, waitPdf, 60000)"/>-->
+            <!--<to uri="direct:waitStatusOk"/>-->
+        <!--</route>-->
+
+        <!--<route id="waitStatusOk">-->
+            <!--<from uri="direct:waitStatusOk"/>-->
+            <!--<setBody>-->
+                <!--<simple/>-->
+            <!--</setBody>-->
+            <!--<to uri="http4://dummy"/>-->
+            <!--<unmarshal ref="gson"/>-->
+            <!--<log message="Got response done=${body[done]} status=${body[status]}" loggingLevel="ERROR"/>-->
+        <!--</route>-->
+
+        <!--<route id="getPdf">-->
+            <!--<from uri="direct:getPdf"/>-->
+            <!--<setHeader headerName="CamelHttpMethod">-->
+                <!--<constant>GET</constant>-->
+            <!--</setHeader>-->
+            <!--<setHeader headerName="Exchange.HTTP_URI">-->
+                <!--<simple>${property.printBase}/report/${property[printRef]}</simple>-->
+            <!--</setHeader>-->
+            <!--<setBody>-->
+                <!--<simple/>-->
+            <!--</setBody>-->
+            <!--<to uri="http4:dummy"/>-->
+            <!--<log message="Got the PDF" loggingLevel="ERROR"/>-->
+        <!--</route>-->
+    </camelContext>
+
+
+
+</beans>
