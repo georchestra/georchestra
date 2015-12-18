@@ -50,6 +50,41 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
             tpl: this.getTemplate(),
             listeners: {
                 "selectionchange": this.onSelectionchange,
+                // problem with this approach is that HTTP errors are not silent ...
+                
+                "mouseenter": function(dv, idx, node, e) {
+                    GEOR.ajaxglobal.disableAllErrors = true; // FIXME: awful hack
+                    // idea: preload xml metadata (if any), parse it and enrich record with MD fields ? (cf caching)
+                    // get WMS layer record
+                    var record = dv.getRecord(node);
+                    if (record.get("metadata").type !== "MD_Metadata") {
+                        // get iso metadata url
+                        // prefered url is the one pointing to the XML document:
+                        var url = GEOR.util.getBestMetadataURL(record,
+                            /^text\/xml|application\/xml$/, true);
+                        console.log(url);
+                        if (!url) {
+                            return;
+                        }
+                        // fetch document
+                        OpenLayers.Request.GET({
+                            // TODO: silently fail
+                            url: url,
+                            success: function(response) {
+                                GEOR.ajaxglobal.disableAllErrors = false;
+                                var f = new OpenLayers.Format.CSWGetRecords();
+                                var o = f.read(response.responseXML || response.responseText);
+                                console.log(o); // TODO: do not forget to commit fix in CSW 2.0.2 getrecords parser obj.records = obj.records || [];
+                                if (o && o.records && o.records[0]) {
+                                    record.set("metadata", o.records[0]);
+                                }
+                            },
+                            failure: function() {
+                                GEOR.ajaxglobal.disableAllErrors = false;
+                            }
+                        });
+                    }
+                },
                 scope: this
             }
         });
@@ -295,13 +330,32 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
                     "";
             },
             "mdlink": function(values) {
-                var url = GEOR.util.setMetadataURL(values.layer, values.metadataURLs);
-                return url ? [
-                    '<a href="', url, '" ext:qtip="',
+                // donc on veut un lien ici
+                // soit on n'a que du html => lien avec target blank
+                // soit on a du XML => requete, parsing, templating, ext.window
+
+                //var url = GEOR.util.setMetadataURL(values.layer, values.metadataURLs);
+                
+                // prefered url is the one pointing to the XML document:
+                var xmlurl = GEOR.util.getBestMetadataURL(values,
+                    /^text\/xml|application\/xml$/, true);
+                
+                if (xmlurl) {
+                    // ici, un lien a sans href, mais pas de qtip => onclick => new Ext.Window
+                    //~ return '<a ext:qtip="'+GEOR.util.makeMD(values.metadata)+'" ext:hide="user" ext:qtitle="Metadata">metadata</a>';
+                    return '<a onclick="GEOR.util.window(this);return false;" ext:data="'+GEOR.util.makeMD(values.metadata)+'" ext:qtip="Display metadata essentials">more metadata</a>';
+                }
+
+                var htmlurl = GEOR.util.getBestMetadataURL(values, null, true);
+                if (htmlurl) {
+                    return [
+                    '<a href="', htmlurl, '" ext:qtip="',
                         tr("Show metadata sheet in a new window"), '" ',
                         'target="_blank" onclick="window.open(this.href);return false;">',
                         tr('metadata'), '</a>'
-                ].join('') : "";
+                    ].join('');
+                }
+                
             },
             "abstract": function(t) {
                 // two things here:

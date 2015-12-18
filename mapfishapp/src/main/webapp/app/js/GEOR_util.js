@@ -267,6 +267,145 @@ GEOR.util = (function() {
                 GEOR.config.PATHNAME, '/', input
             ].join('');
         },
+        
+        /**
+         * APIMethod: getBestMetadataURL
+         * Given a record, or record data, and a prefered format, returns the best metadata url
+         *
+         * Parameters:
+         * record - {Ext.data.Record}
+         * type - {RegExp} optional prefered mime type,
+         *        defaults to /^text\/html|application\/xhtml(\+xml)?$/
+         *        if not available, the method tries to infer it.
+         *
+         * Returns:
+         * {String} the "best" metadataURL for WMC storage
+         */
+        // TODO: add a strict parameter ? if strict then return null if no matching MDurl ...
+        getBestMetadataURL: function(record, type, strict) {
+            type = type || /^text\/html|application\/xhtml(\+xml)?$/;
+            strict = strict || false;
+            if (record instanceof GeoExt.data.LayerRecord) {
+                record = record.data;
+            }
+            var out,
+                metadataURLs = record.metadataURLs;
+            if (metadataURLs && metadataURLs.length > 0) {
+                var murl = strict ? "" : metadataURLs[0];
+                // default to first entry
+                out = (murl.href) ? murl.href : murl; // FIXME: really ?
+                Ext.each(metadataURLs, function(murl) {
+                    // prefer provided format if found
+                    if (murl.format && type.test(murl.format)) {
+                        out = (murl.href) ? murl.href : murl;
+                        return false; // stop looping
+                    }
+                });
+            }
+            return out;
+        },
+
+        window: function(elt) {
+            var markup = Ext.fly(elt).getAttribute("data", "ext");
+            GEOR.util.urlDialog({
+                title: "Metadata",
+                msg: markup
+            });
+        },
+        
+        escapeHtml: function(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        },
+        
+        /**
+         * APIMethod: makeMD
+         * Given a MD object, creates some markup to render it
+         *
+         * Parameters:
+         * metadata - {Object}
+         *
+         * Returns:
+         * {String} html markup
+         */
+        makeMD: function(metadata) {          
+            var tpl = [
+                '<b>title: </b> {[this.title(values)]} <br/>',
+                '<b>abstract: </b> {[this.abstract(values)]} <br/>',
+                '<b>lineage: </b> {[this.lineage(values)]} <br/>',
+                '<b>creation date: </b> {[this.creation_date(values)]} <br/>',
+                '<b>update date: </b> {[this.update_date(values)]} <br/>',
+                '<b>point of contact: </b> {[this.point_of_contact(values)]} <br/>',
+                '<b>administrator: </b> {[this.administrator(values)]} <br/>'
+            ].join('');
+            var ctx = {
+                "title": function(v) {
+                    var o = '';
+                    try {
+                        o = v.identificationInfo[0].citation.title.characterString;
+                    } catch (e) {}
+                    return GEOR.util.escapeHtml(o);
+                },
+                "abstract": function(v) {
+                    var o = '';
+                    try {
+                        o = v.identificationInfo[0]['abstract'].characterString;
+                    } catch (e) {}
+                    return GEOR.util.escapeHtml(o);
+                },
+                "lineage": function(v) {
+                    var o = '';
+                    try {
+                        o = v.dataQualityInfo[0].lineage.statement.characterString;
+                    } catch (e) {}
+                    return GEOR.util.escapeHtml(o);
+                },
+                "creation_date": function(v) {
+                    var o = '';
+                    try {
+                        var dates = v.identificationInfo[0].citation.date;
+                        Ext.each(dates, function(date) {
+                            if (date.dateType.codeListValue == "creation") {                               
+                                o = date.date[0].dateTime;
+                            }
+                        });
+                    } catch (e) {}
+                    return o;
+                },
+                "update_date": function(v) {
+                    var o = '';
+                    try {
+                        var dates = v.identificationInfo[0].citation.date;
+                        Ext.each(dates, function(date) {
+                            if (date.dateType.codeListValue == "revision") {                               
+                                o = date.date[0].dateTime;
+                            }
+                        });
+                    } catch (e) {}
+                    return o;
+                },
+                "point_of_contact": function(v) {
+                    var o = '';
+                    try {
+                        o = v.contact[0].contactInfo.address.electronicMailAddress[0].characterString;
+                        o = '<a href="mailto:'+o+'">'+o+'</a>';
+                    } catch (e) {}
+                    return GEOR.util.escapeHtml(o);
+                },
+                "administrator": function(v) {
+                    var o = '';
+                    try {
+                        //o = v.identificationInfo[0].citation.title.characterString;
+                    } catch (e) {}
+                    return GEOR.util.escapeHtml(o);
+                }
+            };
+            return new Ext.XTemplate(tpl, ctx).apply(metadata);
+        },
 
         /**
          * APIMethod: setMetadataURL
@@ -279,21 +418,21 @@ GEOR.util = (function() {
          * Returns:
          * {String} the "best" metadataURL for WMC storage
          */
-        setMetadataURL: function(layer, metadataURLs) {
-            if (metadataURLs && metadataURLs.length > 0) {
-                var murl = metadataURLs[0];
-                // default to first entry
-                layer.metadataURL = (murl.href) ? murl.href : murl;
-                Ext.each(metadataURLs, function(murl) {
-                    // prefer text/html format if found
-                    if (murl.format && murl.format == 'text/html') {
-                        layer.metadataURL = (murl.href) ? murl.href : murl;
-                        return false; // stop looping
-                    }
-                });
-            }
-            return layer.metadataURL;
-        },
+        //~ setMetadataURL: function(layer, metadataURLs) {
+            //~ if (metadataURLs && metadataURLs.length > 0) {
+                //~ var murl = metadataURLs[0];
+                //~ // default to first entry
+                //~ layer.metadataURL = (murl.href) ? murl.href : murl;
+                //~ Ext.each(metadataURLs, function(murl) {
+                    //~ // prefer text/html format if found
+                    //~ if (murl.format && murl.format == 'text/html') {
+                        //~ layer.metadataURL = (murl.href) ? murl.href : murl;
+                        //~ return false; // stop looping
+                    //~ }
+                //~ });
+            //~ }
+            //~ return layer.metadataURL;
+        //~ },
 
         /**
          * APIMethod: confirmDialog

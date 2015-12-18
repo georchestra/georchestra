@@ -67,6 +67,7 @@ GEOR.ows = (function() {
         {name: "geometryType", type: "string", defaultValue: "unknown"}, // Line, Point, Polygon
         {name: "multiGeometry", type: "boolean"},
         {name: "layergroup", type: "boolean", defaultValue: false},
+        {name: "metadata"}, // object with metadata fields
         // end geOrchestra use
         {name: "name", type: "string"},
         {name: "title", type: "string"},
