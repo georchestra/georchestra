@@ -20,7 +20,7 @@
             http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
   <!-- Directory to scan for repository classes -->
-  <jpa:repositories base-package="org.georchestra.atlas.dao" />
+  <jpa:repositories base-package="org.georchestra.atlas" />
 
   <mvc:annotation-driven/>
 
@@ -73,7 +73,11 @@
         <property name="entityManagerFactory" ref="entityManagerFactory" />
     </bean>
 
-
+    <bean id="jpa" class="org.apache.camel.component.jpa.JpaComponent">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="sharedEntityManager" value="true" />
+    </bean>
  
   <!-- This bean resolves specific types of exceptions to corresponding logical
         - view names for error views. The default behaviour of DispatcherServlet

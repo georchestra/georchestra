@@ -65,11 +65,18 @@
         <property name="fieldNamingPolicy" value="LOWER_CASE_WITH_UNDERSCORES"/>
     </bean>
 
-    <bean id="printMerge" class="org.georchestra.atlas.PrintMerge"/>
+    <bean id="populateProperties" class="org.georchestra.atlas.CamelPopulatePropertiesComponent"/>
 
     <!-- A context component that has some utility components to handle typical tasks -->
     <camelContext id="mapfish" xmlns="http://camel.apache.org/schema/spring"
-                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  streamCache="true">
+
+
+        <restConfiguration component="servlet">
+            <componentProperty key="enableCors" value="true"/>
+            <dataFormatProperty key="prettyPrint" value="true"/>
+        </restConfiguration>
 
         <!--
         Route for requesting Mapfish Print to generate a PDF.
@@ -106,101 +113,56 @@
                 <simple>${body[displayLegend]}</simple>
             </setProperty>
 
-            <setProperty propertyName="couche_support">
-                <simple>${body[couche_support]}</simple>
+            <setProperty propertyName="outputFormat">
+                <simple>${body[outputFormat]}</simple>
             </setProperty>
 
-            <setProperty propertyName="couche_support">
-                <simple>${body[couche_support]}</simple>
-            </setProperty>
-
-            <!-- Store parsed Json-->
-            <setProperty propertyName="rootJson">
-                <simple>${body}</simple>
+            <setProperty propertyName="projection">
+                <simple>${body[projection]}</simple>
             </setProperty>
 
             <split>
                 <simple>${body[pages]}</simple>
 
-                <!-- Add layers property -->
-                <to uri="bean:printMerge"/>
+                <!-- generate layers and legendURL property -->
+                <to uri="bean:populateProperties"/>
 
                 <transform>
                     <simple>
-                        { "layout": "${exchangeProperty.rootJson[layout]}",
-                          "outputFormat": "${exchangeProperty.rootJson[outputFormat]}",
+                        { "layout": "${exchangeProperty.layout}",
+                          "outputFormat": "PDF",
+                          "displayLegend": "${exchangeProperty.displayLegend}",
                           "attributes": {
-                            "map": {
-                              "projection": "${exchangeProperty.rootJson[srs]}",
-                              "dpi": ${exchangeProperty.rootJson[dpi]},
-                              "center": ${body[center]},
-                              "scale": ${body[scale]},
-                              "layers": ${exchangeProperty.layers}
-                            }
-                          }
-                        }
+                            "title": "${body[title]}",
+                            "subtitle": "${body[subtitle]}",
+                            "legendURL": "${exchangeProperty.legendURL}",
+                            "datasource": [{
+                              "map": {
+                                "dpi": ${exchangeProperty.dpi},
+                                "projection": "${exchangeProperty.projection}",
+                                "center": ${body[center]},
+                                "scale": ${body[scale]},
+                                "layers": ${exchangeProperty.layers}
+                        }}]}}
                     </simple>
                 </transform>
 
                 <!-- Test Json validity -->
                 <!--<marshal ref="gson"/>-->
-                <!--<marshal ref="gson"/>-->
+                <unmarshal ref="gson"/>
+
                 <log message="${body}" loggingLevel="ERROR"/>
 
                 <!--<marshal ref="gson"/>-->
                 <to uri="file:///tmp/log?autoCreate=true"/>
+
+                <!-- store in DB queue -->
+                <to uri="jpa:org.georchestra.atlas.AtlasMFPJob?persistenceUnit=myPU"/>
+
             </split>
 
         </route>
 
-        <!--<route>-->
-            <!--<from uri="direct:print"/>-->
-            <!--<setHeader headerName="CamelHttpMethod">-->
-                <!--<constant>POST</constant>-->
-            <!--</setHeader>-->
-            <!--<setHeader headerName="Exchange.HTTP_URI">-->
-                <!--<simple>${property.printBase}/report.pdf?bridgeEndpoint=true</simple>-->
-            <!--</setHeader>-->
-            <!--<to uri="http4://dummy"/>-->
-            <!--<log message="posted print request" loggingLevel="ERROR"/>-->
-            <!--<unmarshal ref="gson"/>-->
-            <!--<setProperty propertyName="printRef">-->
-                <!--<simple>${body[ref]}</simple>-->
-            <!--</setProperty>-->
-            <!--<setHeader headerName="CamelHttpMethod">-->
-                <!--<constant>GET</constant>-->
-            <!--</setHeader>-->
-            <!--<setHeader headerName="Exchange.HTTP_URI">-->
-                <!--<simple>${property.printBase}/status/${body[ref]}.json</simple>-->
-            <!--</setHeader>-->
-            <!--<bean ref="mfTimeout" method="start(*, waitPdf, 60000)"/>-->
-            <!--<to uri="direct:waitStatusOk"/>-->
-        <!--</route>-->
-
-        <!--<route id="waitStatusOk">-->
-            <!--<from uri="direct:waitStatusOk"/>-->
-            <!--<setBody>-->
-                <!--<simple/>-->
-            <!--</setBody>-->
-            <!--<to uri="http4://dummy"/>-->
-            <!--<unmarshal ref="gson"/>-->
-            <!--<log message="Got response done=${body[done]} status=${body[status]}" loggingLevel="ERROR"/>-->
-        <!--</route>-->
-
-        <!--<route id="getPdf">-->
-            <!--<from uri="direct:getPdf"/>-->
-            <!--<setHeader headerName="CamelHttpMethod">-->
-                <!--<constant>GET</constant>-->
-            <!--</setHeader>-->
-            <!--<setHeader headerName="Exchange.HTTP_URI">-->
-                <!--<simple>${property.printBase}/report/${property[printRef]}</simple>-->
-            <!--</setHeader>-->
-            <!--<setBody>-->
-                <!--<simple/>-->
-            <!--</setBody>-->
-            <!--<to uri="http4:dummy"/>-->
-            <!--<log message="Got the PDF" loggingLevel="ERROR"/>-->
-        <!--</route>-->
     </camelContext>
 
 
