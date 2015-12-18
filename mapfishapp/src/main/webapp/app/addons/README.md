@@ -36,9 +36,6 @@ There are other places where one can find contributed addons:
 Deploying addons
 =================
 
-
-
-
 ## Without georchestra.datadir
 
 Deploying addons is just a matter of inserting a few lines of code in your configuration files.
@@ -65,8 +62,17 @@ Typically, the config.json block was previously contained in the GEOR_custom.js 
 ## Using georchestra.datadir
 
 If you are using the georchestra.datadir environment variable, the previous
-behaviour applies, but if other addons are available into the
-georchestra.datadir, they can override the default ones provided in the webapp.
+behaviour applies, but if other addons are available in the
+"georchestra datadir", they override the default ones provided by the webapp.
+
+Loading addons
+==============
+
+The platform administrator decides which addons will be available to the end users.  
+Users may choose the ones they want among these addons, through the dedicated UI.
+
+Note that it is also possible to force the viewer to use a given list of addons, eg with:
+http://my.sdi.org/mapfishapp/?addons=magnifier_0,annotation_0 (in which magnifier_0 and annotation_0 are the addon ids)
 
 
 Addon placement
