@@ -149,7 +149,7 @@
 
                 <!-- Test Json validity -->
                 <!--<marshal ref="gson"/>-->
-                <unmarshal ref="gson"/>
+                <!--<unmarshal ref="gson"/>-->
 
                 <log message="${body}" loggingLevel="ERROR"/>
 
@@ -157,7 +157,7 @@
                 <to uri="file:///tmp/log?autoCreate=true"/>
 
                 <!-- store in DB queue -->
-                <to uri="jpa:org.georchestra.atlas.AtlasMFPJob?persistenceUnit=myPU"/>
+                <!--<to uri="jpa:org.georchestra.atlas.AtlasMFPJob?persistenceUnit=myPU"/>-->
 
             </split>
 
