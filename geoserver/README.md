@@ -12,13 +12,13 @@ $ cd geoserver-submodule/src
 $ mvn clean install
 ```
 
-### GeoServer with GeoFence, without the internal UI
+### GeoServer with GeoFence's own UI
 
 ```
 $ mvn clean install -Pgeofence
 ```
 
-### GeoServer with GeoFence and the internal UI
+### GeoServer with integrated GeoFence UI
 
 ```
 $ mvn clean install -Pgeofence -Pgeofence-server
