@@ -96,17 +96,17 @@ public class UsersControllerTest {
         }
     }
 
-    @Test
-    public void testFindByUidEmpty() throws Exception {
+	@Test
+	public void testFindByUidEmpty() throws Exception {
+		
+		usersCtrl.findByUid("nonexistentuser", response);
+		String a = response.getContentAsString();
+		JSONObject ret = new JSONObject(response.getContentAsString());
+		assertTrue(response.getStatus() == HttpServletResponse.SC_NOT_FOUND);
+		assertFalse(ret.getBoolean("success"));
+		assertTrue(ret.getString("error").equals("not_found"));
 
-            usersCtrl.findByUid("nonexistentuser", response);
-            String a = response.getContentAsString();
-            JSONObject ret = new JSONObject(response.getContentAsString());
-            assertTrue(response.getStatus() == HttpServletResponse.SC_NOT_FOUND);
-            assertFalse(ret.getBoolean("success"));
-            assertTrue(ret.getString("error").equals("not_found"));
-
-    }
+	}
 
     @Test
     public void testFindByUidProtected() throws Exception {
@@ -330,20 +330,20 @@ public class UsersControllerTest {
         assertTrue(ret.getString("error").equals("The user is protected, it cannot be updated: geoserver_privileged_user"));
     }
 
-    @Test
-    public void testUpdateUserNotFound() throws Exception {
-        request.setRequestURI("/ldapadmin/users/usernotfound");
+	@Test
+	public void testUpdateUserNotFound() throws Exception {
+		request.setRequestURI("/ldapadmin/users/usernotfound");
 
-        Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate)
-            .lookup(eq(new DistinguishedName("uid=usernotfound,ou=users")), (ContextMapper) Mockito.any());
+		Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate)
+				.lookup(eq(new DistinguishedName("uid=usernotfound,ou=users")), (ContextMapper) Mockito.any());
 
-        usersCtrl.update(request, response);
+		usersCtrl.update(request, response);
 
-        JSONObject ret = new JSONObject(response.getContentAsString());
-        assertTrue(response.getStatus() == HttpServletResponse.SC_NOT_FOUND);
-        assertFalse(ret.getBoolean("success"));
-        assertTrue(ret.getString("error").equals("not_found"));
-    }
+		JSONObject ret = new JSONObject(response.getContentAsString());
+		assertTrue(response.getStatus() == HttpServletResponse.SC_NOT_FOUND);
+		assertFalse(ret.getBoolean("success"));
+		assertTrue(ret.getString("error").equals("not_found"));
+	}
 
     @Test
     public void testUpdateUserDataServiceException() throws Exception {
@@ -405,9 +405,11 @@ public class UsersControllerTest {
                 "developer & sysadmin", "dev&ops");
         String mFilter = "(&(objectClass=inetOrgPerson)(objectClass=organizationalPerson)"
                 + "(objectClass=person)(mail=tomcat2@localhost))";
-        Mockito.doReturn(fakedAccount).when(ldapTemplate).lookup((Name) Mockito.any(), (ContextMapper) Mockito.any());
+        Mockito.doReturn(fakedAccount).when(ldapTemplate).lookup((Name) Mockito.any(), eq(UserSchema.ATTR_TO_RETRIEVE), (ContextMapper) Mockito.any());
         Mockito.doThrow(DataServiceException.class).when(ldapTemplate).search(eq(DistinguishedName.EMPTY_PATH),
-                eq(mFilter), (ContextMapper) Mockito.any());
+                eq(mFilter),(SearchControls) Mockito.any(), (ContextMapper) Mockito.any());
+        
+        
 
         try {
             usersCtrl.update(request, response);

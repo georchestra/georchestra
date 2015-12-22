@@ -34,6 +34,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.filter.LikeFilter;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -166,10 +167,11 @@ public class UsersController {
 	 *
 	 * @param response Returns the detailed information of the user as json
 	 * @throws IOException
+	 * @throws NotFoundException 
 	 */
 	@RequestMapping(value=REQUEST_MAPPING+"/{uid}", method=RequestMethod.GET,
 					produces = "application/json; charset=UTF-8")
-	public void findByUid(@PathVariable String uid, HttpServletResponse response) throws IOException, JSONException {
+	public void findByUid(@PathVariable String uid, HttpServletResponse response) throws IOException, JSONException, NotFoundException {
 
 		// Check for protected accounts
 		if(this.userRule.isProtected(uid) ){
@@ -187,7 +189,7 @@ public class UsersController {
 			try {
 				account = this.accountDao.findByUID(uid);
 				response.getWriter().write(account.toJSON().toString());
-			} catch (NotFoundException e) {
+			} catch (NameNotFoundException e) {
 				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 				JSONObject res = new JSONObject();
 				res.put("success", "false");
@@ -196,6 +198,7 @@ public class UsersController {
 			} catch (DataServiceException e) {
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				throw new IOException(e);
+
 			}
 		}
 
@@ -373,9 +376,10 @@ public class UsersController {
 	 * @param response
 	 *
 	 * @throws IOException if the uid does not exist or fails to access to the LDAP store.
+	 * @throws NotFoundException 
 	 */
 	@RequestMapping(value=REQUEST_MAPPING+ "/*", method=RequestMethod.PUT)
-	public void update( HttpServletRequest request, HttpServletResponse response) throws IOException{
+	public void update( HttpServletRequest request, HttpServletResponse response) throws IOException, NotFoundException{
 
 		final String uid = RequestUtil.getKeyFromPathVariable(request).toLowerCase();
 
@@ -396,7 +400,7 @@ public class UsersController {
 		try {
 			account = this.accountDao.findByUID(uid);
 
-		} catch (NotFoundException e) {
+		} catch (NameNotFoundException e) {
 
 			ResponseUtil.writeError(response, NOT_FOUND);
 
