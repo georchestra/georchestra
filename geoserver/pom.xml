@@ -11,9 +11,9 @@
   <name>Geoserver 2.x root module</name>
   <properties>
     <maven.test.skip>true</maven.test.skip>
-    <gs.version>2.5.4</gs.version>
-    <gt.version>11.4</gt.version>
-    <geofence.version>2.2-SNAPSHOT</geofence.version>
+    <gs.version>2.8.1</gs.version>
+    <gt.version>14.0</gt.version>
+    <geofence.version>3.0-SNAPSHOT</geofence.version>
     <geoserver.webapp.groupId>org.geoserver.web</geoserver.webapp.groupId>
     <geoserver.webapp.artifactId>gs-web-app</geoserver.webapp.artifactId>
     <geoserver.webapp.version>${gs.version}</geoserver.webapp.version>
@@ -29,14 +29,18 @@
       </activation>
       <modules>
         <module>geofence/src</module>
+        <!-- useless ?
         <module>geofence-webapp</module>
+        -->
         <module>webapp</module>
       </modules>
       <properties>
         <geofence>geofence</geofence>
+        <!--
         <geoserver.webapp.groupId>it.geosolutions.geofence.geoserver</geoserver.webapp.groupId>
         <geoserver.webapp.artifactId>geofence-web-app</geoserver.webapp.artifactId>
         <geoserver.webapp.version>${geofence.version}</geoserver.webapp.version>
+        -->
       </properties>
     </profile>
     <profile>
