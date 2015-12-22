@@ -222,7 +222,9 @@ JAVA_OPTS="$JAVA_OPTS \
 ```
 This allocates 2Gb of your server RAM to all geOrchestra webapps (except proxy, cas and geoserver).
 
-If GeoNetwork is deployed:
+#### GeoNetwork 2.x
+
+If GeoNetwork 2.x (legacy version) is being deployed:
 ```
 JAVA_OPTS="$JAVA_OPTS \
               -Dgeonetwork.dir=/path/to/your/geonetwork_data_dir \
@@ -236,6 +238,46 @@ Example:
 sudo git clone https://github.com/georchestra/geonetwork_minimal_datadir.git /opt/geonetwork_data_dir
 sudo chown -R tomcat8 /opt/geonetwork_data_dir
 ```
+
+#### GeoNetwork 3.0.x (geOrchestra 15.12 and above)
+
+If GeoNetwork 3.0.x is deployed, some extra java environment variables will be
+required, because almost everything related to the configuration and the
+geOrchestra integration has been exported outside the webapp.
+
+
+```
+sudo git clone https://github.com/georchestra/config.git /etc/georchestra
+sudo git clone -b gn3.0.x https://github.com/georchestra/geonetwork_minimal_datadir.git /opt/geonetwork_data_dir
+sudo chown -R tomcat8 /opt/geonetwork_data_dir
+```
+
+Customize the `/etc/georchestra/geonetwork/geonetwork.properties`, so that the
+`geonetwork.dir` reflects the path where you actually cloned the default
+datadir in the previous step, e.g. `/opt/geonetwork_data_dir`.
+
+Then edit the following files in `/etc/georchestra/geonetwork/config`:
+
+- `config-datadir-georchestra.xml`
+- `config-db-georchestra.xml`
+- `config-logging-georchestra.xml`
+- `config-overrides-georchestra.xml`
+- `config-security-georchestra.xml`
+
+And replace every occurence of `${georchestra.datadir}` or `${env:georchestra.datadir}` by `/etc/georchestra/geonetwork`.
+
+Then ensure your tomcat has the following environment variable set:
+
+```
+JAVA_OPTS="$JAVA_OPTS \
+              -Dgeonetwork.jeeves.configuration.overrides.file=/etc/georchestra/geonetwork/config/config-overrides-georchestra.xml"
+```
+
+Note: You can also override every geonetwork sub-data-directories by modifying
+the `/etc/georchestra/geonetwork/geonetwork.properties` file for convenience.
+
+
+#### Extractor
 
 If the extractor application is deployed:
 ```
