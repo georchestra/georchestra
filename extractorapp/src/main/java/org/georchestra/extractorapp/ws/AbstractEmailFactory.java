@@ -1,6 +1,7 @@
 package org.georchestra.extractorapp.ws;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,7 +12,11 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.extractorapp.ws.extractor.ExpiredArchiveDaemon;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 public abstract class AbstractEmailFactory {
@@ -31,6 +36,28 @@ public abstract class AbstractEmailFactory {
 	protected String  emailSubject;
 
     private boolean frozen = false;
+
+    protected Log LOG = LogFactory.getLog(this.getClass().getPackage().getName());
+
+    @Autowired
+    protected GeorchestraConfiguration georConfig;
+
+    public void init() {
+        if ((georConfig != null) && (georConfig.activated())) {
+            LOG.info("geOrchestra datadir: reconfiguring bean " + this.getClass());
+            smtpHost = georConfig.getProperty("smtpHost");
+            smtpPort = Integer.parseInt(georConfig.getProperty("smtpPort"));
+            emailHtml = georConfig.getProperty("emailHtml");
+            replyTo = georConfig.getProperty("replyTo");
+            from = georConfig.getProperty("from");
+            languages = georConfig.getProperty("language").split(",");
+            extraKeywordsFile = String.format("i18n/extra_keywords_%s", georConfig.getProperty("language"));
+            emailSubject = georConfig.getProperty("emailsubject");
+            emailAckTemplateFile = String.format("%s/templates/extractor-email-ack-template.tpl", georConfig.getContextDataDir());
+            emailTemplateFile = String.format("%s/templates/extractor-email-template.tpl", georConfig.getContextDataDir());
+            LOG.info("geOrchestra datadir: done.");
+        }
+    }
 
     public AbstractEmailFactory() {
         // this is the default constructor for use by spring
@@ -81,7 +108,18 @@ public abstract class AbstractEmailFactory {
     }
 
     protected String readFile(HttpServletRequest request, final String path) throws IOException {
-    	String realPath = request.getSession().getServletContext().getRealPath(path);
+        String realPath = null;
+        // If georConfig is activated, then the given path is already the one
+        // pointing to the correct template file. Else, we fall back on the
+        // original behaviour (nested into the webapp).
+        if ((this.georConfig != null) && (this.georConfig.activated())) {
+            if (! new File(path).exists()) {
+                throw new RuntimeException("Template file \""+ realPath +"\" does not exist. Please check your configuration.");
+            }
+            realPath = path;
+        } else {
+            realPath = request.getSession().getServletContext().getRealPath(path);
+        }
     	BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(realPath), "UTF-8") );
         StringBuilder builder = new StringBuilder();
         try {
@@ -95,6 +133,13 @@ public abstract class AbstractEmailFactory {
     }
     protected HashMap<String,String> readExtraKeywords(String path) throws IOException {
         HashMap<String,String> ret = new HashMap<String,String>();
+        if ((this.georConfig != null) && (georConfig.activated())) {
+            Properties p = georConfig.loadCustomPropertiesFile(extraKeywordsFile);
+            for (String key : p.stringPropertyNames()) {
+                ret.put(key, p.getProperty(key));
+            }
+            return ret;
+        }
         InputStream is = null;
         try {
             is = this.getClass().getClassLoader().getResourceAsStream(path);

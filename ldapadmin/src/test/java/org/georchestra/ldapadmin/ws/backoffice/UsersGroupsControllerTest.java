@@ -3,6 +3,7 @@ package org.georchestra.ldapadmin.ws.backoffice;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assume.assumeTrue;
+import static org.mockito.Matchers.eq;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,10 +16,7 @@ import org.apache.commons.logging.LogFactory;
 import org.georchestra.ldapadmin.ds.AccountDaoImpl;
 import org.georchestra.ldapadmin.ds.GroupDaoImpl;
 import org.georchestra.ldapadmin.ds.NotFoundException;
-import org.georchestra.ldapadmin.dto.Account;
-import org.georchestra.ldapadmin.dto.AccountFactory;
-import org.georchestra.ldapadmin.dto.Group;
-import org.georchestra.ldapadmin.dto.GroupFactory;
+import org.georchestra.ldapadmin.dto.*;
 import org.georchestra.ldapadmin.ws.backoffice.groups.GroupsController;
 import org.georchestra.ldapadmin.ws.backoffice.users.UserRule;
 import org.georchestra.ldapadmin.ws.backoffice.users.UsersController;
@@ -36,9 +34,14 @@ import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DistinguishedName;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
+import org.springframework.ldap.filter.AndFilter;
+import org.springframework.ldap.filter.EqualsFilter;
+import org.springframework.ldap.filter.PresentFilter;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.ldap.DefaultSpringSecurityContextSource;
+
+import javax.naming.directory.SearchControls;
 
 public class UsersGroupsControllerTest {
 
@@ -64,6 +67,8 @@ public class UsersGroupsControllerTest {
 
     @Rule
     public ErrorCollector collector = new ErrorCollector();
+    
+    private AccountDaoImpl accountDao;
 
     private void setUpRealLdap() {
         final String bindDn = System.getProperty(ENV_BINDDN);
@@ -118,6 +123,12 @@ public class UsersGroupsControllerTest {
                 "48 avenue du lac du Bourget", "73000", "registeredAddress", "BP 352", "Le-Bourget-du-Lac",
                 "avenue du lac du Bourget", "Savoie-Technolac", "+331234567899", "Peon",
                 "Undisclosed", "+336123457890", "42", "Rhone-Alpes"));
+        Account tempAccount = AccountFactory.createFull("testadminTmp", "testadminTmp", "testadminTmp", "administrator",
+                "psc@georchestra.org", "geOrchestra", "administrator", "+331234567890", "admin",
+                "48 avenue du lac du Bourget", "73000", "registeredAddress", "BP 352", "Le-Bourget-du-Lac",
+                "avenue du lac du Bourget", "Savoie-Technolac", "+331234567899", "geodata administration",
+                "Undisclosed", "+336123457890", "42", "Rhone-Alpes");
+        fakeAccountList.add(tempAccount);
 
 
         // fake group List
@@ -131,10 +142,34 @@ public class UsersGroupsControllerTest {
         fakeGroupList.add(adminGrp);
         fakeGroupList.add(userGrp);
 
+        EqualsFilter accountFilter = new EqualsFilter("objectClass", "person");
+        EqualsFilter groupFilter = new EqualsFilter("objectClass", "groupOfMembers");
+
+        // Fake findAll() on AccountDao
+        Mockito.when(ldapTemplate.search(Mockito.any(DistinguishedName.class), eq(accountFilter.encode()),
+                Mockito.any(SearchControls.class),  Mockito.any(ContextMapper.class))).thenReturn(fakeAccountList);
+
+        // Fake findAll() on GroupDao
+        Mockito.when(ldapTemplate.search(Mockito.any(DistinguishedName.class), eq(groupFilter.encode()),
+                Mockito.any(ContextMapper.class))).thenReturn(fakeGroupList);
+
+        // Fake temporary account
+        List<Account> fakeTempAccountList = new ArrayList<Account>();
+        fakeTempAccountList.add(tempAccount);
+        AndFilter filter = new AndFilter();
+        filter.and(new EqualsFilter("objectClass", "shadowAccount"));
+        filter.and(new EqualsFilter("objectClass", "inetOrgPerson"));
+        filter.and(new EqualsFilter("objectClass", "organizationalPerson"));
+        filter.and(new EqualsFilter("objectClass", "person"));
+        filter.and(new PresentFilter("shadowExpire"));
+
+        SearchControls sc = new SearchControls();
+        sc.setReturningAttributes(UserSchema.ATTR_TO_RETRIEVE);
+        sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
 
-        Mockito.when(ldapTemplate.search(Mockito.any(DistinguishedName.class), Mockito.anyString(),
-                Mockito.any(ContextMapper.class))).thenReturn(fakeAccountList, fakeGroupList);
+        Mockito.when(ldapTemplate.search(Mockito.any(DistinguishedName.class), eq(filter.encode()), Mockito.any(SearchControls.class),
+                Mockito.any(ContextMapper.class))).thenReturn(fakeTempAccountList);
 
     }
 
@@ -183,6 +218,8 @@ public class UsersGroupsControllerTest {
 
         userCtrl = new UsersController(dao, userRule);
         groupCtrl = new GroupsController(groupDao, userRule);
+        groupCtrl.setAccountDao(dao);
+      
     }
 
     @After
@@ -192,6 +229,7 @@ public class UsersGroupsControllerTest {
 
     @Test
     public final void testUsersGroupController() throws Exception {
+
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
 

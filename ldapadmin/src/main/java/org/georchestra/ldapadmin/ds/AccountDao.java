@@ -1,8 +1,10 @@
 package org.georchestra.ldapadmin.ds;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.georchestra.ldapadmin.dto.Account;
+import org.springframework.ldap.filter.Filter;
 
 /**
  * Defines the operations to maintain the set of account.
@@ -45,7 +47,6 @@ public interface AccountDao {
 	 * @param groupID
 	 * @throws DataServiceException
 	 * @throws DuplicatedEmailException
-	 * @throws RequiredFiedException
 	 */
 	void insert(final Account account, final String groupID) throws DataServiceException, DuplicatedUidException, DuplicatedEmailException;
 
@@ -54,9 +55,21 @@ public interface AccountDao {
 	 * @param account
 	 * @throws DataServiceException
 	 * @throws DuplicatedEmailException
-	 * @throws RequiredFiedException
 	 */
 	void update(final Account account) throws DataServiceException, DuplicatedEmailException;
+
+	/**
+	 * Updates the user account, given the old and the new state of the account
+	 * Needed if a DN update is required (modifying the uid).
+	 *
+	 * @param account
+	 * @param modified
+	 *
+	 * @throws DuplicatedEmailException
+	 * @throws DataServiceException
+	 * @throws NotFoundException
+	 */
+	void update(Account account, Account modified) throws DataServiceException, DuplicatedEmailException, NotFoundException;
 
 	/**
 	 * Changes the user password
@@ -71,7 +84,7 @@ public interface AccountDao {
 	/**
 	 * Deletes the account
 	 * 
-	 * @param account
+	 * @param uid
 	 * @throws DataServiceException
 	 * @throws NotFoundException
 	 */
@@ -88,6 +101,18 @@ public interface AccountDao {
 	 * @throws NotFoundException
 	 */
 	Account findByUID(final String uid)throws DataServiceException, NotFoundException;
+
+    /**
+	 * Returns the account that correspond to specified entryUUID
+	 *
+	 * @param uuid
+	 *
+	 * @return {@link Account}
+	 *
+	 * @throws DataServiceException
+	 * @throws NotFoundException
+	 */
+	Account findByUUID(UUID uuid) throws DataServiceException, NotFoundException;
 
 	/**
 	 * Returns the account that contains the email provided as parameter.
@@ -106,7 +131,7 @@ public interface AccountDao {
 	 * Add the new password. This method is part of the "lost password" workflow to maintan the old password and the new password until the
 	 * user can confirm that he had asked for a new password.   
 	 * 
-	 * @param udi
+	 * @param uid
 	 * @param newPassword
 	 */
 	void addNewPassword(String uid, String newPassword);
@@ -123,8 +148,21 @@ public interface AccountDao {
 	 */
 	String generateUid(String uid) throws DataServiceException;
 
-	
 
+	/**
+	 * users in LDAP directory with shadowExpire field filled
+	 *
+	 * @return List of Account that have a shadowExpire attribute
+	 */
 
-	
+	List<Account> findByShadowExpire();
+
+	/**
+	 * Finds all accounts given a list of blacklisted users and a LDAP filter
+	 *
+	 * @return List of Account that are not in the ProtectedUserFilter, and which
+	 * complies with the provided LDAP filter.
+	 */
+	List<Account> find(final ProtectedUserFilter uidFilter, Filter f);
+
 }

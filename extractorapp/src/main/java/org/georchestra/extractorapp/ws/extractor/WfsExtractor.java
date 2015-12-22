@@ -161,7 +161,7 @@ public class WfsExtractor {
         boolean permitted = regex.matcher(capabilities).find();
 
         if(!permitted) {
-            throw new SecurityException("User does not have sufficient privileges to access the Layer: "+request._layerName+". \n\nCapabilties:  "+capabilities);
+            throw new SecurityException("User does not have sufficient privileges to access the Layer: "+request._layerName+". \n\nCapabilities:  "+capabilities);
         }
     }
 

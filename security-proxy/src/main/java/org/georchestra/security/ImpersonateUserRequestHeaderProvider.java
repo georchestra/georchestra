@@ -1,16 +1,21 @@
 package org.georchestra.security;
 
-import org.apache.http.Header;
-import org.apache.http.message.BasicHeader;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import org.apache.http.Header;
+import org.apache.http.message.BasicHeader;
+import org.georchestra.commons.configuration.GeorchestraConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  * Allows certain white-listed users to impersonate other users.
@@ -19,6 +24,22 @@ import javax.servlet.http.HttpSession;
  */
 public class ImpersonateUserRequestHeaderProvider extends HeaderProvider {
     private List<String> trustedUsers = new ArrayList<String>();
+
+    @Autowired
+    private GeorchestraConfiguration georchestraConfiguration;
+
+    public void init() throws IOException {
+        if ((georchestraConfiguration != null) && (georchestraConfiguration.activated())) {
+            trustedUsers.clear();
+            Properties htTrustUsrs = georchestraConfiguration.loadCustomPropertiesFile("trusted-users");
+            String usr;
+            int i = 0;
+            while ((usr = htTrustUsrs.getProperty("trusteduser" + i +".name")) != null) {
+                trustedUsers.add(usr);
+                i++;
+            }
+        }
+    }
 
     @Override
     protected Collection<Header> getCustomRequestHeaders(HttpSession session, HttpServletRequest originalRequest) {

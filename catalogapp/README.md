@@ -27,4 +27,4 @@ then, each time you want to test a change in the configuration or the catalogapp
     $ cd catalogapp
     $ ../mvn -Ptemplate jetty:run
 
-Point your browser to [http://localhost:8080/catalogapp/?noheader=true](http://localhost:8080/catalogapp/?noheader=true)
+Point your browser to [http://localhost:8281/catalogapp/?noheader=true](http://localhost:8281/catalogapp/?noheader=true)

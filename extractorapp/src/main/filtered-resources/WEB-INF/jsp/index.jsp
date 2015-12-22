@@ -3,18 +3,47 @@
 <%@ page language="java" %>
 <%@ page import="java.util.*" %>
 <%@ page import="org.georchestra.extractorapp.ws.Utf8ResourceBundle" %>
+<%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
+<%@ page import="org.springframework.context.ApplicationContext" %>
+<%@ page import="org.springframework.web.servlet.support.RequestContextUtils" %>
+<%@ page import="org.georchestra.commons.configuration.GeorchestraConfiguration" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ page pageEncoding="UTF-8"%>
 <%@ page isELIgnored="false" %>
 <%
+
 Boolean anonymous = true;
 Boolean admin = false;
 Boolean editor = false;
 
 String lang = request.getParameter("lang");
+
+String instanceName = null;
+String defaultLanguage = null;
+String georCustomPath = "resources/app/js/GEOR_custom.js";
+
+try {
+  ApplicationContext ctx = RequestContextUtils.getWebApplicationContext(request);
+  instanceName = ((GeorchestraConfiguration) ctx.getBean("georchestraConfiguration")).getProperty("instance");
+  defaultLanguage = ((GeorchestraConfiguration) ctx.getBean("georchestraConfiguration")).getProperty("language");
+  if ((ctx.getBean("georchestraConfiguration") != null)
+    && (((GeorchestraConfiguration) ctx.getBean("georchestraConfiguration")).activated())) {
+      georCustomPath = "ws/app/js/GEOR_custom.js";
+    }
+} catch (Exception e) {}
+
 if (lang == null || (!lang.equals("en") && !lang.equals("es") && !lang.equals("fr") && !lang.equals("de"))) {
-    lang = "${language}";
+    if (defaultLanguage != null) {
+        lang = defaultLanguage;
+      }
+      else {
+        lang = "${language}";
+      }
 }
+if ((instanceName == null) || (instanceName == "")) {
+    instanceName = "${instance}";
+}
+
 Locale l = new Locale(lang);
 ResourceBundle resource = org.georchestra.extractorapp.ws.Utf8ResourceBundle.getBundle("org.georchestra.extractorapp.i18n.index",l);
 javax.servlet.jsp.jstl.core.Config.set(
@@ -72,7 +101,7 @@ if(sec_roles != null) {
     </style>
     <link rel="stylesheet" type="text/css" href="resources/app/css/main.css" />
 
-    <title lang="<%= lang %>" dir="ltr"><fmt:message key="title"/> - ${instance}</title>
+    <title lang="<%= lang %>" dir="ltr"><fmt:message key="title"/> - <%= instanceName %></title>
     <script type="text/javascript">
         GEOR = {
             header: <%= request.getParameter("noheader") == null %>
@@ -100,7 +129,7 @@ if(sec_roles != null) {
     <!--
         loading custom parameters (see build profile)
     -->	
-    <script type="text/javascript" src="resources/app/js/GEOR_custom.js"></script>
+    <script type="text/javascript" src="<%= georCustomPath %>"></script>
 
     <c:choose>
         <c:when test='<%= request.getParameter("debug") != null %>'>

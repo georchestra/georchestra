@@ -8,20 +8,23 @@
     http://www.springframework.org/schema/context
     http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-    <context:annotation-config/>
+    <context:annotation-config />
 
     <bean name="data_usage" class="org.georchestra.dlform.DataUsage">
       <constructor-arg ref="dataSource"/>
       <constructor-arg value="${activated}"/>
     </bean>
+
     <bean name="extractorapp" class="org.georchestra.dlform.ExtractorApp">
       <constructor-arg ref="dataSource"/>
       <constructor-arg value="${activated}"/>
     </bean>
+
     <bean name="geonetwork" class="org.georchestra.dlform.GeoNetwork">
       <constructor-arg ref="dataSource"/>
       <constructor-arg value="${activated}"/>
     </bean>
+
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
       <property name="url" value="${dlJdbcUrl}"/>
       <property name="testOnBorrow" value="true"/>
@@ -30,7 +33,18 @@
       <property name="defaultReadOnly" value="false"/>
       <property name="defaultAutoCommit" value="true"/>
     </bean>
+
     <!-- Substitutes any ${...} variables in this (and loaded) spring configuration file
          with values from the properties file -->
-    <bean id="properties-loader" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" p:locations="/WEB-INF/downloadform.properties"/>
+    <context:property-placeholder location="/WEB-INF/downloadform.properties"
+      ignore-resource-not-found="true" ignore-unresolvable="true" order="2" />
+
+    <context:property-placeholder
+      location="file:${georchestra.datadir}/downloadform/downloadform.properties"
+      ignore-resource-not-found="true" ignore-unresolvable="true" order="1" />
+
+    <bean id="georchestraConfiguration" class="org.georchestra.commons.configuration.GeorchestraConfiguration">
+      <constructor-arg value="downloadform" />
+    </bean>
+
 </beans>

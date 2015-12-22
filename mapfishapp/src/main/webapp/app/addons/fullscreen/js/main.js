@@ -90,7 +90,7 @@ GEOR.Addons.Fullscreen = Ext.extend(GEOR.Addons.Base, {
             // put the header in the back:
             this.headerIframe.style.zIndex = 0;
             // (this is for those with drop down menus in header)
-            var p = GeoExt.MapPanel.guess().ownerCt; 
+            var p = this.mapPanel.ownerCt; 
             this.size = p.items.get(0).getSize();
             p.items.get(0).setSize(0, 0);
             p.items.get(p.items.getCount() - 2).collapse();
@@ -110,7 +110,7 @@ GEOR.Addons.Fullscreen = Ext.extend(GEOR.Addons.Base, {
         if (this.options.toolbars == true) {
             // put the header to the front:
             this.headerIframe.style.zIndex = this.originalZIndex;
-            var p = GeoExt.MapPanel.guess().ownerCt;
+            var p = this.mapPanel.ownerCt;
             p.items.get(0).setSize(this.size);
             p.items.get(p.items.getCount() - 2).expand();
             p.doLayout();

@@ -23,7 +23,9 @@ final class PostgresConnectionProvider implements DBConnectionProvider {
 	private static final PostgresConnectionProvider THIS = new PostgresConnectionProvider();
 	
 	private Connection connection= null;
-	private String jdbcURL = "jdbc:postgresql://localhost:5432/";//FIXME host:port should be configured (this implementation should be replaced by jndi)
+	private String jdbcURL = "jdbc:postgresql://";
+	private String host;
+	private Integer port;
 	private String database;
 	private String user;
 	private String password;
@@ -34,8 +36,10 @@ final class PostgresConnectionProvider implements DBConnectionProvider {
 		//singleton
 	}
 	
-	public static synchronized DBConnectionProvider getInstance(final String database, final String user, final String password, final String clientApp) {
+	public static synchronized DBConnectionProvider getInstance(final String host, final Integer port, final String database, final String user, final String password, final String clientApp) {
 		
+		THIS.host = host;
+		THIS.port = port;
 		THIS.database = database;
 		THIS.user = user;
 		THIS.password = password;
@@ -68,7 +72,9 @@ final class PostgresConnectionProvider implements DBConnectionProvider {
 					Properties connProp = getConnectionProperties();
 
 					StringBuilder url = new StringBuilder(40);
-					url.append(this.jdbcURL).append(this.database);
+					url.append(this.jdbcURL).append(this.host);
+					url.append(':').append(this.port);
+					url.append('/').append(this.database);
 					this.connection = DriverManager.getConnection(url.toString(), connProp);
  
 					//this.connection.setClientInfo("application_name", this.clientApp); is abstract method in jdbc3 the following is a workaround

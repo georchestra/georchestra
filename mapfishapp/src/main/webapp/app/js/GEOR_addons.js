@@ -2,8 +2,9 @@ Ext.namespace("GEOR.Addons");
 
 GEOR.Addons.Base = Ext.extend(Object, {
 
-    constructor: function(map, options) {
-        this.map = map;
+    constructor: function(mp, options) {
+        this.mapPanel = mp;
+        this.map = mp.map;
         this.options = options;
         this.components = null;
         this.lang = OpenLayers.Lang.getCode();
@@ -15,11 +16,11 @@ GEOR.Addons.Base = Ext.extend(Object, {
             switch (target) {
                 // top toolbar:
                 case "tbar":
-                    this.target = GeoExt.MapPanel.guess().getTopToolbar();
+                    this.target = this.mapPanel.getTopToolbar();
                     break;
                 // bottom toolbar:
                 case "bbar":
-                    this.target = GeoExt.MapPanel.guess().getBottomToolbar();
+                    this.target = this.mapPanel.getBottomToolbar();
                     break;
                 // mini tabpanel in lower right corner:
                 case "tabs":
@@ -69,5 +70,6 @@ GEOR.Addons.Base = Ext.extend(Object, {
             this.components = null;
         }
         this.map = null;
+        this.mapPanel = null;
     }
 });

@@ -2,30 +2,32 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
     xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
-						http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+						http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+						http://www.springframework.org/schema/context
+                        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:annotation-config/>
 
     <bean id="proxy"  init-method="init"
           class="org.georchestra.security.Proxy">
-<!--          <property name="defaultTarget" value="${proxy.defaultTarget}/sec/"/>-->
           <property name="headerManagement" ref="headerManagementBean"/>
           <property name="defaultCharset" value="UTF-8"/>
 
           <property name="checkHealth" value="${checkHealth}"/>
-          <property name="maxDatabaseConnections" value="${max.database.connections}"/>    
-                
+          <property name="maxDatabaseConnections" value="${max.database.connections}"/>
           <property name="database" value="${psql.db}"/>
 
-<!--  Need to make host and port configurable
           <property name="host" value="${psql.host}"/>
-          <property name="port" value="${psql.port}"/> -->
+          <property name="port" value="${psql.port}"/>
           <property name="user" value="${psql.user}"/>
           <property name="password" value="${psql.pass}"/>
           <property name="proxyPermissionsFile" value="permissions.xml"/>
 
           <property name="targets">
                <map>
-${proxy.mapping}
+                    ${proxy.mapping}
                </map>
           </property>
           <property name="requireCharsetContentTypes">
@@ -52,8 +54,7 @@ ${proxy.mapping}
             </list>
           </property>
     </bean>
-          
-    <bean id="headerManagementBean"
+    <bean id="headerManagementBean" init-method="init"
           class="org.georchestra.security.HeadersManagementStrategy">
         <!-- If set then the referrer header will always be the current server even if client sends its
              own referrer header
@@ -63,14 +64,14 @@ ${proxy.mapping}
         <property name="headerProviders">
             <list>
                 <bean class="org.georchestra.security.SecurityRequestHeaderProvider"/>
-                <bean class="org.georchestra.security.ImpersonateUserRequestHeaderProvider">
+                <bean class="org.georchestra.security.ImpersonateUserRequestHeaderProvider" init-method="init">
                     <property name="trustedUsers">
                         <list>
                             <value>${privileged_admin_name}</value>
                         </list>
                     </property>
                 </bean>
-                <bean class="org.georchestra.security.LdapUserDetailsRequestHeaderProvider">
+                <bean class="org.georchestra.security.LdapUserDetailsRequestHeaderProvider" init-method="init">
                     <constructor-arg index="0" ref="ldapUserSearch"/>
                     <constructor-arg index="1">
                         <map>
@@ -83,7 +84,7 @@ ${proxy.mapping}
         <property name="filters">
             <list>
                 <bean class="org.georchestra.security.SecurityRequestHeaderFilter" />
-                <bean class="org.georchestra.security.RemoveXForwardedHeaders">
+                <bean class="org.georchestra.security.RemoveXForwardedHeaders" init-method="init">
                     <!-- Only one of includes or excludes may have elements -->
                     <property name="includes">
                         <list>
@@ -100,9 +101,17 @@ ${proxy.mapping}
             </list>
         </property>
     </bean>
-    
-    <bean id="properties-loader"
-        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
-        p:locations="/WEB-INF/security-proxy.properties" />
-    
+
+	<context:property-placeholder location="/WEB-INF/security-proxy.properties"
+		ignore-resource-not-found="true" ignore-unresolvable="true" order="2" />
+
+	<!-- using the one from the geOrchestra datadir first (if available) -->
+	<context:property-placeholder
+		location="file:${georchestra.datadir}/security-proxy/security-proxy.properties"
+		ignore-resource-not-found="true" ignore-unresolvable="true" order="1" />
+
+    <bean id="georchestraConfiguration" class="org.georchestra.commons.configuration.GeorchestraConfiguration">
+      <constructor-arg value="security-proxy" />
+    </bean>
+
 </beans>

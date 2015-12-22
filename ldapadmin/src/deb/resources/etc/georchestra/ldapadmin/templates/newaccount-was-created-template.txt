@@ -1,0 +1,10 @@
+Dear {name},
+
+Your account on https://georchestra.mydomain.org/ has been successfully created !
+Visit https://georchestra.mydomain.org/cas/login to login with your identifier "{uid}" and your password.
+
+Have fun with geOrchestra,
+
+Your platform administrator
+---
+Sent by geOrchestra (https://georchestra.mydomain.org/)

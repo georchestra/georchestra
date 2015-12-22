@@ -37,7 +37,7 @@ public class DatabaseHealthCenterTest {
 	@Test
 	public void testCheckConnectionsUnstable() {
 		
-		DatabaseHealthCenter hc = DatabaseHealthCenter.getInstance("postgres", "postgres", "admin", "testCase");
+		DatabaseHealthCenter hc = DatabaseHealthCenter.getInstance("localhost", 5432, "postgres", "postgres", "admin", "testCase");
 		boolean healthy = hc.checkConnections(2);
 		
 		// TODO assertFalse(healty);
@@ -45,7 +45,7 @@ public class DatabaseHealthCenterTest {
 	@Test
 	public void testCheckConnectionsOnLimits() {
 		
-		DatabaseHealthCenter hc = DatabaseHealthCenter.getInstance("postgres","postgres", "admin", "testCase");
+		DatabaseHealthCenter hc = DatabaseHealthCenter.getInstance("localhost", 5432, "postgres","postgres", "admin", "testCase");
 		boolean healthy = hc.checkConnections(6);
 
 		// TODO assertTrue(healthy);
@@ -54,7 +54,7 @@ public class DatabaseHealthCenterTest {
 	@Test
 	public void testCheckConnectionsOK() {
 		
-		DatabaseHealthCenter hc = DatabaseHealthCenter.getInstance("postgres","postgres", "admin", "testCase");
+		DatabaseHealthCenter hc = DatabaseHealthCenter.getInstance("localhost", 5432, "postgres","postgres", "admin", "testCase");
 		boolean healthy = hc.checkConnections(10);
 
 		// TODO assertTrue(healthy);

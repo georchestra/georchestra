@@ -8,6 +8,8 @@ import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.http.MediaType;
+
 /**
  * Utility class which contains useful method to prepare the http response.
  * 
@@ -47,8 +49,7 @@ final public class ResponseUtil {
 
 	public static void buildResponse(HttpServletResponse response, String jsonData, int sc) throws IOException {
 		
-		response.setCharacterEncoding("UTF-8");
-		response.setContentType("text/html");
+		response.setContentType("application/json; charset=UTF-8");
 		response.setStatus(sc);
 
 		PrintWriter out = response.getWriter();

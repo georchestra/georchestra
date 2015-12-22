@@ -1,0 +1,18 @@
+[{
+        "id": "openls_0",
+        "name": "OpenLS",
+        "enabled": false,
+        "title": {
+            "en": "OpenLS recentering",
+            "es": "OpenLS recentering",
+            "fr": "Recentrage OpenLS"
+        },
+        "description": {
+            "en": "OpenLS recentering",
+            "es": "OpenLS recentering",
+            "fr": "Recentrage OpenLS"
+        },
+        "options": {
+            "serviceURL": "http://my.server.tld/openls"
+        }
+}]

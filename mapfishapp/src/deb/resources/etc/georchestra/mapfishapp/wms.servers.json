@@ -1,0 +1,40 @@
+{
+    "servers": [
+        {
+            "name": "geOrchestra.org demo",
+            "url": "http://sdi.georchestra.org/geoserver/wms"
+        },
+        {
+            "name": "GeoBretagne cadastre - regional SDI",
+            "url": "http://geobretagne.fr/geoserver/cadastre/wms"
+        },
+        {
+            "name": "Agrocampus Ouest - french research center",
+            "url": "http://geowww.agrocampus-ouest.fr/geoserver/wms"
+        },
+        {
+            "name": "SHOM - Naval Hydrographic and Oceanographic Service",
+            "url": "http://services.data.shom.fr/INSPIRE/wms/r"
+        },
+        {
+            "name": "IGN Raster",
+            "url": "http://wxs.ign.fr/luvs4p9c4yq5ewfwqcqgm83f/inspire/r/wms"
+        },
+        {
+            "name": "IGN Vector",
+            "url": "http://wxs.ign.fr/luvs4p9c4yq5ewfwqcqgm83f/inspire/v/wms"
+        },
+        {
+            "name": "BRGM/géologie",
+            "url": "http://geoservices.brgm.fr/geologie"
+        },
+        {
+            "name": "BRGM/risques",
+            "url": "http://geoservices.brgm.fr/risques"
+        },
+        {
+            "name": "IFREMER/Océanographie physique",
+            "url": "http://www.ifremer.fr/services/wms/oceanographie_physique"
+        }
+    ]
+}

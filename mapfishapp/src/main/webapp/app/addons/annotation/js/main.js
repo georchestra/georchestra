@@ -2,8 +2,6 @@ Ext.namespace("GEOR.Addons");
 
 GEOR.Addons.Annotation = Ext.extend(GEOR.Addons.Base, {
 
-    control: null,
-
     window: null,
 
     /**
@@ -88,7 +86,6 @@ GEOR.Addons.Annotation = Ext.extend(GEOR.Addons.Base, {
      */
     destroy: function() {
         this.window.hide();
-        this.control = null;
 
         GEOR.Addons.Base.prototype.destroy.call(this);
     }

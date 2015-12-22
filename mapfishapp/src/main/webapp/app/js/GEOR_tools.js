@@ -13,18 +13,17 @@
  */
 
 /*
- * @include GeoExt/widgets/Popup.js
  * @include OpenLayers/Format/JSON.js
- * @include OpenLayers/Control/Measure.js
- * @include OpenLayers/Handler/Path.js
- * @include OpenLayers/Handler/Polygon.js
- * @include OpenLayers/StyleMap.js
- * @include OpenLayers/Rule.js
  * @include GEOR_waiter.js
  * @include GEOR_config.js
  * @include GEOR_localStorage.js
  * @include GEOR_addons.js
  * @include GEOR_util.js
+ */
+
+// Note that we keep a dependency to GeoExt Popup here because several addons are using it:
+/*
+ * @include GeoExt/widgets/Popup.js
  */
 
 Ext.namespace("GEOR");
@@ -47,10 +46,10 @@ GEOR.tools = (function() {
     var map;
 
     /**
-     * Property: popup
-     * {GeoExt.Popup}
+     * Property: map
+     * {GeoExt.MapPanel} The map panel object
      */
-    var popup;
+    var mapPanel;
 
     /**
      * Property: menu
@@ -89,103 +88,6 @@ GEOR.tools = (function() {
     var previousState;
 
     /**
-     * Method: createMeasureControl.
-     * Create a measure control.
-     *
-     * Parameters:
-     * handlerType - {OpenLayers.Handler.Path} or {OpenLayers.Handler.Polygon}
-     *     The handler the measure control will use, depending whether
-     *     measuring distances or areas.
-     * map - {OpenLayers.Map}
-     *
-     * Returns:
-     * {OpenLayers.Control.Measure} The control.
-     */
-    var createMeasureControl = function(handlerType, map) {
-        var styleMap = new OpenLayers.StyleMap({
-            "default": new OpenLayers.Style(null, {
-                rules: [new OpenLayers.Rule({
-                    symbolizer: {
-                        "Point": {
-                            pointRadius: 4,
-                            graphicName: "square",
-                            fillColor: "white",
-                            fillOpacity: 1,
-                            strokeWidth: 1,
-                            strokeOpacity: 1,
-                            strokeColor: "#333333"
-                        },
-                        "Line": {
-                            strokeWidth: 3,
-                            strokeOpacity: 1,
-                            strokeColor: "#666666",
-                            strokeDashstyle: "dash"
-                        },
-                        "Polygon": {
-                            strokeWidth: 2,
-                            strokeOpacity: 1,
-                            strokeColor: "#666666",
-                            fillColor: "white",
-                            fillOpacity: 0.3
-                        }
-                    }
-                })]
-            })
-        });
-
-        var measureControl = new OpenLayers.Control.Measure(handlerType, {
-            persist: true,
-            geodesic: true,
-            handlerOptions: {
-                layerOptions: {styleMap: styleMap}
-            }
-        });
-        
-        var showPopup = function(event) {
-            popup && popup.destroy();
-            popup = new GeoExt.Popup({
-                map: map,
-                title: tr("Measure"),
-                bodyStyle: "padding:5px;",
-                unpinnable: true,
-                closeAction: 'close',
-                location: map.getCenter(),
-                tpl: new Ext.Template("{measure} {units}"),
-                listeners: {
-                    "close": function() {
-                        measureControl.deactivate();
-                        popup.destroy();
-                        popup = null;
-                    }
-                }
-            });
-            var points = event.geometry.components;
-            if (points[0] instanceof OpenLayers.Geometry.LinearRing) {
-                points = points[0].components;
-            }
-            if (event.measure > 0) {
-                popup.location = points[points.length-1].getBounds().getCenterLonLat();
-                popup.position();
-                popup.show();
-                popup.update({
-                    measure: event.order == 2 ?
-                        (event.units == tr("m") ?
-                            (event.measure/10000).toFixed(2) :
-                            (event.measure*100).toFixed(2)) :
-                        event.measure.toFixed(2),
-                    units: event.order == 2 ? tr("hectares") : event.units
-                });
-            }
-        }
-        measureControl.events.on({
-            measurepartial: showPopup,
-            measure: showPopup
-        });
-        return measureControl;
-    };
-
-
-    /**
      * Method: loadCssFiles
      * This method loads dynamically the css files passed in parameter
      *
@@ -201,7 +103,6 @@ GEOR.tools = (function() {
             document.getElementsByTagName("head")[0].appendChild(css);
         });
     };
-
 
     /**
      * Method: fetchAndLoadTools
@@ -235,6 +136,9 @@ GEOR.tools = (function() {
             if (item) {
                 menu.remove(item, true);
             }
+            Ext.each(addon.items, function(item) {
+                menu.remove(item, true);
+            });
             addon.destroy(); // will be used by the addon to remove its component
             delete addonsCache[r.id];
             r.set("_loaded", false);
@@ -244,7 +148,7 @@ GEOR.tools = (function() {
         GEOR.waiter.show(count);
         Ext.each(incoming, function(r) {
             var addonName = r.get("name"),
-                addonPath = GEOR.config.PATHNAME + "/app/addons/" +
+                addonPath = GEOR.config.PATHNAME + "/ws/addons/" +
                     addonName.toLowerCase() + "/",
                 failure = function() {
                     count -= 1;
@@ -300,7 +204,7 @@ GEOR.tools = (function() {
                                 return;
                             }
                             // init addon
-                            var addon = new GEOR.Addons[addonName](map, Ext.apply({}, 
+                            var addon = new GEOR.Addons[addonName](mapPanel, Ext.apply({}, 
                                 r.get("options") || {}, 
                                 o.default_options || {}
                             ));
@@ -323,7 +227,14 @@ GEOR.tools = (function() {
                                 // handle menuitem qtip:
                                 addon.item.on('afterrender', GEOR.util.registerTip);
                                 // here we know it should be inserted at position i from the beginning
-                                menu.insert(i + 5, addon.item);
+                                menu.insert(i + 2, addon.item);
+                            } else if (addon.items) {
+                                // the addon publishes an array of menu items
+                                popmsg = true;
+                                Ext.each(addon.items, function(item) {
+                                    item.on('afterrender', GEOR.util.registerTip);
+                                    menu.insert(i + 2, item);
+                                });
                             } else {
                                 // if there is no addon.item, it means the addon takes care of 
                                 // inserting his own component into the viewport
@@ -425,7 +336,7 @@ GEOR.tools = (function() {
                     return v[key].hasOwnProperty(lang) ? v[key][lang] : v[key]["en"];
                 },
                 thumb: function(v) {
-                    var base = GEOR.config.PATHNAME+"/app/addons/"+v.name.toLowerCase()+"/";
+                    var base = GEOR.config.PATHNAME+"/ws/addons/"+v.name.toLowerCase()+"/";
                     return base + ((v.thumbnail) ? v.thumbnail : "img/thumbnail.png");
                 }
             }),
@@ -528,12 +439,13 @@ GEOR.tools = (function() {
          * Initialize this module
          *
          * Parameters:
-         * layerStore - {GeoExt.data.LayerStore} The application's layer store.
+         * mp - {GeoExt.MapPanel} The application's map panel.
          *
          */
-        init: function(layerStore) {
+        init: function(mp) {
             tr = OpenLayers.i18n;
-            map = layerStore.map;
+            mapPanel = mp;
+            map = mp.map;
             // filter out restricted addons:
             var allowedAddons = [];
             Ext.each(GEOR.config.ADDONS, function(addon) {
@@ -571,37 +483,20 @@ GEOR.tools = (function() {
          * Returns:
          * {Ext.Button} the toolbar button holding the menu
          */
-        create: function(layerStore) {
+        create: function() {
             menu = new Ext.menu.Menu({
                 defaultAlign: "tr-br",
                 items: [
                     {
-                        text: tr("Manage tools"),
+                        text: OpenLayers.i18n("Manage tools"),
                         hideOnClick: false,
                         iconCls: "add",
                         handler: showToolSelection
-                    }, '-',
-                    new Ext.menu.CheckItem(
-                        new GeoExt.Action({
-                            text: tr("distance measure"),
-                            control: createMeasureControl(OpenLayers.Handler.Path, map),
-                            map: map,
-                            group: "_measure",
-                            iconCls: "measure_path"
-                        })
-                    ), new Ext.menu.CheckItem(
-                        new GeoExt.Action({
-                            text: tr("area measure"),
-                            control: createMeasureControl(OpenLayers.Handler.Polygon, map),
-                            map: map,
-                            group: "_measure",
-                            iconCls: "measure_area"
-                        })
-                    ), '-'
+                    }, '-'
                 ]
             });
             return new Ext.Button({
-                text: tr("Tools"),
+                text: OpenLayers.i18n("Tools"),
                 menu: menu
             });
         },
@@ -612,6 +507,13 @@ GEOR.tools = (function() {
          *
          */
         restore: function() {
+            var o = GEOR.util.splitURL(window.location.href);
+            if (o.params.hasOwnProperty("ADDONS")) {
+                fetchAndLoadTools(store.queryBy(function(r) {
+                    return (o.params.ADDONS.indexOf(r.id) > -1);
+                }), true);
+                return;
+            }
             if (!GEOR.ls.available) {
                 return;
             }

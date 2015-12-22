@@ -17,6 +17,7 @@ We currently have the following addons available:
  * [quicksearch](quicksearch/README.md) is an all-in-one search tool.
  * [streetview](streetview/README.md) ... obviously based on the Google Street View Image API.
  * [osm2geor](osm2geor/README.md) display vector data from OSM (got from the Overpass API) into a vector layer.
+ * [measure](measure/README.md) to perform simple distance and area measurements (that cannot be printed).
  * [locateme](locateme/README.md) allows users to track their location on the map.
  * [fullscreen](fullscreen/README.md) to (obviously) make the map fullscreen.
 
@@ -35,16 +36,43 @@ There are other places where one can find contributed addons:
 Deploying addons
 =================
 
-Deploying addons is just a matter of inserting a few lines of code in your configuration files.
-An example is provided in the template configuration, here: [georchestra/template/mapfishapp/app/js/GEOR_custom.js](https://github.com/georchestra/template/blob/master/mapfishapp/app/js/GEOR_custom.js#L47).
+## Without georchestra.datadir
 
-Each addon comes with a ```manifest.json``` file which:
+Deploying addons is just a matter of inserting a few lines of code in your configuration files.
+
+Each addon comes with two files: ```manifest.json``` and ```config.json```.
+
+```manifest.json``` addresses the following needs:
  * describes the files to load,
  * lists the addon options (see for instance the ```default_options``` [key](extractor/manifest.json#L8) in the extractor addon) and their most common values,
  * ships the translated strings.
 
 The ```default_options``` from the manifest are overriden by the addon-config-specific ```options``` set in your own GEOR_custom.js file.
 Again, an example is worth a hundred words, please refer to the typical [extractor addon config](extractor/README.md).
+
+```config.json``` contains the following informations:
+
+ * the unique identifier for the addon (an id)
+ * the addon name,
+ * a boolean indicating whether the addon is activated or not (i.e. available as the addon selection tool in the interface),
+ * some extra infos (title, description) translated in several languages
+
+Typically, the config.json block was previously contained in the GEOR_custom.js file, and is now dynamically sourced from a controller server-side.
+
+## Using georchestra.datadir
+
+If you are using the georchestra.datadir environment variable, the previous
+behaviour applies, but if other addons are available in the
+"georchestra datadir", they override the default ones provided by the webapp.
+
+Loading addons
+==============
+
+The platform administrator decides which addons will be available to the end users.  
+Users may choose the ones they want among these addons, through the dedicated UI.
+
+Note that it is also possible to force the viewer to use a given list of addons, eg with:
+http://my.sdi.org/mapfishapp/?addons=magnifier_0,annotation_0 (in which magnifier_0 and annotation_0 are the addon ids)
 
 
 Addon placement
