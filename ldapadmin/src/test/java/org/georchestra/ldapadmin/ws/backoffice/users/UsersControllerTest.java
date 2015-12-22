@@ -407,7 +407,7 @@ public class UsersControllerTest {
                 + "(objectClass=person)(mail=tomcat2@localhost))";
         Mockito.doReturn(fakedAccount).when(ldapTemplate).lookup((Name) Mockito.any(), eq(UserSchema.ATTR_TO_RETRIEVE), (ContextMapper) Mockito.any());
         Mockito.doThrow(DataServiceException.class).when(ldapTemplate).search(eq(DistinguishedName.EMPTY_PATH),
-                eq(mFilter), (ContextMapper) Mockito.any());
+                eq(mFilter),(SearchControls) Mockito.any(), (ContextMapper) Mockito.any());
         
         
 
@@ -415,7 +415,7 @@ public class UsersControllerTest {
             usersCtrl.update(request, response);
         } catch (Throwable e) {
             assertTrue(e instanceof IOException);
-            assertTrue(response.getStatus() ==  HttpServletResponse.SC_NOT_FOUND);
+            assertTrue(response.getStatus() ==  HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
