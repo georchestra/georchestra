@@ -264,7 +264,8 @@ Then edit the following files in `/etc/georchestra/geonetwork/config`:
 - `config-overrides-georchestra.xml`
 - `config-security-georchestra.xml`
 
-And replace every occurence of `${georchestra.datadir}` or `${env:georchestra.datadir}` by `/etc/georchestra/geonetwork`.
+
+And replace every occurence of `${georchestra.datadir}` or `${env:georchestra.datadir}` by `/etc/georchestra`, unless you are already use to the datadir-enabled configuration for georchestra, see https://github.com/georchestra/config#georchestra-default-datadir for more info.
 
 Then ensure your tomcat has the following environment variable set:
 
