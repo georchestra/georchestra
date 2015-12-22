@@ -91,7 +91,7 @@
   <bean class="org.georchestra.ldapadmin.ws.backoffice.users.UserRule">
     <property name="listOfprotectedUsers">
       <description>Comma separated list of one or more user identifiers (uid) of protected user</description>
-        <!-- Users are defined as a comma separated list of uid and can be override in data dir with "protectedUserList" key-->
+        <!-- Users are defined as a comma separated list of uid and can be overridden in data dir with "protectedUserList" key-->
       <value>${protectedUserList:geoserver_privileged_user}</value>
     </property>
   </bean>

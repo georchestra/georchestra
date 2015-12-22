@@ -136,16 +136,39 @@ public class StatisticsController {
 	/** Granularity used for the returned date type in combined requests statistics */
 	public static enum GRANULARITY { HOUR, DAY, WEEK, MONTH }
 
-	/**
-	 * Testing onto users:
+	/*
+	 * Test examples :
 	 *
-	 *  curl -XPOST --data-binary '{"user": "testadmin", "startDate": "2015-01-01", "endDate": "2015-12-01" }' \
+	 *  combinedRequests with user:
+	 *	 curl -XPOST --data-binary '{"user": "testadmin", "startDate": "2015-01-01", "endDate": "2015-12-01" }' \
 	   -H'Content-Type: application/json'   http://localhost:8280/analytics/ws/combinedRequests -i
 	 *
-	 * Testing onto groups:
-	 *
-	   curl -XPOST --data-binary '{"group": "ADMINISTRATOR", "startDate": "2015-10-01", "endDate": "2015-11-01" }' \
+	 *  combinedRequests with group:
+	 *   curl -XPOST --data-binary '{"group": "ADMINISTRATOR", "startDate": "2015-10-01", "endDate": "2015-11-01" }' \
            -H'Content-Type: application/json'   http://localhost:8280/analytics/ws/combinedRequests -i
+	 *
+	 *  layersUsage with user:
+	 *    curl -XPOST --data-binary '{"user": "testadmin", "limit": 10, "startDate": "2015-01-01", "endDate": "2015-12-01" }' \
+           -H'Content-Type: application/json'   http://localhost:8280/analytics/ws/layersUsage -i
+	 *
+	 *  layersUsage with group:
+	 *    curl -XPOST --data-binary '{"group": "ADMINISTRATOR", "startDate": "2015-01-01", "endDate": "2015-12-01" }' \
+           -H'Content-Type: application/json'   http://localhost:8280/analytics/ws/layersUsage -i
+	 *
+	 *  layersUsage without filter:
+	 *    curl -XPOST --data-binary '{"limit": 10, "startDate": "2015-01-01", "endDate": "2015-12-01" }' \
+           -H'Content-Type: application/json'   http://localhost:8280/analytics/ws/layersUsage -i
+	 *
+	 *  distinctUsers :
+	 *    curl -XPOST --data-binary '{"group": "ADMINISTRATOR", "startDate": "2015-01-01", "endDate": "2015-12-01" }' \
+	   -H'Content-Type: application/json'   http://localhost:8280/analytics/ws/distinctUsers -i
+	 */
+
+
+
+	/**
+	 * Total combined requests count group by time interval (hour, day, week or month). May be filtered by a user or a
+	 * group.
 	 *
 	 * @param payload the JSON object containing the input parameters
 	 * @param response the HttpServletResponse object.
@@ -248,17 +271,8 @@ public class StatisticsController {
 	}
 
 	/**
-	 * Gets statistics for layers consumption.
+	 * Gets statistics for layers consumption. May be filtered by a user or a group.
 	 *
-	 * Test by group:
-	   curl -XPOST --data-binary '{"group": "ADMINISTRATOR", "startDate": "2015-01-01", "endDate": "2015-12-01" }' \
-           -H'Content-Type: application/json'   http://localhost:8280/analytics/ws/layersUsage -i
-           
-	   curl -XPOST --data-binary '{"user": "testadmin", "limit": 10, "startDate": "2015-01-01", "endDate": "2015-12-01" }' \
-           -H'Content-Type: application/json'   http://localhost:8280/analytics/ws/layersUsage -i
-           
-  	   curl -XPOST --data-binary '{"limit": 10, "startDate": "2015-01-01", "endDate": "2015-12-01" }' \
-           -H'Content-Type: application/json'   http://localhost:8280/analytics/ws/layersUsage -i
 	 * @param payload the JSON object containing the input parameters
 	 * @param response the HttpServletResponse object.
 	 * @return a JSON string containing the requested aggregated statistics.
@@ -325,9 +339,6 @@ public class StatisticsController {
 	 * 
 	 * @param payload the JSON object containing the parameters
 	 * @param response the HTTP Servlet Response object, used to set the 40x HTTP code in case of errors.
-	 *
-	 * curl -XPOST --data-binary '{"group": "ADMINISTRATOR", "startDate": "2015-01-01", "endDate": "2015-12-01" }' \
-	   -H'Content-Type: application/json'   http://localhost:8280/analytics/ws/distinctUsers -i
 	 *
 	 * @return A string representing a JSON object with the requested datas.
 	 * @throws JSONException

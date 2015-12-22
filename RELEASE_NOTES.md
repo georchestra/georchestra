@@ -28,7 +28,7 @@ Version 15.12
    * drop your groups organizationalUnit (```ou```)
    * import the updated groups.ldif file.
 
- * There is several change about structure of log in database for ogc statistic part. If your 
+ * There are several changes about structure of log in database for ogc statistic part. If you 
    are upgrading from previous version of georchestra with ogc statistics, you should run 
    following upgrade procedure : 
    * Open ```ogc-server-statistics/populate_stats_roles.py``` script in your favorite editor and change value of following variables according to your configuration :
