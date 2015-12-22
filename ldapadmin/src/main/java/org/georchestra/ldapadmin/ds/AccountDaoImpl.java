@@ -105,7 +105,7 @@ public final class AccountDaoImpl implements AccountDao {
 
             throw new DuplicatedUidException("there is a user with this user identifier (uid): " + account.getUid());
 
-        } catch (NotFoundException e1) {
+        } catch (NameNotFoundException e1) {
             // if no account with the given UID can be found, then the new
             // account can be added.
             LOG.debug("User with uid " + uid + " not found, account can be created");
@@ -306,11 +306,11 @@ public final class AccountDaoImpl implements AccountDao {
      * @see {@link AccountDao#findByUID(String)}
      */
     @Override
-    public Account findByUID(final String uid) throws DataServiceException, NotFoundException {
+    public Account findByUID(final String uid) throws NameNotFoundException {
 
         Account a = (Account) ldapTemplate.lookup(buildDn(uid.toLowerCase()), UserSchema.ATTR_TO_RETRIEVE, new AccountContextMapper());
         if(a == null)
-            throw new NotFoundException("Cannot find user with uid : " + uid + " in LDAP server");
+            throw new NameNotFoundException("Cannot find user with uid : " + uid + " in LDAP server");
         else
             return a;
 
