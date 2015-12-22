@@ -555,10 +555,10 @@
             <version>0.3.8</version>
             <configuration>
               <imageName>${project.artifactId}</imageName>
-              <baseImage>tomcat</baseImage>
+              <baseImage>jetty:latest</baseImage>
               <resources>
                 <resource>
-                  <targetPath>/usr/local/tomcat/webapps</targetPath>
+                  <targetPath>/var/lib/jetty/webapps</targetPath>
                   <directory>${project.build.directory}</directory>
                   <include>${project.artifactId}.war</include>
                 </resource>
