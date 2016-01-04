@@ -45,6 +45,19 @@ public class AtlasMFPJob {
         this.updated = new Date();
     }
 
+
+    @Override
+    public String toString() {
+        return "AtlasMFPJob{" +
+                "id=" + id +
+                ", query='" + query + '\'' +
+                ", filename='" + filename + '\'' +
+                ", pageIndex=" + pageIndex +
+                ", created=" + created +
+                ", updated=" + updated +
+                '}';
+    }
+
     public Long getId() {
         return id;
     }

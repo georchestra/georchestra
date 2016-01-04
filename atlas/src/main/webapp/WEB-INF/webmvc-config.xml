@@ -26,14 +26,6 @@
 
   <context:component-scan base-package="org.georchestra.atlas"/>
 
-  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="locations">
-            <list>
-                <value>WEB-INF/atlas.properties</value>
-            </list>
-        </property>
-  </bean>
-
   <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" p:prefix="/WEB-INF/views/" p:suffix=".jsp" />
 
   <!--<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">-->

@@ -21,8 +21,8 @@
         then be used within application context files in the form of
         ${propertyKey}.
     -->
+    <context:property-placeholder location="classpath*:WEB-INF/*.properties"/>
 
-    <!--<context:property-placeholder location="classpath*:"/>-->
     <!--
         Turn on AspectJ @Configurable support. As a result, any time you
         instantiate an object, Spring will attempt to perform dependency
@@ -109,12 +109,12 @@
         -->
         <rest>
             <post uri="/atlas" consumes="application/json" produces="application/json" enableCORS="true">
-                <to uri="direct:atlas"/>
+                <to uri="direct:split_save"/>
             </post>
         </rest>
 
-        <route id="atlas">
-            <from uri="direct:atlas"/>
+        <route id="split_save">
+            <from uri="direct:split_save"/>
 
             <!-- Backup original Json-->
             <setProperty propertyName="rawJson">
@@ -185,6 +185,16 @@
             </split>
 
         </route>
+
+        <route id="start_generation">
+            <from uri="jpa:org.georchestra.atlas.AtlasMFPJob?persistenceUnit=myPU&amp;consumeLockEntity=false&amp;consumer.delay=2000&amp;maxMessagesPerPoll=1&amp;consumer.query=from org.georchestra.atlas.AtlasMFPJob order by id"/>
+
+
+            
+            <log message="${body}" loggingLevel="ERROR"/>
+
+        </route>
+
 
     </camelContext>
 
