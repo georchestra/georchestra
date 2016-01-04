@@ -64,11 +64,7 @@ import org.georchestra.ogcservstatistics.log4j.OGCServiceMessageFormatter;
 import org.georchestra.security.healthcenter.DatabaseHealthCenter;
 import org.georchestra.security.permissions.Permissions;
 import org.georchestra.security.permissions.UriMatcher;
-import org.jasig.cas.client.validation.Cas20ServiceTicketValidator;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.oxm.xstream.XStreamMarshaller;
 import org.springframework.security.cas.ServiceProperties;
 import org.springframework.security.core.Authentication;
@@ -328,8 +324,13 @@ public class Proxy {
         return false;
     }
 
-    private boolean isSameServer(HttpServletRequest request, URL url) throws UnknownHostException {
-        return InetAddress.getByName(request.getServerName()).equals(InetAddress.getByName(url.getHost()));
+    private boolean isSameServer(HttpServletRequest request, URL url) {
+        try {
+            return InetAddress.getByName(request.getServerName()).equals(InetAddress.getByName(url.getHost()));
+        } catch (UnknownHostException e) {
+            logger.error("Unknown host: " + request.getServerName());
+            return false;
+        }
     }
 
     private boolean samePathPrefix(String[] requestSegments, String target) throws MalformedURLException {
@@ -949,9 +950,9 @@ public class Proxy {
              * the encoding within the file. It is made possible because this
              * proxy mainly forwards xml files. They all have the encoding
              * attribute in the first xml node.
-             * 
+             *
              * This is implemented as follows:
-             * 
+             *
              * A. The content type provides a charset: Nothing special, just
              * send back the stream to the client B. There is no charset
              * provided: The encoding has to be extracted from the file. The
@@ -959,7 +960,7 @@ public class Proxy {
              * that the encoding located in the first not can be retrieved. Once
              * the charset is found, the content-type header is overridden and
              * the charset is appended.
-             * 
+             *
              * /!\ Special case: whenever data are compressed in gzip/deflate
              * the stream has to be uncompressed and re-compressed
              */
@@ -1112,7 +1113,7 @@ public class Proxy {
     /**
      * Extract the encoding from a string which is the header node of an xml
      * file
-     * 
+     *
      * @param header
      *            String that should contain the encoding attribute and its
      *            value
@@ -1141,7 +1142,7 @@ public class Proxy {
     /**
      * Gets the encoding of the content sent by the remote host: extracts the
      * content-encoding header
-     * 
+     *
      * @param headers
      *            headers of the HttpURLConnection
      * @return null if not exists otherwise name of the encoding (gzip,
@@ -1170,7 +1171,7 @@ public class Proxy {
 
     /**
      * Check if the content type is accepted by the proxy
-     * 
+     *
      * @param contentType
      * @return true: valid; false: not valid
      */
