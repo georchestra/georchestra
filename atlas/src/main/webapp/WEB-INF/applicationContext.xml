@@ -67,6 +67,29 @@
 
     <bean id="populateProperties" class="org.georchestra.atlas.CamelPopulatePropertiesComponent"/>
 
+    <bean id="jpa" class="org.apache.camel.component.jpa.JpaComponent">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+        <property name="transactionManager" ref="jpaTxManager"/>
+    </bean>
+
+    <bean id="jpaTxManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean>
+
+
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
+        <property name="persistenceUnitName" value="myPU"/>
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL94Dialect</prop>
+                <prop key="hibernate.show_sql">false</prop>
+                <prop key="hibernate.format_sql">false</prop>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+            </props>
+        </property>
+
+    </bean>
+
     <!-- A context component that has some utility components to handle typical tasks -->
     <camelContext id="mapfish" xmlns="http://camel.apache.org/schema/spring"
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -157,7 +180,7 @@
                 <to uri="file:///tmp/log?autoCreate=true"/>
 
                 <!-- store in DB queue -->
-                <!--<to uri="jpa:org.georchestra.atlas.AtlasMFPJob?persistenceUnit=myPU"/>-->
+                <to uri="jpa:org.georchestra.atlas.AtlasMFPJob?persistenceUnit=myPU"/>
 
             </split>
 

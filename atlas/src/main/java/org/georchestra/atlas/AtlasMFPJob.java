@@ -15,6 +15,7 @@ public class AtlasMFPJob {
     /*
      *   Json encoded query to mapfish print
      */
+    @Column(columnDefinition="text")
     private String query;
 
     private String filename;
@@ -23,6 +24,8 @@ public class AtlasMFPJob {
 
     private Date created;
     private Date updated;
+
+    public AtlasMFPJob(){}
 
     public AtlasMFPJob(String query, String filename, Short pageIndex) {
         this.query = query;

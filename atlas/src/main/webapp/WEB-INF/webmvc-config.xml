@@ -36,44 +36,31 @@
 
   <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" p:prefix="/WEB-INF/views/" p:suffix=".jsp" />
 
-  <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
-      <property name="url" value="${psql.url}"/>
-      <property name="username" value="${psql.user}"/>
-      <property name="password" value="${psql.pass}"/>
-      <property name="driverClassName" value="org.postgresql.Driver"/>
-      <property name="testOnBorrow" value="true"/>
-      <property name="poolPreparedStatements" value="true"/>
-      <property name="maxOpenPreparedStatements" value="-1"/>
-      <property name="defaultReadOnly" value="false"/>
-      <property name="defaultAutoCommit" value="true"/>
-  </bean>
+  <!--<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">-->
+      <!--<property name="url" value="${psql.url}"/>-->
+      <!--<property name="username" value="${psql.user}"/>-->
+      <!--<property name="password" value="${psql.pass}"/>-->
+      <!--<property name="driverClassName" value="org.postgresql.Driver"/>-->
+      <!--<property name="testOnBorrow" value="true"/>-->
+      <!--<property name="poolPreparedStatements" value="true"/>-->
+      <!--<property name="maxOpenPreparedStatements" value="-1"/>-->
+      <!--<property name="defaultReadOnly" value="false"/>-->
+      <!--<property name="defaultAutoCommit" value="true"/>-->
+  <!--</bean>-->
 
-  <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-      <property name="dataSource" ref="dataSource" />
-      <property name="persistenceUnitName" value="myPU" />
-      <property name="persistenceXmlLocation" value="classpath:persistence.xml"/>
-      <property name="jpaVendorAdapter">
-          <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
-      </property>
-      <property name="jpaProperties">
-          <props>
-              <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL94Dialect</prop>
-              <prop key="hibernate.show_sql">false</prop>
-              <prop key="hibernate.format_sql">false</prop>
-              <prop key="hibernate.hbm2ddl.auto">update</prop>
-          </props>
-      </property>
-  </bean>
+  <!--<bean id="dialect" class="org.springframework.orm.jpa.vendor.HibernateJpaDialect"/>-->
 
-  <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-      <property name="entityManagerFactory" ref="entityManagerFactory" />
-  </bean>
+  <!--<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">-->
+      <!--<property name="jpaDialect" ref="dialect"/>-->
+  <!--</bean>-->
 
-  <bean id="jpa" class="org.apache.camel.component.jpa.JpaComponent">
-      <property name="entityManagerFactory" ref="entityManagerFactory"/>
-      <property name="transactionManager" ref="transactionManager"/>
-      <property name="sharedEntityManager" value="true" />
-  </bean>
+    <!--<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">-->
+      <!--<property name="entityManagerFactory" ref="entityManagerFactory" />-->
+  <!--</bean>-->
+
+  <!--<bean id="jpa" class="org.apache.camel.component.jpa.JpaComponent">-->
+      <!--<property name="entityManagerFactory" ref="entityManagerFactory" />-->
+  <!--</bean>-->
 
     <!-- This bean resolves specific types of exceptions to corresponding logical
         - view names for error views. The default behaviour of DispatcherServlet
