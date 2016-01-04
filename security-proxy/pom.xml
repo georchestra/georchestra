@@ -388,12 +388,17 @@
             <version>0.3.8</version>
             <configuration>
               <imageName>${project.artifactId}</imageName>
-              <baseImage>jetty:latest</baseImage>
+              <dockerDirectory>${project.basedir}/src/docker</dockerDirectory>
               <resources>
                 <resource>
                   <targetPath>/var/lib/jetty/webapps</targetPath>
                   <directory>${project.build.directory}</directory>
                   <include>ROOT.war</include>
+                </resource>
+                <!-- default /etc/georchestra - can be overriden ? -->
+                <resource>
+                  <targetPath>/</targetPath>
+                  <directory>${project.basedir}/src/deb/resources</directory>
                 </resource>
               </resources>
             </configuration>
