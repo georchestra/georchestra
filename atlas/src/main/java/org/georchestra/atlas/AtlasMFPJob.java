@@ -2,6 +2,7 @@ package org.georchestra.atlas;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.UUID;
 
 @Entity
 @Table(schema = "atlas", name = "atlas_jobs")
@@ -12,6 +13,7 @@ public class AtlasMFPJob {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "atlas_jobs_seq")
     private Long id;
 
+    private UUID uuid;
     /*
      *   Json encoded query to mapfish print
      */
@@ -27,7 +29,8 @@ public class AtlasMFPJob {
 
     public AtlasMFPJob(){}
 
-    public AtlasMFPJob(String query, String filename, Short pageIndex) {
+    public AtlasMFPJob(UUID uuid, String query, String filename, Short pageIndex) {
+        this.uuid = uuid;
         this.query = query;
         this.filename = filename;
         this.pageIndex = pageIndex;
@@ -64,6 +67,14 @@ public class AtlasMFPJob {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
     }
 
     public String getQuery() {

@@ -144,6 +144,10 @@
                 <simple>${body[projection]}</simple>
             </setProperty>
 
+            <setProperty propertyName="uuid">
+                <groovy>java.util.UUID.randomUUID().toString()</groovy>
+            </setProperty>
+
             <split>
                 <simple>${body[pages]}</simple>
 
@@ -189,8 +193,6 @@
         <route id="start_generation">
             <from uri="jpa:org.georchestra.atlas.AtlasMFPJob?persistenceUnit=myPU&amp;consumeLockEntity=false&amp;consumer.delay=2000&amp;maxMessagesPerPoll=1&amp;consumer.query=from org.georchestra.atlas.AtlasMFPJob order by id"/>
 
-
-            
             <log message="${body}" loggingLevel="ERROR"/>
 
         </route>

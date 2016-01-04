@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.io.*;
+import java.util.UUID;
 
 @Converter
 @SuppressWarnings("unused")
@@ -37,9 +38,10 @@ public class AtlasMFPJobConverter {
 
         JSONObject jobSpec = new JSONObject(new JSONTokener(AtlasMFPJobConverter.toString(exchange.getProperty("rawJson", InputStream.class))));
         Integer pageIndex = exchange.getProperty("CamelSplitIndex", Integer.class);
+        UUID uuid = exchange.getProperty("uuid", UUID.class);
         String filename = ((JSONObject) jobSpec.getJSONArray("pages").get(pageIndex)).getString("filename");
 
-        return new AtlasMFPJob(query, filename, pageIndex.shortValue());
+        return new AtlasMFPJob(uuid, query, filename, pageIndex.shortValue());
     }
 
     @Converter
@@ -53,6 +55,7 @@ public class AtlasMFPJobConverter {
         exchange.setProperty("filename", job.getFilename());
         exchange.setProperty("pageIndex", job.getPageIndex());
         exchange.setProperty("jobId", job.getId());
+        exchange.setProperty("uuid", job.getUuid());
 
         return new ByteArrayInputStream(job.getQuery().getBytes(charsetName));
     }
