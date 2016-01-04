@@ -4,7 +4,7 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:jee="http://www.springframework.org/schema/jee"
        xmlns:tx="http://www.springframework.org/schema/tx"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jpa="http://www.springframework.org/schema/data/jpa"
        xsi:schemaLocation="http://www.springframework.org/schema/aop
                            http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
                            http://www.springframework.org/schema/beans
@@ -13,7 +13,7 @@
                            http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.5.xsd
                            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
                            http://camel.apache.org/schema/spring
-                           http://camel.apache.org/schema/spring/camel-spring-2.16.1.xsd">
+                           http://camel.apache.org/schema/spring/camel-spring-2.16.1.xsd http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
     <!--
         This will automatically locate any and all property files you have
         within your classpath, provided they fall under the META-INF/spring
@@ -60,6 +60,9 @@
     -->
     <context:component-scan base-package="org.georchestra.atlas"/>
 
+     <!-- Directory to scan for repository classes -->
+    <jpa:repositories base-package="org.georchestra.atlas" />
+
     <!-- bean to marshall/unmashall json -->
     <bean id="gson" class="org.apache.camel.component.gson.GsonDataFormat">
         <property name="fieldNamingPolicy" value="LOWER_CASE_WITH_UNDERSCORES"/>
@@ -67,12 +70,14 @@
 
     <bean id="populateProperties" class="org.georchestra.atlas.CamelPopulatePropertiesComponent"/>
 
+    <bean id="setState" class="org.georchestra.atlas.CamelSetStateComponent"/>
+
     <bean id="jpa" class="org.apache.camel.component.jpa.JpaComponent">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
-        <property name="transactionManager" ref="jpaTxManager"/>
+        <property name="transactionManager" ref="transactionManager"/>
     </bean>
 
-    <bean id="jpaTxManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
     </bean>
 
@@ -191,7 +196,9 @@
         </route>
 
         <route id="start_generation">
-            <from uri="jpa:org.georchestra.atlas.AtlasMFPJob?persistenceUnit=myPU&amp;consumeLockEntity=false&amp;consumer.delay=2000&amp;maxMessagesPerPoll=1&amp;consumer.query=from org.georchestra.atlas.AtlasMFPJob order by id"/>
+            <from uri="jpa:org.georchestra.atlas.AtlasMFPJob?persistenceUnit=myPU&amp;consumeDelete=false&amp;consumeLockEntity=false&amp;consumer.delay=2000&amp;maxMessagesPerPoll=1&amp;consumer.query=FROM org.georchestra.atlas.AtlasMFPJob WHERE state = 'TODO' ORDER BY id"/>
+
+            <to uri="bean:setState?method=setInProgress"/>
 
             <log message="${body}" loggingLevel="ERROR"/>
 

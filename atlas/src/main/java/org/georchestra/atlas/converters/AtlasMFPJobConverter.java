@@ -38,7 +38,7 @@ public class AtlasMFPJobConverter {
 
         JSONObject jobSpec = new JSONObject(new JSONTokener(AtlasMFPJobConverter.toString(exchange.getProperty("rawJson", InputStream.class))));
         Integer pageIndex = exchange.getProperty("CamelSplitIndex", Integer.class);
-        UUID uuid = exchange.getProperty("uuid", UUID.class);
+        UUID uuid = UUID.fromString(exchange.getProperty("uuid", String.class));
         String filename = ((JSONObject) jobSpec.getJSONArray("pages").get(pageIndex)).getString("filename");
 
         return new AtlasMFPJob(uuid, query, filename, pageIndex.shortValue());

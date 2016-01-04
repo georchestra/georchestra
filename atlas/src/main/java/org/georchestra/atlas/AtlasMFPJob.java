@@ -14,6 +14,10 @@ public class AtlasMFPJob {
     private Long id;
 
     private UUID uuid;
+
+    @Enumerated(EnumType.STRING)
+    private AtlasJobState state;
+
     /*
      *   Json encoded query to mapfish print
      */
@@ -41,6 +45,7 @@ public class AtlasMFPJob {
     protected void onCreate() {
         this.created = new Date();
         this.updated = new Date();
+        this.state = AtlasJobState.TODO;
     }
 
     @PreUpdate
@@ -75,6 +80,14 @@ public class AtlasMFPJob {
 
     public void setUuid(UUID uuid) {
         this.uuid = uuid;
+    }
+
+    public AtlasJobState getState() {
+        return state;
+    }
+
+    public void setState(AtlasJobState state) {
+        this.state = state;
     }
 
     public String getQuery() {
