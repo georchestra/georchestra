@@ -29,6 +29,12 @@ public class CamelPopulatePropertiesComponent {
         return rawString.toString();
     }
 
+
+    /**
+     * Generate following key in exchange properties :
+     *  * layers : List of all layers in print request (feature layer and base layers)
+     *  * legendURL : URL to download legend
+     */
     @Handler
     public void merge(Exchange ex) throws JSONException, IOException {
 

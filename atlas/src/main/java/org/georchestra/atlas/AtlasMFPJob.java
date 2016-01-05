@@ -12,7 +12,7 @@ public class AtlasMFPJob {
     @SequenceGenerator(name="atlas_jobs_seq", schema = "atlas", sequenceName="atlas_jobs_seq", initialValue=1, allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "atlas_jobs_seq")
     private Long id;
-
+    private Long printId;
     private UUID uuid;
 
     @Enumerated(EnumType.STRING)
@@ -53,11 +53,13 @@ public class AtlasMFPJob {
         this.updated = new Date();
     }
 
-
     @Override
     public String toString() {
         return "AtlasMFPJob{" +
                 "id=" + id +
+                ", printId=" + printId +
+                ", uuid=" + uuid +
+                ", state=" + state +
                 ", query='" + query + '\'' +
                 ", filename='" + filename + '\'' +
                 ", pageIndex=" + pageIndex +
@@ -72,6 +74,14 @@ public class AtlasMFPJob {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getPrintId() {
+        return printId;
+    }
+
+    public void setPrintId(Long printId) {
+        this.printId = printId;
     }
 
     public UUID getUuid() {
