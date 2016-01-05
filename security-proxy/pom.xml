@@ -395,12 +395,7 @@
                   <directory>${project.build.directory}</directory>
                   <include>ROOT.war</include>
                 </resource>
-                <!-- default /etc/georchestra - can be overriden ? -->
-                <resource>
-                  <targetPath>/</targetPath>
-                  <directory>${project.basedir}/src/deb/resources</directory>
-                </resource>
-              </resources>
+             </resources>
             </configuration>
             <dependencies>
               <dependency>

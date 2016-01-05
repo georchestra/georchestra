@@ -269,7 +269,7 @@
             <version>0.3.8</version>
             <configuration>
               <imageName>${project.artifactId}</imageName>
-              <baseImage>jetty:latest</baseImage>
+              <dockerDirectory>${project.basedir}/src/docker</dockerDirectory>
               <resources>
                 <resource>
                   <targetPath>/var/lib/jetty/webapps</targetPath>
