@@ -133,6 +133,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
+        <version>2.6</version>
         <configuration>
           <warName>catalogapp</warName>
         </configuration>
@@ -239,7 +240,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-war-plugin</artifactId>
-            <version>2.1.1</version>
+            <version>2.6</version>
             <configuration>
               <classifier>generic</classifier>
               <packagingExcludes>**/docs/**,**/openlayers/examples/**,**/openlayers/tests/**,**/ext/examples/**</packagingExcludes>
@@ -312,7 +313,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-war-plugin</artifactId>
-            <version>2.1.1</version>
+            <version>2.6</version>
             <configuration>
               <classifier>generic</classifier>
               <packagingExcludes>**/docs/**,**/openlayers/examples/**,**/openlayers/tests/**</packagingExcludes>
