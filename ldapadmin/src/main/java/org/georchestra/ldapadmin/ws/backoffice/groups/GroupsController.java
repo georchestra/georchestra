@@ -55,7 +55,7 @@ public class GroupsController {
 
 	private static final String USER_NOT_FOUND = "user_not_found";
 
-	private static final String VIRTUAL_TEMPORARY_GROUP_NAME = "TEMPORARY_USER";
+	public static final String VIRTUAL_TEMPORARY_GROUP_NAME = "TEMPORARY-USER";
 	private static final String VIRTUAL_TEMPORARY_GROUP_DESCRIPTION = "Virtual group that contains all temporary users";
 
 
