@@ -50,43 +50,6 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
             tpl: this.getTemplate(),
             listeners: {
                 "selectionchange": this.onSelectionchange,
-                /*,
-                // problem with this approach is that HTTP errors are not silent ...
-                
-                "mouseenter": function(dv, idx, node, e) {
-                    GEOR.ajaxglobal.disableAllErrors = true; // FIXME: awful hack
-                    // idea: preload xml metadata (if any), parse it and enrich record with MD fields ? (cf caching)
-                    // get WMS layer record
-                    var record = dv.getRecord(node);
-                    if (record.get("metadata").type !== "MD_Metadata") {
-                        // get iso metadata url
-                        // prefered url is the one pointing to the XML document:
-                        var url = GEOR.util.getBestMetadataURL(record,
-                            /^text\/xml|application\/xml$/, true);
-                        console.log(url);
-                        if (!url) {
-                            return;
-                        }
-                        // fetch document
-                        OpenLayers.Request.GET({
-                            // TODO: silently fail
-                            url: url,
-                            success: function(response) {
-                                GEOR.ajaxglobal.disableAllErrors = false;
-                                var f = new OpenLayers.Format.CSWGetRecords();
-                                // TODO: try / catch :
-                                var o = f.read(response.responseXML || response.responseText);
-                                console.log(o); // TODO: do not forget to commit fix in CSW 2.0.2 getrecords parser obj.records = obj.records || [];
-                                if (o && o.records && o.records[0]) {
-                                    record.set("metadata", o.records[0]);
-                                }
-                            },
-                            failure: function() {
-                                GEOR.ajaxglobal.disableAllErrors = false;
-                            }
-                        });
-                    }
-                },*/
                 scope: this
             }
         });

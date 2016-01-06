@@ -269,7 +269,6 @@ GEOR.map = (function() {
             // Saving the first occurence whose format matches text/html
             // see https://github.com/georchestra/georchestra/issues/454
             r.getLayer().metadataURL = GEOR.util.getBestMetadataURL(r);
-            //GEOR.util.setMetadataURL(r.getLayer(), r.get("metadataURLs"));
 
             // we discard WMS layers without a valid URL (see https://github.com/georchestra/georchestra/issues/759)
             if (!(layer.CLASS_NAME === "OpenLayers.Layer.WMS" && !layer.url)) {

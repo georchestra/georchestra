@@ -339,7 +339,6 @@ GEOR.util = (function() {
                             msg: GEOR.util.makeMD(o.records[0])
                         });
                     } else {
-                        // TODO: factorize
                         GEOR.util.errorDialog({
                             title: "Error",
                             msg: "Could not parse metadata."
@@ -356,8 +355,18 @@ GEOR.util = (function() {
             return false;
         },
 
+        /**
+         * APIMethod: getMDtitle
+         * Given a MD object, returns its title
+         *
+         * Parameters:
+         * metadata - {Object}
+         *
+         * Returns:
+         * {String} metadata title
+         */
         getMDtitle: function(metadata) {
-            var o = OpenLayers.i18n('not filled');
+            var o = '';
             try {
                 o = metadata.identificationInfo[0].citation.title.characterString;
             } catch (e) {}
@@ -429,33 +438,6 @@ GEOR.util = (function() {
             };
             return new Ext.XTemplate(tpl, ctx).apply(metadata);
         },
-
-        /**
-         * APIMethod: setMetadataURL
-         * Given a layer, and a bunch of metadataURLs, sets the best metadata url
-         *
-         * Parameters:
-         * layer - {OpenLayers.Layer}
-         * metadataURLs - {Array}
-         *
-         * Returns:
-         * {String} the "best" metadataURL for WMC storage
-         */
-        //~ setMetadataURL: function(layer, metadataURLs) {
-            //~ if (metadataURLs && metadataURLs.length > 0) {
-                //~ var murl = metadataURLs[0];
-                //~ // default to first entry
-                //~ layer.metadataURL = (murl.href) ? murl.href : murl;
-                //~ Ext.each(metadataURLs, function(murl) {
-                    //~ // prefer text/html format if found
-                    //~ if (murl.format && murl.format == 'text/html') {
-                        //~ layer.metadataURL = (murl.href) ? murl.href : murl;
-                        //~ return false; // stop looping
-                    //~ }
-                //~ });
-            //~ }
-            //~ return layer.metadataURL;
-        //~ },
 
         /**
          * APIMethod: confirmDialog
