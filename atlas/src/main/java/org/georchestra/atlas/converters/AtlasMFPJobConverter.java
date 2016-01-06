@@ -2,6 +2,7 @@ package org.georchestra.atlas.converters;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
+import org.georchestra.atlas.AtlasJobState;
 import org.georchestra.atlas.AtlasMFPJob;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,12 +37,26 @@ public class AtlasMFPJobConverter {
     @Converter
     public AtlasMFPJob toAtlasMFPJob(String query, Exchange exchange) throws IOException, JSONException {
 
-        JSONObject jobSpec = new JSONObject(new JSONTokener(AtlasMFPJobConverter.toString(exchange.getProperty("rawJson", InputStream.class))));
-        Integer pageIndex = exchange.getProperty("CamelSplitIndex", Integer.class);
-        UUID uuid = UUID.fromString(exchange.getProperty("uuid", String.class));
-        String filename = ((JSONObject) jobSpec.getJSONArray("pages").get(pageIndex)).getString("filename");
+        if(exchange.getProperties().containsKey("rawJson")) {
+            JSONObject jobSpec = new JSONObject(new JSONTokener(AtlasMFPJobConverter.toString(exchange.getProperty("rawJson", InputStream.class))));
+            Integer pageIndex = exchange.getProperty("CamelSplitIndex", Integer.class);
+            UUID uuid = UUID.fromString(exchange.getProperty("uuid", String.class));
+            String filename = ((JSONObject) jobSpec.getJSONArray("pages").get(pageIndex)).getString("filename");
 
-        return new AtlasMFPJob(uuid, query, filename, pageIndex.shortValue());
+            return new AtlasMFPJob(uuid, query, filename, pageIndex.shortValue());
+        } else {
+            Short pageIndex = exchange.getProperty("pageIndex", Short.class);
+            String filename = exchange.getProperty("filename", String.class);
+            Long jobId = exchange.getProperty("jobId", Long.class);
+            UUID uuid = UUID.fromString(exchange.getProperty("uuid", String.class));
+            String state = exchange.getProperty("state", String.class);
+            AtlasMFPJob res =  new AtlasMFPJob(uuid, query, filename, pageIndex);
+            res.setId(jobId);
+            res.setState(exchange.getProperty("state", AtlasJobState.class));
+
+            return res;
+
+        }
     }
 
     @Converter
@@ -56,6 +71,7 @@ public class AtlasMFPJobConverter {
         exchange.setProperty("pageIndex", job.getPageIndex());
         exchange.setProperty("jobId", job.getId());
         exchange.setProperty("uuid", job.getUuid());
+        exchange.setProperty("state", job.getState());
 
         return new ByteArrayInputStream(job.getQuery().getBytes(charsetName));
     }

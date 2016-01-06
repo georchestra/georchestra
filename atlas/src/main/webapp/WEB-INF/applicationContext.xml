@@ -149,35 +149,59 @@
                 <simple>${body[projection]}</simple>
             </setProperty>
 
+            <!-- Generate unique identifier for atlas job -->
             <setProperty propertyName="uuid">
                 <groovy>java.util.UUID.randomUUID().toString()</groovy>
             </setProperty>
 
+            <!-- generate layers and legendURL property -->
+            <to uri="bean:populateProperties"/>
+
             <split>
                 <simple>${body[pages]}</simple>
-
-                <!-- generate layers and legendURL property -->
-                <to uri="bean:populateProperties"/>
-
-                <transform>
-                    <simple>
-                        { "layout": "${exchangeProperty.layout}",
-                          "outputFormat": "PDF",
-                          "displayLegend": "${exchangeProperty.displayLegend}",
-                          "attributes": {
-                            "title": "${body[title]}",
-                            "subtitle": "${body[subtitle]}",
-                            "legendURL": "${exchangeProperty.legendURL}",
-                            "datasource": [{
-                              "map": {
+                <choice>
+                    <when>
+                        <simple>${exchangeProperty.displayLegend} == true</simple>
+                        <transform>
+                            <simple>
+                                { "layout": "${exchangeProperty.layout}",
+                                "outputFormat": "PDF",
+                                "attributes": {
+                                "title": "${body[title]}",
+                                "subtitle": "${body[subtitle]}",
+                                "legendURL": "${exchangeProperty.legendURL}",
+                                "datasource": [{
+                                "map": {
                                 "dpi": ${exchangeProperty.dpi},
                                 "projection": "${exchangeProperty.projection}",
                                 "center": ${body[center]},
                                 "scale": ${body[scale]},
                                 "layers": ${exchangeProperty.layers}
-                        }}]}}
-                    </simple>
-                </transform>
+                                }}]}}
+                            </simple>
+                        </transform>
+                    </when>
+                    <otherwise>
+                        <transform>
+                            <simple>
+                                { "layout": "${exchangeProperty.layout}",
+                                "outputFormat": "PDF",
+                                "attributes": {
+                                "title": "${body[title]}",
+                                "subtitle": "${body[subtitle]}",
+                                "datasource": [{
+                                "map": {
+                                "dpi": ${exchangeProperty.dpi},
+                                "projection": "${exchangeProperty.projection}",
+                                "center": ${body[center]},
+                                "scale": ${body[scale]},
+                                "layers": ${exchangeProperty.layers}
+                                }}]}}
+                            </simple>
+                        </transform>
+                    </otherwise>
+                </choice>
+
 
                 <!-- Test Json validity -->
                 <!--<marshal ref="gson"/>-->
