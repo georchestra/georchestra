@@ -198,7 +198,7 @@ angular.module('ldapadmin.controllers', [])
     };
     $scope.deleteGroup = function(group) {
 
-      if(group == VIRTUAL_TEMPORARY_GROUP_NAME) {
+      if(group == GEOR_config.virtualTemporaryGroupName) {
         alert("This group cannot be deleted because it's a virtual group !");
         return;
       }

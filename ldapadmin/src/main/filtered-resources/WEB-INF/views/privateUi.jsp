@@ -109,9 +109,9 @@ try {
     <script src="lib/angular-flash.min.js"></script>
     <script type="text/javascript">
     var GEOR_config = {
-        publicContextPath: "<%= contextPath %>"
+        publicContextPath: "<%= contextPath %>",
+        virtualTemporaryGroupName: "<%= GroupsController.VIRTUAL_TEMPORARY_GROUP_NAME %>"
     };
-    var VIRTUAL_TEMPORARY_GROUP_NAME = "<%= GroupsController.VIRTUAL_TEMPORARY_GROUP_NAME %>";
     </script>
     <script src="js/app.js"></script>
     <script src="js/services.js"></script>
