@@ -197,6 +197,12 @@ angular.module('ldapadmin.controllers', [])
       postGroups($scope, $scope.selectedUsers(), Restangular, flash);
     };
     $scope.deleteGroup = function(group) {
+
+      if(group == VIRTUAL_TEMPORARY_GROUP_NAME) {
+        alert("This group cannot be deleted because it's a virtual group !");
+        return;
+      }
+
       if (confirm('Do you really want to remove group "' + group + '"?')) {
         Restangular.one('groups', group).remove().then(function() {
           var index = findByAttr($scope.groups, 'cn', $routeParams.group);

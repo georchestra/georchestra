@@ -5,6 +5,7 @@
 <%@ page import="org.springframework.context.ApplicationContext" %>
 <%@ page import="org.springframework.web.servlet.support.RequestContextUtils" %>
 <%@ page import="org.georchestra.commons.configuration.GeorchestraConfiguration" %>
+<%@ page import="org.georchestra.ldapadmin.ws.backoffice.groups.GroupsController" %>
 
 <%
 String instanceName = "${instanceName}";
@@ -110,6 +111,7 @@ try {
     var GEOR_config = {
         publicContextPath: "<%= contextPath %>"
     };
+    var VIRTUAL_TEMPORARY_GROUP_NAME = "<%= GroupsController.VIRTUAL_TEMPORARY_GROUP_NAME %>";
     </script>
     <script src="js/app.js"></script>
     <script src="js/services.js"></script>
