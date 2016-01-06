@@ -135,6 +135,9 @@ public final class AccountDaoImpl implements AccountDao {
             DirContextAdapter context = new DirContextAdapter(dn);
             mapToContext(uniqueNumber, account, context);
 
+            // Maps the password separately
+            context.setAttributeValue(UserSchema.USER_PASSWORD_KEY, account.getPassword());
+
             this.ldapTemplate.bind(dn, context, null);
 
             this.groupDao.addUser(groupID, account.getUid());
