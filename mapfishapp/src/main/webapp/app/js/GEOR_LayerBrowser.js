@@ -50,6 +50,7 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
             tpl: this.getTemplate(),
             listeners: {
                 "selectionchange": this.onSelectionchange,
+                /*,
                 // problem with this approach is that HTTP errors are not silent ...
                 
                 "mouseenter": function(dv, idx, node, e) {
@@ -73,6 +74,7 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
                             success: function(response) {
                                 GEOR.ajaxglobal.disableAllErrors = false;
                                 var f = new OpenLayers.Format.CSWGetRecords();
+                                // TODO: try / catch :
                                 var o = f.read(response.responseXML || response.responseText);
                                 console.log(o); // TODO: do not forget to commit fix in CSW 2.0.2 getrecords parser obj.records = obj.records || [];
                                 if (o && o.records && o.records[0]) {
@@ -84,7 +86,7 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
                             }
                         });
                     }
-                },
+                },*/
                 scope: this
             }
         });
@@ -343,7 +345,9 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
                 if (xmlurl) {
                     // ici, un lien a sans href, mais pas de qtip => onclick => new Ext.Window
                     //~ return '<a ext:qtip="'+GEOR.util.makeMD(values.metadata)+'" ext:hide="user" ext:qtitle="Metadata">metadata</a>';
-                    return '<a onclick="GEOR.util.window(this);return false;" ext:data="'+GEOR.util.makeMD(values.metadata)+'" ext:qtip="Display metadata essentials">more metadata</a>';
+                    
+                    //return '<a onclick="GEOR.util.window(this);return false;" ext:data="'+GEOR.util.makeMD(values.metadata)+'" ext:qtip="Display metadata essentials">more metadata</a>';
+                    return '<a onclick="GEOR.util.mdwindow(\''+xmlurl+'\')" ext:qtip="Display metadata essentials">more metadata</a>';
                 }
 
                 var htmlurl = GEOR.util.getBestMetadataURL(values, null, true);

@@ -305,23 +305,57 @@ GEOR.util = (function() {
             return out;
         },
 
-        window: function(elt) {
-            var markup = Ext.fly(elt).getAttribute("data", "ext");
-            GEOR.util.urlDialog({
-                title: "Metadata",
-                msg: markup
+        /**
+         * APIMethod: mdwindow
+         * Given an XML MD url, fetch it and display MD essentials in a popup
+         *
+         * Parameters:
+         * xmlMetadataURL - {String}
+         *
+         * Returns:
+         * {Boolean} false
+         */
+        mdwindow: function(xmlMetadataURL) {
+            if (!xmlMetadataURL) {
+                return;
+            }
+            GEOR.waiter.show();
+            OpenLayers.Request.GET({
+                url: xmlMetadataURL,
+                success: function(response) {
+                    var f = new OpenLayers.Format.CSWGetRecords();
+                    try {
+                        var o = f.read(response.responseXML || response.responseText);
+                    } catch(e) {
+                        GEOR.util.errorDialog({
+                            title: "Error",
+                            msg: "Could not parse metadata."
+                        });
+                    }
+                    // TODO: do not forget to commit fix in CSW 2.0.2 getrecords parser obj.records = obj.records || [];
+                    if (o && o.records && o.records[0]) {
+                        GEOR.util.urlDialog({
+                            title: "Metadata",
+                            msg: GEOR.util.makeMD(o.records[0])
+                        });
+                    } else {
+                        // TODO: factorize
+                        GEOR.util.errorDialog({
+                            title: "Error",
+                            msg: "Could not parse metadata."
+                        });
+                    }
+                },
+                failure: function() {
+                    GEOR.util.errorDialog({
+                        title: "Error",
+                        msg: "Could not get metadata."
+                    });
+                }
             });
+            return false;
         },
-        
-        escapeHtml: function(unsafe) {
-            return unsafe
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
-        },
-        
+
         /**
          * APIMethod: makeMD
          * Given a MD object, creates some markup to render it
