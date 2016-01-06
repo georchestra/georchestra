@@ -21,7 +21,6 @@
     <spring_security.version>4.0.3.RELEASE</spring_security.version>
     <spring_data.version>1.11.1.RELEASE</spring_data.version>
     <postgres.version>9.4-1205-jdbc41</postgres.version>
-
   </properties>
   <repositories>
     <repository>
@@ -705,6 +704,36 @@
                 </mapping>
               </mappings>
             </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>docker</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.spotify</groupId>
+            <artifactId>docker-maven-plugin</artifactId>
+            <version>0.3.8</version>
+            <configuration>
+              <imageName>${project.artifactId}</imageName>
+              <dockerDirectory>${project.basedir}/src/docker</dockerDirectory>
+              <resources>
+                <resource>
+                  <targetPath>/var/lib/jetty/webapps</targetPath>
+                  <directory>${project.build.directory}</directory>
+                  <include>${project.artifactId}.war</include>
+                </resource>
+              </resources>
+            </configuration>
+            <dependencies>
+              <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>19.0</version>
+              </dependency>
+            </dependencies>
           </plugin>
         </plugins>
       </build>
