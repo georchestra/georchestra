@@ -332,34 +332,27 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
                     "";
             },
             "mdlink": function(values) {
-                // donc on veut un lien ici
-                // soit on n'a que du html => lien avec target blank
-                // soit on a du XML => requete, parsing, templating, ext.window
-
-                //var url = GEOR.util.setMetadataURL(values.layer, values.metadataURLs);
-                
-                // prefered url is the one pointing to the XML document:
+                // prefered url is the one pointing at the XML document:
                 var xmlurl = GEOR.util.getBestMetadataURL(values,
                     /^text\/xml|application\/xml$/, true);
-                
                 if (xmlurl) {
-                    // ici, un lien a sans href, mais pas de qtip => onclick => new Ext.Window
-                    //~ return '<a ext:qtip="'+GEOR.util.makeMD(values.metadata)+'" ext:hide="user" ext:qtitle="Metadata">metadata</a>';
-                    
-                    //return '<a onclick="GEOR.util.window(this);return false;" ext:data="'+GEOR.util.makeMD(values.metadata)+'" ext:qtip="Display metadata essentials">more metadata</a>';
-                    return '<a onclick="GEOR.util.mdwindow(\''+xmlurl+'\')" ext:qtip="Display metadata essentials">more metadata</a>';
+                    return [
+                    '<a href="', xmlurl, '" ext:qtip="',
+                        tr("Show metadata essentials in a window"), '" ',
+                        'target="_blank" onclick="GEOR.util.mdwindow(this.href)">',
+                        tr('metadata'), '</a>'
+                    ].join('');
                 }
-
+                // if xmlurl is not available, use text/html metadata link:
                 var htmlurl = GEOR.util.getBestMetadataURL(values, null, true);
                 if (htmlurl) {
                     return [
                     '<a href="', htmlurl, '" ext:qtip="',
-                        tr("Show metadata sheet in a new window"), '" ',
+                        tr("Show metadata sheet in a new browser tab"), '" ',
                         'target="_blank" onclick="window.open(this.href);return false;">',
                         tr('metadata'), '</a>'
                     ].join('');
                 }
-                
             },
             "abstract": function(t) {
                 // two things here:

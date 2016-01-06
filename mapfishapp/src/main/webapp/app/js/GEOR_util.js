@@ -335,7 +335,7 @@ GEOR.util = (function() {
                     // TODO: do not forget to commit fix in CSW 2.0.2 getrecords parser obj.records = obj.records || [];
                     if (o && o.records && o.records[0]) {
                         GEOR.util.urlDialog({
-                            title: "Metadata",
+                            title: GEOR.util.getMDtitle(o.records[0]),
                             msg: GEOR.util.makeMD(o.records[0])
                         });
                     } else {
@@ -356,6 +356,14 @@ GEOR.util = (function() {
             return false;
         },
 
+        getMDtitle: function(metadata) {
+            var o = OpenLayers.i18n('not filled');
+            try {
+                o = metadata.identificationInfo[0].citation.title.characterString;
+            } catch (e) {}
+            return o;
+        },
+
         /**
          * APIMethod: makeMD
          * Given a MD object, creates some markup to render it
@@ -368,74 +376,55 @@ GEOR.util = (function() {
          */
         makeMD: function(metadata) {          
             var tpl = [
-                '<b>title: </b> {[this.title(values)]} <br/>',
-                '<b>abstract: </b> {[this.abstract(values)]} <br/>',
-                '<b>lineage: </b> {[this.lineage(values)]} <br/>',
-                '<b>creation date: </b> {[this.creation_date(values)]} <br/>',
-                '<b>update date: </b> {[this.update_date(values)]} <br/>',
-                '<b>point of contact: </b> {[this.point_of_contact(values)]} <br/>',
-                '<b>administrator: </b> {[this.administrator(values)]} <br/>'
+                '{[this.abstract(values)]}',
+                '{[this.lineage(values)]}',
+                '{[this.dates(values)]}',
+                '{[this.contacts(values)]}'
             ].join('');
             var ctx = {
-                "title": function(v) {
-                    var o = '';
-                    try {
-                        o = v.identificationInfo[0].citation.title.characterString;
-                    } catch (e) {}
-                    return GEOR.util.escapeHtml(o);
-                },
                 "abstract": function(v) {
                     var o = '';
                     try {
-                        o = v.identificationInfo[0]['abstract'].characterString;
+                        o = v.identificationInfo[0]['abstract'].characterString + '<br/><br/>';
                     } catch (e) {}
-                    return GEOR.util.escapeHtml(o);
+                    return o;
                 },
                 "lineage": function(v) {
                     var o = '';
                     try {
-                        o = v.dataQualityInfo[0].lineage.statement.characterString;
-                    } catch (e) {}
-                    return GEOR.util.escapeHtml(o);
-                },
-                "creation_date": function(v) {
-                    var o = '';
-                    try {
-                        var dates = v.identificationInfo[0].citation.date;
-                        Ext.each(dates, function(date) {
-                            if (date.dateType.codeListValue == "creation") {                               
-                                o = date.date[0].dateTime;
-                            }
-                        });
+                        o = v.dataQualityInfo[0].lineage.statement.characterString + '<br/><br/>';
                     } catch (e) {}
                     return o;
                 },
-                "update_date": function(v) {
-                    var o = '';
-                    try {
-                        var dates = v.identificationInfo[0].citation.date;
-                        Ext.each(dates, function(date) {
-                            if (date.dateType.codeListValue == "revision") {                               
-                                o = date.date[0].dateTime;
-                            }
-                        });
-                    } catch (e) {}
-                    return o;
+                "dates":  function(v) {
+                    var a = v.identificationInfo[0].citation.date, 
+                        o = [];
+                    if (!a[0]) {
+                        return '';
+                    }
+                    Ext.each(a, function(date) {
+                        try {
+                            var type = OpenLayers.i18n(date.dateType.codeListValue),
+                                datetime = date.date[0].dateTime.split("T")[0];
+                            o.push(type+OpenLayers.i18n('labelSeparator')+datetime);
+                        } catch (e) {}
+                    });
+                    return o.join('<br/>')+'<br/><br/>';
                 },
-                "point_of_contact": function(v) {
-                    var o = '';
-                    try {
-                        o = v.contact[0].contactInfo.address.electronicMailAddress[0].characterString;
-                        o = '<a href="mailto:'+o+'">'+o+'</a>';
-                    } catch (e) {}
-                    return GEOR.util.escapeHtml(o);
-                },
-                "administrator": function(v) {
-                    var o = '';
-                    try {
-                        //o = v.identificationInfo[0].citation.title.characterString;
-                    } catch (e) {}
-                    return GEOR.util.escapeHtml(o);
+                "contacts": function(v) {
+                    var a = v.contact,
+                        o = [];
+                    if (!a[0]) {
+                        return '';
+                    }
+                    Ext.each(a, function(contact) {
+                        try {
+                            var role = OpenLayers.i18n(contact.role.codeListValue),
+                                email = contact.contactInfo.address.electronicMailAddress[0].characterString;
+                            o.push(role+OpenLayers.i18n('labelSeparator')+'<a href="mailto:'+email+'" target="_blank">'+email+'</a>');
+                        } catch (e) {}
+                    });
+                    return o.join('<br/>');
                 }
             };
             return new Ext.XTemplate(tpl, ctx).apply(metadata);
