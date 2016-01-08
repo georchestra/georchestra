@@ -331,7 +331,6 @@ GEOR.util = (function() {
                             msg: tr("Could not parse metadata.")
                         });
                     }
-                    // TODO: do not forget to commit fix in CSW 2.0.2 getrecords parser obj.records = obj.records || [];
                     if (o && o.records && o.records[0]) {
                         GEOR.util.urlDialog({
                             title: GEOR.util.getMDtitle(o.records[0]),
