@@ -679,9 +679,7 @@ GEOR.managelayers = (function() {
                 return;
             }
             // if xmlurl is not available, use text/html metadata link:
-            if (o.htmlurls[0]) {
-                window.open(o.htmlurls[0]);
-            }
+            window.open(o.htmlurls[0] || r.getLayer().metadataURL);
         };
 
         // recenter action
