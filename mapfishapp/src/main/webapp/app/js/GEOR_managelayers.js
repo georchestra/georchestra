@@ -666,6 +666,24 @@ GEOR.managelayers = (function() {
             }
         };
 
+        /**
+         * Method: viewMD
+         *
+         * Parameters:
+         * r - {GeoExt.data.LayerRecord}
+         */
+        var viewMD = function(r) {
+            var o = GEOR.util.getMetadataURLs(r);
+            if (o.xmlurls[0]) {
+                GEOR.util.mdwindow(o.xmlurls[0], o.htmlurls[0]);
+                return;
+            }
+            // if xmlurl is not available, use text/html metadata link:
+            if (o.htmlurls[0]) {
+                window.open(o.htmlurls[0]);
+            }
+        };
+
         // recenter action
         menuItems.push({
             iconCls: 'geor-btn-zoom',
@@ -843,55 +861,16 @@ GEOR.managelayers = (function() {
                         if (typeof layerRecord.get('srs') == "object") {
                             // record comes from a capabilities
                             // no need to perform hydrateLayerRecord
-                            // prefered url is the one pointing at the XML document:
-                            
-                            // TODO: factorize with layerbrowser:
-                            var xmlurl = GEOR.util.getBestMetadataURL(layerRecord, {
-                                type: "xml",
-                                strict: true
-                            }),
-                            htmlurl = GEOR.util.getBestMetadataURL(layerRecord, {
-                                type: "html",
-                                strict: true
-                            });
-                            if (xmlurl) {
-                                GEOR.util.mdwindow(xmlurl, htmlurl);
-                                return;
-                            }
-                            // if xmlurl is not available, use text/html metadata link:
-                            if (htmlurl) {
-                                window.open(htmlurl);
-                            }
+                            viewMD(layerRecord);
                         } else {
                             // record comes from a WMC, we need to hydrate the layer record
                             // with fresh data from the Capabilities
-                            
-                            // no need to report an XHR error, we can silently fail here:
+                            // but no need to report an XHR error, we can silently fail here:
                             GEOR.ajaxglobal.disableOGCExceptionReports = true;
                             GEOR.ows.hydrateLayerRecord(layerRecord, {
                                 success: function() {
                                     GEOR.ajaxglobal.disableOGCExceptionReports = false;
-                                    
-                                    
-                                    // TODO: factorize with layerbrowser:
-                                    var xmlurl = GEOR.util.getBestMetadataURL(layerRecord, {
-                                        type: "xml",
-                                        strict: true
-                                    }),
-                                    htmlurl = GEOR.util.getBestMetadataURL(layerRecord, {
-                                        type: "html",
-                                        strict: true
-                                    });
-                                    if (xmlurl) {
-                                        GEOR.util.mdwindow(xmlurl, htmlurl);
-                                        return;
-                                    }
-                                    // if xmlurl is not available, use text/html metadata link:
-                                    if (htmlurl) {
-                                        window.open(htmlurl);
-                                    }
-                                    
-                                    
+                                    viewMD(layerRecord);
                                 },
                                 failure: function() {
                                     GEOR.ajaxglobal.disableOGCExceptionReports = false;
@@ -899,8 +878,6 @@ GEOR.managelayers = (function() {
                                 },
                             scope: this
                             });
-                            
-                            
                         }
                     }
                 }

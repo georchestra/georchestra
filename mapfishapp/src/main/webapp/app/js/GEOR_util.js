@@ -269,43 +269,37 @@ GEOR.util = (function() {
         },
         
         /**
-         * APIMethod: getBestMetadataURL
-         * Given a record, or record data, and a prefered format, returns the best metadata url
+         * APIMethod: getMetadataURLs
+         * Given a record, or record data, returns metadata urls
          *
          * Parameters:
          * record - {Ext.data.Record}
-         * options - {Object} optional config object, with keys:
-         *     type: either "html" or "xml". Defaults to "html".
-         *     strict: boolean. If true, returns null if no metadataURL matches
-         *                      Else returns the available one
-         *                      Defaults to false. 
          *
          * Returns:
-         * {String} the "best" metadataURL
+         * {Object} metadataURLs keyed with htmlurls and xmlurls
          */
-        getBestMetadataURL: function(record, options) {
-            var T = {
-                "html": /^text\/html|application\/xhtml(\+xml)?$/,
-                "xml": /^text\/xml|application\/xml$/
-            }, type = T[options.type || "html"];
-            var strict = options.strict || false;
+        getMetadataURLs: function(record) {
             if (record instanceof GeoExt.data.LayerRecord) {
                 record = record.data;
             }
-            var out = null,
-                metadataURLs = record.metadataURLs;
-            if (metadataURLs && metadataURLs.length > 0) {
-                var murl = strict ? null : metadataURLs[0];
-                // default to first entry
-                out = (murl && murl.href) ? murl.href : murl;
-                Ext.each(metadataURLs, function(murl) {
-                    // prefer provided format if found
-                    if (murl.format && type.test(murl.format)) {
-                        out = (murl.href) ? murl.href : murl;
-                        return false; // stop looping
-                    }
-                });
-            }
+            var out = {
+                "htmlurls": [],
+                "xmlurls": []
+            };
+            Ext.each(record.metadataURLs, function(murl) {
+                var f = murl.format;
+                if (murl && !f) {
+                    // considering that WMCs only store the HTML metadata URL
+                    out.htmlurls.push(murl);
+                    return;
+                }
+                if (/^text\/html|application\/xhtml(\+xml)?$/.test(f)) {
+                    out.htmlurls.push(murl.href);
+                }
+                if (/^text\/xml|application\/xml$/.test(f)) {
+                    out.xmlurls.push(murl.href);
+                }
+            });
             return out;
         },
 
