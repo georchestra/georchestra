@@ -105,6 +105,7 @@
         <property name="hibernateProperties">
             <value>
                 hibernate.dialect=org.hibernate.dialect.PostgreSQL9Dialect
+                hibernate.hbm2ddl.auto=update
             </value>
         </property>
     </bean>
@@ -276,14 +277,14 @@
                 <to uri="file:///tmp/log?autoCreate=true"/>
 
                 <!-- store in DB queue -->
-                <to uri="hibernate:org.georchestra.atlas.AtlasMFPJob?persistenceUnit=myPU"/>
+                <to uri="hibernate:org.georchestra.atlas.AtlasMFPJob"/>
 
             </split>
 
         </route>
 
         <route id="start_generation">
-            <from uri="hibernate:org.georchestra.atlas.AtlasMFPJob?persistenceUnit=myPU&amp;consumeDelete=false&amp;consumer.delay=2000&amp;maxResults=1&amp;consumer.query=FROM org.georchestra.atlas.AtlasMFPJob WHERE state = 'TODO' ORDER BY id"/>
+            <from uri="hibernate:org.georchestra.atlas.AtlasMFPJob?consumer.delay=2000&amp;maximumResults=1&amp;consumeDelete=false&amp;consumer.query=FROM org.georchestra.atlas.AtlasMFPJob WHERE state = 'TODO' ORDER BY id"/>
 
             <to uri="bean:setState?method=setInProgress"/>
 
