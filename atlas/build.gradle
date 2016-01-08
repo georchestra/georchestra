@@ -1,0 +1,130 @@
+defaultTasks 'build', 'createDocker'
+
+apply plugin: 'java'
+apply plugin: 'docker'
+
+task wrapper(type: Wrapper) {
+    description 'Creates or deletes the gradle wrapper.'
+    gradleVersion = '2.10'
+}
+
+buildscript {
+    repositories { jcenter() }
+    dependencies {
+        classpath 'se.transmode.gradle:gradle-docker:1.2'
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    def junitVersion = '4.11'
+    def springVersion = '4.2.4.RELEASE'
+    def hibernateVersion = '5.0.3.Final'
+    compile(
+            "org.slf4j:slf4j-api:1.7.12",
+            "org.apache-extras.camel-extra:camel-hibernate:2.14.1",
+            "org.springframework:spring-orm:${springVersion}",
+            "org.springframework:spring-web:${springVersion}",
+            "org.springframework:spring-core:${springVersion}",
+            "org.springframework:spring-context:${springVersion}",
+            "org.springframework:spring-aop:${springVersion}",
+            "org.springframework:spring-aspects:${springVersion}",
+            "org.springframework:spring-webmvc:${springVersion}",
+            "org.springframework:spring-jdbc:${springVersion}",
+            "org.springframework.data:spring-data-jpa:1.9.1.RELEASE",
+            "org.springframework:spring-orm:${springVersion}",
+            "org.springframework:spring-orm:${springVersion}",
+            "org.hibernate:hibernate-entitymanager:${hibernateVersion}",
+            "com.mchange:c3p0:0.9.5.1",
+            "org.postgresql:postgresql:9.4-1205-jdbc4",
+            "org.json:json:20080701",
+            "javax.servlet:javax.servlet-api:3.1.0",
+            "commons-io:commons-io:2.4",
+    )
+
+    testCompile("junit:junit:${junitVersion}")
+}
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+group = 'org.georchestra.atlas'
+
+project.ext {
+    integrationTmp = file("$project.buildDir/tmpIntegration")
+}
+
+jar {
+    baseName = 'georchestra_atlas'
+}
+
+docker {
+    baseImage "camptocamp/mapfish_batch:latest"
+    maintainer 'Camptocamp "info@camptocamp.com"'
+}
+
+task createDocker(type: Docker, dependsOn:'build') {
+    description 'Creates a docker image with the Mapfish Batch webapp installed and configured for Atlas.'
+    group 'Docker'
+    applicationName = "georchestra_atlas"
+    tagVersion = 'latest'
+    tag = "camptocamp/${applicationName}"
+    project.ext.set("dockerImage", "${tag}:${tagVersion}")
+
+    runCommand 'rm -rf ${CATALINA_HOME}/webapps/ROOT/WEB-INF/classes/camel/* && ' +
+               'apt-get update && ' +
+               'apt-get install -y zip && '+
+               'apt-get clean && ' +
+               'rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*'
+    def filters = ['json', 'groovy']
+    def depends = configurations.compile.findAll { cur -> filters.any {cur.getName().contains(it)}}
+    depends += jar.archivePath
+    depends.each {
+        addFile it, '${CATALINA_HOME}/webapps/ROOT/WEB-INF/lib/'
+    }
+}
+
+task startDocker(dependsOn: 'createDocker') {
+    description 'Starts a container with the apps from camel/.'
+    group 'Docker'
+    doFirst {
+        def imageName = project.dockerImage
+        project.integrationTmp.mkdirs()
+
+        def process = ("docker run -d -p 8180:8080 " +
+                "${imageName}").execute()
+        if (process.waitFor() != 0) {
+            throw new RuntimeException("Failed to start the docker container: " + process.text)
+        }
+        def imageId = process.text
+        System.out.println("Started docker ${imageName} as ${imageId}")
+        project.ext.set("runningContainerId", imageId)
+
+        //cleaning previous run's temporary files
+        "docker exec ${project.runningContainerId} \"rm -rf /tmp/*\"".execute().waitFor()
+    }
+}
+
+task cleanDocker(type: Exec) {
+    description 'Deletes all the containers that are exited.'
+    group 'Docker'
+    commandLine 'sh', '-c', 'docker rm $(docker ps -q -f status=exited)'
+}
+
+task stopDocker {
+    description 'Stops the container started by startDocker.'
+    group 'Docker'
+    doLast {
+        if (project.ext.has("runningContainerId")) {
+            def process = "docker stop ${project.runningContainerId}".execute()
+            if (process.waitFor() != 0) {
+                throw new RuntimeException("Failed to stop docker container " + project.runningContainerId)
+            }
+        } else {
+            System.out.println("No docker container to stop");
+        }
+    }
+}

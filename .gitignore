@@ -12,3 +12,5 @@ PostTreatment.groovy
 **/.settings
 .idea/
 *.iml
+*/build/
+*/.gradle/

@@ -14,14 +14,16 @@
                            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
                            http://camel.apache.org/schema/spring
                            http://camel.apache.org/schema/spring/camel-spring-2.16.1.xsd http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
-    <!--
-        This will automatically locate any and all property files you have
-        within your classpath, provided they fall under the META-INF/spring
-        directory. The located property files are parsed and their values can
-        then be used within application context files in the form of
-        ${propertyKey}.
-    -->
-    <context:property-placeholder location="classpath*:WEB-INF/*.properties"/>
+
+
+    <!-- have a properties file with the defaults with the possibility to override them with
+         JRE or system environment variables-->
+    <bean id="bridgePropertyPlaceholder"
+          class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:atlas.properties"/>
+        <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
+        <property name="searchSystemEnvironment" value="true"/>
+    </bean>
 
     <!--
         Turn on AspectJ @Configurable support. As a result, any time you
@@ -36,7 +38,7 @@
         method). Roo applications use this useful feature in a number of
         areas, such as @PersistenceContext injection into entities.
     -->
-    <context:spring-configured/>
+    <!--<context:spring-configured/>-->
     <!--
         This declaration will cause Spring to locate every @Component,
         @Repository and @Service in your application. In practical terms this
@@ -58,45 +60,96 @@
         The most commonly used annotation is @Autowired, which instructs Spring to
         dependency inject an object into your class.
     -->
-    <context:component-scan base-package="org.georchestra.atlas"/>
+    <!--<context:component-scan base-package="org.georchestra.atlas"/>-->
+
+
+    <!-- Setup Hibernate (queuing in the DB) -->
+    <bean id="hibernate" class="org.apacheextras.camel.component.hibernate.HibernateComponent">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="transactionStrategy" ref="springTransactionStrategy"/>
+    </bean>
+
+    <!-- setup hibernate and spring to use transaction -->
+    <bean id="springTransactionStrategy"
+          class="org.apacheextras.camel.component.hibernate.SpringTransactionStrategy">
+        <constructor-arg ref="sessionFactory"/>
+        <constructor-arg ref="transactionTemplate"/>
+    </bean>
+    <bean id="transactionManager"
+          class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+    <bean id="transactionTemplate"
+          class="org.springframework.transaction.support.TransactionTemplate">
+        <property name="transactionManager" ref="transactionManager"/>
+    </bean>
+
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="driverClass" value="org.postgresql.Driver"/>
+        <property name="jdbcUrl" value="${psql.url}"/>
+        <property name="user" value="${psql.user}"/>
+        <property name="password" value="${psql.pass}"/>
+        <property name="maxPoolSize" value="5"/>
+        <property name="minPoolSize" value="1"/>
+    </bean>
+
+    <!-- setup Hibernate session factory -->
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="packagesToScan">
+            <list>
+                <value>org.georchestra.atlas</value>
+            </list>
+        </property>
+        <!-- and here we have additional hibernate options -->
+        <property name="hibernateProperties">
+            <value>
+                hibernate.dialect=org.hibernate.dialect.PostgreSQL9Dialect
+            </value>
+        </property>
+    </bean>
+
+
+
+
 
      <!-- Directory to scan for repository classes -->
-    <jpa:repositories base-package="org.georchestra.atlas" />
+    <!--<jpa:repositories base-package="org.georchestra.atlas" />-->
 
     <!-- bean to marshall/unmashall json -->
-    <bean id="gson" class="org.apache.camel.component.gson.GsonDataFormat">
-        <property name="fieldNamingPolicy" value="LOWER_CASE_WITH_UNDERSCORES"/>
-    </bean>
+    <!--<bean id="gson" class="org.apache.camel.component.gson.GsonDataFormat">-->
+        <!--<property name="fieldNamingPolicy" value="LOWER_CASE_WITH_UNDERSCORES"/>-->
+    <!--</bean>-->
 
     <bean id="populateProperties" class="org.georchestra.atlas.CamelPopulatePropertiesComponent"/>
 
     <bean id="setState" class="org.georchestra.atlas.CamelSetStateComponent"/>
 
-    <bean id="jpa" class="org.apache.camel.component.jpa.JpaComponent">
-        <property name="entityManagerFactory" ref="entityManagerFactory"/>
-        <property name="transactionManager" ref="transactionManager"/>
-    </bean>
+    <!--<bean id="jpa" class="org.apache.camel.component.jpa.JpaComponent">-->
+        <!--<property name="entityManagerFactory" ref="entityManagerFactory"/>-->
+        <!--<property name="transactionManager" ref="transactionManager"/>-->
+    <!--</bean>-->
 
-    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <property name="entityManagerFactory" ref="entityManagerFactory"/>
-    </bean>
+    <!--<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">-->
+        <!--<property name="entityManagerFactory" ref="entityManagerFactory"/>-->
+    <!--</bean>-->
 
 
-    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
-        <property name="persistenceUnitName" value="myPU"/>
-        <property name="jpaProperties">
-            <props>
-                <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL94Dialect</prop>
-                <prop key="hibernate.show_sql">false</prop>
-                <prop key="hibernate.format_sql">false</prop>
-                <prop key="hibernate.hbm2ddl.auto">update</prop>
-            </props>
-        </property>
+    <!--<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">-->
+        <!--<property name="persistenceUnitName" value="myPU"/>-->
+        <!--<property name="jpaProperties">-->
+            <!--<props>-->
+                <!--<prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL94Dialect</prop>-->
+                <!--<prop key="hibernate.show_sql">false</prop>-->
+                <!--<prop key="hibernate.format_sql">false</prop>-->
+                <!--<prop key="hibernate.hbm2ddl.auto">update</prop>-->
+            <!--</props>-->
+        <!--</property>-->
 
-    </bean>
+    <!--</bean>-->
 
     <!-- A context component that has some utility components to handle typical tasks -->
-    <camelContext id="mapfish" xmlns="http://camel.apache.org/schema/spring"
+    <camelContext id="atlas" xmlns="http://camel.apache.org/schema/spring"
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   streamCache="true">
 
@@ -113,10 +166,20 @@
             - property.printBase must have the base URL of the Mapfish Print service.
         -->
         <rest>
-            <post uri="/atlas" consumes="application/json" produces="application/json" enableCORS="true">
+            <post uri="/atlas/login" consumes="application/json" produces="application/json" enableCORS="true">
                 <to uri="direct:split_save"/>
             </post>
+            <get uri="/atlas/index" consumes="text/plain" produces="text/html" >
+                <to uri="direct:teste"/>
+            </get>
         </rest>
+
+        <route id="teste">
+            <from uri="direct:teste"/>
+            <transform>
+                <simple>Hello !</simple>
+            </transform>
+        </route>
 
         <route id="split_save">
             <from uri="direct:split_save"/>
@@ -213,14 +276,14 @@
                 <to uri="file:///tmp/log?autoCreate=true"/>
 
                 <!-- store in DB queue -->
-                <to uri="jpa:org.georchestra.atlas.AtlasMFPJob?persistenceUnit=myPU"/>
+                <to uri="hibernate:org.georchestra.atlas.AtlasMFPJob?persistenceUnit=myPU"/>
 
             </split>
 
         </route>
 
         <route id="start_generation">
-            <from uri="jpa:org.georchestra.atlas.AtlasMFPJob?persistenceUnit=myPU&amp;consumeDelete=false&amp;consumeLockEntity=false&amp;consumer.delay=2000&amp;maxMessagesPerPoll=1&amp;consumer.query=FROM org.georchestra.atlas.AtlasMFPJob WHERE state = 'TODO' ORDER BY id"/>
+            <from uri="hibernate:org.georchestra.atlas.AtlasMFPJob?persistenceUnit=myPU&amp;consumeDelete=false&amp;consumer.delay=2000&amp;maxResults=1&amp;consumer.query=FROM org.georchestra.atlas.AtlasMFPJob WHERE state = 'TODO' ORDER BY id"/>
 
             <to uri="bean:setState?method=setInProgress"/>
 
