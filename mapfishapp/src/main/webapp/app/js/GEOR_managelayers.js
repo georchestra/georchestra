@@ -829,13 +829,79 @@ GEOR.managelayers = (function() {
         if (layer.metadataURL || isOGC) {
             menuItems.push("-");
         }
+        // what do we want here ?
+        // if the record is full (comes from a getcaps), no need to hydrate
+        // if it comes from a WMC, we have to hydrate it (when button is pressed)
+        // finally, it there is a XML MD, display popup window
+        // else, keep previous behavior (open new tab)
         if (layer.metadataURL) {
             menuItems.push({
                 iconCls: 'geor-btn-metadata',
                 text: tr("Show metadata"),
                 listeners: {
                     "click": function(btn, pressed) {
-                        window.open(layer.metadataURL);
+                        if (typeof layerRecord.get('srs') == "object") {
+                            // record comes from a capabilities
+                            // no need to perform hydrateLayerRecord
+                            // prefered url is the one pointing at the XML document:
+                            
+                            // TODO: factorize with layerbrowser:
+                            var xmlurl = GEOR.util.getBestMetadataURL(layerRecord, {
+                                type: "xml",
+                                strict: true
+                            }),
+                            htmlurl = GEOR.util.getBestMetadataURL(layerRecord, {
+                                type: "html",
+                                strict: true
+                            });
+                            if (xmlurl) {
+                                GEOR.util.mdwindow(xmlurl, htmlurl);
+                                return;
+                            }
+                            // if xmlurl is not available, use text/html metadata link:
+                            if (htmlurl) {
+                                window.open(htmlurl);
+                            }
+                        } else {
+                            // record comes from a WMC, we need to hydrate the layer record
+                            // with fresh data from the Capabilities
+                            
+                            // no need to report an XHR error, we can silently fail here:
+                            GEOR.ajaxglobal.disableOGCExceptionReports = true;
+                            GEOR.ows.hydrateLayerRecord(layerRecord, {
+                                success: function() {
+                                    GEOR.ajaxglobal.disableOGCExceptionReports = false;
+                                    
+                                    
+                                    // TODO: factorize with layerbrowser:
+                                    var xmlurl = GEOR.util.getBestMetadataURL(layerRecord, {
+                                        type: "xml",
+                                        strict: true
+                                    }),
+                                    htmlurl = GEOR.util.getBestMetadataURL(layerRecord, {
+                                        type: "html",
+                                        strict: true
+                                    });
+                                    if (xmlurl) {
+                                        GEOR.util.mdwindow(xmlurl, htmlurl);
+                                        return;
+                                    }
+                                    // if xmlurl is not available, use text/html metadata link:
+                                    if (htmlurl) {
+                                        window.open(htmlurl);
+                                    }
+                                    
+                                    
+                                },
+                                failure: function() {
+                                    GEOR.ajaxglobal.disableOGCExceptionReports = false;
+                                    window.open(layer.metadataURL);
+                                },
+                            scope: this
+                            });
+                            
+                            
+                        }
                     }
                 }
             });

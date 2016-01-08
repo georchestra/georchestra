@@ -334,6 +334,7 @@ GEOR.util = (function() {
                     } catch(e) {
                         GEOR.util.errorDialog({
                             title: "Error",
+                            // TODO: translations
                             msg: "Could not parse metadata."
                         });
                     }
@@ -400,7 +401,8 @@ GEOR.util = (function() {
          * Returns:
          * {String} html markup
          */
-        makeMD: function(metadata) {          
+        makeMD: function(metadata) {
+            // TODO: let the platform admin specify his own custom MD template:
             var tpl = [
                 '{[this.abstract(values)]}',
                 '{[this.lineage(values)]}',

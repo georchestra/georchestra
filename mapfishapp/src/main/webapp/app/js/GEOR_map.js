@@ -269,7 +269,7 @@ GEOR.map = (function() {
             // Saving the first occurence whose format matches text/html
             // see https://github.com/georchestra/georchestra/issues/454
             r.getLayer().metadataURL = GEOR.util.getBestMetadataURL(r, {
-                type: "html", 
+                type: "html",
                 strict: false
             });
 
