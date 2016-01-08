@@ -116,7 +116,9 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "cswquerier.help.title": "Ayuda para consulta avanzada",
     "cswquerier.help.message": '<ul><li><b>@carretera</b> busca "carretera" en el nombre de la organización.</li><li><b>#carretera</b> busca "carretera" en las palabras-clave de los metadatos.</li><li><b>?carretera</b> abre la búsqueda de "carretera" a todos los campos de los metadatos.</li></ul>',
     "NAME layer on VALUE": "Capa ${NAME} sobre ${VALUE}",
-    "Show metadata sheet in a new window":
+    "Show metadata essentials in a window":
+        "Mostrar metadatos básicos",
+    "Show metadata sheet in a new browser tab": 
         "Mostrar la ficha de metadatos en una nueva ventana",
     "more": "más",
     "Click to select or deselect the layer":
@@ -442,6 +444,13 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Other": "Otro",
     "Confirmation": "Confirmación",
     "Information": "Información",
+    "pointOfContact": "contacto",
+    "custodian": "productor",
+    "distributor": "distribuidor",
+    "originator": "originador",
+    "More": "Más",
+    "Could not parse metadata.": "No se puede analizar los metadatos",
+    "Could not get metadata.": "No se puede obtener los metadatos",
     /* GEOR_waiter.js strings */
     /* GEOR_wmc.js strings */
     "The provided file is not a valid OGC context":

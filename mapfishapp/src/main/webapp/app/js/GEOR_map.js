@@ -268,7 +268,8 @@ GEOR.map = (function() {
             // so that this can be saved in a WMC context.
             // Saving the first occurence whose format matches text/html
             // see https://github.com/georchestra/georchestra/issues/454
-            GEOR.util.setMetadataURL(r.getLayer(), r.get("metadataURLs"));
+            var o = GEOR.util.getMetadataURLs(r);
+            r.getLayer().metadataURL = o.htmlurls[0];
 
             // we discard WMS layers without a valid URL (see https://github.com/georchestra/georchestra/issues/759)
             if (!(layer.CLASS_NAME === "OpenLayers.Layer.WMS" && !layer.url)) {

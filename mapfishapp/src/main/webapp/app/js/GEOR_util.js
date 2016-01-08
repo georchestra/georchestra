@@ -267,32 +267,185 @@ GEOR.util = (function() {
                 GEOR.config.PATHNAME, '/', input
             ].join('');
         },
-
+        
         /**
-         * APIMethod: setMetadataURL
-         * Given a layer, and a bunch of metadataURLs, sets the best metadata url
+         * APIMethod: getMetadataURLs
+         * Given a record, or record data, returns metadata urls
          *
          * Parameters:
-         * layer - {OpenLayers.Layer}
-         * metadataURLs - {Array}
+         * record - {Ext.data.Record}
          *
          * Returns:
-         * {String} the "best" metadataURL for WMC storage
+         * {Object} metadataURLs keyed with htmlurls and xmlurls
          */
-        setMetadataURL: function(layer, metadataURLs) {
-            if (metadataURLs && metadataURLs.length > 0) {
-                var murl = metadataURLs[0];
-                // default to first entry
-                layer.metadataURL = (murl.href) ? murl.href : murl;
-                Ext.each(metadataURLs, function(murl) {
-                    // prefer text/html format if found
-                    if (murl.format && murl.format == 'text/html') {
-                        layer.metadataURL = (murl.href) ? murl.href : murl;
-                        return false; // stop looping
-                    }
-                });
+        getMetadataURLs: function(record) {
+            if (record instanceof GeoExt.data.LayerRecord) {
+                record = record.data;
             }
-            return layer.metadataURL;
+            var out = {
+                "htmlurls": [],
+                "xmlurls": []
+            };
+            Ext.each(record.metadataURLs, function(murl) {
+                var f = murl.format;
+                if (murl && !f) {
+                    // considering that WMCs only store the HTML metadata URL
+                    out.htmlurls.push(murl);
+                    return;
+                }
+                if (/^text\/html|application\/xhtml(\+xml)?$/.test(f)) {
+                    out.htmlurls.push(murl.href);
+                }
+                if (/^text\/xml|application\/xml$/.test(f)) {
+                    out.xmlurls.push(murl.href);
+                }
+            });
+            return out;
+        },
+
+        /**
+         * APIMethod: mdwindow
+         * Given an XML MD url, fetch it and display MD essentials in a popup
+         *
+         * Parameters:
+         * xmlMetadataURL - {String}
+         * htmlMetadataURL - {String} (optional)
+         *
+         * Returns:
+         * {Boolean} false
+         */
+        mdwindow: function(xmlMetadataURL, htmlMetadataURL) {
+            if (!xmlMetadataURL) {
+                return;
+            }
+            var tr = OpenLayers.i18n;
+            GEOR.waiter.show();
+            OpenLayers.Request.GET({
+                url: xmlMetadataURL,
+                success: function(response) {
+                    var f = new OpenLayers.Format.CSWGetRecords();
+                    try {
+                        var o = f.read(response.responseXML || response.responseText);
+                    } catch(e) {
+                        GEOR.util.errorDialog({
+                            msg: tr("Could not parse metadata.")
+                        });
+                    }
+                    if (o && o.records && o.records[0]) {
+                        GEOR.util.urlDialog({
+                            title: GEOR.util.getMDtitle(o.records[0]),
+                            msg: GEOR.util.makeMD(o.records[0]),
+                            buttons: [{
+                                text: tr('More'),
+                                disabled: !htmlMetadataURL,
+                                handler: function() {
+                                    window.open(htmlMetadataURL);
+                                }
+                            }, {
+                                text: tr('OK'),
+                                handler: function() {
+                                    this.ownerCt.ownerCt.close();
+                                }
+                            }]
+                        });
+                    } else {
+                        GEOR.util.errorDialog({
+                            msg: tr("Could not parse metadata.")
+                        });
+                    }
+                },
+                failure: function() {
+                    GEOR.util.errorDialog({
+                        msg: tr("Could not get metadata.")
+                    });
+                }
+            });
+            return false;
+        },
+
+        /**
+         * APIMethod: getMDtitle
+         * Given a MD object, returns its title
+         *
+         * Parameters:
+         * metadata - {Object}
+         *
+         * Returns:
+         * {String} metadata title
+         */
+        getMDtitle: function(metadata) {
+            var o = '';
+            try {
+                o = metadata.identificationInfo[0].citation.title.characterString;
+            } catch (e) {}
+            return o;
+        },
+
+        /**
+         * APIMethod: makeMD
+         * Given a MD object, creates some markup to render it
+         *
+         * Parameters:
+         * metadata - {Object}
+         *
+         * Returns:
+         * {String} html markup
+         */
+        makeMD: function(metadata) {
+            // TODO: let the platform admin specify his own custom MD template:
+            var tpl = [
+                '{[this.abstract(values)]}',
+                '{[this.lineage(values)]}',
+                '{[this.dates(values)]}',
+                '{[this.contacts(values)]}'
+            ].join('');
+            var ctx = {
+                "abstract": function(v) {
+                    var o = '';
+                    try {
+                        o = v.identificationInfo[0]['abstract'].characterString + '<br/><br/>';
+                    } catch (e) {}
+                    return o;
+                },
+                "lineage": function(v) {
+                    var o = '';
+                    try {
+                        o = v.dataQualityInfo[0].lineage.statement.characterString + '<br/><br/>';
+                    } catch (e) {}
+                    return o;
+                },
+                "dates":  function(v) {
+                    var a = v.identificationInfo[0].citation.date, 
+                        o = [];
+                    if (!a[0]) {
+                        return '';
+                    }
+                    Ext.each(a, function(date) {
+                        try {
+                            var type = OpenLayers.i18n(date.dateType.codeListValue),
+                                datetime = date.date[0].dateTime.split("T")[0];
+                            o.push(type+OpenLayers.i18n('labelSeparator')+datetime);
+                        } catch (e) {}
+                    });
+                    return o.join('<br/>')+'<br/><br/>';
+                },
+                "contacts": function(v) {
+                    var a = v.contact,
+                        o = [];
+                    if (!a[0]) {
+                        return '';
+                    }
+                    Ext.each(a, function(contact) {
+                        try {
+                            var role = OpenLayers.i18n(contact.role.codeListValue),
+                                email = contact.contactInfo.address.electronicMailAddress[0].characterString;
+                            o.push(role+OpenLayers.i18n('labelSeparator')+'<a href="mailto:'+email+'" target="_blank">'+email+'</a>');
+                        } catch (e) {}
+                    });
+                    return o.join('<br/>');
+                }
+            };
+            return new Ext.XTemplate(tpl, ctx).apply(metadata);
         },
 
         /**
@@ -383,7 +536,7 @@ GEOR.util = (function() {
                     html: options.msg,
                     border: false
                 }],
-                buttons: [{
+                buttons: options.buttons || [{
                     text: OpenLayers.i18n("Thanks!"),
                     handler: function() {
                         win.close();
