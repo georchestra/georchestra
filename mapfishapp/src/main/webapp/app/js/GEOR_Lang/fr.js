@@ -441,6 +441,11 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Other": "Autre",
     "Confirmation": "Confirmation",
     "Information": "Information",
+    "pointOfContact": "contact",
+    "custodian": "producteur",
+    "distributor": "distributeur",
+    "originator": "instigateur",
+    "More": "Plus",
     /* GEOR_waiter.js strings */
     /* GEOR_wmc.js strings */
     "The provided file is not a valid OGC context": "Le fichier fourni n'est pas un contexte OGC valide",

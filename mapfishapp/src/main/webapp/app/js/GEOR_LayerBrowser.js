@@ -296,18 +296,23 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
             },
             "mdlink": function(values) {
                 // prefered url is the one pointing at the XML document:
-                var xmlurl = GEOR.util.getBestMetadataURL(values,
-                    /^text\/xml|application\/xml$/, true);
+                var xmlurl = GEOR.util.getBestMetadataURL(values, {
+                    type: "xml", 
+                    strict: true
+                }),
+                htmlurl = GEOR.util.getBestMetadataURL(values, {
+                    type: "html", 
+                    strict: true
+                });
                 if (xmlurl) {
                     return [
                     '<a href="', xmlurl, '" ext:qtip="',
                         tr("Show metadata essentials in a window"), '" ',
-                        'target="_blank" onclick="GEOR.util.mdwindow(this.href)">',
+                        ' onclick="GEOR.util.mdwindow(this.href, \'', htmlurl,'\')">',
                         tr('metadata'), '</a>'
                     ].join('');
                 }
                 // if xmlurl is not available, use text/html metadata link:
-                var htmlurl = GEOR.util.getBestMetadataURL(values, null, true);
                 if (htmlurl) {
                     return [
                     '<a href="', htmlurl, '" ext:qtip="',

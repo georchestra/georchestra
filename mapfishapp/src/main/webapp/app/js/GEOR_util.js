@@ -274,26 +274,30 @@ GEOR.util = (function() {
          *
          * Parameters:
          * record - {Ext.data.Record}
-         * type - {RegExp} optional prefered mime type,
-         *        defaults to /^text\/html|application\/xhtml(\+xml)?$/
-         *        if not available, the method tries to infer it.
+         * options - {Object} optional config object, with keys:
+         *     type: either "html" or "xml". Defaults to "html".
+         *     strict: boolean. If true, returns null if no metadataURL matches
+         *                      Else returns the available one
+         *                      Defaults to false. 
          *
          * Returns:
-         * {String} the "best" metadataURL for WMC storage
+         * {String} the "best" metadataURL
          */
-        // TODO: add a strict parameter ? if strict then return null if no matching MDurl ...
-        getBestMetadataURL: function(record, type, strict) {
-            type = type || /^text\/html|application\/xhtml(\+xml)?$/;
-            strict = strict || false;
+        getBestMetadataURL: function(record, options) {
+            var T = {
+                "html": /^text\/html|application\/xhtml(\+xml)?$/,
+                "xml": /^text\/xml|application\/xml$/
+            }, type = T[options.type || "html"];
+            var strict = options.strict || false;
             if (record instanceof GeoExt.data.LayerRecord) {
                 record = record.data;
             }
-            var out,
+            var out = null,
                 metadataURLs = record.metadataURLs;
             if (metadataURLs && metadataURLs.length > 0) {
-                var murl = strict ? "" : metadataURLs[0];
+                var murl = strict ? null : metadataURLs[0];
                 // default to first entry
-                out = (murl.href) ? murl.href : murl; // FIXME: really ?
+                out = (murl && murl.href) ? murl.href : murl;
                 Ext.each(metadataURLs, function(murl) {
                     // prefer provided format if found
                     if (murl.format && type.test(murl.format)) {
@@ -311,11 +315,12 @@ GEOR.util = (function() {
          *
          * Parameters:
          * xmlMetadataURL - {String}
+         * htmlMetadataURL - {String} (optional)
          *
          * Returns:
          * {Boolean} false
          */
-        mdwindow: function(xmlMetadataURL) {
+        mdwindow: function(xmlMetadataURL, htmlMetadataURL) {
             if (!xmlMetadataURL) {
                 return;
             }
@@ -336,7 +341,19 @@ GEOR.util = (function() {
                     if (o && o.records && o.records[0]) {
                         GEOR.util.urlDialog({
                             title: GEOR.util.getMDtitle(o.records[0]),
-                            msg: GEOR.util.makeMD(o.records[0])
+                            msg: GEOR.util.makeMD(o.records[0]),
+                            buttons: [{
+                                text: tr('More'),
+                                disabled: !htmlMetadataURL,
+                                handler: function() {
+                                    window.open(htmlMetadataURL);
+                                }
+                            }, {
+                                text: tr('OK'),
+                                handler: function() {
+                                    this.ownerCt.ownerCt.close();
+                                }
+                            }]
                         });
                     } else {
                         GEOR.util.errorDialog({
@@ -527,7 +544,7 @@ GEOR.util = (function() {
                     html: options.msg,
                     border: false
                 }],
-                buttons: [{
+                buttons: options.buttons || [{
                     text: OpenLayers.i18n("Thanks!"),
                     handler: function() {
                         win.close();
