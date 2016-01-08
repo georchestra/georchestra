@@ -10,6 +10,10 @@
   <intercept-url pattern="/ldapadmin/private/.*" access="ROLE_MOD_LDAPADMIN" />
   <intercept-url pattern="/ldapadmin/account/userdetails" access="IS_AUTHENTICATED_FULLY" />
   <intercept-url pattern="/ldapadmin/account/changePassword" access="IS_AUTHENTICATED_FULLY" />
+  <intercept-url pattern="/ldapadmin/.*/emails" access="ROLE_MOD_LDAPADMIN" />
+  <intercept-url pattern="/ldapadmin/.*/sendEmail" access="ROLE_MOD_LDAPADMIN" />
+  <intercept-url pattern="/ldapadmin/attachments" access="ROLE_MOD_LDAPADMIN" />
+  <intercept-url pattern="/ldapadmin/emailTemplates" access="ROLE_MOD_LDAPADMIN" />
   <intercept-url pattern="/testPage" access="IS_AUTHENTICATED_FULLY" />
   <intercept-url pattern=".*/ogcproxy/.*" access="ROLE_NO_ONE" />
   <intercept-url pattern=".*" access="IS_AUTHENTICATED_ANONYMOUSLY,ROLE_SV_USER,ROLE_SV_EDITOR,ROLE_SV_REVIEWER,ROLE_SV_ADMIN,ROLE_ADMINISTRATOR" />

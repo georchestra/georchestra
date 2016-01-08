@@ -189,22 +189,6 @@ public class EmailController {
         return res.toString();
     }
 
-
-    @RequestMapping(value="/testShadowExpire", method = RequestMethod.GET)
-    @ResponseBody
-    public String testAttachments() throws JSONException {
-
-        List<Account> accounts = this.accountDao.findByShadowExpire();
-        JSONObject res = new JSONObject();
-        JSONArray tempAccounts = new JSONArray();
-        for(Account acc : accounts)
-            tempAccounts.put(acc.toJSON());
-        res.put("temporaryAccounts",tempAccounts);
-
-        return res.toString();
-    }
-
-
     /**
      * Send EmailEntry to smtp server
      *

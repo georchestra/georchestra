@@ -58,6 +58,10 @@
 						<entry key="/ldapadmin/private/.*" value="ROLE_MOD_LDAPADMIN" />
 						<entry key="/ldapadmin/account/userdetails" value="IS_AUTHENTICATED_FULLY" />
 						<entry key="/ldapadmin/account/changePassword" value="IS_AUTHENTICATED_FULLY" />
+						<entry key="/ldapadmin/.*/emails" value="ROLE_MOD_LDAPADMIN" />
+						<entry key="/ldapadmin/.*/sendEmail" value="ROLE_MOD_LDAPADMIN" />
+						<entry key="/ldapadmin/attachments" value="ROLE_MOD_LDAPADMIN" />
+						<entry key="/ldapadmin/emailTemplates" value="ROLE_MOD_LDAPADMIN" />
 						<entry key="/testPage" value="IS_AUTHENTICATED_FULLY" />
 						<entry key=".*/ogcproxy/.*" value="ROLE_NO_ONE" />
 						<entry key=".*" value="IS_AUTHENTICATED_ANONYMOUSLY,ROLE_SV_USER,ROLE_SV_EDITOR,ROLE_SV_REVIEWER,ROLE_SV_ADMIN,ROLE_ADMINISTRATOR" />
