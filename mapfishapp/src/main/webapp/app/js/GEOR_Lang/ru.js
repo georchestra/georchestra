@@ -357,6 +357,8 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Other": "Другой",
     "Confirmation": "Подтверждение",
     "Information": "Информация",
+    //"Could not parse metadata.": "Impossible d'analyser la métadonnée",
+    //"Could not get metadata.": "Impossible d'obtenir la métadonnée",
     //"pointOfContact": "contact",
     //"custodian": "producteur",
     //"distributor": "distributeur",

@@ -436,8 +436,10 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "pointOfContact": "Kontakt",
     "custodian": "Produzent",
     "distributor": "Distributor",
-    "originator": "Urhebers",
+    "originator": "Urheber",
     "More": "Mehr",
+    "Could not parse metadata.": "Konnte nicht die Metadaten analysieren.",
+    "Could not get metadata.": "Metadaten konnten nicht abgerufen werden.",
     /* GEOR_waiter.js strings */
     /* GEOR_wmc.js strings */
     "The provided file is not a valid OGC context": "OGC entspricht nicht dieser Datei",

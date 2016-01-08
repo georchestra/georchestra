@@ -448,6 +448,8 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "distributor": "distributeur",
     "originator": "instigateur",
     "More": "Plus",
+    "Could not parse metadata.": "Impossible d'analyser la métadonnée",
+    "Could not get metadata.": "Impossible d'obtenir la métadonnée",
     /* GEOR_waiter.js strings */
     /* GEOR_wmc.js strings */
     "The provided file is not a valid OGC context": "Le fichier fourni n'est pas un contexte OGC valide",

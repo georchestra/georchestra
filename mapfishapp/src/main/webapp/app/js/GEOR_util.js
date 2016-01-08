@@ -318,6 +318,7 @@ GEOR.util = (function() {
             if (!xmlMetadataURL) {
                 return;
             }
+            var tr = OpenLayers.i18n;
             GEOR.waiter.show();
             OpenLayers.Request.GET({
                 url: xmlMetadataURL,
@@ -327,9 +328,7 @@ GEOR.util = (function() {
                         var o = f.read(response.responseXML || response.responseText);
                     } catch(e) {
                         GEOR.util.errorDialog({
-                            title: "Error",
-                            // TODO: translations
-                            msg: "Could not parse metadata."
+                            msg: tr("Could not parse metadata.")
                         });
                     }
                     // TODO: do not forget to commit fix in CSW 2.0.2 getrecords parser obj.records = obj.records || [];
@@ -352,15 +351,13 @@ GEOR.util = (function() {
                         });
                     } else {
                         GEOR.util.errorDialog({
-                            title: "Error",
-                            msg: "Could not parse metadata."
+                            msg: tr("Could not parse metadata.")
                         });
                     }
                 },
                 failure: function() {
                     GEOR.util.errorDialog({
-                        title: "Error",
-                        msg: "Could not get metadata."
+                        msg: tr("Could not get metadata.")
                     });
                 }
             });
