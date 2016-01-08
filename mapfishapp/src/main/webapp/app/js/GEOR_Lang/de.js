@@ -113,7 +113,9 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "cswquerier.help.title": "Hinweise zur erweiterten Suche",
     "cswquerier.help.message": '<ul><li><b>@suchwort</b> Suche im Organisationsnamen.</li><li><b>#suchwort</b> Suche in den Metadaten-Tags.</li><li><b>?suchwort</b> Erweitert die Suche auf alle Metadaten-Felder.</li></ul>',
     "NAME layer on VALUE": "Layer ${NAME} auf ${VALUE}",
-    "Show metadata sheet in a new window":
+    "Show metadata essentials in a window":
+        "Afficher les métadonnées basiques",
+    "Show metadata sheet in a new browser tab": 
         "Metadatei in neuem Fenster öffnen",
     "more": "mehr",
     "Click to select or deselect the layer":
@@ -431,6 +433,11 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Other": "Andere",
     "Confirmation": "Bestätigung",
     "Information": "Information",
+    "pointOfContact": "Kontakt",
+    "custodian": "Produzent",
+    "distributor": "Distributor",
+    "originator": "Urhebers",
+    "More": "Mehr",
     /* GEOR_waiter.js strings */
     /* GEOR_wmc.js strings */
     "The provided file is not a valid OGC context": "OGC entspricht nicht dieser Datei",

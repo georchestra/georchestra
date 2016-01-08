@@ -847,11 +847,6 @@ GEOR.managelayers = (function() {
         if (layer.metadataURL || isOGC) {
             menuItems.push("-");
         }
-        // what do we want here ?
-        // if the record is full (comes from a getcaps), no need to hydrate
-        // if it comes from a WMC, we have to hydrate it (when button is pressed)
-        // finally, it there is a XML MD, display popup window
-        // else, keep previous behavior (open new tab)
         if (layer.metadataURL) {
             menuItems.push({
                 iconCls: 'geor-btn-metadata',
@@ -876,7 +871,7 @@ GEOR.managelayers = (function() {
                                     GEOR.ajaxglobal.disableOGCExceptionReports = false;
                                     window.open(layer.metadataURL);
                                 },
-                            scope: this
+                                scope: this
                             });
                         }
                     }

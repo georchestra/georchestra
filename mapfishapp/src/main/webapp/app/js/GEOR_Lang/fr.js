@@ -113,8 +113,10 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "cswquerier.help.title": "Syntaxe pour la recherche avancée",
     "cswquerier.help.message": "<ul><li><b>@mot</b> cherche dans le nom de l'organisation.</li><li><b>#mot</b> cherche dans les mots clés de la métadonnée.</li><li><b>?mot</b> élargit la recherche à tous les champs de la métadonnée.</li></ul>",
     "NAME layer on VALUE": "Couche ${NAME} sur ${VALUE}",
-    "Show metadata sheet in a new window":
-        "Afficher la fiche de métadonnées dans une nouvelle fenêtre",
+    "Show metadata essentials in a window":
+        "Afficher les métadonnées basiques",
+    "Show metadata sheet in a new browser tab": 
+        "Afficher la métadonnée complète dans un nouvel onglet",
     "more": "plus",
     "Click to select or deselect the layer":
         "Cliquez pour sélectionner ou désélectionner la couche",

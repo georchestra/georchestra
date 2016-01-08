@@ -93,7 +93,10 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     /* GEOR_cswquerier.js strings */
     "cswquerier.help.title": "Hints for advanced query",
     "cswquerier.help.message": '<ul><li><b>@word</b> looks for "word" in the organization name.</li><li><b>#word</b> looks for "word" in the metadata keywords.</li><li><b>?word</b> broadens the search by looking for "word" in any metadata field.</li></ul>',
-    "Show metadata sheet in a new window": "Показать список метаданных в новом окне",
+    //~ "Show metadata essentials in a window":
+        //~ "Afficher les métadonnées basiques",
+    //~ "Show metadata sheet in a new browser tab": 
+        //~ "Afficher la métadonnée complète dans un nouvel onglet",
     "more": "более, ещё...",
     "Click to select or deselect the layer": "Нажать, чтобы выбрать или отменить выделение слоя.",
     "Open the URL url in a new window": "Открыть URL в новом окне.",
@@ -354,6 +357,11 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Other": "Другой",
     "Confirmation": "Подтверждение",
     "Information": "Информация",
+    //"pointOfContact": "contact",
+    //"custodian": "producteur",
+    //"distributor": "distributeur",
+    //"originator": "instigateur",
+    //"More": "Plus",
     /* GEOR_waiter.js strings */
     /* GEOR_wmc.js strings */
     "The provided file is not a valid OGC context": "Данный файл не является действительным контекстом OGC",

@@ -139,6 +139,7 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
     /* GEOR_tools.js strings */
     "Could not load addon ADDONNAME": "Could not load addon ${ADDONNAME}",
     /* GEOR_util.js strings */
+    "pointOfContact": "contact",
     /* GEOR_waiter.js strings */
     /* GEOR_wmc.js strings */
     "Warning: trying to restore WMC with a different projection (PROJCODE1, while map SRS is PROJCODE2). Strange things might occur !": "Warning: trying to restore WMC with a different projection (${PROJCODE1}, while map SRS is ${PROJCODE2}). Strange things might occur !",
