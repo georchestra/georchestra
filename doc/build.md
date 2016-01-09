@@ -205,7 +205,7 @@ Then generate the Docker images (make sure that Docker and docker-compose are
 correctly installed before):
 
 ```
-mvn clean package docker:build -Pdocker -DskipTests --pl docker/db,docker/ldap,cas-server-webapp,security-proxy,geoserver/webapp,mapfishapp,header,ldapadmin,geonetwork/web
+mvn clean package docker:build -Pdocker -DskipTests --pl cas-server-webapp,security-proxy,geoserver/webapp,mapfishapp,header,ldapadmin,geonetwork/web
 ```
 
 Using the `docker images` command, you should get a listing of the geOrchestra images generated:
