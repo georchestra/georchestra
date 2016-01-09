@@ -188,3 +188,50 @@ Both can be combined with:
 ```
 ./mvn -P-all,geoserver '-Dgeoserver.war.excludes=WEB-INF/lib/*gwc*.jar,WEB-INF/lib/jai_*.jar' -Dserver=myprofile -Dmaven.test.skip=true clean install
 ```
+
+
+### Alternative building process using Doker (experimental)
+
+As of last quarter of 2015, we introduced in geOrchestra the notion of generic
+webapps ; it is now possible to use Docker images to run the whole SDI easily.
+
+First, you will need to compile the GeoNetwork and GeoServer artifacts separately:
+
+```
+mvn clean install --pl geoserver/geoserver-submodule/src,geonetwork -DskipTests
+```
+
+Then generate the Docker images (make sure that Docker and docker-compose are
+correctly installed before):
+
+```
+mvn clean package docker:build -Pdocker -DskipTests --pl docker/db,docker/ldap,cas-server-webapp,security-proxy,geoserver/webapp,mapfishapp,header,ldapadmin,geonetwork/web
+```
+
+Using the `docker images` command, you should get a listing of the geOrchestra images generated:
+
+```
+$ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
+[...]
+header              latest              443bf753975d        52 minutes ago      325.1 MB
+geonetwork          latest              aa50809004a5        About an hour ago   473.4 MB
+security-proxy      latest              47cfeb41b3f3        About an hour ago   329.8 MB
+mapfishapp          latest              e1b1f4a436cf        About an hour ago   374.6 MB
+ldapadmin           latest              756edfabd2c5        About an hour ago   349 MB
+geoserver           latest              556a537c6b50        About an hour ago   377.3 MB
+cas                 latest              6d27f4719f5f        About an hour ago   343.5 MB
+[...]
+```
+
+
+Grab a copy of the default datadir / docker composition:
+
+```
+git clone -b docker-composition https://github.com/pmauduit/config.git
+cd docker-composition
+docker-compose up
+```
+
+If no error occured, you should be able to visit `http://localhost:8080/header/`.
+
