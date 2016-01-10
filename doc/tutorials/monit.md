@@ -52,8 +52,8 @@ check process tomcat-proxycas with pidfile /var/run/tomcat-proxycas.pid
     if memory is greater than 1 GB then restart
     if cpu usage > 99% for 3 cycles then restart
 
-    # restart security proxy if cas/login page is not ok
-    if failed (url http://127.0.0.1:8180/cas/login
+    # restart security proxy if header page is not ok
+    if failed (url http://127.0.0.1:8180/header/
         and content = "html")
         for 3 cycles
     then restart
