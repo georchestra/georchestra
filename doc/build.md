@@ -198,38 +198,42 @@ webapps ; it is now possible to use Docker images to run the whole SDI easily.
 First, you will need to compile the GeoNetwork and GeoServer artifacts separately:
 
 ```
-mvn clean install --pl geoserver/geoserver-submodule/src,geonetwork -DskipTests
+cd geoserver/geoserver-submodule/src
+mvn clean install
+cd ../../../geonetwork/
+mvn clean install -DskipTests
 ```
 
 Then generate the Docker images (make sure that Docker and docker-compose are
 correctly installed before):
 
 ```
-mvn clean package docker:build -Pdocker -DskipTests --pl cas-server-webapp,security-proxy,geoserver/webapp,mapfishapp,header,ldapadmin,geonetwork/web
+mvn clean package docker:build -Pdocker -DskipTests --pl extractorapp,cas-server-webapp,security-proxy,geoserver/webapp,mapfishapp,header,ldapadmin,geonetwork/web
 ```
 
 Using the `docker images` command, you should get a listing of the geOrchestra images generated:
 
 ```
-$ docker images
-REPOSITORY          TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
+docker images
+REPOSITORY          TAG                 IMAGE ID         ...
 [...]
-header              latest              443bf753975d        52 minutes ago      325.1 MB
-geonetwork          latest              aa50809004a5        About an hour ago   473.4 MB
-security-proxy      latest              47cfeb41b3f3        About an hour ago   329.8 MB
-mapfishapp          latest              e1b1f4a436cf        About an hour ago   374.6 MB
-ldapadmin           latest              756edfabd2c5        About an hour ago   349 MB
-geoserver           latest              556a537c6b50        About an hour ago   377.3 MB
-cas                 latest              6d27f4719f5f        About an hour ago   343.5 MB
+header              latest              XXXXXXXXXXXX     ...
+geonetwork          latest              XXXXXXXXXXXX     ...
+security-proxy      latest              XXXXXXXXXXXX     ...
+mapfishapp          latest              XXXXXXXXXXXX     ...
+extractorapp        latest              XXXXXXXXXXXX     ...
+ldapadmin           latest              XXXXXXXXXXXX     ...
+geoserver           latest              XXXXXXXXXXXX     ...
+cas                 latest              XXXXXXXXXXXX     ...
 [...]
 ```
 
 
-Grab a copy of the default datadir / docker composition:
+Grab a copy of the default datadir / docker composition outside of the geOrchestra source directory:
 
 ```
 git clone -b docker-composition https://github.com/pmauduit/config.git
-cd docker-composition
+cd config
 docker-compose up
 ```
 
