@@ -2,7 +2,7 @@
     "servers": [
         {
             "name": "geOrchestra.org demo",
-            "url": "http://sdi.georchestra.org/geoserver/wms"
+            "url": "https://sdi.georchestra.org/geoserver/wms"
         },
         {
             "name": "GeoBretagne cadastre - regional SDI",

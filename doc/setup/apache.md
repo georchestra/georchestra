@@ -1,16 +1,8 @@
 # Setting up Apache
 
-Basically, there are two options here:
- 1. either your whole SDI is all-HTTPS
- 2. or it is mostly HTTP, but some parts of it use HTTPS (typically CAS & LDAPadmin webapps)
+We assume here that SSL is used for the whole SDI.  
+Having a partial SSL/non-SSL setup should work, but will require several changes in your configuration.
 
-Option 1 is achieved through the following apache configuration:
-```
-RewriteCond %{HTTPS} off 
-RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} 
-```
-
-Option 2 is described in detail below.
 
 ## Modules setup
 
@@ -61,6 +53,8 @@ In ```/etc/apache2/sites-available/georchestra.conf```:
     CustomLog /var/www/georchestra/logs/access.log "combined"
     Include /var/www/georchestra/conf/*.conf
     ServerSignature Off
+    RewriteCond %{HTTPS} off 
+    RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} 
 </VirtualHost>
 <VirtualHost *:443>
     ServerName georchestra.mydomain.org
@@ -73,6 +67,10 @@ In ```/etc/apache2/sites-available/georchestra.conf```:
     SSLCertificateFile /var/www/georchestra/ssl/georchestra.crt
     SSLCertificateKeyFile /var/www/georchestra/ssl/georchestra-unprotected.key
     SSLCACertificateFile /etc/ssl/certs/ca-certificates.crt
+    # alternate setup with letsencrypt:
+    #SSLCertificateFile /etc/letsencrypt/live/mysdi.org/cert.pem
+    #SSLCertificateKeyFile /etc/letsencrypt/live/mysdi.org/privkey.pem
+    #SSLCertificateChainFile /etc/letsencrypt/live/mysdi.org/fullchain.pem
     ServerSignature Off
 </VirtualHost>
 ```
@@ -143,7 +141,7 @@ ProxyPassReverse /testPage http://localhost:8180/testPage
 ProxyPass /_static/ http://localhost:8180/_static/
 ProxyPassReverse /_static/ http://localhost:8180/_static/
 
-SetEnvIf Referer "^http://my\.sdi\.org/" mysdi
+SetEnvIf Referer "^https://my\.sdi\.org/" mysdi
 <Proxy http://localhost:8180/proxy/*>
     Require env mysdi
 </Proxy>
@@ -181,19 +179,6 @@ ProxyPass /analytics/ http://localhost:8180/analytics/
 ProxyPassReverse /analytics/ http://localhost:8180/analytics/
 ```
 
-In addition, if you would like to encrypt all communications to the analytics webapp, you have to add the following:
-```
-RewriteCond %{HTTPS} off
-RewriteCond %{REQUEST_URI} ^/analytics/?.*$ 
-RewriteRule ^/(.*)$ https://%{SERVER_NAME}/$1 [R=301,L]
-```
-
-Or if you prefer to access analytics through http only, choose the following:
-```
-RewriteCond %{HTTPS} on
-RewriteCond %{REQUEST_URI} ^/analytics/?.*$ 
-RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
-```
 
 * ```catalogapp.conf```:
 
@@ -206,12 +191,6 @@ ProxyPass /catalogapp/ http://localhost:8180/catalogapp/
 ProxyPassReverse /catalogapp/ http://localhost:8180/catalogapp/
 ```
 
-And if your SDI is primarily accessed through unsecured http:
-```
-RewriteCond %{HTTPS} on
-RewriteCond %{REQUEST_URI} ^/catalogapp/?.*$ 
-RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
-```
 
 * ```downloadform.conf```:
 
@@ -222,20 +201,6 @@ RewriteRule ^/downloadform$ /downloadform/ [R]
 </Proxy>
 ProxyPass /downloadform/ http://localhost:8180/downloadform/ 
 ProxyPassReverse /downloadform/ http://localhost:8180/downloadform/
-```
-
-In addition, if you would like to encrypt all communications to the downloadform webapp, you have to add the following:
-```
-RewriteCond %{HTTPS} off
-RewriteCond %{REQUEST_URI} ^/downloadform/?.*$ 
-RewriteRule ^/(.*)$ https://%{SERVER_NAME}/$1 [R=301,L]
-```
-
-Or if you prefer to access downloadform through http only, choose the following:
-```
-RewriteCond %{HTTPS} on
-RewriteCond %{REQUEST_URI} ^/downloadform/?.*$ 
-RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
 ```
 
 
@@ -251,12 +216,6 @@ ProxyPass /extractorapp/ http://localhost:8180/extractorapp/
 ProxyPassReverse /extractorapp/ http://localhost:8180/extractorapp/
 ```
 
-And if your SDI is primarily accessed through unsecured http:
-```
-RewriteCond %{HTTPS} on
-RewriteCond %{REQUEST_URI} ^/extractorapp/?.*$ 
-RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
-```
 
 * ```geonetwork.conf```:
 
@@ -269,12 +228,6 @@ ProxyPass /geonetwork/ http://localhost:8180/geonetwork/
 ProxyPassReverse /geonetwork/ http://localhost:8180/geonetwork/
 ```
 
-And if your SDI is primarily accessed through unsecured http:
-```
-RewriteCond %{HTTPS} on
-RewriteCond %{REQUEST_URI} ^/geonetwork/?.*$ 
-RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
-```
 
 * ```geoserver.conf```:
 
@@ -291,12 +244,6 @@ ProxyPass /geoserver/ http://localhost:8180/geoserver/
 ProxyPassReverse /geoserver/ http://localhost:8180/geoserver/
 ```
 
-And if your SDI is primarily accessed through unsecured http:
-```
-RewriteCond %{HTTPS} on
-RewriteCond %{REQUEST_URI} ^/geoserver/?.*$ 
-RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
-```
 
 * ```geofence.conf```:
 
@@ -309,12 +256,6 @@ ProxyPass /geofence/ http://localhost:8180/geofence/
 ProxyPassReverse /geofence/ http://localhost:8180/geofence/
 ```
 
-And if your SDI is primarily accessed through unsecured http:
-```
-RewriteCond %{HTTPS} on
-RewriteCond %{REQUEST_URI} ^/geofence/?.*$ 
-RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
-```
 
 * ```geowebcache.conf```:
 
@@ -327,12 +268,6 @@ ProxyPass /geowebcache/ http://localhost:8180/geowebcache/
 ProxyPassReverse /geowebcache/ http://localhost:8180/geowebcache/
 ```
 
-And if your SDI is primarily accessed through unsecured http:
-```
-RewriteCond %{HTTPS} on
-RewriteCond %{REQUEST_URI} ^/geowebcache/?.*$ 
-RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
-```
 
 * ```header.conf```:
 
@@ -345,12 +280,9 @@ ProxyPass /header/ http://localhost:8180/header/
 ProxyPassReverse /header/ http://localhost:8180/header/
 ```
 
-Note that the Header module may be accessed through http or https, we're not forcing anything here.
-
 
 * ```ldapadmin.conf```:
 
-Since the ldapadmin webapp handles user accounts, all communications should be encrypted here.
 ```
 RewriteRule ^/ldapadmin$ /ldapadmin/ [R]
 RewriteRule ^/ldapadmin/privateui$ /ldapadmin/privateui/ [R]
@@ -360,10 +292,6 @@ RewriteRule ^/ldapadmin/privateui$ /ldapadmin/privateui/ [R]
 </Proxy>
 ProxyPass /ldapadmin/ http://localhost:8180/ldapadmin/
 ProxyPassReverse /ldapadmin/ http://localhost:8180/ldapadmin/
-
-RewriteCond %{HTTPS} off
-RewriteCond %{REQUEST_URI} ^/ldapadmin/?.*$
-RewriteRule ^/(.*)$ https://%{SERVER_NAME}/$1 [R=301,L]
 ```
 
 * ```mapfishapp.conf```:
@@ -377,63 +305,8 @@ ProxyPass /mapfishapp/ http://localhost:8180/mapfishapp/
 ProxyPassReverse /mapfishapp/ http://localhost:8180/mapfishapp/
 ```
 
-And if your SDI is primarily accessed through unsecured http:
-```
-RewriteCond %{HTTPS} on
-RewriteCond %{REQUEST_URI} ^/mapfishapp/?.*$ 
-RewriteRule ^/(.*)$ http://%{SERVER_NAME}/$1 [R=301,L]
-```
-
 
 ## SSL certificate
 
-The SSL certificate is absolutely required, at least for the CAS module, if not for the whole SDI.
-
-* Generate a private key (enter a good passphrase and keep it safe !)
-```
-sudo openssl genrsa -des3 \
-    -out /var/www/georchestra/ssl/georchestra.key 2048
-```
-
-Protect it with:
-```
-sudo chmod 400 /var/www/georchestra/ssl/georchestra.key
-```
-
-* Generate a [Certificate Signing Request](http://en.wikipedia.org/wiki/Certificate_signing_request) (CSR) for this key, with eg:
-```
-sudo openssl req \
-    -key /var/www/georchestra/ssl/georchestra.key \
-    -subj "/C=FR/ST=None/L=None/O=None/OU=None/CN=georchestra.mydomain.org" \
-    -newkey rsa:2048 -sha256 \
-    -out /var/www/georchestra/ssl/georchestra.csr
-```
-
-Be sure to replace the ```/C=FR/ST=None/L=None/O=None/OU=None/CN=georchestra.mydomain.org``` string with something more relevant:
- * ```C``` is the 2 letter Country Name code
- * ```ST``` is the State or Province Name
- * ```L``` is the Locality Name (eg, city)
- * ```O``` is the Organization Name (eg, company)
- * ```OU``` is the Organizational Unit (eg, company department)
- * ```CN``` is the Common Name (***your server FQDN***)
-
-* Create an unprotected key:
-```
-sudo openssl rsa \
-    -in /var/www/georchestra/ssl/georchestra.key \
-    -out /var/www/georchestra/ssl/georchestra-unprotected.key
-```
-
- * Finally generate a self-signed certificate (CRT):
-```
-sudo openssl x509 -req \
-    -days 365 \
-    -in /var/www/georchestra/ssl/georchestra.csr \
-    -signkey /var/www/georchestra/ssl/georchestra.key \
-    -out /var/www/georchestra/ssl/georchestra.crt
-```
-
-* Restart the web server:
-```
-sudo service apache2 restart
-``` 
+An SSL certificate is absolutely required, at least for the CAS module.
+We recommend using a certificate issued by [Let's Encrypt](https://letsencrypt.org/), but one may also use a [self-signed certificate](../tutorials/self-signed-certificate.md).

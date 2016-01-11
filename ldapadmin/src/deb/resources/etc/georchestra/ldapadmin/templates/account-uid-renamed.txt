@@ -6,4 +6,4 @@ geOrchestra platform has been modified.
 Your new login is now: {uid}
 
 ---
-Sent by geOrchestra (http://georchestra.mydomain.org/)
+Sent by geOrchestra (https://georchestra.mydomain.org/)
