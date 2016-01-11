@@ -1,7 +1,7 @@
 # Setting up Apache
 
 We assume here that SSL is used for the whole SDI.  
-Having a partial SSL/non-SSL setup should work, but will require several changes in your configuration.
+Having a mixed SSL/non-SSL setup should work, but will require several changes in your configuration.
 
 
 ## Modules setup
