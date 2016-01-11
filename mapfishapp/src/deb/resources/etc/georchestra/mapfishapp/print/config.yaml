@@ -37,7 +37,7 @@ scales:
   - 559082264
 
 # see https://github.com/georchestra/georchestra/issues/362
-brokenUrlPlaceholder: http://sdi.georchestra.org/public/transparent.gif
+brokenUrlPlaceholder: https://sdi.georchestra.org/public/transparent.gif
 
 #===========================================================================
 # printing protected layers

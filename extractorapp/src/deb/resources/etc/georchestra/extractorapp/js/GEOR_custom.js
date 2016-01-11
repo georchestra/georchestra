@@ -271,7 +271,7 @@ GEOR.custom = {
     STARTUP_LAYERS: [
         {
             owstype: "WMS",
-            owsurl: "http://sdi.georchestra.org/geoserver/wms",
+            owsurl: "https://sdi.georchestra.org/geoserver/wms",
             layername: "gshhs:GSHHS_l_L2"
         }
     ],
@@ -284,7 +284,7 @@ GEOR.custom = {
         {
             text: "Example layers",
             owstype: "WMS",
-            owsurl: "http://sdi.georchestra.org/geoserver/wms"
+            owsurl: "https://sdi.georchestra.org/geoserver/wms"
         }
     ]
 

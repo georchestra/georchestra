@@ -13,4 +13,4 @@ Your extraction can be downloaded during {expiry} days at the following address:
 For more information, please contact your SDI administrator
 
 ---
-Sent by geOrchestra (http://georchestra.mydomain.org/)
+Sent by geOrchestra (https://georchestra.mydomain.org/)

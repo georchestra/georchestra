@@ -138,7 +138,7 @@ GEOR.custom = {
      * List of catalogs for freetext search
      */
     CATALOGS: [
-        ['http://sdi.georchestra.org/geonetwork/srv/fre/csw', 'le catalogue geOrchestra démo'],
+        ['https://sdi.georchestra.org/geonetwork/srv/fre/csw', 'le catalogue geOrchestra démo'],
         ['http://geobretagne.fr/geonetwork/srv/fre/csw', 'le catalogue GeoBretagne'],
         ['http://ids.pigma.org/geonetwork/srv/fre/csw', 'le catalogue PIGMA'],
         ['/geonetwork/srv/fre/csw', 'le catalogue local'],
@@ -152,7 +152,7 @@ GEOR.custom = {
      * CSW URL which should be used by default for freetext search
      * Note: must be one of the URLs in the above CATALOGS config option
      */
-    DEFAULT_CSW_URL: 'http://sdi.georchestra.org/geonetwork/srv/fre/csw',
+    DEFAULT_CSW_URL: 'https://sdi.georchestra.org/geonetwork/srv/fre/csw',
 
     /**
      * Constant: MAX_CSW_RECORDS
@@ -647,11 +647,11 @@ GEOR.custom = {
      *
     SEND_MAP_TO: [{
         "name": "Mobile viewer", 
-        "url": "http://sdi.georchestra.org/sviewer/?wmc={context_url}",
+        "url": "https://sdi.georchestra.org/sviewer/?wmc={context_url}",
         "qtip": "Mobile compatible viewer on sdi.georchestra.org"
     }, {
         "name": "Desktop viewer",
-        "url": "http://sdi.georchestra.org/mapfishapp/?wmc={context_url}",
+        "url": "https://sdi.georchestra.org/mapfishapp/?wmc={context_url}",
         "qtip": "Desktop viewer on sdi.georchestra.org"
     }],*/
 

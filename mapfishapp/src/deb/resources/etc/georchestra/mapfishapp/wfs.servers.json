@@ -2,7 +2,7 @@
     "servers": [
         {
             "name": "geOrchestra demo",
-            "url": "http://sdi.georchestra.org/geoserver/wfs"
+            "url": "https://sdi.georchestra.org/geoserver/wfs"
         },
         {
             "name": "GéoBretagne",

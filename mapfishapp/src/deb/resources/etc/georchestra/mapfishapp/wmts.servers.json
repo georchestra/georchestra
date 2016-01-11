@@ -2,7 +2,7 @@
     "servers": [
         {
             "name": "geOrchestra demo",
-            "url": "http://sdi.georchestra.org/geoserver/gwc/service/wmts"
+            "url": "https://sdi.georchestra.org/geoserver/gwc/service/wmts"
         },
         {
             "name": "GéoBretagne OSM",
