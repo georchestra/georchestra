@@ -1,0 +1,35 @@
+<h4 ng-if="isRoot">Groups</h4>
+
+<a ng-if="enableBack" class="btn btn-default btn-xs" ng-link="users({groupid: prefix.parent})">
+  «
+</a>
+<span ng-if="enableBack">{{prefix.cn || 'Tous'}}</span>
+
+<div ng-repeat="group in groups.tree" ng-if="groups.filter(group, groups.activeGroup)">
+
+  <strong ng-if="(groups.activeGroup.cn == group.cn) && (group.children.length == 0)">
+    {{::group | unprefix: prefix}} <span class="badge">{{::group.users.length}}</span>
+  </strong>
+  <a ng-link="users({groupid: group.cn})" title={{::group.description}}
+      ng-if="(groups.activeGroup.cn != group.cn) && (prefix.cn.indexOf(group.cn)!=0)">
+    <span ng-if="group.children.length > 0">[+]</span>
+    {{::group | unprefix: prefix}} <span class="badge">{{::group.users.length}}</span>
+  </a>
+
+  <groups groups="group.children" active-group="groups.activeGroup" index="groups.index"
+      ng-if="groups.isExpanded(group, groups.activeGroup)"></groups>
+
+</div>
+
+
+<h4 ng-if="isRoot">list</h4>
+<ul ng-if="isRoot">
+  <li ng-repeat="group in groups.groups">
+    <strong ng-if="groups.activeGroup.cn == group.cn">
+      {{::group.cn}} <span class="badge">{{::group.users.length}}</span>
+    </strong>
+    <a ng-link="users({groupid: group.cn})" title={{::group.description}} ng-if="groups.activeGroup.cn != group.cn">
+      {{::group.cn}} ({{::group.users.length}})
+    </a>
+  </li>
+</ul>

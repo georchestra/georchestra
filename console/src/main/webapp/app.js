@@ -3,6 +3,7 @@
 angular.module('admin_console', [
   'admin_console.home',
   'admin_console.users',
+  'admin_console.groups',
   'userServices',
   'ngNewRouter'
 ]).controller('AppController', [
