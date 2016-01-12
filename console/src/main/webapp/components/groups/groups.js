@@ -49,34 +49,23 @@ function GroupsController($scope) {
 GroupsController.$inject = [ '$scope' ];
 
 GroupsController.prototype.filter = function(group, active) {
-  if (active) {
-    // console.log(active,group);
-  // console.log(active.parent, group.parent);
-    }
   return (
     !active || // All
-    ((active.parent == group.parent) && (active.children.length == 0)) || // 1st level leaf
-    (group.cn == active.cn) || // 1st level active
-    group.cn.substr(0, active.cn.length) == active.cn ||
-    active.cn.indexOf(group.cn) == 0 ||
-    active.cn.substr(0, active.cn.lastIndexOf('_')) == group.cn
+    ((active.parent == group.parent) && (active.children.length == 0)) || // Common ancestor without child
+    (group.cn == active.cn) || // Active
+    group.cn.substr(0, active.cn.length) == active.cn || // Active is prefix of group
+    active.cn.substr(0, active.cn.lastIndexOf('_')) == group.cn // Group prefix of active
   );
 };
 
 GroupsController.prototype.isExpanded = function(group, active) {
-  return (
-    group.children.length > 0 &&
-    (active && active.cn.indexOf(group.cn) == 0)
-  );
+  return (group.children.length > 0 &&
+    (active && active.cn.indexOf(group.cn) == 0));
 };
 
 function GroupUnprefix() {
   return function(input, active) {
-    if (!active) {
-      return input.cn;
-    }
-    console.log(active.children.length, input, active);
-    return (input.children.length==0) ? input.cn :
-        input.cn.substr(active.length + 1);
+    if (!active) { return input.cn; }
+    return (input.children.length==0) ? input.cn : input.cn.substr(active.length + 1);
   }
 }
