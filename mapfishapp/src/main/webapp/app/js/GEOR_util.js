@@ -527,13 +527,16 @@ GEOR.util = (function() {
                 title: options.title,
                 layout: "fit",
                 width: options.width || 400,
+                maxHeight: 400,
                 closeAction: 'close',
                 constrainHeader: true,
                 modal: false,
                 defaultButton: 0,
                 items: [{
                     bodyStyle: 'padding:5px',
+                    autoScroll: true,
                     html: options.msg,
+                    maxHeight: 400,
                     border: false
                 }],
                 buttons: options.buttons || [{
@@ -541,7 +544,14 @@ GEOR.util = (function() {
                     handler: function() {
                         win.close();
                     }
-                }]
+                }],
+                listeners: {
+                    'afterrender': function(w) {
+                        if (w.getHeight() > w.maxHeight) {
+                            w.setHeight(w.maxHeight);
+                        }
+                    }
+                }
             });
             win.show();
         },
