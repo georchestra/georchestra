@@ -190,7 +190,7 @@ Both can be combined with:
 ```
 
 
-### Alternative building process using Doker (experimental)
+### Alternative building process using Docker (experimental)
 
 As of last quarter of 2015, we introduced in geOrchestra the notion of generic
 webapps ; it is now possible to use Docker images to run the whole SDI easily.
@@ -199,16 +199,17 @@ First, you will need to compile the GeoNetwork and GeoServer artifacts separatel
 
 ```
 cd geoserver/geoserver-submodule/src
-mvn clean install
+../../../mvn clean install -DskipTests
 cd ../../../geonetwork/
-mvn clean install -DskipTests
+../mvn clean install -DskipTests
 ```
 
 Then generate the Docker images (make sure that Docker and docker-compose are
 correctly installed before):
 
+From the project root:
 ```
-mvn clean package docker:build -Pdocker -DskipTests --pl extractorapp,cas-server-webapp,security-proxy,geoserver/webapp,mapfishapp,header,ldapadmin,geonetwork/web
+./mvn clean package docker:build -Pdocker -DskipTests --pl extractorapp,cas-server-webapp,security-proxy,geoserver/webapp,mapfishapp,header,ldapadmin,geonetwork/web
 ```
 
 Using the `docker images` command, you should get a listing of the geOrchestra images generated:
