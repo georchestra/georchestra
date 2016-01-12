@@ -10,17 +10,16 @@ function UsersController($routeParams, User, Group) {
   }.bind(this));
 
   this.groups = Group.query(function(){
-    if ($routeParams.groupid == 'all') { return; }
-    this.filter(
-      this.groups.filter(function(g) { return g.cn == $routeParams.groupid })[0]
-    );
+    this.activeGroup = this.groups.filter(function(g) {
+      return g.cn == $routeParams.groupid }
+    )[0];
+    if (this.activeGroup) {
+      this.filter(this.activeGroup);
+    }
   }.bind(this));
 }
 
-UsersController.prototype.filter = function(group, evt) {
-  if (evt) {
-    evt.preventDefault();
-  }
+UsersController.prototype.filter = function(group) {
   if (!this.allUsers) { return; }
   this.users = this.allUsers.filter(function(user) {
     return group.users.indexOf(user.uid) >= 0;
