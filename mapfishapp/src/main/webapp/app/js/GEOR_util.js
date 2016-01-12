@@ -547,6 +547,97 @@ GEOR.util = (function() {
         },
 
         /**
+         * APIMethod: extButton
+         *
+         * Parameters:
+         * options - {Object} Button config
+         *
+         * Returns:
+         * {String} the HTML string to generate a button
+         */
+        extButton: function(options) {
+            return [
+                '<table cellspacing="0" class="x-btn x-btn-text-icon" style="width: auto;">',
+                   '<tbody class="x-btn-small x-btn-icon-small-left">',
+                      '<tr>',
+                         '<td class="x-btn-tl"><i>&nbsp;</i></td>',
+                         '<td class="x-btn-tc"></td>',
+                         '<td class="x-btn-tr"><i>&nbsp;</i></td>',
+                      '</tr>',
+                      '<tr>',
+                         '<td class="x-btn-ml"><i>&nbsp;</i></td>',
+                         '<td class="x-btn-mc"><em class=" x-unselectable" unselectable="on">',
+                            '<button ext:qtip="', options.tooltip, '" type="button" class=" x-btn-text ', options.iconCls, '" onclick="', options.handler,'">',
+                            options.text,
+                            '</button></em></td>',
+                         '<td class="x-btn-mr"><i>&nbsp;</i></td>',
+                      '</tr>',
+                      '<tr>',
+                         '<td class="x-btn-bl"><i>&nbsp;</i></td>',
+                         '<td class="x-btn-bc"></td>',
+                         '<td class="x-btn-br"><i>&nbsp;</i></td>',
+                      '</tr>',
+                   '</tbody>',
+                '</table>'].join('');
+        },
+
+        /**
+         * APIMethod: extFbar
+         *
+         * Parameters:
+         * options - {Object} config
+         *
+         * Returns:
+         * {String} the HTML string to generate a footer bar with buttons
+         */
+        extFbar: function(options) {
+            var tds = '';
+            Ext.each(options.buttons, function(btn) {
+                tds += '<td class="x-toolbar-cell">'+btn+'</td>'
+            });
+            return [
+'<div class="x-panel-fbar x-small-editor x-toolbar-layout-ct" style="width: auto;">',
+   '<table cellspacing="0" class="x-toolbar-ct">',
+      '<tbody>',
+         '<tr>',
+            '<td class="x-toolbar-left" align="left">',
+               '<table cellspacing="0">',
+                  '<tbody>',
+                     '<tr class="x-toolbar-left-row"></tr>',
+                  '</tbody>',
+               '</table>',
+            '</td>',
+            '<td class="x-toolbar-right" align="right">',
+               '<table cellspacing="0" class="x-toolbar-right-ct">',
+                  '<tbody>',
+                     '<tr>',
+                        '<td>',
+                           '<table cellspacing="0">',
+                              '<tbody>',
+                                 '<tr class="x-toolbar-right-row">',
+                                    tds,
+                                 '</tr>',
+                              '</tbody>',
+                           '</table>',
+                        '</td>',
+                        '<td>',
+                           '<table cellspacing="0">',
+                              '<tbody>',
+                                 '<tr class="x-toolbar-extras-row"></tr>',
+                              '</tbody>',
+                           '</table>',
+                        '</td>',
+                     '</tr>',
+                  '</tbody>',
+               '</table>',
+            '</td>',
+         '</tr>',
+      '</tbody>',
+   '</table>',
+'</div>'].join('');
+        },
+
+        /**
          * APIMethod: isUrl
          *
          * Parameters:
