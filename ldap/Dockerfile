@@ -11,7 +11,7 @@ MAINTAINER PSC "psc@georchestra.org"
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && \
-    apt-get install -y slapd ldap-utils wget ca-certificates
+    apt-get install -y slapd ldap-utils ca-certificates
 
 # FIXME: find a way to customize the "secret" password
 # Hint: environment variables
