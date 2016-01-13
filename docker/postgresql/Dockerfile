@@ -13,6 +13,9 @@ ENV DEBIAN_FRONTEND noninterative
 RUN apt-get update && \
     apt-get install -y postgresql-9.4-postgis-2.1 wget
 
+
+# TODO: rely on local files, not remote ones.
+
 # Fetch the SQL code
 # https://github.com/docker/compose/issues/1065
 #ADD https://raw.githubusercontent.com/georchestra/georchestra/master/mapfishapp/database.sql /tmp/mapfishapp.sql
