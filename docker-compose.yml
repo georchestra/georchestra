@@ -2,7 +2,7 @@ database:
   build: ./docker/postgresql
 
 ldap:
-  build: ./docker/ldap
+  build: ./ldap
 
 geoserver:
   image: geoserver
