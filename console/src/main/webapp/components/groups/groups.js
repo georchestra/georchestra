@@ -10,7 +10,7 @@ angular.module('admin_console')
 })
 .filter('unprefix', GroupUnprefix);
 
-function GroupsController($scope) {
+function GroupsController() {
   var root = [];
   var index = {};
   this.q = (this.q) || '';
@@ -36,26 +36,16 @@ function GroupsController($scope) {
     this.index = index;
   }
 
-  $scope.isRoot = this.groups.length == Object.keys(index).length;
-  $scope.enableBack = $scope.isRoot && this.activeGroup;
+  this.isRoot = this.groups.length == Object.keys(index).length;
+  this.enableBack = this.isRoot && this.activeGroup;
 
   if (this.activeGroup) {
-    $scope.prefix = (this.activeGroup.children.length == 0) ?
+    this.prefix = (this.activeGroup.children.length == 0) ?
         this.index[this.activeGroup.parent] : this.activeGroup;
-    $scope.enableBack = $scope.enableBack && $scope.prefix;
+    this.enableBack = this.enableBack && this.prefix;
   }
 
-  // $scope.searchFilter= function(group) {
-  //   console.log($scope.q);
-  //   if (!this.q) { return true; }
-  //   console.log(this.q);
-  //   var search = this.q.toLowerCase();
-  //   console.log(search);
-  //   return group.cn.toLowerCase().indexOf(search) >= 0;
-  // }
 }
-
-GroupsController.$inject = [ '$scope' ];
 
 GroupsController.prototype.filter = function(group, active) {
   var result = (
