@@ -1,0 +1,177 @@
+# users, georchestra.org
+dn: ou=users,dc=georchestra,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: users
+
+# testuser, users, georchestra.org
+dn: uid=testuser,ou=users,dc=georchestra,dc=org
+objectClass: organizationalPerson
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: top
+mail: psc+testuser@georchestra.org
+o: geOrchestra
+uid: testuser
+givenName: Test
+sn: USER
+l: SRID=4326;POLYGON((-5.76043921875 48.698689609375,-2.02508765625 50.104939609375,2.45733421875 51.423298984375,7.51104515625 47.644002109375,6.23663109375 45.842244296875,7.29131859375 42.853963046875,3.59991234375 41.975056796875,-2.55243140625 43.601033359375,-5.76043921875 48.698689609375))
+description: USER
+employeeNumber: 1
+userPassword:: e1NIQX1SY1Z4b1ZiZHp2UVRVYWNUdk4zdVc2ZnBWR0E9
+cn: testuser
+
+# testreviewer, users, georchestra.org
+dn: uid=testreviewer,ou=users,dc=georchestra,dc=org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+uid: testreviewer
+givenName: Test
+sn: REVIEWER
+description: Reviewer
+employeeNumber: 2
+userPassword:: e1NIQX1Nb3IzdXZ5cnpISWpHK0crSEcvblhxZW8reWc9
+mail: psc+testreviewer@georchestra.org
+o: geOrchestra
+cn: testreviewer
+
+# testeditor, users, georchestra.org
+dn: uid=testeditor,ou=users,dc=georchestra,dc=org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+uid: testeditor
+givenName: Test
+sn: EDITOR
+description: editor
+employeeNumber: 3
+userPassword:: e1NIQX1mVTFvSmdzV0FEZ1ZtTHBHeHBxdFBVa2RiekU9
+mail: psc+testeditor@georchestra.org
+o: geOrchestra
+cn: testeditor
+
+# testadmin, users, georchestra.org
+dn: uid=testadmin,ou=users,dc=georchestra,dc=org
+objectClass: organizationalPerson
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: top
+uid: testadmin
+givenName: Test
+sn: ADMIN
+description: Admin user
+employeeNumber: 4
+userPassword:: e1NIQX1kREU1SkEvMkVpVTRGMFFObUt5eXpuazUrN1E9
+mail: psc+testadmin@georchestra.org
+o: geOrchestra
+cn: testadmin
+
+# geoserver_privileged_user, users, georchestra.org
+dn: uid=geoserver_privileged_user,ou=users,dc=georchestra,dc=org
+sn: geoserver_privileged_user
+objectClass: organizationalPerson
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: top
+mail: psc+geoserver_privileged_user@georchestra.org
+uid: geoserver_privileged_user
+cn: geoserver_privileged_user
+employeeNumber: 5
+description: Do not modify.  This is a required user for extractorapp, geofence, mapfishapp...
+userPassword:: e1NIQX1XMlY4d2UrOFdNanpma28rMUtZVDFZcWZFVDQ9
+
+# groups, georchestra.org
+dn: ou=groups,dc=georchestra,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: groups
+
+
+# ADMINISTRATOR, groups, georchestra.org
+dn: cn=ADMINISTRATOR,ou=groups,dc=georchestra,dc=org
+objectClass: top
+objectClass: groupOfMembers
+cn: ADMINISTRATOR
+ou: 1
+description: This group grants admin access to GeoServer
+member: uid=geoserver_privileged_user,ou=users,dc=georchestra,dc=org
+member: uid=testadmin,ou=users,dc=georchestra,dc=org
+
+
+# PENDING, groups, georchestra.org
+dn: cn=PENDING,ou=groups,dc=georchestra,dc=org
+objectClass: top
+objectClass: groupOfMembers
+cn: PENDING
+ou: 2
+description: This group does not grant any right inside the SDI. Users in this group are requesting a fully fledged account.
+
+
+# MOD_LDAPADMIN, groups, georchestra.org
+dn: cn=MOD_LDAPADMIN,ou=groups,dc=georchestra,dc=org
+objectClass: top
+objectClass: groupOfMembers
+cn: MOD_LDAPADMIN
+ou: 10
+description: This group grants access to the LDAPadmin private User Interface
+member: uid=testadmin,ou=users,dc=georchestra,dc=org
+
+# MOD_ANALYTICS, groups, georchestra.org
+dn: cn=MOD_ANALYTICS,ou=groups,dc=georchestra,dc=org
+objectClass: top
+objectClass: groupOfMembers
+cn: MOD_ANALYTICS
+ou: 11
+description: This group grants access to the Analytics application
+member: uid=testadmin,ou=users,dc=georchestra,dc=org
+
+# MOD_EXTRACTORAPP, groups, georchestra.org
+dn: cn=MOD_EXTRACTORAPP,ou=groups,dc=georchestra,dc=org
+objectClass: top
+objectClass: groupOfMembers
+cn: MOD_EXTRACTORAPP
+ou: 12
+description: This group grants access to the Extractorapp application
+member: uid=testadmin,ou=users,dc=georchestra,dc=org
+
+
+# SV_ADMIN, groups, georchestra.org
+dn: cn=SV_ADMIN,ou=groups,dc=georchestra,dc=org
+objectClass: top
+objectClass: groupOfMembers
+cn: SV_ADMIN
+ou: 20
+description: This group grants admin access to GeoNetwork
+member: uid=testadmin,ou=users,dc=georchestra,dc=org
+
+# SV_EDITOR, groups, georchestra.org
+dn: cn=SV_EDITOR,ou=groups,dc=georchestra,dc=org
+objectClass: top
+objectClass: groupOfMembers
+cn: SV_EDITOR
+ou: 21
+description: This group grants edit rights in GeoNetwork and Mapfishapp
+member: uid=testeditor,ou=users,dc=georchestra,dc=org
+
+# SV_REVIEWER, groups, georchestra.org
+dn: cn=SV_REVIEWER,ou=groups,dc=georchestra,dc=org
+objectClass: top
+objectClass: groupOfMembers
+cn: SV_REVIEWER
+ou: 22
+description: This group grants reviewer rights in GeoNetwork
+member: uid=testreviewer,ou=users,dc=georchestra,dc=org
+
+# SV_USER, groups, georchestra.org
+dn: cn=SV_USER,ou=groups,dc=georchestra,dc=org
+objectClass: top
+objectClass: groupOfMembers
+cn: SV_USER
+ou: 23
+description: This group grants basic, authenticated access to the whole SDI
+member: uid=testuser,ou=users,dc=georchestra,dc=org
+
+
