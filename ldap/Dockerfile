@@ -20,10 +20,10 @@ RUN apt-get update && \
 ADD . /tmp
 
 RUN /etc/init.d/slapd start && \
-    ldapadd -Y EXTERNAL -H ldapi:/// -f /tmp/georchestra-bootstrap.ldif && \
-    ldapadd -Y EXTERNAL -H ldapi:/// -f /tmp/georchestra-groupofmembers.ldif && \
-    ldapadd -Y EXTERNAL -H ldapi:/// -f /tmp/georchestra-memberof.ldif && \
-    ldapadd -D"cn=admin,dc=georchestra,dc=org" -w secret -f /tmp/georchestra-root.ldif && \
+    ldapadd -Y EXTERNAL -H ldapi:/// -f /tmp/bootstrap.ldif && \
+    ldapadd -Y EXTERNAL -H ldapi:/// -f /tmp/groupofmembers.ldif && \
+    ldapadd -Y EXTERNAL -H ldapi:/// -f /tmp/memberof.ldif && \
+    ldapadd -D"cn=admin,dc=georchestra,dc=org" -w secret -f /tmp/root.ldif && \
     ldapadd -D"cn=admin,dc=georchestra,dc=org" -w secret -f /tmp/georchestra.ldif
 
 # Expose the ldap port

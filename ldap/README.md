@@ -4,11 +4,11 @@ This folder holds the required files to configure and populate an OpenLDAP direc
 
 Please refer to the [geOrchestra documentation](https://github.com/georchestra/georchestra/blob/master/README.md) for instructions, and **use the branch matching your geOrchestra version** !
 
-## georchestra-groupofmembers.ldif
+## groupofmembers.ldif
 
 This file imports ```groupOfMembers``` LDAP objectClass into OpenLdap available schemas. It allows to have empty groups, which the default ```groupOfNames``` doesn't permit. ```groupOfMembers``` comes from RFC2037bis and is used in lots of places.
 
-## georchestra-bootstrap.ldif
+## bootstrap.ldif
 
 This file creates the database.
 
@@ -19,7 +19,7 @@ Note that, depending on your Debian version, you might need to use a different v
 Please refer to [issue 856](https://github.com/georchestra/georchestra/issues/856) for more information.
 
 
-## georchestra-root.ldif
+## root.ldif
 
 This files creates the root DN, which is by default ```dc=georchestra,dc=org```.
 
