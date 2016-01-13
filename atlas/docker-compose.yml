@@ -1,0 +1,15 @@
+#A compose file for integration tests and development
+batch:
+  image: camptocamp/georchestra_atlas:latest
+  ports:
+  - 8180:8080
+  environment:
+    CATALINA_OPTS: -Daws.profile=travis-build -Dmapfish.print.nb_poll_wait_status=300 -Dexport.nb_redeliveries=5
+  links:
+  - print
+
+print:
+  image: camptocamp/atlas_print:latest
+  ports:
+  - 8181:8080
+

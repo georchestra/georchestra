@@ -154,6 +154,7 @@
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   streamCache="true">
 
+        <routeContextRef ref="mapfish"/>
 
         <restConfiguration component="servlet">
             <componentProperty key="enableCors" value="true"/>
@@ -171,12 +172,12 @@
                 <to uri="direct:split_save"/>
             </post>
             <get uri="/atlas/index" consumes="text/plain" produces="text/html" >
-                <to uri="direct:teste"/>
+                <to uri="direct:test"/>
             </get>
         </rest>
 
-        <route id="teste">
-            <from uri="direct:teste"/>
+        <route id="test">
+            <from uri="direct:test"/>
             <transform>
                 <simple>Hello !</simple>
             </transform>
@@ -221,7 +222,7 @@
             <!-- generate layers and legendURL property -->
             <to uri="bean:populateProperties"/>
 
-            <split>
+            <split stopOnException="true">
                 <simple>${body[pages]}</simple>
                 <choice>
                     <when>
@@ -289,6 +290,14 @@
             <to uri="bean:setState?method=setInProgress"/>
 
             <log message="${body}" loggingLevel="ERROR"/>
+            <transform>
+                <groovy>request.body.getQuery()</groovy>
+            </transform>
+            <setProperty propertyName="printBase">
+                <constant>http://print:8080/print/atlas</constant>
+            </setProperty>
+
+            <to uri="direct:print"/>
 
         </route>
 

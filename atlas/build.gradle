@@ -53,7 +53,7 @@ docker {
 }
 
 task createDocker(type: Docker, dependsOn:'build') {
-    description 'Creates a docker image with the Mapfish Batch webapp installed and configured for Atlas.'
+    description 'Creates a docker image with the Atlas webapp installed and configured for Atlas.'
     group 'Docker'
     applicationName = "georchestra_atlas"
     tagVersion = 'latest'

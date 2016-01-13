@@ -57,7 +57,7 @@ public class CamelPopulatePropertiesComponent {
         legendURL += "?SERVICE=WMS";
         legendURL += "&VERSION=" + featureLayer.getString("version");
         legendURL += "&REQUEST=GetLegendGraphic&FORMAT=image/png&TRANSPARENT=true";
-        legendURL += "&LAYER=" + featureLayer.getString("layer");
+        legendURL += "&LAYER=" + featureLayer.getJSONArray("layers").getString(0);
 
         ex.setProperty("legendURL", legendURL);
 
