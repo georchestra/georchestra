@@ -1,4 +1,4 @@
-angular.module('admin_console.groups', [])
+angular.module('admin_console')
 .component('groups', {
   bindings    : {
     groups      : '=',
@@ -13,6 +13,7 @@ angular.module('admin_console.groups', [])
 function GroupsController($scope) {
   var root = [];
   var index = {};
+  this.q = (this.q) || '';
 
   if (this.index) { // child
     this.tree = this.groups;
@@ -44,12 +45,20 @@ function GroupsController($scope) {
     $scope.enableBack = $scope.enableBack && $scope.prefix;
   }
 
+  // $scope.searchFilter= function(group) {
+  //   console.log($scope.q);
+  //   if (!this.q) { return true; }
+  //   console.log(this.q);
+  //   var search = this.q.toLowerCase();
+  //   console.log(search);
+  //   return group.cn.toLowerCase().indexOf(search) >= 0;
+  // }
 }
 
 GroupsController.$inject = [ '$scope' ];
 
 GroupsController.prototype.filter = function(group, active) {
-  return (
+  var result = (
     !active || // All
     ((active.parent == group.parent) && (active.children.length == 0)) || // Common ancestor without child
     (group.cn == active.cn) || // Active
@@ -57,6 +66,9 @@ GroupsController.prototype.filter = function(group, active) {
     active.cn.indexOf(group.cn) == 0 || // Leafs
     active.cn.substr(0, active.cn.lastIndexOf('_')) == group.cn // Group prefix of active
   );
+  return (this.q != '') ?
+    (group.cn.toLowerCase().indexOf(this.q.toLowerCase())>=0) :
+    result;
 };
 
 GroupsController.prototype.isExpanded = function(group, active) {

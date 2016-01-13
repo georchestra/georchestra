@@ -11,9 +11,9 @@ angular.module('admin_console', [
 
 function AppController($router) {
   $router.config([
-    { path: '/'                      , redirectTo: '/home' },
-    { path: '/home'                  , component: 'home' },
-    { path: '/users/:groupid'       , component: 'users' },
+    { path: '/'               , redirectTo: '/home' },
+    { path: '/home'           , component: 'home' },
+    { path: '/users/:groupid' , component: 'users' },
   ]);
 }
 
