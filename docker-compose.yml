@@ -1,5 +1,5 @@
 database:
-  build: ./docker/postgresql
+  build: ./postgresql
 
 ldap:
   build: ./ldap
