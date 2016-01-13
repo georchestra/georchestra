@@ -7,8 +7,7 @@
 	<parameter name="title" class="java.lang.String"/>
 	<parameter name="subtitle" class="java.lang.String"/>
 	<parameter name="legendURL" class="java.lang.String"/>
-	<field name="table" class="net.sf.jasperreports.engine.data.JRMapCollectionDataSource"/>
-	<field name="mapSubReport" class="java.lang.String"/>
+	<parameter name="mapSubReport" class="java.lang.String"/>
 	<pageHeader>
 		<band height="72">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
@@ -37,7 +36,7 @@
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
-				<subreportExpression><![CDATA[$F{mapSubReport}]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{mapSubReport}]]></subreportExpression>
 			</subreport>
 			<image scaleImage="RealSize" hAlign="Left" vAlign="Top">
 				<reportElement x="900" y="11" width="250" height="718" uuid="63273d5a-46be-4bab-bad7-46998ac21dce"/>

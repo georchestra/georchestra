@@ -59,6 +59,10 @@ public class CamelPopulatePropertiesComponent {
         legendURL += "&REQUEST=GetLegendGraphic&FORMAT=image/png&TRANSPARENT=true";
         legendURL += "&LAYER=" + featureLayer.getJSONArray("layers").getString(0);
 
+        // Temporary fix missing User-Agent header for legendUrl request
+        // see https://github.com/mapfish/mapfish-print/issues/373
+        legendURL = "https://avatars3.githubusercontent.com/u/7067560?v=3&s=40";
+
         ex.setProperty("legendURL", legendURL);
 
     }

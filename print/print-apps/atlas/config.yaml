@@ -3,18 +3,15 @@ throwErrorOnExtraParameters: true
 templates:
     A4 portrait: !template
         reportTemplate: A4_Portrait.jrxml
-        tableData: jrDataSource
         attributes:
             title: !string {}
             subtitle: !string {}
             legendURL: !string
-              default: ""
-            datasource: !datasource
-                attributes:
-                    map: !map
-                        maxDpi: 254
-                        width: 555
-                        height: 590
+                default: ""
+            map: !map
+                maxDpi: 254
+                width: 555
+                height: 590
         processors:
           - !reportBuilder # compile all reports in current directory
             directory: '.'
@@ -22,10 +19,9 @@ templates:
             httpProcessors:
               - !addHeaders
                 headers:
-                  User-Agent: "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:42.0) Gecko/20100101 Firefox/42.0"
-          - !createDataSource
-            processors:
-              - !createMap {}
+                    User-Agent: "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:42.0) Gecko/20100101 Firefox/42.0"
+          - !createMap {}
+
     A4 landscape: !template
         reportTemplate: A4_Landscape.jrxml
         tableData: jrDataSource
@@ -33,13 +29,11 @@ templates:
             title: !string {}
             subtitle: !string {}
             legendURL: !string
-              default: ""
-            datasource: !datasource
-                attributes:
-                    map: !map
-                        maxDpi: 254
-                        width: 590
-                        height: 480
+                default: ""
+            map: !map
+                maxDpi: 254
+                width: 590
+                height: 480
         processors:
           - !reportBuilder # compile all reports in current directory
             directory: '.'
@@ -48,9 +42,8 @@ templates:
               - !addHeaders
                 headers:
                   User-Agent: "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:42.0) Gecko/20100101 Firefox/42.0"
-          - !createDataSource
-            processors:
-              - !createMap {}
+          - !createMap {}
+
     A3 portrait: !template
         reportTemplate: A3_Portrait.jrxml
         tableData: jrDataSource
@@ -59,12 +52,10 @@ templates:
             subtitle: !string {}
             legendURL: !string
               default: ""
-            datasource: !datasource
-                attributes:
-                    map: !map
-                        maxDpi: 350
-                        width: 800
-                        height: 937
+            map: !map
+                maxDpi: 350
+                width: 800
+                height: 937
         processors:
           - !reportBuilder # compile all reports in current directory
             directory: '.'
@@ -73,9 +64,8 @@ templates:
               - !addHeaders
                 headers:
                   User-Agent: "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:42.0) Gecko/20100101 Firefox/42.0"
-          - !createDataSource
-            processors:
-              - !createMap {}
+          - !createMap {}
+
     A3 landscape: !template
         reportTemplate: A3_Landscape.jrxml
         tableData: jrDataSource
@@ -84,12 +74,10 @@ templates:
             subtitle: !string {}
             legendURL: !string
               default: ""
-            datasource: !datasource
-                attributes:
-                    map: !map
-                        maxDpi: 350
-                        width: 890
-                        height: 729
+            map: !map
+                maxDpi: 350
+                width: 890
+                height: 729
         processors:
           - !reportBuilder # compile all reports in current directory
             directory: '.'
@@ -98,6 +86,4 @@ templates:
               - !addHeaders
                 headers:
                   User-Agent: "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:42.0) Gecko/20100101 Firefox/42.0"
-          - !createDataSource
-            processors:
-              - !createMap {}
+          - !createMap {}

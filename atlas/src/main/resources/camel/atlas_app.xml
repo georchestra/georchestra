@@ -230,19 +230,20 @@
                         <transform>
                             <simple>
                                 { "layout": "${exchangeProperty.layout}",
-                                "outputFormat": "PDF",
-                                "attributes": {
-                                "title": "${body[title]}",
-                                "subtitle": "${body[subtitle]}",
-                                "legendURL": "${exchangeProperty.legendURL}",
-                                "datasource": [{
-                                "map": {
-                                "dpi": ${exchangeProperty.dpi},
-                                "projection": "${exchangeProperty.projection}",
-                                "center": ${body[center]},
-                                "scale": ${body[scale]},
-                                "layers": ${exchangeProperty.layers}
-                                }}]}}
+                                  "outputFormat": "PDF",
+                                  "attributes": {
+                                    "title": "${body[title]}",
+                                    "subtitle": "${body[subtitle]}",
+                                    "legendURL": "${exchangeProperty.legendURL}",
+                                    "map": {
+                                        "dpi": ${exchangeProperty.dpi},
+                                        "projection": "${exchangeProperty.projection}",
+                                        "center": ${body[center]},
+                                        "scale": ${body[scale]},
+                                        "layers": ${exchangeProperty.layers}
+                                    }
+                                  }
+                                }
                             </simple>
                         </transform>
                     </when>
@@ -254,14 +255,15 @@
                                 "attributes": {
                                 "title": "${body[title]}",
                                 "subtitle": "${body[subtitle]}",
-                                "datasource": [{
                                 "map": {
                                 "dpi": ${exchangeProperty.dpi},
                                 "projection": "${exchangeProperty.projection}",
                                 "center": ${body[center]},
                                 "scale": ${body[scale]},
                                 "layers": ${exchangeProperty.layers}
-                                }}]}}
+                                }
+                                }
+                                }
                             </simple>
                         </transform>
                     </otherwise>
@@ -293,6 +295,7 @@
             <transform>
                 <groovy>request.body.getQuery()</groovy>
             </transform>
+
             <setProperty propertyName="printBase">
                 <constant>http://print:8080/print/atlas</constant>
             </setProperty>

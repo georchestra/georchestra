@@ -15,8 +15,7 @@
 	<parameter name="title" class="java.lang.String"/>
 	<parameter name="subtitle" class="java.lang.String"/>
 	<parameter name="legendURL" class="java.lang.String"/>
-	<field name="table" class="net.sf.jasperreports.engine.data.JRMapCollectionDataSource"/>
-	<field name="mapSubReport" class="java.lang.String"/>
+	<parameter name="mapSubReport" class="java.lang.String"/>
 	<pageHeader>
 		<band height="80">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
@@ -44,7 +43,7 @@
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
-				<subreportExpression><![CDATA[$F{mapSubReport}]]></subreportExpression>
+				<subreportExpression><![CDATA[$P{mapSubReport}]]></subreportExpression>
 			</subreport>
 		</band>
 	</detail>
