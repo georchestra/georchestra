@@ -230,11 +230,8 @@ cas                 latest              XXXXXXXXXXXX     ...
 ```
 
 
-Grab a copy of the default datadir / docker composition outside of the geOrchestra source directory:
-
+Finally, fire up the whole composition:
 ```
-git clone -b docker-composition https://github.com/pmauduit/config.git
-cd config
 docker-compose up
 ```
 
