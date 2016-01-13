@@ -1,0 +1,69 @@
+database:
+  build: ./docker/postgresql
+
+ldap:
+  build: ./docker/ldap
+
+geoserver:
+  image: geoserver
+
+proxy:
+  image: security-proxy
+  ports:
+    - "8080:8080"
+  links:
+    - database
+    - ldap
+    - cas
+    - mapfishapp
+    - extractorapp
+    - ldapadmin
+    - geonetwork
+    - header
+    - geoserver
+  volumes:
+    - ./docker/datadir:/etc/georchestra
+
+cas:
+  image: cas
+  links:
+    - ldap
+  volumes:
+    - ./docker/datadir:/etc/georchestra
+
+mapfishapp:
+  image: mapfishapp
+  links:
+    - database
+  volumes:
+    - ./docker/datadir:/etc/georchestra
+
+extractorapp:
+  image: extractorapp
+  links:
+    - database
+  volumes:
+    - ./docker/datadir:/etc/georchestra
+
+header:
+  image: header
+  volumes:
+    - ./docker/datadir:/etc/georchestra
+
+ldapadmin:
+  image: ldapadmin
+  links:
+    - database
+    - ldap
+  volumes:
+    - ./docker/datadir:/etc/georchestra
+
+geonetwork:
+  image: geonetwork
+  ports:
+    - "1099:1099"
+  links:
+    - database
+    - ldap
+  volumes:
+    - ./docker/datadir:/etc/georchestra
