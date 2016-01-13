@@ -54,6 +54,7 @@ GroupsController.prototype.filter = function(group, active) {
     ((active.parent == group.parent) && (active.children.length == 0)) || // Common ancestor without child
     (group.cn == active.cn) || // Active
     group.cn.substr(0, active.cn.length) == active.cn || // Active is prefix of group
+    active.cn.indexOf(group.cn) == 0 || // Leafs
     active.cn.substr(0, active.cn.lastIndexOf('_')) == group.cn // Group prefix of active
   );
 };
@@ -66,6 +67,6 @@ GroupsController.prototype.isExpanded = function(group, active) {
 function GroupUnprefix() {
   return function(input, active) {
     if (!active) { return input.cn; }
-    return (input.children.length==0) ? input.cn : input.cn.substr(active.length + 1);
+    return (input.cn == active.cn) ? input.cn : input.cn.substr(active.cn.length + 1);
   }
 }
