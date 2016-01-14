@@ -15,7 +15,9 @@
       </thead>
       <tbody>
         <tr ng-repeat="user in users.users">
-          <td>{{::user.sn}} {{::user.givenName}}</td>
+          <td>
+            <a ng-link="user({id: user.uid, tab: 'infos'})">{{::user.sn}} {{::user.givenName}}</a>
+          </td>
           <td>{{::user.uid}}</td>
           <td>{{::user.o}}</td>
         </tr>

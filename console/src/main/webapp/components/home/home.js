@@ -1,6 +1,6 @@
-angular.module('admin_console.home', [
-]).controller('HomeController', HomeController);
+angular.module('admin_console')
+.controller('HomeController', HomeController);
 
 function HomeController() {
-  this.heading = 'Welcome to The New Angular Router Demo!';
+  this.heading = 'Console';
 }

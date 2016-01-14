@@ -16,7 +16,7 @@
     <div class="collapse navbar-collapse">
       <ul class="nav navbar-nav">
         <li><a ng-link="home">Dashboard</a></li>
-        <li><a ng-link="all/users">Users</a></li>
+        <li><a ng-link="users({id: 'all'})">Users</a></li>
       </ul>
 
       <ul class="nav navbar-nav navbar-right">
@@ -38,6 +38,8 @@
   <script src="app.js"></script>
   <script src="components/home/home.js"></script>
   <script src="components/users/users.js"></script>
+  <script src="components/user/user.js"></script>
   <script src="components/groups/groups.js"></script>
   <script src="services/userServices.js"></script>
+  <script src="services/groupServices.js"></script>
 </body>

@@ -1,9 +1,8 @@
 "use strict";
 
 angular.module('admin_console', [
-  'admin_console.home',
-  'admin_console.users',
   'userServices',
+  'groupServices',
   'ngNewRouter'
 ]).controller('AppController', [
   '$router', AppController
@@ -11,9 +10,9 @@ angular.module('admin_console', [
 
 function AppController($router) {
   $router.config([
-    { path: '/'               , redirectTo: '/home' },
-    { path: '/home'           , component: 'home' },
-    { path: '/users/:groupid' , component: 'users' },
+    { path: '/'                 , redirectTo: '/home' },
+    { path: '/home'             , component: 'home' },
+    { path: '/groups/:id/users' , component: 'users' },
+    { path: '/users/:id/:tab'   , component: 'user' },
   ]);
 }
-

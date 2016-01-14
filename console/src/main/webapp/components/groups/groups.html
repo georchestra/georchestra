@@ -4,7 +4,7 @@
 
 <div ng-if="groups.q == ''">
 
-  <a ng-if="groups.enableBack" class="btn btn-default btn-xs" ng-link="users({groupid: groups.prefix.parent})">
+  <a ng-if="groups.enableBack" class="btn btn-default btn-xs" ng-link="users({id: groups.prefix.parent})">
     «
   </a>
   <span ng-if="groups.enableBack">{{groups.prefix.cn || 'Tous'}}</span>
@@ -14,7 +14,7 @@
     <strong ng-if="(groups.activeGroup.cn == group.cn) && (group.children.length == 0)">
       {{::group | unprefix: groups.prefix}} <span class="badge">{{::group.users.length}}</span>
     </strong>
-    <a ng-link="users({groupid: group.cn})" title={{::group.description}}
+    <a ng-link="users({id: group.cn})" title={{::group.description}}
       ng-if="(groups.activeGroup.cn != group.cn) && (groups.prefix.cn.indexOf(group.cn)!=0)">
       <span ng-if="group.children.length > 0">+</span>
       {{::group | unprefix: groups.prefix}} <span class="badge">{{::group.users.length}}</span>
@@ -28,7 +28,7 @@
 </div>
 
 <div ng-repeat="(key, group) in groups.index" ng-if="groups.isRoot && groups.q != ''">
-  <a ng-link="users({groupid: group.cn})" title={{::group.description}}
+  <a ng-link="users({id: group.cn})" title={{::group.description}}
       ng-if="group.cn.toLowerCase().indexOf(groups.q.toLowerCase()) >= 0">
     {{::group.cn}} <span class="badge">{{::group.users.length}}</span>
   </a>

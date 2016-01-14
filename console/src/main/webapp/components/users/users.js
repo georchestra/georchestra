@@ -1,5 +1,5 @@
-angular.module('admin_console.users', [
-]).controller('UsersController', [
+angular.module('admin_console')
+.controller('UsersController', [
   '$routeParams', 'User', 'Group',
   UsersController
 ]);
@@ -11,7 +11,7 @@ function UsersController($routeParams, User, Group) {
 
   this.groups = Group.query(function(){
     this.activeGroup = this.groups.filter(function(g) {
-      return g.cn == $routeParams.groupid }
+      return g.cn == $routeParams.id }
     )[0];
     if (this.activeGroup) {
       this.filter(this.activeGroup);
