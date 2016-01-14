@@ -889,7 +889,7 @@
             <artifactId>docker-maven-plugin</artifactId>
             <version>0.3.8</version>
             <configuration>
-              <imageName>geoserver</imageName>
+              <imageName>georchestra/geoserver</imageName>
               <dockerDirectory>${project.basedir}/src/docker</dockerDirectory>
               <resources>
                 <resource>
@@ -897,7 +897,13 @@
                   <directory>${project.build.directory}</directory>
                   <include>geoserver.war</include>
                 </resource>
+                <resource>
+                  <targetPath>/etc/georchestra/geoserver</targetPath>
+                  <directory>${project.basedir}/../../docker/${datadir}/geoserver</directory>
+                </resource>
               </resources>
+              <serverId>docker-hub</serverId>
+              <registryUrl>https://index.docker.io/v1/</registryUrl>
             </configuration>
             <dependencies>
               <dependency>

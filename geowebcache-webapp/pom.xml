@@ -340,6 +340,10 @@
                   <directory>${project.build.directory}</directory>
                   <include>geowebcache.war</include>
                 </resource>
+                <resource>
+                  <targetPath>/etc/georchestra/geowebcache</targetPath>
+                  <directory>${project.basedir}/../docker/${datadir}/geowebcache</directory>
+                </resource>
               </resources>
               <!-- This will require to set up the docker-hub credentials correctly
                    into your ~/.m2/settings.xml, see:
