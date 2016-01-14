@@ -22,33 +22,33 @@ proxy:
     - header
     - geoserver
   volumes:
-    - ./security-proxy/src/deb/resources/etc/georchestra:/etc/georchestra:ro
+    - ./docker/datadir:/etc/georchestra
 
 cas:
   image: cas
   links:
     - ldap
   volumes:
-    - ./cas-server-webapp/src/deb/resources/etc/georchestra:/etc/georchestra:ro
+    - ./docker/datadir:/etc/georchestra
 
 mapfishapp:
   image: mapfishapp
   links:
     - database
   volumes:
-    - ./mapfishapp/src/deb/resources/etc/georchestra:/etc/georchestra:ro
+    - ./docker/datadir:/etc/georchestra
 
 extractorapp:
   image: extractorapp
   links:
     - database
   volumes:
-    - ./extractorapp/src/deb/resources/etc/georchestra:/etc/georchestra:ro
+    - ./docker/datadir:/etc/georchestra
 
 header:
   image: header
   volumes:
-    - ./header/src/deb/resources/etc/georchestra:/etc/georchestra:ro
+    - ./docker/datadir:/etc/georchestra
 
 ldapadmin:
   image: ldapadmin
@@ -56,7 +56,7 @@ ldapadmin:
     - database
     - ldap
   volumes:
-    - ./ldapadmin/src/deb/resources/etc/georchestra:/etc/georchestra:ro
+    - ./docker/datadir:/etc/georchestra
 
 geonetwork:
   image: geonetwork
@@ -66,4 +66,4 @@ geonetwork:
     - database
     - ldap
   volumes:
-    - ./geonetwork/web/src/deb/resources/etc/georchestra:/etc/georchestra:ro
+    - ./docker/datadir:/etc/georchestra
