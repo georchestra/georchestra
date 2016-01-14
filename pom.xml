@@ -25,6 +25,7 @@
     <gmaven.version>1.0</gmaven.version>
     <gmaven.runtime.version>1.5</gmaven.runtime.version>
     <server>template</server>
+    <datadir>datadir</datadir>
     <sub.target>dev</sub.target>
     <!-- default when building without a profile specified -->
     <confdir>${project.build.directory}/conf</confdir>

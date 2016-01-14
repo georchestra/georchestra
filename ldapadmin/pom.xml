@@ -717,7 +717,7 @@
             <artifactId>docker-maven-plugin</artifactId>
             <version>0.3.8</version>
             <configuration>
-              <imageName>${project.artifactId}</imageName>
+              <imageName>georchestra/${project.artifactId}</imageName>
               <dockerDirectory>${project.basedir}/src/docker</dockerDirectory>
               <resources>
                 <resource>
@@ -725,7 +725,13 @@
                   <directory>${project.build.directory}</directory>
                   <include>${project.artifactId}.war</include>
                 </resource>
+                <resource>
+                  <targetPath>/etc/georchestra/${project.artifactId}</targetPath>
+                  <directory>${project.basedir}/../docker/${datadir}/${project.artifactId}</directory>
+                </resource>
               </resources>
+              <serverId>docker-hub</serverId>
+              <registryUrl>https://index.docker.io/v1/</registryUrl>
             </configuration>
             <dependencies>
               <dependency>

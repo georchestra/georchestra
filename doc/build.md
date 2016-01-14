@@ -209,7 +209,7 @@ correctly installed before):
 
 From the project root:
 ```
-./mvn clean package docker:build -Pdocker -DskipTests --pl extractorapp,cas-server-webapp,security-proxy,geoserver/webapp,mapfishapp,header,ldapadmin,geonetwork/web
+./mvn clean package docker:build -Pdocker -DskipTests --pl extractorapp,cas-server-webapp,security-proxy,geoserver/webapp,mapfishapp,header,ldapadmin,geonetwork/web,analytics,catalogapp,downloadform,geowebcache
 ```
 
 Using the `docker images` command, you should get a listing of the geOrchestra images generated:
