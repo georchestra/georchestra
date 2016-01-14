@@ -52,3 +52,6 @@
 [submodule "geotools"]
 	path = geotools
 	url = https://github.com/georchestra/geotools.git
+[submodule "docker/datadir"]
+	path = docker/datadir
+	url = https://github.com/georchestra/config.git
