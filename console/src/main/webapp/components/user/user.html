@@ -1,0 +1,29 @@
+<section>
+
+  <div class="panel-body clearfix">
+
+    <div class="col-md-4">
+      <ul class="nav nav-pills nav-stacked">
+        <li ng-repeat="tab in user.tabs" ng-class="{active: user.tab==tab}">
+        <!-- <a ng-link="user({id: user.user.uid, tab: tab});" rel="{{user.user.uid}}/{{tab}}">{{ {id: user.user.uid, tab: tab} }}</a> -->
+        <a href="#/users/{{user.user.uid}}/{{tab}}">{{::tab}}</a> <!-- FIXME use ng-link -->
+        </li>
+      </ul>
+    </div>
+
+    <div class="col-md-8">
+      <div class="panel panel-default">
+
+        <div class="panel-heading">
+          <h3 class="panel-title">User: {{::user.user.sn}} {{::user.user.givenName}}</h3>
+        </div>
+
+        <div class="panel-body">
+          truite
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</section>

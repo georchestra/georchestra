@@ -1,8 +1,8 @@
-var userServices = angular.module('userServices', ['ngResource']);
+var groupServices = angular.module('groupServices', ['ngResource']);
 
-userServices.factory('User',
+groupServices.factory('Group',
   ['$resource', 'LDAP_BASE_URI', function($resource, baseUri){
-    return $resource(baseUri + 'users/:id', {}, {
+    return $resource(baseUri + 'groups', {}, {
       query: {
         cache: true,
         method:'GET',
