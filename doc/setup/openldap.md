@@ -17,7 +17,7 @@ sudo apt-get install slapd ldap-utils
 You will need to provide the LDAP administrator password. Choose a strong one.
 
 
-Before creating the LDAP tree, you should have a look at the [users and groups](https://github.com/georchestra/LDAP/blob/master/README.md) we'll be adding.
+Before creating the LDAP tree, you should have a look at the [users and groups](../../ldap/README.md) we'll be adding.
 
 
 
