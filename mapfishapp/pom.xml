@@ -565,7 +565,7 @@
                 <resource>
                   <targetPath>/etc/georchestra/${project.artifactId}</targetPath>
                   <directory>${project.basedir}/../docker/${datadir}/${project.artifactId}</directory>
-                  </resource>
+                </resource>
               </resources>
               <!-- This will require to set up the docker-hub credentials correctly
                    into your ~/.m2/settings.xml, see:

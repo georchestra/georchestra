@@ -395,6 +395,10 @@
                   <directory>${project.build.directory}</directory>
                   <include>ROOT.war</include>
                 </resource>
+                <resource>
+                  <targetPath>/etc/georchestra/${project.artifactId}</targetPath>
+                  <directory>${project.basedir}/../docker/${datadir}/${project.artifactId}</directory>
+                </resource>
              </resources>
              <serverId>docker-hub</serverId>
              <registryUrl>https://index.docker.io/v1/</registryUrl>
