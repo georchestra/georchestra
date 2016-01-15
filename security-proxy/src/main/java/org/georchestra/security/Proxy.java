@@ -445,6 +445,7 @@ public class Proxy {
 
             if (sURL == null) {
                 response.sendError(404);
+                return;
             }
 
             URL url;
