@@ -5,10 +5,10 @@ ldap:
   build: ./ldap
 
 geoserver:
-  image: geoserver
+  image: georchestra/geoserver
 
 proxy:
-  image: security-proxy
+  image: georchestra/security-proxy
   ports:
     - "8080:8080"
   links:
@@ -25,33 +25,33 @@ proxy:
     - ./docker/datadir:/etc/georchestra
 
 cas:
-  image: cas
+  image: georchestra/cas
   links:
     - ldap
   volumes:
     - ./docker/datadir:/etc/georchestra
 
 mapfishapp:
-  image: mapfishapp
+  image: georchestra/mapfishapp
   links:
     - database
   volumes:
     - ./docker/datadir:/etc/georchestra
 
 extractorapp:
-  image: extractorapp
+  image: georchestra/extractorapp
   links:
     - database
   volumes:
     - ./docker/datadir:/etc/georchestra
 
 header:
-  image: header
+  image: georchestra/header
   volumes:
     - ./docker/datadir:/etc/georchestra
 
 ldapadmin:
-  image: ldapadmin
+  image: georchestra/ldapadmin
   links:
     - database
     - ldap
@@ -59,7 +59,7 @@ ldapadmin:
     - ./docker/datadir:/etc/georchestra
 
 geonetwork:
-  image: geonetwork
+  image: georchestra/geonetwork
   ports:
     - "1099:1099"
   links:

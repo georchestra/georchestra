@@ -898,8 +898,8 @@
                   <include>geoserver.war</include>
                 </resource>
                 <resource>
-                  <targetPath>/etc/georchestra/geoserver</targetPath>
-                  <directory>${project.basedir}/../../docker/${datadir}/geoserver</directory>
+                  <targetPath>/var/local/geoserver/</targetPath>
+                  <directory>${project.basedir}/../../docker/${geoserver_datadir}</directory>
                 </resource>
               </resources>
               <serverId>docker-hub</serverId>
