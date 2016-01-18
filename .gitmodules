@@ -58,3 +58,6 @@
 [submodule "docker/geoserver_datadir"]
 	path = docker/geoserver_datadir
 	url = https://github.com/georchestra/geoserver_minimal_datadir.git
+[submodule "docker/smtp"]
+	path = docker/smtp
+	url = https://github.com/camptocamp/docker_smtp.git
