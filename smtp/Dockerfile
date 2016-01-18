@@ -7,7 +7,7 @@ MAINTAINER PSC "psc@georchestra.org"
 
 ENV DEBIAN_FRONTEND noninterative
 
-# Avoid ERROR: invoke-rc.d: policy-rc.d denied execution of start. 
+# Avoid ERROR: invoke-rc.d: policy-rc.d denied execution of start.
 RUN echo "#!/bin/sh\nexit 0" > /usr/sbin/policy-rc.d
 
 RUN apt-get update && \
@@ -23,7 +23,7 @@ RUN echo "/etc/init.d/courier-imap start" >> /root/start.sh
 RUN echo "smtp-sink -c -d /home/smtp/Maildir/new/%M. -u smtp 0.0.0.0:25 10" >> /root/start.sh
 RUN chmod +x /root/start.sh
 
-# Run the rest of the commands as the ``postgres`` user
+# Run the rest of the commands as the ``smtp`` user
 USER smtp
 WORKDIR /home/smtp
 RUN maildirmake Maildir
