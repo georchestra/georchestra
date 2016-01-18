@@ -1,12 +1,17 @@
 "use strict";
-
 angular.module('admin_console', [
-  'userServices',
-  'groupServices',
+  'ngResource',
   'ngNewRouter'
 ]).controller('AppController', [
   '$router', AppController
 ]).constant('LDAP_BASE_URI', 'http://localhost:8286/ldapadmin/private/');
+
+require('./components/users/users');
+require('./components/groups/groups');
+require('./components/user/user');
+require('./components/home/home');
+require('./services/groups');
+require('./services/users');
 
 function AppController($router) {
   $router.config([
