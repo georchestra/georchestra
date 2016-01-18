@@ -1,0 +1,25 @@
+{
+    "name": "admin_console",
+    "version": "0.0.1",
+    "description": "admin_Console",
+    "homepage": "https://github.com/georchestra/georchestra",
+    "main": "index.js",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/georchestra/georchestra.git"
+    },
+    "bugs": {
+        "url": "https://github.com/georchestra/georchestra/issues"
+    },
+    "dependencies": {
+    },
+    "devDependencies": {
+        "angular": "1.5.0-rc.0",
+        "angular-resource": "1.5.0-rc.0",
+        "angular-new-router": "0.5.3",
+        "bootstrap": "3.3.6",
+        "brunch": "2.1.3",
+        "javascript-brunch": "1.8.0"
+    }
+}
+
