@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <base href="/console/">
+  <base href="/console/app/">
 
-  <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css">
-  <link rel="stylesheet" href="styles/app.css">
+  <link rel="stylesheet" href="../public/libraries.css">
+  <link rel="stylesheet" href="../public/app.css">
 
   <title>Admin Console</title>
 </head>
@@ -31,15 +31,9 @@
     <ng-viewport></ng-viewport>
   </div>
 
-  <script src="node_modules/angular/angular.js"></script>
-  <script src="node_modules/angular-resource/angular-resource.js"></script>
-  <script src="node_modules/angular-new-router/dist/router.es5.js"></script>
+  <script src="../public/libraries.js"></script>
+  <script src="../public/templates.js"></script>
+  <script src="../public/app.js"></script>
+  <script>require('app');</script>
 
-  <script src="app.js"></script>
-  <script src="components/home/home.js"></script>
-  <script src="components/users/users.js"></script>
-  <script src="components/user/user.js"></script>
-  <script src="components/groups/groups.js"></script>
-  <script src="services/userServices.js"></script>
-  <script src="services/groupServices.js"></script>
 </body>
