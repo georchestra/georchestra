@@ -4,9 +4,24 @@ database:
 ldap:
   build: ./ldap
 
+smtp-sink:
+  build: ./docker/smtp/smtp-sink
+
+courier-imap:
+  build: ./docker/smtp/courier-imap
+  volumes_from:
+    - smtp-sink:rw
+
+webmail:
+  build: ./docker/smtp/webmail
+  volumes_from:
+    - smtp-sink:rw
+    
 geoserver:
   image: georchestra/geoserver
-
+  volumes:
+    - geoserver_datadir:/var/local/geoserver
+    
 proxy:
   image: georchestra/security-proxy
   ports:
@@ -42,6 +57,7 @@ extractorapp:
   image: georchestra/extractorapp
   links:
     - database
+    - smtp-sink
   volumes:
     - ./docker/datadir:/etc/georchestra
 
@@ -55,6 +71,7 @@ ldapadmin:
   links:
     - database
     - ldap
+    - smtp-sink
   volumes:
     - ./docker/datadir:/etc/georchestra
 
