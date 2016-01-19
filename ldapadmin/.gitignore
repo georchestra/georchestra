@@ -5,3 +5,4 @@ src/main/webapp/WEB-INF/views/header.jsp
 src/main/webapp/privateui/css/main.css
 src/main/webapp/privateui/index.html
 src/main/webapp/privateui/partials/users-list-table.html
+node/
