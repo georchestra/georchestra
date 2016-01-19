@@ -571,6 +571,37 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
+        <version>0.0.27</version>
+        <executions>
+          <execution>
+            <id>install-node-and-npm</id>
+            <goals>
+              <goal>install-node-and-npm</goal>
+            </goals>
+            <phase>generate-resources</phase>
+          </execution>
+          <execution>
+            <id>npm install</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <arguments>install</arguments>
+              <installDirectory>${project.basedir}</installDirectory>
+            </configuration>
+          </execution>
+        </executions>
+        <configuration>
+          <nodeVersion>v4.2.4</nodeVersion>
+          <npmVersion>2.14.12</npmVersion>
+          <installDirectory>${project.basedir}</installDirectory>
+          <workingDirectory>${project.basedir}/src/main/webapp/console</workingDirectory>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
   <profiles>
