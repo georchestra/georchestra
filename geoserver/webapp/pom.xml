@@ -898,9 +898,10 @@
                   <include>geoserver.war</include>
                 </resource>
                 <resource>
-                  <targetPath>/var/local/geoserver/</targetPath>
-                  <directory>${project.basedir}/../../docker/${geoserver_datadir}</directory>
-                </resource>
+                <targetPath>/root</targetPath>
+                <directory>${project.basedir}/src/docker</directory>
+                <include>start.sh</include>
+              </resource>
               </resources>
               <serverId>docker-hub</serverId>
               <registryUrl>https://index.docker.io/v1/</registryUrl>
