@@ -1,8 +1,8 @@
 database:
-  build: ./postgresql
+  build: ./docker/postgresql
 
 ldap:
-  build: ./ldap
+  build: ./docker/ldap
 
 smtp-sink:
   build: ./docker/smtp/smtp-sink
