@@ -84,19 +84,22 @@ public class BasicAuthChallengeByUserAgent extends BasicAuthenticationFilter {
         }
 
         final HttpServletRequest request = (HttpServletRequest) req;
-        final String userAgent = request.getHeader("User-Agent");
-        if (userAgentMatch(userAgent)) {
-            String auth = request.getHeader("Authorization");
+        String auth = request.getHeader("Authorization");
 
-            if ((auth == null) || !auth.startsWith("Basic ")) {
+        /* no valid Authorization header sent preemptively */
+        if ((auth == null) || !auth.startsWith("Basic ")) {
+            final String userAgent = request.getHeader("User-Agent");
+            if (userAgentMatch(userAgent)) {
+                /* UA matched, return a 401 directly to the client */
+                LOGGER.debug("the user-agent matched and no Authorization header was sent, returning a 401.");
                 getAuthenticationEntryPoint().commence(request, (HttpServletResponse) res, _exception);
             } else {
-                LOGGER.debug("Activating filter ...");
-                super.doFilter(req, res, chain);
+                LOGGER.debug("the user-agent does not match, skipping filter.");
+                chain.doFilter(req, res);
             }
         } else {
-            LOGGER.debug("the user-agent does not match, skipping filter.");
-            chain.doFilter(req, res);
+            LOGGER.debug("Authorization header sent in the request, activating filter ...");
+            super.doFilter(req, res, chain);
         }
     }
 
