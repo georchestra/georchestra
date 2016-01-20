@@ -14,13 +14,24 @@ courier-imap:
 
 webmail:
   build: ./docker/smtp/webmail
+  ports:
+    - "8081:80"
   volumes_from:
     - smtp-sink:rw
-    
+
+geoserver_shapefile:
+  image: shapefile_repo
+  ports:
+    - "2222:22"
+  volumes:
+    - geoserver_shapefile:/home/geoserver/data
+
+
 geoserver:
   image: georchestra/geoserver
   volumes:
     - geoserver_datadir:/var/local/geoserver
+    - geoserver_shapefile:/var/local/shapefile
     
 proxy:
   image: georchestra/security-proxy
