@@ -56,6 +56,7 @@ public class BasicAuthChallengeByUserAgent extends BasicAuthenticationFilter {
             try {
                 fisProp = new FileInputStream(new File(contextDatadir, "user-agents.properties"));
                 InputStreamReader isrProp = new InputStreamReader(fisProp, "UTF8");
+                _userAgents.clear();
                 uaProps.load(isrProp);
             } finally {
                 if (fisProp != null) {
@@ -66,7 +67,6 @@ public class BasicAuthChallengeByUserAgent extends BasicAuthenticationFilter {
         if (! uaProps.isEmpty()) {
             int i = 0;
             String ua;
-            _userAgents.clear();
             while ((ua = uaProps.getProperty("useragent" + i + ".value")) != null) {
                 _userAgents.add(Pattern.compile(ua));
                 i++;
