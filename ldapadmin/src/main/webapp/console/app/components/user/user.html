@@ -67,7 +67,7 @@
 
           <h4>Application groups</h4>
           <div class="form-group">
-            <select name="" class="form-control" multiple>
+            <select class="form-control" multiple chosen ng-options="group.cn for (key, group) in user.groups" ng-model="user.toto" data-placeholder="Select groups">
               <option ng-repeat="(key, group) in user.groups" value="{{::group.cn}}">{{::group.cn}}</option>
             </select>
           </div>

@@ -1,7 +1,8 @@
 "use strict";
 angular.module('admin_console', [
   'ngResource',
-  'ngNewRouter'
+  'ngNewRouter',
+  'angular-chosen'
 ]).controller('AppController', [
   '$router', AppController
 ]).constant('LDAP_BASE_URI', '/ldapadmin/private/');

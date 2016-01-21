@@ -8,15 +8,19 @@ module.exports = config:
       joinTo:
         'app.js': /^app/
         'libraries.js': [
+          'vendor/jquery.js',
           'vendor/angular.js',
           'vendor/angular-resource.js',
-          'vendor/router.es5.js'
+          'vendor/router.es5.js',
+          'vendor/chosen.jquery.js',
+          'vendor/angular-chosen.js'
         ]
     stylesheets:
       joinTo:
         'app.css': /^app/
         'libraries.css': [
-          'vendor/bootstrap.css'
+          'vendor/bootstrap.css',
+          'vendor/chosen.min.css'
         ]
     templates:
       joinTo:
