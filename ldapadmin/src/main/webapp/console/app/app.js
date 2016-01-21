@@ -4,7 +4,7 @@ angular.module('admin_console', [
   'ngNewRouter'
 ]).controller('AppController', [
   '$router', AppController
-]).constant('LDAP_BASE_URI', 'http://localhost:8286/ldapadmin/private/');
+]).constant('LDAP_BASE_URI', '/ldapadmin/private/');
 
 require('./components/users/users');
 require('./components/groups/groups');

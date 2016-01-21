@@ -44,6 +44,7 @@
         <url-pattern>/account/css/*</url-pattern>
         <url-pattern>/account/fonts/*</url-pattern>
         <url-pattern>/account/js/*</url-pattern>
+        <url-pattern>/console/*</url-pattern>
     </servlet-mapping>
 
     <session-config>
