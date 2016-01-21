@@ -57,8 +57,8 @@ cd geoserver/webapp/
 This will create a georchestra/geoserver docker image.
 
 ```bash
-cd ../../docker/geoserver/shapefile_repo
-docker build -t georchestra/shapefile_repo .
+cd ../../docker/geoserver/ssh_data
+docker build -t georchestra/ssh_data .
 ../../mvn -P docker clean package docker:build
 ```
 

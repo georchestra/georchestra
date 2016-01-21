@@ -2,9 +2,9 @@
 cd /var/local/geoserver
 if [ -d .git ]
 	then
-    echo 'Datadir already initialised'
+    echo 'Datadir already initialized'
 else
-    echo 'Initialising datadir from github'
+    echo 'Initializing datadir from github'
     git clone https://github.com/georchestra/geoserver_minimal_datadir.git .
     chown -R jetty:jetty /var/local/geoserver
 fi
