@@ -1,0 +1,1 @@
+../node_modules/angular-chosen/dist/chosen.js

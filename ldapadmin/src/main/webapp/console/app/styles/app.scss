@@ -8,3 +8,11 @@ body {
 groups input {
   margin-bottom: 1em;
 }
+
+.chosen-container-multi .chosen-choices li.search-choice {
+  background: #f5f5f5;
+  box-shadow: none;
+}
+.chosen-container * {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+}
