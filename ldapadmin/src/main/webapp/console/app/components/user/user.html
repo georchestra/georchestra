@@ -18,9 +18,77 @@
           <h3 class="panel-title">User: {{::user.user.sn}} {{::user.user.givenName}}</h3>
         </div>
 
-        <div class="panel-body">
-          truite
+        <div class="panel-body" ng-if="user.tab=='infos'">
+
+          <form class="form-horizontal">
+            <div class="form-group">
+              <label class="col-sm-3" for="uid">Login</label>
+              <div class="col-sm-9">
+                <input ng-model="user.user.uid" class="form-control" id="uid" placeholder="Login">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3" for="commonName">CommonName</label>
+              <div class="col-sm-9">
+                <input ng-model="user.user.commonName" class="form-control" id="commonName" placeholder="CommonName">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3" for="givenName">GivenName</label>
+              <div class="col-sm-9">
+                <input ng-model="user.user.givenName" class="form-control" id="givenName" placeholder="GivenName">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3" for="email">Email address</label>
+              <div class="col-sm-9">
+                <input ng-model="user.user.mail" type="email" class="form-control" id="email" placeholder="Email">
+              </div>
+            </div>
+            <button ng-click="user.save()" type="submit" class="btn btn-primary">Enregistrer</button>
+          </form>
+
         </div>
+
+        <div class="panel-body" ng-if="user.tab=='groups'">
+
+          <h4>System groups</h4>
+          <div class="form-group clearfix">
+            <div class="col-sm-6"ng-repeat="group in user.adminGroups">
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox"> {{::group}}
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <hr>
+
+          <h4>Application groups</h4>
+          <div class="form-group">
+            <select name="" class="form-control" multiple>
+              <option ng-repeat="(key, group) in user.groups" value="{{::group.cn}}">{{::group.cn}}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="panel-body" ng-if="user.tab=='analytics'">
+          <h4>Analytics</h4>
+        </div>
+
+        <div class="panel-body" ng-if="user.tab=='messages'">
+          <h4>Messages</h4>
+        </div>
+
+        <div class="panel-body" ng-if="user.tab=='logs'">
+          <h4>Logs</h4>
+        </div>
+
+        <div class="panel-body" ng-if="user.tab=='manage'">
+          <h4>Manage</h4>
+        </div>
+
       </div>
     </div>
 
