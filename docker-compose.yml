@@ -1,3 +1,4 @@
+# non geOrchestra images
 database:
   build: ./docker/postgresql
 
@@ -19,19 +20,20 @@ webmail:
   volumes_from:
     - smtp-sink:rw
 
-geoserver_shapefile:
-  image: shapefile_repo
+geoserver_geodata:
+  image: ssh_data
   ports:
     - "2222:22"
   volumes:
-    - geoserver_shapefile:/home/geoserver/data
+    - geoserver_geodata:/home/geoserver/data
 
-
+# geOrchestra images
+    
 geoserver:
   image: georchestra/geoserver
   volumes:
     - geoserver_datadir:/var/local/geoserver
-    - geoserver_shapefile:/var/local/shapefile
+    - geoserver_geodata:/var/local/geodata
     
 proxy:
   image: georchestra/security-proxy
