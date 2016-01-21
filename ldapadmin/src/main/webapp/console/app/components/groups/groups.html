@@ -1,4 +1,20 @@
-<h4 ng-if="groups.isRoot">Groups</h4>
+<div ng-if="groups.isRoot">
+  <a ng-link="users({id: 'all'})">All users</a>
+  <hr>
+  <h4>System groups</h4>
+  <div ng-repeat="group in groups.adminList">
+    <strong ng-if="(groups.activeGroup.cn == group.cn)">
+      {{::group | unprefix: groups.prefix}} <span class="badge">{{::group.users.length}}</span>
+    </strong>
+    <a ng-link="users({id: group.cn})" ng-if="(groups.activeGroup.cn != group.cn)">
+      {{::group.cn}}
+     <span class="badge">{{::group.users.length}}</span>
+   </a>
+  </div>
+  <hr>
+</div>
+
+<h4 ng-if="groups.isRoot">Application groups</h4>
 
 <input ng-if="groups.isRoot" ng-model="groups.q" class="form-control" placeholder="Search groups">
 

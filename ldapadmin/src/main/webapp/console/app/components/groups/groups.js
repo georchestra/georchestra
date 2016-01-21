@@ -10,7 +10,7 @@ angular.module('admin_console')
 })
 .filter('unprefix', GroupUnprefix);
 
-function GroupsController() {
+function GroupsController(groupAdminList) {
   var root = [];
   var index = {};
   this.q = (this.q) || '';
@@ -45,7 +45,14 @@ function GroupsController() {
     this.enableBack = this.enableBack && this.prefix;
   }
 
+  var fullAdminList = groupAdminList();
+  this.adminList = Object.values(this.index).filter(function(group) {
+    return fullAdminList.indexOf(group.cn) >= 0;
+  });
+
 }
+
+GroupsController.$inject = [ 'groupAdminList' ];
 
 GroupsController.prototype.filter = function(group, active) {
   var result = (
@@ -56,9 +63,8 @@ GroupsController.prototype.filter = function(group, active) {
     active.cn.indexOf(group.cn) == 0 || // Leafs
     active.cn.substr(0, active.cn.lastIndexOf('_')) == group.cn // Group prefix of active
   );
-  return (this.q != '') ?
-    (group.cn.toLowerCase().indexOf(this.q.toLowerCase())>=0) :
-    result;
+
+  return result && (this.adminList.map(function(g){return g.cn;}).indexOf(group.cn) == -1);
 };
 
 GroupsController.prototype.isExpanded = function(group, active) {
