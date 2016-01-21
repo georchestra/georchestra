@@ -1,10 +1,10 @@
-# Docker version of georchestra
+# geOrchestra on Docker
 
 ## Build 
 
 ### With maven
 
-Following modules have a maven configuration for building docker images :
+The following modules have a maven configuration to build docker images:
  
  * CAS
  * DownloadForm
@@ -15,7 +15,7 @@ Following modules have a maven configuration for building docker images :
  * MapfishApp
  * Security Proxy
 
-In order to (re)build docker image :
+In order to (re)build a docker image:
 
 ```bash
 cd <module>
@@ -29,7 +29,7 @@ This will build a 'georchestra/<module>' image
 
 
 ### Not dockerized
-Following modules are not already dockerized :
+Following modules are not already dockerized:
 
  * Analytics
  * Atlas
@@ -38,7 +38,7 @@ Following modules are not already dockerized :
  
 ### Other custom modules
  
-#### Geonetwork 
+#### GeoNetwork 
 
 ```bash
 cd geonetwork 
@@ -47,7 +47,7 @@ cd web
 ../../mvn -P docker -DskipTests package docker:build
 ```
 
-#### Geoserver
+#### GeoServer
 
 ```bash
 cd geoserver/webapp/
@@ -64,7 +64,7 @@ docker build -t georchestra/shapefile_repo .
 
 This will create a `georchestra/shapefile_repo` docker image. This image will be used to transfer and store files on 
 geoserver. With composition (docker-compose), those files will be available on geoserver instance in 
-`/var/local/shapefile`. Files can be modify with SSH protocol on second image in `/home/geoserver/data` folder.
+`/var/local/shapefile`. Files can be modified with SSH protocol on second image in `/home/geoserver/data` folder.
 
 
 
