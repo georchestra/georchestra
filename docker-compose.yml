@@ -1,6 +1,14 @@
 # non geOrchestra images
 database:
   build: ./postgresql
+  volumes_from:
+    - postgresql_data
+
+# data volume container for postgresql:
+postgresql_data:
+  image: debian:jessie
+  volumes:
+    - "/var/lib/postgresql"
 
 ldap:
   build: ./ldap
@@ -21,7 +29,7 @@ webmail:
     - smtp-sink:rw
 
 geoserver_geodata:
-  image: ssh_data
+  image: georchestra/ssh_data
   ports:
     - "2222:22"
   volumes:

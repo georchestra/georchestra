@@ -49,22 +49,19 @@ cd web
 
 #### GeoServer
 
+This creates a ```georchestra/geoserver``` docker image:
+
 ```bash
 cd geoserver/webapp/
 ../../mvn -P docker clean package docker:build
 ```
 
-This will create a georchestra/geoserver docker image.
+This creates a ```georchestra/ssh_data``` docker image:
 
 ```bash
-cd ../../docker/geoserver/ssh_data
+cd ../../docker/ssh_data
 docker build -t georchestra/ssh_data .
-../../mvn -P docker clean package docker:build
 ```
-
-This will create a `georchestra/shapefile_repo` docker image. This image will be used to transfer and store files on 
-geoserver. With composition (docker-compose), those files will be available on geoserver instance in 
-`/var/local/shapefile`. Files can be modified with SSH protocol on second image in `/home/geoserver/data` folder.
-
-
-
+This image will be used to transfer and store geodata files for geoserver. 
+Through composition (docker-compose), those files will be available to all geoserver instances in `/var/local/shapefile`. 
+Files can be managed via SSH on second image in `/home/geoserver/data` folder.
