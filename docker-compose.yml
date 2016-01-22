@@ -1,9 +1,9 @@
 # non geOrchestra images
 database:
-  build: ./docker/postgresql
+  build: ./postgresql
 
 ldap:
-  build: ./docker/ldap
+  build: ./ldap
 
 smtp-sink:
   build: ./docker/smtp/smtp-sink
