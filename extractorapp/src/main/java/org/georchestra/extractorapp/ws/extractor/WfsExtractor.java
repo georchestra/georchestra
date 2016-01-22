@@ -104,7 +104,7 @@ public class WfsExtractor {
         }
     }
 
-    private final File          _basedir;
+    private final File   _basedir;
     private final String _adminUsername;
     private final String _adminPassword;
     private final String _secureHost;
@@ -116,8 +116,7 @@ public class WfsExtractor {
      *
      */
     public WfsExtractor (File basedir) throws IOException {
-        this(basedir, "", "", "localhost");
-        this.loadUserAgent();
+        this(basedir, "", "", "localhost", null);
     }
 
     /**
@@ -128,18 +127,12 @@ public class WfsExtractor {
      * @param adminPassword password the the admin user
      * @param secureHost
      */
-    public WfsExtractor (File basedir, String adminUsername, String adminPassword, String secureHost) throws IOException {
+    public WfsExtractor (File basedir, String adminUsername, String adminPassword, String secureHost, String userAgent) {
         this._basedir = basedir;
         this._adminPassword = adminPassword;
         this._adminUsername = adminUsername;
         this._secureHost = secureHost;
-        this.loadUserAgent();
-    }
-
-    private void loadUserAgent() throws IOException {
-        Properties properties = new Properties();
-        properties.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("extractorapp.properties"));
-        this.userAgent = properties.getProperty("userAgent");
+        this.userAgent = userAgent;
     }
 
     public void checkPermission(ExtractorLayerRequest request, String secureHost, String username, String roles) throws IOException {

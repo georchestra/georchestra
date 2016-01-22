@@ -35,16 +35,12 @@ public class WcsExtractor {
 
     private final File      _basedir;
     private final WcsFormat _format;
-    private final String userAgent;
     private RequestConfiguration requestConfig;
 
-    public WcsExtractor(File requestBaseDir, RequestConfiguration requestConfig) throws IOException {
+    public WcsExtractor(File requestBaseDir, RequestConfiguration requestConfig){
         this._basedir = requestBaseDir;
         this._format = new WcsFormat(requestConfig.maxCoverageExtractionSize);
         this.requestConfig = requestConfig;
-        Properties properties = new Properties();
-        properties.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("extractorapp.properties"));
-        this.userAgent = properties.getProperty("userAgent");
     }
     protected static final Log LOG = LogFactory.getLog(WcsExtractor.class.getPackage().getName());
 
@@ -53,7 +49,7 @@ public class WcsExtractor {
         URL capabilitiesURL = request.capabilitiesURL("WMS", null);
 
         final HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
-        httpClientBuilder.setUserAgent(this.userAgent);
+        httpClientBuilder.setUserAgent(requestConfig.userAgent);
 
         HttpClientContext localContext = HttpClientContext.create();
         final HttpHost httpHost = new HttpHost(capabilitiesURL.getHost(), capabilitiesURL.getPort(), capabilitiesURL.getProtocol());

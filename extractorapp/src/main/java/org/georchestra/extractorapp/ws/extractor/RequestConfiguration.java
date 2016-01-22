@@ -30,6 +30,7 @@ public class RequestConfiguration {
 	public final boolean useCommandLineGDAL;
 	/** the original request in json syntax */
 	public final String strRequest;
+	public final String userAgent;
 
 	public RequestConfiguration(List<ExtractorLayerRequest> requests,
 			UUID requestUuid, Email email,
@@ -37,7 +38,7 @@ public class RequestConfiguration {
 			String roles, UsernamePasswordCredentials adminCredentials,
 			String secureHost, String extractionFolderPrefix, long maxCoverageExtractionSize,
 			boolean remoteReproject, boolean useCommandLineGDAL,
-			String strRequest) {
+			String strRequest, String userAgent) {
 		super();
 
 		this.strRequest = strRequest;
@@ -54,6 +55,7 @@ public class RequestConfiguration {
 		this.remoteReproject = remoteReproject;
 		this.useCommandLineGDAL = useCommandLineGDAL;
 		this.extractionFolderPrefix = extractionFolderPrefix;
+		this.userAgent = userAgent;
 	}
 	public void setThreadLocal() {
 		instance.set(this);

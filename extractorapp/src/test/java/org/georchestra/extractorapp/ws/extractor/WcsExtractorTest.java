@@ -45,17 +45,6 @@ public class WcsExtractorTest extends AbstractTestWithServer {
         this.serverWasCalled = false;
     }
 
-    @Test
-    public void testUserAgentIsDefined() throws IOException {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        Properties properties = new Properties();
-        properties.load(classLoader.getResourceAsStream("extractorapp.properties"));
-        String userAgent = properties.getProperty("userAgent");
-        assertNotNull(userAgent);
-        assertTrue(userAgent.length() > 0);
-
-    }
-
     @Test(expected = SecurityException.class)
     public void testCheckPermission_Illegal_Layer() throws Exception {
         RequestConfiguration requestConfig = createRequestConfiguration(null, null);
@@ -210,7 +199,7 @@ public class WcsExtractorTest extends AbstractTestWithServer {
             adminCredentials = new UsernamePasswordCredentials(extractorappUsername, extractorappPassword);
         }
         return new RequestConfiguration(null, null, null, null, true, null, null, adminCredentials,
-                "localhost", this.testDir.getRoot().toString(), 10000000, true, false, null);
+                "localhost", this.testDir.getRoot().toString(), 10000000, true, false, null, null);
     }
 
     @Override

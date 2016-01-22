@@ -50,14 +50,12 @@ public class CSWExtractor {
 	 * @param adminPassword
 	 * @param secureHost 
 	 */
-    public CSWExtractor (final File layerDirectory, final String adminUserName, final String adminPassword, final String secureHost) throws IOException {
+    public CSWExtractor (final File layerDirectory, final String adminUserName, final String adminPassword, final String secureHost, String userAgent) {
         this._basedir = layerDirectory;
         this._adminPassword = adminPassword;
         this._adminUserName = adminUserName;
         this._secureHost = secureHost;
-        Properties properties = new Properties();
-        properties.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("extractorapp.properties"));
-        this.userAgent = properties.getProperty("userAgent");
+        this.userAgent = userAgent;
     }
 	
 
