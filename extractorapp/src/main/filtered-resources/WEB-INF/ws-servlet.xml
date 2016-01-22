@@ -9,8 +9,6 @@
 
     <context:annotation-config/>
 
-    <context:property-placeholder location="/WEB-INF/extractorapp.properties"/>
-
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="basename" value="messages"/>
     </bean>

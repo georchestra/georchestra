@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Properties;
 import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
@@ -34,14 +35,16 @@ public class WcsExtractor {
 
     private final File      _basedir;
     private final WcsFormat _format;
+    private final String userAgent;
     private RequestConfiguration requestConfig;
-    @Autowired
-    private Environment env;
 
-    public WcsExtractor(File requestBaseDir, RequestConfiguration requestConfig) {
+    public WcsExtractor(File requestBaseDir, RequestConfiguration requestConfig) throws IOException {
         this._basedir = requestBaseDir;
         this._format = new WcsFormat(requestConfig.maxCoverageExtractionSize);
         this.requestConfig = requestConfig;
+        Properties properties = new Properties();
+        properties.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("extractorapp.properties"));
+        this.userAgent = properties.getProperty("userAgent");
     }
     protected static final Log LOG = LogFactory.getLog(WcsExtractor.class.getPackage().getName());
 
@@ -50,7 +53,7 @@ public class WcsExtractor {
         URL capabilitiesURL = request.capabilitiesURL("WMS", null);
 
         final HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
-        httpClientBuilder.setUserAgent(env.getProperty("userAgent"));
+        httpClientBuilder.setUserAgent(this.userAgent);
 
         HttpClientContext localContext = HttpClientContext.create();
         final HttpHost httpHost = new HttpHost(capabilitiesURL.getHost(), capabilitiesURL.getPort(), capabilitiesURL.getProtocol());

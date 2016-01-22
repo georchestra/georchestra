@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Properties;
 import java.util.regex.Pattern;
 
 
@@ -35,13 +36,11 @@ public class CSWExtractor {
 	
 	protected static final Log LOG = LogFactory.getLog(CSWExtractor.class.getPackage().getName());
 
-    @Autowired
-    private Environment env;
-
-	private File _basedir;
+    private File _basedir;
 	private String _adminPassword;
 	private String _secureHost;
 	private String _adminUserName;
+    private String userAgent;
 	
 	/**
 	 * CSWExtractor
@@ -51,12 +50,14 @@ public class CSWExtractor {
 	 * @param adminPassword
 	 * @param secureHost 
 	 */
-    public CSWExtractor (final File layerDirectory, final String adminUserName, final String adminPassword, final String secureHost) {
-    	
+    public CSWExtractor (final File layerDirectory, final String adminUserName, final String adminPassword, final String secureHost) throws IOException {
         this._basedir = layerDirectory;
         this._adminPassword = adminPassword;
         this._adminUserName = adminUserName;
         this._secureHost = secureHost;
+        Properties properties = new Properties();
+        properties.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("extractorapp.properties"));
+        this.userAgent = properties.getProperty("userAgent");
     }
 	
 
@@ -76,7 +77,7 @@ public class CSWExtractor {
         boolean isMetadata = false;
         try {
             final HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
-            httpClientBuilder.setUserAgent(env.getProperty("userAgent"));
+            httpClientBuilder.setUserAgent(this.userAgent);
 
             HttpClientContext localContext = HttpClientContext.create();
             final HttpHost httpHost = new HttpHost(request._isoMetadataURL.getHost(), request._isoMetadataURL.getPort());

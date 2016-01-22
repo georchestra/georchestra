@@ -4,10 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
@@ -67,8 +64,6 @@ import org.springframework.core.env.Environment;
 public class WfsExtractor {
 
     protected static final Log LOG = LogFactory.getLog(WcsExtractor.class.getPackage().getName());
-    @Autowired
-    private Environment env;
 
     /**
      * Enumerate general types of geometries we accept. Multi/normal is ignored
@@ -113,14 +108,16 @@ public class WfsExtractor {
     private final String _adminUsername;
     private final String _adminPassword;
     private final String _secureHost;
+    private String userAgent;
 
     /**
      *
      * Should only be used by tests
      *
      */
-    public WfsExtractor (File basedir) {
+    public WfsExtractor (File basedir) throws IOException {
         this(basedir, "", "", "localhost");
+        this.loadUserAgent();
     }
 
     /**
@@ -131,18 +128,25 @@ public class WfsExtractor {
      * @param adminPassword password the the admin user
      * @param secureHost
      */
-    public WfsExtractor (File basedir, String adminUsername, String adminPassword, String secureHost) {
+    public WfsExtractor (File basedir, String adminUsername, String adminPassword, String secureHost) throws IOException {
         this._basedir = basedir;
         this._adminPassword = adminPassword;
         this._adminUsername = adminUsername;
         this._secureHost = secureHost;
+        this.loadUserAgent();
+    }
+
+    private void loadUserAgent() throws IOException {
+        Properties properties = new Properties();
+        properties.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("extractorapp.properties"));
+        this.userAgent = properties.getProperty("userAgent");
     }
 
     public void checkPermission(ExtractorLayerRequest request, String secureHost, String username, String roles) throws IOException {
         URL capabilitiesURL = request.capabilitiesURL("WFS", "1.0.0");
 
         final HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
-        httpClientBuilder.setUserAgent(env.getProperty("userAgent"));
+        httpClientBuilder.setUserAgent(this.userAgent);
 
         HttpClientContext localContext = HttpClientContext.create();
         final HttpHost httpHost = new HttpHost(capabilitiesURL.getHost(), capabilitiesURL.getPort(), capabilitiesURL.getProtocol());
