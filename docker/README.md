@@ -63,5 +63,18 @@ cd ../../docker/ssh_data
 docker build -t georchestra/ssh_data .
 ```
 This image will be used to transfer and store geodata files for geoserver. 
-Through composition (docker-compose), those files will be available to all geoserver instances in `/var/local/shapefile`. 
-Files can be managed via SSH on second image in `/home/geoserver/data` folder.
+Through composition (docker-compose), those files will be available to all geoserver instances in `/var/local/geodata`. 
+
+
+These files can also be managed via SSH onto the `georchestra_geoserver_geodata_1`, eg with:
+```
+ssh -p 2222 geoserver@localhost 
+```
+The default password is `geoserver`
+
+```
+geoserver@20d925d9072b:~$ ls -al /home/geoserver/data/
+total 8
+drwxr-xr-x 2 geoserver geoserver 4096 Jan 22 13:10 .
+drwxr-xr-x 4 geoserver geoserver 4096 Jan 22 13:10 ..
+```
