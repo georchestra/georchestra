@@ -56,6 +56,8 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 
 /**
  * Obtains data from a WFS and write the data out to the filesystem
@@ -64,7 +66,9 @@ import com.vividsolutions.jts.geom.Polygon;
  */
 public class WfsExtractor {
 
-	protected static final Log LOG = LogFactory.getLog(WcsExtractor.class.getPackage().getName());
+    protected static final Log LOG = LogFactory.getLog(WcsExtractor.class.getPackage().getName());
+    @Autowired
+    private Environment env;
 
     /**
      * Enumerate general types of geometries we accept. Multi/normal is ignored
@@ -138,6 +142,7 @@ public class WfsExtractor {
         URL capabilitiesURL = request.capabilitiesURL("WFS", "1.0.0");
 
         final HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+        httpClientBuilder.setUserAgent(env.getProperty("userAgent"));
 
         HttpClientContext localContext = HttpClientContext.create();
         final HttpHost httpHost = new HttpHost(capabilitiesURL.getHost(), capabilitiesURL.getPort(), capabilitiesURL.getProtocol());

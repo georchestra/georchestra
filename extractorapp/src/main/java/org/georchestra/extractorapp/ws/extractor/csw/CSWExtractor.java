@@ -10,6 +10,8 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.georchestra.extractorapp.ws.extractor.ExtractorLayerRequest;
 import org.georchestra.extractorapp.ws.extractor.FileUtils;
 import org.georchestra.extractorapp.ws.extractor.WfsExtractor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +34,10 @@ import java.util.regex.Pattern;
 public class CSWExtractor {
 	
 	protected static final Log LOG = LogFactory.getLog(CSWExtractor.class.getPackage().getName());
-	
+
+    @Autowired
+    private Environment env;
+
 	private File _basedir;
 	private String _adminPassword;
 	private String _secureHost;
@@ -71,6 +76,7 @@ public class CSWExtractor {
         boolean isMetadata = false;
         try {
             final HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+            httpClientBuilder.setUserAgent(env.getProperty("userAgent"));
 
             HttpClientContext localContext = HttpClientContext.create();
             final HttpHost httpHost = new HttpHost(request._isoMetadataURL.getHost(), request._isoMetadataURL.getPort());

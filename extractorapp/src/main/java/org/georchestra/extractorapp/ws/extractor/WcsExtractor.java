@@ -21,6 +21,8 @@ import org.geotools.referencing.CRS;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 
 
 /**
@@ -33,6 +35,8 @@ public class WcsExtractor {
     private final File      _basedir;
     private final WcsFormat _format;
     private RequestConfiguration requestConfig;
+    @Autowired
+    private Environment env;
 
     public WcsExtractor(File requestBaseDir, RequestConfiguration requestConfig) {
         this._basedir = requestBaseDir;
@@ -46,6 +50,7 @@ public class WcsExtractor {
         URL capabilitiesURL = request.capabilitiesURL("WMS", null);
 
         final HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+        httpClientBuilder.setUserAgent(env.getProperty("userAgent"));
 
         HttpClientContext localContext = HttpClientContext.create();
         final HttpHost httpHost = new HttpHost(capabilitiesURL.getHost(), capabilitiesURL.getPort(), capabilitiesURL.getProtocol());
