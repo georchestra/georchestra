@@ -1,9 +1,7 @@
 package org.georchestra.extractorapp.ws.extractor;
 
 import static java.lang.String.valueOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +9,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
@@ -24,6 +23,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.opengis.referencing.FactoryException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.util.ReflectionUtils;
 
 import com.google.common.io.Files;
@@ -42,7 +43,6 @@ public class WcsExtractorTest extends AbstractTestWithServer {
     @Before
     public void before() {
         this.serverWasCalled = false;
-
     }
 
     @Test(expected = SecurityException.class)
@@ -68,7 +68,7 @@ public class WcsExtractorTest extends AbstractTestWithServer {
     }
 
     @Test
-    public void testisLayerPresent() {
+    public void testisLayerPresent() throws IOException {
         final String ilpGetCap = "<WMS_Capabilities><Capability><Layer><Name>prefixed:MY_LAYER</Name></Layer></Capability></WMS_Capabilities>";
         final String ilpGetCapNoPrefix = "<WMS_Capabilities>"
                 + "  <Capability>"
@@ -199,7 +199,7 @@ public class WcsExtractorTest extends AbstractTestWithServer {
             adminCredentials = new UsernamePasswordCredentials(extractorappUsername, extractorappPassword);
         }
         return new RequestConfiguration(null, null, null, null, true, null, null, adminCredentials,
-                "localhost", this.testDir.getRoot().toString(), 10000000, true, false, null);
+                "localhost", this.testDir.getRoot().toString(), 10000000, true, false, null, null);
     }
 
     @Override

@@ -71,6 +71,7 @@ public class ExtractorController implements ServletContextAware {
     private CheckFormAcceptance checkFormAcceptance;
 
     private ExtractionManager extractionManager;
+    private String userAgent;
 
     @Autowired
     private GeorchestraConfiguration georConfig;
@@ -306,7 +307,7 @@ public class ExtractorController implements ServletContextAware {
                 String username = request.getHeader("sec-username");
                 String roles = request.getHeader("sec-roles");
                 RequestConfiguration requestConfig = new RequestConfiguration(requests, requestUuid, email, servletContext, testing, username, roles,
-                        adminCredentials, secureHost, extractionFolderPrefix, maxCoverageExtractionSize, remoteReproject, useCommandLineGDAL, postData);
+                        adminCredentials, secureHost, extractionFolderPrefix, maxCoverageExtractionSize, remoteReproject, useCommandLineGDAL, postData, this.userAgent);
                 ExtractionTask extractor = new ExtractionTask(requestConfig);
 
                 LOG.info("Sending mail to user");
@@ -441,5 +442,13 @@ public class ExtractorController implements ServletContextAware {
 
     public void setEmailFactory(AbstractEmailFactory emailFactory) {
         this.emailFactory = emailFactory;
+    }
+
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
+    }
+
+    public String getUserAgent() {
+        return userAgent;
     }
 }

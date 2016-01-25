@@ -386,7 +386,8 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 		WfsExtractor extractor = new WfsExtractor(requestBaseDir,
 				requestConfig.adminCredentials.getUserName(),
 				requestConfig.adminCredentials.getPassword(),
-				requestConfig.secureHost);
+				requestConfig.secureHost,
+				requestConfig.userAgent);
 
 		extractor.checkPermission(request, requestConfig.secureHost, requestConfig.username, requestConfig.roles);
 
@@ -408,7 +409,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 
 		String cswHost = request._isoMetadataURL.getHost();
 
-		CSWExtractor extractor = new CSWExtractor(layerDirectory, adminUserName, adminPassword, cswHost);
+		CSWExtractor extractor = new CSWExtractor(layerDirectory, adminUserName, adminPassword, cswHost, requestConfig.userAgent);
 
 		extractor.checkPermission(request, requestConfig.username, requestConfig.roles);
 
