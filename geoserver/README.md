@@ -21,7 +21,7 @@ $ mvn clean install -Pgeofence
 ### GeoServer with integrated GeoFence UI
 
 ```
-$ mvn clean install -Pgeofence -Pgeofence-server
+$ mvn clean install -Pgeofence-server
 
 ```
 
