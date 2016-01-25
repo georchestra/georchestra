@@ -1,17 +1,16 @@
 # non geOrchestra images
 database:
-  build: ./postgresql
-  volumes_from:
-    - postgresql_data
-
-# data volume container for postgresql:
-postgresql_data:
-  image: debian:jessie
+  build: georchestra/database
+  environment:
+    - POSTGRES_USER=georchestra
+    - POSTGRES_PASSWORD=georchestra
   volumes:
-    - "/var/lib/postgresql"
+    - postgresql_data:/var/lib/postgresql/data
 
 ldap:
-  build: ./ldap
+  image: georchestra/ldap
+  volumes:
+    - ldap_data:/var/lib/ldap
 
 smtp-sink:
   build: ./docker/smtp/smtp-sink
