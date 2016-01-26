@@ -46,9 +46,13 @@ function GroupsController(groupAdminList) {
   }
 
   var fullAdminList = groupAdminList();
-  this.adminList = Object.values(this.index).filter(function(group) {
-    return fullAdminList.indexOf(group.cn) >= 0;
-  });
+  this.adminList = [];
+  for (var idx in this.index) {
+    var group = this.index[idx];
+    if (fullAdminList.indexOf(group.cn) >= 0) {
+      this.adminList.push(group);
+    }
+  };
 
 }
 
