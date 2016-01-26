@@ -147,7 +147,8 @@ public class AccountFactory {
 			String homePostalAddress,
 			String mobile, 
 			String roomNumber,
-			String stateOrProvince) {
+			String stateOrProvince,
+			String manager) {
 		
 		
 		Account a = new AccountImpl();
@@ -180,6 +181,7 @@ public class AccountFactory {
 		a.setMobile(mobile);
 		a.setRoomNumber(roomNumber);
 		a.setStateOrProvince(stateOrProvince);
+		a.setManager(manager);
 		
 		return a;
 	}
