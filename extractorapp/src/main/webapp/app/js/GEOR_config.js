@@ -22,26 +22,6 @@ GEOR.config = (function() {
     var tr = OpenLayers.i18n;
 
     /**
-     * Constant: URL_DEV
-     * {String} The URL to the dev host.
-     */
-    var URL_DEV =
-        "http://ns383241.ovh.net/";
-
-    /**
-     * Constant: HOST_EXCEPTIONS
-     * {Object}
-     */
-    var HOST_EXCEPTIONS = {
-        "localhost": URL_DEV,           // localhost
-        "\\.wrk\\.cby": URL_DEV,        // c2c chambéry
-        "\\.wrk\\.lsn": URL_DEV,        // c2c lausanne
-        "10\\.26\\.10\\..*$": URL_DEV,  // c2c internal
-        "192\\.168\\..*$": URL_DEV,     // private net
-        "10\\.25\\.40\\..*$": URL_DEV   // c2c VPN
-    };
-
-    /**
      * Property: vectorAbility
      * {Number} Integer representing
      *  browser ability to handle features
@@ -118,39 +98,6 @@ GEOR.config = (function() {
         // not implemented for now.
         // eg: time to load app (not the files) ...
         return 1;
-    };
-
-    /**
-     * Method: getHostname
-     * Get the application's host name.
-     *
-     * Returns:
-     * {String} The application's host name.
-     */
-    var getHostname = function() {
-        return getUrlObj().host;
-    };
-
-    /**
-     * Method: getBaseURL
-     * Get the base URL of the "mapfishapp", "geonetwork" and "geoserver"
-     * webapps.
-     *
-     * Returns:
-     * {String} The base URL.
-     */
-    var getBaseURL = function() {
-        var re;
-        for (var h in HOST_EXCEPTIONS) {
-            if (!HOST_EXCEPTIONS.hasOwnProperty(h)) {
-                continue;
-            }
-            re = new RegExp(h);
-            if (getHostname().match(re)) {
-                return URL_DEV;
-            }
-        }
-        return "../";
     };
 
     /**
@@ -268,14 +215,14 @@ GEOR.config = (function() {
          * The URL to GeoServer WMS.
          */
         GEOSERVER_WMS_URL: getCustomParameter("GEOSERVER_WMS_URL",
-            getBaseURL() + "geoserver/wms"),
+            "/geoserver/wms"),
 
         /**
          * Constant: GEOSERVER_WFS_URL
          * The URL to GeoServer WFS.
          */
         GEOSERVER_WFS_URL: getCustomParameter("GEOSERVER_WFS_URL",
-            getBaseURL() + "geoserver/wfs"),
+            "/geoserver/wfs"),
 
         /**
          * Constant: MAX_FEATURES
