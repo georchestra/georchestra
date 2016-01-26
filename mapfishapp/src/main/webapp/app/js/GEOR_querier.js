@@ -70,7 +70,7 @@ GEOR.querier = (function() {
          * Fires when the filterbuilder panel is already built 
          * and we just need to display it.
          */
-        "showrequest",
+        //"showrequest",
         /**
          * Event: searchresults
          * Fires when we've received a response from server 
