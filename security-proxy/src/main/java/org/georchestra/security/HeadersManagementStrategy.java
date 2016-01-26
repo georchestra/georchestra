@@ -1,23 +1,5 @@
 package org.georchestra.security;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.message.BasicHeader;
-import org.springframework.util.StringUtils;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import static org.georchestra.security.HeaderNames.ACCEPT_ENCODING;
 import static org.georchestra.security.HeaderNames.CONTENT_LENGTH;
 import static org.georchestra.security.HeaderNames.COOKIE_ID;
@@ -29,10 +11,31 @@ import static org.georchestra.security.HeaderNames.SEC_ROLES;
 import static org.georchestra.security.HeaderNames.SEC_USERNAME;
 import static org.georchestra.security.HeaderNames.TRANSFER_ENCODING;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.message.BasicHeader;
+import org.georchestra.commons.configuration.GeorchestraConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
+
 /**
  * A strategy for copying headers from the request to the proxied request and
  * the same for the response headers.
- * 
+ *
  * @author jeichar
  */
 public class HeadersManagementStrategy {
@@ -42,12 +45,21 @@ public class HeadersManagementStrategy {
      * If true (default is false) AcceptEncoding headers are removed from request headers
      */
     private boolean noAcceptEncoding = false;
-    private List<HeaderProvider> headerProviders = Collections.emptyList(); 
+    private List<HeaderProvider> headerProviders = Collections.emptyList();
     private List<HeaderFilter> filters = new ArrayList<HeaderFilter>(1);
     private String referer = null;
 
+    @Autowired
+    private GeorchestraConfiguration georchestraConfiguration;
+
     public HeadersManagementStrategy() {
         filters.add(new SecurityRequestHeaderFilter());
+    }
+
+    public void init() {
+        if ((georchestraConfiguration != null) && (georchestraConfiguration.activated())) {
+            referer = georchestraConfiguration.getProperty("public.host");
+        }
     }
 
     /**
@@ -181,14 +193,14 @@ public class HeadersManagementStrategy {
                 cookies.append(currentId);
             }
         }
-        
+
         headersLog.append("\t" + COOKIE_ID);
         headersLog.append("=");
         headersLog.append(cookies);
         headersLog.append("\n");
 
         proxyRequest.addHeader(new BasicHeader(COOKIE_ID, cookies.toString()));
-        
+
     }
 
     private boolean filter(HttpServletRequest originalRequest, String headerName, HttpRequestBase proxyRequest) {
@@ -205,8 +217,7 @@ public class HeadersManagementStrategy {
      */
     public synchronized void copyResponseHeaders(HttpServletRequest originalRequest, String originalRequestURI, HttpResponse proxyResponse, HttpServletResponse finalResponse, Map<String,String> proxyTargets) {
         HttpSession session = originalRequest.getSession(true);
-        session.setMaxInactiveInterval(Integer.MAX_VALUE);
-        
+
         StringBuilder headersLog = new StringBuilder("Response Headers:\n");
         headersLog
                 .append("==========================================================\n");
@@ -234,7 +245,7 @@ public class HeadersManagementStrategy {
             headersLog.append(header.getValue());
             headersLog.append("\n");
         }
-        
+
         for(HeaderProvider provider : headerProviders) {
             for (Header header : provider.getCustomResponseHeaders()) {
                 finalResponse.addHeader(header.getName(), header.getValue());
@@ -249,7 +260,7 @@ public class HeadersManagementStrategy {
         if(cookieHeaders!=null) {
             handleResponseCookies(originalRequestURI, finalResponse, cookieHeaders, session,headersLog);
         }
-        
+
         headersLog
                 .append("==========================================================\n");
 
@@ -278,16 +289,16 @@ public class HeadersManagementStrategy {
     				if (logger.isDebugEnabled()) {
         				logger.debug("Adjust location header on redirection from: " + locationHeader.getValue() + " to: " + newLocation);
         			}
-    				
+
     				Header newLocationHeader = new BasicHeader(locationHeader.getName(), newLocation);
         			return newLocationHeader;
     			}
     		}
     	}
-    	
+
     	return locationHeader;
     }
-    
+
     private String sanitizeLocation(HttpServletRequest request, String location, Map<String,String> targets) {
     	if (location.startsWith("/")) {
     		String [] requestPath = StringUtils.split(location.substring(1), "/");
@@ -300,11 +311,11 @@ public class HeadersManagementStrategy {
     			return StringUtils.arrayToDelimitedString(requestPath, "/");
     		}
     	}
-    	
+
     	return location;
     }
-    
-    
+
+
     private void handleResponseCookies(String originalRequestURI, HttpServletResponse finalResponse, Header[] headers, HttpSession session, StringBuilder headersLog) {
         String originalPath = originalRequestURI.substring("/sec/".length()).split("/")[0];
         for (Header header : headers) {
@@ -366,18 +377,18 @@ public class HeadersManagementStrategy {
 
     private boolean defaultIgnores(Header header) {
         boolean transferEncoding = header.getName().equalsIgnoreCase(TRANSFER_ENCODING) && header.getValue().equalsIgnoreCase(HeaderNames.CHUNKED);
-        
+
         return transferEncoding;
     }
 
     public void setNoAcceptEncoding(boolean noAcceptEncoding) {
         this.noAcceptEncoding = noAcceptEncoding;
     }
-    
+
     public void setHeaderProviders(List<HeaderProvider> headerProviders) {
         this.headerProviders = headerProviders;
     }
-    
+
     public void setFilters(List<HeaderFilter> filters) {
         this.filters = filters;
     }

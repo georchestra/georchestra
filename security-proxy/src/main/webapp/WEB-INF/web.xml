@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
 <web-app>
+  <distributable/>
   <!-- security related filters and listeners  -->
   <context-param>
     <param-name>contextConfigLocation</param-name>
@@ -75,7 +76,7 @@
     <url-pattern>/sec/*</url-pattern>
   </servlet-mapping>
   <session-config>
-    <session-timeout>60</session-timeout>
+    <session-timeout>1440</session-timeout>
   </session-config>
   <error-page>
     <error-code>404</error-code>

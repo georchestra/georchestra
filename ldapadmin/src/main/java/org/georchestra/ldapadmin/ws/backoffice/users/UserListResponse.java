@@ -23,6 +23,7 @@ import org.json.JSONObject;
  * @author Mauricio Pazos
  *
  */
+
 final class UserListResponse {
 	
 	private List<Account> accountList;
@@ -52,6 +53,7 @@ final class UserListResponse {
 	 * 
 	 * @throws JSONException
 	 */
+
 	public String asJsonString() throws JSONException {
 
 		JSONArray jsonArray = new JSONArray();
@@ -59,7 +61,7 @@ final class UserListResponse {
     	for (Account account: this.accountList) {
     		
     		JSONObject jsonAccount = new JSONObject();
-    		jsonAccount.put(UserSchema.UUID_KEY, account.getUid());
+    		jsonAccount.put(UserSchema.UID_KEY, account.getUid());
     		jsonAccount.put(UserSchema.GIVEN_NAME_KEY, account.getGivenName());
     		jsonAccount.put(UserSchema.SURNAME_KEY, account.getSurname());
     		jsonAccount.put(UserSchema.ORG_KEY, account.getOrg());

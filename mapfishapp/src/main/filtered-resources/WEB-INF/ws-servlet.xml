@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
-<beans>
-    <bean id="homecontroller" 
-          class="org.georchestra.mapfishapp.ws.HomeController"/>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+    <context:annotation-config/>
+    <!-- autoscan these packages, the classic beans are defined in
+         the next of the file. -->
+    <context:component-scan base-package="org.georchestra.mapfishapp.addons.*"/>
+
+    <bean id="homecontroller" class="org.georchestra.mapfishapp.ws.HomeController"/>
 
     <!--  url mapping is directly handled with the spring annotations written in the following controllers -->
-    <bean class="org.georchestra.mapfishapp.ws.OGCProxy">
-    </bean>
+    <bean class="org.georchestra.mapfishapp.ws.OGCProxy" />
 
     <!-- File uploads --> 
     <bean id="multipartResolver"
@@ -22,7 +32,7 @@
         </property>
     </bean>
 
-    <bean class="org.georchestra.mapfishapp.ws.UpLoadGeoFileController">
+    <bean class="org.georchestra.mapfishapp.ws.UpLoadGeoFileController" init-method="init">
         <property name="responseCharset" value="UTF-8"/>
         <property name="tempDirectory" value="${docTempDir}/geoFileUploadsCache"/>
         <property name="zipSizeLimit" value="8388608"/>
@@ -33,24 +43,34 @@
     </bean>
 
 
-    <bean id="pgpool" class="org.georchestra.mapfishapp.model.ConnectionPool">
-        <constructor-arg value="${jdbcUrl}" /> 
+    <bean id="pgpool" class="org.georchestra.mapfishapp.model.ConnectionPool" init-method="init">
+        <property name="jdbcUrl" value="${jdbcUrl}" /> 
     </bean>
 
     <!-- Documents controller -->
-    <bean class="org.georchestra.mapfishapp.ws.DocController">
+    <bean class="org.georchestra.mapfishapp.ws.DocController" init-method="init">
         <property name="docTempDir" value="${docTempDir}"/>
-        <property name="connectionPool" ref="pgpool"/>
         <property name="credentials">
             <map>${credentials}</map>
         </property>
     </bean>
-    
+
     <!-- View resolver Required to access jsps in WEB-INF/jsp directory-->
     <bean id="viewResolver"
           class="org.springframework.web.servlet.view.UrlBasedViewResolver">
         <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
         <property name="prefix" value="/WEB-INF/jsp/"/>
         <property name="suffix" value=".jsp"/>
+      </bean>
+
+    <bean id="georchestraConfiguration" class="org.georchestra.commons.configuration.GeorchestraConfiguration">
+        <constructor-arg value="mapfishapp" />
     </bean>
-</beans>
+
+    <bean id="contextController" class="org.georchestra.mapfishapp.ws.ContextController" />
+
+    <bean id="addonController" class="org.georchestra.mapfishapp.ws.AddonController" />
+
+    <bean id="wxsController" class="org.georchestra.mapfishapp.ws.WxsJsonController" />
+
+</beans> 

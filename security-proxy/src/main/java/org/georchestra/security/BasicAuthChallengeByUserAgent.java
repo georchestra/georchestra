@@ -1,9 +1,13 @@
 package org.georchestra.security;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.regex.Pattern;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -12,10 +16,10 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 /**
  * If the user-agent of the client is one of the supported user-agents then send a basic authentication request.
@@ -37,6 +41,39 @@ public class BasicAuthChallengeByUserAgent extends BasicAuthenticationFilter {
     private static final Log LOGGER = LogFactory.getLog(BasicAuthChallengeByUserAgent.class.getPackage().getName());
     private AuthenticationException _exception = new AuthenticationException("No basic authentication credentials provided") {};
 
+    public void init() throws IOException {
+        // GeorchestraConfiguration is a regular spring bean, which won't be
+        // accessible from this bean (which is a spring-security one). We have no
+        // other choice than doing configuration by hand.
+        String datadir = System.getProperty("georchestra.datadir");
+        Properties uaProps = new Properties();
+        if (datadir != null) {
+            File contextDatadir = new File(datadir, "security-proxy");
+            if (! contextDatadir.exists()) {
+                return;
+            }
+            FileInputStream fisProp = null;
+            try {
+                fisProp = new FileInputStream(new File(contextDatadir, "user-agents.properties"));
+                InputStreamReader isrProp = new InputStreamReader(fisProp, "UTF8");
+                _userAgents.clear();
+                uaProps.load(isrProp);
+            } finally {
+                if (fisProp != null) {
+                    fisProp.close();
+                }
+            }
+        }
+        if (! uaProps.isEmpty()) {
+            int i = 0;
+            String ua;
+            while ((ua = uaProps.getProperty("useragent" + i + ".value")) != null) {
+                _userAgents.add(Pattern.compile(ua));
+                i++;
+            }
+        }
+    }
+
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
 
@@ -47,19 +84,22 @@ public class BasicAuthChallengeByUserAgent extends BasicAuthenticationFilter {
         }
 
         final HttpServletRequest request = (HttpServletRequest) req;
-        final String userAgent = request.getHeader("User-Agent");
-        if (userAgentMatch(userAgent)) {
-            String auth = request.getHeader("Authorization");
+        String auth = request.getHeader("Authorization");
 
-            if ((auth == null) || !auth.startsWith("Basic ")) {
+        /* no valid Authorization header sent preemptively */
+        if ((auth == null) || !auth.startsWith("Basic ")) {
+            final String userAgent = request.getHeader("User-Agent");
+            if (userAgentMatch(userAgent)) {
+                /* UA matched, return a 401 directly to the client */
+                LOGGER.debug("the user-agent matched and no Authorization header was sent, returning a 401.");
                 getAuthenticationEntryPoint().commence(request, (HttpServletResponse) res, _exception);
             } else {
-                LOGGER.debug("Activating filter ...");
-                super.doFilter(req, res, chain);
+                LOGGER.debug("the user-agent does not match, skipping filter.");
+                chain.doFilter(req, res);
             }
         } else {
-            LOGGER.debug("the user-agent does not match, skipping filter.");
-            chain.doFilter(req, res);
+            LOGGER.debug("Authorization header sent in the request, activating filter ...");
+            super.doFilter(req, res, chain);
         }
     }
 

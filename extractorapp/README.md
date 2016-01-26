@@ -127,7 +127,7 @@ then, each time you want to test a change in the configuration or the extractora
     $ cd extractorapp
     $ ../mvn -Ptemplate jetty:run
 
-Point your browser to [http://localhost:8080/extractorapp/?noheader=true](http://localhost:8080/extractorapp/?noheader=true) 
+Point your browser to [http://localhost:8283/extractorapp/?noheader=true](http://localhost:8283/extractorapp/?noheader=true) 
 
 
 **Want to trick the extractor into thinking you're logged in ?**

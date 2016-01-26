@@ -113,8 +113,10 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "cswquerier.help.title": "Syntaxe pour la recherche avancée",
     "cswquerier.help.message": "<ul><li><b>@mot</b> cherche dans le nom de l'organisation.</li><li><b>#mot</b> cherche dans les mots clés de la métadonnée.</li><li><b>?mot</b> élargit la recherche à tous les champs de la métadonnée.</li></ul>",
     "NAME layer on VALUE": "Couche ${NAME} sur ${VALUE}",
-    "Show metadata sheet in a new window":
-        "Afficher la fiche de métadonnées dans une nouvelle fenêtre",
+    "Show metadata essentials in a window":
+        "Afficher les métadonnées basiques",
+    "Show metadata sheet in a new browser tab": 
+        "Afficher la métadonnée complète dans un nouvel onglet",
     "more": "plus",
     "Click to select or deselect the layer":
         "Cliquez pour sélectionner ou désélectionner la couche",
@@ -424,9 +426,6 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Contextual help": "Aide contextuelle",
     "Activate or deactivate contextual help bubbles": "Activer ou désactiver les bulles d'aide contextuelle",
     /* GEOR_tools.js strings */
-    "distance measure": "Mesurer une distance",
-    "area measure": "Mesurer une surface",
-    "Measure": "Mesure",
     "Tools": "Outils",
     "tools": "outils",
     "tool": "outil",
@@ -444,6 +443,13 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Other": "Autre",
     "Confirmation": "Confirmation",
     "Information": "Information",
+    "pointOfContact": "contact",
+    "custodian": "producteur",
+    "distributor": "distributeur",
+    "originator": "instigateur",
+    "More": "Plus",
+    "Could not parse metadata.": "Impossible d'analyser la métadonnée",
+    "Could not get metadata.": "Impossible d'obtenir la métadonnée",
     /* GEOR_waiter.js strings */
     /* GEOR_wmc.js strings */
     "The provided file is not a valid OGC context": "Le fichier fourni n'est pas un contexte OGC valide",

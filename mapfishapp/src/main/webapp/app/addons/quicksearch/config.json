@@ -1,0 +1,51 @@
+[{
+        "id": "quicksearch_0",
+        "name": "Quicksearch",
+        "enabled": false,
+        "options": {
+            "field": "label",
+            "tip": {
+                "fr": "<b>Recherche rapide d'une référence</b><br>Tapez \"d numero_de_dossier\" pour obtenir l'affichage du dossier",
+                "en": "...",
+                "es": "...",
+                "de": "..."
+            },
+            "searches": [{
+                "pattern": "d ([0-9]+)",
+                "service": "https://opendata.agglo-lepuyenvelay.fr/geoserver/wfs",
+                "featureNS": "http://opendata.agglo-lepuyenvelay.fr/geoserver/cadastre",
+                "featureType": "dossier"
+            }, {
+                "pattern": "([0-9]+ .+)",
+                "service": "https://opendata.agglo-lepuyenvelay.fr/geoserver/wfs",
+                "featureNS": "http://opendata.agglo-lepuyenvelay.fr/geoserver/geoloc",
+                "featureType": "geo_adresse"
+            },{
+                "service": "https://opendata.agglo-lepuyenvelay.fr/geoserver/wfs",
+                "featureNS": "http://opendata.agglo-lepuyenvelay.fr/geoserver/geoloc",
+                "featureType": "geo_voie"
+            }],
+            "target": "tbar_11",
+            "minChars": 4,
+            "maxResults": 10,
+            "graphicStyle": {
+                "graphicName": "cross",
+                "pointRadius": 16,
+                "strokeColor": "fuchsia",
+                "strokeWidth": 2,
+                "fillOpacity": 0
+            }
+        },
+        "title": {
+            "en": "Quick Search",
+            "fr": "Recherche rapide",
+            "es": "Búsqueda rápida",
+            "de": "Schnellsuche"
+        },
+        "description": {
+            "en": "Quick search your favorite objects",
+            "fr": "Trouvez en quelques secondes vos objets",
+            "de": "Finden Sie Ihre Artikel innerhalb von Sekunden",
+            "es": "Encuentra tus artículos en segundos"
+        }
+}]

@@ -197,24 +197,53 @@ angular.module('ldapadmin.controllers', [])
       postGroups($scope, $scope.selectedUsers(), Restangular, flash);
     };
     $scope.deleteGroup = function(group) {
-      if (confirm('Do you really want to remove group "' + group + '"?')) {
-        Restangular.one('groups', group).remove().then(
-          function() {
-            var index = findByAttr($scope.groups, 'cn', $routeParams.group);
 
-            if (index !== false) {
-              $scope.groups = $scope.groups.splice(index, 1);
-              removeNode($scope.groups_tree, group);
-            }
-            window.location = '#/users';
-            flash.success = 'Group correctly removed';
-          },
-          function errorCallback() {
-            flash.error = 'Error removing the group';
+      if(group == GEOR_config.virtualTemporaryGroupName) {
+        alert("This group cannot be deleted because it's a virtual group !");
+        return;
+      }
+
+      if (confirm('Do you really want to remove group "' + group + '"?')) {
+        Restangular.one('groups', group).remove().then(function() {
+          var index = findByAttr($scope.groups, 'cn', $routeParams.group);
+
+          if (index !== false) {
+            $scope.groups = $scope.groups.splice(index, 1);
+            removeNode($scope.groups_tree, group);
           }
-        );
+          window.location = '#/users';
+          flash.success = 'Group correctly removed';
+        }, function errorCallback() {
+          flash.error = 'Error removing the group';
+        });
       }
     };
+
+    $scope.exportAsCsv = function() {
+      var uids = _.pluck($scope.selectedUsers(), 'uid');
+      var url = GEOR_config.publicContextPath + "/private/users.csv";
+  
+      var form = $('<form> </form>').attr("action", url).attr("method", 'POST').attr("id", '#exportAsCsvForm');
+      var input = $('<input >').attr("name", 'users');
+      
+      form.append(input).appendTo('body');
+      form.find("input[name=users]").val(JSON.stringify(uids));
+      form.submit();
+      form.remove();
+    }
+
+    $scope.exportAsVcard = function() {
+      var uids = _.pluck($scope.selectedUsers(), 'uid');
+      var url = GEOR_config.publicContextPath + "/private/users.vcf";
+
+      var form = $('<form> </form>').attr("action", url).attr("method", 'POST').attr("id", '#exportAsVcfForm');
+      var input = $('<input >').attr("name", 'users');
+
+      form.append(input).appendTo('body');
+      form.find("input[name=users]").val(JSON.stringify(uids));
+      form.submit();
+      form.remove();
+    }
   })
 
   /**
@@ -236,11 +265,28 @@ angular.module('ldapadmin.controllers', [])
       $scope.save = function() {
         $scope.user.put().then(function() {
           flash.success = 'User correctly updated';
-          var index = findByAttr($scope.users, 'uid', $routeParams.userId);
+          var prevUserId = $routeParams.userId;
+          var newUserId = $scope.user.uid;
+          var index = findByAttr($scope.users, 'uid', prevUserId);
 
           if (index !== false) {
             $scope.users[index] = angular.copy($scope.user);
             remote = angular.copy($scope.user);
+
+            // uid modified
+            if (newUserId != prevUserId) {
+              window.location = '#/users/' + newUserId;
+
+              // Update the groups the user belongs to
+              var i,
+                  len = $scope.groups.length;
+              for (i=0; i < len; i++) {
+                var index2 = _.indexOf($scope.groups[i].users, prevUserId);
+                if (index2 != -1) {
+                  $scope.groups[i].users[index2] = newUserId;
+                }
+              }
+            }
           }
         }, function(args) {
           flash.error = 'User could not be updated';

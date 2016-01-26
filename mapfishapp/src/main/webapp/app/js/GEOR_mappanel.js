@@ -179,8 +179,9 @@ GEOR.mappanel = (function() {
         create: function(layerStore) {
             var map = layerStore.map;
             tr = OpenLayers.i18n;
-            return {
+            return new GeoExt.MapPanel({
                 xtype: "gx_mappanel",
+                region: "center",
                 id: "mappanel",
                 stateful: false,
                 map: map,
@@ -190,7 +191,7 @@ GEOR.mappanel = (function() {
                 // hack for better ergonomics:
                 //,updateMapSize: function() {}
                 // but is responsible of https://github.com/georchestra/georchestra/issues/367
-            };
+            });
         }
     };
 })();

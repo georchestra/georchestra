@@ -272,10 +272,10 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
             '<tpl for=".">',
                 '<div class="x-view-item">',
                     '<table style="width:100%;"><tr><td style="vertical-align:text-top;">',
-                        '{[this.queryable(values)]}',
+                        //'{[this.queryable(values)]}',
                         '<p><b ext:qtip="{title}">{[this.title(values.title)]}</b></p>',
                         '<p style="padding-top: 2px">{[this.abstract(values.abstract)]}</p>',
-                        '<p>{[this.mdlink(values)]}</p>',
+                        '{[this.mdlink(values)]}',
                     '</td></tr></table>',
                 '</div>',
             '</tpl>'
@@ -289,19 +289,39 @@ GEOR.LayerBrowser = Ext.extend(Ext.Panel, {
                 // shorten to 65 to take into account uppercased layer titles
                 return GEOR.util.shorten(t, 65);
             },
-            "queryable": function(values) {
-                return values.queryable ?
-                    '<div style="float:right;"><img src="'+GEOR.config.PATHNAME+'/app/img/famfamfam/information.png" ext:qtip="'+tr("Queryable")+'"/></div>' :
-                    "";
-            },
+            //"queryable": function(values) {
+                //return values.queryable ?
+                    //'<div style="float:right;"><img src="'+GEOR.config.PATHNAME+'/app/img/famfamfam/information.png" ext:qtip="'+tr("Queryable")+'"/></div>' :
+                    //"";
+            //},
             "mdlink": function(values) {
-                var url = GEOR.util.setMetadataURL(values.layer, values.metadataURLs);
-                return url ? [
-                    '<a href="', url, '" ext:qtip="',
-                        tr("Show metadata sheet in a new window"), '" ',
-                        'target="_blank" onclick="window.open(this.href);return false;">',
-                        tr('metadata'), '</a>'
-                ].join('') : "";
+                // prefered url is the one pointing at the XML document:
+                var o = GEOR.util.getMetadataURLs(values);
+                if (o.xmlurls[0]) {
+                    return GEOR.util.extFbar({
+                        buttons: [
+                            GEOR.util.extButton({
+                                text: tr('metadata'),
+                                tooltip: tr("Show metadata essentials in a window"),
+                                iconCls: 'geor-btn-metadata',
+                                handler: "GEOR.util.mdwindow('"+ o.xmlurls[0] + "', '" + o.htmlurls[0] + "');"
+                            })
+                        ]
+                    });
+                }
+                // if xmlurl is not available, use text/html metadata link:
+                if (o.htmlurls[0]) {
+                    return GEOR.util.extFbar({
+                        buttons: [
+                            GEOR.util.extButton({
+                                text: tr('metadata'),
+                                tooltip: tr("Show metadata sheet in a new browser tab"),
+                                iconCls: 'geor-btn-metadata-external',
+                                handler: "window.open('"+o.htmlurls[0] + "');return false;"
+                            })
+                        ]
+                    });
+                }
             },
             "abstract": function(t) {
                 // two things here:

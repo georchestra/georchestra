@@ -4,10 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
@@ -56,6 +53,8 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 
 /**
  * Obtains data from a WFS and write the data out to the filesystem
@@ -64,7 +63,7 @@ import com.vividsolutions.jts.geom.Polygon;
  */
 public class WfsExtractor {
 
-	protected static final Log LOG = LogFactory.getLog(WcsExtractor.class.getPackage().getName());
+    protected static final Log LOG = LogFactory.getLog(WcsExtractor.class.getPackage().getName());
 
     /**
      * Enumerate general types of geometries we accept. Multi/normal is ignored
@@ -105,18 +104,19 @@ public class WfsExtractor {
         }
     }
 
-    private final File          _basedir;
+    private final File   _basedir;
     private final String _adminUsername;
     private final String _adminPassword;
     private final String _secureHost;
+    private String userAgent;
 
     /**
      *
      * Should only be used by tests
      *
      */
-    public WfsExtractor (File basedir) {
-        this(basedir, "", "", "localhost");
+    public WfsExtractor (File basedir) throws IOException {
+        this(basedir, "", "", "localhost", null);
     }
 
     /**
@@ -127,17 +127,19 @@ public class WfsExtractor {
      * @param adminPassword password the the admin user
      * @param secureHost
      */
-    public WfsExtractor (File basedir, String adminUsername, String adminPassword, String secureHost) {
+    public WfsExtractor (File basedir, String adminUsername, String adminPassword, String secureHost, String userAgent) {
         this._basedir = basedir;
         this._adminPassword = adminPassword;
         this._adminUsername = adminUsername;
         this._secureHost = secureHost;
+        this.userAgent = userAgent;
     }
 
     public void checkPermission(ExtractorLayerRequest request, String secureHost, String username, String roles) throws IOException {
         URL capabilitiesURL = request.capabilitiesURL("WFS", "1.0.0");
 
         final HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+        httpClientBuilder.setUserAgent(this.userAgent);
 
         HttpClientContext localContext = HttpClientContext.create();
         final HttpHost httpHost = new HttpHost(capabilitiesURL.getHost(), capabilitiesURL.getPort(), capabilitiesURL.getProtocol());
@@ -161,7 +163,7 @@ public class WfsExtractor {
         boolean permitted = regex.matcher(capabilities).find();
 
         if(!permitted) {
-            throw new SecurityException("User does not have sufficient privileges to access the Layer: "+request._layerName+". \n\nCapabilties:  "+capabilities);
+            throw new SecurityException("User does not have sufficient privileges to access the Layer: "+request._layerName+". \n\nCapabilities:  "+capabilities);
         }
     }
 

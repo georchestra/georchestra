@@ -1,0 +1,12 @@
+{
+    "servers": [
+        {
+            "name": "geOrchestra demo",
+            "url": "https://sdi.georchestra.org/geoserver/wfs"
+        },
+        {
+            "name": "GéoBretagne",
+            "url": "http://geobretagne.fr/geoserver/wfs"
+        }
+    ]
+}

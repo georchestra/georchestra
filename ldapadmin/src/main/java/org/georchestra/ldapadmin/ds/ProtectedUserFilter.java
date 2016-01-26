@@ -50,7 +50,7 @@ public class ProtectedUserFilter {
 		TreeSet<Account> filtered = new TreeSet<Account>();
 
 		for (Account account : users) {
-			if(!this.isProtected(account.getUid()) && (! account.getUid().equals(Configuration.FAKE_USER))) {
+			if(!this.isProtected(account.getUid())) {
 				filtered.add(account);
 			}
 		}
@@ -66,7 +66,7 @@ public class ProtectedUserFilter {
 		TreeSet<String> filtered = new TreeSet<String>();
 		for (String uid : users) {
 
-			if ((!this.isProtected(uid) && (! uid.equals(Configuration.FAKE_USER)))) {
+			if (!this.isProtected(uid)) {
 				filtered.add(uid);
 			}
 		}

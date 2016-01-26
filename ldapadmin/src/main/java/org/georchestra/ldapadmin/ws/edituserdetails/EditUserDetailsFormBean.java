@@ -7,7 +7,7 @@ package org.georchestra.ldapadmin.ws.edituserdetails;
  * @author Mauricio Pazos
  *
  */
-public class EditUserDetailsFormBean {
+public class EditUserDetailsFormBean implements java.io.Serializable {
 	
 	private String uid; 
 	private String surname; 

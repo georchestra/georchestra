@@ -1,56 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.georchestra</groupId>
-		<artifactId>root</artifactId>
-		<version>15.06</version>
-	</parent>
-	<artifactId>geoserver-root</artifactId>
-	<packaging>pom</packaging>
-	<name>Geoserver 2.x root module</name>
-
-	<properties>
-		<maven.test.skip>true</maven.test.skip>
-		<gs.version>2.5.4</gs.version>
-    <gt.version>11.4</gt.version>
-		<geofence.version>2.2-SNAPSHOT</geofence.version>
-
-		<geoserver.webapp.groupId>org.geoserver.web</geoserver.webapp.groupId>
-		<geoserver.webapp.artifactId>gs-web-app</geoserver.webapp.artifactId>
-		<geoserver.webapp.version>${gs.version}</geoserver.webapp.version>
-	</properties>
-
-	<modules>
-		<module>geoserver-submodule/src</module>
-	</modules>
-
-	<profiles>
-		<profile>
-			<id>geofence</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<modules>
-				<module>geofence/src</module>
-				<module>geofence-webapp</module>
-				<module>webapp</module>
-			</modules>
-			<properties>
-				<geofence>geofence</geofence>
-				<geoserver.webapp.groupId>it.geosolutions.geofence.geoserver</geoserver.webapp.groupId>
-				<geoserver.webapp.artifactId>geofence-web-app</geoserver.webapp.artifactId>
-				<geoserver.webapp.version>${geofence.version}</geoserver.webapp.version>
-			</properties>	
-		</profile>
-		<profile>
-			<id>no_geofence</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<modules>
-				<module>webapp</module>
-			</modules>
-		</profile>
-	</profiles>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.georchestra</groupId>
+    <artifactId>root</artifactId>
+    <version>15.12-SNAPSHOT</version>
+  </parent>
+  <artifactId>geoserver-root</artifactId>
+  <packaging>pom</packaging>
+  <name>Geoserver 2.x root module</name>
+  <properties>
+    <maven.test.skip>true</maven.test.skip>
+    <gs.version>2.8.1</gs.version>
+    <gt.version>14.1</gt.version>
+    <geofence.version>3.0-SNAPSHOT</geofence.version>
+    <geoserver.webapp.groupId>org.geoserver.web</geoserver.webapp.groupId>
+    <geoserver.webapp.artifactId>gs-web-app</geoserver.webapp.artifactId>
+    <geoserver.webapp.version>${gs.version}</geoserver.webapp.version>
+  </properties>
+  <modules>
+    <module>geoserver-submodule/src</module>
+  </modules>
+  <profiles>
+    <profile>
+      <id>geofence</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <modules>
+        <module>geofence/src</module>
+        <!-- useless ?
+        <module>geofence-webapp</module>
+        -->
+        <module>webapp</module>
+      </modules>
+      <properties>
+        <geofence>geofence</geofence>
+        <!--
+        <geoserver.webapp.groupId>it.geosolutions.geofence.geoserver</geoserver.webapp.groupId>
+        <geoserver.webapp.artifactId>geofence-web-app</geoserver.webapp.artifactId>
+        <geoserver.webapp.version>${geofence.version}</geoserver.webapp.version>
+        -->
+      </properties>
+    </profile>
+    <profile>
+      <id>no_geofence</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+        <module>webapp</module>
+      </modules>
+    </profile>
+  </profiles>
 </project>

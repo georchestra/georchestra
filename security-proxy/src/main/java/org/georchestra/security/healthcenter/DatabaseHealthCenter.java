@@ -20,6 +20,10 @@ public class DatabaseHealthCenter {
 
     private static DatabaseHealthCenter THIS = new DatabaseHealthCenter();
 
+	private String host;
+
+	private Integer port;
+
 	private String user;
 
 	private String password;
@@ -31,8 +35,10 @@ public class DatabaseHealthCenter {
 	private DatabaseHealthCenter(){
 		// singleton
 	}
-	public static synchronized DatabaseHealthCenter getInstance(String database, String user, String password, String clientName){
+	public static synchronized DatabaseHealthCenter getInstance(String host, Integer port, String database, String user, String password, String clientName){
 
+		THIS.host = host;
+		THIS.port = port;
 		THIS.database = database;
 		THIS.user = user;
 		THIS.password = password;
@@ -68,7 +74,7 @@ public class DatabaseHealthCenter {
 		try {
 			long healthLimit = Math.round( maxConnections * 0.8 );
 			
-			List<Map<String,Object>> listConnections = CheckPostgresConnections.findConnections(this.database,  this.user, this.password, this.clientName);
+			List<Map<String,Object>> listConnections = CheckPostgresConnections.findConnections(this.host, this.port, this.database,  this.user, this.password, this.clientName);
 			final int liveConnections = listConnections.size();
 			if( (liveConnections >= healthLimit) && (liveConnections < maxConnections) ){
 				// the configuration is near to the limit, then log the connections status 

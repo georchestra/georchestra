@@ -190,7 +190,7 @@ GEOR.config = (function() {
          * List of catalogs for freetext search
          */
         CATALOGS: getCustomParameter("CATALOGS", [
-            ['http://sdi.georchestra.org/geonetwork/srv/fre/csw', 'le catalogue geOrchestra démo'],
+            ['https://sdi.georchestra.org/geonetwork/srv/fre/csw', 'le catalogue geOrchestra démo'],
             ['/geonetwork/srv/fre/csw', 'le catalogue local']
         ]),
 
@@ -200,7 +200,7 @@ GEOR.config = (function() {
          * Note: must be one of the URLs in the above CATALOGS config option
          */
         DEFAULT_CSW_URL: getCustomParameter("DEFAULT_CSW_URL",
-            'http://sdi.georchestra.org/geonetwork/srv/fre/csw'),
+            'https://sdi.georchestra.org/geonetwork/srv/fre/csw'),
 
         /**
          * Constant: MAX_CSW_RECORDS
@@ -686,8 +686,8 @@ GEOR.config = (function() {
          *  - iconCls: the CSS class which will be appended to the menu item
          */
         SEND_MAP_TO: getCustomParameter("SEND_MAP_TO", [
-            {"name": "Mobile viewer", "url": "http://sdi.georchestra.org/sviewer/?wmc={context_url}", "qtip": "Mobile compatible viewer on sdi.georchestra.org"},
-            {"name": "Desktop viewer", "url": "http://sdi.georchestra.org/mapfishapp/?wmc={context_url}", "qtip": "Desktop viewer on sdi.georchestra.org"}
+            {"name": "Mobile viewer", "url": "https://sdi.georchestra.org/sviewer/?wmc={context_url}", "qtip": "Mobile compatible viewer on sdi.georchestra.org"},
+            {"name": "Desktop viewer", "url": "https://sdi.georchestra.org/mapfishapp/?wmc={context_url}", "qtip": "Desktop viewer on sdi.georchestra.org"}
         ]),
 
         /**
@@ -696,9 +696,9 @@ GEOR.config = (function() {
          *          (relative to viewer or complete) where the servers are enlisted
          **/
         OGC_SERVERS_URL: getCustomParameter("OGC_SERVERS_URL", {
-            "WMS": "wms.servers.json",
-            "WFS": "wfs.servers.json",
-            "WMTS": "wmts.servers.json"
+            "WMS": "ws/wms.servers.json",
+            "WFS": "ws/wfs.servers.json",
+            "WMTS": "ws/wmts.servers.json"
         }),
 
         /**

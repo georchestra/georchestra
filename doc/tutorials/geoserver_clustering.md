@@ -16,7 +16,6 @@ There are lots of different ways to achieve this, and we will not go through all
 The most common setup is based on **NFS shares**, and that's the one we describe here, but we've seen [interesting things](https://gist.github.com/fvanderbiest/d93c6c7d2e58425c2b2e) based on git recently.
 
 
-
 ## Server setup
 
 Every "slave" machine should host one tomcat instance containing a single webapp, deployed from the same GeoServer WAR.

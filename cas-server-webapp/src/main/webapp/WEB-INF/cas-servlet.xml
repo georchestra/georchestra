@@ -264,4 +264,9 @@
         c:cas-ref="centralAuthenticationService"
         c:tgtCookieGenerator-ref="ticketGrantingTicketCookieGenerator"
         c:warnCookieGenerator-ref="warnCookieGenerator"/>
+
+  <bean id="georchestraConfigurator" class="org.georchestra.commons.configuration.GeorchestraConfiguration">
+        <constructor-arg value="cas" />
+  </bean>
+
 </beans>

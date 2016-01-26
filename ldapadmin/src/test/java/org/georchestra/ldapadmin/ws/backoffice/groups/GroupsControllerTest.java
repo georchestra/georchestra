@@ -9,11 +9,7 @@ import java.util.Arrays;
 import javax.naming.Name;
 import javax.servlet.http.HttpServletResponse;
 
-import org.georchestra.ldapadmin.ds.AccountDaoImpl;
-import org.georchestra.ldapadmin.ds.DataServiceException;
-import org.georchestra.ldapadmin.ds.DuplicatedCommonNameException;
-import org.georchestra.ldapadmin.ds.GroupDaoImpl;
-import org.georchestra.ldapadmin.ds.NotFoundException;
+import org.georchestra.ldapadmin.ds.*;
 import org.georchestra.ldapadmin.dto.Group;
 import org.georchestra.ldapadmin.dto.GroupFactory;
 import org.georchestra.ldapadmin.ws.backoffice.users.UserRule;
@@ -65,6 +61,8 @@ public class GroupsControllerTest {
         groupDao.setGroupSearchBaseDN("ou=groups");
         groupDao.setUniqueNumberField("ou");
         groupDao.setUserSearchBaseDN("ou=users");
+
+        AccountDao accountDao = new AccountDaoImpl(ldapTemplate, groupDao);
 
         groupCtrl = new GroupsController(groupDao, userRule);
 

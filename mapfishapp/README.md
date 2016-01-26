@@ -21,6 +21,7 @@ Parameters
 
 The application accepts several GET parameters :
  * **wmc** points to a WMC file in order to override the default context,
+ * **addons** is a comma separated list of already known addon ids,
  * **bbox** in the form left,bottom,right,top in WGS84 coordinates overrides the extent of any WMC,
  * **lon** and **lat** in WGS84 coordinates override the extent of any WMC to center the map,
  * **radius** in meters, when set in addition to the lon and lat params, allows to control the resulting zoom level,
@@ -215,7 +216,7 @@ Once this is done, running mapfishapp is pretty simple with Jetty:
     $ cd mapfishapp
     $ ../mvn -Ptemplate jetty:run
 
-Then, point your browser to [http://localhost:8080/mapfishapp/?noheader=true](http://localhost:8080/mapfishapp/?noheader=true).
+Then, point your browser to [http://localhost:8287/mapfishapp/?noheader=true](http://localhost:8287/mapfishapp/?noheader=true).
 
 Please note that if you make changes to your configuration, you have to run this command again:
 

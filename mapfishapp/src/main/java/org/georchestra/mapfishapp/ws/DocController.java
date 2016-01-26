@@ -8,20 +8,23 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.georchestra.commons.configuration.GeorchestraConfiguration;
+import org.georchestra.mapfishapp.model.ConnectionPool;
 import org.georchestra.mapfishapp.ws.classif.ClassifierCommand;
 import org.georchestra.mapfishapp.ws.classif.SLDClassifier;
+import org.geotools.data.wfs.WFSDataStoreFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.georchestra.mapfishapp.model.ConnectionPool;
-import org.geotools.data.wfs.WFSDataStoreFactory;
 
 // TODO: KML, GML, CSV services: do not store files, this is useless
 // instead, implement a generic "echo" service with custom mime type, as specified by client.
@@ -41,36 +44,65 @@ import org.geotools.data.wfs.WFSDataStoreFactory;
  * <br />
  * The implementation should be modified when Spring 3.0 is released. It provides RESTful tools such as URI templates. <br />
  * It could also make easier to create a DocService Factory that create Doc Services with the service name found in the URL. <br />
- * 
+ *
  * @author yoann.buch@gmail.com
  *
  */
 
 // TODO: Implements REST Style controllers when Spring framework 3.0 is released
-  
+
 @Controller
 public class DocController {
 
 	/** the temporary directory used by the document services*/
     private String docTempDir;
 
-    public String getDocTempDir() {return docTempDir;}
-	public void setDocTempDir(String docTempDir) {	this.docTempDir = docTempDir; }
+    @Autowired
+    public GeorchestraConfiguration georchestraConfiguration;
 
-	/** the postgresql connection pool used by the document services*/
+    /** the connection pool used by the document services*/
+    @Autowired
     private ConnectionPool connectionPool;
 
-    public ConnectionPool getConnectionPool() {return connectionPool;}
-	public void setConnectionPool(ConnectionPool connectionPool) {	this.connectionPool = connectionPool; }
+    public void init() throws IOException {
+        if (georchestraConfiguration.activated()) {
+            docTempDir = georchestraConfiguration.getProperty("docTempDir");
+
+            Properties userPasswordCreds = georchestraConfiguration.loadCustomPropertiesFile("credentials");
+            credentials.clear();
+            for (String key : userPasswordCreds.stringPropertyNames()) {
+                credentials.put(key, new UsernamePasswordCredentials(userPasswordCreds.getProperty(key)));
+            }
+        }
+    }
+
+    public String getDocTempDir() {
+        return docTempDir;
+    }
+
+	public void setDocTempDir(String docTempDir) {
+	    this.docTempDir = docTempDir;
+	}
+
+
+	// needed for tests
+	public void setConnectionPool(ConnectionPool cp) {
+	    connectionPool = cp;
+    }
 
 	private WFSDataStoreFactory factory = new WFSDataStoreFactory();
 	public void setWFSDataStoreFactory(WFSDataStoreFactory fac) { factory = fac; }
+
 	/**
 	 * mapping from hostname -> credentials
 	 */
 	private Map<String, UsernamePasswordCredentials> credentials = new HashMap<String, UsernamePasswordCredentials>();
-	public Map<String, UsernamePasswordCredentials> getCredentials() {return credentials;}
-	public void setCredentials(Map<String, UsernamePasswordCredentials> credentials) {this.credentials = credentials;}
+	public Map<String, UsernamePasswordCredentials> getCredentials() {
+	    return credentials;
+	}
+	public void setCredentials(Map<String, UsernamePasswordCredentials> credentials) {
+	    this.credentials = credentials;
+	}
 
     /**
      * variable name that has to be used on client side
@@ -108,26 +140,26 @@ public class DocController {
     public static final String GML_URL = DOC_URL + "gml/";
     
     /*=======================Services entry points==========================================================================*/
-    
+
     /*======================= WMC ======================================================================*/
-    
+
     /**
      * POST WMC entry point. Store the body of the request POST (or file by upload) in a temporary file.
      * @param request contains in its body the wmc file
      * @param response contains the url path to get back the file: WMC_URL/{filename}
      */
     @RequestMapping(value="/wmc/", method=RequestMethod.POST)
-    public void storeWMCFile(HttpServletRequest request, HttpServletResponse response) {   
-        storeFile(new WMCDocService(this.docTempDir, this.connectionPool), WMC_URL, request, response);   
+    public void storeWMCFile(HttpServletRequest request, HttpServletResponse response) {
+        storeFile(new WMCDocService(this.docTempDir, this.connectionPool), WMC_URL, request, response);
     }
-    
+
     /**
      * GET WMC entry point. Retrieve the right file previously stored corresponding to the REST argument. <br />
      * @param request no parameter. The parameter has to be provided REST style: WMC_URL/{filename}
      * @param response contains the file content
      */
     @RequestMapping(value="/wmc/*", method=RequestMethod.GET)
-    public void getWMCFile(HttpServletRequest request, HttpServletResponse response) { 
+    public void getWMCFile(HttpServletRequest request, HttpServletResponse response) {
         getFile(new WMCDocService(this.docTempDir, this.connectionPool), request, response);
     }
 
@@ -138,17 +170,17 @@ public class DocController {
      * @param response contains the url path to get back the file in CSV: KML_URL/{filename}
      */
     @RequestMapping(value="/kml/", method=RequestMethod.POST)
-    public void storeKMLFile(HttpServletRequest request, HttpServletResponse response) {   
-        storeFile(new KMLDocService(this.docTempDir, this.connectionPool), KML_URL, request, response);   
+    public void storeKMLFile(HttpServletRequest request, HttpServletResponse response) {
+        storeFile(new KMLDocService(this.docTempDir, this.connectionPool), KML_URL, request, response);
     }
 
     /**
-     * GET KML entry point. Retrieve the right file previously stored corresponding to the REST argument. 
+     * GET KML entry point. Retrieve the right file previously stored corresponding to the REST argument.
      * @param request no parameter. The parameter has to be provided REST style: KML_URL/{filename}
      * @param response contains the file content
      */
     @RequestMapping(value="/kml/*", method=RequestMethod.GET)
-    public void getKMLFile(HttpServletRequest request, HttpServletResponse response) { 
+    public void getKMLFile(HttpServletRequest request, HttpServletResponse response) {
         getFile(new KMLDocService(this.docTempDir, this.connectionPool), request, response);
     }
 
@@ -180,44 +212,34 @@ public class DocController {
      * @param response contains the url path to get back the file in CSV: CSV_URL/{filename}
      */
     @RequestMapping(value="/csv/", method=RequestMethod.POST)
-    public void storeCSVFile(HttpServletRequest request, HttpServletResponse response) {   
-        storeFile(new CSVDocService(this.docTempDir, this.connectionPool), CSV_URL, request, response);   
+    public void storeCSVFile(HttpServletRequest request, HttpServletResponse response) {
+        storeFile(new CSVDocService(this.docTempDir, this.connectionPool), CSV_URL, request, response);
     }
-    
+
     /**
-     * GET CSV entry point. Retrieve the right file previously stored corresponding to the REST argument. 
+     * GET CSV entry point. Retrieve the right file previously stored corresponding to the REST argument.
      * @param request no parameter. The parameter has to be provided REST style: CSV_URL/{filename}
      * @param response contains the file content
      */
     @RequestMapping(value="/csv/*", method=RequestMethod.GET)
-    public void getCSVFile(HttpServletRequest request, HttpServletResponse response) { 
+    public void getCSVFile(HttpServletRequest request, HttpServletResponse response) {
         getFile(new CSVDocService(this.docTempDir, this.connectionPool), request, response);
     }
-    
+
     /*======================= SLD =====================================================================*/
-    
+
     /**
-     * POST SLD entry point. Create and store a SLD file. 
-     * @param request Can contains an SLD file (POST body or upload) or a JSON request to build a classification SLD 
+     * POST SLD entry point. Create and store a SLD file.
+     * @param request Can contains an SLD file (POST body or upload) or a JSON request to build a classification SLD
      * (this request must fulfill the ClassifierCommand syntax).
      * @param response contains the url path to get back the file in SLD: SLD_URL/{filename}
      */
     @RequestMapping(value="/sld/", method=RequestMethod.POST)
-    public void doSLDPost(HttpServletRequest request, HttpServletResponse response) {   
-        
-    	/*
-    	 * We need anonymous users to be able to use service
-    	 * but there is a potential for users to fill up harddrive
-    	 * We should address that at some point
-        String roles = request.getHeader("sec-roles");
-        if((roles == null) || roles.equals("ROLE_ANONYMOUS")) {
-            sendErrorToClient(response, HttpServletResponse.SC_UNAUTHORIZED, "Only non anonymous users are allowed to post SLD");
-            return;
-        }*/
+    public void doSLDPost(HttpServletRequest request, HttpServletResponse response) {
 
         if(request.getContentType().contains("application/vnd.ogc.sld+xml")) {
             // sld to store
-            storeFile(new SLDDocService(this.docTempDir, this.connectionPool), SLD_URL, request, response);   
+            storeFile(new SLDDocService(this.docTempDir, this.connectionPool), SLD_URL, request, response);
         }
         else if(request.getContentType().contains("application/json") || request.getContentType().contains("text/json")) {
             // classification based on client request
@@ -227,35 +249,35 @@ public class DocController {
             sendErrorToClient(response, HttpServletResponse.SC_BAD_REQUEST, "Expected content types: application/vnd.ogc.sld+xml or application/json (classification)");
         }
     }
-    
+
     /**
      * GET SLD entry point. Retrieve the right file previously stored corresponding to the REST argument.
      * @param request o parameter. The parameter has to be provided REST style: SLD_URL/{filename}
      * @param response contains the file content
      */
     @RequestMapping(value="/sld/*", method=RequestMethod.GET)
-    public void getSLDFile(HttpServletRequest request, HttpServletResponse response) { 
+    public void getSLDFile(HttpServletRequest request, HttpServletResponse response) {
         getFile(new SLDDocService(this.docTempDir, this.connectionPool), request, response);
     }
-    
+
     /*=======================Private Methods==========================================================================*/
-    
+
     /**
-     * Create SLD file. Let handle the generation by a classifier object. 
+     * Create SLD file. Let handle the generation by a classifier object.
      */
     private void doClassification(HttpServletRequest request, HttpServletResponse response) {
         try {
             // classification based on client request in json
             SLDClassifier c = new SLDClassifier(credentials, new ClassifierCommand(getBodyFromRequest(request)),
             		factory);
-            
+
             // save SLD content under a file
             SLDDocService service = new SLDDocService(this.docTempDir, this.connectionPool);
             String fileName = service.saveData(c.getSLD(), request.getHeader("sec-username"));
-            
-            PrintWriter out = response.getWriter(); 
-            out.println("{\"success\":true,\"" + FILEPATH_VARNAME + "\":\"" + SLD_URL + fileName + "\"}"); 
-        } 
+
+            PrintWriter out = response.getWriter();
+            out.println("{\"success\":true,\"" + FILEPATH_VARNAME + "\":\"" + SLD_URL + fileName + "\"}");
+        }
         catch (DocServiceException e) {
             sendErrorToClient(response, e.getErrorCode() , e.getMessage());
             e.printStackTrace();
@@ -264,7 +286,7 @@ public class DocController {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Store a file sent by the client. 2 modes: <br />
      * - content is stored in POST Body
@@ -274,26 +296,26 @@ public class DocController {
      * @param response response contains the url path to get back the file: SERVICE_URL/{filename}
      */
     @SuppressWarnings("unchecked")
-    private void storeFile(A_DocService docService, String docUrl, HttpServletRequest request, HttpServletResponse response) {  
+    private void storeFile(A_DocService docService, String docUrl, HttpServletRequest request, HttpServletResponse response) {
         try {
-            
+
             String fileContent;
-            
+
             if(request instanceof MultipartHttpServletRequest)
             {
                 // the request is a MultipartHttpServletRequest => one upload occurred
                 // execution order => DispatcherServlet => CommonsMultipartResolver => DocController
-                // CommonsMultipartResolver wrapped HttpServletRequest into MultipartHttpServletRequest    
+                // CommonsMultipartResolver wrapped HttpServletRequest into MultipartHttpServletRequest
                 MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-                
+
                 // get file name
-                Iterator<String> it = (Iterator<String>) multipartRequest.getFileNames();
+                Iterator<String> it = multipartRequest.getFileNames();
                 if(!it.hasNext()) {
                     sendErrorToClient(response, HttpServletResponse.SC_BAD_REQUEST, "No file has been sent");
                     return;
-                }  
-                String fileName = it.next();  
-                    
+                }
+                String fileName = it.next();
+
                 // get file
                 MultipartFile file = multipartRequest.getFile(fileName);
                 if(file.isEmpty()) {
@@ -306,26 +328,25 @@ public class DocController {
 
             }
             else {
-                // service has been called normally: RESTful style 
-                
+                // service has been called normally: RESTful style
+
                 // extract body from the client request, it should contain the file content
                 fileContent = getBodyFromRequest(request);
             }
-               
+
             // let the specific service handles the storage on the server
             // get back the file name under which it is saved
             String fileName = docService.saveData(fileContent, request.getHeader("sec-username"));
 
             // send back to client the url path to retrieve this file later on
             response.setStatus(HttpServletResponse.SC_CREATED); // 201 created, new resource created
-            //response.setContentType("application/json; charset=utf-8"); // does not work as expected ... FIXME     
             response.setContentType("text/html; charset=utf-8");
             response.setHeader("Cache-Control", "max-age=0"); // both Cache-Control and Expires are required
             response.setHeader("Expires", "Fri, 19 Jun 1970 14:23:31 GMT"); // which is in the past
-            
-            PrintWriter out = response.getWriter(); 
-            out.println("{\"success\":true,\"" + FILEPATH_VARNAME + "\":\"" + docUrl + fileName + "\"}"); 
-        } 
+
+            PrintWriter out = response.getWriter();
+            out.println("{\"success\":true,\"" + FILEPATH_VARNAME + "\":\"" + docUrl + fileName + "\"}");
+        }
         catch (DocServiceException e) {
             sendErrorToClient(response, e.getErrorCode() , e.getMessage());
             e.printStackTrace();
@@ -333,16 +354,16 @@ public class DocController {
             e.printStackTrace();
         }
     }
-    
+
     /**
-     * 
+     *
      * @param docService Any service implementing A_DocService
      * @param request no parameter. The parameter has to be provided REST style: SERVICE_URL/{filename}
      * @param response contains the file content
      */
-    private void getFile(A_DocService docService, HttpServletRequest request, HttpServletResponse response) { 
+    private void getFile(A_DocService docService, HttpServletRequest request, HttpServletResponse response) {
         try {
-            
+
             // extract file name from the request URI
             // will be simpler and safer with Spring 3.0 - REST features
             String fileName = getFileNameFromURI(request.getRequestURI());
@@ -350,12 +371,12 @@ public class DocController {
                 sendErrorToClient(response, HttpServletResponse.SC_BAD_REQUEST, "Could not find the file name in the URL");
                 return;
             }
-            
+
             // let the specific service retrieve the file stored on the server
             docService.loadFile(fileName);
-            
+
             // send back the file content
-            response.setStatus(HttpServletResponse.SC_OK); 
+            response.setStatus(HttpServletResponse.SC_OK);
             response.setContentType(docService.getMIMEType()); // MIME type of the file
             response.setCharacterEncoding("utf-8");
             response.setHeader("Content-Disposition", "attachment; filename=\"" + docService.getName() + "\"");
@@ -366,7 +387,7 @@ public class DocController {
             // but we want it to be be fast => cached by proxies => public
             PrintWriter out = response.getWriter();
             out.println(docService.getContent());
-        } 
+        }
         catch (DocServiceException docExc) {
             sendErrorToClient(response, docExc.getErrorCode() , docExc.toString());
             docExc.printStackTrace();
@@ -376,14 +397,14 @@ public class DocController {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Try to get the filename argument from the URI. Method will be simplified with Spring 3.0
      * @param uri URI of the request
      * @return null: no filename found. Otherwise file name.
      */
     private String getFileNameFromURI(final String uri) {
-        
+
         // get last argument from uri
         String[] splittedUri = uri.split("/");
         String lastArgument = splittedUri[splittedUri.length - 1].trim();
@@ -396,7 +417,7 @@ public class DocController {
             return null;
         }
     }
-    
+
     /**
      * Extract the content of a POST request
      * @param request POST request
@@ -404,12 +425,12 @@ public class DocController {
      */
     private String getBodyFromRequest(final HttpServletRequest request) {
         StringBuilder strBuilder = new StringBuilder();
-        
+
         try {
             // use stream from the request
             InputStream  response = request.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(response));
-            
+
             String sLine;
             while ((sLine = reader.readLine()) != null) {
                 strBuilder.append(sLine);
@@ -421,10 +442,10 @@ public class DocController {
         catch(Exception exc) {
             exc.printStackTrace();
         }
-        
+
         return strBuilder.toString();
     }
-    
+
     /**
      * Send HTTP error to the given client represented by the response object
      * @param response represent the client output point
@@ -440,4 +461,5 @@ public class DocController {
             }
         }
     }
+
 }

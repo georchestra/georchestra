@@ -1,6 +1,15 @@
 package org.georchestra.security;
 
-import com.google.common.collect.Maps;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeNoException;
+
+import java.io.IOException;
+import java.net.UnknownHostException;
+import java.util.Collections;
+import java.util.Map;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
@@ -13,13 +22,7 @@ import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import com.google.common.collect.Maps;
 
 public class ProxyTest {
     private Proxy proxy;
@@ -39,9 +42,14 @@ public class ProxyTest {
                 return response;
             }
         };
-        proxy.setProxyPermissions(new Permissions().
-                setAllowed(Collections.singletonList(new UriMatcher().setHost("localhost"))).
-                setDenied(Collections.singletonList(new UriMatcher().setHost("google.com"))));
+
+        try {
+            proxy.setProxyPermissions(new Permissions().setAllowed(
+                    Collections.singletonList(new UriMatcher().setHost("localhost"))).setDenied(
+                    Collections.singletonList(new UriMatcher().setHost("google.com"))));
+        } catch (UnknownHostException e) {
+            assumeNoException(" some hosts unresolveable, check connectivity. Tests skipped.", e);
+        }
 
         response = new BasicHttpResponse(HttpVersion.HTTP_1_1, 200, "OK");
         this.request = new MockHttpServletRequest("GET", "/sec/proxy/");
