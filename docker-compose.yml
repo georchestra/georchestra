@@ -1,6 +1,6 @@
 # non geOrchestra images
 database:
-  build: georchestra/database
+  image: georchestra/database
   environment:
     - POSTGRES_USER=georchestra
     - POSTGRES_PASSWORD=georchestra
