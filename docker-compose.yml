@@ -9,8 +9,8 @@ database:
 
 ldap:
   image: georchestra/ldap
-  volumes:
-    - ldap_data:/var/lib/ldap
+#  volumes:
+#    - ldap_data:/var/lib/ldap
 
 smtp-sink:
   build: ./docker/smtp/smtp-sink
