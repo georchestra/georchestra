@@ -73,6 +73,8 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 	private Date shadowExpire;
 
 	private String manager;
+	
+	private String context;
 
 	@Override
 	public String toString() {
@@ -103,7 +105,8 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 				", organizationalUnit='" + organizationalUnit + '\'' +
 				", homePostalAddress='" + homePostalAddress + '\'' +
 				", uuid='" + uuid + '\'' +
-				", shadowExpire=" + shadowExpire +
+				", shadowExpire=" + shadowExpire + '\'' +
+				", context=" + context +
 				'}';
 	}
 
@@ -289,6 +292,8 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 		}
 		if(this.manager != null)
 			res.put("manager", this.manager);
+		if(this.context != null)
+			res.put("context", this.context);
 		return res;
 	}
 
@@ -547,6 +552,16 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 	@Override
 	public void setManager(String manager) {
 		this.manager = manager;
+	}
+	
+	@Override
+	public String getContext() {
+		return context;
+	}
+
+	@Override
+	public void setContext(String context) {
+		this.context = context;
 	}
 
 	/* (non-Javadoc)

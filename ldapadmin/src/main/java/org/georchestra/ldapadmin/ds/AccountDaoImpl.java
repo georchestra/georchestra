@@ -476,6 +476,8 @@ public final class AccountDaoImpl implements AccountDao {
 
         if(account.getManager() != null)
             setAccountField(context, UserSchema.MANAGER, account.getManager());
+        
+        setAccountField(context, UserSchema.CONTEXT, account.getContext());
     }
 
     private void setAccountField(DirContextOperations context, String fieldName, Object value) {
@@ -529,7 +531,8 @@ public final class AccountDaoImpl implements AccountDao {
                     context.getStringAttribute(UserSchema.MOBILE_KEY),
                     context.getStringAttribute(UserSchema.ROOM_NUMBER_KEY),
                     context.getStringAttribute(UserSchema.STATE_OR_PROVINCE_KEY),
-                    context.getStringAttribute(UserSchema.MANAGER));
+                    context.getStringAttribute(UserSchema.MANAGER),
+                    context.getStringAttribute(UserSchema.CONTEXT));
 
             account.setUUID(context.getStringAttribute(UserSchema.UUID_KEY));
             String rawShadowExpire = context.getStringAttribute(UserSchema.SHADOW_EXPIRE);

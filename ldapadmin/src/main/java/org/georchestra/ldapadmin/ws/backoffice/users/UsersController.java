@@ -572,7 +572,12 @@ public class UsersController {
 		if (manager != null) {
 			account.setManager(manager);
 		}
-
+		
+		String context = RequestUtil.getFieldValue(json, UserSchema.CONTEXT);
+		if (context != null) {
+			account.setContext(context);
+		}
+		
 		String commonName = AccountFactory.formatCommonName(
 				account.getGivenName(), account.getSurname());
 
@@ -644,7 +649,7 @@ public class UsersController {
 
 		String commonName = AccountFactory.formatCommonName(givenName, surname);
 
-		Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, org, title, phone, description, postalAddress, postalCode, "", postOfficeBox, "", street, locality, facsimile, "","","","","","");
+		Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, org, title, phone, description, postalAddress, postalCode, "", postOfficeBox, "", street, locality, facsimile, "","","","","","","");
 
 		return a;
 
