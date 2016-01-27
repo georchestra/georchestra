@@ -56,35 +56,25 @@ proxy:
     - geonetwork
     - header
     - geoserver
-  volumes:
-    - ./docker/datadir:/etc/georchestra
 
 cas:
   image: georchestra/cas
   links:
     - ldap
-  volumes:
-    - ./docker/datadir:/etc/georchestra
 
 mapfishapp:
   image: georchestra/mapfishapp
   links:
     - database
-  volumes:
-    - ./docker/datadir:/etc/georchestra
 
 extractorapp:
   image: georchestra/extractorapp
   links:
     - database
     - smtp-sink
-  volumes:
-    - ./docker/datadir:/etc/georchestra
 
 header:
   image: georchestra/header
-  volumes:
-    - ./docker/datadir:/etc/georchestra
 
 ldapadmin:
   image: georchestra/ldapadmin
@@ -92,8 +82,6 @@ ldapadmin:
     - database
     - ldap
     - smtp-sink
-  volumes:
-    - ./docker/datadir:/etc/georchestra
 
 geonetwork:
   image: georchestra/geonetwork
@@ -102,5 +90,4 @@ geonetwork:
   links:
     - database
     - ldap
-  volumes:
-    - ./docker/datadir:/etc/georchestra
+
