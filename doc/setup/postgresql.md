@@ -24,7 +24,7 @@ psql -d georchestra -c 'CREATE SCHEMA AUTHORIZATION geonetwork;'
 
 If **mapfishapp** is deployed:
 ```
-psql -d georchestra -f postgresql/mapfishapp.sql
+psql -d georchestra -f postgresql/02-mapfishapp.sql
 psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA mapfishapp TO "www-data";'
 psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA mapfishapp TO "www-data";'
 psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA mapfishapp TO "www-data";'
@@ -34,7 +34,7 @@ psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA mapfisha
 
 If the **ldapadmin** webapp is deployed:
 ```
-psql -d georchestra -f postgresql/ldapadmin.sql
+psql -d georchestra -f postgresql/04-ldapadmin.sql
 psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA ldapadmin TO "www-data";'
 psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ldapadmin TO "www-data";'
 psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA ldapadmin TO "www-data";'
@@ -65,7 +65,7 @@ psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA geofence
 
 If the **downloadform** module is deployed and ```shared.download_form.activated``` is true in your setup (false by default):
 ```
-psql -d georchestra -f postgresql/downloadform.sql
+psql -d georchestra -f postgresql/03-downloadform.sql
 psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA downloadform TO "www-data";'
 psql -d georchestra -c 'GRANT USAGE ON SCHEMA downloadform TO "geonetwork";'
 psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA downloadform TO "www-data";'
@@ -77,7 +77,7 @@ psql -d georchestra -c 'GRANT SELECT ON downloadform.geonetwork_log TO "geonetwo
 
 If the **security proxy** is deployed and ```shared.ogc.statistics.activated``` is true in your setup (false by default):
 ```
-psql -d georchestra -f postgresql/ogcstatistics.sql
+psql -d georchestra -f postgresql/05-ogc-server-statistics.sql
 psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA ogcstatistics TO "www-data";'
 psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ogcstatistics TO "www-data";'
 psql -d georchestra -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA ogcstatistics TO "www-data";'
