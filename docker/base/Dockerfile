@@ -3,12 +3,11 @@ FROM jetty:9.3.6-jre8
 MAINTAINER PSC "psc@georchestra.org"
 
 RUN apt-get update && \
-    apt-get install -y unzip git && \
+    apt-get install -y unzip && \
 		rm -rf /var/lib/apt/lists/*
 
 RUN java -jar "$JETTY_HOME/start.jar" --add-to-startd=jmx,jmx-remote,stats
 
-# TODO: replace repo name + branch according to customer
 ADD https://github.com/georchestra/datadir/archive/docker-official.zip /tmp/georchestra.zip
 RUN unzip /tmp/georchestra.zip -d /etc && mv /etc/datadir-docker-official /etc/georchestra
 
