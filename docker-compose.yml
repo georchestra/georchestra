@@ -9,23 +9,31 @@ database:
 
 ldap:
   image: georchestra/ldap
-#  volumes:
-#    - ldap_data:/var/lib/ldap
+  environment:
+      - SLAPD_ORGANISATION=georchestra
+      - SLAPD_DOMAIN=georchestra.org
+      - SLAPD_PASSWORD=secret
+      - SLAPD_ADDITIONAL_MODULES=memberof3,groupofmembers
+  volumes:
+    - ldap_data:/var/lib/ldap
+    - ldap_config:/etc/ldap
+  ports:
+    - "3899:389"
 
-smtp-sink:
+smtp:
   build: ./docker/smtp/smtp-sink
 
 courier-imap:
   build: ./docker/smtp/courier-imap
   volumes_from:
-    - smtp-sink:rw
+    - smtp:rw
 
 webmail:
   build: ./docker/smtp/webmail
   ports:
     - "8081:80"
   volumes_from:
-    - smtp-sink:rw
+    - smtp:rw
 
 geoserver_geodata:
   image: georchestra/ssh_data
@@ -71,7 +79,7 @@ extractorapp:
   image: georchestra/extractorapp
   links:
     - database
-    - smtp-sink
+    - smtp
 
 header:
   image: georchestra/header
@@ -81,7 +89,7 @@ ldapadmin:
   links:
     - database
     - ldap
-    - smtp-sink
+    - smtp
 
 geonetwork:
   image: georchestra/geonetwork
