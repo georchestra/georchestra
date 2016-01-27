@@ -226,8 +226,8 @@ public class AccountFactory {
 		a.setHomePostalAddress(o.getHomePostalAddress());
 		a.setUUID(o.getUUID());
 		a.setManager(o.getManager());
-		a.setShadowExpire(a.getShadowExpire());
-		a.setContext(a.getContext());
+		a.setShadowExpire(o.getShadowExpire());
+		a.setContext(o.getContext());
 
 		return a;
 	}
