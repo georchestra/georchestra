@@ -2,20 +2,20 @@
 
   <div class="panel-body clearfix">
 
-    <div class="col-md-4">
+    <div class="col-md-3">
       <ul class="nav nav-pills nav-stacked">
         <li ng-repeat="tab in user.tabs" ng-class="{active: user.tab==tab}">
         <!-- <a ng-link="user({id: user.user.uid, tab: tab});" rel="{{user.user.uid}}/{{tab}}">{{ {id: user.user.uid, tab: tab} }}</a> -->
-        <a href="#/users/{{user.user.uid}}/{{tab}}">{{::tab}}</a> <!-- FIXME use ng-link -->
+        <a href="#/users/{{user.user.uid}}/{{tab}}" translate="tab.{{::tab}}"></a> <!-- FIXME use ng-link -->
         </li>
       </ul>
     </div>
 
-    <div class="col-md-8">
+    <div class="col-md-9">
       <div class="panel panel-default">
 
         <div class="panel-heading">
-          <h3 class="panel-title">User: {{::user.user.sn}} {{::user.user.givenName}}</h3>
+          <h3 class="panel-title">{{::user.user.sn}} {{::user.user.givenName}}</h3>
         </div>
 
         <div class="panel-body" ng-if="user.tab=='infos'">
@@ -78,7 +78,51 @@
         </div>
 
         <div class="panel-body" ng-if="user.tab=='messages'">
-          <h4>Messages</h4>
+          <ol class="breadcrumb">
+            <li class="active" ng-if="!user.message">
+              <span translate>msg.messages</span> <span class="badge">{{::user.messages.length}}</span>
+            </li>
+            <li ng-if="user.message"><a href="javascript:void(0);" ng-click="user.closeMessage()">
+              <span translate>msg.messages</span> <span class="badge">{{::user.messages.length}}</span></a>
+            </li>
+            <li class="active" ng-if="user.message">{{::user.message.subject}}</li>
+          </ol>
+          <div ng-if="user.message">
+            <h4>
+              <small>
+                {{user.message.sender}}, <span translate>msg.on</span> {{user.message.date | date: 'mediumDate'}}
+              </small>
+            </h4>
+            <h4>
+              {{user.message.subject}}
+            </h4>
+            <p>
+              {{user.message.body}}
+            </p>
+            <hr ng-if="user.message.attachments.length>0"/>
+            <h5 ng-if="user.message.attachments.length>0" translate>msg.attachments</h5>
+            <ul ng-if="user.message.attachments.length>0">
+              <li ng-repeat="attachment in user.message.attachments">
+              {{attachment.name}} ({{attachment.size / 1000 | number:0}} Mo)
+              </li>
+            </ul>
+          </div>
+          <table class="table table-condensed" ng-if="!user.message">
+            <thead>
+              <tr>
+                <th translate>msg.date</th>
+                <th translate>msg.subject</th>
+                <th translate>msg.sender</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="message in user.messages">
+                <td>{{::message.date | date: 'mediumDate'}}</td>
+                <td><a ng-click="user.openMessage(message)" href="javascript:void(0);">{{::message.subject}}</a></td>
+                <td>{{::message.sender}}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
         <div class="panel-body" ng-if="user.tab=='logs'">

@@ -13,7 +13,8 @@ module.exports = config:
           'vendor/angular-resource.js',
           'vendor/router.es5.js',
           'vendor/chosen.jquery.js',
-          'vendor/angular-chosen.js'
+          'vendor/angular-chosen.js',
+          'vendor/angular-translate.js'
         ]
     stylesheets:
       joinTo:
