@@ -1,0 +1,1 @@
+../node_modules/angular-translate/dist/angular-translate.js
