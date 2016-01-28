@@ -1,0 +1,1 @@
+../node_modules/angular-flash-alert/dist/angular-flash.js

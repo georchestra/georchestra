@@ -24,3 +24,12 @@ groups input {
     top: calc(100% + 2px);
   }
 }
+
+[flash-message] {
+  position    : absolute;
+  width       : 20em;
+  left        : 50%;
+  margin-left : -10em;
+  top         : 1em;
+  z-index     : 2000;
+}

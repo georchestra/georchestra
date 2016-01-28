@@ -3,6 +3,7 @@ angular.module('admin_console', [
   'ngResource',
   'ngNewRouter',
   'angular-chosen',
+  'flash',
   'pascalprecht.translate'
 ]).controller('AppController', [
   '$router', AppController
@@ -18,6 +19,8 @@ angular.module('admin_console', [
     'tab.logs'      : 'Logs',
     'tab.manage'    : 'Manage',
     // USER
+    'group.system'    : 'System groups',
+    'group.app'       : 'Application groups',
     'msg.date'        : 'Date',
     'msg.subject'     : 'Subject',
     'msg.sender'      : 'Sender',
@@ -32,6 +35,7 @@ require('./components/groups/groups');
 require('./components/user/user');
 require('./components/home/home');
 require('./services/groups');
+require('./services/groups_users');
 require('./services/users');
 
 function AppController($router) {

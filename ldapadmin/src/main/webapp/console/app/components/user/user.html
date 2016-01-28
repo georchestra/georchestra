@@ -52,7 +52,7 @@
 
         <div class="panel-body" ng-if="user.tab=='groups'">
 
-          <h4>System groups</h4>
+          <h4 translate>group.system</h4>
           <div class="form-group clearfix">
             <div class="col-sm-6"ng-repeat="group in user.adminGroups">
               <div class="checkbox">
@@ -65,10 +65,10 @@
 
           <hr>
 
-          <h4>Application groups</h4>
+          <h4 translate>group.app</h4>
           <div class="form-group">
-            <select class="form-control" multiple chosen ng-options="group.cn for (key, group) in user.groups" ng-model="user.toto" data-placeholder="Select groups">
-              <option ng-repeat="(key, group) in user.groups" value="{{::group.cn}}">{{::group.cn}}</option>
+            <select class="form-control" multiple chosen ng-model="user.user.groups" 
+              ng-options="group for group in user.groups" data-placeholder="Select groups">
             </select>
           </div>
         </div>
