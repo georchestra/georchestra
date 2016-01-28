@@ -13,7 +13,7 @@ ldap:
       - SLAPD_ORGANISATION=georchestra
       - SLAPD_DOMAIN=georchestra.org
       - SLAPD_PASSWORD=secret
-      - SLAPD_ADDITIONAL_MODULES=memberof3,groupofmembers
+      - SLAPD_ADDITIONAL_MODULES=memberof,groupofmembers
   volumes:
     - ldap_data:/var/lib/ldap
     - ldap_config:/etc/ldap

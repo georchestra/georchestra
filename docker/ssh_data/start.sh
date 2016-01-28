@@ -9,4 +9,4 @@ chown -R 999:999 /home/geoserver
 
 
 # start openssh server
-/usr/sbin/sshd -D
+exec /usr/sbin/sshd -D
