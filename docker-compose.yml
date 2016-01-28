@@ -17,19 +17,17 @@ ldap:
   volumes:
     - ldap_data:/var/lib/ldap
     - ldap_config:/etc/ldap
-  ports:
-    - "3899:389"
 
 smtp:
-  build: ./docker/smtp/smtp-sink
+  image: camptocamp/smtp-sink
 
 courier-imap:
-  build: ./docker/smtp/courier-imap
+  image: camptocamp/courier-imap
   volumes_from:
     - smtp:rw
 
 webmail:
-  build: ./docker/smtp/webmail
+  image: camptocamp/sqwebmail
   ports:
     - "8081:80"
   volumes_from:
