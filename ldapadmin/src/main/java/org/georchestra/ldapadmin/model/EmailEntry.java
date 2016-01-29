@@ -49,7 +49,7 @@ public class EmailEntry {
         res.put("sender", this.getSender());
         res.put("recipient", this.getRecipient());
         res.put("subject", this.getSubject());
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         res.put("date", dateFormat.format(this.getDate()));
         res.put("body", this.getBody());
         JSONArray array = new JSONArray();
