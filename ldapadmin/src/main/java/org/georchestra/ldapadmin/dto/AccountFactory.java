@@ -125,6 +125,8 @@ public class AccountFactory {
 	 * @param roomNumber
 	 * @param stateOrProvince
 	 * @param manager
+	 * @param context
+	 * @param string 
 	 * 
 	 * @return {@link Account}
 	 */
@@ -151,7 +153,8 @@ public class AccountFactory {
 			String mobile, 
 			String roomNumber,
 			String stateOrProvince,
-			String manager) {
+			String manager,
+			String context) {
 		
 		
 		Account a = new AccountImpl();
@@ -185,6 +188,7 @@ public class AccountFactory {
 		a.setRoomNumber(roomNumber);
 		a.setStateOrProvince(stateOrProvince);
 		a.setManager(manager);
+		a.setContext(context);
 		
 		return a;
 	}
@@ -222,7 +226,8 @@ public class AccountFactory {
 		a.setHomePostalAddress(o.getHomePostalAddress());
 		a.setUUID(o.getUUID());
 		a.setManager(o.getManager());
-		a.setShadowExpire(a.getShadowExpire());
+		a.setShadowExpire(o.getShadowExpire());
+		a.setContext(o.getContext());
 
 		return a;
 	}
