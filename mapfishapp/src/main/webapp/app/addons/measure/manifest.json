@@ -36,22 +36,46 @@
         "en": {
             "measure_popuptitle": "Measure",
             "measure_distance": "distance measure",
-            "measure_area": "area measure"
+            "measure_area": "area measure",
+            "measure_perimeter": "perimeter measure",
+            "m": "m",
+            "km": "km",
+            "m2": "m&#178;",
+            "km2": "km&#178;",
+            "hectare": "h" 
         },
         "es": {
             "measure_popuptitle": "Medida",
             "measure_distance": "Medir una distancia",
-            "measure_area": "Medir un área"
+            "measure_area": "Medir un área",
+            "measure_perimeter": "Medir el perímetro",
+            "m": "m",
+            "km": "km",
+            "m2": "m&#178;",
+            "km2": "km&#178;",
+            "hectare": "h" 
         },
         "fr": {
             "measure_popuptitle": "Mesure",
             "measure_distance": "mesure de distance",
-            "measure_area": "mesure de surface"
+            "measure_area": "mesure de surface",
+            "measure_perimeter": "mesure du périmètre",
+            "m": "m",
+            "km": "km",
+            "m2": "m&#178;",
+            "km2": "km&#178;",
+            "hectare": "h" 
         },
         "de": {
             "measure_popuptitle": "Maß",
             "measure_distance": "Distanz messen",
-            "measure_area": "Oberfläche messen"
+            "measure_area": "Oberfläche messen",
+            "measure_perimeter": "Messen di perimeter",
+            "m": "m",
+            "km": "km",
+            "m2": "m&#178;",
+            "km2": "km&#178;",
+            "hectare": "h" 
         }
     }
 }
