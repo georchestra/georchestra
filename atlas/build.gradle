@@ -27,6 +27,7 @@ dependencies {
     compile(
             "org.slf4j:slf4j-api:1.7.12",
             "org.apache.camel:camel-core:$camelVersion",
+            "org.apache.camel:camel-jpa:$camelVersion",
             "org.apache.camel:camel-groovy:$camelVersion",
             "org.hibernate:hibernate-entitymanager:${hibernateVersion}",
             "org.json:json:20080701"
@@ -65,7 +66,7 @@ task createDocker(type: Docker, dependsOn:'build') {
                'apt-get install -y zip && '+
                'apt-get clean && ' +
                'rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*'
-    def filters = ['json', 'groovy']
+    def filters = ['json', 'groovy', 'jpa']
     def depends = configurations.compile.findAll { cur -> filters.any {cur.getName().contains(it)}}
     depends += jar.archivePath
     depends.each {

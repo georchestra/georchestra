@@ -38,8 +38,8 @@ public class CamelPopulatePropertiesComponent {
     @Handler
     public void merge(Exchange ex) throws JSONException, IOException {
 
-        InputStreamCache rawJson = ex.getProperty("rawJson", InputStreamCache.class);
-        JSONObject jobSpec = new JSONObject(new JSONTokener(toString(rawJson)));
+        String rawJson = ex.getProperty("rawJson", String.class);
+        JSONObject jobSpec = new JSONObject(new JSONTokener(rawJson));
 
         JSONObject featureLayer = (JSONObject) jobSpec.get("featureLayer");
         JSONArray baseLayers = (JSONArray) jobSpec.get("baseLayers");

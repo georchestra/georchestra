@@ -5,17 +5,15 @@ import java.util.Date;
 import java.util.UUID;
 
 @Entity
-@Table(schema = "atlas", name = "atlas_mfp_jobs")
-public class AtlasMFPJob {
+@Table(schema = "atlas", name = "atlas_jobs")
+public class AtlasJob {
 
-    private final static String SEQUENCE_NAME = "atlas_mfp_jobs_seq";
+    private final static String SEQUENCE_NAME = "atlas_jobs_seq";
 
     @Id
-    @SequenceGenerator(name= SEQUENCE_NAME, schema = "atlas", sequenceName= SEQUENCE_NAME, initialValue=1, allocationSize=1)
+    @SequenceGenerator(name=SEQUENCE_NAME, schema = "atlas", sequenceName=SEQUENCE_NAME, initialValue=1, allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SEQUENCE_NAME)
     private Long id;
-    private Long printId;
-    private UUID uuid;
 
     @Enumerated(EnumType.STRING)
     private AtlasJobState state;
@@ -26,20 +24,13 @@ public class AtlasMFPJob {
     @Column(columnDefinition="text")
     private String query;
 
-    private String filename;
-
-    private Short pageIndex;
-
     private Date created;
     private Date updated;
 
-    public AtlasMFPJob(){}
+    public AtlasJob(){}
 
-    public AtlasMFPJob(UUID uuid, String query, String filename, Short pageIndex) {
-        this.uuid = uuid;
+    public AtlasJob(String query) {
         this.query = query;
-        this.filename = filename;
-        this.pageIndex = pageIndex;
         this.onCreate();
     }
 
@@ -57,14 +48,10 @@ public class AtlasMFPJob {
 
     @Override
     public String toString() {
-        return "AtlasMFPJob{" +
+        return "AtlasJob{" +
                 "id=" + id +
-                ", printId=" + printId +
-                ", uuid=" + uuid +
                 ", state=" + state +
                 ", query='" + query + '\'' +
-                ", filename='" + filename + '\'' +
-                ", pageIndex=" + pageIndex +
                 ", created=" + created +
                 ", updated=" + updated +
                 '}';
@@ -78,28 +65,13 @@ public class AtlasMFPJob {
         this.id = id;
     }
 
-    public Long getPrintId() {
-        return printId;
-    }
-
-    public void setPrintId(Long printId) {
-        this.printId = printId;
-    }
-
-    public UUID getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
-    }
-
     public AtlasJobState getState() {
         return state;
     }
 
-    public void setState(AtlasJobState state) {
+    public AtlasJob setState(AtlasJobState state) {
         this.state = state;
+        return this;
     }
 
     public String getQuery() {
@@ -110,27 +82,19 @@ public class AtlasMFPJob {
         this.query = query;
     }
 
-    public String getFilename() {
-        return filename;
-    }
-
-    public void setFilename(String filename) {
-        this.filename = filename;
-    }
-
-    public Short getPageIndex() {
-        return pageIndex;
-    }
-
-    public void setPageIndex(Short pageIndex) {
-        this.pageIndex = pageIndex;
-    }
-
     public Date getCreated() {
         return created;
     }
 
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
     public Date getUpdated() {
         return updated;
+    }
+
+    public void setUpdated(Date updated) {
+        this.updated = updated;
     }
 }
