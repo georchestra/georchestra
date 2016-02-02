@@ -323,10 +323,6 @@
                   <directory>${project.build.directory}</directory>
                   <include>cas.war</include>
                 </resource>
-                <resource>
-                  <targetPath>/etc/georchestra/cas</targetPath>
-                  <directory>${project.basedir}/../docker/${datadir}/cas</directory>
-                </resource>
               </resources>
               <serverId>docker-hub</serverId>
               <registryUrl>https://index.docker.io/v1/</registryUrl>
