@@ -57,7 +57,7 @@
             <div class="col-sm-6"ng-repeat="group in user.adminGroups">
               <div class="checkbox">
                 <label>
-                  <input type="checkbox"> {{::group}}
+                  <input type="checkbox" ng-model="user.user.adminGroups[group]"> {{::group}}
                 </label>
               </div>
             </div>
