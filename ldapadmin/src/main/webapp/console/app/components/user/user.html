@@ -5,8 +5,9 @@
     <div class="col-md-3">
       <ul class="nav nav-pills nav-stacked">
         <li ng-repeat="tab in user.tabs" ng-class="{active: user.tab==tab}">
-        <!-- <a ng-link="user({id: user.user.uid, tab: tab});" rel="{{user.user.uid}}/{{tab}}">{{ {id: user.user.uid, tab: tab} }}</a> -->
-        <a href="#/users/{{user.user.uid}}/{{tab}}" translate="tab.{{::tab}}"></a> <!-- FIXME use ng-link -->
+          <!-- <a ng-link="user({id: user.user.uid, tab: tab});" rel="{{user.user.uid}}/{{tab}}">{{ {id: user.user.uid, tab: tab} }}</a> -->
+          <a href="#/users/{{user.user.uid}}/{{tab}}" translate="tab.{{::tab}}"></a>
+          <!-- FIXME use ng-link -->
         </li>
       </ul>
     </div>
@@ -19,42 +20,114 @@
         </div>
 
         <div class="panel-body" ng-if="user.tab=='infos'">
-
           <form class="form-horizontal">
-            <div class="form-group">
-              <label class="col-sm-3" for="uid">Login</label>
-              <div class="col-sm-9">
-                <input ng-model="user.user.uid" class="form-control" id="uid" placeholder="Login">
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-3" for="commonName">CommonName</label>
-              <div class="col-sm-9">
-                <input ng-model="user.user.commonName" class="form-control" id="commonName" placeholder="CommonName">
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-3" for="givenName">GivenName</label>
-              <div class="col-sm-9">
-                <input ng-model="user.user.givenName" class="form-control" id="givenName" placeholder="GivenName">
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-3" for="email">Email address</label>
-              <div class="col-sm-9">
-                <input ng-model="user.user.mail" type="email" class="form-control" id="email" placeholder="Email">
-              </div>
-            </div>
-            <button ng-click="user.save()" type="submit" class="btn btn-primary">Enregistrer</button>
-          </form>
+            <div class="row">
+              <div class="col-sm-6">
 
+                <div class="form-group">
+                  <label class="col-sm-4" for="uid">Login</label>
+                  <div class="col-sm-8">
+                    <input ng-model="user.user.uid" class="form-control" id="uid" placeholder="Login">
+                  </div>
+                </div>
+
+                <div class="form-group form-group-sm">
+                  <label class="col-sm-4" for="commonName">CommonName</label>
+                  <div class="col-sm-8">
+                    <input ng-model="user.user.commonName" class="form-control" id="commonName" placeholder="CommonName">
+                  </div>
+                </div>
+
+                <div class="form-group form-group-sm">
+                  <label class="col-sm-4" for="email">Email address</label>
+                  <div class="col-sm-8">
+                    <input ng-model="user.user.mail" type="email" class="form-control" id="email" placeholder="Email">
+                  </div>
+                </div>
+                <div class="form-group form-group-sm">
+                  <label class="col-sm-4" for="address">Address</label>
+                  <div class="col-sm-8">
+                    <input ng-model="user.user.postalAddress" class="form-control" id="address" placeholder="Address">
+                  </div>
+                </div>
+
+                <div class="form-group form-group-sm">
+                  <label class="col-sm-4" for="organization">Organization</label>
+                  <div class="col-sm-8">
+                    <input ng-model="user.user.o" class="form-control" id="organization" placeholder="Organization">
+                  </div>
+                </div>
+
+                <div class="form-group form-group-sm">
+                  <label class="col-sm-4" for="organization">Description</label>
+                  <div class="col-sm-8">
+                    <input ng-model="user.user.description" class="form-control" id="description" placeholder="Description">
+                  </div>
+                </div>
+                <div class="form-group form-group-sm">
+                  <label class="col-sm-4" for="manager">Nom du Responsable</label>
+                  <div class="col-sm-8">
+                    <input ng-model="user.user.manager" class="form-control" id="manager" placeholder="Manager">
+                  </div>
+                </div>
+                <div class="form-group form-group-sm">
+                  <label class="col-sm-4" for="shadowExpire">shadowExpire</label>
+                  <div class="col-sm-8">
+                    <input ng-model="user.user.shadowExpire" class="form-control" id="shadowExpire" placeholder="shadowExpire">
+                  </div>
+                </div>
+                <div class="form-group form-group-sm">
+                  <label class="col-sm-4" for="preferredLanguage">Contexte</label>
+                  <div class="col-sm-8">
+                    <input ng-model="user.user.preferredLanguage" class="form-control" id="preferredLanguage"
+                    placeholder="preferredLanguage">
+                  </div>
+                </div>
+
+                <button ng-click="user.save()" type="submit" class="btn btn-primary">Enregistrer</button>
+              </div>
+
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label class="col-sm-4" for="givenName">Password</label> <a>Re-initialiser</a>
+                </div>
+
+                <div class="form-group form-group-sm">
+                  <label class="col-sm-4" for="givenName">GivenName</label>
+                  <div class="col-sm-8">
+                    <input ng-model="user.user.givenName" class="form-control" id="givenName" placeholder="GivenName">
+                  </div>
+                </div>
+                <div class="form-group form-group-sm">
+                  <label class="col-sm-4" for="phone">Phone</label>
+                  <div class="col-sm-8">
+                    <input ng-model="user.user.telephoneNumber" class="form-control" id="phone" placeholder="telephoneNumber">
+                  </div>
+                </div>
+                <div class="form-group form-group-sm">
+                  <label class="col-sm-4" for="fax">fax</label>
+                  <div class="col-sm-8">
+                    <input ng-model="user.user.facsimile" class="form-control" id="fax" placeholder="facsimileTelephoneNumber">
+                  </div>
+                </div>
+
+                <div class="form-group form-group-sm">
+                  <label class="col-sm-4" for="title">Title</label>
+                  <div class="col-sm-8">
+                    <input ng-model="user.user.title" class="form-control" id="title" placeholder="Title">
+                  </div>
+                </div>
+
+          </form>
+          </div>
+          </div>
         </div>
 
         <div class="panel-body" ng-if="user.tab=='groups'">
 
           <h4 translate>group.system</h4>
           <div class="form-group clearfix">
-            <div class="col-sm-6"ng-repeat="group in user.adminGroups">
+            <div class="col-sm-6" ng-repeat="group in user.adminGroups">
               <div class="checkbox">
                 <label>
                   <input type="checkbox" ng-model="user.user.adminGroups[group]"> {{::group}}
@@ -67,8 +140,8 @@
 
           <h4 translate>group.app</h4>
           <div class="form-group">
-            <select class="form-control" multiple chosen ng-model="user.user.groups" 
-              ng-options="group for group in user.groups" data-placeholder="Select groups">
+            <select class="form-control" multiple chosen ng-model="user.user.groups" ng-options="group for group in user.groups"
+            data-placeholder="Select groups">
             </select>
           </div>
         </div>
@@ -82,8 +155,10 @@
             <li class="active" ng-if="!user.message">
               <span translate>msg.messages</span> <span class="badge">{{::user.messages.length}}</span>
             </li>
-            <li ng-if="user.message"><a href="javascript:void(0);" ng-click="user.closeMessage()">
-              <span translate>msg.messages</span> <span class="badge">{{::user.messages.length}}</span></a>
+            <li ng-if="user.message">
+              <a href="javascript:void(0);" ng-click="user.closeMessage()">
+                <span translate>msg.messages</span> <span class="badge">{{::user.messages.length}}</span>
+              </a>
             </li>
             <li class="active" ng-if="user.message">{{::user.message.subject}}</li>
           </ol>
@@ -99,11 +174,11 @@
             <p>
               {{user.message.body}}
             </p>
-            <hr ng-if="user.message.attachments.length>0"/>
+            <hr ng-if="user.message.attachments.length>0" />
             <h5 ng-if="user.message.attachments.length>0" translate>msg.attachments</h5>
             <ul ng-if="user.message.attachments.length>0">
               <li ng-repeat="attachment in user.message.attachments">
-              {{attachment.name}} ({{attachment.size / 1000 | number:0}} Mo)
+                {{attachment.name}} ({{attachment.size / 1000 | number:0}} Mo)
               </li>
             </ul>
           </div>
@@ -118,7 +193,8 @@
             <tbody>
               <tr ng-repeat="message in user.messages">
                 <td>{{::message.date | date: 'mediumDate'}}</td>
-                <td><a ng-click="user.openMessage(message)" href="javascript:void(0);">{{::message.subject}}</a></td>
+                <td><a ng-click="user.openMessage(message)" href="javascript:void(0);">{{::message.subject}}</a>
+                </td>
                 <td>{{::message.sender}}</td>
               </tr>
             </tbody>
