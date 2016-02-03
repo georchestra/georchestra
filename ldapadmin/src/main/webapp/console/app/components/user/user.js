@@ -9,7 +9,8 @@ angular.module('admin_console')
 function UserController($routeParams, $q, Flash, User, Group, Email,
     groupAdminList, groupAdminFilter) {
   this.tab = $routeParams.tab;
-  this.user = User.get({id : $routeParams.id}, function() {
+  this.flash = Flash;
+  this.user = User.get({id : $routeParams.id}, function(user) {
     if (this.tab == 'messages') {
       Email.query({id: this.user.uuid}, function(r) {
         // this.messages = r.emails;
@@ -62,11 +63,11 @@ function UserController($routeParams, $q, Flash, User, Group, Email,
         this.groups.$promise
       ]).then(function() {
         this.user.groups = this.user.groups || [];
-        this.user.adminGroups = this.user.adminGroups || [];
+        this.user.adminGroups = this.user.adminGroups || {};
         this.groups.forEach(function(group) {
           if (group.users.indexOf(this.user.uid)>=0) {
             if (groupAdminFilter(group)) {
-              this.user.adminGroups.push(group.cn);
+              this.user.adminGroups[group.cn] = true;
             } else {
               this.user.groups.push(group.cn);
             }
@@ -82,55 +83,60 @@ function UserController($routeParams, $q, Flash, User, Group, Email,
   }
 }
 
-UserController.prototype.activate = [ '$scope', '$cacheFactory',
-    'LDAP_BASE_URI', 'GroupsUsers', 'Flash',
-    function($scope, $cacheFactory, baseUri, GroupsUsers, Flash) {
-  $scope.$watch(function(){
-    return this.user.groups;
-  }.bind(this), function(newVal, oldVal) {
-    if (!newVal || !oldVal) {
-      return;
-    }
-    var toAdd = newVal.filter(function(a) {
-      return oldVal.indexOf(a) == -1;
-    });
-    var toRemove = oldVal.filter(function(a) {
-      return newVal.indexOf(a) == -1;
-    });
-    if (toAdd.length == 0 && toRemove.length == 0) {
-      return;
-    }
-    var $httpDefaultCache = $cacheFactory.get('$http');
+UserController.prototype.activate = [
+    '$scope', '$cacheFactory', 'LDAP_BASE_URI', 'GroupsUsers',
+    function($scope, $cacheFactory, baseUri, GroupsUsers) {
+
+  var $httpDefaultCache = $cacheFactory.get('$http');
+  var saveGroups = function(newVal, oldVal) {
+    if (!newVal || !oldVal) { return; }
+
+    var toPut = newVal.filter(function(a) { return oldVal.indexOf(a) == -1; });
+    var toDel = oldVal.filter(function(a) { return newVal.indexOf(a) == -1; });
+
+    if (toPut.length == 0 && toDel.length == 0) { return; }
+
     GroupsUsers.save({
       users: [ this.user.uid ],
-      PUT: toAdd,
-      DELETE: toRemove
+      PUT: toPut,
+      DELETE: toDel
     }, function() {
-      Flash.create('success', 'Groups updated');
-      // $httpDefaultCache.remove(baseUri + 'groups');
-      $httpDefaultCache.removeAll();
-    }, function() {
-      Flash.create('error', 'Error associating to groups');
-    });
-  }.bind(this));
+      this.flash.create('success', 'Groups updated');
+      $httpDefaultCache.removeAll(); // $httpDefaultCache.remove(baseUri + 'groups');
+    }.bind(this), function() {
+      this.flash.create('error', 'Error associating to groups');
+    }.bind(this));
+  }
+
+  $scope.$watch(function(){
+    return this.user.groups;
+  }.bind(this), saveGroups.bind(this));
+
+  $scope.$watchCollection(function(){
+    var groups = [];
+    for (g in this.user.adminGroups) {
+      if (this.user.adminGroups[g]) {
+        groups.push(g);
+      }
+    }
+    return groups;
+  }.bind(this), saveGroups.bind(this));
+
 }];
 
 UserController.prototype.save = function() {
   this.user.$update(function(r) {
-    r.$promise.then(function(user) {
-      console.log(arguments[0]);
-      // console.log(arguments);
-      // this.user = user;
-    });
-    console.log('user success');
-  }, function() {
-    console.log('user error');
-  });
-}
+    // FIXME : reset user values from controller new response
+    this.flash.create('success', 'User updated');
+  }.bind(this), function() {
+    this.flash.create('error', 'Error associating to groups');
+  }.bind(this));
+};
 
 UserController.prototype.openMessage = function(message) {
   this.message = message;
-}
+};
+
 UserController.prototype.closeMessage = function(message) {
   delete this.message;
-}
+};
