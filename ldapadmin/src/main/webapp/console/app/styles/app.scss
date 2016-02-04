@@ -1,9 +1,20 @@
 body {
-  padding-top: 70px;
+  padding-top: 7em;
+}
+@media (min-width: 768px) {
+  body {
+    padding-top: 70px;
+  }
 }
 
 groups input {
   margin-bottom: 1em;
+}
+.user-messages {
+  select {
+    margin-bottom: 0.25em;
+    margin-top: -0.25em;
+  }
 }
 
 .chosen-container-multi .chosen-choices {

@@ -12,21 +12,33 @@ angular.module('admin_console', [
   $translateProvider
   .translations('en', {
     // TABS
-    'tab.infos'     : 'Infos',
-    'tab.groups'    : 'Groups',
-    'tab.analytics' : 'Analytics',
-    'tab.messages'  : 'Messages',
-    'tab.logs'      : 'Logs',
-    'tab.manage'    : 'Manage',
+    'tab.infos'       : 'Infos',
+    'tab.groups'      : 'Groups',
+    'tab.analytics'   : 'Analytics',
+    'tab.messages'    : 'Messages',
+    'tab.logs'        : 'Logs',
+    'tab.manage'      : 'Manage',
     // USER
+    'user.updated'    : 'User updated',
+    'user.error'      : 'Error while saving user',
+    // GROUPS
     'group.system'    : 'System groups',
     'group.app'       : 'Application groups',
+    // MESSAGES
+    'msg.compose'     : 'Compose message',
     'msg.date'        : 'Date',
     'msg.subject'     : 'Subject',
     'msg.sender'      : 'Sender',
     'msg.messages'    : 'Messages',
     'msg.on'          : 'on',
     'msg.attachments' : 'Attachments',
+    'msg.templates'   : 'Choose template',
+    'msg.title'       : 'Title',
+    'msg.content'     : 'Content',
+    'msg.cancel'      : 'Cancel',
+    'msg.send'        : 'Send',
+    'msg.sent'        : 'Message sent!',
+    'msg.error'       : 'Error sending message',
   }).preferredLanguage('en').useSanitizeValueStrategy('escape');
 }]);
 
@@ -36,6 +48,7 @@ require('./components/user/user');
 require('./components/home/home');
 require('./services/groups');
 require('./services/groups_users');
+require('./services/messages');
 require('./services/users');
 
 function AppController($router) {
