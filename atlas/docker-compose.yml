@@ -9,6 +9,8 @@ batch:
   links:
     - print
     - database
+  volumes:
+    - /tmp:/tmp
 
 print:
   image: camptocamp/atlas_print:latest

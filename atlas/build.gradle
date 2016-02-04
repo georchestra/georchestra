@@ -63,7 +63,7 @@ task createDocker(type: Docker, dependsOn:'build') {
 
     runCommand 'rm -rf ${CATALINA_HOME}/webapps/ROOT/WEB-INF/classes/camel/* && ' +
                'apt-get update && ' +
-               'apt-get install -y zip && '+
+               'apt-get install -y zip texlive-extra-utils && '+
                'apt-get clean && ' +
                'rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*'
     def filters = ['json', 'groovy', 'jpa']

@@ -92,12 +92,7 @@
         <route id="save_print_request">
             <from uri="direct:save_print_request"/>
 
-            <!-- check json format -->
-            <unmarshal ref="gson"/>
-            <marshal ref="gson"/>
-
-            <!--<marshal ref="gson"/>-->
-            <to uri="file:///tmp/log?autoCreate=true"/>
+            <to uri="direct:checkArgs"/>
 
             <!-- store in DB queue -->
             <to uri="jpa:org.georchestra.atlas.AtlasJob?persistenceUnit=myPU"/>
@@ -109,6 +104,16 @@
             </transform>
 
         </route>
+
+        <route id="checkArgs">
+            <from uri="direct:checkArgs"/>
+
+            <!-- check json format -->
+            <unmarshal ref="gson"/>
+            <marshal ref="gson"/>
+
+        </route>
+
 
         <route id="split_and_send_request">
             <from uri="jpa:org.georchestra.atlas.AtlasJob?transactionManager=#transactionManager&amp;persistenceUnit=myPU&amp;consumer.lockModeType=NONE&amp;consumer.delay=2000&amp;maximumResults=1&amp;consumeDelete=false&amp;consumer.query=FROM org.georchestra.atlas.AtlasJob WHERE state = 'TODO' ORDER BY id"/>
@@ -154,6 +159,10 @@
 
             <setProperty propertyName="outputFormat">
                 <simple>${body[outputFormat]}</simple>
+            </setProperty>
+
+            <setProperty propertyName="outputFilename">
+                <simple>${body[outputFilename]}</simple>
             </setProperty>
 
             <setProperty propertyName="projection">
@@ -218,29 +227,49 @@
 
                 <to uri="direct:print"/>
 
-                <log message="${body}" loggingLevel="ERROR"/>
+                <to uri="file://?fileName=/tmp/tmp/${property.jobId}/${property.CamelSplitIndex}.pdf"/>
+
+                <log message="${property.jobId} / ${property.CamelSplitIndex} Done !" loggingLevel="INFO"/>
 
             </split>
 
-        </route>
+            <setHeader headerName="CamelExecCommandWorkingDir">
+                <simple>/tmp/tmp/${property.jobId}</simple>
+            </setHeader>
 
-        <route id="start_generation">
-            <from uri="hibernate:org.georchestra.atlas.AtlasMFPJob?consumer.delay=2000&amp;maximumResults=1&amp;consumeDelete=false&amp;consumer.query=FROM org.georchestra.atlas.AtlasMFPJob WHERE state = 'TODO' ORDER BY id"/>
-
-            <to uri="bean:setState?method=setInProgress"/>
-
-            <log message="${body}" loggingLevel="ERROR"/>
+            <!-- Clean STDIN before launching scripts -->
             <transform>
-                <groovy>request.body.getQuery()</groovy>
+                <constant/>
             </transform>
 
-            <setProperty propertyName="printBase">
-                <constant>http://print:8080/print/atlas</constant>
-						</setProperty>
+            <choice>
+                    <when>
+                        <simple>${exchangeProperty.outputFormat} == "pdf"</simple>
+                        <to uri="exec:/bin/sh?useStderrOnEmptyStdout=true&amp;args=-c &quot;/usr/bin/pdfjoin --outfile /proc/self/fd/1 *.pdf&quot;"/>
+                    </when>
+                    <otherwise>
+                        <to uri="exec:/bin/sh?useStderrOnEmptyStdout=true&amp;args=-c &quot;/usr/bin/zip - *.pdf&quot;"/>
+                    </otherwise>
+            </choice>
+
+            <choice>
+                <when>
+                    <simple>${body.exitValue} != 0</simple>
+                    <to uri="log:zip?level=ERROR"/>
+                    <throwException message="Failed to zip the files" exceptionType="java.lang.RuntimeException"/>
+                </when>
+                <otherwise>
+                    <to uri="file://?fileName=/tmp/output/${property.outputFilename}"/>
+                </otherwise>
+            </choice>
+
+            <transform>
+                <simple>${property.originalObject}</simple>
+            </transform>
 
             <!-- Change state of job -->
             <setProperty propertyName="dummy">
-                <groovy>request.body.setState(AtlasJobState.DONE)</groovy>
+                <groovy>request.body.setState(org.georchestra.atlas.AtlasJobState.DONE)</groovy>
             </setProperty>
 
         </route>
