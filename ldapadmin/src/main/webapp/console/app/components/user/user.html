@@ -154,18 +154,60 @@
           <h4>Analytics</h4>
         </div>
 
-        <div class="panel-body" ng-if="user.tab=='messages'">
+        <div class="panel-body user-messages" ng-if="user.tab=='messages'">
+
           <ol class="breadcrumb">
-            <li class="active" ng-if="!user.message">
+            <button class="pull-right btn btn-link btn-xs" ng-if="!user.compose && !user.message" translate ng-click="user.compose={}">msg.compose</button>
+            <li class="active" ng-if="!user.message && !user.compose">
               <span translate>msg.messages</span> <span class="badge">{{::user.messages.length}}</span>
             </li>
-            <li ng-if="user.message">
+            <li ng-if="user.message || user.compose">
               <a href="javascript:void(0);" ng-click="user.closeMessage()">
                 <span translate>msg.messages</span> <span class="badge">{{::user.messages.length}}</span>
               </a>
             </li>
+            <li class="active" ng-if="user.compose" translate>msg.compose</li>
             <li class="active" ng-if="user.message">{{::user.message.subject}}</li>
           </ol>
+          <label ng-if="user.compose" class="pull-right clearfix">
+            <span translate>msg.templates</span>
+            <select placeholder="{{ 'msg.templates' | translate }}" ng-change="user.loadTemplate()"
+              ng-options="template.name for template in user.templates" ng-model="user.compose.template"></select>
+          </label>
+
+          <form ng-if="user.compose" class="">
+            <div class="form-group">
+              <label for="compose_title" translate>msg.title</label>
+              <div>
+                <input ng-model="user.compose.subject" class="form-control" id="compose_title" placeholder="{{'msg.title' | translate}}">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="compose_content" translate>msg.content</label>
+              <div >
+                <textarea ng-model="user.compose.content" class="form-control" id="compose_content" placeholder="{{'msg.content' | translate}}"></textarea>
+              </div>
+            </div>
+
+            <h5 translate>msg.attachments</h5>
+            <div class="clearfix">
+              <div class="col-sm-4" ng-repeat="attachment in user.attachments">
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" ng-model="user.compose.attachments[attachment.id]"> {{::attachment.name}}
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <hr>
+
+            <div class="pull-right">
+              <button ng-click="user.closeMessage()" class="btn btn-link" translate>msg.cancel</button>
+              <button ng-click="user.sendMail()" class="btn btn-primary" translate>msg.send</button>
+            </div>
+
+          </form>
           <div ng-if="user.message">
             <h4>
               <small>
@@ -186,7 +228,7 @@
               </li>
             </ul>
           </div>
-          <table class="table table-condensed" ng-if="!user.message">
+          <table class="table table-condensed" ng-if="!user.message && !user.compose">
             <thead>
               <tr>
                 <th translate>msg.date</th>

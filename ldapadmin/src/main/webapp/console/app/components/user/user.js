@@ -1,15 +1,16 @@
 angular.module('admin_console')
 .controller('UserController', [
-  '$routeParams', '$q',
-  'Flash', 'User', 'Group', 'Email',
+  '$routeParams', '$q', '$injector',
+  'Flash', 'User', 'Group', 'Email', 'Attachments', 'Templates',
   'groupAdminList', 'groupAdminFilter',
   UserController
 ]);
 
-function UserController($routeParams, $q, Flash, User, Group, Email,
-    groupAdminList, groupAdminFilter) {
+function UserController($routeParams, $q, $injector, Flash, User, Group, Email, Attachments,
+    Templates, groupAdminList, groupAdminFilter) {
   this.tab = $routeParams.tab;
   this.flash = Flash;
+  this.$injector = $injector;
   this.user = User.get({id : $routeParams.id}, function(user) {
     if (this.tab == 'messages') {
       Email.query({id: this.user.uuid}, function(r) {
@@ -79,6 +80,17 @@ function UserController($routeParams, $q, Flash, User, Group, Email,
         this.groups = notAdmin;
       }.bind(this));
       break;
+    case 'messages':
+      Templates.query(function(r) { this.templates = r.templates; }.bind(this));
+      //Attachments.query(function(r) { this.attachments = r.attachments; }.bind(this));
+      this.attachments = [{"id":2,
+          "name":"Licence.pdf",
+        "mimeType": "application/pdf"},
+        {"id":3,
+          "name":"Admin.pdf",
+        "mimeType": "image/jpeg"}
+        ];
+      break;
     default:
   }
 }
@@ -126,12 +138,11 @@ UserController.prototype.activate = [
 }];
 
 UserController.prototype.save = function() {
-  this.user.$update(function(r) {
-    // FIXME : reset user values from controller new response
-    this.flash.create('success', 'User updated');
-  }.bind(this), function() {
-    this.flash.create('error', 'Error associating to groups');
-  }.bind(this));
+  var $translate = this.$injector.get('$translate');
+  this.user.$update(
+    this.flash.create.bind(this, 'success', $translate('user.updated')),
+    this.flash.create.bind(this, 'error', $translate('user.error'))
+  );
 };
 
 UserController.prototype.openMessage = function(message) {
@@ -140,4 +151,30 @@ UserController.prototype.openMessage = function(message) {
 
 UserController.prototype.closeMessage = function(message) {
   delete this.message;
+  delete this.compose;
 };
+
+UserController.prototype.loadTemplate = function() {
+  this.compose.subject = this.compose.template.name;
+  this.compose.content = this.compose.template.content;
+}
+
+UserController.prototype.sendMail = function() {
+  var Mail = this.$injector.get('Mail');
+  var $translate = this.$injector.get('$translate');
+  var attachments = [];
+  for (var attach_id in this.compose.attachments) {
+    if (this.compose.attachments[attach_id]) { attachments.push(attach_id); }
+  }
+  (new Mail({
+    id: this.user.uuid,
+    subject:this.compose.subject,
+    content: this.compose.content,
+    attachments: attachments.join(',')
+  })).$save(function(r) {
+    delete this.compose;
+    this.flash.create('success', $translate('msg.sent'));
+  }.bind(this),
+    this.flash.create.bind(this, 'error', $translate('msg.error'))
+  );
+}
