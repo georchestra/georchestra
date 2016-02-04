@@ -22,7 +22,7 @@
         <div class="panel-body" ng-if="user.tab=='infos'">
           <form class="form-horizontal">
             <div class="row">
-              <div class="col-sm-6">
+              <div class="col-md-6">
 
                 <div class="form-group">
                   <label class="col-sm-4" for="uid">Login</label>
@@ -84,10 +84,9 @@
                   </div>
                 </div>
 
-                <button ng-click="user.save()" type="submit" class="btn btn-primary">Enregistrer</button>
               </div>
 
-              <div class="col-sm-6">
+              <div class="col-md-6">
                 <div class="form-group">
                   <label class="col-sm-4" for="givenName">Password</label> <a>Re-initialiser</a>
                 </div>
@@ -118,9 +117,14 @@
                   </div>
                 </div>
 
-          </form>
+              </form>
+            </div>
           </div>
-          </div>
+
+        </div>
+
+        <div class="panel-footer" ng-if="user.tab=='infos'">
+          <button ng-click="user.save()" type="submit" class="btn btn-primary">Enregistrer</button>
         </div>
 
         <div class="panel-body" ng-if="user.tab=='groups'">
