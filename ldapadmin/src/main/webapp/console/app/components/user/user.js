@@ -95,6 +95,7 @@ UserController.prototype.activate = [
     var toDel = oldVal.filter(function(a) { return newVal.indexOf(a) == -1; });
 
     if (toPut.length == 0 && toDel.length == 0) { return; }
+    if (toPut.length > 1 || toDel.length > 1) { return; } // Batch operations are wrong artifacts
 
     GroupsUsers.save({
       users: [ this.user.uid ],
