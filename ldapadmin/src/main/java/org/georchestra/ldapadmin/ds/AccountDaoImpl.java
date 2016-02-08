@@ -3,8 +3,6 @@
  */
 package org.georchestra.ldapadmin.ds;
 
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -55,6 +53,7 @@ public final class AccountDaoImpl implements AccountDao {
     private String uniqueNumberField = "employeeNumber";
     private LdapRdn userSearchBaseDN;
     private AtomicInteger uniqueNumberCounter = new AtomicInteger(-1);
+
     @Autowired
     private AdminLogDao logDao;
 
@@ -126,7 +125,7 @@ public final class AccountDaoImpl implements AccountDao {
 
             throw new DuplicatedEmailException("there is a user with this email: " + account.getEmail());
 
-        } catch (NotFoundException e1) {
+        } catch (NameNotFoundException e1) {
             // if no other accounts with the same e-mail exists yet, then the
             // new account can be added.
             LOG.debug("No account with the mail " + account.getEmail() + ", account can be created.");
@@ -151,7 +150,7 @@ public final class AccountDaoImpl implements AccountDao {
 
             this.groupDao.addUser(groupID, account.getUid(), originUUID);
 
-        } catch (NotFoundException e) {
+        } catch (NameNotFoundException e) {
             throw new DataServiceException(e);
         }
     }
@@ -238,7 +237,7 @@ public final class AccountDaoImpl implements AccountDao {
                         + account.getEmail());
             }
 
-        } catch (NotFoundException e1) {
+        } catch (NameNotFoundException e1) {
             // if it doesn't exist an account with this e-mail the it can be
             // part of the updated account.
             LOG.debug("Updated account with email " + account.getEmail() + " does not exist, update possible.");
@@ -265,7 +264,7 @@ public final class AccountDaoImpl implements AccountDao {
      * @see {@link AccountDao#update(Account, Account, String)}
      */
     @Override
-    public synchronized void update(Account account, Account modified, String originUUID) throws DataServiceException, DuplicatedEmailException, NotFoundException {
+    public synchronized void update(Account account, Account modified, String originUUID) throws DataServiceException, DuplicatedEmailException, NameNotFoundException {
        if (! account.getUid().equals(modified.getUid())) {
            ldapTemplate.rename(buildDn(account.getUid()), buildDn(modified.getUid()));
            for (Group g : groupDao.findAllForUser(account.getUid())) {
@@ -284,7 +283,7 @@ public final class AccountDaoImpl implements AccountDao {
      * @see {@link AccountDao#delete(String, String)}
      */
     @Override
-    public synchronized void delete(final String uid, final String originUUID) throws DataServiceException, NotFoundException {
+    public synchronized void delete(final String uid, final String originUUID) throws DataServiceException, NameNotFoundException {
         this.ldapTemplate.unbind(buildDn(uid), true);
 
         this.groupDao.deleteUser(uid, originUUID);
@@ -329,10 +328,10 @@ public final class AccountDaoImpl implements AccountDao {
      * @see {@link AccountDao#findByUID(String)}
      */
     @Override
-    public Account findByUID(final String uid) throws NameNotFoundException {
+    public Account findByUID(final String uid) throws NameNotFoundException{
 
         if(uid == null)
-            throw new NotFoundException("Cannot find user with uid : " + uid + " in LDAP server");
+            throw new NameNotFoundException("Cannot find user with uid : " + uid + " in LDAP server");
 
         Account a = (Account) ldapTemplate.lookup(buildDn(uid.toLowerCase()), UserSchema.ATTR_TO_RETRIEVE, new AccountContextMapper());
         if(a == null)
@@ -346,14 +345,14 @@ public final class AccountDaoImpl implements AccountDao {
      * @see {@link AccountDao#findByUID(String)}
      */
     @Override
-    public Account findByUUID(final UUID uuid) throws DataServiceException, NotFoundException {
+    public Account findByUUID(final UUID uuid) throws DataServiceException, NameNotFoundException {
         SearchControls sc = new SearchControls();
         sc.setReturningAttributes(UserSchema.ATTR_TO_RETRIEVE);
         sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
         EqualsFilter filter = new EqualsFilter("entryUUID", uuid.toString());
         List<Account> accounts = ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(), sc, new AccountContextMapper());
         if(accounts.size() < 1)
-            throw new NotFoundException("Cannot find Ldap entry with UUID = " + uuid);
+            throw new NameNotFoundException("Cannot find Ldap entry with UUID = " + uuid);
         if(accounts.size() > 1)
             throw new DataServiceException("Invalid response from ldap server, entryUUID should be unique");
         return accounts.get(0);
@@ -363,7 +362,7 @@ public final class AccountDaoImpl implements AccountDao {
      * @see {@link AccountDao#findByEmail(String)}
      */
     @Override
-    public Account findByEmail(final String email) throws DataServiceException, NotFoundException {
+    public Account findByEmail(final String email) throws DataServiceException, NameNotFoundException {
 
         SearchControls sc = new SearchControls();
         sc.setReturningAttributes(UserSchema.ATTR_TO_RETRIEVE);
@@ -378,7 +377,7 @@ public final class AccountDaoImpl implements AccountDao {
         List<Account> accountList = ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(),sc,
                 new AccountContextMapper());
         if (accountList.isEmpty()) {
-            throw new NotFoundException("There is no user with this email: " + email);
+            throw new NameNotFoundException("There is no user with this email: " + email);
         }
         Account account = accountList.get(0);
 

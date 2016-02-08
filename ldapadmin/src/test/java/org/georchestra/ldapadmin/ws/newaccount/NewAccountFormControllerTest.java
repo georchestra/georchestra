@@ -7,17 +7,18 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import net.tanesha.recaptcha.ReCaptcha;
 import net.tanesha.recaptcha.ReCaptchaResponse;
 
 import org.georchestra.ldapadmin.bs.Moderator;
 import org.georchestra.ldapadmin.bs.ReCaptchaParameters;
-import org.georchestra.ldapadmin.ds.*;
+import org.georchestra.ldapadmin.ds.AccountDao;
+import org.georchestra.ldapadmin.ds.DataServiceException;
+import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
+import org.georchestra.ldapadmin.ds.DuplicatedUidException;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
-import org.georchestra.ldapadmin.dto.UserSchema;
+
 import org.georchestra.ldapadmin.mailservice.EmailFactoryImpl;
 import org.georchestra.ldapadmin.mailservice.MailService;
 import org.georchestra.ldapadmin.ws.utils.Validation;
@@ -25,6 +26,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.DistinguishedName;
 import org.springframework.ldap.core.LdapRdn;
 import org.springframework.ldap.core.LdapTemplate;
@@ -93,7 +95,7 @@ public class NewAccountFormControllerTest {
             Mockito.when(this.dao.findByUID(eq("testadmin"))).thenReturn(this.adminAccount);
         } catch (DataServiceException e) {
             assertTrue(false);
-        } catch (NotFoundException e) {
+        } catch (NameNotFoundException e) {
             assertTrue(false);
         }
 

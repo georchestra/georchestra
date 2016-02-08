@@ -8,12 +8,12 @@ import java.util.List;
 
 import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
-import org.georchestra.ldapadmin.ds.NotFoundException;
 import org.georchestra.ldapadmin.ds.UserTokenDao;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -56,7 +56,7 @@ public class NewPasswordFormControllerTest {
     @Test
     public void testSetupFormUserNotFound() throws Exception {
         Model model = Mockito.mock(Model.class);
-        Mockito.doThrow(new NotFoundException("User not found")).when(userTokenDao).findUserByToken(Mockito.anyString());
+        Mockito.doThrow(new NameNotFoundException("User not found")).when(userTokenDao).findUserByToken(Mockito.anyString());
 
         String ret = ctrl.setupForm("test", model);
         assertTrue(ret.equals("passwordRecoveryForm"));

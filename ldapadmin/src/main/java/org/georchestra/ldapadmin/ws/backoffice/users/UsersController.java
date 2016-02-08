@@ -6,7 +6,6 @@ package org.georchestra.ldapadmin.ws.backoffice.users;
 
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.Normalizer;
 import java.util.List;
 
@@ -20,7 +19,6 @@ import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
 import org.georchestra.ldapadmin.ds.DuplicatedUidException;
-import org.georchestra.ldapadmin.ds.NotFoundException;
 import org.georchestra.ldapadmin.ds.ProtectedUserFilter;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
@@ -168,11 +166,11 @@ public class UsersController {
 	 *
 	 * @param response Returns the detailed information of the user as json
 	 * @throws IOException
-	 * @throws NotFoundException 
+	 * @throws NameNotFoundException
 	 */
 	@RequestMapping(value=REQUEST_MAPPING+"/{uid}", method=RequestMethod.GET,
 					produces = "application/json; charset=UTF-8")
-	public void findByUid(@PathVariable String uid, HttpServletResponse response) throws IOException, JSONException, NotFoundException {
+	public void findByUid(@PathVariable String uid, HttpServletResponse response) throws IOException, JSONException, NameNotFoundException {
 
 		// Check for protected accounts
 		if(this.userRule.isProtected(uid) ){
@@ -286,7 +284,7 @@ public class UsersController {
 			String adminUUID = null;
 			try {
 				adminUUID = this.accountDao.findByUID(request.getHeader("sec-username")).getUUID();
-			} catch (NotFoundException e) {
+			} catch (NameNotFoundException e) {
 				LOG.error("Unable to find admin/user connected, so no admin log generated when creating uid : " + account.getUid());
 			}
 
@@ -383,10 +381,10 @@ public class UsersController {
 	 * @param response
 	 *
 	 * @throws IOException if the uid does not exist or fails to access to the LDAP store.
-	 * @throws NotFoundException 
+	 * @throws NameNotFoundException
 	 */
 	@RequestMapping(value=REQUEST_MAPPING+ "/*", method=RequestMethod.PUT)
-	public void update( HttpServletRequest request, HttpServletResponse response) throws IOException, NotFoundException{
+	public void update( HttpServletRequest request, HttpServletResponse response) throws IOException, NameNotFoundException{
 
 		final String uid = RequestUtil.getKeyFromPathVariable(request).toLowerCase();
 
@@ -425,7 +423,7 @@ public class UsersController {
 			try {
 				Account adminAccount = this.accountDao.findByUID(request.getHeader("sec-username"));
 				adminUUID = adminAccount == null ? null : adminAccount.getUUID();
-			} catch (NotFoundException ex){
+			} catch (NameNotFoundException ex){
 				adminUUID = null;
 			}
 			this.accountDao.update(account, modified, adminUUID);
@@ -448,7 +446,7 @@ public class UsersController {
 			LOG.error(e.getMessage());
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			throw new IOException(e);
-		} catch (NotFoundException e) {
+		} catch (NameNotFoundException e) {
 			LOG.error(e.getMessage());
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		}
@@ -485,7 +483,7 @@ public class UsersController {
 			String adminUUID = null;
 			try {
 				adminUUID = this.accountDao.findByUID(request.getHeader("sec-username")).getUUID();
-			} catch (NotFoundException e) {
+			} catch (NameNotFoundException e) {
 				LOG.error("Unable to find admin/user connected, so no admin log generated when deleting uid : " + uid);
 			}
 
@@ -497,7 +495,7 @@ public class UsersController {
 			LOG.error(e.getMessage());
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             throw new IOException(e);
-		} catch (NotFoundException e) {
+		} catch (NameNotFoundException e) {
             String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, NOT_FOUND);
             ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_NOT_FOUND);
 		}

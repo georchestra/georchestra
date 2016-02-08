@@ -14,7 +14,6 @@ import org.georchestra.ldapadmin.bs.ReCaptchaParameters;
 import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.GroupDao;
-import org.georchestra.ldapadmin.ds.NotFoundException;
 import org.georchestra.ldapadmin.ds.UserTokenDao;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.Group;
@@ -25,6 +24,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.ldap.NameNotFoundException;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -115,7 +115,7 @@ public class PasswordRecoveryFormControllerTest {
     public void testGenerateTokenWithUserNotFound() throws Exception {
         prepareLegitRequest();
         Mockito.when(utd.exist(Mockito.anyString())).thenReturn(false);
-        Mockito.doThrow(NotFoundException.class).when(dao).findByEmail(Mockito.anyString());
+        Mockito.doThrow(NameNotFoundException.class).when(dao).findByEmail(Mockito.anyString());
 
         String ret = ctrl.generateToken(request, formBean, result, status);
         assertTrue(ret.equals("passwordRecoveryForm"));

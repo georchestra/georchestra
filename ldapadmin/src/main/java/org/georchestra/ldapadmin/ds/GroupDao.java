@@ -6,6 +6,7 @@ package org.georchestra.ldapadmin.ds;
 import java.util.List;
 
 import org.georchestra.ldapadmin.dto.Group;
+import org.springframework.ldap.NameNotFoundException;
 
 /**
  * @author Mauricio Pazos
@@ -19,13 +20,13 @@ public interface GroupDao {
 	 * @param groupID
 	 * @param userId
 	 * @param originUUID UUID of admin that generate this request
-	 * @throws NotFoundException 
+	 * @throws NameNotFoundException
 	 * @throws DataServiceException 
 	 */
-	void addUser(String  groupID, String userId, final String originUUID) throws DataServiceException, NotFoundException;
+	void addUser(String  groupID, String userId, final String originUUID) throws DataServiceException, NameNotFoundException;
 
 
-	void addUsers(String cn, List<String> addList, final String originUUID) throws DataServiceException, NotFoundException;
+	void addUsers(String cn, List<String> addList, final String originUUID) throws DataServiceException, NameNotFoundException;
 
 	/**
 	 * Returns all groups. Each groups will contains its list of users.
@@ -57,7 +58,7 @@ public interface GroupDao {
 	 */
 	void deleteUser(String uid, final String originUUID) throws DataServiceException;
 
-	void deleteUsers(String cn, List<String> deleteList, String originUUID) throws DataServiceException, NotFoundException;
+	void deleteUsers(String cn, List<String> deleteList, String originUUID) throws DataServiceException, NameNotFoundException;
 
 	/**
 	 * Deletes the user from the group
@@ -94,18 +95,18 @@ public interface GroupDao {
 	 * 
 	 * @param commonName
 	 * @throws DataServiceException
-	 * @throws NotFoundException
+	 * @throws NameNotFoundException
 	 */
-	void delete(String commonName) throws DataServiceException,	NotFoundException;
+	void delete(String commonName) throws DataServiceException,	NameNotFoundException;
 
 	/**
 	 * Search the group based on the common name (cn)
 	 * @param commonName
 	 * @return {@link Group}
 	 * 
-	 * @throws NotFoundException
+	 * @throws NameNotFoundException
 	 */
-	Group findByCommonName(String commonName) throws DataServiceException, NotFoundException;
+	Group findByCommonName(String commonName) throws DataServiceException, NameNotFoundException;
 
 	
 	/**
@@ -115,12 +116,12 @@ public interface GroupDao {
 	 * @param modified
 	 * 
 	 */
-	void update(String groupName, Group modified) throws DataServiceException, NotFoundException, DuplicatedCommonNameException;
+	void update(String groupName, Group modified) throws DataServiceException, NameNotFoundException, DuplicatedCommonNameException;
 
 
-	void addUsersInGroups(List<String> putGroup, List<String> users, final String originUUID)  throws DataServiceException, NotFoundException;
+	void addUsersInGroups(List<String> putGroup, List<String> users, final String originUUID)  throws DataServiceException, NameNotFoundException;
 
-	void deleteUsersInGroups(List<String> deleteGroup, List<String> users, final String originUUID) throws DataServiceException, NotFoundException;
+	void deleteUsersInGroups(List<String> deleteGroup, List<String> users, final String originUUID) throws DataServiceException, NameNotFoundException;
 
 
 	

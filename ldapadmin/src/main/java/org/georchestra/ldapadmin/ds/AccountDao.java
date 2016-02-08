@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.georchestra.ldapadmin.dto.Account;
+import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.filter.Filter;
 
 /**
@@ -69,9 +70,9 @@ public interface AccountDao {
 	 *
 	 * @throws DuplicatedEmailException
 	 * @throws DataServiceException
-	 * @throws NotFoundException
+	 * @throws NameNotFoundException
 	 */
-	void update(Account account, Account modified, String originUUID) throws DataServiceException, DuplicatedEmailException, NotFoundException;
+	void update(Account account, Account modified, String originUUID) throws DataServiceException, DuplicatedEmailException, NameNotFoundException;
 
 	/**
 	 * Changes the user password
@@ -89,9 +90,9 @@ public interface AccountDao {
 	 * @param uid
 	 * @param originUUID UUID of admin that make request
 	 * @throws DataServiceException
-	 * @throws NotFoundException
+	 * @throws NameNotFoundException
 	 */
-	void delete(final String uid, final String originUUID) throws DataServiceException, NotFoundException;
+	void delete(final String uid, final String originUUID) throws DataServiceException, NameNotFoundException;
 
 	/**
 	 * Returns the account that contains the uid provided as parameter.
@@ -101,9 +102,9 @@ public interface AccountDao {
 	 * @return {@link Account}
 	 * 
 	 * @throws DataServiceException
-	 * @throws NotFoundException
+	 * @throws NameNotFoundException
 	 */
-	Account findByUID(final String uid)throws DataServiceException, NotFoundException;
+	Account findByUID(final String uid)throws DataServiceException, NameNotFoundException;
 
     /**
 	 * Returns the account that correspond to specified entryUUID
@@ -113,9 +114,9 @@ public interface AccountDao {
 	 * @return {@link Account}
 	 *
 	 * @throws DataServiceException
-	 * @throws NotFoundException
+	 * @throws NameNotFoundException
 	 */
-	Account findByUUID(UUID uuid) throws DataServiceException, NotFoundException;
+	Account findByUUID(UUID uuid) throws DataServiceException, NameNotFoundException;
 
 	/**
 	 * Returns the account that contains the email provided as parameter.
@@ -124,9 +125,9 @@ public interface AccountDao {
 	 * @return {@link Account}
 	 * 
 	 * @throws DataServiceException
-	 * @throws NotFoundException
+	 * @throws NameNotFoundException
 	 */
-	Account findByEmail(final String email) throws DataServiceException, NotFoundException;
+	Account findByEmail(final String email) throws DataServiceException, NameNotFoundException;
 	
 
 	

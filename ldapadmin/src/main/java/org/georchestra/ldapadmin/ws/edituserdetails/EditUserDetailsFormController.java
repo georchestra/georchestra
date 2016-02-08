@@ -12,11 +12,11 @@ import javax.servlet.http.HttpSession;
 import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
-import org.georchestra.ldapadmin.ds.NotFoundException;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.ws.utils.UserUtils;
 import org.georchestra.ldapadmin.ws.utils.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ldap.NameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -172,7 +172,7 @@ public class EditUserDetailsFormController {
 			try {
 				Account adminAccount = this.accountDao.findByUID(request.getHeader("sec-username"));
 				adminUUID = adminAccount == null ? null : adminAccount.getUUID();
-			} catch (NotFoundException ex){
+			} catch (NameNotFoundException ex){
 				adminUUID = null;
 			}
 			this.accountDao.update(account, adminUUID);

@@ -14,7 +14,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.ldapadmin.ds.*;
+import org.georchestra.ldapadmin.ds.AccountDao;
+import org.georchestra.ldapadmin.ds.DataServiceException;
+import org.georchestra.ldapadmin.ds.DuplicatedCommonNameException;
+import org.georchestra.ldapadmin.ds.GroupDao;
+import org.georchestra.ldapadmin.ds.ProtectedUserFilter;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.Group;
 import org.georchestra.ldapadmin.dto.GroupFactory;
@@ -27,6 +31,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ldap.NameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -152,7 +157,7 @@ public class GroupsController {
 		try {
 			group = this.groupDao.findByCommonName(cn);
 
-		} catch (NotFoundException e) {
+		} catch (NameNotFoundException e) {
 
 			ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(Boolean.FALSE, NOT_FOUND), HttpServletResponse.SC_NOT_FOUND);
 
@@ -277,7 +282,7 @@ public class GroupsController {
 
 			ResponseUtil.writeSuccess(response);
 
-		} catch (NotFoundException e) {
+		} catch (NameNotFoundException e) {
 			LOG.error(e.getMessage());
 			ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
 					HttpServletResponse.SC_NOT_FOUND);
@@ -347,7 +352,7 @@ public class GroupsController {
 		try {
 			group = this.groupDao.findByCommonName(cn);
 
-		} catch (NotFoundException e) {
+		} catch (NameNotFoundException e) {
 
 			ResponseUtil.writeError(response, NOT_FOUND);
 
@@ -365,7 +370,7 @@ public class GroupsController {
 
 			ResponseUtil.writeSuccess(response);
 
-		}  catch (NotFoundException e) {
+		}  catch (NameNotFoundException e) {
 
 			ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(Boolean.FALSE, NOT_FOUND), HttpServletResponse.SC_NOT_FOUND);
 
@@ -401,7 +406,7 @@ public class GroupsController {
 
 		try {
 			adminUUID = this.accountDao.findByUID(request.getHeader("sec-username")).getUUID();
-		} catch (NotFoundException e) {
+		} catch (NameNotFoundException e) {
 			LOG.error("Unable to find Admin that initiate this request, so no admin log");
 		} catch (DataServiceException e) {
 			LOG.error("Unable to find Admin that initiate this request, so no admin log");
@@ -423,7 +428,7 @@ public class GroupsController {
 
 			ResponseUtil.writeSuccess(response);
 
-		}  catch (NotFoundException e) {
+		}  catch (NameNotFoundException e) {
 
 			ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(Boolean.FALSE, USER_NOT_FOUND), HttpServletResponse.SC_NOT_FOUND);
 
