@@ -1,0 +1,28 @@
+Authors approximately ordered by first contribution
+
+Jesse Eichar <jesse.eichar@camptocamp.com>
+Eric Lemoine <eric.lemoine@camptocamp.com>
+Pierre Mauduit <pierre.mauduit@camptocamp.com>
+François Prunayre <fx.prunayre@titellus.net>
+François Van Der Biest <francois.vanderbiest@camptocamp.com>
+Yoann Buch <yoann.buch@gmail.com>
+Bruno Binet <bruno.binet@camptocamp.com>
+Pierre Giraud <pierre.giraud@camptocamp.com>
+Fabrice Phung <fabrice@phung.fr>
+Philippe Huet <philippe@dotgee.fr>
+Yves Jacolin <yves.jacolin@camptocamp.com>
+Lydie Vinsonneau <lydie.vinsonneau@bretagne.bzh>
+Florent Gravin <florent.gravin@camptocamp.com>
+Sylvain Lesage <severo@rednegra.net>
+Davis Mendoza <davis.men.pa@gmail.com>
+Mauricio Pazos <mauricio.pazos@gmail.com>
+Sébastien Pelhate <sebastien.pelhate@bretagne.bzh>
+Stéphane Brunner <stephane.brunner@camptocamp.com>
+Landry Breuil <breuil@craig.fr>
+Jeremy Kalsron <jeremy.kalsron@gmail.com>
+Julien Sabatier <julien.sabatier@agglo-lepuyenvelay.fr>
+Jean-Pascal Klipfel <jean-pascal.klipfel@region-alsace.eu>
+Louca Lerch <Louca.Lerch@unige.ch>
+Ernest Chiarello <ernest.chiarello@univ-fcomte.fr>
+Julien Acroute <julien.acroute@camptocamp.com>
+Vincent Dorut <vincent.dorut@camptocamp.com>
