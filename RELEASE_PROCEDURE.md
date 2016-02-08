@@ -118,6 +118,7 @@ cd -
 ```
 
 Manually update the files mentionning the current release version (```README.md``` and ```RELEASE_NOTES.md```).
+Also update the branch name for the Travis status logo.
 
 Commit and propagate the changes:
 
