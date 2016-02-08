@@ -6,24 +6,44 @@ import org.georchestra.ldapadmin.dao.EmailDao;
 import org.georchestra.ldapadmin.dao.EmailTemplateDao;
 import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
-import org.georchestra.ldapadmin.ds.NotFoundException;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.mailservice.EmailFactoryImpl;
-import org.georchestra.ldapadmin.model.*;
+import org.georchestra.ldapadmin.model.AdminLogEntry;
+import org.georchestra.ldapadmin.model.AdminLogType;
+import org.georchestra.ldapadmin.model.Attachment;
+import org.georchestra.ldapadmin.model.EmailEntry;
+import org.georchestra.ldapadmin.model.EmailTemplate;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ldap.NameNotFoundException;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.activation.DataHandler;
-import javax.mail.*;
-import javax.mail.internet.*;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MailDateFormat;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.*;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Properties;
+import java.util.UUID;
 
 @Controller
 public class EmailController {
@@ -89,7 +109,7 @@ public class EmailController {
      * @param content content of email (text part in html)
      * @param attachmentsIds comma separated list of attachments identifier
      * @return identifier of new email sent prefixed by "OK : "
-     * @throws NotFoundException if sender cannot be found
+     * @throws NameNotFoundException if sender cannot be found
      * @throws DataServiceException if there is issues while contacting LDAP server
      * @throws MessagingException if email cannot be sent through SMTP protocol
      * @throws IOException if email cannot be sent through SMTP protocol
@@ -100,7 +120,7 @@ public class EmailController {
                             @RequestParam("subject") String subject,
                             @RequestParam("content") String content,
                             @RequestParam("attachments") String attachmentsIds,
-                            HttpServletRequest request) throws NotFoundException, DataServiceException, MessagingException, IOException {
+                            HttpServletRequest request) throws NameNotFoundException, DataServiceException, MessagingException, IOException {
 
         EmailEntry email = new EmailEntry();
         Account sender = this.accountDao.findByUID(request.getHeader("sec-username"));
@@ -117,7 +137,7 @@ public class EmailController {
             for (String attId : attachmentsIdsList) {
                 Attachment att = this.attachmentRepo.findOne(Long.parseLong(attId));
                 if(att == null)
-                    throw new NotFoundException("Unable to find attachment with ID : " + attId);
+                    throw new NameNotFoundException("Unable to find attachment with ID : " + attId);
                 attachments.add(att);
             }
         }
@@ -202,11 +222,11 @@ public class EmailController {
      * Send EmailEntry to smtp server
      *
      * @param email email to send
-     * @throws NotFoundException if recipient cannot be found in LDAP server
+     * @throws NameNotFoundException if recipient cannot be found in LDAP server
      * @throws DataServiceException if LDAP server is not available
      * @throws MessagingException if some field of email cannot be encoded (malformed email address)
      */
-    private void send(EmailEntry email) throws NotFoundException, DataServiceException, MessagingException {
+    private void send(EmailEntry email) throws NameNotFoundException, DataServiceException, MessagingException {
 
         final Properties props = System.getProperties();
         props.put("mail.smtp.host", this.emailFactory.getSmtpHost());

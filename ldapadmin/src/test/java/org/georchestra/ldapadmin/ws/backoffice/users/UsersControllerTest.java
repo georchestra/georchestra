@@ -16,7 +16,6 @@ import org.georchestra.ldapadmin.ds.AccountDaoImpl;
 import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
 import org.georchestra.ldapadmin.ds.GroupDaoImpl;
-import org.georchestra.ldapadmin.ds.NotFoundException;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.georchestra.ldapadmin.dto.UserSchema;
@@ -27,7 +26,11 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.http.HttpMethod;
 import org.springframework.ldap.NameNotFoundException;
-import org.springframework.ldap.core.*;
+import org.springframework.ldap.core.ContextMapper;
+import org.springframework.ldap.core.DirContextOperations;
+import org.springframework.ldap.core.DistinguishedName;
+import org.springframework.ldap.core.LdapRdn;
+import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
@@ -133,7 +136,7 @@ public class UsersControllerTest {
 
     @Test
     public void testFindByUidNotFound() throws Exception {
-        Mockito.doThrow(NotFoundException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (ContextMapper) Mockito.any());
+        Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (ContextMapper) Mockito.any());
 
         usersCtrl.findByUid("notfounduser", response);
 
@@ -533,7 +536,7 @@ public class UsersControllerTest {
     @Test
     public void testDeleteNotFoundExceptionCaught() throws Exception {
         request.setRequestURI("/ldapadmin/users/pmauduitnotfound");
-        Mockito.doThrow(NotFoundException.class).when(ldapTemplate).unbind((Name) Mockito.any(), eq(true));
+        Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).unbind((Name) Mockito.any(), eq(true));
 
         usersCtrl.delete(request, response);
 

@@ -18,7 +18,6 @@ import org.georchestra.ldapadmin.bs.ReCaptchaParameters;
 import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.GroupDao;
-import org.georchestra.ldapadmin.ds.NotFoundException;
 import org.georchestra.ldapadmin.ds.UserTokenDao;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.Group;
@@ -26,6 +25,7 @@ import org.georchestra.ldapadmin.mailservice.MailService;
 import org.georchestra.ldapadmin.ws.utils.EmailUtils;
 import org.georchestra.ldapadmin.ws.utils.RecaptchaUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ldap.NameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -144,7 +144,7 @@ public class PasswordRecoveryFormController  {
 
 			for (Group g : group) {
 				if (g.getName().equals(Group.PENDING)) {
-					throw new NotFoundException("User in PENDING group");
+					throw new NameNotFoundException("User in PENDING group");
 				}
 			}
 			
@@ -173,7 +173,7 @@ public class PasswordRecoveryFormController  {
 			
 			throw new IOException(e);
 			
-		} catch (NotFoundException e) {
+		} catch (NameNotFoundException e) {
 			
 			resultErrors.rejectValue("email", "email.error.notFound", "No user found for this email.");
 			
@@ -184,9 +184,7 @@ public class PasswordRecoveryFormController  {
 
 
 	/**
-	 * Create the URL to change the password based on the provided token  
-	 * @param token
-	 * @param token2 
+	 * Create the URL to change the password based on the provided token
 	 * 
 	 * @return a new URL to change password
 	 */

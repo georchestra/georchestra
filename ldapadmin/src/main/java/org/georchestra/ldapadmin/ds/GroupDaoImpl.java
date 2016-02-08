@@ -144,7 +144,7 @@ public class GroupDaoImpl implements GroupDao {
 	 * @see org.georchestra.ldapadmin.ds.GroupDao#addUser(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void addUser(final String groupID, final String userId, final String originUUID) throws NotFoundException, DataServiceException {
+	public void addUser(final String groupID, final String userId, final String originUUID) throws NameNotFoundException, DataServiceException {
 
 
 		/* TODO Add hierarchic behaviour here :
@@ -279,10 +279,10 @@ public class GroupDaoImpl implements GroupDao {
 	 * Searches the group by common name (cn)
 	 *
 	 * @param commonName
-	 * @throws NotFoundException
+	 * @throws NameNotFoundException
 	 */
 	@Override
-	public Group findByCommonName(String commonName) throws DataServiceException, NotFoundException {
+	public Group findByCommonName(String commonName) throws DataServiceException, NameNotFoundException {
 
 		try{
 			DistinguishedName dn = buildGroupDn(commonName);
@@ -292,7 +292,7 @@ public class GroupDaoImpl implements GroupDao {
 
 		} catch (NameNotFoundException e){
 
-			throw new NotFoundException("There is not a group with this common name (cn): " + commonName);
+			throw new NameNotFoundException("There is not a group with this common name (cn): " + commonName);
 		}
 	}
 
@@ -303,16 +303,11 @@ public class GroupDaoImpl implements GroupDao {
 	 *
 	 */
 	@Override
-	public void delete(final String commonName) throws DataServiceException, NotFoundException {
+	public void delete(final String commonName) throws DataServiceException, NameNotFoundException {
 
 		if (!this.groups.isProtected(commonName)) {
-			try {
-				this.ldapTemplate.unbind(buildGroupDn(commonName), true);
-			} catch (NameNotFoundException e) {
-				throw new NotFoundException(e);
-			}
+			this.ldapTemplate.unbind(buildGroupDn(commonName), true);
 		} else {
-
 			throw new DataServiceException("Group " + commonName + " is a protected group");
 		}
 
@@ -364,7 +359,7 @@ public class GroupDaoImpl implements GroupDao {
 
 			throw new DuplicatedCommonNameException("there is a group with this name: " + group.getName());
 
-		} catch (NotFoundException e1) {
+		} catch (NameNotFoundException e1) {
 			// if an group with the specified name cannot be retrieved, then
 			// the new group can be safely added.
 		    LOG.debug("The group with name " + group.getName() + " does not exist yet, it can "
@@ -447,11 +442,11 @@ public class GroupDaoImpl implements GroupDao {
 	 * @param groupName
 	 * @param group
 	 * @throws DataServiceException
-	 * @throws NotFoundException
+	 * @throws NameNotFoundException
 	 * @throws DuplicatedCommonNameException
 	 */
 	@Override
-	public synchronized void update(final String groupName, final Group group) throws DataServiceException, NotFoundException, DuplicatedCommonNameException {
+	public synchronized void update(final String groupName, final Group group) throws DataServiceException, NameNotFoundException, DuplicatedCommonNameException {
 
 		if( group.getName().length()== 0 ){
 			throw new IllegalArgumentException("given name is required");
@@ -464,7 +459,7 @@ public class GroupDaoImpl implements GroupDao {
 
                 throw new DuplicatedCommonNameException("there is a group with this name: " + group.getName());
 
-            } catch (NotFoundException e1) {
+            } catch (NameNotFoundException e1) {
                 // if a group with the specified name cannot be retrieved, then
                 // the new group can be safely renamed.
                 LOG.debug("no account with name " + group.getName() + " can be found, it is then "
@@ -512,7 +507,7 @@ public class GroupDaoImpl implements GroupDao {
 	}
 
 	@Override
-	public void addUsers(String groupName, List<String> addList, final String originUUID) throws NotFoundException, DataServiceException {
+	public void addUsers(String groupName, List<String> addList, final String originUUID) throws NameNotFoundException, DataServiceException {
 
 		for (String uid : addList) {
 			addUser(groupName, uid, originUUID);
@@ -521,7 +516,7 @@ public class GroupDaoImpl implements GroupDao {
 
 	@Override
 	public void deleteUsers(String groupName, List<String> deleteList, final String originUUID)
-			throws DataServiceException, NotFoundException {
+			throws DataServiceException, NameNotFoundException {
 
 		for (String uid : deleteList) {
 			deleteUser(groupName, uid, originUUID);
@@ -531,7 +526,7 @@ public class GroupDaoImpl implements GroupDao {
 
 	@Override
 	public void addUsersInGroups(List<String> putGroup, List<String> users, final String originUUID)
-			throws DataServiceException, NotFoundException {
+			throws DataServiceException, NameNotFoundException {
 
 
 		for (String groupName : putGroup) {
@@ -542,7 +537,7 @@ public class GroupDaoImpl implements GroupDao {
 
 	@Override
 	public void deleteUsersInGroups(List<String> deleteGroup, List<String> users, final String originUUID)
-			throws DataServiceException, NotFoundException {
+			throws DataServiceException, NameNotFoundException {
 
 		for (String groupName : deleteGroup) {
 

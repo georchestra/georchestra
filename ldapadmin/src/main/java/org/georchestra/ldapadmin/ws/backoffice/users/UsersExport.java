@@ -3,12 +3,11 @@ package org.georchestra.ldapadmin.ws.backoffice.users;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.ldapadmin.ds.AccountDao;
-import org.georchestra.ldapadmin.ds.NotFoundException;
 import org.georchestra.ldapadmin.dto.Account;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ldap.NameNotFoundException;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -61,7 +60,7 @@ public class UsersExport {
             try {
                 Account a = accountDao.findByUID(jsonUsers.getString(i));
                 ret1.append(a.toCsv());
-            } catch (NotFoundException e) {
+            } catch (NameNotFoundException e) {
                 LOG.error(String.format("User [%s] not found, skipping", jsonUsers.getString(i)), e);
             }
         }
@@ -82,7 +81,7 @@ public class UsersExport {
             try {
                 Account a = accountDao.findByUID(usersAr.getString(i));
                 ret.append(a.toVcf());
-            } catch (NotFoundException e) {
+            } catch (NameNotFoundException e) {
                 LOG.error(String.format("User [%s] not found, skipping", usersAr.getString(i)), e);
             }
         }

@@ -4,7 +4,7 @@
 package org.georchestra.ldapadmin.ws.newaccount;
 
 import java.io.IOException;
-import java.util.logging.Logger;
+
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -17,7 +17,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.ldapadmin.bs.Moderator;
 import org.georchestra.ldapadmin.bs.ReCaptchaParameters;
-import org.georchestra.ldapadmin.ds.*;
+import org.georchestra.ldapadmin.ds.AccountDao;
+import org.georchestra.ldapadmin.ds.DataServiceException;
+import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
+import org.georchestra.ldapadmin.ds.DuplicatedUidException;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.georchestra.ldapadmin.dto.Group;
@@ -28,6 +31,7 @@ import org.georchestra.ldapadmin.ws.utils.RecaptchaUtils;
 import org.georchestra.ldapadmin.ws.utils.UserUtils;
 import org.georchestra.ldapadmin.ws.utils.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ldap.NameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -155,7 +159,7 @@ public final class NewAccountFormController {
 			String adminUUID = null;
 			try {
 				adminUUID = this.accountDao.findByUID(request.getHeader("sec-username")).getUUID();
-			} catch (NotFoundException e) {
+			} catch (NameNotFoundException e) {
 				LOG.error("Unable to find admin/user connected, so no admin log generated when creating uid : " + formBean.getUid());
 			}
 
