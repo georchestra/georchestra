@@ -341,8 +341,9 @@ angular.module('ldapadmin.controllers', [])
         var tree = [];
         var prefix;
         angular.forEach($scope.user_groups, function(group, key) {
-          if(group.cn != GEOR_config.virtualTemporaryGroupName)
+          if(group.cn != GEOR_config.virtualTemporaryGroupName){
             addNode(tree, group);
+          }
         });
         $scope.user_groups_tree = tree;
 
