@@ -9,10 +9,6 @@ import org.json.JSONObject;
 
 public class OGCStatsModel extends AbstractModel  {
 
-	public OGCStatsModel(PostGresqlConnection pgpool) {
-		super(pgpool);
-	}
-
 	private final String selectLayersQ = "SELECT "
 	        + "    service"
 	        + "    , layer"

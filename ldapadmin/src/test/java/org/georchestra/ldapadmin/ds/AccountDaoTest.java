@@ -26,7 +26,8 @@ public class AccountDaoTest {
     private AccountDao us;
     private GroupDaoImpl groupDao;
     private LdapContextSource contextSource;
-    
+    private Account adminAccount;
+
     @Before
     public void setUp() throws Exception {
         assumeTrue(System.getProperty("ldapadmin.test.openldap.ldapurl") != null
@@ -60,6 +61,10 @@ public class AccountDaoTest {
         groupDao.setUserSearchBaseDN("ou=users");
         us = new AccountDaoImpl(ldapTemplate, groupDao);
         ((AccountDaoImpl) us).setUserSearchBaseDN("ou=users");
+
+        this.adminAccount = AccountFactory.createBrief("testadmin", "monkey123", "Test", "ADmin",
+                "postmastrer@localhost", "+33123456789", "geOrchestra Project Steering Committee", "admin", "");
+        this.adminAccount.setUUID("9818af68-18d0-1035-8e0e-c310a114ab8f");
     }
 
     @Test
@@ -69,7 +74,7 @@ public class AccountDaoTest {
         
         testadminAc.setOrg(null);
         
-        us.update(testadminAc);
+        us.update(testadminAc, this.adminAccount.getUUID());
         
         Attributes attrs = contextSource.getReadWriteContext().getAttributes(new LdapName("uid=testadmin,ou=users"));
             
@@ -78,7 +83,7 @@ public class AccountDaoTest {
         
         // restoring 'o' attribute before assertions, to keep original state
         testadminAc.setOrg(org);
-        us.update(testadminAc);
+        us.update(testadminAc, "testadmin");
 
         assertTrue("No userPassword found for testadmin, expected one", hasStillUserPassword);
         assertTrue("Found a 'o' attribute, expeceted none", noOrgAnymore);
@@ -95,7 +100,7 @@ public class AccountDaoTest {
 
         newTestAdminAc.setUid("testadminblah");
 
-        us.update(testadminAc, newTestAdminAc);
+        us.update(testadminAc, newTestAdminAc, this.adminAccount.getUUID());
 
         Attributes attrs = contextSource.getReadWriteContext().getAttributes(new LdapName("uid=testadminblah,ou=users"));
         Object o = attrs.get("uid");
@@ -109,7 +114,7 @@ public class AccountDaoTest {
 
 
         // restoring testadmin in its initial state
-        us.update(newTestAdminAc, testadminAc);
+        us.update(newTestAdminAc, testadminAc, this.adminAccount.getUUID());
 
         assertTrue("Was able to find testadmin back (found some attributes), none expected", encounteredNamingEx);
         assertTrue("Wrong uid encountered (found " + o.toString() + " instead of testadminblah", correctlyrenamed);

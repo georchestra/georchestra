@@ -2,7 +2,7 @@ package org.georchestra.ldapadmin.model;
 
 public enum AdminLogType {
 
-    ACCOUNT_VALIDATION("Account Validation"),
+    ACCOUNT_MODERATION("Account Moderation"),
     SYSTEM_GROUP_CHANGE("Modification of system group"),
     OTHER_GROUP_CHANGE("Modification of other group"),
     LDAP_ATTRIBUTE_CHANGE("Modification of other LDAP attributes"),

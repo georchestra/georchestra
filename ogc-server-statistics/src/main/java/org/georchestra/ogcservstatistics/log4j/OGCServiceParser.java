@@ -176,14 +176,18 @@ final class OGCServiceParser {
 		String service = parseService(request);
 		String ogcReq = parseRequest(request).toLowerCase();
 		
-		// parses org (it is optional)
+		// parses org (it is optional) and sec roles
 		String org;
-		if(splittedMessage.length == 4){
+		String roles;
+		if(splittedMessage.length == 5){
 			org = splittedMessage[3];
-		} else {
+			roles = splittedMessage[4];
+		} else { // missing case
 			org = "";
+			roles = "";
 		}
 		
+
 		// for each layer adds a log to the list
 		List<Map<String, Object>> logList = new LinkedList<Map<String,Object>>(); 
 		List<String> layerList = parseLayer(request);
@@ -197,6 +201,7 @@ final class OGCServiceParser {
 			log.put("layer", "" );
 			log.put("request", ogcReq );
 			log.put("org", org);
+			log.put("secrole", roles);
 			
 			logList.add(log);
 		} else{ // there are one ore more layers
@@ -210,6 +215,7 @@ final class OGCServiceParser {
 				log.put("layer", layer.toLowerCase() );
 				log.put("request", ogcReq );
 				log.put("org", org);
+				log.put("secrole", roles);
 				
 				logList.add(log);
 			}

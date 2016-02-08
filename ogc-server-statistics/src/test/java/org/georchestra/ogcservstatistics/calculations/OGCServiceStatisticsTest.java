@@ -53,22 +53,23 @@ public class OGCServiceStatisticsTest {
 
 			// user101: one request layer1 (WFS) and two for layer2 (using WFS and WMS) 
 			String request;
+			String [] roles = null;
 			
 			request = "http://www.someserver.com/wfs.cgi&SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=layer1&FILTER=<Filter><Within><PropertyName>InWaterA_1M/wkbGeom<PropertyName><gml:Envelope><gml:lowerCorner>10 10<gml:lowerCorner><gml:upperCorner>20 20</gml:upperCorner></gml:Envelope></Within></Filter>";
-			LOGGER.info(OGCServiceMessageFormatter.format("user101", time, request,""));
+			LOGGER.info(OGCServiceMessageFormatter.format("user101", request,"",roles));
 			
 			request = "http://www.someserver.com/wfs.cgi&SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=layer2&FILTER=<Filter><Within><PropertyName>InWaterA_1M/wkbGeom<PropertyName><gml:Envelope><gml:lowerCorner>10 10<gml:lowerCorner><gml:upperCorner>20 20</gml:upperCorner></gml:Envelope></Within></Filter>";
-			LOGGER.info(OGCServiceMessageFormatter.format("user101", time, request,""));
+			LOGGER.info(OGCServiceMessageFormatter.format("user102", request,"",roles));
 			
 			request = "http://www.someserver.com/geoserver/wms?SERVICE=WMS&LAYERS=layer2&TRANSPARENT=true&VERSION=1.1.1&FORMAT=image%2Fpng&REQUEST=GetMap&STYLES=&SRS=EPSG%3A2154&BBOX=358976.61292821,6395407.8064641,430656.57422103,6467087.7677569&WIDTH=512&HEIGHT=512";
-			LOGGER.info(OGCServiceMessageFormatter.format("user101", time, request,""));
+			LOGGER.info(OGCServiceMessageFormatter.format("user101", request,"",roles));
 			
 			// user102: one request layer1 using WFS and other using WMS
 			request = "http://www.someserver.com/wfs.cgi&SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=layer1&FILTER=<Filter><Within><PropertyName>InWaterA_1M/wkbGeom<PropertyName><gml:Envelope><gml:lowerCorner>10 10<gml:lowerCorner><gml:upperCorner>20 20</gml:upperCorner></gml:Envelope></Within></Filter>";
-			LOGGER.info(OGCServiceMessageFormatter.format("user102", time, request,""));
+			LOGGER.info(OGCServiceMessageFormatter.format("user101", request,"",roles));
 			
 			request = "http://www.someserver.com/geoserver/wms?SERVICE=WMS&LAYERS=layer1&TRANSPARENT=true&VERSION=1.1.1&FORMAT=image%2Fpng&REQUEST=GetMap&STYLES=&SRS=EPSG%3A2154&BBOX=358976.61292821,6395407.8064641,430656.57422103,6467087.7677569&WIDTH=512&HEIGHT=512";
-			LOGGER.info(OGCServiceMessageFormatter.format("user102", time, request,""));
+			LOGGER.info(OGCServiceMessageFormatter.format("user101", request,"",roles));
 			
 			
 			

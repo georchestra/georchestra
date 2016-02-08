@@ -15,14 +15,17 @@ public interface GroupDao {
 
 	/**
 	 * adds the user to the group
-	 * @param uid
+	 *
+	 * @param groupID
+	 * @param userId
+	 * @param originUUID UUID of admin that generate this request
 	 * @throws NotFoundException 
 	 * @throws DataServiceException 
 	 */
-	void addUser(String  groupID, String userId) throws DataServiceException, NotFoundException;
+	void addUser(String  groupID, String userId, final String originUUID) throws DataServiceException, NotFoundException;
 
 
-	void addUsers(String cn, List<String> addList) throws DataServiceException, NotFoundException; 
+	void addUsers(String cn, List<String> addList, final String originUUID) throws DataServiceException, NotFoundException;
 
 	/**
 	 * Returns all groups. Each groups will contains its list of users.
@@ -49,20 +52,22 @@ public interface GroupDao {
 	 * Deletes the user from all groups 
 	 *
 	 * @param uid
+	 * @param originUUID UUID of admin that generate this request
 	 * @throws DataServiceException
 	 */
-	void deleteUser(String uid) throws DataServiceException;
+	void deleteUser(String uid, final String originUUID) throws DataServiceException;
 
-	void deleteUsers(String cn, List<String> deleteList) throws DataServiceException, NotFoundException;
+	void deleteUsers(String cn, List<String> deleteList, String originUUID) throws DataServiceException, NotFoundException;
 
 	/**
 	 * Deletes the user from the group
 	 * 
 	 * @param groupName
 	 * @param uid
+	 * @param originUUID of admin that generate this request
 	 * @throws DataServiceException
 	 */
-	void deleteUser(String groupName, String uid) throws DataServiceException;
+	void deleteUser(String groupName, String uid, final String originUUID) throws DataServiceException;
 
 	/**
 	 * Modifies the user (e.g. rename) from the group
@@ -112,9 +117,10 @@ public interface GroupDao {
 	 */
 	void update(String groupName, Group modified) throws DataServiceException, NotFoundException, DuplicatedCommonNameException;
 
-	void addUsersInGroups(List<String> putGroup, List<String> users)  throws DataServiceException, NotFoundException;
 
-	void deleteUsersInGroups(List<String> deleteGroup, List<String> users) throws DataServiceException, NotFoundException;
+	void addUsersInGroups(List<String> putGroup, List<String> users, final String originUUID)  throws DataServiceException, NotFoundException;
+
+	void deleteUsersInGroups(List<String> deleteGroup, List<String> users, final String originUUID) throws DataServiceException, NotFoundException;
 
 
 	

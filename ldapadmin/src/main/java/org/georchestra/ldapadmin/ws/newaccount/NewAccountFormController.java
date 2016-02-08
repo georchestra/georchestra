@@ -4,6 +4,7 @@
 package org.georchestra.ldapadmin.ws.newaccount;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -12,12 +13,11 @@ import javax.servlet.http.HttpSession;
 import net.tanesha.recaptcha.ReCaptcha;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.georchestra.ldapadmin.bs.Moderator;
 import org.georchestra.ldapadmin.bs.ReCaptchaParameters;
-import org.georchestra.ldapadmin.ds.AccountDao;
-import org.georchestra.ldapadmin.ds.DataServiceException;
-import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
-import org.georchestra.ldapadmin.ds.DuplicatedUidException;
+import org.georchestra.ldapadmin.ds.*;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.georchestra.ldapadmin.dto.Group;
@@ -52,6 +52,8 @@ import org.springframework.web.bind.support.SessionStatus;
 @Controller
 @SessionAttributes(types={AccountFormBean.class})
 public final class NewAccountFormController {
+
+	private static final Log LOG = LogFactory.getLog(NewAccountFormController.class.getName());
 
 	private AccountDao accountDao;
 
@@ -116,7 +118,7 @@ public final class NewAccountFormController {
 						 @ModelAttribute AccountFormBean formBean,
 						 BindingResult result,
 						 SessionStatus sessionStatus)
-						 throws IOException {
+			throws IOException {
 
 		String remoteAddr = request.getRemoteAddr();
 
@@ -150,7 +152,14 @@ public final class NewAccountFormController {
 
 			String groupID = this.moderator.moderatedSignup() ? Group.PENDING : Group.SV_USER;
 
-			this.accountDao.insert(account, groupID);
+			String adminUUID = null;
+			try {
+				adminUUID = this.accountDao.findByUID(request.getHeader("sec-username")).getUUID();
+			} catch (NotFoundException e) {
+				LOG.error("Unable to find admin/user connected, so no admin log generated when creating uid : " + formBean.getUid());
+			}
+
+			this.accountDao.insert(account, groupID, adminUUID);
 
 			final ServletContext servletContext = request.getSession().getServletContext();
 			if(this.moderator.moderatedSignup() ){

@@ -1,8 +1,6 @@
 package org.georchestra.ldapadmin.ds;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 
 import org.georchestra.ldapadmin.Configuration;
 import org.georchestra.ldapadmin.dto.Account;
@@ -44,7 +42,7 @@ public class ProtectedUserFilter {
 		return uidList.contains(uid);
 	}
 
-        public List<Account> filterUsersList(final List<Account> users) {
+	public List<Account> filterUsersList(final List<Account> users) {
 
 		// removes the protected users.
 		TreeSet<Account> filtered = new TreeSet<Account>();
@@ -60,7 +58,7 @@ public class ProtectedUserFilter {
 		return list;
 	}
 
-        public List<String> filterStringList(final List<String> users) {
+	public List<String> filterStringList(final List<String> users) {
 
 		// removes the protected users.
 		TreeSet<String> filtered = new TreeSet<String>();

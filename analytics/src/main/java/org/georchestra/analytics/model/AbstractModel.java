@@ -6,20 +6,22 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
+
+import javax.sql.DataSource;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class AbstractModel {
 
-	protected PostGresqlConnection postgresqlConnection;
+	@Autowired
+	protected DataSource jpaDataSource;
 
 	private final String countQ = "SELECT count(*) from (@query@) as res;";
 
-	public AbstractModel(PostGresqlConnection pgpool) {
-		postgresqlConnection = pgpool;
-	}
 
 	/**
 	 * Prepares the statement with controller attributes
@@ -78,32 +80,36 @@ public class AbstractModel {
 		q = q.replace("LIMIT ? OFFSET ?;", "");
 		q = countQ.replace("@query@", q);
 
-
-
 		try {
 			st = con.prepareStatement(q);
 
 	        int curParam = 1;
 	        for (String extrafilter : extraFilters) {
-	                st.setString(curParam++, extrafilter);
+				st.setString(curParam++, extrafilter);
 	        }
 
-            if ((month > 0) && (year > 0)) {
-                st.setString(curParam++, String.format("%4d-%02d-01 00:00", year, month));
-                if (month < 12) {
-                    st.setString(curParam++, String.format("%4d-%02d-01 00:00", year, month + 1));
-                } else {
-                    st.setString(curParam++, String.format("%4d-01-01 00:00", year + 1));
-                }
-            } else {
+			if ((month > 0) && (year > 0)) {
+				st.setString(curParam++, String.format("%4d-%02d-01 00:00", year, month));
+				if (month < 12) {
+					st.setString(curParam++, String.format("%4d-%02d-01 00:00", year, month + 1));
+				} else {
+					st.setString(curParam++, String.format("%4d-01-01 00:00", year + 1));
+				}
+			} else {
                 // hack-ish, but need to find out a better way to do,
                 // I've until 2032 to rewrite this in a better fashion.
-                st.setString(curParam++, "1970-01-01 00:00");
-                st.setString(curParam++, "2032-01-01 00:00");
-            }
-		    rs = st.executeQuery();
+				st.setString(curParam++, "1970-01-01 00:00");
+				st.setString(curParam++, "2032-01-01 00:00");
+			}
+
+			long mstime = System.currentTimeMillis();
+			String finalQuery = st.toString();
+			rs = con.createStatement().executeQuery(finalQuery);
+			//Logger.getLogger("stat").warning("Count duration : " + (System.currentTimeMillis() - mstime) + "ms : " + finalQuery);
+
 		    if(rs.next()) {
 		    	count = rs.getInt(1);
+				int i = 0;
 		    }
 		} catch(SQLException e) {
 			throw e;
@@ -161,12 +167,15 @@ public class AbstractModel {
 
 
 		try {
-			//String q = addFilters(query, filter);
+			con = jpaDataSource.getConnection();
 
-			con = postgresqlConnection.getConnection();
 			int count = getCount(con, q, month, year, sort, extraFilters);
 			st = prepareStatement(con, q, month, year, start, limit, sort, extraFilters);
-			rs = st.executeQuery();
+			long mstime = System.currentTimeMillis();
+			String finalQuery = st.toString();
+			rs = con.createStatement().executeQuery(finalQuery);
+			//Logger.getLogger("stat").warning("Data duration : " + (System.currentTimeMillis() - mstime) + "ms : " + finalQuery);
+			//rs = st.executeQuery();
 
 			JSONArray jsarr = strategy.process(rs);
 			object.put("success", true);

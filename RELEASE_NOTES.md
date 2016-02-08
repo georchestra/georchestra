@@ -28,6 +28,26 @@ Version 15.12
    * drop your groups organizationalUnit (```ou```)
    * import the updated groups.ldif file.
 
+ * There are several changes about structure of log in database for ogc statistic part. If you 
+   are upgrading from previous version of georchestra with ogc statistics, you should run 
+   following upgrade procedure : 
+   * Open ```ogc-server-statistics/populate_stats_roles.py``` script in your favorite editor and change value of following variables according to your configuration :
+      * LDAP_URI
+      * BIND_WITH_CREDENTIALS
+      * LDAP_BINDDN
+      * LDAP_PASSWD
+      * GROUPS_DN
+      * GROUP_OBJECT_CLASS
+   * Create a virtual env for python :
+      * ```$ virtualenv migr-ogcstatistics```
+      * ```$ cd migr-ogcstatistics/```
+      * ```$ source bin/activate```
+      * ```$ easy_install ldap3```
+   * Run ```ogc-server-statistics/populate_stats_roles.py``` in previously created virtual env
+   * Copy/paste SQL queries outputed by python script in ```partitions_stat.sql``` file between ```ALTER TABLE ogcstatistics.ogc_services_log_old ADD COLUMN roles text[];``` and ```INSERT INTO ogcstatistics.ogc_services_log SELECT * FROM ogcstatistics.ogc_services_log_old;``` and remove ```ROLLBACK;``` statement.
+   * Finnaly, you can launch SQL script in database
+
+
 
 Version 15.06
 =============

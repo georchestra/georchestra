@@ -48,15 +48,16 @@ public interface AccountDao {
 	 * @throws DataServiceException
 	 * @throws DuplicatedEmailException
 	 */
-	void insert(final Account account, final String groupID) throws DataServiceException, DuplicatedUidException, DuplicatedEmailException;
+	void insert(final Account account, final String groupID, final String originUUID) throws DataServiceException, DuplicatedUidException, DuplicatedEmailException;
 
 	/**
 	 * Updates the user account
 	 * @param account
+	 * @param originUUID UUID of admin that issue this modification
 	 * @throws DataServiceException
 	 * @throws DuplicatedEmailException
 	 */
-	void update(final Account account) throws DataServiceException, DuplicatedEmailException;
+	void update(final Account account, String originUUID) throws DataServiceException, DuplicatedEmailException;
 
 	/**
 	 * Updates the user account, given the old and the new state of the account
@@ -64,12 +65,13 @@ public interface AccountDao {
 	 *
 	 * @param account
 	 * @param modified
+	 * @param originUUID UUID of admin that issue this modification
 	 *
 	 * @throws DuplicatedEmailException
 	 * @throws DataServiceException
 	 * @throws NotFoundException
 	 */
-	void update(Account account, Account modified) throws DataServiceException, DuplicatedEmailException, NotFoundException;
+	void update(Account account, Account modified, String originUUID) throws DataServiceException, DuplicatedEmailException, NotFoundException;
 
 	/**
 	 * Changes the user password
@@ -85,10 +87,11 @@ public interface AccountDao {
 	 * Deletes the account
 	 * 
 	 * @param uid
+	 * @param originUUID UUID of admin that make request
 	 * @throws DataServiceException
 	 * @throws NotFoundException
 	 */
-	void delete(final String uid) throws DataServiceException, NotFoundException;
+	void delete(final String uid, final String originUUID) throws DataServiceException, NotFoundException;
 
 	/**
 	 * Returns the account that contains the uid provided as parameter.

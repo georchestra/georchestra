@@ -9,9 +9,6 @@ import org.json.JSONObject;
 
 public class ExtractorStatsModel extends AbstractModel  {
 
-	public ExtractorStatsModel(PostGresqlConnection pgpool) {
-		super(pgpool);
-	}
 
 	private final String selectLayersQ = "SELECT "
 	        + "    y.ows_url "

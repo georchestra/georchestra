@@ -267,9 +267,10 @@ public class GroupsController {
 	 * @param response
 	 * @throws IOException
 	 */
-	@RequestMapping(value=REQUEST_MAPPING + "/*", method=RequestMethod.DELETE)
-	public void delete( HttpServletRequest request, HttpServletResponse response) throws IOException{
-		try{
+	@RequestMapping(value = REQUEST_MAPPING + "/*", method = RequestMethod.DELETE)
+	public void delete(HttpServletRequest request, HttpServletResponse response)
+			throws IOException {
+		try {
 			String cn = RequestUtil.getKeyFromPathVariable(request);
 
 			this.groupDao.delete(cn);
@@ -277,10 +278,15 @@ public class GroupsController {
 			ResponseUtil.writeSuccess(response);
 
 		} catch (NotFoundException e) {
-	          LOG.error(e.getMessage());
-	            ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
-	                    HttpServletResponse.SC_NOT_FOUND);
-		} catch (Exception e){
+			LOG.error(e.getMessage());
+			ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
+					HttpServletResponse.SC_NOT_FOUND);
+		} catch (DataServiceException e) {
+			LOG.error(e.getMessage());
+			ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
+					HttpServletResponse.SC_BAD_REQUEST);
+
+		} catch (Exception e) {
 			LOG.error(e.getMessage());
 			ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
 					HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -291,8 +297,10 @@ public class GroupsController {
 	/**
 	 * Modifies the group using the fields provided in the request body.
 	 * <p>
-	 * The fields that are not present in the parameters will remain untouched in the LDAP store.
+	 * The fields that are not present in the parameters will remain untouched
+	 * in the LDAP store.
 	 * </p>
+	 * 
 	 * <pre>
 	 * The request format is:
 	 * [BASE_MAPPING]/groups/{cn}
@@ -300,11 +308,13 @@ public class GroupsController {
 	 * Where <b>cn</b> is the name of group to update.
 	 * </pre>
 	 * <p>
-	 * The request body should contains a the fields to modify using the JSON syntax.
+	 * The request body should contains a the fields to modify using the JSON
+	 * syntax.
 	 * </p>
 	 * <p>
 	 * Example:
 	 * </p>
+	 * 
 	 * <pre>
 	 * <b>Request</b>
 	 * [BASE_MAPPING]/groups/users
@@ -312,16 +322,20 @@ public class GroupsController {
 	 * <b>Body request: </b>
 	 * group data:
 	 * {
-     *   "cn": "newName"
-     *   "description": "new Description"
-     *   }
+	 *   "cn": "newName"
+	 *   "description": "new Description"
+	 *   }
 	 *
 	 * </pre>
 	 *
-	 * @param request [BASE_MAPPING]/groups/{cn}  body request {"cn": value1, "description": value2 }
+	 * @param request
+	 *            [BASE_MAPPING]/groups/{cn} body request {"cn": value1,
+	 *            "description": value2 }
 	 * @param response
 	 *
-	 * @throws IOException if the uid does not exist or fails to access to the LDAP store.
+	 * @throws IOException
+	 *             if the uid does not exist or fails to access to the LDAP
+	 *             store.
 	 */
 	@RequestMapping(value=REQUEST_MAPPING+ "/*", method=RequestMethod.PUT)
 	public void update( HttpServletRequest request, HttpServletResponse response) throws IOException{
@@ -383,6 +397,16 @@ public class GroupsController {
 	@RequestMapping(value=BASE_MAPPING+ "/groups_users", method=RequestMethod.POST)
 	public void updateUsers( HttpServletRequest request, HttpServletResponse response) throws IOException{
 
+		String adminUUID = null;
+
+		try {
+			adminUUID = this.accountDao.findByUID(request.getHeader("sec-username")).getUUID();
+		} catch (NotFoundException e) {
+			LOG.error("Unable to find Admin that initiate this request, so no admin log");
+		} catch (DataServiceException e) {
+			LOG.error("Unable to find Admin that initiate this request, so no admin log");
+		}
+
 		try{
 
 			ServletInputStream is = request.getInputStream();
@@ -392,10 +416,10 @@ public class GroupsController {
 			List<String> users = createUserList(json, "users");
 
 			List<String> putGroup = createUserList(json, "PUT");
-			this.groupDao.addUsersInGroups(putGroup, users);
+			this.groupDao.addUsersInGroups(putGroup, users, adminUUID);
 
 			List<String> deleteGroup = createUserList(json, "DELETE");
-			this.groupDao.deleteUsersInGroups(deleteGroup, users);
+			this.groupDao.deleteUsersInGroups(deleteGroup, users, adminUUID);
 
 			ResponseUtil.writeSuccess(response);
 

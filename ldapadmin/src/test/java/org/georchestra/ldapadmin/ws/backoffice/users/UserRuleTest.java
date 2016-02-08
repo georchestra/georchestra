@@ -20,7 +20,7 @@ public class UserRuleTest {
 
     @Test
     public void testIsProtected() {
-        List<String> protectedUsrs = Arrays.asList(new String[]{"protected"});
+        String[] protectedUsrs = new String[]{"protected"};
 
         assertFalse(testUserRule.isProtected("protected"));
         assertTrue(testUserRule.getListOfprotectedUsers().size() == 0);

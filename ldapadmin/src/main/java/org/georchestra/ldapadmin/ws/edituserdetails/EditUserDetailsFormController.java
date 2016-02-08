@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
+import org.georchestra.ldapadmin.ds.NotFoundException;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.ws.utils.UserUtils;
 import org.georchestra.ldapadmin.ws.utils.Validation;
@@ -100,7 +101,6 @@ public class EditUserDetailsFormController {
 	 * Creates a form based on the account data.
 	 *
 	 * @param account input data
-	 * @param formBean (out)
 	 */
 	private EditUserDetailsFormBean createForm(final Account account) {
 
@@ -168,8 +168,14 @@ public class EditUserDetailsFormController {
 		try {
 
 			Account account = modify(this.accountBackup, formBean);
-
-			this.accountDao.update(account);
+			String adminUUID;
+			try {
+				Account adminAccount = this.accountDao.findByUID(request.getHeader("sec-username"));
+				adminUUID = adminAccount == null ? null : adminAccount.getUUID();
+			} catch (NotFoundException ex){
+				adminUUID = null;
+			}
+			this.accountDao.update(account, adminUUID);
 
 			model.addAttribute("success", true);
 

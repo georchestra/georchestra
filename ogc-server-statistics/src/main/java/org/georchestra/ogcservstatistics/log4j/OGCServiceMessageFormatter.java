@@ -39,24 +39,33 @@ public class OGCServiceMessageFormatter {
 		// utility class
 	}
 
-	public static String format(final String user, final String request, final String org){
-			return format(user, new Date(), request, org);
+	public static String format(final String user, final String request, final String org,String [] roles){
+			return format(user, new Date(), request, org,roles);
 	}
+	/*
+	public static String format(final String user,final String request, String org) { // roles null  ???
+		
+			return format(user, new Date(), request, org,null);
+
+	}
+
+	*/
 	/**
 	 * Builds a formated string that can be recognized by the OGCServicesAppender.
 	 * <pre>
 	 * Produced format:
 	 * 
-	 * user|yyyy-MM-dd|request
+	 * user|yyyy-MM-dd|request|roles
 	 * 
 	 * </pre>
 	 * @param user
 	 * @param date
 	 * @param request
+	 * @param roles
 	 * 
 	 * @return The ogcservice message
 	 */
-	public static String format(final String user, final Date date, final String request, final String org){
+	public static String format(final String user, final Date date, final String request, final String org,final String [] roles){
 		
 		if((user == null)|| "".equals(user) ){
 			throw new IllegalArgumentException("user cannot be null");
@@ -67,9 +76,14 @@ public class OGCServiceMessageFormatter {
 		if((request == null)|| "".equals(request) ){
 			throw new IllegalArgumentException("request cannot be null");
 		}
+		if(roles == null){
+			roles[0] = "";
+		}
 		// org can be null
 		
 		// appends user
+
+		
 		StringBuilder ogcLogBuilder = new StringBuilder(user);
 		ogcLogBuilder.append(SEPARATOR);
 		
@@ -84,9 +98,23 @@ public class OGCServiceMessageFormatter {
 		
 		// appends ogc service org
 		ogcLogBuilder.append(org);
+		ogcLogBuilder.append(SEPARATOR);
 		
+		// appends ogc service roles
+		StringBuilder rolesBuilder = new StringBuilder();
+		int i=0;
+		for(String s : roles) {
+		   if (i > 0) {
+			   rolesBuilder.append(",");
+		   }
+		   rolesBuilder.append(s);
+		   i++;
+		}
+		
+		ogcLogBuilder.append(rolesBuilder.toString());
+
 	    final String ogcStatisticLog = ogcLogBuilder.toString();
-		
+	    
 	    // log additional information to test the system
 	    log(ogcLogBuilder);
 		
