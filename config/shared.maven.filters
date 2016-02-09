@@ -2,9 +2,9 @@
 
 shared.instance.name=geOrchestra
 
-shared.url.scheme=http
+shared.url.scheme=https
 shared.homepage.url=@shared.url.scheme@://@shared.server.name@/
-shared.server.port=80
+shared.server.port=443
 
 shared.header.height=90
 
