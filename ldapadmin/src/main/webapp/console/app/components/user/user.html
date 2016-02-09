@@ -121,10 +121,12 @@
             </div>
           </div>
 
-        </div>
+          <hr>
 
-        <div class="panel-footer" ng-if="user.tab=='infos'">
-          <button ng-click="user.save()" type="submit" class="btn btn-primary">Enregistrer</button>
+          <div class="pull-right">
+            <button ng-click="user.save()" class="btn btn-primary" translate>user.save</button>
+          </div>
+
         </div>
 
         <div class="panel-body" ng-if="user.tab=='groups'">
@@ -252,7 +254,7 @@
         </div>
 
         <div class="panel-body" ng-if="user.tab=='manage'">
-          <h4>Manage</h4>
+            <button ng-click="user.delete()" class="btn btn-danger" translate>user.delete</button>
         </div>
 
       </div>

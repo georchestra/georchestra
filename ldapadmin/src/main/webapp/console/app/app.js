@@ -10,6 +10,8 @@ angular.module('admin_console', [
   'AppController', [ '$router', AppController ]
 ).constant(
   'LDAP_BASE_URI', '/ldapadmin/private/'
+).constant(
+  'ANALYTICS_BASE_URI', 'http://localhost:8280/analytics/ws/'
 ).config(['$translateProvider', function ($translateProvider) {
 
   $translateProvider
@@ -26,6 +28,7 @@ require('./components/users/users');
 require('./components/groups/groups');
 require('./components/user/user');
 require('./components/home/home');
+require('./services/analytics');
 require('./services/groups');
 require('./services/groups_users');
 require('./services/messages');

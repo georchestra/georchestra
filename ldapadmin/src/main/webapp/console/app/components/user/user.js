@@ -91,6 +91,13 @@ function UserController($routeParams, $q, $injector, Flash, User, Group, Email, 
         "mimeType": "image/jpeg"}
         ];
       break;
+    case 'analytics':
+      this.$injector.get('Analytics').query({user: this.user.uuid}, function() {
+        console.log(arguments);
+      },function(){
+        console.log('error',arguments);
+      });
+      break
     default:
   }
 }
