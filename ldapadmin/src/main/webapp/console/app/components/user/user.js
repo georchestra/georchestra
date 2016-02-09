@@ -146,8 +146,10 @@ UserController.prototype.activate = [
 
 UserController.prototype.save = function() {
   var $translate = this.$injector.get('$translate');
-  this.user.$update(
-    this.flash.create.bind(this, 'success', $translate('user.updated')),
+  this.user.$update(function() {
+      $httpDefaultCache.removeAll();
+      this.flash.create.bind(this, 'success', $translate('user.updated'))
+    }.bind(this),
     this.flash.create.bind(this, 'error', $translate('user.error'))
   );
 };
