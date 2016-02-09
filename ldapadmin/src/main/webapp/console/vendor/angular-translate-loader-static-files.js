@@ -1,0 +1,1 @@
+../node_modules/angular-translate-loader-static-files/angular-translate-loader-static-files.js
