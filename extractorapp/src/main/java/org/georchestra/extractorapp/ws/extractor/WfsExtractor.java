@@ -154,7 +154,9 @@ public class WfsExtractor {
 
             enablePreemptiveBasicAuth(capabilitiesURL, httpClientBuilder, localContext, httpHost, _adminUsername, _adminPassword);
         } else {
-        	LOG.debug("WfsExtractor.checkPermission - Non Secured Server");
+            // use a user agent that did *not* trigger basic auth on remote server
+            httpClientBuilder.setUserAgent("Apache-HttpClient");
+            LOG.debug("WfsExtractor.checkPermission - Non Secured Server");
         }
 
         final CloseableHttpClient httpclient = httpClientBuilder.build();
