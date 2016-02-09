@@ -6,6 +6,9 @@ angular.module('admin_console').factory('User',
         method  : 'GET',
         isArray : true
       },
+      get: {
+        cache: true
+      },
       update: {
         method: 'PUT'
       }
