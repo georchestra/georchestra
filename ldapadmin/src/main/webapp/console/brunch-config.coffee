@@ -15,7 +15,8 @@ module.exports = config:
           'vendor/chosen.jquery.js',
           'vendor/angular-chosen.js',
           'vendor/angular-flash.js',
-          'vendor/angular-translate.js'
+          'vendor/angular-translate.js',
+          'vendor/angular-translate-loader-static-files.js'
         ]
     stylesheets:
       joinTo:
