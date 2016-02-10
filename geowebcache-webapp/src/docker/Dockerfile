@@ -1,0 +1,3 @@
+FROM georchestra/base
+
+ADD . /

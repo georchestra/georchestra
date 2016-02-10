@@ -138,8 +138,17 @@
 
     <bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
 
+    <bean id="waitForLdap" class="org.georchestra.cas.ldap.WaitForLdap" init-method="test">
+        <property name="ldapUrl" value="${ldap.url}"/>
+        <property name="connectTimeout" value="${ldap.connectTimeout}"/>
+        <property name="useStartTLS" value="${ldap.useStartTLS}"/>
+        <property name="username" value="${ldap.admin.username}"/>
+        <property name="password" value="${ldap.admin.password}"/>
+        <property name="groupSearchBaseDn" value="${ldap.authn.groupSearchBaseDn}"/>
+    </bean>
+
     <bean id="connectionPool" class="org.ldaptive.pool.BlockingConnectionPool"
-        init-method="initialize"
+        init-method="initialize" depends-on="waitForLdap"
         p:poolConfig-ref="ldapPoolConfig"
         p:blockWaitTime="${ldap.pool.blockWaitTime}"
         p:pruneStrategy-ref="pruneStrategy"

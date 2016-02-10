@@ -1,0 +1,99 @@
+# non geOrchestra images
+database:
+  image: georchestra/database
+  environment:
+    - POSTGRES_USER=georchestra
+    - POSTGRES_PASSWORD=georchestra
+  volumes:
+    - postgresql_data:/var/lib/postgresql/data
+
+ldap:
+  image: georchestra/ldap
+  environment:
+      - SLAPD_ORGANISATION=georchestra
+      - SLAPD_DOMAIN=georchestra.org
+      - SLAPD_PASSWORD=secret
+      - SLAPD_ADDITIONAL_MODULES=memberof,groupofmembers
+  volumes:
+    - ldap_data:/var/lib/ldap
+    - ldap_config:/etc/ldap
+
+smtp:
+  image: camptocamp/smtp-sink
+
+courier-imap:
+  image: camptocamp/courier-imap
+  volumes_from:
+    - smtp:rw
+
+webmail:
+  image: camptocamp/sqwebmail
+  ports:
+    - "8081:80"
+  volumes_from:
+    - smtp:rw
+
+geoserver_geodata:
+  image: georchestra/ssh_data
+  ports:
+    - "2222:22"
+  volumes:
+    - geoserver_geodata:/home/geoserver/data
+
+# geOrchestra images
+    
+geoserver:
+  image: georchestra/geoserver
+  volumes:
+    - geoserver_datadir:/var/local/geoserver
+    - geoserver_geodata:/var/local/geodata
+    
+proxy:
+  image: georchestra/security-proxy
+  ports:
+    - "8080:8080"
+  links:
+    - database
+    - ldap
+    - cas
+    - mapfishapp
+    - extractorapp
+    - ldapadmin
+    - geonetwork
+    - header
+    - geoserver
+
+cas:
+  image: georchestra/cas
+  links:
+    - ldap
+
+mapfishapp:
+  image: georchestra/mapfishapp
+  links:
+    - database
+
+extractorapp:
+  image: georchestra/extractorapp
+  links:
+    - database
+    - smtp
+
+header:
+  image: georchestra/header
+
+ldapadmin:
+  image: georchestra/ldapadmin
+  links:
+    - database
+    - ldap
+    - smtp
+
+geonetwork:
+  image: georchestra/geonetwork
+  ports:
+    - "1099:1099"
+  links:
+    - database
+    - ldap
+

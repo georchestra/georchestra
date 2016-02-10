@@ -193,6 +193,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
+        <version>2.6</version>
         <configuration>
           <warName>analytics</warName>
           <packagingExcludes>**/docs/**,js/lib/external/ext/examples/**,js/lib/external/ext/builds/**,js/lib/external/ext/pkgs/**,PostTreatment.groovy</packagingExcludes>
@@ -365,6 +366,38 @@
                 </mapping>
               </mappings>
             </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>docker</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.spotify</groupId>
+            <artifactId>docker-maven-plugin</artifactId>
+            <version>0.3.8</version>
+            <configuration>
+              <imageName>georchestra/${project.artifactId}</imageName>
+              <dockerDirectory>${project.basedir}/src/docker</dockerDirectory>
+              <resources>
+                <resource>
+                  <targetPath>/var/lib/jetty/webapps</targetPath>
+                  <directory>${project.build.directory}</directory>
+                  <include>${project.artifactId}.war</include>
+                </resource>
+              </resources>
+              <serverId>docker-hub</serverId>
+              <registryUrl>https://index.docker.io/v1/</registryUrl>
+            </configuration>
+            <dependencies>
+              <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>19.0</version>
+              </dependency>
+            </dependencies>
           </plugin>
         </plugins>
       </build>

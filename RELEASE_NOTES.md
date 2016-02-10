@@ -20,10 +20,9 @@ Version 15.12
    sed -i 's/groupOfNames/groupOfMembers/' /tmp/groups.ldif
    sed -i '/fakeuser/d' /tmp/groups.ldif
    ```
-   * load the groupOfMembers definition:
+   * load the [groupOfMembers](ldap/groupofmembers.ldif) definition:
    ```
-    wget --no-check-certificate https://raw.githubusercontent.com/georchestra/LDAP/YY.MM/georchestra-groupofmembers.ldif -O /tmp/groupofmembers.ldif
-    sudo ldapadd -Y EXTERNAL -H ldapi:/// -f /tmp/groupofmembers.ldif
+    sudo ldapadd -Y EXTERNAL -H ldapi:/// -f groupofmembers.ldif
    ```
    * drop your groups organizationalUnit (```ou```)
    * import the updated groups.ldif file.

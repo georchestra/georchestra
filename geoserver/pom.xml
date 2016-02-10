@@ -8,7 +8,7 @@
   </parent>
   <artifactId>geoserver-root</artifactId>
   <packaging>pom</packaging>
-  <name>Geoserver 2.x root module</name>
+  <name>GeoServer 2.x root module</name>
   <properties>
     <maven.test.skip>true</maven.test.skip>
     <gs.version>2.8.2</gs.version>
