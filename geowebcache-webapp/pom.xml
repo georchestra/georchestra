@@ -209,22 +209,21 @@
             </configuration>
           </plugin>
           <plugin>
-            <artifactId>maven-resources-plugin</artifactId>
-            <version>2.3</version>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-scm-plugin</artifactId>
+            <version>1.9.4</version>
+            <configuration>
+              <checkoutDirectory>${project.build.directory}/deb/etc/georchestra</checkoutDirectory>
+              <connectionUrl>scm:git:https://github.com/georchestra/datadir.git</connectionUrl>
+              <pushChanges>false</pushChanges>
+            </configuration>
             <executions>
               <execution>
-                <id>copy-deb-resources</id>
+                <id>checkout-deb-default-datadir</id>
                 <phase>process-resources</phase>
-                <goals><goal>copy-resources</goal></goals>
-                <configuration>
-                  <overwrite>true</overwrite>
-                  <outputDirectory>${basedir}/target/deb</outputDirectory>
-                  <resources>
-                    <resource>
-                      <directory>src/deb/resources</directory>
-                    </resource>
-                  </resources>
-                </configuration>
+                <goals>
+                  <goal>checkout</goal>
+                </goals>
               </execution>
             </executions>
           </plugin>
@@ -234,12 +233,29 @@
             <version>1.6</version>
             <executions>
               <execution>
+                <id>remove-useless-directories</id>
+                <phase>package</phase>
+                <configuration>
+                  <target>
+                    <delete includeemptydirs="true">
+                      <fileset dir="${project.build.directory}/deb/etc/georchestra">
+                        <include name="**/*" />
+                        <exclude name="geowebcache/**" />
+                      </fileset>
+                    </delete>
+                 </target>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+              <execution>
                 <id>fix-permissions</id>
                 <phase>package</phase>
                 <configuration>
                   <target>
                     <chmod perm="ugo+x">
-                      <fileset dir="${basedir}/target/deb">
+                      <fileset dir="${project.build.directory}/deb">
                         <include name="**/bin/**"/>
                         <include name="**/sbin/**"/>
                         <include name="DEBIAN/post*"/>
@@ -272,6 +288,49 @@
       <id>rpmPackage</id>
       <build>
         <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-scm-plugin</artifactId>
+            <version>1.9.4</version>
+            <configuration>
+              <checkoutDirectory>${project.build.directory}/deb/etc/georchestra</checkoutDirectory>
+              <connectionUrl>scm:git:https://github.com/georchestra/datadir.git</connectionUrl>
+              <pushChanges>false</pushChanges>
+            </configuration>
+            <executions>
+              <execution>
+                <id>checkout-deb-default-datadir</id>
+                <phase>process-resources</phase>
+                <goals>
+                  <goal>checkout</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.6</version>
+            <executions>
+              <execution>
+                <configuration>
+                  <target>
+                    <delete includeemptydirs="true">
+                      <fileset dir="${project.build.directory}/deb/etc/georchestra">
+                        <include name="**/*" />
+                        <exclude name="geowebcache/**" />
+                      </fileset>
+                    </delete>
+                 </target>
+                </configuration>
+                <id>remove-useless-directories</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-war-plugin</artifactId>
@@ -313,7 +372,7 @@
                   <directory>/</directory>
                   <sources>
                     <source>
-                      <location>${basedir}/src/deb/resources</location>
+                      <location>${project.build.directory}/deb</location>
                     </source>
                   </sources>
                 </mapping>
