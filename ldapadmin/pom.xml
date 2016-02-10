@@ -548,7 +548,7 @@
         <artifactId>jetty-maven-plugin</artifactId>
         <version>9.2.11.v20150529</version>
         <configuration>
-          <webApp><contextPath>/ldapadmin/</contextPath></webApp>
+          <webApp><contextPath>/ldapadmin</contextPath></webApp>
           <scanIntervalSeconds>5</scanIntervalSeconds>
           <scanTargets>
             <scanTarget>src/main/java/</scanTarget>
