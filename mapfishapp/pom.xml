@@ -11,7 +11,6 @@
   <name>Mapfishapp Webapp</name>
   <url>http://www.georchestra.org</url>
   <properties>
-    <finalName>mapfishapp</finalName>
     <maven.test.skip>false</maven.test.skip>
     <spring.version>3.1.0.RELEASE</spring.version>
   </properties>
@@ -195,7 +194,7 @@
     </dependency>
   </dependencies>
   <build>
-    <finalName>${finalName}</finalName>
+    <finalName>mapfishapp-${server}</finalName>
     <pluginManagement>
       <plugins>
         <plugin>
@@ -262,7 +261,6 @@
         <artifactId>maven-war-plugin</artifactId>
         <version>2.6</version>
         <configuration>
-          <warName>mapfishapp</warName>
           <packagingExcludes>**/ext/examples/**,**/ext/pkgs/**,**/docs/**,**/openlayers/examples/**,**/openlayers/tests/**,PostTreatment.groovy</packagingExcludes>
         </configuration>
       </plugin>
@@ -419,16 +417,8 @@
     <profile>
       <id>debianPackage</id>
       <build>
+        <finalName>mapfishapp-generic</finalName>
         <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-war-plugin</artifactId>
-            <version>2.6</version>
-            <configuration>
-              <classifier>generic</classifier>
-              <packagingExcludes>**/ext/src/**,**/ext/examples/**,**/ext/pkgs/**,**/docs/**,**/openlayers/examples/**,**/openlayers/tests/**,PostTreatment.groovy</packagingExcludes>
-            </configuration>
-          </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-scm-plugin</artifactId>
@@ -510,16 +500,8 @@
     <profile>
       <id>rpmPackage</id>
       <build>
+        <finalName>mapfishapp-generic</finalName>
         <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-war-plugin</artifactId>
-            <version>2.6</version>
-            <configuration>
-              <classifier>generic</classifier>
-              <packagingExcludes>**/ext/src/**,**/ext/examples/**,**/ext/pkgs/**,**/docs/**,**/openlayers/examples/**,**/openlayers/tests/**,PostTreatment.groovy</packagingExcludes>
-            </configuration>
-          </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-scm-plugin</artifactId>
@@ -609,6 +591,7 @@
     <profile>
       <id>docker</id>
       <build>
+        <finalName>mapfishapp</finalName>
         <plugins>
           <plugin>
             <groupId>com.spotify</groupId>
