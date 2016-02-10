@@ -172,7 +172,7 @@
     </dependency>
   </dependencies>
   <build>
-    <finalName>analytics</finalName>
+    <finalName>${project.artifactId}-${server}</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -195,7 +195,6 @@
         <artifactId>maven-war-plugin</artifactId>
         <version>2.6</version>
         <configuration>
-          <warName>analytics</warName>
           <packagingExcludes>**/docs/**,js/lib/external/ext/examples/**,js/lib/external/ext/builds/**,js/lib/external/ext/pkgs/**,PostTreatment.groovy</packagingExcludes>
         </configuration>
       </plugin>
@@ -244,6 +243,7 @@
     <profile>
       <id>debianPackage</id>
       <build>
+        <finalName>${project.artifactId}-generic</finalName>
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -251,7 +251,6 @@
             <version>2.6</version>
             <configuration>
               <packagingExcludes>**/docs/**,js/lib/external/ext/examples/**,js/lib/external/ext/builds/**,js/lib/external/ext/pkgs/**,PostTreatment.groovy</packagingExcludes>
-              <classifier>generic</classifier>
             </configuration>
           </plugin>
           <plugin>
@@ -317,6 +316,7 @@
     <profile>
       <id>rpmPackage</id>
       <build>
+        <finalName>${project.artifactId}-generic</finalName>
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -373,6 +373,7 @@
     <profile>
       <id>docker</id>
       <build>
+        <finalName>${project.artifactId}</finalName>
         <plugins>
           <plugin>
             <groupId>com.spotify</groupId>
