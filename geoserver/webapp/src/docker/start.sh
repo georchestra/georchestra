@@ -1,7 +1,7 @@
 #!/bin/bash
 mkdir /var/local/geoserver 2> /dev/null
 cd /var/local/geoserver
-if [ -d .git ]
+if [ -f global.xml ]
 	then
     echo 'Datadir already initialized'
 else
