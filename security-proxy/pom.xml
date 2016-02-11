@@ -204,7 +204,6 @@
         <artifactId>maven-war-plugin</artifactId>
         <version>2.1.1</version>
         <configuration>
-          <packagingExcludes>**/docs/**,**/openlayers/examples/**,**/openlayers/tests/**</packagingExcludes>
           <filters>
             <filter>${confdir}/${project.artifactId}/maven.filter</filter>
           </filters>
