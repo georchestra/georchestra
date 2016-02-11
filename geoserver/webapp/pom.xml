@@ -13,6 +13,7 @@
     <gs.unpack.dir>${project.build.directory}/geoserver-unpacked-webapp</gs.unpack.dir>
   </properties>
   <build>
+    <finalName>geoserver-${server}</finalName>
     <plugins>
       <plugin>
         <groupId>org.codehaus.groovy.maven</groupId>
@@ -73,7 +74,6 @@
         <configuration>
           <warSourceDirectory>${gs.unpack.dir}</warSourceDirectory>
           <webXml>${gs.unpack.dir}/WEB-INF/web.xml</webXml>
-          <warName>geoserver</warName>
           <filter>${confdir}/${project.artifactId}/maven.filter</filter>
           <webResources>
             <resource>
@@ -797,15 +797,8 @@
     <profile>
       <id>debianPackage</id>
       <build>
+        <finalName>geoserver-generic</finalName>
         <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-war-plugin</artifactId>
-            <version>2.1.1</version>
-            <configuration>
-              <classifier>generic</classifier>
-            </configuration>
-          </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-scm-plugin</artifactId>
@@ -880,7 +873,7 @@
               <projectOrganization>geOrchestra</projectOrganization>
               <maintainerName>PSC</maintainerName>
               <maintainerEmail>psc@georchestra.org</maintainerEmail>
-              <excludeAllArtifacts>true</excludeAllArtifacts>
+              <excludeAllDependencies>true</excludeAllDependencies>
             </configuration>
           </plugin>
         </plugins>
@@ -889,15 +882,8 @@
     <profile>
       <id>rpmPackage</id>
       <build>
+        <finalName>geoserver-generic</finalName>
         <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-war-plugin</artifactId>
-            <version>2.1.1</version>
-            <configuration>
-              <classifier>generic</classifier>
-            </configuration>
-          </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-scm-plugin</artifactId>
@@ -987,6 +973,7 @@
     <profile>
       <id>docker</id>
       <build>
+        <finalName>geoserver</finalName>
         <plugins>
           <plugin>
             <groupId>com.spotify</groupId>
