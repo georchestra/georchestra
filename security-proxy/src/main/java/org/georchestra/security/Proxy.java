@@ -658,13 +658,14 @@ public class Proxy {
                 }
                 // no OGC SERVICE log if request going through /proxy/?url=
                 if (!request.getRequestURI().startsWith("/sec/proxy/")) {
-                	String [] roles = null;
-                	try{
-                	Header[] rolesHeaders = proxyingRequest.getHeaders("sec-roles");
-                	roles = rolesHeaders[0].getValue().split(";");
-                	
-                	} catch (Exception e) {
-                        logger.error("Unable to compute roles", e);
+                    String [] roles = new String[] {""};
+                    try {
+                        Header[] rolesHeaders = proxyingRequest.getHeaders("sec-roles");
+                        if (rolesHeaders.length > 0) {
+                            roles = rolesHeaders[0].getValue().split(";");
+                        }
+                    } catch (Exception e) {
+                        logger.error("Unable to compute roles");
                     }
                     statsLogger.info(OGCServiceMessageFormatter.format(authentication.getName(), sURL, org, roles));
                 

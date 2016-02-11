@@ -57,17 +57,9 @@ public class OGCServiceMessageFormatter {
 		// utility class
 	}
 
-	public static String format(final String user, final String request, final String org,String [] roles){
-			return format(user, new Date(), request, org,roles);
+	public static String format(final String user, final String request, final String org, final String [] roles) {
+			return format(user, new Date(), request, org, roles);
 	}
-	/*
-	public static String format(final String user,final String request, String org) { // roles null  ???
-		
-			return format(user, new Date(), request, org,null);
-
-	}
-
-	*/
 	/**
 	 * Builds a formated string that can be recognized by the OGCServicesAppender.
 	 * <pre>
@@ -83,59 +75,57 @@ public class OGCServiceMessageFormatter {
 	 * 
 	 * @return The ogcservice message
 	 */
-	public static String format(final String user, final Date date, final String request, final String org,final String [] roles){
+	public static String format(final String user, final Date date, final String request, final String org, final String [] roles) {
 		
-		if((user == null)|| "".equals(user) ){
+		if ((user == null )||  "".equals(user)) {
 			throw new IllegalArgumentException("user cannot be null");
 		}
-		if( date== null ){
+		if (date == null) {
 			throw new IllegalArgumentException("date cannot be null");
 		}
-		if((request == null)|| "".equals(request) ){
+		if ((request == null) || "".equals(request)) {
 			throw new IllegalArgumentException("request cannot be null");
 		}
-		if(roles == null){
-			roles[0] = "";
+		if (roles == null) {
+			throw new IllegalArgumentException("roles cannot be null");
 		}
 		// org can be null
-		
-		// appends user
 
-		
+		// appends user
 		StringBuilder ogcLogBuilder = new StringBuilder(user);
 		ogcLogBuilder.append(SEPARATOR);
-		
+
 		// appends date
 		DateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
 		ogcLogBuilder.append(formatter.format(date));
 		ogcLogBuilder.append(SEPARATOR);
-		 
+
 		// appends ogc service request
 		ogcLogBuilder.append(request);
 		ogcLogBuilder.append(SEPARATOR);
-		
+
 		// appends ogc service org
 		ogcLogBuilder.append(org);
 		ogcLogBuilder.append(SEPARATOR);
-		
+
 		// appends ogc service roles
 		StringBuilder rolesBuilder = new StringBuilder();
 		int i=0;
 		for(String s : roles) {
-		   if (i > 0) {
-			   rolesBuilder.append(",");
-		   }
-		   rolesBuilder.append(s);
-		   i++;
+			if (i > 0) {
+				rolesBuilder.append(",");
+			}
+			rolesBuilder.append(s);
+			i++;
 		}
 		
 		ogcLogBuilder.append(rolesBuilder.toString());
 
-	    final String ogcStatisticLog = ogcLogBuilder.toString();
-	    
-	    // log additional information to test the system
-	    log(ogcLogBuilder);
-		
+		final String ogcStatisticLog = ogcLogBuilder.toString();
+
+		// log additional information to test the system
+		log(ogcLogBuilder);
+
 		return ogcStatisticLog;
 	}
 	
@@ -186,15 +176,6 @@ public class OGCServiceMessageFormatter {
 			 debugLog.append(SEPARATOR);
 		 }
 
-		 
-//		 Properties p = System.getProperties();   
-//		    p.list(System.out); 
-//		    
-//		    System.out.print("Total CPU:");
-//		    System.out.println(Runtime.getRuntime().availableProcessors());
-//		    System.out.println("os.name=" + System.getProperty("os.name"));
-		    
-		    
 		 LOGGER.debug(debugLog);	
 	}
 
