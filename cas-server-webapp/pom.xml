@@ -112,6 +112,7 @@
     </dependency>
   </dependencies>
   <build>
+    <finalName>cas-${server}</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -134,7 +135,6 @@
         <artifactId>maven-war-plugin</artifactId>
         <version>2.6</version>
         <configuration>
-          <warName>cas</warName>
           <filters>
             <filter>${confdir}/${project.artifactId}/maven.filter</filter>
           </filters>
@@ -206,32 +206,65 @@
     <profile>
       <id>debianPackage</id>
       <build>
+        <finalName>cas-generic</finalName>
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-war-plugin</artifactId>
-            <version>2.6</version>
+            <artifactId>maven-scm-plugin</artifactId>
+            <version>1.9.4</version>
             <configuration>
-              <classifier>generic</classifier>
+              <checkoutDirectory>${project.build.directory}/deb/etc/georchestra</checkoutDirectory>
+              <connectionUrl>scm:git:https://github.com/georchestra/datadir.git</connectionUrl>
+              <pushChanges>false</pushChanges>
             </configuration>
-          </plugin>
-          <plugin>
-            <artifactId>maven-resources-plugin</artifactId>
-            <version>2.3</version>
             <executions>
               <execution>
-                <id>copy-deb-resources</id>
+                <id>checkout-deb-default-datadir</id>
                 <phase>process-resources</phase>
-                <goals><goal>copy-resources</goal></goals>
+                <goals>
+                  <goal>checkout</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.6</version>
+            <executions>
+              <execution>
+                <id>remove-useless-directories</id>
+                <phase>package</phase>
                 <configuration>
-                  <overwrite>true</overwrite>
-                  <outputDirectory>${basedir}/target/deb</outputDirectory>
-                  <resources>
-                    <resource>
-                      <directory>src/deb/resources</directory>
-                    </resource>
-                  </resources>
+                  <target>
+                    <delete includeemptydirs="true">
+                      <fileset dir="${project.build.directory}/deb/etc/georchestra">
+                        <include name="**/*" />
+                        <exclude name="cas/**" />
+                      </fileset>
+                    </delete>
+                 </target>
                 </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>fix-permissions</id>
+                <phase>package</phase>
+                <configuration>
+                  <target>
+                    <chmod perm="ugo+x">
+                      <fileset dir="${basedir}/target/deb">
+                        <include name="**/bin/**"/>
+                        <include name="**/sbin/**"/>
+                        <include name="DEBIAN/post*"/>
+                        <include name="DEBIAN/pre*"/>
+                      </fileset>
+                    </chmod>
+                  </target>
+                </configuration>
+                <goals><goal>run</goal></goals>
               </execution>
             </executions>
           </plugin>
@@ -245,7 +278,7 @@
               <projectOrganization>geOrchestra</projectOrganization>
               <maintainerName>PSC</maintainerName>
               <maintainerEmail>psc@georchestra.org</maintainerEmail>
-              <excludeAllArtifacts>true</excludeAllArtifacts>
+              <excludeAllDependencies>true</excludeAllDependencies>
             </configuration>
           </plugin>
         </plugins>
@@ -254,14 +287,50 @@
     <profile>
       <id>rpmPackage</id>
       <build>
+        <finalName>cas-generic</finalName>
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-war-plugin</artifactId>
-            <version>2.6</version>
+            <artifactId>maven-scm-plugin</artifactId>
+            <version>1.9.4</version>
             <configuration>
-              <classifier>generic</classifier>
+              <checkoutDirectory>${project.build.directory}/deb/etc/georchestra</checkoutDirectory>
+              <connectionUrl>scm:git:https://github.com/georchestra/datadir.git</connectionUrl>
+              <pushChanges>false</pushChanges>
             </configuration>
+            <executions>
+              <execution>
+                <id>checkout-deb-default-datadir</id>
+                <phase>process-resources</phase>
+                <goals>
+                  <goal>checkout</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.6</version>
+            <executions>
+              <execution>
+                <configuration>
+                  <target>
+                    <delete includeemptydirs="true">
+                      <fileset dir="${project.build.directory}/deb/etc/georchestra">
+                        <include name="**/*" />
+                        <exclude name="cas/**" />
+                      </fileset>
+                    </delete>
+                 </target>
+                </configuration>
+                <id>remove-useless-directories</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
           </plugin>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
@@ -296,7 +365,7 @@
                   <directory>/</directory>
                   <sources>
                     <source>
-                      <location>${basedir}/src/deb/resources</location>
+                      <location>${project.build.directory}/deb</location>
                     </source>
                   </sources>
                 </mapping>
@@ -309,6 +378,7 @@
     <profile>
       <id>docker</id>
       <build>
+        <finalName>cas</finalName>
         <plugins>
           <plugin>
             <groupId>com.spotify</groupId>
