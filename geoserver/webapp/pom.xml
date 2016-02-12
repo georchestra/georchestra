@@ -11,6 +11,8 @@
   <name>geOrchestra GeoServer Web Application</name>
   <properties>
     <gs.unpack.dir>${project.build.directory}/geoserver-unpacked-webapp</gs.unpack.dir>
+    <packageName>georchestra-geoserver</packageName>
+    <dockerImageName>georchestra/geoserver</dockerImageName>
   </properties>
   <build>
     <finalName>geoserver-${server}</finalName>
@@ -864,7 +866,7 @@
             <artifactId>debian-maven-plugin</artifactId>
             <version>1.0.6</version>
             <configuration>
-              <packageName>georchestra-geoserver</packageName>
+              <packageName>${packageName}</packageName>
               <packageDescription>geOrchestra GeoServer</packageDescription>
               <packageDependencies>
                 <packageDependency>debconf</packageDependency>
@@ -940,7 +942,7 @@
               </execution>
             </executions>
             <configuration>
-              <name>georchestra-geoserver</name>
+              <name>${packageName}</name>
               <sourceEncoding>UTF-8</sourceEncoding>
               <group>Applications/Internet</group>
               <keyname>${rpm.gpg.key}</keyname>
@@ -980,7 +982,7 @@
             <artifactId>docker-maven-plugin</artifactId>
             <version>0.3.8</version>
             <configuration>
-              <imageName>georchestra/geoserver</imageName>
+              <imageName>${dockerImageName}</imageName>
               <dockerDirectory>${project.basedir}/src/docker</dockerDirectory>
               <resources>
                 <resource>
@@ -1007,6 +1009,13 @@
           </plugin>
         </plugins>
       </build>
+    </profile>
+    <profile>
+      <id>geofence</id>
+      <properties>
+        <packageName>georchestra-geoserver-geofence</packageName>
+        <dockerImageName>georchestra/geoserver-geofence</dockerImageName>
+      </properties>
     </profile>
   </profiles>
 </project>
