@@ -226,12 +226,8 @@ if(sec_roles != null) {
     </c:choose>
         GEOR.config.ROLES = [<%= js_roles %>];
         GEOR.config.PATHNAME = '<%= context %>';
-    <c:choose>
-        <c:when test='<%= georDatadirActivated == true %>'>
         GEOR.config.CONTEXTS = ${c.contexts};
         GEOR.config.ADDONS = ${c.addons};
-        </c:when>
-    </c:choose>
         
     </script>
     <noscript><p><fmt:message key="need.javascript"/></p></noscript>
