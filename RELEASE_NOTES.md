@@ -9,6 +9,12 @@ Version 15.12
 
 
 ### UPGRADING:
+
+ * Mapfishapp has been revamped to allow dynamic customization of addons and contexts. This means that 2 new controllers are now responsible of the JSON blocks that were previously present in the GEOR_custom.js file. As a result, it introduced some stricter conventions that have to be respected so that the controllers can function correctly.
+ 
+   *  in case of datadir-mode, contexts have to be stored either in <georchestra.datadir>/mapfishapp/contexts/context.wmc accompagnied by an picture in <georchestra.datadir>/mapfishapp/contexts/images/context.jpg or png (or in the root of the webapp, in the contexts/ subdirectory, in case of non-datadir mode).
+   *  Addons have to be stored either in <georchestra.datadir>/mapfishapp/addons/ or in the app/addons/ subdirectory of the webapp. In case of non-datadir mode, only the ones nested in the webapp are taken into account, in case of datadir-mode, both directories are scanned and the resulting JSON blocks are merged for the 2 directories, letting the possibility to override using the datadir (which takes precedence).
+
  * As a result of [#1040](https://github.com/georchestra/georchestra/pull/1040), LDAP groups are now ```groupOfMembers``` instances rather than ```groupOfNames``` instances. In addition, the ```PENDING_USERS``` group was renamed. You have to migrate your LDAP tree, according to the following procedure (please change the ```dc=georchestra,dc=org``` string for your own base DN and provide a suitable password):
    * dump your ldap **groups** with:
    ```
