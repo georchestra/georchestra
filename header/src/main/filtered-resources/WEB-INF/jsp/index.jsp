@@ -323,10 +323,14 @@ if(sec_roles != null) {
                         <c:when test='<%= catadmin == true %>'>
                         <c:choose>
                             <c:when test='<%= active.equals("geonetwork") %>'>
-                        <li class="active"><a href="/geonetwork/srv/eng/admin"><fmt:message key="catalogue"/></a></li>
+                        <!-- GN2 or GN3 -->
+                        <!--li class="active"><a href="/geonetwork/srv/<%= lang %>/admin"><fmt:message key="catalogue"/></a></li-->
+                        <li class="active"><a href="/geonetwork/srv/<%= lang %>/admin.console"><fmt:message key="catalogue"/></a></li>
                             </c:when>
                             <c:otherwise>
-                        <li><a href="/geonetwork/srv/<%= lang %>/admin"><fmt:message key="catalogue"/></a></li> <!-- FIXME: GN3 -->
+                        <!-- GN2 or GN3 -->
+                        <!--li><a href="/geonetwork/srv/<%= lang %>/admin"><fmt:message key="catalogue"/></a></li-->
+                        <li><a href="/geonetwork/srv/<%= lang %>/admin.console"><fmt:message key="catalogue"/></a></li>
                             </c:otherwise>
                         </c:choose>
                         </c:when>
