@@ -1,4 +1,4 @@
-﻿BEGIN;
+BEGIN;
 
 CREATE OR REPLACE FUNCTION get_partition_table(my_date date)
   RETURNS character varying AS

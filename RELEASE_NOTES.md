@@ -49,7 +49,7 @@ Version 15.12
       * ```$ source bin/activate```
       * ```$ easy_install ldap3```
    * Run ```ogc-server-statistics/populate_stats_roles.py``` in previously created virtual env
-   * Copy/paste SQL queries outputed by python script in ```ogc-server-statistics/update.sql``` file between ```ALTER TABLE ogcstatistics.ogc_services_log_old ADD COLUMN roles text[];``` and ```INSERT INTO ogcstatistics.ogc_services_log SELECT * FROM ogcstatistics.ogc_services_log_old;``` and remove ```ROLLBACK;``` statement.
+   * Copy/paste SQL queries outputed by python script in ```ogc-server-statistics/update_to_1512.sql``` file between ```ALTER TABLE ogcstatistics.ogc_services_log_old ADD COLUMN roles text[];``` and ```INSERT INTO ogcstatistics.ogc_services_log SELECT * FROM ogcstatistics.ogc_services_log_old;``` and remove ```ROLLBACK;``` statement.
    * Finnaly, you can launch SQL script in database
 
 
