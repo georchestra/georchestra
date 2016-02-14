@@ -1,0 +1,20 @@
+[{
+    "id": "fullscreen_0",
+    "enabled": false,
+    "name": "Fullscreen",
+    "title": {
+        "en": "Fullscreen",
+        "es": "Pantalla Completa",
+        "fr": "Plein écran",
+        "de": "Vollbild"
+    },
+    "options": {
+        "toolbars": true
+    },
+    "description": {
+        "en": "Make the map go fullscreen",
+        "es": "Mostrar el mapa en pantalla completa",
+        "fr": "Voir la carte en plein écran",
+        "de": "Siehe Vollbildkarte"
+    }
+}]
