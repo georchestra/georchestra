@@ -103,49 +103,6 @@ GEOR.config = (function() {
         /***** Beginning of config options which can be overriden by GEOR.custom *****/
 
         /**
-         * Constant: ADDONS
-         * An array of addons config objects.
-         * Defaults to []
-         *
-         * An "addon config object" is an object with the following properties:
-         *  id - {String} required identifier, which *MUST* :
-         *        * be stable across deployments in order to let your users recover their tools
-         *        * be unique in the ADDONS array
-         *  name - {String} required addon name, which, once lowercased, gives the addon folder name
-         *  title - {Object} a required hash storing addon titles by lang key
-         *  description - {Object} a required hash storing addon descriptions by lang key
-         *  roles - {Array} optional array of roles allowed to use this addon - defaults to [], which means everyone is allowed to.
-         *          eg: ["ROLE_SV_ADMIN"] will allow the current addon for admin users only
-         *  group - {String} an optional group for mutual exclusion between activated tools - default group is "tools"
-         *  options - {Object} an optional config object which overrides the package default_options (in manifest.json)
-         *  thumbnail - {String} an optional thumbnail path, relative to app/addons/{addon_name.toLowerCase()}/ (defaults to img/icon.png)
-         *
-         */
-        ADDONS: getCustomParameter("ADDONS",
-            []),
-
-        /**
-         * Constant: CONTEXTS
-         * {Array} the array describing the available contexts
-         *
-         * Each "context object" consists of 5 mandatory fields:
-         *   * the label which appears in the UI
-         *   * the path to the thumbnail
-         *   * the path to the context (WMC) file
-         *   * the comment which will be shown on thumbnail hovering
-         *   * the keywords used to filter the view
-         *
-         * Should *not* be empty !
-         */
-        CONTEXTS: getCustomParameter("CONTEXTS", [{
-            label: "OpenStreetMap",
-            thumbnail: "app/img/contexts/osm.png",
-            wmc: "default.wmc",
-            tip: "A unique OSM layer",
-            keywords: ["OpenStreetMap", "Basemap"]
-        }]),
-
-        /**
          * Constant: GEOSERVER_WFS_URL
          * The URL to GeoServer WFS.
          * This is required if and only if the "referentials" module is activated.
