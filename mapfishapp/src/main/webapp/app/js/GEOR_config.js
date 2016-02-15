@@ -255,11 +255,9 @@ GEOR.config = (function() {
          * Key (as the one in the response from /geonetwork/srv/fre/xml.thesaurus.getList)
          * of the thesaurus to use as the default (selected) one.
          *
-         * local.theme.test is the only one exported by GeoNetwork by default.
-         * It is highly recommended to upload new thesauri and to change this setting.
          */
         DEFAULT_THESAURUS_KEY: getCustomParameter("DEFAULT_THESAURUS_KEY",
-            'local.theme.test'),
+            'external.theme.inspire-theme'),
 
         /**
          * Constant: MAX_FEATURES
