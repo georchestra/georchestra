@@ -53,5 +53,11 @@ If using GeoFence, make sure the following environment variable is defined befor
 -DGEOSERVER_XSTREAM_WHITELIST=org.geoserver.geoserver.authentication.auth.GeoFenceAuthenticationProviderConfig
 ```
 
-And also the `geofence.dir` (with the same value as your `georchestra.datadir`) variable.
+The `geofence.dir` variable should also be configured so that `${geofence.dir}/geofence-datasource-ovr.properties` can resolve the correct properties file in the datadir, e.g.
+
+```
+-Dgeofence.dir=/etc/georchestra/geoserver/geofence
+```
+
+This extra variable is needed because we did not want to customize a geofence module which then come in its vanilla version.
 
