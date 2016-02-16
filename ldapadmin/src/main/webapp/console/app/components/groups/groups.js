@@ -6,11 +6,21 @@ angular.module('admin_console')
     index       : '=?'
   },
   controller  : GroupsController,
-  templateUrl : 'components/groups/groups.html'
+  templateUrl : 'components/groups/groups.tpl.html'
 })
 .filter('unprefix', GroupUnprefix);
 
 function GroupsController(groupAdminList) {
+  if (this.groups.$promise) {
+    this.groups.$promise.then(function() {
+      this.init(groupAdminList);
+    }.bind(this));
+  } else {
+    this.init(groupAdminList);
+  }
+}
+
+GroupsController.prototype.init = function(groupAdminList) {
   var root = [];
   var index = {};
   this.q = (this.q) || '';
