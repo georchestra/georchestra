@@ -1,6 +1,6 @@
 [{
     "id": "fullscreen_0",
-    "enabled": false,
+    "enabled": true,
     "name": "Fullscreen",
     "title": {
         "en": "Fullscreen",
@@ -9,7 +9,7 @@
         "de": "Vollbild"
     },
     "options": {
-        "toolbars": true
+        "toolbars": false
     },
     "description": {
         "en": "Make the map go fullscreen",

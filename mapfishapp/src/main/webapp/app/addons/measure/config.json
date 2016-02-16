@@ -1,7 +1,7 @@
 [{
     "id": "measure_0",
     "name": "Measure",
-    "enabled": false,
+    "enabled": true,
     "options": {},
     "title": {
         "en": "Measurement tools",
