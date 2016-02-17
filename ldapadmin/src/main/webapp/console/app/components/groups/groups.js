@@ -12,15 +12,13 @@ angular.module('admin_console')
 
 function GroupsController(groupAdminList) {
   if (this.groups.$promise) {
-    this.groups.$promise.then(function() {
-      this.init(groupAdminList);
-    }.bind(this));
+    this.groups.$promise.then(this.initialize.bind(this, groupAdminList));
   } else {
-    this.init(groupAdminList);
+    this.initialize(groupAdminList);
   }
 }
 
-GroupsController.prototype.init = function(groupAdminList) {
+GroupsController.prototype.initialize = function(groupAdminList) {
   var root = [];
   var index = {};
   this.q = (this.q) || '';
