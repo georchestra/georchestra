@@ -304,6 +304,11 @@ public class ClassifierCommand {
         }
         return _paletteID;
     }
+
+	public void setFeatureTypeName(String ftName) {
+		this._featureTypeName = ftName;
+		
+	}
     
     
 }

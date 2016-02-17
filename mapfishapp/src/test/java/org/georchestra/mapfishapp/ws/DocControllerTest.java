@@ -195,9 +195,9 @@ public class DocControllerTest {
 
         JSONObject jsReq = new JSONObject()
             .put("type", "PROP_SYMBOLS")
-            .put("wfs_url", "http://sigma.openplans.org/geoserver/wfs?service=WFS&request=GetCapabilities")
-            .put("layer_name", "topp:states")
-            .put("attribute_name", "PERSONS")
+            .put("wfs_url", "https://sdi.georchestra.org/geoserver/wfs?service=WFS&request=GetCapabilities&version=1.0.0")
+            .put("layer_name", "geor:sdi")
+            .put("attribute_name", "csw_db")
             .put("class_count", classCount)
             .put("min_size", minSize)
             .put("symbol_type", "point")

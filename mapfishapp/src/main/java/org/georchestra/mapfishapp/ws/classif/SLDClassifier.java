@@ -88,6 +88,11 @@ public class SLDClassifier {
      */
     public SLDClassifier(Map<String, UsernamePasswordCredentials> credentials, final ClassifierCommand command, WFSDataStoreFactory fac) throws DocServiceException {
         this._credentials = credentials;
+	        // If we do not have the prefix URL, then we need to use a typename as string
+	        // where the ":" has been replaced by an underscore. Since we expect the controller
+	        // to be called with the "prefix:layername" pattern, we replace the char by hand.
+	        String ftName = command.getFeatureTypeName().replaceFirst(":", "_");
+	        command.setFeatureTypeName(ftName);
             _command = command;
             if (fac != null)
             	_factory = fac;
@@ -115,6 +120,8 @@ public class SLDClassifier {
         SLDTransformer aTransformer = new SLDTransformer();
         aTransformer.setIndentation(4);
         String xml = "";
+        // BUG: this code can certainly cause some issues in a global context (think other webapps in the
+        // same servlet container), and should at least be synchronized.
         String oldTransformer = System.getProperty("javax.xml.transform.TransformerFactory");
         try {        
             System.setProperty("javax.xml.transform.TransformerFactory", org.apache.xalan.processor.TransformerFactoryImpl.class.getName());
@@ -142,17 +149,17 @@ public class SLDClassifier {
             WFSContentDataStore wfs = connectToWFS(_command.getWFSUrl());
             
             // check if property name exists
-            int index = wfs.getSchema(_command.getFeatureTypeName()).indexOf(_command.getPropertyName());
+            String ftName = _command.getFeatureTypeName();
+            SimpleFeatureType ft = wfs.getSchema(ftName);
+            int index = ft.indexOf(_command.getPropertyName());
             if(index == -1) {
                 throw new DocServiceException(_command.getPropertyName() + " is not an attribute of " + _command.getFeatureTypeName(),
                         HttpServletResponse.SC_BAD_REQUEST);
             }
                        
             // Load all the features
-            FeatureSource<SimpleFeatureType, SimpleFeature> source = wfs.getFeatureSource(_command.getFeatureTypeName());
+            FeatureSource<SimpleFeatureType, SimpleFeature> source = wfs.getFeatureSource(ftName);
             FeatureCollection<SimpleFeatureType, SimpleFeature> featuresCollection = source.getFeatures();
-            // Loading the feature collection early
-            FeatureCollection col = new DefaultFeatureCollection(featuresCollection);
 
             // We need a display (Symbolizers) and a value (Filters) fatories to generate a SLD file
             I_SymbolizerFactory symbolizerFact = null; // create symbols
@@ -188,7 +195,7 @@ public class SLDClassifier {
                 }
                     
                 // get values to classify
-                ArrayList<Double> values  = getDoubleValues(col.features(), _command.getPropertyName());
+                ArrayList<Double> values  = getDoubleValues(featuresCollection.features(), _command.getPropertyName());
                 filterFact = new ContinuousFilterFactory(values, _command.getClassCount(), _command.getPropertyName());        
                 
                 if (_command.getClassifType() == E_ClassifType.CHOROPLETHS) {
@@ -229,7 +236,7 @@ public class SLDClassifier {
             else if (_command.getClassifType() == E_ClassifType.UNIQUE_VALUES ) {
 
                 // no needs to classify on Unique Values. They can be kept as Strings.
-                Set<String> values  = getUniqueStringValues(col.features(), _command.getPropertyName());
+                Set<String> values  = getUniqueStringValues(featuresCollection.features(), _command.getPropertyName());
                 filterFact = new DiscreteFilterFactory(values, _command.getPropertyName());
 
                 switch (_command.getSymbolType()) {
