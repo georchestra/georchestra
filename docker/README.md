@@ -53,7 +53,12 @@ This creates a ```georchestra/geoserver``` docker image:
 
 ```bash
 cd geoserver/webapp/
-../../mvn -P docker clean package docker:build
+../../mvn -Pdocker clean package docker:build
+```
+For ```georchestra/geoserver-geofence```:
+```bash
+cd geoserver/webapp/
+../../mvn -Pdocker,geofence clean package docker:build
 ```
 
 This creates a ```georchestra/ssh_data``` docker image:
