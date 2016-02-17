@@ -6,10 +6,10 @@ import java.util.NoSuchElementException;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
-import org.geotools.data.simple.SimpleFeatureSource;
-import org.geotools.data.wfs.WFSDataStore;
-import org.geotools.data.wfs.WFSDataStoreFactory;
-import org.geotools.feature.FeatureCollection;
+import org.geotools.data.store.ContentFeatureCollection;
+import org.geotools.data.store.ContentFeatureSource;
+import org.geotools.data.wfs.impl.WFSContentDataStore;
+import org.geotools.data.wfs.impl.WFSDataStoreFactory;
 import org.mockito.Mockito;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
@@ -19,11 +19,11 @@ import org.opengis.feature.type.AttributeType;
 public class MockWFSDataStoreFactory extends WFSDataStoreFactory {
 
 	@Override
-	public WFSDataStore createDataStore(Map arg0) throws IOException {
-		WFSDataStore mockDs = Mockito.mock(WFSDataStore.class);
+	public WFSContentDataStore createDataStore(Map arg0) throws IOException {
+		WFSContentDataStore mockDs = Mockito.mock(WFSContentDataStore.class);
 		SimpleFeatureType mockFType = Mockito.mock(SimpleFeatureType.class);
-		SimpleFeatureSource mockFeatureSource = Mockito.mock(SimpleFeatureSource.class);
-		SimpleFeatureCollection mockFeatureCollection = Mockito.mock(SimpleFeatureCollection.class);
+		ContentFeatureSource mockFeatureSource = Mockito.mock(ContentFeatureSource.class);
+		ContentFeatureCollection mockFeatureCollection = Mockito.mock(ContentFeatureCollection.class);
 		AttributeType mockAttributeType = Mockito.mock(AttributeType.class);
 		SimpleFeatureIterator  mockFeatIterator = new MockFeatureIterator();
 		
@@ -64,9 +64,9 @@ public class MockWFSDataStoreFactory extends WFSDataStoreFactory {
 		public SimpleFeature next() throws NoSuchElementException {
 			SimpleFeature feat = Mockito.mock(SimpleFeature.class);
 			Property prop = Mockito.mock(Property.class);
-
+			Mockito.when(feat.getID()).thenReturn(String.format("feature%d", count));
 			Mockito.when(prop.getValue()).thenReturn((Object) new Double(count));
-				
+			Mockito.when(feat.getFeatureType()).thenReturn(Mockito.mock(SimpleFeatureType.class));
 			Mockito.when(feat.getProperty(Mockito.anyString())).thenReturn(prop);
 			return feat;
 		}

@@ -42,9 +42,10 @@ import org.georchestra.mapfishapp.ws.DocServiceException;
 import org.georchestra.mapfishapp.ws.classif.ClassifierCommand.E_ClassifType;
 import org.geotools.data.DataSourceException;
 import org.geotools.data.FeatureSource;
-import org.geotools.data.wfs.WFSDataStore;
-import org.geotools.data.wfs.WFSDataStoreFactory;
+import org.geotools.data.wfs.impl.WFSContentDataStore;
+import org.geotools.data.wfs.impl.WFSDataStoreFactory;
 import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.styling.FeatureTypeStyle;
@@ -55,6 +56,8 @@ import org.geotools.styling.StyleFactory;
 import org.geotools.styling.StyledLayerDescriptor;
 import org.geotools.styling.Symbolizer;
 import org.geotools.styling.NamedLayer;
+import org.opengis.feature.Feature;
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
@@ -136,7 +139,7 @@ public class SLDClassifier {
         try {
             
             // connect to the remote WFS
-            WFSDataStore wfs = connectToWFS(_command.getWFSUrl());
+            WFSContentDataStore wfs = connectToWFS(_command.getWFSUrl());
             
             // check if property name exists
             int index = wfs.getSchema(_command.getFeatureTypeName()).indexOf(_command.getPropertyName());
@@ -148,6 +151,8 @@ public class SLDClassifier {
             // Load all the features
             FeatureSource<SimpleFeatureType, SimpleFeature> source = wfs.getFeatureSource(_command.getFeatureTypeName());
             FeatureCollection<SimpleFeatureType, SimpleFeature> featuresCollection = source.getFeatures();
+            // Loading the feature collection early
+            FeatureCollection col = new DefaultFeatureCollection(featuresCollection);
 
             // We need a display (Symbolizers) and a value (Filters) fatories to generate a SLD file
             I_SymbolizerFactory symbolizerFact = null; // create symbols
@@ -183,7 +188,7 @@ public class SLDClassifier {
                 }
                     
                 // get values to classify
-                ArrayList<Double> values  = getDoubleValues(featuresCollection.features(), _command.getPropertyName());
+                ArrayList<Double> values  = getDoubleValues(col.features(), _command.getPropertyName());
                 filterFact = new ContinuousFilterFactory(values, _command.getClassCount(), _command.getPropertyName());        
                 
                 if (_command.getClassifType() == E_ClassifType.CHOROPLETHS) {
@@ -224,7 +229,7 @@ public class SLDClassifier {
             else if (_command.getClassifType() == E_ClassifType.UNIQUE_VALUES ) {
 
                 // no needs to classify on Unique Values. They can be kept as Strings.
-                Set<String> values  = getUniqueStringValues(featuresCollection.features(), _command.getPropertyName());
+                Set<String> values  = getUniqueStringValues(col.features(), _command.getPropertyName());
                 filterFact = new DiscreteFilterFactory(values, _command.getPropertyName());
 
                 switch (_command.getSymbolType()) {
@@ -320,7 +325,7 @@ public class SLDClassifier {
      * @param wfs datastore
      * @return data type as Class
      */
-    private Class<?> getDataType(WFSDataStore wfs) {
+    private Class<?> getDataType(WFSContentDataStore wfs) {
         SimpleFeatureType schema;
         Class<?> clazz = null;
         try {
@@ -342,8 +347,8 @@ public class SLDClassifier {
      * @throws DocServiceException 
      */
     @SuppressWarnings("unchecked")
-    private WFSDataStore connectToWFS(final URL wfsUrl) throws DocServiceException {   
-        WFSDataStore wfs = null;
+    private WFSContentDataStore connectToWFS(final URL wfsUrl) throws DocServiceException {   
+    	WFSContentDataStore wfs = null;
         Map m = new HashMap();
         try {
             UsernamePasswordCredentials credentials = findCredentials(wfsUrl);
