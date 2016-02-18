@@ -17,12 +17,14 @@ public class MockWFSDataStoreFactory extends WFSDataStoreFactory {
 
 	@Override
 	public WFSContentDataStore createDataStore(Map arg0) throws IOException {
+        // connect to remote WFS
+
 		WFSConfig conf = WFSConfig.fromParams(arg0);
 		WFSClient wfsclient = null;
 		try {
 			URL getCap = (URL) arg0.get(WFSDataStoreFactory.URL.key);
-			wfsclient = new WFSClient(getCap,
-					new SimpleHttpClient(), conf); // TODO use TestHTTPClient instead
+			SimpleHttpClient hc = new SimpleHttpClient(); // TODO use TestHTTPClient instead
+			wfsclient = new WFSClient(getCap, hc, conf);
 		} catch (ServiceException e) {
 			fail("Unable to instantiate a WFSClient: " + e.getMessage());
 		}

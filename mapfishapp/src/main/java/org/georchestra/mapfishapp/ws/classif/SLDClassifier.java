@@ -86,24 +86,29 @@ public class SLDClassifier {
      * @param command ClassifierCommand provides the type of classification and display
      * @throws DocServiceException When client request is not valid
      */
-    public SLDClassifier(Map<String, UsernamePasswordCredentials> credentials, final ClassifierCommand command, WFSDataStoreFactory fac) throws DocServiceException {
+    public SLDClassifier(Map<String, UsernamePasswordCredentials> credentials, final ClassifierCommand command,
+            WFSDataStoreFactory fac) throws DocServiceException {
         this._credentials = credentials;
-	        // If we do not have the prefix URL, then we need to use a typename as string
-	        // where the ":" has been replaced by an underscore. Since we expect the controller
-	        // to be called with the "prefix:layername" pattern, we replace the char by hand.
-	        String ftName = command.getFeatureTypeName().replaceFirst(":", "_");
-	        command.setFeatureTypeName(ftName);
-            _command = command;
-            if (fac != null)
-            	_factory = fac;
-            // turn off logger
-            Handler[] handlers = Logger.getLogger("").getHandlers();
-            for (int index = 0; index < handlers.length; index++ ) {
-                handlers[index].setLevel( Level.OFF );
-            }
-            
-            // start directly the classification
-            doClassification();
+
+        // wfs-ng specific: If we do not have the prefix URL, then we need to
+        // use a typename as string where the ":" has been replaced by an
+        // underscore. Since we expect the controller to be called with the
+        // "prefix:layername" pattern and we do not want to add an extra logic
+        // to get the prefix URL in the code, we replace the character by hand.
+
+        String ftName = command.getFeatureTypeName().replaceFirst(":", "_");
+        command.setFeatureTypeName(ftName);
+        _command = command;
+        if (fac != null)
+            _factory = fac;
+        // turn off logger
+        Handler[] handlers = Logger.getLogger("").getHandlers();
+        for (int index = 0; index < handlers.length; index++) {
+            handlers[index].setLevel(Level.OFF);
+        }
+
+        // start directly the classification
+        doClassification();
     }
 
 	/**
@@ -120,8 +125,8 @@ public class SLDClassifier {
         SLDTransformer aTransformer = new SLDTransformer();
         aTransformer.setIndentation(4);
         String xml = "";
-        // BUG: this code can certainly cause some issues in a global context (think other webapps in the
-        // same servlet container), and should at least be synchronized.
+        // BUG: this code can certainly cause some issues in a global context
+        // (think other webapps like GeoNetwork in the same servlet container).
         String oldTransformer = System.getProperty("javax.xml.transform.TransformerFactory");
         try {        
             System.setProperty("javax.xml.transform.TransformerFactory", org.apache.xalan.processor.TransformerFactoryImpl.class.getName());
@@ -371,7 +376,7 @@ public class SLDClassifier {
             m.put(WFSDataStoreFactory.ENCODING, "UTF-8"); // try to force UTF-8
             // TODO : configurable ?
             m.put(WFSDataStoreFactory.MAXFEATURES.key, 2000);
-            wfs = _factory.createDataStore(m);     
+            wfs = _factory.createDataStore(m);
         } 
         catch(SocketTimeoutException e) {
             throw new DocServiceException("WFS is unavailable", HttpServletResponse.SC_GATEWAY_TIMEOUT);

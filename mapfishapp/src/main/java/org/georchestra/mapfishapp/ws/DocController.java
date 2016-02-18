@@ -287,8 +287,7 @@ public class DocController {
     private void doClassification(HttpServletRequest request, HttpServletResponse response) {
         try {
             // classification based on client request in json
-            SLDClassifier c = new SLDClassifier(credentials, new ClassifierCommand(getBodyFromRequest(request)),
-            		factory);
+            SLDClassifier c = new SLDClassifier(credentials, new ClassifierCommand(getBodyFromRequest(request)), factory);
 
             // save SLD content under a file
             SLDDocService service = new SLDDocService(this.docTempDir, this.connectionPool);
