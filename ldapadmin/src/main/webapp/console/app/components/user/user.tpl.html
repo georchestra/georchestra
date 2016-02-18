@@ -153,7 +153,11 @@
         </div>
 
         <div class="panel-body" ng-if="user.tab=='analytics'">
-          <h4>Analytics</h4>
+          <h4 translate>analytics.title</h4>
+          <div class="row">
+            <stats data="user.data.requests.results" type="'line'" config="user.config.requests" title="'analytics.requests'" class="col-md-6"></stats>
+            <stats data="user.data.layers.results" type="'bar'" config="user.config.layers" title="'analytics.layers'" class="col-md-6"></stats>
+          </div>
         </div>
 
         <div class="panel-body user-messages" ng-if="user.tab=='messages'">

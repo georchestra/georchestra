@@ -32,6 +32,8 @@ require('./components/users/users');
 require('./components/users/users.tpl');
 require('./components/groups/groups');
 require('./components/groups/groups.tpl');
+require('./components/stats/stats');
+require('./components/stats/stats.tpl');
 require('./components/user/user');
 require('./components/user/user.tpl');
 require('./components/home/home');
