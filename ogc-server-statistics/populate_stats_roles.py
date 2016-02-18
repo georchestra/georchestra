@@ -39,7 +39,7 @@ GROUP_OBJECT_CLASS = 'groupOfMembers'
 
 
 
-reg = re.compile(r"^uid=([a-zA-Z0-9_-]+),")
+reg = re.compile(r"^uid=([a-zA-Z0-9_.-]+),")
 
 if BIND_WITH_CREDENTIALS:
     conn = Connection(LDAP_URI, LDAP_BINDDN, LDAP_PASSWD, auto_bind=True)
