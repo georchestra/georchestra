@@ -134,9 +134,9 @@ query = "SELECT DISTINCT layer, COUNT(*) FROM ogcstatistics.ogc_services_log WHE
 @Table(schema="ogcstatistics", name="ogc_services_log")
 public class Stats {
 	@Id
-	@SequenceGenerator(name="stats_seq", sequenceName="stats_seq",
+	@SequenceGenerator(name="ogc_services_log_id_seq", sequenceName="ogc_services_log_id_seq",
 		schema="ogcstatistics", initialValue=1, allocationSize = 1)
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "stats_seq")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ogc_services_log_id_seq")
 	private long id;
 	@Column(name="user_name")
 	private String user;
