@@ -25,7 +25,7 @@ import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.Query;
 import org.geotools.data.simple.SimpleFeatureCollection;
-import org.geotools.data.wfs.WFSDataStoreFactory;
+import org.geotools.data.wfs.impl.WFSDataStoreFactory;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.factory.GeoTools;
 import org.geotools.geometry.jts.ReferencedEnvelope;
@@ -222,9 +222,11 @@ public class WfsExtractor {
         }
 
         DataStore sourceDs = DataStoreFinder.getDataStore(params);
-        SimpleFeatureType sourceSchema = sourceDs.getSchema (request.getWFSName());
+        // WFS-ng: we need to convert the schema name
+        String typeName = request.getWFSName().replaceFirst(":", "_");
+        SimpleFeatureType sourceSchema = sourceDs.getSchema (typeName);
         Query query = createQuery(request, sourceSchema);
-		SimpleFeatureCollection features = sourceDs.getFeatureSource(request.getWFSName()).getFeatures(query);
+        SimpleFeatureCollection features = sourceDs.getFeatureSource(typeName).getFeatures(query);
 
         ProgressListener progressListener = new NullProgressListener () {
             @Override
