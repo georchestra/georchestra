@@ -73,6 +73,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 public class SLDClassifier {
     
     private ClassifierCommand _command = null;
+    private String _wfsngTypeName = null;
     private StyledLayerDescriptor _sld = null;
     private Map<String, UsernamePasswordCredentials> _credentials;
     
@@ -96,11 +97,11 @@ public class SLDClassifier {
         // "prefix:layername" pattern and we do not want to add an extra logic
         // to get the prefix URL in the code, we replace the character by hand.
 
-        String ftName = command.getFeatureTypeName().replaceFirst(":", "_");
-        command.setFeatureTypeName(ftName);
+        _wfsngTypeName = command.getFeatureTypeName().replaceFirst(":", "_");
         _command = command;
-        if (fac != null)
+        if (fac != null) {
             _factory = fac;
+        }
         // turn off logger
         Handler[] handlers = Logger.getLogger("").getHandlers();
         for (int index = 0; index < handlers.length; index++) {
@@ -154,8 +155,7 @@ public class SLDClassifier {
             WFSContentDataStore wfs = connectToWFS(_command.getWFSUrl());
             
             // check if property name exists
-            String ftName = _command.getFeatureTypeName();
-            SimpleFeatureType ft = wfs.getSchema(ftName);
+            SimpleFeatureType ft = wfs.getSchema(_wfsngTypeName);
             int index = ft.indexOf(_command.getPropertyName());
             if(index == -1) {
                 throw new DocServiceException(_command.getPropertyName() + " is not an attribute of " + _command.getFeatureTypeName(),
@@ -163,7 +163,7 @@ public class SLDClassifier {
             }
                        
             // Load all the features
-            FeatureSource<SimpleFeatureType, SimpleFeature> source = wfs.getFeatureSource(ftName);
+            FeatureSource<SimpleFeatureType, SimpleFeature> source = wfs.getFeatureSource(_wfsngTypeName);
             FeatureCollection<SimpleFeatureType, SimpleFeature> featuresCollection = source.getFeatures();
 
             // We need a display (Symbolizers) and a value (Filters) fatories to generate a SLD file
@@ -341,7 +341,7 @@ public class SLDClassifier {
         SimpleFeatureType schema;
         Class<?> clazz = null;
         try {
-            schema = wfs.getSchema(_command.getFeatureTypeName()); // get schema
+            schema = wfs.getSchema(_wfsngTypeName); // get schema
             clazz = schema.getType(_command.getPropertyName()).getBinding(); // get data type as Class
         } catch (IOException e) {
             e.printStackTrace();
@@ -475,6 +475,7 @@ public class SLDClassifier {
         
         // add named layer
         NamedLayer layer = styleFactory.createNamedLayer();
+        // wfs-ng: ensures we recover the correct typename
         layer.setName(_command.getFeatureTypeName());    // name must match the layer name
         fts.setName(_command.getFeatureTypeName());
         sld.addStyledLayer(layer);
