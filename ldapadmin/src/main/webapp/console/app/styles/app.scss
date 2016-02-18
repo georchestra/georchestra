@@ -10,6 +10,8 @@ body {
 groups input {
   margin-bottom: 1em;
 }
+
+// MESSAGES
 .user-messages {
   select {
     margin-bottom: 0.25em;
@@ -17,6 +19,39 @@ groups input {
   }
 }
 
+.stats {
+  .pull-right {
+    margin-top: -.75em;
+  }
+  table {
+    margin-top: 1em;
+  }
+}
+
+// CHARTS
+.chartist {
+  height: 25em;
+}
+.ct-label {
+  font-size: 1rem;
+}
+.ct-barlabel {
+  font-size: 1rem;
+  fill: white;
+}
+.ct-series-a
+.ct-bar,
+.ct-series-a
+.ct-line,
+.ct-series-a
+.ct-point,
+.ct-series-a
+.ct-slice-donut
+{
+  stroke: #337ab7;
+}
+
+// CHOSEN
 .chosen-container-multi .chosen-choices {
   border-radius: 4px;
   padding: 2px 5px;

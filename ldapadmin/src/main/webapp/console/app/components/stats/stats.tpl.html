@@ -1,0 +1,23 @@
+<div class="stats">
+
+  <div class="btn-group pull-right" role="group">
+    <button ng-click="stats.switchView()" type="button" class="btn btn-default" ng-class="{'active': stats.view =='graph'}">
+      <i class="glyphicon glyphicon-stats"></i>
+    </button>
+    <button ng-click="stats.switchView()" type="button" class="btn btn-default" ng-class="{'active': stats.view =='table'}">
+      <i class="glyphicon glyphicon-th-list"></i>
+    </button>
+  </div>
+
+  <h5 translate>analytics.requests</h5>
+
+  <div class="chartist" ng-show="stats.view=='graph'"></div>
+
+  <table class="table table-bordered table-striped" ng-show="stats.view=='table'">
+    <tr ng-repeat="value in stats.series[0] track by $index">
+      <td>{{stats.labels[$index]}}</td>
+      <td>{{value}}</td>
+    </tr>
+  </table>
+
+</div>

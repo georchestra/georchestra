@@ -16,13 +16,15 @@ module.exports = config:
           'vendor/angular-chosen.js',
           'vendor/angular-flash.js',
           'vendor/angular-translate.js',
-          'vendor/angular-translate-loader-static-files.js'
+          'vendor/angular-translate-loader-static-files.js',
+          'vendor/chartist.js'
         ]
     stylesheets:
       joinTo:
         'app.css': /^app/
         'libraries.css': [
           'vendor/bootstrap.css',
+          'vendor/chartist.min.css',
           'vendor/chosen.min.css'
         ]
     templates:
