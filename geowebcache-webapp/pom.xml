@@ -272,6 +272,7 @@
               <maintainerName>geOrchestra PSC</maintainerName>
               <maintainerEmail>psc@georchestra.org</maintainerEmail>
               <excludeAllDependencies>true</excludeAllDependencies>
+              <snapshotRevisionFile>${project.build.directory}</snapshotRevisionFile>
             </configuration>
           </plugin>
         </plugins>
