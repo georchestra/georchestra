@@ -252,7 +252,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 		e.printStackTrace(new PrintWriter(stackTrace));
 		openFailuresFile(failureFile);
 		String message = String
-				.format("Error accessing layer: %s \n"
+				.format("\nError accessing layer: %s \n"
 						+ "\n"
 						+ " * Service: %s \n"
 						+ " * Layer: %s \n"
@@ -266,10 +266,10 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 
 	private void openFailuresFile(File failureFile) {
 		if (!failureFile.exists()) {
-			String msg = "There were errors during the extraction process\n\n"
+			String msg = "There were errors during the extraction process\n"
 					+ "All services have been polled "
 					+ EXTRACTION_ATTEMPTS
-					+ " times.\n\n";
+					+ " times.\n";
 			writeToFile(failureFile, msg, false);
 		}
 	}
