@@ -30,7 +30,6 @@ max.database.connections=@shared.checkhealth.max_db_connections@
 cas.private.host=
 public.ssl=
 private.ssl=
-proxy.defaultTarget=
 proxy.mapping=
 header.mapping=
 remove.xforwarded.headers=
