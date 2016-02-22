@@ -50,7 +50,9 @@ public abstract class AbstractTestWithServer {
     }
 
     protected void writeResponse(HttpExchange httpExchange, byte[] response) throws IOException {
+        httpExchange.getResponseHeaders().set("Content-Type", "text/xml");
         httpExchange.sendResponseHeaders(200, response.length);
+
         httpExchange.getResponseBody().write(response);
         httpExchange.getResponseBody().close();
     }

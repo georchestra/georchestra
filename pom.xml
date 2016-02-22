@@ -543,17 +543,6 @@
   </repositories>
   <pluginRepositories>
     <pluginRepository>
-      <id>codehaus-snapshot-plugins</id>
-      <name>codehaus-shapshot-plugins</name>
-      <url>http://snapshots.repository.codehaus.org/</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </pluginRepository>
-    <pluginRepository>
       <id>opengeo</id>
       <name>OpenGeo Maven Repository</name>
       <url>http://repo.boundlessgeo.com/main/</url>

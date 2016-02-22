@@ -42,9 +42,10 @@ import org.georchestra.mapfishapp.ws.DocServiceException;
 import org.georchestra.mapfishapp.ws.classif.ClassifierCommand.E_ClassifType;
 import org.geotools.data.DataSourceException;
 import org.geotools.data.FeatureSource;
-import org.geotools.data.wfs.WFSDataStore;
-import org.geotools.data.wfs.WFSDataStoreFactory;
+import org.geotools.data.wfs.impl.WFSContentDataStore;
+import org.geotools.data.wfs.impl.WFSDataStoreFactory;
 import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.styling.FeatureTypeStyle;
@@ -55,6 +56,8 @@ import org.geotools.styling.StyleFactory;
 import org.geotools.styling.StyledLayerDescriptor;
 import org.geotools.styling.Symbolizer;
 import org.geotools.styling.NamedLayer;
+import org.opengis.feature.Feature;
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
@@ -70,6 +73,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 public class SLDClassifier {
     
     private ClassifierCommand _command = null;
+    private String _wfsngTypeName = null;
     private StyledLayerDescriptor _sld = null;
     private Map<String, UsernamePasswordCredentials> _credentials;
     
@@ -83,19 +87,29 @@ public class SLDClassifier {
      * @param command ClassifierCommand provides the type of classification and display
      * @throws DocServiceException When client request is not valid
      */
-    public SLDClassifier(Map<String, UsernamePasswordCredentials> credentials, final ClassifierCommand command, WFSDataStoreFactory fac) throws DocServiceException {
+    public SLDClassifier(Map<String, UsernamePasswordCredentials> credentials, final ClassifierCommand command,
+            WFSDataStoreFactory fac) throws DocServiceException {
         this._credentials = credentials;
-            _command = command;
-            if (fac != null)
-            	_factory = fac;
-            // turn off logger
-            Handler[] handlers = Logger.getLogger("").getHandlers();
-            for (int index = 0; index < handlers.length; index++ ) {
-                handlers[index].setLevel( Level.OFF );
-            }
-            
-            // start directly the classification
-            doClassification();
+
+        // wfs-ng specific: If we do not have the prefix URL, then we need to
+        // use a typename as string where the ":" has been replaced by an
+        // underscore. Since we expect the controller to be called with the
+        // "prefix:layername" pattern and we do not want to add an extra logic
+        // to get the prefix URL in the code, we replace the character by hand.
+
+        _wfsngTypeName = command.getFeatureTypeName().replaceFirst(":", "_");
+        _command = command;
+        if (fac != null) {
+            _factory = fac;
+        }
+        // turn off logger
+        Handler[] handlers = Logger.getLogger("").getHandlers();
+        for (int index = 0; index < handlers.length; index++) {
+            handlers[index].setLevel(Level.OFF);
+        }
+
+        // start directly the classification
+        doClassification();
     }
 
 	/**
@@ -112,6 +126,8 @@ public class SLDClassifier {
         SLDTransformer aTransformer = new SLDTransformer();
         aTransformer.setIndentation(4);
         String xml = "";
+        // BUG: this code can certainly cause some issues in a global context
+        // (think other webapps like GeoNetwork in the same servlet container).
         String oldTransformer = System.getProperty("javax.xml.transform.TransformerFactory");
         try {        
             System.setProperty("javax.xml.transform.TransformerFactory", org.apache.xalan.processor.TransformerFactoryImpl.class.getName());
@@ -136,17 +152,18 @@ public class SLDClassifier {
         try {
             
             // connect to the remote WFS
-            WFSDataStore wfs = connectToWFS(_command.getWFSUrl());
+            WFSContentDataStore wfs = connectToWFS(_command.getWFSUrl());
             
             // check if property name exists
-            int index = wfs.getSchema(_command.getFeatureTypeName()).indexOf(_command.getPropertyName());
+            SimpleFeatureType ft = wfs.getSchema(_wfsngTypeName);
+            int index = ft.indexOf(_command.getPropertyName());
             if(index == -1) {
                 throw new DocServiceException(_command.getPropertyName() + " is not an attribute of " + _command.getFeatureTypeName(),
                         HttpServletResponse.SC_BAD_REQUEST);
             }
                        
             // Load all the features
-            FeatureSource<SimpleFeatureType, SimpleFeature> source = wfs.getFeatureSource(_command.getFeatureTypeName());
+            FeatureSource<SimpleFeatureType, SimpleFeature> source = wfs.getFeatureSource(_wfsngTypeName);
             FeatureCollection<SimpleFeatureType, SimpleFeature> featuresCollection = source.getFeatures();
 
             // We need a display (Symbolizers) and a value (Filters) fatories to generate a SLD file
@@ -320,11 +337,11 @@ public class SLDClassifier {
      * @param wfs datastore
      * @return data type as Class
      */
-    private Class<?> getDataType(WFSDataStore wfs) {
+    private Class<?> getDataType(WFSContentDataStore wfs) {
         SimpleFeatureType schema;
         Class<?> clazz = null;
         try {
-            schema = wfs.getSchema(_command.getFeatureTypeName()); // get schema
+            schema = wfs.getSchema(_wfsngTypeName); // get schema
             clazz = schema.getType(_command.getPropertyName()).getBinding(); // get data type as Class
         } catch (IOException e) {
             e.printStackTrace();
@@ -342,8 +359,8 @@ public class SLDClassifier {
      * @throws DocServiceException 
      */
     @SuppressWarnings("unchecked")
-    private WFSDataStore connectToWFS(final URL wfsUrl) throws DocServiceException {   
-        WFSDataStore wfs = null;
+    private WFSContentDataStore connectToWFS(final URL wfsUrl) throws DocServiceException {   
+    	WFSContentDataStore wfs = null;
         Map m = new HashMap();
         try {
             UsernamePasswordCredentials credentials = findCredentials(wfsUrl);
@@ -359,7 +376,7 @@ public class SLDClassifier {
             m.put(WFSDataStoreFactory.ENCODING, "UTF-8"); // try to force UTF-8
             // TODO : configurable ?
             m.put(WFSDataStoreFactory.MAXFEATURES.key, 2000);
-            wfs = _factory.createDataStore(m);     
+            wfs = _factory.createDataStore(m);
         } 
         catch(SocketTimeoutException e) {
             throw new DocServiceException("WFS is unavailable", HttpServletResponse.SC_GATEWAY_TIMEOUT);
@@ -458,6 +475,7 @@ public class SLDClassifier {
         
         // add named layer
         NamedLayer layer = styleFactory.createNamedLayer();
+        // wfs-ng: ensures we recover the correct typename
         layer.setName(_command.getFeatureTypeName());    // name must match the layer name
         fts.setName(_command.getFeatureTypeName());
         sld.addStyledLayer(layer);
