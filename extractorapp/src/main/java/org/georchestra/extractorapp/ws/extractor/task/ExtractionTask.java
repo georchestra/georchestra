@@ -160,8 +160,6 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 				}
 			}
 
-			closeFailuresFile(failureFile);
-
 			File archive = archiveExtraction(tmpExtractionBundle);
 			long fileSize = archive.length();
 			long end = System.currentTimeMillis();
@@ -273,12 +271,6 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 					+ EXTRACTION_ATTEMPTS
 					+ " times.\n\n";
 			writeToFile(failureFile, msg, false);
-		}
-	}
-
-	private void closeFailuresFile(File failureFile) {
-		if (failureFile.exists()) {
-			writeToFile(failureFile, "</ul></body></html>", true);
 		}
 	}
 
