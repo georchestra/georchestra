@@ -1,5 +1,7 @@
 BEGIN;
 
+SET search_path TO ogcstatistics,public,pg_catalog;
+
 CREATE OR REPLACE FUNCTION get_partition_table(my_date date)
   RETURNS character varying AS
 $BODY$
@@ -70,10 +72,10 @@ LANGUAGE plpgsql;
 
 
 -- Prevent application to add records to old version of ogc_services_log table
-ALTER TABLE ogcstatistics.ogc_services_log RENAME TO ogc_services_log_old;
+ALTER TABLE ogc_services_log RENAME TO ogc_services_log_old;
 
 -- Create new version of ogc_services_log table
-CREATE TABLE ogcstatistics.ogc_services_log(
+CREATE TABLE ogc_services_log(
   user_name character varying(255),
   date timestamp without time zone,
   service character varying(5),
@@ -86,7 +88,7 @@ CREATE TABLE ogcstatistics.ogc_services_log(
 
 
 CREATE TRIGGER insert_stat_trigger
-    BEFORE INSERT ON ogcstatistics.ogc_services_log
+    BEFORE INSERT ON ogc_services_log
     FOR EACH ROW EXECUTE PROCEDURE insert_stat_trigger_function();
 
 COMMIT;
