@@ -52,28 +52,23 @@ conn.search(search_base = GROUPS_DN,
             attributes = ['cn', 'member'])
 
 usersGroups = {}
-print("""
 
-Browsing Groups 
+# Browsing Groups 
 
-""")
 for entry in conn.entries:
-    print("Group found : %s" % entry.cn)
+    #print("Group found : %s" % entry.cn)
     try:
         for user in entry.member.values:
             if user not in usersGroups:
                 usersGroups[user] = [entry.cn.value]
             else:
                 usersGroups[user].append(entry.cn.value)
-            print("\tUser found : %s" % user)
+            #print("\tUser found : %s" % user)
     except LDAPKeyError:
         continue
 
-print("""
-
-Listing groups *by users*
-
-""")    
+# Listing groups *by users*
+  
 sqlUpdates = {}
 for key in usersGroups:
     user = key
@@ -81,15 +76,17 @@ for key in usersGroups:
     user = matches.group(1)
     members = usersGroups[key]
     sqlUpdates[user] = "ARRAY['" + "','".join(members) + "']"
-    print("User %s in groups : '%s'" % (user, "','".join(members)))
+    #print("User %s in groups : '%s'" % (user, "','".join(members)))
 
-print("""
+# Final SQL queries to insert in SQL file
 
-Final SQL queries to insert in SQL file
 
-""")
+print "BEGIN;"
+print "ALTER TABLE ogcstatistics.ogc_services_log_old ADD COLUMN roles text[];"
+
 for user in sqlUpdates:
     value = sqlUpdates[user]
     print ("UPDATE ogcstatistics.ogc_services_log_old SET roles = %s WHERE user_name = '%s';" % (value, user))
 
- 
+print "INSERT INTO ogcstatistics.ogc_services_log SELECT * FROM ogcstatistics.ogc_services_log_old;"
+print "COMMIT;"
