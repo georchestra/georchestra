@@ -60,7 +60,7 @@ wget https://raw.githubusercontent.com/georchestra/georchestra/15.12/ogc-server-
 psql -d georchestra -f /tmp/update_to_1512.sql
 psql -d georchestra -f /tmp/ogc-server-statistics-migration.sql
 ```
-
+Please note that the last step might take a very long time, depending on your database size.
 
 
 Version 15.06
