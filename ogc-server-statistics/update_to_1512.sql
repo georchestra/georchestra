@@ -2,7 +2,9 @@ BEGIN;
 
 SET search_path TO ogcstatistics,public,pg_catalog;
 
-CREATE OR REPLACE FUNCTION get_partition_table(my_date date)
+DROP FUNCTION IF EXISTS get_partition_table(date);
+
+CREATE OR REPLACE FUNCTION get_partition_table(my_date timestamp without time zone)
   RETURNS character varying AS
 $BODY$
 DECLARE
@@ -47,7 +49,7 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE;
 
-COMMENT ON FUNCTION get_partition_table(date) IS 'Table name that correspond to specified date, also create this table if it does not exists';
+COMMENT ON FUNCTION get_partition_table(timestamp without time zone) IS 'Table name that correspond to specified date, also create this table if it does not exists';
 
 
 
