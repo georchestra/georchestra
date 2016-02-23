@@ -5,9 +5,10 @@
 BEGIN;
 
 CREATE SCHEMA ogcstatistics;
+SET search_path TO ogcstatistics,public,pg_catalog;
 
 -- Create new version of ogc_services_log table
-CREATE TABLE ogcstatistics.ogc_services_log(
+CREATE TABLE ogc_services_log(
   user_name character varying(255),
   date timestamp without time zone,
   service character varying(5),
@@ -88,7 +89,7 @@ LANGUAGE plpgsql;
 
 
 CREATE TRIGGER insert_stat_trigger
-    BEFORE INSERT ON ogcstatistics.ogc_services_log
+    BEFORE INSERT ON ogc_services_log
     FOR EACH ROW EXECUTE PROCEDURE insert_stat_trigger_function();
 
 COMMIT;
