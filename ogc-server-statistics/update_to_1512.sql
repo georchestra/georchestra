@@ -59,7 +59,7 @@ DECLARE
 	table_name character varying;
 BEGIN
 
-	table_name := get_partition_table(NEW.date);
+	table_name := ogcstatistics.get_partition_table(NEW.date);
 
 	-- insert record in child table
 	EXECUTE 'INSERT INTO ' || table_name || ' VALUES ($1.*)' USING NEW;
