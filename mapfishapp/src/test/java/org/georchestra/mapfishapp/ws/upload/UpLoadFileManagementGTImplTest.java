@@ -6,11 +6,8 @@ package org.georchestra.mapfishapp.ws.upload;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
-import static org.junit.Assume.assumeNoException;
+import static org.junit.Assume.assumeFalse;
 
-
-import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URL;
@@ -22,8 +19,7 @@ import org.geotools.referencing.CRS;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.Assume;
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
 import org.opengis.feature.simple.SimpleFeature;
 
@@ -43,6 +39,21 @@ public class UpLoadFileManagementGTImplTest {
         System.setProperty("org.geotools.referencing.forceXY", "true");
     }
 
+    @Before
+    public void setUp() {
+        // If travis-ci is detected, deactivate.
+        //
+        // we know that the JVM will crash, and our own CI with Jenkins will
+        // handle the test correctly anyway.
+        //
+        // see:
+        // https://github.com/travis-ci/travis-ci/issues/5599#issuecomment-182085831
+        String onTravisCi = System.getenv("TRAVIS");
+        if (onTravisCi != null) {
+            assumeFalse("Travis-ci detected, skipping test",
+                    onTravisCi.equalsIgnoreCase("true"));
+        }
+    }
     /**
      * Test method for
      * {@link mapfishapp.ws.upload.UpLoadFileManagement#getFeatureCollectionAsJSON()}
