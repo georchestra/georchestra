@@ -23,10 +23,10 @@ git push origin 13.12
 
 There's nothing more to do here !
 
-## LDAP
+## Datadir
 
 Same as above !
-We have to create a dedicated branch for the new release.
+We have to create a dedicated branch in https://github.com/georchestra/datadir for the new release.
 
 ## GeoNetwork
 
