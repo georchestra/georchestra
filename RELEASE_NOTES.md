@@ -7,7 +7,7 @@ Version 15.12
 =============
 
 This release received important contributions from the community. 
-The major one being that the project delivers generic artifacts (WARs, Debian & RPM packages, Docker images), which allow for a wider distribution by removing the need of compilation.
+The major one being that the project delivers generic artifacts (WARs, Debian & RPM packages, Docker images), which allow for a wider distribution by removing the need for compilation.
 A strong focus was also laid on infrastructure, with the integration of the [docker image generation process](https://github.com/georchestra/georchestra/issues/1178) in the main repository and also with the [automation of the install process allowed by ansible](https://github.com/georchestra/ansible).
 
 
@@ -16,21 +16,29 @@ New features:
  * docker images [#1178](https://github.com/georchestra/georchestra/issues/1178)
  * geonetwork 3.0.4 integration [#1120](https://github.com/georchestra/georchestra/issues/1120)
  * geoserver 2.8.2 and geofence 3 integration [#1135](https://github.com/georchestra/georchestra/issues/1135)
- * osm2geor addon [#1031](https://github.com/georchestra/georchestra/pull/1031) & [#1074](https://github.com/georchestra/georchestra/issues/1074) & [README](https://github.com/georchestra/georchestra/blob/15.12/mapfishapp/src/main/webapp/app/addons/osm2geor/README.md)
- * fullscreen addon [#981](https://github.com/georchestra/georchestra/issues/981) & [README](https://github.com/georchestra/georchestra/blob/15.12/mapfishapp/src/main/webapp/app/addons/fullscreen/README.md)
+ * geowebcache standalone 1.8.0 integration
+ * osm2geor addon [#1031](https://github.com/georchestra/georchestra/pull/1031) & [#1074](https://github.com/georchestra/georchestra/issues/1074) & [README](mapfishapp/src/main/webapp/app/addons/osm2geor/README.md)
+ * fullscreen addon [#981](https://github.com/georchestra/georchestra/issues/981) & [README](mapfishapp/src/main/webapp/app/addons/fullscreen/README.md)
+ * locateme addon [#1079](https://github.com/georchestra/georchestra/pull/1079) & [README](mapfishapp/src/main/webapp/app/addons/locateme/README.md)
  * mapfishapp: simplified metadata view [#1016](https://github.com/georchestra/georchestra/issues/1016)
- * mapfishapp: dynamic contexts and addons discovery [#40](https://github.com/georchestra/georchestra/issues/40)
+ * mapfishapp: dynamic contexts and addons discovery [#40](https://github.com/georchestra/georchestra/issues/40) & [#1255](https://github.com/georchestra/georchestra/pull/1255)
+ * ldapadmin: export to CSV or Vcard [#1104](https://github.com/georchestra/georchestra/pull/1104)
  
 Enhancements:
  * extractorapp and mapfishapp now use the `wfs-ng` geotools module: [#1267](https://github.com/georchestra/georchestra/pull/1267)
  * analytics: improved performance on huge databases [#556](https://github.com/georchestra/georchestra/issues/556)
  * ogc-server-statistics: logs user roles too [#1108](https://github.com/georchestra/georchestra/issues/1108)
- * ldapadmin: sends an email to user when his id was changed by an administrator
+ * ldapadmin: administrator can modify a user's `uid` and the user is informed by email [#1109](https://github.com/georchestra/georchestra/pull/1109)
  * ldapadmin: new `TEMPORARY` virtual group, holding users from the `shadowAccount` objectClass with a `shadowExpire` attribute.
  * header: new sub-menu dedicated to administrators [#1010](https://github.com/georchestra/georchestra/issues/1010)
  * mapfishapp: improved addons init [#1006](https://github.com/georchestra/georchestra/issues/1006)
+ * mapfishapp: measurement tools are now an addon, see the [README](mapfishapp/src/main/webapp/app/addons/measure/README.md)
+ * mapfishapp: layergroup detection and reduced functionalities [#1091](https://github.com/georchestra/georchestra/pull/1091)
+ * extractorapp: text file for failure instead of html file [#1272](https://github.com/georchestra/georchestra/pull/1272)
  * security-proxy: does not require clients presenting the `jakarta` or `java` user-agent to provide a valid basic auth [#960](https://github.com/georchestra/georchestra/issues/960)
+ * security-proxy: fix UA matching/authorization checking flow [#1188](https://github.com/georchestra/georchestra/pull/1188)
  * ldap: search fields indexed [#881](https://github.com/georchestra/georchestra/issues/881)
+ * dev: add configuration to run geOrchestra with multiple jetty instances [#1112](https://github.com/georchestra/georchestra/pull/1112)
  
 Bug fixes:
  * security-proxy: fixed a long-standing issue with sessions [#1069](https://github.com/georchestra/georchestra/issues/1069). They now last 24 hours by default [#1177](https://github.com/georchestra/georchestra/issues/1177)
@@ -38,6 +46,11 @@ Bug fixes:
  * ldapadmin: blanking a field is now allowed [#1086](https://github.com/georchestra/georchestra/issues/1086)
  * ldapadmin: now allows using the plus char in email address [#1128](https://github.com/georchestra/georchestra/issues/1128)
  * ldapadmin: fixed SMTP servers refusing ICMP protocols makes the deploy fail [#991](https://github.com/georchestra/georchestra/issues/991)
+ * ldapadmin: fixed group filter not applying correctly on selections [56e350](https://github.com/georchestra/georchestra/commit/56e35057f7a347faee4fd4f117ca5138b4897d4a)
+ * ldapadmin: members of the PENDING group are not able to reset their password anymore [#1002](https://github.com/georchestra/georchestra/issues/1002)
+ * ldapadmin: API returns json content-type [#1115](https://github.com/georchestra/georchestra/issues/1115)
+ * ldapadmin: fixed encoding of email in URL [#1129](https://github.com/georchestra/georchestra/pull/1129)
+ * ldapadmin: set restangular version in CDN [#1270](https://github.com/georchestra/georchestra/issues/1270)
 
 According to our release policy, geOrchestra 14.06 is not supported anymore.
 
@@ -56,7 +69,7 @@ This folder will generally be `/etc/georchestra` and the webapps will be aware o
 Packages provide:
  * the WAR files, typically in `/usr/share/lib/georchestra-MODULENAME/`,
  * their own copy of the `/etc/georchestra` folder.
-If using packages, it is your responsibility to symlinks WAR files in your tomcat `webapps` folder, for automatic deployment of the webapps.
+If using packages, it is your responsibility to symlink WAR files in your tomcat `webapps` folder, for automatic deployment of the webapps.
 
 Keep in mind that the default configurations (either "template config" or "data dir") consider that geOrchestra runs on a SSL-enabled server. If this is not the case, please check carefully your datadir with [#1123](https://github.com/georchestra/georchestra/issues/1123) in mind.
 
