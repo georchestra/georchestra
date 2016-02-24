@@ -6,16 +6,66 @@ This branch receives bug fixes as they arrive, during 6 months at least.
 Version 15.12
 =============
 
+This release received important contributions from the community. 
+The major one being that the project delivers generic artifacts (WARs, Debian & RPM packages, Docker images), which allow for a wider distribution by removing the need of compilation.
+A strong focus was also laid on infrastructure, with the integration of the [docker image generation process](https://github.com/georchestra/georchestra/issues/1178) in the main repository and also with the [automation of the install process allowed by ansible](https://github.com/georchestra/ansible).
+
+
+New features:
+ * generic wars [#94](https://github.com/georchestra/georchestra/issues/94) and [build.georchestra.org](https://build.georchestra.org/)
+ * docker images [#1178](https://github.com/georchestra/georchestra/issues/1178)
+ * geonetwork 3.0.4 integration [#1120](https://github.com/georchestra/georchestra/issues/1120)
+ * geoserver 2.8.2 and geofence 3 integration [#1135](https://github.com/georchestra/georchestra/issues/1135)
+ * osm2geor addon [#1031](https://github.com/georchestra/georchestra/pull/1031) & [#1074](https://github.com/georchestra/georchestra/issues/1074) & [README](https://github.com/georchestra/georchestra/blob/15.12/mapfishapp/src/main/webapp/app/addons/osm2geor/README.md)
+ * fullscreen addon [#981](https://github.com/georchestra/georchestra/issues/981) & [README](https://github.com/georchestra/georchestra/blob/15.12/mapfishapp/src/main/webapp/app/addons/fullscreen/README.md)
+ * mapfishapp: simplified metadata view [#1016](https://github.com/georchestra/georchestra/issues/1016)
+ * mapfishapp: dynamic contexts and addons discovery [#40](https://github.com/georchestra/georchestra/issues/40)
+ 
+Enhancements:
+ * extractorapp and mapfishapp now use the `wfs-ng` geotools module: [#1267](https://github.com/georchestra/georchestra/pull/1267)
+ * analytics: improved performance on huge databases [#556](https://github.com/georchestra/georchestra/issues/556)
+ * ogc-server-statistics: logs user roles too [#1108](https://github.com/georchestra/georchestra/issues/1108)
+ * ldapadmin: sends an email to user when his id was changed by an administrator
+ * ldapadmin: new `TEMPORARY` virtual group, holding users from the `shadowAccount` objectClass with a `shadowExpire` attribute.
+ * header: new sub-menu dedicated to administrators [#1010](https://github.com/georchestra/georchestra/issues/1010)
+ * mapfishapp: improved addons init [#1006](https://github.com/georchestra/georchestra/issues/1006)
+ * security-proxy: does not require clients presenting the `jakarta` or `java` user-agent to provide a valid basic auth [#960](https://github.com/georchestra/georchestra/issues/960)
+ * ldap: search fields indexed [#881](https://github.com/georchestra/georchestra/issues/881)
+ 
+Bug fixes:
+ * security-proxy: fixed a long-standing issue with sessions [#1069](https://github.com/georchestra/georchestra/issues/1069). They now last 24 hours by default [#1177](https://github.com/georchestra/georchestra/issues/1177)
+ * ogc-server-statistics: does not log OGC requests to external servers anymore [#1058](https://github.com/georchestra/georchestra/issues/1058)
+ * ldapadmin: blanking a field is now allowed [#1086](https://github.com/georchestra/georchestra/issues/1086)
+ * ldapadmin: now allows using the plus char in email address [#1128](https://github.com/georchestra/georchestra/issues/1128)
+ * ldapadmin: fixed SMTP servers refusing ICMP protocols makes the deploy fail [#991](https://github.com/georchestra/georchestra/issues/991)
+
+According to our release policy, geOrchestra 14.06 is not supported anymore.
 
 
 ### UPGRADING:
+
+When upgrading your instance, you need to choose between the following alternatives:
+ * you can go on compiling from the sources, using a "config directory" deriving from the [georchestra/template](https://github.com/georchestra/template) repository we provide (using branch 15.12 !),
+ * you can use the generic WARs we provide on [build.georchestra.org/wars](http://build.georchestra.org/wars/),
+ * you can use the packages we provide for Debian, CentOS or RedHat on [build.georchestra.org](http://build.georchestra.org/),
+ * you can build on the docker images we provide on [hub.docker.com](https://hub.docker.com/r/georchestra/).
+
+Generic WARs expect to find their configuration in a folder, typically bootstrapped from the content of the [georchestra/datadir](https://github.com/georchestra/datadir/) repository (branch 15.12 !).
+This folder will generally be `/etc/georchestra` and the webapps will be aware of this location through the use of the tomcat additional parameter `-Dgeorchestra.datadir=/etc/georchestra`.
+
+Packages provide:
+ * the WAR files, typically in `/usr/share/lib/georchestra-MODULENAME/`,
+ * their own copy of the `/etc/georchestra` folder.
+If using packages, it is your responsibility to symlinks WAR files in your tomcat `webapps` folder, for automatic deployment of the webapps.
+
+Keep in mind that the default configurations (either "template config" or "data dir") consider that geOrchestra runs on a SSL-enabled server. If this is not the case, please check carefully your datadir with [#1123](https://github.com/georchestra/georchestra/issues/1123) in mind.
 
  * Mapfishapp has been revamped to allow dynamic customization of addons and contexts. This means that 2 new controllers are now responsible of the JSON blocks that were previously present in the GEOR_custom.js file. As a result, it introduced some stricter conventions that have to be respected so that the controllers can function correctly.
  
    *  in case of datadir-mode, contexts have to be stored either in <georchestra.datadir>/mapfishapp/contexts/context.wmc accompagnied by an picture in <georchestra.datadir>/mapfishapp/contexts/images/context.jpg or png (or in the root of the webapp, in the contexts/ subdirectory, in case of non-datadir mode).
    *  Addons have to be stored either in <georchestra.datadir>/mapfishapp/addons/ or in the app/addons/ subdirectory of the webapp. In case of non-datadir mode, only the ones nested in the webapp are taken into account, in case of datadir-mode, both directories are scanned and the resulting JSON blocks are merged for the 2 directories, letting the possibility to override using the datadir (which takes precedence).
 
- * As a result of [#1040](https://github.com/georchestra/georchestra/pull/1040), LDAP groups are now ```groupOfMembers``` instances rather than ```groupOfNames``` instances. In addition, the ```PENDING_USERS``` group was renamed. You have to migrate your LDAP tree, according to the following procedure (please change the ```dc=georchestra,dc=org``` string for your own base DN and provide a suitable password):
+ * As a result of [#1040](https://github.com/georchestra/georchestra/pull/1040), LDAP groups are now ```groupOfMembers``` instances rather than ```groupOfNames``` instances. In addition, the ```PENDING_USERS``` group was renamed to ```PENDING```. You have to migrate your LDAP tree, according to the following procedure (please change the ```dc=georchestra,dc=org``` string for your own base DN and provide a suitable password):
    * dump your ldap **groups** with:
    ```
    ldapsearch -H ldap://localhost:389 -xLLL -D "cn=admin,dc=georchestra,dc=org" -w your_ldap_password -b "ou=groups,dc=georchestra,dc=org" > /tmp/groups.ldif
