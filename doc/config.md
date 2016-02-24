@@ -11,7 +11,7 @@ cd ~/myprofile
 git remote rename origin upstream
 ```
 
-First thing to note is that you end up in the stable branch (15.06) matching the latest stable geOrchestra version (also 15.06).
+First thing to note is that you end up in the stable branch (15.12) matching the latest stable geOrchestra version (also 15.12).
 This is exactly what we want, nice !
 
 Remember: every stable geOrchestra version has its own template configuration, hosted in a branch named by the release version.
@@ -23,7 +23,7 @@ This is something to keep in mind when [upgrading](how_to_upgrade.md).
 Let's see what the template configuration looks like:
 
 ```
-user@computer:~/myprofile (15.06)$ tree -L 1
+user@computer:~/myprofile (15.12)$ tree -L 1
 .
 ├── analytics
 ├── build_support
