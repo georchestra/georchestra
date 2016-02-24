@@ -59,8 +59,9 @@ Finally, execute the two migration scripts:
 wget https://raw.githubusercontent.com/georchestra/georchestra/15.12/ogc-server-statistics/update_to_1512.sql -O /tmp/update_to_1512.sql
 psql -d georchestra -f /tmp/update_to_1512.sql
 psql -d georchestra -f /tmp/ogc-server-statistics-migration.sql
+psql -d georchestra -c "grant all on ogcstatistics.ogc_services_log to \"www-data\"";
 ```
-Please note that the last step might take a very long time, depending on your database size.
+Please note that the `ogc-server-statistics-migration.sql` script might take a very long time, depending on your database size.
 
 
 Version 15.06
