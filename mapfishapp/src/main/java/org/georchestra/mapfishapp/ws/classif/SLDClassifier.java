@@ -121,26 +121,14 @@ public class SLDClassifier {
         if (_sld == null) {
             throw new RuntimeException("sld has not been generated yet");
         }
-        
         // transform SLD object into String
         SLDTransformer aTransformer = new SLDTransformer();
         aTransformer.setIndentation(4);
-        String xml = "";
-        // BUG: this code can certainly cause some issues in a global context
-        // (think other webapps like GeoNetwork in the same servlet container).
-        String oldTransformer = System.getProperty("javax.xml.transform.TransformerFactory");
-        try {        
-            System.setProperty("javax.xml.transform.TransformerFactory", org.apache.xalan.processor.TransformerFactoryImpl.class.getName());
-            xml = aTransformer.transform(_sld);
+        try {
+            return aTransformer.transform(_sld);
         } catch (TransformerException e) {
-            e.printStackTrace();
-        } finally {
-            if(oldTransformer != null) {
-                System.setProperty("javax.xml.transform.TransformerFactory", oldTransformer);
-            }
+            throw new RuntimeException(e);
         }
-        
-        return xml;
     }
 
     /**
