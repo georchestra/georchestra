@@ -3,7 +3,7 @@
 
 geOrchestra is a complete **Spatial Data Infrastructure** solution.
 
-It features a **metadata catalog** (GeoNetwork 2.10), an **OGC server** (GeoServer 2.5.4 and GeoWebCache 1.5.4) with fine-grained access control (based on GeoFence), an **advanced viewer and editor**, an **extractor** and **many more** (security and auth system based on proxy/CAS/LDAP, analytics, admin UIs, ...)
+It features a **metadata catalog** (GeoNetwork 3.0.4), an **OGC server** (GeoServer 2.8.2 and GeoWebCache 1.8.0) with fine-grained access control (based on GeoFence), an **advanced viewer and editor**, an **extractor** and **many more** (security and auth system based on proxy/CAS/LDAP, analytics, admin UIs, ...)
 
 ## Releases
 

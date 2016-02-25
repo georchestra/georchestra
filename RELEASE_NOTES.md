@@ -35,8 +35,8 @@ Enhancements:
  * mapfishapp: measurement tools are now an addon, see the [README](mapfishapp/src/main/webapp/app/addons/measure/README.md)
  * mapfishapp: layergroup detection and reduced functionalities [#1091](https://github.com/georchestra/georchestra/pull/1091)
  * extractorapp: text file for failure instead of html file [#1272](https://github.com/georchestra/georchestra/pull/1272)
- * security-proxy: does not require clients presenting the `jakarta` or `java` user-agent to provide a valid basic auth [#960](https://github.com/georchestra/georchestra/issues/960)
- * security-proxy: fix UA matching/authorization checking flow [#1188](https://github.com/georchestra/georchestra/pull/1188)
+ * security-proxy: does not require clients presenting the `jakarta` or `apache-httpclient` user-agent to provide a valid basic auth [#960](https://github.com/georchestra/georchestra/issues/960)
+ * security-proxy: fix user-agent matching/authorization checking flow [#1188](https://github.com/georchestra/georchestra/pull/1188)
  * ldap: search fields indexed [#881](https://github.com/georchestra/georchestra/issues/881)
  * dev: add configuration to run geOrchestra with multiple jetty instances [#1112](https://github.com/georchestra/georchestra/pull/1112)
  
