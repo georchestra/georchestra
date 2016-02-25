@@ -64,6 +64,9 @@ GEOR.Addons.OSMSearchPlaces = Ext.extend(GEOR.Addons.Base, {
             if( query[i] == 'n' || query[i] == 'N' ) {
                 computedQuery += 'Ññ';
             }
+            if( query[i] == ' ' ) {
+                computedQuery += ' -';
+            }
             computedQuery += ']';
         }
         return computedQuery;
