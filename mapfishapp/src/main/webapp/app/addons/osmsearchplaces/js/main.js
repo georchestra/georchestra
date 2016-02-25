@@ -86,9 +86,14 @@ GEOR.Addons.OSMSearchPlaces = Ext.extend(GEOR.Addons.Base, {
             return false;
         }
         
-        var overpassQuery = 'way["name"~"'+this._computeQuery(event.query)+'"]';
+        var overpassQuery = '(';
+        overpassQuery += 'way["name"~"'+this._computeQuery(event.query)+'"]';
         overpassQuery += '('+this.options.boundingbox.minlat+','+this.options.boundingbox.minlon+','
             +this.options.boundingbox.maxlat+','+this.options.boundingbox.maxlon+');';
+        overpassQuery += 'node["name"~"'+this._computeQuery(event.query)+'"]';
+        overpassQuery += '('+this.options.boundingbox.minlat+','+this.options.boundingbox.minlon+','
+            +this.options.boundingbox.maxlat+','+this.options.boundingbox.maxlon+');';
+        overpassQuery += ');';
         overpassQuery += 'out tags '+this.options.limit+';';
         
         var store = new Ext.data.ArrayStore({fields: ['display', 'geometry'], idIndex: 0, autoLoad: false});
