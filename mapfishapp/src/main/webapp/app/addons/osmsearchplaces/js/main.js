@@ -4,6 +4,12 @@
 
 Ext.namespace("GEOR.Addons");
 
+Array.prototype.caseInsensitiveIndexOf = function (searchElement, fromIndex) {
+    return this.map(function (value) {
+        return value.toLowerCase();
+    }).indexOf(searchElement.toLowerCase(), fromIndex);
+};
+
 GEOR.Addons.OSMSearchPlaces = Ext.extend(GEOR.Addons.Base, {
     win: null,
     addressField: null,
@@ -97,12 +103,21 @@ GEOR.Addons.OSMSearchPlaces = Ext.extend(GEOR.Addons.Base, {
             },
             scope: this,
             success: function(respon,opt){
-                var waysList = respon.responseXML.getElementsByTagName("way"), searchTerms = [];
+                var waysList = respon.responseXML.getElementsByTagName("way"), nodeList = respon.responseXML.getElementsByTagName("node"), searchTerms = [];
                 for (var i = 0; i < waysList.length; i++) {
                     var nameTags = waysList[i].querySelectorAll("tag[k=name]");
                     if( nameTags.length > 0 ) {
                         var name = nameTags[0].getAttribute("v");
-                        if( searchTerms.indexOf(name) == -1 ) {
+                        if( searchTerms.caseInsensitiveIndexOf(name) == -1 ) {
+                            searchTerms.push(name);
+                        }
+                    }
+                }
+                for (var i = 0; i < nodeList.length; i++) {
+                    var nameTags = nodeList[i].querySelectorAll("tag[k=name]");
+                    if( nameTags.length > 0 ) {
+                        var name = nameTags[0].getAttribute("v");
+                        if( searchTerms.caseInsensitiveIndexOf(name) == -1 ) {
                             searchTerms.push(name);
                         }
                     }
