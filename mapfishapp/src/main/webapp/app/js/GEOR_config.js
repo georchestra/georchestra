@@ -480,7 +480,7 @@ GEOR.config = (function() {
          * Note that it is possible to restrict search to an admin area
          * by specifying either an adminCode1 or adminCode2 or adminCode3
          * See http://download.geonames.org/export/dump/admin1CodesASCII.txt for adminCode1
-         * Aquitaine matches '97' while Bretagne (Brittany) matches 'A2'
+         * Aquitaine-Limousin-Poitou-Charentes matches '75' while Bretagne (Brittany) matches '53'
          */
         GEONAMES_FILTERS: getCustomParameter("GEONAMES_FILTERS", {
             username: 'georchestra', // please replace this username by yours !
@@ -488,7 +488,7 @@ GEOR.config = (function() {
             // It is then required to enable your account to query the free web services
             // by visiting http://www.geonames.org/manageaccount
             country: 'FR',         // France
-            //adminCode1: '97',    // Region
+            //adminCode1: '75',    // Region
             style: 'short',        // verbosity of results
             lang: 'fr',
             featureClass: 'P',     // class category: populated places
