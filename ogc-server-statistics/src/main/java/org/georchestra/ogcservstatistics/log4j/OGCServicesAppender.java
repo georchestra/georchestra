@@ -221,7 +221,6 @@ public class OGCServicesAppender extends AppenderSkeleton {
 			if (OGCServiceParser.isOGCService(event)) {
 
 				String msg = event.getRenderedMessage();
-
 				List<Map<String, Object>> logList = OGCServiceParser.parseLog(msg);
 				
 				for (Map<String, Object> log : logList) {
@@ -232,7 +231,7 @@ public class OGCServicesAppender extends AppenderSkeleton {
 				} 
 			} 
 		} catch (Exception ex) {
-			errorHandler.error("Failed to insert the ogc service reocrd", ex,
+			errorHandler.error("Failed to insert the ogc service record", ex,
 					ErrorCode.WRITE_FAILURE);
 		}
 	}

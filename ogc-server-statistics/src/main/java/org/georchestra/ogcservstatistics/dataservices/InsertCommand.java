@@ -19,6 +19,8 @@
 
 package org.georchestra.ogcservstatistics.dataservices;
 
+import org.georchestra.ogcservstatistics.log4j.OGCServiceParser;
+
 import java.sql.Array;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -32,17 +34,14 @@ import java.util.Map;
  */
 public final class InsertCommand extends AbstractDataCommand {
 
-	
-	public final static String DATE_COLUMN = "date";
-	public final static String USER__COLUMN = "user_name";
-	public final static String SERVICE_COLUMN = "service";
-	public final static String LAYER_COLUMN = "layer";
-	public final static String REQUEST_COLUMN = "request";
-	public final static String ORG_COLUMN = "org";
-	public final static String SECROLE_COLUMN = "roles";
-
-	
-	private static final String SQL_INSERT= "INSERT INTO ogcstatistics.ogc_services_log("+USER__COLUMN+","+ DATE_COLUMN+ ","+  SERVICE_COLUMN+ "," +LAYER_COLUMN+ "," +REQUEST_COLUMN+ "," +ORG_COLUMN+ ","+SECROLE_COLUMN+") VALUES (?, ?, ?, ?, ?, ?, string_to_array(?, ','))";
+	private static final String SQL_INSERT= "INSERT INTO ogcstatistics.ogc_services_log(" + OGCServiceParser.USER_COLUMN +
+			"," + OGCServiceParser.DATE_COLUMN +
+			"," + OGCServiceParser.SERVICE_COLUMN +
+			"," + OGCServiceParser.LAYER_COLUMN +
+			"," + OGCServiceParser.REQUEST_COLUMN +
+			"," + OGCServiceParser.ORG_COLUMN +
+			"," + OGCServiceParser.SECROLE_COLUMN +
+			") VALUES (?, ?, ?, ?, ?, ?, string_to_array(?, ','))";
 	
 	private Map<String, Object> rowValues;
 	
@@ -57,15 +56,15 @@ public final class InsertCommand extends AbstractDataCommand {
         assert this.connection != null: "database connection is null, use setConnection";
 
         PreparedStatement pStmt = this.connection.prepareStatement(SQL_INSERT);
-        pStmt.setString(1, (String)this.rowValues.get(USER__COLUMN));
-        
-        java.sql.Date sqlDate = new java.sql.Date(((java.util.Date) this.rowValues.get(DATE_COLUMN)).getTime());
-		pStmt.setDate(2, sqlDate);
-		pStmt.setString(3, ((String)this.rowValues.get(SERVICE_COLUMN)).trim());
-        pStmt.setString(4, ((String)this.rowValues.get(LAYER_COLUMN)).trim());
-        pStmt.setString(5, ((String)this.rowValues.get(REQUEST_COLUMN)).trim());
-        pStmt.setString(6, ((String)this.rowValues.get(ORG_COLUMN)).trim());
-        pStmt.setString(7, ((String)this.rowValues.get(SECROLE_COLUMN)).trim());
+        pStmt.setString(1, (String)this.rowValues.get(OGCServiceParser.USER_COLUMN));
+
+		java.sql.Timestamp sqlDate = new java.sql.Timestamp(((java.util.Date) this.rowValues.get(OGCServiceParser.DATE_COLUMN)).getTime());
+		pStmt.setTimestamp(2, sqlDate);
+		pStmt.setString(3, ((String)this.rowValues.get(OGCServiceParser.SERVICE_COLUMN)).trim());
+        pStmt.setString(4, ((String)this.rowValues.get(OGCServiceParser.LAYER_COLUMN)).trim());
+        pStmt.setString(5, ((String)this.rowValues.get(OGCServiceParser.REQUEST_COLUMN)).trim());
+        pStmt.setString(6, ((String)this.rowValues.get(OGCServiceParser.ORG_COLUMN)).trim());
+        pStmt.setString(7, ((String)this.rowValues.get(OGCServiceParser.SECROLE_COLUMN)).trim());
         
 		return pStmt;
 	}
@@ -80,13 +79,8 @@ public final class InsertCommand extends AbstractDataCommand {
         try {
         	this.connection.setAutoCommit(false);
             pStmt = prepareStatement();
-            int updatedRows = pStmt.executeUpdate();
+            pStmt.executeUpdate();
             this.connection.commit();
-            
-            if(updatedRows < 1){
-                throw new DataCommandException("Failed inserting the OGC Service Log. " + pStmt.toString());
-            }
-
         } catch (SQLException e) {
         	if(this.connection != null){
         		try {
