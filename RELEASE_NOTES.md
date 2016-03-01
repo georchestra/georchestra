@@ -117,15 +117,37 @@ python populate_stats_roles.py > /tmp/ogc-server-statistics-migration.sql
 ```
 Check the sql migration file looks good.
 
-Finally, execute the two migration scripts:
+Next step is to execute the two migration scripts:
 ```
 wget https://raw.githubusercontent.com/georchestra/georchestra/15.12/ogc-server-statistics/update_to_1512.sql -O /tmp/update_to_1512.sql
 psql -d georchestra -f /tmp/update_to_1512.sql
 psql -d georchestra -f /tmp/ogc-server-statistics-migration.sql
-psql -d georchestra -c "grant all on ogcstatistics.ogc_services_log to \"www-data\"";
 ```
 Please note that the `ogc-server-statistics-migration.sql` script might take a very long time, depending on your database size.
 
+Finnaly, ensure geOrchestra database user is owner of database. If your database is dedicated to geOrchestra (no other 
+apps are running in same database), you can use following procedure to reset ownership of all objects to selected user, for 
+example ```www-data``` :
+ 
+```
+wget https://raw.githubusercontent.com/georchestra/georchestra/15.12/postgresql/fix-owner.sql -O /tmp/fix-owner.sql
+psql -d georchestra -f /tmp/fix-owner.sql
+psql -d georchestra -c "SELECT change_owner('mapfishapp', 'www-data');";
+psql -d georchestra -c "SELECT change_owner('downloadform', 'www-data');";
+psql -d georchestra -c "SELECT change_owner('ldapadmin', 'www-data');";
+psql -d georchestra -c "SELECT change_owner('ogcstatistics', 'www-data');";
+psql -d georchestra -c "SELECT change_owner('public', 'www-data');";
+```
+
+And if you deploy geofence :
+```
+psql -d georchestra -c "SELECT change_owner('geofence', 'www-data');";
+```
+
+Finnaly, you can drop maintenance function :
+```
+ psql -d georchestra -c "DROP FUNCTION change_owner(text, text);";
+```
 
 Version 15.06
 =============
