@@ -125,7 +125,7 @@ psql -d georchestra -f /tmp/ogc-server-statistics-migration.sql
 ```
 Please note that the `ogc-server-statistics-migration.sql` script might take a very long time, depending on your database size.
 
-Finnaly, ensure geOrchestra database user is owner of database. If your database is dedicated to geOrchestra (no other 
+Finally, ensure geOrchestra database user is owner of database. If your database is dedicated to geOrchestra (no other 
 apps are running in same database), you can use following procedure to reset ownership of all objects to selected user, for 
 example ```www-data``` :
  
@@ -137,6 +137,8 @@ psql -d georchestra -c "SELECT change_owner('downloadform', 'www-data');";
 psql -d georchestra -c "SELECT change_owner('ldapadmin', 'www-data');";
 psql -d georchestra -c "SELECT change_owner('ogcstatistics', 'www-data');";
 psql -d georchestra -c "SELECT change_owner('public', 'www-data');";
+# if you deploy geonetwork :
+psql -d georchestra -c "SELECT change_owner('geonetwork', 'geonetwork');";
 ```
 
 And if you deploy geofence :
@@ -144,7 +146,7 @@ And if you deploy geofence :
 psql -d georchestra -c "SELECT change_owner('geofence', 'www-data');";
 ```
 
-Finnaly, you can drop maintenance function :
+Finally, you can drop maintenance function :
 ```
  psql -d georchestra -c "DROP FUNCTION change_owner(text, text);";
 ```

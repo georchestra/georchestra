@@ -52,7 +52,7 @@ If the **security proxy** is deployed and ```shared.ogc.statistics.activated``` 
 psql -d georchestra -f postgresql/05-ogc-server-statistics.sql
 ```
 
-## Fix ownership of database objects
+## Change ownership of database objects
  
 Ensure geOrchestra database user is owner of database. If your database is dedicated to geOrchestra (no other 
 apps are running in same database), you can use following procedure to reset ownership of all objects to selected user, for 
