@@ -82,7 +82,7 @@ CREATE TABLE ogc_services_log(
   date timestamp without time zone,
   service character varying(5),
   layer character varying(255),
-  id bigserial,
+  id bigint NOT NULL DEFAULT nextval('ogcstatistics.ogc_services_log_id_seq'::regclass),
   request character varying(20),
   org character varying(255),
   roles text[]
