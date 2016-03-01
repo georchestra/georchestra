@@ -51,7 +51,7 @@ public class OGCServiceMessageFormatter {
 	private static Log LOGGER = LogFactory.getLog(OGCServiceMessageFormatter.class.getSimpleName());
 	
 	public static final String SEPARATOR = "|";
-	public static final String DATE_FORMAT = "yyyy/MM/dd";
+	public static final String DATE_FORMAT = "yyyy/MM/dd HH:mm:ss";
 
 	private OGCServiceMessageFormatter(){
 		// utility class
