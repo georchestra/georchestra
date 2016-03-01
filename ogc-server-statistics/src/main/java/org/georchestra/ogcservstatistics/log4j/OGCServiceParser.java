@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.spi.LoggingEvent;
+import org.georchestra.ogcservstatistics.dataservices.InsertCommand;
 
 /**
  * This parse recognizes an OGC service taking into account the syntax convention 
@@ -41,7 +42,17 @@ import org.apache.log4j.spi.LoggingEvent;
  * @author Mauricio Pazos
  *
  */
-final class OGCServiceParser {
+public final class OGCServiceParser {
+
+	// Key for hashmap that holds logs information
+	public final static String DATE_COLUMN = "date";
+	public final static String USER_COLUMN = "user_name";
+	public final static String SERVICE_COLUMN = "service";
+	public final static String LAYER_COLUMN = "layer";
+	public final static String REQUEST_COLUMN = "request";
+	public final static String ORG_COLUMN = "org";
+	public final static String SECROLE_COLUMN = "roles";
+
 
 	private static final String SERVICE_KEYWORD = "SERVICE=";
 	private static final String REQUEST_KEYWORD = "REQUEST=";
@@ -76,7 +87,9 @@ final class OGCServiceParser {
 	private static final String CREATESTOREDQUERY = "CREATESTOREDQUERY";
 	private static final String DROPSTOREDQUERY = "DROPSTOREDQUERY";
 	
-	
+
+
+
 	
 	private static final String[] REQUEST_TYPE = 
 		{ 	REQUEST_KEYWORD+GETCAPABILITIES,
@@ -185,7 +198,7 @@ final class OGCServiceParser {
 		
 		// extracts date
 		DateFormat format = new SimpleDateFormat(OGCServiceMessageFormatter.DATE_FORMAT);
-		Date date = format.parse(splittedMessage[1] );
+		Date date = format.parse(splittedMessage[1]);
 		
 		// parses service and layer from request
 		String request = URLDecoder.decode(splittedMessage[2], "UTF-8");
@@ -211,13 +224,13 @@ final class OGCServiceParser {
 			// create a log without layer
 			Map<String, Object>  log = new HashMap<String, Object>(6);
 			
-			log.put("user_name", user );
-			log.put("date", date);
-			log.put("service", service );
-			log.put("layer", "" );
-			log.put("request", ogcReq );
-			log.put("org", org);
-			log.put("secrole", roles);
+			log.put(USER_COLUMN, user );
+			log.put(DATE_COLUMN, date);
+			log.put(SERVICE_COLUMN, service );
+			log.put(LAYER_COLUMN, "" );
+			log.put(REQUEST_COLUMN, ogcReq );
+			log.put(ORG_COLUMN, org);
+			log.put(SECROLE_COLUMN, roles);
 			
 			logList.add(log);
 		} else{ // there are one ore more layers
@@ -225,14 +238,14 @@ final class OGCServiceParser {
 			for(String layer : layerList){
 				Map<String, Object>  log = new HashMap<String, Object>(6);
 				
-				log.put("user_name", user );
-				log.put("date", date);
-				log.put("service", service );
-				log.put("layer", layer.toLowerCase() );
-				log.put("request", ogcReq );
-				log.put("org", org);
-				log.put("secrole", roles);
-				
+				log.put(USER_COLUMN, user );
+				log.put(DATE_COLUMN, date);
+				log.put(SERVICE_COLUMN, service );
+				log.put(LAYER_COLUMN, layer.toLowerCase() );
+				log.put(REQUEST_COLUMN, ogcReq );
+				log.put(ORG_COLUMN, org);
+				log.put(SECROLE_COLUMN, roles);
+
 				logList.add(log);
 			}
 		}
