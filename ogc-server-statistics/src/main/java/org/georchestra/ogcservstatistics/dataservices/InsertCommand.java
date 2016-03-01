@@ -79,7 +79,7 @@ public final class InsertCommand extends AbstractDataCommand {
         try {
         	this.connection.setAutoCommit(false);
             pStmt = prepareStatement();
-            int updatedRows = pStmt.executeUpdate();
+            pStmt.executeUpdate();
             this.connection.commit();
         } catch (SQLException e) {
         	if(this.connection != null){
