@@ -18,7 +18,7 @@ public class WaitForLdap {
                 new BindConnectionInitializer(
                         this.getUsername(), new Credential(this.getPassword())));
         ConnectionFactory cf = new DefaultConnectionFactory(connConfig);
-        while(true) {
+        for(int tryCount = 0; tryCount < 300; tryCount++) {
             try {
                 SearchExecutor executor = new SearchExecutor();
                 executor.setBaseDn(this.getGroupSearchBaseDn());
@@ -26,9 +26,10 @@ public class WaitForLdap {
                 System.out.println("--------------------------------> LDAP OK <------------------------------------");
                 break;
             } catch (LdapException e) {
-                System.out.println("-------------------------> LDAP Not Ready waiting... <-------------------------");
+                System.out.println("-------------> LDAP Not Ready waiting... on " + ldapUrl + " with login : " + username + " Searching entry with '(uid=*)' in "  + this.getGroupSearchBaseDn()  + " (" + tryCount + "/300) <---------------");
                 try { Thread.sleep(1000l); } catch (InterruptedException e1) {}
             }
+
         }
     }
 
