@@ -1,142 +1,204 @@
 <section>
 
-  <div class="panel-body clearfix">
+  <div class="col-md-2">
+    <ul class="nav nav-pills nav-stacked">
+      <li ng-repeat="tab in user.tabs" ng-class="{active: user.tab==tab}">
+        <!-- <a ng-link="user({id: user.user.uid, tab: tab});" rel="{{user.user.uid}}/{{tab}}">{{ {id: user.user.uid, tab: tab} }}</a> -->
+        <a href="#/users/{{user.user.uid}}/{{tab}}" translate="tab.{{::tab}}"></a>
+        <!-- FIXME use ng-link -->
+      </li>
+    </ul>
+  </div>
 
-    <div class="col-md-2">
-      <ul class="nav nav-pills nav-stacked">
-        <li ng-repeat="tab in user.tabs" ng-class="{active: user.tab==tab}">
-          <!-- <a ng-link="user({id: user.user.uid, tab: tab});" rel="{{user.user.uid}}/{{tab}}">{{ {id: user.user.uid, tab: tab} }}</a> -->
-          <a href="#/users/{{user.user.uid}}/{{tab}}" translate="tab.{{::tab}}"></a>
-          <!-- FIXME use ng-link -->
-        </li>
-      </ul>
-    </div>
+  <div class="col-md-10">
+    <div class="panel panel-default">
 
-    <div class="col-md-10">
-      <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{::user.user.sn}} {{::user.user.givenName}}</h3>
+      </div>
 
-        <div class="panel-heading">
-          <h3 class="panel-title">{{::user.user.sn}} {{::user.user.givenName}}</h3>
-        </div>
+      <div class="panel-body" ng-if="user.tab=='infos'">
+        <form class="form-horizontal">
+          <div class="row">
+            <div class="col-md-6">
 
-        <div class="panel-body" ng-if="user.tab=='infos'">
-          <form class="form-horizontal">
-            <div class="row">
-              <div class="col-md-6">
-
-                <div class="form-group">
-                  <label class="col-sm-4" for="uid">Login</label>
-                  <div class="col-sm-8">
-                    <input ng-model="user.user.uid" class="form-control" id="uid" placeholder="Login">
-                  </div>
+              <div class="form-group">
+                <label class="col-sm-4" for="uid">Login</label>
+                <div class="col-sm-8">
+                  <input ng-model="user.user.uid" class="form-control" id="uid" placeholder="Login">
                 </div>
-
-                <div class="form-group form-group-sm">
-                  <label class="col-sm-4" for="commonName">CommonName</label>
-                  <div class="col-sm-8">
-                    <input ng-model="user.user.commonName" class="form-control" id="commonName" placeholder="CommonName">
-                  </div>
-                </div>
-
-                <div class="form-group form-group-sm">
-                  <label class="col-sm-4" for="email">Email address</label>
-                  <div class="col-sm-8">
-                    <input ng-model="user.user.mail" type="email" class="form-control" id="email" placeholder="Email">
-                  </div>
-                </div>
-                <div class="form-group form-group-sm">
-                  <label class="col-sm-4" for="address">Address</label>
-                  <div class="col-sm-8">
-                    <input ng-model="user.user.postalAddress" class="form-control" id="address" placeholder="Address">
-                  </div>
-                </div>
-
-                <div class="form-group form-group-sm">
-                  <label class="col-sm-4" for="organization">Organization</label>
-                  <div class="col-sm-8">
-                    <input ng-model="user.user.o" class="form-control" id="organization" placeholder="Organization">
-                  </div>
-                </div>
-
-                <div class="form-group form-group-sm">
-                  <label class="col-sm-4" for="organization">Description</label>
-                  <div class="col-sm-8">
-                    <input ng-model="user.user.description" class="form-control" id="description" placeholder="Description">
-                  </div>
-                </div>
-                <div class="form-group form-group-sm">
-                  <label class="col-sm-4" for="manager">Nom du Responsable</label>
-                  <div class="col-sm-8">
-                    <input ng-model="user.user.manager" class="form-control" id="manager" placeholder="Manager">
-                  </div>
-                </div>
-                <div class="form-group form-group-sm">
-                  <label class="col-sm-4" for="shadowExpire">shadowExpire</label>
-                  <div class="col-sm-8">
-                    <input ng-model="user.user.shadowExpire" class="form-control" id="shadowExpire" placeholder="shadowExpire">
-                  </div>
-                </div>
-                <div class="form-group form-group-sm">
-                  <label class="col-sm-4" for="preferredLanguage">Contexte</label>
-                  <div class="col-sm-8">
-                    <input ng-model="user.user.preferredLanguage" class="form-control" id="preferredLanguage"
-                    placeholder="preferredLanguage">
-                  </div>
-                </div>
-
               </div>
 
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label class="col-sm-4" for="givenName">Password</label> <a>Re-initialiser</a>
+              <div class="form-group form-group-sm">
+                <label class="col-sm-4" for="commonName">CommonName</label>
+                <div class="col-sm-8">
+                  <input ng-model="user.user.commonName" class="form-control" id="commonName" placeholder="CommonName">
                 </div>
+              </div>
 
-                <div class="form-group form-group-sm">
-                  <label class="col-sm-4" for="givenName">GivenName</label>
-                  <div class="col-sm-8">
-                    <input ng-model="user.user.givenName" class="form-control" id="givenName" placeholder="GivenName">
-                  </div>
+              <div class="form-group form-group-sm">
+                <label class="col-sm-4" for="email">Email address</label>
+                <div class="col-sm-8">
+                  <input ng-model="user.user.mail" type="email" class="form-control" id="email" placeholder="Email">
                 </div>
-                <div class="form-group form-group-sm">
-                  <label class="col-sm-4" for="phone">Phone</label>
-                  <div class="col-sm-8">
-                    <input ng-model="user.user.telephoneNumber" class="form-control" id="phone" placeholder="telephoneNumber">
-                  </div>
+              </div>
+              <div class="form-group form-group-sm">
+                <label class="col-sm-4" for="address">Address</label>
+                <div class="col-sm-8">
+                  <input ng-model="user.user.postalAddress" class="form-control" id="address" placeholder="Address">
                 </div>
-                <div class="form-group form-group-sm">
-                  <label class="col-sm-4" for="fax">fax</label>
-                  <div class="col-sm-8">
-                    <input ng-model="user.user.facsimile" class="form-control" id="fax" placeholder="facsimileTelephoneNumber">
-                  </div>
-                </div>
+              </div>
 
-                <div class="form-group form-group-sm">
-                  <label class="col-sm-4" for="title">Title</label>
-                  <div class="col-sm-8">
-                    <input ng-model="user.user.title" class="form-control" id="title" placeholder="Title">
-                  </div>
+              <div class="form-group form-group-sm">
+                <label class="col-sm-4" for="organization">Organization</label>
+                <div class="col-sm-8">
+                  <input ng-model="user.user.o" class="form-control" id="organization" placeholder="Organization">
                 </div>
+              </div>
 
-              </form>
+              <div class="form-group form-group-sm">
+                <label class="col-sm-4" for="organization">Description</label>
+                <div class="col-sm-8">
+                  <input ng-model="user.user.description" class="form-control" id="description" placeholder="Description">
+                </div>
+              </div>
+              <div class="form-group form-group-sm">
+                <label class="col-sm-4" for="manager">Nom du Responsable</label>
+                <div class="col-sm-8">
+                  <input ng-model="user.user.manager" class="form-control" id="manager" placeholder="Manager">
+                </div>
+              </div>
+              <div class="form-group form-group-sm">
+                <label class="col-sm-4" for="shadowExpire">shadowExpire</label>
+                <div class="col-sm-8">
+                  <input ng-model="user.user.shadowExpire" class="form-control" id="shadowExpire" placeholder="shadowExpire">
+                </div>
+              </div>
+              <div class="form-group form-group-sm">
+                <label class="col-sm-4" for="preferredLanguage">Contexte</label>
+                <div class="col-sm-8">
+                  <input ng-model="user.user.preferredLanguage" class="form-control" id="preferredLanguage"
+                  placeholder="preferredLanguage">
+                </div>
+              </div>
+
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="col-sm-4" for="givenName">Password</label> <a>Re-initialiser</a>
+              </div>
+
+              <div class="form-group form-group-sm">
+                <label class="col-sm-4" for="givenName">GivenName</label>
+                <div class="col-sm-8">
+                  <input ng-model="user.user.givenName" class="form-control" id="givenName" placeholder="GivenName">
+                </div>
+              </div>
+              <div class="form-group form-group-sm">
+                <label class="col-sm-4" for="phone">Phone</label>
+                <div class="col-sm-8">
+                  <input ng-model="user.user.telephoneNumber" class="form-control" id="phone" placeholder="telephoneNumber">
+                </div>
+              </div>
+              <div class="form-group form-group-sm">
+                <label class="col-sm-4" for="fax">fax</label>
+                <div class="col-sm-8">
+                  <input ng-model="user.user.facsimile" class="form-control" id="fax" placeholder="facsimileTelephoneNumber">
+                </div>
+              </div>
+
+              <div class="form-group form-group-sm">
+                <label class="col-sm-4" for="title">Title</label>
+                <div class="col-sm-8">
+                  <input ng-model="user.user.title" class="form-control" id="title" placeholder="Title">
+                </div>
+              </div>
+
+            </form>
+          </div>
+        </div>
+
+        <hr>
+
+        <div class="pull-right">
+          <button ng-click="user.save()" class="btn btn-primary" translate>user.save</button>
+        </div>
+
+      </div>
+
+      <div class="panel-body" ng-if="user.tab=='groups'">
+
+        <h4 translate>group.system</h4>
+        <div class="form-group clearfix">
+          <div class="col-sm-6" ng-repeat="group in user.adminGroups">
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" ng-model="user.user.adminGroups[group]"> {{::group}}
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <hr>
+
+        <h4 translate>group.app</h4>
+        <div class="form-group">
+          <select class="form-control" multiple chosen ng-model="user.user.groups" ng-options="group for group in user.groups"
+          data-placeholder="Select groups">
+          </select>
+        </div>
+      </div>
+
+      <div class="panel-body" ng-if="user.tab=='analytics'">
+        <h4 translate>analytics.title</h4>
+        <div class="row">
+          <stats data="user.data.requests.results" type="'line'" config="user.config.requests" title="'analytics.requests'" class="col-md-6"></stats>
+          <stats data="user.data.layers.results" type="'bar'" config="user.config.layers" title="'analytics.layers'" class="col-md-6"></stats>
+        </div>
+      </div>
+
+      <div class="panel-body user-messages" ng-if="user.tab=='messages'">
+
+        <ol class="breadcrumb">
+          <button class="pull-right btn btn-link btn-xs" ng-if="!user.compose && !user.message" translate ng-click="user.compose={}">msg.compose</button>
+          <li class="active" ng-if="!user.message && !user.compose">
+            <span translate>msg.messages</span> <span class="badge">{{::user.messages.length}}</span>
+          </li>
+          <li ng-if="user.message || user.compose">
+            <a href="javascript:void(0);" ng-click="user.closeMessage()">
+              <span translate>msg.messages</span> <span class="badge">{{::user.messages.length}}</span>
+            </a>
+          </li>
+          <li class="active" ng-if="user.compose" translate>msg.compose</li>
+          <li class="active" ng-if="user.message">{{::user.message.subject}}</li>
+        </ol>
+        <label ng-if="user.compose" class="pull-right clearfix">
+          <span translate>msg.templates</span>
+          <select placeholder="{{ 'msg.templates' | translate }}" ng-change="user.loadTemplate()"
+            ng-options="template.name for template in user.templates" ng-model="user.compose.template"></select>
+        </label>
+
+        <form ng-if="user.compose" class="">
+          <div class="form-group">
+            <label for="compose_title" translate>msg.title</label>
+            <div>
+              <input ng-model="user.compose.subject" class="form-control" id="compose_title" placeholder="{{'msg.title' | translate}}">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="compose_content" translate>msg.content</label>
+            <div >
+              <textarea ng-model="user.compose.content" class="form-control" id="compose_content" placeholder="{{'msg.content' | translate}}"></textarea>
             </div>
           </div>
 
-          <hr>
-
-          <div class="pull-right">
-            <button ng-click="user.save()" class="btn btn-primary" translate>user.save</button>
-          </div>
-
-        </div>
-
-        <div class="panel-body" ng-if="user.tab=='groups'">
-
-          <h4 translate>group.system</h4>
-          <div class="form-group clearfix">
-            <div class="col-sm-6" ng-repeat="group in user.adminGroups">
+          <h5 translate>msg.attachments</h5>
+          <div class="clearfix">
+            <div class="col-sm-4" ng-repeat="attachment in user.attachments">
               <div class="checkbox">
                 <label>
-                  <input type="checkbox" ng-model="user.user.adminGroups[group]"> {{::group}}
+                  <input type="checkbox" ng-model="user.compose.attachments[attachment.id]"> {{::attachment.name}}
                 </label>
               </div>
             </div>
@@ -144,126 +206,60 @@
 
           <hr>
 
-          <h4 translate>group.app</h4>
-          <div class="form-group">
-            <select class="form-control" multiple chosen ng-model="user.user.groups" ng-options="group for group in user.groups"
-            data-placeholder="Select groups">
-            </select>
+          <div class="pull-right">
+            <button ng-click="user.closeMessage()" class="btn btn-link" translate>msg.cancel</button>
+            <button ng-click="user.sendMail()" class="btn btn-primary" translate>msg.send</button>
           </div>
-        </div>
 
-        <div class="panel-body" ng-if="user.tab=='analytics'">
-          <h4 translate>analytics.title</h4>
-          <div class="row">
-            <stats data="user.data.requests.results" type="'line'" config="user.config.requests" title="'analytics.requests'" class="col-md-6"></stats>
-            <stats data="user.data.layers.results" type="'bar'" config="user.config.layers" title="'analytics.layers'" class="col-md-6"></stats>
-          </div>
-        </div>
-
-        <div class="panel-body user-messages" ng-if="user.tab=='messages'">
-
-          <ol class="breadcrumb">
-            <button class="pull-right btn btn-link btn-xs" ng-if="!user.compose && !user.message" translate ng-click="user.compose={}">msg.compose</button>
-            <li class="active" ng-if="!user.message && !user.compose">
-              <span translate>msg.messages</span> <span class="badge">{{::user.messages.length}}</span>
+        </form>
+        <div ng-if="user.message">
+          <h4>
+            <small>
+              {{user.message.sender}}, <span translate>msg.on</span> {{user.message.date | date: 'mediumDate'}}
+            </small>
+          </h4>
+          <h4>
+            {{user.message.subject}}
+          </h4>
+          <p>
+            {{user.message.body}}
+          </p>
+          <hr ng-if="user.message.attachments.length>0" />
+          <h5 ng-if="user.message.attachments.length>0" translate>msg.attachments</h5>
+          <ul ng-if="user.message.attachments.length>0">
+            <li ng-repeat="attachment in user.message.attachments">
+              {{attachment.name}} ({{attachment.size / 1000 | number:0}} Mo)
             </li>
-            <li ng-if="user.message || user.compose">
-              <a href="javascript:void(0);" ng-click="user.closeMessage()">
-                <span translate>msg.messages</span> <span class="badge">{{::user.messages.length}}</span>
-              </a>
-            </li>
-            <li class="active" ng-if="user.compose" translate>msg.compose</li>
-            <li class="active" ng-if="user.message">{{::user.message.subject}}</li>
-          </ol>
-          <label ng-if="user.compose" class="pull-right clearfix">
-            <span translate>msg.templates</span>
-            <select placeholder="{{ 'msg.templates' | translate }}" ng-change="user.loadTemplate()"
-              ng-options="template.name for template in user.templates" ng-model="user.compose.template"></select>
-          </label>
-
-          <form ng-if="user.compose" class="">
-            <div class="form-group">
-              <label for="compose_title" translate>msg.title</label>
-              <div>
-                <input ng-model="user.compose.subject" class="form-control" id="compose_title" placeholder="{{'msg.title' | translate}}">
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="compose_content" translate>msg.content</label>
-              <div >
-                <textarea ng-model="user.compose.content" class="form-control" id="compose_content" placeholder="{{'msg.content' | translate}}"></textarea>
-              </div>
-            </div>
-
-            <h5 translate>msg.attachments</h5>
-            <div class="clearfix">
-              <div class="col-sm-4" ng-repeat="attachment in user.attachments">
-                <div class="checkbox">
-                  <label>
-                    <input type="checkbox" ng-model="user.compose.attachments[attachment.id]"> {{::attachment.name}}
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            <hr>
-
-            <div class="pull-right">
-              <button ng-click="user.closeMessage()" class="btn btn-link" translate>msg.cancel</button>
-              <button ng-click="user.sendMail()" class="btn btn-primary" translate>msg.send</button>
-            </div>
-
-          </form>
-          <div ng-if="user.message">
-            <h4>
-              <small>
-                {{user.message.sender}}, <span translate>msg.on</span> {{user.message.date | date: 'mediumDate'}}
-              </small>
-            </h4>
-            <h4>
-              {{user.message.subject}}
-            </h4>
-            <p>
-              {{user.message.body}}
-            </p>
-            <hr ng-if="user.message.attachments.length>0" />
-            <h5 ng-if="user.message.attachments.length>0" translate>msg.attachments</h5>
-            <ul ng-if="user.message.attachments.length>0">
-              <li ng-repeat="attachment in user.message.attachments">
-                {{attachment.name}} ({{attachment.size / 1000 | number:0}} Mo)
-              </li>
-            </ul>
-          </div>
-          <table class="table table-condensed" ng-if="!user.message && !user.compose">
-            <thead>
-              <tr>
-                <th translate>msg.date</th>
-                <th translate>msg.subject</th>
-                <th translate>msg.sender</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr ng-repeat="message in user.messages">
-                <td>{{::message.date | date: 'mediumDate'}}</td>
-                <td><a ng-click="user.openMessage(message)" href="javascript:void(0);">{{::message.subject}}</a>
-                </td>
-                <td>{{::message.sender}}</td>
-              </tr>
-            </tbody>
-          </table>
+          </ul>
         </div>
-
-        <div class="panel-body" ng-if="user.tab=='logs'">
-          <h4>Logs</h4>
-        </div>
-
-        <div class="panel-body" ng-if="user.tab=='manage'">
-            <button ng-click="user.delete()" class="btn btn-danger" translate>user.delete</button>
-        </div>
-
+        <table class="table table-condensed" ng-if="!user.message && !user.compose">
+          <thead>
+            <tr>
+              <th translate>msg.date</th>
+              <th translate>msg.subject</th>
+              <th translate>msg.sender</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="message in user.messages">
+              <td>{{::message.date | date: 'mediumDate'}}</td>
+              <td><a ng-click="user.openMessage(message)" href="javascript:void(0);">{{::message.subject}}</a>
+              </td>
+              <td>{{::message.sender}}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-    </div>
 
+      <div class="panel-body" ng-if="user.tab=='logs'">
+        <h4>Logs</h4>
+      </div>
+
+      <div class="panel-body" ng-if="user.tab=='manage'">
+          <button ng-click="user.delete()" class="btn btn-danger" translate>user.delete</button>
+      </div>
+
+    </div>
   </div>
 
 </section>
