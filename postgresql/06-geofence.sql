@@ -175,9 +175,5 @@ foreign key (group_id)
 references gf_usergroup;
 create sequence hibernate_sequence;
 
-GRANT ALL PRIVILEGES ON SCHEMA geofence TO "georchestra";
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA geofence TO "georchestra";
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA geofence TO "georchestra";
-
 commit;
 
