@@ -45,6 +45,7 @@ require('./templates/dirPagination.tpl');
 require('./services/analytics');
 require('./services/groups');
 require('./services/groups_users');
+require('./services/logs');
 require('./services/messages');
 require('./services/users');
 

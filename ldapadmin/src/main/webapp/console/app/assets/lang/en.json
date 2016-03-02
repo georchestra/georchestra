@@ -30,6 +30,11 @@
   "msg.sent"           : "Message sent!",
   "msg.error"          : "Error sending message",
 
+  "logs.logs"          : "Admin logs",
+  "logs.date"          : "Date",
+  "logs.sender"        : "Sender",
+  "logs.type"          : "Action",
+
   "analytics.title"    : "Analytics",
   "analytics.requests" : "Number of requests",
   "analytics.layers"   : "Most viewed layers"
