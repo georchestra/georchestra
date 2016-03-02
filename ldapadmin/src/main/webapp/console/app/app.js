@@ -5,6 +5,7 @@ angular.module('admin_console', [
   'ngNewRouter',
   'angular-chosen',
   'flash',
+  'angularUtils.directives.dirPagination',
   'pascalprecht.translate'
 ]).controller(
   'AppController', [ '$router', AppController ]
@@ -26,6 +27,8 @@ angular.module('admin_console', [
       suffix: '.json'
     });
 
+}]).config(['paginationTemplateProvider', function(paginationTemplateProvider) {
+  paginationTemplateProvider.setPath('templates/dirPagination.tpl.html');
 }]);
 
 require('./components/users/users');
@@ -38,6 +41,7 @@ require('./components/user/user');
 require('./components/user/user.tpl');
 require('./components/home/home');
 require('./components/home/home.tpl');
+require('./templates/dirPagination.tpl');
 require('./services/analytics');
 require('./services/groups');
 require('./services/groups_users');
