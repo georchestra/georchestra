@@ -138,6 +138,9 @@ UserController.prototype.activate = [
   if (this.tab == 'analytics') {
     this.loadAnalytics($scope);
   }
+  if (this.tab == 'logs') {
+    this.loadLogs($scope);
+  }
 
 }];
 
@@ -153,6 +156,34 @@ UserController.prototype.loadAnalytics = function($scope) {
   this.data.requests = { "granularity": "WEEK", "results": [ { "count": 653, "date": "2015-01" }, { "count": 864, "date": "2015-02" }, { "count": 136, "date": "2015-03" }, { "count": 6, "date": "2015-04" }, { "count": 254, "date": "2015-05" }, { "count": 90, "date": "2015-06" }, { "count": 90, "date": "2015-07" }, { "count": 198, "date": "2015-08" }, { "count": 145, "date": "2015-09" }, { "count": 3, "date": "2015-10" }, { "count": 12, "date": "2015-11" }, { "count": 17, "date": "2015-12" }, { "count": 266, "date": "2015-13" }, { "count": 330, "date": "2015-14" }, { "count": 324, "date": "2015-15" }, { "count": 507, "date": "2015-16" } ]};
   this.config.layers = [ 'layer', 'count'];
   this.config.requests = ['date', 'count'];
+};
+
+UserController.prototype.loadLogs = function($scope) {
+  // this.$injector.get('Logs').query({user: this.user.uuid}, function() {
+  //   console.log(arguments);
+  // },function(){
+  //   console.log('error',arguments);
+  // });
+  this.logs = [
+    {
+      "admin": "98192574-18d0-1035-8e10-c310a114ab8f",
+      "date": "2015-12-01T13:48:18Z",
+      "target": "98192574-18d0-1035-8e10-c310a114ab8f",
+      "type": "Email sent"
+    },
+    {
+      "admin": "9818af68-18d0-1035-8e0e-999999999999",
+      "date": "2015-11-30T16:37:00Z",
+      "target": "98192574-18d0-1035-8e10-c310a114ab8f",
+      "type": "Email sent"
+    },
+    {
+      "admin": "98192574-18d0-1035-8e10-c310a114ab8f",
+      "date": "2015-11-30T17:37:50Z",
+      "target": "98192574-18d0-1035-8e10-c310a114ab8f",
+      "type": "Email sent"
+    }
+  ];
 };
 
 UserController.prototype.save = function() {

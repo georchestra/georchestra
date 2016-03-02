@@ -252,7 +252,28 @@
       </div>
 
       <div class="panel-body" ng-if="user.tab=='logs'">
-        <h4>Logs</h4>
+        <ol class="breadcrumb">
+          <li class="active">
+            <span translate>logs.logs</span> <span class="badge">{{::user.logs.length}}</span>
+          </li>
+        </ol>
+        <table class="table table-condensed">
+          <thead>
+            <tr>
+              <th translate>logs.date</th>
+              <th translate>logs.sender</th>
+              <th translate>logs.type</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr dir-paginate="log in user.logs | itemsPerPage: 2">
+              <td>{{::log.date | date: 'mediumDate'}}</td>
+              <td>{{::log.admin}}</td>
+              <td>{{::log.type}}</td>
+            </tr>
+          </tbody>
+        </table>
+        <dir-pagination-controls></dir-pagination-controls>
       </div>
 
       <div class="panel-body" ng-if="user.tab=='manage'">

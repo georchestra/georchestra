@@ -20,6 +20,14 @@ groups input {
   border        : 1px solid rgb(221, 221, 221);
   border-radius : 5px;
   margin-top    : 2.75em;
+  padding       : 1em 0;
+  li a {
+    border-radius : 0;
+  }
+}
+
+.pagination li a {
+  cursor: pointer;
 }
 
 // MESSAGES
