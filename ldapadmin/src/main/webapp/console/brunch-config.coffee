@@ -17,6 +17,7 @@ module.exports = config:
           'vendor/angular-flash.js',
           'vendor/angular-translate.js',
           'vendor/angular-translate-loader-static-files.js',
+          'vendor/dirPagination.js',
           'vendor/chartist.js'
         ]
     stylesheets:
@@ -29,4 +30,6 @@ module.exports = config:
         ]
     templates:
       joinTo:
-        'templates.js': /^app/
+        'templates.js': [
+          /^app/
+        ]

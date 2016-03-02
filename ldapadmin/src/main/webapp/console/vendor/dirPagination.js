@@ -1,0 +1,1 @@
+../node_modules/angular-utils-pagination/dirPagination.js
