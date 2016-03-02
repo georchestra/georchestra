@@ -82,7 +82,7 @@ psql -d georchestra -c 'GRANT SELECT ON downloadform.geonetwork_log TO "geonetwo
 
 ## Cleanup maintenance function
 
-Finnaly, you can drop maintenance function :
+Finally, you can drop maintenance function :
 ```
 psql -d georchestra -c "DROP FUNCTION change_owner(text, text);";
 ```
