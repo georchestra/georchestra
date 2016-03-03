@@ -205,7 +205,7 @@ public class GroupDaoImpl implements GroupDao {
 	@Override
 	public void deleteUser(String uid, final String originUUID) throws DataServiceException {
 
-		List<Group> allGroups = findAll();
+		List<Group> allGroups = findAllForUser(uid);
 
 		for (Group group : allGroups) {
 			deleteUser(group.getName(), uid, originUUID);
@@ -237,6 +237,7 @@ public class GroupDaoImpl implements GroupDao {
 			}
 			AdminLogEntry log = new AdminLogEntry(admin, target, logType, new Date());
 			this.logDao.save(log);
+
 		}
 	}
 
