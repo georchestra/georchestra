@@ -79,6 +79,8 @@ public class ContextController implements ServletContextAware {
         // image
         // defaulting to default.png
         String image = "context/image/default.png";
+        // roles
+        JSONArray roles = new JSONArray();
 
         File imagePath = new File(pathCtx, "images");
         if (! imagePath.isDirectory()) {
@@ -92,6 +94,30 @@ public class ContextController implements ServletContextAware {
                 }
             }
         }
+        
+        File rolePath = new File(pathCtx);
+        Collection<File> files = FileUtils.listFiles(rolePath, new String[] { "XML", "xml" }, false);
+        for (File curRoleFile : files) {
+            if (FilenameUtils.getBaseName(curRoleFile.toString()).equalsIgnoreCase(title)) {
+                DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder builder = domFactory.newDocumentBuilder();
+                Document doc = builder.parse(curRoleFile);
+                XPath xpath = XPathFactory.newInstance().newXPath();
+                
+                // Parsing roles
+                XPathExpression xpRole = xpath.compile("//AllowedRoles/Role");
+                Object oRole = xpRole.evaluate(doc, XPathConstants.NODESET);
+                
+                if (oRole instanceof NodeList) {
+                    NodeList nl = (NodeList) oRole;
+                    for (int i = 0; i < nl.getLength(); ++i) {
+                        roles.put(nl.item(i).getTextContent());
+                    }
+                }
+                break;
+            }
+        }
+        
         // filename
         String wmcUrl = "context/" + f.getName();
 
@@ -103,6 +129,7 @@ public class ContextController implements ServletContextAware {
         info.put("wmc", wmcUrl);
         info.put("tip", xmlInfos.get("tip").equals("unset") ? title : xmlInfos.get("tip"));
         info.put("keywords", xmlInfos.getJSONArray("keywords").put(title));
+        info.put("roles", roles);
 
         return info;
     }
