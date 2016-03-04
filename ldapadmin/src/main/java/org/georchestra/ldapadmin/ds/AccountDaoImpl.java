@@ -300,9 +300,9 @@ public final class AccountDaoImpl implements AccountDao {
      */
     @Override
     public synchronized void delete(final String uid, final String originUUID) throws DataServiceException, NameNotFoundException {
-        this.ldapTemplate.unbind(buildDn(uid), true);
 
         this.groupDao.deleteUser(uid, originUUID);
+        this.ldapTemplate.unbind(buildDn(uid), true);
 
     }
 
