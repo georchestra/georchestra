@@ -33,6 +33,7 @@
         <servlet-name>ldapadmin</servlet-name>
         <url-pattern>/</url-pattern>
         <url-pattern>/privateui/</url-pattern>
+        <url-pattern>/console/public/</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
@@ -44,7 +45,6 @@
         <url-pattern>/account/css/*</url-pattern>
         <url-pattern>/account/fonts/*</url-pattern>
         <url-pattern>/account/js/*</url-pattern>
-        <url-pattern>/console/*</url-pattern>
     </servlet-mapping>
 
     <session-config>
