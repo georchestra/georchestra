@@ -82,7 +82,7 @@ data (using a batch insert for instance).
 Building your SDI is just a command-line away:
 ```
 cd ~/georchestra
-export MAVEN_OPTS="-XX:MaxPermSize=256M"
+export MAVEN_OPTS="-XX:MaxPermSize=512M"
 ./mvn -Dmaven.test.skip=true -Dserver=myprofile clean install
 ```
 
