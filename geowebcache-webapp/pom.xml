@@ -13,7 +13,7 @@
     <gwc.unpack.dir>${project.build.directory}/unpacked-webapp</gwc.unpack.dir>
     <geowebcache.war.excludes/>
     <maven.test.skip>false</maven.test.skip>
-    <geowebcache.version>1.8.0</geowebcache.version>
+    <geowebcache.version>1.8.1</geowebcache.version>
   </properties>
   <dependencies>
     <dependency>
