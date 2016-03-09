@@ -204,7 +204,7 @@ public class ContextController implements ServletContextAware {
     public void getContext(HttpServletRequest request, HttpServletResponse response, @PathVariable String contextName)
             throws Exception {
         String ctxDir = guessContextDirectory();
-        response.setContentType("application/xml; charset=UTF-8");
+        response.setContentType("application/vnd.ogc.context+xml");
         if (ctxDir != null) {
             try {
                 byte[] ret = FileUtils.readFileToByteArray(new File(ctxDir, File.separator + "contexts"
