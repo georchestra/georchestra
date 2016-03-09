@@ -119,6 +119,9 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
                     if (OpenLayers.Util.indexOf(this.map.layers, this.layer) > 0) {
                         this.map.removeLayer(this.layer);
                     }
+                    this.areaAction.control.deactivate();
+                    this.lengthAction.control.deactivate();
+
                 },
                 scope: this
             }
