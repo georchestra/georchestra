@@ -145,25 +145,36 @@ UserController.prototype.activate = [
 }];
 
 UserController.prototype.loadAnalytics = function($scope) {
-  // this.$injector.get('Analytics').query({user: this.user.uuid}, function() {
-  //   console.log(arguments);
-  // },function(){
-  //   console.log('error',arguments);
-  // });
+  var $translate = this.$injector.get('$translate');
   this.data = {};
-  this.config = {};
-  this.data.layers = {"results": [ { "count": 205, "layer": "cigal:cigal_lignesfrontieres_250000_utm32" }, { "count": 174, "layer": "gn:ne_50m_coastline" }, { "count": 170, "layer": "gn:ne_50m_boundary_lines_land" }, { "count": 152, "layer": "gn:ne_50m_boundary_da" }, { "count": 151, "layer": "gn:world" }, { "count": 64, "layer": "default_pmauduit:ign_pleiade_test_tif_l93" }, { "count": 59, "layer": "osm:google" }, { "count": 58, "layer": "default_pmauduit:73-savoie" }, { "count": 55, "layer": "pmauduit:cigal_pleiade_colmar_2014_tif_l93" }, { "count": 22, "layer": "test_layer_group" } ]};
-  this.data.requests = { "granularity": "WEEK", "results": [ { "count": 653, "date": "2015-01" }, { "count": 864, "date": "2015-02" }, { "count": 136, "date": "2015-03" }, { "count": 6, "date": "2015-04" }, { "count": 254, "date": "2015-05" }, { "count": 90, "date": "2015-06" }, { "count": 90, "date": "2015-07" }, { "count": 198, "date": "2015-08" }, { "count": 145, "date": "2015-09" }, { "count": 3, "date": "2015-10" }, { "count": 12, "date": "2015-11" }, { "count": 17, "date": "2015-12" }, { "count": 266, "date": "2015-13" }, { "count": 330, "date": "2015-14" }, { "count": 324, "date": "2015-15" }, { "count": 507, "date": "2015-16" } ]};
-  this.config.layers = [ 'layer', 'count'];
-  this.config.requests = ['date', 'count'];
+  this.config = {
+    layers   : [ 'layer', 'count' ],
+    requests : [ 'date', 'count' ]
+  };
+  this.data.layers = this.$injector.get('Analytics').get({
+      service   : 'combinedRequests',
+      user      : this.user.uuid,
+      startDate : '15-01-01',
+      endDate   : '16-03-09'
+    }, function() {},
+    this.flash.create.bind(this, 'error', $translate('analytics.errorload'))
+  );
+  this.data.requests = this.$injector.get('Analytics').get({
+      service   : 'layersUsage',
+      user      : this.user.uuid,
+      startDate : '15-01-01',
+      endDate   : '16-03-09'
+    }, function() {},
+    this.flash.create.bind(this, 'error', $translate('analytics.errorload'))
+  );
 };
 
 UserController.prototype.loadLogs = function($scope) {
-  // this.$injector.get('Logs').query({user: this.user.uuid}, function() {
-  //   console.log(arguments);
-  // },function(){
-  //   console.log('error',arguments);
-  // });
+  this.$injector.get('Logs').query({user: this.user.uuid}, function() {
+    console.log('success', arguments);
+  },function(){
+    console.log('error',arguments);
+  });
   this.logs = [
     {
       "admin": "98192574-18d0-1035-8e10-c310a114ab8f",
