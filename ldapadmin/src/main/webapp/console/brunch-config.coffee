@@ -3,6 +3,8 @@ module.exports = config:
     ng_templates:
       module: 'admin_console'
       relativePath: 'app/'
+    babel:
+      pattern: /\.es6/
   files:
     javascripts:
       joinTo:
