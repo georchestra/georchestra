@@ -17,7 +17,6 @@ function StatsController($element) {
 StatsController.prototype.initialize = function($element) {
   var options;
   // FIXME to delete
-  console.log('data', this.data.results);
   if (this.type=='bar') {
     this.data = {"results": [ { "count": 205, "layer": "cigal:cigal_lignesfrontieres_250000_utm32" }, { "count": 174, "layer": "gn:ne_50m_coastline" }, { "count": 170, "layer": "gn:ne_50m_boundary_lines_land" }, { "count": 152, "layer": "gn:ne_50m_boundary_da" }, { "count": 151, "layer": "gn:world" }, { "count": 64, "layer": "default_pmauduit:ign_pleiade_test_tif_l93" }, { "count": 59, "layer": "osm:google" }, { "count": 58, "layer": "default_pmauduit:73-savoie" }, { "count": 55, "layer": "pmauduit:cigal_pleiade_colmar_2014_tif_l93" }, { "count": 22, "layer": "test_layer_group" } ]};
   } else {
