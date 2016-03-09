@@ -12,7 +12,7 @@ angular.module('admin_console', [
 ).constant(
   'LDAP_BASE_URI', '/ldapadmin/private/'
 ).constant(
-  'ANALYTICS_BASE_URI', 'http://localhost:8280/analytics/ws/'
+  'ANALYTICS_BASE_URI', '/analytics/ws/'
 ).config(['$componentLoaderProvider', function ($componentLoaderProvider) {
   $componentLoaderProvider.setTemplateMapping(function (name) {
     return 'components/' + name + '/' + name + '.tpl.html';
