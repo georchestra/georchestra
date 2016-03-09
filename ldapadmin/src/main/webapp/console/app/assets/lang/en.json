@@ -1,4 +1,8 @@
 {
+  "home.users"         : "Manage users",
+  "home.waiting_users" : "waiting users",
+  "home.expired_users" : "users expired today",
+  "home.connected"     : "connected today",
 
   "tab.infos"          : "Infos",
   "tab.groups"         : "Groups",

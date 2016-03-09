@@ -47,6 +47,55 @@ groups input {
   }
 }
 
+// HOME
+.home {
+  .alert {
+    margin-bottom: 0;
+    border-radius: 0;
+    .glyphicon,
+    a {
+      color: white;
+    }
+    .glyphicon {
+      font-size: 2.7em;
+      &:first-of-type {
+        font-size: 2.3em;
+        margin-left: -.5em;
+      }
+    }
+    &.alert-info {
+      background-color: #009FE3;
+      border-color: #009FE3;
+      padding: 30px 15px;
+      font-weight: bold;
+    }
+    &.alert-danger {
+      background-color: #E40615;
+      border-color: #E40615;
+    }
+    &.alert-warning {
+      background-color: #F29200;
+      border-color: #F29200;
+    }
+    &:first-child {
+      border-radius: 4px 4px 0 0;
+    }
+    &:last-child {
+      border-radius: 0 0 4px 4px;
+    }
+  }
+  .jumbotron {
+    margin-top: 2em;
+    padding: 24px;
+    h1 {
+      font-size: 48px;
+    }
+    h1, p {
+      text-align: center;
+    }
+  }
+}
+
 // CHARTS
 .chartist {
   height: 25em;
