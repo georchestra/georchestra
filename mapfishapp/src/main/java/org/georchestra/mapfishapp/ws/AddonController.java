@@ -83,7 +83,7 @@ public class AddonController implements ServletContextAware {
      */
     @RequestMapping(value= "/addons")
     public void getAddons(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        response.setContentType("application/javascript; charset=UTF-8");
+        response.setContentType("application/json");
         JSONArray jsAddons = constructAddonsSpec();
 
         response.getOutputStream().write(jsAddons.toString(4).getBytes());
@@ -165,9 +165,9 @@ public class AddonController implements ServletContextAware {
         String ext = FilenameUtils.getExtension(actualFile.getAbsolutePath());
 
         if ("css".equalsIgnoreCase(ext)) {
-            response.setContentType("text/css; charset: UTF-8");
+            response.setContentType("text/css");
         } else if ("js".equalsIgnoreCase(ext)) {
-            response.setContentType("application/javascript; charset: UTF-8");
+            response.setContentType("application/javascript");
         } else if ("png".equalsIgnoreCase(ext)) {
             response.setContentType("image/png");
         } else if (("jpg".equalsIgnoreCase(ext)) || ("jpeg".equalsIgnoreCase(ext))) {
