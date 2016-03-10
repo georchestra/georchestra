@@ -13,7 +13,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "angular": "1.5.0-rc.0",
+    "angular": "1.5.0-rc.1",
     "angular-chosen": "1.0.8",
     "angular-flash-alert": "^1.1.1",
     "angular-new-router": "0.5.3",

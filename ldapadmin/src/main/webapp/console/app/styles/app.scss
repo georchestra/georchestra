@@ -9,6 +9,9 @@ body {
     min-height: 22em;
   }
 }
+a {
+  color : #009FE3;
+}
 
 groups input {
   margin-bottom: 1em;
@@ -33,49 +36,55 @@ groups input {
 // MESSAGES
 .user-messages {
   select {
-    margin-bottom: 0.25em;
-    margin-top: -0.25em;
+    margin-bottom : 0.25em;
+    margin-top    : -0.25em;
   }
 }
 
 .stats {
   .pull-right {
-    margin-top: -.75em;
+    margin-top : -.75em;
   }
   table {
-    margin-top: 1em;
+    margin-top : 1em;
   }
 }
 
 // HOME
 .home {
   .alert {
-    margin-bottom: 0;
-    border-radius: 0;
+    margin-bottom : 0;
+    border-radius : 0;
     .glyphicon,
     a {
       color: white;
     }
+    .manage {
+      font-weight : bold;
+    }
     .glyphicon {
-      font-size: 2.7em;
+      font-size : 2.7em;
       &:first-of-type {
-        font-size: 2.3em;
-        margin-left: -.5em;
+        font-size   : 2.3em;
+        margin-left : -.5em;
       }
     }
     &.alert-info {
-      background-color: #009FE3;
-      border-color: #009FE3;
-      padding: 30px 15px;
-      font-weight: bold;
+      background-color : #009FE3;
+      border-color     : #009FE3;
+      padding          : 30px 15px;
+      font-weight      : bold;
+      a {
+        font-size: 1.2em;
+      }
     }
     &.alert-danger {
-      background-color: #E40615;
-      border-color: #E40615;
+      background-color : #E40615;
+      border-color     : #E40615;
     }
     &.alert-warning {
-      background-color: #F29200;
-      border-color: #F29200;
+      background-color : #F29200;
+      border-color     : #F29200;
     }
     &:first-child {
       border-radius: 4px 4px 0 0;
@@ -85,15 +94,20 @@ groups input {
     }
   }
   .jumbotron {
-    margin-top: 2em;
-    padding: 24px;
+    margin-top   : 2em;
+    padding      : 24px;
     h1 {
-      font-size: 48px;
+      font-size  : 48px;
     }
     h1, p {
-      text-align: center;
+      text-align : center;
     }
   }
+}
+
+// GROUPS
+.groups {
+  border-right: 2px solid #009FE3;
 }
 
 // CHARTS
