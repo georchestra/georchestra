@@ -7,15 +7,15 @@
         <i class="glyphicon glyphicon-user pull-right"></i>
         <a ng-link="users({id: 'all'})" translate>home.users</a>
       </div>
-      <div class="alert alert-danger">
-        <a ng-link="users({id: 'PENDING'})">
-          3 <span translate>home.waiting_users</span><br>
+      <div class="alert alert-danger" ng-if="home.pending && home.pending.users.length > 0">
+        <a ng-link="users({id: home.PENDING})">
+          {{::home.pending.users.length}} <span translate>home.waiting_users</span><br>
           <span class="manage" translate>home.view_manage</span>
         </a>
       </div>
-      <div class="alert alert-warning">
-        <a ng-link="users({id: 'all'})">
-          4 <span translate>home.expired_users</span><br>
+      <div class="alert alert-warning" ng-if="home.expired && home.expired.users.length > 0">
+        <a ng-link="users({id: home.EXPIRED})">
+          {{::home.expired.users.length}} <span translate>home.expired_users</span><br>
           <span class="manage" translate>home.view_manage</span>
         </a>
       </div>
