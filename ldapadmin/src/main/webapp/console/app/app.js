@@ -27,8 +27,10 @@ angular.module('admin_console', [
       suffix: '.json'
     });
 
+}]).config(['$locationProvider', function($locationProvider) {
+  $locationProvider.html5Mode(false)
 }]).config(['paginationTemplateProvider', function(paginationTemplateProvider) {
-  paginationTemplateProvider.setPath('templates/dirPagination.tpl.html');
+  paginationTemplateProvider.setPath('templates/dirPagination.tpl.html')
 }]);
 
 require('./components/users/users');
