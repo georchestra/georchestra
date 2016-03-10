@@ -127,8 +127,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * <pre>
  * {
  *   "results": [
- *     "user1",
- *     "user2",
+ *     { "user": "user1", "nb_requests": 10, "organization": "truite" },
+ *     { "user": "user1", "nb_requests": 10, "organization": "truite" },
  *     ...
  *   ]
  * }
