@@ -5,8 +5,8 @@
   "home.connected"     : "connected today",
   "home.view_manage"   : "View & manage",
   "home.nb_requests"   : "Requests",
-  "home.user"   : "User",
-  "home.org"   : "Org.",
+  "home.user"          : "User",
+  "home.org"           : "Org.",
 
   "tab.infos"          : "Infos",
   "tab.groups"         : "Groups",
