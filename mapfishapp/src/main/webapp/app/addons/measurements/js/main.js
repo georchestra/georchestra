@@ -59,6 +59,7 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
         this.lengthAction =  new GeoExt.Action({
             control: new OpenLayers.Control.DynamicMeasure(OpenLayers.Handler.Path, {
                 maxSegments: null,
+                persist: true,
                 geodesic: true,
                 drawingLayer: this.layer,
                 layerSegments: this.layer2,
@@ -79,6 +80,7 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
         this.areaAction =  new GeoExt.Action({
             control: new OpenLayers.Control.DynamicMeasure(OpenLayers.Handler.Polygon, {
                 maxSegments: null,
+                persist: true,
                 geodesic: true,
                 drawingLayer: this.layer,
                 layerSegments: this.layer2,
@@ -96,6 +98,25 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
             text: OpenLayers.i18n("measurements.area"),
             iconAlign: 'top'
         });
+        this.measuresReset = new Ext.Action({
+            handler: function () {
+                measurements_layers = this.map.getLayersByName('__georchestra_measurements');
+                if (measurements_layers.length > 0) {
+                    measurements_layers[0].removeAllFeatures();
+                }
+                this.toggle();
+            },
+            map: this.map,
+            toggleGroup: this.toggleGroup,
+            allowDepress: true,
+            pressed: false,
+            minWidth: 50,
+            tooltip: this.tr("measurements.reset.tooltip"),
+            iconCls: 'measurements-delete',
+            text: OpenLayers.i18n("measurements.reset"),
+            iconAlign: 'top'
+            
+        });
         this.window = new Ext.Window({
             title: OpenLayers.i18n('measurements.tools'),
             width: 200,
@@ -107,7 +128,7 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
             items: [{
                 xtype: 'toolbar',
                 border: false,
-                items: [this.lengthAction, this.areaAction]
+                items: [this.lengthAction, this.areaAction, this.measuresReset]
             }],
             listeners: {
                 'show': function() {

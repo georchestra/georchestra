@@ -37,30 +37,38 @@
         "en": {
             "measurements.tools": "Measurement tools",
             "measurements.distance": "Distance",
+            "measurements.reset": "Reset",
             "measurements.area": "Area",
             "measurements.distance.tooltip": "Distance measure",
-            "measurements.area.tooltip": "Area measure"
+            "measurements.area.tooltip": "Area measure",
+            "measurements.reset.tooltip": "Remove all measurements"
         },
         "es": {
             "measurements.tools": "Medida",
             "measurements.distance": "Distancia",
+            "measurements.reset": "Reinciar",
             "measurements.area": "Area",
             "measurements.distance.tooltip": "Medir una distancia",
-            "measurements.area.tooltip": "Medir un área"
+            "measurements.area.tooltip": "Medir un área",
+            "measurements.reset.tooltip": "Remove all measurements (es)"
         },
         "fr": {
             "measurements.tools": "Mesure",
             "measurements.distance": "Distance",
+            "measurements.reset": "Réinitialiser",
             "measurements.area": "Surface",
             "measurements.distance.tooltip": "Mesure de distance",
-            "measurements.area.tooltip": "Mesure de surface"
+            "measurements.area.tooltip": "Mesure de surface",
+            "measurements.reset.tooltip": "Effacer toutes les mesures"
         },
         "de": {
             "measurements.tools": "Maß",
             "measurements.distance": "Distanz",
             "measurements.area": "Oberfläche",
+            "measurements.reset": "Reset (de)",
             "measurements.distance.tooltip": "Distanz messen",
-            "measurements.area.tooltip": "Oberfläche messen"
+            "measurements.area.tooltip": "Oberfläche messen",
+            "measurements.reset.tooltip": "Remove all measurements (de)"
         }
     }
 }
