@@ -171,7 +171,7 @@ public class ContextController implements ServletContextAware {
 
     @RequestMapping(value= "/contexts")
     public void getContexts(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        response.setContentType("application/javascript; charset=UTF-8");
+        response.setContentType("application/json");
 
         response.getOutputStream().write(getContexts().toString(4).getBytes());
     }

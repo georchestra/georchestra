@@ -358,7 +358,7 @@ public class DocController {
 
             // send back to client the url path to retrieve this file later on
             response.setStatus(HttpServletResponse.SC_CREATED); // 201 created, new resource created
-            response.setContentType("text/html; charset=utf-8");
+            response.setContentType("application/json");
             response.setHeader("Cache-Control", "max-age=0"); // both Cache-Control and Expires are required
             response.setHeader("Expires", "Fri, 19 Jun 1970 14:23:31 GMT"); // which is in the past
 

@@ -149,7 +149,7 @@ public class UsersController {
 	 * @param response Returns the detailed information of the user as json
 	 * @throws IOException
 	 */
-	@RequestMapping(value=BASE_MAPPING+"/usersearch/{userPattern}", method=RequestMethod.GET, produces="application/json; charset=utf-8")
+	@RequestMapping(value=BASE_MAPPING+"/usersearch/{userPattern}", method=RequestMethod.GET, produces="application/json")
 	@ResponseBody
 	public String findWithPattern(@PathVariable String userPattern, HttpServletResponse response) throws IOException, JSONException {
 		try {
@@ -185,7 +185,7 @@ public class UsersController {
 	 * @throws NameNotFoundException
 	 */
 	@RequestMapping(value=REQUEST_MAPPING+"/{uid}", method=RequestMethod.GET,
-					produces = "application/json; charset=UTF-8")
+					produces = "application/json")
 	public void findByUid(@PathVariable String uid, HttpServletResponse response) throws IOException, JSONException, NameNotFoundException {
 
 		// Check for protected accounts
