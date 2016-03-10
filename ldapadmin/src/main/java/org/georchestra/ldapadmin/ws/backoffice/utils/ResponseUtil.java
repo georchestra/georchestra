@@ -65,7 +65,7 @@ final public class ResponseUtil {
 
 	public static void buildResponse(HttpServletResponse response, String jsonData, int sc) throws IOException {
 		
-		response.setContentType("application/json; charset=UTF-8");
+		response.setContentType("application/json");
 		response.setStatus(sc);
 
 		PrintWriter out = response.getWriter();

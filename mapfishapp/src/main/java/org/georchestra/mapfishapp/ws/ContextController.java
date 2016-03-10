@@ -171,7 +171,7 @@ public class ContextController implements ServletContextAware {
 
     @RequestMapping(value= "/contexts")
     public void getContexts(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        response.setContentType("application/javascript; charset=UTF-8");
+        response.setContentType("application/json");
 
         response.getOutputStream().write(getContexts().toString(4).getBytes());
     }
@@ -204,7 +204,7 @@ public class ContextController implements ServletContextAware {
     public void getContext(HttpServletRequest request, HttpServletResponse response, @PathVariable String contextName)
             throws Exception {
         String ctxDir = guessContextDirectory();
-        response.setContentType("application/xml; charset=UTF-8");
+        response.setContentType("application/vnd.ogc.context+xml");
         if (ctxDir != null) {
             try {
                 byte[] ret = FileUtils.readFileToByteArray(new File(ctxDir, File.separator + "contexts"

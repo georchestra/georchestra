@@ -91,7 +91,7 @@ public class DataUsage {
 
 	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST})
 	public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		response.setHeader("Content-Type", "application/json; charset=UTF-8");
+		response.setHeader("Content-Type", "application/json");
 	    OutputStream out = null;
 	    out = response.getOutputStream();
 

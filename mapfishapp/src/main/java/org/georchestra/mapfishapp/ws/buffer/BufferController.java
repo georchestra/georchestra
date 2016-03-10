@@ -40,7 +40,7 @@ public class BufferController {
 
 	@RequestMapping(value = "/buffer/{bufferValue}",
 			method = RequestMethod.POST,
-			produces = "application/json; charset=UTF-8")
+			produces = "application/json")
 	@ResponseBody
 	public String computeBuffer(@PathVariable double bufferValue,
 			@RequestBody String wktgeom,

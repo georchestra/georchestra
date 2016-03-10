@@ -553,7 +553,7 @@ public class UsersControllerTest {
         request.setRequestURI("/private/users/pmaudui");
         request.setMethod(HttpMethod.DELETE.toString());
         usersCtrl.delete(request, response);
-        assertTrue(response.getContentType().equals("application/json; charset=UTF-8"));
+        assertTrue(response.getContentType().equals("application/json"));
         
     }
 }
