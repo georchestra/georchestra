@@ -100,11 +100,11 @@ query = "SELECT COUNT(*) AS count, to_char(date, 'YYYY-mm') FROM ogcstatistics.o
 
 // distinct users
 @NamedNativeQuery(name="Stats.getDistinctUsersByGroup",
-query = "SELECT DISTINCT user_name FROM ogcstatistics.ogc_services_log WHERE "
-		+ ":group = ANY (roles) AND date >= :startDate  AND date < :endDate "),
+query = "SELECT DISTINCT user_name, org, COUNT(*)  FROM ogcstatistics.ogc_services_log WHERE "
+		+ ":group = ANY (roles) AND date >= :startDate  AND date < :endDate GROUP BY user_name, org ORDER BY COUNT(*) DESC"),
 @NamedNativeQuery(name="Stats.getDistinctUsers",
-query = "SELECT DISTINCT user_name FROM ogcstatistics.ogc_services_log WHERE "
-		+ " date >= :startDate  AND date < :endDate "),
+query = "SELECT DISTINCT user_name, org, COUNT(*) FROM ogcstatistics.ogc_services_log WHERE "
+		+ " date >= :startDate  AND date < :endDate GROUP BY user_name, org ORDER BY COUNT(*) DESC"),
 
 // layer stats
 @NamedNativeQuery(name="Stats.getLayersStatisticsForUser",
