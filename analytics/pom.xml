@@ -86,6 +86,11 @@
       <version>20080701</version>
     </dependency>
     <dependency>
+      <groupId>org.jsondoc</groupId>
+      <artifactId>jsondoc-core</artifactId>
+      <version>1.2.11</version>
+    </dependency>
+    <dependency>
       <groupId>log4j</groupId>
       <artifactId>apache-log4j-extras</artifactId>
       <version>1.1</version>
