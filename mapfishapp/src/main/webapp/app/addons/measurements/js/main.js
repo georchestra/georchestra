@@ -23,45 +23,13 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
                 })
             )
         });
-        this.layer2 = new OpenLayers.Layer.Vector('__georchestra_measurements2', {
-            styleMap: new OpenLayers.StyleMap(
-                new OpenLayers.Style(null, {
-                    rules: [
-                        new OpenLayers.Rule({
-                            symbolizer: OpenLayers.Control.DynamicMeasure.styles
-                        })
-                    ]
-                })
-            )
-        });
-        this.layer3 = new OpenLayers.Layer.Vector('__georchestra_measurements3', {
-            styleMap: new OpenLayers.StyleMap(
-                new OpenLayers.Style(null, {
-                    rules: [
-                        new OpenLayers.Rule({
-                            symbolizer: OpenLayers.Control.DynamicMeasure.styles
-                        })
-                    ]
-                })
-            )
-        });
-        this.layer4 = new OpenLayers.Layer.Vector('__georchestra_measurements4', {
-            styleMap: new OpenLayers.StyleMap(
-                new OpenLayers.Style(null, {
-                    rules: [
-                        new OpenLayers.Rule({
-                            symbolizer: OpenLayers.Control.DynamicMeasure.styles
-                        })
-                    ]
-                })
-            )
-        });
         this.lengthAction =  new GeoExt.Action({
             control: new OpenLayers.Control.DynamicMeasure(OpenLayers.Handler.Path, {
                 maxSegments: null,
                 persist: true,
                 geodesic: true,
                 drawingLayer: this.layer,
+                keep: true
             }),
             map: this.map,
             // button options
@@ -80,6 +48,7 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
                 persist: true,
                 geodesic: true,
                 drawingLayer: this.layer,
+                keep: true
             }),
             map: this.map,
             // button options
@@ -97,6 +66,15 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
             handler: function () {
                 if (this.layer) {
                     this.layer.removeAllFeatures();
+                }
+                for (i = 0; i < this.map.layers.length; i++) {
+                    var layerName = this.map.layers[i].name;
+                    //DynamicMeasure spefic name
+                    var dynamicMesurePattern =
+                            /(^OpenLayers.Control.DynamicMeasure)(.)*(Keep$)/
+                    if (dynamicMesurePattern.test(layerName)) {
+                        this.map.layers[i].removeAllFeatures();
+                    }
                 }
                 this.measuresReset.items[0].toggle();
             },
@@ -121,9 +99,20 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
                         'internalProjection': this.map.getProjectionObject(),
                         'externalProjection': new OpenLayers.Projection("EPSG:4326")
                     });
+               var kmlFeatures = this.layer.features
+               for (i = 0; i < this.map.layers.length; i++) {
+                    var layerName = this.map.layers[i].name;
+                    //DynamicMeasure spefic name
+                    var dynamicMesurePattern =
+                            /(^OpenLayers.Control.DynamicMeasure)(.)*(Keep$)/
+                    if (dynamicMesurePattern.test(layerName)) {
+                        kmlFeatures = kmlFeatures.concat(this.map.layers[i].features);
+                    }
+                }
+
                OpenLayers.Request.POST({
                     url: GEOR.config.PATHNAME + "/ws/kml/",
-                    data: format.write(this.layer.features),
+                    data: format.write(kmlFeatures),
                     success: function(response) {
                         var o = Ext.decode(response.responseText);
                         window.location.href = GEOR.config.PATHNAME + "/" + o.filepath;

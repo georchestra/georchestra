@@ -1,4 +1,4 @@
-/* Copyright 2011-2015 Xavier Mamano, http://github.com/jorix/OL-DynamicMeasure
+/* Copyright 2011-2016 Xavier Mamano, http://github.com/jorix/OL-DynamicMeasure
  * Published under MIT license. */
 
 /**
@@ -132,6 +132,12 @@ OpenLayers.Control.DynamicMeasure = OpenLayers.Class(
     multi: false,
 
     /**
+     * APIProperty: keep
+     * {Boolean} Keep annotations for every measures.
+     */
+    keep: false,
+
+    /**
      * Property: layerSegments
      * {<OpenLayers.Layer.Vector>} The temporary drawing layer to show the
      *     length of the segments.
@@ -152,6 +158,26 @@ OpenLayers.Control.DynamicMeasure = OpenLayers.Class(
      */
     layerArea: null,
 
+    /**
+     * Property: layerSegmentsKeep
+     * {<OpenLayers.Layer.Vector>} The layer keep a copy of the length of
+     *     every segments measured since tool activation.
+     */
+    layerSegmentsKeep: null,
+
+    /**
+     * Property: layersLengthKeep
+     * {<OpenLayers.Layer.Vector>} The layer keep a copy of the length of
+     *     every polyline/poly measured since tool activation.
+     */
+    layerLengthKeep: null,
+
+    /**
+     * Property: layerAreaKeep
+     * {<OpenLayers.Layer.Vector>} The layer keep a copy of the area of every
+     *     polygon
+     */
+    layerAreaKeep: null,
     /**
      * Property: dynamicObj
      * {Object} Internal use.
@@ -201,6 +227,7 @@ OpenLayers.Control.DynamicMeasure = OpenLayers.Class(
      *     store the drawing when finished.
      * multi - {Boolean} Cast features to multi-part geometries before passing
      *     to the drawing layer
+     * keep - {Boolean} Keep annotations for every measures.
      */
     initialize: function(handler, options) {
 
@@ -277,6 +304,9 @@ OpenLayers.Control.DynamicMeasure = OpenLayers.Class(
                     );
                 },
                 done: function(geometry) {
+                    if (this.keep) {
+                        this.copyAnnotations();
+                    }
                     this.callbackDone(geometry);
                     this.drawFeature(geometry);
                 }
@@ -376,7 +406,7 @@ OpenLayers.Control.DynamicMeasure = OpenLayers.Class(
             var _optionsStyles = this.styles || {},
                 _defaultStyles = OpenLayers.Control.DynamicMeasure.styles,
                 _self = this;
-            var _create = function(styleName, initialOptions) {
+            var _create = function(styleName, initialOptions, nameSuffix='') {
                 if (initialOptions === null) {
                     return null;
                 }
@@ -394,7 +424,8 @@ OpenLayers.Control.DynamicMeasure = OpenLayers.Class(
                     });
                 }
                 var layer = new OpenLayers.Layer.Vector(
-                                   _self.CLASS_NAME + ' ' + styleName, options);
+                    _self.CLASS_NAME + ' ' + styleName + nameSuffix,
+                    options);
                 _self.map.addLayer(layer);
                 return layer;
             };
@@ -405,6 +436,19 @@ OpenLayers.Control.DynamicMeasure = OpenLayers.Class(
             this.layerLength = _create('labelLength', this.layerLengthOptions);
             if (this.isArea) {
                 this.layerArea = _create('labelArea', this.layerAreaOptions);
+            }
+            if (this.keep) {
+                this.layerSegmentsKeep =
+                            _create('labelSegments', this.layerSegmentsOptions,
+                            'Keep');
+                this.layerLengthKeep =
+                            _create('labelLength', this.layerLengthOptions,
+                            'Keep');
+                if (this.isArea) {
+                    this.layerAreaKeep =
+                                _create('labelArea', this.layerAreaOptions,
+                                'Keep');
+                }
             }
         }
         return response;
@@ -436,6 +480,23 @@ OpenLayers.Control.DynamicMeasure = OpenLayers.Class(
             this.layerArea = null;
         }
         return response;
+    },
+
+    /**
+     * APIMethod: emptyKeeped
+     * Remove annotation from layers layerSegementsKeep, layerLengthKeep,
+     * layerAreaKeep
+     */
+     emptyKeeped: function () {
+        if (this.layerSegmentsKeep) {
+            this.layerSegmentsKeep.removeAllFeatures();
+        }
+        if (this.layerLengthKeep) {
+            this.layerLengthKeep.removeAllFeatures();
+        }
+        if (this.layerAreaKeep) {
+            this.layerAreaKeep.removeAllFeatures();
+        }
     },
 
     /**
@@ -495,6 +556,38 @@ OpenLayers.Control.DynamicMeasure = OpenLayers.Class(
                 this.featureAdded(feature);
             }
             this.events.triggerEvent('featureadded', {feature: feature});
+        }
+    },
+
+    /**
+     * Method: copyAnnotations
+     */
+    copyAnnotations: function() {
+        var _insertable = function(feat) {
+            feat.state = OpenLayers.State.INSERT;
+        };
+        // Segments measures
+        var segments = this.layerSegments.clone();
+        var segmentsFeatures = segments.features;
+        for(i = 0; i > segmentsFeatures.length; i++) {
+            segmentsFeatures[i].state = OpenLayers.State.INSERT;
+        }
+        this.layerSegmentsKeep.addFeatures(segmentsFeatures);
+        // Length measures
+        var lengths = this.layerLength.clone();
+        var lengthsFeatures = lengths.features;
+        for(i = 0; i > lengthsFeatures.length; i++) {
+            lengthsFeatures[i].state = OpenLayers.State.INSERT;
+        }
+        this.layerLengthKeep.addFeatures(lengthsFeatures);
+        // Area measures
+        if (this.isArea) {
+            var areas = this.layerArea.clone();
+            var areasFeatures = areas.features;
+            for(i = 0; i > areasFeatures.length; i++) {
+                areasFeatures[i].state = OpenLayers.State.INSERT;
+            }
+            this.layerAreaKeep.addFeatures(areasFeatures);
         }
     },
 
