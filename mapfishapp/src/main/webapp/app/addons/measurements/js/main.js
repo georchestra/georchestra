@@ -100,11 +100,10 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
         });
         this.measuresReset = new Ext.Action({
             handler: function () {
-                measurements_layers = this.map.getLayersByName('__georchestra_measurements');
-                if (measurements_layers.length > 0) {
-                    measurements_layers[0].removeAllFeatures();
+                if (this.layer) {
+                    this.layer.removeAllFeatures();
                 }
-                this.toggle();
+                this.measuresReset.items[0].toggle();
             },
             map: this.map,
             toggleGroup: this.toggleGroup,
@@ -159,7 +158,7 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
             this.target.doLayout();
         } else {
             // create a menu item for the "tools" menu:
-            this.item =  new Ext.menu.CheckItem({
+            this.item = new Ext.menu.CheckItem({
                 text: this.getText(record),
                 qtip: this.getQtip(record),
                 iconCls: "addon-measurements",
@@ -197,10 +196,31 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
             this.window.hide();
         }
     },
+    /** private: _exportAsKml
+     *  Called when the exportAsKml is triggered (button pressed).
+     *  code from: src/main/webapp/app/addons/annotation/js/Annotation.js
+     */
+    _exportAsKml: function() {
+        GEOR.waiter.show();
+        var urlObj = OpenLayers.Util.createUrlObject(window.location.href),
+            format = new OpenLayers.Format.KML({
+                'foldersName': urlObj.host, // TODO use instance name instead
+                'internalProjection': this.map.getProjectionObject(),
+                'externalProjection': new OpenLayers.Projection("EPSG:4326")
+            });
+        OpenLayers.Request.POST({
+            url: GEOR.config.PATHNAME + "/ws/kml/",
+            data: format.write(this.layer.features),
+            success: function(response) {
+                var o = Ext.decode(response.responseText);
+                window.location.href = GEOR.config.PATHNAME + "/" + o.filepath;
+            }
+        });
+    },
 
     /**
      * Method: destroy
-     * 
+     *
      */
     destroy: function() {
         this.window.hide();
