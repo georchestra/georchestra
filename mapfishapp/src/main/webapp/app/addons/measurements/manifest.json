@@ -39,36 +39,44 @@
             "measurements.distance": "Distance",
             "measurements.reset": "Reset",
             "measurements.area": "Area",
+            "measurements.export": "Export",
             "measurements.distance.tooltip": "Distance measure",
             "measurements.area.tooltip": "Area measure",
-            "measurements.reset.tooltip": "Remove all measurements"
+            "measurements.reset.tooltip": "Remove all measurements",
+            "measurements.export.tooltip": "Export measurements to KML"
         },
         "es": {
             "measurements.tools": "Medida",
             "measurements.distance": "Distancia",
             "measurements.reset": "Reinciar",
             "measurements.area": "Area",
+            "measurements.export": "Export (es)",
             "measurements.distance.tooltip": "Medir una distancia",
             "measurements.area.tooltip": "Medir un área",
-            "measurements.reset.tooltip": "Remove all measurements (es)"
+            "measurements.reset.tooltip": "Remove all measurements (es)",
+            "measurements.export.tooltip": "Export measurements to KML (es)"
         },
         "fr": {
             "measurements.tools": "Mesure",
             "measurements.distance": "Distance",
             "measurements.reset": "Réinitialiser",
             "measurements.area": "Surface",
+            "measurements.export": "Exporter",
             "measurements.distance.tooltip": "Mesure de distance",
             "measurements.area.tooltip": "Mesure de surface",
-            "measurements.reset.tooltip": "Effacer toutes les mesures"
+            "measurements.reset.tooltip": "Effacer toutes les mesures",
+            "measurements.export.tooltip": "Exporter les mesures en KML"
         },
         "de": {
             "measurements.tools": "Maß",
             "measurements.distance": "Distanz",
             "measurements.area": "Oberfläche",
             "measurements.reset": "Reset (de)",
+            "measurements.export": "Export (de)",
             "measurements.distance.tooltip": "Distanz messen",
             "measurements.area.tooltip": "Oberfläche messen",
-            "measurements.reset.tooltip": "Remove all measurements (de)"
+            "measurements.reset.tooltip": "Remove all measurements (de)",
+            "measurements.export.tooltip": "Export measurements to KML (de)"
         }
     }
 }

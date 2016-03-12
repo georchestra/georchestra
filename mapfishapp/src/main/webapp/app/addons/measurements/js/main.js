@@ -62,9 +62,6 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
                 persist: true,
                 geodesic: true,
                 drawingLayer: this.layer,
-                layerSegments: this.layer2,
-                layerLength: this.layer3,
-                layerArea: this.layer4
             }),
             map: this.map,
             // button options
@@ -83,9 +80,6 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
                 persist: true,
                 geodesic: true,
                 drawingLayer: this.layer,
-                layerSegments: this.layer2,
-                layerLength: this.layer3,
-                layerArea: this.layer4
             }),
             map: this.map,
             // button options
@@ -96,7 +90,8 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
             tooltip: this.tr("measurements.area.tooltip"),
             iconCls: 'measurements-area',
             text: OpenLayers.i18n("measurements.area"),
-            iconAlign: 'top'
+            iconAlign: 'top',
+            scope: this
         });
         this.measuresReset = new Ext.Action({
             handler: function () {
@@ -113,12 +108,43 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
             tooltip: this.tr("measurements.reset.tooltip"),
             iconCls: 'measurements-delete',
             text: OpenLayers.i18n("measurements.reset"),
-            iconAlign: 'top'
-            
+            iconAlign: 'top',
+            scope: this
+        });
+        this.exportAsKml = new Ext.Action({
+            //code from: src/main/webapp/app/addons/annotation/js/Annotation.js
+            handler: function() {
+                GEOR.waiter.show();
+                var urlObj = OpenLayers.Util.createUrlObject(window.location.href),
+                    format = new OpenLayers.Format.KML({
+                        'foldersName': urlObj.host, // TODO use instance name instead
+                        'internalProjection': this.map.getProjectionObject(),
+                        'externalProjection': new OpenLayers.Projection("EPSG:4326")
+                    });
+               OpenLayers.Request.POST({
+                    url: GEOR.config.PATHNAME + "/ws/kml/",
+                    data: format.write(this.layer.features),
+                    success: function(response) {
+                        var o = Ext.decode(response.responseText);
+                        window.location.href = GEOR.config.PATHNAME + "/" + o.filepath;
+                    }
+                });
+                this.measuresReset.items[0].toggle();
+            },
+            map: this.map,
+            toggleGroup: this.toggleGroup,
+            allowDepress: true,
+            pressed: false,
+            minWidth: 50,
+            tooltip: this.tr("measurements.export.tooltip"),
+            iconCls: 'measurements-export',
+            text: OpenLayers.i18n("measurements.export"),
+            iconAlign: 'top',
+            scope: this
         });
         this.window = new Ext.Window({
             title: OpenLayers.i18n('measurements.tools'),
-            width: 200,
+            width: 240,
             closable: true,
             closeAction: "hide",
             resizable: false,
@@ -127,7 +153,8 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
             items: [{
                 xtype: 'toolbar',
                 border: false,
-                items: [this.lengthAction, this.areaAction, this.measuresReset]
+                items: [this.lengthAction, this.areaAction, this.measuresReset,
+                            this.exportAsKml]
             }],
             listeners: {
                 'show': function() {
@@ -195,27 +222,6 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
         } else {
             this.window.hide();
         }
-    },
-    /** private: _exportAsKml
-     *  Called when the exportAsKml is triggered (button pressed).
-     *  code from: src/main/webapp/app/addons/annotation/js/Annotation.js
-     */
-    _exportAsKml: function() {
-        GEOR.waiter.show();
-        var urlObj = OpenLayers.Util.createUrlObject(window.location.href),
-            format = new OpenLayers.Format.KML({
-                'foldersName': urlObj.host, // TODO use instance name instead
-                'internalProjection': this.map.getProjectionObject(),
-                'externalProjection': new OpenLayers.Projection("EPSG:4326")
-            });
-        OpenLayers.Request.POST({
-            url: GEOR.config.PATHNAME + "/ws/kml/",
-            data: format.write(this.layer.features),
-            success: function(response) {
-                var o = Ext.decode(response.responseText);
-                window.location.href = GEOR.config.PATHNAME + "/" + o.filepath;
-            }
-        });
     },
 
     /**
