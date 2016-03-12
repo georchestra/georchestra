@@ -14,6 +14,10 @@
   background-image: url("../img/delete.png") !important;
 }
 
+.measurements-export {
+  background-image: url("../img/export.png") !important;
+}
+
 .measurements .x-toolbar {
     border: 0;
     background-image: none;
