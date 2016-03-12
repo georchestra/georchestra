@@ -29,7 +29,8 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
                 persist: true,
                 geodesic: true,
                 drawingLayer: this.layer,
-                keep: true
+                keep: true,
+                styles: this.options.graphicStyle
             }),
             map: this.map,
             // button options
@@ -48,7 +49,8 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
                 persist: true,
                 geodesic: true,
                 drawingLayer: this.layer,
-                keep: true
+                keep: true,
+                styles: this.options.graphicStyle
             }),
             map: this.map,
             // button options
@@ -150,10 +152,31 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
                     if (OpenLayers.Util.indexOf(this.map.layers, this.layer) < 0) {
                         this.map.addLayer(this.layer);
                     }
+                    // Show annotation layers
+                    for (i = 0; i < this.map.layers.length; i++) {
+                        var layerName = this.map.layers[i].name;
+                        //DynamicMeasure spefic name
+                        var dynamicMesurePattern =
+                                /(^OpenLayers.Control.DynamicMeasure)(.)*(Keep$)/
+                        if (dynamicMesurePattern.test(layerName)) {
+                            this.map.layers[i].setVisibility(true);
+                        }
+                    }
                 },
                 'hide': function() {
+                    // Hide draw layer
                     if (OpenLayers.Util.indexOf(this.map.layers, this.layer) > 0) {
                         this.map.removeLayer(this.layer);
+                    }
+                    // Hide annotation layers
+                    for (i = 0; i < this.map.layers.length; i++) {
+                        var layerName = this.map.layers[i].name;
+                        //DynamicMeasure spefic name
+                        var dynamicMesurePattern =
+                                /(^OpenLayers.Control.DynamicMeasure)(.)*(Keep$)/
+                        if (dynamicMesurePattern.test(layerName)) {
+                            this.map.layers[i].setVisibility(false);
+                        }
                     }
                     this.areaAction.control.deactivate();
                     this.lengthAction.control.deactivate();

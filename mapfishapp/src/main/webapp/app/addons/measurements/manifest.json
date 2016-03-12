@@ -19,7 +19,7 @@
                 "strokeColor": "#333333"
             },
             "Line": {
-                "strokeWidth": 3,
+                "strokeWidth": 2,
                 "strokeOpacity": 1,
                 "strokeColor": "#666666",
                 "strokeDashstyle": "dash"
@@ -28,8 +28,47 @@
                 "strokeWidth": 2,
                 "strokeOpacity": 1,
                 "strokeColor": "#666666",
+                "strokeDashstyle": "solid",
                 "fillColor": "white",
                 "fillOpacity": 0.3
+            },
+            "labelSegments": {
+                "label": "${measure} ${units}",
+                "fontSize": "11px",
+                "fontColor": "#800517",
+                "fontFamily": "Verdana",
+                "labelOutlineColor": "#dddddd",
+                "labelAlign": "cm",
+                "labelOutlineWidth": 2
+            },
+            "labelLength": {
+                "label": "${measure} ${units}\n",
+                "fontSize": "11px",
+                "fontWeight": "bold",
+                "fontColor": "#800517",
+                "fontFamily": "Verdana",
+                "labelOutlineColor": "#dddddd",
+                "labelAlign": "lb",
+                "labelOutlineWidth": 3
+            },
+            "labelArea": {
+                "label": "${measure}\n${units}²\n",
+                "fontSize": "11px",
+                "fontWeight": "bold",
+                "fontColor": "#800517",
+                "fontFamily": "Verdana",
+                "labelOutlineColor": "#dddddd",
+                "labelAlign": "cm",
+                "labelOutlineWidth": 3
+            },
+            "labelHeading": {
+                "fontSize": "11px",
+                "label": "${measure} ${units}",
+                "fontColor": "#800517",
+                "fontFamily": "Verdana",
+                "labelOutlineColor": "#dddddd",
+                "labelAlign": "cm",
+                "labelOutlineWidth": 3
             }
         }
     },
