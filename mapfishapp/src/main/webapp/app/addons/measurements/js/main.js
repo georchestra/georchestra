@@ -62,8 +62,7 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
             tooltip: this.tr("measurements.area.tooltip"),
             iconCls: 'measurements-area',
             text: OpenLayers.i18n("measurements.area"),
-            iconAlign: 'top',
-            scope: this
+            iconAlign: 'top'
         });
         this.measuresReset = new Ext.Action({
             handler: function () {
