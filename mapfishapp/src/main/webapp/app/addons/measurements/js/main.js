@@ -102,7 +102,31 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
                         'internalProjection': this.map.getProjectionObject(),
                         'externalProjection': new OpenLayers.Projection("EPSG:4326")
                     });
-               var kmlFeatures = this.layer.features;
+                var kmlFeatures = this.layer.features;
+                for (i = 0; i < kmlFeatures.length; i++) {
+                    var geometry = kmlFeatures[i].geometry;
+                    var aLength = this.lengthAction.control.getBestLength(geometry);
+                    kmlFeatures[i].data.length_measure = aLength[0];
+                    kmlFeatures[i].data.length_units = aLength[1];
+
+
+                    if (geometry instanceof OpenLayers.Geometry.Polygon) {
+                        var area = this.areaAction.control.getBestArea(geometry);
+
+                        kmlFeatures[i].data.area_measure = area[0];
+                        kmlFeatures[i].data.area_units = area[1];
+                        var label = kmlFeatures[i].data.area_measure + ' ' +
+                                kmlFeatures[i].data.area_units + ' (' +
+                                kmlFeatures[i].data.length_measure + ' ' +
+                                kmlFeatures[i].data.length_units + ')';
+                    } else {
+                        var label = kmlFeatures[i].data.length_measure + ' ' +
+                                    kmlFeatures[i].data.length_units;
+                    }
+
+                    kmlFeatures[i].attributes.name = label;
+                    kmlFeatures[i].attributes.description = label;
+               }
                for (i = 0; i < this.map.layers.length; i++) {
                     var layerName = this.map.layers[i].name;
                     //DynamicMeasure spefic name
