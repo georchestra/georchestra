@@ -116,7 +116,7 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
                         kmlFeatures[i].data.area_measure = area[0];
                         kmlFeatures[i].data.area_units = area[1];
                         var label = kmlFeatures[i].data.area_measure + ' ' +
-                                kmlFeatures[i].data.area_units + ' (' +
+                                kmlFeatures[i].data.area_units + '² (' +
                                 kmlFeatures[i].data.length_measure + ' ' +
                                 kmlFeatures[i].data.length_units + ')';
                     } else {
@@ -137,8 +137,15 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
                         for (j = 0; j < this.map.layers[i].features.length;
                                 j++) {
                             var feature = this.map.layers[i].features[j];
-                            var measure = feature.data.measure + ' ' +
+                            //Square unit for area
+                            if (/(^OpenLayers.Control.DynamicMeasure)(.)*(AreaKeep$)/.test(layerName)) {
+                                var measure = feature.data.measure + ' ' +
+                                    feature.data.units + '²';
+                            } else {
+                                 var measure = feature.data.measure + ' ' +
                                     feature.data.units;
+                            }
+
                             feature.attributes.name = measure;
                             feature.attributes.description = measure;
                         }
