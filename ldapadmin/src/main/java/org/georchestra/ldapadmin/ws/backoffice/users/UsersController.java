@@ -184,7 +184,7 @@ public class UsersController {
 	 * @throws IOException
 	 * @throws NameNotFoundException
 	 */
-	@RequestMapping(value=REQUEST_MAPPING+"/{uid}", method=RequestMethod.GET,
+	@RequestMapping(value=REQUEST_MAPPING+"/{uid:.+}", method=RequestMethod.GET,
 					produces = "application/json")
 	public void findByUid(@PathVariable String uid, HttpServletResponse response) throws IOException, JSONException, NameNotFoundException {
 

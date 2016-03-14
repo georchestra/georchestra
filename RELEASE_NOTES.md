@@ -1,7 +1,7 @@
 The development branch is master. It can be used for testing and reporting errors.
 
 For production systems, you are advised to use the stable branch (currently 15.12).
-This branch receives bug fixes as they arrive, during 6 months at least.
+This branch receives bug fixes as they arrive, during 12 months at least.
 
 Version 15.12
 =============
