@@ -20,7 +20,8 @@ module.exports = config:
           'vendor/angular-translate.js',
           'vendor/angular-translate-loader-static-files.js',
           'vendor/dirPagination.js',
-          'vendor/chartist.js'
+          'vendor/chartist.js',
+          'vendor/moment.min.js'
         ]
     stylesheets:
       joinTo:

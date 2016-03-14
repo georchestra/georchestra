@@ -31,6 +31,7 @@
     "css-brunch": "^1.7.0",
     "javascript-brunch": "1.8.0",
     "jquery": "^2.2.0",
+    "moment": "^2.12.0",
     "sass-brunch": "1.9.2"
   },
   "scripts": {

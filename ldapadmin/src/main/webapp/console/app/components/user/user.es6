@@ -52,37 +52,72 @@ class UserController {
   }
 
   loadAnalytics($scope) {
+
     let $translate = this.$injector.get('$translate');
+    let startDate  = moment().format('YY-MM-DD')
+    let endDate    = moment().format('YY-MM-DD')
+
+    this.intervals = [
+      'day', 'week', 'month', '3month', 'year'
+    ].map(x => { return { value: x, label: 'analytics.' + x } })
+    this.interval = this.intervals[0]
+
     this.data = {};
     this.config = {
       layers   : [ 'layer', 'count' ],
       requests : [ 'date', 'count' ]
     };
-    this.data.layers = this.$injector.get('Analytics').get({
+    let load_ = (startDate) => {
+      let options = {
         service   : 'combinedRequests',
         user      : this.user.uuid,
-        startDate : '15-01-01',
-        endDate   : '16-03-09'
-      }, function() {},
-      this.flash.create.bind(this, 'error', $translate('analytics.errorload'))
-    );
-    this.data.requests = this.$injector.get('Analytics').get({
-        service   : 'layersUsage',
-        user      : this.user.uuid,
-        startDate : '15-01-01',
-        endDate   : '16-03-09'
-      }, function() {},
-      this.flash.create.bind(this, 'error', $translate('analytics.errorload'))
-    );
+        startDate : startDate,
+        endDate   : endDate
+      };
+      this.data.layers = this.$injector.get('Analytics').get(options,
+        function() {},
+        this.flash.create.bind(this, 'error', $translate('analytics.errorload'))
+      )
+      options.service = 'layersUsage'
+      this.data.requests = this.$injector.get('Analytics').get(options,
+        function() {},
+        this.flash.create.bind(this, 'error', $translate('analytics.errorload'))
+      )
+    }
+    load_(startDate)
+
+    $scope.$watch('user.interval', (newVal, oldVal) => {
+      if (newVal == oldVal) { return; }
+      let m = moment()
+      switch (newVal.value) {
+        case 'day':
+          break;
+        case 'week':
+          m = m.subtract(1, 'weeks')
+          break;
+        case 'month':
+          m = m.subtract(1, 'months')
+          break;
+        case '3month':
+          m = m.subtract(3, 'months')
+          break;
+        case 'year':
+          m = m.subtract(1, 'year')
+          break;
+      }
+      load_(m.format('YY-MM-DD'))
+    })
   }
 
   loadLogs($scope) {
-    let $translate = this.$injector.get('$translate');
-    this.$injector.get('Logs').query({user: this.user.uuid}, () => {
-      this.logs = [ { "admin": "98192574-18d0-1035-8e10-c310a114ab8f", "date": "2015-12-01T13:48:18Z", "target": "98192574-18d0-1035-8e10-c310a114ab8f", "type": "Email sent" }, { "admin": "9818af68-18d0-1035-8e0e-999999999999", "date": "2015-11-30T16:37:00Z", "target": "98192574-18d0-1035-8e10-c310a114ab8f", "type": "Email sent" }, { "admin": "98192574-18d0-1035-8e10-c310a114ab8f", "date": "2015-11-30T17:37:50Z", "target": "98192574-18d0-1035-8e10-c310a114ab8f", "type": "Email sent" } ];
-    },
-    this.flash.create.bind(this, 'error', $translate('analytics.errorload'))
-    );
+    let $translate = this.$injector.get('$translate')
+    this.$injector.get('Logs').query(
+      { user: this.user.uuid },
+      () => {
+        this.logs = [ { "admin": "98192574-18d0-1035-8e10-c310a114ab8f", "date": "2015-12-01T13:48:18Z", "target": "98192574-18d0-1035-8e10-c310a114ab8f", "type": "Email sent" }, { "admin": "9818af68-18d0-1035-8e0e-999999999999", "date": "2015-11-30T16:37:00Z", "target": "98192574-18d0-1035-8e10-c310a114ab8f", "type": "Email sent" }, { "admin": "98192574-18d0-1035-8e10-c310a114ab8f", "date": "2015-11-30T17:37:50Z", "target": "98192574-18d0-1035-8e10-c310a114ab8f", "type": "Email sent" } ];
+      },
+      this.flash.create.bind(this, 'error', $translate('analytics.errorload'))
+    )
   }
 
   save() {
