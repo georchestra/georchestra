@@ -112,7 +112,7 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
                     }
                 }
 
-               OpenLayers.Request.POST({
+                OpenLayers.Request.POST({
                     url: GEOR.config.PATHNAME + "/ws/kml/",
                     data: format.write(kmlFeatures),
                     success: function(response) {
