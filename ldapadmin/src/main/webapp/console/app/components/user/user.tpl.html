@@ -176,7 +176,7 @@
         <label ng-if="user.compose" class="pull-right clearfix">
           <span translate>msg.templates</span>
           <select placeholder="{{ 'msg.templates' | translate }}" ng-change="user.loadTemplate()"
-            ng-options="template.name for template in user.templates" ng-model="user.compose.template"></select>
+            ng-options="template.name for template in user.templates.templates" ng-model="user.compose.template"></select>
         </label>
 
         <form ng-if="user.compose" class="">
@@ -195,7 +195,7 @@
 
           <h5 translate>msg.attachments</h5>
           <div class="clearfix">
-            <div class="col-sm-4" ng-repeat="attachment in user.attachments">
+            <div class="col-sm-4" ng-repeat="attachment in user.attachments.attachments">
               <div class="checkbox">
                 <label>
                   <input type="checkbox" ng-model="user.compose.attachments[attachment.id]"> {{::attachment.name}}

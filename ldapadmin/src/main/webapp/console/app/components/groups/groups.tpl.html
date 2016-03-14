@@ -1,22 +1,27 @@
 <div ng-if="groups.isRoot">
-  <a ng-link="users({id: 'all'})">All users</a>
-  <hr>
-  <h4>System groups</h4>
-  <div ng-repeat="group in groups.adminList">
+  <div class="alert alert-info">
+    <a ng-link="users({id: 'all'})" translate>group.allusers</a>
+    <br>
+    <hr>
+    <a href="" class="btn btn-default" translate>group.newuser</a>
+    <a href="" class="btn btn-default" translate>group.newgroup</a>
+  </div>
+
+  <input ng-if="groups.isRoot" ng-model="groups.q" class="form-control input-sm" placeholder="Search groups">
+
+  <h5 ng-if="groups.q == ''">System groups</h5>
+  <div ng-repeat="group in groups.adminList" ng-if="groups.q == ''">
     <strong ng-if="(groups.activeGroup.cn == group.cn)">
-      {{::group | unprefix: groups.prefix}} <span class="badge">{{::group.users.length}}</span>
+      {{::group | unprefix: groups.prefix}} ({{::group.users.length}})
     </strong>
     <a ng-link="users({id: group.cn})" ng-if="(groups.activeGroup.cn != group.cn)">
       {{::group.cn}}
-     <span class="badge">{{::group.users.length}}</span>
+     ({{::group.users.length}})
    </a>
   </div>
-  <hr>
 </div>
 
-<h4 ng-if="groups.isRoot">Application groups</h4>
-
-<input ng-if="groups.isRoot" ng-model="groups.q" class="form-control" placeholder="Search groups">
+<h5 ng-if="groups.isRoot && groups.q == ''">Application groups</h5>
 
 <div ng-if="groups.q == ''">
 
@@ -28,12 +33,12 @@
   <div ng-repeat="group in groups.tree" ng-if="groups.filter(group, groups.activeGroup)">
 
     <strong ng-if="(groups.activeGroup.cn == group.cn) && (group.children.length == 0)">
-      {{::group | unprefix: groups.prefix}} <span class="badge">{{::group.users.length}}</span>
+      {{::group | unprefix: groups.prefix}} ({{::group.users.length}})
     </strong>
     <a ng-link="users({id: group.cn})" title={{::group.description}}
       ng-if="(groups.activeGroup.cn != group.cn) && (groups.prefix.cn.indexOf(group.cn)!=0)">
       <span ng-if="group.children.length > 0">+</span>
-      {{::group | unprefix: groups.prefix}} <span class="badge">{{::group.users.length}}</span>
+      {{::group | unprefix: groups.prefix}} ({{::group.users.length}})
     </a>
 
     <groups groups="group.children" active-group="groups.activeGroup" index="groups.index"
@@ -46,6 +51,6 @@
 <div ng-repeat="(key, group) in groups.index" ng-if="groups.isRoot && groups.q != ''">
   <a ng-link="users({id: group.cn})" title={{::group.description}}
       ng-if="group.cn.toLowerCase().indexOf(groups.q.toLowerCase()) >= 0">
-    {{::group.cn}} <span class="badge">{{::group.users.length}}</span>
+    {{::group.cn}} ({{::group.users.length}})
   </a>
 </div>

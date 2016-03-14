@@ -20,8 +20,11 @@
   "user.save"          : "Save",
   "user.delete"        : "Delete user",
 
+  "group.allusers"     : "All users",
   "group.system"       : "System groups",
   "group.app"          : "Application groups",
+  "group.newuser"      : "New user",
+  "group.newgroup"     : "New group",
 
   "msg.compose"        : "Compose message",
   "msg.date"           : "Date",
