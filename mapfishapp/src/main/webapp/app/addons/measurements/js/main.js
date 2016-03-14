@@ -97,24 +97,35 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
                 GEOR.waiter.show();
                 var urlObj = OpenLayers.Util.createUrlObject(window.location.href),
                     format = new OpenLayers.Format.KML({
-                        'foldersName': urlObj.host, // TODO use instance name instead
+                        'extractAttributes': true,
+                        'foldersName': OpenLayers.i18n("measurements.tools"),
                         'internalProjection': this.map.getProjectionObject(),
                         'externalProjection': new OpenLayers.Projection("EPSG:4326")
                     });
-               var kmlFeatures = this.layer.features
+               var kmlFeatures = this.layer.features;
                for (i = 0; i < this.map.layers.length; i++) {
                     var layerName = this.map.layers[i].name;
                     //DynamicMeasure spefic name
                     var dynamicMesurePattern =
                             /(^OpenLayers.Control.DynamicMeasure)(.)*(Keep$)/
                     if (dynamicMesurePattern.test(layerName)) {
+                        //Update feature name and description
+                        for (j = 0; j < this.map.layers[i].features.length;
+                                j++) {
+                            var feature = this.map.layers[i].features[j];
+                            var measure = feature.data.measure + ' ' +
+                                    feature.data.units;
+                            feature.attributes.name = measure;
+                            feature.attributes.description = measure;
+                        }
                         kmlFeatures = kmlFeatures.concat(this.map.layers[i].features);
                     }
                 }
+                var olKML = format.write(kmlFeatures);
 
                 OpenLayers.Request.POST({
                     url: GEOR.config.PATHNAME + "/ws/kml/",
-                    data: format.write(kmlFeatures),
+                    data: olKML,
                     success: function(response) {
                         var o = Ext.decode(response.responseText);
                         window.location.href = GEOR.config.PATHNAME + "/" + o.filepath;
