@@ -86,8 +86,6 @@
                 <!--value>.*ArcGIS.*</value-->
                 <!--value>.*uDig.*</value-->
                 <!--value>.*QGIS.*</value-->
-                <value>.*Jakarta.*</value> <!-- GeoFence UA for GeoServer REST -->
-                <value>.*ExtractorApp.*</value> <!-- Extractorapp client -->
             </list>
         </property>
         <property name="ignoreHttps" value="true" />
