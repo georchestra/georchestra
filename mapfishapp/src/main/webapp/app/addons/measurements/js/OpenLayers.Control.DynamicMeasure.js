@@ -406,7 +406,8 @@ OpenLayers.Control.DynamicMeasure = OpenLayers.Class(
             var _optionsStyles = this.styles || {},
                 _defaultStyles = OpenLayers.Control.DynamicMeasure.styles,
                 _self = this;
-            var _create = function(styleName, initialOptions, nameSuffix='') {
+            var _create = function(styleName, initialOptions, nameSuffix) {
+                nameSuffix = nameSuffix || '';
                 if (initialOptions === null) {
                     return null;
                 }
