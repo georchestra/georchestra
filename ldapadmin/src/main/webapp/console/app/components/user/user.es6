@@ -1,21 +1,22 @@
 class UserController {
 
-  constructor($routeParams, $injector, User, Group, Email, Attachments,
-      Templates, groupAdminList, groupAdminFilter) {
+  constructor($routeParams, $injector, User, Group, groupAdminFilter) {
 
-    this.tab = $routeParams.tab
+    this.tabs = ['infos', 'groups', 'analytics', 'messages', 'logs', 'manage']
+
     this.$injector = $injector
+    this.tab = $routeParams.tab
     this.flash = this.$injector.get('Flash')
+
     this.user = User.get({id : $routeParams.id}, (user) => {
       if (this.tab == 'messages') {
-        Email.query({id: this.user.uuid}, (r) => {
+        this.$injector.get('Email').query({id: this.user.uuid}, (r) => {
           // this.messages = r.emails;
           this.messages =  [{ "sender": "98192574-18d0-1035-8e10-c310a114ab8f", "id": 51, "body": "qsdfqsdfqsf", "subject": "Hello", "attachments": [ { "id": 42, "name": "intelij.jpeg", "mimeType": "image/jpeg", "size": 30218 }, { "id": 43, "name": "intelij.jpeg", "mimeType": "image/jpeg", "size": 30218 } ], "date": "2007-03-01T13:00:00Z", "recipient": "9818af68-18d0-1035-8e0e-c310a114ab8f"}, { "sender": "98192574-18d0-1035-8e10-c310a114ab8f", "id": 52, "body": "Hello ça va ?", "subject": "Hi men :!", "attachments": [{ "id": 44, "name": "intelij.jpeg", "mimeType": "image/jpeg", "size": 30218 }], "date": "2015-11-23T16:44:18.00Z", "recipient": "9818af68-18d0-1035-8e0e-c310a114ab8f"} ];
         });
       }
     });
-    this.tabs = [ 'infos', 'groups', 'analytics', 'messages', 'logs', 'manage' ];
-    this.adminGroups = groupAdminList();
+    this.adminGroups = this.$injector.get('groupAdminList')()
     switch (this.tab) {
       case 'groups':
         let notAdmin = [];
@@ -42,8 +43,8 @@ class UserController {
         })
         break;
       case 'messages':
-        this.templates = Templates.query()
-        // this.attachments = Attachments.query()
+        this.templates = this.$injector.get('Templates').query()
+        // this.attachments = this.$injector.get('Attachments').query()
         this.attachments = { "attachments" :[{"id":2, "name":"Licence.pdf", "mimeType": "application/pdf"}, {"id":3, "name":"Admin.pdf", "mimeType": "image/jpeg"} ]}
         break;
       default:
@@ -176,9 +177,10 @@ class UserController {
 }
 
 UserController.$inject = [
-  '$routeParams', '$injector', 'User', 'Group', 'Email',
-  'Attachments', 'Templates', 'groupAdminList', 'groupAdminFilter'
+  '$routeParams', '$injector', 'User', 'Group', 'groupAdminFilter'
 ]
+
+UserController.prototype.activate.$inject = [ '$scope' ]
 
 
 
