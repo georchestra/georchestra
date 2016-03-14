@@ -13,6 +13,7 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
      */
     init: function(record) {
         this.layer = new OpenLayers.Layer.Vector('__georchestra_measurements', {
+            displayInLayerSwitcher: false,
             styleMap: new OpenLayers.StyleMap(
                 new OpenLayers.Style(null, {
                     rules: [
