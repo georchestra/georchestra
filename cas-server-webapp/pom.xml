@@ -385,6 +385,9 @@
     </profile>
     <profile>
       <id>docker</id>
+      <properties>
+        <dockerImageName>georchestra/cas</dockerImageName>
+      </properties>
       <build>
         <finalName>cas</finalName>
         <plugins>
@@ -393,7 +396,7 @@
             <artifactId>docker-maven-plugin</artifactId>
             <version>0.3.8</version>
             <configuration>
-              <imageName>georchestra/cas</imageName>
+              <imageName>${dockerImageName}</imageName>
               <dockerDirectory>${project.basedir}/src/docker</dockerDirectory>
               <resources>
                 <resource>
