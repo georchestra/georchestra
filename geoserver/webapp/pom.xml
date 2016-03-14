@@ -12,7 +12,6 @@
   <properties>
     <gs.unpack.dir>${project.build.directory}/geoserver-unpacked-webapp</gs.unpack.dir>
     <packageName>georchestra-geoserver</packageName>
-    <dockerImageName>georchestra/geoserver</dockerImageName>
   </properties>
   <dependencies>
     <dependency>
@@ -984,6 +983,9 @@
     </profile>
     <profile>
       <id>docker</id>
+      <properties>
+        <dockerImageName>georchestra/geoserver</dockerImageName>
+      </properties>
       <build>
         <finalName>geoserver</finalName>
         <plugins>

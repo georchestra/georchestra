@@ -591,6 +591,9 @@
     </profile>
     <profile>
       <id>docker</id>
+      <properties>
+        <dockerImageName>georchestra/${project.artifactId}</dockerImageName>
+      </properties>
       <build>
         <finalName>mapfishapp</finalName>
         <plugins>
@@ -599,7 +602,7 @@
             <artifactId>docker-maven-plugin</artifactId>
             <version>0.3.8</version>
             <configuration>
-              <imageName>georchestra/${project.artifactId}</imageName>
+              <imageName>${dockerImageName}</imageName>
               <dockerDirectory>${project.basedir}/src/docker</dockerDirectory>
               <resources>
                 <resource>
