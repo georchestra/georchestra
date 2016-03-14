@@ -371,6 +371,9 @@
     </profile>
     <profile>
       <id>docker</id>
+      <properties>
+        <dockerImageName>georchestra/geowebcache</dockerImageName>
+      </properties>
       <build>
         <finalName>geowebcache</finalName>
         <plugins>
@@ -379,7 +382,7 @@
             <artifactId>docker-maven-plugin</artifactId>
             <version>0.3.8</version>
             <configuration>
-              <imageName>georchestra/geowebcache</imageName>
+              <imageName>${dockerImageName}</imageName>
               <dockerDirectory>${project.basedir}/src/docker</dockerDirectory>
               <resources>
                 <resource>
