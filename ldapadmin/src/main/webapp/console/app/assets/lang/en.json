@@ -48,5 +48,10 @@
 
   "analytics.title"    : "Analytics",
   "analytics.requests" : "Number of requests",
-  "analytics.layers"   : "Most viewed layers"
+  "analytics.layers"   : "Most viewed layers",
+  "analytics.day"      : "Today",
+  "analytics.week"     : "Last week",
+  "analytics.month"    : "Last month",
+  "analytics.3month"   : "Last 3 month",
+  "analytics.year"     : "Last year"
 }

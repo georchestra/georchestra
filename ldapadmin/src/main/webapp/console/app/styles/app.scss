@@ -121,6 +121,14 @@ groups input {
   }
 }
 
+// STATS
+@media (min-width: 992px) {
+  .user-analytics select {
+    width: 25%;
+  }
+}
+
+
 // CHARTS
 .chartist {
   height: 25em;
