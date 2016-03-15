@@ -69,15 +69,13 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
                 if (this.layer) {
                     this.layer.removeAllFeatures();
                 }
-                for (i = 0; i < this.map.layers.length; i++) {
-                    var layerName = this.map.layers[i].name;
-                    //DynamicMeasure spefic name
-                    var dynamicMesurePattern =
-                            /(^OpenLayers.Control.DynamicMeasure)(.)*(Keep$)/
-                    if (dynamicMesurePattern.test(layerName)) {
-                        this.map.layers[i].removeAllFeatures();
-                    }
+                var dynamicMesurePattern =
+                    /(^OpenLayers.Control.DynamicMeasure)(.)*(Keep$)/
+                var removeAllFeatures = function (layer) {
+                    layer.removeAllFeatures();
                 }
+                this._loopOnMatchingLayers(this.map, dynamicMesurePattern,
+                    removeAllFeatures);
                 this.measuresReset.items[0].toggle();
             },
             map: this.map,
@@ -126,33 +124,30 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
                     kmlFeatures[i].attributes.name = label;
                     kmlFeatures[i].attributes.description = label;
                }
-               for (i = 0; i < this.map.layers.length; i++) {
-                    var layerName = this.map.layers[i].name;
-                    //DynamicMeasure spefic name
-                    var dynamicMesurePattern =
-                            /(^OpenLayers.Control.DynamicMeasure)(.)*(Keep$)/
-                    if (dynamicMesurePattern.test(layerName)) {
-                        //Update feature name and description
-                        var layer = this.map.layers[i];
-                        for (j = 0; j < layer.features.length; j++) {
-                            var feature = layer.features[j];
-                            //Square unit for area
-                            var areaPattern = /(^OpenLayers.Control.DynamicMeasure)(.)*(AreaKeep$)/
-                            if (areaPattern.test(layerName)) {
-                                var measure = feature.data.measure + ' ' +
-                                    feature.data.units + '²';
-                            } else {
-                                 var measure = feature.data.measure + ' ' +
-                                    feature.data.units;
-                            }
-
-                            feature.attributes.name = measure;
-                            feature.attributes.description = measure;
+               var dynamicMesurePattern =
+                   /(^OpenLayers.Control.DynamicMeasure)(.)*(Keep$)/
+               var setNameDescriptionKml = function(layer, argsObj) {
+                   for (j = 0; j < layer.features.length; j++) {
+                        var feature = layer.features[j];
+                        //Square unit for area
+                        var areaPattern = /(^OpenLayers.Control.DynamicMeasure)(.)*(AreaKeep$)/
+                        if (areaPattern.test(layer.name)) {
+                            var measure = feature.data.measure + ' ' +
+                                feature.data.units + '²';
+                        } else {
+                             var measure = feature.data.measure + ' ' +
+                                feature.data.units;
                         }
-                        kmlFeatures = kmlFeatures.concat(layer.features);
+                        feature.attributes.name = measure;
+                        feature.attributes.description = measure;
                     }
-                }
-                var olKML = format.write(kmlFeatures);
+                    argsObj.kmlFeatures = argsObj.kmlFeatures.concat(layer.features);
+               }
+               var kmlObj = {kmlFeatures: kmlFeatures};
+               this._loopOnMatchingLayers(this.map, dynamicMesurePattern,
+                    setNameDescriptionKml, kmlObj);
+
+                var olKML = format.write(kmlObj.kmlFeatures);
                 var kmlStyle = "<Style id='measureFeatureStyle'><LineStyle><width>2</width><color>ff6666636</color></LineStyle><PolygonStyle><fill>0</fill></PolygonStyle><LabelStyle><color>ff170580</color></LabelStyle><IconStyle><color>00ffffff</color><Icon><href>http:/maps.google.com/mapfiles/kml/shapes/placemark_circle.png</href></Icon></IconStyle></Style>";
                 var styleInHeadKML = olKML.replace(/<Folder>/g, '<Folder>' + kmlStyle);
                 var styleInHeadAndPlacemarksKML = styleInHeadKML.replace(/<placemark><name>/ig,'<Placemark><styleUrl>#measureFeatureStyle</styleUrl><name>');
@@ -277,6 +272,23 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
             );
         } else {
             this.window.hide();
+        }
+    },
+
+    /**
+     * Method: _loopOnMatchingLayers
+     *
+     * Private use.
+     * fun is a function that will be called with a matching layer and
+     *     the argsArray as parameter
+     */
+    _loopOnMatchingLayers: function (map, pattern, fun, argsObj) {
+        argsObj = argsObj || null;
+        for (i = 0; i < map.layers.length; i++) {
+            var layerName = map.layers[i].name
+            if (pattern.test(layerName)) {
+                fun(map.layers[i], argsObj);
+            }
         }
     },
 
