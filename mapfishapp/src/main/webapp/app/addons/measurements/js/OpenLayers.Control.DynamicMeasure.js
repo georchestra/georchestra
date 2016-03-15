@@ -498,6 +498,9 @@ OpenLayers.Control.DynamicMeasure = OpenLayers.Class(
         if (this.layerAreaKeep) {
             this.layerAreaKeep.removeAllFeatures();
         }
+        this.layerSegmentsKeep = null;
+        this.layerLengthKeep = null;
+        this.layerAreaKeep = null;
     },
 
     /**

@@ -288,6 +288,8 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
         this.window.hide();
         this.layer.destroy();
         this.layer = null;
+        this.lengthAction.control.emptyKeeped();
+        this.areaAction.control.emptyKeeped();
         GEOR.Addons.Base.prototype.destroy.call(this);
     }
 });
