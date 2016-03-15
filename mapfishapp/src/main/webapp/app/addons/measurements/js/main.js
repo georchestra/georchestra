@@ -162,7 +162,7 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
                         window.location.href = GEOR.config.PATHNAME + "/" + o.filepath;
                     }
                 });
-                this.measuresReset.items[0].toggle();
+                this.exportAsKml.items[0].toggle();
             },
             map: this.map,
             toggleGroup: this.toggleGroup,
