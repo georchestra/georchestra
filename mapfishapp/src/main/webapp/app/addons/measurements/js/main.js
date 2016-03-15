@@ -95,8 +95,7 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
             //code from: src/main/webapp/app/addons/annotation/js/Annotation.js
             handler: function() {
                 GEOR.waiter.show();
-                var urlObj = OpenLayers.Util.createUrlObject(window.location.href),
-                    format = new OpenLayers.Format.KML({
+                var format = new OpenLayers.Format.KML({
                         'extractAttributes': true,
                         'foldersName': OpenLayers.i18n("measurements.tools"),
                         'internalProjection': this.map.getProjectionObject(),
@@ -134,11 +133,12 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
                             /(^OpenLayers.Control.DynamicMeasure)(.)*(Keep$)/
                     if (dynamicMesurePattern.test(layerName)) {
                         //Update feature name and description
-                        for (j = 0; j < this.map.layers[i].features.length;
-                                j++) {
-                            var feature = this.map.layers[i].features[j];
+                        var layer = this.map.layers[i];
+                        for (j = 0; j < layer.features.length; j++) {
+                            var feature = layer.features[j];
                             //Square unit for area
-                            if (/(^OpenLayers.Control.DynamicMeasure)(.)*(AreaKeep$)/.test(layerName)) {
+                            var areaPattern = /(^OpenLayers.Control.DynamicMeasure)(.)*(AreaKeep$)/
+                            if (areaPattern.test(layerName)) {
                                 var measure = feature.data.measure + ' ' +
                                     feature.data.units + '²';
                             } else {
@@ -149,7 +149,7 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
                             feature.attributes.name = measure;
                             feature.attributes.description = measure;
                         }
-                        kmlFeatures = kmlFeatures.concat(this.map.layers[i].features);
+                        kmlFeatures = kmlFeatures.concat(layer.features);
                     }
                 }
                 var olKML = format.write(kmlFeatures);
