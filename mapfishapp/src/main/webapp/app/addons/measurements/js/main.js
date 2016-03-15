@@ -153,10 +153,12 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
                     }
                 }
                 var olKML = format.write(kmlFeatures);
-
+                var kmlStyle = "<Style id='measureFeatureStyle'><LineStyle><width>2</width><color>ff6666636</color></LineStyle><PolygonStyle><fill>0</fill></PolygonStyle><LabelStyle><color>ff170580</color></LabelStyle><IconStyle><color>00ffffff</color><Icon><href>http:/maps.google.com/mapfiles/kml/shapes/placemark_circle.png</href></Icon></IconStyle></Style>";
+                var styleInHeadKML = olKML.replace(/<Folder>/g, '<Folder>' + kmlStyle);
+                var styleInHeadAndPlacemarksKML = styleInHeadKML.replace(/<placemark><name>/ig,'<Placemark><styleUrl>#measureFeatureStyle</styleUrl><name>');
                 OpenLayers.Request.POST({
                     url: GEOR.config.PATHNAME + "/ws/kml/",
-                    data: olKML,
+                    data: styleInHeadAndPlacemarksKML,
                     success: function(response) {
                         var o = Ext.decode(response.responseText);
                         window.location.href = GEOR.config.PATHNAME + "/" + o.filepath;
