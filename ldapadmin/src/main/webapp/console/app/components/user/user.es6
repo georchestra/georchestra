@@ -88,24 +88,7 @@ class UserController {
 
     $scope.$watch('user.interval', (newVal, oldVal) => {
       if (newVal == oldVal) { return; }
-      let m = moment()
-      switch (newVal.value) {
-        case 'day':
-          break;
-        case 'week':
-          m = m.subtract(1, 'weeks')
-          break;
-        case 'month':
-          m = m.subtract(1, 'months')
-          break;
-        case '3month':
-          m = m.subtract(3, 'months')
-          break;
-        case 'year':
-          m = m.subtract(1, 'year')
-          break;
-      }
-      load_(m.format('YY-MM-DD'))
+      load_(this.$injector.get('Util').getDateFromDiff(newVal.value))
     })
   }
 
@@ -166,7 +149,6 @@ class UserController {
 
   activate($scope) {
 
-    // let $scope = this.$injector.get('$scope')
     let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
 
     let saveGroups = function(newVal, oldVal) {
