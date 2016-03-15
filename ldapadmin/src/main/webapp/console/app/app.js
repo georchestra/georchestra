@@ -45,6 +45,7 @@ require('./components/home/home');
 require('./components/home/home.tpl');
 require('./templates/dirPagination.tpl');
 require('./services/analytics');
+require('./services/util');
 require('./services/groups');
 require('./services/groups_users');
 require('./services/logs');
