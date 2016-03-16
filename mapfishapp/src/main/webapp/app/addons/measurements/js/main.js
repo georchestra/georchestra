@@ -211,7 +211,8 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
                         setVisibilityCallback);
                     this.areaAction.control.deactivate();
                     this.lengthAction.control.deactivate();
-
+                    //Deactivate measurements tool in menus
+                    this.item.setChecked(false);
                 },
                 scope: this
             }
