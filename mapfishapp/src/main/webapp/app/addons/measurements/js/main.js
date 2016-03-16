@@ -269,7 +269,7 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
      *
      * Private use.
      * fun is a function that will be called with a matching layer and
-     *     the argsArray as parameter
+     *     the argsObj as parameter
      */
     _loopOnMatchingLayers: function (map, pattern, fun, argsObj) {
         argsObj = argsObj || null;
