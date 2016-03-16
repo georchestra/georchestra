@@ -111,11 +111,13 @@ As a result, the `default.wmc` file should be edited to integrate the `Title` (m
    ldapsearch -H ldap://localhost:389 -xLLL -D "cn=admin,dc=georchestra,dc=org" -w your_ldap_password -b "ou=groups,dc=georchestra,dc=org" > /tmp/groups.ldif
    ```
    * migration:
-   ```
-   sed -i 's/PENDING_USERS/PENDING/' /tmp/groups.ldif
-   sed -i 's/groupOfNames/groupOfMembers/' /tmp/groups.ldif
-   sed -i '/fakeuser/d' /tmp/groups.ldif
-   ```
+
+```
+sed -i 's/PENDING_USERS/PENDING/' /tmp/groups.ldif
+sed -i 's/groupOfNames/groupOfMembers/' /tmp/groups.ldif
+sed -i '/fakeuser/d' /tmp/groups.ldif
+```
+
    * load the [groupOfMembers](ldap/groupofmembers.ldif) definition:
    ```
     sudo ldapadd -Y EXTERNAL -H ldapi:/// -f groupofmembers.ldif
