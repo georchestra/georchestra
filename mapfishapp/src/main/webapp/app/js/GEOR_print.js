@@ -276,6 +276,28 @@ GEOR.print = (function() {
                         // do not print bounds layer
                         return false;
                     }
+                    var geometry, ring, point;
+                    if (layer.CLASS_NAME === "OpenLayers.Layer.Vector") {
+                        for(var i=0, lenF=layer.features.length; i<lenF; ++i) {
+                            geometry = layer.features[i].geometry;
+                            if (geometry.CLASS_NAME == "OpenLayers.Geometry.Polygon") {
+                                for( var j=0, lenR=geometry.components.length; j<lenR; j++) {
+                                    ring = geometry.components[j];
+                                    //Linear ring must have 0 or more than 2 points
+                                    if ( !((ring.components.length == 0) ||
+                                        (ring.components.length > 2)) ) {
+                                        return false;
+                                    }
+                                }
+                            } else if (geometry.CLASS_NAME == "OpenLayers.Geometry.LineString") {
+                                //LineString must have 0 or more than 1 points
+                                if ( !((geometry.components.length == 0) ||
+                                    (geometry.components.length > 1) ) ) {
+                                    return false;
+                                }
+                            }
+                        }
+                    }
                 },
                 "beforeprint": function(provider, map, pages, o) {
                     mask.show();
