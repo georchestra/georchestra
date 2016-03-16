@@ -383,6 +383,7 @@ OpenLayers.Control.DynamicMeasure = OpenLayers.Class(
      */
     destroy: function() {
         this.deactivate();
+        this.emptyKeeped();
         OpenLayers.Control.Measure.prototype.destroy.apply(this, arguments);
     },
 
@@ -485,8 +486,8 @@ OpenLayers.Control.DynamicMeasure = OpenLayers.Class(
 
     /**
      * APIMethod: emptyKeeped
-     * Remove annotation from layers layerSegementsKeep, layerLengthKeep,
-     * layerAreaKeep
+     * Remove annotations from layers layerSegementsKeep, layerLengthKeep,
+     * layerAreaKeep.
      */
      emptyKeeped: function () {
         if (this.layerSegmentsKeep) {
