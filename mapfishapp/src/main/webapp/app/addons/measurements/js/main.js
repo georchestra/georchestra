@@ -26,6 +26,7 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
         });
         this.lengthAction =  new GeoExt.Action({
             control: new OpenLayers.Control.DynamicMeasure(OpenLayers.Handler.Path, {
+                accuracy: this.options.accuracy,
                 maxSegments: null,
                 persist: true,
                 geodesic: true,
@@ -46,6 +47,7 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
         });
         this.areaAction =  new GeoExt.Action({
             control: new OpenLayers.Control.DynamicMeasure(OpenLayers.Handler.Polygon, {
+                accuracy: this.options.accuracy,
                 maxSegments: null,
                 persist: true,
                 geodesic: true,
@@ -101,15 +103,16 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
                 for (i = 0; i < kmlFeatures.length; i++) {
                     var geometry = kmlFeatures[i].geometry;
                     var aLength = this.lengthAction.control.getBestLength(geometry);
-                    kmlFeatures[i].data.length_measure = aLength[0];
-                    kmlFeatures[i].data.length_units = aLength[1];
+                    sLength = this.formatMeasure(aLength);
+                    kmlFeatures[i].data.length_measure = sLength[0];
+                    kmlFeatures[i].data.length_units = sLength[1];
 
 
                     if (geometry instanceof OpenLayers.Geometry.Polygon) {
                         var area = this.areaAction.control.getBestArea(geometry);
-
-                        kmlFeatures[i].data.area_measure = area[0];
-                        kmlFeatures[i].data.area_units = area[1];
+                        sArea = this.formatMeasure(area);
+                        kmlFeatures[i].data.area_measure = sArea[0];
+                        kmlFeatures[i].data.area_units = sArea[1];
                         var label = kmlFeatures[i].data.area_measure + ' ' +
                                 kmlFeatures[i].data.area_units + '² (' +
                                 kmlFeatures[i].data.length_measure + ' ' +
@@ -280,6 +283,29 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
                 fun.call(map.layers[i], argsObj);
             }
         }
+    },
+
+    /**
+     * Method : formatMeasure
+     *
+     * Format a measure in the add-on format
+     *
+     * Parameter:
+     * - Array({Float|String}) Measure provided by OL Measure control.
+     *
+     * Return:
+     * - Array({String|String}) Formatted measure the firs item is value
+     *   and the second is the unit.
+     *
+     * Usage:
+     * var measure_txt = formatMeasure(measure);
+     *
+     */
+    formatMeasure: function(measure) {
+        measure[0] = OpenLayers.Number.format(
+            Number(measure[0].toPrecision(this.options.accuracy)), null);
+
+        return measure;
     },
 
     /**

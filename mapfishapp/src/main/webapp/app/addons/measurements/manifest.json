@@ -70,7 +70,8 @@
                 "labelAlign": "cm",
                 "labelOutlineWidth": 3
             }
-        }
+        },
+        "accuracy": 3
     },
     "i18n": {
         "en": {
