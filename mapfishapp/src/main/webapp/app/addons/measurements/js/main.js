@@ -145,7 +145,7 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
                     setNameDescriptionKmlCallback, kmlObj);
 
                 var olKML = format.write(kmlObj.kmlFeatures),
-                    kmlStyle = "<Style id='measureFeatureStyle'><LineStyle><width>2</width><color>ff6666636</color></LineStyle><PolygonStyle><fill>0</fill></PolygonStyle><LabelStyle><color>ff170580</color></LabelStyle><IconStyle><color>00ffffff</color><Icon><href>http:/maps.google.com/mapfiles/kml/shapes/placemark_circle.png</href></Icon></IconStyle></Style>",
+                    kmlStyle = "<Style id='measureFeatureStyle'><LineStyle><width>2</width><color>ff6666636</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle><LabelStyle><color>ff170580</color></LabelStyle><IconStyle><color>00ffffff</color><Icon><href>http:/maps.google.com/mapfiles/kml/shapes/placemark_circle.png</href></Icon></IconStyle></Style>",
                     styleInHeadKML = olKML.replace(/<Folder>/g, '<Folder>' + kmlStyle),
                     styleInHeadAndPlacemarksKML = styleInHeadKML.replace(/<Placemark><name>/g,'<Placemark><styleUrl>#measureFeatureStyle</styleUrl><name>');
                 OpenLayers.Request.POST({
