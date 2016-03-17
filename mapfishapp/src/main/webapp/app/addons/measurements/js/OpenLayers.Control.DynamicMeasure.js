@@ -440,16 +440,20 @@ OpenLayers.Control.DynamicMeasure = OpenLayers.Class(
                 this.layerArea = _create('labelArea', this.layerAreaOptions);
             }
             if (this.keep) {
-                this.layerSegmentsKeep =
-                            _create('labelSegments', this.layerSegmentsOptions,
-                            'Keep');
-                this.layerLengthKeep =
-                            _create('labelLength', this.layerLengthOptions,
-                            'Keep');
-                if (this.isArea) {
+                if (!this.layerSegmentsKeep) {
+                    this.layerSegmentsKeep =
+                        _create('labelSegments', this.layerSegmentsOptions,
+                        'Keep');
+                }
+                if (!this.layerLengthKeep) {
+                    this.layerLengthKeep =
+                        _create('labelLength', this.layerLengthOptions,
+                        'Keep');
+                }
+                if (!this.layerAreaKeep) {
                     this.layerAreaKeep =
-                                _create('labelArea', this.layerAreaOptions,
-                                'Keep');
+                        _create('labelArea', this.layerAreaOptions,
+                        'Keep');
                 }
             }
         }
@@ -491,17 +495,14 @@ OpenLayers.Control.DynamicMeasure = OpenLayers.Class(
      */
      emptyKeeped: function () {
         if (this.layerSegmentsKeep) {
-            this.layerSegmentsKeep.removeAllFeatures();
+            this.layerSegmentsKeep.destroyFeatures();
         }
         if (this.layerLengthKeep) {
-            this.layerLengthKeep.removeAllFeatures();
+            this.layerLengthKeep.destroyFeatures();
         }
         if (this.layerAreaKeep) {
-            this.layerAreaKeep.removeAllFeatures();
+            this.layerAreaKeep.destroyFeatures();
         }
-        this.layerSegmentsKeep = null;
-        this.layerLengthKeep = null;
-        this.layerAreaKeep = null;
     },
 
     /**
