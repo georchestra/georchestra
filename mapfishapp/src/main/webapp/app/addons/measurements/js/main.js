@@ -295,11 +295,8 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
      * - Array({Float|String}) Measure provided by OL Measure control.
      *
      * Return:
-     * - Array({String|String}) Formatted measure the firs item is value
+     * - Array({String|String}) Formatted measure the first item is value
      *   and the second is the unit.
-     *
-     * Usage:
-     * var measure_txt = formatMeasure(measure);
      *
      */
     formatMeasure: function(measure) {

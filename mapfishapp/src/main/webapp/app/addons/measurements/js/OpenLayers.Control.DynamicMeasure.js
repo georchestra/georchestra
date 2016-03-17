@@ -490,7 +490,7 @@ OpenLayers.Control.DynamicMeasure = OpenLayers.Class(
 
     /**
      * APIMethod: emptyKeeped
-     * Remove annotations from layers layerSegementsKeep, layerLengthKeep,
+     * Remove annotations from layers layerSegmentsKeep, layerLengthKeep,
      * layerAreaKeep.
      */
      emptyKeeped: function () {
