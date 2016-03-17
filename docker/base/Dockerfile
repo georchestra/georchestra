@@ -1,4 +1,4 @@
-FROM jetty:9.3.6-jre8
+FROM jetty:9.3-jre8
 
 MAINTAINER PSC "psc@georchestra.org"
 

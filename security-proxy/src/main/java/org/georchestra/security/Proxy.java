@@ -63,6 +63,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -72,11 +73,11 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpTrace;
-import org.apache.http.client.params.ClientPNames;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.ProxySelectorRoutePlanner;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.apache.http.message.BasicNameValuePair;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.ogcservstatistics.log4j.OGCServiceMessageFormatter;
@@ -600,25 +601,22 @@ public class Proxy {
     }
 
     private void handleRequest(HttpServletRequest request, HttpServletResponse finalResponse, RequestType requestType, String sURL, boolean localProxy) {
-        HttpClient httpclient = new DefaultHttpClient();
-        // TODO: ... At least make it configurable ...
-        httpclient.getParams().setParameter("http.socket.timeout", new Integer(300000));
-        httpclient.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, false);
+        HttpClientBuilder htb = HttpClients.custom().disableRedirectHandling();
+
+        // TODO: This should be configurable
+        RequestConfig config = RequestConfig.custom().setSocketTimeout(300000).build();
+        htb.setDefaultRequestConfig(config);
+
+        //
+        // Handle http proxy for external request.
+        // Proxy must be configured by system variables (e.g.: -Dhttp.proxyHost=proxy -Dhttp.proxyPort=3128)
+        htb.setRoutePlanner(new SystemDefaultRoutePlanner(ProxySelector.getDefault()));
+        HttpClient httpclient = htb.build();
 
         if (isCheckHealth()) {
             DatabaseHealthCenter.getInstance(this.host, this.port, this.database, this.user, this.password, Proxy.class.getSimpleName())
                     .checkConnections(this.maxDatabaseConnections);
         }
-
-        //
-        // Handle http proxy for external request.
-        // Proxy must be configured by system variables (e.g.:
-        // -Dhttp.proxyHost=proxy -Dhttp.proxyPort=3128)
-        //
-        ProxySelectorRoutePlanner routePlanner = new ProxySelectorRoutePlanner(httpclient.getConnectionManager().getSchemeRegistry(),
-                ProxySelector.getDefault());
-
-        ((DefaultHttpClient) httpclient).setRoutePlanner(routePlanner);
 
         HttpResponse proxiedResponse = null;
         int statusCode = 500;
