@@ -271,23 +271,28 @@ GEOR.print = (function() {
                     printExtent.init(GeoExt.MapPanel.guess());
                 },
                 "beforeencodelayer": function(printProvider, layer) {
-                    if ((layer.CLASS_NAME === "OpenLayers.Layer.Vector") &&
-                        layer.name === VECTOR_LAYER_NAME) {
-                        // do not print bounds layer
-                        return false;
-                    }
-                    var geometry, ring, point;
                     if (layer.CLASS_NAME === "OpenLayers.Layer.Vector") {
-                        for(var i=0, lenF=layer.features.length; i<lenF; ++i) {
-                            geometry = layer.features[i].geometry;
+                        if (layer.name === VECTOR_LAYER_NAME) {
+                            // do not print bounds layer
+                            return false;
+                        }
+
+                        var geometry, ring, point, invalid;
+                        //Will return id if a ring is invalid
+                        var isInvalidRing = function(ring) {
+                            //Linear ring must have 0 or more than 2 points
+                            if ( !((ring.components.length == 0) ||
+                                (ring.components.length > 2)) ) {
+                                return false;
+                            }
+                        }
+                        //Will return id if layer's geometry is invalid
+                        var isInvalidGeometry = function(feature) {
+                            geometry = feature.geometry;
                             if (geometry.CLASS_NAME == "OpenLayers.Geometry.Polygon") {
-                                for( var j=0, lenR=geometry.components.length; j<lenR; j++) {
-                                    ring = geometry.components[j];
-                                    //Linear ring must have 0 or more than 2 points
-                                    if ( !((ring.components.length == 0) ||
-                                        (ring.components.length > 2)) ) {
-                                        return false;
-                                    }
+                                invalid = Ext.each(geometry.components,isInvalidRing);
+                                if (invalid >= 0) {
+                                    return false;
                                 }
                             } else if (geometry.CLASS_NAME == "OpenLayers.Geometry.LineString") {
                                 //LineString must have 0 or more than 1 points
@@ -295,6 +300,12 @@ GEOR.print = (function() {
                                     (geometry.components.length > 1) ) ) {
                                     return false;
                                 }
+                            }
+                        }
+                        if (layer.CLASS_NAME === "OpenLayers.Layer.Vector") {
+                            invalid = Ext.each(layer.features, isInvalidGeometry);
+                            if (invalid >= 0) {
+                                    return false;
                             }
                         }
                     }
