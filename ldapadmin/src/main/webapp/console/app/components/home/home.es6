@@ -1,3 +1,5 @@
+require('components/home/home.tpl')
+
 class HomeController {
 
   constructor($injector) {

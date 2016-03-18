@@ -1,3 +1,5 @@
+require('components/stats/stats.tpl')
+
 class StatsController {
 
   constructor($element, $scope) {
