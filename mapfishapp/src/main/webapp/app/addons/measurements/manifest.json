@@ -41,7 +41,13 @@
                 "fontFamily": "Verdana",
                 "labelOutlineColor": "#dddddd",
                 "labelAlign": "cm",
-                "labelOutlineWidth": 2
+                "labelOutlineWidth": 2,
+                "pointRadius": 1,
+                "fillColor": "#ffffff",
+                "fillOpacity": 0,
+                "strokeWidth": 1,
+                "strokeOpacity": 0,
+                "strokeColor": "#ffffff"
             },
             "labelLength": {
                 "label": "${measure} ${units}\n",
@@ -51,7 +57,13 @@
                 "fontFamily": "Verdana",
                 "labelOutlineColor": "#dddddd",
                 "labelAlign": "lb",
-                "labelOutlineWidth": 3
+                "labelOutlineWidth": 3,
+                "pointRadius": 1,
+                "fillColor": "#ffffff",
+                "fillOpacity": 0,
+                "strokeWidth": 1,
+                "strokeOpacity": 0,
+                "strokeColor": "#ffffff"
             },
             "labelArea": {
                 "label": "${measure}\n${units}²\n",
@@ -61,16 +73,13 @@
                 "fontFamily": "Verdana",
                 "labelOutlineColor": "#dddddd",
                 "labelAlign": "cm",
-                "labelOutlineWidth": 3
-            },
-            "labelHeading": {
-                "fontSize": "11px",
-                "label": "${measure} ${units}",
-                "fontColor": "#800517",
-                "fontFamily": "Verdana",
-                "labelOutlineColor": "#dddddd",
-                "labelAlign": "cm",
-                "labelOutlineWidth": 3
+                "labelOutlineWidth": 3,
+                "pointRadius": 1,
+                "fillColor": "#ffffff",
+                "fillOpacity": 0,
+                "strokeWidth": 1,
+                "strokeOpacity": 0,
+                "strokeColor": "#ffffff"
             }
         }
     },
