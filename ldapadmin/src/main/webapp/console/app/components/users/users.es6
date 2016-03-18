@@ -2,6 +2,8 @@ class UsersController {
 
   constructor($routeParams, User, Group) {
 
+    this.q = ''
+
     this.users = User.query(() => {
       this.allUsers = this.users.slice()
     })
