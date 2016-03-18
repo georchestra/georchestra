@@ -1,10 +1,20 @@
 <section class="analytics">
 
-  <select class="form-control pull-right" ng-model="analytics.interval" ng-change="analytics.setInterval()"
+  <select class="form-control stats-conf" ng-model="analytics.interval" ng-change="analytics.setInterval()"
     ng-options="interval as interval.label | translate for interval in analytics.intervals track by interval.value">
   </select>
+  <select class="form-control stats-conf" ng-model="analytics.group" ng-change="analytics.setGroup()">
+    <option value="all">Tous les groupes</option>
+    <option value="{{group.cn}}" ng-repeat="group in analytics.groups">{{group.cn}}</option>
+  </select>
 
-  <h4 translate>analytics.title</h4>
+  <h4>
+    <span translate>analytics.title</span>
+    <span ng-if="analytics.group != 'all'">
+      <span translate>for</span>
+      {{analytics.group}}
+    </span>
+  </h4>
 
   <hr>
 

@@ -1,11 +1,15 @@
 require('components/analytics/analytics.tpl')
 
 require('services/analytics')
+
 class AnalyticsController {
 
   constructor($injector, $routeParams) {
 
     this.$injector = $injector
+
+    this.group = $routeParams.group
+    this.groups = this.$injector.get('Group').query()
 
     let startDate  = moment().format('YY-MM-DD')
     this.endDate    = moment().format('YY-MM-DD')
@@ -21,11 +25,10 @@ class AnalyticsController {
       requests : [ 'date', 'count' ]
     }
 
-    this.load(startDate)
-
+    this.load(startDate, (this.group != 'all') ? this.group : undefined)
   }
 
-  load(startDate) {
+  load(startDate, group) {
     let Flash = this.$injector.get('Flash')
     let Analytics = this.$injector.get('Analytics')
     let $translate = this.$injector.get('$translate')
@@ -35,6 +38,10 @@ class AnalyticsController {
       startDate : startDate,
       endDate   : this.endDate
     }
+    if (group) {
+      options.group = group
+    }
+
     this.data.layers = Analytics.get(options, function() {},
       Flash.create.bind(this, 'error', $translate('analytics.errorload'))
     )
@@ -44,16 +51,17 @@ class AnalyticsController {
     )
   }
 
-  activate($scope) {
-    $scope.$watch('analytics.interval', (newVal, oldVal) => {
-      if (newVal == oldVal) { return; }
-      this.load(this.$injector.get('Util').getDateFromDiff(newVal.value))
-    })
+  setInterval() {
+    this.load(this.$injector.get('Util').getDateFromDiff(this.interval.value))
+  }
+
+  setGroup() {
+    let $router = this.$injector.get('$router')
+    $router.navigate($router.generate('analytics', { group: this.group}))
   }
 
 }
 
 AnalyticsController.$inject = [ '$injector', '$routeParams', 'Analytics' ]
-AnalyticsController.prototype.activate.$inject = [ '$scope' ]
 
 angular.module('admin_console').controller('AnalyticsController', AnalyticsController)

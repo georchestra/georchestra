@@ -29,7 +29,9 @@ groups {
 
 section {
   .nav {
-    width         : 130%;
+    @media (min-width: 992px) {
+      width         : 130%;
+    }
     border        : 1px solid rgb(221, 221, 221);
     border-radius : 5px;
     margin-top    : 2.75em;
@@ -47,6 +49,16 @@ section {
 
 .pagination li a {
   cursor: pointer;
+}
+
+// ANALYTICS
+.analytics {
+  hr {
+    margin-top: 2em;
+  }
+  .stats-conf {
+    margin: -.45em 0 0 1em;
+  }
 }
 
 // MESSAGES
@@ -158,8 +170,9 @@ section {
 
 // STATS
 @media (min-width: 992px) {
-  .user-analytics select {
-    width: 25%;
+  .stats-conf {
+    width: 20%;
+    float: right;
   }
 }
 

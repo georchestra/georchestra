@@ -151,7 +151,7 @@
       </div>
 
       <div class="panel-body user-analytics" ng-if="user.tab=='analytics'">
-        <select class="form-control pull-right" ng-model="user.interval" ng-change="user.setInterval()"
+        <select class="form-control stats-conf" ng-model="user.interval" ng-change="user.setInterval()"
           ng-options="interval as interval.label | translate for interval in user.intervals track by interval.value">
         </select>
         <h4 translate>analytics.title</h4>
