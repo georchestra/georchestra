@@ -26,3 +26,4 @@ Louca Lerch <Louca.Lerch@unige.ch>
 Ernest Chiarello <ernest.chiarello@univ-fcomte.fr>
 Julien Acroute <julien.acroute@camptocamp.com>
 Vincent Dorut <vincent.dorut@camptocamp.com>
+Jean-Denis Giguère <jdenisgiguere@gmail.com>

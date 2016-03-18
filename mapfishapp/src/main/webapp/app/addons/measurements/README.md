@@ -7,7 +7,7 @@ Contrary to the measure addon, this one allows users to:
  * measure each segment
  * print the measurements
 
-Author: @fvanderbiest, with kudos to @jorix for the original [OL-DynamicMeasure](https://github.com/jorix/OL-DynamicMeasure) control.
+Author: @fvanderbiest & @jdenisgiguere, with kudos to @jorix for the original [OL-DynamicMeasure](https://github.com/jorix/OL-DynamicMeasure) control.
 
 ## Setup
 
