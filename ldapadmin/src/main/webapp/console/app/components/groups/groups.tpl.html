@@ -1,10 +1,11 @@
 <div ng-if="groups.isRoot">
   <div class="alert alert-info">
     <a ng-link="users({id: 'all'})" translate>group.allusers</a>
-    <br>
     <hr>
-    <a href="" class="btn btn-default" translate>group.newuser</a>
-    <a href="" class="btn btn-default" translate>group.newgroup</a>
+    <div class="create-btn">
+      <a href="" class="btn btn-default" translate>group.newuser</a>
+      <a href="" class="btn btn-default" translate>group.newgroup</a>
+    </div>
   </div>
 
   <input ng-if="groups.isRoot" ng-model="groups.q" class="form-control input-sm" placeholder="Search groups">

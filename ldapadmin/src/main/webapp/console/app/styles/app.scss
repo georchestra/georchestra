@@ -10,8 +10,17 @@ a {
   color : #009FE3;
 }
 
-groups input {
-  margin-bottom: 1em;
+groups {
+  input {
+    margin-bottom: 1em;
+  }
+  .create-btn {
+    display: flex;
+    .btn {
+      flex-grow : 1;
+      margin    : 0 .5em;
+    }
+  }
 }
 
 .container > .nav {
