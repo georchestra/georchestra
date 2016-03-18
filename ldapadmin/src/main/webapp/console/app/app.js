@@ -8,7 +8,7 @@ angular.module('admin_console', [
   'angularUtils.directives.dirPagination',
   'pascalprecht.translate'
 ]).controller(
-  'AppController', [ '$router', AppController ]
+  'AppController', [ '$scope', '$router', '$location', AppController ]
 ).constant(
   'LDAP_BASE_URI', '/ldapadmin/private/'
 ).constant(
@@ -52,11 +52,15 @@ require('./services/logs');
 require('./services/messages');
 require('./services/users');
 
-function AppController($router) {
+function AppController($scope, $router, $location) {
   $router.config([
     { path: '/'                 , redirectTo: '/home' },
     { path: '/home'             , component: 'home' },
     { path: '/groups/:id/users' , component: 'users' },
     { path: '/users/:id/:tab'   , component: 'user' },
   ]);
+
+  $scope.isActive = (routes) => routes.some(
+    route => $location.$$path.indexOf(route) == 1
+  )
 }

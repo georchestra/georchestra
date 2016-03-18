@@ -1,10 +1,7 @@
 body {
-  padding-top: 7em;
+  padding-top: 2em;
 }
 @media (min-width: 768px) {
-  body {
-    padding-top: 70px;
-  }
   .panel .panel-body {
     min-height: 22em;
   }
@@ -17,8 +14,11 @@ groups input {
   margin-bottom: 1em;
 }
 
+.container > .nav {
+  margin-bottom: 2em;
+}
 
-.container .nav {
+section .nav {
   width         : 130%;
   border        : 1px solid rgb(221, 221, 221);
   border-radius : 5px;
