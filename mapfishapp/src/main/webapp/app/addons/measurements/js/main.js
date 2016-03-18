@@ -342,9 +342,8 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
      *
      */
     formatMeasure: function(measure) {
-        // FIXME: NUMBER !
         measure[0] = OpenLayers.Number.format(
-            Number(measure[0].toPrecision(this.options.accuracy)), null);
+            parseFloat(measure[0].toPrecision(this.options.accuracy)), null);
 
         return measure;
     },
