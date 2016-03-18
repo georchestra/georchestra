@@ -14,16 +14,25 @@
 
   <div flash-message="2000"></div>
 
-  <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-    <div class="container-fluid">
-        <ul class="nav navbar-nav">
-          <li><a ng-link="home">Dashboard</a></li>
-          <li><a ng-link="users({id: 'all'})">Users</a></li>
-        </ul>
-    </div>
-  </nav>
   <div class="container">
+
+    <ul class="nav nav-tabs">
+      <li role="presentation" ng-class="{'active': isActive(['home'])}">
+        <a ng-link="#home" translate>nav.dashboard</a>
+      </li>
+      <li role="presentation" ng-class="{'active': isActive(['users','groups'])}">
+        <a ng-link="users({'id': 'all'})" translate>nav.users</a>
+      </li>
+      <li role="presentation" ng-class="{'active': isActive(['analytics'])}">
+      <a href="#" translate>nav.analytics</a>
+      </li>
+      <li role="presentation" ng-class="{'active': isActive(['logs'])}">
+        <a href="#" translate>nav.logs</a>
+      </li>
+    </ul>
+
     <ng-viewport></ng-viewport>
+
   </div>
 
   <script src="libraries.js"></script>

@@ -1,4 +1,8 @@
 {
+  "nav.dashboard"      : "Dashboard",
+  "nav.users"          : "Users",
+  "nav.analytics"      : "Analytics",
+  "nav.logs"           : "Logs",
   "home.users"         : "Manage users",
   "home.waiting_users" : "waiting users",
   "home.expired_users" : "users expired today",

@@ -3,7 +3,7 @@
   <div class="col-md-2">
     <ul class="nav nav-pills nav-stacked">
       <li ng-repeat="tab in user.tabs" ng-class="{active: user.tab==tab}">
-        <!-- <a ng-link="user({id: user.user.uid, tab: tab});" rel="{{user.user.uid}}/{{tab}}">{{ {id: user.user.uid, tab: tab} }}</a> -->
+        <!-- <a ng-link="users({'id': user.user.uid, 'tab': tab})" rel="{{user.user.uid}}/{{tab}}">{{ {id: user.user.uid, tab: tab} }}</a> -->
         <a href="#/users/{{user.user.uid}}/{{tab}}" translate="tab.{{::tab}}"></a>
         <!-- FIXME use ng-link -->
       </li>
