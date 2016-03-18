@@ -206,7 +206,7 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
      *
      */
     exportHandler: function() {
-        // code from: src/main/webapp/app/addons/annotation/js/Annotation.js
+        // code inspired from: src/main/webapp/app/addons/annotation/js/Annotation.js
         GEOR.waiter.show();
         var format = new OpenLayers.Format.KML({
             'extractAttributes': true,
@@ -246,7 +246,7 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
             feature.attributes.description = label;
         }, this);
 
-        var kmlFeatures = [];
+        var kmlFeatures = this.layer.features;
         this.loopOnMeasureLayers(function(layer) {
             var areaPattern = /(^OpenLayers.Control.DynamicMeasure)(.)*(AreaKeep$)/;
 
@@ -254,7 +254,7 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
                 var measure,
                     data = feature.data;
                 // Square unit for area
-                if (areaPattern.test(this.name)) {
+                if (areaPattern.test(feature.layer.name)) {
                     measure = data.measure + ' ' + data.units + '²';
                 } else {
                     measure = data.measure + ' ' + data.units;
