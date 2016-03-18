@@ -276,37 +276,9 @@ GEOR.print = (function() {
                             // do not print bounds layer
                             return false;
                         }
-
-                        var geometry, ring, point, invalid;
-                        //Will return id if a ring is invalid
-                        var isInvalidRing = function(ring) {
-                            //Linear ring must have 0 or more than 2 points
-                            if ( !((ring.components.length == 0) ||
-                                (ring.components.length > 2)) ) {
-                                return false;
-                            }
-                        }
-                        //Will return id if layer's geometry is invalid
-                        var isInvalidGeometry = function(feature) {
-                            geometry = feature.geometry;
-                            if (geometry.CLASS_NAME == "OpenLayers.Geometry.Polygon") {
-                                invalid = Ext.each(geometry.components,isInvalidRing);
-                                if (invalid >= 0) {
-                                    return false;
-                                }
-                            } else if (geometry.CLASS_NAME == "OpenLayers.Geometry.LineString") {
-                                //LineString must have 0 or more than 1 points
-                                if ( !((geometry.components.length == 0) ||
-                                    (geometry.components.length > 1) ) ) {
-                                    return false;
-                                }
-                            }
-                        }
-                        if (layer.CLASS_NAME === "OpenLayers.Layer.Vector") {
-                            invalid = Ext.each(layer.features, isInvalidGeometry);
-                            if (invalid >= 0) {
-                                    return false;
-                            }
+                        var invalid = Ext.each(layer.features, GEOR.util.hasInvalidGeometry);
+                        if (invalid >= 0) {
+                            return false;
                         }
                     }
                 },
