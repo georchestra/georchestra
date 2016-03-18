@@ -1,3 +1,7 @@
+require('components/groups/groups.tpl')
+
+require('services/groups')
+
 class GroupsController {
 
   constructor(groupAdminList) {

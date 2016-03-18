@@ -1,3 +1,10 @@
+require('components/users/users.tpl')
+
+require('services/users')
+require('services/groups_users')
+require('services/logs')
+require('services/messages')
+
 class UsersController {
 
   constructor($routeParams, User, Group) {

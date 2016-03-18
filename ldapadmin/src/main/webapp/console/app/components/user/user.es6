@@ -1,3 +1,6 @@
+require('components/user/user.tpl')
+require('services/util')
+
 class UserController {
 
   constructor($routeParams, $injector, User, Group, groupAdminFilter) {
