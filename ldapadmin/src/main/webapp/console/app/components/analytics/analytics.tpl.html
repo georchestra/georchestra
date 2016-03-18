@@ -1,0 +1,16 @@
+<section class="analytics">
+
+  <select class="form-control pull-right" ng-model="analytics.interval" ng-change="analytics.setInterval()"
+    ng-options="interval as interval.label | translate for interval in analytics.intervals track by interval.value">
+  </select>
+
+  <h4 translate>analytics.title</h4>
+
+  <hr>
+
+  <div class="row">
+    <stats data="analytics.data.requests" type="'line'" config="analytics.config.requests" title="'analytics.requests'" class="col-md-6"></stats>
+    <stats data="analytics.data.layers" type="'bar'" config="analytics.config.layers" title="'analytics.layers'" class="col-md-6"></stats>
+  </div>
+
+</section>
