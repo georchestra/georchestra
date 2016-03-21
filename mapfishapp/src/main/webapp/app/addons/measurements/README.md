@@ -34,7 +34,7 @@ ADDONS: [...,
 }], ...
 ```
 
-Options allow an adminitrator to alter the default:
+Options allow an administrator to alter the default:
  * drawing style
  * accuracy
  * KML style
