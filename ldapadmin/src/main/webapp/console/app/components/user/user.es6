@@ -57,8 +57,8 @@ class UserController {
   loadAnalytics($scope) {
 
     let $translate = this.$injector.get('$translate');
-    let startDate  = moment().format('YY-MM-DD')
-    let endDate    = moment().format('YY-MM-DD')
+    let startDate  = moment().format('YYYY-MM-DD')
+    let endDate    = moment().format('YYYY-MM-DD')
 
     this.intervals = [
       'day', 'week', 'month', '3month', 'year'

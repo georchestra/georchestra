@@ -6,8 +6,8 @@
 
     <input type="text" class="filter-users form-control pull-right" ng-model="users.q" placeholder="{{'group.filter_users' | translate}}"></input>
     <i class="glyphicon glyphicon-remove-sign" ng-show="users.q != ''" ng-click="users.q = ''"></i>
-    <h3 ng-if="!users.activeGroup">{{users.users.length}} <span translate>group.users</span></h3>
-    <h3 ng-if="users.activeGroup">{{users.activeGroup.cn}}</h3>
+    <h3 ng-if="!users.activeGroup" class="groups-title">{{users.users.length}} <span translate>group.users</span></h3>
+    <h3 ng-if="users.activeGroup" class="groups-title">{{users.activeGroup.cn}}</h3>
     <p ng-if="users.activeGroup"><em>{{users.activeGroup.description}}</em></p>
 
     <table class="table table-striped table-condensed">
