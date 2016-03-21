@@ -861,7 +861,40 @@ GEOR.util = (function() {
                 target: menuItem.getEl().getAttribute('id')
             });
             Ext.QuickTips.register(qtip);
+        },
+
+        /**
+         * APIMethod: isInvalidRing
+         *
+         */
+        isInvalidRing: function(ring) {
+            // Linear ring must have 0 or more than 2 points
+            if (!((ring.components.length == 0) ||
+                (ring.components.length > 2))) {
+                return false;
+            }
+        },
+
+        /**
+         * APIMethod: hasInvalidGeometry
+         * Will return id if layer's geometry is invalid
+         */
+        hasInvalidGeometry: function(feature) {
+            var geometry = feature.geometry;
+            if (geometry.CLASS_NAME == "OpenLayers.Geometry.Polygon") {
+                var invalid = Ext.each(geometry.components, GEOR.util.isInvalidRing);
+                if (invalid >= 0) {
+                    return false;
+                }
+            } else if (geometry.CLASS_NAME == "OpenLayers.Geometry.LineString") {
+                // LineString must have 0 or more than 1 points
+                if (!((geometry.components.length == 0) ||
+                    (geometry.components.length > 1))) {
+                    return false;
+                }
+            }
         }
+
     };
 })();
 

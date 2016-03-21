@@ -271,10 +271,15 @@ GEOR.print = (function() {
                     printExtent.init(GeoExt.MapPanel.guess());
                 },
                 "beforeencodelayer": function(printProvider, layer) {
-                    if ((layer.CLASS_NAME === "OpenLayers.Layer.Vector") &&
-                        layer.name === VECTOR_LAYER_NAME) {
-                        // do not print bounds layer
-                        return false;
+                    if (layer.CLASS_NAME === "OpenLayers.Layer.Vector") {
+                        if (layer.name === VECTOR_LAYER_NAME) {
+                            // do not print bounds layer
+                            return false;
+                        }
+                        var invalid = Ext.each(layer.features, GEOR.util.hasInvalidGeometry);
+                        if (invalid >= 0) {
+                            return false;
+                        }
                     }
                 },
                 "beforeprint": function(provider, map, pages, o) {
