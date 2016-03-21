@@ -72,5 +72,7 @@
     <bean id="addonController" class="org.georchestra.mapfishapp.ws.AddonController" />
 
     <bean id="wxsController" class="org.georchestra.mapfishapp.ws.WxsJsonController" />
+    
+    <bean id="bufferController" class="org.georchestra.mapfishapp.ws.buffer.BufferController" />
 
 </beans> 
