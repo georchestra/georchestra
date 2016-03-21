@@ -39,7 +39,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.UUID;
 
 @Controller
 public class LogController {
@@ -57,21 +56,21 @@ public class LogController {
 	 * <pre>
 	 *     {"logs": [
 	 *		{
-	 *			"admin": "98192574-18d0-1035-8e10-c310a114ab8f",
+	 *			"admin": "testadmin",
  	 *			"date": "2015-12-01 13:48:18.729",
-	 *			"target": "98192574-18d0-1035-8e10-c310a114ab8f",
+	 *			"target": "testeditor",
 	 *			"type": "Email sent"
 	 *		},
 	 *		{
-	 *			"admin": "9818af68-18d0-1035-8e0e-999999999999",
+	 *			"admin": "testadmin",
 	 *			"date": "2015-11-30 16:37:00.974",
-	 *			"target": "98192574-18d0-1035-8e10-c310a114ab8f",
+	 *			"target": "joe",
 	 *			"type": "Email sent"
 	 *		},
 	 *		{
-	 *			"admin": "98192574-18d0-1035-8e10-c310a114ab8f",
+	 *			"admin": "testadmin",
 	 *			"date": "2015-11-30 17:37:50.359",
-	 *			"target": "98192574-18d0-1035-8e10-c310a114ab8f",
+	 *			"target": "marie",
 	 *			"type": "Email sent"
 	 *		}
 	 *	]}
@@ -80,7 +79,7 @@ public class LogController {
 	 */
 	@RequestMapping(value=REQUEST_MAPPING + "/{target}/{limit}/{page}", method=RequestMethod.GET, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String find( HttpServletRequest request, @PathVariable UUID target, @PathVariable int limit, @PathVariable int page) throws JSONException {
+	public String find( HttpServletRequest request, @PathVariable String target, @PathVariable int limit, @PathVariable int page) throws JSONException {
 
 		List<AdminLogEntry> logs = this.logDao.findByTarget(target, new PageRequest(page, limit, new Sort("date")));
 

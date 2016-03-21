@@ -242,7 +242,6 @@ public class AccountFactory {
 		a.setStateOrProvince(o.getStateOrProvince());
 		a.setOrganizationalUnit(o.getOrganizationalUnit());
 		a.setHomePostalAddress(o.getHomePostalAddress());
-		a.setUUID(o.getUUID());
 		a.setManager(o.getManager());
 		a.setShadowExpire(o.getShadowExpire());
 		a.setContext(o.getContext());

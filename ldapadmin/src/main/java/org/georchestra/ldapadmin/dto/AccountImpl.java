@@ -84,7 +84,6 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 	private String organizationalUnit; // ou
 
 	private String homePostalAddress;
-	private String uuid;
 
 	private Date shadowExpire;
 
@@ -120,7 +119,6 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 				", stateOrProvince='" + stateOrProvince + '\'' +
 				", organizationalUnit='" + organizationalUnit + '\'' +
 				", homePostalAddress='" + homePostalAddress + '\'' +
-				", uuid='" + uuid + '\'' +
 				", shadowExpire=" + shadowExpire + '\'' +
 				", context=" + context +
 				'}';
@@ -301,7 +299,6 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 		res.put("stateOrProvince", this.stateOrProvince);
 		res.put("organizationalUnit", this.organizationalUnit);
 		res.put("homePostalAddress", this.homePostalAddress);
-		res.put("uuid", this.uuid);
 		if(this.shadowExpire != null) {
 			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 			res.put("shadowExpire", dateFormat.format(this.shadowExpire));
@@ -541,17 +538,6 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 	@Override
 	public void  setStateOrProvince(String stateOrProvince) {
 		this.stateOrProvince = stateOrProvince;
-	}
-
-
-	@Override
-	public void setUUID(String uuid) {
-		this.uuid = uuid;
-	}
-
-	@Override
-	public String getUUID() {
-		return uuid;
 	}
 
 	@Override

@@ -23,13 +23,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.persistence.*;
-
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Table(schema = "ldapadmin", name = "admin_emails")
@@ -39,8 +45,8 @@ public class EmailEntry {
     @SequenceGenerator(name="admin_emails_seq", schema = "ldapadmin", sequenceName="admin_emails_seq", initialValue=1, allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "admin_emails_seq")
     private long id;
-    private UUID sender;
-    private UUID recipient;
+    private String sender;
+    private String recipient;
     private String subject;
     private Date date;
     private String body;
@@ -51,7 +57,7 @@ public class EmailEntry {
 
     public EmailEntry(){}
 
-    public EmailEntry(long id, UUID sender, UUID recipient, String subject, Date date, String body, List<Attachment> attachments) {
+    public EmailEntry(long id, String sender, String recipient, String subject, Date date, String body, List<Attachment> attachments) {
         this.id = id;
         this.sender = sender;
         this.recipient = recipient;
@@ -78,7 +84,6 @@ public class EmailEntry {
         return res;
     }
 
-
     /*
      * Generic getter, setter
      */
@@ -88,11 +93,11 @@ public class EmailEntry {
         this.id = id;
     }
 
-    public UUID getSender() {
+    public String getSender() {
         return this.sender;
     }
 
-    public UUID getRecipient() {
+    public String getRecipient() {
         return this.recipient;
     }
 
@@ -108,11 +113,11 @@ public class EmailEntry {
         return this.attachments;
     }
 
-    public void setSender(UUID sender) {
+    public void setSender(String sender) {
         this.sender = sender;
     }
 
-    public void setRecipient(UUID recipient) {
+    public void setRecipient(String recipient) {
         this.recipient = recipient;
     }
 

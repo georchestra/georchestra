@@ -8,6 +8,7 @@ import java.io.IOException;
 import javax.naming.Name;
 import javax.servlet.http.HttpServletResponse;
 
+import org.georchestra.ldapadmin.dao.AdminLogDao;
 import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.AccountDaoImpl;
 import org.georchestra.ldapadmin.ds.DataServiceException;
@@ -49,6 +50,7 @@ public class GroupsControllerTest {
 	public void setUp() throws Exception {
 		ldapTemplate = Mockito.mock(LdapTemplate.class);
 		contextSource = Mockito.mock(LdapContextSource.class);
+        AdminLogDao logDao = Mockito.mock(AdminLogDao.class);
 
 		Mockito.when(contextSource.getBaseLdapPath()).thenReturn(new DistinguishedName("dc=georchestra,dc=org"));
 
@@ -68,7 +70,7 @@ public class GroupsControllerTest {
 		groupDao.setGroupSearchBaseDN("ou=groups");
 		groupDao.setUniqueNumberField("ou");
 		groupDao.setUserSearchBaseDN("ou=users");
-		// groupDao.setLogDao(logDao);
+		groupDao.setLogDao(logDao);
 		groupDao.setGroups(groups);
 
 		AccountDao accountDao = new AccountDaoImpl(ldapTemplate, groupDao);

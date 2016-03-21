@@ -21,7 +21,6 @@ package org.georchestra.ldapadmin.ds;
 
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.naming.Name;
@@ -114,7 +113,7 @@ public final class AccountDaoImpl implements AccountDao {
      * @see {@link AccountDao#insert(Account, String, String)}
      */
     @Override
-    public synchronized void insert(final Account account, final String groupID, final String originUUID) throws DataServiceException,
+    public synchronized void insert(final Account account, final String groupID, final String originLogin) throws DataServiceException,
             DuplicatedUidException, DuplicatedEmailException {
 
         assert account != null;
@@ -164,7 +163,7 @@ public final class AccountDaoImpl implements AccountDao {
 
             this.ldapTemplate.bind(dn, context, null);
 
-            this.groupDao.addUser(groupID, account.getUid(), originUUID);
+            this.groupDao.addUser(groupID, account.getUid(), originLogin);
 
         } catch (NameNotFoundException e) {
             throw new DataServiceException(e);
@@ -225,7 +224,7 @@ public final class AccountDaoImpl implements AccountDao {
      * @see {@link AccountDao#update(Account, String)}
      */
     @Override
-    public synchronized void update(final Account account, String originUUID) throws DataServiceException, DuplicatedEmailException {
+    public synchronized void update(final Account account, String originLogin) throws DataServiceException, DuplicatedEmailException {
 
         // checks mandatory fields
         if (account.getUid().length() == 0) {
@@ -268,10 +267,8 @@ public final class AccountDaoImpl implements AccountDao {
         ldapTemplate.modifyAttributes(context);
 
         // Add log entry for this modification
-        if(originUUID != null) {
-            UUID admin = UUID.fromString(originUUID);
-            UUID target = UUID.fromString(account.getUUID());
-            AdminLogEntry log = new AdminLogEntry(admin, target, AdminLogType.LDAP_ATTRIBUTE_CHANGE, new Date());
+        if(originLogin != null) {
+            AdminLogEntry log = new AdminLogEntry(originLogin, account.getUid(), AdminLogType.LDAP_ATTRIBUTE_CHANGE, new Date());
             this.logDao.save(log);
         }
     }
@@ -280,28 +277,28 @@ public final class AccountDaoImpl implements AccountDao {
      * @see {@link AccountDao#update(Account, Account, String)}
      */
     @Override
-    public synchronized void update(Account account, Account modified, String originUUID) throws DataServiceException, DuplicatedEmailException, NameNotFoundException {
+    public synchronized void update(Account account, Account modified, String originLogin) throws DataServiceException, DuplicatedEmailException, NameNotFoundException {
        if (! account.getUid().equals(modified.getUid())) {
            ldapTemplate.rename(buildDn(account.getUid()), buildDn(modified.getUid()));
            for (Group g : groupDao.findAllForUser(account.getUid())) {
                groupDao.modifyUser(g.getName(), account.getUid(), modified.getUid());
            }
        }
-       update(modified, originUUID);
+       update(modified, originLogin);
     }
 
     /**
      * Removes the user account and the reference included in the group
      *
      * @param uid user to delete from LDAP
-     * @param originUUID  UUID of admin that request deletion
+     * @param originLogin login of admin that request deletion
      *
      * @see {@link AccountDao#delete(String, String)}
      */
     @Override
-    public synchronized void delete(final String uid, final String originUUID) throws DataServiceException, NameNotFoundException {
+    public synchronized void delete(final String uid, final String originLogin) throws DataServiceException, NameNotFoundException {
 
-        this.groupDao.deleteUser(uid, originUUID);
+        this.groupDao.deleteUser(uid, originLogin);
         this.ldapTemplate.unbind(buildDn(uid), true);
 
     }
@@ -355,23 +352,6 @@ public final class AccountDaoImpl implements AccountDao {
         else
             return a;
 
-    }
-
-    /**
-     * @see {@link AccountDao#findByUID(String)}
-     */
-    @Override
-    public Account findByUUID(final UUID uuid) throws DataServiceException, NameNotFoundException {
-        SearchControls sc = new SearchControls();
-        sc.setReturningAttributes(UserSchema.ATTR_TO_RETRIEVE);
-        sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
-        EqualsFilter filter = new EqualsFilter("entryUUID", uuid.toString());
-        List<Account> accounts = ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(), sc, new AccountContextMapper());
-        if(accounts.size() < 1)
-            throw new NameNotFoundException("Cannot find Ldap entry with UUID = " + uuid);
-        if(accounts.size() > 1)
-            throw new DataServiceException("Invalid response from ldap server, entryUUID should be unique");
-        return accounts.get(0);
     }
 
     /**
@@ -572,7 +552,6 @@ public final class AccountDaoImpl implements AccountDao {
                     context.getStringAttribute(UserSchema.MANAGER),
                     context.getStringAttribute(UserSchema.CONTEXT));
 
-            account.setUUID(context.getStringAttribute(UserSchema.UUID_KEY));
             String rawShadowExpire = context.getStringAttribute(UserSchema.SHADOW_EXPIRE);
             if(rawShadowExpire != null){
                 Long shadowExpire = Long.parseLong(rawShadowExpire);

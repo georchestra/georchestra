@@ -12,6 +12,7 @@ import javax.naming.Name;
 import javax.naming.directory.SearchControls;
 import javax.servlet.http.HttpServletResponse;
 
+import org.georchestra.ldapadmin.dao.AdminLogDao;
 import org.georchestra.ldapadmin.ds.AccountDaoImpl;
 import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
@@ -19,6 +20,7 @@ import org.georchestra.ldapadmin.ds.GroupDaoImpl;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.georchestra.ldapadmin.dto.UserSchema;
+import org.georchestra.ldapadmin.ws.backoffice.groups.GroupProtected;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
@@ -46,6 +48,7 @@ public class UsersControllerTest {
     private AccountDaoImpl dao ;
     private GroupDaoImpl groupDao ;
     private UserRule userRule ;
+    private GroupProtected groups;
 
     private MockHttpServletRequest request;
     private MockHttpServletResponse response;
@@ -58,10 +61,14 @@ public class UsersControllerTest {
 
         ldapTemplate = Mockito.mock(LdapTemplate.class);
         contextSource = Mockito.mock(LdapContextSource.class);
+        groups = Mockito.mock(GroupProtected.class);
+        AdminLogDao logDao = Mockito.mock(AdminLogDao.class);
+
 
         Mockito.when(contextSource.getBaseLdapPath())
             .thenReturn(new DistinguishedName("dc=georchestra,dc=org"));
         Mockito.when(ldapTemplate.getContextSource()).thenReturn(contextSource);
+        Mockito.when(groups.isProtected(Mockito.eq("SV_USER"))).thenReturn(true);
 
         // Configures groupDao
         groupDao = new GroupDaoImpl();
@@ -69,12 +76,15 @@ public class UsersControllerTest {
         groupDao.setGroupSearchBaseDN("ou=groups");
         groupDao.setUniqueNumberField("ou");
         groupDao.setUserSearchBaseDN("ou=users");
+        groupDao.setGroups(this.groups);
+        groupDao.setLogDao(logDao);
 
         // configures AccountDao
         dao = new AccountDaoImpl(ldapTemplate, groupDao);
         dao.setUniqueNumberField("employeeNumber");
         dao.setUserSearchBaseDN("ou=users");
         dao.setGroupDao(groupDao);
+        dao.setLogDao(logDao);
 
         usersCtrl = new UsersController(dao, userRule);
 
@@ -277,6 +287,7 @@ public class UsersControllerTest {
             .thenReturn(new ArrayList<Object>());
         Mockito.when(ldapTemplate.lookupContext(new DistinguishedName("cn=SV_USER,ou=groups")))
             .thenReturn(Mockito.mock(DirContextOperations.class));
+
 
         usersCtrl.create(request, response);
 
