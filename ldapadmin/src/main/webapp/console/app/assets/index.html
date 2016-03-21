@@ -18,7 +18,7 @@
 
     <ul class="nav nav-tabs">
       <li role="presentation" ng-class="{'active': isActive(['home'])}">
-        <a ng-link="#home" translate>nav.dashboard</a>
+        <a ng-link="home" translate>nav.dashboard</a>
       </li>
       <li role="presentation" ng-class="{'active': isActive(['users','groups'])}">
         <a ng-link="users({'id': 'all'})" translate>nav.users</a>
@@ -27,7 +27,7 @@
         <a ng-link="analytics({'group': 'all'})" translate>nav.analytics</a>
       </li>
       <li role="presentation" ng-class="{'active': isActive(['logs'])}">
-        <a href="#" translate>nav.logs</a>
+        <a ng-link="logs" translate>nav.logs</a>
       </li>
     </ul>
 

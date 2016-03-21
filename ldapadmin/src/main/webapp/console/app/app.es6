@@ -10,6 +10,7 @@ class AppController {
       { path: '/analytics/:group' , component: 'analytics' },
       { path: '/groups/:id/users' , component: 'users' },
       { path: '/users/:id/:tab'   , component: 'user' },
+      { path: '/logs'             , component: 'logs' },
     ])
 
     $scope.isActive = (routes) => routes.some(
@@ -53,6 +54,7 @@ angular.module('admin_console', [
 require('components/analytics/analytics')
 require('components/home/home')
 require('components/groups/groups')
+require('components/logs/logs')
 require('components/stats/stats')
 require('components/user/user')
 require('components/users/users')
