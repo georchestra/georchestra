@@ -19,6 +19,8 @@
 
 package org.georchestra.ldapadmin.ws.emails;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.georchestra.ldapadmin.dao.AdminLogDao;
 import org.georchestra.ldapadmin.dao.AttachmentDao;
 import org.georchestra.ldapadmin.dao.EmailDao;
@@ -57,6 +59,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
 import java.util.LinkedList;
@@ -85,6 +88,7 @@ public class EmailController {
     @Autowired
     private AdminLogDao logRepo;
 
+    private static final Log LOG = LogFactory.getLog(EmailController.class.getName());
 
     /*
      * produces = MediaType.APPLICATION_JSON_VALUE
@@ -139,34 +143,43 @@ public class EmailController {
                             @RequestParam("subject") String subject,
                             @RequestParam("content") String content,
                             @RequestParam("attachments") String attachmentsIds,
-                            HttpServletRequest request) throws NameNotFoundException, DataServiceException, MessagingException, IOException {
+                            HttpServletRequest request,
+                            HttpServletResponse response) throws NameNotFoundException, DataServiceException, MessagingException, IOException {
+        try {
+            EmailEntry email = new EmailEntry();
+            Account sender = this.accountDao.findByUID(request.getHeader("sec-username"));
+            email.setSender(UUID.fromString(sender.getUUID()));
+            email.setRecipient(UUID.fromString(recipient));
+            email.setSubject(subject);
+            email.setDate(new Date());
+            email.setBody(content);
 
-        EmailEntry email = new EmailEntry();
-        Account sender = this.accountDao.findByUID(request.getHeader("sec-username"));
-        email.setSender(UUID.fromString(sender.getUUID()));
-        email.setRecipient(UUID.fromString(recipient));
-        email.setSubject(subject);
-        email.setDate(new Date());
-        email.setBody(content);
-
-        attachmentsIds = attachmentsIds.trim();
-        List<Attachment> attachments = new LinkedList<Attachment>();
-        if(attachmentsIds.length() > 0) {
-            String[] attachmentsIdsList = attachmentsIds.split("\\s?,\\s?");
-            for (String attId : attachmentsIdsList) {
-                Attachment att = this.attachmentRepo.findOne(Long.parseLong(attId));
-                if(att == null)
-                    throw new NameNotFoundException("Unable to find attachment with ID : " + attId);
-                attachments.add(att);
+            attachmentsIds = attachmentsIds.trim();
+            List<Attachment> attachments = new LinkedList<Attachment>();
+            if (attachmentsIds.length() > 0) {
+                String[] attachmentsIdsList = attachmentsIds.split("\\s?,\\s?");
+                for (String attId : attachmentsIdsList) {
+                    Attachment att = this.attachmentRepo.findOne(Long.parseLong(attId));
+                    if (att == null)
+                        throw new NameNotFoundException("Unable to find attachment with ID : " + attId);
+                    attachments.add(att);
+                }
             }
+            email.setAttachments(attachments);
+            this.send(email);
+
+            AdminLogEntry log = new AdminLogEntry(UUID.fromString(sender.getUUID()), UUID.fromString(recipient), AdminLogType.EMAIL_SENT, new Date());
+            this.logRepo.save(log);
+
+            this.emailRepository.save(email);
+            response.setContentType("application/json");
+            return email.toJSON().toString();
+
+        } catch (Exception ex) {
+            LOG.error(ex.getMessage());
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            throw new IOException(ex);
         }
-        email.setAttachments(attachments);
-        this.send(email);
-
-        AdminLogEntry log = new AdminLogEntry(UUID.fromString(sender.getUUID()), UUID.fromString(recipient), AdminLogType.EMAIL_SENT, new Date());
-        this.logRepo.save(log);
-
-        return "OK : " + this.emailRepository.save(email).getId();
     }
 
 
