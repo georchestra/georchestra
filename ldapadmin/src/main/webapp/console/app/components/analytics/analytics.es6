@@ -11,7 +11,7 @@ class AnalyticsController {
     this.group = $routeParams.group
     this.groups = this.$injector.get('Group').query()
 
-    let startDate  = moment().format('YY-MM-DD')
+    this.startDate  = moment().format('YY-MM-DD')
     this.endDate    = moment().format('YY-MM-DD')
 
     this.intervals = [
@@ -25,17 +25,17 @@ class AnalyticsController {
       requests : [ 'date', 'count' ]
     }
 
-    this.load(startDate, (this.group != 'all') ? this.group : undefined)
+    this.load((this.group != 'all') ? this.group : undefined)
   }
 
-  load(startDate, group) {
+  load(group) {
     let Flash = this.$injector.get('Flash')
     let Analytics = this.$injector.get('Analytics')
     let $translate = this.$injector.get('$translate')
 
     let options = {
       service   : 'combinedRequests',
-      startDate : startDate,
+      startDate : this.startDate,
       endDate   : this.endDate
     }
     if (group) {
@@ -52,7 +52,9 @@ class AnalyticsController {
   }
 
   setInterval() {
-    this.load(this.$injector.get('Util').getDateFromDiff(this.interval.value))
+    this.startDate = this.$injector.get('Util')
+        .getDateFromDiff(this.interval.value)
+    this.load()
   }
 
   setGroup() {
