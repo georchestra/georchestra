@@ -34,9 +34,16 @@ ADDONS: [...,
 }], ...
 ```
 
-Note that it is possible to alter the default drawing style with the following option:
+Options allow an adminitrator to alter the default:
+ * drawing style
+ * accuracy
+ * KML style
+
+eg:
 ```js
     "options": {
+        "accuracy": 3,
+        "KMLStyle": "<Style id='measureFeatureStyle'><LineStyle><width>2</width><color>ff6666636</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle><LabelStyle><color>ff170580</color></LabelStyle><IconStyle><color>00ffffff</color><Icon><href>http:/maps.google.com/mapfiles/kml/shapes/placemark_circle.png</href></Icon></IconStyle></Style>",
         "graphicStyle": {
             "Point": {
                 "pointRadius": 4,
@@ -48,7 +55,7 @@ Note that it is possible to alter the default drawing style with the following o
                 "strokeColor": "#333333"
             },
             "Line": {
-                "strokeWidth": 3,
+                "strokeWidth": 2,
                 "strokeOpacity": 1,
                 "strokeColor": "#666666",
                 "strokeDashstyle": "dash"
@@ -57,8 +64,56 @@ Note that it is possible to alter the default drawing style with the following o
                 "strokeWidth": 2,
                 "strokeOpacity": 1,
                 "strokeColor": "#666666",
+                "strokeDashstyle": "solid",
                 "fillColor": "white",
                 "fillOpacity": 0.3
+            },
+            "labelSegments": {
+                "label": "${measure} ${units}",
+                "fontSize": "11px",
+                "fontColor": "#800517",
+                "fontFamily": "Verdana",
+                "labelOutlineColor": "#dddddd",
+                "labelAlign": "cm",
+                "labelOutlineWidth": 2,
+                "pointRadius": 1,
+                "fillColor": "#ffffff",
+                "fillOpacity": 0,
+                "strokeWidth": 1,
+                "strokeOpacity": 0,
+                "strokeColor": "#ffffff"
+            },
+            "labelLength": {
+                "label": "${measure} ${units}\n",
+                "fontSize": "11px",
+                "fontWeight": "bold",
+                "fontColor": "#800517",
+                "fontFamily": "Verdana",
+                "labelOutlineColor": "#dddddd",
+                "labelAlign": "lb",
+                "labelOutlineWidth": 3,
+                "pointRadius": 1,
+                "fillColor": "#ffffff",
+                "fillOpacity": 0,
+                "strokeWidth": 1,
+                "strokeOpacity": 0,
+                "strokeColor": "#ffffff"
+            },
+            "labelArea": {
+                "label": "${measure}\n${units}²\n",
+                "fontSize": "11px",
+                "fontWeight": "bold",
+                "fontColor": "#800517",
+                "fontFamily": "Verdana",
+                "labelOutlineColor": "#dddddd",
+                "labelAlign": "cm",
+                "labelOutlineWidth": 3,
+                "pointRadius": 1,
+                "fillColor": "#ffffff",
+                "fillOpacity": 0,
+                "strokeWidth": 1,
+                "strokeOpacity": 0,
+                "strokeColor": "#ffffff"
             }
         }
     },
