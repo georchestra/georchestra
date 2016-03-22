@@ -19,12 +19,11 @@
 
 package org.georchestra.ldapadmin.ds;
 
-import java.util.List;
-import java.util.UUID;
-
 import org.georchestra.ldapadmin.dto.Account;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.filter.Filter;
+
+import java.util.List;
 
 /**
  * Defines the operations to maintain the set of account.
@@ -65,19 +64,20 @@ public interface AccountDao {
 	 * 
 	 * @param account
 	 * @param groupID
+	 * @param originLogin login of admin that create user
 	 * @throws DataServiceException
 	 * @throws DuplicatedEmailException
 	 */
-	void insert(final Account account, final String groupID, final String originUUID) throws DataServiceException, DuplicatedUidException, DuplicatedEmailException;
+	void insert(final Account account, final String groupID, final String originLogin) throws DataServiceException, DuplicatedUidException, DuplicatedEmailException;
 
 	/**
 	 * Updates the user account
 	 * @param account
-	 * @param originUUID UUID of admin that issue this modification
+	 * @param originLogin login of admin that issue this modification
 	 * @throws DataServiceException
 	 * @throws DuplicatedEmailException
 	 */
-	void update(final Account account, String originUUID) throws DataServiceException, DuplicatedEmailException;
+	void update(final Account account, String originLogin) throws DataServiceException, DuplicatedEmailException;
 
 	/**
 	 * Updates the user account, given the old and the new state of the account
@@ -85,13 +85,13 @@ public interface AccountDao {
 	 *
 	 * @param account
 	 * @param modified
-	 * @param originUUID UUID of admin that issue this modification
+	 * @param originLogin login of admin that issue this modification
 	 *
 	 * @throws DuplicatedEmailException
 	 * @throws DataServiceException
 	 * @throws NameNotFoundException
 	 */
-	void update(Account account, Account modified, String originUUID) throws DataServiceException, DuplicatedEmailException, NameNotFoundException;
+	void update(Account account, Account modified, String originLogin) throws DataServiceException, DuplicatedEmailException, NameNotFoundException;
 
 	/**
 	 * Changes the user password
@@ -107,11 +107,11 @@ public interface AccountDao {
 	 * Deletes the account
 	 * 
 	 * @param uid
-	 * @param originUUID UUID of admin that make request
+	 * @param originLogin login of admin that make request
 	 * @throws DataServiceException
 	 * @throws NameNotFoundException
 	 */
-	void delete(final String uid, final String originUUID) throws DataServiceException, NameNotFoundException;
+	void delete(final String uid, final String originLogin) throws DataServiceException, NameNotFoundException;
 
 	/**
 	 * Returns the account that contains the uid provided as parameter.
@@ -125,18 +125,6 @@ public interface AccountDao {
 	 */
 	Account findByUID(final String uid)throws DataServiceException, NameNotFoundException;
 
-    /**
-	 * Returns the account that correspond to specified entryUUID
-	 *
-	 * @param uuid
-	 *
-	 * @return {@link Account}
-	 *
-	 * @throws DataServiceException
-	 * @throws NameNotFoundException
-	 */
-	Account findByUUID(UUID uuid) throws DataServiceException, NameNotFoundException;
-
 	/**
 	 * Returns the account that contains the email provided as parameter.
 	 * 
@@ -148,8 +136,6 @@ public interface AccountDao {
 	 */
 	Account findByEmail(final String email) throws DataServiceException, NameNotFoundException;
 	
-
-	
 	/**
 	 * Add the new password. This method is part of the "lost password" workflow to maintan the old password and the new password until the
 	 * user can confirm that he had asked for a new password.   
@@ -159,7 +145,6 @@ public interface AccountDao {
 	 */
 	void addNewPassword(String uid, String newPassword);
 
-	
 	/**
 	 * Generates a new Id based on the uid provided as parameter.
 	 * 
@@ -170,7 +155,6 @@ public interface AccountDao {
 	 * @throws DataServiceException
 	 */
 	String generateUid(String uid) throws DataServiceException;
-
 
 	/**
 	 * users in LDAP directory with shadowExpire field filled

@@ -103,24 +103,6 @@ public class GroupDaoImpl implements GroupDao {
 		this.groups = groups;
 	}
 
-	/**
-	 * Retrieve immutable identifier (UUID) from Ldap
-	 *
-	 * @param uid
-	 *            Muttable identifier of account
-	 * @return immutable identifier
-	 */
-
-	private UUID findUUID(String uid){
- 		String[] attRet =  UserSchema.ATTR_TO_RETRIEVE;
-		AccountDaoImpl.AccountContextMapper acm = new AccountDaoImpl.AccountContextMapper();
-		DistinguishedName dn = new DistinguishedName();
-		dn.add(userSearchBaseDN);
-		dn.add("uid", uid);
-		Account a = (Account) ldapTemplate.lookup(dn,attRet, acm);
-		return UUID.fromString(a.getUUID());
-	}
-
     /**
 	 * Create an ldap entry for the group
 	 *
@@ -160,7 +142,7 @@ public class GroupDaoImpl implements GroupDao {
 	 * @see org.georchestra.ldapadmin.ds.GroupDao#addUser(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void addUser(final String groupID, final String userId, final String originUUID) throws NameNotFoundException, DataServiceException {
+	public void addUser(final String groupID, final String userId, final String originLogin) throws NameNotFoundException, DataServiceException {
 
 
 		/* TODO Add hierarchic behaviour here :
@@ -181,11 +163,9 @@ public class GroupDaoImpl implements GroupDao {
 			this.ldapTemplate.modifyAttributes(context);
 
 			// Add log entry for this modification
-			if(originUUID != null) {
-				UUID admin = UUID.fromString(originUUID);
-				UUID target = this.findUUID(userId);
+			if(originLogin != null) {
 				AdminLogType logType = this.groups.isProtected(groupID) ? AdminLogType.SYSTEM_GROUP_CHANGE : AdminLogType.OTHER_GROUP_CHANGE;
-				AdminLogEntry log = new AdminLogEntry(admin, target, logType, new Date());
+				AdminLogEntry log = new AdminLogEntry(originLogin, userId, logType, new Date());
 				this.logDao.save(log);
 			}
 
@@ -200,19 +180,19 @@ public class GroupDaoImpl implements GroupDao {
 	 * Removes the uid from all groups
 	 *
 	 * @param uid user to remove
-	 * @param originUUID UUID of admin that make request
+	 * @param originLogin login of admin that make request
 	 */
 	@Override
-	public void deleteUser(String uid, final String originUUID) throws DataServiceException {
+	public void deleteUser(String uid, final String originLogin) throws DataServiceException {
 
 		List<Group> allGroups = findAllForUser(uid);
 
 		for (Group group : allGroups) {
-			deleteUser(group.getName(), uid, originUUID);
+			deleteUser(group.getName(), uid, originLogin);
 		}
 	}
 
-	public void deleteUser(String groupName, String uid, final String originUUID) throws DataServiceException {
+	public void deleteUser(String groupName, String uid, final String originLogin) throws DataServiceException {
 		/* TODO Add hierarchic behaviour here like addUser method */
 
 		Name dnSvUser = buildGroupDn(groupName);
@@ -224,9 +204,7 @@ public class GroupDaoImpl implements GroupDao {
 		this.ldapTemplate.modifyAttributes(ctx);
 
 		// Add log entry for this modification
-		if(originUUID != null) {
-			UUID admin = UUID.fromString(originUUID);
-			UUID target = this.findUUID(uid);
+		if(originLogin != null) {
 			AdminLogType logType;
 			if(groupName.equals(Group.PENDING)){
 				logType = AdminLogType.ACCOUNT_MODERATION;
@@ -235,7 +213,7 @@ public class GroupDaoImpl implements GroupDao {
 			} else {
 				logType = AdminLogType.OTHER_GROUP_CHANGE;
 			}
-			AdminLogEntry log = new AdminLogEntry(admin, target, logType, new Date());
+			AdminLogEntry log = new AdminLogEntry(originLogin, uid, logType, new Date());
 			this.logDao.save(log);
 
 		}
@@ -524,41 +502,38 @@ public class GroupDaoImpl implements GroupDao {
 	}
 
 	@Override
-	public void addUsers(String groupName, List<String> addList, final String originUUID) throws NameNotFoundException, DataServiceException {
+	public void addUsers(String groupName, List<String> addList, final String originLogin) throws NameNotFoundException, DataServiceException {
 
 		for (String uid : addList) {
-			addUser(groupName, uid, originUUID);
+			addUser(groupName, uid, originLogin);
 		}
 	}
 
 	@Override
-	public void deleteUsers(String groupName, List<String> deleteList, final String originUUID)
+	public void deleteUsers(String groupName, List<String> deleteList, final String originLogin)
 			throws DataServiceException, NameNotFoundException {
 
 		for (String uid : deleteList) {
-			deleteUser(groupName, uid, originUUID);
+			deleteUser(groupName, uid, originLogin);
 		}
 
 	}
 
 	@Override
-	public void addUsersInGroups(List<String> putGroup, List<String> users, final String originUUID)
+	public void addUsersInGroups(List<String> putGroup, List<String> users, final String originLogin)
 			throws DataServiceException, NameNotFoundException {
 
-
 		for (String groupName : putGroup) {
-
-			addUsers(groupName, users, originUUID);
+			addUsers(groupName, users, originLogin);
 		}
 	}
 
 	@Override
-	public void deleteUsersInGroups(List<String> deleteGroup, List<String> users, final String originUUID)
+	public void deleteUsersInGroups(List<String> deleteGroup, List<String> users, final String originLogin)
 			throws DataServiceException, NameNotFoundException {
 
 		for (String groupName : deleteGroup) {
-
-			deleteUsers(groupName, users, originUUID);
+			deleteUsers(groupName, users, originLogin);
 		}
 
 	}

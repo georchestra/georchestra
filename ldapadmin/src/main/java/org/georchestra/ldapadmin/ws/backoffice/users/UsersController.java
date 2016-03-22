@@ -297,14 +297,7 @@ public class UsersController {
 				return;
 			}
 
-			String adminUUID = null;
-			try {
-				adminUUID = this.accountDao.findByUID(request.getHeader("sec-username")).getUUID();
-			} catch (NameNotFoundException e) {
-				LOG.error("Unable to find admin/user connected, so no admin log generated when creating uid : " + account.getUid());
-			}
-
-			storeUser(account, adminUUID);
+			storeUser(account, request.getHeader("sec-username"));
 
 			UserResponse userResponse = new UserResponse(account);
 
@@ -338,13 +331,14 @@ public class UsersController {
 	 * Saves the user in the LDAP store.
 	 *
 	 * @param account
+	 * @param originLogin login of admin that issue request
 	 * @throws DuplicatedEmailException
 	 * @throws DataServiceException
 	 * @throws IOException
 	 */
-	private void storeUser(Account account, String originUUID) throws DuplicatedEmailException, DataServiceException, IOException {
+	private void storeUser(Account account, String originLogin) throws DuplicatedEmailException, DataServiceException, IOException {
 		try {
-			this.accountDao.insert(account, Group.SV_USER, originUUID);
+			this.accountDao.insert(account, Group.SV_USER, originLogin);
 
 		} catch (DuplicatedEmailException e) {
 			throw e;
@@ -424,7 +418,6 @@ public class UsersController {
 		} catch (NameNotFoundException e) {
 
 			ResponseUtil.writeError(response, NOT_FOUND);
-
 			return;
 
 		} catch (DataServiceException e) {
@@ -435,14 +428,7 @@ public class UsersController {
 		// modifies the account data
 		try{
 			final Account modified = modifyAccount(AccountFactory.create(account), request.getInputStream());
-			String adminUUID;
-			try {
-				Account adminAccount = this.accountDao.findByUID(request.getHeader("sec-username"));
-				adminUUID = adminAccount == null ? null : adminAccount.getUUID();
-			} catch (NameNotFoundException ex){
-				adminUUID = null;
-			}
-			this.accountDao.update(account, modified, adminUUID);
+			this.accountDao.update(account, modified, request.getHeader("sec-username"));
 			boolean uidChanged = ( ! modified.getUid().equals(account.getUid()));
 			if ((uidChanged) && (warnUserIfUidModified)) {
 				this.mailService.sendAccountUidRenamed(request.getSession().getServletContext(),
@@ -452,7 +438,6 @@ public class UsersController {
 
 		} catch (DuplicatedEmailException e) {
 			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, DUPLICATED_EMAIL);
-
 			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
 		} catch (IOException e) {
 			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, PARAMS_NOT_UNDERSTOOD);
@@ -496,14 +481,7 @@ public class UsersController {
 				return;
 			}
 
-			String adminUUID = null;
-			try {
-				adminUUID = this.accountDao.findByUID(request.getHeader("sec-username")).getUUID();
-			} catch (NameNotFoundException e) {
-				LOG.error("Unable to find admin/user connected, so no admin log generated when deleting uid : " + uid);
-			}
-
-			this.accountDao.delete(uid, adminUUID);
+			this.accountDao.delete(uid, request.getHeader("sec-username"));
 
 			ResponseUtil.writeSuccess(response);
 

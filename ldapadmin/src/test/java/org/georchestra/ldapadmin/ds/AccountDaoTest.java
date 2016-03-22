@@ -64,7 +64,6 @@ public class AccountDaoTest {
 
         this.adminAccount = AccountFactory.createBrief("testadmin", "monkey123", "Test", "ADmin",
                 "postmastrer@localhost", "+33123456789", "geOrchestra Project Steering Committee", "admin", "");
-        this.adminAccount.setUUID("9818af68-18d0-1035-8e0e-c310a114ab8f");
     }
 
     @Test
@@ -74,7 +73,7 @@ public class AccountDaoTest {
         
         testadminAc.setOrg(null);
         
-        us.update(testadminAc, this.adminAccount.getUUID());
+        us.update(testadminAc, this.adminAccount.getUid());
         
         Attributes attrs = contextSource.getReadWriteContext().getAttributes(new LdapName("uid=testadmin,ou=users"));
             
@@ -100,7 +99,7 @@ public class AccountDaoTest {
 
         newTestAdminAc.setUid("testadminblah");
 
-        us.update(testadminAc, newTestAdminAc, this.adminAccount.getUUID());
+        us.update(testadminAc, newTestAdminAc, this.adminAccount.getUid());
 
         Attributes attrs = contextSource.getReadWriteContext().getAttributes(new LdapName("uid=testadminblah,ou=users"));
         Object o = attrs.get("uid");
@@ -114,7 +113,7 @@ public class AccountDaoTest {
 
 
         // restoring testadmin in its initial state
-        us.update(newTestAdminAc, testadminAc, this.adminAccount.getUUID());
+        us.update(newTestAdminAc, testadminAc, this.adminAccount.getUid());
 
         assertTrue("Was able to find testadmin back (found some attributes), none expected", encounteredNamingEx);
         assertTrue("Wrong uid encountered (found " + o.toString() + " instead of testadminblah", correctlyrenamed);

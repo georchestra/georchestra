@@ -21,11 +21,16 @@ package org.georchestra.ldapadmin.model;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.security.ldap.userdetails.Person;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 import java.util.Date;
-import java.util.UUID;
 
 @Entity
 @Table(schema = "ldapadmin", name = "admin_log")
@@ -36,8 +41,8 @@ public class AdminLogEntry {
     @SequenceGenerator(name="admin_log_seq", schema = "ldapadmin", sequenceName="admin_log_seq", initialValue=1, allocationSize=1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "admin_log_seq")
     private long id;
-    private UUID admin;
-    private UUID target;
+    private String admin;
+    private String target;
     private AdminLogType type;
 
     @Column(updatable = false, nullable = false)
@@ -45,7 +50,7 @@ public class AdminLogEntry {
 
     public AdminLogEntry() {}
 
-    public AdminLogEntry(UUID admin, UUID target, AdminLogType type, Date date) {
+    public AdminLogEntry(String admin, String target, AdminLogType type, Date date) {
         this.admin = admin;
         this.target = target;
         this.type = type;
@@ -60,19 +65,19 @@ public class AdminLogEntry {
         this.id = id;
     }
 
-    public UUID getAdmin() {
+    public String getAdmin() {
         return admin;
     }
 
-    public void setAdmin(UUID admin) {
+    public void setAdmin(String admin) {
         this.admin = admin;
     }
 
-    public UUID getTarget() {
+    public String getTarget() {
         return target;
     }
 
-    public void setTarget(UUID target) {
+    public void setTarget(String target) {
         this.target = target;
     }
 

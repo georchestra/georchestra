@@ -418,16 +418,6 @@ public class GroupsController {
 	@RequestMapping(value=BASE_MAPPING+ "/groups_users", method=RequestMethod.POST)
 	public void updateUsers( HttpServletRequest request, HttpServletResponse response) throws IOException{
 
-		String adminUUID = null;
-
-		try {
-			adminUUID = this.accountDao.findByUID(request.getHeader("sec-username")).getUUID();
-		} catch (NameNotFoundException e) {
-			LOG.error("Unable to find Admin that initiate this request, so no admin log");
-		} catch (DataServiceException e) {
-			LOG.error("Unable to find Admin that initiate this request, so no admin log");
-		}
-
 		try{
 
 			ServletInputStream is = request.getInputStream();
@@ -437,10 +427,10 @@ public class GroupsController {
 			List<String> users = createUserList(json, "users");
 
 			List<String> putGroup = createUserList(json, "PUT");
-			this.groupDao.addUsersInGroups(putGroup, users, adminUUID);
+			this.groupDao.addUsersInGroups(putGroup, users, request.getHeader("sec-username"));
 
 			List<String> deleteGroup = createUserList(json, "DELETE");
-			this.groupDao.deleteUsersInGroups(deleteGroup, users, adminUUID);
+			this.groupDao.deleteUsersInGroups(deleteGroup, users, request.getHeader("sec-username"));
 
 			ResponseUtil.writeSuccess(response);
 
