@@ -2,6 +2,8 @@ require('components/logs/logs.tpl')
 
 class LogsController {
 
+  static $inject = [ '$injector' ]
+
   constructor($injector, $routeParams) {
 
     this.itemsPerPage = 5
@@ -20,7 +22,5 @@ class LogsController {
   }
 
 }
-
-LogsController.$inject = [ '$injector' ]
 
 angular.module('admin_console').controller('LogsController', LogsController)

@@ -2,6 +2,8 @@ require('components/home/home.tpl')
 
 class HomeController {
 
+  static $inject = [ '$injector' ]
+
   constructor($injector) {
 
     const LOG_LIMIT = 10
@@ -46,7 +48,5 @@ class HomeController {
   }
 
 }
-
-HomeController.$inject = [ '$injector' ]
 
 angular.module('admin_console').controller('HomeController', HomeController)
