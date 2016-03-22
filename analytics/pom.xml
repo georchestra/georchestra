@@ -465,7 +465,7 @@
                 <resource>
                   <targetPath>/etc/georchestra</targetPath>
                   <directory>${project.build.directory}/datadir</directory>
-                  <include>${project.artifactId}/*</include>
+                  <include>${project.artifactId}/**</include>
                 </resource>
               </resources>
               <serverId>docker-hub</serverId>

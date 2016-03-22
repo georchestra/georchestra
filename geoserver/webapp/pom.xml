@@ -1033,7 +1033,7 @@
                 <resource>
                   <targetPath>/etc/georchestra</targetPath>
                   <directory>${project.build.directory}/datadir</directory>
-                  <include>geoserver/*</include>
+                  <include>geoserver/**</include>
                 </resource>
               </resources>
               <serverId>docker-hub</serverId>
