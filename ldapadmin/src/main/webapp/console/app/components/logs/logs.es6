@@ -6,7 +6,16 @@ class LogsController {
 
   constructor($injector, $routeParams) {
 
-    this.$injector = $injector
+    const LOG_LIMIT = 10
+    this.$injector  = $injector
+
+    let msg   = 'Error while loading data'
+    let error = $injector.get('Flash').create.bind(this, 'error', msg, '')
+
+    this.logs = $injector.get('Logs').query({
+      limit: LOG_LIMIT,
+      page: 0
+    }, () => {}, error)
 
   }
 

@@ -1,5 +1,24 @@
 <section class="logs">
 
-  <h4>truite</h4>
+  <h4 translate>logs.title</h4>
+
+  <hr>
+
+  <table class="table table-condensed">
+    <thead>
+      <tr>
+        <th translate>logs.date</th>
+        <th translate>logs.sender</th>
+        <th translate>logs.type</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="log in logs.logs.logs">
+        <td>{{::log.date | date: 'mediumDate'}}</td>
+        <td>{{::log.admin}}</td>
+        <td>{{::log.type}}</td>
+      </tr>
+    </tbody>
+  </table>
 
 </section>
