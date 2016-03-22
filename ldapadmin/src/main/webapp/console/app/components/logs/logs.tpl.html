@@ -7,18 +7,26 @@
   <table class="table table-condensed">
     <thead>
       <tr>
-        <th translate>logs.date</th>
-        <th translate>logs.sender</th>
-        <th translate>logs.type</th>
+        <th class="header-filter"><span translate>logs.date</span></th>
+        <th class="header-filter">
+          <select class="pull-right form-control input-sm" ng-options="sender for sender in logs.senders" ng-model="logs.sender"></select>
+          <span translate>logs.sender</span>
+        </th>
+        <th class="header-filter">
+          <select class="pull-right form-control input-sm" ng-options="type for type in logs.types" ng-model="logs.type"></select>
+          <span translate>logs.type</span>
+        </th>
       </tr>
     </thead>
     <tbody>
-      <tr ng-repeat="log in logs.logs.logs">
+      <tr dir-paginate="log in logs.logs.logs | itemsPerPage: logs.itemsPerPage">
         <td>{{::log.date | date: 'mediumDate'}}</td>
         <td>{{::log.admin}}</td>
         <td>{{::log.type}}</td>
       </tr>
     </tbody>
   </table>
+
+  <dir-pagination-controls></dir-pagination-controls>
 
 </section>
