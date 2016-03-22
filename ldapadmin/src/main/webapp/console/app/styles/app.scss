@@ -193,6 +193,28 @@ section {
 }
 
 
+// LOGS
+.logs {
+  table {
+    th, td {
+      width: 40%;
+      &:first-of-type {
+        width: 20%;
+      }
+      select {
+        max-width: 50%;
+      }
+    }
+    select {
+      width : auto;
+    }
+  }
+  .header-filter span {
+    display     : inline-block;
+    padding: .5em;
+  }
+}
+
 // CHARTS
 .chartist {
   height: 25em;
