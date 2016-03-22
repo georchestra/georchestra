@@ -78,6 +78,7 @@ public class UsersController {
 	private static final String DUPLICATED_EMAIL = "duplicated_email";
 	private static final String PARAMS_NOT_UNDERSTOOD = "params_not_understood";
 	private static final String NOT_FOUND = "not_found";
+	private static final String UNABLE_TO_ENCODE = "unable_to_encode";
 
 	private AccountDao accountDao;
 	private UserRule userRule;
@@ -299,11 +300,7 @@ public class UsersController {
 
 			storeUser(account, request.getHeader("sec-username"));
 
-			UserResponse userResponse = new UserResponse(account);
-
-			String jsonResponse = userResponse.asJsonString();
-
-			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_OK);
+			ResponseUtil.buildResponse(response, account.toJSON().toString(), HttpServletResponse.SC_OK);
 
 		} catch (IllegalArgumentException e ){
 			LOG.warn(e.getMessage());
@@ -323,6 +320,9 @@ public class UsersController {
 			ResponseUtil.buildResponse(response, "{ \"success\": false }",
 					HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			throw new IOException(dsex);
+		} catch (JSONException e) {
+			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, UNABLE_TO_ENCODE);
+			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
 		}
 	}
 
@@ -434,7 +434,7 @@ public class UsersController {
 				this.mailService.sendAccountUidRenamed(request.getSession().getServletContext(),
 						modified.getUid(), modified.getCommonName(), modified.getEmail());
 			}
-			ResponseUtil.writeSuccess(response);
+			ResponseUtil.buildResponse(response, modified.toJSON().toString(), HttpServletResponse.SC_OK);
 
 		} catch (DuplicatedEmailException e) {
 			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, DUPLICATED_EMAIL);
@@ -450,6 +450,9 @@ public class UsersController {
 		} catch (NameNotFoundException e) {
 			LOG.error(e.getMessage());
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+		} catch (JSONException e) {
+			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, UNABLE_TO_ENCODE);
+			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
 		}
 	}
 
@@ -581,12 +584,12 @@ public class UsersController {
 			account.setDescription(description);
 		}
 
-		String manager = RequestUtil.getFieldValue(json, UserSchema.MANAGER);
+		String manager = RequestUtil.getFieldValue(json, UserSchema.MANAGER_KEY);
 		if (manager != null) {
 			account.setManager(manager);
 		}
 		
-		String context = RequestUtil.getFieldValue(json, UserSchema.CONTEXT);
+		String context = RequestUtil.getFieldValue(json, UserSchema.CONTEXT_KEY);
 		if (context != null) {
 			account.setContext(context);
 		}

@@ -144,8 +144,7 @@ public class AccountFactory {
 	 * @param stateOrProvince
 	 * @param manager
 	 * @param context
-	 * @param string 
-	 * 
+	 *
 	 * @return {@link Account}
 	 */
 	public static Account createFull(

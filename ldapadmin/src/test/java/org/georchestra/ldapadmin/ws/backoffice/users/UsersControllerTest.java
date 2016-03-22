@@ -1,13 +1,17 @@
 package org.georchestra.ldapadmin.ws.backoffice.users;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import javax.naming.Name;
 import javax.naming.directory.SearchControls;
 import javax.servlet.http.HttpServletResponse;
@@ -21,6 +25,7 @@ import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.georchestra.ldapadmin.dto.UserSchema;
 import org.georchestra.ldapadmin.ws.backoffice.groups.GroupProtected;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
@@ -465,8 +470,13 @@ public class UsersControllerTest {
 
         JSONObject ret = new JSONObject(response.getContentAsString());
         assertTrue(response.getStatus() == HttpServletResponse.SC_OK);
-        assertTrue(ret.getBoolean("success"));
 
+        // Add missing param in request
+        reqUsr.put("mail", "pmauduit@georchestra.org");
+        reqUsr.put("cn", "newPierre newPmauduit");
+        reqUsr.put("uid", "pmauduit");
+
+        assertTrue(UsersControllerTest.jsonEquals(reqUsr, ret));
 
     }
 
@@ -510,7 +520,13 @@ public class UsersControllerTest {
 
         JSONObject ret = new JSONObject(response.getContentAsString());
         assertTrue(response.getStatus() == HttpServletResponse.SC_OK);
-        assertTrue(ret.getBoolean("success"));
+
+        // Add missing param in request
+        reqUsr.put("mail", "pmauduit@georchestra.org");
+        reqUsr.put("cn", "newPierre newPmauduit");
+        reqUsr.put("uid", "pmauduit");
+
+        assertTrue(UsersControllerTest.jsonEquals(reqUsr, ret));
 
     }
 
@@ -566,5 +582,39 @@ public class UsersControllerTest {
         usersCtrl.delete(request, response);
         assertTrue(response.getContentType().equals("application/json"));
         
+    }
+
+
+    private static boolean jsonEquals(JSONObject a, JSONObject b){
+
+        Iterator<String> aIt = a.sortedKeys();
+        Set<String> aKeys = new HashSet<String>();
+        while(aIt.hasNext()){
+            String key = aIt.next();
+            aKeys.add(key);
+            String aValue = null;
+            String bValue = null;
+            try {
+                aValue = a.getString(key);
+                bValue = b.getString(key);
+            } catch (JSONException e) {
+                return false;
+            }
+
+            if(bValue == null)
+                return false;
+            if(!aValue.equals(bValue))
+                return false;
+        }
+        Iterator<String> bIt = b.sortedKeys();
+        Set<String> bKeys = new HashSet<String>();
+        while(bIt.hasNext()) {
+            String key = bIt.next();
+            bKeys.add(key);
+        }
+        if(bKeys.size() != aKeys.size())
+            return false;
+
+        return true;
     }
 }
