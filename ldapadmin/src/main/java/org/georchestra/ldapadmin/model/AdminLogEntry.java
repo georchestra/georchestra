@@ -30,6 +30,8 @@ import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Entity
@@ -44,6 +46,7 @@ public class AdminLogEntry {
     private String admin;
     private String target;
     private AdminLogType type;
+    private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
     @Column(updatable = false, nullable = false)
     private Date date;
@@ -102,7 +105,7 @@ public class AdminLogEntry {
         res.put("admin", this.admin.toString());
         res.put("target", this.target.toString());
         res.put("type", this.type.toString());
-        res.put("date", this.date.toString());
+        res.put("date",  AdminLogEntry.dateFormat.format(this.date));
         return res;
     }
 }

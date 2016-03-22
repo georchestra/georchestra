@@ -351,7 +351,8 @@ public class GroupsControllerTest {
 
         JSONObject ret = new JSONObject(response.getContentAsString());
         assertTrue(response.getStatus() == HttpServletResponse.SC_OK);
-        assertTrue(ret.getBoolean("success"));
+        assertTrue(ret.getString("cn").equals("newName"));
+        assertTrue(ret.getString("description").equals("new Description"));
 
     }
 

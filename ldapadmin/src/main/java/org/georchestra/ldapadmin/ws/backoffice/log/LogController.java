@@ -29,7 +29,6 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -57,19 +56,19 @@ public class LogController {
 	 *     {"logs": [
 	 *		{
 	 *			"admin": "testadmin",
- 	 *			"date": "2015-12-01 13:48:18.729",
+ 	 *			"date": "2016-03-22T15:26:21.087+0100",
 	 *			"target": "testeditor",
 	 *			"type": "Email sent"
 	 *		},
 	 *		{
 	 *			"admin": "testadmin",
-	 *			"date": "2015-11-30 16:37:00.974",
+	 *			"date": "2016-03-21T17:50:09.258+0100",
 	 *			"target": "joe",
 	 *			"type": "Email sent"
 	 *		},
 	 *		{
 	 *			"admin": "testadmin",
-	 *			"date": "2015-11-30 17:37:50.359",
+	 *			"date": "2016-03-21T17:50:09.258+0100",
 	 *			"target": "marie",
 	 *			"type": "Email sent"
 	 *		}
