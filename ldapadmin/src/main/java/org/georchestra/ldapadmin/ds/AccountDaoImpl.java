@@ -493,9 +493,9 @@ public final class AccountDaoImpl implements AccountDao {
         setAccountField(context, UserSchema.HOME_POSTAL_ADDRESS_KEY, account.getHomePostalAddress());
 
         if(account.getManager() != null)
-            setAccountField(context, UserSchema.MANAGER, account.getManager());
+            setAccountField(context, UserSchema.MANAGER_KEY, account.getManager());
         
-        setAccountField(context, UserSchema.CONTEXT, account.getContext());
+        setAccountField(context, UserSchema.CONTEXT_KEY, account.getContext());
     }
 
     private void setAccountField(DirContextOperations context, String fieldName, Object value) {
@@ -549,10 +549,10 @@ public final class AccountDaoImpl implements AccountDao {
                     context.getStringAttribute(UserSchema.MOBILE_KEY),
                     context.getStringAttribute(UserSchema.ROOM_NUMBER_KEY),
                     context.getStringAttribute(UserSchema.STATE_OR_PROVINCE_KEY),
-                    context.getStringAttribute(UserSchema.MANAGER),
-                    context.getStringAttribute(UserSchema.CONTEXT));
+                    context.getStringAttribute(UserSchema.MANAGER_KEY),
+                    context.getStringAttribute(UserSchema.CONTEXT_KEY));
 
-            String rawShadowExpire = context.getStringAttribute(UserSchema.SHADOW_EXPIRE);
+            String rawShadowExpire = context.getStringAttribute(UserSchema.SHADOW_EXPIRE_KEY);
             if(rawShadowExpire != null){
                 Long shadowExpire = Long.parseLong(rawShadowExpire);
                 shadowExpire *= 1000; // Convert to milliseconds
