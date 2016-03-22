@@ -430,7 +430,7 @@
                 <resource>
                   <targetPath>/etc/georchestra</targetPath>
                   <directory>${project.build.directory}/datadir</directory>
-                  <include>cas/*</include>
+                  <include>cas/**</include>
                 </resource>
               </resources>
               <serverId>docker-hub</serverId>
