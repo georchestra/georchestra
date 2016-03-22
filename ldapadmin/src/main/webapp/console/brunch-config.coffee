@@ -5,6 +5,7 @@ module.exports = config:
       relativePath: 'app/'
     babel:
       pattern: /\.es6/
+      plugins: [ "transform-class-properties" ]
   files:
     javascripts:
       joinTo:
