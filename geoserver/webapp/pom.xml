@@ -985,10 +985,33 @@
       <id>docker</id>
       <properties>
         <dockerImageName>georchestra/geoserver</dockerImageName>
+        <dockerDatadirScmUrl>scm:git:https://github.com/georchestra/datadir.git</dockerDatadirScmUrl>
+        <dockerDatadirScmVersion>docker-15.12</dockerDatadirScmVersion>
       </properties>
       <build>
         <finalName>geoserver</finalName>
         <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-scm-plugin</artifactId>
+            <version>1.9.4</version>
+            <configuration>
+              <checkoutDirectory>${project.build.directory}/datadir/</checkoutDirectory>
+              <connectionUrl>${dockerDatadirScmUrl}</connectionUrl>
+              <pushChanges>false</pushChanges>
+              <scmVersion>${dockerDatadirScmVersion}</scmVersion>
+              <scmVersionType>branch</scmVersionType>
+            </configuration>
+            <executions>
+              <execution>
+                <id>checkout-docker-default-datadir</id>
+                <phase>process-resources</phase>
+                <goals>
+                  <goal>checkout</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
           <plugin>
             <groupId>com.spotify</groupId>
             <artifactId>docker-maven-plugin</artifactId>
@@ -1003,10 +1026,15 @@
                   <include>geoserver.war</include>
                 </resource>
                 <resource>
-                <targetPath>/root</targetPath>
-                <directory>${project.basedir}/src/docker</directory>
-                <include>start.sh</include>
-              </resource>
+                  <targetPath>/root</targetPath>
+                  <directory>${project.basedir}/src/docker</directory>
+                  <include>start.sh</include>
+                </resource>
+                <resource>
+                  <targetPath>/etc/georchestra</targetPath>
+                  <directory>${project.build.directory}/datadir</directory>
+                  <include>geoserver/*</include>
+                </resource>
               </resources>
               <serverId>docker-hub</serverId>
               <registryUrl>https://index.docker.io/v1/</registryUrl>
