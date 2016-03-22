@@ -8,38 +8,41 @@
         <a ng-link="users({id: 'all'})" translate>home.users</a>
       </div>
       <div class="alert alert-danger" ng-if="home.pending && home.pending.users.length > 0">
-        <a ng-link="users({id: home.PENDING})">
+        <a ng-link="users({id: home.pending.cn})">
           {{::home.pending.users.length}} <span translate>home.waiting_users</span><br>
           <span class="manage" translate>home.view_manage</span>
         </a>
       </div>
       <div class="alert alert-warning" ng-if="home.expired && home.expired.users.length > 0">
-        <a ng-link="users({id: home.EXPIRED})">
+        <a ng-link="users({id: home.expired.cn})">
           {{::home.expired.users.length}} <span translate>home.expired_users</span><br>
           <span class="manage" translate>home.view_manage</span>
         </a>
       </div>
     </div>
+
     <div class="jumbotron">
       <h1>{{::home.connected.results.length}}</h1>
       <p translate>home.connected</p>
-    <table class="table table-condensed">
-      <thead>
-        <tr>
-          <th translate>home.nb_requests</th>
-          <th translate>home.user</th>
-          <th translate>home.org</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr ng-repeat="user in home.connected.results">
-          <td>{{::user.nb_requests}}</td>
-          <td>{{::user.user}}</td>
-          <td>{{::user.organization}}</td>
-        </tr>
-      </tbody>
-    </table>
+      <table class="table table-condensed">
+        <thead>
+          <tr>
+            <th translate>home.nb_requests</th>
+            <th translate>home.user</th>
+            <th translate>home.org</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr dir-paginate="user in home.connected.results | itemsPerPage: 10">
+            <td title="{{::user.nb_requests}}">{{::user.nb_requests}}</td>
+            <td title="{{::user.user}}">{{::user.user}}</td>
+            <td title="{{::user.organization}}">{{::user.organization}}</td>
+          </tr>
+        </tbody>
+      </table>
+      <dir-pagination-controls></dir-pagination-controls>
     </div>
+
   </div>
 
   <div class="col-md-8">

@@ -5,64 +5,48 @@ class HomeController {
   constructor($injector) {
 
     const LOG_LIMIT = 10
-
-    this.PENDING   = 'PENDING'
-    this.EXPIRED   = 'TEMPORARY'
+    const PENDING   = 'PENDING'
+    const EXPIRED   = 'SV'
 
     this.$injector = $injector;
 
     $injector.get('Group').query(groups => {
       groups.forEach(group => {
-        if (group.cn == this.PENDING) {
+        if (group.cn == PENDING) {
           this.pending = group
         }
-        if (group.cn == this.EXPIRED) {
+        if (group.cn == EXPIRED) {
           this.expired = group
         }
       })
     })
 
-    let err_handler = $injector.get('Flash').create.bind(
-      this, 'error', $injector.get('$translate')('analytics.errorload')
-    )
+    let msg       = 'Error while loading data'
+    let error     = $injector.get('Flash').create.bind(this, 'error', msg, '')
+    let Analytics = $injector.get('Analytics')
+    let options   = {
+      service   : 'distinctUsers',
+      startDate : moment().subtract(19, 'week').format('YYYY-MM-DD'),
+      endDate   : moment().format('YYYY-MM-DD')
+    }
 
-    this.requests_conf = [ 'date', 'count' ];
-    this.requests = $injector.get('Analytics').get({
-        service   : 'layersUsage',
-        startDate : '15-01-01',
-        endDate   : this.getDate()
-      }, function() {}, err_handler
-    )
+    this.requests_conf = [ 'layer', 'count' ]
 
-    this.connected = $injector.get('Analytics').get({
-        service   : 'distinctUsers',
-        startDate : '15-01-01',
-        endDate   : this.getDate()
-    // }, function() {},
-    }, function() {
-      // FAKEDATA
-      this.connected = { "results" : [ { "user": "toto", "nb_requests": 520, "organization": "GIP ATGeRI" }, { "user": "toto2", "nb_requests": 250, "organization": "GIP ATGeRI" }, { "user": "toto3", "nb_requests": 221, "organization": "GIP ATGeRI" }, { "user": "toto4", "nb_requests": 221, "organization": "GIP ATGeRI" }, { "user": "toto5", "nb_requests": 215, "organization": "GIP ATGeRI" }, { "user": "toto6", "nb_requests": 209, "organization": "GIP ATGeRI" } ]};
-    }.bind(this),
-      err_handler
-    )
+    this.connected  = Analytics.get(options, () => {}, error)
 
-    this.logs = this.$injector.get('Logs').query(
-      {
-        limit: LOG_LIMIT,
-        page: 1
-      },
-      function() {}, err_handler
-    )
+    options.limit   = 10
+    options.service = 'layersUsage'
+    this.requests = Analytics.get(options, () => {}, error)
+
+    this.logs = this.$injector.get('Logs').query({
+      limit: LOG_LIMIT,
+      page: 1
+    }, () => {}, error)
+
   }
 
-  getDate() {
-    let today = new Date()
-    return this.$injector.get('$filter')('date')(today, 'yy-MM-dd')
-  }
 }
 
 HomeController.$inject = [ '$injector' ]
 
-
-angular.module('admin_console')
-.controller('HomeController', HomeController);
+angular.module('admin_console').controller('HomeController', HomeController)
