@@ -55,6 +55,7 @@
   "logs.type"           : "Action",
 
   "analytics.title"     : "Analytics",
+  "analytics.everyone"  : "Everyone",
   "analytics.requests"  : "Number of requests",
   "analytics.layers"    : "Most viewed layers",
   "analytics.day"       : "Today",

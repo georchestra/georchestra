@@ -8,7 +8,7 @@ class AnalyticsController {
 
     this.$injector = $injector
 
-    this.group = $routeParams.group
+    this.group  = $routeParams.group
     this.groups = this.$injector.get('Group').query()
 
     this.startDate  = moment().subtract(6, 'month').format('YYYY-MM-DD')
@@ -17,7 +17,7 @@ class AnalyticsController {
     this.intervals = [
       'day', 'week', 'month', '3month', 'year'
     ].map(x => { return { value: x, label: 'analytics.' + x } })
-    this.interval = this.intervals[0]
+    this.interval = this.intervals[this.intervals.length - 1]
 
     this.data = {}
     this.config = {
@@ -29,8 +29,8 @@ class AnalyticsController {
   }
 
   load(group) {
-    let Flash = this.$injector.get('Flash')
-    let Analytics = this.$injector.get('Analytics')
+    let Flash      = this.$injector.get('Flash')
+    let Analytics  = this.$injector.get('Analytics')
     let $translate = this.$injector.get('$translate')
 
     let options = {
@@ -46,8 +46,8 @@ class AnalyticsController {
       Flash.create.bind(this, 'error', $translate('analytics.errorload'))
     )
     options.service = 'layersUsage'
-    options.limit = 10
-    this.layers = Analytics.get(options, () => { },
+    options.limit   = 10
+    this.layers     = Analytics.get(options, () => { },
       Flash.create.bind(this, 'error', $translate('analytics.errorload'))
     )
   }
