@@ -4,7 +4,7 @@ class LogsController {
 
   static $inject = [ '$injector' ]
 
-  constructor($injector, $routeParams) {
+  constructor($injector) {
 
     this.itemsPerPage = 5
     this.$injector    = $injector
