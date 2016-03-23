@@ -1,9 +1,5 @@
 #!/bin/bash
 
-chown -R jetty:jetty /var/local/geoserver
-chown -R jetty:jetty /var/local/geodata
-chown -R jetty:jetty /var/local/geowebcache
-
 cd /var/local/geoserver
 
 if [ -f global.xml ]
