@@ -57,6 +57,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
  * - POST: ws/sld/ GET: ws/sld/{filename} <br />
  * - POST: ws/kml/ GET: ws/kml/{filename} <br />
  * - POST: ws/gml/ GET: ws/gml/{filename} <br />
+ * - POST: ws/fe/  GET: ws/fe/{filename}  <br />
  * <br />
  * File can be sent via POST or by upload (max one file at a time)
  * <br />
@@ -157,6 +158,11 @@ public class DocController {
      * Absolute (from domain name) URL path where the gml service can be called
      */
     public static final String GML_URL = DOC_URL + "gml/";
+
+    /**
+     * Absolute (from domain name) URL path where the fe service can be called
+     */
+    public static final String FE_URL = DOC_URL + "fe/";
     
     /*=======================Services entry points==========================================================================*/
 
@@ -222,6 +228,27 @@ public class DocController {
     @RequestMapping(value="/gml/*", method=RequestMethod.GET)
     public void getGMLFile(HttpServletRequest request, HttpServletResponse response) {
         getFile(new GMLDocService(this.docTempDir, this.connectionPool), request, response);
+    }
+
+    /*======================= FE ======================================================================*/
+    /**
+     * POST FE entry point. Store the body of the request POST (or file by upload) in a temporary file.
+     * @param request contains in its body the file in the JSON format
+     * @param response contains the url path to get back the file in CSV: FE_URL/{filename}
+     */
+    @RequestMapping(value="/fe/", method=RequestMethod.POST)
+    public void storeFEFile(HttpServletRequest request, HttpServletResponse response) {
+        storeFile(new FEDocService(this.docTempDir, this.connectionPool), FE_URL, request, response);
+    }
+
+    /**
+     * GET FE entry point. Retrieve the right file previously stored corresponding to the REST argument.
+     * @param request no parameter. The parameter has to be provided REST style: FE_URL/{filename}
+     * @param response contains the file content
+     */
+    @RequestMapping(value="/fe/*", method=RequestMethod.GET)
+    public void getFEFile(HttpServletRequest request, HttpServletResponse response) {
+        getFile(new FEDocService(this.docTempDir, this.connectionPool), request, response);
     }
 
     /*======================= JSON to CSV =====================================================================*/
