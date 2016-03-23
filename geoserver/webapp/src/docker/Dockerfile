@@ -6,7 +6,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 ADD . /
-ADD https://github.com/georchestra/geoserver_minimal_datadir/archive/master.zip /tmp/datadir.zip
+ADD https://github.com/georchestra/geoserver_minimal_datadir/archive/15.12.zip /tmp/datadir.zip
 
 VOLUME [ "/var/local/geoserver", "/var/local/geodata" ]
 
