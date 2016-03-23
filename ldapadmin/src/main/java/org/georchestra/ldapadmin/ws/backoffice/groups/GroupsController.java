@@ -164,39 +164,39 @@ public class GroupsController {
 	public void findByCN( HttpServletRequest request, HttpServletResponse response) throws IOException, JSONException {
 
 		String cn = RequestUtil.getKeyFromPathVariable(request);
+		String jsonGroup = null;
 
-		if(cn.equals(GroupsController.VIRTUAL_TEMPORARY_GROUP_NAME))
-			ResponseUtil.buildResponse(response, this.extractTemporaryGroupInformation().toString(), HttpServletResponse.SC_OK);
+		if(cn.equals(GroupsController.VIRTUAL_TEMPORARY_GROUP_NAME)) {
+			jsonGroup = this.extractTemporaryGroupInformation().toString();
+		} else {
 
-		// searches the group
-		Group group = null;
-		try {
-			group = this.groupDao.findByCommonName(cn);
+			// searches the group
+			Group group = null;
+			try {
+				group = this.groupDao.findByCommonName(cn);
 
-		} catch (NameNotFoundException e) {
+			} catch (NameNotFoundException e) {
 
-			ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(Boolean.FALSE, NOT_FOUND), HttpServletResponse.SC_NOT_FOUND);
+				ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(Boolean.FALSE, NOT_FOUND), HttpServletResponse.SC_NOT_FOUND);
 
-			return;
+				return;
 
-		} catch (DataServiceException e) {
-			LOG.error(e.getMessage());
-			ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
-					HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			throw new IOException(e);
-		} catch (IllegalArgumentException e) {
-	          LOG.error(e.getMessage());
-              ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()), HttpServletResponse.SC_NOT_FOUND);
-	          return;
+			} catch (DataServiceException e) {
+				LOG.error(e.getMessage());
+				ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
+						HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				throw new IOException(e);
+			} catch (IllegalArgumentException e) {
+				LOG.error(e.getMessage());
+				ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()), HttpServletResponse.SC_NOT_FOUND);
+				return;
+			}
+
+			// sets the group data in the response object
+			jsonGroup = (new GroupResponse(group, this.filter)).asJsonString();
+
 		}
-
-		// sets the group data in the response object
-		GroupResponse groupResponse = new GroupResponse(group, this.filter);
-
-		String jsonGroup = groupResponse.asJsonString();
-
 		ResponseUtil.buildResponse(response, jsonGroup, HttpServletResponse.SC_OK);
-
 	}
 
 	private JSONObject extractTemporaryGroupInformation() throws JSONException {
@@ -367,11 +367,8 @@ public class GroupsController {
 		Group group = null;
 		try {
 			group = this.groupDao.findByCommonName(cn);
-
 		} catch (NameNotFoundException e) {
-
 			ResponseUtil.writeError(response, NOT_FOUND);
-
 			return;
 		} catch (DataServiceException e) {
 		    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -383,6 +380,12 @@ public class GroupsController {
 			final Group modified = modifyGroup( group, request.getInputStream());
 
 			this.groupDao.update(cn, modified);
+
+			GroupResponse groupResponse = new GroupResponse(group, this.filter);
+
+			String jsonResponse = groupResponse.asJsonString();
+
+			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_OK);
 
 			ResponseUtil.writeSuccess(response);
 
@@ -418,16 +421,6 @@ public class GroupsController {
 	@RequestMapping(value=BASE_MAPPING+ "/groups_users", method=RequestMethod.POST)
 	public void updateUsers( HttpServletRequest request, HttpServletResponse response) throws IOException{
 
-		String adminUUID = null;
-
-		try {
-			adminUUID = this.accountDao.findByUID(request.getHeader("sec-username")).getUUID();
-		} catch (NameNotFoundException e) {
-			LOG.error("Unable to find Admin that initiate this request, so no admin log");
-		} catch (DataServiceException e) {
-			LOG.error("Unable to find Admin that initiate this request, so no admin log");
-		}
-
 		try{
 
 			ServletInputStream is = request.getInputStream();
@@ -437,10 +430,10 @@ public class GroupsController {
 			List<String> users = createUserList(json, "users");
 
 			List<String> putGroup = createUserList(json, "PUT");
-			this.groupDao.addUsersInGroups(putGroup, users, adminUUID);
+			this.groupDao.addUsersInGroups(putGroup, users, request.getHeader("sec-username"));
 
 			List<String> deleteGroup = createUserList(json, "DELETE");
-			this.groupDao.deleteUsersInGroups(deleteGroup, users, adminUUID);
+			this.groupDao.deleteUsersInGroups(deleteGroup, users, request.getHeader("sec-username"));
 
 			ResponseUtil.writeSuccess(response);
 

@@ -78,6 +78,7 @@ public class UsersController {
 	private static final String DUPLICATED_EMAIL = "duplicated_email";
 	private static final String PARAMS_NOT_UNDERSTOOD = "params_not_understood";
 	private static final String NOT_FOUND = "not_found";
+	private static final String UNABLE_TO_ENCODE = "unable_to_encode";
 
 	private AccountDao accountDao;
 	private UserRule userRule;
@@ -297,20 +298,9 @@ public class UsersController {
 				return;
 			}
 
-			String adminUUID = null;
-			try {
-				adminUUID = this.accountDao.findByUID(request.getHeader("sec-username")).getUUID();
-			} catch (NameNotFoundException e) {
-				LOG.error("Unable to find admin/user connected, so no admin log generated when creating uid : " + account.getUid());
-			}
+			storeUser(account, request.getHeader("sec-username"));
 
-			storeUser(account, adminUUID);
-
-			UserResponse userResponse = new UserResponse(account);
-
-			String jsonResponse = userResponse.asJsonString();
-
-			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_OK);
+			ResponseUtil.buildResponse(response, account.toJSON().toString(), HttpServletResponse.SC_OK);
 
 		} catch (IllegalArgumentException e ){
 			LOG.warn(e.getMessage());
@@ -330,6 +320,9 @@ public class UsersController {
 			ResponseUtil.buildResponse(response, "{ \"success\": false }",
 					HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			throw new IOException(dsex);
+		} catch (JSONException e) {
+			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, UNABLE_TO_ENCODE);
+			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
 		}
 	}
 
@@ -338,13 +331,14 @@ public class UsersController {
 	 * Saves the user in the LDAP store.
 	 *
 	 * @param account
+	 * @param originLogin login of admin that issue request
 	 * @throws DuplicatedEmailException
 	 * @throws DataServiceException
 	 * @throws IOException
 	 */
-	private void storeUser(Account account, String originUUID) throws DuplicatedEmailException, DataServiceException, IOException {
+	private void storeUser(Account account, String originLogin) throws DuplicatedEmailException, DataServiceException, IOException {
 		try {
-			this.accountDao.insert(account, Group.SV_USER, originUUID);
+			this.accountDao.insert(account, Group.SV_USER, originLogin);
 
 		} catch (DuplicatedEmailException e) {
 			throw e;
@@ -424,7 +418,6 @@ public class UsersController {
 		} catch (NameNotFoundException e) {
 
 			ResponseUtil.writeError(response, NOT_FOUND);
-
 			return;
 
 		} catch (DataServiceException e) {
@@ -435,24 +428,16 @@ public class UsersController {
 		// modifies the account data
 		try{
 			final Account modified = modifyAccount(AccountFactory.create(account), request.getInputStream());
-			String adminUUID;
-			try {
-				Account adminAccount = this.accountDao.findByUID(request.getHeader("sec-username"));
-				adminUUID = adminAccount == null ? null : adminAccount.getUUID();
-			} catch (NameNotFoundException ex){
-				adminUUID = null;
-			}
-			this.accountDao.update(account, modified, adminUUID);
+			this.accountDao.update(account, modified, request.getHeader("sec-username"));
 			boolean uidChanged = ( ! modified.getUid().equals(account.getUid()));
 			if ((uidChanged) && (warnUserIfUidModified)) {
 				this.mailService.sendAccountUidRenamed(request.getSession().getServletContext(),
 						modified.getUid(), modified.getCommonName(), modified.getEmail());
 			}
-			ResponseUtil.writeSuccess(response);
+			ResponseUtil.buildResponse(response, modified.toJSON().toString(), HttpServletResponse.SC_OK);
 
 		} catch (DuplicatedEmailException e) {
 			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, DUPLICATED_EMAIL);
-
 			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
 		} catch (IOException e) {
 			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, PARAMS_NOT_UNDERSTOOD);
@@ -465,6 +450,9 @@ public class UsersController {
 		} catch (NameNotFoundException e) {
 			LOG.error(e.getMessage());
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+		} catch (JSONException e) {
+			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, UNABLE_TO_ENCODE);
+			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
 		}
 	}
 
@@ -496,14 +484,7 @@ public class UsersController {
 				return;
 			}
 
-			String adminUUID = null;
-			try {
-				adminUUID = this.accountDao.findByUID(request.getHeader("sec-username")).getUUID();
-			} catch (NameNotFoundException e) {
-				LOG.error("Unable to find admin/user connected, so no admin log generated when deleting uid : " + uid);
-			}
-
-			this.accountDao.delete(uid, adminUUID);
+			this.accountDao.delete(uid, request.getHeader("sec-username"));
 
 			ResponseUtil.writeSuccess(response);
 
@@ -603,12 +584,12 @@ public class UsersController {
 			account.setDescription(description);
 		}
 
-		String manager = RequestUtil.getFieldValue(json, UserSchema.MANAGER);
+		String manager = RequestUtil.getFieldValue(json, UserSchema.MANAGER_KEY);
 		if (manager != null) {
 			account.setManager(manager);
 		}
 		
-		String context = RequestUtil.getFieldValue(json, UserSchema.CONTEXT);
+		String context = RequestUtil.getFieldValue(json, UserSchema.CONTEXT_KEY);
 		if (context != null) {
 			account.setContext(context);
 		}

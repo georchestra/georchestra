@@ -92,7 +92,6 @@ public class HomeController {
         } else {
             // redirect to CAS
             response.sendRedirect(config.getPublicContextPath() + "/account/userdetails?login");
-            return;
         }
     }
 

@@ -19,6 +19,8 @@
 
 package org.georchestra.ldapadmin.ws.emails;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.georchestra.ldapadmin.dao.AdminLogDao;
 import org.georchestra.ldapadmin.dao.AttachmentDao;
 import org.georchestra.ldapadmin.dao.EmailDao;
@@ -57,12 +59,12 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
-import java.util.UUID;
 
 @Controller
 public class EmailController {
@@ -85,6 +87,7 @@ public class EmailController {
     @Autowired
     private AdminLogDao logRepo;
 
+    private static final Log LOG = LogFactory.getLog(EmailController.class.getName());
 
     /*
      * produces = MediaType.APPLICATION_JSON_VALUE
@@ -100,7 +103,7 @@ public class EmailController {
     /**
      * Return a JSON list of Emails sent to specified user
      *
-     * @param recipient recipient UUID
+     * @param recipient recipient login
      * @return JSON list of Emails sent to specified user
      * @throws JSONException
      */
@@ -111,7 +114,7 @@ public class EmailController {
     public String emailsList(@PathVariable String recipient) throws JSONException {
 
         JSONArray emails = new JSONArray();
-        for(EmailEntry email : this.emailRepository.findByRecipient(UUID.fromString(recipient)))
+        for(EmailEntry email : this.emailRepository.findByRecipient(recipient))
             emails.put(email.toJSON());
         JSONObject res = new JSONObject();
         res.put("emails", emails);
@@ -123,7 +126,7 @@ public class EmailController {
     /**
      * Send an email and store it in database
      *
-     * @param recipient recipient UUID
+     * @param recipient recipient login
      * @param subject subject of email
      * @param content content of email (text part in html)
      * @param attachmentsIds comma separated list of attachments identifier
@@ -139,40 +142,47 @@ public class EmailController {
                             @RequestParam("subject") String subject,
                             @RequestParam("content") String content,
                             @RequestParam("attachments") String attachmentsIds,
-                            HttpServletRequest request) throws NameNotFoundException, DataServiceException, MessagingException, IOException {
+                            HttpServletRequest request,
+                            HttpServletResponse response) throws NameNotFoundException, DataServiceException, MessagingException, IOException {
+        try {
+						EmailEntry email = new EmailEntry();
+						String sender = request.getHeader("sec-username");
+						email.setSender(sender);
+						email.setRecipient(recipient);
+						email.setSubject(subject);
+						email.setDate(new Date());
+						email.setBody(content);
 
-        EmailEntry email = new EmailEntry();
-        Account sender = this.accountDao.findByUID(request.getHeader("sec-username"));
-        email.setSender(UUID.fromString(sender.getUUID()));
-        email.setRecipient(UUID.fromString(recipient));
-        email.setSubject(subject);
-        email.setDate(new Date());
-        email.setBody(content);
-
-        attachmentsIds = attachmentsIds.trim();
-        List<Attachment> attachments = new LinkedList<Attachment>();
-        if(attachmentsIds.length() > 0) {
-            String[] attachmentsIdsList = attachmentsIds.split("\\s?,\\s?");
-            for (String attId : attachmentsIdsList) {
-                Attachment att = this.attachmentRepo.findOne(Long.parseLong(attId));
-                if(att == null)
-                    throw new NameNotFoundException("Unable to find attachment with ID : " + attId);
-                attachments.add(att);
+            attachmentsIds = attachmentsIds.trim();
+            List<Attachment> attachments = new LinkedList<Attachment>();
+            if (attachmentsIds.length() > 0) {
+                String[] attachmentsIdsList = attachmentsIds.split("\\s?,\\s?");
+                for (String attId : attachmentsIdsList) {
+                    Attachment att = this.attachmentRepo.findOne(Long.parseLong(attId));
+                    if (att == null)
+                        throw new NameNotFoundException("Unable to find attachment with ID : " + attId);
+                    attachments.add(att);
+                }
             }
+            email.setAttachments(attachments);
+            this.send(email);
+						
+						AdminLogEntry log = new AdminLogEntry(sender, recipient, AdminLogType.EMAIL_SENT, new Date());
+						this.emailRepository.save(email);
+            response.setContentType("application/json");
+            return email.toJSON().toString();
+						
+        } catch (Exception ex) {
+            LOG.error(ex.getMessage());
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            throw new IOException(ex);
         }
-        email.setAttachments(attachments);
-        this.send(email);
-
-        AdminLogEntry log = new AdminLogEntry(UUID.fromString(sender.getUUID()), UUID.fromString(recipient), AdminLogType.EMAIL_SENT, new Date());
-        this.logRepo.save(log);
-
-        return "OK : " + this.emailRepository.save(email).getId();
     }
 
 
     /**
      * This service can be used to test email sending
-     * @param recipient UUID of recipient
+     * @param recipient login of recipient
      * @return Html page to test email sending
      */
     @RequestMapping(value="{recipient}/sendEmail", method = RequestMethod.GET)
@@ -254,8 +264,8 @@ public class EmailController {
         final Session session = Session.getInstance(props, null);
         final MimeMessage message = new MimeMessage(session);
 
-        Account recipient = this.accountDao.findByUUID(email.getRecipient());
-        InternetAddress[] senders = {new InternetAddress(this.accountDao.findByUUID(email.getSender()).getEmail())};
+        Account recipient = this.accountDao.findByUID(email.getRecipient());
+        InternetAddress[] senders = {new InternetAddress(this.accountDao.findByUID(email.getSender()).getEmail())};
 
         message.addFrom(senders);
         message.addRecipient(Message.RecipientType.TO, new InternetAddress(recipient.getEmail()));

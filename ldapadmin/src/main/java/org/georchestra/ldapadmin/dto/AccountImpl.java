@@ -84,7 +84,6 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 	private String organizationalUnit; // ou
 
 	private String homePostalAddress;
-	private String uuid;
 
 	private Date shadowExpire;
 
@@ -120,7 +119,6 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 				", stateOrProvince='" + stateOrProvince + '\'' +
 				", organizationalUnit='" + organizationalUnit + '\'' +
 				", homePostalAddress='" + homePostalAddress + '\'' +
-				", uuid='" + uuid + '\'' +
 				", shadowExpire=" + shadowExpire + '\'' +
 				", context=" + context +
 				'}';
@@ -279,41 +277,39 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 	@Override
 	public JSONObject toJSON() throws JSONException {
 		JSONObject res = new JSONObject();
-		res.put("uid", this.uid);
-		res.put("commonName", this.commonName);
-		res.put("sn", this.surname);
-		res.put("o", this.org);
-		res.put("mail", this.email);
-		res.put("telephoneNumber", this.phone);
-		res.put("description", this.description);
-		res.put("givenName", this.givenName);
-		res.put("title", this.title);
-		res.put("postalAddress", this.postalAddress);
-		res.put("postalCode", this.postalCode);
-		res.put("registeredAddress", this.registeredAddress);
-		res.put("postOfficeBox", this.postOfficeBox);
-		res.put("physicalDeliveryOfficeName", this.physicalDeliveryOfficeName);
-		res.put("street", this.street);
-		res.put("locality", this.locality);
-		res.put("facsimile", this.facsimile);
-		res.put("mobile", this.mobile);
-		res.put("roomNumber", this.roomNumber);
-		res.put("stateOrProvince", this.stateOrProvince);
-		res.put("organizationalUnit", this.organizationalUnit);
-		res.put("homePostalAddress", this.homePostalAddress);
-		res.put("uuid", this.uuid);
+		res.put(UserSchema.UID_KEY, this.uid);
+		res.put(UserSchema.COMMON_NAME_KEY, this.commonName);
+		res.put(UserSchema.SURNAME_KEY, this.surname);
+		res.put(UserSchema.ORG_KEY, this.org);
+		res.put(UserSchema.MAIL_KEY, this.email);
+		res.put(UserSchema.TELEPHONE_KEY, this.phone);
+		res.put(UserSchema.DESCRIPTION_KEY, this.description);
+		res.put(UserSchema.GIVEN_NAME_KEY, this.givenName);
+		res.put(UserSchema.TITLE_KEY, this.title);
+		res.put(UserSchema.POSTAL_ADDRESS_KEY, this.postalAddress);
+		res.put(UserSchema.POSTAL_CODE_KEY, this.postalCode);
+		res.put(UserSchema.REGISTERED_ADDRESS_KEY, this.registeredAddress);
+		res.put(UserSchema.POST_OFFICE_BOX_KEY, this.postOfficeBox);
+		res.put(UserSchema.PHYSICAL_DELIVERY_OFFICE_NAME_KEY, this.physicalDeliveryOfficeName);
+		res.put(UserSchema.STREET_KEY, this.street);
+		res.put(UserSchema.LOCALITY_KEY, this.locality);
+		res.put(UserSchema.FACSIMILE_KEY, this.facsimile);
+		res.put(UserSchema.MOBILE_KEY, this.mobile);
+		res.put(UserSchema.ROOM_NUMBER_KEY, this.roomNumber);
+		res.put(UserSchema.STATE_OR_PROVINCE_KEY, this.stateOrProvince);
+		res.put(UserSchema.ORG_UNIT_KEY, this.organizationalUnit);
+		res.put(UserSchema.HOME_POSTAL_ADDRESS_KEY, this.homePostalAddress);
 		if(this.shadowExpire != null) {
 			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-			res.put("shadowExpire", dateFormat.format(this.shadowExpire));
+			res.put(UserSchema.SHADOW_EXPIRE_KEY, dateFormat.format(this.shadowExpire));
 		}
 		if(this.manager != null)
-			res.put("manager", this.manager);
+			res.put(UserSchema.MANAGER_KEY, this.manager);
 		if(this.context != null)
-			res.put("context", this.context);
+			res.put(UserSchema.CONTEXT_KEY, this.context);
 		return res;
 	}
 
-	;
 
 	@Override
 	public void setUid(String uid) {
@@ -541,17 +537,6 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 	@Override
 	public void  setStateOrProvince(String stateOrProvince) {
 		this.stateOrProvince = stateOrProvince;
-	}
-
-
-	@Override
-	public void setUUID(String uuid) {
-		this.uuid = uuid;
-	}
-
-	@Override
-	public String getUUID() {
-		return uuid;
 	}
 
 	@Override

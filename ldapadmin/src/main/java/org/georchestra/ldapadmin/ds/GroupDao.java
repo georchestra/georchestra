@@ -35,14 +35,14 @@ public interface GroupDao {
 	 *
 	 * @param groupID
 	 * @param userId
-	 * @param originUUID UUID of admin that generate this request
+	 * @param originLogin login of admin that generate this request
 	 * @throws NameNotFoundException
 	 * @throws DataServiceException 
 	 */
-	void addUser(String  groupID, String userId, final String originUUID) throws DataServiceException, NameNotFoundException;
+	void addUser(String  groupID, String userId, final String originLogin) throws DataServiceException, NameNotFoundException;
 
 
-	void addUsers(String cn, List<String> addList, final String originUUID) throws DataServiceException, NameNotFoundException;
+	void addUsers(String cn, List<String> addList, final String originLogin) throws DataServiceException, NameNotFoundException;
 
 	/**
 	 * Returns all groups. Each groups will contains its list of users.
@@ -69,22 +69,22 @@ public interface GroupDao {
 	 * Deletes the user from all groups 
 	 *
 	 * @param uid
-	 * @param originUUID UUID of admin that generate this request
+	 * @param originLogin login of admin that generate this request
 	 * @throws DataServiceException
 	 */
-	void deleteUser(String uid, final String originUUID) throws DataServiceException;
+	void deleteUser(String uid, final String originLogin) throws DataServiceException;
 
-	void deleteUsers(String cn, List<String> deleteList, String originUUID) throws DataServiceException, NameNotFoundException;
+	void deleteUsers(String cn, List<String> deleteList, String originLogin) throws DataServiceException, NameNotFoundException;
 
 	/**
 	 * Deletes the user from the group
 	 * 
 	 * @param groupName
 	 * @param uid
-	 * @param originUUID of admin that generate this request
+	 * @param originLogin login of admin that generate this request
 	 * @throws DataServiceException
 	 */
-	void deleteUser(String groupName, String uid, final String originUUID) throws DataServiceException;
+	void deleteUser(String groupName, String uid, final String originLogin) throws DataServiceException;
 
 	/**
 	 * Modifies the user (e.g. rename) from the group
@@ -124,7 +124,6 @@ public interface GroupDao {
 	 */
 	Group findByCommonName(String commonName) throws DataServiceException, NameNotFoundException;
 
-	
 	/**
 	 * Modifies the groups fields in the store
 	 * 
@@ -134,11 +133,8 @@ public interface GroupDao {
 	 */
 	void update(String groupName, Group modified) throws DataServiceException, NameNotFoundException, DuplicatedCommonNameException;
 
+	void addUsersInGroups(List<String> putGroup, List<String> users, final String originLogin)  throws DataServiceException, NameNotFoundException;
 
-	void addUsersInGroups(List<String> putGroup, List<String> users, final String originUUID)  throws DataServiceException, NameNotFoundException;
-
-	void deleteUsersInGroups(List<String> deleteGroup, List<String> users, final String originUUID) throws DataServiceException, NameNotFoundException;
-
-
+	void deleteUsersInGroups(List<String> deleteGroup, List<String> users, final String originLogin) throws DataServiceException, NameNotFoundException;
 	
 }
