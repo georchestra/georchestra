@@ -2,7 +2,12 @@ FROM jetty:9.3-jre8
 
 ADD . /
 
+VOLUME [ "/var/local/geowebcache" ]
+
 RUN java -jar "$JETTY_HOME/start.jar" --add-to-startd=jmx,jmx-remote,stats
 
-CMD ["java","-Djava.io.tmpdir=/tmp/jetty", "-Dgeorchestra.datadir=/etc/georchestra","-jar","/usr/local/jetty/start.jar"]
+ENTRYPOINT [ "/docker-entrypoint.sh" ]
+
+CMD [ "java","-Djava.io.tmpdir=/tmp/jetty", "-Dgeorchestra.datadir=/etc/georchestra",         \
+      "-DGEOWEBCACHE_CACHE_DIR=/var/local/geowebcache", "-jar","/usr/local/jetty/start.jar" ]
 
