@@ -47,7 +47,10 @@ geoserver:
   volumes:
     - geoserver_datadir:/var/local/geoserver
     - geoserver_geodata:/var/local/geodata
-    
+    - geoserver_geowebcache:/var/local/geowebcache
+  links:
+    - database
+
 proxy:
   image: georchestra/security-proxy
   ports:
@@ -62,6 +65,9 @@ proxy:
     - geonetwork
     - header
     - geoserver
+    - analytics
+    - catalogapp
+    - downloadform
 
 cas:
   image: georchestra/cas
@@ -96,4 +102,17 @@ geonetwork:
   links:
     - database
     - ldap
+
+analytics:
+  image: georchestra/analytics
+  links:
+    - database
+
+catalogapp:
+  image: georchestra/catalogapp
+
+downloadform:
+  image: georchestra/downloadform
+
+
 

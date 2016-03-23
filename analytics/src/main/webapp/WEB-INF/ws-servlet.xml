@@ -14,8 +14,13 @@
 
 	<!--  JPA & Database-related beans -->
 	<jpa:repositories base-package="org.georchestra.analytics.dao" />
- 
-    <bean id="jpaDataSource" class="org.apache.commons.dbcp.BasicDataSource">
+
+    <bean id="waitForDb" class="org.georchestra.commons.WaitForDb" init-method="test">
+        <property name="url" value="${dlJdbcUrlOGC}"/>
+        <property name="driverClassName" value="org.postgresql.Driver"/>
+    </bean>
+
+    <bean id="jpaDataSource" class="org.apache.commons.dbcp.BasicDataSource" depends-on="waitForDb">
         <property name="url" value="${dlJdbcUrlOGC}"/>
         <property name="driverClassName" value="org.postgresql.Driver"/>
         <property name="testOnBorrow" value="true"/>
