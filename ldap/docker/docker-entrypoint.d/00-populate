@@ -1,15 +1,17 @@
 #!/bin/bash
-set -e
 
 # test if already initialized
-sleep 10
 if [ ! -d /etc/ldap/slapd.d ]; then
 
     # init ldap config
+    echo -n "init with upstream entrypoint..."
     /entrypoint.sh true
+    echo "OK"
 
     # start slapd in background
+    echo -n "Start slapd daemon in background..."
     slapd -u openldap -g openldap -h "ldapi:/// ldap:///"
+    echo "OK"
 
     echo -n "waiting for ldap deamon to start..."
     while true; do
@@ -21,9 +23,9 @@ if [ ! -d /etc/ldap/slapd.d ]; then
     done;
     echo "OK"
 
-    echo "Populating ldap tree"
+    echo "Populating ldap tree..."
     ldapadd -D"cn=admin,dc=georchestra,dc=org" -w "secret" -f /tmp/georchestra.ldif
-    echo "OK"
+    echo "Populating ldap tree...OK"
 
     pkill slapd
 
@@ -42,9 +44,6 @@ else
     echo "Ldap already initialised"
 
 fi
-
-exec "slapd -d 32768 -u openldap -g openldap"
-
 
 
 
