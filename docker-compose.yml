@@ -76,6 +76,8 @@ cas:
 
 mapfishapp:
   image: georchestra/mapfishapp
+  volumes:
+    - mapfishapp_uploads:/var/local/uploads
   links:
     - database
   volumes:
@@ -83,6 +85,8 @@ mapfishapp:
 
 extractorapp:
   image: georchestra/extractorapp
+  volumes:
+    - extractorapp_extracts:/var/local/extracts
   links:
     - database
     - smtp
