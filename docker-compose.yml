@@ -80,6 +80,8 @@ mapfishapp:
     - mapfishapp_uploads:/var/local/uploads
   links:
     - database
+  volumes:
+    - mapfishapp_uploads:/var/local/uploads
 
 extractorapp:
   image: georchestra/extractorapp
@@ -88,6 +90,9 @@ extractorapp:
   links:
     - database
     - smtp
+  volumes:
+    - extractorapp_extracts:/var/local/extracts
+
 
 header:
   image: georchestra/header
@@ -106,6 +111,8 @@ geonetwork:
   links:
     - database
     - ldap
+  volumes:
+    - geonetwork_datadir:/var/local/geonetwork
 
 analytics:
   image: georchestra/analytics
@@ -118,5 +125,7 @@ catalogapp:
 downloadform:
   image: georchestra/downloadform
 
-
-
+geowebcache:
+  image: georchestra/geowebcache
+  volumes:
+    - geowebcache_geowebcache:/var/local/geowebcache
