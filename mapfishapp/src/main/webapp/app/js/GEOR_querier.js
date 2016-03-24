@@ -254,6 +254,7 @@ GEOR.querier = (function() {
                 }
             },
             toolbarType: "tbar",
+            bufferSupport: true,
             allowGroups: false,
             noConditionOnInit: true,
             deactivable: true,
