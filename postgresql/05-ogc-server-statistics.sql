@@ -19,7 +19,7 @@ CREATE TABLE ogc_services_log(
   roles text[]	
 );
 
-CREATE OR REPLACE FUNCTION get_partition_table(my_date date)
+CREATE OR REPLACE FUNCTION get_partition_table(my_date timestamp without time zone)
   RETURNS character varying AS
 $BODY$
 DECLARE
@@ -64,7 +64,7 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE;
 
-COMMENT ON FUNCTION get_partition_table(date) IS 'Table name that correspond to specified date, also create this table if it does not exists';
+COMMENT ON FUNCTION get_partition_table(timestamp without time zone) IS 'Table name that correspond to specified date, also create this table if it does not exists';
 
 
 

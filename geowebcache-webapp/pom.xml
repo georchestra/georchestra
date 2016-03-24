@@ -373,10 +373,33 @@
       <id>docker</id>
       <properties>
         <dockerImageName>georchestra/geowebcache</dockerImageName>
+        <dockerDatadirScmUrl>scm:git:https://github.com/georchestra/datadir.git</dockerDatadirScmUrl>
+        <dockerDatadirScmVersion>docker-master</dockerDatadirScmVersion>
       </properties>
       <build>
         <finalName>geowebcache</finalName>
         <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-scm-plugin</artifactId>
+            <version>1.9.4</version>
+            <configuration>
+              <checkoutDirectory>${project.build.directory}/datadir/</checkoutDirectory>
+              <connectionUrl>${dockerDatadirScmUrl}</connectionUrl>
+              <pushChanges>false</pushChanges>
+              <scmVersion>${dockerDatadirScmVersion}</scmVersion>
+              <scmVersionType>branch</scmVersionType>
+            </configuration>
+            <executions>
+              <execution>
+                <id>checkout-docker-default-datadir</id>
+                <phase>process-resources</phase>
+                <goals>
+                  <goal>checkout</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
           <plugin>
             <groupId>com.spotify</groupId>
             <artifactId>docker-maven-plugin</artifactId>
@@ -389,6 +412,11 @@
                   <targetPath>/var/lib/jetty/webapps</targetPath>
                   <directory>${project.build.directory}</directory>
                   <include>geowebcache.war</include>
+                </resource>
+                <resource>
+                  <targetPath>/etc/georchestra</targetPath>
+                  <directory>${project.build.directory}/datadir</directory>
+                  <include>geowebcache/**</include>
                 </resource>
               </resources>
               <!-- This will require to set up the docker-hub credentials correctly
