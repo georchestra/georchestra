@@ -358,7 +358,8 @@ public class DocController {
 
             // send back to client the url path to retrieve this file later on
             response.setStatus(HttpServletResponse.SC_CREATED); // 201 created, new resource created
-            response.setContentType("application/json");
+            // Note: "text/html" required for http://docs.sencha.com/extjs/3.4.0/#!/api/Ext.form.BasicForm
+            response.setContentType("text/html");
             response.setHeader("Cache-Control", "max-age=0"); // both Cache-Control and Expires are required
             response.setHeader("Expires", "Fri, 19 Jun 1970 14:23:31 GMT"); // which is in the past
 
