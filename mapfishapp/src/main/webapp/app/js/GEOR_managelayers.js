@@ -759,12 +759,14 @@ GEOR.managelayers = (function() {
                 text: tr("Build a query"),
                 listeners: {
                     "click": function(btn, pressed) {
+                        /*
                         if (layerRecord == querierRecord) {
                             // FIXME (later) : this is not how it should be.
                             // (only the module should fire its own events)
                             GEOR.querier.events.fireEvent("showrequest");
                             return;
                         }
+                        */
                         var layer = layerRecord.get('layer'), data;
                         var name = layerRecord.get('title') || layer.name || '';
                         var recordType = GeoExt.data.LayerRecord.create([
