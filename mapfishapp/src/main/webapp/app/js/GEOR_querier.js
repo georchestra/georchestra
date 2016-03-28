@@ -255,7 +255,7 @@ GEOR.querier = (function() {
             },
             toolbarType: 'tbar',
             allowSaveFilter: true,
-            bufferSupport: true,
+            toolbarType: "tbar",
             allowGroups: false,
             noConditionOnInit: true,
             deactivable: true,
