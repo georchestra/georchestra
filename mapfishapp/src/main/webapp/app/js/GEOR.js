@@ -401,7 +401,7 @@ Ext.namespace("GEOR");
             GEOR.querier.events.on({
                 "ready": function(panelCfg) {
 
-                    win = new Ext.Window({
+                    var win = new Ext.Window({
                         title: GEOR.util.shorten(panelCfg.title, 70),
                         layout: "fit",
                         width: 650,
