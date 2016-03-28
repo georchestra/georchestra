@@ -44,7 +44,7 @@ public class FEDocService extends A_DocService {
      */
     @Override
     protected void preSave() throws DocServiceException {
-
+        //We do not perform any action before saving the file.
     }
 
     /**
@@ -53,7 +53,7 @@ public class FEDocService extends A_DocService {
      */
     @Override
     protected void postLoad() throws DocServiceException {
-
+        //We do not perform any action on file once loaded in memory.
     }
 
 }
