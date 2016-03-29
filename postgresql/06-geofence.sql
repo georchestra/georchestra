@@ -65,6 +65,7 @@ create table gf_layer_details (
   areaMetadataField varchar(255),
   type varchar(255),
   rule_id int8 not null,
+  catalog_mode character varying(255),
   primary key (id),
   unique (rule_id)
 );
@@ -82,9 +83,14 @@ create table gf_rule (
   request varchar(255),
   service varchar(255),
   workspace varchar(255),
-  gsuser_id int8,
-  instance_id int8,
-  userGroup_id int8,
+  gsuser_id bigint,
+  instance_id bigint,
+  userGroup_id bigint,
+  ip_high bigint,
+  ip_low bigint,
+  ip_size integer,
+  rolename character varying(255),
+  username character varying(255),
   primary key (id),
   unique (gsuser_id, userGroup_id, instance_id, service, request, workspace, layer)
 );
@@ -93,6 +99,7 @@ create table gf_rule_limits (
   id int8 not null,
   area public.geometry,
   rule_id int8 not null,
+  catalog_mode character varying(255),
   primary key (id),
   unique (rule_id)
 );
@@ -109,7 +116,9 @@ create table gf_usergroup (
   enabled bool not null,
   extId varchar(255) unique,
   name varchar(255) not null unique,
-  primary key (id)
+  primary key (id),
+  CONSTRAINT gf_usergroup_extid_key UNIQUE (extid),
+  CONSTRAINT gf_usergroup_name_key UNIQUE (name)
 );
 
 create index idx_gsuser_name on gf_gsuser (name);

@@ -8,5 +8,5 @@ then
 else
     echo 'Initializing datadir from georchestra/geoserver_minimal_datadir'
     unzip /tmp/datadir.zip -d /tmp
-    cp -Rax /tmp/geoserver_minimal_datadir-15.12/* /var/local/geoserver
+    cp -Rax /tmp/geoserver_minimal_datadir-15.12-docker-geofence/* /var/local/geoserver
 fi

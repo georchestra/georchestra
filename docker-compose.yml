@@ -50,6 +50,7 @@ geoserver:
     - geoserver_tiles:/var/local/tiles
   links:
     - database
+    - ldap
 
 geowebcache:
   image: georchestra/geowebcache
