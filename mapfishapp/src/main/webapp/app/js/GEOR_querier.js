@@ -70,7 +70,7 @@ GEOR.querier = (function() {
          * Fires when the filterbuilder panel is already built 
          * and we just need to display it.
          */
-        "showrequest",
+        //"showrequest",
         /**
          * Event: searchresults
          * Fires when we've received a response from server 
@@ -253,6 +253,8 @@ GEOR.querier = (function() {
                     tpl: GEOR.util.getAttributesComboTpl()
                 }
             },
+            allowSaveFilter: true,
+            toolbarType: "tbar",
             allowGroups: false,
             noConditionOnInit: true,
             deactivable: true,
