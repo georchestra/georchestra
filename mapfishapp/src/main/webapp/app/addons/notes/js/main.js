@@ -45,7 +45,7 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
             data: OpenLayers.Util.getParameterString({
                 email: "info@abc.com",
                 comment: "comment",
-                map_contextpg: "context_string",
+                map_context: "context_string",
                 latitude: 45,
                 longitude: -72
             }),
