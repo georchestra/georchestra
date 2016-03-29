@@ -1,0 +1,18 @@
+[{
+    "id": "notes_0",
+    "enabled": true,
+    "name": "Notes",
+    "options": {},
+    "title": {
+        "en": "Notes : Report map issues",
+        "es": "Notes : Report map issues (es)",
+        "fr": "Notes : Signaler des anomalies cartographiques",
+        "de": "Notes : Report map issues (de)"
+    },
+    "description": {
+        "en": "",
+        "es": "",
+        "fr": "",
+        "de": ""
+    }
+}]
