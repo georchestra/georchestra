@@ -84,46 +84,6 @@ public class DocController {
     @Autowired
     private ConnectionPool connectionPool;
 
-    public void init() throws IOException {
-        if (georchestraConfiguration.activated()) {
-            docTempDir = georchestraConfiguration.getProperty("docTempDir");
-
-            Properties userPasswordCreds = georchestraConfiguration.loadCustomPropertiesFile("credentials");
-            credentials.clear();
-            for (String key : userPasswordCreds.stringPropertyNames()) {
-                credentials.put(key, new UsernamePasswordCredentials(userPasswordCreds.getProperty(key)));
-            }
-        }
-    }
-
-    public String getDocTempDir() {
-        return docTempDir;
-    }
-
-	public void setDocTempDir(String docTempDir) {
-	    this.docTempDir = docTempDir;
-	}
-
-
-	// needed for tests
-	public void setConnectionPool(ConnectionPool cp) {
-	    connectionPool = cp;
-    }
-
-	private WFSDataStoreFactory factory = new WFSDataStoreFactory();
-	public void setWFSDataStoreFactory(WFSDataStoreFactory fac) { factory = fac; }
-
-	/**
-	 * mapping from hostname -> credentials
-	 */
-	private Map<String, UsernamePasswordCredentials> credentials = new HashMap<String, UsernamePasswordCredentials>();
-	public Map<String, UsernamePasswordCredentials> getCredentials() {
-	    return credentials;
-	}
-	public void setCredentials(Map<String, UsernamePasswordCredentials> credentials) {
-	    this.credentials = credentials;
-	}
-
     /**
      * variable name that has to be used on client side
      */
@@ -163,6 +123,47 @@ public class DocController {
      * Absolute (from domain name) URL path where the fe service can be called
      */
     public static final String FE_URL = DOC_URL + "fe/";
+
+
+    public void init() throws IOException {
+        if (georchestraConfiguration.activated()) {
+            docTempDir = georchestraConfiguration.getProperty("docTempDir");
+
+            Properties userPasswordCreds = georchestraConfiguration.loadCustomPropertiesFile("credentials");
+            credentials.clear();
+            for (String key : userPasswordCreds.stringPropertyNames()) {
+                credentials.put(key, new UsernamePasswordCredentials(userPasswordCreds.getProperty(key)));
+            }
+        }
+    }
+
+    public String getDocTempDir() {
+        return docTempDir;
+    }
+
+	public void setDocTempDir(String docTempDir) {
+	    this.docTempDir = docTempDir;
+	}
+
+
+	// needed for tests
+	public void setConnectionPool(ConnectionPool cp) {
+	    connectionPool = cp;
+    }
+
+	private WFSDataStoreFactory factory = new WFSDataStoreFactory();
+	public void setWFSDataStoreFactory(WFSDataStoreFactory fac) { factory = fac; }
+
+	/**
+	 * mapping from hostname -> credentials
+	 */
+	private Map<String, UsernamePasswordCredentials> credentials = new HashMap<String, UsernamePasswordCredentials>();
+	public Map<String, UsernamePasswordCredentials> getCredentials() {
+	    return credentials;
+	}
+	public void setCredentials(Map<String, UsernamePasswordCredentials> credentials) {
+	    this.credentials = credentials;
+	}
     
     /*=======================Services entry points==========================================================================*/
 
