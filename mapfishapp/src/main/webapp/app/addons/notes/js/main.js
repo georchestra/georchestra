@@ -22,7 +22,7 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
         } else {
             // addon places in "tools menus"
             this.item = new Ext.menu.CheckItem({
-                xtype: 'button',
+                xtype: "button",
                 text: this.getText(record),
                 qtip: this.getQtip(record),
                 iconCls: "notes-icon",
@@ -40,9 +40,9 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
      */
     onToggle: function(btn, pressed) {
         if (pressed) {
-            this.map.events.register('click', this, this.addNote);
+            this.map.events.register("click", this, this.addNote);
         } else {
-            this.map.events.unregister('click', this, this.addNote);
+            this.map.events.unregister("click", this, this.addNote);
         }
     },
     /**
@@ -61,7 +61,7 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
             resizable: false,
             border: false,
             items: [{
-                xtype: 'form',
+                xtype: "form",
                 width: 410,
                 items: [
                     {
