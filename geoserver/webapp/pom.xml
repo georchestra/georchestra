@@ -1056,7 +1056,7 @@
                   <include>geoserver/**</include>
                 </resource>
                 <resource>
-                  <targetPath>/tmp/geoserver_minimal_datadir/</targetPath>
+                  <targetPath>/var/local/geoserver.orig/</targetPath>
                   <directory>${project.build.directory}/geoserver_minimal_datadir/</directory>
                 </resource>
               </resources>
