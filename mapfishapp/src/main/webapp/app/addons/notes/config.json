@@ -2,7 +2,10 @@
     "id": "notes_0",
     "enabled": true,
     "name": "Notes",
-    "options": {},
+    "options": {
+        "target": "tbar_9",
+        "backend" : "backend1"
+    },
     "title": {
         "en": "Notes : Report map issues",
         "es": "Notes : Report map issues (es)",
@@ -10,9 +13,9 @@
         "de": "Notes : Report map issues (de)"
     },
     "description": {
-        "en": "",
-        "es": "",
-        "fr": "",
-        "de": ""
+        "en": "Create notes to report map issues",
+        "es": "Create notes to report map issues (es)",
+        "fr": "Créez des notes pour signaler des anomalies cartographiques",
+        "de": "Create notes to report map issues (de)"
     }
 }]

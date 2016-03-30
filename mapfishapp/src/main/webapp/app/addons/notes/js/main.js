@@ -4,9 +4,21 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
     /**
      * Method: init
      */
-    init: function (record) {
-        if (false) {
+    init: function(record) {
+        if (this.target) {
             // addon placed in toolbar
+            this.components = this.target.insertButton(this.position, {
+                xtype: "button",
+                enableToggle: true,
+                tooltip: this.getTooltip(record),
+                iconCls: "notes-icon",
+                listeners: {
+                    "toggle": this.onToggle,
+                    scope: this
+                },
+                scope: this
+            });
+            this.target.doLayout();
         } else {
             // addon places in "tools menus"
             this.item = new Ext.menu.CheckItem({
@@ -26,22 +38,24 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
      * Method: onToggle
      *
      */
-    onToggle: function (btn, pressed) {
+    onToggle: function(btn, pressed) {
         if (pressed) {
-            this.map.events.register('click', this.map, this.addNote);
+            this.map.events.register('click', this, this.addNote);
         } else {
-            //TODO
+            this.map.events.unregister('click', this, this.addNote);
         }
     },
     /**
      * Method: addNote
      *
      */
-    addNote: function (evt) {
-        var lonlat = this.getLonLatFromViewPortPx(evt.xy);
-        lonlat.transform(this.projection, new OpenLayers.Projection("EPSG:4326"));
+    addNote: function(evt) {
+        var lonlat = this.map.getLonLatFromViewPortPx(evt.xy);
+        lonlat.transform(this.map.projection,
+            new OpenLayers.Projection("EPSG:4326"));
+        var backend = this.options.backend;
         this.window = new Ext.Window({
-            title: "Add a note",
+            title: tr("notes_title"),
             width: 420,
             closable: true,
             closeAction: "hide",
@@ -56,7 +70,8 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
                         fieldLabel: "Email",
                         width: 240,
                         name: "email",
-                        allowBlank: false
+                        allowBlank: false,
+                        value: GEOR.config.USEREMAIL || ""
                     }, {
                         xtype: "textarea",
                         width: 240,
@@ -75,25 +90,25 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
                     }, {
                         xtype: "hidden",
                         name: "map_context",
-                        value: "context string"
+                        value: GEOR.wmc.write()
                     }
                 ],
                 buttons: [{
                     text: "submit",
-                    handler: function (b, e) {
+                    handler: function(b, e) {
                         if (b.findParentByType('form').getForm().isValid()) {
                             b.findParentByType('form').getForm().submit({
-                                url: GEOR.config.PATHNAME + "/ws/note/backend/backend1",
+                                url: GEOR.config.PATHNAME +
+                                    "/ws/note/backend/" + backend,
                                 method: "POST",
-                                //TODO : Response is note well handled
-                                success: function (response) {
+                                success: function(response) {
                                     var o = Ext.decode(response.responseText);
-                                    this.findParentByType('window').close();
+                                    b.findParentByType('window').close();
                                 },
-                                failure: function (form, action) {
+                                failure: function(form, action) {
                                     GEOR.util.errorDialog({
-                                        msg: "Cannot create note"
-                                    })
+                                        msg: tr("notes_cannotsave")
+                                    });
                                 }
                             });
                         }
@@ -103,6 +118,24 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
             }] // windows items
         });
         this.window.show();
+    },
+
+    /**
+     * Method: tr
+     *
+     */
+    tr: function(a) {
+        return OpenLayers.i18n(a);
+    },
+
+    /**
+     * Method: destroy
+     */
+    destroy: function() {
+        if (this.window) {
+            this.window.destroy();
+        }
+        GEOR.Addons.Base.prototype.destroy.call(this);
     }
 
 

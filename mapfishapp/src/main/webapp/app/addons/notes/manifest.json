@@ -4,6 +4,32 @@
     ],
     "css": [
         "css/main.css"
-    ]
+    ],
+    "i18n": {
+        "en": {
+            "notes_cannotsave": "Cannot save the note",
+            "notes_title": "Add a note",
+            "notes_email": "Email",
+            "notes_comment": "Comment"
+        },
+        "es": {
+            "notes_cannotsave": "Cannot save the note (es)",
+            "notes_title": "Add a note (es)",
+            "notes_email": "Correo electrónico ",
+            "notes_comment": "Comentario"
+        },
+        "fr": {
+            "notes_cannotsave": "Impossible de sauvegarder la note",
+            "notes_title": "Ajouter une note",
+            "notes_email": "Courriel",
+            "notes_comment": "Commentaires"
+        },
+        "de": {
+            "notes_cannotsave": "Cannot save the notes (de)",
+            "notes_title": "Add a note (de)",
+            "notes_email": "Mailadresse",
+            "notes_comment": "Kommentar"
+        }
+    }
 }
 
