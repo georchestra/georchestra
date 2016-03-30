@@ -20,6 +20,7 @@
  * @include GeoExt/widgets/LayerOpacitySlider.js
  * @include GeoExt/widgets/tree/LayerContainer.js
  * @include GeoExt/widgets/tree/TreeNodeUIEventMixin.js
+ * @include Ext.state.LocalStorageProvider.js
  * @include OpenLayers/Format/JSON.js
  * @include GEOR_layerfinder.js
  * @include GEOR_edit.js
@@ -615,24 +616,27 @@ GEOR.managelayers = (function() {
             layer = layerRecord.get('layer'), 
             name = layerRecord.get('title') || layer.name || '';
 
-        GEOR.waiter.show();
-        // get layer model through WFS DescribeFeatureType:
-        var attStore = GEOR.ows.WFSDescribeFeatureType({
+        var pseudoRecord = {
             typeName: isWFS ? 
                 layerRecord.get("WFS_typeName") : layerRecord.get("name"),
             owsURL: isWFS ? 
                 layer.protocol.url : layerRecord.get("WFS_URL")
-        }, {
+        };
+
+        GEOR.waiter.show();
+        // get layer model through WFS DescribeFeatureType:
+        var attStore = GEOR.ows.WFSDescribeFeatureType(pseudoRecord, {
             extractFeatureNS: true,
             success: function() {
                 // we list all fields, including the geometry
-                layerFields = attStore.collect('name');
+                var layerFields = attStore.collect('name');
                 // we get the geometry column name, and remove the corresponding record from store
                 var idx = attStore.find('type', GEOR.ows.matchGeomProperty);
                 if (idx > -1) {
                     // we have a geometry
-                    var r = attStore.getAt(idx);
-                    geometryName = r.get('name');
+                    var r = attStore.getAt(idx),
+                        geometryName = r.get('name');
+
                     attStore.remove(r);
 
                     var querier = new GEOR.Querier({
@@ -644,11 +648,13 @@ GEOR.managelayers = (function() {
                         closeAction: 'close',
                         constrainHeader: true,
                         modal: false,
+                        record: pseudoRecord,
+                        geometryName: geometryName,
+                        map: layer.map,
+                        attributeStore: attStore,
                         filterbuilderOptions: {
-                            cookieProvider: cp,
-                            map: layer.map,
-                            attributes: attStore
-                            // TODO: add more
+                            cookieProvider: cp
+                            // TODO: re-evaluate the need
                         }
                     });
                     querier.show();

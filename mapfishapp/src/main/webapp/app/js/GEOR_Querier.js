@@ -41,7 +41,6 @@
  * @include GeoExt/data/LayerRecord.js
  * @include GeoExt/data/AttributeStore.js
  * @include Styler/widgets/FilterBuilder.js
- * @include Ext.state.LocalStorageProvider.js
  * @include GEOR_waiter.js
  * @include GEOR_ows.js
  * @include GEOR_util.js
@@ -61,17 +60,43 @@ GEOR.Querier = Ext.extend(Ext.Window, {
     // hash to override default filterbuilder options
     filterbuilderOptions: null,
 
+    /**
+     * Property: geometryName
+     * {String} The geometry column name
+     */
+    geometryName: null,
+
+    /**
+     * Property: record
+     * {Ext.data.Record} The matching record for a WFS layer
+     *      Fields: "owsType" (should be "WFS"), "owsURL" & "typeName"
+     */
+    record: null,
+
+    /**
+     * Property: map
+     * {OpenLayers.Map} The map instance.
+     */
+    map: null,
+
+    /**
+     * Property: attributeStore
+     * {GeoExt.data.AttributeStore} 
+     */
+    attributeStore: null,
+    
+    /**
+     * Property: layerFields
+     * {Array} an array of fields for the current layer
+     * It is extracted from the WFS DescribeFeatureType operation
+     */  
+    layerFields: null,
+
     /*
      * Method: initComponent.
      * Overridden constructor. Set up widgets and lay them out
      */
     initComponent: function() {
-        
-        var tr = OpenLayers.i18n;
-
-        // TODO: factorize ? I think there's something similar in geor.utils
-        //~ var style = OpenLayers.Util.extend({}, 
-                    //~ OpenLayers.Feature.Vector.style['default']);
 
         this.filterbuilder = new Styler.FilterBuilder(Ext.apply({
             defaultBuilderType: Styler.FilterBuilder.ALL_OF,
@@ -82,8 +107,10 @@ GEOR.Querier = Ext.extend(Ext.Window, {
                     tpl: GEOR.util.getAttributesComboTpl()
                 }
             },
+            attributes: this.attributeStore,
             toolbarType: "tbar",
-            allowGroups: false, // TODO: change, since we now have more room ?
+            map: this.map,
+            allowGroups: true,
             noConditionOnInit: false,
             deactivable: true,
             autoScroll: true,
@@ -101,38 +128,17 @@ GEOR.Querier = Ext.extend(Ext.Window, {
         }, this.filterbuilderOptions));
 
         this.items = [this.filterbuilder];
-        
         this.buttons = [{
-            text: tr("Close"),
+            text: OpenLayers.i18n("Close"),
             handler: this.close, // TODO: on close, hide / remove vector layer
             scope: this
         }, {
-            text: tr("Search"),
-            handler: function() {
-                search() // FIXME : where should this button go ? window or filterbuilder ?
-            }
+            text: OpenLayers.i18n("Search"),
+            handler: this.search,
+            scope: this
         }];
 
-        GEOR.Querier.superclass.initComponent.call(this);
-
         this.addEvents(
-            /**
-             * @event ready
-             * Fires when the filterbuilder panel is ready 
-             *
-             * Listener arguments:
-             * filterBuilderCfg - {Object} Config object for a panel 
-             *  with a filterbuilder
-             */
-            "ready",
-
-            /**
-             * @event showrequest
-             * Fires when the filterbuilder panel is already built 
-             * and we just need to display it.
-             */
-            //"showrequest",
-
             /**
              * @event searchresults
              * Fires when we've received a response from server 
@@ -151,60 +157,13 @@ GEOR.Querier = Ext.extend(Ext.Window, {
              */
             "search"
         );
+
+        GEOR.Querier.superclass.initComponent.call(this);
     },
-    
-    /**
-     * Property: record
-     * {Ext.data.Record} The matching record for a WFS layer
-     *      Fields: "owsType" (should be "WFS"), "owsURL" & "typeName"
-     */
-    record: null,
-    
-    /**
-     * Property: attStore
-     * {GeoExt.data.AttributeStore} 
-     */
-    attStore: null,
-    
-    /**
-     * Property: geometryName
-     * {String} The geometry column name
-     */
-    geometryName: null,
-    
-    /**
-     * Property: map
-     * {OpenLayers.Map} The map instance.
-     */
-    map: null,
-    
-    /**
-     * Property: styleMap
-     * {OpenLayers.StyleMap} StyleMap used for vectors
-     */
-    styleMap: null,
-    
-    /**
-     * Property: cp
-     * {Ext.state.Provider} the state provider
-     */  
-    cp: null,
-    
-    /**
-     * Property: layerFields
-     * {Array} an array of fields for the current layer
-     * It is extracted from the WFS DescribeFeatureType operation
-     */  
-    layerFields: null,
+
 
     /**
-     * Property: name
-     * {String}
-     */
-    name: null,
-
-    /**
-     * Method: checkFilter
+     * Method: _checkFilter
      * Checks that a filter is not missing items.
      *
      * Parameters:
@@ -213,12 +172,12 @@ GEOR.Querier = Ext.extend(Ext.Window, {
      * Returns:
      * {Boolean} Filter is correct ?
      */
-    checkFilter: function(filter) {
+    _checkFilter: function(filter) {
         var filters = filter.filters || [filter];
         for (var i=0, l=filters.length; i<l; i++) {
             var f = filters[i];
             if (f.CLASS_NAME == 'OpenLayers.Filter.Logical') {
-                if (!checkFilter(f)) {
+                if (!this._checkFilter(f)) {
                     return false;
                 }
             } else if (!(f.value && f.type && 
@@ -238,28 +197,29 @@ GEOR.Querier = Ext.extend(Ext.Window, {
      * Gets the Filter Encoding string and sends the getFeature request
      */
     search: function() {
-        var filterbuilder = this.findParentByType("gx_filterbuilder");
         // we quickly check if nothing lacks in filter
-        var filter = filterbuilder.getFilter();
-        if (!checkFilter(filter)) {
+        var filter = this.filterbuilder.getFilter();
+        if (!this._checkFilter(filter)) {
             return;
         }
-    
-        observable.fireEvent("search", {
+
+        this.fireEvent("search", {
             html: tr("<div>Searching...</div>")
         });
-        
+
         // we deactivate draw controls before the request is done.
-        filterbuilder.deactivateControls();
-        
+        this.filterbuilder.deactivateControls();
+
         // we need to pass the geometry name at protocol creation, 
         // so that the format has the correct geometryName too.
-        GEOR.ows.WFSProtocol(record, map, {geometryName: geometryName}).read({
+        GEOR.ows.WFSProtocol(this.record, this.map, {
+                geometryName: this.geometryName
+        }).read({
             maxFeatures: GEOR.config.MAX_FEATURES,
             // some mapserver versions require that we list all fields to return 
             // (as seen with 5.6.1):
             // see http://applis-bretagne.fr/redmine/issues/1996
-            propertyNames: layerFields || [], 
+            propertyNames: this.attributeStore.collect('name') || [],
             filter: filter,
             callback: function(response) {
                 // Houston, we've got a pb ...
@@ -282,14 +242,14 @@ GEOR.Querier = Ext.extend(Ext.Window, {
                 }
                 
                 var model =  (attStore.getCount() > 0) ? new GEOR.FeatureDataModel({
-                    attributeStore: attStore
+                    attributeStore: this.attributeStore
                 }) : null;
 
-                observable.fireEvent("searchresults", {
+                this.fireEvent("searchresults", {
                     features: response.features,
                     model: model,
-                    tooltip: name + " - " + tr("WFS GetFeature on filter"),
-                    title: GEOR.util.shortenLayerName(name)
+                    //tooltip: name + " - " + tr("WFS GetFeature on filter"), // FIXME
+                    title: "Querier results" // GEOR.util.shortenLayerName(name) // FIXME
                 });
             },
             scope: this
