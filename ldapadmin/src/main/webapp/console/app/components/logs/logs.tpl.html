@@ -9,24 +9,30 @@
       <tr>
         <th class="header-filter"><span translate>logs.date</span></th>
         <th class="header-filter">
-          <select class="pull-right form-control input-sm" ng-options="sender for sender in logs.senders" ng-model="logs.sender"></select>
+          <select class="pull-right form-control input-sm" ng-model="logs.sender">
+            <option value="" translate>logs.allsender</option>
+            <option ng-repeat="sender in logs.senders" value="{{::sender}}">{{::sender}}</option>
+          </select>
           <span translate>logs.sender</span>
         </th>
         <th class="header-filter">
           <span translate>logs.target</span>
         </th>
         <th class="header-filter">
-          <select class="pull-right form-control input-sm" ng-options="type for type in logs.types" ng-model="logs.type"></select>
+          <select class="pull-right form-control input-sm" ng-model="logs.type">
+            <option value="" translate>logs.alltype</option>
+            <option ng-repeat="type in logs.types" value="{{::type}}">{{::type}}</option>
+          </select>
           <span translate>logs.type</span>
         </th>
       </tr>
     </thead>
     <tbody>
-      <tr dir-paginate="log in logs.logs.logs | itemsPerPage: logs.itemsPerPage">
-        <td>{{::log.date | date: 'mediumDate'}}</td>
-        <td>{{::log.admin}}</td>
-        <td>{{::log.target}}</td>
-        <td>{{::log.type}}</td>
+      <tr dir-paginate="log in logs.logs.logs | logs: logs.type:logs.sender | itemsPerPage: logs.itemsPerPage">
+        <td>{{::log.date | date: 'mediumDate'}}
+        <td>{{::log.admin}}
+        <td>{{::log.target}}
+        <td>{{::log.type}}
       </tr>
     </tbody>
   </table>
