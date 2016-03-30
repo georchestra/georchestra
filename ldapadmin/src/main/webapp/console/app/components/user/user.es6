@@ -62,42 +62,34 @@ class UserController {
   loadAnalytics($scope) {
 
     let $translate = this.$injector.get('$translate');
-    let startDate  = moment().format('YYYY-MM-DD')
-    let endDate    = moment().format('YYYY-MM-DD')
 
-    this.intervals = [
-      'day', 'week', 'month', '3month', 'year'
-    ].map(x => { return { value: x, label: 'analytics.' + x } })
-    this.interval = this.intervals[0]
+    this.date = {
+      // start : moment().subtract(1, 'year').format('YYYY-MM-DD'),
+      start : moment().subtract(6, 'month').format('YYYY-MM-DD'),
+      end   : moment().format('YYYY-MM-DD')
+    }
 
-    this.data = {};
     this.config = {
       layers   : [ 'layer', 'count' ],
       requests : [ 'date', 'count' ]
     };
-    let load_ = (startDate) => {
-      let options = {
-        service   : 'combinedRequests',
-        user      : this.user.uuid,
-        startDate : startDate,
-        endDate   : endDate
-      };
-      this.data.layers = this.$injector.get('Analytics').get(options,
-        function() {},
-        this.flash.create.bind(this, 'error', $translate('analytics.errorload'))
-      )
-      options.service = 'layersUsage'
-      this.data.requests = this.$injector.get('Analytics').get(options,
-        function() {},
-        this.flash.create.bind(this, 'error', $translate('analytics.errorload'))
-      )
-    }
-    load_(startDate)
+    this.loadAnalyticsData()
 
-    $scope.$watch('user.interval', (newVal, oldVal) => {
-      if (newVal == oldVal) { return; }
-      load_(this.$injector.get('Util').getDateFromDiff(newVal.value))
-    })
+  }
+
+  loadAnalyticsData() {
+    let error = this.flash.create.bind(this, 'error', 'Error loading data')
+    let Analytics = this.$injector.get('Analytics')
+    let options = {
+      service   : 'combinedRequests',
+      user      : this.user.uuid,
+      startDate : this.date.start,
+      endDate   : this.date.end
+    }
+    this.requests   = Analytics.get(options, () => {}, error)
+    options.service    = 'layersUsage'
+    options.limit      = 10
+    this.layers = Analytics.get(options, () => {}, error)
   }
 
   loadLogs($scope) {

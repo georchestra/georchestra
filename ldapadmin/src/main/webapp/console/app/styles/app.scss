@@ -201,7 +201,17 @@ section {
     float: right;
   }
 }
-
+.stats {
+  .progress {
+    width  : 10em;
+    margin : 5em auto;
+    height : 2em;
+  }
+  .progress-bar {
+    border-radius    : 4px;
+    background-color : $lightblue;
+  }
+}
 
 // LOGS
 .logs {

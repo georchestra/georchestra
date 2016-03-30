@@ -1,0 +1,6 @@
+<select
+  class="form-control"
+  ng-model="date.option"
+  ng-change="date.change()"
+  ng-options="option as option.label | translate for option in date.options track by option.value">
+</select>

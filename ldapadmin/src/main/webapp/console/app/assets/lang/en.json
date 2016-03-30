@@ -63,10 +63,11 @@
   "analytics.everyone"  : "Everyone",
   "analytics.requests"  : "Number of requests",
   "analytics.layers"    : "Most viewed layers",
-  "analytics.day"       : "Today",
-  "analytics.week"      : "Last week",
-  "analytics.month"     : "Last month",
-  "analytics.3month"    : "Last 3 month",
-  "analytics.year"      : "Last year",
-  "analytics.errorload" : "Error loading data"
+  "analytics.errorload" : "Error loading data",
+
+  "date.day"            : "Today",
+  "date.week"           : "Last week",
+  "date.month"          : "Last month",
+  "date.3month"         : "Last 3 month",
+  "date.year"           : "Last year"
 }

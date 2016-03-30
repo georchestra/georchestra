@@ -11,11 +11,18 @@
 
   <h5>{{stats.title | translate}}</h5>
 
-  <div class="chartist" ng-show="stats.view=='graph'"></div>
+  <div ng-show="stats.nodata">NO DATA</div>
+
+  <div ng-show="!stats.data.$resolved" class="progress">
+    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+    </div>
+  </div>
+
+  <div class="chartist" ng-show="stats.view=='graph' && stats.data.$resolved"></div>
 
   <table class="table table-bordered table-striped" ng-show="stats.view=='table'">
-    <tr ng-repeat="value in stats.series[0] track by $index">
-      <td>{{stats.labels[$index]}}</td>
+    <tr ng-repeat="value in stats.parsed.series[0] track by $index">
+      <td>{{stats.parsed.labels[$index]}}</td>
       <td>{{value}}</td>
     </tr>
   </table>
