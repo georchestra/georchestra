@@ -119,12 +119,7 @@ GEOR.querier = (function() {
      * {OpenLayers.StyleMap} StyleMap used for vectors
      */
     var styleMap = null;
-    
-    /**
-     * Property: cp
-     * {Ext.state.Provider} the state provider
-     */  
-    var cp = null;
+
     
     /**
      * Property: layerFields

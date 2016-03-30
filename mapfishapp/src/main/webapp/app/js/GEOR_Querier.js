@@ -53,19 +53,27 @@ Ext.namespace("GEOR");
 GEOR.Querier = Ext.extend(Ext.Window, {
 
     layout: 'fit',
+    border: false,
+    
+    // the local Styler.FilterBuilder instance
+    filterbuilder: null,
+
+    // hash to override default filterbuilder options
+    filterbuilderOptions: null,
 
     /*
      * Method: initComponent.
      * Overridden constructor. Set up widgets and lay them out
      */
     initComponent: function() {
+        
+        var tr = OpenLayers.i18n;
 
-        // FIXME
-        this.items = [{
-            xtype: 'gx_filterbuilder',
-            //~ title: tr("Request on NAME", {
-                //~ 'NAME': GEOR.util.shortenLayerName(layerName)
-            //~ }),
+        // TODO: factorize ? I think there's something similar in geor.utils
+        //~ var style = OpenLayers.Util.extend({}, 
+                    //~ OpenLayers.Feature.Vector.style['default']);
+
+        this.filterbuilder = new Styler.FilterBuilder(Ext.apply({
             defaultBuilderType: Styler.FilterBuilder.ALL_OF,
             filterPanelOptions: {
                 attributesComboConfig: {
@@ -75,27 +83,34 @@ GEOR.Querier = Ext.extend(Ext.Window, {
                 }
             },
             toolbarType: "tbar",
-            allowGroups: false,
-            noConditionOnInit: true,
+            allowGroups: false, // TODO: change, since we now have more room ?
+            noConditionOnInit: false,
             deactivable: true,
-            cookieProvider: cp,
             autoScroll: true,
-            buttons: [{
-                text: tr("Close"),
-                handler: function() {
-                    win.close();
-                }
-            }, {
-                text: tr("Search"),
-                handler: search
-            }],
-            map: map,
-            attributes: attStore,
             allowSpatial: true,
-            vectorLayer: new OpenLayers.Layer.Vector('__georchestra_filterbuilder',{
+            vectorLayer: new OpenLayers.Layer.Vector('__georchestra_filterbuilder', {
                 displayInLayerSwitcher: false,
-                styleMap: styleMap
+                styleMap: GEOR.util.getStyleMap({
+                    "default": {
+                        strokeWidth: 2,
+                        strokeColor: "#ee5400",
+                        fillOpacity: 0
+                    }
+                })
             })
+        }, this.filterbuilderOptions));
+
+        this.items = [this.filterbuilder];
+        
+        this.buttons = [{
+            text: tr("Close"),
+            handler: this.close, // TODO: on close, hide / remove vector layer
+            scope: this
+        }, {
+            text: tr("Search"),
+            handler: function() {
+                search() // FIXME : where should this button go ? window or filterbuilder ?
+            }
         }];
 
         GEOR.Querier.superclass.initComponent.call(this);
@@ -181,12 +196,6 @@ GEOR.Querier = Ext.extend(Ext.Window, {
      * It is extracted from the WFS DescribeFeatureType operation
      */  
     layerFields: null,
-
-    /**
-     * Property: tr
-     * {Function} an alias to OpenLayers.i18n
-     */
-    tr: null,
 
     /**
      * Property: name
@@ -287,119 +296,6 @@ GEOR.Querier = Ext.extend(Ext.Window, {
         });
     },
 
-
-    /**
-     * Method: buildPanel
-     *
-     */
-    buildPanel: function(layerName, r) {
-        record = r;
-        name = layerName;
-        observable.fireEvent("ready", {
-            xtype: 'gx_filterbuilder',
-            title: tr("Request on NAME", {
-                'NAME': GEOR.util.shortenLayerName(layerName)
-            }),
-            defaultBuilderType: Styler.FilterBuilder.ALL_OF,
-            filterPanelOptions: {
-                attributesComboConfig: {
-                    displayField: "name",
-                    listWidth: 165,
-                    tpl: GEOR.util.getAttributesComboTpl()
-                }
-            },
-            toolbarType: "tbar",
-            allowGroups: false,
-            noConditionOnInit: true,
-            deactivable: true,
-            cookieProvider: cp,
-            autoScroll: true,
-            buttons: [{
-                text: tr("Search"),
-                handler: search
-            }],
-            map: map,
-            attributes: attStore,
-            allowSpatial: true,
-            vectorLayer: new OpenLayers.Layer.Vector('__georchestra_filterbuilder',{
-                displayInLayerSwitcher: false,
-                styleMap: styleMap
-            })
-        });
-    },
-
-
-    /**
-     * APIMethod: init
-     * Initialize this module 
-     *
-     * Parameters:
-     * m - {OpenLayers.Map} The map instance.
-     */
-    init: function(m) { 
-        map = m;
-        tr = OpenLayers.i18n;
-        
-        // storage !
-        cp = new Ext.state.LocalStorageProvider({
-            prefix: "geor-viewer-"
-        });
-        Ext.state.Manager.setProvider(cp);
-        
-        var style = OpenLayers.Util.extend({}, 
-                    OpenLayers.Feature.Vector.style['default']);
-        
-        styleMap = GEOR.util.getStyleMap({
-            "default": {
-                strokeWidth: 2,
-                strokeColor: "#ee5400",
-                fillOpacity: 0
-            }
-        });
-    },
-        
-    /*
-     * Method: create
-     *
-     * Parameters:
-     * layerName - {String} the "nice" layer name.
-     * record - {GeoExt.data.LayerRecord} a WMSDescribeLayer record
-     *          with at least three fields "owsURL", "typeName" and "featureNS"
-     * success - {Function} optional success callback
-     */
-    create: function(layerName, record, success) {
-        GEOR.waiter.show();
-        attStore = GEOR.ows.WFSDescribeFeatureType(record, {
-            extractFeatureNS: true,
-            success: function() {
-                // we list all fields, including the geometry
-                layerFields = attStore.collect('name');
-                // we get the geometry column name, and remove the corresponding record from store
-                var idx = attStore.find('type', GEOR.ows.matchGeomProperty);
-                if (idx > -1) { 
-                    // we have a geometry
-                    var r = attStore.getAt(idx);
-                    geometryName = r.get('name');
-                    attStore.remove(r);
-                    if (success) {
-                        success.call(this);
-                    }
-                    buildPanel(layerName, record);
-                } else {
-                    GEOR.util.infoDialog({
-                        msg: tr("querier.layer.no.geom")
-                    });
-                }
-            },
-            failure: function() {
-                GEOR.util.errorDialog({
-                    msg: tr("querier.layer.error")
-                });
-            },
-            scope: this
-        });
-
-    },
 
     /** private: method[destroy]
      */
