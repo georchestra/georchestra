@@ -11,8 +11,8 @@
   <name>GeoServer 2.x root module</name>
   <properties>
     <maven.test.skip>true</maven.test.skip>
-    <gs.version>2.8.2</gs.version>
-    <gt.version>14.2</gt.version>
+    <gs.version>2.8.3</gs.version>
+    <gt.version>14.3</gt.version>
     <geofence.version>3.1-SNAPSHOT</geofence.version>
     <geoserver.webapp.groupId>org.geoserver.web</geoserver.webapp.groupId>
     <geoserver.webapp.artifactId>gs-web-app</geoserver.webapp.artifactId>
