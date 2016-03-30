@@ -47,9 +47,14 @@ geoserver:
   volumes:
     - geoserver_datadir:/var/local/geoserver
     - geoserver_geodata:/var/local/geodata
-    - geoserver_geowebcache:/var/local/geowebcache
+    - geoserver_tiles:/var/local/tiles
   links:
     - database
+
+geowebcache:
+  image: georchestra/geowebcache
+  volumes:
+    - geowebcache_tiles:/var/local/tiles
 
 proxy:
   image: georchestra/security-proxy
@@ -124,8 +129,3 @@ catalogapp:
 
 downloadform:
   image: georchestra/downloadform
-
-geowebcache:
-  image: georchestra/geowebcache
-  volumes:
-    - geowebcache_geowebcache:/var/local/geowebcache
