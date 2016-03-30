@@ -25,7 +25,7 @@
  * @include GEOR_edit.js
  * @include GEOR_ows.js
  * @include GEOR_util.js
- * @include GEOR_querier.js
+ * @include GEOR_Querier.js
  * @include GEOR_selectfeature.js
  */
 
@@ -103,7 +103,7 @@ GEOR.managelayers = (function() {
     /**
      * Property: querierRecord
      */
-    var querierRecord;
+    //var querierRecord;
 
     /**
      * Property: form
@@ -598,6 +598,126 @@ GEOR.managelayers = (function() {
     };
 
     /**
+     * Method: fireQuerier
+     * Callback executed on querier clicked
+     *
+     */
+    var fireQuerier = function(layerRecord) {
+
+        var type = layerRecord.get("type"),
+            isWFS = type === "WFS",
+            layer = layerRecord.get('layer'), 
+            data,
+            name = layerRecord.get('title') || layer.name || '',
+            recordType = GeoExt.data.LayerRecord.create([
+                {name: "featureNS", type: "string"},
+                {name: "owsURL", type: "string"},
+                {name: "typeName", type: "string"}
+            ]
+        );
+
+        if (isWFS) {
+            data = {
+                "featureNS": layerRecord.get("namespace"),
+                "owsURL": layer.protocol.url,
+                "typeName": layerRecord.get("name")
+            };
+        } else { // WMS layer with WFS equivalence
+            data = {
+                "owsURL": layerRecord.get("WFS_URL"),
+                "typeName": layerRecord.get("WFS_typeName")
+            };
+        }
+
+        GEOR.waiter.show();
+        var record = new recordType(data, layer.id);
+        
+        var attStore = GEOR.ows.WFSDescribeFeatureType(record, {
+            extractFeatureNS: true,
+            success: function() {
+                // we list all fields, including the geometry
+                layerFields = attStore.collect('name');
+                // we get the geometry column name, and remove the corresponding record from store
+                var idx = attStore.find('type', GEOR.ows.matchGeomProperty);
+                if (idx > -1) {
+                    // we have a geometry
+                    var r = attStore.getAt(idx);
+                    geometryName = r.get('name');
+                    attStore.remove(r);
+                    
+                    // TODO: reduce GEOR.Querier call complexity
+                    // fewer arguments should be required.
+                    
+                    var querier = new GEOR.Querier({
+                        title: GEOR.util.shorten(panelCfg.title, 70),
+                        width: 650,
+                        height: 400,
+                        closeAction: 'close',
+                        constrainHeader: true,
+                        modal: false,
+                        filterbuilderOptions: {
+                            
+                        },
+                        
+                        // TODO: no apparent items:
+                        items: [{
+                            xtype: 'gx_filterbuilder',
+                            //~ title: tr("Request on NAME", {
+                                //~ 'NAME': GEOR.util.shortenLayerName(layerName)
+                            //~ }),
+                            defaultBuilderType: Styler.FilterBuilder.ALL_OF,
+                            filterPanelOptions: {
+                                attributesComboConfig: {
+                                    displayField: "name",
+                                    listWidth: 165,
+                                    tpl: GEOR.util.getAttributesComboTpl()
+                                }
+                            },
+                            toolbarType: "tbar",
+                            allowGroups: false,
+                            noConditionOnInit: true,
+                            deactivable: true,
+                            cookieProvider: cp,
+                            autoScroll: true,
+                            buttons: [{
+                                text: tr("Close"),
+                                handler: function() {
+                                    win.close();
+                                }
+                            }, {
+                                text: tr("Search"),
+                                handler: search
+                            }],
+                            map: map,
+                            attributes: attStore,
+                            allowSpatial: true,
+                            vectorLayer: new OpenLayers.Layer.Vector('__georchestra_filterbuilder',{
+                                displayInLayerSwitcher: false,
+                                styleMap: styleMap
+                            })
+                        }]
+                    });
+                    querier.show();
+                    
+                    
+                } else {
+                    GEOR.util.infoDialog({
+                        msg: tr("querier.layer.no.geom")
+                    });
+                }
+            },
+            failure: function() {
+                GEOR.util.errorDialog({
+                    msg: tr("querier.layer.error")
+                });
+            },
+            scope: this
+        });
+
+    };
+
+
+    /**
      * Method: createMenuItems
      *
      * Parameters:
@@ -758,38 +878,9 @@ GEOR.managelayers = (function() {
                 iconCls: 'geor-btn-query',
                 text: tr("Build a query"),
                 listeners: {
-                    "click": function(btn, pressed) {
-                        /*
-                        if (layerRecord == querierRecord) {
-                            // FIXME (later) : this is not how it should be.
-                            // (only the module should fire its own events)
-                            GEOR.querier.events.fireEvent("showrequest");
-                            return;
-                        }
-                        */
-                        var layer = layerRecord.get('layer'), data;
-                        var name = layerRecord.get('title') || layer.name || '';
-                        var recordType = GeoExt.data.LayerRecord.create([
-                            {name: "featureNS", type: "string"},
-                            {name: "owsURL", type: "string"},
-                            {name: "typeName", type: "string"}
-                        ]);
-                        if (isWFS) {
-                            data = {
-                                "featureNS": layerRecord.get("namespace"),
-                                "owsURL": layer.protocol.url,
-                                "typeName": layerRecord.get("name")
-                            };
-                        } else { // WMS layer with WFS equivalence
-                            data = {
-                                "owsURL": layerRecord.get("WFS_URL"),
-                                "typeName": layerRecord.get("WFS_typeName")
-                            };
-                        }
-                        GEOR.querier.create(name, new recordType(data, layer.id), function() {
-                            // optional success callback
-                            querierRecord = layerRecord;
-                        });
+                    "click": function() {
+                        // FIXME: not beautiful !
+                        fireQuerier(layerRecord);
                     }
                 }
             });

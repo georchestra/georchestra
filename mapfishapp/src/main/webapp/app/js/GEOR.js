@@ -396,67 +396,11 @@ Ext.namespace("GEOR");
         // errors when loading WMC are not catched by GEOR.ajaxglobal
         // but by the mapinit module, which handles them more appropriately
 
+        
+        // TODO: remove this code:
         if (GEOR.querier) {
             var querierTitle;
             GEOR.querier.events.on({
-                "ready": function(panelCfg) {
-
-                    var win = new Ext.Window({
-                        title: GEOR.util.shorten(panelCfg.title, 70),
-                        layout: "fit",
-                        width: 650,
-                        height: 400,
-                        closeAction: 'close',
-                        constrainHeader: true,
-                        modal: false,
-                        items: Ext.apply(panelCfg, {
-                            title: null,
-                            buttons: panelCfg.buttons.concat([{
-                                text: tr("Close"),
-                                handler: function() {
-                                    win.close();
-                                }
-                            }]).reverse()
-                        })
-                    });
-                    win.show();
-
-                    // clear the previous filterbuilder panel, if exists
-                    /*
-                    if (eastItems[0].getComponent(1)) {
-                        eastItems[0].remove(eastItems[0].getComponent(1));
-                    }
-                    panelCfg.buttons.push({
-                        text: tr('Close'),
-                        handler: function() {
-                            // we also need to hide querier vector layer:
-                            eastItems[0].getComponent(1).tearDown();
-                            eastItems[0].setTitle(tr("Available layers"));
-                            eastItems[0].getLayout().setActiveItem(0);
-                        }
-                    });
-                    panelCfg.buttons.reverse();
-                    querierTitle = panelCfg.title;
-                    eastItems[0].setTitle(querierTitle);
-                    var panel = Ext.apply(panelCfg, {
-                        // whatever here
-                        title: null
-                    });
-                    eastItems[0].add(panel);
-                    eastItems[0].getLayout().setActiveItem(1);
-                    eastItems[0].getComponent(1).setUp();
-                    eastItems[0].doLayout(); // required
-                    */
-                },/*
-                "showrequest": function() {
-                    // at this stage, there is no garantee that 2nd cmp exists
-                    if (eastItems[0].getComponent(1)) {
-                        eastItems[0].setTitle(querierTitle);
-                        eastItems[0].getLayout().setActiveItem(1);
-                        eastItems[0].getComponent(1).setUp();
-                        eastItems[0].doLayout(); // required
-                    }
-                },*/
                 "search": function(panelCfg) {
                     var tab = southPanel.getActiveTab();
                     if (tab) {
