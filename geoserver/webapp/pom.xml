@@ -981,12 +981,18 @@
         </plugins>
       </build>
     </profile>
+
     <profile>
       <id>docker</id>
       <properties>
         <dockerImageName>georchestra/geoserver</dockerImageName>
+
         <dockerDatadirScmUrl>scm:git:https://github.com/georchestra/datadir.git</dockerDatadirScmUrl>
         <dockerDatadirScmVersion>docker-15.12</dockerDatadirScmVersion>
+
+        <dockerGeoserverDatadirScmUrl>scm:git:https://github.com/georchestra/geoserver_minimal_datadir.git</dockerGeoserverDatadirScmUrl>
+        <dockerGeoserverDatadirScmVersion>15.12</dockerGeoserverDatadirScmVersion>
+
       </properties>
       <build>
         <finalName>geoserver</finalName>
@@ -995,17 +1001,31 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-scm-plugin</artifactId>
             <version>1.9.4</version>
-            <configuration>
-              <checkoutDirectory>${project.build.directory}/datadir/</checkoutDirectory>
-              <connectionUrl>${dockerDatadirScmUrl}</connectionUrl>
-              <pushChanges>false</pushChanges>
-              <scmVersion>${dockerDatadirScmVersion}</scmVersion>
-              <scmVersionType>branch</scmVersionType>
-            </configuration>
             <executions>
               <execution>
                 <id>checkout-docker-default-datadir</id>
                 <phase>process-resources</phase>
+                <configuration>
+                  <checkoutDirectory>${project.build.directory}/datadir/</checkoutDirectory>
+                  <connectionUrl>${dockerDatadirScmUrl}</connectionUrl>
+                  <pushChanges>false</pushChanges>
+                  <scmVersion>${dockerDatadirScmVersion}</scmVersion>
+                  <scmVersionType>branch</scmVersionType>
+                </configuration>
+                <goals>
+                  <goal>checkout</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>checkout-docker-default-geoserver-datadir</id>
+                <phase>process-resources</phase>
+                <configuration>
+                  <checkoutDirectory>${project.build.directory}/geoserver_minimal_datadir/</checkoutDirectory>
+                  <connectionUrl>${dockerGeoserverDatadirScmUrl}</connectionUrl>
+                  <pushChanges>false</pushChanges>
+                  <scmVersion>${dockerGeoserverDatadirScmVersion}</scmVersion>
+                  <scmVersionType>branch</scmVersionType>
+                </configuration>
                 <goals>
                   <goal>checkout</goal>
                 </goals>
@@ -1035,6 +1055,10 @@
                   <directory>${project.build.directory}/datadir</directory>
                   <include>geoserver/**</include>
                 </resource>
+                <resource>
+                  <targetPath>/tmp/geoserver_minimal_datadir/</targetPath>
+                  <directory>${project.build.directory}/geoserver_minimal_datadir/</directory>
+                </resource>
               </resources>
               <serverId>docker-hub</serverId>
               <registryUrl>https://index.docker.io/v1/</registryUrl>
@@ -1049,13 +1073,6 @@
           </plugin>
         </plugins>
       </build>
-    </profile>
-    <profile>
-      <id>geofence</id>
-      <properties>
-        <packageName>georchestra-geoserver-geofence</packageName>
-        <dockerImageName>georchestra/geoserver-geofence</dockerImageName>
-      </properties>
     </profile>
   </profiles>
 </project>
