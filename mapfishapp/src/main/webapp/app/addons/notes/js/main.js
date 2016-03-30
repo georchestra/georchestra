@@ -4,7 +4,7 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
     /**
      * Method: init
      */
-    init: function(record) {
+    init: function (record) {
         if (false) {
             // addon placed in toolbar
         } else {
@@ -26,7 +26,7 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
      * Method: onToggle
      *
      */
-    onToggle: function(btn, pressed) {
+    onToggle: function (btn, pressed) {
         if (pressed) {
             this.map.events.register('click', this.map, this.addNote);
         } else {
@@ -39,24 +39,71 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
      */
     addNote: function (evt) {
         var lonlat = this.getLonLatFromViewPortPx(evt.xy);
-        lonlat = lonlat.transform(this.projection, new OpenLayers.Projection("EPSG:4326"));
-        OpenLayers.Request.POST({
-            url: GEOR.config.PATHNAME + "/ws/note/backend/backend1",
-            data: OpenLayers.Util.getParameterString({
-                email: "info@abc.com",
-                comment: "comment",
-                map_context: "context_string",
-                latitude: 45,
-                longitude: -72
-            }),
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-           success: function(response) {
-               var o = Ext.decode(response.responseText);
-           }
+        lonlat.transform(this.projection, new OpenLayers.Projection("EPSG:4326"));
+        this.window = new Ext.Window({
+            title: "Add a note",
+            width: 420,
+            closable: true,
+            closeAction: "hide",
+            resizable: false,
+            border: false,
+            items: [{
+                xtype: 'form',
+                width: 410,
+                items: [
+                    {
+                        xtype: "textfield",
+                        fieldLabel: "Email",
+                        width: 240,
+                        name: "email",
+                        allowBlank: false
+                    }, {
+                        xtype: "textarea",
+                        width: 240,
+                        height: 120,
+                        fieldLabel: "Comment",
+                        name: "comment",
+                        allowBlank: false
+                    }, {
+                        xtype: "hidden",
+                        name: "latitude",
+                        value: lonlat.lat
+                    }, {
+                        xtype: "hidden",
+                        name: "longitude",
+                        value: lonlat.lon
+                    }, {
+                        xtype: "hidden",
+                        name: "map_context",
+                        value: "context string"
+                    }
+                ],
+                buttons: [{
+                    text: "submit",
+                    handler: function (b, e) {
+                        if (b.findParentByType('form').getForm().isValid()) {
+                            b.findParentByType('form').getForm().submit({
+                                url: GEOR.config.PATHNAME + "/ws/note/backend/backend1",
+                                method: "POST",
+                                //TODO : Response is note well handled
+                                success: function (response) {
+                                    var o = Ext.decode(response.responseText);
+                                    this.findParentByType('window').close();
+                                },
+                                failure: function (form, action) {
+                                    GEOR.util.errorDialog({
+                                        msg: "Cannot create note"
+                                    })
+                                }
+                            });
+                        }
+                    },
+                    scope: this
+                }] // buttons
+            }] // windows items
         });
+        this.window.show();
     }
-    
+
 
 });
