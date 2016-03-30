@@ -53,9 +53,8 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
         var lonlat = this.map.getLonLatFromViewPortPx(evt.xy);
         lonlat.transform(this.map.projection,
             new OpenLayers.Projection("EPSG:4326"));
-        var backend = this.options.backend;
         this.window = new Ext.Window({
-            title: tr("notes_title"),
+            title: this.tr("notes_title"),
             width: 420,
             closable: true,
             closeAction: "hide",
@@ -67,7 +66,7 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
                 items: [
                     {
                         xtype: "textfield",
-                        fieldLabel: "Email",
+                        fieldLabel: this.tr("notes_email"),
                         width: 240,
                         name: "email",
                         allowBlank: false,
@@ -76,7 +75,7 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
                         xtype: "textarea",
                         width: 240,
                         height: 120,
-                        fieldLabel: "Comment",
+                        fieldLabel: this.tr("notes_comment"),
                         name: "comment",
                         allowBlank: false
                     }, {
@@ -94,20 +93,19 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
                     }
                 ],
                 buttons: [{
-                    text: "submit",
-                    handler: function(b, e) {
-                        if (b.findParentByType('form').getForm().isValid()) {
-                            b.findParentByType('form').getForm().submit({
+                    text: this.tr("notes_submit"),
+                    handler: function(b) {
+                        if (b.findParentByType("form").getForm().isValid()) {
+                            b.findParentByType("form").getForm().submit({
                                 url: GEOR.config.PATHNAME +
-                                    "/ws/note/backend/" + backend,
+                                    "/ws/note/backend/" + this.options.backend,
                                 method: "POST",
-                                success: function(response) {
-                                    var o = Ext.decode(response.responseText);
-                                    b.findParentByType('window').close();
+                                success: function() {
+                                    b.findParentByType("window").close();
                                 },
                                 failure: function(form, action) {
                                     GEOR.util.errorDialog({
-                                        msg: tr("notes_cannotsave")
+                                        msg: this.tr("notes_cannotsave" + ":" + action.result.msg)
                                     });
                                 }
                             });
