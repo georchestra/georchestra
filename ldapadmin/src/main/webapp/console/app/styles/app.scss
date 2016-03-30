@@ -1,3 +1,5 @@
+$lightblue: #009FE3;
+
 body {
   padding-top: 2em;
 }
@@ -7,7 +9,7 @@ body {
   }
 }
 a {
-  color : #009FE3;
+  color : $lightblue;
 }
 
 groups {
@@ -29,15 +31,23 @@ groups {
 
 section {
   .nav {
+    background: $lightblue;
     @media (min-width: 992px) {
-      width         : 130%;
+      margin : 0 -15px;
+      border : none;
     }
     border        : 1px solid rgb(221, 221, 221);
     border-radius : 5px;
-    margin-top    : 2.75em;
     padding       : 1em 0;
     li a {
       border-radius : 0;
+      color         : #fff;
+    }
+    li a:hover,
+    li.active a:hover,
+    li.active a {
+      background      : $lightblue;
+      font-weight     : bold;
     }
   }
   .groups-title {
@@ -98,8 +108,8 @@ section {
       }
     }
     &.alert-info {
-      background-color : #009FE3;
-      border-color     : #009FE3;
+      background-color : $lightblue;
+      border-color     : $lightblue;
       padding          : 30px 15px;
       font-weight      : bold;
       a {
@@ -154,11 +164,11 @@ section {
 // GROUPS
 .groups {
   @media (min-width: 992px) {
-    border-right: 2px solid #009FE3;
+    border-right: 2px solid $lightblue;
   }
   .alert-info {
-    background-color : #009FE3;
-    border-color     : #009FE3;
+    background-color : $lightblue;
+    border-color     : $lightblue;
     a:not(.btn) {
       color          : white;
     }
@@ -235,7 +245,7 @@ section {
 .ct-series-a
 .ct-slice-donut
 {
-  stroke: #009FE3;
+  stroke: $lightblue;
 }
 
 // CHOSEN

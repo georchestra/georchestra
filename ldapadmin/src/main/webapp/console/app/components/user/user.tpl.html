@@ -1,4 +1,12 @@
-<section>
+<section class="user">
+
+  <h4>
+    <a ng-link="users({'id': 'all'})" translate>user.userlist</a>
+    <span>/</span>
+    {{::user.user.sn}} {{::user.user.givenName}}
+  </h4>
+
+  <hr>
 
   <div class="col-md-2">
     <ul class="nav nav-pills nav-stacked">
@@ -13,9 +21,6 @@
   <div class="col-md-10">
     <div class="panel panel-default">
 
-      <div class="panel-heading">
-        <h3 class="panel-title">{{::user.user.sn}} {{::user.user.givenName}}</h3>
-      </div>
 
       <div class="panel-body" ng-if="user.tab=='infos'">
         <form class="form-horizontal">
