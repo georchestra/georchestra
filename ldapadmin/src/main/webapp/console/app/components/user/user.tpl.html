@@ -156,14 +156,12 @@
       </div>
 
       <div class="panel-body user-analytics" ng-if="user.tab=='analytics'">
-        <select class="form-control stats-conf" ng-model="user.interval" ng-change="user.setInterval()"
-          ng-options="interval as interval.label | translate for interval in user.intervals track by interval.value">
-        </select>
+        <date class="stats-conf" model="user.date" callback="user.loadAnalyticsData()"></date>
         <h4 translate>analytics.title</h4>
         <hr>
         <div class="row">
-          <stats data="user.data.requests" type="'line'" config="user.config.requests" title="'analytics.requests'" class="col-md-6"></stats>
-          <stats data="user.data.layers" type="'bar'" config="user.config.layers" title="'analytics.layers'" class="col-md-6"></stats>
+          <stats data="user.requests" type="'line'" config="user.config.requests" title="'analytics.requests'" class="col-md-6"></stats>
+          <stats data="user.layers" type="'bar'" config="user.config.layers" title="'analytics.layers'" class="col-md-6"></stats>
         </div>
       </div>
 

@@ -1,4 +1,5 @@
 require('components/analytics/analytics.tpl')
+require('components/date/date')
 
 require('services/analytics')
 
@@ -11,13 +12,10 @@ class AnalyticsController {
     this.group  = $routeParams.group
     this.groups = this.$injector.get('Group').query()
 
-    this.startDate  = moment().subtract(6, 'month').format('YYYY-MM-DD')
-    this.endDate    = moment().format('YYYY-MM-DD')
-
-    this.intervals = [
-      'day', 'week', 'month', '3month', 'year'
-    ].map(x => { return { value: x, label: 'analytics.' + x } })
-    this.interval = this.intervals[this.intervals.length - 1]
+    this.date = {
+      start : moment().subtract(1, 'year').format('YYYY-MM-DD'),
+      end   : moment().format('YYYY-MM-DD')
+    }
 
     this.data = {}
     this.config = {
@@ -35,10 +33,10 @@ class AnalyticsController {
 
     let options = {
       service   : 'combinedRequests',
-      startDate : this.startDate,
-      endDate   : this.endDate
+      startDate : this.date.start,
+      endDate   : this.date.end
     }
-    if (group) {
+    if (group && group!='all') {
       options.group = group
     }
 
@@ -52,11 +50,6 @@ class AnalyticsController {
     )
   }
 
-  setInterval() {
-    this.startDate = this.$injector.get('Util')
-        .getDateFromDiff(this.interval.value)
-    this.load()
-  }
 
   setGroup() {
     let $router = this.$injector.get('$router')
