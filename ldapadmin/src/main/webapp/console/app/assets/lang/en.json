@@ -56,6 +56,8 @@
   "logs.sender"         : "Sender",
   "logs.target"         : "Recipient",
   "logs.type"           : "Action",
+  "logs.allsender"      : "All",
+  "logs.alltype"        : "All",
 
   "analytics.title"     : "Analytics",
   "analytics.everyone"  : "Everyone",
