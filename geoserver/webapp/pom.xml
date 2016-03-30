@@ -1074,5 +1074,15 @@
         </plugins>
       </build>
     </profile>
+
+    <profile>
+      <id>geofence</id>
+      <properties>
+        <packageName>georchestra-geoserver-geofence</packageName>
+        <dockerGeoserverDatadirScmVersion>15.12-docker-geofence</dockerGeoserverDatadirScmVersion>
+        <dockerImageName>georchestra/geoserver:${geofence}-${project.parent.version}</dockerImageName>
+      </properties>
+    </profile>
+
   </profiles>
 </project>
