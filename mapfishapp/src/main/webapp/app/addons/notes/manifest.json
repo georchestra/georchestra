@@ -2,33 +2,34 @@
     "js": [
         "js/main.js"
     ],
-    "css": [
-        "css/main.css"
-    ],
     "i18n": {
         "en": {
             "notes_cannotsave": "Cannot save the note",
             "notes_title": "Add a note",
             "notes_email": "Email",
-            "notes_comment": "Comment"
+            "notes_comment": "Comment",
+            "notes_submit": "Submit"
         },
         "es": {
             "notes_cannotsave": "Cannot save the note (es)",
             "notes_title": "Add a note (es)",
             "notes_email": "Correo electrónico ",
-            "notes_comment": "Comentario"
+            "notes_comment": "Comentario",
+            "notes_submit": "Envio"
         },
         "fr": {
             "notes_cannotsave": "Impossible de sauvegarder la note",
             "notes_title": "Ajouter une note",
             "notes_email": "Courriel",
-            "notes_comment": "Commentaires"
+            "notes_comment": "Commentaires",
+            "notes_submit": "Soumettre"
         },
         "de": {
             "notes_cannotsave": "Cannot save the notes (de)",
             "notes_title": "Add a note (de)",
             "notes_email": "Mailadresse",
-            "notes_comment": "Kommentar"
+            "notes_comment": "Kommentar",
+            "notes_submit": "Senden"
         }
     }
 }

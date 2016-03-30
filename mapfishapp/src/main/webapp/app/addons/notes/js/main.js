@@ -1,6 +1,9 @@
 Ext.namespace("GEOR.Addons");
 
 GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
+
+    toggleGroup: "notes",
+
     /**
      * Method: init
      */
@@ -10,8 +13,11 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
             this.components = this.target.insertButton(this.position, {
                 xtype: "button",
                 enableToggle: true,
+                toggleGroup: this.toggleGroup,
                 tooltip: this.getTooltip(record),
-                iconCls: "notes-icon",
+                icon: GEOR.config.PATHNAME + "/ws/addons/" +
+                    record.get("name").toLowerCase() + "/" +
+                    this.options.icon,
                 listeners: {
                     "toggle": this.onToggle,
                     scope: this
@@ -25,8 +31,11 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
                 xtype: "button",
                 text: this.getText(record),
                 qtip: this.getQtip(record),
-                iconCls: "notes-icon",
+                icon: GEOR.config.PATHNAME + "/ws/addons/" +
+                    record.get("name").toLowerCase() + "/" +
+                    this.options.icon,
                 checked: false,
+                toggleGroup: this.toggleGroup,
                 listeners: {
                     "checkchange": this.onToggle,
                     scope: this
