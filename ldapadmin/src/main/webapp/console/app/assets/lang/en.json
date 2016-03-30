@@ -21,6 +21,7 @@
   "tab.logs"            : "Logs",
   "tab.manage"          : "Manage",
 
+  "user.userlist"       : "All users",
   "user.updated"        : "User updated",
   "user.error"          : "Error while saving user",
   "user.save"           : "Save",

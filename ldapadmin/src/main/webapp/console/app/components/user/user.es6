@@ -1,7 +1,12 @@
 require('components/user/user.tpl')
+
 require('services/util')
 
 class UserController {
+
+  static $inject = [
+    '$routeParams', '$injector', 'User', 'Group', 'groupAdminFilter'
+  ]
 
   constructor($routeParams, $injector, User, Group, groupAdminFilter) {
 
@@ -108,6 +113,7 @@ class UserController {
 
   save() {
     let $translate = this.$injector.get('$translate');
+    let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
     this.user.$update(() => {
         $httpDefaultCache.removeAll();
         this.flash.create.bind(this, 'success', $translate('user.updated'))
@@ -196,14 +202,7 @@ class UserController {
 
 }
 
-UserController.$inject = [
-  '$routeParams', '$injector', 'User', 'Group', 'groupAdminFilter'
-]
-
 UserController.prototype.activate.$inject = [ '$scope' ]
 
-
-
-angular.module('admin_console')
-.controller('UserController', UserController);
+angular.module('admin_console').controller('UserController', UserController)
 
