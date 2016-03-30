@@ -47,20 +47,29 @@ cd web
 ../../mvn -P docker -DskipTests package docker:build
 ```
 
-#### GeoServer
+#### GeoServer without geofence
 
 This creates a ```georchestra/geoserver``` docker image:
 
 ```bash
-cd geoserver/webapp/
-../../mvn -Pdocker clean package docker:build
-```
-For ```georchestra/geoserver-geofence```:
-```bash
-cd geoserver/webapp/
-../../mvn -Pdocker,geofence clean package docker:build
+cd geoserver/geoserver-submodule/src
+LANG=C ../../../mvn clean install
+cd ../../webapp
+../../mvn clean install docker:build -Pdocker
 ```
 
+#### GeoServer with geofence
+
+This creates a ```georchestra/geoserver:geofence-15.12``` docker image:
+
+```bash
+cd geoserver/geoserver-submodule/src
+LANG=C ../../../mvn clean install -Pgeofence-server
+cd ../../webapp
+../../mvn clean install docker:build -Pdocker,geofence
+```
+
+#### Geodata container
 This creates a ```georchestra/ssh_data``` docker image:
 
 ```bash

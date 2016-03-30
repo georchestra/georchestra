@@ -1,12 +1,11 @@
 #!/bin/bash
 
-cd /var/local/geoserver
-
-if [ -f global.xml ]
+if [ -f /var/local/geoserver/global.xml ]
 then
     echo 'Datadir already initialized'
 else
     echo 'Initializing datadir from georchestra/geoserver_minimal_datadir'
-    unzip /tmp/datadir.zip -d /tmp
-    cp -Rax /tmp/geoserver_minimal_datadir-15.12/* /var/local/geoserver
+    cp -Rax /tmp/geoserver_minimal_datadir/* /var/local/geoserver
+    cp -Rax /tmp/geoserver_minimal_datadir/.git /var/local/geoserver
+    cp -Rax /tmp/geoserver_minimal_datadir/.gitignore /var/local/geoserver
 fi
