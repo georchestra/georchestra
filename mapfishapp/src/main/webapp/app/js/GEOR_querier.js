@@ -97,6 +97,13 @@ GEOR.querier = (function() {
     var record = null;
     
     /**
+     * Property: layerRecord
+     * {GeoExt.data.LayerRecord} The record representing
+     * the layer to style.
+     */
+    var layerRecord = null;
+    
+    /**
      * Property: attStore
      * {GeoExt.data.AttributeStore} 
      */
@@ -138,6 +145,12 @@ GEOR.querier = (function() {
      * {Function} an alias to OpenLayers.i18n
      */
     var tr = null;
+    
+    /**
+     * Property: filterStyle
+     * {String} The current selected style used for generate filter's SLD
+     */ 
+    var filterStyle = null;
 
     var name = null;
 
@@ -240,7 +253,7 @@ GEOR.querier = (function() {
     var buildPanel = function(layerName, r) {
         record = r;
         name = layerName;
-        observable.fireEvent("ready", {
+        var structure = {
             xtype: 'gx_filterbuilder',
             title: tr("Request on NAME", {
                 'NAME': GEOR.util.shortenLayerName(layerName)
@@ -269,9 +282,219 @@ GEOR.querier = (function() {
                 displayInLayerSwitcher: false,
                 styleMap: styleMap
             })
-        });
+        };
+        
+        var type = layerRecord.get("type"),
+            isWMS = type === "WMS",
+            isWFS = type === "WFS";
+        
+        if( isWMS ) {
+            var styles = layerRecord.get("styles"),
+                layer = layerRecord.get("layer"),
+                stylesMenuItems = [],
+                onStyleItemCheck;
+            
+            var default_style = {
+                text: tr("no styling"),
+                value: '',
+                checked: true,
+                group: 'filter-style',
+                checkHandler: updateFilterStyle
+            };
+            filterStyle = '';
+            
+            stylesMenuItems.push(default_style);
+            stylesMenuItems.push('-');
+            
+            if (styles && styles.length > 0) {
+                styles = styles.concat([]); // to prevent modification of original styles
+                var defaultStyleName = styles[0].name;
+                currentStyle = styles[0].name;
+                styles.sort(function(a, b){
+                    return GEOR.util.sortFn(
+                        a.name || a.title, 
+                        b.name || b.title
+                    );
+                });
+                var checked, style, text, cfg;
+                for (var i=0, len=styles.length; i<len; i++) {
+                    style = styles[i];
+                    if (style.href) {
+                        if (style.current) {
+                            // if the style has an href and is the current
+                            // style we don't want any named style to be
+                            // checked in the list of styles
+                            default_style.checked = false;
+                        }
+                    } else {
+                        checked = false;
+                        if (style.current === true) {
+                            default_style.checked = false;
+                            checked = true;
+                        }
+                        text = (style.title || style.name) + // title is a human readable string
+                            (style.name === defaultStyleName ? " - <b>"+tr("default style")+"</b>" : "");
+                        cfg = {
+                            text: text,
+                            value: style.name, // name is used in the map request STYLE parameter
+                            checked: checked,
+                            group: 'filter-style',
+                            checkHandler: updateFilterStyle
+                        };
+                        if (style['abstract']) { // this is the "sld:abstract" field
+                            cfg.qtip = style['abstract'];
+                        }
+                        stylesMenuItems.push(cfg);
+                    }
+                }
+            }
+            
+            structure.buttons.push({
+                xtype: "splitbutton",
+                text: tr("Filter"),
+                arrowTooltip: tr("Style to use for filter"),
+                minWidth: 90,
+                handler: filterLayer,
+                itemId: 'filter',
+                menuAlign: "tr-br",
+                menu: new Ext.menu.Menu({
+                    items: stylesMenuItems
+                })
+            });
+        } else if( isWFS ) {
+            structure.buttons.push({
+                text: tr("Filter"),
+                handler: filterLayer
+            });
+        }
+        
+        observable.fireEvent("ready", structure);
     };
-
+    
+    var updateFilterStyle = function(item,checked) {
+        if( checked == true ) {
+            filterStyle = item.value;
+        }
+    };
+    
+    var filterLayer = function() {
+        var filterbuilder = this.findParentByType("gx_filterbuilder");
+        var filter = filterbuilder.getFilter();
+        if (!checkFilter(filter)) {
+            return;
+        }
+        
+        var type = layerRecord.get("type"),
+            isWMS = type === "WMS",
+            isWMTS = type === "WMTS",
+            isWFS = type === "WFS";
+        
+        if( isWMS ) {
+            var layer = layerRecord.get('layer');
+            
+            if( filterStyle === null ) {
+                filterStyle = '';
+            }
+            
+            OpenLayers.Request.GET({
+                url: layer.url,
+                params: {request: "GetStyles",layers:layer.params.LAYERS,version:"1.1.1"},
+                success: function(request) {
+                    var XMLFormatter = new OpenLayers.Format.XML();
+                    var textSLD = insertFilter(request.responseText,filter);
+                    
+                    var xmlDom = XMLFormatter.read(textSLD);
+                    var styles = xmlDom.getElementsByTagName("UserStyle");
+                    var stylesToRm = [], styleMatch = false;
+                    
+                    for( var i=0 ; i < styles.length ; ++i ) {
+                        var styleName = styles[i].getElementsByTagName("Name")[0];
+                        if( styleName.childNodes[0].nodeValue != filterStyle )
+                            stylesToRm.push(styles[i]);
+                        else
+                            styleMatch = true;
+                    }
+                    
+                    for( var i=0 ; i < stylesToRm.length ; ++i ) {
+                        if( 	styleMatch == false && 
+                            stylesToRm[i].getElementsByTagName("IsDefault").length > 0 && 
+                            stylesToRm[i].getElementsByTagName("IsDefault")[0].childNodes[0].nodeValue == 1 
+                        )
+                            continue;
+                        
+                        stylesToRm[i].parentNode.removeChild(stylesToRm[i]);
+                    }
+                    
+                    var sldString = XMLFormatter.write(xmlDom);
+                    // TO CORRECT
+                    // Because we get xml version twice in the string (don't know why)
+                    sldString = sldString.replace('<?xml version="1.0" encoding="UTF-8"?>','');
+                    
+                    saveSLD(sldString,function(){return;},this,true);
+                }
+            });
+        } else if( isWFS ) {
+            var layers = map.getLayersByName(name);
+            if( layers.length > 0 ) {
+                layers[0].filter = filter;
+                layers[0].refresh();
+            }
+        }
+    };
+    
+    var saveSLD = function(data, callback, scope, applySLD) {
+        var ok = true;
+        applySLD = (applySLD !== false) ? true : false;
+        if (data === null) {
+            ok = false;
+        } else {
+            // define the callbacks
+            var success = function(response) {
+                sldURL = [
+                    window.location.protocol, '//', window.location.host,
+                    GEOR.config.PATHNAME, '/',
+                    Ext.decode(response.responseText).filepath
+                ].join('');
+                applySLD && observable.fireEvent(
+                    "sldready",
+                    layerRecord,
+                    sldURL
+                );
+                // indicate that the SLD at sldURL matches
+                // our set of rules
+                callback.apply(scope, [true, sldURL]);
+            };
+            var failure = function(response) {
+                callback.apply(scope, [false]);
+            };
+            Ext.Ajax.request({
+                url: GEOR.config.PATHNAME + "/ws/sld/",
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/vnd.ogc.sld+xml; charset=UTF-8"
+                },
+                xmlData: data,
+                success: success,
+                failure: failure
+            });
+        }
+        callback.apply(scope,  [ok]);
+    };
+    
+    var insertFilter = function(text, filter) {
+        var XMLFormatter = new OpenLayers.Format.XML();
+        XMLFormatter.setNamespace(null,null);
+        var textFilter = XMLFormatter.write((new OpenLayers.Format.Filter()).write(filter));
+        // Remove XML headers
+        textFilter = textFilter.replace('<?xml version="1.0" encoding="UTF-8"?><ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">','').replace('</ogc:Filter>','');
+        // TO CORRECT
+        // Geometry attribute name not matched, so add it manually to filter
+        // Maybe there is a better way...
+        textFilter = textFilter.replace(new RegExp("<ogc:PropertyName/>", 'g'),"<ogc:PropertyName>"+geometryName+"</ogc:PropertyName>")
+        var res = text.replace(new RegExp("<ogc:Filter>", 'g'),"<ogc:Filter><ogc:And>").replace(new RegExp("</ogc:Filter>", 'g'),textFilter+"</ogc:And></ogc:Filter>");
+        return res;
+    };
+    
     return {
     
         /*
@@ -317,8 +540,33 @@ GEOR.querier = (function() {
          *          with at least three fields "owsURL", "typeName" and "featureNS"
          * success - {Function} optional success callback
          */
-        create: function(layerName, record, success) {
+        create: function(lr, success) {
             GEOR.waiter.show();
+            
+            layerRecord = lr;
+            var type = layerRecord.get("type"), isWFS = type === "WFS";
+            var layer = layerRecord.get('layer'), data;
+            var name = layerRecord.get('title') || layer.name || '';
+            var recordType = GeoExt.data.LayerRecord.create([
+                {name: "featureNS", type: "string"},
+                {name: "owsURL", type: "string"},
+                {name: "typeName", type: "string"}
+            ]);
+            if (isWFS) {
+                data = {
+                    "featureNS": layerRecord.get("namespace"),
+                    "owsURL": layer.protocol.url,
+                    "typeName": layerRecord.get("name")
+                };
+            } else { // WMS layer with WFS equivalence
+                data = {
+                    "owsURL": layerRecord.get("WFS_URL"),
+                    "typeName": layerRecord.get("WFS_typeName")
+                };
+            }
+            
+            record = new recordType(data, layer.id)
+            
             attStore = GEOR.ows.WFSDescribeFeatureType(record, {
                 extractFeatureNS: true,
                 success: function() {
@@ -334,7 +582,7 @@ GEOR.querier = (function() {
                         if (success) {
                             success.call(this);
                         }
-                        buildPanel(layerName, record);
+                        buildPanel(name, record);
                     } else {
                         GEOR.util.infoDialog({
                             msg: tr("querier.layer.no.geom")
