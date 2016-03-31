@@ -8,72 +8,74 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
     toggleGroup: "notes",
 
     layer: null,
+    icon: null,
 
     /**
      * Method: init
      */
     init: function(record) {
+        this.icon = GEOR.config.PATHNAME + "/ws/addons/" + record.get("name").toLowerCase() + "/" + this.options.icon;
+
+        this.layer = new OpenLayers.Layer.Vector('__georchestra_notes', {
+            displayInLayerSwitcher: false,
+            styleMap: new OpenLayers.StyleMap({
+                "default": new OpenLayers.Style(null, {
+                    rules: [new OpenLayers.Rule({
+                        symbolizer: {
+                            "Point": {
+                                "externalGraphic": this.icon,
+                                "graphicWidth": 18,
+                                "graphicHeight": 18
+                            }
+                        }
+                    })]
+                })
+            })
+        });
+        if (OpenLayers.Util.indexOf(this.map.layers, this.layer) < 0) {
+            this.map.addLayer(this.layer);
+        }
+
+        var action = new GeoExt.Action({
+            text: this.getText(record),
+            qtip: this.getQtip(record),
+            map: this.map,
+            //group is required for for CheckItem
+            group: "_notes",
+            //toggleGroup is required for button
+            toggleGroup: "notes",
+            icon: this.icon,
+            control: new OpenLayers.Control.DrawFeature(this.layer, OpenLayers.Handler.Point,
+                {
+                    eventListeners: {
+                        "featureadded": this.addNote,
+                        scope: this
+                    }
+                }
+            )
+        });
+
+        // If ther are many addons and some of them are in the toolbar and
+        // others in the menu, we do not manage if more than 1 is activated.
         if (this.target) {
-            this.layer = new OpenLayers.Layer.Vector('__georchestra_notes', {
-                displayInLayerSwitcher: false,
-                styleMap: new OpenLayers.StyleMap(
-                    new OpenLayers.Style(null, {
-                        rules: [
-                            new OpenLayers.Rule({
-                                symbolizer: OpenLayers.Control.DynamicMeasure.styles
-                            })
-                        ]
-                    })
-                )
-            });
             // addon placed in toolbar
-            this.components = this.target.insertButton(this.position, {
-                xtype: "button",
-                enableToggle: true,
-                toggleGroup: this.toggleGroup,
-                tooltip: this.getTooltip(record),
-                icon: GEOR.config.PATHNAME + "/ws/addons/" + record.get("name").toLowerCase() + "/" + this.options.icon,
-                listeners: {
-                    "toggle": this.onToggle,
-                    scope: this
-                },
-                scope: this
-            });
+            this.components = this.target.insertButton(this.position, action);
             this.target.doLayout();
         } else {
-            // addon places in "tools menus"
-            this.item = new Ext.menu.CheckItem({
-                xtype: "button",
-                text: this.getText(record),
-                qtip: this.getQtip(record),
-                icon: GEOR.config.PATHNAME + "/ws/addons/" + record.get("name").toLowerCase() + "/" + this.options.icon,
-                checked: false,
-                toggleGroup: this.toggleGroup,
-                listeners: {
-                    "checkchange": this.onToggle,
-                    scope: this
-                }
-            });
+            // addon placed in menu
+            this.items = new Ext.menu.CheckItem(action);
         }
     },
-    /**
-     * Method: onToggle
-     *
-     */
-    onToggle: function(btn, pressed) {
-        if (pressed) {
-            this.map.events.register("click", this, this.addNote);
-        } else {
-            this.map.events.unregister("click", this, this.addNote);
-        }
-    },
+
     /**
      * Method: addNote
      *
      */
-    addNote: function(evt) {
-        var lonlat = this.map.getLonLatFromViewPortPx(evt.xy);
-        lonlat.transform(this.map.projection,
+    addNote: function(obj) {
+        //Deactivate control. Adding many notes at the same time is not supported
+        obj.object.deactivate();
+        var geometry = obj.feature.geometry.clone();
+        geometry.transform(this.map.projection,
             new OpenLayers.Projection("EPSG:4326"));
         this.window = new Ext.Window({
             title: this.tr("notes_title"),
@@ -103,11 +105,11 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
                     }, {
                         xtype: "hidden",
                         name: "latitude",
-                        value: lonlat.lat
+                        value: geometry.y
                     }, {
                         xtype: "hidden",
                         name: "longitude",
-                        value: lonlat.lon
+                        value: geometry.x
                     }, {
                         xtype: "hidden",
                         name: "map_context",
@@ -164,6 +166,8 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
         if (this.window) {
             this.window.destroy();
         }
+        this.layer.destroy();
+        this.layer = null;
         GEOR.Addons.Base.prototype.destroy.call(this);
     }
 
