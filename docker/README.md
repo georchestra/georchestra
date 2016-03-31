@@ -53,9 +53,9 @@ This creates a ```georchestra/geoserver``` docker image:
 
 ```bash
 cd geoserver/geoserver-submodule/src
-LANG=C ../../../mvn clean install
+LANG=C ../../../mvn clean install -DskipTests
 cd ../../webapp
-../../mvn clean install docker:build -Pdocker
+../../mvn clean install docker:build -Pdocker -DskipTests
 ```
 
 #### GeoServer with geofence
@@ -64,9 +64,9 @@ This creates a ```georchestra/geoserver:geofence-15.12``` docker image:
 
 ```bash
 cd geoserver/geoserver-submodule/src
-LANG=C ../../../mvn clean install -Pgeofence-server
+LANG=C ../../../mvn clean install -Pgeofence-server -DskipTests
 cd ../../webapp
-../../mvn clean install docker:build -Pdocker,geofence
+../../mvn clean install docker:build -Pdocker,geofence -DskipTests
 ```
 
 #### Geodata container
