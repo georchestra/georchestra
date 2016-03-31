@@ -192,11 +192,6 @@
       <artifactId>georchestra-commons</artifactId>
       <version>${project.version}</version>
     </dependency>
-<dependency>
-  <groupId>org.georchestra</groupId>
-  <artifactId>notes</artifactId>
-  <version>15.12</version>
-</dependency>
   </dependencies>
   <build>
     <finalName>mapfishapp-${server}</finalName>
