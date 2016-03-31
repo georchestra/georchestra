@@ -1,5 +1,5 @@
 /*global
- Ext, OpenLayers, GEOR
+ Ext, GeoExt, OpenLayers, GEOR
  */
 Ext.namespace("GEOR.Addons");
 
@@ -16,7 +16,7 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
     init: function(record) {
         this.icon = GEOR.config.PATHNAME + "/ws/addons/" + record.get("name").toLowerCase() + "/" + this.options.icon;
 
-        this.layer = new OpenLayers.Layer.Vector('__georchestra_notes', {
+        this.layer = new OpenLayers.Layer.Vector("__georchestra_notes", {
             displayInLayerSwitcher: false,
             styleMap: new OpenLayers.StyleMap({
                 "default": new OpenLayers.Style(null, {
