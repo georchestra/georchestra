@@ -628,7 +628,7 @@ GEOR.managelayers = (function() {
      * Method: fireQuerier
      * Callback executed on querier clicked
      *
-     */
+     *
     var fireQuerier = function(layerRecord) {
         var type = layerRecord.get("type"),
             isWFS = type === "WFS",
@@ -700,7 +700,7 @@ GEOR.managelayers = (function() {
             },
             scope: this
         });
-    };
+    };*/
 
 
     /**
@@ -865,8 +865,29 @@ GEOR.managelayers = (function() {
                 text: tr("Build a query"),
                 listeners: {
                     "click": function() {
-                        // FIXME: not beautiful !
-                        fireQuerier(layerRecord);
+                        //fireQuerier(layerRecord);
+                        new GEOR.Querier({
+                            width: 650,
+                            height: 400,
+                            constrainHeader: true,
+                            modal: false,
+                            record: layerRecord,//pseudoRecord, --> to do inside instance
+                            // geometryName: geometryName, --> to do inside instance
+                            map: layer.map,
+                            // attributeStore: attStore,--> to do inside instance
+                            filterbuilderOptions: {
+                                cookieProvider: cp
+                                // TODO: re-evaluate the need
+                            },
+                            listeners: {
+                                "search": function(panelCfg) {
+                                    observable.fireEvent("search", panelCfg);
+                                },
+                                "searchresults": function(options) {
+                                    observable.fireEvent("searchresults", options);
+                                }
+                            }
+                        }).show();
                     }
                 }
             });
