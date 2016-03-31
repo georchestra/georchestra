@@ -1,3 +1,4 @@
+/* global Ext:false, OpenLayers:false, GEOR:false */
 Ext.namespace("GEOR.Addons");
 
 GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
@@ -15,9 +16,7 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
                 enableToggle: true,
                 toggleGroup: this.toggleGroup,
                 tooltip: this.getTooltip(record),
-                icon: GEOR.config.PATHNAME + "/ws/addons/" +
-                    record.get("name").toLowerCase() + "/" +
-                    this.options.icon,
+                icon: GEOR.config.PATHNAME + "/ws/addons/" + record.get("name").toLowerCase() + "/" + this.options.icon,
                 listeners: {
                     "toggle": this.onToggle,
                     scope: this
@@ -31,9 +30,7 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
                 xtype: "button",
                 text: this.getText(record),
                 qtip: this.getQtip(record),
-                icon: GEOR.config.PATHNAME + "/ws/addons/" +
-                    record.get("name").toLowerCase() + "/" +
-                    this.options.icon,
+                icon: GEOR.config.PATHNAME + "/ws/addons/" + record.get("name").toLowerCase() + "/" + this.options.icon,
                 checked: false,
                 toggleGroup: this.toggleGroup,
                 listeners: {
@@ -106,23 +103,32 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
                     handler: function(b) {
                         if (b.findParentByType("form").getForm().isValid()) {
                             b.findParentByType("form").getForm().submit({
-                                url: GEOR.config.PATHNAME +
-                                    "/ws/note/backend/" + this.options.backend,
+                                url: GEOR.config.PATHNAME + "/ws/note/backend/" + this.options.backend,
                                 method: "POST",
                                 success: function() {
-                                    b.findParentByType("window").close();
+                                    this.window.close();
+                                    GEOR.helper.msg(this.tr("notes_title"), this.tr("notes_saved"));
                                 },
                                 failure: function(form, action) {
                                     GEOR.util.errorDialog({
                                         msg: this.tr("notes_cannotsave" + ":" + action.result.msg)
                                     });
-                                }
+                                },
+                                scope: this
                             });
                         }
                     },
                     scope: this
-                }] // buttons
-            }] // windows items
+                }, {
+                    text: this.tr("notes_cancel"),
+                    handler: function() {
+                        this.window.close();
+                    },
+                    scope: this
+                }], // buttons
+                scope: this
+            }], // windows items
+            scope: this
         });
         this.window.show();
     },
