@@ -10,12 +10,12 @@ if [ ! -d /etc/ldap/slapd.d ]; then
 
     # start slapd in background
     echo -n "Start slapd daemon in background..."
-    slapd -u openldap -g openldap -h "ldapi:/// ldap:///"
+    slapd -u openldap -g openldap -h "ldapi:/// ldap://127.0.0.1/"
     echo "OK"
 
     echo -n "waiting for ldap deamon to start..."
     while true; do
-        sleep 10
+        sleep 1
         ldapsearch -x >/dev/null 2>&1
         if [ $? -eq 0 ]; then
             break
@@ -32,7 +32,7 @@ if [ ! -d /etc/ldap/slapd.d ]; then
     # wait for ldap to stop
     echo -n "wait for ldap to stop..."
     while true; do
-        sleep 10
+        sleep 1
         pgrep slapd >/dev/null 2>&1
         if [ $? -ne 0 ]; then
             break
