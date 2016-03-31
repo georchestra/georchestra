@@ -5,7 +5,7 @@
     "i18n": {
         "en": {
             "notes_cannotsave": "Cannot save the note",
-            "notes_saved" : "Note is saved",
+            "notes_saved": "Note is saved",
             "notes_title": "Add a note",
             "notes_email": "Email",
             "notes_comment": "Comment",
@@ -14,7 +14,7 @@
         },
         "es": {
             "notes_cannotsave": "No se puede guardar la nota",
-            "notes_saved" : "La nota se guarda",
+            "notes_saved": "La nota se guarda",
             "notes_title": "Añadir una nota",
             "notes_email": "Correo electrónico ",
             "notes_comment": "Comentario",
@@ -23,7 +23,7 @@
         },
         "fr": {
             "notes_cannotsave": "Impossible de sauvegarder la note",
-            "notes_saved" : "La note est sauvegardée",
+            "notes_saved": "La note est sauvegardée",
             "notes_title": "Ajouter une note",
             "notes_email": "Courriel",
             "notes_comment": "Commentaires",
