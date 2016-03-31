@@ -1,15 +1,31 @@
-/* global Ext:false, OpenLayers:false, GEOR:false */
+/*global
+ Ext, OpenLayers, GEOR
+ */
 Ext.namespace("GEOR.Addons");
 
 GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
 
     toggleGroup: "notes",
 
+    layer: null,
+
     /**
      * Method: init
      */
     init: function(record) {
         if (this.target) {
+            this.layer = new OpenLayers.Layer.Vector('__georchestra_notes', {
+                displayInLayerSwitcher: false,
+                styleMap: new OpenLayers.StyleMap(
+                    new OpenLayers.Style(null, {
+                        rules: [
+                            new OpenLayers.Rule({
+                                symbolizer: OpenLayers.Control.DynamicMeasure.styles
+                            })
+                        ]
+                    })
+                )
+            });
             // addon placed in toolbar
             this.components = this.target.insertButton(this.position, {
                 xtype: "button",
