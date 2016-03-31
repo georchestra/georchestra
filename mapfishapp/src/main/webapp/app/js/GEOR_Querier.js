@@ -204,6 +204,7 @@ GEOR.Querier = Ext.extend(Ext.Window, {
         }
 
         this.fireEvent("search", {
+            // TODO: tell on which layerRecord the search is running ?
             html: tr("<div>Searching...</div>")
         });
 
@@ -219,7 +220,7 @@ GEOR.Querier = Ext.extend(Ext.Window, {
             // some mapserver versions require that we list all fields to return 
             // (as seen with 5.6.1):
             // see http://applis-bretagne.fr/redmine/issues/1996
-            propertyNames: this.attributeStore.collect('name') || [],
+            propertyNames: this.attributeStore.collect('name').concat(this.geometryName) || [],
             filter: filter,
             callback: function(response) {
                 // Houston, we've got a pb ...
@@ -241,9 +242,10 @@ GEOR.Querier = Ext.extend(Ext.Window, {
                     return;
                 }
                 
-                var model =  (attStore.getCount() > 0) ? new GEOR.FeatureDataModel({
-                    attributeStore: this.attributeStore
-                }) : null;
+                var model =  (this.attributeStore.getCount() > 0) ? 
+                    new GEOR.FeatureDataModel({
+                        attributeStore: this.attributeStore
+                    }) : null;
 
                 this.fireEvent("searchresults", {
                     features: response.features,

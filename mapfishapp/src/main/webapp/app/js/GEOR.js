@@ -396,43 +396,6 @@ Ext.namespace("GEOR");
         // errors when loading WMC are not catched by GEOR.ajaxglobal
         // but by the mapinit module, which handles them more appropriately
 
-        
-        // TODO: remove this code:
-        if (GEOR.querier) {
-            var querierTitle;
-            GEOR.querier.events.on({
-                "search": function(panelCfg) {
-                    var tab = southPanel.getActiveTab();
-                    if (tab) {
-                        tab.setTitle(tr("WFS Search"));
-                    }
-                    //southPanel.removeAll();
-                    var panel = Ext.apply({
-                        bodyStyle: 'padding:5px'
-                    }, panelCfg);
-                    tab.removeAll();
-                    tab.add(panel);
-                    southPanel.doLayout();
-                    southPanel.expand();
-                },
-                "searchresults": function(options) {
-                    removeActiveTab();
-                    var tab = new GEOR.ResultsPanel({
-                        html: tr("resultspanel.emptytext"),
-                        tabTip: options.tooltip,
-                        title: options.title,
-                        map: map
-                    });
-                    tab.populate({
-                        features: options.features,
-                        // here we do have a valid model (got from describeFeatureType)
-                        model: options.model
-                    });
-                    southPanel.insert(southPanel.items.length-1, tab);
-                    southPanel.setActiveTab(tab);
-                }
-            });
-        }
 
         if (GEOR.getfeatureinfo) {
             GEOR.getfeatureinfo.events.on({
@@ -538,6 +501,37 @@ Ext.namespace("GEOR");
                 GEOR.selectfeature.deactivate();
                 GEOR.getfeatureinfo.deactivate();
                 southPanel.collapse();
+            },
+            // events from querier windows:
+            "search": function(panelCfg) {
+                var tab = southPanel.getActiveTab();
+                if (tab) {
+                    tab.setTitle(tr("WFS Search"));
+                }
+                //southPanel.removeAll();
+                var panel = Ext.apply({
+                    bodyStyle: 'padding:5px'
+                }, panelCfg);
+                tab.removeAll();
+                tab.add(panel);
+                southPanel.doLayout();
+                southPanel.expand();
+            },
+            "searchresults": function(options) {
+                removeActiveTab();
+                var tab = new GEOR.ResultsPanel({
+                    html: tr("resultspanel.emptytext"),
+                    tabTip: options.tooltip,
+                    title: options.title,
+                    map: map
+                });
+                tab.populate({
+                    features: options.features,
+                    // here we do have a valid model (got from describeFeatureType)
+                    model: options.model
+                });
+                southPanel.insert(southPanel.items.length-1, tab);
+                southPanel.setActiveTab(tab);
             }
         });
 

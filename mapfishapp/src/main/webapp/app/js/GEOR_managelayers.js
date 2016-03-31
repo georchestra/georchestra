@@ -75,15 +75,34 @@ GEOR.managelayers = (function() {
     var observable = new Ext.util.Observable();
     observable.addEvents(
         /**
-         * Event: selectstyle
+         * @event selectstyle
          * Fires when a new wms layer style has been selected
          */
         "selectstyle",
+
         /**
-         * Event: beforecontextcleared
+         * @event beforecontextcleared
          * Fired before all layers are removed from map
          */
-        "beforecontextcleared"
+        "beforecontextcleared",
+
+        /**
+         * @event searchresults
+         * Fires when we've received a response from server 
+         *
+         * Listener arguments:
+         * options - {Object} A hash containing response, model and format
+         */
+        "searchresults",
+
+        /**
+         * @event search
+         * Fires when the user presses the search button
+         *
+         * Listener arguments:
+         * panelCfg - {Object} Config object for a panel 
+         */
+        "search"
     );
 
     /**
@@ -639,9 +658,12 @@ GEOR.managelayers = (function() {
 
                     attStore.remove(r);
 
+                    // TODO: improvement: integrate the call to WFSDescribeFeatureType
+                    // into GEOR.Querier, thus enabling the window to appear immediately
+                    // after querier action is selected.
                     var querier = new GEOR.Querier({
                         title: tr("Request on NAME", {
-                            'NAME': name //GEOR.util.shortenLayerName(name)
+                            'NAME': name
                         }),
                         width: 650,
                         height: 400,
@@ -655,6 +677,14 @@ GEOR.managelayers = (function() {
                         filterbuilderOptions: {
                             cookieProvider: cp
                             // TODO: re-evaluate the need
+                        },
+                        listeners: {
+                            "search": function(panelCfg) {
+                                observable.fireEvent("search", panelCfg);
+                            },
+                            "searchresults": function(options) {
+                                observable.fireEvent("searchresults", options);
+                            }
                         }
                     });
                     querier.show();
