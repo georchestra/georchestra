@@ -53,6 +53,7 @@ GEOR.Querier = Ext.extend(Ext.Window, {
 
     layout: 'fit',
     border: false,
+    closeAction: 'close',
     
     // the local Styler.FilterBuilder instance
     filterbuilder: null,
@@ -80,6 +81,12 @@ GEOR.Querier = Ext.extend(Ext.Window, {
     map: null,
 
     /**
+     * Property: layer
+     * {OpenLayers.Layer.Vector} The layer on which geometries can be drawn
+     */
+    layer: null,
+
+    /**
      * Property: attributeStore
      * {GeoExt.data.AttributeStore} 
      */
@@ -97,6 +104,16 @@ GEOR.Querier = Ext.extend(Ext.Window, {
      * Overridden constructor. Set up widgets and lay them out
      */
     initComponent: function() {
+        this.layer = new OpenLayers.Layer.Vector('__georchestra_filterbuilder', {
+            displayInLayerSwitcher: false,
+            styleMap: GEOR.util.getStyleMap({
+                "default": {
+                    strokeWidth: 2,
+                    strokeColor: "#ee5400",
+                    fillOpacity: 0
+                }
+            })
+        });
 
         this.filterbuilder = new Styler.FilterBuilder(Ext.apply({
             defaultBuilderType: Styler.FilterBuilder.ALL_OF,
@@ -115,22 +132,13 @@ GEOR.Querier = Ext.extend(Ext.Window, {
             deactivable: true,
             autoScroll: true,
             allowSpatial: true,
-            vectorLayer: new OpenLayers.Layer.Vector('__georchestra_filterbuilder', {
-                displayInLayerSwitcher: false,
-                styleMap: GEOR.util.getStyleMap({
-                    "default": {
-                        strokeWidth: 2,
-                        strokeColor: "#ee5400",
-                        fillOpacity: 0
-                    }
-                })
-            })
+            vectorLayer: this.layer
         }, this.filterbuilderOptions));
 
         this.items = [this.filterbuilder];
         this.buttons = [{
             text: OpenLayers.i18n("Close"),
-            handler: this.close, // TODO: on close, hide / remove vector layer
+            handler: this.close,
             scope: this
         }, {
             text: OpenLayers.i18n("Search"),
@@ -242,7 +250,7 @@ GEOR.Querier = Ext.extend(Ext.Window, {
                     return;
                 }
                 
-                var model =  (this.attributeStore.getCount() > 0) ? 
+                var model = (this.attributeStore.getCount() > 0) ? 
                     new GEOR.FeatureDataModel({
                         attributeStore: this.attributeStore
                     }) : null;
@@ -262,12 +270,7 @@ GEOR.Querier = Ext.extend(Ext.Window, {
     /** private: method[destroy]
      */
     destroy: function() {
-        /*
-        this.combo.un("select", this.onComboSelect, this);
-        this.store.un("datachanged", this.onStoreDatachanged, this);
-        this.store.un("clear", this.onStoreClear, this);
-        this.store.un("beforeload", this.onStoreBeforeload, this);
-        */
+        this.filterbuilder.tearDown();
         GEOR.Querier.superclass.destroy.call(this);
     }
 

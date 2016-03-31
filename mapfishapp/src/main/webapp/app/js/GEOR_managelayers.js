@@ -667,7 +667,6 @@ GEOR.managelayers = (function() {
                         }),
                         width: 650,
                         height: 400,
-                        closeAction: 'close',
                         constrainHeader: true,
                         modal: false,
                         record: pseudoRecord,
