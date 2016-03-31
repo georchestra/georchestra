@@ -143,20 +143,16 @@ public class ContextController implements ServletContextAware {
     private JSONArray getRolesForContext(String pathContext, String title) {
         JSONArray roles = new JSONArray();
         File rolePath = new File(pathContext);
-        Collection<File> files = FileUtils.listFiles(rolePath, new String[] { "XML", "xml" }, false);
-        // TODO: instead of iterating on each XML files from the directory, it
-        // might be more relevant to consider using a file with the same
-        // basename as the WMC ?
-        for (File curRoleFile : files) {
-            if (FilenameUtils.getBaseName(curRoleFile.toString()).equalsIgnoreCase(title)) {
-                try {
-                    roles = parseRoleXmlFile(curRoleFile);
-                } catch (Exception e) {
-                    LOG.error("Error parsing role file: " + curRoleFile, e);
-                }
-                break;
+        File roleFile = new File(rolePath, title + ".xml");
+
+        try {
+            if (roleFile.exists()) {
+                roles = parseRoleXmlFile(roleFile);
             }
+        } catch (Exception e) {
+            LOG.error("Error parsing role file: " + roleFile, e);
         }
+
         return roles;
     }
 
