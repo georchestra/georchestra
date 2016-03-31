@@ -79,6 +79,8 @@ public class ContextController implements ServletContextAware {
         // image
         // defaulting to default.png
         String image = "context/image/default.png";
+        // roles
+        JSONArray roles = getRolesForContext(pathCtx, title);
 
         File imagePath = new File(pathCtx, "images");
         if (! imagePath.isDirectory()) {
@@ -103,8 +105,81 @@ public class ContextController implements ServletContextAware {
         info.put("wmc", wmcUrl);
         info.put("tip", xmlInfos.get("tip").equals("unset") ? title : xmlInfos.get("tip"));
         info.put("keywords", xmlInfos.getJSONArray("keywords").put(title));
+        info.put("roles", roles);
 
         return info;
+    }
+
+    /**
+     * Gets the roles as a JSON array for the given context. If a XML file is
+     * provided next to the context file (i.e. context.xml and context.wmc), it
+     * is possible to limit its access to the defined roles.
+     *
+     * The xml file should have the following syntax:
+     *
+     * <pre>
+     *   <?xml version="1.0" encoding="UTF-8"?>
+     *   <AllowedRoles>
+     *        <Role>ROLE_ADMINISTRATOR</Role>
+     *        <Role>ROLE_SER_URBANISME</Role>
+     *        <Role>ROLE_SER_INGENIERIE</Role>
+     *        <Role>ROLE_PERM_COMMUNES</Role>
+     *   </AllowedRoles>
+     * </pre>
+     *
+     * The purpose is not to prevent the user from accessing the context (since
+     * if the user is knowing the context name, it is trivial to call the
+     * controller and get the context served by the getContext() method below),
+     * but to at least hide it from the mapfishapp interface.
+     *
+     * @param pathContext
+     *            the path to the WMC context file
+     * @param title
+     *            the title
+     * @return a JSON array containing the roles, or an empty array if all roles
+     *         are allowed.
+     * @throws Exception
+     */
+    private JSONArray getRolesForContext(String pathContext, String title) {
+        JSONArray roles = new JSONArray();
+        File rolePath = new File(pathContext);
+        File roleFile = new File(rolePath, title + ".xml");
+
+        try {
+            if (roleFile.exists()) {
+                roles = parseRoleXmlFile(roleFile);
+            }
+        } catch (Exception e) {
+            LOG.error("Error parsing role file: " + roleFile, e);
+        }
+
+        return roles;
+    }
+
+    /**
+     * Parses a single XML file containing the roles for a given context.
+     *
+     * @param roleXml the file to be parsed
+     * @return a JSON array containing the roles, or an empty array if all roles are allowed.
+     * @throws Exception
+     */
+    private JSONArray parseRoleXmlFile(File roleXml) throws Exception {
+        JSONArray roles = new JSONArray();
+        DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = domFactory.newDocumentBuilder();
+        Document doc = builder.parse(roleXml);
+        XPath xpath = XPathFactory.newInstance().newXPath();
+        // Parsing roles
+        XPathExpression xpRole = xpath.compile("//AllowedRoles/Role");
+        Object oRole = xpRole.evaluate(doc, XPathConstants.NODESET);
+
+        if (oRole instanceof NodeList) {
+            NodeList nl = (NodeList) oRole;
+            for (int i = 0; i < nl.getLength(); ++i) {
+                roles.put(nl.item(i).getTextContent());
+            }
+        }
+        return roles;
     }
 
     private JSONObject getXmlInfos(File f) throws Exception {
