@@ -163,12 +163,13 @@ GEOR.Querier = Ext.extend(Ext.Window, {
             filterPanelOptions: {
                 attributesComboConfig: {
                     displayField: "name",
-                    listWidth: 165,
                     tpl: GEOR.util.getAttributesComboTpl()
                 }
             },
             attributes: this.attributeStore,
-            toolbarType: "tbar",
+            toolbarType: "bbar",
+            // maintaining a bbar,
+            // since noConditionOnInit has been set to false
             map: this.map,
             allowGroups: true,
             noConditionOnInit: false,
