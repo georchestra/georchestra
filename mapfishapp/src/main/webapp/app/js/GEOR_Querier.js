@@ -54,11 +54,15 @@ Ext.namespace("GEOR");
 GEOR.Querier = Ext.extend(Ext.Window, {
 
     layout: "fit",
-    border: false,
     closeAction: "close",
-    // the local Styler.FilterBuilder instance
+    border: false,
+ 
+    /**
+     * Property: filterbuilder
+     * {String} The local Styler.FilterBuilder instance
+     */
     filterbuilder: null,
-    cookieProvider: null,
+
     pseudoRecord: null,
 
     /**
@@ -176,7 +180,7 @@ GEOR.Querier = Ext.extend(Ext.Window, {
             deactivable: true,
             autoScroll: true,
             allowSpatial: true,
-            cookieProvider: this.cookieProvider,
+            stateProvider: Ext.state.Manager.getProvider(),
             vectorLayer: this.layer
         });
         this.items = [this.filterbuilder];

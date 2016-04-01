@@ -41,6 +41,7 @@
  * @include GEOR_styler.js
  * @include GEOR_wmc.js
  * @include GEOR_helper.js
+ * @include Ext.state.LocalStorageProvider.js
  */
 
 Ext.namespace("GEOR");
@@ -141,6 +142,11 @@ Ext.namespace("GEOR");
          */
         Proj4js.libPath = GEOR.config.PATHNAME + "/lib/proj4js/lib/";
         Ext.apply(Proj4js.defs, GEOR.config.PROJ4JS_STRINGS);
+
+        // State manager for the viewer
+        Ext.state.Manager.setProvider(new Ext.state.LocalStorageProvider({
+            prefix: "geor-viewer-"
+        }));
 
         /*
          * Security stuff

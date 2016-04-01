@@ -20,7 +20,6 @@
  * @include GeoExt/widgets/LayerOpacitySlider.js
  * @include GeoExt/widgets/tree/LayerContainer.js
  * @include GeoExt/widgets/tree/TreeNodeUIEventMixin.js
- * @include Ext.state.LocalStorageProvider.js
  * @include OpenLayers/Format/JSON.js
  * @include GEOR_layerfinder.js
  * @include GEOR_edit.js
@@ -141,12 +140,6 @@ GEOR.managelayers = (function() {
      * {Object} an object storing references to layer panels keyed by record.id
      */
     var panelCache;
-    
-    /**
-     * Property: cp
-     * {Ext.state.Provider} the state provider
-     */  
-    var cp = null;
 
     /**
      * Method: checkEditEnabled
@@ -788,7 +781,6 @@ GEOR.managelayers = (function() {
                             modal: false,
                             record: layerRecord,
                             map: layer.map,
-                            cookieProvider: cp,
                             listeners: {
                                 "search": function(panelCfg) {
                                     observable.fireEvent("search", panelCfg);
@@ -1205,12 +1197,6 @@ GEOR.managelayers = (function() {
         create: function(layerStore) {
             tr = OpenLayers.i18n;
             Ext.QuickTips.init();
-            
-            // storage used by the querier
-            cp = new Ext.state.LocalStorageProvider({
-                prefix: "geor-viewer-"
-            });
-            Ext.state.Manager.setProvider(cp);
             
             // handle our panels cache:
             panelCache = {};
