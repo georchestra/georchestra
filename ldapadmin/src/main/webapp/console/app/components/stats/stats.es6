@@ -2,9 +2,10 @@ require('components/stats/stats.tpl')
 
 class StatsController {
 
-  static $inject = [ '$element', '$scope' ]
+  static $inject = [ '$element', '$scope', '$injector' ]
 
-  constructor($element, $scope) {
+  constructor($element, $scope, $injector) {
+    this.$injector = $injector
     this.data.$promise.then(this.initialize.bind(this, $element, $scope));
   }
 
@@ -28,7 +29,7 @@ class StatsController {
                 return null
               }
             }
-            if (value > 10000) {
+            if (value >= 10000) {
               return Math.floor(value / 1000) + 'K'
             }
             return value
@@ -58,8 +59,12 @@ class StatsController {
 
     $scope.$watch('stats.data', (newVal, oldVal) => {
       if (oldVal == newVal) { return; }
-      this.parsed = this.parseData()
-      newVal.$promise.then(() => this.lines.update(this.parsed))
+      newVal.$promise.then(() => {
+        this.parsed = this.parseData()
+        this.$injector.get('$timeout')(() => {
+          this.lines.update(this.parsed)
+        })
+      })
     })
   }
 
@@ -68,12 +73,12 @@ class StatsController {
   }
 
   parseData() {
-    if (!this.data.results) {
-      this.nodata = true
-    }
+    let data = this.data.results
+    this.nodata = !data || data.length == 0
+    if (this.nodata) { return }
     return {
-      labels :  this.data.results.map(x => x[this.config[0]]),
-      series : [this.data.results.map(x => x[this.config[1]])]
+      labels :  data.map(x => x[this.config[0]]),
+      series : [data.map(x => x[this.config[1]])]
     }
   }
 
