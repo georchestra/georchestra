@@ -1,6 +1,9 @@
 angular.module('admin_console').factory('Util', () => {
 
+  let format = 'YYYY-MM-DD'
+
   return {
+
     getDateFromDiff: (interval) => {
       let m = moment()
       if (interval == 'week') {
@@ -15,8 +18,11 @@ angular.module('admin_console').factory('Util', () => {
       if (interval == 'year') {
         m = m.subtract(1, 'year')
       }
-      return m.format('YYYY-MM-DD')
-    }
+      return m.format(format)
+    },
+
+    getDefaultDate: () => moment().subtract(1, 'year').format(format)
+
   }
 
 })

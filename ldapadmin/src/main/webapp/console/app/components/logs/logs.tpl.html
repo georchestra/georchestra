@@ -7,9 +7,12 @@
   <table class="table table-condensed">
     <thead>
       <tr>
-        <th class="header-filter"><span translate>logs.date</span></th>
         <th class="header-filter">
-          <select class="pull-right form-control input-sm" ng-model="logs.sender">
+          <span translate>logs.date</span>
+          <date class="pull-right" model="logs.date"></date>
+        </th>
+        <th class="header-filter">
+          <select class="pull-right form-control input-sm" ng-model="logs.admin">
             <option value="" translate>logs.allsender</option>
             <option ng-repeat="sender in logs.senders" value="{{::sender}}">{{::sender}}</option>
           </select>
@@ -28,7 +31,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr dir-paginate="log in logs.logs.logs | logs: logs.type:logs.sender | itemsPerPage: logs.itemsPerPage">
+      <tr dir-paginate="log in logs.logs.logs | logs: logs.type:logs.sender:logs.date | orderBy: '-date' | itemsPerPage: logs.itemsPerPage">
         <td>{{::log.date | date: 'mediumDate'}}
         <td>{{::log.admin}}
         <td>{{::log.target}}
