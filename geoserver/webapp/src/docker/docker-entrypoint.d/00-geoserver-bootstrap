@@ -5,7 +5,12 @@ then
     echo 'Datadir already initialized'
 else
     echo 'Initializing datadir from georchestra/geoserver_minimal_datadir'
-    cp -Rax /tmp/geoserver_minimal_datadir/* /var/local/geoserver
-    cp -Rax /tmp/geoserver_minimal_datadir/.git /var/local/geoserver
-    cp -Rax /tmp/geoserver_minimal_datadir/.gitignore /var/local/geoserver
+
+    cp -Rax /var/local/geoserver.orig/* /var/local/geoserver
+    cp -Rax /var/local/geoserver.orig/.git /var/local/geoserver
+    cp -Rax /var/local/geoserver.orig/.gitignore /var/local/geoserver
+
+    echo 'Change LDAP url according to docker setup'
+    sed -i 's:<serverURL>ldap\://localhost\:389</serverURL>:<serverURL>ldap\://ldap\:389</serverURL>:g' /var/local/geoserver/security/role/my_ldap/config.xml
+    sed -i 's:<serverURL>ldap\://localhost\:389</serverURL>:<serverURL>ldap\://ldap\:389</serverURL>:g' /var/local/geoserver/security/usergroup/my_ldap/config.xml
 fi
