@@ -53,7 +53,7 @@
   "logs.title"          : "Administration logs",
   "logs.logs"           : "Admin logs",
   "logs.date"           : "Date",
-  "logs.sender"         : "Sender",
+  "logs.sender"         : "Admin",
   "logs.target"         : "Recipient",
   "logs.type"           : "Action",
   "logs.allsender"      : "All",
