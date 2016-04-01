@@ -46,14 +46,16 @@
  * @include GEOR_util.js
  */
 
+/* globals Ext, GeoExt, OpenLayers, GEOR */
+
 Ext.namespace("GEOR");
 
 
 GEOR.Querier = Ext.extend(Ext.Window, {
 
-    layout: 'fit',
+    layout: "fit",
     border: false,
-    closeAction: 'close',
+    closeAction: "close",
     // the local Styler.FilterBuilder instance
     filterbuilder: null,
     cookieProvider: null,
@@ -104,11 +106,11 @@ GEOR.Querier = Ext.extend(Ext.Window, {
         var r = this.record,
             type = r.get("type"),
             isWFS = type === "WFS",
-            layer = r.get('layer'), 
-            name = r.get('title') || layer.name || '';
+            layer = r.get("layer"), 
+            name = r.get("title") || layer.name || "";
 
         this.title = OpenLayers.i18n("Request on NAME", {
-            'NAME': name
+            "NAME": name
         });
 
         this.pseudoRecord = {
@@ -124,13 +126,13 @@ GEOR.Querier = Ext.extend(Ext.Window, {
             extractFeatureNS: true,
             success: function() {
                 // we list all fields, including the geometry
-                this.layerFields = this.attributeStore.collect('name');
+                this.layerFields = this.attributeStore.collect("name");
                 // we get the geometry column name, and remove the corresponding record from store
-                var idx = this.attributeStore.find('type', GEOR.ows.matchGeomProperty);
+                var idx = this.attributeStore.find("type", GEOR.ows.matchGeomProperty);
                 if (idx > -1) {
                     // we have a geometry
                     var r = this.attributeStore.getAt(idx);
-                    this.geometryName = r.get('name');
+                    this.geometryName = r.get("name");
                     this.attributeStore.remove(r);
                 } else {
                     GEOR.util.infoDialog({
@@ -146,7 +148,7 @@ GEOR.Querier = Ext.extend(Ext.Window, {
             scope: this
         });
 
-        this.layer = new OpenLayers.Layer.Vector('__georchestra_filterbuilder', {
+        this.layer = new OpenLayers.Layer.Vector("__georchestra_filterbuilder", {
             displayInLayerSwitcher: false,
             styleMap: GEOR.util.getStyleMap({
                 "default": {
@@ -227,7 +229,7 @@ GEOR.Querier = Ext.extend(Ext.Window, {
         var filters = filter.filters || [filter];
         for (var i=0, l=filters.length; i<l; i++) {
             var f = filters[i];
-            if (f.CLASS_NAME == 'OpenLayers.Filter.Logical') {
+            if (f.CLASS_NAME == "OpenLayers.Filter.Logical") {
                 if (!this._checkFilter(f)) {
                     return false;
                 }
