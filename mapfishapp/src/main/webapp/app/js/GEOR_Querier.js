@@ -148,7 +148,6 @@ GEOR.Querier = Ext.extend(Ext.Window, {
             scope: this
         });
 
-
         this.layer = new OpenLayers.Layer.Vector("__georchestra_filterbuilder", {
             displayInLayerSwitcher: false,
             styleMap: GEOR.util.getStyleMap({
@@ -297,13 +296,14 @@ GEOR.Querier = Ext.extend(Ext.Window, {
                 var model = (this.attributeStore.getCount() > 0) ? 
                     new GEOR.FeatureDataModel({
                         attributeStore: this.attributeStore
-                    }) : null;
+                    }) : null,
+                    name = this.record.get("title");
 
                 this.fireEvent("searchresults", {
                     features: response.features,
                     model: model,
-                    //tooltip: name + " - " + tr("WFS GetFeature on filter"), // FIXME
-                    title: "Querier results" // GEOR.util.shortenLayerName(name) // FIXME
+                    tooltip: name + " - " + tr("WFS GetFeature on filter"),
+                    title: GEOR.util.shortenLayerName(name)
                 });
             },
             scope: this
