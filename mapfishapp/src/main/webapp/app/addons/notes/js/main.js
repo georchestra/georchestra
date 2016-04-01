@@ -81,7 +81,12 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
             title: this.tr("notes_title"),
             width: 420,
             closable: true,
-            closeAction: "hide",
+            listeners: {
+                "close": {
+                    fn: this.clearLayer,
+                    scope: this
+                }
+            },
             resizable: false,
             border: false,
             items: [{
@@ -149,6 +154,14 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
             scope: this
         });
         this.window.show();
+    },
+
+    /**
+     *  Method : clearLayer
+     *
+     */
+    clearLayer: function() {
+        this.layer.destroyFeatures();
     },
 
     /**
