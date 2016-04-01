@@ -7,7 +7,6 @@ class LogsController {
   constructor($injector) {
 
     this.itemsPerPage = 5
-    this.$injector    = $injector
 
     let msg   = 'Error while loading data'
 
@@ -19,21 +18,30 @@ class LogsController {
       this.types   = [ ...new Set(this.logs.logs.map(l => l.type)) ]
     }, $injector.get('Flash').create.bind(this, 'error', msg, ''))
 
+    this.date = {
+      start: $injector.get('Util').getDefaultDate()
+    }
+
   }
 
 }
 
 let filter_logs = () => {
-  return (logs, type, sender) => {
+  return (logs, type, admin, date) => {
     if (!logs) { return }
 
     let filtered = logs.filter(log => {
-      if (type && sender) {
-        return (log.type == type && log.admin == sender)
+      let valid = true
+      if (type && log.type != type)   {
+        valid = false
       }
-      if (type)   { return (log.type == type) }
-      if (sender) { return (log.admin == sender) }
-      return true
+      if (admin && log.admin != admin)   {
+        valid = false
+      }
+      if (date && moment(log.date).isBefore(date.start))   {
+        valid = false
+      }
+      return valid
     })
 
     return filtered
