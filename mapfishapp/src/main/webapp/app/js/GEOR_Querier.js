@@ -54,23 +54,17 @@ GEOR.Querier = Ext.extend(Ext.Window, {
     layout: 'fit',
     border: false,
     closeAction: 'close',
-    
     // the local Styler.FilterBuilder instance
     filterbuilder: null,
-
-    // hash to override default filterbuilder options
-    filterbuilderOptions: null,
+    cookieProvider: null,
+    pseudoRecord: null,
 
     /**
      * Property: geometryName
      * {String} The geometry column name
      */
     geometryName: null,
-        
-    /* FIXME: no
-     * The matching record for a WFS layer
-     *      Fields: "owsType" (should be "WFS"), "owsURL" & "typeName"
-     */
+
     /**
      * Property: record
      * {Ext.data.Record} the WMS or WFS layer record
@@ -107,7 +101,6 @@ GEOR.Querier = Ext.extend(Ext.Window, {
      * Overridden constructor. Set up widgets and lay them out
      */
     initComponent: function() {
-
         var r = this.record,
             type = r.get("type"),
             isWFS = type === "WFS",
@@ -118,59 +111,27 @@ GEOR.Querier = Ext.extend(Ext.Window, {
             'NAME': name
         });
 
-        var pseudoRecord = {
+        this.pseudoRecord = {
             typeName: isWFS ? 
                 r.get("WFS_typeName") : r.get("name"),
             owsURL: isWFS ? 
                 layer.protocol.url : r.get("WFS_URL")
         };
 
-        /*
         GEOR.waiter.show();
         // get layer model through WFS DescribeFeatureType:
-        var attStore = GEOR.ows.WFSDescribeFeatureType(pseudoRecord, {
+        this.attributeStore = GEOR.ows.WFSDescribeFeatureType(this.pseudoRecord, {
             extractFeatureNS: true,
             success: function() {
                 // we list all fields, including the geometry
-                var layerFields = attStore.collect('name');
+                this.layerFields = this.attributeStore.collect('name');
                 // we get the geometry column name, and remove the corresponding record from store
-                var idx = attStore.find('type', GEOR.ows.matchGeomProperty);
+                var idx = this.attributeStore.find('type', GEOR.ows.matchGeomProperty);
                 if (idx > -1) {
                     // we have a geometry
-                    var r = attStore.getAt(idx),
-                        geometryName = r.get('name');
-
-                    attStore.remove(r);
-
-                    // TODO: improvement: integrate the call to WFSDescribeFeatureType
-                    // into GEOR.Querier, thus enabling the window to appear immediately
-                    // after querier action is selected.
-                    var querier = new GEOR.Querier({
-                        title: tr("Request on NAME", {
-                            'NAME': name
-                        }),
-                        width: 650,
-                        height: 400,
-                        constrainHeader: true,
-                        modal: false,
-                        record: pseudoRecord,
-                        geometryName: geometryName,
-                        map: layer.map,
-                        attributeStore: attStore,
-                        filterbuilderOptions: {
-                            cookieProvider: cp
-                            // TODO: re-evaluate the need
-                        },
-                        listeners: {
-                            "search": function(panelCfg) {
-                                observable.fireEvent("search", panelCfg);
-                            },
-                            "searchresults": function(options) {
-                                observable.fireEvent("searchresults", options);
-                            }
-                        }
-                    });
-                    querier.show();
+                    var r = this.attributeStore.getAt(idx);
+                    this.geometryName = r.get('name');
+                    this.attributeStore.remove(r);
                 } else {
                     GEOR.util.infoDialog({
                         msg: tr("querier.layer.no.geom")
@@ -185,8 +146,6 @@ GEOR.Querier = Ext.extend(Ext.Window, {
             scope: this
         });
 
-        */
-        
         this.layer = new OpenLayers.Layer.Vector('__georchestra_filterbuilder', {
             displayInLayerSwitcher: false,
             styleMap: GEOR.util.getStyleMap({
@@ -198,7 +157,7 @@ GEOR.Querier = Ext.extend(Ext.Window, {
             })
         });
 
-        this.filterbuilder = new Styler.FilterBuilder(Ext.apply({
+        this.filterbuilder = new Styler.FilterBuilder({
             defaultBuilderType: Styler.FilterBuilder.ALL_OF,
             filterPanelOptions: {
                 attributesComboConfig: {
@@ -215,8 +174,9 @@ GEOR.Querier = Ext.extend(Ext.Window, {
             deactivable: true,
             autoScroll: true,
             allowSpatial: true,
+            cookieProvider: this.cookieProvider,
             vectorLayer: this.layer
-        }, this.filterbuilderOptions));
+        });
 
         this.items = [this.filterbuilder];
         this.buttons = [{
@@ -304,14 +264,14 @@ GEOR.Querier = Ext.extend(Ext.Window, {
 
         // we need to pass the geometry name at protocol creation, 
         // so that the format has the correct geometryName too.
-        GEOR.ows.WFSProtocol(this.record, this.map, {
+        GEOR.ows.WFSProtocol(this.pseudoRecord, this.map, {
                 geometryName: this.geometryName
         }).read({
             maxFeatures: GEOR.config.MAX_FEATURES,
             // some mapserver versions require that we list all fields to return 
             // (as seen with 5.6.1):
             // see http://applis-bretagne.fr/redmine/issues/1996
-            propertyNames: this.attributeStore.collect('name').concat(this.geometryName) || [],
+            propertyNames: this.layerFields.concat(this.geometryName) || [],
             filter: filter,
             callback: function(response) {
                 // Houston, we've got a pb ...

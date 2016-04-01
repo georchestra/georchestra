@@ -865,20 +865,14 @@ GEOR.managelayers = (function() {
                 text: tr("Build a query"),
                 listeners: {
                     "click": function() {
-                        //fireQuerier(layerRecord);
                         new GEOR.Querier({
                             width: 650,
                             height: 400,
                             constrainHeader: true,
                             modal: false,
-                            record: layerRecord,//pseudoRecord, --> to do inside instance
-                            // geometryName: geometryName, --> to do inside instance
+                            record: layerRecord,
                             map: layer.map,
-                            // attributeStore: attStore,--> to do inside instance
-                            filterbuilderOptions: {
-                                cookieProvider: cp
-                                // TODO: re-evaluate the need
-                            },
+                            cookieProvider: cp,
                             listeners: {
                                 "search": function(panelCfg) {
                                     observable.fireEvent("search", panelCfg);
