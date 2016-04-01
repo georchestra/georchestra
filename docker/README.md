@@ -53,6 +53,7 @@ This creates a ```georchestra/geoserver``` docker image:
 
 ```bash
 cd geoserver/geoserver-submodule/src
+rm -fr ../data/citewfs-1.1/workspaces/sf/sf/E*
 LANG=C ../../../mvn clean install -DskipTests
 cd ../../webapp
 ../../mvn clean install docker:build -Pdocker -DskipTests
@@ -64,6 +65,7 @@ This creates a ```georchestra/geoserver:geofence-15.12``` docker image:
 
 ```bash
 cd geoserver/geoserver-submodule/src
+rm -fr ../data/citewfs-1.1/workspaces/sf/sf/E*
 LANG=C ../../../mvn clean install -Pgeofence-server -DskipTests
 cd ../../webapp
 ../../mvn clean install docker:build -Pdocker,geofence -DskipTests
