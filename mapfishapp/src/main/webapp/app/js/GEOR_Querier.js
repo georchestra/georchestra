@@ -136,13 +136,13 @@ GEOR.Querier = Ext.extend(Ext.Window, {
                     this.attributeStore.remove(r);
                 } else {
                     GEOR.util.infoDialog({
-                        msg: tr("querier.layer.no.geom")
+                        msg: this.tr("querier.layer.no.geom")
                     });
                 }
             },
             failure: function() {
                 GEOR.util.errorDialog({
-                    msg: tr("querier.layer.error")
+                    msg: this.tr("querier.layer.error")
                 });
             },
             scope: this
@@ -216,6 +216,14 @@ GEOR.Querier = Ext.extend(Ext.Window, {
 
 
     /**
+     * Method: tr
+     */
+    tr: function(s) {
+        return OpenLayers.i18n(s);
+    },
+
+
+    /**
      * Method: _checkFilter
      * Checks that a filter is not missing items.
      *
@@ -236,7 +244,7 @@ GEOR.Querier = Ext.extend(Ext.Window, {
             } else if (!(f.value && f.type && 
                 (f.property || f.CLASS_NAME == "OpenLayers.Filter.Spatial"))) {
                 GEOR.util.infoDialog({
-                    msg: tr("Fields of filters with a red mark are mandatory")
+                    msg: this.tr("Fields of filters with a red mark are mandatory")
                 });
                 return false;
             }
@@ -258,7 +266,7 @@ GEOR.Querier = Ext.extend(Ext.Window, {
 
         this.fireEvent("search", {
             // TODO: tell on which layerRecord the search is running ?
-            html: tr("<div>Searching...</div>")
+            html: this.tr("<div>Searching...</div>")
         });
 
         // we deactivate draw controls before the request is done.
@@ -302,7 +310,7 @@ GEOR.Querier = Ext.extend(Ext.Window, {
                 this.fireEvent("searchresults", {
                     features: response.features,
                     model: model,
-                    tooltip: name + " - " + tr("WFS GetFeature on filter"),
+                    tooltip: name + " - " + this.tr("WFS GetFeature on filter"),
                     title: GEOR.util.shortenLayerName(name)
                 });
             },
