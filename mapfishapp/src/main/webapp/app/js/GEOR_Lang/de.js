@@ -320,7 +320,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Print": "Drucken",
     "Printing...": "Druckvorgang aktiv...",
     "Print current map": "Drucken der aktiven Karte",
-    /* GEOR_querier.js strings */
+    /* GEOR_Querier.js strings */
     "Fields of filters with a red mark are mandatory": "Rote Felder sind auszufüllen",
     "Request on NAME": "Sucher auf ${NAME}",
     "WFS GetFeature on filter": "GetFeature WFS auf einem Filter",

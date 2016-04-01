@@ -115,7 +115,7 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
     "print.unknown.format":
         "Configuration error: the " +
         "${FORMAT} format is not supported by the print server",
-    /* GEOR_querier.js strings */
+    /* GEOR_Querier.js strings */
     "Request on NAME": "Request on ${NAME}",
     "querier.layer.no.geom":
         "This layer has no geometric column." +

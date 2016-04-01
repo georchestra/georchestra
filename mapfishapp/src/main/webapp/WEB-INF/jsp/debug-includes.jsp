@@ -45,7 +45,7 @@
     <script type="text/javascript" src="<%= context %>/app/js/Ext.state.LocalStorageProvider.js"></script>
     <script type="text/javascript" src="<%= context %>/app/js/GEOR_config.js"></script>
     <script type="text/javascript" src="<%= context %>/app/js/GEOR_Lang/<%= lang %>.js"></script>
-    <script type="text/javascript" src="<%= context %>/app/js/GEOR_querier.js"></script>
+    <script type="text/javascript" src="<%= context %>/app/js/GEOR_Querier.js"></script>
     <script type="text/javascript" src="<%= context %>/app/js/GEOR_styler.js"></script>
     <script type="text/javascript" src="<%= context %>/app/js/GEOR_addons.js"></script>
     <script type="text/javascript" src="<%= context %>/app/js/GEOR_getfeatureinfo.js"></script>

@@ -266,7 +266,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Print": "Напечатать",
     "Printing...": "Идёт печать...",
     "Print current map": "Напечатать текущую карту",
-    /* GEOR_querier.js strings */
+    /* GEOR_Querier.js strings */
     "Fields of filters with a red mark are mandatory": "Поля фильтров, помеченные красным цветом, являются обязательными для заполнения.",
     "Request on NAME": "Сделать запрос о ${NAME}",
     "Search": "Искать",

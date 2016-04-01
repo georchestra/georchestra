@@ -25,7 +25,7 @@
  * @include GEOR_edit.js
  * @include GEOR_ows.js
  * @include GEOR_util.js
- * @include GEOR_querier.js
+ * @include GEOR_Querier.js
  * @include GEOR_selectfeature.js
  */
 
@@ -74,15 +74,34 @@ GEOR.managelayers = (function() {
     var observable = new Ext.util.Observable();
     observable.addEvents(
         /**
-         * Event: selectstyle
+         * @event selectstyle
          * Fires when a new wms layer style has been selected
          */
         "selectstyle",
+
         /**
-         * Event: beforecontextcleared
+         * @event beforecontextcleared
          * Fired before all layers are removed from map
          */
-        "beforecontextcleared"
+        "beforecontextcleared",
+
+        /**
+         * @event searchresults
+         * Fires when we've received a response from server 
+         *
+         * Listener arguments:
+         * options - {Object} A hash containing response, model and format
+         */
+        "searchresults",
+
+        /**
+         * @event search
+         * Fires when the user presses the search button
+         *
+         * Listener arguments:
+         * panelCfg - {Object} Config object for a panel 
+         */
+        "search"
     );
 
     /**
@@ -99,11 +118,6 @@ GEOR.managelayers = (function() {
      * Property: stylesMenu
      */
     var stylesMenu;
-
-    /**
-     * Property: querierRecord
-     */
-    var querierRecord;
 
     /**
      * Property: form
@@ -597,6 +611,7 @@ GEOR.managelayers = (function() {
         }
     };
 
+
     /**
      * Method: createMenuItems
      *
@@ -752,42 +767,29 @@ GEOR.managelayers = (function() {
             });
         }
 
-        if (GEOR.querier && (hasEquivalentWFS || isWFS)) {
+        if (GEOR.Querier && (hasEquivalentWFS || isWFS)) {
             insertSep();
             menuItems.push({
                 iconCls: 'geor-btn-query',
                 text: tr("Build a query"),
                 listeners: {
-                    "click": function(btn, pressed) {
-                        if (layerRecord == querierRecord) {
-                            // FIXME (later) : this is not how it should be.
-                            // (only the module should fire its own events)
-                            GEOR.querier.events.fireEvent("showrequest");
-                            return;
-                        }
-                        var layer = layerRecord.get('layer'), data;
-                        var name = layerRecord.get('title') || layer.name || '';
-                        var recordType = GeoExt.data.LayerRecord.create([
-                            {name: "featureNS", type: "string"},
-                            {name: "owsURL", type: "string"},
-                            {name: "typeName", type: "string"}
-                        ]);
-                        if (isWFS) {
-                            data = {
-                                "featureNS": layerRecord.get("namespace"),
-                                "owsURL": layer.protocol.url,
-                                "typeName": layerRecord.get("name")
-                            };
-                        } else { // WMS layer with WFS equivalence
-                            data = {
-                                "owsURL": layerRecord.get("WFS_URL"),
-                                "typeName": layerRecord.get("WFS_typeName")
-                            };
-                        }
-                        GEOR.querier.create(name, new recordType(data, layer.id), function() {
-                            // optional success callback
-                            querierRecord = layerRecord;
-                        });
+                    "click": function() {
+                        new GEOR.Querier({
+                            width: 650,
+                            height: 400,
+                            constrainHeader: true,
+                            modal: false,
+                            record: layerRecord,
+                            map: layer.map,
+                            listeners: {
+                                "search": function(panelCfg) {
+                                    observable.fireEvent("search", panelCfg);
+                                },
+                                "searchresults": function(options) {
+                                    observable.fireEvent("searchresults", options);
+                                }
+                            }
+                        }).show();
                     }
                 }
             });
@@ -1195,6 +1197,7 @@ GEOR.managelayers = (function() {
         create: function(layerStore) {
             tr = OpenLayers.i18n;
             Ext.QuickTips.init();
+            
             // handle our panels cache:
             panelCache = {};
             layerStore.on("remove", function(s, record) {

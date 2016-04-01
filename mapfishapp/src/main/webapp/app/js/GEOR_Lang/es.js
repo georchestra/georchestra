@@ -323,7 +323,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Print": "Imprimir",
     "Printing...": "Imprimiendo...",
     "Print current map": "Imprimir el mapa actual",
-    /* GEOR_querier.js strings */
+    /* GEOR_Querier.js strings */
     "Fields of filters with a red mark are mandatory": "Tiene que llenar " +
         "los campos de filtros con rojo.",
     "Request on NAME": "Consultas sobre ${NAME}",

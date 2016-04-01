@@ -18,7 +18,7 @@ GEOR.ls = (function() {
     /*
      * Private
      */
-    var isAvailable = typeof(localStorage) !== 'undefined';
+    var isAvailable = typeof(localStorage) !== "undefined";
 
     /*
      * Public
@@ -38,12 +38,12 @@ GEOR.ls = (function() {
                 try {
                     localStorage.setItem(key, value);
                 } catch (e) {
-                    if (e.name.toUpperCase() === 'QUOTA_EXCEEDED_ERR' || 
-                        e.name.toUpperCase() === 'NS_ERROR_DOM_QUOTA_REACHED') {
+                    if (e.name.toUpperCase() === "QUOTA_EXCEEDED_ERR" || 
+                        e.name.toUpperCase() === "NS_ERROR_DOM_QUOTA_REACHED") {
 
-                        alert('localStorage quota exceeded !');
+                        alert("localStorage quota exceeded !");
                     } else {
-                        alert('localStorage failed to store value.');
+                        alert("localStorage failed to store value ("+e.name+")");
                     }
                 }
             }
