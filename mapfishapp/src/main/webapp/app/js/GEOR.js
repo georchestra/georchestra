@@ -37,7 +37,7 @@
  * @include GEOR_getfeatureinfo.js
  * @include GEOR_selectfeature.js
  * @include GEOR_ResultsPanel.js
- * @include GEOR_querier.js
+ * @include GEOR_Querier.js
  * @include GEOR_styler.js
  * @include GEOR_wmc.js
  * @include GEOR_helper.js
@@ -147,7 +147,7 @@ Ext.namespace("GEOR");
          * Deactivate modules if current user roles do not match
          */
         checkRoles('styler', GEOR.config.ROLES_FOR_STYLER);
-        checkRoles('querier', GEOR.config.ROLES_FOR_QUERIER);
+        checkRoles('Querier', GEOR.config.ROLES_FOR_QUERIER);
         checkRoles('print', GEOR.config.ROLES_FOR_PRINTER);
         checkRoles('edit', GEOR.config.ROLES_FOR_EDIT);
 
@@ -162,9 +162,6 @@ Ext.namespace("GEOR");
         GEOR.tools.init(mapPanel);
         if (GEOR.edit) {
             GEOR.edit.init(map);
-        }
-        if (GEOR.querier) {
-            GEOR.querier.init(map);
         }
         GEOR.getfeatureinfo.init(layerStore);
         GEOR.selectfeature.init(map);
@@ -195,8 +192,7 @@ Ext.namespace("GEOR");
 
         var eastItems = [
             new Ext.Panel({
-                // this panel contains the "manager layer" and
-                // "querier" components
+                // this panel contains the "manager layer" component
                 region: "center",
                 height: 270, // has no effect when region is
                              // "center"

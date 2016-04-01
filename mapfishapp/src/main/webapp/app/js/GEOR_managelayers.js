@@ -121,11 +121,6 @@ GEOR.managelayers = (function() {
     var stylesMenu;
 
     /**
-     * Property: querierRecord
-     */
-    //var querierRecord;
-
-    /**
      * Property: form
      */
     var form;
@@ -625,85 +620,6 @@ GEOR.managelayers = (function() {
 
 
     /**
-     * Method: fireQuerier
-     * Callback executed on querier clicked
-     *
-     *
-    var fireQuerier = function(layerRecord) {
-        var type = layerRecord.get("type"),
-            isWFS = type === "WFS",
-            layer = layerRecord.get('layer'), 
-            name = layerRecord.get('title') || layer.name || '';
-
-        var pseudoRecord = {
-            typeName: isWFS ? 
-                layerRecord.get("WFS_typeName") : layerRecord.get("name"),
-            owsURL: isWFS ? 
-                layer.protocol.url : layerRecord.get("WFS_URL")
-        };
-
-        GEOR.waiter.show();
-        // get layer model through WFS DescribeFeatureType:
-        var attStore = GEOR.ows.WFSDescribeFeatureType(pseudoRecord, {
-            extractFeatureNS: true,
-            success: function() {
-                // we list all fields, including the geometry
-                var layerFields = attStore.collect('name');
-                // we get the geometry column name, and remove the corresponding record from store
-                var idx = attStore.find('type', GEOR.ows.matchGeomProperty);
-                if (idx > -1) {
-                    // we have a geometry
-                    var r = attStore.getAt(idx),
-                        geometryName = r.get('name');
-
-                    attStore.remove(r);
-
-                    // TODO: improvement: integrate the call to WFSDescribeFeatureType
-                    // into GEOR.Querier, thus enabling the window to appear immediately
-                    // after querier action is selected.
-                    var querier = new GEOR.Querier({
-                        title: tr("Request on NAME", {
-                            'NAME': name
-                        }),
-                        width: 650,
-                        height: 400,
-                        constrainHeader: true,
-                        modal: false,
-                        record: pseudoRecord,
-                        geometryName: geometryName,
-                        map: layer.map,
-                        attributeStore: attStore,
-                        filterbuilderOptions: {
-                            cookieProvider: cp
-                            // TODO: re-evaluate the need
-                        },
-                        listeners: {
-                            "search": function(panelCfg) {
-                                observable.fireEvent("search", panelCfg);
-                            },
-                            "searchresults": function(options) {
-                                observable.fireEvent("searchresults", options);
-                            }
-                        }
-                    });
-                    querier.show();
-                } else {
-                    GEOR.util.infoDialog({
-                        msg: tr("querier.layer.no.geom")
-                    });
-                }
-            },
-            failure: function() {
-                GEOR.util.errorDialog({
-                    msg: tr("querier.layer.error")
-                });
-            },
-            scope: this
-        });
-    };*/
-
-
-    /**
      * Method: createMenuItems
      *
      * Parameters:
@@ -858,7 +774,7 @@ GEOR.managelayers = (function() {
             });
         }
 
-        if (GEOR.querier && (hasEquivalentWFS || isWFS)) {
+        if (GEOR.Querier && (hasEquivalentWFS || isWFS)) {
             insertSep();
             menuItems.push({
                 iconCls: 'geor-btn-query',

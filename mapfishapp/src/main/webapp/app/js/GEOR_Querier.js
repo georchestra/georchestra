@@ -177,8 +177,8 @@ GEOR.Querier = Ext.extend(Ext.Window, {
             cookieProvider: this.cookieProvider,
             vectorLayer: this.layer
         });
-
         this.items = [this.filterbuilder];
+
         this.buttons = [{
             text: OpenLayers.i18n("Close"),
             handler: this.close,

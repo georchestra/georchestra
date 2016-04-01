@@ -43,7 +43,7 @@ GEOR.ls = (function() {
 
                         alert('localStorage quota exceeded !');
                     } else {
-                        alert('localStorage failed to store value.');
+                        alert('localStorage failed to store value ('+e.name+')');
                     }
                 }
             }
