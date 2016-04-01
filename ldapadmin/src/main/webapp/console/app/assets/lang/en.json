@@ -64,6 +64,7 @@
   "analytics.requests"  : "Number of requests",
   "analytics.layers"    : "Most viewed layers",
   "analytics.errorload" : "Error loading data",
+  "analytics.nodata"    : "No data for this period",
 
   "date.day"            : "Today",
   "date.week"           : "Last week",

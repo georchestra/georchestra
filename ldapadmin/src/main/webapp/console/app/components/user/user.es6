@@ -72,7 +72,7 @@ class UserController {
     this.config = {
       layers   : [ 'layer', 'count' ],
       requests : [ 'date', 'count' ]
-    };
+    }
     this.loadAnalyticsData()
 
   }
@@ -87,9 +87,9 @@ class UserController {
       endDate   : this.date.end
     }
     this.requests   = Analytics.get(options, () => {}, error)
-    options.service    = 'layersUsage'
-    options.limit      = 10
-    this.layers = Analytics.get(options, () => {}, error)
+    options.service = 'layersUsage'
+    options.limit   = 10
+    this.layers     = Analytics.get(options, () => {}, error)
   }
 
   loadLogs($scope) {
