@@ -63,6 +63,10 @@ GEOR.Querier = Ext.extend(Ext.Window, {
      */
     filterbuilder: null,
 
+    /**
+     * Property: pseudoRecord
+     * {Object} Object with typeName & owsURL properties
+     */
     pseudoRecord: null,
 
     /**
@@ -73,7 +77,7 @@ GEOR.Querier = Ext.extend(Ext.Window, {
 
     /**
      * Property: record
-     * {Ext.data.Record} the WMS or WFS layer record
+     * {Ext.data.Record} The WMS or WFS layer record
      */
     record: null,
 
@@ -94,7 +98,7 @@ GEOR.Querier = Ext.extend(Ext.Window, {
      * {GeoExt.data.AttributeStore} 
      */
     attributeStore: null,
-    
+
     /**
      * Property: layerFields
      * {Array} an array of fields for the current layer
