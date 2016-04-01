@@ -6,6 +6,7 @@ class LogsController {
 
   constructor($injector) {
 
+    this.$injector = $injector
     this.itemsPerPage = 5
 
     let msg   = 'Error while loading data'
@@ -19,9 +20,20 @@ class LogsController {
     }, $injector.get('Flash').create.bind(this, 'error', msg, ''))
 
     this.date = {
-      start: $injector.get('Util').getDefaultDate()
+      start: this.$injector.get('Util').getDefaultDate()
     }
 
+  }
+
+  isFiltered() {
+    return this.admin || this.type ||
+      this.date.start != this.$injector.get('Util').getDefaultDate()
+  }
+
+  reset() {
+    this.admin      = undefined
+    this.type       = undefined
+    this.date.start = this.$injector.get('Util').getDefaultDate()
   }
 
 }

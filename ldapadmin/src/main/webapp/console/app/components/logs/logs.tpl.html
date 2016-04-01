@@ -1,5 +1,10 @@
 <section class="logs">
 
+  <button ng-show="logs.isFiltered()" class="btn btn-default pull-right" ng-click="logs.reset()">
+    <i class="glyphicon glyphicon-repeat"></i>
+    Reset filters
+  </button>
+
   <h4 translate>logs.title</h4>
 
   <hr>
@@ -31,7 +36,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr dir-paginate="log in logs.logs.logs | logs: logs.type:logs.sender:logs.date | orderBy: '-date' | itemsPerPage: logs.itemsPerPage">
+      <tr dir-paginate="log in logs.logs.logs | logs: logs.type:logs.admin:logs.date | orderBy: '-date' | itemsPerPage: logs.itemsPerPage">
         <td>{{::log.date | date: 'mediumDate'}}
         <td>{{::log.admin}}
         <td>{{::log.target}}
