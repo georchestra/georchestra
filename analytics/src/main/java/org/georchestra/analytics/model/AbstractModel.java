@@ -25,7 +25,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
 
 import javax.sql.DataSource;
 
@@ -121,15 +121,14 @@ public class AbstractModel {
 				st.setString(curParam++, "2032-01-01 00:00");
 			}
 
-			long mstime = System.currentTimeMillis();
+			//long mstime = System.currentTimeMillis();
 			String finalQuery = st.toString();
 			rs = con.createStatement().executeQuery(finalQuery);
 			//Logger.getLogger("stat").warning("Count duration : " + (System.currentTimeMillis() - mstime) + "ms : " + finalQuery);
 
-		    if(rs.next()) {
+		    if(rs.next())
 		    	count = rs.getInt(1);
-				int i = 0;
-		    }
+			
 		} catch(SQLException e) {
 			throw e;
 		} finally {
@@ -158,9 +157,8 @@ public class AbstractModel {
 
 		// The current block code corresponds to the deprecated
 		// addFilters() method
-		String q = new String(query);
 		List<String> extraFilters = new ArrayList<String>();
-
+		String q = query;
 		if ((filter != null) && (! "".equals(filter))) {
 
 	        JSONArray arr = new JSONArray(filter);
@@ -180,7 +178,7 @@ public class AbstractModel {
 	        sb.append(" ");
 
 	        // Case-sensivity of the where
-	        q = q.replace("WHERE", sb.toString());
+	        q = query.replace("WHERE", sb.toString());
 		}
         // end block
 
@@ -190,7 +188,7 @@ public class AbstractModel {
 
 			int count = getCount(con, q, month, year, sort, extraFilters);
 			st = prepareStatement(con, q, month, year, start, limit, sort, extraFilters);
-			long mstime = System.currentTimeMillis();
+			//long mstime = System.currentTimeMillis();
 			String finalQuery = st.toString();
 			rs = con.createStatement().executeQuery(finalQuery);
 			//Logger.getLogger("stat").warning("Data duration : " + (System.currentTimeMillis() - mstime) + "ms : " + finalQuery);
