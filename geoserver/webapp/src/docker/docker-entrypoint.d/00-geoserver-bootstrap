@@ -5,7 +5,7 @@ then
     echo 'Datadir already initialized'
 else
     echo 'Initializing datadir from georchestra/geoserver_minimal_datadir'
-    cp -Rax /tmp/geoserver_minimal_datadir/* /var/local/geoserver
-    cp -Rax /tmp/geoserver_minimal_datadir/.git /var/local/geoserver
-    cp -Rax /tmp/geoserver_minimal_datadir/.gitignore /var/local/geoserver
+    cp -Rax /var/local/geoserver.orig/* /var/local/geoserver
+    cp -Rax /var/local/geoserver.orig/.git /var/local/geoserver
+    cp -Rax /var/local/geoserver.orig/.gitignore /var/local/geoserver
 fi
