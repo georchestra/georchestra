@@ -1,0 +1,20 @@
+[
+    {
+        "id": "atlas_0",
+        "name": "Atlas",
+        "enabled": true,
+        "options": {},
+        "title": {
+            "fr": "Atlas",
+            "en": "Atlas",
+            "es": "atlas",
+            "de": "Atlas"
+        },
+        "description": {
+            "fr": "Génération d'un atlas constitué de plusieurs pages PDF",
+            "en": "Create an altas with several PDF pages",
+            "es": "Generar atlas consta de varias páginas PDF",
+            "de": "Einen Atlas generieren besteht aus mehreren Seiten"
+        }
+    }
+]

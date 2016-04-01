@@ -1,0 +1,23 @@
+{
+    "js": [
+        "js/main.js"
+    ],
+    "css": [
+        "css/main.css"
+    ],
+    "i18n": {
+        "en": {
+            "atlas_failed": "Atlas generation failed"
+        },
+        "es": {
+            "atlas_failed": "La generación de los atlas falló"
+        },
+        "fr": {
+            "atlas_failed": "La génération de l'atlas a échoué"
+        },
+        "de": {
+            "atlas_failed": "Die Erzeugung des Atlas fehlgeschlagen"
+        }
+    }
+}
+
