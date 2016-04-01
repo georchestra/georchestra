@@ -46,7 +46,7 @@
  * @include GEOR_util.js
  */
 
-/* globals Ext, GeoExt, OpenLayers, GEOR */
+/* globals Ext, GeoExt, OpenLayers, GEOR, Styler */
 
 Ext.namespace("GEOR");
 
@@ -102,8 +102,7 @@ GEOR.Querier = Ext.extend(Ext.Window, {
             type = r.get("type"),
             isWFS = type === "WFS",
             layer = r.get("layer"), 
-            name = r.get("title") || layer.name || "",
-            geometryName = "";
+            name = r.get("title") || layer.name || "";
 
         this.title = OpenLayers.i18n("Request on NAME", {
             "NAME": name
@@ -242,7 +241,7 @@ GEOR.Querier = Ext.extend(Ext.Window, {
                     return false;
                 }
             } else if (!(f.value && f.type && 
-                (f.property || f.CLASS_NAME == "OpenLayers.Filter.Spatial"))) {
+                (f.property || f.CLASS_NAME === "OpenLayers.Filter.Spatial"))) {
                 GEOR.util.infoDialog({
                     msg: this.tr("Fields of filters with a red mark are mandatory")
                 });
