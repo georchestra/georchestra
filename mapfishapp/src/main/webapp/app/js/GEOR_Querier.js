@@ -46,7 +46,7 @@
  * @include GEOR_util.js
  */
 
-/* globals Ext, GeoExt, OpenLayers, GEOR, Styler */
+/* globals Ext, OpenLayers, GEOR, Styler */
 
 Ext.namespace("GEOR");
 
