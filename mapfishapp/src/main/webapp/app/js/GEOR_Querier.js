@@ -64,18 +64,6 @@ GEOR.Querier = Ext.extend(Ext.Window, {
     filterbuilder: null,
 
     /**
-     * Property: pseudoRecord
-     * {Object} Object with typeName & owsURL properties
-     */
-    pseudoRecord: null,
-
-    /**
-     * Property: geometryName
-     * {String} The geometry column name
-     */
-    geometryName: null,
-
-    /**
      * Property: record
      * {Ext.data.Record} The WMS or WFS layer record
      */
@@ -98,13 +86,12 @@ GEOR.Querier = Ext.extend(Ext.Window, {
      * {GeoExt.data.AttributeStore} 
      */
     attributeStore: null,
-
+ 
     /**
-     * Property: layerFields
-     * {Array} an array of fields for the current layer
-     * It is extracted from the WFS DescribeFeatureType operation
-     */  
-    layerFields: null,
+     * Property: _geometryName
+     * {String} The layer geometry name, obtained by DescribeFeatureType
+     */
+    _geometryName: null,
 
     /*
      * Method: initComponent.
@@ -115,13 +102,14 @@ GEOR.Querier = Ext.extend(Ext.Window, {
             type = r.get("type"),
             isWFS = type === "WFS",
             layer = r.get("layer"), 
-            name = r.get("title") || layer.name || "";
+            name = r.get("title") || layer.name || "",
+            geometryName = "";
 
         this.title = OpenLayers.i18n("Request on NAME", {
             "NAME": name
         });
 
-        this.pseudoRecord = {
+        var pseudoRecord = {
             typeName: isWFS ? 
                 r.get("WFS_typeName") : r.get("name"),
             owsURL: isWFS ? 
@@ -130,17 +118,21 @@ GEOR.Querier = Ext.extend(Ext.Window, {
 
         GEOR.waiter.show();
         // get layer model through WFS DescribeFeatureType:
-        this.attributeStore = GEOR.ows.WFSDescribeFeatureType(this.pseudoRecord, {
+        this.attributeStore = GEOR.ows.WFSDescribeFeatureType(pseudoRecord, {
             extractFeatureNS: true,
             success: function() {
-                // we list all fields, including the geometry
-                this.layerFields = this.attributeStore.collect("name");
                 // we get the geometry column name, and remove the corresponding record from store
                 var idx = this.attributeStore.find("type", GEOR.ows.matchGeomProperty);
                 if (idx > -1) {
                     // we have a geometry
-                    var r = this.attributeStore.getAt(idx);
-                    this.geometryName = r.get("name");
+                    var r = this.attributeStore.getAt(idx),
+                        geometryName = r.get("name");
+                    // create the protocol:
+                    this.protocol = GEOR.ows.WFSProtocol(pseudoRecord, this.map, {
+                        geometryName: geometryName
+                    });
+                    this._geometryName = geometryName;
+                    // remove geometry from attribute store:
                     this.attributeStore.remove(r);
                 } else {
                     GEOR.util.infoDialog({
@@ -155,6 +147,7 @@ GEOR.Querier = Ext.extend(Ext.Window, {
             },
             scope: this
         });
+
 
         this.layer = new OpenLayers.Layer.Vector("__georchestra_filterbuilder", {
             displayInLayerSwitcher: false,
@@ -274,14 +267,12 @@ GEOR.Querier = Ext.extend(Ext.Window, {
 
         // we need to pass the geometry name at protocol creation, 
         // so that the format has the correct geometryName too.
-        GEOR.ows.WFSProtocol(this.pseudoRecord, this.map, {
-                geometryName: this.geometryName
-        }).read({
+        this.protocol.read({
             maxFeatures: GEOR.config.MAX_FEATURES,
             // some mapserver versions require that we list all fields to return 
             // (as seen with 5.6.1):
             // see http://applis-bretagne.fr/redmine/issues/1996
-            propertyNames: this.layerFields.concat(this.geometryName) || [],
+            propertyNames: this.attributeStore.collect("name").concat(this._geometryName),
             filter: filter,
             callback: function(response) {
                 // Houston, we've got a pb ...
