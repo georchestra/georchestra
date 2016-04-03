@@ -72,7 +72,7 @@ check process tomcat-georchestra with pidfile /var/run/tomcat-georchestra.pid
     if cpu usage > 99% for 10 cycles then restart
 
     # restart if csw getrecords fails
-    if failed (url http://127.0.0.1:8280/geonetwork/srv/eng/csw?service=CSW&version=2.0.2&request=GetRecords&constraintlanguage=CQL_TEXT
+    if failed (url http://127.0.0.1:8280/geonetwork/srv/eng/csw?service=CSW&version=2.0.2&request=GetRecords&constraintlanguage=CQL_TEXT&typeNames=csw:Record
         and content = "SearchResults")
         for 3 cycles
     then restart
