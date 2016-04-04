@@ -1,1 +1,1 @@
-../node_modules/angular-chosen/dist/chosen.js
+../node_modules/angular-chosen-localytics/dist/angular-chosen.js
