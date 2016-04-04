@@ -176,7 +176,7 @@ GEOR.Querier = Ext.extend(Ext.Window, {
             deactivable: true,
             autoScroll: true,
             allowSpatial: true,
-            bufferSupport: true,
+            bufferService: GEOR.config.PATHNAME + "/ws/buffer/",
             stateProvider: Ext.state.Manager.getProvider(),
             vectorLayer: this.layer
         });
