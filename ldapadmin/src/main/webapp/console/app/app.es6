@@ -25,30 +25,27 @@ AppController.$inject = [ '$scope', '$router', '$location' ]
 angular.module('admin_console', [
   'ngResource',
   'ngNewRouter',
-  'angular-chosen',
+  'localytics.directives',
   'flash',
   'angularUtils.directives.dirPagination',
   'pascalprecht.translate'
 ])
-.controller('AppController', AppController)
+.controller('AppController'    , AppController)
 .constant('LDAP_BASE_URI'      , '/ldapadmin/private/')
 .constant('ANALYTICS_BASE_URI' , '/analytics/ws/')
-.config(['$componentLoaderProvider', ($componentLoaderProvider) => {
-  $componentLoaderProvider.setTemplateMapping(
-    (name) => 'components/' + name + '/' + name + '.tpl.html'
-  )
-}]).config(['$translateProvider', ($translateProvider) => {
-  $translateProvider
+.config([ '$componentLoaderProvider', '$translateProvider',
+  '$locationProvider', 'paginationTemplateProvider',
+  ($componentLoader, $translate, $location, paginationTemplate) => {
+
+  $componentLoader.setTemplateMapping(
+    (name) => 'components/' + name + '/' + name + '.tpl.html')
+  $translate
     .preferredLanguage('en')
     .useSanitizeValueStrategy('escape')
-    .useStaticFilesLoader({
-      prefix: 'lang/',
-      suffix: '.json'
-    })
-}]).config(['$locationProvider', ($locationProvider) => {
-  $locationProvider.html5Mode(false)
-}]).config(['paginationTemplateProvider', (paginationTemplateProvider) => {
-  paginationTemplateProvider.setPath('templates/dirPagination.tpl.html')
+    .useStaticFilesLoader({ prefix: 'lang/', suffix: '.json' })
+  $location.html5Mode(false)
+  paginationTemplate.setPath('templates/dirPagination.tpl.html')
+
 }])
 
 require('components/analytics/analytics')
