@@ -24,6 +24,10 @@
           <span translate>logs.sender</span>
         </th>
         <th class="header-filter">
+          <select class="pull-right form-control input-sm" ng-model="logs.target" chosen>
+            <option value="" translate>logs.alltarget</option>
+            <option ng-repeat="target in logs.targets" value="{{::target}}">{{::target}}</option>
+          </select>
           <span translate>logs.target</span>
         </th>
         <th class="header-filter">
@@ -36,7 +40,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr dir-paginate="log in logs.logs.logs | logs: logs.type:logs.admin:logs.date | orderBy: '-date' | itemsPerPage: logs.itemsPerPage">
+      <tr dir-paginate="log in logs.logs.logs | logs: logs.type:logs.admin:logs.target:logs.date | orderBy: '-date' | itemsPerPage: logs.itemsPerPage">
         <td>{{::log.date | date: 'mediumDate'}}
         <td>{{::log.admin}}
         <td>{{::log.target}}

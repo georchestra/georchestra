@@ -230,6 +230,12 @@ section {
   .reset {
     margin-top : -.75em;
   }
+  .chosen-container {
+    float: right
+  }
+  .chosen-drop {
+    width : 21em;
+  }
   table {
     th, td {
       width: 27%;
@@ -255,7 +261,7 @@ section {
       }
     }
   }
-  .header-filter span {
+  .header-filter > span {
     display     : inline-block;
     padding: .5em;
   }

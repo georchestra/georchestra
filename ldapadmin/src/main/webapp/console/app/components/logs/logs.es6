@@ -15,8 +15,10 @@ class LogsController {
       limit : 100000,
       page  : 0
     }, () => {
-      this.senders = [ ...new Set(this.logs.logs.map(l => l.admin)) ]
-      this.types   = [ ...new Set(this.logs.logs.map(l => l.type)) ]
+      let extract  = (key) => [ ...new Set(this.logs.logs.map(l => l[key])) ]
+      this.senders = extract('admin')
+      this.types   = extract('type')
+      this.targets = extract('target')
     }, $injector.get('Flash').create.bind(this, 'error', msg, ''))
 
     this.date = {
@@ -26,20 +28,21 @@ class LogsController {
   }
 
   isFiltered() {
-    return this.admin || this.type ||
+    return this.admin || this.type || this.target ||
       this.date.start != this.$injector.get('Util').getDefaultDate()
   }
 
   reset() {
     this.admin      = undefined
     this.type       = undefined
+    this.target     = undefined
     this.date.start = this.$injector.get('Util').getDefaultDate()
   }
 
 }
 
 let filter_logs = () => {
-  return (logs, type, admin, date) => {
+  return (logs, type, admin, target, date) => {
     if (!logs) { return }
 
     let filtered = logs.filter(log => {
@@ -48,6 +51,9 @@ let filter_logs = () => {
         valid = false
       }
       if (admin && log.admin != admin)   {
+        valid = false
+      }
+      if (target && log.target != target)   {
         valid = false
       }
       if (date && moment(log.date).isBefore(date.start))   {
