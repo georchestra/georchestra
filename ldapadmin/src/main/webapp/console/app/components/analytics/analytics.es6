@@ -27,9 +27,9 @@ class AnalyticsController {
   }
 
   load(group) {
-    let Flash      = this.$injector.get('Flash')
-    let Analytics  = this.$injector.get('Analytics')
-    let $translate = this.$injector.get('$translate')
+    let Flash     = this.$injector.get('Flash')
+    let Analytics = this.$injector.get('Analytics')
+    let msg       = 'Error loading data'
 
     let options = {
       service   : 'combinedRequests',
@@ -41,12 +41,12 @@ class AnalyticsController {
     }
 
     this.requests = Analytics.get(options, () => { },
-      Flash.create.bind(this, 'error', $translate('analytics.errorload'))
+      Flash.create.bind(this, 'error', msg)
     )
     options.service = 'layersUsage'
     options.limit   = 10
     this.layers     = Analytics.get(options, () => { },
-      Flash.create.bind(this, 'error', $translate('analytics.errorload'))
+      Flash.create.bind(this, 'error', msg)
     )
   }
 

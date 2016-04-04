@@ -57,8 +57,9 @@ section {
   }
 }
 
-.pagination li a {
-  cursor: pointer;
+.pagination > li > a {
+  cursor  : pointer;
+  padding : 6px 9px;
 }
 
 // ANALYTICS
@@ -68,6 +69,12 @@ section {
   }
   .stats-conf {
     margin: -.45em 0 0 1em;
+  }
+  .chosen-container {
+    float: right
+  }
+  .chosen-single {
+    margin-top : -.45em;
   }
 }
 
@@ -294,6 +301,20 @@ section {
     border-top: 1px solid #aaa;
     border-radius: 4px;
     top: calc(100% + 2px);
+  }
+  .chosen-single {
+    background : white;
+    padding    : 4px 0 4px 8px;
+    height     : 33px;
+    div b {
+      background-position: 0 6px;
+    }
+  }
+}
+.chosen-container-active.chosen-with-drop .chosen-single {
+  background : white;
+  div b {
+    background-position: -18px 6px;
   }
 }
 
