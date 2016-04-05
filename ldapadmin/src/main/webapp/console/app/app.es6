@@ -10,6 +10,7 @@ class AppController {
       { path: '/analytics/:group' , component: 'analytics' },
       { path: '/groups/:id/users' , component: 'users' },
       { path: '/users/:id/:tab'   , component: 'user' },
+      { path: '/users/add'        , component: 'newUser' },
       { path: '/logs'             , component: 'logs' },
     ])
 
@@ -53,6 +54,7 @@ require('components/analytics/analytics')
 require('components/home/home')
 require('components/groups/groups')
 require('components/logs/logs')
+require('components/newUser/newUser')
 require('components/stats/stats')
 require('components/user/user')
 require('components/users/users')
