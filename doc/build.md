@@ -79,14 +79,25 @@ data (using a batch insert for instance).
 
 ## Build the modules
 
-Building your SDI is just a command-line away:
+Building your SDI is just few command-lines away.
 ```
 cd ~/georchestra
 export MAVEN_OPTS="-XX:MaxPermSize=512M"
+```
+
+Build Geonetwork
+```
+cd geonetwork
+../mvn -DskipTests clean install
+cd ..
+```
+
+Build **all modules** (except GeoFence).
+```
 ./mvn -Dmaven.test.skip=true -Dserver=myprofile clean install
 ```
 
-Note: this will build **all modules** (except GeoFence).
+
 In case you only want to build one module or a collection, the syntax is a bit different:
 ```
 ./mvn -Dmaven.test.skip=true -Dserver=myprofile -P-all,module1,module2 clean install
