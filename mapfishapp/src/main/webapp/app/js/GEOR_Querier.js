@@ -167,11 +167,12 @@ GEOR.Querier = Ext.extend(Ext.Window, {
                 }
             },
             attributes: this.attributeStore,
-            toolbarType: "bbar",
+            toolbarType: "tbar",
             // maintaining a bbar,
             // since noConditionOnInit has been set to false
             map: this.map,
             allowGroups: true,
+            allowSaveFilter: true, // FIXME
             noConditionOnInit: false,
             deactivable: true,
             autoScroll: true,
