@@ -168,16 +168,14 @@ GEOR.Querier = Ext.extend(Ext.Window, {
             },
             attributes: this.attributeStore,
             toolbarType: "tbar",
-            // maintaining a bbar,
-            // since noConditionOnInit has been set to false
             map: this.map,
             allowGroups: true,
-            allowSaveFilter: true, // FIXME
             noConditionOnInit: false,
             deactivable: true,
             autoScroll: true,
             allowSpatial: true,
             bufferService: GEOR.config.PATHNAME + "/ws/buffer/",
+            saveFilterService: GEOR.config.PATHNAME + "/ws/fe/",
             stateProvider: Ext.state.Manager.getProvider(),
             vectorLayer: this.layer
         });
