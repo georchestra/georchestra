@@ -88,13 +88,13 @@ export MAVEN_OPTS="-XX:MaxPermSize=512M"
 Build Geonetwork
 ```
 cd geonetwork
-./mvn -DskipTests clean install
+../mvn -DskipTests clean install
 cd ..
 ```
 
 Build **all modules** (except GeoFence).
 ```
-./mvn -Dmaven.test.skip=true-Dserver=myprofile clean install
+./mvn -Dmaven.test.skip=true -Dserver=myprofile clean install
 ```
 
 
