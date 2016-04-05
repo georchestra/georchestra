@@ -22,6 +22,7 @@ module.exports = config:
           'vendor/angular-translate-loader-static-files.js',
           'vendor/dirPagination.js',
           'vendor/chartist.js',
+          'vendor/inline.js',
           'vendor/moment.min.js'
         ]
     stylesheets:

@@ -25,6 +25,7 @@ AppController.$inject = [ '$scope', '$router', '$location' ]
 angular.module('admin_console', [
   'ngResource',
   'ngNewRouter',
+  'inline',
   'localytics.directives',
   'flash',
   'angularUtils.directives.dirPagination',
