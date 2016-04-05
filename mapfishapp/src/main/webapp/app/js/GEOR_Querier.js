@@ -30,6 +30,7 @@
  * @requires OpenLayers/Filter/Spatial.js
  * @include OpenLayers/Filter/Logical.js
  * @include OpenLayers/Format/Filter.js
+ * @include OpenLayers/Format/Filter/v2_0_0.js
  * @include OpenLayers/Format/XML.js
  // see https://github.com/georchestra/georchestra/issues/482 :
  * @include OpenLayers/Format/WKT.js
