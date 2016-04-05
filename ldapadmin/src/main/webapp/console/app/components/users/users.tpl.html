@@ -21,7 +21,7 @@
       </thead>
 
       <tbody>
-        <tr dir-paginate="user in users.users | filter:users.q | itemsPerPage: 2">
+        <tr dir-paginate="user in users.users | filter:users.q | itemsPerPage: 5">
           <td>
             <a ng-link="user({id: user.uid, tab: 'infos'})">{{::user.sn}} {{::user.givenName}}</a>
           </td>
