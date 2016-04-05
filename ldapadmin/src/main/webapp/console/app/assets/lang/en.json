@@ -42,6 +42,7 @@
   "user.phone"          : "Phone",
   "user.fax"            : "Fax",
   "user.title"          : "Title",
+  "user.lastcontext"    : "Last context",
 
   "group.allusers"      : "All users",
   "group.system"        : "System groups",
