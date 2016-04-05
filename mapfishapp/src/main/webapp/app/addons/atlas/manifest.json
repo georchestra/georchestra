@@ -7,16 +7,20 @@
     ],
     "i18n": {
         "en": {
-            "atlas_failed": "Atlas generation failed"
+            "atlas_failed": "Atlas generation failed",
+            "atlas_selectlayer": "Select layer"
         },
         "es": {
-            "atlas_failed": "La generación de los atlas falló"
+            "atlas_failed": "La generación de los atlas falló",
+            "atlas_selectlayer": "Seleccionar capa"
         },
         "fr": {
-            "atlas_failed": "La génération de l'atlas a échoué"
+            "atlas_failed": "La génération de l'atlas a échoué",
+            "atlas_selectlayer": "Sélectionner une couche"
         },
         "de": {
-            "atlas_failed": "Die Erzeugung des Atlas fehlgeschlagen"
+            "atlas_failed": "Die Erzeugung des Atlas fehlgeschlagen",
+            "atlas_selectlayer": "wählen Sie eine Ebene"
         }
     }
 }
