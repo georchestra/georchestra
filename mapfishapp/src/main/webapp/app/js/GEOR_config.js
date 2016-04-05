@@ -48,20 +48,16 @@ GEOR.config = (function() {
         HEADER_HEIGHT: getCustomParameter("HEADER_HEIGHT", 90),
 
         /**
-         * Method: DEFAULT_WMC
-         * runtime method to get the current default WMC
+         * Constant: DEFAULT_WMC
+         * The relative path to the default context.
+         *
+         * Must be one of those, either copied to the datadir
+         * or contained in the webapp.
+         *
+         * Defaults to the first one got by mapfishapp's ContextController.java,
+         * probably something like "context/default.wmc"
          */
-        DEFAULT_WMC: function() {
-            if (GEOR.config.CONTEXTS &&
-                GEOR.config.CONTEXTS[0] &&
-                GEOR.config.CONTEXTS[0]["wmc"]) {
-                return GEOR.config.CONTEXTS[0]["wmc"];
-            }
-            alert("Administrator: "+
-                "GEOR.config.CONTEXTS is not configured as expected !");
-            // should not happen:
-            return "default.wmc";
-        },
+        DEFAULT_WMC: getCustomParameter("DEFAULT_WMC", GEOR.config.CONTEXTS[0]["wmc"]),
 
         /**
          * Constant: ANONYMOUS

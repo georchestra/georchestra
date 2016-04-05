@@ -451,7 +451,7 @@ GEOR.mapinit = (function() {
             // and finally we're running our global success callback:
             cb.call();
         } else {
-            updateStoreFromWMC(GEOR.config.DEFAULT_WMC());
+            updateStoreFromWMC(GEOR.config.DEFAULT_WMC);
         }
     };
 
@@ -589,7 +589,7 @@ GEOR.mapinit = (function() {
                 // this is so that the map object and fake base layer are
                 // properly configured when adding the other layers
                 // to the map
-                updateStoreFromWMC(GEOR.config.DEFAULT_WMC(), {
+                updateStoreFromWMC(GEOR.config.DEFAULT_WMC, {
                     success: function() {
                         loadLayers(initState);
                     }
