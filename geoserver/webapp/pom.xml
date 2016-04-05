@@ -1046,11 +1046,6 @@
                   <include>geoserver.war</include>
                 </resource>
                 <resource>
-                  <targetPath>/root</targetPath>
-                  <directory>${project.basedir}/src/docker</directory>
-                  <include>start.sh</include>
-                </resource>
-                <resource>
                   <targetPath>/etc/georchestra</targetPath>
                   <directory>${project.build.directory}/datadir</directory>
                   <include>geoserver/**</include>
@@ -1074,7 +1069,6 @@
         </plugins>
       </build>
     </profile>
-
     <profile>
       <id>geofence</id>
       <properties>
