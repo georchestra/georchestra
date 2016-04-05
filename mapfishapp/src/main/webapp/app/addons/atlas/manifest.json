@@ -8,19 +8,22 @@
     "i18n": {
         "en": {
             "atlas_failed": "Atlas generation failed",
-            "atlas_selectlayer": "Select layer"
+            "atlas_atlaslayer": "Atlas features layer",
+            "atlas_baselayer": "Altas basemap"
         },
         "es": {
             "atlas_failed": "La generación de los atlas falló",
-            "atlas_selectlayer": "Seleccionar capa"
+            "atlas_atlaslayer": "",
+            "atlas_baselayer": ""
         },
         "fr": {
             "atlas_failed": "La génération de l'atlas a échoué",
-            "atlas_selectlayer": "Sélectionner une couche"
+            "atlas_atlaslayer": "Couche d'entités de l'atlas",
+            "atlas_basemap": "Couche de fond"
         },
         "de": {
             "atlas_failed": "Die Erzeugung des Atlas fehlgeschlagen",
-            "atlas_selectlayer": "wählen Sie eine Ebene"
+            "atlas_selectlayer": ""
         }
     }
 }

@@ -54,11 +54,22 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                 items: [
                     {
                         xtype: "combo",
-                        name: "layer",
-                        fieldLabel: this.tr("atlas_selectlayer"),
+                        name: "atlasLayer",
+                        fieldLabel: this.tr("atlas_atlaslayer"),
                         mode: "local",
                         triggerAction: "all",
                         store: atlasLayersStore,
+                        valueField: "name",
+                        displayField: "title",
+                        allowBlank: false
+                    },
+                    {
+                        xtype: "combo",
+                        name: "baseLayer",
+                        fieldLabel: this.tr("atlas_basemap"),
+                        mode: "local",
+                        triggerAction: "all",
+                        store: this.mapPanel.layers,
                         valueField: "name",
                         displayField: "title",
                         allowBlank: false
@@ -108,6 +119,40 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                         displayField: "layoutDescription"
                     },
                     {
+                        xtype: "radiogroup",
+                        fieldLabel: "Scale determination",
+                        name: "scale_method_group",
+                        items: [
+                            {
+                                xtype: "radio",
+                                boxLabel: "Bounding box",
+                                name: "scale_method",
+                                inputValue: "bbox"
+                            },
+                            {
+                                xtype: "radio",
+                                boxLabel: "Manual scale",
+                                name: "scale_method",
+                                inputValue: "manual",
+                                checked: true
+                            }
+                        ]
+                    },
+                    {
+                        //TODO tr
+                        xtype: "textfield",
+                        name: "scale_manual",
+                        fieldLabel: "Scale",
+                        value: this.map.getScale()
+                    },
+                    {
+                        //TODO tr
+                        xtype: "textfield",
+                        name: "scale_padding",
+                        fieldLabel: "Bounding box padding (%)",
+                        value: 15
+                    },
+                    {
                         xtype: "hidden",
                         name: "dpi",
                         //TODO improve management of dpi
@@ -127,10 +172,24 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                         text: "Submit",
                         handler: function(b) {
                             var formValues, layersRelatedValues,
+                                scaleParameters = {},
                                 json = new OpenLayers.Format.JSON();
                             if (b.findParentByType("form").getForm().isValid()) {
                                 formValues = b.findParentByType("form").getForm().getFieldValues();
-                                layersRelatedValues = this.createPagesSpecs(formValues["layer"]);
+                                scaleParameters = {
+                                    scale_manual: formValues["scale_manual"],
+                                    scale_method: formValues["scale_method_group"].inputValue,
+                                    scale_padding: formValues["scale_padding"]
+                                };
+                                delete formValues.scale_manual;
+                                delete formValues.scale_method_group;
+                                delete formValues.scale_padding;
+
+                                layersRelatedValues = this.createPagesSpecs(formValues["atlasLayer"],
+                                    formValues["baseLayer"], scaleParameters);
+                                delete formValues.atlasLayer;
+                                delete formValues.baseLayer;
+
                                 formValues.featureLayer = layersRelatedValues.featureLayer;
                                 formValues.baseLayers = layersRelatedValues.baseLayers;
                                 //We do not use form.submit to keep json object
@@ -149,9 +208,11 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                     }
                 ],
                 scope: this
-            }],
+            }
+            ],
             scope: this
-        });
+        })
+        ;
         this.window.show();
     },
 
@@ -159,13 +220,13 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
      * Method createPagesSpecs
      * TODO Check MFP v3 layers/type specification (order is important)
      */
-    createPagesSpecs: function(layerName) {
+    createPagesSpecs: function(atlasLayer, baseLayer, scaleParameters) {
         var layer = null;
         var extraConfig = {};
         var baseLayers = [];
         this.mapPanel.layers.each(function(layerStore) {
             layer = layerStore.get("layer");
-            if (layerStore.get("name") == layerName) {
+            if (layerStore.get("name") == atlasLayer) {
                 extraConfig.featureLayer = {};
                 extraConfig.featureLayer.type = layerStore.get("type");
                 extraConfig.featureLayer.baseURL = layer.url;
@@ -177,7 +238,8 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                     };
                 }
 
-            } else if (layer.isBaseLayer) {
+            }
+            if (layerStore.get("name") == baseLayer) {
                 var baseLayersItem = {},
                     extension;
                 baseLayersItem.type = layerStore.get("type");
@@ -211,7 +273,8 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
         extraConfig.baseLayers = baseLayers;
 
         return extraConfig;
-    },
+    }
+    ,
 
     /**
      * Method: tr
@@ -219,7 +282,8 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
      */
     tr: function(a) {
         return OpenLayers.i18n(a);
-    },
+    }
+    ,
 
     /**
      * Method: destroy
@@ -228,4 +292,5 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
     destroy: function() {
         GEOR.Addons.Base.prototype.destroy.call(this);
     }
-});
+})
+;
