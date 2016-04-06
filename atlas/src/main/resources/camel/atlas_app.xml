@@ -29,9 +29,9 @@
 
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
         <property name="driverClass" value="org.postgresql.Driver"/>
-        <property name="jdbcUrl" value="${psql.url}"/>
-        <property name="user" value="${psql.user}"/>
-        <property name="password" value="${psql.pass}"/>
+        <property name="jdbcUrl" value="jdbc:postgresql://database/georchestra"/>
+        <property name="user" value="georchestra"/>
+        <property name="password" value="georchestra"/>
         <property name="maxPoolSize" value="5"/>
         <property name="minPoolSize" value="1"/>
     </bean>
