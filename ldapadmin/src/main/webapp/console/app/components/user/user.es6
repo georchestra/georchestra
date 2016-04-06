@@ -172,6 +172,24 @@ class UserController {
         this.flash.create('error', 'Error associating to groups')
       })
     }
+    
+    this.contexts =[
+                    {
+                        "keywords": ["relief"],
+                        "label": "geOrchestra World",
+                        "thumbnail": "context/image/relief.png",
+                        "tip": "This map displays geOrchestra instances on top of a world DEM baselayer",
+                        "wmc": "context/relief.wmc"
+                    },
+                    {
+                        "keywords": ["default"],
+                        "label": "OSM Map over Western Europa",
+                        "thumbnail": "context/image/default.png",
+                        "tip": "Uses a layer made from regularly updated OpenStreetMap data, rendered with a GoogleMaps-inspired style.",
+                        "wmc": "context/default.wmc"
+                    }
+                 ];
+                      
 
     $scope.$watch(() => this.user.groups, saveGroups.bind(this))
 
@@ -197,4 +215,6 @@ class UserController {
 UserController.prototype.activate.$inject = [ '$scope' ]
 
 angular.module('admin_console').controller('UserController', UserController)
-
+.filter('encodeURIComponent', () => {
+  return (input) => window.encodeURIComponent(input)
+});
