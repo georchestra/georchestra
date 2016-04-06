@@ -48,22 +48,6 @@ GEOR.config = (function() {
         HEADER_HEIGHT: getCustomParameter("HEADER_HEIGHT", 90),
 
         /**
-         * Method: DEFAULT_WMC
-         * runtime method to get the current default WMC
-         */
-        DEFAULT_WMC: function() {
-            if (GEOR.config.CONTEXTS &&
-                GEOR.config.CONTEXTS[0] &&
-                GEOR.config.CONTEXTS[0]["wmc"]) {
-                return GEOR.config.CONTEXTS[0]["wmc"];
-            }
-            alert("Administrator: "+
-                "GEOR.config.CONTEXTS is not configured as expected !");
-            // should not happen:
-            return "default.wmc";
-        },
-
-        /**
          * Constant: ANONYMOUS
          * Whether a user is logged in or not: can be overriden
          * dynamically in index.jsp
