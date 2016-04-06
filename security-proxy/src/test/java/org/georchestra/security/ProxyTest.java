@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -21,6 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.google.common.collect.Maps;
 
@@ -61,6 +63,8 @@ public class ProxyTest {
         targets.put("geonetwork", "http://www.google.com/geonetwork-private");
         targets.put("extractorapp", "http://localhost/extractorapp-private");
         proxy.setTargets(targets);
+
+        proxy.setDefaultTarget("/mapfishapp/");
 
     }
 
@@ -112,6 +116,15 @@ public class ProxyTest {
         request = new MockHttpServletRequest("GET", "/unmapped/x");
         proxy.handleGETRequest(request, httpResponse);
         assertFalse(executed);
+    }
+
+    @Test
+    public void testDefaultTarget() throws Exception {
+        request = new MockHttpServletRequest("GET", "http://localhost:8080/");
+        proxy.handleRequest(request, httpResponse);
+
+        assertTrue(httpResponse.getRedirectedUrl().equals("/mapfishapp/"));
+
     }
 
     @Test
