@@ -524,6 +524,16 @@ GEOR.mapinit = (function() {
             layerStore = ls;
             tr = OpenLayers.i18n;
             cb = callback || OpenLayers.Util.Void;
+
+            // the default WMC is either the one provided by the admin in GEOR.custom,
+            // or the first one publicized by mapfishapp's ContextController.java 
+            // in GEOR.config.CONTEXTS
+            GEOR.config.DEFAULT_WMC = GEOR.custom.DEFAULT_WMC ||
+                // first context publicized by ContextController:
+                (GEOR.config.CONTEXTS[0] && GEOR.config.CONTEXTS[0]["wmc"]) ||
+                // this last one should not happen
+                "context/default.wmc";
+
             var url;
             // POSTing a content to the app (which results in GEOR.initstate
             // being set) has priority over everything else:
