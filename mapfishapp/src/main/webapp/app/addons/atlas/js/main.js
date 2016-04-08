@@ -7,6 +7,8 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
     window: null,
     layer: null,
     title: null,
+    atlasConfig: {},
+
 
     /**
      * Method: init
@@ -29,7 +31,27 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             }
         });
         this.title = this.getText(record);
-    },
+
+        this.events = new Ext.util.Observable();
+        this.events.addEvents(
+            /**
+             * Event: featurelayerready"
+             * Fires the layer and pages object are ready
+             */
+            "featurelayerready"
+        );
+        this.events.on({
+            "featurelayerready": function(atlasConfig) {
+                var json;
+                json = new OpenLayers.Format.JSON();
+                OpenLayers.Request.POST({
+                    url: "http://localhost:8180/apps/atlas/login",
+                    data: json.write(atlasConfig)
+                });
+            }
+        });
+    }
+    ,
 
     /**
      * Method menuAction
@@ -40,7 +62,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             fields: this.mapPanel.layers.fields.items
         });
         this.mapPanel.layers.each(function(layerRecord) {
-            if (layerRecord.get("queryable")) {
+            if (layerRecord.get("WFS_typeName") || layerRecord.get("WFS_URL")) {
                 atlasLayersStore.add(layerRecord);
             }
         });
@@ -56,20 +78,10 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                         xtype: "combo",
                         name: "atlasLayer",
                         fieldLabel: this.tr("atlas_atlaslayer"),
+                        value: atlasLayersStore.getAt(0) ? atlasLayersStore.getAt(0).get("name") : null,
                         mode: "local",
                         triggerAction: "all",
                         store: atlasLayersStore,
-                        valueField: "name",
-                        displayField: "title",
-                        allowBlank: false
-                    },
-                    {
-                        xtype: "combo",
-                        name: "baseLayer",
-                        fieldLabel: this.tr("atlas_basemap"),
-                        mode: "local",
-                        triggerAction: "all",
-                        store: this.mapPanel.layers,
                         valueField: "name",
                         displayField: "title",
                         allowBlank: false
@@ -159,10 +171,16 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                         value: "216"
                     },
                     {
-                        xtype: "hidden",
-                        name: "projection",
-                        value: this.map.projection
-
+                        //TODO tr
+                        xtype: "textfield",
+                        name: "email",
+                        fieldLabel: "Email"
+                    },
+                    {
+                        //TODO tr
+                        xtype: "checkbox",
+                        name: "displayLegend",
+                        fieldLabel: "Display legend"
                     }
 
                 ],
@@ -172,31 +190,38 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                         text: "Submit",
                         handler: function(b) {
                             var formValues, layersRelatedValues,
-                                scaleParameters = {},
-                                json = new OpenLayers.Format.JSON();
+                                scaleParameters = {};
                             if (b.findParentByType("form").getForm().isValid()) {
                                 formValues = b.findParentByType("form").getForm().getFieldValues();
+
+                                //copy some parameter
+                                this.atlasConfig.outputFormat = formValues.outputFormat;
+                                this.atlasConfig.layout = formValues.layout;
+                                this.atlasConfig.dpi = formValues.dpi;
+                                this.atlasConfig.projection = this.map.getProjection();
+                                this.atlasConfig.email = formValues.email;
+                                this.atlasConfig.displayLegend = formValues.displayLegend;
+
+
                                 scaleParameters = {
                                     scale_manual: formValues["scale_manual"],
                                     scale_method: formValues["scale_method_group"].inputValue,
                                     scale_padding: formValues["scale_padding"]
                                 };
-                                delete formValues.scale_manual;
-                                delete formValues.scale_method_group;
-                                delete formValues.scale_padding;
 
-                                layersRelatedValues = this.createPagesSpecs(formValues["atlasLayer"],
-                                    formValues["baseLayer"], scaleParameters);
-                                delete formValues.atlasLayer;
-                                delete formValues.baseLayer;
+                                this.atlasConfig.baseLayers = [
+                                    {
+                                        "type": "osm",
+                                        "baseURL": "http://otile1.mqcdn.com/tiles/1.0.0/map/",
+                                        "imageExtension": "png",
+                                        "opacity": 0.3
+                                    }
+                                ];
 
-                                formValues.featureLayer = layersRelatedValues.featureLayer;
-                                formValues.baseLayers = layersRelatedValues.baseLayers;
-                                //We do not use form.submit to keep json object
-                                OpenLayers.Request.POST({
-                                    url: GEOR.config.PATHNAME + "/ws/atlas",
-                                    data: json.write(formValues)
-                                });
+                                this.createFeatureLayerAndPagesSpecs(formValues["atlasLayer"], scaleParameters);
+
+                                //Form submit is trigger on "featurelayerready event
+
 
                             }
                         },
@@ -220,61 +245,64 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
      * Method createPagesSpecs
      * TODO Check MFP v3 layers/type specification (order is important)
      */
-    createPagesSpecs: function(atlasLayer, baseLayer, scaleParameters) {
-        var layer = null;
-        var extraConfig = {};
-        var baseLayers = [];
+    createFeatureLayerAndPagesSpecs: function(atlasLayer, scaleParameters) {
+        var layer, page, gml, wfsFeature,
+            pages = [];
+        gml = new OpenLayers.Format.GML();
+
         this.mapPanel.layers.each(function(layerStore) {
             layer = layerStore.get("layer");
+
             if (layerStore.get("name") == atlasLayer) {
-                extraConfig.featureLayer = {};
-                extraConfig.featureLayer.type = layerStore.get("type");
-                extraConfig.featureLayer.baseURL = layer.url;
-                extraConfig.featureLayer.layer = layer.params.LAYERS;
-                extraConfig.featureLayer.version = layer.params.VERSION;
+                this.atlasConfig.featureLayer = {};
+                this.atlasConfig.featureLayer.type = layerStore.get("type");
+                this.atlasConfig.featureLayer.baseURL = layer.url;
+                this.atlasConfig.featureLayer.layers = [layer.params.LAYERS];
+                this.atlasConfig.featureLayer.version = layer.params.VERSION;
                 if (layer.params.TRANSPARENT) {
-                    extraConfig.featureLayer.customParams = {
+                    this.atlasConfig.featureLayer.customParams = {
                         transparent: true
                     };
                 }
 
+                OpenLayers.Request.GET({
+                    url: layerStore.get("WFS_URL"),
+                    params: {
+                        service: "wfs",
+                        version: "1.1.0",
+                        request: "GetFeature",
+                        typeName: layerStore.get("WFS_typeName"),
+                        maxFeatures: 2
+                    },
+                    success: function(resp) {
+                        Ext.each(resp._object.responseXML.getElementsByTagName("FeatureCollection")[0].getElementsByTagName("featureMembers")[0].children, function(gmlFeature) {
+                            wfsFeature = gml.parseFeature(gmlFeature);
+
+                            page = {};
+                            page.center = [wfsFeature.geometry.getCentroid().x, wfsFeature.geometry.getCentroid().y];
+                            //TODO choose title
+                            page.title = "Title";
+                            //TODO
+                            page.subtitle = "Subtitle";
+                            //TODO improve scale
+                            page.scale = scaleParameters.scale_manual;
+                            //TODO
+                            page.filename = "filename.pdf"
+                            pages.splice(0, 0, page);
+                        });
+
+                        this.atlasConfig.pages = pages;
+                        this.events.fireEvent("featurelayerready", this.atlasConfig)
+                    },
+                    failure: function(resp) {
+                        //TODO improve msg
+                        alert(resp);
+                    },
+                    scope: this
+                });
             }
-            if (layerStore.get("name") == baseLayer) {
-                var baseLayersItem = {},
-                    extension;
-                baseLayersItem.type = layerStore.get("type");
-                baseLayersItem.baseURL = layer.url;
-                switch (layer.params.FORMAT) {
-                    case "image/png":
-                        extension = ".png";
-                        break;
-                    case "image/gif":
-                        extension = ".gif";
-                        break;
-                    case "image/jpeg":
-                        //could be .jpg
-                        extension = ".jpeg";
-                        break;
-                    case "image/tiff":
-                        //could be .tif
-                        extension = ".tiff";
-                        break;
-                    case "image/svg+xml":
-                        extension = ".svg";
-                        break;
-                }
-                baseLayersItem.imageExtension = extension;
-                baseLayersItem.opacity = layer.opacity;
-
-                baseLayers.splice(0, -1, baseLayersItem);
-            }
-        });
-
-        extraConfig.baseLayers = baseLayers;
-
-        return extraConfig;
-    }
-    ,
+        }, this);
+    },
 
     /**
      * Method: tr
