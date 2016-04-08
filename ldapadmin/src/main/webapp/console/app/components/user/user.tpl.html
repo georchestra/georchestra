@@ -23,7 +23,7 @@
 
 
       <div class="panel-body" ng-if="user.tab=='infos'" >
-        <div ng-inline="templates/userForm.tpl.html"></div>
+        <div ng-inline="templates/userForm.tpl.html" ng-init="model=user.user"></div>
 
 
         <hr>

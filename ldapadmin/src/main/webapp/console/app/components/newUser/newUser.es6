@@ -4,22 +4,22 @@ require('templates/userForm.tpl')
 
 class NewUserController {
 
-  static $inject = [ '$injector', 'User' ]
+  static $inject = [ '$injector', '$translate', 'User' ]
 
-  constructor($injector, User) {
+  constructor($injector, $translate, User) {
     this.$injector = $injector
-    this.flash = this.$injector.get('Flash')
 
-    this.error = $translate('user.error')
+    this.error   = $translate('user.error')
     this.success = $translate('user.created')
+    this.user    = new User({})
+    this.toto = { goujon: 'truite'}
   }
 
   save() {
-    let $translate = this.$injector.get('$translate')
-    this.user.$update(() => {
-        this.flash.create.bind(this, 'success', this.success)
-      },
-      this.flash.create.bind(this, 'error', this.error)
+    let flash = this.$injector.get('Flash')
+    this.user.$save(
+      flash.create.bind(this, 'success', this.success),
+      flash.create.bind(this, 'error', this.error)
     )
   }
 

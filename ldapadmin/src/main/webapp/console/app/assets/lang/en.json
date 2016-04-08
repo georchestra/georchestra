@@ -26,6 +26,8 @@
   "user.error"          : "Error while saving user",
   "user.save"           : "Save",
   "user.delete"         : "Delete user",
+  "user.new_user"       : "New user",
+  "user.discard"        : "Cancel",
 
   "group.allusers"      : "All users",
   "group.system"        : "System groups",

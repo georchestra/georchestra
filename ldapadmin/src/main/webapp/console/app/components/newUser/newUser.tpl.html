@@ -6,9 +6,15 @@
     <span translate>user.new_user</span>
   </h4>
 
-  <div class="panel panel-default">
-    <div class="panel-body" ng-inline="templates/userForm.tpl.html">
-    </div>
+  <hr>
+
+  <div class="panel-body" ng-if="newUser.user">
+    <hr>
+    <div ng-inline="templates/userForm.tpl.html" ng-init="model=newUser.user"></div>
+    <hr>
+    <button ng-click="newUser.save()" class="btn btn-primary pull-right" translate>user.save</button>
+    <a ng-link="users({id: 'all'})" class="btn btn-link pull-right" translate>user.discard</a>
   </div>
+
 
 </section>
