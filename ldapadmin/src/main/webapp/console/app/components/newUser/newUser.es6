@@ -1,25 +1,33 @@
 require('components/newUser/newUser.tpl')
 
 require('templates/userForm.tpl')
+require('services/translate')
 
 class NewUserController {
 
-  static $inject = [ '$injector', '$translate', 'User' ]
+  static $inject = [ '$injector', 'translate', 'User' ]
 
-  constructor($injector, $translate, User) {
+  constructor($injector, translate, User) {
     this.$injector = $injector
 
-    this.error   = $translate('user.error')
-    this.success = $translate('user.created')
-    this.user    = new User({})
-    this.toto = { goujon: 'truite'}
+    this.user = new User({})
+    this.i18n = {}
+    translate('user.created' , this.i18n)
+    translate('user.error'   , this.i18n)
   }
 
   save() {
-    let flash = this.$injector.get('Flash')
+    let flash   = this.$injector.get('Flash')
+    let $router = this.$injector.get('$router')
     this.user.$save(
-      flash.create.bind(this, 'success', this.success),
-      flash.create.bind(this, 'error', this.error)
+      () => {
+        flash.create('success', this.i18n.created)
+        $router.navigate($router.generate('user', {
+          id  : this.user.uid,
+          tab : 'infos'
+        }))
+      },
+      flash.create.bind(this, 'error', this.i18n.error)
     )
   }
 

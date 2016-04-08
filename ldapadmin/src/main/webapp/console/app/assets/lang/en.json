@@ -23,6 +23,7 @@
 
   "user.userlist"       : "All users",
   "user.updated"        : "User updated",
+  "user.created"        : "User created",
   "user.error"          : "Error while saving user",
   "user.save"           : "Save",
   "user.delete"         : "Delete user",

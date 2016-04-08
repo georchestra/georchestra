@@ -26,6 +26,13 @@ class UserController {
     });
     this.adminGroups = this.$injector.get('groupAdminList')()
     switch (this.tab) {
+      case 'infos':
+        let translate = this.$injector.get('translate');
+        this.messages = {}
+        translate('user.updated', this.messages)
+        translate('user.error', this.messages)
+
+        break;
       case 'groups':
         let notAdmin = [];
         this.groups = Group.query();
@@ -104,13 +111,12 @@ class UserController {
   }
 
   save() {
-    let $translate = this.$injector.get('$translate');
     let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
     this.user.$update(() => {
         $httpDefaultCache.removeAll();
-        this.flash.create.bind(this, 'success', $translate('user.updated'))
+        this.flash.create('success', this.messages.updated)
       },
-      this.flash.create.bind(this, 'error', $translate('user.error'))
+      this.flash.create.bind(this, 'error', this.messages.error)
     );
   }
 
