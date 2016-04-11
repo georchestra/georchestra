@@ -66,10 +66,11 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                 atlasLayersStore.add(layerRecord);
             }
         });
+
         this.window = new Ext.Window({
             title: this.title,
             width: 420,
-            height: 360,
+            height: 540,
             closable: true,
             items: [{
                 xtype: "form",
@@ -84,7 +85,17 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                         store: atlasLayersStore,
                         valueField: "name",
                         displayField: "title",
-                        allowBlank: false
+                        allowBlank: false,
+                        listeners: {
+                            select: {
+                                fn: function(combo, record) {
+                                    this.buildFieldsStore(record);
+                                },
+                                scope: this
+                            },
+                            scope: this
+                        },
+                        scope: this
                     },
                     {
                         xtype: "combo",
@@ -181,6 +192,25 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                         xtype: "checkbox",
                         name: "displayLegend",
                         fieldLabel: "Display legend"
+                    },
+                    {
+                        //TODO tr
+                        xtype: "combo",
+                        name: "pageTitle",
+                        fieldLabel: "Field for page title",
+                        mode: "local",
+                        store: {
+                            xtype: "arraystore",
+                            id: 0,
+                            fields: ["name", "type"],
+                            //TODO tr
+                            data: [
+                                ["default name", "default type"],
+                            ]
+                        },
+                        valueField: "name",
+                        displayField: "name",
+                        scope: this
                     }
 
                 ],
@@ -302,6 +332,51 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                 });
             }
         }, this);
+    },
+
+
+    /**
+     * Method: buildFieldsStore
+     * @param layerRecord
+     */
+    buildFieldsStore: function(layerRecord) {
+        //WIP
+        var fieldsRecord = Ext.data.Record.create([
+            {name: "name", mapping: "@name"},
+            {name: "type", mapping: "@type"}
+        ]);
+        var fieldsReader = new Ext.data.XmlReader({
+            //TODO check agains WFS
+            record: "complexType complexContent extension sequence element"
+
+        }, fieldsRecord);
+
+        Ext.Ajax.request({
+            url: layerRecord.get("WFS_URL"),
+            method: "GET",
+            params: {
+                request: "DescribeFeatureType",
+                version: "1.1.0",
+                service: "WFS",
+                typeName: layerRecord.get("WFS_typeName")
+            },
+            callback: function(opt, s, resp) {
+                var fieldsRecords = fieldsReader.read(resp._object);
+                var fieldsStore = new Ext.data.Store({reader: fieldsReader});
+                fieldsStore.loadData(resp._object.responseXML);
+                fieldsCombo = this.window.findBy(function(c) {
+                    return ((c.getXType() == "combo") && (c.name == "pageTitle"))
+                });
+                fieldsCombo = this.window.findBy(function(c) {
+                    return ((c.getXType() == "combo") && (c.name == "pageTitle"))
+                });
+                Ext.each(fieldsCombo, function(fieldCombo) {
+                    fieldCombo.store = fieldsStore;
+                });
+            },
+            scope: this
+        });
+
     },
 
     /**
