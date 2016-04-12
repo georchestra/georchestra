@@ -526,7 +526,7 @@ GEOR.Annotation = Ext.extend(Ext.util.Observable, {
             listFeatures.push(feature);
         }
         
-        featuresJSON = formatJSON.write(listFeatures);
+        var featuresJSON = formatJSON.write(listFeatures);
         
         var element = document.createElement('a');
         element.setAttribute('href', 'data:text/json;charset=utf-8,' + encodeURIComponent(featuresJSON));
