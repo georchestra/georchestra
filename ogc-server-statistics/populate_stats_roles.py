@@ -16,7 +16,7 @@
 # geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
 
 from ldap3 import Connection, SUBTREE
-from ldap3.core.exceptions import LDAPKeyError
+from ldap3.core.exceptions import LDAPException
 import re
 
 # Please configure following VARIABLE in order to match your local configuration
@@ -64,7 +64,7 @@ for entry in conn.entries:
             else:
                 usersGroups[user].append(entry.cn.value)
             #print("\tUser found : %s" % user)
-    except LDAPKeyError:
+    except LDAPException:
         continue
 
 # Listing groups *by users*

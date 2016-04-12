@@ -107,13 +107,9 @@ import com.google.common.io.Closer;
  * There are two primary ways that the paths can be encoded:
  * <ul>
  * <li>The full url to forward to is encoded in a parameter called "url"</li>
- * <li>The url is encoded as part of the path
- * <ul>
- * <li>The first way is to forward to the default target server. The fragment of
- * the path after the context will be appended to the defaultTarget</li>
- * <li>The second way is to define the targets. The segment after the context of
- * this service will be the key for looking up the target server and the rest of
- * the path will be appended to the target</li>
+ * <li>The url is encoded as part of the path. Then the target should be
+ * defined (either in the targets-mapping.properties file of the datadir or in
+ * the targets map property of the proxyservlet.xml file)</li>
  * </ul>
  * Examples:
  * <p>
@@ -428,6 +424,20 @@ public class Proxy {
         handlePathEncodedRequests(request, response, RequestType.PUT);
     }
 
+    /**
+     * Default redirection to defaultTarget. By default returns a 302 redirect to '/header/'. The
+     * parameter can be customized in the security-proxy.properties file.
+     *
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    @RequestMapping(value = "/", params = { "!url", "!login" })
+    public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.sendRedirect(defaultTarget);
+        return;
+    }
+
     @RequestMapping(params = { "!url", "!login" }, method = RequestMethod.TRACE)
     public void handleTRACERequest(HttpServletRequest request, HttpServletResponse response) {
         handlePathEncodedRequests(request, response, RequestType.TRACE);
@@ -543,12 +553,11 @@ public class Proxy {
         }
 
         if (segments.length == 0) {
-            return concat(defaultTarget, new StringBuilder(requestURI));
+            return null;
         }
         String target = targets.get(segments[0]);
         if (target == null) {
-            target = defaultTarget;
-            return concat(defaultTarget, new StringBuilder(requestURI));
+            return null;
         } else {
             StringBuilder builder = new StringBuilder("/");
             for (int i = 1; i < segments.length; i++) {
