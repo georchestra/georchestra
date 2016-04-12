@@ -360,9 +360,8 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
      * TODO Check MFP v3 layers/type specification (order is important)
      */
     createFeatureLayerAndPagesSpecs: function(atlasLayer, scaleParameters, titleSubtitleParameters) {
-        var layer, page, gml, wfsFeatures,
+        var layer, page, wfsFeatures,
             pages = [];
-        gml = new OpenLayers.Format.GML.v3();
 
         this.mapPanel.layers.each(function(layerStore) {
             layer = layerStore.get("layer");
@@ -379,17 +378,17 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                     };
                 }
 
-                OpenLayers.Request.GET({
-                    url: layerStore.get("WFS_URL"),
-                    params: {
-                        service: "wfs",
-                        version: "1.1.0",
-                        request: "GetFeature",
-                        typeName: layerStore.get("WFS_typeName"),
-                        maxFeatures: 2
-                    },
-                    success: function(resp) {
-                        wfsFeatures = gml.read(resp._object.responseXML.getElementsByTagName("FeatureCollection")[0]);
+                this.protocol.read({
+                    //See GEOR_Querier "search" method
+                    //TODO set maxFeatures
+                    //maxFeatures: GEOR.config.MAX_FEATURES,
+                    maxFeatures: 2,
+                    propertyNames: this.attributeStore.collect("name").concat(this._geometryName),
+                    callback: function(response) {
+                        if (!response.success()) {
+                            return;
+                        }
+                        wfsFeatures = response.features;
                         Ext.each(wfsFeatures, function(wfsFeature) {
 
                             page = {};
@@ -415,14 +414,11 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                         });
 
                         this.atlasConfig.pages = pages;
-                        this.events.fireEvent("featurelayerready", this.atlasConfig)
-                    },
-                    failure: function(resp) {
-                        //TODO improve msg
-                        alert(resp);
+                        this.events.fireEvent("featurelayerready", this.atlasConfig);
                     },
                     scope: this
-                });
+
+                })
             }
         }, this);
     },
@@ -433,41 +429,51 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
      * @param layerRecord
      */
     buildFieldsStore: function(layerRecord) {
-        //WIP
-        var fieldsRecord = Ext.data.Record.create([
-            {name: "name", mapping: "@name"},
-            {name: "type", mapping: "@type"}
-        ]);
-        var fieldsReader = new Ext.data.XmlReader({
-            //TODO check agains WFS
-            record: "complexType complexContent extension sequence element"
 
-        }, fieldsRecord);
+        //Code from GEOR_querier
+        var pseudoRecord = {
+            owsURL: layerRecord.get("WFS_URL"),
+            typeName: layerRecord.get("WFS_typeName"),
+        }
 
-        Ext.Ajax.request({
-            url: layerRecord.get("WFS_URL"),
-            method: "GET",
-            params: {
-                request: "DescribeFeatureType",
-                version: "1.1.0",
-                service: "WFS",
-                typeName: layerRecord.get("WFS_typeName")
+        this.attributeStore = GEOR.ows.WFSDescribeFeatureType(pseudoRecord, {
+            extractFeatureNS: true,
+            success: function() {
+                // we get the geometry column name, and remove the corresponding record from store
+                var idx = this.attributeStore.find("type", GEOR.ows.matchGeomProperty);
+                if (idx > -1) {
+                    // we have a geometry
+                    var r = this.attributeStore.getAt(idx),
+                        geometryName = r.get("name");
+                    // create the protocol:
+                    this.protocol = GEOR.ows.WFSProtocol(pseudoRecord, this.map, {
+                        geometryName: geometryName
+                    });
+                    this._geometryName = geometryName;
+                    // remove geometry from attribute store:
+                    this.attributeStore.remove(r);
+                } else {
+                    GEOR.util.infoDialog({
+                        msg: this.tr("querier.layer.no.geom")
+                    });
+                }
             },
-            callback: function(opt, s, resp) {
-                var fieldsRecords = fieldsReader.read(resp._object);
-                var fieldsStore = new Ext.data.Store({reader: fieldsReader});
-                fieldsStore.loadData(resp._object.responseXML);
-                var fieldsCombo = this.window.findBy(function(c) {
-                    return ((c.getXType() == "combo") &&
-                    ((c.name == "title_field") || (c.name == "subtitle_field")))
-                });
-                Ext.each(fieldsCombo, function(fieldCombo) {
-                    fieldCombo.store = fieldsStore;
+            failure: function() {
+                GEOR.util.errorDialog({
+                    msg: this.tr("querier.layer.error")
                 });
             },
             scope: this
         });
+        //End of code from GEOR_querier
 
+        var fieldsCombo = this.window.findBy(function(c) {
+            return ((c.getXType() == "combo") &&
+                    ((c.name == "title_field") || (c.name == "subtitle_field")))
+                });
+        Ext.each(fieldsCombo, function(fieldCombo) {
+            fieldCombo.store = this.attributeStore;
+        }, this);
     },
 
     /**
