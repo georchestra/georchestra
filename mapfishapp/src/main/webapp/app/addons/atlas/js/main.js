@@ -194,10 +194,79 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                         fieldLabel: "Display legend"
                     },
                     {
+                        xtype: "radiogroup",
+                        fieldLabel: "Page title option",
+                        items: [
+                            {
+                                boxLabel: "Same title for every page",
+                                name: "title_method",
+                                inputValue: "same",
+                                checked: true
+                            },
+                            {
+                                boxLabel: "Use a field from the atlas layer as title",
+                                name: "title_method",
+                                inputValue: "field"
+                            }
+                        ]
+                    },
+                    {
+                        //TODO tr
+                        xtype: "textfield",
+                        name: "title_text",
+                        fieldLabel: "Page title",
+                        //tabTip: "This title will be use for every page",
+                        value: "Title"
+                    },
+                    {
                         //TODO tr
                         xtype: "combo",
                         name: "pageTitle",
                         fieldLabel: "Field for page title",
+                        mode: "local",
+                        store: {
+                            xtype: "arraystore",
+                            id: 0,
+                            fields: ["name", "type"],
+                            //TODO tr
+                            data: [
+                                ["default name", "default type"],
+                            ]
+                        },
+                        valueField: "name",
+                        displayField: "name",
+                        scope: this
+                    },
+                    {
+                        xtype: "radiogroup",
+                        fieldLabel: "Page subtitle option",
+                        items: [
+                            {
+                                boxLabel: "Same subtitle for every page",
+                                name: "subtitle_method",
+                                inputValue: "same",
+                                checked: true
+                            },
+                            {
+                                boxLabel: "Use a field from the atlas layer as subtitle",
+                                name: "subtitle_method",
+                                inputValue: "field"
+                            }
+                        ]
+                    },
+                    {
+                        //TODO tr
+                        xtype: "textfield",
+                        name: "subtitle_text",
+                        fieldLabel: "Page subtitle",
+                        //tabTip: "This subtitle will be use for every page",
+                        value: "Subtitle"
+                    },
+                    {
+                        //TODO tr
+                        xtype: "combo",
+                        name: "pageSubtitle",
+                        fieldLabel: "Field for page subtitle",
                         mode: "local",
                         store: {
                             xtype: "arraystore",
@@ -259,7 +328,11 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                     },
                     {
                         //TODO tr
-                        text: "Cancel"
+                        text: "Cancel",
+                        handler: function() {
+                            this.window.close();
+                        },
+                        scope: this
                     }
                 ],
                 scope: this
@@ -364,11 +437,9 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                 var fieldsRecords = fieldsReader.read(resp._object);
                 var fieldsStore = new Ext.data.Store({reader: fieldsReader});
                 fieldsStore.loadData(resp._object.responseXML);
-                fieldsCombo = this.window.findBy(function(c) {
-                    return ((c.getXType() == "combo") && (c.name == "pageTitle"))
-                });
-                fieldsCombo = this.window.findBy(function(c) {
-                    return ((c.getXType() == "combo") && (c.name == "pageTitle"))
+                var fieldsCombo = this.window.findBy(function(c) {
+                    return ((c.getXType() == "combo") &&
+                    ((c.name == "pageTitle") || (c.name == "pageSubtitle")))
                 });
                 Ext.each(fieldsCombo, function(fieldCombo) {
                     fieldCombo.store = fieldsStore;
