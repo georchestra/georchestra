@@ -33,7 +33,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
         });
         this.title = this.getText(record);
 
-        this.bufferService =  GEOR.config.PATHNAME + "/ws/buffer/";
+        this.bufferService = GEOR.config.PATHNAME + "/ws/buffer/";
         this.pageWait = 0
 
         this.events = new Ext.util.Observable();
@@ -298,7 +298,30 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                         valueField: "name",
                         displayField: "name",
                         scope: this
+                    },
+                    {
+                        //TODO tr
+                        xtype: "combo",
+                        name: "prefix_field",
+                        fieldLabel: "Field for filename prefix",
+                        emptyText: "Select prefix field",
+                        mode: "local",
+                        editable: false,
+                        typeAhead: false,
+                        store: {
+                            xtype: "arraystore",
+                            id: 0,
+                            fields: ["name"],
+                            //TODO tr
+                            data: [
+                                ["Select atlas layer first"]
+                            ]
+                        },
+                        valueField: "name",
+                        displayField: "name",
+                        scope: this
                     }
+
 
                 ],
                 buttons: [
@@ -344,7 +367,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                 ];
 
                                 this.createFeatureLayerAndPagesSpecs(formValues["atlasLayer"], scaleParameters,
-                                    titleSubtitleParameters);
+                                    titleSubtitleParameters, formValues["prefix_field"]);
 
                                 //Form submit is trigger on "featurelayerready event
 
@@ -375,8 +398,8 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
      * Method createFeatureLayerAndPagesSpecs
      * TODO Check MFP v3 layers/type specification (order is important)
      */
-    createFeatureLayerAndPagesSpecs: function(atlasLayer, scaleParameters, titleSubtitleParameters) {
-        var layer, page, page_idx, wfsFeatures, page_title, page_subtitle;
+    createFeatureLayerAndPagesSpecs: function(atlasLayer, scaleParameters, titleSubtitleParameters, field_prefix) {
+        var layer, page, page_idx, wfsFeatures, page_title, page_subtitle, page_filename;
 
         this.atlasConfig.pages = [];
         page_idx = 0;
@@ -436,7 +459,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                 var bWkt, json, wkt, bbox, bufferData, cur_idx;
                                 json = new OpenLayers.Format.JSON();
                                 wkt = new OpenLayers.Format.WKT();
-                                if (!(wfsFeature.geometry instanceof  OpenLayers.Geometry.Point)) {
+                                if (!(wfsFeature.geometry instanceof OpenLayers.Geometry.Point)) {
                                     bufferData = wfsFeature.geometry.getBounds().toGeometry();
                                 } else {
                                     bufferData = wfsFeature.geometry;
@@ -453,7 +476,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                             bbox = wkt.read(bWkt).geometry.getBounds().toArray();
                                             atlasAddon.atlasConfig.pages[cur_idx].bbox = bbox;
                                             atlasAddon.pageWait = atlasAddon.pageWait - 1;
-                                            if (atlasAddon.pageWait == 0 ) {
+                                            if (atlasAddon.pageWait == 0) {
                                                 atlasAddon.events.fireEvent("featurelayerready", atlasAddon.atlasConfig);
                                             }
                                         },
@@ -472,8 +495,13 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
 
                             }
 
-                            //TODO
-                            this.atlasConfig.pages[page_idx].filename = "filename.pdf"
+                            if (field_prefix === "") {
+                                page_filename = page_idx.toString() + "_atlas.pdf"
+                            } else {
+                                page_filename = wfsFeature.attributes[field_prefix] + "_" + page_idx.toString() +
+                                    "_atlas.pdf";
+                            }
+                            this.atlasConfig.pages[page_idx].filename = page_filename;
 
                             page_idx = page_idx + 1;
 
@@ -539,8 +567,8 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
 
         var fieldsCombo = this.window.findBy(function(c) {
             return ((c.getXType() == "combo") &&
-                    ((c.name == "title_field") || (c.name == "subtitle_field")))
-                });
+            ((c.name == "title_field") || (c.name == "subtitle_field" || (c.name == "prefix_field"))));
+        });
         Ext.each(fieldsCombo, function(fieldCombo) {
             fieldCombo.reset();
             fieldCombo.bindStore(this.attributeStore);
