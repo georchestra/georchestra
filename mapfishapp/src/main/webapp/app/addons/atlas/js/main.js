@@ -7,6 +7,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
     window: null,
     layer: null,
     title: null,
+    pageWait: null,
     atlasConfig: {},
 
 
@@ -31,6 +32,9 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             }
         });
         this.title = this.getText(record);
+
+        this.bufferService =  GEOR.config.PATHNAME + "/ws/buffer/";
+        this.pageWait = 0
 
         this.events = new Ext.util.Observable();
         this.events.addEvents(
@@ -178,8 +182,8 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                         //TODO tr
                         xtype: "textfield",
                         name: "scale_padding",
-                        fieldLabel: "Bounding box padding (%)",
-                        value: 15
+                        fieldLabel: "Bounding box padding (m)",
+                        value: 10000
                     },
                     {
                         xtype: "hidden",
@@ -372,8 +376,10 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
      * TODO Check MFP v3 layers/type specification (order is important)
      */
     createFeatureLayerAndPagesSpecs: function(atlasLayer, scaleParameters, titleSubtitleParameters) {
-        var layer, page, wfsFeatures,
-            pages = [];
+        var layer, page, page_idx, wfsFeatures, page_title, page_subtitle;
+
+        this.atlasConfig.pages = [];
+        page_idx = 0;
 
         this.mapPanel.layers.each(function(layerStore) {
             layer = layerStore.get("layer");
@@ -404,29 +410,80 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                         Ext.each(wfsFeatures, function(wfsFeature) {
 
                             page = {};
-                            page.center = [wfsFeature.geometry.getCentroid().x, wfsFeature.geometry.getCentroid().y];
+                            //we add the page at the beginning to reference it on asynchronous buffer
+                            this.atlasConfig.pages.splice(page_idx, 0, page);
 
                             if (titleSubtitleParameters.title_method == "same") {
-                                page.title = titleSubtitleParameters.title_text;
+                                page_title = titleSubtitleParameters.title_text;
                             } else {
-                                page.title = wfsFeature.attributes[titleSubtitleParameters.title_field];
+                                page_title = wfsFeature.attributes[titleSubtitleParameters.title_field];
                             }
+                            this.atlasConfig.pages[page_idx].title = page_title;
+
 
                             if (titleSubtitleParameters.subtitle_method == "same") {
-                                page.subtitle = titleSubtitleParameters.subtitle_text;
+                                page_subtitle = titleSubtitleParameters.subtitle_text;
                             } else {
-                                page.subtitle = wfsFeature.attributes[titleSubtitleParameters.subtitle_field];
+                                page_subtitle = wfsFeature.attributes[titleSubtitleParameters.subtitle_field];
+                            }
+                            this.atlasConfig.pages[page_idx].subtitle = page_subtitle;
+
+                            if (scaleParameters.scale_method == "manual") {
+                                this.atlasConfig.pages[page_idx].center =
+                                    [wfsFeature.geometry.getCentroid().x, wfsFeature.geometry.getCentroid().y];
+                                this.atlasConfig.pages[page_idx].scale = scaleParameters.scale_manual;
+                            } else {
+                                var bWkt, json, wkt, bbox, bufferData, cur_idx;
+                                json = new OpenLayers.Format.JSON();
+                                wkt = new OpenLayers.Format.WKT();
+                                if (!(wfsFeature.geometry instanceof  OpenLayers.Geometry.Point)) {
+                                    bufferData = wfsFeature.geometry.getBounds().toGeometry();
+                                } else {
+                                    bufferData = wfsFeature.geometry;
+                                }
+
+                                //fonction for closure
+                                var _retrieveBBOX = function(atlasAddon, cur_idx) {
+                                    atlasAddon.pageWait = atlasAddon.pageWait + 1;
+                                    OpenLayers.Request.POST({
+                                        url: atlasAddon.bufferService + scaleParameters.scale_padding,
+                                        data: bufferData,
+                                        success: function(response) {
+                                            bWkt = json.read(response.responseText)["geometry"];
+                                            bbox = wkt.read(bWkt).geometry.getBounds().toArray();
+                                            atlasAddon.atlasConfig.pages[cur_idx].bbox = bbox;
+                                            atlasAddon.pageWait = atlasAddon.pageWait - 1;
+                                            if (atlasAddon.pageWait == 0 ) {
+                                                atlasAddon.events.fireEvent("featurelayerready", atlasAddon.atlasConfig);
+                                            }
+                                        },
+                                        failure: function() {
+                                            //TODO test
+                                            GEOR.util.errorDialog({
+                                                //TODO tr
+                                                title: "Geometry padding error",
+                                                msg: "Cannot apply the padding"
+                                            });
+                                        },
+                                        scope: this
+                                    });
+                                };
+                                _retrieveBBOX(this, page_idx);
+
                             }
 
-                            //TODO improve scale
-                            page.scale = scaleParameters.scale_manual;
                             //TODO
-                            page.filename = "filename.pdf"
-                            pages.splice(0, 0, page);
-                        });
+                            this.atlasConfig.pages[page_idx].filename = "filename.pdf"
 
-                        this.atlasConfig.pages = pages;
-                        this.events.fireEvent("featurelayerready", this.atlasConfig);
+                            page_idx = page_idx + 1;
+
+
+                        }, this);
+
+                        if (this.pageWait == 0) {
+                            this.events.fireEvent("featurelayerready", this.atlasConfig);
+                        }
+
                     },
                     scope: this
 
