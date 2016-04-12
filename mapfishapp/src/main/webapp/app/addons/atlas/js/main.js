@@ -79,8 +79,10 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                         xtype: "combo",
                         name: "atlasLayer",
                         fieldLabel: this.tr("atlas_atlaslayer"),
-                        value: atlasLayersStore.getAt(0) ? atlasLayersStore.getAt(0).get("name") : null,
+                        emptyText: "Select layer...",
                         mode: "local",
+                        editable: false,
+                        typeAhead: false,
                         triggerAction: "all",
                         store: atlasLayersStore,
                         valueField: "name",
@@ -103,6 +105,8 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                         //TODO tr
                         fieldLabel: "Format",
                         value: "pdf",
+                        editable: false,
+                        typeAhed: false,
                         mode: "local",
                         triggerAction: "all",
                         store: {
@@ -123,6 +127,8 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                         name: "layout",
                         //TODO tr
                         fieldLabel: "Layout",
+                        editable: false,
+                        typeAhead: false,
                         value: "A4 portrait",
                         mode: "local",
                         triggerAction: "all",
@@ -224,14 +230,17 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                         xtype: "combo",
                         name: "title_field",
                         fieldLabel: "Field for page title",
+                        emptyText: "Select title field",
+                        editable: false,
+                        typeAhead: false,
                         mode: "local",
                         store: {
                             xtype: "arraystore",
                             id: 0,
-                            fields: ["name", "type"],
+                            fields: ["name"],
                             //TODO tr
                             data: [
-                                ["default name", "default type"],
+                                ["Select atlas layer first"]
                             ]
                         },
                         valueField: "name",
@@ -269,14 +278,17 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                         xtype: "combo",
                         name: "subtitle_field",
                         fieldLabel: "Field for page subtitle",
+                        emptyText: "Select subtitle field",
                         mode: "local",
+                        editable: false,
+                        typeAhead: false,
                         store: {
                             xtype: "arraystore",
                             id: 0,
-                            fields: ["name", "type"],
+                            fields: ["name"],
                             //TODO tr
                             data: [
-                                ["default name", "default type"],
+                                ["Select atlas layer first"]
                             ]
                         },
                         valueField: "name",
@@ -356,7 +368,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
     },
 
     /**
-     * Method createPagesSpecs
+     * Method createFeatureLayerAndPagesSpecs
      * TODO Check MFP v3 layers/type specification (order is important)
      */
     createFeatureLayerAndPagesSpecs: function(atlasLayer, scaleParameters, titleSubtitleParameters) {
@@ -430,6 +442,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
      */
     buildFieldsStore: function(layerRecord) {
 
+        GEOR.waiter.show();
         //Code from GEOR_querier
         var pseudoRecord = {
             owsURL: layerRecord.get("WFS_URL"),
@@ -472,7 +485,8 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                     ((c.name == "title_field") || (c.name == "subtitle_field")))
                 });
         Ext.each(fieldsCombo, function(fieldCombo) {
-            fieldCombo.store = this.attributeStore;
+            fieldCombo.reset();
+            fieldCombo.bindStore(this.attributeStore);
         }, this);
     },
 
