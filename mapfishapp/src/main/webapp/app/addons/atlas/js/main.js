@@ -196,6 +196,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                     {
                         xtype: "radiogroup",
                         fieldLabel: "Page title option",
+                        name: "title_method_group",
                         items: [
                             {
                                 boxLabel: "Same title for every page",
@@ -221,7 +222,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                     {
                         //TODO tr
                         xtype: "combo",
-                        name: "pageTitle",
+                        name: "title_field",
                         fieldLabel: "Field for page title",
                         mode: "local",
                         store: {
@@ -240,6 +241,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                     {
                         xtype: "radiogroup",
                         fieldLabel: "Page subtitle option",
+                        name: "subtitle_method_group",
                         items: [
                             {
                                 boxLabel: "Same subtitle for every page",
@@ -265,7 +267,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                     {
                         //TODO tr
                         xtype: "combo",
-                        name: "pageSubtitle",
+                        name: "subtitle_field",
                         fieldLabel: "Field for page subtitle",
                         mode: "local",
                         store: {
@@ -288,12 +290,11 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                         //TODO tr
                         text: "Submit",
                         handler: function(b) {
-                            var formValues, layersRelatedValues,
-                                scaleParameters = {};
+                            var formValues, layersRelatedValues, scaleParameters, titleSubtitleParameters;
                             if (b.findParentByType("form").getForm().isValid()) {
                                 formValues = b.findParentByType("form").getForm().getFieldValues();
 
-                                //copy some parameter
+                                //copy some parameters
                                 this.atlasConfig.outputFormat = formValues.outputFormat;
                                 this.atlasConfig.layout = formValues.layout;
                                 this.atlasConfig.dpi = formValues.dpi;
@@ -301,12 +302,21 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                 this.atlasConfig.email = formValues.email;
                                 this.atlasConfig.displayLegend = formValues.displayLegend;
 
-
                                 scaleParameters = {
                                     scale_manual: formValues["scale_manual"],
                                     scale_method: formValues["scale_method_group"].inputValue,
                                     scale_padding: formValues["scale_padding"]
                                 };
+
+                                titleSubtitleParameters = {
+                                    title_method: formValues["title_method_group"].inputValue,
+                                    title_text: formValues["title_text"],
+                                    title_field: formValues["title_field"],
+                                    subtitle_method: formValues["title_method_group"].inputValue,
+                                    subtitle_text: formValues["subtitle_text"],
+                                    subtitle_field: formValues["subtitle_field"],
+
+                                }
 
                                 this.atlasConfig.baseLayers = [
                                     {
@@ -317,7 +327,8 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                     }
                                 ];
 
-                                this.createFeatureLayerAndPagesSpecs(formValues["atlasLayer"], scaleParameters);
+                                this.createFeatureLayerAndPagesSpecs(formValues["atlasLayer"], scaleParameters,
+                                    titleSubtitleParameters);
 
                                 //Form submit is trigger on "featurelayerready event
 
@@ -348,10 +359,10 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
      * Method createPagesSpecs
      * TODO Check MFP v3 layers/type specification (order is important)
      */
-    createFeatureLayerAndPagesSpecs: function(atlasLayer, scaleParameters) {
-        var layer, page, gml, wfsFeature,
+    createFeatureLayerAndPagesSpecs: function(atlasLayer, scaleParameters, titleSubtitleParameters) {
+        var layer, page, gml, wfsFeatures,
             pages = [];
-        gml = new OpenLayers.Format.GML();
+        gml = new OpenLayers.Format.GML.v3();
 
         this.mapPanel.layers.each(function(layerStore) {
             layer = layerStore.get("layer");
@@ -378,15 +389,24 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                         maxFeatures: 2
                     },
                     success: function(resp) {
-                        Ext.each(resp._object.responseXML.getElementsByTagName("FeatureCollection")[0].getElementsByTagName("featureMembers")[0].children, function(gmlFeature) {
-                            wfsFeature = gml.parseFeature(gmlFeature);
+                        wfsFeatures = gml.read(resp._object.responseXML.getElementsByTagName("FeatureCollection")[0]);
+                        Ext.each(wfsFeatures, function(wfsFeature) {
 
                             page = {};
                             page.center = [wfsFeature.geometry.getCentroid().x, wfsFeature.geometry.getCentroid().y];
-                            //TODO choose title
-                            page.title = "Title";
-                            //TODO
-                            page.subtitle = "Subtitle";
+
+                            if (titleSubtitleParameters.title_method == "same") {
+                                page.title = titleSubtitleParameters.title_text;
+                            } else {
+                                page.title = wfsFeature.attributes[titleSubtitleParameters.title_field];
+                            }
+
+                            if (titleSubtitleParameters.subtitle_method == "same") {
+                                page.subtitle = titleSubtitleParameters.subtitle_text;
+                            } else {
+                                page.subtitle = wfsFeature.attributes[titleSubtitleParameters.subtitle_field];
+                            }
+
                             //TODO improve scale
                             page.scale = scaleParameters.scale_manual;
                             //TODO
@@ -439,7 +459,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                 fieldsStore.loadData(resp._object.responseXML);
                 var fieldsCombo = this.window.findBy(function(c) {
                     return ((c.getXType() == "combo") &&
-                    ((c.name == "pageTitle") || (c.name == "pageSubtitle")))
+                    ((c.name == "title_field") || (c.name == "subtitle_field")))
                 });
                 Ext.each(fieldsCombo, function(fieldCombo) {
                     fieldCombo.store = fieldsStore;
