@@ -7,7 +7,6 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
     window: null,
     layer: null,
     title: null,
-    pageWait: null,
     atlasConfig: {},
 
 
@@ -32,9 +31,6 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             }
         });
         this.title = this.getText(record);
-
-        this.bufferService = GEOR.config.PATHNAME + "/ws/buffer/";
-        this.pageWait = 0
 
         this.events = new Ext.util.Observable();
         this.events.addEvents(
@@ -366,6 +362,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                     }
                                 ];
 
+
                                 this.createFeatureLayerAndPagesSpecs(formValues["atlasLayer"], scaleParameters,
                                     titleSubtitleParameters, formValues["prefix_field"]);
 
@@ -399,7 +396,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
      * TODO Check MFP v3 layers/type specification (order is important)
      */
     createFeatureLayerAndPagesSpecs: function(atlasLayer, scaleParameters, titleSubtitleParameters, field_prefix) {
-        var layer, page, page_idx, wfsFeatures, page_title, page_subtitle, page_filename;
+        var layer, page, page_idx, wfsFeatures, page_title, page_subtitle, page_filename, bounds, bbox;
 
         this.atlasConfig.pages = [];
         page_idx = 0;
@@ -460,39 +457,19 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                 json = new OpenLayers.Format.JSON();
                                 wkt = new OpenLayers.Format.WKT();
                                 if (!(wfsFeature.geometry instanceof OpenLayers.Geometry.Point)) {
-                                    bufferData = wfsFeature.geometry.getBounds().toGeometry();
+                                    bounds = wfsFeature.geometry.getBounds();
+                                    //TODO Revisit after form validation (this will not be available for point)
+                                    bbox = new OpenLayers.Bounds(bounds.left - scaleParameters.scale_padding,
+                                        bounds.bottom - scaleParameters.scale_padding,
+                                        bounds.right + scaleParameters.scale_padding,
+                                        bounds.top + scaleParameters.scale_padding
+                                    ).toArray();
                                 } else {
-                                    bufferData = wfsFeature.geometry;
+                                    bounds = wfsFeature.geometry.getBounds();
+                                    //TODO - Read from add-on config
+                                    bbox = bounds.scale(1.1).toArray();
                                 }
-
-                                //fonction for closure
-                                var _retrieveBBOX = function(atlasAddon, cur_idx) {
-                                    atlasAddon.pageWait = atlasAddon.pageWait + 1;
-                                    OpenLayers.Request.POST({
-                                        url: atlasAddon.bufferService + scaleParameters.scale_padding,
-                                        data: bufferData,
-                                        success: function(response) {
-                                            bWkt = json.read(response.responseText)["geometry"];
-                                            bbox = wkt.read(bWkt).geometry.getBounds().toArray();
-                                            atlasAddon.atlasConfig.pages[cur_idx].bbox = bbox;
-                                            atlasAddon.pageWait = atlasAddon.pageWait - 1;
-                                            if (atlasAddon.pageWait == 0) {
-                                                atlasAddon.events.fireEvent("featurelayerready", atlasAddon.atlasConfig);
-                                            }
-                                        },
-                                        failure: function() {
-                                            //TODO test
-                                            GEOR.util.errorDialog({
-                                                //TODO tr
-                                                title: "Geometry padding error",
-                                                msg: "Cannot apply the padding"
-                                            });
-                                        },
-                                        scope: this
-                                    });
-                                };
-                                _retrieveBBOX(this, page_idx);
-
+                                this.atlasConfig.pages[page_idx].bbox = bbox;
                             }
 
                             if (field_prefix === "") {
@@ -508,9 +485,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
 
                         }, this);
 
-                        if (this.pageWait == 0) {
                             this.events.fireEvent("featurelayerready", this.atlasConfig);
-                        }
 
                     },
                     scope: this
