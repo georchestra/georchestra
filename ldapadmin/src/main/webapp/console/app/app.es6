@@ -2,16 +2,18 @@
 
 class AppController {
 
+  static $inject = [ '$scope', '$router', '$location' ]
+
   constructor($scope, $router, $location) {
 
     $router.config([
-      { path: '/'                 , redirectTo: '/home' },
-      { path: '/home'             , component: 'home' },
+      { path: '/'                 , redirectTo: '/home'    },
+      { path: '/home'             , component: 'home'      },
       { path: '/analytics/:group' , component: 'analytics' },
-      { path: '/groups/:id/users' , component: 'users' },
-      { path: '/users/:id/:tab'   , component: 'user' },
-      { path: '/users/add'        , component: 'newUser' },
-      { path: '/logs'             , component: 'logs' },
+      { path: '/groups/:id/users' , component: 'users'     },
+      { path: '/users/:id/:tab'   , component: 'user'      },
+      { path: '/users/add'        , component: 'newUser'   },
+      { path: '/logs'             , component: 'logs'      },
     ])
 
     $scope.isActive = (routes) => routes.some(
@@ -20,8 +22,6 @@ class AppController {
   }
 
 }
-
-AppController.$inject = [ '$scope', '$router', '$location' ]
 
 angular.module('admin_console', [
   'ngResource',
