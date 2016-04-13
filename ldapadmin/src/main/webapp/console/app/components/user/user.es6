@@ -10,9 +10,16 @@ class UserController {
 
   constructor($routeParams, $injector, User, Group, groupAdminFilter) {
 
+    this.$injector = $injector
+
+    let translate = $injector.get('translate');
+    this.messages = {}
+    translate('user.updated', this.messages)
+    translate('user.error', this.messages)
+
+
     this.tabs = ['infos', 'groups', 'analytics', 'messages', 'logs', 'manage']
 
-    this.$injector = $injector
     this.tab = $routeParams.tab
     this.flash = this.$injector.get('Flash')
 
@@ -27,11 +34,6 @@ class UserController {
     this.adminGroups = this.$injector.get('groupAdminList')()
     switch (this.tab) {
       case 'infos':
-        let translate = this.$injector.get('translate');
-        this.messages = {}
-        translate('user.updated', this.messages)
-        translate('user.error', this.messages)
-
         break;
       case 'groups':
         let notAdmin = [];
@@ -85,7 +87,7 @@ class UserController {
   }
 
   loadAnalyticsData() {
-    let error = this.flash.create.bind(this, 'error', 'Error loading data')
+    let error = this.flash.create.bind(this.flash, 'danger', 'Error loading data')
     let Analytics = this.$injector.get('Analytics')
     let options = {
       service   : 'combinedRequests',
@@ -106,7 +108,7 @@ class UserController {
       () => {
         this.logs = [ { "admin": "98192574-18d0-1035-8e10-c310a114ab8f", "date": "2015-12-01T13:48:18Z", "target": "98192574-18d0-1035-8e10-c310a114ab8f", "type": "Email sent" }, { "admin": "9818af68-18d0-1035-8e0e-999999999999", "date": "2015-11-30T16:37:00Z", "target": "98192574-18d0-1035-8e10-c310a114ab8f", "type": "Email sent" }, { "admin": "98192574-18d0-1035-8e10-c310a114ab8f", "date": "2015-11-30T17:37:50Z", "target": "98192574-18d0-1035-8e10-c310a114ab8f", "type": "Email sent" } ];
       },
-      this.flash.create.bind(this, 'error', $translate('analytics.errorload'))
+      this.flash.create.bind(this.flash, 'danger', $translate('analytics.errorload'))
     )
   }
 
@@ -116,7 +118,7 @@ class UserController {
         $httpDefaultCache.removeAll();
         this.flash.create('success', this.messages.updated)
       },
-      this.flash.create.bind(this, 'error', this.messages.error)
+      this.flash.create.bind(this.flash, 'danger', this.messages.error)
     );
   }
 
@@ -150,7 +152,7 @@ class UserController {
         delete this.compose;
         this.flash.create('success', $translate('msg.sent'));
       },
-      this.flash.create.bind(this, 'error', $translate('msg.error'))
+      this.flash.create.bind(this.flash, 'error', $translate('msg.error'))
     );
   }
 
