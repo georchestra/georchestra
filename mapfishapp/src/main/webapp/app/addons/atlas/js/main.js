@@ -129,7 +129,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                         fieldLabel: "Layout",
                         editable: false,
                         typeAhead: false,
-                        value: "A4 portrait",
+                        emptyText: "Select a layout",
                         mode: "local",
                         triggerAction: "all",
                         store: {
@@ -145,7 +145,17 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                             ]
                         },
                         valueField: "layoutId",
-                        displayField: "layoutDescription"
+                        displayField: "layoutDescription",
+                        listeners: {
+                            select: {
+                                fn: function(combo, record) {
+                                    this.buildDpiStore(record);
+                                },
+                                scope: this
+                            },
+                            scope: this
+                        },
+                        scope: this
                     },
                     {
                         xtype: "radiogroup",
@@ -182,10 +192,24 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                         value: 10000
                     },
                     {
-                        xtype: "hidden",
+                        xtype: "combo",
                         name: "dpi",
-                        //TODO improve management of dpi
-                        value: "216"
+                        fieldLabel: "Map dpi",
+                        emptyText: "Select print resolution",
+                        editable: false,
+                        typeAhead: false,
+                        autoComplete: false,
+                        mode: "local",
+                        //store is replaced on layout select
+                        store: {
+                            xtype: "arraystore",
+                            fields: ["dpi"],
+                            data: [[72],]
+                        },
+                        displayField: "dpi",
+                        valueField: "dpi",
+                        triggerAction: "all",
+                        scope: this
                     },
                     {
                         //TODO tr
@@ -245,6 +269,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                         },
                         valueField: "name",
                         displayField: "name",
+                        triggerAction: "all",
                         scope: this
                     },
                     {
@@ -293,6 +318,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                         },
                         valueField: "name",
                         displayField: "name",
+                        triggerAction: "all",
                         scope: this
                     },
                     {
@@ -315,6 +341,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                         },
                         valueField: "name",
                         displayField: "name",
+                        triggerAction: "all",
                         scope: this
                     }
 
@@ -548,6 +575,57 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             fieldCombo.reset();
             fieldCombo.bindStore(this.attributeStore);
         }, this);
+    },
+
+    /**
+     * Method buildDpiStore
+     * @param formatRecord
+     */
+    buildDpiStore: function(formatRecord) {
+        var dpis, dpiStore;
+        Ext.Ajax.request({
+            //TODO add-on config
+            url: "http://localhost:8181/print/atlas/capabilities.json",
+            success: function(resp) {
+                var capabilities = Ext.util.JSON.decode(resp.responseText);
+                Ext.each(capabilities.layouts, function(layout) {
+                    if (layout.name == formatRecord.id) {
+                        Ext.each(layout.attributes, function(attribute) {
+                            if (attribute.name == "map") {
+                                dpis = attribute.clientInfo.dpiSuggestions;
+                                var dpisArrays = [];
+                                Ext.each(dpis, function(dpi) {dpisArrays.splice(-1, 0, [dpi]);});
+                                dpiArrays = dpisArrays.sort(function(a,b) {return a[0] - b[0]});
+
+                                dpiStore = new Ext.data.ArrayStore({
+                                    storeId: "dpiStore",
+                                    fields: ["dpi"],
+                                    data: dpisArrays
+                                });
+
+                                this.dpiStore = dpiStore;
+
+                                var dpiCombos = this.window.findBy(function(c) {
+                                    return ((c.getXType() == "combo") && (c.name == "dpi"));
+                                });
+                                Ext.each(dpiCombos, function(dpiCombo) {
+                                        dpiCombo.reset();
+                                        dpiCombo.bindStore(this.dpiStore);
+                                }, this);
+                            }
+                        }, this)
+                    }
+                }, this);
+            },
+            failure: function() {
+                GEOR.util.errorDialog({
+                    title: "Cannot retreive dpi options",
+                    msg: "Cannot retrieve dpi options"
+                })
+            },
+            scope: this
+        });
+
     },
 
     /**
