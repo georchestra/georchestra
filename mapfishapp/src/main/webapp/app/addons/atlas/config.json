@@ -3,7 +3,10 @@
         "id": "atlas_0",
         "name": "Atlas",
         "enabled": true,
-        "options": {},
+        "options": {
+            "target": "tbar_4",
+            "resultPanelAction": true
+        },
         "title": {
             "fr": "Atlas",
             "en": "Atlas",

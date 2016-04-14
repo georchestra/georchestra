@@ -8,7 +8,9 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
     layer: null,
     title: null,
     atlasConfig: {},
-
+    events: null,
+    attributeStore: null,
+    dpiStore: null,
 
     /**
      * Method: init
@@ -17,6 +19,21 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
      * record - {Ext.data.record} a record with the addon parameters
      */
     init: function(record) {
+        if (this.target) {
+            this.components = this.target.insertButton(this.position, {
+                xtype: 'button',
+                enableToggle: true,
+                tooltip: this.getTooltip(record),
+                iconCls: 'atlas-icon',
+                listeners: {
+                    "toggle": this.menuAction,
+                    scope: this
+                },
+                scope: this
+            });
+            this.target.doLayout();
+
+        }
         // create a menu item for the "tools" menu:
         this.item = new Ext.menu.CheckItem({
             text: this.getText(record),
@@ -416,6 +433,14 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
         })
         ;
         this.window.show();
+    },
+
+    /**
+     *
+     * @param addon - The current addon.
+     */
+    resultPanelHandler: function(addon) {
+        alert("Result panel action for " + addon.title);
     },
 
     /**

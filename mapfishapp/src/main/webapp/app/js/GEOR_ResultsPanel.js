@@ -400,17 +400,21 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
             }, '-',
             actionsItem
         ];
-
+        
         /**Loading Addons actions
          *
          * Addons must have options.resultPanelAction === true and
          *  API method resultPanelHandler(menuitem, event, resultPanel). In this API method, this is the addon.
          */
-        actionsItem.menu.addItem({
-            text: GEOR.tools.getAddon(addonConfig.id).title,
-            iconCls: GEOR.tools.getAddon(addonConfig.id).iconCls,
-            tooltip: GEOR.tools.getAddon(addonConfig.id).qtip,
-            handler: GEOR.tools.getAddon(addonConfig.id).resultPanelHandler.createDelegate(addon, [this], true)
+        Ext.each(GEOR.config.ADDONS, function(addonConfig) {
+            if (GEOR.tools.getAddonsState()[addonConfig.id] && addonConfig.options.resultPanelAction) {
+                actionsItem.menu.addItem({
+                    text: GEOR.tools.getAddon(addonConfig.id).title,
+                    iconCls: GEOR.tools.getAddon(addonConfig.id).iconCls,
+                    tooltip: GEOR.tools.getAddon(addonConfig.id).qtip,
+                    handler: GEOR.tools.getAddon(addonConfig.id).resultPanelHandler.createDelegate(addon, [this], true)
+                });
+            }
         });
 
         if (!this.sfControl) {

@@ -948,8 +948,9 @@ GEOR.managelayers = (function() {
          * Addons must have options.layerTreeAction === true and
          *  API method layerTreeHandler(menuitem, event, layerRecord). In this API method, this is the addon.
          */
-        var addon;
+
         Ext.each(GEOR.config.ADDONS, function(addonConfig) {
+            var addon;
             if (GEOR.tools.getAddonsState()[addonConfig.id] && addonConfig.options.layerTreeAction) {
                 addon = GEOR.tools.getAddon(addonConfig.id);
                 insertSep();
@@ -964,7 +965,8 @@ GEOR.managelayers = (function() {
                     },
                 });
             }
-                });
+        });
+
 
         return menuItems;
     };
