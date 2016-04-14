@@ -36,4 +36,42 @@
 
   </div>
 
+  <div ng-if="users.newGroup" class="background" ng-cloack>
+
+    <div class="panel panel-default">
+
+      <div class="panel-heading">
+        <a class="btn close" ng-click="users.close()">&times;</a>
+        <span translate>users.createGroup</span>
+      </div>
+      <div class="panel-body">
+        <form class="form-horizontal" name="groupForm">
+
+          <div class="form-group" ng-class="{'has-error': groupForm.newGroupName.$invalid && groupForm.newGroupName.$dirty}">
+            <label for="newGroupName" class="col-sm-4 control-label" translate>users.newGroup</label>
+            <div class="col-sm-8">
+              <input ng-model="users.newGroupName" id="newGroupName" class="form-control" name="newGroupName"
+                placeholder="{{ 'users.newGroupName' | translate}}" validate-group="users.groups"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="newGroupDesc" class="col-sm-4 control-label" translate>users.newGroupDesc</label>
+            <div class="col-sm-8">
+              <textarea ng-model="users.newGroupDesc" id="newGroupDesc" class="form-control" Desc="newGroupDesc"></textarea>
+            </div>
+          </div>
+
+          <hr>
+
+          <button class="btn btn-primary pull-right" ng-disabled="groupForm.$invalid" ng-click="users.saveGroup()">
+            <span translate>users.save</span>
+          </button>
+          <button class="btn btn-link pull-right" ng-click="users.close()" translate>users.cancel</button>
+        </form>
+      </div>
+
+    </div>
+
+  </div>
+
 </section>

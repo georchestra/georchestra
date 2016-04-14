@@ -54,6 +54,15 @@
   "group.newgroup"      : "New group",
   "group.users"         : "users",
   "group.filter_users"  : "Filter",
+  "group.created"       : "Group created",
+  "group.error"         : "Error creating group",
+
+  "users.createGroup"   : "Create group",
+  "users.newGroup"      : "Name",
+  "users.newGroupName"  : "Group name",
+  "users.newGroupDesc"  : "Description",
+  "users.cancel"        : "Cancel",
+  "users.save"          : "Save",
 
   "msg.compose"         : "Compose message",
   "msg.date"            : "Date",

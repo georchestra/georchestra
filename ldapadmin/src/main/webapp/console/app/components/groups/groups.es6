@@ -4,23 +4,27 @@ require('services/groups')
 
 class GroupsController {
 
-  constructor(groupAdminList) {
+  static $inject = [ '$injector', 'groupAdminList' ]
+
+  constructor($injector, groupAdminList) {
+    this.$injector = $injector
+
     if (this.groups.$promise) {
-      this.groups.$promise.then(this.initialize.bind(this, groupAdminList));
+      this.groups.$promise.then(this.initialize.bind(this, groupAdminList))
     } else {
-      this.initialize(groupAdminList);
+      this.initialize(groupAdminList)
     }
   }
 
   initialize(groupAdminList) {
-    var root = [];
-    var index = {};
+    let root = [];
+    let index = {};
     this.q = (this.q) || '';
 
     if (this.index) { // child
       this.tree = this.groups;
     } else { // root
-      this.groups.forEach(function(group) {
+      this.groups.forEach((group) => {
         // Store for quick access
         index[group.cn] = group;
         // Set parent for each group
@@ -33,7 +37,7 @@ class GroupsController {
         } else {
           index[group.parent].children.push(group);
         }
-      });
+      })
       this.tree = root;
       this.index = index;
     }
@@ -47,19 +51,19 @@ class GroupsController {
       this.enableBack = this.enableBack && this.prefix;
     }
 
-    var fullAdminList = groupAdminList();
+    let fullAdminList = groupAdminList();
     this.adminList = [];
-    for (var idx in this.index) {
-      var group = this.index[idx];
+    for (let idx in this.index) {
+      let group = this.index[idx];
       if (fullAdminList.indexOf(group.cn) >= 0) {
         this.adminList.push(group);
       }
-    };
+    }
 
   }
 
   filter(group, active) {
-    var result = (
+    let result = (
       !active || // All
       ((active.parent == group.parent) && (active.children.length == 0)) || // Common ancestor without child
       (group.cn == active.cn) || // Active
@@ -68,7 +72,7 @@ class GroupsController {
       active.cn.substr(0, active.cn.lastIndexOf('_')) == group.cn // Group prefix of active
     );
 
-    return result && (this.adminList.map(function(g){return g.cn;}).indexOf(group.cn) == -1);
+    return result && this.adminList.every(g => g.cn != group.cn)
   }
 
   isExpanded(group, active) {
@@ -76,10 +80,12 @@ class GroupsController {
       (active && active.cn.indexOf(group.cn) == 0));
   }
 
+  createGroup() {
+    let $location = this.$injector.get('$location')
+    $location.search('new', 'group')
+  }
+
 }
-
-GroupsController.$inject = [ 'groupAdminList' ];
-
 
 angular.module('admin_console')
 .component('groups', {
