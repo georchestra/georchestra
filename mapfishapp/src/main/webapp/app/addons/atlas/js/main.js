@@ -19,6 +19,11 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
      * record - {Ext.data.record} a record with the addon parameters
      */
     init: function(record) {
+        this.title = this.getText(record);
+        this.qtip = this.getQtip(record);
+        this.tooltip = this.getTooltip(record);
+        this.iconCls = "atlas-icon";
+
         if (this.target) {
             this.components = this.target.insertButton(this.position, {
                 xtype: 'button',
