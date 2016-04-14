@@ -106,8 +106,8 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
 
         this.window = new Ext.Window({
             title: this.title,
-            width: 420,
-            height: 540,
+            width: 640,
+            height: 580,
             closable: true,
             items: [{
                 xtype: "form",
@@ -195,14 +195,21 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                     },
                     {
                         //TODO tr
-                        xtype: "textfield",
+                        xtype: "combo",
                         name: "scale_manual",
                         fieldLabel: "Scale",
-                        value: this.map.getScale()
+                        emptyText: "Select scale...",
+                        mode: "local",
+                        triggerAction: "all",
+                        store: new GeoExt.data.ScaleStore({map: this.mapPanel}),
+                        valueField: "scale",
+                        displayField: "scale",
+                        editable: false,
+                        typeAhead: false
                     },
                     {
-                        //TODO tr
-                        xtype: "textfield",
+                        //TODO replace by add-on config
+                        xtype: "hidden",
                         name: "scale_padding",
                         fieldLabel: "Bounding box padding (m)",
                         value: 10000
@@ -353,6 +360,12 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                         displayField: "name",
                         triggerAction: "all",
                         scope: this
+                    },
+                    {
+                        xtype: "textfield",
+                        name: "outputFilename",
+                        fieldLabel: "Output filename",
+                        value: "filename"
                     }
 
 
@@ -373,6 +386,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                 this.atlasConfig.projection = this.map.getProjection();
                                 this.atlasConfig.email = formValues.email;
                                 this.atlasConfig.displayLegend = formValues.displayLegend;
+                                this.atlasConfig.outputFilename = formValues.outputFilename;
 
                                 scaleParameters = {
                                     scale_manual: formValues["scale_manual"],
@@ -390,14 +404,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
 
                                 }
 
-                                this.atlasConfig.baseLayers = [
-                                    {
-                                        "type": "osm",
-                                        "baseURL": "http://otile1.mqcdn.com/tiles/1.0.0/map/",
-                                        "imageExtension": "png",
-                                        "opacity": 0.3
-                                    }
-                                ];
+                                this.atlasConfig.baseLayers = this.baseLayers(formValues["atlasLayer"]);
 
 
                                 this.createFeatureLayerAndPagesSpecs(formValues["atlasLayer"], scaleParameters,
@@ -450,16 +457,8 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             layer = layerStore.get("layer");
 
             if (layerStore.get("name") == atlasLayer) {
-                this.atlasConfig.featureLayer = {};
-                this.atlasConfig.featureLayer.type = layerStore.get("type");
-                this.atlasConfig.featureLayer.baseURL = layer.url;
-                this.atlasConfig.featureLayer.layers = [layer.params.LAYERS];
-                this.atlasConfig.featureLayer.version = layer.params.VERSION;
-                if (layer.params.TRANSPARENT) {
-                    this.atlasConfig.featureLayer.customParams = {
-                        transparent: true
-                    };
-                }
+                this.atlasConfig.featureLayer = this.printProvider.encodeLayer(layerStore.get("layer"),
+                    layerStore.get("layer").getExtent());
 
                 this.protocol.read({
                     //See GEOR_Querier "search" method
@@ -593,6 +592,20 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             fieldCombo.reset();
             fieldCombo.bindStore(this.attributeStore);
         }, this);
+    },
+
+    baseLayers: function(atlasLayer) {
+
+        var encodedLayer = null,
+            encodedLayers = [];
+        this.mapPanel.layers.each(function(layerRecord) {
+            if ((layerRecord.get("name") != atlasLayer) && layerRecord.get("layer").visibility) {
+                encodedLayer =  this.printProvider.encodeLayer(layerRecord.get("layer"), this.map.getMaxExtent())
+                encodedLayers.splice(-1, 0, encodedLayer);
+            }
+        }, this);
+
+        return encodedLayers;
     },
 
     /**
