@@ -400,7 +400,6 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
             }, '-',
             actionsItem
         ];
-
         
         /**Loading Addons actions
          *

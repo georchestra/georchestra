@@ -545,7 +545,6 @@ GEOR.tools = (function() {
          */
         getAddon: function(addonId) {
             return addonsCache[addonId];
-
         }
     };
 })();
