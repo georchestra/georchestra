@@ -6,7 +6,14 @@ class StatsController {
 
   constructor($element, $scope, $injector) {
     this.$injector = $injector
-    this.data.$promise.then(this.initialize.bind(this, $element, $scope));
+    let initialize = this.initialize.bind(this, $element, $scope)
+    if (this.data) {
+      this.data.$promise.then(initialize)
+    }
+
+    $scope.$watch('stats.data', (newVal, oldVal) => { if (oldVal != newVal) {
+      newVal.$promise.then(initialize)
+    }})
   }
 
   initialize($element, $scope) {
@@ -24,14 +31,8 @@ class StatsController {
         },
         axisX: {
           labelInterpolationFnc: (value, index) => {
-            if (value > 1000000) {
-              if (index % 2 == 0) {
-                return null
-              }
-            }
-            if (value >= 10000) {
-              return Math.floor(value / 1000) + 'K'
-            }
+            if (value > 1000000 && index % 2 == 0) { return null }
+            if (value >= 10000) { return Math.floor(value / 1000) + 'K' }
             return value
           }
         }
@@ -41,35 +42,24 @@ class StatsController {
         fullWidth: true,
         axisY: {
           offset: 45,
-          labelInterpolationFnc: (value, index) => {
-            return (value > 10000) ? Math.floor(value / 1000) + 'K' : value
-          }
+          labelInterpolationFnc: (value, index) =>
+            (value > 10000) ? Math.floor(value / 1000) + 'K' : value
         },
         axisX: {
-          labelInterpolationFnc: (value, index) => {
-            return (parseInt(value.split('-')[1]) % 3 == 1) ? value : null;
-          }
+          labelInterpolationFnc: (value, index) =>
+            (parseInt(value.split('-')[1]) % 3 == 1) ? value : null
         }
       }
     }
     this.lines = new Chartist[this.type=='bar' ? 'Bar' : 'Line'](
       $element.find('.chartist')[0], this.parsed, options
-    );
-    this.view = 'graph';
+    )
+    this.view = 'graph'
 
-    $scope.$watch('stats.data', (newVal, oldVal) => {
-      if (oldVal == newVal) { return; }
-      newVal.$promise.then(() => {
-        this.parsed = this.parseData()
-        this.$injector.get('$timeout')(() => {
-          this.lines.update(this.parsed)
-        })
-      })
-    })
   }
 
   switchView() {
-    this.view = (this.view=='graph') ? 'table' : 'graph';
+    this.view = (this.view=='graph') ? 'table' : 'graph'
   }
 
   parseData() {

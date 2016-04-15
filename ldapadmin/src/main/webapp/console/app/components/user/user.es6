@@ -70,8 +70,6 @@ class UserController {
 
   loadAnalytics($scope) {
 
-    let $translate = this.$injector.get('$translate');
-
     this.date = {
       // start : moment().subtract(1, 'year').format('YYYY-MM-DD'),
       start : moment().subtract(6, 'month').format('YYYY-MM-DD'),
@@ -87,61 +85,71 @@ class UserController {
   }
 
   loadAnalyticsData() {
-    let error = this.flash.create.bind(this.flash, 'danger', 'Error loading data')
-    let Analytics = this.$injector.get('Analytics')
-    let options = {
-      service   : 'combinedRequests',
-      user      : this.user.uuid,
-      startDate : this.date.start,
-      endDate   : this.date.end
-    }
-    this.requests   = Analytics.get(options, () => {}, error)
-    options.service = 'layersUsage'
-    options.limit   = 10
-    this.layers     = Analytics.get(options, () => {}, error)
+    let i18n        = {}
+    let i18nPromise = this.$injector.get('$translate')('analytics.errorload')
+    i18nPromise.then(v => i18n.errorload = v)
+
+    this.$injector.get('$q').all([
+      this.user.$promise,
+      i18nPromise
+    ]).then(() => {
+      let error = this.flash.create.bind(this.flash, 'danger', i18n.errorload)
+      let Analytics = this.$injector.get('Analytics')
+      let options = {
+        service   : 'combinedRequests',
+        user      : this.user.uid,
+        startDate : this.date.start,
+        endDate   : this.date.end
+      }
+      this.requests   = Analytics.get(options, () => {}, error)
+      options.service = 'layersUsage'
+      options.limit   = 10
+      this.layers     = Analytics.get(options, () => {}, error)
+    })
   }
 
   loadLogs($scope) {
-    let $translate = this.$injector.get('$translate')
-    this.$injector.get('Logs').query(
-      { user: this.user.uuid },
-      () => {
-        this.logs = [ { "admin": "98192574-18d0-1035-8e10-c310a114ab8f", "date": "2015-12-01T13:48:18Z", "target": "98192574-18d0-1035-8e10-c310a114ab8f", "type": "Email sent" }, { "admin": "9818af68-18d0-1035-8e0e-999999999999", "date": "2015-11-30T16:37:00Z", "target": "98192574-18d0-1035-8e10-c310a114ab8f", "type": "Email sent" }, { "admin": "98192574-18d0-1035-8e10-c310a114ab8f", "date": "2015-11-30T17:37:50Z", "target": "98192574-18d0-1035-8e10-c310a114ab8f", "type": "Email sent" } ];
-      },
-      this.flash.create.bind(this.flash, 'danger', $translate('analytics.errorload'))
-    )
+    this.$injector.get('$translate')('analytics.errorload').then((i18n) => {
+      this.$injector.get('Logs').query(
+        { user: this.user.uuid },
+        () => {
+          this.logs = [ { "admin": "98192574-18d0-1035-8e10-c310a114ab8f", "date": "2015-12-01T13:48:18Z", "target": "98192574-18d0-1035-8e10-c310a114ab8f", "type": "Email sent" }, { "admin": "9818af68-18d0-1035-8e0e-999999999999", "date": "2015-11-30T16:37:00Z", "target": "98192574-18d0-1035-8e10-c310a114ab8f", "type": "Email sent" }, { "admin": "98192574-18d0-1035-8e10-c310a114ab8f", "date": "2015-11-30T17:37:50Z", "target": "98192574-18d0-1035-8e10-c310a114ab8f", "type": "Email sent" } ];
+        },
+        this.flash.create.bind(this.flash, 'danger', i18n)
+      )
+    })
   }
 
   save() {
     let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
     this.user.$update(() => {
-        $httpDefaultCache.removeAll();
+        $httpDefaultCache.removeAll()
         this.flash.create('success', this.messages.updated)
       },
       this.flash.create.bind(this.flash, 'danger', this.messages.error)
-    );
+    )
   }
 
   openMessage(message) {
-    this.message = message;
+    this.message = message
   }
 
   closeMessage(message) {
-    delete this.message;
-    delete this.compose;
+    delete this.message
+    delete this.compose
   }
 
   loadTemplate() {
-    this.compose.subject = this.compose.template.name;
-    this.compose.content = this.compose.template.content;
+    this.compose.subject = this.compose.template.name
+    this.compose.content = this.compose.template.content
   }
 
   sendMail() {
-    let Mail = this.$injector.get('Mail');
-    let $translate = this.$injector.get('$translate');
-    let attachments = [];
+    let Mail = this.$injector.get('Mail')
+    let $translate = this.$injector.get('$translate')
+    let attachments = []
     for (let attach_id in this.compose.attachments) {
-      if (this.compose.attachments[attach_id]) { attachments.push(attach_id); }
+      if (this.compose.attachments[attach_id]) { attachments.push(attach_id) }
     }
     (new Mail({
       id: this.user.uuid,
@@ -149,11 +157,11 @@ class UserController {
       content: this.compose.content,
       attachments: attachments.join(',')
     })).$save((r) => {
-        delete this.compose;
-        this.flash.create('success', $translate('msg.sent'));
+        delete this.compose
+        this.flash.create('success', $translate('msg.sent'))
       },
       this.flash.create.bind(this.flash, 'error', $translate('msg.error'))
-    );
+    )
   }
 
   activate($scope) {
@@ -161,13 +169,13 @@ class UserController {
     let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
 
     let saveGroups = function(newVal, oldVal) {
-      if (!newVal || !oldVal) { return; }
+      if (!newVal || !oldVal) { return }
 
       let toPut = newVal.filter(a => oldVal.indexOf(a) == -1)
       let toDel = oldVal.filter(a => newVal.indexOf(a) == -1)
 
-      if (toPut.length == 0 && toDel.length == 0) { return; }
-      if (toPut.length > 1 || toDel.length > 1) { return; } // Batch operations are wrong artifacts
+      if (toPut.length == 0 && toDel.length == 0) { return }
+      if (toPut.length > 1 || toDel.length > 1) { return } // Batch operations are wrong artifacts
 
       this.$injector.get('GroupsUsers').save({
         users  : [ this.user.uid ],
