@@ -175,7 +175,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr dir-paginate="log in user.logs | itemsPerPage: 2">
+            <tr dir-paginate="log in user.logs.logs | itemsPerPage: 2">
               <td>{{::log.date | date: 'mediumDate'}}</td>
               <td>{{::log.admin}}</td>
               <td>{{::log.type}}</td>

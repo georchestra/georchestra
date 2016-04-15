@@ -109,13 +109,20 @@ class UserController {
   }
 
   loadLogs($scope) {
-    this.$injector.get('$translate')('analytics.errorload').then((i18n) => {
-      this.$injector.get('Logs').query(
-        { user: this.user.uuid },
-        () => {
-          this.logs = [ { "admin": "98192574-18d0-1035-8e10-c310a114ab8f", "date": "2015-12-01T13:48:18Z", "target": "98192574-18d0-1035-8e10-c310a114ab8f", "type": "Email sent" }, { "admin": "9818af68-18d0-1035-8e0e-999999999999", "date": "2015-11-30T16:37:00Z", "target": "98192574-18d0-1035-8e10-c310a114ab8f", "type": "Email sent" }, { "admin": "98192574-18d0-1035-8e10-c310a114ab8f", "date": "2015-11-30T17:37:50Z", "target": "98192574-18d0-1035-8e10-c310a114ab8f", "type": "Email sent" } ];
+    let i18n = {}
+
+    this.$injector.get('$q').all([
+      this.user.$promise,
+      this.$injector.get('translate')('analytics.errorload', i18n)
+    ]).then(() => {
+      this.logs = this.$injector.get('Logs').query(
+        {
+          user  : this.user.uid,
+          limit : 100000,
+          page  : 0
         },
-        this.flash.create.bind(this.flash, 'danger', i18n)
+        () => { },
+        this.flash.create.bind(this.flash, 'danger', i18n.errorload)
       )
     })
   }
