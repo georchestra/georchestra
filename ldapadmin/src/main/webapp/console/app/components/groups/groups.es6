@@ -10,7 +10,9 @@ class GroupsController {
     this.$injector = $injector
 
     if (this.groups.$promise) {
-      this.groups.$promise.then(this.initialize.bind(this, groupAdminList))
+      this.groups.$promise.then(
+        $injector.get('$timeout')(this.initialize.bind(this, groupAdminList))
+      )
     } else {
       this.initialize(groupAdminList)
     }
