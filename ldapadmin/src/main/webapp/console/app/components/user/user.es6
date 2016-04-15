@@ -115,9 +115,9 @@ class UserController {
       this.user.$promise,
       this.$injector.get('translate')('analytics.errorload', i18n)
     ]).then(() => {
-      this.logs = this.$injector.get('Logs').query(
+      this.logs = this.$injector.get('UserLogs').query(
         {
-          user  : this.user.uid,
+          id    : this.user.uid,
           limit : 100000,
           page  : 0
         },
