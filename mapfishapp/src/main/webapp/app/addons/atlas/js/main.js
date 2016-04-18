@@ -106,269 +106,446 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
 
         this.window = new Ext.Window({
             title: this.title,
-            width: 640,
+            width: 680,
             height: 580,
+            bodyStyle: {
+                padding: "5px 5px 0",
+                "background-color": "white"
+            },
+            border: false,
             closable: true,
             items: [{
                 xtype: "form",
                 items: [
                     {
-                        xtype: "combo",
-                        name: "atlasLayer",
-                        fieldLabel: this.tr("atlas_atlaslayer"),
-                        emptyText: "Select layer...",
-                        mode: "local",
-                        editable: false,
-                        typeAhead: false,
-                        triggerAction: "all",
-                        store: atlasLayersStore,
-                        valueField: "name",
-                        displayField: "title",
-                        allowBlank: false,
-                        listeners: {
-                            select: {
-                                fn: function(combo, record) {
-                                    this.buildFieldsStore(record);
+                        layout: "form",
+                        border: false,
+                        style: {
+                            padding: "5px 5px 0",
+                            "background-color": "white"
+                        },
+                        items: [
+                            {
+                                xtype: "combo",
+                                name: "atlasLayer",
+                                labelStyle: "width:180px",
+                                fieldLabel: this.tr("atlas_atlaslayer"),
+                                emptyText: "Select layer...",
+                                mode: "local",
+                                editable: false,
+                                typeAhead: false,
+                                triggerAction: "all",
+                                store: atlasLayersStore,
+                                valueField: "name",
+                                displayField: "title",
+                                allowBlank: false,
+                                listeners: {
+                                    select: {
+                                        fn: function(combo, record) {
+                                            this.buildFieldsStore(record);
+                                        },
+                                        scope: this
+                                    },
+                                    scope: this
                                 },
                                 scope: this
-                            },
-                            scope: this
-                        },
-                        scope: this
-                    },
-                    {
-                        xtype: "combo",
-                        name: "outputFormat",
-                        //TODO tr
-                        fieldLabel: "Format",
-                        value: "pdf",
-                        editable: false,
-                        typeAhed: false,
-                        mode: "local",
-                        triggerAction: "all",
-                        store: {
-                            xtype: "arraystore",
-                            id: 0,
-                            fields: ["formatId", "formatDescription"],
-                            data: [
-                                ["pdf", "PDF"],
-                                ["zip", "zip"]
-                            ]
-                        },
-                        valueField: "formatId",
-                        displayField: "formatDescription",
-                        allowBlank: false
-                    },
-                    {
-                        xtype: "combo",
-                        name: "layout",
-                        //TODO tr
-                        fieldLabel: "Layout",
-                        editable: false,
-                        typeAhead: false,
-                        emptyText: "Select a layout",
-                        mode: "local",
-                        triggerAction: "all",
-                        store: this.printProvider.layouts,
-                        valueField: "name",
-                        displayField: "name"
-                    },
-                    {
-                        xtype: "radiogroup",
-                        fieldLabel: "Scale determination",
-                        name: "scale_method_group",
-                        items: [
-                            {
-                                xtype: "radio",
-                                boxLabel: "Bounding box",
-                                name: "scale_method",
-                                inputValue: "bbox"
-                            },
-                            {
-                                xtype: "radio",
-                                boxLabel: "Manual scale",
-                                name: "scale_method",
-                                inputValue: "manual",
-                                checked: true
                             }
                         ]
                     },
                     {
-                        //TODO tr
-                        xtype: "combo",
-                        name: "scale_manual",
-                        fieldLabel: "Scale",
-                        emptyText: "Select scale...",
-                        mode: "local",
-                        triggerAction: "all",
-                        store: new GeoExt.data.ScaleStore({map: this.mapPanel}),
-                        valueField: "scale",
-                        displayField: "scale",
-                        editable: false,
-                        typeAhead: false
-                    },
-                    {
-                        //TODO replace by add-on config
-                        xtype: "hidden",
-                        name: "scale_padding",
-                        fieldLabel: "Bounding box padding (m)",
-                        value: 10000
-                    },
-                    {
-                        xtype: "combo",
-                        name: "dpi",
-                        fieldLabel: "Map dpi",
-                        emptyText: "Select print resolution",
-                        editable: false,
-                        typeAhead: false,
-                        autoComplete: false,
-                        mode: "local",
-                        store: this.printProvider.dpis,
-                        displayField: "name",
-                        valueField: "value",
-                        triggerAction: "all"
-                    },
-                    {
-                        //TODO tr
-                        xtype: "textfield",
-                        name: "email",
-                        fieldLabel: "Email"
-                    },
-                    {
-                        //TODO tr
-                        xtype: "checkbox",
-                        name: "displayLegend",
-                        fieldLabel: "Display legend"
-                    },
-                    {
-                        xtype: "radiogroup",
-                        fieldLabel: "Page title option",
-                        name: "title_method_group",
+                        xtype: "fieldset",
+                        autoheight: true,
+                        title: "Layout",
+                        style: {
+                            margin: "0 5px 10px",
+                            "background-color": "white"
+                        },
                         items: [
                             {
-                                boxLabel: "Same title for every page",
-                                name: "title_method",
-                                inputValue: "same",
-                                checked: true
-                            },
-                            {
-                                boxLabel: "Use a field from the atlas layer as title",
-                                name: "title_method",
-                                inputValue: "field"
+                                layout: "column",
+                                border: false,
+                                items: [
+                                    {
+                                        columnWidth: 0.5,
+                                        border: false,
+                                        layout: "form",
+                                        items: [
+                                            {
+                                                xtype: "combo",
+                                                name: "layout",
+                                                //TODO tr
+                                                fieldLabel: "Layout",
+                                                editable: false,
+                                                typeAhead: false,
+                                                emptyText: "Select a layout",
+                                                mode: "local",
+                                                triggerAction: "all",
+                                                store: this.printProvider.layouts,
+                                                valueField: "name",
+                                                displayField: "name"
+                                            },
+                                            {
+                                                //TODO tr
+                                                xtype: "checkbox",
+                                                name: "displayLegend",
+                                                fieldLabel: "Display legend"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        columnWidth: 0.5,
+                                        layout: "form",
+                                        border: false,
+                                        items: [
+                                            {
+                                                xtype: "combo",
+                                                name: "outputFormat",
+                                                //TODO tr
+                                                fieldLabel: "Format",
+                                                value: "pdf",
+                                                editable: false,
+                                                typeAhed: false,
+                                                mode: "local",
+                                                triggerAction: "all",
+                                                store: {
+                                                    xtype: "arraystore",
+                                                    id: 0,
+                                                    fields: ["formatId", "formatDescription"],
+                                                    data: [
+                                                        ["pdf", "PDF"],
+                                                        ["zip", "zip"]
+                                                    ]
+                                                },
+                                                valueField: "formatId",
+                                                displayField: "formatDescription",
+                                                allowBlank: false
+                                            },
+                                            {
+                                                xtype: "combo",
+                                                name: "dpi",
+                                                fieldLabel: "Map dpi",
+                                                emptyText: "Select print resolution",
+                                                editable: false,
+                                                typeAhead: false,
+                                                autoComplete: false,
+                                                mode: "local",
+                                                store: this.printProvider.dpis,
+                                                displayField: "name",
+                                                valueField: "value",
+                                                triggerAction: "all"
+                                            }
+                                        ]
+                                    }
+                                ]
                             }
                         ]
                     },
                     {
+                        xtype: "fieldset",
                         //TODO tr
-                        xtype: "textfield",
-                        name: "title_text",
-                        fieldLabel: "Page title",
-                        //tabTip: "This title will be use for every page",
-                        value: "Title"
-                    },
-                    {
-                        //TODO tr
-                        xtype: "combo",
-                        name: "title_field",
-                        fieldLabel: "Field for page title",
-                        emptyText: "Select title field",
-                        editable: false,
-                        typeAhead: false,
-                        mode: "local",
-                        store: {
-                            xtype: "arraystore",
-                            id: 0,
-                            fields: ["name"],
-                            //TODO tr
-                            data: [
-                                ["Select atlas layer first"]
-                            ]
+                        title: "Scale",
+                        autoheight: true,
+                        style: {
+                            margin: "0 5px 10px",
+                            "background-color": "white"
                         },
-                        valueField: "name",
-                        displayField: "name",
-                        triggerAction: "all",
-                        scope: this
-                    },
-                    {
-                        xtype: "radiogroup",
-                        fieldLabel: "Page subtitle option",
-                        name: "subtitle_method_group",
                         items: [
                             {
-                                boxLabel: "Same subtitle for every page",
-                                name: "subtitle_method",
-                                inputValue: "same",
-                                checked: true
-                            },
+                                layout: "column",
+                                border: false,
+                                items: [{
+                                    columnWidth: 0.4,
+                                    layout: "form",
+                                    border: false,
+                                    items: [
+                                        {
+                                            xtype: "radiogroup",
+                                            columns: 1,
+                                            hideLabel: true,
+                                            name: "scale_method_group",
+                                            items: [
+                                                {
+                                                    xtype: "radio",
+                                                    boxLabel: "Manual scale",
+                                                    name: "scale_method",
+                                                    inputValue: "manual",
+                                                    checked: true
+                                                }, {
+                                                    xtype: "radio",
+                                                    boxLabel: "Bounding box",
+                                                    name: "scale_method",
+                                                    inputValue: "bbox"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }, {
+                                    layout: "form",
+                                    columnWidth: 0.6,
+                                    border: false,
+                                    items: [{
+                                        //TODO tr
+                                        xtype: "combo",
+                                        name: "scale_manual",
+                                        fieldLabel: "Scale",
+                                        emptyText: "Select scale...",
+                                        mode: "local",
+                                        triggerAction: "all",
+                                        store: new GeoExt.data.ScaleStore({map: this.mapPanel}),
+                                        valueField: "scale",
+                                        displayField: "scale",
+                                        editable: false,
+                                        typeAhead: false
+                                    },
+                                        {
+                                            //TODO replace by add-on config
+                                            xtype: "hidden",
+                                            name: "scale_padding",
+                                            fieldLabel: "Bounding box padding (m)",
+                                            value: 10000
+                                        }]
+                                }]
+                            }
+
+                        ]
+                    },
+                    {
+                        xtype: "fieldset",
+                        autoheight: true,
+                        title: "Page title",
+                        style: {
+                            margin: "0 5px 10px",
+                            "background-color": "white"
+                        },
+                        items: [
                             {
-                                boxLabel: "Use a field from the atlas layer as subtitle",
-                                name: "subtitle_method",
-                                inputValue: "field"
+                                layout: "column",
+                                border: false,
+                                items: [
+                                    {
+                                        columnWidth: 0.4,
+                                        layout: "form",
+                                        border: false,
+                                        items: [
+                                            {
+                                                xtype: "radiogroup",
+                                                columns: 1,
+                                                hideLabel: true,
+                                                name: "title_method_group",
+                                                items: [
+                                                    {
+                                                        boxLabel: "Same title for every page",
+                                                        name: "title_method",
+                                                        inputValue: "same",
+                                                        checked: true
+                                                    },
+                                                    {
+                                                        boxLabel: "Use a field from the atlas layer as title",
+                                                        name: "title_method",
+                                                        inputValue: "field"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+
+                                    },
+                                    {
+                                        columnWidth: 0.6,
+                                        layout: "form",
+                                        border: false,
+                                        items: [
+                                            {
+                                                //TODO tr
+                                                xtype: "textfield",
+                                                name: "title_text",
+                                                fieldLabel: "Page title",
+                                                //tabTip: "This title will be use for every page",
+                                                value: "Title"
+                                            },
+                                            {
+                                                //TODO tr
+                                                xtype: "combo",
+                                                name: "title_field",
+                                                fieldLabel: "Field for page title",
+                                                emptyText: "Select title field",
+                                                editable: false,
+                                                typeAhead: false,
+                                                mode: "local",
+                                                store: {
+                                                    xtype: "arraystore",
+                                                    id: 0,
+                                                    fields: ["name"],
+                                                    //TODO tr
+                                                    data: [
+                                                        ["Select atlas layer first"]
+                                                    ]
+                                                },
+                                                valueField: "name",
+                                                displayField: "name",
+                                                triggerAction: "all",
+                                                scope: this
+                                            }
+                                        ]
+                                    }
+                                ]
                             }
                         ]
                     },
                     {
-                        //TODO tr
-                        xtype: "textfield",
-                        name: "subtitle_text",
-                        fieldLabel: "Page subtitle",
-                        //tabTip: "This subtitle will be use for every page",
-                        value: "Subtitle"
-                    },
-                    {
-                        //TODO tr
-                        xtype: "combo",
-                        name: "subtitle_field",
-                        fieldLabel: "Field for page subtitle",
-                        emptyText: "Select subtitle field",
-                        mode: "local",
-                        editable: false,
-                        typeAhead: false,
-                        store: {
-                            xtype: "arraystore",
-                            id: 0,
-                            fields: ["name"],
-                            //TODO tr
-                            data: [
-                                ["Select atlas layer first"]
-                            ]
+                        xtype: "fieldset",
+                        autoheight: true,
+                        title: "Page subtitle",
+                        style: {
+                            margin: "0 5px 10px",
+                            "background-color": "white"
                         },
-                        valueField: "name",
-                        displayField: "name",
-                        triggerAction: "all",
-                        scope: this
+                        items: [
+                            {
+                                layout: "column",
+                                border: false,
+                                items: [
+                                    {
+                                        columnWidth: 0.4,
+                                        layout: "form",
+                                        border: false,
+                                        items: [
+                                            {
+                                                xtype: "radiogroup",
+                                                hideLabel: true,
+                                                columns: 1,
+                                                name: "subtitle_method_group",
+                                                items: [
+                                                    {
+                                                        boxLabel: "Same subtitle for every page",
+                                                        name: "subtitle_method",
+                                                        inputValue: "same",
+                                                        checked: true
+                                                    },
+                                                    {
+                                                        boxLabel: "Use a field from the atlas layer as subtitle",
+                                                        name: "subtitle_method",
+                                                        inputValue: "field"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        columnWidth: 0.6,
+                                        layout: "form",
+                                        border: false,
+                                        items: [
+                                            {
+                                                //TODO tr
+                                                xtype: "textfield",
+                                                name: "subtitle_text",
+                                                fieldLabel: "Page subtitle",
+                                                //tabTip: "This subtitle will be use for every page",
+                                                value: "Subtitle"
+                                            },
+                                            {
+                                                //TODO tr
+                                                xtype: "combo",
+                                                name: "subtitle_field",
+                                                fieldLabel: "Field for page subtitle",
+                                                emptyText: "Select subtitle field",
+                                                mode: "local",
+                                                editable: false,
+                                                typeAhead: false,
+                                                store: {
+                                                    xtype: "arraystore",
+                                                    id: 0,
+                                                    fields: ["name"],
+                                                    //TODO tr
+                                                    data: [
+                                                        ["Select atlas layer first"]
+                                                    ]
+                                                },
+                                                valueField: "name",
+                                                displayField: "name",
+                                                triggerAction: "all",
+                                                scope: this
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
                     },
                     {
-                        //TODO tr
-                        xtype: "combo",
-                        name: "prefix_field",
-                        fieldLabel: "Field for filename prefix",
-                        emptyText: "Select prefix field",
-                        mode: "local",
-                        editable: false,
-                        typeAhead: false,
-                        store: {
-                            xtype: "arraystore",
-                            id: 0,
-                            fields: ["name"],
-                            //TODO tr
-                            data: [
-                                ["Select atlas layer first"]
-                            ]
+                        layout: "column",
+                        border: false,
+                        style: {
+                            margin: "0 5px 10px",
+                            "background-color": "white"
                         },
-                        valueField: "name",
-                        displayField: "name",
-                        triggerAction: "all",
-                        scope: this
+                        items: [
+                            {
+                                layout: "form",
+                                border: false,
+                                columnWidth: 0.5,
+                                items: [
+                                    {
+                                        xtype: "textfield",
+                                        name: "outputFilename",
+                                        fieldLabel: "Output filename",
+                                        value: "filename"
+                                    }
+                                ]
+                            },
+                            {
+                                layout: "form",
+                                border: false,
+                                columnWidth: 0.5,
+                                items: [
+                                    {
+                                        //TODO tr
+                                        xtype: "combo",
+                                        name: "prefix_field",
+                                        fieldLabel: "Field for filename prefix",
+                                        emptyText: "Select prefix field",
+                                        mode: "local",
+                                        editable: false,
+                                        typeAhead: false,
+                                        store: {
+                                            xtype: "arraystore",
+                                            id: 0,
+                                            fields: ["name"],
+                                            //TODO tr
+                                            data: [
+                                                ["Select atlas layer first"]
+                                            ]
+                                        },
+                                        valueField: "name",
+                                        displayField: "name",
+                                        triggerAction: "all",
+                                        scope: this
+                                    }
+                                ]
+                            }
+                        ]
                     },
                     {
-                        xtype: "textfield",
-                        name: "outputFilename",
-                        fieldLabel: "Output filename",
-                        value: "filename"
+                        layout: "form",
+                        border: false,
+                        style: {
+                            padding: "5px 5px 0",
+                            "background-color": "white"
+                        },
+                        items: [
+                            {
+                                //TODO tr
+                                xtype: "textfield",
+                                style: {
+                                    margin: "0 5px 10px",
+                                    "background-color": "white"
+                                },
+                                name: "email",
+                                labelStyle: "width:180px",
+                                fieldLabel: "Atlas link will be sent by email at"
+                            }
+                        ]
                     }
-
-
                 ],
                 buttons: [
                     {
@@ -529,7 +706,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
 
                         }, this);
 
-                            this.events.fireEvent("featurelayerready", this.atlasConfig);
+                        this.events.fireEvent("featurelayerready", this.atlasConfig);
 
                     },
                     scope: this
@@ -600,7 +777,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             encodedLayers = [];
         this.mapPanel.layers.each(function(layerRecord) {
             if ((layerRecord.get("name") != atlasLayer) && layerRecord.get("layer").visibility) {
-                encodedLayer =  this.printProvider.encodeLayer(layerRecord.get("layer"), this.map.getMaxExtent())
+                encodedLayer = this.printProvider.encodeLayer(layerRecord.get("layer"), this.map.getMaxExtent())
                 encodedLayers.splice(-1, 0, encodedLayer);
             }
         }, this);
