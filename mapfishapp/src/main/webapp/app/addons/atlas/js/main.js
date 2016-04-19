@@ -107,7 +107,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
         this.window = new Ext.Window({
             title: this.title,
             width: 680,
-            height: 580,
+            autoHeight: true,
             bodyStyle: {
                 padding: "5px 5px 0",
                 "background-color": "white"
@@ -130,7 +130,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                 name: "atlasLayer",
                                 labelStyle: "width:180px",
                                 fieldLabel: this.tr("atlas_atlaslayer"),
-                                emptyText: "Select layer...",
+                                emptyText: this.tr("atlas_emptylayer"),
                                 mode: "local",
                                 editable: false,
                                 typeAhead: false,
@@ -155,7 +155,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                     {
                         xtype: "fieldset",
                         autoheight: true,
-                        title: "Layout",
+                        title: this.tr("atlas_layout"),
                         style: {
                             margin: "0 5px 10px",
                             "background-color": "white"
@@ -173,11 +173,10 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                             {
                                                 xtype: "combo",
                                                 name: "layout",
-                                                //TODO tr
-                                                fieldLabel: "Layout",
+                                                fieldLabel: this.tr("atlas_layout"),
                                                 editable: false,
                                                 typeAhead: false,
-                                                emptyText: "Select a layout",
+                                                emptyText: this.tr("atlas_selectlayout"),
                                                 mode: "local",
                                                 triggerAction: "all",
                                                 store: this.printProvider.layouts,
@@ -185,10 +184,10 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                                 displayField: "name"
                                             },
                                             {
-                                                //TODO tr
                                                 xtype: "checkbox",
                                                 name: "displayLegend",
-                                                fieldLabel: "Display legend"
+                                                labelStyle: "width:120px",
+                                                fieldLabel: this.tr("atlas_displaylegend")
                                             }
                                         ]
                                     },
@@ -200,8 +199,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                             {
                                                 xtype: "combo",
                                                 name: "outputFormat",
-                                                //TODO tr
-                                                fieldLabel: "Format",
+                                                fieldLabel: this.tr("atlas_format"),
                                                 value: "pdf",
                                                 editable: false,
                                                 typeAhed: false,
@@ -242,8 +240,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                     },
                     {
                         xtype: "fieldset",
-                        //TODO tr
-                        title: "Scale",
+                        title: this.tr("atlas_scale"),
                         autoheight: true,
                         style: {
                             margin: "0 5px 10px",
@@ -266,13 +263,13 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                             items: [
                                                 {
                                                     xtype: "radio",
-                                                    boxLabel: "Manual scale",
+                                                    boxLabel: this.tr("atlas_scalemanual"),
                                                     name: "scale_method",
                                                     inputValue: "manual",
                                                     checked: true
                                                 }, {
                                                     xtype: "radio",
-                                                    boxLabel: "Bounding box",
+                                                    boxLabel: this.tr("atlas_bbox"),
                                                     name: "scale_method",
                                                     inputValue: "bbox"
                                                 }
@@ -284,11 +281,10 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                     columnWidth: 0.6,
                                     border: false,
                                     items: [{
-                                        //TODO tr
                                         xtype: "combo",
                                         name: "scale_manual",
-                                        fieldLabel: "Scale",
-                                        emptyText: "Select scale...",
+                                        fieldLabel: this.tr("atlas_scale"),
+                                        emptyText: this.tr("atlas_selectscale"),
                                         mode: "local",
                                         triggerAction: "all",
                                         store: new GeoExt.data.ScaleStore({map: this.mapPanel}),
@@ -301,7 +297,6 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                             //TODO replace by add-on config
                                             xtype: "hidden",
                                             name: "scale_padding",
-                                            fieldLabel: "Bounding box padding (m)",
                                             value: 10000
                                         }]
                                 }]
@@ -312,7 +307,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                     {
                         xtype: "fieldset",
                         autoheight: true,
-                        title: "Page title",
+                        title: this.tr("atlas_pagetitle"),
                         style: {
                             margin: "0 5px 10px",
                             "background-color": "white"
@@ -334,13 +329,13 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                                 name: "title_method_group",
                                                 items: [
                                                     {
-                                                        boxLabel: "Same title for every page",
+                                                        boxLabel: this.tr("atlas_sametitle"),
                                                         name: "title_method",
                                                         inputValue: "same",
                                                         checked: true
                                                     },
                                                     {
-                                                        boxLabel: "Use a field from the atlas layer as title",
+                                                        boxLabel: this.tr("atlas_fieldtitle"),
                                                         name: "title_method",
                                                         inputValue: "field"
                                                     }
@@ -355,19 +350,18 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                         border: false,
                                         items: [
                                             {
-                                                //TODO tr
                                                 xtype: "textfield",
                                                 name: "title_text",
-                                                fieldLabel: "Page title",
-                                                //tabTip: "This title will be use for every page",
-                                                value: "Title"
+                                                fieldLabel: this.tr("atlas_pagetitle"),
+                                                labelStyle: "width:160px",
+                                                value: this.tr("atlas_title")
                                             },
                                             {
-                                                //TODO tr
                                                 xtype: "combo",
                                                 name: "title_field",
-                                                fieldLabel: "Field for page title",
-                                                emptyText: "Select title field",
+                                                labelStyle: "width:160px",
+                                                fieldLabel: this.tr("atlas_fieldfortitle"),
+                                                emptyText: this.tr("atlas_fieldfortitleselect"),
                                                 editable: false,
                                                 typeAhead: false,
                                                 mode: "local",
@@ -375,9 +369,8 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                                     xtype: "arraystore",
                                                     id: 0,
                                                     fields: ["name"],
-                                                    //TODO tr
                                                     data: [
-                                                        ["Select atlas layer first"]
+                                                        [this.tr("atlas_selectlayerfirst")]
                                                     ]
                                                 },
                                                 valueField: "name",
@@ -394,7 +387,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                     {
                         xtype: "fieldset",
                         autoheight: true,
-                        title: "Page subtitle",
+                        title: this.tr("atlas_pagesubtitle"),
                         style: {
                             margin: "0 5px 10px",
                             "background-color": "white"
@@ -416,13 +409,13 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                                 name: "subtitle_method_group",
                                                 items: [
                                                     {
-                                                        boxLabel: "Same subtitle for every page",
+                                                        boxLabel: this.tr("atlas_samesubtitle"),
                                                         name: "subtitle_method",
                                                         inputValue: "same",
                                                         checked: true
                                                     },
                                                     {
-                                                        boxLabel: "Use a field from the atlas layer as subtitle",
+                                                        boxLabel: this.tr("atlas_fieldsubtitle"),
                                                         name: "subtitle_method",
                                                         inputValue: "field"
                                                     }
@@ -436,19 +429,19 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                         border: false,
                                         items: [
                                             {
-                                                //TODO tr
                                                 xtype: "textfield",
                                                 name: "subtitle_text",
-                                                fieldLabel: "Page subtitle",
+                                                labelStyle: "width:160px",
+                                                fieldLabel: this.tr("atlas_pagesubtitle"),
                                                 //tabTip: "This subtitle will be use for every page",
-                                                value: "Subtitle"
+                                                value: this.tr("atlas_subtitle")
                                             },
                                             {
-                                                //TODO tr
                                                 xtype: "combo",
                                                 name: "subtitle_field",
-                                                fieldLabel: "Field for page subtitle",
-                                                emptyText: "Select subtitle field",
+                                                labelStyle: "width:160px",
+                                                fieldLabel: this.tr("atlas_fieldforsubtitle"),
+                                                emptyText: this.tr("atlas_fieldforsubtitleselect"),
                                                 mode: "local",
                                                 editable: false,
                                                 typeAhead: false,
@@ -456,9 +449,8 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                                     xtype: "arraystore",
                                                     id: 0,
                                                     fields: ["name"],
-                                                    //TODO tr
                                                     data: [
-                                                        ["Select atlas layer first"]
+                                                        [this.tr("atlas_selectlayerfirst")]
                                                     ]
                                                 },
                                                 valueField: "name",
@@ -483,27 +475,29 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                             {
                                 layout: "form",
                                 border: false,
-                                columnWidth: 0.5,
+                                columnWidth: 0.4,
                                 items: [
                                     {
                                         xtype: "textfield",
+                                        labelStyle: "width:110px",
+                                        width: 120,
                                         name: "outputFilename",
-                                        fieldLabel: "Output filename",
-                                        value: "filename"
+                                        fieldLabel: this.tr("atlas_outputfilename"),
+                                        value: this.tr("atlas_ouputfilenamedefault")
                                     }
                                 ]
                             },
                             {
                                 layout: "form",
                                 border: false,
-                                columnWidth: 0.5,
+                                columnWidth: 0.6,
                                 items: [
                                     {
-                                        //TODO tr
                                         xtype: "combo",
                                         name: "prefix_field",
-                                        fieldLabel: "Field for filename prefix",
-                                        emptyText: "Select prefix field",
+                                        labelStyle: "width:160px",
+                                        fieldLabel: this.tr("atlas_fieldprefix"),
+                                        emptyText: this.tr("atlas_fieldforprefix"),
                                         mode: "local",
                                         editable: false,
                                         typeAhead: false,
@@ -511,9 +505,8 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                             xtype: "arraystore",
                                             id: 0,
                                             fields: ["name"],
-                                            //TODO tr
                                             data: [
-                                                ["Select atlas layer first"]
+                                                [this.tr("atlas_selectlayerfirst")]
                                             ]
                                         },
                                         valueField: "name",
@@ -534,23 +527,21 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                         },
                         items: [
                             {
-                                //TODO tr
                                 xtype: "textfield",
                                 style: {
                                     margin: "0 5px 10px",
                                     "background-color": "white"
                                 },
                                 name: "email",
-                                labelStyle: "width:180px",
-                                fieldLabel: "Atlas link will be sent by email at"
+                                labelStyle: "width:420px",
+                                fieldLabel: this.tr("atlas_emaillabel")
                             }
                         ]
                     }
                 ],
                 buttons: [
                     {
-                        //TODO tr
-                        text: "Submit",
+                        text: this.tr("atlas_submit"),
                         handler: function(b) {
                             var formValues, layersRelatedValues, scaleParameters, titleSubtitleParameters;
                             if (b.findParentByType("form").getForm().isValid()) {
@@ -595,8 +586,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                         scope: this
                     },
                     {
-                        //TODO tr
-                        text: "Cancel",
+                        text: this.tr("atlas_cancel"),
                         handler: function() {
                             this.window.close();
                         },
