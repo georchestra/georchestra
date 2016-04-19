@@ -543,42 +543,11 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                     {
                         text: this.tr("atlas_submit"),
                         handler: function(b) {
-                            var formValues, layersRelatedValues, scaleParameters, titleSubtitleParameters;
+                            var formValues;
                             if (b.findParentByType("form").getForm().isValid()) {
                                 formValues = b.findParentByType("form").getForm().getFieldValues();
 
-                                //copy some parameters
-                                this.atlasConfig.outputFormat = formValues.outputFormat;
-                                this.atlasConfig.layout = formValues.layout;
-                                this.atlasConfig.dpi = formValues.dpi;
-                                this.atlasConfig.projection = this.map.getProjection();
-                                this.atlasConfig.email = formValues.email;
-                                this.atlasConfig.displayLegend = formValues.displayLegend;
-                                this.atlasConfig.outputFilename = formValues.outputFilename;
-
-                                scaleParameters = {
-                                    scale_manual: formValues["scale_manual"],
-                                    scale_method: formValues["scale_method_group"].inputValue,
-                                    scale_padding: formValues["scale_padding"]
-                                };
-
-                                titleSubtitleParameters = {
-                                    title_method: formValues["title_method_group"].inputValue,
-                                    title_text: formValues["title_text"],
-                                    title_field: formValues["title_field"],
-                                    subtitle_method: formValues["title_method_group"].inputValue,
-                                    subtitle_text: formValues["subtitle_text"],
-                                    subtitle_field: formValues["subtitle_field"],
-
-                                }
-
-                                this.atlasConfig.baseLayers = this.baseLayers(formValues["atlasLayer"]);
-
-
-                                this.createFeatureLayerAndPagesSpecs(formValues["atlasLayer"], scaleParameters,
-                                    titleSubtitleParameters, formValues["prefix_field"]);
-
-                                //Form submit is trigger on "featurelayerready event
+                                this.parseForm(formValues);
 
 
                             }
@@ -604,17 +573,59 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
 
     /**
      *
+     * @param menuitem - menuitem which will receive the callback
+     * @param resultpanel - resultpanel on which the callback must be operated
      * @param addon - The current addon.
+     *
      */
-    resultPanelHandler: function(addon) {
+    resultPanelHandler: function(menuitem, event, resultpanel, addon) {
         alert("Result panel action for " + addon.title);
+    },
+
+    parseForm: function(formValues, autoSubmit) {
+        var layersRelatedValues, scaleParameters, titleSubtitleParameters;
+
+        autoSubmit = autoSubmit || true;
+        //copy some parameters
+        this.atlasConfig.outputFormat = formValues.outputFormat;
+        this.atlasConfig.layout = formValues.layout;
+        this.atlasConfig.dpi = formValues.dpi;
+        this.atlasConfig.projection = this.map.getProjection();
+        this.atlasConfig.email = formValues.email;
+        this.atlasConfig.displayLegend = formValues.displayLegend;
+        this.atlasConfig.outputFilename = formValues.outputFilename;
+
+        scaleParameters = {
+            scale_manual: formValues["scale_manual"],
+            scale_method: formValues["scale_method_group"].inputValue,
+            scale_padding: formValues["scale_padding"]
+        };
+
+        titleSubtitleParameters = {
+            title_method: formValues["title_method_group"].inputValue,
+            title_text: formValues["title_text"],
+            title_field: formValues["title_field"],
+            subtitle_method: formValues["title_method_group"].inputValue,
+            subtitle_text: formValues["subtitle_text"],
+            subtitle_field: formValues["subtitle_field"]
+
+        }
+
+        this.atlasConfig.baseLayers = this.baseLayers(formValues["atlasLayer"]);
+
+
+        this.createFeatureLayerAndPagesSpecs(formValues["atlasLayer"], scaleParameters,
+            titleSubtitleParameters, formValues["prefix_field"], autoSubmit);
+
+        //Form submit is trigger on "featurelayerready event
+
     },
 
     /**
      * Method createFeatureLayerAndPagesSpecs
      * TODO Check MFP v3 layers/type specification (order is important)
      */
-    createFeatureLayerAndPagesSpecs: function(atlasLayer, scaleParameters, titleSubtitleParameters, field_prefix) {
+    createFeatureLayerAndPagesSpecs: function(atlasLayer, scaleParameters, titleSubtitleParameters, field_prefix, autoSubmit) {
         var layer, page, page_idx, wfsFeatures, page_title, page_subtitle, page_filename, bounds, bbox;
 
         this.atlasConfig.pages = [];
@@ -626,6 +637,16 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             if (layerStore.get("name") == atlasLayer) {
                 this.atlasConfig.featureLayer = this.printProvider.encodeLayer(layerStore.get("layer"),
                     layerStore.get("layer").getExtent());
+                //TODO version may not be required by mapfish - check serverside
+                if (layerStore.get("layer").DEFAULT_PARAMS) {
+                    this.atlasConfig.featureLayer.version = layerStore.get("layer").DEFAULT_PARAMS.version;
+                }
+                if (this.atlasConfig.featureLayer.maxScaleDenominator) {
+                    delete this.atlasConfig.featureLayer.maxScaleDenominator;
+                }
+                if (this.atlasConfig.featureLayer.minScaleDenominator) {
+                    delete this.atlasConfig.featureLayer.minScaleDenominator;
+                }
 
                 this.protocol.read({
                     //See GEOR_Querier "search" method
@@ -696,7 +717,9 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
 
                         }, this);
 
-                        this.events.fireEvent("featurelayerready", this.atlasConfig);
+                        if (autoSubmit) {
+                            this.events.fireEvent("featurelayerready", this.atlasConfig);
+                        }
 
                     },
                     scope: this

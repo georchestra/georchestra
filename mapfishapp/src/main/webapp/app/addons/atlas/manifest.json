@@ -39,6 +39,8 @@
             "atlas_fieldforprefix": "Select prefix field...",
             "atlas_emaillabel": "Atlas download link will be sent by email at",
             "atlas_submit": "Submit",
+            "atlas_preview": "Preview",
+            "atlas_previewsuccess": "Preview generation is completed",
             "atlas_cancel": "Cancel"
         },
         "es": {
@@ -74,6 +76,8 @@
             "atlas_fieldforprefix": "Select prefix field...",
             "atlas_emaillabel": "Atlas download link will be sent by email at",
             "atlas_submit": "Submit",
+            "atlas_preview": "Preview",
+            "atlas_previewsuccess": "Preview generation is completed",
             "atlas_cancel": "Cancel"
         },
         "fr": {
@@ -109,6 +113,8 @@
             "atlas_fieldforprefix": "Sélectioner le champ à utiliser comme préfixe...",
             "atlas_emaillabel": "Le lien de téléchargement de l'atlas sera transmis par courriel à l'adresse",
             "atlas_submit": "Soumettre",
+            "atlas_preview": "Aperçu",
+            "atlas_previewsuccess": "La génération de l'aperçu est complétée",
             "atlas_cancel": "Annuler"
 
 
@@ -147,6 +153,8 @@
             "atlas_fieldforprefix": "Select prefix field...",
             "atlas_emaillabel": "Atlas download link will be sent by email at",
             "atlas_submit": "Submit",
+            "atlas_preview": "Preview",
+            "atlas_previewsuccess": "Preview generation is completed",
             "atlas_cancel": "Cancel"
         }
     }
