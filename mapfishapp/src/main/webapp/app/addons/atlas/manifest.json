@@ -41,7 +41,8 @@
             "atlas_submit": "Submit",
             "atlas_preview": "Preview",
             "atlas_previewsuccess": "Preview generation is completed",
-            "atlas_cancel": "Cancel"
+            "atlas_cancel": "Cancel",
+            "atlas_connect_printserver_error": "Cannot connect to print server"
         },
         "es": {
             "atlas_failed": "La generación de los atlas falló",
@@ -78,7 +79,8 @@
             "atlas_submit": "Submit",
             "atlas_preview": "Preview",
             "atlas_previewsuccess": "Preview generation is completed",
-            "atlas_cancel": "Cancel"
+            "atlas_cancel": "Cancel",
+            "atlas_connect_printserver_error": "Cannot connect to print server"
         },
         "fr": {
             "atlas_failed": "La génération de l'atlas a échoué",
@@ -115,7 +117,8 @@
             "atlas_submit": "Soumettre",
             "atlas_preview": "Aperçu",
             "atlas_previewsuccess": "La génération de l'aperçu est complétée",
-            "atlas_cancel": "Annuler"
+            "atlas_cancel": "Annuler",
+            "atlas_connect_printserver_error": "Impossible de se connecter au serveur d'impression"
 
 
 
@@ -155,7 +158,8 @@
             "atlas_submit": "Submit",
             "atlas_preview": "Preview",
             "atlas_previewsuccess": "Preview generation is completed",
-            "atlas_cancel": "Cancel"
+            "atlas_cancel": "Cancel",
+            "atlas_connect_printserver_error": "Cannot connect to print server"
         }
     }
 }
