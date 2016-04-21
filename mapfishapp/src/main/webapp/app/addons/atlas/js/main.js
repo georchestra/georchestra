@@ -97,7 +97,12 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             }
         }, 1000, this);
 
-
+        this.attributeStore = new Ext.data.ArrayStore({
+            fields: ["name"],
+            data: [
+                [this.tr("atlas_selectlayerfirst")]
+            ]
+        });
     }
     ,
 
@@ -431,14 +436,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                                 editable: false,
                                                 typeAhead: false,
                                                 mode: "local",
-                                                store: {
-                                                    xtype: "arraystore",
-                                                    id: 0,
-                                                    fields: ["name"],
-                                                    data: [
-                                                        [this.tr("atlas_selectlayerfirst")]
-                                                    ]
-                                                },
+                                                store: this.attributeStore,
                                                 valueField: "name",
                                                 displayField: "name",
                                                 triggerAction: "all",
@@ -545,14 +543,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                                 mode: "local",
                                                 editable: false,
                                                 typeAhead: false,
-                                                store: {
-                                                    xtype: "arraystore",
-                                                    id: 0,
-                                                    fields: ["name"],
-                                                    data: [
-                                                        [this.tr("atlas_selectlayerfirst")]
-                                                    ]
-                                                },
+                                                store: this.attributeStore,
                                                 valueField: "name",
                                                 displayField: "name",
                                                 triggerAction: "all",
@@ -619,14 +610,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                         mode: "local",
                                         editable: false,
                                         typeAhead: false,
-                                        store: {
-                                            xtype: "arraystore",
-                                            id: 0,
-                                            fields: ["name"],
-                                            data: [
-                                                [this.tr("atlas_selectlayerfirst")]
-                                            ]
-                                        },
+                                        store: this.attributeStore,
                                         valueField: "name",
                                         displayField: "name",
                                         triggerAction: "all",
@@ -860,6 +844,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             typeName: layerRecord.get("WFS_typeName"),
         }
 
+        this.attributeStore = null;
         this.attributeStore = GEOR.ows.WFSDescribeFeatureType(pseudoRecord, {
             extractFeatureNS: true,
             success: function() {
@@ -875,6 +860,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                     });
                     this._geometryName = geometryName;
                     // remove geometry from attribute store:
+                    // FIXME : disabled because it causes problem with combobox (index offset)
                     this.attributeStore.remove(r);
                 } else {
                     GEOR.util.infoDialog({
@@ -896,8 +882,8 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             ((c.name == "title_field") || (c.name == "subtitle_field" || (c.name == "prefix_field"))));
         });
         Ext.each(fieldsCombo, function(fieldCombo) {
-            fieldCombo.reset();
             fieldCombo.bindStore(this.attributeStore);
+            fieldCombo.reset();
         }, this);
     },
 
