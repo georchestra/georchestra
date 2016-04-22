@@ -10,7 +10,7 @@ RUN apt-get update && \
 
 USER openldap
 ADD groupofmembers.ldif /etc/ldap.dist/modules/
-ADD docker/memberof.ldif /etc/ldap.dist/modules/
+ADD docker/memberof.ldif /tmp/
 ADD georchestra.ldif /tmp/
 
 USER root
@@ -20,4 +20,5 @@ ADD docker/docker-entrypoint.sh /
 RUN chmod +x /docker-entrypoint.d/*
 
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
+
 CMD [ "slapd", "-d", "32768", "-u", "openldap", "-g", "openldap" ]

@@ -24,6 +24,7 @@ if [ ! -d /etc/ldap/slapd.d ]; then
     echo "OK"
 
     echo "Populating ldap tree..."
+    ldapadd -Y EXTERNAL -H ldapi:/// -f /tmp/memberof.ldif
     ldapadd -D"cn=admin,dc=georchestra,dc=org" -w "secret" -f /tmp/georchestra.ldif
     echo "Populating ldap tree...OK"
 
