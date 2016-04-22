@@ -415,7 +415,7 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
                     handler: GEOR.tools.getAddon(addonConfig.id).resultPanelHandler.createDelegate(addon, [this], true)
                 });
             }
-        });
+        }, this);
 
         if (!this.sfControl) {
             // we need to create the SelectFeature control by ourselves

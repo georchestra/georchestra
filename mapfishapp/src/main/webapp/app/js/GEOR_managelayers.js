@@ -950,7 +950,9 @@ GEOR.managelayers = (function() {
          */
 
         Ext.each(GEOR.config.ADDONS, function(addonConfig) {
-            var addon;
+        var addon, me;
+        me = this;
+
             if (GEOR.tools.getAddonsState()[addonConfig.id] && addonConfig.options.layerTreeAction) {
                 addon = GEOR.tools.getAddon(addonConfig.id);
                 insertSep();
@@ -960,13 +962,12 @@ GEOR.managelayers = (function() {
                     qtip: addon.qtip,
                     listeners: {
                         "click": {
-                            fn: addon.layerTreeHandler.createDelegate(addon, [layerRecord], true)
+                            fn: addon.layerTreeHandler.createDelegate(this, [me, addon], true)
                         }
                     },
                 });
             }
         });
-
 
         return menuItems;
     };

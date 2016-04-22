@@ -693,6 +693,10 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
         alert("Result panel action for " + addon.title);
     },
 
+    layerTreeHandler: function(menuitem, event, layertree, addon) {
+        alert("Layer tree action for " + addon.title);
+    },
+
     parseForm: function(formValues, autoSubmit) {
         var layersRelatedValues, scaleParameters, titleSubtitleParameters;
 

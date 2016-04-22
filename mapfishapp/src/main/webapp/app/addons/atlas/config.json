@@ -5,7 +5,8 @@
         "enabled": true,
         "options": {
             "target": "tbar_4",
-            "resultPanelAction": true
+            "resultPanelAction": true,
+            "layerTreeAction": true
         },
         "title": {
             "fr": "Atlas",
