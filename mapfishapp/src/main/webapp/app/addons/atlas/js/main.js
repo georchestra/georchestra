@@ -103,22 +103,6 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                 [this.tr("atlas_selectlayerfirst")]
             ]
         });
-    }
-    ,
-
-    /**
-     * Method menuAction
-     */
-
-    menuAction: function(atlas, e) {
-        var atlasLayersStore = new GeoExt.data.LayerStore({
-            fields: this.mapPanel.layers.fields.items
-        });
-        this.mapPanel.layers.each(function(layerRecord) {
-            if (layerRecord.get("WFS_typeName") || layerRecord.get("WFS_URL")) {
-                atlasLayersStore.add(layerRecord);
-            }
-        });
 
         this.window = new Ext.Window({
             title: this.title,
@@ -130,44 +114,10 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             },
             border: false,
             closable: true,
+            closeAction: "hide",
             items: [{
                 xtype: "form",
                 items: [
-                    {
-                        layout: "form",
-                        border: false,
-                        style: {
-                            padding: "5px 5px 0",
-                            "background-color": "white"
-                        },
-                        items: [
-                            {
-                                xtype: "combo",
-                                name: "atlasLayer",
-                                labelStyle: "width:180px",
-                                fieldLabel: this.tr("atlas_atlaslayer"),
-                                emptyText: this.tr("atlas_emptylayer"),
-                                mode: "local",
-                                editable: false,
-                                typeAhead: false,
-                                triggerAction: "all",
-                                store: atlasLayersStore,
-                                valueField: "name",
-                                displayField: "title",
-                                allowBlank: false,
-                                listeners: {
-                                    select: {
-                                        fn: function(combo, record) {
-                                            this.buildFieldsStore(record);
-                                        },
-                                        scope: this
-                                    },
-                                    scope: this
-                                },
-                                scope: this
-                            }
-                        ]
-                    },
                     {
                         xtype: "fieldset",
                         autoheight: true,
@@ -658,7 +608,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                     {
                         text: this.tr("atlas_cancel"),
                         handler: function() {
-                            this.window.close();
+                            this.window.hide();
                         },
                         scope: this
                     }
@@ -667,9 +617,69 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             }
             ],
             scope: this
-        })
-        ;
+        });
+    },
+
+    /**
+     * Method menuAction
+     */
+
+    menuAction: function(atlasMenu, e) {
+        var atlasLayersStore = new GeoExt.data.LayerStore({
+            fields: this.mapPanel.layers.fields.items
+        });
+        this.mapPanel.layers.each(function(layerRecord) {
+            if (layerRecord.get("WFS_typeName") || layerRecord.get("WFS_URL")) {
+                atlasLayersStore.add(layerRecord);
+            }
+        });
+
+        var layerSelectPanel = new Ext.Panel({
+            layout: "form",
+            border: false,
+            style: {
+                padding: "5px 5px 0",
+                "background-color": "white"
+            },
+            items: [
+                {
+                    xtype: "combo",
+                    name: "atlasLayer",
+                    labelStyle: "width:180px",
+                    fieldLabel: this.tr("atlas_atlaslayer"),
+                    emptyText: this.tr("atlas_emptylayer"),
+                    mode: "local",
+                    editable: false,
+                    typeAhead: false,
+                    triggerAction: "all",
+                    store: atlasLayersStore,
+                    valueField: "name",
+                    displayField: "title",
+                    allowBlank: false,
+                    listeners: {
+                        select: {
+                            fn: function(combo, record) {
+                                this.buildFieldsStore(record);
+                            },
+                            scope: this
+                        },
+                        scope: this
+                    },
+                    scope: this
+                }
+            ]
+        });
+
+        this.window.items.itemAt(0).insert(0, layerSelectPanel);
+        this.window.on("beforehide", function () {
+            layerSelectPanel.destroy();
+        });
+
+
         this.window.show();
+        if (atlasMenu.getXType() === "button") {
+            atlasMenu.toggle(false);
+        }
     },
 
     /**
