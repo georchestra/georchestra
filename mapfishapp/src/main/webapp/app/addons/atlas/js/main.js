@@ -11,6 +11,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
     events: null,
     attributeStore: null,
     dpiStore: null,
+    resultPanelFeatures: null,
 
     printProvider: null,
 
@@ -639,7 +640,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             }
         });
 
-        var layerSelectPanel = new Ext.Panel({
+        var layerPanel = new Ext.Panel({
             layout: "form",
             border: false,
             style: {
@@ -675,10 +676,10 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             ]
         });
 
-        this.window.items.itemAt(0).insert(0, layerSelectPanel);
+        this.window.items.itemAt(0).insert(0, layerPanel);
         this.window.on("beforehide", function() {
-            if (layerSelectPanel) {
-                layerSelectPanel.destroy();
+            if (layerPanel) {
+                layerPanel.destroy();
             }
 
         });
@@ -698,21 +699,107 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
      *
      */
     resultPanelHandler: function(menuitem, event, resultpanel, addon) {
+        var layerName, fieldsCombo, attributeStoreData, layerPanel;
+
+        addon.resultPanelFeatures = resultpanel._store;
 
 
-        var fieldsCombo = this.window.findBy(function(c) {
+        fieldsCombo = addon.window.findBy(function(c) {
             return ((c.getXType() == "combo") &&
             ((c.name == "title_field") || (c.name == "subtitle_field" || (c.name == "prefix_field"))));
         });
+
+        attributeStoreData = [];
+        Ext.each(resultpanel._model.getFields(), function(fieldname) {
+            attributeStoreData.splice(-1, 0, [fieldname]);
+        })
+
+        addon.attributeStore = new Ext.data.ArrayStore({
+            fields: ["name"],
+            data: attributeStoreData
+        });
         Ext.each(fieldsCombo, function(fieldCombo) {
-            fieldCombo.bindStore(this.attributeStore);
+            fieldCombo.bindStore(addon.attributeStore);
             fieldCombo.reset();
-        }, this);
+        }, addon);
+
+
+        addon.mapPanel.layers.each(function(l) {
+            //FIXME or not... find layerRecord based on title
+            if (resultpanel.title == l.get("title")) {
+                layerName = l.get("name");
+            }
+        });
+
+
+        layerPanel = new Ext.Panel({
+            layout: "form",
+            border: false,
+            style: {
+                padding: "5px 5px 0",
+                "background-color": "white"
+            },
+            items: [
+                {
+                    xtype: "label",
+                    //TODO tr
+                    text: "Atlas of layer " + resultpanel.title
+                },
+                {
+                    xtype: "hidden",
+                    name: "resultPanel",
+                    value: true
+                },
+                {
+                    xtype: "hidden",
+                    name: "atlasLayer",
+                    value: layerName
+                }
+            ]
+        });
+
+        addon.window.items.itemAt(0).insert(0, layerPanel);
+        addon.window.on("beforehide", function() {
+            if (layerPanel) {
+                layerPanel.destroy();
+            }
+
+        });
+
         addon.window.show();
     },
 
     layerTreeHandler: function(menuitem, event, layerRecord, addon) {
-        //TODO Add panel with layer name
+        //TODO Improve panel with layer name
+        var layerPanel = new Ext.Panel({
+            layout: "form",
+            border: false,
+            style: {
+                padding: "5px 5px 0",
+                "background-color": "white"
+            },
+            items: [
+                {
+                    xtype: "label",
+                    //TODO tr
+                    text: "Atlas of layer " + layerRecord.get("title")
+                },
+                {
+                    xtype: "hidden",
+                    name: "atlasLayer",
+                    value: layerRecord.get("name")
+                }
+            ]
+        });
+
+        addon.window.items.itemAt(0).insert(0, layerPanel);
+        addon.window.on("beforehide", function() {
+            if (layerPanel) {
+                layerPanel.destroy();
+            }
+
+        });
+
         addon.buildFieldsStore(layerRecord);
         addon.window.show();
     },
@@ -750,7 +837,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
 
 
         this.createFeatureLayerAndPagesSpecs(formValues["atlasLayer"], scaleParameters,
-            titleSubtitleParameters, formValues["prefix_field"], autoSubmit);
+            titleSubtitleParameters, formValues["prefix_field"], autoSubmit, formValues["resultPanel"]);
 
         //Form submit is trigger on "featurelayerready event
 
@@ -760,8 +847,65 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
      * Method createFeatureLayerAndPagesSpecs
      * TODO Check MFP v3 layers/type specification (order is important)
      */
-    createFeatureLayerAndPagesSpecs: function(atlasLayer, scaleParameters, titleSubtitleParameters, field_prefix, autoSubmit) {
+    createFeatureLayerAndPagesSpecs: function(atlasLayer, scaleParameters, titleSubtitleParameters, field_prefix, autoSubmit, resultPanel) {
         var layer, page, page_idx, wfsFeatures, page_title, page_subtitle, page_filename, bounds, bbox;
+
+        /**
+         *
+         * @param wfsFeature
+         * @return page object
+         * @private
+         */
+        var _pageFromFeature = function(wfsFeature) {
+            page = {};
+
+            if (titleSubtitleParameters.title_method == "same") {
+                page.title = titleSubtitleParameters.title_text;
+            } else {
+                page.title = wfsFeature.attributes[titleSubtitleParameters.title_field];
+            }
+
+
+            if (titleSubtitleParameters.subtitle_method == "same") {
+                page.subtitle = titleSubtitleParameters.subtitle_text;
+            } else {
+                page.subtitle = wfsFeature.attributes[titleSubtitleParameters.subtitle_field];
+            }
+
+            if (scaleParameters.scale_method == "manual") {
+                page.center =
+                    [wfsFeature.geometry.getCentroid().x, wfsFeature.geometry.getCentroid().y];
+                page.scale = scaleParameters.scale_manual;
+            } else {
+                var bWkt, json, wkt, bbox, bufferData, cur_idx;
+                json = new OpenLayers.Format.JSON();
+                wkt = new OpenLayers.Format.WKT();
+                if (!(wfsFeature.geometry instanceof OpenLayers.Geometry.Point)) {
+                    bounds = wfsFeature.geometry.getBounds();
+                    //TODO Revisit after form validation (this will not be available for point)
+                    bbox = new OpenLayers.Bounds(bounds.left - scaleParameters.scale_padding,
+                        bounds.bottom - scaleParameters.scale_padding,
+                        bounds.right + scaleParameters.scale_padding,
+                        bounds.top + scaleParameters.scale_padding
+                    ).toArray();
+                } else {
+                    bounds = wfsFeature.geometry.getBounds();
+                    //TODO - Read from add-on config
+                    bbox = bounds.scale(1.1).toArray();
+                }
+                page.bbox = bbox;
+            }
+
+            if (field_prefix === "") {
+                page.filename = page_idx.toString() + "_atlas.pdf"
+            } else {
+                page.filename = wfsFeature.attributes[field_prefix] + "_" + page_idx.toString() +
+                    "_atlas.pdf";
+            }
+
+            return page;
+
+        }
 
         this.atlasConfig.pages = [];
         page_idx = 0;
@@ -783,83 +927,51 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                     delete this.atlasConfig.featureLayer.minScaleDenominator;
                 }
 
-                this.protocol.read({
-                    //See GEOR_Querier "search" method
-                    //TODO set maxFeatures
-                    //maxFeatures: GEOR.config.MAX_FEATURES,
-                    maxFeatures: 2,
-                    propertyNames: this.attributeStore.collect("name").concat(this._geometryName),
-                    callback: function(response) {
-                        if (!response.success()) {
-                            return;
-                        }
-                        wfsFeatures = response.features;
-                        Ext.each(wfsFeatures, function(wfsFeature) {
+                if (resultPanel) {
+                    wfsFeatures = this.resultPanelFeatures;
+                    //FIXME Duplicate of below function!!!
+                    wfsFeatures.each(function(record) {
 
-                            page = {};
-                            //we add the page at the beginning to reference it on asynchronous buffer
-                            this.atlasConfig.pages.splice(page_idx, 0, page);
+                        wfsFeature = record.data.feature;
 
-                            if (titleSubtitleParameters.title_method == "same") {
-                                page_title = titleSubtitleParameters.title_text;
-                            } else {
-                                page_title = wfsFeature.attributes[titleSubtitleParameters.title_field];
+
+                        this.atlasConfig.pages.splice(-1, 0, _pageFromFeature(wfsFeature));
+
+                        page_idx = page_idx + 1;
+
+
+                    }, this);
+
+                    if (autoSubmit) {
+                        this.events.fireEvent("featurelayerready", this.atlasConfig);
+                    }
+                } else {
+                    this.protocol.read({
+                        //See GEOR_Querier "search" method
+                        maxFeatures: GEOR.config.MAX_FEATURES,
+                        propertyNames: this.attributeStore.collect("name").concat(this._geometryName),
+                        callback: function(response) {
+                            if (!response.success()) {
+                                return;
                             }
-                            this.atlasConfig.pages[page_idx].title = page_title;
+                            wfsFeatures = response.features;
+                            Ext.each(wfsFeatures, function(wfsFeature) {
 
+                                this.atlasConfig.pages.splice(-1, 0, _pageFromFeature(wfsFeature));
 
-                            if (titleSubtitleParameters.subtitle_method == "same") {
-                                page_subtitle = titleSubtitleParameters.subtitle_text;
-                            } else {
-                                page_subtitle = wfsFeature.attributes[titleSubtitleParameters.subtitle_field];
-                            }
-                            this.atlasConfig.pages[page_idx].subtitle = page_subtitle;
+                                page_idx = page_idx + 1;
 
-                            if (scaleParameters.scale_method == "manual") {
-                                this.atlasConfig.pages[page_idx].center =
-                                    [wfsFeature.geometry.getCentroid().x, wfsFeature.geometry.getCentroid().y];
-                                this.atlasConfig.pages[page_idx].scale = scaleParameters.scale_manual;
-                            } else {
-                                var bWkt, json, wkt, bbox, bufferData, cur_idx;
-                                json = new OpenLayers.Format.JSON();
-                                wkt = new OpenLayers.Format.WKT();
-                                if (!(wfsFeature.geometry instanceof OpenLayers.Geometry.Point)) {
-                                    bounds = wfsFeature.geometry.getBounds();
-                                    //TODO Revisit after form validation (this will not be available for point)
-                                    bbox = new OpenLayers.Bounds(bounds.left - scaleParameters.scale_padding,
-                                        bounds.bottom - scaleParameters.scale_padding,
-                                        bounds.right + scaleParameters.scale_padding,
-                                        bounds.top + scaleParameters.scale_padding
-                                    ).toArray();
-                                } else {
-                                    bounds = wfsFeature.geometry.getBounds();
-                                    //TODO - Read from add-on config
-                                    bbox = bounds.scale(1.1).toArray();
-                                }
-                                this.atlasConfig.pages[page_idx].bbox = bbox;
+                            }, this);
+
+                            if (autoSubmit) {
+                                this.events.fireEvent("featurelayerready", this.atlasConfig);
                             }
 
-                            if (field_prefix === "") {
-                                page_filename = page_idx.toString() + "_atlas.pdf"
-                            } else {
-                                page_filename = wfsFeature.attributes[field_prefix] + "_" + page_idx.toString() +
-                                    "_atlas.pdf";
-                            }
-                            this.atlasConfig.pages[page_idx].filename = page_filename;
+                        },
+                        scope: this
 
-                            page_idx = page_idx + 1;
-
-
-                        }, this);
-
-                        if (autoSubmit) {
-                            this.events.fireEvent("featurelayerready", this.atlasConfig);
-                        }
-
-                    },
-                    scope: this
-
-                })
+                    });
+                }
             }
         }, this);
     },
