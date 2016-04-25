@@ -927,10 +927,26 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             encodedLayers = [];
         this.mapPanel.layers.each(function(layerRecord) {
             if ((layerRecord.get("name") != atlasLayer) && layerRecord.get("layer").visibility) {
-                encodedLayer = this.printProvider.encodeLayer(layerRecord.get("layer"), this.map.getMaxExtent())
-                encodedLayers.splice(-1, 0, encodedLayer);
+                encodedLayer = this.printProvider.encodeLayer(layerRecord.get("layer"), this.map.getMaxExtent());
+
+                if (encodedLayer) {
+
+                    //TODO Do we force version parameter inclusion%
+                    if (layerRecord.get("layer").DEFAULT_PARAMS) {
+                        encodedLayer.version = layerRecord.get("layer").DEFAULT_PARAMS.version;
+                    }
+                    if (encodedLayer.maxScaleDenominator) {
+                        delete encodedLayer.maxScaleDenominator;
+                    }
+                    if (encodedLayer.minScaleDenominator) {
+                        delete encodedLayer.minScaleDenominator;
+                    }
+
+                    encodedLayers.splice(-1, 0, encodedLayer);
+                }
             }
         }, this);
+
 
         return encodedLayers;
     },
