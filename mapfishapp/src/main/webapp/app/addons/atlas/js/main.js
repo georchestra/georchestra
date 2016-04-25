@@ -625,6 +625,11 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
      */
 
     menuAction: function(atlasMenu, e) {
+        if (atlasMenu.getXType() === "button") {
+            if (!atlasMenu.pressed) {
+                return;
+            }
+        }
         var atlasLayersStore = new GeoExt.data.LayerStore({
             fields: this.mapPanel.layers.fields.items
         });
@@ -671,8 +676,11 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
         });
 
         this.window.items.itemAt(0).insert(0, layerSelectPanel);
-        this.window.on("beforehide", function () {
-            layerSelectPanel.destroy();
+        this.window.on("beforehide", function() {
+            if (layerSelectPanel) {
+                layerSelectPanel.destroy();
+            }
+
         });
 
 
