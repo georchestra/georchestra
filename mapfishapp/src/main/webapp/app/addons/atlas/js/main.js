@@ -29,10 +29,10 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
 
         if (this.target) {
             this.components = this.target.insertButton(this.position, {
-                xtype: 'button',
+                xtype: "button",
                 enableToggle: true,
                 tooltip: this.getTooltip(record),
-                iconCls: 'atlas-icon',
+                iconCls: this.iconCls,
                 listeners: {
                     "toggle": this.menuAction,
                     scope: this
@@ -94,7 +94,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             if (this.printProvider.capabilities === null) {
                 GEOR.util.errorDialog({
                     msg: this.tr("atlas_connect_printserver_error")
-                })
+                });
             }
         }, 1000, this);
 
@@ -242,8 +242,8 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                                                 var form, combos;
                                                                 form = cb.findParentByType("form");
                                                                 combos = form.findBy(function(c) {
-                                                                    return ((c.getXType() == "combo") &&
-                                                                    (c.name == "scale_manual"));
+                                                                    return ((c.getXType() === "combo") &&
+                                                                    (c.name === "scale_manual"));
                                                                 });
                                                                 if (checked) {
                                                                     combos[0].enable();
@@ -280,12 +280,12 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                         editable: false,
                                         typeAhead: false,
                                         validator: function(value) {
-                                            var radio_scale, valid;
-                                            radio_scale = this.findParentByType("form").findBy(function(c) {
+                                            var radioScale, valid;
+                                            radioScale = this.findParentByType("form").findBy(function(c) {
                                                 return ((c.getXType() == "radiogroup") &&
                                                 (c.name == "scale_method_group"));
                                             })[0];
-                                            if (radio_scale.getValue().inputValue == "manual") {
+                                            if (radioScale.getValue().inputValue == "manual") {
                                                 if (value === "") {
                                                     valid = false;
                                                 } else {
@@ -335,13 +335,13 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                                 items: [
                                                     {
                                                         boxLabel: this.tr("atlas_sametitle"),
-                                                        name: "title_method",
+                                                        name: "titleMethod",
                                                         inputValue: "same",
                                                         checked: true
                                                     },
                                                     {
                                                         boxLabel: this.tr("atlas_fieldtitle"),
-                                                        name: "title_method",
+                                                        name: "titleMethod",
                                                         inputValue: "field"
                                                     }
                                                 ]
@@ -356,17 +356,17 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                         items: [
                                             {
                                                 xtype: "textfield",
-                                                name: "title_text",
+                                                name: "titleText",
                                                 fieldLabel: this.tr("atlas_pagetitle"),
                                                 labelStyle: "width:160px",
                                                 value: this.tr("atlas_title"),
                                                 validator: function(value) {
-                                                    var radio_title, valid;
-                                                    radio_title = this.findParentByType("form").findBy(function(c) {
-                                                        return ((c.getXType() == "radiogroup") &&
-                                                        (c.name == "title_method_group"));
+                                                    var radioTitle, valid;
+                                                    radioTitle = this.findParentByType("form").findBy(function(c) {
+                                                        return ((c.getXType() === "radiogroup") &&
+                                                        (c.name === "title_method_group"));
                                                     })[0];
-                                                    if (radio_title.getValue().inputValue == "same") {
+                                                    if (radioTitle.getValue().inputValue === "same") {
                                                         if (value === "") {
                                                             valid = false;
                                                         } else {
@@ -380,7 +380,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                             },
                                             {
                                                 xtype: "combo",
-                                                name: "title_field",
+                                                name: "titleField",
                                                 labelStyle: "width:160px",
                                                 fieldLabel: this.tr("atlas_fieldfortitle"),
                                                 emptyText: this.tr("atlas_fieldfortitleselect"),
@@ -393,12 +393,12 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                                 triggerAction: "all",
                                                 scope: this,
                                                 validator: function(value) {
-                                                    var radio_title, valid;
-                                                    radio_title = this.findParentByType("form").findBy(function(c) {
-                                                        return ((c.getXType() == "radiogroup") &&
-                                                        (c.name == "title_method_group"));
+                                                    var radioTitle, valid;
+                                                    radioTitle = this.findParentByType("form").findBy(function(c) {
+                                                        return ((c.getXType() === "radiogroup") &&
+                                                        (c.name === "title_method_group"));
                                                     })[0];
-                                                    if (radio_title.getValue().inputValue == "field") {
+                                                    if (radioTitle.getValue().inputValue === "field") {
                                                         if (value === "") {
                                                             valid = false;
                                                         } else {
@@ -442,13 +442,13 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                                 items: [
                                                     {
                                                         boxLabel: this.tr("atlas_samesubtitle"),
-                                                        name: "subtitle_method",
+                                                        name: "subtitleMethod",
                                                         inputValue: "same",
                                                         checked: true
                                                     },
                                                     {
                                                         boxLabel: this.tr("atlas_fieldsubtitle"),
-                                                        name: "subtitle_method",
+                                                        name: "subtitleMethod",
                                                         inputValue: "field"
                                                     }
                                                 ]
@@ -462,7 +462,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                         items: [
                                             {
                                                 xtype: "textfield",
-                                                name: "subtitle_text",
+                                                name: "subtitleText",
                                                 labelStyle: "width:160px",
                                                 fieldLabel: this.tr("atlas_pagesubtitle"),
                                                 //tabTip: "This subtitle will be use for every page",
@@ -470,10 +470,10 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                                 validator: function(value) {
                                                     var radio_subtitle, valid;
                                                     radio_subtitle = this.findParentByType("form").findBy(function(c) {
-                                                        return ((c.getXType() == "radiogroup") &&
-                                                        (c.name == "title_method_group"));
+                                                        return ((c.getXType() === "radiogroup") &&
+                                                        (c.name === "title_method_group"));
                                                     })[0];
-                                                    if (radio_subtitle.getValue().inputValue == "same") {
+                                                    if (radio_subtitle.getValue().inputValue === "same") {
                                                         if (value === "") {
                                                             valid = false;
                                                         } else {
@@ -487,7 +487,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                             },
                                             {
                                                 xtype: "combo",
-                                                name: "subtitle_field",
+                                                name: "subtitleField",
                                                 labelStyle: "width:160px",
                                                 fieldLabel: this.tr("atlas_fieldforsubtitle"),
                                                 emptyText: this.tr("atlas_fieldforsubtitleselect"),
@@ -502,10 +502,10 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                                 validator: function(value) {
                                                     var radio_subtitle, valid;
                                                     radio_subtitle = this.findParentByType("form").findBy(function(c) {
-                                                        return ((c.getXType() == "radiogroup") &&
-                                                        (c.name == "subtitle_method_group"));
+                                                        return ((c.getXType() === "radiogroup") &&
+                                                        (c.name === "subtitle_method_group"));
                                                     })[0];
-                                                    if (radio_subtitle.getValue().inputValue == "field") {
+                                                    if (radio_subtitle.getValue().inputValue === "field") {
                                                         if (value === "") {
                                                             valid = false;
                                                         } else {
@@ -705,8 +705,8 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
 
 
         fieldsCombo = addon.window.findBy(function(c) {
-            return ((c.getXType() == "combo") &&
-            ((c.name == "title_field") || (c.name == "subtitle_field" || (c.name == "prefix_field"))));
+            return ((c.getXType() === "combo") &&
+            ((c.name === "titleField") || (c.name === "subtitleField" || (c.name === "prefix_field"))));
         });
 
         attributeStoreData = [];
@@ -726,7 +726,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
 
         addon.mapPanel.layers.each(function(l) {
             //FIXME or not... find layerRecord based on title
-            if (resultpanel.title == l.get("title")) {
+            if (resultpanel.title === l.get("title")) {
                 layerName = l.get("name");
             }
         });
@@ -818,18 +818,18 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
         this.atlasConfig.outputFilename = formValues.outputFilename;
 
         scaleParameters = {
-            scale_manual: formValues["scale_manual"],
-            scale_method: formValues["scale_method_group"].inputValue,
-            scale_padding: formValues["scale_padding"]
+            scaleManual: formValues["scale_manual"],
+            scaleMethod: formValues["scale_method_group"].inputValue,
+            scalePadding: formValues["scale_padding"]
         };
 
         titleSubtitleParameters = {
-            title_method: formValues["title_method_group"].inputValue,
-            title_text: formValues["title_text"],
-            title_field: formValues["title_field"],
-            subtitle_method: formValues["title_method_group"].inputValue,
-            subtitle_text: formValues["subtitle_text"],
-            subtitle_field: formValues["subtitle_field"]
+            titleMethod: formValues["title_method_group"].inputValue,
+            titleText: formValues["titleText"],
+            titleField: formValues["titleField"],
+            subtitleMethod: formValues["title_method_group"].inputValue,
+            subtitleText: formValues["subtitleText"],
+            subtitleField: formValues["subtitleField"]
 
         }
 
@@ -859,23 +859,23 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
         var _pageFromFeature = function(wfsFeature) {
             page = {};
 
-            if (titleSubtitleParameters.title_method == "same") {
-                page.title = titleSubtitleParameters.title_text;
+            if (titleSubtitleParameters.titleMethod === "same") {
+                page.title = titleSubtitleParameters.titleText;
             } else {
-                page.title = wfsFeature.attributes[titleSubtitleParameters.title_field];
+                page.title = wfsFeature.attributes[titleSubtitleParameters.titleField];
             }
 
 
-            if (titleSubtitleParameters.subtitle_method == "same") {
-                page.subtitle = titleSubtitleParameters.subtitle_text;
+            if (titleSubtitleParameters.subtitleMethod === "same") {
+                page.subtitle = titleSubtitleParameters.subtitleText;
             } else {
-                page.subtitle = wfsFeature.attributes[titleSubtitleParameters.subtitle_field];
+                page.subtitle = wfsFeature.attributes[titleSubtitleParameters.subtitleField];
             }
 
-            if (scaleParameters.scale_method == "manual") {
+            if (scaleParameters.scaleMethod === "manual") {
                 page.center =
                     [wfsFeature.geometry.getCentroid().x, wfsFeature.geometry.getCentroid().y];
-                page.scale = scaleParameters.scale_manual;
+                page.scale = scaleParameters.scaleManual;
             } else {
                 var bWkt, json, wkt, bbox, bufferData, cur_idx;
                 json = new OpenLayers.Format.JSON();
@@ -913,7 +913,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
         this.mapPanel.layers.each(function(layerStore) {
             layer = layerStore.get("layer");
 
-            if (layerStore.get("name") == atlasLayer) {
+            if (layerStore.get("name") === atlasLayer) {
                 this.atlasConfig.featureLayer = this.printProvider.encodeLayer(layerStore.get("layer"),
                     layerStore.get("layer").getExtent());
                 //TODO version may not be required by mapfish - check serverside
@@ -1024,8 +1024,8 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
         //End of code from GEOR_querier
 
         var fieldsCombo = this.window.findBy(function(c) {
-            return ((c.getXType() == "combo") &&
-            ((c.name == "title_field") || (c.name == "subtitle_field" || (c.name == "prefix_field"))));
+            return ((c.getXType() === "combo") &&
+            ((c.name === "titleField") || (c.name === "subtitleField" || (c.name === "prefix_field"))));
         });
         Ext.each(fieldsCombo, function(fieldCombo) {
             fieldCombo.bindStore(this.attributeStore);
