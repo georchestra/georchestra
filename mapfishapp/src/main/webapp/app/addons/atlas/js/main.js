@@ -12,6 +12,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
     attributeStore: null,
     dpiStore: null,
     resultPanelFeatures: null,
+    max_features: null,
 
     printProvider: null,
 
@@ -25,6 +26,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
         this.title = this.getText(record);
         this.qtip = this.getQtip(record);
         this.tooltip = this.getTooltip(record);
+        this.max_features = this.options.max_features;
         this.iconCls = "atlas-icon";
 
         if (this.target) {
@@ -929,6 +931,15 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
 
                 if (resultPanel) {
                     wfsFeatures = this.resultPanelFeatures;
+
+                    if (wfsFeatures.totalLength >= (this.max_features + 1)) {
+                        GEOR.util.errorDialog({
+                            //TODO tr
+                            msg: "Too many features to build atlas, please launch Atlas generation from the result panel with less than " +
+                            (this.max_features + 1) + " features."
+                        });
+                        return;
+                    }
                     //FIXME Duplicate of below function!!!
                     wfsFeatures.each(function(record) {
 
@@ -948,13 +959,22 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                 } else {
                     this.protocol.read({
                         //See GEOR_Querier "search" method
-                        maxFeatures: GEOR.config.MAX_FEATURES,
+                        maxFeatures: this.max_features + 1,
                         propertyNames: this.attributeStore.collect("name").concat(this._geometryName),
                         callback: function(response) {
                             if (!response.success()) {
                                 return;
                             }
                             wfsFeatures = response.features;
+                            //TODO Use addon max features
+                            if (wfsFeatures.length == (this.max_features + 1)) {
+                                GEOR.util.errorDialog({
+                                    //TODO tr
+                                    msg: "Too many features to build atlas, please launch Atlas generation from the result panel with less than " +
+                                    (this.max_features + 1) + " features.",
+                                    scope: this
+                                });
+                            }
                             Ext.each(wfsFeatures, function(wfsFeature) {
 
                                 this.atlasConfig.pages.splice(-1, 0, _pageFromFeature(wfsFeature));
