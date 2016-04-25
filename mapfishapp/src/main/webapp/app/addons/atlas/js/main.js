@@ -698,11 +698,23 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
      *
      */
     resultPanelHandler: function(menuitem, event, resultpanel, addon) {
-        alert("Result panel action for " + addon.title);
+
+
+        var fieldsCombo = this.window.findBy(function(c) {
+            return ((c.getXType() == "combo") &&
+            ((c.name == "title_field") || (c.name == "subtitle_field" || (c.name == "prefix_field"))));
+        });
+        Ext.each(fieldsCombo, function(fieldCombo) {
+            fieldCombo.bindStore(this.attributeStore);
+            fieldCombo.reset();
+        }, this);
+        addon.window.show();
     },
 
-    layerTreeHandler: function(menuitem, event, layertree, addon) {
-        alert("Layer tree action for " + addon.title);
+    layerTreeHandler: function(menuitem, event, layerRecord, addon) {
+        //TODO Add panel with layer name
+        addon.buildFieldsStore(layerRecord);
+        addon.window.show();
     },
 
     parseForm: function(formValues, autoSubmit) {
