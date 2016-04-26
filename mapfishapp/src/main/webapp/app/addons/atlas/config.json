@@ -9,7 +9,8 @@
             "resultPanelAction": true,
             "layerTreeAction": true,
             "maxFeatures": 50,
-            "printServerUrl": "http://localhost:8181/print/atlas/"
+            "printServerUrl": "http://localhost:8181/print/atlas/",
+            "bboxBuffer": 0.1
         },
         "title": {
             "fr": "Atlas",

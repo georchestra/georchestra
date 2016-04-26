@@ -962,7 +962,7 @@ GEOR.managelayers = (function() {
                     qtip: addon.qtip,
                     listeners: {
                         "click": {
-                            fn: addon.layerTreeHandler.createDelegate(this, [me, addon], true)
+                            fn: addon.layerTreeHandler.createDelegate(addon, [layerRecord], true)
                         }
                     },
                 });

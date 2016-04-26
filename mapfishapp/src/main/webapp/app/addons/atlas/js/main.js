@@ -133,22 +133,25 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
          * Atlas request is submitted on featurelayerready event
          */
         this.events.on({
-            "featurelayerready": function(atlasConfig) {
-                var json;
-                json = new OpenLayers.Format.JSON();
-                OpenLayers.Request.POST({
-                    url: "http://localhost:8180/apps/atlas/login",
-                    data: json.write(atlasConfig),
-                    success: function() {
-                        GEOR.helper.msg(this.title, this.tr("atlas_submit_success"))
-                    },
-                    failure: function() {
-                        GEOR.util.errorDialog({
-                            msg: this.tr("atlas_submit_fail")
-                        })
-                    },
-                    scope: this
-                });
+            "featurelayerready": {
+                fn: function(atlasConfig) {
+                    var json;
+                    json = new OpenLayers.Format.JSON();
+                    OpenLayers.Request.POST({
+                        url: "http://localhost:8180/apps/atlas/login",
+                        data: json.write(atlasConfig),
+                        success: function() {
+                            GEOR.helper.msg(this.title, this.tr("atlas_submit_success"))
+                        },
+                        failure: function() {
+                            GEOR.util.errorDialog({
+                                msg: this.tr("atlas_submit_fail")
+                            })
+                        },
+                        scope: this
+                    });
+                },
+                scope: this
             }
         });
 
@@ -174,6 +177,10 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             ]
         });
 
+
+        /**
+         * Form configuration
+         */
         this.window = new Ext.Window({
             title: this.title,
             width: 680,
@@ -512,7 +519,6 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                                 name: "subtitleText",
                                                 labelStyle: "width:160px",
                                                 fieldLabel: this.tr("atlas_pagesubtitle"),
-                                                //tabTip: "This subtitle will be use for every page",
                                                 value: this.tr("atlas_subtitle"),
                                                 validator: function(value) {
                                                     var radioSubtitle, valid;
@@ -653,9 +659,9 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
     },
 
     /**
-     * Method menuAction
+     * @function menuAction
      *
-     * Ext component handler used to launch atlas form
+     * Ext component's (button or menuitem) handler used to launch atlas form
      *
      * @param atlasMenu - button or menuitem to which the handler is attached
      */
@@ -727,22 +733,25 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
     },
 
     /**
+     * @function resultPanelHandler
      *
-     * @param menuitem - menuitem which will receive the callback
+     * Handler for the result panel Actions menu.
+     *
+     * scope is set for having the addons as this
+     *
+     * @param menuitem - menuitem which will receive the handler
      * @param event - event which trigger the action
-     * @param resultpanel - resultpanel on which the callback must be operated
-     * @param addon - The current addon.
-     *
+     * @param resultpanel - resultpanel on which the handler must be operated
      */
-    resultPanelHandler: function(menuitem, event, resultpanel, addon) {
+    resultPanelHandler: function(menuitem, event, resultpanel) {
         var layerName, fieldsCombo, attributeStoreData, layerPanel;
 
         layerName = null;
 
-        addon.resultPanelFeatures = resultpanel._store;
+        this.resultPanelFeatures = resultpanel._store;
 
 
-        fieldsCombo = addon.window.findBy(function(c) {
+        fieldsCombo = this.window.findBy(function(c) {
             return ((c.getXType() === "combo") &&
             ((c.name === "titleField") || (c.name === "subtitleField" || (c.name === "prefix_field"))));
         });
@@ -752,17 +761,17 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             attributeStoreData.splice(-1, 0, [fieldname]);
         });
 
-        addon.attributeStore = new Ext.data.ArrayStore({
+        this.attributeStore = new Ext.data.ArrayStore({
             fields: ["name"],
             data: attributeStoreData
         });
         Ext.each(fieldsCombo, function(fieldCombo) {
-            fieldCombo.bindStore(addon.attributeStore);
+            fieldCombo.bindStore(this.attributeStore);
             fieldCombo.reset();
-        }, addon);
+        }, this);
 
 
-        addon.mapPanel.layers.each(function(l) {
+        this.mapPanel.layers.each(function(l) {
             //FIXME or not... find layerRecord based on title
             if (resultpanel.title === l.get("title")) {
                 layerName = l.get("name");
@@ -796,19 +805,30 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             ]
         });
 
-        addon.window.items.itemAt(0).insert(0, layerPanel);
-        addon.window.on("beforehide", function() {
+        this.window.items.itemAt(0).insert(0, layerPanel);
+        this.window.on("beforehide", function() {
             if (layerPanel) {
                 layerPanel.destroy();
             }
 
         });
 
-        addon.window.show();
+        this.window.show();
     },
 
-    layerTreeHandler: function(menuitem, event, layerRecord, addon) {
-        //TODO Improve panel with layer name
+    /**
+     * @function layerTreeHandler
+     *
+     * Handler for the layer tree Actions menu.
+     *
+     * scope is set for having the addons as this
+     *
+     * @param menuitem - menuitem which will receive the handler
+     * @param event - event which trigger the action
+     * @param layerRecord - layerRecord on which operate
+     */
+    layerTreeHandler: function(menuitem, event, layerRecord) {
+        //TODO Improve panel style
         var layerPanel = new Ext.Panel({
             layout: "form",
             border: false,
@@ -830,18 +850,26 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             ]
         });
 
-        addon.window.items.itemAt(0).insert(0, layerPanel);
-        addon.window.on("beforehide", function() {
+        this.window.items.itemAt(0).insert(0, layerPanel);
+        this.window.on("beforehide", function() {
             if (layerPanel) {
                 layerPanel.destroy();
             }
 
         });
 
-        addon.buildFieldsStore(layerRecord);
-        addon.window.show();
+        this.buildFieldsStore(layerRecord);
+        this.window.show();
     },
 
+    /**
+     * @function parseForm - parse form values
+     * @private
+     *
+     * @param formValues - form values as return by Ext.form.BasicForm.getFieldValues()
+     * @param autoSubmit - Should we fire "featurelayerready" when parsing is done ?
+     *     This will send request to atlas server
+     */
     parseForm: function(formValues, autoSubmit) {
         var scaleParameters, titleSubtitleParameters;
 
@@ -883,8 +911,17 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
     },
 
     /**
-     * Method createFeatureLayerAndPagesSpecs
-     * TODO Check MFP v3 layers/type specification (order is important)
+     * @function createFeatureLayerAndPagesSpecs
+     * @private
+     *
+     * Build the part of the atlas configuration related to the feature layer and the pages description
+     *
+     * @param atlasLayer {String} - Name of the atlas layer
+     * @param scaleParameters {Object} - Form values related to the scale management
+     * @param titleSubtitleParameters {Object} - Form values related to title and subtitle
+     * @param fieldPrefix {String} - Attribute to use a prefix for filename generation
+     * @param autoSubmit {Boolean] - Should we fire "featurelayerready" when parsing is done ?
+     *     This will send request to atlas server
      */
     createFeatureLayerAndPagesSpecs: function(atlasLayer, scaleParameters, titleSubtitleParameters, fieldPrefix, autoSubmit, resultPanel) {
         var layer, pageIdx, wfsFeatures, wfsFeature, bounds, bbox;
@@ -929,7 +966,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                 } else {
                     bounds = wfsFeature.geometry.getBounds();
                     //TODO - Read from add-on config
-                    bbox = bounds.scale(1.1).toArray();
+                    bbox = bounds.scale(1 + this.options.bboxBuffer).toArray();
                 }
                 page.bbox = bbox;
             }
@@ -970,13 +1007,11 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
 
                     if (wfsFeatures.totalLength >= (this.maxFeatures + 1)) {
                         GEOR.util.errorDialog({
-                            //TODO tr
-                            msg: "Too many features to build atlas, please launch Atlas generation from the result panel with less than " +
-                            (this.maxFeatures + 1) + " features."
+                            msg: this.tr("atlas_too_many_features") +
+                            (this.maxFeatures + 1) + this.tr("atlas_too_many_features_after_nb")
                         });
                         return;
                     }
-                    //FIXME Duplicate of below function!!!
                     wfsFeatures.each(function(record) {
 
                         wfsFeature = record.data.feature;
@@ -1002,7 +1037,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                 return;
                             }
                             wfsFeatures = response.features;
-                            //TODO Use addon max features
+
                             if (wfsFeatures.length === (this.maxFeatures + 1)) {
                                 GEOR.util.errorDialog({
                                     //TODO tr
@@ -1089,6 +1124,12 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
         }, this);
     },
 
+    /**
+     * @function baseLayers - Encode all other mapPanel layers than the atlas layer using the print provider
+     *
+     * @param atlasLayer {String}
+     * @returns {Array}
+     */
     baseLayers: function(atlasLayer) {
 
         var encodedLayer = null,
@@ -1099,7 +1140,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
 
                 if (encodedLayer) {
 
-                    //TODO Do we force version parameter inclusion%
+                    //TODO Do we force version parameter inclusion?
                     if (layerRecord.get("layer").DEFAULT_PARAMS) {
                         encodedLayer.version = layerRecord.get("layer").DEFAULT_PARAMS.version;
                     }
@@ -1120,8 +1161,9 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
     },
 
     /**
-     * Method: tr
+     * @function tr
      *
+     * Translate string
      */
     tr: function(a) {
         return OpenLayers.i18n(a);
@@ -1129,7 +1171,9 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
     ,
 
     /**
-     * Method: destroy
+     * @function destroy
+     *
+     * Destroy the addon
      *
      */
     destroy: function() {
