@@ -4,9 +4,12 @@
         "name": "Atlas",
         "enabled": true,
         "options": {
+            "iconCls": "atlas-icon",
             "target": "tbar_4",
             "resultPanelAction": true,
-            "layerTreeAction": true
+            "layerTreeAction": true,
+            "maxFeatures": 50,
+            "printServerUrl": "http://localhost:8181/print/atlas/"
         },
         "title": {
             "fr": "Atlas",

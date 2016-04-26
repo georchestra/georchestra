@@ -4,17 +4,78 @@
 Ext.namespace("GEOR.Addons");
 
 GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
-    window: null,
-    layer: null,
-    title: null,
-    atlasConfig: {},
-    events: null,
-    attributeStore: null,
-    dpiStore: null,
-    resultPanelFeatures: null,
-    max_features: null,
 
+    /**
+     * Maximum number of features for atlas generation
+     */
+    maxFeatures: null,
+
+    /**
+     * Addons title {String}
+     */
+    title: null,
+
+    /**
+     * Addons description {String}
+     */
+    qtip: null,
+
+    /**
+     * css class for icon {String}
+     */
+    iconCls: null,
+
+    /**
+     * atlas configuration  {Object}
+     * this will be send as JSON to atlas server
+     */
+    atlasConfig: {},
+
+    /**
+     * Menu item to show atlas form {Ext.menu.CheckItem}
+     * @private
+     */
+    item: null,
+
+    /**
+     * Button to show atlas form {Ext.Button}
+     * @private
+     */
+    components: null,
+
+    /**
+     * Form window {Ext.Window}
+     * @private
+     *
+     */
+    window: null,
+
+    /**
+     * Events Mangement {Ext.util.Observable}
+     * @private
+     */
+    events: null,
+
+    /**
+     * Store containing attributes name {Ext.data.Store subclass}
+     * It is use in some form comboboxes
+     * @private
+     */
+    attributeStore: null,
+
+    /**
+     * Selected feature when addons is used from result panel action {GeoExt.data.FeatureStore}
+     * @private
+     */
+    resultPanelFeatures: null,
+
+
+    /**
+     * Print provider used to retrieve print server configuration {GeoExt.data.MapFishPrintv3Provider}
+     * @private
+     */
     printProvider: null,
+
 
     /**
      * Method: init
@@ -26,8 +87,8 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
         this.title = this.getText(record);
         this.qtip = this.getQtip(record);
         this.tooltip = this.getTooltip(record);
-        this.max_features = this.options.max_features;
-        this.iconCls = "atlas-icon";
+        this.maxFeatures = this.options.maxFeatures;
+        this.iconCls = this.options.iconCls;
 
         if (this.target) {
             this.components = this.target.insertButton(this.position, {
@@ -43,57 +104,63 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             });
             this.target.doLayout();
 
-        }
-        // create a menu item for the "tools" menu:
-        this.item = new Ext.menu.CheckItem({
-            text: this.getText(record),
-            qtip: this.getQtip(record),
-            iconCls: "atlas-icon",
-            checked: false,
-            listeners: {
-                "click": {
-                    fn: this.menuAction,
-                    scope: this
+        } else {
+            // create a menu item for the "tools" menu:
+            this.item = new Ext.menu.CheckItem({
+                text: this.getText(record),
+                qtip: this.getQtip(record),
+                iconCls: "atlas-icon",
+                checked: false,
+                listeners: {
+                    "click": {
+                        fn: this.menuAction,
+                        scope: this
+                    }
                 }
-            }
-        });
-        this.title = this.getText(record);
+            });
+        }
 
         this.events = new Ext.util.Observable();
         this.events.addEvents(
             /**
-             * Event: featurelayerready"
-             * Fires the layer and pages object are ready
+             * @event featurelayerready
+             * Fires when the layer and pages object are ready
              */
             "featurelayerready"
         );
+
+        /**
+         * Atlas request is submitted on featurelayerready event
+         */
         this.events.on({
             "featurelayerready": function(atlasConfig) {
                 var json;
                 json = new OpenLayers.Format.JSON();
                 OpenLayers.Request.POST({
                     url: "http://localhost:8180/apps/atlas/login",
-                    data: json.write(atlasConfig)
+                    data: json.write(atlasConfig),
+                    success: function() {
+                        GEOR.helper.msg(this.title, this.tr("atlas_submit_success"))
+                    },
+                    failure: function() {
+                        GEOR.util.errorDialog({
+                            msg: this.tr("atlas_submit_fail")
+                        })
+                    },
+                    scope: this
                 });
             }
         });
 
         this.printProvider = new GeoExt.data.MapFishPrintv3Provider({
             method: "POST",
-            //TODO read print url from config
-            //TODO check customParams
-            url: "http://localhost:8181/print/atlas/",
-            customParams: {
-                title: "Printing Demo",
-                comments: "This is a map printed from GeoExt.",
-                datasource: []
-            }
+            url: this.options.printServerUrl
         });
         this.printProvider.loadCapabilities();
         //TODO We are waiting for capabilites...
         // TODO Do we use event, modify GeoExt.data.PrintProviderBase.loadCapabilities() or else?
         Ext.util.Functions.defer(function() {
-            if (this.printProvider.capabilities === null) {
+            if (this.printProvider.capabilities === "") {
                 GEOR.util.errorDialog({
                     msg: this.tr("atlas_connect_printserver_error")
                 });
@@ -284,18 +351,10 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                         validator: function(value) {
                                             var radioScale, valid;
                                             radioScale = this.findParentByType("form").findBy(function(c) {
-                                                return ((c.getXType() == "radiogroup") &&
-                                                (c.name == "scale_method_group"));
+                                                return ((c.getXType() === "radiogroup") &&
+                                                (c.name === "scale_method_group"));
                                             })[0];
-                                            if (radioScale.getValue().inputValue == "manual") {
-                                                if (value === "") {
-                                                    valid = false;
-                                                } else {
-                                                    valid = true;
-                                                }
-                                            } else {
-                                                valid = true;
-                                            }
+                                            valid = !(radioScale.getValue().inputValue === "manual" && (value === ""));
                                             return valid;
                                         }
 
@@ -368,15 +427,8 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                                         return ((c.getXType() === "radiogroup") &&
                                                         (c.name === "title_method_group"));
                                                     })[0];
-                                                    if (radioTitle.getValue().inputValue === "same") {
-                                                        if (value === "") {
-                                                            valid = false;
-                                                        } else {
-                                                            valid = true;
-                                                        }
-                                                    } else {
-                                                        valid = true;
-                                                    }
+                                                    valid = !((radioTitle.getValue().inputValue === "same") &&
+                                                    (value === ""));
                                                     return valid;
                                                 }
                                             },
@@ -400,15 +452,8 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                                         return ((c.getXType() === "radiogroup") &&
                                                         (c.name === "title_method_group"));
                                                     })[0];
-                                                    if (radioTitle.getValue().inputValue === "field") {
-                                                        if (value === "") {
-                                                            valid = false;
-                                                        } else {
-                                                            valid = true;
-                                                        }
-                                                    } else {
-                                                        valid = true;
-                                                    }
+                                                    valid = !((radioTitle.getValue().inputValue === "field") &&
+                                                    (value === ""));
                                                     return valid;
                                                 }
                                             }
@@ -470,20 +515,13 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                                 //tabTip: "This subtitle will be use for every page",
                                                 value: this.tr("atlas_subtitle"),
                                                 validator: function(value) {
-                                                    var radio_subtitle, valid;
-                                                    radio_subtitle = this.findParentByType("form").findBy(function(c) {
+                                                    var radioSubtitle, valid;
+                                                    radioSubtitle = this.findParentByType("form").findBy(function(c) {
                                                         return ((c.getXType() === "radiogroup") &&
                                                         (c.name === "title_method_group"));
                                                     })[0];
-                                                    if (radio_subtitle.getValue().inputValue === "same") {
-                                                        if (value === "") {
-                                                            valid = false;
-                                                        } else {
-                                                            valid = true;
-                                                        }
-                                                    } else {
-                                                        valid = true;
-                                                    }
+                                                    valid = !((radioSubtitle.getValue().inputValue === "same") &&
+                                                    (value === ""));
                                                     return valid;
                                                 }
                                             },
@@ -502,20 +540,13 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                                 triggerAction: "all",
                                                 scope: this,
                                                 validator: function(value) {
-                                                    var radio_subtitle, valid;
-                                                    radio_subtitle = this.findParentByType("form").findBy(function(c) {
+                                                    var radioSubtitle, valid;
+                                                    radioSubtitle = this.findParentByType("form").findBy(function(c) {
                                                         return ((c.getXType() === "radiogroup") &&
                                                         (c.name === "subtitle_method_group"));
                                                     })[0];
-                                                    if (radio_subtitle.getValue().inputValue === "field") {
-                                                        if (value === "") {
-                                                            valid = false;
-                                                        } else {
-                                                            valid = true;
-                                                        }
-                                                    } else {
-                                                        valid = true;
-                                                    }
+                                                    valid = !((radioSubtitle.getValue().inputValue === "field") &&
+                                                    (value === ""));
                                                     return valid;
                                                 }
                                             }
@@ -615,19 +646,21 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                         },
                         scope: this
                     }
-                ],
-                scope: this
+                ]
             }
-            ],
-            scope: this
+            ]
         });
     },
 
     /**
      * Method menuAction
+     *
+     * Ext component handler used to launch atlas form
+     *
+     * @param atlasMenu - button or menuitem to which the handler is attached
      */
 
-    menuAction: function(atlasMenu, e) {
+    menuAction: function(atlasMenu) {
         if (atlasMenu.getXType() === "button") {
             if (!atlasMenu.pressed) {
                 return;
@@ -696,12 +729,15 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
     /**
      *
      * @param menuitem - menuitem which will receive the callback
+     * @param event - event which trigger the action
      * @param resultpanel - resultpanel on which the callback must be operated
      * @param addon - The current addon.
      *
      */
     resultPanelHandler: function(menuitem, event, resultpanel, addon) {
         var layerName, fieldsCombo, attributeStoreData, layerPanel;
+
+        layerName = null;
 
         addon.resultPanelFeatures = resultpanel._store;
 
@@ -714,7 +750,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
         attributeStoreData = [];
         Ext.each(resultpanel._model.getFields(), function(fieldname) {
             attributeStoreData.splice(-1, 0, [fieldname]);
-        })
+        });
 
         addon.attributeStore = new Ext.data.ArrayStore({
             fields: ["name"],
@@ -807,7 +843,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
     },
 
     parseForm: function(formValues, autoSubmit) {
-        var layersRelatedValues, scaleParameters, titleSubtitleParameters;
+        var scaleParameters, titleSubtitleParameters;
 
         autoSubmit = autoSubmit || true;
         //copy some parameters
@@ -833,15 +869,16 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             subtitleText: formValues["subtitleText"],
             subtitleField: formValues["subtitleField"]
 
-        }
+        };
 
         this.atlasConfig.baseLayers = this.baseLayers(formValues["atlasLayer"]);
-
 
         this.createFeatureLayerAndPagesSpecs(formValues["atlasLayer"], scaleParameters,
             titleSubtitleParameters, formValues["prefix_field"], autoSubmit, formValues["resultPanel"]);
 
-        //Form submit is trigger on "featurelayerready event
+        //Form submit is trigger on "featurelayerready" event
+
+        this.window.hide();
 
     },
 
@@ -849,17 +886,19 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
      * Method createFeatureLayerAndPagesSpecs
      * TODO Check MFP v3 layers/type specification (order is important)
      */
-    createFeatureLayerAndPagesSpecs: function(atlasLayer, scaleParameters, titleSubtitleParameters, field_prefix, autoSubmit, resultPanel) {
-        var layer, page, page_idx, wfsFeatures, page_title, page_subtitle, page_filename, bounds, bbox;
+    createFeatureLayerAndPagesSpecs: function(atlasLayer, scaleParameters, titleSubtitleParameters, fieldPrefix, autoSubmit, resultPanel) {
+        var layer, pageIdx, wfsFeatures, wfsFeature, bounds, bbox;
 
         /**
+         *
+         * Private function to create page object from a feature.
          *
          * @param wfsFeature
          * @return page object
          * @private
          */
         var _pageFromFeature = function(wfsFeature) {
-            page = {};
+            var page = {};
 
             if (titleSubtitleParameters.titleMethod === "same") {
                 page.title = titleSubtitleParameters.titleText;
@@ -879,16 +918,13 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                     [wfsFeature.geometry.getCentroid().x, wfsFeature.geometry.getCentroid().y];
                 page.scale = scaleParameters.scaleManual;
             } else {
-                var bWkt, json, wkt, bbox, bufferData, cur_idx;
-                json = new OpenLayers.Format.JSON();
-                wkt = new OpenLayers.Format.WKT();
                 if (!(wfsFeature.geometry instanceof OpenLayers.Geometry.Point)) {
                     bounds = wfsFeature.geometry.getBounds();
                     //TODO Revisit after form validation (this will not be available for point)
-                    bbox = new OpenLayers.Bounds(bounds.left - scaleParameters.scale_padding,
-                        bounds.bottom - scaleParameters.scale_padding,
-                        bounds.right + scaleParameters.scale_padding,
-                        bounds.top + scaleParameters.scale_padding
+                    bbox = new OpenLayers.Bounds(bounds.left - scaleParameters.scalePadding,
+                        bounds.bottom - scaleParameters.scalePadding,
+                        bounds.right + scaleParameters.scalePadding,
+                        bounds.top + scaleParameters.scalePadding
                     ).toArray();
                 } else {
                     bounds = wfsFeature.geometry.getBounds();
@@ -898,19 +934,19 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                 page.bbox = bbox;
             }
 
-            if (field_prefix === "") {
-                page.filename = page_idx.toString() + "_atlas.pdf"
+            if (fieldPrefix === "") {
+                page.filename = pageIdx.toString() + "_atlas.pdf";
             } else {
-                page.filename = wfsFeature.attributes[field_prefix] + "_" + page_idx.toString() +
+                page.filename = wfsFeature.attributes[fieldPrefix] + "_" + pageIdx.toString() +
                     "_atlas.pdf";
             }
 
             return page;
 
-        }
+        };
 
         this.atlasConfig.pages = [];
-        page_idx = 0;
+        pageIdx = 0;
 
         this.mapPanel.layers.each(function(layerStore) {
             layer = layerStore.get("layer");
@@ -932,11 +968,11 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                 if (resultPanel) {
                     wfsFeatures = this.resultPanelFeatures;
 
-                    if (wfsFeatures.totalLength >= (this.max_features + 1)) {
+                    if (wfsFeatures.totalLength >= (this.maxFeatures + 1)) {
                         GEOR.util.errorDialog({
                             //TODO tr
                             msg: "Too many features to build atlas, please launch Atlas generation from the result panel with less than " +
-                            (this.max_features + 1) + " features."
+                            (this.maxFeatures + 1) + " features."
                         });
                         return;
                     }
@@ -948,7 +984,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
 
                         this.atlasConfig.pages.splice(-1, 0, _pageFromFeature(wfsFeature));
 
-                        page_idx = page_idx + 1;
+                        pageIdx = pageIdx + 1;
 
 
                     }, this);
@@ -959,7 +995,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                 } else {
                     this.protocol.read({
                         //See GEOR_Querier "search" method
-                        maxFeatures: this.max_features + 1,
+                        maxFeatures: this.maxFeatures + 1,
                         propertyNames: this.attributeStore.collect("name").concat(this._geometryName),
                         callback: function(response) {
                             if (!response.success()) {
@@ -967,11 +1003,11 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                             }
                             wfsFeatures = response.features;
                             //TODO Use addon max features
-                            if (wfsFeatures.length == (this.max_features + 1)) {
+                            if (wfsFeatures.length === (this.maxFeatures + 1)) {
                                 GEOR.util.errorDialog({
                                     //TODO tr
                                     msg: "Too many features to build atlas, please launch Atlas generation from the result panel with less than " +
-                                    (this.max_features + 1) + " features.",
+                                    (this.maxFeatures + 1) + " features.",
                                     scope: this
                                 });
                             }
@@ -979,7 +1015,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
 
                                 this.atlasConfig.pages.splice(-1, 0, _pageFromFeature(wfsFeature));
 
-                                page_idx = page_idx + 1;
+                                pageIdx = pageIdx + 1;
 
                             }, this);
 
@@ -1007,8 +1043,8 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
         //Code from GEOR_querier
         var pseudoRecord = {
             owsURL: layerRecord.get("WFS_URL"),
-            typeName: layerRecord.get("WFS_typeName"),
-        }
+            typeName: layerRecord.get("WFS_typeName")
+        };
 
         this.attributeStore = null;
         this.attributeStore = GEOR.ows.WFSDescribeFeatureType(pseudoRecord, {
@@ -1058,7 +1094,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
         var encodedLayer = null,
             encodedLayers = [];
         this.mapPanel.layers.each(function(layerRecord) {
-            if ((layerRecord.get("name") != atlasLayer) && layerRecord.get("layer").visibility) {
+            if ((layerRecord.get("name") !== atlasLayer) && layerRecord.get("layer").visibility) {
                 encodedLayer = this.printProvider.encodeLayer(layerRecord.get("layer"), this.map.getMaxExtent());
 
                 if (encodedLayer) {

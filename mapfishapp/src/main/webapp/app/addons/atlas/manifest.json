@@ -42,7 +42,9 @@
             "atlas_preview": "Preview",
             "atlas_previewsuccess": "Preview generation is completed",
             "atlas_cancel": "Cancel",
-            "atlas_connect_printserver_error": "Cannot connect to print server"
+            "atlas_connect_printserver_error": "Cannot connect to print server",
+            "atlas_submit_success": "Atlas request is successfully submitted.",
+            "atlas_submit_fail": "Atlas request to the print server failed."
         },
         "es": {
             "atlas_failed": "Error de generación de atlas",
@@ -80,7 +82,9 @@
             "atlas_preview": "Vista previa",
             "atlas_previewsuccess": "La generación de vista previa se ha completado",
             "atlas_cancel": "Cancelar",
-            "atlas_connect_printserver_error": "No se puede conectar al servidor de impresión"
+            "atlas_connect_printserver_error": "No se puede conectar al servidor de impresión",
+            "atlas_submit_success": "Atlas request is successfully submitted.",
+            "atlas_submit_fail": "Atlas request to the print server failed."
         },
         "fr": {
             "atlas_failed": "La génération de l'atlas a échoué",
@@ -118,7 +122,9 @@
             "atlas_preview": "Aperçu",
             "atlas_previewsuccess": "La génération de l'aperçu est complétée",
             "atlas_cancel": "Annuler",
-            "atlas_connect_printserver_error": "Impossible de se connecter au serveur d'impression"
+            "atlas_connect_printserver_error": "Impossible de se connecter au serveur d'impression",
+            "atlas_submit_success": "La requête d'impression a été transmise avec succès au serveur.",
+            "atlas_submit_fail": "La transmission de la requête d'impression a échoué."
         },
         "de": {
             "atlas_failed": "Die Erzeugung des Atlas fehlgeschlagen",
@@ -156,7 +162,9 @@
             "atlas_preview": "Preview",
             "atlas_previewsuccess": "Preview generation is completed",
             "atlas_cancel": "Cancel",
-            "atlas_connect_printserver_error": "Cannot connect to print server"
+            "atlas_connect_printserver_error": "Cannot connect to print server",
+            "atlas_submit_success": "Atlas request is successfully submitted.",
+            "atlas_submit_fail": "Atlas request to the print server failed."
         }
     }
 }
