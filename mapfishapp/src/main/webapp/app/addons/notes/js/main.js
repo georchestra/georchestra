@@ -25,7 +25,22 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
                             "Point": {
                                 "externalGraphic": this.icon,
                                 "graphicWidth": 18,
-                                "graphicHeight": 18
+                                "graphicHeight": 18,
+                                "graphicXOffset": -9,
+                                "graphicYOffset": -18
+                            }
+                        }
+                    })]
+                }),
+                "temporary": new OpenLayers.Style(null, {
+                    rules: [new OpenLayers.Rule({
+                        symbolizer: {
+                            "Point": {
+                                "externalGraphic": this.icon,
+                                "graphicWidth": 18,
+                                "graphicHeight": 18,
+                                "graphicXOffset": -9,
+                                "graphicYOffset": -18
                             }
                         }
                     })]
@@ -46,7 +61,7 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
             //toggleGroup is required for button
             toggleGroup: "notes",
             icon: this.icon,
-            control: new OpenLayers.Control.DrawFeature(this.layer, 
+            control: new OpenLayers.Control.DrawFeature(this.layer,
                 OpenLayers.Handler.Point, {
                     eventListeners: {
                         "featureadded": this.addNote,
