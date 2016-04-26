@@ -216,7 +216,7 @@ JAVA_OPTS="$JAVA_OPTS \
               -Djavax.net.ssl.trustStore=/etc/tomcat8/keystore \
               -Djavax.net.ssl.trustStorePassword=STOREPASSWORD"
 
-JAVA_OPTS="$JAVA_OPTS \              
+JAVA_OPTS="$JAVA_OPTS \
               -Djava.util.prefs.userRoot=/tmp \
               -Djava.util.prefs.systemRoot=/tmp"
 ```

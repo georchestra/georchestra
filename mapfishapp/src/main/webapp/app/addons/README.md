@@ -21,6 +21,7 @@ We currently have the following addons available:
  * [measurements](measurements/README.md) to perform advanced distance and area measurements (which can be printed & exported to KML).
  * [locateme](locateme/README.md) allows users to track their location on the map.
  * [fullscreen](fullscreen/README.md) to (obviously) make the map fullscreen.
+ * [notes](notes/README.md) to report map issues.
 
 
 Finding more addons
