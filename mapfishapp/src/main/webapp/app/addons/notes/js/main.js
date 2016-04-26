@@ -1,12 +1,12 @@
 /*global
  Ext, GeoExt, OpenLayers, GEOR
  */
+
 Ext.namespace("GEOR.Addons");
 
 GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
 
     toggleGroup: "notes",
-
     layer: null,
     icon: null,
 
@@ -32,6 +32,7 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
                 })
             })
         });
+
         if (OpenLayers.Util.indexOf(this.map.layers, this.layer) < 0) {
             this.map.addLayer(this.layer);
         }
@@ -40,13 +41,13 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
             text: this.getText(record),
             qtip: this.getQtip(record),
             map: this.map,
-            //group is required for for CheckItem
+            //group is required for CheckItem
             group: "_notes",
             //toggleGroup is required for button
             toggleGroup: "notes",
             icon: this.icon,
-            control: new OpenLayers.Control.DrawFeature(this.layer, OpenLayers.Handler.Point,
-                {
+            control: new OpenLayers.Control.DrawFeature(this.layer, 
+                OpenLayers.Handler.Point, {
                     eventListeners: {
                         "featureadded": this.addNote,
                         scope: this
@@ -55,7 +56,7 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
             )
         });
 
-        // If ther are many addons and some of them are in the toolbar and
+        // If there are many addons and some of them are in the toolbar and
         // others in the menu, we do not manage if more than 1 is activated.
         if (this.target) {
             // addon placed in toolbar
@@ -74,84 +75,89 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
     addNote: function(obj) {
         //Deactivate control. Adding many notes at the same time is not supported
         obj.object.deactivate();
+
         var geometry = obj.feature.geometry.clone();
         geometry.transform(this.map.projection,
             new OpenLayers.Projection("EPSG:4326"));
+
+        var form = new Ext.form.FormPanel({
+            height: 180,
+            bodyStyle: "padding: 5px;",
+            labelSeparator: tr("labelSeparator"),
+            items: [{
+                xtype: "textarea",
+                width: 240,
+                height: 100,
+                fieldLabel: this.tr("notes_comment"),
+                name: "comment",
+                allowBlank: false
+            }, {
+                xtype: "textfield",
+                fieldLabel: this.tr("notes_email"),
+                width: 240,
+                name: "email",
+                allowBlank: false,
+                value: GEOR.config.USEREMAIL || ""
+            }, {
+                xtype: "hidden",
+                name: "latitude",
+                value: geometry.y
+            }, {
+                xtype: "hidden",
+                name: "longitude",
+                value: geometry.x
+            }, {
+                xtype: "hidden",
+                name: "map_context",
+                value: GEOR.wmc.write()
+            }],
+            buttons: [{
+                text: this.tr("notes_cancel"),
+                handler: function() {
+                    this.window.close();
+                },
+                scope: this
+            }, {
+                text: this.tr("notes_submit"),
+                iconCls: 'btn-add',
+                handler: function(b) {
+                    if (b.findParentByType("form").getForm().isValid()) {
+                        b.findParentByType("form").getForm().submit({
+                            url: GEOR.config.PATHNAME + "/ws/note/backend/" + this.options.backend,
+                            method: "POST",
+                            success: function() {
+                                this.window.close();
+                                GEOR.helper.msg(this.tr("notes_title"), this.tr("notes_saved"));
+                            },
+                            failure: function(form, action) {
+                                GEOR.util.errorDialog({
+                                    msg: this.tr("notes_cannotsave" + ":" + action.result.msg)
+                                });
+                            },
+                            scope: this
+                        });
+                    }
+                },
+                scope: this
+            }]
+        });
+        
         this.window = new Ext.Window({
             title: this.tr("notes_title"),
-            width: 420,
+            width: 400,
             closable: true,
             listeners: {
-                "close": {
-                    fn: this.clearLayer,
-                    scope: this
-                }
+                "close": this.clearLayer,
+                "show": function() {
+                    var field = form.getForm().findField("comment");
+                    field.focus('', 50);
+                },
+                scope: this
             },
             resizable: false,
             border: false,
-            items: [{
-                xtype: "form",
-                width: 410,
-                items: [
-                    {
-                        xtype: "textfield",
-                        fieldLabel: this.tr("notes_email"),
-                        width: 240,
-                        name: "email",
-                        allowBlank: false,
-                        value: GEOR.config.USEREMAIL || ""
-                    }, {
-                        xtype: "textarea",
-                        width: 240,
-                        height: 120,
-                        fieldLabel: this.tr("notes_comment"),
-                        name: "comment",
-                        allowBlank: false
-                    }, {
-                        xtype: "hidden",
-                        name: "latitude",
-                        value: geometry.y
-                    }, {
-                        xtype: "hidden",
-                        name: "longitude",
-                        value: geometry.x
-                    }, {
-                        xtype: "hidden",
-                        name: "map_context",
-                        value: GEOR.wmc.write()
-                    }
-                ],
-                buttons: [{
-                    text: this.tr("notes_submit"),
-                    handler: function(b) {
-                        if (b.findParentByType("form").getForm().isValid()) {
-                            b.findParentByType("form").getForm().submit({
-                                url: GEOR.config.PATHNAME + "/ws/note/backend/" + this.options.backend,
-                                method: "POST",
-                                success: function() {
-                                    this.window.close();
-                                    GEOR.helper.msg(this.tr("notes_title"), this.tr("notes_saved"));
-                                },
-                                failure: function(form, action) {
-                                    GEOR.util.errorDialog({
-                                        msg: this.tr("notes_cannotsave" + ":" + action.result.msg)
-                                    });
-                                },
-                                scope: this
-                            });
-                        }
-                    },
-                    scope: this
-                }, {
-                    text: this.tr("notes_cancel"),
-                    handler: function() {
-                        this.window.close();
-                    },
-                    scope: this
-                }], // buttons
-                scope: this
-            }], // windows items
-            scope: this
+            layout: "fit",
+            items: form
         });
         this.window.show();
     },
@@ -183,6 +189,4 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
         this.layer = null;
         GEOR.Addons.Base.prototype.destroy.call(this);
     }
-
-
 });

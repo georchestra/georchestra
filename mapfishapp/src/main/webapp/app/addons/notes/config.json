@@ -1,45 +1,21 @@
-[
-    {
-        "id": "notes_0",
-        "enabled": true,
-        "name": "Notes",
-        "options": {
-            "backend": "backend1",
-            "icon": "img/marker-18.png"
-        },
-        "title": {
-            "en": "Notes : Report map issues",
-            "es": "Notes : Report map issues (es)",
-            "fr": "Notes : Signaler des anomalies cartographiques",
-            "de": "Notes : Report map issues (de)"
-        },
-        "description": {
-            "en": "Create notes to report map issues",
-            "es": "Create notes to report map issues (es)",
-            "fr": "Créez des notes pour signaler des anomalies cartographiques",
-            "de": "Create notes to report map issues (de)"
-        }
+[{
+    "id": "notes_0",
+    "enabled": true,
+    "name": "Notes",
+    "options": {
+        "backend": "backend1",
+        "icon": "img/marker-18.png"
     },
-    {
-        "id": "notes_1",
-        "enabled": true,
-        "name": "Notes",
-        "options": {
-            "target": "tbar_11",
-            "backend": "backend2",
-            "icon": "img/marker-18-red.png"
-        },
-        "title": {
-            "en": "Notes : Report map issues 2",
-            "es": "Notes : Report map issues 2 (es)",
-            "fr": "Notes : Signaler des anomalies cartographiques 2",
-            "de": "Notes : Report map issues (de)"
-        },
-        "description": {
-            "en": "Create notes to report map issues 2",
-            "es": "Create notes to report map issues 2 (es)",
-            "fr": "Créez des notes pour signaler des anomalies cartographiques 2",
-            "de": "Create notes to report map issues 2 (de)"
-        }
+    "title": {
+        "en": "Notes : Report map issues",
+        "es": "Notes : Report map issues",
+        "fr": "Notes : Signaler des anomalies cartographiques",
+        "de": "Notes : Report map issues"
+    },
+    "description": {
+        "en": "Create notes to report map issues",
+        "es": "Create notes to report map issues",
+        "fr": "Créez des notes pour signaler des anomalies cartographiques",
+        "de": "Create notes to report map issues"
     }
-]
+}]
