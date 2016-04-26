@@ -626,6 +626,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                 },
                                 name: "email",
                                 labelStyle: "width:420px",
+                                value: GEOR.config.USEREMAIL,
                                 fieldLabel: this.tr("atlas_emaillabel"),
                                 allowBlank: false,
                                 vtype: "email"
