@@ -1153,7 +1153,16 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             encodedLayers = [];
         this.mapPanel.layers.each(function(layerRecord) {
             if ((layerRecord.get("name") !== atlasLayer) && layerRecord.get("layer").visibility) {
-                encodedLayer = this.printProvider.encodeLayer(layerRecord.get("layer"), this.map.getMaxExtent());
+
+                /**
+                 * TODO Do we want to show the resultPanel symbology in the atlas? Currently, we hide the layer because
+                 * it hide the current symbology.
+                 */
+                if (!((layerRecord.get("layer").name === "__georchestra_print_bounds_") ||
+                    (layerRecord.get("layer").name === "__georchestra_results_resultPanel" ))) {
+                    encodedLayer = this.printProvider.encodeLayer(layerRecord.get("layer"), this.map.getMaxExtent());
+                }
+
 
                 if (encodedLayer) {
 
