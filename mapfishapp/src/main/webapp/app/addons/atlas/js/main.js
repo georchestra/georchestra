@@ -364,14 +364,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                             valid = !(radioScale.getValue().inputValue === "manual" && (value === ""));
                                             return valid;
                                         }
-
-                                    },
-                                        {
-                                            //TODO replace by add-on config
-                                            xtype: "hidden",
-                                            name: "scale_padding",
-                                            value: 10000
-                                        }]
+                                    }]
                                 }]
                             }
 
@@ -921,10 +914,12 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
      * @param scaleParameters {Object} - Form values related to the scale management
      * @param titleSubtitleParameters {Object} - Form values related to title and subtitle
      * @param fieldPrefix {String} - Attribute to use a prefix for filename generation
-     * @param autoSubmit {Boolean] - Should we fire "featurelayerready" when parsing is done ?
+     * @param autoSubmit {Boolean} - Should we fire "featurelayerready" when parsing is done ?
+     * @param resultPanel {Boolean} - True atlas is generated from result panel actions menu
      *     This will send request to atlas server
      */
-    createFeatureLayerAndPagesSpecs: function(atlasLayer, scaleParameters, titleSubtitleParameters, fieldPrefix, autoSubmit, resultPanel) {
+    createFeatureLayerAndPagesSpecs: function(atlasLayer, scaleParameters, titleSubtitleParameters, fieldPrefix,
+                                              autoSubmit, resultPanel) {
         var layer, pageIdx, wfsFeatures, wfsFeature, bounds, bbox;
 
         /**
@@ -932,7 +927,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
          * Private function to create page object from a feature.
          *
          * @param wfsFeature
-         * @return page object
+         * @return {Object} or {undefined}
          * @private
          */
         var _pageFromFeature = function(wfsFeature) {
@@ -958,16 +953,10 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             } else {
                 if (!(wfsFeature.geometry instanceof OpenLayers.Geometry.Point)) {
                     bounds = wfsFeature.geometry.getBounds();
-                    //TODO Revisit after form validation (this will not be available for point)
-                    bbox = new OpenLayers.Bounds(bounds.left - scaleParameters.scalePadding,
-                        bounds.bottom - scaleParameters.scalePadding,
-                        bounds.right + scaleParameters.scalePadding,
-                        bounds.top + scaleParameters.scalePadding
-                    ).toArray();
-                } else {
-                    bounds = wfsFeature.geometry.getBounds();
-                    //TODO - Read from add-on config
                     bbox = bounds.scale(1 + this.options.bboxBuffer).toArray();
+                } else {
+                    GEOR.helper.msg(this.title, this.tr("atlas_bbox_point_error"), 10);
+                    return undefined;
                 }
                 page.bbox = bbox;
             }
@@ -1025,8 +1014,22 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
 
                     }, this);
 
+                    //Remove empty page
+                    Ext.each(this.atlasConfig.pages, function(page, idx) {
+                        if (page === undefined) {
+                            this.atlasConfig.pages.splice(idx, 1);
+                        }
+                    }, this);
+
                     if (autoSubmit) {
-                        this.events.fireEvent("featurelayerready", this.atlasConfig);
+                        if (this.atlasConfig.pages.length === 0) {
+                            GEOR.util.errorDialog({
+                                msg: this.tr("atlas_no_pages")
+                            });
+                        } else {
+                            this.events.fireEvent("featurelayerready", this.atlasConfig);
+                        }
+
                     }
                 } else {
                     this.protocol.read({
@@ -1041,9 +1044,8 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
 
                             if (wfsFeatures.length === (this.maxFeatures + 1)) {
                                 GEOR.util.errorDialog({
-                                    //TODO tr
-                                    msg: "Too many features to build atlas, please launch Atlas generation from the result panel with less than " +
-                                    (this.maxFeatures + 1) + " features.",
+                                    msg: this.tr("atlas_too_many_features") +
+                                    (this.maxFeatures + 1) + this.tr("atlas_too_many_features_after_nb"),
                                     scope: this
                                 });
                             }
@@ -1055,8 +1057,22 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
 
                             }, this);
 
+                            //Remove empty page
+                            Ext.each(this.atlasConfig.pages, function(page, idx) {
+                                if (page === undefined) {
+                                    this.atlasConfig.pages.splice(idx, 1);
+                                }
+                            }, this);
+
                             if (autoSubmit) {
-                                this.events.fireEvent("featurelayerready", this.atlasConfig);
+                                if (this.atlasConfig.pages.length === 0) {
+                                    GEOR.util.errorDialog({
+                                        msg: this.tr("atlas_no_pages")
+                                    });
+                                } else {
+                                    this.events.fireEvent("featurelayerready", this.atlasConfig);
+                                }
+
                             }
 
                         },
