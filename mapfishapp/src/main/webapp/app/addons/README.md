@@ -133,6 +133,57 @@ If no target is specified, the addon will have the default behavior (as before) 
 In order to achieve this, addons are supposed to inherit from the ```GEOR.Addons.Base``` class. 
 Older addons still work, but they will not take advantage of the newer capability.
 
+Addon in Actions menu
+=====================
+
+Addon can add a menu item in both Result Panel and  Layer Tree Actions menus.
+
+`config.json` must have `options.resultPanelAction` set to `true` for inclusion in the Result Panel Actions menu.
+`options.layerTreeAction` must be set to `true` for inclusion in the Layer Tree Actions menu.
+.
+
+The menu item will use data from `config.json` to set their text and image properties.
+
+A handler will be assiocated to the menu item. For Result Panel, the addon must have an API method with
+the following signature:
+
+```
+    /**
+     * @function resultPanelHandler
+     *
+     * Handler for the result panel Actions menu.
+     *
+     * scope is set for having the addons as this
+     *
+     * @param menuitem - menuitem which will receive the handler
+     * @param event - event which trigger the action
+     * @param resultpanel - resultpanel on which the handler must be operated
+     */
+    resultPanelHandler: function(menuitem, event, resultpanel) {
+        ...
+    }
+```
+
+For the Layer Tree, the addon must have an API method with the signature:
+
+```
+    /**
+     * @function layerTreeHandler
+     *
+     * Handler for the layer tree Actions menu.
+     *
+     * scope is set for having the addons as this
+     *
+     * @param menuitem - menuitem which will receive the handler
+     * @param event - event which trigger the action
+     * @param layerRecord - layerRecord on which operate
+     */
+    layerTreeHandler: function(menuitem, event, layerRecord) {
+    ...
+    }
+```
+
+
 
 Developers' corner
 ===================
