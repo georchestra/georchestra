@@ -64,6 +64,9 @@ section {
   cursor  : pointer;
   padding : 6px 9px;
 }
+.pagination > .active > a {
+  background: $lightblue;
+}
 
 // ANALYTICS
 .analytics {
