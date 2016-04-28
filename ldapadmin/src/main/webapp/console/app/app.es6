@@ -35,8 +35,11 @@ angular.module('admin_console', [
 .controller('AppController'    , AppController)
 .constant('LDAP_BASE_URI'      , '/ldapadmin/private/')
 .constant('ANALYTICS_BASE_URI' , '/analytics/ws/')
-.config([ '$componentLoaderProvider', '$translateProvider',
-  '$locationProvider', 'paginationTemplateProvider',
+.config([
+  '$componentLoaderProvider',
+  '$translateProvider',
+  '$locationProvider',
+  'paginationTemplateProvider',
   ($componentLoader, $translate, $location, paginationTemplate) => {
 
   $componentLoader.setTemplateMapping(
