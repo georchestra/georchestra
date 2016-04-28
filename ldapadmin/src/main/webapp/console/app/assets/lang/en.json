@@ -80,6 +80,7 @@
   "msg.send"            : "Send",
   "msg.sent"            : "Message sent!",
   "msg.error"           : "Error sending message",
+  "msg.empty"           : "No mails",
 
   "logs.title"          : "Administration logs",
   "logs.logs"           : "Admin logs",

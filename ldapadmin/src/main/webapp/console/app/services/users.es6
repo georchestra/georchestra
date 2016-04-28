@@ -14,7 +14,7 @@ angular.module('admin_console')
     }
   })
 ]).factory('Email', ['$resource', 'LDAP_BASE_URI', ($resource, baseUri) =>
-  $resource(baseUri + '../:id/emails', { id: '@uuid' }, {
+  $resource(baseUri + '../:id/emails', { id: '@id' }, {
     query: {
       method  : 'GET',
       isArray: false

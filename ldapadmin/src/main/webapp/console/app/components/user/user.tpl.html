@@ -72,17 +72,17 @@
         <ol class="breadcrumb">
           <button class="pull-right btn btn-link btn-xs" ng-if="!user.compose && !user.message" translate ng-click="user.compose={}">msg.compose</button>
           <li class="active" ng-if="!user.message && !user.compose">
-            <span translate>msg.messages</span> <span class="badge">{{::user.messages.length}}</span>
+            <span translate>msg.messages</span> <span class="badge">{{::user.messages.emails.length}}</span>
           </li>
           <li ng-if="user.message || user.compose">
             <a href="javascript:void(0);" ng-click="user.closeMessage()">
-              <span translate>msg.messages</span> <span class="badge">{{::user.messages.length}}</span>
+              <span translate>msg.messages</span> <span class="badge">{{::user.messages.emails.length}}</span>
             </a>
           </li>
           <li class="active" ng-if="user.compose" translate>msg.compose</li>
           <li class="active" ng-if="user.message">{{::user.message.subject}}</li>
         </ol>
-        <label ng-if="user.compose" class="pull-right clearfix">
+        <label ng-if="user.compose && user.templates.templates.length > 0" class="pull-right clearfix">
           <span translate>msg.templates</span>
           <select placeholder="{{ 'msg.templates' | translate }}" ng-change="user.loadTemplate()"
             ng-options="template.name for template in user.templates.templates" ng-model="user.compose.template"></select>
@@ -102,7 +102,7 @@
             </div>
           </div>
 
-          <h5 translate>msg.attachments</h5>
+          <h5 translate ng-if="user.attachments.attachments.length > 0">msg.attachments</h5>
           <div class="clearfix">
             <div class="col-sm-4" ng-repeat="attachment in user.attachments.attachments">
               <div class="checkbox">
@@ -150,11 +150,16 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="message in user.messages">
+            <tr ng-repeat="message in user.messages.emails">
               <td>{{::message.date | date: 'mediumDate'}}</td>
               <td><a ng-click="user.openMessage(message)" href="javascript:void(0);">{{::message.subject}}</a>
               </td>
               <td>{{::message.sender}}</td>
+            </tr>
+            <tr ng-if="user.messages.emails.length == 0">
+              <td colspan="3">
+                <div class="alert alert-info" translate>msg.empty</div>
+              </td>
             </tr>
           </tbody>
         </table>

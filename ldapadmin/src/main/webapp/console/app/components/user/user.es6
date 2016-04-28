@@ -26,19 +26,16 @@ class UserController {
 
     this.user = User.get({id : $routeParams.id}, (user) => {
       if (this.tab == 'messages') {
-        this.$injector.get('Email').query({id: this.user.uuid}, (r) => {
-          // this.messages = r.emails;
-          this.messages =  [{ "sender": "98192574-18d0-1035-8e10-c310a114ab8f", "id": 51, "body": "qsdfqsdfqsf", "subject": "Hello", "attachments": [ { "id": 42, "name": "intelij.jpeg", "mimeType": "image/jpeg", "size": 30218 }, { "id": 43, "name": "intelij.jpeg", "mimeType": "image/jpeg", "size": 30218 } ], "date": "2007-03-01T13:00:00Z", "recipient": "9818af68-18d0-1035-8e0e-c310a114ab8f"}, { "sender": "98192574-18d0-1035-8e10-c310a114ab8f", "id": 52, "body": "Hello ça va ?", "subject": "Hi men :!", "attachments": [{ "id": 44, "name": "intelij.jpeg", "mimeType": "image/jpeg", "size": 30218 }], "date": "2015-11-23T16:44:18.00Z", "recipient": "9818af68-18d0-1035-8e0e-c310a114ab8f"} ];
-        });
+        this.messages = this.$injector.get('Email').query({id: this.user.uid})
       }
-    });
+    })
     this.adminGroups = this.$injector.get('groupAdminList')()
     switch (this.tab) {
       case 'infos':
         break;
       case 'groups':
         let notAdmin = [];
-        this.groups = Group.query();
+        this.groups = Group.query()
         this.$injector.get('$q').all([
           this.user.$promise,
           this.groups.$promise
@@ -54,16 +51,15 @@ class UserController {
               }
             }
             if (!groupAdminFilter(group)) {
-              notAdmin.push(group.cn);
+              notAdmin.push(group.cn)
             }
           })
-          this.groups = notAdmin;
+          this.groups = notAdmin
         })
         break;
       case 'messages':
         this.templates = this.$injector.get('Templates').query()
-        // this.attachments = this.$injector.get('Attachments').query()
-        this.attachments = { "attachments" :[{"id":2, "name":"Licence.pdf", "mimeType": "application/pdf"}, {"id":3, "name":"Admin.pdf", "mimeType": "image/jpeg"} ]}
+        this.attachments = this.$injector.get('Attachments').query()
         break;
       default:
     }
