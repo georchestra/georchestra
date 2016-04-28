@@ -214,6 +214,10 @@ section {
       cursor: pointer;
     }
   }
+  th:last-child,
+  td:last-child {
+    display: none;
+  }
   .background {
     position        : absolute;
     top             : 0;
