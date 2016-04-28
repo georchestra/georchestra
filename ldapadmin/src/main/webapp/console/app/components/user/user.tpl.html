@@ -186,7 +186,11 @@
       </div>
 
       <div class="panel-body" ng-if="user.tab=='manage'">
-          <button ng-click="user.delete()" class="btn btn-danger" translate>user.delete</button>
+        <div class="alert alert-danger clearfix">
+          <i class="glyphicon glyphicon-exclamation-sign"></i>
+          <span translate>user.warning</span>
+          <button  ng-click="user.delete()" class="btn btn-danger" translate>user.delete</button>
+        </div>
       </div>
 
     </div>

@@ -23,6 +23,7 @@
 
   "user.userlist"       : "All users",
   "user.updated"        : "User updated",
+  "user.deleted"        : "User deleted",
   "user.created"        : "User created",
   "user.error"          : "Error while saving user",
   "user.save"           : "Save",
@@ -46,6 +47,7 @@
   "user.fax"            : "Fax",
   "user.title"          : "Title",
   "user.lastcontext"    : "Last context",
+  "user.warning"        : "Warning, this action is irreversible — ",
 
   "group.allusers"      : "All users",
   "group.system"        : "System groups",

@@ -16,6 +16,7 @@ class UserController {
     this.messages = {}
     translate('user.updated', this.messages)
     translate('user.error', this.messages)
+    translate('user.deleted', this.messages)
 
 
     this.tabs = ['infos', 'groups', 'analytics', 'messages', 'logs', 'manage']
@@ -132,6 +133,18 @@ class UserController {
     this.user.$update(() => {
         $httpDefaultCache.removeAll()
         this.flash.create('success', this.messages.updated)
+      },
+      this.flash.create.bind(this.flash, 'danger', this.messages.error)
+    )
+  }
+
+  delete() {
+    let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
+    this.user.$delete(() => {
+        $httpDefaultCache.removeAll()
+        let $router = this.$injector.get('$router')
+        $router.navigate($router.generate('users', { id: 'all'}))
+        this.flash.create('success', this.messages.deleted)
       },
       this.flash.create.bind(this.flash, 'danger', this.messages.error)
     )
