@@ -41,12 +41,12 @@ class AnalyticsController {
     }
 
     this.requests = Analytics.get(options, () => { },
-      Flash.create.bind(this, 'error', msg)
+      Flash.create.bind(Flash, 'error', msg)
     )
     options.service = 'layersUsage'
     options.limit   = 10
     this.layers     = Analytics.get(options, () => { },
-      Flash.create.bind(this, 'error', msg)
+      Flash.create.bind(Flash, 'error', msg)
     )
   }
 
