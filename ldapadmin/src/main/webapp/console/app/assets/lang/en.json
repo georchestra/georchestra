@@ -98,6 +98,8 @@
   "analytics.layers"    : "Most viewed layers",
   "analytics.errorload" : "Error loading data",
   "analytics.nodata"    : "No data for this period",
+  "analytics.graphview" : "View as graph",
+  "analytics.dataview"  : "View as table",
 
   "date.day"            : "Today",
   "date.week"           : "Last week",
