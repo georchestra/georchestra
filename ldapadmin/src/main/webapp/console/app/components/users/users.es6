@@ -22,11 +22,13 @@ class UsersController {
       this.allUsers = this.users.slice()
     })
 
-    this.groups = Group.query(() => {
+    this.groups = Group.query()
+    this.activePromise = this.groups.$promise.then(() => {
       this.activeGroup = this.groups.filter(g => g.cn == $routeParams.id)[0];
       if (this.activeGroup) {
         this.filter(this.activeGroup)
       }
+      return this.activeGroup;
     })
 
     let translate = this.$injector.get('translate')

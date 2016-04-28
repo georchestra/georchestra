@@ -10,15 +10,18 @@ class GroupsController {
     this.$injector = $injector
 
     if (this.groups.$promise) {
-      this.groups.$promise.then(
-        $injector.get('$timeout')(this.initialize.bind(this, groupAdminList))
-      )
+      $injector.get('$q').all([
+        this.groups.$promise,
+        this.activePromise
+      ]).then(this.initialize.bind(this, groupAdminList))
     } else {
       this.initialize(groupAdminList)
     }
   }
 
   initialize(groupAdminList) {
+    this.activeGroup = this.activePromise.$$state.value
+
     let root = [];
     let index = {};
     this.q = (this.q) || '';
@@ -92,9 +95,9 @@ class GroupsController {
 angular.module('admin_console')
 .component('groups', {
   bindings    : {
-    groups      : '=',
-    activeGroup : '=',
-    index       : '=?'
+    groups        : '=',
+    activePromise : '=',
+    index         : '=?'
   },
   controller   : GroupsController,
   controllerAs : 'groups',

@@ -42,7 +42,7 @@
       {{::group | unprefix: groups.prefix}} ({{::group.users.length}})
     </a>
 
-    <groups groups="group.children" active-group="groups.activeGroup" index="groups.index"
+    <groups groups="group.children" active-promise="groups.activePromise" index="groups.index"
     ng-if="groups.isExpanded(group, groups.activeGroup)"></groups>
 
   </div>
