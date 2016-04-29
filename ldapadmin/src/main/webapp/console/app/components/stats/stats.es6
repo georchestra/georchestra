@@ -20,6 +20,7 @@ class StatsController {
     var options;
 
     this.parsed = this.parseData()
+    this.granularity = this.data.granularity
 
     if (this.type == 'bar') {
       options = {
@@ -46,8 +47,22 @@ class StatsController {
             (value > 10000) ? Math.floor(value / 1000) + 'K' : value
         },
         axisX: {
-          labelInterpolationFnc: (value, index) =>
-            (parseInt(value.split('-')[1]) % 3 == 1) ? value : null
+          labelInterpolationFnc: (value, index) => {
+            if (this.granularity == 'DAY' && this.parsed.series[0].length > 8) {
+              return (parseInt(value.split('-')[2]) % 4 == 1) ?
+                value.substr(value.indexOf('-') + 1) : null
+            }
+            if (this.granularity == 'DAY') {
+              return value.substr(value.indexOf('-') + 1)
+            }
+            if (this.granularity == 'WEEK') {
+              return (parseInt(value.split('-')[1]) % 2 == 0) ? value : null
+            }
+            if (this.granularity == 'MONTH') {
+              return (parseInt(value.split('-')[1]) % 3 == 1) ? value : null
+            }
+            return value
+          }
         }
       }
     }

@@ -100,6 +100,10 @@
   "analytics.nodata"    : "No data for this period",
   "analytics.graphview" : "View as graph",
   "analytics.dataview"  : "View as table",
+  "analytics.DAY"       : "Per day",
+  "analytics.WEEK"      : "Per week",
+  "analytics.MONTH"     : "Per month",
+  "analytics.HOUR"      : "Per hour",
 
   "date.day"            : "Today",
   "date.week"           : "Last week",
