@@ -14,6 +14,7 @@ module.exports = config:
           'vendor/jquery.js',
           'vendor/angular.js',
           'vendor/angular-resource.js',
+          'vendor/bootstrap-datepicker.js',
           'vendor/router.es5.js',
           'vendor/chosen.jquery.js',
           'vendor/angular-chosen.js',
@@ -30,6 +31,7 @@ module.exports = config:
         'app.css': /^app/
         'libraries.css': [
           'vendor/bootstrap.css',
+          'vendor/bootstrap-datepicker3.css',
           'vendor/chartist.min.css',
           'vendor/chosen.min.css'
         ]
