@@ -2,26 +2,42 @@ require('components/date/date.tpl')
 
 class DateController {
 
-  static $inject = [ '$injector', '$scope' ]
+  static $inject = [ '$injector', '$scope', '$element' ]
 
-  constructor($injector, $scope) {
+  constructor($injector, $scope, $element) {
+
     this.$injector = $injector
-    this.options = [ 'day', 'week', 'month', '3month', 'year' ].map(
+
+    this.options = [ 'day', 'week', 'month', '3month', 'year', 'custom' ].map(
       x => { return { value: x, label: 'date.' + x } }
     )
-    this.option = this.options[this.options.length - 1]
+    this.option = this.options[this.options.length - 2]
 
     $scope.$watch('date.model.start', (newVal, oldVal) => {
-      if (!newVal) { return }
+      if (!newVal || this.option.value == 'custom') { return }
       this.option = this.options.filter(
         x => this.$injector.get('Util').getDateFromDiff(x.value) == newVal
       )[0]
     })
+
+    // Reload on custom date changes
+    $scope.$watch('date.model.start', (newVal, oldVal) => {
+      if (newVal != oldVal) { this.callback() }
+    })
+    $scope.$watch('date.model.end', (newVal, oldVal) => {
+      if (newVal != oldVal) { this.callback() }
+    })
+
+    $element.find('.input-daterange').datepicker({
+      format: 'yyyy-mm-dd'
+    })
   }
 
   change() {
-    this.model.start = this.$injector.get('Util')
-      .getDateFromDiff(this.option.value)
+    if (this.option.value !== 'custom') {
+      this.model.start = this.$injector.get('Util')
+        .getDateFromDiff(this.option.value)
+    }
     this.callback()
   }
 

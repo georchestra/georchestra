@@ -245,8 +245,10 @@ section {
 
 // STATS
 @media (min-width: 992px) {
+  .chosen-container {
+    width: 16em !important;
+  }
   .stats-conf {
-    width: 20%;
     float: right;
   }
 }
@@ -265,16 +267,32 @@ section {
   }
 }
 
+// DATE
+date {
+  display : flex;
+  .input-group {
+    width        : 16em;
+    margin-right : 1em;
+  }
+  select {
+    flex : 1;
+  }
+}
+
 // LOGS
 .logs {
   .reset {
     margin-top : -.75em;
   }
   .chosen-container {
-    float: right
+    width : 8em !important;
+    float : right
   }
   .chosen-drop {
     width : 21em;
+  }
+  .custom {
+    width : 1em;
   }
   table {
     th, td {
@@ -284,6 +302,12 @@ section {
       }
       select {
         max-width: 50%;
+      }
+      .input-group {
+        max-width: 15em;
+      }
+      input {
+        padding : 3px;
       }
     }
     select {

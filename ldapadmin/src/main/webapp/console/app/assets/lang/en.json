@@ -105,5 +105,6 @@
   "date.week"           : "Last week",
   "date.month"          : "Last month",
   "date.3month"         : "Last 3 month",
-  "date.year"           : "Last year"
+  "date.year"           : "Last year",
+  "date.custom"         : "Custom range"
 }

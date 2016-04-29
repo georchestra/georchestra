@@ -21,7 +21,9 @@ angular.module('admin_console').factory('Util', () => {
       return m.format(format)
     },
 
-    getDefaultDate: () => moment().subtract(1, 'year').format(format)
+    getDefaultDate: () => moment().subtract(1, 'year').format(format),
+
+    getDate: () => moment().format(format)
 
   }
 

@@ -22,14 +22,16 @@ class LogsController {
     }, $injector.get('Flash').create.bind(this, 'error', msg, ''))
 
     this.date = {
-      start: this.$injector.get('Util').getDefaultDate()
+      start : this.$injector.get('Util').getDefaultDate(),
+      end   : this.$injector.get('Util').getDate()
     }
 
   }
 
   isFiltered() {
     return this.admin || this.type || this.target ||
-      this.date.start != this.$injector.get('Util').getDefaultDate()
+      this.date.start != this.$injector.get('Util').getDefaultDate() ||
+      this.date.end != this.$injector.get('Util').getDate()
   }
 
   reset() {
@@ -37,6 +39,7 @@ class LogsController {
     this.type       = undefined
     this.target     = undefined
     this.date.start = this.$injector.get('Util').getDefaultDate()
+    this.date.end   = this.$injector.get('Util').getDate()
   }
 
 }
@@ -56,7 +59,9 @@ let filter_logs = () => {
       if (target && log.target != target)   {
         valid = false
       }
-      if (date && moment(log.date).isBefore(date.start))   {
+      if (date &&
+        (moment(log.date).isBefore(date.start) ||
+        moment(log.date).isAfter(date.end)) )   {
         valid = false
       }
       return valid

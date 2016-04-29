@@ -1,6 +1,9 @@
-<select
-  class="form-control"
-  ng-model="date.option"
-  ng-change="date.change()"
+<div class="input-daterange input-group" ng-show="date.option.value=='custom'">
+  <input type="text" class="form-control" name="start" ng-model="date.model.start" />
+  <span class="input-group-addon">to</span>
+  <input type="text" class="form-control" name="end"  ng-model="date.model.end"/>
+</div>
+<select class="form-control" ng-class="{ 'custom' : date.option.value=='custom'}"
+  ng-model="date.option" ng-change="date.change()"
   ng-options="option as option.label | translate for option in date.options track by option.value">
 </select>
