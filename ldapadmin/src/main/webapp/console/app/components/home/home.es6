@@ -23,8 +23,11 @@ class HomeController {
       })
     })
 
-    let msg       = 'Error while loading data'
-    let error     = $injector.get('Flash').create.bind(this, 'error', msg, '')
+    this.i18n = {}
+    $injector.get('translate')('analytics.errorload', this.i18n)
+
+    let flash     = $injector.get('Flash')
+    let error     = flash.create.bind(flash, 'error', this.i18n.errorload)
     let Analytics = $injector.get('Analytics')
     let date      = $injector.get('date')
     let options   = {
@@ -33,12 +36,11 @@ class HomeController {
       endDate   : date.getEnd()
     }
 
-    this.requests_conf = [ 'layer', 'count' ]
+    this.requests_conf = [ 'date', 'count' ]
 
     this.connected  = Analytics.get(options, () => {}, error)
 
-    options.limit   = 10
-    options.service = 'layersUsage'
+    options.service = 'combinedRequests'
     this.requests = Analytics.get(options, () => {}, error)
 
     this.logs = this.$injector.get('Logs').query({
