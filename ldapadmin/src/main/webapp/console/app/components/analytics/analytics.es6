@@ -11,10 +11,11 @@ class AnalyticsController {
 
     this.group  = $routeParams.group
     this.groups = this.$injector.get('Group').query()
+    let date    = this.$injector.get('date')
 
     this.date = {
-      start : moment().subtract(1, 'year').format('YYYY-MM-DD'),
-      end   : moment().format('YYYY-MM-DD')
+      start : date.getFromDiff('year'),
+      end   : date.getEnd()
     }
 
     this.data = {}

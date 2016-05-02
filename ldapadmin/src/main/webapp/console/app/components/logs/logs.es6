@@ -22,24 +22,24 @@ class LogsController {
     }, $injector.get('Flash').create.bind(this, 'error', msg, ''))
 
     this.date = {
-      start : this.$injector.get('Util').getDefaultDate(),
-      end   : this.$injector.get('Util').getDate()
+      start : this.$injector.get('date').getDefault(),
+      end   : this.$injector.get('date').getEnd()
     }
 
   }
 
   isFiltered() {
     return this.admin || this.type || this.target ||
-      this.date.start != this.$injector.get('Util').getDefaultDate() ||
-      this.date.end != this.$injector.get('Util').getDate()
+      this.date.start != this.$injector.get('date').getDefault() ||
+      this.date.end != this.$injector.get('date').getEnd()
   }
 
   reset() {
     this.admin      = undefined
     this.type       = undefined
     this.target     = undefined
-    this.date.start = this.$injector.get('Util').getDefaultDate()
-    this.date.end   = this.$injector.get('Util').getDate()
+    this.date.start = this.$injector.get('date').getDefault()
+    this.date.end   = this.$injector.get('date').getEnd()
   }
 
 }

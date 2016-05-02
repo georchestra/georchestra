@@ -26,10 +26,11 @@ class HomeController {
     let msg       = 'Error while loading data'
     let error     = $injector.get('Flash').create.bind(this, 'error', msg, '')
     let Analytics = $injector.get('Analytics')
+    let date      = $injector.get('date')
     let options   = {
       service   : 'distinctUsers',
-      startDate : moment().subtract(19, 'week').format('YYYY-MM-DD'),
-      endDate   : moment().format('YYYY-MM-DD')
+      startDate : date.getFromDiff('week'),
+      endDate   : date.getEnd()
     }
 
     this.requests_conf = [ 'layer', 'count' ]

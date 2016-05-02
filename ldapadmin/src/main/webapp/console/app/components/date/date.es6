@@ -16,7 +16,7 @@ class DateController {
     $scope.$watch('date.model.start', (newVal, oldVal) => {
       if (!newVal || this.option.value == 'custom') { return }
       this.option = this.options.filter(
-        x => this.$injector.get('Util').getDateFromDiff(x.value) == newVal
+        x => this.$injector.get('date').getFromDiff(x.value) == newVal
       )[0]
     })
 
@@ -35,8 +35,8 @@ class DateController {
 
   change() {
     if (this.option.value !== 'custom') {
-      this.model.start = this.$injector.get('Util')
-        .getDateFromDiff(this.option.value)
+      this.model.start = this.$injector.get('date')
+        .getFromDiff(this.option.value)
     }
     this.callback()
   }

@@ -66,11 +66,11 @@ class UserController {
   }
 
   loadAnalytics($scope) {
+    let date    = this.$injector.get('date')
 
     this.date = {
-      // start : moment().subtract(1, 'year').format('YYYY-MM-DD'),
-      start : moment().subtract(6, 'month').format('YYYY-MM-DD'),
-      end   : moment().format('YYYY-MM-DD')
+      start : date.getFromDiff('year'),
+      end   : date.getEnd()
     }
 
     this.config = {
