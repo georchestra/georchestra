@@ -40,5 +40,11 @@ http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
         <servlet-name>ws</servlet-name>
         <url-pattern>/ws/*</url-pattern>
     </servlet-mapping>
- 
+
+    <jsp-config>
+      <jsp-property-group>
+        <url-pattern>*.jsp</url-pattern>
+        <page-encoding>UTF-8</page-encoding>
+      </jsp-property-group>
+    </jsp-config>
 </web-app>
