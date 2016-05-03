@@ -79,7 +79,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * If neither user nor group is set, global statistics are returned.
  *
  * where granularity will depend on the submitted date, following the algorithm:
- *  if datediff < 1 day    then granularity by hour
+ *  if datediff < 2 days   then granularity by hour
  *  if datediff < 1 week   then granularity by day
  *  if datediff < 1 month  then granularity by day
  *  if datediff < 3 months then granularity by week
@@ -433,7 +433,7 @@ public class StatisticsController {
 	private GRANULARITY guessGranularity(Date beginDate, Date endDate) {
 		long diff = endDate.getTime() - beginDate.getTime();
 		long numdays = TimeUnit.MILLISECONDS.toDays(diff);
-		if (numdays < 1) {
+		if (numdays < 2) {
 			return GRANULARITY.HOUR;
 		} else if (numdays < 90) {
 			return GRANULARITY.DAY;

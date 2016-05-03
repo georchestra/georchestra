@@ -323,9 +323,13 @@ public class StatisticsControllerTest {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Date startDate = sdf.parse("2015-12-03");
 
-		// < 1 day => by hour
-		GRANULARITY gran =  (GRANULARITY) ReflectionUtils.invokeMethod(m, ctrl, startDate, startDate);
+
+		// < 2 day => by hour
+		GRANULARITY gran =  (GRANULARITY) ReflectionUtils.invokeMethod(m, ctrl, startDate, sdf.parse("2015-12-04"));
 		assertTrue(gran == GRANULARITY.HOUR);
+
+		gran =  (GRANULARITY) ReflectionUtils.invokeMethod(m, ctrl, startDate, sdf.parse("2015-12-05"));
+		assertTrue(gran == GRANULARITY.DAY);
 
 		// < 1 week => by day
 		gran =  (GRANULARITY) ReflectionUtils.invokeMethod(m, ctrl, startDate, sdf.parse("2015-12-06"));
