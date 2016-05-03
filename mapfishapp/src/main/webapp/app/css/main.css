@@ -380,6 +380,8 @@ div.olMapViewport {
     background: #fff;
     font-size: 11px;
     font-family: tahoma,arial,verdana,sans-serif;
+    display: flex;
+    flex-wrap: wrap;
 }
 .context-selector .thumb {
     background: #dddddd;
@@ -396,9 +398,6 @@ div.olMapViewport {
     padding: 5px;
     cursor: pointer;
     width: 116px;
-}
-.context-selector .thumb-wrap:nth-child(4n+1) {
-    clear: left;
 }
 
 .context-selector .thumb-wrap span {
