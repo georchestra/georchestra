@@ -382,6 +382,8 @@ div.olMapViewport {
     font-family: tahoma,arial,verdana,sans-serif;
     display: flex;
     flex-wrap: wrap;
+    -ms-flex-flow: row wrap;
+    -webkit-flex-flow: row wrap;
 }
 .context-selector .thumb {
     background: #dddddd;
@@ -392,6 +394,7 @@ div.olMapViewport {
     width: 110px;
 }
 .context-selector .thumb-wrap {
+    display: inline-block;
     float: left;
     margin: 4px;
     margin-right: 0;
