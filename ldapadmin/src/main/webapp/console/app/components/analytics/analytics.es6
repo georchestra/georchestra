@@ -30,7 +30,7 @@ class AnalyticsController {
   load(group) {
     let Flash     = this.$injector.get('Flash')
     let Analytics = this.$injector.get('Analytics')
-    let msg       = 'Error loading data'
+    let err       = Flash.create.bind(Flash, 'error', 'Error loading data')
 
     let options = {
       service   : 'combinedRequests',
@@ -41,14 +41,10 @@ class AnalyticsController {
       options.group = group
     }
 
-    this.requests = Analytics.get(options, () => { },
-      Flash.create.bind(Flash, 'error', msg)
-    )
+    this.requests   = Analytics.get(options, () => {}, err)
     options.service = 'layersUsage'
     options.limit   = 10
-    this.layers     = Analytics.get(options, () => { },
-      Flash.create.bind(Flash, 'error', msg)
-    )
+    this.layers     = Analytics.get(options, () => {}, err)
   }
 
 

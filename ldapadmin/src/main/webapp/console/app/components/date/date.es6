@@ -6,7 +6,7 @@ class DateController {
 
   constructor($injector, $scope, $element) {
 
-    this.$injector = $injector
+    this.date = $injector.get('date')
 
     this.options = [ 'day', 'week', 'month', '3month', 'year', 'custom' ].map(
       x => { return { value: x, label: 'date.' + x } }
@@ -16,7 +16,7 @@ class DateController {
     $scope.$watch('date.model.start', (newVal, oldVal) => {
       if (!newVal || this.option.value == 'custom') { return }
       this.option = this.options.filter(
-        x => this.$injector.get('date').getFromDiff(x.value) == newVal
+        x => this.date.getFromDiff(x.value) == newVal
       )[0]
     })
 
@@ -27,15 +27,12 @@ class DateController {
     $scope.$watch('date.model.start' , dateChanged)
     $scope.$watch('date.model.end'   , dateChanged)
 
-    $element.find('.input-daterange').datepicker({
-      format: 'yyyy-mm-dd'
-    })
+    $element.find('.input-daterange').datepicker({ format: 'yyyy-mm-dd' })
   }
 
   change() {
     if (this.option.value !== 'custom') {
-      this.model.start = this.$injector.get('date')
-        .getFromDiff(this.option.value)
+      this.model.start = this.date.getFromDiff(this.option.value)
     }
     this.callback()
   }

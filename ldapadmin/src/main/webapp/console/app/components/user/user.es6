@@ -4,13 +4,12 @@ require('services/util')
 
 class UserController {
 
-  static $inject = [
-    '$routeParams', '$injector', 'User', 'Group', 'groupAdminFilter'
-  ]
+  static $inject = [ '$routeParams', '$injector', 'User', 'Group' ]
 
-  constructor($routeParams, $injector, User, Group, groupAdminFilter) {
+  constructor($routeParams, $injector, User, Group) {
 
     this.$injector = $injector
+    let groupAdminFilter = $injector.get('groupAdminFilter')
 
     let translate = $injector.get('translate');
     this.messages = {}
@@ -19,10 +18,8 @@ class UserController {
     translate('user.deleted', this.messages)
 
 
-    this.tabs = ['infos', 'groups', 'analytics', 'messages', 'logs', 'manage']
-
-    this.tab = $routeParams.tab
-    this.flash = this.$injector.get('Flash')
+    this.tabs  = ['infos', 'groups', 'analytics', 'messages', 'logs', 'manage']
+    this.tab   = $routeParams.tab
 
     this.user = User.get({id : $routeParams.id}, (user) => {
       if (this.tab == 'messages') {
@@ -83,14 +80,14 @@ class UserController {
 
   loadAnalyticsData() {
     let i18n        = {}
-    let i18nPromise = this.$injector.get('$translate')('analytics.errorload')
-    i18nPromise.then(v => i18n.errorload = v)
+    let i18nPromise = this.$injector.get('translate')('analytics.errorload', i18n)
+    let flash = this.$injector.get('Flash')
 
     this.$injector.get('$q').all([
       this.user.$promise,
       i18nPromise
     ]).then(() => {
-      let error = this.flash.create.bind(this.flash, 'danger', i18n.errorload)
+      let error = flash.create.bind(flash, 'danger', i18n.errorload)
       let Analytics = this.$injector.get('Analytics')
       let options = {
         service   : 'combinedRequests',
@@ -107,6 +104,7 @@ class UserController {
 
   loadLogs($scope) {
     let i18n = {}
+    let flash = this.$injector.get('Flash')
 
     this.$injector.get('$q').all([
       this.user.$promise,
@@ -119,30 +117,32 @@ class UserController {
           page  : 0
         },
         () => { },
-        this.flash.create.bind(this.flash, 'danger', i18n.errorload)
+        flash.create.bind(flash, 'danger', i18n.errorload)
       )
     })
   }
 
   save() {
+    let flash = this.$injector.get('Flash')
     let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
     this.user.$update(() => {
         $httpDefaultCache.removeAll()
-        this.flash.create('success', this.messages.updated)
+        flash.create('success', this.messages.updated)
       },
-      this.flash.create.bind(this.flash, 'danger', this.messages.error)
+      flash.create.bind(flash, 'danger', this.messages.error)
     )
   }
 
   delete() {
     let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
+    let flash = this.$injector.get('Flash')
     this.user.$delete(() => {
         $httpDefaultCache.removeAll()
         let $router = this.$injector.get('$router')
         $router.navigate($router.generate('users', { id: 'all'}))
-        this.flash.create('success', this.messages.deleted)
+        flash.create('success', this.messages.deleted)
       },
-      this.flash.create.bind(this.flash, 'danger', this.messages.error)
+      flash.create.bind(flash, 'danger', this.messages.error)
     )
   }
 
@@ -161,8 +161,11 @@ class UserController {
   }
 
   sendMail() {
-    let Mail = this.$injector.get('Mail')
-    let $translate = this.$injector.get('$translate')
+    let flash = this.$injector.get('Flash')
+    let Mail  = this.$injector.get('Mail')
+    let i18n  = {}
+    $injector.get('translate')('msg.sent', i18n)
+    $injector.get('translate')('msg.error', i18n)
     let attachments = []
     for (let attach_id in this.compose.attachments) {
       if (this.compose.attachments[attach_id]) { attachments.push(attach_id) }
@@ -174,15 +177,16 @@ class UserController {
       attachments: attachments.join(',')
     })).$save((r) => {
         delete this.compose
-        this.flash.create('success', $translate('msg.sent'))
+        flash.create('success', i18n.sent)
       },
-      this.flash.create.bind(this.flash, 'error', $translate('msg.error'))
+      flash.create.bind(flash, 'error', i18n.error)
     )
   }
 
   activate($scope) {
 
     let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
+    let flash             = this.$injector.get('Flash')
 
     let saveGroups = function(newVal, oldVal) {
       if (!newVal || !oldVal) { return }
@@ -193,16 +197,16 @@ class UserController {
       if (toPut.length == 0 && toDel.length == 0) { return }
       if (toPut.length > 1 || toDel.length > 1) { return } // Batch operations are wrong artifacts
 
-      this.$injector.get('GroupsUsers').save({
-        users  : [ this.user.uid ],
-        PUT    : toPut,
-        DELETE : toDel
-      }, () => {
-        this.flash.create('success', 'Groups updated')
-        $httpDefaultCache.removeAll()
-      }, () => {
-        this.flash.create('error', 'Error associating to groups')
-      })
+      this.$injector.get('GroupsUsers').save(
+        {
+          users  : [ this.user.uid ],
+          PUT    : toPut,
+          DELETE : toDel
+        }, () => {
+          flash.create('success', 'Groups updated')
+          $httpDefaultCache.removeAll()
+        }, flash.create.bind(flash, 'error', 'Error associating to groups')
+      )
     }
 
   this.contexts =[

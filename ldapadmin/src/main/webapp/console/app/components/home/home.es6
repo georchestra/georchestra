@@ -26,22 +26,19 @@ class HomeController {
     this.i18n = {}
     $injector.get('translate')('analytics.errorload', this.i18n)
 
-    let flash     = $injector.get('Flash')
-    let error     = flash.create.bind(flash, 'error', this.i18n.errorload)
+    let error     = $injector.get('Flash').create.bind(
+      $injector.get('Flash'), 'error', this.i18n.errorload
+    )
     let Analytics = $injector.get('Analytics')
-    let date      = $injector.get('date')
     let options   = {
       service   : 'distinctUsers',
-      startDate : date.getFromDiff('week'),
-      endDate   : date.getEnd()
+      startDate : $injector.get('date').getFromDiff('week'),
+      endDate   : $injector.get('date').getEnd()
     }
 
-    this.requests_conf = [ 'date', 'count' ]
-
     this.connected  = Analytics.get(options, () => {}, error)
-
     options.service = 'combinedRequests'
-    this.requests = Analytics.get(options, () => {}, error)
+    this.requests   = Analytics.get(options, () => {}, error)
 
     this.logs = this.$injector.get('Logs').query({
       limit: LOG_LIMIT,
