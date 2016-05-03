@@ -48,6 +48,9 @@ class StatsController {
         },
         axisX: {
           labelInterpolationFnc: (value, index) => {
+            if (this.granularity == 'HOUR') {
+              return value.split(' ')[1]+'H'
+            }
             if (this.granularity == 'DAY' && this.parsed.series[0].length > 8) {
               return (parseInt(value.split('-')[2]) % 4 == 1) ?
                 value.substr(value.indexOf('-') + 1) : null

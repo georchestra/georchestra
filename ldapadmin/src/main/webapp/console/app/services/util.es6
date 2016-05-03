@@ -7,6 +7,9 @@ angular.module('admin_console')
 
     getFromDiff: (interval) => {
       let m = moment().add(1, 'day')
+      if (interval == 'day') {
+        m = m.subtract(1, 'day')
+      }
       if (interval == 'week') {
         m = m.subtract(1, 'weeks')
       }
