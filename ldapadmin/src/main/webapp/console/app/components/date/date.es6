@@ -21,12 +21,11 @@ class DateController {
     })
 
     // Reload on custom date changes
-    $scope.$watch('date.model.start', (newVal, oldVal) => {
-      if (newVal != oldVal) { this.callback() }
-    })
-    $scope.$watch('date.model.end', (newVal, oldVal) => {
-      if (newVal != oldVal) { this.callback() }
-    })
+    let dateChanged = (val, old) => {
+      if (this.option.value == 'custom' && val != old) { this.callback() }
+    }
+    $scope.$watch('date.model.start' , dateChanged)
+    $scope.$watch('date.model.end'   , dateChanged)
 
     $element.find('.input-daterange').datepicker({
       format: 'yyyy-mm-dd'
