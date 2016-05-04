@@ -96,7 +96,7 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
             new OpenLayers.Projection("EPSG:4326"));
 
         var form = new Ext.form.FormPanel({
-            height: 180,
+            autoHeight: true,
             bodyStyle: "padding: 5px;",
             labelSeparator: tr("labelSeparator"),
             items: [{
@@ -107,12 +107,26 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
                 name: "comment",
                 allowBlank: false
             }, {
+                xtype: "checkbox",
+                labelStyle: "width:160px",
+                fieldLabel: this.tr("notes_follow_up"),
+                name: "followup"
+
+            }, {
                 xtype: "textfield",
                 fieldLabel: this.tr("notes_email"),
                 width: 240,
                 name: "email",
-                allowBlank: false,
-                value: GEOR.config.USEREMAIL || ""
+                value: GEOR.config.USEREMAIL || "",
+                vtype: "email",
+                validator: function(value) {
+                    var followUpCheckbox;
+                    followUpCheckbox = this.findParentByType("form").findBy(function(c) {
+                        return ((c.getXType() === "checkbox") &&
+                        (c.name === "followup"));
+                    })[0];
+                    return (!followUpCheckbox.getValue() || value !== "");
+                }
             }, {
                 xtype: "hidden",
                 name: "latitude",
@@ -156,7 +170,7 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
                 scope: this
             }]
         });
-        
+
         this.window = new Ext.Window({
             title: this.tr("notes_title"),
             width: 400,
