@@ -110,8 +110,29 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
                 xtype: "checkbox",
                 labelStyle: "width:160px",
                 fieldLabel: this.tr("notes_follow_up"),
-                name: "followup"
+                name: "followup_checkbox",
+                inputValue: true,
+                listeners: {
+                    "change": {
+                        fn: function(checkbox, newValue) {
+                            var followUpHidden = checkbox.findParentByType("form").findBy(function(c) {
+                                return ((c.getXType() === "hidden") &&
+                                (c.name === "followup"));
+                            })[0];
 
+                            followUpHidden.setRawValue(newValue);
+                        }
+                    }
+                }
+
+
+            }, {
+                // The checkbox named followup_checkbox will only be send if it is checked.
+                // A listener on this checkbox will change the value of this hidden field based
+                // on its value.
+                xtype: "hidden",
+                name: "followup",
+                value: false
             }, {
                 xtype: "textfield",
                 fieldLabel: this.tr("notes_email"),
@@ -123,7 +144,7 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
                     var followUpCheckbox;
                     followUpCheckbox = this.findParentByType("form").findBy(function(c) {
                         return ((c.getXType() === "checkbox") &&
-                        (c.name === "followup"));
+                        (c.name === "followup_checkbox"));
                     })[0];
                     return (!followUpCheckbox.getValue() || value !== "");
                 }
