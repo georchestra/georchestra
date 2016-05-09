@@ -95,6 +95,15 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
         geometry.transform(this.map.projection,
             new OpenLayers.Projection("EPSG:4326"));
 
+        var followUpHidden = new Ext.form.Hidden({
+            // The checkbox named followup_checkbox will only be send if it is checked.
+            // A listener on this checkbox will change the value of this hidden field based
+            // on its value.
+            xtype: "hidden",
+            name: "followup",
+            value: false
+        });
+
         var form = new Ext.form.FormPanel({
             autoHeight: true,
             bodyStyle: "padding: 5px;",
@@ -111,28 +120,13 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
                 labelStyle: "width:160px",
                 fieldLabel: this.tr("notes_follow_up"),
                 name: "followup_checkbox",
-                inputValue: true,
                 listeners: {
                     "change": {
                         fn: function(checkbox, newValue) {
-                            var followUpHidden = checkbox.findParentByType("form").findBy(function(c) {
-                                return ((c.getXType() === "hidden") &&
-                                (c.name === "followup"));
-                            })[0];
-
                             followUpHidden.setRawValue(newValue);
                         }
                     }
                 }
-
-
-            }, {
-                // The checkbox named followup_checkbox will only be send if it is checked.
-                // A listener on this checkbox will change the value of this hidden field based
-                // on its value.
-                xtype: "hidden",
-                name: "followup",
-                value: false
             }, {
                 xtype: "textfield",
                 fieldLabel: this.tr("notes_email"),
@@ -141,12 +135,7 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
                 value: GEOR.config.USEREMAIL || "",
                 vtype: "email",
                 validator: function(value) {
-                    var followUpCheckbox;
-                    followUpCheckbox = this.findParentByType("form").findBy(function(c) {
-                        return ((c.getXType() === "checkbox") &&
-                        (c.name === "followup_checkbox"));
-                    })[0];
-                    return (!followUpCheckbox.getValue() || value !== "");
+                    return (followUpHidden.getValue() === "false" || value !== "");
                 }
             }, {
                 xtype: "hidden",
@@ -160,7 +149,8 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
                 xtype: "hidden",
                 name: "map_context",
                 value: GEOR.wmc.write()
-            }],
+            },
+                followUpHidden],
             buttons: [{
                 text: this.tr("notes_cancel"),
                 handler: function() {
