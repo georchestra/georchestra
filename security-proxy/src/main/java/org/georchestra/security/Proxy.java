@@ -251,6 +251,11 @@ public class Proxy {
         redirectStrategy.sendRedirect(request, response, uriBuilder.build().toString());
     }
 
+    @RequestMapping("/services_monitoring")
+    public void servicesMonitoring(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        (new ServicesMonitoring(this.georchestraConfiguration.loadCustomPropertiesFile("targets-mapping"))).checkServices(request, response);
+    }
+
     @RequestMapping(params = { "login", "url" }, method = { GET, POST })
     public void login(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) throws ServletException, IOException {
         redirectStrategy.sendRedirect(request, response, sURL);
