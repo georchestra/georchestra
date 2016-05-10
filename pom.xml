@@ -373,14 +373,6 @@
       <id>georchestra</id>
       <url>http://sdi.georchestra.org/maven/repository</url>
     </repository>
-    <repository>
-      <snapshots>
-        <enabled>true</enabled>
-        <checksumPolicy>ignore</checksumPolicy>
-      </snapshots>
-      <id>mapfish</id>
-      <url>http://dev.mapfish.org/maven/repository</url>
-    </repository>
     <!-- geotools -->
     <repository>
       <snapshots>
@@ -423,14 +415,6 @@
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
-    </pluginRepository>
-    <pluginRepository>
-      <snapshots>
-        <enabled>true</enabled>
-        <checksumPolicy>ignore</checksumPolicy>
-      </snapshots>
-      <id>mapfish</id>
-      <url>http://dev.mapfish.org/maven/repository</url>
     </pluginRepository>
   </pluginRepositories>
 </project>
