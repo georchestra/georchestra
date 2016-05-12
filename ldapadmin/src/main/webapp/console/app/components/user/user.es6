@@ -179,7 +179,7 @@ class UserController {
         delete this.compose
         flash.create('success', i18n.sent)
       },
-      flash.create.bind(flash, 'error', i18n.error)
+      () => { flash.create('danger', i18n.error) }
     )
   }
 

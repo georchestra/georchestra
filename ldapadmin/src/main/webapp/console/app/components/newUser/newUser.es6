@@ -27,7 +27,7 @@ class NewUserController {
           tab : 'infos'
         }))
       },
-      flash.create.bind(flash, 'error', this.i18n.error)
+      () => { flash.create('danger', this.i18n.error) }
     )
   }
 
