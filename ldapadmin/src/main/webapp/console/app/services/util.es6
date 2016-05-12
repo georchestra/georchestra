@@ -25,7 +25,7 @@ angular.module('admin_console')
       return m.format(format)
     },
 
-    getDefault : () => moment().subtract(1, 'year').format(format),
+    getDefault : () => moment().add(1, 'day').subtract(1, 'year').format(format),
 
     getEnd     : () => moment().add(1, 'day').format(format)
 

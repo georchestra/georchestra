@@ -22,6 +22,7 @@ class DateController {
 
     // Reload on custom date changes
     let dateChanged = (val, old) => {
+      if (!this.option) { return }
       if (this.option.value == 'custom' && val != old) { this.callback() }
     }
     $scope.$watch('date.model.start' , dateChanged)
