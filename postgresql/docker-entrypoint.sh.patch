@@ -4,7 +4,7 @@
  		for f in /docker-entrypoint-initdb.d/*; do
  			case "$f" in
  				*.sh)     echo "$0: running $f"; . "$f" ;;
-+ 				*-data.sql) if [ "$IGNORE_DATA" = 'yes' ]; then echo "$0: ignoring $f";  else echo "$0: running $f"; "${psql[@]}" < "$f"; echo ; fi ;;
++ 				*-data.sql) if [ "$IGNORE_DATA" = 'true' ]; then echo "$0: ignoring $f";  else echo "$0: running $f"; "${psql[@]}" < "$f"; echo ; fi ;;
  				*.sql)    echo "$0: running $f"; "${psql[@]}" < "$f"; echo ;;
  				*.sql.gz) echo "$0: running $f"; gunzip -c "$f" | "${psql[@]}"; echo ;;
  				*)        echo "$0: ignoring $f" ;;
