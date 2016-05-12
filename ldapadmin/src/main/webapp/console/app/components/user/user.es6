@@ -171,7 +171,7 @@ class UserController {
       if (this.compose.attachments[attach_id]) { attachments.push(attach_id) }
     }
     (new Mail({
-      id: this.user.uuid,
+      id: this.user.uid,
       subject:this.compose.subject,
       content: this.compose.content,
       attachments: attachments.join(',')
