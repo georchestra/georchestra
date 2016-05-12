@@ -205,7 +205,7 @@ class UserController {
         }, () => {
           flash.create('success', 'Groups updated')
           $httpDefaultCache.removeAll()
-        }, flash.create.bind(flash, 'error', 'Error associating to groups')
+        }, flash.create.bind(flash, 'danger', 'Error associating to groups')
       )
     }
 
