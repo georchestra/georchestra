@@ -36,9 +36,10 @@
     "javascript-brunch": "1.8.0",
     "jquery": "^2.2.0",
     "moment": "^2.12.0",
-    "sass-brunch": "1.9.2"
+    "sass-brunch": "1.9.2",
+    "uglify-js-brunch": "^2.0.1"
   },
   "scripts": {
-    "postinstall": "./node_modules/.bin/brunch build"
+    "postinstall": "./node_modules/.bin/brunch build --production"
   }
 }
