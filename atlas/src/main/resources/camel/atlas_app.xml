@@ -70,7 +70,7 @@
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   streamCache="true">
 
-        <routeContextRef ref="mapfish"/>
+        <!--<routeContextRef ref="mapfish"/>-->
 
         <restConfiguration component="servlet">
             <componentProperty key="enableCors" value="true"/>
@@ -87,7 +87,19 @@
             <post uri="/atlas/print" consumes="application/json" produces="application/json" enableCORS="true">
                 <to uri="direct:save_print_request"/>
             </post>
+            <get uri="/test">
+                <to uri="direct:test"/>
+            </get>
         </rest>
+
+        <route id="test">
+            <from uri="direct:test"/>
+
+            <transform>
+                <simple>Hello it Works !</simple>
+            </transform>
+        </route>
+
 
         <route id="save_print_request">
             <from uri="direct:save_print_request"/>

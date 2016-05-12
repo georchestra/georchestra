@@ -1,0 +1,45 @@
+{
+    "email": "test@domain.noexistante",
+    "layout": "A4 portrait",
+    "outputFormat": "pdf",
+    "outputFilename": "armoire_atlas.pdf",
+    "dpi": 96,
+		"projection": "EPSG:900913",
+		"displayLegend": true,
+		"featureLayer": { "type": "wms",
+						  "baseURL" : "https://sdi.georchestra.org/geoserver/pmauduit_test/wms",
+						  "layers" : ["pmauduit_test:toilettes_publiques"],
+						  "version" : "1.1.1",
+						  "customParams" : {"transparent": true}
+					  },
+		"baseLayers": [
+			{ "type": "osm",
+			  "baseURL" : "http://otile1.mqcdn.com/tiles/1.0.0/map/",
+			  "imageExtension" : "png",
+			  "opacity": 0.3},
+			{ "type": "osm",
+			  "baseURL" : "http://otile1.mqcdn.com/tiles/1.0.0/sat/",
+			  "imageExtension" : "png"}
+		],
+    "pages": [
+		{ "title" : "Armoire de rue N°25689",
+		  "subtitle" : "Armoire optique opérée par la société Free SAS.",
+		  "center" : [-8233518.5005945, 4980320.4059228],
+		  "scale" : 25000,
+		  "filename" : "armoire_1_atlas.pdf"
+		},
+		{ "title" : "Armoire de rue N°26697",
+		  "subtitle" : "Armoire optique opérée par la société Orange.",
+		  "center" : [-8468418.8974655, 4789870.2316878],
+		  "scale" : 25000,
+		  "filename" : "armoire_2_atlas.pdf"
+		},
+		{ "title" : "Armoire de rue N°26985",
+		  "subtitle" : "Armoire optique opérée par la société SFR.",
+		  "center" : [-8648683.6468445, 4647480.6846846],
+		  "scale" : 25000,
+		  "filename" : "armoire_3_atlas.pdf"
+		}
+		]
+
+}
