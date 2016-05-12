@@ -164,8 +164,8 @@ class UserController {
     let flash = this.$injector.get('Flash')
     let Mail  = this.$injector.get('Mail')
     let i18n  = {}
-    $injector.get('translate')('msg.sent', i18n)
-    $injector.get('translate')('msg.error', i18n)
+    this.$injector.get('translate')('msg.sent', i18n)
+    this.$injector.get('translate')('msg.error', i18n)
     let attachments = []
     for (let attach_id in this.compose.attachments) {
       if (this.compose.attachments[attach_id]) { attachments.push(attach_id) }
