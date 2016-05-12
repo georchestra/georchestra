@@ -1,6 +1,7 @@
 require('components/user/user.tpl')
 
 require('services/util')
+require('services/contexts')
 
 class UserController {
 
@@ -29,6 +30,7 @@ class UserController {
     this.adminGroups = this.$injector.get('groupAdminList')()
     switch (this.tab) {
       case 'infos':
+        this.contexts = $injector.get('Contexts').query()
         break;
       case 'groups':
         let notAdmin = [];
@@ -208,24 +210,6 @@ class UserController {
         }, flash.create.bind(flash, 'danger', 'Error associating to groups')
       )
     }
-
-  this.contexts =[
-    {
-      "keywords": ["relief"],
-      "label": "geOrchestra World",
-      "thumbnail": "context/image/relief.png",
-      "tip": "This map displays geOrchestra instances on top of a world DEM baselayer",
-      "wmc": "context/relief.wmc"
-    },
-    {
-      "keywords": ["default"],
-      "label": "OSM Map over Western Europa",
-      "thumbnail": "context/image/default.png",
-      "tip": "Uses a layer made from regularly updated OpenStreetMap data, rendered with a GoogleMaps-inspired style.",
-      "wmc": "context/default.wmc"
-    }
-  ];
-
 
     $scope.$watch(() => this.user.groups, saveGroups.bind(this))
 
