@@ -943,6 +943,29 @@ GEOR.managelayers = (function() {
             });
         }
 
+        /**Loading Addons actions
+         *
+         * Addons must have options.layerTreeAction === true and
+         *  API method layerTreeHandler(menuitem, event, layerRecord). In this API method, this is the addon.
+         */
+        var addon;
+        Ext.each(GEOR.config.ADDONS, function(addonConfig) {
+            if (GEOR.tools.getAddonsState()[addonConfig.id] && addonConfig.options.layerTreeAction) {
+                addon = GEOR.tools.getAddon(addonConfig.id);
+                insertSep();
+                menuItems.push({
+                    iconCls: addon.iconCls,
+                    text: addon.title,
+                    qtip: addon.qtip,
+                    listeners: {
+                        "click": {
+                            fn: addon.layerTreeHandler.createDelegate(addon, [layerRecord], true)
+                        }
+                    },
+                });
+            }
+                });
+
         return menuItems;
     };
 
