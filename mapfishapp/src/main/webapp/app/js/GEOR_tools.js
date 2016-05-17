@@ -529,6 +529,22 @@ GEOR.tools = (function() {
                     return (ids.indexOf(r.id) > -1);
                 }), true);
             }
+        },
+
+        /**
+         * APIMethod: getAddonsState
+         * Retrieve informations about addons
+         */
+        getAddonsState: function() {
+            return previousState;
+        },
+
+        /**
+         * APIMethod: getAddon
+         * @param: addonId - Unique identifier of addon (id in config.json)
+         */
+        getAddon: function(addonId) {
+            return addonsCache[addonId];
         }
     };
 })();
