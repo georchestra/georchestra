@@ -25,7 +25,12 @@ if [ ! -d /etc/ldap/slapd.d ]; then
 
     echo "Populating ldap tree..."
     ldapadd -Y EXTERNAL -H ldapi:/// -f /tmp/memberof.ldif
-    ldapadd -D"cn=admin,dc=georchestra,dc=org" -w "secret" -f /tmp/georchestra.ldif
+    if [ "$IGNORE_DATA" = 'true' ]; then
+        echo "$0: ignoring /tmp/georchestra.ldif";
+    else
+        ldapadd -D"cn=admin,dc=georchestra,dc=org" -w "$SLAPD_PASSWORD" -f /tmp/georchestra.ldif
+    fi
+
     echo "Populating ldap tree...OK"
 
     pkill slapd
