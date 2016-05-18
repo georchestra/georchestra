@@ -109,7 +109,7 @@ public class EmailController {
      */
     @RequestMapping(value="/{recipient}/emails",
                     method= RequestMethod.GET,
-                    produces = "application/json")
+                    produces = "application/json; charset=UTF-8")
     @ResponseBody
     public String emailsList(@PathVariable String recipient) throws JSONException {
 
@@ -206,7 +206,7 @@ public class EmailController {
      */
     @RequestMapping(value="/attachments",
                     method = RequestMethod.GET,
-                    produces = "application/json")
+                    produces = "application/json; charset=UTF-8")
     @ResponseBody
     public String attachments() throws JSONException {
         JSONArray attachments = new JSONArray();
