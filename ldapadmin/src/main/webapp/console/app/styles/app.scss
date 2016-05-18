@@ -1,8 +1,5 @@
 $lightblue: #009FE3;
 
-body {
-  padding-top : 2em;
-}
 @media (min-width: 768px) {
   .panel .panel-body {
     min-height : 22em;
@@ -13,6 +10,13 @@ a {
 }
 .btn-primary {
   background-color : $lightblue;
+}
+
+iframe {
+  width    : 100%;
+  height   : 90px;
+  border   : none;
+  overflow : hidden;
 }
 
 groups {
