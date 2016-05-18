@@ -9,6 +9,8 @@ class UserController {
 
   constructor($routeParams, $injector, User, Group) {
 
+    const TMP_GROUP  = 'TEMPORARY'
+
     this.$injector = $injector
     let groupAdminFilter = $injector.get('groupAdminFilter')
 
@@ -49,7 +51,7 @@ class UserController {
                 this.user.groups.push(group.cn);
               }
             }
-            if (!groupAdminFilter(group)) {
+            if (!groupAdminFilter(group) && group.cn != TMP_GROUP) {
               notAdmin.push(group.cn)
             }
           })

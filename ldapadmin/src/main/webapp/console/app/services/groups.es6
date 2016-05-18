@@ -10,12 +10,10 @@ angular.module('admin_console')
 ]).factory('groupAdminList', [ () => {
   var admin_groups = [
     'ADMINISTRATOR',
-    'EDITOR',
-    'PENDING_USERS',
+    'PENDING',
     'SV_ADMIN',
     'SV_EDITOR',
-    'SV_REVIEWER'/*,
-    'SV_USER'*/
+    'SV_REVIEWER'
   ]
   return () => admin_groups
 }]).factory('groupAdminFilter', [ 'groupAdminList', (groupAdminList)  =>

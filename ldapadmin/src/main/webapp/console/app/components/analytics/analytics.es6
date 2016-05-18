@@ -14,7 +14,7 @@ class AnalyticsController {
     let date    = this.$injector.get('date')
 
     this.date = {
-      start : date.getFromDiff('year'),
+      start : date.getDefault(),
       end   : date.getEnd()
     }
 

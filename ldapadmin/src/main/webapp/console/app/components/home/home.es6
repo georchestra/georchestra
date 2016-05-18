@@ -8,7 +8,7 @@ class HomeController {
 
     const LOG_LIMIT = 10
     const PENDING   = 'PENDING'
-    const EXPIRED   = 'SV'
+    const EXPIRED   = 'TEMPORARY'
 
     this.$injector = $injector;
 
