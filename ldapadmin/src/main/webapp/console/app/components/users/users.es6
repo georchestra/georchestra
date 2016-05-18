@@ -54,8 +54,9 @@ class UsersController {
   }
 
   saveGroup() {
-    let flash         = this.$injector.get('Flash')
-    let $router       = this.$injector.get('$router')
+    let flash             = this.$injector.get('Flash')
+    let $router           = this.$injector.get('$router')
+    let $location         = this.$injector.get('$location')
     let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
 
     let group         = new (this.$injector.get('Group'))()
@@ -66,7 +67,7 @@ class UsersController {
       () => {
         flash.create('success', this.i18n.created)
         $httpDefaultCache.removeAll()
-        let $location = this.$injector.get('$location')
+        $router.navigate($router.generate('users', { id: group.cn}))
         $location.url($location.path())
       },
       flash.create.bind(flash, 'error', this.i18n.error)
