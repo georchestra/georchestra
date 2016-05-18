@@ -230,7 +230,7 @@ public class EmailController {
      */
     @RequestMapping(value="/emailTemplates",
                     method = RequestMethod.GET,
-                    produces = "application/json")
+                    produces = "application/json; charset=UTF-8")
     @ResponseBody
     public String emailTemplates() throws JSONException {
         JSONArray emailTemplates = new JSONArray();
