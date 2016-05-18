@@ -74,6 +74,10 @@ public final class AccountDaoImpl implements AccountDao {
 
     private static final Log LOG = LogFactory.getLog(AccountDaoImpl.class.getName());
 
+    private String basePath;
+    public String getBasePath() { return basePath; }
+    public void setBasePath(String basePath) { this.basePath = basePath; }
+
     @Autowired
     public AccountDaoImpl(LdapTemplate ldapTemplate, GroupDao groupDao) {
 
@@ -213,7 +217,7 @@ public final class AccountDaoImpl implements AccountDao {
             AndFilter filter = new AndFilter();
             filter.and(searchFilter);
             filter.and(new EqualsFilter(uniqueNumberField, uniqueNumber.get()));
-            isUnique = ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(), new AccountContextMapper())
+            isUnique = ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(), new AccountContextMapper(""))
                     .isEmpty();
             uniqueNumber.incrementAndGet();
         }
@@ -312,7 +316,7 @@ public final class AccountDaoImpl implements AccountDao {
         sc.setReturningAttributes(UserSchema.ATTR_TO_RETRIEVE);
         sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
         EqualsFilter filter = new EqualsFilter("objectClass", "person");
-        return ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(), sc, new AccountContextMapper());
+        return ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(), sc, new AccountContextMapper(this.basePath));
     }
     
     @Override
@@ -323,7 +327,7 @@ public final class AccountDaoImpl implements AccountDao {
         AndFilter and = new AndFilter();
         and.and( new EqualsFilter("objectClass", "person"));
         and.and(f);
-        List<Account> l = ldapTemplate.search(DistinguishedName.EMPTY_PATH, and.encode(), sc, new AccountContextMapper());
+        List<Account> l = ldapTemplate.search(DistinguishedName.EMPTY_PATH, and.encode(), sc, new AccountContextMapper(this.basePath));
         return filterProtected.filterUsersList(l);
     }
 
@@ -346,7 +350,7 @@ public final class AccountDaoImpl implements AccountDao {
         if(uid == null)
             throw new NameNotFoundException("Cannot find user with uid : " + uid + " in LDAP server");
 
-        Account a = (Account) ldapTemplate.lookup(buildDn(uid.toLowerCase()), UserSchema.ATTR_TO_RETRIEVE, new AccountContextMapper());
+        Account a = (Account) ldapTemplate.lookup(buildDn(uid.toLowerCase()), UserSchema.ATTR_TO_RETRIEVE, new AccountContextMapper(this.basePath));
         if(a == null)
             throw new NameNotFoundException("Cannot find user with uid : " + uid + " in LDAP server");
         else
@@ -371,7 +375,7 @@ public final class AccountDaoImpl implements AccountDao {
         filter.and(new EqualsFilter("mail", email));
 
         List<Account> accountList = ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(),sc,
-                new AccountContextMapper());
+                new AccountContextMapper(this.basePath));
         if (accountList.isEmpty()) {
             throw new NameNotFoundException("There is no user with this email: " + email);
         }
@@ -517,8 +521,15 @@ public final class AccountDaoImpl implements AccountDao {
 
     public static class AccountContextMapper implements ContextMapper {
 
+
+        private final String basePath;
+        public AccountContextMapper(String basePath) {
+            this.basePath = basePath;
+        }
+
         @Override
         public Object mapFromContext(Object ctx) {
+
 
             DirContextAdapter context = (DirContextAdapter) ctx;
 
@@ -558,6 +569,8 @@ public final class AccountDaoImpl implements AccountDao {
                 shadowExpire *= 1000; // Convert to milliseconds
                 account.setShadowExpire(new Date(shadowExpire));
             }
+
+            account.setDn(context.getDn() + "," + this.basePath);
 
             return account;
         }
@@ -675,7 +688,7 @@ public final class AccountDaoImpl implements AccountDao {
         filter.and(new EqualsFilter("objectClass", "person"));
         filter.and(new PresentFilter("shadowExpire"));
 
-        return ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(),sc, new AccountContextMapper());
+        return ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(),sc, new AccountContextMapper(this.basePath));
 
     }
 }
