@@ -48,6 +48,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ldap.InvalidAttributeValueException;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.filter.LikeFilter;
 import org.springframework.stereotype.Controller;
@@ -80,6 +81,8 @@ public class UsersController {
 	private static final String PARAMS_NOT_UNDERSTOOD = "params_not_understood";
 	private static final String NOT_FOUND = "not_found";
 	private static final String UNABLE_TO_ENCODE = "unable_to_encode";
+	private static final String INVALID_VALUE = "invalid_value";
+	private static final String OTHER_ERROR = "other_error";
 
 	private AccountDao accountDao;
 	private UserRule userRule;
@@ -324,7 +327,14 @@ public class UsersController {
 		} catch (JSONException e) {
 			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, UNABLE_TO_ENCODE);
 			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
+		} catch (InvalidAttributeValueException ex){
+			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, INVALID_VALUE);
+			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
+		} catch (Exception ex){
+			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, OTHER_ERROR);
+			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
 		}
+
 	}
 
 
@@ -656,6 +666,8 @@ public class UsersController {
 
 		String description = RequestUtil.getFieldValue( json, UserSchema.DESCRIPTION_KEY);
 
+		String manager = RequestUtil.getFieldValue(json, UserSchema.MANAGER_KEY);
+
 		String uid;
 		try {
 			uid = createUid(givenName, surname);
@@ -666,7 +678,7 @@ public class UsersController {
 
 		String commonName = AccountFactory.formatCommonName(givenName, surname);
 
-		Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, org, title, phone, description, postalAddress, postalCode, "", postOfficeBox, "", street, locality, facsimile, "","","","","","","");
+		Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, org, title, phone, description, postalAddress, postalCode, "", postOfficeBox, "", street, locality, facsimile, "","","","","",manager,"");
 
 		return a;
 
