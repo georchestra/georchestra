@@ -14,6 +14,8 @@ class NewUserController {
     this.i18n = {}
     translate('user.created' , this.i18n)
     translate('user.error'   , this.i18n)
+
+    this.contexts = $injector.get('Contexts').query()
   }
 
   save() {
