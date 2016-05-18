@@ -24,6 +24,8 @@ class UserController {
     this.tabs  = ['infos', 'groups', 'analytics', 'messages', 'logs', 'manage']
     this.tab   = $routeParams.tab
 
+    this.users = User.query()
+
     this.user = User.get({id : $routeParams.id}, (user) => {
       if (this.tab == 'messages') {
         this.messages = this.$injector.get('Email').query({id: this.user.uid})
