@@ -1,0 +1,25 @@
+<section class="analytics">
+
+  <date class="stats-conf" model="analytics.date" callback="analytics.load(analytics.group)"></date>
+
+  <select class="form-control stats-conf" ng-model="analytics.group" ng-change="analytics.setGroup()" chosen>
+    <option value="all" translate>analytics.everyone</option>
+    <option value="{{group.cn}}" ng-repeat="group in analytics.groups">{{group.cn}}</option>
+  </select>
+
+  <h4>
+    <span translate>analytics.title</span>
+    <span ng-if="analytics.group != 'all'">
+      <span translate>for</span>
+      {{analytics.group}}
+    </span>
+  </h4>
+
+  <hr>
+
+  <div class="row">
+    <stats data="analytics.requests" type="'line'" config="analytics.config.requests" title="'analytics.requests'" class="col-md-6"></stats>
+    <stats data="analytics.layers" type="'bar'" config="analytics.config.layers" title="'analytics.layers'" class="col-md-6"></stats>
+  </div>
+
+</section>

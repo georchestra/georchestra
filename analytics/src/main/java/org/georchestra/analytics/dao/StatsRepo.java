@@ -58,9 +58,9 @@ public interface StatsRepo extends PagingAndSortingRepository<Stats, Long> {
 	public List getRequestCountForGroupBetweenStartDateAndEndDateByMonth(@Param("group") String group,
 			@Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
-	public List<String> getDistinctUsers(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+	public List getDistinctUsers(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
 	
-	public List<String> getDistinctUsersByGroup(@Param("group") String group,
+	public List getDistinctUsersByGroup(@Param("group") String group,
 			@Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
 

@@ -1,0 +1,204 @@
+<section class="user">
+
+  <h4>
+    <a ng-link="users({'id': 'all'})" translate>user.userlist</a>
+    <span>/</span>
+    {{::user.user.sn}} {{::user.user.givenName}}
+  </h4>
+
+  <hr>
+
+  <div class="col-md-2">
+    <ul class="nav nav-pills nav-stacked">
+      <li ng-repeat="tab in user.tabs" ng-class="{active: user.tab==tab}">
+        <!-- <a ng-link="users({'id': user.user.uid, 'tab': tab})" rel="{{user.user.uid}}/{{tab}}">{{ {id: user.user.uid, tab: tab} }}</a> -->
+        <a href="#/users/{{user.user.uid}}/{{tab}}" translate="tab.{{::tab}}"></a>
+        <!-- FIXME use ng-link -->
+      </li>
+    </ul>
+  </div>
+
+  <div class="col-md-10">
+    <div class="panel panel-default">
+
+
+      <div class="panel-body" ng-if="user.tab=='infos'" >
+
+        <div ng-inline="templates/userForm.tpl.html" ng-init="model=user.user"></div>
+
+        <hr>
+
+        <div class="pull-right">
+          <button ng-click="user.save()" class="btn btn-primary" translate>user.save</button>
+        </div>
+
+      </div>
+
+      <div class="panel-body" ng-if="user.tab=='groups'">
+
+        <h4 translate>group.system</h4>
+        <div class="form-group clearfix">
+          <div class="col-sm-6" ng-repeat="group in user.adminGroups">
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" ng-model="user.user.adminGroups[group]"> {{::group}}
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <hr>
+
+        <h4 translate>group.app</h4>
+        <div class="form-group">
+          <select class="form-control" multiple chosen ng-model="user.user.groups" ng-options="group for group in user.groups"
+          data-placeholder="Select groups">
+          </select>
+        </div>
+      </div>
+
+      <div class="panel-body user-analytics" ng-if="user.tab=='analytics'">
+        <date class="stats-conf" model="user.date" callback="user.loadAnalyticsData()"></date>
+        <h4 translate>analytics.title</h4>
+        <hr>
+        <div class="row">
+          <stats data="user.requests" type="'line'" config="user.config.requests" title="'analytics.requests'" class="col-md-6"></stats>
+          <stats data="user.layers" type="'bar'" config="user.config.layers" title="'analytics.layers'" class="col-md-6"></stats>
+        </div>
+      </div>
+
+      <div class="panel-body user-messages" ng-if="user.tab=='messages'">
+
+        <ol class="breadcrumb">
+          <button class="pull-right btn btn-link btn-xs" ng-if="!user.compose && !user.message" translate ng-click="user.compose={}">msg.compose</button>
+          <li class="active" ng-if="!user.message && !user.compose">
+            <span translate>msg.messages</span> <span class="badge">{{::user.messages.emails.length}}</span>
+          </li>
+          <li ng-if="user.message || user.compose">
+            <a href="javascript:void(0);" ng-click="user.closeMessage()">
+              <span translate>msg.messages</span> <span class="badge">{{::user.messages.emails.length}}</span>
+            </a>
+          </li>
+          <li class="active" ng-if="user.compose" translate>msg.compose</li>
+          <li class="active" ng-if="user.message">{{::user.message.subject}}</li>
+        </ol>
+        <label ng-if="user.compose && user.templates.templates.length > 0" class="pull-right clearfix">
+          <span translate>msg.templates</span>
+          <select placeholder="{{ 'msg.templates' | translate }}" ng-change="user.loadTemplate()"
+            ng-options="template.name for template in user.templates.templates" ng-model="user.compose.template"></select>
+        </label>
+
+        <form ng-if="user.compose" class="">
+          <div class="form-group">
+            <label for="compose_title" translate>msg.title</label>
+            <div>
+              <input ng-model="user.compose.subject" class="form-control" id="compose_title" placeholder="{{'msg.title' | translate}}">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="compose_content" translate>msg.content</label>
+            <div >
+              <textarea ng-model="user.compose.content" class="form-control" id="compose_content" placeholder="{{'msg.content' | translate}}"></textarea>
+            </div>
+          </div>
+
+          <h5 translate ng-if="user.attachments.attachments.length > 0">msg.attachments</h5>
+          <div class="clearfix">
+            <div class="col-sm-4" ng-repeat="attachment in user.attachments.attachments">
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox" ng-model="user.compose.attachments[attachment.id]"> {{::attachment.name}}
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <hr>
+
+          <div class="pull-right">
+            <button ng-click="user.closeMessage()" class="btn btn-link" translate>msg.cancel</button>
+            <button ng-click="user.sendMail()" class="btn btn-primary" translate>msg.send</button>
+          </div>
+
+        </form>
+        <div ng-if="user.message">
+          <h4>
+            <small>
+              {{user.message.sender}}, <span translate>msg.on</span> {{user.message.date | date: 'mediumDate'}}
+            </small>
+          </h4>
+          <h4>
+            {{user.message.subject}}
+          </h4>
+          <p>
+            {{user.message.body}}
+          </p>
+          <hr ng-if="user.message.attachments.length>0" />
+          <h5 ng-if="user.message.attachments.length>0" translate>msg.attachments</h5>
+          <ul ng-if="user.message.attachments.length>0">
+            <li ng-repeat="attachment in user.message.attachments">
+              {{attachment.name}} ({{attachment.size / 1000 | number:0}} Mo)
+            </li>
+          </ul>
+        </div>
+        <table class="table table-condensed" ng-if="!user.message && !user.compose">
+          <thead>
+            <tr>
+              <th translate>msg.date</th>
+              <th translate>msg.subject</th>
+              <th translate>msg.sender</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="message in user.messages.emails">
+              <td>{{::message.date | date: 'mediumDate'}}</td>
+              <td><a ng-click="user.openMessage(message)" href="javascript:void(0);">{{::message.subject}}</a>
+              </td>
+              <td>{{::message.sender}}</td>
+            </tr>
+            <tr ng-if="user.messages.emails.length == 0">
+              <td colspan="3">
+                <div class="alert alert-info" translate>msg.empty</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel-body" ng-if="user.tab=='logs'">
+        <ol class="breadcrumb">
+          <li class="active">
+            <span translate>logs.logs</span> <span class="badge">{{::user.logs.length}}</span>
+          </li>
+        </ol>
+        <table class="table table-condensed">
+          <thead>
+            <tr>
+              <th translate>logs.date</th>
+              <th translate>logs.sender</th>
+              <th translate>logs.type</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr dir-paginate="log in user.logs.logs | itemsPerPage: 2">
+              <td>{{::log.date | date: 'mediumDate'}}</td>
+              <td>{{::log.admin}}</td>
+              <td>{{::log.type}}</td>
+            </tr>
+          </tbody>
+        </table>
+        <dir-pagination-controls></dir-pagination-controls>
+      </div>
+
+      <div class="panel-body" ng-if="user.tab=='manage'">
+        <div class="alert alert-danger clearfix">
+          <i class="glyphicon glyphicon-exclamation-sign"></i>
+          <span translate>user.warning</span>
+          <button  ng-click="user.delete()" class="btn btn-danger" translate>user.delete</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</section>

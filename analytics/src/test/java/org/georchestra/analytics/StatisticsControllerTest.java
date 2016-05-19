@@ -263,9 +263,9 @@ public class StatisticsControllerTest {
 		StatisticsController ctrl = new StatisticsController();
 		MockMvc mockMvc = standaloneSetup(ctrl).build();
 		StatsRepo statsRepo = Mockito.mock(StatsRepo.class);
-		ArrayList someUsers = new ArrayList<String>();
-		someUsers.add("testadmin");
-		someUsers.add("testuser");
+		ArrayList someUsers = new ArrayList();
+		someUsers.add(new Object[] { "testadmin", "georchestra", "643" });
+		someUsers.add(new Object[] { "testuser", "camptocamp", "29" });
 		
 		Mockito.when(statsRepo.getDistinctUsersByGroup(Mockito.anyString(), Mockito.any(Date.class),
 				Mockito.any(Date.class))).thenReturn(someUsers);
@@ -277,10 +277,15 @@ public class StatisticsControllerTest {
 		mockMvc.perform(post("/distinctUsers").content(posted.put("endDate", "2015-01-01").toString()))
 			.andExpect(content().string(containsString("results\": ")))
 			.andExpect(status().isOk());
+
 		mockMvc.perform(post("/distinctUsers").content(posted.put("endDate", "2015-01-08").put("group", "ADMINISTRATOR").toString()))
 		.andExpect(content().string(containsString("results\": ")))
 		.andExpect(content().string(containsString("testadmin")))
+		.andExpect(content().string(containsString("georchestra")))
+		.andExpect(content().string(containsString("643")))
 		.andExpect(content().string(containsString("testuser")))
+		.andExpect(content().string(containsString("camptocamp")))
+		.andExpect(content().string(containsString("29")))
 		.andExpect(status().isOk());
 	}
 	
@@ -318,9 +323,13 @@ public class StatisticsControllerTest {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Date startDate = sdf.parse("2015-12-03");
 
-		// < 1 day => by hour
-		GRANULARITY gran =  (GRANULARITY) ReflectionUtils.invokeMethod(m, ctrl, startDate, startDate);
+
+		// < 2 day => by hour
+		GRANULARITY gran =  (GRANULARITY) ReflectionUtils.invokeMethod(m, ctrl, startDate, sdf.parse("2015-12-04"));
 		assertTrue(gran == GRANULARITY.HOUR);
+
+		gran =  (GRANULARITY) ReflectionUtils.invokeMethod(m, ctrl, startDate, sdf.parse("2015-12-05"));
+		assertTrue(gran == GRANULARITY.DAY);
 
 		// < 1 week => by day
 		gran =  (GRANULARITY) ReflectionUtils.invokeMethod(m, ctrl, startDate, sdf.parse("2015-12-06"));

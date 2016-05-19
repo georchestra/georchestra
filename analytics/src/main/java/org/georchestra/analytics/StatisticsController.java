@@ -79,7 +79,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * If neither user nor group is set, global statistics are returned.
  *
  * where granularity will depend on the submitted date, following the algorithm:
- *  if datediff < 1 day    then granularity by hour
+ *  if datediff < 2 days   then granularity by hour
  *  if datediff < 1 week   then granularity by day
  *  if datediff < 1 month  then granularity by day
  *  if datediff < 3 months then granularity by week
@@ -127,8 +127,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * <pre>
  * {
  *   "results": [
- *     "user1",
- *     "user2",
+ *     { "user": "user1", "nb_requests": 10, "organization": "truite" },
+ *     { "user": "user1", "nb_requests": 10, "organization": "truite" },
  *     ...
  *   ]
  * }
@@ -355,11 +355,29 @@ public class StatisticsController {
 	}
 	
 	/**
-	 * 
-	 * @param payload the JSON object containing the parameters
-	 * @param response the HTTP Servlet Response object, used to set the 40x HTTP code in case of errors.
+	 * Gets the statistics by distinct users (number of requests between
+	 * beginDate and endDate).
 	 *
-	 * @return A string representing a JSON object with the requested datas.
+	 * @param payload
+	 *            the JSON object containing the parameters
+	 * @param response
+	 *            the HTTP Servlet Response object, used to set the 40x HTTP
+	 *            code in case of errors.
+	 *
+	 * @return A string representing a JSON object with the requested datas. The
+	 *         output JSON has the following form:
+	 * 
+	 * <pre>
+	 *    { "results": [
+	 *	    {
+	 *        "nb_requests": 3895,
+	 *        "organization": "geOrchestra",
+	 *        "user": "testadmin"
+	 *      }, [...]
+	 *     ]
+	 *    }
+	 * </pre>
+	 *
 	 * @throws JSONException
 	 */
 	@RequestMapping(value="/distinctUsers", method=RequestMethod.POST, produces= "application/json; charset=utf-8")
@@ -385,7 +403,7 @@ public class StatisticsController {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return null;
 		}
-		List<String> lst = null;
+		List lst = null;
 		if (groupId != null) {
 			lst = statsRepository.getDistinctUsersByGroup(groupId, startDate,
 					endDate);
@@ -393,24 +411,29 @@ public class StatisticsController {
 			lst = statsRepository.getDistinctUsers(startDate, endDate);
 		}
 		JSONArray results = new JSONArray();
-		for (String o : lst) {
-			results.put(o);
+		for (Object o : lst) {
+			Object[] r = (Object[]) o;
+			JSONObject row = new JSONObject();
+			row.put("user", r[0]);
+			row.put("organization", r[1]);
+			row.put("nb_requests", r[2]);
+			results.put(row);
 		}
 		return new JSONObject().put("results", results)
 				.toString(4);
 	}
 	
 	/**
-	 * Calculates the appropriate granularity given the begin date and end date.
+	 * Calculates the appropriate granularity given the begin date and the end date.
 	 *
-	 * @param beginDate
-	 * @param endDate
-	 * @return the most relevant GRANULARITY
+	 * @param beginDate the begin date.
+	 * @param endDate the end date.
+	 * @return the most relevant GRANULARITY.
 	 */
 	private GRANULARITY guessGranularity(Date beginDate, Date endDate) {
 		long diff = endDate.getTime() - beginDate.getTime();
 		long numdays = TimeUnit.MILLISECONDS.toDays(diff);
-		if (numdays < 1) {
+		if (numdays < 2) {
 			return GRANULARITY.HOUR;
 		} else if (numdays < 90) {
 			return GRANULARITY.DAY;
