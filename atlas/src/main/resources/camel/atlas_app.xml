@@ -35,6 +35,7 @@
     </bean>
 
     <bean id="populateProperties" class="org.georchestra.atlas.CamelPopulatePropertiesComponent"/>
+    <bean id="specAsPdf" class="org.georchestra.atlas.CamelMapfishPrintComponent"/>
 
     <bean id="setState" class="org.georchestra.atlas.CamelSetStateComponent"/>
 
@@ -69,6 +70,9 @@
     <camelContext id="atlas" xmlns="http://camel.apache.org/schema/spring"
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   streamCache="true">
+        <dataFormats>
+            <json id="gson" library="Gson" />
+        </dataFormats>
 
         <!--<routeContextRef ref="mapfish"/>-->
 
@@ -236,9 +240,10 @@
                 <setProperty propertyName="printBase">
                     <constant>http://print:8080/print/atlas</constant>
                 </setProperty>
-
+                <!--
                 <to uri="direct:print"/>
-
+                -->
+                <to uri="bean:specAsPdf"/>
                 <to uri="file://?fileName=/tmp/tmp/${property.jobId}/${property.CamelSplitIndex}.pdf"/>
 
                 <log message="${property.jobId} / ${property.CamelSplitIndex} Done !" loggingLevel="INFO"/>
@@ -284,127 +289,21 @@
                 <groovy>request.body.setState(org.georchestra.atlas.AtlasJobState.DONE)</groovy>
             </setProperty>
 
+			<!-- Send a mail once done -->
+			<transform>
+				<simple>Bonjour,
+
+Votre impression est dorénavant terminée ; elle est disponible à l'addresse:
+${body.id}.
+
+Bien cordialement,
+
+-- Pierre Mauduit
+				</simple>
+			</transform>
+			
+			<to uri="smtp://localhost?to%3Dpierre.mauduit%40camptocamp.com%26from%3Dnoreply%40camptocamp.com%26subject%3DAtlas%20-%20Votre%20demande%20de%20cr%C3%A9ation"></to>
         </route>
-
-
-        <!--<route id="split_save">-->
-            <!--<from uri="direct:split_save"/>-->
-
-            <!--&lt;!&ndash; Backup original Json&ndash;&gt;-->
-            <!--<setProperty propertyName="rawJson">-->
-                <!--<simple>${body}</simple>-->
-            <!--</setProperty>-->
-
-            <!--&lt;!&ndash; parse json &ndash;&gt;-->
-            <!--<unmarshal ref="gson"/>-->
-
-            <!--<setProperty propertyName="layout">-->
-                <!--<simple>${body[layout]}</simple>-->
-            <!--</setProperty>-->
-
-            <!--<setProperty propertyName="dpi">-->
-                <!--<simple>${body[dpi]}</simple>-->
-            <!--</setProperty>-->
-
-            <!--<setProperty propertyName="displayLegend">-->
-                <!--<simple>${body[displayLegend]}</simple>-->
-            <!--</setProperty>-->
-
-            <!--<setProperty propertyName="outputFormat">-->
-                <!--<simple>${body[outputFormat]}</simple>-->
-            <!--</setProperty>-->
-
-            <!--<setProperty propertyName="projection">-->
-                <!--<simple>${body[projection]}</simple>-->
-            <!--</setProperty>-->
-
-            <!--&lt;!&ndash; Generate unique identifier for atlas job &ndash;&gt;-->
-            <!--<setProperty propertyName="uuid">-->
-                <!--<groovy>java.util.UUID.randomUUID().toString()</groovy>-->
-            <!--</setProperty>-->
-
-            <!--&lt;!&ndash; generate layers and legendURL property &ndash;&gt;-->
-            <!--<to uri="bean:populateProperties"/>-->
-
-            <!--<split stopOnException="true">-->
-                <!--<simple>${body[pages]}</simple>-->
-                <!--<choice>-->
-                    <!--<when>-->
-                        <!--<simple>${exchangeProperty.displayLegend} == true</simple>-->
-                        <!--<transform>-->
-                            <!--<simple>-->
-                                <!--{ "layout": "${exchangeProperty.layout}",-->
-                                <!--"outputFormat": "PDF",-->
-                                <!--"attributes": {-->
-                                <!--"title": "${body[title]}",-->
-                                <!--"subtitle": "${body[subtitle]}",-->
-                                <!--"legendURL": "${exchangeProperty.legendURL}",-->
-                                <!--"datasource": [{-->
-                                <!--"map": {-->
-                                <!--"dpi": ${exchangeProperty.dpi},-->
-                                <!--"projection": "${exchangeProperty.projection}",-->
-                                <!--"center": ${body[center]},-->
-                                <!--"scale": ${body[scale]},-->
-                                <!--"layers": ${exchangeProperty.layers}-->
-                                <!--}}]}}-->
-                            <!--</simple>-->
-                        <!--</transform>-->
-                    <!--</when>-->
-                    <!--<otherwise>-->
-                        <!--<transform>-->
-                            <!--<simple>-->
-                                <!--{ "layout": "${exchangeProperty.layout}",-->
-                                <!--"outputFormat": "PDF",-->
-                                <!--"attributes": {-->
-                                <!--"title": "${body[title]}",-->
-                                <!--"subtitle": "${body[subtitle]}",-->
-                                <!--"datasource": [{-->
-                                <!--"map": {-->
-                                <!--"dpi": ${exchangeProperty.dpi},-->
-                                <!--"projection": "${exchangeProperty.projection}",-->
-                                <!--"center": ${body[center]},-->
-                                <!--"scale": ${body[scale]},-->
-                                <!--"layers": ${exchangeProperty.layers}-->
-                                <!--}}]}}-->
-                            <!--</simple>-->
-                        <!--</transform>-->
-                    <!--</otherwise>-->
-                <!--</choice>-->
-
-
-                <!--&lt;!&ndash; Test Json validity &ndash;&gt;-->
-                <!--&lt;!&ndash;<marshal ref="gson"/>&ndash;&gt;-->
-                <!--&lt;!&ndash;<unmarshal ref="gson"/>&ndash;&gt;-->
-
-                <!--<log message="${body}" loggingLevel="ERROR"/>-->
-
-                <!--&lt;!&ndash;<marshal ref="gson"/>&ndash;&gt;-->
-                <!--<to uri="file:///tmp/log?autoCreate=true"/>-->
-
-                <!--&lt;!&ndash; store in DB queue &ndash;&gt;-->
-                <!--<to uri="hibernate:org.georchestra.atlas.AtlasMFPJob"/>-->
-
-            <!--</split>-->
-
-        <!--</route>-->
-
-        <!--<route id="start_generation">-->
-            <!--<from uri="hibernate:org.georchestra.atlas.AtlasMFPJob?consumer.delay=2000&amp;maximumResults=1&amp;consumeDelete=false&amp;consumer.query=FROM org.georchestra.atlas.AtlasMFPJob WHERE state = 'TODO' ORDER BY id"/>-->
-
-            <!--<to uri="bean:setState?method=setInProgress"/>-->
-
-            <!--<log message="${body}" loggingLevel="ERROR"/>-->
-            <!--<transform>-->
-                <!--<groovy>request.body.getQuery()</groovy>-->
-            <!--</transform>-->
-            <!--<setProperty propertyName="printBase">-->
-                <!--<constant>http://print:8080/print/atlas</constant>-->
-            <!--</setProperty>-->
-
-            <!--<to uri="direct:print"/>-->
-
-        <!--</route>-->
-
 
     </camelContext>
 

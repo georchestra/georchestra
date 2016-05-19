@@ -70,7 +70,17 @@
             <artifactId>camel-gson</artifactId>
             <version>${camel.version}</version>
         </dependency>
+        <dependency>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-mail</artifactId>
+          <version>${camel.version}</version>
+        </dependency>
          <!--Others dependencies-->
+         <dependency>
+           <groupId>ch.qos.logback</groupId>
+           <artifactId>logback-classic</artifactId>
+           <version>1.1.7</version>
+         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -84,24 +94,19 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
-            <version>5.0.3.Final</version> <!-- 4.2.15.Final -->
-            <!--
-            <exclusions>
-                <exclusion>
-                    <groupId>org.hibernate.javax.persistence</groupId>
-                    <artifactId>hibernate-jpa-2.1-api</artifactId>
-                </exclusion>
-            </exclusions>
-            -->
+            <version>5.0.3.Final</version>
         </dependency>
 
-
+        <dependency>
+          <groupId>org.mapfish.print</groupId>
+          <artifactId>print-lib</artifactId>
+          <version>3.4.0</version>
+        </dependency>
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20080701</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
@@ -123,7 +128,11 @@
             <artifactId>postgresql</artifactId>
             <version>9.4-1205-jdbc4</version>
         </dependency>
-
+        <dependency>
+          <groupId>com.itextpdf</groupId>
+          <artifactId>itextpdf</artifactId>
+          <version>5.5.9</version>
+        </dependency>
     </dependencies>
     <build>
         <finalName>atlas-${server}</finalName>
