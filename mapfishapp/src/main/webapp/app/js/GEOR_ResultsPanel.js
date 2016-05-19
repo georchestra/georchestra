@@ -413,7 +413,7 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
                     text: GEOR.tools.getAddon(addonConfig.id).title,
                     iconCls: GEOR.tools.getAddon(addonConfig.id).iconCls,
                     tooltip: GEOR.tools.getAddon(addonConfig.id).qtip,
-                    handler: GEOR.tools.getAddon(addonConfig.id).resultPanelHandler.createDelegate(addon, [this], true)
+                    handler: GEOR.tools.getAddon(addonConfig.id).resultPanelHandler.createDelegate(GEOR.tools.getAddon(addonConfig.id), [this], true)
                 });
             }
         }, this);
