@@ -165,6 +165,22 @@ GEOR.util = (function() {
         },
 
         /**
+         * APIMethod: stringReplaceCharCode
+         * Replace char codes in string
+         *
+         * Parameters:
+         * str - {String}
+         *
+         * Returns:
+         * {String} input string with char codes replaced by the actual char
+         */
+        stringReplaceCharCodes: function(str) {
+            return str.replace(/&#(\d+);?/g, function() {
+                return String.fromCharCode(arguments[1])
+            });
+        },
+
+        /**
          * APIMethod: Capitalize
          * Returns a string with first letter uppercased
          *
