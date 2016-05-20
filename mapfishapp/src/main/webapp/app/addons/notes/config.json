@@ -1,6 +1,6 @@
 [{
     "id": "notes_0",
-    "enabled": true,
+    "enabled": false,
     "name": "Notes",
     "options": {
         "backend": "backend1",
