@@ -13,5 +13,5 @@ RUN ln -s /usr/share/java/gdal.jar /var/lib/jetty/lib/ext/
 VOLUME [ "/var/local/extracts" ]
 
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
-CMD ["java","-Djava.io.tmpdir=/tmp/jetty", "-Dgeorchestra.datadir=/etc/georchestra", "-Dextractor.storage.dir=/var/local/extracts", "-jar","/usr/local/jetty/start.jar"]
+CMD ["java","-Djava.io.tmpdir=/tmp/jetty", "-Dgeorchestra.datadir=/etc/georchestra", "-Dextractor.storage.dir=/var/local/extracts","-Xmx1024m","-jar","/usr/local/jetty/start.jar"]
 
