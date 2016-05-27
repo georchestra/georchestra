@@ -37,6 +37,7 @@
     "jquery": "^2.2.0",
     "moment": "^2.12.0",
     "sass-brunch": "1.9.2",
+    "select2": "^4.0.2",
     "uglify-js-brunch": "^2.0.1"
   },
   "scripts": {

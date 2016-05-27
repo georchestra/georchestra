@@ -19,6 +19,7 @@ class AppController {
     $scope.isActive = (routes) => routes.some(
       route => $location.$$path.indexOf(route) == 1
     )
+
   }
 
 }

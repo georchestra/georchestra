@@ -63,11 +63,7 @@
       <div class="form-group form-group-sm">
         <label class="col-sm-4" for="manager" translate>user.manager</label>
         <div class="col-sm-8">
-          <select class="form-control" ng-model="model.manager" chosen>
-            <option value=""></option>
-            <option ng-if="model.$promise" value="{{user.dn}}" ng-repeat="user in user.users">{{user.givenName}}</option>
-            <option ng-if="!model.$promise" value="{{user.dn}}" ng-repeat="user in newUser.users">{{user.givenName}}</option>
-          </select>
+          <input ng-model="model.manager" class="manager form-control"/>
         </div>
       </div>
       <div class="form-group form-group-sm">
