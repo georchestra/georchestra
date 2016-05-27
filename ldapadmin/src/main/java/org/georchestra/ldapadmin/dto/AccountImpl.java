@@ -47,7 +47,6 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 	private static final long serialVersionUID = -8022496448991887664L;
 
 	// main data
-	private String dn;
 	private String uid; // uid
 
 	private String commonName; // cn: person's full name,  mandatory
@@ -311,16 +310,6 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 		return res;
 	}
 
-
-	@Override
-	public String getDn() {
-		return this.dn;
-	}
-
-	@Override
-	public void setDn(String dn) {
-		this.dn = dn;
-	}
 
 	@Override
 	public void setUid(String uid) {

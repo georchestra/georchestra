@@ -27,7 +27,6 @@ package org.georchestra.ldapadmin.dto;
  */
 public interface UserSchema {
 
-	public static final String DN = "dn";
 	public static final String UID_KEY = "uid";
 	public static final String COMMON_NAME_KEY = "cn"; // full name (givenName) + Surname
 	public static final String SURNAME_KEY = "sn";

@@ -32,9 +32,6 @@ import java.util.Date;
  */
 public interface Account {
 
-	String getDn();
-	void setDn(String dn);
-
 	void setUid(String uid);
 
 	String getUid();
