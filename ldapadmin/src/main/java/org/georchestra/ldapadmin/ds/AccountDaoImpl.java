@@ -74,6 +74,10 @@ public final class AccountDaoImpl implements AccountDao {
 
     private static final Log LOG = LogFactory.getLog(AccountDaoImpl.class.getName());
 
+    private String basePath;
+    public String getBasePath() { return basePath; }
+    public void setBasePath(String basePath) { this.basePath = basePath; }
+
     @Autowired
     public AccountDaoImpl(LdapTemplate ldapTemplate, GroupDao groupDao) {
 
@@ -493,7 +497,7 @@ public final class AccountDaoImpl implements AccountDao {
         setAccountField(context, UserSchema.HOME_POSTAL_ADDRESS_KEY, account.getHomePostalAddress());
 
         if(account.getManager() != null)
-            setAccountField(context, UserSchema.MANAGER_KEY, account.getManager());
+            setAccountField(context, UserSchema.MANAGER_KEY, "uid=" + account.getManager() + "," + this.userSearchBaseDN.toString() + "," + this.getBasePath());
         
         setAccountField(context, UserSchema.CONTEXT_KEY, account.getContext());
     }

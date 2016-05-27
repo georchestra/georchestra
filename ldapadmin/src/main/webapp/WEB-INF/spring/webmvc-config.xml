@@ -90,6 +90,7 @@
     <constructor-arg ref="groupDao"/>
     <property name="uniqueNumberField" value="${accountUniqueNumberField}"/>
     <property name="userSearchBaseDN" value="${userSearchBaseDN}"/>
+    <property name="basePath" value="${baseDN}"/>
   </bean>
 
   <bean class="org.georchestra.ldapadmin.ws.backoffice.users.UserRule">
