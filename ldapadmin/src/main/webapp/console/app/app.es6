@@ -49,7 +49,7 @@ angular.module('admin_console', [
   $translate
     .preferredLanguage('en')
     .useSanitizeValueStrategy('escape')
-    .useStaticFilesLoader({ prefix: 'lang/', suffix: '.json' })
+    .useStaticFilesLoader({ prefix: 'public/lang/', suffix: '.json' })
   $location.html5Mode(false)
   paginationTemplate.setPath('templates/dirPagination.tpl.html')
 
