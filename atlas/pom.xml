@@ -12,6 +12,8 @@
     <url>http://www.georchestra.org</url>
     <properties>
         <camel.version>2.16.1</camel.version>
+        <geotools.version>11.0</geotools.version>
+        <spring.version>4.1.8.RELEASE</spring.version>
     </properties>
     <dependencies>
         <!-- Camel dependencies -->
@@ -96,23 +98,145 @@
             <artifactId>hibernate-entitymanager</artifactId>
             <version>5.0.3.Final</version>
         </dependency>
-
         <dependency>
           <groupId>org.mapfish.print</groupId>
           <artifactId>print-lib</artifactId>
-          <version>3.4.0</version>
+          <version>3.5-SNAPSHOT</version>
         </dependency>
+        <!-- Needed by mfpv3 at runtime, see
+             https://github.com/mapfish/mapfish-print/issues/418 -->
+        <dependency>
+          <groupId>com.codahale.metrics</groupId>
+          <artifactId>metrics-httpclient</artifactId>
+          <version>3.0.2</version>
+        </dependency>
+        <dependency>
+          <groupId>com.codahale.metrics</groupId>
+          <artifactId>metrics-healthchecks</artifactId>
+          <version>3.0.2</version>
+        </dependency>
+        <dependency>
+          <groupId>com.codahale.metrics</groupId>
+          <artifactId>metrics-logback</artifactId>
+          <version>3.0.2</version>
+        </dependency>
+        <dependency>
+          <groupId>com.codahale.metrics</groupId>
+          <artifactId>metrics-jvm</artifactId>
+          <version>3.0.2</version>
+        </dependency>
+        <dependency>
+          <groupId>com.readytalk</groupId>
+          <artifactId>metrics3-statsd</artifactId>
+          <version>4.1.0</version>
+        </dependency>
+        <dependency>
+          <groupId>org.codehaus.jsr166-mirror</groupId>
+          <artifactId>jsr166y</artifactId>
+          <version>1.7.0</version>
+        </dependency>
+        <dependency>
+          <groupId>org.yaml</groupId>
+          <artifactId>snakeyaml</artifactId>
+          <version>1.13</version>
+        </dependency>
+        <dependency>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-epsg-hsql</artifactId>
+          <version>${geotools.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-render</artifactId>
+          <version>${geotools.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-geojson</artifactId>
+          <version>${geotools.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-geotiff</artifactId>
+          <version>${geotools.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-wms</artifactId>
+          <version>${geotools.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.geotools.xsd</groupId>
+          <artifactId>gt-xsd-gml3</artifactId>
+          <version>${geotools.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-svg</artifactId>
+          <version>${geotools.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-cql</artifactId>
+          <version>${geotools.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>com.google.guava</groupId>
+          <artifactId>guava</artifactId>
+          <version>16.0.1</version>
+        </dependency>
+        <dependency>
+          <groupId>net.sf.jasperreports</groupId>
+          <artifactId>jasperreports</artifactId>
+          <version>6.1.1</version>
+        </dependency>
+        <dependency>
+          <groupId>net.sf.jasperreports</groupId>
+          <artifactId>jasperreports-fonts</artifactId>
+          <version>6.0.0</version>
+        </dependency>
+        <dependency>
+          <groupId>org.springframework.security</groupId>
+          <artifactId>spring-security-core</artifactId>
+          <version>4.1.0.RELEASE</version>
+        </dependency>
+        <dependency>
+          <groupId>org.springframework.security</groupId>
+          <artifactId>spring-security-web</artifactId>
+          <version>4.1.0.RELEASE</version>
+        </dependency>
+        <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-expression</artifactId>
+          <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-beans</artifactId>
+          <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-web</artifactId>
+          <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-core</artifactId>
+          <version>${spring.version}</version>
+        </dependency>
+
+
+
+
+
+
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20080701</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-            <version>4.2.5.RELEASE</version>
-        </dependency>
-        <dependency>
+       <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
             <version>3.0-alpha-1</version>
@@ -133,7 +257,28 @@
           <artifactId>itextpdf</artifactId>
           <version>5.5.9</version>
         </dependency>
-    </dependencies>
+      </dependencies>
+      <repositories>
+      <repository>
+        <id>sonatype</id>
+        <name>Sonatype Repository</name>
+        <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        <snapshots>
+          <enabled>true</enabled>
+        </snapshots>
+        <releases>
+          <enabled>false</enabled>
+        </releases>
+      </repository>
+      <repository>
+        <snapshots>
+          <enabled>false</enabled>
+        </snapshots>
+        <id>bintray-readytalk-maven</id>
+        <name>bintray</name>
+        <url>http://dl.bintray.com/readytalk/maven</url>
+      </repository>
+    </repositories>
     <build>
         <finalName>atlas-${server}</finalName>
         <pluginManagement>
