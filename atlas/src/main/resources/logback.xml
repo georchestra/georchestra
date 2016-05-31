@@ -16,7 +16,7 @@
     <logger name="com.mchange" level="WARN" />
     <logger name="org.apache" level="WARN" />
     <logger name="com.amazonaws" level="WARN" />
-    <logger name="org.apache.camel" level="DEBUG" />
+    <logger name="org.apache.camel" level="WARN" />
 
     <root level="ALL">
         <appender-ref ref="standardOut" />

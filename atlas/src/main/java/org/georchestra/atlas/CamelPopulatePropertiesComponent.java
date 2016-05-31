@@ -17,6 +17,22 @@ import java.io.InputStreamReader;
 
 public class CamelPopulatePropertiesComponent {
 
+    /**
+     * The base URL where the webapp can be reached.
+     *
+     */
+    private String baseUrl;
+
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+
+    public void setBaseUrl(String url) {
+        this.baseUrl = url;
+    }
+    
+
+
     private String toString(InputStreamCache property) throws IOException {
 
         property.reset();
@@ -51,7 +67,7 @@ public class CamelPopulatePropertiesComponent {
             layers.put(baseLayers.get(i));
 
         ex.setProperty("layers",layers.toString());
-
+        ex.setProperty("baseUrl",this.getBaseUrl());
 
         String legendURL = featureLayer.getString("baseURL");
         legendURL += "?SERVICE=WMS";

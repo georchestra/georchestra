@@ -9,21 +9,19 @@
                            http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
                            http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+						   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
                            http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.5.xsd
                            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
                            http://camel.apache.org/schema/spring
                            http://camel.apache.org/schema/spring/camel-spring-2.16.1.xsd http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
 
+    <context:annotation-config/>
 
-    <!-- have a properties file with the defaults with the possibility to override them with
-         JRE or system environment variables-->
-    <bean id="bridgePropertyPlaceholder"
-          class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer">
-        <property name="location" value="classpath:atlas.properties"/>
-        <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
-        <property name="searchSystemEnvironment" value="true"/>
-    </bean>
+	<context:property-placeholder
+		location="file:${georchestra.datadir}/atlas/atlas.properties"
+		ignore-resource-not-found="true" ignore-unresolvable="true" order="1" />
+	<context:property-placeholder location="classpath:atlas.properties"
+		ignore-resource-not-found="true" ignore-unresolvable="true" order="2" />
 
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
         <property name="driverClass" value="org.postgresql.Driver"/>
@@ -34,14 +32,12 @@
         <property name="minPoolSize" value="1"/>
     </bean>
 
-    <bean id="populateProperties" class="org.georchestra.atlas.CamelPopulatePropertiesComponent"/>
+    <bean id="populateProperties" class="org.georchestra.atlas.CamelPopulatePropertiesComponent">
+     <property name="baseUrl" value="${atlas.baseUrl}"/>
+     </bean>
+    
     <bean id="specAsPdf" class="org.georchestra.atlas.CamelMapfishPrintComponent" init-method="init" />
 
-    <bean id="setState" class="org.georchestra.atlas.CamelSetStateComponent"/>
-
-    <!--<bean id="myTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">-->
-      <!--<property name="entityManagerFactory" ref="entityManagerFactory"/>-->
-    <!--</bean>-->
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource"></property>
     </bean>
@@ -70,11 +66,10 @@
     <camelContext id="atlas" xmlns="http://camel.apache.org/schema/spring"
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   streamCache="true">
+
         <dataFormats>
             <json id="gson" library="Gson" />
         </dataFormats>
-
-        <!--<routeContextRef ref="mapfish"/>-->
 
         <restConfiguration component="servlet">
             <componentProperty key="enableCors" value="true"/>
@@ -88,106 +83,81 @@
             - property.printBase must have the base URL of the Mapfish Print service.
         -->
         <rest>
-            <post uri="/atlas/print" consumes="application/json" produces="application/json" enableCORS="true">
+            <post uri="/print" consumes="application/json" produces="application/json" enableCORS="true">
                 <to uri="direct:save_print_request"/>
             </post>
-            <get uri="/test">
-                <to uri="direct:test"/>
-            </get>
         </rest>
 
-        <route id="test">
-            <from uri="direct:test"/>
-
-            <transform>
-                <simple>Hello it Works !</simple>
-            </transform>
-        </route>
-
-
+		<!-- route which receives the posted data from the rest endpoint /print defined above -->
         <route id="save_print_request">
             <from uri="direct:save_print_request"/>
-
+            <log message="Email from requesting user : ${header['sec-email']}" loggingLevel="INFO"/>
+			<setProperty propertyName="requestingUserEmail">
+                <simple>header['sec-email']</simple>
+            </setProperty>
             <to uri="direct:checkArgs"/>
-
             <!-- store in DB queue -->
             <to uri="jpa:org.georchestra.atlas.AtlasJob?persistenceUnit=myPU"/>
-
             <log message="Storing request to DB with ID : ${body.id}" loggingLevel="INFO"/>
-
             <transform>
                 <simple>${body.id}</simple>
             </transform>
-
         </route>
 
+		<!--  Route which checks data integrity (valid JSON) on input -->
         <route id="checkArgs">
             <from uri="direct:checkArgs"/>
-
             <!-- check json format -->
             <unmarshal ref="gson"/>
             <marshal ref="gson"/>
-
         </route>
 
-
+		<!--  Route which polls the DB and process incoming requests -->
         <route id="split_and_send_request">
+        	<!--  polls the DB for incoming requests -->
             <from uri="jpa:org.georchestra.atlas.AtlasJob?transactionManager=#transactionManager&amp;persistenceUnit=myPU&amp;consumer.lockModeType=NONE&amp;consumer.delay=2000&amp;maximumResults=1&amp;consumeDelete=false&amp;consumer.query=FROM org.georchestra.atlas.AtlasJob WHERE state = 'TODO' ORDER BY id"/>
-
-            <log message="New request from DB" loggingLevel="INFO"/>
-
-            <setProperty propertyName="dummy">
+            <log message="New request from DB from ${exchangeProperty.requestingUserEmail}" loggingLevel="INFO"/>
+            <!--  Modifies the state of the job -->
+            <script>
                 <groovy>request.body.setState(org.georchestra.atlas.AtlasJobState.IN_PROGRESS)</groovy>
-            </setProperty>
-
+            </script>
             <setProperty propertyName="jobId">
                 <simple>${body.id}</simple>
             </setProperty>
-
             <!-- Store job as object -->
             <setProperty propertyName="originalObject">
                 <simple>${body}</simple>
             </setProperty>
-
             <transform>
                 <groovy>request.body.getQuery()</groovy>
             </transform>
-
             <!-- Backup original Json-->
             <setProperty propertyName="rawJson">
                 <simple>${body}</simple>
             </setProperty>
-
-            <!-- parse json -->
+            <!-- parses json input -->
             <unmarshal ref="gson"/>
-
             <setProperty propertyName="layout">
                 <simple>${body[layout]}</simple>
             </setProperty>
-
             <setProperty propertyName="dpi">
                 <simple>${body[dpi]}</simple>
             </setProperty>
-
             <setProperty propertyName="displayLegend">
                 <simple>${body[displayLegend]}</simple>
             </setProperty>
-
             <setProperty propertyName="outputFormat">
                 <simple>${body[outputFormat]}</simple>
             </setProperty>
-
             <setProperty propertyName="outputFilename">
                 <simple>${body[outputFilename]}</simple>
             </setProperty>
-
             <setProperty propertyName="projection">
                 <simple>${body[projection]}</simple>
             </setProperty>
-
-            <!-- generate layers and legendURL property -->
+            <!-- generate layers and legendURL properties -->
             <to uri="bean:populateProperties"/>
-
+			<!--  prints page by page -->
             <split stopOnException="true">
                 <simple>${body[pages]}</simple>
                 <choice>
@@ -196,7 +166,7 @@
                         <transform>
                             <simple>
                                 { "layout": "${exchangeProperty.layout}",
-                                  "outputFormat": "PDF",
+                                  "outputFormat": "${exchangeProperty.outputFormat}",
                                   "attributes": {
                                     "title": "${body[title]}",
                                     "subtitle": "${body[subtitle]}",
@@ -216,49 +186,40 @@
                     <otherwise>
                         <transform>
                             <simple>
-                                { "layout": "${exchangeProperty.layout}",
-                                "outputFormat": "PDF",
-                                "attributes": {
-                                "title": "${body[title]}",
-                                "subtitle": "${body[subtitle]}",
-                                "map": {
-                                "dpi": ${exchangeProperty.dpi},
-                                "projection": "${exchangeProperty.projection}",
-                                "center": ${body[center]},
-                                "scale": ${body[scale]},
-                                "layers": ${exchangeProperty.layers}
-                                }
-                                }
-                                }
-                            </simple>
+	                            {
+								   "layout" : "${exchangeProperty.layout}",
+								   "outputFormat" : "${exchangeProperty.outputFormat}",
+								   "attributes" : {
+								      "map" : {
+								         "layers" : ${exchangeProperty.layers},
+								         "scale" : ${body[scale]},
+								         "center" : ${body[center]},
+								         "projection" : "${exchangeProperty.projection}",
+								         "dpi" : ${exchangeProperty.dpi}
+								      },
+								      "title" : "${body[title]}",
+								      "subtitle" : "${body[subtitle]}"
+								   }
+								}
+		                    </simple>
                         </transform>
                     </otherwise>
                 </choice>
-
                 <log message="print request : ${body}" loggingLevel="INFO"/>
-
-                <setProperty propertyName="printBase">
-                    <constant>http://print:8080/print/atlas</constant>
-                </setProperty>
-                <!--
-                <to uri="direct:print"/>
-                -->
+				<!-- Wires to the bean which will actually call the MF Print -->
                 <to uri="bean:specAsPdf"/>
+                <!-- Saves the file onto the disk -->
                 <to uri="file://?fileName=/tmp/tmp/${property.jobId}/${property.CamelSplitIndex}.pdf"/>
-
                 <log message="${property.jobId} / ${property.CamelSplitIndex} Done !" loggingLevel="INFO"/>
-
             </split>
-
             <setHeader headerName="CamelExecCommandWorkingDir">
                 <simple>/tmp/tmp/${property.jobId}</simple>
             </setHeader>
-
             <!-- Clean STDIN before launching scripts -->
             <transform>
                 <constant/>
             </transform>
-
+			<!-- TODO: port to itext to join the files -->
             <choice>
                     <when>
                         <simple>${exchangeProperty.outputFormat} == "pdf"</simple>
@@ -268,7 +229,6 @@
                         <to uri="exec:/bin/sh?useStderrOnEmptyStdout=true&amp;args=-c &quot;/usr/bin/zip - *.pdf&quot;"/>
                     </otherwise>
             </choice>
-
             <choice>
                 <when>
                     <simple>${body.exitValue} != 0</simple>
@@ -279,34 +239,27 @@
                     <to uri="file://?fileName=/tmp/output/${property.outputFilename}"/>
                 </otherwise>
             </choice>
-
             <transform>
                 <simple>${property.originalObject}</simple>
             </transform>
-
             <!-- Change state of job -->
-            <setProperty propertyName="dummy">
+            <script>
                 <groovy>request.body.setState(org.georchestra.atlas.AtlasJobState.DONE)</groovy>
-            </setProperty>
-
-			<!-- Send a mail once done -->
+            </script>
+			<!-- Send a mail once done (TODO: use a bean instead ? so that it is possible to manage templates ...) -->
 			<transform>
 				<simple>Bonjour,
 
 Votre impression est dorénavant terminée ; elle est disponible à l'addresse:
-${body.id}.
+${exchangeProperty.baseUrl}/jobs/${body.id}.
+
 
 Bien cordialement,
 
 -- Pierre Mauduit
 				</simple>
 			</transform>
-			
 			<to uri="smtp://localhost?to%3Dpierre.mauduit%40camptocamp.com%26from%3Dnoreply%40camptocamp.com%26subject%3DAtlas%20-%20Votre%20demande%20de%20cr%C3%A9ation"></to>
         </route>
-
     </camelContext>
-
-
-
 </beans>

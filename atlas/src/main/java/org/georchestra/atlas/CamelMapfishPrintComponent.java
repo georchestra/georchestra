@@ -48,13 +48,13 @@ public class CamelMapfishPrintComponent {
     
     @Handler
     public void toMapfishPrintPdf(Exchange ex) throws JSONException, DocumentException, URISyntaxException, IOException {
-        String rawJson = ex.getProperty("rawJson", String.class);
+        String mfprintJsonSpec = ex.getIn().getBody(String.class);
 
         Assert.notNull(this.mapPrinter);
 
         try {
             ByteArrayOutputStream baos =  new ByteArrayOutputStream();
-            PJsonObject mfSpec = this.mapPrinter.parseSpec(rawJson); 
+            PJsonObject mfSpec = MapPrinter.parseSpec(mfprintJsonSpec); 
             this.mapPrinter.print(mfSpec, baos);
             Message m = ex.getIn();
             m.setBody(baos.toByteArray());
