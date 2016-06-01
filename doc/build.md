@@ -1,6 +1,8 @@
 # Building geOrchestra
 
-Here are the steps...
+To build geOrchestra, you will first have to [create your own configuration repository](doc/config.md), based on the [template](https://github.com/georchestra/template) we provide.
+
+Once you're created your own configuration, follow these steps...
 
 ## Get the sources
 
@@ -8,8 +10,9 @@ At this stage, if you don't have the geOrchestra sources, you need to download t
 ```
 git clone --recursive https://github.com/georchestra/georchestra.git ~/georchestra
 ```
-(go grab some coffee in the mean time, or read on)
+By default, this will always fetch the latest stable version.
 
+Go grab some coffee in the mean time, or read on...
 
 ## Install the dependencies
 

@@ -4,39 +4,39 @@
 
 geOrchestra is a complete **Spatial Data Infrastructure** solution.
 
-It features a **metadata catalog** (GeoNetwork 3.0.4), an **OGC server** (GeoServer 2.8.2 and GeoWebCache 1.8.0) with fine-grained access control (based on GeoFence), an **advanced viewer and editor**, an **extractor** and **many more** (security and auth system based on proxy/CAS/LDAP, analytics, admin UIs, ...)
+It features a **metadata catalog** (GeoNetwork 3.0.4), an **OGC server** (GeoServer 2.8.3 and GeoWebCache 1.8.1) with fine-grained access control (based on GeoFence), an **advanced viewer and editor**, an **extractor** and **many more** (security and auth system based on proxy/CAS/LDAP, analytics, admin UIs, ...)
+
 
 ## Releases
 
-A new release is published every 6 months and is supported during 12 months. Stable versions are named by their release date, eg 14.06 was published in June 2014.  
+A new release is published every 6 months and is supported during 12 months. 
+Stable versions are named by their release date, eg 15.12 (latest stable) was published in december 2015.  
 
-Before downloading, you might be interested in the [release notes](RELEASE_NOTES.md) and the [kanban board](https://huboard.com/georchestra/georchestra) we're using to manage issues.
+Have a look at the [release notes](RELEASE_NOTES.md) for more information.
 
-## Download
-
-To download the latest stable version (currently 15.12), use the following command line:
-```
-git clone --recursive https://github.com/georchestra/georchestra.git ~/georchestra
-```
 
 ## Install
 
-To install geOrchestra, you will have to:
- * [create your own configuration repository](doc/config.md), based on the [template](https://github.com/georchestra/template) we provide,
- * [build the web applications](doc/build.md) with your config,
- * [setup the middleware](doc/setup.md) (apache, tomcat, postgresql, openldap),
- * [deploy the webapps](doc/deploy.md), [check](doc/check.md) they're working as expected and finally [configure](doc/post-deploy_config.md) them.
+Depending on your goals and skills, there are several ways to install geOrchestra:
 
-There are also several [optimizations](doc/optimizations.md), [good practices](doc/good_practices.md) and [tutorials](doc/tutorials.md) that are worth reading.
+ * a [docker composition](docker-compose.yml), which pulls pre-built images from [docker hub](https://hub.docker.com/u/georchestra/), is perfect for demo purposes. Provided you have a good download speed and recent machine (8Gb required), you'll be up and running on `localhost:8080` within 10 minutes after `docker-compose up`.
+ * a contributed [ansible playbook](https://github.com/georchestra/ansible) allows you to spin an instance in a few minutes. This is probably the easiest way to create a small production server, since it takes care of installing the middleware, fetching the webapps and configuring them.
+ * generic [debian (or yum) packages](https://build.georchestra.org/) are perfect to create complex architectures, but you'll have to [install and configure the middleware](doc/setup.md) first.
+ * you could also use the [generic wars](http://build.georchestra.org/wars/) with their "[datadir](https://github.com/georchestra/datadir)", as an alternate method. The above packages provide both.
+ * finally, [building from the sources](doc/build.md) is the most flexible solution, since it allows you to customize the webapps very deeply. You get custom WAR files, packages or docker images that you can [deploy](doc/deploy.md) to dev, test, or production servers. 
 
-The minimum system requirement is 2 cores and 4Gb RAM, but we recommend at least 4 cores and 8 Gb RAM for a production instance.
+
+If you opt for the middleware setup by yourself, there are several [optimizations](doc/optimizations.md), [good practices](doc/good_practices.md) and [tutorials](doc/tutorials.md) that are worth reading. 
+Note that the minimum system requirement is 2 cores and 4Gb RAM, but we recommend at least 4 cores and 8 Gb RAM for a production instance.
 More RAM is of course better !
+
 
 ## Community
 
 If you need more information, please ask on the [geOrchestra mailing list](https://groups.google.com/forum/#!forum/georchestra). 
 
 For help setting up your instance, or for dev-related questions, use the [#georchestra](https://kiwiirc.com/client/irc.freenode.net/georchestra) IRC channel or the [dev/tech list](https://groups.google.com/forum/#!forum/georchestra-dev).
+
 
 ## More
 
