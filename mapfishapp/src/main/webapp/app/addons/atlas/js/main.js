@@ -927,10 +927,11 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
          * Private function to create page object from a feature.
          *
          * @param wfsFeature
+         * @param addon
          * @return {Object} or {undefined}
          * @private
          */
-        var _pageFromFeature = function(wfsFeature) {
+        var _pageFromFeature = function(wfsFeature, addon) {
             var page = {};
 
             if (titleSubtitleParameters.titleMethod === "same") {
@@ -953,9 +954,9 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             } else {
                 if (!(wfsFeature.geometry instanceof OpenLayers.Geometry.Point)) {
                     bounds = wfsFeature.geometry.getBounds();
-                    bbox = bounds.scale(1 + this.options.bboxBuffer).toArray();
+                    bbox = bounds.scale(1 + addon.options.bboxBuffer).toArray();
                 } else {
-                    GEOR.helper.msg(this.title, this.tr("atlas_bbox_point_error"), 10);
+                    GEOR.helper.msg(addon.title, addon.tr("atlas_bbox_point_error"), 10);
                     return undefined;
                 }
                 page.bbox = bbox;
@@ -1000,14 +1001,14 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                             msg: this.tr("atlas_too_many_features") +
                             (this.maxFeatures + 1) + this.tr("atlas_too_many_features_after_nb")
                         });
-                        return;
+                        autoSubmit = false;
                     }
                     wfsFeatures.each(function(record) {
 
                         wfsFeature = record.data.feature;
 
 
-                        this.atlasConfig.pages.splice(-1, 0, _pageFromFeature(wfsFeature));
+                        this.atlasConfig.pages.splice(-1, 0, _pageFromFeature(wfsFeature, this));
 
                         pageIdx = pageIdx + 1;
 
@@ -1048,10 +1049,11 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                     (this.maxFeatures + 1) + this.tr("atlas_too_many_features_after_nb"),
                                     scope: this
                                 });
+                                autoSubmit = false;
                             }
                             Ext.each(wfsFeatures, function(wfsFeature) {
 
-                                this.atlasConfig.pages.splice(-1, 0, _pageFromFeature(wfsFeature));
+                                this.atlasConfig.pages.splice(-1, 0, _pageFromFeature(wfsFeature, this));
 
                                 pageIdx = pageIdx + 1;
 
