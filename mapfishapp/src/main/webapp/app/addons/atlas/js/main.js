@@ -766,8 +766,8 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
 
 
         this.mapPanel.layers.each(function(l) {
-            //FIXME or not... find layerRecord based on title
-            if (resultpanel.title === l.get("title")) {
+            //FIXME find layerRecord based on title
+            if (resultpanel.title === GEOR.util.shortenLayerName(l.get("title"))) {
                 layerName = l.get("name");
             }
         });
