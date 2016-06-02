@@ -153,4 +153,4 @@ Finally, the addon's ```init``` method is called with an ```Ext.data.Record``` o
 If the addon instance exposes a public property named ```item```, the referenced object is inserted in the "tools" menu.
 
 
-If developing a new addon, you might want to start from a simple example, eg the [magnifier](magnifier/README.md) addon.
+If developing a new addon, you might want to start from a simple example, eg the [magnifier](magnifier/README.md) addon. There is also a [template](template/README.md) which may be useful to jump-start the development process.

@@ -1,3 +1,6 @@
+/*global
+ Ext, GeoExt, OpenLayers, GEOR
+ */
 Ext.namespace("GEOR.Addons");
 
 //Replace Template by a representative name
