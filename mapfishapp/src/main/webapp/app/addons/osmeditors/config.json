@@ -4,7 +4,13 @@
         "enabled": true,
         "name": "OsmEditors",
         "options": {
-            "target": "tbar_11"
+            "target": "bbar_8",
+            "editors": {
+                "iD": true,
+                "potlach": true,
+                "JOSM": true,
+                "WalkingPapers": true
+            }
         },
         "title": {
             "en": "Edit in OSM",

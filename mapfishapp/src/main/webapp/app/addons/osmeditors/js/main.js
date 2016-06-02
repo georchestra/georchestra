@@ -11,7 +11,44 @@ GEOR.Addons.OsmEditors = Ext.extend(GEOR.Addons.Base, {
      */
     init: function(record) {
 
-        var map = this.map;
+
+
+        this.map = GEOR.mappanel;
+
+        if (this.target) {
+            // create a button to be inserted in toolbar:
+            this.components = this.target.insertButton(this.position, {
+                tooltip: this.getTooltip(record),
+                iconCls: "addon-osmeditors",
+                text: this.getText(record),
+                plugins: [{
+                    ptype: 'menuqtips'
+                }],
+                menu: this._selectEditors(this.options),
+                scope: this
+            });
+            this.target.doLayout();
+
+        } else {
+            // create a menu item for the "tools" menu:
+            this.item = new Ext.menu.CheckItem({
+                text: this.getText(record),
+                qtip: this.getQtip(record),
+                iconCls: "addon-osmeditors",
+                checked: false,
+                plugins: [{
+                    ptype: 'menuqtips'
+                }],
+                menu: this._selectEditors(this.options),
+                scope: this
+            });
+        }
+    },
+
+    _selectEditors: function(options) {
+        var editors = []
+
+        var map = this.mapPanel.map;
 
         /**
          * Method: editOSM
@@ -51,67 +88,60 @@ GEOR.Addons.OsmEditors = Ext.extend(GEOR.Addons.Base, {
             };
         };
 
-        this.map = GEOR.mappanel
+        if (options.editors.iD) {
+            editors.push({
+                text: tr("with iD"),
+                qtip: tr("Recommended scale is 1:10.000"),
+                handler: editOSM.call(this, {
+                    base: 'http://www.openstreetmap.org/edit?editor=id&',
+                    protocol: 'llz'
+                })
+            });
+        }
 
-        if (this.target) {
-            // create a button to be inserted in toolbar:
-            this.components = this.target.insertButton(this.position, {
-                tooltip: this.getTooltip(record),
-                iconCls: "addon-osmeditors",
-                text: this.getText(record),
-                plugins: [{
-                    ptype: 'menuqtips'
-                }],
-                menu: [{
-                    text: tr("with iD"),
-                    qtip: tr("Recommended scale is 1:10.000"),
-                    handler: editOSM.call(this, {
-                        base: 'http://www.openstreetmap.org/edit?editor=id&',
-                        protocol: 'llz'
-                    })
-                }, {
+        if (options.editors.potlach) {
+            editors.push(
+                {
                     text: tr("with Potlatch2"),
                     qtip: tr("Recommended scale is 1:10.000"),
                     handler: editOSM.call(this, {
                         base: 'http://www.openstreetmap.org/edit?editor=potlatch2&',
                         protocol: 'llz'
                     })
-                }, {
+                }
+            );
+        }
+
+        if (options.editors.JOSM) {
+            editors.push(
+                {
                     text: tr("with JOSM"),
                     qtip: tr("JOSM must be started with the remote control option"),
                     handler: editOSM.call(this, {
                         base: 'http://127.0.0.1:8111/load_and_zoom?',
                         protocol: 'lbrt'
                     })
-                }, {
-                    text: tr("with Walking Papers"),
-                    qtip: tr("Recommended scale is 1:10.000"),
-                    handler: editOSM.call(this, {
-                        base: 'http://walking-papers.org/?',
-                        protocol: 'llz'
-                    })
-                }],
-                scope: this
-            });
-            this.target.doLayout();
-
-        } else {
-            // create a menu item for the "tools" menu:
-            this.item = new Ext.menu.CheckItem({
-                text: this.getText(record),
-                qtip: this.getQtip(record),
-                iconCls: "addon-osmeditors",
-                checked: false,
-                listeners: {
-                    "checkchange": this._sampleHandler,
-                    scope: this
                 }
+            );
+        }
+
+        if (options.editors.WalkingPapers) {
+            editors.push({
+                text: tr("with Walking Papers"),
+                qtip: tr("Recommended scale is 1:10.000"),
+                handler: editOSM.call(this, {
+                    base: 'http://walking-papers.org/?',
+                    protocol: 'llz'
+                })
             });
         }
-    },
 
-    _sampleHandler: function() {
-        GEOR.helper.msg(this.options.title, "OSM edit launched")
+        if (editors.length < 1) {
+            //TODO tr
+            GEOR.util.errorDialog("No editor available. Please review osmeditors configuration.")
+        }
+
+        return editors;
     },
 
     tr: function(str) {

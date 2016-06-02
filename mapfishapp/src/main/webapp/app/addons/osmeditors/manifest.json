@@ -6,6 +6,12 @@
         "css/main.css"
     ],
     "default_options": {
+        "editors": {
+            "iD": true,
+            "potlach": true,
+            "JOSM": false,
+            "WalkingPapers": true
+        }
     },
     "i18n": {
         "en": {
