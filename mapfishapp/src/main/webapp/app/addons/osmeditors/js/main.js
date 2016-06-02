@@ -1,3 +1,6 @@
+/*global
+ Ext, GeoExt, OpenLayers, GEOR
+ */
 Ext.namespace("GEOR.Addons");
 
 //Replace Template by a representative name
@@ -22,7 +25,7 @@ GEOR.Addons.OsmEditors = Ext.extend(GEOR.Addons.Base, {
                 iconCls: "addon-osmeditors",
                 text: this.getText(record),
                 plugins: [{
-                    ptype: 'menuqtips'
+                    ptype: "menuqtips"
                 }],
                 menu: this._selectEditors(this.options),
                 scope: this
@@ -37,7 +40,7 @@ GEOR.Addons.OsmEditors = Ext.extend(GEOR.Addons.Base, {
                 iconCls: "addon-osmeditors",
                 checked: false,
                 plugins: [{
-                    ptype: 'menuqtips'
+                    ptype: "menuqtips"
                 }],
                 menu: this._selectEditors(this.options),
                 scope: this
@@ -46,7 +49,7 @@ GEOR.Addons.OsmEditors = Ext.extend(GEOR.Addons.Base, {
     },
 
     _selectEditors: function(options) {
-        var editors = []
+        var editors = [];
 
         var map = this.mapPanel.map;
 
@@ -62,7 +65,7 @@ GEOR.Addons.OsmEditors = Ext.extend(GEOR.Addons.Base, {
                     map.getProjectionObject(),
                     new OpenLayers.Projection("EPSG:4326")
                 );
-                if (options.protocol === 'lbrt') {
+                if (options.protocol === "lbrt") {
                     url = options.base + OpenLayers.Util.getParameterString({
                             left: round(bounds.left, 5),
                             bottom: round(bounds.bottom, 5),
@@ -70,7 +73,7 @@ GEOR.Addons.OsmEditors = Ext.extend(GEOR.Addons.Base, {
                             top: round(bounds.top, 5)
                         });
                     frames[0].location.href = url;
-                } else if (options.protocol === 'llz') {
+                } else if (options.protocol === "llz") {
                     var c = bounds.getCenterLonLat();
                     /*
                      Zoom level determined based on the idea that, for OSM:
@@ -90,11 +93,11 @@ GEOR.Addons.OsmEditors = Ext.extend(GEOR.Addons.Base, {
 
         if (options.editors.iD) {
             editors.push({
-                text: tr("with iD"),
-                qtip: tr("Recommended scale is 1:10.000"),
+                text: this.tr("with iD"),
+                qtip: this.tr("Recommended scale is 1:10.000"),
                 handler: editOSM.call(this, {
-                    base: 'http://www.openstreetmap.org/edit?editor=id&',
-                    protocol: 'llz'
+                    base: "http://www.openstreetmap.org/edit?editor=id&",
+                    protocol: "llz"
                 })
             });
         }
@@ -102,11 +105,11 @@ GEOR.Addons.OsmEditors = Ext.extend(GEOR.Addons.Base, {
         if (options.editors.potlach) {
             editors.push(
                 {
-                    text: tr("with Potlatch2"),
-                    qtip: tr("Recommended scale is 1:10.000"),
+                    text: this.tr("with Potlatch2"),
+                    qtip: this.tr("Recommended scale is 1:10.000"),
                     handler: editOSM.call(this, {
-                        base: 'http://www.openstreetmap.org/edit?editor=potlatch2&',
-                        protocol: 'llz'
+                        base: "http://www.openstreetmap.org/edit?editor=potlatch2&",
+                        protocol: "llz"
                     })
                 }
             );
@@ -115,11 +118,11 @@ GEOR.Addons.OsmEditors = Ext.extend(GEOR.Addons.Base, {
         if (options.editors.JOSM) {
             editors.push(
                 {
-                    text: tr("with JOSM"),
-                    qtip: tr("JOSM must be started with the remote control option"),
+                    text: this.tr("with JOSM"),
+                    qtip: this.tr("JOSM must be started with the remote control option"),
                     handler: editOSM.call(this, {
-                        base: 'http://127.0.0.1:8111/load_and_zoom?',
-                        protocol: 'lbrt'
+                        base: "http://127.0.0.1:8111/load_and_zoom?",
+                        protocol: "lbrt"
                     })
                 }
             );
@@ -127,11 +130,11 @@ GEOR.Addons.OsmEditors = Ext.extend(GEOR.Addons.Base, {
 
         if (options.editors.WalkingPapers) {
             editors.push({
-                text: tr("with Walking Papers"),
-                qtip: tr("Recommended scale is 1:10.000"),
+                text: this.tr("with Walking Papers"),
+                qtip: this.tr("Recommended scale is 1:10.000"),
                 handler: editOSM.call(this, {
-                    base: 'http://walking-papers.org/?',
-                    protocol: 'llz'
+                    base: "http://walking-papers.org/?",
+                    protocol: "llz"
                 })
             });
         }
