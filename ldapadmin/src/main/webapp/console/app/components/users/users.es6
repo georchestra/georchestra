@@ -13,7 +13,8 @@ class UsersController {
 
     this.$injector = $injector
 
-    this.q = ''
+    this.q            = ''
+    this.itemsPerPage = 15
 
     this.newGroup = this.$injector.get('$location').$$search['new'] === 'group'
     this.newGroupName = ''
