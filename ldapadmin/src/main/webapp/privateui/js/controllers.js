@@ -490,6 +490,8 @@ function addNode(tree, node) {
           return -1;
         }
       });
+    } else if (!branch.nodes) {
+      branch.nodes = [];
     }
     branch.nodes.push({group: node});
     branch.nodes.sort(function(a, b) {

@@ -90,11 +90,11 @@ try {
                 <i class="icon-blank"></i>
                 {{data.group.cn}} <small>({{data.group.users.length || 0}})</small>
               </a>
-              <div ng-if="!data.group && data.nodes.length" class="accordion-group">
+              <div ng-if="data.nodes.length" class="accordion-group">
                 <div class="accordion-heading">
                   <a class="accordion-toggle" onclick="$('#collapse{{data.name}}').collapse('toggle');" data-toggle="collapse">
                     <i class="icon-chevron-right"></i>
-                    {{data.group.cn || data.name}}
+                    <em>{{data.group.cn || data.name}}</em>
                   </a>
                 </div>
                 <div id="collapse{{data.name}}" class="accordion-body collapse">
@@ -108,13 +108,13 @@ try {
               <div class="accordion" ng-repeat="data in groups_tree" ng-include="'group_item_renderer.html'">
               </div>
             </div>
-            
+
             <br />
             <i class="icon-blank"></i>
             <a href="#/groups/none" ng-class="{active: selectedGroup == 'none'}">
               Users with no access
             </a>
-            
+
           </div>
         </div>
         <div id="content" class="span9" ng-view>
