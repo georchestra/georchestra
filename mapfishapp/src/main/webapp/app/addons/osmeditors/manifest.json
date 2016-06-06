@@ -1,0 +1,47 @@
+{
+    "js": [
+        "js/main.js"
+    ],
+    "css": [
+        "css/main.css"
+    ],
+    "default_options": {
+        "editors": {
+            "iD": true,
+            "potlach": true,
+            "JOSM": false,
+            "WalkingPapers": true
+        }
+    },
+    "i18n": {
+        "en": {
+        },
+        "es": {
+            "Edit in OSM": "Editar en OSM",
+            "with JOSM": "con JOSM",
+            "JOSM must be started with the remote control option": "Usted tiene que lanzar JOSM y activar el control remoto",
+            "with iD": "con iD",
+            "Recommended scale is 1:10.000": "La escala de trabajo recomendada es 1:10.000",
+            "with Potlatch2": "con Potlatch2",
+            "with Walking Papers": "con Walking Papers"
+        },
+        "fr": {
+            "Edit in OSM": "Editer dans OSM",
+            "with JOSM": "avec JOSM",
+            "JOSM must be started with the remote control option": "Il vous faut auparavant lancer JOSM et activer le contrôle à distance",
+            "with iD": "avec iD",
+            "Recommended scale is 1:10.000": "Il est recommandé de travailler à des échelles proches de 1:10.000",
+            "with Potlatch2": "avec Potlatch2",
+            "with Walking Papers": "avec Walking Papers"
+        },
+        "de": {
+            "Edit in OSM": "Berarbeitet im OSM",
+            "with JOSM": "mit JOSM",
+            "JOSM must be started with the remote control option": "Bitte vorher JOSM und Distanzkontrolle aktivieren",
+            "with iD": "mit iD",
+            "Recommended scale is 1:10.000": "Empfohlener Maßstab 1:10000",
+            "with Potlatch2": "mit Potlatch2",
+            "with Walking Papers": "mit Walking Papers"
+        }
+    }
+}
