@@ -43,7 +43,7 @@ geoserver_geodata:
 # geOrchestra images
     
 geoserver:
-  image: georchestra/geoserver:15.12
+  image: georchestra/geoserver:latest
   volumes:
     - geoserver_datadir:/var/local/geoserver
     - geoserver_geodata:/var/local/geodata
@@ -53,12 +53,12 @@ geoserver:
     - ldap
 
 geowebcache:
-  image: georchestra/geowebcache:15.12
+  image: georchestra/geowebcache:latest
   volumes:
     - geowebcache_tiles:/var/local/tiles
 
 proxy:
-  image: georchestra/security-proxy:15.12
+  image: georchestra/security-proxy:latest
   ports:
     - "8080:8080"
   links:
@@ -76,12 +76,12 @@ proxy:
     - downloadform
 
 cas:
-  image: georchestra/cas:15.12
+  image: georchestra/cas:latest
   links:
     - ldap
 
 mapfishapp:
-  image: georchestra/mapfishapp:15.12
+  image: georchestra/mapfishapp:latest
   volumes:
     - mapfishapp_uploads:/var/local/uploads
   links:
@@ -90,7 +90,7 @@ mapfishapp:
     - mapfishapp_uploads:/var/local/uploads
 
 extractorapp:
-  image: georchestra/extractorapp:15.12
+  image: georchestra/extractorapp:latest
   volumes:
     - extractorapp_extracts:/var/local/extracts
   links:
@@ -101,17 +101,17 @@ extractorapp:
 
 
 header:
-  image: georchestra/header:15.12
+  image: georchestra/header:latest
 
 ldapadmin:
-  image: georchestra/ldapadmin:15.12
+  image: georchestra/ldapadmin:latest
   links:
     - database
     - ldap
     - smtp
 
 geonetwork:
-  image: georchestra/geonetwork:3-15.12
+  image: georchestra/geonetwork:3-latest
   ports:
     - "1099:1099"
   links:
@@ -121,12 +121,12 @@ geonetwork:
     - geonetwork_datadir:/var/local/geonetwork
 
 analytics:
-  image: georchestra/analytics:15.12
+  image: georchestra/analytics:latest
   links:
     - database
 
 catalogapp:
-  image: georchestra/catalogapp:15.12
+  image: georchestra/catalogapp:latest
 
 downloadform:
-  image: georchestra/downloadform:15.12
+  image: georchestra/downloadform:latest

@@ -95,8 +95,17 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
         geometry.transform(this.map.projection,
             new OpenLayers.Projection("EPSG:4326"));
 
+        var followUpHidden = new Ext.form.Hidden({
+            // The checkbox named followup_checkbox will only be send if it is checked.
+            // A listener on this checkbox will change the value of this hidden field based
+            // on its value.
+            xtype: "hidden",
+            name: "followup",
+            value: false
+        });
+
         var form = new Ext.form.FormPanel({
-            height: 180,
+            autoHeight: true,
             bodyStyle: "padding: 5px;",
             labelSeparator: tr("labelSeparator"),
             items: [{
@@ -107,12 +116,27 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
                 name: "comment",
                 allowBlank: false
             }, {
+                xtype: "checkbox",
+                labelStyle: "width:160px",
+                fieldLabel: this.tr("notes_follow_up"),
+                name: "followup_checkbox",
+                listeners: {
+                    "change": {
+                        fn: function(checkbox, newValue) {
+                            followUpHidden.setRawValue(newValue);
+                        }
+                    }
+                }
+            }, {
                 xtype: "textfield",
                 fieldLabel: this.tr("notes_email"),
                 width: 240,
                 name: "email",
-                allowBlank: false,
-                value: GEOR.config.USEREMAIL || ""
+                value: GEOR.config.USEREMAIL || "",
+                vtype: "email",
+                validator: function(value) {
+                    return (followUpHidden.getValue() === "false" || value !== "");
+                }
             }, {
                 xtype: "hidden",
                 name: "latitude",
@@ -125,7 +149,8 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
                 xtype: "hidden",
                 name: "map_context",
                 value: GEOR.wmc.write()
-            }],
+            },
+                followUpHidden],
             buttons: [{
                 text: this.tr("notes_cancel"),
                 handler: function() {
@@ -156,7 +181,7 @@ GEOR.Addons.Notes = Ext.extend(GEOR.Addons.Base, {
                 scope: this
             }]
         });
-        
+
         this.window = new Ext.Window({
             title: this.tr("notes_title"),
             width: 400,

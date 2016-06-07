@@ -44,9 +44,9 @@ Eg, in ```/etc/monit/conf.enabled/tomcat-proxycas```:
 ```
 check process tomcat-proxycas with pidfile /var/run/tomcat-proxycas.pid
     start program = "/etc/init.d/tomcat-proxycas start"
-    with uid tomcat8 gid tomcat8
+    as uid root and gid root
     stop program = "/etc/init.d/tomcat-proxycas stop"
-    with uid tomcat8 gid tomcat8
+    as uid root and gid root
 
     if failed host 127.0.0.1 port 8180 for 3 cycles then restart
     if memory is greater than 1 GB then restart
@@ -63,9 +63,9 @@ In ```/etc/monit/conf.enabled/tomcat-georchestra```:
 ```
 check process tomcat-georchestra with pidfile /var/run/tomcat-georchestra.pid
     start program = "/etc/init.d/tomcat-georchestra start"
-    with uid tomcat8 gid tomcat8
+    as uid root and gid root
     stop program = "/etc/init.d/tomcat-georchestra stop"
-    with uid tomcat8 gid tomcat8
+    as uid root and gid root
 
     if failed host 127.0.0.1 port 8280 for 3 cycles then restart
     if memory is greater than 2 GB then restart
@@ -82,9 +82,9 @@ In ```/etc/monit/conf.enabled/tomcat-geoserver0```:
 ```
 check process tomcat-geoserver0 with pidfile /var/run/tomcat-geoserver0.pid
     start program = "/etc/init.d/tomcat-geoserver0 start"
-    with uid tomcat8 gid tomcat8
+    as uid root and gid root
     stop program = "/etc/init.d/tomcat-geoserver0 stop"
-    with uid tomcat8 gid tomcat8
+    as uid root and gid root
 
     if totalmem > 80% then alert
 

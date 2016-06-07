@@ -227,3 +227,8 @@ non-interactive is enabled so using system property 'passphrase' as the privateK
 [INFO] Final Memory: 23M/377M
 [INFO] ------------------------------------------------------------------------
 ```
+
+# What's next ?
+
+You should first [check](doc/check.md) the webapps are working as expected.
+Once you've checked, there's a quick [post-deploy configuration step](doc/post-deploy_config.md) that is highly recommended.

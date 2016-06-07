@@ -490,15 +490,6 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Get a permalink": "Obtenir un permalien",
     "Permalink": "Permalien",
     "Share your map with this URL: ": "Partagez la carte avec l'adresse suivante : ",
-    "Edit in OSM": "Editer dans OSM",
-    "with JOSM": "avec JOSM",
-    "JOSM must be started with the remote control option": "Il vous faut " +
-        "auparavant lancer JOSM et activer le contrôle à distance",
-    "with iD": "avec iD",
-    "Recommended scale is 1:10.000": "Il est recommandé de travailler à des " +
-        "échelles proches de 1:10.000",
-    "with Potlatch2": "avec Potlatch2",
-    "with Walking Papers": "avec Walking Papers",
     /* GEOR_edit.js */
     "Req.": "Req.", // requis
     "Required": "Requis",
