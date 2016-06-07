@@ -30,6 +30,7 @@
  * @requires OpenLayers/Filter/Spatial.js
  * @include OpenLayers/Filter/Logical.js
  * @include OpenLayers/Format/Filter.js
+ * @include OpenLayers/Format/Filter/v2_0_0.js
  * @include OpenLayers/Format/XML.js
  // see https://github.com/georchestra/georchestra/issues/482 :
  * @include OpenLayers/Format/WKT.js
@@ -167,9 +168,7 @@ GEOR.Querier = Ext.extend(Ext.Window, {
                 }
             },
             attributes: this.attributeStore,
-            toolbarType: "bbar",
-            // maintaining a bbar,
-            // since noConditionOnInit has been set to false
+            toolbarType: "tbar",
             map: this.map,
             allowGroups: true,
             noConditionOnInit: false,
@@ -177,6 +176,8 @@ GEOR.Querier = Ext.extend(Ext.Window, {
             autoScroll: true,
             allowSpatial: true,
             bufferService: GEOR.config.PATHNAME + "/ws/buffer/",
+            saveFilterService: GEOR.config.PATHNAME + "/ws/fe/",
+            getFilterService: GEOR.config.PATHNAME + "/",
             stateProvider: Ext.state.Manager.getProvider(),
             vectorLayer: this.layer
         });
