@@ -1,9 +1,8 @@
 /*global
- Ext, GeoExt, OpenLayers, GEOR
+ Ext, OpenLayers, GEOR
  */
 Ext.namespace("GEOR.Addons");
 
-//Replace Template by a representative name
 GEOR.Addons.OsmEditors = Ext.extend(GEOR.Addons.Base, {
 
     /**
@@ -14,10 +13,6 @@ GEOR.Addons.OsmEditors = Ext.extend(GEOR.Addons.Base, {
      */
     init: function(record) {
 
-
-
-        this.map = GEOR.mappanel;
-
         if (this.target) {
             // create a button to be inserted in toolbar:
             this.components = this.target.insertButton(this.position, {
@@ -27,7 +22,7 @@ GEOR.Addons.OsmEditors = Ext.extend(GEOR.Addons.Base, {
                 plugins: [{
                     ptype: "menuqtips"
                 }],
-                menu: this._selectEditors(this.options),
+                menu: this._getMenu(this.options),
                 scope: this
             });
             this.target.doLayout();
@@ -42,16 +37,19 @@ GEOR.Addons.OsmEditors = Ext.extend(GEOR.Addons.Base, {
                 plugins: [{
                     ptype: "menuqtips"
                 }],
-                menu: this._selectEditors(this.options),
+                menu: this._getMenu(this.options),
                 scope: this
             });
         }
     },
 
-    _selectEditors: function(options) {
-        var editors = [];
-
-        var map = this.mapPanel.map;
+    /**
+     * Method: _getMenu
+     *
+     */
+    _getMenu: function(options) {
+        var items = [], editors = options.editors;
+        var map = this.map;
 
         /**
          * Method: editOSM
@@ -91,8 +89,8 @@ GEOR.Addons.OsmEditors = Ext.extend(GEOR.Addons.Base, {
             };
         };
 
-        if (options.editors.iD) {
-            editors.push({
+        if (editors.iD) {
+            items.push({
                 text: this.tr("with iD"),
                 qtip: this.tr("Recommended scale is 1:10.000"),
                 handler: editOSM.call(this, {
@@ -102,34 +100,30 @@ GEOR.Addons.OsmEditors = Ext.extend(GEOR.Addons.Base, {
             });
         }
 
-        if (options.editors.potlach) {
-            editors.push(
-                {
-                    text: this.tr("with Potlatch2"),
-                    qtip: this.tr("Recommended scale is 1:10.000"),
-                    handler: editOSM.call(this, {
-                        base: "http://www.openstreetmap.org/edit?editor=potlatch2&",
-                        protocol: "llz"
-                    })
-                }
-            );
+        if (editors.potlatch) {
+            items.push({
+                text: this.tr("with Potlatch2"),
+                qtip: this.tr("Recommended scale is 1:10.000"),
+                handler: editOSM.call(this, {
+                    base: "http://www.openstreetmap.org/edit?editor=potlatch2&",
+                    protocol: "llz"
+                })
+            });
         }
 
-        if (options.editors.JOSM) {
-            editors.push(
-                {
-                    text: this.tr("with JOSM"),
-                    qtip: this.tr("JOSM must be started with the remote control option"),
-                    handler: editOSM.call(this, {
-                        base: "http://127.0.0.1:8111/load_and_zoom?",
-                        protocol: "lbrt"
-                    })
-                }
-            );
+        if (editors.JOSM) {
+            items.push({
+                text: this.tr("with JOSM"),
+                qtip: this.tr("JOSM must be started with the remote control option"),
+                handler: editOSM.call(this, {
+                    base: "http://127.0.0.1:8111/load_and_zoom?",
+                    protocol: "lbrt"
+                })
+            });
         }
 
-        if (options.editors.WalkingPapers) {
-            editors.push({
+        if (editors.WalkingPapers) {
+            items.push({
                 text: this.tr("with Walking Papers"),
                 qtip: this.tr("Recommended scale is 1:10.000"),
                 handler: editOSM.call(this, {
@@ -139,14 +133,17 @@ GEOR.Addons.OsmEditors = Ext.extend(GEOR.Addons.Base, {
             });
         }
 
-        if (editors.length < 1) {
-            //TODO tr
-            GEOR.util.errorDialog("No editor available. Please review osmeditors configuration.")
+        if (items.length < 1) {
+            GEOR.util.errorDialog("No editor available. Please review the osmeditors addon config.");
         }
 
-        return editors;
+        return items;
     },
 
+    /**
+     * Method: tr
+     *
+     */
     tr: function(str) {
         return OpenLayers.i18n(str);
     },
@@ -156,8 +153,6 @@ GEOR.Addons.OsmEditors = Ext.extend(GEOR.Addons.Base, {
      *
      */
     destroy: function() {
-        //Place addon specific destroy here
-
         GEOR.Addons.Base.prototype.destroy.call(this);
     }
 });

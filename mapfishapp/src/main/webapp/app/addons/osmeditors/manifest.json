@@ -8,8 +8,8 @@
     "default_options": {
         "editors": {
             "iD": true,
-            "potlach": true,
-            "JOSM": false,
+            "potlatch": true,
+            "JOSM": true,
             "WalkingPapers": true
         }
     },
