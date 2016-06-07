@@ -82,7 +82,7 @@ This image will be used to transfer and store geodata files for geoserver.
 Through composition (docker-compose), those files will be available to all geoserver instances in `/var/local/geodata`. 
 
 
-These files can also be managed via SSH onto the `georchestra_geoserver_geodata_1`, eg with:
+These files can also be managed via SSH onto the `georchestra_geodata_1`, eg with:
 ```
 ssh -p 2222 geoserver@localhost 
 ```

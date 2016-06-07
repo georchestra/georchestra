@@ -33,7 +33,7 @@ webmail:
   volumes_from:
     - smtp:rw
 
-geoserver_geodata:
+geodata:
   image: georchestra/ssh_data
   ports:
     - "2222:22"
