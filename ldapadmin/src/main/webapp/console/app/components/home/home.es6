@@ -6,7 +6,7 @@ class HomeController {
 
   constructor($injector) {
 
-    const LOG_LIMIT = 10
+    const LOG_LIMIT = 15
     const PENDING   = 'PENDING'
     const EXPIRED   = 'TEMPORARY'
 

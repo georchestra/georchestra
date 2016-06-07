@@ -7,7 +7,7 @@ class LogsController {
   constructor($injector) {
 
     this.$injector = $injector
-    this.itemsPerPage = 5
+    this.itemsPerPage = 15
 
     let msg   = 'Error while loading data'
 

@@ -24,6 +24,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.naming.ldap.LdapName;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.security.authentication.encoding.LdapShaPasswordEncoder;
@@ -34,6 +35,8 @@ import ezvcard.parameter.TelephoneType;
 import ezvcard.property.Address;
 import ezvcard.property.FormattedName;
 import ezvcard.property.Organization;
+
+import javax.naming.InvalidNameException;
 
 /**
  * Account this is a Data transfer Object.
@@ -47,7 +50,6 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 	private static final long serialVersionUID = -8022496448991887664L;
 
 	// main data
-	private String dn;
 	private String uid; // uid
 
 	private String commonName; // cn: person's full name,  mandatory
@@ -313,16 +315,6 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 
 
 	@Override
-	public String getDn() {
-		return this.dn;
-	}
-
-	@Override
-	public void setDn(String dn) {
-		this.dn = dn;
-	}
-
-	@Override
 	public void setUid(String uid) {
 		this.uid = uid;
 	}
@@ -563,7 +555,14 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 
 	@Override
 	public void setManager(String manager) {
-		this.manager = manager;
+		if(manager != null) {
+			try {
+				LdapName dn = new LdapName(manager);
+				this.manager = dn.getRdn(dn.size() - 1).getValue().toString();
+			} catch (InvalidNameException e) {
+				this.manager = manager;
+			}
+		}
 	}
 	
 	@Override

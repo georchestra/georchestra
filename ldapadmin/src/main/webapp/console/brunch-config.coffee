@@ -24,6 +24,7 @@ module.exports = config:
           'vendor/dirPagination.js',
           'vendor/chartist.js',
           'vendor/inline.js',
+          'vendor/select2.full.js',
           'vendor/moment.min.js'
         ]
     stylesheets:
@@ -33,7 +34,8 @@ module.exports = config:
           'vendor/bootstrap.css',
           'vendor/bootstrap-datepicker3.css',
           'vendor/chartist.min.css',
-          'vendor/chosen.min.css'
+          'vendor/chosen.min.css',
+          'vendor/select2.css'
         ]
     templates:
       joinTo:

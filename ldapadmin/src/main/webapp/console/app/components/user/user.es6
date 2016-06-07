@@ -24,8 +24,6 @@ class UserController {
     this.tabs  = ['infos', 'groups', 'analytics', 'messages', 'logs', 'manage']
     this.tab   = $routeParams.tab
 
-    this.users = User.query()
-
     this.user = User.get({id : $routeParams.id}, (user) => {
       if (this.tab == 'messages') {
         this.messages = this.$injector.get('Email').query({id: this.user.uid})
@@ -35,6 +33,19 @@ class UserController {
     switch (this.tab) {
       case 'infos':
         this.contexts = $injector.get('Contexts').query()
+        let sel_users = []
+        User.query((users) => {
+          users.map((u) => {
+            let id = u.uid
+            sel_users.push({
+              id   : id,
+              text : (u.sn || '') + ' ' + (u.givenName || '')
+            })
+          })
+          $('.manager').select2({
+            data  : sel_users
+          })
+        })
         break;
       case 'groups':
         let notAdmin = [];
