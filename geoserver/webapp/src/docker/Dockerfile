@@ -15,8 +15,10 @@ ADD . /
 
 VOLUME [ "/var/local/geoserver", "/var/local/geodata", "/var/local/tiles" ]
 
-ENTRYPOINT [ "/docker-entrypoint.sh" ]
-CMD [ "java","-Djava.io.tmpdir=/tmp/jetty", "-Dgeorchestra.datadir=/etc/georchestra",                     \
-      "-DGEOSERVER_DATA_DIR=/var/local/geoserver", "-Dgeofence.dir=/etc/georchestra/geoserver/geofence", \
-      "-DGEOWEBCACHE_CACHE_DIR=/var/local/tiles", "-Xmx2048m", "-jar","/usr/local/jetty/start.jar" ]
+CMD ["sh", "-c", "exec java -Djava.io.tmpdir=/tmp/jetty -Dgeorchestra.datadir=/etc/georchestra \
+-DGEOSERVER_DATA_DIR=/var/local/geoserver \
+-Dgeofence.dir=/etc/georchestra/geoserver/geofence \
+-DGEOWEBCACHE_CACHE_DIR=/var/local/tiles \
+-Xmx$XMX -Xms$XMX \
+-jar /usr/local/jetty/start.jar" ]
 
