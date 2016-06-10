@@ -10,9 +10,7 @@ RUN apt-get update && \
 
 RUN ln -s /usr/share/java/gdal.jar /var/lib/jetty/lib/ext/
 
-
 VOLUME [ "/var/local/uploads" ]
 
-ENTRYPOINT [ "/docker-entrypoint.sh" ]
-CMD ["java","-Djava.io.tmpdir=/tmp/jetty", "-Dgeorchestra.datadir=/etc/georchestra","-jar","/usr/local/jetty/start.jar"]
+CMD ["sh", "-c", "exec java -Djava.io.tmpdir=/tmp/jetty -Dgeorchestra.datadir=/etc/georchestra -Xmx$XMX -Xms$XMX -jar /usr/local/jetty/start.jar"]
 
