@@ -1,0 +1,10 @@
+Hello,
+
+Your Atlas Job is now finished and available for downloading ; you can download
+it at the following URL:
+${exchangeProperty.baseUrl}/jobs/${jobId}
+
+Best regards,
+ 
+
+-- the geOrchestra Atlas printing system

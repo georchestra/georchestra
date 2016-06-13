@@ -38,6 +38,8 @@
     
     <bean id="specAsPdf" class="org.georchestra.atlas.CamelMapfishPrintComponent" init-method="init" />
 
+    <bean id="prepareMail" class="org.georchestra.atlas.AtlasMailComponent" init-method="init" />
+
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource"></property>
     </bean>
@@ -91,10 +93,15 @@
 		<!-- route which receives the posted data from the rest endpoint /print defined above -->
         <route id="save_print_request">
             <from uri="direct:save_print_request"/>
+        	<to uri="bean:prepareMail"/>
             <log message="Email from requesting user : ${header['sec-email']}" loggingLevel="INFO"/>
 			<setProperty propertyName="requestingUserEmail">
                 <simple>header['sec-email']</simple>
             </setProperty>
+			<setProperty propertyName="baseUrl">
+                <simple>header['sec-email']</simple>
+            </setProperty>
+            
             <to uri="direct:checkArgs"/>
             <!-- store in DB queue -->
             <to uri="jpa:org.georchestra.atlas.AtlasJob?persistenceUnit=myPU"/>
@@ -246,20 +253,8 @@
             <script>
                 <groovy>request.body.setState(org.georchestra.atlas.AtlasJobState.DONE)</groovy>
             </script>
-			<!-- Send a mail once done (TODO: use a bean instead ? so that it is possible to manage templates ...) -->
-			<transform>
-				<simple>Bonjour,
-
-Votre impression est dorénavant terminée ; elle est disponible à l'addresse:
-${exchangeProperty.baseUrl}/jobs/${body.id}.
-
-
-Bien cordialement,
-
--- Pierre Mauduit
-				</simple>
-			</transform>
-			<to uri="smtp://localhost?to%3Dpierre.mauduit%40camptocamp.com%26from%3Dnoreply%40camptocamp.com%26subject%3DAtlas%20-%20Votre%20demande%20de%20cr%C3%A9ation"></to>
+			<to uri="bean:prepareMail"/>
+			<to uri="smtp://localhost:1025?to%3Dpierre.mauduit%40camptocamp.com%26from%3Dnoreply%40camptocamp.com%26subject%3DAtlas%20-%20Votre%20demande%20de%20cr%C3%A9ation"></to>
         </route>
     </camelContext>
 </beans>
