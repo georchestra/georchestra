@@ -17,8 +17,8 @@ public class AtlasMailComponentTest {
     }
     @Test
     public void testPrepareMail() {
-        String ret = amc.formatMail(3L, "pmt@camptocamp.org");
-        
+        String ret = amc.formatMail(3L);
+
         assertTrue("Missing patterns in the mail", ret.contains("http://localhost:8080/jobs/3"));
     }
 }

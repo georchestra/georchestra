@@ -13,6 +13,7 @@ import org.apache.camel.Handler;
 import org.apache.camel.converter.stream.InputStreamCache;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
+import org.bouncycastle.jce.exception.ExtCertificateEncodingException;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,7 +32,10 @@ public class AtlasMailComponent {
     private String successTemplatePath;
     
     private String georBaseUrl = "http://localhost:8080";
+    
+    private String emailFrom = "noreply+atlas@georchestra.org";
 
+    private String emailSubject = "[geOrchestra] Your Atlas request";
     
     @Autowired
     private GeorchestraConfiguration georConfiguration ;
@@ -44,7 +48,8 @@ public class AtlasMailComponent {
             vProp.setProperty("resource.loader", "file");
         }
         else {
-            // templates are considered nested in the webapp
+            // templates are considered nested in the webapp,
+            // using a classpath resource loader
             vProp.setProperty("resource.loader", "class");            
             vProp.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader ");
             successTemplatePath = "emails/finished.vm";
@@ -67,11 +72,18 @@ public class AtlasMailComponent {
     @Handler
     public void prepareMail(Exchange ex) throws JSONException {
         log.debug("into AtlasMailComponent");
-        Velocity.getTemplate(successTemplatePath, "UTF-8");
+
         AtlasJob j = ex.getIn().getBody(AtlasJob.class);
         Long jobId = j.getId();
         JSONObject query = new JSONObject(j.getQuery());
         String email = query.getString("email");
+
+        String mailBody = this.formatMail(jobId);
+        ex.getOut().setHeader("from", this.emailFrom);
+        ex.getOut().setHeader("subject", this.emailSubject);
+        ex.getOut().setHeader("to", email);
+        
+        ex.getOut().setBody(mailBody);
     }
     
     /**
@@ -80,11 +92,10 @@ public class AtlasMailComponent {
      * "velocity-based example"
      *
      * @param jobId
-     * @param emailAddress
      * @return
      */
     @VisibleForTesting
-    public String formatMail(Long jobId, String emailAddress) {
+    public String formatMail(Long jobId) {
         String mail = null;
         Map<String, Object> model = new HashMap<String, Object>();
         model.put("jobId",jobId);
@@ -95,4 +106,16 @@ public class AtlasMailComponent {
         
         return mail;
     }
+    public void setGeorBaseUrl(String georBaseUrl) {
+        this.georBaseUrl = georBaseUrl;
+    }
+
+    public void setEmailFrom(String emailFrom) {
+        this.emailFrom = emailFrom;
+    }
+
+    public void setEmailSubject(String emailSubject) {
+        this.emailSubject = emailSubject;
+    }
+
 }

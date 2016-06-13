@@ -20,6 +20,7 @@
 	<context:property-placeholder
 		location="file:${georchestra.datadir}/atlas/atlas.properties"
 		ignore-resource-not-found="true" ignore-unresolvable="true" order="1" />
+
 	<context:property-placeholder location="classpath:atlas.properties"
 		ignore-resource-not-found="true" ignore-unresolvable="true" order="2" />
 
@@ -33,12 +34,16 @@
     </bean>
 
     <bean id="populateProperties" class="org.georchestra.atlas.CamelPopulatePropertiesComponent">
-     <property name="baseUrl" value="${atlas.baseUrl}"/>
-     </bean>
+        <property name="baseUrl" value="${atlas.baseUrl}"/>
+    </bean>
     
     <bean id="specAsPdf" class="org.georchestra.atlas.CamelMapfishPrintComponent" init-method="init" />
 
-    <bean id="prepareMail" class="org.georchestra.atlas.AtlasMailComponent" init-method="init" />
+    <bean id="prepareMail" class="org.georchestra.atlas.AtlasMailComponent" init-method="init">
+        <property name="georBaseUrl" value="${atlas.baseUrl}" />
+        <property name="emailFrom" value="${atlas.emailFrom}" />
+        <property name="emailSubject" value="${atlas.emailSubject}" />
+    </bean>
 
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource"></property>
@@ -253,8 +258,10 @@
             <script>
                 <groovy>request.body.setState(org.georchestra.atlas.AtlasJobState.DONE)</groovy>
             </script>
-			<to uri="bean:prepareMail"/>
-			<to uri="smtp://localhost:1025?to%3Dpierre.mauduit%40camptocamp.com%26from%3Dnoreply%40camptocamp.com%26subject%3DAtlas%20-%20Votre%20demande%20de%20cr%C3%A9ation"></to>
+            <!-- Sets all the necessary properties to send a mail, see AtlasMailComponent Java class -->
+			<to uri="bean:prepareMail" />
+			<!-- Actually send the mail -->
+			<to uri="smtp://localhost:1025" />
         </route>
     </camelContext>
 </beans>
