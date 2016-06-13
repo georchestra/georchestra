@@ -257,9 +257,16 @@
             <version>9.4-1205-jdbc4</version>
         </dependency>
         <dependency>
-          <groupId>com.itextpdf</groupId>
-          <artifactId>itextpdf</artifactId>
-          <version>5.5.9</version>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itextpdf</artifactId>
+            <version>5.5.9</version>
+        </dependency>
+        <!-- Test scope -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
         </dependency>
       </dependencies>
       <repositories>
