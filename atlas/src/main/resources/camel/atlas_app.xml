@@ -66,7 +66,10 @@
                 <prop key="hibernate.hbm2ddl.auto">update</prop>
             </props>
         </property>
+    </bean>
 
+    <bean id="georchestraConfiguration" class="org.georchestra.commons.configuration.GeorchestraConfiguration">
+        <constructor-arg value="atlasapp" />
     </bean>
 
     <!-- A context component that has some utility components to handle typical tasks -->
