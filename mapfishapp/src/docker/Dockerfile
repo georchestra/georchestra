@@ -12,5 +12,5 @@ RUN ln -s /usr/share/java/gdal.jar /var/lib/jetty/lib/ext/
 
 VOLUME [ "/var/local/uploads" ]
 
-CMD ["sh", "-c", "exec java -Djava.io.tmpdir=/tmp/jetty -Dgeorchestra.datadir=/etc/georchestra -Xmx$XMX -Xms$XMX -jar /usr/local/jetty/start.jar"]
+CMD ["sh", "-c", "exec java -Djava.io.tmpdir=/tmp/jetty -Dgeorchestra.datadir=/etc/georchestra -Dmapfish-print-config=/etc/georchestra/mapfishapp/print/config.yaml -Xmx$XMX -Xms$XMX -jar /usr/local/jetty/start.jar"]
 
