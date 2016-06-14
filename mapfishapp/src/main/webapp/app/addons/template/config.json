@@ -1,7 +1,7 @@
 [
     {
         "id": "template_0",
-        "enabled": true,
+        "enabled": false,
         "name": "Template",
         "options": {
             "target": "tbar_3",
