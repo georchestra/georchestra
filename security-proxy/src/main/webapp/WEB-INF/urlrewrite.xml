@@ -44,8 +44,11 @@
         <to type="forward" last="true">/$1</to>
     </rule>
     <rule>
+        <from>^/([a-zA-Z0-9]+)$</from>
+        <to type="redirect" last="true">/$1/</to>
+    </rule>
+    <rule>
         <from>^/(?!sec/|favicon.ico|receptor|j_spring_security_logout|j_spring_cas_security_check|header.jsp|_static/|cas-logout.jsp|403.jsp|404.jsp|casfailed.jsp)(.*)$</from>
         <to type="forward" last="true">/sec/$1</to>
     </rule>
-
 </urlrewrite>
