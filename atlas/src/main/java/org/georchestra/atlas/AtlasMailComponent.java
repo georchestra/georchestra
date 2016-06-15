@@ -11,9 +11,7 @@ import java.util.Properties;
 import org.apache.camel.Exchange;
 import org.apache.camel.Handler;
 import org.apache.camel.converter.stream.InputStreamCache;
-import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
-import org.bouncycastle.jce.exception.ExtCertificateEncodingException;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,16 +34,19 @@ public class AtlasMailComponent {
     private String emailFrom = "noreply+atlas@georchestra.org";
 
     private String emailSubject = "[geOrchestra] Your Atlas request";
-    
+
+
     @Autowired
     private GeorchestraConfiguration georConfiguration ;
 
     public void init() {
         Properties vProp = new Properties();
         if ((georConfiguration != null) && (georConfiguration.activated())) {
-            successTemplatePath = georConfiguration.getContextDataDir() +
-                    File.separator + "emails" + File.separator;
             vProp.setProperty("resource.loader", "file");
+            vProp.setProperty("file.resource.loader.class", "org.apache.velocity.runtime.resource.loader.FileResourceLoader");
+            vProp.setProperty("file.resource.loader.path", georConfiguration.getContextDataDir() +
+                    File.separator + "emails");
+            successTemplatePath = "finished.vm";
         }
         else {
             // templates are considered nested in the webapp,
@@ -71,8 +72,6 @@ public class AtlasMailComponent {
     
     @Handler
     public void prepareMail(Exchange ex) throws JSONException {
-        log.debug("into AtlasMailComponent");
-
         AtlasJob j = ex.getIn().getBody(AtlasJob.class);
         Long jobId = j.getId();
         JSONObject query = new JSONObject(j.getQuery());
@@ -82,7 +81,9 @@ public class AtlasMailComponent {
         ex.getOut().setHeader("from", this.emailFrom);
         ex.getOut().setHeader("subject", this.emailSubject);
         ex.getOut().setHeader("to", email);
+        ex.getOut().setHeader("Content-Type", "text/plain; charset=utf-8");
         
+
         ex.getOut().setBody(mailBody);
     }
     
@@ -102,20 +103,17 @@ public class AtlasMailComponent {
         model.put("baseUrl", this.georBaseUrl);
         
         mail = VelocityEngineUtils.mergeTemplateIntoString(this.velocityEngine,
-                this.successTemplatePath, model);
+                this.successTemplatePath, "UTF-8", model);
         
         return mail;
     }
     public void setGeorBaseUrl(String georBaseUrl) {
         this.georBaseUrl = georBaseUrl;
     }
-
     public void setEmailFrom(String emailFrom) {
         this.emailFrom = emailFrom;
     }
-
     public void setEmailSubject(String emailSubject) {
         this.emailSubject = emailSubject;
     }
-
 }

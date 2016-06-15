@@ -69,13 +69,17 @@
     </bean>
 
     <bean id="georchestraConfiguration" class="org.georchestra.commons.configuration.GeorchestraConfiguration">
-        <constructor-arg value="atlasapp" />
+        <constructor-arg value="atlas" />
     </bean>
 
     <!-- A context component that has some utility components to handle typical tasks -->
     <camelContext id="atlas" xmlns="http://camel.apache.org/schema/spring"
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   streamCache="true">
+
+		<!-- TODO order ? -->
+  		<propertyPlaceholder id="properties" location="classpath:atlas.properties,file:${georchestra.datadir}/atlas/atlas.properties" 
+  		ignoreMissingLocation="true" />
 
         <dataFormats>
             <json id="gson" library="Gson" />
@@ -101,7 +105,6 @@
 		<!-- route which receives the posted data from the rest endpoint /print defined above -->
         <route id="save_print_request">
             <from uri="direct:save_print_request"/>
-        	<to uri="bean:prepareMail"/>
             <log message="Email from requesting user : ${header['sec-email']}" loggingLevel="INFO"/>
 			<setProperty propertyName="requestingUserEmail">
                 <simple>header['sec-email']</simple>
@@ -264,7 +267,7 @@
             <!-- Sets all the necessary properties to send a mail, see AtlasMailComponent Java class -->
 			<to uri="bean:prepareMail" />
 			<!-- Actually send the mail -->
-			<to uri="smtp://localhost:1025" />
+			<to uri="smtp://{{smtpHost}}:{{smtpPort}}/" />
         </route>
     </camelContext>
 </beans>
