@@ -13,7 +13,8 @@
                            http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.5.xsd
                            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
                            http://camel.apache.org/schema/spring
-                           http://camel.apache.org/schema/spring/camel-spring-2.16.1.xsd http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+                           http://camel.apache.org/schema/spring/camel-spring-2.16.1.xsd
+                           http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
 
     <context:annotation-config/>
 
@@ -45,10 +46,13 @@
         <property name="emailSubject" value="${atlas.emailSubject}" />
     </bean>
 
-    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="dataSource"></property>
+    <bean id="bundlePdf" class="org.georchestra.atlas.BundlePdfComponent" init-method="init">
+        <property name="tempDir" value="${atlas.temporaryDirectory}" />
     </bean>
 
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
 
     <bean id="jpa" class="org.apache.camel.component.jpa.JpaComponent">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
@@ -226,25 +230,20 @@
                 <log message="print request : ${body}" loggingLevel="INFO"/>
 				<!-- Wires to the bean which will actually call the MF Print -->
                 <to uri="bean:specAsPdf"/>
+
                 <!-- Saves the file onto the disk -->
+                <!-- TODO {{atlas.temporaryDirectory}} -->
+
                 <to uri="file://?fileName=/tmp/tmp/${property.jobId}/${property.CamelSplitIndex}.pdf"/>
                 <log message="${property.jobId} / ${property.CamelSplitIndex} Done !" loggingLevel="INFO"/>
             </split>
-            <setHeader headerName="CamelExecCommandWorkingDir">
-                <simple>/tmp/tmp/${property.jobId}</simple>
-            </setHeader>
-            <!-- Clean STDIN before launching scripts -->
-            <transform>
-                <constant/>
-            </transform>
-			<!-- TODO: port to itext to join the files -->
             <choice>
                     <when>
                         <simple>${exchangeProperty.outputFormat} == "pdf"</simple>
-                        <to uri="exec:/bin/sh?useStderrOnEmptyStdout=true&amp;args=-c &quot;/usr/bin/pdfjoin --outfile /proc/self/fd/1 *.pdf&quot;"/>
+                        <to uri="bean:bundlePdf?method=pdfMerge" />
                     </when>
                     <otherwise>
-                        <to uri="exec:/bin/sh?useStderrOnEmptyStdout=true&amp;args=-c &quot;/usr/bin/zip - *.pdf&quot;"/>
+                        <to uri="bean:bundlePdf?method=pdfZip" />
                     </otherwise>
             </choice>
             <choice>

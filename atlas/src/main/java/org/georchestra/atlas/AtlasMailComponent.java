@@ -52,24 +52,12 @@ public class AtlasMailComponent {
             // templates are considered nested in the webapp,
             // using a classpath resource loader
             vProp.setProperty("resource.loader", "class");            
-            vProp.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader ");
+            vProp.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
             successTemplatePath = "emails/finished.vm";
         }
         this.velocityEngine = new VelocityEngine(vProp);
     }
 
-    private String toString(InputStreamCache property) throws IOException {
-
-        property.reset();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(property));
-
-        StringBuilder rawString = new StringBuilder();
-        String line;
-        while((line = reader.readLine()) != null)
-            rawString.append(line);
-        return rawString.toString();
-    }
-    
     @Handler
     public void prepareMail(Exchange ex) throws JSONException {
         AtlasJob j = ex.getIn().getBody(AtlasJob.class);
