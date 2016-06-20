@@ -188,7 +188,7 @@
                         <transform>
                             <simple>
                                 { "layout": "${exchangeProperty.layout}",
-                                  "outputFormat": "${exchangeProperty.outputFormat}",
+                                  "outputFormat": "pdf",
                                   "attributes": {
                                     "title": "${body[title]}",
                                     "subtitle": "${body[subtitle]}",
@@ -210,7 +210,7 @@
                             <simple>
 	                            {
 								   "layout" : "${exchangeProperty.layout}",
-								   "outputFormat" : "${exchangeProperty.outputFormat}",
+								   "outputFormat" : "pdf",
 								   "attributes" : {
 								      "map" : {
 								         "layers" : ${exchangeProperty.layers},
@@ -234,7 +234,7 @@
                 <!-- Saves the file onto the disk -->
                 <!-- TODO {{atlas.temporaryDirectory}} -->
 
-                <to uri="file://?fileName=/tmp/tmp/${property.jobId}/${property.CamelSplitIndex}.pdf"/>
+                <to uri="file://?fileName=/{{atlas.temporaryDirectory}}/${property.jobId}/${property.CamelSplitIndex}.pdf"/>
                 <log message="${property.jobId} / ${property.CamelSplitIndex} Done !" loggingLevel="INFO"/>
             </split>
             <choice>
@@ -246,16 +246,10 @@
                         <to uri="bean:bundlePdf?method=pdfZip" />
                     </otherwise>
             </choice>
-            <choice>
-                <when>
-                    <simple>${body.exitValue} != 0</simple>
-                    <to uri="log:zip?level=ERROR"/>
-                    <throwException message="Failed to zip the files" exceptionType="java.lang.RuntimeException"/>
-                </when>
-                <otherwise>
-                    <to uri="file://?fileName=/tmp/output/${property.outputFilename}"/>
-                </otherwise>
-            </choice>
+
+			<!--  dumps the PDF to a file -->
+            <to uri="file://?fileName=/{{atlas.temporaryDirectory}}/${property.jobId}/${property.outputFilename}"/>
+
             <transform>
                 <simple>${property.originalObject}</simple>
             </transform>

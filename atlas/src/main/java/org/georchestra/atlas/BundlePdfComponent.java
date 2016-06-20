@@ -21,6 +21,7 @@ import org.apache.commons.io.comparator.NameFileComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfCopy;
@@ -38,8 +39,48 @@ public class BundlePdfComponent {
     
     @Handler
     public void pdfMerge(Exchange ex) throws Exception {
+        Long jobId = (Long) ex.getProperty("jobId");
+        Document document = new Document();
+        ByteArrayOutputStream bsDoc = new ByteArrayOutputStream();
+        
+        List<File> pdfs = getFiles(jobId);
+        PdfCopy cop = new PdfCopy(document, bsDoc);
+
+        document.open();
+        for (File pdf : pdfs) {
+            PdfReader reader = new PdfReader(pdf.getAbsolutePath());
+            int n = reader.getNumberOfPages();
+            for (int page = 0; page < n;) {
+                cop.addPage(cop.getImportedPage(reader, ++page));
+            }
+            cop.freeReader(reader);
+            reader.close();
+        }
+        document.close();
+        ex.getOut().setBody(bsDoc.toByteArray());
+    }
+
+    @Handler
+    public void pdfZip(Exchange ex) throws IOException {
         AtlasJob j = ex.getIn().getBody(AtlasJob.class);
-        Long jobId = j.getId();
+        Long jobId = (Long) ex.getProperty("jobId");
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ZipOutputStream zip = new ZipOutputStream(out);
+        List<File> files = getFiles(jobId);
+        for (File file : files) {
+                ZipEntry e = new ZipEntry(FilenameUtils.getName(file.getAbsolutePath()));
+                zip.putNextEntry(e);
+                FileInputStream in = new FileInputStream(file);
+                IOUtils.copy(in, zip);
+                IOUtils.closeQuietly(in);
+        }
+        IOUtils.closeQuietly(zip);
+        ex.getOut().setBody(out.toByteArray());
+    }
+
+    @VisibleForTesting
+    public List<File> getFiles(Long jobId) {
         Iterator<File> pdfs = FileUtils.iterateFiles(new File(this.tempDir,  "" + jobId),
                 new String[] { "pdf" }, false);
         
@@ -48,46 +89,7 @@ public class BundlePdfComponent {
             pdfsList.add(pdfs.next());
         }
         Collections.sort(pdfsList, NameFileComparator.NAME_COMPARATOR);
-        Document document = new Document();
-        PdfCopy cop = new PdfCopy(document, new ByteArrayOutputStream());
-        document.open();
-     for (File pdf : pdfsList) {
-         PdfReader reader = new PdfReader(pdf.getAbsolutePath());
-         int n = reader.getNumberOfPages();
-         for (int page = 0; page < n; ) {
-             cop.addPage(cop.getImportedPage(reader, ++page));
-         }
-         cop.freeReader(reader);
-         reader.close();
-     }
-     document.close();
-     // TODO: save doc somewhere ? add it to the exchange output ?
-
-    }
-    
-    @Handler
-    public void pdfZip(Exchange ex) throws IOException {
-        // TODO refactor (DRY)
-        AtlasJob j = ex.getIn().getBody(AtlasJob.class);
-        Long jobId = j.getId();
-        Iterator<File> pdfs = FileUtils.iterateFiles(new File(this.tempDir,  "" + jobId),
-                new String[] { "pdf" }, false);
-        
-        List<File> pdfsList = new ArrayList<File>();
-        while (pdfs.hasNext()) {
-            pdfsList.add(pdfs.next());
-        }
-
-        ZipOutputStream zip = new ZipOutputStream(new ByteArrayOutputStream());
-        for (File file : pdfsList) {
-                ZipEntry e = new ZipEntry(FilenameUtils.getName(file.getAbsolutePath()));
-                zip.putNextEntry(e);
-                FileInputStream in = new FileInputStream(file);
-                IOUtils.copy(in, zip);
-                IOUtils.closeQuietly(in);
-        }
-        IOUtils.closeQuietly(zip);
-        // TODO ?? same
+        return pdfsList;
     }
 
     public void setTempDir(String tempDir) {
