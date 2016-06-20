@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -46,7 +47,7 @@ public class BundlePdfComponent {
         while (pdfs.hasNext()) {
             pdfsList.add(pdfs.next());
         }
-        pdfsList.sort(NameFileComparator.NAME_COMPARATOR);
+        Collections.sort(pdfsList, NameFileComparator.NAME_COMPARATOR);
         Document document = new Document();
         PdfCopy cop = new PdfCopy(document, new ByteArrayOutputStream());
         document.open();
