@@ -18,6 +18,8 @@
 
     <context:annotation-config/>
 
+	<jpa:repositories base-package="org.georchestra.atlas.repository" />
+
 	<context:property-placeholder
 		location="file:${georchestra.datadir}/atlas/atlas.properties"
 		ignore-resource-not-found="true" ignore-unresolvable="true" order="1" />
@@ -49,6 +51,10 @@
     <bean id="bundlePdf" class="org.georchestra.atlas.BundlePdfComponent" init-method="init">
         <property name="tempDir" value="${atlas.temporaryDirectory}" />
     </bean>
+
+    <bean id="jobController" class="org.georchestra.atlas.JobController" init-method="init">
+        <property name="tempDir" value="${atlas.temporaryDirectory}" />
+    </bean>    
 
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource" />
@@ -145,6 +151,9 @@
             </script>
             <setProperty propertyName="jobId">
                 <simple>${body.id}</simple>
+            </setProperty>
+            <setProperty propertyName="token">
+                <simple>${body.token}</simple>
             </setProperty>
             <!-- Store job as object -->
             <setProperty propertyName="originalObject">
@@ -247,8 +256,8 @@
                     </otherwise>
             </choice>
 
-			<!--  dumps the PDF to a file -->
-            <to uri="file://?fileName=/{{atlas.temporaryDirectory}}/${property.jobId}/${property.outputFilename}"/>
+			<!--  dumps the PDF / ZIP to a file -->
+            <to uri="file://?fileName=/{{atlas.temporaryDirectory}}/${property.jobId}/${property.token}.${property.outputFormat}"/>
 
             <transform>
                 <simple>${property.originalObject}</simple>

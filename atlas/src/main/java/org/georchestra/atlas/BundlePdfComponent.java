@@ -40,6 +40,7 @@ public class BundlePdfComponent {
     @Handler
     public void pdfMerge(Exchange ex) throws Exception {
         Long jobId = (Long) ex.getProperty("jobId");
+        ex.setProperty("extension", "pdf");
         Document document = new Document();
         ByteArrayOutputStream bsDoc = new ByteArrayOutputStream();
         
@@ -64,6 +65,7 @@ public class BundlePdfComponent {
     public void pdfZip(Exchange ex) throws IOException {
         AtlasJob j = ex.getIn().getBody(AtlasJob.class);
         Long jobId = (Long) ex.getProperty("jobId");
+        ex.setProperty("extension", "zip");
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ZipOutputStream zip = new ZipOutputStream(out);

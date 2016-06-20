@@ -14,6 +14,7 @@
         <camel.version>2.16.1</camel.version>
         <geotools.version>11.0</geotools.version>
         <spring.version>4.1.8.RELEASE</spring.version>
+        <spring.data.version>1.9.1.RELEASE</spring.data.version>
     </properties>
     <dependencies>
         <!-- Camel dependencies -->
@@ -229,8 +230,13 @@
             <groupId>org.apache.velocity</groupId>
             <artifactId>velocity</artifactId>
             <version>1.7</version>
-        </dependency>
-        <dependency>
+          </dependency>
+          <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+            <version>${spring.data.version}</version>
+          </dependency>
+          <dependency>
             <groupId>org.georchestra</groupId>
             <artifactId>georchestra-commons</artifactId>
             <version>${project.parent.version}</version>
@@ -240,7 +246,7 @@
             <artifactId>json</artifactId>
             <version>20080701</version>
         </dependency>
-       <dependency>
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
             <version>3.0-alpha-1</version>
@@ -260,14 +266,14 @@
             <groupId>com.itextpdf</groupId>
             <artifactId>itextpdf</artifactId>
             <version>5.5.9</version>
-        </dependency>
-        <!-- Test scope -->
-        <dependency>
+          </dependency>
+          <!-- Test scope -->
+          <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
             <scope>test</scope>
-        </dependency>
+          </dependency>
       </dependencies>
       <repositories>
       <repository>

@@ -13,6 +13,7 @@ import org.apache.camel.Handler;
 import org.apache.camel.converter.stream.InputStreamCache;
 import org.apache.velocity.app.VelocityEngine;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
+import org.jfree.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -61,40 +62,50 @@ public class AtlasMailComponent {
     @Handler
     public void prepareMail(Exchange ex) throws JSONException {
         AtlasJob j = ex.getIn().getBody(AtlasJob.class);
-        Long jobId = j.getId();
         JSONObject query = new JSONObject(j.getQuery());
         String email = query.getString("email");
 
-        String mailBody = this.formatMail(jobId);
+        String mailBody = this.formatMail(j);
         ex.getOut().setHeader("from", this.emailFrom);
         ex.getOut().setHeader("subject", this.emailSubject);
         ex.getOut().setHeader("to", email);
         ex.getOut().setHeader("Content-Type", "text/plain; charset=utf-8");
-        
 
         ex.getOut().setBody(mailBody);
     }
     
     /**
-     * TODO: see:
-     * http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mail.html
-     * "velocity-based example"
+     * Loads the default template e-mail for finished jobs and replaces
+     * the variables nested into it with the appropriate values.
+     * 
+     * The e-mail is supposed to be UTF-8 encoded.
      *
      * @param jobId
-     * @return
+     * @return string the formatted e-mail
      */
     @VisibleForTesting
-    public String formatMail(Long jobId) {
+    public String formatMail(AtlasJob job) {
         String mail = null;
         Map<String, Object> model = new HashMap<String, Object>();
-        model.put("jobId",jobId);
+        model.put("jobId", job.getId());
         model.put("baseUrl", this.georBaseUrl);
+        model.put("token", job.getToken());
+        String outputFormat = "pdf";
+
+        try {
+            outputFormat = job.getOutputFormat();
+        } catch (JSONException e) {
+            Log.error("unable to parse the outputformat of the Job " + job, e);
+        }
+
+        model.put("extension", outputFormat);
         
         mail = VelocityEngineUtils.mergeTemplateIntoString(this.velocityEngine,
                 this.successTemplatePath, "UTF-8", model);
         
         return mail;
     }
+
     public void setGeorBaseUrl(String georBaseUrl) {
         this.georBaseUrl = georBaseUrl;
     }
