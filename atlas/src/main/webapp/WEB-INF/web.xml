@@ -32,18 +32,11 @@
         <servlet-class>org.apache.camel.component.servlet.CamelHttpTransportServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
-    <servlet>
-		<servlet-name>SpringDispatcher</servlet-name>
-		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-	</servlet>
+
     <servlet-mapping>
         <servlet-name>CamelServlet</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>SpringDispatcher</servlet-name>
-        <url-pattern>/jobs/*</url-pattern>
-    </servlet-mapping>
+
 </web-app>
 

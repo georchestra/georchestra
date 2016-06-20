@@ -124,7 +124,7 @@ public class AtlasJob {
      */
     public String getFileName() throws JSONException {
         JSONObject spec = new JSONObject(this.query);
-        return spec.getString("filename");
+        return spec.getString("outputFilename");
     }
     /**
      * This is a convenient method to retrieve the format of the atlas job (PDF

@@ -100,6 +100,15 @@
             <dataFormatProperty key="prettyPrint" value="true"/>
         </restConfiguration>
 
+        <rest>
+            <get uri="/jobs/{jobId}/{token}/{ext}">
+            <param name="jobId" type="path" description="the id of the job to get" dataType="long"/>
+            <param name="token" type="path" description="The token related to the job" dataType="string"/>
+            <param name="ext"   type="path" description="The expected extension (pdf or zip)" dataType="string"/>            
+                <to uri="bean:jobController" />
+            </get>
+        </rest>
+
         <!--
         Route for requesting Mapfish Print to generate a PDF.
         Inputs:
