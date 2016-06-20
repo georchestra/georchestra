@@ -636,7 +636,8 @@ GEOR.managelayers = (function() {
                 layerRecord.hasEquivalentWCS() : false,
             isVector = layer instanceof OpenLayers.Layer.Vector,
             isBaseLayer = layerRecord.get("opaque") || 
-                layer.transitionEffect === "resize";
+                layer.transitionEffect === "resize",
+            isSingleTile = layer.options.singleTile;
 
         var menuItems = [], sepInserted, item;
 
@@ -839,6 +840,19 @@ GEOR.managelayers = (function() {
                         "map-resize" : "resize";
                     store.remove(layerRecord);
                     store.addSorted(layerRecord);
+                }
+            });
+        }
+        
+        if (isWMS) {
+            menuItems.push({
+                text: isSingleTile ? 
+                    tr("Deactivate SingleTile") : tr("Activate SingleTile"),
+                handler: function() {
+                    layerRecord.get('layer').addOptions({singleTile: !isSingleTile});
+                    layerRecord.get('layer').redraw(true);
+                    isSingleTile = !isSingleTile;
+                    this.setText(isSingleTile ? tr("Deactivate SingleTile") : tr("Activate SingleTile"));
                 }
             });
         }
