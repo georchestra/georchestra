@@ -17,8 +17,13 @@ public class AtlasMailComponentTest {
     }
     @Test
     public void testPrepareMail() {
-        String ret = amc.formatMail(3L);
+        AtlasJob j = new AtlasJob();
+        j.setId(3L);
+        j.setToken("594aa148-a4fe-45c7-a5a8-14baeac9661e");
+        j.setQuery("{ outputFormat: \"zip\" }");
+        String ret = amc.formatMail(j);
 
-        assertTrue("Missing patterns in the mail", ret.contains("http://localhost:8080/jobs/3"));
+        assertTrue("Wrong patterns in the mail (bad generated document URL)",
+                ret.contains("http://localhost:8080/jobs/3/594aa148-a4fe-45c7-a5a8-14baeac9661e/zip"));
     }
 }

@@ -3,7 +3,7 @@ Hello,
 Your Atlas Job is now finished and available for downloading ; you can download
 it at the following URL:
 
-${baseUrl}/jobs/${jobId}
+${baseUrl}/jobs/${jobId}/${token}/${extension}
 
 Best regards,
 

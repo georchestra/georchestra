@@ -40,7 +40,7 @@ public class JobController {
 
         File jobDir = new File(tempDir, jobId + "");
 
-        if ("zip".equalsIgnoreCase(ext) && "pdf".equalsIgnoreCase(ext)) {
+        if (! "zip".equalsIgnoreCase(ext) && ! "pdf".equalsIgnoreCase(ext)) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
