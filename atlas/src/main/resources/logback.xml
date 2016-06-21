@@ -8,14 +8,12 @@
         </encoder>
     </appender>
 
-    <logger name="ch.geoacorda" level="DEBUG" />
-    <logger name="org.mapfish" level="DEBUG" />
-    <logger name="ch.thus.camel.retry" level="DEBUG" />
+    <logger name="org.mapfish" level="WARN" />
+    <logger name="ch.thus.camel.retry" level="WARN" />
     <logger name="org.springframework" level="ERROR" />
     <logger name="org.hibernate" level="WARN" />
     <logger name="com.mchange" level="WARN" />
     <logger name="org.apache" level="WARN" />
-    <logger name="com.amazonaws" level="WARN" />
     <logger name="org.apache.camel" level="WARN" />
 
     <root level="ALL">

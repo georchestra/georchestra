@@ -1,23 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ Copyright (C) 2014  Camptocamp
-  ~
-  ~ This file is part of MapFish Batch
-  ~
-  ~ MapFish Batch is free software: you can redistribute it and/or modify
-  ~ it under the terms of the GNU General Public License as published by
-  ~ the Free Software Foundation, either version 3 of the License, or
-  ~ (at your option) any later version.
-  ~
-  ~ MapFish Batch is distributed in the hope that it will be useful,
-  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~ GNU General Public License for more details.
-  ~
-  ~ You should have received a copy of the GNU General Public License
-  ~ along with MapFish Patch.  If not, see <http://www.gnu.org/licenses/>.
-  -->
-
 <configuration>
 
     <appender name="standardOut" class="ch.qos.logback.core.ConsoleAppender">
@@ -41,14 +22,12 @@
         </encoder>
     </appender>
 
-    <logger name="ch.geoacorda" level="DEBUG" />
-    <logger name="org.mapfish" level="DEBUG" />
+    <logger name="org.mapfish" level="WARN" />
     <logger name="org.springframework" level="ERROR" />
     <logger name="org.hibernate" level="WARN" />
     <logger name="com.mchange" level="WARN" />
     <logger name="org.apache" level="WARN" />
-    <logger name="com.amazonaws" level="WARN" />
-    <logger name="org.apache.camel" level="DEBUG" />
+    <logger name="org.apache.camel" level="WARN" />
 
     <root level="ALL">
         <appender-ref ref="standardOut" />
