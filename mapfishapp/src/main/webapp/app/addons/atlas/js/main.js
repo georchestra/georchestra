@@ -138,7 +138,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                     var json;
                     json = new OpenLayers.Format.JSON();
                     OpenLayers.Request.POST({
-                        url: "http://localhost:8180/apps/atlas/login",
+                        url: "http://localhost:8291/atlas/print",
                         data: json.write(atlasConfig),
                         success: function() {
                             GEOR.helper.msg(this.title, this.tr("atlas_submit_success"))
