@@ -30,6 +30,7 @@ import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.DistinguishedName;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
+import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -279,10 +280,8 @@ public class GroupsControllerTest {
         Group retAdmin = GroupFactory.create("ADMINISTRATOR", "administrator group");
         Mockito.when(ldapTemplate.lookup((Name) Mockito.any(), (ContextMapper) Mockito.any())).thenReturn(retAdmin);
         Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (AttributesMapper) Mockito.any());
-        DistinguishedName dn2 = new DistinguishedName();
-        dn2.add("ou=roles");
-        dn2.add("cn", "newName");
-        Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup(eq(dn2), (ContextMapper) Mockito.any());
+        Name dn = LdapNameBuilder.newInstance("ou=roles").add("cn", "newName").build();
+        Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup(eq(dn), (ContextMapper) Mockito.any());
 
         groupCtrl.update(request, response);
 
@@ -300,10 +299,8 @@ public class GroupsControllerTest {
         Group retAdmin = GroupFactory.create("ADMINISTRATOR", "administrator group");
         Mockito.when(ldapTemplate.lookup((Name) Mockito.any(), (ContextMapper) Mockito.any())).thenReturn(retAdmin);
         Mockito.doThrow(DuplicatedCommonNameException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (AttributesMapper) Mockito.any());
-        DistinguishedName dn2 = new DistinguishedName();
-        dn2.add("ou=roles");
-        dn2.add("cn", "newName");
-        Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup(eq(dn2), (ContextMapper) Mockito.any());
+        Name dn = LdapNameBuilder.newInstance("ou=roles").add("cn", "newName").build();
+        Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup(eq(dn), (ContextMapper) Mockito.any());
 
         groupCtrl.update(request, response);
 
@@ -320,10 +317,8 @@ public class GroupsControllerTest {
         Group retAdmin = GroupFactory.create("ADMINISTRATOR", "administrator group");
         Mockito.when(ldapTemplate.lookup((Name) Mockito.any(), (ContextMapper) Mockito.any())).thenReturn(retAdmin);
         Mockito.doThrow(DataServiceException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (AttributesMapper) Mockito.any());
-        DistinguishedName dn2 = new DistinguishedName();
-        dn2.add("ou=roles");
-        dn2.add("cn", "newName");
-        Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup(eq(dn2), (ContextMapper) Mockito.any());
+        Name dn = LdapNameBuilder.newInstance("ou=roles").add("cn", "newName").build();
+        Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup(eq(dn), (ContextMapper) Mockito.any());
 
         try {
             groupCtrl.update(request, response);
@@ -342,9 +337,8 @@ public class GroupsControllerTest {
         Group retAdmin = GroupFactory.create("ADMINISTRATOR", "administrator group");
         Mockito.when(ldapTemplate.lookup((Name) Mockito.any(), (ContextMapper) Mockito.any())).thenReturn(retAdmin);
         Mockito.when(ldapTemplate.lookup((Name) Mockito.any(), (AttributesMapper) Mockito.any())).thenReturn(-1);
-        DistinguishedName dn = new DistinguishedName();
-        dn.add("ou=roles");
-        dn.add("cn", "newName");
+
+        Name dn = LdapNameBuilder.newInstance("ou=roles").add("cn", "newName").build();
         Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup(eq(dn), (ContextMapper) Mockito.any());
 
         groupCtrl.update(request, response);

@@ -41,6 +41,8 @@ import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
+import org.springframework.ldap.support.LdapNameBuilder;
+import org.springframework.ldap.support.LdapUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -290,7 +292,8 @@ public class UsersControllerTest {
 
         Mockito.when(ldapTemplate.search((Name) Mockito.any(), Mockito.anyString(),(ContextMapper) Mockito.any()))
             .thenReturn(new ArrayList<Object>());
-        Mockito.when(ldapTemplate.lookupContext(new DistinguishedName("cn=USER,ou=roles")))
+
+        Mockito.when(ldapTemplate.lookupContext(LdapNameBuilder.newInstance("cn=USER,ou=roles").build()))
             .thenReturn(Mockito.mock(DirContextOperations.class));
 
 

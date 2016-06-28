@@ -47,6 +47,7 @@ import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
+import org.springframework.ldap.support.LdapNameBuilder;
 
 
 /**
@@ -70,8 +71,8 @@ public class GroupDaoImpl implements GroupDao {
 
 	private String uniqueNumberField = "ou";
 
-    private LdapRdn groupSearchBaseDN;
-    private LdapRdn userSearchBaseDN;
+    private Name groupSearchBaseDN;
+	private LdapRdn userSearchBaseDN;
 
     private AtomicInteger uniqueNumberCounter = new AtomicInteger(-1);
 
@@ -87,8 +88,8 @@ public class GroupDaoImpl implements GroupDao {
 		this.uniqueNumberField = uniqueNumberField;
 	}
 
-	public void setGroupSearchBaseDN(String groupSearchBaseDN) {
-		this.groupSearchBaseDN = new LdapRdn(groupSearchBaseDN);
+	public void setGroupSearchBaseDN(String groupSearchBaseDN) throws InvalidNameException {
+		this.groupSearchBaseDN = LdapNameBuilder.newInstance(groupSearchBaseDN).build();
 	}
 
 	public void setUserSearchBaseDN(String userSearchBaseDN) {
@@ -109,13 +110,12 @@ public class GroupDaoImpl implements GroupDao {
 	 * @param cn
 	 * @return
 	 */
-	private DistinguishedName buildGroupDn(String cn) {
-		DistinguishedName dn = new DistinguishedName();
-
-		dn.add(groupSearchBaseDN);
-		dn.add("cn", cn);
-
-		return dn;
+	private Name buildGroupDn(String cn) {
+		try {
+			return LdapNameBuilder.newInstance(this.groupSearchBaseDN).add("cn", cn).build();
+		} catch (org.springframework.ldap.InvalidNameException ex){
+			throw new IllegalArgumentException(ex.getMessage());
+		}
 	}
 
 	/**
@@ -233,8 +233,8 @@ public class GroupDaoImpl implements GroupDao {
 	public List<Group> findAll() throws DataServiceException {
 
 		EqualsFilter filter = new EqualsFilter("objectClass", "groupOfMembers");
-		List<Group> groupList = ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(),
-				new GroupContextMapper());
+
+		List<Group> groupList = ldapTemplate.search(this.groupSearchBaseDN, filter.encode(), new GroupContextMapper());
 
 		TreeSet<Group> sorted = new TreeSet<Group>();
 		for (Group g : groupList) {
@@ -248,25 +248,17 @@ public class GroupDaoImpl implements GroupDao {
 		EqualsFilter grpFilter = new EqualsFilter("objectClass", "groupOfMembers");
 		AndFilter filter = new AndFilter();
 		filter.and(grpFilter);
-
 		filter.and(new EqualsFilter("member", buildUserDn(userId).toString()));
-		return ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(),
-				new GroupContextMapper());
+		return ldapTemplate.search(this.groupSearchBaseDN, filter.encode(),	new GroupContextMapper());
 	}
 
 	public List<String> findUsers(final String groupName) throws DataServiceException{
 
 		AndFilter filter = new AndFilter();
-		filter.and(new EqualsFilter("objectClass", "ou"));
-		filter.and(new EqualsFilter(groupSearchBaseDN.getKey(), groupSearchBaseDN.getValue()));
+		filter.and(new EqualsFilter("objectClass", "groupOfMembers"));
 		filter.and(new EqualsFilter("cn", groupName));
 
-		List<String> memberList = ldapTemplate.search(
-								DistinguishedName.EMPTY_PATH,
-								filter.encode(),
-								new GroupContextMapper());
-
-		return  memberList;
+		return ldapTemplate.search(groupSearchBaseDN, filter.encode(), new GroupContextMapper());
 	}
 
 
@@ -280,7 +272,7 @@ public class GroupDaoImpl implements GroupDao {
 	public Group findByCommonName(String commonName) throws DataServiceException, NameNotFoundException {
 
 		try{
-			DistinguishedName dn = buildGroupDn(commonName);
+			Name dn = buildGroupDn(commonName);
 			Group g = (Group) ldapTemplate.lookup(dn, new GroupContextMapper());
 
 			return  g;
@@ -462,8 +454,8 @@ public class GroupDaoImpl implements GroupDao {
             }
         }
 
-        DistinguishedName sourceDn = buildGroupDn(groupName);
-        DistinguishedName destDn = buildGroupDn(group.getName());
+        Name sourceDn = buildGroupDn(groupName);
+        Name destDn = buildGroupDn(group.getName());
 
 
         Integer uniqueNumber = (Integer) ldapTemplate.lookup(sourceDn, new AttributesMapper() {
