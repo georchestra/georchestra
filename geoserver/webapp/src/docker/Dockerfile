@@ -1,4 +1,4 @@
-FROM jetty:9.3-jre8
+FROM jetty:9.2-jre7
 
 RUN apt-get update && \
     apt-get install -y unzip && \
@@ -19,6 +19,7 @@ CMD ["sh", "-c", "exec java -Djava.io.tmpdir=/tmp/jetty -Dgeorchestra.datadir=/e
 -DGEOSERVER_DATA_DIR=/var/local/geoserver \
 -Dgeofence.dir=/etc/georchestra/geoserver/geofence \
 -DGEOWEBCACHE_CACHE_DIR=/var/local/tiles \
+-Dhttps.protocols=TLSv1,TLSv1.1,TLSv1.2 \
 -Xmx$XMX -Xms$XMX \
 -jar /usr/local/jetty/start.jar" ]
 
