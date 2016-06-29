@@ -366,6 +366,19 @@ angular.module('ldapadmin.controllers', [])
         });
         $scope.user_groups_tree = tree;
 
+        // support groups with real parent group
+        $scope.user_groups_tree.forEach(function(group, i) {
+          if (group.group && group.nodes && group.nodes.length) {
+            var new_group = {
+              name: group.name,
+              nodes: group.nodes
+            };
+            delete group.nodes;
+            $scope.user_groups_tree.splice(i + 1, 0, new_group);
+          }
+        });
+
+
         angular.forEach($scope.user_groups, function(group, key) {
           group.hasUsers = _.contains(group.users, $scope.user.uid);
         });
