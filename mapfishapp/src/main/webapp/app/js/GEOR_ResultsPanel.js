@@ -61,6 +61,9 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
      */
     sfControl: null,
 
+    //TODO doc
+    id: "resultPanel",
+
     /**
      * Property: noDelete
      * {Boolean} do not show the delete button
@@ -290,6 +293,58 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
             tr("No result")
         });
 
+        var actionsItem = {
+            text: tr("Actions"),
+            tooltip: tr("Actions on the selection or on all results if no row is selected"),
+            menu: new Ext.menu.Menu({
+                items: [{
+                    text: tr("Zoom"),
+                    iconCls: 'geor-btn-zoom',
+                    tooltip: tr("Zoom to results extent"),
+                    handler: function() {
+                        var grid = this.findByType("grid")[0];
+                        if (grid) {
+                            var sm = grid.getSelectionModel(),
+                                selectedFeatures = [],
+                                bypass = (sm.getCount() == 0);
+                            this._store.each(function(record) {
+                                if (bypass || sm.isSelected(record)) {
+                                    selectedFeatures.push(record.get("feature"));
+                                }
+                            });
+                            this._zoomToFeatures(selectedFeatures);
+                        }
+                    },
+                    scope: this
+                }, {
+                    text: tr("Export"),
+                    iconCls: 'geor-export',
+                    menu: [{
+                        text: "CSV",
+                        tooltip: tr("Export results as") + " CSV",
+                        handler: this._exportBtnHandler.createDelegate(this, ["csv"]),
+                        scope: this
+                    }, {
+                        text: "GML",
+                        tooltip: tr("Export results as") + " GML",
+                        handler: this._exportBtnHandler.createDelegate(this, ["gml"]),
+                        scope: this
+                    }, {
+                        text: "KML",
+                        tooltip: tr("Export results as") + " KML",
+                        handler: this._exportBtnHandler.createDelegate(this, ["kml"]),
+                        scope: this
+                    }]
+                }, {
+                    text: tr("Store the geometry"),
+                    iconCls: 'geor-geom-save',
+                    tooltip: tr("Aggregates the geometries of the selected features and stores it in your browser for later use in the querier"),
+                    handler: this._storeGeometry,
+                    scope: this
+                }]
+            })
+        };
+
         var bbar = [
             {
                 text: tr("Clean"),
@@ -342,58 +397,26 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
                         scope: this
                     }]
                 })
-            }, '-', {
-                text: tr("Actions"),
-                tooltip: tr("Actions on the selection or on all results if no row is selected"),
-                menu: new Ext.menu.Menu({
-                    items: [{
-                        text: tr("Zoom"),
-                        iconCls: 'geor-btn-zoom',
-                        tooltip: tr("Zoom to results extent"),
-                        handler: function() {
-                            var grid = this.findByType("grid")[0];
-                            if (grid) {
-                                var sm = grid.getSelectionModel(),
-                                    selectedFeatures = [],
-                                    bypass = (sm.getCount() == 0);
-                                this._store.each(function(record) {
-                                    if (bypass || sm.isSelected(record)) {
-                                        selectedFeatures.push(record.get("feature"));
-                                    }
-                                });
-                                this._zoomToFeatures(selectedFeatures);
-                            }
-                        },
-                        scope: this
-                    },{
-                        text: tr("Export"),
-                        iconCls: 'geor-export',
-                        menu: [{
-                            text: "CSV",
-                            tooltip: tr("Export results as") + " CSV",
-                            handler: this._exportBtnHandler.createDelegate(this, ["csv"]),
-                            scope: this
-                        }, {
-                            text: "GML",
-                            tooltip: tr("Export results as") + " GML",
-                            handler: this._exportBtnHandler.createDelegate(this, ["gml"]),
-                            scope: this
-                        }, {
-                            text: "KML",
-                            tooltip: tr("Export results as") + " KML",
-                            handler: this._exportBtnHandler.createDelegate(this, ["kml"]),
-                            scope: this
-                        }]
-                    },{
-                        text: tr("Store the geometry"),
-                        iconCls: 'geor-geom-save',
-                        tooltip: tr("Aggregates the geometries of the selected features and stores it in your browser for later use in the querier"),
-                        handler: this._storeGeometry,
-                        scope: this
-                    }]
-                })
-            } 
+            }, '-',
+            actionsItem
         ];
+
+
+        /**Loading Addons actions
+         *
+         * Addons must have options.resultPanelAction === true and
+         *  API method resultPanelHandler(menuitem, event, resultPanel). In this API method, this is the addon.
+         */
+        Ext.each(GEOR.config.ADDONS, function(addonConfig) {
+            if (GEOR.tools.getAddonsState()[addonConfig.id] && addonConfig.options.resultPanelAction) {
+                actionsItem.menu.addItem({
+                    text: GEOR.tools.getAddon(addonConfig.id).title,
+                    iconCls: GEOR.tools.getAddon(addonConfig.id).iconCls,
+                    tooltip: GEOR.tools.getAddon(addonConfig.id).qtip,
+                    handler: GEOR.tools.getAddon(addonConfig.id).resultPanelHandler.createDelegate(GEOR.tools.getAddon(addonConfig.id), [this], true)
+                });
+            }
+        }, this);
 
         if (!this.sfControl) {
             // we need to create the SelectFeature control by ourselves

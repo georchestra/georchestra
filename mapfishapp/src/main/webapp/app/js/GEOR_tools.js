@@ -82,10 +82,10 @@ GEOR.tools = (function() {
     var addonsCache = {};
 
     /**
-     * Property: previousState
-     * {Object} Hash storing the previous state of each addons (loaded or not)
+     * Property: state
+     * {Object} Hash storing the current state of each addons (loaded or not)
      */
-    var previousState;
+    var state;
 
     /**
      * Method: loadCssFiles
@@ -121,14 +121,14 @@ GEOR.tools = (function() {
         // compute diff with previous selection state:
         var incoming = [], outgoing = [];
         Ext.iterate(newState, function(k, v) {
-            if (newState[k] === true && previousState[k] === false) {
+            if (newState[k] === true && state[k] === false) {
                 incoming.push(store.getById(k));
             }
-            if (newState[k] === false && previousState[k] === true) {
+            if (newState[k] === false && state[k] === true) {
                 outgoing.push(store.getById(k));
             }
         });
-        previousState = newState;
+        state = newState;
         // remove unwanted addons:
         Ext.each(outgoing, function(r) {
             var addon = addonsCache[r.id],
@@ -152,8 +152,8 @@ GEOR.tools = (function() {
                     addonName.toLowerCase() + "/",
                 failure = function() {
                     count -= 1;
-                    // if an addon fails to load properly, update previousState accordingly
-                    previousState[r.id] = false;
+                    // if an addon fails to load properly, update state accordingly
+                    state[r.id] = false;
                     // unselect node corresponding to record in dataview:
                     dataview && dataview.deselect(r);
                     r.set("_loaded", false);
@@ -471,9 +471,9 @@ GEOR.tools = (function() {
                 }],
                 data: allowedAddons
             });
-            previousState = {};
+            state = {};
             store.each(function(r) {
-                previousState[r.id] = false;
+                state[r.id] = false;
             });
         },
 
@@ -529,6 +529,22 @@ GEOR.tools = (function() {
                     return (ids.indexOf(r.id) > -1);
                 }), true);
             }
+        },
+
+        /**
+         * APIMethod: getAddonsState
+         * Retrieve informations about addons
+         */
+        getAddonsState: function() {
+            return state;
+        },
+
+        /**
+         * APIMethod: getAddon
+         * @param: addonId - Unique identifier of addon (id in config.json)
+         */
+        getAddon: function(addonId) {
+            return addonsCache[addonId];
         }
     };
 })();

@@ -1,0 +1,29 @@
+[
+    {
+        "id": "atlas_0",
+        "name": "Atlas",
+        "enabled": true,
+        "options": {
+            "iconCls": "atlas-icon",
+            "target": "tbar_4",
+            "resultPanelAction": true,
+            "layerTreeAction": true,
+            "maxFeatures": 50,
+            "printServerUrl": "http://localhost:8181/print/atlas/",
+            "atlasServerUrl": "http://localhost:8291/atlas/print",
+            "bboxBuffer": 0.1
+        },
+        "title": {
+            "fr": "Atlas",
+            "en": "Atlas",
+            "es": "atlas",
+            "de": "Atlas"
+        },
+        "description": {
+            "fr": "Génération d'un atlas constitué de plusieurs pages PDF",
+            "en": "Create an altas with several PDF pages",
+            "es": "Generar atlas consta de varias páginas PDF",
+            "de": "Einen Atlas generieren besteht aus mehreren Seiten"
+        }
+    }
+]
