@@ -12,10 +12,7 @@ import net.tanesha.recaptcha.ReCaptchaResponse;
 
 import org.georchestra.ldapadmin.bs.Moderator;
 import org.georchestra.ldapadmin.bs.ReCaptchaParameters;
-import org.georchestra.ldapadmin.ds.AccountDao;
-import org.georchestra.ldapadmin.ds.DataServiceException;
-import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
-import org.georchestra.ldapadmin.ds.DuplicatedUidException;
+import org.georchestra.ldapadmin.ds.*;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
 
@@ -41,6 +38,7 @@ public class NewAccountFormControllerTest {
     // Mocked objects needed by the controller default constructor
     private NewAccountFormController ctrl ;
     private AccountDao dao = Mockito.mock(AccountDao.class);
+    private OrgsDao org = Mockito.mock(OrgsDao.class);
     private EmailFactoryImpl efi = Mockito.mock(EmailFactoryImpl.class);
     private MailService srv = new MailService(efi);
     private Moderator  mod = new Moderator();
@@ -81,7 +79,7 @@ public class NewAccountFormControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        ctrl = new NewAccountFormController(dao, srv, mod, rec, rep);
+        ctrl = new NewAccountFormController(dao, org, srv, mod, rec, rep);
 
         // Mock admin account
         DistinguishedName dn = new DistinguishedName();

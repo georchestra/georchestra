@@ -25,6 +25,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="s" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 
 <%@ page import="net.tanesha.recaptcha.ReCaptcha" %>
@@ -82,9 +83,9 @@
 				<t:input path="phone" required="${phoneRequired}">
 					<jsp:attribute name="label"><s:message code="phone.label" /></jsp:attribute>
 				</t:input>
-				<t:input path="org" required="${orgRequired}">
+				<t:list path="org" required="${orgRequired}" items="${orgs}">
 					<jsp:attribute name="label"><s:message code="org.label" /></jsp:attribute>
-				</t:input>
+				</t:list>
 				<t:input path="title" required="${titleRequired}">
 					<jsp:attribute name="label"><s:message code="title.label" /></jsp:attribute>
 				</t:input>

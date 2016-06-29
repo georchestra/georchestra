@@ -20,6 +20,10 @@
 package org.georchestra.ldapadmin.ws.newaccount;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 
 import javax.servlet.ServletContext;
@@ -33,13 +37,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.ldapadmin.bs.Moderator;
 import org.georchestra.ldapadmin.bs.ReCaptchaParameters;
-import org.georchestra.ldapadmin.ds.AccountDao;
-import org.georchestra.ldapadmin.ds.DataServiceException;
-import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
-import org.georchestra.ldapadmin.ds.DuplicatedUidException;
+import org.georchestra.ldapadmin.ds.*;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.georchestra.ldapadmin.dto.Group;
+import org.georchestra.ldapadmin.dto.Org;
 import org.georchestra.ldapadmin.mailservice.MailService;
 import org.georchestra.ldapadmin.ws.utils.EmailUtils;
 import org.georchestra.ldapadmin.ws.utils.PasswordUtils;
@@ -76,6 +78,7 @@ public final class NewAccountFormController {
 	private static final Log LOG = LogFactory.getLog(NewAccountFormController.class.getName());
 
 	private AccountDao accountDao;
+	private OrgsDao orgDao;
 
 	private MailService mailService;
 
@@ -89,9 +92,10 @@ public final class NewAccountFormController {
 	    "title", "description", "uid", "password", "confirmPassword"};
 
 	@Autowired
-	public NewAccountFormController(AccountDao dao, MailService mailSrv, Moderator moderatorRule,
-	        ReCaptcha reCaptcha, ReCaptchaParameters reCaptchaParameters) {
+	public NewAccountFormController(AccountDao dao, OrgsDao orgDao, MailService mailSrv, Moderator moderatorRule,
+									ReCaptcha reCaptcha, ReCaptchaParameters reCaptchaParameters) {
 		this.accountDao = dao;
+		this.orgDao = orgDao;
 		this.mailService = mailSrv;
 		this.moderator = moderatorRule;
 		this.reCaptcha = reCaptcha;
@@ -109,8 +113,15 @@ public final class NewAccountFormController {
 
 		HttpSession session = request.getSession();
 		AccountFormBean formBean = new AccountFormBean();
+		Map<String, String> options = new HashMap<String, String>();
+
+		List<Org> orgs = this.orgDao.findAll();
+		for(Org org : orgs)
+			options.put(org.getId(), org.getName());
 
 		model.addAttribute(formBean);
+		model.addAttribute("orgs", options);
+
 		session.setAttribute("reCaptchaPublicKey", this.reCaptchaParameters.getPublicKey());
 		for (String f : fields) {
 			if (Validation.isFieldRequired(f)) {
@@ -173,6 +184,13 @@ public final class NewAccountFormController {
 			String groupID = this.moderator.moderatedSignup() ? Group.PENDING : Group.USER;
 
 			this.accountDao.insert(account, groupID, request.getHeader("sec-username"));
+
+			// Organisation
+			if(formBean.getCreateOrg()){
+				Org org = Org.createBrief(formBean.getOrgName(), formBean.getOrgShortName());
+				this.orgDao.insert(org);
+			}
+
 
 			final ServletContext servletContext = request.getSession().getServletContext();
 			if(this.moderator.moderatedSignup() ){

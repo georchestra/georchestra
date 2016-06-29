@@ -85,6 +85,13 @@
     <property name="groupSearchBaseDN" value="${groupSearchBaseDN}"/>
   </bean>
 
+  <bean id="orgsDao" class="org.georchestra.ldapadmin.ds.OrgsDao">
+    <property name="ldapTemplate" ref="ldapTemplate"/>
+    <property name="orgsSearchBaseDN" value="${orgsSearchBaseDN}"/>
+    <property name="userSearchBaseDN" value="${userSearchBaseDN}"/>
+  </bean>
+
+
   <bean id="accountDao" class="org.georchestra.ldapadmin.ds.AccountDaoImpl">
     <constructor-arg ref="ldapTemplate"/>
     <constructor-arg ref="groupDao"/>
