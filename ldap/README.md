@@ -30,18 +30,18 @@ This file creates a basic LDAP tree for geOrchestra.
 
 It creates 2 Organisational Units (ou):
  * ```ou=users,dc=georchestra,dc=org``` 
- * ```ou=groups,dc=georchestra,dc=org```
+ * ```ou=roles,dc=georchestra,dc=org```
 
 The basic users:
  * ```testuser``` is a member of SV_USER. The password is **testuser**.
  * ```testreviewer``` is a member of SV_REVIEWER. The password is **testreviewer**.
  * ```testeditor``` is a member of SV_EDITOR. The password is **testeditor**.
- * ```testadmin``` is a member of SV_ADMIN, ADMINISTRATOR and MOD_* groups. The password is **testadmin**
+ * ```testadmin``` is a member of SV_ADMIN, ADMINISTRATOR and MOD_* roles. The password is **testadmin**
  * ```geoserver_privileged_user``` is a required user. It is internally used by the extractorapp, mapfishapp & geofence modules. The default password is ```gerlsSnFd6SmM``` (you should change it, and update the ```shared.privileged.geoserver.pass``` option in your shared.maven.filters file).
 
-The groups:
+The roles:
  * ```ADMINISTRATOR``` is for GeoServer administrators,
- * ```MOD_LDAPADMIN``` grants access to the ldapadmin webapp (where one can manage users and groups),
+ * ```MOD_LDAPADMIN``` grants access to the ldapadmin webapp (where one can manage users and roles),
  * ```MOD_ANALYTICS``` grants access rights to the analytics application,
  * ```MOD_EXTRACTORAPP``` grants access to the extractor application,
  * ```SV_ADMIN``` is for GeoNetwork administrators,
