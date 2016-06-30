@@ -3,8 +3,11 @@ package org.georchestra.extractorapp.ws;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
+import java.util.HashMap;
+import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -12,7 +15,7 @@ import org.georchestra.extractorapp.ws.extractor.ExpiredArchiveDaemon;
 
 
 public abstract class AbstractEmailFactory {
-	
+
 	protected String smtpHost;
 	protected int smtpPort = -1;
 	protected String emailHtml;
@@ -24,25 +27,26 @@ public abstract class AbstractEmailFactory {
 	protected ExpiredArchiveDaemon expireDeamon;
 	protected String  emailAckTemplateFile;
 	protected String  emailTemplateFile;
+	protected String  extraKeywordsFile;
 	protected String  emailSubject;
 
     private boolean frozen = false;
-    
+
     public AbstractEmailFactory() {
         // this is the default constructor for use by spring
     }
-    
-	public abstract Email createEmail(HttpServletRequest request, 
+
+	public abstract Email createEmail(HttpServletRequest request,
 			final String[] recipients, final String url) throws IOException;
 
-	// -------------- Not public API -------------- // 
+	// -------------- Not public API -------------- //
     /**
      * Signals that the values for this object are set and may not
      * be changed.  This is to ensure that when the defaults are set
      * by Spring that later no one will change them programatically.
-     * 
+     *
      * The defaults should only be set via spring configuration.
-     * 
+     *
      * Freeze will be called by the class that has the parameter
      * set by spring.
      */
@@ -75,7 +79,7 @@ public abstract class AbstractEmailFactory {
             subjectEncoding = bodyEncoding;
         }
     }
-    
+
     protected String readFile(HttpServletRequest request, final String path) throws IOException {
     	String realPath = request.getSession().getServletContext().getRealPath(path);
     	BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(realPath), "UTF-8") );
@@ -89,14 +93,30 @@ public abstract class AbstractEmailFactory {
         }
         return builder.toString();
     }
-    
+    protected HashMap<String,String> readExtraKeywords(String path) throws IOException {
+        HashMap<String,String> ret = new HashMap<String,String>();
+        InputStream is = null;
+        try {
+            is = this.getClass().getClassLoader().getResourceAsStream(path);
+            InputStreamReader isr = new InputStreamReader(is, "UTF-8");
+            Properties extraProps = new Properties();
+            extraProps.load(isr);
+
+            for (String key : extraProps.stringPropertyNames()) {
+                ret.put(key, extraProps.getProperty(key));
+            }
+            return ret;
+        } finally {
+            if (is != null) is.close();
+        }
+    }
     private void checkState() {
         if (frozen) {
             throw new IllegalStateException("EmailDefaultParams have already been frozen");
         }
     }
-    
-    // -------------- Bean setters/getters -------------- // 
+
+    // -------------- Bean setters/getters -------------- //
     public String getSmtpHost() {
         return smtpHost;
     }
@@ -166,6 +186,10 @@ public abstract class AbstractEmailFactory {
 
 	public void setEmailTemplateFile(String emailTemplateFile) {
 		this.emailTemplateFile = emailTemplateFile;
+	}
+
+	public void setExtraKeywordsFile(String extraKeywordsFile) {
+	    this.extraKeywordsFile = extraKeywordsFile;
 	}
 
 	public void setEmailSubject(String emailSubject) {
