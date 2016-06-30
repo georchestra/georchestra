@@ -989,7 +989,7 @@
         <dockerDatadirScmUrl>scm:git:https://github.com/georchestra/datadir.git</dockerDatadirScmUrl>
         <dockerDatadirScmVersion>docker-master</dockerDatadirScmVersion>
         <dockerGeoserverDatadirScmUrl>scm:git:https://github.com/georchestra/geoserver_minimal_datadir.git</dockerGeoserverDatadirScmUrl>
-        <dockerGeoserverDatadirScmVersion>15.12</dockerGeoserverDatadirScmVersion>
+        <dockerGeoserverDatadirScmVersion>master</dockerGeoserverDatadirScmVersion>
       </properties>
       <build>
         <finalName>geoserver</finalName>
