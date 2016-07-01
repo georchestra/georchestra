@@ -10,6 +10,9 @@
   <packaging>war</packaging>
   <name>Download form webapp</name>
   <url>http://www.georchestra.org</url>
+  <properties>
+    <spring.version>3.1.0.RELEASE</spring.version>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>org.jdom</groupId>
