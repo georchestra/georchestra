@@ -1,9 +1,9 @@
 package org.georchestra.security;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -12,10 +12,10 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 /**
  * If the user-agent of the client is one of the supported user-agents then send a basic authentication request.
@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
 public class BasicAuthChallengeByUserAgent extends BasicAuthenticationFilter {
 
     private final List<Pattern> _userAgents = new ArrayList<Pattern>();
+    private List<String> blacklistedHosts = new ArrayList<String>();
     private boolean ignoreHttps = false;
     private static final Log LOGGER = LogFactory.getLog(BasicAuthChallengeByUserAgent.class.getPackage().getName());
     private AuthenticationException _exception = new AuthenticationException("No basic authentication credentials provided") {};
@@ -44,6 +45,27 @@ public class BasicAuthChallengeByUserAgent extends BasicAuthenticationFilter {
             LOGGER.debug("not in HTTPS, skipping filter.");
             chain.doFilter(req, res);
             return;
+        }
+        try {
+
+            // We have to rely on the HTTP header "x-forwarded-for", instead of
+            // req.getRemoteAddr() (which will return the last proxy IP addr
+            // instead).
+
+            // Note: the field can be multivalued, comma-separated list, the
+            // last value should be the most reliable one (added by the
+            // geOrchestra front webserver).
+
+            String[] xfwForHeaders = ((HttpServletRequest) req).getHeader("x-forwarded-for").split(",");
+            String xfwForHeader = xfwForHeaders[xfwForHeaders.length - 1].trim();
+            for (String blHost : blacklistedHosts) {
+                if (blHost.equals(xfwForHeader)) {
+                    LOGGER.debug(String.format("Host \"%s\" is blacklisted. Skipping filter.", blHost));
+                    chain.doFilter(req, res);
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.error("Unable to check if the host doing the request is blacklisted or not, skipping check: ", e);
         }
 
         final HttpServletRequest request = (HttpServletRequest) req;
@@ -91,5 +113,12 @@ public class BasicAuthChallengeByUserAgent extends BasicAuthenticationFilter {
      */
     public void setIgnoreHttps(boolean f) {
         ignoreHttps = f;
+    }
+    /**
+     * Sets the lists of hosts which are blacklisted.
+     * If the host doing the request is in this list, the filter is discarded.
+     */
+    public void setBlackListedHosts(List<String> hosts) {
+        this.blacklistedHosts = hosts;
     }
 }
