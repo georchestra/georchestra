@@ -5,11 +5,6 @@ We need 3 tomcat instances:
  * an other one for geoserver
  * the last one for the other webapps
  
-## Prerequisites
-
-```
-sudo apt-get install -y tomcat6 tomcat6-user
-```
 
 We will deactivate the default tomcat instance, just to be sure:
 ```
