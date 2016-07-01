@@ -124,14 +124,11 @@ public class EditUserDetailsFormController {
 
 		formBean.setUid(account.getUid());
 		formBean.setEmail(account.getEmail());
-
 		formBean.setFirstName(account.getGivenName());
 		formBean.setSurname(account.getSurname());
 		formBean.setTitle(account.getTitle());
-
 		formBean.setPhone(account.getPhone());
 		formBean.setFacsimile(account.getFacsimile());
-		formBean.setOrg(account.getOrg());
 		formBean.setDescription(account.getDescription());
 		formBean.setPostalAddress(account.getPostalAddress());
 
@@ -221,7 +218,6 @@ public class EditUserDetailsFormController {
 		account.setTitle( formBean.getTitle() );
 		account.setPhone(formBean.getPhone());
 		account.setFacsimile(formBean.getFacsimile());
-		account.setOrg(formBean.getOrg());
 		account.setDescription(formBean.getDescription());
 		account.setPostalAddress(formBean.getPostalAddress());
 

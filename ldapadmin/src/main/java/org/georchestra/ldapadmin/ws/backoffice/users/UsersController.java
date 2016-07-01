@@ -580,11 +580,6 @@ public class UsersController {
 			account.setFacsimile(facsimile);
 		}
 
-		String org = RequestUtil.getFieldValue(json, UserSchema.ORG_KEY);
-		if (org != null) {
-			account.setOrg(org);
-		}
-
 		String title = RequestUtil.getFieldValue(json, UserSchema.TITLE_KEY);
 		if (title != null) {
 			account.setTitle(title);
@@ -678,7 +673,7 @@ public class UsersController {
 
 		String commonName = AccountFactory.formatCommonName(givenName, surname);
 
-		Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, org, title, phone, description, postalAddress, postalCode, "", postOfficeBox, "", street, locality, facsimile, "","","","","",manager,"");
+		Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, title, phone, description, postalAddress, postalCode, "", postOfficeBox, "", street, locality, facsimile, "","","","","",manager,"");
 
 		return a;
 

@@ -46,10 +46,6 @@ public interface Account {
 	 */
 	void setCommonName(String name);
 
-	String getOrg();
-
-	void setOrg(String org);
-
 	String getEmail();
 
 	void setEmail(String email);

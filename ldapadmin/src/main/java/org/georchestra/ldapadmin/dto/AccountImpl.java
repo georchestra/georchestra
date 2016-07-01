@@ -55,7 +55,6 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 	private String commonName; // cn: person's full name,  mandatory
 	private String surname; // sn  mandatory
 
-	private String org; // o
 	private String email;// mail
 	private String phone;// telephoneNumber
 	private String description; // description
@@ -63,7 +62,7 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 	private String newPassword;
 
 	// user details
-	// sn, givenName, o, title, postalAddress, postalCode, registeredAddress, postOfficeBox, physicalDeliveryOfficeName
+	// sn, givenName, title, postalAddress, postalCode, registeredAddress, postOfficeBox, physicalDeliveryOfficeName
 	private String givenName; // givenName (optional)
 	private String title; // title
 	private String postalAddress; //postalAddress
@@ -101,7 +100,6 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 				", uid='" + uid + '\'' +
 				", commonName='" + commonName + '\'' +
 				", surname='" + surname + '\'' +
-				", org='" + org + '\'' +
 				", email='" + email + '\'' +
 				", phone='" + phone + '\'' +
 				", description='" + description + '\'' +
@@ -132,9 +130,6 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 	    VCard v = new VCard();
 	    FormattedName f = new FormattedName(givenName + " " + surname);
 	    v.addFormattedName(f);
-	    Organization org = new Organization();
-	    org.addValue(this.org);
-	    org.addValue(this.organizationalUnit);
 	    v.addEmail(email, EmailType.WORK);
 	    v.addTelephoneNumber(phone, TelephoneType.WORK);
 	    v.addTitle(title);
@@ -217,7 +212,7 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 		csv.append(toFormatedString(facsimile));
 		csv.append(CSV_DELIMITER); // Business Fax
 		csv.append(CSV_DELIMITER);// Assistant's Phone
-		csv.append(toFormatedString(org));
+		csv.append(CSV_DELIMITER); // Organization
 		csv.append(CSV_DELIMITER); // Company
 		csv.append(toFormatedString(description));
 		csv.append(CSV_DELIMITER);// Job Title
@@ -283,7 +278,6 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 		res.put(UserSchema.UID_KEY, this.uid);
 		res.put(UserSchema.COMMON_NAME_KEY, this.commonName);
 		res.put(UserSchema.SURNAME_KEY, this.surname);
-		res.put(UserSchema.ORG_KEY, this.org);
 		res.put(UserSchema.MAIL_KEY, this.email);
 		res.put(UserSchema.TELEPHONE_KEY, this.phone);
 		res.put(UserSchema.DESCRIPTION_KEY, this.description);
@@ -337,14 +331,6 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 	@Override
 	public void setCommonName(String name) {
 		this.commonName = name;
-	}
-	@Override
-	public String getOrg() {
-		return org;
-	}
-	@Override
-	public void setOrg(String org) {
-		this.org = org;
 	}
 	@Override
 	public String getEmail() {

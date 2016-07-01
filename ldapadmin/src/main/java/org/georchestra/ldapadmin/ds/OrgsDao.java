@@ -96,10 +96,18 @@ public class OrgsDao {
 
     }
 
+    public void addUser(String organization, String user){
+        Org org = this.findByCommonName(organization);
+
+
+
+
+    }
+
 
     /*
     public abstract void delete(final String commonName);
-    public abstract void addUser(String org, String user);
+
 
 
     public void deleteUser(String user) throws DataServiceException {

@@ -477,9 +477,6 @@ public final class AccountDaoImpl implements AccountDao {
 
         setAccountField(context, UserSchema.MAIL_KEY, account.getEmail());
 
-        // additional
-        setAccountField(context, UserSchema.ORG_KEY, account.getOrg());
-
         setAccountField(context, UserSchema.POSTAL_ADDRESS_KEY, account.getPostalAddress());
 
         setAccountField(context, UserSchema.POSTAL_CODE_KEY, account.getPostalCode());
@@ -531,24 +528,18 @@ public final class AccountDaoImpl implements AccountDao {
                     context.getStringAttribute(UserSchema.SURNAME_KEY),
                     context.getStringAttribute(UserSchema.GIVEN_NAME_KEY),
                     context.getStringAttribute(UserSchema.MAIL_KEY),
-
-                    context.getStringAttribute(UserSchema.ORG_KEY), context.getStringAttribute(UserSchema.TITLE_KEY),
-
+                    context.getStringAttribute(UserSchema.TITLE_KEY),
                     context.getStringAttribute(UserSchema.TELEPHONE_KEY),
                     context.getStringAttribute(UserSchema.DESCRIPTION_KEY),
-
                     context.getStringAttribute(UserSchema.POSTAL_ADDRESS_KEY),
                     context.getStringAttribute(UserSchema.POSTAL_CODE_KEY),
                     context.getStringAttribute(UserSchema.REGISTERED_ADDRESS_KEY),
                     context.getStringAttribute(UserSchema.POST_OFFICE_BOX_KEY),
                     context.getStringAttribute(UserSchema.PHYSICAL_DELIVERY_OFFICE_NAME_KEY),
-
                     context.getStringAttribute(UserSchema.STREET_KEY),
                     context.getStringAttribute(UserSchema.LOCALITY_KEY),
-
                     context.getStringAttribute(UserSchema.FACSIMILE_KEY),
                     context.getStringAttribute(UserSchema.ORG_UNIT_KEY),
-
                     context.getStringAttribute(UserSchema.HOME_POSTAL_ADDRESS_KEY),
                     context.getStringAttribute(UserSchema.MOBILE_KEY),
                     context.getStringAttribute(UserSchema.ROOM_NUMBER_KEY),

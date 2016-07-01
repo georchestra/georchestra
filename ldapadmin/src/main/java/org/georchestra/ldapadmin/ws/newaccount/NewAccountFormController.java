@@ -177,7 +177,6 @@ public final class NewAccountFormController {
 					formBean.getSurname(),
 					formBean.getEmail(),
 					formBean.getPhone(),
-					formBean.getOrg(),
 					formBean.getTitle(),
 					formBean.getDescription() );
 
@@ -186,11 +185,12 @@ public final class NewAccountFormController {
 			this.accountDao.insert(account, groupID, request.getHeader("sec-username"));
 
 			// Organisation
-			if(formBean.getCreateOrg()){
+			/*if(formBean.getCreateOrg()){
 				Org org = Org.createBrief(formBean.getOrgName(), formBean.getOrgShortName());
 				this.orgDao.insert(org);
-			}
+			}*/
 
+			this.orgDao.addUser(formBean.getOrg(), formBean.getUid().toLowerCase());
 
 			final ServletContext servletContext = request.getSession().getServletContext();
 			if(this.moderator.moderatedSignup() ){
