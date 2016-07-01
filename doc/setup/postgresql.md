@@ -1,3 +1,8 @@
+# Prerequisites
+```
+apt-get install postgis postgresql-9.1-postgis libpostgis-java
+```
+
 # Setting up the geOrchestra database
 
 The "georchestra" database hosts several schemas, which are specific to the deployed modules:
