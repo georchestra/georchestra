@@ -189,26 +189,25 @@ member: uid=testuser,ou=users,dc=georchestra,dc=org
 
 # orgs, georchestra.org
 dn: ou=orgs,dc=georchestra,dc=org
-objectClass: top
 objectClass: organizationalUnit
+objectClass: top
 ou: orgs
 
-dn: o=onf,ou=orgs,dc=georchestra,dc=org
-objectClass: top
+dn: o=psc,ou=orgs,dc=georchestra,dc=org
 objectClass: organization
-o: onf
-description: association
+objectClass: top
+o: psc
+businessCategory: ASSOCIATION
 postalAddress: 127 rue georchestra, 73590 Chamblille
 
-dn: cn=onf,ou=orgs,dc=georchestra,dc=org
-objectClass: top
+dn: cn=psc,ou=orgs,dc=georchestra,dc=org
 objectClass: groupOfMembers
-cn: onf
-businessCategory: inscrit
+objectClass: top
+cn: psc
+businessCategory: REGISTERED
 description: 4184,684,9849,7987,797898,5797,579,97,49,797,97
 member: uid=testadmin,ou=users,dc=georchestra,dc=org
 member: uid=testuser,ou=users,dc=georchestra,dc=org
-o: ONF
-ou:: T2ZmaWNlIG5hdGlvbmFsIGRlcyBGb3LDqnRz
-seeAlso: o=onf,ou=orgs,dc=georchestra,dc=org
-
+o: Project Steering Community
+ou: PSC
+seeAlso: o=psc,ou=orgs,dc=georchestra,dc=org
