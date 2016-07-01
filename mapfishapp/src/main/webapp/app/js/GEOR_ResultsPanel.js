@@ -61,6 +61,9 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
      */
     sfControl: null,
 
+    //TODO doc
+    id: "resultPanel",
+
     /**
      * Property: noDelete
      * {Boolean} do not show the delete button
@@ -394,6 +397,29 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
                 })
             } 
         ];
+
+        /**Loading Addons actions
+         *
+         * Addons must have options.resultPanelAction === true and
+         *  API method resultPanelHandler(menuitem, event, resultPanel). In this API method, this is the addon.
+         */
+        var addon;
+        Ext.each(bbar, function(barItem) {
+            //Warning, compare to translated string
+            if (barItem.text == tr("Actions")) {
+                Ext.each(GEOR.config.ADDONS, function(addonConfig) {
+                    if (GEOR.tools.getAddonsState()[addonConfig.id] && addonConfig.options.resultPanelAction) {
+                        addon = GEOR.tools.getAddon(addonConfig.id);
+                        barItem.menu.addItem({
+                            text: addon.title,
+                            iconCls: addon.iconCls,
+                            tooltip: addon.qtip,
+                            handler: addon.resultPanelHandler.createDelegate(addon,[this],true)
+                        });
+                    }
+                }, this);
+            }
+        }, this);
 
         if (!this.sfControl) {
             // we need to create the SelectFeature control by ourselves
