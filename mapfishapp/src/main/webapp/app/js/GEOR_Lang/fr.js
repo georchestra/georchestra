@@ -320,6 +320,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Request on NAME": "Requêteur sur ${NAME}",
     "WFS GetFeature on filter": "GetFeature WFS sur un filtre",
     "Search": "Rechercher",
+    "Filter": "Filtrer",
     "querier.layer.no.geom":
         "La couche ne possède pas de colonne géométrique." +
         "<br />Le requêteur géométrique ne sera pas fonctionnel.",

@@ -317,6 +317,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Request on NAME": "Sucher auf ${NAME}",
     "WFS GetFeature on filter": "GetFeature WFS auf einem Filter",
     "Search": "Suchen",
+    "Filter": "Filter",
     "querier.layer.no.geom":
         "Geometrische Spalte nicht vorhanden." +
         "<br />Sucher nicht verfügbar.",

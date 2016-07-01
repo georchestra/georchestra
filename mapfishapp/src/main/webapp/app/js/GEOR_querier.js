@@ -258,10 +258,16 @@ GEOR.querier = (function() {
             deactivable: true,
             cookieProvider: cp,
             autoScroll: true,
-            buttons: [{
-                text: tr("Search"),
-                handler: search
-            }],
+            buttons: [
+                {
+                    text: tr("Search"),
+                    handler: search
+                },
+                {
+                    text: tr("Filter"),
+                    handler: filterLayer
+                }
+            ],
             map: map,
             attributes: attStore,
             allowSpatial: true,
@@ -271,6 +277,33 @@ GEOR.querier = (function() {
             })
         });
     };
+    
+    var filterLayer = function() {
+        var filterbuilder = this.findParentByType("gx_filterbuilder");
+        var filter = filterbuilder.getFilter();
+        if (!checkFilter(filter)) {
+            return;
+        }
+        
+        var layer = record.getLayer();
+        
+        if( layers.length > 0 ) {
+            if( layers[0].CLASS_NAME == "OpenLayers.Layer.WMS" ) {
+                if( filter.CLASS_NAME == "OpenLayers.Filter.Spatial" || filter.CLASS_NAME == "OpenLayers.Filter.Comparison" || ('filters' in filter && filter.filters.length > 0) ) {
+                    layers[0].params["FILTER"] = (new OpenLayers.Format.XML()).write((new OpenLayers.Format.Filter()).write(filter));
+                } else {
+                    layers[0].params["FILTER"] = null;
+                }
+                
+                layers[0].mergeNewParams({
+                    nocache: new Date().valueOf()
+                });
+            } else if( layers[0].CLASS_NAME == "OpenLayers.Layer.Vector" ) {
+                layers[0].filter = filter;
+                layers[0].refresh();
+            }
+        }
+    }
 
     return {
     
