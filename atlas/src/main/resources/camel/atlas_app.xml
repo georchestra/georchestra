@@ -253,7 +253,7 @@
                 </choice>
                 <log message="print request : ${body}" loggingLevel="INFO"/>
 				<!-- Wires to the bean which will actually call the MF Print -->
-                <to uri="bean:specAsPdf"/>
+                <to uri="bean:specAsPdf?method=toMapfishPrintPdf"/>
 
                 <!-- Saves the file onto the disk -->
                 <!-- TODO {{atlas.temporaryDirectory}} -->

@@ -12,7 +12,6 @@ import org.apache.camel.Handler;
 import org.apache.camel.Message;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONException;
-import org.json.JSONStringer;
 import org.json.JSONWriter;
 import org.mapfish.print.MapPrinter;
 import org.mapfish.print.cli.Main;
@@ -41,7 +40,6 @@ public class CamelMapfishPrintComponent {
         this.mapPrinter.setConfiguration(configFileUrl.toURI(), configFileData);
     }
 
-    @Handler
     public void toMapfishPrintPdf(Exchange ex)
             throws JSONException, DocumentException, URISyntaxException, IOException {
         String mfprintJsonSpec = ex.getIn().getBody(String.class);
@@ -60,7 +58,6 @@ public class CamelMapfishPrintComponent {
         }
     }
 
-    @Handler
     public void printCapabilities(Exchange ex) throws JSONException {
         StringWriter strw = new StringWriter();
         

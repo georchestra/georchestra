@@ -36,8 +36,7 @@ public class BundlePdfComponent {
     public void init() throws IOException {
         FileUtils.forceMkdir(new File(tempDir));
     }
-    
-    @Handler
+
     public void pdfMerge(Exchange ex) throws Exception {
         Long jobId = (Long) ex.getProperty("jobId");
         ex.setProperty("extension", "pdf");
@@ -61,7 +60,6 @@ public class BundlePdfComponent {
         ex.getOut().setBody(bsDoc.toByteArray());
     }
 
-    @Handler
     public void pdfZip(Exchange ex) throws IOException {
         AtlasJob j = ex.getIn().getBody(AtlasJob.class);
         Long jobId = (Long) ex.getProperty("jobId");
