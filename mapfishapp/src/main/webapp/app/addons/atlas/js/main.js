@@ -157,7 +157,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
 
         this.printProvider = new GeoExt.data.MapFishPrintv3Provider({
             method: "POST",
-            url: this.options.printServerUrl
+            url: this.options.atlasServerUrl
         });
         this.printProvider.loadCapabilities();
         //TODO We are waiting for capabilites...

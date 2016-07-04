@@ -23,7 +23,7 @@ Example addon config:
             "resultPanelAction": true,
             "layerTreeAction": true,
             "maxFeatures": 100,
-            "printServerUrl": "http://localhost:8181/print/atlas/",
+            "atlasServerUrl": "/atlas/print",
             "bboxBuffer": 0.1
         },
         "title": {
