@@ -187,4 +187,27 @@ ou: 23
 description: This group grants basic, authenticated access to the whole SDI
 member: uid=testuser,ou=users,dc=georchestra,dc=org
 
+# orgs, georchestra.org
+dn: ou=orgs,dc=georchestra,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: orgs
 
+dn: o=psc,ou=orgs,dc=georchestra,dc=org
+objectClass: organization
+objectClass: top
+o: psc
+businessCategory: ASSOCIATION
+postalAddress: 127 rue georchestra, 73590 Chamblille
+
+dn: cn=psc,ou=orgs,dc=georchestra,dc=org
+objectClass: groupOfMembers
+objectClass: top
+cn: psc
+businessCategory: REGISTERED
+description: 4184,684,9849,7987,797898,5797,579,97,49,797,97
+member: uid=testadmin,ou=users,dc=georchestra,dc=org
+member: uid=testuser,ou=users,dc=georchestra,dc=org
+o: Project Steering Community
+ou: PSC
+seeAlso: o=psc,ou=orgs,dc=georchestra,dc=org
