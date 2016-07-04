@@ -209,7 +209,7 @@ public class UsersGroupsControllerTest {
         // Configures groupDao
         groupDao = new GroupDaoImpl();
         groupDao.setLdapTemplate(ldapTemplate);
-        groupDao.setGroupSearchBaseDN("ou=groups");
+        groupDao.setGroupSearchBaseDN("ou=roles");
         groupDao.setUniqueNumberField("ou");
         groupDao.setUserSearchBaseDN("ou=users");
 

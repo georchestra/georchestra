@@ -49,19 +49,19 @@ shared.ldapUrl=ldap://@shared.ldap.host@:@shared.ldap.port@
 # how geOrchestra should query the ldap directory.
 # shared.ldap.baseDn is the top level of the directory tree
 # shared.ldap.userSearchBaseDN is the query filter for users
-# shared.ldap.groupSearchBaseDN is the query filter for groups
+# shared.ldap.groupSearchBaseDN is the query filter for roles
 # shared.ldap.admin.dn is the query filter for the ldap admin user
 # shared.ldap.admin.password is the ldap admin user password
 # + example +
 # shared.ldap.baseDn=dc=georchestra,dc=org
 # shared.ldap.userSearchBaseDN=ou=users
-# shared.ldap.groupSearchBaseDN=ou=groups
+# shared.ldap.groupSearchBaseDN=ou=roles
 # shared.ldap.admin.dn=cn=admin,@shared.ldap.baseDn@
 # shared.ldap.admin.password=secret
 #
 shared.ldap.baseDn=dc=pigma,dc=org
 shared.ldap.userSearchBaseDN=ou=users
-shared.ldap.groupSearchBaseDN=ou=groups
+shared.ldap.groupSearchBaseDN=ou=roles
 shared.ldap.admin.dn=cn=admin,@shared.ldap.baseDn@
 shared.ldap.admin.password=secret
 

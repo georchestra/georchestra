@@ -78,7 +78,7 @@ public class UsersControllerTest {
         // Configures groupDao
         groupDao = new GroupDaoImpl();
         groupDao.setLdapTemplate(ldapTemplate);
-        groupDao.setGroupSearchBaseDN("ou=groups");
+        groupDao.setGroupSearchBaseDN("ou=roles");
         groupDao.setUniqueNumberField("ou");
         groupDao.setUserSearchBaseDN("ou=users");
         groupDao.setGroups(this.groups);
@@ -290,7 +290,7 @@ public class UsersControllerTest {
 
         Mockito.when(ldapTemplate.search((Name) Mockito.any(), Mockito.anyString(),(ContextMapper) Mockito.any()))
             .thenReturn(new ArrayList<Object>());
-        Mockito.when(ldapTemplate.lookupContext(new DistinguishedName("cn=SV_USER,ou=groups")))
+        Mockito.when(ldapTemplate.lookupContext(new DistinguishedName("cn=SV_USER,ou=roles")))
             .thenReturn(Mockito.mock(DirContextOperations.class));
 
 
