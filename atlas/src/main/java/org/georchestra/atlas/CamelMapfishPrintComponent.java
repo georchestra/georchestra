@@ -3,6 +3,7 @@ package org.georchestra.atlas;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.net.URISyntaxException;
 import java.net.URL;
 
@@ -11,6 +12,8 @@ import org.apache.camel.Handler;
 import org.apache.camel.Message;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONException;
+import org.json.JSONStringer;
+import org.json.JSONWriter;
 import org.mapfish.print.MapPrinter;
 import org.mapfish.print.cli.Main;
 import org.mapfish.print.wrapper.json.PJsonObject;
@@ -31,6 +34,7 @@ public class CamelMapfishPrintComponent {
     public void init() throws IOException, URISyntaxException {
         this.context = new ClassPathXmlApplicationContext(Main.DEFAULT_SPRING_CONTEXT);
         this.mapPrinter = context.getBean(MapPrinter.class);
+
         URL configFileUrl = this.getClass().getResource("/atlas/config.yaml");
         Assert.notNull(configFileUrl);
         byte[] configFileData = FileUtils.readFileToByteArray(new File(configFileUrl.toURI()));
@@ -54,6 +58,16 @@ public class CamelMapfishPrintComponent {
         } catch (Exception e) {
             log.error("Error generating PDF", e);
         }
+    }
 
+    @Handler
+    public void printCapabilities(Exchange ex) throws JSONException {
+        StringWriter strw = new StringWriter();
+        
+        JSONWriter w = new JSONWriter(strw);
+        w.object();
+        mapPrinter.printClientConfig(w);
+        w.endObject();
+        ex.getOut().setBody(strw.toString());
     }
 }

@@ -109,6 +109,12 @@
             </get>
         </rest>
 
+        <rest>
+            <get uri="/print/capabilities.json">         
+                <to uri="bean:specAsPdf?method=printCapabilities" />
+            </get>
+        </rest>
+
         <!--
         Route for requesting Mapfish Print to generate a PDF.
         Inputs:
