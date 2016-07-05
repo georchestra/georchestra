@@ -89,15 +89,18 @@
     <property name="ldapTemplate" ref="ldapTemplate"/>
     <property name="orgsSearchBaseDN" value="${orgsSearchBaseDN}"/>
     <property name="userSearchBaseDN" value="${userSearchBaseDN}"/>
+    <property name="basePath" value="${baseDN}"/>
   </bean>
 
 
-  <bean id="accountDao" class="org.georchestra.ldapadmin.ds.AccountDaoImpl">
+  <bean id="accountDao" class="org.georchestra.ldapadmin.ds.AccountDaoImpl" init-method="init">
     <constructor-arg ref="ldapTemplate"/>
     <constructor-arg ref="groupDao"/>
+    <constructor-arg ref="orgsDao"/>
     <property name="uniqueNumberField" value="${accountUniqueNumberField}"/>
     <property name="userSearchBaseDN" value="${userSearchBaseDN}"/>
     <property name="basePath" value="${baseDN}"/>
+    <property name="orgsSearchBaseDN" value="${orgsSearchBaseDN}"/>
   </bean>
 
   <bean class="org.georchestra.ldapadmin.ws.backoffice.users.UserRule">

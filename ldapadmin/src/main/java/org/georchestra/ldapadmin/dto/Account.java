@@ -130,13 +130,13 @@ public interface Account {
 
 	String getStateOrProvince();
 
-	void setOrganizationalUnit(String organizationalUnit);
-
-	String getOrganizationalUnit();
-
 	void setHomePostalAddress(String homePostalAddress);
 
 	String getHomePostalAddress();
+
+	void setOrg(String org);
+
+	String getOrg();
 
 	String toVcf();
 

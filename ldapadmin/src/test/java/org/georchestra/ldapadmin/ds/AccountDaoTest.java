@@ -27,6 +27,7 @@ public class AccountDaoTest {
     private GroupDaoImpl groupDao;
     private LdapContextSource contextSource;
     private Account adminAccount;
+    private OrgsDao orgsDao;
 
     @Before
     public void setUp() throws Exception {
@@ -59,7 +60,14 @@ public class AccountDaoTest {
         groupDao.setGroupSearchBaseDN("ou=roles");
         groupDao.setUniqueNumberField("ou");
         groupDao.setUserSearchBaseDN("ou=users");
-        us = new AccountDaoImpl(ldapTemplate, groupDao);
+
+        orgsDao = new OrgsDao();
+        orgsDao.setLdapTemplate(ldapTemplate);
+        orgsDao.setOrgsSearchBaseDN("ou=orgs");
+        orgsDao.setUserSearchBaseDN("ou=users");
+
+
+        us = new AccountDaoImpl(ldapTemplate, groupDao, orgsDao);
         ((AccountDaoImpl) us).setUserSearchBaseDN("ou=users");
 
         this.adminAccount = AccountFactory.createBrief("testadmin", "monkey123", "Test", "ADmin",

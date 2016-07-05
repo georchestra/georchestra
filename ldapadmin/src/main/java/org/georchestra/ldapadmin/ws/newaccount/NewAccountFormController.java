@@ -148,8 +148,17 @@ public final class NewAccountFormController {
 	public String create(HttpServletRequest request,
 						 @ModelAttribute AccountFormBean formBean,
 						 BindingResult result,
-						 SessionStatus sessionStatus)
+						 SessionStatus sessionStatus,
+						 Model model)
 			throws IOException {
+
+		// Populate orgs droplist
+		Map<String, String> options = new HashMap<String, String>();
+		List<Org> orgs = this.orgDao.findAll();
+		for(Org org : orgs)
+			options.put(org.getId(), org.getName());
+		model.addAttribute("orgs", options);
+
 
 		String remoteAddr = request.getRemoteAddr();
 
@@ -179,6 +188,8 @@ public final class NewAccountFormController {
 					formBean.getPhone(),
 					formBean.getTitle(),
 					formBean.getDescription() );
+
+			account.setOrg(formBean.getOrg());
 
 			String groupID = this.moderator.moderatedSignup() ? Group.PENDING : Group.USER;
 

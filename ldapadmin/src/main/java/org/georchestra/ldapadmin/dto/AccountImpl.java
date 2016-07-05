@@ -83,8 +83,6 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 
 	private String stateOrProvince; // st
 
-	private String organizationalUnit; // ou
-
 	private String homePostalAddress;
 
 	private Date shadowExpire;
@@ -92,6 +90,9 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 	private String manager;
 	
 	private String context;
+
+	// Organization from ou=orgs,dc=georchestra,dc=org
+	private String org;
 
 	@Override
 	public String toString() {
@@ -118,10 +119,10 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 				", mobile='" + mobile + '\'' +
 				", roomNumber='" + roomNumber + '\'' +
 				", stateOrProvince='" + stateOrProvince + '\'' +
-				", organizationalUnit='" + organizationalUnit + '\'' +
 				", homePostalAddress='" + homePostalAddress + '\'' +
-				", shadowExpire=" + shadowExpire + '\'' +
-				", context=" + context +
+				", shadowExpire='" + shadowExpire + '\'' +
+				", context='" + context + '\'' +
+				", org='" + org + '\'' +
 				'}';
 	}
 
@@ -294,7 +295,6 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 		res.put(UserSchema.MOBILE_KEY, this.mobile);
 		res.put(UserSchema.ROOM_NUMBER_KEY, this.roomNumber);
 		res.put(UserSchema.STATE_OR_PROVINCE_KEY, this.stateOrProvince);
-		res.put(UserSchema.ORG_UNIT_KEY, this.organizationalUnit);
 		res.put(UserSchema.HOME_POSTAL_ADDRESS_KEY, this.homePostalAddress);
 		if(this.shadowExpire != null) {
 			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
@@ -618,16 +618,6 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 	}
 
 	@Override
-	public void setOrganizationalUnit(String organizationalUnit) {
-		this.organizationalUnit = organizationalUnit;
-	}
-
-	@Override
-	public String getOrganizationalUnit() {
-		return this.organizationalUnit;
-	}
-
-	@Override
 	public void setHomePostalAddress(String homePostalAddress) {
 		this.homePostalAddress = homePostalAddress;
 	}
@@ -636,6 +626,17 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 	public String getHomePostalAddress() {
 		return this.homePostalAddress;
 	}
+
+	@Override
+	public void setOrg(String org) {
+		this.org = org;
+	}
+
+	@Override
+	public String getOrg() {
+		return this.org;
+	}
+
 	@Override
     public int compareTo(Account o) {
 		return this.uid.compareTo(o.getUid());

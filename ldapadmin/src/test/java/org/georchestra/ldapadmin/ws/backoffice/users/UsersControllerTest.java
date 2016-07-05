@@ -17,10 +17,7 @@ import javax.naming.directory.SearchControls;
 import javax.servlet.http.HttpServletResponse;
 
 import org.georchestra.ldapadmin.dao.AdminLogDao;
-import org.georchestra.ldapadmin.ds.AccountDaoImpl;
-import org.georchestra.ldapadmin.ds.DataServiceException;
-import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
-import org.georchestra.ldapadmin.ds.GroupDaoImpl;
+import org.georchestra.ldapadmin.ds.*;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.georchestra.ldapadmin.dto.UserSchema;
@@ -54,6 +51,7 @@ public class UsersControllerTest {
     private UsersController usersCtrl ;
     private AccountDaoImpl dao ;
     private GroupDaoImpl groupDao ;
+    private OrgsDao orgsDao ;
     private UserRule userRule ;
     private GroupProtected groups;
 
@@ -86,8 +84,14 @@ public class UsersControllerTest {
         groupDao.setGroups(this.groups);
         groupDao.setLogDao(logDao);
 
+        orgsDao = new OrgsDao();
+        orgsDao.setLdapTemplate(ldapTemplate);
+        orgsDao.setOrgsSearchBaseDN("ou=orgs");
+        orgsDao.setUserSearchBaseDN("ou=users");
+
+
         // configures AccountDao
-        dao = new AccountDaoImpl(ldapTemplate, groupDao);
+        dao = new AccountDaoImpl(ldapTemplate, groupDao, orgsDao);
         dao.setUniqueNumberField("employeeNumber");
         dao.setUserSearchBaseDN("ou=users");
         dao.setGroupDao(groupDao);

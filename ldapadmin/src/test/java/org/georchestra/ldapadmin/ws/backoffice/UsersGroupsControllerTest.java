@@ -15,6 +15,7 @@ import java.util.Set;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.ldapadmin.ds.AccountDaoImpl;
 import org.georchestra.ldapadmin.ds.GroupDaoImpl;
+import org.georchestra.ldapadmin.ds.OrgsDao;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.georchestra.ldapadmin.dto.Group;
@@ -73,6 +74,7 @@ public class UsersGroupsControllerTest {
     public ErrorCollector collector = new ErrorCollector();
     
     private AccountDaoImpl accountDao;
+    private OrgsDao orgsDao;
 
     private void setUpRealLdap() {
         final String bindDn = System.getProperty(ENV_BINDDN);
@@ -213,8 +215,13 @@ public class UsersGroupsControllerTest {
         groupDao.setUniqueNumberField("ou");
         groupDao.setUserSearchBaseDN("ou=users");
 
+        orgsDao = new OrgsDao();
+        orgsDao.setLdapTemplate(ldapTemplate);
+        orgsDao.setOrgsSearchBaseDN("ou=orgs");
+        orgsDao.setUserSearchBaseDN("ou=users");
+
         // configures AccountDao
-        dao = new AccountDaoImpl(ldapTemplate, groupDao);
+        dao = new AccountDaoImpl(ldapTemplate, groupDao, orgsDao);
         dao.setUniqueNumberField("employeeNumber");
         dao.setUserSearchBaseDN("ou=users");
         dao.setGroupDao(groupDao);

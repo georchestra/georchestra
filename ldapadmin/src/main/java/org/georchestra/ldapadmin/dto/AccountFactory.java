@@ -122,14 +122,14 @@ public class AccountFactory {
 	 * @param physicalDeliveryOfficeName
 	 * @param locality 
 	 * @param street 
-	 * @param facsimile 
-	 * @param organizationalUnit
+	 * @param facsimile
 	 * @param homePostalAddress
 	 * @param mobile
 	 * @param roomNumber
 	 * @param stateOrProvince
 	 * @param manager
 	 * @param context
+	 * @param org
 	 *
 	 * @return {@link Account}
 	 */
@@ -149,14 +149,14 @@ public class AccountFactory {
 			String physicalDeliveryOfficeName, 
 			String street, 
 			String locality, 
-			String facsimile, 
-			String organizationalUnit,
+			String facsimile,
 			String homePostalAddress,
 			String mobile, 
 			String roomNumber,
 			String stateOrProvince,
 			String manager,
-			String context) {
+			String context,
+			String org) {
 		
 		
 		Account a = new AccountImpl();
@@ -177,13 +177,13 @@ public class AccountFactory {
 		a.setPostOfficeBox(postOfficeBox);
 		a.setPhysicalDeliveryOfficeName(physicalDeliveryOfficeName);
 		a.setFacsimile(facsimile);
-		a.setOrganizationalUnit(organizationalUnit);
 		a.setHomePostalAddress(homePostalAddress);
 		a.setMobile(mobile);
 		a.setRoomNumber(roomNumber);
 		a.setStateOrProvince(stateOrProvince);
 		a.setManager(manager);
 		a.setContext(context);
+		a.setOrg(org);
 		
 		return a;
 	}
@@ -216,11 +216,11 @@ public class AccountFactory {
 		a.setMobile(o.getMobile());
 		a.setRoomNumber(o.getRoomNumber());
 		a.setStateOrProvince(o.getStateOrProvince());
-		a.setOrganizationalUnit(o.getOrganizationalUnit());
 		a.setHomePostalAddress(o.getHomePostalAddress());
 		a.setManager(o.getManager());
 		a.setShadowExpire(o.getShadowExpire());
 		a.setContext(o.getContext());
+		a.setOrg(o.getOrg());
 
 		return a;
 	}

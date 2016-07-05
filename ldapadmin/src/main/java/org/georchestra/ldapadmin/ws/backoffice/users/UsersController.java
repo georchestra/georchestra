@@ -243,7 +243,7 @@ public class UsersController {
      * 	"postalCode": "postal code",
      *	"l": "locality",
      * 	"postOfficeBox": "the post office box",
-     *  "o": "the_organization"
+     *  "org": "the_organization"
      * }
      *
      * where <b>sn, givenName, mail</b> are mandatories
@@ -655,8 +655,6 @@ public class UsersController {
 
 		String facsimile = RequestUtil.getFieldValue( json, UserSchema.FACSIMILE_KEY);
 
-		String org = RequestUtil.getFieldValue( json, UserSchema.ORG_KEY);
-
 		String title = RequestUtil.getFieldValue( json, UserSchema.TITLE_KEY);
 
 		String description = RequestUtil.getFieldValue( json, UserSchema.DESCRIPTION_KEY);
@@ -673,7 +671,9 @@ public class UsersController {
 
 		String commonName = AccountFactory.formatCommonName(givenName, surname);
 
-		Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, title, phone, description, postalAddress, postalCode, "", postOfficeBox, "", street, locality, facsimile, "","","","","",manager,"");
+		String org = RequestUtil.getFieldValue(json, "org");
+
+		Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, title, phone, description, postalAddress, postalCode, "", postOfficeBox, "", street, locality, facsimile, "","","","",manager,"", org);
 
 		return a;
 

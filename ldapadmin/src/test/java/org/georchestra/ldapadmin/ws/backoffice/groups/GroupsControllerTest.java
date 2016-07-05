@@ -9,11 +9,7 @@ import javax.naming.Name;
 import javax.servlet.http.HttpServletResponse;
 
 import org.georchestra.ldapadmin.dao.AdminLogDao;
-import org.georchestra.ldapadmin.ds.AccountDao;
-import org.georchestra.ldapadmin.ds.AccountDaoImpl;
-import org.georchestra.ldapadmin.ds.DataServiceException;
-import org.georchestra.ldapadmin.ds.DuplicatedCommonNameException;
-import org.georchestra.ldapadmin.ds.GroupDaoImpl;
+import org.georchestra.ldapadmin.ds.*;
 import org.georchestra.ldapadmin.dto.Group;
 import org.georchestra.ldapadmin.dto.GroupFactory;
 import org.georchestra.ldapadmin.ws.backoffice.users.UserRule;
@@ -46,8 +42,9 @@ public class GroupsControllerTest {
 
 	private MockHttpServletRequest request;
 	private MockHttpServletResponse response;
+    private OrgsDao orgsDao;
 
-	@Before
+    @Before
 	public void setUp() throws Exception {
 		ldapTemplate = Mockito.mock(LdapTemplate.class);
 		contextSource = Mockito.mock(LdapContextSource.class);
@@ -74,7 +71,13 @@ public class GroupsControllerTest {
 		groupDao.setLogDao(logDao);
 		groupDao.setGroups(groups);
 
-		AccountDao accountDao = new AccountDaoImpl(ldapTemplate, groupDao);
+        orgsDao = new OrgsDao();
+        orgsDao.setLdapTemplate(ldapTemplate);
+        orgsDao.setOrgsSearchBaseDN("ou=orgs");
+        orgsDao.setUserSearchBaseDN("ou=users");
+
+
+        AccountDao accountDao = new AccountDaoImpl(ldapTemplate, groupDao, orgsDao);
 
 		groupCtrl = new GroupsController(groupDao, userRule);
 		groupCtrl.setAccountDao(accountDao);

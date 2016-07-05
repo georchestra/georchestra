@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.georchestra.ldapadmin.ds.AccountDaoImpl;
 import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.GroupDaoImpl;
+import org.georchestra.ldapadmin.ds.OrgsDao;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -32,6 +33,7 @@ public class ChangePasswordControllerTest {
     private ChangePasswordFormController ctrl;
     private AccountDaoImpl dao;
     private GroupDaoImpl groupDao;
+    private OrgsDao orgsDao;
     private LdapTemplate ldapTemplate;
     private ContextSource contextSource;
 
@@ -50,7 +52,12 @@ public class ChangePasswordControllerTest {
         groupDao = new GroupDaoImpl();
         groupDao.setLdapTemplate(ldapTemplate);
 
-        dao = new AccountDaoImpl(ldapTemplate, groupDao);
+        orgsDao = new OrgsDao();
+        orgsDao.setLdapTemplate(ldapTemplate);
+        orgsDao.setUserSearchBaseDN("ou=users");
+        orgsDao.setOrgsSearchBaseDN("ou=orgs");
+
+        dao = new AccountDaoImpl(ldapTemplate, groupDao, orgsDao);
         dao.setUserSearchBaseDN("ou=users");
         ctrl = new ChangePasswordFormController(dao);
 

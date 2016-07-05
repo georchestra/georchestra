@@ -3,6 +3,7 @@ package org.georchestra.ldapadmin.ds;
 
 import org.georchestra.ldapadmin.dto.Org;
 import org.springframework.ldap.core.AttributesMapper;
+import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
@@ -10,11 +11,8 @@ import org.springframework.ldap.filter.Filter;
 import org.springframework.ldap.support.LdapNameBuilder;
 
 import javax.naming.Name;
-import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
+import javax.naming.directory.*;
 import javax.naming.NamingException;
-import javax.naming.directory.BasicAttribute;
-import javax.naming.directory.BasicAttributes;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.LinkedList;
@@ -25,6 +23,8 @@ public class OrgsDao {
     private LdapTemplate ldapTemplate;
     private Name orgsSearchBaseDN;
     private Name userSearchBaseDN;
+    private String basePath;
+
 
     public void setLdapTemplate(LdapTemplate ldapTemplate) {
         this.ldapTemplate = ldapTemplate;
@@ -37,6 +37,15 @@ public class OrgsDao {
     public void setUserSearchBaseDN(String userSearchBaseDN) {
         this.userSearchBaseDN = LdapNameBuilder.newInstance(userSearchBaseDN).build();
     }
+
+    public void setBasePath(String basePath) {
+        this.basePath = basePath;
+    }
+
+    public String getBasePath() {
+        return basePath;
+    }
+
 
     public List<Org> findAll(){
         EqualsFilter filter = new EqualsFilter("objectClass", "groupOfMembers");
@@ -97,29 +106,23 @@ public class OrgsDao {
     }
 
     public void addUser(String organization, String user){
-        Org org = this.findByCommonName(organization);
+        Name orgDN = LdapNameBuilder.newInstance(this.orgsSearchBaseDN).add("cn", organization).build();
+        Name userDN = LdapNameBuilder.newInstance(this.userSearchBaseDN + "," + this.basePath).add("uid", user).build();
 
-
-
-
+        DirContextOperations context = ldapTemplate.lookupContext(orgDN);
+        context.addAttributeValue("member", userDN, false);
+        this.ldapTemplate.modifyAttributes(context);
     }
 
+    public void removeUser(String organization, String user){
+        Name orgDN = LdapNameBuilder.newInstance(this.orgsSearchBaseDN).add("cn", organization).build();
+        Name userDN = LdapNameBuilder.newInstance(this.userSearchBaseDN).add("uid", user).build();
 
-    /*
-    public abstract void delete(final String commonName);
-
-
-
-    public void deleteUser(String user) throws DataServiceException {
-
-        Org org = this.findForUser(user);
-        this.deleteUser(org.getId(), user);
+        Attribute attr = new BasicAttribute("member", userDN);
+        ModificationItem item = new ModificationItem(DirContext.REMOVE_ATTRIBUTE, attr);
+        this.ldapTemplate.modifyAttributes(orgDN, new ModificationItem[] {item});
 
     }
-
-    public abstract void deleteUser(String org, String user);
-*/
-
 
 
     private Attributes buildAttributes(Org org) {
