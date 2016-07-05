@@ -406,6 +406,12 @@
       </modules>
     </profile>
     <profile>
+      <id>atlas</id>
+      <modules>
+        <module>atlas</module>
+      </modules>
+    </profile>
+    <profile>
       <id>commons</id>
       <modules>
         <module>commons</module>
