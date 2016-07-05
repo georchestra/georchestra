@@ -1,16 +1,8 @@
 package org.georchestra.atlas;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-
+import com.google.common.annotations.VisibleForTesting;
 import org.apache.camel.Exchange;
 import org.apache.camel.Handler;
-import org.apache.camel.converter.stream.InputStreamCache;
 import org.apache.velocity.app.VelocityEngine;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.jfree.util.Log;
@@ -21,7 +13,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
-import com.google.common.annotations.VisibleForTesting;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 public class AtlasMailComponent {
 

@@ -1,14 +1,7 @@
 package org.georchestra.atlas;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.net.URISyntaxException;
-import java.net.URL;
-
+import com.itextpdf.text.DocumentException;
 import org.apache.camel.Exchange;
-import org.apache.camel.Handler;
 import org.apache.camel.Message;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONException;
@@ -22,16 +15,20 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.util.Assert;
 
-import com.itextpdf.text.DocumentException;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 public class CamelMapfishPrintComponent {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     private MapPrinter mapPrinter = null;
-    private ApplicationContext context = null;
 
     public void init() throws IOException, URISyntaxException {
-        this.context = new ClassPathXmlApplicationContext(Main.DEFAULT_SPRING_CONTEXT);
+        ApplicationContext context = new ClassPathXmlApplicationContext(Main.DEFAULT_SPRING_CONTEXT);
         this.mapPrinter = context.getBean(MapPrinter.class);
 
         URL configFileUrl = this.getClass().getResource("/atlas/config.yaml");

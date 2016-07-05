@@ -31,21 +31,6 @@ public class CamelPopulatePropertiesComponent {
         this.baseUrl = url;
     }
     
-
-
-    private String toString(InputStreamCache property) throws IOException {
-
-        property.reset();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(property));
-
-        StringBuilder rawString = new StringBuilder();
-        String line;
-        while((line = reader.readLine()) != null)
-            rawString.append(line);
-        return rawString.toString();
-    }
-
-
     /**
      * Generate following key in exchange properties :
      *  * layers : List of all layers in print request (feature layer and base layers)
