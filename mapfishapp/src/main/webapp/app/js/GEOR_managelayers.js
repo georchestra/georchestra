@@ -87,7 +87,7 @@ GEOR.managelayers = (function() {
 
         /**
          * @event searchresults
-         * Fires when we've received a response from server 
+         * Fires when we've received a response from server
          *
          * Listener arguments:
          * options - {Object} A hash containing response, model and format
@@ -99,7 +99,7 @@ GEOR.managelayers = (function() {
          * Fires when the user presses the search button
          *
          * Listener arguments:
-         * panelCfg - {Object} Config object for a panel 
+         * panelCfg - {Object} Config object for a panel
          */
         "search"
     );
@@ -260,7 +260,7 @@ GEOR.managelayers = (function() {
         width = (logo && logo.width) ? 'width=\''+logo.width+'\'' : '',
         height = (logo && logo.height) ? 'height=\''+logo.height+'\'' : '',
         tip = tr('source: ')+ titleForDisplay +
-            ((logo && GEOR.util.isUrl(logo.href, true)) ? 
+            ((logo && GEOR.util.isUrl(logo.href, true)) ?
                 '<br /><img src=\''+logo.href+'\' '+width+' '+height+' />' : ''),
         attrDisplay = (attr.href) ?
             '<a href="'+attr.href+'" target="_blank" ext:qtip="'+tip+'">'+titleForDisplay+'</a>' :
@@ -322,8 +322,8 @@ GEOR.managelayers = (function() {
         return {
             xtype: 'button',
             // for vector layers, the button is always enabled:
-            disabled: (isWMS || isWMTS) ? 
-                !(layerRecord.get("queryable")) : 
+            disabled: (isWMS || isWMTS) ?
+                !(layerRecord.get("queryable")) :
                 false,
             iconCls: 'geor-btn-info',
             allowDepress: true,
@@ -411,7 +411,7 @@ GEOR.managelayers = (function() {
             isWMTS = type === "WMTS",
             stylesMenuItems = [],
             onStyleItemCheck;
-        
+
         if (isWMS) {
             onStyleItemCheck = function(item, checked) {
                 if (checked === true) {
@@ -434,7 +434,7 @@ GEOR.managelayers = (function() {
                 var defaultStyleName = styles[0].name;
                 styles.sort(function(a, b){
                     return GEOR.util.sortFn(
-                        a.name || a.title, 
+                        a.name || a.title,
                         b.name || b.title
                     );
                 });
@@ -619,7 +619,7 @@ GEOR.managelayers = (function() {
      * layerRecord - {GeoExt.data.LayerRecord}
      *
      * Returns:
-     * {Array} An array of menu items, empty if the WMS layer 
+     * {Array} An array of menu items, empty if the WMS layer
      * is not yet described.
      */
     var createMenuItems = function(layerRecord) {
@@ -635,7 +635,7 @@ GEOR.managelayers = (function() {
             hasEquivalentWCS = (type === "WMS") ?
                 layerRecord.hasEquivalentWCS() : false,
             isVector = layer instanceof OpenLayers.Layer.Vector,
-            isBaseLayer = layerRecord.get("opaque") || 
+            isBaseLayer = layerRecord.get("opaque") ||
                 layer.transitionEffect === "resize";
 
         var menuItems = [], sepInserted, item;
@@ -795,7 +795,7 @@ GEOR.managelayers = (function() {
             });
         }
 
-        if ((hasEquivalentWFS || hasEquivalentWCS || isWFS) 
+        if ((hasEquivalentWFS || hasEquivalentWCS || isWFS)
             && (GEOR.config.ROLES.indexOf("ROLE_MOD_EXTRACTORAPP") >= 0)) {
 
             insertSep();
@@ -830,12 +830,12 @@ GEOR.managelayers = (function() {
                 menu: createFormatMenu(layerRecord)
             });
             menuItems.push({
-                text: isBaseLayer ? 
+                text: isBaseLayer ?
                     tr("Set as overlay") : tr("Set as baselayer"),
                 handler: function() {
                     var store = layerRecord.store;
                     layerRecord.set("opaque", !isBaseLayer);
-                    layer.transitionEffect = isBaseLayer ? 
+                    layer.transitionEffect = isBaseLayer ?
                         "map-resize" : "resize";
                     store.remove(layerRecord);
                     store.addSorted(layerRecord);
@@ -895,7 +895,7 @@ GEOR.managelayers = (function() {
                         o.pathname
                     ].join(''), OpenLayers.Util.getParameterString(
                         Ext.apply(
-                            OpenLayers.Util.upperCaseObject(o.args), 
+                            OpenLayers.Util.upperCaseObject(o.args),
                             {
                                 SERVICE: p.protocol,
                                 REQUEST: "GetCapabilities"
@@ -923,7 +923,7 @@ GEOR.managelayers = (function() {
                             },{
                                 xtype: 'displayfield',
                                 fieldLabel: tr("FeatureType"),
-                                value: '<b>' + p.layer + '</b>' + 
+                                value: '<b>' + p.layer + '</b>' +
                                     (isLayergroup ? " (" + tr("layergroup") + ")" : "")
                             },{
                                 xtype: 'displayfield',
@@ -942,6 +942,34 @@ GEOR.managelayers = (function() {
                 }
             });
         }
+
+        /**Loading Addons actions
+         *
+         * Addons must have options.layerTreeAction === true and
+         *  API method layerTreeHandler(menuitem, event, layerRecord). In this API method, this is the addon.
+         */
+
+
+        
+        Ext.each(GEOR.config.ADDONS, function(addonConfig) {
+        var addon, me;
+        me = this;
+
+            if (GEOR.tools.getAddonsState()[addonConfig.id] && addonConfig.options.layerTreeAction) {
+                addon = GEOR.tools.getAddon(addonConfig.id);
+                insertSep();
+                menuItems.push({
+                    iconCls: addon.iconCls,
+                    text: addon.title,
+                    qtip: addon.qtip,
+                    listeners: {
+                        "click": {
+                            fn: addon.layerTreeHandler.createDelegate(addon, [layerRecord], true)
+                        }
+                    },
+                });
+            }
+        });
 
         return menuItems;
     };
@@ -974,7 +1002,7 @@ GEOR.managelayers = (function() {
      * layerRecord - {GeoExt.data.LayerRecord}
      *
      * Returns:
-     * {Array} An array of menu items, empty if the WMS layer 
+     * {Array} An array of menu items, empty if the WMS layer
      * is not yet described.
      */
     var createEditionItems = function(layerRecord) {
@@ -1019,7 +1047,7 @@ GEOR.managelayers = (function() {
         var layerRecord = node.layerStore.getById(layer.id);
 
         // buttons in the toolbar
-        var buttons = [createInfoButton(layerRecord), 
+        var buttons = [createInfoButton(layerRecord),
         {
             text: tr("Actions"),
             menu: new Ext.menu.Menu({
@@ -1053,7 +1081,7 @@ GEOR.managelayers = (function() {
                 }
             })
         }];
-        
+
         if (GEOR.edit) {
             buttons.push({
                 xtype: "splitbutton",
@@ -1197,7 +1225,7 @@ GEOR.managelayers = (function() {
         create: function(layerStore) {
             tr = OpenLayers.i18n;
             Ext.QuickTips.init();
-            
+
             // handle our panels cache:
             panelCache = {};
             layerStore.on("remove", function(s, record) {
