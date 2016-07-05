@@ -96,7 +96,7 @@ public class UsersControllerTest {
         usersCtrl = new UsersController(dao, userRule);
 
         this.adminAccount = AccountFactory.createBrief("testadmin", "monkey123", "Test", "ADmin",
-                "postmastrer@localhost", "+33123456789", "geOrchestra Project Steering Committee", "admin", "");
+                "postmastrer@localhost", "+33123456789", "admin", "");
 
         request = new MockHttpServletRequest();
         response = new MockHttpServletResponse();
@@ -178,7 +178,7 @@ public class UsersControllerTest {
     @Test
     public void testFindByUid() throws Exception {
         Account pmauduit = AccountFactory.createBrief("pmauduit", "monkey123", "Pierre", "Mauduit",
-                "pmauduit@localhost", "+33123456789", "geOrchestra Project Steering Committee", "developer", "");
+                "pmauduit@localhost", "+33123456789", "developer", "");
 
         Mockito.when(ldapTemplate.lookup(Mockito.any(DistinguishedName.class), eq(UserSchema.ATTR_TO_RETRIEVE), (ContextMapper) Mockito.any())).thenReturn(pmauduit);
         usersCtrl.findByUid("pmauduit", response);
@@ -191,7 +191,6 @@ public class UsersControllerTest {
         assertTrue(ret.getString("sn").equals("Mauduit"));
         assertTrue(ret.getString("description").isEmpty());
         assertTrue(ret.getString("telephoneNumber").equals("+33123456789"));
-        assertTrue(ret.getString("o").equals("geOrchestra Project Steering Committee"));
         assertTrue(ret.getString("givenName").equals("Pierre"));
     }
 
@@ -281,8 +280,7 @@ public class UsersControllerTest {
                 put("street", "Avenue des Ducs de Savoie").
                 put("postalCode", "73000").
                 put("l", "Chambéry").
-                put("postOfficeBox", "1234").
-                put("o", "GeoServer");
+                put("postOfficeBox", "1234");
         request.setRequestURI("/ldapadmin/users/geoserver");
         request.setContent(reqUsr.toString().getBytes());
         Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup((Name) Mockito.any());
@@ -308,7 +306,6 @@ public class UsersControllerTest {
         assertTrue(ret.getString("ou").equals(""));
         assertTrue(ret.getString("facsimileTelephoneNumber").equals("+33123456788"));
         assertTrue(ret.getString("street").equals("Avenue des Ducs de Savoie"));
-        assertTrue(ret.getString("o").equals("GeoServer"));
         assertTrue(ret.getString("l").equals("Chambéry"));
         assertTrue(ret.getString("givenName").equals("GS Priv User"));
         assertTrue(ret.getString("postalCode").equals("73000"));
@@ -369,10 +366,10 @@ public class UsersControllerTest {
         JSONObject reqUsr = new JSONObject().put("mail","tomcat2@localhost");
         request.setContent(reqUsr.toString().getBytes());
         Account fakedAccount = AccountFactory.createBrief("pmauduit", "monkey123", "Pierre",
-                "pmauduit", "pmauduit@georchestra.org", "+33123456789", "geOrchestra",
+                "pmauduit", "pmauduit@georchestra.org", "+33123456789",
                 "developer & sysadmin", "dev&ops");
         Account fakedAccount2 = AccountFactory.createBrief("pmauduit2", "monkey123", "Pierre",
-                "pmauduit", "tomcat2@localhost", "+33123456789", "geOrchestra",
+                "pmauduit", "tomcat2@localhost", "+33123456789",
                 "developer & sysadmin", "dev&ops");
         Mockito.doReturn(fakedAccount).when(ldapTemplate).lookup((Name) Mockito.any(), (ContextMapper) Mockito.any());
         // Returns the same account when searching it back
@@ -404,7 +401,7 @@ public class UsersControllerTest {
         JSONObject reqUsr = new JSONObject().put("mail","tomcat2@localhost");
         request.setContent(reqUsr.toString().getBytes());
         Account fakedAccount = AccountFactory.createBrief("pmauduit", "monkey123", "Pierre",
-                "pmauduit", "pmauduit@georchestra.org", "+33123456789", "geOrchestra",
+                "pmauduit", "pmauduit@georchestra.org", "+33123456789",
                 "developer & sysadmin", "dev&ops");
         String mFilter = "(&(objectClass=inetOrgPerson)(objectClass=organizationalPerson)"
                 + "(objectClass=person)(mail=tomcat2@localhost))";
@@ -428,7 +425,7 @@ public class UsersControllerTest {
         request.setContent("{[this is ] } not valid JSON obviously ....".getBytes());
         Mockito.when(ldapTemplate.lookup(Mockito.any(Name.class), Mockito.any(ContextMapper.class))).thenReturn(
               AccountFactory.createBrief("pmauduit", "monkey123", "Pierre", "Mauduit",
-              "pmt@c2c.com", "+123", "+456", "developer", "developer"));
+              "pmt@c2c.com", "+123", "developer", "developer"));
         try {
             usersCtrl.update(request, response);
         } catch (Throwable e) {
@@ -451,13 +448,12 @@ public class UsersControllerTest {
                 .put("l", "newLocality") // locality
                 .put("telephoneNumber", "+33987654321")
                 .put("facsimileTelephoneNumber", "+339182736745")
-                .put("o", "newgeOrchestra") // organization
                 .put("title", "CEO")
                 .put("description", "CEO geOrchestra Corporation")
                 .put("givenName", "newPierre");
         request.setContent(reqUsr.toString().getBytes());
         Account fakedAccount = AccountFactory.createBrief("pmauduit", "monkey123", "Pierre",
-                "pmauduit", "pmauduit@georchestra.org", "+33123456789", "geOrchestra",
+                "pmauduit", "pmauduit@georchestra.org", "+33123456789",
                 "developer & sysadmin", "dev&ops");
         Mockito.doReturn(fakedAccount).when(ldapTemplate).lookup((Name) Mockito.any(), (String[]) Mockito.any(), (ContextMapper) Mockito.any());
         // Returns the same account when searching it back
@@ -494,13 +490,12 @@ public class UsersControllerTest {
                 .put("l", "newLocality") // locality
                 .put("telephoneNumber", "")
                 .put("facsimileTelephoneNumber", "+339182736745")
-                .put("o", "newgeOrchestra") // organization
                 .put("title", "CEO")
                 .put("description", "CEO geOrchestra Corporation")
                 .put("givenName", "newPierre");
         request.setContent(reqUsr.toString().getBytes());
         Account fakedAccount = AccountFactory.createBrief("pmauduit", "monkey123", "Pierre",
-                "pmauduit", "pmauduit@georchestra.org", "+33123456789", "geOrchestra",
+                "pmauduit", "pmauduit@georchestra.org", "+33123456789",
                 "developer & sysadmin", "dev&ops");
         Mockito.doReturn(fakedAccount).when(ldapTemplate).
             lookup((Name) Mockito.any(), eq(UserSchema.ATTR_TO_RETRIEVE), (ContextMapper) Mockito.any());

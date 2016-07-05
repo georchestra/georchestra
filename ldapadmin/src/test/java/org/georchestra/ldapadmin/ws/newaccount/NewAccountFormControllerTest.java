@@ -86,7 +86,7 @@ public class NewAccountFormControllerTest {
         dn.add(new LdapRdn("ou=users"));
         dn.add("uid", "testadmin");
         this.adminAccount =  AccountFactory.createBrief("testadmin", "monkey123", "Test", "ADmin",
-                "postmastrer@localhost", "+33123456789", "geOrchestra Project Steering Committee", "admin", "");
+                "postmastrer@localhost", "+33123456789", "admin", "");
         this.request.addHeader("sec-username", "testadmin"); // Set user connected through http header
         try {
             Mockito.when(this.dao.findByUID(eq("testadmin"))).thenReturn(this.adminAccount);
