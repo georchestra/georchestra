@@ -33,15 +33,7 @@ public class AtlasJobConverter {
 
     @Converter
     public AtlasJob toAtlasJob(String body, Exchange exchange) throws IOException, JSONException {
-
-        if(exchange.getProperties().containsKey("jobId")) {
-//            Long jobId = exchange.getProperty("rawJson", Long.class);
-            AtlasJob res = new AtlasJob(body);
-//            res.setId(jobId);
-            return res;
-        } else {
-            return new AtlasJob(body);
-        }
+        return new AtlasJob(body);
     }
 
     @Converter

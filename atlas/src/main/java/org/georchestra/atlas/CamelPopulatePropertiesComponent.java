@@ -30,7 +30,7 @@ public class CamelPopulatePropertiesComponent {
     public void setBaseUrl(String url) {
         this.baseUrl = url;
     }
-    
+
     /**
      * Generate following key in exchange properties :
      *  * layers : List of all layers in print request (feature layer and base layers)
@@ -59,10 +59,6 @@ public class CamelPopulatePropertiesComponent {
         legendURL += "&VERSION=" + featureLayer.getString("version");
         legendURL += "&REQUEST=GetLegendGraphic&FORMAT=image/png&TRANSPARENT=true";
         legendURL += "&LAYER=" + featureLayer.getJSONArray("layers").getString(0);
-
-        // Temporary fix missing User-Agent header for legendUrl request
-        // see https://github.com/mapfish/mapfish-print/issues/373
-        // legendURL = "https://avatars3.githubusercontent.com/u/7067560?v=3&s=40";
 
         ex.setProperty("legendURL", legendURL);
 
