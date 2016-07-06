@@ -28,7 +28,9 @@ import javax.servlet.http.HttpSession;
 import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
+import org.georchestra.ldapadmin.ds.OrgsDao;
 import org.georchestra.ldapadmin.dto.Account;
+import org.georchestra.ldapadmin.dto.Org;
 import org.georchestra.ldapadmin.ws.utils.UserUtils;
 import org.georchestra.ldapadmin.ws.utils.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,13 +57,12 @@ import org.springframework.web.bind.support.SessionStatus;
 public class EditUserDetailsFormController {
 
 	private AccountDao accountDao;
-
-	private Account accountBackup;
-
+	private OrgsDao orgsDao;
 
 	@Autowired
-	public EditUserDetailsFormController( AccountDao dao){
+	public EditUserDetailsFormController(AccountDao dao, OrgsDao orgsDao){
 		this.accountDao = dao;
+		this.orgsDao = orgsDao;
 	}
 
 	private static final String[] fields = {"uid", "firstName", "surname", "email", "title", "phone", "facsimile", "org", "description", "postalAddress"};
@@ -92,10 +93,8 @@ public class EditUserDetailsFormController {
 
 		try {
 
-			this.accountBackup = this.accountDao.findByUID(request.getHeader("sec-username"));
-
 			HttpSession session = request.getSession();
-			EditUserDetailsFormBean formBean = createForm(this.accountBackup);
+			EditUserDetailsFormBean formBean = createForm(this.accountDao.findByUID(request.getHeader("sec-username")));
 
 			model.addAttribute(formBean);
 			for (String f : fields) {
@@ -120,6 +119,8 @@ public class EditUserDetailsFormController {
 	 */
 	private EditUserDetailsFormBean createForm(final Account account) {
 
+		Org org = this.orgsDao.findByCommonName(account.getOrg());
+
 		EditUserDetailsFormBean formBean = new EditUserDetailsFormBean();
 
 		formBean.setUid(account.getUid());
@@ -131,6 +132,7 @@ public class EditUserDetailsFormController {
 		formBean.setFacsimile(account.getFacsimile());
 		formBean.setDescription(account.getDescription());
 		formBean.setPostalAddress(account.getPostalAddress());
+		formBean.setOrg(org.getName());
 
 		return formBean;
 	}
@@ -168,19 +170,17 @@ public class EditUserDetailsFormController {
 		Validation.validateField("phone", formBean.getPhone(), resultErrors);
 		Validation.validateField("facsimile", formBean.getFacsimile(), resultErrors);
 		Validation.validateField("title", formBean.getTitle(), resultErrors);
-		Validation.validateField("org", formBean.getOrg(), resultErrors);
 		Validation.validateField("description", formBean.getDescription(), resultErrors);
 		Validation.validateField("postalAddress", formBean.getPostalAddress(), resultErrors);
 
 		if(resultErrors.hasErrors()){
-
 			return "editUserDetailsForm";
 		}
 
 		// updates the account details
 		try {
 
-			Account account = modify(this.accountBackup, formBean);
+			Account account = modify(this.accountDao.findByUID(request.getHeader("sec-username")), formBean);
 			this.accountDao.update(account, request.getHeader("sec-username"));
 
 			model.addAttribute("success", true);
@@ -222,14 +222,6 @@ public class EditUserDetailsFormController {
 		account.setPostalAddress(formBean.getPostalAddress());
 
 		return account;
-	}
-
-	/**
-	 * Setter only meant for testing purposes.
-	 *
-	 */
-	public void setAccountBackup(Account a) {
-	    this.accountBackup = a;
 	}
 	
 	@ModelAttribute("editUserDetailsFormBean")
