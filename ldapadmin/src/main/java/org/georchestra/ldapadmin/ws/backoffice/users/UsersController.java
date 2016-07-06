@@ -35,10 +35,12 @@ import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
 import org.georchestra.ldapadmin.ds.DuplicatedUidException;
+import org.georchestra.ldapadmin.ds.OrgsDao;
 import org.georchestra.ldapadmin.ds.ProtectedUserFilter;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.georchestra.ldapadmin.dto.Group;
+import org.georchestra.ldapadmin.dto.Org;
 import org.georchestra.ldapadmin.dto.UserSchema;
 import org.georchestra.ldapadmin.mailservice.MailService;
 import org.georchestra.ldapadmin.ws.backoffice.utils.RequestUtil;
@@ -85,6 +87,8 @@ public class UsersController {
 	private static final String OTHER_ERROR = "other_error";
 
 	private AccountDao accountDao;
+	@Autowired
+	private OrgsDao orgDao;
 	private UserRule userRule;
 	
 	@Autowired
@@ -423,8 +427,10 @@ public class UsersController {
 
 		// searches the account
 		Account account = null;
+		String originalOrg = null;
 		try {
 			account = this.accountDao.findByUID(uid);
+			originalOrg = account.getOrg();
 
 		} catch (NameNotFoundException e) {
 
@@ -440,6 +446,14 @@ public class UsersController {
 		try{
 			final Account modified = modifyAccount(AccountFactory.create(account), request.getInputStream());
 			this.accountDao.update(account, modified, request.getHeader("sec-username"));
+
+			if(!modified.getOrg().equals(originalOrg)){
+				if(account.getOrg() != null)
+					this.orgDao.removeUser(originalOrg, uid);
+				this.orgDao.addUser(modified.getOrg(), uid);
+			}
+
+
 			boolean uidChanged = ( ! modified.getUid().equals(account.getUid()));
 			if ((uidChanged) && (warnUserIfUidModified)) {
 				this.mailService.sendAccountUidRenamed(request.getSession().getServletContext(),
@@ -608,6 +622,11 @@ public class UsersController {
 		if (uid != null) {
 			account.setUid(uid);
 		}
+
+		String org = RequestUtil.getFieldValue(json, "org");
+		if(org != null)
+			account.setOrg(org);
+
 		return account;
 	}
 

@@ -304,6 +304,8 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 			res.put(UserSchema.MANAGER_KEY, this.manager);
 		if(this.context != null)
 			res.put(UserSchema.CONTEXT_KEY, this.context);
+		if(this.getOrg() != null)
+			res.put("org", this.getOrg());
 		return res;
 	}
 

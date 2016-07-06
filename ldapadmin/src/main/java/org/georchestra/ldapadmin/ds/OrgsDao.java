@@ -99,31 +99,28 @@ public class OrgsDao {
 
 
     public void insert(Org org){
-
-        Name dn = LdapNameBuilder.newInstance(this.orgsSearchBaseDN).add("cn", org.getId()).build();
-        this.ldapTemplate.bind(dn, null, buildAttributes(org));
-
+        this.ldapTemplate.bind(buildOrgDN(org.getId()), null, buildAttributes(org));
     }
 
     public void addUser(String organization, String user){
-        Name orgDN = LdapNameBuilder.newInstance(this.orgsSearchBaseDN).add("cn", organization).build();
-        Name userDN = LdapNameBuilder.newInstance(this.userSearchBaseDN + "," + this.basePath).add("uid", user).build();
-
-        DirContextOperations context = ldapTemplate.lookupContext(orgDN);
-        context.addAttributeValue("member", userDN, false);
+        DirContextOperations context = ldapTemplate.lookupContext(buildOrgDN(organization));
+        context.addAttributeValue("member", buildUserDN(user), false);
         this.ldapTemplate.modifyAttributes(context);
     }
 
     public void removeUser(String organization, String user){
-        Name orgDN = LdapNameBuilder.newInstance(this.orgsSearchBaseDN).add("cn", organization).build();
-        Name userDN = LdapNameBuilder.newInstance(this.userSearchBaseDN).add("uid", user).build();
-
-        Attribute attr = new BasicAttribute("member", userDN);
-        ModificationItem item = new ModificationItem(DirContext.REMOVE_ATTRIBUTE, attr);
-        this.ldapTemplate.modifyAttributes(orgDN, new ModificationItem[] {item});
-
+        DirContextOperations ctx = ldapTemplate.lookupContext(buildOrgDN(organization));
+        ctx.removeAttributeValue("member", buildUserDN(user).toString());
+        this.ldapTemplate.modifyAttributes(ctx);
     }
 
+    private Name buildUserDN(String id){
+        return LdapNameBuilder.newInstance(this.userSearchBaseDN + "," + this.basePath).add("uid", id).build();
+    }
+
+    private Name buildOrgDN(String id){
+        return LdapNameBuilder.newInstance(this.orgsSearchBaseDN).add("cn", id).build();
+    }
 
     private Attributes buildAttributes(Org org) {
         Attributes attrs = new BasicAttributes();

@@ -21,6 +21,7 @@ package org.georchestra.ldapadmin.ws.backoffice.orgs;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.OrgsDao;
 import org.georchestra.ldapadmin.dto.Org;
 import org.georchestra.ldapadmin.ws.backoffice.utils.ResponseUtil;
@@ -29,6 +30,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -56,6 +58,13 @@ public class OrgsController {
         this.orgDao = dao;
     }
 
+    /**
+     * Return a list of available organization as json array
+     *
+     * @param request
+     * @param response
+     * @throws IOException
+     */
     @RequestMapping(value = REQUEST_MAPPING, method = RequestMethod.GET)
     public void findAll(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
@@ -77,5 +86,37 @@ public class OrgsController {
 
 
     }
+
+    /**
+     * Set organization for one user
+     */
+    @RequestMapping(value = REQUEST_MAPPING + "{org}/{user}", method = RequestMethod.POST)
+    public void addUserInOrg(@PathVariable String org, @PathVariable String user, HttpServletResponse response) throws IOException {
+
+        try {
+            Org oldOrg = this.orgDao.findForUser(user);
+            if (oldOrg != null)
+                this.orgDao.removeUser(oldOrg.getId(), user);
+            this.orgDao.addUser(org, user);
+
+            ResponseUtil.writeSuccess(response);
+
+        } catch (DataServiceException ex){
+            LOG.error(ex.getMessage());
+            ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, ex.getMessage()),
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    /**
+     * Remove user from organization
+     */
+    @RequestMapping(value = REQUEST_MAPPING + "{org}/{user}", method = RequestMethod.DELETE)
+    public void removeUserfromOrg(@PathVariable String org, @PathVariable String user, HttpServletResponse response) throws IOException {
+        this.orgDao.removeUser(org, user);
+        ResponseUtil.writeSuccess(response);
+    }
+
 
 }
