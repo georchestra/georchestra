@@ -448,9 +448,10 @@ public class UsersController {
 			this.accountDao.update(account, modified, request.getHeader("sec-username"));
 
 			if(!modified.getOrg().equals(originalOrg)){
-				if(account.getOrg() != null)
+				if(originalOrg != null && originalOrg.length() > 0)
 					this.orgDao.removeUser(originalOrg, uid);
-				this.orgDao.addUser(modified.getOrg(), uid);
+				if(modified.getOrg() != null && modified.getOrg().length() > 0)
+					this.orgDao.addUser(modified.getOrg(), uid);
 			}
 
 

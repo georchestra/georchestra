@@ -291,7 +291,7 @@ angular.module('ldapadmin.controllers', [])
 
         $('.user-orgs').select2({
           data: sel_orgs,
-         // allowClear: true,
+         allowClear: true,
           placeholder: "Select organization...",
         })
         $('.user-orgs').on("change", function(){
