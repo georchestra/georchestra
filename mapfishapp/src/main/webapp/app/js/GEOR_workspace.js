@@ -186,9 +186,9 @@ GEOR.workspace = (function() {
             text: tr("Cancel"),
             handler: cancelBtnHandler
         }];
-        if (GEOR.config.ROLES.indexOf("ROLE_SV_EDITOR") >= 0 || 
-            GEOR.config.ROLES.indexOf("ROLE_SV_REVIEWER") >= 0 ||
-            GEOR.config.ROLES.indexOf("ROLE_SV_ADMIN") >= 0 ) {
+        if (GEOR.config.ROLES.indexOf("ROLE_GN_EDITOR") >= 0 || 
+            GEOR.config.ROLES.indexOf("ROLE_GN_REVIEWER") >= 0 ||
+            GEOR.config.ROLES.indexOf("ROLE_GN_ADMIN") >= 0 ) {
 
             var menu = new Ext.menu.Menu({
                 showSeparator: false,

@@ -60,7 +60,7 @@ public class GroupsControllerTest {
 		userRule.setListOfprotectedUsers(new String[] { "geoserver_privileged_user" });
 
 		GroupProtected groups = new GroupProtected();
-		groups.setListOfprotectedGroups(new String[] { "ADMINISTRATOR", "SV_.*", "MOD_.*" });
+		groups.setListOfprotectedGroups(new String[] { "ADMINISTRATOR", "USER", "GN_.*", "MOD_.*" });
 
 		// AdminLogDao logDao = new Adm
 
@@ -218,7 +218,7 @@ public class GroupsControllerTest {
 
 	@Test
 	public void testDeleteSV() throws Exception {
-		request.setRequestURI("/groups/SV_123USERS");
+		request.setRequestURI("/groups/GN_123USERS");
 
 		groupCtrl.delete(request, response);
 

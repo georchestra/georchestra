@@ -349,7 +349,7 @@ public class UsersController {
 	 */
 	private void storeUser(Account account, String originLogin) throws DuplicatedEmailException, DataServiceException, IOException {
 		try {
-			this.accountDao.insert(account, Group.SV_USER, originLogin);
+			this.accountDao.insert(account, Group.USER, originLogin);
 
 		} catch (DuplicatedEmailException e) {
 			throw e;

@@ -97,7 +97,7 @@ if(sec_roles != null) {
             //response.setHeader("Cache-Control", "public, max-age=31536000");
             break;
         }
-        if (roles[i].equals("ROLE_SV_EDITOR") || roles[i].equals("ROLE_SV_REVIEWER") || roles[i].equals("ROLE_SV_ADMIN") || roles[i].equals("ROLE_ADMINISTRATOR") || roles[i].equals("ROLE_SV_USER")) {
+        if (roles[i].equals("ROLE_GN_EDITOR") || roles[i].equals("ROLE_GN_REVIEWER") || roles[i].equals("ROLE_GN_ADMIN") || roles[i].equals("ROLE_ADMINISTRATOR") || roles[i].equals("ROLE_USER")) {
             anonymous = false;
         }
         if (roles[i].equals("ROLE_MOD_EXTRACTORAPP")) {
@@ -107,7 +107,7 @@ if(sec_roles != null) {
             admin = true;
             ldapadmin = true;
         }
-        if (roles[i].equals("ROLE_SV_ADMIN")) {
+        if (roles[i].equals("ROLE_GN_ADMIN")) {
             admin = true;
             catadmin = true;
         }

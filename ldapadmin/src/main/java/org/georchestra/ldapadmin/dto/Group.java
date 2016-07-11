@@ -28,7 +28,7 @@ import java.util.List;
  */
 public interface Group {
 	
-	final String SV_USER = "SV_USER";
+	final String USER = "USER";
 	final String PENDING = "PENDING";
 
 	/**

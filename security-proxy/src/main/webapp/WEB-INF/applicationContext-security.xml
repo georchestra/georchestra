@@ -47,8 +47,8 @@
 				<property name="requestMap">
 					<map>
 						<!-- default geOrchestra rules (can be overriden in datadir) -->
-						<entry key=".*\?.*login.*" value="ROLE_SV_USER,ROLE_SV_EDITOR,ROLE_SV_REVIEWER,ROLE_SV_ADMIN,ROLE_ADMINISTRATOR" />
-						<entry key=".*\?.*casLogin.*" value="ROLE_SV_USER,ROLE_SV_EDITOR,ROLE_SV_REVIEWER,ROLE_SV_ADMIN,ROLE_ADMINISTRATOR" />
+						<entry key=".*\?.*login.*" value="ROLE_USER,ROLE_GN_EDITOR,ROLE_GN_REVIEWER,ROLE_GN_ADMIN,ROLE_ADMINISTRATOR" />
+						<entry key=".*\?.*casLogin.*" value="ROLE_USER,ROLE_GN_EDITOR,ROLE_GN_REVIEWER,ROLE_GN_ADMIN,ROLE_ADMINISTRATOR" />
 						<entry key="/extractorapp/admin/.*" value="ROLE_ADMINISTRATOR" />
 						<entry key="/extractorapp/jobs/.*" value="ROLE_ADMINISTRATOR" />
 						<entry key="/extractorapp/.*" value="ROLE_MOD_EXTRACTORAPP" />
@@ -65,7 +65,7 @@
 						<entry key="/ldapadmin/emailTemplates" value="ROLE_MOD_LDAPADMIN" />
 						<entry key="/testPage" value="IS_AUTHENTICATED_FULLY" />
 						<entry key=".*/ogcproxy/.*" value="ROLE_NO_ONE" />
-						<entry key=".*" value="IS_AUTHENTICATED_ANONYMOUSLY,ROLE_SV_USER,ROLE_SV_EDITOR,ROLE_SV_REVIEWER,ROLE_SV_ADMIN,ROLE_ADMINISTRATOR" />
+						<entry key=".*" value="IS_AUTHENTICATED_ANONYMOUSLY,ROLE_USER,ROLE_GN_EDITOR,ROLE_GN_REVIEWER,ROLE_GN_ADMIN,ROLE_ADMINISTRATOR" />
 					</map>
 				</property>
 			</bean>

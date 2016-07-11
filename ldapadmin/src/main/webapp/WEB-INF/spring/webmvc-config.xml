@@ -105,7 +105,7 @@
     <property name="listOfprotectedGroups">
       <description>Comma separated list of one or more protected Groups</description>
         <!-- Groups are defined as a comma separated list of Groups name and can be override in data dir with "protectedGroupList" key-->
-      <value>${protectedGroupList:ADMINISTRATOR,SV_.*,MOD_.*}</value>
+      <value>${protectedGroupList:ADMINISTRATOR,USER,GN_.*,MOD_.*}</value>
     </property>
   </bean>
   
