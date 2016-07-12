@@ -193,6 +193,10 @@ GEOR.tools = (function() {
                     if (o.css && o.css.length) {
                         loadCssFiles(addonPath, o.css);
                     }
+                    var urlparams = GEOR.util.splitURL(window.location.href);
+                    if (urlparams.params.hasOwnProperty("DEBUG") && o.debugjs && o.debugjs.length) {
+                        o.js = o.debugjs;
+                    }
                     // load JS
                     if (o.js && o.js.length) {
                         Ext.each(o.js, function(f) {

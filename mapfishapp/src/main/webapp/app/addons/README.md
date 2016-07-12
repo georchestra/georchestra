@@ -205,3 +205,20 @@ If the addon instance exposes a public property named ```item```, the referenced
 
 
 If developing a new addon, you might want to start from a simple example, eg the [magnifier](magnifier/README.md) addon. There is also a [template](template/README.md) which may be useful to jump-start the development process.
+
+If you addon has many javascript files and you want to provide a minified version of the addon for production while retaining the possibility to view/debug the full javascript, ```manifest.json``` can provide two different lists of files:
+
+```js
+{
+...
+    "js": [ "js/minified.js" ],
+    "debugjs": [
+        "js/first.js",
+        "js/second.js",
+        "js/third.js"
+    ]
+...
+```
+
+This way, if ```debug``` is set in the url as a parameter, the files listed in ```debugjs``` will be loaded instead of the minified version.
+If ```debugjs``` isnt defined, the files listed in ```js``` are loaded by default.
