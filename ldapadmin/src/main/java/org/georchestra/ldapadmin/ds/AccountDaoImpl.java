@@ -19,21 +19,6 @@
 
 package org.georchestra.ldapadmin.ds;
 
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.SortedSet;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.annotation.PostConstruct;
-import javax.naming.Name;
-import javax.naming.NamingException;
-import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
-import javax.naming.directory.SearchControls;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -60,6 +45,19 @@ import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.filter.Filter;
 import org.springframework.ldap.filter.PresentFilter;
 import org.springframework.security.authentication.encoding.LdapShaPasswordEncoder;
+
+import javax.naming.Name;
+import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.SearchControls;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class is responsible of maintaining the user accounts (CRUD operations).

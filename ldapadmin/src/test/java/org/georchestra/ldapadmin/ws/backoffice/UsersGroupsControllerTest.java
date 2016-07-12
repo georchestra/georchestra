@@ -72,8 +72,7 @@ public class UsersGroupsControllerTest {
 
     @Rule
     public ErrorCollector collector = new ErrorCollector();
-    
-    private AccountDaoImpl accountDao;
+
     private OrgsDao orgsDao;
 
     private void setUpRealLdap() {

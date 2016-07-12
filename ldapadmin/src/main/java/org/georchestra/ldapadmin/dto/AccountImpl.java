@@ -636,7 +636,10 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 
 	@Override
 	public String getOrg() {
-		return this.org;
+		if(this.org == null)
+			return "";
+		else
+			return this.org;
 	}
 
 	@Override

@@ -6,7 +6,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.georchestra.ldapadmin.ds.AccountDao;
+import org.georchestra.ldapadmin.ds.OrgsDao;
 import org.georchestra.ldapadmin.dto.Account;
+import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,10 +36,11 @@ public class EditUserDetailsFormControllerTest {
     private SessionStatus sessionStatus = Mockito.mock(SessionStatus.class);
 
     Model model = Mockito.mock(Model.class);
+    private OrgsDao orgDao = Mockito.mock(OrgsDao.class);
 
     @Before
     public void setUp() throws Exception {
-        ctrl = new EditUserDetailsFormController(dao);
+        ctrl = new EditUserDetailsFormController(dao, orgDao);
         formBean.setDescription("description");
         formBean.setEmail("email");
         formBean.setFacsimile("+331234567890");
@@ -49,7 +52,17 @@ public class EditUserDetailsFormControllerTest {
         formBean.setTitle("test engineer");
         formBean.setUid("mtester");
 
+        // Mock mtester user
+        Account mtester = AccountFactory.createBrief("mtester",
+                "12345",
+                "testFirst",
+                "misterTest",
+                "email",
+                "+331234567891",
+                "test engineer",
+                "description");
 
+        Mockito.when(dao.findByUID(Mockito.eq("mtester"))).thenReturn(mtester);
     }
 
     @After
@@ -109,10 +122,9 @@ public class EditUserDetailsFormControllerTest {
      */
     @Test
     public void testEdit() throws Exception {
-       ctrl.setAccountBackup(Mockito.mock(Account.class));
+       request.addHeader("sec-username", "mtester");
        String ret = ctrl.edit(request, response, model, formBean, resultErrors, sessionStatus);
-
-       assertTrue (ret.equals("editUserDetailsForm"));
+       assertTrue(ret.equals("editUserDetailsForm"));
     }
 
     /**
@@ -120,7 +132,6 @@ public class EditUserDetailsFormControllerTest {
      */
     @Test
     public void testEditUserDetailsFormBean() {
-
 
         assertTrue(formBean.getUid().equals("mtester"));
         assertTrue(formBean.getDescription().equals("description"));
@@ -132,7 +143,6 @@ public class EditUserDetailsFormControllerTest {
         assertTrue(formBean.getFacsimile().equals("+331234567890"));
         assertTrue(formBean.getOrg().equals("geOrchestra testing LLC"));
         assertTrue(formBean.getPostalAddress().equals("48 Avenue du Lac du Bourget. 73377 Le Bourget-du-Lac"));
-
 
         assertTrue(formBean.toString().equals("EditUserDetailsFormBean [uid=mtester, surname=misterTest, "
                 + "givenName=testFirst, email=email, title=test engineer, phone=+331234567891, facsimile=+331234567890, "

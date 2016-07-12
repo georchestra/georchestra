@@ -1,23 +1,11 @@
 package org.georchestra.ldapadmin.ws.backoffice.users;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import javax.naming.Name;
-import javax.naming.directory.SearchControls;
-import javax.servlet.http.HttpServletResponse;
-
 import org.georchestra.ldapadmin.dao.AdminLogDao;
-import org.georchestra.ldapadmin.ds.*;
+import org.georchestra.ldapadmin.ds.AccountDaoImpl;
+import org.georchestra.ldapadmin.ds.DataServiceException;
+import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
+import org.georchestra.ldapadmin.ds.GroupDaoImpl;
+import org.georchestra.ldapadmin.ds.OrgsDao;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.georchestra.ldapadmin.dto.UserSchema;
@@ -39,9 +27,22 @@ import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.support.LdapNameBuilder;
-import org.springframework.ldap.support.LdapUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import javax.naming.Name;
+import javax.naming.directory.SearchControls;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.eq;
 
 public class UsersControllerTest {
     private LdapTemplate ldapTemplate ;
@@ -57,7 +58,6 @@ public class UsersControllerTest {
 
     private MockHttpServletRequest request;
     private MockHttpServletResponse response;
-    private Account adminAccount;
 
     @Before
     public void setUp() throws Exception {
@@ -99,9 +99,6 @@ public class UsersControllerTest {
 
         usersCtrl = new UsersController(dao, userRule);
 
-        this.adminAccount = AccountFactory.createBrief("testadmin", "monkey123", "Test", "ADmin",
-                "postmastrer@localhost", "+33123456789", "admin", "");
-
         request = new MockHttpServletRequest();
         response = new MockHttpServletResponse();
 
@@ -111,14 +108,6 @@ public class UsersControllerTest {
 
     @After
     public void tearDown() throws Exception {
-    }
-
-    private DistinguishedName buildDn(String uid) {
-        DistinguishedName dn = new DistinguishedName();
-        dn.add(userSearchBaseDN);
-        dn.add("uid", uid);
-
-        return dn;
     }
 
     @Test

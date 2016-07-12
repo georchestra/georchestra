@@ -19,22 +19,14 @@
 
 package org.georchestra.ldapadmin.ws.edituserdetails;
 
-import java.io.IOException;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
 import org.georchestra.ldapadmin.ds.OrgsDao;
 import org.georchestra.ldapadmin.dto.Account;
-import org.georchestra.ldapadmin.dto.Org;
 import org.georchestra.ldapadmin.ws.utils.UserUtils;
 import org.georchestra.ldapadmin.ws.utils.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ldap.NameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -45,6 +37,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
 
 /**
  * Support for the Edit Account user interactions.
@@ -119,8 +116,6 @@ public class EditUserDetailsFormController {
 	 */
 	private EditUserDetailsFormBean createForm(final Account account) {
 
-		Org org = this.orgsDao.findByCommonName(account.getOrg());
-
 		EditUserDetailsFormBean formBean = new EditUserDetailsFormBean();
 
 		formBean.setUid(account.getUid());
@@ -132,7 +127,7 @@ public class EditUserDetailsFormController {
 		formBean.setFacsimile(account.getFacsimile());
 		formBean.setDescription(account.getDescription());
 		formBean.setPostalAddress(account.getPostalAddress());
-		formBean.setOrg(org.getName());
+		formBean.setOrg(account.getOrg());
 
 		return formBean;
 	}
