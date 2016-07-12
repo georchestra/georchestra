@@ -22,7 +22,6 @@ package org.georchestra.ldapadmin.ws.edituserdetails;
 import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
-import org.georchestra.ldapadmin.ds.OrgsDao;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.ws.utils.UserUtils;
 import org.georchestra.ldapadmin.ws.utils.Validation;
@@ -54,12 +53,10 @@ import java.io.IOException;
 public class EditUserDetailsFormController {
 
 	private AccountDao accountDao;
-	private OrgsDao orgsDao;
 
 	@Autowired
-	public EditUserDetailsFormController(AccountDao dao, OrgsDao orgsDao){
+	public EditUserDetailsFormController(AccountDao dao){
 		this.accountDao = dao;
-		this.orgsDao = orgsDao;
 	}
 
 	private static final String[] fields = {"uid", "firstName", "surname", "email", "title", "phone", "facsimile", "org", "description", "postalAddress"};

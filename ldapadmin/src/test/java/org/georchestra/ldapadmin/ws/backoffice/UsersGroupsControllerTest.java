@@ -73,8 +73,6 @@ public class UsersGroupsControllerTest {
     @Rule
     public ErrorCollector collector = new ErrorCollector();
 
-    private OrgsDao orgsDao;
-
     private void setUpRealLdap() {
         final String bindDn = System.getProperty(ENV_BINDDN);
         final String password = System.getProperty(ENV_PASSWORD);
@@ -214,7 +212,7 @@ public class UsersGroupsControllerTest {
         groupDao.setUniqueNumberField("ou");
         groupDao.setUserSearchBaseDN("ou=users");
 
-        orgsDao = new OrgsDao();
+        OrgsDao orgsDao = new OrgsDao();
         orgsDao.setLdapTemplate(ldapTemplate);
         orgsDao.setOrgsSearchBaseDN("ou=orgs");
         orgsDao.setUserSearchBaseDN("ou=users");

@@ -35,12 +35,11 @@ public class EditUserDetailsFormControllerTest {
 
     private SessionStatus sessionStatus = Mockito.mock(SessionStatus.class);
 
-    Model model = Mockito.mock(Model.class);
-    private OrgsDao orgDao = Mockito.mock(OrgsDao.class);
+    private Model model = Mockito.mock(Model.class);
 
     @Before
     public void setUp() throws Exception {
-        ctrl = new EditUserDetailsFormController(dao, orgDao);
+        ctrl = new EditUserDetailsFormController(dao);
         formBean.setDescription("description");
         formBean.setEmail("email");
         formBean.setFacsimile("+331234567890");

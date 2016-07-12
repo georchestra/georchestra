@@ -34,7 +34,6 @@ public class GroupsControllerTest {
 
 	private GroupsController groupCtrl;
 
-	private AccountDaoImpl dao;
 	private GroupDaoImpl groupDao;
 	private UserRule userRule;
 	private LdapTemplate ldapTemplate;
@@ -42,7 +41,6 @@ public class GroupsControllerTest {
 
 	private MockHttpServletRequest request;
 	private MockHttpServletResponse response;
-    private OrgsDao orgsDao;
 
     @Before
 	public void setUp() throws Exception {
@@ -71,7 +69,7 @@ public class GroupsControllerTest {
 		groupDao.setLogDao(logDao);
 		groupDao.setGroups(groups);
 
-        orgsDao = new OrgsDao();
+        OrgsDao orgsDao = new OrgsDao();
         orgsDao.setLdapTemplate(ldapTemplate);
         orgsDao.setOrgsSearchBaseDN("ou=orgs");
         orgsDao.setUserSearchBaseDN("ou=users");

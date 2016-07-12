@@ -193,7 +193,8 @@ public final class AccountDaoImpl implements AccountDao {
             this.groupDao.addUser(groupID, account.getUid(), originLogin);
 
             // Add user to the rog
-            this.orgDao.addUser(account.getOrg(), account.getUid());
+            if(account.getOrg().length() > 0)
+                this.orgDao.addUser(account.getOrg(), account.getUid());
 
         } catch (NameNotFoundException e) {
             throw new DataServiceException(e);

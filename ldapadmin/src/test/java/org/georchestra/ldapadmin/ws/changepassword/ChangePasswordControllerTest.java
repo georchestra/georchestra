@@ -31,12 +31,7 @@ import org.springframework.web.bind.support.SessionStatus;
 public class ChangePasswordControllerTest {
 
     private ChangePasswordFormController ctrl;
-    private AccountDaoImpl dao;
-    private GroupDaoImpl groupDao;
-    private OrgsDao orgsDao;
     private LdapTemplate ldapTemplate;
-    private ContextSource contextSource;
-
     private MockHttpServletRequest request ;
     private MockHttpServletResponse response ;
     private Model model ;
@@ -47,17 +42,16 @@ public class ChangePasswordControllerTest {
     @Before
     public void setUp() {
         ldapTemplate = Mockito.mock(LdapTemplate.class);
-        contextSource = Mockito.mock(LdapContextSource.class);
 
-        groupDao = new GroupDaoImpl();
+        GroupDaoImpl groupDao = new GroupDaoImpl();
         groupDao.setLdapTemplate(ldapTemplate);
 
-        orgsDao = new OrgsDao();
+        OrgsDao orgsDao = new OrgsDao();
         orgsDao.setLdapTemplate(ldapTemplate);
         orgsDao.setUserSearchBaseDN("ou=users");
         orgsDao.setOrgsSearchBaseDN("ou=orgs");
 
-        dao = new AccountDaoImpl(ldapTemplate, groupDao, orgsDao);
+        AccountDaoImpl dao = new AccountDaoImpl(ldapTemplate, groupDao, orgsDao);
         dao.setUserSearchBaseDN("ou=users");
         ctrl = new ChangePasswordFormController(dao);
 

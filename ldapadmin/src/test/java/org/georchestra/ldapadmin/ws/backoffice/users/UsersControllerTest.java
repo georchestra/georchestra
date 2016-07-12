@@ -21,7 +21,6 @@ import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.DistinguishedName;
-import org.springframework.ldap.core.LdapRdn;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.ldap.filter.AndFilter;
@@ -47,12 +46,10 @@ import static org.mockito.Matchers.eq;
 public class UsersControllerTest {
     private LdapTemplate ldapTemplate ;
     private LdapContextSource contextSource ;
-    private LdapRdn userSearchBaseDN = new LdapRdn("ou=users");
 
     private UsersController usersCtrl ;
     private AccountDaoImpl dao ;
     private GroupDaoImpl groupDao ;
-    private OrgsDao orgsDao ;
     private UserRule userRule ;
     private GroupProtected groups;
 
@@ -84,7 +81,7 @@ public class UsersControllerTest {
         groupDao.setGroups(this.groups);
         groupDao.setLogDao(logDao);
 
-        orgsDao = new OrgsDao();
+        OrgsDao orgsDao = new OrgsDao();
         orgsDao.setLdapTemplate(ldapTemplate);
         orgsDao.setOrgsSearchBaseDN("ou=orgs");
         orgsDao.setUserSearchBaseDN("ou=users");
@@ -296,7 +293,6 @@ public class UsersControllerTest {
         assertTrue(ret.getString("uid").equals("ggeoserverprivilegeduser"));
         assertTrue(ret.getString("mail").equals("tomcat@localhost"));
         assertTrue(ret.getString("sn").equals("geoserver privileged user"));
-        assertTrue(ret.getString("ou").equals(""));
         assertTrue(ret.getString("facsimileTelephoneNumber").equals("+33123456788"));
         assertTrue(ret.getString("street").equals("Avenue des Ducs de Savoie"));
         assertTrue(ret.getString("l").equals("Chambéry"));
@@ -467,7 +463,8 @@ public class UsersControllerTest {
         reqUsr.put("mail", "pmauduit@georchestra.org");
         reqUsr.put("cn", "newPierre newPmauduit");
         reqUsr.put("uid", "pmauduit");
-
+        reqUsr.put("org", "");
+        
         assertTrue(UsersControllerTest.jsonEquals(reqUsr, ret));
 
     }
@@ -516,6 +513,7 @@ public class UsersControllerTest {
         reqUsr.put("mail", "pmauduit@georchestra.org");
         reqUsr.put("cn", "newPierre newPmauduit");
         reqUsr.put("uid", "pmauduit");
+        reqUsr.put("org", "");
 
         assertTrue(UsersControllerTest.jsonEquals(reqUsr, ret));
 
