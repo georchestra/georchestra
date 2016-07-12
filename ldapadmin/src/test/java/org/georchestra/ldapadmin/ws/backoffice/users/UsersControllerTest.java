@@ -73,7 +73,7 @@ public class UsersControllerTest {
         Mockito.when(contextSource.getBaseLdapPath())
             .thenReturn(new DistinguishedName("dc=georchestra,dc=org"));
         Mockito.when(ldapTemplate.getContextSource()).thenReturn(contextSource);
-        Mockito.when(groups.isProtected(Mockito.eq("SV_USER"))).thenReturn(true);
+        Mockito.when(groups.isProtected(Mockito.eq("USER"))).thenReturn(true);
 
         // Configures groupDao
         groupDao = new GroupDaoImpl();
@@ -290,7 +290,7 @@ public class UsersControllerTest {
 
         Mockito.when(ldapTemplate.search((Name) Mockito.any(), Mockito.anyString(),(ContextMapper) Mockito.any()))
             .thenReturn(new ArrayList<Object>());
-        Mockito.when(ldapTemplate.lookupContext(new DistinguishedName("cn=SV_USER,ou=roles")))
+        Mockito.when(ldapTemplate.lookupContext(new DistinguishedName("cn=USER,ou=roles")))
             .thenReturn(Mockito.mock(DirContextOperations.class));
 
 

@@ -108,10 +108,10 @@ angular.module('ldapadmin.controllers', [])
       if ($routeParams.group == 'none') {
         var groups = [
           $scope.groups[findByAttr($scope.groups, 'cn', 'ADMINISTRATOR')],
-          $scope.groups[findByAttr($scope.groups, 'cn', 'SV_ADMIN')],
-          $scope.groups[findByAttr($scope.groups, 'cn', 'SV_REVIEWER')],
-          $scope.groups[findByAttr($scope.groups, 'cn', 'SV_EDITOR')],
-          $scope.groups[findByAttr($scope.groups, 'cn', 'SV_USER')]
+          $scope.groups[findByAttr($scope.groups, 'cn', 'GN_ADMIN')],
+          $scope.groups[findByAttr($scope.groups, 'cn', 'GN_REVIEWER')],
+          $scope.groups[findByAttr($scope.groups, 'cn', 'GN_EDITOR')],
+          $scope.groups[findByAttr($scope.groups, 'cn', 'USER')]
         ];
         $scope.groupFilter = function(item) {
           return groups[0].users.indexOf(item.uid) == -1 &&

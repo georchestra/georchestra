@@ -45,8 +45,8 @@ Once submitted, the form disappears and a (configurable) message says something 
 
 What happens here ? 
  * Depending on a "MODERATED_SIGNUP" config option, new users will be recorded in the LDAP and affected to :
-   * the PENDING group if MODERATED_SIGNUP = true. An admin will then be able to move them to SV_USERS group.
-   * the SV_USERS group if MODERATED_SIGNUP = false.
+   * the PENDING group if MODERATED_SIGNUP = true. An admin will then be able to move them to USERS group.
+   * the USERS group if MODERATED_SIGNUP = false.
  * An email will be sent to one email address (configurable), saying that new users need an account.
 
 ### Edit user details
@@ -187,7 +187,7 @@ When creating a new user (and only in this case), a **strong** password will be 
 #### Left pane 
 
 Dedicated to groups:
- * tree view of groups, with intermediate nodes for group types (SV_*, EL_*, ...) - group types should be configurable
+ * tree view of groups, with intermediate nodes for group types (GN_*, EL_*, ...) - group types should be configurable
  * ability to filter users list by one group (on group name click)
  * button to add a new group 
  * button to remove a group (users will **not** be deleted)

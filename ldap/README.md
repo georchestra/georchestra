@@ -33,10 +33,10 @@ It creates 2 Organisational Units (ou):
  * ```ou=roles,dc=georchestra,dc=org```
 
 The basic users:
- * ```testuser``` is a member of SV_USER. The password is **testuser**.
- * ```testreviewer``` is a member of SV_REVIEWER. The password is **testreviewer**.
- * ```testeditor``` is a member of SV_EDITOR. The password is **testeditor**.
- * ```testadmin``` is a member of SV_ADMIN, ADMINISTRATOR and MOD_* roles. The password is **testadmin**
+ * ```testuser``` is a member of USER. The password is **testuser**.
+ * ```testreviewer``` is a member of GN_REVIEWER. The password is **testreviewer**.
+ * ```testeditor``` is a member of GN_EDITOR. The password is **testeditor**.
+ * ```testadmin``` is a member of GN_ADMIN, ADMINISTRATOR and MOD_* roles. The password is **testadmin**
  * ```geoserver_privileged_user``` is a required user. It is internally used by the extractorapp, mapfishapp & geofence modules. The default password is ```gerlsSnFd6SmM``` (you should change it, and update the ```shared.privileged.geoserver.pass``` option in your shared.maven.filters file).
 
 The roles:
@@ -44,8 +44,8 @@ The roles:
  * ```MOD_LDAPADMIN``` grants access to the ldapadmin webapp (where one can manage users and roles),
  * ```MOD_ANALYTICS``` grants access rights to the analytics application,
  * ```MOD_EXTRACTORAPP``` grants access to the extractor application,
- * ```SV_ADMIN``` is for GeoNetwork administrators,
- * ```SV_EDITOR``` is for metadata editors,
- * ```SV_REVIEWER``` is for metadata reviewers,
- * ```SV_USER``` is for the basic SDI users,
+ * ```GN_ADMIN``` is for GeoNetwork administrators,
+ * ```GN_EDITOR``` is for metadata editors,
+ * ```GN_REVIEWER``` is for metadata reviewers,
+ * ```USER``` is for the basic SDI users,
  * ```PENDING``` is the landing group for people asking an account on the platform. This group gives no right by default.

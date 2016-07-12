@@ -26,7 +26,7 @@ Typical configuration to include in your GEOR_custom.js file:
         "options": {
             "roles": {
                 "tab1": [],
-                "tab2": ["ROLE_SV_ADMIN"]
+                "tab2": ["ROLE_GN_ADMIN"]
             },
             "tab1": {
                 "field1": {

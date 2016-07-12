@@ -128,7 +128,7 @@ public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
         WfsExtractor wfsExtractor = new WfsExtractor(testDir.getRoot(), extractorappUsername, extractorappPassword, "localhost", null);
 
         ExtractorLayerRequest request = createLayerRequestObject("sf:archsites");
-        wfsExtractor.checkPermission(request, "localhost", impUser, "ROLE_SV_ADMIN");
+        wfsExtractor.checkPermission(request, "localhost", impUser, "ROLE_GN_ADMIN");
 
         assertTrue(this.serverWasCalled);
     }

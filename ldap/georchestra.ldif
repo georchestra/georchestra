@@ -151,38 +151,38 @@ description: This group grants access to the Extractorapp application
 member: uid=testadmin,ou=users,dc=georchestra,dc=org
 
 
-# SV_ADMIN, roles, georchestra.org
-dn: cn=SV_ADMIN,ou=roles,dc=georchestra,dc=org
+# GN_ADMIN, roles, georchestra.org
+dn: cn=GN_ADMIN,ou=roles,dc=georchestra,dc=org
 objectClass: top
 objectClass: groupOfMembers
-cn: SV_ADMIN
+cn: GN_ADMIN
 ou: 20
 description: This group grants admin access to GeoNetwork
 member: uid=testadmin,ou=users,dc=georchestra,dc=org
 
-# SV_EDITOR, roles, georchestra.org
-dn: cn=SV_EDITOR,ou=roles,dc=georchestra,dc=org
+# GN_EDITOR, roles, georchestra.org
+dn: cn=GN_EDITOR,ou=roles,dc=georchestra,dc=org
 objectClass: top
 objectClass: groupOfMembers
-cn: SV_EDITOR
+cn: GN_EDITOR
 ou: 21
 description: This group grants edit rights in GeoNetwork and Mapfishapp
 member: uid=testeditor,ou=users,dc=georchestra,dc=org
 
-# SV_REVIEWER, roles, georchestra.org
-dn: cn=SV_REVIEWER,ou=roles,dc=georchestra,dc=org
+# GN_REVIEWER, roles, georchestra.org
+dn: cn=GN_REVIEWER,ou=roles,dc=georchestra,dc=org
 objectClass: top
 objectClass: groupOfMembers
-cn: SV_REVIEWER
+cn: GN_REVIEWER
 ou: 22
 description: This group grants reviewer rights in GeoNetwork
 member: uid=testreviewer,ou=users,dc=georchestra,dc=org
 
-# SV_USER, roles, georchestra.org
-dn: cn=SV_USER,ou=roles,dc=georchestra,dc=org
+# USER, roles, georchestra.org
+dn: cn=USER,ou=roles,dc=georchestra,dc=org
 objectClass: top
 objectClass: groupOfMembers
-cn: SV_USER
+cn: USER
 ou: 23
 description: This group grants basic, authenticated access to the whole SDI
 member: uid=testuser,ou=users,dc=georchestra,dc=org

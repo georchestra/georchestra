@@ -491,10 +491,10 @@ GEOR.config = (function() {
          * Constant: ROLES_FOR_STYLER
          * {Array} roles required for the styler to show up
          * Empty array means the module is available for everyone
-         * Defaults to ['ROLE_SV_USER', 'ROLE_SV_REVIEWER', 'ROLE_SV_EDITOR', 'ROLE_SV_ADMIN']
+         * Defaults to ['ROLE_USER', 'ROLE_GN_REVIEWER', 'ROLE_GN_EDITOR', 'ROLE_GN_ADMIN']
          */
         ROLES_FOR_STYLER: getCustomParameter("ROLES_FOR_STYLER",
-            ['ROLE_SV_USER', 'ROLE_SV_REVIEWER', 'ROLE_SV_EDITOR', 'ROLE_SV_ADMIN']),
+            ['ROLE_USER', 'ROLE_GN_REVIEWER', 'ROLE_GN_EDITOR', 'ROLE_GN_ADMIN']),
 
         /**
          * Constant: ROLES_FOR_QUERIER
@@ -535,8 +535,8 @@ GEOR.config = (function() {
             'Letter landscape': [],
             'Letter portrait': [],
             // A3 not allowed for unconnected users (guests):
-            'A3 landscape': ['ROLE_SV_USER', 'ROLE_SV_REVIEWER', 'ROLE_SV_EDITOR', 'ROLE_SV_ADMIN'],
-            'A3 portrait': ['ROLE_SV_USER', 'ROLE_SV_REVIEWER', 'ROLE_SV_EDITOR', 'ROLE_SV_ADMIN']
+            'A3 landscape': ['ROLE_USER', 'ROLE_GN_REVIEWER', 'ROLE_GN_EDITOR', 'ROLE_GN_ADMIN'],
+            'A3 portrait': ['ROLE_USER', 'ROLE_GN_REVIEWER', 'ROLE_GN_EDITOR', 'ROLE_GN_ADMIN']
         }),
 
         /**

@@ -135,7 +135,7 @@ public class WcsExtractorTest extends AbstractTestWithServer {
         WcsExtractor wcsExtractor = new WcsExtractor(testDir.getRoot(), requestConfig);
 
         ExtractorLayerRequest request = createLayerRequestObject("nurc:Arc_Sample", "geotiff");
-        wcsExtractor.checkPermission(request, "localhost", impUser, "ROLE_SV_ADMIN");
+        wcsExtractor.checkPermission(request, "localhost", impUser, "ROLE_GN_ADMIN");
 
         assertTrue(this.serverWasCalled);
     }
