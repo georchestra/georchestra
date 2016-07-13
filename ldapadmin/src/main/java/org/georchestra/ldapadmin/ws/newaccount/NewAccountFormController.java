@@ -114,6 +114,7 @@ public final class NewAccountFormController {
 		AccountFormBean formBean = new AccountFormBean();
 		Map<String, String> options = new HashMap<String, String>();
 
+		// Populate orgs droplist
 		List<Org> orgs = this.orgDao.findAll();
 		for(Org org : orgs)
 			options.put(org.getId(), org.getName());
@@ -193,12 +194,6 @@ public final class NewAccountFormController {
 			String groupID = this.moderator.moderatedSignup() ? Group.PENDING : Group.USER;
 
 			this.accountDao.insert(account, groupID, request.getHeader("sec-username"));
-
-			// Organisation
-			/*if(formBean.getCreateOrg()){
-				Org org = Org.createBrief(formBean.getOrgName(), formBean.getOrgShortName());
-				this.orgDao.insert(org);
-			}*/
 
 			this.orgDao.addUser(formBean.getOrg(), formBean.getUid().toLowerCase());
 

@@ -46,9 +46,6 @@ public class AccountFormBean implements Serializable{
 
 	private String recaptcha_challenge_field;
 	private String recaptcha_response_field;
-	private Boolean createOrg;
-	private String orgName;
-	private String orgShortName;
 
 	public String getRecaptcha_challenge_field() {
 		return recaptcha_challenge_field;
@@ -130,29 +127,7 @@ public class AccountFormBean implements Serializable{
 		this.surname = sn;
 	}
 
-	public Boolean getCreateOrg() {
-		return createOrg;
-	}
 
-	public void setCreateOrg(Boolean createOrg) {
-		this.createOrg = createOrg;
-	}
-
-	public String getOrgShortName() {
-		return orgShortName;
-	}
-
-	public void setOrgShortName(String orgShortName) {
-		this.orgShortName = orgShortName;
-	}
-
-	public String getOrgName() {
-		return orgName;
-	}
-
-	public void setOrgName(String orgName) {
-		this.orgName = orgName;
-	}
 	@Override
 	public String toString() {
 		return "AccountFormBean [uid=" + uid + ", firstName=" + firstName

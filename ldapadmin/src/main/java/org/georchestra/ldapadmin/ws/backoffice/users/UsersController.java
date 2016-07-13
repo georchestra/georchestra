@@ -621,7 +621,7 @@ public class UsersController {
 			account.setUid(uid);
 		}
 
-		String org = RequestUtil.getFieldValue(json, "org");
+		String org = RequestUtil.getFieldValue(json, UserSchema.ORG_KEY);
 		if(org != null)
 			account.setOrg(org);
 
@@ -688,7 +688,7 @@ public class UsersController {
 
 		String commonName = AccountFactory.formatCommonName(givenName, surname);
 
-		String org = RequestUtil.getFieldValue(json, "org");
+		String org = RequestUtil.getFieldValue(json, UserSchema.ORG_KEY);
 
 		Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, title, phone, description, postalAddress, postalCode, "", postOfficeBox, "", street, locality, facsimile, "","","","",manager,"", org);
 

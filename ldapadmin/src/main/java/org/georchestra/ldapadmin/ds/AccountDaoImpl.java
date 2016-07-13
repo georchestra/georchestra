@@ -192,7 +192,7 @@ public final class AccountDaoImpl implements AccountDao {
             // Add user to the role
             this.groupDao.addUser(groupID, account.getUid(), originLogin);
 
-            // Add user to the rog
+            // Add user to the organization
             if(account.getOrg().length() > 0)
                 this.orgDao.addUser(account.getOrg(), account.getUid());
 

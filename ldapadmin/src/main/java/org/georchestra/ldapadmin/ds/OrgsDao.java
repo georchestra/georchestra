@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2009-2016 by the geOrchestra PSC
+ *
+ * This file is part of geOrchestra.
+ *
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.georchestra.ldapadmin.ds;
 
 
@@ -18,6 +37,9 @@ import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * This class manage organization membership
+ */
 public class OrgsDao {
 
     private LdapTemplate ldapTemplate;
@@ -46,17 +68,34 @@ public class OrgsDao {
         return basePath;
     }
 
-
+    /**
+     * Search all organization defined in ldap. this.orgsSearchBaseDN hold search path in ldap.
+     *
+     * @return list of organization
+     */
     public List<Org> findAll(){
         EqualsFilter filter = new EqualsFilter("objectClass", "groupOfMembers");
         return ldapTemplate.search(this.orgsSearchBaseDN, filter.encode(), new OrgsDao.OrgAttributesMapper());
     }
 
+    /**
+     * Search organization with 'commonName' as distinguish name
+     * @param commonName distinguish name of organization for example : 'psc' to retreive
+     *                   'cn=psc,ou=orgs,dc=georchestra,dc=org'
+     * @return Org instance with specified DN
+     */
     public Org findByCommonName(String commonName) {
         Name dn = LdapNameBuilder.newInstance(this.orgsSearchBaseDN).add("cn", commonName).build();
         return this.ldapTemplate.lookup(dn, new OrgsDao.OrgAttributesMapper());
     }
 
+    /**
+     * Given user identifier, retrieve organization of this user.
+     * @param user identifier of user (not a full DN), example : 'testadmin'
+     * @return Org instance corresponding to organization of specified user or null if no organization is linked to
+     * this user
+     * @throws DataServiceException if more than one organization is linked to specified user
+     */
     public Org findForUser(String user) throws DataServiceException {
 
         Name userDn = LdapNameBuilder.newInstance(this.userSearchBaseDN).add("uid", user).build();
@@ -66,37 +105,13 @@ public class OrgsDao {
         filter.and(new EqualsFilter("objectClass", "groupOfMembers"));
         List<Org> res = ldapTemplate.search(this.orgsSearchBaseDN, filter.encode(), new OrgsDao.OrgAttributesMapper());
         if(res.size() > 1)
-            throw new DataServiceException("Multiple org for one user");
+            throw new DataServiceException("Multiple org for user : " + user);
         if(res.size() == 1)
             return res.get(0);
         else
             return null;
 
     }
-
-    public List<String> findUsers(final String org) throws DataServiceException {
-
-        Filter filter = new EqualsFilter("cn", org);
-        List<List<String>> res = ldapTemplate.search(this.orgsSearchBaseDN, filter.encode(),  new AttributesMapper<List<String>>() {
-            public List<String> mapFromAttributes(Attributes attrs) throws NamingException {
-
-                Attribute member = attrs.get("member");
-                List<String> res = new LinkedList<String>();
-                for (Enumeration vals = member.getAll(); vals.hasMoreElements();)
-                    res.add((String) ((Attribute) vals.nextElement()).get());
-                return res;
-            }
-         });
-
-        if(res.size() > 1)
-            throw new DataServiceException("Multiple org for one user");
-        if(res.size() == 1)
-            return res.get(0);
-        else
-            return null;
-
-    }
-
 
     public void insert(Org org){
         this.ldapTemplate.bind(buildOrgDN(org.getId()), null, buildAttributes(org));
