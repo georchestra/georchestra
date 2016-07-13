@@ -22,7 +22,9 @@ package org.georchestra.ldapadmin.ws.edituserdetails;
 import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
+import org.georchestra.ldapadmin.ds.OrgsDao;
 import org.georchestra.ldapadmin.dto.Account;
+import org.georchestra.ldapadmin.dto.Org;
 import org.georchestra.ldapadmin.ws.utils.UserUtils;
 import org.georchestra.ldapadmin.ws.utils.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,11 +54,13 @@ import java.io.IOException;
 @SessionAttributes(types=EditUserDetailsFormBean.class)
 public class EditUserDetailsFormController {
 
+	private OrgsDao orgsDao;
 	private AccountDao accountDao;
 
 	@Autowired
-	public EditUserDetailsFormController(AccountDao dao){
+	public EditUserDetailsFormController(AccountDao dao, OrgsDao orgsDao){
 		this.accountDao = dao;
+		this.orgsDao = orgsDao;
 	}
 
 	private static final String[] fields = {"uid", "firstName", "surname", "email", "title", "phone", "facsimile", "org", "description", "postalAddress"};
@@ -124,7 +128,12 @@ public class EditUserDetailsFormController {
 		formBean.setFacsimile(account.getFacsimile());
 		formBean.setDescription(account.getDescription());
 		formBean.setPostalAddress(account.getPostalAddress());
-		formBean.setOrg(account.getOrg());
+		if(account.getOrg().length() > 0) {
+			Org org = this.orgsDao.findByCommonName(account.getOrg());
+			formBean.setOrg(org.getName());
+		} else {
+			formBean.setOrg("");
+		}
 
 		return formBean;
 	}

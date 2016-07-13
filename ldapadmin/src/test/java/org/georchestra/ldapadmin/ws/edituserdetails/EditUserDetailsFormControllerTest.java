@@ -9,6 +9,7 @@ import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.OrgsDao;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
+import org.georchestra.ldapadmin.dto.Org;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,6 +27,7 @@ public class EditUserDetailsFormControllerTest {
     private EditUserDetailsFormController ctrl;
 
     private AccountDao dao = Mockito.mock(AccountDao.class);
+    private OrgsDao orgsDao = Mockito.mock(OrgsDao.class);
 
     private MockHttpServletRequest request = new MockHttpServletRequest();
     private MockHttpServletResponse response = new MockHttpServletResponse();
@@ -36,10 +38,11 @@ public class EditUserDetailsFormControllerTest {
     private SessionStatus sessionStatus = Mockito.mock(SessionStatus.class);
 
     private Model model = Mockito.mock(Model.class);
+    private Account mtesterAccount;
 
     @Before
     public void setUp() throws Exception {
-        ctrl = new EditUserDetailsFormController(dao);
+        ctrl = new EditUserDetailsFormController(dao, orgsDao);
         formBean.setDescription("description");
         formBean.setEmail("email");
         formBean.setFacsimile("+331234567890");
@@ -52,7 +55,7 @@ public class EditUserDetailsFormControllerTest {
         formBean.setUid("mtester");
 
         // Mock mtester user
-        Account mtester = AccountFactory.createBrief("mtester",
+        this.mtesterAccount = AccountFactory.createBrief("mtester",
                 "12345",
                 "testFirst",
                 "misterTest",
@@ -60,8 +63,15 @@ public class EditUserDetailsFormControllerTest {
                 "+331234567891",
                 "test engineer",
                 "description");
+        mtesterAccount.setOrg("georTest");
 
-        Mockito.when(dao.findByUID(Mockito.eq("mtester"))).thenReturn(mtester);
+        Mockito.when(dao.findByUID(Mockito.eq("mtester"))).thenReturn(mtesterAccount);
+
+        Org org = new Org();
+        org.setId("georTest");
+        org.setName("geOrchestra testing LLC");
+
+        Mockito.when(this.orgsDao.findByCommonName(Mockito.eq("georTest"))).thenReturn(org);
     }
 
     @After
@@ -104,9 +114,8 @@ public class EditUserDetailsFormControllerTest {
 
     @Test
     public void testSetupForm() throws Exception {
-        request.addHeader("sec-username", "testadmin");
-        Account mockedAccount = Mockito.mock(Account.class);
-        Mockito.when(dao.findByUID(Mockito.anyString())).thenReturn(mockedAccount);
+        request.addHeader("sec-username", "mtester");
+        Mockito.when(dao.findByUID(Mockito.anyString())).thenReturn(this.mtesterAccount);
 
         String ret = ctrl.setupForm(request, response, model);
 
