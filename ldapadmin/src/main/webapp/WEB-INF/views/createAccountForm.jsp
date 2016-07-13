@@ -38,6 +38,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<link href='css/bootstrap.min.css' rel="stylesheet" />
+	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.css"/>
 	<link href='css/ldapadmin.css' rel="stylesheet" />
 	<title><s:message code="createAccountForm.title"/></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -123,6 +124,7 @@
 	</div>
 	<script src="//code.jquery.com/jquery.js"></script>
 	<script src='js/bootstrap.min.js'></script>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
 	<%@ include file="validation.jsp" %>
 	<script type="text/javascript">
     /* to be called when either Firstname or Surname is modified
@@ -193,6 +195,7 @@
         $("input#uid").attr("placeholder", "<s:message code="uid.placeholder" />");
         $("input#password").attr("placeholder", "<s:message code="password.placeholder" />");
         $("input#confirmPassword").attr("placeholder", "<s:message code="confirmPassword.placeholder" />");
+		$("#org").select2();
     });
 	</script>
 </body>
