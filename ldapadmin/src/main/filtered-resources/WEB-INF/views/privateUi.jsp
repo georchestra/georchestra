@@ -122,8 +122,8 @@ try {
         </div>
       </div>
     </div>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular.min.js"></script>
+    <script src="lib/jquery/jquery.min.js"></script>
+    <script src="lib/angular/angular.min.js"></script>
     <!-- for debug purposes:
     <script src="lib/angular/angular.js"></script>
     -->
@@ -140,8 +140,8 @@ try {
     <script src="js/filters.js"></script>
     <script src="js/directives.js"></script>
     <script src="lib/bootstrap/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="lib/underscorejs/underscore-min.js"></script>
-    <script type="text/javascript" src="lib/restangular/restangular.min.js"></script>
-    <script type="text/javascript" src="lib/select2/select2.full.js"></script>
+    <script src="lib/underscorejs/underscore-min.js"></script>
+    <script src="lib/restangular/restangular.min.js"></script>
+    <script src="lib/select2/select2.full.js"></script>
   </body>
 </html>

@@ -47,7 +47,7 @@
 <body>
     <%@ include file="header.jsp" %>
 
-	<div class="container">
+	<fieldset class="container">
 		<div class="page-header">
 			<h1><s:message code="createAccountForm.title"/> <small><s:message code="createAccountForm.subtitle" /></small></h1>
 		</div>
@@ -119,10 +119,10 @@
 						<button type="submit" class="btn btn-primary btn-lg"><s:message code="submit.label"/> </button>
 					</div>
 				</div>
-			</div>
+			</fieldset>
 		</form:form>
-	</div>
-	<script src="//code.jquery.com/jquery.js"></script>
+	</fieldset>
+	<script src="js/jquery.js"></script>
 	<script src='js/bootstrap.min.js'></script>
 	<script src="../privateui/lib/select2/select2.full.js"></script>
 	<%@ include file="validation.jsp" %>
