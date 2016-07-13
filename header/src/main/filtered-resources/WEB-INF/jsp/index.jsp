@@ -128,7 +128,7 @@ if(sec_roles != null) {
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-
+    <base target="_parent" />
     <style type="text/css">
         /* see https://github.com/georchestra/georchestra/issues/147 for missing http protocol */
         @import url(//fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
