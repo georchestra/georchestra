@@ -16,6 +16,8 @@ accountUniqueNumberField=employeeNumber
 groupUniqueNumberField=ou
 userSearchBaseDN=@shared.ldap.userSearchBaseDN@
 groupSearchBaseDN=@shared.ldap.groupSearchBaseDN@
+orgsSearchBaseDN=@shared.ldap.orgsSearchBaseDN@
+
 
 # list of protected user
 # example
