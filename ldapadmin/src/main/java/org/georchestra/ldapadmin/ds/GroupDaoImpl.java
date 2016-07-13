@@ -71,10 +71,10 @@ public class GroupDaoImpl implements GroupDao {
 
 	private String uniqueNumberField = "ou";
 
-    private Name groupSearchBaseDN;
+	private Name groupSearchBaseDN;
 	private LdapRdn userSearchBaseDN;
 
-    private AtomicInteger uniqueNumberCounter = new AtomicInteger(-1);
+	private AtomicInteger uniqueNumberCounter = new AtomicInteger(-1);
 
 	public LdapTemplate getLdapTemplate() {
 		return ldapTemplate;

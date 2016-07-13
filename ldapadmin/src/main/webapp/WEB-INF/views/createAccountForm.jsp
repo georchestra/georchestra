@@ -195,7 +195,7 @@
         $("input#uid").attr("placeholder", "<s:message code="uid.placeholder" />");
         $("input#password").attr("placeholder", "<s:message code="password.placeholder" />");
         $("input#confirmPassword").attr("placeholder", "<s:message code="confirmPassword.placeholder" />");
-		$("#org").select2();
+        $("#org").select2();
     });
 	</script>
 </body>
