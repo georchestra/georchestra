@@ -140,8 +140,8 @@ try {
     <script src="js/filters.js"></script>
     <script src="js/directives.js"></script>
     <script src="lib/bootstrap/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="//cdn.jsdelivr.net/underscorejs/1.4.3/underscore-min.js"></script>
-    <script type="text/javascript" src="//cdn.jsdelivr.net/restangular/1.5.1/restangular.min.js"></script>
+    <script type="text/javascript" src="lib/underscorejs/underscore-min.js"></script>
+    <script type="text/javascript" src="lib/restangular/restangular.min.js"></script>
     <script type="text/javascript" src="lib/select2/select2.full.js"></script>
   </body>
 </html>
