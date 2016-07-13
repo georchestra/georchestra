@@ -55,7 +55,6 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 	private String commonName; // cn: person's full name,  mandatory
 	private String surname; // sn  mandatory
 
-	private String org; // o
 	private String email;// mail
 	private String phone;// telephoneNumber
 	private String description; // description
@@ -63,7 +62,7 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 	private String newPassword;
 
 	// user details
-	// sn, givenName, o, title, postalAddress, postalCode, registeredAddress, postOfficeBox, physicalDeliveryOfficeName
+	// sn, givenName, title, postalAddress, postalCode, registeredAddress, postOfficeBox, physicalDeliveryOfficeName
 	private String givenName; // givenName (optional)
 	private String title; // title
 	private String postalAddress; //postalAddress
@@ -84,8 +83,6 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 
 	private String stateOrProvince; // st
 
-	private String organizationalUnit; // ou
-
 	private String homePostalAddress;
 
 	private Date shadowExpire;
@@ -94,6 +91,9 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 	
 	private String context;
 
+	// Organization from ou=orgs,dc=georchestra,dc=org
+	private String org;
+
 	@Override
 	public String toString() {
 		return "AccountImpl{" +
@@ -101,7 +101,6 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 				", uid='" + uid + '\'' +
 				", commonName='" + commonName + '\'' +
 				", surname='" + surname + '\'' +
-				", org='" + org + '\'' +
 				", email='" + email + '\'' +
 				", phone='" + phone + '\'' +
 				", description='" + description + '\'' +
@@ -120,10 +119,10 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 				", mobile='" + mobile + '\'' +
 				", roomNumber='" + roomNumber + '\'' +
 				", stateOrProvince='" + stateOrProvince + '\'' +
-				", organizationalUnit='" + organizationalUnit + '\'' +
 				", homePostalAddress='" + homePostalAddress + '\'' +
-				", shadowExpire=" + shadowExpire + '\'' +
-				", context=" + context +
+				", shadowExpire='" + shadowExpire + '\'' +
+				", context='" + context + '\'' +
+				", org='" + org + '\'' +
 				'}';
 	}
 
@@ -132,9 +131,6 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 	    VCard v = new VCard();
 	    FormattedName f = new FormattedName(givenName + " " + surname);
 	    v.addFormattedName(f);
-	    Organization org = new Organization();
-	    org.addValue(this.org);
-	    org.addValue(this.organizationalUnit);
 	    v.addEmail(email, EmailType.WORK);
 	    v.addTelephoneNumber(phone, TelephoneType.WORK);
 	    v.addTitle(title);
@@ -217,7 +213,7 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 		csv.append(toFormatedString(facsimile));
 		csv.append(CSV_DELIMITER); // Business Fax
 		csv.append(CSV_DELIMITER);// Assistant's Phone
-		csv.append(toFormatedString(org));
+		csv.append(CSV_DELIMITER); // Organization
 		csv.append(CSV_DELIMITER); // Company
 		csv.append(toFormatedString(description));
 		csv.append(CSV_DELIMITER);// Job Title
@@ -283,7 +279,6 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 		res.put(UserSchema.UID_KEY, this.uid);
 		res.put(UserSchema.COMMON_NAME_KEY, this.commonName);
 		res.put(UserSchema.SURNAME_KEY, this.surname);
-		res.put(UserSchema.ORG_KEY, this.org);
 		res.put(UserSchema.MAIL_KEY, this.email);
 		res.put(UserSchema.TELEPHONE_KEY, this.phone);
 		res.put(UserSchema.DESCRIPTION_KEY, this.description);
@@ -300,7 +295,6 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 		res.put(UserSchema.MOBILE_KEY, this.mobile);
 		res.put(UserSchema.ROOM_NUMBER_KEY, this.roomNumber);
 		res.put(UserSchema.STATE_OR_PROVINCE_KEY, this.stateOrProvince);
-		res.put(UserSchema.ORG_UNIT_KEY, this.organizationalUnit);
 		res.put(UserSchema.HOME_POSTAL_ADDRESS_KEY, this.homePostalAddress);
 		if(this.shadowExpire != null) {
 			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
@@ -310,6 +304,7 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 			res.put(UserSchema.MANAGER_KEY, this.manager);
 		if(this.context != null)
 			res.put(UserSchema.CONTEXT_KEY, this.context);
+		res.put(UserSchema.ORG_KEY, this.getOrg());
 		return res;
 	}
 
@@ -337,14 +332,6 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 	@Override
 	public void setCommonName(String name) {
 		this.commonName = name;
-	}
-	@Override
-	public String getOrg() {
-		return org;
-	}
-	@Override
-	public void setOrg(String org) {
-		this.org = org;
 	}
 	@Override
 	public String getEmail() {
@@ -632,16 +619,6 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 	}
 
 	@Override
-	public void setOrganizationalUnit(String organizationalUnit) {
-		this.organizationalUnit = organizationalUnit;
-	}
-
-	@Override
-	public String getOrganizationalUnit() {
-		return this.organizationalUnit;
-	}
-
-	@Override
 	public void setHomePostalAddress(String homePostalAddress) {
 		this.homePostalAddress = homePostalAddress;
 	}
@@ -650,6 +627,20 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 	public String getHomePostalAddress() {
 		return this.homePostalAddress;
 	}
+
+	@Override
+	public void setOrg(String org) {
+		this.org = org;
+	}
+
+	@Override
+	public String getOrg() {
+		if(this.org == null)
+			return "";
+		else
+			return this.org;
+	}
+
 	@Override
     public int compareTo(Account o) {
 		return this.uid.compareTo(o.getUid());

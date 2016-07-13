@@ -19,16 +19,6 @@
 
 package org.georchestra.ldapadmin.ds;
 
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.naming.Name;
-import javax.naming.NamingException;
-import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
-import javax.naming.directory.SearchControls;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -56,6 +46,19 @@ import org.springframework.ldap.filter.Filter;
 import org.springframework.ldap.filter.PresentFilter;
 import org.springframework.security.authentication.encoding.LdapShaPasswordEncoder;
 
+import javax.naming.Name;
+import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.SearchControls;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * This class is responsible of maintaining the user accounts (CRUD operations).
  *
@@ -63,8 +66,10 @@ import org.springframework.security.authentication.encoding.LdapShaPasswordEncod
  */
 public final class AccountDaoImpl implements AccountDao {
 
+    private AccountContextMapper attributMapper;
     private LdapTemplate ldapTemplate;
     private GroupDao groupDao;
+    private OrgsDao orgDao;
     private String uniqueNumberField = "employeeNumber";
     private LdapRdn userSearchBaseDN;
     private AtomicInteger uniqueNumberCounter = new AtomicInteger(-1);
@@ -75,14 +80,22 @@ public final class AccountDaoImpl implements AccountDao {
     private static final Log LOG = LogFactory.getLog(AccountDaoImpl.class.getName());
 
     private String basePath;
+    private String orgsSearchBaseDN;
+
     public String getBasePath() { return basePath; }
     public void setBasePath(String basePath) { this.basePath = basePath; }
 
     @Autowired
-    public AccountDaoImpl(LdapTemplate ldapTemplate, GroupDao groupDao) {
+    public AccountDaoImpl(LdapTemplate ldapTemplate, GroupDao groupDao, OrgsDao orgDao) {
 
         this.ldapTemplate = ldapTemplate;
         this.groupDao = groupDao;
+        this.orgDao = orgDao;
+
+    }
+
+    public void init() {
+        this.attributMapper = new AccountContextMapper(this.getOrgsSearchBaseDN() + "," + this.getBasePath());
     }
 
     public LdapTemplate getLdapTemplate() {
@@ -112,6 +125,15 @@ public final class AccountDaoImpl implements AccountDao {
     public void setLogDao(AdminLogDao logDao) {
         this.logDao = logDao;
     }
+
+    public void setOrgsSearchBaseDN(String orgsSearchBaseDN) {
+        this.orgsSearchBaseDN = orgsSearchBaseDN;
+    }
+
+    public String getOrgsSearchBaseDN() {
+        return orgsSearchBaseDN;
+    }
+
 
     /**
      * @see {@link AccountDao#insert(Account, String, String)}
@@ -167,7 +189,12 @@ public final class AccountDaoImpl implements AccountDao {
 
             this.ldapTemplate.bind(dn, context, null);
 
+            // Add user to the role
             this.groupDao.addUser(groupID, account.getUid(), originLogin);
+
+            // Add user to the organization
+            if(account.getOrg().length() > 0)
+                this.orgDao.addUser(account.getOrg(), account.getUid());
 
         } catch (NameNotFoundException e) {
             throw new DataServiceException(e);
@@ -217,7 +244,7 @@ public final class AccountDaoImpl implements AccountDao {
             AndFilter filter = new AndFilter();
             filter.and(searchFilter);
             filter.and(new EqualsFilter(uniqueNumberField, uniqueNumber.get()));
-            isUnique = ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(), new AccountContextMapper())
+            isUnique = ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(), new AccountContextMapper(""))
                     .isEmpty();
             uniqueNumber.incrementAndGet();
         }
@@ -316,7 +343,7 @@ public final class AccountDaoImpl implements AccountDao {
         sc.setReturningAttributes(UserSchema.ATTR_TO_RETRIEVE);
         sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
         EqualsFilter filter = new EqualsFilter("objectClass", "person");
-        return ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(), sc, new AccountContextMapper());
+        return ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(), sc, attributMapper);
     }
     
     @Override
@@ -327,7 +354,7 @@ public final class AccountDaoImpl implements AccountDao {
         AndFilter and = new AndFilter();
         and.and( new EqualsFilter("objectClass", "person"));
         and.and(f);
-        List<Account> l = ldapTemplate.search(DistinguishedName.EMPTY_PATH, and.encode(), sc, new AccountContextMapper());
+        List<Account> l = ldapTemplate.search(DistinguishedName.EMPTY_PATH, and.encode(), sc, attributMapper);
         return filterProtected.filterUsersList(l);
     }
 
@@ -350,7 +377,7 @@ public final class AccountDaoImpl implements AccountDao {
         if(uid == null)
             throw new NameNotFoundException("Cannot find user with uid : " + uid + " in LDAP server");
 
-        Account a = (Account) ldapTemplate.lookup(buildDn(uid.toLowerCase()), UserSchema.ATTR_TO_RETRIEVE, new AccountContextMapper());
+        Account a = (Account) ldapTemplate.lookup(buildDn(uid.toLowerCase()), UserSchema.ATTR_TO_RETRIEVE, attributMapper);
         if(a == null)
             throw new NameNotFoundException("Cannot find user with uid : " + uid + " in LDAP server");
         else
@@ -375,7 +402,7 @@ public final class AccountDaoImpl implements AccountDao {
         filter.and(new EqualsFilter("mail", email));
 
         List<Account> accountList = ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(),sc,
-                new AccountContextMapper());
+                attributMapper);
         if (accountList.isEmpty()) {
             throw new NameNotFoundException("There is no user with this email: " + email);
         }
@@ -477,9 +504,6 @@ public final class AccountDaoImpl implements AccountDao {
 
         setAccountField(context, UserSchema.MAIL_KEY, account.getEmail());
 
-        // additional
-        setAccountField(context, UserSchema.ORG_KEY, account.getOrg());
-
         setAccountField(context, UserSchema.POSTAL_ADDRESS_KEY, account.getPostalAddress());
 
         setAccountField(context, UserSchema.POSTAL_CODE_KEY, account.getPostalCode());
@@ -492,8 +516,6 @@ public final class AccountDaoImpl implements AccountDao {
 
         setAccountField(context, UserSchema.STATE_OR_PROVINCE_KEY, account.getStateOrProvince());
 
-        setAccountField(context, UserSchema.ORG_UNIT_KEY, account.getOrganizationalUnit());
-        
         setAccountField(context, UserSchema.HOME_POSTAL_ADDRESS_KEY, account.getHomePostalAddress());
 
         if(account.getManager() != null)
@@ -521,6 +543,14 @@ public final class AccountDaoImpl implements AccountDao {
 
     public static class AccountContextMapper implements ContextMapper {
 
+        private final String orgBasePath;
+        private final Pattern pattern;
+
+        public AccountContextMapper(String orgBasePath) {
+            this.orgBasePath = orgBasePath;
+            this.pattern = Pattern.compile("([^=,]+)=([^=,]+)," + this.orgBasePath + "$");
+        }
+
         @Override
         public Object mapFromContext(Object ctx) {
 
@@ -531,24 +561,18 @@ public final class AccountDaoImpl implements AccountDao {
                     context.getStringAttribute(UserSchema.SURNAME_KEY),
                     context.getStringAttribute(UserSchema.GIVEN_NAME_KEY),
                     context.getStringAttribute(UserSchema.MAIL_KEY),
-
-                    context.getStringAttribute(UserSchema.ORG_KEY), context.getStringAttribute(UserSchema.TITLE_KEY),
-
+                    context.getStringAttribute(UserSchema.TITLE_KEY),
                     context.getStringAttribute(UserSchema.TELEPHONE_KEY),
                     context.getStringAttribute(UserSchema.DESCRIPTION_KEY),
-
                     context.getStringAttribute(UserSchema.POSTAL_ADDRESS_KEY),
                     context.getStringAttribute(UserSchema.POSTAL_CODE_KEY),
                     context.getStringAttribute(UserSchema.REGISTERED_ADDRESS_KEY),
                     context.getStringAttribute(UserSchema.POST_OFFICE_BOX_KEY),
                     context.getStringAttribute(UserSchema.PHYSICAL_DELIVERY_OFFICE_NAME_KEY),
-
                     context.getStringAttribute(UserSchema.STREET_KEY),
                     context.getStringAttribute(UserSchema.LOCALITY_KEY),
-
                     context.getStringAttribute(UserSchema.FACSIMILE_KEY),
                     context.getStringAttribute(UserSchema.ORG_UNIT_KEY),
-
                     context.getStringAttribute(UserSchema.HOME_POSTAL_ADDRESS_KEY),
                     context.getStringAttribute(UserSchema.MOBILE_KEY),
                     context.getStringAttribute(UserSchema.ROOM_NUMBER_KEY),
@@ -562,6 +586,32 @@ public final class AccountDaoImpl implements AccountDao {
                 shadowExpire *= 1000; // Convert to milliseconds
                 account.setShadowExpire(new Date(shadowExpire));
             }
+
+
+            // Set Organization
+            String org = null;
+
+            SortedSet<String> groups = context.getAttributeSortedStringSet("memberOf");
+            if(groups != null) {
+                Iterator<String> it = groups.iterator();
+                while (it.hasNext()) {
+                    String group = it.next();
+                    Matcher m = this.pattern.matcher(group);
+
+                    // Skip roles
+                    if (!m.matches())
+                        continue;
+
+                    // Check organization cardinality
+                    if (org != null)
+                        throw new RuntimeException("More than one org per user on " + account.getCommonName());
+
+                    org = m.group(2);
+                }
+                if (org != null)
+                    account.setOrg(org);
+            }
+
 
             return account;
         }
@@ -679,7 +729,7 @@ public final class AccountDaoImpl implements AccountDao {
         filter.and(new EqualsFilter("objectClass", "person"));
         filter.and(new PresentFilter("shadowExpire"));
 
-        return ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(),sc, new AccountContextMapper());
+        return ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(),sc, attributMapper);
 
     }
 }

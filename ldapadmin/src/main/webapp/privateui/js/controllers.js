@@ -278,6 +278,31 @@ angular.module('ldapadmin.controllers', [])
 
       $scope.user = Restangular.copy(remote);
 
+
+      $scope.orgs = Restangular.all("orgs").getList().then(function(orgs) {
+
+        var sel_orgs = []
+        orgs.map(function(org) {
+          sel_orgs.push({
+            id: org.id,
+            text: org.name
+          });
+        });
+
+        $('.user-orgs').select2({
+          data: sel_orgs,
+         allowClear: true,
+          placeholder: "Select organization...",
+        })
+        $('.user-orgs').on("change", function(){
+          var org = $(this).val();
+          $scope.$apply(function(){
+            $scope.user.org = org;
+          });
+        });
+
+      });
+
       $scope.groupsChanged = false;
       $scope.publicContextPath = GEOR_config.publicContextPath;
 

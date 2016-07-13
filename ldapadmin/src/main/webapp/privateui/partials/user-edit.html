@@ -24,13 +24,13 @@
   <div class="row-fluid">
     <div class="span6">
       <div class="control-group">
-        <label for="mail">Login</label>
+        <label>Login</label>
         <input type="text" name="uid" ng-model="user.uid" placeholder="Login" class="span12"/>
       </div>
     </div>
     <div class="span6">
       <div class="control-group">
-        <label for="mail">Password</label>
+        <label>Password</label>
         <a href="{{publicContextPath}}/account/passwordRecovery?email={{user.mail | encodeURIComponent}}">Reset password</a>
       </div>
     </div>
@@ -38,14 +38,14 @@
   <div class="row-fluid">
     <div class="span6">
       <div class="control-group" ng-class="{error: userForm.sn.$invalid}">
-        <label for="mail">Last Name</label>
+        <label>Last Name</label>
         <input type="text" name="sn" ng-model="user.sn" required  placeholder="Last Name" class="span12"/>
         <span ng-show="userForm.sn.$error.required" class="help-inline">Required</span>
       </div>
     </div>
     <div class="span6">
       <div class="control-group" ng-class="{error: userForm.givenName.$invalid}">
-        <label for="mail">First Name</label>
+        <label>First Name</label>
         <input type="text" name="givenName" ng-model="user.givenName" required  placeholder="First Name" class="span12"/>
         <span ng-show="userForm.givenName.$error.required" class="help-inline">Required</span>
       </div>
@@ -54,7 +54,7 @@
   <div class="row-fluid">
     <div class="span6">
       <div class="control-group" ng-class="{error: userForm.mail.$invalid}">
-        <label for="mail">E-Mail</label>
+        <label>E-Mail</label>
         <input type="email" name="mail" ng-model="user.mail" required class="span12"/>
         <span ng-show="userForm.mail.$error.required" class="help-inline">Required</span>
         <span ng-show="userForm.mail.$error.email" class="help-inline">Not a valid E-mail</span>
@@ -82,7 +82,7 @@
 
   <div class="row-fluid">
     <div class="span10">
-      <label class="control-label" for="postalAddress">Address</label>
+      <label class="control-label">Address</label>
       <textarea type="text" name="postalAddress" ng-model="user.postalAddress" class="span12" placeholder="Address" />
     </div>
   </div>
@@ -90,7 +90,7 @@
   <div class="row-fluid">
     <div class="span5 bgcolor">
       <label>Organization</label>
-      <input type="text" class="span12" ng-model="user.o" placeholder="Organization">
+      <input type="text" class="span12 user-orgs" ng-model="user.org" placeholder="Organization">
     </div>
     <div class="span5 bgcolor">
       <label>Title</label>
@@ -99,7 +99,7 @@
   </div>
   <div class="row-fluid">
     <div class="span10">
-      <label for="description">Description</label>
+      <label>Description</label>
       <textarea type="text" name="description" class="span12" ng-model="user.description" placeholder="Description" />
     </div>
   </div>

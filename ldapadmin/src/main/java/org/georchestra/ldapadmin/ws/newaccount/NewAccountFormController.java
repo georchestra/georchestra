@@ -19,15 +19,7 @@
 
 package org.georchestra.ldapadmin.ws.newaccount;
 
-import java.io.IOException;
-
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import net.tanesha.recaptcha.ReCaptcha;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,9 +29,11 @@ import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
 import org.georchestra.ldapadmin.ds.DuplicatedUidException;
+import org.georchestra.ldapadmin.ds.OrgsDao;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.georchestra.ldapadmin.dto.Group;
+import org.georchestra.ldapadmin.dto.Org;
 import org.georchestra.ldapadmin.mailservice.MailService;
 import org.georchestra.ldapadmin.ws.utils.EmailUtils;
 import org.georchestra.ldapadmin.ws.utils.PasswordUtils;
@@ -47,7 +41,6 @@ import org.georchestra.ldapadmin.ws.utils.RecaptchaUtils;
 import org.georchestra.ldapadmin.ws.utils.UserUtils;
 import org.georchestra.ldapadmin.ws.utils.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ldap.NameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -58,6 +51,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Manages the UI Account Form.
@@ -76,6 +77,7 @@ public final class NewAccountFormController {
 	private static final Log LOG = LogFactory.getLog(NewAccountFormController.class.getName());
 
 	private AccountDao accountDao;
+	private OrgsDao orgDao;
 
 	private MailService mailService;
 
@@ -89,9 +91,10 @@ public final class NewAccountFormController {
 	    "title", "description", "uid", "password", "confirmPassword"};
 
 	@Autowired
-	public NewAccountFormController(AccountDao dao, MailService mailSrv, Moderator moderatorRule,
-	        ReCaptcha reCaptcha, ReCaptchaParameters reCaptchaParameters) {
+	public NewAccountFormController(AccountDao dao, OrgsDao orgDao, MailService mailSrv, Moderator moderatorRule,
+									ReCaptcha reCaptcha, ReCaptchaParameters reCaptchaParameters) {
 		this.accountDao = dao;
+		this.orgDao = orgDao;
 		this.mailService = mailSrv;
 		this.moderator = moderatorRule;
 		this.reCaptcha = reCaptcha;
@@ -109,8 +112,16 @@ public final class NewAccountFormController {
 
 		HttpSession session = request.getSession();
 		AccountFormBean formBean = new AccountFormBean();
+		Map<String, String> options = new HashMap<String, String>();
+
+		// Populate orgs droplist
+		List<Org> orgs = this.orgDao.findAll();
+		for(Org org : orgs)
+			options.put(org.getId(), org.getName());
 
 		model.addAttribute(formBean);
+		model.addAttribute("orgs", options);
+
 		session.setAttribute("reCaptchaPublicKey", this.reCaptchaParameters.getPublicKey());
 		for (String f : fields) {
 			if (Validation.isFieldRequired(f)) {
@@ -137,8 +148,17 @@ public final class NewAccountFormController {
 	public String create(HttpServletRequest request,
 						 @ModelAttribute AccountFormBean formBean,
 						 BindingResult result,
-						 SessionStatus sessionStatus)
+						 SessionStatus sessionStatus,
+						 Model model)
 			throws IOException {
+
+		// Populate orgs droplist
+		Map<String, String> options = new HashMap<String, String>();
+		List<Org> orgs = this.orgDao.findAll();
+		for(Org org : orgs)
+			options.put(org.getId(), org.getName());
+		model.addAttribute("orgs", options);
+
 
 		String remoteAddr = request.getRemoteAddr();
 
@@ -166,13 +186,16 @@ public final class NewAccountFormController {
 					formBean.getSurname(),
 					formBean.getEmail(),
 					formBean.getPhone(),
-					formBean.getOrg(),
 					formBean.getTitle(),
 					formBean.getDescription() );
+
+			account.setOrg(formBean.getOrg());
 
 			String groupID = this.moderator.moderatedSignup() ? Group.PENDING : Group.USER;
 
 			this.accountDao.insert(account, groupID, request.getHeader("sec-username"));
+
+			this.orgDao.addUser(formBean.getOrg(), formBean.getUid().toLowerCase());
 
 			final ServletContext servletContext = request.getSession().getServletContext();
 			if(this.moderator.moderatedSignup() ){

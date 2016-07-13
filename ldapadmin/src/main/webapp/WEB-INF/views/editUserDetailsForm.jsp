@@ -87,9 +87,14 @@
 				<t:input path="facsimile" required="${facsimileRequired}">
 					<jsp:attribute name="label"><s:message code="facsimile.label" /></jsp:attribute>
 				</t:input>
-				<t:input path="org" required="${orgRequired}">
-					<jsp:attribute name="label"><s:message code="org.label" /></jsp:attribute>
-				</t:input>
+				<div class="form-group">
+					<label class="col-lg-4 control-label"><s:message code="org.label" /></label>
+					<div class="col-lg-8">
+						<p class="form-control-static">
+								${editUserDetailsFormBean.org}
+						</p>
+					</div>
+				</div>
 				<t:input path="title" required="${titleRequired}">
 					<jsp:attribute name="label"><s:message code="title.label" /></jsp:attribute>
 				</t:input>

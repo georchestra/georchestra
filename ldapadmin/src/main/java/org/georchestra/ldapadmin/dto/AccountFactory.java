@@ -47,7 +47,6 @@ public class AccountFactory {
 	 * @param surname
 	 * @param email
 	 * @param phone
-	 * @param org
 	 * @param description
 	 * @return
 	 */
@@ -58,23 +57,17 @@ public class AccountFactory {
 			String surname, 
 			String email, 
 			String phone,
-			String org, 
 			String title,
 			String description) {
 		
 		Account account = new AccountImpl();
-		
 		account.setUid(uid);
 		account.setPassword(password);
-
 		account.setGivenName(firstName);
 		account.setSurname(surname);
-
 		account.setCommonName(formatCommonName(firstName ,surname));
-
 		account.setEmail(email);
 		account.setPhone(phone);
-		account.setOrg(org);
 		account.setTitle(title);
 		account.setDescription(description);
 		
@@ -87,8 +80,7 @@ public class AccountFactory {
 	public static Account createDetails(
 			String uid, 
 			String givenName,
-			String surname, 
-			String org, 
+			String surname,
 			String physicalDeliveryOfficeName,
 			String postalAddress, 
 			String postalCode, 
@@ -99,18 +91,13 @@ public class AccountFactory {
 		Account a = new AccountImpl();
 		
 		a.setUid(uid);
-		
 		a.setGivenName(givenName);
 		a.setSurname(surname);
 		a.setCommonName(formatCommonName(givenName, surname) );
-
-		a.setOrg(org);
-
 		a.setPhysicalDeliveryOfficeName(physicalDeliveryOfficeName);
 		a.setPostalAddress(postalAddress);
 		a.setPostalCode(postalCode);
 		a.setPostOfficeBox(postOfficeBox);
-		
 		a.setRegisteredAddress(registeredAddress);
 		a.setTitle(title);
 
@@ -125,7 +112,6 @@ public class AccountFactory {
 	 * @param surname surname 
 	 * @param givenName first name
 	 * @param email
-	 * @param org
 	 * @param title
 	 * @param phone
 	 * @param description
@@ -136,14 +122,14 @@ public class AccountFactory {
 	 * @param physicalDeliveryOfficeName
 	 * @param locality 
 	 * @param street 
-	 * @param facsimile 
-	 * @param organizationalUnit
+	 * @param facsimile
 	 * @param homePostalAddress
 	 * @param mobile
 	 * @param roomNumber
 	 * @param stateOrProvince
 	 * @param manager
 	 * @param context
+	 * @param org
 	 *
 	 * @return {@link Account}
 	 */
@@ -153,7 +139,6 @@ public class AccountFactory {
 			String surname,
 			String givenName, 
 			String email,
-			String org, 
 			String title,
 			String phone, 
 			String description,
@@ -164,14 +149,14 @@ public class AccountFactory {
 			String physicalDeliveryOfficeName, 
 			String street, 
 			String locality, 
-			String facsimile, 
-			String organizationalUnit,
+			String facsimile,
 			String homePostalAddress,
 			String mobile, 
 			String roomNumber,
 			String stateOrProvince,
 			String manager,
-			String context) {
+			String context,
+			String org) {
 		
 		
 		Account a = new AccountImpl();
@@ -181,31 +166,24 @@ public class AccountFactory {
 		a.setGivenName(givenName);
 		a.setSurname(surname);
 		a.setEmail(email);
-
-		a.setOrg(org);
 		a.setTitle(title);
-
 		a.setPhone(phone);
 		a.setDescription(description);
-		
 		a.setStreet(street);
 		a.setLocality(locality);
-		
 		a.setPostalAddress(postalAddress);
 		a.setPostalCode(postalCode);
 		a.setRegisteredAddress(registeredAddress);
 		a.setPostOfficeBox(postOfficeBox);
 		a.setPhysicalDeliveryOfficeName(physicalDeliveryOfficeName);
-		
 		a.setFacsimile(facsimile);
-		a.setOrganizationalUnit(organizationalUnit);
-		
 		a.setHomePostalAddress(homePostalAddress);
 		a.setMobile(mobile);
 		a.setRoomNumber(roomNumber);
 		a.setStateOrProvince(stateOrProvince);
 		a.setManager(manager);
 		a.setContext(context);
+		a.setOrg(org);
 		
 		return a;
 	}
@@ -220,7 +198,6 @@ public class AccountFactory {
 		a.setUid(o.getUid());
 		a.setCommonName(o.getCommonName());
 		a.setSurname(o.getSurname());
-		a.setOrg(o.getOrg());
 		a.setEmail(o.getEmail());
 		a.setPhone(o.getPhone());
 		a.setDescription(o.getDescription());
@@ -239,11 +216,11 @@ public class AccountFactory {
 		a.setMobile(o.getMobile());
 		a.setRoomNumber(o.getRoomNumber());
 		a.setStateOrProvince(o.getStateOrProvince());
-		a.setOrganizationalUnit(o.getOrganizationalUnit());
 		a.setHomePostalAddress(o.getHomePostalAddress());
 		a.setManager(o.getManager());
 		a.setShadowExpire(o.getShadowExpire());
 		a.setContext(o.getContext());
+		a.setOrg(o.getOrg());
 
 		return a;
 	}

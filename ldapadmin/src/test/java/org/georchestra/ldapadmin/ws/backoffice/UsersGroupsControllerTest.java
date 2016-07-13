@@ -15,6 +15,7 @@ import java.util.Set;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.ldapadmin.ds.AccountDaoImpl;
 import org.georchestra.ldapadmin.ds.GroupDaoImpl;
+import org.georchestra.ldapadmin.ds.OrgsDao;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.georchestra.ldapadmin.dto.Group;
@@ -71,8 +72,6 @@ public class UsersGroupsControllerTest {
 
     @Rule
     public ErrorCollector collector = new ErrorCollector();
-    
-    private AccountDaoImpl accountDao;
 
     private void setUpRealLdap() {
         final String bindDn = System.getProperty(ENV_BINDDN);
@@ -117,18 +116,18 @@ public class UsersGroupsControllerTest {
         // fake account list
         List<Account> fakeAccountList = new ArrayList<Account>();
         fakeAccountList.add(AccountFactory.createFull("testadmin", "testadmin", "testadmin", "administrator",
-                "psc@georchestra.org", "geOrchestra", "administrator", "+331234567890", "admin",
+                "psc@georchestra.org", "administrator", "+331234567890", "admin",
                 "48 avenue du lac du Bourget", "73000", "registeredAddress", "BP 352", "Le-Bourget-du-Lac",
                 "avenue du lac du Bourget", "Savoie-Technolac", "+331234567899", "geodata administration",
                 "Undisclosed", "+336123457890", "42", "Rhone-Alpes", null, null));
 
         fakeAccountList.add(AccountFactory.createFull("testuser", "testuser", "testuser", "regular user",
-                "psc@georchestra.org", "geOrchestra", "user", "+331234567890", "user",
+                "psc@georchestra.org", "user", "+331234567890", "user",
                 "48 avenue du lac du Bourget", "73000", "registeredAddress", "BP 352", "Le-Bourget-du-Lac",
                 "avenue du lac du Bourget", "Savoie-Technolac", "+331234567899", "Peon",
                 "Undisclosed", "+336123457890", "42", "Rhone-Alpes", null, null));
         Account tempAccount = AccountFactory.createFull("testadminTmp", "testadminTmp", "testadminTmp", "administrator",
-                "psc@georchestra.org", "geOrchestra", "administrator", "+331234567890", "admin",
+                "psc@georchestra.org", "administrator", "+331234567890", "admin",
                 "48 avenue du lac du Bourget", "73000", "registeredAddress", "BP 352", "Le-Bourget-du-Lac",
                 "avenue du lac du Bourget", "Savoie-Technolac", "+331234567899", "geodata administration",
                 "Undisclosed", "+336123457890", "42", "Rhone-Alpes", null, null);
@@ -213,8 +212,13 @@ public class UsersGroupsControllerTest {
         groupDao.setUniqueNumberField("ou");
         groupDao.setUserSearchBaseDN("ou=users");
 
+        OrgsDao orgsDao = new OrgsDao();
+        orgsDao.setLdapTemplate(ldapTemplate);
+        orgsDao.setOrgsSearchBaseDN("ou=orgs");
+        orgsDao.setUserSearchBaseDN("ou=users");
+
         // configures AccountDao
-        dao = new AccountDaoImpl(ldapTemplate, groupDao);
+        dao = new AccountDaoImpl(ldapTemplate, groupDao, orgsDao);
         dao.setUniqueNumberField("employeeNumber");
         dao.setUserSearchBaseDN("ou=users");
         dao.setGroupDao(groupDao);

@@ -45,7 +45,7 @@ public interface UserSchema {
 	public static final String MOBILE_KEY = "mobile";
 	public static final String ROOM_NUMBER_KEY = "roomNumber";
 	public static final String LOCALITY_KEY = "l";
-	public static final String ORG_KEY = "o";
+	//public static final String ORG_KEY = "o";
 	public static final String STATE_OR_PROVINCE_KEY = "st";
 	public static final String ORG_UNIT_KEY = "ou";
 	public static final String USER_PASSWORD_KEY = "userPassword";
@@ -53,11 +53,16 @@ public interface UserSchema {
 	public static final String SHADOW_EXPIRE_KEY = "shadowExpire";
 	public static final String MANAGER_KEY = "manager";
 	public static final String CONTEXT_KEY = "preferredLanguage";
+	public static final String MEMBER_OF = "memberOf";
+
+	// Only used in JSON output
+	public static final String ORG_KEY = "org";
+
 
 	public static final String[] ATTR_TO_RETRIEVE = {UID_KEY, COMMON_NAME_KEY, SURNAME_KEY, GIVEN_NAME_KEY, STREET_KEY,
 			HOME_POSTAL_ADDRESS_KEY, TITLE_KEY, FACSIMILE_KEY, POSTAL_CODE_KEY, MAIL_KEY, POSTAL_ADDRESS_KEY,
 			POST_OFFICE_BOX_KEY, DESCRIPTION_KEY, TELEPHONE_KEY, PHYSICAL_DELIVERY_OFFICE_NAME_KEY, MOBILE_KEY,
-			ROOM_NUMBER_KEY, LOCALITY_KEY, ORG_KEY, STATE_OR_PROVINCE_KEY, ORG_UNIT_KEY, USER_PASSWORD_KEY,
-			REGISTERED_ADDRESS_KEY, SHADOW_EXPIRE_KEY, MANAGER_KEY, CONTEXT_KEY};
+			ROOM_NUMBER_KEY, LOCALITY_KEY, STATE_OR_PROVINCE_KEY, ORG_UNIT_KEY, USER_PASSWORD_KEY,
+			REGISTERED_ADDRESS_KEY, SHADOW_EXPIRE_KEY, MANAGER_KEY, CONTEXT_KEY, MEMBER_OF};
 
 }

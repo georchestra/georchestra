@@ -25,6 +25,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="s" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 
 <%@ page import="net.tanesha.recaptcha.ReCaptcha" %>
@@ -37,6 +38,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<link href='css/bootstrap.min.css' rel="stylesheet" />
+	<link href="../privateui/lib/select2/select2.css" rel="stylesheet" />
 	<link href='css/ldapadmin.css' rel="stylesheet" />
 	<title><s:message code="createAccountForm.title"/></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -45,7 +47,7 @@
 <body>
     <%@ include file="header.jsp" %>
 
-	<div class="container">
+	<fieldset class="container">
 		<div class="page-header">
 			<h1><s:message code="createAccountForm.title"/> <small><s:message code="createAccountForm.subtitle" /></small></h1>
 		</div>
@@ -82,9 +84,9 @@
 				<t:input path="phone" required="${phoneRequired}">
 					<jsp:attribute name="label"><s:message code="phone.label" /></jsp:attribute>
 				</t:input>
-				<t:input path="org" required="${orgRequired}">
+				<t:list path="org" required="${orgRequired}" items="${orgs}">
 					<jsp:attribute name="label"><s:message code="org.label" /></jsp:attribute>
-				</t:input>
+				</t:list>
 				<t:input path="title" required="${titleRequired}">
 					<jsp:attribute name="label"><s:message code="title.label" /></jsp:attribute>
 				</t:input>
@@ -117,11 +119,12 @@
 						<button type="submit" class="btn btn-primary btn-lg"><s:message code="submit.label"/> </button>
 					</div>
 				</div>
-			</div>
+			</fieldset>
 		</form:form>
-	</div>
-	<script src="//code.jquery.com/jquery.js"></script>
+	</fieldset>
+	<script src="js/jquery.js"></script>
 	<script src='js/bootstrap.min.js'></script>
+	<script src="../privateui/lib/select2/select2.full.js"></script>
 	<%@ include file="validation.jsp" %>
 	<script type="text/javascript">
     /* to be called when either Firstname or Surname is modified
@@ -192,6 +195,7 @@
         $("input#uid").attr("placeholder", "<s:message code="uid.placeholder" />");
         $("input#password").attr("placeholder", "<s:message code="password.placeholder" />");
         $("input#confirmPassword").attr("placeholder", "<s:message code="confirmPassword.placeholder" />");
+        $("#org").select2();
     });
 	</script>
 </body>

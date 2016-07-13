@@ -19,12 +19,12 @@
 
 package org.georchestra.ldapadmin.ws.backoffice.utils;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.http.MediaType;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * Utility class which contains useful method to prepare the http response.
@@ -52,14 +52,17 @@ final public class ResponseUtil {
 	}
 	
 	public static String buildResponseMessage(Boolean status, String errorMessage){
-		
-		String error;
-		if(errorMessage == null){
-			error = "{ \"success\": "+ status.toString() +" }";
-		} else {
-			error = "{ \"success\": "+ status.toString() +" , \"error\": \"" +errorMessage+ "\" }";
+
+		JSONObject res = new JSONObject();
+		try {
+			res.put("success", status);
+			if(errorMessage != null){
+				res.put("error", errorMessage);
+			}
+		} catch (JSONException e) {
+			throw new RuntimeException(e);
 		}
-		return error;
+		return res.toString();
 	}
 
 

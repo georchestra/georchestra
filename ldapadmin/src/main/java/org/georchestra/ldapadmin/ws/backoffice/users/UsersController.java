@@ -21,20 +21,13 @@ package org.georchestra.ldapadmin.ws.backoffice.users;
 
 
 
-import java.io.IOException;
-import java.text.Normalizer;
-import java.util.List;
-
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
 import org.georchestra.ldapadmin.ds.DuplicatedUidException;
+import org.georchestra.ldapadmin.ds.OrgsDao;
 import org.georchestra.ldapadmin.ds.ProtectedUserFilter;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
@@ -52,11 +45,17 @@ import org.springframework.ldap.InvalidAttributeValueException;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.filter.LikeFilter;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.text.Normalizer;
+import java.util.List;
 
 /**
  * Web Services to maintain the User information.
@@ -85,6 +84,8 @@ public class UsersController {
 	private static final String OTHER_ERROR = "other_error";
 
 	private AccountDao accountDao;
+	@Autowired
+	private OrgsDao orgDao;
 	private UserRule userRule;
 	
 	@Autowired
@@ -243,7 +244,7 @@ public class UsersController {
      * 	"postalCode": "postal code",
      *	"l": "locality",
      * 	"postOfficeBox": "the post office box",
-     *  "o": "the_organization"
+     *  "org": "the_organization"
      * }
      *
      * where <b>sn, givenName, mail</b> are mandatories
@@ -423,8 +424,10 @@ public class UsersController {
 
 		// searches the account
 		Account account = null;
+		String originalOrg = null;
 		try {
 			account = this.accountDao.findByUID(uid);
+			originalOrg = account.getOrg();
 
 		} catch (NameNotFoundException e) {
 
@@ -440,6 +443,15 @@ public class UsersController {
 		try{
 			final Account modified = modifyAccount(AccountFactory.create(account), request.getInputStream());
 			this.accountDao.update(account, modified, request.getHeader("sec-username"));
+
+			if(!modified.getOrg().equals(originalOrg)){
+				if(originalOrg.length() > 0)
+					this.orgDao.removeUser(originalOrg, uid);
+				if(modified.getOrg().length() > 0)
+					this.orgDao.addUser(modified.getOrg(), uid);
+			}
+
+
 			boolean uidChanged = ( ! modified.getUid().equals(account.getUid()));
 			if ((uidChanged) && (warnUserIfUidModified)) {
 				this.mailService.sendAccountUidRenamed(request.getSession().getServletContext(),
@@ -580,11 +592,6 @@ public class UsersController {
 			account.setFacsimile(facsimile);
 		}
 
-		String org = RequestUtil.getFieldValue(json, UserSchema.ORG_KEY);
-		if (org != null) {
-			account.setOrg(org);
-		}
-
 		String title = RequestUtil.getFieldValue(json, UserSchema.TITLE_KEY);
 		if (title != null) {
 			account.setTitle(title);
@@ -613,6 +620,11 @@ public class UsersController {
 		if (uid != null) {
 			account.setUid(uid);
 		}
+
+		String org = RequestUtil.getFieldValue(json, UserSchema.ORG_KEY);
+		if(org != null)
+			account.setOrg(org);
+
 		return account;
 	}
 
@@ -660,8 +672,6 @@ public class UsersController {
 
 		String facsimile = RequestUtil.getFieldValue( json, UserSchema.FACSIMILE_KEY);
 
-		String org = RequestUtil.getFieldValue( json, UserSchema.ORG_KEY);
-
 		String title = RequestUtil.getFieldValue( json, UserSchema.TITLE_KEY);
 
 		String description = RequestUtil.getFieldValue( json, UserSchema.DESCRIPTION_KEY);
@@ -678,7 +688,9 @@ public class UsersController {
 
 		String commonName = AccountFactory.formatCommonName(givenName, surname);
 
-		Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, org, title, phone, description, postalAddress, postalCode, "", postOfficeBox, "", street, locality, facsimile, "","","","","",manager,"");
+		String org = RequestUtil.getFieldValue(json, UserSchema.ORG_KEY);
+
+		Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, title, phone, description, postalAddress, postalCode, "", postOfficeBox, "", street, locality, facsimile, "","","","",manager,"", org);
 
 		return a;
 

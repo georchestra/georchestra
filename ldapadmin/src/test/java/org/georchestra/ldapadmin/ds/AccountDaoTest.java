@@ -59,34 +59,32 @@ public class AccountDaoTest {
         groupDao.setGroupSearchBaseDN("ou=roles");
         groupDao.setUniqueNumberField("ou");
         groupDao.setUserSearchBaseDN("ou=users");
-        us = new AccountDaoImpl(ldapTemplate, groupDao);
+
+        OrgsDao orgsDao = new OrgsDao();
+        orgsDao.setLdapTemplate(ldapTemplate);
+        orgsDao.setOrgsSearchBaseDN("ou=orgs");
+        orgsDao.setUserSearchBaseDN("ou=users");
+
+
+        us = new AccountDaoImpl(ldapTemplate, groupDao, orgsDao);
         ((AccountDaoImpl) us).setUserSearchBaseDN("ou=users");
 
         this.adminAccount = AccountFactory.createBrief("testadmin", "monkey123", "Test", "ADmin",
-                "postmastrer@localhost", "+33123456789", "geOrchestra Project Steering Committee", "admin", "");
+                "postmastrer@localhost", "+33123456789", "admin", "");
     }
 
     @Test
     public void testBlankFields_issues_1086_1096() throws Exception {
         Account testadminAc  = us.findByUID("testadmin");
-        String org = testadminAc.getOrg();
-        
-        testadminAc.setOrg(null);
-        
         us.update(testadminAc, this.adminAccount.getUid());
         
         Attributes attrs = contextSource.getReadWriteContext().getAttributes(new LdapName("uid=testadmin,ou=users"));
             
         boolean hasStillUserPassword = attrs.get("userPassword") != null;
-        boolean noOrgAnymore = attrs.get("o") == null;
-        
-        // restoring 'o' attribute before assertions, to keep original state
-        testadminAc.setOrg(org);
+
         us.update(testadminAc, "testadmin");
 
         assertTrue("No userPassword found for testadmin, expected one", hasStillUserPassword);
-        assertTrue("Found a 'o' attribute, expeceted none", noOrgAnymore);
-        
     }
 
     @Test

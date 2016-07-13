@@ -80,7 +80,6 @@ final class UserListResponse {
     		jsonAccount.put(UserSchema.UID_KEY, account.getUid());
     		jsonAccount.put(UserSchema.GIVEN_NAME_KEY, account.getGivenName());
     		jsonAccount.put(UserSchema.SURNAME_KEY, account.getSurname());
-    		jsonAccount.put(UserSchema.ORG_KEY, account.getOrg());
 
     		jsonArray.put(i, jsonAccount);
     		i++;
