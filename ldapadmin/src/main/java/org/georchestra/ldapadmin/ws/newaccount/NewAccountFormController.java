@@ -189,13 +189,15 @@ public final class NewAccountFormController {
 					formBean.getTitle(),
 					formBean.getDescription() );
 
-			account.setOrg(formBean.getOrg());
+			if(!formBean.getOrg().equals("-"))
+				account.setOrg(formBean.getOrg());
 
 			String groupID = this.moderator.moderatedSignup() ? Group.PENDING : Group.USER;
 
 			this.accountDao.insert(account, groupID, request.getHeader("sec-username"));
 
-			this.orgDao.addUser(formBean.getOrg(), formBean.getUid().toLowerCase());
+			if(!formBean.getOrg().equals("-"))
+				this.orgDao.addUser(formBean.getOrg(), formBean.getUid().toLowerCase());
 
 			final ServletContext servletContext = request.getSession().getServletContext();
 			if(this.moderator.moderatedSignup() ){
