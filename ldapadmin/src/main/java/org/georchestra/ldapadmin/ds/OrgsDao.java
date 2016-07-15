@@ -119,7 +119,7 @@ public class OrgsDao {
 
     public void addUser(String organization, String user){
         DirContextOperations context = ldapTemplate.lookupContext(buildOrgDN(organization));
-        context.addAttributeValue("member", buildUserDN(user), false);
+        context.addAttributeValue("member", buildUserDN(user).toString(), false);
         this.ldapTemplate.modifyAttributes(context);
     }
 
@@ -161,7 +161,10 @@ public class OrgsDao {
             org.setId(asString(attrs.get("cn")));
             org.setName(asString(attrs.get("o")));
             org.setShortName(asString(attrs.get("ou")));
-            org.setCities(Arrays.asList(asString(attrs.get("description")).split(",")));
+            if(attrs.get("description") != null)
+                org.setCities(Arrays.asList(asString(attrs.get("description")).split(",")));
+            else
+                 org.setCities(new LinkedList<String>());
             org.setStatus(asString(attrs.get("businessCategory")));
             org.setMembers(asListString(attrs.get("member")));
             return org;
@@ -175,10 +178,12 @@ public class OrgsDao {
         }
 
         public List<String> asListString(Attribute att) throws NamingException {
-            if(att == null)
-                return null;
-
             List<String> res = new LinkedList<String>();
+
+            if(att == null)
+                return res;
+
+
             for(int i=0; i< att.size();i++)
                 res.add((String) att.get(i));
 
