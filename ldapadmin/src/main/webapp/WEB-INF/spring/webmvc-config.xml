@@ -24,10 +24,6 @@
 
   <mvc:annotation-driven/>
 
-  <mvc:cors>
-  	<mvc:mapping path="/**" />
-  </mvc:cors>
-    
   <context:annotation-config/>
 
   <!--  First provided ldapadmin.properties from webapp with prio  2 -->
