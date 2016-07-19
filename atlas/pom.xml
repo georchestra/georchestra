@@ -322,16 +322,30 @@
                         <version>${project.version}</version>
                         <classifier>${server}</classifier>
                     </dependency>
-                </dependencies>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <configuration>
-                    <encoding>UTF-8</encoding>
-                </configuration>
-            </plugin>
-            <!-- needed for jetty:run maven target -->
+                  </dependencies>
+                </plugin>
+                <plugin>
+                  <artifactId>maven-antrun-plugin</artifactId>
+                  <executions>
+                    <execution>
+                      <id>serverConfigCopy</id>
+                      <phase>generate-sources</phase>
+                      <configuration>
+                        <tasks>
+                         <copy todir="${basedir}/src/main/webapp/" overwrite="true" verbose="true" failonerror="false">
+                            <fileset dir="${confdir}/${project.artifactId}">
+                              <exclude name="**/maven.filter"/>
+                            </fileset>
+                          </copy>
+                        </tasks>
+                      </configuration>
+                      <goals>
+                        <goal>run</goal>
+                      </goals>
+                    </execution>
+                  </executions>
+                </plugin>
+                <!-- needed for jetty:run maven target -->
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
