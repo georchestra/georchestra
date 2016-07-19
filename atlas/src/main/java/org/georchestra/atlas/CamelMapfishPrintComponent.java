@@ -1,6 +1,11 @@
 package org.georchestra.atlas;
 
+import com.google.common.annotations.VisibleForTesting;
+import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.commons.io.FileUtils;
@@ -42,17 +47,30 @@ public class CamelMapfishPrintComponent {
         String mfprintJsonSpec = ex.getIn().getBody(String.class);
 
         Assert.notNull(this.mapPrinter);
+        ByteArrayOutputStream baos =  new ByteArrayOutputStream();
+        Message m = ex.getIn();
 
         try {
-            ByteArrayOutputStream baos =  new ByteArrayOutputStream();
             PJsonObject mfSpec = MapPrinter.parseSpec(mfprintJsonSpec); 
             this.mapPrinter.print(mfSpec, baos);
-            Message m = ex.getIn();
+        } catch (Exception e) {
+            log.error("Error generating PDF, returning a blank pdf with the error message", e);
+            baos = generateErrorPdf(e);
+        } finally {
             m.setBody(baos.toByteArray());
             ex.setOut(m);
-        } catch (Exception e) {
-            log.error("Error generating PDF", e);
         }
+    }
+
+    @VisibleForTesting
+    public ByteArrayOutputStream generateErrorPdf(Throwable e) throws DocumentException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Document d = new Document();
+        PdfWriter.getInstance(d, baos);
+        d.open();
+        d.add(new Paragraph(e.getMessage()));
+        d.close();
+        return baos;
     }
 
     public void printCapabilities(Exchange ex) throws JSONException {
