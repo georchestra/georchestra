@@ -37,6 +37,9 @@ public class AtlasMailComponent {
 
     public void init() {
         Properties vProp = new Properties();
+        vProp.put("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogChute");
+        vProp.put("runtime.log.logsystem.log4j.category", "velocity");
+        vProp.put("runtime.log.logsystem.log4j.logger", "velocity");
         if ((georConfiguration != null) && (georConfiguration.activated())) {
             vProp.setProperty("resource.loader", "file");
             vProp.setProperty("file.resource.loader.class", "org.apache.velocity.runtime.resource.loader.FileResourceLoader");
