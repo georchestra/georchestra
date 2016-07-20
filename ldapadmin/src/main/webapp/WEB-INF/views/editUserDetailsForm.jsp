@@ -91,7 +91,16 @@
 					<label class="col-lg-4 control-label"><s:message code="org.label" /></label>
 					<div class="col-lg-8">
 						<p class="form-control-static">
-								${editUserDetailsFormBean.org}
+							<c:choose>
+								<c:when test="${!empty editUserDetailsFormBean.org}">
+									${editUserDetailsFormBean.org}
+								</c:when>
+								<c:otherwise>
+									<span style="color: rgb(186, 186, 186);">
+										<s:message code="password.label.empty"/>
+									</span>
+								</c:otherwise>
+							</c:choose>
 						</p>
 					</div>
 				</div>
