@@ -156,6 +156,10 @@ Ext.namespace("GEOR");
         checkRoles('Querier', GEOR.config.ROLES_FOR_QUERIER);
         checkRoles('print', GEOR.config.ROLES_FOR_PRINTER);
         checkRoles('edit', GEOR.config.ROLES_FOR_EDIT);
+        // deactivate thesaurus tab in layer finder if required:
+        if (!GEOR.config.THESAURUS_SEARCH) {
+            GEOR["cswbrowser"] = null;
+        }
 
         /*
          * Initialize the application.
