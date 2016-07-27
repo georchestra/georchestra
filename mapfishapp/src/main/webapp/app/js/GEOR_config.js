@@ -192,6 +192,14 @@ GEOR.config = (function() {
             'app/img/nopreview.png'),
 
         /**
+         * Constant: THESAURUS_SEARCH
+         * Whether to display the thesaurus tab or not in the layer finder.
+         * Defaults to true.
+         */
+        THESAURUS_SEARCH: getCustomParameter("THESAURUS_SEARCH",
+            true),
+
+        /**
          * Constant: DEFAULT_THESAURUS_KEY
          * Key (as the one in the response from /geonetwork/srv/fre/xml.thesaurus.getList)
          * of the thesaurus to use as the default (selected) one.
