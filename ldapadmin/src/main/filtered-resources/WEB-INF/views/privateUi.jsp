@@ -74,7 +74,7 @@ try {
             </a>
             <a id="new_group" href="#/groups/new" class="btn">
               <i class="icon-plus-sign"></i>
-              New group
+              New role
             </a>
           </div>
           <!--Sidebar content-->
