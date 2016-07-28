@@ -8,9 +8,9 @@
     </div>
   </div>
 
-  <input ng-if="groups.isRoot" ng-model="groups.q" class="form-control input-sm" placeholder="Search groups">
+  <input ng-if="groups.isRoot" ng-model="groups.q" class="form-control input-sm" placeholder="Search roles">
 
-  <h5 ng-if="groups.q == ''">System groups</h5>
+  <h5 ng-if="groups.q == ''">System roles</h5>
   <div ng-repeat="group in groups.adminList" ng-if="groups.q == ''">
     <strong ng-if="(groups.activeGroup.cn == group.cn)">
       {{::group | unprefix: groups.prefix}} ({{::group.users.length}})
@@ -22,7 +22,7 @@
   </div>
 </div>
 
-<h5 ng-if="groups.isRoot && groups.q == ''">Application groups</h5>
+<h5 ng-if="groups.isRoot && groups.q == ''">Other roles</h5>
 
 <div ng-if="groups.q == ''">
 

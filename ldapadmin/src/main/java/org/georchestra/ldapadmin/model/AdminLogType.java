@@ -21,10 +21,10 @@ package org.georchestra.ldapadmin.model;
 
 public enum AdminLogType {
 
-    ACCOUNT_MODERATION("Account Moderation"),
-    SYSTEM_GROUP_CHANGE("Modification of system group"),
-    OTHER_GROUP_CHANGE("Modification of other group"),
-    LDAP_ATTRIBUTE_CHANGE("Modification of other LDAP attributes"),
+    ACCOUNT_MODERATION("Account moderation"),
+    SYSTEM_GROUP_CHANGE("System role"),
+    OTHER_GROUP_CHANGE("Other role"),
+    LDAP_ATTRIBUTE_CHANGE("User attributes"),
     EMAIL_SENT("Email sent");
 
     private String name;

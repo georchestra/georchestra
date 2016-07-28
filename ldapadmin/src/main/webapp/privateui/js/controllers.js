@@ -222,7 +222,7 @@ angular.module('ldapadmin.controllers', [])
         return;
       }
 
-      if (confirm('Do you really want to remove group "' + group + '"?')) {
+      if (confirm('Do you really want to remove role "' + group + '"?')) {
         Restangular.one('groups', group).remove().then(function() {
           var index = findByAttr($scope.groups, 'cn', $routeParams.group);
 
