@@ -84,6 +84,13 @@ Ext.namespace("GEOR");
     if (!initExtCss()) {
         Ext.onReady(initExtCss);
     }
+
+    // String fill polyfill
+    if (!String.prototype.trim) {
+        String.prototype.trim = function () {
+            return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
+        };
+    }
 })();
 
 
