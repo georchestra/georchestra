@@ -468,6 +468,8 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "default viewer context": "contexte par défaut",
     "(default)": "<br/>(contexte par défaut actuel)",
     /* GEOR_workspace.js strings */
+    "Keywords": "Mots clés",
+    "comma separated keywords": "mots clés séparés par une virgule",
     "Save to metadata": "Créer une métadonnée",
     "in group": "dans le groupe",
     "The context title is mandatory": "Le titre du contexte est obligatoire",

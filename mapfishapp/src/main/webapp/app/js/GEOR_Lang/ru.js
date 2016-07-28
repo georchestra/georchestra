@@ -383,6 +383,8 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "A unique OSM layer": "Единый слой OpenStreetMap",
     "default viewer context": "контекст вьюера по умолчанию",
     /* GEOR_workspace.js strings */
+    //"Keywords": "Mots clés",
+    //"comma separated keywords": "mots clés séparés par une virgule",
     //"Save to metadata": "Créer une métadonnée",
     //"in group": "dans le groupe",
     //"The context title is mandatory": "Le titre du contexte est obligatoire",
