@@ -116,11 +116,11 @@ objectClass: groupOfMembers
 cn: MOD
 ou: 24
 
-# SV
-dn: cn=SV,ou=roles,dc=georchestra,dc=org
+# GN
+dn: cn=GN,ou=roles,dc=georchestra,dc=org
 objectClass: top
 objectClass: groupOfMembers
-cn: SV
+cn: GN
 ou: 25
 
 # MOD_LDAPADMIN, roles, georchestra.org
