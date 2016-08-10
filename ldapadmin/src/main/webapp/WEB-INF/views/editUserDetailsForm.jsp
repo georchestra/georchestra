@@ -97,7 +97,7 @@
 								</c:when>
 								<c:otherwise>
 									<span style="color: rgb(186, 186, 186);">
-										<s:message code="password.label.empty"/>
+										<s:message code="org.empty"/>
 									</span>
 								</c:otherwise>
 							</c:choose>
