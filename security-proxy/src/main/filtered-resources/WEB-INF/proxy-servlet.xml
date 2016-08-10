@@ -73,7 +73,8 @@
                 </bean>
                 <bean class="org.georchestra.security.LdapUserDetailsRequestHeaderProvider" init-method="init">
                     <constructor-arg index="0" ref="ldapUserSearch"/>
-                    <constructor-arg index="1">
+                    <constructor-arg index="1" value="${orgsSearchBaseDN}"/>
+                    <constructor-arg index="2">
                         <map>
                         ${header.mapping}
                         </map>
