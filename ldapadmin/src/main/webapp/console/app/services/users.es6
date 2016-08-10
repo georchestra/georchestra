@@ -20,4 +20,12 @@ angular.module('admin_console')
       isArray: false
     }
   })
+]).factory('Orgs', ['$resource', 'LDAP_BASE_URI', ($resource, baseUri) =>
+    $resource(baseUri + 'orgs', {}, {
+        query: {
+            cache: true,
+            method:'GET',
+            isArray:true
+        }
+    })
 ])
