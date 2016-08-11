@@ -21,6 +21,7 @@ package org.georchestra.ldapadmin.ds;
 
 
 import org.georchestra.ldapadmin.dto.Org;
+import org.georchestra.ldapadmin.dto.OrgExt;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.LdapTemplate;
@@ -90,6 +91,17 @@ public class OrgsDao {
     }
 
     /**
+     * Search for organization extension with specified identifier
+     * @param cn distinguish name of organization for example : 'psc' to retreive
+     *           'o=psc,ou=orgs,dc=georchestra,dc=org'
+     * @return OrgExt instance corresponding to extended attributes
+     */
+    public OrgExt findExtById(String cn) {
+        Name dn = LdapNameBuilder.newInstance(this.orgsSearchBaseDN).add("o", cn).build();
+        return this.ldapTemplate.lookup(dn, new OrgsDao.OrgExtAttributesMapper());
+    }
+
+    /**
      * Given user identifier, retrieve organization of this user.
      * @param user identifier of user (not a full DN), example : 'testadmin'
      * @return Org instance corresponding to organization of specified user or null if no organization is linked to
@@ -117,6 +129,10 @@ public class OrgsDao {
         this.ldapTemplate.bind(buildOrgDN(org.getId()), null, buildAttributes(org));
     }
 
+    public void insert(OrgExt org){
+        this.ldapTemplate.bind(buildOrgExtDN(org.getId()), null, buildAttributes(org));
+    }
+
     public void addUser(String organization, String user){
         DirContextOperations context = ldapTemplate.lookupContext(buildOrgDN(organization));
         context.addAttributeValue("member", buildUserDN(user).toString(), false);
@@ -137,6 +153,11 @@ public class OrgsDao {
         return LdapNameBuilder.newInstance(this.orgsSearchBaseDN).add("cn", id).build();
     }
 
+    private Name buildOrgExtDN(String id){
+        return LdapNameBuilder.newInstance(this.orgsSearchBaseDN).add("o", id).build();
+    }
+
+
     private Attributes buildAttributes(Org org) {
         Attributes attrs = new BasicAttributes();
         BasicAttribute ocattr = new BasicAttribute("objectclass");
@@ -149,10 +170,24 @@ public class OrgsDao {
         attrs.put("ou", org.getShortName());
         attrs.put("description", org.getCities());
         attrs.put("businessCategory", org.getStatus());
+        attrs.put("seeAlso", this.buildOrgExtDN(org.getId()));
 
         return attrs;
     }
 
+    private Attributes buildAttributes(OrgExt org) {
+        Attributes attrs = new BasicAttributes();
+        BasicAttribute ocattr = new BasicAttribute("objectclass");
+        ocattr.add("top");
+        ocattr.add("organization");
+
+        attrs.put(ocattr);
+        attrs.put("o", org.getId());
+        attrs.put("businessCategory", org.getOrgType());
+        attrs.put("postalAddress", org.getAddress());
+
+        return attrs;
+    }
 
     private class OrgAttributesMapper implements AttributesMapper<Org> {
 
@@ -164,7 +199,7 @@ public class OrgsDao {
             if(attrs.get("description") != null)
                 org.setCities(Arrays.asList(asString(attrs.get("description")).split(",")));
             else
-                 org.setCities(new LinkedList<String>());
+                org.setCities(new LinkedList<String>());
             org.setStatus(asString(attrs.get("businessCategory")));
             org.setMembers(asListString(attrs.get("member")));
             return org;
@@ -188,6 +223,24 @@ public class OrgsDao {
                 res.add((String) att.get(i));
 
             return res;
+        }
+    }
+
+    private class OrgExtAttributesMapper implements AttributesMapper<OrgExt> {
+
+        public OrgExt mapFromAttributes(Attributes attrs) throws NamingException {
+            OrgExt org = new OrgExt();
+            org.setId(asString(attrs.get("o")));
+            org.setOrgType(asString(attrs.get("businessCategory")));
+            org.setAddress(asString(attrs.get("postalAddress")));
+            return org;
+        }
+
+        public String asString(Attribute att) throws NamingException {
+            if(att == null)
+                return null;
+            else
+                return (String) att.get();
         }
     }
 }

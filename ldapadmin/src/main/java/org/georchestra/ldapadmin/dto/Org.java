@@ -28,6 +28,13 @@ import java.util.List;
 
 public class Org {
 
+    public static final String JSON_ID = "id";
+    public static final String JSON_NAME = "name";
+    public static final String JSON_SHORT_NAME = "shortName";
+    public static final String JSON_CITIES = "cities";
+    public static final String JSON_STATUS = "status";
+    public static final String JSON_MEMBERS = "members";
+
     private String id;
     private String name;
     private String shortName;
@@ -85,18 +92,18 @@ public class Org {
 
     public JSONObject toJson() throws JSONException {
         JSONObject res = new JSONObject();
-        res.put("id", this.getId());
-        res.put("name", this.getName());
-        res.put("shortName", this.getShortName());
+        res.put(JSON_ID, this.getId());
+        res.put(JSON_NAME, this.getName());
+        res.put(JSON_SHORT_NAME, this.getShortName());
         JSONArray cities = new JSONArray();
         for(String city : this.getCities())
             cities.put(city);
-        res.put("cities", cities);
-        res.put("status", this.getStatus());
+        res.put(JSON_CITIES, cities);
+        res.put(JSON_STATUS, this.getStatus());
         JSONArray members = new JSONArray();
         for(String member : this.getMembers())
             members.put(member);
-        res.put("members", members);
+        res.put(JSON_MEMBERS, members);
         return res;
     }
 
