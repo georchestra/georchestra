@@ -166,11 +166,18 @@ public class OrgsDao {
 
         attrs.put(ocattr);
         attrs.put("cn", org.getId());
+        attrs.put("seeAlso", LdapNameBuilder.newInstance(this.orgsSearchBaseDN + "," + this.basePath)
+                .add("o", org.getId()).build().toString());
+
+        // Mandatory attributes
         attrs.put("o", org.getName());
         attrs.put("ou", org.getShortName());
-        attrs.put("description", org.getCities());
-        attrs.put("businessCategory", org.getStatus());
-        attrs.put("seeAlso", this.buildOrgExtDN(org.getId()));
+
+        // Optional ones
+        if(org.getCities() != null)
+            attrs.put("description", org.getCities());
+        if(org.getStatus() != null)
+            attrs.put("businessCategory", org.getStatus());
 
         return attrs;
     }
@@ -183,8 +190,10 @@ public class OrgsDao {
 
         attrs.put(ocattr);
         attrs.put("o", org.getId());
-        attrs.put("businessCategory", org.getOrgType());
-        attrs.put("postalAddress", org.getAddress());
+        if(org.getOrgType() != null)
+            attrs.put("businessCategory", org.getOrgType());
+        if(org.getAddress() != null)
+            attrs.put("postalAddress", org.getAddress());
 
         return attrs;
     }

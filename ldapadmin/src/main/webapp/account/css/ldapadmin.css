@@ -12,3 +12,12 @@
 #recaptcha_response_field .input-group-addon {
     border-left: 0 none;
 }
+
+#create_org_div {
+	display: none;
+	background-color: #eee;
+	border: 1px solid #ccc;
+	padding: 10px;
+	margin: 10px 0px;
+	border-radius: 4px;
+}

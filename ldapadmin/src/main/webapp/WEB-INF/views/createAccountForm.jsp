@@ -87,6 +87,55 @@
 				<t:list path="org" required="${orgRequired}" items="${orgs}">
 					<jsp:attribute name="label"><s:message code="org.label" /></jsp:attribute>
 				</t:list>
+
+				<div id="org_checkbox_div" class="form-group" style="margin-top: -15px;">
+					<div class="col-lg-8 col-lg-offset-4" >
+						<input id="create_org_checkbox" type="checkbox" disabled="disabled">
+						Mon organisme n'apparait pas dans la liste
+					</div>
+				</div>
+
+				<div id="create_org_div" class="create_org_block">
+
+					<div class="form-group">
+						<label for="org_name" class="control-label col-lg-4">Votre organisme</label>
+						<div class="col-lg-8">
+							<input type="text" id="org_name" class="form-control" placeholder="Name of new organization">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="org_short_name" class="control-label col-lg-4">Libellé court</label>
+						<div class="col-lg-8">
+							<input type="text" id="org_short_name" class="form-control" placeholder="Short Name of new organization">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="org_address" class="control-label col-lg-4">Adresse</label>
+						<div class="col-lg-8">
+							<textarea id="org_address" class="form-control" placeholder="Organization address"></textarea>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="org_type" class="control-label col-lg-4">Type d'organisme</label>
+						<div class="col-lg-8">
+							<select id="org_type" placeholder="Choose organization type">
+								<option value="association">association</option>
+								<option value="non-association">non-association</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group" style="margin-bottom: 0px">
+						<div class="col-lg-8 col-lg-offset-4 text-right">
+							<button id="create_org_button" class="btn btn-primary btn-lg" style="padding: 3px;">Create</button>
+						</div>
+					</div>
+
+				</div>
+
+
 				<t:input path="title" required="${titleRequired}">
 					<jsp:attribute name="label"><s:message code="title.label" /></jsp:attribute>
 				</t:input>
@@ -196,6 +245,65 @@
         $("input#password").attr("placeholder", "<s:message code="password.placeholder" />");
         $("input#confirmPassword").attr("placeholder", "<s:message code="confirmPassword.placeholder" />");
         $("#org").select2();
+		$("#org_type").select2();
+
+		// enable creation of org only if user already open droplist
+		// User must take a look at drop list before submiting a new org
+		$( "#org" ).on("select2:open", function (e) {
+			$("#create_org_checkbox").removeAttr("disabled");
+		});
+
+		// Animate org creation form
+		$( "#create_org_checkbox" ).change(function() {
+			if($( "#create_org_checkbox" ).prop( "checked" ) ){
+				$("#create_org_div").show(200);
+			} else {
+				$("#create_org_div").hide(200);
+			}
+		});
+
+		// submit org creation and fill droplist with new created org
+		$("#create_org_button").click(function (event) {
+			event.preventDefault();
+			console.log("Button clicked");
+			check_org_form();
+
+			$.ajax({
+				url: "/ldapadmin/private/orgs",
+				method: "PUT",
+				dataType: 'json',
+				processData: false,
+				contentType: 'application/json',
+				data: JSON.stringify( {
+					name: $("#org_name").val(),
+					shortName: $("#org_short_name").val(),
+					orgType: $("#org_type").val(),
+					address: $("#org_address").val()
+				})
+			}).success(function( newOrg, textStatus, jqXHR) {
+				console.log("Success : ");
+				console.log(newOrg);
+
+				// Add new organisation to droplist
+				var newOrgOption = new Option(newOrg.id, newOrg.name, true, true);
+				$('#org').select2().append(newOrgOption);
+
+				$('#org').select2().trigger('change');
+
+				// Hide organisation form
+				$("#create_org_div").hide(200);
+				$("#org_checkbox_div").hide(200);
+
+			}).error(function ( jqXHR, textStatus, errorThrown) {
+				console.log("Error on PUT request : " + textStatus);
+			})
+
+		})
+
+		function check_org_form(){
+			alert("Hello");
+		}
+
     });
 	</script>
 </body>

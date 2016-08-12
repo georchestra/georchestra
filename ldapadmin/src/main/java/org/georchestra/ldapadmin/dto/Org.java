@@ -95,14 +95,20 @@ public class Org {
         res.put(JSON_ID, this.getId());
         res.put(JSON_NAME, this.getName());
         res.put(JSON_SHORT_NAME, this.getShortName());
+
         JSONArray cities = new JSONArray();
-        for(String city : this.getCities())
-            cities.put(city);
+        if(this.getCities() != null)
+            for(String city : this.getCities())
+                cities.put(city);
         res.put(JSON_CITIES, cities);
-        res.put(JSON_STATUS, this.getStatus());
+
+        if(this.getStatus() != null)
+            res.put(JSON_STATUS, this.getStatus());
+
         JSONArray members = new JSONArray();
-        for(String member : this.getMembers())
-            members.put(member);
+        if(this.getMembers() != null)
+            for(String member : this.getMembers())
+                members.put(member);
         res.put(JSON_MEMBERS, members);
         return res;
     }

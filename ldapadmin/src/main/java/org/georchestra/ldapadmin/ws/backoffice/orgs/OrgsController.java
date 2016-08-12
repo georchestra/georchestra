@@ -31,6 +31,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ldap.NameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -256,6 +257,9 @@ public class OrgsController {
         this.updateFromRequest(org, json);
         this.updateFromRequest(orgExt, json);
 
+        // Set default value
+        org.setStatus("Non validated");
+
         // Persist changes to LDAP server
         this.orgDao.insert(org);
         this.orgDao.insert(orgExt);
@@ -276,25 +280,29 @@ public class OrgsController {
      */
     private void updateFromRequest(Org org, JSONObject json) throws JSONException {
 
-        if(json.getString("name") != null)
+        try{
             org.setName(json.getString("name"));
+        } catch (JSONException ex){}
 
-        if(json.getString("shortName") != null)
+        try{
             org.setShortName(json.getString("shortName"));
+        } catch (JSONException ex){}
 
-        if(json.getString("shortName") != null)
+        try{
             org.setShortName(json.getString("shortName"));
+        } catch (JSONException ex){}
 
-        if(json.getJSONArray("cities") != null){
+        try{
             JSONArray cities = json.getJSONArray("cities");
             List<String> parsedCities = new LinkedList<String>();
             for(int i = 0; i < cities.length(); i++)
                 parsedCities.add(cities.getString(i));
             org.setCities(parsedCities);
-        }
+        } catch (JSONException ex){}
 
-        if(json.getString("status") != null)
+        try{
             org.setStatus(json.getString("status"));
+        } catch (JSONException ex){}
 
     }
 
@@ -310,11 +318,13 @@ public class OrgsController {
      */
     private void updateFromRequest(OrgExt orgExt, JSONObject json) throws JSONException {
 
-        if(json.getString("orgType") != null)
+        try{
             orgExt.setOrgType(json.getString("orgType"));
+        } catch (JSONException ex){}
 
-        if(json.getString("address") != null)
+        try{
             orgExt.setAddress(json.getString("address"));
+        } catch (JSONException ex){}
 
     }
 
@@ -330,8 +340,10 @@ public class OrgsController {
     private JSONObject encodeToJson(Org org, OrgExt orgExt) throws JSONException {
 
         JSONObject res = org.toJson();
-        res.put("orgType", orgExt.getOrgType());
-        res.put("address", orgExt.getAddress());
+        if(orgExt.getOrgType() != null)
+            res.put("orgType", orgExt.getOrgType());
+        if(orgExt.getAddress() != null)
+            res.put("address", orgExt.getAddress());
         return res;
 
     }
@@ -362,9 +374,10 @@ public class OrgsController {
     private String generateId(String shortName) throws IOException {
         String id = shortName.replaceAll("\\W", "");
 
-        Org sameId = this.orgDao.findByCommonName(id);
-        if(sameId != null)
-            throw  new IOException("Identifier already used : " + id);
+        try {
+            Org sameId = this.orgDao.findByCommonName(id);
+            throw new IOException("Identifier already used : " + id);
+        }catch (NameNotFoundException ex){}
 
         return id;
     }
