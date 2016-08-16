@@ -395,6 +395,10 @@
       <name>Jetty Maven2 Repository</name>
       <url>https://oss.sonatype.org/content/groups/jetty/</url>
     </repository>
+    <repository>
+      <id>maven snapshots</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+    </repository>
   </repositories>
   <pluginRepositories>
     <pluginRepository>
