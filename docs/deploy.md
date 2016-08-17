@@ -230,5 +230,5 @@ non-interactive is enabled so using system property 'passphrase' as the privateK
 
 # What's next ?
 
-You should first [check](doc/check.md) the webapps are working as expected.
-Once you've checked, there's a quick [post-deploy configuration step](doc/post-deploy_config.md) that is highly recommended.
+You should first [check](check.md) the webapps are working as expected.
+Once you've checked, there's a quick [post-deploy configuration step](post-deploy_config.md) that is highly recommended.
