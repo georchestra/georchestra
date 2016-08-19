@@ -37,7 +37,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -65,12 +64,11 @@ public class OrgsController {
     /**
      * Return a list of available organization as json array
      *
-     * @param request
      * @param response
      * @throws IOException
      */
     @RequestMapping(value = REQUEST_MAPPING, method = RequestMethod.GET)
-    public void findAll(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void findAll(HttpServletResponse response) throws IOException {
 
         try {
             List<Org> orgs = this.orgDao.findAll();
@@ -358,10 +356,8 @@ public class OrgsController {
      */
     private JSONObject parseRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        String putData = FileUtils.asString(request.getInputStream());
-        JSONObject json;
         try {
-            return new JSONObject(putData);
+            return new JSONObject(FileUtils.asString(request.getInputStream()));
         } catch (JSONException e) {
             LOG.error(e.getMessage());
             ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, e.getMessage()),
@@ -375,7 +371,7 @@ public class OrgsController {
         String id = shortName.replaceAll("\\W", "");
 
         try {
-            Org sameId = this.orgDao.findByCommonName(id);
+            this.orgDao.findByCommonName(id);
             throw new IOException("Identifier already used : " + id);
         }catch (NameNotFoundException ex){}
 

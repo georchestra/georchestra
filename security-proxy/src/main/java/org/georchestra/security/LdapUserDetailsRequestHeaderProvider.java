@@ -58,7 +58,6 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
     protected static final Log logger = LogFactory.getLog(LdapUserDetailsRequestHeaderProvider.class.getPackage().getName());
 
     private LdapUserSearch      _userSearch;
-    private String _orgsSearchBaseDN;
     private Map<String, String> _headerMapping;
     private Pattern pattern;
 
@@ -69,10 +68,9 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
         Assert.notNull(userSearch, "userSearch must not be null");
         Assert.notNull(headerMapping, "headerMapping must not be null");
         this._userSearch = userSearch;
-        this._orgsSearchBaseDN = orgsSearchBaseDN;
         this._headerMapping = headerMapping;
 
-        this.pattern = Pattern.compile("([^=,]+)=([^=,]+)," + this._orgsSearchBaseDN + ".*");
+        this.pattern = Pattern.compile("([^=,]+)=([^=,]+)," + orgsSearchBaseDN + ".*");
     }
 
     public void init() throws IOException {
