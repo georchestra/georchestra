@@ -77,7 +77,9 @@ class GroupsController {
       active.cn.substr(0, active.cn.lastIndexOf('_')) == group.cn // Group prefix of active
     );
 
-    return result && this.adminList.every(g => g.cn != group.cn)
+    return result && this.adminList.concat(
+      [ {cn: 'MOD'}, {cn: 'GN'} ] // Avoid empty parents
+    ).every(g => g.cn != group.cn)
   }
 
   isExpanded(group, active) {

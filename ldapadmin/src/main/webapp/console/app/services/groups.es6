@@ -11,13 +11,14 @@ angular.module('admin_console')
   var admin_groups = [
     'ADMINISTRATOR',
     'PENDING',
-    'GN_ADMIN',
-    'GN_EDITOR',
-    'GN_REVIEWER',
     'MOD_ANALYTICS',
     'MOD_EXTRACTORAPP',
     'MOD_LDAPADMIN',
+    'GN_ADMIN',
+    'GN_EDITOR',
+    'GN_REVIEWER',
     'USER'
+    'TEMPORARY'
   ]
   return () => admin_groups
 }]).factory('groupAdminFilter', [ 'groupAdminList', (groupAdminList)  =>
