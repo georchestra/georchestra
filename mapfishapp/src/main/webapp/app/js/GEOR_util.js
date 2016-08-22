@@ -431,8 +431,11 @@ GEOR.util = (function() {
                     return o;
                 },
                 "dates":  function(v) {
-                    var a = v.identificationInfo[0].citation.date, 
+                    var a = [], 
                         o = [];
+                    try {
+                        a = v.identificationInfo[0].citation.date;
+                    } catch (e) {}
                     if (!a[0]) {
                         return '';
                     }
