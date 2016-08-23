@@ -147,7 +147,7 @@ class UserController {
           limit : 100000,
           page  : 0
         },
-        () => { },
+        () => { this.logs.logs.reverse() },
         flash.create.bind(flash, 'danger', i18n.errorload)
       )
     })
