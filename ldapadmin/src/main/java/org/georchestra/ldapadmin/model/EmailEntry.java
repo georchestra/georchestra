@@ -23,6 +23,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -47,12 +48,14 @@ public class EmailEntry {
     private long id;
     private String sender;
     private String recipient;
+    @Column(columnDefinition = "TEXT")
     private String subject;
     private Date date;
+    @Column(columnDefinition = "TEXT")
     private String body;
 
     @ManyToMany(targetEntity = Attachment.class, fetch = FetchType.EAGER)
-    @JoinTable(schema = "ldapadmin", name="admin_emails_attchments")
+    @JoinTable(schema = "ldapadmin", name="admin_emails_attachments")
     private List<Attachment> attachments;
 
     public EmailEntry(){}
