@@ -58,6 +58,7 @@
   "group.filter_users"  : "Filter",
   "group.created"       : "Role created",
   "group.error"         : "Error creating role",
+  "group.search"        : "Search role",
 
   "users.createGroup"   : "Create role",
   "users.newGroup"      : "Name",
