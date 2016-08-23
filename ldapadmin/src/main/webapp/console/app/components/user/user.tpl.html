@@ -137,7 +137,7 @@
           <h5 ng-if="user.message.attachments.length>0" translate>msg.attachments</h5>
           <ul ng-if="user.message.attachments.length>0">
             <li ng-repeat="attachment in user.message.attachments">
-              {{attachment.name}} ({{attachment.size / 1000 | number:0}} Mo)
+              {{attachment.name}}
             </li>
           </ul>
         </div>
