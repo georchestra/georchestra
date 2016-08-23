@@ -43,7 +43,7 @@ class HomeController {
     this.logs = this.$injector.get('Logs').query({
       limit: LOG_LIMIT,
       page: 0
-    }, () => {}, error)
+    }, () => { this.logs.logs.reverse() }, error)
 
   }
 
