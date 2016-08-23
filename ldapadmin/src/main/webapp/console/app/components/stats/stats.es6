@@ -19,7 +19,7 @@ class StatsController {
   initialize($element, $scope) {
     var options;
 
-    this.parsed = this.parseData()
+    this.parseData()
     this.granularity = this.data.granularity
 
     if (this.type == 'bar') {
@@ -84,9 +84,11 @@ class StatsController {
     let data = this.data.results
     this.nodata = !data || data.length == 0
     if (this.nodata) { return }
-    return {
-      labels :  data.map(x => x[this.config[0]]),
-      series : [data.map(x => x[this.config[1]])]
+    let serie = data.map(x => x[this.config[1]])
+    this.serie = (this.type == 'line') ? [].concat(serie).reverse() : serie
+    this.parsed =  {
+      labels : data.map(x => x[this.config[0]]),
+      series : [ [].concat(serie) ]
     }
   }
 

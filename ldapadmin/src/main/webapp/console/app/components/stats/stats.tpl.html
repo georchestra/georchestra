@@ -24,8 +24,8 @@
   <div class="chartist" ng-show="stats.view=='graph' && stats.data.$resolved && !stats.nodata"></div>
 
   <table class="table table-bordered table-striped" ng-show="stats.view=='table'">
-    <tr ng-repeat="value in stats.parsed.series[0] track by $index">
-      <td>{{stats.parsed.labels[$index]}}</td>
+    <tr ng-repeat="value in stats.serie track by $index">
+      <td>{{stats.parsed.labels[stats.serie.length - $index -1]}}</td>
       <td>{{value}}</td>
     </tr>
   </table>
