@@ -572,13 +572,13 @@ public final class AccountDaoImpl implements AccountDao {
                     context.getStringAttribute(UserSchema.STREET_KEY),
                     context.getStringAttribute(UserSchema.LOCALITY_KEY),
                     context.getStringAttribute(UserSchema.FACSIMILE_KEY),
-                    context.getStringAttribute(UserSchema.ORG_UNIT_KEY),
                     context.getStringAttribute(UserSchema.HOME_POSTAL_ADDRESS_KEY),
                     context.getStringAttribute(UserSchema.MOBILE_KEY),
                     context.getStringAttribute(UserSchema.ROOM_NUMBER_KEY),
                     context.getStringAttribute(UserSchema.STATE_OR_PROVINCE_KEY),
                     context.getStringAttribute(UserSchema.MANAGER_KEY),
-                    context.getStringAttribute(UserSchema.CONTEXT_KEY));
+                    context.getStringAttribute(UserSchema.CONTEXT_KEY),
+                    null); // Org will filled later
 
             String rawShadowExpire = context.getStringAttribute(UserSchema.SHADOW_EXPIRE_KEY);
             if(rawShadowExpire != null){
