@@ -13,7 +13,7 @@
   <h5 ng-if="groups.q == ''">System roles</h5>
   <div ng-repeat="group in groups.adminList" ng-if="groups.q == ''">
     <strong ng-if="(groups.activeGroup.cn == group.cn)">
-      {{::group | unprefix: groups.prefix}} ({{::group.users.length}})
+      {{::group.cn}} ({{::group.users.length}})
     </strong>
     <a ng-link="users({id: group.cn})" ng-if="(groups.activeGroup.cn != group.cn)">
       {{::group.cn}}
