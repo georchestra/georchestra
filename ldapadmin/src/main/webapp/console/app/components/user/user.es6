@@ -209,6 +209,9 @@ class UserController {
     })).$save((r) => {
         delete this.compose
         flash.create('success', i18n.sent)
+        let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
+        $httpDefaultCache.removeAll()
+        this.messages = this.$injector.get('Email').query({id: this.user.uid})
       },
       () => { flash.create('danger', i18n.error) }
     )
