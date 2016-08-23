@@ -69,8 +69,12 @@ class StatsController {
         }
       }
     }
+    let el = $element.find('.chartist')
     this.lines = new Chartist[this.type=='bar' ? 'Bar' : 'Line'](
-      $element.find('.chartist')[0], this.parsed, options
+      el[0], this.parsed, options
+    )
+    this.$injector.get('translate')(this.title).then(
+      (v) => el.attr('title', v)
     )
     this.view = 'graph'
 
