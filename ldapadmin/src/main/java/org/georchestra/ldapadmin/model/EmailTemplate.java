@@ -34,8 +34,8 @@ import javax.persistence.Table;
 public class EmailTemplate {
 
     @Id
-    @SequenceGenerator(name="email_template_seq", schema = "ldapadmin", sequenceName="email_template_seq", initialValue=1, allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "email_template_seq")
+    @SequenceGenerator(name="email_template_id_seq", schema = "ldapadmin", sequenceName="email_template_id_seq", initialValue=1, allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "email_template_id_seq")
     private long id;
     private String name;
     private String content;
