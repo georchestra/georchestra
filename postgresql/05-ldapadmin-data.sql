@@ -23,10 +23,10 @@ CREATE TABLE email_template (
 
 CREATE TABLE ldapadmin.admin_emails (
   id bigserial,
-  body character varying(255),
+  body text,
   date timestamp without time zone,
   recipient character varying(255),
-  sender character varying(255),
+  sender text,
   subject character varying(255),
   CONSTRAINT admin_emails_pkey PRIMARY KEY (id)
 );
