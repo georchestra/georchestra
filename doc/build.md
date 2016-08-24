@@ -204,10 +204,7 @@ Both can be combined with:
 ```
 
 
-### Alternative building process using Docker (experimental)
-
-As of last quarter of 2015, we introduced in geOrchestra the notion of generic
-webapps ; it is now possible to use Docker images to run the whole SDI easily.
+### Alternative building process using Docker
 
 First, you will need to compile the GeoNetwork and GeoServer artifacts separately:
 
@@ -218,7 +215,7 @@ cd ../../../geonetwork/
 ../mvn clean install -DskipTests
 ```
 
-Then generate the Docker images (make sure that Docker and docker-compose are
+Then generate Docker images (make sure that Docker and docker-compose are
 correctly installed before):
 
 From the project root:
@@ -243,11 +240,4 @@ cas                 latest              XXXXXXXXXXXX     ...
 [...]
 ```
 
-
-Finally, fire up the whole composition:
-```
-docker-compose up
-```
-
-If no error occured, you should be able to visit `http://localhost:8080/header/`.
 
