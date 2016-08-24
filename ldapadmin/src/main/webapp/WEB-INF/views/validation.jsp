@@ -228,6 +228,8 @@ function isUidValid(uid) {
  * @returns {boolean}
  */
 function isNotEmpty(str) {
+    if(str == "-")
+        return false;
 	if (str.trim().length){
 		return true;
 	} else {

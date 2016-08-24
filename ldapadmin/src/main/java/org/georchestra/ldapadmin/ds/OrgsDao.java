@@ -47,6 +47,7 @@ public class OrgsDao {
     private Name orgsSearchBaseDN;
     private Name userSearchBaseDN;
     private String basePath;
+    private String[] orgTypeValues;
 
 
     public void setLdapTemplate(LdapTemplate ldapTemplate) {
@@ -196,6 +197,14 @@ public class OrgsDao {
             attrs.put("postalAddress", org.getAddress());
 
         return attrs;
+    }
+
+    public String[] getOrgTypeValues() {
+        return orgTypeValues;
+    }
+
+    public void setOrgTypeValues(String orgTypeValues) {
+        this.orgTypeValues = orgTypeValues.split("\\s*,\\s*");
     }
 
     private class OrgAttributesMapper implements AttributesMapper<Org> {

@@ -86,6 +86,7 @@
     <property name="orgsSearchBaseDN" value="${orgsSearchBaseDN}"/>
     <property name="userSearchBaseDN" value="${userSearchBaseDN}"/>
     <property name="basePath" value="${baseDN}"/>
+    <property name="orgTypeValues" value="${orgTypeValues}"/>
   </bean>
 
 

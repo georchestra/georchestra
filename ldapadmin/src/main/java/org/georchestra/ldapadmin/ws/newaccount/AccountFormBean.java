@@ -47,6 +47,14 @@ public class AccountFormBean implements Serializable{
 	private String recaptcha_challenge_field;
 	private String recaptcha_response_field;
 
+	// Org creation fields
+	private String create_org;
+	private String org_name;
+	private String org_short_name;
+	private String org_address;
+	private String org_type;
+
+	// Getter and setter
 	public String getRecaptcha_challenge_field() {
 		return recaptcha_challenge_field;
 	}
@@ -59,8 +67,6 @@ public class AccountFormBean implements Serializable{
 	public void setRecaptcha_response_field(String recaptcha_response_field) {
 		this.recaptcha_response_field = recaptcha_response_field;
 	}
-
-
 	public String getUid() {
 		return uid;
 	}
@@ -85,7 +91,6 @@ public class AccountFormBean implements Serializable{
 	public void setTitle(String title) {
 		this.title = title;
 	}
-
 	public String getEmail() {
 		return email;
 	}
@@ -104,7 +109,6 @@ public class AccountFormBean implements Serializable{
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
 	public String getPassword() {
 		return password;
 	}
@@ -117,16 +121,43 @@ public class AccountFormBean implements Serializable{
 	public void setConfirmPassword(String confirmPassword) {
 		this.confirmPassword = confirmPassword;
 	}
-
 	public String getSurname() {
 		return surname;
 	}
-
 	public void setSurname(String sn){
 
 		this.surname = sn;
 	}
-
+	public String getCreate_org() {
+		return create_org;
+	}
+	public void setCreate_org(String create_org) {
+		this.create_org = create_org;
+	}
+	public String getOrg_name() {
+		return org_name;
+	}
+	public void setOrg_name(String org_name) {
+		this.org_name = org_name;
+	}
+	public String getOrg_short_name() {
+		return org_short_name;
+	}
+	public void setOrg_short_name(String org_short_name) {
+		this.org_short_name = org_short_name;
+	}
+	public String getOrg_address() {
+		return org_address;
+	}
+	public void setOrg_address(String org_address) {
+		this.org_address = org_address;
+	}
+	public String getOrg_type() {
+		return org_type;
+	}
+	public void setOrg_type(String org_type) {
+		this.org_type = org_type;
+	}
 
 	@Override
 	public String toString() {

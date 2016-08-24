@@ -91,42 +91,30 @@
 				<div id="org_checkbox_div" class="form-group" style="margin-top: -15px;">
 					<div class="col-lg-8 col-lg-offset-4" >
 						<input id="create_org_checkbox" type="checkbox" disabled="disabled">
-						Mon organisme n'apparait pas dans la liste
+						<s:message code="org.cannot_find_org_in_list" />
 					</div>
 				</div>
 
 				<div id="create_org_div" class="create_org_block">
 
-					<div class="form-group">
-						<label for="org_name" class="control-label col-lg-4">Votre organisme</label>
-						<div class="col-lg-8">
-							<input type="text" id="org_name" class="form-control" placeholder="Name of new organization">
-						</div>
-					</div>
+					<form:hidden path="create_org" value="false"/>
 
-					<div class="form-group">
-						<label for="org_short_name" class="control-label col-lg-4">Libellé court</label>
-						<div class="col-lg-8">
-							<input type="text" id="org_short_name" class="form-control" placeholder="Short Name of new organization">
-						</div>
-					</div>
+					<t:input path="org_name" required="true">
+						<jsp:attribute name="label">Votre organisme</jsp:attribute>
+					</t:input>
 
-					<div class="form-group">
-						<label for="org_address" class="control-label col-lg-4">Adresse</label>
-						<div class="col-lg-8">
-							<textarea id="org_address" class="form-control" placeholder="Organization address"></textarea>
-						</div>
-					</div>
+					<t:input path="org_short_name" required="${orgShortNameRequired}">
+						<jsp:attribute name="label">Libellé court</jsp:attribute>
+					</t:input>
 
-					<div class="form-group">
-						<label for="org_type" class="control-label col-lg-4">Type d'organisme</label>
-						<div class="col-lg-8">
-							<select id="org_type" placeholder="Choose organization type">
-								<option value="association">association</option>
-								<option value="non-association">non-association</option>
-							</select>
-						</div>
-					</div>
+					<t:textarea path="org_address" required="${orgAddressRequired}">
+						<jsp:attribute name="label">Adresse</jsp:attribute>
+					</t:textarea>
+
+					<t:list path="org_type" required="${orgTypeRequired}" items="${orgtypes}">
+						<jsp:attribute name="label">Type d'organisme</jsp:attribute>
+					</t:list>
+
 					<div class="form-group" style="margin-bottom: 0px">
 						<div class="col-lg-8 col-lg-offset-4 text-right">
 							<button id="create_org_button" class="btn btn-primary btn-lg" style="padding: 3px;">Create</button>
@@ -134,7 +122,6 @@
 					</div>
 
 				</div>
-
 
 				<t:input path="title" required="${titleRequired}">
 					<jsp:attribute name="label"><s:message code="title.label" /></jsp:attribute>
@@ -223,6 +210,7 @@
         if (testFirstname() & testSurname() & testEmail() & testUid() & testPassword() & testConfirmPassword() & testRecaptcha() &
 			testField("phone") & testField("org") & testField("title") & testField("description")
         ) {
+			$("#org").prop("disabled", false);
             return true;
         } else {
             setFormError();
@@ -244,8 +232,15 @@
         $("input#uid").attr("placeholder", "<s:message code="uid.placeholder" />");
         $("input#password").attr("placeholder", "<s:message code="password.placeholder" />");
         $("input#confirmPassword").attr("placeholder", "<s:message code="confirmPassword.placeholder" />");
-        $("#org").select2();
-		$("#org_type").select2();
+        $("#org").select2({
+				placeholder:"Choose organization",
+		});
+		$("#org_type").select2({
+			placeholder:"Choose organization type",
+			required: "${orgTypeRequired}",
+			width: "100%",
+			dropdownAutoWidth : true
+		});
 
 		// enable creation of org only if user already open droplist
 		// User must take a look at drop list before submiting a new org
@@ -265,11 +260,28 @@
 		// submit org creation and fill droplist with new created org
 		$("#create_org_button").click(function (event) {
 			event.preventDefault();
-			console.log("Button clicked");
-			check_org_form();
+			var valid = testField("org_name");
+			valid = testField("org_short_name") && valid;
+			valid = testField("org_address") && valid;
+			valid = testField("org_type") && valid;
 
-			$.ajax({
-				url: "/ldapadmin/private/orgs",
+			if(!valid)
+				return;
+
+			$("#create_org").val("true");
+
+			// Add new organisation to droplist and disable it
+			var newOrgOption = new Option($("#org_name").val(), $("#org_name").val(), true, true);
+			$('#org').select2().append(newOrgOption);
+			$('#org').select2().trigger('change');
+			$("#org").prop("disabled", true);
+
+			// Hide organisation form
+			$("#create_org_div").hide(200);
+			$("#org_checkbox_div").hide(200);
+
+			/*$.ajax({
+				url: "/ldapadmin/org/new",
 				method: "PUT",
 				dataType: 'json',
 				processData: false,
@@ -285,7 +297,7 @@
 				console.log(newOrg);
 
 				// Add new organisation to droplist
-				var newOrgOption = new Option(newOrg.id, newOrg.name, true, true);
+				var newOrgOption = new Option(newOrg.name, newOrg.id, true, true);
 				$('#org').select2().append(newOrgOption);
 
 				$('#org').select2().trigger('change');
@@ -295,14 +307,10 @@
 				$("#org_checkbox_div").hide(200);
 
 			}).error(function ( jqXHR, textStatus, errorThrown) {
-				console.log("Error on PUT request : " + textStatus);
-			})
+				alert.log(jqXHR.responseJSON);
+			})*/
 
 		})
-
-		function check_org_form(){
-			alert("Hello");
-		}
 
     });
 	</script>

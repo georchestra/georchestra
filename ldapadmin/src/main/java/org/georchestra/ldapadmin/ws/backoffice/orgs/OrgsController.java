@@ -190,26 +190,90 @@ public class OrgsController {
                                HttpServletRequest request, HttpServletResponse response)
             throws IOException, JSONException {
 
-        // Parse Json
-        JSONObject json = this.parseRequest(request, response);
+        try {
+            // Parse Json
+            JSONObject json = this.parseRequest(request, response);
 
-        // Retrieve current orgs state from ldap
-        Org org = this.orgDao.findByCommonName(commonName);
-        OrgExt orgExt = this.orgDao.findExtById(commonName);
+            // Retrieve current orgs state from ldap
+            Org org = this.orgDao.findByCommonName(commonName);
+            OrgExt orgExt = this.orgDao.findExtById(commonName);
 
-        // Update org and orgExt fields
-        this.updateFromRequest(org, json);
-        this.updateFromRequest(orgExt, json);
+            // Update org and orgExt fields
+            this.updateFromRequest(org, json);
+            this.updateFromRequest(orgExt, json);
 
-        // Persist changes to LDAP server
-        this.orgDao.insert(org);
-        this.orgDao.insert(orgExt);
+            // Persist changes to LDAP server
+            this.orgDao.insert(org);
+            this.orgDao.insert(orgExt);
 
-        // Regenerate json and send it to browser
-        this.returnOrgAsJSON(org, orgExt, response);
+            // Regenerate json and send it to browser
+            this.returnOrgAsJSON(org, orgExt, response);
+
+        } catch (Exception e) {
+            LOG.error(e.getMessage());
+            ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, e.getMessage()),
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+
+            throw new IOException(e);
+        }
 
     }
 
+
+    /**
+     * Create a new org based on JSON document sent by browser. This mapping is public, JSON document may contain
+     * following keys :
+     *
+     * * 'name'
+     * * 'shortName' (mandatory)
+     * * 'orgType'
+     * * 'address'
+     *
+     * All fields are optional except 'shortname' which is used to generate organization identifier.
+     *
+     * A new JSON document will be return to browser with a complete description of created org. @see updateOrgInfos()
+     * for JSON format.
+     */
+    @RequestMapping(value = "org/new", method = RequestMethod.PUT)
+    public void createPendingOrg(HttpServletRequest request, HttpServletResponse response) throws IOException, JSONException {
+
+        try {
+            // Parse Json
+            JSONObject json = this.parseRequest(request, response);
+
+            Org org = new Org();
+            OrgExt orgExt = new OrgExt();
+
+            // Generate identifier based on short name
+            String id = this.generateId(json.getString(Org.JSON_SHORT_NAME));
+            org.setId(id);
+            orgExt.setId(id);
+
+            // Store name and short name
+            org.setName(json.getString(Org.JSON_NAME));
+            org.setShortName(json.getString(Org.JSON_SHORT_NAME));
+
+            // Update orgExt fields (orgType, address)
+            this.updateFromRequest(orgExt, json);
+
+            // Set default value
+            org.setStatus("Non validated");
+
+            // Persist changes to LDAP server
+            this.orgDao.insert(org);
+            this.orgDao.insert(orgExt);
+
+            // Regenerate json and send it to browser
+            this.returnOrgAsJSON(org, orgExt, response);
+
+        } catch (Exception e) {
+            LOG.error(e.getMessage());
+            ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, e.getMessage()),
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+
+            throw new IOException(e);
+        }
+    }
 
 
     /**
@@ -230,40 +294,36 @@ public class OrgsController {
     @RequestMapping(value = REQUEST_MAPPING + "", method = RequestMethod.PUT)
     public void createOrg(HttpServletRequest request, HttpServletResponse response) throws IOException, JSONException {
 
-        // Parse Json
-        JSONObject json = this.parseRequest(request, response);
+        try {
+            // Parse Json
+            JSONObject json = this.parseRequest(request, response);
 
-        Org org = new Org();
-        OrgExt orgExt = new OrgExt();
+            Org org = new Org();
+            OrgExt orgExt = new OrgExt();
 
-        // Check short name
-        String shortName = json.getString(Org.JSON_SHORT_NAME);
-        if(shortName == null) {
-            IOException ex = new IOException("Invalid request org must have a short name, none specified");
-            LOG.error(ex.getMessage());
-            ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, ex.getMessage()),
+            // Generate identifier based on short name
+            String id = this.generateId(json.getString(Org.JSON_SHORT_NAME));
+            org.setId(id);
+            orgExt.setId(id);
+
+            // Update org and orgExt fields
+            this.updateFromRequest(org, json);
+            this.updateFromRequest(orgExt, json);
+
+            // Persist changes to LDAP server
+            this.orgDao.insert(org);
+            this.orgDao.insert(orgExt);
+
+            // Regenerate json and send it to browser
+            this.returnOrgAsJSON(org, orgExt, response);
+
+        } catch (Exception e) {
+            LOG.error(e.getMessage());
+            ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, e.getMessage()),
                     HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throw ex;
+
+            throw new IOException(e);
         }
-
-        // Generate identifier
-        String id = this.generateId(shortName);
-        org.setId(id);
-        orgExt.setId(id);
-
-        // Update org and orgExt fields
-        this.updateFromRequest(org, json);
-        this.updateFromRequest(orgExt, json);
-
-        // Set default value
-        org.setStatus("Non validated");
-
-        // Persist changes to LDAP server
-        this.orgDao.insert(org);
-        this.orgDao.insert(orgExt);
-
-        // Regenerate json and send it to browser
-        this.returnOrgAsJSON(org, orgExt, response);
     }
 
 
@@ -280,10 +340,6 @@ public class OrgsController {
 
         try{
             org.setName(json.getString("name"));
-        } catch (JSONException ex){}
-
-        try{
-            org.setShortName(json.getString("shortName"));
         } catch (JSONException ex){}
 
         try{
@@ -368,6 +424,11 @@ public class OrgsController {
     }
 
     private String generateId(String shortName) throws IOException {
+
+        // Check short name
+        if(shortName == null || shortName.length() == 0)
+            throw new IOException("Invalid request org must have a short name, none specified");
+
         String id = shortName.replaceAll("\\W", "");
 
         try {
