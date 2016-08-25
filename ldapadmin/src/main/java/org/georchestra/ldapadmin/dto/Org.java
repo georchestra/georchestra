@@ -63,7 +63,8 @@ public class Org {
     }
 
     public void setShortName(String shortName) {
-        this.shortName = shortName;
+        if(shortName != null && shortName.length() > 0)
+            this.shortName = shortName;
     }
 
     public List<String> getCities() {

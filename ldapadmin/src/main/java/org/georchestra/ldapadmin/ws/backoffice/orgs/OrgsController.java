@@ -224,12 +224,12 @@ public class OrgsController {
      * Create a new org based on JSON document sent by browser. This mapping is public, JSON document may contain
      * following keys :
      *
-     * * 'name'
-     * * 'shortName' (mandatory)
+     * * 'name' (mandatory)
+     * * 'shortName'
      * * 'orgType'
      * * 'address'
      *
-     * All fields are optional except 'shortname' which is used to generate organization identifier.
+     * All fields are optional except 'name' which is used to generate organization identifier.
      *
      * A new JSON document will be return to browser with a complete description of created org. @see updateOrgInfos()
      * for JSON format.
@@ -244,8 +244,8 @@ public class OrgsController {
             Org org = new Org();
             OrgExt orgExt = new OrgExt();
 
-            // Generate identifier based on short name
-            String id = this.generateId(json.getString(Org.JSON_SHORT_NAME));
+            // Generate identifier based on org name
+            String id = this.orgDao.generateId(json.getString(Org.JSON_NAME));
             org.setId(id);
             orgExt.setId(id);
 
@@ -279,14 +279,14 @@ public class OrgsController {
     /**
      * Create a new org based on JSON document sent by browser. JSON document may contain following keys :
      *
-     * * 'name'
-     * * 'shortName' (mandatory)
+     * * 'name' (mandatory)
+     * * 'shortName'
      * * 'cities' as json array ex: [654,865498,98364,9834534,984984,6978984,98498]
      * * 'status'
      * * 'orgType'
      * * 'address'
      *
-     * All fields are optional except 'shortname' which is used to generate organization identifier.
+     * All fields are optional except 'name' which is used to generate organization identifier.
      *
      * A new JSON document will be return to browser with a complete description of created org. @see updateOrgInfos()
      * for JSON format.
@@ -302,7 +302,7 @@ public class OrgsController {
             OrgExt orgExt = new OrgExt();
 
             // Generate identifier based on short name
-            String id = this.generateId(json.getString(Org.JSON_SHORT_NAME));
+            String id = this.orgDao.generateId(json.getString(Org.JSON_NAME));
             org.setId(id);
             orgExt.setId(id);
 
@@ -423,21 +423,6 @@ public class OrgsController {
 
     }
 
-    private String generateId(String shortName) throws IOException {
-
-        // Check short name
-        if(shortName == null || shortName.length() == 0)
-            throw new IOException("Invalid request org must have a short name, none specified");
-
-        String id = shortName.replaceAll("\\W", "");
-
-        try {
-            this.orgDao.findByCommonName(id);
-            throw new IOException("Identifier already used : " + id);
-        }catch (NameNotFoundException ex){}
-
-        return id;
-    }
 
     private void returnOrgAsJSON(Org org, OrgExt orgExt, HttpServletResponse response) throws IOException {
         try {

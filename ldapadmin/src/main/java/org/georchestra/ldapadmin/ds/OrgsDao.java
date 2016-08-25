@@ -22,6 +22,7 @@ package org.georchestra.ldapadmin.ds;
 
 import org.georchestra.ldapadmin.dto.Org;
 import org.georchestra.ldapadmin.dto.OrgExt;
+import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.LdapTemplate;
@@ -33,6 +34,7 @@ import org.springframework.ldap.support.LdapNameBuilder;
 import javax.naming.Name;
 import javax.naming.directory.*;
 import javax.naming.NamingException;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.LinkedList;
@@ -135,13 +137,13 @@ public class OrgsDao {
     }
 
     public void addUser(String organization, String user){
-        DirContextOperations context = ldapTemplate.lookupContext(buildOrgDN(organization));
+        DirContextOperations context = ldapTemplate.lookupContext(buildOrgDN(organization).toString());
         context.addAttributeValue("member", buildUserDN(user).toString(), false);
         this.ldapTemplate.modifyAttributes(context);
     }
 
     public void removeUser(String organization, String user){
-        DirContextOperations ctx = ldapTemplate.lookupContext(buildOrgDN(organization));
+        DirContextOperations ctx = ldapTemplate.lookupContext(buildOrgDN(organization).toString());
         ctx.removeAttributeValue("member", buildUserDN(user).toString());
         this.ldapTemplate.modifyAttributes(ctx);
     }
@@ -170,11 +172,12 @@ public class OrgsDao {
         attrs.put("seeAlso", LdapNameBuilder.newInstance(this.orgsSearchBaseDN + "," + this.basePath)
                 .add("o", org.getId()).build().toString());
 
-        // Mandatory attributes
+        // Mandatory attribute
         attrs.put("o", org.getName());
-        attrs.put("ou", org.getShortName());
 
         // Optional ones
+        if(org.getShortName() != null)
+            attrs.put("ou", org.getShortName());
         if(org.getCities() != null)
             attrs.put("description", org.getCities());
         if(org.getStatus() != null)
@@ -205,6 +208,33 @@ public class OrgsDao {
 
     public void setOrgTypeValues(String orgTypeValues) {
         this.orgTypeValues = orgTypeValues.split("\\s*,\\s*");
+    }
+
+    public String generateId(String org_name) throws IOException {
+
+        // Check name
+        if(org_name == null || org_name.length() == 0)
+            throw new IOException("Invalid org name");
+
+        String id = org_name.replaceAll("\\W", "_");
+
+        try {
+            this.findByCommonName(id);
+        } catch (NameNotFoundException ex){
+            return id;
+        }
+
+        int i = 0;
+        while(true){
+            i++;
+            try{
+                this.findByCommonName(id + i);
+                break;
+            } catch (NameNotFoundException ex){
+                continue;
+            }
+        }
+        return id + i;
     }
 
     private class OrgAttributesMapper implements AttributesMapper<Org> {

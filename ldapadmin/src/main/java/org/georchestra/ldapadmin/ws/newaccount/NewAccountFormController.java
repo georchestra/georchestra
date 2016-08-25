@@ -34,7 +34,9 @@ import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.georchestra.ldapadmin.dto.Group;
 import org.georchestra.ldapadmin.dto.Org;
+import org.georchestra.ldapadmin.dto.OrgExt;
 import org.georchestra.ldapadmin.mailservice.MailService;
+import org.georchestra.ldapadmin.ws.backoffice.utils.ResponseUtil;
 import org.georchestra.ldapadmin.ws.utils.EmailUtils;
 import org.georchestra.ldapadmin.ws.utils.PasswordUtils;
 import org.georchestra.ldapadmin.ws.utils.RecaptchaUtils;
@@ -166,6 +168,41 @@ public final class NewAccountFormController {
 		if(result.hasErrors())
 			return "createAccountForm";
 
+		// Create org if nedeed
+		if("true".equals(formBean.getCreate_org())){
+			try {
+
+				Org org = new Org();
+				OrgExt orgExt = new OrgExt();
+
+				// Generate identifier based on short name
+				String orgId = this.orgDao.generateId(formBean.getOrg_name());
+				org.setId(orgId);
+				orgExt.setId(orgId);
+
+				// Store name, short name, orgType and address
+				org.setName(formBean.getOrg_name());
+				org.setShortName(formBean.getOrg_short_name());
+				orgExt.setAddress(formBean.getOrg_address());
+				orgExt.setOrgType(formBean.getOrg_type());
+
+				// Set default value
+				org.setStatus("Non validated");
+
+				// Persist changes to LDAP server
+				this.orgDao.insert(org);
+				this.orgDao.insert(orgExt);
+
+				// Set real org identifier in form
+				formBean.setOrg(orgId);
+
+			} catch (Exception e) {
+				LOG.error(e.getMessage());
+				throw new IOException(e);
+			}
+		}
+
+
 		// inserts the new account
 		try {
 
@@ -185,9 +222,6 @@ public final class NewAccountFormController {
 			String groupID = this.moderator.moderatedSignup() ? Group.PENDING : Group.USER;
 
 			this.accountDao.insert(account, groupID, request.getHeader("sec-username"));
-
-			if(!formBean.getOrg().equals("-"))
-				this.orgDao.addUser(formBean.getOrg(), formBean.getUid().toLowerCase());
 
 			final ServletContext servletContext = request.getSession().getServletContext();
 			if(this.moderator.moderatedSignup() ){
