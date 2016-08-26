@@ -1,6 +1,6 @@
 # Building geOrchestra
 
-To build geOrchestra, you will first have to [create your own configuration repository](doc/config.md), based on the [template](https://github.com/georchestra/template) we provide.
+To build geOrchestra, you will first have to [create your own configuration repository](config.md), based on the [template](https://github.com/georchestra/template) we provide.
 
 Once you're created your own configuration, follow these steps...
 
