@@ -100,24 +100,24 @@
 					<form:hidden path="createOrg" value="false"/>
 
 					<t:input path="orgName" required="true">
-						<jsp:attribute name="label">Votre organisme</jsp:attribute>
+						<jsp:attribute name="label"><s:message code="org.creation.label"/></jsp:attribute>
 					</t:input>
 
 					<t:input path="orgShortName" required="${orgShortNameRequired}">
-						<jsp:attribute name="label">Libellé court</jsp:attribute>
+						<jsp:attribute name="label"><s:message code="org.creation.shortLabel"/></jsp:attribute>
 					</t:input>
 
 					<t:textarea path="orgAddress" required="${orgAddressRequired}">
-						<jsp:attribute name="label">Adresse</jsp:attribute>
+						<jsp:attribute name="label"><s:message code="org.creation.address"/></jsp:attribute>
 					</t:textarea>
 
 					<t:list path="orgType" required="${orgTypeRequired}" items="${orgTypes}">
-						<jsp:attribute name="label">Type d'organisme</jsp:attribute>
+						<jsp:attribute name="label"><s:message code="org.creation.orgType"/></jsp:attribute>
 					</t:list>
 
 					<div class="form-group" style="margin-bottom: 0px">
 						<div class="col-lg-8 col-lg-offset-4 text-right">
-							<button id="create_org_button" class="btn btn-primary btn-lg" style="padding: 3px;">Create</button>
+							<button id="create_org_button" class="btn btn-primary btn-lg" style="padding: 3px;"><s:message code="org.creation.create"/></button>
 						</div>
 					</div>
 
