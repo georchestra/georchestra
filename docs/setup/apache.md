@@ -286,6 +286,7 @@ ProxyPassReverse /header/ http://localhost:8180/header/
 ```
 RewriteRule ^/ldapadmin$ /ldapadmin/ [R]
 RewriteRule ^/ldapadmin/privateui$ /ldapadmin/privateui/ [R]
+RewriteRule ^/ldapadmin/console$ /ldapadmin/console/ [R]
 
 <Proxy http://localhost:8180/ldapadmin/*>
     Require all granted
