@@ -36,7 +36,6 @@ import org.georchestra.ldapadmin.dto.Group;
 import org.georchestra.ldapadmin.dto.Org;
 import org.georchestra.ldapadmin.dto.OrgExt;
 import org.georchestra.ldapadmin.mailservice.MailService;
-import org.georchestra.ldapadmin.ws.backoffice.utils.ResponseUtil;
 import org.georchestra.ldapadmin.ws.utils.EmailUtils;
 import org.georchestra.ldapadmin.ws.utils.PasswordUtils;
 import org.georchestra.ldapadmin.ws.utils.RecaptchaUtils;
@@ -87,9 +86,8 @@ public final class NewAccountFormController {
 
 	private ReCaptchaParameters reCaptchaParameters;
 
-	private static final String[] fields = {"firstName","surname", "email", "phone", "org",
-			"title", "description", "uid", "password", "confirmPassword", "orgShortName", "orgAddress", "orgType",
-			"create_org", "org_name", "org_short_name", "org_address", "org_type"};
+	private static final String[] fields = {"firstName","surname", "email", "phone", "org", "title", "description",
+			"uid", "password", "confirmPassword", "createOrg", "orgName", "orgShortName", "orgAddress", "orgType"};
 
 	@Autowired
 	public NewAccountFormController(AccountDao dao, OrgsDao orgDao, MailService mailSrv, Moderator moderatorRule,
@@ -117,7 +115,7 @@ public final class NewAccountFormController {
 		// Populate orgs droplist
 		model.addAttribute("orgs", this.getOrgs());
 		// Populate org type droplist
-		model.addAttribute("orgtypes", this.getOrgTypes());
+		model.addAttribute("orgTypes", this.getOrgTypes());
 
 		session.setAttribute("reCaptchaPublicKey", this.reCaptchaParameters.getPublicKey());
 		for (String f : fields) {
@@ -153,7 +151,7 @@ public final class NewAccountFormController {
 		model.addAttribute("orgs", this.getOrgs());
 
 		// Populate org type droplist
-		model.addAttribute("orgtypes", this.getOrgTypes());
+		model.addAttribute("orgTypes", this.getOrgTypes());
 
 		UserUtils.validate(formBean.getUid(), formBean.getFirstName(), formBean.getSurname(), result );
 		EmailUtils.validate(formBean.getEmail(), result);
@@ -168,26 +166,26 @@ public final class NewAccountFormController {
 		if(result.hasErrors())
 			return "createAccountForm";
 
-		// Create org if nedeed
-		if("true".equals(formBean.getCreate_org())){
+		// Create org if needed
+		if("true".equals(formBean.getCreateOrg())){
 			try {
 
 				Org org = new Org();
 				OrgExt orgExt = new OrgExt();
 
 				// Generate identifier based on short name
-				String orgId = this.orgDao.generateId(formBean.getOrg_name());
+				String orgId = this.orgDao.generateId(formBean.getOrgName());
 				org.setId(orgId);
 				orgExt.setId(orgId);
 
 				// Store name, short name, orgType and address
-				org.setName(formBean.getOrg_name());
-				org.setShortName(formBean.getOrg_short_name());
-				orgExt.setAddress(formBean.getOrg_address());
-				orgExt.setOrgType(formBean.getOrg_type());
+				org.setName(formBean.getOrgName());
+				org.setShortName(formBean.getOrgShortName());
+				orgExt.setAddress(formBean.getOrgAddress());
+				orgExt.setOrgType(formBean.getOrgType());
 
 				// Set default value
-				org.setStatus("Non validated");
+				org.setStatus("PENDING");
 
 				// Persist changes to LDAP server
 				this.orgDao.insert(org);
@@ -282,7 +280,7 @@ public final class NewAccountFormController {
 	 * @return
      */
 	public Map<String, String> getOrgs() {
-		List<Org> orgs = this.orgDao.findAll();
+		List<Org> orgs = this.orgDao.findValidated();
 		Collections.sort(orgs, new Comparator<Org>() {
 			@Override
 			public int compare(Org o1, Org o2){

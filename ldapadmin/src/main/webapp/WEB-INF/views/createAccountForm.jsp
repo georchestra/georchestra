@@ -97,21 +97,21 @@
 
 				<div id="create_org_div" class="create_org_block">
 
-					<form:hidden path="create_org" value="false"/>
+					<form:hidden path="createOrg" value="false"/>
 
-					<t:input path="org_name" required="true">
+					<t:input path="orgName" required="true">
 						<jsp:attribute name="label">Votre organisme</jsp:attribute>
 					</t:input>
 
-					<t:input path="org_short_name" required="${orgShortNameRequired}">
+					<t:input path="orgShortName" required="${orgShortNameRequired}">
 						<jsp:attribute name="label">Libellé court</jsp:attribute>
 					</t:input>
 
-					<t:textarea path="org_address" required="${orgAddressRequired}">
+					<t:textarea path="orgAddress" required="${orgAddressRequired}">
 						<jsp:attribute name="label">Adresse</jsp:attribute>
 					</t:textarea>
 
-					<t:list path="org_type" required="${orgTypeRequired}" items="${orgtypes}">
+					<t:list path="orgType" required="${orgTypeRequired}" items="${orgTypes}">
 						<jsp:attribute name="label">Type d'organisme</jsp:attribute>
 					</t:list>
 
@@ -235,7 +235,7 @@
         $("#org").select2({
 				placeholder:"Choose organization",
 		});
-		$("#org_type").select2({
+		$("#orgType").select2({
 			placeholder:"Choose organization type",
 			required: "${orgTypeRequired}",
 			width: "100%",
@@ -260,18 +260,18 @@
 		// submit org creation and fill droplist with new created org
 		$("#create_org_button").click(function (event) {
 			event.preventDefault();
-			var valid = testField("org_name");
-			valid = testField("org_short_name") && valid;
-			valid = testField("org_address") && valid;
-			valid = testField("org_type") && valid;
+			var valid = testField("orgName");
+			valid = testField("orgShortName") && valid;
+			valid = testField("orgAddress") && valid;
+			valid = testField("orgType") && valid;
 
 			if(!valid)
 				return;
 
-			$("#create_org").val("true");
+			$("#createOrg").val("true");
 
 			// Add new organisation to droplist and disable it
-			var newOrgOption = new Option($("#org_name").val(), $("#org_name").val(), true, true);
+			var newOrgOption = new Option($("#orgName").val(), $("#orgName").val(), true, true);
 			$('#org').select2().append(newOrgOption);
 			$('#org').select2().trigger('change');
 			$("#org").prop("disabled", true);
@@ -279,36 +279,6 @@
 			// Hide organisation form
 			$("#create_org_div").hide(200);
 			$("#org_checkbox_div").hide(200);
-
-			/*$.ajax({
-				url: "/ldapadmin/org/new",
-				method: "PUT",
-				dataType: 'json',
-				processData: false,
-				contentType: 'application/json',
-				data: JSON.stringify( {
-					name: $("#org_name").val(),
-					shortName: $("#org_short_name").val(),
-					orgType: $("#org_type").val(),
-					address: $("#org_address").val()
-				})
-			}).success(function( newOrg, textStatus, jqXHR) {
-				console.log("Success : ");
-				console.log(newOrg);
-
-				// Add new organisation to droplist
-				var newOrgOption = new Option(newOrg.name, newOrg.id, true, true);
-				$('#org').select2().append(newOrgOption);
-
-				$('#org').select2().trigger('change');
-
-				// Hide organisation form
-				$("#create_org_div").hide(200);
-				$("#org_checkbox_div").hide(200);
-
-			}).error(function ( jqXHR, textStatus, errorThrown) {
-				alert.log(jqXHR.responseJSON);
-			})*/
 
 		})
 

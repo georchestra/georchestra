@@ -73,12 +73,26 @@ public class OrgsDao {
     }
 
     /**
-     * Search all organization defined in ldap. this.orgsSearchBaseDN hold search path in ldap.
+     * Search all organizations defined in ldap. this.orgsSearchBaseDN hold search path in ldap.
      *
-     * @return list of organization
+     * @return list of organizations
      */
     public List<Org> findAll(){
         EqualsFilter filter = new EqualsFilter("objectClass", "groupOfMembers");
+        return ldapTemplate.search(this.orgsSearchBaseDN, filter.encode(), new OrgsDao.OrgAttributesMapper());
+    }
+
+    /**
+     * Search for validated organizations defined in ldap.
+     *
+     * @return list of validated organizations
+     */
+    public List<Org> findValidated(){
+        EqualsFilter classFilter = new EqualsFilter("objectClass", "groupOfMembers");
+        EqualsFilter validatedFilter = new EqualsFilter("businessCategory", "REGISTERED");
+        AndFilter filter = new AndFilter();
+        filter.and(classFilter);
+        filter.and(validatedFilter);
         return ldapTemplate.search(this.orgsSearchBaseDN, filter.encode(), new OrgsDao.OrgAttributesMapper());
     }
 

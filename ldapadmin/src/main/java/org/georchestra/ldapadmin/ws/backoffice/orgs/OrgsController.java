@@ -219,63 +219,6 @@ public class OrgsController {
 
     }
 
-
-    /**
-     * Create a new org based on JSON document sent by browser. This mapping is public, JSON document may contain
-     * following keys :
-     *
-     * * 'name' (mandatory)
-     * * 'shortName'
-     * * 'orgType'
-     * * 'address'
-     *
-     * All fields are optional except 'name' which is used to generate organization identifier.
-     *
-     * A new JSON document will be return to browser with a complete description of created org. @see updateOrgInfos()
-     * for JSON format.
-     */
-    @RequestMapping(value = "org/new", method = RequestMethod.PUT)
-    public void createPendingOrg(HttpServletRequest request, HttpServletResponse response) throws IOException, JSONException {
-
-        try {
-            // Parse Json
-            JSONObject json = this.parseRequest(request, response);
-
-            Org org = new Org();
-            OrgExt orgExt = new OrgExt();
-
-            // Generate identifier based on org name
-            String id = this.orgDao.generateId(json.getString(Org.JSON_NAME));
-            org.setId(id);
-            orgExt.setId(id);
-
-            // Store name and short name
-            org.setName(json.getString(Org.JSON_NAME));
-            org.setShortName(json.getString(Org.JSON_SHORT_NAME));
-
-            // Update orgExt fields (orgType, address)
-            this.updateFromRequest(orgExt, json);
-
-            // Set default value
-            org.setStatus("Non validated");
-
-            // Persist changes to LDAP server
-            this.orgDao.insert(org);
-            this.orgDao.insert(orgExt);
-
-            // Regenerate json and send it to browser
-            this.returnOrgAsJSON(org, orgExt, response);
-
-        } catch (Exception e) {
-            LOG.error(e.getMessage());
-            ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, e.getMessage()),
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-
-            throw new IOException(e);
-        }
-    }
-
-
     /**
      * Create a new org based on JSON document sent by browser. JSON document may contain following keys :
      *

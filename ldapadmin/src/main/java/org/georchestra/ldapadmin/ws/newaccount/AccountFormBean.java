@@ -48,11 +48,11 @@ public class AccountFormBean implements Serializable{
 	private String recaptcha_response_field;
 
 	// Org creation fields
-	private String create_org;
-	private String org_name;
-	private String org_short_name;
-	private String org_address;
-	private String org_type;
+	private String createOrg;
+	private String orgName;
+	private String orgShortName;
+	private String orgAddress;
+	private String orgType;
 
 	// Getter and setter
 	public String getRecaptcha_challenge_field() {
@@ -128,35 +128,35 @@ public class AccountFormBean implements Serializable{
 
 		this.surname = sn;
 	}
-	public String getCreate_org() {
-		return create_org;
+	public String getCreateOrg() {
+		return createOrg;
 	}
-	public void setCreate_org(String create_org) {
-		this.create_org = create_org;
+	public void setCreateOrg(String createOrg) {
+		this.createOrg = createOrg;
 	}
-	public String getOrg_name() {
-		return org_name;
+	public String getOrgName() {
+		return orgName;
 	}
-	public void setOrg_name(String org_name) {
-		this.org_name = org_name;
+	public void setOrgName(String orgName) {
+		this.orgName = orgName;
 	}
-	public String getOrg_short_name() {
-		return org_short_name;
+	public String getOrgShortName() {
+		return orgShortName;
 	}
-	public void setOrg_short_name(String org_short_name) {
-		this.org_short_name = org_short_name;
+	public void setOrgShortName(String orgShortName) {
+		this.orgShortName = orgShortName;
 	}
-	public String getOrg_address() {
-		return org_address;
+	public String getOrgAddress() {
+		return orgAddress;
 	}
-	public void setOrg_address(String org_address) {
-		this.org_address = org_address;
+	public void setOrgAddress(String orgAddress) {
+		this.orgAddress = orgAddress;
 	}
-	public String getOrg_type() {
-		return org_type;
+	public String getOrgType() {
+		return orgType;
 	}
-	public void setOrg_type(String org_type) {
-		this.org_type = org_type;
+	public void setOrgType(String orgType) {
+		this.orgType = orgType;
 	}
 
 	@Override
