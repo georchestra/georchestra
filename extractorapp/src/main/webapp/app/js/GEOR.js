@@ -111,7 +111,7 @@ Ext.namespace("GEOR");
                 "We cannot produce images with more than MAX million RGB pixels.",
                 "Continue anyway ?"
             ].join('<br/>'), {
-                'MAX': Math.round(GEOR.config.MAX_COVERAGE_EXTRACTION_SIZE/3000000),
+                'MAX': Math.round(GEOR.config.MAX_COVERAGE_EXTRACTION_SIZE/1000000),
                 'LAYERS': oversized.join(', ')
             }), function(btn, text){
                 if (btn == 'yes'){

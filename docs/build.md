@@ -204,6 +204,40 @@ Both can be combined with:
 ```
 
 
-### Alternative building process using Docker (experimental)
+### Alternative building process using Docker
+
+First, you will need to compile the GeoNetwork and GeoServer artifacts separately:
+
+```
+cd geoserver/geoserver-submodule/src
+../../../mvn clean install -DskipTests
+cd ../../../geonetwork/
+../mvn clean install -DskipTests
+```
+
+Then generate Docker images (make sure that Docker and docker-compose are
+correctly installed before):
+
+From the project root:
+```
+./mvn clean package docker:build -Pdocker -DskipTests --pl extractorapp,cas-server-webapp,security-proxy,geoserver/webapp,mapfishapp,header,ldapadmin,geonetwork/web,analytics,catalogapp,downloadform,geowebcache-webapp
+```
+
+Using the `docker images` command, you should get a listing of the geOrchestra images generated:
+
+```
+docker images
+REPOSITORY          TAG                 IMAGE ID         ...
+[...]
+header              latest              XXXXXXXXXXXX     ...
+geonetwork          latest              XXXXXXXXXXXX     ...
+security-proxy      latest              XXXXXXXXXXXX     ...
+mapfishapp          latest              XXXXXXXXXXXX     ...
+extractorapp        latest              XXXXXXXXXXXX     ...
+ldapadmin           latest              XXXXXXXXXXXX     ...
+geoserver           latest              XXXXXXXXXXXX     ...
+cas                 latest              XXXXXXXXXXXX     ...
+[...]
+```
 
 Please refer to https://github.com/georchestra/georchestra/blob/master/docker/README.md for more information on Docker and geOrchestra.
