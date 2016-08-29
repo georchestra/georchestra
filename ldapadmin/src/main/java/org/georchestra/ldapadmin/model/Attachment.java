@@ -35,8 +35,8 @@ import javax.persistence.Table;
 public class Attachment {
 
     @Id
-    @SequenceGenerator(name="admin_attachments_seq", schema = "ldapadmin", sequenceName="admin_attachments_seq", initialValue=1, allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "admin_attachments_seq")
+    @SequenceGenerator(name="admin_attachments_id_seq", schema = "ldapadmin", sequenceName="admin_attachments_id_seq", initialValue=1, allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "admin_attachments_id_seq")
     private long id;
     private String name;
     @Lob

@@ -43,8 +43,8 @@ import java.util.List;
 public class EmailEntry {
 
     @Id
-    @SequenceGenerator(name="admin_emails_seq", schema = "ldapadmin", sequenceName="admin_emails_seq", initialValue=1, allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "admin_emails_seq")
+    @SequenceGenerator(name="admin_emails_id_seq", schema = "ldapadmin", sequenceName="admin_emails_id_seq", initialValue=1, allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "admin_emails_id_seq")
     private long id;
     private String sender;
     private String recipient;
