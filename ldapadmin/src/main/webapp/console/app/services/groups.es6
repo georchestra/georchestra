@@ -13,7 +13,11 @@ angular.module('admin_console')
     'PENDING',
     'GN_ADMIN',
     'GN_EDITOR',
-    'GN_REVIEWER'
+    'GN_REVIEWER',
+    'MOD_ANALYTICS',
+    'MOD_EXTRACTORAPP',
+    'MOD_LDAPADMIN',
+    'USER'
   ]
   return () => admin_groups
 }]).factory('groupAdminFilter', [ 'groupAdminList', (groupAdminList)  =>
