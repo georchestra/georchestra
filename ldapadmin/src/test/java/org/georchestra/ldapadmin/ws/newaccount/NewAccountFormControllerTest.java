@@ -98,6 +98,8 @@ public class NewAccountFormControllerTest {
             assertTrue(false);
         }
 
+        String[] orgTypes = {"Association", "Company", "Non-governmental organization"};
+        Mockito.when(this.org.getOrgTypeValues()).thenReturn(orgTypes);
     }
 
     @After

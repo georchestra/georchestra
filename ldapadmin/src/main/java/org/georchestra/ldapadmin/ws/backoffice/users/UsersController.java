@@ -32,6 +32,7 @@ import org.georchestra.ldapadmin.ds.ProtectedUserFilter;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.georchestra.ldapadmin.dto.Group;
+import org.georchestra.ldapadmin.dto.Org;
 import org.georchestra.ldapadmin.dto.UserSchema;
 import org.georchestra.ldapadmin.mailservice.MailService;
 import org.georchestra.ldapadmin.ws.backoffice.utils.RequestUtil;
@@ -55,7 +56,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.Normalizer;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Web Services to maintain the User information.
@@ -86,6 +89,11 @@ public class UsersController {
 	private AccountDao accountDao;
 	@Autowired
 	private OrgsDao orgDao;
+
+	public void setOrgDao(OrgsDao orgDao) {
+		this.orgDao = orgDao;
+	}
+
 	private UserRule userRule;
 	
 	@Autowired
@@ -114,7 +122,7 @@ public class UsersController {
 	 *
 	 *	[
 	 *	    {
-	 *	        "o": "Zogak",
+	 *	        "org": "Zogak",
 	 *	        "givenName": "Walsh",
 	 *	        "sn": "Atkins",
 	 *	        "uid": "watkins"
@@ -129,17 +137,27 @@ public class UsersController {
 	 */
 	@RequestMapping(value=REQUEST_MAPPING, method=RequestMethod.GET)
 	public void findAll( HttpServletRequest request, HttpServletResponse response ) throws IOException{
-		List protectedUsers = this.userRule.getListUidProtected();
-		int i = 0;
 		try {
 			ProtectedUserFilter filter = new ProtectedUserFilter( this.userRule.getListUidProtected() );
 			List<Account> list = this.accountDao.findFilterBy(filter);
 
-			UserListResponse userListResponse = new UserListResponse(list);
+			// Retrieve organizations list to display org name instead of org DN
+			List<Org> orgs = this.orgDao.findAll();
+			Map<String, String> orgNames = new HashMap<String, String>();
+			for(Org org: orgs)
+				orgNames.put(org.getId(), org.getName());
 
-			String jsonList = userListResponse.asJsonString();
+			JSONArray res = new JSONArray();
+			for (Account account: list) {
+				JSONObject jsonAccount = new JSONObject();
+				jsonAccount.put(UserSchema.UID_KEY, account.getUid());
+				jsonAccount.put(UserSchema.GIVEN_NAME_KEY, account.getGivenName());
+				jsonAccount.put(UserSchema.SURNAME_KEY, account.getSurname());
+				jsonAccount.put(UserSchema.ORG_KEY, orgNames.get(account.getOrg()));
+				res.put(jsonAccount);
+			}
 
-			ResponseUtil.buildResponse(response, jsonList, HttpServletResponse.SC_OK);
+			ResponseUtil.buildResponse(response, res.toString(), HttpServletResponse.SC_OK);
 
 		} catch (Exception e) {
 			LOG.error(e.getMessage());

@@ -25,6 +25,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.naming.NamingEnumeration;
 import javax.naming.directory.Attribute;
@@ -41,6 +43,7 @@ import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
 import org.springframework.security.ldap.search.LdapUserSearch;
 import org.springframework.util.Assert;
 
@@ -56,15 +59,18 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
 
     private LdapUserSearch      _userSearch;
     private Map<String, String> _headerMapping;
+    private Pattern pattern;
 
     @Autowired
     private GeorchestraConfiguration georchestraConfiguration;
 
-    public LdapUserDetailsRequestHeaderProvider(LdapUserSearch userSearch, Map<String, String> headerMapping) {
+    public LdapUserDetailsRequestHeaderProvider(LdapUserSearch userSearch, String orgsSearchBaseDN, Map<String, String> headerMapping) {
         Assert.notNull(userSearch, "userSearch must not be null");
         Assert.notNull(headerMapping, "headerMapping must not be null");
         this._userSearch = userSearch;
         this._headerMapping = headerMapping;
+
+        this.pattern = Pattern.compile("([^=,]+)=([^=,]+)," + orgsSearchBaseDN + ".*");
     }
 
     public void init() throws IOException {
@@ -130,11 +136,38 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
 					} catch (javax.naming.NamingException e) {
 						logger.error("problem adding headers for request:"
 								+ entry.getKey(), e);
-					}
-				}
-				logger.info("Storing attributes into session for user :" + username);
-				session.setAttribute("security-proxy-cached-username", username);
-				session.setAttribute("security-proxy-cached-attrs", headers);
+                    }
+                }
+
+                // Add user organization
+                try {
+                    // Retreive memberOf attributes
+                    String[] attrs = {"memberOf"};
+                    ((FilterBasedLdapUserSearch) this._userSearch).setReturningAttributes(attrs);
+                    userData = _userSearch.searchForUser(username);
+                    Attribute attributes = userData.getAttributes().get("memberOf");
+                    if (attributes != null) {
+                        NamingEnumeration<?> all = attributes.getAll();
+
+                        while (all.hasMore()) {
+                            String memberOf = all.next().toString();
+                            Matcher m = this.pattern.matcher(memberOf);
+                            if (m.matches()) {
+                                headers.add(new BasicHeader("sec-org", m.group(2)));
+                                break;
+                            }
+                        }
+                    }
+                } catch (javax.naming.NamingException e) {
+                    logger.error("problem adding headers for request: organization", e);
+                } finally {
+                    // restore standard attribute list
+                    ((FilterBasedLdapUserSearch) this._userSearch).setReturningAttributes(null);
+                }
+
+                logger.info("Storing attributes into session for user :" + username);
+                session.setAttribute("security-proxy-cached-username", username);
+                session.setAttribute("security-proxy-cached-attrs", headers);
 			}
 		}
 

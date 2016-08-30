@@ -34,6 +34,7 @@ import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.georchestra.ldapadmin.dto.Group;
 import org.georchestra.ldapadmin.dto.Org;
+import org.georchestra.ldapadmin.dto.OrgExt;
 import org.georchestra.ldapadmin.mailservice.MailService;
 import org.georchestra.ldapadmin.ws.utils.EmailUtils;
 import org.georchestra.ldapadmin.ws.utils.PasswordUtils;
@@ -56,9 +57,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Manages the UI Account Form.
@@ -87,8 +86,8 @@ public final class NewAccountFormController {
 
 	private ReCaptchaParameters reCaptchaParameters;
 
-	private static final String[] fields = {"firstName","surname", "email", "phone", "org",
-	    "title", "description", "uid", "password", "confirmPassword"};
+	private static final String[] fields = {"firstName","surname", "email", "phone", "org", "title", "description",
+			"uid", "password", "confirmPassword", "createOrg", "orgName", "orgShortName", "orgAddress", "orgType"};
 
 	@Autowired
 	public NewAccountFormController(AccountDao dao, OrgsDao orgDao, MailService mailSrv, Moderator moderatorRule,
@@ -112,15 +111,11 @@ public final class NewAccountFormController {
 
 		HttpSession session = request.getSession();
 		AccountFormBean formBean = new AccountFormBean();
-		Map<String, String> options = new HashMap<String, String>();
 
 		// Populate orgs droplist
-		List<Org> orgs = this.orgDao.findAll();
-		for(Org org : orgs)
-			options.put(org.getId(), org.getName());
-
-		model.addAttribute(formBean);
-		model.addAttribute("orgs", options);
+		model.addAttribute("orgs", this.getOrgs());
+		// Populate org type droplist
+		model.addAttribute("orgTypes", this.getOrgTypes());
 
 		session.setAttribute("reCaptchaPublicKey", this.reCaptchaParameters.getPublicKey());
 		for (String f : fields) {
@@ -153,28 +148,58 @@ public final class NewAccountFormController {
 			throws IOException {
 
 		// Populate orgs droplist
-		Map<String, String> options = new HashMap<String, String>();
-		List<Org> orgs = this.orgDao.findAll();
-		for(Org org : orgs)
-			options.put(org.getId(), org.getName());
-		model.addAttribute("orgs", options);
+		model.addAttribute("orgs", this.getOrgs());
 
-
-		String remoteAddr = request.getRemoteAddr();
+		// Populate org type droplist
+		model.addAttribute("orgTypes", this.getOrgTypes());
 
 		UserUtils.validate(formBean.getUid(), formBean.getFirstName(), formBean.getSurname(), result );
 		EmailUtils.validate(formBean.getEmail(), result);
 		PasswordUtils.validate(formBean.getPassword(), formBean.getConfirmPassword(), result);
-		new RecaptchaUtils(remoteAddr, this.reCaptcha).validate(formBean.getRecaptcha_challenge_field(), formBean.getRecaptcha_response_field(), result);
+		new RecaptchaUtils(request.getRemoteAddr(), this.reCaptcha)
+				.validate(formBean.getRecaptcha_challenge_field(), formBean.getRecaptcha_response_field(), result);
 		Validation.validateField("phone", formBean.getPhone(), result);
 		Validation.validateField("title", formBean.getTitle(), result);
 		Validation.validateField("org", formBean.getOrg(), result);
 		Validation.validateField("description", formBean.getDescription(), result);
 
-		if(result.hasErrors()){
-
+		if(result.hasErrors())
 			return "createAccountForm";
+
+		// Create org if needed
+		if("true".equals(formBean.getCreateOrg())){
+			try {
+
+				Org org = new Org();
+				OrgExt orgExt = new OrgExt();
+
+				// Generate identifier based on short name
+				String orgId = this.orgDao.generateId(formBean.getOrgName());
+				org.setId(orgId);
+				orgExt.setId(orgId);
+
+				// Store name, short name, orgType and address
+				org.setName(formBean.getOrgName());
+				org.setShortName(formBean.getOrgShortName());
+				orgExt.setAddress(formBean.getOrgAddress());
+				orgExt.setOrgType(formBean.getOrgType());
+
+				// Set default value
+				org.setStatus("PENDING");
+
+				// Persist changes to LDAP server
+				this.orgDao.insert(org);
+				this.orgDao.insert(orgExt);
+
+				// Set real org identifier in form
+				formBean.setOrg(orgId);
+
+			} catch (Exception e) {
+				LOG.error(e.getMessage());
+				throw new IOException(e);
+			}
 		}
+
 
 		// inserts the new account
 		try {
@@ -196,12 +221,8 @@ public final class NewAccountFormController {
 
 			this.accountDao.insert(account, groupID, request.getHeader("sec-username"));
 
-			if(!formBean.getOrg().equals("-"))
-				this.orgDao.addUser(formBean.getOrg(), formBean.getUid().toLowerCase());
-
 			final ServletContext servletContext = request.getSession().getServletContext();
 			if(this.moderator.moderatedSignup() ){
-
 				// email to the moderator
 				this.mailService.sendNewAccountRequiresModeration(servletContext, account.getUid(), account.getCommonName(), account.getEmail(), this.moderator.getModeratorEmail());
 
@@ -244,5 +265,33 @@ public final class NewAccountFormController {
 	@ModelAttribute("accountFormBean")
 	public AccountFormBean getAccountFormBean() {
 		return new AccountFormBean();
+	}
+
+
+	public Map<String, String> getOrgTypes() {
+		Map<String, String> orgTypes = new LinkedHashMap<String, String>();
+		for(String orgType: this.orgDao.getOrgTypeValues())
+			orgTypes.put(orgType, orgType);
+		return orgTypes;
+	}
+
+	/**
+	 * Create a sorted Map of organization sorted by human readable name
+	 * @return
+     */
+	public Map<String, String> getOrgs() {
+		List<Org> orgs = this.orgDao.findValidated();
+		Collections.sort(orgs, new Comparator<Org>() {
+			@Override
+			public int compare(Org o1, Org o2){
+				return  o1.getName().compareTo(o2.getName());
+			}
+		});
+
+		Map<String, String> orgsName = new LinkedHashMap<String, String>();
+		for(Org org : orgs)
+			orgsName.put(org.getId(), org.getName());
+
+		return orgsName;
 	}
 }
