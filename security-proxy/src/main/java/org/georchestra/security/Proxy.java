@@ -169,6 +169,7 @@ public class Proxy {
     private String user;
     private String password;
     private Integer maxDatabaseConnections;
+    private Integer httpClientTimeout;
 
     public void init() throws Exception {
         if (targets != null) {
@@ -617,8 +618,7 @@ public class Proxy {
     private void handleRequest(HttpServletRequest request, HttpServletResponse finalResponse, RequestType requestType, String sURL, boolean localProxy) {
         HttpClientBuilder htb = HttpClients.custom().disableRedirectHandling();
 
-        // TODO: This should be configurable
-        RequestConfig config = RequestConfig.custom().setSocketTimeout(300000).build();
+        RequestConfig config = RequestConfig.custom().setSocketTimeout(this.httpClientTimeout).build();
         htb.setDefaultRequestConfig(config);
 
         //
@@ -1359,4 +1359,7 @@ public class Proxy {
         return proxyPermissions;
     }
 
+    public void setHttpClientTimeoutTimeout(String timeout) {
+        this.httpClientTimeout = Integer.parseInt(timeout.trim());
+    }
 }
