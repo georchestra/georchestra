@@ -55,6 +55,7 @@ public class UsersGroupsControllerTest {
 
     private AccountDaoImpl dao;
     private GroupDaoImpl groupDao;
+    private OrgsDao orgDao;
     private UserRule userRule;
     private LdapTemplate ldapTemplate;
     private LdapContextSource contextSource;
@@ -224,6 +225,7 @@ public class UsersGroupsControllerTest {
         dao.setGroupDao(groupDao);
 
         userCtrl = new UsersController(dao, userRule);
+        userCtrl.setOrgDao(orgsDao);
         groupCtrl = new GroupsController(groupDao, userRule);
         groupCtrl.setAccountDao(dao);
       

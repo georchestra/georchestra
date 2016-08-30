@@ -89,6 +89,11 @@ public class UsersController {
 	private AccountDao accountDao;
 	@Autowired
 	private OrgsDao orgDao;
+
+	public void setOrgDao(OrgsDao orgDao) {
+		this.orgDao = orgDao;
+	}
+
 	private UserRule userRule;
 	
 	@Autowired
