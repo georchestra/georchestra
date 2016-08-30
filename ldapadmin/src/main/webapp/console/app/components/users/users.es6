@@ -35,6 +35,7 @@ class UsersController {
     let translate = this.$injector.get('translate')
     this.i18n     = {}
     translate('group.created' , this.i18n)
+    translate('group.updated' , this.i18n)
     translate('group.error'   , this.i18n)
 
   }
@@ -79,6 +80,25 @@ class UsersController {
     let $location = this.$injector.get('$location')
     $scope.$watch(() => $location.search()['new'], (v) => {
       this.newGroup = v === 'group'
+    })
+  }
+
+  initEditable() {
+    let flash = this.$injector.get('Flash')
+    let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
+    $('.content-description').on('blur', (e) => {
+      let group  = this.$injector.get('Group').get(
+        {id : this.activeGroup.cn},
+        (group) => {
+          group.description = e.target.innerText
+          group.$update(() => {
+              $httpDefaultCache.removeAll()
+              flash.create('success', this.i18n.updated)
+            },
+            flash.create.bind(flash, 'error', this.i18n.error)
+          )
+        }
+      )
     })
   }
 

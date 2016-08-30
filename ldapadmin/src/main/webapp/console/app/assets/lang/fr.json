@@ -57,6 +57,7 @@
   "group.users"         : "utilisateurs",
   "group.filter_users"  : "Filtrer",
   "group.created"       : "Rôle créé",
+  "group.updated"       : "Rôle mis à jour",
   "group.error"         : "Erreur lors de la création du rôle",
   "group.search"        : "Chercher un rôle",
 

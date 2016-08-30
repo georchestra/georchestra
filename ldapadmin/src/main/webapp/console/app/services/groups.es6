@@ -1,10 +1,13 @@
 angular.module('admin_console')
 .factory('Group', ['$resource', 'LDAP_BASE_URI', ($resource, baseUri) =>
-  $resource(baseUri + 'groups', {}, {
+  $resource(baseUri + 'groups/:id', { id: '@cn' }, {
     query: {
       cache: true,
       method:'GET',
       isArray:true
+    },
+    update: {
+      method: 'PUT'
     }
   })
 ]).factory('groupAdminList', [ () => {
