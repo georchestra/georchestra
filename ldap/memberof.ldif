@@ -11,7 +11,7 @@ objectClass: olcConfig
 objectClass: top
 olcOverlay: memberof
 olcMemberOfDangling: ignore
-olcMemberOfRefInt: FALSE
+olcMemberOfRefInt: TRUE
 olcMemberOfGroupOC: groupOfMembers
 olcMemberOfMemberAD: member
 olcMemberOfMemberOfAD: memberOf
