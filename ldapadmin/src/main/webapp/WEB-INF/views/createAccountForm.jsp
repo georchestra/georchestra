@@ -265,8 +265,9 @@
 			valid = testField("orgAddress") && valid;
 			valid = testField("orgType") && valid;
 
-			if(!valid)
+			if(!valid) {
 				return;
+			}
 
 			$("#createOrg").val("true");
 
