@@ -15,10 +15,11 @@ class UserController {
     let groupAdminFilter = $injector.get('groupAdminFilter')
 
     let translate = $injector.get('translate');
-    this.messages = {}
-    translate('user.updated', this.messages)
-    translate('user.error', this.messages)
-    translate('user.deleted', this.messages)
+    this.i18n = {}
+    translate('user.updated', this.i18n)
+    translate('user.error', this.i18n)
+    translate('user.deleted', this.i18n)
+    translate('user.content', this.i18n)
 
 
     this.tabs  = ['infos', 'groups', 'analytics', 'messages', 'logs', 'manage']
@@ -158,9 +159,9 @@ class UserController {
     let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
     this.user.$update(() => {
         $httpDefaultCache.removeAll()
-        flash.create('success', this.messages.updated)
+        flash.create('success', this.i18n.updated)
       },
-      flash.create.bind(flash, 'danger', this.messages.error)
+      flash.create.bind(flash, 'danger', this.i18n.error)
     )
   }
 
@@ -171,14 +172,32 @@ class UserController {
         $httpDefaultCache.removeAll()
         let $router = this.$injector.get('$router')
         $router.navigate($router.generate('users', { id: 'all'}))
-        flash.create('success', this.messages.deleted)
+        flash.create('success', this.i18n.deleted)
       },
-      flash.create.bind(flash, 'danger', this.messages.error)
+      flash.create.bind(flash, 'danger', this.i18n.error)
     )
   }
 
+  initCompose() {
+
+    const quill = new Quill(document.querySelector('#compose_content'), {
+      modules : {
+        toolbar: [
+          [ { header: [ 1, 2, false ] } ],
+          [ 'bold', 'italic', 'underline', 'image' ]
+        ]
+      },
+      placeholder: this.i18n.content,
+      theme: 'snow'
+    })
+    quill.on('text-change', () => {
+      this.compose.content = quill.container.firstChild.innerHTML
+    })
+  }
+
   openMessage(message) {
-    this.message = message
+    message.trusted = this.$injector.get('$sce').trustAsHtml(message.body)
+    this.message    = message
   }
 
   closeMessage(message) {

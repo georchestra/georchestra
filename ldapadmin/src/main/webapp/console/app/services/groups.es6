@@ -17,7 +17,7 @@ angular.module('admin_console')
     'GN_ADMIN',
     'GN_EDITOR',
     'GN_REVIEWER',
-    'USER'
+    'USER',
     'TEMPORARY'
   ]
   return () => admin_groups

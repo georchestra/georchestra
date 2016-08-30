@@ -27,6 +27,7 @@ class AppController {
 angular.module('admin_console', [
   'ngResource',
   'ngNewRouter',
+  'ngSanitize',
   'inline',
   'localytics.directives',
   'flash',

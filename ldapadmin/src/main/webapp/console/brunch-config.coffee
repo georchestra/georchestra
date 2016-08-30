@@ -14,6 +14,7 @@ module.exports = config:
           'vendor/jquery.js',
           'vendor/angular.js',
           'vendor/angular-resource.js',
+          'vendor/angular-sanitize.js',
           'vendor/bootstrap-datepicker.js',
           'vendor/router.es5.js',
           'vendor/chosen.jquery.js',
@@ -25,7 +26,8 @@ module.exports = config:
           'vendor/chartist.js',
           'vendor/inline.js',
           'vendor/select2.full.js',
-          'vendor/moment.min.js'
+          'vendor/moment.min.js',
+          'vendor/quill.js'
         ]
     stylesheets:
       joinTo:
@@ -35,7 +37,8 @@ module.exports = config:
           'vendor/bootstrap-datepicker3.css',
           'vendor/chartist.min.css',
           'vendor/chosen.min.css',
-          'vendor/select2.css'
+          'vendor/select2.css',
+          'vendor/quill.snow.css'
         ]
     templates:
       joinTo:

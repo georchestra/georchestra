@@ -96,6 +96,12 @@ section {
   .chosen-container {
     width: 100% !important;
   }
+  .ql-toolbar {
+    border-radius: 4px 4px 0 0;
+  }
+  .ql-container {
+    border-radius: 0 0 4px 4px;
+  }
 }
 
 // MESSAGES
