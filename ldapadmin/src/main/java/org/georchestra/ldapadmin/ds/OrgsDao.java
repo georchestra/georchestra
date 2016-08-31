@@ -212,6 +212,8 @@ public class OrgsDao {
             attrs.put("businessCategory", org.getOrgType());
         if(org.getAddress() != null)
             attrs.put("postalAddress", org.getAddress());
+        if(org.getNumericId() != null)
+            attrs.put("destinationIndicator", org.getNumericId().toString());
 
         return attrs;
     }
@@ -257,9 +259,13 @@ public class OrgsDao {
         List<OrgExt> orgs = ldapTemplate.search(this.orgsSearchBaseDN, filter.encode(), new OrgsDao.OrgExtAttributesMapper());
         Integer maxId = 0;
 
-        for(OrgExt org : orgs)
-            if(org.getNumericId() > maxId)
-                maxId = org.getNumericId();
+        for(OrgExt org : orgs){
+            Integer orgId = org.getNumericId();
+            if(orgId == null)
+                continue;
+            if(orgId > maxId)
+            maxId = orgId;
+        }
 
         return maxId + 1;
 

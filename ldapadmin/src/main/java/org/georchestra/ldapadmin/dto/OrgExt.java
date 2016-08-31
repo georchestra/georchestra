@@ -28,7 +28,7 @@ public class OrgExt {
     public static final String JSON_ADDRESS = "address";
     public static final String JSON_ID = "id";
     public static final String JSON_ORG_TYPE = "orgType";
-    private static final String JSON_NUMERIC_ID = "numericID";
+    private static final String JSON_NUMERIC_ID = "numericId";
 
     private String id;
     private String orgType;

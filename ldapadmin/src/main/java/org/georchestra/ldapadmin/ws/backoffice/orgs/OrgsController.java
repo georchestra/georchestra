@@ -243,7 +243,7 @@ public class OrgsController {
             Org org = new Org();
             OrgExt orgExt = new OrgExt();
 
-            // Generate string identifier based on short name
+            // Generate string identifier based on name
             String id = this.orgDao.generateId(json.getString(Org.JSON_NAME));
             org.setId(id);
             orgExt.setId(id);
