@@ -90,14 +90,12 @@
 
 				<div id="org_checkbox_div" class="form-group" style="margin-top: -15px;">
 					<div class="col-lg-8 col-lg-offset-4" >
-						<input id="create_org_checkbox" type="checkbox" disabled="disabled">
+						<form:checkbox id="createOrg" path="createOrg"/>
 						<s:message code="org.cannot_find_org_in_list" />
 					</div>
 				</div>
 
 				<div id="create_org_div" class="create_org_block">
-
-					<form:hidden path="createOrg" value="false"/>
 
 					<t:input path="orgName" required="true">
 						<jsp:attribute name="label"><s:message code="org.creation.label"/></jsp:attribute>
@@ -114,12 +112,6 @@
 					<t:list path="orgType" required="${orgTypeRequired}" items="${orgTypes}">
 						<jsp:attribute name="label"><s:message code="org.creation.orgType"/></jsp:attribute>
 					</t:list>
-
-					<div class="form-group" style="margin-bottom: 0px">
-						<div class="col-lg-8 col-lg-offset-4 text-right">
-							<button id="create_org_button" class="btn btn-primary btn-lg" style="padding: 3px;"><s:message code="org.creation.create"/></button>
-						</div>
-					</div>
 
 				</div>
 
@@ -207,10 +199,9 @@
     }
     /* Validate the form */
     function validate() {
-        if (testFirstname() & testSurname() & testEmail() & testUid() & testPassword() & testConfirmPassword() & testRecaptcha() &
-			testField("phone") & testField("org") & testField("title") & testField("description")
+        if (testFirstname() & testSurname() & testEmail() & testUid() & testPassword() & testConfirmPassword() &
+                testRecaptcha() & testField("phone") & testField("title") & testField("description") & testOrg()
         ) {
-			$("#org").prop("disabled", false);
             return true;
         } else {
             setFormError();
@@ -232,58 +223,21 @@
         $("input#uid").attr("placeholder", "<s:message code="uid.placeholder" />");
         $("input#password").attr("placeholder", "<s:message code="password.placeholder" />");
         $("input#confirmPassword").attr("placeholder", "<s:message code="confirmPassword.placeholder" />");
-        $("#org").select2({
-				placeholder:"Choose organization",
-		});
-		$("#orgType").select2({
-			placeholder:"Choose organization type",
-			required: "${orgTypeRequired}",
-			width: "100%",
-			dropdownAutoWidth : true
-		});
+        $("#org").select2();
+        $("#orgType").select2({width: "100%"});
 
-		// enable creation of org only if user already open droplist
-		// User must take a look at drop list before submiting a new org
-		$( "#org" ).on("select2:open", function (e) {
-			$("#create_org_checkbox").removeAttr("disabled");
-		});
-
-		// Animate org creation form
-		$( "#create_org_checkbox" ).change(function() {
-			if($( "#create_org_checkbox" ).prop( "checked" ) ){
-				$("#create_org_div").show(200);
-			} else {
-				$("#create_org_div").hide(200);
-			}
-		});
-
-		// submit org creation and fill droplist with new created org
-		$("#create_org_button").click(function (event) {
-			event.preventDefault();
-			var valid = testField("orgName");
-			valid = testField("orgShortName") && valid;
-			valid = testField("orgAddress") && valid;
-			valid = testField("orgType") && valid;
-
-			if(!valid) {
-				return;
-			}
-
-			$("#createOrg").val("true");
-
-			// Add new organisation to droplist and disable it
-			var newOrgOption = new Option($("#orgName").val(), $("#orgName").val(), true, true);
-			$('#org').select2().append(newOrgOption);
-			$('#org').select2().trigger('change');
-			$("#org").prop("disabled", true);
-
-			// Hide organisation form
-			$("#create_org_div").hide(200);
-			$("#org_checkbox_div").hide(200);
-
-		})
+        // Animate org creation form
+        $( "#createOrg" ).change(function() {
+            if($( "#createOrg" ).prop( "checked" ) ){
+                $("#create_org_div").show(200);
+                $("#org").prop("disabled", true);
+            } else {
+                $("#create_org_div").hide(200);
+                $("#org").prop("disabled", false);
+            }
+        });
 
     });
-	</script>
+    </script>
 </body>
 </html>

@@ -93,6 +93,19 @@ function testRecaptcha() {
 	}
 	return true;
 }
+function testOrg(){
+    removeError("orgName");
+    removeError("orgShortName");
+    removeError("orgAddress");
+    removeError("orgType");
+    removeError("org");
+    if($('#createOrg').is(':checked')){
+        return testField("orgName") & testField("orgShortName") & testField("orgAddress") & testField("orgType");
+    } else {
+        return testField("org");
+    }
+}
+
 function setFormError() {
 	$("form#form > #message").remove();
 	$("form#form").prepend('<div id="message" class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><s:message code="form.error" /></div>');

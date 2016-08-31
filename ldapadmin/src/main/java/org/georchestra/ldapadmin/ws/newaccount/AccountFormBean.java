@@ -48,7 +48,7 @@ public class AccountFormBean implements Serializable{
 	private String recaptcha_response_field;
 
 	// Org creation fields
-	private String createOrg;
+	private boolean createOrg;
 	private String orgName;
 	private String orgShortName;
 	private String orgAddress;
@@ -128,10 +128,10 @@ public class AccountFormBean implements Serializable{
 
 		this.surname = sn;
 	}
-	public String getCreateOrg() {
+	public boolean getCreateOrg() {
 		return createOrg;
 	}
-	public void setCreateOrg(String createOrg) {
+	public void setCreateOrg(boolean createOrg) {
 		this.createOrg = createOrg;
 	}
 	public String getOrgName() {
