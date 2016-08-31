@@ -9,7 +9,7 @@ RUN apt-get update && \
 # add a user 'geoserver' with default password : 'geoserver'
 # that can be overriden by environement variable $USER_PASS
 RUN groupadd --gid 999 geoserver
-RUN useradd -ms /bin/bash --home /home/geoserver -p $(perl -e'print crypt("geoserver", "salt")') --uid 999 --gid 999 geoserver
+RUN useradd -ms /bin/bash --home /home/geoserver -p $(perl -e'print crypt("${USER_PASS:-geoserver}", "salt")') --uid 999 --gid 999 geoserver
 
 RUN mkdir /home/geoserver/data
 RUN chown -R 999:999 /home/geoserver/data
