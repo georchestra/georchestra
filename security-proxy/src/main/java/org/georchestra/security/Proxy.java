@@ -169,7 +169,7 @@ public class Proxy {
     private String user;
     private String password;
     private Integer maxDatabaseConnections;
-    private Integer httpClientTimeout;
+    private Integer httpClientTimeout = 300000;
 
     public void init() throws Exception {
         if (targets != null) {
