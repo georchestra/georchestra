@@ -233,7 +233,7 @@ public class OrgsController {
      * A new JSON document will be return to browser with a complete description of created org. @see updateOrgInfos()
      * for JSON format.
      */
-    @RequestMapping(value = REQUEST_MAPPING + "", method = RequestMethod.PUT)
+    @RequestMapping(value = REQUEST_MAPPING, method = RequestMethod.PUT)
     public void createOrg(HttpServletRequest request, HttpServletResponse response) throws IOException, JSONException {
 
         try {
@@ -243,10 +243,13 @@ public class OrgsController {
             Org org = new Org();
             OrgExt orgExt = new OrgExt();
 
-            // Generate identifier based on short name
+            // Generate string identifier based on name
             String id = this.orgDao.generateId(json.getString(Org.JSON_NAME));
             org.setId(id);
             orgExt.setId(id);
+
+            // Generate unique numeric identifier
+            orgExt.setNumericId(this.orgDao.generateNumericId());
 
             // Update org and orgExt fields
             this.updateFromRequest(org, json);

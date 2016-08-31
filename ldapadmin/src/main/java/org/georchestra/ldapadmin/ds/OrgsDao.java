@@ -212,6 +212,8 @@ public class OrgsDao {
             attrs.put("businessCategory", org.getOrgType());
         if(org.getAddress() != null)
             attrs.put("postalAddress", org.getAddress());
+        if(org.getNumericId() != null)
+            attrs.put("destinationIndicator", org.getNumericId().toString());
 
         return attrs;
     }
@@ -249,6 +251,24 @@ public class OrgsDao {
             }
         }
         return id + i;
+    }
+
+    public Integer generateNumericId() {
+
+        EqualsFilter filter = new EqualsFilter("objectClass", "organization");
+        List<OrgExt> orgs = ldapTemplate.search(this.orgsSearchBaseDN, filter.encode(), new OrgsDao.OrgExtAttributesMapper());
+        Integer maxId = 0;
+
+        for(OrgExt org : orgs){
+            Integer orgId = org.getNumericId();
+            if(orgId == null)
+                continue;
+            if(orgId > maxId)
+            maxId = orgId;
+        }
+
+        return maxId + 1;
+
     }
 
     private class OrgAttributesMapper implements AttributesMapper<Org> {
@@ -295,7 +315,15 @@ public class OrgsDao {
             org.setId(asString(attrs.get("o")));
             org.setOrgType(asString(attrs.get("businessCategory")));
             org.setAddress(asString(attrs.get("postalAddress")));
+            org.setNumericId(asInteger(attrs.get("destinationIndicator")));
             return org;
+        }
+
+        public Integer asInteger(Attribute att) throws NamingException {
+            if(att == null)
+                return null;
+            else
+                return Integer.parseInt(asString(att));
         }
 
         public String asString(Attribute att) throws NamingException {
