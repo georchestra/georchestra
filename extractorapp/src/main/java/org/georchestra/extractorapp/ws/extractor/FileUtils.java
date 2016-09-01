@@ -76,7 +76,10 @@ public final class FileUtils {
             zip.putNextEntry(next);
             FileInputStream in = new FileInputStream(file);
             try {
-              in.getChannel().transferTo(0, file.length(), Channels.newChannel(zip));
+                long pos = 0;
+                pos = in.getChannel().transferTo(pos, file.length(), Channels.newChannel(zip));
+                while(pos < file.length())
+                    pos += in.getChannel().transferTo(pos, file.length(), Channels.newChannel(zip));
             } finally {
               in.close();
             }
