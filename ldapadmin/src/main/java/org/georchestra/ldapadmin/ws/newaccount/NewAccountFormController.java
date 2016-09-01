@@ -160,14 +160,11 @@ public final class NewAccountFormController {
 				.validate(formBean.getRecaptcha_challenge_field(), formBean.getRecaptcha_response_field(), result);
 		Validation.validateField("phone", formBean.getPhone(), result);
 		Validation.validateField("title", formBean.getTitle(), result);
-		Validation.validateField("org", formBean.getOrg(), result);
 		Validation.validateField("description", formBean.getDescription(), result);
 
-		if(result.hasErrors())
-			return "createAccountForm";
 
 		// Create org if needed
-		if("true".equals(formBean.getCreateOrg())){
+		if(formBean.getCreateOrg()){
 			try {
 
 				Org org = new Org();
@@ -201,7 +198,12 @@ public final class NewAccountFormController {
 				LOG.error(e.getMessage());
 				throw new IOException(e);
 			}
+		} else {
+			Validation.validateField("org", formBean.getOrg(), result);
 		}
+
+		if(result.hasErrors())
+			return "createAccountForm";
 
 
 		// inserts the new account
