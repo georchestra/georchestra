@@ -578,6 +578,42 @@ GEOR.mapinit = (function() {
                         scope: this
                     });
                 }
+                // Handle the case where OGC layers/servers are being sent via GET parameters...
+                // eg ?layername=commune_bdcarto,opendata:carroyage
+                // &owstype=WMSLayer,WMSLayer
+                // &owsurl=http://geobretagne.fr/geoserver/dreal_b/ows,https://preprod.ppige-npdc.fr/geoserver/ows
+                var p = GEOR.util.splitURL(window.location.href).params;
+                if (p.hasOwnProperty('LAYERNAME') && p.hasOwnProperty('OWSTYPE')
+                    && p.hasOwnProperty('OWSURL')) {
+                    // load the given layer on top of the WMC
+                    if (Ext.isArray(p.OWSURL) && Ext.isArray(p.OWSTYPE)
+                        && Ext.isArray(p.LAYERNAME) && p.OWSURL.length === p.OWSTYPE.length
+                        && p.OWSURL.length === p.LAYERNAME.length) {
+                        // several layers, eventually from different servers
+                        initState = [];
+                        Ext.each(p.OWSURL, function(item, idx) {
+                            initState.push({
+                                "url": p.OWSURL[idx],
+                                "type": p.OWSTYPE[idx],
+                                "name": p.LAYERNAME[idx]
+                            });
+                        });
+                    } else if (Ext.isString(p.OWSURL) && Ext.isString(p.OWSTYPE)
+                        && Ext.isString(p.LAYERNAME)) {
+                        // only one layer
+                        initState = [{
+                            "url": p.OWSURL,
+                            "type": p.OWSTYPE,
+                            "name": p.LAYERNAME
+                        }];
+                    } else {
+                        // query string error
+                        GEOR.util.errorDialog({
+                            msg: OpenLayers.i18n("Error while decoding querystring")
+                        });
+                    }
+                    loadLayers(initState);
+                }
                 return;
             }
 
