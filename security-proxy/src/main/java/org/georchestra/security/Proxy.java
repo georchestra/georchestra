@@ -135,6 +135,7 @@ public class Proxy {
     protected static final Log statsLogger = LogFactory.getLog(Proxy.class.getPackage().getName() + ".statistics");
     protected static final Log commonLogger = LogFactory.getLog(Proxy.class.getPackage().getName() + ".statistics-common");
 
+
     protected enum RequestType {
         GET, POST, DELETE, PUT, TRACE, OPTIONS, HEAD
     }
@@ -170,6 +171,14 @@ public class Proxy {
     private String password;
     private Integer maxDatabaseConnections;
     private Integer httpClientTimeout = 300000;
+
+    public void setHttpClientTimeout(Integer timeout) {
+        this.httpClientTimeout = timeout;
+    }
+
+    public Integer getHttpClientTimeout() {
+        return httpClientTimeout;
+    }
 
     public void init() throws Exception {
         if (targets != null) {
@@ -1359,7 +1368,4 @@ public class Proxy {
         return proxyPermissions;
     }
 
-    public void setHttpClientTimeoutTimeout(String timeout) {
-        this.httpClientTimeout = Integer.parseInt(timeout.trim());
-    }
 }
