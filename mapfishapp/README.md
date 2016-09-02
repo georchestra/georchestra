@@ -29,6 +29,13 @@ The application accepts several GET parameters :
  * **lang** can be set to any of the following : fr, en, es, ru, de,
  * **debug** when set to true, the application loads unminified javascript files,
  * **noheader** when set to true, the application does not load the header.
+ * **layername**, **owstype** and **owsurl** are used to load OGC layers, or to browse OGC servers
+
+Valid query strings:
+ * ?owstype=WMS&owsurl=http://server/ows
+ * ?layername=layer&owstype=WMSLayer&owsurl=http://server/ows
+ * ?layername=layer1,layer2&owstype=WMSLayer,WMSLayer&owsurl=http://server1/ows,https://server2/ows
+ * ?layername=layer1,layer2&owstype=WMSLayer,WMSLayer&owsurl=http://server1/ows,https://server2/ows&wmc=https://server3/path/to/file.wmc
 
 
 It is also possible to POST a JSON string to the home controller, for instance :
@@ -50,7 +57,7 @@ It is also possible to POST a JSON string to the home controller, for instance :
         }]
     }
 
-In response, the viewer will add the above two layers to the map, and display a dialog window showing the layers from the http://ids.pigma.org/geoserver/ign_r/wms WMS server. The department will only display features which have id_dept equals to 47.
+In response, the viewer will add the above two layers to the map, and display a dialog window showing the layers from the `http://ids.pigma.org/geoserver/ign_r/wms` WMS server. The CQL filter also applies, eg here: the department layer will only display features with `id_dept = 47`.
 
 
 CSWquerier
