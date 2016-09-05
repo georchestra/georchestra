@@ -8,11 +8,14 @@
   <link rel="stylesheet" href="public/app.css">
 
   <title>Admin Console</title>
+
+  <script src="/header/js/header.js"></script>
+
 </head>
 
 <body ng-app="admin_console" ng-strict-di ng-controller="AppController">
 
-  <iframe src="/header/?active=console" scrolling="no" frameborder="0"></iframe>
+  <iframe src="/header/?active=console" scrolling="no" frameborder="0" onload="_headerOnLoad(this)"></iframe>
 
   <div flash-message="2000"></div>
 
