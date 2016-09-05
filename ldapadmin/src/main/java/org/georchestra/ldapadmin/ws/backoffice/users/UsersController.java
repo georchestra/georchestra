@@ -56,6 +56,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.Normalizer;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,6 +87,7 @@ public class UsersController {
 	private static final String UNABLE_TO_ENCODE = "unable_to_encode";
 	private static final String INVALID_VALUE = "invalid_value";
 	private static final String OTHER_ERROR = "other_error";
+	private static final String INVALID_DATE_FORMAT = "invalid_date_format";
 
 	private AccountDao accountDao;
 	@Autowired
@@ -494,7 +497,11 @@ public class UsersController {
 		} catch (JSONException e) {
 			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, UNABLE_TO_ENCODE);
 			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
+		} catch (ParseException e){
+			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, INVALID_DATE_FORMAT);
+			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_BAD_REQUEST);
 		}
+
 	}
 
 	/**
@@ -549,7 +556,7 @@ public class UsersController {
 	 *
 	 * @throws IOException
 	 */
-	private Account modifyAccount(Account account, ServletInputStream inputStream) throws IOException {
+	private Account modifyAccount(Account account, ServletInputStream inputStream) throws IOException, ParseException {
 
 		String strUser = FileUtils.asString(inputStream);
 		JSONObject json;
@@ -632,8 +639,8 @@ public class UsersController {
 		
 		String commonName = AccountFactory.formatCommonName(
 				account.getGivenName(), account.getSurname());
-
 		account.setCommonName(commonName);
+
 		String uid = RequestUtil.getFieldValue(json, UserSchema.UID_KEY);
 		if (uid != null) {
 			account.setUid(uid);
@@ -642,6 +649,10 @@ public class UsersController {
 		String org = RequestUtil.getFieldValue(json, UserSchema.ORG_KEY);
 		if(org != null)
 			account.setOrg(org);
+
+		String shadowExpire = RequestUtil.getFieldValue(json, UserSchema.SHADOW_EXPIRE_KEY);
+		if(shadowExpire != null)
+			account.setShadowExpire((new SimpleDateFormat("yyyy-MM-dd")).parse(shadowExpire));
 
 		return account;
 	}

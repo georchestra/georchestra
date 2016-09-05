@@ -34,7 +34,6 @@ import ezvcard.parameter.EmailType;
 import ezvcard.parameter.TelephoneType;
 import ezvcard.property.Address;
 import ezvcard.property.FormattedName;
-import ezvcard.property.Organization;
 
 import javax.naming.InvalidNameException;
 
@@ -297,7 +296,7 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 		res.put(UserSchema.STATE_OR_PROVINCE_KEY, this.stateOrProvince);
 		res.put(UserSchema.HOME_POSTAL_ADDRESS_KEY, this.homePostalAddress);
 		if(this.shadowExpire != null) {
-			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 			res.put(UserSchema.SHADOW_EXPIRE_KEY, dateFormat.format(this.shadowExpire));
 		}
 		if(this.manager != null)
