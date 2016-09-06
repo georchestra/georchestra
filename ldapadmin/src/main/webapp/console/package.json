@@ -40,6 +40,7 @@
     "moment": "^2.12.0",
     "quill": "^1.0.0-rc.0",
     "sass-brunch": "1.9.2",
+    "save-svg-as-png": "^1.0.3",
     "select2": "^4.0.2",
     "uglify-js-brunch": "^2.0.1"
   },
