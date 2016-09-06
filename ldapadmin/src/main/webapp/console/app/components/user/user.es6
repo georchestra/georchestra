@@ -46,6 +46,9 @@ class UserController {
           $('.manager').select2({
             data  : sel_users
           })
+          this.$injector.get('$timeout')(() => {
+            $('.manager').trigger('change')
+          })
         })
         let sel_orgs = []
         Orgs.query((orgs) => {
