@@ -162,7 +162,6 @@ if(sec_roles != null) {
     <script type="text/javascript" src="resources/build/lang/<%= lang %>.js"></script>
         </c:otherwise>
     </c:choose>
-    <script type="text/javascript" src="resources/lib/externals/ext/src/locale/ext-lang-<%= lang %>.js"></script>
     
     <script type="text/javascript">
         // remove the loading element
