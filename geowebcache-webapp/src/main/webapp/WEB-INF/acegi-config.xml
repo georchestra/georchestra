@@ -28,9 +28,7 @@
     -->
     <bean id="restFilterDefinitionMap" class="org.geowebcache.security.RESTfulDefinitionSource">
         <constructor-arg type="java.lang.String">
-            <value>/demo=ROLE_ADMINISTRATOR
-                /demo/**=ROLE_ADMINISTRATOR
-                /home=ROLE_ADMINISTRATOR
+            <value>
                 /rest/**=ROLE_ADMINISTRATOR
                 /**:GET=IS_AUTHENTICATED_ANONYMOUSLY
                 /**:POST,DELETE,PUT=ROLE_ADMINISTRATOR </value>
