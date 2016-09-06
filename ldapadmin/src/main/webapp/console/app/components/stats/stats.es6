@@ -44,7 +44,7 @@ class StatsController {
         axisY: {
           offset: 45,
           labelInterpolationFnc: (value, index) =>
-            (value > 10000) ? Math.floor(value / 1000) + 'K' : value
+            (value > 10000) ? Math.floor(value / 100)/10 + 'K' : value
         },
         axisX: {
           labelInterpolationFnc: (value, index) => {
@@ -67,16 +67,41 @@ class StatsController {
             return value
           }
         }
+
       }
     }
     let el = $element.find('.chartist')
     this.lines = new Chartist[this.type=='bar' ? 'Bar' : 'Line'](
       el[0], this.parsed, options
     )
+    this.lines.on('draw', (data) => {
+      if(data.type === 'label') {
+        let ydiff = 8
+        if (data.axis.units.dir == 'vertical') {
+          let delta = el.height() / (data.axis.ticks.length)
+          ydiff = (this.type == 'bar') ? 18 : ( delta )
+        }
+        let text = Chartist.Svg('text', {
+          x : data.x,
+          y : data.y + ydiff
+        }).text(data.text)
+        data.element.replace(text)
+      }
+    })
     this.$injector.get('translate')(this.title).then(
       (v) => el.attr('title', v)
     )
     this.view = 'graph'
+
+    this.export = () => {
+      let el = $element.find('svg')
+      el.append($(
+        '<style>' +
+        Array.from(document.styleSheets[3].cssRules).map(x => x.cssText).join('') +
+        '</style>')
+      )
+      saveSvgAsPng(el[0], 'image.png')
+    }
 
   }
 

@@ -1,0 +1,32 @@
+$lightblue: #009FE3;
+svg {
+  background: white;
+}
+
+.chartist {
+  height: 25em;
+}
+.ct-label {
+  font-size: 1rem;
+}
+.ct-barlabel {
+  font-size: 1rem;
+  fill: white;
+}
+.ct-series-a
+.ct-bar,
+.ct-series-a
+.ct-line,
+.ct-series-a
+.ct-point,
+.ct-series-a
+.ct-slice-donut
+{
+  stroke: $lightblue;
+}
+
+text {
+  font-size   : 11px;
+  font-family : Arial;
+  fill        : #AAA;
+}
