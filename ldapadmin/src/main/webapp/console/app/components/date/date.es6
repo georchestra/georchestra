@@ -50,3 +50,9 @@ angular.module('admin_console').component('date', {
   controllerAs : 'date',
   templateUrl  : 'components/date/date.tpl.html'
 })
+.directive('datepicker', () => ({
+  require: 'ngModel',
+  link: (scope, elm, attrs, ctrl) => {
+    elm.datepicker({ format: 'yyyy-mm-dd' })
+  }
+}))
