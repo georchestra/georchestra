@@ -9,6 +9,7 @@ dn: uid=testuser,ou=users,dc=georchestra,dc=org
 objectClass: organizationalPerson
 objectClass: person
 objectClass: inetOrgPerson
+objectClass: shadowAccount
 objectClass: top
 mail: psc+testuser@georchestra.org
 o: geOrchestra
@@ -26,6 +27,7 @@ dn: uid=testreviewer,ou=users,dc=georchestra,dc=org
 objectClass: inetOrgPerson
 objectClass: organizationalPerson
 objectClass: person
+objectClass: shadowAccount
 objectClass: top
 uid: testreviewer
 givenName: Test
@@ -42,6 +44,7 @@ dn: uid=testeditor,ou=users,dc=georchestra,dc=org
 objectClass: inetOrgPerson
 objectClass: organizationalPerson
 objectClass: person
+objectClass: shadowAccount
 objectClass: top
 uid: testeditor
 givenName: Test
@@ -58,6 +61,7 @@ dn: uid=testadmin,ou=users,dc=georchestra,dc=org
 objectClass: organizationalPerson
 objectClass: person
 objectClass: inetOrgPerson
+objectClass: shadowAccount
 objectClass: top
 uid: testadmin
 givenName: Test
@@ -75,6 +79,7 @@ sn: geoserver_privileged_user
 objectClass: organizationalPerson
 objectClass: person
 objectClass: inetOrgPerson
+objectClass: shadowAccount
 objectClass: top
 mail: psc+geoserver_privileged_user@georchestra.org
 uid: geoserver_privileged_user

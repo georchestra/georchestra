@@ -91,7 +91,6 @@ public final class AccountDaoImpl implements AccountDao {
         this.ldapTemplate = ldapTemplate;
         this.groupDao = groupDao;
         this.orgDao = orgDao;
-
     }
 
     public void init() {
@@ -470,7 +469,7 @@ public final class AccountDaoImpl implements AccountDao {
     private void mapToContext(Integer uniqueNumber, Account account, DirContextOperations context) {
 
         context.setAttributeValues("objectclass", new String[] { "top", "person", "organizationalPerson",
-                "inetOrgPerson" });
+                "inetOrgPerson", "shadowAccount" });
 
         // person attributes
         if (uniqueNumber != null) {
@@ -520,7 +519,11 @@ public final class AccountDaoImpl implements AccountDao {
 
         if(account.getManager() != null)
             setAccountField(context, UserSchema.MANAGER_KEY, "uid=" + account.getManager() + "," + this.userSearchBaseDN.toString() + "," + this.getBasePath());
-        
+
+        // Return shawdow Expire field as yyyy-mm-dd
+        if(account.getShadowExpire() != null)
+            setAccountField(context, UserSchema.SHADOW_EXPIRE_KEY, String.valueOf(account.getShadowExpire().getTime() / 1000));
+
         setAccountField(context, UserSchema.CONTEXT_KEY, account.getContext());
     }
 

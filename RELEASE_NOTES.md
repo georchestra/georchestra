@@ -3,6 +3,16 @@ The development branch is master. It can be used for testing and reporting error
 For production systems, you are advised to use the stable branch (currently 15.12).
 This branch receives bug fixes as they arrive, during 12 months at least.
 
+Version 16.12
+=============
+
+* In order to be able to set shadowExpire (account expiration date), you need to update your LDAP tree and add shadowAccount objectClass on all users :
+
+In your LDIF file, you can add :
+``` 
+objectClass: shadowAccount
+```
+
 Version 15.12
 =============
 
