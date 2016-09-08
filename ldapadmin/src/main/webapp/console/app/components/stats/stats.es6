@@ -96,9 +96,9 @@ class StatsController {
     this.export = () => {
       let el = $element.find('svg')
       el.append($(
-        '<style>' +
-        Array.from(document.styleSheets[3].cssRules).map(x => x.cssText).join('') +
-        '</style>')
+        '<style>' + Array.from(
+          document.querySelector('.svg-styles').sheet.cssRules
+        ).map(x => x.cssText).join('') + '</style>')
       )
       saveSvgAsPng(el[0], 'image.png')
     }
