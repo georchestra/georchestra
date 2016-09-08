@@ -167,8 +167,8 @@ public class EmailController {
             email.setAttachments(attachments);
             this.send(email);
 						
-						AdminLogEntry log = new AdminLogEntry(sender, recipient, AdminLogType.EMAIL_SENT, new Date());
-						this.emailRepository.save(email);
+            AdminLogEntry log = new AdminLogEntry(sender, recipient, AdminLogType.EMAIL_SENT, new Date());
+            this.emailRepository.save(email);
             response.setContentType("application/json");
             return email.toJSON().toString();
 						
@@ -285,7 +285,7 @@ public class EmailController {
 
         // html part
         MimeBodyPart htmlPart = new MimeBodyPart();
-        htmlPart.setContent(email.getBody(), "text/html");
+        htmlPart.setContent(email.getBody(), "text/html; charset=utf-8");
         multiPart.addBodyPart(htmlPart);
 
         message.setContent(multiPart);
