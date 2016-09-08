@@ -44,6 +44,7 @@ class UserController {
             })
           })
           $('.manager').select2({
+            allowClear: true,
             data  : sel_users
           })
           this.$injector.get('$timeout')(() => {

@@ -99,9 +99,9 @@ public class RequestUtil {
 		try {
 			value = json.getString(fieldName);
 		} catch (JSONException e) {
-			value = null;
+			return null;
 		}
-		return value;
+		return value.length() > 0 ? value : null;
 	}
 
 
