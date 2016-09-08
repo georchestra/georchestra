@@ -519,6 +519,8 @@ public final class AccountDaoImpl implements AccountDao {
 
         if(account.getManager() != null)
             setAccountField(context, UserSchema.MANAGER_KEY, "uid=" + account.getManager() + "," + this.userSearchBaseDN.toString() + "," + this.getBasePath());
+        else
+            setAccountField(context, UserSchema.MANAGER_KEY, null);
 
         // Return shawdow Expire field as yyyy-mm-dd
         if(account.getShadowExpire() != null)

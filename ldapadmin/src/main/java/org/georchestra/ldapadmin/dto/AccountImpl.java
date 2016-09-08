@@ -541,7 +541,9 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 
 	@Override
 	public void setManager(String manager) {
-		if(manager != null) {
+		if (manager == null || manager.length() == 0){
+			this.manager = null;
+		} else {
 			try {
 				LdapName dn = new LdapName(manager);
 				this.manager = dn.getRdn(dn.size() - 1).getValue().toString();

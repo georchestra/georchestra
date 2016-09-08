@@ -628,10 +628,8 @@ public class UsersController {
 		}
 
 		String manager = RequestUtil.getFieldValue(json, UserSchema.MANAGER_KEY);
-		if (manager != null) {
-			account.setManager(manager);
-		}
-		
+		account.setManager(manager);
+
 		String context = RequestUtil.getFieldValue(json, UserSchema.CONTEXT_KEY);
 		if (context != null) {
 			account.setContext(context);

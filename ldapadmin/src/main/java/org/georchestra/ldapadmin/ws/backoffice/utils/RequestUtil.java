@@ -101,7 +101,7 @@ public class RequestUtil {
 		} catch (JSONException e) {
 			return null;
 		}
-		return value.length() > 0 ? value : null;
+		return value;
 	}
 
 
