@@ -27,6 +27,7 @@ class AppController {
 angular.module('admin_console', [
   'ngResource',
   'ngNewRouter',
+  'ngSanitize',
   'inline',
   'localytics.directives',
   'flash',
@@ -47,9 +48,10 @@ angular.module('admin_console', [
   $componentLoader.setTemplateMapping(
     (name) => 'components/' + name + '/' + name + '.tpl.html')
   $translate
-    .preferredLanguage('en')
     .useSanitizeValueStrategy('escape')
     .useStaticFilesLoader({ prefix: 'public/lang/', suffix: '.json' })
+    .determinePreferredLanguage()
+    .fallbackLanguage('en')
   $location.html5Mode(false)
   paginationTemplate.setPath('templates/dirPagination.tpl.html')
 

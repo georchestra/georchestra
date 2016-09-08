@@ -19,7 +19,7 @@ class StatsController {
   initialize($element, $scope) {
     var options;
 
-    this.parsed = this.parseData()
+    this.parseData()
     this.granularity = this.data.granularity
 
     if (this.type == 'bar') {
@@ -44,7 +44,7 @@ class StatsController {
         axisY: {
           offset: 45,
           labelInterpolationFnc: (value, index) =>
-            (value > 10000) ? Math.floor(value / 1000) + 'K' : value
+            (value > 10000) ? Math.floor(value / 100)/10 + 'K' : value
         },
         axisX: {
           labelInterpolationFnc: (value, index) => {
@@ -67,12 +67,47 @@ class StatsController {
             return value
           }
         }
+
       }
     }
+    let el = $element.find('.chartist')
     this.lines = new Chartist[this.type=='bar' ? 'Bar' : 'Line'](
-      $element.find('.chartist')[0], this.parsed, options
+      el[0], this.parsed, options
+    )
+
+    // Replace foreign object with text tag to allow png export.
+    // We then have to correctly place labels by ourselves.
+    this.lines.on('draw', (data) => {
+      if(data.type === 'label') {
+        // Move x-axis label above bottom line
+        let ydiff = 8
+        if (data.axis.units.dir == 'vertical') {
+          // Align y-axis labels in front of lines
+          let delta = el.height() / (data.axis.ticks.length)
+          // For bar graph, move it in front of bar
+          ydiff = (this.type == 'bar') ? 18 : delta
+        }
+        let text = Chartist.Svg('text', {
+          x : data.x,
+          y : data.y + ydiff
+        }).text(data.text)
+        data.element.replace(text)
+      }
+    })
+    this.$injector.get('translate')(this.title).then(
+      (v) => el.attr('title', v)
     )
     this.view = 'graph'
+
+    this.export = () => {
+      let el = $element.find('svg')
+      el.append($(
+        '<style>' + Array.from(
+          document.querySelector('.svg-styles').sheet.cssRules
+        ).map(x => x.cssText).join('') + '</style>')
+      )
+      saveSvgAsPng(el[0], 'image.png')
+    }
 
   }
 
@@ -84,9 +119,11 @@ class StatsController {
     let data = this.data.results
     this.nodata = !data || data.length == 0
     if (this.nodata) { return }
-    return {
-      labels :  data.map(x => x[this.config[0]]),
-      series : [data.map(x => x[this.config[1]])]
+    let serie = data.map(x => x[this.config[1]])
+    this.serie = (this.type == 'line') ? [].concat(serie).reverse() : serie
+    this.parsed =  {
+      labels : data.map(x => x[this.config[0]]),
+      series : [ [].concat(serie) ]
     }
   }
 

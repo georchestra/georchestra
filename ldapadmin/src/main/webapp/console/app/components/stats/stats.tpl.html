@@ -9,7 +9,12 @@
     </button>
   </div>
 
-  <h5>{{stats.title | translate}}</h5>
+  <h5>
+    {{stats.title | translate}}
+    <span ng-if="stats.data.granularity">
+      {{'analytics.' + stats.data.granularity | translate}}
+    </span>
+  </h5>
 
   <div ng-show="stats.nodata && stats.data.$resolved" class="alert alert-warning">
     <i class="glyphicon glyphicon-alert"></i>&nbsp;
@@ -23,15 +28,16 @@
 
   <div class="chartist" ng-show="stats.view=='graph' && stats.data.$resolved && !stats.nodata"></div>
 
+  <button ng-click="stats.export()" class="btn btn-default btn-sm center-block"
+    ng-show="stats.view=='graph' && stats.data.$resolved && !stats.nodata">
+    <i class="glyphicon glyphicon-save"></i>
+  </button>
+
   <table class="table table-bordered table-striped" ng-show="stats.view=='table'">
-    <tr ng-repeat="value in stats.parsed.series[0] track by $index">
-      <td>{{stats.parsed.labels[$index]}}</td>
+    <tr ng-repeat="value in stats.serie track by $index">
+      <td>{{stats.parsed.labels[stats.serie.length - $index -1]}}</td>
       <td>{{value}}</td>
     </tr>
   </table>
-
-  <p class="text-center" ng-if="stats.data.granularity">
-    {{'analytics.' + stats.data.granularity | translate}}
-  </p>
 
 </div>

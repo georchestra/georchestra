@@ -88,7 +88,7 @@
             ng-options="template.name for template in user.templates.templates" ng-model="user.compose.template"></select>
         </label>
 
-        <form ng-if="user.compose" class="">
+        <form ng-if="user.compose" class="" ng-init="user.initCompose()">
           <div class="form-group">
             <label for="compose_title" translate>msg.title</label>
             <div>
@@ -97,9 +97,7 @@
           </div>
           <div class="form-group">
             <label for="compose_content" translate>msg.content</label>
-            <div >
-              <textarea ng-model="user.compose.content" class="form-control" id="compose_content" placeholder="{{'msg.content' | translate}}"></textarea>
-            </div>
+            <div id="compose_content"></div>
           </div>
 
           <h5 translate ng-if="user.attachments.attachments.length > 0">msg.attachments</h5>
@@ -130,14 +128,12 @@
           <h4>
             {{user.message.subject}}
           </h4>
-          <p>
-            {{user.message.body}}
-          </p>
+          <p ng-bind-html="user.message.trusted"></p>
           <hr ng-if="user.message.attachments.length>0" />
           <h5 ng-if="user.message.attachments.length>0" translate>msg.attachments</h5>
           <ul ng-if="user.message.attachments.length>0">
             <li ng-repeat="attachment in user.message.attachments">
-              {{attachment.name}} ({{attachment.size / 1000 | number:0}} Mo)
+              {{attachment.name}}
             </li>
           </ul>
         </div>
@@ -152,7 +148,10 @@
           <tbody>
             <tr ng-repeat="message in user.messages.emails">
               <td>{{::message.date | date: 'mediumDate'}}</td>
-              <td><a ng-click="user.openMessage(message)" href="javascript:void(0);">{{::message.subject}}</a>
+              <td>
+                <a ng-click="user.openMessage(message)" href="javascript:void(0);">
+                  {{::message.subject}}<em ng-if="message.subject==''" translate>msg.nosubject</em>
+                </a>
               </td>
               <td>{{::message.sender}}</td>
             </tr>
@@ -180,7 +179,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr dir-paginate="log in user.logs.logs | itemsPerPage: 2">
+            <tr dir-paginate="log in user.logs.logs | itemsPerPage: 10">
               <td>{{::log.date | date: 'mediumDate'}}</td>
               <td>{{::log.admin}}</td>
               <td>{{::log.type}}</td>
