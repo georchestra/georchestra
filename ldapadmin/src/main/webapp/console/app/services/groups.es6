@@ -1,12 +1,13 @@
 angular.module('admin_console')
 .factory('Group', ['$resource', 'LDAP_BASE_URI', ($resource, baseUri) =>
-  $resource(baseUri + 'groups/:id', { id: '@cn' }, {
+  $resource(baseUri + 'groups/:id', {}, {
     query: {
       cache: true,
       method:'GET',
       isArray:true
     },
     update: {
+      params: { id: '@cn' },
       method: 'PUT'
     }
   })
