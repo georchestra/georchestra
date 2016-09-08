@@ -74,12 +74,18 @@ class StatsController {
     this.lines = new Chartist[this.type=='bar' ? 'Bar' : 'Line'](
       el[0], this.parsed, options
     )
+
+    // Replace foreign object with text tag to allow png export.
+    // We then have to correctly place labels by ourselves.
     this.lines.on('draw', (data) => {
       if(data.type === 'label') {
+        // Move x-axis label above bottom line
         let ydiff = 8
         if (data.axis.units.dir == 'vertical') {
+          // Align y-axis labels in front of lines
           let delta = el.height() / (data.axis.ticks.length)
-          ydiff = (this.type == 'bar') ? 18 : ( delta )
+          // For bar graph, move it in front of bar
+          ydiff = (this.type == 'bar') ? 18 : delta
         }
         let text = Chartist.Svg('text', {
           x : data.x,
