@@ -58,6 +58,7 @@ geowebcache:
   image: georchestra/geowebcache:latest
   volumes:
     - geowebcache_tiles:/var/local/tiles
+    - /etc/georchestra:/etc/georchestra
   environment:
     - XMX=1g
 
@@ -65,6 +66,8 @@ proxy:
   image: georchestra/security-proxy:latest
   ports:
     - "8080:8080"
+  volumes:
+    - /etc/georchestra:/etc/georchestra
   links:
     - database
     - ldap
@@ -83,6 +86,8 @@ proxy:
 
 cas:
   image: georchestra/cas:latest
+  volumes:
+    - /etc/georchestra:/etc/georchestra
   links:
     - ldap
   environment:
@@ -91,17 +96,17 @@ cas:
 mapfishapp:
   image: georchestra/mapfishapp:latest
   volumes:
+    - /etc/georchestra:/etc/georchestra
     - mapfishapp_uploads:/var/local/uploads
   links:
     - database
-  volumes:
-    - mapfishapp_uploads:/var/local/uploads
   environment:
     - XMX=1g
 
 extractorapp:
   image: georchestra/extractorapp:latest
   volumes:
+    - /etc/georchestra:/etc/georchestra
     - extractorapp_extracts:/var/local/extracts
   links:
     - database
@@ -113,11 +118,15 @@ extractorapp:
 
 header:
   image: georchestra/header:latest
+  volumes:
+    - /etc/georchestra:/etc/georchestra
   environment:
     - XMX=512m
 
 ldapadmin:
   image: georchestra/ldapadmin:latest
+  volumes:
+    - /etc/georchestra:/etc/georchestra
   links:
     - database
     - ldap
@@ -133,12 +142,15 @@ geonetwork:
     - database
     - ldap
   volumes:
+    - /etc/georchestra:/etc/georchestra
     - geonetwork_datadir:/var/local/geonetwork
   environment:
     - XMX=2g
 
 analytics:
   image: georchestra/analytics:latest
+  volumes:
+    - /etc/georchestra:/etc/georchestra
   links:
     - database
   environment:
@@ -146,6 +158,10 @@ analytics:
 
 catalogapp:
   image: georchestra/catalogapp:latest
+  volumes:
+    - /etc/georchestra:/etc/georchestra
 
 downloadform:
   image: georchestra/downloadform:latest
+  volumes:
+    - /etc/georchestra:/etc/georchestra
