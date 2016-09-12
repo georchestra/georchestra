@@ -40,10 +40,11 @@ To login, use these credentials:
  * `testuser` / `testuser`
  * `testadmin` / `testadmin`
 
-To upload data into the GeoServer data volume (`geoserver_geodata`), we recommend rsync:
+To upload data into the GeoServer data volume (`geoserver_geodata`), use rsync:
 ```
 rsync -arv -e `ssh -p 2222` /path/to/geodata/ geoserver@localhost:/home/geoserver/data 
 ```
+(password is: `geoserver`)
 
 Files uploaded into this volume will be available for the geoserver instance in `/var/local/geodata`.
 
