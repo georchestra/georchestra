@@ -4,15 +4,15 @@ Usually, you don't have to do this, since it is already taken care of by our CI,
 
 ## PostGreSQL
 
-```
-cd <georchestra-root>/postgresql
+```bash
+cd postgresql
 docker build -t georchestra/database .
 ```
 
 ## LDAP 
 
-```
-cd <georchestra-root>/ldap
+```bash
+cd ldap
 docker build -t georchestra/ldap .
 ```
 
@@ -55,7 +55,7 @@ cd ../../webapp
 ### Other webapps
 
 From the project root:
-```
+```bash
 ./mvn clean package docker:build -Pdocker -DskipTests --pl extractorapp,cas-server-webapp,security-proxy,mapfishapp,header,ldapadmin,analytics,catalogapp,downloadform,geowebcache-webapp
 ```
 
@@ -72,13 +72,13 @@ docker build -t georchestra/ssh_data .
 ```
 
 These files can be managed through SSH, eg with:
-```
+```bash
 ssh -p 2222 geoserver@localhost 
 ```
 The default password is `geoserver`.
 
 File should be transfered to the `/home/geoserver/data/` folder:
-```
+```bash
 geoserver@20d925d9072b:~$ ls -al /home/geoserver/data/
 total 8
 drwxr-xr-x 2 geoserver geoserver 4096 Jan 22 13:10 .
