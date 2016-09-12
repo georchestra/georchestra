@@ -24,7 +24,7 @@ git clone -b docker-master https://github.com/georchestra/datadir.git
 sudo mv datadir /etc/georchestra
 ```
 
-Optional: adjust the configuration in /etc/georchestra according to your needs.
+Optional: adjust the configuration in `/etc/georchestra` according to your needs.
 
 
 **Third step**
