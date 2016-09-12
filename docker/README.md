@@ -1,44 +1,24 @@
-# geOrchestra on Docker
+# Building your own docker images for geOrchestra
 
-## Build 
+Usually, you don't have to this, since it is already taken care of by our CI, which pushes the latest images to docker hub.
 
-### With maven
-
-The following modules have a maven configuration to build docker images:
- 
- * CAS
- * DownloadForm
- * ExtractorApp
- * GeoWebCache
- * Header
- * Ldapadmin
- * MapfishApp
- * Security Proxy
-
-In order to (re)build a docker image:
-
-```bash
-cd <module>
-../mvn -P docker clean package docker:build
+## PostGreSQL
 
 ```
+cd <georchestra-root>/postgresql
+docker build -t georchestra/database .
+```
 
-This will build a 'georchestra/<module>' image
+## LDAP 
 
-(Replace <module> by module name)
+```
+cd <georchestra-root>/ldap
+docker build -t georchestra/ldap .
+```
 
+## Webapps
 
-### Not dockerized
-Following modules are not already dockerized:
-
- * Analytics
- * Atlas
- * Catalog App
- * GeoFence
- 
-### Other custom modules
- 
-#### GeoNetwork 
+### GeoNetwork 3
 
 ```bash
 cd geonetwork 
@@ -47,7 +27,7 @@ cd web
 ../../mvn -P docker -DskipTests package docker:build
 ```
 
-#### GeoServer without geofence
+### GeoServer without geofence
 
 This creates a ```georchestra/geoserver``` docker image:
 
@@ -59,9 +39,9 @@ cd ../../webapp
 ../../mvn clean install docker:build -Pdocker -DskipTests
 ```
 
-#### GeoServer with geofence
+### GeoServer with geofence
 
-This creates a ```georchestra/geoserver:geofence-15.12``` docker image:
+This creates a ```georchestra/geoserver:geofence``` docker image:
 
 ```bash
 cd geoserver/geoserver-submodule/src
@@ -71,26 +51,38 @@ cd ../../webapp
 ../../mvn clean install docker:build -Pdocker,geofence -DskipTests
 ```
 
-#### Geodata container
-This creates a ```georchestra/ssh_data``` docker image:
+
+### Other webapps
+
+From the project root:
+```
+./mvn clean package docker:build -Pdocker -DskipTests --pl extractorapp,cas-server-webapp,security-proxy,mapfishapp,header,ldapadmin,analytics,catalogapp,downloadform,geowebcache-webapp
+```
+
+
+## Other complementary modules
+
+### Geodata upload
+
+This creates a ```georchestra/ssh_data``` docker image, which will be useful to transfer geodata into the SDI:
 
 ```bash
 cd ../../docker/ssh_data
 docker build -t georchestra/ssh_data .
 ```
-This image will be used to transfer and store geodata files for geoserver. 
-Through composition (docker-compose), those files will be available to all geoserver instances in `/var/local/geodata`. 
 
-
-These files can also be managed via SSH onto the `georchestra_geodata_1`, eg with:
+These files can be managed through SSH, eg with:
 ```
 ssh -p 2222 geoserver@localhost 
 ```
-The default password is `geoserver`
+The default password is `geoserver`.
 
+File should be transfered to the `/home/geoserver/data/` folder:
 ```
 geoserver@20d925d9072b:~$ ls -al /home/geoserver/data/
 total 8
 drwxr-xr-x 2 geoserver geoserver 4096 Jan 22 13:10 .
 drwxr-xr-x 4 geoserver geoserver 4096 Jan 22 13:10 ..
 ```
+
+They will be made available to all geoserver instances in `/var/local/geodata`. 

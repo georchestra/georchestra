@@ -4,6 +4,13 @@ This folder holds the required files to configure and populate an OpenLDAP direc
 
 Please refer to the [geOrchestra documentation](https://github.com/georchestra/georchestra/blob/master/README.md) for instructions, and **use the branch matching your geOrchestra version** !
 
+## Docker
+
+In case you have to build the `georchestra/ldap` docker image, this can be done inside this directory with:
+```
+docker build -t georchestra/ldap .
+```
+
 ## groupofmembers.ldif
 
 This file imports ```groupOfMembers``` LDAP objectClass into OpenLdap available schemas. It allows to have empty groups, which the default ```groupOfNames``` doesn't permit. ```groupOfMembers``` comes from RFC2037bis and is used in lots of places.
