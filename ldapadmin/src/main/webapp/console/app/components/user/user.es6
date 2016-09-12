@@ -277,6 +277,7 @@ angular.module('admin_console')
 .filter('encodeURIComponent', () => window.encodeURIComponent )
 .directive('managers', [ '$timeout', 'User', ($timeout, User) => ({
   link: (scope, elm, attrs, ctrl) => {
+    let promise = scope.$eval(attrs['promise'])
     let sel_users = []
     User.query((users) => {
       users.map((u) => {
@@ -291,10 +292,12 @@ angular.module('admin_console')
         allowClear: true,
         data  : sel_users
       })
-      $timeout(() => {
-        elm.val('')
-        elm.trigger('change')
-      })
+      let cb = () => { $timeout(() => { elm.trigger('change') }) }
+      if (promise) {
+        promise.then(cb)
+      } else {
+        cb()
+      }
     })
   }
 })])
