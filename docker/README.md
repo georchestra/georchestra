@@ -1,6 +1,6 @@
 # Building your own docker images for geOrchestra
 
-Usually, you don't have to this, since it is already taken care of by our CI, which pushes the latest images to docker hub.
+Usually, you don't have to do this, since it is already taken care of by our CI, which pushes the latest images to docker hub.
 
 ## PostGreSQL
 
