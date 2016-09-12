@@ -34,8 +34,10 @@ Run geOrchestra with
 docker-compose up
 ```
 
-Open [http://localhost:8080/header/](http://localhost:8080/header/) in your browser.
-
+Open [http://localhost:8080/header/](http://localhost:8080/header/) in your browser.  
+Credentials:
+ * `testuser` / `testuser`
+ * `testadmin` / `testadmin`
 
 ## Notes
 
