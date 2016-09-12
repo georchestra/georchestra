@@ -71,7 +71,7 @@ cd ../../docker/ssh_data
 docker build -t georchestra/ssh_data .
 ```
 
-These files can be managed through SSH, eg with:
+These files can be managed through SSH / rsync, eg with:
 ```bash
 ssh -p 2222 geoserver@localhost 
 ```

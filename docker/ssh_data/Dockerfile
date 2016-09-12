@@ -3,7 +3,7 @@ FROM debian:jessie
 MAINTAINER PSC "psc@georchestra.org"
 
 RUN apt-get update && \
-    apt-get install -y openssh-server && \
+    apt-get install -y openssh-server rsync && \
 		rm -rf /var/lib/apt/lists/*
 
 # add a user 'geoserver' with default password : 'geoserver'
