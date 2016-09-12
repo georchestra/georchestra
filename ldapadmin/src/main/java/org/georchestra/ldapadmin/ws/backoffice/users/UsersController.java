@@ -374,10 +374,11 @@ public class UsersController {
 			this.accountDao.insert(account, Group.USER, originLogin);
 
 		} catch (DuplicatedEmailException e) {
+			LOG.error(e);
 			throw e;
 
 		} catch (DataServiceException e) {
-
+			LOG.error(e);
 			throw e;
 
 		} catch (DuplicatedUidException e) {
