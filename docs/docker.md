@@ -1,6 +1,6 @@
 # How to run geOrchestra on Docker
 
-## Using pre-built images
+## 3 easy steps
 
 **First step**
 
@@ -26,6 +26,7 @@ sudo mv datadir /etc/georchestra
 
 Optional: adjust the configuration in /etc/georchestra according to your needs.
 
+
 **Third step**
 
 Run geOrchestra with
@@ -33,26 +34,10 @@ Run geOrchestra with
 docker-compose up
 ```
 
-Open [http://localhost:8080/header/](http://localhost:8080/header/) in your browser
+Open [http://localhost:8080/header/](http://localhost:8080/header/) in your browser.
 
 
-## Building your own images
+## Notes
 
-
-### PostGreSQL
-
-```
-cd <georchestra-root>/postgresql
-docker build -t georchestra/database .
-```
-
-### LDAP 
-
-```
-cd <georchestra-root>/ldap
-docker build -t georchestra/ldap .
-```
-
-### Webapps
-
-Please refer to [../docker/README.md](../docker/README.md)
+In the above guide, images are pulled from docker hub, which means they've been compiled by our CI. 
+In case you need to build these images by yourself, please refer to the [docker images build instructions](../docker/README.md).
