@@ -20,7 +20,7 @@ Have a look at the [release notes](RELEASE_NOTES.md) for more information.
 
 Depending on your goals and skills, there are several ways to install geOrchestra:
 
- * a [docker composition](docker-compose.yml), which pulls pre-built images from [docker hub](https://hub.docker.com/u/georchestra/), is perfect for a quick start. Provided you have a good download speed and recent machine (8Gb required), you'll be up and running on `localhost:8080` within 10 minutes. Read [how to run geOrchestra on Docker](docs/docker.md) here.
+ * a [docker composition](./docker-compose.yml), which pulls pre-built images from [docker hub](https://hub.docker.com/u/georchestra/), is perfect for a quick start. Provided you have a good download speed and recent machine (8Gb required), you'll be up and running on `localhost:8080` within 10 minutes. Read [how to run geOrchestra on Docker](docs/docker.md) here.
  * a contributed [ansible playbook](https://github.com/georchestra/ansible) allows you to spin an instance in a few minutes. This is probably the easiest way to create a small production server, since it takes care of installing the middleware, fetching the webapps and configuring them.
  * generic [debian (or yum) packages](https://build.georchestra.org/) are perfect to create complex architectures, but you'll have to [install and configure the middleware](docs/setup.md) first.
  * you could also use the [generic wars](http://build.georchestra.org/wars/) with their "[datadir](https://github.com/georchestra/datadir)", as an alternate method. The above packages provide both.
