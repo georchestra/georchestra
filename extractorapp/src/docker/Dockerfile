@@ -2,7 +2,7 @@ FROM jetty:9.3-jre8
 
 ADD . /
 
-RUN java -jar "$JETTY_HOME/start.jar" --add-to-startd=jmx,jmx-remote,stats
+RUN java -jar "$JETTY_HOME/start.jar" --add-to-startd=jmx,jmx-remote,stats,gzip
 
 RUN apt-get update && \
    apt-get install -y libgdal-java gdal-bin && \
