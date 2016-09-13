@@ -32,6 +32,8 @@ The application accepts several GET parameters :
  * **layername**, **owstype** and **owsurl** are used to load OGC layers, or to browse OGC servers
 
 Valid query strings:
+ * ?lon=2.961&lat=45.770&radius=5000
+ * ?bbox=2.86,44.84,3.32,45.02
  * ?owstype=WMS&owsurl=http://server/ows
  * ?layername=layer&owstype=WMSLayer&owsurl=http://server/ows
  * ?layername=layer1,layer2&owstype=WMSLayer,WMSLayer&owsurl=http://server1/ows,https://server2/ows
