@@ -955,7 +955,8 @@ GEOR.managelayers = (function() {
         var addon, me;
         me = this;
 
-            if (GEOR.tools.getAddonsState()[addonConfig.id] && addonConfig.options.layerTreeAction) {
+            if (GEOR.tools.getAddonsState()[addonConfig.id] && addonConfig.options
+            && addonConfig.options.layerTreeAction) {
                 addon = GEOR.tools.getAddon(addonConfig.id);
                 insertSep();
                 menuItems.push({
