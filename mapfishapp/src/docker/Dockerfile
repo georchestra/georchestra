@@ -6,7 +6,7 @@ RUN apt-get update && \
 
 ADD . /
 
-RUN java -jar "$JETTY_HOME/start.jar" --add-to-startd=jmx,jmx-remote,stats,gzip
+RUN java -jar "$JETTY_HOME/start.jar" --add-to-startd=jmx,jmx-remote,stats
 
 RUN ln -s /usr/share/java/gdal.jar /var/lib/jetty/lib/ext/
 

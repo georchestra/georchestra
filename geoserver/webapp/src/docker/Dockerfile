@@ -13,7 +13,7 @@ RUN apt-get update && \
 
 ADD . /
 
-RUN java -jar "$JETTY_HOME/start.jar" --add-to-startd=jmx,jmx-remote,stats,gzip
+RUN java -jar "$JETTY_HOME/start.jar" --add-to-startd=jmx,jmx-remote,stats
 
 VOLUME [ "/var/local/geoserver", "/var/local/geodata", "/var/local/tiles" ]
 
