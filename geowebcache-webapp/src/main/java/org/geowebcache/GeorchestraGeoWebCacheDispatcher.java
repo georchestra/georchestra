@@ -66,10 +66,8 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher {
 +"  </head>"
 +"  <body>"
 +"    <!-- geOrchestra header -->"
-+"    <script type=\"text/javascript\" src=\"/header/js/header.js\"></script>"
 +"    <div id=\"go_head\">"
-+"      <!-- see http://stackoverflow.com/questions/1037839/how-to-force-link-from-iframe-to-be-opened-in-the-parent-window -->"
-+"      <iframe src=\"/header/?active=geowebcache\" style=\"width:100%;height:@header.height@px;border:none;overflow:hidden;\" scrolling=\"no\" frameborder=\"0\" onload=\"_headerOnLoad(this)\"></iframe>"
++"      <iframe src=\"/header/?active=geowebcache\" style=\"width:100%;height:@header.height@px;border:none;overflow:hidden;\" scrolling=\"no\" frameborder=\"0\"></iframe>"
 +"    </div>"
 +"    <!-- end of geOrchestra header -->";
     /**
