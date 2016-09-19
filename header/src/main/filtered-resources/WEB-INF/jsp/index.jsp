@@ -369,7 +369,7 @@ if(sec_roles != null) {
                         <li class="active"><a><fmt:message key="users"/></a></li>
                             </c:when>
                             <c:otherwise>
-                        <li><a href="<%= ldapadm %>/privateui/"><fmt:message key="users"/></a></li>
+                        <li><a href="<%= ldapadm %>/console/"><fmt:message key="users"/></a></li>
                             </c:otherwise>
                         </c:choose>
                         </c:when>
