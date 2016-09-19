@@ -86,7 +86,7 @@ GEOR.workspace = (function() {
                             if (r && r[1]) {
                                 // wait a while for the MD to be made available:
                                 new Ext.util.DelayedTask(function(){
-                                    window.open(GEOR.config.GEONETWORK_BASE_URL+"/?uuid="+r[1]);
+                                    window.open(GEOR.config.METADATA_VIEW_BASE_URL+r[1]);
                                 }).delay(1000);
                                 return;
                             }
