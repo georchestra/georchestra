@@ -125,8 +125,7 @@ GEOR.cswbrowser = (function() {
 
                         metadataURL = null;
                         if (record.identifier && record.identifier[0]) {
-                            metadataURL = GEOR.config.GEONETWORK_BASE_URL + 
-                                '/?uuid='+record.identifier[0].value;
+                            metadataURL = GEOR.config.METADATA_VIEW_BASE_URL + record.identifier[0].value;
                             name += '<a href="'+metadataURL +
                                 '" target="_blank" onclick="window.open(this.href);return false;">'+mdTitle+'</a>';
                         }

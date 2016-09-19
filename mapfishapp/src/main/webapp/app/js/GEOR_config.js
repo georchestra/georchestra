@@ -114,6 +114,14 @@ GEOR.config = (function() {
             "/geonetwork"),
 
         /**
+         * Constant: METADATA_VIEW_BASE_URL
+         * The base URL to the "view metadata" service
+         * Defaults to "/geonetwork/?uuid="
+         */
+        METADATA_VIEW_BASE_URL: getCustomParameter("METADATA_VIEW_BASE_URL",
+            "/geonetwork/?uuid="),
+
+        /**
          * Constant: CSW_GETDOMAIN_SORTING
          * true to case insensitive sort (client side) the keywords
          * got from a CSW getDomain request. false to disable
