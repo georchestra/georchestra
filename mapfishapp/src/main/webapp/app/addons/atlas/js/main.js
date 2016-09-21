@@ -194,461 +194,401 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             closeAction: "hide",
             items: [{
                 xtype: "form",
-                items: [
-                    {
-                        xtype: "fieldset",
-                        autoheight: true,
-                        title: this.tr("atlas_layout"),
-                        style: {
-                            margin: "0 5px 10px",
-                            "background-color": "white"
-                        },
-                        items: [
-                            {
-                                layout: "column",
-                                border: false,
-                                items: [
-                                    {
-                                        columnWidth: 0.5,
-                                        border: false,
-                                        layout: "form",
-                                        items: [
-                                            {
-                                                xtype: "combo",
-                                                name: "layout",
-                                                allowBlank: false,
-                                                fieldLabel: this.tr("atlas_layout"),
-                                                editable: false,
-                                                typeAhead: false,
-                                                emptyText: this.tr("atlas_selectlayout"),
-                                                mode: "local",
-                                                triggerAction: "all",
-                                                store: this.printProvider.layouts,
-                                                valueField: "name",
-                                                displayField: "name"
-                                            },
-                                            {
-                                                xtype: "checkbox",
-                                                name: "displayLegend",
-                                                labelStyle: "width:120px",
-                                                fieldLabel: this.tr("atlas_displaylegend")
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        columnWidth: 0.5,
-                                        layout: "form",
-                                        border: false,
-                                        items: [
-                                            {
-                                                xtype: "combo",
-                                                name: "outputFormat",
-                                                fieldLabel: this.tr("atlas_format"),
-                                                value: "pdf",
-                                                editable: false,
-                                                typeAhed: false,
-                                                mode: "local",
-                                                triggerAction: "all",
-                                                store: {
-                                                    xtype: "arraystore",
-                                                    id: 0,
-                                                    fields: ["formatId", "formatDescription"],
-                                                    data: [
-                                                        ["pdf", "PDF"],
-                                                        ["zip", "zip"]
-                                                    ]
-                                                },
-                                                valueField: "formatId",
-                                                displayField: "formatDescription",
-                                                allowBlank: false
-                                            },
-                                            {
-                                                xtype: "combo",
-                                                name: "dpi",
-                                                fieldLabel: "Map dpi",
-                                                emptyText: "Select print resolution",
-                                                editable: false,
-                                                typeAhead: false,
-                                                autoComplete: false,
-                                                mode: "local",
-                                                store: this.printProvider.dpis,
-                                                displayField: "name",
-                                                valueField: "value",
-                                                triggerAction: "all",
-                                                allowBlank: false
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
+                items: [{
+                    xtype: "fieldset",
+                    autoheight: true,
+                    title: this.tr("atlas_layout"),
+                    style: {
+                        margin: "0 5px 10px",
+                        "background-color": "white"
                     },
-                    {
-                        xtype: "fieldset",
-                        title: this.tr("atlas_scale"),
-                        autoheight: true,
-                        style: {
-                            margin: "0 5px 10px",
-                            "background-color": "white"
-                        },
-                        items: [
-                            {
-                                layout: "column",
-                                border: false,
-                                items: [{
-                                    columnWidth: 0.4,
-                                    layout: "form",
-                                    border: false,
-                                    items: [
-                                        {
-                                            xtype: "radiogroup",
-                                            columns: 1,
-                                            hideLabel: true,
-                                            name: "scale_method_group",
-                                            items: [
-                                                {
-                                                    xtype: "radio",
-                                                    boxLabel: this.tr("atlas_scalemanual"),
-                                                    name: "scale_method",
-                                                    inputValue: "manual",
-                                                    checked: true,
-                                                    listeners: {
-                                                        "check": {
-                                                            fn: function(cb, checked) {
-                                                                var form, combos;
-                                                                form = cb.findParentByType("form");
-                                                                combos = form.findBy(function(c) {
-                                                                    return ((c.getXType() === "combo") &&
-                                                                    (c.name === "scale_manual"));
-                                                                });
-                                                                if (checked) {
-                                                                    combos[0].enable();
-                                                                } else {
-                                                                    combos[0].disable();
-                                                                }
-
-                                                            }
-                                                        }
-                                                    }
-                                                }, {
-                                                    xtype: "radio",
-                                                    boxLabel: this.tr("atlas_bbox"),
-                                                    name: "scale_method",
-                                                    inputValue: "bbox"
-                                                }
-                                            ]
-                                        }
-                                    ]
-                                }, {
-                                    layout: "form",
-                                    columnWidth: 0.6,
-                                    border: false,
-                                    items: [{
-                                        xtype: "combo",
-                                        name: "scale_manual",
-                                        fieldLabel: this.tr("atlas_scale"),
-                                        emptyText: this.tr("atlas_selectscale"),
-                                        mode: "local",
-                                        triggerAction: "all",
-                                        store: new GeoExt.data.ScaleStore({map: this.mapPanel}),
-                                        valueField: "scale",
-                                        displayField: "scale",
-                                        editable: false,
-                                        typeAhead: false,
-                                        validator: function(value) {
-                                            var radioScale, valid;
-                                            radioScale = this.findParentByType("form").findBy(function(c) {
-                                                return ((c.getXType() === "radiogroup") &&
-                                                (c.name === "scale_method_group"));
-                                            })[0];
-                                            valid = !(radioScale.getValue().inputValue === "manual" && (value === ""));
-                                            return valid;
-                                        }
-                                    }]
-                                }]
-                            }
-
-                        ]
-                    },
-                    {
-                        xtype: "fieldset",
-                        autoheight: true,
-                        title: this.tr("atlas_pagetitle"),
-                        style: {
-                            margin: "0 5px 10px",
-                            "background-color": "white"
-                        },
-                        items: [
-                            {
-                                layout: "column",
-                                border: false,
-                                items: [
-                                    {
-                                        columnWidth: 0.4,
-                                        layout: "form",
-                                        border: false,
-                                        items: [
-                                            {
-                                                xtype: "radiogroup",
-                                                columns: 1,
-                                                hideLabel: true,
-                                                name: "title_method_group",
-                                                items: [
-                                                    {
-                                                        boxLabel: this.tr("atlas_sametitle"),
-                                                        name: "titleMethod",
-                                                        inputValue: "same",
-                                                        checked: true
-                                                    },
-                                                    {
-                                                        boxLabel: this.tr("atlas_fieldtitle"),
-                                                        name: "titleMethod",
-                                                        inputValue: "field"
-                                                    }
-                                                ]
-                                            }
-                                        ]
-
-                                    },
-                                    {
-                                        columnWidth: 0.6,
-                                        layout: "form",
-                                        border: false,
-                                        items: [
-                                            {
-                                                xtype: "textfield",
-                                                name: "titleText",
-                                                fieldLabel: this.tr("atlas_pagetitle"),
-                                                labelStyle: "width:160px",
-                                                value: this.tr("atlas_title"),
-                                                validator: function(value) {
-                                                    var radioTitle, valid;
-                                                    radioTitle = this.findParentByType("form").findBy(function(c) {
-                                                        return ((c.getXType() === "radiogroup") &&
-                                                        (c.name === "title_method_group"));
-                                                    })[0];
-                                                    valid = !((radioTitle.getValue().inputValue === "same") &&
-                                                    (value === ""));
-                                                    return valid;
-                                                }
-                                            },
-                                            {
-                                                xtype: "combo",
-                                                name: "titleField",
-                                                labelStyle: "width:160px",
-                                                fieldLabel: this.tr("atlas_fieldfortitle"),
-                                                emptyText: this.tr("atlas_fieldfortitleselect"),
-                                                editable: false,
-                                                typeAhead: false,
-                                                mode: "local",
-                                                store: this.attributeStore,
-                                                valueField: "name",
-                                                displayField: "name",
-                                                triggerAction: "all",
-                                                scope: this,
-                                                validator: function(value) {
-                                                    var radioTitle, valid;
-                                                    radioTitle = this.findParentByType("form").findBy(function(c) {
-                                                        return ((c.getXType() === "radiogroup") &&
-                                                        (c.name === "title_method_group"));
-                                                    })[0];
-                                                    valid = !((radioTitle.getValue().inputValue === "field") &&
-                                                    (value === ""));
-                                                    return valid;
-                                                }
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        xtype: "fieldset",
-                        autoheight: true,
-                        title: this.tr("atlas_pagesubtitle"),
-                        style: {
-                            margin: "0 5px 10px",
-                            "background-color": "white"
-                        },
-                        items: [
-                            {
-                                layout: "column",
-                                border: false,
-                                items: [
-                                    {
-                                        columnWidth: 0.4,
-                                        layout: "form",
-                                        border: false,
-                                        items: [
-                                            {
-                                                xtype: "radiogroup",
-                                                hideLabel: true,
-                                                columns: 1,
-                                                name: "subtitle_method_group",
-                                                items: [
-                                                    {
-                                                        boxLabel: this.tr("atlas_samesubtitle"),
-                                                        name: "subtitleMethod",
-                                                        inputValue: "same",
-                                                        checked: true
-                                                    },
-                                                    {
-                                                        boxLabel: this.tr("atlas_fieldsubtitle"),
-                                                        name: "subtitleMethod",
-                                                        inputValue: "field"
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        columnWidth: 0.6,
-                                        layout: "form",
-                                        border: false,
-                                        items: [
-                                            {
-                                                xtype: "textfield",
-                                                name: "subtitleText",
-                                                labelStyle: "width:160px",
-                                                fieldLabel: this.tr("atlas_pagesubtitle"),
-                                                value: this.tr("atlas_subtitle"),
-                                                validator: function(value) {
-                                                    var radioSubtitle, valid;
-                                                    radioSubtitle = this.findParentByType("form").findBy(function(c) {
-                                                        return ((c.getXType() === "radiogroup") &&
-                                                        (c.name === "title_method_group"));
-                                                    })[0];
-                                                    valid = !((radioSubtitle.getValue().inputValue === "same") &&
-                                                    (value === ""));
-                                                    return valid;
-                                                }
-                                            },
-                                            {
-                                                xtype: "combo",
-                                                name: "subtitleField",
-                                                labelStyle: "width:160px",
-                                                fieldLabel: this.tr("atlas_fieldforsubtitle"),
-                                                emptyText: this.tr("atlas_fieldforsubtitleselect"),
-                                                mode: "local",
-                                                editable: false,
-                                                typeAhead: false,
-                                                store: this.attributeStore,
-                                                valueField: "name",
-                                                displayField: "name",
-                                                triggerAction: "all",
-                                                scope: this,
-                                                validator: function(value) {
-                                                    var radioSubtitle, valid;
-                                                    radioSubtitle = this.findParentByType("form").findBy(function(c) {
-                                                        return ((c.getXType() === "radiogroup") &&
-                                                        (c.name === "subtitle_method_group"));
-                                                    })[0];
-                                                    valid = !((radioSubtitle.getValue().inputValue === "field") &&
-                                                    (value === ""));
-                                                    return valid;
-                                                }
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
+                    items: [{
                         layout: "column",
                         border: false,
+                        items: [{
+                            columnWidth: 0.5,
+                            border: false,
+                            layout: "form",
+                            items: [{
+                                xtype: "combo",
+                                name: "layout",
+                                allowBlank: false,
+                                fieldLabel: this.tr("atlas_layout"),
+                                editable: false,
+                                typeAhead: false,
+                                emptyText: this.tr("atlas_selectlayout"),
+                                mode: "local",
+                                triggerAction: "all",
+                                store: this.printProvider.layouts,
+                                valueField: "name",
+                                displayField: "name"
+                            }, {
+                                xtype: "checkbox",
+                                name: "displayLegend",
+                                labelStyle: "width:120px",
+                                fieldLabel: this.tr("atlas_displaylegend")
+                            }]
+                        }, {
+                            columnWidth: 0.5,
+                            layout: "form",
+                            border: false,
+                            items: [{
+                                xtype: "combo",
+                                name: "outputFormat",
+                                fieldLabel: this.tr("atlas_format"),
+                                value: "pdf",
+                                editable: false,
+                                typeAhed: false,
+                                mode: "local",
+                                triggerAction: "all",
+                                store: {
+                                    xtype: "arraystore",
+                                    id: 0,
+                                    fields: ["formatId", "formatDescription"],
+                                    data: [
+                                        ["pdf", "PDF"],
+                                        ["zip", "zip"]
+                                    ]
+                                },
+                                valueField: "formatId",
+                                displayField: "formatDescription",
+                                allowBlank: false
+                            }, {
+                                xtype: "combo",
+                                name: "dpi",
+                                fieldLabel: "Map dpi",
+                                emptyText: "Select print resolution",
+                                editable: false,
+                                typeAhead: false,
+                                autoComplete: false,
+                                mode: "local",
+                                store: this.printProvider.dpis,
+                                displayField: "name",
+                                valueField: "value",
+                                triggerAction: "all",
+                                allowBlank: false
+                            }]
+                        }]
+                    }]
+                }, {
+                    xtype: "fieldset",
+                    title: this.tr("atlas_scale"),
+                    autoheight: true,
+                    style: {
+                        margin: "0 5px 10px",
+                        "background-color": "white"
+                    },
+                    items: [{
+                            layout: "column",
+                            border: false,
+                            items: [{
+                                columnWidth: 0.4,
+                                layout: "form",
+                                border: false,
+                                items: [{
+                                    xtype: "radiogroup",
+                                    columns: 1,
+                                    hideLabel: true,
+                                    name: "scale_method_group",
+                                    items: [{
+                                        xtype: "radio",
+                                        boxLabel: this.tr("atlas_scalemanual"),
+                                        name: "scale_method",
+                                        inputValue: "manual",
+                                        checked: true,
+                                        listeners: {
+                                            "check": {
+                                                fn: function(cb, checked) {
+                                                    var form, combos;
+                                                    form = cb.findParentByType("form");
+                                                    combos = form.findBy(function(c) {
+                                                        return ((c.getXType() === "combo") &&
+                                                            (c.name === "scale_manual"));
+                                                    });
+                                                    if (checked) {
+                                                        combos[0].enable();
+                                                    } else {
+                                                        combos[0].disable();
+                                                    }
+
+                                                }
+                                            }
+                                        }
+                                    }, {
+                                        xtype: "radio",
+                                        boxLabel: this.tr("atlas_bbox"),
+                                        name: "scale_method",
+                                        inputValue: "bbox"
+                                    }]
+                                }]
+                            }, {
+                                layout: "form",
+                                columnWidth: 0.6,
+                                border: false,
+                                items: [{
+                                    xtype: "combo",
+                                    name: "scale_manual",
+                                    fieldLabel: this.tr("atlas_scale"),
+                                    emptyText: this.tr("atlas_selectscale"),
+                                    mode: "local",
+                                    triggerAction: "all",
+                                    store: new GeoExt.data.ScaleStore({
+                                        map: this.mapPanel
+                                    }),
+                                    valueField: "scale",
+                                    displayField: "scale",
+                                    editable: false,
+                                    typeAhead: false,
+                                    validator: function(value) {
+                                        var radioScale, valid;
+                                        radioScale = this.findParentByType("form").findBy(function(c) {
+                                            return ((c.getXType() === "radiogroup") &&
+                                                (c.name === "scale_method_group"));
+                                        })[0];
+                                        valid = !(radioScale.getValue().inputValue === "manual" && (value === ""));
+                                        return valid;
+                                    }
+                                }]
+                            }]
+                        }
+
+                    ]
+                }, {
+                    xtype: "fieldset",
+                    autoheight: true,
+                    title: this.tr("atlas_pagetitle"),
+                    style: {
+                        margin: "0 5px 10px",
+                        "background-color": "white"
+                    },
+                    items: [{
+                        layout: "column",
+                        border: false,
+                        items: [{
+                            columnWidth: 0.4,
+                            layout: "form",
+                            border: false,
+                            items: [{
+                                xtype: "radiogroup",
+                                columns: 1,
+                                hideLabel: true,
+                                name: "title_method_group",
+                                items: [{
+                                    boxLabel: this.tr("atlas_sametitle"),
+                                    name: "titleMethod",
+                                    inputValue: "same",
+                                    checked: true
+                                }, {
+                                    boxLabel: this.tr("atlas_fieldtitle"),
+                                    name: "titleMethod",
+                                    inputValue: "field"
+                                }]
+                            }]
+
+                        }, {
+                            columnWidth: 0.6,
+                            layout: "form",
+                            border: false,
+                            items: [{
+                                xtype: "textfield",
+                                name: "titleText",
+                                fieldLabel: this.tr("atlas_pagetitle"),
+                                labelStyle: "width:160px",
+                                value: this.tr("atlas_title"),
+                                validator: function(value) {
+                                    var radioTitle, valid;
+                                    radioTitle = this.findParentByType("form").findBy(function(c) {
+                                        return ((c.getXType() === "radiogroup") &&
+                                            (c.name === "title_method_group"));
+                                    })[0];
+                                    valid = !((radioTitle.getValue().inputValue === "same") &&
+                                        (value === ""));
+                                    return valid;
+                                }
+                            }, {
+                                xtype: "combo",
+                                name: "titleField",
+                                labelStyle: "width:160px",
+                                fieldLabel: this.tr("atlas_fieldfortitle"),
+                                emptyText: this.tr("atlas_fieldfortitleselect"),
+                                editable: false,
+                                typeAhead: false,
+                                mode: "local",
+                                store: this.attributeStore,
+                                valueField: "name",
+                                displayField: "name",
+                                triggerAction: "all",
+                                scope: this,
+                                validator: function(value) {
+                                    var radioTitle, valid;
+                                    radioTitle = this.findParentByType("form").findBy(function(c) {
+                                        return ((c.getXType() === "radiogroup") &&
+                                            (c.name === "title_method_group"));
+                                    })[0];
+                                    valid = !((radioTitle.getValue().inputValue === "field") &&
+                                        (value === ""));
+                                    return valid;
+                                }
+                            }]
+                        }]
+                    }]
+                }, {
+                    xtype: "fieldset",
+                    autoheight: true,
+                    title: this.tr("atlas_pagesubtitle"),
+                    style: {
+                        margin: "0 5px 10px",
+                        "background-color": "white"
+                    },
+                    items: [{
+                        layout: "column",
+                        border: false,
+                        items: [{
+                            columnWidth: 0.4,
+                            layout: "form",
+                            border: false,
+                            items: [{
+                                xtype: "radiogroup",
+                                hideLabel: true,
+                                columns: 1,
+                                name: "subtitle_method_group",
+                                items: [{
+                                    boxLabel: this.tr("atlas_samesubtitle"),
+                                    name: "subtitleMethod",
+                                    inputValue: "same",
+                                    checked: true
+                                }, {
+                                    boxLabel: this.tr("atlas_fieldsubtitle"),
+                                    name: "subtitleMethod",
+                                    inputValue: "field"
+                                }]
+                            }]
+                        }, {
+                            columnWidth: 0.6,
+                            layout: "form",
+                            border: false,
+                            items: [{
+                                xtype: "textfield",
+                                name: "subtitleText",
+                                labelStyle: "width:160px",
+                                fieldLabel: this.tr("atlas_pagesubtitle"),
+                                value: this.tr("atlas_subtitle"),
+                                validator: function(value) {
+                                    var radioSubtitle, valid;
+                                    radioSubtitle = this.findParentByType("form").findBy(function(c) {
+                                        return ((c.getXType() === "radiogroup") &&
+                                            (c.name === "title_method_group"));
+                                    })[0];
+                                    valid = !((radioSubtitle.getValue().inputValue === "same") &&
+                                        (value === ""));
+                                    return valid;
+                                }
+                            }, {
+                                xtype: "combo",
+                                name: "subtitleField",
+                                labelStyle: "width:160px",
+                                fieldLabel: this.tr("atlas_fieldforsubtitle"),
+                                emptyText: this.tr("atlas_fieldforsubtitleselect"),
+                                mode: "local",
+                                editable: false,
+                                typeAhead: false,
+                                store: this.attributeStore,
+                                valueField: "name",
+                                displayField: "name",
+                                triggerAction: "all",
+                                scope: this,
+                                validator: function(value) {
+                                    var radioSubtitle, valid;
+                                    radioSubtitle = this.findParentByType("form").findBy(function(c) {
+                                        return ((c.getXType() === "radiogroup") &&
+                                            (c.name === "subtitle_method_group"));
+                                    })[0];
+                                    valid = !((radioSubtitle.getValue().inputValue === "field") &&
+                                        (value === ""));
+                                    return valid;
+                                }
+                            }]
+                        }]
+                    }]
+                }, {
+                    layout: "column",
+                    border: false,
+                    style: {
+                        margin: "0 5px 10px",
+                        "background-color": "white"
+                    },
+                    items: [{
+                        layout: "form",
+                        border: false,
+                        columnWidth: 0.4,
+                        items: [{
+                            xtype: "textfield",
+                            labelStyle: "width:110px",
+                            width: 120,
+                            name: "outputFilename",
+                            fieldLabel: this.tr("atlas_outputfilename"),
+                            value: this.tr("atlas_ouputfilenamedefault"),
+                            allowBlank: false
+                        }]
+                    }, {
+                        layout: "form",
+                        border: false,
+                        columnWidth: 0.6,
+                        items: [{
+                            xtype: "combo",
+                            name: "prefix_field",
+                            labelStyle: "width:160px",
+                            fieldLabel: this.tr("atlas_fieldprefix"),
+                            emptyText: this.tr("atlas_fieldforprefix"),
+                            mode: "local",
+                            editable: false,
+                            typeAhead: false,
+                            store: this.attributeStore,
+                            valueField: "name",
+                            displayField: "name",
+                            triggerAction: "all",
+                            scope: this
+                        }]
+                    }]
+                }, {
+                    layout: "form",
+                    border: false,
+                    style: {
+                        padding: "5px 5px 0",
+                        "background-color": "white"
+                    },
+                    items: [{
+                        xtype: "textfield",
                         style: {
                             margin: "0 5px 10px",
                             "background-color": "white"
                         },
-                        items: [
-                            {
-                                layout: "form",
-                                border: false,
-                                columnWidth: 0.4,
-                                items: [
-                                    {
-                                        xtype: "textfield",
-                                        labelStyle: "width:110px",
-                                        width: 120,
-                                        name: "outputFilename",
-                                        fieldLabel: this.tr("atlas_outputfilename"),
-                                        value: this.tr("atlas_ouputfilenamedefault"),
-                                        allowBlank: false
-                                    }
-                                ]
-                            },
-                            {
-                                layout: "form",
-                                border: false,
-                                columnWidth: 0.6,
-                                items: [
-                                    {
-                                        xtype: "combo",
-                                        name: "prefix_field",
-                                        labelStyle: "width:160px",
-                                        fieldLabel: this.tr("atlas_fieldprefix"),
-                                        emptyText: this.tr("atlas_fieldforprefix"),
-                                        mode: "local",
-                                        editable: false,
-                                        typeAhead: false,
-                                        store: this.attributeStore,
-                                        valueField: "name",
-                                        displayField: "name",
-                                        triggerAction: "all",
-                                        scope: this
-                                    }
-                                ]
-                            }
-                        ]
+                        name: "email",
+                        labelStyle: "width:420px",
+                        value: GEOR.config.USEREMAIL,
+                        fieldLabel: this.tr("atlas_emaillabel"),
+                        allowBlank: false,
+                        vtype: "email"
+                    }]
+                }],
+                buttons: [{
+                    text: this.tr("atlas_submit"),
+                    handler: function(b) {
+                        var formValues;
+                        if (b.findParentByType("form").getForm().isValid()) {
+                            formValues = b.findParentByType("form").getForm().getFieldValues();
+                            this.parseForm(formValues);
+                        }
                     },
-                    {
-                        layout: "form",
-                        border: false,
-                        style: {
-                            padding: "5px 5px 0",
-                            "background-color": "white"
-                        },
-                        items: [
-                            {
-                                xtype: "textfield",
-                                style: {
-                                    margin: "0 5px 10px",
-                                    "background-color": "white"
-                                },
-                                name: "email",
-                                labelStyle: "width:420px",
-                                value: GEOR.config.USEREMAIL,
-                                fieldLabel: this.tr("atlas_emaillabel"),
-                                allowBlank: false,
-                                vtype: "email"
-                            }
-                        ]
-                    }
-                ],
-                buttons: [
-                    {
-                        text: this.tr("atlas_submit"),
-                        handler: function(b) {
-                            var formValues;
-                            if (b.findParentByType("form").getForm().isValid()) {
-                                formValues = b.findParentByType("form").getForm().getFieldValues();
-                                this.parseForm(formValues);
-                            }
-                        },
-                        scope: this
+                    scope: this
+                }, {
+                    text: this.tr("atlas_cancel"),
+                    handler: function() {
+                        this.window.hide();
                     },
-                    {
-                        text: this.tr("atlas_cancel"),
-                        handler: function() {
-                            this.window.hide();
-                        },
-                        scope: this
-                    }
-                ]
-            }
-            ]
+                    scope: this
+                }]
+            }]
         });
     },
 
@@ -682,33 +622,31 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                 padding: "5px 5px 0",
                 "background-color": "white"
             },
-            items: [
-                {
-                    xtype: "combo",
-                    name: "atlasLayer",
-                    labelStyle: "width:180px",
-                    fieldLabel: this.tr("atlas_atlaslayer"),
-                    emptyText: this.tr("atlas_emptylayer"),
-                    mode: "local",
-                    editable: false,
-                    typeAhead: false,
-                    triggerAction: "all",
-                    store: atlasLayersStore,
-                    valueField: "name",
-                    displayField: "title",
-                    allowBlank: false,
-                    listeners: {
-                        select: {
-                            fn: function(combo, record) {
-                                this.buildFieldsStore(record);
-                            },
-                            scope: this
+            items: [{
+                xtype: "combo",
+                name: "atlasLayer",
+                labelStyle: "width:180px",
+                fieldLabel: this.tr("atlas_atlaslayer"),
+                emptyText: this.tr("atlas_emptylayer"),
+                mode: "local",
+                editable: false,
+                typeAhead: false,
+                triggerAction: "all",
+                store: atlasLayersStore,
+                valueField: "name",
+                displayField: "title",
+                allowBlank: false,
+                listeners: {
+                    select: {
+                        fn: function(combo, record) {
+                            this.buildFieldsStore(record);
                         },
                         scope: this
                     },
                     scope: this
-                }
-            ]
+                },
+                scope: this
+            }]
         });
 
         this.window.items.itemAt(0).insert(0, layerPanel);
@@ -747,7 +685,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
 
         fieldsCombo = this.window.findBy(function(c) {
             return ((c.getXType() === "combo") &&
-            ((c.name === "titleField") || (c.name === "subtitleField" || (c.name === "prefix_field"))));
+                ((c.name === "titleField") || (c.name === "subtitleField" || (c.name === "prefix_field"))));
         });
 
         attributeStoreData = [];
@@ -780,23 +718,19 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                 padding: "5px 5px 0",
                 "background-color": "white"
             },
-            items: [
-                {
-                    xtype: "label",
-                    //TODO tr
-                    text: "Atlas of layer " + resultpanel.title
-                },
-                {
-                    xtype: "hidden",
-                    name: "resultPanel",
-                    value: true
-                },
-                {
-                    xtype: "hidden",
-                    name: "atlasLayer",
-                    value: layerName
-                }
-            ]
+            items: [{
+                xtype: "label",
+                //TODO tr
+                text: "Atlas of layer " + resultpanel.title
+            }, {
+                xtype: "hidden",
+                name: "resultPanel",
+                value: true
+            }, {
+                xtype: "hidden",
+                name: "atlasLayer",
+                value: layerName
+            }]
         });
 
         this.window.items.itemAt(0).insert(0, layerPanel);
@@ -830,18 +764,15 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                 padding: "5px 5px 0",
                 "background-color": "white"
             },
-            items: [
-                {
-                    xtype: "label",
-                    //TODO tr
-                    text: "Atlas of layer " + layerRecord.get("title")
-                },
-                {
-                    xtype: "hidden",
-                    name: "atlasLayer",
-                    value: layerRecord.get("name")
-                }
-            ]
+            items: [{
+                xtype: "label",
+                //TODO tr
+                text: "Atlas of layer " + layerRecord.get("title")
+            }, {
+                xtype: "hidden",
+                name: "atlasLayer",
+                value: layerRecord.get("name")
+            }]
         });
 
         this.window.items.itemAt(0).insert(0, layerPanel);
@@ -919,7 +850,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
      *     This will send request to atlas server
      */
     createFeatureLayerAndPagesSpecs: function(atlasLayer, scaleParameters, titleSubtitleParameters, fieldPrefix,
-                                              autoSubmit, resultPanel) {
+        autoSubmit, resultPanel) {
         var layer, pageIdx, wfsFeatures, wfsFeature, bounds, bbox;
 
         /**
@@ -948,8 +879,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             }
 
             if (scaleParameters.scaleMethod === "manual") {
-                page.center =
-                    [wfsFeature.geometry.getCentroid().x, wfsFeature.geometry.getCentroid().y];
+                page.center = [wfsFeature.geometry.getCentroid().x, wfsFeature.geometry.getCentroid().y];
                 page.scale = scaleParameters.scaleManual;
             } else {
                 if (!(wfsFeature.geometry instanceof OpenLayers.Geometry.Point)) {
@@ -999,7 +929,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                     if (wfsFeatures.totalLength >= (this.maxFeatures + 1)) {
                         GEOR.util.errorDialog({
                             msg: this.tr("atlas_too_many_features") +
-                            (this.maxFeatures + 1) + this.tr("atlas_too_many_features_after_nb")
+                                (this.maxFeatures + 1) + this.tr("atlas_too_many_features_after_nb")
                         });
                         autoSubmit = false;
                     }
@@ -1046,7 +976,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                             if (wfsFeatures.length === (this.maxFeatures + 1)) {
                                 GEOR.util.errorDialog({
                                     msg: this.tr("atlas_too_many_features") +
-                                    (this.maxFeatures + 1) + this.tr("atlas_too_many_features_after_nb"),
+                                        (this.maxFeatures + 1) + this.tr("atlas_too_many_features_after_nb"),
                                     scope: this
                                 });
                                 autoSubmit = false;
@@ -1135,7 +1065,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
 
         var fieldsCombo = this.window.findBy(function(c) {
             return ((c.getXType() === "combo") &&
-            ((c.name === "titleField") || (c.name === "subtitleField" || (c.name === "prefix_field"))));
+                ((c.name === "titleField") || (c.name === "subtitleField" || (c.name === "prefix_field"))));
         });
         Ext.each(fieldsCombo, function(fieldCombo) {
             fieldCombo.bindStore(this.attributeStore);
@@ -1161,7 +1091,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                  * it hide the current symbology.
                  */
                 if (!((layerRecord.get("layer").name === "__georchestra_print_bounds_") ||
-                    (layerRecord.get("layer").name === "__georchestra_results_resultPanel" ))) {
+                        (layerRecord.get("layer").name === "__georchestra_results_resultPanel"))) {
                     encodedLayer = this.printProvider.encodeLayer(layerRecord.get("layer"), this.map.getMaxExtent());
                 }
 
@@ -1195,8 +1125,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
      */
     tr: function(a) {
         return OpenLayers.i18n(a);
-    }
-    ,
+    },
 
     /**
      * @function destroy
@@ -1207,5 +1136,4 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
     destroy: function() {
         GEOR.Addons.Base.prototype.destroy.call(this);
     }
-})
-;
+});
