@@ -408,7 +408,7 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
          *  API method resultPanelHandler(menuitem, event, resultPanel). In this API method, this is the addon.
          */
         Ext.each(GEOR.config.ADDONS, function(addonConfig) {
-            if (GEOR.tools.getAddonsState()[addonConfig.id] && addonConfig.options.resultPanelAction) {
+            if (GEOR.tools.getAddonsState()[addonConfig.id] && addonConfig.options && addonConfig.options.resultPanelAction) {
                 actionsItem.menu.addItem({
                     text: GEOR.tools.getAddon(addonConfig.id).title,
                     iconCls: GEOR.tools.getAddon(addonConfig.id).iconCls,
