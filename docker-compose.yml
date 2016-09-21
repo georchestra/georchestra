@@ -94,8 +94,6 @@ mapfishapp:
     - mapfishapp_uploads:/var/local/uploads
   links:
     - database
-  volumes:
-    - mapfishapp_uploads:/var/local/uploads
   environment:
     - XMX=1g
 

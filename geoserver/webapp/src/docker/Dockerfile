@@ -1,9 +1,5 @@
 FROM jetty:9.2-jre7
 
-RUN apt-get update && \
-    apt-get install -y unzip && \
-    rm -rf /var/lib/apt/lists/*
-
 RUN echo "deb http://httpredir.debian.org/debian jessie contrib" >> /etc/apt/sources.list
 RUN echo "deb http://security.debian.org/ jessie/updates contrib" >> /etc/apt/sources.list
 
