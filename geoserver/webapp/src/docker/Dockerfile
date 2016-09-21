@@ -11,6 +11,8 @@ RUN apt-get update && \
    apt-get install -y ttf-mscorefonts-installer  && \
    rm -rf /var/lib/apt/lists/*
 
+RUN java -jar "\$JETTY_HOME/start.jar" --add-to-startd=jmx,jmx-remote,stats,jndi
+
 ADD . /
 
 VOLUME [ "/var/local/geoserver", "/var/local/geodata", "/var/local/tiles" ]
