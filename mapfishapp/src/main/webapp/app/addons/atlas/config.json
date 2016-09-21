@@ -4,7 +4,7 @@
     "enabled": false,
     "options": {
         "iconCls": "atlas-icon",
-        "target": "tbar_4",
+        "target": "tbar_12",
         "resultPanelAction": true,
         "layerTreeAction": true,
         "maxFeatures": 50,
@@ -14,13 +14,13 @@
     "title": {
         "fr": "Atlas",
         "en": "Atlas",
-        "es": "atlas",
+        "es": "Atlas",
         "de": "Atlas"
     },
     "description": {
         "fr": "Génération d'un atlas constitué de plusieurs pages PDF",
-        "en": "Create an altas with several PDF pages",
+        "en": "Create an atlas with several PDF pages",
         "es": "Generar atlas consta de varias páginas PDF",
-        "de": "Einen Atlas generieren besteht aus mehreren Seiten"
+        "de": "Einen Atlas generieren"
     }
 }]
