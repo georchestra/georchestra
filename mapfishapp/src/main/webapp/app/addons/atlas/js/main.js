@@ -185,6 +185,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             title: this.title,
             width: 700,
             autoHeight: true,
+            constrainHeader: true,
             bodyStyle: {
                 padding: "5px 5px 0",
                 "background-color": "white"
