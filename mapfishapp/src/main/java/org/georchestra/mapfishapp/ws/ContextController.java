@@ -104,7 +104,7 @@ public class ContextController implements ServletContextAware {
         info.put("thumbnail", image);
         info.put("wmc", wmcUrl);
         info.put("tip", xmlInfos.get("tip").equals("unset") ? title : xmlInfos.get("tip"));
-        info.put("keywords", xmlInfos.getJSONArray("keywords");
+        info.put("keywords", xmlInfos.getJSONArray("keywords"));
         info.put("roles", roles);
 
         return info;
