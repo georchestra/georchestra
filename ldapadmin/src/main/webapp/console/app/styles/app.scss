@@ -196,8 +196,8 @@ section {
   }
 }
 
-// GROUPS
-.groups {
+// ASIDE
+.aside {
   @media (min-width: 992px) {
     border-right: 2px solid $lightblue;
   }
@@ -208,24 +208,33 @@ section {
       color          : white;
     }
   }
+  .category {
+    display: block;
+    padding: .5em 0;
+    &.active {
+      font-weight: bold;
+    }
+  }
 }
+
+.filter-table {
+  width: 25%;
+}
+.filter-table-reset {
+  position : absolute;
+  right    : 1.5em;
+  top      : 0.7em;
+  &:hover {
+    cursor: pointer;
+  }
+}
+
 .users {
   @media (min-width: 992px) {
     margin: 0 -15px;
   }
   em {
     color: #888;
-  }
-  .filter-users {
-    width: 25%;
-  }
-  .glyphicon-remove-sign {
-    position : absolute;
-    right    : 1.5em;
-    top      : 0.7em;
-    &:hover {
-      cursor: pointer;
-    }
   }
   th:last-child,
   td:last-child {

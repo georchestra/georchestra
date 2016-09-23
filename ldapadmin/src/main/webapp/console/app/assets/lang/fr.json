@@ -1,6 +1,7 @@
 {
   "nav.dashboard"       : "Tableau de bord",
   "nav.users"           : "Utilisateurs",
+  "nav.orgs"            : "Organismes",
   "nav.analytics"       : "Statistiques",
   "nav.logs"            : "Logs",
 
@@ -48,6 +49,8 @@
   "user.title"          : "Titre",
   "user.lastcontext"    : "Dernier contexte",
   "user.warning"        : "Attention, cette action est irréversible — ",
+
+  "orgs.title"          : "organismes",
 
   "group.allusers"      : "Tous les utilisateurs",
   "group.system"        : "Rôles systèmes",

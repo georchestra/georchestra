@@ -1,6 +1,6 @@
 <div ng-if="groups.isRoot">
   <div class="alert alert-info">
-    <a ng-link="users({id: 'all'})" translate>group.allusers</a>
+    <a ng-link="users({id: 'all'})" class="category" ng-class="{active: !groups.activeGroup}" translate>group.allusers</a>
     <hr>
     <div class="create-btn">
       <a ng-link="newUser" class="btn btn-default" translate>group.newuser</a>

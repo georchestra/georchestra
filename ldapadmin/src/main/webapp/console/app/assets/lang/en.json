@@ -1,6 +1,7 @@
 {
   "nav.dashboard"       : "Dashboard",
   "nav.users"           : "Users",
+  "nav.orgs"            : "Organisms",
   "nav.analytics"       : "Analytics",
   "nav.logs"            : "Logs",
 
@@ -48,6 +49,8 @@
   "user.title"          : "Title",
   "user.lastcontext"    : "Last context",
   "user.warning"        : "Warning, this action is irreversible — ",
+
+  "orgs.title"          : "organisms",
 
   "group.allusers"      : "All users",
   "group.system"        : "System roles",
