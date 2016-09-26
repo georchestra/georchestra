@@ -19,10 +19,14 @@
   </div>
 
   <div class="col-md-10">
-    <div class="panel panel-default">
+    <div class="panel panel-default" ng-class="{'panel-danger': user.user.pending}">
 
+      <div class="panel-heading text-center" ng-if="user.user.pending">
+        <span translate>user.pendingmsg</span>
+        <button class="btn btn-default" ng-click="user.confirm()" translate>user.confirm</button>
+      </div>
 
-      <div class="panel-body" ng-if="user.tab=='infos'" >
+      <div class="panel-body" ng-if="user.tab=='infos'">
 
         <div ng-inline="templates/userForm.tpl.html" ng-init="model=user.user;promise=user.user.$promise"></div>
 

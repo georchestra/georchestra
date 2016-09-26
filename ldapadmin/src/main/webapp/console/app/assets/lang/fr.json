@@ -49,6 +49,8 @@
   "user.title"          : "Titre",
   "user.lastcontext"    : "Dernier contexte",
   "user.warning"        : "Attention, cette action est irréversible — ",
+  "user.pendingmsg"     : "Utilisateur en attente ",
+  "user.confirm"        : "Confirmer",
 
   "orgs.title"          : "organismes",
 

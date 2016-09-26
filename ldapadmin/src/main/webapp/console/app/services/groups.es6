@@ -3,8 +3,11 @@ angular.module('admin_console')
   $resource(baseUri + 'groups/:id', {}, {
     query: {
       cache: true,
-      method:'GET',
-      isArray:true
+      method: 'GET',
+      isArray: true
+    },
+    get: {
+      isArray: false
     },
     update: {
       params: { id: '@cn' },
@@ -16,7 +19,7 @@ angular.module('admin_console')
     }
   })
 ]).factory('groupAdminList', [ () => {
-  var admin_groups = [
+  const adminGroups = [
     'ADMINISTRATOR',
     'PENDING',
     'MOD_ANALYTICS',
@@ -28,7 +31,7 @@ angular.module('admin_console')
     'USER',
     'TEMPORARY'
   ]
-  return () => admin_groups
-}]).factory('groupAdminFilter', [ 'groupAdminList', (groupAdminList)  =>
+  return () => adminGroups
+}]).factory('groupAdminFilter', [ 'groupAdminList', (groupAdminList) =>
   (group) => groupAdminList().indexOf(group.cn) >= 0
 ])

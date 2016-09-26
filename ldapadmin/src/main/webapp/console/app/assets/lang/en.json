@@ -49,6 +49,8 @@
   "user.title"          : "Title",
   "user.lastcontext"    : "Last context",
   "user.warning"        : "Warning, this action is irreversible — ",
+  "user.pendingmsg"     : "Pending user ",
+  "user.confirm"        : "Confirm",
 
   "orgs.title"          : "organisms",
 

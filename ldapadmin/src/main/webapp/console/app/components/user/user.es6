@@ -9,8 +9,6 @@ class UserController {
 
   constructor($routeParams, $injector, User, Group, Orgs) {
 
-    const TMP_GROUP  = 'TEMPORARY'
-
     this.$injector = $injector
     let groupAdminFilter = $injector.get('groupAdminFilter')
 
@@ -48,37 +46,49 @@ class UserController {
             data  : sel_orgs
           })
         })
-        break;
-      case 'groups':
-        let notAdmin = [];
-        this.groups = Group.query()
-        this.$injector.get('$q').all([
-          this.user.$promise,
-          this.groups.$promise
-        ]).then(() => {
-          this.user.groups = this.user.groups || [];
-          this.user.adminGroups = this.user.adminGroups || {};
-          this.groups.forEach((group) => {
-            if (group.users.indexOf(this.user.uid)>=0) {
-              if (groupAdminFilter(group)) {
-                this.user.adminGroups[group.cn] = true;
-              } else {
-                this.user.groups.push(group.cn);
-              }
-            }
-            if (!groupAdminFilter(group) && group.cn != TMP_GROUP) {
-              notAdmin.push(group.cn)
-            }
-          })
-          this.groups = notAdmin
-        })
-        break;
+        break
       case 'messages':
         this.templates = this.$injector.get('Templates').query()
         this.attachments = this.$injector.get('Attachments').query()
-        break;
+        break
       default:
     }
+    this.bindGroups()
+  }
+
+  bindGroups () {
+    const TMP_GROUP = 'TEMPORARY'
+
+    // Load group infos for every tab (for confirmation)
+    this.user.$promise.then(() => {
+      let Group = this.$injector.get('Group')
+      let groupAdminFilter = this.$injector.get('groupAdminFilter')
+      let notAdmin = []
+      this.groups = Group.query()
+      this.$injector.get('$q').all([
+        this.user.$promise,
+        this.groups.$promise
+      ]).then(() => {
+        this.user.groups = this.user.groups || []
+        this.user.adminGroups = this.user.adminGroups || {}
+        this.groups.forEach((group) => {
+          if (group.users.indexOf(this.user.uid) >= 0) {
+            if (groupAdminFilter(group)) {
+              this.user.adminGroups[group.cn] = true
+            } else {
+              this.user.groups.push(group.cn)
+            }
+          }
+          if (!groupAdminFilter(group) && group.cn !== TMP_GROUP) {
+            notAdmin.push(group.cn)
+          }
+          if (group.cn === 'PENDING') {
+            this.user.pending = group.users.indexOf(this.user.uid) >= 0
+          }
+        })
+        this.groups = notAdmin
+      })
+    })
   }
 
   loadAnalytics($scope) {
@@ -225,29 +235,41 @@ class UserController {
     )
   }
 
-  activate($scope) {
+  confirm () {
+    angular.extend(this.user.adminGroups, {
+      'PENDING': false,
+      'USER': true
+    })
+    this.$injector.get('$cacheFactory').get('$http').removeAll()
+    this.$injector.get('$timeout')(() =>
+      this.groupPromise.$promise.then(this.bindGroups.bind(this))
+    )
+  }
 
+  activate ($scope) {
     let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
-    let flash             = this.$injector.get('Flash')
+    let flash = this.$injector.get('Flash')
 
-    let saveGroups = function(newVal, oldVal) {
+    let saveGroups = function (newVal, oldVal) {
       if (!newVal || !oldVal) { return }
 
-      let toPut = newVal.filter(a => oldVal.indexOf(a) == -1)
-      let toDel = oldVal.filter(a => newVal.indexOf(a) == -1)
+      let toPut = newVal.filter(a => oldVal.indexOf(a) === -1)
+      let toDel = oldVal.filter(a => newVal.indexOf(a) === -1)
 
-      if (toPut.length == 0 && toDel.length == 0) { return }
-      if (toPut.length > 1 || toDel.length > 1) { return } // Batch operations are wrong artifacts
+      if (toPut.length === 0 && toDel.length === 0) { return }
+      if (toPut.length > 1 && toDel.length === 0) { return } // Wrong artifacts
 
-      this.$injector.get('GroupsUsers').save(
+      this.groupPromise = this.$injector.get('GroupsUsers').save(
         {
-          users  : [ this.user.uid ],
-          PUT    : toPut,
-          DELETE : toDel
-        }, () => {
+          users: [ this.user.uid ],
+          PUT: toPut,
+          DELETE: toDel
+        },
+        () => {
           flash.create('success', 'Roles updated')
           $httpDefaultCache.removeAll()
-        }, flash.create.bind(flash, 'danger', 'Error associating to roles')
+        },
+        flash.create.bind(flash, 'danger', 'Error associating to roles')
       )
     }
 
@@ -258,25 +280,23 @@ class UserController {
       for (let g in this.user.adminGroups) {
         if (this.user.adminGroups[g]) { groups.push(g) }
       }
-      return groups;
-    }, saveGroups.bind(this));
+      return groups
+    }, saveGroups.bind(this))
 
-    if (this.tab == 'analytics') {
-      this.loadAnalytics($scope);
+    if (this.tab === 'analytics') {
+      this.loadAnalytics($scope)
     }
-    if (this.tab == 'logs') {
-      this.loadLogs($scope);
+    if (this.tab === 'logs') {
+      this.loadLogs($scope)
     }
-
   }
-
 }
 
 UserController.prototype.activate.$inject = [ '$scope' ]
 
 angular.module('admin_console')
 .controller('UserController', UserController)
-.filter('encodeURIComponent', () => window.encodeURIComponent )
+.filter('encodeURIComponent', () => window.encodeURIComponent)
 .directive('managers', [ '$timeout', 'User', ($timeout, User) => ({
   link: (scope, elm, attrs, ctrl) => {
     let promise = scope.$eval(attrs['promise'])
@@ -285,14 +305,14 @@ angular.module('admin_console')
       users.map((u) => {
         let id = u.uid
         sel_users.push({
-          id   : id,
-          text : (u.sn || '') + ' ' + (u.givenName || '')
+          id: id,
+          text: (u.sn || '') + ' ' + (u.givenName || '')
         })
       })
       elm.select2({
         placeholder: '',
         allowClear: true,
-        data  : sel_users
+        data: sel_users
       })
       let cb = () => { $timeout(() => { elm.trigger('change') }) }
       if (promise) {
