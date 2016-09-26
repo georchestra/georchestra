@@ -44,6 +44,11 @@
     "select2": "^4.0.2",
     "uglify-js-brunch": "^2.0.1"
   },
+  "standard": {
+    "parser": "babel-eslint",
+    "globals": [ "angular" ],
+    "ignore": [ "vendor/", "public/" ]
+  },
   "scripts": {
     "postinstall": "./node_modules/.bin/brunch build --production"
   }

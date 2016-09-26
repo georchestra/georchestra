@@ -1,5 +1,3 @@
-/* globals angular */
-
 require('components/orgs/orgs.tpl')
 
 class OrgsController {

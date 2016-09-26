@@ -1,5 +1,3 @@
-/* globals angular */
-
 class AppController {
 
   static $inject = [ '$scope', '$router', '$location' ]
