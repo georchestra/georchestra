@@ -23,12 +23,26 @@ if [ ! -d /etc/ldap/slapd.d ]; then
     done;
     echo "OK"
 
+    echo "Get the LDAP domain"
+    dc_string=""
+    IFS="."; declare -a dc_parts=($SLAPD_DOMAIN); unset IFS
+    for dc_part in "${dc_parts[@]}"; do
+        if [ -z "$dc_string" ]
+          then
+            dc_string="dc=$dc_part"
+          else
+            dc_string="$dc_string,dc=$dc_part"
+        fi
+    done
+
     echo "Populating ldap tree..."
     ldapadd -Y EXTERNAL -H ldapi:/// -f /tmp/memberof.ldif
     if [ "$IGNORE_DATA" = 'true' ]; then
         echo "$0: ignoring /tmp/georchestra.ldif";
     else
-        ldapadd -D"cn=admin,dc=georchestra,dc=org" -w "$SLAPD_PASSWORD" -f /tmp/georchestra.ldif
+        perl -p -i -e "s/georchestra.org/${SLAPD_DOMAIN}/"        /tmp/georchestra.ldif
+        perl -p -i -e "s/dc=georchestra,dc=org/${dc_string}/"     /tmp/georchestra.ldif
+        ldapadd -D"cn=admin,${dc_string}" -w "$SLAPD_PASSWORD" -f /tmp/georchestra.ldif
     fi
 
     echo "Populating ldap tree...OK"
