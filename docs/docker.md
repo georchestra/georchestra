@@ -21,8 +21,8 @@ Feel free to comment out the apps you do not need.
 Create a configuration directory on your host machine:
 ```
 git clone -b docker-master https://github.com/georchestra/datadir.git
-mkdir /etc/georchestra
-mv datadir/* /etc/georchestra/.
+sudo mkdir /etc/georchestra
+sudo mv datadir/* /etc/georchestra/.
 ```
 
 Optional: adjust the configuration in `/etc/georchestra` according to your needs.
