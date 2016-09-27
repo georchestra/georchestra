@@ -218,7 +218,10 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                         anchor: '-30px',
                         name: "outputFilename",
                         fieldLabel: this.tr("atlas_outputfilename"),
-                        value: new Date().toISOString().slice(0,19).replace(/T|:|-/g, '')+"_atlas",
+                        value: [
+                            new Date().toISOString().slice(0,19).replace(/T|:|-/g, ''),
+                            "_atlas"
+                        ].join(''),
                         allowBlank: false
                     }]
                 }, { // FORMAT (PDF or ZIP)
@@ -336,8 +339,8 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                             items: [{
                                 xtype: "combo",
                                 name: "dpi",
-                                fieldLabel: "Map dpi",
-                                emptyText: "Select print resolution",
+                                fieldLabel: this.tr("atlas_mapdpi"),
+                                emptyText: this.tr("atlas_selectdpi"),
                                 anchor: '-10px',
                                 editable: false,
                                 typeAhead: false,
@@ -418,6 +421,13 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                 }),
                                 valueField: "scale",
                                 displayField: "scale",
+                                tpl: [
+                                    '<tpl for=".">',
+                                        '<div class="x-combo-list-item">',
+                                            '1 : {[OpenLayers.Number.format(values.scale, 0)]}',
+                                        '</div>',
+                                    '</tpl>'
+                                ].join(''),
                                 editable: false,
                                 typeAhead: false,
                                 validator: function(value) {
@@ -428,6 +438,13 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                                     })[0];
                                     valid = !(radioScale.getValue().inputValue === "manual" && (value === ""));
                                     return valid;
+                                },
+                                listeners: {
+                                    "select": function(cb, r, idx) {
+                                        cb.setValue(
+                                            "1 : " + OpenLayers.Number.format(r.get("scale"), 0)
+                                        );
+                                    }
                                 }
                             }]
                         }]
