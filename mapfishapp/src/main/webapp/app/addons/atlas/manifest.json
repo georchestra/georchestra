@@ -45,7 +45,8 @@
             "atlas_too_many_features": "Too many features to build atlas, please launch atlas generation from the result panel with less than ",
             "atlas_too_many_features_after_nb": " features.",
             "atlas_no_pages": "There is no atlas pages to print.",
-            "atlas_bbox_point_error": "Cannot set page scale based on bounding box with point geometry."
+            "atlas_bbox_point_error": "Cannot set page scale based on bounding box with point geometry.",
+            "atlas_form_invalid": "Invalid form"
         },
         "es": {
             "atlas_failed": "Error de generación de atlas",
@@ -85,7 +86,8 @@
             "atlas_too_many_features": "Too many features to build atlas, please launch atlas generation from the result panel with less than ",
             "atlas_too_many_features_after_nb": " features.",
             "atlas_no_pages": "There is no atlas pages to print.",
-            "atlas_bbox_point_error": "Cannot set page scale based on bounding box with point geometry."
+            "atlas_bbox_point_error": "Cannot set page scale based on bounding box with point geometry.",
+            "atlas_form_invalid": "Invalid form"
         },
         "fr": {
             "atlas_failed": "La génération de l'atlas a échoué",
@@ -125,7 +127,8 @@
             "atlas_too_many_features": "Le nombre d'entités est supérieur à la limite permise pour la génération de l'atlas, veuillez relancer la génération de l'atlas à partir du panneau de résultats avec moins de ",
             "atlas_too_many_features_after_nb": " entités.",
             "atlas_no_pages": "Aucune page d'atlas à imprimer",
-            "atlas_bbox_point_error": "Impossible de définir l'échelle à partir du rectangle englobant un point"
+            "atlas_bbox_point_error": "Impossible de définir l'échelle à partir du rectangle englobant un point",
+            "atlas_form_invalid": "Formulaire invalide"
         },
         "de": {
             "atlas_failed": "Die Erzeugung des Atlas fehlgeschlagen",
@@ -165,7 +168,8 @@
             "atlas_too_many_features": "Too many features to build atlas, please launch atlas generation from the result panel with less than ",
             "atlas_too_many_features_after_nb": " features.",
             "atlas_no_pages": "There is no atlas pages to print.",
-            "atlas_bbox_point_error": "Cannot set page scale based on bounding box with point geometry."
+            "atlas_bbox_point_error": "Cannot set page scale based on bounding box with point geometry.",
+            "atlas_form_invalid": "Invalid form"
         }
     }
 }

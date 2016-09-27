@@ -133,17 +133,18 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
          */
         this.events.on({
             "featurelayerready": function(spec) {
+                console.log(spec);
                 var format = new OpenLayers.Format.JSON();
                 OpenLayers.Request.POST({
                     url: this.options.atlasServerUrl,
                     data: format.write(spec),
                     success: function() {
-                        GEOR.helper.msg(this.title, this.tr("atlas_submit_success"))
+                        GEOR.helper.msg(this.title, this.tr("atlas_submit_success"));
                     },
                     failure: function() {
                         GEOR.util.errorDialog({
                             msg: this.tr("atlas_submit_fail")
-                        })
+                        });
                     },
                     scope: this
                 });
@@ -195,7 +196,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             closable: true,
             closeAction: "hide",
             listeners: {
-                "show": function() {
+                "show": function() { // FIXME: this window should be created only when the layerrecord on which to operate is known
                     this.window.setTitle([
                         this.tr("Atlas of layer"),
                         ' \"',
@@ -676,10 +677,14 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                     width: 100,
                     iconCls: this.options.iconCls,
                     handler: function(b) {
-                        var formValues;
                         if (b.findParentByType("form").getForm().isValid()) {
-                            formValues = b.findParentByType("form").getForm().getFieldValues();
-                            this.parseForm(formValues);
+                            this.parseForm(
+                                b.findParentByType("form").getForm().getFieldValues()
+                            );
+                        } else {
+                            GEOR.util.errorDialog({
+                                msg: this.tr("atlas_form_invalid")
+                            });
                         }
                     },
                     scope: this
@@ -825,13 +830,10 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
      * @private
      *
      * @param formValues - form values as returned by Ext.form.BasicForm.getFieldValues()
-     * @param autoSubmit - Should we fire "featurelayerready" when parsing is done ?
-     *     This will send request to atlas server
      */
-    parseForm: function(formValues, autoSubmit) {
+    parseForm: function(formValues) {
         var scaleParameters, titleSubtitleParameters;
 
-        autoSubmit = autoSubmit || true;
         //copy some parameters
         this.spec.outputFormat = formValues.outputFormat;
         this.spec.layout = formValues.layout;
@@ -859,7 +861,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
         this.spec.baseLayers = this.baseLayers(formValues["atlasLayer"]);
 
         this.createFeatureLayerAndPagesSpecs(formValues["atlasLayer"], scaleParameters,
-            titleSubtitleParameters, formValues["prefix_field"], autoSubmit, formValues["resultPanel"]);
+            titleSubtitleParameters, formValues["prefix_field"], formValues["resultPanel"]);
 
         // Form submit is triggered by "featurelayerready" event
 
@@ -876,13 +878,12 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
      * @param scaleParameters {Object} - Form values related to the scale management
      * @param titleSubtitleParameters {Object} - Form values related to title and subtitle
      * @param fieldPrefix {String} - Attribute to use a prefix for filename generation
-     * @param autoSubmit {Boolean} - Should we fire "featurelayerready" when parsing is done ?
      * @param resultPanel {Boolean} - True atlas is generated from result panel actions menu
      *     This will send request to atlas server
      */
-    createFeatureLayerAndPagesSpecs: function(atlasLayer, scaleParameters, titleSubtitleParameters, fieldPrefix,
-        autoSubmit, resultPanel) {
+    createFeatureLayerAndPagesSpecs: function(atlasLayer, scaleParameters, titleSubtitleParameters, fieldPrefix, resultPanel) {
 
+        var autoSubmit = true;
         /**
          *
          * Private function to create page object from a feature.
@@ -894,19 +895,19 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
          */
         var _pageFromFeature = function(wfsFeature, addon) {
             var page = {}, bounds, bbox;
-
+            // title
             if (titleSubtitleParameters.titleMethod === "same") {
                 page.title = titleSubtitleParameters.titleText;
             } else {
                 page.title = wfsFeature.attributes[titleSubtitleParameters.titleField];
             }
-
+            // subtitle
             if (titleSubtitleParameters.subtitleMethod === "same") {
                 page.subtitle = titleSubtitleParameters.subtitleText;
             } else {
                 page.subtitle = wfsFeature.attributes[titleSubtitleParameters.subtitleField];
             }
-
+            // center + scale
             if (scaleParameters.scaleMethod === "manual") {
                 page.center = [wfsFeature.geometry.getCentroid().x, wfsFeature.geometry.getCentroid().y];
                 page.scale = scaleParameters.scaleManual;
@@ -920,14 +921,13 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                 }
                 page.bbox = bbox;
             }
-
+            // filename
             if (fieldPrefix === "") {
                 page.filename = pageIdx.toString() + "_atlas.pdf";
             } else {
                 page.filename = wfsFeature.attributes[fieldPrefix] + "_" + pageIdx.toString() +
                     "_atlas.pdf";
             }
-
             return page;
         };
 
