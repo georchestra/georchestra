@@ -302,18 +302,8 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
                     iconCls: 'geor-btn-zoom',
                     tooltip: tr("Zoom to results extent"),
                     handler: function() {
-                        var grid = this.findByType("grid")[0];
-                        if (grid) {
-                            var sm = grid.getSelectionModel(),
-                                selectedFeatures = [],
-                                bypass = (sm.getCount() == 0);
-                            this._store.each(function(record) {
-                                if (bypass || sm.isSelected(record)) {
-                                    selectedFeatures.push(record.get("feature"));
-                                }
-                            });
-                            this._zoomToFeatures(selectedFeatures);
-                        }
+                        var features = this.getSelectedFeatures();
+                        this._zoomToFeatures(features);
                     },
                     scope: this
                 }, {
@@ -547,6 +537,35 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
         });
         this._store.loadData(features);
         this._createGridPanel();
+    },
+
+    /**
+     * APIMethod: getSelectedFeatures
+     * This method returns the selected features in the grid.
+     *
+     */
+    getSelectedFeatures: function() {
+        var grid = this.findByType("grid")[0];
+        if (!grid) {
+            return [];
+        }
+        var sm = grid.getSelectionModel(),
+            selectedFeatures = [],
+            bypass = (sm.getCount() == 0);
+        this._store.each(function(record) {
+            if (bypass || sm.isSelected(record)) {
+                selectedFeatures.push(record.get("feature"));
+            }
+        });
+        return selectedFeatures;
+    },
+
+    /**
+     * APIMethod: getModel
+     *
+     */
+    getModel: function() {
+        return this._model;
     },
 
     /**
