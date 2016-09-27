@@ -402,18 +402,23 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
         ];
 
 
-        /**Loading Addons actions
+        /** Loading Addon actions
          *
-         * Addons must have options.resultPanelAction === true and
-         *  API method resultPanelHandler(menuitem, event, resultPanel). In this API method, this is the addon.
+         * To be able to insert their own action in the ResultsPanel "actions" menu,
+         * addons must have the `resultPanelAction` option set to true
+         * and an API method named `resultPanelHandler`
+         * with the `(menuitem, event, resultPanel)` signature.
+         * The `resultPanelHandler` scope is set to the addon.
          */
-        Ext.each(GEOR.config.ADDONS, function(addonConfig) {
-            if (GEOR.tools.getAddonsState()[addonConfig.id] && addonConfig.options && addonConfig.options.resultPanelAction) {
+        var addonsState = GEOR.tools.getAddonsState();
+        Ext.each(GEOR.config.ADDONS, function(cfg) {
+            if (addonsState[cfg.id] && cfg.options && cfg.options.resultPanelAction === true) {
+                var a = GEOR.tools.getAddon(cfg.id);
                 actionsItem.menu.addItem({
-                    text: GEOR.tools.getAddon(addonConfig.id).title,
-                    iconCls: GEOR.tools.getAddon(addonConfig.id).iconCls,
-                    tooltip: GEOR.tools.getAddon(addonConfig.id).qtip,
-                    handler: GEOR.tools.getAddon(addonConfig.id).resultPanelHandler.createDelegate(GEOR.tools.getAddon(addonConfig.id), [this], true)
+                    text: a.title,
+                    iconCls: a.iconCls,
+                    tooltip: a.qtip,
+                    handler: a.resultPanelHandler.createDelegate(a, [this])
                 });
             }
         }, this);
