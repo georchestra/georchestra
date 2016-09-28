@@ -22,6 +22,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
 
     // string
     _geometryName: null,
+    _geometryType: null,
 
     // current ext window
     window: null,
@@ -68,30 +69,6 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                 }
             });
         }
-
-        /**
-         * Atlas request is submitted on featurelayerready event
-         *
-        this.events.on({
-            "featurelayerready": function(spec) {
-                console.log(spec);
-                var format = new OpenLayers.Format.JSON();
-                OpenLayers.Request.POST({
-                    url: this.options.atlasServerUrl,
-                    data: format.write(spec),
-                    success: function() {
-                        GEOR.helper.msg(this.title, this.tr("atlas_submit_success"));
-                    },
-                    failure: function() {
-                        GEOR.util.errorDialog({
-                            msg: this.tr("atlas_submit_fail")
-                        });
-                    },
-                    scope: this
-                });
-            },
-            scope: this
-        });*/
 
         this.printProvider = new GeoExt.data.MapFishPrintv3Provider({
             method: "POST",
@@ -240,7 +217,8 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                         geometryName: geometryName
                     });
                     this._getFeatures(protocol); // note that this could be done later (when the user submits the form)...
-                    this._geometryName = geometryName;
+                    this._geometryName = geometryName; // TODO: check we still need it.
+                    this._geometryType = r.get("type");
                     // remove geometry from attribute store (useless in combos)
                     this.attributeStore.remove(r);
                 } else {
@@ -272,37 +250,29 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                 type: "INTERSECTS",
                 value: this.map.getMaxExtent()
             }),
-            propertyNames: this.attributeStore.collect("name").concat(this._geometryName),
+            //propertyNames: this.attributeStore.collect("name").concat(this._geometryName),
+            propertyNames: this.attributeStore.collect("name"), // trying to remove the geometry from the response (keeping the bboxes)
             callback: function(response) {
                 if (!response.success()) {
                     alert("Error while performing WFS getFeature"); // FIXME
                     return;
                 }
                 if (response.features.length > this.maxFeatures) {
-                    alert("Too many features in layer for an atlas, please select the features through a query"); // FIXME
+                    GEOR.util.errorDialog({
+                        msg: this.tr("atlas_too_many_features") +
+                            (this.maxFeatures) + this.tr("atlas_too_many_features_after_nb")
+                    });
                     return;
                 }
                 this.features = response.features;
                 // update window title with feature count:
-                this.window.setTitle(this.window.title + " - " + this.features.length + " " + this.tr("features"));
-
-                /*
-                Ext.each(wfsFeatures, function(wfsFeature) {
-
-                    this.spec.pages.splice(-1, 0, 
-                        _pageFromFeature(wfsFeature, this));
-
-                    pageIdx = pageIdx + 1;
-
-                }, this);
-
-                //Remove empty pages //shouldn't they be removed immediately ?
-                Ext.each(this.spec.pages, function(page, idx) {
-                    if (page === undefined) {
-                        this.spec.pages.splice(idx, 1);
-                    }
-                }, this);
-                */
+                this.window.setTitle([
+                    this.window.title,
+                    " - ",
+                    this.features.length,
+                    " ",
+                    this.tr("features")
+                ].join(''));
             },
             scope: this
         });
@@ -355,7 +325,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
      * When this method is called, we always know on which layer we operate
      */
     _buildFormDialog: function() {
-        var form = (new GEOR.Addons.Atlas.Form(this)).form,
+        var formPanel = (new GEOR.Addons.Atlas.Form(this)).form,
             basicTitle = [
                 this.tr("Atlas of layer"),
                 ' \"',
@@ -387,7 +357,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                 },
                 scope: this
             },
-            items: form,
+            items: formPanel,
             buttons: [{
                 text: this.tr("atlas_cancel"),
                 handler: function() {
@@ -396,13 +366,16 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                 scope: this
             }, {
                 text: this.tr("atlas_submit"),
+                // TODO: disable button as long as this.features.length is 0
                 width: 100,
                 iconCls: this.options.iconCls,
                 handler: function(b) {
+                    var form = formPanel.getForm();
                     if (form.isValid()) {
                         this.createSpec(
                             form.getFieldValues()
                         );
+                        this.window.close();
                     } else {
                         GEOR.util.errorDialog({
                             msg: this.tr("atlas_form_invalid")
@@ -423,266 +396,144 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
      * @param v - form values as returned by Ext.form.BasicForm.getFieldValues()
      */
     createSpec: function(v) {
-        //var scaleParameters, titleSubtitleParameters;
-        //copy some parameters
+        // see https://gist.github.com/Vampouille/1ceb047465047dd1f9fd
+        // for the atlas spec
         var spec = {
             email: v.email,
             layout: v.layout,
             outputFormat: v.outputFormat,
-            outputFilename: v.outputFilename,
+            outputFilename: v.outputFilename + "." + v.outputFormat,
             dpi: v.dpi,
             projection: this.map.getProjection(),
             displayLegend: v.displayLegend,
-            baseLayers: this.baseLayers(v["atlasLayer"]) // FIXME: check definition of baselayers
+            baseLayers: this.encodeBaseLayers(),
+            featureLayer: this.encodeAtlasLayer(),
+            pages: this.getPages(v)
         };
-
-        scaleParameters = {
-            scaleManual: formValues["scale_manual"],
-            scaleMethod: formValues["scale_method_group"].inputValue,
-            scalePadding: formValues["scale_padding"] // FIXME: undefined
-        };
-
-        titleSubtitleParameters = {
-            titleMethod: formValues["title_method_group"].inputValue,
-            titleText: formValues["titleText"],
-            titleField: formValues["titleField"],
-            subtitleMethod: formValues["title_method_group"].inputValue,
-            subtitleText: formValues["subtitleText"],
-            subtitleField: formValues["subtitleField"]
-        };
-
-
-        this.createFeatureLayerAndPagesSpecs(formValues["atlasLayer"], scaleParameters,
-            titleSubtitleParameters, formValues["prefix_field"], formValues["resultPanel"]);
-
-        // Form submit is triggered by "featurelayerready" event
-
-        this.spec = spec;
-        this.window.close();
-    },
-
-    /**
-     * @function createFeatureLayerAndPagesSpecs
-     * @private
-     *
-     * Build the part of the atlas configuration related to the feature layer and the pages description
-     *
-     * @param atlasLayer {String} - Name of the atlas layer
-     * @param scaleParameters {Object} - Form values related to the scale management
-     * @param titleSubtitleParameters {Object} - Form values related to title and subtitle
-     * @param fieldPrefix {String} - Attribute to use a prefix for filename generation
-     * @param resultPanel {Boolean} - True atlas is generated from result panel actions menu
-     *     This will send request to atlas server
-     */
-    createFeatureLayerAndPagesSpecs: function(atlasLayer, scaleParameters, titleSubtitleParameters, fieldPrefix, resultPanel) {
-
-        var autoSubmit = true;
-        /**
-         *
-         * Private function to create page object from a feature.
-         *
-         * @param wfsFeature
-         * @param addon
-         * @return {Object} or {undefined}
-         * @private
-         */
-        var _pageFromFeature = function(wfsFeature, addon) {
-            var page = {}, bounds, bbox;
-            // title
-            if (titleSubtitleParameters.titleMethod === "same") {
-                page.title = titleSubtitleParameters.titleText;
-            } else {
-                page.title = wfsFeature.attributes[titleSubtitleParameters.titleField];
-            }
-            // subtitle
-            if (titleSubtitleParameters.subtitleMethod === "same") {
-                page.subtitle = titleSubtitleParameters.subtitleText;
-            } else {
-                page.subtitle = wfsFeature.attributes[titleSubtitleParameters.subtitleField];
-            }
-            // center + scale
-            if (scaleParameters.scaleMethod === "manual") {
-                page.center = [wfsFeature.geometry.getCentroid().x, wfsFeature.geometry.getCentroid().y];
-                page.scale = scaleParameters.scaleManual;
-            } else {
-                if (!(wfsFeature.geometry instanceof OpenLayers.Geometry.Point)) {
-                    bounds = wfsFeature.geometry.getBounds();
-                    bbox = bounds.scale(1 + addon.options.bboxBuffer).toArray();
-                } else {
-                    GEOR.helper.msg(addon.title, addon.tr("atlas_bbox_point_error"), 10); // FIXME - GEOR.helper.msg probably not appropriate here
-                    return undefined;
-                }
-                page.bbox = bbox;
-            }
-            // filename
-            if (fieldPrefix === "") {
-                page.filename = pageIdx.toString() + "_atlas.pdf";
-            } else {
-                page.filename = wfsFeature.attributes[fieldPrefix] + "_" + pageIdx.toString() +
-                    "_atlas.pdf";
-            }
-            return page;
-        };
-
-        this.spec.pages = [];
-        var pageIdx = 0;
-
-        this.mapPanel.layers.each(function(layerRecord) {
-            var layer = layerRecord.get("layer");
-
-            if (layer === atlasLayer) {
-                this.spec.featureLayer = this.printProvider.encodeLayer(layer, layer.getExtent());
-                //TODO version may not be required by mapfish - check serverside
-                if (layer.DEFAULT_PARAMS) {
-                    this.spec.featureLayer.version = layer.DEFAULT_PARAMS.version;
-                }
-                if (this.spec.featureLayer.maxScaleDenominator) {
-                    delete this.spec.featureLayer.maxScaleDenominator;
-                }
-                if (this.spec.featureLayer.minScaleDenominator) {
-                    delete this.spec.featureLayer.minScaleDenominator;
-                }
-
-                if (resultPanel) {
-                    var wfsFeatures = this.resultPanelFeatures;
-
-                    if (wfsFeatures.totalLength >= (this.maxFeatures + 1)) {
-                        GEOR.util.errorDialog({
-                            msg: this.tr("atlas_too_many_features") +
-                                (this.maxFeatures + 1) + this.tr("atlas_too_many_features_after_nb")
-                        });
-                        autoSubmit = false;
-                    }
-
-                    wfsFeatures.each(function(record) {
-                        this.spec.pages.splice(-1, 0, 
-                            _pageFromFeature(record.getFeature(), this)
-                        );
-                        pageIdx = pageIdx + 1;
-                    }, this);
-
-                    //Remove empty page
-                    Ext.each(this.spec.pages, function(page, idx) {
-                        if (page === undefined) {
-                            this.spec.pages.splice(idx, 1);
-                        }
-                    }, this);
-
-                    if (autoSubmit) {
-                        if (this.spec.pages.length === 0) {
-                            GEOR.util.errorDialog({
-                                msg: this.tr("atlas_no_pages")
-                            });
-                        } else {
-                            this.events.fireEvent("featurelayerready", this.spec);
-                        }
-
-                    }
-                } else {
-                    /*
-                    this.protocol.read({
-                        //See GEOR_Querier "search" method
-                        maxFeatures: this.maxFeatures + 1,
-                        filter: new OpenLayers.Filter.Spatial({
-                            type: "INTERSECTS",
-                            value: this.map.getMaxExtent()
-                        }),
-                        propertyNames: this.attributeStore.collect("name").concat(this._geometryName),
-                        callback: function(response) {
-                            if (!response.success()) {
-                                return;
-                            }
-                            var wfsFeatures = response.features;
-
-                            if (wfsFeatures.length === (this.maxFeatures + 1)) {
-                                GEOR.util.errorDialog({
-                                    msg: this.tr("atlas_too_many_features") +
-                                        (this.maxFeatures + 1) + this.tr("atlas_too_many_features_after_nb"),
-                                    scope: this
-                                });
-                                autoSubmit = false;
-                            }
-                            Ext.each(wfsFeatures, function(wfsFeature) {
-
-                                this.spec.pages.splice(-1, 0, 
-                                    _pageFromFeature(wfsFeature, this));
-
-                                pageIdx = pageIdx + 1;
-
-                            }, this);
-
-                            //Remove empty pages //shouldn't they be removed immediately ?
-                            Ext.each(this.spec.pages, function(page, idx) {
-                                if (page === undefined) {
-                                    this.spec.pages.splice(idx, 1);
-                                }
-                            }, this);
-
-                            if (autoSubmit) {
-                                if (this.spec.pages.length === 0) {
-                                    GEOR.util.errorDialog({
-                                        msg: this.tr("atlas_no_pages")
-                                    });
-                                } else {
-                                    this.events.fireEvent("featurelayerready", this.spec);
-                                }
-
-                            }
-
-                        },
-                        scope: this
-
-                    });
-                    */
-                }
-            }
-        }, this);
+        OpenLayers.Request.POST({
+            url: this.options.atlasServerUrl,
+            data: new OpenLayers.Format.JSON().write(spec),
+            success: function() {
+                GEOR.helper.msg(this.title, this.tr("atlas_submit_success"));
+                // TODO: need something else than GEOR.helper for information
+            },
+            failure: function() {
+                GEOR.util.errorDialog({
+                    msg: this.tr("atlas_submit_fail")
+                });
+            },
+            scope: this
+        });
     },
 
 
-
-
     /**
-     * @function baseLayers - Encode all other mapPanel layers than the atlas layer using the print provider
+     * @function encodeBaseLayers - Encode all other mapPanel layers than the atlas layer using the print provider
      *
-     * @param atlasLayer {String}
      * @returns {Array}
      */
-    baseLayers: function(atlasLayer) {
-        var encodedLayer = null,
-            encodedLayers = [];
-        this.mapPanel.layers.each(function(layerRecord) {
-            if ((layerRecord.get("name") !== atlasLayer) && layerRecord.get("layer").visibility) {
-
-                /**
-                 * TODO Do we want to show the resultPanel symbology in the atlas? Currently, we hide the layer because
-                 * it hide the current symbology.
-                 */
-                if (!((layerRecord.get("layer").name === "__georchestra_print_bounds_") ||
-                        (layerRecord.get("layer").name === "__georchestra_results_resultPanel"))) {
-                    encodedLayer = this.printProvider.encodeLayer(layerRecord.get("layer"), this.map.getMaxExtent());
+    encodeBaseLayers: function() {
+        var encodedLayers = [];
+        this.mapPanel.layers.each(function(r) {
+            var l = r.getLayer();
+            // loop on all visible layers
+            // not the atlas layer
+            // not the vector layers used by addons (macthing "__georchestra")
+            if (l.getVisibility() && r !== this.layerRecord && !/^__georchestra/.test(l.name)) {
+                // use print provider to encode
+                encodedLayers.push(
+                    this.printProvider.encodeLayer(l, this.map.getMaxExtent())
+                );
+                /*
+                if (l.DEFAULT_PARAMS) {
+                    encodedLayer.version = l.DEFAULT_PARAMS.version;
                 }
-
-                if (encodedLayer) {
-
-                    //TODO Do we force version parameter inclusion?
-                    if (layerRecord.get("layer").DEFAULT_PARAMS) {
-                        encodedLayer.version = layerRecord.get("layer").DEFAULT_PARAMS.version;
-                    }
-                    if (encodedLayer.maxScaleDenominator) {
-                        delete encodedLayer.maxScaleDenominator;
-                    }
-                    if (encodedLayer.minScaleDenominator) {
-                        delete encodedLayer.minScaleDenominator;
-                    }
-
-                    encodedLayers.splice(-1, 0, encodedLayer);
-                }
+                */
             }
         }, this);
-
         return encodedLayers;
     },
+
+
+    /**
+     * @function encodeAtlasLayer - Encode atlas layer
+     *
+     * @returns {Object}
+     */
+    encodeAtlasLayer: function() {
+        var layer = this.layerRecord.getLayer(),
+            encodedLayer = this.printProvider.encodeLayer(layer, layer.getExtent());
+        /*
+        if (layer.DEFAULT_PARAMS) {
+            this.spec.featureLayer.version = layer.DEFAULT_PARAMS.version;
+        }*/
+        // we want to get rid of scale limits:
+        if (encodedLayer.maxScaleDenominator) {
+            delete encodedLayer.maxScaleDenominator;
+        }
+        if (encodedLayer.minScaleDenominator) {
+            delete encodedLayer.minScaleDenominator;
+        }
+        return encodedLayer;
+    },
+
+
+    /**
+     * @function getPages
+     *
+     * @returns {Array}
+     */
+    getPages: function(values) {
+        var pages = [];
+        // one page per feature
+        // when this code is run, we're sure that this.feature is not empty
+        Ext.each(this.features, function(feature) {
+            pages.push(this.getPage(feature, values));
+        }, this);
+        return pages;
+    },
+
+
+    /**
+     * @function getPage
+     *
+     * @returns {Array}
+     */
+    getPage: function(feature, values) {
+        var center,
+            a = feature.attributes,
+            page = {
+            "title": values["title_method"].inputValue == "same" ?
+                values.titleText : a[values.titleField],
+            "subtitle": values["subtitle_method"].inputValue == "same" ?
+                values.subtitleText : a[values.subtitleField]
+        };
+        if (values.outputFormat == "zip") {
+            if (values.prefix_field != "") {
+                // TODO: sanitization of a[values.prefix_field] ?
+                page.filename = values.outputFilename + "_" + a[values.prefix_field] + ".pdf";
+            } else {
+                // FIXME: feature.fid is fragile
+                page.filename = values.outputFilename + "_" + feature.fid.split(".")[1] + ".pdf";
+            }
+        } else {
+            // stupid server requests that every page has a filename,
+            // even if it is not being used
+            page.filename = "truite";
+        }
+        // if geom is point || user has manually chosen a scale
+        if (this._geometryType == "gml:PointPropertyType" ||
+            values["scale_method"].inputValue == "manual") {
+
+            center = feature.geometry.getCentroid();
+            page.center = [center.x, center.y];
+            page.scale = values["scale_manual"] || this.options.defaultPointScale;
+        } else {
+            page.bbox = feature.geometry.getBounds().scale(1 + this.options.bboxBuffer).toArray()
+        }
+        return page;
+    },
+
 
     /**
      * @function tr

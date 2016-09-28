@@ -7,6 +7,14 @@
     "css": [
         "css/main.css"
     ],
+    "default_options": {
+        "iconCls": "atlas-icon",
+        "resultPanelAction": true,
+        "layerTreeAction": true,
+        "atlasServerUrl": "/atlas/print",
+        "bboxBuffer": 0.1,
+        "defaultPointScale": 17061.8366707982724577
+    },
     "i18n": {
         "en": {
             "atlas_failed": "Atlas generation failed",
@@ -21,7 +29,7 @@
             "atlas_selectscale": "Select scale...",
             "atlas_selectdpi": "Select print resolution",
             "atlas_scalemanual": "Manual scale",
-            "atlas_bbox": "Bounding box",
+            "atlas_scaleauto": "Best scale",
             "atlas_pagetitle": "Page title",
             "atlas_sametitle": "Same title for every page",
             "atlas_fieldtitle": "Use a field from the atlas layer as title",
@@ -35,8 +43,8 @@
             "atlas_subtitle": "Subtitle",
             "atlas_fieldforsubtitleselect": "Select subtitle field",
             "atlas_outputfilename": "Output filename",
-            "atlas_fieldprefix": "Field to use as page filename prefix",
-            "atlas_fieldforprefix": "Select prefix field...",
+            "atlas_fieldprefix": "Field to use as page filename suffix",
+            "atlas_fieldforprefix": "Select suffix field...",
             "atlas_emaillabel": "Atlas download link will be sent by email at",
             "atlas_submit": "Submit",
             "atlas_cancel": "Cancel",
@@ -46,7 +54,6 @@
             "atlas_too_many_features": "Too many features to build atlas, please launch atlas generation from the result panel with less than ",
             "atlas_too_many_features_after_nb": " features.",
             "atlas_no_pages": "There is no atlas pages to print.",
-            "atlas_bbox_point_error": "Cannot set page scale based on bounding box with point geometry.",
             "atlas_form_invalid": "Invalid form"
         },
         "es": {
@@ -62,7 +69,7 @@
             "atlas_selectscale": "Seleccione una escala...",
             "atlas_selectdpi": "Seleccionar resolución de impresión",
             "atlas_scalemanual": "Escala manual",
-            "atlas_bbox": "Rectángulo de selección",
+            "atlas_scaleauto": "Escala auto",
             "atlas_pagetitle": "Título de la página",
             "atlas_sametitle": "Mismo título para cada página",
             "atlas_fieldtitle": "Utilizar un campo de la capa del atlas como título",
@@ -76,8 +83,8 @@
             "atlas_subtitle": "Subtítulo",
             "atlas_fieldforsubtitleselect": "Seleccionar campo de subtítulo",
             "atlas_outputfilename": "Nombre de archivo de salida",
-            "atlas_fieldprefix": "Campo para utilizar como prefijo de nombre de archivo de página",
-            "atlas_fieldforprefix": "Seleccionar campo de prefijo...",
+            "atlas_fieldprefix": "Campo para utilizar como suffijo de nombre de archivo de página",
+            "atlas_fieldforprefix": "Seleccionar campo de suffijo...",
             "atlas_emaillabel": "El vínculo de descarga del atlas se enviará por correo electrónico a",
             "atlas_submit": "Enviar",
             "atlas_cancel": "Cancelar",
@@ -87,7 +94,6 @@
             "atlas_too_many_features": "Too many features to build atlas, please launch atlas generation from the result panel with less than ",
             "atlas_too_many_features_after_nb": " features.",
             "atlas_no_pages": "There is no atlas pages to print.",
-            "atlas_bbox_point_error": "Cannot set page scale based on bounding box with point geometry.",
             "atlas_form_invalid": "Invalid form"
         },
         "fr": {
@@ -103,7 +109,7 @@
             "atlas_selectscale": "Sélectionner l'échelle...",
             "atlas_selectdpi": "Sélectionner la résolution",
             "atlas_scalemanual": "Échelle manuelle",
-            "atlas_bbox": "Rectangle englobant",
+            "atlas_scaleauto": "Meilleure échelle",
             "atlas_pagetitle": "Titre",
             "atlas_sametitle": "Même titre pour toutes les pages",
             "atlas_fieldtitle": "Utiliser un champ comme titre",
@@ -117,8 +123,8 @@
             "atlas_subtitle": "Sous-titre",
             "atlas_fieldforsubtitleselect": "Sélectionner le champ sous-titre",
             "atlas_outputfilename": "Nom de l'atlas",
-            "atlas_fieldprefix": "Préfixe",
-            "atlas_fieldforprefix": "Sélectionner le champ à utiliser comme préfixe",
+            "atlas_fieldprefix": "Suffixe",
+            "atlas_fieldforprefix": "Sélectionner le champ à utiliser comme suffixe",
             "atlas_emaillabel": "Le lien de téléchargement de l'atlas sera transmis par courriel à l'adresse",
             "atlas_submit": "Soumettre",
             "atlas_cancel": "Annuler",
@@ -128,7 +134,6 @@
             "atlas_too_many_features": "Le nombre d'entités est supérieur à la limite permise pour la génération de l'atlas, veuillez relancer la génération de l'atlas à partir du panneau de résultats avec moins de ",
             "atlas_too_many_features_after_nb": " entités.",
             "atlas_no_pages": "Aucune page d'atlas à imprimer",
-            "atlas_bbox_point_error": "Impossible de définir l'échelle à partir du rectangle englobant un point",
             "atlas_form_invalid": "Formulaire invalide"
         },
         "de": {
@@ -144,7 +149,7 @@
             "atlas_selectscale": "Select scale...",
             "atlas_selectdpi": "Select print resolution",
             "atlas_scalemanual": "Manual scale",
-            "atlas_bbox": "Bounding box",
+            "atlas_scaleauto": "Best scale",
             "atlas_pagetitle": "Page title",
             "atlas_sametitle": "Same title for every page",
             "atlas_fieldtitle": "Use a field from the atlas layer as title",
@@ -158,8 +163,8 @@
             "atlas_subtitle": "Subtitle",
             "atlas_fieldforsubtitleselect": "Select subtitle field",
             "atlas_outputfilename": "Output filename",
-            "atlas_fieldprefix": "Field to use as page filename prefix",
-            "atlas_fieldforprefix": "Select prefix field...",
+            "atlas_fieldprefix": "Field to use as page filename suffix",
+            "atlas_fieldforprefix": "Select suffix field...",
             "atlas_emaillabel": "Atlas download link will be sent by email at",
             "atlas_submit": "Submit",
             "atlas_cancel": "Cancel",
@@ -169,7 +174,6 @@
             "atlas_too_many_features": "Too many features to build atlas, please launch atlas generation from the result panel with less than ",
             "atlas_too_many_features_after_nb": " features.",
             "atlas_no_pages": "There is no atlas pages to print.",
-            "atlas_bbox_point_error": "Cannot set page scale based on bounding box with point geometry.",
             "atlas_form_invalid": "Invalid form"
         }
     }

@@ -93,7 +93,7 @@ GEOR.map = (function() {
     var createMainBaseLayer = function() {
         
         // Grid of blank images of 1024x1024
-        return new OpenLayers.Layer.Grid("base_layer", '', null, {
+        return new OpenLayers.Layer.Grid("__georchestra_base_layer", '', null, {
             singleTile: false,
             displayInLayerSwitcher: false,
             isBaseLayer: true,

@@ -234,7 +234,7 @@ GEOR.Addons.Atlas.Form = Ext.extend(Object, {
                         xtype: "radiogroup",
                         columns: 1,
                         hideLabel: true,
-                        name: "scale_method_group",
+                        name: "scale_method",
                         listeners: {
                             "change": function(rg, checked) {
                                 var form = rg.findParentByType("form"),
@@ -250,15 +250,15 @@ GEOR.Addons.Atlas.Form = Ext.extend(Object, {
                             },
                             "render": function(rg) {
                                 // artifically forcing "manual" field hiding through:
-                                rg.fireEvent('change', rg, {inputValue: "bbox"});
+                                rg.fireEvent('change', rg, {inputValue: "auto"});
                             }
                         },
                         items: [{
                             xtype: "radio",
-                            boxLabel: this.tr("atlas_bbox"),
+                            boxLabel: this.tr("atlas_scaleauto"),
                             name: "r_scale_method",
                             checked: true,
-                            inputValue: "bbox"
+                            inputValue: "auto"
                         }, {
                             xtype: "radio",
                             boxLabel: this.tr("atlas_scalemanual"),
@@ -283,7 +283,7 @@ GEOR.Addons.Atlas.Form = Ext.extend(Object, {
                             map: this.map
                         }),
                         valueField: "scale",
-                        displayField: "scale",
+                        displayField: "niceScale",
                         tpl: [
                             '<tpl for=".">',
                                 '<div class="x-combo-list-item">',
@@ -293,21 +293,20 @@ GEOR.Addons.Atlas.Form = Ext.extend(Object, {
                         ].join(''),
                         editable: false,
                         typeAhead: false,
+                        listeners: {
+                            "beforeSelect": function(cb, r) {
+                                // faking a record field only for display in combo
+                                r.data.niceScale = '1 : '+ OpenLayers.Number.format(r.get('scale'), 0);
+                            }
+                        },
                         validator: function(value) {
                             var radioScale, valid;
                             radioScale = this.findParentByType("form").findBy(function(c) {
                                 return ((c.getXType() === "radiogroup") &&
-                                    (c.name === "scale_method_group"));
+                                    (c.name === "scale_method"));
                             })[0];
                             valid = !(radioScale.getValue().inputValue === "manual" && (value === ""));
                             return valid;
-                        },
-                        listeners: {
-                            "select": function(cb, r, idx) {
-                                cb.setValue(
-                                    "1 : " + OpenLayers.Number.format(r.get("scale"), 0)
-                                );
-                            }
                         }
                     }]
                 }]
@@ -337,7 +336,7 @@ GEOR.Addons.Atlas.Form = Ext.extend(Object, {
                         xtype: "radiogroup",
                         columns: 1,
                         hideLabel: true,
-                        name: "title_method_group",
+                        name: "title_method",
                         listeners: {
                             "change": function(rg, checked) {
                                 var form = rg.findParentByType("form"),
@@ -390,7 +389,7 @@ GEOR.Addons.Atlas.Form = Ext.extend(Object, {
                             var radioTitle, valid;
                             radioTitle = this.findParentByType("form").findBy(function(c) {
                                 return ((c.getXType() === "radiogroup") &&
-                                    (c.name === "title_method_group"));
+                                    (c.name === "title_method"));
                             })[0];
                             valid = !((radioTitle.getValue().inputValue === "same") &&
                                 (value === ""));
@@ -413,7 +412,7 @@ GEOR.Addons.Atlas.Form = Ext.extend(Object, {
                             var radioTitle, valid;
                             radioTitle = this.findParentByType("form").findBy(function(c) {
                                 return ((c.getXType() === "radiogroup") &&
-                                    (c.name === "title_method_group"));
+                                    (c.name === "title_method"));
                             })[0];
                             valid = !((radioTitle.getValue().inputValue === "field") &&
                                 (value === ""));
@@ -447,7 +446,7 @@ GEOR.Addons.Atlas.Form = Ext.extend(Object, {
                         xtype: "radiogroup",
                         hideLabel: true,
                         columns: 1,
-                        name: "subtitle_method_group",
+                        name: "subtitle_method",
                         items: [{
                             boxLabel: this.tr("atlas_samesubtitle"),
                             name: "subtitleMethod",
@@ -501,7 +500,7 @@ GEOR.Addons.Atlas.Form = Ext.extend(Object, {
                             var radioSubtitle, valid;
                             radioSubtitle = this.findParentByType("form").findBy(function(c) {
                                 return ((c.getXType() === "radiogroup") &&
-                                    (c.name === "title_method_group"));
+                                    (c.name === "title_method"));
                             })[0];
                             valid = !((radioSubtitle.getValue().inputValue === "same") &&
                                 (value === ""));
@@ -524,7 +523,7 @@ GEOR.Addons.Atlas.Form = Ext.extend(Object, {
                             var radioSubtitle, valid;
                             radioSubtitle = this.findParentByType("form").findBy(function(c) {
                                 return ((c.getXType() === "radiogroup") &&
-                                    (c.name === "subtitle_method_group"));
+                                    (c.name === "subtitle_method"));
                             })[0];
                             valid = !((radioSubtitle.getValue().inputValue === "field") &&
                                 (value === ""));
