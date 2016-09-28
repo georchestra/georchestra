@@ -3,13 +3,9 @@
     "name": "Atlas",
     "enabled": false,
     "options": {
-        "iconCls": "atlas-icon",
         "target": "tbar_12",
-        "resultPanelAction": true,
-        "layerTreeAction": true,
         "maxFeatures": 50,
-        "atlasServerUrl": "/atlas/print",
-        "bboxBuffer": 0.1
+        "defaultPointScale": 17061.8366707982724577
     },
     "title": {
         "fr": "Atlas",
