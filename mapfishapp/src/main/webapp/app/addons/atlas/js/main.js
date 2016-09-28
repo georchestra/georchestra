@@ -529,7 +529,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             page.center = [center.x, center.y];
             page.scale = values["scale_manual"] || this.options.defaultPointScale;
         } else {
-            page.bbox = feature.geometry.getBounds().scale(1 + this.options.bboxBuffer).toArray()
+            page.bbox = feature.geometry.getBounds().scale(1 + this.options.buffer).toArray()
         }
         return page;
     },

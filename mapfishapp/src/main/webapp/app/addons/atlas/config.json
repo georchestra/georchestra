@@ -4,7 +4,8 @@
     "enabled": false,
     "options": {
         "target": "tbar_12",
-        "maxFeatures": 50
+        "maxFeatures": 50,
+        "defaultPointScale": 17061.8366707982724577
     },
     "title": {
         "fr": "Atlas",
