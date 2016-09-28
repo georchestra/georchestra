@@ -9,23 +9,23 @@
                            http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
                            http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-						   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
                            http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.5.xsd
                            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
                            http://camel.apache.org/schema/spring
                            http://camel.apache.org/schema/spring/camel-spring-2.16.1.xsd
                            http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
 
-    <context:annotation-config/>
+    <context:annotation-config />
 
-	<jpa:repositories base-package="org.georchestra.atlas.repository" />
+    <jpa:repositories base-package="org.georchestra.atlas.repository" />
 
-	<context:property-placeholder
-		location="file:${georchestra.datadir}/atlas/atlas.properties"
-		ignore-resource-not-found="true" ignore-unresolvable="true" order="1" />
+    <context:property-placeholder
+      location="file:${georchestra.datadir}/atlas/atlas.properties"
+      ignore-resource-not-found="true" ignore-unresolvable="true" order="1" />
 
-	<context:property-placeholder location="classpath:atlas.properties"
-		ignore-resource-not-found="true" ignore-unresolvable="true" order="2" />
+    <context:property-placeholder location="classpath:atlas.properties"
+      ignore-resource-not-found="true" ignore-unresolvable="true" order="2" />
 
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
         <property name="driverClass" value="org.postgresql.Driver"/>
@@ -39,7 +39,7 @@
     <bean id="populateProperties" class="org.georchestra.atlas.CamelPopulatePropertiesComponent">
         <property name="baseUrl" value="${atlas.baseUrl}"/>
     </bean>
-    
+
     <bean id="specAsPdf" class="org.georchestra.atlas.CamelMapfishPrintComponent" init-method="init" />
 
     <bean id="prepareMail" class="org.georchestra.atlas.AtlasMailComponent" init-method="init">
@@ -54,7 +54,7 @@
 
     <bean id="jobController" class="org.georchestra.atlas.JobController" init-method="init">
         <property name="tempDir" value="${atlas.temporaryDirectory}" />
-    </bean>    
+    </bean>
 
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource" />
@@ -87,9 +87,9 @@
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   streamCache="true">
 
-		<!-- TODO order ? -->
-  		<propertyPlaceholder id="properties" location="classpath:atlas.properties,file:${georchestra.datadir}/atlas/atlas.properties" 
-  		ignoreMissingLocation="true" />
+        <!-- TODO order ? -->
+        <propertyPlaceholder id="properties" location="classpath:atlas.properties,file:${georchestra.datadir}/atlas/atlas.properties"
+            ignoreMissingLocation="true" />
 
         <dataFormats>
             <json id="gson" library="Gson" />
@@ -104,13 +104,13 @@
             <get uri="/jobs/{jobId}/{token}/{ext}">
             <param name="jobId" type="path" description="the id of the job to get" dataType="long"/>
             <param name="token" type="path" description="The token related to the job" dataType="string"/>
-            <param name="ext"   type="path" description="The expected extension (pdf or zip)" dataType="string"/>            
+            <param name="ext"   type="path" description="The expected extension (pdf or zip)" dataType="string"/>
                 <to uri="bean:jobController" />
             </get>
         </rest>
 
         <rest>
-            <get uri="/print/capabilities.json">         
+            <get uri="/print/capabilities.json">
                 <to uri="bean:specAsPdf?method=printCapabilities" />
             </get>
         </rest>
@@ -127,17 +127,17 @@
             </post>
         </rest>
 
-		<!-- route which receives the posted data from the rest endpoint /print defined above -->
+        <!-- route which receives the posted data from the rest endpoint /print defined above -->
         <route id="save_print_request">
             <from uri="direct:save_print_request"/>
             <log message="Email from requesting user : ${header['sec-email']}" loggingLevel="INFO"/>
-			<setProperty propertyName="requestingUserEmail">
+            <setProperty propertyName="requestingUserEmail">
                 <simple>header['sec-email']</simple>
             </setProperty>
-			<setProperty propertyName="baseUrl">
+            <setProperty propertyName="baseUrl">
                 <simple>header['sec-email']</simple>
             </setProperty>
-            
+
             <to uri="direct:checkArgs"/>
             <!-- store in DB queue -->
             <to uri="jpa:org.georchestra.atlas.AtlasJob?persistenceUnit=myPU"/>
@@ -147,7 +147,7 @@
             </transform>
         </route>
 
-		<!--  Route which checks data integrity (valid JSON) on input -->
+        <!--  Route which checks data integrity (valid JSON) on input -->
         <route id="checkArgs">
             <from uri="direct:checkArgs"/>
             <!-- check json format -->
@@ -155,9 +155,9 @@
             <marshal ref="gson"/>
         </route>
 
-		<!--  Route which polls the DB and process incoming requests -->
+        <!--  Route which polls the DB and process incoming requests -->
         <route id="split_and_send_request">
-        	<!--  polls the DB for incoming requests -->
+            <!--  polls the DB for incoming requests -->
             <from uri="jpa:org.georchestra.atlas.AtlasJob?transactionManager=#transactionManager&amp;persistenceUnit=myPU&amp;consumer.lockModeType=NONE&amp;consumer.delay=2000&amp;maximumResults=1&amp;consumeDelete=false&amp;consumer.query=FROM org.georchestra.atlas.AtlasJob WHERE state = 'TODO' ORDER BY id"/>
             <log message="New request from DB from ${exchangeProperty.requestingUserEmail}" loggingLevel="INFO"/>
             <!--  Modifies the state of the job -->
@@ -203,12 +203,33 @@
             </setProperty>
             <!-- generate layers and legendURL properties -->
             <to uri="bean:populateProperties"/>
-			<!--  prints page by page -->
+            <!--  prints page by page -->
             <split stopOnException="true">
                 <simple>${body[pages]}</simple>
                 <choice>
                     <when>
-                        <simple>${exchangeProperty.displayLegend} == true</simple>
+                        <simple>${exchangeProperty.displayLegend} == true and ${body[bbox]} != null</simple>
+                        <transform>
+                            <simple>
+                                { "layout": "${exchangeProperty.layout}",
+                                  "outputFormat": "pdf",
+                                  "attributes": {
+                                    "title": "${body[title]}",
+                                    "subtitle": "${body[subtitle]}",
+                                    "legendURL": "${exchangeProperty.legendURL}",
+                                    "map": {
+                                        "dpi": ${exchangeProperty.dpi},
+                                        "projection": "${exchangeProperty.projection}",
+                                        "bbox": ${body[bbox]},
+                                        "layers": ${exchangeProperty.layers}
+                                    }
+                                  }
+                                }
+                            </simple>
+                        </transform>
+                    </when>
+                    <when>
+                        <simple>${exchangeProperty.displayLegend} == true and ${body[bbox]} == null</simple>
                         <transform>
                             <simple>
                                 { "layout": "${exchangeProperty.layout}",
@@ -229,30 +250,51 @@
                             </simple>
                         </transform>
                     </when>
+                    <when>
+                        <simple>${exchangeProperty.displayLegend} == false and ${body[bbox]} != null</simple>
+                        <transform>
+                            <simple>
+                                {
+                                   "layout" : "${exchangeProperty.layout}",
+                                   "outputFormat" : "pdf",
+                                   "attributes" : {
+                                      "map" : {
+                                         "layers" : ${exchangeProperty.layers},
+                                         "bbox": ${body[bbox]},
+                                         "projection" : "${exchangeProperty.projection}",
+                                         "dpi" : ${exchangeProperty.dpi}
+                                      },
+                                      "title" : "${body[title]}",
+                                      "subtitle" : "${body[subtitle]}"
+                                   }
+                                }
+                            </simple>
+                        </transform>
+                    </when>
                     <otherwise>
                         <transform>
                             <simple>
-	                            {
-								   "layout" : "${exchangeProperty.layout}",
-								   "outputFormat" : "pdf",
-								   "attributes" : {
-								      "map" : {
-								         "layers" : ${exchangeProperty.layers},
-								         "scale" : ${body[scale]},
-								         "center" : ${body[center]},
-								         "projection" : "${exchangeProperty.projection}",
-								         "dpi" : ${exchangeProperty.dpi}
-								      },
-								      "title" : "${body[title]}",
-								      "subtitle" : "${body[subtitle]}"
-								   }
-								}
-		                    </simple>
+                                {
+                                   "layout" : "${exchangeProperty.layout}",
+                                   "outputFormat" : "pdf",
+                                   "attributes" : {
+                                      "map" : {
+                                         "layers" : ${exchangeProperty.layers},
+                                         "scale" : ${body[scale]},
+                                         "center" : ${body[center]},
+                                         "projection" : "${exchangeProperty.projection}",
+                                         "dpi" : ${exchangeProperty.dpi}
+                                      },
+                                      "title" : "${body[title]}",
+                                      "subtitle" : "${body[subtitle]}"
+                                   }
+                                }
+                            </simple>
                         </transform>
                     </otherwise>
                 </choice>
                 <log message="print request : ${body}" loggingLevel="INFO"/>
-				<!-- Wires to the bean which will actually call the MF Print -->
+                <!-- Wires to the bean which will actually call the MF Print -->
                 <to uri="bean:specAsPdf?method=toMapfishPrintPdf"/>
 
                 <!-- Saves the file onto the disk -->
@@ -271,7 +313,7 @@
                     </otherwise>
             </choice>
 
-			<!--  dumps the PDF / ZIP to a file -->
+            <!--  dumps the PDF / ZIP to a file -->
             <to uri="file://?fileName=/{{atlas.temporaryDirectory}}/${property.jobId}/${property.token}.${property.outputFormat}"/>
 
             <transform>
@@ -282,9 +324,9 @@
                 <groovy>request.body.setState(org.georchestra.atlas.AtlasJobState.DONE)</groovy>
             </script>
             <!-- Sets all the necessary properties to send a mail, see AtlasMailComponent Java class -->
-			<to uri="bean:prepareMail" />
-			<!-- Actually send the mail -->
-			<to uri="smtp://{{smtpHost}}:{{smtpPort}}/" />
+            <to uri="bean:prepareMail" />
+            <!-- Actually send the mail -->
+            <to uri="smtp://{{smtpHost}}:{{smtpPort}}/" />
         </route>
     </camelContext>
 </beans>
