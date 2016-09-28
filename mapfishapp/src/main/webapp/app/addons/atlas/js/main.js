@@ -118,7 +118,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             }
         });
         var win = new Ext.Window({
-            title: this.tr("Select atlas layer"),
+            title: this.tr("Atlas"),
             width: 400,
             height: 300,
             autoHeight: true,
@@ -271,7 +271,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                     " - ",
                     this.features.length,
                     " ",
-                    this.tr("features")
+                    this.tr("atlas_features")
                 ].join(''));
             },
             scope: this
@@ -327,13 +327,12 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
     _buildFormDialog: function() {
         var formPanel = (new GEOR.Addons.Atlas.Form(this)).form,
             basicTitle = [
-                this.tr("Atlas of layer"),
-                ' \"',
-                this.layerRecord.get("title"),
-                '\"'
+                this.tr("Atlas"),
+                ' - ',
+                this.layerRecord.get("title")
             ].join(''),
             title = (this.features) ? 
-                basicTitle + " - " + this.features.length + " " + this.tr("features") :
+                basicTitle + " - " + this.features.length + " " + this.tr("atlas_features") :
                 basicTitle;
 
         this.window = new Ext.Window({

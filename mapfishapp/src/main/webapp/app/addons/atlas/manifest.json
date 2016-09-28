@@ -18,6 +18,7 @@
     "i18n": {
         "en": {
             "atlas_failed": "Atlas generation failed",
+            "atlas_features": "features",
             "atlas_atlaslayer": "Atlas features layer",
             "atlas_emptytlayer": "Select a layer...",
             "atlas_layout": "Layout",
@@ -58,6 +59,7 @@
         },
         "es": {
             "atlas_failed": "Error de generación de atlas",
+            "atlas_features": "features",
             "atlas_atlaslayer": "Capa de características de atlas",
             "atlas_emptytlayer": "Seleccione una capa...",
             "atlas_layout": "Diseño",
@@ -98,6 +100,7 @@
         },
         "fr": {
             "atlas_failed": "La génération de l'atlas a échoué",
+            "atlas_features": "objets",
             "atlas_atlaslayer": "Couche de l'atlas",
             "atlas_emptylayer": "Sélectionner une couche...",
             "atlas_layout": "Mise en page",
@@ -138,6 +141,7 @@
         },
         "de": {
             "atlas_failed": "Die Erzeugung des Atlas fehlgeschlagen",
+            "atlas_features": "features",
             "atlas_atlaslayer": "Atlas features layer",
             "atlas_emptytlayer": "Select a layer...",
             "atlas_layout": "Layout",
