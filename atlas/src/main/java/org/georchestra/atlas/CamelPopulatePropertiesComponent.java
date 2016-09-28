@@ -54,9 +54,17 @@ public class CamelPopulatePropertiesComponent {
         ex.setProperty("layers",layers.toString());
         ex.setProperty("baseUrl",this.getBaseUrl());
 
+        String wmsVersion;
+        try{
+            wmsVersion = featureLayer.getString("version");
+        } catch (JSONException e){
+            // Used default value of 1.1.1 if version is not specified
+            wmsVersion = "1.1.1";
+        }
+
         String legendURL = featureLayer.getString("baseURL");
         legendURL += "?SERVICE=WMS";
-        legendURL += "&VERSION=" + featureLayer.getString("version");
+        legendURL += "&VERSION=" + wmsVersion;
         legendURL += "&REQUEST=GetLegendGraphic&FORMAT=image/png&TRANSPARENT=true";
         legendURL += "&LAYER=" + featureLayer.getJSONArray("layers").getString(0);
 
