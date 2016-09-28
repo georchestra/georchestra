@@ -5,6 +5,9 @@ Ext.namespace("GEOR.Addons");
 
 GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
 
+    // boolean, set to true when the addon is opened
+    active: null,
+
     // number
     maxFeatures: null,
 
@@ -95,7 +98,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
      * It's role is to select the layer on which to operate
      */
     menuAction: function() {
-        if (this.window) {
+        if (this.active) {
             return;
         }
         this._selectLayer();
@@ -108,6 +111,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
      * among those which are currently loaded and suitable. 
      */
     _selectLayer: function() {
+        this.active = true;
         var atlasLayersStore = new GeoExt.data.LayerStore({
             fields: GEOR.ows.getRecordFields()
         });
@@ -157,6 +161,9 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                             // compute attributeStore (get it from the server)
                             this._getAttributeStore(record);
                         },
+                        "close": function() {
+                            this.active = false;
+                        },
                         scope: this
                     }
                 }]
@@ -177,7 +184,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
      * @param layerRecord - layerRecord on which operate
      */
     layerTreeHandler: function(menuitem, event, layerRecord) {
-        if (this.window) {
+        if (this.active) {
             return;
         }
         // set layer record:
@@ -289,6 +296,9 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
      * @param resultpanel - resultpanel on which the handler must be operated
      */
     resultPanelHandler: function(resultPanel) {
+        if (this.active) {
+            return;
+        }
         // we get the selected features from resultsPanel:
         this.features = resultPanel.getSelectedFeatures();
 
@@ -325,6 +335,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
      * When this method is called, we always know on which layer we operate
      */
     _buildFormDialog: function() {
+        this.active = true;
         var formPanel = (new GEOR.Addons.Atlas.Form(this)).form,
             basicTitle = [
                 this.tr("Atlas"),
@@ -350,7 +361,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             listeners: {
                 "close": function() {
                     // to allow new windows to be opened:
-                    this.window = null;
+                    this.active = false;
                     // reset features cache:
                     this.features = null;
                 },
