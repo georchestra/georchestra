@@ -1,6 +1,7 @@
 {
     "js": [
         "js/main.js",
+        "js/form.js",
         "js/MapFishPrintv3Provider.js"
     ],
     "css": [
