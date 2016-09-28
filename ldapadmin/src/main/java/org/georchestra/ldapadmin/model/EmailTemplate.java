@@ -22,6 +22,7 @@ package org.georchestra.ldapadmin.model;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -38,6 +39,7 @@ public class EmailTemplate {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "email_template_id_seq")
     private long id;
     private String name;
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     public EmailTemplate() {}
