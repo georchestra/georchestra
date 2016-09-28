@@ -200,6 +200,9 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
      * @param layerRecord - layerRecord on which operate
      */
     layerTreeHandler: function(menuitem, event, layerRecord) {
+        if (this.window) {
+            return;
+        }
         // set layer record:
         this.layerRecord = layerRecord;
         // compute attributeStore (get it from the server)
@@ -280,6 +283,8 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                     return;
                 }
                 this.features = response.features;
+                // update window title with feature count:
+                this.window.setTitle(this.window.title + " - " + this.features.length + " " + this.tr("features"));
 
                 /*
                 Ext.each(wfsFeatures, function(wfsFeature) {
@@ -350,14 +355,19 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
      * When this method is called, we always know on which layer we operate
      */
     _buildFormDialog: function() {
-        var form = (new GEOR.Addons.Atlas.Form(this)).form;
-        this.window = new Ext.Window({
-            title: [
+        var form = (new GEOR.Addons.Atlas.Form(this)).form,
+            basicTitle = [
                 this.tr("Atlas of layer"),
                 ' \"',
                 this.layerRecord.get("title"),
                 '\"'
             ].join(''),
+            title = (this.features) ? 
+                basicTitle + " - " + this.features.length + " " + this.tr("features") :
+                basicTitle;
+
+        this.window = new Ext.Window({
+            title: title,
             minWidth: 550,
             width: 700,
             autoHeight: true,
@@ -372,6 +382,8 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                 "close": function() {
                     // to allow new windows to be opened:
                     this.window = null;
+                    // reset features cache:
+                    this.features = null;
                 },
                 scope: this
             },
@@ -388,7 +400,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                 iconCls: this.options.iconCls,
                 handler: function(b) {
                     if (form.isValid()) {
-                        this.parseForm(
+                        this.createSpec(
                             form.getFieldValues()
                         );
                     } else {
@@ -405,22 +417,24 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
 
 
     /**
-     * @function parseForm - parse form values
+     * @function createSpec - parse form values
      * @private
      *
-     * @param formValues - form values as returned by Ext.form.BasicForm.getFieldValues()
+     * @param v - form values as returned by Ext.form.BasicForm.getFieldValues()
      */
-    parseForm: function(formValues) {
-        var scaleParameters, titleSubtitleParameters;
-
+    createSpec: function(v) {
+        //var scaleParameters, titleSubtitleParameters;
         //copy some parameters
-        this.spec.outputFormat = formValues.outputFormat;
-        this.spec.layout = formValues.layout;
-        this.spec.dpi = formValues.dpi;
-        this.spec.projection = this.map.getProjection();
-        this.spec.email = formValues.email;
-        this.spec.displayLegend = formValues.displayLegend;
-        this.spec.outputFilename = formValues.outputFilename;
+        var spec = {
+            email: v.email,
+            layout: v.layout,
+            outputFormat: v.outputFormat,
+            outputFilename: v.outputFilename,
+            dpi: v.dpi,
+            projection: this.map.getProjection(),
+            displayLegend: v.displayLegend,
+            baseLayers: this.baseLayers(v["atlasLayer"]) // FIXME: check definition of baselayers
+        };
 
         scaleParameters = {
             scaleManual: formValues["scale_manual"],
@@ -437,13 +451,13 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             subtitleField: formValues["subtitleField"]
         };
 
-        this.spec.baseLayers = this.baseLayers(formValues["atlasLayer"]);
 
         this.createFeatureLayerAndPagesSpecs(formValues["atlasLayer"], scaleParameters,
             titleSubtitleParameters, formValues["prefix_field"], formValues["resultPanel"]);
 
         // Form submit is triggered by "featurelayerready" event
 
+        this.spec = spec;
         this.window.close();
     },
 
@@ -565,6 +579,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
 
                     }
                 } else {
+                    /*
                     this.protocol.read({
                         //See GEOR_Querier "search" method
                         maxFeatures: this.maxFeatures + 1,
@@ -618,6 +633,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                         scope: this
 
                     });
+                    */
                 }
             }
         }, this);
