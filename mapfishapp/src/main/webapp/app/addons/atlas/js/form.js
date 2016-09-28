@@ -176,6 +176,7 @@ GEOR.Addons.Atlas.Form = Ext.extend(Object, {
                         mode: "local",
                         triggerAction: "all",
                         store: this.printProvider.layouts,
+                        value: this.printProvider.layouts.getAt(0).get('name'),
                         valueField: "name",
                         displayField: "name"
                     }, {
@@ -381,6 +382,7 @@ GEOR.Addons.Atlas.Form = Ext.extend(Object, {
                     items: [{
                         xtype: "textfield",
                         name: "titleText",
+                        value: this.layerRecord.get('title'),
                         anchor: '-10px',
                         fieldLabel: this.tr("atlas_pagetitle"),
                         blankText: this.tr("atlas_title"),
@@ -489,9 +491,12 @@ GEOR.Addons.Atlas.Form = Ext.extend(Object, {
                     items: [{
                         xtype: "textfield",
                         name: "subtitleText",
+                        //value: this.tr("subtitle"),
                         anchor: '-10px',
                         fieldLabel: this.tr("atlas_pagesubtitle"),
-                        blankText: this.tr("atlas_subtitle"),
+                        blankText: this.tr("atlas_subtitle")
+                        // allow blank subtitle :
+                        /*,
                         validator: function(value) {
                             var radioSubtitle, valid;
                             radioSubtitle = this.findParentByType("form").findBy(function(c) {
@@ -501,7 +506,7 @@ GEOR.Addons.Atlas.Form = Ext.extend(Object, {
                             valid = !((radioSubtitle.getValue().inputValue === "same") &&
                                 (value === ""));
                             return valid;
-                        }
+                        }*/
                     }, {
                         xtype: "combo",
                         name: "subtitleField",

@@ -366,7 +366,6 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                 padding: "10px 10px",
                 "background-color": "white"
             },
-            border: false,
             closable: true,
             closeAction: "close",
             listeners: {
