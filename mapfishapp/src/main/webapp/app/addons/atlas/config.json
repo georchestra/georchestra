@@ -5,7 +5,13 @@
     "options": {
         "target": "tbar_12",
         "maxFeatures": 50,
-        "defaultPointScale": 17061.8366707982724577
+        "defaultPointScale": 17061.8366707982724577,
+        "wmsc2wms": {
+            "https://portail-test.sig.rennesmetropole.fr/geowebcache/service/wms": "https://portail-test.sig.rennesmetropole.fr/geoserver/wms",
+            "https://portail-test.sig.rennesmetropole.fr/geowebcache/service/wmts": "https://portail-test.sig.rennesmetropole.fr/geoserver/wms",
+            "https://portail.sig.rennesmetropole.fr/geowebcache/service/wms": "https://portail.sig.rennesmetropole.fr/geoserver/wms",
+            "https://portail.sig.rennesmetropole.fr/geowebcache/service/wmts": "https://portail.sig.rennesmetropole.fr/geoserver/wms"
+        }
     },
     "title": {
         "fr": "Atlas",

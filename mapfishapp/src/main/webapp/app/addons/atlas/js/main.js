@@ -443,22 +443,26 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
      * @returns {Array}
      */
     encodeBaseLayers: function() {
-        var encodedLayers = [];
+        var encodedLayers = [],
+            wmsc2wms = this.options.wmsc2wms;
         this.mapPanel.layers.each(function(r) {
-            var l = r.getLayer();
+            var encodedLayer,
+                l = r.getLayer();
             // loop on all visible layers
             // not the atlas layer
             // not the vector layers used by addons (macthing "__georchestra")
             if (l.getVisibility() && r !== this.layerRecord && !/^__georchestra/.test(l.name)) {
                 // use print provider to encode
-                encodedLayers.push(
-                    this.printProvider.encodeLayer(l, this.map.getMaxExtent())
-                );
-                /*
-                if (l.DEFAULT_PARAMS) {
-                    encodedLayer.version = l.DEFAULT_PARAMS.version;
+                encodedLayer = this.printProvider.encodeLayer(l, this.map.getMaxExtent());
+                // substitute known WMS-C instances by WMS instances serving same layers:
+                if (wmsc2wms && wmsc2wms.hasOwnProperty(encodedLayer.baseURL)) {
+                    encodedLayer.baseURL = wmsc2wms[encodedLayer.baseURL];
                 }
-                */
+                // we get rid of scale limits, 
+                // since they are already taken care of by the current layer style
+                delete encodedLayer.maxScaleDenominator;
+                delete encodedLayer.minScaleDenominator;
+                encodedLayers.push(encodedLayer);
             }
         }, this);
         return encodedLayers;
