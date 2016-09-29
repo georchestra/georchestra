@@ -58,7 +58,9 @@
   "group.filter_users"  : "Filter",
   "group.created"       : "Role created",
   "group.updated"       : "Role updated",
+  "group.deleted"       : "Role deleted",
   "group.error"         : "Error creating role",
+  "group.deleteError"   : "Error deleting role",
   "group.search"        : "Search role",
 
   "users.createGroup"   : "Create role",
@@ -67,6 +69,9 @@
   "users.newGroupDesc"  : "Description",
   "users.cancel"        : "Cancel",
   "users.save"          : "Save",
+  "users.delete"        : "Delete",
+  "users.confirm"       : "Confirm",
+  "users.confirmText"   : "Do you really want to delete role",
 
   "msg.compose"         : "Compose message",
   "msg.date"            : "Date",

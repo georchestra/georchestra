@@ -9,6 +9,10 @@ angular.module('admin_console')
     update: {
       params: { id: '@cn' },
       method: 'PUT'
+    },
+    delete: {
+      params: { id: '@cn' },
+      method: 'DELETE'
     }
   })
 ]).factory('groupAdminList', [ () => {

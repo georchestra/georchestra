@@ -19,7 +19,9 @@ class LogsController {
       this.senders = extract('admin')
       this.types   = extract('type')
       this.targets = extract('target')
-    }, $injector.get('Flash').create.bind(this, 'error', msg, ''))
+    }, $injector.get('Flash').create.bind(
+      $injector.get('Flash'), 'danger', msg, ''
+    ))
 
     this.date = {
       start : this.$injector.get('date').getDefault(),
