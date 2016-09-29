@@ -22,6 +22,7 @@ We currently have the following addons available:
  * [locateme](locateme/README.md) allows users to track their location on the map.
  * [fullscreen](fullscreen/README.md) to (obviously) make the map fullscreen.
  * [notes](notes/README.md) to report map issues.
+ * [atlas](atlas/README.md) allows users to print PDF with one feature per page.
 
 
 Finding more addons
