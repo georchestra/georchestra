@@ -33,6 +33,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.net.URLDecoder;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -855,7 +856,9 @@ public class Proxy {
     private HttpRequestBase makeRequest(HttpServletRequest request, RequestType requestType, String sURL) throws IOException {
         HttpRequestBase targetRequest;
         try {
-            URI uri = new URI(sURL);
+            // Decode URL to replace %20, %xx
+            URL url = new URL(URLDecoder.decode(sURL, "UTF-8"));
+            URI uri = new URI(url.getProtocol(), url.getUserInfo(), url.getHost(), url.getPort(), url.getPath(), url.getQuery(), url.getRef());
             switch (requestType) {
             case GET: {
                 logger.debug("New request is: " + sURL + "\nRequest is GET");
@@ -904,7 +907,7 @@ public class Proxy {
                 break;
             }
             case TRACE: {
-                logger.debug("New request is: " + sURL + "\nRequest is POST");
+                logger.debug("New request is: " + sURL + "\nRequest is TRACE");
 
                 HttpTrace post = new HttpTrace(uri);
 
@@ -912,7 +915,7 @@ public class Proxy {
                 break;
             }
             case OPTIONS: {
-                logger.debug("New request is: " + sURL + "\nRequest is POST");
+                logger.debug("New request is: " + sURL + "\nRequest is OPTIONS");
 
                 HttpOptions post = new HttpOptions(uri);
 
@@ -920,7 +923,7 @@ public class Proxy {
                 break;
             }
             case HEAD: {
-                logger.debug("New request is: " + sURL + "\nRequest is POST");
+                logger.debug("New request is: " + sURL + "\nRequest is HEAD");
 
                 HttpHead post = new HttpHead(uri);
 
