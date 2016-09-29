@@ -9,7 +9,8 @@
     <h3 ng-if="!users.activeGroup" class="groups-title">{{users.users.length}} <span translate>group.users</span></h3>
     <h3 ng-if="users.activeGroup" class="groups-title">
       {{users.activeGroup.cn}}
-      <button class="btn btn-default btn-xs delete" title="{{ 'group.remove' | translate }}" ng-click="users.deleteGroup()">
+      <button class="btn btn-default btn-xs delete" title="{{ 'group.remove' | translate }}"
+        ng-click="users.deleteGroup()" ng-show="users.canDelete">
         <i class="glyphicon glyphicon-trash"></i>
       </button>
     </h3>

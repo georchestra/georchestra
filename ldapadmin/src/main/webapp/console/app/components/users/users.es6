@@ -15,10 +15,10 @@ class UsersController {
     this.q = ''
     this.itemsPerPage = 15
 
-    console.log('ctor')
     this.newGroup = this.$injector.get('$location').$$search['new'] === 'group'
     this.newGroupName = ''
     this.delete = this.$injector.get('$location').$$search['delete'] === 'true'
+    this.canDelete = false
 
     this.users = User.query(() => {
       this.allUsers = this.users.slice()
@@ -29,6 +29,9 @@ class UsersController {
       this.activeGroup = this.groups.filter(g => g.cn === $routeParams.id)[0]
       if (this.activeGroup) {
         this.filter(this.activeGroup)
+        this.canDelete = !this.$injector.get('groupAdminFilter')(
+          this.activeGroup
+        )
       }
       return this.activeGroup
     })
