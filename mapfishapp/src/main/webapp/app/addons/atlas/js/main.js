@@ -424,8 +424,10 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             url: this.options.atlasServerUrl,
             data: new OpenLayers.Format.JSON().write(spec),
             success: function() {
-                GEOR.helper.msg(this.title, this.tr("atlas_submit_success"));
-                // TODO: need something else than GEOR.helper for information
+                GEOR.util.infoDialog({
+                    title: this.title,
+                    msg: this.tr("atlas_submit_success")
+                });
             },
             failure: function() {
                 GEOR.util.errorDialog({
@@ -477,17 +479,10 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
     encodeAtlasLayer: function() {
         var layer = this.layerRecord.getLayer(),
             encodedLayer = this.printProvider.encodeLayer(layer, layer.getExtent());
-        /*
-        if (layer.DEFAULT_PARAMS) {
-            this.spec.featureLayer.version = layer.DEFAULT_PARAMS.version;
-        }*/
+
         // we want to get rid of scale limits:
-        if (encodedLayer.maxScaleDenominator) {
-            delete encodedLayer.maxScaleDenominator;
-        }
-        if (encodedLayer.minScaleDenominator) {
-            delete encodedLayer.minScaleDenominator;
-        }
+        delete encodedLayer.maxScaleDenominator;
+        delete encodedLayer.minScaleDenominator;
         return encodedLayer;
     },
 
@@ -543,7 +538,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             page.center = [center.x, center.y];
             page.scale = values["scale_manual"] || this.options.defaultPointScale;
         } else {
-            page.bbox = feature.geometry.getBounds().scale(1 + this.options.buffer).toArray()
+            page.bbox = feature.geometry.getBounds().scale(1 + this.options.buffer).toArray();
         }
         return page;
     },

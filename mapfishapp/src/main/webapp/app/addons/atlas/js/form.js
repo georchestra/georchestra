@@ -490,7 +490,6 @@ GEOR.Addons.Atlas.Form = Ext.extend(Object, {
                     items: [{
                         xtype: "textfield",
                         name: "subtitleText",
-                        //value: this.tr("subtitle"),
                         anchor: '-10px',
                         fieldLabel: this.tr("atlas_pagesubtitle"),
                         blankText: this.tr("atlas_subtitle")
