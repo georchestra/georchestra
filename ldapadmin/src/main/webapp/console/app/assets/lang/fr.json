@@ -21,6 +21,7 @@
   "tab.messages"        : "Messages",
   "tab.logs"            : "Logs",
   "tab.manage"          : "Gérer",
+  "tab.area"            : "Zone de compétence",
 
   "user.userlist"       : "Tous les utilisateurs",
   "user.updated"        : "Utilisateur modifié",
@@ -53,6 +54,18 @@
   "user.confirm"        : "Confirmer",
 
   "orgs.title"          : "organismes",
+
+  "org.name"            : "Nom",
+  "org.shortName"       : "Nom court",
+  "org.orgType"         : "Type d’organisation",
+  "org.address"         : "Adresse",
+  "org.save"            : "Enregistrer",
+  "org.updated"         : "Organisme modifié",
+  "org.deleted"         : "Organisme supprimé",
+  "org.created"         : "Organisme créé",
+  "org.error"           : "Erreur lors de la création de l’organisme",
+  "org.warning"         : "Attention, cette action est irréversible — ",
+  "org.delete"          : "Supprimer l’organisme",
 
   "group.allusers"      : "Tous les utilisateurs",
   "group.system"        : "Rôles systèmes",

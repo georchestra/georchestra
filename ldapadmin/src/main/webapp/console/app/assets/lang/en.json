@@ -21,6 +21,7 @@
   "tab.messages"        : "Messages",
   "tab.logs"            : "Logs",
   "tab.manage"          : "Manage",
+  "tab.area"            : "Area",
 
   "user.userlist"       : "All users",
   "user.updated"        : "User updated",
@@ -53,6 +54,18 @@
   "user.confirm"        : "Confirm",
 
   "orgs.title"          : "organisms",
+
+  "org.name"            : "Name",
+  "org.shortName"       : "Short name",
+  "org.orgType"         : "Type",
+  "org.address"         : "Address",
+  "org.save"            : "Save",
+  "org.updated"         : "Organism updated",
+  "org.deleted"         : "Organism deleted",
+  "org.created"         : "Organism created",
+  "org.error"           : "Error while saving organism",
+  "org.warning"         : "Warning, this action is irreversible — ",
+  "org.delete"          : "Delete organism",
 
   "group.allusers"      : "All users",
   "group.system"        : "System roles",

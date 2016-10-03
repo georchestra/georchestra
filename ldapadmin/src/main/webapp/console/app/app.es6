@@ -12,6 +12,8 @@ class AppController {
         component: 'analytics' },
       { path: '/orgs/:org',
         component: 'orgs' },
+      { path: '/org/:org/:tab',
+        component: 'org' },
       { path: '/groups/:id/users',
         component: 'users' },
       { path: '/users/:id/:tab',
@@ -62,6 +64,7 @@ angular.module('admin_console', [
 
 require('components/analytics/analytics')
 require('components/orgs/orgs')
+require('components/org/org')
 require('components/home/home')
 require('components/groups/groups')
 require('components/logs/logs')
