@@ -91,7 +91,7 @@ public class OrgsController {
     /**
      * Set organization for one user
      */
-    @RequestMapping(value = REQUEST_MAPPING + "/{org}/{user}", method = RequestMethod.POST)
+    @RequestMapping(value = REQUEST_MAPPING + "/{org}/{user:.+}", method = RequestMethod.POST)
     public void addUserInOrg(@PathVariable String org, @PathVariable String user, HttpServletResponse response) throws IOException {
 
         try {
@@ -113,7 +113,7 @@ public class OrgsController {
     /**
      * Remove user from organization
      */
-    @RequestMapping(value = REQUEST_MAPPING + "/{org}/{user}", method = RequestMethod.DELETE)
+    @RequestMapping(value = REQUEST_MAPPING + "/{org}/{user:.+}", method = RequestMethod.DELETE)
     public void removeUserfromOrg(@PathVariable String org, @PathVariable String user, HttpServletResponse response) throws IOException {
         this.orgDao.removeUser(org, user);
         ResponseUtil.writeSuccess(response);

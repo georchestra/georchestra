@@ -47,8 +47,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -156,22 +158,21 @@ public class GroupsController {
 	 * Example: [BASE_MAPPING]/groups/group44
 	 * </p>
 	 *
-	 * @param request the request includes the group identifier required
 	 * @param response Returns the detailed information of the group as json
+	 * @param cn Comon name of group
 	 * @throws IOException
 	 */
-	@RequestMapping(value=REQUEST_MAPPING+"/*", method=RequestMethod.GET)
-	public void findByCN( HttpServletRequest request, HttpServletResponse response) throws IOException, JSONException {
+	@RequestMapping(value=REQUEST_MAPPING+"/{cn:.+}", method=RequestMethod.GET)
+	public void findByCN(HttpServletResponse response, @PathVariable String cn) throws IOException, JSONException {
 
-		String cn = RequestUtil.getKeyFromPathVariable(request);
-		String jsonGroup = null;
+		String jsonGroup;
 
 		if(cn.equals(GroupsController.VIRTUAL_TEMPORARY_GROUP_NAME)) {
 			jsonGroup = this.extractTemporaryGroupInformation().toString();
 		} else {
 
 			// searches the group
-			Group group = null;
+			Group group;
 			try {
 				group = this.groupDao.findByCommonName(cn);
 
@@ -284,15 +285,14 @@ public class GroupsController {
 	 * Where <b>cn</b> is the name of group to delete.
 	 * </pre>
 	 *
-	 * @param request
 	 * @param response
+	 * @param cn Common name of group to delete
 	 * @throws IOException
 	 */
-	@RequestMapping(value = REQUEST_MAPPING + "/*", method = RequestMethod.DELETE)
-	public void delete(HttpServletRequest request, HttpServletResponse response)
+	@RequestMapping(value = REQUEST_MAPPING + "/{cn:.+}", method = RequestMethod.DELETE)
+	public void delete(HttpServletResponse response, @PathVariable String cn)
 			throws IOException {
 		try {
-			String cn = RequestUtil.getKeyFromPathVariable(request);
 
 			this.groupDao.delete(cn);
 
@@ -358,13 +358,11 @@ public class GroupsController {
 	 *             if the uid does not exist or fails to access to the LDAP
 	 *             store.
 	 */
-	@RequestMapping(value=REQUEST_MAPPING+ "/*", method=RequestMethod.PUT)
-	public void update( HttpServletRequest request, HttpServletResponse response) throws IOException{
-
-		String cn = RequestUtil.getKeyFromPathVariable(request);
+	@RequestMapping(value=REQUEST_MAPPING+ "/{cn:.+}", method=RequestMethod.PUT)
+	public void update( HttpServletRequest request, HttpServletResponse response, @PathVariable String cn) throws IOException{
 
 		// searches the group
-		Group group = null;
+		Group group;
 		try {
 			group = this.groupDao.findByCommonName(cn);
 		} catch (NameNotFoundException e) {
