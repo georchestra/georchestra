@@ -309,9 +309,8 @@ public class UsersControllerTest {
 
     @Test
     public void testUpdateUserProtected() throws Exception {
-        request.setRequestURI("/ldapadmin/users/geoserver_privileged_user");
 
-        usersCtrl.update(request, response);
+        usersCtrl.update(request, response, "geoserver_privileged_user");
 
         JSONObject ret = new JSONObject(response.getContentAsString());
         assertTrue(response.getStatus() == HttpServletResponse.SC_CONFLICT);
@@ -321,12 +320,11 @@ public class UsersControllerTest {
 
 	@Test
 	public void testUpdateUserNotFound() throws Exception {
-		request.setRequestURI("/ldapadmin/users/usernotfound");
 
 		Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate)
 				.lookup(eq(new DistinguishedName("uid=usernotfound,ou=users")), (ContextMapper) Mockito.any());
 
-		usersCtrl.update(request, response);
+		usersCtrl.update(request, response, "usernotfound");
 
 		JSONObject ret = new JSONObject(response.getContentAsString());
 		assertTrue(response.getStatus() == HttpServletResponse.SC_NOT_FOUND);
@@ -336,13 +334,12 @@ public class UsersControllerTest {
 
     @Test
     public void testUpdateUserDataServiceException() throws Exception {
-        request.setRequestURI("/ldapadmin/users/pmauduit");
 
         Mockito.doThrow(DataServiceException.class).when(ldapTemplate)
             .lookup(eq(new DistinguishedName("uid=pmauduit,ou=users")), (ContextMapper) Mockito.any());
 
         try {
-            usersCtrl.update(request, response);
+            usersCtrl.update(request, response, "pmauduit");
         } catch (Throwable e) {
             assertTrue(e instanceof IOException);
             assertTrue(response.getStatus() == HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -351,7 +348,6 @@ public class UsersControllerTest {
 
     @Test
     public void testUpdateDuplicatedEmailException() throws Exception {
-        request.setRequestURI("/ldapadmin/users/pmauduit");
         JSONObject reqUsr = new JSONObject().put("mail","tomcat2@localhost");
         request.setContent(reqUsr.toString().getBytes());
         Account fakedAccount = AccountFactory.createBrief("pmauduit", "monkey123", "Pierre",
@@ -376,7 +372,7 @@ public class UsersControllerTest {
         Mockito.doReturn(fakedAccount).when(ldapTemplate).lookup(Mockito.any(DistinguishedName.class),
                 eq(UserSchema.ATTR_TO_RETRIEVE), (ContextMapper) Mockito.any());
 
-        usersCtrl.update(request, response);
+        usersCtrl.update(request, response, "pmauduit");
 
         JSONObject ret = new JSONObject(response.getContentAsString());
         assertTrue(response.getStatus() == HttpServletResponse.SC_CONFLICT);
@@ -386,7 +382,6 @@ public class UsersControllerTest {
 
     @Test
     public void testUpdateDataServiceExceptionWhileModifying() throws Exception {
-        request.setRequestURI("/ldapadmin/users/pmauduit");
         JSONObject reqUsr = new JSONObject().put("mail","tomcat2@localhost");
         request.setContent(reqUsr.toString().getBytes());
         Account fakedAccount = AccountFactory.createBrief("pmauduit", "monkey123", "Pierre",
@@ -401,7 +396,7 @@ public class UsersControllerTest {
         
 
         try {
-            usersCtrl.update(request, response);
+            usersCtrl.update(request, response, "pmauduit");
         } catch (Throwable e) {
             assertTrue(e instanceof IOException);
             assertTrue(response.getStatus() ==  HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -410,13 +405,12 @@ public class UsersControllerTest {
 
     @Test
     public void testUpdateBadJSON() throws Exception {
-        request.setRequestURI("/ldapadmin/users/pmauduit");
         request.setContent("{[this is ] } not valid JSON obviously ....".getBytes());
         Mockito.when(ldapTemplate.lookup(Mockito.any(Name.class), Mockito.any(ContextMapper.class))).thenReturn(
               AccountFactory.createBrief("pmauduit", "monkey123", "Pierre", "Mauduit",
               "pmt@c2c.com", "+123", "developer", "developer"));
         try {
-            usersCtrl.update(request, response);
+            usersCtrl.update(request, response, "pmauduit");
         } catch (Throwable e) {
             assertTrue(e instanceof IOException);
             JSONObject ret = new JSONObject(response.getContentAsString());
@@ -428,7 +422,6 @@ public class UsersControllerTest {
 
     @Test
     public void testUpdate() throws Exception {
-        request.setRequestURI("/ldapadmin/users/pmauduit");
         JSONObject reqUsr = new JSONObject().put("sn","newPmauduit")
                 .put("postalAddress", "newAddress")
                 .put("postOfficeBox", "newPOBox")
@@ -454,7 +447,7 @@ public class UsersControllerTest {
                 eq(mFilter), (SearchControls) Mockito.any(), (ContextMapper) Mockito.any());
         Mockito.doReturn(Mockito.mock(DirContextOperations.class)).when(ldapTemplate).lookupContext((Name) Mockito.any());
 
-        usersCtrl.update(request, response);
+        usersCtrl.update(request, response, "pmauduit");
 
         JSONObject ret = new JSONObject(response.getContentAsString());
         assertTrue(response.getStatus() == HttpServletResponse.SC_OK);
@@ -471,7 +464,6 @@ public class UsersControllerTest {
 
     @Test
     public void testUpdateEmptyTelephoneNumber() throws Exception {
-        request.setRequestURI("/ldapadmin/users/pmauduit");
         JSONObject reqUsr = new JSONObject().put("sn","newPmauduit")
                 .put("postalAddress", "newAddress")
                 .put("postOfficeBox", "newPOBox")
@@ -504,7 +496,7 @@ public class UsersControllerTest {
         Mockito.doReturn(Mockito.mock(DirContextOperations.class)).
             when(ldapTemplate).lookupContext((Name) Mockito.any());
 
-        usersCtrl.update(request, response);
+        usersCtrl.update(request, response, "pmauduit");
 
         JSONObject ret = new JSONObject(response.getContentAsString());
         assertTrue(response.getStatus() == HttpServletResponse.SC_OK);
@@ -521,9 +513,7 @@ public class UsersControllerTest {
 
     @Test
     public void testDeleteUserProtected() throws Exception {
-        request.setRequestURI("/ldapadmin/users/geoserver_privileged_user");
-
-        usersCtrl.delete(request, response);
+        usersCtrl.delete("geoserver_privileged_user", request, response);
 
         JSONObject ret = new JSONObject(response.getContentAsString());
         assertTrue(response.getStatus() == HttpServletResponse.SC_CONFLICT);
@@ -534,13 +524,12 @@ public class UsersControllerTest {
 
     @Test
     public void testDeleteDataServiceExceptionCaught() throws Exception {
-        request.setRequestURI("/ldapadmin/users/pmauduit");
         Mockito.doThrow(DataServiceException.class).when(ldapTemplate).unbind((Name) Mockito.any(), eq(true));
         boolean caught = false;
 
 
         try {
-            usersCtrl.delete(request, response);
+            usersCtrl.delete("pmauduit", request, response);
         } catch (Throwable e) {
             caught = true;
             assertTrue(e instanceof IOException);
@@ -551,26 +540,21 @@ public class UsersControllerTest {
 
     @Test
     public void testDeleteNotFoundExceptionCaught() throws Exception {
-        request.setRequestURI("/ldapadmin/users/pmauduitnotfound");
         Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).unbind((Name) Mockito.any(), eq(true));
 
-        usersCtrl.delete(request, response);
+        usersCtrl.delete("pmauduitnotfound", request, response);
 
         JSONObject ret = new JSONObject(response.getContentAsString());
         assertTrue(response.getStatus() == HttpServletResponse.SC_NOT_FOUND);
         assertFalse(ret.getBoolean("success"));
         assertTrue(ret.getString("error").equals("not_found"));
-        
     }
     
 
     @Test
     public void testResquestProducesDelete() throws Exception {
-        request.setRequestURI("/private/users/pmaudui");
-        request.setMethod(HttpMethod.DELETE.toString());
-        usersCtrl.delete(request, response);
+        usersCtrl.delete("pmaudui", request, response);
         assertTrue(response.getContentType().equals("application/json"));
-        
     }
 
 
