@@ -209,7 +209,7 @@ dn: cn=psc,ou=orgs,dc=georchestra,dc=org
 objectClass: groupOfMembers
 objectClass: top
 cn: psc
-businessCategory: REGISTERED
+businessCategory: VALID
 description: 4184,684,9849,7987,797898,5797,579,97,49,797,97
 member: uid=testadmin,ou=users,dc=georchestra,dc=org
 member: uid=testuser,ou=users,dc=georchestra,dc=org
