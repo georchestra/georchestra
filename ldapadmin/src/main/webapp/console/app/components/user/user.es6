@@ -167,18 +167,18 @@ class UserController {
 
   initCompose() {
 
-    const quill = new Quill(document.querySelector('#compose_content'), {
+    this.quill = new Quill(document.querySelector('#compose_content'), {
       modules : {
         toolbar: [
           [ { header: [ 1, 2, false ] } ],
-          [ 'bold', 'italic', 'underline', 'image', 'color', 'align' ]
+          [ 'bold', 'italic', 'underline', 'image', { 'color': [] }, {'align': [] }  ]
         ]
       },
       placeholder: this.i18n.content,
       theme: 'snow'
     })
-    quill.on('text-change', () => {
-      this.compose.content = quill.container.firstChild.innerHTML
+    this.quill.on('text-change', () => {
+      this.compose.content = this.quill.container.firstChild.innerHTML
     })
   }
 
@@ -194,7 +194,7 @@ class UserController {
 
   loadTemplate() {
     this.compose.subject = this.compose.template.name
-    this.compose.content = this.compose.template.content
+    this.quill.setText(this.compose.template.content)
   }
 
   sendMail() {
