@@ -171,7 +171,7 @@ class UserController {
       modules : {
         toolbar: [
           [ { header: [ 1, 2, false ] } ],
-          [ 'bold', 'italic', 'underline', 'image' ]
+          [ 'bold', 'italic', 'underline', 'image', 'color', 'align' ]
         ]
       },
       placeholder: this.i18n.content,
