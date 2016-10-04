@@ -35,8 +35,7 @@
 <%@ page pageEncoding="UTF-8" %>
 <%@ page isELIgnored="false" %>
 <%
-Boolean anonymous = true;
-Boolean admin = false;
+Boolean anonymous = false;
 Boolean georDatadirActivated = false;
 
 String instanceName = null;
@@ -87,16 +86,8 @@ if(sec_roles != null) {
         // ROLE_ANONYMOUS is added by the security proxy:
         if (roles[i].equals("ROLE_ANONYMOUS")) {
             js_roles_array[0] = "'ROLE_ANONYMOUS'";
+            anonymous = true;
             break;
-        }
-        if (roles[i].equals("ROLE_GN_ADMIN")) {
-            admin = true;
-        }
-        if (roles[i].equals("ROLE_GN_EDITOR") || roles[i].equals("ROLE_GN_REVIEWER") || roles[i].equals("ROLE_GN_ADMIN")) {
-            anonymous = false;
-        }
-        if (roles[i].equals("ROLE_USER")) {
-            anonymous = false;
         }
         js_roles_array[i] = "'"+roles[i]+"'";
     }

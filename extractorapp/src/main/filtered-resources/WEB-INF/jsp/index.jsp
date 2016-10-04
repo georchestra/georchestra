@@ -33,9 +33,7 @@
 <%@ page isELIgnored="false" %>
 <%
 
-Boolean anonymous = true;
-Boolean admin = false;
-Boolean editor = false;
+Boolean anonymous = false;
 
 String lang = request.getParameter("lang");
 
@@ -79,17 +77,8 @@ if(sec_roles != null) {
     for (int i = 0; i < roles.length; i++) {
         // ROLE_ANONYMOUS is added by the security proxy:
         if (roles[i].equals("ROLE_ANONYMOUS")) {
+            anonymous = true;
             break;
-        }
-        if (roles[i].equals("ROLE_GN_ADMIN")) {
-            admin = true;
-        }
-        if (roles[i].equals("ROLE_GN_EDITOR") || roles[i].equals("ROLE_GN_REVIEWER") || roles[i].equals("ROLE_GN_ADMIN")) {
-            editor = true;
-            anonymous = false;
-        }
-        if (roles[i].equals("ROLE_USER")) {
-            anonymous = false;
         }
     }
 }
