@@ -48,7 +48,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
         this.maxFeatures = this.options.maxFeatures;
         this.iconCls = this.options.iconCls;
         // end strange
-        
+
         this.maxFeatures = this.options.maxFeatures;
         this.sep = this.tr("labelSeparator");
 
@@ -552,9 +552,62 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             page.center = [center.x, center.y];
             page.scale = values["scale_manual"] || this.options.defaultPointScale;
         } else {
-            page.bbox = feature.geometry.getBounds().scale(1 + this.options.buffer).toArray();
+            // we need to adapt bbox to server ratio & print template
+            var serverRatio = this._mapRatios[values.layout],
+                featureBbox = feature.geometry.getBounds();
+
+            if (featureBbox.getHeight() == 0) {
+                // means that only feature width should be considered for inclusion
+                page.bbox = this._getBox({
+                    bounds: featureBbox,
+                    fitTo: "width",
+                    ratio: serverRatio
+                });
+            } else {
+                var featureRatio = featureBbox.getWidth() / featureBbox.getHeight();
+                if (featureRatio > serverRatio) {
+                    // means that feature width is the greatest
+                    page.bbox = this._getBox({
+                        bounds: featureBbox,
+                        fitTo: "width",
+                        ratio: serverRatio
+                    });
+                } else {
+                    page.bbox = this._getBox({
+                        bounds: featureBbox,
+                        fitTo: "height",
+                        ratio: serverRatio
+                    });
+                }
+            }
         }
         return page;
+    },
+
+
+    /**
+     * @function _getBox
+     *
+     * Returns an array of page bounds given a bounds object
+     * and a fitTo property 
+     */
+    _getBox: function(o) {
+        var out = o.bounds.clone(),
+            center = out.getCenterLonLat();
+
+        if (o.fitTo == "width") {
+            // we keep out.left and out.right
+            var width = out.getWidth();
+            out.top = center.lat + width / ( 2 * o.ratio);
+            out.bottom = center.lat - width / ( 2 * o.ratio);
+        } else {
+            // fitTo height
+            // we keep out.bottom and out.top
+            var height = out.getHeight();
+            out.right = center.lon + height / ( 2 * o.ratio);
+            out.left = center.lon - height / ( 2 * o.ratio);
+        }
+        return out.scale(1 + this.options.buffer).toArray();
     },
 
 
