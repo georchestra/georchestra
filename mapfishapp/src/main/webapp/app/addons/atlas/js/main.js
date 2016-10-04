@@ -27,6 +27,9 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
     _geometryName: null,
     _geometryType: null,
 
+    // _mapRatios
+    _mapRatios: null,
+
     // current ext window
     window: null,
 
@@ -79,10 +82,21 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
             url: this.options.atlasServerUrl,
             listeners: {
                 "loadcapabilities": function(pp, caps) {
-                    if (caps === "") {
+                    if (caps === "") { // FIXME: is an object
                         GEOR.util.errorDialog({
                             msg: this.tr("atlas_connect_printserver_error")
                         });
+                    } else {
+                        // compute & cache map ratios per layout
+                        this._mapRatios = {};
+                        Ext.each(caps.layouts, function(layout) {
+                            Ext.each(layout.attributes, function(a) {
+                                // there should be only one attribute with type MapAttributeValues per layout
+                                if (a.type === "MapAttributeValues") {
+                                    this._mapRatios[layout.name] = a.clientInfo.width / a.clientInfo.height;
+                                }
+                            }, this)
+                        }, this)
                     }
                 },
                 scope: this
@@ -400,7 +414,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
 
 
     /**
-     * @function createSpec - parse form values
+     * @function createSpec - parse form values, create spec, POST it.
      * @private
      *
      * @param v - form values as returned by Ext.form.BasicForm.getFieldValues()
