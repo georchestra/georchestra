@@ -41,7 +41,7 @@ Example addon config:
 ```
 
 Note that several configuration options are available, eg:
-```
+```js
     "options": {
         "iconCls": "atlas-icon",
         "target": "tbar_4",
