@@ -1,8 +1,6 @@
 # Atlas addon 
 
-Generates PDF maps based on vector features. Each pages represents 
-one feature in its mapping context.
-
+Generates PDF maps based on vector features. Each page displays one feature in its mapping context.
 
 Authors: @jdenisgiguere, @fvanderbiest
 
