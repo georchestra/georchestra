@@ -271,6 +271,11 @@ GEOR.print = (function() {
                     printExtent.init(GeoExt.MapPanel.guess());
                 },
                 "beforeencodelayer": function(printProvider, layer) {
+                    // to overcome a limitation when working in conjunction with atlas addon
+                    // (in which mfpv3 print provider cannot be mixed with v2)
+                    Ext.apply(printProvider.encoders.layers, GeoExt.data.PrintProvider.prototype.encodersOverride.layers);
+                    Ext.apply(printProvider.encoders.legends, GeoExt.data.PrintProvider.prototype.encodersOverride.legends);
+
                     if (layer.CLASS_NAME === "OpenLayers.Layer.Vector") {
                         if (layer.name === VECTOR_LAYER_NAME) {
                             // do not print bounds layer

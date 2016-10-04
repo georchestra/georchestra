@@ -99,6 +99,17 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                         }, this)
                     }
                 },
+                "beforeencodelayer": function(printProvider, layer) {
+                    // to overcome a limitation in which mfpv3 print provider cannot be mixed with v2
+                    Ext.apply(printProvider.encoders.layers,
+                        GeoExt.data.MapFishPrintv3Provider.prototype.encodersOverride.layers);
+                    Ext.apply(printProvider.encoders.legends,
+                        GeoExt.data.MapFishPrintv3Provider.prototype.encodersOverride.legends);
+                    // do not print vector layers
+                    if (layer.CLASS_NAME === "OpenLayers.Layer.Vector") {
+                        return false;
+                    }
+                },
                 scope: this
             }
         });
