@@ -153,7 +153,6 @@ ProxyPassReverse /proxy/ http://localhost:8180/proxy/
 
 The cas module should be accessed only through https.
 ```
-RewriteRule ^/cas$ /cas/ [R]
 
 <Proxy http://localhost:8180/cas/*>
     Require all granted
@@ -171,7 +170,6 @@ For the other ones, pick only those you need, depending on the modules you plan 
 * ```analytics.conf```:
 
 ```
-RewriteRule ^/analytics$ /analytics/ [R]
 <Proxy http://localhost:8180/analytics/*>
     Require all granted
 </Proxy>
@@ -183,7 +181,6 @@ ProxyPassReverse /analytics/ http://localhost:8180/analytics/
 * ```catalogapp.conf```:
 
 ```
-RewriteRule ^/catalogapp$ /catalogapp/ [R]
 <Proxy http://localhost:8180/catalogapp/*>
     Require all granted
 </Proxy>
@@ -195,7 +192,6 @@ ProxyPassReverse /catalogapp/ http://localhost:8180/catalogapp/
 * ```downloadform.conf```:
 
 ```
-RewriteRule ^/downloadform$ /downloadform/ [R]
 <Proxy http://localhost:8180/downloadform/*>
     Require all granted
 </Proxy>
@@ -207,8 +203,6 @@ ProxyPassReverse /downloadform/ http://localhost:8180/downloadform/
 * ```extractorapp.conf```:
 
 ```
-RewriteRule ^/extractorapp$ /extractorapp/ [R]
-RewriteRule ^/extractorapp/admin$ /extractorapp/admin/ [R]
 <Proxy http://localhost:8180/extractorapp/*>
     Require all granted
 </Proxy>
@@ -220,7 +214,6 @@ ProxyPassReverse /extractorapp/ http://localhost:8180/extractorapp/
 * ```geonetwork.conf```:
 
 ```
-RewriteRule ^/geonetwork$ /geonetwork/ [R]
 <Proxy http://localhost:8180/geonetwork/*>
     Require all granted
 </Proxy>
@@ -232,7 +225,6 @@ ProxyPassReverse /geonetwork/ http://localhost:8180/geonetwork/
 * ```geoserver.conf```:
 
 ```
-RewriteRule ^/geoserver$ /geoserver/ [R]
 <Proxy http://localhost:8180/geoserver/*>
     Require all granted
 </Proxy>
@@ -248,7 +240,6 @@ ProxyPassReverse /geoserver/ http://localhost:8180/geoserver/
 * ```geofence.conf```:
 
 ```
-RewriteRule ^/geofence$ /geofence/ [R]
 <Proxy http://localhost:8180/geofence/*>
     Require all granted
 </Proxy>
@@ -260,7 +251,6 @@ ProxyPassReverse /geofence/ http://localhost:8180/geofence/
 * ```geowebcache.conf```:
 
 ```
-RewriteRule ^/geowebcache$ /geowebcache/ [R]
 <Proxy http://localhost:8180/geowebcache/*>
     Require all granted
 </Proxy>
@@ -272,7 +262,6 @@ ProxyPassReverse /geowebcache/ http://localhost:8180/geowebcache/
 * ```header.conf```:
 
 ```
-RewriteRule ^/header$ /header/ [R]
 <Proxy http://localhost:8180/header/*>
     Require all granted
 </Proxy>
@@ -284,9 +273,6 @@ ProxyPassReverse /header/ http://localhost:8180/header/
 * ```ldapadmin.conf```:
 
 ```
-RewriteRule ^/ldapadmin$ /ldapadmin/ [R]
-RewriteRule ^/ldapadmin/privateui$ /ldapadmin/privateui/ [R]
-RewriteRule ^/ldapadmin/console$ /ldapadmin/console/ [R]
 
 <Proxy http://localhost:8180/ldapadmin/*>
     Require all granted
@@ -298,7 +284,6 @@ ProxyPassReverse /ldapadmin/ http://localhost:8180/ldapadmin/
 * ```mapfishapp.conf```:
 
 ```
-RewriteRule ^/mapfishapp$ /mapfishapp/ [R]
 <Proxy http://localhost:8180/mapfishapp/*>
     Require all granted
 </Proxy>

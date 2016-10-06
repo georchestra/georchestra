@@ -13,6 +13,10 @@ In your LDIF file, you can add :
 objectClass: shadowAccount
 ```
 
+* Rewrite rules for adding an extra trailing slash on webapps are no longer needed on the frontend webserver (apache), since it is managed security-proxy side.
+(PR1502)
+
+
 Version 15.12
 =============
 
