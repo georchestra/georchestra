@@ -206,6 +206,9 @@
             <!--  prints page by page -->
             <split stopOnException="true">
                 <simple>${body[pages]}</simple>
+                <setProperty propertyName="filename">
+                    <simple>${body[filename]}</simple>
+                </setProperty>
                 <choice>
                     <when>
                         <simple>${exchangeProperty.displayLegend} == true and ${body[bbox]} != null</simple>
@@ -300,7 +303,7 @@
                 <!-- Saves the file onto the disk -->
                 <!-- TODO {{atlas.temporaryDirectory}} -->
 
-                <to uri="file://?fileName=/{{atlas.temporaryDirectory}}/${property.jobId}/${property.CamelSplitIndex}.pdf"/>
+                <to uri="file://?fileName=/{{atlas.temporaryDirectory}}/${property.jobId}/${property.filename}"/>
                 <log message="${property.jobId} / ${property.CamelSplitIndex} Done !" loggingLevel="INFO"/>
             </split>
             <choice>
