@@ -26,15 +26,11 @@
       </div>
 
       <div class="panel-body" ng-if="org.tab=='infos'">
-
         <div ng-inline="templates/orgForm.tpl.html" ng-init="model=org.org;promise=org.org.$promise"></div>
-
         <hr>
-
         <div class="pull-right">
           <button ng-click="org.save()" class="btn btn-primary" translate>org.save</button>
         </div>
-
       </div>
 
       <div class="panel-body" ng-if="org.tab=='area'">

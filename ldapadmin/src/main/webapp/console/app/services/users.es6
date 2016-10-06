@@ -36,6 +36,10 @@ angular.module('admin_console')
     update: {
       params: { id: '@id' },
       method: 'PUT'
+    },
+    delete: {
+      params: { id: '@id' },
+      method: 'DELETE'
     }
   })
 ])

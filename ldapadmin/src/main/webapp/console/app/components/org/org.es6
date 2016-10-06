@@ -16,9 +16,9 @@ class OrgController {
     translate('org.updated', this.i18n)
     translate('org.error', this.i18n)
     translate('org.deleted', this.i18n)
+    translate('org.deleteError', this.i18n)
 
     this.org = this.$injector.get('Orgs').get({id: $routeParams.org})
-    // this.org.$promise.then(org => org.pending = true)
   }
 
   save () {
@@ -38,7 +38,7 @@ class OrgController {
       let $router = this.$injector.get('$router')
       $router.navigate($router.generate('orgs', { id: 'all' }))
       flash.create('success', this.i18n.deleted)
-    }, flash.create.bind(flash, 'danger', this.i18n.error))
+    }, flash.create.bind(flash, 'danger', this.i18n.deleteError))
   }
 
 }
