@@ -603,8 +603,8 @@
           </execution>
         </executions>
         <configuration>
-          <nodeVersion>v4.2.4</nodeVersion>
-          <npmVersion>2.14.12</npmVersion>
+          <nodeVersion>v4.6.0</nodeVersion>
+          <npmVersion>2.15.11</npmVersion>
           <installDirectory>${project.basedir}</installDirectory>
           <workingDirectory>${project.basedir}/src/main/webapp/console</workingDirectory>
         </configuration>
