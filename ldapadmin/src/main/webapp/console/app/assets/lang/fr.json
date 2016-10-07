@@ -52,6 +52,7 @@
   "user.warning"        : "Attention, cette action est irréversible — ",
   "user.pendingmsg"     : "Utilisateur en attente ",
   "user.confirm"        : "Confirmer",
+  "user.orgFirst"       : "Confirmer d’abord l’organisme : ",
 
   "orgs.title"          : "organismes",
 

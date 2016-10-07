@@ -19,12 +19,18 @@ class UserController {
     translate('user.deleted', this.i18n)
     translate('user.content', this.i18n)
 
+    this.tabs = ['infos', 'groups', 'analytics', 'messages', 'logs', 'manage']
+    this.tab = $routeParams.tab
 
-    this.tabs  = ['infos', 'groups', 'analytics', 'messages', 'logs', 'manage']
-    this.tab   = $routeParams.tab
-
-    this.user = User.get({id : $routeParams.id}, (user) => {
-      if (this.tab == 'messages') {
+    this.user = User.get({id: $routeParams.id}, (user) => {
+      if (user.org && user.org !== '') {
+        user.orgObj = Orgs.get({'id': user.org}, org => {
+          user.validOrg = org.status === 'REGISTERED'
+        })
+      } else {
+        user.validOrg = true
+      }
+      if (this.tab === 'messages') {
         this.messages = this.$injector.get('Email').query({id: this.user.uid})
       }
     })
@@ -221,18 +227,16 @@ class UserController {
     }
     (new Mail({
       id: this.user.uid,
-      subject:this.compose.subject,
+      subject: this.compose.subject,
       content: this.compose.content,
       attachments: attachments.join(',')
     })).$save((r) => {
-        delete this.compose
-        flash.create('success', i18n.sent)
-        let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
-        $httpDefaultCache.removeAll()
-        this.messages = this.$injector.get('Email').query({id: this.user.uid})
-      },
-      () => { flash.create('danger', i18n.error) }
-    )
+      delete this.compose
+      flash.create('success', i18n.sent)
+      let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
+      $httpDefaultCache.removeAll()
+      this.messages = this.$injector.get('Email').query({id: this.user.uid})
+    }, () => { flash.create('danger', i18n.error) })
   }
 
   confirm () {

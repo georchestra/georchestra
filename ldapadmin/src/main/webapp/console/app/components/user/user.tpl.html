@@ -21,7 +21,15 @@
 
       <div class="panel-heading text-center" ng-if="user.user.pending">
         <span translate>user.pendingmsg</span>
-        <button class="btn btn-default" ng-click="user.confirm()" translate>user.confirm</button>
+        <button class="btn btn-default" ng-click="user.confirm()"
+          ng-show="user.user.validOrg" translate>user.confirm</button>
+        <span ng-if="!user.user.validOrg">
+          —
+          <span translate>user.orgFirst</span>
+          <a ng-link="org({org: user.user.orgObj.id, tab: 'infos'})">
+            {{::user.user.orgObj.name || user.user.orgObj.name}}
+          </a>
+        </span>
       </div>
 
       <div class="panel-body" ng-if="user.tab=='infos'">

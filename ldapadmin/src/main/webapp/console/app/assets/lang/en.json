@@ -52,6 +52,7 @@
   "user.warning"        : "Warning, this action is irreversible — ",
   "user.pendingmsg"     : "Pending user ",
   "user.confirm"        : "Confirm",
+  "user.orgFirst"       : "Confirm organism first : ",
 
   "orgs.title"          : "organisms",
 

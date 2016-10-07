@@ -41,6 +41,16 @@ class OrgController {
     }, flash.create.bind(flash, 'danger', this.i18n.deleteError))
   }
 
+  confirm () {
+    let flash = this.$injector.get('Flash')
+    let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
+    this.org.status = 'REGISTERED'
+    this.org.$update(() => {
+      $httpDefaultCache.removeAll()
+      flash.create('success', this.i18n.updated)
+    }, flash.create.bind(flash, 'danger', this.i18n.error))
+  }
+
 }
 
 angular.module('admin_console').controller('OrgController', OrgController)

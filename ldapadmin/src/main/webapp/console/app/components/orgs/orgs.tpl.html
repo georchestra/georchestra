@@ -32,7 +32,9 @@
       <tbody>
         <tr dir-paginate="org in orgs.orgs | filter:orgs.q | itemsPerPage: orgs.itemsPerPage">
           <td>
-            <a ng-link="org({org: org.id, tab: 'infos'})">{{::org.name}}</a>
+            <a ng-link="org({org: org.id, tab: 'infos'})" ng-class="{pending: org.status !== 'REGISTERED'}">
+              {{::org.name}}
+            </a>
           </td>
           <td>{{::org.shortName}}</td>
           <td>{{::org.membersCount}}</td>
