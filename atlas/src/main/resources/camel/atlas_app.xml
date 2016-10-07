@@ -302,8 +302,17 @@
 
                 <!-- Saves the file onto the disk -->
                 <!-- TODO {{atlas.temporaryDirectory}} -->
+                <choice>
+                    <when>
+                        <simple>${property.outputFormat} == "pdf"</simple>
+                        <to uri="file://?fileName=/{{atlas.temporaryDirectory}}/${property.jobId}/${property.CamelSplitIndex}.pdf"/>
+                    </when>
+                    <!-- use filename from spec for ZIP format -->
+                    <otherwise>
+                        <to uri="file://?fileName=/{{atlas.temporaryDirectory}}/${property.jobId}/${property.filename}"/>
+                    </otherwise>
+                </choice>
 
-                <to uri="file://?fileName=/{{atlas.temporaryDirectory}}/${property.jobId}/${property.filename}"/>
                 <log message="${property.jobId} / ${property.CamelSplitIndex} Done !" loggingLevel="INFO"/>
             </split>
             <choice>
