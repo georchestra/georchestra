@@ -492,7 +492,8 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                 encodedLayers.push(encodedLayer);
             }
         }, this);
-        return encodedLayers;
+        // reverse is required to get correct the print order:
+        return encodedLayers.reverse();
     },
 
 
