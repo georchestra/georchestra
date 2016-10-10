@@ -18,6 +18,7 @@ CMD ["sh", "-c", "exec java -Djava.io.tmpdir=/tmp/jetty -Dgeorchestra.datadir=/e
 -Dgeofence.dir=/etc/georchestra/geoserver/geofence \
 -DGEOWEBCACHE_CACHE_DIR=/var/local/tiles \
 -DENABLE_JSONP=true \
+-DENABLE_ADVANCED_PROJECTION=false \
 -Dhttps.protocols=TLSv1,TLSv1.1,TLSv1.2 \
 -Xmx$XMX -Xms$XMX \
 -jar /usr/local/jetty/start.jar" ]
