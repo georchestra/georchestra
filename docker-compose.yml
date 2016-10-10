@@ -106,7 +106,7 @@ extractorapp:
     - smtp
   volumes:
     - extractorapp_extracts:/var/local/extracts
-    - extractorapp_tmp:/var/local/extractorapp_tmp
+    - /tmp
   environment:
     - XMX=1g
 

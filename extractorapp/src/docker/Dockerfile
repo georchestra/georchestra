@@ -10,6 +10,6 @@ RUN apt-get update && \
 
 RUN ln -s /usr/share/java/gdal.jar /var/lib/jetty/lib/ext/
 
-VOLUME [ "/var/local/extracts", "/var/local/extractorapp_tmp" ]
+VOLUME [ "/var/local/extracts", "/tmp" ]
 
-CMD ["sh", "-c", "exec java -Djava.io.tmpdir=/var/local/extractorapp_tmp/jetty -Djava.util.prefs.userRoot=/var/local/extractorapp_tmp/userPrefs -Djava.util.prefs.systemRoot=/var/local/extractorapp_tmp/systemPrefs -Dgeorchestra.datadir=/etc/georchestra -Dextractor.storage.dir=/var/local/extracts -Xmx$XMX -Xms$XMX -jar /usr/local/jetty/start.jar"]
+CMD ["sh", "-c", "exec java -Djava.io.tmpdir=/tmp/jetty -Djava.util.prefs.userRoot=/tmp/userPrefs -Djava.util.prefs.systemRoot=/tmp/systemPrefs -Dgeorchestra.datadir=/etc/georchestra -Dextractor.storage.dir=/var/local/extracts -Xmx$XMX -Xms$XMX -jar /usr/local/jetty/start.jar"]
