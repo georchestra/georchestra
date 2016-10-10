@@ -48,6 +48,7 @@ geoserver:
     - geoserver_datadir:/var/local/geoserver
     - geoserver_geodata:/var/local/geodata
     - geoserver_tiles:/var/local/tiles
+    - /tmp
   links:
     - database
     - ldap
@@ -58,6 +59,7 @@ geowebcache:
   image: georchestra/geowebcache:latest
   volumes:
     - geowebcache_tiles:/var/local/tiles
+    - /tmp
   environment:
     - XMX=1g
 
@@ -78,6 +80,8 @@ proxy:
     - analytics
     - catalogapp
     - downloadform
+  volumes:
+    - /tmp
   environment:
     - XMX=1g
 
@@ -85,6 +89,8 @@ cas:
   image: georchestra/cas:latest
   links:
     - ldap
+  volumes:
+    - /tmp
   environment:
     - XMX=1g
 
@@ -92,6 +98,7 @@ mapfishapp:
   image: georchestra/mapfishapp:latest
   volumes:
     - mapfishapp_uploads:/var/local/uploads
+    - /tmp
   links:
     - database
   environment:
@@ -112,6 +119,8 @@ extractorapp:
 
 header:
   image: georchestra/header:latest
+  volumes:
+    - /tmp
   environment:
     - XMX=512m
 
@@ -121,6 +130,8 @@ ldapadmin:
     - database
     - ldap
     - smtp
+  volumes:
+    - /tmp
   environment:
     - XMX=1g
 
@@ -133,6 +144,7 @@ geonetwork:
     - ldap
   volumes:
     - geonetwork_datadir:/var/local/geonetwork
+    - /tmp
   environment:
     - XMX=2g
 
@@ -140,11 +152,21 @@ analytics:
   image: georchestra/analytics:latest
   links:
     - database
+  volumes:
+    - /tmp
   environment:
     - XMX=512m
 
 catalogapp:
   image: georchestra/catalogapp:latest
+  volumes:
+    - /tmp
+  environment:
+    - XMX=512m
 
 downloadform:
   image: georchestra/downloadform:latest
+  volumes:
+    - /tmp
+  environment:
+    - XMX=512m

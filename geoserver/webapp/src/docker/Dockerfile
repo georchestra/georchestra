@@ -11,13 +11,14 @@ RUN java -jar "$JETTY_HOME/start.jar" --add-to-startd=jmx,jmx-remote,stats,jndi
 
 ADD . /
 
-VOLUME [ "/var/local/geoserver", "/var/local/geodata", "/var/local/tiles" ]
+VOLUME [ "/var/local/geoserver", "/var/local/geodata", "/var/local/tiles", "/tmp" ]
 
-CMD ["sh", "-c", "exec java -Djava.io.tmpdir=/tmp/jetty -Dgeorchestra.datadir=/etc/georchestra \
--DGEOSERVER_DATA_DIR=/var/local/geoserver \
+CMD ["sh", "-c", "exec java -Djava.io.tmpdir=/tmp/jetty \
+-Dgeorchestra.datadir=/etc/georchestra \
 -Dgeofence.dir=/etc/georchestra/geoserver/geofence \
+-DGEOSERVER_DATA_DIR=/var/local/geoserver \
 -DGEOWEBCACHE_CACHE_DIR=/var/local/tiles \
 -Dhttps.protocols=TLSv1,TLSv1.1,TLSv1.2 \
 -Xmx$XMX -Xms$XMX \
+-XX:-UsePerfData \
 -jar /usr/local/jetty/start.jar" ]
-
