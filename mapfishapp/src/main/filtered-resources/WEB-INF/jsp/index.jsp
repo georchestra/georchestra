@@ -70,7 +70,7 @@ if (instanceName == null) {
   instanceName = "${instance}";
 }
 Locale l = new Locale(lang);
-ResourceBundle resource = org.georchestra.mapfishapp.ws.Utf8ResourceBundle.getBundle("mapfishapp.i18n.index",l);
+ResourceBundle resource = org.georchestra.mapfishapp.ws.Utf8ResourceBundle.getBundle("org.georchestra.mapfishapp.i18n.index",l);
 javax.servlet.jsp.jstl.core.Config.set(
     request,
     javax.servlet.jsp.jstl.core.Config.FMT_LOCALIZATION_CONTEXT,
