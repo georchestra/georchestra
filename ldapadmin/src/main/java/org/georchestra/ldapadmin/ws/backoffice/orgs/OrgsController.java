@@ -273,6 +273,27 @@ public class OrgsController {
 
 
     /**
+     * Delete one org
+     */
+    @RequestMapping(value = REQUEST_MAPPING + "/{commonName}", method = RequestMethod.DELETE)
+    public void deleteOrg(@PathVariable String commonName, HttpServletResponse response)
+            throws IOException, JSONException {
+
+        try {
+            // delete entities in LDAP server
+            this.orgDao.delete(this.orgDao.findExtById(commonName));
+            this.orgDao.delete(this.orgDao.findByCommonName(commonName));
+            ResponseUtil.writeSuccess(response);
+        } catch (Exception e) {
+            LOG.error(e.getMessage());
+            ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, e.getMessage()),
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            throw new IOException(e);
+        }
+    }
+
+
+    /**
      * Update org instance based on field found in json object.
      *
      * All field of Org instance will be updated if corresponding key exists in json document except 'members'.

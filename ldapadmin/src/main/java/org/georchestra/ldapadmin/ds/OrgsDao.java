@@ -158,6 +158,14 @@ public class OrgsDao {
         this.ldapTemplate.rebind(buildOrgExtDN(org.getId()), null, buildAttributes(org));
     }
 
+    public void delete(Org org){
+        this.ldapTemplate.unbind(buildOrgDN(org.getId()));
+    }
+
+    public void delete(OrgExt org){
+        this.ldapTemplate.unbind(buildOrgExtDN(org.getId()));
+    }
+
     public void addUser(String organization, String user){
         DirContextOperations context = ldapTemplate.lookupContext(buildOrgDN(organization).toString());
         context.addAttributeValue("member", buildUserDN(user).toString(), false);
