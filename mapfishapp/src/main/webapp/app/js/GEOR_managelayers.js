@@ -948,27 +948,27 @@ GEOR.managelayers = (function() {
          * Addons must have options.layerTreeAction === true and
          *  API method layerTreeHandler(menuitem, event, layerRecord). In this API method, this is the addon.
          */
-
-
-        
         Ext.each(GEOR.config.ADDONS, function(addonConfig) {
-        var addon, me;
-        me = this;
 
-            if (GEOR.tools.getAddonsState()[addonConfig.id] && addonConfig.options
-            && addonConfig.options.layerTreeAction) {
-                addon = GEOR.tools.getAddon(addonConfig.id);
-                insertSep();
-                menuItems.push({
-                    iconCls: addon.iconCls,
-                    text: addon.title,
-                    qtip: addon.qtip,
-                    listeners: {
-                        "click": {
-                            fn: addon.layerTreeHandler.createDelegate(addon, [layerRecord], true)
-                        }
-                    },
-                });
+            if (GEOR.tools.getAddonsState()[addonConfig.id] &&
+                addonConfig.options &&
+                addonConfig.options.layerTreeAction) {
+
+                var addon = GEOR.tools.getAddon(addonConfig.id);
+                // addon can be not yet available
+                if (addon) {
+                    insertSep();
+                    menuItems.push({
+                        iconCls: addon.iconCls,
+                        text: addon.title,
+                        qtip: addon.qtip,
+                        listeners: {
+                            "click": {
+                                fn: addon.layerTreeHandler.createDelegate(addon, [layerRecord], true)
+                            }
+                        },
+                    });
+                }
             }
         });
 
