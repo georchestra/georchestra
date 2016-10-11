@@ -300,6 +300,15 @@ public class OrgsController {
         } catch (JSONException ex){}
 
         try{
+            JSONArray members = json.getJSONArray("members");
+            List<String> parsedMembers = new LinkedList<String>();
+            for(int i = 0; i < members.length(); i++)
+                parsedMembers.add(members.getString(i));
+            org.setMembers(parsedMembers);
+        } catch (JSONException ex){}
+
+
+        try{
             org.setStatus(json.getString("status"));
         } catch (JSONException ex){}
 
