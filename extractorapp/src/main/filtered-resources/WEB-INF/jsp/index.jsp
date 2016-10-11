@@ -43,10 +43,10 @@ String georCustomPath = "resources/app/js/GEOR_custom.js";
 
 try {
   ApplicationContext ctx = RequestContextUtils.getWebApplicationContext(request);
-  instanceName = ((GeorchestraConfiguration) ctx.getBean("georchestraConfiguration")).getProperty("instance");
-  defaultLanguage = ((GeorchestraConfiguration) ctx.getBean("georchestraConfiguration")).getProperty("language");
-  if ((ctx.getBean("georchestraConfiguration") != null)
-    && (((GeorchestraConfiguration) ctx.getBean("georchestraConfiguration")).activated())) {
+  instanceName = ctx.getBean(GeorchestraConfiguration.class).getProperty("instance");
+  defaultLanguage = ctx.getBean(GeorchestraConfiguration.class).getProperty("language");
+  if ((ctx.getBean(GeorchestraConfiguration.class) != null)
+    && (ctx.getBean(GeorchestraConfiguration.class).activated())) {
       georCustomPath = "ws/app/js/GEOR_custom.js";
     }
 } catch (Exception e) {}

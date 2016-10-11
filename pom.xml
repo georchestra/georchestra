@@ -507,6 +507,17 @@
         <module>analytics</module>
       </modules>
     </profile>
+    <profile>
+      <id>log4j-logstash</id>
+      <dependencies>
+        <dependency>
+          <groupId>net.logstash.log4j</groupId>
+          <artifactId>jsonevent-layout</artifactId>
+          <version>1.7</version>
+          <scope>runtime</scope>
+        </dependency>
+      </dependencies>
+    </profile>
   </profiles>
   <repositories>
     <repository>
