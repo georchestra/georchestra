@@ -206,8 +206,14 @@ public class OrgsDao {
         // Optional ones
         if(org.getShortName() != null)
             attrs.put("ou", org.getShortName());
-        if(org.getCities() != null)
-            attrs.put("description", org.getCities());
+
+        if(org.getCities() != null) {
+            StringBuilder rawCities = new StringBuilder();
+            for(String city : org.getCities())
+                rawCities.append("," + city);
+            if(rawCities.length() > 0)
+                attrs.put("description", rawCities.substring(1));
+        }
         if(org.getStatus() != null)
             attrs.put("businessCategory", org.getStatus());
 
