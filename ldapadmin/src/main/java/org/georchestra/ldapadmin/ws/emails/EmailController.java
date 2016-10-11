@@ -114,7 +114,7 @@ public class EmailController {
     public String emailsList(@PathVariable String recipient) throws JSONException {
 
         JSONArray emails = new JSONArray();
-        for(EmailEntry email : this.emailRepository.findByRecipient(recipient))
+        for(EmailEntry email : this.emailRepository.findByRecipientOrderByDateDesc(recipient))
             emails.put(email.toJSON());
         JSONObject res = new JSONObject();
         res.put("emails", emails);
