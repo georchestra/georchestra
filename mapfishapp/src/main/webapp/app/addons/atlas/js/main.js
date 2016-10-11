@@ -558,6 +558,7 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
         }
         // if geom is point || user has manually chosen a scale
         if (this._geometryType == "gml:PointPropertyType" ||
+            feature.geometry.CLASS_NAME == "OpenLayers.Geometry.Point" ||
             values["scale_method"].inputValue == "manual") {
 
             center = feature.geometry.getCentroid();
