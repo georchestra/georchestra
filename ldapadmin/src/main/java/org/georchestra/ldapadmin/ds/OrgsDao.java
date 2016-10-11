@@ -150,6 +150,14 @@ public class OrgsDao {
         this.ldapTemplate.bind(buildOrgExtDN(org.getId()), null, buildAttributes(org));
     }
 
+    public void update(Org org){
+        this.ldapTemplate.rebind(buildOrgDN(org.getId()), null, buildAttributes(org));
+    }
+
+    public void update(OrgExt org){
+        this.ldapTemplate.rebind(buildOrgExtDN(org.getId()), null, buildAttributes(org));
+    }
+
     public void addUser(String organization, String user){
         DirContextOperations context = ldapTemplate.lookupContext(buildOrgDN(organization).toString());
         context.addAttributeValue("member", buildUserDN(user).toString(), false);
@@ -188,6 +196,12 @@ public class OrgsDao {
 
         // Mandatory attribute
         attrs.put("o", org.getName());
+
+        // Add members
+        BasicAttribute members = new BasicAttribute("member");
+        for(String member : org.getMembers())
+            members.add(member);
+        attrs.put(members);
 
         // Optional ones
         if(org.getShortName() != null)

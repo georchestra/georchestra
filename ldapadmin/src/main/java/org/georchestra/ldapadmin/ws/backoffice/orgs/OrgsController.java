@@ -202,8 +202,8 @@ public class OrgsController {
             this.updateFromRequest(orgExt, json);
 
             // Persist changes to LDAP server
-            this.orgDao.insert(org);
-            this.orgDao.insert(orgExt);
+            this.orgDao.update(org);
+            this.orgDao.update(orgExt);
 
             // Regenerate json and send it to browser
             this.returnOrgAsJSON(org, orgExt, response);
