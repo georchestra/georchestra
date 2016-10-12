@@ -202,8 +202,8 @@ public class OrgsController {
             this.updateFromRequest(orgExt, json);
 
             // Persist changes to LDAP server
-            this.orgDao.insert(org);
-            this.orgDao.insert(orgExt);
+            this.orgDao.update(org);
+            this.orgDao.update(orgExt);
 
             // Regenerate json and send it to browser
             this.returnOrgAsJSON(org, orgExt, response);
@@ -273,6 +273,27 @@ public class OrgsController {
 
 
     /**
+     * Delete one org
+     */
+    @RequestMapping(value = REQUEST_MAPPING + "/{commonName}", method = RequestMethod.DELETE)
+    public void deleteOrg(@PathVariable String commonName, HttpServletResponse response)
+            throws IOException, JSONException {
+
+        try {
+            // delete entities in LDAP server
+            this.orgDao.delete(this.orgDao.findExtById(commonName));
+            this.orgDao.delete(this.orgDao.findByCommonName(commonName));
+            ResponseUtil.writeSuccess(response);
+        } catch (Exception e) {
+            LOG.error(e.getMessage());
+            ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, e.getMessage()),
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            throw new IOException(e);
+        }
+    }
+
+
+    /**
      * Update org instance based on field found in json object.
      *
      * All field of Org instance will be updated if corresponding key exists in json document except 'members'.
@@ -298,6 +319,15 @@ public class OrgsController {
                 parsedCities.add(cities.getString(i));
             org.setCities(parsedCities);
         } catch (JSONException ex){}
+
+        try{
+            JSONArray members = json.getJSONArray("members");
+            List<String> parsedMembers = new LinkedList<String>();
+            for(int i = 0; i < members.length(); i++)
+                parsedMembers.add(members.getString(i));
+            org.setMembers(parsedMembers);
+        } catch (JSONException ex){}
+
 
         try{
             org.setStatus(json.getString("status"));

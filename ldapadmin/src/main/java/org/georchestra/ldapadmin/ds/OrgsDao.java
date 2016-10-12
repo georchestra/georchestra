@@ -150,6 +150,22 @@ public class OrgsDao {
         this.ldapTemplate.bind(buildOrgExtDN(org.getId()), null, buildAttributes(org));
     }
 
+    public void update(Org org){
+        this.ldapTemplate.rebind(buildOrgDN(org.getId()), null, buildAttributes(org));
+    }
+
+    public void update(OrgExt org){
+        this.ldapTemplate.rebind(buildOrgExtDN(org.getId()), null, buildAttributes(org));
+    }
+
+    public void delete(Org org){
+        this.ldapTemplate.unbind(buildOrgDN(org.getId()));
+    }
+
+    public void delete(OrgExt org){
+        this.ldapTemplate.unbind(buildOrgExtDN(org.getId()));
+    }
+
     public void addUser(String organization, String user){
         DirContextOperations context = ldapTemplate.lookupContext(buildOrgDN(organization).toString());
         context.addAttributeValue("member", buildUserDN(user).toString(), false);
@@ -189,11 +205,36 @@ public class OrgsDao {
         // Mandatory attribute
         attrs.put("o", org.getName());
 
+        // Add members
+        BasicAttribute members = new BasicAttribute("member");
+        for(String member : org.getMembers())
+            members.add(member);
+        attrs.put(members);
+
         // Optional ones
         if(org.getShortName() != null)
             attrs.put("ou", org.getShortName());
-        if(org.getCities() != null)
-            attrs.put("description", org.getCities());
+
+        if(org.getCities() != null) {
+            BasicAttribute description = new BasicAttribute("description");
+            StringBuilder buffer = new StringBuilder();
+            // description field max size : 1024
+            int maxFieldSize = 1000;
+
+            for (String city : org.getCities()) {
+                if (buffer.length() > maxFieldSize) {
+                    description.add(buffer.substring(1));
+                    buffer = new StringBuilder();
+                }
+                buffer.append("," + city);
+            }
+            if (buffer.length() > 0)
+                description.add(buffer.substring(1));
+
+            if(description.size() > 0)
+                attrs.put(description);
+        }
+
         if(org.getStatus() != null)
             attrs.put("businessCategory", org.getStatus());
 
@@ -290,8 +331,12 @@ public class OrgsDao {
         public String asString(Attribute att) throws NamingException {
             if(att == null)
                 return null;
-            else
-                return (String) att.get();
+            else {
+                StringBuilder buffer = new StringBuilder();
+                for(int i = 0; i < att.size(); i++)
+                    buffer.append("," + att.get(i));
+                return buffer.length() > 0 ? buffer.substring(1) : "";
+            }
         }
 
         public List<String> asListString(Attribute att) throws NamingException {
