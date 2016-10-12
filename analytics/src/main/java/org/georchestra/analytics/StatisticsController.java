@@ -218,7 +218,7 @@ public class StatisticsController {
 			userId = input.getString("user");
 		}
 		if (input.has("group")) {
-			groupId = input.getString("group");
+			groupId = "ROLE_" + input.getString("group");
 		}
 		// not both group and user can be defined at the same time
 		if ((userId != null) && (groupId != null)) {
@@ -322,7 +322,7 @@ public class StatisticsController {
 				userId = input.getString("user");
 			}
 			if (input.has("group")) {
-				groupId = input.getString("group");
+				groupId = "ROLE_" + input.getString("group");
 			}
 		} catch (Throwable e) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -397,7 +397,7 @@ public class StatisticsController {
 			startDate = sdf.parse(input.getString("startDate"));
 			endDate = sdf.parse(input.getString("endDate"));
 			if (input.has("group")) {
-				groupId = input.getString("group");
+				groupId = "ROLE_" + input.getString("group");
 			}
 		} catch (Throwable e) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

@@ -7,7 +7,13 @@
     <input type="text" class="filter-users form-control pull-right" ng-model="users.q" placeholder="{{'group.filter_users' | translate}}"></input>
     <i class="glyphicon glyphicon-remove-sign" ng-show="users.q != ''" ng-click="users.q = ''"></i>
     <h3 ng-if="!users.activeGroup" class="groups-title">{{users.users.length}} <span translate>group.users</span></h3>
-    <h3 ng-if="users.activeGroup" class="groups-title">{{users.activeGroup.cn}}</h3>
+    <h3 ng-if="users.activeGroup" class="groups-title">
+      {{users.activeGroup.cn}}
+      <button class="btn btn-default btn-xs delete" title="{{ 'group.remove' | translate }}"
+        ng-click="users.deleteGroup()" ng-show="users.canDelete">
+        <i class="glyphicon glyphicon-trash"></i>
+      </button>
+    </h3>
     <p ng-if="users.activeGroup">
       <em class="content-description" contenteditable="true" ng-init="users.initEditable()">{{users.activeGroup.description}}</em>
     </p>
@@ -72,6 +78,30 @@
           </button>
           <button class="btn btn-link pull-right" ng-click="users.close()" translate>users.cancel</button>
         </form>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div ng-if="users.delete" class="background" ng-cloack>
+
+    <div class="panel panel-default">
+
+      <div class="panel-heading">
+        <a class="btn close" ng-click="users.close()">&times;</a>
+        <span translate>users.confirm</span>
+      </div>
+      <div class="panel-body">
+        <p>
+          <span translate>users.confirmText</span>
+          «<em>{{users.activeGroup.cn}}</em>» ?
+        </p>
+        <hr>
+        <button class="btn btn-primary pull-right" ng-click="users.confirmDeleteGroup()">
+          <span translate>users.delete</span>
+        </button>
+        <button class="btn btn-link pull-right" ng-click="users.close()" translate>users.cancel</button>
       </div>
 
     </div>

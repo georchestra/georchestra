@@ -27,7 +27,7 @@ class HomeController {
     $injector.get('translate')('analytics.errorload', this.i18n)
 
     let error     = $injector.get('Flash').create.bind(
-      $injector.get('Flash'), 'error', this.i18n.errorload
+      $injector.get('Flash'), 'danger', this.i18n.errorload
     )
     let Analytics = $injector.get('Analytics')
     let options   = {

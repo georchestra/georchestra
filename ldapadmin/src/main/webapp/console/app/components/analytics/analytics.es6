@@ -30,7 +30,7 @@ class AnalyticsController {
   load(group) {
     let Flash     = this.$injector.get('Flash')
     let Analytics = this.$injector.get('Analytics')
-    let err       = Flash.create.bind(Flash, 'error', 'Error loading data')
+    let err       = Flash.create.bind(Flash, 'danger', 'Error loading data')
 
     let options = {
       service   : 'combinedRequests',

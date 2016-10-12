@@ -24,7 +24,7 @@
 
       <div class="panel-body" ng-if="user.tab=='infos'" >
 
-        <div ng-inline="templates/userForm.tpl.html" ng-init="model=user.user"></div>
+        <div ng-inline="templates/userForm.tpl.html" ng-init="model=user.user;promise=user.user.$promise"></div>
 
         <hr>
 
@@ -179,7 +179,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr dir-paginate="log in user.logs.logs | itemsPerPage: 10">
+            <tr dir-paginate="log in user.logs.logs | itemsPerPage: 25">
               <td>{{::log.date | date: 'mediumDate'}}</td>
               <td>{{::log.admin}}</td>
               <td>{{::log.type}}</td>

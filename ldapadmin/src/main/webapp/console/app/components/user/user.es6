@@ -34,22 +34,6 @@ class UserController {
     switch (this.tab) {
       case 'infos':
         this.contexts = $injector.get('Contexts').query()
-        let sel_users = []
-        User.query((users) => {
-          users.map((u) => {
-            let id = u.uid
-            sel_users.push({
-              id   : id,
-              text : (u.sn || '') + ' ' + (u.givenName || '')
-            })
-          })
-          $('.manager').select2({
-            data  : sel_users
-          })
-          this.$injector.get('$timeout')(() => {
-            $('.manager').trigger('change')
-          })
-        })
         let sel_orgs = []
         Orgs.query((orgs) => {
           orgs.map((o) => {
@@ -131,6 +115,8 @@ class UserController {
         endDate   : this.date.end
       }
       this.requests   = Analytics.get(options, () => {}, error)
+      // Keep original value for previous async call
+      options =  Object.assign({}, options)
       options.service = 'layersUsage'
       options.limit   = 10
       this.layers     = Analytics.get(options, () => {}, error)
@@ -183,18 +169,18 @@ class UserController {
 
   initCompose() {
 
-    const quill = new Quill(document.querySelector('#compose_content'), {
+    this.quill = new Quill(document.querySelector('#compose_content'), {
       modules : {
         toolbar: [
           [ { header: [ 1, 2, false ] } ],
-          [ 'bold', 'italic', 'underline', 'image' ]
+          [ 'bold', 'italic', 'underline', 'image', { 'color': [] }, {'align': [] }  ]
         ]
       },
       placeholder: this.i18n.content,
       theme: 'snow'
     })
-    quill.on('text-change', () => {
-      this.compose.content = quill.container.firstChild.innerHTML
+    this.quill.on('text-change', () => {
+      this.compose.content = this.quill.container.firstChild.innerHTML
     })
   }
 
@@ -210,7 +196,7 @@ class UserController {
 
   loadTemplate() {
     this.compose.subject = this.compose.template.name
-    this.compose.content = this.compose.template.content
+    this.quill.setText(this.compose.template.content)
   }
 
   sendMail() {
@@ -291,3 +277,29 @@ UserController.prototype.activate.$inject = [ '$scope' ]
 angular.module('admin_console')
 .controller('UserController', UserController)
 .filter('encodeURIComponent', () => window.encodeURIComponent )
+.directive('managers', [ '$timeout', 'User', ($timeout, User) => ({
+  link: (scope, elm, attrs, ctrl) => {
+    let promise = scope.$eval(attrs['promise'])
+    let sel_users = []
+    User.query((users) => {
+      users.map((u) => {
+        let id = u.uid
+        sel_users.push({
+          id   : id,
+          text : (u.sn || '') + ' ' + (u.givenName || '')
+        })
+      })
+      elm.select2({
+        placeholder: '',
+        allowClear: true,
+        data  : sel_users
+      })
+      let cb = () => { $timeout(() => { elm.trigger('change') }) }
+      if (promise) {
+        promise.then(cb)
+      } else {
+        cb()
+      }
+    })
+  }
+})])

@@ -16,7 +16,7 @@ CREATE TABLE admin_attachments (
 
 CREATE TABLE email_template (
   id bigserial,
-  content character varying(255),
+  content text,
   name character varying(255),
   CONSTRAINT email_template_pkey PRIMARY KEY (id)
 );

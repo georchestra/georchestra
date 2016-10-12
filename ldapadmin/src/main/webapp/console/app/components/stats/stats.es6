@@ -39,6 +39,11 @@ class StatsController {
         }
       }
     } else {
+      const formatDay = v => {
+        let splits = v.split('-').reverse()
+        splits.pop()
+        return splits.join('/')
+      }
       options = {
         fullWidth: true,
         axisY: {
@@ -48,15 +53,16 @@ class StatsController {
         },
         axisX: {
           labelInterpolationFnc: (value, index) => {
+            console.log(value)
             if (this.granularity == 'HOUR') {
               return value.split(' ')[1]+'H'
             }
             if (this.granularity == 'DAY' && this.parsed.series[0].length > 8) {
               return (parseInt(value.split('-')[2]) % 4 == 1) ?
-                value.substr(value.indexOf('-') + 1) : null
+                formatDay(value) : null
             }
             if (this.granularity == 'DAY') {
-              return value.substr(value.indexOf('-') + 1)
+              return formatDay(value)
             }
             if (this.granularity == 'WEEK') {
               return (parseInt(value.split('-')[1]) % 2 == 0) ? value : null

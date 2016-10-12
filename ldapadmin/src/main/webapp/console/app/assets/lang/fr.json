@@ -58,7 +58,9 @@
   "group.filter_users"  : "Filtrer",
   "group.created"       : "Rôle créé",
   "group.updated"       : "Rôle mis à jour",
-  "group.error"         : "Erreur lors de la création du rôle",
+  "group.deleted"       : "Rôle supprimé",
+  "group.error"         : "Erreur de création du rôle",
+  "group.deleteError"   : "Erreur de suppression du rôle",
   "group.search"        : "Chercher un rôle",
 
   "users.createGroup"   : "Créer un rôle",
@@ -67,6 +69,9 @@
   "users.newGroupDesc"  : "Description",
   "users.cancel"        : "Annuler",
   "users.save"          : "Enregistrer",
+  "users.delete"        : "Supprimer",
+  "users.confirm"       : "Confirmation",
+  "users.confirmText"   : "Souhaitez vous vraiment supprimer le rôle",
 
   "msg.compose"         : "Composer un message",
   "msg.date"            : "Date",

@@ -176,7 +176,7 @@ public class UsersController {
 	 * @param response Returns the detailed information of the user as json
 	 * @throws IOException
 	 */
-	@RequestMapping(value=BASE_MAPPING+"/usersearch/{userPattern}", method=RequestMethod.GET, produces="application/json")
+	@RequestMapping(value=BASE_MAPPING+"/usersearch/{userPattern:.+}", method=RequestMethod.GET, produces="application/json")
 	@ResponseBody
 	public String findWithPattern(@PathVariable String userPattern, HttpServletResponse response) throws IOException, JSONException {
 		try {
@@ -374,10 +374,11 @@ public class UsersController {
 			this.accountDao.insert(account, Group.USER, originLogin);
 
 		} catch (DuplicatedEmailException e) {
+			LOG.error(e);
 			throw e;
 
 		} catch (DataServiceException e) {
-
+			LOG.error(e);
 			throw e;
 
 		} catch (DuplicatedUidException e) {
@@ -426,10 +427,8 @@ public class UsersController {
 	 * @throws IOException if the uid does not exist or fails to access to the LDAP store.
 	 * @throws NameNotFoundException
 	 */
-	@RequestMapping(value=REQUEST_MAPPING+ "/*", method=RequestMethod.PUT)
-	public void update( HttpServletRequest request, HttpServletResponse response) throws IOException, NameNotFoundException{
-
-		final String uid = RequestUtil.getKeyFromPathVariable(request).toLowerCase();
+	@RequestMapping(value=REQUEST_MAPPING+ "/{uid:.+}", method=RequestMethod.PUT)
+	public void update( HttpServletRequest request, HttpServletResponse response, @PathVariable String uid) throws IOException, NameNotFoundException{
 
 		if(this.userRule.isProtected(uid) ){
 
@@ -516,10 +515,9 @@ public class UsersController {
 	 * @param response
 	 * @throws IOException
 	 */
-	@RequestMapping(value=REQUEST_MAPPING + "/*", method=RequestMethod.DELETE)
-	public void delete( HttpServletRequest request, HttpServletResponse response) throws IOException{
+	@RequestMapping(value=REQUEST_MAPPING + "/{uid:.+}", method=RequestMethod.DELETE)
+	public void delete(@PathVariable String uid, HttpServletRequest request, HttpServletResponse response) throws IOException{
 		try{
-			final String uid = RequestUtil.getKeyFromPathVariable(request).toLowerCase();
 			if(this.userRule.isProtected(uid) ){
 
 				String message = "The user is protected, it cannot be deleted: " + uid;
@@ -628,10 +626,8 @@ public class UsersController {
 		}
 
 		String manager = RequestUtil.getFieldValue(json, UserSchema.MANAGER_KEY);
-		if (manager != null) {
-			account.setManager(manager);
-		}
-		
+		account.setManager(manager);
+
 		String context = RequestUtil.getFieldValue(json, UserSchema.CONTEXT_KEY);
 		if (context != null) {
 			account.setContext(context);
