@@ -206,8 +206,9 @@ public class OrgsDao {
 
         // Mandatory attribute
         attrs.put("o", org.getName());
-
+        
         // Add members if present
+        // Add members
         if(org.getMembers() != null && org.getMembers().size() > 0) {
             BasicAttribute members = new BasicAttribute("member");
             for (String member : org.getMembers())
