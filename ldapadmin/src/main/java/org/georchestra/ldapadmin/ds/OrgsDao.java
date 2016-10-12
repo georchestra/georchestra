@@ -28,15 +28,17 @@ import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
-import org.springframework.ldap.filter.Filter;
 import org.springframework.ldap.support.LdapNameBuilder;
 
 import javax.naming.Name;
-import javax.naming.directory.*;
 import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.BasicAttribute;
+import javax.naming.directory.BasicAttributes;
+import javax.naming.ldap.LdapName;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -208,7 +210,7 @@ public class OrgsDao {
         // Add members
         BasicAttribute members = new BasicAttribute("member");
         for(String member : org.getMembers())
-            members.add(member);
+            members.add(buildUserDN(member).toString());
         attrs.put(members);
 
         // Optional ones
@@ -324,7 +326,14 @@ public class OrgsDao {
             else
                 org.setCities(new LinkedList<String>());
             org.setStatus(asString(attrs.get("businessCategory")));
-            org.setMembers(asListString(attrs.get("member")));
+            List<String> rawMembers = asListString(attrs.get("member"));
+            List<String> filteredMembers = new LinkedList<String>();
+            for (String member : rawMembers) {
+                LdapNameBuilder dn = LdapNameBuilder.newInstance(member);
+                LdapName name = dn.build();
+                filteredMembers.add(name.getRdn(name.size() - 1 ).getValue().toString());
+            }
+            org.setMembers(filteredMembers);
             return org;
         }
 

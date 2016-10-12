@@ -162,6 +162,7 @@ public class OrgsController {
      * * 'status'
      * * 'orgType'
      * * 'address'
+     * * 'members' as json array ex: ["testadmin", "testuser"]
      *
      * All fields are optional.
      *
@@ -180,7 +181,11 @@ public class OrgsController {
      *     ],
      *     "status" : "inscrit",
      *     "orgType" : "association",
-     *     "address" : "128 rue de la plante, 73059 Chambrille"
+     *     "address" : "128 rue de la plante, 73059 Chambrille",
+     *     "members": [
+     *        "testadmin",
+     *        "testuser"
+     *     ]
      *  }
      *
      */
@@ -227,6 +232,7 @@ public class OrgsController {
      * * 'status'
      * * 'orgType'
      * * 'address'
+     * * 'members' as json array ex: ["testadmin", "testuser"]
      *
      * All fields are optional except 'name' which is used to generate organization identifier.
      *
