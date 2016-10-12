@@ -22,7 +22,10 @@ package org.georchestra.mapfishapp.ws;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -70,6 +73,15 @@ public class ContextController implements ServletContextAware {
 
     @Autowired
     public GeorchestraConfiguration georchestraConfiguration;
+
+    /**
+     * Setter for the geOrchestraConfiguration bean, used mainly for testing purposes.
+     *
+     * @param georchestraConfiguration
+     */
+    public void setGeorchestraConfiguration(GeorchestraConfiguration georchestraConfiguration) {
+        this.georchestraConfiguration = georchestraConfiguration;
+    }
 
     private JSONObject getContextInfo(File f) throws Exception {
         JSONObject info = new JSONObject();
@@ -261,7 +273,15 @@ public class ContextController implements ServletContextAware {
                 LOG.error("No context sub-directory found in \"" + ctxDir + "\". Returning an empty array of contexts. Please check your setup.");
                 return ret;
             }
-            Iterator<File> wmcs = FileUtils.iterateFiles(new File(ctxDir, "contexts"), new String[] {"wmc"}, false);
+            List<File> wmcscol = (List<File>) FileUtils.listFiles(new File(ctxDir, "contexts"), new String[] { "wmc" },
+                    false);
+            Collections.sort(wmcscol, new Comparator<File>() {
+                @Override
+                public int compare(File o1, File o2) {
+                    return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
+                }
+            });
+            Iterator<File> wmcs = wmcscol.iterator();
             while (wmcs.hasNext()) {
                 File f = wmcs.next();
                 try {
