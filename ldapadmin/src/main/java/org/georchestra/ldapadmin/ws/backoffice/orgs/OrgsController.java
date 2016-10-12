@@ -134,6 +134,7 @@ public class OrgsController {
      * * 'status'
      * * 'orgType'
      * * 'address'
+     * * 'members' as json array ex: ["testadmin", "testuser"]
      *
      */
     @RequestMapping(value = REQUEST_MAPPING + "/{cn}", method = RequestMethod.GET)
@@ -201,6 +202,14 @@ public class OrgsController {
         try {
             // Parse Json
             JSONObject json = this.parseRequest(request, response);
+
+            // Validate request against required fields
+            for(String requiredField : this.validation.getRequiredOrgFieldsName()) {
+                if (!json.has(requiredField))
+                    throw new IOException("Missing required field : " + requiredField);
+                if(json.getString(requiredField) == null || json.getString(requiredField).length() == 0)
+                    throw new IOException("Empty required field : " + requiredField);
+            }
 
             // Retrieve current orgs state from ldap
             Org org = this.orgDao.findByCommonName(commonName);
@@ -401,7 +410,7 @@ public class OrgsController {
     private void updateFromRequest(OrgExt orgExt, JSONObject json) throws JSONException {
 
         try{
-            orgExt.setOrgType(json.getString("orgType"));
+            orgExt.setOrgType(json.getString("type"));
         } catch (JSONException ex){}
 
         try{
@@ -423,7 +432,7 @@ public class OrgsController {
 
         JSONObject res = org.toJson();
         if(orgExt.getOrgType() != null)
-            res.put("orgType", orgExt.getOrgType());
+            res.put("type", orgExt.getOrgType());
         if(orgExt.getAddress() != null)
             res.put("address", orgExt.getAddress());
         return res;

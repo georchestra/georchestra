@@ -57,10 +57,13 @@ public class EditUserDetailsFormController {
 	private OrgsDao orgsDao;
 	private AccountDao accountDao;
 
+	private Validation validation;
+
 	@Autowired
-	public EditUserDetailsFormController(AccountDao dao, OrgsDao orgsDao){
+	public EditUserDetailsFormController(AccountDao dao, OrgsDao orgsDao, Validation validation){
 		this.accountDao = dao;
 		this.orgsDao = orgsDao;
+		this.validation = validation;
 	}
 
 	private static final String[] fields = {"uid", "firstName", "surname", "email", "title", "phone", "facsimile", "org", "description", "postalAddress"};
@@ -96,7 +99,7 @@ public class EditUserDetailsFormController {
 
 			model.addAttribute(formBean);
 			for (String f : fields) {
-				if (Validation.isFieldRequired(f)) {
+				if (this.validation.isFieldRequired(f)) {
 					session.setAttribute(f + "Required", "true");
 				}
 			}
@@ -168,11 +171,11 @@ public class EditUserDetailsFormController {
 		}
 
 		UserUtils.validate( formBean.getFirstName(), formBean.getSurname(), resultErrors );
-		Validation.validateField("phone", formBean.getPhone(), resultErrors);
-		Validation.validateField("facsimile", formBean.getFacsimile(), resultErrors);
-		Validation.validateField("title", formBean.getTitle(), resultErrors);
-		Validation.validateField("description", formBean.getDescription(), resultErrors);
-		Validation.validateField("postalAddress", formBean.getPostalAddress(), resultErrors);
+		this.validation.validateField("phone", formBean.getPhone(), resultErrors);
+		this.validation.validateField("facsimile", formBean.getFacsimile(), resultErrors);
+		this.validation.validateField("title", formBean.getTitle(), resultErrors);
+		this.validation.validateField("description", formBean.getDescription(), resultErrors);
+		this.validation.validateField("postalAddress", formBean.getPostalAddress(), resultErrors);
 
 		if(resultErrors.hasErrors()){
 			return "editUserDetailsForm";

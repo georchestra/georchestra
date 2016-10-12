@@ -10,6 +10,7 @@ import org.georchestra.ldapadmin.ds.OrgsDao;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.georchestra.ldapadmin.dto.Org;
+import org.georchestra.ldapadmin.ws.utils.Validation;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,7 +43,7 @@ public class EditUserDetailsFormControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        ctrl = new EditUserDetailsFormController(dao, orgsDao);
+        ctrl = new EditUserDetailsFormController(dao, orgsDao, new Validation());
         formBean.setDescription("description");
         formBean.setEmail("email");
         formBean.setFacsimile("+331234567890");

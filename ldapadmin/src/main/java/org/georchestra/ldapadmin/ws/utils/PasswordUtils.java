@@ -19,6 +19,7 @@
 
 package org.georchestra.ldapadmin.ws.utils;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 
@@ -31,6 +32,8 @@ public final class PasswordUtils  {
 
 	public static final int SIZE = 8;
 
+	@Autowired
+	private static Validation validation;
 
 	private PasswordUtils(){
 		// utility class
@@ -41,12 +44,12 @@ public final class PasswordUtils  {
 		final String pwd1 = password.trim();
 		final String pwd2 = confirmPassword.trim();
 
-		if( !StringUtils.hasLength(pwd1) && Validation.isFieldRequired("password") ){
+		if( !StringUtils.hasLength(pwd1) && PasswordUtils.validation.isFieldRequired("password") ){
 
 			errors.rejectValue("password", "password.error.required", "required");
 
 		}
-		if( !StringUtils.hasLength(pwd2) && Validation.isFieldRequired("confirmPassword") ){
+		if( !StringUtils.hasLength(pwd2) && PasswordUtils.validation.isFieldRequired("confirmPassword") ){
 
 			errors.rejectValue("confirmPassword", "confirmPassword.error.required", "required");
 		}

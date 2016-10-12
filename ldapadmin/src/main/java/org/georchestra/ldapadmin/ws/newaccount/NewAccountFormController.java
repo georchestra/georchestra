@@ -23,6 +23,7 @@ import net.tanesha.recaptcha.ReCaptcha;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.georchestra.ldapadmin.bs.Moderator;
 import org.georchestra.ldapadmin.bs.ReCaptchaParameters;
 import org.georchestra.ldapadmin.ds.AccountDao;
@@ -36,7 +37,6 @@ import org.georchestra.ldapadmin.dto.Group;
 import org.georchestra.ldapadmin.dto.Org;
 import org.georchestra.ldapadmin.dto.OrgExt;
 import org.georchestra.ldapadmin.mailservice.MailService;
-import org.georchestra.ldapadmin.ws.utils.EmailUtils;
 import org.georchestra.ldapadmin.ws.utils.PasswordUtils;
 import org.georchestra.ldapadmin.ws.utils.RecaptchaUtils;
 import org.georchestra.ldapadmin.ws.utils.UserUtils;
@@ -44,6 +44,7 @@ import org.georchestra.ldapadmin.ws.utils.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -86,18 +87,21 @@ public final class NewAccountFormController {
 
 	private ReCaptchaParameters reCaptchaParameters;
 
+	private Validation validation;
+
 	private static final String[] fields = {"firstName","surname", "email", "phone", "org", "title", "description",
 			"uid", "password", "confirmPassword", "createOrg", "orgName", "orgShortName", "orgAddress", "orgType"};
 
 	@Autowired
 	public NewAccountFormController(AccountDao dao, OrgsDao orgDao, MailService mailSrv, Moderator moderatorRule,
-									ReCaptcha reCaptcha, ReCaptchaParameters reCaptchaParameters) {
+									ReCaptcha reCaptcha, ReCaptchaParameters reCaptchaParameters, Validation validation) {
 		this.accountDao = dao;
 		this.orgDao = orgDao;
 		this.mailService = mailSrv;
 		this.moderator = moderatorRule;
 		this.reCaptcha = reCaptcha;
 		this.reCaptchaParameters = reCaptchaParameters;
+		this.validation = validation;
 	}
 
 	@InitBinder
@@ -119,7 +123,7 @@ public final class NewAccountFormController {
 
 		session.setAttribute("reCaptchaPublicKey", this.reCaptchaParameters.getPublicKey());
 		for (String f : fields) {
-			if (Validation.isFieldRequired(f)) {
+			if (this.validation.isFieldRequired(f)) {
 				session.setAttribute(f + "Required", "true");
 			}
 		}
@@ -154,13 +158,21 @@ public final class NewAccountFormController {
 		model.addAttribute("orgTypes", this.getOrgTypes());
 
 		UserUtils.validate(formBean.getUid(), formBean.getFirstName(), formBean.getSurname(), result );
-		EmailUtils.validate(formBean.getEmail(), result);
+
+		if ( !StringUtils.hasLength(formBean.getEmail()) && this.validation.isFieldRequired("email") ) {
+			result.rejectValue("email", "email.error.required", "required");
+		} else {
+			if (!EmailValidator.getInstance().isValid(formBean.getEmail())) {
+				result.rejectValue("email", "email.error.invalidFormat", "Invalid Format");
+			}
+		}
+
 		PasswordUtils.validate(formBean.getPassword(), formBean.getConfirmPassword(), result);
 		new RecaptchaUtils(request.getRemoteAddr(), this.reCaptcha)
 				.validate(formBean.getRecaptcha_challenge_field(), formBean.getRecaptcha_response_field(), result);
-		Validation.validateField("phone", formBean.getPhone(), result);
-		Validation.validateField("title", formBean.getTitle(), result);
-		Validation.validateField("description", formBean.getDescription(), result);
+		this.validation.validateField("phone", formBean.getPhone(), result);
+		this.validation.validateField("title", formBean.getTitle(), result);
+		this.validation.validateField("description", formBean.getDescription(), result);
 
 
 		// Create org if needed
@@ -199,7 +211,7 @@ public final class NewAccountFormController {
 				throw new IOException(e);
 			}
 		} else {
-			Validation.validateField("org", formBean.getOrg(), result);
+			this.validation.validateField("org", formBean.getOrg(), result);
 		}
 
 		if(result.hasErrors())

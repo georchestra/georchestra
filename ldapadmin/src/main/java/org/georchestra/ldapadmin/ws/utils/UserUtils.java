@@ -19,6 +19,7 @@
 
 package org.georchestra.ldapadmin.ws.utils;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 
@@ -30,6 +31,10 @@ import org.springframework.validation.Errors;
  */
 public class UserUtils {
 
+	@Autowired
+	private static Validation validation;
+
+
 	private UserUtils(){
 			// utility class
 	}
@@ -37,7 +42,7 @@ public class UserUtils {
 	public static void validate(String uid, String firstName, String surname, Errors errors) {
 
 		// uid validation
-		if( !StringUtils.hasLength(uid) && Validation.isFieldRequired("uid") ){
+		if( !StringUtils.hasLength(uid) && UserUtils.validation.isFieldRequired("uid") ){
 			errors.rejectValue("uid", "uid.error.required", "required");
 		} else{
 
@@ -74,11 +79,11 @@ public class UserUtils {
 
 	public static void validate(String firstName, String surname, Errors errors) {
 
-		if( !StringUtils.hasLength(firstName) && Validation.isFieldRequired("firstName") ){
+		if( !StringUtils.hasLength(firstName) && UserUtils.validation.isFieldRequired("firstName") ){
 			errors.rejectValue("firstName", "firstName.error.required", "required");
 		}
 
-		if( !StringUtils.hasLength( surname ) && Validation.isFieldRequired("surname") ){
+		if( !StringUtils.hasLength( surname ) && UserUtils.validation.isFieldRequired("surname") ){
 			errors.rejectValue("surname", "surname.error.required", "required");
 		}
 	}

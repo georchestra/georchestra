@@ -81,7 +81,7 @@ public class NewAccountFormControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        ctrl = new NewAccountFormController(dao, org, srv, mod, rec, rep);
+        ctrl = new NewAccountFormController(dao, org, srv, mod, rec, rep, new Validation());
 
         // Mock admin account
         DistinguishedName dn = new DistinguishedName();

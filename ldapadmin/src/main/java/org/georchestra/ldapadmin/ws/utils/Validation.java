@@ -37,10 +37,29 @@ import org.springframework.validation.Errors;
  */
 public class Validation {
 
-	private static List<String> requiredFields;
-	public String getRequiredFields() {
-		return requiredFields.toString();
+	private List<String> requiredFields;
+
+	public List<String> getRequiredFields() {
+		return requiredFields;
 	}
+
+	public List<String> getRequiredOrgFieldsName(){
+		List<String> res = new LinkedList<String>();
+		// Extract all fields starting by Org and change next letter to lower case
+		// orgShortName --> shortName
+		Pattern regexp = Pattern.compile("^org(.+)$");
+		for(String field: this.getRequiredFields()){
+			Matcher m = regexp.matcher(field);
+			if(m.matches()) {
+				String match = m.group(1);
+				match = match.substring(0, 1).toLowerCase() + match.substring(1);
+				res.add(match);
+			}
+		}
+
+		return res;
+	}
+
 	public void setRequiredFields(String csvRequiredFields) {
 		List<String> r = new ArrayList<String>(Arrays.asList(csvRequiredFields.split("\\s*,\\s*")));
 		// add mandatory fields (they may be present two times, it's not a problem)
@@ -50,8 +69,8 @@ public class Validation {
 		r.add("confirmPassword");
 		this.requiredFields = r;
 	}
-	public static boolean isFieldRequired (String field) {
-	    if (requiredFields == null)
+	public boolean isFieldRequired (String field) {
+	    if (this.requiredFields == null)
 	        return false;
 
 		for (String f : requiredFields) {
@@ -61,8 +80,8 @@ public class Validation {
 		}
 		return false;
 	}
-	public static void validateField (String field, String value, Errors errors) {
-		if( Validation.isFieldRequired(field) && !StringUtils.hasLength(value) ){
+	public void validateField (String field, String value, Errors errors) {
+		if( this.isFieldRequired(field) && !StringUtils.hasLength(value) ){
 			errors.rejectValue(field, "error.required", "required");
 		}
 	}

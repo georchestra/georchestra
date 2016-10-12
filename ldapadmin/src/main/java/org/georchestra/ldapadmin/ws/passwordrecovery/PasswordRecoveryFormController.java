@@ -38,7 +38,6 @@ import org.georchestra.ldapadmin.ds.UserTokenDao;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.Group;
 import org.georchestra.ldapadmin.mailservice.MailService;
-import org.georchestra.ldapadmin.ws.utils.EmailUtils;
 import org.georchestra.ldapadmin.ws.utils.RecaptchaUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
@@ -138,14 +137,7 @@ public class PasswordRecoveryFormController  {
 						BindingResult resultErrors, 
 						SessionStatus sessionStatus) 
 						throws IOException {
-		
-		EmailUtils.validate(formBean.getEmail(), resultErrors);
-		if(resultErrors.hasErrors()){
-			return "passwordRecoveryForm";
-		}
 
-		
-		
 		String remoteAddr = request.getRemoteAddr();
 		new RecaptchaUtils(remoteAddr, this.reCaptcha).validate(formBean.getRecaptcha_challenge_field(), formBean.getRecaptcha_response_field(), resultErrors);
 		if(resultErrors.hasErrors()){
