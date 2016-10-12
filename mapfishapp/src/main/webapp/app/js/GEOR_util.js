@@ -419,14 +419,14 @@ GEOR.util = (function() {
                 "abstract": function(v) {
                     var o = '';
                     try {
-                        o = v.identificationInfo[0]['abstract'].characterString + '<br/><br/>';
+                        o = v.identificationInfo[0]['abstract'].characterString.replace(/\n/g, '<br/>') + '<br/><br/>';
                     } catch (e) {}
                     return o;
                 },
                 "lineage": function(v) {
                     var o = '';
                     try {
-                        o = v.dataQualityInfo[0].lineage.statement.characterString + '<br/><br/>';
+                        o = v.dataQualityInfo[0].lineage.statement.characterString.replace(/\n/g, '<br/>') + '<br/><br/>';
                     } catch (e) {}
                     return o;
                 },
