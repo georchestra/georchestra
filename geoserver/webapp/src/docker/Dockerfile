@@ -1,6 +1,6 @@
 FROM jetty:9.2-jre7
 
-ENV XMS=512M XMX=2G
+ENV XMS=1536M XMX=8G
 
 RUN echo "deb http://httpredir.debian.org/debian jessie contrib" >> /etc/apt/sources.list
 RUN echo "deb http://security.debian.org/ jessie/updates contrib" >> /etc/apt/sources.list

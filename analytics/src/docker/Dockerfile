@@ -1,6 +1,6 @@
 FROM jetty:9.3-jre8
 
-ENV XMS=256M XMX=512M
+ENV XMS=256M XMX=1G
 
 RUN java -jar "$JETTY_HOME/start.jar" --add-to-startd=jmx,jmx-remote,stats
 

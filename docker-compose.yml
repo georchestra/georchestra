@@ -54,8 +54,8 @@ geoserver:
     - database
     - ldap
   environment:
-    - XMS=512M
-    - XMX=2G
+    - XMS=1536M
+    - XMX=8G
 
 geowebcache:
   image: georchestra/geowebcache:latest
@@ -64,8 +64,8 @@ geowebcache:
     - /run/jetty
     - /tmp
   environment:
-    - XMS=256M
-    - XMX=1G
+    - XMS=1G
+    - XMX=2G
 
 proxy:
   image: georchestra/security-proxy:latest
@@ -88,7 +88,7 @@ proxy:
     - /run/jetty
     - /tmp
   environment:
-    - XMS=256M
+    - XMS=512M
     - XMX=1G
 
 cas:
@@ -111,8 +111,8 @@ mapfishapp:
   links:
     - database
   environment:
-    - XMS=256M
-    - XMX=1G
+    - XMS=1G
+    - XMX=2G
 
 extractorapp:
   image: georchestra/extractorapp:latest
@@ -124,8 +124,8 @@ extractorapp:
     - /run/jetty
     - /tmp
   environment:
-    - XMS=256M
-    - XMX=1G
+    - XMS=1G
+    - XMX=2G
 
 header:
   image: georchestra/header:latest
@@ -173,7 +173,7 @@ analytics:
     - /tmp
   environment:
     - XMS=256M
-    - XMX=512M
+    - XMX=1G
 
 catalogapp:
   image: georchestra/catalogapp:latest
