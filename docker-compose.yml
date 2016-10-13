@@ -142,8 +142,6 @@ ldapadmin:
 
 geonetwork:
   image: georchestra/geonetwork:3-latest
-  ports:
-    - "1099:1099"
   links:
     - database
     - ldap
