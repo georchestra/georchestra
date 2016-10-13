@@ -48,8 +48,6 @@ geoserver:
     - geoserver_datadir:/var/local/geoserver
     - geoserver_geodata:/var/local/geodata
     - geoserver_tiles:/var/local/tiles
-    - /run/jetty
-    - /tmp
   links:
     - database
     - ldap
@@ -61,8 +59,6 @@ geowebcache:
   image: georchestra/geowebcache:latest
   volumes:
     - geowebcache_tiles:/var/local/tiles
-    - /run/jetty
-    - /tmp
   environment:
     - XMS=1G
     - XMX=2G
@@ -84,9 +80,6 @@ proxy:
     - analytics
     - catalogapp
     - downloadform
-  volumes:
-    - /run/jetty
-    - /tmp
   environment:
     - XMS=512M
     - XMX=1G
@@ -95,9 +88,6 @@ cas:
   image: georchestra/cas:latest
   links:
     - ldap
-  volumes:
-    - /run/jetty
-    - /tmp
   environment:
     - XMS=256M
     - XMX=1G
@@ -106,8 +96,6 @@ mapfishapp:
   image: georchestra/mapfishapp:latest
   volumes:
     - mapfishapp_uploads:/var/local/uploads
-    - /run/jetty
-    - /tmp
   links:
     - database
   environment:
@@ -121,17 +109,12 @@ extractorapp:
     - smtp
   volumes:
     - extractorapp_extracts:/var/local/extracts
-    - /run/jetty
-    - /tmp
   environment:
     - XMS=1G
     - XMX=2G
 
 header:
   image: georchestra/header:latest
-  volumes:
-    - /run/jetty
-    - /tmp
   environment:
     - XMS=256M
     - XMX=512M
@@ -142,9 +125,6 @@ ldapadmin:
     - database
     - ldap
     - smtp
-  volumes:
-    - /run/jetty
-    - /tmp
   environment:
     - XMS=512M
     - XMX=1G
@@ -158,8 +138,6 @@ geonetwork:
     - ldap
   volumes:
     - geonetwork_datadir:/var/local/geonetwork
-    - /run/jetty
-    - /tmp
   environment:
     - XMS=1G
     - XMX=6G
@@ -168,27 +146,18 @@ analytics:
   image: georchestra/analytics:latest
   links:
     - database
-  volumes:
-    - /run/jetty
-    - /tmp
   environment:
     - XMS=256M
     - XMX=1G
 
 catalogapp:
   image: georchestra/catalogapp:latest
-  volumes:
-    - /run/jetty
-    - /tmp
   environment:
     - XMS=256M
     - XMX=512M
 
 downloadform:
   image: georchestra/downloadform:latest
-  volumes:
-    - /run/jetty
-    - /tmp
   environment:
     - XMS=256M
     - XMX=512M
