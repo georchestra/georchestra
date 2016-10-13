@@ -52,14 +52,16 @@ geoserver:
     - database
     - ldap
   environment:
-    - XMX=2g
+    - XMS=1536M
+    - XMX=8G
 
 geowebcache:
   image: georchestra/geowebcache:latest
   volumes:
     - geowebcache_tiles:/var/local/tiles
   environment:
-    - XMX=1g
+    - XMS=1G
+    - XMX=2G
 
 proxy:
   image: georchestra/security-proxy:latest
@@ -79,14 +81,16 @@ proxy:
     - catalogapp
     - downloadform
   environment:
-    - XMX=1g
+    - XMS=512M
+    - XMX=1G
 
 cas:
   image: georchestra/cas:latest
   links:
     - ldap
   environment:
-    - XMX=1g
+    - XMS=256M
+    - XMX=1G
 
 mapfishapp:
   image: georchestra/mapfishapp:latest
@@ -95,25 +99,25 @@ mapfishapp:
   links:
     - database
   environment:
-    - XMX=1g
+    - XMS=1G
+    - XMX=2G
 
 extractorapp:
   image: georchestra/extractorapp:latest
-  volumes:
-    - extractorapp_extracts:/var/local/extracts
   links:
     - database
     - smtp
   volumes:
     - extractorapp_extracts:/var/local/extracts
-    - /tmp
   environment:
-    - XMX=1g
+    - XMS=1G
+    - XMX=2G
 
 header:
   image: georchestra/header:latest
   environment:
-    - XMX=512m
+    - XMS=256M
+    - XMX=512M
 
 ldapadmin:
   image: georchestra/ldapadmin:latest
@@ -122,7 +126,8 @@ ldapadmin:
     - ldap
     - smtp
   environment:
-    - XMX=1g
+    - XMS=512M
+    - XMX=1G
 
 geonetwork:
   image: georchestra/geonetwork:3-latest
@@ -134,17 +139,25 @@ geonetwork:
   volumes:
     - geonetwork_datadir:/var/local/geonetwork
   environment:
-    - XMX=2g
+    - XMS=1G
+    - XMX=6G
 
 analytics:
   image: georchestra/analytics:latest
   links:
     - database
   environment:
-    - XMX=512m
+    - XMS=256M
+    - XMX=1G
 
 catalogapp:
   image: georchestra/catalogapp:latest
+  environment:
+    - XMS=256M
+    - XMX=512M
 
 downloadform:
   image: georchestra/downloadform:latest
+  environment:
+    - XMS=256M
+    - XMX=512M
