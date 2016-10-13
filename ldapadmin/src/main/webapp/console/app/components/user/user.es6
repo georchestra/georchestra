@@ -66,11 +66,12 @@ class UserController {
     const TMP_GROUP = 'TEMPORARY'
 
     // Load group infos for every tab (for confirmation)
+    let Group = this.$injector.get('Group')
+    this.groups = Group.query()
+
     this.user.$promise.then(() => {
-      let Group = this.$injector.get('Group')
       let groupAdminFilter = this.$injector.get('groupAdminFilter')
       let notAdmin = []
-      this.groups = Group.query()
       this.$injector.get('$q').all([
         this.user.$promise,
         this.groups.$promise
@@ -277,15 +278,20 @@ class UserController {
       )
     }
 
-    $scope.$watch(() => this.user.groups, saveGroups.bind(this))
+    this.$injector.get('$q').all([
+      this.user.$promise,
+      this.groups.$promise
+    ]).then(() => {
+      $scope.$watch(() => this.user.groups, saveGroups.bind(this))
 
-    $scope.$watchCollection(() => {
-      let groups = []
-      for (let g in this.user.adminGroups) {
-        if (this.user.adminGroups[g]) { groups.push(g) }
-      }
-      return groups
-    }, saveGroups.bind(this))
+      $scope.$watchCollection(() => {
+        let groups = []
+        for (let g in this.user.adminGroups) {
+          if (this.user.adminGroups[g]) { groups.push(g) }
+        }
+        return groups
+      }, saveGroups.bind(this))
+    })
 
     if (this.tab === 'analytics') {
       this.loadAnalytics($scope)
