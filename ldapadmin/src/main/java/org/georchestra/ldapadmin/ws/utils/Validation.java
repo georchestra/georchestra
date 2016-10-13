@@ -21,7 +21,10 @@ package org.georchestra.ldapadmin.ws.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
@@ -63,4 +66,33 @@ public class Validation {
 			errors.rejectValue(field, "error.required", "required");
 		}
 	}
+
+	public String[] getUserRequiredFields() {
+		List<String> res = new LinkedList<String>();
+		Pattern pattern = Pattern.compile("org.+");
+		for(String field: this.requiredFields)
+			if(!pattern.matcher(field).matches())
+				res.add(field);
+
+		return res.toArray(new String[res.size()]);
+	}
+
+	// Need to be factorize with previous method
+	public String[] getOrgRequiredFields() {
+		List<String> res = new LinkedList<String>();
+
+		Pattern regexp = Pattern.compile("^org(.+)$");
+		for(String field: this.requiredFields){
+			Matcher m = regexp.matcher(field);
+			if(m.matches()) {
+				String match = m.group(1);
+				match = match.substring(0, 1).toLowerCase() + match.substring(1);
+				res.add(match);
+			}
+		}
+		return res.toArray(new String[res.size()]);
+	}
+
+
+
 }

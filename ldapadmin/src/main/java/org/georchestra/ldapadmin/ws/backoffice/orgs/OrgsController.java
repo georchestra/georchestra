@@ -26,6 +26,7 @@ import org.georchestra.ldapadmin.ds.OrgsDao;
 import org.georchestra.ldapadmin.dto.Org;
 import org.georchestra.ldapadmin.dto.OrgExt;
 import org.georchestra.ldapadmin.ws.backoffice.utils.ResponseUtil;
+import org.georchestra.ldapadmin.ws.utils.Validation;
 import org.georchestra.lib.file.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,6 +55,9 @@ public class OrgsController {
 
     @Autowired
     private OrgsDao orgDao;
+
+    @Autowired
+    private Validation validation;
 
     @Autowired
     public OrgsController(OrgsDao dao) {
@@ -298,6 +302,49 @@ public class OrgsController {
         }
     }
 
+    /**
+     * Return a list of required fields for org creation
+     *
+     * return a JSON array with required fields. Possible values :
+     *
+     * * 'shortName'
+     * * 'address'
+     * * 'type'
+     */
+    @RequestMapping(value = REQUEST_MAPPING + "/requiredFields", method = RequestMethod.GET)
+    public void getUserRequiredFields(HttpServletResponse response) throws IOException{
+        try {
+            JSONArray fields = new JSONArray();
+            for(String field : this.validation.getOrgRequiredFields())
+                fields.put(field);
+            ResponseUtil.buildResponse(response, fields.toString(4), HttpServletResponse.SC_OK);
+        } catch (Exception e) {
+            LOG.error(e.getMessage());
+            ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, e.getMessage()),
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            throw new IOException(e);
+        }
+    }
+
+    /**
+     * Return a list of possible values for organization type
+     *
+     * return a JSON array with possible value
+     */
+    @RequestMapping(value = REQUEST_MAPPING + "/orgTypeValues", method = RequestMethod.GET)
+    public void getOrgTypeVAlues(HttpServletResponse response) throws IOException{
+        try {
+            JSONArray fields = new JSONArray();
+            for(String field : this.orgDao.getOrgTypeValues())
+                fields.put(field);
+            ResponseUtil.buildResponse(response, fields.toString(4), HttpServletResponse.SC_OK);
+        } catch (Exception e) {
+            LOG.error(e.getMessage());
+            ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, e.getMessage()),
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            throw new IOException(e);
+        }
+    }
 
     /**
      * Update org instance based on field found in json object.
