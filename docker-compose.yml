@@ -146,7 +146,7 @@ ldapadmin:
     - /run/jetty
     - /tmp
   environment:
-    - XMS=256M
+    - XMS=512M
     - XMX=1G
 
 geonetwork:
@@ -162,7 +162,7 @@ geonetwork:
     - /tmp
   environment:
     - XMS=1G
-    - XMX=2G
+    - XMX=6G
 
 analytics:
   image: georchestra/analytics:latest
