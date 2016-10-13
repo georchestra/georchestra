@@ -39,7 +39,6 @@ import org.georchestra.ldapadmin.dto.OrgExt;
 import org.georchestra.ldapadmin.mailservice.MailService;
 import org.georchestra.ldapadmin.ws.utils.PasswordUtils;
 import org.georchestra.ldapadmin.ws.utils.RecaptchaUtils;
-import org.georchestra.ldapadmin.ws.utils.UserUtils;
 import org.georchestra.ldapadmin.ws.utils.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -59,6 +58,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Manages the UI Account Form.
@@ -157,9 +158,29 @@ public final class NewAccountFormController {
 		// Populate org type droplist
 		model.addAttribute("orgTypes", this.getOrgTypes());
 
-		UserUtils.validate(formBean.getUid(), formBean.getFirstName(), formBean.getSurname(), result );
+		// uid validation
+		if(!StringUtils.hasLength(formBean.getUid())){
+			result.rejectValue("uid", "uid.error.required", "required");
+		} else {
+			// A valid user identifier (uid) can only contain characters, numbers, hyphens or dot.
+			// It must begin with a character.
+			Pattern regexp = Pattern.compile("[a-zA-Z][a-zA-Z0-9.-]*]");
+			Matcher m = regexp.matcher(formBean.getUid());
+			if(!m.matches())
+				result.rejectValue("uid", "uid.error.invalid", "required");
+		}
 
-		if ( !StringUtils.hasLength(formBean.getEmail()) && this.validation.isFieldRequired("email") ) {
+		// first name and surname validation
+		if( !StringUtils.hasLength(formBean.getFirstName()) && this.validation.isFieldRequired("firstName")){
+			result.rejectValue("firstName", "firstName.error.required", "required");
+		}
+
+		if( !StringUtils.hasLength(formBean.getSurname()) && this.validation.isFieldRequired("surname")){
+			result.rejectValue("surname", "surname.error.required", "required");
+		}
+
+
+		if ( !StringUtils.hasLength(formBean.getEmail()) && this.validation.isFieldRequired("email")){
 			result.rejectValue("email", "email.error.required", "required");
 		} else {
 			if (!EmailValidator.getInstance().isValid(formBean.getEmail())) {

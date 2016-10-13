@@ -25,11 +25,11 @@ import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
 import org.georchestra.ldapadmin.ds.OrgsDao;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.Org;
-import org.georchestra.ldapadmin.ws.utils.UserUtils;
 import org.georchestra.ldapadmin.ws.utils.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -170,7 +170,15 @@ public class EditUserDetailsFormController {
 			response.sendError(HttpServletResponse.SC_FORBIDDEN);
 		}
 
-		UserUtils.validate( formBean.getFirstName(), formBean.getSurname(), resultErrors );
+		// Validate first name and surname
+		if( !StringUtils.hasLength(formBean.getFirstName()) && this.validation.isFieldRequired("firstName") ){
+			resultErrors.rejectValue("firstName", "firstName.error.required", "required");
+		}
+
+		if( !StringUtils.hasLength( formBean.getSurname() ) && this.validation.isFieldRequired("surname") ){
+			resultErrors.rejectValue("surname", "surname.error.required", "required");
+		}
+
 		this.validation.validateField("phone", formBean.getPhone(), resultErrors);
 		this.validation.validateField("facsimile", formBean.getFacsimile(), resultErrors);
 		this.validation.validateField("title", formBean.getTitle(), resultErrors);
