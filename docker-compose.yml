@@ -48,20 +48,24 @@ geoserver:
     - geoserver_datadir:/var/local/geoserver
     - geoserver_geodata:/var/local/geodata
     - geoserver_tiles:/var/local/tiles
+    - /run/jetty
     - /tmp
   links:
     - database
     - ldap
   environment:
-    - XMX=2g
+    - XMS=512M
+    - XMX=2G
 
 geowebcache:
   image: georchestra/geowebcache:latest
   volumes:
     - geowebcache_tiles:/var/local/tiles
+    - /run/jetty
     - /tmp
   environment:
-    - XMX=1g
+    - XMS=256M
+    - XMX=1G
 
 proxy:
   image: georchestra/security-proxy:latest
@@ -81,48 +85,56 @@ proxy:
     - catalogapp
     - downloadform
   volumes:
+    - /run/jetty
     - /tmp
   environment:
-    - XMX=1g
+    - XMS=256M
+    - XMX=1G
 
 cas:
   image: georchestra/cas:latest
   links:
     - ldap
   volumes:
+    - /run/jetty
     - /tmp
   environment:
-    - XMX=1g
+    - XMS=256M
+    - XMX=1G
 
 mapfishapp:
   image: georchestra/mapfishapp:latest
   volumes:
     - mapfishapp_uploads:/var/local/uploads
+    - /run/jetty
     - /tmp
   links:
     - database
   environment:
-    - XMX=1g
+    - XMS=256M
+    - XMX=1G
 
 extractorapp:
   image: georchestra/extractorapp:latest
-  volumes:
-    - extractorapp_extracts:/var/local/extracts
   links:
     - database
     - smtp
   volumes:
     - extractorapp_extracts:/var/local/extracts
+    - /run/jetty
     - /tmp
   environment:
-    - XMX=1g
+    - XMS=256M
+    - XMX=1G
 
 header:
   image: georchestra/header:latest
   volumes:
+    - /run/jetty
     - /tmp
   environment:
-    - XMX=512m
+    - XMS=256M
+    - XMX=512M
 
 ldapadmin:
   image: georchestra/ldapadmin:latest
@@ -131,9 +143,11 @@ ldapadmin:
     - ldap
     - smtp
   volumes:
+    - /run/jetty
     - /tmp
   environment:
-    - XMX=1g
+    - XMS=256M
+    - XMX=1G
 
 geonetwork:
   image: georchestra/geonetwork:3-latest
@@ -144,29 +158,37 @@ geonetwork:
     - ldap
   volumes:
     - geonetwork_datadir:/var/local/geonetwork
+    - /run/jetty
     - /tmp
   environment:
-    - XMX=2g
+    - XMS=1G
+    - XMX=2G
 
 analytics:
   image: georchestra/analytics:latest
   links:
     - database
   volumes:
+    - /run/jetty
     - /tmp
   environment:
-    - XMX=512m
+    - XMS=256M
+    - XMX=512M
 
 catalogapp:
   image: georchestra/catalogapp:latest
   volumes:
+    - /run/jetty
     - /tmp
   environment:
-    - XMX=512m
+    - XMS=256M
+    - XMX=512M
 
 downloadform:
   image: georchestra/downloadform:latest
   volumes:
+    - /run/jetty
     - /tmp
   environment:
-    - XMX=512m
+    - XMS=256M
+    - XMX=512M
