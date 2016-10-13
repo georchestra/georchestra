@@ -46,7 +46,7 @@
   },
   "standard": {
     "parser": "babel-eslint",
-    "globals": [ "angular" ],
+    "globals": [ "angular", "$", "Quill" ],
     "ignore": [ "vendor/", "public/" ]
   },
   "scripts": {

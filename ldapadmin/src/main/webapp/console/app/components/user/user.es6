@@ -7,12 +7,10 @@ class UserController {
 
   static $inject = [ '$routeParams', '$injector', 'User', 'Group', 'Orgs' ]
 
-  constructor($routeParams, $injector, User, Group, Orgs) {
-
+  constructor ($routeParams, $injector, User, Group, Orgs) {
     this.$injector = $injector
-    let groupAdminFilter = $injector.get('groupAdminFilter')
 
-    let translate = $injector.get('translate');
+    let translate = $injector.get('translate')
     this.i18n = {}
     translate('user.updated', this.i18n)
     translate('user.error', this.i18n)
@@ -38,18 +36,18 @@ class UserController {
     switch (this.tab) {
       case 'infos':
         this.contexts = $injector.get('Contexts').query()
-        let sel_orgs = []
+        let selOrgs = []
         Orgs.query((orgs) => {
           orgs.map((o) => {
-            sel_orgs.push({
-              id   : o.id,
-              text : o.name
+            selOrgs.push({
+              id: o.id,
+              text: o.name
             })
           })
           $('#organization').select2({
-            placeholder: "Select an organization",
+            placeholder: 'Select an organization',
             allowClear: true,
-            data  : sel_orgs
+            data: selOrgs
           })
         })
         break
@@ -90,7 +88,7 @@ class UserController {
             notAdmin.push(group.cn)
           }
           if (group.cn === 'PENDING') {
-            this.user.pending = group.users.indexOf(this.user.uid) >= 0
+            this.user.pending = group.users.indexOf(this.user.uid) >= 0
           }
         })
         this.groups = notAdmin
@@ -98,24 +96,23 @@ class UserController {
     })
   }
 
-  loadAnalytics($scope) {
-    let date    = this.$injector.get('date')
+  loadAnalytics ($scope) {
+    let date = this.$injector.get('date')
 
     this.date = {
-      start : date.getFromDiff('year'),
-      end   : date.getEnd()
+      start: date.getFromDiff('year'),
+      end: date.getEnd()
     }
 
     this.config = {
-      layers   : [ 'layer', 'count' ],
-      requests : [ 'date', 'count' ]
+      layers: [ 'layer', 'count' ],
+      requests: [ 'date', 'count' ]
     }
     this.loadAnalyticsData()
-
   }
 
-  loadAnalyticsData() {
-    let i18n        = {}
+  loadAnalyticsData () {
+    let i18n = {}
     let i18nPromise = this.$injector.get('translate')('analytics.errorload', i18n)
     let flash = this.$injector.get('Flash')
 
@@ -126,21 +123,21 @@ class UserController {
       let error = flash.create.bind(flash, 'danger', i18n.errorload)
       let Analytics = this.$injector.get('Analytics')
       let options = {
-        service   : 'combinedRequests',
-        user      : this.user.uid,
-        startDate : this.date.start,
-        endDate   : this.date.end
+        service: 'combinedRequests',
+        user: this.user.uid,
+        startDate: this.date.start,
+        endDate: this.date.end
       }
-      this.requests   = Analytics.get(options, () => {}, error)
+      this.requests = Analytics.get(options, () => {}, error)
       // Keep original value for previous async call
-      options =  Object.assign({}, options)
+      options = Object.assign({}, options)
       options.service = 'layersUsage'
-      options.limit   = 10
-      this.layers     = Analytics.get(options, () => {}, error)
+      options.limit = 10
+      this.layers = Analytics.get(options, () => {}, error)
     })
   }
 
-  loadLogs($scope) {
+  loadLogs ($scope) {
     let i18n = {}
     let flash = this.$injector.get('Flash')
 
@@ -150,9 +147,9 @@ class UserController {
     ]).then(() => {
       this.logs = this.$injector.get('UserLogs').query(
         {
-          id    : this.user.uid,
-          limit : 100000,
-          page  : 0
+          id: this.user.uid,
+          limit: 100000,
+          page: 0
         },
         () => { this.logs.logs.reverse() },
         flash.create.bind(flash, 'danger', i18n.errorload)
@@ -160,37 +157,32 @@ class UserController {
     })
   }
 
-  save() {
+  save () {
     let flash = this.$injector.get('Flash')
     let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
     this.user.$update(() => {
-        $httpDefaultCache.removeAll()
-        flash.create('success', this.i18n.updated)
-      },
-      flash.create.bind(flash, 'danger', this.i18n.error)
-    )
+      $httpDefaultCache.removeAll()
+      flash.create('success', this.i18n.updated)
+    }, flash.create.bind(flash, 'danger', this.i18n.error))
   }
 
-  delete() {
+  delete () {
     let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
     let flash = this.$injector.get('Flash')
     this.user.$delete(() => {
-        $httpDefaultCache.removeAll()
-        let $router = this.$injector.get('$router')
-        $router.navigate($router.generate('users', { id: 'all'}))
-        flash.create('success', this.i18n.deleted)
-      },
-      flash.create.bind(flash, 'danger', this.i18n.error)
-    )
+      $httpDefaultCache.removeAll()
+      let $router = this.$injector.get('$router')
+      $router.navigate($router.generate('users', { id: 'all' }))
+      flash.create('success', this.i18n.deleted)
+    }, flash.create.bind(flash, 'danger', this.i18n.error))
   }
 
-  initCompose() {
-
+  initCompose () {
     this.quill = new Quill(document.querySelector('#compose_content'), {
-      modules : {
+      modules: {
         toolbar: [
           [ { header: [ 1, 2, false ] } ],
-          [ 'bold', 'italic', 'underline', 'image', { 'color': [] }, {'align': [] }  ]
+          [ 'bold', 'italic', 'underline', 'image', {'color': []}, {'align': []} ]
         ]
       },
       placeholder: this.i18n.content,
@@ -201,30 +193,30 @@ class UserController {
     })
   }
 
-  openMessage(message) {
+  openMessage (message) {
     message.trusted = this.$injector.get('$sce').trustAsHtml(message.body)
-    this.message    = message
+    this.message = message
   }
 
-  closeMessage(message) {
+  closeMessage (message) {
     delete this.message
     delete this.compose
   }
 
-  loadTemplate() {
+  loadTemplate () {
     this.compose.subject = this.compose.template.name
     this.quill.setText(this.compose.template.content)
   }
 
-  sendMail() {
+  sendMail () {
     let flash = this.$injector.get('Flash')
-    let Mail  = this.$injector.get('Mail')
-    let i18n  = {}
+    let Mail = this.$injector.get('Mail')
+    let i18n = {}
     this.$injector.get('translate')('msg.sent', i18n)
     this.$injector.get('translate')('msg.error', i18n)
     let attachments = []
-    for (let attach_id in this.compose.attachments) {
-      if (this.compose.attachments[attach_id]) { attachments.push(attach_id) }
+    for (let attachId in this.compose.attachments) {
+      if (this.compose.attachments[attachId]) { attachments.push(attachId) }
     }
     (new Mail({
       id: this.user.uid,
@@ -310,11 +302,11 @@ angular.module('admin_console')
 .directive('managers', [ '$timeout', 'User', ($timeout, User) => ({
   link: (scope, elm, attrs, ctrl) => {
     let promise = scope.$eval(attrs['promise'])
-    let sel_users = []
+    let selUsers = []
     User.query((users) => {
       users.map((u) => {
         let id = u.uid
-        sel_users.push({
+        selUsers.push({
           id: id,
           text: (u.sn || '') + ' ' + (u.givenName || '')
         })
@@ -322,7 +314,7 @@ angular.module('admin_console')
       elm.select2({
         placeholder: '',
         allowClear: true,
-        data: sel_users
+        data: selUsers
       })
       let cb = () => { $timeout(() => { elm.trigger('change') }) }
       if (promise) {
