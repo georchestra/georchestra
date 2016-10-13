@@ -129,11 +129,11 @@ class UserController {
         endDate: this.date.end
       }
       this.requests = Analytics.get(options, () => {}, error)
-      // Keep original value for previous async call
-      options = Object.assign({}, options)
-      options.service = 'layersUsage'
-      options.limit = 10
-      this.layers = Analytics.get(options, () => {}, error)
+      this.layers = Analytics.get({
+        ...options,
+        service: 'layersUsage',
+        limit: 10
+      },() => {}, error)
     })
   }
 
