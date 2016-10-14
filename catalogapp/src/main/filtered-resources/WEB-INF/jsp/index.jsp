@@ -76,14 +76,14 @@ String sec_roles = request.getHeader("sec-roles");
 if(sec_roles != null) {
     String[] roles = sec_roles.split(";");
     for (int i = 0; i < roles.length; i++) {
-        if (roles[i].equals("ROLE_SV_ADMIN")) {
+        if (roles[i].equals("ROLE_GN_ADMIN")) {
             admin = true;
         }
-        if (roles[i].equals("ROLE_SV_EDITOR") || roles[i].equals("ROLE_SV_REVIEWER") || roles[i].equals("ROLE_SV_ADMIN")) {
+        if (roles[i].equals("ROLE_GN_EDITOR") || roles[i].equals("ROLE_GN_REVIEWER") || roles[i].equals("ROLE_GN_ADMIN")) {
             editor = true;
             anonymous = false;
         }
-        if (roles[i].equals("ROLE_SV_USER")) {
+        if (roles[i].equals("ROLE_USER")) {
             anonymous = false;
         }
     }

@@ -81,14 +81,14 @@ if(sec_roles != null) {
         if (roles[i].equals("ROLE_ANONYMOUS")) {
             break;
         }
-        if (roles[i].equals("ROLE_SV_ADMIN")) {
+        if (roles[i].equals("ROLE_GN_ADMIN")) {
             admin = true;
         }
-        if (roles[i].equals("ROLE_SV_EDITOR") || roles[i].equals("ROLE_SV_REVIEWER") || roles[i].equals("ROLE_SV_ADMIN")) {
+        if (roles[i].equals("ROLE_GN_EDITOR") || roles[i].equals("ROLE_GN_REVIEWER") || roles[i].equals("ROLE_GN_ADMIN")) {
             editor = true;
             anonymous = false;
         }
-        if (roles[i].equals("ROLE_SV_USER")) {
+        if (roles[i].equals("ROLE_USER")) {
             anonymous = false;
         }
     }
