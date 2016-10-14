@@ -1,0 +1,19 @@
+[{
+        "id": "bangeocoder_0",
+        "name": "BANGeocoder",
+        "enabled": true,
+        "title": {
+            "en": "Adress recentering",
+            "es": "Adress recentering",
+            "fr": "Recherche d'adresse"
+        },
+        "description": {
+            "en": "Adress recentering",
+            "es": "Adress recentering",
+            "fr": "Recherche d'adresses dans la Base d'Addresse National (France)"
+        },
+        "options": {
+            "limitResponse":5,
+            "geocodeServiceUrl":"https://api-adresse.data.gouv.fr/search/?"
+        }
+}]
