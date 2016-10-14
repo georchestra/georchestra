@@ -33,7 +33,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ page isELIgnored="false" %>
 <%
-Boolean anonymous = false;
+Boolean anonymous = true;
 
 /*
 response.setDateHeader("Expires", 31536000);
@@ -95,8 +95,10 @@ if(sec_roles != null) {
         // ROLE_ANONYMOUS is added by the security proxy:
         if (roles[i].equals("ROLE_ANONYMOUS")) {
             //response.setHeader("Cache-Control", "public, max-age=31536000");
-            anonymous = true;
             break;
+        }
+        if (roles[i].equals("ROLE_SV_EDITOR") || roles[i].equals("ROLE_SV_REVIEWER") || roles[i].equals("ROLE_SV_ADMIN") || roles[i].equals("ROLE_ADMINISTRATOR") || roles[i].equals("ROLE_SV_USER")) {
+            anonymous = false;
         }
         if (roles[i].equals("ROLE_MOD_EXTRACTORAPP")) {
             extractor = true;
