@@ -48,7 +48,6 @@ public class HomeControllerTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        request.addHeader("sec-roles", "ROLE_ANONYMOUS");
         ctrl.root(request, response);
 
         assertTrue("expected 302, got " + response.getStatus(), response.getStatus() == HttpServletResponse.SC_MOVED_TEMPORARILY);
