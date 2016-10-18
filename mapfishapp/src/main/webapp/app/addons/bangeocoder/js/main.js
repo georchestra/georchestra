@@ -18,11 +18,11 @@ GEOR.Addons.BANGeocoder = Ext.extend(GEOR.Addons.Base, {
             displayInLayerSwitcher: false,
             styleMap: new OpenLayers.StyleMap({
                 "default": {
-                	graphicWidth: 20,
+                    graphicWidth: 20,
                     graphicHeight: 32,
                     graphicYOffset: -28, // shift graphic up 28 pixels
                     //Change the location of picture if not find
-                    externalGraphic : 'app/css/images/pwrs/geoPin.png',
+                    externalGraphic: 'app/css/images/pwrs/geoPin.png',
                 }
             })
         });
@@ -31,7 +31,7 @@ GEOR.Addons.BANGeocoder = Ext.extend(GEOR.Addons.Base, {
         this.addressField = this._createCbSearch();
         this.win = new Ext.Window({
             title: OpenLayers.i18n('banGeocoder.window_title'),
-            constrainHeader:true,
+            constrainHeader: true,
             width: 312,
             closable: true,
             closeAction: "hide",
@@ -64,7 +64,7 @@ GEOR.Addons.BANGeocoder = Ext.extend(GEOR.Addons.Base, {
             this.target.doLayout();
         } else {
             // create a menu item for the "tools" menu:
-            this.item =  new Ext.menu.CheckItem({
+            this.item = new Ext.menu.CheckItem({
                 text: this.getText(record),
                 qtip: this.getQtip(record),
                 iconCls: "addon-bangeocoder",
@@ -81,46 +81,45 @@ GEOR.Addons.BANGeocoder = Ext.extend(GEOR.Addons.Base, {
      * Create combo use to search free text input by user and display proposition (autocompletion)
      */
     _createCbSearch: function() {
-    	
-    	// get options from config.json file
-    	var banGeocoderOptions = this.options;
-    	
+
+        // get options from config.json file
+        var banGeocoderOptions = this.options;
+
         // create store to pass free text and get result from service (URL)
-    	var store = new Ext.data.JsonStore({
+        var store = new Ext.data.JsonStore({
             proxy: new Ext.data.HttpProxy({
-                url:banGeocoderOptions.geocodeServiceUrl, // set service URL in config.json file, more informations in README
+                url: banGeocoderOptions.geocodeServiceUrl, // set service URL in config.json file, more informations in README
                 method: 'GET',
-                autoLoad:true
+                autoLoad: true
             }),
-            storeId:'geocodeStore',
-            root:'features',
-            fields:[                    
-                    {name:'typeGeometry',
-                     convert:function(v,rec){
-                         return rec.geometry.type
-                     }
-                    },
-                    {name:'coordinates',
-                     convert:function(v,rec){
-                         return rec.geometry.coordinates
-                     }
-                    },
-                    {name:'id',
-                     convert:function(v,rec){
-                         return rec.properties.id
-                     }
-                    },
-                    {name:'label',
-                     convert:function(v,rec){
-                         return rec.properties.label
-                     }
-                    }                                              
-                   ],
+            storeId: 'geocodeStore',
+            root: 'features',
+            fields: [{
+                name: 'typeGeometry',
+                convert: function(v, rec) {
+                    return rec.geometry.type
+                }
+            }, {
+                name: 'coordinates',
+                convert: function(v, rec) {
+                    return rec.geometry.coordinates
+                }
+            }, {
+                name: 'id',
+                convert: function(v, rec) {
+                    return rec.properties.id
+                }
+            }, {
+                name: 'label',
+                convert: function(v, rec) {
+                    return rec.properties.label
+                }
+            }],
             totalProperty: 'limit',
-            listeners : {
-                "beforeload": function (q){
-                    store.baseParams.q = store.baseParams["query"];  
-                    store.baseParams.limit = banGeocoderOptions.limitResponse;   // number of result is default set to 5, change it in config.json file, more informations in README
+            listeners: {
+                "beforeload": function(q) {
+                    store.baseParams.q = store.baseParams["query"];
+                    store.baseParams.limit = banGeocoderOptions.limitResponse; // number of result is default set to 5, change it in config.json file, more informations in README
                     delete store.baseParams["query"];
                 }
             }
@@ -130,13 +129,13 @@ GEOR.Addons.BANGeocoder = Ext.extend(GEOR.Addons.Base, {
         return new Ext.form.ComboBox({
             emptyText: OpenLayers.i18n('banGeocoder.field_emptytext'),
             fieldLabel: OpenLayers.i18n('banGeocoder.field_label'),
-            id:'comboGeocoder',
-            displayField:'label',
+            id: 'comboGeocoder',
+            displayField: 'label',
             loadingText: OpenLayers.i18n('Loading...'),
             width: 300,
             store: store,
             hideTrigger: true,
-            pageSize:0,
+            pageSize: 0,
             minChars: 5,
             listeners: {
                 "select": this._onComboSelect,
@@ -145,39 +144,40 @@ GEOR.Addons.BANGeocoder = Ext.extend(GEOR.Addons.Base, {
         });
     },
 
-    
+
     /*
      * Method: _onComboSelect
      * Callback on combo selected to create and display address location from geometry
      * 
      */
-    
-    _onComboSelect: function(combo, record) {      	
-        if(this.layer.features.length > 0){
-        	this.layer.destroyFeatures();        	
+
+    _onComboSelect: function(combo, record) {
+        if (this.layer.features.length > 0) {
+            this.layer.destroyFeatures();
         }
         var geom, toCoordX, toCoordY, from, to, geom, fromCoordX, fromCoordY, point, feature
         from = new OpenLayers.Projection("EPSG:4326"), // default GeoJSON SRS return by the service 
-        to = this.map.getProjectionObject();
-        
+            to = this.map.getProjectionObject();
+
         //get coordinates from GeoJson
         fromCoordX = record.json.geometry.coordinates[0];
         fromCoordY = record.json.geometry.coordinates[1];
-        
+
         //create feature from GeoJson geometry
 
         // get geometry
         geom = new OpenLayers.Geometry.Point(fromCoordX, fromCoordY).transform(from, to);
 
         // create point from geometry find in GeoJSON and create vector feature from point geometry
-        point = new OpenLayers.Geometry.Point(geom.x,geom.y);
+        point = new OpenLayers.Geometry.Point(geom.x, geom.y);
         feature = new OpenLayers.Feature.Vector(point);
 
         // add point feature to layer and zoom on    
         this.layer.addFeatures(feature);
-        this.map.setCenter(new OpenLayers.LonLat(geom.x,geom.y), 10);    },
+        this.map.setCenter(new OpenLayers.LonLat(geom.x, geom.y), 10);
+    },
 
-    
+
     /**
      * Method: showWindow
      */
@@ -185,7 +185,7 @@ GEOR.Addons.BANGeocoder = Ext.extend(GEOR.Addons.Base, {
         this.win.show();
     },
 
-    
+
     /**
      * Method: destroy
      * Called by GEOR_tools when deselecting this addon
@@ -193,8 +193,7 @@ GEOR.Addons.BANGeocoder = Ext.extend(GEOR.Addons.Base, {
     destroy: function() {
         this.win.destroy();
         this.layer.destroyFeatures();
-        
+
         GEOR.Addons.Base.prototype.destroy.call(this);
     }
 });
-
