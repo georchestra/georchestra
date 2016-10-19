@@ -37,6 +37,7 @@ import org.georchestra.ldapadmin.dto.UserSchema;
 import org.georchestra.ldapadmin.mailservice.MailService;
 import org.georchestra.ldapadmin.ws.backoffice.utils.RequestUtil;
 import org.georchestra.ldapadmin.ws.backoffice.utils.ResponseUtil;
+import org.georchestra.ldapadmin.ws.utils.Validation;
 import org.georchestra.lib.file.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -80,6 +81,7 @@ public class UsersController {
 
 	private static final String BASE_MAPPING = "/private";
 	private static final String REQUEST_MAPPING = BASE_MAPPING + "/users";
+	private static final String PUBLIC_REQUEST_MAPPING = "/public/users";
 
 	private static final String DUPLICATED_EMAIL = "duplicated_email";
 	private static final String PARAMS_NOT_UNDERSTOOD = "params_not_understood";
@@ -92,6 +94,9 @@ public class UsersController {
 	private AccountDao accountDao;
 	@Autowired
 	private OrgsDao orgDao;
+
+	@Autowired
+	private Validation validation;
 
 	public void setOrgDao(OrgsDao orgDao) {
 		this.orgDao = orgDao;
@@ -543,6 +548,26 @@ public class UsersController {
             ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_NOT_FOUND);
 		}
 	}
+
+	/**
+     * Return a list of required fields for user creation
+     *
+     * return a JSON array with required fields.
+     */
+    @RequestMapping(value = PUBLIC_REQUEST_MAPPING + "/requiredFields", method = RequestMethod.GET)
+    public void getUserRequiredFields(HttpServletResponse response) throws IOException{
+        try {
+            JSONArray fields = new JSONArray();
+            for(String field : this.validation.getUserRequiredFields())
+                fields.put(field);
+            ResponseUtil.buildResponse(response, fields.toString(4), HttpServletResponse.SC_OK);
+        } catch (Exception e) {
+            LOG.error(e.getMessage());
+            ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, e.getMessage()),
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            throw new IOException(e);
+        }
+    }
 
 	/**
 	 * Modify only the account's fields that are present in the request body.
