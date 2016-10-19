@@ -48,10 +48,10 @@ public class OrgsController {
 
     private static final Log LOG = LogFactory.getLog(OrgsDao.class.getName());
 
-
     private static final String BASE_MAPPING = "/private";
     private static final String BASE_RESOURCE = "orgs";
     private static final String REQUEST_MAPPING = BASE_MAPPING + "/" + BASE_RESOURCE;
+    private static final String PUBLIC_REQUEST_MAPPING = "/public/" + BASE_RESOURCE;
 
     @Autowired
     private OrgsDao orgDao;
@@ -311,7 +311,7 @@ public class OrgsController {
      * * 'address'
      * * 'type'
      */
-    @RequestMapping(value = REQUEST_MAPPING + "/requiredFields", method = RequestMethod.GET)
+    @RequestMapping(value = PUBLIC_REQUEST_MAPPING + "/requiredFields", method = RequestMethod.GET)
     public void getUserRequiredFields(HttpServletResponse response) throws IOException{
         try {
             JSONArray fields = new JSONArray();
@@ -331,7 +331,7 @@ public class OrgsController {
      *
      * return a JSON array with possible value
      */
-    @RequestMapping(value = REQUEST_MAPPING + "/orgTypeValues", method = RequestMethod.GET)
+    @RequestMapping(value = PUBLIC_REQUEST_MAPPING +"/orgTypeValues", method = RequestMethod.GET)
     public void getOrgTypeVAlues(HttpServletResponse response) throws IOException{
         try {
             JSONArray fields = new JSONArray();

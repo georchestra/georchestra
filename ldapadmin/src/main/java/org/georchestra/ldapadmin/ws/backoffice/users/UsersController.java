@@ -81,6 +81,7 @@ public class UsersController {
 
 	private static final String BASE_MAPPING = "/private";
 	private static final String REQUEST_MAPPING = BASE_MAPPING + "/users";
+	private static final String PUBLIC_REQUEST_MAPPING = "/public/users";
 
 	private static final String DUPLICATED_EMAIL = "duplicated_email";
 	private static final String PARAMS_NOT_UNDERSTOOD = "params_not_understood";
@@ -553,7 +554,7 @@ public class UsersController {
      *
      * return a JSON array with required fields.
      */
-    @RequestMapping(value = REQUEST_MAPPING + "/requiredFields", method = RequestMethod.GET)
+    @RequestMapping(value = PUBLIC_REQUEST_MAPPING + "/requiredFields", method = RequestMethod.GET)
     public void getUserRequiredFields(HttpServletResponse response) throws IOException{
         try {
             JSONArray fields = new JSONArray();
