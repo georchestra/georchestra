@@ -88,7 +88,7 @@ class OrganizationHelper:
     def createOrg(self, org_id, org_name):
         if not self.connection.add("cn=%s,%s" % (org_id, self.base_org_dn),
                                    ["groupOfMembers", "top"],
-                                   {"businessCategory" : "REGISTERED",
+                                   {"businessCategory" : "VALID",
                                     "o" : org_name,
                                     "seeAlso": "o=%s,%s" % (org_id, self.base_org_dn)}):
             raise LdapError("Unable to create groupOfMembers : %s" % org_id)
