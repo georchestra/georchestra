@@ -79,23 +79,4 @@ public class HomeControllerTest {
 
     }
 
-    @Test
-    public void testPrivateUiForbidden() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-
-        String ret = ctrl.privateui(request);
-
-        assertTrue(ret.equals("forbidden"));
-    }
-
-    @Test
-    public void testPrivateUi() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("sec-roles", "ROLE_MOD_LDAPADMIN");
-
-        String ret = ctrl.privateui(request);
-
-        assertTrue(ret.equals("privateUi"));
-    }
-
 }
