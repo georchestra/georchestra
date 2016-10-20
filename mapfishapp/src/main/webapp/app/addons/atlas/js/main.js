@@ -477,10 +477,15 @@ GEOR.Addons.Atlas = Ext.extend(GEOR.Addons.Base, {
                 l = r.getLayer();
             // loop on all visible layers
             // not the atlas layer
-            // not the vector layers used by addons (macthing "__georchestra")
+            // not the vector layers used by addons (matching "__georchestra")
             if (l.getVisibility() && r !== this.layerRecord && !/^__georchestra/.test(l.name)) {
                 // use print provider to encode
                 encodedLayer = this.printProvider.encodeLayer(l, this.map.getMaxExtent());
+                if (!encodedLayer) {
+                    // eg if a vector layer name does not follow
+                    // the "name begins with "__georchestra" convention"
+                    return;
+                }
                 // substitute known WMS-C instances by WMS instances serving same layers:
                 if (wmsc2wms && wmsc2wms.hasOwnProperty(encodedLayer.baseURL)) {
                     encodedLayer.baseURL = wmsc2wms[encodedLayer.baseURL];
