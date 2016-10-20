@@ -47,6 +47,7 @@ import org.springframework.ldap.InvalidAttributeValueException;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.filter.LikeFilter;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -699,11 +700,6 @@ public class UsersController {
 			throw new IOException(e);
 		}
 
-		// Check required fields
-		for(String requiredField : this.validation.getRequiredUserFields())
-			if(!this.validation.validateUserField(requiredField, json))
-				throw new IllegalArgumentException(requiredField + " is required" );
-
 		String givenName     = RequestUtil.getFieldValue(json, UserSchema.GIVEN_NAME_KEY);
 		String surname       = RequestUtil.getFieldValue(json, UserSchema.SURNAME_KEY);
 		String email         = RequestUtil.getFieldValue(json, UserSchema.MAIL_KEY);
@@ -719,13 +715,24 @@ public class UsersController {
 		String manager       = RequestUtil.getFieldValue(json, UserSchema.MANAGER_KEY);
 		String org           = RequestUtil.getFieldValue(json, UserSchema.ORG_KEY);
 
-		String uid;
-		try {
-			uid = createUid(givenName, surname);
-		} catch (DataServiceException e) {
-			LOG.error(e.getMessage());
-			throw new IOException(e);
-		}
+		if(givenName == null)
+			throw new IllegalArgumentException("fFirst Name is required");
+
+		if(surname == null)
+			throw new IllegalArgumentException("Last Name is required");
+
+		if(email == null)
+			throw new IllegalArgumentException("EMail is required");
+
+		// Use specified login if not empty
+		String uid = RequestUtil.getFieldValue(json, UserSchema.UID_KEY);
+		if(!StringUtils.hasLength(uid))
+			try {
+				uid = createUid(givenName, surname);
+			} catch (DataServiceException e) {
+				LOG.error(e.getMessage());
+				throw new IOException(e);
+			}
 
 		String commonName = AccountFactory.formatCommonName(givenName, surname);
 
