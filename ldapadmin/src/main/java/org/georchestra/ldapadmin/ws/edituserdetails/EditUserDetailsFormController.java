@@ -99,7 +99,7 @@ public class EditUserDetailsFormController {
 
 			model.addAttribute(formBean);
 			for (String f : fields) {
-				if (this.validation.isFieldRequired(f)) {
+				if (this.validation.isUserFieldRequired(f)) {
 					session.setAttribute(f + "Required", "true");
 				}
 			}
@@ -163,31 +163,27 @@ public class EditUserDetailsFormController {
 						throws IOException {
 		String uid = formBean.getUid();
 		try {
-			if(!request.getHeader("sec-username").equals(uid)){
+			if(!request.getHeader("sec-username").equals(uid))
 				response.sendError(HttpServletResponse.SC_FORBIDDEN);
-			}
 		} catch (NullPointerException e) {
 			response.sendError(HttpServletResponse.SC_FORBIDDEN);
 		}
 
 		// Validate first name and surname
-		if( !StringUtils.hasLength(formBean.getFirstName()) && this.validation.isFieldRequired("firstName") ){
+		if(!StringUtils.hasLength(formBean.getFirstName()) && this.validation.isUserFieldRequired("firstName"))
 			resultErrors.rejectValue("firstName", "firstName.error.required", "required");
-		}
 
-		if( !StringUtils.hasLength( formBean.getSurname() ) && this.validation.isFieldRequired("surname") ){
+		if(!StringUtils.hasLength( formBean.getSurname() ) && this.validation.isUserFieldRequired("surname"))
 			resultErrors.rejectValue("surname", "surname.error.required", "required");
-		}
 
-		this.validation.validateField("phone", formBean.getPhone(), resultErrors);
-		this.validation.validateField("facsimile", formBean.getFacsimile(), resultErrors);
-		this.validation.validateField("title", formBean.getTitle(), resultErrors);
-		this.validation.validateField("description", formBean.getDescription(), resultErrors);
-		this.validation.validateField("postalAddress", formBean.getPostalAddress(), resultErrors);
+		this.validation.validateUserField("phone", formBean.getPhone(), resultErrors);
+		this.validation.validateUserField("facsimile", formBean.getFacsimile(), resultErrors);
+		this.validation.validateUserField("title", formBean.getTitle(), resultErrors);
+		this.validation.validateUserField("description", formBean.getDescription(), resultErrors);
+		this.validation.validateUserField("postalAddress", formBean.getPostalAddress(), resultErrors);
 
-		if(resultErrors.hasErrors()){
+		if(resultErrors.hasErrors())
 			return "editUserDetailsForm";
-		}
 
 		// updates the account details
 		try {

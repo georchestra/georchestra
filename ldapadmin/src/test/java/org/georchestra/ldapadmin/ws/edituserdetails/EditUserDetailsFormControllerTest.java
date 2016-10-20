@@ -43,7 +43,7 @@ public class EditUserDetailsFormControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        ctrl = new EditUserDetailsFormController(dao, orgsDao, new Validation());
+        ctrl = new EditUserDetailsFormController(dao, orgsDao, new Validation(""));
         formBean.setDescription("description");
         formBean.setEmail("email");
         formBean.setFacsimile("+331234567890");

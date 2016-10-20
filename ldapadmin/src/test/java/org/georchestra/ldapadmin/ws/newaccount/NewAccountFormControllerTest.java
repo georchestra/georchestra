@@ -58,8 +58,7 @@ public class NewAccountFormControllerTest {
     SessionStatus status = Mockito.mock(SessionStatus.class);
 
     private void configureLegitFormBean() {
-        Validation v = new Validation();
-        v.setRequiredFields("uid\tfirstName\temail\tpassword\n");
+        Validation v = new Validation("uid,firstName,email,password");
 
         Mockito.when(formBean.getUid()).thenReturn("1");
         Mockito.when(formBean.getFirstName()).thenReturn("test");
@@ -81,7 +80,7 @@ public class NewAccountFormControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        ctrl = new NewAccountFormController(dao, org, srv, mod, rec, rep, new Validation());
+        ctrl = new NewAccountFormController(dao, org, srv, mod, rec, rep, new Validation(""));
 
         // Mock admin account
         DistinguishedName dn = new DistinguishedName();

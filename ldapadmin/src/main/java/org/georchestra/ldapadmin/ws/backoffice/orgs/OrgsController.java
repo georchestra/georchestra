@@ -33,6 +33,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -204,10 +205,10 @@ public class OrgsController {
             JSONObject json = this.parseRequest(request, response);
 
             // Validate request against required fields
-            for(String requiredField : this.validation.getRequiredOrgFieldsName()) {
+            for(String requiredField : this.validation.getRequiredOrgFields()) {
                 if (!json.has(requiredField))
                     throw new IOException("Missing required field : " + requiredField);
-                if(json.getString(requiredField) == null || json.getString(requiredField).length() == 0)
+                if(!StringUtils.hasLength(json.getString(requiredField)))
                     throw new IOException("Empty required field : " + requiredField);
             }
 
@@ -324,7 +325,7 @@ public class OrgsController {
     public void getUserRequiredFields(HttpServletResponse response) throws IOException{
         try {
             JSONArray fields = new JSONArray();
-            for(String field : this.validation.getOrgRequiredFields())
+            for(String field : this.validation.getRequiredOrgFields())
                 fields.put(field);
             ResponseUtil.buildResponse(response, fields.toString(4), HttpServletResponse.SC_OK);
         } catch (Exception e) {

@@ -123,11 +123,10 @@ public final class NewAccountFormController {
 		model.addAttribute("orgTypes", this.getOrgTypes());
 
 		session.setAttribute("reCaptchaPublicKey", this.reCaptchaParameters.getPublicKey());
-		for (String f : fields) {
-			if (this.validation.isFieldRequired(f)) {
+		for(String f : fields)
+			if (this.validation.isUserFieldRequired(f))
 				session.setAttribute(f + "Required", "true");
-			}
-		}
+
 		return "createAccountForm";
 	}
 
@@ -171,30 +170,29 @@ public final class NewAccountFormController {
 		}
 
 		// first name and surname validation
-		if( !StringUtils.hasLength(formBean.getFirstName()) && this.validation.isFieldRequired("firstName")){
+		if(!this.validation.validateUserField("firstName", formBean.getFirstName()))
 			result.rejectValue("firstName", "firstName.error.required", "required");
-		}
-
-		if( !StringUtils.hasLength(formBean.getSurname()) && this.validation.isFieldRequired("surname")){
+		if(!this.validation.validateUserField("surname", formBean.getSurname()))
 			result.rejectValue("surname", "surname.error.required", "required");
-		}
 
-
-		if ( !StringUtils.hasLength(formBean.getEmail()) && this.validation.isFieldRequired("email")){
+		// email validation
+		if (!this.validation.validateUserField("email", formBean.getEmail()))
 			result.rejectValue("email", "email.error.required", "required");
-		} else {
-			if (!EmailValidator.getInstance().isValid(formBean.getEmail())) {
+		else
+			if (!EmailValidator.getInstance().isValid(formBean.getEmail()))
 				result.rejectValue("email", "email.error.invalidFormat", "Invalid Format");
-			}
-		}
 
+		// password validation
 		PasswordUtils.validate(formBean.getPassword(), formBean.getConfirmPassword(), result);
+
+		// Check captcha
 		new RecaptchaUtils(request.getRemoteAddr(), this.reCaptcha)
 				.validate(formBean.getRecaptcha_challenge_field(), formBean.getRecaptcha_response_field(), result);
-		this.validation.validateField("phone", formBean.getPhone(), result);
-		this.validation.validateField("title", formBean.getTitle(), result);
-		this.validation.validateField("description", formBean.getDescription(), result);
 
+		// Validate remaining fields
+		this.validation.validateUserField("phone", formBean.getPhone(), result);
+		this.validation.validateUserField("title", formBean.getTitle(), result);
+		this.validation.validateUserField("description", formBean.getDescription(), result);
 
 		// Create org if needed
 		if(formBean.getCreateOrg() && ! result.hasErrors()){
@@ -232,7 +230,7 @@ public final class NewAccountFormController {
 				throw new IOException(e);
 			}
 		} else {
-			this.validation.validateField("org", formBean.getOrg(), result);
+			this.validation.validateUserField("org", formBean.getOrg(), result);
 		}
 
 		if(result.hasErrors())

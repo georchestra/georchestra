@@ -19,99 +19,126 @@
 
 package org.georchestra.ldapadmin.ws.utils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
- * Validation class for all forms
+ * Validation class for user and org forms
  *
- * @author Sylvain Lesage
+ * Possible values:
+ * *
+ *
+ * There is hardcoded mandatory field for user and organizations creation:
+ *
+ * mandatory user fields:
+ * * email
+ * * uid
+ * * password
+ * * confirmPassword
+ *
+ * mandatory org fields:
+ * * name
  *
  */
 public class Validation {
 
-	private List<String> requiredFields;
+	private Set<String> requiredUserFields;
+	private Set<String> requiredOrgFields;
 
-	public List<String> getRequiredFields() {
-		return requiredFields;
-	}
+	/**
+	 * Create a validation class with field list formated as comma separated list. List can contains spaces.
+	 *
+	 * @param requiredFields comma separated list of required fields (ex: "surname, orgType, orgAddress")
+     */
+	public Validation(String requiredFields) {
 
-	public List<String> getRequiredOrgFieldsName(){
-		List<String> res = new LinkedList<String>();
+		String[] configuredFields = requiredFields.split("\\s*,\\s*");
+		this.requiredUserFields = new HashSet<String>();
+		this.requiredOrgFields = new HashSet<String>();
+
+		// Add mandatory fields for user
+		this.requiredUserFields.add("email");
+		this.requiredUserFields.add("uid");
+		this.requiredUserFields.add("password");
+		this.requiredUserFields.add("confirmPassword");
+
+		// Add mandatory field for org
+		this.requiredOrgFields.add("name");
+
 		// Extract all fields starting by Org and change next letter to lower case
 		// orgShortName --> shortName
-		Pattern regexp = Pattern.compile("^org(.+)$");
-		for(String field: this.getRequiredFields()){
+		Pattern regexp = Pattern.compile("^org([A-Z].*)$");
+		for(String field: configuredFields){
+			field = field.trim();
 			Matcher m = regexp.matcher(field);
-			if(m.matches()) {
+			if(m.matches()){
+				// This is a org field, so remove 'org' prefix
 				String match = m.group(1);
 				match = match.substring(0, 1).toLowerCase() + match.substring(1);
-				res.add(match);
+				this.requiredOrgFields.add(match);
+			} else {
+				// This is a user field
+				this.requiredUserFields.add(field);
 			}
 		}
-
-		return res;
 	}
 
-	public void setRequiredFields(String csvRequiredFields) {
-		List<String> r = new ArrayList<String>(Arrays.asList(csvRequiredFields.split("\\s*,\\s*")));
-		// add mandatory fields (they may be present two times, it's not a problem)
-		r.add("email");
-		r.add("uid");
-		r.add("password");
-		r.add("confirmPassword");
-		this.requiredFields = r;
+	/**
+	 * Return a set of required fields for user creation or update
+	 * @return a Set that contains all required fields for user forms.
+     */
+	public Set<String> getRequiredUserFields() {
+		return this.requiredUserFields;
 	}
-	public boolean isFieldRequired (String field) {
-	    if (this.requiredFields == null)
-	        return false;
 
-		for (String f : requiredFields) {
-			if (field.equals(f)) {
-				return true;
-			}
-		}
-		return false;
+	/**
+	 * Return a set of required fields for organization creation or update
+	 * @return a Set that contains all required fields for organization forms.
+	 */
+	public Set<String> getRequiredOrgFields() {
+		return this.requiredOrgFields;
 	}
-	public void validateField (String field, String value, Errors errors) {
-		if( this.isFieldRequired(field) && !StringUtils.hasLength(value) ){
+
+	/**
+	 * Return true if specified field is required for user creation or update
+	 * @param field field to check requirement
+	 * @return true id 'field' is required for user forms
+     */
+	public boolean isUserFieldRequired (String field) {
+		return this.requiredUserFields.contains(field);
+	}
+
+	/**
+	 * Return true if specified field is required for organization creation or update
+	 * @param field field to check requirement
+	 * @return true id 'field' is required for organization forms
+	 */
+	public boolean isOrgFieldRequired (String field) {
+		return this.requiredOrgFields.contains(field);
+	}
+
+	public void validateUserField (String field, String value, Errors errors) {
+		if(!validateUserField(field, value))
 			errors.rejectValue(field, "error.required", "required");
-		}
 	}
 
-	public String[] getUserRequiredFields() {
-		List<String> res = new LinkedList<String>();
-		Pattern pattern = Pattern.compile("org.+");
-		for(String field: this.requiredFields)
-			if(!pattern.matcher(field).matches())
-				res.add(field);
-
-		return res.toArray(new String[res.size()]);
+	public boolean validateUserField(String field, String value){
+		return !this.isUserFieldRequired(field) || StringUtils.hasLength(value);
 	}
 
-	// Need to be factorize with previous method
-	public String[] getOrgRequiredFields() {
-		List<String> res = new LinkedList<String>();
-
-		Pattern regexp = Pattern.compile("^org(.+)$");
-		for(String field: this.requiredFields){
-			Matcher m = regexp.matcher(field);
-			if(m.matches()) {
-				String match = m.group(1);
-				match = match.substring(0, 1).toLowerCase() + match.substring(1);
-				res.add(match);
-			}
-		}
-		return res.toArray(new String[res.size()]);
+	public void validateOrgField (String field, String value, Errors errors) {
+		if(!validateOrgField(field, value))
+			errors.rejectValue(field, "error.required", "required");
 	}
 
-
-
+	public boolean validateOrgField(String field, String value){
+		return !this.isOrgFieldRequired(field) || StringUtils.hasLength(value);
+	}
 }
