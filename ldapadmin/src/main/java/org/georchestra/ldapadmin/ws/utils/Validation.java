@@ -77,6 +77,8 @@ public class Validation {
 		Pattern regexp = Pattern.compile("^org([A-Z].*)$");
 		for(String field: configuredFields){
 			field = field.trim();
+			if(field.length() == 0)
+				continue;
 			Matcher m = regexp.matcher(field);
 			if(m.matches()){
 				// This is a org field, so remove 'org' prefix
