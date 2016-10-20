@@ -81,7 +81,7 @@ public class HomeController {
             List<String> rolesList = Arrays.asList(roles.split(";"));
 
             if (rolesList.contains("ROLE_MOD_LDAPADMIN")) {
-                redirectUrl = "/privateui/";
+                redirectUrl = "/console/";
             } else {
                 redirectUrl = "/account/userdetails";
             }
