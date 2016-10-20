@@ -75,7 +75,7 @@ public class HomeControllerTest {
         request.addHeader("sec-roles", "ROLE_MOD_LDAPADMIN");
         ctrl.root(request, response);
 
-        assertTrue(response.getRedirectedUrl().endsWith("/privateui/"));
+        assertTrue(response.getRedirectedUrl().endsWith("/console/"));
 
     }
 
