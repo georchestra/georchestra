@@ -1,5 +1,7 @@
 package org.georchestra.ldapadmin.ws.utils;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runners.JUnit4;
@@ -81,32 +83,45 @@ public class ValidationTest {
         // non required user field
         Assert.assertTrue(v.validateUserField("name", "josé"));
         Assert.assertTrue(v.validateUserField("name", ""));
-        Assert.assertTrue(v.validateUserField("name", null));
+        Assert.assertTrue(v.validateUserField("name", (String) null));
 
         // required user field (default)
         Assert.assertTrue(v.validateUserField("uid", "josé"));
         Assert.assertFalse(v.validateUserField("uid", ""));
-        Assert.assertFalse(v.validateUserField("uid", null));
+        Assert.assertFalse(v.validateUserField("uid", (String) null));
 
         // required user field (configured)
         Assert.assertTrue(v.validateUserField("required_field", "josé"));
         Assert.assertFalse(v.validateUserField("required_field", ""));
-        Assert.assertFalse(v.validateUserField("required_field", null));
+        Assert.assertFalse(v.validateUserField("required_field", (String) null));
 
         // non required org field
         Assert.assertTrue(v.validateOrgField("type", "josé"));
         Assert.assertTrue(v.validateOrgField("type", ""));
-        Assert.assertTrue(v.validateOrgField("type", null));
+        Assert.assertTrue(v.validateOrgField("type", (String) null));
 
         // required org field (default)
         Assert.assertTrue(v.validateOrgField("name", "josé"));
         Assert.assertFalse(v.validateOrgField("name", ""));
-        Assert.assertFalse(v.validateOrgField("name", null));
+        Assert.assertFalse(v.validateOrgField("name", (String) null));
 
         // required org field (configured)
         Assert.assertTrue(v.validateOrgField("required_org_field", "josé"));
         Assert.assertFalse(v.validateOrgField("required_org_field", ""));
-        Assert.assertFalse(v.validateOrgField("required_org_field", null));
+        Assert.assertFalse(v.validateOrgField("required_org_field", (String) null));
+
+    }
+
+    @Test
+    public void testJson() throws JSONException {
+        Validation v = new Validation("");
+
+        JSONObject json = new JSONObject("{'uid': 'josé', 'mail': 'josé@mail.com'}");
+
+        Assert.assertTrue(v.validateUserField("telephone", json));
+        Assert.assertTrue(v.validateUserField("uid", json));
+        Assert.assertTrue(v.validateUserField("mail", json));
+        Assert.assertFalse(v.validateUserField("password", json));
 
     }
 

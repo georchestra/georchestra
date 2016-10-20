@@ -205,12 +205,9 @@ public class OrgsController {
             JSONObject json = this.parseRequest(request, response);
 
             // Validate request against required fields
-            for(String requiredField : this.validation.getRequiredOrgFields()) {
-                if (!json.has(requiredField))
-                    throw new IOException("Missing required field : " + requiredField);
-                if(!StringUtils.hasLength(json.getString(requiredField)))
-                    throw new IOException("Empty required field : " + requiredField);
-            }
+            for(String requiredField : this.validation.getRequiredOrgFields())
+                if (!this.validation.validateOrgField(requiredField, json))
+                    throw new IOException("required field : " + requiredField);
 
             // Retrieve current orgs state from ldap
             Org org = this.orgDao.findByCommonName(commonName);
@@ -259,6 +256,11 @@ public class OrgsController {
         try {
             // Parse Json
             JSONObject json = this.parseRequest(request, response);
+
+            // Check required fields
+            for(String field : this.validation.getRequiredOrgFields())
+                if(!json.has(field) || !StringUtils.hasLength(json.getString(field)))
+                    throw new Exception(field + " required");
 
             Org org = new Org();
             OrgExt orgExt = new OrgExt();

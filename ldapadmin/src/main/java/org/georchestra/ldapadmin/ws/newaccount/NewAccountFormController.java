@@ -158,7 +158,7 @@ public final class NewAccountFormController {
 		model.addAttribute("orgTypes", this.getOrgTypes());
 
 		// uid validation
-		if(!StringUtils.hasLength(formBean.getUid())){
+		if(!this.validation.validateUserField("uid", formBean.getUid())){
 			result.rejectValue("uid", "uid.error.required", "required");
 		} else {
 			// A valid user identifier (uid) can only contain characters, numbers, hyphens or dot.
@@ -178,9 +178,8 @@ public final class NewAccountFormController {
 		// email validation
 		if (!this.validation.validateUserField("email", formBean.getEmail()))
 			result.rejectValue("email", "email.error.required", "required");
-		else
-			if (!EmailValidator.getInstance().isValid(formBean.getEmail()))
-				result.rejectValue("email", "email.error.invalidFormat", "Invalid Format");
+		else if (!EmailValidator.getInstance().isValid(formBean.getEmail()))
+			result.rejectValue("email", "email.error.invalidFormat", "Invalid Format");
 
 		// password validation
 		PasswordUtils.validate(formBean.getPassword(), formBean.getConfirmPassword(), result);
@@ -197,6 +196,12 @@ public final class NewAccountFormController {
 		// Create org if needed
 		if(formBean.getCreateOrg() && ! result.hasErrors()){
 			try {
+
+				// Check required fields
+				this.validation.validateOrgField("name", formBean.getOrgName(), result);
+				this.validation.validateOrgField("shortName", formBean.getOrgShortName(), result);
+				this.validation.validateOrgField("address", formBean.getOrgAddress(), result);
+				this.validation.validateOrgField("type", formBean.getOrgType(), result);
 
 				Org org = new Org();
 				OrgExt orgExt = new OrgExt();
@@ -219,11 +224,13 @@ public final class NewAccountFormController {
 				org.setStatus("PENDING");
 
 				// Persist changes to LDAP server
-				this.orgDao.insert(org);
-				this.orgDao.insert(orgExt);
+				if(!result.hasErrors()){
+					this.orgDao.insert(org);
+					this.orgDao.insert(orgExt);
 
-				// Set real org identifier in form
-				formBean.setOrg(orgId);
+					// Set real org identifier in form
+					formBean.setOrg(orgId);
+				}
 
 			} catch (Exception e) {
 				LOG.error(e.getMessage());

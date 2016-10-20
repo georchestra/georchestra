@@ -691,46 +691,33 @@ public class UsersController {
 	 */
 	private Account createAccountFromRequestBody(ServletInputStream is) throws IllegalArgumentException, IOException {
 
-		String strUser = FileUtils.asString(is);
 		JSONObject json;
 		try {
-			json = new JSONObject(strUser);
+			json = new JSONObject(FileUtils.asString(is));
 		} catch (JSONException e) {
 			LOG.error(e.getMessage());
 			throw new IOException(e);
 		}
 
-		String givenName = RequestUtil.getFieldValue(json, UserSchema.GIVEN_NAME_KEY);
-		if(givenName == null){
-			throw new IllegalArgumentException(UserSchema.GIVEN_NAME_KEY + " is required" );
-		}
-		String surname= RequestUtil.getFieldValue(json, UserSchema.SURNAME_KEY);
-		if(surname == null){
-			throw new IllegalArgumentException(UserSchema.SURNAME_KEY + " is required" );
-		}
-		String email= RequestUtil.getFieldValue(json, UserSchema.MAIL_KEY);
-		if(email == null){
-			throw new IllegalArgumentException(UserSchema.MAIL_KEY + " is required" );
-		}
+		// Check required fields
+		for(String requiredField : this.validation.getRequiredUserFields())
+			if(!this.validation.validateUserField(requiredField, json))
+				throw new IllegalArgumentException(requiredField + " is required" );
 
-		String postalAddress =  RequestUtil.getFieldValue(json, UserSchema.POSTAL_ADDRESS_KEY );
-
-		String postOfficeBox =  RequestUtil.getFieldValue(json, UserSchema.POST_OFFICE_BOX_KEY );
-
-		String postalCode = RequestUtil.getFieldValue(json, UserSchema.POSTAL_CODE_KEY);
-
-		String street= RequestUtil.getFieldValue(json, UserSchema.STREET_KEY);
-		String locality = RequestUtil.getFieldValue(json, UserSchema.LOCALITY_KEY);
-
-		String phone = RequestUtil.getFieldValue(json, UserSchema.TELEPHONE_KEY);
-
-		String facsimile = RequestUtil.getFieldValue( json, UserSchema.FACSIMILE_KEY);
-
-		String title = RequestUtil.getFieldValue( json, UserSchema.TITLE_KEY);
-
-		String description = RequestUtil.getFieldValue( json, UserSchema.DESCRIPTION_KEY);
-
-		String manager = RequestUtil.getFieldValue(json, UserSchema.MANAGER_KEY);
+		String givenName     = RequestUtil.getFieldValue(json, UserSchema.GIVEN_NAME_KEY);
+		String surname       = RequestUtil.getFieldValue(json, UserSchema.SURNAME_KEY);
+		String email         = RequestUtil.getFieldValue(json, UserSchema.MAIL_KEY);
+		String postalAddress = RequestUtil.getFieldValue(json, UserSchema.POSTAL_ADDRESS_KEY );
+		String postOfficeBox = RequestUtil.getFieldValue(json, UserSchema.POST_OFFICE_BOX_KEY );
+		String postalCode    = RequestUtil.getFieldValue(json, UserSchema.POSTAL_CODE_KEY);
+		String street        = RequestUtil.getFieldValue(json, UserSchema.STREET_KEY);
+		String locality      = RequestUtil.getFieldValue(json, UserSchema.LOCALITY_KEY);
+		String phone         = RequestUtil.getFieldValue(json, UserSchema.TELEPHONE_KEY);
+		String facsimile     = RequestUtil.getFieldValue(json, UserSchema.FACSIMILE_KEY);
+		String title         = RequestUtil.getFieldValue(json, UserSchema.TITLE_KEY);
+		String description   = RequestUtil.getFieldValue(json, UserSchema.DESCRIPTION_KEY);
+		String manager       = RequestUtil.getFieldValue(json, UserSchema.MANAGER_KEY);
+		String org           = RequestUtil.getFieldValue(json, UserSchema.ORG_KEY);
 
 		String uid;
 		try {
@@ -741,8 +728,6 @@ public class UsersController {
 		}
 
 		String commonName = AccountFactory.formatCommonName(givenName, surname);
-
-		String org = RequestUtil.getFieldValue(json, UserSchema.ORG_KEY);
 
 		Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, title, phone, description, postalAddress, postalCode, "", postOfficeBox, "", street, locality, facsimile, "","","","",manager,"", org);
 

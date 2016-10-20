@@ -19,6 +19,8 @@
 
 package org.georchestra.ldapadmin.ws.utils;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 
@@ -133,6 +135,22 @@ public class Validation {
 
 	public boolean validateUserField(String field, String value){
 		return !this.isUserFieldRequired(field) || StringUtils.hasLength(value);
+	}
+
+	public boolean validateUserField(String field, JSONObject json){
+		try {
+			return !this.isUserFieldRequired(field) || (json.has(field) && StringUtils.hasLength(json.getString(field)));
+		} catch (JSONException e) {
+			return false;
+		}
+	}
+
+	public boolean validateOrgField(String field, JSONObject json){
+		try {
+			return !this.isOrgFieldRequired(field) || (json.has(field) && StringUtils.hasLength(json.getString(field)));
+		} catch (JSONException e) {
+			return false;
+		}
 	}
 
 	public void validateOrgField (String field, String value, Errors errors) {
