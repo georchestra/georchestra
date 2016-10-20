@@ -85,10 +85,11 @@ class OrganizationHelper:
         else:
             print("Adding %s to %s" % (user_full_dn, org_full_dn))
 
-    def createOrg(self, org_id):
+    def createOrg(self, org_id, org_name):
         if not self.connection.add("cn=%s,%s" % (org_id, self.base_org_dn),
                                    ["groupOfMembers", "top"],
                                    {"businessCategory" : "REGISTERED",
+                                    "o" : org_name,
                                     "seeAlso": "o=%s,%s" % (org_id, self.base_org_dn)}):
             raise LdapError("Unable to create groupOfMembers : %s" % org_id)
 
@@ -131,7 +132,7 @@ for user in conn.entries:
     # check if organization exists and create it if necessary
     if not orgHelper.exists(org_cn):
         print("Creating new organization : %s" % (org_dn))
-        orgHelper.createOrg(org_cn)
+        orgHelper.createOrg(org_cn, user.o.value)
 
     # add user to org (if not already present)
     orgHelper.addUserToOrg(user.uid, org_cn)
