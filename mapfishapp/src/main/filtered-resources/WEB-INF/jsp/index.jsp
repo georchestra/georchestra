@@ -84,11 +84,6 @@ if(sec_roles != null) {
     String[] roles = sec_roles.split(";");
     String[] js_roles_array = new String[roles.length];
     for (int i = 0; i < roles.length; i++) {
-        // ROLE_ANONYMOUS is added by the security proxy:
-        if (roles[i].equals("ROLE_ANONYMOUS")) {
-            js_roles_array[0] = "'ROLE_ANONYMOUS'";
-            break;
-        }
         if (roles[i].equals("ROLE_GN_ADMIN")) {
             admin = true;
         }
