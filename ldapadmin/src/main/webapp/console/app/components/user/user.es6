@@ -245,9 +245,9 @@ class UserController {
           PUT    : toPut,
           DELETE : toDel
         }, () => {
-          flash.create('success', 'Groups updated')
+          flash.create('success', 'Roles updated')
           $httpDefaultCache.removeAll()
-        }, flash.create.bind(flash, 'danger', 'Error associating to groups')
+        }, flash.create.bind(flash, 'danger', 'Error associating to roles')
       )
     }
 
