@@ -298,7 +298,7 @@ public final class OGCServiceParser {
 			}
 		}
 		if( end == -1){
-			end = layer.length() - 1;
+			end = layer.length();
 		}
 		return end;
 	}
