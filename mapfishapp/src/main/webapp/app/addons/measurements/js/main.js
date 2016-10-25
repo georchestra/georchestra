@@ -33,7 +33,7 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
 
         this.lengthAction =  new GeoExt.Action({
             control: new OpenLayers.Control.DynamicMeasure(OpenLayers.Handler.Path, {
-                accuracy: this.options.accuracy,
+                decimals: this.options.decimals,
                 maxSegments: null,
                 persist: true,
                 geodesic: true,
@@ -55,7 +55,7 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
 
         this.areaAction =  new GeoExt.Action({
             control: new OpenLayers.Control.DynamicMeasure(OpenLayers.Handler.Polygon, {
-                accuracy: this.options.accuracy,
+                decimals: this.options.decimals,
                 maxSegments: null,
                 persist: true,
                 geodesic: true,
@@ -343,7 +343,7 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
      */
     formatMeasure: function(measure) {
         measure[0] = OpenLayers.Number.format(
-            parseFloat(measure[0].toPrecision(this.options.accuracy)), null);
+            parseFloat(measure[0].toFixed(this.options.decimals)), null);
 
         return measure;
     },

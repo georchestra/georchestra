@@ -36,13 +36,13 @@ ADDONS: [...,
 
 Options allow an administrator to alter the default:
  * drawing style
- * accuracy
+ * number of decimals (2 by default)
  * KML style
 
 eg:
 ```js
     "options": {
-        "accuracy": 3,
+        "decimals": 2,
         "KMLStyle": "<Style id='measureFeatureStyle'><LineStyle><width>2</width><color>ff6666636</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle><LabelStyle><color>ff170580</color></LabelStyle><IconStyle><color>00ffffff</color><Icon><href>http:/maps.google.com/mapfiles/kml/shapes/placemark_circle.png</href></Icon></IconStyle></Style>",
         "graphicStyle": {
             "Point": {

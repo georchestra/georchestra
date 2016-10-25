@@ -18,10 +18,10 @@ OpenLayers.Control.DynamicMeasure = OpenLayers.Class(
                                                    OpenLayers.Control.Measure, {
 
     /**
-     * APIProperty: accuracy
-     * {Integer} Digits measurement accuracy, default is 5.
+     * APIProperty: decimals
+     * {Integer} Number of decimals, default is 2.
      */
-    accuracy: 5,
+    decimals: 2,
 
     /**
      * APIProperty: persist
@@ -198,7 +198,7 @@ OpenLayers.Control.DynamicMeasure = OpenLayers.Class(
      * options - {Object}
      *
      * Valid options:
-     * accuracy - {Integer} Digits measurement accuracy, default is 5.
+     * decimals - {Integer} number of decimals in measures, default is 2.
      * styles - {Object} Alterations of the default styles of the points lines
      *     poligons and labels text, could use keys: "Point",
      *     "Line", "Polygon", "labelSegments", "labelLength", "labelArea".
@@ -882,7 +882,7 @@ OpenLayers.Control.DynamicMeasure = OpenLayers.Class(
 
     /**
      * Method: setMesureAttributes
-     * Format measure[0] with digits of <accuracy>. Could internationalize the
+     * Format measure[0] with digits of <decimals>. Could internationalize the
      *     format customizing <OpenLayers.Number.thousandsSeparator> and
      *     <OpenLayers.Number.decimalSeparator>
      *
@@ -892,7 +892,7 @@ OpenLayers.Control.DynamicMeasure = OpenLayers.Class(
      */
     setMesureAttributes: function(attributes, measure) {
         attributes.measure = OpenLayers.Number.format(
-                           Number(measure[0].toPrecision(this.accuracy)), null);
+                           Number(measure[0].toFixed(this.decimals)), null);
         attributes.units = measure[1];
     },
 
