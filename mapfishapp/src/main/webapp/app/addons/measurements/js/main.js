@@ -36,7 +36,7 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
                 accuracy: this.options.accuracy,
                 maxSegments: null,
                 persist: true,
-                geodesic: true,
+                geodesic: GEOR.config.MAP_SRS != "EPSG:4326",
                 drawingLayer: this.layer,
                 keep: true,
                 styles: this.options.graphicStyle
@@ -58,7 +58,7 @@ GEOR.Addons.Measurements = Ext.extend(GEOR.Addons.Base, {
                 accuracy: this.options.accuracy,
                 maxSegments: null,
                 persist: true,
-                geodesic: true,
+                geodesic: GEOR.config.MAP_SRS != "EPSG:4326",
                 drawingLayer: this.layer,
                 keep: true,
                 styles: this.options.graphicStyle
