@@ -115,7 +115,10 @@ GEOR.mappanel = (function() {
             cls: "olControlScaleLine"
         });
         items.push(div);
-        map.addControl(new OpenLayers.Control.ScaleLine({div: div}));
+        map.addControl(new OpenLayers.Control.ScaleLine({
+            geodesic: GEOR.config.MAP_SRS != "EPSG:4326",
+            div: div
+        }));
 
         // greedy spacer
         items.push("->");

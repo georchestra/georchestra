@@ -71,7 +71,7 @@ GEOR.Addons.Measure = Ext.extend(GEOR.Addons.Base, {
         });
         var measureControl = new OpenLayers.Control.Measure(handlerType, {
             persist: true,
-            geodesic: true,
+            geodesic: GEOR.config.MAP_SRS != "EPSG:4326",
             handlerOptions: {
                 layerOptions: {
                     styleMap: styleMap
