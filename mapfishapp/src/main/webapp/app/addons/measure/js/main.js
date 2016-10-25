@@ -120,11 +120,17 @@ GEOR.Addons.Measure = Ext.extend(GEOR.Addons.Base, {
             this.popup.show();
             this.popup.update({
                 measure: event.order == 2 ?
-                    (event.units == tr("m") ?
-                        (event.measure/10000).toFixed(2) :
-                        (event.measure*100).toFixed(2)) :
-                    event.measure.toFixed(2),
-                units: event.order == 2 ? tr("hectares") : event.units
+                    // area measurement, order = 2
+                    (event.units == "m" ?
+                        (event.measure/10000).toFixed(this.options.decimals) :
+                        (event.measure*100).toFixed(this.options.decimals)) :
+                    // distance measurement, order = 1
+                    event.measure.toFixed(this.options.decimals),
+                units: event.order == 2 ?
+                    // area measurement
+                    tr("hectares") :
+                    // distance measurement
+                    event.units
             });
         }
     },
