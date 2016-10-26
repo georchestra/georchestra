@@ -19,10 +19,12 @@
 
 package org.georchestra.analytics;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletResponse;
@@ -197,7 +199,7 @@ public class StatisticsController {
 	 */
 	@RequestMapping(value="/combinedRequests", method=RequestMethod.POST, produces= "application/json; charset=utf-8")
 	@ResponseBody
-	public String combinedRequests(@RequestBody String payload, HttpServletResponse response) throws JSONException {
+	public String combinedRequests(@RequestBody String payload, HttpServletResponse response) throws JSONException, ParseException {
 		JSONObject input = null;
 		String userId  = null, groupId = null;
 		Date startDate = null, endDate = null;
@@ -207,9 +209,9 @@ public class StatisticsController {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return null;
 			}
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			startDate = sdf.parse(input.getString("startDate"));
-			endDate = sdf.parse(input.getString("endDate"));
+
+			startDate = this.convertCESTDateToUTC(input.getString("startDate"));
+			endDate = this.convertCESTDateToUTC(input.getString("endDate"));
 		} catch (Throwable e) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return null;
@@ -282,7 +284,9 @@ public class StatisticsController {
 		JSONArray results = new JSONArray();
 		for (Object o : lst) {
 			Object[] row = (Object[]) o;
-			results.put(new JSONObject().put("count", row[0]).put("date", row[1]));
+			String date = (String) row[1];
+			date = this.convertUTCDateToCEST(date);
+			results.put(new JSONObject().put("count", row[0]).put("date", date));
 		}
 		return new JSONObject().put("results", results)
 				.put("granularity", g)
@@ -442,6 +446,38 @@ public class StatisticsController {
 		} else {
 			return GRANULARITY.MONTH;
 		}
+	}
+
+	private Date convertCESTDateToUTC(String rawDate) throws ParseException {
+
+		SimpleDateFormat inputFormatter = new SimpleDateFormat("yyyy-MM-dd");
+		inputFormatter.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
+
+		Date date = inputFormatter.parse(rawDate);
+
+		SimpleDateFormat FRTZ = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
+		FRTZ.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
+		SimpleDateFormat UTCTZ = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
+		UTCTZ.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+		return FRTZ.parse(UTCTZ.format(date));
+	}
+
+	private String convertUTCDateToCEST(String rawDate) throws ParseException {
+		
+		SimpleDateFormat inputFormatter = new SimpleDateFormat("y-M-d H");
+		SimpleDateFormat outputFormatter = new SimpleDateFormat("y-M-d HH");
+		Date date = inputFormatter.parse(rawDate);
+
+		SimpleDateFormat FRTZ = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
+		FRTZ.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
+		SimpleDateFormat UTCTZ = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
+		UTCTZ.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+		date = UTCTZ.parse(FRTZ.format(date));
+
+		return outputFormatter.format(date);
+
 	}
 }
 
