@@ -13,7 +13,6 @@
             "fr": "Recherche d'adresses dans la Base d'Addresse Nationale (France)"
         },
         "options": {
-            "limitResponse":5,
-            "geocodeServiceUrl":"https://api-adresse.data.gouv.fr/search/?"
+            "limitResponse":5
         }
 }]

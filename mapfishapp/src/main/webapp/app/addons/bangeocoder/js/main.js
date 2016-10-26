@@ -88,7 +88,7 @@ GEOR.Addons.BANGeocoder = Ext.extend(GEOR.Addons.Base, {
         // create store to pass free text and get result from service (URL)
         var store = new Ext.data.JsonStore({
             proxy: new Ext.data.HttpProxy({
-                url: banGeocoderOptions.geocodeServiceUrl, // set service URL in config.json file, more informations in README
+                url: banGeocoderOptions.geocodeServiceUrl, // set service URL in manifest.json file, more informations in README
                 method: 'GET',
                 autoLoad: true
             }),
