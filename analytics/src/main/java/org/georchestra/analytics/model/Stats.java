@@ -37,9 +37,9 @@ import org.hibernate.annotations.Type;
 @NamedNativeQueries({
 // no user / group filter
 @NamedNativeQuery(name="Stats.getRequestCountBetweenStartDateAndEndDateByHour",
-query = "SELECT COUNT(*) AS count,	to_char(date, 'YYYY-mm-dd hh') FROM ogcstatistics.ogc_services_log WHERE "
+query = "SELECT COUNT(*) AS count,	to_char(date, 'YYYY-mm-dd HH24') FROM ogcstatistics.ogc_services_log WHERE "
 		+ "date >= :startDate  AND date < :endDate "
-		+ "GROUP BY to_char(date, 'YYYY-mm-dd hh') ORDER BY to_char(date, 'YYYY-mm-dd hh')"),
+		+ "GROUP BY to_char(date, 'YYYY-mm-dd HH24') ORDER BY to_char(date, 'YYYY-mm-dd HH24')"),
 
 @NamedNativeQuery(name="Stats.getRequestCountBetweenStartDateAndEndDateByDay",
 query = "SELECT COUNT(*) AS count,	to_char(date, 'YYYY-mm-dd') FROM ogcstatistics.ogc_services_log WHERE "
@@ -55,12 +55,12 @@ query = "SELECT COUNT(*) AS count,	 to_char(date, 'YYYY-WW') FROM ogcstatistics.
 query = "SELECT COUNT(*) AS count,	 to_char(date, 'YYYY-mm') FROM ogcstatistics.ogc_services_log WHERE "
 		+ "date >= :startDate  AND date < :endDate "
 		+ "GROUP BY to_char(date, 'YYYY-mm') ORDER BY to_char(date, 'YYYY-mm')"),
-	
+
 // users
 @NamedNativeQuery(name="Stats.getRequestCountForUserBetweenStartDateAndEndDateByHour",
-query = "SELECT COUNT(*) AS count,	to_char(date, 'YYYY-mm-dd hh') FROM ogcstatistics.ogc_services_log WHERE "
+query = "SELECT COUNT(*) AS count,	to_char(date, 'YYYY-mm-dd HH24') FROM ogcstatistics.ogc_services_log WHERE "
 		+ "user_name = :user AND date >= :startDate  AND date < :endDate "
-		+ "GROUP BY to_char(date, 'YYYY-mm-dd hh') ORDER BY to_char(date, 'YYYY-mm-dd hh')"),
+		+ "GROUP BY to_char(date, 'YYYY-mm-dd HH24') ORDER BY to_char(date, 'YYYY-mm-dd HH24')"),
 
 @NamedNativeQuery(name="Stats.getRequestCountForUserBetweenStartDateAndEndDateByDay",
 query = "SELECT COUNT(*) AS count,	to_char(date, 'YYYY-mm-dd') FROM ogcstatistics.ogc_services_log WHERE "
@@ -79,9 +79,9 @@ query = "SELECT COUNT(*) AS count,	 to_char(date, 'YYYY-mm') FROM ogcstatistics.
 
 // groups
 @NamedNativeQuery(name="Stats.getRequestCountForGroupBetweenStartDateAndEndDateByHour",
-query = "SELECT COUNT(*) AS count,	 to_char(date, 'YYYY-mm-dd hh')  FROM ogcstatistics.ogc_services_log WHERE "
+query = "SELECT COUNT(*) AS count,	 to_char(date, 'YYYY-mm-dd HH24')  FROM ogcstatistics.ogc_services_log WHERE "
 		+ ":group = ANY (roles) AND date >= :startDate  AND date < :endDate "
-		+ "GROUP BY to_char(date, 'YYYY-mm-dd hh') ORDER BY to_char(date, 'YYYY-mm-dd hh')"),
+		+ "GROUP BY to_char(date, 'YYYY-mm-dd HH24') ORDER BY to_char(date, 'YYYY-mm-dd HH24')"),
 
 @NamedNativeQuery(name="Stats.getRequestCountForGroupBetweenStartDateAndEndDateByDay",
 query = "SELECT COUNT(*) AS count,	 to_char(date, 'YYYY-mm-dd') FROM ogcstatistics.ogc_services_log WHERE "
