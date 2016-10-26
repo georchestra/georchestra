@@ -36,7 +36,7 @@ import java.util.Date;
 
 @Entity
 @Table(schema = "ldapadmin", name = "admin_log")
-@NamedQuery(name = "AdminLogEntry.findByTargetPageable", query = "SELECT l FROM AdminLogEntry l WHERE l.target = :target ORDER BY l.date")
+@NamedQuery(name = "AdminLogEntry.findByTargetPageable", query = "SELECT l FROM AdminLogEntry l WHERE l.target = :target ORDER BY l.date DESC")
 public class AdminLogEntry {
 
     @Id
