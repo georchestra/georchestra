@@ -80,7 +80,7 @@ public class LogController {
 	@ResponseBody
 	public String find( HttpServletRequest request, @PathVariable String target, @PathVariable int limit, @PathVariable int page) throws JSONException {
 
-		List<AdminLogEntry> logs = this.logDao.findByTarget(target, new PageRequest(page, limit, new Sort("date")));
+		List<AdminLogEntry> logs = this.logDao.findByTarget(target, new PageRequest(page, limit, new Sort(Sort.Direction.DESC, "date")));
 
 		JSONArray res = new JSONArray();
 		for(AdminLogEntry log: logs)
@@ -94,7 +94,7 @@ public class LogController {
 	@ResponseBody
 	public String find( HttpServletRequest request, @PathVariable int limit, @PathVariable int page) throws JSONException {
 
-		Page<AdminLogEntry> logs = this.logDao.findAll(new PageRequest(page, limit, new Sort("date")));
+		Page<AdminLogEntry> logs = this.logDao.findAll(new PageRequest(page, limit, new Sort(Sort.Direction.DESC, "date")));
 
 		JSONArray res = new JSONArray();
 		for(AdminLogEntry log: logs)
