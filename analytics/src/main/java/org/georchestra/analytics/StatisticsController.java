@@ -142,10 +142,47 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class StatisticsController {
+
     @Autowired
     private StatsRepo statsRepository;
 
-    /**
+	private SimpleDateFormat utcTimezone;
+	private SimpleDateFormat localTimezone;
+	private SimpleDateFormat uiInputFormatter;
+	private SimpleDateFormat dbHourInputFormatter;
+	private SimpleDateFormat dbHourOutputFormatter;
+	private SimpleDateFormat dbDayOutputFormatter;
+	private SimpleDateFormat dbWeekInputFormatter;
+	private SimpleDateFormat dbWeekOutputFormatter;
+	private SimpleDateFormat dbMonthInputFormatter;
+	private SimpleDateFormat dbMonthOutputFormatter;
+	private SimpleDateFormat dbDayInputFormatter;
+
+	public StatisticsController(String localTimezone) {
+
+		// Used to convert from one timezone to another
+		this.localTimezone = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
+		this.localTimezone.setTimeZone(TimeZone.getTimeZone(localTimezone));
+		this.utcTimezone = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
+		this.utcTimezone.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+		// Used to parse UI date
+		this.uiInputFormatter = new SimpleDateFormat("yyyy-MM-dd");
+		this.uiInputFormatter.setTimeZone(TimeZone.getTimeZone(localTimezone));
+
+		// Used to parse date from DB based on granularity
+		this.dbHourInputFormatter = new SimpleDateFormat("y-M-d H");
+		this.dbHourOutputFormatter = new SimpleDateFormat("yyyy-MM-dd HH");
+		this.dbDayInputFormatter = new SimpleDateFormat("y-M-d");
+		this.dbDayOutputFormatter = new SimpleDateFormat("yyyy-MM-dd");
+		this.dbWeekInputFormatter = new SimpleDateFormat("y-w");
+		this.dbWeekOutputFormatter = new SimpleDateFormat("yyyy-ww");
+		this.dbMonthInputFormatter = new SimpleDateFormat("y-M");
+		this.dbMonthOutputFormatter = new SimpleDateFormat("yyyy-MM");
+
+	}
+
+	/**
      * Setter used mainly for testing purposes.
      * @param statsRepository
      */
@@ -202,7 +239,7 @@ public class StatisticsController {
 	public String combinedRequests(@RequestBody String payload, HttpServletResponse response) throws JSONException, ParseException {
 		JSONObject input = null;
 		String userId  = null, groupId = null;
-		Date startDate = null, endDate = null;
+		Date startDate, endDate;
 		try {
 			input = new JSONObject(payload);
 			if (!input.has("startDate") || !input.has("endDate")) {
@@ -210,8 +247,8 @@ public class StatisticsController {
 				return null;
 			}
 
-			startDate = this.convertCESTDateToUTC(input.getString("startDate"));
-			endDate = this.convertCESTDateToUTC(input.getString("endDate"));
+			startDate = this.convertLocalDateToUTC(input.getString("startDate"));
+			endDate = this.convertLocalDateToUTC(input.getString("endDate"));
 		} catch (Throwable e) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return null;
@@ -285,7 +322,7 @@ public class StatisticsController {
 		for (Object o : lst) {
 			Object[] row = (Object[]) o;
 			String date = (String) row[1];
-			date = this.convertUTCDateToCEST(date);
+			date = this.convertUTCDateToLocal(date, g);
 			results.put(new JSONObject().put("count", row[0]).put("date", date));
 		}
 		return new JSONObject().put("results", results)
@@ -307,7 +344,7 @@ public class StatisticsController {
 	public String layersUsage(@RequestBody String payload, HttpServletResponse response) throws JSONException {
 		JSONObject input = null;
 		String userId  = null, groupId = null;
-		Date startDate = null, endDate = null;
+		Date startDate, endDate;
 		int limit = -1;
 
 		try {
@@ -316,9 +353,9 @@ public class StatisticsController {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return null;
 			}
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			startDate = sdf.parse(input.getString("startDate"));
-			endDate = sdf.parse(input.getString("endDate"));
+
+			startDate = this.convertLocalDateToUTC(input.getString("startDate"));
+			endDate = this.convertLocalDateToUTC(input.getString("endDate"));
 			if (input.has("limit")) {
 				limit = input.getInt("limit");
 			}
@@ -397,9 +434,8 @@ public class StatisticsController {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return null;
 			}
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			startDate = sdf.parse(input.getString("startDate"));
-			endDate = sdf.parse(input.getString("endDate"));
+			startDate = this.convertLocalDateToUTC(input.getString("startDate"));
+			endDate = this.convertLocalDateToUTC(input.getString("endDate"));
 			if (input.has("group")) {
 				groupId = "ROLE_" + input.getString("group");
 			}
@@ -448,34 +484,51 @@ public class StatisticsController {
 		}
 	}
 
-	private Date convertCESTDateToUTC(String rawDate) throws ParseException {
+	/**
+	 * Convert Date (with time) from configured local timezone to UTC. This method is used to convert date sent by UI
+	 * to date with same timezone as database records.
+	 *
+	 * @param rawDate Date to convert, should looks like : 2016-02-12
+	 * @return Date instance with date and time converted but with wrong timezone, please don't use timezone part of
+	 * 		   result
+	 * @throws ParseException if input date is not parsable
+	 */
 
-		SimpleDateFormat inputFormatter = new SimpleDateFormat("yyyy-MM-dd");
-		inputFormatter.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
-
-		Date date = inputFormatter.parse(rawDate);
-
-		SimpleDateFormat FRTZ = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
-		FRTZ.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
-		SimpleDateFormat UTCTZ = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
-		UTCTZ.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-		return FRTZ.parse(UTCTZ.format(date));
+	private Date convertLocalDateToUTC(String rawDate) throws ParseException {
+		Date date = this.uiInputFormatter.parse(rawDate);
+		return this.localTimezone.parse(this.utcTimezone.format(date));
 	}
 
-	private String convertUTCDateToCEST(String rawDate) throws ParseException {
-		
-		SimpleDateFormat inputFormatter = new SimpleDateFormat("y-M-d H");
-		SimpleDateFormat outputFormatter = new SimpleDateFormat("y-M-d HH");
+	/**
+	 * Convert date from UTC to local configured timezone. This method is used to convert dates returns by database.
+	 * @param rawDate raw date from database with format : "2016-02-12 23" or "2016-02-12" or "2016-06" or "2016-02"
+	 * @return date in local timezone with hour
+	 * @throws ParseException if input date is not parsable
+	 */
+	private String convertUTCDateToLocal(String rawDate, GRANULARITY granularity) throws ParseException {
+		SimpleDateFormat inputFormatter = null, outputFormatter = null;
+		switch (granularity){
+			case HOUR:
+				inputFormatter = this.dbHourInputFormatter;
+				outputFormatter = this.dbHourOutputFormatter;
+				break;
+			case DAY:
+				inputFormatter = this.dbDayInputFormatter;
+				outputFormatter = this.dbDayOutputFormatter;
+				break;
+			case WEEK:
+				inputFormatter = this.dbWeekInputFormatter;
+				outputFormatter = this.dbWeekOutputFormatter;
+				break;
+			case MONTH:
+				inputFormatter = this.dbMonthInputFormatter;
+				outputFormatter = this.dbMonthOutputFormatter;
+				break;
+		}
+
 		Date date = inputFormatter.parse(rawDate);
 
-		SimpleDateFormat FRTZ = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
-		FRTZ.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
-		SimpleDateFormat UTCTZ = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
-		UTCTZ.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-		date = UTCTZ.parse(FRTZ.format(date));
-
+		date = this.utcTimezone.parse(this.localTimezone.format(date));
 		return outputFormatter.format(date);
 
 	}

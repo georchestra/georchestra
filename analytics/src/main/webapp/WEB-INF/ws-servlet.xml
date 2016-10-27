@@ -87,7 +87,9 @@
         location="file:${georchestra.datadir}/analytics/analytics.properties"
         ignore-resource-not-found="true" ignore-unresolvable="true" order="1" />
 
-    <bean id="statisticsController" class="org.georchestra.analytics.StatisticsController" />
+    <bean id="statisticsController" class="org.georchestra.analytics.StatisticsController">
+        <constructor-arg name="localTimezone" value="${localTimezone}"/>
+    </bean>
 
     <bean id="georchestraConfiguration" class="org.georchestra.commons.configuration.GeorchestraConfiguration">
         <constructor-arg value="analytics" />
