@@ -1,5 +1,6 @@
 require('components/org/org.tpl')
 require('templates/orgForm.tpl')
+require('components/area/area')
 
 class OrgController {
 

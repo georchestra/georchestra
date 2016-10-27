@@ -1,7 +1,7 @@
 <section class="org">
 
   <h4>
-    <a ng-link="orgs({'org': 'all'})" translate>org.userlist</a>
+    <a ng-link="orgs({'org': 'all'})" translate>org.orglist</a>
     <span>/</span>
     {{::org.org.name}}
   </h4>
@@ -34,7 +34,7 @@
       </div>
 
       <div class="panel-body" ng-if="org.tab=='area'">
-        <p><strong>TODO</strong></p>
+        <areas item="org.org"></areas>
       </div>
 
       <div class="panel-body" ng-if="org.tab=='manage'">

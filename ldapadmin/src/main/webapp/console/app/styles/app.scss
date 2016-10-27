@@ -1,6 +1,10 @@
 $lightblue: #009FE3;
+$border: #ddd;
 
-@media (min-width: 768px) {
+$tablet: 768px;
+$large: 992px;
+
+@media (min-width: $tablet) {
   .panel .panel-body {
     min-height : 22em;
   }
@@ -36,10 +40,17 @@ groups {
   margin-bottom: 2em;
 }
 
+.col-md-10 {
+  margin-top: 1em;
+  @media (min-width: $large) {
+    margin-top: 0;
+  }
+}
+
 section {
   .nav {
     background: $lightblue;
-    @media (min-width: 992px) {
+    @media (min-width: $large) {
       margin : 0 -15px;
       border : none;
     }
@@ -198,7 +209,7 @@ section {
 
 // ASIDE
 .aside {
-  @media (min-width: 992px) {
+  @media (min-width: $large) {
     border-right: 2px solid $lightblue;
   }
   .alert-info {
@@ -257,7 +268,7 @@ section {
 }
 
 .users {
-  @media (min-width: 992px) {
+  @media (min-width: $large) {
     margin: 0 -15px;
   }
   em {
@@ -270,7 +281,7 @@ section {
 }
 
 // STATS
-@media (min-width: 992px) {
+@media (min-width: $large) {
   .chosen-container {
     width: 16em !important;
   }
@@ -291,6 +302,92 @@ section {
   .alert {
     margin-top : 2em;
   }
+}
+
+// AREA
+.area {
+  .map {
+    height        : 650px;
+    width         : calc(100% + 60px);
+    position      : relative;
+    border-radius : 5px 0 0 5px;
+    margin        : -15px 0 -15px -30px;
+    border        : none;
+    border-right: 1px solid $border;
+  }
+  .ol-zoom {
+    top    : auto;
+    bottom : .5em;
+  }
+  .ol-dragbox {
+    border-color: $lightblue;
+  }
+  .ol-control button {
+    background: rgba(0, 139, 207, .5);
+    &:hover {
+      background: rgba(0, 159, 227, .8);
+    }
+  }
+  .alert-info {
+    text-align : center;
+    margin: 15px -30px 15px;
+    border-radius: 0 4px 0 0;
+    border-width: 0 0 1px 0;
+  }
+  @media (min-width: $large) {
+    .map {
+      width : calc(100% + 30px);
+    }
+    .alert-info {
+      margin-top: -15px;
+    }
+  }
+  .attributions {
+    position    : absolute;
+    bottom      : 0;
+    right       : 0;
+    z-index     : 1;
+    background  : rgba(255,255,255, 0.5);
+    padding     : .25em 1em;
+    font-size   : 11px;
+    text-shadow : 0 0 1px #FFF;
+    color       : #666;
+  }
+  .selection {
+    position : absolute;
+    top      : .5em;
+    right    : .5em;
+    z-index  : 1;
+  }
+  .search-container {
+    position : absolute;
+    top      : .5em;
+    left     : .5em;
+    z-index  : 1;
+    width    : 15em;
+  }
+  .search-clear {
+    position : absolute;
+    right    : 0;
+    top      : 0;
+  }
+  .pagination {
+    margin: 10px 0 0;
+  }
+  .alternate {
+    opacity: 75%;
+    font-style: italic;
+  }
+}
+.autocomplete-suggestions {
+  border-radius: 4px;
+  font-size: 13px;
+}
+.autocomplete-suggestion span {
+  display     : inline-block;
+  width       : 0.7em;
+  text-align  : center;
+  margin-left : -0.5em;
 }
 
 // DATE

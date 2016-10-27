@@ -15,7 +15,7 @@
 
   <div class="col-md-8">
 
-    <input type="text" class="filter-table form-control pull-right" ng-model="orgs.q" placeholder="{{'group.filter_orgs' | translate}}"></input>
+    <input type="text" class="filter-table form-control pull-right" ng-model="orgs.q" placeholder="{{'orgs.filter_orgs' | translate}}"></input>
     <i class="glyphicon glyphicon-remove-sign filter-table-reset" ng-show="orgs.q != ''" ng-click="orgs.q = ''"></i>
     <h3 class="groups-title">{{orgs.orgs.length}} <span translate>orgs.title</span></h3>
 
@@ -56,12 +56,12 @@
         <span translate>orgs.createOrg</span>
       </div>
       <div class="panel-body">
-        <form class="form-horizontal" name="groupForm">
+        <form class="form-horizontal" name="orgForm">
 
           <div ng-inline="templates/orgForm.tpl.html" ng-init="model=orgs.newInstance;promise=orgs.newInstance.$promise"></div>
 
           <hr>
-          <button class="btn btn-primary pull-right" ng-disabled="groupForm.$invalid" ng-click="orgs.saveOrg()">
+          <button class="btn btn-primary pull-right" ng-disabled="orgForm.$invalid" ng-click="orgs.saveOrg()">
             <span translate>users.save</span>
           </button>
           <button class="btn btn-link pull-right" ng-click="orgs.close()" translate>users.cancel</button>

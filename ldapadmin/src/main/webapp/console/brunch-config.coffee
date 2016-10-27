@@ -15,6 +15,7 @@ module.exports = config:
           'vendor/angular.js',
           'vendor/angular-resource.js',
           'vendor/angular-sanitize.js',
+          'vendor/auto-complete.min.js',
           'vendor/bootstrap-datepicker.js',
           'vendor/router.es5.js',
           'vendor/chosen.jquery.js',
@@ -28,17 +29,20 @@ module.exports = config:
           'vendor/select2.full.js',
           'vendor/moment.min.js',
           'vendor/quill.js',
-          'vendor/saveSvgAsPng.js'
+          'vendor/saveSvgAsPng.js',
+          'vendor/ol.js'
         ]
     stylesheets:
       joinTo:
         'app.css': /^app/
         'libraries.css': [
-          'vendor/bootstrap.css',
+          'vendor/auto-complete.css',
           'vendor/bootstrap-datepicker3.css',
+          'vendor/bootstrap.css',
           'vendor/chosen.min.css',
-          'vendor/select2.css',
-          'vendor/quill.snow.css'
+          'vendor/ol.css',
+          'vendor/quill.snow.css',
+          'vendor/select2.css'
         ]
         'svg.css': [
           'vendor/chartist.min.css',

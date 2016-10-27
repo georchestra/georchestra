@@ -55,6 +55,10 @@
   "user.orgFirst"       : "Confirm organism first : ",
 
   "orgs.title"          : "organisms",
+  "orgs.allorgs"        : "All orgs",
+  "orgs.pending"        : "Pending",
+  "orgs.neworg"         : "New org",
+  "orgs.filter_orgs"    : "Filter",
 
   "org.name"            : "Name",
   "org.shortName"       : "Short name",
@@ -67,6 +71,10 @@
   "org.error"           : "Error while saving organism",
   "org.warning"         : "Warning, this action is irreversible — ",
   "org.delete"          : "Delete organism",
+  "org.orglist"         : "All orgs",
+
+  "area.updated"        : "Area updated",
+  "area.error"          : "Error saving area",
 
   "group.allusers"      : "All users",
   "group.system"        : "System roles",
