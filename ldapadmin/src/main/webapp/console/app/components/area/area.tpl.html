@@ -1,4 +1,4 @@
-<div class="area">
+<div class="area clearfix">
 
   <div class="col-md-8">
     <div class="map">
@@ -37,7 +37,7 @@
   <div class="col-md-4">
     <p class="alert alert-info">
       {{area.collection.getArray().length}} commune(s)
-      <button class="btn btn-default btn-sm" ng-click="area.save()">area.save</button>
+      <button class="btn btn-default btn-sm" ng-click="area.save()" translate>area.save</button>
     </p>
     
     <ul class="list">
@@ -46,6 +46,10 @@
       </li>
     </ul>
     <dir-pagination-controls max-size="7"></dir-pagination-controls>
+  </div>
+
+  <div class="loading" ng-show="area.loading">
+    <i class="glyphicon glyphicon-map-marker glyphicon-spin"></i>
   </div>
 
 </div>

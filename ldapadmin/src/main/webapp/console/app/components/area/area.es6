@@ -64,6 +64,7 @@ class AreaController {
       setTimeout(() => feature.setStyle(), 250)
     }
 
+    this.loading = true
     window.fetch('public/hdf.json', { credentials: 'include' }).then(
         response => response.json()
     ).then(json => {
@@ -79,6 +80,7 @@ class AreaController {
         if (this.ids.indexOf(insee) >= 0) selected.push(f)
       })
       updateSelection(selected)
+      this.loading = false
     })
 
     map.getInteractions().push(select)

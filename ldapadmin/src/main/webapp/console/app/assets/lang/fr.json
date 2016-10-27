@@ -73,6 +73,7 @@
   "org.delete"          : "Supprimer l’organisme",
   "org.orglist"         : "Organismes",
 
+  "area.save"           : "Enregister la zone",
   "area.updated"        : "Aire de compétence mise à jour",
   "area.error"          : "Erreur d’enregistrement",
 

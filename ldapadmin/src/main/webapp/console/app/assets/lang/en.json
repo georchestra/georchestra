@@ -73,6 +73,7 @@
   "org.delete"          : "Delete organism",
   "org.orglist"         : "All orgs",
 
+  "area.save"           : "Save area",
   "area.updated"        : "Area updated",
   "area.error"          : "Error saving area",
 

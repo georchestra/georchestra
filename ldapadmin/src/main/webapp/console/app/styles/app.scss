@@ -306,6 +306,20 @@ section {
 
 // AREA
 .area {
+  position: relative;
+  .loading {
+    position    : absolute;
+    top         : -15px;
+    left        : -15px;
+    right       : -15px;
+    bottom      : -15px;
+    background  : rgba(0,0,0,.3);
+    z-index     : 1000;
+    text-align  : center;
+    font-size   : 200%;
+    color       : #fff;
+    line-height : 10em;
+  }
   .map {
     height        : 650px;
     width         : calc(100% + 60px);
@@ -499,4 +513,16 @@ date {
   margin-left : -10em;
   top         : 1em;
   z-index     : 2000;
+}
+
+.glyphicon-spin {
+  animation: spin 2s infinite linear;
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(359deg);
+  }
 }
