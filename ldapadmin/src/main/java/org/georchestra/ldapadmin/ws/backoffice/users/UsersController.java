@@ -672,8 +672,12 @@ public class UsersController {
 			account.setOrg(org);
 
 		String shadowExpire = RequestUtil.getFieldValue(json, UserSchema.SHADOW_EXPIRE_KEY);
-		if(shadowExpire != null)
-			account.setShadowExpire((new SimpleDateFormat("yyyy-MM-dd")).parse(shadowExpire));
+		if(shadowExpire != null) {
+			if("".equals(shadowExpire))
+				account.setShadowExpire(null);
+			else
+				account.setShadowExpire((new SimpleDateFormat("yyyy-MM-dd")).parse(shadowExpire));
+		}
 
 		return account;
 	}
