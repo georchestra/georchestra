@@ -22,7 +22,7 @@ GEOR.Addons.BANGeocoder = Ext.extend(GEOR.Addons.Base, {
                     graphicHeight: 32,
                     graphicYOffset: -28, // shift graphic up 28 pixels
                     //Change the location of picture if not find
-                    externalGraphic: GEOR.config.PATHNAME + 'app/css/images/pwrs/geoPin.png',
+                    externalGraphic: GEOR.config.PATHNAME + "app/css/images/pwrs/geoPin.png",
                 }
             })
         });
@@ -30,7 +30,7 @@ GEOR.Addons.BANGeocoder = Ext.extend(GEOR.Addons.Base, {
         // create main window containing free text combo
         this.addressField = this._createCbSearch();
         this.win = new Ext.Window({
-            title: OpenLayers.i18n('banGeocoder.window_title'),
+            title: OpenLayers.i18n("banGeocoder.window_title"),
             constrainHeader: true,
             width: 312,
             closable: true,
@@ -55,9 +55,9 @@ GEOR.Addons.BANGeocoder = Ext.extend(GEOR.Addons.Base, {
         if (this.target) {
             // create a button to be inserted in toolbar:
             this.components = this.target.insertButton(this.position, {
-                xtype: 'button',
+                xtype: "button",
                 tooltip: this.getTooltip(record),
-                iconCls: 'addon-bangeocoder',
+                iconCls: "addon-bangeocoder",
                 handler: this.showWindow,
                 scope: this
             });
@@ -89,33 +89,33 @@ GEOR.Addons.BANGeocoder = Ext.extend(GEOR.Addons.Base, {
         var store = new Ext.data.JsonStore({
             proxy: new Ext.data.HttpProxy({
                 url: banGeocoderOptions.geocodeServiceUrl, // set service URL in manifest.json file, more informations in README
-                method: 'GET',
+                method: "GET",
                 autoLoad: true
             }),
-            storeId: 'geocodeStore',
-            root: 'features',
+            storeId: "geocodeStore",
+            root: "features",
             fields: [{
-                name: 'typeGeometry',
+                name: "typeGeometry",
                 convert: function(v, rec) {
                     return rec.geometry.type;
                 }
             }, {
-                name: 'coordinates',
+                name: "coordinates",
                 convert: function(v, rec) {
                     return rec.geometry.coordinates;
                 }
             }, {
-                name: 'id',
+                name: "id",
                 convert: function(v, rec) {
                     return rec.properties.id;
                 }
             }, {
-                name: 'label',
+                name: "label",
                 convert: function(v, rec) {
                     return rec.properties.label;
                 }
             }],
-            totalProperty: 'limit',
+            totalProperty: "limit",
             listeners: {
                 "beforeload": function(q) {
                     store.baseParams.q = store.baseParams["query"];
@@ -127,11 +127,11 @@ GEOR.Addons.BANGeocoder = Ext.extend(GEOR.Addons.Base, {
 
         // Create search combo
         return new Ext.form.ComboBox({
-            emptyText: OpenLayers.i18n('banGeocoder.field_emptytext'),
-            fieldLabel: OpenLayers.i18n('banGeocoder.field_label'),
-            id: 'comboGeocoder',
-            displayField: 'label',
-            loadingText: OpenLayers.i18n('Loading...'),
+            emptyText: OpenLayers.i18n("banGeocoder.field_emptytext"),
+            fieldLabel: OpenLayers.i18n("banGeocoder.field_label"),
+            id: ""comboGeocoder",
+            displayField: "label",
+            loadingText: OpenLayers.i18n("Loading..."),
             width: 300,
             store: store,
             hideTrigger: true,
