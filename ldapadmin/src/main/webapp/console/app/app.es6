@@ -43,6 +43,7 @@ angular.module('admin_console', [
 ])
 .controller('AppController', AppController)
 .constant('LDAP_BASE_URI', '/ldapadmin/private/')
+.constant('LDAP_PUBLIC_URI', '/ldapadmin/public/')
 .constant('MF_BASE_URI', '/mapfishapp/ws/')
 .constant('ANALYTICS_BASE_URI', '/analytics/ws/')
 .config([

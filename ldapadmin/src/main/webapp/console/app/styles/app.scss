@@ -472,6 +472,20 @@ date {
   opacity: .5;
 }
 
+.user-form,
+.org-form {
+  .required .col-sm-8:after {
+    position: absolute;
+    right: 0.35em;
+    top: -0.4em;
+    content: '*';
+    color: $lightblue;
+    opacity: .8;
+    font-size: 200%;
+    line-height: 1.4em;
+  }
+}
+
 // CHOSEN
 .chosen-container-multi .chosen-choices {
   border-radius : 4px;

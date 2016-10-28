@@ -58,6 +58,8 @@ class UserController {
       default:
     }
     this.bindGroups()
+
+    this.required = $injector.get('UserRequired').get()
   }
 
   bindGroups () {

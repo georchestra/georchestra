@@ -1,6 +1,7 @@
 require('components/org/org.tpl')
 require('templates/orgForm.tpl')
 require('components/area/area')
+require('services/orgs')
 
 class OrgController {
 
@@ -20,6 +21,7 @@ class OrgController {
     translate('org.deleteError', this.i18n)
 
     this.org = this.$injector.get('Orgs').get({id: $routeParams.org})
+    this.required = this.$injector.get('OrgsRequired').get()
   }
 
   save () {

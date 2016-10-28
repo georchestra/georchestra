@@ -34,7 +34,8 @@
 
       <div class="panel-body" ng-if="user.tab=='infos'">
 
-        <div ng-inline="templates/userForm.tpl.html" ng-init="model=user.user;promise=user.user.$promise"></div>
+        <div ng-inline="templates/userForm.tpl.html"
+          ng-init="model=user.user;promise=user.user.$promise;required=user.required"></div>
 
         <hr>
 

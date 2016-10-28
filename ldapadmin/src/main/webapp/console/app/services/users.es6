@@ -20,26 +20,16 @@ angular.module('admin_console')
       isArray: false
     }
   })
-]).factory('Orgs', ['$resource', 'LDAP_BASE_URI', ($resource, baseUri) =>
-  $resource(baseUri + 'orgs/:id', {}, {
-    query: {
-      cache: true,
-      method: 'GET',
-      isArray: true
-    },
+]).factory('UserRequired', ['$resource', 'LDAP_PUBLIC_URI', ($resource, baseUri) =>
+  $resource(baseUri + 'users/requiredFields', {}, {
     get: {
-      params: { id: '@id' },
       method: 'GET',
       cache: true,
-      isArray: false
-    },
-    update: {
-      params: { id: '@id' },
-      method: 'PUT'
-    },
-    delete: {
-      params: { id: '@id' },
-      method: 'DELETE'
+      transformResponse: (data) => {
+        let response = {}
+        JSON.parse(data).forEach(key => { response[key] = true })
+        return response
+      }
     }
   })
 ])

@@ -53,12 +53,13 @@
 
       <div class="panel-heading">
         <a class="btn close" ng-click="orgs.close()">&times;</a>
-        <span translate>orgs.createOrg</span>
+        <span translate>orgs.neworg</span>
       </div>
       <div class="panel-body">
         <form class="form-horizontal" name="orgForm">
 
-          <div ng-inline="templates/orgForm.tpl.html" ng-init="model=orgs.newInstance;promise=orgs.newInstance.$promise"></div>
+          <div ng-inline="templates/orgForm.tpl.html"
+             ng-init="model=orgs.newInstance;promise=orgs.newInstance.$promise;required=orgs.required"></div>
 
           <hr>
           <button class="btn btn-primary pull-right" ng-disabled="orgForm.$invalid" ng-click="orgs.saveOrg()">

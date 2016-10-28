@@ -1,4 +1,5 @@
 require('components/orgs/orgs.tpl')
+require('services/orgs')
 
 class OrgsController {
 
@@ -26,6 +27,8 @@ class OrgsController {
       const Org = this.$injector.get('Orgs')
       this.newInstance = new Org({})
     }
+
+    this.required = this.$injector.get('OrgsRequired').get()
 
     let translate = this.$injector.get('translate')
     this.i18n = {}
