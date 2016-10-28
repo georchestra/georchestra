@@ -97,22 +97,22 @@ GEOR.Addons.BANGeocoder = Ext.extend(GEOR.Addons.Base, {
             fields: [{
                 name: 'typeGeometry',
                 convert: function(v, rec) {
-                    return rec.geometry.type
+                    return rec.geometry.type;
                 }
             }, {
                 name: 'coordinates',
                 convert: function(v, rec) {
-                    return rec.geometry.coordinates
+                    return rec.geometry.coordinates;
                 }
             }, {
                 name: 'id',
                 convert: function(v, rec) {
-                    return rec.properties.id
+                    return rec.properties.id;
                 }
             }, {
                 name: 'label',
                 convert: function(v, rec) {
-                    return rec.properties.label
+                    return rec.properties.label;
                 }
             }],
             totalProperty: 'limit',
@@ -155,22 +155,22 @@ GEOR.Addons.BANGeocoder = Ext.extend(GEOR.Addons.Base, {
         if (this.layer.features.length > 0) {
             this.layer.destroyFeatures();
         }
-        var geom, toCoordX, toCoordY, from, to, geom, fromCoordX, fromCoordY, point, feature
-        from = new OpenLayers.Projection("EPSG:4326"), // default GeoJSON SRS return by the service 
-            to = this.map.getProjectionObject();
+
+        var from = new OpenLayers.Projection("EPSG:4326"); // default GeoJSON SRS return by the service 
+        var to = this.map.getProjectionObject();
 
         //get coordinates from GeoJson
-        fromCoordX = record.json.geometry.coordinates[0];
-        fromCoordY = record.json.geometry.coordinates[1];
+        var fromCoordX = record.json.geometry.coordinates[0];
+        var fromCoordY = record.json.geometry.coordinates[1];
 
         //create feature from GeoJson geometry
 
         // get geometry
-        geom = new OpenLayers.Geometry.Point(fromCoordX, fromCoordY).transform(from, to);
+        var geom = new OpenLayers.Geometry.Point(fromCoordX, fromCoordY).transform(from, to);
 
         // create point from geometry find in GeoJSON and create vector feature from point geometry
-        point = new OpenLayers.Geometry.Point(geom.x, geom.y);
-        feature = new OpenLayers.Feature.Vector(point);
+        var point = new OpenLayers.Geometry.Point(geom.x, geom.y);
+        var feature = new OpenLayers.Feature.Vector(point);
 
         // add point feature to layer and zoom on    
         this.layer.addFeatures(feature);
