@@ -27,8 +27,10 @@
       <div class="form-group form-group-sm" ng-class="{required: required.orgType}">
         <label class="col-sm-4" for="orgType" translate>org.orgType</label>
         <div class="col-sm-8">
-          <input ng-model="model.orgType" class="form-control" id="orgType"
+          <select ng-model="model.orgType" class="form-control" id="orgType"
             placeholder="" ng-required="required.orgType">
+            <option ng-repeat="o in orgTypeValues" value="o">{{::o}}</option>
+          </select>
         </div>
       </div>
 

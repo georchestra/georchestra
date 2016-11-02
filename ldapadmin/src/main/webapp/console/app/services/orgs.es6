@@ -23,7 +23,7 @@ angular.module('admin_console')
   })
 ]).factory('OrgsRequired', ['$resource', 'LDAP_PUBLIC_URI', ($resource, baseUri) =>
   $resource(baseUri + 'orgs/requiredFields', {}, {
-    get: {
+    query: {
       method: 'GET',
       cache: true,
       transformResponse: (data) => {
@@ -31,6 +31,14 @@ angular.module('admin_console')
         JSON.parse(data).forEach(key => { response[key] = true })
         return response
       }
+    }
+  })
+]).factory('OrgsType', ['$resource', 'LDAP_PUBLIC_URI', ($resource, baseUri) =>
+  $resource(baseUri + 'orgs/orgTypeValues', {}, {
+    query: {
+      method: 'GET',
+      cache: true,
+      isArray: true
     }
   })
 ])

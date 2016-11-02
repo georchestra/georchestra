@@ -20,8 +20,9 @@ class OrgController {
     translate('org.deleted', this.i18n)
     translate('org.deleteError', this.i18n)
 
-    this.org = this.$injector.get('Orgs').get({id: $routeParams.org})
-    this.required = this.$injector.get('OrgsRequired').get()
+    this.org = $injector.get('Orgs').get({id: $routeParams.org})
+    this.required = $injector.get('OrgsRequired').query()
+    this.orgTypeValues = $injector.get('OrgsType').query()
   }
 
   save () {

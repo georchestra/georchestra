@@ -28,7 +28,8 @@ class OrgsController {
       this.newInstance = new Org({})
     }
 
-    this.required = this.$injector.get('OrgsRequired').get()
+    this.required = $injector.get('OrgsRequired').query()
+    this.orgTypeValues = $injector.get('OrgsType').query()
 
     let translate = this.$injector.get('translate')
     this.i18n = {}

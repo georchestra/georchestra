@@ -59,7 +59,7 @@
         <form class="form-horizontal" name="orgForm">
 
           <div ng-inline="templates/orgForm.tpl.html"
-             ng-init="model=orgs.newInstance;promise=orgs.newInstance.$promise;required=orgs.required"></div>
+             ng-init="model=orgs.newInstance;promise=orgs.newInstance.$promise;required=orgs.required;orgTypeValues=orgs.orgTypeValues"></div>
 
           <hr>
           <button class="btn btn-primary pull-right" ng-disabled="orgForm.$invalid" ng-click="orgs.saveOrg()">
