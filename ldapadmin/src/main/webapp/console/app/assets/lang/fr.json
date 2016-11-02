@@ -72,6 +72,8 @@
   "org.warning"         : "Attention, cette action est irréversible — ",
   "org.delete"          : "Supprimer l’organisme",
   "org.orglist"         : "Organismes",
+  "org.pendingmsg"      : "Organisme en attente ",
+  "org.confirm"         : "Confirmer",
 
   "area.save"           : "Enregister la zone",
   "area.updated"        : "Aire de compétence mise à jour",
