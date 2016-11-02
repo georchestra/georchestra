@@ -135,7 +135,7 @@ class UserController {
         ...options,
         service: 'layersUsage',
         limit: 10
-      },() => {}, error)
+      }, () => {}, error)
     })
   }
 
@@ -246,11 +246,15 @@ class UserController {
   }
 
   activate ($scope) {
+    const TMP_GROUP = 'TEMPORARY'
     let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
     let flash = this.$injector.get('Flash')
 
     let saveGroups = function (newVal, oldVal) {
       if (!newVal || !oldVal) { return }
+      let removeTmp = g => g !== TMP_GROUP
+      newVal = newVal.filter(removeTmp)
+      oldVal = oldVal.filter(removeTmp)
 
       let toPut = newVal.filter(a => oldVal.indexOf(a) === -1)
       let toDel = oldVal.filter(a => newVal.indexOf(a) === -1)
