@@ -22,7 +22,7 @@ GEOR.Addons.BANGeocoder = Ext.extend(GEOR.Addons.Base, {
                     graphicHeight: 32,
                     graphicYOffset: -28, // shift graphic up 28 pixels
                     //Change the location of picture if not find
-                    externalGraphic: GEOR.config.PATHNAME + "app/css/images/pwrs/geoPin.png",
+                    externalGraphic: GEOR.config.PATHNAME + "/app/addons/bangeocoder/img/geoPin.png",
                 }
             })
         });
@@ -86,12 +86,15 @@ GEOR.Addons.BANGeocoder = Ext.extend(GEOR.Addons.Base, {
         var banGeocoderOptions = this.options;
 
         // create store to pass free text and get result from service (URL)
-        var store = new Ext.data.JsonStore({
+        var storeBAN = new Ext.data.JsonStore({
             proxy: new Ext.data.HttpProxy({
-                url: banGeocoderOptions.geocodeServiceUrl, // set service URL in manifest.json file, more informations in README
+                url: banGeocoderOptions.geocodeServiceUrl, 
                 method: "GET",
                 autoLoad: true
             }),
+            baseParams: {
+            	limit: banGeocoderOptions.limitResponse // number of result is default set to 5, change it in config.json file, more informations in README
+            },
             storeId: "geocodeStore",
             root: "features",
             fields: [{
@@ -117,9 +120,9 @@ GEOR.Addons.BANGeocoder = Ext.extend(GEOR.Addons.Base, {
             }],
             totalProperty: "limit",
             listeners: {
-                "beforeload": function(q) {
-                    store.baseParams.q = store.baseParams["query"];
-                    store.baseParams.limit = banGeocoderOptions.limitResponse; // number of result is default set to 5, change it in config.json file, more informations in README
+                "beforeload": function(store) {
+                	// service is waiting for params q not query
+                	store.baseParams.q = store.baseParams["query"];
                     delete store.baseParams["query"];
                 }
             }
@@ -129,11 +132,11 @@ GEOR.Addons.BANGeocoder = Ext.extend(GEOR.Addons.Base, {
         return new Ext.form.ComboBox({
             emptyText: OpenLayers.i18n("banGeocoder.field_emptytext"),
             fieldLabel: OpenLayers.i18n("banGeocoder.field_label"),
-            id: ""comboGeocoder",
+            id: "comboGeocoder",
             displayField: "label",
             loadingText: OpenLayers.i18n("Loading..."),
             width: 300,
-            store: store,
+            store: storeBAN,
             hideTrigger: true,
             pageSize: 0,
             minChars: 5,
@@ -150,7 +153,6 @@ GEOR.Addons.BANGeocoder = Ext.extend(GEOR.Addons.Base, {
      * Callback on combo selected to create and display address location from geometry
      * 
      */
-
     _onComboSelect: function(combo, record) {
         if (this.layer.features.length > 0) {
             this.layer.destroyFeatures();
