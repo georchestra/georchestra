@@ -6,7 +6,7 @@
         "css/main.css"
     ],
     "default_options": {
-    	"geocodeServiceUrl": "https://api-adresse.data.gouv.fr/search/?"
+    	"geocodeServiceUrl": "https://api-adresse.data.gouv.fr/search"
     },
     "i18n": {
         "en": {
