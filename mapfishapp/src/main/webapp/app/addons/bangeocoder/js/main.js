@@ -88,12 +88,12 @@ GEOR.Addons.BANGeocoder = Ext.extend(GEOR.Addons.Base, {
         // create store to pass free text and get result from service (URL)
         var storeBAN = new Ext.data.JsonStore({
             proxy: new Ext.data.HttpProxy({
-                url: banGeocoderOptions.geocodeServiceUrl, 
+                url: banGeocoderOptions.geocodeServiceUrl,
                 method: "GET",
                 autoLoad: true
             }),
             baseParams: {
-            	limit: banGeocoderOptions.limitResponse // number of result is default set to 5, change it in config.json file, more informations in README
+                limit: banGeocoderOptions.limitResponse // number of result is default set to 5, change it in config.json file, more informations in README
             },
             storeId: "geocodeStore",
             root: "features",
@@ -121,8 +121,8 @@ GEOR.Addons.BANGeocoder = Ext.extend(GEOR.Addons.Base, {
             totalProperty: "limit",
             listeners: {
                 "beforeload": function(store) {
-                	// service is waiting for params q not query
-                	store.baseParams.q = store.baseParams["query"];
+                    // service is waiting for params q not query
+                    store.baseParams.q = store.baseParams["query"];
                     delete store.baseParams["query"];
                 }
             }
