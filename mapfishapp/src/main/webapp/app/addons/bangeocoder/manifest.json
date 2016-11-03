@@ -6,37 +6,36 @@
         "css/main.css"
     ],
     "default_options": {
-    	"geocodeServiceUrl": "https://api-adresse.data.gouv.fr/search"
+        "geocodeServiceUrl": "https://api-adresse.data.gouv.fr/search"
     },
     "i18n": {
         "en": {
             "banGeocoder.window_title": "Adresse researcher",
-            "Loading...":"Loading",
+            "Loading...": "Loading",
             "banGeocoder.field_emptytext": "Ex : 11 Rue Louis de Broglie, 22300 Lannion",
             "banGeocoder.field_label": "Address",
             "Result": "Result"
-        },        
+        },
         "es": {
             "banGeocoder.window_title": "Adresse researcher",
-	    	"Loading...":"Loading",
+            "Loading...": "Loading",
             "banGeocoder.field_emptytext": "Ex : 11 Rue Louis de Broglie, 22300 Lannion",
             "banGeocoder.field_label": "Address",
             "Result": "Resultado"
         },
         "fr": {
             "banGeocoder.window_title": "Recherche d'adresse",
-	    	"Loading...":"Chargement",
+            "Loading...": "Chargement",
             "banGeocoder.field_emptytext": "Ex : 11 Rue Louis de Broglie, 22300 Lannion",
             "banGeocoder.field_label": "Adresse",
-            "Result":"Résultat"
+            "Result": "Résultat"
         },
         "de": {
             "banGeocoder.window_title": "Adresse researcher",
-	    	"Loading...":"Loading",
+            "Loading...": "Loading",
             "banGeocoder.field_emptytext": "Ex : 11 Rue Louis de Broglie, 22300 Lannion",
             "banGeocoder.field_label": "Address",
-            "Result":"Ergebnis"
-        } 
+            "Result": "Ergebnis"
+        }
     }
 }
-
