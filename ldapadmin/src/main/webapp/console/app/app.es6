@@ -31,6 +31,16 @@ class AppController {
 
 }
 
+class StandaloneController {
+
+  static $inject = [ '$scope', 'Orgs' ]
+
+  constructor ($scope, Org) {
+    $scope.org = new Org()
+  }
+
+}
+
 angular.module('admin_console', [
   'ngResource',
   'ngNewRouter',
@@ -42,6 +52,8 @@ angular.module('admin_console', [
   'pascalprecht.translate'
 ])
 .controller('AppController', AppController)
+.controller('StandaloneController', StandaloneController)
+.constant('LDAP_ROOT_URI', '/ldapadmin/')
 .constant('LDAP_BASE_URI', '/ldapadmin/private/')
 .constant('LDAP_PUBLIC_URI', '/ldapadmin/public/')
 .constant('MF_BASE_URI', '/mapfishapp/ws/')
@@ -75,4 +87,3 @@ require('components/user/user')
 require('components/users/users')
 
 require('templates/dirPagination.tpl')
-

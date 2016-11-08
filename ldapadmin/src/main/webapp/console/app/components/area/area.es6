@@ -20,6 +20,7 @@ class AreaController {
 
   initialize () {
     this.ids = this.item.cities || []
+    const PUBLIC_URI = this.$injector.get('LDAP_ROOT_URI') + 'console/public/'
 
     const buildStyle = (fillColor, strokeColor, width) => new ol.style.Style({
       fill: new ol.style.Fill({ color: fillColor }),
@@ -65,7 +66,9 @@ class AreaController {
     }
 
     this.loading = true
-    window.fetch('public/hdf.json', { credentials: 'include' }).then(
+    window.fetch(PUBLIC_URI + 'hdf.json', {
+      credentials: 'include'
+    }).then(
         response => response.json()
     ).then(json => {
       const conf = {
