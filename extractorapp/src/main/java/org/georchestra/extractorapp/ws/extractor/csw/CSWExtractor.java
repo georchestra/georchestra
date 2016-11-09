@@ -120,7 +120,7 @@ public class CSWExtractor {
 			content = httpclient.execute(httpHost, get, localContext).getEntity().getContent();
 
 			String metadata = FileUtils.asString(content);
-			Pattern regex = Pattern.compile("<gmd:MD_Metadata>*");
+			Pattern regex = Pattern.compile("<(gmd:)?MD_Metadata*");
 
             isMetadata = regex.matcher(metadata).find();
 
