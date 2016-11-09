@@ -186,7 +186,7 @@ public class OrgsController {
      *        98498
      *     ],
      *     "status" : "inscrit",
-     *     "orgType" : "association",
+     *     "type" : "association",
      *     "address" : "128 rue de la plante, 73059 Chambrille",
      *     "members": [
      *        "testadmin",
@@ -241,7 +241,7 @@ public class OrgsController {
      * * 'shortName'
      * * 'cities' as json array ex: [654,865498,98364,9834534,984984,6978984,98498]
      * * 'status'
-     * * 'orgType'
+     * * 'type'
      * * 'address'
      * * 'members' as json array ex: ["testadmin", "testuser"]
      *
