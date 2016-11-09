@@ -228,7 +228,7 @@ public final class NewAccountFormController {
 					org.setCities(Arrays.asList(orgCities.split("\\s*,\\s*")));
 
 				// Set default value
-				org.setStatus("PENDING");
+				org.setStatus(Org.STATUS_PENDING);
 
 				// Persist changes to LDAP server
 				if(!result.hasErrors()){

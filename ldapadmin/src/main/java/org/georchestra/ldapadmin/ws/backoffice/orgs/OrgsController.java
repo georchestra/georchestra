@@ -277,6 +277,9 @@ public class OrgsController {
             this.updateFromRequest(org, json);
             this.updateFromRequest(orgExt, json);
 
+            // Validate org
+            org.setStatus(Org.STATUS_REGISTERED);
+
             // Persist changes to LDAP server
             this.orgDao.insert(org);
             this.orgDao.insert(orgExt);

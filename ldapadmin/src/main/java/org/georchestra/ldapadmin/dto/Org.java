@@ -35,6 +35,9 @@ public class Org {
     public static final String JSON_STATUS = "status";
     public static final String JSON_MEMBERS = "members";
 
+    public static final String STATUS_REGISTERED = "REGISTERED";
+    public static final String STATUS_PENDING = "PENDING";
+
     private String id;
     private String name;
     private String shortName;
