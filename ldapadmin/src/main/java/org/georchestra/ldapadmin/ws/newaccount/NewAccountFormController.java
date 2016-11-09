@@ -49,6 +49,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
@@ -146,6 +147,7 @@ public final class NewAccountFormController {
 	@RequestMapping(value="/account/new", method=RequestMethod.POST)
 	public String create(HttpServletRequest request,
 						 @ModelAttribute AccountFormBean formBean,
+						 @RequestParam("orgCities") String orgCities,
 						 BindingResult result,
 						 SessionStatus sessionStatus,
 						 Model model)
@@ -219,6 +221,11 @@ public final class NewAccountFormController {
 				org.setShortName(formBean.getOrgShortName());
 				orgExt.setAddress(formBean.getOrgAddress());
 				orgExt.setOrgType(formBean.getOrgType());
+
+				// Parse and store cities
+				orgCities = orgCities.trim();
+				if(orgCities.length() > 0)
+					org.setCities(Arrays.asList(orgCities.split("\\s*,\\s*")));
 
 				// Set default value
 				org.setStatus("PENDING");
