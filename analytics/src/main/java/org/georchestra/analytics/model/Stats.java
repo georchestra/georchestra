@@ -115,10 +115,10 @@ query = "SELECT CAST(COUNT(*) AS integer) AS count, to_char(date, 'YYYY-mm') FRO
 // distinct users
 @NamedNativeQuery(name="Stats.getDistinctUsersByGroup",
 query = "SELECT user_name, org, CAST(COUNT(*) AS integer) AS count FROM ogcstatistics.ogc_services_log WHERE "
-		+ ":group = ANY (roles) AND date >= :startDate  AND date < :endDate GROUP BY user_name ORDER BY COUNT(*) DESC"),
+		+ ":group = ANY (roles) AND date >= :startDate  AND date < :endDate GROUP BY user_name, org ORDER BY COUNT(*) DESC"),
 @NamedNativeQuery(name="Stats.getDistinctUsers",
 query = "SELECT user_name, org, CAST(COUNT(*) AS integer) AS count FROM ogcstatistics.ogc_services_log WHERE "
-		+ " date >= :startDate  AND date < :endDate GROUP BY user_name ORDER BY COUNT(*) DESC"),
+		+ " date >= :startDate  AND date < :endDate GROUP BY user_name, org ORDER BY COUNT(*) DESC"),
 
 // layer stats
 @NamedNativeQuery(name="Stats.getLayersStatisticsForUser",
