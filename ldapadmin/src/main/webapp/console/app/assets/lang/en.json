@@ -62,7 +62,7 @@
 
   "org.name"            : "Name",
   "org.shortName"       : "Short name",
-  "org.orgType"         : "Type",
+  "org.type"            : "Type",
   "org.address"         : "Address",
   "org.save"            : "Save",
   "org.updated"         : "Organism updated",
