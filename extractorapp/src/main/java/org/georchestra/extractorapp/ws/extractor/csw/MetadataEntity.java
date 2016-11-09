@@ -24,17 +24,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.AbstractHttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.georchestra.extractorapp.ws.extractor.FileUtils;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 
 
 /**
@@ -90,8 +91,9 @@ final class MetadataEntity {
 		try {
             writer = new PrintWriter( fileName, "UTF-8" );
 
-        	HttpGet get = new HttpGet(this.request.buildURI() );
-        	DefaultHttpClient httpclient = new DefaultHttpClient();
+            HttpGet get = new HttpGet(this.request.buildURI() );
+            CloseableHttpClient httpclient = HttpClients.createDefault();
+            HttpClientContext localContext = HttpClientContext.create();
 
             // if credentials are actually provided, use them to configure
             // the HttpClient object.
@@ -99,14 +101,14 @@ final class MetadataEntity {
                 if (this.request.getUser() != null  && request.getPassword() != null) {
                     Credentials credentials = new UsernamePasswordCredentials(request.getUser(), request.getPassword());
                     AuthScope authScope = new AuthScope(get.getURI().getHost(), get.getURI().getPort());
-                    if (httpclient instanceof AbstractHttpClient) {
-                        ((AbstractHttpClient) httpclient).getCredentialsProvider().setCredentials(authScope, credentials);
-                    }
+                    CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+                    credentialsProvider.setCredentials(authScope, credentials);
+                    localContext.setCredentialsProvider(credentialsProvider);
                }
             } catch (Exception e) {
                 LOG.error("Unable to set basic-auth on http client to get the Metadata remotely, trying without ...", e);
             }
-            content = httpclient.execute(get).getEntity().getContent();
+            content = httpclient.execute(get, localContext).getEntity().getContent();
             reader = new BufferedReader(new InputStreamReader(content));
 
             String line = reader.readLine();
