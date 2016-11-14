@@ -198,7 +198,7 @@ public class WcsExtractorTest extends AbstractTestWithServer {
         if (extractorappUsername != null) {
             adminCredentials = new UsernamePasswordCredentials(extractorappUsername, extractorappPassword);
         }
-        return new RequestConfiguration(null, null, null, null, true, null, null, adminCredentials,
+        return new RequestConfiguration(null, null, null, null, true, null, null, null, adminCredentials,
                 "localhost", this.testDir.getRoot().toString(), 10000000, true, false, null, null);
     }
 

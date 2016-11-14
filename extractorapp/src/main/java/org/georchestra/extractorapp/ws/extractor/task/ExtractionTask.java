@@ -19,13 +19,21 @@
 
 package org.georchestra.extractorapp.ws.extractor.task;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
 import java.net.MalformedURLException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.extractorapp.ws.extractor.ExtractorController;
@@ -36,7 +44,9 @@ import org.georchestra.extractorapp.ws.extractor.RequestConfiguration;
 import org.georchestra.extractorapp.ws.extractor.WcsExtractor;
 import org.georchestra.extractorapp.ws.extractor.WfsExtractor;
 import org.georchestra.extractorapp.ws.extractor.csw.CSWExtractor;
+import org.geotools.referencing.CRS;
 import org.json.JSONException;
+import org.opengis.geometry.BoundingBox;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
@@ -51,15 +61,17 @@ import org.opengis.referencing.operation.TransformException;
 public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 	private static final Log LOG = LogFactory.getLog(ExtractionTask.class
 			.getPackage().getName());
+	private final BasicDataSource datasource;
 
 	private static final int EXTRACTION_ATTEMPTS = 3;
 	public final ExecutionMetadata executionMetadata;
 
 	private RequestConfiguration requestConfig;
 
-	public ExtractionTask(RequestConfiguration requestConfig)
+	public ExtractionTask(RequestConfiguration requestConfig, BasicDataSource datasource)
 			throws NoSuchAuthorityCodeException, MalformedURLException, JSONException, FactoryException {
 		this.requestConfig = requestConfig;
+		this.datasource = datasource;
 		this.executionMetadata = new ExecutionMetadata(
 				this.requestConfig.requestUuid,
 				this.requestConfig.username,
@@ -69,6 +81,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 	public ExtractionTask(ExtractionTask toCopy) {
 
 		this.requestConfig = toCopy.requestConfig;
+		this.datasource = toCopy.datasource;
 		this.executionMetadata = toCopy.executionMetadata;
 	}
 
@@ -77,6 +90,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 	public void run() {
 		executionMetadata.setRunning();
 		requestConfig.setThreadLocal();
+		this.statSetRunning();
 
 		final File tmpDir = FileUtils.createTempDirectory();
 		final File tmpExtractionBundle = mkDirTmpExtractionBundle(tmpDir, requestConfig.extractionFolderPrefix+requestConfig.requestUuid .toString());
@@ -182,7 +196,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 			executionMetadata.setCompleted();
 			FileUtils.delete(tmpExtractionBundle);
 			FileUtils.delete(tmpDir);
-
+			this.statSetCompleted();
 		}
 	}
 
@@ -239,6 +253,9 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 
 	private void handleExtractionException(ExtractorLayerRequest request,
 			Throwable e, File failureFile) {
+
+		this.statSetError(request);
+
 		if (!failureFile.getParentFile().exists()) {
 			throw new AssertionError(
 					"The temporary extraction bundle directory: "
@@ -379,5 +396,120 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 
 	public boolean equalId(String uuid) {
 		return requestConfig.requestUuid.toString().equals(uuid);
+	}
+
+
+
+	private void statSetError(ExtractorLayerRequest request) {
+		int i= 0;
+		i += 1;
+	}
+
+	private void statSetRunning() {
+
+		Connection c = null;
+		Statement st = null;
+		try {
+			c = this.datasource.getConnection();
+
+			String sqlQuery = "INSERT INTO extractorapp.extractor_log " +
+					"(username, roles, org, request_id, projection, format, bbox, owstype, owsurl, layer_name) " +
+					"VALUES (:username, :roles, :org, :request_id, :projection, :format, " +
+					"ST_GeometryFromText('POLYGON((:x0 :y0,:x1 :y1,:x2 :y2,:x3 :y3,:x0 :y0))'), " +
+					":owstype, :owsurl, :layer_name)";
+
+			sqlQuery = this.setString(sqlQuery, "username", this.requestConfig.username);
+
+			// Parse and set roles
+			String roles;
+			if (this.requestConfig.roles != null && this.requestConfig.roles.length() > 0) {
+				roles = this.requestConfig.roles;
+			} else {
+				roles = "MOD_LDAPADMIN, MOD_ADMIN";
+			}
+			sqlQuery = this.setArray(sqlQuery, "roles", roles.split("\\s*,\\s*"));
+			sqlQuery = this.setString(sqlQuery, "org", this.requestConfig.org);
+			sqlQuery = this.setString(sqlQuery, "request_id", this.requestConfig.requestUuid.toString());
+
+			for (ExtractorLayerRequest layerRequest : this.requestConfig.requests) {
+
+				String query = new String(sqlQuery);
+				// Set BBOX
+				query = this.setString(query, "projection", layerRequest._epsg);
+				query = this.setString(query, "format", layerRequest._format);
+				BoundingBox bbox = layerRequest._bbox.toBounds(CRS.decode("EPSG:4326"));
+				query = this.setDouble(query, "x0", bbox.getMinX());
+				query = this.setDouble(query, "y0", bbox.getMaxY());
+				query = this.setDouble(query, "x1", bbox.getMaxX());
+				query = this.setDouble(query, "y1", bbox.getMaxY());
+				query = this.setDouble(query, "x2", bbox.getMaxX());
+				query = this.setDouble(query, "y2", bbox.getMinY());
+				query = this.setDouble(query, "x3", bbox.getMinX());
+				query = this.setDouble(query, "y3", bbox.getMinY());
+				query = this.setString(query, "owstype", layerRequest._owsType.toString());
+				query = this.setString(query, "owsurl", layerRequest._url.toString());
+				query = this.setString(query, "layer_name", layerRequest._layerName);
+				st = c.createStatement();
+				st.executeUpdate(query);
+
+			}
+
+		} catch (SQLException e) {
+			LOG.error(e.getMessage());
+		} catch (TransformException e) {
+			LOG.error(e.getMessage());
+		} catch (NoSuchAuthorityCodeException e) {
+			LOG.error(e.getMessage());
+		} catch (FactoryException e) {
+			LOG.error(e.getMessage());
+		} finally {
+			try {
+				if(st != null)
+					st.close();
+				if(c != null)
+					c.close();
+			} catch (SQLException e) {
+				LOG.warn("Unable to close DB connection or statement");
+			}
+		}
+
+	}
+
+	private String setArray(String query, String parameter, String[] values) {
+		String valueSt;
+		if(values != null){
+			StringBuilder stBuilder = new StringBuilder("ARRAY[");
+			int i = 0;
+			for(String value : values) {
+				if (i > 0)
+					stBuilder.append(",");
+				stBuilder.append("'" + value + "'");
+				i++;
+			}
+			stBuilder.append("]");
+			valueSt = stBuilder.toString();
+		} else {
+			valueSt = "NULL";
+		}
+		return query.replaceAll(":" + parameter, valueSt);
+	}
+
+	private String setDouble(String query, String parameter, double value) {
+		return query.replaceAll(":" + parameter, String.valueOf(value));
+	}
+
+	private String setString(String query, String parameter, String value) {
+		String valueSt;
+		if(value != null)
+			valueSt = "'" + value.replaceAll("'", "") + "'";
+		else
+			valueSt = "NULL";
+		return query.replaceAll(":" + parameter, valueSt);
+	}
+
+	private void statSetCompleted() {
+		int i= 0;
+		i += 1;
+
 	}
 }

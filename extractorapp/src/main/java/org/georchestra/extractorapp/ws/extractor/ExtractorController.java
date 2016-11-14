@@ -37,6 +37,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -94,6 +95,7 @@ public class ExtractorController implements ServletContextAware {
 
     @Autowired
     private GeorchestraConfiguration georConfig;
+    private BasicDataSource dataSource;
 
     public void validateConfig() {
         if ((georConfig != null) && (georConfig.activated())) {
@@ -123,6 +125,10 @@ public class ExtractorController implements ServletContextAware {
                 throw new AssertionError("extractorapp does not have access to " + storageFile + " and cannot create it");
             }
         }
+
+        this.dataSource = new BasicDataSource();
+        this.dataSource.setUrl(this.georConfig.getProperty("jdbcurl"));
+
     }
 
     @RequestMapping(value = RESULTS_MAPPING, method = RequestMethod.GET)
@@ -197,12 +203,9 @@ public class ExtractorController implements ServletContextAware {
      * </pre>
      * 
      * Spring 2.5 has not got @PathVariable, thus this method was defined as
-     * "/*" to match uuid. The task id is retrieved from json object maintianed
+     * "/*" to match uuid. The task id is retrieved from json object maintained
      * in the request content.
      *
-     *
-     * @param jsonTask
-     * @throws Exception
      */
     @RequestMapping(value = EXTRACTOR_TASKS + "/*", method = RequestMethod.PUT)
     public void updateTask(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -325,9 +328,10 @@ public class ExtractorController implements ServletContextAware {
 
                 String username = request.getHeader("sec-username");
                 String roles = request.getHeader("sec-roles");
-                RequestConfiguration requestConfig = new RequestConfiguration(requests, requestUuid, email, servletContext, testing, username, roles,
+                String org = request.getHeader("sec-org");
+                RequestConfiguration requestConfig = new RequestConfiguration(requests, requestUuid, email, servletContext, testing, username, roles, org,
                         adminCredentials, secureHost, extractionFolderPrefix, maxCoverageExtractionSize, remoteReproject, useCommandLineGDAL, postData, this.userAgent);
-                ExtractionTask extractor = new ExtractionTask(requestConfig);
+                ExtractionTask extractor = new ExtractionTask(requestConfig, this.dataSource);
 
                 LOG.info("Sending mail to user");
                 try {
@@ -400,6 +404,14 @@ public class ExtractorController implements ServletContextAware {
 
     public void setCheckFormAcceptance(CheckFormAcceptance a) {
         this.checkFormAcceptance = a;
+    }
+
+    public void setDataSource(BasicDataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    public BasicDataSource getDataSource() {
+        return dataSource;
     }
 
     private String replace(String template, String url, String[] emails) {
