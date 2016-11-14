@@ -518,19 +518,19 @@ GEOR.Annotation = Ext.extend(Ext.util.Observable, {
         var formatGeoJSON = new OpenLayers.Format.GeoJSON(),
             formatJSON = new OpenLayers.Format.JSON(),
             listFeatures = [];
-        
+
         for( var i=0 ; i<this.layer.features.length ; i++ ) {
             var featureJSON = formatGeoJSON.write(this.layer.features[i]),
                 feature = formatJSON.read(featureJSON);
             feature.style = this.layer.features[i].style;
             listFeatures.push(feature);
         }
-        
         var featuresJSON = formatJSON.write(listFeatures);
-        
-        var element = document.createElement('a');
+
+        var element = document.createElement('a'),
+            filename = new Date().toISOString().substring(0,19).replace(/[T,:]/g,'-') + '_annotation.json';
         element.setAttribute('href', 'data:text/json;charset=utf-8,' + encodeURIComponent(featuresJSON));
-        element.setAttribute('download', 'annotation-export.json');
+        element.setAttribute('download', filename);
         element.style.display = 'none';
         document.body.appendChild(element);
         element.click();
@@ -561,32 +561,36 @@ GEOR.Annotation = Ext.extend(Ext.util.Observable, {
         var formatGeoJSON = new OpenLayers.Format.GeoJSON(),
             formatJSON = new OpenLayers.Format.JSON(),
             targetLayer = this.layer;
-        
+
         var element = document.createElement('input');
         element.setAttribute('type', 'file');
         element.style.visibility = 'hidden';
         element.addEventListener('change', function(event) {
             var file = event.target.files[0];
-            if (!file) return;
+            if (!file) {
+                return;
+            }
             var reader = new FileReader();
             reader.onload = function(event) {
                 var featuresJSON = event.target.result;
                 try {
                     var listFeatures = formatJSON.read(featuresJSON);
                     
-                    for( var i=0 ; i<listFeatures.length ; i++ ) {
+                    for (var i=0 ; i<listFeatures.length ; i++) {
                         var style = listFeatures[i].style,
                             featureJSON = formatJSON.write(listFeatures[i]),
                             feature = formatGeoJSON.read(featureJSON,"Feature");
                         feature.style = style;
                         feature.layer = targetLayer;
-                        if( style.label ) feature.isLabel = true;
+                        if ( style.label) {
+                            feature.isLabel = true;
+                        }
                         targetLayer.features.push(feature);
                     }
                     targetLayer.redraw();
                 } catch(err) {
                     GEOR.util.errorDialog({
-                        msg: tr("The provided file is not a valid Annotations file.")
+                        msg: OpenLayers.i18n("The provided file is not a valid Annotations file.")
                     });
                 }
             };
