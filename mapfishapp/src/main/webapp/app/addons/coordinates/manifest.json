@@ -1,57 +1,46 @@
 {
     "js": [
-        "js/coordinates.js",
+        "js/main.js",
         "js/coordinatesquery.js"
     ],
     "css": [
-        "css/coordinates.css"
+        "css/main.css"
     ],
     "default_options": {
-        "placement": "bottom",
-        "position": 3,
-        "services": [
-                    {
-                        "url": "http://geobretagne.fr/geoserver/ref/wms",
-                        "layers": [
-                            {
-                                "name": "REG_BD_ALTI",
-                                "label": "mnt 25m IGN",
-                                "metadata": "http://geobretagne.fr/geonetwork/apps/georchestra/?uuid=b29b9a3b-a9ba-4834-a33a-35c3b78ff444"
-                            }
-                        ]
-                    },
-                    {
-                        "url": "http://geobretagne.fr/geoserver/alti/wms",
-                        "layers": [
-                            {
-                                "name": "litto3d",
-                                "label": "litto 3D IGN",
-                                "metadata": "http://geobretagne.fr/geonetwork/apps/georchestra/?uuid=266b60bd-0f1d-4e47-a5b5-c932e35d836d"
-                            }
-                        ]
-                    },
-                    {
-                        "url": "http://geobretagne.fr/geoserver/alti/wms",
-                        "layers": [
-                            {
-                                "name": "mnt5so",
-                                "label": "mnt 5m Bretagne sans ouvrages",
-                                "metadata": "http://geobretagne.fr/geonetwork/apps/georchestra/?uuid=4ac04028-fb34-475d-96f8-b1218b396c38"
-                            },
-                            {
-                                "name": "mnt5ao",
-                                "label": "mnt 5m Bretagne avec ouvrages",
-                                "metadata": "http://geobretagne.fr/geonetwork/apps/georchestra/?uuid=b0bb2067-157f-477d-951d-09b1fa0e98ef"
-                            }
-                        ]
-                    }
-                ],
-        "showintoolmenu": true,
-        "autoactivate": false
+        "services": [{
+            "url": "http://geobretagne.fr/geoserver/ref/wms",
+            "layers": [{
+                "name": "REG_BD_ALTI",
+                "label": "mnt 25m IGN",
+                "metadata": "http://geobretagne.fr/geonetwork/apps/georchestra/?uuid=b29b9a3b-a9ba-4834-a33a-35c3b78ff444"
+            }]
+        }, {
+            "url": "http://geobretagne.fr/geoserver/alti/wms",
+            "layers": [{
+                "name": "litto3d",
+                "label": "litto 3D IGN",
+                "metadata": "http://geobretagne.fr/geonetwork/apps/georchestra/?uuid=266b60bd-0f1d-4e47-a5b5-c932e35d836d"
+            }]
+        }, {
+            "url": "http://geobretagne.fr/geoserver/alti/wms",
+            "layers": [{
+                "name": "mnt5so",
+                "label": "mnt 5m Bretagne sans ouvrages",
+                "metadata": "http://geobretagne.fr/geonetwork/apps/georchestra/?uuid=4ac04028-fb34-475d-96f8-b1218b396c38"
+            }, {
+                "name": "mnt5ao",
+                "label": "mnt 5m Bretagne avec ouvrages",
+                "metadata": "http://geobretagne.fr/geonetwork/apps/georchestra/?uuid=b0bb2067-157f-477d-951d-09b1fa0e98ef"
+            }]
+        }]
     },
     "i18n": {
-        "en": {},
-        "es": {},
+        "en": {
+            "coordinates": "Coordinates"
+        },
+        "es": {
+            "coordinates": "Coordenadas"
+        },
         "fr": {
             "coordinates": "Coordonnées"
         }
