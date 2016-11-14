@@ -20,11 +20,12 @@ Feel free to comment out the apps you do not need.
 
 Create a configuration directory on your host machine:
 ```
-git clone -b docker-master https://github.com/georchestra/datadir.git
-sudo mv datadir /etc/georchestra
+sudo mkdir /etc/georchestra
+sudo chown unprivileged_user /etc/georchestra
+git clone -b docker-master https://github.com/georchestra/datadir.git /etc/georchestra
 ```
 
-Optional: adjust the configuration in `/etc/georchestra` according to your needs.
+Optional, but recommended: as `unprivileged_user`, adjust the configuration in `/etc/georchestra` according to your needs.
 
 
 **Third step**
