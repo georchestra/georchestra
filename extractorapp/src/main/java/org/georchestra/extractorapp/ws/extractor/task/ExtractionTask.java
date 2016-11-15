@@ -399,11 +399,9 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 	}
 
 
-
-	private void statSetError(ExtractorLayerRequest request) {
-		int i= 0;
-		i += 1;
-	}
+	/*
+	 * Stats methods
+	 */
 
 	private void statSetRunning() {
 
@@ -413,21 +411,15 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 			c = this.datasource.getConnection();
 
 			String sqlQuery = "INSERT INTO extractorapp.extractor_log " +
-					"(username, roles, org, request_id, projection, format, bbox, owstype, owsurl, layer_name) " +
-					"VALUES (:username, :roles, :org, :request_id, :projection, :format, " +
-					"ST_GeometryFromText('POLYGON((:x0 :y0,:x1 :y1,:x2 :y2,:x3 :y3,:x0 :y0))'), " +
+					"(username, roles, org, request_id, projection, resolution, format, bbox, owstype, owsurl, layer_name) " +
+					"VALUES (:username, :roles, :org, :request_id, :projection, :resolution, :format, " +
+					"ST_SetSRID(ST_GeometryFromText('POLYGON((:x0 :y0,:x1 :y1,:x2 :y2,:x3 :y3,:x0 :y0))'), 4326), " +
 					":owstype, :owsurl, :layer_name)";
 
 			sqlQuery = this.setString(sqlQuery, "username", this.requestConfig.username);
 
 			// Parse and set roles
-			String roles;
-			if (this.requestConfig.roles != null && this.requestConfig.roles.length() > 0) {
-				roles = this.requestConfig.roles;
-			} else {
-				roles = "MOD_LDAPADMIN, MOD_ADMIN";
-			}
-			sqlQuery = this.setArray(sqlQuery, "roles", roles.split("\\s*,\\s*"));
+			sqlQuery = this.setArray(sqlQuery, "roles", this.requestConfig.roles.split("\\s*;\\s*"));
 			sqlQuery = this.setString(sqlQuery, "org", this.requestConfig.org);
 			sqlQuery = this.setString(sqlQuery, "request_id", this.requestConfig.requestUuid.toString());
 
@@ -436,6 +428,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 				String query = new String(sqlQuery);
 				// Set BBOX
 				query = this.setString(query, "projection", layerRequest._epsg);
+				query = this.setDouble(query, "resolution", layerRequest._resolution);
 				query = this.setString(query, "format", layerRequest._format);
 				BoundingBox bbox = layerRequest._bbox.toBounds(CRS.decode("EPSG:4326"));
 				query = this.setDouble(query, "x0", bbox.getMinX());
@@ -463,16 +456,74 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 		} catch (FactoryException e) {
 			LOG.error(e.getMessage());
 		} finally {
-			try {
-				if(st != null)
-					st.close();
-				if(c != null)
-					c.close();
-			} catch (SQLException e) {
-				LOG.warn("Unable to close DB connection or statement");
-			}
+			this.closeDbLinks(c, st);
 		}
 
+	}
+
+	private void statSetCompleted() {
+
+		Connection c = null;
+		Statement st = null;
+		try {
+			c = this.datasource.getConnection();
+
+			String sqlQuery = "UPDATE extractorapp.extractor_log " +
+					"SET is_successful = TRUE " +
+					"WHERE request_id = :request_id AND is_successful IS NULL";
+
+			sqlQuery = this.setString(sqlQuery, "request_id", this.requestConfig.requestUuid.toString());
+			st = c.createStatement();
+			st.executeUpdate(sqlQuery);
+
+			// Update duration
+			sqlQuery = "UPDATE extractorapp.extractor_log " +
+					"SET duration = NOW() - creation_date " +
+					"WHERE request_id = :request_id";
+
+			sqlQuery = this.setString(sqlQuery, "request_id", this.requestConfig.requestUuid.toString());
+			st = c.createStatement();
+			st.executeUpdate(sqlQuery);
+
+		} catch (SQLException e) {
+			LOG.error(e.getMessage());
+		} finally {
+			this.closeDbLinks(c, st);
+		}
+
+	}
+
+	private void statSetError(ExtractorLayerRequest request) {
+
+		Connection c = null;
+		Statement st = null;
+		try {
+			c = this.datasource.getConnection();
+
+			String sqlQuery = "UPDATE extractorapp.extractor_log " +
+					"SET is_successful = FALSE " +
+					"WHERE request_id = :request_id AND layer_name = :layer_name";
+
+			sqlQuery = this.setString(sqlQuery, "request_id", this.requestConfig.requestUuid.toString());
+			sqlQuery = this.setString(sqlQuery, "layer_name", request._layerName);
+			st = c.createStatement();
+			st.executeUpdate(sqlQuery);
+		} catch (SQLException e) {
+			LOG.error(e.getMessage());
+		} finally {
+			this.closeDbLinks(c, st);
+		}
+	}
+
+	private void closeDbLinks(Connection c, Statement st) {
+		try {
+			if(st != null)
+				st.close();
+			if(c != null)
+				c.close();
+		} catch (SQLException e) {
+			LOG.warn(e.getMessage());
+		}
 	}
 
 	private String setArray(String query, String parameter, String[] values) {
@@ -507,9 +558,4 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 		return query.replaceAll(":" + parameter, valueSt);
 	}
 
-	private void statSetCompleted() {
-		int i= 0;
-		i += 1;
-
-	}
 }
