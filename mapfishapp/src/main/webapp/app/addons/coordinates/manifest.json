@@ -1,0 +1,31 @@
+{
+    "js": [
+        "js/main.js"
+    ],
+    "css": [
+        "css/main.css"
+    ],
+    "default_options": {
+        "target": "bbar_3",
+        "projections": [{
+            "srs": "EPSG:4326",
+            "name": "WGS84",
+            "decimals": 6,
+            "labels": ["Longitude", "Latitude"]
+        }]
+    },
+    "i18n": {
+        "en": {
+            "Coordinates": "Coordinates"
+        },
+        "es": {
+            "Coordinates": "Coordenadas"
+        },
+        "fr": {
+            "Coordinates": "Coordonnées"
+        },
+        "de": {
+            "Coordinates": "Koordinaten"
+        }
+    }
+}

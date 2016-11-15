@@ -862,34 +862,38 @@ public class Proxy {
         }
     }
 
+    private URI buildUri(URL url) throws URISyntaxException {
+        // Let URI constructor encode Path part
+        URI uri = new URI(url.getProtocol(),
+                url.getUserInfo(),
+                url.getHost(),
+                url.getPort(),
+                url.getPath(),
+                null, // Don't use query part because URI constructor will try to double encode it
+                // (query part is already encoded in sURL)
+                url.getRef());
+
+        // Reconstruct URL with encoded path from URI class and others parameters from URL class
+        StringBuilder rawUrl = new StringBuilder(url.getProtocol() + "://" + url.getHost());
+
+        if(url.getPort() != -1)
+            rawUrl.append(":" + String.valueOf(url.getPort()));
+
+        rawUrl.append(uri.getRawPath()); // Use encoded version from URI class
+
+        if(url.getQuery() != null)
+            rawUrl.append("?" + url.getQuery()); // Use already encoded query part
+
+        return new URI(rawUrl.toString());
+    }
+
     private HttpRequestBase makeRequest(HttpServletRequest request, RequestType requestType, String sURL) throws IOException {
         HttpRequestBase targetRequest;
         try {
             // Split URL
             URL url = new URL(sURL);
+            URI uri = buildUri(url);
 
-            // Let URI constructor encode Path part
-            URI uri = new URI(url.getProtocol(),
-                    url.getUserInfo(),
-                    url.getHost(),
-                    url.getPort(),
-                    url.getPath(),
-                    null, // Don't use query part because URI constructor will try to double encode it
-                    // (query part is already encoded in sURL)
-                    url.getRef());
-
-            // Reconstruct URL with encoded path from URI class and others parameters from URL class
-            StringBuilder rawUrl = new StringBuilder(url.getProtocol() + "://" + url.getHost());
-
-            if(url.getPort() != -1)
-                rawUrl.append(":" + String.valueOf(url.getPort()));
-
-            rawUrl.append(uri.getRawPath()); // Use encoded version from URI class
-
-            if(url.getQuery() != null)
-                rawUrl.append("?" + url.getQuery()); // Use already encoded query part
-
-            uri = new URI(rawUrl.toString());
             switch (requestType) {
             case GET: {
                 logger.debug("New request is: " + sURL + "\nRequest is GET");

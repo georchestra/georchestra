@@ -23,6 +23,7 @@ We currently have the following addons available:
  * [fullscreen](fullscreen/README.md) to (obviously) make the map fullscreen.
  * [notes](notes/README.md) to report map issues.
  * [atlas](atlas/README.md) allows users to print PDF with one feature per page.
+ * [coordinates](coordinates/README.md) to let the user copy location coordinates.
 
 
 Finding more addons
