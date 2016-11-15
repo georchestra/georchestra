@@ -1,0 +1,26 @@
+[{
+    "id": "coordinates_0",
+    "name": "Coordinates",
+    "enabled": true,
+    "title": {
+        "en": "Coordinates",
+        "es": "Coordenadas",
+        "fr": "Coordonnées",
+        "de": "Koordinaten"
+    },
+    "description": {
+        "en": "Get pixel coordinates",
+        "es": "Obtener coordenadas de píxeles",
+        "fr": "Obtenir les coordonnées d'un point",
+        "de": "Holen Sie sich die Koordinaten eines Punktes"
+    },
+    "options": {
+        "target": "bbar_3",
+        "projections": [{
+            "srs": "EPSG:4326", 
+            "name": "WGS84",
+            "decimals": 6,
+            "labels": ["Longitude", "Latitude"]
+        }]
+    }
+}]
