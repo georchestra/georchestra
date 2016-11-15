@@ -26,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -61,14 +63,14 @@ import org.opengis.referencing.operation.TransformException;
 public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 	private static final Log LOG = LogFactory.getLog(ExtractionTask.class
 			.getPackage().getName());
-	private final BasicDataSource datasource;
+	private final ComboPooledDataSource datasource;
 
 	private static final int EXTRACTION_ATTEMPTS = 3;
 	public final ExecutionMetadata executionMetadata;
 
 	private RequestConfiguration requestConfig;
 
-	public ExtractionTask(RequestConfiguration requestConfig, BasicDataSource datasource)
+	public ExtractionTask(RequestConfiguration requestConfig, ComboPooledDataSource datasource)
 			throws NoSuchAuthorityCodeException, MalformedURLException, JSONException, FactoryException {
 		this.requestConfig = requestConfig;
 		this.datasource = datasource;
@@ -406,45 +408,44 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 	private void statSetRunning() {
 
 		Connection c = null;
-		Statement st = null;
+		PreparedStatement pst = null;
 		try {
 			c = this.datasource.getConnection();
 
-			String sqlQuery = "INSERT INTO extractorapp.extractor_log " +
-					"(username, roles, org, request_id, projection, resolution, format, bbox, owstype, owsurl, layer_name) " +
-					"VALUES (:username, :roles, :org, :request_id, :projection, :resolution, :format, " +
-					"ST_SetSRID(ST_GeometryFromText('POLYGON((:x0 :y0,:x1 :y1,:x2 :y2,:x3 :y3,:x0 :y0))'), 4326), " +
-					":owstype, :owsurl, :layer_name)";
+			pst = c.prepareStatement("INSERT INTO extractorapp.extractor_log " +
+					"(username, " +  // 1
+					"roles, " +      // 2
+					"org, " +        // 3
+					"request_id, " + // 4
+					"projection, " + // 5
+					"resolution, " + // 6
+					"format, " +     // 7
+					"bbox, " +       // 8, 9, 10, 11
+					"owstype, " +    // 12
+					"owsurl, " +     // 13
+					"layer_name) " + // 14
+					"VALUES (?, ?, ?, ?, ?, ?, ?, " +
+					"ST_SetSRID(ST_MakeBox2D(ST_Point(?, ?), ST_Point(? ,?)), 4326), " +
+					"?, ?, ?)");
 
-			sqlQuery = this.setString(sqlQuery, "username", this.requestConfig.username);
-
-			// Parse and set roles
-			sqlQuery = this.setArray(sqlQuery, "roles", this.requestConfig.roles.split("\\s*;\\s*"));
-			sqlQuery = this.setString(sqlQuery, "org", this.requestConfig.org);
-			sqlQuery = this.setString(sqlQuery, "request_id", this.requestConfig.requestUuid.toString());
+			pst.setString(1, this.requestConfig.username);
+			pst.setArray(2, c.createArrayOf("varchar", this.requestConfig.roles.split("\\s*;\\s*")));
+			pst.setString(3, this.requestConfig.org);
+			pst.setString(4, this.requestConfig.requestUuid.toString());
 
 			for (ExtractorLayerRequest layerRequest : this.requestConfig.requests) {
-
-				String query = new String(sqlQuery);
-				// Set BBOX
-				query = this.setString(query, "projection", layerRequest._epsg);
-				query = this.setDouble(query, "resolution", layerRequest._resolution);
-				query = this.setString(query, "format", layerRequest._format);
+				pst.setString(5, layerRequest._epsg);
+				pst.setDouble(6, layerRequest._resolution);
+				pst.setString(7, layerRequest._format);
 				BoundingBox bbox = layerRequest._bbox.toBounds(CRS.decode("EPSG:4326"));
-				query = this.setDouble(query, "x0", bbox.getMinX());
-				query = this.setDouble(query, "y0", bbox.getMaxY());
-				query = this.setDouble(query, "x1", bbox.getMaxX());
-				query = this.setDouble(query, "y1", bbox.getMaxY());
-				query = this.setDouble(query, "x2", bbox.getMaxX());
-				query = this.setDouble(query, "y2", bbox.getMinY());
-				query = this.setDouble(query, "x3", bbox.getMinX());
-				query = this.setDouble(query, "y3", bbox.getMinY());
-				query = this.setString(query, "owstype", layerRequest._owsType.toString());
-				query = this.setString(query, "owsurl", layerRequest._url.toString());
-				query = this.setString(query, "layer_name", layerRequest._layerName);
-				st = c.createStatement();
-				st.executeUpdate(query);
-
+				pst.setDouble(8, bbox.getMinX());
+				pst.setDouble(9, bbox.getMinY());
+				pst.setDouble(10, bbox.getMaxX());
+				pst.setDouble(11, bbox.getMaxY());
+				pst.setString(12, layerRequest._owsType.toString());
+				pst.setString(13, layerRequest._url.toString());
+				pst.setString(14, layerRequest._layerName);
+				pst.executeUpdate();
 			}
 
 		} catch (SQLException e) {
@@ -456,7 +457,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 		} catch (FactoryException e) {
 			LOG.error(e.getMessage());
 		} finally {
-			this.closeDbLinks(c, st);
+			this.closeDbLinks(c, pst);
 		}
 
 	}
@@ -464,31 +465,30 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 	private void statSetCompleted() {
 
 		Connection c = null;
-		Statement st = null;
+		PreparedStatement pst = null;
 		try {
 			c = this.datasource.getConnection();
 
-			String sqlQuery = "UPDATE extractorapp.extractor_log " +
+			pst = c.prepareStatement("UPDATE extractorapp.extractor_log " +
 					"SET is_successful = TRUE " +
-					"WHERE request_id = :request_id AND is_successful IS NULL";
+					"WHERE request_id = ? AND is_successful IS NULL");
 
-			sqlQuery = this.setString(sqlQuery, "request_id", this.requestConfig.requestUuid.toString());
-			st = c.createStatement();
-			st.executeUpdate(sqlQuery);
+			pst.setString(1, this.requestConfig.requestUuid.toString());
+			pst.executeUpdate();
+			pst.close();
 
 			// Update duration
-			sqlQuery = "UPDATE extractorapp.extractor_log " +
+			pst = c.prepareStatement("UPDATE extractorapp.extractor_log " +
 					"SET duration = NOW() - creation_date " +
-					"WHERE request_id = :request_id";
+					"WHERE request_id = ?");
 
-			sqlQuery = this.setString(sqlQuery, "request_id", this.requestConfig.requestUuid.toString());
-			st = c.createStatement();
-			st.executeUpdate(sqlQuery);
+			pst.setString(1, this.requestConfig.requestUuid.toString());
+			pst.executeUpdate();
 
 		} catch (SQLException e) {
 			LOG.error(e.getMessage());
 		} finally {
-			this.closeDbLinks(c, st);
+			this.closeDbLinks(c, pst);
 		}
 
 	}
@@ -496,66 +496,33 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 	private void statSetError(ExtractorLayerRequest request) {
 
 		Connection c = null;
-		Statement st = null;
+		PreparedStatement pst = null;
 		try {
 			c = this.datasource.getConnection();
 
-			String sqlQuery = "UPDATE extractorapp.extractor_log " +
+			pst = c.prepareStatement("UPDATE extractorapp.extractor_log " +
 					"SET is_successful = FALSE " +
-					"WHERE request_id = :request_id AND layer_name = :layer_name";
+					"WHERE request_id = ? AND layer_name = ?");
 
-			sqlQuery = this.setString(sqlQuery, "request_id", this.requestConfig.requestUuid.toString());
-			sqlQuery = this.setString(sqlQuery, "layer_name", request._layerName);
-			st = c.createStatement();
-			st.executeUpdate(sqlQuery);
+			pst.setString(1, this.requestConfig.requestUuid.toString());
+			pst.setString(2, request._layerName);
+			pst.executeUpdate();
 		} catch (SQLException e) {
 			LOG.error(e.getMessage());
 		} finally {
-			this.closeDbLinks(c, st);
+			this.closeDbLinks(c, pst);
 		}
 	}
 
-	private void closeDbLinks(Connection c, Statement st) {
+	private void closeDbLinks(Connection c, PreparedStatement pst) {
 		try {
-			if(st != null)
-				st.close();
+			if(pst != null)
+				pst.close();
 			if(c != null)
 				c.close();
 		} catch (SQLException e) {
 			LOG.warn(e.getMessage());
 		}
-	}
-
-	private String setArray(String query, String parameter, String[] values) {
-		String valueSt;
-		if(values != null){
-			StringBuilder stBuilder = new StringBuilder("ARRAY[");
-			int i = 0;
-			for(String value : values) {
-				if (i > 0)
-					stBuilder.append(",");
-				stBuilder.append("'" + value + "'");
-				i++;
-			}
-			stBuilder.append("]");
-			valueSt = stBuilder.toString();
-		} else {
-			valueSt = "NULL";
-		}
-		return query.replaceAll(":" + parameter, valueSt);
-	}
-
-	private String setDouble(String query, String parameter, double value) {
-		return query.replaceAll(":" + parameter, String.valueOf(value));
-	}
-
-	private String setString(String query, String parameter, String value) {
-		String valueSt;
-		if(value != null)
-			valueSt = "'" + value.replaceAll("'", "") + "'";
-		else
-			valueSt = "NULL";
-		return query.replaceAll(":" + parameter, valueSt);
 	}
 
 }

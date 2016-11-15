@@ -19,6 +19,7 @@
 
 package org.georchestra.extractorapp.ws.extractor;
 
+import java.beans.PropertyVetoException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,7 +38,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.dbcp.BasicDataSource;
+import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -95,9 +96,9 @@ public class ExtractorController implements ServletContextAware {
 
     @Autowired
     private GeorchestraConfiguration georConfig;
-    private BasicDataSource dataSource;
+    private ComboPooledDataSource dataSource;
 
-    public void validateConfig() {
+    public void validateConfig() throws PropertyVetoException {
         if ((georConfig != null) && (georConfig.activated())) {
             LOG.info("geOrchestra datadir: reconfiguring bean ...");
             servletUrl = georConfig.getProperty("servletUrl");
@@ -126,8 +127,9 @@ public class ExtractorController implements ServletContextAware {
             }
         }
 
-        this.dataSource = new BasicDataSource();
-        this.dataSource.setUrl(this.georConfig.getProperty("jdbcurl"));
+        this.dataSource = new ComboPooledDataSource();
+        this.dataSource.setDriverClass( "org.postgresql.Driver" );
+        this.dataSource.setJdbcUrl( this.georConfig.getProperty("jdbcurl") );
 
     }
 
@@ -404,14 +406,6 @@ public class ExtractorController implements ServletContextAware {
 
     public void setCheckFormAcceptance(CheckFormAcceptance a) {
         this.checkFormAcceptance = a;
-    }
-
-    public void setDataSource(BasicDataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-
-    public BasicDataSource getDataSource() {
-        return dataSource;
     }
 
     private String replace(String template, String url, String[] emails) {
