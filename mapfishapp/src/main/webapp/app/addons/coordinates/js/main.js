@@ -1,141 +1,150 @@
+/*global
+ Ext, GeoExt, OpenLayers, GEOR
+ */
 Ext.namespace("GEOR.Addons");
 
-GEOR.Addons.coordinates = function(map, options) {
-    this.map = map;
-    this.options = options;
-    this.control = null;
-    this.item = null;
-    this.layer = null;
-    this.action = null;
-    this.toolbar = null;
-    this.infos = [];
-};
+GEOR.Addons.Coordinates = Ext.extend(GEOR.Addons.Base, {
 
-GEOR.Addons.coordinates.prototype = (function() {
+    up: false,
+    popups: null,
 
-    /*
-     * Private     */
-
-    var _self = null;
-    var _map = null;
-    var _config = null;
-    var _coordinatesLayer = null;
-    var _mask_loader = null;
-
-    var _style = {
-        externalGraphic: "app/addons/coordinates/img/target.png",
-        graphicWidth: 16,
-        graphicHeight: 16
-    };
-
-    var _styleMap = new OpenLayers.StyleMap({
-        'default': _style,
-        'temporary': _style
-    });
-
-    var _createDrawControl = function() {
-        var drawPointCtrl = new OpenLayers.Control.DrawFeature(_coordinatesLayer, OpenLayers.Handler.Point, {
-            featureAdded: function(e) {
-                _onClick(e);
-                drawPointCtrl.deactivate();
+    init: function(record) {
+        this.popups = [];
+        var style = {
+            externalGraphic: GEOR.config.PATHNAME + "/app/addons/coordinates/img/target.png",
+            graphicWidth: 16,
+            graphicHeight: 16
+        };
+        this.layer = new OpenLayers.Layer.Vector("__georchestra_coordinates", {
+            displayInLayerSwitcher: false,
+            styleMap: new OpenLayers.StyleMap({
+                "default": style,
+                "temporary": style
+            }),
+            eventListeners: {
+                "featureadded": this.onFeatureadded,
+                scope: this
             }
         });
-        drawPointCtrl.deactivate();
-        return drawPointCtrl;
-    };
+        this.map.addLayer(this.layer);
 
-    var _onClick = function(feature) {
-        _self.infos.push(new GEOR.Addons.coordinatesquery(_map, feature, _config.services));
-        _self.control.deactivate();
-    };
+        this.control = new OpenLayers.Control.DrawFeature(
+            this.layer, OpenLayers.Handler.Point
+        );
+        this.map.addControl(this.control);
 
-
-
-    var _activateControl = function() {
-        _self.control.activate();
-        _self.map.setLayerIndex(_coordinatesLayer, _self.map.layers.length - 1);
-    };
-
-    var _showInfos = function(e) {
-        console.log("Coordonnées", e.feature.coordinates);
-    }
-
-
-    return {
-        /*
-         * Public
-         */
-        activateTool: function() {
-            this.action = new Ext.Action({
-                handler: _activateControl,
-                scope: this,
-                iconCls: 'coordinates-icon'
+        if (this.target) {
+            // create a button to be inserted in toolbar:
+            this.components = this.target.insertButton(this.position, {
+                xtype: "button",
+                tooltip: this.getTooltip(record),
+                iconCls: "addon-coordinates",
+                handler: this.onClick,
+                scope: this
             });
-            this.toolbar = (_config.placement === "bottom") ? Ext.getCmp("mappanel").bottomToolbar : Ext.getCmp("mappanel").topToolbar;
-            this.toolbar.insert(parseInt(this.options.position), '-');
-            this.toolbar.insert(parseInt(this.options.position), this.action);
-            this.toolbar.doLayout();
-        },
-        deactivateTool: function() {
-            this.toolbar.remove(this.action.items[0]);
-            this.toolbar.remove(this.toolbar.items.items[this.options.position]);
-        },
-        onCheckchange: function(item, checked) {
-            if (checked) {
-                this.activateTool();
-            } else {
-                this.deactivateTool();
-            }
-        },
-
-
-        init: function(record) {
-            _self = this;
-            var lang = OpenLayers.Lang.getCode();
-            title = record.get("title")[lang];
-            _map = this.map;
-            _coordinatesLayer = new OpenLayers.Layer.Vector("coordinates", {
-                displayInLayerSwitcher: false,
-                styleMap: _styleMap
-            });
-            this.layer = _coordinatesLayer;
-            _config = _self.options;
-
-            this.map.addLayers([_coordinatesLayer]);
-            this.control = _createDrawControl();
-
-            this.map.addControl(this.control);
-
-            var item = new Ext.menu.CheckItem({
-                text: title,
-                hidden: (this.options.showintoolmenu === true) ? false : true,
-                checked: this.options.autoactivate,
-                qtip: record.get("description")[lang],
+            this.target.doLayout();
+        } else {
+            // create a menu item for the "tools" menu:
+            this.item = new Ext.menu.Item({
+                text: this.getText(record),
+                qtip: this.getQtip(record),
+                iconCls: "addon-coordinates",
+                checked: false,
                 listeners: {
-                    "checkchange": this.onCheckchange,
+                    "click": this.onClick,
                     scope: this
                 }
-
             });
-            if (this.options.autoactivate === true) {
-                this.activateTool();
-            }
-            this.item = item;
-            return item;
-        },
-        destroy: function() {
-            this.map = null;
-            this.control.deactivate();
-            this.control.destroy();
-            this.control = null;
-            this.item = null;
-            this.layer.destroy();
-            Ext.each(this.infos, function(w, i) {
-                w.destroy();
-            });
-            this.toolbar.remove(this.action.items[0]);
-            this.toolbar.remove(this.toolbar.items.items[this.options.position]);
-            this.options = null;
         }
+    },
+
+    /**
+     * Method: onClick
+     *
+     */
+    onClick: function(item) {
+        if (!this.up) {
+            this.up = true;
+            this.control.activate();
+        }
+    },
+
+    /**
+     * Method: onFeatureadded
+     *
+     */
+    onFeatureadded: function(o) {
+        this.up = false;
+        this.control.deactivate();
+        var f = o.feature,
+        popup = new GeoExt.Popup({
+            map: this.map,
+            title: this.tr("Coordinates"),
+            cls: "addon-coordinates-popup",
+            bodyStyle: "padding:5px;",
+            unpinnable: false,
+            resizable: false,
+            closeAction: "close",
+            location: f,
+            anchored: true,
+            html: this.buildContent(f),
+            listeners: {
+                "close": function() {
+                    f.destroy();
+                }
+            }
+        });
+        this.popups.push(popup);
+        popup.show();
+    },
+
+    /**
+     * Method: buildContent
+     *
+     */
+    buildContent: function(feature) {
+        var geom = feature.geometry,
+            orig = new OpenLayers.Projection(this.map.getProjection())
+            out = [];
+        Ext.each(this.options.projections, function(p) {
+            var g = geom.clone().transform(
+                orig, new OpenLayers.Projection(p.srs)
+            );
+            var str = [
+                "<div class=\"coords\">",
+                    "<p><b>", p.name,"</b></p>",
+                    "<p>", p.labels[0], this.tr("labelSeparator"), GEOR.util.round(g.x, p.decimals),"</p>",
+                    "<p>", p.labels[1], this.tr("labelSeparator"), GEOR.util.round(g.y, p.decimals),"</p>",
+                "</div>"
+            ].join("");
+            out.push(str);
+        }, this);
+        return out.join("<hr>");
+    },
+
+    /**
+     * Method: tr
+     *
+     */
+    tr: function(str) {
+        return OpenLayers.i18n(str);
+    },
+
+    /**
+     * Method: destroy
+     *
+     */
+    destroy: function() {
+        this.up = false;
+        Ext.each(this.popups, function(p) {
+            p.destroy();
+        });
+        this.control.deactivate();
+        this.map.removeControl(this.control);
+        this.layer.destroyFeatures();
+        this.map.removeLayer(this.layer);
+        this.control = null;
+        this.layer = null;
+        GEOR.Addons.Base.prototype.destroy.call(this);
     }
-})();
+});
