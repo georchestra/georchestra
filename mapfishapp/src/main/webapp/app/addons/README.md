@@ -23,6 +23,7 @@ We currently have the following addons available:
  * [fullscreen](fullscreen/README.md) to (obviously) make the map fullscreen.
  * [notes](notes/README.md) to report map issues.
  * [coordinates](coordinates/README.md) to let the user copy location coordinates.
+ * [goto](goto/README.md) allows users to recenter the map on a location, given its coordinates.
 
 
 Finding more addons
