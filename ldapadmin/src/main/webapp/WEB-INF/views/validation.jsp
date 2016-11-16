@@ -266,7 +266,7 @@ function emailCheck (emailStr) {
 
   /* The following is the list of known TLDs that an e-mail address must end with. */
 
-  var knownDomsPat=/^(com|net|org|edu|int|mil|gov|arpa|biz|aero|name|coop|info|pro|museum)$/;
+  var knownDomsPat=/^(com|net|org|edu|int|mil|gov|arpa|biz|aero|name|coop|info|pro|museum|bzh)$/;
 
   /* The following pattern is used to check if the entered e-mail address
   fits the user@domain format.  It also is used to separate the username
