@@ -1,0 +1,28 @@
+[{
+    "id": "goto_0",
+    "name": "Goto",
+    "enabled": true,
+    "options": {
+        "projections": [{
+            "srs": "EPSG:4326", 
+            "name": "WGS 84",
+            "labels": ["Longitude", "Latitude"]
+        }, {
+            "srs": "EPSG:2154", 
+            "name": "Lambert 93",
+            "labels": ["X", "Y"]
+        }]
+    },
+    "title": {
+        "en": "Go to coordinates...",
+        "es": "Ir a coordenadas ...",
+        "fr": "Aller aux coordonnées ...",
+        "de": "Zu Koordinaten gehen"
+    },
+    "description": {
+        "en": "Go to a location given its coordinates",
+        "es": "Ir a un lugar dado sus coordenadas",
+        "fr": "Aller à un point de coordonnées données",
+        "de": "Gehen Sie zu einem Ort, der seine Koordinaten gibt"
+    }
+}]
