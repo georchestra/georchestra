@@ -24,6 +24,7 @@ We currently have the following addons available:
  * [notes](notes/README.md) to report map issues.
  * [atlas](atlas/README.md) allows users to print PDF with one feature per page.
  * [coordinates](coordinates/README.md) to let the user copy location coordinates.
+ * [goto](goto/README.md) allows users to recenter the map on a location, given its coordinates.
 
 
 Finding more addons
