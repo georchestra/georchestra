@@ -158,6 +158,9 @@ public class StatisticsController {
 	private SimpleDateFormat dbMonthOutputFormatter;
 	private SimpleDateFormat dbDayInputFormatter;
 
+	private static final int USAGE_TYPE = 0;
+	private static final int EXTRACTION_TYPE = 1;
+
 	public StatisticsController(String localTimezone) {
 
 		// Used to convert from one timezone to another
@@ -331,7 +334,7 @@ public class StatisticsController {
 	}
 
 	/**
-	 * Gets statistics for layers consumption. May be filtered by a user or a group.
+	 * Gets statistics for layers consumption. May be filtered by a user or a group and limited.
 	 *
 	 * @param payload the JSON object containing the input parameters
 	 * @param response the HttpServletResponse object.
@@ -342,49 +345,94 @@ public class StatisticsController {
 	@RequestMapping(value="/layersUsage", method=RequestMethod.POST, produces= "application/json; charset=utf-8")
 	@ResponseBody
 	public String layersUsage(@RequestBody String payload, HttpServletResponse response) throws JSONException {
-		JSONObject input = null;
-		String userId  = null, groupId = null;
+		return this.generateStats(payload, USAGE_TYPE, response);
+	}
+
+	/**
+	 * Gets statistics for layers extraction. May be filtered by a user or a group and limited.
+	 *
+	 * @param payload the JSON object containing the input parameters
+	 * @param response the HttpServletResponse object.
+	 * @return a JSON string containing the requested aggregated statistics.
+	 *
+	 * @throws JSONException
+	 */
+	@RequestMapping(value="/layersExtraction", method=RequestMethod.POST, produces= "application/json; charset=utf-8")
+	@ResponseBody
+	public String layersExtraction(@RequestBody String payload, HttpServletResponse response) throws JSONException {
+		return this.generateStats(payload, EXTRACTION_TYPE, response);
+	}
+
+	private String generateStats(String payload, int type, HttpServletResponse response) throws JSONException {
+
+		JSONObject input;
+		String userId, groupId;
 		Date startDate, endDate;
-		int limit = -1;
+		Integer limit;
 
 		try {
 			input = new JSONObject(payload);
-			if (!input.has("startDate") || !input.has("endDate")) {
+			if (this.getStartDate(input) == null || this.getEndDate(input) == null) {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return null;
 			}
 
-			startDate = this.convertLocalDateToUTC(input.getString("startDate"));
-			endDate = this.convertLocalDateToUTC(input.getString("endDate"));
-			if (input.has("limit")) {
-				limit = input.getInt("limit");
-			}
-			if (input.has("user")) {
-				userId = input.getString("user");
-			}
-			if (input.has("group")) {
-				groupId = "ROLE_" + input.getString("group");
-			}
+			startDate = this.getStartDate(input);
+			endDate = this.getEndDate(input);
+			limit = this.getLimit(input);
+			userId = this.getUser(input);
+			groupId = this.getGroup(input);
+
 		} catch (Throwable e) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return null;
 		}
 		List lst = null;
 		if (userId != null) {
-			if (limit > 0)
-				lst = statsRepository.getLayersStatisticsForUserLimit(userId, startDate, endDate, limit);
+			if (limit != null)
+				switch (type) {
+					case EXTRACTION_TYPE:
+						lst = statsRepository.getLayersExtractionForUserLimit(userId, startDate, endDate, limit); break;
+					case USAGE_TYPE:
+						lst = statsRepository.getLayersStatisticsForUserLimit(userId, startDate, endDate, limit); break;
+				}
 			else
-				lst = statsRepository.getLayersStatisticsForUser(userId, startDate, endDate);				
+				switch (type) {
+					case EXTRACTION_TYPE:
+						lst = statsRepository.getLayersExtractionForUser(userId, startDate, endDate); break;
+					case USAGE_TYPE:
+						lst = statsRepository.getLayersStatisticsForUser(userId, startDate, endDate); break;
+				}
 		} else if (groupId != null) {
-			if (limit > 0)
-				lst = statsRepository.getLayersStatisticsForGroupLimit(groupId, startDate, endDate, limit);
+			if (limit != null)
+				switch (type) {
+					case EXTRACTION_TYPE:
+						lst = statsRepository.getLayersExtractionForGroupLimit(groupId, startDate, endDate, limit); break;
+					case USAGE_TYPE:
+						lst = statsRepository.getLayersStatisticsForGroupLimit(groupId, startDate, endDate, limit); break;
+				}
 			else
-				lst = statsRepository.getLayersStatisticsForGroup(groupId, startDate, endDate);				
+				switch (type) {
+					case EXTRACTION_TYPE:
+						lst = statsRepository.getLayersExtractionForGroup(groupId, startDate, endDate); break;
+					case USAGE_TYPE:
+						lst = statsRepository.getLayersStatisticsForGroup(groupId, startDate, endDate); break;
+				}
 		} else {
-			if (limit > 0)
-				lst = statsRepository.getLayersStatisticsLimit(startDate, endDate, limit);
+			if (limit != null)
+				switch (type) {
+					case EXTRACTION_TYPE:
+						lst = statsRepository.getLayersExtractionLimit(startDate, endDate, limit); break;
+					case USAGE_TYPE:
+						lst = statsRepository.getLayersStatisticsLimit(startDate, endDate, limit); break;
+				}
 			else
-				lst = statsRepository.getLayersStatistics(startDate, endDate);							
+				switch (type) {
+					case EXTRACTION_TYPE:
+						lst = statsRepository.getLayersExtraction(startDate, endDate); break;
+					case USAGE_TYPE:
+						lst = statsRepository.getLayersStatistics(startDate, endDate); break;
+				}
 		}
 		JSONArray results = new JSONArray();
 		for (Object o : lst) {
@@ -394,7 +442,10 @@ public class StatisticsController {
 		return new JSONObject().put("results", results)
 				.toString(4);
 	}
-	
+
+
+
+
 	/**
 	 * Gets the statistics by distinct users (number of requests between
 	 * beginDate and endDate).
@@ -532,6 +583,43 @@ public class StatisticsController {
 		return outputFormatter.format(date);
 
 	}
+
+	private String getGroup(JSONObject payload) throws JSONException {
+		if(payload.has("group"))
+			return "ROLE_" + payload.getString("group");
+		else
+			return null;
+	}
+
+	private String getUser(JSONObject payload) throws JSONException {
+		if(payload.has("user"))
+			return payload.getString("user");
+		else
+			return null;
+	}
+
+	private Integer getLimit(JSONObject payload) throws JSONException {
+		if(payload.has("limit"))
+			return payload.getInt("limit");
+		else
+			return null;
+	}
+
+	private Date getDateField(JSONObject payload, String field) throws JSONException, ParseException {
+		if(payload.has(field))
+			return this.convertLocalDateToUTC(payload.getString(field));
+		else
+			return null;
+	}
+
+	private Date getStartDate(JSONObject payload) throws JSONException, ParseException {
+		return this.getDateField(payload, "startDate");
+	}
+
+	private Date getEndDate(JSONObject payload) throws JSONException, ParseException {
+		return this.getDateField(payload, "endDate");
+	}
+
 }
 
 
