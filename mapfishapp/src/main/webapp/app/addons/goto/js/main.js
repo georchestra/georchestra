@@ -92,7 +92,7 @@ GEOR.Addons.Goto = Ext.extend(GEOR.Addons.Base, {
         return {
             xtype: "form",
             border: false,
-            title: tr("goto.title"),
+            title: OpenLayers.i18n("goto.title"),
             defaults: {
                 border: false
             },
