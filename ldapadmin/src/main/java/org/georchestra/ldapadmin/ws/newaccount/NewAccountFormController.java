@@ -164,7 +164,7 @@ public final class NewAccountFormController {
 
 
 		// Create org if needed
-		if(formBean.getCreateOrg()){
+		if(formBean.getCreateOrg() && ! result.hasErrors()){
 			try {
 
 				Org org = new Org();
