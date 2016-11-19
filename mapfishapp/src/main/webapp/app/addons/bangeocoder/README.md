@@ -1,18 +1,41 @@
-BAN Geocoder ADDON
-==================
+# BAN Geocoder ADDON
 
-**** This addon allows user to search adress from BAN service in France. 
+This addon allows users to search for an address from the French "BAN" service ("BAN" stands for "Base Adresse Nationale"). 
 Ex : https://adresse.data.gouv.fr/api/
 
-**** This addon use autocompletion service (GET method) with 3 parameters : 
- service URL : http://api-adresse.data.gouv.fr/search/?
- search value : "q=8 bd du port"
- limit of responses (is set to 5 by default) : "limit=5"  
-Ex : http://api-adresse.data.gouv.fr/search/?q=8 bd du port&limit=5
+Authors: @PierreJ & @GaetanB
 
-**** The service return GeoJSON like that :
+The addon config should look like this:
 
-    /!\ Default SRS code is EPSG:4326 /!\
+```json
+[{
+    "id": "bangeocoder_0",
+    "name": "BANGeocoder",
+    "enabled": true,
+    "title": {
+        "en": "Recherche d'adresse",
+        "es": "Recherche d'adresse",
+        "fr": "Recherche d'adresse"
+    },
+    "description": {
+        "en": "Recherche d'adresses dans la Base d'Addresse National (France)",
+        "es": "Recherche d'adresses dans la Base d'Addresse National (France)",
+        "fr": "Recherche d'adresses dans la Base d'Addresse National (France)"
+    },
+    "options": {
+        "limitResponse": 5
+    }
+}]
+```
+
+This addon uses the "BAN" autocompletion service (service URL: http://api-adresse.data.gouv.fr/search/) with 2 parameters: 
+ * search value: "q=8 bd du port"
+ * limit the number of responses (is set to 5 by default) : "limit=5"
+
+Eg: http://api-adresse.data.gouv.fr/search/?q=8%20bd%20du%20port&limit=5
+
+The service returns a GeoJSON string like:
+```json
 {
     "attribution": "BAN",
     "licence": "ODbL 1.0",
@@ -57,44 +80,4 @@ Ex : http://api-adresse.data.gouv.fr/search/?q=8 bd du port&limit=5
         "type": "Feature"
     }]
 }
-
--------------------
-**** config.json file
-
-the addon config should look like this:
-
-[{
-    "id": "bangeocoder_0",
-    "name": "BANGeocoder",
-    "enabled": true,
-    "title": {
-        "en": "Adress recentering",
-        "es": "Adress recentering",
-        "fr": "Recherche d'adresse"
-    },
-    "description": {
-        "en": "Adress recentering",
-        "es": "Adress recentering",
-        "fr": "Recherche d'adresses dans la Base d'Addresse National (France)"
-    },
-    "options": {
-        "limitResponse": 5
-    }
-}]
-
-
-**** To change service set "the geocodeServiceUrl". 
-    
-    /!\/!\/!\ Warning /!\/!\/!\  
-    The fields store are compatible only with the response of the default URL. 
-    You need to adapt store and _onComboSelect method to get correct responses and correct geometry.
-     
-**** To get more than 5 responses, set the "limitResponse". If not set, service return 5 results.
-
--------------------
-**** manifest.json file
-
-to set traduction value, modify this file. 
-
---------------------
-authors : Gfi Informatique - @PierreJ & @GaetanB
+```
