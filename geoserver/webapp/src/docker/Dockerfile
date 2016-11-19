@@ -22,6 +22,8 @@ CMD ["sh", "-c", "exec java -Djava.io.tmpdir=/tmp/jetty \
 -DGEOWEBCACHE_CACHE_DIR=/var/local/tiles \
 -Dhttps.protocols=TLSv1,TLSv1.1,TLSv1.2 \
 -Xms$XMS -Xmx$XMX \
+-XX:SoftRefLRUPolicyMSPerMB=36000 \
+-XX:+UseParallelGC \
 -XX:-UsePerfData \
 ${JAVA_OPTIONS} \
 -jar /usr/local/jetty/start.jar" ]
