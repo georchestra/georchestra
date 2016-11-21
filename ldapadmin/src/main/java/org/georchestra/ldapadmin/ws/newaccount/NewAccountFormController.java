@@ -90,9 +90,6 @@ public final class NewAccountFormController {
 
 	private Validation validation;
 
-	private static final String[] fields = {"firstName","surname", "email", "phone", "org", "title", "description",
-			"uid", "password", "confirmPassword", "createOrg", "orgName", "orgShortName", "orgAddress", "orgType"};
-
 	@Autowired
 	public NewAccountFormController(AccountDao dao, OrgsDao orgDao, MailService mailSrv, Moderator moderatorRule,
 									ReCaptcha reCaptcha, ReCaptchaParameters reCaptchaParameters, Validation validation) {
@@ -107,7 +104,9 @@ public final class NewAccountFormController {
 
 	@InitBinder
 	public void initForm(WebDataBinder dataBinder) {
-		dataBinder.setAllowedFields(ArrayUtils.addAll(fields,
+		dataBinder.setAllowedFields(ArrayUtils.addAll(new String[]{"firstName","surname", "email", "phone",
+				"org", "title", "description", "uid", "password", "confirmPassword", "createOrg", "orgName",
+				"orgShortName", "orgAddress", "orgType", "orgCities"},
 		        new String[]{"recaptcha_challenge_field", "recaptcha_response_field"}));
 	}
 
@@ -123,9 +122,13 @@ public final class NewAccountFormController {
 		model.addAttribute("orgTypes", this.getOrgTypes());
 
 		session.setAttribute("reCaptchaPublicKey", this.reCaptchaParameters.getPublicKey());
-		for(String f : fields)
-			if (this.validation.isUserFieldRequired(f))
-				session.setAttribute(f + "Required", "true");
+		for(String f: this.validation.getRequiredUserFields())
+			session.setAttribute(f + "Required", "true");
+
+		// Convert to camelcase with 'org' prefix 'shortName' --> 'orgShortName'
+		for(String f: this.validation.getRequiredOrgFields())
+			session.setAttribute("org" + f.substring(0, 1).toUpperCase() + f.substring(1, f.length()) + "Required",
+					"true");
 
 		return "createAccountForm";
 	}
