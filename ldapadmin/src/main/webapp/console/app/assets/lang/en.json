@@ -1,6 +1,7 @@
 {
   "nav.dashboard"       : "Dashboard",
   "nav.users"           : "Users",
+  "nav.orgs"            : "Organisms",
   "nav.analytics"       : "Analytics",
   "nav.logs"            : "Logs",
 
@@ -20,6 +21,7 @@
   "tab.messages"        : "Messages",
   "tab.logs"            : "Logs",
   "tab.manage"          : "Manage",
+  "tab.area"            : "Area",
 
   "user.userlist"       : "All users",
   "user.updated"        : "User updated",
@@ -48,6 +50,34 @@
   "user.title"          : "Title",
   "user.lastcontext"    : "Last context",
   "user.warning"        : "Warning, this action is irreversible — ",
+  "user.pendingmsg"     : "Pending user ",
+  "user.confirm"        : "Confirm",
+  "user.orgFirst"       : "Confirm organism first : ",
+
+  "orgs.title"          : "organisms",
+  "orgs.allorgs"        : "All orgs",
+  "orgs.pending"        : "Pending",
+  "orgs.neworg"         : "New org",
+  "orgs.filter_orgs"    : "Filter",
+
+  "org.name"            : "Name",
+  "org.shortName"       : "Short name",
+  "org.type"            : "Type",
+  "org.address"         : "Address",
+  "org.save"            : "Save",
+  "org.updated"         : "Organism updated",
+  "org.deleted"         : "Organism deleted",
+  "org.created"         : "Organism created",
+  "org.error"           : "Error while saving organism",
+  "org.warning"         : "Warning, this action is irreversible — ",
+  "org.delete"          : "Delete organism",
+  "org.orglist"         : "All orgs",
+  "org.pendingmsg"      : "Pending organism",
+  "org.confirm"         : "Confirm",
+
+  "area.save"           : "Save area",
+  "area.updated"        : "Area updated",
+  "area.error"          : "Error saving area",
 
   "group.allusers"      : "All users",
   "group.system"        : "System roles",

@@ -250,7 +250,7 @@ public class OrgsController {
      * A new JSON document will be return to browser with a complete description of created org. @see updateOrgInfos()
      * for JSON format.
      */
-    @RequestMapping(value = REQUEST_MAPPING, method = RequestMethod.PUT)
+    @RequestMapping(value = REQUEST_MAPPING, method = RequestMethod.POST)
     public void createOrg(HttpServletRequest request, HttpServletResponse response) throws IOException, JSONException {
 
         try {

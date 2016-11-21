@@ -1,11 +1,11 @@
 <section class="users">
 
-  <groups class="col-md-4 groups" groups="users.groups" active-promise="users.activePromise"></groups>
+  <groups class="col-md-4 groups aside" groups="users.groups" active-promise="users.activePromise"></groups>
 
   <div class="col-md-8">
 
-    <input type="text" class="filter-users form-control pull-right" ng-model="users.q" placeholder="{{'group.filter_users' | translate}}"></input>
-    <i class="glyphicon glyphicon-remove-sign" ng-show="users.q != ''" ng-click="users.q = ''"></i>
+    <input type="text" class="filter-table form-control pull-right" ng-model="users.q" placeholder="{{'group.filter_users' | translate}}"></input>
+    <i class="glyphicon glyphicon-remove-sign filter-table-reset" ng-show="users.q != ''" ng-click="users.q = ''"></i>
     <h3 ng-if="!users.activeGroup" class="groups-title">{{users.users.length}} <span translate>group.users</span></h3>
     <h3 ng-if="users.activeGroup" class="groups-title">
       {{users.activeGroup.cn}}

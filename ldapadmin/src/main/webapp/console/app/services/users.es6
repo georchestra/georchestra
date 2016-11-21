@@ -2,9 +2,9 @@ angular.module('admin_console')
 .factory('User', ['$resource', 'LDAP_BASE_URI', ($resource, baseUri) =>
   $resource(baseUri + 'users/:id', { id: '@uid' }, {
     query: {
-      cache   : true,
-      method  : 'GET',
-      isArray : true
+      cache: true,
+      method: 'GET',
+      isArray: true
     },
     get: {
       cache: true
@@ -16,16 +16,20 @@ angular.module('admin_console')
 ]).factory('Email', ['$resource', 'LDAP_BASE_URI', ($resource, baseUri) =>
   $resource(baseUri + '../:id/emails', { id: '@id' }, {
     query: {
-      method  : 'GET',
+      method: 'GET',
       isArray: false
     }
   })
-]).factory('Orgs', ['$resource', 'LDAP_BASE_URI', ($resource, baseUri) =>
-    $resource(baseUri + 'orgs', {}, {
-        query: {
-            cache: true,
-            method:'GET',
-            isArray:true
-        }
-    })
+]).factory('UserRequired', ['$resource', 'LDAP_PUBLIC_URI', ($resource, baseUri) =>
+  $resource(baseUri + 'users/requiredFields', {}, {
+    get: {
+      method: 'GET',
+      cache: true,
+      transformResponse: (data) => {
+        let response = {}
+        JSON.parse(data).forEach(key => { response[key] = true })
+        return response
+      }
+    }
+  })
 ])

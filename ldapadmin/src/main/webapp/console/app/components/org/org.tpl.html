@@ -1,0 +1,51 @@
+<section class="org">
+
+  <h4>
+    <a ng-link="orgs({'org': 'all'})" translate>org.orglist</a>
+    <span>/</span>
+    {{::org.org.name}}
+  </h4>
+
+  <hr>
+
+  <div class="col-md-2">
+    <ul class="nav nav-pills nav-stacked">
+      <li ng-repeat="tab in org.tabs" ng-class="{active: org.tab==tab}">
+        <a ng-link="org({org: org.org.id, tab: tab})">{{ 'tab.' + tab | translate}}</a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="col-md-10">
+
+    <div class="panel panel-default" ng-class="{'panel-danger': org.org.status !== 'REGISTERED'}">
+
+      <div class="panel-heading text-center" ng-if="org.org.status !== 'REGISTERED'">
+        <span translate>org.pendingmsg</span>
+        <button class="btn btn-default" ng-click="org.confirm()" translate>org.confirm</button>
+      </div>
+
+      <div class="panel-body" ng-if="org.tab=='infos'">
+        <div ng-inline="templates/orgForm.tpl.html"
+          ng-init="model=org.org;promise=org.org.$promise;required=org.required;orgTypeValues=org.orgTypeValues"></div>
+        <hr>
+        <div class="pull-right">
+          <button ng-click="org.save()" class="btn btn-primary" translate>org.save</button>
+        </div>
+      </div>
+
+      <div class="panel-body" ng-if="org.tab=='area'">
+        <areas item="org.org"></areas>
+      </div>
+
+      <div class="panel-body" ng-if="org.tab=='manage'">
+        <div class="alert alert-danger clearfix">
+          <i class="glyphicon glyphicon-exclamation-sign"></i>
+          <span translate>org.warning</span>
+          <button  ng-click="org.delete()" class="btn btn-danger" translate>org.delete</button>
+        </div>
+      </div>
+
+  </div>
+
+</section>
