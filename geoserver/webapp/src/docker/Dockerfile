@@ -23,6 +23,7 @@ CMD ["sh", "-c", "exec java -Djava.io.tmpdir=/tmp/jetty \
 -DENABLE_JSONP=true \
 -DENABLE_ADVANCED_PROJECTION=false \
 -Dhttps.protocols=TLSv1,TLSv1.1,TLSv1.2 \
+-Dorg.geotools.image.reduceWarpAffine=false \
 -Xms$XMS -Xmx$XMX \
 -XX:SoftRefLRUPolicyMSPerMB=36000 \
 -XX:+UseParallelGC \
