@@ -21,7 +21,6 @@ CMD ["sh", "-c", "exec java -Djava.io.tmpdir=/tmp/jetty \
 -DGEOSERVER_DATA_DIR=/var/local/geoserver \
 -DGEOWEBCACHE_CACHE_DIR=/var/local/tiles \
 -DENABLE_JSONP=true \
--DENABLE_ADVANCED_PROJECTION=false \
 -Dhttps.protocols=TLSv1,TLSv1.1,TLSv1.2 \
 -Dorg.geotools.image.reduceWarpAffine=false \
 -Xms$XMS -Xmx$XMX \
