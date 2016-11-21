@@ -559,8 +559,8 @@ public class UsersController {
     public void getUserRequiredFields(HttpServletResponse response) throws IOException{
         try {
             JSONArray fields = new JSONArray();
-            for(String field : this.validation.getRequiredUserFields())
-                fields.put(field);
+			fields.put("uid");
+			fields.put("mail");
             ResponseUtil.buildResponse(response, fields.toString(4), HttpServletResponse.SC_OK);
         } catch (Exception e) {
             LOG.error(e.getMessage());

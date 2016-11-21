@@ -540,3 +540,7 @@ date {
     transform: rotate(359deg);
   }
 }
+
+input.ng-invalid {
+  border-color: red;
+}

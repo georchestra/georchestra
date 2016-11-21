@@ -330,8 +330,7 @@ public class OrgsController {
     public void getUserRequiredFields(HttpServletResponse response) throws IOException{
         try {
             JSONArray fields = new JSONArray();
-            for(String field : this.validation.getRequiredOrgFields())
-                fields.put(field);
+            fields.put("name");
             ResponseUtil.buildResponse(response, fields.toString(4), HttpServletResponse.SC_OK);
         } catch (Exception e) {
             LOG.error(e.getMessage());
