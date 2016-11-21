@@ -118,7 +118,6 @@
   "users.organization"    : "Organization",
   "users.email"           : "Mail",
 
-
   "msg.compose"           : "Compose message",
   "msg.date"              : "Date",
   "msg.subject"           : "Subject",
@@ -159,6 +158,7 @@
   "analytics.WEEK"        : "per week",
   "analytics.MONTH"       : "per month",
   "analytics.HOUR"        : "per hour",
+  "analytics.extraction"  : "Layers extractions",
 
   "date.day"              : "Today",
   "date.week"             : "Last week",

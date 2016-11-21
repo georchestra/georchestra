@@ -158,6 +158,7 @@
   "analytics.WEEK"        : "par semaine",
   "analytics.MONTH"       : "par mois",
   "analytics.HOUR"        : "par heure",
+  "analytics.extraction"  : "Extractions des couches",
 
   "date.day"              : "Aujourd’hui",
   "date.week"             : "Dernière semaine",

@@ -26,8 +26,9 @@ class AnalyticsController {
 
     this.data = {}
     this.config = {
-      layers: [ 'layer', 'count' ],
-      requests: [ 'date', 'count' ]
+      layers     : [ 'layer', 'count' ],
+      requests   : [ 'date', 'count' ],
+      extraction : [ 'layer', 'count' ]
     }
 
     this.load((this.group !== 'all') ? this.group : undefined)
@@ -50,10 +51,14 @@ class AnalyticsController {
       options.group = group
     }
 
-    this.requests = Analytics.get(options, () => {}, err)
+    this.requests   = Analytics.get(options, () => {}, err)
     options.service = 'layersUsage'
-    options.limit = 10
-    this.layers = Analytics.get(options, () => {}, err)
+
+    options.limit   = 10
+    this.layers     = Analytics.get(options, () => {}, err)
+    
+    options.service = 'layersExtraction'
+    this.extraction = Analytics.get(options, () => {}, err) 
   }
 
   setGroup () {
