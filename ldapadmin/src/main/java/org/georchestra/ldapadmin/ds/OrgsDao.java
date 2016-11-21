@@ -91,7 +91,7 @@ public class OrgsDao {
      */
     public List<Org> findValidated(){
         EqualsFilter classFilter = new EqualsFilter("objectClass", "groupOfMembers");
-        EqualsFilter validatedFilter = new EqualsFilter("businessCategory", "VALID");
+        EqualsFilter validatedFilter = new EqualsFilter("businessCategory", Org.STATUS_REGISTERED);
         AndFilter filter = new AndFilter();
         filter.and(classFilter);
         filter.and(validatedFilter);
