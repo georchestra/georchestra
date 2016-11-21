@@ -46,7 +46,6 @@ public class NewAccountFormControllerTest {
     private ReCaptchaParameters rep = new ReCaptchaParameters();
     private ReCaptchaResponse rer = Mockito.mock(ReCaptchaResponse.class);
     private MockHttpServletRequest request = new MockHttpServletRequest();
-    private LdapTemplate ldapTemplate = Mockito.mock(LdapTemplate.class);
     private Model UiModel = Mockito.mock(Model.class);
 
 
@@ -58,8 +57,6 @@ public class NewAccountFormControllerTest {
     SessionStatus status = Mockito.mock(SessionStatus.class);
 
     private void configureLegitFormBean() {
-        Validation v = new Validation("uid,firstName,email,password");
-
         Mockito.when(formBean.getUid()).thenReturn("1");
         Mockito.when(formBean.getFirstName()).thenReturn("test");
         Mockito.when(formBean.getSurname()).thenReturn("test");

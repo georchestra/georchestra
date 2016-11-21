@@ -4,13 +4,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runners.JUnit4;
-import org.springframework.validation.Errors;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class ValidationTest {
