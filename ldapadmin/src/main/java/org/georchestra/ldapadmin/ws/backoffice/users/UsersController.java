@@ -717,7 +717,7 @@ public class UsersController {
 		String org           = RequestUtil.getFieldValue(json, UserSchema.ORG_KEY);
 
 		if(givenName == null)
-			throw new IllegalArgumentException("fFirst Name is required");
+			throw new IllegalArgumentException("First Name is required");
 
 		if(surname == null)
 			throw new IllegalArgumentException("Last Name is required");
