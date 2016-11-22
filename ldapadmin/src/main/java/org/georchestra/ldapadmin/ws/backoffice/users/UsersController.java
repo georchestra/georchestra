@@ -163,6 +163,7 @@ public class UsersController {
 				jsonAccount.put(UserSchema.GIVEN_NAME_KEY, account.getGivenName());
 				jsonAccount.put(UserSchema.SURNAME_KEY, account.getSurname());
 				jsonAccount.put(UserSchema.ORG_KEY, orgNames.get(account.getOrg()));
+				jsonAccount.put(UserSchema.MAIL_KEY, account.getEmail());
 				res.put(jsonAccount);
 			}
 
