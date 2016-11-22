@@ -16,6 +16,7 @@ class UserController {
     translate('user.error', this.i18n)
     translate('user.deleted', this.i18n)
     translate('user.content', this.i18n)
+    translate('org.select', this.i18n)
 
     this.tabs = ['infos', 'groups', 'analytics', 'messages', 'logs', 'manage']
     this.tab = $routeParams.tab
@@ -45,7 +46,7 @@ class UserController {
             })
           })
           $('#organization').select2({
-            placeholder: 'Select an organization',
+            placeholder: this.i18n.select,
             allowClear: true,
             data: selOrgs
           })
@@ -250,6 +251,7 @@ class UserController {
     let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
     let flash = this.$injector.get('Flash')
 
+
     let saveGroups = function (newVal, oldVal) {
       if (!newVal || !oldVal) { return }
       let removeTmp = g => g !== TMP_GROUP
@@ -262,6 +264,10 @@ class UserController {
       if (toPut.length === 0 && toDel.length === 0) { return }
       if (toPut.length > 1 && toDel.length === 0) { return } // Wrong artifacts
 
+      let i18n = {}
+      this.$injector.get('translate')('users.roleUpdated', i18n)
+      this.$injector.get('translate')('users.roleUpdateError', i18n)
+
       this.groupPromise = this.$injector.get('GroupsUsers').save(
         {
           users: [ this.user.uid ],
@@ -269,7 +275,7 @@ class UserController {
           DELETE: toDel
         },
         () => {
-          flash.create('success', 'Roles updated')
+          flash.create('success', i18n.roleUpdated)
           $httpDefaultCache.removeAll()
         },
         flash.create.bind(flash, 'danger', 'Error associating to roles')

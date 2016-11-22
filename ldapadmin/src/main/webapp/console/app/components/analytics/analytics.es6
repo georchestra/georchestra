@@ -28,9 +28,12 @@ class AnalyticsController {
   }
 
   load(group) {
+    let i18n = {}
+    this.$injector.get('translate')('analytics.errorload', i18n)
+    this.$injector.get('translate')('users.roleUpdateError', i18n)
     let Flash     = this.$injector.get('Flash')
     let Analytics = this.$injector.get('Analytics')
-    let err       = Flash.create.bind(Flash, 'danger', 'Error loading data')
+    let err       = Flash.create.bind(Flash, 'danger', i18n.errorload)
 
     let options = {
       service   : 'combinedRequests',

@@ -29,7 +29,7 @@
   <a ng-if="groups.enableBack" class="btn btn-default btn-xs" ng-link="users({id: groups.prefix.parent})">
     «
   </a>
-  <span ng-if="groups.enableBack">{{groups.prefix.cn || 'Tous'}}</span>
+  <span ng-if="groups.enableBack">{{groups.prefix.cn || 'group.all' | translate }}</span>
 
   <div ng-repeat="group in groups.tree" ng-if="groups.filter(group, groups.activeGroup)">
 
