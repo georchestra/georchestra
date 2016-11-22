@@ -231,7 +231,7 @@ public class UsersControllerTest {
         JSONObject ret = new JSONObject(response.getContentAsString());
         assertTrue(response.getStatus() == HttpServletResponse.SC_CONFLICT);
         assertFalse(ret.getBoolean("success"));
-        assertTrue(ret.getString("error").equals("givenName is required"));
+        assertTrue(ret.getString("error").equals("First Name is required"));
     }
 
     @Test
