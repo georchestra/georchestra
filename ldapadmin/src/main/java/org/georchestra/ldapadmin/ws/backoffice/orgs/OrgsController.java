@@ -35,7 +35,6 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -83,54 +82,37 @@ public class OrgsController {
      * @throws IOException
      */
     @RequestMapping(value = REQUEST_MAPPING, method = RequestMethod.GET)
-    public void findAll(HttpServletResponse response) throws IOException {
+    public void findAll(HttpServletResponse response) throws IOException, JSONException {
 
-        try {
-            List<Org> orgs = this.orgDao.findAll();
-            JSONArray res = new JSONArray();
-            for (Org org : orgs)
-                res.put(org.toJson());
+        List<Org> orgs = this.orgDao.findAll();
+        JSONArray res = new JSONArray();
+        for (Org org : orgs)
+            res.put(org.toJson());
 
-            ResponseUtil.buildResponse(response, res.toString(4), HttpServletResponse.SC_OK);
-
-        } catch (Exception e) {
-            LOG.error(e.getMessage());
-            ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, e.getMessage()),
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-
-            throw new IOException(e);
-        }
-
-
+        ResponseUtil.buildResponse(response, res.toString(4), HttpServletResponse.SC_OK);
     }
 
     /**
      * Set organization for one user
      */
     @RequestMapping(value = REQUEST_MAPPING + "/{org}/{user:.+}", method = RequestMethod.POST)
-    public void addUserInOrg(@PathVariable String org, @PathVariable String user, HttpServletResponse response) throws IOException {
+    public void addUserInOrg(@PathVariable String org, @PathVariable String user, HttpServletResponse response)
+            throws IOException, DataServiceException {
 
-        try {
-            Org oldOrg = this.orgDao.findForUser(user);
-            if (oldOrg != null)
-                this.orgDao.removeUser(oldOrg.getId(), user);
-            this.orgDao.addUser(org, user);
+        Org oldOrg = this.orgDao.findForUser(user);
+        if (oldOrg != null)
+            this.orgDao.removeUser(oldOrg.getId(), user);
+        this.orgDao.addUser(org, user);
 
-            ResponseUtil.writeSuccess(response);
-
-        } catch (DataServiceException ex){
-            LOG.error(ex.getMessage());
-            ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, ex.getMessage()),
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
-
+        ResponseUtil.writeSuccess(response);
     }
 
     /**
      * Remove user from organization
      */
     @RequestMapping(value = REQUEST_MAPPING + "/{org}/{user:.+}", method = RequestMethod.DELETE)
-    public void removeUserfromOrg(@PathVariable String org, @PathVariable String user, HttpServletResponse response) throws IOException {
+    public void removeUserfromOrg(@PathVariable String org, @PathVariable String user, HttpServletResponse response)
+            throws IOException {
         this.orgDao.removeUser(org, user);
         ResponseUtil.writeSuccess(response);
     }
@@ -150,21 +132,11 @@ public class OrgsController {
      *
      */
     @RequestMapping(value = REQUEST_MAPPING + "/{cn}", method = RequestMethod.GET)
-    public void getOrgInfos(@PathVariable String cn, HttpServletResponse response) throws IOException {
-
-        try {
-            Org org = this.orgDao.findByCommonName(cn);
-            OrgExt orgExt = this.orgDao.findExtById(cn);
-            JSONObject res = this.encodeToJson(org, orgExt);
-            ResponseUtil.buildResponse(response, res.toString(4), HttpServletResponse.SC_OK);
-        } catch (Exception e) {
-            LOG.error(e.getMessage());
-            ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, e.getMessage()),
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-
-            throw new IOException(e);
-        }
-
+    public void getOrgInfos(@PathVariable String cn, HttpServletResponse response) throws IOException, JSONException {
+        Org org = this.orgDao.findByCommonName(cn);
+        OrgExt orgExt = this.orgDao.findExtById(cn);
+        JSONObject res = this.encodeToJson(org, orgExt);
+        ResponseUtil.buildResponse(response, res.toString(4), HttpServletResponse.SC_OK);
     }
 
 
@@ -211,37 +183,27 @@ public class OrgsController {
                                HttpServletRequest request, HttpServletResponse response)
             throws IOException, JSONException {
 
-        try {
-            // Parse Json
-            JSONObject json = this.parseRequest(request, response);
+        // Parse Json
+        JSONObject json = this.parseRequest(request);
 
-            // Validate request against required fields for admin part
-            if (!this.validation.validateOrgField("name", json))
-                throw new IOException("required field : name");
+        // Validate request against required fields for admin part
+        if (!this.validation.validateOrgField("name", json))
+            throw new IOException("required field : name");
 
-            // Retrieve current orgs state from ldap
-            Org org = this.orgDao.findByCommonName(commonName);
-            OrgExt orgExt = this.orgDao.findExtById(commonName);
+        // Retrieve current orgs state from ldap
+        Org org = this.orgDao.findByCommonName(commonName);
+        OrgExt orgExt = this.orgDao.findExtById(commonName);
 
-            // Update org and orgExt fields
-            this.updateFromRequest(org, json);
-            this.updateFromRequest(orgExt, json);
+        // Update org and orgExt fields
+        this.updateFromRequest(org, json);
+        this.updateFromRequest(orgExt, json);
 
-            // Persist changes to LDAP server
-            this.orgDao.update(org);
-            this.orgDao.update(orgExt);
+        // Persist changes to LDAP server
+        this.orgDao.update(org);
+        this.orgDao.update(orgExt);
 
-            // Regenerate json and send it to browser
-            this.returnOrgAsJSON(org, orgExt, response);
-
-        } catch (Exception e) {
-            LOG.error(e.getMessage());
-            ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, e.getMessage()),
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-
-            throw new IOException(e);
-        }
-
+        // Regenerate json and send it to browser
+        this.returnOrgAsJSON(org, orgExt, response);
     }
 
     /**
@@ -262,48 +224,37 @@ public class OrgsController {
      */
     @RequestMapping(value = REQUEST_MAPPING, method = RequestMethod.POST)
     public void createOrg(HttpServletRequest request, HttpServletResponse response) throws IOException, JSONException {
+        // Parse Json
+        JSONObject json = this.parseRequest(request);
 
-        try {
-            // Parse Json
-            JSONObject json = this.parseRequest(request, response);
+        // Validate request against required fields for admin part
+        if (!this.validation.validateOrgField("name", json))
+            throw new IOException("required field : name");
 
-            // Check required fields
-            for(String field : this.validation.getRequiredOrgFields())
-                if(!json.has(field) || !StringUtils.hasLength(json.getString(field)))
-                    throw new Exception(field + " required");
+        Org org = new Org();
+        OrgExt orgExt = new OrgExt();
 
-            Org org = new Org();
-            OrgExt orgExt = new OrgExt();
+        // Generate string identifier based on name
+        String id = this.orgDao.generateId(json.getString(Org.JSON_NAME));
+        org.setId(id);
+        orgExt.setId(id);
 
-            // Generate string identifier based on name
-            String id = this.orgDao.generateId(json.getString(Org.JSON_NAME));
-            org.setId(id);
-            orgExt.setId(id);
+        // Generate unique numeric identifier
+        orgExt.setNumericId(this.orgDao.generateNumericId());
 
-            // Generate unique numeric identifier
-            orgExt.setNumericId(this.orgDao.generateNumericId());
+        // Update org and orgExt fields
+        this.updateFromRequest(org, json);
+        this.updateFromRequest(orgExt, json);
 
-            // Update org and orgExt fields
-            this.updateFromRequest(org, json);
-            this.updateFromRequest(orgExt, json);
+        // Validate org
+        org.setStatus(Org.STATUS_REGISTERED);
 
-            // Validate org
-            org.setStatus(Org.STATUS_REGISTERED);
+        // Persist changes to LDAP server
+        this.orgDao.insert(org);
+        this.orgDao.insert(orgExt);
 
-            // Persist changes to LDAP server
-            this.orgDao.insert(org);
-            this.orgDao.insert(orgExt);
-
-            // Regenerate json and send it to browser
-            this.returnOrgAsJSON(org, orgExt, response);
-
-        } catch (Exception e) {
-            LOG.error(e.getMessage());
-            ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, e.getMessage()),
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-
-            throw new IOException(e);
-        }
+        // Regenerate json and send it to browser
+        this.returnOrgAsJSON(org, orgExt, response);
     }
 
 
@@ -313,18 +264,10 @@ public class OrgsController {
     @RequestMapping(value = REQUEST_MAPPING + "/{commonName}", method = RequestMethod.DELETE)
     public void deleteOrg(@PathVariable String commonName, HttpServletResponse response)
             throws IOException, JSONException {
-
-        try {
-            // delete entities in LDAP server
-            this.orgDao.delete(this.orgDao.findExtById(commonName));
-            this.orgDao.delete(this.orgDao.findByCommonName(commonName));
-            ResponseUtil.writeSuccess(response);
-        } catch (Exception e) {
-            LOG.error(e.getMessage());
-            ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, e.getMessage()),
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throw new IOException(e);
-        }
+        // delete entities in LDAP server
+        this.orgDao.delete(this.orgDao.findExtById(commonName));
+        this.orgDao.delete(this.orgDao.findByCommonName(commonName));
+        ResponseUtil.writeSuccess(response);
     }
 
     /**
@@ -337,17 +280,10 @@ public class OrgsController {
      * * 'type'
      */
     @RequestMapping(value = PUBLIC_REQUEST_MAPPING + "/requiredFields", method = RequestMethod.GET)
-    public void getUserRequiredFields(HttpServletResponse response) throws IOException{
-        try {
+    public void getUserRequiredFields(HttpServletResponse response) throws IOException, JSONException {
             JSONArray fields = new JSONArray();
             fields.put("name");
             ResponseUtil.buildResponse(response, fields.toString(4), HttpServletResponse.SC_OK);
-        } catch (Exception e) {
-            LOG.error(e.getMessage());
-            ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, e.getMessage()),
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throw new IOException(e);
-        }
     }
 
     /**
@@ -356,18 +292,11 @@ public class OrgsController {
      * return a JSON array with possible value
      */
     @RequestMapping(value = PUBLIC_REQUEST_MAPPING +"/orgTypeValues", method = RequestMethod.GET)
-    public void getOrgTypeVAlues(HttpServletResponse response) throws IOException{
-        try {
-            JSONArray fields = new JSONArray();
-            for(String field : this.orgDao.getOrgTypeValues())
-                fields.put(field);
-            ResponseUtil.buildResponse(response, fields.toString(4), HttpServletResponse.SC_OK);
-        } catch (Exception e) {
-            LOG.error(e.getMessage());
-            ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, e.getMessage()),
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throw new IOException(e);
-        }
+    public void getOrgTypeVAlues(HttpServletResponse response) throws IOException, JSONException {
+        JSONArray fields = new JSONArray();
+        for(String field : this.orgDao.getOrgTypeValues())
+            fields.put(field);
+        ResponseUtil.buildResponse(response, fields.toString(4), HttpServletResponse.SC_OK);
     }
 
     /**
@@ -561,35 +490,18 @@ public class OrgsController {
      * Parse request payload and return a JSON document
      *
      * @param request
-     * @param response used to send error to browser
      * @return JSON document corresponding to browser request
      * @throws IOException if error occurs during JSON parsing
      */
-    private JSONObject parseRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-        try {
-            return new JSONObject(FileUtils.asString(request.getInputStream()));
-        } catch (JSONException e) {
-            LOG.error(e.getMessage());
-            ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, e.getMessage()),
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throw new IOException(e);
-        }
-
+    private JSONObject parseRequest(HttpServletRequest request) throws IOException, JSONException {
+        return new JSONObject(FileUtils.asString(request.getInputStream()));
     }
 
 
-    private void returnOrgAsJSON(Org org, OrgExt orgExt, HttpServletResponse response) throws IOException {
-        try {
-            JSONObject res = this.encodeToJson(org, orgExt);
-            ResponseUtil.buildResponse(response, res.toString(4), HttpServletResponse.SC_OK);
-        } catch (Exception e) {
-            LOG.error(e.getMessage());
-            ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, e.getMessage()),
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-
-            throw new IOException(e);
-        }
+    private void returnOrgAsJSON(Org org, OrgExt orgExt, HttpServletResponse response)
+            throws IOException, JSONException {
+        JSONObject res = this.encodeToJson(org, orgExt);
+        ResponseUtil.buildResponse(response, res.toString(4), HttpServletResponse.SC_OK);
     }
 
 
