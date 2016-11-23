@@ -46,8 +46,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class OrgsController {
@@ -418,6 +421,57 @@ public class OrgsController {
                 HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         throw new IOException(e);
     }
+
+    /**
+     * Return distribution of orgs by org type as json array or CSV
+     *
+     * json array contains objects with following keys:
+     * - type : org type
+     * - count : count of org with specified type
+     *
+     * CSV contains two columns one for org type and second for count
+     *
+     */
+    @RequestMapping(value = BASE_MAPPING + "/orgsTypeDistribution.{format:(?:csv|json)}", method = RequestMethod.GET)
+    public void orgTypeDistribution(HttpServletResponse response,
+                                    @PathVariable String format) throws IOException, JSONException {
+
+        Map<String, Integer> distribution = new HashMap();
+
+        for (OrgExt org : this.orgDao.findAllExt()) {
+            try {
+                distribution.put(org.getOrgType(), distribution.get(org.getOrgType()) + 1);
+
+            } catch (NullPointerException e) {
+                distribution.put(org.getOrgType(), 1);
+            }
+        }
+
+        PrintWriter out = response.getWriter();
+
+        if(format.equalsIgnoreCase("csv")){
+            response.setContentType("text/csv");
+            response.setHeader("Content-Disposition", "attachment;filename=orgsTypeDistribution.csv");
+
+            out.println("organisation type, count");
+            for(String type : distribution.keySet())
+                out.println(type + "," + distribution.get(type));
+            out.close();
+
+        } else if(format.equalsIgnoreCase("json")){
+            response.setContentType("application/json");
+
+
+            JSONArray res = new JSONArray();
+            for(String type : distribution.keySet())
+                res.put(new JSONObject().put("type", type).put("count", distribution.get(type)));
+            out.println(res.toString(4));
+            out.close();
+
+        }
+
+    }
+
 
     /**
      * Update org instance based on field found in json object.

@@ -99,6 +99,17 @@ public class OrgsDao {
     }
 
     /**
+     * Search all organizations defined in ldap. this.orgsSearchBaseDN hold search path in ldap.
+     *
+     * @return list of organizations (ldap organization object)
+     */
+    public List<OrgExt> findAllExt(){
+        EqualsFilter filter = new EqualsFilter("objectClass", "organization");
+        return ldapTemplate.search(this.orgsSearchBaseDN, filter.encode(), new OrgsDao.OrgExtAttributesMapper());
+    }
+
+
+    /**
      * Search organization with 'commonName' as distinguish name
      * @param commonName distinguish name of organization for example : 'psc' to retrieve
      *                   'cn=psc,ou=orgs,dc=georchestra,dc=org'
