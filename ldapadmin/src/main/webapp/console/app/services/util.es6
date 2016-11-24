@@ -1,6 +1,5 @@
 angular.module('admin_console')
 .factory('date', () => {
-
   let format = 'YYYY-MM-DD'
 
   return {
@@ -25,10 +24,9 @@ angular.module('admin_console')
       return m.format(format)
     },
 
-    getDefault : () => moment().add(1, 'day').subtract(1, 'month').format(format),
+    getDefault: () => moment().add(1, 'day').subtract(1, 'month').format(format),
 
-    getEnd     : () => moment().add(1, 'day').format(format)
+    getEnd: () => moment().add(1, 'day').format(format)
 
   }
-
 })

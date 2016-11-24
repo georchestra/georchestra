@@ -251,7 +251,6 @@ class UserController {
     let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
     let flash = this.$injector.get('Flash')
 
-
     let saveGroups = function (newVal, oldVal) {
       if (!newVal || !oldVal) { return }
       let removeTmp = g => g !== TMP_GROUP

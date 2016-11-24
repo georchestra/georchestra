@@ -4,8 +4,7 @@ class DateController {
 
   static $inject = [ '$injector', '$scope', '$element' ]
 
-  constructor($injector, $scope, $element) {
-
+  constructor ($injector, $scope, $element) {
     this.date = $injector.get('date')
 
     this.options = [ 'day', 'week', 'month', '3month', 'year', 'custom' ].map(
@@ -25,13 +24,13 @@ class DateController {
       if (!this.option) { return }
       if (this.option.value == 'custom' && val != old) { this.callback() }
     }
-    $scope.$watch('date.model.start' , dateChanged)
-    $scope.$watch('date.model.end'   , dateChanged)
+    $scope.$watch('date.model.start', dateChanged)
+    $scope.$watch('date.model.end', dateChanged)
 
     $element.find('.input-daterange').datepicker({ format: 'yyyy-mm-dd' })
   }
 
-  change() {
+  change () {
     if (this.option.value !== 'custom') {
       this.model.start = this.date.getFromDiff(this.option.value)
     }
@@ -40,15 +39,14 @@ class DateController {
 
 }
 
-
 angular.module('admin_console').component('date', {
-  bindings     : {
-    model      : '=',
-    callback   : '&',
+  bindings: {
+    model: '=',
+    callback: '&'
   },
-  controller   : DateController,
-  controllerAs : 'date',
-  templateUrl  : 'components/date/date.tpl.html'
+  controller: DateController,
+  controllerAs: 'date',
+  templateUrl: 'components/date/date.tpl.html'
 })
 .directive('datepicker', () => ({
   require: 'ngModel',
