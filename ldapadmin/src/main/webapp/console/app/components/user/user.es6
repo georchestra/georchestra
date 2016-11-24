@@ -278,7 +278,9 @@ class UserController {
           flash.create('success', i18n.roleUpdated)
           $httpDefaultCache.removeAll()
         },
-        flash.create.bind(flash, 'danger', 'Error associating to roles')
+        () => {
+          flash.create('danger', i18n.roleUpdateError)
+        }
       )
     }
 

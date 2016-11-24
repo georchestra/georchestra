@@ -63,12 +63,13 @@ angular.module('admin_console', [
   '$translateProvider',
   '$locationProvider',
   'paginationTemplateProvider',
-  ($componentLoader, $translate, $location, paginationTemplate) => {
+  'LDAP_ROOT_URI',
+  ($componentLoader, $translate, $location, paginationTemplate, $uri) => {
     $componentLoader.setTemplateMapping(
     (name) => 'components/' + name + '/' + name + '.tpl.html')
     $translate
     .useSanitizeValueStrategy('escape')
-    .useStaticFilesLoader({ prefix: 'public/lang/', suffix: '.json' })
+    .useStaticFilesLoader({ prefix: $uri + 'console/public/lang/', suffix: '.json' })
     .determinePreferredLanguage()
     .fallbackLanguage('en')
     $location.html5Mode(false)

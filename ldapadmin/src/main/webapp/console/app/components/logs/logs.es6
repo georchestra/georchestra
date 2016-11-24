@@ -8,8 +8,8 @@ class LogsController {
 
     this.$injector = $injector
     this.itemsPerPage = 15
-
-    let msg   = 'Error while loading data'
+    let i18n = {}
+    this.$injector.get('translate')('logs.error',i18n)
 
     this.logs = $injector.get('Logs').query({
       limit : 100000,
@@ -19,9 +19,9 @@ class LogsController {
       this.senders = extract('admin')
       this.types   = extract('type')
       this.targets = extract('target')
-    }, $injector.get('Flash').create.bind(
-      $injector.get('Flash'), 'danger', msg, ''
-    ))
+    }, () => {
+      $injector.get('Flash').create('danger', i18n.error)
+    })
 
     this.date = {
       start : this.$injector.get('date').getDefault(),

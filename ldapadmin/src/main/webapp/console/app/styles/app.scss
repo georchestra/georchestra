@@ -1,8 +1,10 @@
 $lightblue: #009FE3;
+$error: #a94442;
 $border: #ddd;
 
 $tablet: 768px;
 $large: 992px;
+
 
 @media (min-width: $tablet) {
   .panel .panel-body {
@@ -538,5 +540,5 @@ date {
 }
 
 input.ng-invalid {
-  border-color: red;
+  border-color: $error;
 }
