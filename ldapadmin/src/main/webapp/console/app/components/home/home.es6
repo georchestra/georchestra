@@ -13,10 +13,10 @@ class HomeController {
 
     $injector.get('Group').query(groups => {
       groups.forEach(group => {
-        if (group.cn == PENDING) {
+        if (group.cn === PENDING) {
           this.pending = group
         }
-        if (group.cn == EXPIRED) {
+        if (group.cn === EXPIRED) {
           this.expired = group
         }
       })

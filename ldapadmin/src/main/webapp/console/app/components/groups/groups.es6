@@ -33,11 +33,11 @@ class GroupsController {
         // Store for quick access
         index[group.cn] = group
         // Set parent for each group
-        group.parent = (group && group.cn.indexOf('_') > 0) ?
-          group.cn.substr(0, group.cn.lastIndexOf('_')) : 'all'
+        group.parent = (group && group.cn.indexOf('_') > 0)
+          ? group.cn.substr(0, group.cn.lastIndexOf('_')) : 'all'
         // Initialize children
         group.children = group.children || []
-        if (group.cn.split('_').length == 1) {
+        if (group.cn.split('_').length === 1) {
           root.push(group)
         } else {
           index[group.parent].children.push(group)
@@ -47,12 +47,12 @@ class GroupsController {
       this.index = index
     }
 
-    this.isRoot = this.groups.length == Object.keys(index).length
+    this.isRoot = this.groups.length === Object.keys(index).length
     this.enableBack = this.isRoot && this.activeGroup
 
     if (this.activeGroup) {
-      this.prefix = (this.activeGroup.children.length == 0) ?
-          this.index[this.activeGroup.parent] : this.activeGroup
+      this.prefix = (this.activeGroup.children.length === 0)
+        ? this.index[this.activeGroup.parent] : this.activeGroup
       this.enableBack = this.enableBack && this.prefix
     }
 
@@ -69,21 +69,21 @@ class GroupsController {
   filter (group, active) {
     let result = (
       !active || // All
-      ((active.parent == group.parent) && (active.children.length == 0)) || // Common ancestor without child
-      (group.cn == active.cn) || // Active
-      group.cn.substr(0, active.cn.length) == active.cn || // Active is prefix of group
-      active.cn.indexOf(group.cn) == 0 || // Leafs
-      active.cn.substr(0, active.cn.lastIndexOf('_')) == group.cn // Group prefix of active
+      ((active.parent === group.parent) && (active.children.length === 0)) || // Common ancestor without child
+      (group.cn === active.cn) || // Active
+      group.cn.substr(0, active.cn.length) === active.cn || // Active is prefix of group
+      active.cn.indexOf(group.cn) === 0 || // Leafs
+      active.cn.substr(0, active.cn.lastIndexOf('_')) === group.cn // Group prefix of active
     )
 
     return result && this.adminList.concat(
       [ {cn: 'MOD'}, {cn: 'GN'} ] // Avoid empty parents
-    ).every(g => g.cn != group.cn)
+    ).every(g => g.cn !== group.cn)
   }
 
   isExpanded (group, active) {
     return (group.children.length > 0 &&
-      (active && active.cn.indexOf(group.cn) == 0))
+      (active && active.cn.indexOf(group.cn) === 0))
   }
 
   createGroup () {
@@ -106,5 +106,5 @@ angular.module('admin_console')
 })
 .filter('unprefix', () => (input, active) => {
   if (!active) { return input.cn }
-  return (input.cn == active.cn) ? input.cn : input.cn.substr(active.cn.length + 1)
+  return (input.cn === active.cn) ? input.cn : input.cn.substr(active.cn.length + 1)
 })

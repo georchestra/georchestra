@@ -142,7 +142,7 @@ angular.module('admin_console')
     ctrl.$validators.validateGroup = (modelValue, viewValue) => {
       let groups = scope.$eval(attrs['validateGroup'])
       let prefix = viewValue.substr(0, viewValue.lastIndexOf('_'))
-      return prefix == '' || groups.some(g => g.cn == prefix)
+      return prefix === '' || groups.some(g => g.cn === prefix)
     }
   }
 }))

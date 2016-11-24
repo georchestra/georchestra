@@ -113,7 +113,7 @@ class AreaController {
       return new RegExp('(' + search.split(' ').join('|') + ')', 'gi')
     }
 
-    new autoComplete({
+    new autoComplete({ // eslint-disable-line
       selector: document.querySelector('.search'),
       minChars: 3,
       source: (term, response) => {

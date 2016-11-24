@@ -13,16 +13,16 @@ class DateController {
     this.option = this.options[this.options.length - 2]
 
     $scope.$watch('date.model.start', (newVal, oldVal) => {
-      if (!newVal || this.option.value == 'custom') { return }
+      if (!newVal || this.option.value === 'custom') { return }
       this.option = this.options.filter(
-        x => this.date.getFromDiff(x.value) == newVal
+        x => this.date.getFromDiff(x.value) === newVal
       )[0]
     })
 
     // Reload on custom date changes
     let dateChanged = (val, old) => {
       if (!this.option) { return }
-      if (this.option.value == 'custom' && val != old) { this.callback() }
+      if (this.option.value === 'custom' && val !== old) { this.callback() }
     }
     $scope.$watch('date.model.start', dateChanged)
     $scope.$watch('date.model.end', dateChanged)

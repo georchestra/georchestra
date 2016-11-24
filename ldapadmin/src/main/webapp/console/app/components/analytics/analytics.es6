@@ -23,7 +23,7 @@ class AnalyticsController {
       requests: [ 'date', 'count' ]
     }
 
-    this.load((this.group != 'all') ? this.group : undefined)
+    this.load((this.group !== 'all') ? this.group : undefined)
   }
 
   load (group) {
@@ -39,7 +39,7 @@ class AnalyticsController {
       startDate: this.date.start,
       endDate: this.date.end
     }
-    if (group && group != 'all') {
+    if (group && group !== 'all') {
       options.group = group
     }
 
@@ -51,7 +51,7 @@ class AnalyticsController {
 
   setGroup () {
     let $router = this.$injector.get('$router')
-    $router.navigate($router.generate('analytics', { group: this.group}))
+    $router.navigate($router.generate('analytics', { group: this.group }))
   }
 
 }

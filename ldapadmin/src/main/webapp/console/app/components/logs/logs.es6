@@ -30,8 +30,8 @@ class LogsController {
 
   isFiltered () {
     return this.admin || this.type || this.target ||
-      this.date.start != this.$injector.get('date').getDefault() ||
-      this.date.end != this.$injector.get('date').getEnd()
+      this.date.start !== this.$injector.get('date').getDefault() ||
+      this.date.end !== this.$injector.get('date').getEnd()
   }
 
   reset () {
@@ -44,19 +44,19 @@ class LogsController {
 
 }
 
-let filter_logs = () => {
+let filterLogs = () => {
   return (logs, type, admin, target, date) => {
     if (!logs) { return }
 
     let filtered = logs.filter(log => {
       let valid = true
-      if (type && log.type != type) {
+      if (type && log.type !== type) {
         valid = false
       }
-      if (admin && log.admin != admin) {
+      if (admin && log.admin !== admin) {
         valid = false
       }
-      if (target && log.target != target) {
+      if (target && log.target !== target) {
         valid = false
       }
       if (date &&
@@ -72,4 +72,4 @@ let filter_logs = () => {
 }
 
 angular.module('admin_console').controller('LogsController', LogsController)
-.filter('logs', filter_logs)
+.filter('logs', filterLogs)
