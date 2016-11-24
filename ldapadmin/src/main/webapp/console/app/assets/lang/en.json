@@ -148,7 +148,7 @@
   "logs.error"            : "Error while loading data",
 
   "analytics.title"       : "Analytics",
-  "analytics.everyone"    : "Everyone",
+  "analytics.all"         : "Everyone",
   "analytics.requests"    : "Number of requests",
   "analytics.layers"      : "Most viewed layers",
   "analytics.errorload"   : "Error loading data",

@@ -147,7 +147,7 @@
   "logs.error"            : "Erreur au chargement des logs",
 
   "analytics.title"       : "Statistiques",
-  "analytics.everyone"    : "Tout le monde",
+  "analytics.all"         : "Tout le monde",
   "analytics.requests"    : "Nombre de requêtes",
   "analytics.layers"      : "Couches les + consultées",
   "analytics.errorload"   : "Erreur de chargement des données",

@@ -7,9 +7,16 @@ class AnalyticsController {
 
   constructor ($injector, $routeParams) {
     this.$injector = $injector
+    this.i18n = {}
+    this.$injector.get('translate')('analytics.all', this.i18n)
 
-    this.group = $routeParams.group
-    this.groups = this.$injector.get('Group').query()
+    this.group = $routeParams.group || 'all'
+    this.groups = this.$injector.get('Group').query(() => {
+      this.groups = [ { cn: 'all' } ].concat(this.groups).map(g => {
+        g.label = this.i18n[g.cn] || g.cn
+        return g
+      })
+    })
     let date = this.$injector.get('date')
 
     this.date = {
