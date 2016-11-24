@@ -25,6 +25,7 @@
     "angular-translate-loader-static-files": "^2.9.0",
     "angular-utils-pagination": "^0.11.0",
     "babel-brunch": "^6.0.2",
+    "babel-eslint": "^7.1.1",
     "babel-plugin-transform-class-properties": "^6.6.0",
     "babel-plugin-transform-es2015-destructuring": "^6.18.0",
     "babel-plugin-transform-object-rest-spread": "^6.16.0",
@@ -45,6 +46,7 @@
     "sass-brunch": "1.9.2",
     "save-svg-as-png": "^1.0.3",
     "select2": "^4.0.2",
+    "standard": "^8.6.0",
     "uglify-js-brunch": "^2.0.1"
   },
   "standard": {
@@ -71,6 +73,7 @@
     ]
   },
   "scripts": {
-    "postinstall": "./node_modules/.bin/brunch build --production"
+    "lint": "./node_modules/.bin/standard app/**/*.{js,es6}",
+    "postinstall": "./node_modules/.bin/standard app/**/*.{js,es6} && ./node_modules/.bin/brunch build --production"
   }
 }
