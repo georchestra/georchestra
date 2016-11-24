@@ -109,7 +109,7 @@ class AreaController {
     })
 
     const buildRE = (search) => {
-      search = search.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
+      search = search.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') // eslint-disable-line
       return new RegExp('(' + search.split(' ').join('|') + ')', 'gi')
     }
 
