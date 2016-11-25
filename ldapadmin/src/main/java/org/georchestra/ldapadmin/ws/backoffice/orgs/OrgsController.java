@@ -21,6 +21,7 @@ package org.georchestra.ldapadmin.ws.backoffice.orgs;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.OrgsDao;
 import org.georchestra.ldapadmin.dto.Org;
@@ -32,11 +33,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -59,6 +64,9 @@ public class OrgsController {
 
     @Autowired
     private Validation validation;
+
+    @Autowired
+    private GeorchestraConfiguration georConfig;
 
     @Autowired
     public OrgsController(OrgsDao dao) {
@@ -361,6 +369,58 @@ public class OrgsController {
     }
 
     /**
+     * Return configuration areas UI as json object. Configuration includes following values :
+     *
+     * - inital map center
+     * - initial map zoom
+     * - ows service to retrieve area geometry 'url'
+     * - attribute to use as label 'value'
+     * - attribute to use to group area 'group'
+     * - attribute to use as identifier 'key'
+     *
+     * Ex :
+     * {
+     *   "map" : { "center": [49.5468, 5.123486], "zoom": 8},
+     *   "areas" : { "url": "http://sdi.georchestra.org/geoserver/....;",
+     *               "key": "insee_code",
+     *               "value": "commune_name",
+     *               "group": "department_name"}
+     * }
+     */
+
+    @RequestMapping(value = PUBLIC_REQUEST_MAPPING + "/areaConfig.json", method = RequestMethod.GET)
+    public void getAreaConfig(HttpServletResponse response) throws IOException, JSONException {
+        JSONObject res = new JSONObject();
+        JSONObject map = new JSONObject();
+        // Parse center
+        String[] rawCenter = this.georConfig.getProperty("AreaMapCenter").split("\\s*,\\s*");
+        JSONArray center = new JSONArray();
+        center.put(Double.parseDouble(rawCenter[0]));
+        center.put(Double.parseDouble(rawCenter[1]));
+        map.put("center", center);
+        map.put("zoom", this.georConfig.getProperty("AreaMapZoom"));
+        res.put("map", map);
+        JSONObject areas = new JSONObject();
+        areas.put("url", this.georConfig.getProperty("AreasUrl"));
+        areas.put("key", this.georConfig.getProperty("AreasKey"));
+        areas.put("value", this.georConfig.getProperty("AreasValue"));
+        areas.put("group", this.georConfig.getProperty("AreasGroup"));
+        res.put("areas", areas);
+        ResponseUtil.buildResponse(response, res.toString(4), HttpServletResponse.SC_OK);
+    }
+
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    public String handleException(Exception e, HttpServletResponse response) throws JSONException, IOException {
+        LOG.error(e.getMessage());
+        ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, e.getMessage()),
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        throw new IOException(e);
+    }
+
+    /**
      * Update org instance based on field found in json object.
      *
      * All field of Org instance will be updated if corresponding key exists in json document except 'members'.
@@ -480,4 +540,11 @@ public class OrgsController {
     }
 
 
+    public GeorchestraConfiguration getGeorConfig() {
+        return georConfig;
+    }
+
+    public void setGeorConfig(GeorchestraConfiguration georConfig) {
+        this.georConfig = georConfig;
+    }
 }
