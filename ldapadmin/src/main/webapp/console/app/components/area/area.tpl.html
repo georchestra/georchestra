@@ -7,16 +7,12 @@
         contributors.
       </div>
       <div class="btn-group selection">
-        <select ng-change="area.selectBy()" ng-model="area.dpt" class="btn btn-default btn-sm">
+        <select ng-change="area.selectBy()" ng-model="area.group" class="btn btn-default btn-sm">
           <option value="" selected disabled class="glyphicon glyphicon-ok-circle" translate>
             area.selection
           </option>
           <option value="all" class="alternate">— {{ 'area.all' | translate }} —</option>
-          <option value="02">Aisne</option>
-          <option value="59">Nord</option>
-          <option value="60">Oise</option>
-          <option value="62">Pas-de-Calais</option>
-          <option value="80">Somme</option>
+          <option value="{{group}}" ng-repeat="group in area.groups">{{group}}</option>
           <option value="none" class="alternate">— {{ 'area.none' | translate }} —</option>
         </select>
         <button class="btn btn-default btn-sm ol-bbox" title="{{ 'area.selectByBBOX' | translate }}"
@@ -43,7 +39,7 @@
     
     <ul class="list">
       <li dir-paginate="f in area.collection.getArray() | itemsPerPage: 25">
-        {{f.get('nom')}}
+        {{f.get('_label')}}
       </li>
     </ul>
     <dir-pagination-controls max-size="7"></dir-pagination-controls>

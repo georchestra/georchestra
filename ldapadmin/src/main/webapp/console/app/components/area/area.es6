@@ -2,25 +2,28 @@ require('components/area/area.tpl')
 
 class AreaController {
 
-  static $inject = [ '$injector' ]
+  static $inject = [ '$injector', '$q' ]
 
-  constructor ($injector) {
+  constructor ($injector, $q) {
     this.$injector = $injector
-    if (this.item.$promise) {
-      this.item.$promise.then(this.initialize.bind(this))
-    } else {
-      this.initialize()
-    }
+    const CONFIG_URI = this.$injector.get('LDAP_PUBLIC_URI') + 'orgs/areaConfig.json'
 
     let translate = $injector.get('translate')
     this.i18n = {}
     translate('area.updated', this.i18n)
     translate('area.error', this.i18n)
+
+    let promises = [ window.fetch(CONFIG_URI).then(r => r.json()) ]
+    if (this.item.$promise) {
+      promises.push(this.item.$promise)
+    }
+    $q.all(promises).then(this.initialize.bind(this))
   }
 
-  initialize () {
+  initialize (resps) {
+    const [config] = resps
     this.ids = this.item.cities || []
-    const PUBLIC_URI = this.$injector.get('LDAP_ROOT_URI') + 'console/public/'
+    this.groups = []
 
     const buildStyle = (fillColor, strokeColor, width) => new ol.style.Style({
       fill: new ol.style.Fill({ color: fillColor }),
@@ -36,15 +39,13 @@ class AreaController {
       target: document.querySelector('.map'),
       layers: [
         new ol.layer.Tile({
-          source: new ol.source.OSM({
-            attributions: null
-          })
+          source: new ol.source.OSM({ attributions: null })
         }),
         vector
       ],
       view: new ol.View({
-        center: [ 304000, 6440000 ],
-        zoom: 8
+        center: ol.proj.fromLonLat(config.map.center),
+        zoom: config.map.zoom
       }),
       logo: false
     })
@@ -66,10 +67,8 @@ class AreaController {
     }
 
     this.loading = true
-    window.fetch(PUBLIC_URI + 'hdf.json', {
-      credentials: 'include'
-    }).then(
-        response => response.json()
+    window.fetch(config.areas.url).then(
+      response => response.json()
     ).then(json => {
       const conf = {
         dataProjection: 'EPSG:4326',
@@ -78,9 +77,15 @@ class AreaController {
       let selected = []
       vector.getSource().addFeatures(format.readFeatures(json, conf))
       vector.getSource().getFeatures().forEach(f => {
-        let insee = f.get('insee')
-        f.setId(insee)
-        if (this.ids.indexOf(insee) >= 0) selected.push(f)
+        let group = f.get(config.areas.group)
+        let key = f.get(config.areas.key).toString()
+        if (this.groups.indexOf(group) < 0) {
+          this.groups.push(group)
+        }
+        f.set('_label', f.get(config.areas.value).toString() || '')
+        f.set('_group', group)
+        f.setId(key)
+        if (this.ids.indexOf(f.getId()) >= 0) selected.push(f)
       })
       updateSelection(selected)
       this.loading = false
@@ -120,18 +125,18 @@ class AreaController {
         let matches = []
         let re = buildRE(term)
         vector.getSource().getFeatures().forEach(f => {
-          if (f.get('nom').match(re)) { matches.push(f) }
+          if (f.get('_label').match(re)) { matches.push(f) }
         })
         response(matches)
       },
       renderItem: (f, search) =>
         '<div class="autocomplete-suggestion"' +
-        'data-val="' + f.get('nom') + '"' +
+        'data-val="' + f.get('_label') + '"' +
         'data-id="' + f.getId() + '">' +
         '<span>' +
         ((select.getFeatures().getArray().indexOf(f) >= 0) ? '✓' : '') +
         '</span>' +
-        f.get('nom').replace(buildRE(search), '<b>$1</b>') +
+        f.get('_label').replace(buildRE(search), '<b>$1</b>') +
         '</div>',
       onSelect: (e, term, item) => {
         let f = vector.getSource().getFeatureById(item.getAttribute('data-id'))
@@ -152,10 +157,10 @@ class AreaController {
         const uniques = [ ...new Set(this.collection.getArray().concat(features)) ]
         this.collection.clear()
         this.collection.extend(uniques)
-        this.ids = uniques.map(f => f.get('insee'))
+        this.ids = uniques.map(f => f.getId())
         features.map(highlight)
         this.collection.getArray().sort(
-          (a, b) => a.get('nom').localeCompare(b.get('nom'))
+          (a, b) => a.get('_label').localeCompare(b.get('_label'))
         )
       })
     }
@@ -166,18 +171,18 @@ class AreaController {
     }
 
     this.selectBy = () => {
-      if (this.dpt === 'all') {
+      if (this.group === 'all') {
         updateSelection(vector.getSource().getFeatures())
         return
       }
-      if (this.dpt === 'none') {
+      if (this.group === 'none') {
         updateSelection([])
-        this.dpt = ''
+        this.group = ''
         return
       }
 
       let selected = vector.getSource().getFeatures().filter(
-        f => f.get('insee').substr(0, 2) === this.dpt
+        f => f.get('_group') === this.group
       )
       updateSelection(selected)
     }
