@@ -114,6 +114,7 @@
                     </t:list>
 
 
+                    <link rel="stylesheet" href="/ldapadmin/console/public/libraries.css">
                     <link rel="stylesheet" href="/ldapadmin/console/public/app.css">
                     <style>
                       .area {
