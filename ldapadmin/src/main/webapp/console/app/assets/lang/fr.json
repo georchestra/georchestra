@@ -75,6 +75,7 @@
   "org.pendingmsg"        : "Organisme en attente ",
   "org.confirm"           : "Confirmer",
   "org.select"            : "Selectionner un organisme",
+  "org.membersCount"      : "Membres",
 
   "area.save"             : "Enregister la zone",
   "area.updated"          : "Aire de compétence mise à jour",
@@ -159,6 +160,9 @@
   "analytics.MONTH"       : "par mois",
   "analytics.HOUR"        : "par heure",
   "analytics.extraction"  : "Extractions des couches",
+  "analytics.saveAsPNG"   : "Enregistrer en PNG",
+  "analytics.saveAsCSV"   : "Enregistrer en CSV",
+
 
   "date.day"              : "Aujourd’hui",
   "date.week"             : "Dernière semaine",

@@ -158,8 +158,8 @@ public class StatisticsController {
 	private SimpleDateFormat dbMonthOutputFormatter;
 	private SimpleDateFormat dbDayInputFormatter;
 
-	private static final int USAGE_TYPE = 0;
-	private static final int EXTRACTION_TYPE = 1;
+	private static enum FORMAT { JSON, CSV }
+	private static enum REQUEST_TYPE { USAGE, EXTRACTION }
 
 	public StatisticsController(String localTimezone) {
 
@@ -334,7 +334,7 @@ public class StatisticsController {
 	}
 
 	/**
-	 * Gets statistics for layers consumption. May be filtered by a user or a group and limited.
+	 * Gets statistics for layers consumption in JSON format. May be filtered by a user or a group and limited.
 	 *
 	 * @param payload the JSON object containing the input parameters
 	 * @param response the HttpServletResponse object.
@@ -342,14 +342,29 @@ public class StatisticsController {
 	 *
 	 * @throws JSONException 
 	 */
-	@RequestMapping(value="/layersUsage", method=RequestMethod.POST, produces= "application/json; charset=utf-8")
+	@RequestMapping(value="/layersUsage.json", method=RequestMethod.POST, produces= "application/json; charset=utf-8")
 	@ResponseBody
-	public String layersUsage(@RequestBody String payload, HttpServletResponse response) throws JSONException {
-		return this.generateStats(payload, USAGE_TYPE, response);
+	public String layersUsageJson(@RequestBody String payload, HttpServletResponse response) throws JSONException {
+		return this.generateStats(payload, REQUEST_TYPE.USAGE, response, FORMAT.JSON);
 	}
 
 	/**
-	 * Gets statistics for layers extraction. May be filtered by a user or a group and limited.
+	 * Gets statistics for layers consumption in CSV format. May be filtered by a user or a group and limited.
+	 *
+	 * @param payload the JSON object containing the input parameters
+	 * @param response the HttpServletResponse object.
+	 * @return a CSV string containing the requested aggregated statistics.
+	 *
+	 * @throws JSONException
+	 */
+	@RequestMapping(value="/layersUsage.csv", method=RequestMethod.POST, produces= "application/csv; charset=utf-8")
+	@ResponseBody
+	public String layersUsage(@RequestBody String payload, HttpServletResponse response) throws JSONException {
+		return this.generateStats(payload, REQUEST_TYPE.USAGE, response, FORMAT.CSV);
+	}
+
+	/**
+	 * Gets statistics for layers extraction in JSON format. May be filtered by a user or a group and limited.
 	 *
 	 * @param payload the JSON object containing the input parameters
 	 * @param response the HttpServletResponse object.
@@ -357,13 +372,37 @@ public class StatisticsController {
 	 *
 	 * @throws JSONException
 	 */
-	@RequestMapping(value="/layersExtraction", method=RequestMethod.POST, produces= "application/json; charset=utf-8")
+	@RequestMapping(value="/layersExtraction.json", method=RequestMethod.POST, produces= "application/json; charset=utf-8")
 	@ResponseBody
-	public String layersExtraction(@RequestBody String payload, HttpServletResponse response) throws JSONException {
-		return this.generateStats(payload, EXTRACTION_TYPE, response);
+	public String layersExtractionJson(@RequestBody String payload, HttpServletResponse response) throws JSONException {
+		return this.generateStats(payload, REQUEST_TYPE.EXTRACTION, response, FORMAT.JSON);
 	}
 
-	private String generateStats(String payload, int type, HttpServletResponse response) throws JSONException {
+	/**
+	 * Gets statistics for layers extraction in CSV format. May be filtered by a user or a group and limited.
+	 *
+	 * @param payload the JSON object containing the input parameters
+	 * @param response the HttpServletResponse object.
+	 * @return a CSV string containing the requested aggregated statistics.
+	 *
+	 * @throws JSONException
+	 */
+	@RequestMapping(value="/layersExtraction.csv", method=RequestMethod.POST, produces= "application/csv; charset=utf-8")
+	@ResponseBody
+	public String layersExtractionCsv(@RequestBody String payload, HttpServletResponse response) throws JSONException {
+		return this.generateStats(payload, REQUEST_TYPE.EXTRACTION, response, FORMAT.CSV);
+	}
+
+	/**
+	 *  This method generates stats for layer usage or extraction and return results in CSV or JSON format
+	 * @param payload JSON payload, should contain 'startDate', 'endDate', 'limit', 'group'
+	 * @param type either layer usage 'USAGE' or layer extraction 'EXTRACTION'
+	 * @param response response
+	 * @param format
+	 * @return
+	 * @throws JSONException
+	 */
+	private String generateStats(String payload, REQUEST_TYPE type, HttpServletResponse response, FORMAT format) throws JSONException {
 
 		JSONObject input;
 		String userId, groupId;
@@ -391,56 +430,69 @@ public class StatisticsController {
 		if (userId != null) {
 			if (limit != null)
 				switch (type) {
-					case EXTRACTION_TYPE:
+					case EXTRACTION:
 						lst = statsRepository.getLayersExtractionForUserLimit(userId, startDate, endDate, limit); break;
-					case USAGE_TYPE:
+					case USAGE:
 						lst = statsRepository.getLayersStatisticsForUserLimit(userId, startDate, endDate, limit); break;
 				}
 			else
 				switch (type) {
-					case EXTRACTION_TYPE:
+					case EXTRACTION:
 						lst = statsRepository.getLayersExtractionForUser(userId, startDate, endDate); break;
-					case USAGE_TYPE:
+					case USAGE:
 						lst = statsRepository.getLayersStatisticsForUser(userId, startDate, endDate); break;
 				}
 		} else if (groupId != null) {
 			if (limit != null)
 				switch (type) {
-					case EXTRACTION_TYPE:
+					case EXTRACTION:
 						lst = statsRepository.getLayersExtractionForGroupLimit(groupId, startDate, endDate, limit); break;
-					case USAGE_TYPE:
+					case USAGE:
 						lst = statsRepository.getLayersStatisticsForGroupLimit(groupId, startDate, endDate, limit); break;
 				}
 			else
 				switch (type) {
-					case EXTRACTION_TYPE:
+					case EXTRACTION:
 						lst = statsRepository.getLayersExtractionForGroup(groupId, startDate, endDate); break;
-					case USAGE_TYPE:
+					case USAGE:
 						lst = statsRepository.getLayersStatisticsForGroup(groupId, startDate, endDate); break;
 				}
 		} else {
 			if (limit != null)
 				switch (type) {
-					case EXTRACTION_TYPE:
+					case EXTRACTION:
 						lst = statsRepository.getLayersExtractionLimit(startDate, endDate, limit); break;
-					case USAGE_TYPE:
+					case USAGE:
 						lst = statsRepository.getLayersStatisticsLimit(startDate, endDate, limit); break;
 				}
 			else
 				switch (type) {
-					case EXTRACTION_TYPE:
+					case EXTRACTION:
 						lst = statsRepository.getLayersExtraction(startDate, endDate); break;
-					case USAGE_TYPE:
+					case USAGE:
 						lst = statsRepository.getLayersStatistics(startDate, endDate); break;
 				}
 		}
-		JSONArray results = new JSONArray();
-		for (Object o : lst) {
-			Object[] row = (Object[]) o;
-			results.put(new JSONObject().put("layer", row[0]).put("count", row[1]));
+		switch (format){
+			case JSON:
+				JSONArray results = new JSONArray();
+				for (Object o : lst) {
+					Object[] row = (Object[]) o;
+					results.put(new JSONObject().put("layer", row[0]).put("count", row[1]));
+				}
+				return new JSONObject().put("results", results)
+						.toString(4);
+			case CSV:
+				StringBuilder res = new StringBuilder("layer,count\n");
+				for (Object o : lst) {
+					Object[] row = (Object[]) o;
+					res.append(row[0] + "," + row[1] + "\n");
+				}
+				return res.toString();
+			default:
+				throw new JSONException("Invalid format " + format);
 		}
-		return new JSONObject().put("results", results)
-				.toString(4);
+
 	}
 
 

@@ -30,7 +30,8 @@ module.exports = config:
           'vendor/moment.min.js',
           'vendor/quill.js',
           'vendor/saveSvgAsPng.js',
-          'vendor/ol.js'
+          'vendor/ol.js',
+          'vendor/FileSaver.js'
         ]
     stylesheets:
       joinTo:

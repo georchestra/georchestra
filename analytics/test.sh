@@ -101,32 +101,32 @@ http://localhost:8280/analytics/ws/distinctUsers
 echo Test Stats.getLayersStatisticsForUser
 curl -H "Content-Type: application/json" -X POST \
 -d "{\"startDate\":\"$start_day\",\"endDate\":\"$end_day\",\"user\":\"$user\"}" \
-http://localhost:8280/analytics/ws/layersUsage
+http://localhost:8280/analytics/ws/layersUsage.json
 
 echo Test Stats.getLayersStatisticsForUserLimit
 curl -H "Content-Type: application/json" -X POST \
 -d "{\"startDate\":\"$start_day\",\"endDate\":\"$end_day\",\"user\":\"$user\",\"limit\":\"10\"}" \
-http://localhost:8280/analytics/ws/layersUsage
+http://localhost:8280/analytics/ws/layersUsage.json
 
 echo Test Stats.getLayersStatisticsForGroup
 curl -H "Content-Type: application/json" -X POST \
 -d "{\"startDate\":\"$start_day\",\"endDate\":\"$end_day\",\"group\":\"$group\"}" \
-http://localhost:8280/analytics/ws/layersUsage
+http://localhost:8280/analytics/ws/layersUsage.json
 
 echo Test Stats.getLayersStatisticsForGroupLimit
 curl -H "Content-Type: application/json" -X POST \
 -d "{\"startDate\":\"$start_day\",\"endDate\":\"$end_day\",\"group\":\"$group\",\"limit\":\"10\"}" \
-http://localhost:8280/analytics/ws/layersUsage
+http://localhost:8280/analytics/ws/layersUsage.json
 
 echo Test Stats.getLayersStatistics
 curl -H "Content-Type: application/json" -X POST \
 -d "{\"startDate\":\"$start_day\",\"endDate\":\"$end_day\"}" \
-http://localhost:8280/analytics/ws/layersUsage
+http://localhost:8280/analytics/ws/layersUsage.json
 
 echo Test Stats.getLayersStatisticsLimit
 curl -H "Content-Type: application/json" -X POST \
 -d "{\"startDate\":\"$start_day\",\"endDate\":\"$end_day\",\"limit\":\"10\"}" \
-http://localhost:8280/analytics/ws/layersUsage
+http://localhost:8280/analytics/ws/layersUsage.json
 
 
 # Test layersExtraction webservice :
@@ -135,29 +135,29 @@ http://localhost:8280/analytics/ws/layersUsage
 echo Test Stats.getLayersExtractionForUser
 curl -H "Content-Type: application/json" -X POST \
 -d "{\"startDate\":\"$start_day\",\"endDate\":\"$end_day\",\"user\":\"$user\"}" \
-http://localhost:8280/analytics/ws/layersExtraction
+http://localhost:8280/analytics/ws/layersExtraction.json
 
 echo Test Stats.getLayersExtractionForUserLimit
 curl -H "Content-Type: application/json" -X POST \
 -d "{\"startDate\":\"$start_day\",\"endDate\":\"$end_day\",\"user\":\"$user\",\"limit\":\"2\"}" \
-http://localhost:8280/analytics/ws/layersExtraction
+http://localhost:8280/analytics/ws/layersExtraction.json
 
 echo Test Stats.getLayersExtractionForGroup
 curl -H "Content-Type: application/json" -X POST \
 -d "{\"startDate\":\"$start_day\",\"endDate\":\"$end_day\",\"group\":\"$group\"}" \
-http://localhost:8280/analytics/ws/layersExtraction
+http://localhost:8280/analytics/ws/layersExtraction.json
 
 echo Test Stats.getLayersExtractionForGroupLimit
 curl -H "Content-Type: application/json" -X POST \
 -d "{\"startDate\":\"$start_day\",\"endDate\":\"$end_day\",\"group\":\"$group\",\"limit\":\"2\"}" \
-http://localhost:8280/analytics/ws/layersExtraction
+http://localhost:8280/analytics/ws/layersExtraction.json
 
 echo Test Stats.getLayersExtraction
 curl -H "Content-Type: application/json" -X POST \
 -d "{\"startDate\":\"$start_day\",\"endDate\":\"$end_day\"}" \
-http://localhost:8280/analytics/ws/layersExtraction
+http://localhost:8280/analytics/ws/layersExtraction.json
 
 echo Test Stats.getLayersExtractionLimit
 curl -H "Content-Type: application/json" -X POST \
 -d "{\"startDate\":\"$start_day\",\"endDate\":\"$end_day\",\"limit\":\"2\"}" \
-http://localhost:8280/analytics/ws/layersExtraction
+http://localhost:8280/analytics/ws/layersExtraction.json
