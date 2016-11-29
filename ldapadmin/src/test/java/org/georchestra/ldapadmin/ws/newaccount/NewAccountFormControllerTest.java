@@ -46,7 +46,6 @@ public class NewAccountFormControllerTest {
     private ReCaptchaParameters rep = new ReCaptchaParameters();
     private ReCaptchaResponse rer = Mockito.mock(ReCaptchaResponse.class);
     private MockHttpServletRequest request = new MockHttpServletRequest();
-    private LdapTemplate ldapTemplate = Mockito.mock(LdapTemplate.class);
     private Model UiModel = Mockito.mock(Model.class);
 
 
@@ -58,9 +57,6 @@ public class NewAccountFormControllerTest {
     SessionStatus status = Mockito.mock(SessionStatus.class);
 
     private void configureLegitFormBean() {
-        Validation v = new Validation();
-        v.setRequiredFields("uid\tfirstName\temail\tpassword\n");
-
         Mockito.when(formBean.getUid()).thenReturn("1");
         Mockito.when(formBean.getFirstName()).thenReturn("test");
         Mockito.when(formBean.getSurname()).thenReturn("test");
@@ -81,7 +77,7 @@ public class NewAccountFormControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        ctrl = new NewAccountFormController(dao, org, srv, mod, rec, rep);
+        ctrl = new NewAccountFormController(dao, org, srv, mod, rec, rep, new Validation(""));
 
         // Mock admin account
         DistinguishedName dn = new DistinguishedName();
@@ -116,7 +112,7 @@ public class NewAccountFormControllerTest {
     public void testCreate() throws IOException {
         configureLegitFormBean();
 
-        String ret = ctrl.create(request, formBean, result, status, UiModel);
+        String ret = ctrl.create(request, formBean, "", result, status, UiModel);
 
         assertTrue(ret.equals("welcomeNewUser"));
     }
@@ -157,7 +153,7 @@ public class NewAccountFormControllerTest {
         configureLegitFormBean();
         mod.setModeratedSignup(false);
 
-        String ret = ctrl.create(request, formBean, result, status, UiModel);
+        String ret = ctrl.create(request, formBean, "", result, status, UiModel);
 
         assertTrue(ret.equals("welcomeNewUser"));
     }
@@ -172,7 +168,7 @@ public class NewAccountFormControllerTest {
         configureLegitFormBean();
         Mockito.when(result.hasErrors()).thenReturn(true);
 
-        String ret = ctrl.create(request, formBean, result, status, UiModel);
+        String ret = ctrl.create(request, formBean, "", result, status, UiModel);
 
         assertTrue(ret.equals("createAccountForm"));
     }
@@ -188,7 +184,7 @@ public class NewAccountFormControllerTest {
         Mockito.doThrow(new DuplicatedEmailException("User already exists")).
             when(dao).insert((Account) Mockito.any(), Mockito.anyString(), Mockito.anyString());
 
-        String ret = ctrl.create(request, formBean, result, status, UiModel);
+        String ret = ctrl.create(request, formBean, "", result, status, UiModel);
 
         // The user must be redirected to the Create Account form
         assertTrue(ret.equals("createAccountForm"));
@@ -201,7 +197,7 @@ public class NewAccountFormControllerTest {
             when(dao).insert((Account) Mockito.any(), Mockito.anyString(), Mockito.anyString());
 
         try {
-            ctrl.create(request, formBean, result, status, UiModel);
+            ctrl.create(request, formBean, "", result, status, UiModel);
         } catch (Throwable e) {
             assertTrue (e instanceof IOException);
         }
@@ -218,7 +214,7 @@ public class NewAccountFormControllerTest {
         Mockito.doThrow(new DuplicatedUidException("User ID already exists")).
             when(dao).insert((Account) Mockito.any(), Mockito.anyString(), Mockito.anyString());
 
-        String ret = ctrl.create(request, formBean, result, status, UiModel);
+        String ret = ctrl.create(request, formBean, "", result, status, UiModel);
 
         // The user must be redirected to the Create Account form
         assertTrue(ret.equals("createAccountForm"));
@@ -227,7 +223,7 @@ public class NewAccountFormControllerTest {
         Mockito.doThrow(new DataServiceException("something has messed up")).
             when(dao).generateUid(Mockito.anyString());
         try {
-            ctrl.create(request, formBean, result, status, UiModel);
+            ctrl.create(request, formBean, "", result, status, UiModel);
         } catch (Throwable e) {
             assertTrue (e instanceof IOException);
         }

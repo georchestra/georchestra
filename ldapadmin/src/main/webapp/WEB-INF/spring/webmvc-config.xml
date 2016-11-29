@@ -243,7 +243,7 @@
   </bean>
 
   <bean id="validation" class="org.georchestra.ldapadmin.ws.utils.Validation">
-    <property name="requiredFields" value="${requiredFields}"/>
+    <constructor-arg value="${requiredFields}" name="requiredFields" type="java.lang.String"/>
   </bean>
 
   <bean id="warnUserIfUidModified" class="java.lang.Boolean">

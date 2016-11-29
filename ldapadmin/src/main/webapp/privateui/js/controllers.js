@@ -291,7 +291,7 @@ angular.module('ldapadmin.controllers', [])
 
         $('.user-orgs').select2({
           data: sel_orgs,
-         allowClear: true,
+          allowClear: true,
           placeholder: "Select organization...",
         })
         $('.user-orgs').on("change", function(){
@@ -419,27 +419,45 @@ angular.module('ldapadmin.controllers', [])
     });
   })
   .controller('UserCreateCtrl', function($scope, Restangular, flash) {
-      $scope.publicContextPath = GEOR_config.publicContextPath;
-      $scope.save = function() {
-        Restangular.all('users').post(
-          $scope.user
-        ).then(function(user) {
-          $scope.users.push(user);
-          window.location = "#/users";
-          flash.success = 'User correctly added';
-        },
-        function errorCallback(response) {
-          if (response.status == 409) {
-            flash.error = 'Error while creating the user: is the specified e-mail already used ?';
-          } else {
-            flash.error = 'Error while creating the user';
-          }
+    $scope.publicContextPath = GEOR_config.publicContextPath;
+
+    $scope.orgs = Restangular.all("orgs").getList().then(function(orgs) {
+
+      var sel_orgs = []
+      orgs.map(function(org) {
+        sel_orgs.push({
+          id: org.id,
+          text: org.name
         });
-      };
+      });
+
+      $('.user-orgs').select2({
+        data: sel_orgs,
+        allowClear: true,
+        placeholder: "Select organization...",
+      })
+      $('.user-orgs').on("change", function(){
+        var org = $(this).val();
+        $scope.$apply(function(){
+          $scope.user.org = org;
+        });
+      });
+
+    });
+
+    $scope.save = function() {
+      Restangular.all('users').post(
+        $scope.user
+      ).then(function(user) {
+        $scope.users.push(user);
+        window.location = "#/users";
+        flash.success = 'User correctly added';
+      },
+      function errorCallback(response) {
+        flash.error = 'Error while creating the user : ' + response.data.error;
+      });
+    };
   })
-  .controller('FooCtrl', function($scope) {
-    $scope.foo = "bar";
-  });
 
 function getPrefix(group) {
   return group.cn.indexOf('_') != -1 &&

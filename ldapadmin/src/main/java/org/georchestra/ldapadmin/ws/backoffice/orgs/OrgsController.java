@@ -21,6 +21,7 @@ package org.georchestra.ldapadmin.ws.backoffice.orgs;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.OrgsDao;
 import org.georchestra.ldapadmin.dto.Org;
@@ -32,10 +33,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -60,6 +66,9 @@ public class OrgsController {
     private Validation validation;
 
     @Autowired
+    private GeorchestraConfiguration georConfig;
+
+    @Autowired
     public OrgsController(OrgsDao dao) {
         this.orgDao = dao;
     }
@@ -74,7 +83,7 @@ public class OrgsController {
     public void findAll(HttpServletResponse response) throws IOException {
 
         try {
-            List<Org> orgs = this.orgDao.findAll();
+            List<Org> orgs = this.orgDao.findValidated();
             JSONArray res = new JSONArray();
             for (Org org : orgs)
                 res.put(org.toJson());
@@ -134,6 +143,7 @@ public class OrgsController {
      * * 'status'
      * * 'orgType'
      * * 'address'
+     * * 'members' as json array ex: ["testadmin", "testuser"]
      *
      */
     @RequestMapping(value = REQUEST_MAPPING + "/{cn}", method = RequestMethod.GET)
@@ -184,7 +194,7 @@ public class OrgsController {
      *        98498
      *     ],
      *     "status" : "inscrit",
-     *     "orgType" : "association",
+     *     "type" : "association",
      *     "address" : "128 rue de la plante, 73059 Chambrille",
      *     "members": [
      *        "testadmin",
@@ -201,6 +211,11 @@ public class OrgsController {
         try {
             // Parse Json
             JSONObject json = this.parseRequest(request, response);
+
+            // Validate request against required fields
+            for(String requiredField : this.validation.getRequiredOrgFields())
+                if (!this.validation.validateOrgField(requiredField, json))
+                    throw new IOException("required field : " + requiredField);
 
             // Retrieve current orgs state from ldap
             Org org = this.orgDao.findByCommonName(commonName);
@@ -234,7 +249,7 @@ public class OrgsController {
      * * 'shortName'
      * * 'cities' as json array ex: [654,865498,98364,9834534,984984,6978984,98498]
      * * 'status'
-     * * 'orgType'
+     * * 'type'
      * * 'address'
      * * 'members' as json array ex: ["testadmin", "testuser"]
      *
@@ -243,12 +258,17 @@ public class OrgsController {
      * A new JSON document will be return to browser with a complete description of created org. @see updateOrgInfos()
      * for JSON format.
      */
-    @RequestMapping(value = REQUEST_MAPPING, method = RequestMethod.PUT)
+    @RequestMapping(value = REQUEST_MAPPING, method = RequestMethod.POST)
     public void createOrg(HttpServletRequest request, HttpServletResponse response) throws IOException, JSONException {
 
         try {
             // Parse Json
             JSONObject json = this.parseRequest(request, response);
+
+            // Check required fields
+            for(String field : this.validation.getRequiredOrgFields())
+                if(!json.has(field) || !StringUtils.hasLength(json.getString(field)))
+                    throw new Exception(field + " required");
 
             Org org = new Org();
             OrgExt orgExt = new OrgExt();
@@ -264,6 +284,9 @@ public class OrgsController {
             // Update org and orgExt fields
             this.updateFromRequest(org, json);
             this.updateFromRequest(orgExt, json);
+
+            // Validate org
+            org.setStatus(Org.STATUS_REGISTERED);
 
             // Persist changes to LDAP server
             this.orgDao.insert(org);
@@ -315,8 +338,7 @@ public class OrgsController {
     public void getUserRequiredFields(HttpServletResponse response) throws IOException{
         try {
             JSONArray fields = new JSONArray();
-            for(String field : this.validation.getOrgRequiredFields())
-                fields.put(field);
+            fields.put("name");
             ResponseUtil.buildResponse(response, fields.toString(4), HttpServletResponse.SC_OK);
         } catch (Exception e) {
             LOG.error(e.getMessage());
@@ -344,6 +366,58 @@ public class OrgsController {
                     HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             throw new IOException(e);
         }
+    }
+
+    /**
+     * Return configuration areas UI as json object. Configuration includes following values :
+     *
+     * - inital map center
+     * - initial map zoom
+     * - ows service to retrieve area geometry 'url'
+     * - attribute to use as label 'value'
+     * - attribute to use to group area 'group'
+     * - attribute to use as identifier 'key'
+     *
+     * Ex :
+     * {
+     *   "map" : { "center": [49.5468, 5.123486], "zoom": 8},
+     *   "areas" : { "url": "http://sdi.georchestra.org/geoserver/....;",
+     *               "key": "insee_code",
+     *               "value": "commune_name",
+     *               "group": "department_name"}
+     * }
+     */
+
+    @RequestMapping(value = PUBLIC_REQUEST_MAPPING + "/areaConfig.json", method = RequestMethod.GET)
+    public void getAreaConfig(HttpServletResponse response) throws IOException, JSONException {
+        JSONObject res = new JSONObject();
+        JSONObject map = new JSONObject();
+        // Parse center
+        String[] rawCenter = this.georConfig.getProperty("AreaMapCenter").split("\\s*,\\s*");
+        JSONArray center = new JSONArray();
+        center.put(Double.parseDouble(rawCenter[0]));
+        center.put(Double.parseDouble(rawCenter[1]));
+        map.put("center", center);
+        map.put("zoom", this.georConfig.getProperty("AreaMapZoom"));
+        res.put("map", map);
+        JSONObject areas = new JSONObject();
+        areas.put("url", this.georConfig.getProperty("AreasUrl"));
+        areas.put("key", this.georConfig.getProperty("AreasKey"));
+        areas.put("value", this.georConfig.getProperty("AreasValue"));
+        areas.put("group", this.georConfig.getProperty("AreasGroup"));
+        res.put("areas", areas);
+        ResponseUtil.buildResponse(response, res.toString(4), HttpServletResponse.SC_OK);
+    }
+
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    public String handleException(Exception e, HttpServletResponse response) throws JSONException, IOException {
+        LOG.error(e.getMessage());
+        ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, e.getMessage()),
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        throw new IOException(e);
     }
 
     /**
@@ -401,7 +475,7 @@ public class OrgsController {
     private void updateFromRequest(OrgExt orgExt, JSONObject json) throws JSONException {
 
         try{
-            orgExt.setOrgType(json.getString("orgType"));
+            orgExt.setOrgType(json.getString("type"));
         } catch (JSONException ex){}
 
         try{
@@ -423,7 +497,7 @@ public class OrgsController {
 
         JSONObject res = org.toJson();
         if(orgExt.getOrgType() != null)
-            res.put("orgType", orgExt.getOrgType());
+            res.put("type", orgExt.getOrgType());
         if(orgExt.getAddress() != null)
             res.put("address", orgExt.getAddress());
         return res;
@@ -466,4 +540,11 @@ public class OrgsController {
     }
 
 
+    public GeorchestraConfiguration getGeorConfig() {
+        return georConfig;
+    }
+
+    public void setGeorConfig(GeorchestraConfiguration georConfig) {
+        this.georConfig = georConfig;
+    }
 }

@@ -11,25 +11,36 @@
   <div class="col-md-2">
     <ul class="nav nav-pills nav-stacked">
       <li ng-repeat="tab in user.tabs" ng-class="{active: user.tab==tab}">
-        <!-- <a ng-link="users({'id': user.user.uid, 'tab': tab})" rel="{{user.user.uid}}/{{tab}}">{{ {id: user.user.uid, tab: tab} }}</a> -->
-        <a href="#/users/{{user.user.uid}}/{{tab}}" translate="tab.{{::tab}}"></a>
-        <!-- FIXME use ng-link -->
+        <a ng-link="user({id: user.user.uid, tab: tab})">{{ 'tab.' + tab | translate}}</a>
       </li>
     </ul>
   </div>
 
   <div class="col-md-10">
-    <div class="panel panel-default">
+    <div class="panel panel-default" ng-class="{'panel-danger': user.user.pending}">
 
+      <div class="panel-heading text-center" ng-if="user.user.pending">
+        <span translate>user.pendingmsg</span>
+        <button class="btn btn-default" ng-click="user.confirm()"
+          ng-show="user.user.validOrg" translate>user.confirm</button>
+        <span ng-if="!user.user.validOrg">
+          —
+          <span translate>user.orgFirst</span>
+          <a ng-link="org({org: user.user.orgObj.id, tab: 'infos'})">
+            {{::user.user.orgObj.name || user.user.orgObj.shortName}}
+          </a>
+        </span>
+      </div>
 
-      <div class="panel-body" ng-if="user.tab=='infos'" >
+      <div class="panel-body" ng-if="user.tab=='infos'">
 
-        <div ng-inline="templates/userForm.tpl.html" ng-init="model=user.user;promise=user.user.$promise"></div>
+        <div ng-inline="templates/userForm.tpl.html"
+          ng-init="model=user.user;promise=user.user.$promise;required=user.required"></div>
 
         <hr>
 
         <div class="pull-right">
-          <button ng-click="user.save()" class="btn btn-primary" translate>user.save</button>
+          <button ng-click="user.save()" class="btn btn-primary" translate data-ng-disabled="!adminUserForm.$valid">user.save</button>
         </div>
 
       </div>

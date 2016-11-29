@@ -25,11 +25,11 @@ import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
 import org.georchestra.ldapadmin.ds.OrgsDao;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.Org;
-import org.georchestra.ldapadmin.ws.utils.UserUtils;
 import org.georchestra.ldapadmin.ws.utils.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -57,10 +57,13 @@ public class EditUserDetailsFormController {
 	private OrgsDao orgsDao;
 	private AccountDao accountDao;
 
+	private Validation validation;
+
 	@Autowired
-	public EditUserDetailsFormController(AccountDao dao, OrgsDao orgsDao){
+	public EditUserDetailsFormController(AccountDao dao, OrgsDao orgsDao, Validation validation){
 		this.accountDao = dao;
 		this.orgsDao = orgsDao;
+		this.validation = validation;
 	}
 
 	private static final String[] fields = {"uid", "firstName", "surname", "email", "title", "phone", "facsimile", "org", "description", "postalAddress"};
@@ -96,7 +99,7 @@ public class EditUserDetailsFormController {
 
 			model.addAttribute(formBean);
 			for (String f : fields) {
-				if (Validation.isFieldRequired(f)) {
+				if (this.validation.isUserFieldRequired(f)) {
 					session.setAttribute(f + "Required", "true");
 				}
 			}
@@ -160,23 +163,27 @@ public class EditUserDetailsFormController {
 						throws IOException {
 		String uid = formBean.getUid();
 		try {
-			if(!request.getHeader("sec-username").equals(uid)){
+			if(!request.getHeader("sec-username").equals(uid))
 				response.sendError(HttpServletResponse.SC_FORBIDDEN);
-			}
 		} catch (NullPointerException e) {
 			response.sendError(HttpServletResponse.SC_FORBIDDEN);
 		}
 
-		UserUtils.validate( formBean.getFirstName(), formBean.getSurname(), resultErrors );
-		Validation.validateField("phone", formBean.getPhone(), resultErrors);
-		Validation.validateField("facsimile", formBean.getFacsimile(), resultErrors);
-		Validation.validateField("title", formBean.getTitle(), resultErrors);
-		Validation.validateField("description", formBean.getDescription(), resultErrors);
-		Validation.validateField("postalAddress", formBean.getPostalAddress(), resultErrors);
+		// Validate first name and surname
+		if(!StringUtils.hasLength(formBean.getFirstName()) && this.validation.isUserFieldRequired("firstName"))
+			resultErrors.rejectValue("firstName", "firstName.error.required", "required");
 
-		if(resultErrors.hasErrors()){
+		if(!StringUtils.hasLength( formBean.getSurname() ) && this.validation.isUserFieldRequired("surname"))
+			resultErrors.rejectValue("surname", "surname.error.required", "required");
+
+		this.validation.validateUserField("phone", formBean.getPhone(), resultErrors);
+		this.validation.validateUserField("facsimile", formBean.getFacsimile(), resultErrors);
+		this.validation.validateUserField("title", formBean.getTitle(), resultErrors);
+		this.validation.validateUserField("description", formBean.getDescription(), resultErrors);
+		this.validation.validateUserField("postalAddress", formBean.getPostalAddress(), resultErrors);
+
+		if(resultErrors.hasErrors())
 			return "editUserDetailsForm";
-		}
 
 		// updates the account details
 		try {

@@ -1,6 +1,6 @@
 <div ng-if="groups.isRoot">
   <div class="alert alert-info">
-    <a ng-link="users({id: 'all'})" translate>group.allusers</a>
+    <a ng-link="users({id: 'all'})" class="category" ng-class="{active: !groups.activeGroup}" translate>group.allusers</a>
     <hr>
     <div class="create-btn">
       <a ng-link="newUser" class="btn btn-default" translate>group.newuser</a>
@@ -29,7 +29,7 @@
   <a ng-if="groups.enableBack" class="btn btn-default btn-xs" ng-link="users({id: groups.prefix.parent})">
     «
   </a>
-  <span ng-if="groups.enableBack">{{groups.prefix.cn || 'Tous'}}</span>
+  <span ng-if="groups.enableBack">{{groups.prefix.cn || 'group.all' | translate }}</span>
 
   <div ng-repeat="group in groups.tree" ng-if="groups.filter(group, groups.activeGroup)">
 

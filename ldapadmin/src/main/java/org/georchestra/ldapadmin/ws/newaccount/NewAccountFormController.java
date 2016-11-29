@@ -23,6 +23,7 @@ import net.tanesha.recaptcha.ReCaptcha;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.georchestra.ldapadmin.bs.Moderator;
 import org.georchestra.ldapadmin.bs.ReCaptchaParameters;
 import org.georchestra.ldapadmin.ds.AccountDao;
@@ -36,10 +37,8 @@ import org.georchestra.ldapadmin.dto.Group;
 import org.georchestra.ldapadmin.dto.Org;
 import org.georchestra.ldapadmin.dto.OrgExt;
 import org.georchestra.ldapadmin.mailservice.MailService;
-import org.georchestra.ldapadmin.ws.utils.EmailUtils;
 import org.georchestra.ldapadmin.ws.utils.PasswordUtils;
 import org.georchestra.ldapadmin.ws.utils.RecaptchaUtils;
-import org.georchestra.ldapadmin.ws.utils.UserUtils;
 import org.georchestra.ldapadmin.ws.utils.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -49,6 +48,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
@@ -58,6 +58,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Manages the UI Account Form.
@@ -86,23 +88,25 @@ public final class NewAccountFormController {
 
 	private ReCaptchaParameters reCaptchaParameters;
 
-	private static final String[] fields = {"firstName","surname", "email", "phone", "org", "title", "description",
-			"uid", "password", "confirmPassword", "createOrg", "orgName", "orgShortName", "orgAddress", "orgType"};
+	private Validation validation;
 
 	@Autowired
 	public NewAccountFormController(AccountDao dao, OrgsDao orgDao, MailService mailSrv, Moderator moderatorRule,
-									ReCaptcha reCaptcha, ReCaptchaParameters reCaptchaParameters) {
+									ReCaptcha reCaptcha, ReCaptchaParameters reCaptchaParameters, Validation validation) {
 		this.accountDao = dao;
 		this.orgDao = orgDao;
 		this.mailService = mailSrv;
 		this.moderator = moderatorRule;
 		this.reCaptcha = reCaptcha;
 		this.reCaptchaParameters = reCaptchaParameters;
+		this.validation = validation;
 	}
 
 	@InitBinder
 	public void initForm(WebDataBinder dataBinder) {
-		dataBinder.setAllowedFields(ArrayUtils.addAll(fields,
+		dataBinder.setAllowedFields(ArrayUtils.addAll(new String[]{"firstName","surname", "email", "phone",
+				"org", "title", "description", "uid", "password", "confirmPassword", "createOrg", "orgName",
+				"orgShortName", "orgAddress", "orgType", "orgCities"},
 		        new String[]{"recaptcha_challenge_field", "recaptcha_response_field"}));
 	}
 
@@ -118,11 +122,14 @@ public final class NewAccountFormController {
 		model.addAttribute("orgTypes", this.getOrgTypes());
 
 		session.setAttribute("reCaptchaPublicKey", this.reCaptchaParameters.getPublicKey());
-		for (String f : fields) {
-			if (Validation.isFieldRequired(f)) {
-				session.setAttribute(f + "Required", "true");
-			}
-		}
+		for(String f: this.validation.getRequiredUserFields())
+			session.setAttribute(f + "Required", "true");
+
+		// Convert to camelcase with 'org' prefix 'shortName' --> 'orgShortName'
+		for(String f: this.validation.getRequiredOrgFields())
+			session.setAttribute("org" + f.substring(0, 1).toUpperCase() + f.substring(1, f.length()) + "Required",
+					"true");
+
 		return "createAccountForm";
 	}
 
@@ -142,6 +149,7 @@ public final class NewAccountFormController {
 	@RequestMapping(value="/account/new", method=RequestMethod.POST)
 	public String create(HttpServletRequest request,
 						 @ModelAttribute AccountFormBean formBean,
+						 @RequestParam("orgCities") String orgCities,
 						 BindingResult result,
 						 SessionStatus sessionStatus,
 						 Model model)
@@ -153,19 +161,51 @@ public final class NewAccountFormController {
 		// Populate org type droplist
 		model.addAttribute("orgTypes", this.getOrgTypes());
 
-		UserUtils.validate(formBean.getUid(), formBean.getFirstName(), formBean.getSurname(), result );
-		EmailUtils.validate(formBean.getEmail(), result);
+		// uid validation
+		if(!this.validation.validateUserField("uid", formBean.getUid())){
+			result.rejectValue("uid", "uid.error.required", "required");
+		} else {
+			// A valid user identifier (uid) can only contain characters, numbers, hyphens or dot.
+			// It must begin with a character.
+			Pattern regexp = Pattern.compile("[a-zA-Z][a-zA-Z0-9.-]*");
+			Matcher m = regexp.matcher(formBean.getUid());
+			if(!m.matches())
+				result.rejectValue("uid", "uid.error.invalid", "required");
+		}
+
+		// first name and surname validation
+		if(!this.validation.validateUserField("firstName", formBean.getFirstName()))
+			result.rejectValue("firstName", "firstName.error.required", "required");
+		if(!this.validation.validateUserField("surname", formBean.getSurname()))
+			result.rejectValue("surname", "surname.error.required", "required");
+
+		// email validation
+		if (!this.validation.validateUserField("email", formBean.getEmail()))
+			result.rejectValue("email", "email.error.required", "required");
+		else if (!EmailValidator.getInstance().isValid(formBean.getEmail()))
+			result.rejectValue("email", "email.error.invalidFormat", "Invalid Format");
+
+		// password validation
 		PasswordUtils.validate(formBean.getPassword(), formBean.getConfirmPassword(), result);
+
+		// Check captcha
 		new RecaptchaUtils(request.getRemoteAddr(), this.reCaptcha)
 				.validate(formBean.getRecaptcha_challenge_field(), formBean.getRecaptcha_response_field(), result);
-		Validation.validateField("phone", formBean.getPhone(), result);
-		Validation.validateField("title", formBean.getTitle(), result);
-		Validation.validateField("description", formBean.getDescription(), result);
 
+		// Validate remaining fields
+		this.validation.validateUserField("phone", formBean.getPhone(), result);
+		this.validation.validateUserField("title", formBean.getTitle(), result);
+		this.validation.validateUserField("description", formBean.getDescription(), result);
 
 		// Create org if needed
 		if(formBean.getCreateOrg() && ! result.hasErrors()){
 			try {
+
+				// Check required fields
+				this.validation.validateOrgField("name", formBean.getOrgName(), result);
+				this.validation.validateOrgField("shortName", formBean.getOrgShortName(), result);
+				this.validation.validateOrgField("address", formBean.getOrgAddress(), result);
+				this.validation.validateOrgField("type", formBean.getOrgType(), result);
 
 				Org org = new Org();
 				OrgExt orgExt = new OrgExt();
@@ -184,22 +224,29 @@ public final class NewAccountFormController {
 				orgExt.setAddress(formBean.getOrgAddress());
 				orgExt.setOrgType(formBean.getOrgType());
 
+				// Parse and store cities
+				orgCities = orgCities.trim();
+				if(orgCities.length() > 0)
+					org.setCities(Arrays.asList(orgCities.split("\\s*,\\s*")));
+
 				// Set default value
-				org.setStatus("PENDING");
+				org.setStatus(Org.STATUS_PENDING);
 
 				// Persist changes to LDAP server
-				this.orgDao.insert(org);
-				this.orgDao.insert(orgExt);
+				if(!result.hasErrors()){
+					this.orgDao.insert(org);
+					this.orgDao.insert(orgExt);
 
-				// Set real org identifier in form
-				formBean.setOrg(orgId);
+					// Set real org identifier in form
+					formBean.setOrg(orgId);
+				}
 
 			} catch (Exception e) {
 				LOG.error(e.getMessage());
 				throw new IOException(e);
 			}
 		} else {
-			Validation.validateField("org", formBean.getOrg(), result);
+			this.validation.validateUserField("org", formBean.getOrg(), result);
 		}
 
 		if(result.hasErrors())

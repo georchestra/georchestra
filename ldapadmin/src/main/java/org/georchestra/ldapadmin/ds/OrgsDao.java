@@ -91,7 +91,7 @@ public class OrgsDao {
      */
     public List<Org> findValidated(){
         EqualsFilter classFilter = new EqualsFilter("objectClass", "groupOfMembers");
-        EqualsFilter validatedFilter = new EqualsFilter("businessCategory", "VALID");
+        EqualsFilter validatedFilter = new EqualsFilter("businessCategory", Org.STATUS_REGISTERED);
         AndFilter filter = new AndFilter();
         filter.and(classFilter);
         filter.and(validatedFilter);
@@ -206,8 +206,9 @@ public class OrgsDao {
 
         // Mandatory attribute
         attrs.put("o", org.getName());
-
+        
         // Add members if present
+        // Add members
         if(org.getMembers() != null && org.getMembers().size() > 0) {
             BasicAttribute members = new BasicAttribute("member");
             for (String member : org.getMembers())

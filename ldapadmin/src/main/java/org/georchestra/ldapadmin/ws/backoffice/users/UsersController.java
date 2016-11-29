@@ -47,6 +47,7 @@ import org.springframework.ldap.InvalidAttributeValueException;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.filter.LikeFilter;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -162,6 +163,7 @@ public class UsersController {
 				jsonAccount.put(UserSchema.GIVEN_NAME_KEY, account.getGivenName());
 				jsonAccount.put(UserSchema.SURNAME_KEY, account.getSurname());
 				jsonAccount.put(UserSchema.ORG_KEY, orgNames.get(account.getOrg()));
+				jsonAccount.put(UserSchema.MAIL_KEY, account.getEmail());
 				res.put(jsonAccount);
 			}
 
@@ -558,8 +560,8 @@ public class UsersController {
     public void getUserRequiredFields(HttpServletResponse response) throws IOException{
         try {
             JSONArray fields = new JSONArray();
-            for(String field : this.validation.getUserRequiredFields())
-                fields.put(field);
+            fields.put("uid");
+            fields.put("mail");
             ResponseUtil.buildResponse(response, fields.toString(4), HttpServletResponse.SC_OK);
         } catch (Exception e) {
             LOG.error(e.getMessage());
@@ -691,58 +693,49 @@ public class UsersController {
 	 */
 	private Account createAccountFromRequestBody(ServletInputStream is) throws IllegalArgumentException, IOException {
 
-		String strUser = FileUtils.asString(is);
 		JSONObject json;
 		try {
-			json = new JSONObject(strUser);
+			json = new JSONObject(FileUtils.asString(is));
 		} catch (JSONException e) {
 			LOG.error(e.getMessage());
 			throw new IOException(e);
 		}
 
-		String givenName = RequestUtil.getFieldValue(json, UserSchema.GIVEN_NAME_KEY);
-		if(givenName == null){
-			throw new IllegalArgumentException(UserSchema.GIVEN_NAME_KEY + " is required" );
-		}
-		String surname= RequestUtil.getFieldValue(json, UserSchema.SURNAME_KEY);
-		if(surname == null){
-			throw new IllegalArgumentException(UserSchema.SURNAME_KEY + " is required" );
-		}
-		String email= RequestUtil.getFieldValue(json, UserSchema.MAIL_KEY);
-		if(email == null){
-			throw new IllegalArgumentException(UserSchema.MAIL_KEY + " is required" );
-		}
+		String givenName     = RequestUtil.getFieldValue(json, UserSchema.GIVEN_NAME_KEY);
+		String surname       = RequestUtil.getFieldValue(json, UserSchema.SURNAME_KEY);
+		String email         = RequestUtil.getFieldValue(json, UserSchema.MAIL_KEY);
+		String postalAddress = RequestUtil.getFieldValue(json, UserSchema.POSTAL_ADDRESS_KEY );
+		String postOfficeBox = RequestUtil.getFieldValue(json, UserSchema.POST_OFFICE_BOX_KEY );
+		String postalCode    = RequestUtil.getFieldValue(json, UserSchema.POSTAL_CODE_KEY);
+		String street        = RequestUtil.getFieldValue(json, UserSchema.STREET_KEY);
+		String locality      = RequestUtil.getFieldValue(json, UserSchema.LOCALITY_KEY);
+		String phone         = RequestUtil.getFieldValue(json, UserSchema.TELEPHONE_KEY);
+		String facsimile     = RequestUtil.getFieldValue(json, UserSchema.FACSIMILE_KEY);
+		String title         = RequestUtil.getFieldValue(json, UserSchema.TITLE_KEY);
+		String description   = RequestUtil.getFieldValue(json, UserSchema.DESCRIPTION_KEY);
+		String manager       = RequestUtil.getFieldValue(json, UserSchema.MANAGER_KEY);
+		String org           = RequestUtil.getFieldValue(json, UserSchema.ORG_KEY);
 
-		String postalAddress =  RequestUtil.getFieldValue(json, UserSchema.POSTAL_ADDRESS_KEY );
+		if(givenName == null)
+			throw new IllegalArgumentException("First Name is required");
 
-		String postOfficeBox =  RequestUtil.getFieldValue(json, UserSchema.POST_OFFICE_BOX_KEY );
+		if(surname == null)
+			throw new IllegalArgumentException("Last Name is required");
 
-		String postalCode = RequestUtil.getFieldValue(json, UserSchema.POSTAL_CODE_KEY);
+		if(email == null)
+			throw new IllegalArgumentException("EMail is required");
 
-		String street= RequestUtil.getFieldValue(json, UserSchema.STREET_KEY);
-		String locality = RequestUtil.getFieldValue(json, UserSchema.LOCALITY_KEY);
-
-		String phone = RequestUtil.getFieldValue(json, UserSchema.TELEPHONE_KEY);
-
-		String facsimile = RequestUtil.getFieldValue( json, UserSchema.FACSIMILE_KEY);
-
-		String title = RequestUtil.getFieldValue( json, UserSchema.TITLE_KEY);
-
-		String description = RequestUtil.getFieldValue( json, UserSchema.DESCRIPTION_KEY);
-
-		String manager = RequestUtil.getFieldValue(json, UserSchema.MANAGER_KEY);
-
-		String uid;
-		try {
-			uid = createUid(givenName, surname);
-		} catch (DataServiceException e) {
-			LOG.error(e.getMessage());
-			throw new IOException(e);
-		}
+		// Use specified login if not empty
+		String uid = RequestUtil.getFieldValue(json, UserSchema.UID_KEY);
+		if(!StringUtils.hasLength(uid))
+			try {
+				uid = createUid(givenName, surname);
+			} catch (DataServiceException e) {
+				LOG.error(e.getMessage());
+				throw new IOException(e);
+			}
 
 		String commonName = AccountFactory.formatCommonName(givenName, surname);
-
-		String org = RequestUtil.getFieldValue(json, UserSchema.ORG_KEY);
 
 		Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, title, phone, description, postalAddress, postalCode, "", postOfficeBox, "", street, locality, facsimile, "","","","",manager,"", org);
 

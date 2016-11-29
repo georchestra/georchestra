@@ -4,25 +4,27 @@ class StatsController {
 
   static $inject = [ '$element', '$scope', '$injector' ]
 
-  constructor($element, $scope, $injector) {
+  constructor ($element, $scope, $injector) {
     this.$injector = $injector
     let initialize = this.initialize.bind(this, $element, $scope)
     if (this.data) {
       this.data.$promise.then(initialize)
     }
 
-    $scope.$watch('stats.data', (newVal, oldVal) => { if (oldVal != newVal) {
-      newVal.$promise.then(initialize)
-    }})
+    $scope.$watch('stats.data', (newVal, oldVal) => {
+      if (oldVal !== newVal) {
+        newVal.$promise.then(initialize)
+      }
+    })
   }
 
-  initialize($element, $scope) {
-    var options;
+  initialize ($element, $scope) {
+    var options
 
     this.parseData()
     this.granularity = this.data.granularity
 
-    if (this.type == 'bar') {
+    if (this.type === 'bar') {
       options = {
         seriesBarDistance: 10,
         reverseData: true,
@@ -32,7 +34,7 @@ class StatsController {
         },
         axisX: {
           labelInterpolationFnc: (value, index) => {
-            if (value > 1000000 && index % 2 == 0) { return null }
+            if (value > 1000000 && index % 2 === 0) { return null }
             if (value >= 10000) { return Math.floor(value / 1000) + 'K' }
             return value
           }
@@ -49,26 +51,26 @@ class StatsController {
         axisY: {
           offset: 45,
           labelInterpolationFnc: (value, index) =>
-            (value > 10000) ? Math.floor(value / 100)/10 + 'K' : value
+            (value > 10000) ? Math.floor(value / 100) / 10 + 'K' : value
         },
         axisX: {
           labelInterpolationFnc: (value, index) => {
             console.log(value)
-            if (this.granularity == 'HOUR') {
-              return value.split(' ')[1]+'H'
+            if (this.granularity === 'HOUR') {
+              return value.split(' ')[1] + 'H'
             }
-            if (this.granularity == 'DAY' && this.parsed.series[0].length > 8) {
-              return (parseInt(value.split('-')[2]) % 4 == 1) ?
-                formatDay(value) : null
+            if (this.granularity === 'DAY' && this.parsed.series[0].length > 8) {
+              return (parseInt(value.split('-')[2]) % 4 === 1)
+                ? formatDay(value) : null
             }
-            if (this.granularity == 'DAY') {
+            if (this.granularity === 'DAY') {
               return formatDay(value)
             }
-            if (this.granularity == 'WEEK') {
-              return (parseInt(value.split('-')[1]) % 2 == 0) ? value : null
+            if (this.granularity === 'WEEK') {
+              return (parseInt(value.split('-')[1]) % 2 === 0) ? value : null
             }
-            if (this.granularity == 'MONTH') {
-              return (parseInt(value.split('-')[1]) % 3 == 1) ? value : null
+            if (this.granularity === 'MONTH') {
+              return (parseInt(value.split('-')[1]) % 3 === 1) ? value : null
             }
             return value
           }
@@ -77,25 +79,25 @@ class StatsController {
       }
     }
     let el = $element.find('.chartist')
-    this.lines = new Chartist[this.type=='bar' ? 'Bar' : 'Line'](
+    this.lines = new Chartist[this.type === 'bar' ? 'Bar' : 'Line'](
       el[0], this.parsed, options
     )
 
     // Replace foreign object with text tag to allow png export.
     // We then have to correctly place labels by ourselves.
     this.lines.on('draw', (data) => {
-      if(data.type === 'label') {
+      if (data.type === 'label') {
         // Move x-axis label above bottom line
         let ydiff = 8
-        if (data.axis.units.dir == 'vertical') {
+        if (data.axis.units.dir === 'vertical') {
           // Align y-axis labels in front of lines
           let delta = el.height() / (data.axis.ticks.length)
           // For bar graph, move it in front of bar
-          ydiff = (this.type == 'bar') ? 18 : delta
+          ydiff = (this.type === 'bar') ? 18 : delta
         }
         let text = Chartist.Svg('text', {
-          x : data.x,
-          y : data.y + ydiff
+          x: data.x,
+          y: data.y + ydiff
         }).text(data.text)
         data.element.replace(text)
       }
@@ -114,22 +116,21 @@ class StatsController {
       )
       saveSvgAsPng(el[0], 'image.png')
     }
-
   }
 
-  switchView() {
-    this.view = (this.view=='graph') ? 'table' : 'graph'
+  switchView () {
+    this.view = (this.view === 'graph') ? 'table' : 'graph'
   }
 
-  parseData() {
+  parseData () {
     let data = this.data.results
-    this.nodata = !data || data.length == 0
+    this.nodata = !data || data.length === 0
     if (this.nodata) { return }
     let serie = data.map(x => x[this.config[1]])
-    this.serie = (this.type == 'line') ? [].concat(serie).reverse() : serie
-    this.parsed =  {
-      labels : data.map(x => x[this.config[0]]),
-      series : [ [].concat(serie) ]
+    this.serie = (this.type === 'line') ? [].concat(serie).reverse() : serie
+    this.parsed = {
+      labels: data.map(x => x[this.config[0]]),
+      series: [ [].concat(serie) ]
     }
   }
 
@@ -137,13 +138,13 @@ class StatsController {
 
 angular.module('admin_console')
 .component('stats', {
-  bindings    : {
-    data   : '=',
-    type   : '=',
-    config : '=',
-    title  : '='
+  bindings: {
+    data: '=',
+    type: '=',
+    config: '=',
+    title: '='
   },
-  controller   : StatsController,
-  controllerAs : 'stats',
-  templateUrl  : 'components/stats/stats.tpl.html'
+  controller: StatsController,
+  controllerAs: 'stats',
+  templateUrl: 'components/stats/stats.tpl.html'
 })

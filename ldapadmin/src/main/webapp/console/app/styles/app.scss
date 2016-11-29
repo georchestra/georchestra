@@ -1,6 +1,12 @@
 $lightblue: #009FE3;
+$error: #a94442;
+$border: #ddd;
 
-@media (min-width: 768px) {
+$tablet: 768px;
+$large: 992px;
+
+
+@media (min-width: $tablet) {
   .panel .panel-body {
     min-height : 22em;
   }
@@ -36,10 +42,17 @@ groups {
   margin-bottom: 2em;
 }
 
+.col-md-10 {
+  margin-top: 1em;
+  @media (min-width: $large) {
+    margin-top: 0;
+  }
+}
+
 section {
   .nav {
     background: $lightblue;
-    @media (min-width: 992px) {
+    @media (min-width: $large) {
       margin : 0 -15px;
       border : none;
     }
@@ -196,9 +209,9 @@ section {
   }
 }
 
-// GROUPS
-.groups {
-  @media (min-width: 992px) {
+// ASIDE
+.aside {
+  @media (min-width: $large) {
     border-right: 2px solid $lightblue;
   }
   .alert-info {
@@ -208,56 +221,65 @@ section {
       color          : white;
     }
   }
+  .category {
+    display: block;
+    padding: .5em 0;
+    &.active {
+      font-weight: bold;
+    }
+  }
 }
+
+.filter-table {
+  width: 25%;
+}
+.filter-table-reset {
+  position : absolute;
+  right    : 1.5em;
+  top      : 0.7em;
+  &:hover {
+    cursor: pointer;
+  }
+}
+.pending {
+  font-style: italic;
+}
+
+.background {
+  position        : absolute;
+  top             : 0;
+  bottom          : 0;
+  left            : 0;
+  right           : 0;
+  display         : flex;
+  align-items     : center;
+  justify-content : center;
+  background      : rgba(255,255,255,.65);
+  z-index         : 100;
+  .panel {
+    width      : 40em;
+    box-shadow : 0 0 5em rgba(0,0,0,.4);
+  }
+  .panel-body {
+    min-height : 8em;
+  }
+  .close {
+    margin-top   : -.4em;
+    margin-right : -.4em;
+  }
+}
+
 .users {
-  @media (min-width: 992px) {
+  @media (min-width: $large) {
     margin: 0 -15px;
   }
   em {
     color: #888;
   }
-  .filter-users {
-    width: 25%;
-  }
-  .glyphicon-remove-sign {
-    position : absolute;
-    right    : 1.5em;
-    top      : 0.7em;
-    &:hover {
-      cursor: pointer;
-    }
-  }
-  th:last-child,
-  td:last-child {
-    display: none;
-  }
-  .background {
-    position        : absolute;
-    top             : 0;
-    bottom          : 0;
-    left            : 0;
-    right           : 0;
-    display         : flex;
-    align-items     : center;
-    justify-content : center;
-    background      : rgba(255,255,255,.65);
-    z-index         : 100;
-    .panel {
-      width      : 40em;
-      box-shadow : 0 0 5em rgba(0,0,0,.4);
-    }
-    .panel-body {
-      min-height : 8em;
-    }
-    .close {
-      margin-top   : -.4em;
-      margin-right : -.4em;
-    }
-  }
 }
 
 // STATS
-@media (min-width: 992px) {
+@media (min-width: $large) {
   .chosen-container {
     width: 16em !important;
   }
@@ -278,6 +300,106 @@ section {
   .alert {
     margin-top : 2em;
   }
+}
+
+// AREA
+.area {
+  position: relative;
+  .loading {
+    position    : absolute;
+    top         : -15px;
+    left        : -15px;
+    right       : -15px;
+    bottom      : -15px;
+    background  : rgba(0,0,0,.3);
+    z-index     : 1000;
+    text-align  : center;
+    font-size   : 200%;
+    color       : #fff;
+    line-height : 10em;
+  }
+  .map {
+    height        : 650px;
+    width         : calc(100% + 60px);
+    position      : relative;
+    border-radius : 5px 0 0 5px;
+    margin        : -15px 0 -15px -30px;
+    border        : none;
+    border-right: 1px solid $border;
+  }
+  .ol-zoom {
+    top    : auto;
+    bottom : .5em;
+  }
+  .ol-dragbox {
+    border-color: $lightblue;
+  }
+  .ol-control button {
+    background: rgba(0, 139, 207, .5);
+    &:hover {
+      background: rgba(0, 159, 227, .8);
+    }
+  }
+  .alert-info {
+    text-align : center;
+    margin: 15px -30px 15px;
+    border-radius: 0 4px 0 0;
+    border-width: 0 0 1px 0;
+  }
+  @media (min-width: $large) {
+    .map {
+      width : calc(100% + 30px);
+    }
+    .alert-info {
+      margin-top: -15px;
+    }
+  }
+  .attributions {
+    position    : absolute;
+    bottom      : 0;
+    right       : 0;
+    z-index     : 1;
+    background  : rgba(255,255,255, 0.5);
+    padding     : .25em 1em;
+    font-size   : 11px;
+    text-shadow : 0 0 1px #FFF;
+    color       : #666;
+  }
+  .selection {
+    position : absolute;
+    top      : .5em;
+    right    : .5em;
+    z-index  : 1;
+  }
+  .search-container {
+    position : absolute;
+    top      : .5em;
+    left     : .5em;
+    z-index  : 1;
+    width    : 15em;
+  }
+  .search-clear {
+    position : absolute;
+    right    : 0;
+    top      : 0;
+  }
+  .pagination {
+    margin: 10px 0 0;
+  }
+  .alternate {
+    opacity: 75%;
+    font-style: italic;
+  }
+}
+.autocomplete-suggestions {
+  border-radius: 4px;
+  font-size: 13px;
+}
+.autocomplete-suggestion span {
+  display     : inline-block;
+  width       : 0.7em;
+  text-align  : center;
+  margin-left : -0.5em;
 }
 
 // DATE
@@ -348,6 +470,20 @@ date {
   opacity: .5;
 }
 
+.user-form,
+.org-form {
+  .required .col-sm-8:after {
+    position: absolute;
+    right: 0.35em;
+    top: -0.4em;
+    content: '*';
+    color: $lightblue;
+    opacity: .8;
+    font-size: 200%;
+    line-height: 1.4em;
+  }
+}
+
 // CHOSEN
 .chosen-container-multi .chosen-choices {
   border-radius : 4px;
@@ -389,4 +525,20 @@ date {
   margin-left : -10em;
   top         : 1em;
   z-index     : 2000;
+}
+
+.glyphicon-spin {
+  animation: spin 2s infinite linear;
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(359deg);
+  }
+}
+
+input.ng-invalid {
+  border-color: $error;
 }

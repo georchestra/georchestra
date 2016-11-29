@@ -1,0 +1,52 @@
+<div class="area clearfix">
+
+  <div class="col-md-8">
+    <div class="map">
+      <div class="attributions">
+        © <a href="http://openstreetmap.org" rel="noopener noreferrer" target="blank_">Openstreetmap</a>
+        contributors.
+      </div>
+      <div class="btn-group selection">
+        <select ng-change="area.selectBy()" ng-model="area.group" class="btn btn-default btn-sm">
+          <option value="" selected disabled class="glyphicon glyphicon-ok-circle" translate>
+            area.selection
+          </option>
+          <option value="all" class="alternate">— {{ 'area.all' | translate }} —</option>
+          <option value="{{group}}" ng-repeat="group in area.groups">{{group}}</option>
+          <option value="none" class="alternate">— {{ 'area.none' | translate }} —</option>
+        </select>
+        <button class="btn btn-default btn-sm ol-bbox" title="{{ 'area.selectByBBOX' | translate }}"
+          ng-click="area.selectBBOX()" ng-class="{active: area.draw}" type="button" translate>
+          area.selectByBBOX
+        </button>
+      </div>
+
+      <div class="search-container" ng-init="search=''">
+        <button class="btn btn-link btn-sm search-clear" ng-click="search = ''" ng-show="search != ''">
+          <i class="glyphicon glyphicon-remove-sign"></i>
+        </button>
+        <input class="search form-control input-sm" placeholder="{{ 'area.search' | translate }}" ng-model="search">
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <p class="alert alert-info">
+      {{area.collection.getArray().length}} {{ 'area.area' | translate }}
+      <button ng-if="area.item.$resolved" class="btn btn-default btn-sm" ng-click="area.save()" translate>area.save</button>
+      <input type="hidden" ng-if="!area.item.$resolved" ng-value="area.ids" name="orgCities">
+    </p>
+    
+    <ul class="list">
+      <li dir-paginate="f in area.collection.getArray() | itemsPerPage: 25">
+        {{f.get('_label')}}
+      </li>
+    </ul>
+    <dir-pagination-controls max-size="7"></dir-pagination-controls>
+  </div>
+
+  <div class="loading" ng-show="area.loading">
+    <i class="glyphicon glyphicon-map-marker glyphicon-spin"></i>
+  </div>
+
+</div>
