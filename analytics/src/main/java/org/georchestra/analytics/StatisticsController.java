@@ -20,16 +20,17 @@
 package org.georchestra.analytics;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
-import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.georchestra.analytics.dao.StatsRepo;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.Duration;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -146,43 +147,48 @@ public class StatisticsController {
     @Autowired
     private StatsRepo statsRepository;
 
-	private SimpleDateFormat utcTimezone;
-	private SimpleDateFormat localTimezone;
-	private SimpleDateFormat uiInputFormatter;
-	private SimpleDateFormat dbHourInputFormatter;
-	private SimpleDateFormat dbHourOutputFormatter;
-	private SimpleDateFormat dbDayOutputFormatter;
-	private SimpleDateFormat dbWeekInputFormatter;
-	private SimpleDateFormat dbWeekOutputFormatter;
-	private SimpleDateFormat dbMonthInputFormatter;
-	private SimpleDateFormat dbMonthOutputFormatter;
-	private SimpleDateFormat dbDayInputFormatter;
+	private DateTimeFormatter localInputFormatter;
+	private DateTimeFormatter dbOutputFormatter;
+
+	private DateTimeFormatter dbHourInputFormatter;
+	private DateTimeFormatter dbHourOutputFormatter;
+	private DateTimeFormatter dbDayOutputFormatter;
+	private DateTimeFormatter dbWeekInputFormatter;
+	private DateTimeFormatter dbWeekOutputFormatter;
+	private DateTimeFormatter dbMonthInputFormatter;
+	private DateTimeFormatter dbMonthOutputFormatter;
+	private DateTimeFormatter dbDayInputFormatter;
 
 	private static enum FORMAT { JSON, CSV }
 	private static enum REQUEST_TYPE { USAGE, EXTRACTION }
 
 	public StatisticsController(String localTimezone) {
-
-		// Used to convert from one timezone to another
-		this.localTimezone = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
-		this.localTimezone.setTimeZone(TimeZone.getTimeZone(localTimezone));
-		this.utcTimezone = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
-		this.utcTimezone.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-		// Used to parse UI date
-		this.uiInputFormatter = new SimpleDateFormat("yyyy-MM-dd");
-		this.uiInputFormatter.setTimeZone(TimeZone.getTimeZone(localTimezone));
+		// Parser to convert from local time to DB time (UTC)
+		this.localInputFormatter = DateTimeFormat.forPattern("yyyy-MM-dd")
+				.withZone(DateTimeZone.forID(localTimezone));
+		this.dbOutputFormatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")
+				.withZone(DateTimeZone.forID("UTC"));
 
 		// Used to parse date from DB based on granularity
-		this.dbHourInputFormatter = new SimpleDateFormat("y-M-d H");
-		this.dbHourOutputFormatter = new SimpleDateFormat("yyyy-MM-dd HH");
-		this.dbDayInputFormatter = new SimpleDateFormat("y-M-d");
-		this.dbDayOutputFormatter = new SimpleDateFormat("yyyy-MM-dd");
-		this.dbWeekInputFormatter = new SimpleDateFormat("y-w");
-		this.dbWeekOutputFormatter = new SimpleDateFormat("yyyy-ww");
-		this.dbMonthInputFormatter = new SimpleDateFormat("y-M");
-		this.dbMonthOutputFormatter = new SimpleDateFormat("yyyy-MM");
+		this.dbHourInputFormatter = DateTimeFormat.forPattern("yyyy-MM-dd HH")
+				.withZone(DateTimeZone.forID("UTC"));
+		this.dbHourOutputFormatter = DateTimeFormat.forPattern("yyyy-MM-dd HH")
+				.withZone(DateTimeZone.forID(localTimezone));
 
+		this.dbDayInputFormatter = DateTimeFormat.forPattern("y-M-d")
+				.withZone(DateTimeZone.forID("UTC"));
+		this.dbDayOutputFormatter = DateTimeFormat.forPattern("yyyy-MM-dd")
+				.withZone(DateTimeZone.forID(localTimezone));
+
+		this.dbWeekInputFormatter = DateTimeFormat.forPattern("y-w")
+				.withZone(DateTimeZone.forID("UTC"));
+		this.dbWeekOutputFormatter = DateTimeFormat.forPattern("yyyy-ww")
+				.withZone(DateTimeZone.forID(localTimezone));
+
+		this.dbMonthInputFormatter = DateTimeFormat.forPattern("y-M")
+				.withZone(DateTimeZone.forID("UTC"));
+		this.dbMonthOutputFormatter = DateTimeFormat.forPattern("yyyy-MM")
+				.withZone(DateTimeZone.forID(localTimezone));
 	}
 
 	/**
@@ -241,8 +247,10 @@ public class StatisticsController {
 	@ResponseBody
 	public String combinedRequests(@RequestBody String payload, HttpServletResponse response) throws JSONException, ParseException {
 		JSONObject input = null;
-		String userId  = null, groupId = null;
-		Date startDate, endDate;
+		String userId  = null;
+		String groupId = null;
+		String startDate;
+		String endDate;
 		try {
 			input = new JSONObject(payload);
 			if (!input.has("startDate") || !input.has("endDate")) {
@@ -406,21 +414,22 @@ public class StatisticsController {
 
 		JSONObject input;
 		String userId, groupId;
-		Date startDate, endDate;
+		String startDate;
+		String endDate;
 		Integer limit;
 
 		try {
 			input = new JSONObject(payload);
-			if (this.getStartDate(input) == null || this.getEndDate(input) == null) {
-				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-				return null;
-			}
-
 			startDate = this.getStartDate(input);
 			endDate = this.getEndDate(input);
 			limit = this.getLimit(input);
 			userId = this.getUser(input);
 			groupId = this.getGroup(input);
+
+			if (startDate == null || endDate == null) {
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				return null;
+			}
 
 		} catch (Throwable e) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -527,9 +536,10 @@ public class StatisticsController {
 	@RequestMapping(value="/distinctUsers", method=RequestMethod.POST, produces= "application/json; charset=utf-8")
 	@ResponseBody
 	public String distinctUsers(@RequestBody String payload, HttpServletResponse response) throws JSONException {
-		JSONObject input = null;
+		JSONObject input;
 		String groupId = null;
-		Date startDate = null, endDate = null;
+		String startDate;
+		String endDate;
 
 		try {
 			input = new JSONObject(payload);
@@ -573,9 +583,12 @@ public class StatisticsController {
 	 * @param endDate the end date.
 	 * @return the most relevant GRANULARITY.
 	 */
-	private GRANULARITY guessGranularity(Date beginDate, Date endDate) {
-		long diff = endDate.getTime() - beginDate.getTime();
-		long numdays = TimeUnit.MILLISECONDS.toDays(diff);
+	private GRANULARITY guessGranularity(String beginDate, String endDate) {
+		DateTime from = DateTime.parse(beginDate, this.dbOutputFormatter);
+		DateTime to = DateTime.parse(endDate, this.dbOutputFormatter);
+
+		Duration duration = new Duration(from, to);
+		long numdays = duration.getStandardDays();
 		if (numdays < 2) {
 			return GRANULARITY.HOUR;
 		} else if (numdays < 90) {
@@ -589,17 +602,17 @@ public class StatisticsController {
 
 	/**
 	 * Convert Date (with time) from configured local timezone to UTC. This method is used to convert date sent by UI
-	 * to date with same timezone as database records.
+	 * to date with same timezone as database records. Ex : "2016-11-15" will be convert to "2016-11-14 23:00:00" if
+	 * your local timezone is Europe/Paris (+01:00)
 	 *
 	 * @param rawDate Date to convert, should looks like : 2016-02-12
-	 * @return Date instance with date and time converted but with wrong timezone, please don't use timezone part of
-	 * 		   result
+	 * @return String representation of datatime convert to UTC timezone with following format : 2016-11-14 23:00:00
 	 * @throws ParseException if input date is not parsable
 	 */
 
-	private Date convertLocalDateToUTC(String rawDate) throws ParseException {
-		Date date = this.uiInputFormatter.parse(rawDate);
-		return this.localTimezone.parse(this.utcTimezone.format(date));
+	private String convertLocalDateToUTC(String rawDate) {
+		DateTime localDatetime = this.localInputFormatter.parseDateTime(rawDate);
+		return this.dbOutputFormatter.print(localDatetime.toInstant());
 	}
 
 	/**
@@ -609,7 +622,8 @@ public class StatisticsController {
 	 * @throws ParseException if input date is not parsable
 	 */
 	private String convertUTCDateToLocal(String rawDate, GRANULARITY granularity) throws ParseException {
-		SimpleDateFormat inputFormatter = null, outputFormatter = null;
+		DateTimeFormatter inputFormatter = null;
+		DateTimeFormatter outputFormatter = null;
 		switch (granularity){
 			case HOUR:
 				inputFormatter = this.dbHourInputFormatter;
@@ -628,12 +642,8 @@ public class StatisticsController {
 				outputFormatter = this.dbMonthOutputFormatter;
 				break;
 		}
-
-		Date date = inputFormatter.parse(rawDate);
-
-		date = this.utcTimezone.parse(this.localTimezone.format(date));
-		return outputFormatter.format(date);
-
+		DateTime localDatetime = inputFormatter.parseDateTime(rawDate);
+		return outputFormatter.print(localDatetime.toInstant());
 	}
 
 	private String getGroup(JSONObject payload) throws JSONException {
@@ -657,18 +667,18 @@ public class StatisticsController {
 			return null;
 	}
 
-	private Date getDateField(JSONObject payload, String field) throws JSONException, ParseException {
+	private String getDateField(JSONObject payload, String field) throws JSONException, ParseException {
 		if(payload.has(field))
 			return this.convertLocalDateToUTC(payload.getString(field));
 		else
 			return null;
 	}
 
-	private Date getStartDate(JSONObject payload) throws JSONException, ParseException {
+	private String getStartDate(JSONObject payload) throws JSONException, ParseException {
 		return this.getDateField(payload, "startDate");
 	}
 
-	private Date getEndDate(JSONObject payload) throws JSONException, ParseException {
+	private String getEndDate(JSONObject payload) throws JSONException, ParseException {
 		return this.getDateField(payload, "endDate");
 	}
 

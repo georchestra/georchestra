@@ -53,28 +53,28 @@ import org.hibernate.annotations.Type;
 @NamedNativeQuery(name="Stats.getRequestCountBetweenStartDateAndEndDateByHour",
 query = "SELECT CAST(COUNT(*) AS integer) AS count,	to_char(date, 'YYYY-mm-dd HH24') " +
 		"FROM ogcstatistics.ogc_services_log " +
-		"WHERE date >= :startDate AND date < :endDate " +
+		"WHERE date >= CAST(:startDate AS timestamp without time zone) AND date < CAST(:endDate AS timestamp without time zone) " +
 		"GROUP BY to_char(date, 'YYYY-mm-dd HH24') " +
 		"ORDER BY to_char(date, 'YYYY-mm-dd HH24')"),
 
 @NamedNativeQuery(name="Stats.getRequestCountBetweenStartDateAndEndDateByDay",
 query = "SELECT CAST(COUNT(*) AS integer) AS count,	to_char(date, 'YYYY-mm-dd') " +
 		"FROM ogcstatistics.ogc_services_log " +
-		"WHERE date >= :startDate AND date < :endDate " +
+		"WHERE date >= CAST(:startDate AS timestamp without time zone) AND date < CAST(:endDate AS timestamp without time zone) " +
 		"GROUP BY to_char(date, 'YYYY-mm-dd') " +
 		"ORDER BY to_char(date, 'YYYY-mm-dd')"),
 
 @NamedNativeQuery(name="Stats.getRequestCountBetweenStartDateAndEndDateByWeek",
 query = "SELECT CAST(COUNT(*) AS integer) AS count, to_char(date, 'YYYY-WW') " +
 		"FROM ogcstatistics.ogc_services_log " +
-		"WHERE date >= :startDate AND date < :endDate " +
+		"WHERE date >= CAST(:startDate AS timestamp without time zone) AND date < CAST(:endDate AS timestamp without time zone) " +
 		"GROUP BY to_char(date, 'YYYY-WW') " +
 		"ORDER BY to_char(date, 'YYYY-WW')"),
 
 @NamedNativeQuery(name="Stats.getRequestCountBetweenStartDateAndEndDateByMonth",
 query = "SELECT CAST(COUNT(*) AS integer) AS count,	to_char(date, 'YYYY-mm') " +
 		"FROM ogcstatistics.ogc_services_log " +
-		"WHERE date >= :startDate AND date < :endDate " +
+		"WHERE date >= CAST(:startDate AS timestamp without time zone) AND date < CAST(:endDate AS timestamp without time zone) " +
 		"GROUP BY to_char(date, 'YYYY-mm') " +
 		"ORDER BY to_char(date, 'YYYY-mm')"),
 
@@ -83,7 +83,7 @@ query = "SELECT CAST(COUNT(*) AS integer) AS count,	to_char(date, 'YYYY-mm') " +
 query = "SELECT CAST(COUNT(*) AS integer) AS count,	to_char(date, 'YYYY-mm-dd HH24') " +
 		"FROM ogcstatistics.ogc_services_log " +
 		"WHERE user_name = :user " +
-		"AND date >= :startDate AND date < :endDate " +
+		"AND date >= CAST(:startDate AS timestamp without time zone) AND date < CAST(:endDate AS timestamp without time zone) " +
 		"GROUP BY to_char(date, 'YYYY-mm-dd HH24') " +
 		"ORDER BY to_char(date, 'YYYY-mm-dd HH24')"),
 
@@ -91,7 +91,7 @@ query = "SELECT CAST(COUNT(*) AS integer) AS count,	to_char(date, 'YYYY-mm-dd HH
 query = "SELECT CAST(COUNT(*) AS integer) AS count,	to_char(date, 'YYYY-mm-dd') " +
 		"FROM ogcstatistics.ogc_services_log " +
 		"WHERE user_name = :user " +
-		"AND date >= :startDate AND date < :endDate " +
+		"AND date >= CAST(:startDate AS timestamp without time zone) AND date < CAST(:endDate AS timestamp without time zone) " +
 		"GROUP BY to_char(date, 'YYYY-mm-dd') " +
 		"ORDER BY to_char(date, 'YYYY-mm-dd')"),
 
@@ -99,7 +99,7 @@ query = "SELECT CAST(COUNT(*) AS integer) AS count,	to_char(date, 'YYYY-mm-dd') 
 query = "SELECT CAST(COUNT(*) AS integer) AS count,	to_char(date, 'YYYY-WW') " +
 		"FROM ogcstatistics.ogc_services_log " +
 		"WHERE user_name = :user " +
-		"AND date >= :startDate AND date < :endDate " +
+		"AND date >= CAST(:startDate AS timestamp without time zone) AND date < CAST(:endDate AS timestamp without time zone) " +
 		"GROUP BY to_char(date, 'YYYY-WW') " +
 		"ORDER BY to_char(date, 'YYYY-WW')"),
 
@@ -107,7 +107,7 @@ query = "SELECT CAST(COUNT(*) AS integer) AS count,	to_char(date, 'YYYY-WW') " +
 query = "SELECT CAST(COUNT(*) AS integer) AS count,	to_char(date, 'YYYY-mm') " +
 		"FROM ogcstatistics.ogc_services_log " +
 		"WHERE user_name = :user " +
-		"AND date >= :startDate AND date < :endDate " +
+		"AND date >= CAST(:startDate AS timestamp without time zone) AND date < CAST(:endDate AS timestamp without time zone) " +
 		"GROUP BY to_char(date, 'YYYY-mm') " +
 		"ORDER BY to_char(date, 'YYYY-mm')"),
 
@@ -116,7 +116,7 @@ query = "SELECT CAST(COUNT(*) AS integer) AS count,	to_char(date, 'YYYY-mm') " +
 query = "SELECT CAST(COUNT(*) AS integer) AS count, to_char(date, 'YYYY-mm-dd HH24') " +
 		"FROM ogcstatistics.ogc_services_log " +
 		"WHERE :group = ANY (roles) " +
-		"AND date >= :startDate AND date < :endDate " +
+		"AND date >= CAST(:startDate AS timestamp without time zone) AND date < CAST(:endDate AS timestamp without time zone) " +
 		"GROUP BY to_char(date, 'YYYY-mm-dd HH24') " +
 		"ORDER BY to_char(date, 'YYYY-mm-dd HH24')"),
 
@@ -124,7 +124,7 @@ query = "SELECT CAST(COUNT(*) AS integer) AS count, to_char(date, 'YYYY-mm-dd HH
 query = "SELECT CAST(COUNT(*) AS integer) AS count,	to_char(date, 'YYYY-mm-dd') " +
 		"FROM ogcstatistics.ogc_services_log " +
 		"WHERE :group = ANY (roles) " +
-		"AND date >= :startDate AND date < :endDate " +
+		"AND date >= CAST(:startDate AS timestamp without time zone) AND date < CAST(:endDate AS timestamp without time zone) " +
 		"GROUP BY to_char(date, 'YYYY-mm-dd') " +
 		"ORDER BY to_char(date, 'YYYY-mm-dd')"),
 
@@ -132,7 +132,7 @@ query = "SELECT CAST(COUNT(*) AS integer) AS count,	to_char(date, 'YYYY-mm-dd') 
 query = "SELECT CAST(COUNT(*) AS integer) AS count,	to_char(date, 'YYYY-WW') " +
 		"FROM ogcstatistics.ogc_services_log " +
 		"WHERE :group = ANY (roles) " +
-		"AND date >= :startDate AND date < :endDate " +
+		"AND date >= CAST(:startDate AS timestamp without time zone) AND date < CAST(:endDate AS timestamp without time zone) " +
 		"GROUP BY to_char(date, 'YYYY-WW') " +
 		"ORDER BY to_char(date, 'YYYY-WW')"),
 
@@ -140,7 +140,7 @@ query = "SELECT CAST(COUNT(*) AS integer) AS count,	to_char(date, 'YYYY-WW') " +
 query = "SELECT CAST(COUNT(*) AS integer) AS count, to_char(date, 'YYYY-mm') " +
 		"FROM ogcstatistics.ogc_services_log " +
 		"WHERE :group = ANY (roles) " +
-		"AND date >= :startDate AND date < :endDate " +
+		"AND date >= CAST(:startDate AS timestamp without time zone) AND date < CAST(:endDate AS timestamp without time zone) " +
 		"GROUP BY to_char(date, 'YYYY-mm') " +
 		"ORDER BY to_char(date, 'YYYY-mm')"),
 
@@ -149,14 +149,14 @@ query = "SELECT CAST(COUNT(*) AS integer) AS count, to_char(date, 'YYYY-mm') " +
 query = "SELECT user_name, org, CAST(COUNT(*) AS integer) AS count " +
 		"FROM ogcstatistics.ogc_services_log " +
 		"WHERE :group = ANY (roles) " +
-		"AND date >= :startDate AND date < :endDate " +
+		"AND date >= CAST(:startDate AS timestamp without time zone) AND date < CAST(:endDate AS timestamp without time zone) " +
 		"GROUP BY user_name, org " +
 		"ORDER BY COUNT(*) DESC"),
 
 @NamedNativeQuery(name="Stats.getDistinctUsers",
 query = "SELECT user_name, org, CAST(COUNT(*) AS integer) AS count " +
 		"FROM ogcstatistics.ogc_services_log " +
-		"WHERE date >= :startDate AND date < :endDate " +
+		"WHERE date >= CAST(:startDate AS timestamp without time zone) AND date < CAST(:endDate AS timestamp without time zone) " +
 		"GROUP BY user_name, org " +
 		"ORDER BY COUNT(*) DESC"),
 
@@ -164,7 +164,7 @@ query = "SELECT user_name, org, CAST(COUNT(*) AS integer) AS count " +
 @NamedNativeQuery(name="Stats.getLayersStatisticsForUser",
 query = "SELECT layer, CAST(COUNT(*) AS integer) AS count " +
 		"FROM ogcstatistics.ogc_services_log " +
-		"WHERE date >= :startDate AND date < :endDate " +
+		"WHERE date >= CAST(:startDate AS timestamp without time zone) AND date < CAST(:endDate AS timestamp without time zone) " +
 		"AND user_name = :user " +
 		"AND layer != '' " +
 		"GROUP BY layer " +
@@ -173,7 +173,7 @@ query = "SELECT layer, CAST(COUNT(*) AS integer) AS count " +
 @NamedNativeQuery(name="Stats.getLayersStatisticsForUserLimit",
 query = "SELECT layer, CAST(COUNT(*) AS integer) AS count " +
 		"FROM ogcstatistics.ogc_services_log " +
-		"WHERE date >= :startDate AND date < :endDate " +
+		"WHERE date >= CAST(:startDate AS timestamp without time zone) AND date < CAST(:endDate AS timestamp without time zone) " +
 		"AND user_name = :user " +
 		"AND layer != '' " +
 		"GROUP BY layer " +
@@ -183,7 +183,7 @@ query = "SELECT layer, CAST(COUNT(*) AS integer) AS count " +
 @NamedNativeQuery(name="Stats.getLayersStatisticsForGroup",
 query = "SELECT layer, CAST(COUNT(*) AS integer) AS count " +
 		"FROM ogcstatistics.ogc_services_log " +
-		"WHERE date >= :startDate AND date < :endDate " +
+		"WHERE date >= CAST(:startDate AS timestamp without time zone) AND date < CAST(:endDate AS timestamp without time zone) " +
 		"AND :group = ANY(roles) " +
 		"AND layer != '' " +
 		"GROUP BY layer " +
@@ -192,7 +192,7 @@ query = "SELECT layer, CAST(COUNT(*) AS integer) AS count " +
 @NamedNativeQuery(name="Stats.getLayersStatisticsForGroupLimit",
 query = "SELECT layer, CAST(COUNT(*) AS integer) AS count " +
 		"FROM ogcstatistics.ogc_services_log " +
-		"WHERE date >= :startDate AND date < :endDate " +
+		"WHERE date >= CAST(:startDate AS timestamp without time zone) AND date < CAST(:endDate AS timestamp without time zone) " +
 		"AND :group = ANY(roles) " +
 		"AND layer != '' " +
 		"GROUP BY layer " +
@@ -202,7 +202,7 @@ query = "SELECT layer, CAST(COUNT(*) AS integer) AS count " +
 @NamedNativeQuery(name="Stats.getLayersStatistics",
 query = "SELECT layer, CAST(COUNT(*) AS integer) AS count " +
 		"FROM ogcstatistics.ogc_services_log " +
-		"WHERE date >= :startDate AND date < :endDate " +
+		"WHERE date >= CAST(:startDate AS timestamp without time zone) AND date < CAST(:endDate AS timestamp without time zone) " +
 		"AND layer != '' " +
 		"GROUP BY layer " +
 		"ORDER BY COUNT(*) DESC"),
@@ -210,7 +210,7 @@ query = "SELECT layer, CAST(COUNT(*) AS integer) AS count " +
 @NamedNativeQuery(name="Stats.getLayersStatisticsLimit",
 query = "SELECT layer, CAST(COUNT(*) AS integer) AS count " +
 		"FROM ogcstatistics.ogc_services_log " +
-		"WHERE date >= :startDate AND date < :endDate " +
+		"WHERE date >= CAST(:startDate AS timestamp without time zone) AND date < CAST(:endDate AS timestamp without time zone) " +
 		"AND layer != '' " +
 		"GROUP BY layer " +
 		"ORDER BY COUNT(*) DESC " +
@@ -222,7 +222,7 @@ query = "SELECT layer, CAST(COUNT(*) AS integer) AS count " +
 				"FROM extractorapp.extractor_layer_log " +
 				"LEFT JOIN extractorapp.extractor_log " +
 				"	ON (extractorapp.extractor_log.id = extractorapp.extractor_layer_log.extractor_log_id) " +
-				"WHERE creation_date >= :startDate AND creation_date < :endDate " +
+				"WHERE creation_date >= CAST(:startDate AS timestamp without time zone) AND creation_date < CAST(:endDate AS timestamp without time zone) " +
 				"AND username = :user " +
 				"AND is_successful " +
 				"GROUP BY layer_name " +
@@ -233,7 +233,7 @@ query = "SELECT layer, CAST(COUNT(*) AS integer) AS count " +
 				"FROM extractorapp.extractor_layer_log " +
 				"LEFT JOIN extractorapp.extractor_log " +
 				"	ON (extractorapp.extractor_log.id = extractorapp.extractor_layer_log.extractor_log_id) " +
-				"WHERE creation_date >= :startDate AND creation_date < :endDate " +
+				"WHERE creation_date >= CAST(:startDate AS timestamp without time zone) AND creation_date < CAST(:endDate AS timestamp without time zone) " +
 				"AND username = :user " +
 				"AND is_successful " +
 				"GROUP BY layer_name " +
@@ -245,7 +245,7 @@ query = "SELECT layer, CAST(COUNT(*) AS integer) AS count " +
 				"FROM extractorapp.extractor_layer_log " +
 				"LEFT JOIN extractorapp.extractor_log " +
 				"	ON (extractorapp.extractor_log.id = extractorapp.extractor_layer_log.extractor_log_id) " +
-				"WHERE creation_date >= :startDate AND creation_date < :endDate " +
+				"WHERE creation_date >= CAST(:startDate AS timestamp without time zone) AND creation_date < CAST(:endDate AS timestamp without time zone) " +
 				"AND is_successful " +
 				"AND :group = ANY(roles) " +
 				"GROUP BY layer_name " +
@@ -256,7 +256,7 @@ query = "SELECT layer, CAST(COUNT(*) AS integer) AS count " +
 				"FROM extractorapp.extractor_layer_log " +
 				"LEFT JOIN extractorapp.extractor_log " +
 				"	ON (extractorapp.extractor_log.id = extractorapp.extractor_layer_log.extractor_log_id) " +
-				"WHERE creation_date >= :startDate AND creation_date < :endDate " +
+				"WHERE creation_date >= CAST(:startDate AS timestamp without time zone) AND creation_date < CAST(:endDate AS timestamp without time zone) " +
 				"AND :group = ANY(roles) " +
 				"AND is_successful " +
 				"GROUP BY layer_name " +
@@ -268,7 +268,7 @@ query = "SELECT layer, CAST(COUNT(*) AS integer) AS count " +
 				"FROM extractorapp.extractor_layer_log " +
 				"LEFT JOIN extractorapp.extractor_log " +
 				"	ON (extractorapp.extractor_log.id = extractorapp.extractor_layer_log.extractor_log_id) " +
-				"WHERE creation_date >= :startDate AND creation_date < :endDate " +
+				"WHERE creation_date >= CAST(:startDate AS timestamp without time zone) AND creation_date < CAST(:endDate AS timestamp without time zone) " +
 				"AND is_successful " +
 				"GROUP BY layer_name " +
 				"ORDER BY COUNT(*) DESC"),
@@ -278,7 +278,7 @@ query = "SELECT layer, CAST(COUNT(*) AS integer) AS count " +
 				"FROM extractorapp.extractor_layer_log " +
 				"LEFT JOIN extractorapp.extractor_log " +
 				"	ON (extractorapp.extractor_log.id = extractorapp.extractor_layer_log.extractor_log_id) " +
-				"WHERE creation_date >= :startDate AND creation_date < :endDate " +
+				"WHERE creation_date >= CAST(:startDate AS timestamp without time zone) AND creation_date < CAST(:endDate AS timestamp without time zone) " +
 				"AND is_successful " +
 				"GROUP BY layer_name " +
 				"ORDER BY COUNT(*) DESC " +
