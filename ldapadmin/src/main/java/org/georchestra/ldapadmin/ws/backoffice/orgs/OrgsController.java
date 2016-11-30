@@ -212,10 +212,9 @@ public class OrgsController {
             // Parse Json
             JSONObject json = this.parseRequest(request, response);
 
-            // Validate request against required fields
-            for(String requiredField : this.validation.getRequiredOrgFields())
-                if (!this.validation.validateOrgField(requiredField, json))
-                    throw new IOException("required field : " + requiredField);
+            // Validate request against required fields for admin part
+            if (!this.validation.validateOrgField("name", json))
+                throw new IOException("required field : name");
 
             // Retrieve current orgs state from ldap
             Org org = this.orgDao.findByCommonName(commonName);
