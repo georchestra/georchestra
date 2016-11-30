@@ -37,20 +37,6 @@ class UserController {
     switch (this.tab) {
       case 'infos':
         this.contexts = $injector.get('Contexts').query()
-        let selOrgs = []
-        Orgs.query((orgs) => {
-          orgs.map((o) => {
-            selOrgs.push({
-              id: o.id,
-              text: o.name
-            })
-          })
-          $('#organization').select2({
-            placeholder: this.i18n.select,
-            allowClear: true,
-            data: selOrgs
-          })
-        })
         break
       case 'messages':
         this.templates = this.$injector.get('Templates').query()
@@ -94,6 +80,25 @@ class UserController {
             this.user.pending = group.users.indexOf(this.user.uid) >= 0
           }
         })
+        if (this.tab === 'infos') {
+          let selOrgs = []
+          let Orgs = this.$injector.get('Orgs')
+          Orgs.query((orgs) => {
+            orgs.forEach((o) => {
+              if (this.user.pending || o.status !== 'PENDING') {
+                selOrgs.push({
+                  id: o.id,
+                  text: o.name
+                })
+              }
+            })
+            $('#organization').select2({
+              placeholder: this.i18n.select,
+              allowClear: true,
+              data: selOrgs
+            })
+          })
+        }
         this.groups = notAdmin
       })
     })

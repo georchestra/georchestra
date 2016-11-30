@@ -83,7 +83,7 @@ public class OrgsController {
     public void findAll(HttpServletResponse response) throws IOException {
 
         try {
-            List<Org> orgs = this.orgDao.findValidated();
+            List<Org> orgs = this.orgDao.findAll();
             JSONArray res = new JSONArray();
             for (Org org : orgs)
                 res.put(org.toJson());
