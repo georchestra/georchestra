@@ -139,7 +139,7 @@ class UserController {
       this.requests = Analytics.get(options, () => {}, error)
       this.layers = Analytics.get({
         ...options,
-        service: 'layersUsage',
+        service: 'layersUsage.json',
         limit: 10
       }, () => {}, error)
     })

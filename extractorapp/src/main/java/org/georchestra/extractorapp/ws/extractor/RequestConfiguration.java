@@ -22,6 +22,7 @@ public class RequestConfiguration {
 	public final boolean testing;
 	public final String username;
 	public final String roles;
+	public final String org;
 	public final UsernamePasswordCredentials adminCredentials;
 	public final String secureHost;
 	public final String extractionFolderPrefix;
@@ -35,7 +36,7 @@ public class RequestConfiguration {
 	public RequestConfiguration(List<ExtractorLayerRequest> requests,
 			UUID requestUuid, Email email,
 			ServletContext servletContext, boolean testing, String username,
-			String roles, UsernamePasswordCredentials adminCredentials,
+			String roles, String org, UsernamePasswordCredentials adminCredentials,
 			String secureHost, String extractionFolderPrefix, long maxCoverageExtractionSize,
 			boolean remoteReproject, boolean useCommandLineGDAL,
 			String strRequest, String userAgent) {
@@ -49,6 +50,7 @@ public class RequestConfiguration {
 		this.testing = testing;
 		this.username = username;
 		this.roles = roles;
+		this.org = org;
 		this.adminCredentials = adminCredentials;
 		this.secureHost = secureHost;
 		this.maxCoverageExtractionSize = maxCoverageExtractionSize;

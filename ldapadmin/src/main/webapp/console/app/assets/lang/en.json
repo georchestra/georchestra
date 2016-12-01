@@ -75,6 +75,7 @@
   "org.pendingmsg"        : "Pending organism",
   "org.confirm"           : "Confirm",
   "org.select"            : "Select an organization",
+  "org.membersCount"      : "Members count",
 
   "area.save"             : "Save area",
   "area.updated"          : "Area updated",
@@ -118,7 +119,6 @@
   "users.organization"    : "Organization",
   "users.email"           : "Mail",
 
-
   "msg.compose"           : "Compose message",
   "msg.date"              : "Date",
   "msg.subject"           : "Subject",
@@ -159,6 +159,9 @@
   "analytics.WEEK"        : "per week",
   "analytics.MONTH"       : "per month",
   "analytics.HOUR"        : "per hour",
+  "analytics.extraction"  : "Layers extractions",
+  "analytics.saveAsPNG"   : "Save as PNG",
+  "analytics.saveAsCSV"   : "Save as CSV",
 
   "date.day"              : "Today",
   "date.week"             : "Last week",

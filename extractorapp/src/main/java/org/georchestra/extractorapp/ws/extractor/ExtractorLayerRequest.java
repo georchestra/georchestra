@@ -74,6 +74,7 @@ public class ExtractorLayerRequest {
     private final JSONObject               _layerJson;
     private final JSONObject               _globalJson;
     private String _wfsName;
+    private Long dbLogId;
 
     public ExtractorLayerRequest (JSONObject layerJson, JSONObject globalJson, JSONArray emails) throws NoSuchAuthorityCodeException,
             FactoryException, MalformedURLException, JSONException {
@@ -276,4 +277,11 @@ public class ExtractorLayerRequest {
         return _wfsName==null ? _layerName : _wfsName;
     }
 
+    public void setDbLogId(Long dbLogId) {
+        this.dbLogId = dbLogId;
+    }
+
+    public Long getDbLogId() {
+        return dbLogId;
+    }
 }

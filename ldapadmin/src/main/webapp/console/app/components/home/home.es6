@@ -25,6 +25,7 @@ class HomeController {
     this.i18n = {}
     $injector.get('translate')('analytics.errorload', this.i18n)
 
+    // FIX ME : use function instead if a bind
     let error = $injector.get('Flash').create.bind(
       $injector.get('Flash'), 'danger', this.i18n.errorload
     )
@@ -36,8 +37,10 @@ class HomeController {
     }
 
     this.connected = Analytics.get(options, () => {}, error)
-    options.service = 'combinedRequests'
-    this.requests = Analytics.get(options, () => {}, error)
+    this.requests = Analytics.get({
+      ...options,
+      service: 'combinedRequests'
+    }, () => {}, error)
 
     this.logs = this.$injector.get('Logs').query({
       limit: LOG_LIMIT,

@@ -19,13 +19,23 @@
 
 package org.georchestra.extractorapp.ws.extractor.task;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
 import java.net.MalformedURLException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.extractorapp.ws.extractor.ExtractorController;
@@ -36,7 +46,9 @@ import org.georchestra.extractorapp.ws.extractor.RequestConfiguration;
 import org.georchestra.extractorapp.ws.extractor.WcsExtractor;
 import org.georchestra.extractorapp.ws.extractor.WfsExtractor;
 import org.georchestra.extractorapp.ws.extractor.csw.CSWExtractor;
+import org.geotools.referencing.CRS;
 import org.json.JSONException;
+import org.opengis.geometry.BoundingBox;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
@@ -51,15 +63,18 @@ import org.opengis.referencing.operation.TransformException;
 public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 	private static final Log LOG = LogFactory.getLog(ExtractionTask.class
 			.getPackage().getName());
+	private final ComboPooledDataSource datasource;
 
 	private static final int EXTRACTION_ATTEMPTS = 3;
 	public final ExecutionMetadata executionMetadata;
 
 	private RequestConfiguration requestConfig;
+	private Long logId;
 
-	public ExtractionTask(RequestConfiguration requestConfig)
+	public ExtractionTask(RequestConfiguration requestConfig, ComboPooledDataSource datasource)
 			throws NoSuchAuthorityCodeException, MalformedURLException, JSONException, FactoryException {
 		this.requestConfig = requestConfig;
+		this.datasource = datasource;
 		this.executionMetadata = new ExecutionMetadata(
 				this.requestConfig.requestUuid,
 				this.requestConfig.username,
@@ -69,6 +84,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 	public ExtractionTask(ExtractionTask toCopy) {
 
 		this.requestConfig = toCopy.requestConfig;
+		this.datasource = toCopy.datasource;
 		this.executionMetadata = toCopy.executionMetadata;
 	}
 
@@ -77,6 +93,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 	public void run() {
 		executionMetadata.setRunning();
 		requestConfig.setThreadLocal();
+		this.statSetRunning();
 
 		final File tmpDir = FileUtils.createTempDirectory();
 		final File tmpExtractionBundle = mkDirTmpExtractionBundle(tmpDir, requestConfig.extractionFolderPrefix+requestConfig.requestUuid .toString());
@@ -182,7 +199,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 			executionMetadata.setCompleted();
 			FileUtils.delete(tmpExtractionBundle);
 			FileUtils.delete(tmpDir);
-
+			this.statSetCompleted();
 		}
 	}
 
@@ -239,6 +256,9 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 
 	private void handleExtractionException(ExtractorLayerRequest request,
 			Throwable e, File failureFile) {
+
+		this.statSetError(request);
+
 		if (!failureFile.getParentFile().exists()) {
 			throw new AssertionError(
 					"The temporary extraction bundle directory: "
@@ -380,4 +400,157 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 	public boolean equalId(String uuid) {
 		return requestConfig.requestUuid.toString().equals(uuid);
 	}
+
+
+	/*
+	 * Stats methods
+	 */
+
+	private void statSetRunning() {
+
+		Connection c = null;
+		PreparedStatement pst = null;
+		try {
+			c = this.datasource.getConnection();
+
+			pst = c.prepareStatement("INSERT INTO extractorapp.extractor_log " +
+					"(username, " +  // 1
+					"roles, " +      // 2
+					"org, " +        // 3
+					"request_id) " + // 4
+					"VALUES (?, ?, ?, ?)",
+					Statement.RETURN_GENERATED_KEYS);
+
+			pst.setString(1, this.requestConfig.username);
+			pst.setArray(2, c.createArrayOf("varchar", this.requestConfig.roles.split("\\s*;\\s*")));
+			pst.setString(3, this.requestConfig.org);
+			pst.setString(4, this.requestConfig.requestUuid.toString());
+
+			this.logId = this.executeAndGetGeneratedKey(pst);
+			pst.close();
+
+			pst = c.prepareStatement("INSERT INTO extractorapp.extractor_layer_log " +
+					"(extractor_log_id, " +  // 1
+					"projection, " +         // 2
+					"resolution, " +         // 3
+					"format, " +             // 4
+					"bbox, " +               // 5, 6, 7, 8
+					"owstype, " +            // 9
+					"owsurl, " +             // 10
+					"layer_name) " +         // 11
+					"VALUES (?, ?, ?, ?, " +
+					"ST_SetSRID(ST_MakeBox2D(ST_Point(?, ?), ST_Point(? ,?)), 4326), " +
+					"?, ?, ?)",
+					Statement.RETURN_GENERATED_KEYS);
+
+			pst.setLong(1, this.logId);
+
+			for (ExtractorLayerRequest layerRequest : this.requestConfig.requests) {
+				pst.setString(2, layerRequest._epsg);
+				pst.setDouble(3, layerRequest._resolution);
+				pst.setString(4, layerRequest._format);
+				BoundingBox bbox = layerRequest._bbox.toBounds(CRS.decode("EPSG:4326"));
+				pst.setDouble(5, bbox.getMinX());
+				pst.setDouble(6, bbox.getMinY());
+				pst.setDouble(7, bbox.getMaxX());
+				pst.setDouble(8, bbox.getMaxY());
+				pst.setString(9, layerRequest._owsType.toString());
+				pst.setString(10, layerRequest._url.toString());
+				pst.setString(11, layerRequest._layerName);
+
+				layerRequest.setDbLogId(this.executeAndGetGeneratedKey(pst));
+			}
+
+		} catch (SQLException e) {
+			LOG.error(e.getMessage());
+		} catch (TransformException e) {
+			LOG.error(e.getMessage());
+		} catch (NoSuchAuthorityCodeException e) {
+			LOG.error(e.getMessage());
+		} catch (FactoryException e) {
+			LOG.error(e.getMessage());
+		} finally {
+			this.closeDbLinks(c, pst);
+		}
+
+	}
+
+	private void statSetCompleted() {
+
+		Connection c = null;
+		PreparedStatement pst = null;
+		try {
+			c = this.datasource.getConnection();
+
+			pst = c.prepareStatement("UPDATE extractorapp.extractor_layer_log " +
+					"SET is_successful = TRUE " +
+					"WHERE extractor_log_id = ? AND is_successful IS NULL");
+
+			pst.setLong(1, this.logId);
+			pst.executeUpdate();
+			pst.close();
+
+			// Update duration
+			pst = c.prepareStatement("UPDATE extractorapp.extractor_log " +
+					"SET duration = NOW() - creation_date " +
+					"WHERE id = ?");
+
+			pst.setLong(1, this.logId);
+			pst.executeUpdate();
+
+		} catch (SQLException e) {
+			LOG.error(e.getMessage());
+		} finally {
+			this.closeDbLinks(c, pst);
+		}
+
+	}
+
+	private void statSetError(ExtractorLayerRequest request) {
+
+		Connection c = null;
+		PreparedStatement pst = null;
+		try {
+			c = this.datasource.getConnection();
+
+			pst = c.prepareStatement("UPDATE extractorapp.extractor_layer_log " +
+					"SET is_successful = FALSE " +
+					"WHERE id = ?");
+
+			pst.setLong(1, request.getDbLogId());
+			pst.executeUpdate();
+		} catch (SQLException e) {
+			LOG.error(e.getMessage());
+		} finally {
+			this.closeDbLinks(c, pst);
+		}
+	}
+
+	private void closeDbLinks(Connection c, PreparedStatement pst) {
+		try {
+			if(pst != null)
+				pst.close();
+			if(c != null)
+				c.close();
+		} catch (SQLException e) {
+			LOG.warn(e.getMessage());
+		}
+	}
+
+	private Long executeAndGetGeneratedKey(PreparedStatement pst) throws SQLException {
+
+		int affectedRows = pst.executeUpdate();
+		if (affectedRows == 0)
+			throw new SQLException("Failed to insert new stats");
+
+		ResultSet generatedKeys = pst.getGeneratedKeys();
+		Long logId;
+		if(generatedKeys.next())
+			logId = generatedKeys.getLong(1);
+		else
+			throw new SQLException("Failed to insert new stats");
+		generatedKeys.close();
+		return logId;
+	}
+
 }

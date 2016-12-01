@@ -55,7 +55,6 @@ class StatsController {
         },
         axisX: {
           labelInterpolationFnc: (value, index) => {
-            console.log(value)
             if (this.granularity === 'HOUR') {
               return value.split(' ')[1] + 'H'
             }
@@ -107,7 +106,7 @@ class StatsController {
     )
     this.view = 'graph'
 
-    this.export = () => {
+    this.exportPNG = () => {
       let el = $element.find('svg')
       el.append($(
         '<style>' + Array.from(
@@ -115,6 +114,12 @@ class StatsController {
         ).map(x => x.cssText).join('') + '</style>')
       )
       saveSvgAsPng(el[0], 'image.png')
+    }
+
+    this.exportCSV = () => {
+      this.$injector.get('Analytics').download(this.csvConfig).$promise.then((data) => {
+        window.saveAs(data.response.blob, 'document.csv')
+      })
     }
   }
 
@@ -142,7 +147,8 @@ angular.module('admin_console')
     data: '=',
     type: '=',
     config: '=',
-    title: '='
+    title: '=',
+    csvConfig: '='
   },
   controller: StatsController,
   controllerAs: 'stats',

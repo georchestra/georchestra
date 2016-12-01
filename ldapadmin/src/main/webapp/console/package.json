@@ -38,6 +38,7 @@
     "chosen-npm": "1.4.2",
     "coffee-script-brunch": "^1.8.3",
     "css-brunch": "^1.7.0",
+    "file-saverjs": "^1.3.5",
     "javascript-brunch": "1.8.0",
     "jquery": "^2.2.0",
     "moment": "^2.12.0",
@@ -59,7 +60,8 @@
       "moment",
       "Chartist",
       "autoComplete",
-      "saveSvgAsPng"
+      "saveSvgAsPng",
+      "Blob"
     ],
     "ignore": [
       "vendor/",

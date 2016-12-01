@@ -175,6 +175,11 @@
       <artifactId>georchestra-commons</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>joda-time</groupId>
+      <artifactId>joda-time</artifactId>
+      <version>2.9.6</version>
+    </dependency>
   </dependencies>
   <build>
     <finalName>${project.artifactId}-${server}</finalName>
