@@ -99,6 +99,10 @@ public class ExtractorController implements ServletContextAware {
     private ComboPooledDataSource dataSource;
 
     public void validateConfig() throws PropertyVetoException {
+
+        this.dataSource = new ComboPooledDataSource();
+        this.dataSource.setDriverClass("org.postgresql.Driver");
+
         if ((georConfig != null) && (georConfig.activated())) {
             LOG.info("geOrchestra datadir: reconfiguring bean ...");
             servletUrl = georConfig.getProperty("servletUrl");
@@ -115,6 +119,7 @@ public class ExtractorController implements ServletContextAware {
             String dlformJdbcUrl = georConfig.getProperty("dlformjdbcurl");
             // Recreating a CheckFormAcceptance object
             checkFormAcceptance = new CheckFormAcceptance(dlFormActivated, dlformJdbcUrl);
+            this.dataSource.setJdbcUrl(this.georConfig.getProperty("jdbcurl"));
             LOG.info("geOrchestra datadir: done.");
         }
         if (extractionManager == null) {
@@ -126,11 +131,6 @@ public class ExtractorController implements ServletContextAware {
                 throw new AssertionError("extractorapp does not have access to " + storageFile + " and cannot create it");
             }
         }
-
-        this.dataSource = new ComboPooledDataSource();
-        this.dataSource.setDriverClass( "org.postgresql.Driver" );
-        this.dataSource.setJdbcUrl( this.georConfig.getProperty("jdbcurl") );
-
     }
 
     @RequestMapping(value = RESULTS_MAPPING, method = RequestMethod.GET)
