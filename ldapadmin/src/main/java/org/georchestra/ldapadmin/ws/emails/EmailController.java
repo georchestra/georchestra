@@ -69,6 +69,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -99,6 +101,7 @@ public class EmailController {
     private GeorchestraConfiguration georConfig;
 
     private static final Log LOG = LogFactory.getLog(EmailController.class.getName());
+    private Collection<String> recipientWhiteList;
 
     /*
      * produces = MediaType.APPLICATION_JSON_VALUE
@@ -285,7 +288,7 @@ public class EmailController {
     @RequestMapping(value = "/EmailProxy", method = RequestMethod.POST,
             /*produces = "application/json; charset=utf-8",*/ consumes="application/json")
     @ResponseBody
-    public String emailProxy(@RequestBody String rawRequest, HttpServletRequest request) throws JSONException, MessagingException, UnsupportedEncodingException {
+    public String emailProxy(@RequestBody String rawRequest, HttpServletRequest request) throws JSONException, MessagingException, UnsupportedEncodingException, DataServiceException {
 
         JSONObject payload = new JSONObject(rawRequest);
         if(!payload.has("subject") || payload.get("subject").toString().length() == 0)
@@ -299,6 +302,17 @@ public class EmailController {
 
         if(to.length == 0 && cc.length == 0 && bcc.length == 0)
             throw new JSONException("One of 'to', 'cc' or 'bcc' must be present in request");
+
+        // Check Recipients validity
+        for(int i = 0; i < to.length; i++)
+            if(!this.recipientIsAllowed(to[i].getAddress()))
+                throw new IllegalArgumentException("Recipient not allowed : " + to[i].getAddress());
+        for(int i = 0; i < cc.length; i++)
+            if(!this.recipientIsAllowed(cc[i].getAddress()))
+                throw new IllegalArgumentException("Recipient not allowed : " + cc[i].getAddress());
+        for(int i = 0; i < bcc.length; i++)
+            if(!this.recipientIsAllowed(bcc[i].getAddress()))
+                throw new IllegalArgumentException("Recipient not allowed : " + bcc[i].getAddress());
 
         LOG.info("EMail request : user=" + request.getHeader("sec-username")
                 + " to=" + this.extractAddress("to", payload)
@@ -387,7 +401,7 @@ public class EmailController {
      * @param request full object where to search for key
      * @return java list of extracted values
      */
-    private InternetAddress[] populateRecipient(String field, JSONObject request) throws JSONException {
+    private InternetAddress[] populateRecipient(String field, JSONObject request) throws JSONException, DataServiceException {
         List<InternetAddress> res = new LinkedList<InternetAddress>();
         if(request.has(field)){
             JSONArray rawTo = request.getJSONArray(field);
@@ -398,6 +412,23 @@ public class EmailController {
             }
         }
         return res.toArray(new InternetAddress[res.size()]);
+    }
+
+    private boolean recipientIsAllowed(String recipient) throws DataServiceException {
+        // Load configuration if not already loaded
+        if(this.recipientWhiteList == null)
+            this.recipientWhiteList = Arrays.asList(this.georConfig.getProperty("proxyRecipientWhitelist").split("\\s*,\\s*"));
+
+        // Check recipient in whitelist
+        if(this.recipientWhiteList.contains(recipient))
+            return true;
+
+        // Check recipient in LDAP
+        Account a = this.accountDao.findByEmail(recipient);
+        if(a == null)
+            return false;
+        else
+            return true;
     }
 
 
