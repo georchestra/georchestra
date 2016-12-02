@@ -21,6 +21,7 @@ package org.georchestra.ldapadmin.ws.emails;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.ldapadmin.dao.AdminLogDao;
 import org.georchestra.ldapadmin.dao.AttachmentDao;
 import org.georchestra.ldapadmin.dao.EmailDao;
@@ -34,19 +35,25 @@ import org.georchestra.ldapadmin.model.AdminLogType;
 import org.georchestra.ldapadmin.model.Attachment;
 import org.georchestra.ldapadmin.model.EmailEntry;
 import org.georchestra.ldapadmin.model.EmailTemplate;
+import org.georchestra.ldapadmin.ws.backoffice.utils.ResponseUtil;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.activation.DataHandler;
+import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
@@ -61,6 +68,7 @@ import javax.mail.util.ByteArrayDataSource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -86,6 +94,9 @@ public class EmailController {
 
     @Autowired
     private AdminLogDao logRepo;
+
+    @Autowired
+    private GeorchestraConfiguration georConfig;
 
     private static final Log LOG = LogFactory.getLog(EmailController.class.getName());
 
@@ -246,6 +257,149 @@ public class EmailController {
         res.put("templates", emailTemplates);
         return res.toString();
     }
+
+    /**
+     * Send an email based on json payload. Recipient should be present in LDAP directory or in configured whitelist.
+     *
+     * Json sent should have following keys :
+     *
+     * - to      : json array of email to send email to ex: ["you@rm.fr", "another-guy@rm.fr"]
+     * - cc      : json array of email to 'CC' email ex: ["him@rm.fr"]
+     * - bcc     : json array of email to add recipient as blind CC ["secret@rm.fr"]
+     * - subject : subject of email
+     * - body    : Body of email
+     *
+     * Either 'to', 'cc' or 'bcc' parameter must be present in request. 'subject' and 'body' are mandatory.
+     *
+     * complete json example :
+     *
+     * {
+     *   "to": ["you@rm.fr", "another-guy@rm.fr"],
+     *   "cc": ["him@rm.fr"],
+     *   "bcc": ["secret@rm.fr"],
+     *   "subject": "test email",
+     *   "body": "Hi, this a test EMail, please do not reply."
+     * }
+     *
+     */
+    @RequestMapping(value = "/EmailProxy", method = RequestMethod.POST,
+            /*produces = "application/json; charset=utf-8",*/ consumes="application/json")
+    @ResponseBody
+    public String emailProxy(@RequestBody String rawRequest, HttpServletRequest request) throws JSONException, MessagingException, UnsupportedEncodingException {
+
+        JSONObject payload = new JSONObject(rawRequest);
+        if(!payload.has("subject") || payload.get("subject").toString().length() == 0)
+            throw new JSONException("No subject specified, 'subject' field is required");
+        if(!payload.has("body"))
+            throw new JSONException("No body specified, 'body' field is required");
+
+        InternetAddress[] to = this.populateRecipient("to", payload);
+        InternetAddress[] cc = this.populateRecipient("cc", payload);
+        InternetAddress[] bcc = this.populateRecipient("bcc", payload);
+
+        if(to.length == 0 && cc.length == 0 && bcc.length == 0)
+            throw new JSONException("One of 'to', 'cc' or 'bcc' must be present in request");
+
+        LOG.info("EMail request : user=" + request.getHeader("sec-username")
+                + " to=" + this.extractAddress("to", payload)
+                + " cc=" + this.extractAddress("cc", payload)
+                + " bcc=" + this.extractAddress("bcc", payload)
+                + " roles=" + request.getHeader("sec-roles"));
+
+        LOG.debug("EMail request : " + payload.toString());
+
+        // Instanciate MimeMessage instance
+        Properties props = System.getProperties();
+        props.put("mail.smtp.host", this.emailFactory.getSmtpHost());
+        props.put("mail.protocol.port", this.emailFactory.getSmtpPort());
+        Session session = Session.getInstance(props, null);
+        MimeMessage message = new MimeMessage(session);
+
+        // Generate From header
+        InternetAddress from = new InternetAddress();
+        from.setAddress(this.georConfig.getProperty("proxyFromAddress"));
+        from.setPersonal(request.getHeader("sec-firstname") + " " + request.getHeader("sec-lastname"));
+        message.setFrom(from);
+
+        // Generate Reply-to header
+        InternetAddress replyTo = new InternetAddress();
+        replyTo.setAddress(request.getHeader("sec-email"));
+        replyTo.setPersonal(request.getHeader("sec-firstname") + " " + request.getHeader("sec-lastname"));
+        message.setReplyTo(new Address[]{replyTo});
+
+        // Generate to, cc and bcc headers
+        if(to.length > 0)
+            message.setRecipients(Message.RecipientType.TO, to);
+        if(cc.length > 0)
+            message.setRecipients(Message.RecipientType.CC, cc);
+        if(bcc.length > 0)
+            message.setRecipients(Message.RecipientType.BCC, bcc);
+
+        // Add subject and body
+        message.setSubject(payload.getString("subject"), "UTF-8");
+        message.setText(payload.getString("body"), "UTF-8", "plain");
+        message.setSentDate(new Date());
+
+        // finally send message
+        Transport.send(message);
+
+        JSONObject res = new JSONObject();
+        res.put("success", true);
+
+        return res.toString();
+    }
+
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    public String handleException(Exception e, HttpServletResponse response) throws JSONException, IOException {
+        LOG.error(e.getMessage());
+        ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, e.getMessage()),
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        throw new IOException(e);
+    }
+
+    /**
+     * Return EMail addresses in JSON array to a String
+     * @param field field name under which EMails are store in payload
+     * @param payload JsonObject to search EMails addresses
+     * @return
+     * @throws JSONException
+     */
+    private String extractAddress(String field, JSONObject payload) throws JSONException {
+        StringBuilder res = new StringBuilder();
+        if(payload.has(field)){
+            JSONArray rawTo = payload.getJSONArray(field);
+            for(int i = 0; i < rawTo.length(); i++){
+                if(i > 0)
+                    res.append(",");
+                res.append(rawTo.getString(i));
+            }
+        }
+        return res.toString();
+    }
+
+    /**
+     * Create an java String list based on json array found in json ojbect
+     *
+     * @param field field name where to find json array to parse
+     * @param request full object where to search for key
+     * @return java list of extracted values
+     */
+    private InternetAddress[] populateRecipient(String field, JSONObject request) throws JSONException {
+        List<InternetAddress> res = new LinkedList<InternetAddress>();
+        if(request.has(field)){
+            JSONArray rawTo = request.getJSONArray(field);
+            for(int i = 0; i < rawTo.length(); i++){
+                InternetAddress to = new InternetAddress();
+                to.setAddress(rawTo.getString(i));
+                res.add(to);
+            }
+        }
+        return res.toArray(new InternetAddress[res.size()]);
+    }
+
 
     /**
      * Send EmailEntry to smtp server
