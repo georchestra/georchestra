@@ -73,8 +73,14 @@
         <h4 translate>analytics.title</h4>
         <hr>
         <div class="row">
-          <stats data="user.requests" type="'line'" config="user.config.requests" title="'analytics.requests'" class="col-md-6"></stats>
-          <stats data="user.layers" type="'bar'" config="user.config.layers" title="'analytics.layers'" class="col-md-6"></stats>
+          <stats data="user.requests" type="'line'" config="user.config.requests"
+                 title="'analytics.requests'" class="col-md-6"></stats>
+          <stats data="user.layers" type="'bar'" config="user.config.layers"
+                 title="'analytics.layers'" class="col-md-6" csv-config="user.usageOptions"></stats>
+        </div>
+        <div class="row">
+          <stats data="user.extraction" type="'bar'" config="user.config.extraction"
+                 title="'analytics.extraction'" class="col-md-6" csv-config="user.extractionOptions"></stats>
         </div>
       </div>
 

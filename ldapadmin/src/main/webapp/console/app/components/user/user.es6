@@ -114,7 +114,8 @@ class UserController {
 
     this.config = {
       layers: [ 'layer', 'count' ],
-      requests: [ 'date', 'count' ]
+      requests: [ 'date', 'count' ],
+      extraction: [ 'layer', 'count' ]
     }
     this.loadAnalyticsData()
   }
@@ -137,11 +138,28 @@ class UserController {
         endDate: this.date.end
       }
       this.requests = Analytics.get(options, () => {}, error)
-      this.layers = Analytics.get({
+
+      let usageOptions = {
         ...options,
         service: 'layersUsage.json',
         limit: 10
-      }, () => {}, error)
+      }
+      this.layers = Analytics.get(usageOptions, () => {}, error)
+
+      this.usageOptions = { ...usageOptions }
+      delete this.usageOptions.limit
+      this.usageOptions.service = 'layersUsage.csv'
+
+      let extractionOptions = {
+        ...options,
+        service: 'layersExtraction.json',
+        limit: 10
+      }
+
+      this.extraction = Analytics.get(extractionOptions, () => {}, error)
+      this.extractionOptions = { ...extractionOptions }
+      delete this.extractionOptions.limit
+      this.extractionOptions.service = 'layersExtraction.csv'
     })
   }
 
