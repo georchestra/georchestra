@@ -115,7 +115,7 @@ class UserController {
     this.config = {
       layers: [ 'layer', 'count' ],
       requests: [ 'date', 'count' ],
-      extraction: [ 'layer', 'count' ]
+      extractions: [ 'layer', 'count' ]
     }
     this.loadAnalyticsData()
   }
@@ -156,7 +156,7 @@ class UserController {
         limit: 10
       }
 
-      this.extraction = Analytics.get(extractionOptions, () => {}, error)
+      this.extractions = Analytics.get(extractionOptions, () => {}, error)
       this.extractionOptions = { ...extractionOptions }
       delete this.extractionOptions.limit
       this.extractionOptions.service = 'layersExtraction.csv'

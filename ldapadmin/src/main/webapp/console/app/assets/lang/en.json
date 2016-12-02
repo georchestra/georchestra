@@ -159,7 +159,7 @@
   "analytics.WEEK"        : "per week",
   "analytics.MONTH"       : "per month",
   "analytics.HOUR"        : "per hour",
-  "analytics.extraction"  : "Layers extractions",
+  "analytics.extractions"  : "Layers extractions",
   "analytics.saveAsPNG"   : "Save as PNG",
   "analytics.saveAsCSV"   : "Save as CSV",
 

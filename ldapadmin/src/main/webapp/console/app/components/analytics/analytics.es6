@@ -28,7 +28,7 @@ class AnalyticsController {
     this.config = {
       layers: [ 'layer', 'count' ],
       requests: [ 'date', 'count' ],
-      extraction: [ 'layer', 'count' ]
+      extractions: [ 'layer', 'count' ]
     }
 
     this.load((this.group !== 'all') ? this.group : undefined)
@@ -71,7 +71,7 @@ class AnalyticsController {
       limit: 10
     }
 
-    this.extraction = Analytics.get(extractionOptions, () => {}, err)
+    this.extractions = Analytics.get(extractionOptions, () => {}, err)
     this.extractionOptions = { ...extractionOptions }
     delete this.extractionOptions.limit
     this.extractionOptions.service = 'layersExtraction.csv'
