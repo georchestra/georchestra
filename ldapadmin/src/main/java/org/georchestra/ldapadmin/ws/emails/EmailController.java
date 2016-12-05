@@ -59,6 +59,7 @@ import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MailDateFormat;
 import javax.mail.internet.MimeBodyPart;
@@ -286,33 +287,19 @@ public class EmailController {
      *
      */
     @RequestMapping(value = "/EmailProxy", method = RequestMethod.POST,
-            /*produces = "application/json; charset=utf-8",*/ consumes="application/json")
+            produces = "application/json; charset=utf-8", consumes="application/json")
     @ResponseBody
-    public String emailProxy(@RequestBody String rawRequest, HttpServletRequest request) throws JSONException, MessagingException, UnsupportedEncodingException, DataServiceException {
+    public String emailProxy(@RequestBody String rawRequest, HttpServletRequest request)
+            throws JSONException, MessagingException, UnsupportedEncodingException, DataServiceException {
 
         JSONObject payload = new JSONObject(rawRequest);
-        if(!payload.has("subject") || payload.get("subject").toString().length() == 0)
-            throw new JSONException("No subject specified, 'subject' field is required");
-        if(!payload.has("body"))
-            throw new JSONException("No body specified, 'body' field is required");
-
         InternetAddress[] to = this.populateRecipient("to", payload);
         InternetAddress[] cc = this.populateRecipient("cc", payload);
         InternetAddress[] bcc = this.populateRecipient("bcc", payload);
 
-        if(to.length == 0 && cc.length == 0 && bcc.length == 0)
-            throw new JSONException("One of 'to', 'cc' or 'bcc' must be present in request");
-
-        // Check Recipients validity
-        for(int i = 0; i < to.length; i++)
-            if(!this.recipientIsAllowed(to[i].getAddress()))
-                throw new IllegalArgumentException("Recipient not allowed : " + to[i].getAddress());
-        for(int i = 0; i < cc.length; i++)
-            if(!this.recipientIsAllowed(cc[i].getAddress()))
-                throw new IllegalArgumentException("Recipient not allowed : " + cc[i].getAddress());
-        for(int i = 0; i < bcc.length; i++)
-            if(!this.recipientIsAllowed(bcc[i].getAddress()))
-                throw new IllegalArgumentException("Recipient not allowed : " + bcc[i].getAddress());
+        this.checkSubject(payload);
+        this.checkBody(payload);
+        this.checkRecipient(to, cc, bcc);
 
         LOG.info("EMail request : user=" + request.getHeader("sec-username")
                 + " to=" + this.extractAddress("to", payload)
@@ -322,7 +309,7 @@ public class EmailController {
 
         LOG.debug("EMail request : " + payload.toString());
 
-        // Instanciate MimeMessage instance
+        // Instanciate MimeMessage
         Properties props = System.getProperties();
         props.put("mail.smtp.host", this.emailFactory.getSmtpHost());
         props.put("mail.protocol.port", this.emailFactory.getSmtpPort());
@@ -359,10 +346,72 @@ public class EmailController {
 
         JSONObject res = new JSONObject();
         res.put("success", true);
-
         return res.toString();
     }
 
+    /**
+     * Checks 'subject' of request against configuration
+     * @param payload JSONObject to search subject in
+     */
+    private void checkSubject(JSONObject payload) throws JSONException {
+
+        // Checks that subject is present
+        if(!payload.has("subject") || payload.getString("subject").length() == 0)
+            throw new JSONException("No subject specified, 'subject' field is required");
+
+        // Check subject size
+        if(payload.getString("subject").length() > Integer.parseInt(georConfig.getProperty("proxyMaxSubjectSize")))
+            throw new IllegalArgumentException("Subject is too long, it should not exceed " +
+                    georConfig.getProperty("proxyMaxSubjectSize") + " bytes");
+    }
+
+    /**
+     * Checks 'body' of request against configuration
+     * @param payload JSONObject to search body in
+     */
+    private void checkBody(JSONObject payload) throws JSONException {
+
+         // Checks that body is present
+        if(!payload.has("body"))
+            throw new JSONException("No body specified, 'body' field is required");
+
+        // Check subject and body size
+        if(payload.getString("body").length() > Integer.parseInt(georConfig.getProperty("proxyMaxBodySize")))
+            throw new IllegalArgumentException("Body is too long, it should not exceed " +
+                    georConfig.getProperty("proxyMaxBodySize") + " bytes");
+
+    }
+
+    /**
+     * Checks recipients of request against configuration
+     * @param to array of recipients for 'to' field
+     * @param cc array of recipients for 'cc' field
+     * @param bcc array of recipients for 'bcc' field
+     */
+    private void checkRecipient(InternetAddress[] to,
+                                InternetAddress[] cc,
+                                InternetAddress[] bcc) throws JSONException, DataServiceException {
+
+        if(to.length == 0 && cc.length == 0 && bcc.length == 0)
+            throw new JSONException("One of 'to', 'cc' or 'bcc' must be present in request");
+
+        // Check recipient count against proxyMaxRecipient
+        if((to.length + cc.length + bcc.length) > Integer.parseInt(georConfig.getProperty("proxyMaxRecipient")))
+            throw new IllegalArgumentException("Too many recipient in request, max recipient : "
+                    + georConfig.getProperty("proxyMaxRecipient"));
+
+        // Check Recipients validity
+        for(int i = 0; i < to.length; i++)
+            if(!this.recipientIsAllowed(to[i].getAddress()))
+                throw new IllegalArgumentException("Recipient not allowed : " + to[i].getAddress());
+        for(int i = 0; i < cc.length; i++)
+            if(!this.recipientIsAllowed(cc[i].getAddress()))
+                throw new IllegalArgumentException("Recipient not allowed : " + cc[i].getAddress());
+        for(int i = 0; i < bcc.length; i++)
+            if(!this.recipientIsAllowed(bcc[i].getAddress()))
+                throw new IllegalArgumentException("Recipient not allowed : " + bcc[i].getAddress());
+
+    }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
@@ -401,13 +450,14 @@ public class EmailController {
      * @param request full object where to search for key
      * @return java list of extracted values
      */
-    private InternetAddress[] populateRecipient(String field, JSONObject request) throws JSONException, DataServiceException {
+    private InternetAddress[] populateRecipient(String field, JSONObject request) throws JSONException, AddressException {
         List<InternetAddress> res = new LinkedList<InternetAddress>();
         if(request.has(field)){
             JSONArray rawTo = request.getJSONArray(field);
             for(int i = 0; i < rawTo.length(); i++){
                 InternetAddress to = new InternetAddress();
                 to.setAddress(rawTo.getString(i));
+                to.validate();
                 res.add(to);
             }
         }
@@ -424,11 +474,11 @@ public class EmailController {
             return true;
 
         // Check recipient in LDAP
-        Account a = this.accountDao.findByEmail(recipient);
-        if(a == null)
+        try {
+            return this.accountDao.findByEmail(recipient) != null;
+        } catch (NameNotFoundException ex){
             return false;
-        else
-            return true;
+        }
     }
 
 
@@ -477,6 +527,20 @@ public class EmailController {
 
         // Send message
         Transport.send(message);
+    }
+
+    // Setter for unit tests
+    public void setGeorConfig(GeorchestraConfiguration georConfig) {
+        this.georConfig = georConfig;
+    }
+
+    // Getter for unit tests
+    public AccountDao getAccountDao() {
+        return accountDao;
+    }
+
+    public void setAccountDao(AccountDao accountDao) {
+        this.accountDao = accountDao;
     }
 
 }
