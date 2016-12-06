@@ -17,7 +17,7 @@
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>apache-log4j-extras</artifactId>
-      <version>1.1</version>
+      <version>1.2.17</version>
       <type>jar</type>
       <scope>runtime</scope>
     </dependency>
@@ -103,6 +103,17 @@
               </excludes>
             </resource>
           </webResources>
+          <packagingExcludes>
+            <!--
+                 wicket 1.4.12 explicitely needs slf4j 1.5.8, the build system
+                 is made so that we end up with both versions in the WAR,
+                 polluting the classpath.
+                 Best way to address the issue is to exclude the problematic dependency,
+                 note that this is what the official doc does:
+                 https://maven.apache.org/plugins/maven-war-plugin/examples/including-excluding-files-from-war.html
+             -->
+            WEB-INF/lib/slf4j-api-1.5.8.jar
+          </packagingExcludes>
         </configuration>
       </plugin>
       <plugin>
