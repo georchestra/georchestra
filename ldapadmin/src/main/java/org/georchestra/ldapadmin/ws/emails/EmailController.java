@@ -21,6 +21,7 @@ package org.georchestra.ldapadmin.ws.emails;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.ldapadmin.dao.AdminLogDao;
 import org.georchestra.ldapadmin.dao.AttachmentDao;
 import org.georchestra.ldapadmin.dao.EmailDao;
@@ -34,24 +35,31 @@ import org.georchestra.ldapadmin.model.AdminLogType;
 import org.georchestra.ldapadmin.model.Attachment;
 import org.georchestra.ldapadmin.model.EmailEntry;
 import org.georchestra.ldapadmin.model.EmailTemplate;
+import org.georchestra.ldapadmin.ws.backoffice.utils.ResponseUtil;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.activation.DataHandler;
+import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MailDateFormat;
 import javax.mail.internet.MimeBodyPart;
@@ -61,6 +69,9 @@ import javax.mail.util.ByteArrayDataSource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -87,7 +98,11 @@ public class EmailController {
     @Autowired
     private AdminLogDao logRepo;
 
+    @Autowired
+    private GeorchestraConfiguration georConfig;
+
     private static final Log LOG = LogFactory.getLog(EmailController.class.getName());
+    private Collection<String> recipientWhiteList;
 
     /*
      * produces = MediaType.APPLICATION_JSON_VALUE
@@ -248,6 +263,226 @@ public class EmailController {
     }
 
     /**
+     * Send an email based on json payload. Recipient should be present in LDAP directory or in configured whitelist.
+     *
+     * Json sent should have following keys :
+     *
+     * - to      : json array of email to send email to ex: ["you@rm.fr", "another-guy@rm.fr"]
+     * - cc      : json array of email to 'CC' email ex: ["him@rm.fr"]
+     * - bcc     : json array of email to add recipient as blind CC ["secret@rm.fr"]
+     * - subject : subject of email
+     * - body    : Body of email
+     *
+     * Either 'to', 'cc' or 'bcc' parameter must be present in request. 'subject' and 'body' are mandatory.
+     *
+     * complete json example :
+     *
+     * {
+     *   "to": ["you@rm.fr", "another-guy@rm.fr"],
+     *   "cc": ["him@rm.fr"],
+     *   "bcc": ["secret@rm.fr"],
+     *   "subject": "test email",
+     *   "body": "Hi, this a test EMail, please do not reply."
+     * }
+     *
+     */
+    @RequestMapping(value = "/emailProxy", method = RequestMethod.POST,
+            produces = "application/json; charset=utf-8", consumes="application/json")
+    @ResponseBody
+    public String emailProxy(@RequestBody String rawRequest, HttpServletRequest request)
+            throws JSONException, MessagingException, UnsupportedEncodingException, DataServiceException {
+
+        JSONObject payload = new JSONObject(rawRequest);
+        InternetAddress[] to = this.populateRecipient("to", payload);
+        InternetAddress[] cc = this.populateRecipient("cc", payload);
+        InternetAddress[] bcc = this.populateRecipient("bcc", payload);
+
+        this.checkSubject(payload);
+        this.checkBody(payload);
+        this.checkRecipient(to, cc, bcc);
+
+        LOG.info("EMail request : user=" + request.getHeader("sec-username")
+                + " to=" + this.extractAddress("to", payload)
+                + " cc=" + this.extractAddress("cc", payload)
+                + " bcc=" + this.extractAddress("bcc", payload)
+                + " roles=" + request.getHeader("sec-roles"));
+
+        LOG.debug("EMail request : " + payload.toString());
+
+        // Instanciate MimeMessage
+        Properties props = System.getProperties();
+        props.put("mail.smtp.host", this.emailFactory.getSmtpHost());
+        props.put("mail.protocol.port", this.emailFactory.getSmtpPort());
+        Session session = Session.getInstance(props, null);
+        MimeMessage message = new MimeMessage(session);
+
+        // Generate From header
+        InternetAddress from = new InternetAddress();
+        from.setAddress(this.georConfig.getProperty("emailProxyFromAddress"));
+        from.setPersonal(request.getHeader("sec-firstname") + " " + request.getHeader("sec-lastname"));
+        message.setFrom(from);
+
+        // Generate Reply-to header
+        InternetAddress replyTo = new InternetAddress();
+        replyTo.setAddress(request.getHeader("sec-email"));
+        replyTo.setPersonal(request.getHeader("sec-firstname") + " " + request.getHeader("sec-lastname"));
+        message.setReplyTo(new Address[]{replyTo});
+
+        // Generate to, cc and bcc headers
+        if(to.length > 0)
+            message.setRecipients(Message.RecipientType.TO, to);
+        if(cc.length > 0)
+            message.setRecipients(Message.RecipientType.CC, cc);
+        if(bcc.length > 0)
+            message.setRecipients(Message.RecipientType.BCC, bcc);
+
+        // Add subject and body
+        message.setSubject(payload.getString("subject"), "UTF-8");
+        message.setText(payload.getString("body"), "UTF-8", "plain");
+        message.setSentDate(new Date());
+
+        // finally send message
+        Transport.send(message);
+
+        JSONObject res = new JSONObject();
+        res.put("success", true);
+        return res.toString();
+    }
+
+    /**
+     * Checks 'subject' of request against configuration
+     * @param payload JSONObject to search subject in
+     */
+    private void checkSubject(JSONObject payload) throws JSONException {
+
+        // Checks that subject is present
+        if(!payload.has("subject") || payload.getString("subject").length() == 0)
+            throw new JSONException("No subject specified, 'subject' field is required");
+
+        // Check subject size
+        if(payload.getString("subject").length() > Integer.parseInt(georConfig.getProperty("emailProxyMaxSubjectSize")))
+            throw new IllegalArgumentException("Subject is too long, it should not exceed " +
+                    georConfig.getProperty("emailProxyMaxSubjectSize") + " bytes");
+    }
+
+    /**
+     * Checks 'body' of request against configuration
+     * @param payload JSONObject to search body in
+     */
+    private void checkBody(JSONObject payload) throws JSONException {
+
+         // Checks that body is present
+        if(!payload.has("body"))
+            throw new JSONException("No body specified, 'body' field is required");
+
+        // Check subject and body size
+        if(payload.getString("body").length() > Integer.parseInt(georConfig.getProperty("emailProxyMaxBodySize")))
+            throw new IllegalArgumentException("Body is too long, it should not exceed " +
+                    georConfig.getProperty("emailProxyMaxBodySize") + " bytes");
+
+    }
+
+    /**
+     * Checks recipients of request against configuration
+     * @param to array of recipients for 'to' field
+     * @param cc array of recipients for 'cc' field
+     * @param bcc array of recipients for 'bcc' field
+     */
+    private void checkRecipient(InternetAddress[] to,
+                                InternetAddress[] cc,
+                                InternetAddress[] bcc) throws JSONException, DataServiceException {
+
+        if(to.length == 0 && cc.length == 0 && bcc.length == 0)
+            throw new JSONException("One of 'to', 'cc' or 'bcc' must be present in request");
+
+        // Check recipient count against proxyMaxRecipient
+        if((to.length + cc.length + bcc.length) > Integer.parseInt(georConfig.getProperty("emailProxyMaxRecipient")))
+            throw new IllegalArgumentException("Too many recipient in request, max recipient : "
+                    + georConfig.getProperty("emailProxyMaxRecipient"));
+
+        // Check Recipients validity
+        for(int i = 0; i < to.length; i++)
+            if(!this.recipientIsAllowed(to[i].getAddress()))
+                throw new IllegalArgumentException("Recipient not allowed : " + to[i].getAddress());
+        for(int i = 0; i < cc.length; i++)
+            if(!this.recipientIsAllowed(cc[i].getAddress()))
+                throw new IllegalArgumentException("Recipient not allowed : " + cc[i].getAddress());
+        for(int i = 0; i < bcc.length; i++)
+            if(!this.recipientIsAllowed(bcc[i].getAddress()))
+                throw new IllegalArgumentException("Recipient not allowed : " + bcc[i].getAddress());
+
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    public String handleException(Exception e, HttpServletResponse response) throws JSONException, IOException {
+        LOG.error(e.getMessage());
+        ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, e.getMessage()),
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        throw new IOException(e);
+    }
+
+    /**
+     * Return EMail addresses in JSON array to a String
+     * @param field field name under which EMails are store in payload
+     * @param payload JsonObject to search EMails addresses
+     * @return
+     * @throws JSONException
+     */
+    private String extractAddress(String field, JSONObject payload) throws JSONException {
+        StringBuilder res = new StringBuilder();
+        if(payload.has(field)){
+            JSONArray rawTo = payload.getJSONArray(field);
+            for(int i = 0; i < rawTo.length(); i++){
+                if(i > 0)
+                    res.append(",");
+                res.append(rawTo.getString(i));
+            }
+        }
+        return res.toString();
+    }
+
+    /**
+     * Create an java String list based on json array found in json ojbect
+     *
+     * @param field field name where to find json array to parse
+     * @param request full object where to search for key
+     * @return java list of extracted values
+     */
+    private InternetAddress[] populateRecipient(String field, JSONObject request) throws JSONException, AddressException {
+        List<InternetAddress> res = new LinkedList<InternetAddress>();
+        if(request.has(field)){
+            JSONArray rawTo = request.getJSONArray(field);
+            for(int i = 0; i < rawTo.length(); i++){
+                InternetAddress to = new InternetAddress();
+                to.setAddress(rawTo.getString(i));
+                to.validate();
+                res.add(to);
+            }
+        }
+        return res.toArray(new InternetAddress[res.size()]);
+    }
+
+    private boolean recipientIsAllowed(String recipient) throws DataServiceException {
+        // Load configuration if not already loaded
+        if(this.recipientWhiteList == null)
+            this.recipientWhiteList = Arrays.asList(this.georConfig.getProperty("emailProxyRecipientWhitelist").split("\\s*,\\s*"));
+
+        // Check recipient in whitelist
+        if(this.recipientWhiteList.contains(recipient))
+            return true;
+
+        // Check recipient in LDAP
+        try {
+            return this.accountDao.findByEmail(recipient) != null;
+        } catch (NameNotFoundException ex){
+            return false;
+        }
+    }
+
+
+    /**
      * Send EmailEntry to smtp server
      *
      * @param email email to send
@@ -292,6 +527,20 @@ public class EmailController {
 
         // Send message
         Transport.send(message);
+    }
+
+    // Setter for unit tests
+    public void setGeorConfig(GeorchestraConfiguration georConfig) {
+        this.georConfig = georConfig;
+    }
+
+    // Getter for unit tests
+    public AccountDao getAccountDao() {
+        return accountDao;
+    }
+
+    public void setAccountDao(AccountDao accountDao) {
+        this.accountDao = accountDao;
     }
 
 }
