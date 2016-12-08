@@ -286,7 +286,7 @@ public class EmailController {
      * }
      *
      */
-    @RequestMapping(value = "/EmailProxy", method = RequestMethod.POST,
+    @RequestMapping(value = "/emailProxy", method = RequestMethod.POST,
             produces = "application/json; charset=utf-8", consumes="application/json")
     @ResponseBody
     public String emailProxy(@RequestBody String rawRequest, HttpServletRequest request)
@@ -318,7 +318,7 @@ public class EmailController {
 
         // Generate From header
         InternetAddress from = new InternetAddress();
-        from.setAddress(this.georConfig.getProperty("proxyFromAddress"));
+        from.setAddress(this.georConfig.getProperty("emailProxyFromAddress"));
         from.setPersonal(request.getHeader("sec-firstname") + " " + request.getHeader("sec-lastname"));
         message.setFrom(from);
 
@@ -360,9 +360,9 @@ public class EmailController {
             throw new JSONException("No subject specified, 'subject' field is required");
 
         // Check subject size
-        if(payload.getString("subject").length() > Integer.parseInt(georConfig.getProperty("proxyMaxSubjectSize")))
+        if(payload.getString("subject").length() > Integer.parseInt(georConfig.getProperty("emailProxyMaxSubjectSize")))
             throw new IllegalArgumentException("Subject is too long, it should not exceed " +
-                    georConfig.getProperty("proxyMaxSubjectSize") + " bytes");
+                    georConfig.getProperty("emailProxyMaxSubjectSize") + " bytes");
     }
 
     /**
@@ -376,9 +376,9 @@ public class EmailController {
             throw new JSONException("No body specified, 'body' field is required");
 
         // Check subject and body size
-        if(payload.getString("body").length() > Integer.parseInt(georConfig.getProperty("proxyMaxBodySize")))
+        if(payload.getString("body").length() > Integer.parseInt(georConfig.getProperty("emailProxyMaxBodySize")))
             throw new IllegalArgumentException("Body is too long, it should not exceed " +
-                    georConfig.getProperty("proxyMaxBodySize") + " bytes");
+                    georConfig.getProperty("emailProxyMaxBodySize") + " bytes");
 
     }
 
@@ -396,9 +396,9 @@ public class EmailController {
             throw new JSONException("One of 'to', 'cc' or 'bcc' must be present in request");
 
         // Check recipient count against proxyMaxRecipient
-        if((to.length + cc.length + bcc.length) > Integer.parseInt(georConfig.getProperty("proxyMaxRecipient")))
+        if((to.length + cc.length + bcc.length) > Integer.parseInt(georConfig.getProperty("emailProxyMaxRecipient")))
             throw new IllegalArgumentException("Too many recipient in request, max recipient : "
-                    + georConfig.getProperty("proxyMaxRecipient"));
+                    + georConfig.getProperty("emailProxyMaxRecipient"));
 
         // Check Recipients validity
         for(int i = 0; i < to.length; i++)
@@ -467,7 +467,7 @@ public class EmailController {
     private boolean recipientIsAllowed(String recipient) throws DataServiceException {
         // Load configuration if not already loaded
         if(this.recipientWhiteList == null)
-            this.recipientWhiteList = Arrays.asList(this.georConfig.getProperty("proxyRecipientWhitelist").split("\\s*,\\s*"));
+            this.recipientWhiteList = Arrays.asList(this.georConfig.getProperty("emailProxyRecipientWhitelist").split("\\s*,\\s*"));
 
         // Check recipient in whitelist
         if(this.recipientWhiteList.contains(recipient))

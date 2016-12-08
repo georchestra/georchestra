@@ -30,10 +30,10 @@ public class EmailControllerTest {
 
         // Mock configuration
         this.georConfig = mock(GeorchestraConfiguration.class);
-        when(georConfig.getProperty(eq("proxyMaxRecipient"))).thenReturn("10");
-        when(georConfig.getProperty(eq("proxyMaxBodySize"))).thenReturn("10000");
-        when(georConfig.getProperty(eq("proxyMaxSubjectSize"))).thenReturn("200");
-        when(georConfig.getProperty(eq("proxyRecipientWhitelist")))
+        when(georConfig.getProperty(eq("emailProxyMaxRecipient"))).thenReturn("10");
+        when(georConfig.getProperty(eq("emailProxyMaxBodySize"))).thenReturn("10000");
+        when(georConfig.getProperty(eq("emailProxyMaxSubjectSize"))).thenReturn("200");
+        when(georConfig.getProperty(eq("emailProxyRecipientWhitelist")))
                 .thenReturn("psc@georchestra.org, postmaster@georchestra.org, listmaster@georchestra.org");
 
         // Mock headers
@@ -137,7 +137,7 @@ public class EmailControllerTest {
 
 
     /**
-     * Checks that subject length do not exceed configuration : proxyMaxSubjectSize
+     * Checks that subject length do not exceed configuration : emailProxyMaxSubjectSize
      */
     @Test
     public void testSubjectTooLong() throws MessagingException, DataServiceException, JSONException, UnsupportedEncodingException {
@@ -175,7 +175,7 @@ public class EmailControllerTest {
     }
 
     /**
-     * Checks that body length do not exceed configuration : proxyMaxBodySize
+     * Checks that body length do not exceed configuration : emailProxyMaxBodySize
      */
     @Test
     public void testBodyTooLong() throws MessagingException, DataServiceException, JSONException, UnsupportedEncodingException {
