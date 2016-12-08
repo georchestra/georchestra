@@ -7,7 +7,7 @@ FROM postgres:9.4
 
 MAINTAINER PSC "psc@georchestra.org"
 
-ENV DEBIAN_FRONTEND noninterative
+ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && \
     apt-get install -y postgresql-9.4-postgis-2.1 && \
