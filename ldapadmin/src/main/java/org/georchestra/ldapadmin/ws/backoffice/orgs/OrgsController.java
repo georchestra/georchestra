@@ -292,7 +292,7 @@ public class OrgsController {
      * return a JSON array with possible value
      */
     @RequestMapping(value = PUBLIC_REQUEST_MAPPING +"/orgTypeValues", method = RequestMethod.GET)
-    public void getOrgTypeVAlues(HttpServletResponse response) throws IOException, JSONException {
+    public void getOrgTypeValues(HttpServletResponse response) throws IOException, JSONException {
         JSONArray fields = new JSONArray();
         for(String field : this.orgDao.getOrgTypeValues())
             fields.put(field);
