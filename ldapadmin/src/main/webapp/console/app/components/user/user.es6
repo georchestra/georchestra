@@ -246,9 +246,6 @@ class UserController {
       'USER': true
     })
     this.$injector.get('$cacheFactory').get('$http').removeAll()
-    this.$injector.get('$timeout')(() =>
-      this.groupPromise.$promise.then(this.bindGroups.bind(this))
-    )
   }
 
   activate ($scope) {
@@ -279,6 +276,11 @@ class UserController {
           DELETE: toDel
         },
         () => {
+          this.$injector.get('Group').query().$promise.then(groups => {
+            groups.forEach(g => { if (g.cn === 'PENDING') {
+              this.user.pending = g.users.indexOf(this.user.uid) >= 0
+            }})
+          })
           flash.create('success', i18n.roleUpdated)
           $httpDefaultCache.removeAll()
         },
@@ -294,12 +296,18 @@ class UserController {
     ]).then(() => {
       $scope.$watch(() => this.user.groups, saveGroups.bind(this))
 
+      let previousGroups
       $scope.$watchCollection(() => {
         let groups = []
         for (let g in this.user.adminGroups) {
           if (this.user.adminGroups[g]) { groups.push(g) }
         }
-        return groups
+        if (this.user.adminGroups) {
+          previousGroups = groups
+          return groups
+        } else {
+          return previousGroups
+        }
       }, saveGroups.bind(this))
     })
 
