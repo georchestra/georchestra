@@ -163,6 +163,12 @@
 					<version>${project.version}</version>
 					<type>war</type>
 				</dependency>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>atlas</artifactId>
+					<version>${project.version}</version>
+					<type>war</type>
+				</dependency>
 			</dependencies>
 		</profile>
 
@@ -248,6 +254,12 @@
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>analytics</artifactId>
+					<version>${project.version}</version>
+					<type>war</type>
+				</dependency>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>atlas</artifactId>
 					<version>${project.version}</version>
 					<type>war</type>
 				</dependency>
@@ -415,6 +427,17 @@
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>analytics</artifactId>
+					<version>${project.version}</version>
+					<type>war</type>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>atlas</id>
+			<dependencies>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>atlas</artifactId>
 					<version>${project.version}</version>
 					<type>war</type>
 				</dependency>

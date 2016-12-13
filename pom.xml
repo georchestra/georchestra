@@ -348,6 +348,7 @@
         <module>downloadform</module>
         <module>analytics</module>
         <module>header</module>
+        <module>atlas</module>
       </modules>
     </profile>
     <profile>
@@ -377,6 +378,7 @@
         <module>downloadform</module>
         <module>analytics</module>
         <module>header</module>
+        <module>atlas</module>
       </modules>
     </profile>
     <profile>
