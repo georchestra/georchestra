@@ -277,9 +277,11 @@ class UserController {
         },
         () => {
           this.$injector.get('Group').query().$promise.then(groups => {
-            groups.forEach(g => { if (g.cn === 'PENDING') {
-              this.user.pending = g.users.indexOf(this.user.uid) >= 0
-            }})
+            groups.forEach(g => {
+              if (g.cn === 'PENDING') {
+                this.user.pending = g.users.indexOf(this.user.uid) >= 0
+              }
+            })
           })
           flash.create('success', i18n.roleUpdated)
           $httpDefaultCache.removeAll()
