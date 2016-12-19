@@ -32,14 +32,15 @@ class HomeController {
     let Analytics = $injector.get('Analytics')
     let options = {
       service: 'distinctUsers',
-      startDate: $injector.get('date').getFromDiff('week'),
+      startDate: $injector.get('date').getFromDiff('day'),
       endDate: $injector.get('date').getEnd()
     }
 
     this.connected = Analytics.get(options, () => {}, error)
     this.requests = Analytics.get({
       ...options,
-      service: 'combinedRequests'
+      service: 'combinedRequests',
+      startDate: $injector.get('date').getFromDiff('week')
     }, () => {}, error)
 
     this.logs = this.$injector.get('Logs').query({
