@@ -82,7 +82,6 @@ import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.apache.http.message.BasicNameValuePair;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.ogcservstatistics.log4j.OGCServiceMessageFormatter;
-import org.georchestra.security.healthcenter.DatabaseHealthCenter;
 import org.georchestra.security.permissions.Permissions;
 import org.georchestra.security.permissions.UriMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -162,15 +161,7 @@ public class Proxy {
     private Permissions proxyPermissions = new Permissions();
     private String proxyPermissionsFile;
 
-    /* ---------- Required for DatabaseHealthCenter -------------------- */
-    private static Boolean checkHealth = false;
-    private String host;
-    private Integer port;
 
-    private String database;
-    private String user;
-    private String password;
-    private Integer maxDatabaseConnections;
     private Integer httpClientTimeout = 300000;
 
     public void setHttpClientTimeout(Integer timeout) {
@@ -208,11 +199,6 @@ public class Proxy {
         if ((georchestraConfiguration != null) && (georchestraConfiguration.activated())) {
             logger.info("geOrchestra configuration detected, reconfiguration in progress ...");
 
-            checkHealth = Boolean.getBoolean(georchestraConfiguration.getProperty("checkHealth"));
-            database = georchestraConfiguration.getProperty("psql.db");
-            user = georchestraConfiguration.getProperty("psql.user");
-            password = georchestraConfiguration.getProperty("psql.pass");
-            maxDatabaseConnections = new Integer(georchestraConfiguration.getProperty("max.database.connections"));
             Properties pTargets = georchestraConfiguration.loadCustomPropertiesFile("targets-mapping");
 
             targets.clear();
@@ -636,11 +622,6 @@ public class Proxy {
         // Proxy must be configured by system variables (e.g.: -Dhttp.proxyHost=proxy -Dhttp.proxyPort=3128)
         htb.setRoutePlanner(new SystemDefaultRoutePlanner(ProxySelector.getDefault()));
         HttpClient httpclient = htb.build();
-
-        if (isCheckHealth()) {
-            DatabaseHealthCenter.getInstance(this.host, this.port, this.database, this.user, this.password, Proxy.class.getSimpleName())
-                    .checkConnections(this.maxDatabaseConnections);
-        }
 
         HttpResponse proxiedResponse = null;
         int statusCode = 500;
@@ -1321,42 +1302,6 @@ public class Proxy {
 
     public void setHeaderManagement(HeadersManagementStrategy headerManagement) {
         this.headerManagement = headerManagement;
-    }
-
-    public void setHost(String host){
-        this.host = host;
-    }
-
-    public void setPort(Integer port){
-        this.port = port;
-    }
-
-    public void setDatabase(String database) {
-        this.database = database;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setMaxDatabaseConnections(Integer maxDatabaseConnections) {
-        this.maxDatabaseConnections = maxDatabaseConnections;
-    }
-
-    public Boolean getCheckHealth() {
-        return this.checkHealth;
-    }
-
-    public void setCheckHealth(boolean checkHealth) {
-        this.checkHealth = checkHealth;
-    }
-
-    public boolean isCheckHealth() {
-        return this.checkHealth.booleanValue();
     }
 
     public void setRequireCharsetContentTypes(List<String> requireCharsetContentTypes) {
