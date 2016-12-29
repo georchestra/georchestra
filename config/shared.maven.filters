@@ -70,15 +70,3 @@ shared.mapfishapp.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port
 shared.geonetwork.db=georchestra
 
 shared.geofence.db=georchestra
-
-
-# --------------------------------------------------
-# HEALTH CHECK properties
-# --------------------------------------------------
-
-# If the HEALTH CHECK feature is activated, the security proxy 
-# monitors db connections and reports when a limit is reached.
-
-shared.checkhealth.activated=false
-shared.psql.checkhealth.db=@shared.geonetwork.db@
-shared.checkhealth.max_db_connections=170

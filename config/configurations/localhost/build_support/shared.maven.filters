@@ -177,11 +177,6 @@ shared.download_form.pdfurl=
 
 shared.ogc.statistics.activated=true
 
-# --------------------------------------------------
-# health check properties
-# --------------------------------------------------
-
-shared.psql.geonetwork.db=geonetwork
 
 # --------------------------------------------------
 # TO BE DOCUMENTED
