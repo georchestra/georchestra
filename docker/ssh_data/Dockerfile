@@ -11,8 +11,8 @@ RUN apt-get update && \
 RUN groupadd --gid 999 geoserver
 RUN useradd -ms /bin/bash --home /home/geoserver -p $(echo "print crypt("${USER_PASS:-geoserver}", "salt")" | perl) --uid 999 --gid 999 geoserver
 
-RUN mkdir /home/geoserver/data
-RUN chown -R 999:999 /home/geoserver/data
+RUN mkdir /mnt/geoserver_geodata
+RUN chown -R 999:999 /mnt/geoserver_geodata
 
 ADD start.sh /root/
 RUN chmod +x /root/start.sh
