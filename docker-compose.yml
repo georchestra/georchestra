@@ -38,16 +38,16 @@ geodata:
   ports:
     - "2222:22"
   volumes:
-    - geoserver_geodata:/home/geoserver/data
+    - geoserver_geodata:/mnt/geoserver_geodata
 
 # geOrchestra images
     
 geoserver:
   image: georchestra/geoserver:latest
   volumes:
-    - geoserver_datadir:/var/local/geoserver
-    - geoserver_geodata:/var/local/geodata
-    - geoserver_tiles:/var/local/tiles
+    - geoserver_datadir:/mnt/geoserver_datadir
+    - geoserver_geodata:/mnt/geoserver_geodata
+    - geoserver_tiles:/mnt/geoserver_tiles
   links:
     - database
     - ldap
@@ -58,7 +58,7 @@ geoserver:
 geowebcache:
   image: georchestra/geowebcache:latest
   volumes:
-    - geowebcache_tiles:/var/local/tiles
+    - geowebcache_tiles:/mnt/geowebcache_tiles
     - /etc/georchestra:/etc/georchestra
   environment:
     - XMS=1G
@@ -101,7 +101,7 @@ mapfishapp:
   image: georchestra/mapfishapp:latest
   volumes:
     - /etc/georchestra:/etc/georchestra
-    - mapfishapp_uploads:/var/local/uploads
+    - mapfishapp_uploads:/mnt/mapfishapp_uploads
   links:
     - database
   environment:
@@ -115,7 +115,7 @@ extractorapp:
     - smtp
   volumes:
     - /etc/georchestra:/etc/georchestra
-    - extractorapp_extracts:/var/local/extracts
+    - extractorapp_extracts:/mnt/extractorapp_extracts
   environment:
     - XMS=1G
     - XMX=2G
@@ -147,7 +147,7 @@ geonetwork:
     - ldap
   volumes:
     - /etc/georchestra:/etc/georchestra
-    - geonetwork_datadir:/var/local/geonetwork
+    - geonetwork_datadir:/mnt/geonetwork_datadir
   environment:
     - XMS=1G
     - XMX=6G
