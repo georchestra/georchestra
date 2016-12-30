@@ -77,12 +77,12 @@ ssh -p 2222 geoserver@localhost
 ```
 The default password is `geoserver`.
 
-File should be transfered to the `/home/geoserver/data/` folder:
+File should be transfered to the `/mnt/geoserver_geodata/` folder:
 ```bash
-geoserver@20d925d9072b:~$ ls -al /home/geoserver/data/
+geoserver@20d925d9072b:~$ ls -al /mnt/geoserver_geodata/
 total 8
 drwxr-xr-x 2 geoserver geoserver 4096 Jan 22 13:10 .
 drwxr-xr-x 4 geoserver geoserver 4096 Jan 22 13:10 ..
 ```
 
-They will be made available to all geoserver instances in `/var/local/geodata`. 
+They will be made available to all geoserver instances in `/mnt/geoserver_geodata`. 
