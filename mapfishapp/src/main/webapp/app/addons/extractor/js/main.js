@@ -250,50 +250,34 @@ GEOR.Addons.Extractor = Ext.extend(GEOR.Addons.Base, {
         if (!this.emailField.isValid()) {
             return;
         }
-        var okLayers = [], nokLayers = [], count = this.map.layers.length;
-        Ext.each(this.map.layers, function(layer) {
+        var okLayers = [];
+        this.mapPanel.layers.each(function(r) {
+            var layer = r.getLayer();
             if (!layer.getVisibility() || !layer.url) {
-                count--;
                 return;
             }
-            GEOR.waiter.show();
-            GEOR.ows.WMSDescribeLayer(layer, {
-                success: function(store, records) {
-                    count--;
-                    var r, match = null;
-                    for (var i=0, len = records.length; i<len; i++) {
-                        r = records[i];
-                        if ((r.get("owsType") == "WFS" || r.get("owsType") == "WCS") &&
-                            r.get("owsURL") &&
-                            r.get("typeName")) {
-
-                            match = {
-                                "owsUrl": r.get("owsURL"),
-                                "owsType": r.get("owsType"),
-                                "layerName": r.get("typeName")
-                            };
-                            break;
-                        }
-                    }
-                    if (match) {
-                        okLayers.push(match);
-                    } else {
-                        nokLayers.push(layer);
-                    }
-                    if (count === 0) {
-                        this.doExtract(okLayers);
-                    }
-                },
-                failure: function() {
-                    count--;
-                    nokLayers.push(layer);
-                    if (count === 0) {
-                        this.doExtract(okLayers);
-                    }
-                },
-                scope: this
+            if (r.get("WCS_typeName") && r.get("WCS_URL")) {
+                okLayers.push({
+                    "owsUrl": r.get("WCS_URL"),
+                    "owsType": "WCS",
+                    "layerName": r.get("WCS_typeName")
+                });
+            }
+            if (r.get("WFS_typeName") && r.get("WFS_URL")) {
+                okLayers.push({
+                    "owsUrl": r.get("WFS_URL"),
+                    "owsType": "WFS",
+                    "layerName": r.get("WFS_typeName")
+                });
+            }
+        });
+        if (okLayers.length > 0) {
+            this.doExtract(okLayers);
+        } else {
+            GEOR.util.infoDialog({
+                msg: OpenLayers.i18n('No layer is available for extraction.')
             });
-        }, this);
+        }
     },
 
     destroy: function() {
