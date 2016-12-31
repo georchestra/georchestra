@@ -164,3 +164,11 @@ services:
 #      - XMS=256M
 #      - XMX=512M
 
+#  uncomment to enable atlas:
+#  atlas:
+#    image: georchestra/atlas:latest
+#    volumes:
+#      - /etc/georchestra:/etc/georchestra
+#    environment:
+#      - XMS=512M
+#      - XMX=2G
