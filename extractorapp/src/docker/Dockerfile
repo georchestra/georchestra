@@ -12,14 +12,14 @@ RUN apt-get update && \
 
 RUN ln -s /usr/share/java/gdal.jar /var/lib/jetty/lib/ext/
 
-VOLUME [ "/var/local/extracts", "/tmp", "/run/jetty" ]
+VOLUME [ "/mnt/extractorapp_extracts", "/tmp", "/run/jetty" ]
 
 CMD ["sh", "-c", "exec java \
 -Djava.io.tmpdir=/tmp/jetty \
 -Djava.util.prefs.userRoot=/tmp/userPrefs \
 -Djava.util.prefs.systemRoot=/tmp/systemPrefs \
 -Dgeorchestra.datadir=/etc/georchestra \
--Dextractor.storage.dir=/var/local/extracts \
+-Dextractor.storage.dir=/mnt/extractorapp_extracts \
 -Xms$XMS -Xmx$XMX \
 -XX:-UsePerfData \
 ${JAVA_OPTIONS} \
