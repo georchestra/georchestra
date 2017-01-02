@@ -19,12 +19,12 @@ RUN ln -s /usr/share/java/jai_core.jar /var/lib/jetty/lib/ext/ && \
 
 ADD . /
 
-VOLUME [ "/var/local/tiles", "/tmp", "/run/jetty" ]
+VOLUME [ "/mnt/geowebcache_tiles", "/tmp", "/run/jetty" ]
 
 CMD ["sh", "-c", "exec java \
 -Djava.io.tmpdir=/tmp/jetty \
 -Dgeorchestra.datadir=/etc/georchestra \
--DGEOWEBCACHE_CACHE_DIR=/var/local/tiles \
+-DGEOWEBCACHE_CACHE_DIR=/mnt/geowebcache_tiles \
 -Xms$XMS -Xmx$XMX \
 -XX:-UsePerfData \
 ${JAVA_OPTIONS} \

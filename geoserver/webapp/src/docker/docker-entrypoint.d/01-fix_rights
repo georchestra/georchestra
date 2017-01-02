@@ -1,7 +1,7 @@
 #!/bin/bash
 
-chown -R jetty:jetty /var/local/geoserver &
-chown -R jetty:jetty /var/local/geodata &
-chown -R jetty:jetty /var/local/tiles &
+chown -R jetty:jetty /mnt/geoserver_datadir &
+chown -R jetty:jetty /mnt/geoserver_geodata &
+chown -R jetty:jetty /mnt/geoserver_tiles &
 
 

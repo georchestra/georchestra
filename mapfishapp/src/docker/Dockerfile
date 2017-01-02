@@ -12,7 +12,7 @@ RUN ln -s /usr/share/java/gdal.jar /var/lib/jetty/lib/ext/
 
 ADD . /
 
-VOLUME [ "/var/local/uploads", "/tmp", "/run/jetty" ]
+VOLUME [ "/mnt/mapfishapp_uploads", "/tmp", "/run/jetty" ]
 
 CMD ["sh", "-c", "exec java \
 -Djava.io.tmpdir=/tmp/jetty \
