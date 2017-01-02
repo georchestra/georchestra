@@ -13,7 +13,7 @@ RUN java -jar "$JETTY_HOME/start.jar" --add-to-startd=jmx,jmx-remote,stats,jndi
 
 ADD . /
 
-VOLUME [ "/mnt/geoserver_datadir", "/var/local/geodata", "/var/local/tiles", "/tmp", "/run/jetty" ]
+VOLUME [ "/mnt/geoserver_datadir", "/mnt/geoserver_geodata", "/var/local/tiles", "/tmp", "/run/jetty" ]
 
 CMD ["sh", "-c", "exec java -Djava.io.tmpdir=/tmp/jetty \
 -Dgeorchestra.datadir=/etc/georchestra \
