@@ -259,7 +259,8 @@ public abstract class A_DocService {
             connection = pgPool.getConnection();
             st = connection.prepareStatement("SELECT file_hash, created_at, last_access, access_count, raw_file_content " +
                     "FROM mapfishapp.geodocs " +
-                    "WHERE standard = ? AND username = ?");
+                    "WHERE standard = ? AND username = ? " +
+                    "ORDER BY created_at DESC");
             st.setString(1, _fileExtension.substring(1));
             st.setString(2, username);
             ResultSet rs = st.executeQuery();
@@ -282,6 +283,29 @@ public abstract class A_DocService {
                 res.put(entry);
             }
             return res;
+
+        } finally {
+            if (st != null) try { st.close(); } catch (SQLException e) {LOG.error(e);}
+            if (connection != null) try { connection.close(); } catch (SQLException e) {LOG.error(e);}
+        }
+
+    }
+
+    public void deleteFile(String filename, String username) throws Exception {
+
+        Connection connection = null;
+        PreparedStatement st = null;
+
+        try {
+            connection = pgPool.getConnection();
+
+            st = connection.prepareStatement("DELETE FROM mapfishapp.geodocs " +
+                    "WHERE file_hash = ? AND username = ?");
+            st.setString(1, filename);
+            st.setString(2, username);
+
+            if(st.executeUpdate() != 1)
+                throw new SQLException("Unable to find record with file_hash : " + filename + " and username : " + username);
 
         } finally {
             if (st != null) try { st.close(); } catch (SQLException e) {LOG.error(e);}

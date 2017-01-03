@@ -509,7 +509,7 @@ GEOR.workspace = (function() {
                         var r = sm.getSelected();
                         GEOR.waiter.show();
                         OpenLayers.Request.DELETE({
-                            url: GEOR.config.PATHNAME + "/ws/wmc/" + r.get("hash"),
+                            url: GEOR.config.PATHNAME + "/ws/wmc/geodoc" + r.get("hash"),
                             success: function() {
                                 sm.grid.getStore().remove(r);
                             },

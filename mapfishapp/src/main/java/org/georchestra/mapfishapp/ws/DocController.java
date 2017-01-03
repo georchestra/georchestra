@@ -38,6 +38,7 @@ import org.georchestra.mapfishapp.model.ConnectionPool;
 import org.georchestra.mapfishapp.ws.classif.ClassifierCommand;
 import org.georchestra.mapfishapp.ws.classif.SLDClassifier;
 import org.geotools.data.wfs.impl.WFSDataStoreFactory;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -199,6 +200,15 @@ public class DocController {
         getFilesList(new WMCDocService(this.docTempDir, this.connectionPool), request, response);
     }
 
+    /**
+     * DELETE WMC entry point. Delete wmc from DB corresponding to the REST argument. <br />
+     * @param request no parameter. The parameter has to be provided REST style: WMC_URL/{filename}
+     * @param response empty
+     */
+    @RequestMapping(value="/wmc/*", method=RequestMethod.DELETE)
+    public void deleteWMCFile(HttpServletRequest request, HttpServletResponse response) {
+        deleteFile(new WMCDocService(this.docTempDir, this.connectionPool), request, response);
+    }
     /*======================= KML =====================================================================*/
     /**
      * POST KML entry point. Store the body of the request POST (or file by upload) in a temporary file.
@@ -456,7 +466,7 @@ public class DocController {
     }
 
      /**
-     *
+     * Generate a list of geodoc filtered by standard
      * @param docService Any service implementing A_DocService
      * @param request used to retrieve current username
      * @param response contains a list of docs description in JSON. Format depends on docs type.
@@ -467,6 +477,34 @@ public class DocController {
             response.setContentType("application/json; charset=utf-8");
             PrintWriter out = response.getWriter();
             out.print(docService.listFiles(request.getHeader("sec-username")).toString(4));
+        } catch (Exception e) {
+            sendErrorToClient(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+     /**
+     * Delete a geodoc based on filename. This method also check that current user is owner of geodoc.
+     * @param docService Any service implementing A_DocService
+     * @param request used to retrieve current username and filename
+     * @param response {"success" : true} if successfully deleted
+     */
+    private void deleteFile(A_DocService docService, HttpServletRequest request, HttpServletResponse response) {
+        String fileName = getFileNameFromURI(request.getRequestURI());
+        if(fileName == null) {
+            sendErrorToClient(response, HttpServletResponse.SC_BAD_REQUEST, "Could not find the file name in the URL");
+            return;
+        }
+
+        // remove doc prefix 'geodoc' from filename
+        fileName = fileName.replaceAll(A_DocService.DOC_PREFIX, "");
+
+        try {
+            docService.deleteFile(fileName, request.getHeader("sec-username"));
+            response.setContentType("application/json; charset=utf-8");
+            PrintWriter out = response.getWriter();
+            JSONObject res = new JSONObject();
+            res.put("success", true);
+            out.println(res.toString(4));
         } catch (Exception e) {
             sendErrorToClient(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
         }
