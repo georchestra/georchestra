@@ -499,6 +499,7 @@ GEOR.workspace = (function() {
                     disabled: true,
                     handler: function() {
                         var r = sm.getSelected();
+                        GEOR.waiter.show();
                         OpenLayers.Request.DELETE({
                             url: GEOR.config.PATHNAME + "/ws/wmc/" + r.get("file_hash"),
                             success: function(response) {
