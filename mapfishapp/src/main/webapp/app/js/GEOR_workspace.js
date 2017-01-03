@@ -43,6 +43,12 @@ GEOR.workspace = (function() {
     var tr = null;
 
     /**
+     * Property: contextManagerWindow
+     * {Ext.Window}
+     */
+    var contextManagerWindow = null;
+
+    /**
      * Method: saveMDBtnHandler
      * Handler for the button triggering the WMC save to catalog
      */
@@ -379,6 +385,9 @@ GEOR.workspace = (function() {
      * Triggers the "manage contexts" dialog window.
      */
     var manageContexts = function() {
+        if (contextManagerWindow && contextManagerWindow.isVisible()) {
+            return;
+        }
         var expander = new Ext.ux.grid.RowExpander({
             tpl: new Ext.XTemplate(
                 '<br/>',
@@ -414,7 +423,7 @@ GEOR.workspace = (function() {
                 }
             }
         });
-        var popup = new Ext.Window({
+        contextManagerWindow = new Ext.Window({
             title: tr("My contexts"),
             layout: 'fit',
             modal: false,
@@ -422,7 +431,7 @@ GEOR.workspace = (function() {
             animateTarget: GEOR.config.ANIMATE_WINDOWS && this.el,
             width: 600,
             height: 400,
-            closeAction: 'close',
+            closeAction: "close",
             border: false,
             items: [{
                 xtype: "grid",
@@ -517,9 +526,15 @@ GEOR.workspace = (function() {
                         });
                     }
                 }]
+            }],
+            buttons: [{
+                text: tr("Close"),
+                handler: function() {
+                    contextManagerWindow.close();
+                }
             }]
         });
-        popup.show();
+        contextManagerWindow.show();
     };
 
 
