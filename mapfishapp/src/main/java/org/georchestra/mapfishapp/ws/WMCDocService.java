@@ -24,6 +24,9 @@ import java.io.InputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang.StringUtils;
 import org.georchestra.mapfishapp.model.ConnectionPool;
@@ -109,38 +112,40 @@ public class WMCDocService extends A_DocService {
 
         Document document = builder.parse(rawDoc);
         JSONObject res = new JSONObject();
+        XPath xPath = XPathFactory.newInstance().newXPath();
 
         // Extract title
-        NodeList nodes = document.getElementsByTagName("Title");
-        if(nodes.getLength() > 0){
-            Node child = nodes.item(0);
-            res.put("title", child.getTextContent());
-        }
+        Node node = (Node) xPath.evaluate("/ViewContext/General/Title",
+                document.getDocumentElement(), XPathConstants.NODE);
+        if(node != null)
+            res.put("title", node.getTextContent());
+
         // Extract abstract
-        nodes = document.getElementsByTagName("Abstract");
-        if(nodes.getLength() > 0){
-            Node child = nodes.item(0);
-            res.put("abstract", child.getTextContent());
-        }
+        node = (Node) xPath.evaluate("/ViewContext/General/Abstract",
+                document.getDocumentElement(), XPathConstants.NODE);
+        if(node != null)
+            res.put("abstract", node.getTextContent());
+
         // Extract keywords
-        nodes = document.getElementsByTagName("Keyword");
+        NodeList nodes = (NodeList) xPath.evaluate("/ViewContext/General/KeywordList/Keyword",
+                document.getDocumentElement(), XPathConstants.NODESET);
+
         JSONArray keywords = new JSONArray();
-        for(int i = 0; i < nodes.getLength(); i++){
-            Node child = nodes.item(i);
-            keywords.put(child.getTextContent());
-        }
+        for(int i = 0; i < nodes.getLength(); i++)
+            keywords.put(nodes.item(i).getTextContent());
+
         if(keywords.length() > 0)
             res.put("keywords", keywords);
 
         // Extract bounding box and srs
-        nodes = document.getElementsByTagName("BoundingBox");
-        if(nodes.getLength() > 0){
-            Node child = nodes.item(0);
-            NamedNodeMap attrs = child.getAttributes();
-            String minx = attrs.getNamedItem("minx").getTextContent();
-            String miny = attrs.getNamedItem("miny").getTextContent();
-            String maxx = attrs.getNamedItem("maxx").getTextContent();
-            String maxy = attrs.getNamedItem("maxy").getTextContent();
+        node = (Node) xPath.evaluate("/ViewContext/General/BoundingBox",
+                document.getDocumentElement(), XPathConstants.NODE);
+        if(node != null){
+            NamedNodeMap attrs = node.getAttributes();
+            double minx = Double.parseDouble(attrs.getNamedItem("minx").getTextContent());
+            double miny = Double.parseDouble(attrs.getNamedItem("miny").getTextContent());
+            double maxx = Double.parseDouble(attrs.getNamedItem("maxx").getTextContent());
+            double maxy = Double.parseDouble(attrs.getNamedItem("maxy").getTextContent());
 
             JSONArray boundingBox = new JSONArray();
             boundingBox.put(minx);
@@ -154,7 +159,6 @@ public class WMCDocService extends A_DocService {
         }
 
         return res;
-
     }
 
 

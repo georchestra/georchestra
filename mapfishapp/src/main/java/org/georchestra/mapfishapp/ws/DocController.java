@@ -464,7 +464,7 @@ public class DocController {
     private void getFilesList(A_DocService docService, HttpServletRequest request, HttpServletResponse response) {
 
         try {
-            response.setContentType("application/json");
+            response.setContentType("application/json; charset=utf-8");
             PrintWriter out = response.getWriter();
             out.print(docService.listFiles(request.getHeader("sec-username")).toString(4));
         } catch (Exception e) {
