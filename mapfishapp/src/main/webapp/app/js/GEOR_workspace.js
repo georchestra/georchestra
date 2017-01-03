@@ -384,11 +384,11 @@ GEOR.workspace = (function() {
                 '<br/>',
                 '<p>{abstract}</p>',
                 '<br/>',
-                '<p><b>Created:</b> {created_at:date("Y-m-d H:i:s")}</p>', 
-                '<p><b>Last accessed:</b> {last_access:date("Y-m-d H:i:s")}</p>',
-                '<p><b>Access count:</b> {access_count}</p>',
+                '<p><b>', tr("Created:"),'</b> {created_at:date("Y-m-d H:i:s")}</p>', 
+                '<p><b>', tr("Last accessed:"),'</b> {last_access:date("Y-m-d H:i:s")}</p>',
+                '<p><b>', tr("Access count:"),'</b> {access_count}</p>',
                 '<br/>',
-                '<p><b>Permalink:</b> <a href="', GEOR.config.PATHNAME ,'/map/{file_hash}">', GEOR.config.PATHNAME ,'/map/{file_hash}</a></p><br>'
+                '<p><b>', tr("Permalink:"),'</b> <a href="', GEOR.config.PATHNAME ,'/map/{file_hash}">', GEOR.config.PATHNAME ,'/map/{file_hash}</a></p><br>'
             )
         });
         var arrayRenderer = function(value, p, r) {
@@ -464,8 +464,8 @@ GEOR.workspace = (function() {
                 }),
                 sm: sm,
                 tbar:[{
-                    text: tr('View'),
-                    tooltip: tr('View the selected context'),
+                    text: tr("View"),
+                    tooltip: tr("View the selected context"),
                     iconCls: 'geor-load-map',
                     ref: '../viewButton',
                     disabled: true,
@@ -482,8 +482,8 @@ GEOR.workspace = (function() {
                         });
                     }
                 }, {
-                    text: tr('Download'),
-                    tooltip: tr('Download the selected context'),
+                    text: tr("Download"),
+                    tooltip: tr("Download the selected context"),
                     iconCls: 'geor-btn-download',
                     ref: '../downloadButton',
                     disabled: true,
@@ -492,8 +492,8 @@ GEOR.workspace = (function() {
                         window.location.href = GEOR.config.PATHNAME + "/ws/wmc/geodoc" + r.get("file_hash") + ".wmc";
                     }
                 }, "->", {
-                    text: tr('Delete'),
-                    tooltip: tr('Delete the selected context'),
+                    text: tr("Delete"),
+                    tooltip: tr("Delete the selected context"),
                     iconCls: 'btn-removeall',
                     ref: '../removeButton',
                     disabled: true,
@@ -560,7 +560,7 @@ GEOR.workspace = (function() {
             // Display context manager to logged in users
             if (GEOR.config.USERNAME !== null) {
                 items.splice(3, 0, {
-                    text: tr("Manage my contexts"), // TODO: i18n
+                    text: tr("Manage my contexts"),
                     iconCls: "geor-manage-contexts",
                     handler: manageContexts
                 });
