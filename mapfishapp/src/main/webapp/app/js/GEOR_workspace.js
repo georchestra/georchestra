@@ -13,6 +13,7 @@
  */
 
 /*
+ * @include Ext.ux.RowExpander.js
  * @include OpenLayers/Request/XMLHttpRequest.js
  * @include OpenLayers/Projection.js
  * @include GEOR_wmc.js
@@ -148,6 +149,7 @@ GEOR.workspace = (function() {
         OpenLayers.Request.POST({
             url: GEOR.config.PATHNAME + "/ws/wmc/",
             data: GEOR.wmc.write({
+                // TODO: title, abstract, keywords
                 title: ""
             }),
             success: function(response) {
@@ -253,7 +255,7 @@ GEOR.workspace = (function() {
             handler: saveBtnHandler
         });
         var transferFocus = function(f, e) {
-            // transfer focus on button on ENTER
+            // transfer focus to button on ENTER
             if (e.getKey() === e.ENTER) {
                 popup.items.get(0).getFooterToolbar().getComponent('save').focus();
             }
@@ -371,6 +373,151 @@ GEOR.workspace = (function() {
         return menu;
     };
 
+
+    /**
+     * Method: manageContexts
+     * Triggers the "manage contexts" dialog window.
+     */
+    var manageContexts = function() {
+        var expander = new Ext.ux.grid.RowExpander({
+            tpl: new Ext.XTemplate(
+                '<br/>',
+                '<p>{abstract}</p>',
+                '<br/>',
+                '<p><b>Created:</b> {created_at:date("Y-m-d H:i:s")}</p>', 
+                '<p><b>Last accessed:</b> {last_access:date("Y-m-d H:i:s")}</p>',
+                '<p><b>Access count:</b> {access_count}</p>',
+                '<br/>',
+                '<p><b>Permalink:</b> <a href="', GEOR.config.PATHNAME ,'/map/{file_hash}">', GEOR.config.PATHNAME ,'/map/{file_hash}</a></p><br>'
+            )
+        });
+        var arrayRenderer = function(value, p, r) {
+            if (value && value[0]) {
+                return value.join(", ");
+            }
+            return "";
+        };
+        var sm = new Ext.grid.RowSelectionModel({
+            singleSelect: true,
+            listeners: {
+                "selectionchange": function(sm) {
+                    var g = sm.grid;
+                    if (sm.getCount()) {
+                        g.viewButton.enable();
+                        g.downloadButton.enable();
+                        g.removeButton.enable();
+                    } else {
+                        g.viewButton.disable();
+                        g.downloadButton.disable();
+                        g.removeButton.disable();
+                    }
+                }
+            }
+        });
+        var popup = new Ext.Window({
+            title: tr("My contexts"),
+            layout: 'fit',
+            modal: false,
+            constrainHeader: true,
+            animateTarget: GEOR.config.ANIMATE_WINDOWS && this.el,
+            width: 600,
+            height: 400,
+            closeAction: 'close',
+            border: false,
+            items: [{
+                xtype: "grid",
+                plugins: expander,
+                store: {
+                    xtype: "jsonstore",
+                    autoLoad: true,
+                    url: GEOR.config.PATHNAME + "/my.contexts.json", //"/ws/wmcs.json",
+                    root: "contexts",
+                    idProperty: "file_hash",
+                    fields: [
+                        "file_hash",
+                        {name: "created_at", type: "date"},
+                        {name: "last_access", type: "date"},
+                        {name: "access_count", type: "int"},
+                        "title",
+                        "abstract",
+                        "keywords",
+                        "srs",
+                        "bbox"
+                    ]
+                },
+                viewConfig: {
+                    forceFit:true
+                },
+                columnLines: true,
+                cm: new Ext.grid.ColumnModel({
+                    defaults: {
+                        sortable: true
+                    },
+                    columns: [
+                        expander,
+                        {header: tr("Title"), dataIndex: "title", hideable: false},
+                        {header: tr("Keywords"), dataIndex: "keywords", renderer: arrayRenderer},
+                        {header: tr("Created"), dataIndex: "created_at", renderer: Ext.util.Format.dateRenderer('Y-m-d'), width: 45},
+                        {header: tr("Accessed"), dataIndex: "last_access", renderer: Ext.util.Format.dateRenderer('Y-m-d'), width: 45, hidden: true},
+                        {header: tr("Count"), dataIndex: "access_count", width: 35, hidden: true},
+                    ]
+                }),
+                sm: sm,
+                tbar:[{
+                    text: tr('View'),
+                    tooltip: tr('View the selected context'),
+                    iconCls: 'geor-load-map',
+                    ref: '../viewButton',
+                    disabled: true,
+                    handler: function() {
+                        var r = sm.getSelected();
+                        GEOR.waiter.show();
+                        OpenLayers.Request.GET({
+                            url: GEOR.config.PATHNAME + "/ws/wmc/geodoc" + r.get("file_hash") + ".wmc",
+                            success: function(response) {
+                                try {
+                                    GEOR.wmc.read(response.responseXML, true, true);
+                                } catch(e) {}
+                            }
+                        });
+                    }
+                }, {
+                    text: tr('Download'),
+                    tooltip: tr('Download the selected context'),
+                    iconCls: 'geor-btn-download',
+                    ref: '../downloadButton',
+                    disabled: true,
+                    handler: function() {
+                        var r = sm.getSelected();
+                        window.location.href = GEOR.config.PATHNAME + "/ws/wmc/geodoc" + r.get("file_hash") + ".wmc";
+                    }
+                }, "->", {
+                    text: tr('Delete'),
+                    tooltip: tr('Delete the selected context'),
+                    iconCls: 'btn-removeall',
+                    ref: '../removeButton',
+                    disabled: true,
+                    handler: function() {
+                        var r = sm.getSelected();
+                        OpenLayers.Request.DELETE({
+                            url: GEOR.config.PATHNAME + "/ws/wmc/" + r.get("file_hash"),
+                            success: function(response) {
+                                sm.grid.getStore().remove(r);
+                            },
+                            failure: function() {
+                                GEOR.util.errorDialog({
+                                    msg: tr("Failed to delete context") + " " + r.get("file_hash")
+                                });
+                            }
+                        });
+                    }
+                }]
+            }]
+        });
+        popup.show();
+    };
+
+
     /*
      * Public
      */
@@ -389,32 +536,42 @@ GEOR.workspace = (function() {
         create: function(m) {
             map = m;
             tr = OpenLayers.i18n;
+            var items = [{
+                text: tr("Save the map context"),
+                iconCls: "geor-save-map",
+                handler: saveWMC
+            }, {
+                text: tr("Load a map context"),
+                iconCls: "geor-load-map",
+                handler: GEOR.wmcbrowser.show
+            }, '-', {
+                text: tr("Get a permalink"),
+                iconCls: "geor-permalink",
+                handler: permalink
+            }, {
+                text: tr("Share this map"),
+                iconCls: "geor-share",
+                plugins: [{
+                    ptype: 'menuqtips'
+                }],
+                menu: getShareMenu()
+            }];
+            // Display context manager to logged in users
+            if (GEOR.config.USERNAME !== null) {
+                items.splice(3, 0, {
+                    text: tr("Manage my contexts"), // TODO: i18n
+                    iconCls: "geor-manage-contexts",
+                    handler: manageContexts
+                });
+                items.splice(4, 0, '-');
+            }
             return {
                 text: tr("Workspace"),
                 menu: new Ext.menu.Menu({
                     defaultAlign: "tr-br",
                     // does not work as expected, at least with FF3 ... (ExtJS bug ?)
                     // top right corner of menu should be aligned with bottom right corner of its parent
-                    items: [{
-                        text: tr("Save the map context"),
-                        iconCls: "geor-save-map",
-                        handler: saveWMC
-                    },{
-                        text: tr("Load a map context"),
-                        iconCls: "geor-load-map",
-                        handler: GEOR.wmcbrowser.show
-                    }, '-', {
-                        text: tr("Get a permalink"),
-                        iconCls: "geor-permalink",
-                        handler: permalink
-                    }, {
-                        text: tr("Share this map"),
-                        iconCls: "geor-share",
-                        plugins: [{
-                            ptype: 'menuqtips'
-                        }],
-                        menu: getShareMenu()
-                    }]
+                    items: items
                 })
             };
         }
