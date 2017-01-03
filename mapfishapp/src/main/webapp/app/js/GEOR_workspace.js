@@ -430,7 +430,7 @@ GEOR.workspace = (function() {
                 store: {
                     xtype: "jsonstore",
                     autoLoad: true,
-                    url: GEOR.config.PATHNAME + "/my.contexts.json", //"/ws/wmcs.json",
+                    url: GEOR.config.PATHNAME + "/ws/wmcs.json",
                     root: "contexts",
                     idProperty: "file_hash",
                     fields: [
