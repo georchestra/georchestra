@@ -388,7 +388,7 @@ GEOR.workspace = (function() {
                 '<p><b>', tr("Last accessed:"),'</b> {last_access:date("Y-m-d H:i:s")}</p>',
                 '<p><b>', tr("Access count:"),'</b> {access_count}</p>',
                 '<br/>',
-                '<p><b>', tr("Permalink:"),'</b> <a href="', GEOR.config.PATHNAME ,'/map/{file_hash}">', GEOR.config.PATHNAME ,'/map/{file_hash}</a></p><br>'
+                '<p><b>', tr("Permalink:"),'</b> <a href="', GEOR.config.PATHNAME ,'/map/{hash}">', GEOR.config.PATHNAME ,'/map/{hash}</a></p><br>'
             )
         });
         var arrayRenderer = function(value, p, r) {
@@ -431,10 +431,9 @@ GEOR.workspace = (function() {
                     xtype: "jsonstore",
                     autoLoad: true,
                     url: GEOR.config.PATHNAME + "/ws/wmcs.json",
-                    root: "contexts",
-                    idProperty: "file_hash",
+                    idProperty: "hash",
                     fields: [
-                        "file_hash",
+                        "hash",
                         {name: "created_at", type: "date"},
                         {name: "last_access", type: "date"},
                         {name: "access_count", type: "int"},
@@ -473,7 +472,7 @@ GEOR.workspace = (function() {
                         var r = sm.getSelected();
                         GEOR.waiter.show();
                         OpenLayers.Request.GET({
-                            url: GEOR.config.PATHNAME + "/ws/wmc/geodoc" + r.get("file_hash") + ".wmc",
+                            url: GEOR.config.PATHNAME + "/ws/wmc/geodoc" + r.get("hash") + ".wmc",
                             success: function(response) {
                                 try {
                                     GEOR.wmc.read(response.responseXML, true, true);
@@ -489,7 +488,7 @@ GEOR.workspace = (function() {
                     disabled: true,
                     handler: function() {
                         var r = sm.getSelected();
-                        window.location.href = GEOR.config.PATHNAME + "/ws/wmc/geodoc" + r.get("file_hash") + ".wmc";
+                        window.location.href = GEOR.config.PATHNAME + "/ws/wmc/geodoc" + r.get("hash") + ".wmc";
                     }
                 }, "->", {
                     text: tr("Delete"),
@@ -501,13 +500,18 @@ GEOR.workspace = (function() {
                         var r = sm.getSelected();
                         GEOR.waiter.show();
                         OpenLayers.Request.DELETE({
-                            url: GEOR.config.PATHNAME + "/ws/wmc/" + r.get("file_hash"),
-                            success: function(response) {
+                            url: GEOR.config.PATHNAME + "/ws/wmc/" + r.get("hash"),
+                            success: function() {
                                 sm.grid.getStore().remove(r);
                             },
-                            failure: function() {
+                            failure: function(resp) {
+                                var e = Ext.decode(resp.responseText);
                                 GEOR.util.errorDialog({
-                                    msg: tr("Failed to delete context") + " " + r.get("file_hash")
+                                    title: tr("Failed to delete context"),
+                                    msg: [
+                                        tr("Failed to delete context"), " ", r.get("hash"),
+                                        ":<br/>", e.msg
+                                    ].join("")
                                 });
                             }
                         });
