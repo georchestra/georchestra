@@ -189,6 +189,16 @@ public class DocController {
         getFile(new WMCDocService(this.docTempDir, this.connectionPool), request, response);
     }
 
+    /**
+     * Get a list of WMC stored by connected user
+     * @param request used to retrieve connected user
+     * @param response contains a list of WMC doc created by current user
+     */
+    @RequestMapping(value="/wmcs.json", method=RequestMethod.GET)
+    public void getAllWMC(HttpServletRequest request, HttpServletResponse response){
+        getFilesList(new WMCDocService(this.docTempDir, this.connectionPool), request, response);
+    }
+
     /*======================= KML =====================================================================*/
     /**
      * POST KML entry point. Store the body of the request POST (or file by upload) in a temporary file.
@@ -442,6 +452,23 @@ public class DocController {
         catch (Exception e) {
             sendErrorToClient(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "");
             e.printStackTrace();
+        }
+    }
+
+     /**
+     *
+     * @param docService Any service implementing A_DocService
+     * @param request used to retrieve current username
+     * @param response contains a list of docs description in JSON. Format depends on docs type.
+     */
+    private void getFilesList(A_DocService docService, HttpServletRequest request, HttpServletResponse response) {
+
+        try {
+            response.setContentType("application/json; charset=utf-8");
+            PrintWriter out = response.getWriter();
+            out.print(docService.listFiles(request.getHeader("sec-username")).toString(4));
+        } catch (Exception e) {
+            sendErrorToClient(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
