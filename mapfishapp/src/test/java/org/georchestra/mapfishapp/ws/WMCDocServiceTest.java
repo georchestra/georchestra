@@ -52,8 +52,8 @@ public class WMCDocServiceTest {
         JSONObject res = wmcds.extractsStandardSpecificEntries(is);
 
         // Check title and abstract
-        Assert.assertTrue("Missing or invalid title", res.getString("title").equals("Default context (OSM Géobretagne)"));
-        Assert.assertTrue("Missing or invalid abstract", res.getString("abstract").equals("This is the default context provided for geOrchestra, loading a layer kindly provided by GéoBretagne, data issued from OpenStreetMap and contributors"));
+        assertTrue("Missing or invalid title", res.getString("title").equals("Default context (OSM Géobretagne)"));
+        assertTrue("Missing or invalid abstract", res.getString("abstract").equals("This is the default context provided for geOrchestra, loading a layer kindly provided by GéoBretagne, data issued from OpenStreetMap and contributors"));
 
         // Check keywords
         JSONArray keywords = res.getJSONArray("keywords");
@@ -61,12 +61,12 @@ public class WMCDocServiceTest {
         for (int i = 0; i < keywords.length(); i++)
             keywordsAsList.add(keywords.getString(i));
 
-        Assert.assertTrue("Invalid keywords count", keywordsAsList.size() == 2);
-        Assert.assertTrue("keywords does not contains 'OSM'", keywordsAsList.contains("OSM"));
-        Assert.assertTrue("keywords does not contains 'Géobretagne'", keywordsAsList.contains("Géobretagne"));
+        assertTrue("Invalid keywords count", keywordsAsList.size() == 2);
+        assertTrue("keywords does not contains 'OSM'", keywordsAsList.contains("OSM"));
+        assertTrue("keywords does not contains 'Géobretagne'", keywordsAsList.contains("Géobretagne"));
 
         // Check srs
-        Assert.assertTrue("Missing or invalid SRS", res.getString("srs").equals("EPSG:3857"));
+        assertTrue("Missing or invalid SRS", res.getString("srs").equals("EPSG:3857"));
         // bbox
         double[] bbox = {-1363722.41004360002, 5166003.89129989967, 1994613.05072530010, 6777907.07312569954};
         JSONArray rawExtractedBbox = res.getJSONArray("bbox");
@@ -91,8 +91,8 @@ public class WMCDocServiceTest {
         JSONObject res = wmcds.extractsStandardSpecificEntries(is);
 
         // Check title and abstract
-        Assert.assertTrue("Title should not appear in result", !res.has("title"));
-        Assert.assertTrue("Valid abstract", res.getString("abstract").equals("This is the default context provided for geOrchestra, loading a layer kindly provided by GéoBretagne, data issued from OpenStreetMap and contributors"));
+        assertTrue("Title should not appear in result", !res.has("title"));
+        assertTrue("Valid abstract", res.getString("abstract").equals("This is the default context provided for geOrchestra, loading a layer kindly provided by GéoBretagne, data issued from OpenStreetMap and contributors"));
     }
 
     @Test(expected=NumberFormatException.class)
@@ -110,7 +110,7 @@ public class WMCDocServiceTest {
         JSONObject res = wmcds.extractsStandardSpecificEntries(is);
 
         // Check keywords
-        Assert.assertTrue("Keyword should not appear in result", !res.has("keywords"));
+        assertTrue("Keyword should not appear in result", !res.has("keywords"));
     }
 
     @Test
@@ -120,7 +120,7 @@ public class WMCDocServiceTest {
         JSONObject res = wmcds.extractsStandardSpecificEntries(is);
 
         // Check keywords
-        Assert.assertTrue("Keyword should not appear in result", !res.has("keywords"));
+        assertTrue("Keyword should not appear in result", !res.has("keywords"));
     }
 
 
