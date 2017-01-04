@@ -260,7 +260,7 @@ public abstract class A_DocService {
             st = connection.prepareStatement("SELECT file_hash, created_at, last_access, access_count, raw_file_content " +
                     "FROM mapfishapp.geodocs " +
                     "WHERE standard = ? AND username = ? " +
-                    "ORDER BY created_at ASC");
+                    "ORDER BY created_at DESC");
             st.setString(1, _fileExtension.substring(1));
             st.setString(2, username);
             ResultSet rs = st.executeQuery();
