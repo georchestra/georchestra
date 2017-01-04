@@ -402,6 +402,21 @@ GEOR.workspace = (function() {
         return menu;
     };
 
+    /**
+     * Method: loadCtx
+     * 
+     */
+    var loadCtx = function(record) {
+        GEOR.waiter.show();
+        OpenLayers.Request.GET({
+            url: GEOR.config.PATHNAME + "/ws/wmc/geodoc" + record.get("hash") + ".wmc",
+            success: function(response) {
+                try {
+                    GEOR.wmc.read(response.responseXML, true, true);
+                } catch(e) {}
+            }
+        });
+    };
 
     /**
      * Method: manageContexts
@@ -480,6 +495,12 @@ GEOR.workspace = (function() {
                     forceFit:true
                 },
                 columnLines: true,
+                listeners: {
+                    "rowdblclick": function(grid, rowIdx) {
+                        // load map context on double click:
+                        loadCtx(grid.getStore().getAt(rowIdx));
+                    }
+                },
                 cm: new Ext.grid.ColumnModel({
                     defaults: {
                         sortable: true
@@ -501,16 +522,7 @@ GEOR.workspace = (function() {
                     ref: '../viewButton',
                     disabled: true,
                     handler: function() {
-                        var r = sm.getSelected();
-                        GEOR.waiter.show();
-                        OpenLayers.Request.GET({
-                            url: GEOR.config.PATHNAME + "/ws/wmc/geodoc" + r.get("hash") + ".wmc",
-                            success: function(response) {
-                                try {
-                                    GEOR.wmc.read(response.responseXML, true, true);
-                                } catch(e) {}
-                            }
-                        });
+                        loadCtx(sm.getSelected());
                     }
                 }, {
                     text: tr("Download"),
