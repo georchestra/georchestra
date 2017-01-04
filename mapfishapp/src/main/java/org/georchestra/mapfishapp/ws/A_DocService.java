@@ -34,6 +34,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Iterator;
 import java.util.Random;
 
 import javax.servlet.http.HttpServletResponse;
@@ -51,6 +52,8 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.xml.sax.SAXException;
 
 
@@ -238,6 +241,79 @@ public abstract class A_DocService {
         postLoad();
     }
 
+    /**
+     * Return a JSON array with decriptions of all files for specified standard. Descriptions may include some specific
+     * fields based on standard.
+     * @param username username to filter geodoc.
+     * @return a JSON array with following keys : hash, created_at, last_access, access_count and maybe other keys
+     * based on standard
+     * @throws Exception if problems occurs when retrieving data from database
+     */
+    public JSONArray listFiles(String username) throws Exception {
+        JSONArray res = new JSONArray();
+
+        Connection connection = null;
+        PreparedStatement st = null;
+
+        try {
+            connection = pgPool.getConnection();
+            st = connection.prepareStatement("SELECT file_hash, created_at, last_access, access_count, raw_file_content " +
+                    "FROM mapfishapp.geodocs " +
+                    "WHERE standard = ? AND username = ? " +
+                    "ORDER BY created_at DESC");
+            st.setString(1, _fileExtension.substring(1));
+            st.setString(2, username);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+                JSONObject entry = new JSONObject();
+
+                // Add common fields, all standards have these fields
+                entry.put("hash", rs.getString("file_hash"));
+                entry.put("created_at", rs.getString("created_at"));
+                entry.put("last_access", rs.getString("last_access"));
+                entry.put("access_count", rs.getString("access_count"));
+
+                // Add standard specific fields
+                JSONObject standardSpecificEntry = this.extractsStandardSpecificEntries(rs.getBinaryStream("raw_file_content"));
+                Iterator<String> it = standardSpecificEntry.keys();
+                while(it.hasNext()){
+                    String field = it.next();
+                    entry.put(field, standardSpecificEntry.get(field));
+                }
+                res.put(entry);
+            }
+            return res;
+
+        } finally {
+            if (st != null) try { st.close(); } catch (SQLException e) {LOG.error(e);}
+            if (connection != null) try { connection.close(); } catch (SQLException e) {LOG.error(e);}
+        }
+
+    }
+
+    public void deleteFile(String filename, String username) throws Exception {
+
+        Connection connection = null;
+        PreparedStatement st = null;
+
+        try {
+            connection = pgPool.getConnection();
+
+            st = connection.prepareStatement("DELETE FROM mapfishapp.geodocs " +
+                    "WHERE file_hash = ? AND username = ?");
+            st.setString(1, filename);
+            st.setString(2, username);
+
+            if(st.executeUpdate() != 1)
+                throw new SQLException("Unable to find record with file_hash : " + filename + " and username : " + username);
+
+        } finally {
+            if (st != null) try { st.close(); } catch (SQLException e) {LOG.error(e);}
+            if (connection != null) try { connection.close(); } catch (SQLException e) {LOG.error(e);}
+        }
+
+    }
+
     /*========================Accessor Methods====================================================*/
 
     /**
@@ -320,6 +396,18 @@ public abstract class A_DocService {
             e.printStackTrace();
         }
         return false;
+    }
+
+
+    /**
+     * This method will extracts specific fields from geodoc and return a JSON object with only those fields. This JSON
+     * will be merged with the one extracted by listFiles() method. This method should be overrided.
+     * @param rawDoc stream connected to geodoc
+     * @return a JSON object containing only fields dedicated to this geodoc standard
+     * @throws Exception if geodoc cannot be parsed
+     */
+    protected JSONObject extractsStandardSpecificEntries(InputStream rawDoc) throws Exception {
+        return new JSONObject();
     }
 
     /*=====================Private Methods - Common to every DocService=========================================*/

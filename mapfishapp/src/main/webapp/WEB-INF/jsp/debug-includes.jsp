@@ -43,6 +43,7 @@
     <script type="text/javascript" src="<%= context %>/lib/externals/styler/lib/Styler/lang/<%= lang %>.js"></script>
 
     <script type="text/javascript" src="<%= context %>/app/js/Ext.state.LocalStorageProvider.js"></script>
+    <script type="text/javascript" src="<%= context %>/app/js/Ext.ux.RowExpander.js"></script>
     <script type="text/javascript" src="<%= context %>/app/js/GEOR_config.js"></script>
     <script type="text/javascript" src="<%= context %>/app/js/GEOR_Lang/<%= lang %>.js"></script>
     <script type="text/javascript" src="<%= context %>/app/js/GEOR_Querier.js"></script>

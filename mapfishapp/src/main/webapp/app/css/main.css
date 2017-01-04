@@ -162,6 +162,9 @@ div.olMapViewport {
 .geor-load-map {
     background-image: url(../img/famfamfam/map_go.gif) !important;
 }
+.geor-manage-contexts {
+    background-image: url(../img/geosilk/map_wrench.png) !important;
+}
 .geor-add-map {
     background-image: url(../img/famfamfam/map_add.png) !important;
 }
