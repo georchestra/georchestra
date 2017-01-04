@@ -151,41 +151,57 @@ GEOR.workspace = (function() {
      * Handler to display a permalink based on on-the-fly WMC generation
      */
     var permalink = function() {
-        GEOR.waiter.show();
-        OpenLayers.Request.POST({
-            url: GEOR.config.PATHNAME + "/ws/wmc/",
-            data: GEOR.wmc.write({
-                // TODO: title, abstract, keywords
-                title: ""
-            }),
-            success: function(response) {
-                var o = Ext.decode(response.responseText),
-                    params = OpenLayers.Util.getParameters(),
-                    id =  /^.+(\w{32}).wmc$/.exec(o.filepath)[1];
-                // we have to unset these params since they have precedence 
-                // over the WMC:
-                Ext.each(["bbox", "wmc", "lon", "lat", "radius"], function(item) {
-                    delete params[item];
-                });
-                var qs = OpenLayers.Util.getParameterString(params);
-                if (qs) {
-                    qs = "?"+qs;
-                }
-                var url = [
-                    window.location.protocol, '//', window.location.host,
-                    GEOR.config.PATHNAME, '/map/', id, qs
-                ].join('');
-                GEOR.util.urlDialog({
-                    title: tr("Permalink"),
-                    width: 450,
-                    msg: [
-                        tr("Share your map with this URL: "),
-                        '<br /><a href="'+url+'">'+url+'</a>'
-                    ].join('')
-                });
-            },
-            scope: this
+
+        var cfg = getWindowCfg({
+            title: tr("Permalink creation")
         });
+        cfg.items[0].buttons = [{
+            text: tr("Cancel"),
+            handler: cancelBtnHandler
+        }, {
+            text: tr("Permalink"),
+            minWidth: 100,
+            //iconCls: 'geor-btn-download',
+            //itemId: 'save',
+            handler: function() {
+                var formPanel = this.findParentByType('form'), 
+                    md = buildContextMD(formPanel);
+                GEOR.waiter.show();
+                OpenLayers.Request.POST({
+                    url: GEOR.config.PATHNAME + "/ws/wmc/",
+                    data: GEOR.wmc.write(md),
+                    success: function(response) {
+                        var o = Ext.decode(response.responseText),
+                            params = OpenLayers.Util.getParameters(),
+                            id =  /^.+(\w{32}).wmc$/.exec(o.filepath)[1];
+                        // we have to unset these params since they have precedence 
+                        // over the WMC:
+                        Ext.each(["bbox", "wmc", "lon", "lat", "radius"], function(item) {
+                            delete params[item];
+                        });
+                        var qs = OpenLayers.Util.getParameterString(params);
+                        if (qs) {
+                            qs = "?"+qs;
+                        }
+                        var url = [
+                            window.location.protocol, '//', window.location.host,
+                            GEOR.config.PATHNAME, '/map/', id, qs
+                        ].join('');
+                        popup.close();
+                        GEOR.util.urlDialog({
+                            title: tr("Permalink"),
+                            width: 450,
+                            msg: [
+                                tr("Share your map with this URL: "),
+                                '<br /><a href="'+url+'">'+url+'</a>'
+                            ].join('')
+                        });
+                    },
+                    scope: this
+                });
+            }
+        }];
+        var popup = new Ext.Window(cfg).show();
     };
 
     /**
@@ -194,6 +210,56 @@ GEOR.workspace = (function() {
      */
     var cancelBtnHandler = function() {
         this.findParentByType('form').ownerCt.close();
+    };
+
+    /**
+     * Method: getWindowCfg
+     * Returns a config for the create WMC dialog.
+     */
+    var getWindowCfg = function(options) {
+        return Ext.apply({
+            layout: 'fit',
+            modal: false,
+            constrainHeader: true,
+            width: 400,
+            height: 210,
+            closeAction: 'close',
+            listeners: {
+                "show": function() {
+                    // focus first field on show
+                    var field = this.items.get(0).getForm().findField('title');
+                    field.focus('', 50);
+                }
+            },
+            items: [{
+                xtype: 'form',
+                bodyStyle: 'padding:5px',
+                labelWidth: 80,
+                labelSeparator: tr("labelSeparator"),
+                monitorValid: true,
+                buttonAlign: 'right',
+                items: [{
+                    xtype: 'textfield',
+                    name: 'title',
+                    width: 280,
+                    fieldLabel: tr("Title"),
+                    selectOnFocus: true
+                }, {
+                    xtype: 'textfield',
+                    name: 'keywords',
+                    width: 280,
+                    emptyText: tr("comma separated keywords"),
+                    fieldLabel: tr("Keywords"),
+                    selectOnFocus: true
+                }, {
+                    xtype: 'textarea',
+                    name: 'abstract',
+                    width: 280,
+                    fieldLabel: tr("Abstract"),
+                    selectOnFocus: true
+                }]
+            }]
+        }, options);
     };
 
     /**
@@ -260,72 +326,13 @@ GEOR.workspace = (function() {
             itemId: 'save',
             handler: saveBtnHandler
         });
-        var transferFocus = function(f, e) {
-            // transfer focus to button on ENTER
-            if (e.getKey() === e.ENTER) {
-                popup.items.get(0).getFooterToolbar().getComponent('save').focus();
-            }
-        };
-        var popup = new Ext.Window({
+
+        var cfg = getWindowCfg({
             title: tr("Context saving"),
-            layout: 'fit',
-            modal: false,
-            constrainHeader: true,
-            animateTarget: GEOR.config.ANIMATE_WINDOWS && this.el,
-            width: 400,
-            height: 210,
-            closeAction: 'close',
-            plain: true,
-            listeners: {
-                "show": function() {
-                    // focus first field on show
-                    var field = this.items.get(0).getForm().findField('title');
-                    field.focus('', 50);
-                }
-            },
-            items: [{
-                xtype: 'form',
-                bodyStyle: 'padding:5px',
-                labelWidth: 80,
-                labelSeparator: tr("labelSeparator"),
-                monitorValid: true,
-                buttonAlign: 'right',
-                items: [{
-                    xtype: 'textfield',
-                    name: 'title',
-                    width: 280,
-                    fieldLabel: tr("Title"),
-                    enableKeyEvents: true,
-                    selectOnFocus: true,
-                    listeners: {
-                        "keypress": transferFocus
-                    }
-                }, {
-                    xtype: 'textfield',
-                    name: 'keywords',
-                    width: 280,
-                    emptyText: tr("comma separated keywords"),
-                    fieldLabel: tr("Keywords"),
-                    enableKeyEvents: true,
-                    selectOnFocus: true,
-                    listeners: {
-                        "keypress": transferFocus
-                    }
-                }, {
-                    xtype: 'textarea',
-                    name: 'abstract',
-                    width: 280,
-                    fieldLabel: tr("Abstract"),
-                    enableKeyEvents: true,
-                    selectOnFocus: true,
-                    listeners: {
-                        "keypress": transferFocus
-                    }
-                }],
-                buttons: btns
-            }]
+            animateTarget: GEOR.config.ANIMATE_WINDOWS && this.el
         });
-        popup.show();
+        cfg.items[0].buttons = btns;
+        var popup = new Ext.Window(cfg).show();
     };
 
     /**
@@ -334,24 +341,40 @@ GEOR.workspace = (function() {
      */
     var shareLink = function(options) {
         return function() {
-            GEOR.waiter.show();
-            OpenLayers.Request.POST({
-                url: GEOR.config.PATHNAME + "/ws/wmc/",
-                data: GEOR.wmc.write({
-                    title: ""
-                }),
-                success: function(response) {
-                    var o = Ext.decode(response.responseText),
-                        id =  /^.+(\w{32}).wmc$/.exec(o.filepath)[1];
-                    var url = new Ext.XTemplate(options.url).apply({
-                        "context_url": encodeURIComponent(GEOR.util.getValidURI(o.filepath)),
-                        "map_url": GEOR.util.getValidURI('map/' + id),
-                        "id": id
-                    });
-                    window.open(url);
-                },
-                scope: this
+            var cfg = getWindowCfg({
+                title: tr("Map sharing")
             });
+            cfg.items[0].buttons = [{
+                text: tr("Cancel"),
+                handler: cancelBtnHandler
+            }, {
+                text: tr("Share"),
+                minWidth: 100,
+                //iconCls: 'geor-btn-download',
+                //itemId: 'save',
+                handler: function() {
+                    var formPanel = this.findParentByType('form'), 
+                        md = buildContextMD(formPanel);
+                    GEOR.waiter.show();
+                    OpenLayers.Request.POST({
+                        url: GEOR.config.PATHNAME + "/ws/wmc/",
+                        data: GEOR.wmc.write(md),
+                        success: function(response) {
+                            popup.close();
+                            var o = Ext.decode(response.responseText),
+                                id =  /^.+(\w{32}).wmc$/.exec(o.filepath)[1];
+                            var url = new Ext.XTemplate(options.url).apply({
+                                "context_url": encodeURIComponent(GEOR.util.getValidURI(o.filepath)),
+                                "map_url": GEOR.util.getValidURI('map/' + id),
+                                "id": id
+                            });
+                            window.open(url);
+                        },
+                        scope: this
+                    });
+                }
+            }];
+            var popup = new Ext.Window(cfg).show();
         }
     };
 
