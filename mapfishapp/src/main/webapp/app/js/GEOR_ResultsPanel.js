@@ -89,6 +89,11 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
     _model: null,
 
     /**
+     * Private: LS_PREFIX
+     */
+    LS_PREFIX: "geor-viewer-symbolizer-",
+
+    /**
      * Method: _exportBtnHandler
      * Triggers the download dialog for export of the store's content
      */
@@ -210,13 +215,21 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
     },
 
     /**
+     * Method: _getFid
+     *
+     */
+    _getFid: function(feature) {
+        return feature.fid && feature.fid.split(".")[0];
+    },
+
+    /**
      * Method: _createVectorLayer
      *
      */
-    _createVectorLayer: function() {
+    _createVectorLayer: function(styleMapOverrides) {
         this._vectorLayer = new OpenLayers.Layer.Vector("__georchestra_results_"+this.id, {
             displayInLayerSwitcher: false,
-            styleMap: GEOR.util.getStyleMap(),
+            styleMap: GEOR.util.getStyleMap(styleMapOverrides),
             rendererOptions: {
                 zIndexing: true
             }
@@ -345,7 +358,71 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
                     tbtext.hide();
                 },
                 scope: this
-            }, 
+            },
+            {
+                text: tr("Symbology"),
+                tooltip: tr("Edit this panel's features symbology"),
+                handler: function(b) {
+                    var feature = this._vectorLayer.features[0];
+                    if (!feature) {
+                        return;
+                    }
+                    var fid = this._getFid(feature),
+                        symbolType = feature.geometry.CLASS_NAME.replace(/OpenLayers\.Geometry\.(Multi)?|String/g, ""),
+                        symbolizer = Ext.apply({}, this._vectorLayer.styleMap.styles["default"].defaultStyle);
+
+                    var win = new Ext.Window({
+                        title: tr("Symbology"),
+                        layout: "fit",
+                        width: 400,
+                        height: 400,
+                        closeAction: "close",
+                        constrainHeader: true,
+                        animateTarget: GEOR.config.ANIMATE_WINDOWS && b.el,
+                        items: [{
+                            xtype: "gx_" + symbolType.toLowerCase() + "symbolizer",
+                            symbolizer: symbolizer,
+                            bodyStyle: {
+                                "padding": "10px"
+                            },
+                            border: false,
+                            labelWidth: 70,
+                            defaults: {
+                                labelWidth: 70
+                            },
+                            listeners: {
+                                "change": function(symbolizer) {
+                                    this._vectorLayer.style = symbolizer;
+                                    this._vectorLayer.redraw(true);
+                                    if (fid) {
+                                        // we make the symbolizer persist across requests
+                                        // through localStorage:
+                                        GEOR.ls.set(this.LS_PREFIX + fid, Ext.encode(symbolizer));
+                                    }
+                                },
+                                scope: this
+                            }
+                        }],
+                        buttons: [{
+                            text: tr("Reset"),
+                            handler: function() {
+                                GEOR.ls.remove(this.LS_PREFIX + fid);
+                                this._vectorLayer.style = null;
+                                this._vectorLayer.styleMap = GEOR.util.getStyleMap();
+                                this._vectorLayer.redraw(true);
+                                win.close();
+                            },
+                            scope: this
+                        }, {
+                            text: tr("OK"),
+                            handler: function() {
+                                win.close();
+                            }
+                        }]
+                    }).show();
+                },
+                scope: this
+            },
             '->', tbtext, '-',
             {
                 text: tr("Select"),
@@ -483,8 +560,24 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
             });
             return;
         }
+
+        // retrieve matching symbolizer, if any.
+        var fid = this._getFid(features[0]),
+            styleMapOverrides = {};
+        if (fid) {
+            // restore custom StyleMap
+            var storedSymbolizer = GEOR.ls.get(this.LS_PREFIX + fid);
+            if (storedSymbolizer) {
+                var s = Ext.decode(storedSymbolizer);
+                styleMapOverrides = {
+                    "default": s,
+                    "select": s
+                }
+            }
+        }
+        // create vector layer
         if (!this._vectorLayer) {
-            this._createVectorLayer();
+            this._createVectorLayer(styleMapOverrides);
         }
 
         if (options.addLayerToMap !== false) {
