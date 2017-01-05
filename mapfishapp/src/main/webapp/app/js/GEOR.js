@@ -261,6 +261,7 @@ Ext.namespace("GEOR");
         var southPanel = new Ext.TabPanel({
             region: "south",
             id: "southpanel",
+            stateful: false,
             split: true,
             collapsible: true,
             collapsed: true,
