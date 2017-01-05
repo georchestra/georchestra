@@ -337,6 +337,9 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
         "Geometrische Spalte nicht auffindbar",
     "Choose a referential": "Wählen Sie die Referenzen",
     /* GEOR_resultspanel.js strings */
+    "Symbology": "Symbologie",
+    "Edit this panel's features symbology": "Objekte Symbologie bearbeiten",
+    "Reset": "Rücksetzen",
     //"Export is not possible: features have no geometry": "Export impossible : absence de géométries",
     "resultspanel.maxfeature.reached":
         "<span ext:qtip=\  Leistungsfähigeren Navigator benützen " +

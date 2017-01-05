@@ -342,6 +342,9 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "geométrica",
     "Choose a referential": "Elija una unidad administrativa",
     /* GEOR_resultspanel.js strings */
+    "Symbology": "Simbología",
+    "Edit this panel's features symbology": "La simbología modificar",
+    "Reset": "Reiniciar",
     //"Export is not possible: features have no geometry": "Export impossible : absence de géométries",
     "resultspanel.maxfeature.reached":
         " <span ext:qtip=\"Utilice un navegador más potente " +
