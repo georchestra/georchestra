@@ -21,11 +21,14 @@ package org.georchestra.analytics;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.georchestra.analytics.dao.StatsRepo;
+import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
@@ -147,6 +150,9 @@ public class StatisticsController {
     @Autowired
     private StatsRepo statsRepository;
 
+	@Autowired
+	private GeorchestraConfiguration georConfig;
+
 	private DateTimeFormatter localInputFormatter;
 	private DateTimeFormatter dbOutputFormatter;
 
@@ -198,7 +204,14 @@ public class StatisticsController {
     public void setStatsRepository(StatsRepo statsRepository) {
 		this.statsRepository = statsRepository;
 	}
-	
+
+	public GeorchestraConfiguration getGeorConfig() {
+		return georConfig;
+	}
+
+	public void setGeorConfig(GeorchestraConfiguration georConfig) {
+		this.georConfig = georConfig;
+	}
 
 	/** Granularity used for the returned date type in combined requests statistics */
 	public static enum GRANULARITY { HOUR, DAY, WEEK, MONTH }
@@ -533,7 +546,7 @@ public class StatisticsController {
 	 *
 	 * @throws JSONException
 	 */
-	@RequestMapping(value="/distinctUsers", method=RequestMethod.POST, produces= "application/json; charset=utf-8")
+	@RequestMapping(value="/distinctUsers", method=RequestMethod.POST, produces="application/json; charset=utf-8")
 	@ResponseBody
 	public String distinctUsers(@RequestBody String payload, HttpServletResponse response) throws JSONException {
 		JSONObject input;
@@ -558,14 +571,27 @@ public class StatisticsController {
 		}
 		List lst = null;
 		if (groupId != null) {
-			lst = statsRepository.getDistinctUsersByGroup(groupId, startDate,
-					endDate);
+			lst = statsRepository.getDistinctUsersByGroup(groupId, startDate, endDate);
 		} else {
 			lst = statsRepository.getDistinctUsers(startDate, endDate);
 		}
+
+		// Extract list of user to ignore in stats
+		Set<String> excluded_users = new HashSet<String>();
+		for(int i=1;true; i++){
+			String user = this.georConfig.getProperty("protectedUser.uid" + i);
+			if(user != null)
+				excluded_users.add(user);
+			else
+				break;
+		}
+
 		JSONArray results = new JSONArray();
 		for (Object o : lst) {
 			Object[] r = (Object[]) o;
+			// Don"t include excluded user stats
+			if(excluded_users.contains(r[0]))
+				continue;
 			JSONObject row = new JSONObject();
 			row.put("user", r[0]);
 			row.put("organization", r[1]);
