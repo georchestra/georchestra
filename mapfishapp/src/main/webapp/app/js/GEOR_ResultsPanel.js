@@ -369,7 +369,8 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
                     }
                     var fid = this._getFid(feature),
                         symbolType = feature.geometry.CLASS_NAME.replace(/OpenLayers\.Geometry\.(Multi)?|String/g, ""),
-                        symbolizer = Ext.apply({}, this._vectorLayer.styleMap.styles["default"].defaultStyle);
+                        symbolizer = Ext.apply({}, this._vectorLayer.style ||
+                            this._vectorLayer.styleMap.styles["default"].defaultStyle);
 
                     var win = new Ext.Window({
                         title: tr("Symbology"),
