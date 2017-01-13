@@ -2,9 +2,9 @@
 
 shared.instance.name=geOrchestra
 
-shared.url.scheme=http
+shared.url.scheme=https
 shared.homepage.url=@shared.url.scheme@://@shared.server.name@/
-shared.server.port=80
+shared.server.port=443
 
 shared.header.height=90
 
@@ -17,7 +17,8 @@ shared.ldapUrl=ldaps://@shared.ldap.host@:@shared.ldap.port@
 shared.ldap.userSearchBaseDN=ou=users
 shared.ldap.uid=uid
 shared.ldap.userSearchFilter=@shared.ldap.uid@=%u
-shared.ldap.groupSearchBaseDN=ou=groups
+shared.ldap.groupSearchBaseDN=ou=roles
+shared.ldap.orgsSearchBaseDN=ou=orgs
 shared.ldap.admin.dn=cn=admin,@shared.ldap.baseDn@
 shared.ldap.groupSearchFilter=(member=uid={1},@shared.ldap.userSearchBaseDN@,@shared.ldap.baseDn@)
 shared.ldap.ldapPendingGroupName=PENDING
@@ -69,15 +70,3 @@ shared.mapfishapp.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port
 shared.geonetwork.db=georchestra
 
 shared.geofence.db=georchestra
-
-
-# --------------------------------------------------
-# HEALTH CHECK properties
-# --------------------------------------------------
-
-# If the HEALTH CHECK feature is activated, the security proxy 
-# monitors db connections and reports when a limit is reached.
-
-shared.checkhealth.activated=false
-shared.psql.checkhealth.db=@shared.geonetwork.db@
-shared.checkhealth.max_db_connections=170

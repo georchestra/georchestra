@@ -4,7 +4,7 @@
   <groupId>org.georchestra</groupId>
   <artifactId>root</artifactId>
   <packaging>pom</packaging>
-  <version>15.12-SNAPSHOT</version>
+  <version>16.12-SNAPSHOT</version>
   <name>Root project of the geOrchestra SDI</name>
   <url>http://maven.apache.org</url>
   <organization>
@@ -25,6 +25,7 @@
     <gmaven.version>1.0</gmaven.version>
     <gmaven.runtime.version>1.5</gmaven.runtime.version>
     <server>template</server>
+    <geoserver_datadir>geoserver_datadir/</geoserver_datadir>
     <sub.target>dev</sub.target>
     <!-- default when building without a profile specified -->
     <confdir>${project.build.directory}/conf</confdir>
@@ -201,14 +202,6 @@
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-war-plugin</artifactId>
-          <version>2.1.1</version>
-          <configuration>
-            <classifier>${server}</classifier>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>2.3.2</version>
           <configuration>
@@ -355,6 +348,7 @@
         <module>downloadform</module>
         <module>analytics</module>
         <module>header</module>
+        <module>atlas</module>
       </modules>
     </profile>
     <profile>
@@ -384,6 +378,7 @@
         <module>downloadform</module>
         <module>analytics</module>
         <module>header</module>
+        <module>atlas</module>
       </modules>
     </profile>
     <profile>
@@ -404,11 +399,18 @@
         <module>geowebcache-webapp</module>
         <module>ldapadmin</module>
         <module>mapfishapp</module>
+        <module>atlas</module>
         <module>security-proxy</module>
         <module>geonetwork</module>
         <module>downloadform</module>
         <module>analytics</module>
         <module>header</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>atlas</id>
+      <modules>
+        <module>atlas</module>
       </modules>
     </profile>
     <profile>
@@ -507,6 +509,17 @@
         <module>analytics</module>
       </modules>
     </profile>
+    <profile>
+      <id>log4j-logstash</id>
+      <dependencies>
+        <dependency>
+          <groupId>net.logstash.log4j</groupId>
+          <artifactId>jsonevent-layout</artifactId>
+          <version>1.7</version>
+          <scope>runtime</scope>
+        </dependency>
+      </dependencies>
+    </profile>
   </profiles>
   <repositories>
     <repository>
@@ -516,14 +529,6 @@
       </snapshots>
       <id>georchestra</id>
       <url>http://build.georchestra.org/maven/repository</url>
-    </repository>
-    <repository>
-      <snapshots>
-        <enabled>true</enabled>
-        <checksumPolicy>ignore</checksumPolicy>
-      </snapshots>
-      <id>mapfish</id>
-      <url>http://dev.mapfish.org/maven/repository</url>
     </repository>
     <!-- geotools -->
     <repository>
@@ -550,31 +555,12 @@
   </repositories>
   <pluginRepositories>
     <pluginRepository>
-      <id>codehaus-snapshot-plugins</id>
-      <name>codehaus-shapshot-plugins</name>
-      <url>http://snapshots.repository.codehaus.org/</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </pluginRepository>
-    <pluginRepository>
       <id>opengeo</id>
       <name>OpenGeo Maven Repository</name>
       <url>http://repo.boundlessgeo.com/main/</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
-    </pluginRepository>
-    <pluginRepository>
-      <snapshots>
-        <enabled>true</enabled>
-        <checksumPolicy>ignore</checksumPolicy>
-      </snapshots>
-      <id>mapfish</id>
-      <url>http://dev.mapfish.org/maven/repository</url>
     </pluginRepository>
   </pluginRepositories>
 </project>

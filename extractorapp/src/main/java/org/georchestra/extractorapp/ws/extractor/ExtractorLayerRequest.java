@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2009-2016 by the geOrchestra PSC
+ *
+ * This file is part of geOrchestra.
+ *
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.georchestra.extractorapp.ws.extractor;
 
 import com.vividsolutions.jts.geom.Envelope;
@@ -55,6 +74,7 @@ public class ExtractorLayerRequest {
     private final JSONObject               _layerJson;
     private final JSONObject               _globalJson;
     private String _wfsName;
+    private Long dbLogId;
 
     public ExtractorLayerRequest (JSONObject layerJson, JSONObject globalJson, JSONArray emails) throws NoSuchAuthorityCodeException,
             FactoryException, MalformedURLException, JSONException {
@@ -257,4 +277,11 @@ public class ExtractorLayerRequest {
         return _wfsName==null ? _layerName : _wfsName;
     }
 
+    public void setDbLogId(Long dbLogId) {
+        this.dbLogId = dbLogId;
+    }
+
+    public Long getDbLogId() {
+        return dbLogId;
+    }
 }

@@ -27,42 +27,4 @@ public class RequestUtilTest {
         assertTrue(ret.contains("MockHttpServletRequest"));
     }
 
-    @Test
-    public void testGetKeyFromPathVariable() throws JSONException {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        String ret = RequestUtil.getKeyFromPathVariable(request);
-
-        assertTrue(ret.equals(""));
-
-        request.setRequestURI("/ldapadmin/with/a/more/complex/path");
-        ret = RequestUtil.getKeyFromPathVariable(request);
-
-        assertTrue(ret.equals("path"));
-
-    }
-
-    @Test
-    public void testGetKeyFromPathVariableRsrc() throws JSONException {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-
-        try {
-            RequestUtil.getKeyFromPathVariable(request, "test");
-        } catch (Throwable e) {
-            assertTrue(e instanceof IllegalArgumentException);
-        }
-
-        request.setRequestURI("/ldapadmin/with/a/more/complex/path");
-        String ret = RequestUtil.getKeyFromPathVariable(request, "complex");
-
-        assertTrue(ret.equals("path"));
-
-        try {
-            RequestUtil.getKeyFromPathVariable(request, "path");
-        } catch (Throwable e) {
-            assertTrue(e instanceof IllegalArgumentException);
-        }
-    }
-
-
-
 }

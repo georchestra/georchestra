@@ -5,8 +5,8 @@
 <urlrewrite>
 
     <rule>
-        <from>^/context/(.*)$</from>
-        <to type="forward" last="true">/ws/context/$1</to>
+        <from>^/context(s?)/(.*)$</from>
+        <to type="forward" last="true">/ws/context/$2</to>
     </rule>
     <rule>
         <from>^/map/(\d{19})/?$</from>

@@ -1,6 +1,22 @@
-/**
- * 
+/*
+ * Copyright (C) 2009-2016 by the geOrchestra PSC
+ *
+ * This file is part of geOrchestra.
+ *
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.georchestra.extractorapp.ws.extractor.csw;
 
 import java.io.BufferedReader;
@@ -8,17 +24,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.AbstractHttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.georchestra.extractorapp.ws.extractor.FileUtils;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 
 
 /**
@@ -74,8 +91,9 @@ final class MetadataEntity {
 		try {
             writer = new PrintWriter( fileName, "UTF-8" );
 
-        	HttpGet get = new HttpGet(this.request.buildURI() );
-        	DefaultHttpClient httpclient = new DefaultHttpClient();
+            HttpGet get = new HttpGet(this.request.buildURI() );
+            CloseableHttpClient httpclient = HttpClients.createDefault();
+            HttpClientContext localContext = HttpClientContext.create();
 
             // if credentials are actually provided, use them to configure
             // the HttpClient object.
@@ -83,14 +101,14 @@ final class MetadataEntity {
                 if (this.request.getUser() != null  && request.getPassword() != null) {
                     Credentials credentials = new UsernamePasswordCredentials(request.getUser(), request.getPassword());
                     AuthScope authScope = new AuthScope(get.getURI().getHost(), get.getURI().getPort());
-                    if (httpclient instanceof AbstractHttpClient) {
-                        ((AbstractHttpClient) httpclient).getCredentialsProvider().setCredentials(authScope, credentials);
-                    }
+                    CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+                    credentialsProvider.setCredentials(authScope, credentials);
+                    localContext.setCredentialsProvider(credentialsProvider);
                }
             } catch (Exception e) {
                 LOG.error("Unable to set basic-auth on http client to get the Metadata remotely, trying without ...", e);
             }
-            content = httpclient.execute(get).getEntity().getContent();
+            content = httpclient.execute(get, localContext).getEntity().getContent();
             reader = new BufferedReader(new InputStreamReader(content));
 
             String line = reader.readLine();

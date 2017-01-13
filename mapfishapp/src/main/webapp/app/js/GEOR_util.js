@@ -165,6 +165,22 @@ GEOR.util = (function() {
         },
 
         /**
+         * APIMethod: stringReplaceCharCode
+         * Replace char codes in string
+         *
+         * Parameters:
+         * str - {String}
+         *
+         * Returns:
+         * {String} input string with char codes replaced by the actual char
+         */
+        stringReplaceCharCodes: function(str) {
+            return str.replace(/&#(\d+);?/g, function() {
+                return String.fromCharCode(arguments[1])
+            });
+        },
+
+        /**
          * APIMethod: Capitalize
          * Returns a string with first letter uppercased
          *
@@ -267,32 +283,188 @@ GEOR.util = (function() {
                 GEOR.config.PATHNAME, '/', input
             ].join('');
         },
-
+        
         /**
-         * APIMethod: setMetadataURL
-         * Given a layer, and a bunch of metadataURLs, sets the best metadata url
+         * APIMethod: getMetadataURLs
+         * Given a record, or record data, returns metadata urls
          *
          * Parameters:
-         * layer - {OpenLayers.Layer}
-         * metadataURLs - {Array}
+         * record - {Ext.data.Record}
          *
          * Returns:
-         * {String} the "best" metadataURL for WMC storage
+         * {Object} metadataURLs keyed with htmlurls and xmlurls
          */
-        setMetadataURL: function(layer, metadataURLs) {
-            if (metadataURLs && metadataURLs.length > 0) {
-                var murl = metadataURLs[0];
-                // default to first entry
-                layer.metadataURL = (murl.href) ? murl.href : murl;
-                Ext.each(metadataURLs, function(murl) {
-                    // prefer text/html format if found
-                    if (murl.format && murl.format == 'text/html') {
-                        layer.metadataURL = (murl.href) ? murl.href : murl;
-                        return false; // stop looping
-                    }
-                });
+        getMetadataURLs: function(record) {
+            if (record instanceof GeoExt.data.LayerRecord) {
+                record = record.data;
             }
-            return layer.metadataURL;
+            var out = {
+                "htmlurls": [],
+                "xmlurls": []
+            };
+            Ext.each(record.metadataURLs, function(murl) {
+                var f = murl.format;
+                if (murl && !f) {
+                    // considering that WMCs only store the HTML metadata URL
+                    out.htmlurls.push(murl);
+                    return;
+                }
+                if (/^text\/html|application\/xhtml(\+xml)?$/.test(f)) {
+                    out.htmlurls.push(murl.href);
+                }
+                if (/^text\/xml|application\/xml$/.test(f)) {
+                    out.xmlurls.push(murl.href);
+                }
+            });
+            return out;
+        },
+
+        /**
+         * APIMethod: mdwindow
+         * Given an XML MD url, fetch it and display MD essentials in a popup
+         *
+         * Parameters:
+         * xmlMetadataURL - {String}
+         * htmlMetadataURL - {String} (optional)
+         *
+         * Returns:
+         * {Boolean} false
+         */
+        mdwindow: function(xmlMetadataURL, htmlMetadataURL) {
+            if (!xmlMetadataURL) {
+                return;
+            }
+            var tr = OpenLayers.i18n;
+            GEOR.waiter.show();
+            OpenLayers.Request.GET({
+                url: xmlMetadataURL,
+                success: function(response) {
+                    var f = new OpenLayers.Format.CSWGetRecords();
+                    try {
+                        var o = f.read(response.responseXML || response.responseText);
+                    } catch(e) {
+                        GEOR.util.errorDialog({
+                            msg: tr("Could not parse metadata.")
+                        });
+                    }
+                    if (o && o.records && o.records[0]) {
+                        GEOR.util.urlDialog({
+                            title: GEOR.util.getMDtitle(o.records[0]),
+                            msg: GEOR.util.makeMD(o.records[0]),
+                            buttons: [{
+                                text: tr('More'),
+                                disabled: !htmlMetadataURL,
+                                handler: function() {
+                                    window.open(htmlMetadataURL);
+                                }
+                            }, {
+                                text: tr('OK'),
+                                handler: function() {
+                                    this.ownerCt.ownerCt.close();
+                                }
+                            }]
+                        });
+                    } else {
+                        GEOR.util.errorDialog({
+                            msg: tr("Could not parse metadata.")
+                        });
+                    }
+                },
+                failure: function() {
+                    GEOR.util.errorDialog({
+                        msg: tr("Could not get metadata.")
+                    });
+                }
+            });
+            return false;
+        },
+
+        /**
+         * APIMethod: getMDtitle
+         * Given a MD object, returns its title
+         *
+         * Parameters:
+         * metadata - {Object}
+         *
+         * Returns:
+         * {String} metadata title
+         */
+        getMDtitle: function(metadata) {
+            var o = '';
+            try {
+                o = metadata.identificationInfo[0].citation.title.characterString;
+            } catch (e) {}
+            return o;
+        },
+
+        /**
+         * APIMethod: makeMD
+         * Given a MD object, creates some markup to render it
+         *
+         * Parameters:
+         * metadata - {Object}
+         *
+         * Returns:
+         * {String} html markup
+         */
+        makeMD: function(metadata) {
+            // TODO: let the platform admin specify his own custom MD template:
+            var tpl = [
+                '{[this.abstract(values)]}',
+                '{[this.lineage(values)]}',
+                '{[this.dates(values)]}',
+                '{[this.contacts(values)]}'
+            ].join('');
+            var ctx = {
+                "abstract": function(v) {
+                    var o = '';
+                    try {
+                        o = v.identificationInfo[0]['abstract'].characterString.replace(/\n/g, '<br/>') + '<br/><br/>';
+                    } catch (e) {}
+                    return o;
+                },
+                "lineage": function(v) {
+                    var o = '';
+                    try {
+                        o = v.dataQualityInfo[0].lineage.statement.characterString.replace(/\n/g, '<br/>') + '<br/><br/>';
+                    } catch (e) {}
+                    return o;
+                },
+                "dates":  function(v) {
+                    var a = [], 
+                        o = [];
+                    try {
+                        a = v.identificationInfo[0].citation.date;
+                    } catch (e) {}
+                    if (!a[0]) {
+                        return '';
+                    }
+                    Ext.each(a, function(date) {
+                        try {
+                            var type = OpenLayers.i18n(date.dateType.codeListValue),
+                                datetime = date.date[0].dateTime.split("T")[0];
+                            o.push(type+OpenLayers.i18n('labelSeparator')+datetime);
+                        } catch (e) {}
+                    });
+                    return o.join('<br/>')+'<br/><br/>';
+                },
+                "contacts": function(v) {
+                    var a = v.contact,
+                        o = [];
+                    if (!a[0]) {
+                        return '';
+                    }
+                    Ext.each(a, function(contact) {
+                        try {
+                            var role = OpenLayers.i18n(contact.role.codeListValue),
+                                email = contact.contactInfo.address.electronicMailAddress[0].characterString;
+                            o.push(role+OpenLayers.i18n('labelSeparator')+'<a href="mailto:'+email+'" target="_blank">'+email+'</a>');
+                        } catch (e) {}
+                    });
+                    return o.join('<br/>');
+                }
+            };
+            return new Ext.XTemplate(tpl, ctx).apply(metadata);
         },
 
         /**
@@ -374,23 +546,124 @@ GEOR.util = (function() {
                 title: options.title,
                 layout: "fit",
                 width: options.width || 400,
+                maxHeight: 400,
                 closeAction: 'close',
                 constrainHeader: true,
                 modal: false,
                 defaultButton: 0,
                 items: [{
                     bodyStyle: 'padding:5px',
+                    autoScroll: true,
                     html: options.msg,
+                    maxHeight: 400,
                     border: false
                 }],
-                buttons: [{
+                buttons: options.buttons || [{
                     text: OpenLayers.i18n("Thanks!"),
                     handler: function() {
                         win.close();
                     }
-                }]
+                }],
+                listeners: {
+                    'afterrender': function(w) {
+                        if (w.getHeight() > w.maxHeight) {
+                            w.setHeight(w.maxHeight);
+                        }
+                    }
+                }
             });
             win.show();
+        },
+
+        /**
+         * APIMethod: extButton
+         *
+         * Parameters:
+         * options - {Object} Button config
+         *
+         * Returns:
+         * {String} the HTML string to generate a button
+         */
+        extButton: function(options) {
+            return [
+                '<table cellspacing="0" class="x-btn x-btn-text-icon" style="width: auto;">',
+                   '<tbody class="x-btn-small x-btn-icon-small-left">',
+                      '<tr>',
+                         '<td class="x-btn-tl"><i>&nbsp;</i></td>',
+                         '<td class="x-btn-tc"></td>',
+                         '<td class="x-btn-tr"><i>&nbsp;</i></td>',
+                      '</tr>',
+                      '<tr>',
+                         '<td class="x-btn-ml"><i>&nbsp;</i></td>',
+                         '<td class="x-btn-mc"><em class=" x-unselectable" unselectable="on">',
+                            '<button ext:qtip="', options.tooltip, '" type="button" class=" x-btn-text ', options.iconCls, '" onclick="', options.handler,'">',
+                            options.text,
+                            '</button></em></td>',
+                         '<td class="x-btn-mr"><i>&nbsp;</i></td>',
+                      '</tr>',
+                      '<tr>',
+                         '<td class="x-btn-bl"><i>&nbsp;</i></td>',
+                         '<td class="x-btn-bc"></td>',
+                         '<td class="x-btn-br"><i>&nbsp;</i></td>',
+                      '</tr>',
+                   '</tbody>',
+                '</table>'].join('');
+        },
+
+        /**
+         * APIMethod: extFbar
+         *
+         * Parameters:
+         * options - {Object} config
+         *
+         * Returns:
+         * {String} the HTML string to generate a footer bar with buttons
+         */
+        extFbar: function(options) {
+            var tds = '';
+            Ext.each(options.buttons, function(btn) {
+                tds += '<td class="x-toolbar-cell">'+btn+'</td>'
+            });
+            return [
+'<div class="x-panel-fbar x-small-editor x-toolbar-layout-ct" style="width: auto;">',
+   '<table cellspacing="0" class="x-toolbar-ct">',
+      '<tbody>',
+         '<tr>',
+            '<td class="x-toolbar-left" align="left">',
+               '<table cellspacing="0">',
+                  '<tbody>',
+                     '<tr class="x-toolbar-left-row"></tr>',
+                  '</tbody>',
+               '</table>',
+            '</td>',
+            '<td class="x-toolbar-right" align="right">',
+               '<table cellspacing="0" class="x-toolbar-right-ct">',
+                  '<tbody>',
+                     '<tr>',
+                        '<td>',
+                           '<table cellspacing="0">',
+                              '<tbody>',
+                                 '<tr class="x-toolbar-right-row">',
+                                    tds,
+                                 '</tr>',
+                              '</tbody>',
+                           '</table>',
+                        '</td>',
+                        '<td>',
+                           '<table cellspacing="0">',
+                              '<tbody>',
+                                 '<tr class="x-toolbar-extras-row"></tr>',
+                              '</tbody>',
+                           '</table>',
+                        '</td>',
+                     '</tr>',
+                  '</tbody>',
+               '</table>',
+            '</td>',
+         '</tr>',
+      '</tbody>',
+   '</table>',
+'</div>'].join('');
         },
 
         /**
@@ -607,7 +880,40 @@ GEOR.util = (function() {
                 target: menuItem.getEl().getAttribute('id')
             });
             Ext.QuickTips.register(qtip);
+        },
+
+        /**
+         * APIMethod: isInvalidRing
+         *
+         */
+        isInvalidRing: function(ring) {
+            // Linear ring must have 0 or more than 2 points
+            if (!((ring.components.length == 0) ||
+                (ring.components.length > 2))) {
+                return false;
+            }
+        },
+
+        /**
+         * APIMethod: hasInvalidGeometry
+         * Will return id if layer's geometry is invalid
+         */
+        hasInvalidGeometry: function(feature) {
+            var geometry = feature.geometry;
+            if (geometry.CLASS_NAME == "OpenLayers.Geometry.Polygon") {
+                var invalid = Ext.each(geometry.components, GEOR.util.isInvalidRing);
+                if (invalid >= 0) {
+                    return false;
+                }
+            } else if (geometry.CLASS_NAME == "OpenLayers.Geometry.LineString") {
+                // LineString must have 0 or more than 1 points
+                if (!((geometry.components.length == 0) ||
+                    (geometry.components.length > 1))) {
+                    return false;
+                }
+            }
         }
+
     };
 })();
 

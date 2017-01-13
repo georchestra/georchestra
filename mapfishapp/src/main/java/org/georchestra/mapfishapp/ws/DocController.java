@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2009-2016 by the geOrchestra PSC
+ *
+ * This file is part of geOrchestra.
+ *
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.georchestra.mapfishapp.ws;
 
 import java.io.BufferedReader;
@@ -18,7 +37,8 @@ import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.mapfishapp.model.ConnectionPool;
 import org.georchestra.mapfishapp.ws.classif.ClassifierCommand;
 import org.georchestra.mapfishapp.ws.classif.SLDClassifier;
-import org.geotools.data.wfs.WFSDataStoreFactory;
+import org.geotools.data.wfs.impl.WFSDataStoreFactory;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,6 +58,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
  * - POST: ws/sld/ GET: ws/sld/{filename} <br />
  * - POST: ws/kml/ GET: ws/kml/{filename} <br />
  * - POST: ws/gml/ GET: ws/gml/{filename} <br />
+ * - POST: ws/fe/  GET: ws/fe/{filename}  <br />
  * <br />
  * File can be sent via POST or by upload (max one file at a time)
  * <br />
@@ -63,6 +84,47 @@ public class DocController {
     /** the connection pool used by the document services*/
     @Autowired
     private ConnectionPool connectionPool;
+
+    /**
+     * variable name that has to be used on client side
+     */
+    public static final String FILEPATH_VARNAME = "filepath";
+
+    /**
+     * Absolute (from domain name) URL path where doc services can be called
+     */
+    public static final String DOC_URL = "ws/";
+
+    /**
+     * Absolute (from domain name) URL path where the wmc service can be called
+     */
+    public static final String WMC_URL = DOC_URL + "wmc/";
+
+    /**
+     * Absolute (from domain name) URL path where the csv service can be called
+     */
+    public static final String CSV_URL = DOC_URL + "csv/";
+
+    /**
+     * Absolute (from domain name) URL path where the sld service can be called
+     */
+    public static final String SLD_URL = DOC_URL + "sld/";
+
+    /**
+     * Absolute (from domain name) URL path where the kml service can be called
+     */
+    public static final String KML_URL = DOC_URL + "kml/";
+
+    /**
+     * Absolute (from domain name) URL path where the gml service can be called
+     */
+    public static final String GML_URL = DOC_URL + "gml/";
+
+    /**
+     * Absolute (from domain name) URL path where the fe service can be called
+     */
+    public static final String FE_URL = DOC_URL + "fe/";
+
 
     public void init() throws IOException {
         if (georchestraConfiguration.activated()) {
@@ -103,41 +165,6 @@ public class DocController {
 	public void setCredentials(Map<String, UsernamePasswordCredentials> credentials) {
 	    this.credentials = credentials;
 	}
-
-    /**
-     * variable name that has to be used on client side
-     */
-    public static final String FILEPATH_VARNAME = "filepath";
-
-    /**
-     * Absolute (from domain name) URL path where doc services can be called
-     */
-    public static final String DOC_URL = "ws/";
-
-    /**
-     * Absolute (from domain name) URL path where the wmc service can be called
-     */
-    public static final String WMC_URL = DOC_URL + "wmc/";
-
-    /**
-     * Absolute (from domain name) URL path where the csv service can be called
-     */
-    public static final String CSV_URL = DOC_URL + "csv/";
-
-    /**
-     * Absolute (from domain name) URL path where the sld service can be called
-     */
-    public static final String SLD_URL = DOC_URL + "sld/";
-
-    /**
-     * Absolute (from domain name) URL path where the kml service can be called
-     */
-    public static final String KML_URL = DOC_URL + "kml/";
-
-    /**
-     * Absolute (from domain name) URL path where the gml service can be called
-     */
-    public static final String GML_URL = DOC_URL + "gml/";
     
     /*=======================Services entry points==========================================================================*/
 
@@ -163,6 +190,25 @@ public class DocController {
         getFile(new WMCDocService(this.docTempDir, this.connectionPool), request, response);
     }
 
+    /**
+     * Get a list of WMC stored by connected user
+     * @param request used to retrieve connected user
+     * @param response contains a list of WMC doc created by current user
+     */
+    @RequestMapping(value="/wmcs.json", method=RequestMethod.GET)
+    public void getAllWMC(HttpServletRequest request, HttpServletResponse response){
+        getFilesList(new WMCDocService(this.docTempDir, this.connectionPool), request, response);
+    }
+
+    /**
+     * DELETE WMC entry point. Delete wmc from DB corresponding to the REST argument. <br />
+     * @param request no parameter. The parameter has to be provided REST style: WMC_URL/{filename}
+     * @param response empty
+     */
+    @RequestMapping(value="/wmc/*", method=RequestMethod.DELETE)
+    public void deleteWMCFile(HttpServletRequest request, HttpServletResponse response) {
+        deleteFile(new WMCDocService(this.docTempDir, this.connectionPool), request, response);
+    }
     /*======================= KML =====================================================================*/
     /**
      * POST KML entry point. Store the body of the request POST (or file by upload) in a temporary file.
@@ -203,6 +249,27 @@ public class DocController {
     @RequestMapping(value="/gml/*", method=RequestMethod.GET)
     public void getGMLFile(HttpServletRequest request, HttpServletResponse response) {
         getFile(new GMLDocService(this.docTempDir, this.connectionPool), request, response);
+    }
+
+    /*======================= FE ======================================================================*/
+    /**
+     * POST FE entry point. Store the body of the request POST (or file by upload) in a temporary file.
+     * @param request contains in its body the file in the JSON format
+     * @param response contains the url path to get back the file in CSV: FE_URL/{filename}
+     */
+    @RequestMapping(value="/fe/", method=RequestMethod.POST)
+    public void storeFEFile(HttpServletRequest request, HttpServletResponse response) {
+        storeFile(new FEDocService(this.docTempDir, this.connectionPool), FE_URL, request, response);
+    }
+
+    /**
+     * GET FE entry point. Retrieve the right file previously stored corresponding to the REST argument.
+     * @param request no parameter. The parameter has to be provided REST style: FE_URL/{filename}
+     * @param response contains the file content
+     */
+    @RequestMapping(value="/fe/*", method=RequestMethod.GET)
+    public void getFEFile(HttpServletRequest request, HttpServletResponse response) {
+        getFile(new FEDocService(this.docTempDir, this.connectionPool), request, response);
     }
 
     /*======================= JSON to CSV =====================================================================*/
@@ -268,8 +335,7 @@ public class DocController {
     private void doClassification(HttpServletRequest request, HttpServletResponse response) {
         try {
             // classification based on client request in json
-            SLDClassifier c = new SLDClassifier(credentials, new ClassifierCommand(getBodyFromRequest(request)),
-            		factory);
+            SLDClassifier c = new SLDClassifier(credentials, new ClassifierCommand(getBodyFromRequest(request)), factory);
 
             // save SLD content under a file
             SLDDocService service = new SLDDocService(this.docTempDir, this.connectionPool);
@@ -340,7 +406,8 @@ public class DocController {
 
             // send back to client the url path to retrieve this file later on
             response.setStatus(HttpServletResponse.SC_CREATED); // 201 created, new resource created
-            response.setContentType("text/html; charset=utf-8");
+            // Note: "text/html" required for http://docs.sencha.com/extjs/3.4.0/#!/api/Ext.form.BasicForm
+            response.setContentType("text/html");
             response.setHeader("Cache-Control", "max-age=0"); // both Cache-Control and Expires are required
             response.setHeader("Expires", "Fri, 19 Jun 1970 14:23:31 GMT"); // which is in the past
 
@@ -395,6 +462,51 @@ public class DocController {
         catch (Exception e) {
             sendErrorToClient(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "");
             e.printStackTrace();
+        }
+    }
+
+     /**
+     * Generate a list of geodoc filtered by standard
+     * @param docService Any service implementing A_DocService
+     * @param request used to retrieve current username
+     * @param response contains a list of docs description in JSON. Format depends on docs type.
+     */
+    private void getFilesList(A_DocService docService, HttpServletRequest request, HttpServletResponse response) {
+
+        try {
+            response.setContentType("application/json; charset=utf-8");
+            PrintWriter out = response.getWriter();
+            out.print(docService.listFiles(request.getHeader("sec-username")).toString(4));
+        } catch (Exception e) {
+            sendErrorToClient(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+     /**
+     * Delete a geodoc based on filename. This method also check that current user is owner of geodoc.
+     * @param docService Any service implementing A_DocService
+     * @param request used to retrieve current username and filename
+     * @param response {"success" : true} if successfully deleted
+     */
+    private void deleteFile(A_DocService docService, HttpServletRequest request, HttpServletResponse response) {
+        String fileName = getFileNameFromURI(request.getRequestURI());
+        if(fileName == null) {
+            sendErrorToClient(response, HttpServletResponse.SC_BAD_REQUEST, "Could not find the file name in the URL");
+            return;
+        }
+
+        // remove doc prefix 'geodoc' from filename
+        fileName = fileName.replaceAll(A_DocService.DOC_PREFIX, "");
+
+        try {
+            docService.deleteFile(fileName, request.getHeader("sec-username"));
+            response.setContentType("application/json; charset=utf-8");
+            PrintWriter out = response.getWriter();
+            JSONObject res = new JSONObject();
+            res.put("success", true);
+            out.println(res.toString(4));
+        } catch (Exception e) {
+            sendErrorToClient(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 

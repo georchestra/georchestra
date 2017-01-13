@@ -6,11 +6,15 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeNoException;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.URI;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.Map;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -21,6 +25,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.util.ReflectionUtils;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.google.common.collect.Maps;
 
@@ -61,6 +67,8 @@ public class ProxyTest {
         targets.put("geonetwork", "http://www.google.com/geonetwork-private");
         targets.put("extractorapp", "http://localhost/extractorapp-private");
         proxy.setTargets(targets);
+
+        proxy.setDefaultTarget("/mapfishapp/");
 
     }
 
@@ -115,6 +123,15 @@ public class ProxyTest {
     }
 
     @Test
+    public void testDefaultTarget() throws Exception {
+        request = new MockHttpServletRequest("GET", "http://localhost:8080/");
+        proxy.handleRequest(request, httpResponse);
+
+        assertTrue(httpResponse.getRedirectedUrl().equals("/mapfishapp/"));
+
+    }
+
+    @Test
     public void testGetUrlIllegalUrl() throws Exception {
         proxy.handleUrlGETRequest(request, httpResponse, "http://www.google.com:8080/path");
         assertFalse(executed);
@@ -149,5 +166,19 @@ public class ProxyTest {
         proxy.init();
 
         // no exception? good
+    }
+
+    @Test
+    public void testBuildUri() throws Exception {
+        proxy = new Proxy();
+        Method m = ReflectionUtils.findMethod(Proxy.class, "buildUri", URL.class);
+        m.setAccessible(true);
+
+        URI ret = (URI) ReflectionUtils.invokeMethod(m, proxy, new URL("https://dev.pigma.org/geonetwork/srv/fre/xml.keyword.get?"+
+        "thesaurus=local.theme.pigma&id=http://ids.pigma.org/themes%23Eau&multiple=false&transformation=to-iso19139-keyword"));
+        assertTrue(ret.toString().contains("id=http://ids.pigma.org/themes%23Eau"));
+
+        ret = (URI) ReflectionUtils.invokeMethod(m, proxy, new URL("https://sdi.georchestra.org/ldapadmin/account/recover?email=psc%2Btestuser%40georchestra.org"));
+        assertTrue(ret.toString().contains("email=psc%2Btestuser%40georchestra.org"));
     }
 }

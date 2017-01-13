@@ -522,7 +522,7 @@ GEOR.mapinit = (function() {
             // and finally we're running our global success callback:
             cb.call();
         } else {
-            updateStoreFromWMC(GEOR.config.DEFAULT_WMC());
+            updateStoreFromWMC(GEOR.config.DEFAULT_WMC);
         }
     };
 
@@ -599,6 +599,16 @@ GEOR.mapinit = (function() {
             layerStore = ls;
             tr = OpenLayers.i18n;
             cb = callback || OpenLayers.Util.Void;
+
+            // the default WMC is either the one provided by the admin in GEOR.custom,
+            // or the first one publicized by mapfishapp's ContextController.java 
+            // in GEOR.config.CONTEXTS
+            GEOR.config.DEFAULT_WMC = GEOR.custom.DEFAULT_WMC ||
+                // first context publicized by ContextController:
+                (GEOR.config.CONTEXTS[0] && GEOR.config.CONTEXTS[0]["wmc"]) ||
+                // this last one should not happen
+                "context/default.wmc";
+
             var url;
             // POSTing a content to the app (which results in GEOR.initstate
             // being set) has priority over everything else:
@@ -643,6 +653,42 @@ GEOR.mapinit = (function() {
                         scope: this
                     });
                 }
+                // Handle the case where OGC layers/servers are being sent via GET parameters...
+                // eg ?layername=commune_bdcarto,opendata:carroyage
+                // &owstype=WMSLayer,WMSLayer
+                // &owsurl=http://geobretagne.fr/geoserver/dreal_b/ows,https://preprod.ppige-npdc.fr/geoserver/ows
+                var p = GEOR.util.splitURL(window.location.href).params;
+                if (p.hasOwnProperty('LAYERNAME') && p.hasOwnProperty('OWSTYPE')
+                    && p.hasOwnProperty('OWSURL')) {
+                    // load the given layer on top of the WMC
+                    if (Ext.isArray(p.OWSURL) && Ext.isArray(p.OWSTYPE)
+                        && Ext.isArray(p.LAYERNAME) && p.OWSURL.length === p.OWSTYPE.length
+                        && p.OWSURL.length === p.LAYERNAME.length) {
+                        // several layers, eventually from different servers
+                        initState = [];
+                        Ext.each(p.OWSURL, function(item, idx) {
+                            initState.push({
+                                "url": p.OWSURL[idx],
+                                "type": p.OWSTYPE[idx],
+                                "name": p.LAYERNAME[idx]
+                            });
+                        });
+                    } else if (Ext.isString(p.OWSURL) && Ext.isString(p.OWSTYPE)
+                        && Ext.isString(p.LAYERNAME)) {
+                        // only one layer
+                        initState = [{
+                            "url": p.OWSURL,
+                            "type": p.OWSTYPE,
+                            "name": p.LAYERNAME
+                        }];
+                    } else {
+                        // query string error
+                        GEOR.util.errorDialog({
+                            msg: OpenLayers.i18n("Error while decoding querystring")
+                        });
+                    }
+                    loadLayers(initState);
+                }
                 return;
             }
 
@@ -665,7 +711,7 @@ GEOR.mapinit = (function() {
                 // this is so that the map object and fake base layer are
                 // properly configured when adding the other layers
                 // to the map
-                updateStoreFromWMC(GEOR.config.DEFAULT_WMC(), {
+                updateStoreFromWMC(GEOR.config.DEFAULT_WMC, {
                     success: function() {
                         loadLayers(initState);
                     }

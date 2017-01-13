@@ -39,9 +39,9 @@ public class HeadersManagementStrategyTest {
         MockHttpServletRequest originalRequest = new MockHttpServletRequest("get", "http://georchestra.org/geonetwork");
         originalRequest.setRemoteHost("someserver.com");
         originalRequest.addHeader("sec-username", "jeichar");
-        originalRequest.addHeader("sec-roles", "ROLE_SV_ADMIN");
+        originalRequest.addHeader("sec-roles", "ROLE_GN_ADMIN");
         originalRequest.addHeader("imp-username", "imp_user");
-        originalRequest.addHeader("imp-roles", "ROLE_SV_IMP");
+        originalRequest.addHeader("imp-roles", "ROLE_GN_IMP");
         originalRequest.addHeader("other_header", "value");
         return originalRequest;
     }

@@ -2,11 +2,13 @@ package org.georchestra.mapfishapp.ws;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
+import static org.junit.Assume.assumeNotNull;
 
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.UndeclaredThrowableException;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
@@ -42,6 +44,48 @@ public class ContextControllerTest {
         assertTrue("Unexpected keywords: does not contain \"OSM\"", jsRet.getJSONArray("keywords").toString().contains("OSM"));
         assertTrue("Unexpected keywords: does not contain \"Géobretagne\"", jsRet.getJSONArray("keywords").toString().contains("Géobretagne"));
 
+    }
+
+    @Test
+    public void testgetRolesForContext() throws NoSuchMethodException, SecurityException, URISyntaxException {
+        URL defaultCtxUrl = this.getClass().getResource("/default.wmc");
+        assumeNotNull(new Object[] {defaultCtxUrl});
+
+        ContextController ctxCtrl = new ContextController();
+        Method prvMethod = ctxCtrl.getClass().getDeclaredMethod("getRolesForContext", String.class, String.class);
+        prvMethod.setAccessible(true);
+
+        File resourceDir = new File(this.getClass().getResource("/").toURI());
+
+        Object ret = ReflectionUtils.invokeMethod(prvMethod, ctxCtrl, resourceDir.getPath(), "default");
+        assertTrue(((JSONArray) ret).length() == 2);
+        assertTrue(((JSONArray) ret).toString().contains("ROLE_ADMINISTRATOR"));
+    }
+
+    @Test
+    public void testParseRoleXmlFile() throws URISyntaxException, NoSuchMethodException, SecurityException {
+        URL u1 = this.getClass().getResource("roles/several_roles.xml");
+        URL u2 = this.getClass().getResource("roles/one_role.xml");
+        URL u3 = this.getClass().getResource("roles/empty_role.xml");
+        assumeNotNull(new Object[] { u1, u2, u3 });
+
+        File f1 = new File(u1.toURI());
+        File f2 = new File(u2.toURI());
+        File f3 = new File(u3.toURI());
+
+        ContextController ctxCtrl = new ContextController();
+        Method prvMethod = ctxCtrl.getClass().getDeclaredMethod("parseRoleXmlFile", File.class);
+        prvMethod.setAccessible(true);
+
+        Object ret = ReflectionUtils.invokeMethod(prvMethod, ctxCtrl, f1);
+        assertTrue(((JSONArray) ret).length() == 4);
+        assertTrue(((JSONArray) ret).toString().contains("ROLE_ADMINISTRATOR"));
+
+        ret = ReflectionUtils.invokeMethod(prvMethod, ctxCtrl, f2);
+        assertTrue(((JSONArray) ret).length() == 1);
+
+        ret = ReflectionUtils.invokeMethod(prvMethod, ctxCtrl, f3);
+        assertTrue(((JSONArray) ret).length() == 0);
     }
 
     @Test

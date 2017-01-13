@@ -1,3 +1,24 @@
+<%--
+
+ Copyright (C) 2009-2016 by the geOrchestra PSC
+
+ This file is part of geOrchestra.
+
+ geOrchestra is free software: you can redistribute it and/or modify it under
+ the terms of the GNU General Public License as published by the Free
+ Software Foundation, either version 3 of the License, or (at your option)
+ any later version.
+
+ geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ more details.
+
+ You should have received a copy of the GNU General Public License along with
+ geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
+
+--%>
+
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ page pageEncoding="UTF-8" %>
 <%@ page isELIgnored="false" %>
@@ -5,6 +26,7 @@
 <%@ page import="org.springframework.context.ApplicationContext" %>
 <%@ page import="org.springframework.web.servlet.support.RequestContextUtils" %>
 <%@ page import="org.georchestra.commons.configuration.GeorchestraConfiguration" %>
+<%@ page import="org.georchestra.ldapadmin.ws.backoffice.groups.GroupsController" %>
 
 <%
 String instanceName = "${instanceName}";
@@ -25,7 +47,7 @@ try {
     <meta charset="UTF-8">
     <title>LDAPadmin - <%= instanceName %></title>
     <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.min.css" />
-
+    <link rel="stylesheet" href="lib/select2/select2.css"/>
     <link rel="stylesheet" href="css/main.css" />
   </head>
   <body>
@@ -52,7 +74,7 @@ try {
             </a>
             <a id="new_group" href="#/groups/new" class="btn">
               <i class="icon-plus-sign"></i>
-              New group
+              New role
             </a>
           </div>
           <!--Sidebar content-->
@@ -68,11 +90,11 @@ try {
                 <i class="icon-blank"></i>
                 {{data.group.cn}} <small>({{data.group.users.length || 0}})</small>
               </a>
-              <div ng-if="!data.group && data.nodes.length" class="accordion-group">
+              <div ng-if="data.nodes.length" class="accordion-group">
                 <div class="accordion-heading">
                   <a class="accordion-toggle" onclick="$('#collapse{{data.name}}').collapse('toggle');" data-toggle="collapse">
                     <i class="icon-chevron-right"></i>
-                    {{data.group.cn || data.name}}
+                    <em>{{data.group.cn || data.name}}</em>
                   </a>
                 </div>
                 <div id="collapse{{data.name}}" class="accordion-body collapse">
@@ -86,13 +108,13 @@ try {
               <div class="accordion" ng-repeat="data in groups_tree" ng-include="'group_item_renderer.html'">
               </div>
             </div>
-            
+
             <br />
             <i class="icon-blank"></i>
             <a href="#/groups/none" ng-class="{active: selectedGroup == 'none'}">
               Users with no access
             </a>
-            
+
           </div>
         </div>
         <div id="content" class="span9" ng-view>
@@ -100,15 +122,16 @@ try {
         </div>
       </div>
     </div>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular.min.js"></script>
+    <script src="lib/jquery/jquery.min.js"></script>
+    <script src="lib/angular/angular.min.js"></script>
     <!-- for debug purposes:
     <script src="lib/angular/angular.js"></script>
     -->
     <script src="lib/angular-flash.min.js"></script>
     <script type="text/javascript">
     var GEOR_config = {
-        publicContextPath: "<%= contextPath %>"
+        publicContextPath: "<%= contextPath %>",
+        virtualTemporaryGroupName: "<%= GroupsController.VIRTUAL_TEMPORARY_GROUP_NAME %>"
     };
     </script>
     <script src="js/app.js"></script>
@@ -117,7 +140,8 @@ try {
     <script src="js/filters.js"></script>
     <script src="js/directives.js"></script>
     <script src="lib/bootstrap/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="//cdn.jsdelivr.net/underscorejs/1.4.3/underscore-min.js"></script>
-    <script type="text/javascript" src="//cdn.jsdelivr.net/restangular/latest/restangular.min.js"></script>
+    <script src="lib/underscorejs/underscore-min.js"></script>
+    <script src="lib/restangular/restangular.min.js"></script>
+    <script src="lib/select2/select2.full.js"></script>
   </body>
 </html>

@@ -1,0 +1,38 @@
+{
+    "js": [
+        "js/main.js"
+    ],
+    "default_options": {
+        "target": "tabs_2",
+        "projections": [{
+            "srs": "EPSG:4326", 
+            "name": "WGS 84",
+            "labels": ["Longitude", "Latitude"]
+        }],
+        "graphicStyle": {
+            "graphicName": "star",
+            "pointRadius": 4,
+            "strokeColor": "fuchsia",
+            "strokeWidth": 2,
+            "fillOpacity": 0
+        }
+    },
+    "i18n": {
+        "en": {
+            "goto.title": "Location",
+            "goto.srs.label": "Spatial reference system"
+        },
+        "es": {
+            "goto.title": "Localización",
+            "goto.srs.label": "Sistema de referencia"
+        },
+        "fr": {
+            "goto.title": "Position",
+            "goto.srs.label": "Système de coordonnées"
+        },
+        "de": {
+            "goto.title": "Lokalisierung",
+            "goto.srs.label": "Referenzsystem"
+        }
+    }
+}

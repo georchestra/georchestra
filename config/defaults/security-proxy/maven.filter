@@ -14,23 +14,14 @@ ldap.admin.password=@shared.ldap.admin.password@
 authoritiesBaseDN=@shared.ldap.groupSearchBaseDN@
 groupRoleAttribute=@shared.ldap.groupRoleAttribute@
 groupSearchFilter=@shared.ldap.groupSearchFilter@
+orgsSearchBaseDN=@shared.ldap.orgsSearchBaseDN@
 
 cas.public.host=@shared.server.name@
-
-# database health check parameters
-psql.host=@shared.psql.host@
-psql.port=@shared.psql.port@
-psql.user=@shared.psql.user@
-psql.pass=@shared.psql.pass@
-checkHealth=@shared.checkhealth.activated@
-psql.db=@shared.psql.checkhealth.db@
-max.database.connections=@shared.checkhealth.max_db_connections@
 
 # filled by GenerateConfig.groovy:
 cas.private.host=
 public.ssl=
 private.ssl=
-proxy.defaultTarget=
 proxy.mapping=
 header.mapping=
 remove.xforwarded.headers=

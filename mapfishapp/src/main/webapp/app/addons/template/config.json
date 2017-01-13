@@ -1,0 +1,29 @@
+[
+    {
+        "id": "template_0",
+        "enabled": false,
+        "name": "Template",
+        "options": {
+            "target": "tbar_3",
+            "graphicStyle": {
+                "graphicName": "cross",
+                "pointRadius": 16,
+                "strokeColor": "fuchsia",
+                "strokeWidth": 2,
+                "fillOpacity": 0
+            }
+        },
+        "title": {
+            "en": "Addon title in English",
+            "fr": "Titre de l'extension en français",
+            "es": "Titular en español",
+            "de": "Name in der deutschen"
+        },
+        "description": {
+            "en": "Description in English",
+            "fr": "Description en Français",
+            "es": "Descripción en español",
+            "de": "Beschreibung in Deutsch"
+        }
+    }
+]

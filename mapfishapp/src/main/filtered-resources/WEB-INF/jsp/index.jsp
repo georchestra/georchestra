@@ -1,3 +1,24 @@
+<%--
+
+ Copyright (C) 2009-2016 by the geOrchestra PSC
+
+ This file is part of geOrchestra.
+
+ geOrchestra is free software: you can redistribute it and/or modify it under
+ the terms of the GNU General Public License as published by the Free
+ Software Foundation, either version 3 of the License, or (at your option)
+ any later version.
+
+ geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ more details.
+
+ You should have received a copy of the GNU General Public License along with
+ geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
+
+--%>
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page language="java" %>
@@ -50,7 +71,7 @@ if (instanceName == null) {
   instanceName = "${instance}";
 }
 Locale l = new Locale(lang);
-ResourceBundle resource = org.georchestra.mapfishapp.ws.Utf8ResourceBundle.getBundle("mapfishapp.i18n.index",l);
+ResourceBundle resource = org.georchestra.mapfishapp.ws.Utf8ResourceBundle.getBundle("org.georchestra.mapfishapp.i18n.index",l);
 javax.servlet.jsp.jstl.core.Config.set(
     request,
     javax.servlet.jsp.jstl.core.Config.FMT_LOCALIZATION_CONTEXT,
@@ -63,18 +84,13 @@ if(sec_roles != null) {
     String[] roles = sec_roles.split(";");
     String[] js_roles_array = new String[roles.length];
     for (int i = 0; i < roles.length; i++) {
-        // ROLE_ANONYMOUS is added by the security proxy:
-        if (roles[i].equals("ROLE_ANONYMOUS")) {
-            js_roles_array[0] = "'ROLE_ANONYMOUS'";
-            break;
-        }
-        if (roles[i].equals("ROLE_SV_ADMIN")) {
+        if (roles[i].equals("ROLE_GN_ADMIN")) {
             admin = true;
         }
-        if (roles[i].equals("ROLE_SV_EDITOR") || roles[i].equals("ROLE_SV_REVIEWER") || roles[i].equals("ROLE_SV_ADMIN")) {
+        if (roles[i].equals("ROLE_GN_EDITOR") || roles[i].equals("ROLE_GN_REVIEWER") || roles[i].equals("ROLE_GN_ADMIN")) {
             anonymous = false;
         }
-        if (roles[i].equals("ROLE_SV_USER")) {
+        if (roles[i].equals("ROLE_USER")) {
             anonymous = false;
         }
         js_roles_array[i] = "'"+roles[i]+"'";
@@ -202,16 +218,16 @@ if(sec_roles != null) {
         GEOR.config.ANONYMOUS = false;
         GEOR.config.USERNAME = "<%=request.getHeader("sec-username") %>";
         GEOR.config.USEREMAIL = "<%=request.getHeader("sec-email") %>";
+        GEOR.config.USERFIRSTNAME = "<%=request.getHeader("sec-firstname") %>";
+        GEOR.config.USERLASTNAME = "<%=request.getHeader("sec-lastname") %>";
+        GEOR.config.USERORG = "<%=request.getHeader("sec-org") %>";
+        GEOR.config.USERTEL = "<%=request.getHeader("sec-tel") %>";
         </c:when>
     </c:choose>
         GEOR.config.ROLES = [<%= js_roles %>];
         GEOR.config.PATHNAME = '<%= context %>';
-    <c:choose>
-        <c:when test='<%= georDatadirActivated == true %>'>
         GEOR.config.CONTEXTS = ${c.contexts};
         GEOR.config.ADDONS = ${c.addons};
-        </c:when>
-    </c:choose>
         
     </script>
     <noscript><p><fmt:message key="need.javascript"/></p></noscript>

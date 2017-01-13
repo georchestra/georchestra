@@ -48,8 +48,8 @@ public class DisableLoggingTest {
 		final Date time = Calendar.getInstance().getTime();
 
 		final String  request = "http://www.someserver.com/geoserver/wfs/WfsDispatcher?REQUEST=DescribeFeatureType&TYPENAME=ign%3Acommune&SERVICE=WFS&VERSION=1.0.0";
-
-		String ogcServiceMessage = OGCServiceMessageFormatter.format("userNoInsert!", time, request,"");
+		String [] roles = null;
+		String ogcServiceMessage = OGCServiceMessageFormatter.format("userNoInsert!",request,"",roles);
 
 		LOGGER.info(ogcServiceMessage);
 

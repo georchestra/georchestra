@@ -1,0 +1,73 @@
+<section class="home row">
+
+  <div class="col-md-4">
+    <div class="alerts">
+      <div class="alert alert-info">
+        <i class="glyphicon glyphicon-user pull-right"></i>
+        <i class="glyphicon glyphicon-user pull-right"></i>
+        <a ng-link="users({id: 'all'})" translate>home.users</a>
+      </div>
+      <div class="alert alert-danger" ng-if="home.pending && home.pending.users.length > 0">
+        <a ng-link="users({id: home.pending.cn})">
+          {{::home.pending.users.length}} <span translate>home.waiting_users</span><br>
+          <span class="manage" translate>home.view_manage</span>
+        </a>
+      </div>
+      <div class="alert alert-warning" ng-if="home.expired && home.expired.users.length > 0">
+        <a ng-link="users({id: home.expired.cn})">
+          {{::home.expired.users.length}} <span translate>home.expired_users</span><br>
+          <span class="manage" translate>home.view_manage</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="jumbotron">
+      <h1 ng-cloack>{{::home.connected.results.length}}</h1>
+      <p translate>home.connected</p>
+      <table class="table table-condensed">
+        <thead>
+          <tr>
+            <th translate>home.nb_requests</th>
+            <th translate>home.user</th>
+            <th translate>home.org</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr dir-paginate="user in home.connected.results | itemsPerPage: 10">
+            <td title="{{::user.nb_requests}}">{{::user.nb_requests}}</td>
+            <td title="{{::user.user}}">{{::user.user}}</td>
+            <td title="{{::user.organization}}">{{::user.organization}}</td>
+          </tr>
+        </tbody>
+      </table>
+      <dir-pagination-controls></dir-pagination-controls>
+    </div>
+
+  </div>
+
+  <div class="col-md-8">
+
+    <stats data="home.requests" type="'line'" config="['date', 'count']" title="'analytics.requests'"></stats>
+
+    <h3 translate>home.logs</h3>
+
+    <table class="table table-condensed">
+      <thead>
+        <tr>
+          <th translate>logs.date</th>
+          <th translate>logs.sender</th>
+          <th translate>logs.type</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="log in home.logs.logs">
+          <td>{{::log.date | date: 'mediumDate'}}</td>
+          <td>{{::log.admin}}</td>
+          <td>{{::log.type}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+
+</section>

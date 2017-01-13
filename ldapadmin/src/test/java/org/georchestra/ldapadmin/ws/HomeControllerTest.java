@@ -48,7 +48,6 @@ public class HomeControllerTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        request.addHeader("sec-roles", "ROLE_ANONYMOUS");
         ctrl.root(request, response);
 
         assertTrue("expected 302, got " + response.getStatus(), response.getStatus() == HttpServletResponse.SC_MOVED_TEMPORARILY);
@@ -76,27 +75,8 @@ public class HomeControllerTest {
         request.addHeader("sec-roles", "ROLE_MOD_LDAPADMIN");
         ctrl.root(request, response);
 
-        assertTrue(response.getRedirectedUrl().endsWith("/privateui/"));
+        assertTrue(response.getRedirectedUrl().endsWith("/console/"));
 
-    }
-
-    @Test
-    public void testPrivateUiForbidden() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-
-        String ret = ctrl.privateui(request);
-
-        assertTrue(ret.equals("forbidden"));
-    }
-
-    @Test
-    public void testPrivateUi() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("sec-roles", "ROLE_MOD_LDAPADMIN");
-
-        String ret = ctrl.privateui(request);
-
-        assertTrue(ret.equals("privateUi"));
     }
 
 }

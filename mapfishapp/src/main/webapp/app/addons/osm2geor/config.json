@@ -1,0 +1,16 @@
+[{
+  "id": "osm2geor_0",
+  "name": "Osm2Geor",
+  "enabled": true,
+  "title": {
+    "en": "OSM 2 geOrchestra",
+    "es": "OSM 2 geOrchestra",
+    "fr": "OSM 2 geOrchestra"
+  },
+  "description": {
+    "en": "OSM 2 geOrchestra",
+    "es": "OSM 2 geOrchestra",
+    "fr": "OSM 2 geOrchestra"
+  }
+}]
+

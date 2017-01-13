@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2009-2016 by the geOrchestra PSC
+ *
+ * This file is part of geOrchestra.
+ *
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.georchestra.ldapadmin.dto;
 
 import org.json.JSONException;
@@ -26,10 +45,6 @@ public interface Account {
 	 * Person’s full name.
 	 */
 	void setCommonName(String name);
-
-	String getOrg();
-
-	void setOrg(String org);
 
 	String getEmail();
 
@@ -115,13 +130,13 @@ public interface Account {
 
 	String getStateOrProvince();
 
-	void setOrganizationalUnit(String organizationalUnit);
-
-	String getOrganizationalUnit();
-
 	void setHomePostalAddress(String homePostalAddress);
 
 	String getHomePostalAddress();
+
+	void setOrg(String org);
+
+	String getOrg();
 
 	String toVcf();
 
@@ -131,12 +146,15 @@ public interface Account {
 	
 	String toFormatedString(String data);
 
-	void setUUID(String uuid);
-
-	String getUUID();
-
 	void setShadowExpire(Date expireDate);
 
 	Date getShadowExpire();
 
+	String getManager();
+	
+	void setManager(String manager);
+	
+	String getContext();
+	
+	void setContext(String context);
 }

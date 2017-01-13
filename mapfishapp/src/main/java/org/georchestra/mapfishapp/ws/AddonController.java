@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2009-2016 by the geOrchestra PSC
+ *
+ * This file is part of geOrchestra.
+ *
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.georchestra.mapfishapp.ws;
 
 import java.io.File;
@@ -64,7 +83,7 @@ public class AddonController implements ServletContextAware {
      */
     @RequestMapping(value= "/addons")
     public void getAddons(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        response.setContentType("application/javascript; charset=UTF-8");
+        response.setContentType("application/json");
         JSONArray jsAddons = constructAddonsSpec();
 
         response.getOutputStream().write(jsAddons.toString(4).getBytes());
@@ -146,9 +165,9 @@ public class AddonController implements ServletContextAware {
         String ext = FilenameUtils.getExtension(actualFile.getAbsolutePath());
 
         if ("css".equalsIgnoreCase(ext)) {
-            response.setContentType("text/css; charset: UTF-8");
+            response.setContentType("text/css");
         } else if ("js".equalsIgnoreCase(ext)) {
-            response.setContentType("application/javascript; charset: UTF-8");
+            response.setContentType("application/javascript");
         } else if ("png".equalsIgnoreCase(ext)) {
             response.setContentType("image/png");
         } else if (("jpg".equalsIgnoreCase(ext)) || ("jpeg".equalsIgnoreCase(ext))) {

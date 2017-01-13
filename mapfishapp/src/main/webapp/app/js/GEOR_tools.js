@@ -82,10 +82,10 @@ GEOR.tools = (function() {
     var addonsCache = {};
 
     /**
-     * Property: previousState
-     * {Object} Hash storing the previous state of each addons (loaded or not)
+     * Property: state
+     * {Object} Hash storing the current state of each addons (loaded or not)
      */
-    var previousState;
+    var state;
 
     /**
      * Method: loadCssFiles
@@ -121,14 +121,14 @@ GEOR.tools = (function() {
         // compute diff with previous selection state:
         var incoming = [], outgoing = [];
         Ext.iterate(newState, function(k, v) {
-            if (newState[k] === true && previousState[k] === false) {
+            if (newState[k] === true && state[k] === false) {
                 incoming.push(store.getById(k));
             }
-            if (newState[k] === false && previousState[k] === true) {
+            if (newState[k] === false && state[k] === true) {
                 outgoing.push(store.getById(k));
             }
         });
-        previousState = newState;
+        state = newState;
         // remove unwanted addons:
         Ext.each(outgoing, function(r) {
             var addon = addonsCache[r.id],
@@ -152,8 +152,8 @@ GEOR.tools = (function() {
                     addonName.toLowerCase() + "/",
                 failure = function() {
                     count -= 1;
-                    // if an addon fails to load properly, update previousState accordingly
-                    previousState[r.id] = false;
+                    // if an addon fails to load properly, update state accordingly
+                    state[r.id] = false;
                     // unselect node corresponding to record in dataview:
                     dataview && dataview.deselect(r);
                     r.set("_loaded", false);
@@ -192,6 +192,10 @@ GEOR.tools = (function() {
                     // load CSS
                     if (o.css && o.css.length) {
                         loadCssFiles(addonPath, o.css);
+                    }
+                    var urlparams = GEOR.util.splitURL(window.location.href);
+                    if (urlparams.params.hasOwnProperty("DEBUG") && o.debugjs && o.debugjs.length) {
+                        o.js = o.debugjs;
                     }
                     // load JS
                     if (o.js && o.js.length) {
@@ -240,7 +244,7 @@ GEOR.tools = (function() {
                                 // inserting his own component into the viewport
                                 // and calling doLayout on the parent component.
                             }
-                        }, this, true);
+                        }, this, true); // preserveOrder set to true is important to be able to extend classes
                     }
                     // inform user:
                     if (popmsg && count == 0 && !silent) {
@@ -471,9 +475,9 @@ GEOR.tools = (function() {
                 }],
                 data: allowedAddons
             });
-            previousState = {};
+            state = {};
             store.each(function(r) {
-                previousState[r.id] = false;
+                state[r.id] = false;
             });
         },
 
@@ -507,6 +511,13 @@ GEOR.tools = (function() {
          *
          */
         restore: function() {
+            var o = GEOR.util.splitURL(window.location.href);
+            if (o.params.hasOwnProperty("ADDONS")) {
+                fetchAndLoadTools(store.queryBy(function(r) {
+                    return (o.params.ADDONS.indexOf(r.id) > -1);
+                }), true);
+                return;
+            }
             if (!GEOR.ls.available) {
                 return;
             }
@@ -522,6 +533,22 @@ GEOR.tools = (function() {
                     return (ids.indexOf(r.id) > -1);
                 }), true);
             }
+        },
+
+        /**
+         * APIMethod: getAddonsState
+         * Retrieve informations about addons
+         */
+        getAddonsState: function() {
+            return state;
+        },
+
+        /**
+         * APIMethod: getAddon
+         * @param: addonId - Unique identifier of addon (id in config.json)
+         */
+        getAddon: function(addonId) {
+            return addonsCache[addonId];
         }
     };
 })();

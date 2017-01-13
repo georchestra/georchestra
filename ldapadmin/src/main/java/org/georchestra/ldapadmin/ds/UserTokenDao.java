@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2009-2016 by the geOrchestra PSC
+ *
+ * This file is part of geOrchestra.
+ *
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.georchestra.ldapadmin.ds;
 
 import java.sql.Connection;
@@ -14,6 +33,7 @@ import javax.sql.DataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ldap.NameNotFoundException;
 
 /**
  * Maintains the tokens generated when the "Lost password use case" is executed.
@@ -77,9 +97,9 @@ public class UserTokenDao {
      * @return uid
      *
      * @throws DataServiceException
-     * @throws NotFoundException
+     * @throws NameNotFoundException
      */
-    public String findUserByToken(String token) throws DataServiceException, NotFoundException {
+    public String findUserByToken(String token) throws DataServiceException, NameNotFoundException {
         Connection c = null;
         try {
             c = dataSource.getConnection();
@@ -93,7 +113,7 @@ public class UserTokenDao {
             List<Map<String, Object>> result = cmd.getResult();
 
             if (result.isEmpty()) {
-                throw new NotFoundException("the token " + token + " wasn't found.");
+                throw new NameNotFoundException("the token " + token + " wasn't found.");
             }
 
             String uid = (String) result.get(0).get(DatabaseSchema.UID_COLUMN);

@@ -154,11 +154,12 @@ GEOR.toolbar = (function() {
             },
             autoScroll: true
         });
-
+        items.push("-");
+        
         if (GEOR.print) {
-            items.push("-");
             GEOR.print.setLegend(legendPanel);
             items.push(GEOR.print.getAction());
+            items.push("-");
         }
 
         items.push('->');

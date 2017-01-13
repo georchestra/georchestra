@@ -15,7 +15,7 @@
         "options": {
             "roles": {
                 "tab1": [],
-                "tab2": ["ROLE_SV_ADMIN"]
+                "tab2": ["ROLE_GN_ADMIN"]
             },
             "tab1": {
                 "field1": {

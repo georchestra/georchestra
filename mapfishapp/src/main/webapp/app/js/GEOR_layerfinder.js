@@ -130,9 +130,11 @@ GEOR.layerfinder = (function() {
      */
     var createTabPanel = function() {
 
-        GEOR.cswbrowser.events.on({
-            "selectionchanged": selectionChangedListener.call(this, "cswbrowser")
-        });
+        if (GEOR.cswbrowser) {
+            GEOR.cswbrowser.events.on({
+                "selectionchanged": selectionChangedListener.call(this, "cswbrowser")
+            });
+        }
         GEOR.cswquerier.events.on({
             "selectionchanged": selectionChangedListener.call(this, "cswquerier")
         });
@@ -143,10 +145,11 @@ GEOR.layerfinder = (function() {
         panels["cswquerier"] = GEOR.cswquerier.getPanel({
             tabTip: tr("Find layers searching in metadata")
         });
-        panels["cswbrowser"] = GEOR.cswbrowser.getPanel({
-            tabTip: tr("Find layers from keywords")
-        });
-
+        if (GEOR.cswbrowser) {
+            panels["cswbrowser"] = GEOR.cswbrowser.getPanel({
+                tabTip: tr("Find layers from keywords")
+            });
+        }
         var mapSRS = layerStore.map.getProjection(),
         commonStoreOptions = {
             // url should not be empty unless we want the following
@@ -256,55 +259,58 @@ GEOR.layerfinder = (function() {
             ]
         });
 
+        var items = [panels["cswquerier"]];
+        if (GEOR.cswbrowser) {
+            items.push(panels["cswbrowser"]);
+        }
+        items.push({
+            title: tr("OGC server"),
+            tabTip: tr("Find layers querying OGC services"),
+            layout: 'border',
+            border: false,
+            defaults: {
+                border: false
+            },
+            items: [{
+                region: 'north',
+                layout: 'form',
+                labelSeparator: tr("labelSeparator"),
+                labelWidth: 170,
+                bodyStyle: 'padding: 5px;',
+                height: 26,
+                items: [{
+                    xtype: 'radiogroup',
+                    fieldLabel: tr("Service type"),
+                    items: [{
+                        boxLabel: 'WMS',
+                        name: 'svtype',
+                        inputValue: 'wms',
+                        checked: default_svt == "WMS"
+                    },{
+                        boxLabel: 'WMTS',
+                        name: 'svtype',
+                        inputValue: 'wmts',
+                        checked: default_svt == "WMTS"
+                    },{
+                        boxLabel: 'WFS',
+                        name: 'svtype',
+                        inputValue: 'wfs',
+                        checked: default_svt == "WFS"
+                    }],
+                    listeners: {
+                        "change": onServiceTypeChange,
+                        scope: this
+                    }
+                }]
+            }, cardPanel]
+        }, panels["file"]);
+
         return new Ext.TabPanel({
             border: false,
             activeTab: 0,
             // required for WMS & WFS panels to have correct layout:
             deferredRender: true,
-            items: [
-                panels["cswquerier"], panels["cswbrowser"], 
-                {
-                    title: tr("OGC server"),
-                    tabTip: tr("Find layers querying OGC services"),
-                    layout: 'border',
-                    border: false,
-                    defaults: {
-                        border: false
-                    },
-                    items: [{
-                        region: 'north',
-                        layout: 'form',
-                        labelSeparator: tr("labelSeparator"),
-                        labelWidth: 170,
-                        bodyStyle: 'padding: 5px;',
-                        height: 26,
-                        items: [{
-                            xtype: 'radiogroup',
-                            fieldLabel: tr("Service type"),
-                            items: [{
-                                boxLabel: 'WMS',
-                                name: 'svtype',
-                                inputValue: 'wms',
-                                checked: default_svt == "WMS"
-                            },{
-                                boxLabel: 'WMTS',
-                                name: 'svtype',
-                                inputValue: 'wmts',
-                                checked: default_svt == "WMTS"
-                            },{
-                                boxLabel: 'WFS',
-                                name: 'svtype',
-                                inputValue: 'wfs',
-                                checked: default_svt == "WFS"
-                            }],
-                            listeners: {
-                                "change": onServiceTypeChange,
-                                scope: this
-                            }
-                        }]
-                    }, cardPanel]
-                }, panels["file"]
-            ],
+            items: items,
             listeners: {
                 'tabchange': function (tp, p) {
                     switch (p) {

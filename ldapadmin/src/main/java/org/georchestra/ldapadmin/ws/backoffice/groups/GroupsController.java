@@ -1,6 +1,22 @@
-/**
+/*
+ * Copyright (C) 2009-2016 by the geOrchestra PSC
  *
+ * This file is part of geOrchestra.
+ *
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.georchestra.ldapadmin.ws.backoffice.groups;
 
 import java.io.IOException;
@@ -14,7 +30,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.ldapadmin.ds.*;
+import org.georchestra.ldapadmin.ds.AccountDao;
+import org.georchestra.ldapadmin.ds.DataServiceException;
+import org.georchestra.ldapadmin.ds.DuplicatedCommonNameException;
+import org.georchestra.ldapadmin.ds.GroupDao;
+import org.georchestra.ldapadmin.ds.ProtectedUserFilter;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.Group;
 import org.georchestra.ldapadmin.dto.GroupFactory;
@@ -27,7 +47,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.ldap.NameNotFoundException;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -55,7 +78,7 @@ public class GroupsController {
 
 	private static final String USER_NOT_FOUND = "user_not_found";
 
-	private static final String VIRTUAL_TEMPORARY_GROUP_NAME = "TEMPORARY_USER";
+	public static final String VIRTUAL_TEMPORARY_GROUP_NAME = "TEMPORARY";
 	private static final String VIRTUAL_TEMPORARY_GROUP_DESCRIPTION = "Virtual group that contains all temporary users";
 
 
@@ -135,47 +158,46 @@ public class GroupsController {
 	 * Example: [BASE_MAPPING]/groups/group44
 	 * </p>
 	 *
-	 * @param request the request includes the group identifier required
 	 * @param response Returns the detailed information of the group as json
+	 * @param cn Comon name of group
 	 * @throws IOException
 	 */
-	@RequestMapping(value=REQUEST_MAPPING+"/*", method=RequestMethod.GET)
-	public void findByCN( HttpServletRequest request, HttpServletResponse response) throws IOException, JSONException {
+	@RequestMapping(value=REQUEST_MAPPING+"/{cn:.+}", method=RequestMethod.GET)
+	public void findByCN(HttpServletResponse response, @PathVariable String cn) throws IOException, JSONException {
 
-		String cn = RequestUtil.getKeyFromPathVariable(request);
+		String jsonGroup;
 
-		if(cn.equals(GroupsController.VIRTUAL_TEMPORARY_GROUP_NAME))
-			ResponseUtil.buildResponse(response, this.extractTemporaryGroupInformation().toString(), HttpServletResponse.SC_OK);
+		if(cn.equals(GroupsController.VIRTUAL_TEMPORARY_GROUP_NAME)) {
+			jsonGroup = this.extractTemporaryGroupInformation().toString();
+		} else {
 
-		// searches the group
-		Group group = null;
-		try {
-			group = this.groupDao.findByCommonName(cn);
+			// searches the group
+			Group group;
+			try {
+				group = this.groupDao.findByCommonName(cn);
 
-		} catch (NotFoundException e) {
+			} catch (NameNotFoundException e) {
 
-			ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(Boolean.FALSE, NOT_FOUND), HttpServletResponse.SC_NOT_FOUND);
+				ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(Boolean.FALSE, NOT_FOUND), HttpServletResponse.SC_NOT_FOUND);
 
-			return;
+				return;
 
-		} catch (DataServiceException e) {
-			LOG.error(e.getMessage());
-			ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
-					HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			throw new IOException(e);
-		} catch (IllegalArgumentException e) {
-	          LOG.error(e.getMessage());
-              ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()), HttpServletResponse.SC_NOT_FOUND);
-	          return;
+			} catch (DataServiceException e) {
+				LOG.error(e.getMessage());
+				ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
+						HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				throw new IOException(e);
+			} catch (IllegalArgumentException e) {
+				LOG.error(e.getMessage());
+				ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()), HttpServletResponse.SC_NOT_FOUND);
+				return;
+			}
+
+			// sets the group data in the response object
+			jsonGroup = (new GroupResponse(group, this.filter)).asJsonString();
+
 		}
-
-		// sets the group data in the response object
-		GroupResponse groupResponse = new GroupResponse(group, this.filter);
-
-		String jsonGroup = groupResponse.asJsonString();
-
 		ResponseUtil.buildResponse(response, jsonGroup, HttpServletResponse.SC_OK);
-
 	}
 
 	private JSONObject extractTemporaryGroupInformation() throws JSONException {
@@ -263,24 +285,29 @@ public class GroupsController {
 	 * Where <b>cn</b> is the name of group to delete.
 	 * </pre>
 	 *
-	 * @param request
 	 * @param response
+	 * @param cn Common name of group to delete
 	 * @throws IOException
 	 */
-	@RequestMapping(value=REQUEST_MAPPING + "/*", method=RequestMethod.DELETE)
-	public void delete( HttpServletRequest request, HttpServletResponse response) throws IOException{
-		try{
-			String cn = RequestUtil.getKeyFromPathVariable(request);
+	@RequestMapping(value = REQUEST_MAPPING + "/{cn:.+}", method = RequestMethod.DELETE)
+	public void delete(HttpServletResponse response, @PathVariable String cn)
+			throws IOException {
+		try {
 
 			this.groupDao.delete(cn);
 
 			ResponseUtil.writeSuccess(response);
 
-		} catch (NotFoundException e) {
-	          LOG.error(e.getMessage());
-	            ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
-	                    HttpServletResponse.SC_NOT_FOUND);
-		} catch (Exception e){
+		} catch (NameNotFoundException e) {
+			LOG.error(e.getMessage());
+			ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
+					HttpServletResponse.SC_NOT_FOUND);
+		} catch (DataServiceException e) {
+			LOG.error(e.getMessage());
+			ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
+					HttpServletResponse.SC_BAD_REQUEST);
+
+		} catch (Exception e) {
 			LOG.error(e.getMessage());
 			ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
 					HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -291,8 +318,10 @@ public class GroupsController {
 	/**
 	 * Modifies the group using the fields provided in the request body.
 	 * <p>
-	 * The fields that are not present in the parameters will remain untouched in the LDAP store.
+	 * The fields that are not present in the parameters will remain untouched
+	 * in the LDAP store.
 	 * </p>
+	 * 
 	 * <pre>
 	 * The request format is:
 	 * [BASE_MAPPING]/groups/{cn}
@@ -300,11 +329,13 @@ public class GroupsController {
 	 * Where <b>cn</b> is the name of group to update.
 	 * </pre>
 	 * <p>
-	 * The request body should contains a the fields to modify using the JSON syntax.
+	 * The request body should contains a the fields to modify using the JSON
+	 * syntax.
 	 * </p>
 	 * <p>
 	 * Example:
 	 * </p>
+	 * 
 	 * <pre>
 	 * <b>Request</b>
 	 * [BASE_MAPPING]/groups/users
@@ -312,31 +343,30 @@ public class GroupsController {
 	 * <b>Body request: </b>
 	 * group data:
 	 * {
-     *   "cn": "newName"
-     *   "description": "new Description"
-     *   }
+	 *   "cn": "newName"
+	 *   "description": "new Description"
+	 *   }
 	 *
 	 * </pre>
 	 *
-	 * @param request [BASE_MAPPING]/groups/{cn}  body request {"cn": value1, "description": value2 }
+	 * @param request
+	 *            [BASE_MAPPING]/groups/{cn} body request {"cn": value1,
+	 *            "description": value2 }
 	 * @param response
 	 *
-	 * @throws IOException if the uid does not exist or fails to access to the LDAP store.
+	 * @throws IOException
+	 *             if the uid does not exist or fails to access to the LDAP
+	 *             store.
 	 */
-	@RequestMapping(value=REQUEST_MAPPING+ "/*", method=RequestMethod.PUT)
-	public void update( HttpServletRequest request, HttpServletResponse response) throws IOException{
-
-		String cn = RequestUtil.getKeyFromPathVariable(request);
+	@RequestMapping(value=REQUEST_MAPPING+ "/{cn:.+}", method=RequestMethod.PUT)
+	public void update( HttpServletRequest request, HttpServletResponse response, @PathVariable String cn) throws IOException{
 
 		// searches the group
-		Group group = null;
+		Group group;
 		try {
 			group = this.groupDao.findByCommonName(cn);
-
-		} catch (NotFoundException e) {
-
+		} catch (NameNotFoundException e) {
 			ResponseUtil.writeError(response, NOT_FOUND);
-
 			return;
 		} catch (DataServiceException e) {
 		    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -349,9 +379,15 @@ public class GroupsController {
 
 			this.groupDao.update(cn, modified);
 
+			GroupResponse groupResponse = new GroupResponse(group, this.filter);
+
+			String jsonResponse = groupResponse.asJsonString();
+
+			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_OK);
+
 			ResponseUtil.writeSuccess(response);
 
-		}  catch (NotFoundException e) {
+		}  catch (NameNotFoundException e) {
 
 			ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(Boolean.FALSE, NOT_FOUND), HttpServletResponse.SC_NOT_FOUND);
 
@@ -392,14 +428,14 @@ public class GroupsController {
 			List<String> users = createUserList(json, "users");
 
 			List<String> putGroup = createUserList(json, "PUT");
-			this.groupDao.addUsersInGroups(putGroup, users);
+			this.groupDao.addUsersInGroups(putGroup, users, request.getHeader("sec-username"));
 
 			List<String> deleteGroup = createUserList(json, "DELETE");
-			this.groupDao.deleteUsersInGroups(deleteGroup, users);
+			this.groupDao.deleteUsersInGroups(deleteGroup, users, request.getHeader("sec-username"));
 
 			ResponseUtil.writeSuccess(response);
 
-		}  catch (NotFoundException e) {
+		}  catch (NameNotFoundException e) {
 
 			ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(Boolean.FALSE, USER_NOT_FOUND), HttpServletResponse.SC_NOT_FOUND);
 

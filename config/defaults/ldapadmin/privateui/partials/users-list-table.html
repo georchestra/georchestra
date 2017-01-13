@@ -9,6 +9,6 @@
   <tr ng-repeat="user in users | filter:groupFilter" class="">
     <td><input type="checkbox" ng-model="user.selected" /></td>
     <td><a href="#/users/{{user.uid}}">{{user.sn}} {{user.givenName}}</a></td>
-    <td>{{user.o}}</td>
+    <td>{{user.org}}</td>
   </tr>
 </tbody>

@@ -1,27 +1,41 @@
-/**
+/*
+ * Copyright (C) 2009-2016 by the geOrchestra PSC
  *
+ * This file is part of geOrchestra.
+ *
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.georchestra.ldapadmin.ds;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.naming.InvalidNameException;
 import javax.naming.Name;
-import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.ldapadmin.Configuration;
-import org.georchestra.ldapadmin.dto.Group;
-import org.georchestra.ldapadmin.dto.GroupFactory;
-import org.georchestra.ldapadmin.dto.GroupSchema;
+import org.georchestra.ldapadmin.dao.AdminLogDao;
+import org.georchestra.ldapadmin.dto.*;
+import org.georchestra.ldapadmin.model.AdminLogEntry;
+import org.georchestra.ldapadmin.model.AdminLogType;
+import org.georchestra.ldapadmin.ws.backoffice.groups.GroupProtected;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.ContextMapper;
@@ -33,6 +47,8 @@ import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
+import org.springframework.ldap.support.LdapNameBuilder;
+
 
 /**
  * Maintains the group of users in the ldap store.
@@ -43,37 +59,50 @@ import org.springframework.ldap.filter.EqualsFilter;
  */
 public class GroupDaoImpl implements GroupDao {
 
-
-
 	private static final Log LOG = LogFactory.getLog(GroupDaoImpl.class.getName());
 
 	private LdapTemplate ldapTemplate;
 
-    private String uniqueNumberField = "ou";
+	@Autowired
+	private AdminLogDao logDao;
+	
+	@Autowired
+	private GroupProtected groups;
 
-    private LdapRdn groupSearchBaseDN;
-    private LdapRdn userSearchBaseDN;
+	private String uniqueNumberField = "ou";
 
-    private AtomicInteger uniqueNumberCounter = new AtomicInteger(-1);
+	private Name groupSearchBaseDN;
+	private LdapRdn userSearchBaseDN;
 
-    public LdapTemplate getLdapTemplate() {
+	private AtomicInteger uniqueNumberCounter = new AtomicInteger(-1);
+
+	public LdapTemplate getLdapTemplate() {
 		return ldapTemplate;
 	}
 
 	public void setLdapTemplate(LdapTemplate ldapTemplate) {
 		this.ldapTemplate = ldapTemplate;
 	}
-    public void setUniqueNumberField(String uniqueNumberField) {
-        this.uniqueNumberField = uniqueNumberField;
-    }
 
-	public void setGroupSearchBaseDN(String groupSearchBaseDN) {
-		this.groupSearchBaseDN = new LdapRdn(groupSearchBaseDN);
+	public void setUniqueNumberField(String uniqueNumberField) {
+		this.uniqueNumberField = uniqueNumberField;
 	}
+
+	public void setGroupSearchBaseDN(String groupSearchBaseDN) throws InvalidNameException {
+		this.groupSearchBaseDN = LdapNameBuilder.newInstance(groupSearchBaseDN).build();
+	}
+
 	public void setUserSearchBaseDN(String userSearchBaseDN) {
 		this.userSearchBaseDN = new LdapRdn(userSearchBaseDN);
 	}
 
+	public void setLogDao(AdminLogDao logDao) {
+		this.logDao = logDao;
+	}
+
+	public void setGroups(GroupProtected groups) {
+		this.groups = groups;
+	}
 
     /**
 	 * Create an ldap entry for the group
@@ -81,13 +110,12 @@ public class GroupDaoImpl implements GroupDao {
 	 * @param cn
 	 * @return
 	 */
-	private DistinguishedName buildGroupDn(String cn) {
-		DistinguishedName dn = new DistinguishedName();
-
-		dn.add(groupSearchBaseDN);
-		dn.add("cn", cn);
-
-		return dn;
+	private Name buildGroupDn(String cn) {
+		try {
+			return LdapNameBuilder.newInstance(this.groupSearchBaseDN).add("cn", cn).build();
+		} catch (org.springframework.ldap.InvalidNameException ex){
+			throw new IllegalArgumentException(ex.getMessage());
+		}
 	}
 
 	/**
@@ -114,7 +142,7 @@ public class GroupDaoImpl implements GroupDao {
 	 * @see org.georchestra.ldapadmin.ds.GroupDao#addUser(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void addUser(final String groupID, final String userId) throws NotFoundException, DataServiceException {
+	public void addUser(final String groupID, final String userId, final String originLogin) throws NameNotFoundException, DataServiceException {
 
 
 		/* TODO Add hierarchic behaviour here :
@@ -123,7 +151,6 @@ public class GroupDaoImpl implements GroupDao {
 			* then remove last suffix of current group DSI_RENNES_AGRO_SCENE_VOITURE --> DSI_RENNES_AGRO_SCENE,
 			* and re-call this method addUser(DSI_RENNES_AGRO_SCENE, ...)
 		 */
-
 
 		Name dn = buildGroupDn(groupID);
 		DirContextOperations context = ldapTemplate.lookupContext(dn);
@@ -135,6 +162,13 @@ public class GroupDaoImpl implements GroupDao {
 			context.addAttributeValue("member", buildUserDn(userId).toString(), false);
 			this.ldapTemplate.modifyAttributes(context);
 
+			// Add log entry for this modification
+			if(originLogin != null) {
+				AdminLogType logType = this.groups.isProtected(groupID) ? AdminLogType.SYSTEM_GROUP_CHANGE : AdminLogType.OTHER_GROUP_CHANGE;
+				AdminLogEntry log = new AdminLogEntry(originLogin, userId, logType, new Date());
+				this.logDao.save(log);
+			}
+
 		} catch (Exception e) {
 			LOG.error(e);
 			throw new DataServiceException(e);
@@ -145,19 +179,20 @@ public class GroupDaoImpl implements GroupDao {
 	/**
 	 * Removes the uid from all groups
 	 *
-	 * @param uid
+	 * @param uid user to remove
+	 * @param originLogin login of admin that make request
 	 */
 	@Override
-	public void deleteUser(String uid) throws DataServiceException {
+	public void deleteUser(String uid, final String originLogin) throws DataServiceException {
 
-		List<Group> allGroups = findAll();
+		List<Group> allGroups = findAllForUser(uid);
 
 		for (Group group : allGroups) {
-			deleteUser(group.getName(), uid);
+			deleteUser(group.getName(), uid, originLogin);
 		}
 	}
 
-	public void deleteUser(String groupName, String uid) throws DataServiceException {
+	public void deleteUser(String groupName, String uid, final String originLogin) throws DataServiceException {
 		/* TODO Add hierarchic behaviour here like addUser method */
 
 		Name dnSvUser = buildGroupDn(groupName);
@@ -167,6 +202,21 @@ public class GroupDaoImpl implements GroupDao {
 		ctx.removeAttributeValue("member", buildUserDn(uid).toString());
 
 		this.ldapTemplate.modifyAttributes(ctx);
+
+		// Add log entry for this modification
+		if(originLogin != null) {
+			AdminLogType logType;
+			if(groupName.equals(Group.PENDING)){
+				logType = AdminLogType.ACCOUNT_MODERATION;
+			} else if(this.groups.isProtected(groupName)){
+				logType = AdminLogType.SYSTEM_GROUP_CHANGE;
+			} else {
+				logType = AdminLogType.OTHER_GROUP_CHANGE;
+			}
+			AdminLogEntry log = new AdminLogEntry(originLogin, uid, logType, new Date());
+			this.logDao.save(log);
+
+		}
 	}
 
     @Override
@@ -183,8 +233,8 @@ public class GroupDaoImpl implements GroupDao {
 	public List<Group> findAll() throws DataServiceException {
 
 		EqualsFilter filter = new EqualsFilter("objectClass", "groupOfMembers");
-		List<Group> groupList = ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(),
-				new GroupContextMapper());
+
+		List<Group> groupList = ldapTemplate.search(this.groupSearchBaseDN, filter.encode(), new GroupContextMapper());
 
 		TreeSet<Group> sorted = new TreeSet<Group>();
 		for (Group g : groupList) {
@@ -198,25 +248,17 @@ public class GroupDaoImpl implements GroupDao {
 		EqualsFilter grpFilter = new EqualsFilter("objectClass", "groupOfMembers");
 		AndFilter filter = new AndFilter();
 		filter.and(grpFilter);
-
 		filter.and(new EqualsFilter("member", buildUserDn(userId).toString()));
-		return ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(),
-				new GroupContextMapper());
+		return ldapTemplate.search(this.groupSearchBaseDN, filter.encode(),	new GroupContextMapper());
 	}
 
 	public List<String> findUsers(final String groupName) throws DataServiceException{
 
 		AndFilter filter = new AndFilter();
-		filter.and(new EqualsFilter("objectClass", "ou"));
-		filter.and(new EqualsFilter(groupSearchBaseDN.getKey(), groupSearchBaseDN.getValue()));
+		filter.and(new EqualsFilter("objectClass", "groupOfMembers"));
 		filter.and(new EqualsFilter("cn", groupName));
 
-		List<String> memberList = ldapTemplate.search(
-								DistinguishedName.EMPTY_PATH,
-								filter.encode(),
-								new GroupContextMapper());
-
-		return  memberList;
+		return ldapTemplate.search(groupSearchBaseDN, filter.encode(), new GroupContextMapper());
 	}
 
 
@@ -224,20 +266,20 @@ public class GroupDaoImpl implements GroupDao {
 	 * Searches the group by common name (cn)
 	 *
 	 * @param commonName
-	 * @throws NotFoundException
+	 * @throws NameNotFoundException
 	 */
 	@Override
-	public Group findByCommonName(String commonName) throws DataServiceException, NotFoundException {
+	public Group findByCommonName(String commonName) throws DataServiceException, NameNotFoundException {
 
 		try{
-			DistinguishedName dn = buildGroupDn(commonName);
+			Name dn = buildGroupDn(commonName);
 			Group g = (Group) ldapTemplate.lookup(dn, new GroupContextMapper());
 
 			return  g;
 
 		} catch (NameNotFoundException e){
 
-			throw new NotFoundException("There is not a group with this common name (cn): " + commonName);
+			throw new NameNotFoundException("There is not a group with this common name (cn): " + commonName);
 		}
 	}
 
@@ -248,14 +290,15 @@ public class GroupDaoImpl implements GroupDao {
 	 *
 	 */
 	@Override
-	public void delete(final String commonName) throws DataServiceException, NotFoundException{
-	    try {
-	        this.ldapTemplate.unbind(buildGroupDn(commonName), true);
-	    } catch (NameNotFoundException e) {
-	        throw new NotFoundException(e);
-	    }
-	}
+	public void delete(final String commonName) throws DataServiceException, NameNotFoundException {
 
+		if (!this.groups.isProtected(commonName)) {
+			this.ldapTemplate.unbind(buildGroupDn(commonName), true);
+		} else {
+			throw new DataServiceException("Group " + commonName + " is a protected group");
+		}
+
+	}
 
 	private static class GroupContextMapper implements ContextMapper {
 
@@ -303,7 +346,7 @@ public class GroupDaoImpl implements GroupDao {
 
 			throw new DuplicatedCommonNameException("there is a group with this name: " + group.getName());
 
-		} catch (NotFoundException e1) {
+		} catch (NameNotFoundException e1) {
 			// if an group with the specified name cannot be retrieved, then
 			// the new group can be safely added.
 		    LOG.debug("The group with name " + group.getName() + " does not exist yet, it can "
@@ -383,14 +426,14 @@ public class GroupDaoImpl implements GroupDao {
 	/**
 	 * Updates the field of group in the LDAP store
 	 *
-	 *
-	 * @param groupName groupName to modify
-	 * @param modified new values
-	 * @throws NotFoundException
-	 *
+	 * @param groupName
+	 * @param group
+	 * @throws DataServiceException
+	 * @throws NameNotFoundException
+	 * @throws DuplicatedCommonNameException
 	 */
 	@Override
-	public synchronized void update(final String groupName, final Group group) throws DataServiceException, NotFoundException, DuplicatedCommonNameException {
+	public synchronized void update(final String groupName, final Group group) throws DataServiceException, NameNotFoundException, DuplicatedCommonNameException {
 
 		if( group.getName().length()== 0 ){
 			throw new IllegalArgumentException("given name is required");
@@ -403,7 +446,7 @@ public class GroupDaoImpl implements GroupDao {
 
                 throw new DuplicatedCommonNameException("there is a group with this name: " + group.getName());
 
-            } catch (NotFoundException e1) {
+            } catch (NameNotFoundException e1) {
                 // if a group with the specified name cannot be retrieved, then
                 // the new group can be safely renamed.
                 LOG.debug("no account with name " + group.getName() + " can be found, it is then "
@@ -411,8 +454,8 @@ public class GroupDaoImpl implements GroupDao {
             }
         }
 
-        DistinguishedName sourceDn = buildGroupDn(groupName);
-        DistinguishedName destDn = buildGroupDn(group.getName());
+        Name sourceDn = buildGroupDn(groupName);
+        Name destDn = buildGroupDn(group.getName());
 
 
         Integer uniqueNumber = (Integer) ldapTemplate.lookup(sourceDn, new AttributesMapper() {
@@ -451,43 +494,39 @@ public class GroupDaoImpl implements GroupDao {
 	}
 
 	@Override
-	public void addUsers(String groupName, List<String> addList) throws NotFoundException, DataServiceException {
+	public void addUsers(String groupName, List<String> addList, final String originLogin) throws NameNotFoundException, DataServiceException {
 
 		for (String uid : addList) {
-			addUser(groupName, uid);
+			addUser(groupName, uid, originLogin);
 		}
 	}
 
 	@Override
-	public void deleteUsers(String groupName, List<String> deleteList)
-			throws DataServiceException, NotFoundException {
+	public void deleteUsers(String groupName, List<String> deleteList, final String originLogin)
+			throws DataServiceException, NameNotFoundException {
 
 		for (String uid : deleteList) {
-			deleteUser(groupName, uid);
+			deleteUser(groupName, uid, originLogin);
 		}
 
 	}
 
 	@Override
-	public void addUsersInGroups(List<String> putGroup, List<String> users)
-			throws DataServiceException, NotFoundException {
-
+	public void addUsersInGroups(List<String> putGroup, List<String> users, final String originLogin)
+			throws DataServiceException, NameNotFoundException {
 
 		for (String groupName : putGroup) {
-
-			addUsers(groupName, users);
+			addUsers(groupName, users, originLogin);
 		}
 	}
 
 	@Override
-	public void deleteUsersInGroups(List<String> deleteGroup, List<String> users)
-			throws DataServiceException, NotFoundException {
+	public void deleteUsersInGroups(List<String> deleteGroup, List<String> users, final String originLogin)
+			throws DataServiceException, NameNotFoundException {
 
 		for (String groupName : deleteGroup) {
-
-			deleteUsers(groupName, users);
+			deleteUsers(groupName, users, originLogin);
 		}
 
 	}
-
 }

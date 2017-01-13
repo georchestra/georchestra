@@ -221,6 +221,8 @@ GEOR.Annotation = Ext.extend(Ext.util.Observable, {
         this.initDeleteAllAction();
         this.actions.push('-');
         this.initExportAsKmlAction();
+        this.initSaveAction();
+        this.initLoadAction();
 
         GEOR.Annotation.superclass.constructor.apply(this, arguments);
     },
@@ -492,6 +494,113 @@ GEOR.Annotation = Ext.extend(Ext.util.Observable, {
         });
     },
 
+    /** private: method[initSaveAction]
+     *  Create a Ext.Action object that is set as the saveFeatures property
+     *  and pushed to the actions array.
+     */
+    initSaveAction: function() {
+        var actionOptions = {
+            handler: this.saveFeatures,
+            scope: this,
+            text: OpenLayers.i18n('annotation.save'),
+            iconCls: "gx-featureediting-save",
+            iconAlign: 'top',
+            tooltip: OpenLayers.i18n('annotation.save_tip')
+        };
+        var action = new Ext.Action(actionOptions);
+        this.actions.push(action);
+    },
+
+    /** private: method[saveFeatures]
+     *  Called when the saveFeatures is triggered (button pressed).
+     */
+    saveFeatures: function() {
+        var formatGeoJSON = new OpenLayers.Format.GeoJSON(),
+            formatJSON = new OpenLayers.Format.JSON(),
+            listFeatures = [];
+
+        for( var i=0 ; i<this.layer.features.length ; i++ ) {
+            var featureJSON = formatGeoJSON.write(this.layer.features[i]),
+                feature = formatJSON.read(featureJSON);
+            feature.style = this.layer.features[i].style;
+            listFeatures.push(feature);
+        }
+        var featuresJSON = formatJSON.write(listFeatures);
+
+        var element = document.createElement('a'),
+            filename = new Date().toISOString().substring(0,19).replace(/[T,:]/g,'-') + '_annotation.json';
+        element.setAttribute('href', 'data:text/json;charset=utf-8,' + encodeURIComponent(featuresJSON));
+        element.setAttribute('download', filename);
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+    },
+
+    /** private: method[initLoadAction]
+     *  Create a Ext.Action object that is set as the loadFeatures property
+     *  and pushed to the actions array.
+     */
+    initLoadAction: function() {
+        var actionOptions = {
+            handler: this.loadFeatures,
+            scope: this,
+            text: OpenLayers.i18n('annotation.load'),
+            iconCls: "gx-featureediting-load",
+            iconAlign: 'top',
+            tooltip: OpenLayers.i18n('annotation.load_tip')
+        };
+        var action = new Ext.Action(actionOptions);
+        this.actions.push(action);
+    },
+    
+    /** private: method[loadFeatures]
+     *  Called when the loadFeatures is triggered (button pressed).
+     */
+    loadFeatures: function() {
+        var formatGeoJSON = new OpenLayers.Format.GeoJSON(),
+            formatJSON = new OpenLayers.Format.JSON(),
+            targetLayer = this.layer;
+
+        var element = document.createElement('input');
+        element.setAttribute('type', 'file');
+        element.style.visibility = 'hidden';
+        element.addEventListener('change', function(event) {
+            var file = event.target.files[0];
+            if (!file) {
+                return;
+            }
+            var reader = new FileReader();
+            reader.onload = function(event) {
+                var featuresJSON = event.target.result;
+                try {
+                    var listFeatures = formatJSON.read(featuresJSON);
+                    
+                    for (var i=0 ; i<listFeatures.length ; i++) {
+                        var style = listFeatures[i].style,
+                            featureJSON = formatJSON.write(listFeatures[i]),
+                            feature = formatGeoJSON.read(featureJSON,"Feature");
+                        feature.style = style;
+                        feature.layer = targetLayer;
+                        if ( style.label) {
+                            feature.isLabel = true;
+                        }
+                        targetLayer.features.push(feature);
+                    }
+                    targetLayer.redraw();
+                } catch(err) {
+                    GEOR.util.errorDialog({
+                        msg: OpenLayers.i18n("The provided file is not a valid Annotations file.")
+                    });
+                }
+            };
+            reader.readAsText(file);
+            document.body.removeChild(element);
+        }, false);
+        document.body.appendChild(element);
+        element.click();
+    },
+
     /** private: method[getActiveDrawControl]
      *  :return: ``OpenLayers.Control.DrawFeature or false``
      *  Get the current active DrawFeature control.  If none is active, false
@@ -520,6 +629,7 @@ GEOR.Annotation = Ext.extend(Ext.util.Observable, {
         feature.style.label = feature.attributes.label;
         feature.style.graphic = false;
         feature.style.labelSelect = true;
+        feature.style.pointRadius = 0;
         feature.isLabel = true;
     },
 

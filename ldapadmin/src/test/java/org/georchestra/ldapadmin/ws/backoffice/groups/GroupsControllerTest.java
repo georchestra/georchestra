@@ -4,11 +4,11 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import javax.naming.Name;
 import javax.servlet.http.HttpServletResponse;
 
+import org.georchestra.ldapadmin.dao.AdminLogDao;
 import org.georchestra.ldapadmin.ds.*;
 import org.georchestra.ldapadmin.dto.Group;
 import org.georchestra.ldapadmin.dto.GroupFactory;
@@ -19,57 +19,74 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.DistinguishedName;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
+import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 public class GroupsControllerTest {
 
-    private GroupsController groupCtrl;
+	private GroupsController groupCtrl;
 
-    private AccountDaoImpl dao;
-    private GroupDaoImpl groupDao;
-    private UserRule userRule;
-    private LdapTemplate ldapTemplate;
-    private LdapContextSource contextSource;
+	private GroupDaoImpl groupDao;
+	private UserRule userRule;
+	private LdapTemplate ldapTemplate;
+	private LdapContextSource contextSource;
 
-    private MockHttpServletRequest request;
-    private MockHttpServletResponse response;
-
+	private MockHttpServletRequest request;
+	private MockHttpServletResponse response;
 
     @Before
-    public void setUp() throws Exception {
-        ldapTemplate = Mockito.mock(LdapTemplate.class);
-        contextSource = Mockito.mock(LdapContextSource.class);
+	public void setUp() throws Exception {
+		ldapTemplate = Mockito.mock(LdapTemplate.class);
+		contextSource = Mockito.mock(LdapContextSource.class);
+        AdminLogDao logDao = Mockito.mock(AdminLogDao.class);
 
-        Mockito.when(contextSource.getBaseLdapPath()).thenReturn(new DistinguishedName("dc=georchestra,dc=org"));
+		Mockito.when(contextSource.getBaseLdapPath()).thenReturn(new DistinguishedName("dc=georchestra,dc=org"));
 
-        Mockito.when(ldapTemplate.getContextSource()).thenReturn(contextSource);
+		Mockito.when(ldapTemplate.getContextSource()).thenReturn(contextSource);
 
-        userRule = new UserRule();
-        userRule.setListOfprotectedUsers(Arrays
-                .asList(new String[] { "geoserver_privileged_user" }));
+		userRule = new UserRule();
+		userRule.setListOfprotectedUsers(new String[] { "geoserver_privileged_user" });
 
-        // Configures groupDao
-        groupDao = new GroupDaoImpl();
-        groupDao.setLdapTemplate(ldapTemplate);
-        groupDao.setGroupSearchBaseDN("ou=groups");
-        groupDao.setUniqueNumberField("ou");
-        groupDao.setUserSearchBaseDN("ou=users");
+		GroupProtected groups = new GroupProtected();
+		groups.setListOfprotectedGroups(new String[] { "ADMINISTRATOR", "USER", "GN_.*", "MOD_.*" });
 
-        AccountDao accountDao = new AccountDaoImpl(ldapTemplate, groupDao);
+		// AdminLogDao logDao = new Adm
 
-        groupCtrl = new GroupsController(groupDao, userRule);
+		// Configures groupDao
+		groupDao = new GroupDaoImpl();
+		groupDao.setLdapTemplate(ldapTemplate);
+		groupDao.setGroupSearchBaseDN("ou=roles");
+		groupDao.setUniqueNumberField("ou");
+		groupDao.setUserSearchBaseDN("ou=users");
+		groupDao.setLogDao(logDao);
+		groupDao.setGroups(groups);
 
-        request = new MockHttpServletRequest();
-        response = new MockHttpServletResponse();
+        OrgsDao orgsDao = new OrgsDao();
+        orgsDao.setLdapTemplate(ldapTemplate);
+        orgsDao.setOrgsSearchBaseDN("ou=orgs");
+        orgsDao.setUserSearchBaseDN("ou=users");
 
-    }
+
+        AccountDao accountDao = new AccountDaoImpl(ldapTemplate, groupDao, orgsDao);
+
+		groupCtrl = new GroupsController(groupDao, userRule);
+		groupCtrl.setAccountDao(accountDao);
+
+		request = new MockHttpServletRequest();
+		response = new MockHttpServletResponse();
+
+        // Set user connected through http header
+        request.addHeader("sec-username", "testadmin");
+
+	}
 
     @Test
     public void findAllWithException() throws Exception {
@@ -88,16 +105,15 @@ public class GroupsControllerTest {
 
     @Test
     public void testFindByCNEmpty() throws Exception {
-        groupCtrl.findByCN(request, response);
+        groupCtrl.findByCN(response, "");
         assertTrue(response.getStatus() == HttpServletResponse.SC_NOT_FOUND);
     }
 
     @Test
     public void testFindByCNNotFound() throws Exception {
-        request.setRequestURI("/ldapadmin/groups/NOTEXISTINGGROUP");
-        Mockito.doThrow(NotFoundException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (ContextMapper) Mockito.any());
+        Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (ContextMapper) Mockito.any());
 
-        groupCtrl.findByCN(request, response);
+        groupCtrl.findByCN(response, "NOTEXISTINGGROUP");
 
         JSONObject ret = new JSONObject(response.getContentAsString());
         assertTrue(response.getStatus() == HttpServletResponse.SC_NOT_FOUND);
@@ -107,11 +123,10 @@ public class GroupsControllerTest {
 
     @Test
     public void testFindByCNDataServiceException() throws Exception {
-        request.setRequestURI("/ldapadmin/groups/NOTEXISTINGGROUP");
         Mockito.doThrow(DataServiceException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (ContextMapper) Mockito.any());
 
         try {
-            groupCtrl.findByCN(request, response);
+            groupCtrl.findByCN(response, "NOTEXISTINGGROUP");
         } catch (Throwable e) {
             JSONObject ret = new JSONObject(response.getContentAsString());
             assertTrue(e instanceof IOException);
@@ -122,11 +137,10 @@ public class GroupsControllerTest {
 
     @Test
     public void testFindByCN() throws Exception {
-        request.setRequestURI("/ldapadmin/groups/ADMINISTRATOR");
         Group retAdmin = GroupFactory.create("ADMINISTRATOR", "administrator group");
         Mockito.when(ldapTemplate.lookup((Name) Mockito.any(), (ContextMapper) Mockito.any())).thenReturn(retAdmin);
 
-        groupCtrl.findByCN(request, response);
+        groupCtrl.findByCN(response, "ADMINISTRATOR");
 
         JSONObject ret = new JSONObject(response.getContentAsString());
         assertTrue(ret.get("cn").equals("ADMINISTRATOR"));
@@ -168,7 +182,7 @@ public class GroupsControllerTest {
         request.setContent("{ \"cn\": \"MYGROUP\", \"description\": \"Description for the group\" }".getBytes());
         // ensures the mocked object does not return an already existing group
         // Raising NotFoundException instead
-        Mockito.doThrow(NotFoundException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (ContextMapper) Mockito.any());
+        Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (ContextMapper) Mockito.any());
 
         groupCtrl.create(request, response);
 
@@ -179,26 +193,39 @@ public class GroupsControllerTest {
         assertTrue(response.getStatus() == HttpServletResponse.SC_OK);
     }
 
-    @Test
-    public void testDelete() throws Exception {
-        request.setRequestURI("/groups/ADMINISTRATOR");
+	@Test
+	public void testDelete() throws Exception {
+		groupCtrl.delete(response, "USERS");
 
-        groupCtrl.delete(request, response);
+		JSONObject ret = new JSONObject(response.getContentAsString());
+		assertTrue(response.getStatus() == HttpServletResponse.SC_OK);
+		assertTrue(ret.getBoolean("success") == true);
+	}
 
-        JSONObject ret = new JSONObject(response.getContentAsString());
-        assertTrue(response.getStatus() == HttpServletResponse.SC_OK);
-        assertTrue(ret.getBoolean("success") == true);
-    }
+	@Test
+	public void testDeleteADMIN() throws Exception {
+		groupCtrl.delete(response, "ADMINISTRATOR");
 
+		JSONObject ret = new JSONObject(response.getContentAsString());
+		assertTrue(response.getStatus() == HttpServletResponse.SC_BAD_REQUEST);
+		assertTrue(ret.getBoolean("success") == false);
+	}
 
+	@Test
+	public void testDeleteSV() throws Exception {
+		groupCtrl.delete(response, "GN_123USERS");
 
-    @Test
+		JSONObject ret = new JSONObject(response.getContentAsString());
+		assertTrue(response.getStatus() == HttpServletResponse.SC_BAD_REQUEST);
+		assertTrue(ret.getBoolean("success") == false);
+	}
+
+	@Test
     public void testDeleteException() throws Exception {
-        request.setRequestURI("/groups/ADMINISTRATOR");
         Mockito.doThrow(Exception.class).when(ldapTemplate).unbind((Name) Mockito.any(), Mockito.anyBoolean());
 
         try {
-            groupCtrl.delete(request, response);
+            groupCtrl.delete(response, "ADMINISTRATOR");
         } catch (Throwable e) {
             JSONObject ret = new JSONObject(response.getContentAsString());
             assertTrue(response.getStatus() == HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -209,12 +236,11 @@ public class GroupsControllerTest {
 
     @Test
     public void testUpdateNotFound() throws Exception {
-        request.setRequestURI("/ldapadmin/groups/ADMINISTRATOR");
         request.setContent(" { \"cn\": \"newName\", \"description\": \"new Description\" } ".getBytes());
 
-        Mockito.doThrow(NotFoundException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (ContextMapper) Mockito.any());
+        Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (ContextMapper) Mockito.any());
 
-        groupCtrl.update(request, response);
+        groupCtrl.update(request, response, "ADMINISTRATOR");
 
         JSONObject ret = new JSONObject(response.getContentAsString());
         assertTrue(response.getStatus() == HttpServletResponse.SC_NOT_FOUND);
@@ -224,13 +250,12 @@ public class GroupsControllerTest {
 
     @Test
     public void testUpdateDataServiceExceptionAtLookup() throws Exception {
-        request.setRequestURI("/ldapadmin/groups/ADMINISTRATOR");
         request.setContent(" { \"cn\": \"newName\", \"description\": \"new Description\" } ".getBytes());
 
         Mockito.doThrow(DataServiceException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (ContextMapper) Mockito.any());
 
         try {
-            groupCtrl.update(request, response);
+            groupCtrl.update(request, response, "ADMINISTRATOR");
         } catch (Throwable e) {
             assertTrue(e instanceof IOException);
             assertTrue(response.getStatus() == HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -239,17 +264,14 @@ public class GroupsControllerTest {
 
     @Test
     public void testUpdateNotFoundAtModification() throws Exception {
-        request.setRequestURI("/ldapadmin/groups/ADMINISTRATOR");
         request.setContent(" { \"cn\": \"newName\", \"description\": \"new Description\" } ".getBytes());
         Group retAdmin = GroupFactory.create("ADMINISTRATOR", "administrator group");
         Mockito.when(ldapTemplate.lookup((Name) Mockito.any(), (ContextMapper) Mockito.any())).thenReturn(retAdmin);
-        Mockito.doThrow(NotFoundException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (AttributesMapper) Mockito.any());
-        DistinguishedName dn2 = new DistinguishedName();
-        dn2.add("ou=groups");
-        dn2.add("cn", "newName");
-        Mockito.doThrow(NotFoundException.class).when(ldapTemplate).lookup(eq(dn2), (ContextMapper) Mockito.any());
+        Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (AttributesMapper) Mockito.any());
+        Name dn = LdapNameBuilder.newInstance("ou=roles").add("cn", "newName").build();
+        Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup(eq(dn), (ContextMapper) Mockito.any());
 
-        groupCtrl.update(request, response);
+        groupCtrl.update(request, response, "ADMINISTRATOR");
 
         JSONObject ret = new JSONObject(response.getContentAsString());
         assertTrue(ret.getString("error").equals("not_found"));
@@ -260,17 +282,14 @@ public class GroupsControllerTest {
 
     @Test
     public void testUpdateDuplicateCN() throws Exception {
-        request.setRequestURI("/ldapadmin/groups/ADMINISTRATOR");
         request.setContent(" { \"cn\": \"newName\", \"description\": \"new Description\" } ".getBytes());
         Group retAdmin = GroupFactory.create("ADMINISTRATOR", "administrator group");
         Mockito.when(ldapTemplate.lookup((Name) Mockito.any(), (ContextMapper) Mockito.any())).thenReturn(retAdmin);
         Mockito.doThrow(DuplicatedCommonNameException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (AttributesMapper) Mockito.any());
-        DistinguishedName dn2 = new DistinguishedName();
-        dn2.add("ou=groups");
-        dn2.add("cn", "newName");
-        Mockito.doThrow(NotFoundException.class).when(ldapTemplate).lookup(eq(dn2), (ContextMapper) Mockito.any());
+        Name dn = LdapNameBuilder.newInstance("ou=roles").add("cn", "newName").build();
+        Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup(eq(dn), (ContextMapper) Mockito.any());
 
-        groupCtrl.update(request, response);
+        groupCtrl.update(request, response, "ADMINISTRATOR");
 
         JSONObject ret = new JSONObject(response.getContentAsString());
         assertTrue(ret.getString("error").equals("duplicated_common_name"));
@@ -280,18 +299,15 @@ public class GroupsControllerTest {
 
     @Test
     public void testUpdateDataServiceExceptionAtUpdate() throws Exception {
-        request.setRequestURI("/ldapadmin/groups/ADMINISTRATOR");
         request.setContent(" { \"cn\": \"newName\", \"description\": \"new Description\" } ".getBytes());
         Group retAdmin = GroupFactory.create("ADMINISTRATOR", "administrator group");
         Mockito.when(ldapTemplate.lookup((Name) Mockito.any(), (ContextMapper) Mockito.any())).thenReturn(retAdmin);
         Mockito.doThrow(DataServiceException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (AttributesMapper) Mockito.any());
-        DistinguishedName dn2 = new DistinguishedName();
-        dn2.add("ou=groups");
-        dn2.add("cn", "newName");
-        Mockito.doThrow(NotFoundException.class).when(ldapTemplate).lookup(eq(dn2), (ContextMapper) Mockito.any());
+        Name dn = LdapNameBuilder.newInstance("ou=roles").add("cn", "newName").build();
+        Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup(eq(dn), (ContextMapper) Mockito.any());
 
         try {
-            groupCtrl.update(request, response);
+            groupCtrl.update(request, response, "ADMINISTRATOR");
         } catch (Throwable e) {
             JSONObject ret = new JSONObject(response.getContentAsString());
             assertTrue(e instanceof IOException);
@@ -302,96 +318,94 @@ public class GroupsControllerTest {
 
     @Test
     public void testUpdate() throws Exception {
-        request.setRequestURI("/ldapadmin/groups/ADMINISTRATOR");
         request.setContent(" { \"cn\": \"newName\", \"description\": \"new Description\" } ".getBytes());
         Group retAdmin = GroupFactory.create("ADMINISTRATOR", "administrator group");
         Mockito.when(ldapTemplate.lookup((Name) Mockito.any(), (ContextMapper) Mockito.any())).thenReturn(retAdmin);
         Mockito.when(ldapTemplate.lookup((Name) Mockito.any(), (AttributesMapper) Mockito.any())).thenReturn(-1);
-        DistinguishedName dn = new DistinguishedName();
-        dn.add("ou=groups");
-        dn.add("cn", "newName");
-        Mockito.doThrow(NotFoundException.class).when(ldapTemplate).lookup(eq(dn), (ContextMapper) Mockito.any());
 
-        groupCtrl.update(request, response);
+        Name dn = LdapNameBuilder.newInstance("ou=roles").add("cn", "newName").build();
+        Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup(eq(dn), (ContextMapper) Mockito.any());
 
-        JSONObject ret = new JSONObject(response.getContentAsString());
-        assertTrue(response.getStatus() == HttpServletResponse.SC_OK);
-        assertTrue(ret.getBoolean("success"));
-
-    }
-
-    @Test
-    public void testUpdateUsersNotFoundException() throws Exception {
-        JSONObject toSend = new JSONObject().put("users", new JSONArray().put("testadmin").put("testuser")).
-                put("PUT", new JSONArray().put("ADMINISTRATOR")).
-                put("DELETE", new JSONArray().put("USERS"));
-        request.setContent(toSend.toString().getBytes());
-        request.setRequestURI("/ldapadmin/groups_users");
-        DirContextOperations context = Mockito.mock(DirContextOperations.class);
-        Mockito.doThrow(NotFoundException.class).when(ldapTemplate).lookupContext((Name) Mockito.any());
-
-        groupCtrl.updateUsers(request, response);
-
-        JSONObject ret = new JSONObject(response.getContentAsString());
-        assertTrue(response.getStatus() == HttpServletResponse.SC_NOT_FOUND);
-        assertTrue(! ret.getBoolean("success"));
-        assertTrue(ret.getString("error").equals("user_not_found"));
-    }
-
-    @Test
-    public void testUpdateUsersJsonException() throws Exception {
-        JSONObject toSend = new JSONObject().put("users", new JSONArray().put("testadmin").put("testuser")).
-                put("PUT", new JSONArray().put("ADMINISTRATOR")).
-                put("DELETE", new JSONArray().put("USERS"));
-        request.setContent(toSend.toString().getBytes());
-        request.setRequestURI("/ldapadmin/groups_users");
-        // Well, this is unlikely to happen in real life, but the only thing
-        // we want to test is a JSONException being caught, no matter is the cause.
-        Mockito.doThrow(JSONException.class).when(ldapTemplate).lookupContext((Name) Mockito.any());
-
-        try {
-            groupCtrl.updateUsers(request, response);
-        } catch (Throwable e) {
-            assertTrue(e instanceof IOException);
-            JSONObject ret = new JSONObject(response.getContentAsString());
-            assertTrue(response.getStatus() == HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            assertTrue(! ret.getBoolean("success"));
-        }
-    }
-
-    @Test
-    public void testUpdateUsersDataServiceException() throws Exception {
-        JSONObject toSend = new JSONObject().put("users", new JSONArray().put("testadmin").put("testuser")).
-                put("PUT", new JSONArray().put("ADMINISTRATOR")).
-                put("DELETE", new JSONArray().put("USERS"));
-        request.setContent(toSend.toString().getBytes());
-        request.setRequestURI("/ldapadmin/groups_users");
-        Mockito.doThrow(DataServiceException.class).when(ldapTemplate).lookupContext((Name) Mockito.any());
-
-        try {
-            groupCtrl.updateUsers(request, response);
-        } catch (Throwable e) {
-            assertTrue(e instanceof IOException);
-            JSONObject ret = new JSONObject(response.getContentAsString());
-            assertTrue(response.getStatus() == HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            assertTrue(! ret.getBoolean("success"));
-        }
-    }
-
-    @Test
-    public void testUpdateUsers() throws Exception {
-        JSONObject toSend = new JSONObject().put("users", new JSONArray().put("testadmin").put("testuser")).
-                put("PUT", new JSONArray().put("ADMINISTRATOR")).
-                put("DELETE", new JSONArray().put("USERS"));
-        request.setContent(toSend.toString().getBytes());
-        request.setRequestURI("/ldapadmin/groups_users");
-        DirContextOperations context = Mockito.mock(DirContextOperations.class);
-        Mockito.when(ldapTemplate.lookupContext((Name) Mockito.any())).thenReturn(context);
-
-        groupCtrl.updateUsers(request, response);
+        groupCtrl.update(request, response, "USERS");
 
         JSONObject ret = new JSONObject(response.getContentAsString());
         assertTrue(response.getStatus() == HttpServletResponse.SC_OK);
-        assertTrue(ret.getBoolean("success"));
+        assertTrue(ret.getString("cn").equals("newName"));
+        assertTrue(ret.getString("description").equals("new Description"));
+
     }
+
+	@Test
+	public void testUpdateUsersNotFoundException() throws Exception {
+		JSONObject toSend = new JSONObject().put("users", new JSONArray().put("testadmin").put("testuser"))
+				.put("PUT", new JSONArray().put("ADMINISTRATOR")).put("DELETE", new JSONArray().put("USERS"));
+		request.setContent(toSend.toString().getBytes());
+		request.setRequestURI("/ldapadmin/groups_users");
+		DirContextOperations context = Mockito.mock(DirContextOperations.class);
+		Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookupContext((Name) Mockito.any());
+
+		groupCtrl.updateUsers(request, response);
+
+		JSONObject ret = new JSONObject(response.getContentAsString());
+		assertTrue(response.getStatus() == HttpServletResponse.SC_NOT_FOUND);
+		assertTrue(!ret.getBoolean("success"));
+		assertTrue(ret.getString("error").equals("user_not_found"));
+	}
+
+	@Test
+	public void testUpdateUsersJsonException() throws Exception {
+		JSONObject toSend = new JSONObject().put("users", new JSONArray().put("testadmin").put("testuser"))
+				.put("PUT", new JSONArray().put("ADMINISTRATOR")).put("DELETE", new JSONArray().put("USERS"));
+		request.setContent(toSend.toString().getBytes());
+		request.setRequestURI("/ldapadmin/groups_users");
+		// Well, this is unlikely to happen in real life, but the only thing
+		// we want to test is a JSONException being caught, no matter is the
+		// cause.
+		Mockito.doThrow(JSONException.class).when(ldapTemplate).lookupContext((Name) Mockito.any());
+
+		try {
+			groupCtrl.updateUsers(request, response);
+		} catch (Throwable e) {
+			assertTrue(e instanceof IOException);
+			JSONObject ret = new JSONObject(response.getContentAsString());
+			assertTrue(response.getStatus() == HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			assertTrue(!ret.getBoolean("success"));
+		}
+	}
+
+	@Test
+	public void testUpdateUsersDataServiceException() throws Exception {
+		JSONObject toSend = new JSONObject().put("users", new JSONArray().put("testadmin").put("testuser"))
+				.put("PUT", new JSONArray().put("ADMINISTRATOR")).put("DELETE", new JSONArray().put("USERS"));
+		request.setContent(toSend.toString().getBytes());
+		request.setRequestURI("/ldapadmin/groups_users");
+
+		Mockito.doThrow(DataServiceException.class).when(ldapTemplate).lookupContext((Name) Mockito.any());
+
+		try {
+			groupCtrl.updateUsers(request, response);
+		} catch (Throwable e) {
+			assertTrue(e instanceof IOException);
+			JSONObject ret = new JSONObject(response.getContentAsString());
+			assertTrue(response.getStatus() == HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			assertTrue(!ret.getBoolean("success"));
+		}
+	}
+
+	@Test
+	public void testUpdateUsers() throws Exception {
+		JSONObject toSend = new JSONObject().put("users", new JSONArray().put("testadmin").put("testuser"))
+				.put("PUT", new JSONArray().put("ADMINISTRATOR")).put("DELETE", new JSONArray().put("USERS"));
+		request.setContent(toSend.toString().getBytes());
+		request.setRequestURI("/ldapadmin/groups_users");
+		DirContextOperations context = Mockito.mock(DirContextOperations.class);
+		Mockito.when(ldapTemplate.lookupContext((Name) Mockito.any())).thenReturn(context);
+
+		groupCtrl.updateUsers(request, response);
+
+		JSONObject ret = new JSONObject(response.getContentAsString());
+		assertTrue(response.getStatus() == HttpServletResponse.SC_OK);
+		assertTrue(ret.getBoolean("success"));
+	}
+
 }

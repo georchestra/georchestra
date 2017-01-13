@@ -1,15 +1,20 @@
 /*
- * Copyright (C) Camptocamp
+ * Copyright (C) 2009-2016 by the geOrchestra PSC
  *
- * This file is part of geOrchestra
+ * This file is part of geOrchestra.
  *
- * geOrchestra is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
  *
- * You should have received a copy of the GNU General Public License
- * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -113,7 +118,9 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "cswquerier.help.title": "Hinweise zur erweiterten Suche",
     "cswquerier.help.message": '<ul><li><b>@suchwort</b> Suche im Organisationsnamen.</li><li><b>#suchwort</b> Suche in den Metadaten-Tags.</li><li><b>?suchwort</b> Erweitert die Suche auf alle Metadaten-Felder.</li></ul>',
     "NAME layer on VALUE": "Layer ${NAME} auf ${VALUE}",
-    "Show metadata sheet in a new window":
+    "Show metadata essentials in a window":
+        "Afficher les métadonnées basiques",
+    "Show metadata sheet in a new browser tab": 
         "Metadatei in neuem Fenster öffnen",
     "more": "mehr",
     "Click to select or deselect the layer":
@@ -313,7 +320,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Print": "Drucken",
     "Printing...": "Druckvorgang aktiv...",
     "Print current map": "Drucken der aktiven Karte",
-    /* GEOR_querier.js strings */
+    /* GEOR_Querier.js strings */
     "Fields of filters with a red mark are mandatory": "Rote Felder sind auszufüllen",
     "Request on NAME": "Sucher auf ${NAME}",
     "WFS GetFeature on filter": "GetFeature WFS auf einem Filter",
@@ -330,6 +337,9 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
         "Geometrische Spalte nicht auffindbar",
     "Choose a referential": "Wählen Sie die Referenzen",
     /* GEOR_resultspanel.js strings */
+    "Symbology": "Symbologie",
+    "Edit this panel's features symbology": "Objekte Symbologie bearbeiten",
+    "Reset": "Rücksetzen",
     //"Export is not possible: features have no geometry": "Export impossible : absence de géométries",
     "resultspanel.maxfeature.reached":
         "<span ext:qtip=\  Leistungsfähigeren Navigator benützen " +
@@ -431,6 +441,13 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Other": "Andere",
     "Confirmation": "Bestätigung",
     "Information": "Information",
+    "pointOfContact": "Kontakt",
+    "custodian": "Produzent",
+    "distributor": "Distributor",
+    "originator": "Urheber",
+    "More": "Mehr",
+    "Could not parse metadata.": "Konnte nicht die Metadaten analysieren.",
+    "Could not get metadata.": "Metadaten konnten nicht abgerufen werden.",
     /* GEOR_waiter.js strings */
     /* GEOR_wmc.js strings */
     "The provided file is not a valid OGC context": "OGC entspricht nicht dieser Datei",
@@ -444,6 +461,24 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "default viewer context": "Standarteinstellung",
     "(default)": "<br/>(Standardeinstellung)",
     /* GEOR_workspace.js strings */
+    "Created:": "Erstellt am:",
+    "Last accessed:": "Letzter Zugriff:",
+    "Access count:": "Anzahl Zugriffe:",
+    "Permalink:": "Permalink:",
+    "My contexts": "Meine Kontexte",
+    "Created": "Erstellung",
+    "Accessed": "Zugriff",
+    "Count": "Zugriffe",
+    "View": "Anzeigen",
+    "View the selected context": "Ausgewählten Kontext anzeigen",
+    "Download": "Laden",
+    "Download the selected context": "Ausgewählten Kontext herunterladen",
+    "Delete": "Löschen",
+    "Delete the selected context": "Ausgewählten Kontext löschen",
+    "Failed to delete context": "Löschen des Kontexts fehlgeschlagen",
+    "Manage my contexts": "Meine Kontexte verwalten",
+    "Keywords": "Schlüsselwörter",
+    "comma separated keywords": "Komma getrennt Schlüsselwörter",
     "Save to metadata": "Metadaten Erstellen",
     "in group": "in der Gruppe",
     "The context title is mandatory": "Der Kontext Titel ist erforderlich",
@@ -466,14 +501,6 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Get a permalink": "Permalink bekommen",
     "Permalink": "Permalink",
     "Share your map with this URL: ": "Karte mit folgender Adresse teilen : ",
-    "Edit in OSM": "Berarbeitet im OSM",
-    "with JOSM": "mit JOSM",
-    "JOSM must be started with the remote control option": "Bitte " +
-        "vorher JOSM und Distanzkontrolle aktivieren",
-    "with iD": "mit iD",
-    "Recommended scale is 1:10.000": "Empfohlener Maßstab 1:10000",
-    "with Potlatch2": "mit Potlatch2",
-    "with Walking Papers": "mit Walking Papers",
     /* GEOR_edit.js */
     "Req.": "Req.", // requis
     "Required": "Pflicht",

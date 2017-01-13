@@ -1,3 +1,24 @@
+<%--
+
+ Copyright (C) 2009-2016 by the geOrchestra PSC
+
+ This file is part of geOrchestra.
+
+ geOrchestra is free software: you can redistribute it and/or modify it under
+ the terms of the GNU General Public License as published by the Free
+ Software Foundation, either version 3 of the License, or (at your option)
+ any later version.
+
+ geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ more details.
+
+ You should have received a copy of the GNU General Public License along with
+ geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
+
+--%>
+
 <%@ page pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -71,12 +92,7 @@ String sec_roles = request.getHeader("sec-roles");
 if(sec_roles != null) {
     String[] roles = sec_roles.split(";");
     for (int i = 0; i < roles.length; i++) {
-        // ROLE_ANONYMOUS is added by the security proxy:
-        if (roles[i].equals("ROLE_ANONYMOUS")) {
-            //response.setHeader("Cache-Control", "public, max-age=31536000");
-            break;
-        }
-        if (roles[i].equals("ROLE_SV_EDITOR") || roles[i].equals("ROLE_SV_REVIEWER") || roles[i].equals("ROLE_SV_ADMIN") || roles[i].equals("ROLE_ADMINISTRATOR") || roles[i].equals("ROLE_SV_USER")) {
+        if (roles[i].equals("ROLE_GN_EDITOR") || roles[i].equals("ROLE_GN_REVIEWER") || roles[i].equals("ROLE_GN_ADMIN") || roles[i].equals("ROLE_ADMINISTRATOR") || roles[i].equals("ROLE_USER")) {
             anonymous = false;
         }
         if (roles[i].equals("ROLE_MOD_EXTRACTORAPP")) {
@@ -86,7 +102,7 @@ if(sec_roles != null) {
             admin = true;
             ldapadmin = true;
         }
-        if (roles[i].equals("ROLE_SV_ADMIN")) {
+        if (roles[i].equals("ROLE_GN_ADMIN")) {
             admin = true;
             catadmin = true;
         }
@@ -107,7 +123,7 @@ if(sec_roles != null) {
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-
+    <base target="_parent" />
     <style type="text/css">
         /* see https://github.com/georchestra/georchestra/issues/147 for missing http protocol */
         @import url(//fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
@@ -248,7 +264,7 @@ if(sec_roles != null) {
 <body>
 
     <div id="go_head">
-        <a href="#" id="go_home" title="<fmt:message key='go.home'/>">
+        <a href="/" id="go_home" title="<fmt:message key='go.home'/>">
             <img src="img/logo.png" alt="<fmt:message key='logo'/>" height="50"/>
         </a>
         <ul>
@@ -302,10 +318,14 @@ if(sec_roles != null) {
                         <c:when test='<%= catadmin == true %>'>
                         <c:choose>
                             <c:when test='<%= active.equals("geonetwork") %>'>
-                        <li class="active"><a href="/geonetwork/srv/eng/admin"><fmt:message key="catalogue"/></a></li>
+                        <!-- GN2 or GN3 -->
+                        <!--li class="active"><a href="/geonetwork/srv/<%= lang %>/admin"><fmt:message key="catalogue"/></a></li-->
+                        <li class="active"><a href="/geonetwork/srv/<%= lang %>/admin.console"><fmt:message key="catalogue"/></a></li>
                             </c:when>
                             <c:otherwise>
-                        <li><a href="/geonetwork/srv/<%= lang %>/admin"><fmt:message key="catalogue"/></a></li> <!-- FIXME: GN3 -->
+                        <!-- GN2 or GN3 -->
+                        <!--li><a href="/geonetwork/srv/<%= lang %>/admin"><fmt:message key="catalogue"/></a></li-->
+                        <li><a href="/geonetwork/srv/<%= lang %>/admin.console"><fmt:message key="catalogue"/></a></li>
                             </c:otherwise>
                         </c:choose>
                         </c:when>
@@ -344,7 +364,7 @@ if(sec_roles != null) {
                         <li class="active"><a><fmt:message key="users"/></a></li>
                             </c:when>
                             <c:otherwise>
-                        <li><a href="<%= ldapadm %>/privateui/"><fmt:message key="users"/></a></li>
+                        <li><a href="<%= ldapadm %>/console/"><fmt:message key="users"/></a></li>
                             </c:otherwise>
                         </c:choose>
                         </c:when>
@@ -359,7 +379,7 @@ if(sec_roles != null) {
         <c:choose>
             <c:when test='<%= anonymous == false %>'>
         <p class="logged">
-            <a href="<%=ldapadm %>account/userdetails"><%=request.getHeader("sec-username") %></a><span class="light"> | </span><a href="/j_spring_security_logout"><fmt:message key="logout"/></a>
+            <a href="<%=ldapadm %>/account/userdetails"><%=request.getHeader("sec-username") %></a><span class="light"> | </span><a href="/j_spring_security_logout"><fmt:message key="logout"/></a>
         </p>
             </c:when>
             <c:otherwise>

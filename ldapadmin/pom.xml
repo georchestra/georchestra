@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.georchestra</groupId>
     <artifactId>root</artifactId>
-    <version>15.12-SNAPSHOT</version>
+    <version>16.12-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ldapadmin</artifactId>
@@ -21,7 +21,6 @@
     <spring_security.version>4.0.3.RELEASE</spring_security.version>
     <spring_data.version>1.11.1.RELEASE</spring_data.version>
     <postgres.version>9.4-1205-jdbc41</postgres.version>
-
   </properties>
   <repositories>
     <repository>
@@ -284,11 +283,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>commons-fileupload</groupId>
-      <artifactId>commons-fileupload</artifactId>
-      <version>1.2.2</version>
-    </dependency>
-    <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
       <version>2.4</version>
@@ -411,7 +405,15 @@
     </dependency>
   </dependencies>
   <build>
+    <finalName>${project.artifactId}-${server}</finalName>
     <plugins>
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.6</version>
+        <configuration>
+          <packagingExcludes>console/node_modules/**</packagingExcludes>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
@@ -454,14 +456,6 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <version>2.2</version>
-        <configuration>
-          <warName>ldapadmin</warName>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -554,7 +548,7 @@
         <artifactId>jetty-maven-plugin</artifactId>
         <version>9.2.11.v20150529</version>
         <configuration>
-          <webApp><contextPath>/ldapadmin/</contextPath></webApp>
+          <webApp><contextPath>/ldapadmin</contextPath></webApp>
           <scanIntervalSeconds>5</scanIntervalSeconds>
           <scanTargets>
             <scanTarget>src/main/java/</scanTarget>
@@ -584,38 +578,61 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
+        <version>1.0</version>
+        <executions>
+          <execution>
+            <id>install-node-and-npm</id>
+            <goals>
+              <goal>install-node-and-npm</goal>
+            </goals>
+            <phase>generate-resources</phase>
+          </execution>
+          <execution>
+            <id>npm install</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <arguments>install</arguments>
+              <installDirectory>${project.basedir}</installDirectory>
+            </configuration>
+          </execution>
+        </executions>
+        <configuration>
+          <nodeVersion>v4.6.0</nodeVersion>
+          <npmVersion>2.15.11</npmVersion>
+          <installDirectory>${project.basedir}</installDirectory>
+          <workingDirectory>${project.basedir}/src/main/webapp/console</workingDirectory>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
   <profiles>
     <profile>
       <id>debianPackage</id>
       <build>
+        <finalName>${project.artifactId}-generic</finalName>
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-war-plugin</artifactId>
-            <version>2.1.1</version>
+            <artifactId>maven-scm-plugin</artifactId>
+            <version>1.9.4</version>
             <configuration>
-              <classifier>generic</classifier>
+              <checkoutDirectory>${project.build.directory}/deb/etc/georchestra</checkoutDirectory>
+              <connectionUrl>scm:git:https://github.com/georchestra/datadir.git</connectionUrl>
+              <pushChanges>false</pushChanges>
             </configuration>
-          </plugin>
-          <plugin>
-            <artifactId>maven-resources-plugin</artifactId>
-            <version>2.3</version>
             <executions>
               <execution>
-                <id>copy-deb-resources</id>
+                <id>checkout-deb-default-datadir</id>
                 <phase>process-resources</phase>
-                <goals><goal>copy-resources</goal></goals>
-                <configuration>
-                  <overwrite>true</overwrite>
-                  <outputDirectory>${basedir}/target/deb</outputDirectory>
-                  <resources>
-                    <resource>
-                      <directory>src/deb/resources</directory>
-                    </resource>
-                  </resources>
-                </configuration>
+                <goals>
+                  <goal>checkout</goal>
+                </goals>
               </execution>
             </executions>
           </plugin>
@@ -625,12 +642,29 @@
             <version>1.6</version>
             <executions>
               <execution>
+                <id>remove-useless-directories</id>
+                <phase>package</phase>
+                <configuration>
+                  <target>
+                    <delete includeemptydirs="true">
+                      <fileset dir="${project.build.directory}/deb/etc/georchestra">
+                        <include name="**/*" />
+                        <exclude name="${project.artifactId}/**" />
+                      </fileset>
+                    </delete>
+                 </target>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+              <execution>
                 <id>fix-permissions</id>
                 <phase>package</phase>
                 <configuration>
                   <target>
                     <chmod perm="ugo+x">
-                      <fileset dir="${basedir}/target/deb">
+                      <fileset dir="${project.build.directory}/deb">
                         <include name="**/bin/**"/>
                         <include name="**/sbin/**"/>
                         <include name="DEBIAN/post*"/>
@@ -653,7 +687,8 @@
               <projectOrganization>geOrchestra</projectOrganization>
               <maintainerName>PSC</maintainerName>
               <maintainerEmail>psc@georchestra.org</maintainerEmail>
-              <excludeAllArtifacts>true</excludeAllArtifacts>
+              <excludeAllDependencies>true</excludeAllDependencies>
+              <snapshotRevisionFile>${project.build.directory}</snapshotRevisionFile>
             </configuration>
           </plugin>
         </plugins>
@@ -662,14 +697,50 @@
     <profile>
       <id>rpmPackage</id>
       <build>
+        <finalName>${project.artifactId}-generic</finalName>
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-war-plugin</artifactId>
-            <version>2.1.1</version>
+            <artifactId>maven-scm-plugin</artifactId>
+            <version>1.9.4</version>
             <configuration>
-              <classifier>generic</classifier>
+              <checkoutDirectory>${project.build.directory}/deb/etc/georchestra</checkoutDirectory>
+              <connectionUrl>scm:git:https://github.com/georchestra/datadir.git</connectionUrl>
+              <pushChanges>false</pushChanges>
             </configuration>
+            <executions>
+              <execution>
+                <id>checkout-deb-default-datadir</id>
+                <phase>process-resources</phase>
+                <goals>
+                  <goal>checkout</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.6</version>
+            <executions>
+              <execution>
+                <configuration>
+                  <target>
+                    <delete includeemptydirs="true">
+                      <fileset dir="${project.build.directory}/deb/etc/georchestra">
+                        <include name="**/*" />
+                        <exclude name="${project.artifactId}/**" />
+                      </fileset>
+                    </delete>
+                 </target>
+                </configuration>
+                <id>remove-useless-directories</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
           </plugin>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
@@ -704,12 +775,76 @@
                   <directory>/</directory>
                   <sources>
                     <source>
-                      <location>${basedir}/src/deb/resources</location>
+                      <location>${project.build.directory}/deb</location>
                     </source>
                   </sources>
                 </mapping>
               </mappings>
             </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>docker</id>
+      <properties>
+        <dockerImageName>georchestra/${project.artifactId}</dockerImageName>
+        <dockerDatadirScmUrl>scm:git:https://github.com/georchestra/datadir.git</dockerDatadirScmUrl>
+        <dockerDatadirScmVersion>docker-master</dockerDatadirScmVersion>
+      </properties>
+      <build>
+        <finalName>${project.artifactId}</finalName>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-scm-plugin</artifactId>
+            <version>1.9.4</version>
+            <configuration>
+              <checkoutDirectory>${project.build.directory}/datadir/</checkoutDirectory>
+              <connectionUrl>${dockerDatadirScmUrl}</connectionUrl>
+              <pushChanges>false</pushChanges>
+              <scmVersion>${dockerDatadirScmVersion}</scmVersion>
+              <scmVersionType>branch</scmVersionType>
+            </configuration>
+            <executions>
+              <execution>
+                <id>checkout-docker-default-datadir</id>
+                <phase>process-resources</phase>
+                <goals>
+                  <goal>checkout</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>com.spotify</groupId>
+            <artifactId>docker-maven-plugin</artifactId>
+            <version>0.3.8</version>
+            <configuration>
+              <imageName>${dockerImageName}</imageName>
+              <dockerDirectory>${project.basedir}/src/docker</dockerDirectory>
+              <resources>
+                <resource>
+                  <targetPath>/var/lib/jetty/webapps</targetPath>
+                  <directory>${project.build.directory}</directory>
+                  <include>${project.artifactId}.war</include>
+                </resource>
+                <resource>
+                  <targetPath>/etc/georchestra</targetPath>
+                  <directory>${project.build.directory}/datadir</directory>
+                  <include>${project.artifactId}/**</include>
+                </resource>
+              </resources>
+              <serverId>docker-hub</serverId>
+              <registryUrl>https://index.docker.io/v1/</registryUrl>
+            </configuration>
+            <dependencies>
+              <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>19.0</version>
+              </dependency>
+            </dependencies>
           </plugin>
         </plugins>
       </build>

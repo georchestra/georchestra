@@ -21,6 +21,7 @@ Parameters
 
 The application accepts several GET parameters :
  * **wmc** points to a WMC file in order to override the default context,
+ * **addons** is a comma separated list of already known addon ids,
  * **bbox** in the form left,bottom,right,top in WGS84 coordinates overrides the extent of any WMC,
  * **lon** and **lat** in WGS84 coordinates override the extent of any WMC to center the map,
  * **radius** in meters, when set in addition to the lon and lat params, allows to control the resulting zoom level,
@@ -28,6 +29,15 @@ The application accepts several GET parameters :
  * **lang** can be set to any of the following : fr, en, es, ru, de,
  * **debug** when set to true, the application loads unminified javascript files,
  * **noheader** when set to true, the application does not load the header.
+ * **layername**, **owstype** and **owsurl** are used to load OGC layers, or to browse OGC servers
+
+Valid query strings:
+ * ?lon=2.961&lat=45.770&radius=5000
+ * ?bbox=2.86,44.84,3.32,45.02
+ * ?owstype=WMS&owsurl=http://server/ows
+ * ?layername=layer&owstype=WMSLayer&owsurl=http://server/ows
+ * ?layername=layer1,layer2&owstype=WMSLayer,WMSLayer&owsurl=http://server1/ows,https://server2/ows
+ * ?layername=layer1,layer2&owstype=WMSLayer,WMSLayer&owsurl=http://server1/ows,https://server2/ows&wmc=https://server3/path/to/file.wmc
 
 
 It is also possible to POST a JSON string to the home controller, for instance :
@@ -60,6 +70,7 @@ In response, the viewer will :
 * display a dialog window showing the layers from the http://ids.pigma.org/geoserver/ign_r/wms WMS server.
 * The department will only display features which have id_dept equals to 47
 * A searchbar will open with features which have id_dept equals to 48 and recenter on the result extent.
+
 
 
 CSWquerier
@@ -239,6 +250,6 @@ Please note that if you make changes to your configuration, you have to run this
 
 Install the [Modify Headers](https://addons.mozilla.org/en-US/firefox/addon/modify-headers/) Firefox extension, and set the headers to:
  * sec-username = your_desired_login
- * sec-roles = ROLE_SV_USER or ROLE_SV_EDITOR or ROLE_SV_ADMIN
+ * sec-roles = ROLE_USER or ROLE_GN_EDITOR or ROLE_GN_ADMIN
  
 Note: this works only because the security proxy is not runnning.

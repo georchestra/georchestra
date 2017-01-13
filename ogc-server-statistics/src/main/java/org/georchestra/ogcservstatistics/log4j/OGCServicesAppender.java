@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2009-2016 by the geOrchestra PSC
+ *
+ * This file is part of geOrchestra.
+ *
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.georchestra.ogcservstatistics.log4j;
 
 import java.sql.SQLException;
@@ -202,7 +221,6 @@ public class OGCServicesAppender extends AppenderSkeleton {
 			if (OGCServiceParser.isOGCService(event)) {
 
 				String msg = event.getRenderedMessage();
-
 				List<Map<String, Object>> logList = OGCServiceParser.parseLog(msg);
 				
 				for (Map<String, Object> log : logList) {
@@ -213,7 +231,7 @@ public class OGCServicesAppender extends AppenderSkeleton {
 				} 
 			} 
 		} catch (Exception ex) {
-			errorHandler.error("Failed to insert the ogc service reocrd", ex,
+			errorHandler.error("Failed to insert the ogc service record", ex,
 					ErrorCode.WRITE_FAILURE);
 		}
 	}

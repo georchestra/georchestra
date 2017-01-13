@@ -1,0 +1,48 @@
+{
+    "js": [
+        "js/main.js"
+    ],
+    "i18n": {
+        "en": {
+            "notes_cannotsave": "Cannot save the note",
+            "notes_saved": "Note is saved",
+            "notes_title": "Add a note",
+            "notes_follow_up": "Send follow-up information",
+            "notes_email": "Email",
+            "notes_comment": "Comment",
+            "notes_submit": "Submit",
+            "notes_cancel": "Cancel"
+        },
+        "es": {
+            "notes_cannotsave": "No se puede guardar la nota",
+            "notes_saved": "La nota se guarda",
+            "notes_title": "Añadir una nota",
+            "notes_follow_up": "Enviar información de seguimiento",
+            "notes_email": "Correo electrónico ",
+            "notes_comment": "Comentario",
+            "notes_submit": "Envio",
+            "notes_cancel": "Cancelar"
+        },
+        "fr": {
+            "notes_cannotsave": "Impossible de sauvegarder la note",
+            "notes_saved": "La note est sauvegardée",
+            "notes_title": "Ajouter une note",
+            "notes_follow_up": "Suivi du traitement",
+            "notes_email": "Courriel",
+            "notes_comment": "Commentaires",
+            "notes_submit": "Soumettre",
+            "notes_cancel": "Annuler"
+        },
+        "de": {
+            "notes_cannotsave": "Unfähig, die Notiz zu speichern",
+            "notes_saved": "Die Notiz wird gespeichert",
+            "notes_title": "Hinzufügen einer Notiz",
+            "notes_follow_up": "Send follow-up information",
+            "notes_email": "Mailadresse",
+            "notes_comment": "Kommentar",
+            "notes_submit": "Senden",
+            "notes_cancel": "Abbrechen"
+        }
+    }
+}
+

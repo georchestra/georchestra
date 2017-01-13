@@ -61,7 +61,7 @@ public class UsersExportTest {
 
         LdapTemplate ldapTemplate = new LdapTemplate(contextSource);
 
-        AccountDaoImpl adao = new AccountDaoImpl(ldapTemplate, null);
+        AccountDaoImpl adao = new AccountDaoImpl(ldapTemplate, null, null);
         adao.setUserSearchBaseDN("ou=users");
         us.setAccountDao(adao);
     }

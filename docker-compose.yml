@@ -1,0 +1,174 @@
+version: '2'
+
+volumes:
+  postgresql_data:
+  ldap_data:
+  ldap_config:
+  geoserver_geodata:
+  geoserver_datadir:
+  geoserver_tiles:
+  mapfishapp_uploads:
+  extractorapp_extracts:
+  geonetwork_datadir:
+#  geowebcache_tiles:
+
+
+services:
+  # non geOrchestra services
+  database:
+    image: georchestra/database
+    environment:
+      - POSTGRES_USER=georchestra
+      - POSTGRES_PASSWORD=georchestra
+    volumes:
+      - postgresql_data:/var/lib/postgresql/data
+
+  ldap:
+    image: georchestra/ldap
+    environment:
+        - SLAPD_ORGANISATION=georchestra
+        - SLAPD_DOMAIN=georchestra.org
+        - SLAPD_PASSWORD=secret
+        - SLAPD_ADDITIONAL_MODULES=groupofmembers
+    volumes:
+      - ldap_data:/var/lib/ldap
+      - ldap_config:/etc/ldap
+
+  smtp:
+    image: camptocamp/smtp-sink
+
+  courier-imap:
+    image: camptocamp/courier-imap
+    volumes_from:
+      - smtp:rw
+
+  webmail:
+    image: camptocamp/sqwebmail
+    ports:
+      - "8081:80"
+    volumes_from:
+      - smtp:rw
+
+  geodata:
+    image: georchestra/ssh_data
+    ports:
+      - "2222:22"
+    volumes:
+      - geoserver_geodata:/mnt/geoserver_geodata
+
+  # geOrchestra services
+  geoserver:
+    image: georchestra/geoserver:latest
+    volumes:
+      - geoserver_datadir:/mnt/geoserver_datadir
+      - geoserver_geodata:/mnt/geoserver_geodata
+      - geoserver_tiles:/mnt/geoserver_tiles
+    environment:
+      - XMS=1536M
+      - XMX=8G
+
+#  uncomment to enable standalone geowebcache:
+#  geowebcache:
+#    image: georchestra/geowebcache:latest
+#    volumes:
+#      - geowebcache_tiles:/mnt/geowebcache_tiles
+#      - /etc/georchestra:/etc/georchestra
+#    environment:
+#      - XMS=1G
+#      - XMX=2G
+
+  proxy:
+    image: georchestra/security-proxy:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - /etc/georchestra:/etc/georchestra
+    environment:
+      - XMS=512M
+      - XMX=1G
+
+  cas:
+    image: georchestra/cas:latest
+    volumes:
+      - /etc/georchestra:/etc/georchestra
+    environment:
+      - XMS=256M
+      - XMX=1G
+
+  mapfishapp:
+    image: georchestra/mapfishapp:latest
+    volumes:
+      - /etc/georchestra:/etc/georchestra
+      - mapfishapp_uploads:/mnt/mapfishapp_uploads
+    environment:
+      - XMS=1G
+      - XMX=2G
+
+  extractorapp:
+    image: georchestra/extractorapp:latest
+    volumes:
+      - /etc/georchestra:/etc/georchestra
+      - extractorapp_extracts:/mnt/extractorapp_extracts
+    environment:
+      - XMS=1G
+      - XMX=2G
+
+  header:
+    image: georchestra/header:latest
+    volumes:
+      - /etc/georchestra:/etc/georchestra
+    environment:
+      - XMS=256M
+      - XMX=512M
+
+  ldapadmin:
+    image: georchestra/ldapadmin:latest
+    volumes:
+      - /etc/georchestra:/etc/georchestra
+    environment:
+      - XMS=512M
+      - XMX=1G
+
+  geonetwork:
+    image: georchestra/geonetwork:3-latest
+    volumes:
+      - /etc/georchestra:/etc/georchestra
+      - geonetwork_datadir:/mnt/geonetwork_datadir
+    environment:
+      - XMS=1G
+      - XMX=6G
+
+  analytics:
+    image: georchestra/analytics:latest
+    volumes:
+      - /etc/georchestra:/etc/georchestra
+    environment:
+      - XMS=256M
+      - XMX=1G
+
+#  uncomment to enable catalogapp:
+#  catalogapp:
+#    image: georchestra/catalogapp:latest
+#    volumes:
+#      - /etc/georchestra:/etc/georchestra
+#    environment:
+#      - XMS=256M
+#      - XMX=512M
+
+#  uncomment to enable downloadform:
+#  downloadform:
+#    image: georchestra/downloadform:latest
+#    volumes:
+#      - /etc/georchestra:/etc/georchestra
+#    environment:
+#      - XMS=256M
+#      - XMX=512M
+
+#  uncomment to enable atlas:
+#  atlas:
+#    image: georchestra/atlas:latest
+#    volumes:
+#      - /etc/georchestra:/etc/georchestra
+#    environment:
+#      - XMS=512M
+#      - XMX=2G

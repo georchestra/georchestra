@@ -1,3 +1,24 @@
+<%--
+
+ Copyright (C) 2009-2016 by the geOrchestra PSC
+
+ This file is part of geOrchestra.
+
+ geOrchestra is free software: you can redistribute it and/or modify it under
+ the terms of the GNU General Public License as published by the Free
+ Software Foundation, either version 3 of the License, or (at your option)
+ any later version.
+
+ geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ more details.
+
+ You should have received a copy of the GNU General Public License along with
+ geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
+
+--%>
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page language="java" %>
@@ -24,10 +45,10 @@ String georCustomPath = "resources/app/js/GEOR_custom.js";
 
 try {
   ApplicationContext ctx = RequestContextUtils.getWebApplicationContext(request);
-  instanceName = ((GeorchestraConfiguration) ctx.getBean("georchestraConfiguration")).getProperty("instance");
-  defaultLanguage = ((GeorchestraConfiguration) ctx.getBean("georchestraConfiguration")).getProperty("language");
-  if ((ctx.getBean("georchestraConfiguration") != null)
-    && (((GeorchestraConfiguration) ctx.getBean("georchestraConfiguration")).activated())) {
+  instanceName = ctx.getBean(GeorchestraConfiguration.class).getProperty("instance");
+  defaultLanguage = ctx.getBean(GeorchestraConfiguration.class).getProperty("language");
+  if ((ctx.getBean(GeorchestraConfiguration.class) != null)
+    && (ctx.getBean(GeorchestraConfiguration.class).activated())) {
       georCustomPath = "ws/app/js/GEOR_custom.js";
     }
 } catch (Exception e) {}
@@ -56,18 +77,14 @@ String sec_roles = request.getHeader("sec-roles");
 if(sec_roles != null) {
     String[] roles = sec_roles.split(";");
     for (int i = 0; i < roles.length; i++) {
-        // ROLE_ANONYMOUS is added by the security proxy:
-        if (roles[i].equals("ROLE_ANONYMOUS")) {
-            break;
-        }
-        if (roles[i].equals("ROLE_SV_ADMIN")) {
+        if (roles[i].equals("ROLE_GN_ADMIN")) {
             admin = true;
         }
-        if (roles[i].equals("ROLE_SV_EDITOR") || roles[i].equals("ROLE_SV_REVIEWER") || roles[i].equals("ROLE_SV_ADMIN")) {
+        if (roles[i].equals("ROLE_GN_EDITOR") || roles[i].equals("ROLE_GN_REVIEWER") || roles[i].equals("ROLE_GN_ADMIN")) {
             editor = true;
             anonymous = false;
         }
-        if (roles[i].equals("ROLE_SV_USER")) {
+        if (roles[i].equals("ROLE_USER")) {
             anonymous = false;
         }
     }
@@ -141,7 +158,6 @@ if(sec_roles != null) {
     <script type="text/javascript" src="resources/build/lang/<%= lang %>.js"></script>
         </c:otherwise>
     </c:choose>
-    <script type="text/javascript" src="resources/lib/externals/ext/src/locale/ext-lang-<%= lang %>.js"></script>
     
     <script type="text/javascript">
         // remove the loading element

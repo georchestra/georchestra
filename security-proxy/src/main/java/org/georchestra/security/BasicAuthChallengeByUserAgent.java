@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2009-2016 by the geOrchestra PSC
+ *
+ * This file is part of geOrchestra.
+ *
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.georchestra.security;
 
 import java.io.File;
@@ -56,6 +75,7 @@ public class BasicAuthChallengeByUserAgent extends BasicAuthenticationFilter {
             try {
                 fisProp = new FileInputStream(new File(contextDatadir, "user-agents.properties"));
                 InputStreamReader isrProp = new InputStreamReader(fisProp, "UTF8");
+                _userAgents.clear();
                 uaProps.load(isrProp);
             } finally {
                 if (fisProp != null) {
@@ -66,7 +86,6 @@ public class BasicAuthChallengeByUserAgent extends BasicAuthenticationFilter {
         if (! uaProps.isEmpty()) {
             int i = 0;
             String ua;
-            _userAgents.clear();
             while ((ua = uaProps.getProperty("useragent" + i + ".value")) != null) {
                 _userAgents.add(Pattern.compile(ua));
                 i++;
@@ -84,19 +103,22 @@ public class BasicAuthChallengeByUserAgent extends BasicAuthenticationFilter {
         }
 
         final HttpServletRequest request = (HttpServletRequest) req;
-        final String userAgent = request.getHeader("User-Agent");
-        if (userAgentMatch(userAgent)) {
-            String auth = request.getHeader("Authorization");
+        String auth = request.getHeader("Authorization");
 
-            if ((auth == null) || !auth.startsWith("Basic ")) {
+        /* no valid Authorization header sent preemptively */
+        if ((auth == null) || !auth.startsWith("Basic ")) {
+            final String userAgent = request.getHeader("User-Agent");
+            if (userAgentMatch(userAgent)) {
+                /* UA matched, return a 401 directly to the client */
+                LOGGER.debug("the user-agent matched and no Authorization header was sent, returning a 401.");
                 getAuthenticationEntryPoint().commence(request, (HttpServletResponse) res, _exception);
             } else {
-                LOGGER.debug("Activating filter ...");
-                super.doFilter(req, res, chain);
+                LOGGER.debug("the user-agent does not match, skipping filter.");
+                chain.doFilter(req, res);
             }
         } else {
-            LOGGER.debug("the user-agent does not match, skipping filter.");
-            chain.doFilter(req, res);
+            LOGGER.debug("Authorization header sent in the request, activating filter ...");
+            super.doFilter(req, res, chain);
         }
     }
 

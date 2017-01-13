@@ -1,15 +1,20 @@
 /*
- * Copyright (C) Camptocamp
+ * Copyright (C) 2009-2016 by the geOrchestra PSC
  *
- * This file is part of geOrchestra
+ * This file is part of geOrchestra.
  *
- * geOrchestra is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
  *
- * You should have received a copy of the GNU General Public License
- * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -32,10 +37,11 @@
  * @include GEOR_getfeatureinfo.js
  * @include GEOR_selectfeature.js
  * @include GEOR_ResultsPanel.js
- * @include GEOR_querier.js
+ * @include GEOR_Querier.js
  * @include GEOR_styler.js
  * @include GEOR_wmc.js
  * @include GEOR_helper.js
+ * @include Ext.state.LocalStorageProvider.js
  */
 
 Ext.namespace("GEOR");
@@ -77,6 +83,13 @@ Ext.namespace("GEOR");
     };
     if (!initExtCss()) {
         Ext.onReady(initExtCss);
+    }
+
+    // String fill polyfill
+    if (!String.prototype.trim) {
+        String.prototype.trim = function () {
+            return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
+        };
     }
 })();
 
@@ -123,7 +136,7 @@ Ext.namespace("GEOR");
         /*
          * Setting of Ext global vars.
          */
-        Ext.BLANK_IMAGE_URL = GEOR.config.PATHNAME + "/lib/externals/ext/resources/images/default/s.gif";
+        Ext.BLANK_IMAGE_URL = GEOR.config.PATHNAME + "/app/img/s.gif";
         Ext.apply(Ext.MessageBox.buttonText, {
             yes: tr("Yes"),
             no: tr("No"),
@@ -137,14 +150,23 @@ Ext.namespace("GEOR");
         Proj4js.libPath = GEOR.config.PATHNAME + "/lib/proj4js/lib/";
         Ext.apply(Proj4js.defs, GEOR.config.PROJ4JS_STRINGS);
 
+        // State manager for the viewer
+        Ext.state.Manager.setProvider(new Ext.state.LocalStorageProvider({
+            prefix: "geor-viewer-"
+        }));
+
         /*
          * Security stuff
          * Deactivate modules if current user roles do not match
          */
         checkRoles('styler', GEOR.config.ROLES_FOR_STYLER);
-        checkRoles('querier', GEOR.config.ROLES_FOR_QUERIER);
+        checkRoles('Querier', GEOR.config.ROLES_FOR_QUERIER);
         checkRoles('print', GEOR.config.ROLES_FOR_PRINTER);
         checkRoles('edit', GEOR.config.ROLES_FOR_EDIT);
+        // deactivate thesaurus tab in layer finder if required:
+        if (!GEOR.config.THESAURUS_SEARCH) {
+            GEOR["cswbrowser"] = null;
+        }
 
         /*
          * Initialize the application.
@@ -157,9 +179,6 @@ Ext.namespace("GEOR");
         GEOR.tools.init(mapPanel);
         if (GEOR.edit) {
             GEOR.edit.init(map);
-        }
-        if (GEOR.querier) {
-            GEOR.querier.init(map);
         }
         GEOR.getfeatureinfo.init(layerStore);
         GEOR.selectfeature.init(map);
@@ -190,8 +209,7 @@ Ext.namespace("GEOR");
 
         var eastItems = [
             new Ext.Panel({
-                // this panel contains the "manager layer" and
-                // "querier" components
+                // this panel contains the "manager layer" component
                 region: "center",
                 height: 270, // has no effect when region is
                              // "center"
@@ -246,6 +264,8 @@ Ext.namespace("GEOR");
         
         var southPanel = new Ext.TabPanel({
             region: "south",
+            id: "southpanel",
+            stateful: false,
             split: true,
             collapsible: true,
             collapsed: true,
@@ -390,10 +410,9 @@ Ext.namespace("GEOR");
         // Note: we're providing GEOR.ajaxglobal.init as a callback, so that
         // errors when loading WMC are not catched by GEOR.ajaxglobal
         // but by the mapinit module, which handles them more appropriately
-        
         if (GEOR.mapinit) {
-	    GEOR.mapinit.events.on({
-	        "searchresults": function(options) {
+            GEOR.mapinit.events.on({
+                "searchresults": function(options) {
                     removeActiveTab();
                     var tab = new GEOR.ResultsPanel({
                         html: tr("resultspanel.emptytext"),
@@ -408,11 +427,11 @@ Ext.namespace("GEOR");
                     });
                     southPanel.insert(southPanel.items.length-1, tab);
                     southPanel.setActiveTab(tab);
-		    southPanel.expand();
-		    tab._zoomToFeatures(options.features);
+                    southPanel.expand();
+                    tab._zoomToFeatures(options.features);
                 }
-	    });
-	}
+            });
+        }
         
         if (GEOR.querier) {
             var querierTitle;
@@ -589,6 +608,37 @@ Ext.namespace("GEOR");
                 GEOR.selectfeature.deactivate();
                 GEOR.getfeatureinfo.deactivate();
                 southPanel.collapse();
+            },
+            // events from querier windows:
+            "search": function(panelCfg) {
+                var tab = southPanel.getActiveTab();
+                if (tab) {
+                    tab.setTitle(tr("WFS Search"));
+                }
+                //southPanel.removeAll();
+                var panel = Ext.apply({
+                    bodyStyle: 'padding:5px'
+                }, panelCfg);
+                tab.removeAll();
+                tab.add(panel);
+                southPanel.doLayout();
+                southPanel.expand();
+            },
+            "searchresults": function(options) {
+                removeActiveTab();
+                var tab = new GEOR.ResultsPanel({
+                    html: tr("resultspanel.emptytext"),
+                    tabTip: options.tooltip,
+                    title: options.title,
+                    map: map
+                });
+                tab.populate({
+                    features: options.features,
+                    // here we do have a valid model (got from describeFeatureType)
+                    model: options.model
+                });
+                southPanel.insert(southPanel.items.length-1, tab);
+                southPanel.setActiveTab(tab);
             }
         });
 

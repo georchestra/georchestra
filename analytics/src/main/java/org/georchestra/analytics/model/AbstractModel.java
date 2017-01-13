@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2009-2016 by the geOrchestra PSC
+ *
+ * This file is part of geOrchestra.
+ *
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.georchestra.analytics.model;
 
 import java.sql.Connection;
@@ -6,20 +25,22 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+//import java.util.logging.Logger;
+
+import javax.sql.DataSource;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class AbstractModel {
 
-	protected PostGresqlConnection postgresqlConnection;
+	@Autowired
+	protected DataSource jpaDataSource;
 
 	private final String countQ = "SELECT count(*) from (@query@) as res;";
 
-	public AbstractModel(PostGresqlConnection pgpool) {
-		postgresqlConnection = pgpool;
-	}
 
 	/**
 	 * Prepares the statement with controller attributes
@@ -78,33 +99,36 @@ public class AbstractModel {
 		q = q.replace("LIMIT ? OFFSET ?;", "");
 		q = countQ.replace("@query@", q);
 
-
-
 		try {
 			st = con.prepareStatement(q);
 
 	        int curParam = 1;
 	        for (String extrafilter : extraFilters) {
-	                st.setString(curParam++, extrafilter);
+				st.setString(curParam++, extrafilter);
 	        }
 
-            if ((month > 0) && (year > 0)) {
-                st.setString(curParam++, String.format("%4d-%02d-01 00:00", year, month));
-                if (month < 12) {
-                    st.setString(curParam++, String.format("%4d-%02d-01 00:00", year, month + 1));
-                } else {
-                    st.setString(curParam++, String.format("%4d-01-01 00:00", year + 1));
-                }
-            } else {
+			if ((month > 0) && (year > 0)) {
+				st.setString(curParam++, String.format("%4d-%02d-01 00:00", year, month));
+				if (month < 12) {
+					st.setString(curParam++, String.format("%4d-%02d-01 00:00", year, month + 1));
+				} else {
+					st.setString(curParam++, String.format("%4d-01-01 00:00", year + 1));
+				}
+			} else {
                 // hack-ish, but need to find out a better way to do,
                 // I've until 2032 to rewrite this in a better fashion.
-                st.setString(curParam++, "1970-01-01 00:00");
-                st.setString(curParam++, "2032-01-01 00:00");
-            }
-		    rs = st.executeQuery();
-		    if(rs.next()) {
+				st.setString(curParam++, "1970-01-01 00:00");
+				st.setString(curParam++, "2032-01-01 00:00");
+			}
+
+			//long mstime = System.currentTimeMillis();
+			String finalQuery = st.toString();
+			rs = con.createStatement().executeQuery(finalQuery);
+			//Logger.getLogger("stat").warning("Count duration : " + (System.currentTimeMillis() - mstime) + "ms : " + finalQuery);
+
+		    if(rs.next())
 		    	count = rs.getInt(1);
-		    }
+			
 		} catch(SQLException e) {
 			throw e;
 		} finally {
@@ -133,9 +157,8 @@ public class AbstractModel {
 
 		// The current block code corresponds to the deprecated
 		// addFilters() method
-		String q = new String(query);
 		List<String> extraFilters = new ArrayList<String>();
-
+		String q = query;
 		if ((filter != null) && (! "".equals(filter))) {
 
 	        JSONArray arr = new JSONArray(filter);
@@ -155,18 +178,21 @@ public class AbstractModel {
 	        sb.append(" ");
 
 	        // Case-sensivity of the where
-	        q = q.replace("WHERE", sb.toString());
+	        q = query.replace("WHERE", sb.toString());
 		}
         // end block
 
 
 		try {
-			//String q = addFilters(query, filter);
+			con = jpaDataSource.getConnection();
 
-			con = postgresqlConnection.getConnection();
 			int count = getCount(con, q, month, year, sort, extraFilters);
 			st = prepareStatement(con, q, month, year, start, limit, sort, extraFilters);
-			rs = st.executeQuery();
+			//long mstime = System.currentTimeMillis();
+			String finalQuery = st.toString();
+			rs = con.createStatement().executeQuery(finalQuery);
+			//Logger.getLogger("stat").warning("Data duration : " + (System.currentTimeMillis() - mstime) + "ms : " + finalQuery);
+			//rs = st.executeQuery();
 
 			JSONArray jsarr = strategy.process(rs);
 			object.put("success", true);

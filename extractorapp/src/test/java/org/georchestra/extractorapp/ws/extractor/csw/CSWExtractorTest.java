@@ -43,21 +43,21 @@ public class CSWExtractorTest extends AbstractTestWithServer {
 
     @Test
     public void testCheckPermission_no_auth_permitted() throws Exception {
-        new CSWExtractor(folder.getRoot(), null, null, "localhost").checkPermission(createExtractionRequest(MD_UUID), null, "localhost");
+        new CSWExtractor(folder.getRoot(), null, null, "localhost", null).checkPermission(createExtractionRequest(MD_UUID), null, "localhost");
 
         assertTrue(serverWasCalled);
     }
 
     @Test(expected = SecurityException.class)
     public void testCheckPermission_no_auth_denied() throws Exception {
-        new CSWExtractor(folder.getRoot(), null, null, "localhost").checkPermission(createExtractionRequest(DENIED_UUID), null, "localhost");
+        new CSWExtractor(folder.getRoot(), null, null, "localhost", null).checkPermission(createExtractionRequest(DENIED_UUID), null, "localhost");
 
         assertTrue(serverWasCalled);
     }
 
     @Test(expected = SecurityException.class)
     public void testCheckPermission_no_auth_denied2() throws Exception {
-        new CSWExtractor(folder.getRoot(), null, null, "localhost").checkPermission(createExtractionRequest(EMPTY_UUID), null, "localhost");
+        new CSWExtractor(folder.getRoot(), null, null, "localhost", null).checkPermission(createExtractionRequest(EMPTY_UUID), null, "localhost");
 
         assertTrue(serverWasCalled);
     }
@@ -84,14 +84,14 @@ public class CSWExtractorTest extends AbstractTestWithServer {
 
             }
         });
-        new CSWExtractor(folder.getRoot(), username, password, "localhost").checkPermission(createExtractionRequest(MD_UUID), impUser,
+        new CSWExtractor(folder.getRoot(), username, password, "localhost", null).checkPermission(createExtractionRequest(MD_UUID), impUser,
                 "localhost");
         assertTrue(serverWasCalled);
     }
 
     @Test
     public void testExtract() throws Exception {
-        final CSWExtractor extractor = new CSWExtractor(folder.getRoot(), null, null, "localhost");
+        final CSWExtractor extractor = new CSWExtractor(folder.getRoot(), null, null, "localhost", null);
         final URL url = createExtractionRequest(MD_UUID)._isoMetadataURL;
         extractor.extract(url);
 

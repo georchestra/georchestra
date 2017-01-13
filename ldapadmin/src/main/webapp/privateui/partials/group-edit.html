@@ -6,7 +6,7 @@
       <span class="caret"></span>
     </a>
     <ul class="dropdown-menu">
-      <li><a ng-click="deleteGroup(group)" class="delete">Delete group</a></li>
+      <li><a ng-click="deleteGroup(group)" class="delete">Delete role</a></li>
     </ul>
   </div>
 </div>
@@ -15,7 +15,7 @@
 
   <div class="row-fluid form-horizontal">
     <div class="control-group" ng-class="{error: groupForm.cn.$invalid}">
-      <input type="text" name="cn" ng-model="group.cn" required  placeholder="Name of the group" class="span8"/>
+      <input type="text" name="cn" ng-model="group.cn" required  placeholder="Role name" class="span8"/>
       <span ng-show="groupForm.cn.$error.required" class="help-inline">Required</span>
     </div>
   </div>

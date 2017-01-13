@@ -1,15 +1,20 @@
 /*
- * Copyright (C) Camptocamp
+ * Copyright (C) 2009-2016 by the geOrchestra PSC
  *
- * This file is part of geOrchestra
+ * This file is part of geOrchestra.
  *
- * geOrchestra is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
  *
- * You should have received a copy of the GNU General Public License
- * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -46,7 +51,9 @@ GEOR.CustomCSWRecordsReader = function(meta, recordType) {
             {name: "md_uuid"},
             {name: "md_title"},
             {name: "md_abstract"},
-            {name: "md_thumbnail_url"}
+            {name: "md_thumbnail_url"},
+            {name: "csw_url"} // csw service providing the metadata: 
+            // useful to guess if METADATA_VIEW_BASE_URL applies !
         ]);
     }
     GEOR.CustomCSWRecordsReader.superclass.constructor.call(
@@ -106,7 +113,8 @@ Ext.extend(GEOR.CustomCSWRecordsReader, Ext.data.DataReader, {
                                 "md_uuid": r.get('identifier'),
                                 "md_title": r.get('title'),
                                 "md_abstract": r.get('abstract'),
-                                "md_thumbnail_url": thumbnailURL
+                                "md_thumbnail_url": thumbnailURL,
+                                "csw_url": r.store.proxy.url
                             };
                             records.push(
                                 new recordType(values, r.get('identifier')+'_'+item.value+'_'+item.name)
@@ -396,10 +404,21 @@ GEOR.cswquerier = (function() {
 
         var context = {
             "metadataURL": function(values) {
-                // this part is 100% geonetwork specific:
-                var url = CSWRecordsStore.proxy.url;
-                // replace /srv/*/csw with /?uuid=
-                return url.replace(/\/srv\/(\S+)\/csw/, '/?uuid='+values.md_uuid);
+                var base,
+                    localMetadata = values.csw_url[0] === "/" ||
+                        values.csw_url.indexOf(window.location.origin) === 0;
+                if (GEOR.config.METADATA_VIEW_BASE_URL && localMetadata) {
+                    // someone defined a custom metadataBaseURL
+                    // use it if and only if the metadata is coming from the local catalog (same origin)
+                    base = GEOR.config.METADATA_VIEW_BASE_URL;
+                } else {
+                    // this part is 100% geonetwork specific:
+                    // (but we have no way to do better ATM for **remote CSW services**)
+                    var url = CSWRecordsStore.proxy.url;
+                    // replace /srv/*/csw with /?uuid=
+                    base = url.replace(/\/srv\/(\S+)\/csw/, '/?uuid=');
+                }
+                return base+values.md_uuid;
             },
             "thumbnailURL": function(values) {
                 if (values.md_thumbnail_url) {

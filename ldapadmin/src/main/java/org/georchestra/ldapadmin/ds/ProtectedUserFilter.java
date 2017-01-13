@@ -1,8 +1,25 @@
+/*
+ * Copyright (C) 2009-2016 by the geOrchestra PSC
+ *
+ * This file is part of geOrchestra.
+ *
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.georchestra.ldapadmin.ds;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 
 import org.georchestra.ldapadmin.Configuration;
 import org.georchestra.ldapadmin.dto.Account;
@@ -44,7 +61,7 @@ public class ProtectedUserFilter {
 		return uidList.contains(uid);
 	}
 
-        public List<Account> filterUsersList(final List<Account> users) {
+	public List<Account> filterUsersList(final List<Account> users) {
 
 		// removes the protected users.
 		TreeSet<Account> filtered = new TreeSet<Account>();
@@ -60,7 +77,7 @@ public class ProtectedUserFilter {
 		return list;
 	}
 
-        public List<String> filterStringList(final List<String> users) {
+	public List<String> filterStringList(final List<String> users) {
 
 		// removes the protected users.
 		TreeSet<String> filtered = new TreeSet<String>();

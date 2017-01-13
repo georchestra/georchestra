@@ -6,6 +6,9 @@ git:
 before_install:
   - wget http://build.georchestra.org/m2.tar
   - tar xvf m2.tar -C ~ > /dev/null
+cache:
+  directories:
+    - $HOME/.m2
 notifications:
   irc:
     channels:

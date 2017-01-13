@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.georchestra</groupId>
 		<artifactId>root</artifactId>
-		<version>15.12-SNAPSHOT</version>
+		<version>16.12-SNAPSHOT</version>
 	</parent>
 	<artifactId>epsg-extension</artifactId>
 	<packaging>jar</packaging>
@@ -31,15 +31,6 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	<repositories>
-		<repository>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<id>mapfish</id>
-			<url>http://dev.mapfish.org/maven/repository</url>
-		</repository>
-	</repositories>
 	<build>
 		<plugins>
 			<plugin>

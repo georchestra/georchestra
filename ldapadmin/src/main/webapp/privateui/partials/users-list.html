@@ -1,14 +1,14 @@
 <div class="toolbar">
   <span ng-class="{hide: selectedGroup == null || selectedGroup == 'none'}">
-    Group: <b>{{selectedGroup.cn}}</b>
+    Role: <b>{{selectedGroup.cn}}</b>
   </span>
   <div class="btn-group">
     <a class="actions btn btn-mini dropdown-toggle" ng-class="{hide: selectedGroup == null || selectedGroup == 'none'}" data-toggle="dropdown">
       <span class="caret"></span>
     </a>
     <ul class="dropdown-menu">
-      <li><a ng-click="deleteGroup(selectedGroup.cn)" class="delete">Delete group</a></li>
-      <li><a href="#/groups/{{selectedGroup.cn}}/edit" class="edit">Edit group</a></li>
+      <li><a ng-click="deleteGroup(selectedGroup.cn)" class="delete">Delete role</a></li>
+      <li><a href="#/groups/{{selectedGroup.cn}}/edit" class="edit">Edit role</a></li>
     </ul>
   </div>
 </div>
@@ -19,7 +19,7 @@
   <div class="btn-group">
     <a class="groups btn dropdown-toggle" ng-click="initGroups()" ng-class="{hide: selectedUsers().length == 0}" data-toggle="dropdown">
       <i class="icon-th-list"></i>
-      Groups
+      Roles
       <span class="caret"></span>
     </a>
     <div groups-dropdown></div>
@@ -37,7 +37,7 @@
   </div>
 </div>
 <div id="noone" ng-hide="!selectedGroup || selectedGroup.users.length || selectedGroup == 'none'">
-  There are no users in this group.
+  There are no users with this role.
 </div>
 <div id="users">
   <table class="users table table-striped table-hover table-condensed" ng-include="'partials/users-list-table.html'">

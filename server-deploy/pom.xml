@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.georchestra</groupId>
 		<artifactId>root</artifactId>
-		<version>15.12-SNAPSHOT</version>
+		<version>16.12-SNAPSHOT</version>
 	</parent>
 	<artifactId>server-deploy</artifactId>
 	<packaging>pom</packaging>
@@ -89,91 +89,84 @@
 					<groupId>${project.groupId}</groupId>
 					<artifactId>cas-server-webapp</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>header</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>catalogapp</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>extractorapp</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>ldapadmin</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>mapfishapp</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>security-proxy</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 				<dependency>
 					<groupId>org.geonetwork-opensource</groupId>
 					<artifactId>geonetwork-main</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>geoserver-webapp</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>geowebcache-webapp</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>geofence-webapp</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>downloadform</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>analytics</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
+					<type>war</type>
+				</dependency>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>atlas</artifactId>
+					<version>${project.version}</version>
 					<type>war</type>
 				</dependency>
 			</dependencies>
@@ -190,91 +183,84 @@
 					<groupId>${project.groupId}</groupId>
 					<artifactId>cas-server-webapp</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>header</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>catalogapp</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>extractorapp</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>ldapadmin</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>mapfishapp</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>security-proxy</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 				<dependency>
 					<groupId>org.geonetwork-opensource</groupId>
 					<artifactId>geonetwork-main</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>geoserver-webapp</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>geowebcache-webapp</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>geofence-webapp</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>downloadform</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>analytics</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
+					<type>war</type>
+				</dependency>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>atlas</artifactId>
+					<version>${project.version}</version>
 					<type>war</type>
 				</dependency>
 			</dependencies>
@@ -287,7 +273,6 @@
 					<groupId>${project.groupId}</groupId>
 					<artifactId>cas-server-webapp</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 			</dependencies>
@@ -299,7 +284,6 @@
 					<groupId>${project.groupId}</groupId>
 					<artifactId>cas-server-webapp</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 			</dependencies>
@@ -311,7 +295,6 @@
 					<groupId>org.geonetwork-opensource</groupId>
 					<artifactId>geonetwork-main</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 			</dependencies>
@@ -323,7 +306,6 @@
 					<groupId>${project.groupId}</groupId>
 					<artifactId>security-proxy</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 			</dependencies>
@@ -336,7 +318,6 @@
 					<groupId>${project.groupId}</groupId>
 					<artifactId>security-proxy</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 			</dependencies>
@@ -348,7 +329,6 @@
 					<groupId>${project.groupId}</groupId>
 					<artifactId>extractorapp</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 			</dependencies>
@@ -360,7 +340,6 @@
 					<groupId>${project.groupId}</groupId>
 					<artifactId>ldapadmin</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 			</dependencies>
@@ -372,7 +351,6 @@
 					<groupId>${project.groupId}</groupId>
 					<artifactId>mapfishapp</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 			</dependencies>
@@ -384,7 +362,6 @@
 					<groupId>${project.groupId}</groupId>
 					<artifactId>geoserver-webapp</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 			</dependencies>
@@ -396,7 +373,6 @@
 					<groupId>${project.groupId}</groupId>
 					<artifactId>geowebcache-webapp</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 			</dependencies>
@@ -408,7 +384,6 @@
 					<groupId>${project.groupId}</groupId>
 					<artifactId>geofence-webapp</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 			</dependencies>
@@ -420,7 +395,6 @@
 					<groupId>${project.groupId}</groupId>
 					<artifactId>catalogapp</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 			</dependencies>
@@ -432,7 +406,6 @@
 					<groupId>${project.groupId}</groupId>
 					<artifactId>header</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 			</dependencies>
@@ -444,7 +417,6 @@
 					<groupId>${project.groupId}</groupId>
 					<artifactId>downloadform</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
 					<type>war</type>
 				</dependency>
 			</dependencies>
@@ -456,7 +428,17 @@
 					<groupId>${project.groupId}</groupId>
 					<artifactId>analytics</artifactId>
 					<version>${project.version}</version>
-					<classifier>${server}</classifier>
+					<type>war</type>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>atlas</id>
+			<dependencies>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>atlas</artifactId>
+					<version>${project.version}</version>
 					<type>war</type>
 				</dependency>
 			</dependencies>

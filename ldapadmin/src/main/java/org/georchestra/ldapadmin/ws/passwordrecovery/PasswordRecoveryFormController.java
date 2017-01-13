@@ -1,6 +1,22 @@
-/**
- * 
+/*
+ * Copyright (C) 2009-2016 by the geOrchestra PSC
+ *
+ * This file is part of geOrchestra.
+ *
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.georchestra.ldapadmin.ws.passwordrecovery;
 
 import java.io.IOException;
@@ -18,14 +34,13 @@ import org.georchestra.ldapadmin.bs.ReCaptchaParameters;
 import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.GroupDao;
-import org.georchestra.ldapadmin.ds.NotFoundException;
 import org.georchestra.ldapadmin.ds.UserTokenDao;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.Group;
 import org.georchestra.ldapadmin.mailservice.MailService;
-import org.georchestra.ldapadmin.ws.utils.EmailUtils;
 import org.georchestra.ldapadmin.ws.utils.RecaptchaUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ldap.NameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -122,14 +137,7 @@ public class PasswordRecoveryFormController  {
 						BindingResult resultErrors, 
 						SessionStatus sessionStatus) 
 						throws IOException {
-		
-		EmailUtils.validate(formBean.getEmail(), resultErrors);
-		if(resultErrors.hasErrors()){
-			return "passwordRecoveryForm";
-		}
 
-		
-		
 		String remoteAddr = request.getRemoteAddr();
 		new RecaptchaUtils(remoteAddr, this.reCaptcha).validate(formBean.getRecaptcha_challenge_field(), formBean.getRecaptcha_response_field(), resultErrors);
 		if(resultErrors.hasErrors()){
@@ -142,10 +150,9 @@ public class PasswordRecoveryFormController  {
 			// Finds the user using the email as key, if it exists a new token is generated to include in the unique http URL.
 			
 
-			
 			for (Group g : group) {
-				if (g.getName().equals("PENDING")) {
-					throw new NotFoundException("User in PENDING group");
+				if (g.getName().equals(Group.PENDING)) {
+					throw new NameNotFoundException("User in PENDING group");
 				}
 			}
 			
@@ -174,7 +181,7 @@ public class PasswordRecoveryFormController  {
 			
 			throw new IOException(e);
 			
-		} catch (NotFoundException e) {
+		} catch (NameNotFoundException e) {
 			
 			resultErrors.rejectValue("email", "email.error.notFound", "No user found for this email.");
 			
@@ -185,9 +192,7 @@ public class PasswordRecoveryFormController  {
 
 
 	/**
-	 * Create the URL to change the password based on the provided token  
-	 * @param token
-	 * @param token2 
+	 * Create the URL to change the password based on the provided token
 	 * 
 	 * @return a new URL to change password
 	 */

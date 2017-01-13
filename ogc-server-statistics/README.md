@@ -8,9 +8,10 @@ Creating the Logging table
 ==========================
 
 This module requires a logging table called "ogc_services_log" in a postgres database.
- 
-You will find the details about the data structure in the file database.sql
 
+Structure of "ogc_services_log" table have changed between 15.06 and 15.12. So, for a 
+new installation you should use database.sql file. If you upgrade from a previous 
+version of georchestra, you should use database upgrade procedure (see ../RELEASE_NOTES.md)
 
 Configure log4j.properties
 ==========================

@@ -1,6 +1,22 @@
-/**
+/*
+ * Copyright (C) 2009-2016 by the geOrchestra PSC
  *
+ * This file is part of geOrchestra.
+ *
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.georchestra.ldapadmin.dto;
 
 import java.io.Serializable;
@@ -8,6 +24,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.naming.ldap.LdapName;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.security.authentication.encoding.LdapShaPasswordEncoder;
@@ -17,7 +34,8 @@ import ezvcard.parameter.EmailType;
 import ezvcard.parameter.TelephoneType;
 import ezvcard.property.Address;
 import ezvcard.property.FormattedName;
-import ezvcard.property.Organization;
+
+import javax.naming.InvalidNameException;
 
 /**
  * Account this is a Data transfer Object.
@@ -36,7 +54,6 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 	private String commonName; // cn: person's full name,  mandatory
 	private String surname; // sn  mandatory
 
-	private String org; // o
 	private String email;// mail
 	private String phone;// telephoneNumber
 	private String description; // description
@@ -44,7 +61,7 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 	private String newPassword;
 
 	// user details
-	// sn, givenName, o, title, postalAddress, postalCode, registeredAddress, postOfficeBox, physicalDeliveryOfficeName
+	// sn, givenName, title, postalAddress, postalCode, registeredAddress, postOfficeBox, physicalDeliveryOfficeName
 	private String givenName; // givenName (optional)
 	private String title; // title
 	private String postalAddress; //postalAddress
@@ -65,42 +82,54 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 
 	private String stateOrProvince; // st
 
-	private String organizationalUnit; // ou
-
 	private String homePostalAddress;
-	private String uuid;
 
 	private Date shadowExpire;
 
+	private String manager;
+	
+	private String context;
+
+	// Organization from ou=orgs,dc=georchestra,dc=org
+	private String org;
+
 	@Override
 	public String toString() {
-		return "AccountImpl [uid=" + uid + ", commonName=" + commonName
-				+ ", surname=" + surname + ", org=" + org
-				+ ", email=" + email + ", phone=" + phone + ", description="
-				+ description + ", password=" + password + ", newPassword="
-				+ newPassword + ", givenName=" + givenName + ", title=" + title
-				+ ", postalAddress=" + postalAddress + ", postalCode="
-				+ postalCode + ", registeredAddress=" + registeredAddress
-				+ ", postOfficeBox=" + postOfficeBox
-				+ ", physicalDeliveryOfficeName=" + physicalDeliveryOfficeName
-				+ ", street=" + street + ", locality=" + locality
-				+ ", facsimile=" + facsimile + ", mobile=" + mobile
-				+ ", roomNumber=" + roomNumber + ", stateOrProvince="
-				+ stateOrProvince + ", organizationalUnit="
-				+ organizationalUnit + ", homePostalAddress=" + homePostalAddress
-				+ ", UUID=" + this.uuid + ", shadowExpire=" + String.valueOf(this.shadowExpire)
-				+ "]";
+		return "AccountImpl{" +
+				"manager='" + manager + '\'' +
+				", uid='" + uid + '\'' +
+				", commonName='" + commonName + '\'' +
+				", surname='" + surname + '\'' +
+				", email='" + email + '\'' +
+				", phone='" + phone + '\'' +
+				", description='" + description + '\'' +
+				", password='" + password + '\'' +
+				", newPassword='" + newPassword + '\'' +
+				", givenName='" + givenName + '\'' +
+				", title='" + title + '\'' +
+				", postalAddress='" + postalAddress + '\'' +
+				", postalCode='" + postalCode + '\'' +
+				", registeredAddress='" + registeredAddress + '\'' +
+				", postOfficeBox='" + postOfficeBox + '\'' +
+				", physicalDeliveryOfficeName='" + physicalDeliveryOfficeName + '\'' +
+				", street='" + street + '\'' +
+				", locality='" + locality + '\'' +
+				", facsimile='" + facsimile + '\'' +
+				", mobile='" + mobile + '\'' +
+				", roomNumber='" + roomNumber + '\'' +
+				", stateOrProvince='" + stateOrProvince + '\'' +
+				", homePostalAddress='" + homePostalAddress + '\'' +
+				", shadowExpire='" + shadowExpire + '\'' +
+				", context='" + context + '\'' +
+				", org='" + org + '\'' +
+				'}';
 	}
-	
-	
+
 	@Override
 	public String toVcf() {
 	    VCard v = new VCard();
 	    FormattedName f = new FormattedName(givenName + " " + surname);
 	    v.addFormattedName(f);
-	    Organization org = new Organization();
-	    org.addValue(this.org);
-	    org.addValue(this.organizationalUnit);
 	    v.addEmail(email, EmailType.WORK);
 	    v.addTelephoneNumber(phone, TelephoneType.WORK);
 	    v.addTitle(title);
@@ -174,7 +203,7 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 		csv.append(CSV_DELIMITER);// Home Country
 		csv.append(CSV_DELIMITER);// Spouse
 		csv.append(CSV_DELIMITER);// Children
-		csv.append(CSV_DELIMITER); // Manager's Name
+		csv.append(toFormatedString(manager)); // Manager's Name
 		csv.append(CSV_DELIMITER);// Assistant's Name
 		csv.append(CSV_DELIMITER); // Referred By
 		csv.append(CSV_DELIMITER);// Company Main Phone
@@ -183,7 +212,7 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 		csv.append(toFormatedString(facsimile));
 		csv.append(CSV_DELIMITER); // Business Fax
 		csv.append(CSV_DELIMITER);// Assistant's Phone
-		csv.append(toFormatedString(org));
+		csv.append(CSV_DELIMITER); // Organization
 		csv.append(CSV_DELIMITER); // Company
 		csv.append(toFormatedString(description));
 		csv.append(CSV_DELIMITER);// Job Title
@@ -246,38 +275,38 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 	@Override
 	public JSONObject toJSON() throws JSONException {
 		JSONObject res = new JSONObject();
-		res.put("uid", this.uid);
-		res.put("commonName", this.commonName);
-		res.put("sn", this.surname);
-		res.put("o", this.org);
-		res.put("mail", this.email);
-		res.put("telephoneNumber", this.phone);
-		res.put("description", this.description);
-		res.put("givenName", this.givenName);
-		res.put("title", this.title);
-		res.put("postalAddress", this.postalAddress);
-		res.put("postalCode", this.postalCode);
-		res.put("registeredAddress", this.registeredAddress);
-		res.put("postOfficeBox", this.postOfficeBox);
-		res.put("physicalDeliveryOfficeName", this.physicalDeliveryOfficeName);
-		res.put("street", this.street);
-		res.put("locality", this.locality);
-		res.put("facsimile", this.facsimile);
-		res.put("mobile", this.mobile);
-		res.put("roomNumber", this.roomNumber);
-		res.put("stateOrProvince", this.stateOrProvince);
-		res.put("organizationalUnit", this.organizationalUnit);
-		res.put("homePostalAddress", this.homePostalAddress);
-		res.put("uuid", this.uuid);
+		res.put(UserSchema.UID_KEY, this.uid);
+		res.put(UserSchema.COMMON_NAME_KEY, this.commonName);
+		res.put(UserSchema.SURNAME_KEY, this.surname);
+		res.put(UserSchema.MAIL_KEY, this.email);
+		res.put(UserSchema.TELEPHONE_KEY, this.phone);
+		res.put(UserSchema.DESCRIPTION_KEY, this.description);
+		res.put(UserSchema.GIVEN_NAME_KEY, this.givenName);
+		res.put(UserSchema.TITLE_KEY, this.title);
+		res.put(UserSchema.POSTAL_ADDRESS_KEY, this.postalAddress);
+		res.put(UserSchema.POSTAL_CODE_KEY, this.postalCode);
+		res.put(UserSchema.REGISTERED_ADDRESS_KEY, this.registeredAddress);
+		res.put(UserSchema.POST_OFFICE_BOX_KEY, this.postOfficeBox);
+		res.put(UserSchema.PHYSICAL_DELIVERY_OFFICE_NAME_KEY, this.physicalDeliveryOfficeName);
+		res.put(UserSchema.STREET_KEY, this.street);
+		res.put(UserSchema.LOCALITY_KEY, this.locality);
+		res.put(UserSchema.FACSIMILE_KEY, this.facsimile);
+		res.put(UserSchema.MOBILE_KEY, this.mobile);
+		res.put(UserSchema.ROOM_NUMBER_KEY, this.roomNumber);
+		res.put(UserSchema.STATE_OR_PROVINCE_KEY, this.stateOrProvince);
+		res.put(UserSchema.HOME_POSTAL_ADDRESS_KEY, this.homePostalAddress);
 		if(this.shadowExpire != null) {
-			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-			res.put("shadowExpire", dateFormat.format(this.shadowExpire));
+			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			res.put(UserSchema.SHADOW_EXPIRE_KEY, dateFormat.format(this.shadowExpire));
 		}
-
+		if(this.manager != null)
+			res.put(UserSchema.MANAGER_KEY, this.manager);
+		if(this.context != null)
+			res.put(UserSchema.CONTEXT_KEY, this.context);
+		res.put(UserSchema.ORG_KEY, this.getOrg());
 		return res;
 	}
 
-	;
 
 	@Override
 	public void setUid(String uid) {
@@ -302,14 +331,6 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 	@Override
 	public void setCommonName(String name) {
 		this.commonName = name;
-	}
-	@Override
-	public String getOrg() {
-		return org;
-	}
-	@Override
-	public void setOrg(String org) {
-		this.org = org;
 	}
 	@Override
 	public String getEmail() {
@@ -507,26 +528,44 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 		this.stateOrProvince = stateOrProvince;
 	}
 
-
-	@Override
-	public void setUUID(String uuid) {
-		this.uuid = uuid;
-	}
-
-	@Override
-	public String getUUID() {
-		return uuid;
-	}
-
 	@Override
 	public void setShadowExpire(Date expireDate) { this.shadowExpire = expireDate; }
 
 	@Override
 	public Date getShadowExpire() { return this.shadowExpire; }
 
+	@Override
+	public String getManager() {
+		return manager;
+	}
+
+	@Override
+	public void setManager(String manager) {
+		if (manager == null || manager.length() == 0){
+			this.manager = null;
+		} else {
+			try {
+				LdapName dn = new LdapName(manager);
+				this.manager = dn.getRdn(dn.size() - 1).getValue().toString();
+			} catch (InvalidNameException e) {
+				this.manager = manager;
+			}
+		}
+	}
+	
+	@Override
+	public String getContext() {
+		return context;
+	}
+
+	@Override
+	public void setContext(String context) {
+		this.context = context;
+	}
+
 	/* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
+         * @see java.lang.Object#hashCode()
+         */
 	@Override
     public int hashCode() {
 	    final int prime = 31;
@@ -581,16 +620,6 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 	}
 
 	@Override
-	public void setOrganizationalUnit(String organizationalUnit) {
-		this.organizationalUnit = organizationalUnit;
-	}
-
-	@Override
-	public String getOrganizationalUnit() {
-		return this.organizationalUnit;
-	}
-
-	@Override
 	public void setHomePostalAddress(String homePostalAddress) {
 		this.homePostalAddress = homePostalAddress;
 	}
@@ -599,6 +628,20 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 	public String getHomePostalAddress() {
 		return this.homePostalAddress;
 	}
+
+	@Override
+	public void setOrg(String org) {
+		this.org = org;
+	}
+
+	@Override
+	public String getOrg() {
+		if(this.org == null)
+			return "";
+		else
+			return this.org;
+	}
+
 	@Override
     public int compareTo(Account o) {
 		return this.uid.compareTo(o.getUid());

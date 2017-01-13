@@ -1,0 +1,25 @@
+.addon-measurements {
+  background-image: url(../img/area.png) !important;
+}
+
+.measurements-length {
+  background-image: url(../img/length.png) !important;
+}
+
+.measurements-area {
+  background-image: url(../img/area.png) !important;
+}
+
+.measurements-delete {
+  background-image: url("../img/delete.png") !important;
+}
+
+.measurements-export {
+  background-image: url("../img/export.png") !important;
+}
+
+.measurements .x-toolbar {
+    border: 0;
+    background-image: none;
+    background-color: transparent;
+}

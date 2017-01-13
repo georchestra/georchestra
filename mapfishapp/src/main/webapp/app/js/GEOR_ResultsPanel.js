@@ -61,6 +61,9 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
      */
     sfControl: null,
 
+    //TODO doc
+    id: "resultPanel",
+
     /**
      * Property: noDelete
      * {Boolean} do not show the delete button
@@ -84,6 +87,11 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
      * {GEOR.FeatureDataModel} data model
      */
     _model: null,
+
+    /**
+     * Private: LS_PREFIX
+     */
+    LS_PREFIX: "geor-viewer-symbolizer-",
 
     /**
      * Method: _exportBtnHandler
@@ -207,13 +215,21 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
     },
 
     /**
+     * Method: _getFid
+     *
+     */
+    _getFid: function(feature) {
+        return feature.fid && feature.fid.split(".")[0];
+    },
+
+    /**
      * Method: _createVectorLayer
      *
      */
-    _createVectorLayer: function() {
+    _createVectorLayer: function(styleMapOverrides) {
         this._vectorLayer = new OpenLayers.Layer.Vector("__georchestra_results_"+this.id, {
             displayInLayerSwitcher: false,
-            styleMap: GEOR.util.getStyleMap(),
+            styleMap: GEOR.util.getStyleMap(styleMapOverrides),
             rendererOptions: {
                 zIndexing: true
             }
@@ -290,6 +306,48 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
             tr("No result")
         });
 
+        var actionsItem = {
+            text: tr("Actions"),
+            tooltip: tr("Actions on the selection or on all results if no row is selected"),
+            menu: new Ext.menu.Menu({
+                items: [{
+                    text: tr("Zoom"),
+                    iconCls: 'geor-btn-zoom',
+                    tooltip: tr("Zoom to results extent"),
+                    handler: function() {
+                        var features = this.getSelectedFeatures();
+                        this._zoomToFeatures(features);
+                    },
+                    scope: this
+                }, {
+                    text: tr("Export"),
+                    iconCls: 'geor-export',
+                    menu: [{
+                        text: "CSV",
+                        tooltip: tr("Export results as") + " CSV",
+                        handler: this._exportBtnHandler.createDelegate(this, ["csv"]),
+                        scope: this
+                    }, {
+                        text: "GML",
+                        tooltip: tr("Export results as") + " GML",
+                        handler: this._exportBtnHandler.createDelegate(this, ["gml"]),
+                        scope: this
+                    }, {
+                        text: "KML",
+                        tooltip: tr("Export results as") + " KML",
+                        handler: this._exportBtnHandler.createDelegate(this, ["kml"]),
+                        scope: this
+                    }]
+                }, {
+                    text: tr("Store the geometry"),
+                    iconCls: 'geor-geom-save',
+                    tooltip: tr("Aggregates the geometries of the selected features and stores it in your browser for later use in the querier"),
+                    handler: this._storeGeometry,
+                    scope: this
+                }]
+            })
+        };
+
         var bbar = [
             {
                 text: tr("Clean"),
@@ -300,7 +358,72 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
                     tbtext.hide();
                 },
                 scope: this
-            }, 
+            },
+            {
+                text: tr("Symbology"),
+                tooltip: tr("Edit this panel's features symbology"),
+                handler: function(b) {
+                    var feature = this._vectorLayer.features[0];
+                    if (!feature) {
+                        return;
+                    }
+                    var fid = this._getFid(feature),
+                        symbolType = feature.geometry.CLASS_NAME.replace(/OpenLayers\.Geometry\.(Multi)?|String/g, ""),
+                        symbolizer = Ext.apply({}, this._vectorLayer.style ||
+                            this._vectorLayer.styleMap.styles["default"].defaultStyle);
+
+                    var win = new Ext.Window({
+                        title: tr("Symbology"),
+                        layout: "fit",
+                        width: 400,
+                        height: 400,
+                        closeAction: "close",
+                        constrainHeader: true,
+                        animateTarget: GEOR.config.ANIMATE_WINDOWS && b.el,
+                        items: [{
+                            xtype: "gx_" + symbolType.toLowerCase() + "symbolizer",
+                            symbolizer: symbolizer,
+                            bodyStyle: {
+                                "padding": "10px"
+                            },
+                            border: false,
+                            labelWidth: 70,
+                            defaults: {
+                                labelWidth: 70
+                            },
+                            listeners: {
+                                "change": function(symbolizer) {
+                                    this._vectorLayer.style = symbolizer;
+                                    this._vectorLayer.redraw(true);
+                                    if (fid) {
+                                        // we make the symbolizer persist across requests
+                                        // through localStorage:
+                                        GEOR.ls.set(this.LS_PREFIX + fid, Ext.encode(symbolizer));
+                                    }
+                                },
+                                scope: this
+                            }
+                        }],
+                        buttons: [{
+                            text: tr("Reset"),
+                            handler: function() {
+                                GEOR.ls.remove(this.LS_PREFIX + fid);
+                                this._vectorLayer.style = null;
+                                this._vectorLayer.styleMap = GEOR.util.getStyleMap();
+                                this._vectorLayer.redraw(true);
+                                win.close();
+                            },
+                            scope: this
+                        }, {
+                            text: tr("OK"),
+                            handler: function() {
+                                win.close();
+                            }
+                        }]
+                    }).show();
+                },
+                scope: this
+            },
             '->', tbtext, '-',
             {
                 text: tr("Select"),
@@ -342,58 +465,31 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
                         scope: this
                     }]
                 })
-            }, '-', {
-                text: tr("Actions"),
-                tooltip: tr("Actions on the selection or on all results if no row is selected"),
-                menu: new Ext.menu.Menu({
-                    items: [{
-                        text: tr("Zoom"),
-                        iconCls: 'geor-btn-zoom',
-                        tooltip: tr("Zoom to results extent"),
-                        handler: function() {
-                            var grid = this.findByType("grid")[0];
-                            if (grid) {
-                                var sm = grid.getSelectionModel(),
-                                    selectedFeatures = [],
-                                    bypass = (sm.getCount() == 0);
-                                this._store.each(function(record) {
-                                    if (bypass || sm.isSelected(record)) {
-                                        selectedFeatures.push(record.get("feature"));
-                                    }
-                                });
-                                this._zoomToFeatures(selectedFeatures);
-                            }
-                        },
-                        scope: this
-                    },{
-                        text: tr("Export"),
-                        iconCls: 'geor-export',
-                        menu: [{
-                            text: "CSV",
-                            tooltip: tr("Export results as") + " CSV",
-                            handler: this._exportBtnHandler.createDelegate(this, ["csv"]),
-                            scope: this
-                        }, {
-                            text: "GML",
-                            tooltip: tr("Export results as") + " GML",
-                            handler: this._exportBtnHandler.createDelegate(this, ["gml"]),
-                            scope: this
-                        }, {
-                            text: "KML",
-                            tooltip: tr("Export results as") + " KML",
-                            handler: this._exportBtnHandler.createDelegate(this, ["kml"]),
-                            scope: this
-                        }]
-                    },{
-                        text: tr("Store the geometry"),
-                        iconCls: 'geor-geom-save',
-                        tooltip: tr("Aggregates the geometries of the selected features and stores it in your browser for later use in the querier"),
-                        handler: this._storeGeometry,
-                        scope: this
-                    }]
-                })
-            } 
+            }, '-',
+            actionsItem
         ];
+
+
+        /** Loading Addon actions
+         *
+         * To be able to insert their own action in the ResultsPanel "actions" menu,
+         * addons must have the `resultPanelAction` option set to true
+         * and an API method named `resultPanelHandler`
+         * with the `(menuitem, event, resultPanel)` signature.
+         * The `resultPanelHandler` scope is set to the addon.
+         */
+        var addonsState = GEOR.tools.getAddonsState();
+        Ext.each(GEOR.config.ADDONS, function(cfg) {
+            if (addonsState[cfg.id] && cfg.options && cfg.options.resultPanelAction === true) {
+                var a = GEOR.tools.getAddon(cfg.id);
+                actionsItem.menu.addItem({
+                    text: a.title,
+                    iconCls: a.iconCls,
+                    tooltip: a.qtip,
+                    handler: a.resultPanelHandler.createDelegate(a, [this])
+                });
+            }
+        }, this);
 
         if (!this.sfControl) {
             // we need to create the SelectFeature control by ourselves
@@ -465,8 +561,24 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
             });
             return;
         }
+
+        // retrieve matching symbolizer, if any.
+        var fid = this._getFid(features[0]),
+            styleMapOverrides = {};
+        if (fid) {
+            // restore custom StyleMap
+            var storedSymbolizer = GEOR.ls.get(this.LS_PREFIX + fid);
+            if (storedSymbolizer) {
+                var s = Ext.decode(storedSymbolizer);
+                styleMapOverrides = {
+                    "default": s,
+                    "select": s
+                }
+            }
+        }
+        // create vector layer
         if (!this._vectorLayer) {
-            this._createVectorLayer();
+            this._createVectorLayer(styleMapOverrides);
         }
 
         if (options.addLayerToMap !== false) {
@@ -519,6 +631,35 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
         });
         this._store.loadData(features);
         this._createGridPanel();
+    },
+
+    /**
+     * APIMethod: getSelectedFeatures
+     * This method returns the selected features in the grid.
+     *
+     */
+    getSelectedFeatures: function() {
+        var grid = this.findByType("grid")[0];
+        if (!grid) {
+            return [];
+        }
+        var sm = grid.getSelectionModel(),
+            selectedFeatures = [],
+            bypass = (sm.getCount() == 0);
+        this._store.each(function(record) {
+            if (bypass || sm.isSelected(record)) {
+                selectedFeatures.push(record.get("feature"));
+            }
+        });
+        return selectedFeatures;
+    },
+
+    /**
+     * APIMethod: getModel
+     *
+     */
+    getModel: function() {
+        return this._model;
     },
 
     /**

@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2009-2016 by the geOrchestra PSC
+ *
+ * This file is part of geOrchestra.
+ *
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.geowebcache;
 
 import java.io.ByteArrayOutputStream;
@@ -47,10 +66,8 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher {
 +"  </head>"
 +"  <body>"
 +"    <!-- geOrchestra header -->"
-+"    <script type=\"text/javascript\" src=\"/header/js/header.js\"></script>"
 +"    <div id=\"go_head\">"
-+"      <!-- see http://stackoverflow.com/questions/1037839/how-to-force-link-from-iframe-to-be-opened-in-the-parent-window -->"
-+"      <iframe src=\"/header/?active=geowebcache\" style=\"width:100%;height:@header.height@px;border:none;overflow:hidden;\" scrolling=\"no\" frameborder=\"0\" onload=\"_headerOnLoad(this)\"></iframe>"
++"      <iframe src=\"/header/?active=geowebcache\" style=\"width:100%;height:@header.height@px;border:none;overflow:hidden;\" scrolling=\"no\" frameborder=\"0\"></iframe>"
 +"    </div>"
 +"    <!-- end of geOrchestra header -->";
     /**

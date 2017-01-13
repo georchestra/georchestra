@@ -1,5 +1,25 @@
+/*
+ * Copyright (C) 2009-2016 by the geOrchestra PSC
+ *
+ * This file is part of geOrchestra.
+ *
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.georchestra.extractorapp.ws.extractor;
 
+import java.beans.PropertyVetoException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,6 +38,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -71,11 +92,17 @@ public class ExtractorController implements ServletContextAware {
     private CheckFormAcceptance checkFormAcceptance;
 
     private ExtractionManager extractionManager;
+    private String userAgent;
 
     @Autowired
     private GeorchestraConfiguration georConfig;
+    private ComboPooledDataSource dataSource;
 
-    public void validateConfig() {
+    public void validateConfig() throws PropertyVetoException {
+
+        this.dataSource = new ComboPooledDataSource();
+        this.dataSource.setDriverClass("org.postgresql.Driver");
+
         if ((georConfig != null) && (georConfig.activated())) {
             LOG.info("geOrchestra datadir: reconfiguring bean ...");
             servletUrl = georConfig.getProperty("servletUrl");
@@ -92,6 +119,7 @@ public class ExtractorController implements ServletContextAware {
             String dlformJdbcUrl = georConfig.getProperty("dlformjdbcurl");
             // Recreating a CheckFormAcceptance object
             checkFormAcceptance = new CheckFormAcceptance(dlFormActivated, dlformJdbcUrl);
+            this.dataSource.setJdbcUrl(this.georConfig.getProperty("jdbcurl"));
             LOG.info("geOrchestra datadir: done.");
         }
         if (extractionManager == null) {
@@ -177,12 +205,9 @@ public class ExtractorController implements ServletContextAware {
      * </pre>
      * 
      * Spring 2.5 has not got @PathVariable, thus this method was defined as
-     * "/*" to match uuid. The task id is retrieved from json object maintianed
+     * "/*" to match uuid. The task id is retrieved from json object maintained
      * in the request content.
      *
-     *
-     * @param jsonTask
-     * @throws Exception
      */
     @RequestMapping(value = EXTRACTOR_TASKS + "/*", method = RequestMethod.PUT)
     public void updateTask(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -305,9 +330,10 @@ public class ExtractorController implements ServletContextAware {
 
                 String username = request.getHeader("sec-username");
                 String roles = request.getHeader("sec-roles");
-                RequestConfiguration requestConfig = new RequestConfiguration(requests, requestUuid, email, servletContext, testing, username, roles,
-                        adminCredentials, secureHost, extractionFolderPrefix, maxCoverageExtractionSize, remoteReproject, useCommandLineGDAL, postData);
-                ExtractionTask extractor = new ExtractionTask(requestConfig);
+                String org = request.getHeader("sec-org");
+                RequestConfiguration requestConfig = new RequestConfiguration(requests, requestUuid, email, servletContext, testing, username, roles, org,
+                        adminCredentials, secureHost, extractionFolderPrefix, maxCoverageExtractionSize, remoteReproject, useCommandLineGDAL, postData, this.userAgent);
+                ExtractionTask extractor = new ExtractionTask(requestConfig, this.dataSource);
 
                 LOG.info("Sending mail to user");
                 try {
@@ -441,5 +467,13 @@ public class ExtractorController implements ServletContextAware {
 
     public void setEmailFactory(AbstractEmailFactory emailFactory) {
         this.emailFactory = emailFactory;
+    }
+
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
+    }
+
+    public String getUserAgent() {
+        return userAgent;
     }
 }

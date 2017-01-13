@@ -1,0 +1,1 @@
+../node_modules/angular-new-router/dist/router.es5.js

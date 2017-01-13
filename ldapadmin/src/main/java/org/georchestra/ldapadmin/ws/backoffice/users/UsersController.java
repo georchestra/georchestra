@@ -1,18 +1,25 @@
-/**
+/*
+ * Copyright (C) 2009-2016 by the geOrchestra PSC
  *
+ * This file is part of geOrchestra.
+ *
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.georchestra.ldapadmin.ws.backoffice.users;
 
 
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.text.Normalizer;
-import java.util.List;
-
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,26 +27,42 @@ import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
 import org.georchestra.ldapadmin.ds.DuplicatedUidException;
-import org.georchestra.ldapadmin.ds.NotFoundException;
+import org.georchestra.ldapadmin.ds.OrgsDao;
 import org.georchestra.ldapadmin.ds.ProtectedUserFilter;
 import org.georchestra.ldapadmin.dto.Account;
 import org.georchestra.ldapadmin.dto.AccountFactory;
 import org.georchestra.ldapadmin.dto.Group;
+import org.georchestra.ldapadmin.dto.Org;
 import org.georchestra.ldapadmin.dto.UserSchema;
 import org.georchestra.ldapadmin.mailservice.MailService;
 import org.georchestra.ldapadmin.ws.backoffice.utils.RequestUtil;
 import org.georchestra.ldapadmin.ws.backoffice.utils.ResponseUtil;
+import org.georchestra.ldapadmin.ws.utils.Validation;
 import org.georchestra.lib.file.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ldap.InvalidAttributeValueException;
+import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.filter.LikeFilter;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.text.Normalizer;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Web Services to maintain the User information.
@@ -59,12 +82,27 @@ public class UsersController {
 
 	private static final String BASE_MAPPING = "/private";
 	private static final String REQUEST_MAPPING = BASE_MAPPING + "/users";
+	private static final String PUBLIC_REQUEST_MAPPING = "/public/users";
 
 	private static final String DUPLICATED_EMAIL = "duplicated_email";
 	private static final String PARAMS_NOT_UNDERSTOOD = "params_not_understood";
 	private static final String NOT_FOUND = "not_found";
+	private static final String UNABLE_TO_ENCODE = "unable_to_encode";
+	private static final String INVALID_VALUE = "invalid_value";
+	private static final String OTHER_ERROR = "other_error";
+	private static final String INVALID_DATE_FORMAT = "invalid_date_format";
 
 	private AccountDao accountDao;
+	@Autowired
+	private OrgsDao orgDao;
+
+	@Autowired
+	private Validation validation;
+
+	public void setOrgDao(OrgsDao orgDao) {
+		this.orgDao = orgDao;
+	}
+
 	private UserRule userRule;
 	
 	@Autowired
@@ -93,7 +131,7 @@ public class UsersController {
 	 *
 	 *	[
 	 *	    {
-	 *	        "o": "Zogak",
+	 *	        "org": "Zogak",
 	 *	        "givenName": "Walsh",
 	 *	        "sn": "Atkins",
 	 *	        "uid": "watkins"
@@ -108,16 +146,28 @@ public class UsersController {
 	 */
 	@RequestMapping(value=REQUEST_MAPPING, method=RequestMethod.GET)
 	public void findAll( HttpServletRequest request, HttpServletResponse response ) throws IOException{
-
 		try {
 			ProtectedUserFilter filter = new ProtectedUserFilter( this.userRule.getListUidProtected() );
 			List<Account> list = this.accountDao.findFilterBy(filter);
 
-			UserListResponse userListResponse = new UserListResponse(list);
+			// Retrieve organizations list to display org name instead of org DN
+			List<Org> orgs = this.orgDao.findAll();
+			Map<String, String> orgNames = new HashMap<String, String>();
+			for(Org org: orgs)
+				orgNames.put(org.getId(), org.getName());
 
-			String jsonList = userListResponse.asJsonString();
+			JSONArray res = new JSONArray();
+			for (Account account: list) {
+				JSONObject jsonAccount = new JSONObject();
+				jsonAccount.put(UserSchema.UID_KEY, account.getUid());
+				jsonAccount.put(UserSchema.GIVEN_NAME_KEY, account.getGivenName());
+				jsonAccount.put(UserSchema.SURNAME_KEY, account.getSurname());
+				jsonAccount.put(UserSchema.ORG_KEY, orgNames.get(account.getOrg()));
+				jsonAccount.put(UserSchema.MAIL_KEY, account.getEmail());
+				res.put(jsonAccount);
+			}
 
-			ResponseUtil.buildResponse(response, jsonList, HttpServletResponse.SC_OK);
+			ResponseUtil.buildResponse(response, res.toString(), HttpServletResponse.SC_OK);
 
 		} catch (Exception e) {
 			LOG.error(e.getMessage());
@@ -133,7 +183,7 @@ public class UsersController {
 	 * @param response Returns the detailed information of the user as json
 	 * @throws IOException
 	 */
-	@RequestMapping(value=BASE_MAPPING+"/usersearch/{userPattern}", method=RequestMethod.GET, produces="application/json; charset=utf-8")
+	@RequestMapping(value=BASE_MAPPING+"/usersearch/{userPattern:.+}", method=RequestMethod.GET, produces="application/json")
 	@ResponseBody
 	public String findWithPattern(@PathVariable String userPattern, HttpServletResponse response) throws IOException, JSONException {
 		try {
@@ -166,10 +216,11 @@ public class UsersController {
 	 *
 	 * @param response Returns the detailed information of the user as json
 	 * @throws IOException
+	 * @throws NameNotFoundException
 	 */
-	@RequestMapping(value=REQUEST_MAPPING+"/{uid}", method=RequestMethod.GET,
-					produces = "application/json; charset=UTF-8")
-	public void findByUid(@PathVariable String uid, HttpServletResponse response) throws IOException, JSONException {
+	@RequestMapping(value=REQUEST_MAPPING+"/{uid:.+}", method=RequestMethod.GET,
+					produces = "application/json")
+	public void findByUid(@PathVariable String uid, HttpServletResponse response) throws IOException, JSONException, NameNotFoundException {
 
 		// Check for protected accounts
 		if(this.userRule.isProtected(uid) ){
@@ -187,7 +238,7 @@ public class UsersController {
 			try {
 				account = this.accountDao.findByUID(uid);
 				response.getWriter().write(account.toJSON().toString());
-			} catch (NotFoundException e) {
+			} catch (NameNotFoundException e) {
 				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 				JSONObject res = new JSONObject();
 				res.put("success", "false");
@@ -196,6 +247,7 @@ public class UsersController {
 			} catch (DataServiceException e) {
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				throw new IOException(e);
+
 			}
 		}
 
@@ -220,7 +272,7 @@ public class UsersController {
      * 	"postalCode": "postal code",
      *	"l": "locality",
      * 	"postOfficeBox": "the post office box",
-     *  "o": "the_organization"
+     *  "org": "the_organization"
      * }
      *
      * where <b>sn, givenName, mail</b> are mandatories
@@ -279,13 +331,9 @@ public class UsersController {
 				return;
 			}
 
-			storeUser(account);
+			storeUser(account, request.getHeader("sec-username"));
 
-			UserResponse userResponse = new UserResponse(account);
-
-			String jsonResponse = userResponse.asJsonString();
-
-			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_OK);
+			ResponseUtil.buildResponse(response, account.toJSON().toString(), HttpServletResponse.SC_OK);
 
 		} catch (IllegalArgumentException e ){
 			LOG.warn(e.getMessage());
@@ -305,7 +353,17 @@ public class UsersController {
 			ResponseUtil.buildResponse(response, "{ \"success\": false }",
 					HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			throw new IOException(dsex);
+		} catch (JSONException e) {
+			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, UNABLE_TO_ENCODE);
+			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
+		} catch (InvalidAttributeValueException ex){
+			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, INVALID_VALUE);
+			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
+		} catch (Exception ex){
+			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, OTHER_ERROR);
+			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
 		}
+
 	}
 
 
@@ -313,20 +371,21 @@ public class UsersController {
 	 * Saves the user in the LDAP store.
 	 *
 	 * @param account
+	 * @param originLogin login of admin that issue request
 	 * @throws DuplicatedEmailException
 	 * @throws DataServiceException
 	 * @throws IOException
 	 */
-	private void storeUser(Account account) throws DuplicatedEmailException, DataServiceException, IOException {
+	private void storeUser(Account account, String originLogin) throws DuplicatedEmailException, DataServiceException, IOException {
 		try {
-
-			this.accountDao.insert(account, Group.SV_USER);
+			this.accountDao.insert(account, Group.USER, originLogin);
 
 		} catch (DuplicatedEmailException e) {
+			LOG.error(e);
 			throw e;
 
 		} catch (DataServiceException e) {
-
+			LOG.error(e);
 			throw e;
 
 		} catch (DuplicatedUidException e) {
@@ -373,11 +432,10 @@ public class UsersController {
 	 * @param response
 	 *
 	 * @throws IOException if the uid does not exist or fails to access to the LDAP store.
+	 * @throws NameNotFoundException
 	 */
-	@RequestMapping(value=REQUEST_MAPPING+ "/*", method=RequestMethod.PUT)
-	public void update( HttpServletRequest request, HttpServletResponse response) throws IOException{
-
-		final String uid = RequestUtil.getKeyFromPathVariable(request).toLowerCase();
+	@RequestMapping(value=REQUEST_MAPPING+ "/{uid:.+}", method=RequestMethod.PUT)
+	public void update( HttpServletRequest request, HttpServletResponse response, @PathVariable String uid) throws IOException, NameNotFoundException{
 
 		if(this.userRule.isProtected(uid) ){
 
@@ -393,13 +451,14 @@ public class UsersController {
 
 		// searches the account
 		Account account = null;
+		String originalOrg = null;
 		try {
 			account = this.accountDao.findByUID(uid);
+			originalOrg = account.getOrg();
 
-		} catch (NotFoundException e) {
+		} catch (NameNotFoundException e) {
 
 			ResponseUtil.writeError(response, NOT_FOUND);
-
 			return;
 
 		} catch (DataServiceException e) {
@@ -410,17 +469,25 @@ public class UsersController {
 		// modifies the account data
 		try{
 			final Account modified = modifyAccount(AccountFactory.create(account), request.getInputStream());
-			this.accountDao.update(account, modified);
+			this.accountDao.update(account, modified, request.getHeader("sec-username"));
+
+			if(!modified.getOrg().equals(originalOrg)){
+				if(originalOrg.length() > 0)
+					this.orgDao.removeUser(originalOrg, uid);
+				if(modified.getOrg().length() > 0)
+					this.orgDao.addUser(modified.getOrg(), uid);
+			}
+
+
 			boolean uidChanged = ( ! modified.getUid().equals(account.getUid()));
 			if ((uidChanged) && (warnUserIfUidModified)) {
 				this.mailService.sendAccountUidRenamed(request.getSession().getServletContext(),
 						modified.getUid(), modified.getCommonName(), modified.getEmail());
 			}
-			ResponseUtil.writeSuccess(response);
+			ResponseUtil.buildResponse(response, modified.toJSON().toString(), HttpServletResponse.SC_OK);
 
 		} catch (DuplicatedEmailException e) {
 			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, DUPLICATED_EMAIL);
-
 			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
 		} catch (IOException e) {
 			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, PARAMS_NOT_UNDERSTOOD);
@@ -430,10 +497,17 @@ public class UsersController {
 			LOG.error(e.getMessage());
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			throw new IOException(e);
-		} catch (NotFoundException e) {
+		} catch (NameNotFoundException e) {
 			LOG.error(e.getMessage());
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+		} catch (JSONException e) {
+			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, UNABLE_TO_ENCODE);
+			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
+		} catch (ParseException e){
+			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, INVALID_DATE_FORMAT);
+			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_BAD_REQUEST);
 		}
+
 	}
 
 	/**
@@ -448,10 +522,9 @@ public class UsersController {
 	 * @param response
 	 * @throws IOException
 	 */
-	@RequestMapping(value=REQUEST_MAPPING + "/*", method=RequestMethod.DELETE)
-	public void delete( HttpServletRequest request, HttpServletResponse response) throws IOException{
+	@RequestMapping(value=REQUEST_MAPPING + "/{uid:.+}", method=RequestMethod.DELETE)
+	public void delete(@PathVariable String uid, HttpServletRequest request, HttpServletResponse response) throws IOException{
 		try{
-			final String uid = RequestUtil.getKeyFromPathVariable(request).toLowerCase();
 			if(this.userRule.isProtected(uid) ){
 
 				String message = "The user is protected, it cannot be deleted: " + uid;
@@ -464,7 +537,7 @@ public class UsersController {
 				return;
 			}
 
-			this.accountDao.delete(uid);
+			this.accountDao.delete(uid, request.getHeader("sec-username"));
 
 			ResponseUtil.writeSuccess(response);
 
@@ -472,11 +545,31 @@ public class UsersController {
 			LOG.error(e.getMessage());
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             throw new IOException(e);
-		} catch (NotFoundException e) {
+		} catch (NameNotFoundException e) {
             String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, NOT_FOUND);
             ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_NOT_FOUND);
 		}
 	}
+
+	/**
+     * Return a list of required fields for user creation
+     *
+     * return a JSON array with required fields.
+     */
+    @RequestMapping(value = PUBLIC_REQUEST_MAPPING + "/requiredFields", method = RequestMethod.GET)
+    public void getUserRequiredFields(HttpServletResponse response) throws IOException{
+        try {
+            JSONArray fields = new JSONArray();
+            fields.put("uid");
+            fields.put("mail");
+            ResponseUtil.buildResponse(response, fields.toString(4), HttpServletResponse.SC_OK);
+        } catch (Exception e) {
+            LOG.error(e.getMessage());
+            ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, e.getMessage()),
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            throw new IOException(e);
+        }
+    }
 
 	/**
 	 * Modify only the account's fields that are present in the request body.
@@ -488,7 +581,7 @@ public class UsersController {
 	 *
 	 * @throws IOException
 	 */
-	private Account modifyAccount(Account account, ServletInputStream inputStream) throws IOException {
+	private Account modifyAccount(Account account, ServletInputStream inputStream) throws IOException, ParseException {
 
 		String strUser = FileUtils.asString(inputStream);
 		JSONObject json;
@@ -549,11 +642,6 @@ public class UsersController {
 			account.setFacsimile(facsimile);
 		}
 
-		String org = RequestUtil.getFieldValue(json, UserSchema.ORG_KEY);
-		if (org != null) {
-			account.setOrg(org);
-		}
-
 		String title = RequestUtil.getFieldValue(json, UserSchema.TITLE_KEY);
 		if (title != null) {
 			account.setTitle(title);
@@ -564,16 +652,35 @@ public class UsersController {
 			account.setDescription(description);
 		}
 
+		String manager = RequestUtil.getFieldValue(json, UserSchema.MANAGER_KEY);
+		account.setManager(manager);
 
-
+		String context = RequestUtil.getFieldValue(json, UserSchema.CONTEXT_KEY);
+		if (context != null) {
+			account.setContext(context);
+		}
+		
 		String commonName = AccountFactory.formatCommonName(
 				account.getGivenName(), account.getSurname());
-
 		account.setCommonName(commonName);
+
 		String uid = RequestUtil.getFieldValue(json, UserSchema.UID_KEY);
 		if (uid != null) {
 			account.setUid(uid);
 		}
+
+		String org = RequestUtil.getFieldValue(json, UserSchema.ORG_KEY);
+		if(org != null)
+			account.setOrg(org);
+
+		String shadowExpire = RequestUtil.getFieldValue(json, UserSchema.SHADOW_EXPIRE_KEY);
+		if(shadowExpire != null) {
+			if("".equals(shadowExpire))
+				account.setShadowExpire(null);
+			else
+				account.setShadowExpire((new SimpleDateFormat("yyyy-MM-dd")).parse(shadowExpire));
+		}
+
 		return account;
 	}
 
@@ -586,58 +693,51 @@ public class UsersController {
 	 */
 	private Account createAccountFromRequestBody(ServletInputStream is) throws IllegalArgumentException, IOException {
 
-		String strUser = FileUtils.asString(is);
 		JSONObject json;
 		try {
-			json = new JSONObject(strUser);
+			json = new JSONObject(FileUtils.asString(is));
 		} catch (JSONException e) {
 			LOG.error(e.getMessage());
 			throw new IOException(e);
 		}
 
-		String givenName = RequestUtil.getFieldValue(json, UserSchema.GIVEN_NAME_KEY);
-		if(givenName == null){
-			throw new IllegalArgumentException(UserSchema.GIVEN_NAME_KEY + " is required" );
-		}
-		String surname= RequestUtil.getFieldValue(json, UserSchema.SURNAME_KEY);
-		if(surname == null){
-			throw new IllegalArgumentException(UserSchema.SURNAME_KEY + " is required" );
-		}
-		String email= RequestUtil.getFieldValue(json, UserSchema.MAIL_KEY);
-		if(email == null){
-			throw new IllegalArgumentException(UserSchema.MAIL_KEY + " is required" );
-		}
+		String givenName     = RequestUtil.getFieldValue(json, UserSchema.GIVEN_NAME_KEY);
+		String surname       = RequestUtil.getFieldValue(json, UserSchema.SURNAME_KEY);
+		String email         = RequestUtil.getFieldValue(json, UserSchema.MAIL_KEY);
+		String postalAddress = RequestUtil.getFieldValue(json, UserSchema.POSTAL_ADDRESS_KEY );
+		String postOfficeBox = RequestUtil.getFieldValue(json, UserSchema.POST_OFFICE_BOX_KEY );
+		String postalCode    = RequestUtil.getFieldValue(json, UserSchema.POSTAL_CODE_KEY);
+		String street        = RequestUtil.getFieldValue(json, UserSchema.STREET_KEY);
+		String locality      = RequestUtil.getFieldValue(json, UserSchema.LOCALITY_KEY);
+		String phone         = RequestUtil.getFieldValue(json, UserSchema.TELEPHONE_KEY);
+		String facsimile     = RequestUtil.getFieldValue(json, UserSchema.FACSIMILE_KEY);
+		String title         = RequestUtil.getFieldValue(json, UserSchema.TITLE_KEY);
+		String description   = RequestUtil.getFieldValue(json, UserSchema.DESCRIPTION_KEY);
+		String manager       = RequestUtil.getFieldValue(json, UserSchema.MANAGER_KEY);
+		String org           = RequestUtil.getFieldValue(json, UserSchema.ORG_KEY);
 
-		String postalAddress =  RequestUtil.getFieldValue(json, UserSchema.POSTAL_ADDRESS_KEY );
+		if(givenName == null)
+			throw new IllegalArgumentException("First Name is required");
 
-		String postOfficeBox =  RequestUtil.getFieldValue(json, UserSchema.POST_OFFICE_BOX_KEY );
+		if(surname == null)
+			throw new IllegalArgumentException("Last Name is required");
 
-		String postalCode = RequestUtil.getFieldValue(json, UserSchema.POSTAL_CODE_KEY);
+		if(email == null)
+			throw new IllegalArgumentException("EMail is required");
 
-		String street= RequestUtil.getFieldValue(json, UserSchema.STREET_KEY);
-		String locality = RequestUtil.getFieldValue(json, UserSchema.LOCALITY_KEY);
-
-		String phone = RequestUtil.getFieldValue(json, UserSchema.TELEPHONE_KEY);
-
-		String facsimile = RequestUtil.getFieldValue( json, UserSchema.FACSIMILE_KEY);
-
-		String org = RequestUtil.getFieldValue( json, UserSchema.ORG_KEY);
-
-		String title = RequestUtil.getFieldValue( json, UserSchema.TITLE_KEY);
-
-		String description = RequestUtil.getFieldValue( json, UserSchema.DESCRIPTION_KEY);
-
-		String uid;
-		try {
-			uid = createUid(givenName, surname);
-		} catch (DataServiceException e) {
-			LOG.error(e.getMessage());
-			throw new IOException(e);
-		}
+		// Use specified login if not empty
+		String uid = RequestUtil.getFieldValue(json, UserSchema.UID_KEY);
+		if(!StringUtils.hasLength(uid))
+			try {
+				uid = createUid(givenName, surname);
+			} catch (DataServiceException e) {
+				LOG.error(e.getMessage());
+				throw new IOException(e);
+			}
 
 		String commonName = AccountFactory.formatCommonName(givenName, surname);
 
-		Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, org, title, phone, description, postalAddress, postalCode, "", postOfficeBox, "", street, locality, facsimile, "","","","","");
+		Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, title, phone, description, postalAddress, postalCode, "", postOfficeBox, "", street, locality, facsimile, "","","","",manager,"", org);
 
 		return a;
 

@@ -1,6 +1,22 @@
-/**
+/*
+ * Copyright (C) 2009-2016 by the geOrchestra PSC
  *
+ * This file is part of geOrchestra.
+ *
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.georchestra.ldapadmin.ws;
 
 import java.io.File;
@@ -60,12 +76,12 @@ public class HomeController {
 
         String roles = request.getHeader("sec-roles");
 
-        if (roles != null && !roles.equals("ROLE_ANONYMOUS")) {
+        if (roles != null) {
             String redirectUrl;
             List<String> rolesList = Arrays.asList(roles.split(";"));
 
             if (rolesList.contains("ROLE_MOD_LDAPADMIN")) {
-                redirectUrl = "/privateui/";
+                redirectUrl = "/console/";
             } else {
                 redirectUrl = "/account/userdetails";
             }
@@ -76,20 +92,16 @@ public class HomeController {
         } else {
             // redirect to CAS
             response.sendRedirect(config.getPublicContextPath() + "/account/userdetails?login");
-            return;
         }
     }
 
     @RequestMapping(value="/privateui/")
     public String privateui(HttpServletRequest request) throws IOException{
-        String roles = request.getHeader("sec-roles");
-        if(roles != null && !roles.equals("ROLE_ANONYMOUS")) {
-            List<String> rolesList = Arrays.asList(roles.split(";"));
-            if(rolesList.contains("ROLE_MOD_LDAPADMIN")) {
-                return "privateUi";
-            }
-        }
-        return "forbidden";
+        return "privateUi";
     }
 
+    @RequestMapping(value="/console/")
+    public String consoleHome(HttpServletRequest request) throws IOException{
+        return "consoleUi";
+    }
 }

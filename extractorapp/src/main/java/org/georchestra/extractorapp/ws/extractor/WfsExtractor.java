@@ -4,11 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
+
+import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,16 +27,28 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.Query;
+import org.geotools.data.Transaction;
 import org.geotools.data.simple.SimpleFeatureCollection;
-import org.geotools.data.wfs.WFSDataStoreFactory;
+import org.geotools.data.store.ContentDataStore;
+import org.geotools.data.store.ContentFeatureSource;
+import org.geotools.data.wfs.impl.WFSContentDataStore;
+import org.geotools.data.wfs.impl.WFSDataStoreFactory;
+import org.geotools.data.wfs.internal.DescribeFeatureTypeRequest;
+import org.geotools.data.wfs.internal.DescribeFeatureTypeResponse;
+import org.geotools.data.wfs.internal.WFSClient;
+import org.geotools.data.wfs.internal.WFSConfig;
+import org.geotools.data.wfs.internal.parsers.EmfAppSchemaParser;
+import org.geotools.data.wfs.internal.v1_x.MapServerWFSStrategy;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.factory.GeoTools;
+import org.geotools.feature.NameImpl;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.geotools.util.NullProgressListener;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
+import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Literal;
@@ -56,6 +68,8 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 
 /**
  * Obtains data from a WFS and write the data out to the filesystem
@@ -64,7 +78,7 @@ import com.vividsolutions.jts.geom.Polygon;
  */
 public class WfsExtractor {
 
-	protected static final Log LOG = LogFactory.getLog(WcsExtractor.class.getPackage().getName());
+    protected static final Log LOG = LogFactory.getLog(WcsExtractor.class.getPackage().getName());
 
     /**
      * Enumerate general types of geometries we accept. Multi/normal is ignored
@@ -105,18 +119,19 @@ public class WfsExtractor {
         }
     }
 
-    private final File          _basedir;
+    private final File   _basedir;
     private final String _adminUsername;
     private final String _adminPassword;
     private final String _secureHost;
+    private String userAgent;
 
     /**
      *
      * Should only be used by tests
      *
      */
-    public WfsExtractor (File basedir) {
-        this(basedir, "", "", "localhost");
+    public WfsExtractor (File basedir) throws IOException {
+        this(basedir, "", "", "localhost", null);
     }
 
     /**
@@ -127,17 +142,19 @@ public class WfsExtractor {
      * @param adminPassword password the the admin user
      * @param secureHost
      */
-    public WfsExtractor (File basedir, String adminUsername, String adminPassword, String secureHost) {
+    public WfsExtractor (File basedir, String adminUsername, String adminPassword, String secureHost, String userAgent) {
         this._basedir = basedir;
         this._adminPassword = adminPassword;
         this._adminUsername = adminUsername;
         this._secureHost = secureHost;
+        this.userAgent = userAgent;
     }
 
     public void checkPermission(ExtractorLayerRequest request, String secureHost, String username, String roles) throws IOException {
         URL capabilitiesURL = request.capabilitiesURL("WFS", "1.0.0");
 
         final HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+        httpClientBuilder.setUserAgent(this.userAgent);
 
         HttpClientContext localContext = HttpClientContext.create();
         final HttpHost httpHost = new HttpHost(capabilitiesURL.getHost(), capabilitiesURL.getPort(), capabilitiesURL.getProtocol());
@@ -152,7 +169,9 @@ public class WfsExtractor {
 
             enablePreemptiveBasicAuth(capabilitiesURL, httpClientBuilder, localContext, httpHost, _adminUsername, _adminPassword);
         } else {
-        	LOG.debug("WfsExtractor.checkPermission - Non Secured Server");
+            // use a user agent that does *not* trigger basic auth on remote server
+            httpClientBuilder.setUserAgent("Apache-HttpClient");
+            LOG.debug("WfsExtractor.checkPermission - Non Secured Server");
         }
 
         final CloseableHttpClient httpclient = httpClientBuilder.build();
@@ -218,9 +237,39 @@ public class WfsExtractor {
         }
 
         DataStore sourceDs = DataStoreFinder.getDataStore(params);
-        SimpleFeatureType sourceSchema = sourceDs.getSchema (request.getWFSName());
+        // WFS-ng: we need to convert the schema name
+
+        String typeName = request.getWFSName();
+        SimpleFeatureType sourceSchema = null;
+        // prefixed typeName
+        if (typeName.contains(":")) {
+            typeName = typeName.replaceFirst(":", "_");
+            sourceSchema = sourceDs.getSchema(typeName);
+        }
+        // Not prefixed one (mapserver ?)
+        else {
+            // Recreating the datastore forcing wfs 1.1.0, so that (presuming
+            // the remote server is actually powered by MapServer), we would
+            // have a typename prefixed with the same convention as before.
+            params.put(WFSDataStoreFactory.URL.key, request.capabilitiesURL("WFS", "1.1.0"));
+            //params.put(WFSDataStoreFactory.WFS_STRATEGY.key, "mapserver");
+            sourceDs = DataStoreFinder.getDataStore(params);
+            String[] typeNames = sourceDs.getTypeNames();
+            for (String s : typeNames) {
+                if (s.contains(typeName)) {
+                    typeName = s;
+                    sourceSchema = sourceDs.getSchema(s);
+                    // replace the expected typename in the request
+                    break;
+                }
+            }
+            if (sourceSchema == null) {
+                throw new IOException("Unable to find the remote layer " + typeName);
+            }
+        }
+
         Query query = createQuery(request, sourceSchema);
-		SimpleFeatureCollection features = sourceDs.getFeatureSource(request.getWFSName()).getFeatures(query);
+        SimpleFeatureCollection features = sourceDs.getFeatureSource(typeName).getFeatures(query);
 
         ProgressListener progressListener = new NullProgressListener () {
             @Override
@@ -237,17 +286,17 @@ public class WfsExtractor {
         LOG.debug("Number of features returned : " + features.size());
         if ("shp".equalsIgnoreCase(request._format)) {
             featuresWriter = new ShpFeatureWriter(progressListener, sourceSchema, basedir, features);
-        	bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.shp, request._projection, progressListener );
+            bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.shp, request._projection, progressListener );
         } else if ("mif".equalsIgnoreCase(request._format)) {
-        	//featuresWriter = new MifFeatureWriter(progressListener, sourceSchema, basedir, features);
-        	featuresWriter = new OGRFeatureWriter(progressListener, sourceSchema,  basedir, OGRFeatureWriter.FileFormat.mif, features);
-        	bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.mif, request._projection, progressListener );
+            //featuresWriter = new MifFeatureWriter(progressListener, sourceSchema, basedir, features);
+            featuresWriter = new OGRFeatureWriter(progressListener, sourceSchema,  basedir, OGRFeatureWriter.FileFormat.mif, features);
+            bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.mif, request._projection, progressListener );
         } else if ("tab".equalsIgnoreCase(request._format)) {
-        	featuresWriter = new OGRFeatureWriter(progressListener, sourceSchema,  basedir, OGRFeatureWriter.FileFormat.tab, features);
-        	bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.tab, request._projection, progressListener );
+            featuresWriter = new OGRFeatureWriter(progressListener, sourceSchema,  basedir, OGRFeatureWriter.FileFormat.tab, features);
+            bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.tab, request._projection, progressListener );
         } else if ("kml".equalsIgnoreCase(request._format)) {
-        	featuresWriter = new OGRFeatureWriter(progressListener, sourceSchema, basedir, OGRFeatureWriter.FileFormat.kml, features);
-        	bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.kml, request._projection, progressListener );
+            featuresWriter = new OGRFeatureWriter(progressListener, sourceSchema, basedir, OGRFeatureWriter.FileFormat.kml, features);
+            bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.kml, request._projection, progressListener );
         } else {
             throw new IllegalArgumentException(request._format + " is not a recognized vector format");
         }

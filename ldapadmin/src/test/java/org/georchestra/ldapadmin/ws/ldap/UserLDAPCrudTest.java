@@ -45,9 +45,9 @@ public class UserLDAPCrudTest {
 			ltmpl.unbind("ou=users", true);
 		} catch (NamingException e) {}
 
-		// removing groups
+		// removing roles
 		try {
-			ltmpl.unbind("ou=groups", true);
+			ltmpl.unbind("ou=roles", true);
 		} catch (NamingException e) {}
 
 		// recreating ou=users
@@ -59,12 +59,12 @@ public class UserLDAPCrudTest {
 			ltmpl.bind(ctx);
 		} catch (Exception e) {};
 
-		// recreating ou=groups
+		// recreating ou=roles
 		try {
-			DirContextOperations ctx = new DirContextAdapter("ou=groups");
+			DirContextOperations ctx = new DirContextAdapter("ou=roles");
 			ctx.addAttributeValue("objectClass", "top");
 			ctx.addAttributeValue("objectClass", "organizationalUnit");
-			ctx.addAttributeValue("ou", "users");
+			ctx.addAttributeValue("ou", "roles");
 			ltmpl.bind(ctx);
 		} catch (Exception e) {};
 
@@ -76,7 +76,7 @@ public class UserLDAPCrudTest {
 		ltmpl.unbind("ou=users", true);
 		} catch (NamingException e) {}
 		try {
-		ltmpl.unbind("ou=groups", true);
+		ltmpl.unbind("ou=roles", true);
 		} catch (NamingException e) {}
 	}
 

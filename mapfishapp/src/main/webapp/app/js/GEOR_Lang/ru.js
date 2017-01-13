@@ -1,13 +1,20 @@
 /*
- * This file is part of geOrchestra
+ * Copyright (C) 2009-2016 by the geOrchestra PSC
  *
- * geOrchestra is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This file is part of geOrchestra.
  *
- * You should have received a copy of the GNU General Public License
- * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -93,7 +100,10 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     /* GEOR_cswquerier.js strings */
     "cswquerier.help.title": "Hints for advanced query",
     "cswquerier.help.message": '<ul><li><b>@word</b> looks for "word" in the organization name.</li><li><b>#word</b> looks for "word" in the metadata keywords.</li><li><b>?word</b> broadens the search by looking for "word" in any metadata field.</li></ul>',
-    "Show metadata sheet in a new window": "Показать список метаданных в новом окне",
+    //"Show metadata essentials in a window":
+        //"Afficher les métadonnées basiques",
+    //"Show metadata sheet in a new browser tab": 
+        //"Afficher la métadonnée complète dans un nouvel onglet",
     "more": "более, ещё...",
     "Click to select or deselect the layer": "Нажать, чтобы выбрать или отменить выделение слоя.",
     "Open the URL url in a new window": "Открыть URL в новом окне.",
@@ -256,7 +266,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Print": "Напечатать",
     "Printing...": "Идёт печать...",
     "Print current map": "Напечатать текущую карту",
-    /* GEOR_querier.js strings */
+    /* GEOR_Querier.js strings */
     "Fields of filters with a red mark are mandatory": "Поля фильтров, помеченные красным цветом, являются обязательными для заполнения.",
     "Request on NAME": "Сделать запрос о ${NAME}",
     "Search": "Искать",
@@ -267,6 +277,9 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "There is no geometry column in the selected referential": "В выделенной ссылке отсутствует геометрический столбец.",
     "Choose a referential": "Выбрать ссылку",
     /* GEOR_resultspanel.js strings */
+    //"Symbology": "Symbologie",
+    //"Edit this panel's features symbology": "Editer la symbologie de la sélection",
+    //"Reset": "RàZ",
     //"Export is not possible: features have no geometry": "Export impossible : absence de géométries",
     "resultspanel.maxfeature.reached": " <span ext:qtip=\"Используйте более совершенный навигатор для того, чтобы увеличить число фигурирующих на странице объектов.\">Максимальное число объектов достигнуто ${NB}</span>", 
     "NB results": "${NB} результатов",
@@ -354,6 +367,13 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Other": "Другой",
     "Confirmation": "Подтверждение",
     "Information": "Информация",
+    //"Could not parse metadata.": "Impossible d'analyser la métadonnée",
+    //"Could not get metadata.": "Impossible d'obtenir la métadonnée",
+    //"pointOfContact": "contact",
+    //"custodian": "producteur",
+    //"distributor": "distributeur",
+    //"originator": "instigateur",
+    //"More": "Plus",
     /* GEOR_waiter.js strings */
     /* GEOR_wmc.js strings */
     "The provided file is not a valid OGC context": "Данный файл не является действительным контекстом OGC",
@@ -366,6 +386,24 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "A unique OSM layer": "Единый слой OpenStreetMap",
     "default viewer context": "контекст вьюера по умолчанию",
     /* GEOR_workspace.js strings */
+    //"Created:": "Date de création : ",
+    //"Last accessed:": "Date de dernier accès : ",
+    //"Access count:": "Nombre d'accès : ",
+    //"Permalink:": "Permalien : ",
+    //"My contexts": "Mes contextes",
+    //"Created": "Création",
+    //"Accessed": "Accédé",
+    //"Count": "Accès",
+    //"View": "Visualiser",
+    //"View the selected context": "Visualiser le contexte sélectionné (attention: remplacera le contexte courant)",
+    //"Download": "Télécharger",
+    //"Download the selected context": "Télécharger le contexte sélectionné",
+    //"Delete": "Supprimer",
+    //"Delete the selected context": "Supprimer le contexte sélectionné",
+    //"Failed to delete context": "Impossible de supprimer le contexte",
+    //"Manage my contexts": "Gérer mes contextes",
+    //"Keywords": "Mots clés",
+    //"comma separated keywords": "mots clés séparés par une virgule",
     //"Save to metadata": "Créer une métadonnée",
     //"in group": "dans le groupe",
     //"The context title is mandatory": "Le titre du contexte est obligatoire",

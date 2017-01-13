@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2009-2016 by the geOrchestra PSC
+ *
+ * This file is part of geOrchestra.
+ *
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.georchestra.security;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -14,6 +33,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.net.URLDecoder;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -44,6 +64,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -53,22 +74,17 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpTrace;
-import org.apache.http.client.params.ClientPNames;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.ProxySelectorRoutePlanner;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.apache.http.message.BasicNameValuePair;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.ogcservstatistics.log4j.OGCServiceMessageFormatter;
-import org.georchestra.security.healthcenter.DatabaseHealthCenter;
 import org.georchestra.security.permissions.Permissions;
 import org.georchestra.security.permissions.UriMatcher;
-import org.jasig.cas.client.validation.Cas20ServiceTicketValidator;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.oxm.xstream.XStreamMarshaller;
 import org.springframework.security.cas.ServiceProperties;
 import org.springframework.security.core.Authentication;
@@ -91,13 +107,9 @@ import com.google.common.io.Closer;
  * There are two primary ways that the paths can be encoded:
  * <ul>
  * <li>The full url to forward to is encoded in a parameter called "url"</li>
- * <li>The url is encoded as part of the path
- * <ul>
- * <li>The first way is to forward to the default target server. The fragment of
- * the path after the context will be appended to the defaultTarget</li>
- * <li>The second way is to define the targets. The segment after the context of
- * this service will be the key for looking up the target server and the rest of
- * the path will be appended to the target</li>
+ * <li>The url is encoded as part of the path. Then the target should be
+ * defined (either in the targets-mapping.properties file of the datadir or in
+ * the targets map property of the proxyservlet.xml file)</li>
  * </ul>
  * Examples:
  * <p>
@@ -122,6 +134,7 @@ public class Proxy {
     protected static final Log logger = LogFactory.getLog(Proxy.class.getPackage().getName());
     protected static final Log statsLogger = LogFactory.getLog(Proxy.class.getPackage().getName() + ".statistics");
     protected static final Log commonLogger = LogFactory.getLog(Proxy.class.getPackage().getName() + ".statistics-common");
+
 
     protected enum RequestType {
         GET, POST, DELETE, PUT, TRACE, OPTIONS, HEAD
@@ -148,15 +161,16 @@ public class Proxy {
     private Permissions proxyPermissions = new Permissions();
     private String proxyPermissionsFile;
 
-    /* ---------- Required for DatabaseHealthCenter -------------------- */
-    private static Boolean checkHealth = false;
-    private String host;
-    private Integer port;
 
-    private String database;
-    private String user;
-    private String password;
-    private Integer maxDatabaseConnections;
+    private Integer httpClientTimeout = 300000;
+
+    public void setHttpClientTimeout(Integer timeout) {
+        this.httpClientTimeout = timeout;
+    }
+
+    public Integer getHttpClientTimeout() {
+        return httpClientTimeout;
+    }
 
     public void init() throws Exception {
         if (targets != null) {
@@ -185,11 +199,6 @@ public class Proxy {
         if ((georchestraConfiguration != null) && (georchestraConfiguration.activated())) {
             logger.info("geOrchestra configuration detected, reconfiguration in progress ...");
 
-            checkHealth = Boolean.getBoolean(georchestraConfiguration.getProperty("checkHealth"));
-            database = georchestraConfiguration.getProperty("psql.db");
-            user = georchestraConfiguration.getProperty("psql.user");
-            password = georchestraConfiguration.getProperty("psql.pass");
-            maxDatabaseConnections = new Integer(georchestraConfiguration.getProperty("max.database.connections"));
             Properties pTargets = georchestraConfiguration.loadCustomPropertiesFile("targets-mapping");
 
             targets.clear();
@@ -237,6 +246,11 @@ public class Proxy {
         }
 
         redirectStrategy.sendRedirect(request, response, uriBuilder.build().toString());
+    }
+
+    @RequestMapping("/services_monitoring")
+    public void servicesMonitoring(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        (new ServicesMonitoring(this.georchestraConfiguration.loadCustomPropertiesFile("targets-mapping"))).checkServices(request, response);
     }
 
     @RequestMapping(params = { "login", "url" }, method = { GET, POST })
@@ -328,8 +342,13 @@ public class Proxy {
         return false;
     }
 
-    private boolean isSameServer(HttpServletRequest request, URL url) throws UnknownHostException {
-        return InetAddress.getByName(request.getServerName()).equals(InetAddress.getByName(url.getHost()));
+    private boolean isSameServer(HttpServletRequest request, URL url) {
+        try {
+            return InetAddress.getByName(request.getServerName()).equals(InetAddress.getByName(url.getHost()));
+        } catch (UnknownHostException e) {
+            logger.error("Unknown host: " + request.getServerName());
+            return false;
+        }
     }
 
     private boolean samePathPrefix(String[] requestSegments, String target) throws MalformedURLException {
@@ -407,6 +426,20 @@ public class Proxy {
         handlePathEncodedRequests(request, response, RequestType.PUT);
     }
 
+    /**
+     * Default redirection to defaultTarget. By default returns a 302 redirect to '/header/'. The
+     * parameter can be customized in the security-proxy.properties file.
+     *
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    @RequestMapping(value = "/", params = { "!url", "!login" })
+    public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.sendRedirect(defaultTarget);
+        return;
+    }
+
     @RequestMapping(params = { "!url", "!login" }, method = RequestMethod.TRACE)
     public void handleTRACERequest(HttpServletRequest request, HttpServletResponse response) {
         handlePathEncodedRequests(request, response, RequestType.TRACE);
@@ -444,6 +477,7 @@ public class Proxy {
 
             if (sURL == null) {
                 response.sendError(404);
+                return;
             }
 
             URL url;
@@ -521,12 +555,11 @@ public class Proxy {
         }
 
         if (segments.length == 0) {
-            return concat(defaultTarget, new StringBuilder(requestURI));
+            return null;
         }
         String target = targets.get(segments[0]);
         if (target == null) {
-            target = defaultTarget;
-            return concat(defaultTarget, new StringBuilder(requestURI));
+            return null;
         } else {
             StringBuilder builder = new StringBuilder("/");
             for (int i = 1; i < segments.length; i++) {
@@ -579,25 +612,16 @@ public class Proxy {
     }
 
     private void handleRequest(HttpServletRequest request, HttpServletResponse finalResponse, RequestType requestType, String sURL, boolean localProxy) {
-        HttpClient httpclient = new DefaultHttpClient();
-        // TODO: ... At least make it configurable ...
-        httpclient.getParams().setParameter("http.socket.timeout", new Integer(300000));
-        httpclient.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, false);
+        HttpClientBuilder htb = HttpClients.custom().disableRedirectHandling();
 
-        if (isCheckHealth()) {
-            DatabaseHealthCenter.getInstance(this.host, this.port, this.database, this.user, this.password, Proxy.class.getSimpleName())
-                    .checkConnections(this.maxDatabaseConnections);
-        }
+        RequestConfig config = RequestConfig.custom().setSocketTimeout(this.httpClientTimeout).build();
+        htb.setDefaultRequestConfig(config);
 
         //
         // Handle http proxy for external request.
-        // Proxy must be configured by system variables (e.g.:
-        // -Dhttp.proxyHost=proxy -Dhttp.proxyPort=3128)
-        //
-        ProxySelectorRoutePlanner routePlanner = new ProxySelectorRoutePlanner(httpclient.getConnectionManager().getSchemeRegistry(),
-                ProxySelector.getDefault());
-
-        ((DefaultHttpClient) httpclient).setRoutePlanner(routePlanner);
+        // Proxy must be configured by system variables (e.g.: -Dhttp.proxyHost=proxy -Dhttp.proxyPort=3128)
+        htb.setRoutePlanner(new SystemDefaultRoutePlanner(ProxySelector.getDefault()));
+        HttpClient httpclient = htb.build();
 
         HttpResponse proxiedResponse = null;
         int statusCode = 500;
@@ -637,8 +661,19 @@ public class Proxy {
                 }
                 // no OGC SERVICE log if request going through /proxy/?url=
                 if (!request.getRequestURI().startsWith("/sec/proxy/")) {
-                    statsLogger.info(OGCServiceMessageFormatter.format(authentication.getName(), sURL, org));
+                    String [] roles = new String[] {""};
+                    try {
+                        Header[] rolesHeaders = proxyingRequest.getHeaders("sec-roles");
+                        if (rolesHeaders.length > 0) {
+                            roles = rolesHeaders[0].getValue().split(";");
+                        }
+                    } catch (Exception e) {
+                        logger.error("Unable to compute roles");
+                    }
+                    statsLogger.info(OGCServiceMessageFormatter.format(authentication.getName(), sURL, org, roles));
+                
                 }
+                	
             } catch (Exception e) {
                 logger.error("Unable to log the request into the statistics logger", e);
             }
@@ -808,10 +843,38 @@ public class Proxy {
         }
     }
 
+    private URI buildUri(URL url) throws URISyntaxException {
+        // Let URI constructor encode Path part
+        URI uri = new URI(url.getProtocol(),
+                url.getUserInfo(),
+                url.getHost(),
+                url.getPort(),
+                url.getPath(),
+                null, // Don't use query part because URI constructor will try to double encode it
+                // (query part is already encoded in sURL)
+                url.getRef());
+
+        // Reconstruct URL with encoded path from URI class and others parameters from URL class
+        StringBuilder rawUrl = new StringBuilder(url.getProtocol() + "://" + url.getHost());
+
+        if(url.getPort() != -1)
+            rawUrl.append(":" + String.valueOf(url.getPort()));
+
+        rawUrl.append(uri.getRawPath()); // Use encoded version from URI class
+
+        if(url.getQuery() != null)
+            rawUrl.append("?" + url.getQuery()); // Use already encoded query part
+
+        return new URI(rawUrl.toString());
+    }
+
     private HttpRequestBase makeRequest(HttpServletRequest request, RequestType requestType, String sURL) throws IOException {
         HttpRequestBase targetRequest;
         try {
-            URI uri = new URI(sURL);
+            // Split URL
+            URL url = new URL(sURL);
+            URI uri = buildUri(url);
+
             switch (requestType) {
             case GET: {
                 logger.debug("New request is: " + sURL + "\nRequest is GET");
@@ -860,7 +923,7 @@ public class Proxy {
                 break;
             }
             case TRACE: {
-                logger.debug("New request is: " + sURL + "\nRequest is POST");
+                logger.debug("New request is: " + sURL + "\nRequest is TRACE");
 
                 HttpTrace post = new HttpTrace(uri);
 
@@ -868,7 +931,7 @@ public class Proxy {
                 break;
             }
             case OPTIONS: {
-                logger.debug("New request is: " + sURL + "\nRequest is POST");
+                logger.debug("New request is: " + sURL + "\nRequest is OPTIONS");
 
                 HttpOptions post = new HttpOptions(uri);
 
@@ -876,7 +939,7 @@ public class Proxy {
                 break;
             }
             case HEAD: {
-                logger.debug("New request is: " + sURL + "\nRequest is POST");
+                logger.debug("New request is: " + sURL + "\nRequest is HEAD");
 
                 HttpHead post = new HttpHead(uri);
 
@@ -949,9 +1012,9 @@ public class Proxy {
              * the encoding within the file. It is made possible because this
              * proxy mainly forwards xml files. They all have the encoding
              * attribute in the first xml node.
-             * 
+             *
              * This is implemented as follows:
-             * 
+             *
              * A. The content type provides a charset: Nothing special, just
              * send back the stream to the client B. There is no charset
              * provided: The encoding has to be extracted from the file. The
@@ -959,7 +1022,7 @@ public class Proxy {
              * that the encoding located in the first not can be retrieved. Once
              * the charset is found, the content-type header is overridden and
              * the charset is appended.
-             * 
+             *
              * /!\ Special case: whenever data are compressed in gzip/deflate
              * the stream has to be uncompressed and re-compressed
              */
@@ -1112,7 +1175,7 @@ public class Proxy {
     /**
      * Extract the encoding from a string which is the header node of an xml
      * file
-     * 
+     *
      * @param header
      *            String that should contain the encoding attribute and its
      *            value
@@ -1141,7 +1204,7 @@ public class Proxy {
     /**
      * Gets the encoding of the content sent by the remote host: extracts the
      * content-encoding header
-     * 
+     *
      * @param headers
      *            headers of the HttpURLConnection
      * @return null if not exists otherwise name of the encoding (gzip,
@@ -1170,7 +1233,7 @@ public class Proxy {
 
     /**
      * Check if the content type is accepted by the proxy
-     * 
+     *
      * @param contentType
      * @return true: valid; false: not valid
      */
@@ -1239,42 +1302,6 @@ public class Proxy {
 
     public void setHeaderManagement(HeadersManagementStrategy headerManagement) {
         this.headerManagement = headerManagement;
-    }
-
-    public void setHost(String host){
-        this.host = host;
-    }
-
-    public void setPort(Integer port){
-        this.port = port;
-    }
-
-    public void setDatabase(String database) {
-        this.database = database;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setMaxDatabaseConnections(Integer maxDatabaseConnections) {
-        this.maxDatabaseConnections = maxDatabaseConnections;
-    }
-
-    public Boolean getCheckHealth() {
-        return this.checkHealth;
-    }
-
-    public void setCheckHealth(boolean checkHealth) {
-        this.checkHealth = checkHealth;
-    }
-
-    public boolean isCheckHealth() {
-        return this.checkHealth.booleanValue();
     }
 
     public void setRequireCharsetContentTypes(List<String> requireCharsetContentTypes) {

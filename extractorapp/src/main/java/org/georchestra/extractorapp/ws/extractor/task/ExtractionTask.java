@@ -1,12 +1,41 @@
+/*
+ * Copyright (C) 2009-2016 by the geOrchestra PSC
+ *
+ * This file is part of geOrchestra.
+ *
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.georchestra.extractorapp.ws.extractor.task;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
 import java.net.MalformedURLException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.extractorapp.ws.extractor.ExtractorController;
@@ -17,7 +46,9 @@ import org.georchestra.extractorapp.ws.extractor.RequestConfiguration;
 import org.georchestra.extractorapp.ws.extractor.WcsExtractor;
 import org.georchestra.extractorapp.ws.extractor.WfsExtractor;
 import org.georchestra.extractorapp.ws.extractor.csw.CSWExtractor;
+import org.geotools.referencing.CRS;
 import org.json.JSONException;
+import org.opengis.geometry.BoundingBox;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
@@ -32,15 +63,18 @@ import org.opengis.referencing.operation.TransformException;
 public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 	private static final Log LOG = LogFactory.getLog(ExtractionTask.class
 			.getPackage().getName());
+	private final ComboPooledDataSource datasource;
 
 	private static final int EXTRACTION_ATTEMPTS = 3;
 	public final ExecutionMetadata executionMetadata;
 
 	private RequestConfiguration requestConfig;
+	private Long logId;
 
-	public ExtractionTask(RequestConfiguration requestConfig)
+	public ExtractionTask(RequestConfiguration requestConfig, ComboPooledDataSource datasource)
 			throws NoSuchAuthorityCodeException, MalformedURLException, JSONException, FactoryException {
 		this.requestConfig = requestConfig;
+		this.datasource = datasource;
 		this.executionMetadata = new ExecutionMetadata(
 				this.requestConfig.requestUuid,
 				this.requestConfig.username,
@@ -50,6 +84,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 	public ExtractionTask(ExtractionTask toCopy) {
 
 		this.requestConfig = toCopy.requestConfig;
+		this.datasource = toCopy.datasource;
 		this.executionMetadata = toCopy.executionMetadata;
 	}
 
@@ -58,6 +93,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 	public void run() {
 		executionMetadata.setRunning();
 		requestConfig.setThreadLocal();
+		this.statSetRunning();
 
 		final File tmpDir = FileUtils.createTempDirectory();
 		final File tmpExtractionBundle = mkDirTmpExtractionBundle(tmpDir, requestConfig.extractionFolderPrefix+requestConfig.requestUuid .toString());
@@ -68,7 +104,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 					+ tmpExtractionBundle);
 
 			final File failureFile = new File(tmpExtractionBundle,
-					"failures.html");
+					"failures.txt");
 			final List<String> successes = new ArrayList<String>();
 			final List<String> failures = new ArrayList<String>();
 			final List<String> oversized = new ArrayList<String>();
@@ -141,8 +177,6 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 				}
 			}
 
-			closeFailuresFile(failureFile);
-
 			File archive = archiveExtraction(tmpExtractionBundle);
 			long fileSize = archive.length();
 			long end = System.currentTimeMillis();
@@ -165,7 +199,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 			executionMetadata.setCompleted();
 			FileUtils.delete(tmpExtractionBundle);
 			FileUtils.delete(tmpDir);
-
+			this.statSetCompleted();
 		}
 	}
 
@@ -222,6 +256,9 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 
 	private void handleExtractionException(ExtractorLayerRequest request,
 			Throwable e, File failureFile) {
+
+		this.statSetError(request);
+
 		if (!failureFile.getParentFile().exists()) {
 			throw new AssertionError(
 					"The temporary extraction bundle directory: "
@@ -235,92 +272,25 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 		e.printStackTrace(new PrintWriter(stackTrace));
 		openFailuresFile(failureFile);
 		String message = String
-				.format("<li>Erreur d'accès à la couche: %s \n"
-						+ "  <ul>\n"
-						+ "    <li>Serveur: %s</li>\n"
-						+ "    <li>Couche: %s</li>\n"
-						+ "    <li>Exception (à destination de l'administrateur): <![CDATA[%s]]></li>\n"
-						+ "    <li><pre><code style=\"font-size: 1.2em;\"><![CDATA[%s]]></code></pre></li>\n"
-						+ "  </ul>\n" + "</li>\n", request._layerName,
+				.format("\nError accessing layer: %s \n"
+						+ "\n"
+						+ " * Service: %s \n"
+						+ " * Layer: %s \n"
+						+ " * Exception: \n"
+						+ " %s \n", request._layerName,
 						request._url, request._layerName, e.getLocalizedMessage().substring(0, Math.min(200,
-						e.getLocalizedMessage().length())).replaceAll("<","&lt;"),
-						stackTrace.toString().replaceAll("<","&lt;"));
+						e.getLocalizedMessage().length())),
+						stackTrace.toString());
 		writeToFile(failureFile, message, true);
 	}
 
 	private void openFailuresFile(File failureFile) {
 		if (!failureFile.exists()) {
-			String msg = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-					+ "<html>\n"
-					+ "<head>\n"
-					+ "<title>"
-					+ "Erreurs lors de l'extraction"
-					+ "</title>\n" +
-					"<style type=\"text/css\">" +
-					"html { margin: 0; padding: 0; }\n" +
-					"body {  font: 75% georgia, sans-serif; line-height: 1.88889; color: #555753;  background: #fff url(blossoms.jpg) " +
-					"no-repeat bottom right;  margin: 0;  padding: 0; }\n" +
-					"p {  margin-top: 0;  text-align: justify; }\n" +
-					"h3 {  font: italic normal 1.4em georgia, sans-serif; letter-spacing: 1px;  margin-bottom: 0;  color: #7D775C; }\n" +
-					"a:link {  font-weight: bold;  text-decoration: none;  color: #B7A5DF; }\n" +
-					"a:visited {  font-weight: bold;  text-decoration: none;  color: #D4CDDC; }\n" +
-					"a:hover, a:focus, a:active {  text-decoration: underline;  color: #9685BA; }\n" +
-					"abbr { border-bottom: none; }\n" +
-					"\n" +
-					"\n" +
-					"/* specific divs */\n" +
-					".page-wrapper {  background: url(zen-bg.jpg) no-repeat top left;  padding: 0 175px 0 110px;   margin: 0;  " +
-					"position: relative; }\n" +
-					"\n" +
-					".intro {  min-width: 470px; width: 100%; }\n" +
-					"\n" +
-					"header h1 {  background: transparent url(h1.gif) no-repeat top left; margin-top: 10px; display: block; width: " +
-					"219px; height: 87px; float: left; text-indent: 100%; white-space: nowrap; overflow: hidden; }\n" +
-					"header h2 {  background: transparent url(h2.gif) no-repeat top left;  margin-top: 58px;  margin-bottom: 40px;  " +
-					"width: 200px;  height: 18px;  float: right; text-indent: 100%; white-space: nowrap; overflow: hidden; }\n" +
-					"header { padding-top: 20px; height: 87px;}\n" +
-					"\n" +
-					".summary { clear: both;  margin: 20px 20px 20px 10px;  width: 160px;  float: left; }\n" +
-					".summary p { font: italic 1.1em/2.2 georgia;  text-align: center; }\n" +
-					"\n" +
-					".preamble { clear: right;  padding: 0px 10px 0 10px; }\n" +
-					".supporting {\t padding-left: 10px;  margin-bottom: 40px; }\n" +
-					"\n" +
-					"footer {  text-align: center;  }\n" +
-					"footer a:link, footer a:visited {  margin-right: 20px;  }\n" +
-					"\n" +
-					".sidebar { margin-left: 600px;  position: absolute;  top: 0;  right: 0; }\n" +
-					".sidebar .wrapper {  font: 10px verdana, sans-serif;  background: transparent url(paper-bg.jpg) top left repeat-y;" +
-					"  padding: 10px;  margin-top: 150px;  width: 130px;  }\n" +
-					".sidebar h3.select {  background: transparent url(h3.gif) no-repeat top left;  margin: 10px 0 5px 0;  width: 97px;" +
-					"  height: 16px; text-indent: 100%; white-space: nowrap; overflow: hidden; }\n" +
-					".sidebar h3.archives {  background: transparent url(h5.gif) no-repeat top left;  margin: 25px 0 5px 0;  " +
-					"width:57px;  height: 14px; text-indent: 100%; white-space: nowrap; overflow: hidden; }\n" +
-					".sidebar h3.resources {  background: transparent url(h6.gif) no-repeat top left;  margin: 25px 0 5px 0;  " +
-					"width:63px;  height: 10px; text-indent: 100%; white-space: nowrap; overflow: hidden; }\n" +
-					"\n" +
-					"\n" +
-					".sidebar ul { margin: 0; padding: 0; }\n" +
-					".sidebar li { line-height: 1.3em;  background: transparent url(cr1.gif) no-repeat top center;  display: block;  " +
-					"padding-top: 5px;  margin-bottom: 5px; list-style-type: none; }\n" +
-					".sidebar li a:link { color: #988F5E; }\n" +
-					".sidebar li a:visited { color: #B3AE94; }\n" +
-					"\n" +
-					"\n" +
-					".extra1 { background: transparent url(cr2.gif) top left no-repeat;  position: absolute;  top: 40px;  right: 0;  width: 148px;  height: 110px; }"
-					+ "</style></head><body>\n"
-					+ "L'extraction a échoué pour certaines données.  "
-					+ "Contacter l'administrateur concernant les serveurs/couches suivants\n"
-					+ "\n\nToutes les couches ont été contactées "
+			String msg = "There were errors during the extraction process\n"
+					+ "All services have been polled "
 					+ EXTRACTION_ATTEMPTS
-					+ " fois afin d'extraire les données.\n\n" + "<ul>";
+					+ " times.\n";
 			writeToFile(failureFile, msg, false);
-		}
-	}
-
-	private void closeFailuresFile(File failureFile) {
-		if (failureFile.exists()) {
-			writeToFile(failureFile, "</ul></body></html>", true);
 		}
 	}
 
@@ -386,7 +356,8 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 		WfsExtractor extractor = new WfsExtractor(requestBaseDir,
 				requestConfig.adminCredentials.getUserName(),
 				requestConfig.adminCredentials.getPassword(),
-				requestConfig.secureHost);
+				requestConfig.secureHost,
+				requestConfig.userAgent);
 
 		extractor.checkPermission(request, requestConfig.secureHost, requestConfig.username, requestConfig.roles);
 
@@ -408,7 +379,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 
 		String cswHost = request._isoMetadataURL.getHost();
 
-		CSWExtractor extractor = new CSWExtractor(layerDirectory, adminUserName, adminPassword, cswHost);
+		CSWExtractor extractor = new CSWExtractor(layerDirectory, adminUserName, adminPassword, cswHost, requestConfig.userAgent);
 
 		extractor.checkPermission(request, requestConfig.username, requestConfig.roles);
 
@@ -429,4 +400,157 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 	public boolean equalId(String uuid) {
 		return requestConfig.requestUuid.toString().equals(uuid);
 	}
+
+
+	/*
+	 * Stats methods
+	 */
+
+	private void statSetRunning() {
+
+		Connection c = null;
+		PreparedStatement pst = null;
+		try {
+			c = this.datasource.getConnection();
+
+			pst = c.prepareStatement("INSERT INTO extractorapp.extractor_log " +
+					"(username, " +  // 1
+					"roles, " +      // 2
+					"org, " +        // 3
+					"request_id) " + // 4
+					"VALUES (?, ?, ?, ?)",
+					Statement.RETURN_GENERATED_KEYS);
+
+			pst.setString(1, this.requestConfig.username);
+			pst.setArray(2, c.createArrayOf("varchar", this.requestConfig.roles.split("\\s*;\\s*")));
+			pst.setString(3, this.requestConfig.org);
+			pst.setString(4, this.requestConfig.requestUuid.toString());
+
+			this.logId = this.executeAndGetGeneratedKey(pst);
+			pst.close();
+
+			pst = c.prepareStatement("INSERT INTO extractorapp.extractor_layer_log " +
+					"(extractor_log_id, " +  // 1
+					"projection, " +         // 2
+					"resolution, " +         // 3
+					"format, " +             // 4
+					"bbox, " +               // 5, 6, 7, 8
+					"owstype, " +            // 9
+					"owsurl, " +             // 10
+					"layer_name) " +         // 11
+					"VALUES (?, ?, ?, ?, " +
+					"ST_SetSRID(ST_MakeBox2D(ST_Point(?, ?), ST_Point(? ,?)), 4326), " +
+					"?, ?, ?)",
+					Statement.RETURN_GENERATED_KEYS);
+
+			pst.setLong(1, this.logId);
+
+			for (ExtractorLayerRequest layerRequest : this.requestConfig.requests) {
+				pst.setString(2, layerRequest._epsg);
+				pst.setDouble(3, layerRequest._resolution);
+				pst.setString(4, layerRequest._format);
+				BoundingBox bbox = layerRequest._bbox.toBounds(CRS.decode("EPSG:4326"));
+				pst.setDouble(5, bbox.getMinX());
+				pst.setDouble(6, bbox.getMinY());
+				pst.setDouble(7, bbox.getMaxX());
+				pst.setDouble(8, bbox.getMaxY());
+				pst.setString(9, layerRequest._owsType.toString());
+				pst.setString(10, layerRequest._url.toString());
+				pst.setString(11, layerRequest._layerName);
+
+				layerRequest.setDbLogId(this.executeAndGetGeneratedKey(pst));
+			}
+
+		} catch (SQLException e) {
+			LOG.error(e.getMessage());
+		} catch (TransformException e) {
+			LOG.error(e.getMessage());
+		} catch (NoSuchAuthorityCodeException e) {
+			LOG.error(e.getMessage());
+		} catch (FactoryException e) {
+			LOG.error(e.getMessage());
+		} finally {
+			this.closeDbLinks(c, pst);
+		}
+
+	}
+
+	private void statSetCompleted() {
+
+		Connection c = null;
+		PreparedStatement pst = null;
+		try {
+			c = this.datasource.getConnection();
+
+			pst = c.prepareStatement("UPDATE extractorapp.extractor_layer_log " +
+					"SET is_successful = TRUE " +
+					"WHERE extractor_log_id = ? AND is_successful IS NULL");
+
+			pst.setLong(1, this.logId);
+			pst.executeUpdate();
+			pst.close();
+
+			// Update duration
+			pst = c.prepareStatement("UPDATE extractorapp.extractor_log " +
+					"SET duration = NOW() - creation_date " +
+					"WHERE id = ?");
+
+			pst.setLong(1, this.logId);
+			pst.executeUpdate();
+
+		} catch (SQLException e) {
+			LOG.error(e.getMessage());
+		} finally {
+			this.closeDbLinks(c, pst);
+		}
+
+	}
+
+	private void statSetError(ExtractorLayerRequest request) {
+
+		Connection c = null;
+		PreparedStatement pst = null;
+		try {
+			c = this.datasource.getConnection();
+
+			pst = c.prepareStatement("UPDATE extractorapp.extractor_layer_log " +
+					"SET is_successful = FALSE " +
+					"WHERE id = ?");
+
+			pst.setLong(1, request.getDbLogId());
+			pst.executeUpdate();
+		} catch (SQLException e) {
+			LOG.error(e.getMessage());
+		} finally {
+			this.closeDbLinks(c, pst);
+		}
+	}
+
+	private void closeDbLinks(Connection c, PreparedStatement pst) {
+		try {
+			if(pst != null)
+				pst.close();
+			if(c != null)
+				c.close();
+		} catch (SQLException e) {
+			LOG.warn(e.getMessage());
+		}
+	}
+
+	private Long executeAndGetGeneratedKey(PreparedStatement pst) throws SQLException {
+
+		int affectedRows = pst.executeUpdate();
+		if (affectedRows == 0)
+			throw new SQLException("Failed to insert new stats");
+
+		ResultSet generatedKeys = pst.getGeneratedKeys();
+		Long logId;
+		if(generatedKeys.next())
+			logId = generatedKeys.getLong(1);
+		else
+			throw new SQLException("Failed to insert new stats");
+		generatedKeys.close();
+		return logId;
+	}
+
 }

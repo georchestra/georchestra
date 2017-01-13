@@ -135,7 +135,7 @@ Point your browser to [http://localhost:8283/extractorapp/?noheader=true](http:/
 Install the [Modify Headers](https://addons.mozilla.org/en-US/firefox/addon/modify-headers/) Firefox extension, and set the headers to:
  * sec-username = your_desired_login
  * sec-email = you@provider.com
- * sec-roles = ROLE_SV_USER or ROLE_SV_EDITOR or ROLE_SV_ADMIN
+ * sec-roles = ROLE_USER or ROLE_GN_EDITOR or ROLE_GN_ADMIN
  
 Note: this works only because the security proxy is not runnning.
 

@@ -1,15 +1,20 @@
 /*
- * Copyright (C) Camptocamp
+ * Copyright (C) 2009-2016 by the geOrchestra PSC
  *
- * This file is part of geOrchestra
+ * This file is part of geOrchestra.
  *
- * geOrchestra is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
  *
- * You should have received a copy of the GNU General Public License
- * along with geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -106,7 +111,7 @@ Ext.namespace("GEOR");
                 "We cannot produce images with more than MAX million RGB pixels.",
                 "Continue anyway ?"
             ].join('<br/>'), {
-                'MAX': Math.round(GEOR.config.MAX_COVERAGE_EXTRACTION_SIZE/3000000),
+                'MAX': Math.round(GEOR.config.MAX_COVERAGE_EXTRACTION_SIZE/1000000),
                 'LAYERS': oversized.join(', ')
             }), function(btn, text){
                 if (btn == 'yes'){
@@ -166,7 +171,7 @@ Ext.namespace("GEOR");
          * Setting of Ext global vars.
          */
 
-        Ext.BLANK_IMAGE_URL = "resources/lib/externals/ext/resources/images/default/s.gif";
+        Ext.BLANK_IMAGE_URL = "resources/app/img/s.gif";
         Ext.apply(Ext.MessageBox.buttonText, {
             yes: tr("Yes"),
             no: tr("No"),

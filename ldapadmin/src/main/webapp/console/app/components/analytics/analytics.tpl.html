@@ -1,0 +1,31 @@
+<section class="analytics">
+
+  <date class="stats-conf" model="analytics.date" callback="analytics.load(analytics.group)"></date>
+
+  <select class="form-control stats-conf" ng-model="analytics.group" ng-change="analytics.setGroup()"
+    ng-options="group.cn as group.label for group in analytics.groups" chosen>
+  </select>
+
+  <h4>
+    <span translate>analytics.title</span>
+    <span ng-if="analytics.group != 'all'">
+      <span translate>for</span>
+      {{analytics.group}}
+    </span>
+  </h4>
+
+  <hr>
+
+  <div class="row">
+    <stats data="analytics.requests" type="'line'" config="analytics.config.requests"
+           title="'analytics.requests'" class="col-md-6"/>
+    <stats data="analytics.layers" type="'bar'" config="analytics.config.layers"
+           title="'analytics.layers'" class="col-md-6" csv-config="analytics.usageOptions"/>
+  </div>
+  <hr>
+  <div class="row">
+    <stats data="analytics.extractions" type="'bar'" config="analytics.config.extractions"
+           title="'analytics.extractions'" class="col-md-4" csv-config="analytics.extractionOptions"/>
+  </div>
+
+</section>

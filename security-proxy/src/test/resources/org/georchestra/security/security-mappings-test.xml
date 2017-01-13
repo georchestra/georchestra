@@ -1,6 +1,6 @@
 <http>
-  <intercept-url pattern=".*\?.*login.*" access="ROLE_SV_USER,ROLE_SV_EDITOR,ROLE_SV_REVIEWER,ROLE_SV_ADMIN,ROLE_ADMINISTRATOR" />
-  <intercept-url pattern=".*\?.*casLogin.*" access="ROLE_SV_USER,ROLE_SV_EDITOR,ROLE_SV_REVIEWER,ROLE_SV_ADMIN,ROLE_ADMINISTRATOR" />
+  <intercept-url pattern=".*\?.*login.*" access="ROLE_USER,ROLE_GN_EDITOR,ROLE_GN_REVIEWER,ROLE_GN_ADMIN,ROLE_ADMINISTRATOR" />
+  <intercept-url pattern=".*\?.*casLogin.*" access="ROLE_USER,ROLE_GN_EDITOR,ROLE_GN_REVIEWER,ROLE_GN_ADMIN,ROLE_ADMINISTRATOR" />
   <intercept-url pattern="/extractorapp/admin/.*" access="ROLE_ADMINISTRATOR" />
   <intercept-url pattern="/extractorapp/jobs/.*" access="ROLE_ADMINISTRATOR" />
   <intercept-url pattern="/extractorapp/.*" access="ROLE_MOD_EXTRACTORAPP" />
@@ -12,6 +12,6 @@
   <intercept-url pattern="/ldapadmin/account/changePassword" access="IS_AUTHENTICATED_FULLY" />
   <intercept-url pattern="/testPage" access="IS_AUTHENTICATED_FULLY" />
   <intercept-url pattern=".*/ogcproxy/.*" access="ROLE_NO_ONE" />
-  <intercept-url pattern=".*" access="IS_AUTHENTICATED_ANONYMOUSLY,ROLE_SV_USER,ROLE_SV_EDITOR,ROLE_SV_REVIEWER,ROLE_SV_ADMIN,ROLE_ADMINISTRATOR" />
+  <intercept-url pattern=".*" access="IS_AUTHENTICATED_ANONYMOUSLY,ROLE_USER,ROLE_GN_EDITOR,ROLE_GN_REVIEWER,ROLE_GN_ADMIN,ROLE_ADMINISTRATOR" />
 </http>
 

@@ -30,9 +30,14 @@ ADDONS: [...,
 }], ...
 ```
 
-Note that it is possible to alter the default drawing style with the following option:
+Note that it is also possible to:
+ * alter the default drawing style with the `graphicStyle` option
+ * change the number of decimals in a measure with the `decimals` option (defaults to 2)
+
+eg:
 ```js
     "options": {
+        "decimals": 1,
         "graphicStyle": {
             "Point": {
                 "pointRadius": 4,

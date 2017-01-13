@@ -1,0 +1,21 @@
+[{
+    "id": "notes_0",
+    "enabled": false,
+    "name": "Notes",
+    "options": {
+        "backend": "backend1",
+        "icon": "img/marker-18.png"
+    },
+    "title": {
+        "en": "Notes : Report map issues",
+        "es": "Notes : Report map issues",
+        "fr": "Notes : Signaler des anomalies cartographiques",
+        "de": "Notes : Report map issues"
+    },
+    "description": {
+        "en": "Create notes to report map issues",
+        "es": "Create notes to report map issues",
+        "fr": "Créez des notes pour signaler des anomalies cartographiques",
+        "de": "Create notes to report map issues"
+    }
+}]

@@ -23,10 +23,10 @@ git push origin 13.12
 
 There's nothing more to do here !
 
-## LDAP
+## Datadir
 
 Same as above !
-We have to create a dedicated branch for the new release.
+We have to create a dedicated branch in https://github.com/georchestra/datadir for the new release.
 
 ## GeoNetwork
 
@@ -118,6 +118,7 @@ cd -
 ```
 
 Manually update the files mentionning the current release version (```README.md``` and ```RELEASE_NOTES.md```).
+Also update the branch name for the Travis status logo.
 
 Commit and propagate the changes:
 
@@ -164,5 +165,5 @@ git push origin master
 
 geOrchestra 13.12 is now released, congrats !
 
-Finally, change the default branch to latest stable in the [georchestra](https://github.com/georchestra/georchestra/settings), [geonetwork](https://github.com/georchestra/geonetwork/settings), [template](https://github.com/georchestra/template/settings) and [LDAP](https://github.com/georchestra/LDAP/settings) repositories.
+Finally, change the default branch to latest stable in the [georchestra](https://github.com/georchestra/georchestra/settings), [geonetwork](https://github.com/georchestra/geonetwork/settings), [template](https://github.com/georchestra/template/settings) and [datadir](https://github.com/georchestra/datadir/settings) repositories.
 ... and eventually in the geoserver and geofence repositories too.

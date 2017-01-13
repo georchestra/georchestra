@@ -18,8 +18,13 @@ We currently have the following addons available:
  * [streetview](streetview/README.md) ... obviously based on the Google Street View Image API.
  * [osm2geor](osm2geor/README.md) display vector data from OSM (got from the Overpass API) into a vector layer.
  * [measure](measure/README.md) to perform simple distance and area measurements (that cannot be printed).
+ * [measurements](measurements/README.md) to perform advanced distance and area measurements (which can be printed & exported to KML).
  * [locateme](locateme/README.md) allows users to track their location on the map.
  * [fullscreen](fullscreen/README.md) to (obviously) make the map fullscreen.
+ * [notes](notes/README.md) to report map issues.
+ * [atlas](atlas/README.md) allows users to print PDF with one feature per page.
+ * [coordinates](coordinates/README.md) to let the user copy location coordinates.
+ * [goto](goto/README.md) allows users to recenter the map on a location, given its coordinates.
 
 
 Finding more addons
@@ -35,9 +40,6 @@ There are other places where one can find contributed addons:
 
 Deploying addons
 =================
-
-
-
 
 ## Without georchestra.datadir
 
@@ -65,8 +67,17 @@ Typically, the config.json block was previously contained in the GEOR_custom.js 
 ## Using georchestra.datadir
 
 If you are using the georchestra.datadir environment variable, the previous
-behaviour applies, but if other addons are available into the
-georchestra.datadir, they can override the default ones provided in the webapp.
+behaviour applies, but if other addons are available in the
+"georchestra datadir", they override the default ones provided by the webapp.
+
+Loading addons
+==============
+
+The platform administrator decides which addons will be available to the end users.  
+Users may choose the ones they want among these addons, through the dedicated UI.
+
+Note that it is also possible to force the viewer to use a given list of addons, eg with:
+http://my.sdi.org/mapfishapp/?addons=magnifier_0,annotation_0 (in which magnifier_0 and annotation_0 are the addon ids)
 
 
 Addon placement
@@ -125,6 +136,57 @@ If no target is specified, the addon will have the default behavior (as before) 
 In order to achieve this, addons are supposed to inherit from the ```GEOR.Addons.Base``` class. 
 Older addons still work, but they will not take advantage of the newer capability.
 
+Addon in Actions menu
+=====================
+
+Addon can add a menu item in both Result Panel and  Layer Tree Actions menus.
+
+`config.json` must have `options.resultPanelAction` set to `true` for inclusion in the Result Panel Actions menu.
+`options.layerTreeAction` must be set to `true` for inclusion in the Layer Tree Actions menu.
+.
+
+The menu item will use data from `config.json` to set their text and image properties.
+
+A handler will be assiocated to the menu item. For Result Panel, the addon must have an API method with
+the following signature:
+
+```
+    /**
+     * @function resultPanelHandler
+     *
+     * Handler for the result panel Actions menu.
+     *
+     * scope is set for having the addons as this
+     *
+     * @param menuitem - menuitem which will receive the handler
+     * @param event - event which trigger the action
+     * @param resultpanel - resultpanel on which the handler must be operated
+     */
+    resultPanelHandler: function(menuitem, event, resultpanel) {
+        ...
+    }
+```
+
+For the Layer Tree, the addon must have an API method with the signature:
+
+```
+    /**
+     * @function layerTreeHandler
+     *
+     * Handler for the layer tree Actions menu.
+     *
+     * scope is set for having the addons as this
+     *
+     * @param menuitem - menuitem which will receive the handler
+     * @param event - event which trigger the action
+     * @param layerRecord - layerRecord on which operate
+     */
+    layerTreeHandler: function(menuitem, event, layerRecord) {
+    ...
+    }
+```
+
+
 
 Developers' corner
 ===================
@@ -145,4 +207,21 @@ Finally, the addon's ```init``` method is called with an ```Ext.data.Record``` o
 If the addon instance exposes a public property named ```item```, the referenced object is inserted in the "tools" menu.
 
 
-If developing a new addon, you might want to start from a simple example, eg the [magnifier](magnifier/README.md) addon.
+If developing a new addon, you might want to start from a simple example, eg the [magnifier](magnifier/README.md) addon. There is also a [template](template/README.md) which may be useful to jump-start the development process.
+
+If you addon has many javascript files and you want to provide a minified version of the addon for production while retaining the possibility to view/debug the full javascript, ```manifest.json``` can provide two different lists of files:
+
+```js
+{
+...
+    "js": [ "js/minified.js" ],
+    "debugjs": [
+        "js/first.js",
+        "js/second.js",
+        "js/third.js"
+    ]
+...
+```
+
+This way, if ```debug``` is set in the url as a parameter, the files listed in ```debugjs``` will be loaded instead of the minified version.
+If ```debugjs``` isnt defined, the files listed in ```js``` are loaded by default.

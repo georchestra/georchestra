@@ -1,8 +1,27 @@
-/**
- * 
+/*
+ * Copyright (C) 2009-2016 by the geOrchestra PSC
+ *
+ * This file is part of geOrchestra.
+ *
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.georchestra.ogcservstatistics.dataservices;
 
+import org.georchestra.ogcservstatistics.log4j.OGCServiceParser;
+
+import java.sql.Array;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Map;
@@ -15,15 +34,14 @@ import java.util.Map;
  */
 public final class InsertCommand extends AbstractDataCommand {
 
-	
-	public final static String DATE_COLUMN = "date";
-	public final static String USER__COLUMN = "user_name";
-	public final static String SERVICE_COLUMN = "service";
-	public final static String LAYER_COLUMN = "layer";
-	public final static String REQUEST_COLUMN = "request";
-	public final static String ORG_COLUMN = "org";
-	
-	private static final String SQL_INSERT= "INSERT INTO ogcstatistics.ogc_services_log("+USER__COLUMN+","+ DATE_COLUMN+ ","+  SERVICE_COLUMN+ "," +LAYER_COLUMN+ "," +REQUEST_COLUMN+ "," +ORG_COLUMN+ ") VALUES (?, ?, ?, ?, ?,?)";
+	private static final String SQL_INSERT= "INSERT INTO ogcstatistics.ogc_services_log(" + OGCServiceParser.USER_COLUMN +
+			"," + OGCServiceParser.DATE_COLUMN +
+			"," + OGCServiceParser.SERVICE_COLUMN +
+			"," + OGCServiceParser.LAYER_COLUMN +
+			"," + OGCServiceParser.REQUEST_COLUMN +
+			"," + OGCServiceParser.ORG_COLUMN +
+			"," + OGCServiceParser.SECROLE_COLUMN +
+			") VALUES (?, ?, ?, ?, ?, ?, string_to_array(?, ','))";
 	
 	private Map<String, Object> rowValues;
 	
@@ -38,16 +56,16 @@ public final class InsertCommand extends AbstractDataCommand {
         assert this.connection != null: "database connection is null, use setConnection";
 
         PreparedStatement pStmt = this.connection.prepareStatement(SQL_INSERT);
-        pStmt.setString(1, (String)this.rowValues.get(USER__COLUMN));
+        pStmt.setString(1, (String)this.rowValues.get(OGCServiceParser.USER_COLUMN));
+
+		java.sql.Timestamp sqlDate = new java.sql.Timestamp(((java.util.Date) this.rowValues.get(OGCServiceParser.DATE_COLUMN)).getTime());
+		pStmt.setTimestamp(2, sqlDate);
+		pStmt.setString(3, ((String)this.rowValues.get(OGCServiceParser.SERVICE_COLUMN)).trim());
+        pStmt.setString(4, ((String)this.rowValues.get(OGCServiceParser.LAYER_COLUMN)).trim());
+        pStmt.setString(5, ((String)this.rowValues.get(OGCServiceParser.REQUEST_COLUMN)).trim());
+        pStmt.setString(6, ((String)this.rowValues.get(OGCServiceParser.ORG_COLUMN)).trim());
+        pStmt.setString(7, ((String)this.rowValues.get(OGCServiceParser.SECROLE_COLUMN)).trim());
         
-        java.sql.Date sqlDate = new java.sql.Date(((java.util.Date) this.rowValues.get(DATE_COLUMN)).getTime());
-		pStmt.setDate(2, sqlDate);
-        
-		pStmt.setString(3, ((String)this.rowValues.get(SERVICE_COLUMN)).trim());
-        pStmt.setString(4, ((String)this.rowValues.get(LAYER_COLUMN)).trim());
-        pStmt.setString(5, ((String)this.rowValues.get(REQUEST_COLUMN)).trim());
-        pStmt.setString(6, ((String)this.rowValues.get(ORG_COLUMN)).trim());
-		
 		return pStmt;
 	}
 
@@ -61,13 +79,8 @@ public final class InsertCommand extends AbstractDataCommand {
         try {
         	this.connection.setAutoCommit(false);
             pStmt = prepareStatement();
-            int updatedRows = pStmt.executeUpdate();
+            pStmt.executeUpdate();
             this.connection.commit();
-            
-            if(updatedRows < 1){
-                throw new DataCommandException("Failed inserting the OGC Service Log. " + pStmt.toString());
-            }
-
         } catch (SQLException e) {
         	if(this.connection != null){
         		try {

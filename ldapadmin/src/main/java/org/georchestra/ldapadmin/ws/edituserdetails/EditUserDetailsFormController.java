@@ -1,23 +1,35 @@
-/**
+/*
+ * Copyright (C) 2009-2016 by the geOrchestra PSC
  *
+ * This file is part of geOrchestra.
+ *
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.georchestra.ldapadmin.ws.edituserdetails;
-
-import java.io.IOException;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
 import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
+import org.georchestra.ldapadmin.ds.OrgsDao;
 import org.georchestra.ldapadmin.dto.Account;
-import org.georchestra.ldapadmin.ws.utils.UserUtils;
+import org.georchestra.ldapadmin.dto.Org;
 import org.georchestra.ldapadmin.ws.utils.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -26,6 +38,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
 
 /**
  * Support for the Edit Account user interactions.
@@ -37,14 +54,16 @@ import org.springframework.web.bind.support.SessionStatus;
 @SessionAttributes(types=EditUserDetailsFormBean.class)
 public class EditUserDetailsFormController {
 
+	private OrgsDao orgsDao;
 	private AccountDao accountDao;
 
-	private Account accountBackup;
-
+	private Validation validation;
 
 	@Autowired
-	public EditUserDetailsFormController( AccountDao dao){
+	public EditUserDetailsFormController(AccountDao dao, OrgsDao orgsDao, Validation validation){
 		this.accountDao = dao;
+		this.orgsDao = orgsDao;
+		this.validation = validation;
 	}
 
 	private static final String[] fields = {"uid", "firstName", "surname", "email", "title", "phone", "facsimile", "org", "description", "postalAddress"};
@@ -75,14 +94,12 @@ public class EditUserDetailsFormController {
 
 		try {
 
-			this.accountBackup = this.accountDao.findByUID(request.getHeader("sec-username"));
-
 			HttpSession session = request.getSession();
-			EditUserDetailsFormBean formBean = createForm(this.accountBackup);
+			EditUserDetailsFormBean formBean = createForm(this.accountDao.findByUID(request.getHeader("sec-username")));
 
 			model.addAttribute(formBean);
 			for (String f : fields) {
-				if (Validation.isFieldRequired(f)) {
+				if (this.validation.isUserFieldRequired(f)) {
 					session.setAttribute(f + "Required", "true");
 				}
 			}
@@ -100,7 +117,6 @@ public class EditUserDetailsFormController {
 	 * Creates a form based on the account data.
 	 *
 	 * @param account input data
-	 * @param formBean (out)
 	 */
 	private EditUserDetailsFormBean createForm(final Account account) {
 
@@ -108,16 +124,19 @@ public class EditUserDetailsFormController {
 
 		formBean.setUid(account.getUid());
 		formBean.setEmail(account.getEmail());
-
 		formBean.setFirstName(account.getGivenName());
 		formBean.setSurname(account.getSurname());
 		formBean.setTitle(account.getTitle());
-
 		formBean.setPhone(account.getPhone());
 		formBean.setFacsimile(account.getFacsimile());
-		formBean.setOrg(account.getOrg());
 		formBean.setDescription(account.getDescription());
 		formBean.setPostalAddress(account.getPostalAddress());
+		if(account.getOrg().length() > 0) {
+			Org org = this.orgsDao.findByCommonName(account.getOrg());
+			formBean.setOrg(org.getName());
+		} else {
+			formBean.setOrg("");
+		}
 
 		return formBean;
 	}
@@ -144,32 +163,33 @@ public class EditUserDetailsFormController {
 						throws IOException {
 		String uid = formBean.getUid();
 		try {
-			if(!request.getHeader("sec-username").equals(uid)){
+			if(!request.getHeader("sec-username").equals(uid))
 				response.sendError(HttpServletResponse.SC_FORBIDDEN);
-			}
 		} catch (NullPointerException e) {
 			response.sendError(HttpServletResponse.SC_FORBIDDEN);
 		}
 
-		UserUtils.validate( formBean.getFirstName(), formBean.getSurname(), resultErrors );
-		Validation.validateField("phone", formBean.getPhone(), resultErrors);
-		Validation.validateField("facsimile", formBean.getFacsimile(), resultErrors);
-		Validation.validateField("title", formBean.getTitle(), resultErrors);
-		Validation.validateField("org", formBean.getOrg(), resultErrors);
-		Validation.validateField("description", formBean.getDescription(), resultErrors);
-		Validation.validateField("postalAddress", formBean.getPostalAddress(), resultErrors);
+		// Validate first name and surname
+		if(!StringUtils.hasLength(formBean.getFirstName()) && this.validation.isUserFieldRequired("firstName"))
+			resultErrors.rejectValue("firstName", "firstName.error.required", "required");
 
-		if(resultErrors.hasErrors()){
+		if(!StringUtils.hasLength( formBean.getSurname() ) && this.validation.isUserFieldRequired("surname"))
+			resultErrors.rejectValue("surname", "surname.error.required", "required");
 
+		this.validation.validateUserField("phone", formBean.getPhone(), resultErrors);
+		this.validation.validateUserField("facsimile", formBean.getFacsimile(), resultErrors);
+		this.validation.validateUserField("title", formBean.getTitle(), resultErrors);
+		this.validation.validateUserField("description", formBean.getDescription(), resultErrors);
+		this.validation.validateUserField("postalAddress", formBean.getPostalAddress(), resultErrors);
+
+		if(resultErrors.hasErrors())
 			return "editUserDetailsForm";
-		}
 
 		// updates the account details
 		try {
 
-			Account account = modify(this.accountBackup, formBean);
-
-			this.accountDao.update(account);
+			Account account = modify(this.accountDao.findByUID(request.getHeader("sec-username")), formBean);
+			this.accountDao.update(account, request.getHeader("sec-username"));
 
 			model.addAttribute("success", true);
 
@@ -206,19 +226,10 @@ public class EditUserDetailsFormController {
 		account.setTitle( formBean.getTitle() );
 		account.setPhone(formBean.getPhone());
 		account.setFacsimile(formBean.getFacsimile());
-		account.setOrg(formBean.getOrg());
 		account.setDescription(formBean.getDescription());
 		account.setPostalAddress(formBean.getPostalAddress());
 
 		return account;
-	}
-
-	/**
-	 * Setter only meant for testing purposes.
-	 *
-	 */
-	public void setAccountBackup(Account a) {
-	    this.accountBackup = a;
 	}
 	
 	@ModelAttribute("editUserDetailsFormBean")

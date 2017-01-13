@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2009-2016 by the geOrchestra PSC
+ *
+ * This file is part of geOrchestra.
+ *
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 'use strict';
 
 /* Controllers */
@@ -89,10 +108,10 @@ angular.module('ldapadmin.controllers', [])
       if ($routeParams.group == 'none') {
         var groups = [
           $scope.groups[findByAttr($scope.groups, 'cn', 'ADMINISTRATOR')],
-          $scope.groups[findByAttr($scope.groups, 'cn', 'SV_ADMIN')],
-          $scope.groups[findByAttr($scope.groups, 'cn', 'SV_REVIEWER')],
-          $scope.groups[findByAttr($scope.groups, 'cn', 'SV_EDITOR')],
-          $scope.groups[findByAttr($scope.groups, 'cn', 'SV_USER')]
+          $scope.groups[findByAttr($scope.groups, 'cn', 'GN_ADMIN')],
+          $scope.groups[findByAttr($scope.groups, 'cn', 'GN_REVIEWER')],
+          $scope.groups[findByAttr($scope.groups, 'cn', 'GN_EDITOR')],
+          $scope.groups[findByAttr($scope.groups, 'cn', 'USER')]
         ];
         $scope.groupFilter = function(item) {
           return groups[0].users.indexOf(item.uid) == -1 &&
@@ -197,7 +216,13 @@ angular.module('ldapadmin.controllers', [])
       postGroups($scope, $scope.selectedUsers(), Restangular, flash);
     };
     $scope.deleteGroup = function(group) {
-      if (confirm('Do you really want to remove group "' + group + '"?')) {
+
+      if(group == GEOR_config.virtualTemporaryGroupName) {
+        alert("This group cannot be deleted because it's a virtual group !");
+        return;
+      }
+
+      if (confirm('Do you really want to remove role "' + group + '"?')) {
         Restangular.one('groups', group).remove().then(function() {
           var index = findByAttr($scope.groups, 'cn', $routeParams.group);
 
@@ -252,6 +277,31 @@ angular.module('ldapadmin.controllers', [])
       remote.id = remote.uid;
 
       $scope.user = Restangular.copy(remote);
+
+
+      $scope.orgs = Restangular.all("orgs").getList().then(function(orgs) {
+
+        var sel_orgs = []
+        orgs.map(function(org) {
+          sel_orgs.push({
+            id: org.id,
+            text: org.name
+          });
+        });
+
+        $('.user-orgs').select2({
+          data: sel_orgs,
+          allowClear: true,
+          placeholder: "Select organization...",
+        })
+        $('.user-orgs').on("change", function(){
+          var org = $(this).val();
+          $scope.$apply(function(){
+            $scope.user.org = org;
+          });
+        });
+
+      });
 
       $scope.groupsChanged = false;
       $scope.publicContextPath = GEOR_config.publicContextPath;
@@ -335,9 +385,24 @@ angular.module('ldapadmin.controllers', [])
         var tree = [];
         var prefix;
         angular.forEach($scope.user_groups, function(group, key) {
-          addNode(tree, group);
+          if(group.cn != GEOR_config.virtualTemporaryGroupName){
+            addNode(tree, group);
+          }
         });
         $scope.user_groups_tree = tree;
+
+        // support groups with real parent group
+        $scope.user_groups_tree.forEach(function(group, i) {
+          if (group.group && group.nodes && group.nodes.length) {
+            var new_group = {
+              name: group.name,
+              nodes: group.nodes
+            };
+            delete group.nodes;
+            $scope.user_groups_tree.splice(i + 1, 0, new_group);
+          }
+        });
+
 
         angular.forEach($scope.user_groups, function(group, key) {
           group.hasUsers = _.contains(group.users, $scope.user.uid);
@@ -354,27 +419,45 @@ angular.module('ldapadmin.controllers', [])
     });
   })
   .controller('UserCreateCtrl', function($scope, Restangular, flash) {
-      $scope.publicContextPath = GEOR_config.publicContextPath;
-      $scope.save = function() {
-        Restangular.all('users').post(
-          $scope.user
-        ).then(function(user) {
-          $scope.users.push(user);
-          window.location = "#/users";
-          flash.success = 'User correctly added';
-        },
-        function errorCallback(response) {
-          if (response.status == 409) {
-            flash.error = 'Error while creating the user: is the specified e-mail already used ?';
-          } else {
-            flash.error = 'Error while creating the user';
-          }
+    $scope.publicContextPath = GEOR_config.publicContextPath;
+
+    $scope.orgs = Restangular.all("orgs").getList().then(function(orgs) {
+
+      var sel_orgs = []
+      orgs.map(function(org) {
+        sel_orgs.push({
+          id: org.id,
+          text: org.name
         });
-      };
+      });
+
+      $('.user-orgs').select2({
+        data: sel_orgs,
+        allowClear: true,
+        placeholder: "Select organization...",
+      })
+      $('.user-orgs').on("change", function(){
+        var org = $(this).val();
+        $scope.$apply(function(){
+          $scope.user.org = org;
+        });
+      });
+
+    });
+
+    $scope.save = function() {
+      Restangular.all('users').post(
+        $scope.user
+      ).then(function(user) {
+        $scope.users.push(user);
+        window.location = "#/users";
+        flash.success = 'User correctly added';
+      },
+      function errorCallback(response) {
+        flash.error = 'Error while creating the user : ' + response.data.error;
+      });
+    };
   })
-  .controller('FooCtrl', function($scope) {
-    $scope.foo = "bar";
-  });
 
 function getPrefix(group) {
   return group.cn.indexOf('_') != -1 &&
@@ -463,6 +546,8 @@ function addNode(tree, node) {
           return -1;
         }
       });
+    } else if (!branch.nodes) {
+      branch.nodes = [];
     }
     branch.nodes.push({group: node});
     branch.nodes.sort(function(a, b) {

@@ -50,6 +50,7 @@
             </bean>
           </property>
           <property name="extractionManager" ref="extractionManager"/>
+          <property name="userAgent" value="ExtractorApp (+http://www.georchestra.org/)"/>
         </bean>
         <bean id="taskControllers" class="org.georchestra.extractorapp.ws.extractor.task.TaskControllers">
         <property name="extractionManager" ref="extractionManager"/>
@@ -82,11 +83,6 @@
         <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
         <property name="prefix" value="/WEB-INF/jsp/"/>
         <property name="suffix" value=".jsp"/>
-    </bean>
-
-    <!-- File upload controller -->
-    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-      <property name="maxUploadSize" value="1000000"/>
     </bean>
 
     <bean id="georchestraConfiguration" class="org.georchestra.commons.configuration.GeorchestraConfiguration">

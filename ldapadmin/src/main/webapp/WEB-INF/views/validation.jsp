@@ -18,7 +18,7 @@ function addError(id, errCode) {
 function testField(field) {
 	removeError(field);
 	if (!isNotEmpty($("#"+field).val()) && isFieldRequired(field)) {
-		addError(field, '<s:message code="error.required" />');
+		addError(field, "<s:message code="error.required" />");
 		return false;
 	}
 	return true;
@@ -27,7 +27,7 @@ function testFirstname() {
 	var firstname = document.form.firstName.value;
 	removeError("firstName");
 	if (!isNotEmpty(firstname) && isFieldRequired("firstName")) {
-		addError("firstName", '<s:message code="firstName.error.required" />');
+		addError("firstName", "<s:message code="firstName.error.required" />");
 		return false;
 	}
 	return true;
@@ -36,7 +36,7 @@ function testSurname() {
 	var surname = document.form.surname.value;
 	removeError("surname");
 	if (!isNotEmpty(surname) && isFieldRequired("surname")) {
-		addError("surname", '<s:message code="surname.error.required" />');
+		addError("surname", "<s:message code="surname.error.required" />");
 		return false;
 	}
 	return true;
@@ -45,10 +45,10 @@ function testEmail() {
 	var email = document.form.email.value;
 	removeError("email");
 	if (!isNotEmpty(email) && isFieldRequired("email")) {
-		addError("email", '<s:message code="email.error.required" />');
+		addError("email", "<s:message code="email.error.required" />");
 		return false;
 	} else if (!emailCheck(email)) {
-		addError("email", '<s:message code="email.error.invalidFormat" />');
+		addError("email", "<s:message code="email.error.invalidFormat" />");
 		return false;	
 	}
 	return true;
@@ -57,7 +57,7 @@ function testUid() {
 	var uid = document.form.uid.value;
 	removeError("uid");
 	if (!isNotEmpty(uid) && isFieldRequired("uid")) {
-		addError("uid", '<s:message code="uid.error.required" />');
+		addError("uid", "<s:message code="uid.error.required" />");
 		return false;
 	} else if (!isUidValid(uid)) {
 		addError("uid", '<s:message code="uid.error.invalid" />');
@@ -69,7 +69,7 @@ function testPassword() {
 	var password = document.form.password.value;
 	removeError("password");
 	if (!isPasswordValid(password)) {
-		addError("password", '<s:message code="password.error.sizeError" />');
+		addError("password", "<s:message code="password.error.sizeError" />");
 		return false;
 	}
 	return true;
@@ -79,7 +79,7 @@ function testConfirmPassword() {
 	var confirmPassword = document.form.confirmPassword.value;
 	removeError("confirmPassword");
 	if (password!=confirmPassword) {
-		addError("confirmPassword", '<s:message code="confirmPassword.error.pwdNotEquals" />');
+		addError("confirmPassword", "<s:message code="confirmPassword.error.pwdNotEquals" />");
 		return false;
 	}
 	return true;
@@ -88,11 +88,24 @@ function testRecaptcha() {
 	var recaptcha_response_field = document.form.recaptcha_response_field.value;
 	removeError("recaptcha_response_field");
 	if (!isNotEmpty(recaptcha_response_field)) {
-		addError("recaptcha_response_field", '<s:message code="recaptcha_response_field.error.required" />');
+		addError("recaptcha_response_field", "<s:message code="recaptcha_response_field.error.required" />");
 		return false;
 	}
 	return true;
 }
+function testOrg(){
+    removeError("orgName");
+    removeError("orgShortName");
+    removeError("orgAddress");
+    removeError("orgType");
+    removeError("org");
+    if($('#createOrg').is(':checked')){
+        return testField("orgName") & testField("orgShortName") & testField("orgAddress") & testField("orgType");
+    } else {
+        return testField("org");
+    }
+}
+
 function setFormError() {
 	$("form#form > #message").remove();
 	$("form#form").prepend('<div id="message" class="alert alert-dismissable alert-danger"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><s:message code="form.error" /></div>');
@@ -163,24 +176,24 @@ function feedbackPassStrength(elId, password){
         }
     });
     if (!password){
-        message = '<s:message code="password.label.empty" />';
+        message = "<s:message code="password.label.empty" />";
         msgLabelClass = "default";
     } else {
         var score = scorePassword(password);
         if (score > 80){
-            message= '<s:message code="password.label.strong" />';
+            message= "<s:message code="password.label.strong" />";
             msgLabelClass = "success";
             msgOffsetClass = "8";
         } else if (score > 60) {
-            message = '<s:message code="password.label.good" />';
+            message = "<s:message code="password.label.good" />";
             msgLabelClass = "info";
             msgOffsetClass = "6";
         } else if (score >= 30) {
-            message = '<s:message code="password.label.weak" />';
+            message = "<s:message code="password.label.weak" />";
             msgLabelClass = "warning";
             msgOffsetClass = "4";
        } else {
-            message = '<s:message code="password.label.veryweak" />';
+            message = "<s:message code="password.label.veryweak" />";
             msgLabelClass = "danger";
             msgOffsetClass = "2";
         }
@@ -228,6 +241,9 @@ function isUidValid(uid) {
  * @returns {boolean}
  */
 function isNotEmpty(str) {
+    if(str == "-") {
+        return false;
+    }
 	if (str.trim().length){
 		return true;
 	} else {
@@ -266,7 +282,7 @@ function emailCheck (emailStr) {
 
   /* The following is the list of known TLDs that an e-mail address must end with. */
 
-  var knownDomsPat=/^(com|net|org|edu|int|mil|gov|arpa|biz|aero|name|coop|info|pro|museum)$/;
+  var knownDomsPat=/^(com|net|org|edu|int|mil|gov|arpa|biz|aero|name|coop|info|pro|museum|bzh)$/;
 
   /* The following pattern is used to check if the entered e-mail address
   fits the user@domain format.  It also is used to separate the username

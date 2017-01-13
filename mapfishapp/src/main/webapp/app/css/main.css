@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2009-2016 by the geOrchestra PSC
+ *
+ * This file is part of geOrchestra.
+ *
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 /* 
  * hide the OpenLayer.Control.ScaleLine bottom part
  */
@@ -113,6 +132,9 @@ div.olMapViewport {
 .geor-btn-metadata {
     background-image: url(../img/famfamfam/application_view_list.gif) !important;
 }
+.geor-btn-metadata-external {
+    background-image: url(../img/famfamfam/application_view_list_external.png) !important;
+}
 .geor-btn-download {
     background-image: url(../img/famfamfam/disk.png) !important;
 }
@@ -139,6 +161,9 @@ div.olMapViewport {
 }
 .geor-load-map {
     background-image: url(../img/famfamfam/map_go.gif) !important;
+}
+.geor-manage-contexts {
+    background-image: url(../img/geosilk/map_wrench.png) !important;
 }
 .geor-add-map {
     background-image: url(../img/famfamfam/map_add.png) !important;
@@ -358,6 +383,10 @@ div.olMapViewport {
     background: #fff;
     font-size: 11px;
     font-family: tahoma,arial,verdana,sans-serif;
+    display: flex;
+    flex-wrap: wrap;
+    -ms-flex-flow: row wrap;
+    -webkit-flex-flow: row wrap;
 }
 .context-selector .thumb {
     background: #dddddd;
@@ -368,6 +397,7 @@ div.olMapViewport {
     width: 110px;
 }
 .context-selector .thumb-wrap {
+    display: inline-block;
     float: left;
     margin: 4px;
     margin-right: 0;
