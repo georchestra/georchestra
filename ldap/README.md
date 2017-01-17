@@ -28,10 +28,10 @@ It creates 3 Organisational Units (ou):
  * a last one for orgs: ```ou=orgs,dc=georchestra,dc=org```
 
 The basic users:
- * ```testuser``` is a member of USER. The password is **testuser**.
- * ```testreviewer``` is a member of GN_REVIEWER. The password is **testreviewer**.
- * ```testeditor``` is a member of GN_EDITOR. The password is **testeditor**.
- * ```testadmin``` is a member of GN_ADMIN, ADMINISTRATOR and MOD_* roles. The password is **testadmin**
+ * ```testuser``` has the USER role. The password is **testuser**.
+ * ```testreviewer``` has the USER & GN_REVIEWER roles. The password is **testreviewer**.
+ * ```testeditor``` has the USER & GN_EDITOR roles. The password is **testeditor**.
+ * ```testadmin``` has the USER, GN_ADMIN, ADMINISTRATOR and MOD_* roles. The password is **testadmin**
  * ```geoserver_privileged_user``` is a required user. It is internally used by the extractorapp, mapfishapp & geofence modules. The default password is ```gerlsSnFd6SmM``` (you should change it, and update the ```shared.privileged.geoserver.pass``` option in your shared.maven.filters file).
 
 Please note that `test*` users should be deleted before going into production !
