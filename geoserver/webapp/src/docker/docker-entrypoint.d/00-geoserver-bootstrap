@@ -13,4 +13,7 @@ else
     echo 'Change LDAP url according to docker setup'
     sed -i 's:<serverURL>ldap\://localhost\:389</serverURL>:<serverURL>ldap\://ldap\:389</serverURL>:g' /mnt/geoserver_datadir/security/role/my_ldap/config.xml
     sed -i 's:<serverURL>ldap\://localhost\:389</serverURL>:<serverURL>ldap\://ldap\:389</serverURL>:g' /mnt/geoserver_datadir/security/usergroup/my_ldap/config.xml
+
+    echo 'Change rootLogger config according to docker setup'
+    sed -i 's:log4j.rootLogger=WARN, geoserverlogfile, stdout:log4j.rootLogger=WARN, stdout:g' /mnt/geoserver_datadir/logs/*
 fi
