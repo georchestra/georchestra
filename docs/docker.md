@@ -30,6 +30,11 @@ Optional, but recommended: as `unprivileged_user`, adjust the configuration in `
 
 **Third step**
 
+Pull / update geOrchestra docker images to their latest version with:
+```
+docker-compose pull
+```
+
 Run geOrchestra with
 ```
 docker-compose up
