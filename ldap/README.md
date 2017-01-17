@@ -4,26 +4,13 @@ This folder holds the required files to configure and populate an OpenLDAP direc
 
 Please refer to the [geOrchestra documentation](https://github.com/georchestra/georchestra/blob/master/README.md) for instructions, and **use the branch matching your geOrchestra version** !
 
-## Docker
-
-In case you have to build the `georchestra/ldap` docker image, this can be done inside this directory with:
-```
-docker build -t georchestra/ldap .
-```
-
 ## groupofmembers.ldif
 
 This file imports ```groupOfMembers``` LDAP objectClass into OpenLdap available schemas. It allows to have empty groups, which the default ```groupOfNames``` doesn't permit. ```groupOfMembers``` comes from RFC2037bis and is used in lots of places.
 
 ## bootstrap.ldif
 
-This file creates the database.
-
-Note that, depending on your Debian version, you might need to use a different version of this file: 
- * **geOrchestra <= 14.12** is supposed to be installed on **Debian Wheezy**, where OpenLdap's default backend is **HDB**
- * **geOrchestra >= 15.06** targets **Debian Jessie** where the backend is **LMDB**
-
-Please refer to [issue 856](https://github.com/georchestra/georchestra/issues/856) for more information.
+This file creates the database, with an LMDB backend (please refer to [issue 856](https://github.com/georchestra/georchestra/issues/856) for more information regarding the backend type).
 
 
 ## root.ldif
@@ -35,9 +22,10 @@ This files creates the root DN, which is by default ```dc=georchestra,dc=org```.
 
 This file creates a basic LDAP tree for geOrchestra.
 
-It creates 2 Organisational Units (ou):
- * ```ou=users,dc=georchestra,dc=org``` 
- * ```ou=roles,dc=georchestra,dc=org```
+It creates 3 Organisational Units (ou):
+ * one for users: ```ou=users,dc=georchestra,dc=org``` 
+ * an other one for roles: ```ou=roles,dc=georchestra,dc=org```
+ * a last one for orgs: ```ou=orgs,dc=georchestra,dc=org```
 
 The basic users:
  * ```testuser``` is a member of USER. The password is **testuser**.
@@ -45,6 +33,8 @@ The basic users:
  * ```testeditor``` is a member of GN_EDITOR. The password is **testeditor**.
  * ```testadmin``` is a member of GN_ADMIN, ADMINISTRATOR and MOD_* roles. The password is **testadmin**
  * ```geoserver_privileged_user``` is a required user. It is internally used by the extractorapp, mapfishapp & geofence modules. The default password is ```gerlsSnFd6SmM``` (you should change it, and update the ```shared.privileged.geoserver.pass``` option in your shared.maven.filters file).
+
+Please note that `test*` users should be deleted before going into production !
 
 The roles:
  * ```ADMINISTRATOR``` is for GeoServer administrators,
@@ -56,3 +46,5 @@ The roles:
  * ```GN_REVIEWER``` is for metadata reviewers,
  * ```USER``` is for the basic SDI users,
  * ```PENDING``` is the landing group for people asking an account on the platform. This group gives no right by default.
+
+Other roles can be defined by the platform administrator, using eg the console.
