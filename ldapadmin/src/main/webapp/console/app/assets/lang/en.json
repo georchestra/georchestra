@@ -8,7 +8,7 @@
   "home.users"            : "Manage users",
   "home.waiting_users"    : "waiting users",
   "home.expired_users"    : "users expired today",
-  "home.connected"        : "connected today",
+  "home.connected"        : "users connected today",
   "home.view_manage"      : "View & manage",
   "home.nb_requests"      : "Req.",
   "home.user"             : "User",

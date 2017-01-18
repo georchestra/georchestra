@@ -9,12 +9,12 @@
     </button>
   </div>
 
-  <h5>
+  <h4>
     {{stats.title | translate}}
     <span ng-if="stats.data.granularity">
       {{'analytics.' + stats.data.granularity | translate}}
     </span>
-  </h5>
+  </h4>
 
   <div ng-show="stats.nodata && stats.data.$resolved" class="alert alert-warning">
     <i class="glyphicon glyphicon-alert"></i>&nbsp;

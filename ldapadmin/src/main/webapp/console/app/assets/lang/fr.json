@@ -8,7 +8,7 @@
   "home.users"            : "Gérer les utilisateurs",
   "home.waiting_users"    : "utilisateurs en attente",
   "home.expired_users"    : "utilisateurs expiré aujourd’hui",
-  "home.connected"        : "connectés aujourd’hui",
+  "home.connected"        : "utilisateurs connectés aujourd’hui",
   "home.view_manage"      : "Voir & gérer",
   "home.nb_requests"      : "Req.",
   "home.user"             : "Utilisateur",
