@@ -48,7 +48,7 @@ To login, use these credentials:
 
 To upload data into the GeoServer data volume (`geoserver_geodata`), use rsync:
 ```
-rsync -arv -e `ssh -p 2222` /path/to/geodata/ geoserver@localhost:/mnt/geoserver_geodata/
+rsync -arv -e 'ssh -p 2222' /path/to/geodata/ geoserver@localhost:/mnt/geoserver_geodata/
 ```
 (password is: `geoserver`)
 
