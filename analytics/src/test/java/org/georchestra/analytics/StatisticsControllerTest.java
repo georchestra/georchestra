@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 import org.georchestra.analytics.StatisticsController.GRANULARITY;
 import org.georchestra.analytics.dao.StatsRepo;
+import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
@@ -261,6 +262,8 @@ public class StatisticsControllerTest {
 		StatisticsController ctrl = new StatisticsController("UTC");
 		MockMvc mockMvc = standaloneSetup(ctrl).build();
 		StatsRepo statsRepo = Mockito.mock(StatsRepo.class);
+		GeorchestraConfiguration georConfig = Mockito.mock(GeorchestraConfiguration.class);
+
 		ArrayList someUsers = new ArrayList();
 		someUsers.add(new Object[] { "testadmin", "georchestra", "643" });
 		someUsers.add(new Object[] { "testuser", "camptocamp", "29" });
@@ -270,6 +273,7 @@ public class StatisticsControllerTest {
 		Mockito.when(statsRepo.getDistinctUsers(Mockito.anyString(), Mockito.anyString()))
 				.thenReturn(new ArrayList());
 		ctrl.setStatsRepository(statsRepo);
+		ctrl.setGeorConfig(georConfig);
 		JSONObject posted = new JSONObject("{\"startDate\": \"2015-01-01\" }");
 
 		mockMvc.perform(post("/distinctUsers").content(posted.put("endDate", "2015-01-01").toString()))
