@@ -1,10 +1,10 @@
---- docker-entrypoint.sh	2016-05-12 18:41:12.719077954 +0200
-+++ docker-entrypoint_modified.sh	2016-05-12 18:33:38.349967649 +0200
-@@ -79,6 +79,7 @@
+--- docker-entrypoint.sh	2017-01-05 19:05:53.734607718 +0100
++++ docker-entrypoint_modified.sh	2017-01-05 19:07:20.810103301 +0100
+@@ -103,6 +103,7 @@
  		for f in /docker-entrypoint-initdb.d/*; do
  			case "$f" in
  				*.sh)     echo "$0: running $f"; . "$f" ;;
-+ 				*-data.sql) if [ "$IGNORE_DATA" = 'true' ]; then echo "$0: ignoring $f";  else echo "$0: running $f"; "${psql[@]}" < "$f"; echo ; fi ;;
- 				*.sql)    echo "$0: running $f"; "${psql[@]}" < "$f"; echo ;;
++				*-data.sql) if [ "$IGNORE_DATA" = 'true' ]; then echo "$0: ignoring $f";  else echo "$0: running $f"; "${psql[@]}" < "$f"; echo ; fi ;;
+ 				*.sql)    echo "$0: running $f"; "${psql[@]}" -f "$f"; echo ;;
  				*.sql.gz) echo "$0: running $f"; gunzip -c "$f" | "${psql[@]}"; echo ;;
  				*)        echo "$0: ignoring $f" ;;

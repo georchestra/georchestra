@@ -191,6 +191,9 @@ cn: USER
 ou: 23
 description: This group grants basic, authenticated access to the whole SDI
 member: uid=testuser,ou=users,dc=georchestra,dc=org
+member: uid=testeditor,ou=users,dc=georchestra,dc=org
+member: uid=testreviewer,ou=users,dc=georchestra,dc=org
+member: uid=testadmin,ou=users,dc=georchestra,dc=org
 
 # orgs, georchestra.org
 dn: ou=orgs,dc=georchestra,dc=org

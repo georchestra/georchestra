@@ -597,7 +597,7 @@
             </goals>
             <phase>generate-resources</phase>
             <configuration>
-              <arguments>install</arguments>
+              <arguments>install --unsafe-perm</arguments>
               <installDirectory>${project.basedir}</installDirectory>
             </configuration>
           </execution>

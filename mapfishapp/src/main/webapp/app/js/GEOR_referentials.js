@@ -193,10 +193,9 @@ GEOR.referentials = (function() {
 
         return new Ext.form.ComboBox({
             fieldLabel: tr("Referential"),
+            anchor: '95%',
             store: store,
             displayField: 'title',
-            width: 160,
-            listWidth: 160,
             triggerAction: "all",
             editable: false,
             listeners: {
@@ -340,6 +339,7 @@ GEOR.referentials = (function() {
         var cb = new Ext.form.ComboBox({
             fieldLabel: tr("Go to: "),
             labelSeparator: "",
+            anchor: '95%',
             loadingText: tr("Loading..."),
             name: 'nothing',
             mode: 'remote',
@@ -432,18 +432,15 @@ GEOR.referentials = (function() {
                     frame: false,
                     border: false
                 },
-                items: [
-                    {
-                        xtype: 'form',
-                        labelWidth: labelWidth,
-                        region: 'center',
-                        labelSeparator: ' :',
-                        items: [
-                            createLayerCombo()
-                        ]
-                    },
-                    comboPanel
-                ]
+                items: [{
+                    xtype: 'form',
+                    labelWidth: labelWidth,
+                    region: 'center',
+                    labelSeparator: ' :',
+                    items: [
+                        createLayerCombo()
+                    ]
+                }, comboPanel]
             };
         }
     };

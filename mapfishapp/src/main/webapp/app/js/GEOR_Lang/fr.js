@@ -341,6 +341,9 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
         "Le référentiel sélectionné ne possède pas de colonne géométrique",
     "Choose a referential": "Choisissez un référentiel",
     /* GEOR_resultspanel.js strings */
+    "Symbology": "Symbologie",
+    "Edit this panel's features symbology": "Editer la symbologie de la sélection",
+    "Reset": "RàZ",
     "Export is not possible: features have no geometry": "Export impossible : absence de géométries",
     "resultspanel.maxfeature.reached":
         " <span ext:qtip=\"Utilisez un navigateur plus performant " +

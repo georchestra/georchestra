@@ -546,13 +546,15 @@ public class StatisticsController {
 	 *
 	 * @throws JSONException
 	 */
-	@RequestMapping(value="/distinctUsers", method=RequestMethod.POST, produces="application/json; charset=utf-8")
+	@RequestMapping(value="/distinctUsers", method=RequestMethod.POST)
 	@ResponseBody
 	public String distinctUsers(@RequestBody String payload, HttpServletResponse response) throws JSONException {
 		JSONObject input;
 		String groupId = null;
 		String startDate;
 		String endDate;
+
+		response.setContentType("application/json; charset=UTF-8");
 
 		try {
 			input = new JSONObject(payload);

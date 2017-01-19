@@ -6,13 +6,13 @@
     ng-options="group.cn as group.label for group in analytics.groups" chosen>
   </select>
 
-  <h4>
+  <h3>
     <span translate>analytics.title</span>
     <span ng-if="analytics.group != 'all'">
       <span translate>for</span>
       {{analytics.group}}
     </span>
-  </h4>
+  </h3>
 
   <hr>
 

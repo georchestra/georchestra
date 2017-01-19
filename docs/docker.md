@@ -22,13 +22,21 @@ Create a configuration directory on your host machine:
 ```
 sudo mkdir /etc/georchestra
 sudo chown unprivileged_user /etc/georchestra
+```
+Then, as `unprivileged_user`:
+```
 git clone -b docker-master https://github.com/georchestra/datadir.git /etc/georchestra
 ```
 
-Optional, but recommended: as `unprivileged_user`, adjust the configuration in `/etc/georchestra` according to your needs.
+Optional, but recommended: adjust the configuration in `/etc/georchestra` according to your needs.
 
 
 **Third step**
+
+Pull / update geOrchestra docker images to their latest version with:
+```
+docker-compose pull
+```
 
 Run geOrchestra with
 ```
@@ -43,7 +51,7 @@ To login, use these credentials:
 
 To upload data into the GeoServer data volume (`geoserver_geodata`), use rsync:
 ```
-rsync -arv -e `ssh -p 2222` /path/to/geodata/ geoserver@localhost:/mnt/geoserver_geodata/
+rsync -arv -e 'ssh -p 2222' /path/to/geodata/ geoserver@localhost:/mnt/geoserver_geodata/
 ```
 (password is: `geoserver`)
 

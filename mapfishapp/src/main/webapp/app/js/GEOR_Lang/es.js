@@ -342,6 +342,9 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "geométrica",
     "Choose a referential": "Elija una unidad administrativa",
     /* GEOR_resultspanel.js strings */
+    "Symbology": "Simbología",
+    "Edit this panel's features symbology": "La simbología modificar",
+    "Reset": "Reiniciar",
     //"Export is not possible: features have no geometry": "Export impossible : absence de géométries",
     "resultspanel.maxfeature.reached":
         " <span ext:qtip=\"Utilice un navegador más potente " +
@@ -465,8 +468,8 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "all contexts": "todos los contextos",
     "Could not find WMC file": "El contexto WMC especificado no existe",
     "... or a local context": "... o un contexto local",
-    //"Load or add the layers from one of these map contexts:" :
-	//	"Remplazar la composición actual del mapa por uno de estos contextos:",
+    "Load or add the layers from one of these map contexts:":
+	"Remplazar la composición actual del mapa por uno de estos contextos:",
     "A unique OSM layer": "Una capa OpenStreetMap única",
     "default viewer context": "contexto por omisión",
     "(default)": "<br/>(contexto por omisión actual)",

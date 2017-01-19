@@ -119,10 +119,31 @@ public class ContextControllerTest {
 
         try {
             ReflectionUtils.invokeMethod(prvMethod, ctxCtrl, invalidWmc);
-
         } catch (UndeclaredThrowableException e) {
             throw e.getUndeclaredThrowable();
         }
+    }
+
+    /**
+     * This test ensures that the retrieved contexts are correctly sorted in alphabetical order.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testGetContexts() throws Exception {
+        URL testPathUrl = this.getClass().getResource(".");
+        assumeTrue("testPathUrl does not exist, skipping test", testPathUrl != null);
+        GeorchestraConfiguration georConfig = Mockito.mock(GeorchestraConfiguration.class);
+        String testPath = new File(testPathUrl.toURI()).toString();
+        Mockito.when(georConfig.getContextDataDir()).thenReturn(testPath);
+
+        ContextController ctxCtrl = new ContextController();
+        ctxCtrl.setGeorchestraConfiguration(georConfig);
+        JSONArray ret = ctxCtrl.getContexts();
+
+        assertTrue(ret.getJSONObject(0).getString("label").equals("2.wmc"));
+        assertTrue(ret.getJSONObject(1).getString("label").equals("a.wmc"));
+        assertTrue(ret.getJSONObject(2).getString("label").equalsIgnoreCase("Z.wmc"));
     }
 
     @Test
