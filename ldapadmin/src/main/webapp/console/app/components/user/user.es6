@@ -80,25 +80,6 @@ class UserController {
             this.user.pending = group.users.indexOf(this.user.uid) >= 0
           }
         })
-        if (this.tab === 'infos') {
-          let selOrgs = []
-          let Orgs = this.$injector.get('Orgs')
-          Orgs.query((orgs) => {
-            orgs.forEach((o) => {
-              if (this.user.pending || o.status !== 'PENDING') {
-                selOrgs.push({
-                  id: o.id,
-                  text: o.name
-                })
-              }
-            })
-            $('#organization').select2({
-              placeholder: this.i18n.select,
-              allowClear: true,
-              data: selOrgs
-            })
-          })
-        }
         this.groups = notAdmin
       })
     })
@@ -371,3 +352,41 @@ angular.module('admin_console')
     })
   }
 })])
+.directive('organizations', [ '$timeout', 'Orgs', ($timeout, Orgs) => ({
+  link: (scope, elm, attrs, ctrl) => {
+    let promise = scope.$eval(attrs['promise'])
+    let user = scope.$eval(attrs['model'])
+
+    // Initialize pending value for new user
+    if (user.pending === undefined) {
+      user.pending = false
+    }
+    let selOrgs = []
+    Orgs.query((orgs) => {
+      orgs.forEach((o) => {
+        if (user.pending || o.status !== 'PENDING') {
+          selOrgs.push({
+            id: o.id,
+            text: o.name
+          })
+        }
+      })
+      elm.select2({
+        placeholder: '',
+        allowClear: true,
+        data: selOrgs
+      })
+      let cb = () => {
+        $timeout(() => {
+          elm.trigger('change')
+        })
+      }
+      if (promise) {
+        promise.then(cb)
+      } else {
+        cb()
+      }
+    })
+  }
+})])
+
