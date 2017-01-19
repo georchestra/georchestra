@@ -59,12 +59,14 @@ services:
   # geOrchestra services
   geoserver:
     image: georchestra/geoserver:latest
+    depends_on:
+      - ldap
     volumes:
       - geoserver_datadir:/mnt/geoserver_datadir
       - geoserver_geodata:/mnt/geoserver_geodata
       - geoserver_tiles:/mnt/geoserver_tiles
     environment:
-      - XMS=1536M
+      - XMS=256M
       - XMX=8G
 
 #  uncomment to enable standalone geowebcache:
@@ -79,16 +81,21 @@ services:
 
   proxy:
     image: georchestra/security-proxy:latest
+    depends_on:
+      - ldap
+      - database
     ports:
       - "8080:8080"
     volumes:
       - /etc/georchestra:/etc/georchestra
     environment:
-      - XMS=512M
+      - XMS=256M
       - XMX=1G
 
   cas:
     image: georchestra/cas:latest
+    depends_on:
+      - ldap
     volumes:
       - /etc/georchestra:/etc/georchestra
     environment:
@@ -97,20 +104,24 @@ services:
 
   mapfishapp:
     image: georchestra/mapfishapp:latest
+    depends_on:
+      - database
     volumes:
       - /etc/georchestra:/etc/georchestra
       - mapfishapp_uploads:/mnt/mapfishapp_uploads
     environment:
-      - XMS=1G
+      - XMS=256M
       - XMX=2G
 
   extractorapp:
     image: georchestra/extractorapp:latest
+    depends_on:
+      - database
     volumes:
       - /etc/georchestra:/etc/georchestra
       - extractorapp_extracts:/mnt/extractorapp_extracts
     environment:
-      - XMS=1G
+      - XMS=256M
       - XMX=2G
 
   header:
@@ -123,23 +134,31 @@ services:
 
   ldapadmin:
     image: georchestra/ldapadmin:latest
+    depends_on:
+      - ldap
+      - database
     volumes:
       - /etc/georchestra:/etc/georchestra
     environment:
-      - XMS=512M
+      - XMS=256M
       - XMX=1G
 
   geonetwork:
     image: georchestra/geonetwork:3-latest
+    depends_on:
+      - ldap
+      - database
     volumes:
       - /etc/georchestra:/etc/georchestra
       - geonetwork_datadir:/mnt/geonetwork_datadir
     environment:
-      - XMS=1G
+      - XMS=256M
       - XMX=6G
 
   analytics:
     image: georchestra/analytics:latest
+    depends_on:
+      - database
     volumes:
       - /etc/georchestra:/etc/georchestra
     environment:
