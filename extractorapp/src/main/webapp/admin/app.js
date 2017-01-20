@@ -110,7 +110,7 @@ Ext.onReady(function(){
     });
 
     var grid = Ext.create('Ext.grid.Panel', {
-        renderTo: document.body,
+        renderTo: Ext.Element.get('extraction_table'),
         plugins: [{
             ptype: 'rowexpander',
             rowBodyTpl: new Ext.XTemplate(
@@ -305,6 +305,39 @@ Ext.onReady(function(){
                 b.setDisabled(status === 'RUNNING' || status === 'CANCELLED' || status === 'COMPLETED');
             }
         });
+    });
+
+    Ext.create('Ext.form.Panel', {
+        renderTo: Ext.Element.get('full_stats_download_form'),
+        width: 300,
+        bodyPadding: 10,
+        title: 'Téléchargement des statistiques détaillées',
+        standardSubmit: true,
+        items: [{
+            xtype: 'datefield',
+            anchor: '100%',
+            fieldLabel: 'Date de début',
+            name: 'startDate',
+            format: 'Y-m-d',
+            value: Ext.Date.add(new Date(), Ext.Date.YEAR, -1)
+        }, {
+            xtype: 'datefield',
+            anchor: '100%',
+            fieldLabel: 'Date de fin',
+            name: 'endDate',
+            format: 'Y-m-d',
+            value: new Date(),
+            maxValue: new Date()
+        }],
+        buttons: [{
+            text: 'OK',
+            handler: function(){
+                var v = this.up('form').getForm().getValues();
+                window.open(
+                  '/analytics/ws/fullLayersExtraction.csv?startDate=' + v.startDate + '&endDate=' + v.endDate
+                );
+            }
+        }]
     });
 
 });

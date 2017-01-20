@@ -39,6 +39,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
@@ -384,6 +385,45 @@ public class StatisticsController {
 	@ResponseBody
 	public String layersExtractionJson(@RequestBody String payload, HttpServletResponse response) throws JSONException {
 		return this.generateStats(payload, REQUEST_TYPE.EXTRACTION, response, FORMAT.JSON);
+	}
+
+	/**
+	 * Gets full statistics for layers extraction in JSON format. Compared to previous method, this method will not
+	 * aggregate records and it will contains several new informations : organization, start date, end date, duration ...
+	 *
+	 * @param startDate minimum date for stats
+	 * @param endDate maximum date for stats
+	 * @param response the HttpServletResponse object.
+	 * @return a JSON string containing the requested statistics.
+	 *
+	 * @throws JSONException
+	 */
+	@RequestMapping(value="/fullLayersExtraction.csv", method=RequestMethod.GET, produces= "application/csv; charset=utf-8")
+	@ResponseBody
+	public String fullLayersExtractionStats(@RequestParam String startDate, @RequestParam String endDate, HttpServletResponse response) throws JSONException {
+
+		try {
+			if (startDate == null || endDate == null) {
+				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				return null;
+			}
+		} catch (Throwable e) {
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			return null;
+		}
+
+		response.setHeader("Content-Disposition", "attachment; filename=data.csv");
+		response.setContentType("application/csv; charset=utf-8");
+
+		List lst = statsRepository.getFullLayersExtraction(startDate, endDate);
+		StringBuilder res = new StringBuilder("username;organization;creation_date;duration;end_date;layer_name;is_successful;bbox;area_km2\n");
+		for (Object o : lst) {
+			Object[] row = (Object[]) o;
+			for(int i=0; i<8; i++)
+				res.append(row[i] + ";");
+			res.append(row[8] + "\n");
+		}
+		return res.toString();
 	}
 
 	/**

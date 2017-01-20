@@ -103,4 +103,6 @@ public interface StatsRepo extends PagingAndSortingRepository<Stats, Long> {
 								  @Param("limit") int limit);
 
 	List getLayersExtraction(@Param("startDate") String startDate, @Param("endDate") String endDate);
+
+	List getFullLayersExtraction(@Param("startDate") String startDate, @Param("endDate") String endDate);
 }
