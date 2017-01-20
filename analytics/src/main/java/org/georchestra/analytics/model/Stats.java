@@ -283,6 +283,15 @@ query = "SELECT layer, CAST(COUNT(*) AS integer) AS count " +
 				"GROUP BY layer_name " +
 				"ORDER BY COUNT(*) DESC " +
 				"LIMIT :limit"),
+
+@NamedNativeQuery(name="Stats.getFullLayersExtraction",
+		query = "SELECT username, org, creation_date, CAST(duration AS text), creation_date + duration AS start_date, layer_name, is_successful, " +
+				"trunc(CAST(ST_XMin(bbox) AS numeric), 5) || ',' || trunc(CAST(ST_YMin(bbox) AS numeric), 5) || ',' || trunc(CAST(ST_XMax(bbox) AS numeric), 5) || ',' || trunc(CAST(ST_YMax(bbox) AS numeric), 5) AS bbox, " +
+				"ST_Area(CAST(bbox AS geography), TRUE) / 1000000 AS area_km2 " +
+				"FROM extractorapp.extractor_layer_log " +
+				"LEFT JOIN extractorapp.extractor_log " +
+				"	ON (extractorapp.extractor_log.id = extractorapp.extractor_layer_log.extractor_log_id) " +
+				"WHERE creation_date >= CAST(:startDate AS timestamp without time zone) AND creation_date < CAST(:endDate AS timestamp without time zone) "),
 })
 @Table(schema="ogcstatistics", name="ogc_services_log")
 public class Stats {
