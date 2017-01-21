@@ -24,6 +24,3 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 ADD docker-entrypoint.sh.patch /
 RUN cd / && patch -p 0 < docker-entrypoint.sh.patch
-
-# Better query performance with:
-# RUN sed -i 's/shared_buffers = 128MB/shared_buffers = 1024MB/' /etc/postgresql/9.4/main/postgresql.conf
