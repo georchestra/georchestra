@@ -5,6 +5,24 @@ version: '2'
 # **NOT** production ready !
 
 services:
+  georchestra.mydomain.org:
+    image: traefik
+    ports:
+      - "80:80"
+      - "443:443"
+      #- "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /dev/null:/traefik.toml
+    command: --web --docker --logLevel=INFO --docker.domain='mydomain.org' --docker.exposedbydefault='false' --docker.watch
+
+  proxy:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=sp"
+      - "traefik.frontend.rule=Host:georchestra.mydomain.org"
+      - "traefik.frontend.passHostHeader=true"
+
   smtp:
     build: docker/smtp/smtp-sink
     image: camptocamp/smtp-sink:latest
