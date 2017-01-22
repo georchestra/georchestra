@@ -3,9 +3,6 @@ sudo: false
 git:
   depth: 1
   submodules: true
-before_install:
-  - wget http://build.georchestra.org/m2.tar
-  - tar xvf m2.tar -C ~ > /dev/null
 cache:
   directories:
     - $HOME/.m2
