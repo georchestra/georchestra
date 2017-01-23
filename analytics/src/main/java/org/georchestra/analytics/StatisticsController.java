@@ -34,6 +34,8 @@ import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.jsondoc.core.annotation.Api;
+import org.jsondoc.core.annotation.ApiMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -143,6 +145,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 
 @Controller
+@Api(name = "Statistics API", description = "Methods to get several statistics "
+        + "related to users and groups, and their use of the infrastructure.")
 public class StatisticsController {
 
     @Autowired
@@ -231,9 +235,6 @@ public class StatisticsController {
 	 *    curl -XPOST --data-binary '{"group": "ADMINISTRATOR", "startDate": "2015-01-01", "endDate": "2015-12-01" }' \
 	   -H'Content-Type: application/json'   http://localhost:8280/analytics/ws/distinctUsers -i
 	 */
-
-
-
 	/**
 	 * Total combined requests count group by time interval (hour, day, week or month). May be filtered by a user or a
 	 * group.
@@ -246,6 +247,17 @@ public class StatisticsController {
 	 */
 	@RequestMapping(value="/combinedRequests", method=RequestMethod.POST, produces= "application/json; charset=utf-8")
 	@ResponseBody
+    @ApiMethod(description="Returns the Total combined requests count group by time interval "
+	            + "(hour, day, week or month). It must be filtered by either a user or a group. "
+	            + "User or group is mandatory, a startDate and an endDate must be specified, ie:"
+	            + "<br/><code>"
+	            + "{ user: testadmin, startDate: 2015-01-01, endDate: 2015-12-01 }"
+	            + "</code><br/>or<br/>"
+	            + "<code>"
+	            + "{ group: ADMINISTRATOR, startDate: 2015-10-01, endDate: 2015-11-01 }"
+	            + "</code><br/>"
+	            + "is a valid request."
+	            + "")
 	public String combinedRequests(@RequestBody String payload, HttpServletResponse response) throws JSONException, ParseException {
 		JSONObject input = null;
 		String userId  = null;
@@ -574,6 +586,16 @@ public class StatisticsController {
 	 * @throws JSONException
 	 */
 	@RequestMapping(value="/distinctUsers", method=RequestMethod.POST)
+        @ApiMethod(description="Returns the distinct active users for a given period. A group can be provided in the query "
+            + "to limit the results to a given group.<br/>"
+            + "Here are 2 valid examples (with and without a group):<br/>"
+            + "<code>"
+            + "{ group: ADMINISTRATOR, startDate: 2015-01-01, endDate: 2015-12-01 }"
+            + "</code><br/>"
+            + "or:<br/>"
+            + "<code>"
+            + "{ startDate: 2015-01-01, endDate: 2015-12-01 }"
+            + "</code>")
 	@ResponseBody
 	public String distinctUsers(@RequestBody String payload, HttpServletResponse response) throws JSONException {
 		JSONObject input;
