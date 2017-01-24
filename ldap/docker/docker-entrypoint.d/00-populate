@@ -4,16 +4,16 @@
 if [ ! -d /etc/ldap/slapd.d ]; then
 
     # init ldap config
-    echo -n "init with upstream entrypoint..."
+    echo -n "Init with upstream entrypoint..."
     /entrypoint.sh true
-    echo "OK"
+    echo "Init: OK"
 
     # start slapd in background
-    echo -n "Start slapd daemon in background..."
+    echo -n "Starting slapd daemon in background..."
     slapd -u openldap -g openldap -h "ldapi:/// ldap://127.0.0.1/"
-    echo "OK"
+    echo "Started: OK"
 
-    echo -n "waiting for ldap deamon to start..."
+    echo -n "Waiting for LDAP deamon to start..."
     while true; do
         sleep 1
         ldapsearch -x >/dev/null 2>&1
@@ -21,9 +21,9 @@ if [ ! -d /etc/ldap/slapd.d ]; then
             break
         fi
     done;
-    echo "OK"
+    echo "Waiting: OK"
 
-    echo "Get the LDAP domain"
+    # Getting the LDAP domain...
     dc_string=""
     IFS="."; declare -a dc_parts=($SLAPD_DOMAIN); unset IFS
     for dc_part in "${dc_parts[@]}"; do
@@ -35,22 +35,25 @@ if [ ! -d /etc/ldap/slapd.d ]; then
         fi
     done
 
-    echo "Populating ldap tree..."
+    echo "Populating LDAP tree..."
     ldapadd -Y EXTERNAL -H ldapi:/// -f /tmp/memberof.ldif
     if [ "$IGNORE_DATA" = 'true' ]; then
         echo "$0: ignoring /tmp/georchestra.ldif";
     else
         perl -p -i -e "s/georchestra.org/${SLAPD_DOMAIN}/"        /tmp/georchestra.ldif
         perl -p -i -e "s/dc=georchestra,dc=org/${dc_string}/"     /tmp/georchestra.ldif
-        ldapadd -D"cn=admin,${dc_string}" -w "$SLAPD_PASSWORD" -f /tmp/georchestra.ldif
+        ldapadd -D "cn=admin,${dc_string}" -w "$SLAPD_PASSWORD" -f /tmp/georchestra.ldif
     fi
+    echo "Populating LDAP tree: OK"
 
-    echo "Populating ldap tree...OK"
+    echo "Creating indexes..."
+    ldapmodify -Y EXTERNAL -H ldapi:/// -f /tmp/indexes.ldif
+    echo "Indexes: OK"
 
     pkill slapd
 
     # wait for ldap to stop
-    echo -n "wait for ldap to stop..."
+    echo -n "Waiting for LDAP to stop..."
     while true; do
         sleep 1
         pgrep slapd >/dev/null 2>&1
@@ -58,12 +61,8 @@ if [ ! -d /etc/ldap/slapd.d ]; then
             break
         fi
     done;
-    echo "OK"
+    echo "Waiting: OK"
 
 else
-    echo "Ldap already initialised"
-
+    echo "LDAP already initialized !"
 fi
-
-
-

@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Get the LDAP domain...
+dc_string=""
+IFS="."; declare -a dc_parts=($SLAPD_DOMAIN); unset IFS
+for dc_part in "${dc_parts[@]}"; do
+    if [ -z "$dc_string" ]
+      then
+        dc_string="dc=$dc_part"
+      else
+        dc_string="$dc_string,dc=$dc_part"
+    fi
+done
+
+# Recompute indexes (on a stopped service ONLY)
+slapindex -b ${dc_string}
+echo "LDAP indexed"
