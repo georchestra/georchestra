@@ -10,13 +10,11 @@ volumes:
   mapfishapp_uploads:
   extractorapp_extracts:
   geonetwork_datadir:
-#  geowebcache_tiles:
-
 
 services:
-  # non geOrchestra services
   database:
-    image: georchestra/database
+    image: georchestra/database:latest
+    build: postgresql
     environment:
       - POSTGRES_USER=georchestra
       - POSTGRES_PASSWORD=georchestra
@@ -24,7 +22,8 @@ services:
       - postgresql_data:/var/lib/postgresql/data
 
   ldap:
-    image: georchestra/ldap
+    image: georchestra/ldap:latest
+    build: ldap
     environment:
         - SLAPD_ORGANISATION=georchestra
         - SLAPD_DOMAIN=georchestra.org
@@ -34,29 +33,6 @@ services:
       - ldap_data:/var/lib/ldap
       - ldap_config:/etc/ldap
 
-  smtp:
-    image: camptocamp/smtp-sink
-
-  courier-imap:
-    image: camptocamp/courier-imap
-    volumes_from:
-      - smtp:rw
-
-  webmail:
-    image: camptocamp/sqwebmail
-    ports:
-      - "8081:80"
-    volumes_from:
-      - smtp:rw
-
-  geodata:
-    image: georchestra/ssh_data
-    ports:
-      - "2222:22"
-    volumes:
-      - geoserver_geodata:/mnt/geoserver_geodata
-
-  # geOrchestra services
   geoserver:
     image: georchestra/geoserver:latest
     depends_on:
@@ -68,16 +44,6 @@ services:
     environment:
       - XMS=256M
       - XMX=8G
-
-#  uncomment to enable standalone geowebcache:
-#  geowebcache:
-#    image: georchestra/geowebcache:latest
-#    volumes:
-#      - geowebcache_tiles:/mnt/geowebcache_tiles
-#      - /etc/georchestra:/etc/georchestra
-#    environment:
-#      - XMS=1G
-#      - XMX=2G
 
   proxy:
     image: georchestra/security-proxy:latest
@@ -164,30 +130,3 @@ services:
     environment:
       - XMS=256M
       - XMX=1G
-
-#  uncomment to enable catalogapp:
-#  catalogapp:
-#    image: georchestra/catalogapp:latest
-#    volumes:
-#      - /etc/georchestra:/etc/georchestra
-#    environment:
-#      - XMS=256M
-#      - XMX=512M
-
-#  uncomment to enable downloadform:
-#  downloadform:
-#    image: georchestra/downloadform:latest
-#    volumes:
-#      - /etc/georchestra:/etc/georchestra
-#    environment:
-#      - XMS=256M
-#      - XMX=512M
-
-#  uncomment to enable atlas:
-#  atlas:
-#    image: georchestra/atlas:latest
-#    volumes:
-#      - /etc/georchestra:/etc/georchestra
-#    environment:
-#      - XMS=512M
-#      - XMX=2G

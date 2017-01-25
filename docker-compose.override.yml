@@ -1,20 +1,32 @@
 version: '2'
 
+# Complementary services, not part of geOrchestra core.
+# They are made to ease your life as a developer.
+# **NOT** production ready !
+
 services:
-  database:
-    build: postgresql
-
-  ldap:
-    build: ldap
-
   smtp:
     build: docker/smtp/smtp-sink
+    image: camptocamp/smtp-sink
 
   courier-imap:
     build: docker/smtp/courier-imap
+    image: camptocamp/courier-imap
+    volumes_from:
+      - smtp:rw
 
   webmail:
     build: docker/smtp/webmail
+    image: camptocamp/sqwebmail
+    ports:
+      - "8081:80"
+    volumes_from:
+      - smtp:rw
 
   geodata:
     build: docker/ssh_data
+    image: georchestra/ssh_data
+    ports:
+      - "2222:22"
+    volumes:
+      - geoserver_geodata:/mnt/geoserver_geodata
