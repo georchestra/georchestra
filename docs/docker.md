@@ -60,5 +60,15 @@ Files uploaded into this volume will also be available to the geoserver instance
 
 ## Notes
 
+The base docker composition does not include any standalone geowebcache instance, nor the atlas, downloadform, catalogapp modules. 
+If you need them, you have to include a complementary docker-compose file at run-time:
+```
+docker-compose -f docker-compose.yml -f docker-compose.other-apps.yml up
+```
+
 In the above guide, images are pulled from docker hub, which means they've been compiled by our CI. 
-In case you need to build these images by yourself, please refer to the [docker images build instructions](../docker/README.md).
+In case you have to build these images by yourself, please refer to the [docker images build instructions](../docker/README.md) or simply, to build all of them at once:
+```
+make docker-build
+```
+
