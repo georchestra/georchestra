@@ -65,11 +65,11 @@ query = "SELECT CAST(COUNT(*) AS integer) AS count,	to_char(date, 'YYYY-mm-dd') 
 		"ORDER BY to_char(date, 'YYYY-mm-dd')"),
 
 @NamedNativeQuery(name="Stats.getRequestCountBetweenStartDateAndEndDateByWeek",
-query = "SELECT CAST(COUNT(*) AS integer) AS count, to_char(date, 'YYYY-WW') " +
+query = "SELECT CAST(COUNT(*) AS integer) AS count, to_char(date, 'YYYY-IW') " +
 		"FROM ogcstatistics.ogc_services_log " +
 		"WHERE date >= CAST(:startDate AS timestamp without time zone) AND date < CAST(:endDate AS timestamp without time zone) " +
-		"GROUP BY to_char(date, 'YYYY-WW') " +
-		"ORDER BY to_char(date, 'YYYY-WW')"),
+		"GROUP BY to_char(date, 'YYYY-IW') " +
+		"ORDER BY to_char(date, 'YYYY-IW')"),
 
 @NamedNativeQuery(name="Stats.getRequestCountBetweenStartDateAndEndDateByMonth",
 query = "SELECT CAST(COUNT(*) AS integer) AS count,	to_char(date, 'YYYY-mm') " +
@@ -96,12 +96,12 @@ query = "SELECT CAST(COUNT(*) AS integer) AS count,	to_char(date, 'YYYY-mm-dd') 
 		"ORDER BY to_char(date, 'YYYY-mm-dd')"),
 
 @NamedNativeQuery(name="Stats.getRequestCountForUserBetweenStartDateAndEndDateByWeek",
-query = "SELECT CAST(COUNT(*) AS integer) AS count,	to_char(date, 'YYYY-WW') " +
+query = "SELECT CAST(COUNT(*) AS integer) AS count,	to_char(date, 'YYYY-IW') " +
 		"FROM ogcstatistics.ogc_services_log " +
 		"WHERE user_name = :user " +
 		"AND date >= CAST(:startDate AS timestamp without time zone) AND date < CAST(:endDate AS timestamp without time zone) " +
-		"GROUP BY to_char(date, 'YYYY-WW') " +
-		"ORDER BY to_char(date, 'YYYY-WW')"),
+		"GROUP BY to_char(date, 'YYYY-IW') " +
+		"ORDER BY to_char(date, 'YYYY-IW')"),
 
 @NamedNativeQuery(name="Stats.getRequestCountForUserBetweenStartDateAndEndDateByMonth",
 query = "SELECT CAST(COUNT(*) AS integer) AS count,	to_char(date, 'YYYY-mm') " +
@@ -129,12 +129,12 @@ query = "SELECT CAST(COUNT(*) AS integer) AS count,	to_char(date, 'YYYY-mm-dd') 
 		"ORDER BY to_char(date, 'YYYY-mm-dd')"),
 
 @NamedNativeQuery(name="Stats.getRequestCountForGroupBetweenStartDateAndEndDateByWeek",
-query = "SELECT CAST(COUNT(*) AS integer) AS count,	to_char(date, 'YYYY-WW') " +
+query = "SELECT CAST(COUNT(*) AS integer) AS count,	to_char(date, 'YYYY-IW') " +
 		"FROM ogcstatistics.ogc_services_log " +
 		"WHERE :group = ANY (roles) " +
 		"AND date >= CAST(:startDate AS timestamp without time zone) AND date < CAST(:endDate AS timestamp without time zone) " +
-		"GROUP BY to_char(date, 'YYYY-WW') " +
-		"ORDER BY to_char(date, 'YYYY-WW')"),
+		"GROUP BY to_char(date, 'YYYY-IW') " +
+		"ORDER BY to_char(date, 'YYYY-IW')"),
 
 @NamedNativeQuery(name="Stats.getRequestCountForGroupBetweenStartDateAndEndDateByMonth",
 query = "SELECT CAST(COUNT(*) AS integer) AS count, to_char(date, 'YYYY-mm') " +
