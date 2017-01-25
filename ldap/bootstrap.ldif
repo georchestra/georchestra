@@ -8,7 +8,7 @@ olcRootDN: cn=admin,dc=georchestra,dc=org
 olcRootPW: secret
 olcDbIndex: objectClass eq
 olcDbIndex: cn eq,sub,subfinal
-olcDbIndex: mail eq,sub
+olcDbIndex: mail eq,sub,subfinal
 olcDbIndex: member eq
 olcDbIndex: uid eq
 olcLastMod: TRUE

@@ -1,0 +1,12 @@
+dn: olcDatabase={1}hdb,cn=config
+add: olcDbIndex
+olcDbIndex: mail eq,sub,subfinal
+
+dn: olcDatabase={1}hdb,cn=config
+changetype: modify
+delete: olcDbIndex
+olcDbIndex: cn,uid eq
+-
+add: olcDbIndex
+olcDbIndex: cn eq,sub,subfinal
+olcDbIndex: uid eq

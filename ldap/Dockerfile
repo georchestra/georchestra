@@ -5,12 +5,12 @@
 FROM dinkel/openldap
 
 RUN apt-get update && \
-     apt-get install -y ldap-utils && \
-     rm -rf /var/lib/apt/lists/*
+    apt-get install -y ldap-utils && \
+    rm -rf /var/lib/apt/lists/*
 
 USER openldap
 ADD groupofmembers.ldif /etc/ldap.dist/modules/
-ADD docker/memberof.ldif /tmp/
+ADD docker/*.ldif /tmp/
 ADD georchestra.ldif /tmp/
 
 USER root
