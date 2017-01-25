@@ -1,0 +1,20 @@
+version: '2'
+
+services:
+  database:
+    build: postgresql
+
+  ldap:
+    build: ldap
+
+  smtp:
+    build: docker/smtp/smtp-sink
+
+  courier-imap:
+    build: docker/smtp/courier-imap
+
+  webmail:
+    build: docker/smtp/webmail
+
+  geodata:
+    build: docker/ssh_data
