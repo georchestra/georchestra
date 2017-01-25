@@ -85,6 +85,10 @@ data (using a batch insert for instance).
 Building your SDI is just few command-lines away.
 ```
 cd ~/georchestra
+```
+
+If your JDK version is < 8:
+```
 export MAVEN_OPTS="-XX:MaxPermSize=512M"
 ```
 
