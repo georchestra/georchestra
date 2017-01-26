@@ -4,17 +4,19 @@
 
 **First step**
 
-Download the `docker-compose.yml` file:
+Download the `docker-compose.yml` file and its complementary file:
 ```
 wget https://raw.githubusercontent.com/georchestra/georchestra/master/docker-compose.yml
+wget https://raw.githubusercontent.com/georchestra/georchestra/master/docker-compose.override.yml
 ```
-This file describes:
+These files describes:
  * which images / webapps will run,
  * how they are linked together,
  * where the configuration and data volumes are
 
 Feel free to comment out the apps you do not need.
 
+Note: the `docker-compose.override.yml` file adds services to interact with your geOrchestra instance (ssh, smtp, webmail).
 
 **Second step**
 
