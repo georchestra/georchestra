@@ -582,7 +582,7 @@ public class StatisticsController {
 		Set<String> excluded_users = new HashSet<String>();
 		excluded_users.add("anonymousUser");
 		for(int i=1;true; i++){
-			String user = this.georConfig.getProperty("protectedUser.uid" + i);
+			String user = this.georConfig.getProperty("excludedUser.uid" + i);
 			if(user != null)
 				excluded_users.add(user);
 			else
