@@ -7,17 +7,17 @@ version: '2'
 services:
   smtp:
     build: docker/smtp/smtp-sink
-    image: camptocamp/smtp-sink
+    image: camptocamp/smtp-sink:latest
 
   courier-imap:
     build: docker/smtp/courier-imap
-    image: camptocamp/courier-imap
+    image: camptocamp/courier-imap:latest
     volumes_from:
       - smtp:rw
 
   webmail:
     build: docker/smtp/webmail
-    image: camptocamp/sqwebmail
+    image: camptocamp/sqwebmail:latest
     ports:
       - "8081:80"
     volumes_from:
@@ -25,7 +25,7 @@ services:
 
   geodata:
     build: docker/ssh_data
-    image: georchestra/ssh_data
+    image: georchestra/ssh_data:latest
     ports:
       - "2222:22"
     volumes:
