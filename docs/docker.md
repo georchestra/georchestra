@@ -9,7 +9,7 @@ Download the `docker-compose.yml` file and its complementary file:
 wget https://raw.githubusercontent.com/georchestra/georchestra/master/docker-compose.yml
 wget https://raw.githubusercontent.com/georchestra/georchestra/master/docker-compose.override.yml
 ```
-These files describes:
+These files describe:
  * which images / webapps will run,
  * how they are linked together,
  * where the configuration and data volumes are
