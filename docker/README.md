@@ -16,7 +16,7 @@ Other useful makefile targets:
  * `docker-build-dev`: builds non-core geOrchestra images (ssh, smtp, webmail)
  * `docker-build-database`: builds `georchestra/database`
  * `docker-build-ldap`: builds `georchestra/ldap`
- * `docker-build-gn3`: builds `georchestra/geonetwork:3-latest`
+ * `docker-build-gn3`: builds `georchestra/geonetwork`
  * `docker-build-geoserver`: builds `georchestra/geoserver`
  * `docker-clean-volumes`: stops services and erases volumes (use with caution !)
  * `docker-clean-images`: stops services and removes images 
