@@ -1,88 +1,26 @@
-# Building your own docker images for geOrchestra
+# Docker
 
-Usually, you don't have to do this, since it is already taken care of by our CI, which pushes the latest images to docker hub.
+Are you looking for a way to run geOrchestra on Docker ?
+Please read the dedicated [how-to](../docs/docker.md).
 
-## PostGreSQL
+## Building your own docker images for geOrchestra
 
-```bash
-cd postgresql
-docker build -t georchestra/database .
+To build all geOrchestra docker images, including complementary services (ssh, smtp, webmail), just type:
+```
+make docker-build
 ```
 
-## LDAP 
-
-```bash
-cd ldap
-docker build -t georchestra/ldap .
-```
-
-## Webapps
-
-### GeoNetwork 3
-
-```bash
-cd geonetwork 
-../mvn -DskipTests clean install 
-cd web
-../../mvn -P docker -DskipTests package docker:build
-```
-
-### GeoServer without geofence
-
-This creates a ```georchestra/geoserver``` docker image:
-
-```bash
-cd geoserver/geoserver-submodule/src
-rm -fr ../data/citewfs-1.1/workspaces/sf/sf/E*
-LANG=C ../../../mvn clean install -DskipTests
-cd ../../webapp
-../../mvn clean install docker:build -Pdocker -DskipTests
-```
-
-### GeoServer with geofence
-
-This creates a ```georchestra/geoserver:geofence``` docker image:
-
-```bash
-cd geoserver/geoserver-submodule/src
-rm -fr ../data/citewfs-1.1/workspaces/sf/sf/E*
-LANG=C ../../../mvn clean install -Pgeofence-server -DskipTests
-cd ../../webapp
-../../mvn clean install docker:build -Pdocker,geofence -DskipTests
-```
+Other useful makefile targets:
+ * `docker-build-georchestra`: builds core geOrchestra images, including database & ldap
+ * `docker-build-geoserver-geofence`: builds `georchestra/geoserver:geofence`
+ * `docker-build-dev`: builds non-core geOrchestra images (ssh, smtp, webmail)
+ * `docker-build-database`: builds `georchestra/database`
+ * `docker-build-ldap`: builds `georchestra/ldap`
+ * `docker-build-gn3`: builds `georchestra/geonetwork:3-latest`
+ * `docker-build-geoserver`: builds `georchestra/geoserver`
+ * `docker-clean-volumes`: stops services and erases volumes (use with caution !)
+ * `docker-clean-images`: stops services and removes images 
+ * `docker-clean-all`: removes images and volumes (use with caution !)
 
 
-### Other webapps
-
-From the project root:
-```bash
-./mvn clean package docker:build -Pdocker -DskipTests --pl extractorapp,cas-server-webapp,security-proxy,mapfishapp,header,ldapadmin,analytics,catalogapp,downloadform,geowebcache-webapp
-```
-
-
-## Other complementary modules
-
-### Geodata upload
-
-This creates a ```georchestra/ssh_data``` docker image, which will be useful to transfer geodata into the SDI:
-
-```bash
-cd ../../docker/ssh_data
-docker build -t georchestra/ssh_data .
-```
-
-These files can be managed through SSH / rsync, eg with:
-```bash
-ssh -p 2222 geoserver@localhost 
-```
-The default password is `geoserver`.
-
-File should be transfered to the `/mnt/geoserver_geodata/` folder:
-```bash
-geoserver@20d925d9072b:~$ ls -al /mnt/geoserver_geodata/
-total 8
-drwxr-xr-x 2 geoserver geoserver 4096 Jan 22 13:10 .
-drwxr-xr-x 4 geoserver geoserver 4096 Jan 22 13:10 ..
-```
-
-They will be made available to all geoserver instances in `/mnt/geoserver_geodata`. 
+Note: usually, you don't have to build these images by yourself, since it is already taken care of by our CI, which pushes the latest images to [docker hub](https://hub.docker.com/u/georchestra/).
