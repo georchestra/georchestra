@@ -63,13 +63,13 @@ docker-build: docker-build-dev docker-build-gn3 docker-build-geoserver docker-bu
 war-build-geoserver:
 	cd geoserver/geoserver-submodule/src/; \
 	../../../mvn clean install -Pcontrol-flow,css,csw,gdal,inspire,pyramid,wps -DskipTests; \
-    cd ../../..; \
+	cd ../../..; \
 	./mvn clean install -pl geoserver
 
 war-build-geoserver-geofence:
 	cd geoserver/geoserver-submodule/src/; \
 	../../../mvn clean install -Pcontrol-flow,css,csw,gdal,inspire,pyramid,wps -DskipTests -Pgeofence-server; \
-    cd ../../..; \
+	cd ../../..; \
 	./mvn clean install -pl geoserver
 
 war-build-gn3:
