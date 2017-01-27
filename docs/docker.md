@@ -16,7 +16,11 @@ These files describe:
 
 Feel free to comment out the apps you do not need.
 
-Note: the `docker-compose.override.yml` file adds services to interact with your geOrchestra instance (ssh, smtp, webmail).
+Note: the `docker-compose.override.yml` file adds services to interact with your geOrchestra instance:
+ * reverse proxy / load balancer
+ * ssh / rsync services,
+ * smtp, webmail.
+
 
 **Second step**
 
@@ -45,7 +49,12 @@ Run geOrchestra with
 docker-compose up
 ```
 
-Open [http://localhost:8080/header/](http://localhost:8080/header/) in your browser.  
+Edit your `/etc/hosts` file with the following:
+```
+127.0.1.1	georchestra.mydomain.org
+```
+
+Open [http://georchestra.mydomain.org/](http://georchestra.mydomain.org/) in your browser.
 
 To login, use these credentials:
  * `testuser` / `testuser`
@@ -53,7 +62,7 @@ To login, use these credentials:
 
 To upload data into the GeoServer data volume (`geoserver_geodata`), use rsync:
 ```
-rsync -arv -e 'ssh -p 2222' /path/to/geodata/ geoserver@localhost:/mnt/geoserver_geodata/
+rsync -arv -e 'ssh -p 2222' /path/to/geodata/ geoserver@georchestra.mydomain.org:/mnt/geoserver_geodata/
 ```
 (password is: `geoserver`)
 
@@ -73,4 +82,3 @@ In case you have to build these images by yourself, please refer to the [docker 
 ```
 make docker-build
 ```
-
