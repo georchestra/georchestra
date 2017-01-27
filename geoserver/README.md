@@ -1,51 +1,27 @@
-# geOrchestra specific GeoServer build documentations
+# GeoServer in geOrchestra
 
-## GeoServer
+geOrchestra comes with it's own GeoServer version, which is a very light fork for customization (header & geofence integration, mainly).
 
-Into `geoserver-submodule/src` subdirectory
+If needed, geOrchestra is able to work with an unmodified, standard [GeoServer](http://geoserver.org/) instance, provided the [georchestra/geoserver_minimal_datadir](https://github.com/georchestra/geoserver_minimal_datadir) custom datadir is used.
 
-### GeoServer without GeoFence
 
+## Building GeoServer flavors
+
+GeoServer:
 ```
-$ cd geoserver-submodule/src
-# without GeoFence:
-$ mvn clean install
+make war-build-geoserver
 ```
+... or `make deb-build-geoserver` to build a Debian package.
 
-### GeoServer with GeoFence's own UI
 
+GeoServer **with integrated GeoFence** app:
 ```
-$ mvn clean install -Pgeofence
+make war-build-geoserver-geofence
 ```
-
-### GeoServer with integrated GeoFence UI
-
-```
-$ mvn clean install -Pgeofence-server
-
-```
-
-People willing to use GeoFence are advised to use the integrated version.
+... or `make deb-build-geoserver-geofence` to build a Debian package.
 
 
-## Building the geOrchestra debian package for GeoServer
-
-Into this directory:
-
-```
-$ mvn clean package deb:package -PdebianPackage --pl webapp
-```
-
-
-## Building the external GeoFence webapp
-
-Into `geofence/src` subdirectory
-
-```
-$ mvn clean install
-$ mvn package deb:package -Ppostgis -PdebianPackage --pl gui/web
-```
-## Extra properties needed for GeoFence
+## GeoFence
 
 If using GeoFence, make sure the following environment variable is defined before launching your application server:
 
@@ -59,5 +35,4 @@ The `geofence.dir` variable should also be configured so that `${geofence.dir}/g
 -Dgeofence.dir=/etc/georchestra/geoserver/geofence
 ```
 
-This extra variable is needed because we did not want to customize a geofence module which then come in its vanilla version.
-
+This extra variable is needed because we did not want to customize a geofence module which then comes in its vanilla version.

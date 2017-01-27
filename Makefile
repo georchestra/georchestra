@@ -1,3 +1,5 @@
+# Docker related targets
+
 docker-pull-jetty-jre7:
 	docker pull jetty:9.2-jre7
 
@@ -55,4 +57,46 @@ docker-clean-all:
 
 docker-build: docker-build-dev docker-build-gn3 docker-build-geoserver docker-build-georchestra
 
-all: docker-build
+
+# WAR related targets
+
+war-build-geoserver:
+	cd geoserver/geoserver-submodule/src/; \
+	../../../mvn clean install -Pcontrol-flow,css,csw,gdal,inspire,pyramid,wps -DskipTests; \
+    cd ../../..; \
+	./mvn clean install -pl geoserver
+
+war-build-geoserver-geofence:
+	cd geoserver/geoserver-submodule/src/; \
+	../../../mvn clean install -Pcontrol-flow,css,csw,gdal,inspire,pyramid,wps -DskipTests -Pgeofence-server; \
+    cd ../../..; \
+	./mvn clean install -pl geoserver
+
+war-build-gn3:
+	./mvn clean install -f geonetwork/pom.xml -DskipTests
+
+war-build-georchestra: war-build-gn3 war-build-geoserver
+	./mvn -Dmaven.test.skip=true clean install
+
+
+# DEB related targets
+
+deb-build-geoserver: war-build-geoserver
+	cd geoserver; \
+	../mvn clean package deb:package -PdebianPackage --pl webapp
+
+deb-build-geoserver-geofence: war-build-geoserver-geofence
+	cd geoserver; \
+	../mvn clean package deb:package -PdebianPackage --pl webapp
+
+deb-build-deps:
+	./mvn -Dmaven.test.failure.ignore clean install --non-recursive
+	./mvn clean install -pl config -Dmaven.javadoc.failOnError=false
+	./mvn clean install -pl commons,epsg-extension,ogc-server-statistics -Dmaven.javadoc.failOnError=false
+
+deb-build-georchestra: war-build-georchestra deb-build-deps deb-build-geoserver
+	./mvn package deb:package -pl atlas,catalogapp,cas-server-webapp,downloadform,security-proxy,header,mapfishapp,extractorapp,analytics,geoserver/webapp,ldapadmin,geonetwork/web,geowebcache-webapp -PdebianPackage -DskipTests
+
+
+# all
+all: war-build-georchestra deb-build-georchestra docker-build
