@@ -84,6 +84,7 @@ public class ExtractorControllerTest {
 	@Test
 	public void testValidateConfigUnothaurizedDirectory() {
 		// Tests are not supposed to be run as root
+		assumeFalse("root".equals(System.getProperty("user.name")));
 		String storageDirProp = null;
 		boolean assertionErrorRaised = false;
 
