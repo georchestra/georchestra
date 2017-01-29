@@ -15,6 +15,7 @@ Once your system is ready, collect WAR files in a dedicated directory and rename
     mkdir -p /tmp/georchestra
     cd /tmp/georchestra
     cp `find ~/.m2/repository/ -name "*-${VERSION}-${PROFILE}.war"` ./
+    cp ~/.m2/repository/org/geonetwork-opensource/web-app/3.0.4-SNAPSHOT/web-app-3.0.4-SNAPSHOT.war ./
     
     mv security-proxy-${VERSION}-${PROFILE}.war ROOT.war
     mv analytics-${VERSION}-${PROFILE}.war analytics.war
@@ -22,12 +23,12 @@ Once your system is ready, collect WAR files in a dedicated directory and rename
     mv catalogapp-${VERSION}-${PROFILE}.war catalogapp.war
     mv downloadform-${VERSION}-${PROFILE}.war downloadform.war
     mv extractorapp-${VERSION}-${PROFILE}.war extractorapp.war
-    mv geonetwork-main-${VERSION}-${PROFILE}.war geonetwork.war
     mv geoserver-webapp-${VERSION}-${PROFILE}.war geoserver.war
     mv ldapadmin-${VERSION}-${PROFILE}.war ldapadmin.war
     mv mapfishapp-${VERSION}-${PROFILE}.war mapfishapp.war
     mv header-${VERSION}-${PROFILE}.war header.war
-    
+    mv web-app-3.0.4-SNAPSHOT.war geonetwork.war
+
 Optionally, if you do not plan to use GeoServer's integrated GeoWebCache, you can deploy a standalone version:
 
     mv geowebcache-webapp-${VERSION}-${PROFILE}.war geowebcache.war
@@ -76,7 +77,7 @@ However, this requires the build process to happen on the production host (or a 
     sudo ln -s ~/.m2/repository/org/georchestra/catalogapp/${VERSION}-SNAPSHOT/catalogapp-${VERSION}-SNAPSHOT-${PROFILE}.war catalogapp.war
     sudo ln -s ~/.m2/repository/org/georchestra/downloadform/${VERSION}-SNAPSHOT/downloadform-${VERSION}-SNAPSHOT-${PROFILE}.war downloadform.war
     sudo ln -s ~/.m2/repository/org/georchestra/extractorapp/${VERSION}-SNAPSHOT/extractorapp-${VERSION}-SNAPSHOT-${PROFILE}.war extractorapp.war
-    sudo ln -s ~/.m2/repository/org/geonetwork-opensource/geonetwork-main/${VERSION}-SNAPSHOT/geonetwork-main-${VERSION}-SNAPSHOT-${PROFILE}.war geonetwork.war
+    sudo ln -s ~/.m2/repository/org/geonetwork-opensource/web-app/3.0.4-SNAPSHOT/web-app-3.0.4-SNAPSHOT.war geonetwork.war
     sudo ln -s ~/.m2/repository/org/georchestra/ldapadmin/${VERSION}-SNAPSHOT/ldapadmin-${VERSION}-SNAPSHOT-${PROFILE}.war ldapadmin.war
     sudo ln -s ~/.m2/repository/org/georchestra/mapfishapp/${VERSION}-SNAPSHOT/mapfishapp-${VERSION}-SNAPSHOT-${PROFILE}.war mapfishapp.war
     sudo ln -s ~/.m2/repository/org/georchestra/header/${VERSION}-SNAPSHOT/header-${VERSION}-SNAPSHOT-${PROFILE}.war header.war
