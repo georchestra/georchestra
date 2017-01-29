@@ -4,6 +4,9 @@ To build geOrchestra, you will first have to [create your own configuration repo
 
 Once you're created your own configuration, follow these steps...
 
+Note: building geOrchestra is definitely **not recommended anymore**, since [we provide binaries](https://packages.georchestra.org/) !
+
+
 ## Get the sources
 
 At this stage, if you don't have the geOrchestra sources, you need to download them:
@@ -46,38 +49,6 @@ SUCCESS ? Good, you're ready for the next step.
 If not, you should review carefully the error messages and [ask for help](http://www.georchestra.org/community.html) if you don't understand what happens.
 
 Note that if you're connecting to the internet through proxies, you need to [tell maven how to reach public repositories](http://maven.apache.org/guides/mini/guide-proxies.html).
-
-## GeoNetwork
-
-### Important note about the versions
-
-As of december 2015, the default version for GeoNetwork in geOrchestra switched
-to the 3.0.4 version. But some existing instances are still relying on features
-that are present in the older versions, hence it is still possible to use the
-GeoNetwork 2.x versions in geOrchestra.
-
-
-If you need a 2.x version, you will need to checkout the appropriate version in
-your repository before launching the build in the next step.
-
-Assuming a GN2 version is needed and the targeted version of geOrchestra is
-the `15.12` one, follow these steps before compiling:
-
-```
-cd geonetwork
-git checkout georchestra-15.12
-```
-
-This step would have to be repeated each time the git submodules are updated
-(using one of these commands `git submodule sync`, `git submodule update` ...).
-
-
-### Migrating from GeoNetwork 2 to 3.0.4
-
-Currently, no method is provided to migrate an older georchestra-geonetwork
-database to the new version, you will have to export your data from the old
-database by hand, start from an empty Geonetwork3 database, then reimport your
-data (using a batch insert for instance).
 
 
 ## Build the modules
