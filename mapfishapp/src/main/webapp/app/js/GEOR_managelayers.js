@@ -84,6 +84,12 @@ GEOR.managelayers = (function() {
          * Fired before all layers are removed from map
          */
         "beforecontextcleared",
+        
+        /**
+         * @event beforecontextcleared
+         * Fired after all layers are removed from map
+         */
+        "aftercontextcleared",
 
         /**
          * @event searchresults
@@ -994,6 +1000,7 @@ GEOR.managelayers = (function() {
                 map.removeLayer(map.layers[i]);
             }
         }
+        observable.fireEvent("aftercontextcleared");
     };
 
     /**
