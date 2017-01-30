@@ -29,6 +29,7 @@ import static org.georchestra.security.HeaderNames.SEC_PROXY;
 import static org.georchestra.security.HeaderNames.SEC_ROLES;
 import static org.georchestra.security.HeaderNames.SEC_USERNAME;
 import static org.georchestra.security.HeaderNames.TRANSFER_ENCODING;
+import static org.georchestra.security.HeaderNames.PROTECTED_HEADER_PREFIX;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -113,7 +114,8 @@ public class HeadersManagementStrategy {
             if (headerName.equalsIgnoreCase(HOST)) {
                 continue;
             }
-            if (headerName.equalsIgnoreCase(SEC_USERNAME) || headerName.equalsIgnoreCase(SEC_ROLES) ) {
+            // Don't forward 'sec-*' headers, those headers must be managed by security-proxy
+            if(headerName.toLowerCase().startsWith(PROTECTED_HEADER_PREFIX)){
                 continue;
             }
             if (referer != null && headerName.equalsIgnoreCase(REFERER_HEADER_NAME)) {

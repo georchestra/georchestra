@@ -31,6 +31,11 @@ public class HeadersManagementStrategyTest {
         assertFalse(hasHeader("imp-username", proxyRequest));
         assertFalse(hasHeader("imp-roles", proxyRequest));
 
+        assertFalse(hasHeader("sec-org", proxyRequest));
+        assertFalse(hasHeader("sec-email", proxyRequest));
+        assertFalse(hasHeader("sEc-capitalize", proxyRequest));
+        assertFalse(hasHeader("sec-capitalize", proxyRequest));
+
         assertTrue(hasHeader("other_header", proxyRequest));
     }
 
@@ -43,6 +48,9 @@ public class HeadersManagementStrategyTest {
         originalRequest.addHeader("imp-username", "imp_user");
         originalRequest.addHeader("imp-roles", "ROLE_GN_IMP");
         originalRequest.addHeader("other_header", "value");
+        originalRequest.addHeader("sec-org", "value");
+        originalRequest.addHeader("sec-email", "value");
+        originalRequest.addHeader("sEc-capitalize", "value");
         return originalRequest;
     }
 
