@@ -10,7 +10,8 @@ RUN apt-get update && \
 
 USER openldap
 ADD groupofmembers.ldif /etc/ldap.dist/modules/
-ADD docker/*.ldif /tmp/
+ADD docker/indexes.ldif /tmp/
+ADD memberof.ldif /tmp/
 ADD georchestra.ldif /tmp/
 
 USER root

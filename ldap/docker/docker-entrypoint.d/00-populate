@@ -36,6 +36,7 @@ if [ ! -d /etc/ldap/slapd.d ]; then
     done
 
     echo "Populating LDAP tree..."
+    sed -i 's/mdb/hdb/' /tmp/memberof.ldif
     ldapadd -Y EXTERNAL -H ldapi:/// -f /tmp/memberof.ldif
     if [ "$IGNORE_DATA" = 'true' ]; then
         echo "$0: ignoring /tmp/georchestra.ldif";
