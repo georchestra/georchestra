@@ -11,7 +11,9 @@
   "bugs": {
     "url": "https://github.com/georchestra/georchestra/issues"
   },
-  "dependencies": {},
+  "dependencies": {
+    "whatwg-fetch": "^2.0.2"
+  },
   "devDependencies": {
     "angular": "1.5.0-rc.1",
     "angular-chosen": "1.0.8",
