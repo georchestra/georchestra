@@ -115,7 +115,7 @@ public class HeadersManagementStrategy {
                 continue;
             }
             // Don't forward 'sec-*' headers, those headers must be managed by security-proxy
-            if(headerName.substring(0,4).equalsIgnoreCase(PROTECTED_HEADER_PREFIX)){
+            if(headerName.toLowerCase().startsWith(PROTECTED_HEADER_PREFIX)){
                 continue;
             }
             if (referer != null && headerName.equalsIgnoreCase(REFERER_HEADER_NAME)) {
