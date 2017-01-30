@@ -51,6 +51,8 @@ git commit -am "13.12 release"
 git push origin georchestra-13.12
 ```
 
+The first commit in this branch should update the `scmVersion` parameter in `web/pom.xml` to `docker-13.12`.
+
 Now is the time to create the development branch for the future version (14.06):
 
 ```
@@ -135,6 +137,8 @@ Now, let's create the maintenance branch for geOrchestra 13.12:
 git checkout -b 13.12
 git push origin 13.12
 ```
+
+The first commit in this branch should update the `scmVersion` parameter in every `pom.xml` to `docker-13.12`.
 
 ... and update the project version in master:
 
