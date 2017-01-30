@@ -410,28 +410,27 @@ Ext.namespace("GEOR");
         // Note: we're providing GEOR.ajaxglobal.init as a callback, so that
         // errors when loading WMC are not catched by GEOR.ajaxglobal
         // but by the mapinit module, which handles them more appropriately
-        if (GEOR.mapinit) {
-            GEOR.mapinit.events.on({
-                "searchresults": function(options) {
-                    removeActiveTab();
-                    var tab = new GEOR.ResultsPanel({
-                        html: tr("resultspanel.emptytext"),
-                        tabTip: options.tooltip,
-                        title: options.title,
-                        map: map
-                    });
-                    tab.populate({
-                        features: options.features,
-                        // here we do have a valid model (got from describeFeatureType)
-                        model: options.model
-                    });
-                    southPanel.insert(southPanel.items.length-1, tab);
-                    southPanel.setActiveTab(tab);
-                    southPanel.expand();
-                    tab._zoomToFeatures(options.features);
-                }
-            });
-        }
+        GEOR.mapinit.events.on({
+            "searchresults": function(options) {
+                removeActiveTab();
+                var tab = new GEOR.ResultsPanel({
+                    html: tr("resultspanel.emptytext"),
+                    tabTip: options.tooltip,
+                    title: options.title,
+                    map: map
+                });
+                tab.populate({
+                    features: options.features,
+                    // here we do have a valid model (got from describeFeatureType)
+                    model: options.model
+                });
+                southPanel.insert(southPanel.items.length-1, tab);
+                southPanel.setActiveTab(tab);
+                southPanel.expand();
+                tab._zoomToFeatures(options.features);
+            }
+        });
+        
 
         if (GEOR.getfeatureinfo) {
             GEOR.getfeatureinfo.events.on({
