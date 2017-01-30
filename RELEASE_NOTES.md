@@ -81,7 +81,7 @@ The LDAPadmin webapp should also create these new tables automatically during th
 There are several important changes in the LDAP:
  * What we used to call `groups` is now called `roles`. As a result, in the LDAP tree, eg `ou=groups,dc=georchestra,dc=org` should be renamed into `ou=roles,dc=georchestra,dc=org`.
  * A new `ou=orgs,dc=georchestra,dc=org` has been created to host the Organization objects. An org is made of an `organization` linked with a `groupOfMembers`-typed object.
- * Roles are now expected to have parent roles, eg role `EL` is the parent of role `EL_DSI`, which is the parent of role `EL_DSI_SERVICE`. This allows for an easy browsing between roles in the new Console application, but there's [more to come](https://github.com/georchestra/georchestra/issues/1559).
+ * **Roles are now expected to have parent roles**, eg role `EL` is the parent of role `EL_DSI`, which is the parent of role `EL_DSI_SERVICE`. This allows for an easy browsing between roles in the new Console application, but there's [more to come](https://github.com/georchestra/georchestra/issues/1559).
  * Several static roles have been renamed:
    * `SV_USER` -> `USER` is the basic role **expected for all geOrchestra users**, including administrators.
    * `SV_ADMIN` -> `GN_ADMIN` is for the GeoNetwork administrators.
@@ -102,7 +102,7 @@ Here's the [full LDAP diff](https://gist.github.com/fvanderbiest/7c8ae5656e29325
 
 ## Configurations
 
-The geOrchestra datadir is now mandatory.
+**The geOrchestra datadir is now mandatory**.
 Please read the notes from the [georchestra/datadir](https://github.com/georchestra/datadir/blob/master/README.md) repository to upgrade.
 
 For the mapfishapp viewer, we restored the ability to choose which context is shown by default through the `GEOR.custom.DEFAULT_WMC` config option.
@@ -111,7 +111,7 @@ Read [#1534](https://github.com/georchestra/georchestra/pull/1354) for more.
 GeoServer datadir:
  * the logging configuration has been improved
  * the rest configuration should be modified to take into account roles renaming
- * the `role` and `usergroup` services have been plugged onto the LDAP, which provides automatic role creation in GeoServer.
+ * the `role` and `usergroup` services have been plugged onto the LDAP, which provides **automatic role creation in GeoServer**.
 Please refer to this [geoserver datadir full diff](https://gist.github.com/fvanderbiest/2ae1bac7e4dd3023e1060b8deab6683b) for upgrade guidance.
 
 Rewrite rules which add an extra trailing slash on webapps are no longer needed on the frontend webserver, since it is now managed security-proxy side.
