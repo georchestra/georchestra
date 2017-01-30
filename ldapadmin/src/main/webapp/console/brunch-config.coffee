@@ -32,6 +32,7 @@ module.exports = config:
           'vendor/saveSvgAsPng.js',
           'vendor/ol.js',
           'vendor/FileSaver.js',
+          'vendor/promise.min.js',
           'vendor/fetch.js'
         ]
     stylesheets:
