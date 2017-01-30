@@ -90,9 +90,8 @@ There are several important changes in the LDAP:
  * All users (`inetOrgPerson`) should also have the `shadowAccount` objectClass. This allows to set an account expiration date.
  * We now require the `memberof` overlay to be configured with `olcMemberOfRefInt: TRUE` (it was previously set to `FALSE`). It enables integrity check between the `member` and `memberOf` values. Without this parameter, the `member` and `memberOf` can get out of sync. For more information, see [this commit](https://github.com/georchestra/georchestra/commit/534606e97186988ba2a672b729b2031e55256cfc).
 
-The `o` field in user is not used anymore => org title
-add script to migrate organization from 'o' attribut to new ou=orgs #1523
-https://github.com/georchestra/georchestra/pull/1523
+Since we introduced orgs, the `o` field which can be found in every `inetOrgPerson` instance is not used anymore. Instead, the org title should be used.
+In the [migrations/16.12](migrations/16.12) folder, we added a python script which helps creating the new Organizations in your LDAP, based on your user's current organization titles (from the `o` attribute).
 
 The recommended way to upgrade your LDAP database is the following:
  * dump all LDAP objects in a LDIF file
