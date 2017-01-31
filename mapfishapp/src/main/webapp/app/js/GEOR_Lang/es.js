@@ -487,7 +487,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Download the selected context": "Descargar el mapa seleccionada",
     "Delete": "Borrar",
     "Delete the selected context": "Borrar el mapa seleccionada",
-    "Failed to delete context": "el mapa no pudo ser borrado",
+    "Failed to delete context": "El mapa no pudo ser borrado",
     "Manage my contexts": "Manejar mis mapas",
     "Keywords": "Palabras claves",
     "comma separated keywords": "palabras claves separadas por comas",
