@@ -19,12 +19,18 @@
 
 package org.georchestra._header;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.Map;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
+import javax.annotation.PostConstruct;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.georchestra.commons.configuration.GeorchestraConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -35,7 +41,24 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @RequestMapping("/home")
 public class DefaultController {
-	
+
+    @Autowired
+    private ServletContext context;
+
+    @Autowired
+    private GeorchestraConfiguration georchestraConfiguration;
+
+    @PostConstruct
+    public void replaceLogo() throws IOException {
+
+        // Try to replace logo with logo from datadir
+        File target = new File(this.context.getRealPath("/img"), "logo.png");
+        File source = new File(georchestraConfiguration.getContextDataDir() + "/logo.png");
+        if(source.isFile() && target.canWrite())
+            Files.copy(source.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+    }
+
     @RequestMapping(method = RequestMethod.POST)
     public ModelAndView handlePOSTRequest(HttpServletRequest request, HttpServletResponse response)
     throws IOException {
