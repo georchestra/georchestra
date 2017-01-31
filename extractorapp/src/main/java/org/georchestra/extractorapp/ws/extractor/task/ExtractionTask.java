@@ -20,6 +20,7 @@
 package org.georchestra.extractorapp.ws.extractor.task;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.FileOutputStream;
@@ -381,9 +382,15 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 
 		CSWExtractor extractor = new CSWExtractor(layerDirectory, adminUserName, adminPassword, cswHost, requestConfig.userAgent);
 
-		extractor.checkPermission(request, requestConfig.username, requestConfig.roles);
-
-		extractor.extract(request._isoMetadataURL);
+		try {
+			extractor.checkPermission(request, requestConfig.username, requestConfig.roles);
+			extractor.extract(request._isoMetadataURL);
+		}catch (Exception ex){
+			File errorFile = new File(layerDirectory.getAbsolutePath() + File.separatorChar + "metadata_error.txt");
+			FileWriter fw = new FileWriter(errorFile);
+			fw.write(ex.getMessage());
+			fw.close();
+		}
 	}
 
 

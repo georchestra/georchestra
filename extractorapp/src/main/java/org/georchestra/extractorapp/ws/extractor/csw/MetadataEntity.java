@@ -124,7 +124,7 @@ final class MetadataEntity {
         	final String msg = "The metadata could not be extracted";
         	LOG.error(msg, e);
 
-        	writer.println(msg + "\nError :\n" + e.getMessage());
+        	throw new IOException(e);
         	
         } finally {
         	
