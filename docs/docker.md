@@ -39,7 +39,7 @@ Optional, but recommended: [adjust the configuration](https://github.com/georche
 
 **Third step**
 
-Pull / update geOrchestra docker images to their latest version with:
+From the directory where you downloaded the `docker-compose` files, pull / update geOrchestra docker images to their latest version with:
 ```
 docker-compose pull
 ```
