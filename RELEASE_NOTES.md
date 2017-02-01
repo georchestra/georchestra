@@ -50,7 +50,7 @@ Enhancements:
     * many improvements in dockerfiles and composition (syntax v2 now requires compose >= 1.6 and docker >= 1.10),
     * setup streamlined: static datadir is shipped in image, but it is overridable with a volume or a host folder, read the [how-to](https://github.com/georchestra/georchestra/blob/master/docs/docker.md),
     * docker volumes in `/mnt`, see [#1597](https://github.com/georchestra/georchestra/issues/1597) and [#1602](https://github.com/georchestra/georchestra/issues/1602).
- * a [Makefile](Makefile) is now available for those who'd like to build geOrchestra
+ * a [Makefile](Makefile) is now available for those who'd like to build geOrchestra (but it's not recommended anymore, since it is **now fully configurable** through it's datadir and UIs)
  * ... and [many more](https://github.com/georchestra/georchestra/issues?q=milestone%3A16.12+is%3Aclosed+label%3Aenhancement) !
 
 
@@ -102,7 +102,7 @@ Here's the [full LDAP diff](https://gist.github.com/fvanderbiest/7c8ae5656e29325
 
 ## Configurations
 
-**The geOrchestra datadir is now mandatory**.
+**The geOrchestra datadir is now mandatory**. It is indeed possible to fully configure a standard geOrchestra instance without having to build it.  
 Please read the notes from the [georchestra/datadir](https://github.com/georchestra/datadir/blob/master/README.md) repository to upgrade.
 
 For the mapfishapp viewer, we restored the ability to choose which context is shown by default through the `GEOR.custom.DEFAULT_WMC` config option.
