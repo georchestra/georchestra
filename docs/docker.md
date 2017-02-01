@@ -54,7 +54,7 @@ Edit your `/etc/hosts` file with the following:
 127.0.1.1	georchestra.mydomain.org
 ```
 
-Open [http://georchestra.mydomain.org/](http://georchestra.mydomain.org/) in your browser.
+Open [https://georchestra.mydomain.org/](https://georchestra.mydomain.org/) in your browser.
 
 To login, use these credentials:
  * `testuser` / `testuser`
