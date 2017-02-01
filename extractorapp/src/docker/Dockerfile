@@ -20,6 +20,7 @@ CMD ["sh", "-c", "exec java \
 -Djava.util.prefs.systemRoot=/tmp/systemPrefs \
 -Dgeorchestra.datadir=/etc/georchestra \
 -Dextractor.storage.dir=/mnt/extractorapp_extracts \
+-Dorg.geotools.referencing.forceXY=true \
 -Xms$XMS -Xmx$XMX \
 -XX:-UsePerfData \
 ${JAVA_OPTIONS} \
