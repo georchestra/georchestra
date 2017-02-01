@@ -34,7 +34,7 @@ Then, as `unprivileged_user`:
 git clone -b docker-master https://github.com/georchestra/datadir.git /etc/georchestra
 ```
 
-Optional, but recommended: adjust the configuration in `/etc/georchestra` according to your needs.
+Optional, but recommended: [adjust the configuration](https://github.com/georchestra/datadir/blob/docker-master/README.md) in `/etc/georchestra` according to your needs.
 
 
 **Third step**
