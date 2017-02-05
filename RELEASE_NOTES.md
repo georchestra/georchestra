@@ -115,131 +115,8 @@ Bug fixes:
 
 According to our release policy, geOrchestra 14.06 is not supported anymore.
 
+Read [how to migrate from 15.06 to 15.12](migrations/15.12/README.md).
 
-### UPGRADING:
-
-When upgrading your instance, you need to choose between the following alternatives:
- * you can go on compiling from the sources, using a "config directory" deriving from the [georchestra/template](https://github.com/georchestra/template) repository we provide (using branch 15.12 !),
- * you can use the generic WARs we provide on [build.georchestra.org/wars](http://build.georchestra.org/wars/),
- * you can use the packages we provide for Debian, CentOS or RedHat on [build.georchestra.org](http://build.georchestra.org/),
- * you can build on the docker images we provide on [hub.docker.com](https://hub.docker.com/r/georchestra/).
-
-Generic WARs expect to find their configuration in a folder, typically bootstrapped from the content of the [georchestra/datadir](https://github.com/georchestra/datadir/) repository (branch 15.12 !).
-This folder will generally be `/etc/georchestra` and the webapps will be aware of this location through the use of the tomcat additional parameter `-Dgeorchestra.datadir=/etc/georchestra`.
-
-Packages provide:
- * the WAR files, typically in `/usr/share/lib/georchestra-MODULENAME/`,
- * their own copy of the `/etc/georchestra` folder.
-If using packages, it is your responsibility to symlink WAR files in your tomcat `webapps` folder, for automatic deployment of the webapps.
-
-Keep in mind that the default configurations (either "template config" or "data dir") consider that geOrchestra runs on a SSL-enabled server. If this is not the case, please check carefully your datadir with [#1123](https://github.com/georchestra/georchestra/issues/1123) in mind.
-
- * Mapfishapp has been revamped to allow dynamic customization of addons and contexts. This means that 2 new controllers are now responsible of the JSON blocks that were previously present in the GEOR_custom.js file. As a result, it introduced some stricter conventions that have to be respected so that the controllers can function correctly:
-
-   *  Contexts: in "datadir-mode" (ie with the `-Dgeorchestra.datadir` parameter), contexts should be uploaded to `<georchestra.datadir>/mapfishapp/contexts/context.wmc` along with a picture (`<georchestra.datadir>/mapfishapp/contexts/images/context.jpg` or `.png`). Contexts belonging to the webapp (as a result of compilation, for instance) are also taken into account by the controller (in the contexts/ subdirectory).
-
-Imagine you had one context referenced in your GEOR_custom.js as such:
-```js
-     CONTEXTS: [{
-         label: "My context",
-         thumbnail: "app/img/contexts/osm.png",
-         wmc: "default.wmc",
-         tip: "A unique OSM layer",
-         keywords: ["background"]
-     },{
-         ...
-```
-The `label`, `tip` and `keywords` fields are now dynamically extracted from the context file.
-As a result, the `default.wmc` file should be edited to integrate the `Title` (matches `label`), `Abstract` (matches `tip`) and `Keywords` (matches `keywords`) strings, eg:
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<ViewContext xmlns="http://www.opengis.net/context" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.1.0" id="default" xsi:schemaLocation="http://www.opengis.net/context http://schemas.opengis.net/context/1.1.0/context.xsd">
-  <General>
-    <Window width="1373" height="709"/>
-    <BoundingBox minx="455462.822367389977" miny="6838526.51230099984" maxx="875255.821295570000" maxy="7055302.35806940030" SRS="EPSG:2154"/>
-    <Title>My context</Title>
-    <Abstract>A unique OSM layer</Abstract>
-    <KeywordList>
-      <Keyword>background</Keyword>
-    </KeywordList>
-```
-
-   *  Addons: in "datadir-mode", they need to be stored either in `<georchestra.datadir>/mapfishapp/addons/` (recommended) or in the `app/addons/` subdirectory of the webapp. Without the georchestra.datadir parameter, only the ones belonging to the webapp are taken into account.
-
- * As a result of [#1040](https://github.com/georchestra/georchestra/pull/1040), LDAP groups are now ```groupOfMembers``` instances rather than ```groupOfNames``` instances. In addition, the ```PENDING_USERS``` group was renamed to ```PENDING```. You have to migrate your LDAP tree, according to the following procedure (please change the ```dc=georchestra,dc=org``` string for your own base DN and provide a suitable password):
-   * dump your ldap **groups** with:
-   ```
-   ldapsearch -H ldap://localhost:389 -xLLL -D "cn=admin,dc=georchestra,dc=org" -w your_ldap_password -b "ou=groups,dc=georchestra,dc=org" > /tmp/groups.ldif
-   ```
-   * migration:
-
-```
-sed -i 's/PENDING_USERS/PENDING/' /tmp/groups.ldif
-sed -i 's/groupOfNames/groupOfMembers/' /tmp/groups.ldif
-sed -i '/fakeuser/d' /tmp/groups.ldif
-```
-
-   * load the [groupOfMembers](ldap/groupofmembers.ldif) definition:
-   ```
-    sudo ldapadd -Y EXTERNAL -H ldapi:/// -f groupofmembers.ldif
-   ```
-   * drop your groups organizationalUnit (```ou```)
-   * import the updated groups.ldif file.
-
- * As a result of [#1108](https://github.com/georchestra/georchestra/issues/1108) and [#556](https://github.com/georchestra/georchestra/issues/556), the ogc-server-statistics model has been changed. To upgrade your database, you should follow this procedure:
-
-```
-wget https://raw.githubusercontent.com/georchestra/georchestra/15.12/ogc-server-statistics/populate_stats_roles.py
-```
-In this script, change the values of the following variables according to your configuration: LDAP_URI, BIND_WITH_CREDENTIALS, LDAP_BINDDN, LDAP_PASSWD, GROUPS_DN, GROUP_OBJECT_CLASS.
-
-Create a virtual env for python :
-```
-virtualenv migr-ogcstatistics
-cd migr-ogcstatistics/
-source bin/activate
-easy_install ldap3
-```
-
-Then run the script:
-```
-python populate_stats_roles.py > /tmp/ogc-server-statistics-migration.sql
-```
-Check the sql migration file looks good.
-
-Next step is to execute the two migration scripts:
-```
-wget https://raw.githubusercontent.com/georchestra/georchestra/15.12/ogc-server-statistics/update_to_1512.sql -O /tmp/update_to_1512.sql
-psql -d georchestra -f /tmp/update_to_1512.sql
-psql -d georchestra -f /tmp/ogc-server-statistics-migration.sql
-```
-Please note that the `ogc-server-statistics-migration.sql` script might take a very long time, depending on your database size.
-
-Finally, ensure geOrchestra database user is owner of database. If your database is dedicated to geOrchestra (no other
-apps are running in same database), you can use following procedure to reset ownership of all objects to selected user, for
-example ```www-data``` :
-
-```
-wget https://raw.githubusercontent.com/georchestra/georchestra/15.12/postgresql/fix-owner.sql -O /tmp/fix-owner.sql
-psql -d georchestra -f /tmp/fix-owner.sql
-psql -d georchestra -c "SELECT change_owner('mapfishapp', 'www-data');";
-psql -d georchestra -c "SELECT change_owner('downloadform', 'www-data');";
-psql -d georchestra -c "SELECT change_owner('ldapadmin', 'www-data');";
-psql -d georchestra -c "SELECT change_owner('ogcstatistics', 'www-data');";
-psql -d georchestra -c "SELECT change_owner('public', 'www-data');";
-# if you deploy geonetwork :
-psql -d georchestra -c "SELECT change_owner('geonetwork', 'geonetwork');";
-```
-
-And if you deploy geofence :
-```
-psql -d georchestra -c "SELECT change_owner('geofence', 'www-data');";
-```
-
-Finally, you can drop maintenance function :
-```
- psql -d georchestra -c "DROP FUNCTION change_owner(text, text);";
-```
 
 Version 15.06
 =============
@@ -349,89 +226,7 @@ Bug fixes:
  * georchestra: many small fixes related to HTTPS support, eg [#745](https://github.com/georchestra/georchestra/issues/745), [#840](https://github.com/georchestra/georchestra/issues/840) and [#780](https://github.com/georchestra/georchestra/issues/780),
  * georchestra: css3 border-radius property replaces browser (moz and webkit) implementations.
 
-### UPGRADING:
-
-As said previously, the [documentation](README.md) was improved in order to reflect the most recent project changes.
-Most notably, it is now in line with the "3 tomcats"-based setup that drives the [template configuration](https://github.com/georchestra/template) since geOrchestra 14.06.   
-It also includes an interesting "[how to upgrade your config](docs/how_to_upgrade.md)" generic guide (that you should read, and maybe contribute to !).
-
-**config changes**
-
-We introduced a new global config option: ```shared.url.scheme``` which defaults to http.  
-Set to https (along with ```shared.server.port``` to 443) if your SDI requires it. Do not forget to also change the base url of GeoServer and GeoNetwork in their respectives admin GUI.
-
-In mapfishapp's GEOR_custom.js:
- * the ```WMS_SERVERS```, ```WMTS_SERVERS```, ```WFS_SERVERS``` config options have been removed. The server definitions are now loaded via separate XHR's. You should migrate your content into the newly introduced ```myprofile/mapfishapp/*.json``` files.
- * ```CONTEXT_LOADED_INDICATOR_DURATION``` was added to handle the "context loaded" popping down indicator duration. It defaults to 5 seconds. Set to 0 to disable the indicator.
- * ```CONTEXTS``` was an array of arrays. It is now an array of objects.
-
-Eg, in 14.06:
-```js
-[
-    ["OpenStreetMap", "app/img/contexts/osm.png", "default.wmc", "A unique OSM layer"],
-    [...]
-]
-```
-
-From 14.12 on:
-```js
-[{
-    label: "OpenStreetMap",
-    thumbnail: "app/img/contexts/osm.png",
-    wmc: "default.wmc",
-    tip: "A unique OSM layer",
-    keywords: ["OpenStreetMap", "Basemap"]
-}, {
-    ...
-}]
-```
-
-Also, the print templates have been improved.  
-If you made changes to the previous templates, you have to migrate them, or you may also keep your older templates.
-
-In extractorapp's GEOR_custom.js, several new javascript config options have been added, related to [#726](https://github.com/georchestra/georchestra/issues/726): ```SUPPORTED_RESOLUTIONS```, ```DEFAULT_RESOLUTION```, ```METADATA_RESOLUTION_XPATH```. Make sure your configuration is up to date with the template configuration, or you will get these variable defaults.
-
-Note also the addition of an ```excluded``` directory in the template configuration. The content of this directory will be ignored when creating the configuration jar, which is deployed in each webapp. This is a convenient way to store scripts and so on, versioned with your configuration.
-
-**new repositories**
-
-We decided to publish resources for your server "htdocs" folder.
-Have a look at our [georchestra/htdocs](https://github.com/georchestra/htdocs) repository to get some inspiration.
-
-As you may know, since geOrchestra 14.06, we recommend to start from our [minimal GeoServer "data dir"](https://github.com/georchestra/geoserver_minimal_datadir), rather than using GeoServer's default.
-For the 14.12 release, we also decided to publish a [minimal GeoNetwork data dir](https://github.com/georchestra/geonetwork_minimal_datadir) too !
-
-**apache configuration**
-
-In geOrchestra's security proxy, there's an OGC proxy which we use to circumvent browser's [same origin policy](http://en.wikipedia.org/wiki/Same-origin_policy).
-To prevent anyone to use this proxy (see [#755](https://github.com/georchestra/georchestra/issues/755)), we recommend to restrict access to the proxy by checking the request [Referer header](http://en.wikipedia.org/wiki/HTTP_referer), eg for apache <= 2.2 with:
-
-```
-SetEnvIf Referer "^http://my\.sdi\.org/" mysdi
-<Proxy http://localhost:8180/proxy/*>
-    Order deny,allow
-    Deny from all
-    Allow from env=mysdi
-</Proxy>
-```
-
-There's also another improvement when your SDI is not globally accessed through https: securing your communications to the ldapadmin webapp through the following:
-```
-RewriteCond %{HTTPS} off
-RewriteCond %{REQUEST_URI} ^/ldapadmin/?.*$
-RewriteRule ^/(.*)$ https://%{SERVER_NAME}/$1 [R=301,L]
-```
-This can also be used to secure other modules, eg analytics, downloadform...
-
-**building**
-
-If you experience build issues, please clear your local maven repository (rm -rf ~/.m2/repository/), then try again.  
-
-Our [continuous integration process](https://sdi.georchestra.org/ci/job/georchestra-template/) now checks every day that all geOrchestra modules (including GeoFence) build smoothly.  
-We also make sure that the following geoserver extensions are compatible: app-schema, authkey, charts, control-flow, css, csw, dds, dxf, feature-aggregate, feature-pregeneralized, geosearch, gdal, imagemap, inspire, istyler, kml, libjpeg-turbo, mysql, ogr, pyramid, script, spatialite, xslt, wps, w3ds. They can be integrated in your geoserver deployment by adding them in the build command line, eg with
-```
-./mvn -Dserver=template -Dmaven.test.skip=true -Pgeofence -Pcontrol-flow,css,csw,gdal,inspire,kml,libjpeg-turbo,ogr,pyramid,spatialite,wps,w3ds clean install
-```
+Read [how to migrate from 14.06 to 14.12](migrations/14.12/README.md).
 
 
 Version 14.06
@@ -532,118 +327,7 @@ Bug fixes:
 Please refer to [this guide](INSTALL.md).
 
 
-### UPGRADING:
-
-The way geOrchestra is configured has been streamlined:
- - there are **default parameters which are shared by several modules**, in [config/shared.maven.filters](config/shared.maven.filters). A "standard" install should not require you to bother about them. But if your setup is different from the default one, you may have to copy one or more of theses properties into your own shared maven filters (read on), in order to be able to customize them.
- - there are also **shared parameters which have to be customized** for your own instance. These can be found in the **build_support/shared.maven.filters** file inside your own configuration directory. As your config dir inherits from the template config dir, it should be very similar to [georchestra/template:build_support/shared.maven.filters](https://github.com/georchestra/template/blob/master/build_support/shared.maven.filters). The shared maven filters from this file override those from [config/shared.maven.filters](config/shared.maven.filters)
- - finally, there are **parameters for every individual geOrchestra module** (geoserver, geofence, mapfishapp, extractorapp, proxy, ldapadmin), which can be customized via the **build_support/GenerateConfig.groovy** file in your own config dir. Have a look at the one provided by the template config for an example:  [georchestra/template:build_support/GenerateConfig.groovy](https://github.com/georchestra/template/blob/master/build_support/GenerateConfig.groovy).
-
-As a result, a "standard geOrchestra configuration" should not require you to edit more than 2 files: one for the shared parameters, and an other one for module-specific parameters.  
-Note: copying maven.filter files in your own configuration dir (which was an older practice) is not anymore recommended because it is very difficult to maintain when upgrading version.
-=> you should remove any maven.filter file from your own configuration, and eventually copy the values you had customized into build_support/GenerateConfig.groovy
-
-
-**Build:**
-
-The "Jetty Maven2" Repository provided by oss.sonatype.org requires HTTPS now. The fix was pushed to the georchestra and geonetwork repositories, but in the mean time, your /home/$USER/.m2 local repository might have gotten corrupted with html files rather than jars. If you experience compilation errors, you might need to clean your local maven repo, by running ```rm -rf ~/.m2/repository/org/apache/maven```
-
-Upgrading your build is a 2-steps process.  
-Let's assume your local geOrchestra source code repository is located in ```/path_to_georchestra_root/```.
-
-First you have to update the sources from the remote origin and update yours:
-```
-cd /path_to_georchestra_root/
-git fetch origin
-git checkout 14.06
-git submodule sync
-git submodule update --init
-```
-
-Then you need to update your configuration directory to align it with the template configuration, [branch 14.06](https://github.com/georchestra/template/tree/14.06).
-
-In the following, we assume that your configuration directory is versioned with git, and has the geOrchestra template config set as "upstream" remote repository:
-```
-cd /path_to_georchestra_root/config/configuration/<yours>
-git fetch upstream
-git merge upstream/14.06
-```
-Then you'll probably have to fix some conflicts.  
-Note: if you do not know how to fix these conflicts, you're probably better off starting again with a fresh fork of the template config directory.
-
-
-The build process remains unchanged, but there is a difference at the end.  
-In the previous releases, the artifacts included a "-private" suffix in their name. We were making the assumption that all WARs would be deployed to the same tomcat.
-This is not the case anymore. This implies that the security proxy now resides in a different servlet container than the proxied webapps. If this is not your case, juste rename them back with the "-private" suffix.
-
-
-**LDAP:**
-
-The [LDAP repository](https://github.com/georchestra/LDAP) holds branches for the 13.09, 14.01 and 14.06 releases.
-In 13.09, groups are instances of posixGroup. From 14.01 to 15.06, they are instances of groupOfNames.
-Since 15.12, they are instances of groupOfMembers which allows to have empty groups.
-
-Between 14.01 and 14.06 branches, here are the differences:
- - the ```MOD_EXTRACTORAPP``` group was created. You should assign to it the users which already had access to extractorapp (typically members of ```SV_USER```)
- - the privileged geoserver user ("shared.privileged.geoserver.user") was renamed from ```extractorapp_privileged_admin``` to ```geoserver_privileged_user``` because it is no more used only for the extractor.
-
-
-**Databases:**
-
-In this release, the GeoNetwork database was merged into the unique default georchestra database.
-It is now a schema inside the main database.
-
-This change requires that a "geonetwork" db user is created and granted rights:
-```
-createuser -SDRIP geonetwork (the expected password for the default config is "www-data")
-psql -d georchestra -c 'CREATE SCHEMA geonetwork;'
-psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA geonetwork TO "geonetwork";'
-```
-
-The full migration process is described in [#601/comment](https://github.com/georchestra/georchestra/issues/601#issuecomment-36889319).
-This [link](https://github.com/georchestra/georchestra/issues/601#issuecomment-36890670) also provides hints if you prefer to keep your existing 2-databases setup.
-
-
-**Native libs:**
-
-The GDAL java bindings (gdal.jar) are no more provided by webapps, because this can lead to issues when the native libs are loaded several times in the same servlet container.
-Instead, the bindings should be installed once and for all in a folder accessible by the servlet container.
-
-Please refer to the documentation relative to [native libs handling in geOrchestra](https://github.com/georchestra/georchestra/blob/master/geoserver/NATIVE_LIBS.md), section "Tomcat configuration"
-
-
-**Shared maven filters:**
-
-Several previous shared maven filters have been removed because they were not truly shared between modules:
- * ```shared.mapfishapp.docTempDir```
- * ```shared.geofence.*```
- * ```shared.checkhealth.*```
-
-You'll find the exact same settings in build_support/GenerateConfig.groovy
-
-```shared.geonetwork.dir``` was removed because it was useless
-
-Seevral shared maven filters were homogeneized:
- * shared.psql.ogc.statistics.db becomes shared.ogc.statistics.db
- * shared.psql.download_form.db -> shared.download_form.db
- * shared.psql.geonetwork.db -> shared.geonetwork.db
- * shared.ldapadmin.db
- * shared.geofence.db
-
-Finally, ```geonetwork.language``` was renamed into ```shared.geonetwork.language```
-
-
-**Miscellaneous:**
-
-If you're using ldapadmin, make sure you've setup [ReCaptcha](http://www.google.com/recaptcha/) keys for your own domain.  
-Hint: search for privateKey in your GenerateConfig.groovy.
-
-French projections (typically EPSG:2154) have been removed from the extractorapp and mapfishapp config files.  
-Be sure to check your GEOR_custom.js files if you need them.
-
-mapfishapp: ```GEONETWORK_URL``` was renamed into ```GEONETWORK_BASE_URL```.  
-Caution: the expected string for this config option has changed too: from eg. "http://geobretagne.fr/geonetwork/srv/fre" to: "http://geobretagne.fr/geonetwork".
-
+Read [how to migrate from 14.01 to 14.06](migrations/14.06/README.md).
 
 
 
@@ -787,71 +471,8 @@ Bug fixes:
  * header: maintains existing URI parameters when adding the "login" param - see [#175](https://github.com/georchestra/georchestra/issues/175)
  * build now passes on windows.
 
-### UPGRADING:
- * As a result of [#569](https://github.com/georchestra/georchestra/issues/569), LDAP groups are now ```groupOfNames``` instances rather than ```posixGroup``` instances. You have to migrate your LDAP tree, according to the following procedure (please change the ```dc=georchestra,dc=org``` string for your own base DN):
-   * dump your ldap **groups** with:
 
-   ```
-   ldapsearch -H ldap://localhost:389 -xLLL -D "cn=admin,dc=georchestra,dc=org" -w your_ldap_password -b "ou=groups,dc=georchestra,dc=org" > /tmp/groups.ldif
-   ```
-
-   * migration:
-
-   ```
-   sed -i 's/\(memberUid: \)\(.*\)/member: uid=\2,ou=users,dc=georchestra,dc=org/' /tmp/groups.ldif
-   sed -i 's/posixGroup/groupOfNames/' /tmp/groups.ldif
-   sed -i '/gidNumber/d' /tmp/groups.ldif OR sed -i 's/gidNumber/ou/' /tmp/groups.ldif if geofence is deployed
-   sed -i 's/objectClass: groupOfNames/objectClass: groupOfNames\nmember: uid=fakeuser/' /tmp/groups.ldif
-   ```
-
-   * drop your groups organizationalUnit (```ou```)
-   * optionally, have a look at the provided [georchestra-memberof.ldif](https://github.com/georchestra/LDAP/blob/master/georchestra-memberof.ldif) file, which creates & configures the [memberOf overlay](http://www.openldap.org/doc/admin24/overlays.html). As root, and after checking that the file targets the correct database (```olcDatabase={1}hdb``` by default): ```ldapadd -Y EXTERNAL -H ldapi:// < georchestra-memberof.ldif```
-   * import the updated groups.ldif file.
- * analytics: the ExtJS submodule path has changed, be sure to run ```git submodule update --init``` when you switch branches.
- * databases: the downloadform, ogcstatistics and ldapadmin databases are now merged into a single one named "georchestra". Each webapp expects to find its tables in a dedicated schema ("downloadform" for the downloadform module, "ogcstatistics" for ogc-server-statistics, and "ldapadmin" for ldapadmin). See [#535](https://github.com/georchestra/georchestra/pull/535) for the complete patch. If you currently have one dedicated database for each module, you can keep your setup, provided you customize the ```shared.psql.ogc.statistics.db```, ```shared.psql.download_form.db``` & ```shared.ldapadmin.db``` maven filters in your own config. In any case, you'll have to rename the ```download``` schema (of the previous ```downloadform``` database) into ```downloadform```, and migrate the tables which were in the public schema of the databases ```ogcstatistics``` and ```ldapadmin``` into the newly created schemas.
-
-Example migration script:
-
-```
-psql -d downloadform -c 'alter schema download rename to downloadform;'
-
-wget --no-check-certificate https://raw.githubusercontent.com/georchestra/georchestra/14.01/ldapadmin/database.sql -O /tmp/ldapadmin.sql
-psql -d ldapadmin -f /tmp/ldapadmin.sql
-psql -d ldapadmin -c 'GRANT ALL PRIVILEGES ON SCHEMA ldapadmin TO "www-data";'
-psql -d ldapadmin -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ldapadmin TO "www-data";'
-psql -d ldapadmin -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA ldapadmin TO "www-data";'
-psql -d ldapadmin -c 'insert into ldapadmin.user_token (uid, token, creation_date) select uid, token, creation_date from public.user_token;'
-psql -d ldapadmin -c 'drop table public.user_token;'
-
-wget --no-check-certificate https://raw.githubusercontent.com/georchestra/georchestra/14.01/ogc-server-statistics/database.sql -O /tmp/ogcstatistics.sql
-psql -d ogcstatistics -f /tmp/ogcstatistics.sql
-psql -d ogcstatistics -c 'GRANT ALL PRIVILEGES ON SCHEMA ogcstatistics TO "www-data";'
-psql -d ogcstatistics -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ogcstatistics TO "www-data";'
-psql -d ogcstatistics -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA ogcstatistics TO "www-data";'
-psql -d ogcstatistics -c 'insert into ogcstatistics.ogc_services_log (id, user_name, date, service, layer, request, org) select id, user_name, date, service, layer, request, org from public.ogc_services_log;'
-psql -d ogcstatistics -c 'drop table public.ogc_services_log;'
-```
-
- * download form: the module is disabled by default (```shared.download_form.activated=false```). Be sure to set the value you want in your shared.maven.filters file.
- * extractorapp:
-   * ```BUFFER_VALUES``` has changed. If you had a custom value in your GEOR_custom.js file, you have to modify it according to the new syntax.
-   * the ```geobretagne_production``` env variable has been removed - see [#97](https://github.com/georchestra/georchestra/pull/97)
- * geoserver: be sure to set the ```file.encoding``` tomcat option for geoserver to interpret correctly UTF-8 SLDs (read [how](INSTALL.md#geoserver)).
- * ldapadmin:
-   * accessing ```/ldapadmin/privateui/``` is now restricted to members of the ```MOD_LDAPADMIN``` group. It is recommended that only members of the ```ADMINISTRATOR``` or ```SV_ADMIN``` administrative groups belong to ```MOD_LDAPADMIN```, since this group allows privileges escalation.
-   * new ```shared.ldapadmin.db``` parameter to specify the ldapadmin database name (defaults to "georchestra").
-   * the ldapadmin private app is now accessed via /ldapadmin/privateui/ rather than /ldapadmin/privateui/index.html
- * mapfishapp:
-   * geonames now require you to create an account in order to enable queries on their free web services (see [#563](https://github.com/georchestra/georchestra/issues/563)). Please change the default account in your profile's GEOR_custom.js ```GEONAMES_FILTERS``` variable.
-   * addons: custom addons relying on local web services should no longer assume that the application path is ```/mapfishapp```. Instead, they should use the new ```GEOR.config.PATHNAME``` constant, eg [here](https://github.com/georchestra/georchestra/blob/04017309f3880a0c558537235c92f70a269722d1/mapfishapp/src/main/webapp/app/addons/annotation/js/Annotation.js#L486).
-   * the app now requires a dedicated database schema, please refer to the [INSTALL.md](INSTALL.md#postgresql) documentation.
-   * new config option: ```SEND_MAP_TO``` for [#443](https://github.com/georchestra/georchestra/issues/443), please read the [doc](https://github.com/georchestra/template/blob/34496d62701e809c80235275a9e2a0b4b46f1123/mapfishapp/app/js/GEOR_custom.js#L583).
-   * new config option: ```FORCE_LOGIN_IN_TOOLBAR```
-   * the ```NS_EDIT``` config option has been removed, and mapfishapp/edit is no longer routed. By default, all layers served by the platform geoserver are editable (see ```GEOR.custom.EDITABLE_LAYERS```), provided the user has the rights to (defaults to members of ```ROLE_ADMINISTRATOR```, see ```GEOR.custom.ROLES_FOR_EDIT```).
-   * the contexts referenced in your ```GEOR.custom.CONTEXTS``` array are now able to reference layers with their full attribution information (text, logo & link). Have a look at the provided [default.wmc](https://github.com/georchestra/template/blob/55f24c8625e737d0b4567db92966c98502578766/mapfishapp/default.wmc#L39).
-   * print: some parameters have changed when the print module was updated: ```maxIconWidth``` -> ```iconMaxWidth```, ```maxIconHeight``` -> ```iconMaxHeight``` (see [e6231c](https://github.com/georchestra/template/commit/e6231c8cbf325dfa2bf96fcaa14096fc0c64ab89)).
- * ogcservstatistics - disabled by default: ```shared.ogc.statistics.activated=false```. Be sure to set the value you want in your shared.maven.filters file.
- * static: the "static" module has been renamed into "header": your deployment scripts *must* be adapted, as well as your apache2 configuration (or any other reverse proxy).
+Read [how to migrate from 13.09 to 14.01](migrations/14.01/README.md).
 
 
 Version 13.09
@@ -929,27 +550,7 @@ Bug fixes:
  * mapfishapp: fixed broken help url
 
 
-### UPGRADING:
- * mapfishapp:
-   * default projection changes from EPSG:2154 to EPSG:3857 (aka Spherical Web Mercator). Your users might need to clear their localStorage, or force loading of the new default context.
-   * default MAP_SCALES changes to match the OGC WMTS spec,
- * LDAP: see [georchestra/LDAP#2](https://github.com/georchestra/LDAP/pull/2)
-   * one group was renamed: ```STAT_USER``` becomes ```MOD_ANALYTICS``` - grants access to the analytics app,
-   * an other one was created: ```MOD_LDAPADMIN``` - grants access to the LDAPadmin private UI (/ldapadmin/privateui/).
- * The default application language is now **English**:
-   * ```shared.language``` = en
-   * ```geonetwork.language``` = eng
-   * default email templates [here](https://github.com/georchestra/georchestra/tree/master/config/defaults/ldapadmin/WEB-INF/templates) and [there](https://github.com/georchestra/georchestra/tree/master/config/defaults/extractorapp/WEB-INF/templates): be sure to override them in your own config !
- * Remember also to fill these new global maven filters:
-   * ```shared.homepage.url``` - for your SDI home page (might be something like http://my.sdi.org/portal/),
-   * ```shared.instance.name``` - will be displayed in page titles (eg: GeoMyCompany),
-   * ```shared.email.html``` - whether to send emails in plain text (default) or HTML,
-   * ```shared.administrator.email``` - this email receives new account requests (eg: me@mycompany.com)
- * shared maven filters renamed:
-   * ```shared.smtp.replyTo``` -> ```shared.email.replyTo```
-   * ```shared.smtp.from``` -> ```shared.email.from```
- * frontend webserver:
-   * add a proxy rule for `/_static/` subdirectory (see https://github.com/georchestra/georchestra/tree/master/INSTALL.md)
+Read [how to migrate from 13.06 to 13.09](migrations/13.09/README.md).
 
 
 Version 13.06
@@ -982,9 +583,8 @@ Bug fixes:
  * mapfishapp: more robust handling of incoming WMS server URLs (eg: those with a mapfile GET parameter),
  * geonetwork: fixed ldap attribute mapping.
 
-### UPGRADING:
- * mapfishapp's default thesaurus has been set to local.theme.test, which is the only one exported by GeoNetwork by default. Feel free to customize to suit your needs,
- * geonetwork upgrade instructions are available [here](https://github.com/georchestra/geonetwork/blob/georchestra-29/README.md).
+Read [how to migrate from 13.02 to 13.06](migrations/13.06/README.md).
+
 
 
 Version 13.02
@@ -1030,21 +630,5 @@ Bug fixes:
  * mapfishapp: fixed XML documents missing the prolog, see http://applis-bretagne.fr/redmine/issues/4536
  * mapfishapp: WFS layer redraw was throwing an error, see http://applis-bretagne.fr/redmine/issues/4544
  * LDAP: group membership is now declared with memberUid = user uid rather than full dn, see https://github.com/georchestra/georchestra/pull/91
-
-### UPGRADING:
- * LDAP tree needs to be migrated as a result of https://github.com/georchestra/georchestra/pull/91 :
-    * ldif export: ldapsearch -xLLL -D "cn=admin,dc=georchestra,dc=org" -W > dump.ldif
-    * migration: sed 's/\(memberUid: uid=\)\(.*\)\(,ou=users,dc=georchestra,dc=org\)/memberUid: \2/' dump.ldif > new.ldif
-    * ldif import
- * mapfishapp config changes:
-    * the print config folder should be moved from YOUR_CONFIG/mapfishapp/print to YOUR_CONFIG/mapfishapp/WEB-INF/print for security reasons, see https://github.com/georchestra/georchestra/issues/82
-    * client side (see GEOR_config.js or GEOR_custom.js for more information):
-        * MAP_POS_SRS1 and MAP_POS_SRS2 options have been replaced with POINTER_POSITION_SRS_LIST
-        * DEFAULT_WMC option has been replaced with CONTEXTS
-        * PRINT_LAYOUTS_ACL allows to fine-tune available printing layouts based on user roles
-        * DEFAULT_PRINT_FORMAT is now replaced by DEFAULT_PRINT_LAYOUT
-        * DEACCENTUATE_REFERENTIALS_QUERYSTRING option added (controls whether to deaccentuate the referentials widget query string or not)
-    * server side:
-        * There is a new maven filter for mapfishapp temporary documents: shared.mapfishapp.docTempDir (defaults to /tmp/mapfishapp)
-    * don't forget to edit your WMCs to activate back buffers on base layers, see https://github.com/georchestra/georchestra/pull/42
- * In GeoNetwork, it is now recommended to use OGC:WMS protocol rather than OGC:WMS-1.1.1-http-get-map (or any other WMS tagged with a version) to declare WMS layers, see https://github.com/georchestra/georchestra/pull/4
+ 
+Read [how to migrate to 13.02](migrations/13.02/README.md).
