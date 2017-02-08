@@ -2,9 +2,9 @@ require('components/area/area.tpl')
 
 class AreaController {
 
-  static $inject = [ '$injector', '$q' ]
+  static $inject = [ '$injector', '$q', '$http' ]
 
-  constructor ($injector, $q) {
+  constructor ($injector, $q, $http) {
     this.$injector = $injector
     const CONFIG_URI = this.$injector.get('LDAP_PUBLIC_URI') + 'orgs/areaConfig.json'
 
@@ -13,7 +13,7 @@ class AreaController {
     translate('area.updated', this.i18n)
     translate('area.error', this.i18n)
 
-    let promises = [ window.fetch(CONFIG_URI).then(r => r.json()) ]
+    let promises = [ $http.get(CONFIG_URI).then(r => r.data) ]
     if (this.item.$promise) {
       promises.push(this.item.$promise)
     }
@@ -67,8 +67,8 @@ class AreaController {
     }
 
     this.loading = true
-    window.fetch(config.areas.url).then(
-      response => response.json()
+    this.$injector.get('$http').get(config.areas.url).then(
+      response => response.data
     ).then(json => {
       const conf = {
         dataProjection: 'EPSG:4326',
@@ -154,7 +154,9 @@ class AreaController {
     const updateSelection = (features, cumulative = false) => {
       this.$injector.get('$timeout')(() => {
         if (!cumulative) this.collection.clear()
-        const uniques = [ ...new Set(this.collection.getArray().concat(features)) ]
+        const uniques = this.collection.getArray().concat(features).filter(
+          (item, index, self) => index === self.indexOf(item)
+        )
         this.collection.clear()
         this.collection.extend(uniques)
         this.ids = uniques.map(f => f.getId())
