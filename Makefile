@@ -64,13 +64,13 @@ war-build-geoserver:
 	cd geoserver/geoserver-submodule/src/; \
 	../../../mvn clean install -Pcontrol-flow,css,csw,gdal,inspire,pyramid,wps -DskipTests; \
 	cd ../../..; \
-	./mvn clean install -pl geoserver
+	./mvn clean install -pl geoserver/webapp
 
 war-build-geoserver-geofence:
 	cd geoserver/geoserver-submodule/src/; \
-	../../../mvn clean install -Pcontrol-flow,css,csw,gdal,inspire,pyramid,wps -DskipTests -Pgeofence-server; \
+	../../../mvn clean install -Pcontrol-flow,css,csw,gdal,inspire,pyramid,wps,geofence-server -DskipTests; \
 	cd ../../..; \
-	./mvn clean install -pl geoserver
+	./mvn clean install -pl geoserver/webapp
 
 war-build-gn3:
 	./mvn clean install -f geonetwork/pom.xml -DskipTests
