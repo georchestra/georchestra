@@ -578,8 +578,8 @@ GEOR.print = (function() {
                 listeners: {
                     "show": function() {
                         // show print extent:
-                        printExtent.addPage(printPage);
                         printExtent.show();
+                        printExtent.addPage(printPage);
                         /*
                         // focus first field on show
                         var field = formPanel.getForm().findField('mapTitle');
