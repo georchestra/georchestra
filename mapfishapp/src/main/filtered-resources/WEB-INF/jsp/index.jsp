@@ -188,6 +188,7 @@ if(sec_roles != null) {
 
         // mapfishapp initial state: open a WMC, or a mix of WMS layers and servers
         GEOR.initstate = ${c.data};
+        GEOR.initsearch = ${c.search};
 
         // custom WMC loader 
     <c:choose>

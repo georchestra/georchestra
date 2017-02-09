@@ -60,6 +60,7 @@ public class AbstractController implements ApplicationContextAware {
         Map<String, Object> model;
         model = new HashMap<String, Object>();
         model.put("data", "null");
+        model.put("search", "null");
         model.put("bbox", request.getParameter("bbox"));
         model.put("lat", request.getParameter("lat"));
         model.put("lon", request.getParameter("lon"));
@@ -100,7 +101,7 @@ public class AbstractController implements ApplicationContextAware {
 
     Map<String, Object> createModel(HttpServletRequest request, String str) {
         JSONObject jsonData;
-        String data;
+        String data, search;
         try {
             jsonData = new JSONObject(str);
         } catch (JSONException e) {
@@ -120,6 +121,7 @@ public class AbstractController implements ApplicationContextAware {
 
         try {
             JSONArray jsonLayers, jsonServices;
+            JSONObject jsonSearch;
 
             jsonLayers = jsonData.optJSONArray("layers");
 
@@ -141,8 +143,16 @@ public class AbstractController implements ApplicationContextAware {
             } else {
                 data = "[]";
             }
+            
+            jsonSearch = jsonData.optJSONObject("search");
+            if (jsonSearch != null) {
+                search = jsonSearch.toString(1);
+            } else {
+                search = "{}";
+            }
         } catch (JSONException e) {
             data = "[]";
+            search = "{}";
         }
 
         Map<String, Object> model = new HashMap<String, Object>();
@@ -160,6 +170,7 @@ public class AbstractController implements ApplicationContextAware {
 
         model.put("fileFormatList", new AbstractFeatureGeoFileReader().getFormatListAsJSON());
         model.put("data", data);
+        model.put("search", search);
 
         addContextsToModel(model);
         addAddonsToModel(model);
