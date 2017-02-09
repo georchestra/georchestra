@@ -519,7 +519,7 @@
         <checksumPolicy>ignore</checksumPolicy>
       </snapshots>
       <id>georchestra</id>
-      <url>http://build.georchestra.org/maven/repository</url>
+      <url>https://packages.georchestra.org/maven/repository</url>
     </repository>
     <!-- geotools -->
     <repository>
