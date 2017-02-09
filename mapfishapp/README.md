@@ -60,8 +60,7 @@ It is also possible to POST a JSON string to the home controller, for instance :
         "search":{
     		"owsurl":"http://ids.pigma.org/geoserver/ows",
     		"cql_filter": "id_dept = 48",
-    		"featurens":"http://ids.pigma.org/geoserver/ign",
-    		"typename":"ign_bdtopo_departement"
+    		"typename":"ign:ign_bdtopo_departement"
     	}
     }
 
