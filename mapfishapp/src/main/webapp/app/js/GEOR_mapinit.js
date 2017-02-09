@@ -352,13 +352,10 @@ GEOR.mapinit = (function() {
         });
         
         // support for JSON search parameter
-        if( initSearch.hasOwnProperty('typename') && initSearch.hasOwnProperty('featurens') 
-            && initSearch.hasOwnProperty('owsurl') && initSearch.hasOwnProperty('cql_filter') ) {
+        if( initSearch.hasOwnProperty('typename') && initSearch.hasOwnProperty('owsurl') && initSearch.hasOwnProperty('cql_filter') ) {
             var record = {
                 typeName: initSearch.typename,
-                featureNS: initSearch.featurens,
-                owsURL: initSearch.owsurl,
-                WFSversion : "1.1.0"
+                owsURL: initSearch.owsurl
             }
             var filter = (new OpenLayers.Format.CQL()).read(initSearch.cql_filter);
             
