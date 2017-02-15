@@ -180,6 +180,8 @@ GEOR.print = (function() {
      * layerStore - {GeoExt.data.LayerStore} The application's layer store.
      */
     var initialize = function(ls) {
+        // set geodetic print param, see https://github.com/georchestra/georchestra/issues/1084
+        defaultCustomParams.geodetic = GEOR.config.MAP_SRS !== "EPSG:4326";
 
         layerStore = ls;
         tr = OpenLayers.i18n;
