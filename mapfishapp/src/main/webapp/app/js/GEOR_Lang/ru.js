@@ -279,7 +279,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     /* GEOR_resultspanel.js strings */
     //"Symbology": "Symbologie",
     //"Edit this panel's features symbology": "Editer la symbologie de la sélection",
-    //"Reset": "RàZ",
+    //"Reset": "Réinitialiser",
     //"Export is not possible: features have no geometry": "Export impossible : absence de géométries",
     "resultspanel.maxfeature.reached": " <span ext:qtip=\"Используйте более совершенный навигатор для того, чтобы увеличить число фигурирующих на странице объектов.\">Максимальное число объектов достигнуто ${NB}</span>", 
     "NB results": "${NB} результатов",

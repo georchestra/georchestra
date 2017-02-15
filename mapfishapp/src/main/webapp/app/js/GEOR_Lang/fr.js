@@ -343,7 +343,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     /* GEOR_resultspanel.js strings */
     "Symbology": "Symbologie",
     "Edit this panel's features symbology": "Editer la symbologie de la sélection",
-    "Reset": "RàZ",
+    "Reset": "Réinitialiser",
     "Export is not possible: features have no geometry": "Export impossible : absence de géométries",
     "resultspanel.maxfeature.reached":
         " <span ext:qtip=\"Utilisez un navigateur plus performant " +
