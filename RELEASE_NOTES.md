@@ -12,6 +12,7 @@ Major highlights include:
  * an atlas webapp, which allows users to have features from a layer printed as multipage PDF
  * many new features in our power viewer: map contexts manager, buffer, styling of vector features, new addons...
  * Docker as prefered, streamlined deployment procedure
+ * [sdi consistence check](https://github.com/georchestra/sdi-consistence-check), a new project whose aim is to check links between data and metadata in a SDI.
 
 Many thanks to those who made it possible, either through funding, or patches !
 
@@ -31,7 +32,6 @@ New features:
    * BAN - [#1518](https://github.com/georchestra/georchestra/issues/1518)
    * Notes - [#1341](https://github.com/georchestra/georchestra/issues/1341)
    * Measurements - [#1011](https://github.com/georchestra/georchestra/issues/1011)
- * [sdi consistence check](https://github.com/georchestra/sdi-consistence-check), a new project whose aim is to check links between data and metadata in a SDI.
 
 Enhancements:
  * proxy - enable jetty gzip module to compress static files - [#1478](https://github.com/georchestra/georchestra/issues/1478)
