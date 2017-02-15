@@ -218,17 +218,16 @@ if(sec_roles != null) {
         GEOR.config.ANONYMOUS = false;
         GEOR.config.USERNAME = "<%=request.getHeader("sec-username") %>";
         GEOR.config.USEREMAIL = "<%=request.getHeader("sec-email") %>";
-        GEOR.config.USERFIRSTNAME = "<%=request.getHeader("sec-firstname") %>";
-        GEOR.config.USERLASTNAME = "<%=request.getHeader("sec-lastname") %>";
-        GEOR.config.USERORG = "<%=request.getHeader("sec-org") %>";
-        GEOR.config.USERTEL = "<%=request.getHeader("sec-tel") %>";
+        GEOR.config.USERFIRSTNAME = "<%=request.getHeader("sec-firstname") %>" === "null" ? "" : "<%=request.getHeader("sec-firstname") %>";
+        GEOR.config.USERLASTNAME = "<%=request.getHeader("sec-lastname") %>" === "null" ? "" : "<%=request.getHeader("sec-lastname") %>";
+        GEOR.config.USERORG = "<%=request.getHeader("sec-org") %>" === "null" ? "" : "<%=request.getHeader("sec-org") %>";
+        GEOR.config.USERTEL = "<%=request.getHeader("sec-tel") %>" === "null" ? "" : "<%=request.getHeader("sec-tel") %>";
         </c:when>
     </c:choose>
         GEOR.config.ROLES = [<%= js_roles %>];
         GEOR.config.PATHNAME = '<%= context %>';
         GEOR.config.CONTEXTS = ${c.contexts};
         GEOR.config.ADDONS = ${c.addons};
-        
     </script>
     <noscript><p><fmt:message key="need.javascript"/></p></noscript>
 </body>
