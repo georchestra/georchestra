@@ -180,9 +180,6 @@ GEOR.print = (function() {
      * layerStore - {GeoExt.data.LayerStore} The application's layer store.
      */
     var initialize = function(ls) {
-        // set geodetic print param, see https://github.com/georchestra/georchestra/issues/1084
-        defaultCustomParams.geodetic = GEOR.config.MAP_SRS !== "EPSG:4326";
-
         layerStore = ls;
         tr = OpenLayers.i18n;
         boundsLayer = new OpenLayers.Layer.Vector(VECTOR_LAYER_NAME, {
@@ -261,6 +258,8 @@ GEOR.print = (function() {
                     // create printPage & printExtent
                     printPage = new GeoExt.data.PrintPage({
                         printProvider: printProvider,
+                        map: layerStore.map,
+                        geodetic: GEOR.config.MAP_SRS !== "EPSG:4326",
                         customParams: defaultCustomParams
                     });
                     printExtent = new GeoExt.plugins.PrintExtent({
@@ -298,6 +297,8 @@ GEOR.print = (function() {
                     provider.customParams.showLegend = pages[0].customParams.showLegend;
                     // set a custom PDF file name:
                     provider.customParams.outputFilename = GEOR.config.PDF_FILENAME;
+                    // set geodetic print param, see https://github.com/georchestra/georchestra/issues/1084
+                    provider.customParams.geodetic = GEOR.config.MAP_SRS !== "EPSG:4326";
                 },
                 "print": function() {
                     mask.hide();
