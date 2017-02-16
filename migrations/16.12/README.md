@@ -2,7 +2,7 @@
 
 ## Database
 
-An SQL migration script is provided in the [migrations/16.12](migrations/16.12) folder. It creates two new schemas, and several tables in the `extractorapp` schema.
+An SQL migration script is provided in the [migrations/16.12](.) folder. It creates two new schemas, and several tables in the `extractorapp` schema.
 It is a required addition before the `extractorapp` and `atlas` modules are started.
 
 The LDAPadmin webapp should also create these new tables automatically during the first startup:
