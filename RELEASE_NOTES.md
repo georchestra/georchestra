@@ -36,7 +36,9 @@ New features:
 Enhancements:
  * proxy - enable jetty gzip module to compress static files - [#1478](https://github.com/georchestra/georchestra/issues/1478)
  * annotation addon - save and load features - [#1547](https://github.com/georchestra/georchestra/issues/1547)
+ * geoserver - limit jetty threads in a docker context - [#1666](https://github.com/georchestra/georchestra/issues/1666)
  * mapfishapp - sorting contexts alphabetically based on their filename - [#1514](https://github.com/georchestra/georchestra/issues/1514)
+ * mapfishapp - contexts are now uniformly refered to as "maps" - [#1640](https://github.com/georchestra/georchestra/issues/1640)
  * mapfishapp - introducing GEOR.config.METADATA_VIEW_BASE_URL - [#1481](https://github.com/georchestra/georchestra/issues/1481)
  * mapfishapp - load layers via the querystring - [#1469](https://github.com/georchestra/georchestra/issues/1469)
  * mapfishapp - permalink + export to external app now give the user the ability to fill in context title, abstract, keywords
@@ -58,7 +60,10 @@ Bug fixes:
  * analytics - truncated layername when using QGIS as client - [#877](https://github.com/georchestra/georchestra/issues/877)
  * geoserver - restored ability to build extensions - [#1231](https://github.com/georchestra/georchestra/issues/1231)
  * mapfishapp - graphic scalebar is ~ 30% wrong - [#1535](https://github.com/georchestra/georchestra/issues/1535)
+ * mapfishapp - printing now takes into account geodetic distances - [#1084](https://github.com/georchestra/georchestra/issues/1084)
  * mapfishapp - location comboboxes now resize with right panel - [#1459](https://github.com/georchestra/georchestra/issues/1459)
+ * mapfishapp - fix thesaurus query with GeoNetwork 3 - [#1333](https://github.com/georchestra/georchestra/issues/1333)
+ * extractorapp - failure to retrieve linked metadata does not make the extraction fail anymore - [#357](https://github.com/georchestra/georchestra/issues/357)
  * ... and [many more](https://github.com/georchestra/georchestra/issues?q=milestone%3A16.12%20label%3Abug%20is%3Aclosed) !
 
 Read [how to migrate from 15.12 to 16.12](migrations/16.12/README.md).
