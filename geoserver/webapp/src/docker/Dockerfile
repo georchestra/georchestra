@@ -17,6 +17,8 @@ ADD . /
 
 VOLUME [ "/mnt/geoserver_datadir", "/mnt/geoserver_geodata", "/mnt/geoserver_tiles", "/tmp", "/run/jetty" ]
 
+RUN sed -i 's/threads.max=200/threads.max=50/g' /var/lib/jetty/start.d/server.ini
+
 CMD ["sh", "-c", "exec java -Djava.io.tmpdir=/tmp/jetty \
 -Dgeorchestra.datadir=/etc/georchestra \
 -Dgeofence.dir=/etc/georchestra/geoserver/geofence \
