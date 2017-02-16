@@ -60,3 +60,5 @@ If you had JSP files customised in your own profile, you should synchronise them
 
 `ROLE_ANONYMOUS` does not exist anymore.  
 Applications should not use it. Instead, they should rely on the `sec-username` & `sec-roles` values.
+
+The security-proxy-generated `sec-org` header now maps to the user's Org `cn`, rather than the inetOrgPerson's `o` field. In addition, the `sec-orgname` header is now added to proxied requests, which maps to the user's organism title (ie the `o` field from the Org's groupOfMembers instance). This means that applications which were relying on the `sec-org` header should now use `sec-orgname` instead.
