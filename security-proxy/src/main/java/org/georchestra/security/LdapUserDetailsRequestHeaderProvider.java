@@ -40,6 +40,7 @@ import org.apache.http.message.BasicHeader;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.core.DirContextOperations;
+import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -60,6 +61,10 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
     private LdapUserSearch      _userSearch;
     private Map<String, String> _headerMapping;
     private Pattern pattern;
+    private String orgsSearchBaseDN;
+
+    @Autowired
+    private LdapTemplate ldapTemplate;
 
     @Autowired
     private GeorchestraConfiguration georchestraConfiguration;
@@ -69,6 +74,7 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
         Assert.notNull(headerMapping, "headerMapping must not be null");
         this._userSearch = userSearch;
         this._headerMapping = headerMapping;
+        this.orgsSearchBaseDN = orgsSearchBaseDN;
 
         this.pattern = Pattern.compile("([^=,]+)=([^=,]+)," + orgsSearchBaseDN + ".*");
     }
@@ -140,6 +146,7 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
                 }
 
                 // Add user organization
+                String orgCn = null;
                 try {
                     // Retreive memberOf attributes
                     String[] attrs = {"memberOf"};
@@ -153,7 +160,8 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
                             String memberOf = all.next().toString();
                             Matcher m = this.pattern.matcher(memberOf);
                             if (m.matches()) {
-                                headers.add(new BasicHeader("sec-org", m.group(2)));
+                                orgCn = m.group(2);
+                                headers.add(new BasicHeader("sec-org", orgCn));
                                 break;
                             }
                         }
@@ -163,6 +171,16 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
                 } finally {
                     // restore standard attribute list
                     ((FilterBasedLdapUserSearch) this._userSearch).setReturningAttributes(null);
+                }
+
+                // add sec-orgname
+                if(orgCn != null) {
+                    try {
+                        DirContextOperations ctx = this.ldapTemplate.lookupContext("cn=" + orgCn + "," + this.orgsSearchBaseDN);
+                        headers.add(new BasicHeader("sec-orgname", ctx.getStringAttribute("o")));
+                    }catch (RuntimeException ex){
+                        logger.warn("Cannot find associated org with cn " + orgCn);
+                    }
                 }
 
                 logger.info("Storing attributes into session for user :" + username);

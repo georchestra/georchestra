@@ -220,7 +220,7 @@ if(sec_roles != null) {
         GEOR.config.USEREMAIL = "<%=request.getHeader("sec-email") %>";
         GEOR.config.USERFIRSTNAME = "<%=request.getHeader("sec-firstname") %>" === "null" ? "" : "<%=request.getHeader("sec-firstname") %>";
         GEOR.config.USERLASTNAME = "<%=request.getHeader("sec-lastname") %>" === "null" ? "" : "<%=request.getHeader("sec-lastname") %>";
-        GEOR.config.USERORG = "<%=request.getHeader("sec-org") %>" === "null" ? "" : "<%=request.getHeader("sec-org") %>";
+        GEOR.config.USERORG = "<%=request.getHeader("sec-orgname") %>" === "null" ? "" : "<%=request.getHeader("sec-orgname") %>";
         GEOR.config.USERTEL = "<%=request.getHeader("sec-tel") %>" === "null" ? "" : "<%=request.getHeader("sec-tel") %>";
         </c:when>
     </c:choose>

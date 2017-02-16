@@ -122,7 +122,18 @@
         <constructor-arg index="1" value="${userSearchFilter}"/>
         <constructor-arg index="2" ref="contextSource" />
     </bean>
-                    
+
+    <bean id="LdapContextSource" class="org.springframework.ldap.core.support.LdapContextSource">
+        <property name="url" value="${ldapUrl}"/>
+        <property name="base" value="${baseDN}"/>
+        <property name="userDn" value="${ldapAdminDn}"/>
+        <property name="password" value="${ldap.admin.password}"/>
+    </bean>
+
+    <bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate">
+        <constructor-arg ref="contextSource"/>
+    </bean>
+
     <bean id="ldapAuthoritiesPopulator" class="org.springframework.security.ldap.userdetails.DefaultLdapAuthoritiesPopulator">
         <constructor-arg ref="contextSource" />
         <constructor-arg value="${authoritiesBaseDN}" />
