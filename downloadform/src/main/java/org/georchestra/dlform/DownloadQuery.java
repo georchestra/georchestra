@@ -93,8 +93,8 @@ public class DownloadQuery {
         secondName = request.getHeader("sec-lastname") != null ?
                 request.getHeader("sec-lastname") : request.getParameter("last_name");
 
-        company = request.getHeader("sec-org") != null ?
-                request.getHeader("sec-org") : request.getParameter("company");
+        company = request.getHeader("sec-orgname") != null ?
+                request.getHeader("sec-orgname") : request.getParameter("company");
 
         email = request.getHeader("sec-email") != null ?
                 request.getHeader("sec-email") : request.getParameter("email");

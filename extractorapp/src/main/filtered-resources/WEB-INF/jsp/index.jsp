@@ -203,7 +203,7 @@ if(sec_roles != null) {
         GEOR.data.email = "<%=(request.getHeader("sec-email") == null ? "" : request.getHeader("sec-email"))%>";
         GEOR.data.first_name = "<%=(request.getHeader("sec-firstname") == null ? "" : request.getHeader("sec-firstname"))%>";
         GEOR.data.last_name = "<%=(request.getHeader("sec-lastname") == null ? "" : request.getHeader("sec-lastname"))%>";
-        GEOR.data.company = "<%=(request.getHeader("sec-org") == null ? "" : request.getHeader("sec-org"))%>";
+        GEOR.data.company = "<%=(request.getHeader("sec-orgname") == null ? "" : request.getHeader("sec-orgname"))%>";
         GEOR.data.tel = "<%=(request.getHeader("sec-tel") == null ? "" : request.getHeader("sec-tel"))%>";
     </script>
         </c:when>

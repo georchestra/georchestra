@@ -30,7 +30,7 @@ public class AbstractApplicationTest {
         HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
         Mockito.when(req.getHeader("sec-firstname")).thenReturn("Scott");
         Mockito.when(req.getHeader("sec-lastname")).thenReturn("Tiger");
-        Mockito.when(req.getHeader("sec-org")).thenReturn("geOrchestra");
+        Mockito.when(req.getHeader("sec-orgname")).thenReturn("geOrchestra");
         Mockito.when(req.getHeader("sec-email")).thenReturn("root@localhost");
         Mockito.when(req.getHeader("sec-tel")).thenReturn("+331234567890");
         Mockito.when(req.getParameter("datause")).thenReturn("1,2,3,4");

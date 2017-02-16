@@ -330,7 +330,7 @@ public class ExtractorController implements ServletContextAware {
 
                 String username = request.getHeader("sec-username");
                 String roles = request.getHeader("sec-roles");
-                String org = request.getHeader("sec-org");
+                String org = request.getHeader("sec-orgname");
                 RequestConfiguration requestConfig = new RequestConfiguration(requests, requestUuid, email, servletContext, testing, username, roles, org,
                         adminCredentials, secureHost, extractionFolderPrefix, maxCoverageExtractionSize, remoteReproject, useCommandLineGDAL, postData, this.userAgent);
                 ExtractionTask extractor = new ExtractionTask(requestConfig, this.dataSource);
