@@ -35,7 +35,6 @@ New features:
 
 Enhancements:
  * proxy - enable jetty gzip module to compress static files - [#1478](https://github.com/georchestra/georchestra/issues/1478)
- * annotation addon - save and load features - [#1547](https://github.com/georchestra/georchestra/issues/1547)
  * geoserver - limit jetty threads in a docker context - [#1666](https://github.com/georchestra/georchestra/issues/1666)
  * mapfishapp - sorting contexts alphabetically based on their filename - [#1514](https://github.com/georchestra/georchestra/issues/1514)
  * mapfishapp - contexts are now uniformly refered to as "maps" - [#1640](https://github.com/georchestra/georchestra/issues/1640)
@@ -47,6 +46,7 @@ Enhancements:
  * mapfishapp - allow to provide a debug version of an addon alongside a minified js  - [#1430](https://github.com/georchestra/georchestra/issues/1430)
  * mapfishapp - osm editors as addon instead of core feature - [#1389](https://github.com/georchestra/georchestra/issues/1389)
  * mapfishapp - querier in a floating window - [#1346](https://github.com/georchestra/georchestra/issues/1346)
+ * mapfishapp - annotation addon - save and load features - [#1547](https://github.com/georchestra/georchestra/issues/1547)
  * mapfishapp - ACL for contexts - [#1298](https://github.com/georchestra/georchestra/issues/1298)
  * docker:
     * many improvements in dockerfiles and composition (syntax v2 now requires compose >= 1.6 and docker >= 1.10),
