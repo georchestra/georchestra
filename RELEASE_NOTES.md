@@ -11,7 +11,7 @@ Major highlights include:
  * a brand new console to manage efficiently users, orgs and roles
  * an atlas webapp, which allows users to have features from a layer printed as multipage PDF
  * many new features in our power viewer: map contexts manager, buffer, styling of vector features, new addons...
- * Docker as prefered, streamlined deployment procedure
+ * docker as prefered, streamlined deployment procedure
  * [sdi consistence check](https://github.com/georchestra/sdi-consistence-check), a new project whose aim is to check links between data and metadata in a SDI.
 
 Many thanks to those who made it possible, either through funding, or patches !
@@ -34,19 +34,18 @@ New features:
    * Measurements - [#1011](https://github.com/georchestra/georchestra/issues/1011)
 
 Enhancements:
- * proxy - enable jetty gzip module to compress static files - [#1478](https://github.com/georchestra/georchestra/issues/1478)
- * geoserver - limit jetty threads in a docker context - [#1666](https://github.com/georchestra/georchestra/issues/1666)
- * mapfishapp - sorting contexts alphabetically based on their filename - [#1514](https://github.com/georchestra/georchestra/issues/1514)
- * mapfishapp - contexts are now uniformly refered to as "maps" - [#1640](https://github.com/georchestra/georchestra/issues/1640)
- * mapfishapp - introducing GEOR.config.METADATA_VIEW_BASE_URL - [#1481](https://github.com/georchestra/georchestra/issues/1481)
- * mapfishapp - load layers via the querystring - [#1469](https://github.com/georchestra/georchestra/issues/1469)
- * mapfishapp - permalink + export to external app now give the user the ability to fill in context title, abstract, keywords
- * mapfishapp - keywords are now serialized in contexts - [#1447](https://github.com/georchestra/georchestra/issues/1447)
+ * proxy - jetty gzip module enabled, to compress static files - [#1478](https://github.com/georchestra/georchestra/issues/1478)
+ * geoserver - jetty threads limited in a docker context - [#1666](https://github.com/georchestra/georchestra/issues/1666)
+ * mapfishapp - contexts alphabetically sorted based on their filename - [#1514](https://github.com/georchestra/georchestra/issues/1514)
+ * mapfishapp - contexts uniformly refered to as "maps" - [#1640](https://github.com/georchestra/georchestra/issues/1640)
+ * mapfishapp - layers loaded via the querystring - [#1469](https://github.com/georchestra/georchestra/issues/1469)
+ * mapfishapp - ability to fill in context title, abstract, keywords during permalink and "export to external app" export
+ * mapfishapp - keywords now serialized in contexts - [#1447](https://github.com/georchestra/georchestra/issues/1447)
  * mapfishapp - csw keyword browser is now optional - [#1445](https://github.com/georchestra/georchestra/issues/1445)
- * mapfishapp - allow to provide a debug version of an addon alongside a minified js  - [#1430](https://github.com/georchestra/georchestra/issues/1430)
- * mapfishapp - osm editors as addon instead of core feature - [#1389](https://github.com/georchestra/georchestra/issues/1389)
- * mapfishapp - querier in a floating window - [#1346](https://github.com/georchestra/georchestra/issues/1346)
- * mapfishapp - annotation addon - save and load features - [#1547](https://github.com/georchestra/georchestra/issues/1547)
+ * mapfishapp - addons now provide a minified js file for production - [#1430](https://github.com/georchestra/georchestra/issues/1430)
+ * mapfishapp - "osm editors" is now an addon rather than a core feature - [#1389](https://github.com/georchestra/georchestra/issues/1389)
+ * mapfishapp - querier now in a floating window - [#1346](https://github.com/georchestra/georchestra/issues/1346)
+ * mapfishapp - annotation addon: features can be exported and reloaded - [#1547](https://github.com/georchestra/georchestra/issues/1547)
  * mapfishapp - ACL for contexts - [#1298](https://github.com/georchestra/georchestra/issues/1298)
  * docker:
     * many improvements in dockerfiles and composition (syntax v2 now requires compose >= 1.6 and docker >= 1.10),
@@ -59,10 +58,10 @@ Enhancements:
 Bug fixes:
  * analytics - truncated layername when using QGIS as client - [#877](https://github.com/georchestra/georchestra/issues/877)
  * geoserver - restored ability to build extensions - [#1231](https://github.com/georchestra/georchestra/issues/1231)
- * mapfishapp - graphic scalebar is ~ 30% wrong - [#1535](https://github.com/georchestra/georchestra/issues/1535)
- * mapfishapp - printing now takes into account geodetic distances - [#1084](https://github.com/georchestra/georchestra/issues/1084)
+ * mapfishapp - more accurate graphic scalebar size - [#1535](https://github.com/georchestra/georchestra/issues/1535)
+ * mapfishapp - printing takes into account geodetic distances - [#1084](https://github.com/georchestra/georchestra/issues/1084)
  * mapfishapp - location comboboxes now resize with right panel - [#1459](https://github.com/georchestra/georchestra/issues/1459)
- * mapfishapp - fix thesaurus query with GeoNetwork 3 - [#1333](https://github.com/georchestra/georchestra/issues/1333)
+ * mapfishapp - thesaurus query fixed with GeoNetwork 3 - [#1333](https://github.com/georchestra/georchestra/issues/1333)
  * extractorapp - failure to retrieve linked metadata does not make the extraction fail anymore - [#357](https://github.com/georchestra/georchestra/issues/357)
  * ... and [many more](https://github.com/georchestra/georchestra/issues?q=milestone%3A16.12%20label%3Abug%20is%3Aclosed) !
 
