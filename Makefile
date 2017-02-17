@@ -60,13 +60,17 @@ docker-build: docker-build-dev docker-build-gn3 docker-build-geoserver docker-bu
 
 # WAR related targets
 
-war-build-geoserver:
+war-build-config:
+	cd config/; \
+	../mvn -Dserver=template install
+
+war-build-geoserver: war-build-config
 	cd geoserver/geoserver-submodule/src/; \
 	../../../mvn clean install -Pcontrol-flow,css,csw,gdal,inspire,pyramid,wps -DskipTests; \
 	cd ../../..; \
 	./mvn clean install -pl geoserver/webapp
 
-war-build-geoserver-geofence:
+war-build-geoserver-geofence: war-build-config
 	cd geoserver/geoserver-submodule/src/; \
 	../../../mvn clean install -Pcontrol-flow,css,csw,gdal,inspire,pyramid,wps,geofence-server -DskipTests; \
 	cd ../../..; \
