@@ -29,6 +29,14 @@ Same as above !
 We have to create a dedicated branch in https://github.com/georchestra/datadir for the new release.
 
 
+## GeoServer minimal datadir
+
+In https://github.com/georchestra/geoserver_minimal_datadir create 2 new branches:
+ * `16.12` from `master`
+ * `16.12-geofence` from `geofence`
+
+Update the default branch to `16.12`.
+
 ## GeoNetwork 3
 
 Create a new branch deriving from `georchestra-gn3-master`, eg `georchestra-gn3-16.12`.
