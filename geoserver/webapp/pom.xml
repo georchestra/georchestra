@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.georchestra</groupId>
     <artifactId>geoserver-root</artifactId>
-    <version>16.12</version>
+    <version>17.06-SNAPSHOT</version>
   </parent>
   <artifactId>geoserver-webapp</artifactId>
   <packaging>war</packaging>
@@ -998,7 +998,7 @@
       <properties>
         <dockerImageName>georchestra/geoserver</dockerImageName>
         <dockerDatadirScmUrl>scm:git:https://github.com/georchestra/datadir.git</dockerDatadirScmUrl>
-        <dockerDatadirScmVersion>docker-16.12</dockerDatadirScmVersion>
+        <dockerDatadirScmVersion>docker-master</dockerDatadirScmVersion>
         <dockerGeoserverDatadirScmUrl>scm:git:https://github.com/georchestra/geoserver_minimal_datadir.git</dockerGeoserverDatadirScmUrl>
         <dockerGeoserverDatadirScmVersion>master</dockerGeoserverDatadirScmVersion>
       </properties>
