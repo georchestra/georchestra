@@ -110,8 +110,8 @@ Let's update GN submodule too:
 ```
 cd geonetwork
 git fetch origin
-git checkout georchestra-17.06
-git pull origin georchestra-17.06
+git checkout georchestra-gn3-master
+git pull origin georchestra-gn3-master
 cd -
 ```
 
