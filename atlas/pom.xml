@@ -563,7 +563,7 @@
             <properties>
                 <dockerImageName>georchestra/${project.artifactId}</dockerImageName>
                 <dockerDatadirScmUrl>scm:git:https://github.com/georchestra/datadir.git</dockerDatadirScmUrl>
-                <dockerDatadirScmVersion>docker-master</dockerDatadirScmVersion>
+                <dockerDatadirScmVersion>docker-16.12</dockerDatadirScmVersion>
             </properties>
             <build>
                 <finalName>atlas</finalName>

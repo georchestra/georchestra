@@ -74,7 +74,10 @@ cd -
 ```
 
 Manually update the files mentionning the current release version (```README.md``` and ```RELEASE_NOTES.md```).
-Also update the branch name for the Travis status logo.
+Also update the branch name for the Travis status logo, and change the `dockerDatadirScmVersion` parameter in every `pom.xml` to `docker-16.12`:
+```
+find ./ -name pom.xml -exec sed -i 's#<dockerDatadirScmVersion>docker-master</dockerDatadirScmVersion>#<dockerDatadirScmVersion>docker-16.12</dockerDatadirScmVersion>#' {} \;
+```
 
 Commit and propagate the changes:
 
@@ -91,8 +94,6 @@ Now, let's create the maintenance branch for geOrchestra 16.12:
 git checkout -b 16.12
 git push origin 16.12
 ```
-
-The first commit in this branch should update the `scmVersion` parameter in every `pom.xml` to `docker-16.12`.
 
 ... and update the project version in master:
 
