@@ -1,6 +1,6 @@
 # geOrchestra
 
-[![Build Status](https://travis-ci.org/georchestra/georchestra.svg?branch=master)](https://travis-ci.org/georchestra/georchestra)
+[![Build Status](https://travis-ci.org/georchestra/georchestra.svg?branch=16.12)](https://travis-ci.org/georchestra/georchestra)
 [![Codacy Badge](https://api.codacy.com/project/badge/grade/a879ac64588d4357ab72e79cd8026f99)](https://www.codacy.com/app/georchestra/georchestra)
 
 geOrchestra is a complete **Spatial Data Infrastructure** solution.
@@ -11,7 +11,7 @@ It features a **metadata catalog** (GeoNetwork 3.0.4), an **OGC server** (GeoSer
 ## Releases
 
 A new release is published every 6 months and is supported during 12 months. 
-Stable versions are named by their release date, eg 15.12 (latest stable) was published in december 2015.  
+Stable versions are named by their release date, eg 16.12 (latest stable) was published in december 2016.
 
 Have a look at the [release notes](RELEASE_NOTES.md) for more information.
 

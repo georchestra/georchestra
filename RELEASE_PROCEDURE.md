@@ -2,7 +2,7 @@
 
 This is an attempt to write down the procedure to make a release of the geOrchestra SDI.
 
-The use case we describe here is the release of geOrchestra 13.12.
+The use case we describe here is the release of geOrchestra 16.12.
 
 ## Configuration template
 
@@ -17,8 +17,8 @@ git pull origin master
 Let's create a new branch for the release:
 
 ```
-git checkout -b 13.12
-git push origin 13.12
+git checkout -b 16.12
+git push origin 16.12
 ```
 
 There's nothing more to do here !
@@ -28,61 +28,15 @@ There's nothing more to do here !
 Same as above !
 We have to create a dedicated branch in https://github.com/georchestra/datadir for the new release.
 
-## GeoNetwork
 
-Go to the georchestra-13.12 branch in your geonetwork repository:
+## GeoNetwork 3
 
-```
-cd georchestra/geonetwork
-git checkout georchestra-13.12
-git pull origin georchestra-13.12
-```
+Create a new branch deriving from `georchestra-gn3-master`, eg `georchestra-gn3-16.12`.
 
-Batch change the version to the release version in every pom.xml:
+In `georchestra-gn3-16.12`:
+ * in `web/pom.xml` change `<dockerDatadirScmVersion>docker-master</dockerDatadirScmVersion>` into `<dockerDatadirScmVersion>docker-16.12</dockerDatadirScmVersion>`
+ * 
 
-```
-find ./ -name pom.xml -exec sed -i 's/13.12-SNAPSHOT/13.12/' {} \;
-```
-
-Commit and propagate the changes:
-
-```
-git commit -am "13.12 release"
-git push origin georchestra-13.12
-```
-
-The first commit in this branch should update the `scmVersion` parameter in `web/pom.xml` to `docker-13.12`.
-
-Now is the time to create the development branch for the future version (14.06):
-
-```
-git checkout -b georchestra-14.06
-```
-
-In the ```georchestra-14.06``` branch, let's create a brand new ```db-migrate-default.sql``` migration file:
-
-```
-$ cat > web/src/main/webapp/WEB-INF/classes/setup/sql-georchestra/migrate/1406/db-migrate-default.sql << EOF
-BEGIN;
-UPDATE Settings SET value='14.06' WHERE name='version';
-UPDATE Settings SET value='0' WHERE name='subVersion';
-COMMIT;
-EOF
-```
-
-Let's also update the pom's versions:
-
-```
-find ./ -name pom.xml -exec sed -i 's/13.12/14.06-SNAPSHOT/' {} \;
-```
-
-At this point, we should commit and propagate the branch:
-
-```
-git add web/src/main/webapp/WEB-INF/classes/setup/sql-georchestra/migrate/1406/db-migrate-default.sql
-git commit -am "Branch georchestra-14.06 created"
-git push origin georchestra-14.06
-```
 
 We're done for GeoNetwork !
 
@@ -101,7 +55,7 @@ git submodule update --init
 Batch change the version to the release version in every pom.xml:
 
 ```
-find ./ -name pom.xml -exec sed -i 's/13.12-SNAPSHOT/13.12/' {} \;
+find ./ -name pom.xml -exec sed -i 's/16.12-SNAPSHOT/16.12/' {} \;
 ```
 
 Reset changes in every submodule:
@@ -114,8 +68,8 @@ Update the GeoNetwork submodule to the release commit:
 
 ```
 cd geonetwork
-git checkout georchestra-13.12
-git pull origin georchestra-13.12
+git checkout georchestra-gn3-16.12
+git pull origin georchestra-gn3-16.12
 cd -
 ```
 
@@ -126,25 +80,25 @@ Commit and propagate the changes:
 
 ```
 git add geonetwork
-git commit -am "13.12 release"
-git tag v13.12
+git commit -am "16.12 release"
+git tag v16.12
 git push origin master --tags
 ```
 
-Now, let's create the maintenance branch for geOrchestra 13.12:
+Now, let's create the maintenance branch for geOrchestra 16.12:
 
 ```
-git checkout -b 13.12
-git push origin 13.12
+git checkout -b 16.12
+git push origin 16.12
 ```
 
-The first commit in this branch should update the `scmVersion` parameter in every `pom.xml` to `docker-13.12`.
+The first commit in this branch should update the `scmVersion` parameter in every `pom.xml` to `docker-16.12`.
 
 ... and update the project version in master:
 
 ```
 git checkout master
-find ./ -name pom.xml -exec sed -i 's/13.12/14.06-SNAPSHOT/' {} \;
+find ./ -name pom.xml -exec sed -i 's/16.12/17.06-SNAPSHOT/' {} \;
 git submodule foreach 'git reset --hard'
 git commit -am "updated project version in pom.xml"
 ```
@@ -154,8 +108,8 @@ Let's update GN submodule too:
 ```
 cd geonetwork
 git fetch origin
-git checkout georchestra-14.06
-git pull origin georchestra-14.06
+git checkout georchestra-17.06
+git pull origin georchestra-17.06
 cd -
 ```
 
@@ -167,7 +121,7 @@ git commit -m "updated GeoNetwork submodule"
 git push origin master
 ```
 
-geOrchestra 13.12 is now released, congrats !
+geOrchestra 16.12 is now released, congrats !
 
 Finally, change the default branch to latest stable in the [georchestra](https://github.com/georchestra/georchestra/settings), [geonetwork](https://github.com/georchestra/geonetwork/settings), [template](https://github.com/georchestra/template/settings) and [datadir](https://github.com/georchestra/datadir/settings) repositories.
 ... and eventually in the geoserver and geofence repositories too.
