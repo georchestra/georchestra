@@ -33,10 +33,12 @@ We have to create a dedicated branch in https://github.com/georchestra/datadir f
 
 Create a new branch deriving from `georchestra-gn3-master`, eg `georchestra-gn3-16.12`.
 
-In `georchestra-gn3-16.12`:
- * in `web/pom.xml` change `<dockerDatadirScmVersion>docker-master</dockerDatadirScmVersion>` into `<dockerDatadirScmVersion>docker-16.12</dockerDatadirScmVersion>`
- * 
+In branch `georchestra-gn3-16.12`, in file `web/pom.xml` change `<dockerDatadirScmVersion>docker-master</dockerDatadirScmVersion>` into `<dockerDatadirScmVersion>docker-16.12</dockerDatadirScmVersion>`
 
+Commit and push `georchestra-gn3-16.12`.
+
+Merge `georchestra-gn3-16.12` into `georchestra-gn3-master`, restore `<dockerDatadirScmVersion>docker-master</dockerDatadirScmVersion>` in file `web/pom.xml`.
+Commit and push `georchestra-gn3-master`.
 
 We're done for GeoNetwork !
 
