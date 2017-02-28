@@ -93,6 +93,12 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
     @SuppressWarnings("unchecked")
 	@Override
     protected Collection<Header> getCustomRequestHeaders(HttpSession session, HttpServletRequest originalRequest) {
+
+        // Don't use this provider for trusted request
+        if(session.getAttribute("pre-auth") != null){
+            return Collections.emptyList();
+        }
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(authentication instanceof AnonymousAuthenticationToken){
             return Collections.emptyList();
@@ -104,16 +110,7 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
 
 		synchronized (session) {
 
-            if(session.getAttribute("pre-auth") != null){
-                headers = new ArrayList<Header>();
-                Enumeration<String> e = originalRequest.getHeaderNames();
-                while(e.hasMoreElements()){
-                    String headerName = e.nextElement();
-                    originalRequest.getHeader(headerName);
-                    headers.add(new BasicHeader(headerName, originalRequest.getHeader(headerName)));
-                }
-                return headers;
-            } else if (session.getAttribute("security-proxy-cached-attrs") != null) {
+            if (session.getAttribute("security-proxy-cached-attrs") != null) {
 				try {
 					headers = (Collection<Header>) session.getAttribute("security-proxy-cached-attrs");
 					String expectedUsername = (String) session.getAttribute("security-proxy-cached-username");

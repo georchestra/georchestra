@@ -60,6 +60,7 @@
         <property name="referer" value="${scheme}://${public_host}/"/>
         <property name="headerProviders">
             <list>
+                <bean class="org.georchestra.security.TrustedProxyRequestHeaderProvider" />
                 <bean class="org.georchestra.security.SecurityRequestHeaderProvider"/>
                 <bean class="org.georchestra.security.ImpersonateUserRequestHeaderProvider" init-method="init">
                     <property name="trustedUsers">

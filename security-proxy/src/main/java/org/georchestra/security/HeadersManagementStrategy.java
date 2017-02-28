@@ -131,11 +131,15 @@ public class HeadersManagementStrategy {
         HttpSession session = originalRequest.getSession();
 
         for (HeaderProvider provider : headerProviders) {
+
+            // Don't include headers from security framework for request coming from trusted proxy
+            if(session.getAttribute("pre-auth") != null && (! (provider instanceof TrustedProxyRequestHeaderProvider))){
+                logger.debug("Bypassing header provider : " + provider.getClass().toString());
+                continue;
+            }
+
             for (Header header : provider.getCustomRequestHeaders(session, originalRequest)) {
 
-                // Don't include headers from security framework for request coming from trusted proxy
-                if(session.getAttribute("pre-auth") != null && provider instanceof SecurityRequestHeaderProvider)
-                    continue;
                 logger.debug("Processing  header : " + header.getName() + " from " + provider.getClass().toString());
 
                 if ((header.getName().equalsIgnoreCase(SEC_USERNAME) ||
