@@ -21,13 +21,10 @@ public class MyUserDetailsService implements UserDetailsService {
         logger.debug("Log user : " + username);
 
         Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
-//        authorities.add(this.createGrantedAuthority("USER"));
         authorities.add(this.createGrantedAuthority("ROLE_USER"));
-//        authorities.add(this.createGrantedAuthority("ADMINISTRATOR"));
         authorities.add(this.createGrantedAuthority("ROLE_ADMINISTRATOR"));
 
         UserDetails res = new User(username, "N/A", authorities);
-        boolean enabled = res.isEnabled();
         return res;
     }
 

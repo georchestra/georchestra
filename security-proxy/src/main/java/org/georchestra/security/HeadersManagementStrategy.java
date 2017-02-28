@@ -132,10 +132,17 @@ public class HeadersManagementStrategy {
 
         for (HeaderProvider provider : headerProviders) {
             for (Header header : provider.getCustomRequestHeaders(session, originalRequest)) {
+
+//                if(session.getAttribute("pre-auth") != null && provider instanceof SecurityRequestHeaderProvider)
+//                    continue;
+                logger.debug("Processing  header : " + header.getName() + " from " + provider.getClass().toString());
+
+
                 if ((header.getName().equalsIgnoreCase(SEC_USERNAME) ||
-                     header.getName().equalsIgnoreCase(SEC_ROLES)) &&
-                    proxyRequest.getHeaders(header.getName()) != null &&
-                    proxyRequest.getHeaders(header.getName()).length > 0) {
+                        header.getName().equalsIgnoreCase(SEC_ROLES)) &&
+                        proxyRequest.getHeaders(header.getName()) != null &&
+                        proxyRequest.getHeaders(header.getName()).length > 0 &&
+                        (session.getAttribute("pre-auth") == null)) {
                     Header[] originalHeaders = proxyRequest.getHeaders(header.getName());
                     for (Header originalHeader : originalHeaders) {
                         headersLog.append("\t" + originalHeader.getName());
@@ -144,6 +151,8 @@ public class HeadersManagementStrategy {
                         headersLog.append("\n");
                     }
                 } else {
+                    logger.debug("Adding header to proxyed request : " + header.getName() + "=" + header.getValue());
+                    proxyRequest.removeHeaders(header.getName());
                     proxyRequest.addHeader(header);
                     headersLog.append("\t" + header.getName());
                     headersLog.append("=");
