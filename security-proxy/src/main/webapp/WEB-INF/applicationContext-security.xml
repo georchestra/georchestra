@@ -19,7 +19,8 @@
         ignore-resource-not-found="true" ignore-unresolvable="true" order="1" />
 
     <s:http entry-point-ref="casProcessingFilterEntryPoint" request-matcher="regex" realm="${realmName}" disable-url-rewriting="true">
-	    <s:custom-filter ref="basicAuthChallengeByUserAgent" before="CAS_FILTER" />
+        <s:custom-filter ref="trustAnotherProxy" before="PRE_AUTH_FILTER" />
+        <s:custom-filter ref="basicAuthChallengeByUserAgent" before="CAS_FILTER" />
 	    <s:custom-filter ref="casFilter" after="CAS_FILTER" />
         <s:custom-filter ref="filterSecurityInterceptor" after="EXCEPTION_TRANSLATION_FILTER" />
 	    <!--  <s:http-basic />  -->
@@ -99,6 +100,29 @@
 		    </bean>
         </property>
     </bean>
+
+    <bean id="trustAnotherProxy" class="org.georchestra.security.ProxyTrustAnotherProxy" init-method="init">
+        <property name="authenticationManager" ref="authenticationManager" />
+        <property name="georchestraConfiguration" ref="georchestraConfiguration"></property>
+    </bean>
+
+
+    <bean id="userDetailsService" class="org.georchestra.security.MyUserDetailsService"/>
+
+    <bean id="preauthAuthProvider"
+          class="org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider">
+        <property name="preAuthenticatedUserDetailsService">
+            <bean id="userDetailsServiceWrapper"
+                  class="org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper">
+                <property name="userDetailsService" ref="userDetailsService"/>
+            </bean>
+        </property>
+    </bean>
+
+    <s:authentication-manager alias="authenticationManager">
+        <s:authentication-provider ref="preauthAuthProvider" />
+    </s:authentication-manager>
+
 
     <!-- This bean points at the embedded directory server created by the ldap-server element above  -->
     <bean id="contextSource" class="org.springframework.security.ldap.DefaultSpringSecurityContextSource">
@@ -206,5 +230,9 @@
         p:fallbackToSystemLocale="false">
     </bean>
 	<!-- end cas config -->
+
+    <bean id="georchestraConfiguration" class="org.georchestra.commons.configuration.GeorchestraConfiguration">
+        <constructor-arg value="security-proxy" />
+    </bean>
 
 </beans>

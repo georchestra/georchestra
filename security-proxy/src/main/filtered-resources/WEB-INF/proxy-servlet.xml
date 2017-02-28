@@ -108,8 +108,6 @@
 		location="file:${georchestra.datadir}/security-proxy/security-proxy.properties"
 		ignore-resource-not-found="true" ignore-unresolvable="true" order="1" />
 
-    <bean id="georchestraConfiguration" class="org.georchestra.commons.configuration.GeorchestraConfiguration">
-      <constructor-arg value="security-proxy" />
-    </bean>
+
 
 </beans>

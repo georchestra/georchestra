@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -103,7 +104,16 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
 
 		synchronized (session) {
 
-			if (session.getAttribute("security-proxy-cached-attrs") != null) {
+            if(session.getAttribute("pre-auth") != null){
+                headers = new ArrayList<Header>();
+                Enumeration<String> e = originalRequest.getHeaderNames();
+                while(e.hasMoreElements()){
+                    String headerName = e.nextElement();
+                    originalRequest.getHeader(headerName);
+                    headers.add(new BasicHeader(headerName, originalRequest.getHeader(headerName)));
+                }
+                return headers;
+            } else if (session.getAttribute("security-proxy-cached-attrs") != null) {
 				try {
 					headers = (Collection<Header>) session.getAttribute("security-proxy-cached-attrs");
 					String expectedUsername = (String) session.getAttribute("security-proxy-cached-username");
