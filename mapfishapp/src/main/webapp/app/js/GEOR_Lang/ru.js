@@ -421,8 +421,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     //"Hover the feature you wish to edit, or choose \"new feature\" in the edit menu": "Survolez les objets de la couche que vous souhaitez modifier, ou choisissez \"nouvel objet\" dans le menu d'édition de la couche",
     "Synchronization failed.": "Произошла ошибка во время процесса синхронизации.",
     /* GeoExt.data.CSW.js */
-    "no abstract": "нет резюме",
-    "Deactivate SingleTile": "Отключить SingleTile"
+    "no abstract": "нет резюме"
     // no trailing comma
 });
 
