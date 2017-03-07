@@ -209,7 +209,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "About this layer": "A propos de cette couche",
     "Set as overlay": "Passer en calque",
     "Set as baselayer": "Passer en couche de fond",
-    "Deactivate SingleTile" : "Desactiver SingleTile",
+    "Deactivate SingleTile" : "Désactiver SingleTile",
     "Activate SingleTile" : "Activer SingleTile",
     "Confirm NAME layer deletion ?":
         "Voulez-vous réellement supprimer la couche ${NAME} ?",
