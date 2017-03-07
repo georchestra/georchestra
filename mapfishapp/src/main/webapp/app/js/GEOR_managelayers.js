@@ -637,7 +637,7 @@ GEOR.managelayers = (function() {
             isVector = layer instanceof OpenLayers.Layer.Vector,
             isBaseLayer = layerRecord.get("opaque") || 
                 layer.transitionEffect === "resize",
-            isSingleTile = layer.options.singleTile;
+            isSingleTile = layer.singleTile;
 
         var menuItems = [], sepInserted, item;
 
