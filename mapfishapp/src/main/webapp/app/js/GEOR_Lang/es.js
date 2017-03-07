@@ -506,7 +506,8 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "quiere modificar, o seleccionar \"nuevo objeto\" en el menú " +
         " de edición",
     /* GeoExt.data.CSW.js */
-    "no abstract": "ningún abstracto"
+    "no abstract": "ningún abstracto",
+    "Deactivate SingleTile": "Desactivar SingleTile"
     // no trailing comma
 });
 
