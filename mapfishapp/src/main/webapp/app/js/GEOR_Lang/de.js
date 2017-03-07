@@ -227,6 +227,8 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Download data": "Daten downloaden",
     "Choose a style": "Stil",
     "Modify format": "Format ändern",
+    "Deactivate SingleTile" : "Deaktivieren Sie SingleTile",
+    "Activate SingleTile" : "SingleTile aktivieren",
     "Delete this layer": "Layer löschen",
     "Push up this layer": "Layer darüberlegen",
     "Push down this layer": "Layer darunterlegen",
@@ -488,8 +490,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Edit activated": "Bearbeitung aktiviert", 
     "Hover the feature you wish to edit, or choose \"new feature\" in the edit menu": "Uberfliegen der zu verändernden Layerobjekte, oder wählen Sie \"neues Objekt\" im Layermenü",
     /* GeoExt.data.CSW.js */
-    "no abstract": "Keine Zusammenfassung",
-    "Deactivate SingleTile" : "Deaktivieren Sie SingleTile"
+    "no abstract": "Keine Zusammenfassung"
     // no trailing comma
 });
 
