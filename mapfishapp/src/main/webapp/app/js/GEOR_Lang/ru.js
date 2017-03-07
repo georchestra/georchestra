@@ -187,6 +187,8 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Download data": "Скачать данные",
     "Choose a style": "Выбрать стиль",
     "Modify format": "Изменить формат",
+    "Deactivate SingleTile" : "Отключить SingleTile",
+    "Activate SingleTile" : "Активировать SingleTile",
     "Delete this layer": "Удалить этот слой",
     "Push up this layer": "Переместить этот слой вверх",
     "Push down this layer": "Опустить этот слой",
