@@ -209,6 +209,8 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "About this layer": "A propos de cette couche",
     "Set as overlay": "Passer en calque",
     "Set as baselayer": "Passer en couche de fond",
+    "Deactivate SingleTile" : "Desactiver SingleTile",
+    "Activate SingleTile" : "Activer SingleTile",
     "Confirm NAME layer deletion ?":
         "Voulez-vous réellement supprimer la couche ${NAME} ?",
     "1:MAXSCALE to 1:MINSCALE": "1:${MAXSCALE} à 1:${MINSCALE}",
@@ -498,8 +500,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Edit activated": "Edition activée", 
     "Hover the feature you wish to edit, or choose \"new feature\" in the edit menu": "Survolez les objets de la couche que vous souhaitez modifier, ou choisissez \"nouvel objet\" dans le menu d'édition de la couche",
     /* GeoExt.data.CSW.js */
-    "no abstract": "pas de résumé",
-    "Deactivate SingleTile": "Désactiver SingleTile"
+    "no abstract": "pas de résumé"
     // no trailing comma
 });
 
