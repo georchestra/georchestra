@@ -152,5 +152,6 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
     "(default)": "<br/>(current default context)",
     /* GEOR_edit.js */
     /* GEOR_workspace.js strings */
+    "Deactivate SingleTile": "Deactivate SingleTile"
     // no trailing comma
 });
