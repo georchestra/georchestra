@@ -149,7 +149,7 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
     /* GEOR_wmc.js strings */
     "Warning: trying to restore WMC with a different projection (PROJCODE1, while map SRS is PROJCODE2). Strange things might occur !": "Warning: trying to restore WMC with a different projection (${PROJCODE1}, while map SRS is ${PROJCODE2}). Strange things might occur !",
     /* GEOR_wmcbrowser.js strings */
-    "(default)": "<br/>(current default context)",
+    "(default)": "<br/>(current default context)"
     /* GEOR_edit.js */
     /* GEOR_workspace.js strings */
     // no trailing comma

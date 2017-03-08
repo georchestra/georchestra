@@ -232,6 +232,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Download data": "Descargar los datos",
     "Choose a style": "Elegir un estilo",
     "Modify format": "Modificar el formato",
+    "Tiled mode" : "Modo mosaico",
     "Delete this layer": "Quitar esta capa",
     "Push up this layer": "Subir esta capa",
     "Push down this layer": "Bajar esta capa",
