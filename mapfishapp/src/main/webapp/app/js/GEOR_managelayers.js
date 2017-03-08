@@ -846,13 +846,12 @@ GEOR.managelayers = (function() {
         
         if (isWMS) {
             menuItems.push({
-                text: isSingleTile ? 
-                    tr("Deactivate SingleTile") : tr("Activate SingleTile"),
-                handler: function() {
+                text: tr('Tiled mode'),
+                checked: !isSingleTile,
+                checkHandler: function() {
                     layerRecord.get('layer').addOptions({singleTile: !isSingleTile});
                     layerRecord.get('layer').redraw(true);
                     isSingleTile = !isSingleTile;
-                    this.setText(isSingleTile ? tr("Deactivate SingleTile") : tr("Activate SingleTile"));
                 }
             });
         }
