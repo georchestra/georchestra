@@ -227,7 +227,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Download data": "Daten downloaden",
     "Choose a style": "Stil",
     "Modify format": "Format ändern",
-    "Tiled mode" : "Gefliester Modus",
+    "Tiled mode" : "Gekachelt Modus",
     "Delete this layer": "Layer löschen",
     "Push up this layer": "Layer darüberlegen",
     "Push down this layer": "Layer darunterlegen",
