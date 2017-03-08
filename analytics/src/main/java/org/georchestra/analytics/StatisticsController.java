@@ -19,6 +19,8 @@
 
 package org.georchestra.analytics;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -609,20 +611,20 @@ public class StatisticsController {
             + "<code>"
             + "{ startDate: 2015-01-01, endDate: 2015-12-01 }"
             + "</code>")
-	@ResponseBody
-	public String distinctUsers(@RequestBody String payload, HttpServletResponse response) throws JSONException {
+	public void distinctUsers(@RequestBody String payload, HttpServletResponse response) throws JSONException, IOException {
 		JSONObject input;
 		String groupId = null;
 		String startDate;
 		String endDate;
 
 		response.setContentType("application/json; charset=UTF-8");
+		response.setCharacterEncoding("UTF-8");
 
 		try {
 			input = new JSONObject(payload);
 			if (!input.has("startDate") || !input.has("endDate")) {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-				return null;
+				return;
 			}
 			startDate = this.convertLocalDateToUTC(input.getString("startDate"));
 			endDate = this.convertLocalDateToUTC(input.getString("endDate"));
@@ -631,7 +633,7 @@ public class StatisticsController {
 			}
 		} catch (Throwable e) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			return null;
+			return;
 		}
 		List lst = null;
 		if (groupId != null) {
@@ -663,8 +665,12 @@ public class StatisticsController {
 			row.put("nb_requests", r[2]);
 			results.put(row);
 		}
-		return new JSONObject().put("results", results)
+		String res = new JSONObject().put("results", results)
 				.toString(4);
+
+		PrintWriter writer = response.getWriter();
+		writer.print(res);
+		writer.close();
 	}
 	
 	/**

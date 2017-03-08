@@ -654,7 +654,7 @@ public class Proxy {
 
             try {
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                Header[] originalHeaders = proxyingRequest.getHeaders("sec-org");
+                Header[] originalHeaders = proxyingRequest.getHeaders("sec-orgname");
                 String org = "";
                 for (Header originalHeader : originalHeaders) {
                     org = originalHeader.getValue();
