@@ -39,7 +39,7 @@ Here's the [full LDAP diff](https://gist.github.com/fvanderbiest/7c8ae5656e29325
 ## Configurations
 
 **The geOrchestra datadir is now mandatory**. It is indeed possible to fully configure a standard geOrchestra instance without having to build it.  
-Please read the notes from the [georchestra/datadir](https://github.com/georchestra/datadir/blob/master/README.md) repository to upgrade.
+Please read the notes from the [georchestra/datadir](https://github.com/georchestra/datadir/blob/master/README.md) repository before you upgrade. To proceed, we recommend (first a backup, then ...) the use of the `meld` tool to compare your existing datadir and a fresh copy of the datadir (on branch 16.12). 
 
 For the mapfishapp viewer, we restored the ability to choose which context is shown by default through the `GEOR.custom.DEFAULT_WMC` config option.
 Read [#1534](https://github.com/georchestra/georchestra/pull/1354) for more.
