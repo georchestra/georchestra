@@ -1,5 +1,7 @@
 package org.georchestra.security;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 
@@ -12,6 +14,8 @@ import java.util.Enumeration;
 
 public class TrustedProxyRequestHeaderProvider extends HeaderProvider {
 
+    private static final Log logger = LogFactory.getLog(ProxyTrustAnotherProxy.class.getPackage().getName());
+
     @SuppressWarnings("unchecked")
     @Override
     protected Collection<Header> getCustomRequestHeaders(HttpSession session, HttpServletRequest originalRequest) {
@@ -21,6 +25,7 @@ public class TrustedProxyRequestHeaderProvider extends HeaderProvider {
             while (e.hasMoreElements()) {
                 String headerName = e.nextElement();
                 originalRequest.getHeader(headerName);
+                logger.debug("Adding header: " + headerName + ", value: " + originalRequest.getHeader(headerName));
                 headers.add(new BasicHeader(headerName, originalRequest.getHeader(headerName)));
             }
             return headers;

@@ -23,6 +23,7 @@ public class MyUserDetailsService implements UserDetailsService {
         Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
         authorities.add(this.createGrantedAuthority("ROLE_USER"));
         authorities.add(this.createGrantedAuthority("ROLE_ADMINISTRATOR"));
+        
 
         UserDetails res = new User(username, "N/A", authorities);
         return res;

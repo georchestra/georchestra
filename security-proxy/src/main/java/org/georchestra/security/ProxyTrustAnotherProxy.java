@@ -1,23 +1,16 @@
 package org.georchestra.security;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.georchestra.commons.configuration.GeorchestraConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import org.springframework.security.authentication.AuthenticationDetailsSource;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.georchestra.commons.configuration.GeorchestraConfiguration;
+import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 
 public class ProxyTrustAnotherProxy extends AbstractPreAuthenticatedProcessingFilter {
 
@@ -26,10 +19,20 @@ public class ProxyTrustAnotherProxy extends AbstractPreAuthenticatedProcessingFi
     private static final Log logger = LogFactory.getLog(ProxyTrustAnotherProxy.class.getPackage().getName());
 
     private GeorchestraConfiguration georchestraConfiguration;
-    private Set<InetAddress> trustedProxies;
+    private Set<InetAddress> trustedProxies = new HashSet<InetAddress>();
 
     public void init() throws UnknownHostException {
-        String rawProxyValue = georchestraConfiguration.getProperty(CONFIG_KEY).trim();
+        if (! georchestraConfiguration.activated()) {
+            logger.info("trusting security-proxies only works in datadir mode. Skipping bean configuration");
+            return;
+        }
+        String rawProxyValue = georchestraConfiguration.getProperty(CONFIG_KEY);
+        if (rawProxyValue == null) {
+            logger.info("\"trustedProxy\" property is not defined. Skipping bean configuration");
+            return;
+        }
+        rawProxyValue = rawProxyValue.trim();
+
         String[] rawProxyList;
         if(rawProxyValue.length() != 0){
             rawProxyList = rawProxyValue.split("\\s*,\\s*");
@@ -37,10 +40,14 @@ public class ProxyTrustAnotherProxy extends AbstractPreAuthenticatedProcessingFi
             rawProxyList = new String[0];
         }
 
-        this.trustedProxies = new HashSet<InetAddress>();
-
-        for(String proxy : rawProxyList){
-            InetAddress trustedProxyAddress = InetAddress.getByName(proxy);
+        for(String proxy : rawProxyList) {
+            InetAddress trustedProxyAddress; 
+            try {
+                trustedProxyAddress = InetAddress.getByName(proxy);
+            } catch (UnknownHostException e) {
+                logger.error("Unable to lookup " + proxy + ". skipping.");
+                continue;
+            }
             this.trustedProxies.add(trustedProxyAddress);
             logger.info("Add trusted proxy : " + trustedProxyAddress);
         }
@@ -78,15 +85,14 @@ public class ProxyTrustAnotherProxy extends AbstractPreAuthenticatedProcessingFi
         return "N/A";
     }
 
-    public static class MyAuthenticationDetailsSource implements AuthenticationDetailsSource<HttpServletRequest, User> {
-
+    /*public static class MyAuthenticationDetailsSource implements AuthenticationDetailsSource<HttpServletRequest, User> {
 
         @Override
         public User buildDetails(HttpServletRequest req) {
 
             req.getSession().setAttribute("pre-auth", true);
 
-            String username = "joe";
+            String username = "pmauduit";
             Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
 
             authorities.add(this.createGrantedAuthority("ROLE_USER"));
@@ -103,7 +109,7 @@ public class ProxyTrustAnotherProxy extends AbstractPreAuthenticatedProcessingFi
                 }
             };
         }
-    }
+    }*/
 
     public void setGeorchestraConfiguration(GeorchestraConfiguration georchestraConfiguration) {
         this.georchestraConfiguration = georchestraConfiguration;
