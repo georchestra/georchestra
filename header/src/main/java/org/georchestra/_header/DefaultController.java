@@ -52,11 +52,13 @@ public class DefaultController {
     public void replaceLogo() throws IOException {
 
         // Try to replace logo with logo from datadir
-        File target = new File(this.context.getRealPath("/img"), "logo.png");
-        File source = new File(georchestraConfiguration.getContextDataDir() + "/logo.png");
-        if(source.isFile() && target.canWrite())
-            Files.copy(source.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
-
+        File imgDirectory = new File(this.context.getRealPath("/img"));
+        if(imgDirectory.exists() && imgDirectory.isDirectory() && imgDirectory.canWrite()){
+            File target = new File(imgDirectory, "logo.png");
+            File source = new File(georchestraConfiguration.getContextDataDir() + "/logo.png");
+            if(source.isFile() && source.canRead() && (target.canWrite() || !target.exists()))
+                Files.copy(source.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        }
     }
 
     @RequestMapping(method = RequestMethod.POST)
