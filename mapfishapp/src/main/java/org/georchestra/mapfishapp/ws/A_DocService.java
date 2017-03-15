@@ -54,6 +54,7 @@ import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
 import org.xml.sax.SAXException;
 
 
@@ -274,7 +275,13 @@ public abstract class A_DocService {
                 entry.put("access_count", rs.getString("access_count"));
 
                 // Add standard specific fields
-                JSONObject standardSpecificEntry = this.extractsStandardSpecificEntries(rs.getBinaryStream("raw_file_content"));
+                JSONObject standardSpecificEntry;
+                try  {
+                    standardSpecificEntry = this.extractsStandardSpecificEntries(rs.getBinaryStream("raw_file_content"));
+                } catch (Exception e) {
+                    LOG.error("Unable to parse the document [hash: " + rs.getString("file_hash") + "]. Skipping.");
+                    continue;
+                }
                 Iterator<String> it = standardSpecificEntry.keys();
                 while(it.hasNext()){
                     String field = it.next();
@@ -283,10 +290,21 @@ public abstract class A_DocService {
                 res.put(entry);
             }
             return res;
-
         } finally {
-            if (st != null) try { st.close(); } catch (SQLException e) {LOG.error(e);}
-            if (connection != null) try { connection.close(); } catch (SQLException e) {LOG.error(e);}
+            if (st != null) {
+                try {
+                    st.close();
+                } catch (SQLException e) {
+                    LOG.error(e);
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    LOG.error(e);
+                }
+            }
         }
 
     }
@@ -304,9 +322,9 @@ public abstract class A_DocService {
             st.setString(1, filename);
             st.setString(2, username);
 
-            if(st.executeUpdate() != 1)
+            if(st.executeUpdate() != 1) {
                 throw new SQLException("Unable to find record with file_hash : " + filename + " and username : " + username);
-
+            }
         } finally {
             if (st != null) try { st.close(); } catch (SQLException e) {LOG.error(e);}
             if (connection != null) try { connection.close(); } catch (SQLException e) {LOG.error(e);}
