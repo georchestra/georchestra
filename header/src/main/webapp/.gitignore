@@ -1,3 +1,4 @@
 /css
-/img
+/img/*
+!/img/README.md
 /js/.gitignore
