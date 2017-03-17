@@ -58,7 +58,6 @@ public class ProxyTrustAnotherProxy extends AbstractPreAuthenticatedProcessingFi
         }
 
         this.setContinueFilterChainOnUnsuccessfulAuthentication(true);
-        //this.setAuthenticationDetailsSource(new ProxyTrustAnotherProxy.MyAuthenticationDetailsSource());
     }
 
     @Override
@@ -84,32 +83,6 @@ public class ProxyTrustAnotherProxy extends AbstractPreAuthenticatedProcessingFi
     protected Object getPreAuthenticatedCredentials(HttpServletRequest request) {
         return "N/A";
     }
-
-    /*public static class MyAuthenticationDetailsSource implements AuthenticationDetailsSource<HttpServletRequest, User> {
-
-        @Override
-        public User buildDetails(HttpServletRequest req) {
-
-            req.getSession().setAttribute("pre-auth", true);
-
-            String username = "pmauduit";
-            Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
-
-            authorities.add(this.createGrantedAuthority("ROLE_USER"));
-            authorities.add(this.createGrantedAuthority("ROLE_ADMINISTRATOR"));
-
-            return new User(username, "N/A", authorities);
-        }
-
-        private GrantedAuthority createGrantedAuthority(final String role){
-            return new GrantedAuthority() {
-                @Override
-                public String getAuthority() {
-                    return role;
-                }
-            };
-        }
-    }*/
 
     public void setGeorchestraConfiguration(GeorchestraConfiguration georchestraConfiguration) {
         this.georchestraConfiguration = georchestraConfiguration;
