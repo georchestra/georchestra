@@ -91,44 +91,48 @@ public class HeadersManagementStrategy {
         Enumeration<String> headerNames = originalRequest.getHeaderNames();
         String headerName = null;
 
+        HttpSession session = originalRequest.getSession();
+
         StringBuilder headersLog = new StringBuilder("Request Headers:\n");
         headersLog
                 .append("==========================================================\n");
         if (referer != null) {
             addHeaderToRequestAndLog(proxyRequest, headersLog, REFERER_HEADER_NAME, this.referer);
         }
-        while (headerNames.hasMoreElements()) {
-            headerName = headerNames.nextElement();
-            if (headerName.compareToIgnoreCase(CONTENT_LENGTH) == 0) {
-                continue;
+
+        if(session.getAttribute("pre-auth") == null) {
+            while (headerNames.hasMoreElements()) {
+                headerName = headerNames.nextElement();
+                if (headerName.compareToIgnoreCase(CONTENT_LENGTH) == 0) {
+                    continue;
+                }
+                if (headerName.equalsIgnoreCase(COOKIE_ID)) {
+                    continue;
+                }
+                if (filter(originalRequest, headerName, proxyRequest)) {
+                    continue;
+                }
+                if (noAcceptEncoding && headerName.equalsIgnoreCase(ACCEPT_ENCODING)) {
+                    continue;
+                }
+                if (headerName.equalsIgnoreCase(HOST)) {
+                    continue;
+                }
+                // Don't forward 'sec-*' headers, those headers must be managed by security-proxy
+                if (headerName.toLowerCase().startsWith(PROTECTED_HEADER_PREFIX)) {
+                    continue;
+                }
+                if (referer != null && headerName.equalsIgnoreCase(REFERER_HEADER_NAME)) {
+                    continue;
+                }
+                String value = originalRequest.getHeader(headerName);
+                addHeaderToRequestAndLog(proxyRequest, headersLog, headerName, value);
             }
-            if (headerName.equalsIgnoreCase(COOKIE_ID)) {
-                continue;
-            }
-            if (filter(originalRequest, headerName, proxyRequest)) {
-                continue;
-            }
-            if (noAcceptEncoding && headerName.equalsIgnoreCase(ACCEPT_ENCODING)) {
-                continue;
-            }
-            if (headerName.equalsIgnoreCase(HOST)) {
-                continue;
-            }
-            // Don't forward 'sec-*' headers, those headers must be managed by security-proxy
-            if(headerName.toLowerCase().startsWith(PROTECTED_HEADER_PREFIX)){
-                continue;
-            }
-            if (referer != null && headerName.equalsIgnoreCase(REFERER_HEADER_NAME)) {
-                continue;
-            }
-            String value = originalRequest.getHeader(headerName);
-            addHeaderToRequestAndLog(proxyRequest, headersLog, headerName, value);
         }
         // see https://github.com/georchestra/georchestra/issues/509:
         addHeaderToRequestAndLog(proxyRequest, headersLog, SEC_PROXY, "true");
 
         handleRequestCookies(originalRequest, proxyRequest, headersLog);
-        HttpSession session = originalRequest.getSession();
 
         for (HeaderProvider provider : headerProviders) {
 
@@ -171,6 +175,7 @@ public class HeadersManagementStrategy {
     }
 
     private void addHeaderToRequestAndLog(HttpRequestBase proxyRequest, StringBuilder headersLog, String headerName, String value) {
+        logger.debug("Add Header : " + headerName + " = " + value);
         proxyRequest.addHeader(new BasicHeader(headerName, value));
         headersLog.append("\t" + headerName);
         headersLog.append("=");
