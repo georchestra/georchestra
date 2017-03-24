@@ -57,13 +57,15 @@
           <th translate>logs.date</th>
           <th translate>logs.sender</th>
           <th translate>logs.type</th>
+          <th translate>logs.target</th>
         </tr>
       </thead>
       <tbody>
         <tr ng-repeat="log in home.logs.logs">
-          <td>{{::log.date | date: 'mediumDate'}}</td>
+          <td>{{::log.date | date: 'medium'}}</td>
           <td>{{::log.admin}}</td>
           <td>{{::log.type}}</td>
+          <td>{{::log.target}}</td>
         </tr>
       </tbody>
     </table>
