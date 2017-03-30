@@ -127,7 +127,7 @@ GEOR.mappanel = (function() {
         var srsList = GEOR.config.POINTER_POSITION_SRS_LIST,
             srs = srsList[0][0];
         
-        items.push(tr("Coordonnées en "));
+        items.push(tr("Coordinates in "));
         items.push({
             xtype: 'combo',
             width: 110,
