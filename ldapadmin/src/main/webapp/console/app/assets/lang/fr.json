@@ -142,6 +142,7 @@
   "logs.sender"           : "Admin",
   "logs.target"           : "Destinataire",
   "logs.type"             : "Action",
+  "logs.target"           : "Cible",
   "logs.allsender"        : "Tous",
   "logs.alltype"          : "Tous",
   "logs.alltarget"        : "Tous",

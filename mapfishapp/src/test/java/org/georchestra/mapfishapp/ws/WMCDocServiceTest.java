@@ -7,14 +7,21 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.tools.ant.filters.StringInputStream;
+import org.georchestra.mapfishapp.model.ConnectionPool;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.util.ReflectionUtils;
 import org.xml.sax.SAXParseException;
 
@@ -45,6 +52,29 @@ public class WMCDocServiceTest {
     }
 
     @Test
+    public void testADocServiceListFiles() throws Exception {
+        ConnectionPool pgPool = Mockito.mock(ConnectionPool.class);
+        Connection c = Mockito.mock(Connection.class);
+        PreparedStatement st = Mockito.mock(PreparedStatement.class);
+        ResultSet rs = Mockito.mock(ResultSet.class);
+        Mockito.when(pgPool.getConnection()).thenReturn(c);
+        Mockito.when(c.prepareStatement(Mockito.anyString())).thenReturn(st);
+        Mockito.when(st.executeQuery()).thenReturn(rs);
+        Mockito.when(rs.next()).thenReturn(true,true,false);
+        Mockito.when(rs.getString(Mockito.anyString())).thenReturn("dummy_string");
+        // First returned doc is valid, next one is invalid.
+        Mockito.when(rs.getBinaryStream("raw_file_content")).thenReturn(
+                new StringInputStream("<xml><isValid>true</isValid></xml>"),
+                new StringInputStream("<xml><isValid>true</isObviouslyInValid></xml>"));
+
+        WMCDocService wmcds = new WMCDocService("xml", pgPool);
+
+        JSONArray ret = wmcds.listFiles("testadmin");
+
+        assertTrue("Expected only one element in WMCDocService.listFiles() return", ret.length() == 1);
+    }
+
+    @Test
     public void testWMCParse() throws Exception {
         InputStream is = this.getClass().getResourceAsStream("/default.wmc");
 
@@ -53,7 +83,9 @@ public class WMCDocServiceTest {
 
         // Check title and abstract
         assertTrue("Missing or invalid title", res.getString("title").equals("Default context (OSM Géobretagne)"));
-        assertTrue("Missing or invalid abstract", res.getString("abstract").equals("This is the default context provided for geOrchestra, loading a layer kindly provided by GéoBretagne, data issued from OpenStreetMap and contributors"));
+        assertTrue("Missing or invalid abstract", res.getString("abstract").equals("This is the default context "
+                + "provided for geOrchestra, loading a layer kindly provided by GéoBretagne, data issued from "
+                + "OpenStreetMap and contributors"));
 
         // Check keywords
         JSONArray keywords = res.getJSONArray("keywords");

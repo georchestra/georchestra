@@ -408,6 +408,20 @@
           <executable>jsbuild/${jsbuild.command}</executable>
         </configuration>
       </plugin>
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>3.0.0</version>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>jsbuild</directory>
+              <includes>
+                <include>env/**</include>
+              </includes>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
   <profiles>

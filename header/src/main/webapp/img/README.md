@@ -1,0 +1,1 @@
+This directory is a placeholder where header webapp will put logo.png file from datadir at runtime.
