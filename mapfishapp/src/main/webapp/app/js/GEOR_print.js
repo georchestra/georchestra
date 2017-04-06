@@ -180,6 +180,8 @@ GEOR.print = (function() {
      * layerStore - {GeoExt.data.LayerStore} The application's layer store.
      */
     var initialize = function(ls) {
+        // set geodetic print param, see https://github.com/georchestra/georchestra/issues/1084
+        defaultCustomParams.geodetic = GEOR.config.MAP_SRS !== "EPSG:4326";
 
         layerStore = ls;
         tr = OpenLayers.i18n;
@@ -271,10 +273,15 @@ GEOR.print = (function() {
                     printExtent.init(GeoExt.MapPanel.guess());
                 },
                 "beforeencodelayer": function(printProvider, layer) {
-                    if ((layer.CLASS_NAME === "OpenLayers.Layer.Vector") &&
-                        layer.name === VECTOR_LAYER_NAME) {
-                        // do not print bounds layer
-                        return false;
+                    if (layer.CLASS_NAME === "OpenLayers.Layer.Vector") {
+                        if (layer.name === VECTOR_LAYER_NAME) {
+                            // do not print bounds layer
+                            return false;
+                        }
+                        var invalid = Ext.each(layer.features, GEOR.util.hasInvalidGeometry);
+                        if (invalid >= 0) {
+                            return false;
+                        }
                     }
                 },
                 "beforeprint": function(provider, map, pages, o) {
@@ -568,8 +575,8 @@ GEOR.print = (function() {
                 listeners: {
                     "show": function() {
                         // show print extent:
-                        printExtent.addPage(printPage);
                         printExtent.show();
+                        printExtent.addPage(printPage);
                         /*
                         // focus first field on show
                         var field = formPanel.getForm().findField('mapTitle');

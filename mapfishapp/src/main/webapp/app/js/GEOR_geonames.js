@@ -71,8 +71,7 @@ GEOR.geonames = (function() {
             labelSeparator: '',
             store: dsGeonames,
             loadingText: tr('Loading...'),
-            width: 180,
-            listWidth: 180,
+            anchor: '95%',
             queryDelay: 100,
             hideTrigger:true,
             tpl: tplResult,                      // template to display results

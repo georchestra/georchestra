@@ -184,14 +184,7 @@ public class EditUserDetailsFormController {
 		try {
 
 			Account account = modify(this.accountBackup, formBean);
-			String adminUUID;
-			try {
-				Account adminAccount = this.accountDao.findByUID(request.getHeader("sec-username"));
-				adminUUID = adminAccount == null ? null : adminAccount.getUUID();
-			} catch (NameNotFoundException ex){
-				adminUUID = null;
-			}
-			this.accountDao.update(account, adminUUID);
+			this.accountDao.update(account, request.getHeader("sec-username"));
 
 			model.addAttribute("success", true);
 

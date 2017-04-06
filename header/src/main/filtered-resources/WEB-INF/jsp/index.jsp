@@ -92,11 +92,6 @@ String sec_roles = request.getHeader("sec-roles");
 if(sec_roles != null) {
     String[] roles = sec_roles.split(";");
     for (int i = 0; i < roles.length; i++) {
-        // ROLE_ANONYMOUS is added by the security proxy:
-        if (roles[i].equals("ROLE_ANONYMOUS")) {
-            //response.setHeader("Cache-Control", "public, max-age=31536000");
-            break;
-        }
         if (roles[i].equals("ROLE_SV_EDITOR") || roles[i].equals("ROLE_SV_REVIEWER") || roles[i].equals("ROLE_SV_ADMIN") || roles[i].equals("ROLE_ADMINISTRATOR") || roles[i].equals("ROLE_SV_USER")) {
             anonymous = false;
         }
@@ -128,7 +123,7 @@ if(sec_roles != null) {
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-
+    <base target="_parent" />
     <style type="text/css">
         /* see https://github.com/georchestra/georchestra/issues/147 for missing http protocol */
         @import url(//fonts.googleapis.com/css?family=Yanone+Kaffeesatz);

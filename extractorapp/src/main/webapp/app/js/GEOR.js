@@ -111,7 +111,7 @@ Ext.namespace("GEOR");
                 "We cannot produce images with more than MAX million RGB pixels.",
                 "Continue anyway ?"
             ].join('<br/>'), {
-                'MAX': Math.round(GEOR.config.MAX_COVERAGE_EXTRACTION_SIZE/3000000),
+                'MAX': Math.round(GEOR.config.MAX_COVERAGE_EXTRACTION_SIZE/1000000),
                 'LAYERS': oversized.join(', ')
             }), function(btn, text){
                 if (btn == 'yes'){
@@ -171,7 +171,7 @@ Ext.namespace("GEOR");
          * Setting of Ext global vars.
          */
 
-        Ext.BLANK_IMAGE_URL = "resources/lib/externals/ext/resources/images/default/s.gif";
+        Ext.BLANK_IMAGE_URL = "resources/app/img/s.gif";
         Ext.apply(Ext.MessageBox.buttonText, {
             yes: tr("Yes"),
             no: tr("No"),

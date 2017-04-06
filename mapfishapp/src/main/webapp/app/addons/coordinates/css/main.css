@@ -1,0 +1,10 @@
+.addon-coordinates {
+    background-image: url(../img/target.png) !important;    
+}
+
+.addon-coordinates-popup .coords {
+    border-width: 2px;
+    border-style: solid;
+    padding: 5px;
+    border-color: orange;
+}

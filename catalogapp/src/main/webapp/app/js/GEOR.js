@@ -46,7 +46,7 @@ Ext.onReady(function() {
     /*
      * Setting of Ext global vars.
      */
-    Ext.BLANK_IMAGE_URL = "lib/externals/ext/resources/images/default/s.gif";
+    Ext.BLANK_IMAGE_URL = "app/img/s.gif";
     Ext.apply(Ext.MessageBox.buttonText, {
         yes: tr("Yes"),
         no: tr("No"),

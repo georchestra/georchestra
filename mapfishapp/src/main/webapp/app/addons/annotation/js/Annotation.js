@@ -520,6 +520,7 @@ GEOR.Annotation = Ext.extend(Ext.util.Observable, {
         feature.style.label = feature.attributes.label;
         feature.style.graphic = false;
         feature.style.labelSelect = true;
+        feature.style.pointRadius = 0;
         feature.isLabel = true;
     },
 

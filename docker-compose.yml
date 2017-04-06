@@ -13,7 +13,7 @@ ldap:
       - SLAPD_ORGANISATION=georchestra
       - SLAPD_DOMAIN=georchestra.org
       - SLAPD_PASSWORD=secret
-      - SLAPD_ADDITIONAL_MODULES=memberof,groupofmembers
+      - SLAPD_ADDITIONAL_MODULES=groupofmembers
   volumes:
     - ldap_data:/var/lib/ldap
     - ldap_config:/etc/ldap
@@ -33,7 +33,7 @@ webmail:
   volumes_from:
     - smtp:rw
 
-geoserver_geodata:
+geodata:
   image: georchestra/ssh_data
   ports:
     - "2222:22"
@@ -43,13 +43,28 @@ geoserver_geodata:
 # geOrchestra images
     
 geoserver:
-  image: georchestra/geoserver
+  image: georchestra/geoserver:latest
   volumes:
     - geoserver_datadir:/var/local/geoserver
     - geoserver_geodata:/var/local/geodata
-    
+    - geoserver_tiles:/var/local/tiles
+  links:
+    - database
+    - ldap
+  environment:
+    - XMS=1536M
+    - XMX=8G
+
+geowebcache:
+  image: georchestra/geowebcache:latest
+  volumes:
+    - geowebcache_tiles:/var/local/tiles
+  environment:
+    - XMS=1G
+    - XMX=2G
+
 proxy:
-  image: georchestra/security-proxy
+  image: georchestra/security-proxy:latest
   ports:
     - "8080:8080"
   links:
@@ -62,38 +77,85 @@ proxy:
     - geonetwork
     - header
     - geoserver
+    - analytics
+    - catalogapp
+    - downloadform
+  environment:
+    - XMS=512M
+    - XMX=1G
 
 cas:
-  image: georchestra/cas
+  image: georchestra/cas:latest
   links:
     - ldap
+  environment:
+    - XMS=256M
+    - XMX=1G
 
 mapfishapp:
-  image: georchestra/mapfishapp
+  image: georchestra/mapfishapp:latest
+  volumes:
+    - mapfishapp_uploads:/var/local/uploads
   links:
     - database
+  environment:
+    - XMS=1G
+    - XMX=2G
 
 extractorapp:
-  image: georchestra/extractorapp
+  image: georchestra/extractorapp:latest
   links:
     - database
     - smtp
+  volumes:
+    - extractorapp_extracts:/var/local/extracts
+  environment:
+    - XMS=1G
+    - XMX=2G
 
 header:
-  image: georchestra/header
+  image: georchestra/header:latest
+  environment:
+    - XMS=256M
+    - XMX=512M
 
 ldapadmin:
-  image: georchestra/ldapadmin
+  image: georchestra/ldapadmin:latest
   links:
     - database
     - ldap
     - smtp
+  environment:
+    - XMS=512M
+    - XMX=1G
 
 geonetwork:
-  image: georchestra/geonetwork
-  ports:
-    - "1099:1099"
+  image: georchestra/geonetwork:3-latest
   links:
     - database
     - ldap
+  volumes:
+    - geonetwork_datadir:/var/local/geonetwork
+  environment:
+    - XMS=1G
+    - XMX=6G
 
+analytics:
+  image: georchestra/analytics:latest
+  links:
+    - database
+  environment:
+    - XMS=256M
+    - XMX=1G
+
+catalogapp:
+  image: georchestra/catalogapp:latest
+  environment:
+    - XMS=256M
+    - XMX=512M
+
+downloadform:
+  image: georchestra/downloadform:latest
+  environment:
+    - XMS=256M
+    - XMX=512M

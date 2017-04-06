@@ -47,20 +47,31 @@ cd web
 ../../mvn -P docker -DskipTests package docker:build
 ```
 
-#### GeoServer
+#### GeoServer without geofence
 
 This creates a ```georchestra/geoserver``` docker image:
 
 ```bash
-cd geoserver/webapp/
-../../mvn -Pdocker clean package docker:build
-```
-For ```georchestra/geoserver-geofence```:
-```bash
-cd geoserver/webapp/
-../../mvn -Pdocker,geofence clean package docker:build
+cd geoserver/geoserver-submodule/src
+rm -fr ../data/citewfs-1.1/workspaces/sf/sf/E*
+LANG=C ../../../mvn clean install -DskipTests
+cd ../../webapp
+../../mvn clean install docker:build -Pdocker -DskipTests
 ```
 
+#### GeoServer with geofence
+
+This creates a ```georchestra/geoserver:geofence-15.12``` docker image:
+
+```bash
+cd geoserver/geoserver-submodule/src
+rm -fr ../data/citewfs-1.1/workspaces/sf/sf/E*
+LANG=C ../../../mvn clean install -Pgeofence-server -DskipTests
+cd ../../webapp
+../../mvn clean install docker:build -Pdocker,geofence -DskipTests
+```
+
+#### Geodata container
 This creates a ```georchestra/ssh_data``` docker image:
 
 ```bash
@@ -71,7 +82,7 @@ This image will be used to transfer and store geodata files for geoserver.
 Through composition (docker-compose), those files will be available to all geoserver instances in `/var/local/geodata`. 
 
 
-These files can also be managed via SSH onto the `georchestra_geoserver_geodata_1`, eg with:
+These files can also be managed via SSH onto the `georchestra_geodata_1`, eg with:
 ```
 ssh -p 2222 geoserver@localhost 
 ```

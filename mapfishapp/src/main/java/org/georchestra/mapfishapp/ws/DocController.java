@@ -57,6 +57,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
  * - POST: ws/sld/ GET: ws/sld/{filename} <br />
  * - POST: ws/kml/ GET: ws/kml/{filename} <br />
  * - POST: ws/gml/ GET: ws/gml/{filename} <br />
+ * - POST: ws/fe/  GET: ws/fe/{filename}  <br />
  * <br />
  * File can be sent via POST or by upload (max one file at a time)
  * <br />
@@ -82,6 +83,47 @@ public class DocController {
     /** the connection pool used by the document services*/
     @Autowired
     private ConnectionPool connectionPool;
+
+    /**
+     * variable name that has to be used on client side
+     */
+    public static final String FILEPATH_VARNAME = "filepath";
+
+    /**
+     * Absolute (from domain name) URL path where doc services can be called
+     */
+    public static final String DOC_URL = "ws/";
+
+    /**
+     * Absolute (from domain name) URL path where the wmc service can be called
+     */
+    public static final String WMC_URL = DOC_URL + "wmc/";
+
+    /**
+     * Absolute (from domain name) URL path where the csv service can be called
+     */
+    public static final String CSV_URL = DOC_URL + "csv/";
+
+    /**
+     * Absolute (from domain name) URL path where the sld service can be called
+     */
+    public static final String SLD_URL = DOC_URL + "sld/";
+
+    /**
+     * Absolute (from domain name) URL path where the kml service can be called
+     */
+    public static final String KML_URL = DOC_URL + "kml/";
+
+    /**
+     * Absolute (from domain name) URL path where the gml service can be called
+     */
+    public static final String GML_URL = DOC_URL + "gml/";
+
+    /**
+     * Absolute (from domain name) URL path where the fe service can be called
+     */
+    public static final String FE_URL = DOC_URL + "fe/";
+
 
     public void init() throws IOException {
         if (georchestraConfiguration.activated()) {
@@ -122,41 +164,6 @@ public class DocController {
 	public void setCredentials(Map<String, UsernamePasswordCredentials> credentials) {
 	    this.credentials = credentials;
 	}
-
-    /**
-     * variable name that has to be used on client side
-     */
-    public static final String FILEPATH_VARNAME = "filepath";
-
-    /**
-     * Absolute (from domain name) URL path where doc services can be called
-     */
-    public static final String DOC_URL = "ws/";
-
-    /**
-     * Absolute (from domain name) URL path where the wmc service can be called
-     */
-    public static final String WMC_URL = DOC_URL + "wmc/";
-
-    /**
-     * Absolute (from domain name) URL path where the csv service can be called
-     */
-    public static final String CSV_URL = DOC_URL + "csv/";
-
-    /**
-     * Absolute (from domain name) URL path where the sld service can be called
-     */
-    public static final String SLD_URL = DOC_URL + "sld/";
-
-    /**
-     * Absolute (from domain name) URL path where the kml service can be called
-     */
-    public static final String KML_URL = DOC_URL + "kml/";
-
-    /**
-     * Absolute (from domain name) URL path where the gml service can be called
-     */
-    public static final String GML_URL = DOC_URL + "gml/";
     
     /*=======================Services entry points==========================================================================*/
 
@@ -222,6 +229,27 @@ public class DocController {
     @RequestMapping(value="/gml/*", method=RequestMethod.GET)
     public void getGMLFile(HttpServletRequest request, HttpServletResponse response) {
         getFile(new GMLDocService(this.docTempDir, this.connectionPool), request, response);
+    }
+
+    /*======================= FE ======================================================================*/
+    /**
+     * POST FE entry point. Store the body of the request POST (or file by upload) in a temporary file.
+     * @param request contains in its body the file in the JSON format
+     * @param response contains the url path to get back the file in CSV: FE_URL/{filename}
+     */
+    @RequestMapping(value="/fe/", method=RequestMethod.POST)
+    public void storeFEFile(HttpServletRequest request, HttpServletResponse response) {
+        storeFile(new FEDocService(this.docTempDir, this.connectionPool), FE_URL, request, response);
+    }
+
+    /**
+     * GET FE entry point. Retrieve the right file previously stored corresponding to the REST argument.
+     * @param request no parameter. The parameter has to be provided REST style: FE_URL/{filename}
+     * @param response contains the file content
+     */
+    @RequestMapping(value="/fe/*", method=RequestMethod.GET)
+    public void getFEFile(HttpServletRequest request, HttpServletResponse response) {
+        getFile(new FEDocService(this.docTempDir, this.connectionPool), request, response);
     }
 
     /*======================= JSON to CSV =====================================================================*/
@@ -358,7 +386,8 @@ public class DocController {
 
             // send back to client the url path to retrieve this file later on
             response.setStatus(HttpServletResponse.SC_CREATED); // 201 created, new resource created
-            response.setContentType("text/html; charset=utf-8");
+            // Note: "text/html" required for http://docs.sencha.com/extjs/3.4.0/#!/api/Ext.form.BasicForm
+            response.setContentType("text/html");
             response.setHeader("Cache-Control", "max-age=0"); // both Cache-Control and Expires are required
             response.setHeader("Expires", "Fri, 19 Jun 1970 14:23:31 GMT"); // which is in the past
 

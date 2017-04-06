@@ -397,7 +397,7 @@ public class UpLoadFileManagement {
         }
         catch (Exception e) {
 
-            final String message = "Failed reading " + fileName + ".  "
+            final String message = "Failed reading " + FilenameUtils.getName(fileName) + ".  "
                     + e.getMessage();
             LOG.error(message);
             throw new IOException(message, e);

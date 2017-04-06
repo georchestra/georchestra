@@ -1,6 +1,8 @@
 # Building geOrchestra
 
-Here are the steps...
+To build geOrchestra, you will first have to [create your own configuration repository](config.md), based on the [template](https://github.com/georchestra/template) we provide.
+
+Once you're created your own configuration, follow these steps...
 
 ## Get the sources
 
@@ -8,8 +10,9 @@ At this stage, if you don't have the geOrchestra sources, you need to download t
 ```
 git clone --recursive https://github.com/georchestra/georchestra.git ~/georchestra
 ```
-(go grab some coffee in the mean time, or read on)
+By default, this will always fetch the latest stable version.
 
+Go grab some coffee in the mean time, or read on...
 
 ## Install the dependencies
 
@@ -79,14 +82,29 @@ data (using a batch insert for instance).
 
 ## Build the modules
 
-Building your SDI is just a command-line away:
+Building your SDI is just few command-lines away.
 ```
 cd ~/georchestra
-export MAVEN_OPTS="-XX:MaxPermSize=256M"
+```
+
+If your JDK version is < 8:
+```
+export MAVEN_OPTS="-XX:MaxPermSize=512M"
+```
+
+Build Geonetwork
+```
+cd geonetwork
+../mvn -DskipTests clean install
+cd ..
+```
+
+Build **all modules** (except GeoFence).
+```
 ./mvn -Dmaven.test.skip=true -Dserver=myprofile clean install
 ```
 
-Note: this will build **all modules** (except GeoFence).
+
 In case you only want to build one module or a collection, the syntax is a bit different:
 ```
 ./mvn -Dmaven.test.skip=true -Dserver=myprofile -P-all,module1,module2 clean install
@@ -190,10 +208,7 @@ Both can be combined with:
 ```
 
 
-### Alternative building process using Docker (experimental)
-
-As of last quarter of 2015, we introduced in geOrchestra the notion of generic
-webapps ; it is now possible to use Docker images to run the whole SDI easily.
+### Alternative building process using Docker
 
 First, you will need to compile the GeoNetwork and GeoServer artifacts separately:
 
@@ -204,7 +219,7 @@ cd ../../../geonetwork/
 ../mvn clean install -DskipTests
 ```
 
-Then generate the Docker images (make sure that Docker and docker-compose are
+Then generate Docker images (make sure that Docker and docker-compose are
 correctly installed before):
 
 From the project root:
@@ -229,11 +244,4 @@ cas                 latest              XXXXXXXXXXXX     ...
 [...]
 ```
 
-
-Finally, fire up the whole composition:
-```
-docker-compose up
-```
-
-If no error occured, you should be able to visit `http://localhost:8080/header/`.
 

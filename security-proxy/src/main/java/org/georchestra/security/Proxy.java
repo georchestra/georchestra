@@ -33,6 +33,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.net.URLDecoder;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -63,6 +64,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -72,11 +74,11 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpTrace;
-import org.apache.http.client.params.ClientPNames;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.ProxySelectorRoutePlanner;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.apache.http.message.BasicNameValuePair;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.ogcservstatistics.log4j.OGCServiceMessageFormatter;
@@ -106,13 +108,9 @@ import com.google.common.io.Closer;
  * There are two primary ways that the paths can be encoded:
  * <ul>
  * <li>The full url to forward to is encoded in a parameter called "url"</li>
- * <li>The url is encoded as part of the path
- * <ul>
- * <li>The first way is to forward to the default target server. The fragment of
- * the path after the context will be appended to the defaultTarget</li>
- * <li>The second way is to define the targets. The segment after the context of
- * this service will be the key for looking up the target server and the rest of
- * the path will be appended to the target</li>
+ * <li>The url is encoded as part of the path. Then the target should be
+ * defined (either in the targets-mapping.properties file of the datadir or in
+ * the targets map property of the proxyservlet.xml file)</li>
  * </ul>
  * Examples:
  * <p>
@@ -254,6 +252,11 @@ public class Proxy {
         redirectStrategy.sendRedirect(request, response, uriBuilder.build().toString());
     }
 
+    @RequestMapping("/services_monitoring")
+    public void servicesMonitoring(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        (new ServicesMonitoring(this.georchestraConfiguration.loadCustomPropertiesFile("targets-mapping"))).checkServices(request, response);
+    }
+
     @RequestMapping(params = { "login", "url" }, method = { GET, POST })
     public void login(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) throws ServletException, IOException {
         redirectStrategy.sendRedirect(request, response, sURL);
@@ -300,13 +303,25 @@ public class Proxy {
         if (request.getRequestURI().startsWith("/sec/proxy/")) {
             testLegalContentType(request);
             URL url;
+            InetAddress remoteAddress;
             try {
                 url = new URL(sURL);
+                remoteAddress = InetAddress.getByName(url.getHost());
             } catch (MalformedURLException e) { // not an url
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
                 return;
+            } catch (UnknownHostException e){
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+                return;
             }
-            if (proxyPermissions.isDenied(url) || urlIsProtected(request, url)) {
+
+            /*
+             * Disallow :
+             * - Class C IP address (isSiteLocalAddress())
+             * - not allowed urls defined in permissions.xml
+             * - URL defined is target-mappings.xml (urlIsProtected())
+             */
+            if (remoteAddress.isSiteLocalAddress() || proxyPermissions.isDenied(url) || urlIsProtected(request, url)) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "URL is not allowed.");
                 return;
             }
@@ -427,6 +442,20 @@ public class Proxy {
         handlePathEncodedRequests(request, response, RequestType.PUT);
     }
 
+    /**
+     * Default redirection to defaultTarget. By default returns a 302 redirect to '/header/'. The
+     * parameter can be customized in the security-proxy.properties file.
+     *
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    @RequestMapping(value = "/", params = { "!url", "!login" })
+    public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.sendRedirect(defaultTarget);
+        return;
+    }
+
     @RequestMapping(params = { "!url", "!login" }, method = RequestMethod.TRACE)
     public void handleTRACERequest(HttpServletRequest request, HttpServletResponse response) {
         handlePathEncodedRequests(request, response, RequestType.TRACE);
@@ -542,12 +571,11 @@ public class Proxy {
         }
 
         if (segments.length == 0) {
-            return concat(defaultTarget, new StringBuilder(requestURI));
+            return null;
         }
         String target = targets.get(segments[0]);
         if (target == null) {
-            target = defaultTarget;
-            return concat(defaultTarget, new StringBuilder(requestURI));
+            return null;
         } else {
             StringBuilder builder = new StringBuilder("/");
             for (int i = 1; i < segments.length; i++) {
@@ -600,25 +628,22 @@ public class Proxy {
     }
 
     private void handleRequest(HttpServletRequest request, HttpServletResponse finalResponse, RequestType requestType, String sURL, boolean localProxy) {
-        HttpClient httpclient = new DefaultHttpClient();
-        // TODO: ... At least make it configurable ...
-        httpclient.getParams().setParameter("http.socket.timeout", new Integer(300000));
-        httpclient.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, false);
+        HttpClientBuilder htb = HttpClients.custom().disableRedirectHandling();
+
+        // TODO: This should be configurable
+        RequestConfig config = RequestConfig.custom().setSocketTimeout(300000).build();
+        htb.setDefaultRequestConfig(config);
+
+        //
+        // Handle http proxy for external request.
+        // Proxy must be configured by system variables (e.g.: -Dhttp.proxyHost=proxy -Dhttp.proxyPort=3128)
+        htb.setRoutePlanner(new SystemDefaultRoutePlanner(ProxySelector.getDefault()));
+        HttpClient httpclient = htb.build();
 
         if (isCheckHealth()) {
             DatabaseHealthCenter.getInstance(this.host, this.port, this.database, this.user, this.password, Proxy.class.getSimpleName())
                     .checkConnections(this.maxDatabaseConnections);
         }
-
-        //
-        // Handle http proxy for external request.
-        // Proxy must be configured by system variables (e.g.:
-        // -Dhttp.proxyHost=proxy -Dhttp.proxyPort=3128)
-        //
-        ProxySelectorRoutePlanner routePlanner = new ProxySelectorRoutePlanner(httpclient.getConnectionManager().getSchemeRegistry(),
-                ProxySelector.getDefault());
-
-        ((DefaultHttpClient) httpclient).setRoutePlanner(routePlanner);
 
         HttpResponse proxiedResponse = null;
         int statusCode = 500;
@@ -840,10 +865,38 @@ public class Proxy {
         }
     }
 
+    private URI buildUri(URL url) throws URISyntaxException {
+        // Let URI constructor encode Path part
+        URI uri = new URI(url.getProtocol(),
+                url.getUserInfo(),
+                url.getHost(),
+                url.getPort(),
+                url.getPath(),
+                null, // Don't use query part because URI constructor will try to double encode it
+                // (query part is already encoded in sURL)
+                url.getRef());
+
+        // Reconstruct URL with encoded path from URI class and others parameters from URL class
+        StringBuilder rawUrl = new StringBuilder(url.getProtocol() + "://" + url.getHost());
+
+        if(url.getPort() != -1)
+            rawUrl.append(":" + String.valueOf(url.getPort()));
+
+        rawUrl.append(uri.getRawPath()); // Use encoded version from URI class
+
+        if(url.getQuery() != null)
+            rawUrl.append("?" + url.getQuery()); // Use already encoded query part
+
+        return new URI(rawUrl.toString());
+    }
+
     private HttpRequestBase makeRequest(HttpServletRequest request, RequestType requestType, String sURL) throws IOException {
         HttpRequestBase targetRequest;
         try {
-            URI uri = new URI(sURL);
+            // Split URL
+            URL url = new URL(sURL);
+            URI uri = buildUri(url);
+
             switch (requestType) {
             case GET: {
                 logger.debug("New request is: " + sURL + "\nRequest is GET");
@@ -892,7 +945,7 @@ public class Proxy {
                 break;
             }
             case TRACE: {
-                logger.debug("New request is: " + sURL + "\nRequest is POST");
+                logger.debug("New request is: " + sURL + "\nRequest is TRACE");
 
                 HttpTrace post = new HttpTrace(uri);
 
@@ -900,7 +953,7 @@ public class Proxy {
                 break;
             }
             case OPTIONS: {
-                logger.debug("New request is: " + sURL + "\nRequest is POST");
+                logger.debug("New request is: " + sURL + "\nRequest is OPTIONS");
 
                 HttpOptions post = new HttpOptions(uri);
 
@@ -908,7 +961,7 @@ public class Proxy {
                 break;
             }
             case HEAD: {
-                logger.debug("New request is: " + sURL + "\nRequest is POST");
+                logger.debug("New request is: " + sURL + "\nRequest is HEAD");
 
                 HttpHead post = new HttpHead(uri);
 

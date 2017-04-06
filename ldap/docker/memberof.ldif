@@ -2,3 +2,15 @@ dn: cn=module,cn=config
 objectClass: olcModuleList
 cn: module
 olcModuleLoad: /usr/lib/ldap/memberof.la
+
+dn: olcOverlay=memberof,olcDatabase={1}hdb,cn=config
+objectClass: olcMemberOf
+objectClass: olcOverlayConfig
+objectClass: olcConfig
+objectClass: top
+olcOverlay: memberof
+olcMemberOfDangling: ignore
+olcMemberOfRefInt: TRUE
+olcMemberOfGroupOC: groupOfMembers
+olcMemberOfMemberAD: member
+olcMemberOfMemberOfAD: memberOf

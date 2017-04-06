@@ -1,7 +1,7 @@
 The development branch is master. It can be used for testing and reporting errors.
 
 For production systems, you are advised to use the stable branch (currently 15.12).
-This branch receives bug fixes as they arrive, during 6 months at least.
+This branch receives bug fixes as they arrive, during 12 months at least.
 
 Version 15.12
 =============
@@ -75,7 +75,34 @@ Keep in mind that the default configurations (either "template config" or "data 
 
  * Mapfishapp has been revamped to allow dynamic customization of addons and contexts. This means that 2 new controllers are now responsible of the JSON blocks that were previously present in the GEOR_custom.js file. As a result, it introduced some stricter conventions that have to be respected so that the controllers can function correctly:
  
-   *  Contexts: in "datadir-mode" (ie with the `-Dgeorchestra.datadir` parameter), contexts should be uploaded to `<georchestra.datadir>/mapfishapp/contexts/context.wmc` along with a picture (`<georchestra.datadir>/mapfishapp/contexts/images/context.jpg` or `.png`). Contexts belonging to the webapp (as a result of compilation, for instance) are also taken into account by the controller (in the contexts/ subdirectory).
+   *  Contexts: in "datadir-mode" (ie with the `-Dgeorchestra.datadir` parameter), contexts should be uploaded to `<georchestra.datadir>/mapfishapp/contexts/context.wmc` along with a picture (`<georchestra.datadir>/mapfishapp/contexts/images/context.jpg` or `.png`). Contexts belonging to the webapp (as a result of compilation, for instance) are also taken into account by the controller (in the contexts/ subdirectory). 
+
+Imagine you had one context referenced in your GEOR_custom.js as such:
+```js
+     CONTEXTS: [{
+         label: "My context",
+         thumbnail: "app/img/contexts/osm.png",
+         wmc: "default.wmc",
+         tip: "A unique OSM layer",
+         keywords: ["background"]
+     },{
+         ...
+```
+The `label`, `tip` and `keywords` fields are now dynamically extracted from the context file.
+As a result, the `default.wmc` file should be edited to integrate the `Title` (matches `label`), `Abstract` (matches `tip`) and `Keywords` (matches `keywords`) strings, eg:
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<ViewContext xmlns="http://www.opengis.net/context" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.1.0" id="default" xsi:schemaLocation="http://www.opengis.net/context http://schemas.opengis.net/context/1.1.0/context.xsd">
+  <General>
+    <Window width="1373" height="709"/>
+    <BoundingBox minx="455462.822367389977" miny="6838526.51230099984" maxx="875255.821295570000" maxy="7055302.35806940030" SRS="EPSG:2154"/>
+    <Title>My context</Title>
+    <Abstract>A unique OSM layer</Abstract>
+    <KeywordList>
+      <Keyword>background</Keyword>
+    </KeywordList>
+```
+
    *  Addons: in "datadir-mode", they need to be stored either in `<georchestra.datadir>/mapfishapp/addons/` (recommended) or in the `app/addons/` subdirectory of the webapp. Without the georchestra.datadir parameter, only the ones belonging to the webapp are taken into account. 
 
  * As a result of [#1040](https://github.com/georchestra/georchestra/pull/1040), LDAP groups are now ```groupOfMembers``` instances rather than ```groupOfNames``` instances. In addition, the ```PENDING_USERS``` group was renamed to ```PENDING```. You have to migrate your LDAP tree, according to the following procedure (please change the ```dc=georchestra,dc=org``` string for your own base DN and provide a suitable password):
@@ -84,11 +111,13 @@ Keep in mind that the default configurations (either "template config" or "data 
    ldapsearch -H ldap://localhost:389 -xLLL -D "cn=admin,dc=georchestra,dc=org" -w your_ldap_password -b "ou=groups,dc=georchestra,dc=org" > /tmp/groups.ldif
    ```
    * migration:
-   ```
-   sed -i 's/PENDING_USERS/PENDING/' /tmp/groups.ldif
-   sed -i 's/groupOfNames/groupOfMembers/' /tmp/groups.ldif
-   sed -i '/fakeuser/d' /tmp/groups.ldif
-   ```
+
+```
+sed -i 's/PENDING_USERS/PENDING/' /tmp/groups.ldif
+sed -i 's/groupOfNames/groupOfMembers/' /tmp/groups.ldif
+sed -i '/fakeuser/d' /tmp/groups.ldif
+```
+
    * load the [groupOfMembers](ldap/groupofmembers.ldif) definition:
    ```
     sudo ldapadd -Y EXTERNAL -H ldapi:/// -f groupofmembers.ldif

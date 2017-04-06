@@ -12,13 +12,12 @@
   <properties>
     <gs.unpack.dir>${project.build.directory}/geoserver-unpacked-webapp</gs.unpack.dir>
     <packageName>georchestra-geoserver</packageName>
-    <dockerImageName>georchestra/geoserver</dockerImageName>
   </properties>
   <dependencies>
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>apache-log4j-extras</artifactId>
-      <version>1.1</version>
+      <version>1.2.17</version>
       <type>jar</type>
       <scope>runtime</scope>
     </dependency>
@@ -104,6 +103,17 @@
               </excludes>
             </resource>
           </webResources>
+          <packagingExcludes>
+            <!--
+                 wicket 1.4.12 explicitely needs slf4j 1.5.8, the build system
+                 is made so that we end up with both versions in the WAR,
+                 polluting the classpath.
+                 Best way to address the issue is to exclude the problematic dependency,
+                 note that this is what the official doc does:
+                 https://maven.apache.org/plugins/maven-war-plugin/examples/including-excluding-files-from-war.html
+             -->
+            WEB-INF/lib/slf4j-api-1.5.8.jar
+          </packagingExcludes>
         </configuration>
       </plugin>
       <plugin>
@@ -982,11 +992,57 @@
         </plugins>
       </build>
     </profile>
+
     <profile>
       <id>docker</id>
+      <properties>
+        <dockerImageName>georchestra/geoserver</dockerImageName>
+
+        <dockerDatadirScmUrl>scm:git:https://github.com/georchestra/datadir.git</dockerDatadirScmUrl>
+        <dockerDatadirScmVersion>docker-15.12</dockerDatadirScmVersion>
+
+        <dockerGeoserverDatadirScmUrl>scm:git:https://github.com/georchestra/geoserver_minimal_datadir.git</dockerGeoserverDatadirScmUrl>
+        <dockerGeoserverDatadirScmVersion>15.12</dockerGeoserverDatadirScmVersion>
+
+      </properties>
       <build>
         <finalName>geoserver</finalName>
         <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-scm-plugin</artifactId>
+            <version>1.9.4</version>
+            <executions>
+              <execution>
+                <id>checkout-docker-default-datadir</id>
+                <phase>process-resources</phase>
+                <configuration>
+                  <checkoutDirectory>${project.build.directory}/datadir/</checkoutDirectory>
+                  <connectionUrl>${dockerDatadirScmUrl}</connectionUrl>
+                  <pushChanges>false</pushChanges>
+                  <scmVersion>${dockerDatadirScmVersion}</scmVersion>
+                  <scmVersionType>branch</scmVersionType>
+                </configuration>
+                <goals>
+                  <goal>checkout</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>checkout-docker-default-geoserver-datadir</id>
+                <phase>process-resources</phase>
+                <configuration>
+                  <checkoutDirectory>${project.build.directory}/geoserver_minimal_datadir/</checkoutDirectory>
+                  <connectionUrl>${dockerGeoserverDatadirScmUrl}</connectionUrl>
+                  <pushChanges>false</pushChanges>
+                  <scmVersion>${dockerGeoserverDatadirScmVersion}</scmVersion>
+                  <scmVersionType>branch</scmVersionType>
+                </configuration>
+                <goals>
+                  <goal>checkout</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
           <plugin>
             <groupId>com.spotify</groupId>
             <artifactId>docker-maven-plugin</artifactId>
@@ -1001,10 +1057,14 @@
                   <include>geoserver.war</include>
                 </resource>
                 <resource>
-                <targetPath>/root</targetPath>
-                <directory>${project.basedir}/src/docker</directory>
-                <include>start.sh</include>
-              </resource>
+                  <targetPath>/etc/georchestra</targetPath>
+                  <directory>${project.build.directory}/datadir</directory>
+                  <include>geoserver/**</include>
+                </resource>
+                <resource>
+                  <targetPath>/var/local/geoserver.orig/</targetPath>
+                  <directory>${project.build.directory}/geoserver_minimal_datadir/</directory>
+                </resource>
               </resources>
               <serverId>docker-hub</serverId>
               <registryUrl>https://index.docker.io/v1/</registryUrl>
@@ -1024,8 +1084,10 @@
       <id>geofence</id>
       <properties>
         <packageName>georchestra-geoserver-geofence</packageName>
-        <dockerImageName>georchestra/geoserver-geofence</dockerImageName>
+        <dockerGeoserverDatadirScmVersion>15.12-geofence</dockerGeoserverDatadirScmVersion>
+        <dockerImageName>georchestra/geoserver:${geofence}-${project.parent.version}</dockerImageName>
       </properties>
     </profile>
+
   </profiles>
 </project>

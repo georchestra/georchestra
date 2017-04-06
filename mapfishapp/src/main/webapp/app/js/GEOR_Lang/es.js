@@ -232,6 +232,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Download data": "Descargar los datos",
     "Choose a style": "Elegir un estilo",
     "Modify format": "Modificar el formato",
+    "Tiled mode" : "Modo mosaico",
     "Delete this layer": "Quitar esta capa",
     "Push up this layer": "Subir esta capa",
     "Push down this layer": "Bajar esta capa",
@@ -323,7 +324,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Print": "Imprimir",
     "Printing...": "Imprimiendo...",
     "Print current map": "Imprimir el mapa actual",
-    /* GEOR_querier.js strings */
+    /* GEOR_Querier.js strings */
     "Fields of filters with a red mark are mandatory": "Tiene que llenar " +
         "los campos de filtros con rojo.",
     "Request on NAME": "Consultas sobre ${NAME}",
@@ -465,12 +466,14 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "all contexts": "todos los contextos",
     "Could not find WMC file": "El contexto WMC especificado no existe",
     "... or a local context": "... o un contexto local",
-    //"Load or add the layers from one of these map contexts:" :
-	//	"Remplazar la composición actual del mapa por uno de estos contextos:",
+    "Load or add the layers from one of these map contexts:":
+	"Remplazar la composición actual del mapa por uno de estos contextos:",
     "A unique OSM layer": "Una capa OpenStreetMap única",
     "default viewer context": "contexto por omisión",
     "(default)": "<br/>(contexto por omisión actual)",
     /* GEOR_workspace.js strings */
+    "Keywords": "Palabras claves",
+    "comma separated keywords": "palabras claves separadas por comas",
     "Save to metadata": "Crear metadatos",
     "in group": "en el grupo",
     "The context title is mandatory": "Se requiere que el título contexto",
@@ -495,15 +498,6 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Get a permalink": "Crear un permalink",
     "Permalink": "Permalink",
     "Share your map with this URL: ": "Compartir su mapa con esta URL",
-    "Edit in OSM": "Editar en OSM",
-    "with JOSM": "con JOSM",
-    "JOSM must be started with the remote control option": "Usted tiene " +
-        "que lanzar JOSM y activar el control remoto",
-    "with iD": "con iD",
-    "Recommended scale is 1:10.000": "La escala de trabajo recomendada es " +
-        "1:10.000",
-    "with Potlatch2": "con Potlatch2",
-    "with Walking Papers": "con Walking Papers",
     /* GEOR_edit.js */
     "Req.": "Req.",
     "Required": "Requerido",

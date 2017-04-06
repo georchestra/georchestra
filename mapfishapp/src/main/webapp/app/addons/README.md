@@ -18,8 +18,12 @@ We currently have the following addons available:
  * [streetview](streetview/README.md) ... obviously based on the Google Street View Image API.
  * [osm2geor](osm2geor/README.md) display vector data from OSM (got from the Overpass API) into a vector layer.
  * [measure](measure/README.md) to perform simple distance and area measurements (that cannot be printed).
+ * [measurements](measurements/README.md) to perform advanced distance and area measurements (which can be printed & exported to KML).
  * [locateme](locateme/README.md) allows users to track their location on the map.
  * [fullscreen](fullscreen/README.md) to (obviously) make the map fullscreen.
+ * [notes](notes/README.md) to report map issues.
+ * [coordinates](coordinates/README.md) to let the user copy location coordinates.
+ * [goto](goto/README.md) allows users to recenter the map on a location, given its coordinates.
 
 
 Finding more addons
@@ -151,4 +155,4 @@ Finally, the addon's ```init``` method is called with an ```Ext.data.Record``` o
 If the addon instance exposes a public property named ```item```, the referenced object is inserted in the "tools" menu.
 
 
-If developing a new addon, you might want to start from a simple example, eg the [magnifier](magnifier/README.md) addon.
+If developing a new addon, you might want to start from a simple example, eg the [magnifier](magnifier/README.md) addon. There is also a [template](template/README.md) which may be useful to jump-start the development process.

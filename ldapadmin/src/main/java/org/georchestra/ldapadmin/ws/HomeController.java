@@ -76,7 +76,7 @@ public class HomeController {
 
         String roles = request.getHeader("sec-roles");
 
-        if (roles != null && !roles.equals("ROLE_ANONYMOUS")) {
+        if (roles != null) {
             String redirectUrl;
             List<String> rolesList = Arrays.asList(roles.split(";"));
 
@@ -92,14 +92,13 @@ public class HomeController {
         } else {
             // redirect to CAS
             response.sendRedirect(config.getPublicContextPath() + "/account/userdetails?login");
-            return;
         }
     }
 
     @RequestMapping(value="/privateui/")
     public String privateui(HttpServletRequest request) throws IOException{
         String roles = request.getHeader("sec-roles");
-        if(roles != null && !roles.equals("ROLE_ANONYMOUS")) {
+        if(roles != null) {
             List<String> rolesList = Arrays.asList(roles.split(";"));
             if(rolesList.contains("ROLE_MOD_LDAPADMIN")) {
                 return "privateUi";

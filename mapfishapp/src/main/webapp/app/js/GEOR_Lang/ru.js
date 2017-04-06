@@ -187,6 +187,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Download data": "Скачать данные",
     "Choose a style": "Выбрать стиль",
     "Modify format": "Изменить формат",
+    "Tiled mode" : "Режим черепицы",
     "Delete this layer": "Удалить этот слой",
     "Push up this layer": "Переместить этот слой вверх",
     "Push down this layer": "Опустить этот слой",
@@ -266,7 +267,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Print": "Напечатать",
     "Printing...": "Идёт печать...",
     "Print current map": "Напечатать текущую карту",
-    /* GEOR_querier.js strings */
+    /* GEOR_Querier.js strings */
     "Fields of filters with a red mark are mandatory": "Поля фильтров, помеченные красным цветом, являются обязательными для заполнения.",
     "Request on NAME": "Сделать запрос о ${NAME}",
     "Search": "Искать",
@@ -383,6 +384,8 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "A unique OSM layer": "Единый слой OpenStreetMap",
     "default viewer context": "контекст вьюера по умолчанию",
     /* GEOR_workspace.js strings */
+    //"Keywords": "Mots clés",
+    //"comma separated keywords": "mots clés séparés par une virgule",
     //"Save to metadata": "Créer une métadonnée",
     //"in group": "dans le groupe",
     //"The context title is mandatory": "Le titre du contexte est obligatoire",

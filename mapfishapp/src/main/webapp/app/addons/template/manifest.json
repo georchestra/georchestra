@@ -1,0 +1,32 @@
+{
+    "js": [
+        "js/main.js"
+    ],
+    "css": [
+        "css/main.css"
+    ],
+    "default_options": {
+        "target": "tbar_11",
+        "graphicStyle": {
+            "graphicName": "cross",
+            "pointRadius": 16,
+            "strokeColor": "fuchsia",
+            "strokeWidth": 2,
+            "fillOpacity": 0
+        }
+    },
+    "i18n": {
+        "en": {
+            "addon_template_sample_message": "Sample message in English"
+        },
+        "es": {
+            "addon_template_sample_message": "mensaje de la muestra en español"
+        },
+        "fr": {
+            "addon_template_sample_message": "Exemple de message en français"
+        },
+        "de": {
+            "addon_template_sample_message": "Beispielmeldungin Deutsch"
+        }
+    }
+}

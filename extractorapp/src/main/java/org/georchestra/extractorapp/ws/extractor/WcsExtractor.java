@@ -99,7 +99,7 @@ public class WcsExtractor {
             queriedLayer = tmpLayer[tmpLayer.length - 1];
         }
 
-        Pattern regex = Pattern.compile("(?m)<Layer[^>]*>(\\\\n|\\s)*<Name>\\s*(\\w*:)?" + Pattern.quote(queriedLayer) + "\\s*</Name>");
+        Pattern regex = Pattern.compile("(?m)<Layer[^>]*>(\\\\n|\\s)*<Name>\\s*([\\w_0-9-]*:)?" + Pattern.quote(queriedLayer) + "\\s*</Name>");
         return regex.matcher(getCapabilitiesDocument).find();
 	}
 

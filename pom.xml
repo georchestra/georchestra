@@ -500,6 +500,17 @@
         <module>analytics</module>
       </modules>
     </profile>
+    <profile>
+      <id>log4j-logstash</id>
+      <dependencies>
+        <dependency>
+          <groupId>net.logstash.log4j</groupId>
+          <artifactId>jsonevent-layout</artifactId>
+          <version>1.7</version>
+          <scope>runtime</scope>
+        </dependency>
+      </dependencies>
+    </profile>
   </profiles>
   <repositories>
     <repository>
@@ -508,15 +519,7 @@
         <checksumPolicy>ignore</checksumPolicy>
       </snapshots>
       <id>georchestra</id>
-      <url>http://build.georchestra.org/maven/repository</url>
-    </repository>
-    <repository>
-      <snapshots>
-        <enabled>true</enabled>
-        <checksumPolicy>ignore</checksumPolicy>
-      </snapshots>
-      <id>mapfish</id>
-      <url>http://dev.mapfish.org/maven/repository</url>
+      <url>https://packages.georchestra.org/maven/repository</url>
     </repository>
     <!-- geotools -->
     <repository>
@@ -549,14 +552,6 @@
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
-    </pluginRepository>
-    <pluginRepository>
-      <snapshots>
-        <enabled>true</enabled>
-        <checksumPolicy>ignore</checksumPolicy>
-      </snapshots>
-      <id>mapfish</id>
-      <url>http://dev.mapfish.org/maven/repository</url>
     </pluginRepository>
   </pluginRepositories>
 </project>

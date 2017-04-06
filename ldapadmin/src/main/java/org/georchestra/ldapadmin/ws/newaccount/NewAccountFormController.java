@@ -172,14 +172,7 @@ public final class NewAccountFormController {
 
 			String groupID = this.moderator.moderatedSignup() ? Group.PENDING : Group.SV_USER;
 
-			String adminUUID = null;
-			try {
-				adminUUID = this.accountDao.findByUID(request.getHeader("sec-username")).getUUID();
-			} catch (NameNotFoundException e) {
-				LOG.error("Unable to find admin/user connected, so no admin log generated when creating uid : " + formBean.getUid());
-			}
-
-			this.accountDao.insert(account, groupID, adminUUID);
+			this.accountDao.insert(account, groupID, request.getHeader("sec-username"));
 
 			final ServletContext servletContext = request.getSession().getServletContext();
 			if(this.moderator.moderatedSignup() ){

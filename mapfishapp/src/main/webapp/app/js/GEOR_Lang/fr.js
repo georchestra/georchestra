@@ -209,6 +209,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "About this layer": "A propos de cette couche",
     "Set as overlay": "Passer en calque",
     "Set as baselayer": "Passer en couche de fond",
+    "Tiled mode" : "Mode tuilé",
     "Confirm NAME layer deletion ?":
         "Voulez-vous réellement supprimer la couche ${NAME} ?",
     "1:MAXSCALE to 1:MINSCALE": "1:${MAXSCALE} à 1:${MINSCALE}",
@@ -323,7 +324,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Print": "Imprimer",
     "Printing...": "Impression en cours...",
     "Print current map": "Imprimer la carte courante",
-    /* GEOR_querier.js strings */
+    /* GEOR_Querier.js strings */
     "Fields of filters with a red mark are mandatory": "Vous devez remplir " +
         "les champs des filtres marqués en rouge.",
     "Request on NAME": "Requêteur sur ${NAME}",
@@ -468,6 +469,8 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "default viewer context": "contexte par défaut",
     "(default)": "<br/>(contexte par défaut actuel)",
     /* GEOR_workspace.js strings */
+    "Keywords": "Mots clés",
+    "comma separated keywords": "mots clés séparés par une virgule",
     "Save to metadata": "Créer une métadonnée",
     "in group": "dans le groupe",
     "The context title is mandatory": "Le titre du contexte est obligatoire",
@@ -490,15 +493,6 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Get a permalink": "Obtenir un permalien",
     "Permalink": "Permalien",
     "Share your map with this URL: ": "Partagez la carte avec l'adresse suivante : ",
-    "Edit in OSM": "Editer dans OSM",
-    "with JOSM": "avec JOSM",
-    "JOSM must be started with the remote control option": "Il vous faut " +
-        "auparavant lancer JOSM et activer le contrôle à distance",
-    "with iD": "avec iD",
-    "Recommended scale is 1:10.000": "Il est recommandé de travailler à des " +
-        "échelles proches de 1:10.000",
-    "with Potlatch2": "avec Potlatch2",
-    "with Walking Papers": "avec Walking Papers",
     /* GEOR_edit.js */
     "Req.": "Req.", // requis
     "Required": "Requis",

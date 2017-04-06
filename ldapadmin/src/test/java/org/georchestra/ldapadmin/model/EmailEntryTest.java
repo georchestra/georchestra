@@ -1,17 +1,16 @@
 package org.georchestra.ldapadmin.model;
 
-import static org.junit.Assert.fail;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.junit.Test;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.UUID;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.junit.Test;
+import static org.junit.Assert.fail;
 
 public class EmailEntryTest {
 
@@ -19,8 +18,6 @@ public class EmailEntryTest {
 	public final void testDateFormat() throws JSONException {
 		EmailEntry em = new EmailEntry();
 		em.setId(0);
-		em.setSender(UUID.randomUUID());
-		em.setRecipient(UUID.randomUUID());
 		em.setSubject("Test subject");
 		em.setBody("Test email body");
 		em.setAttachments(new ArrayList<Attachment>(0));

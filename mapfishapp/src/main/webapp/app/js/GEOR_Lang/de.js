@@ -227,6 +227,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Download data": "Daten downloaden",
     "Choose a style": "Stil",
     "Modify format": "Format ändern",
+    "Tiled mode" : "Gekachelt Modus",
     "Delete this layer": "Layer löschen",
     "Push up this layer": "Layer darüberlegen",
     "Push down this layer": "Layer darunterlegen",
@@ -320,7 +321,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Print": "Drucken",
     "Printing...": "Druckvorgang aktiv...",
     "Print current map": "Drucken der aktiven Karte",
-    /* GEOR_querier.js strings */
+    /* GEOR_Querier.js strings */
     "Fields of filters with a red mark are mandatory": "Rote Felder sind auszufüllen",
     "Request on NAME": "Sucher auf ${NAME}",
     "WFS GetFeature on filter": "GetFeature WFS auf einem Filter",
@@ -458,6 +459,8 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "default viewer context": "Standarteinstellung",
     "(default)": "<br/>(Standardeinstellung)",
     /* GEOR_workspace.js strings */
+    "Keywords": "Schlüsselwörter",
+    "comma separated keywords": "Komma getrennt Schlüsselwörter",
     "Save to metadata": "Metadaten Erstellen",
     "in group": "in der Gruppe",
     "The context title is mandatory": "Der Kontext Titel ist erforderlich",
@@ -480,14 +483,6 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Get a permalink": "Permalink bekommen",
     "Permalink": "Permalink",
     "Share your map with this URL: ": "Karte mit folgender Adresse teilen : ",
-    "Edit in OSM": "Berarbeitet im OSM",
-    "with JOSM": "mit JOSM",
-    "JOSM must be started with the remote control option": "Bitte " +
-        "vorher JOSM und Distanzkontrolle aktivieren",
-    "with iD": "mit iD",
-    "Recommended scale is 1:10.000": "Empfohlener Maßstab 1:10000",
-    "with Potlatch2": "mit Potlatch2",
-    "with Walking Papers": "mit Walking Papers",
     /* GEOR_edit.js */
     "Req.": "Req.", // requis
     "Required": "Pflicht",

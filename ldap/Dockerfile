@@ -1,8 +1,6 @@
 #
 # Dockerfile for the geOrchestra openldap service
 #
-# Use with caution: this is work in progress
-#
 
 FROM dinkel/openldap
 
@@ -12,12 +10,15 @@ RUN apt-get update && \
 
 USER openldap
 ADD groupofmembers.ldif /etc/ldap.dist/modules/
-ADD docker/memberof.ldif /etc/ldap.dist/modules/
+ADD docker/memberof.ldif /tmp/
 ADD georchestra.ldif /tmp/
 
 USER root
-ADD docker/populate_ldap.sh /
-ADD docker/start.sh /
-RUN chmod +x /populate_ldap.sh /start.sh
+RUN mkdir /docker-entrypoint.d
+ADD docker/docker-entrypoint.d/* /docker-entrypoint.d/
+ADD docker/docker-entrypoint.sh /
+RUN chmod +x /docker-entrypoint.d/*
 
-ENTRYPOINT /start.sh
+ENTRYPOINT [ "/docker-entrypoint.sh" ]
+
+CMD [ "slapd", "-d", "32768", "-u", "openldap", "-g", "openldap" ]

@@ -332,7 +332,6 @@ GEOR.cswbrowser = (function() {
                 //maxResults: '100', // Should it be changed ?
                 pTypeSearch: 1,
                 // pTypeSearch: 0 = starts with / 1 = contains / 2 = exact match
-                pMode: 'consult',
                 pThesauri: key
             },
             success: function(response) {

@@ -24,17 +24,15 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import java.util.List;
-import java.util.UUID;
 
 @Repository
 public interface EmailDao extends CrudRepository<EmailEntry, Long> {
 
     @Transactional
-    List<EmailEntry> findBySender(UUID sender);
+    List<EmailEntry> findBySender(String sender);
 
     @Transactional
-    List<EmailEntry> findByRecipient(UUID recipient);
+    List<EmailEntry> findByRecipient(String recipient);
 
 }

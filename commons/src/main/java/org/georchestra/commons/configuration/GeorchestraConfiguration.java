@@ -145,7 +145,7 @@ public class GeorchestraConfiguration implements ServletContextAware {
     @RequestMapping(value= "/app/js/GEOR_custom.js")
     public void getGeorCustom(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        response.setContentType("application/javascript; charset=UTF-8");
+        response.setContentType("application/javascript");
         // we could get extra infos from the DB or elsewhere, and
         // add them to the variables provided by the js file :-)
         if (contextDataDir != null) {

@@ -47,17 +47,14 @@ GEOR.workspace = (function() {
      */
     var saveMDBtnHandler = function() {
         var formPanel = this.findParentByType('form'), 
-            form = formPanel.getForm();
+            md = buildContextMD(formPanel);
         if (form.findField('title').getValue().length < 3) {
             GEOR.util.errorDialog({
                 msg: tr("The context title is mandatory")
             });
             return;
         }
-        var wmc_string = GEOR.wmc.write({
-            "title": form.findField('title').getValue(),
-            "abstract": form.findField('abstract').getValue()
-        });
+        var wmc_string = GEOR.wmc.write(md);
         GEOR.waiter.show();
         OpenLayers.Request.POST({
             url: GEOR.config.PATHNAME + "/ws/wmc/",
@@ -106,19 +103,33 @@ GEOR.workspace = (function() {
     };
 
     /**
+     * Method: buildContextMD
+     * Extracts WMC title, keywords, abstract from formPanel
+     */
+    var buildContextMD = function(formPanel) {
+        var form = formPanel.getForm(),
+            md = {
+                "title": form.findField('title').getValue(),
+                "abstract": form.findField('abstract').getValue()
+            },
+            keywords = form.findField('keywords').getValue();
+        if (keywords) {
+            md.keywords = keywords.trim().split(/, */);
+        }
+        return md;
+    };
+
+    /**
      * Method: saveBtnHandler
      * Handler for the button triggering the WMC save dialog
      */
     var saveBtnHandler = function() {
         var formPanel = this.findParentByType('form'), 
-            form = formPanel.getForm();
+            md = buildContextMD(formPanel);
         GEOR.waiter.show();
         OpenLayers.Request.POST({
             url: GEOR.config.PATHNAME + "/ws/wmc/",
-            data: GEOR.wmc.write({
-                "title": form.findField('title').getValue(),
-                "abstract": form.findField('abstract').getValue()
-            }),
+            data: GEOR.wmc.write(md),
             success: function(response) {
                 formPanel.ownerCt.close();
                 var o = Ext.decode(response.responseText);
@@ -241,7 +252,12 @@ GEOR.workspace = (function() {
             itemId: 'save',
             handler: saveBtnHandler
         });
-
+        var transferFocus = function(f, e) {
+            // transfer focus on button on ENTER
+            if (e.getKey() === e.ENTER) {
+                popup.items.get(0).getFooterToolbar().getComponent('save').focus();
+            }
+        };
         var popup = new Ext.Window({
             title: tr("Context saving"),
             layout: 'fit',
@@ -249,7 +265,7 @@ GEOR.workspace = (function() {
             constrainHeader: true,
             animateTarget: GEOR.config.ANIMATE_WINDOWS && this.el,
             width: 400,
-            height: 180,
+            height: 210,
             closeAction: 'close',
             plain: true,
             listeners: {
@@ -274,12 +290,18 @@ GEOR.workspace = (function() {
                     enableKeyEvents: true,
                     selectOnFocus: true,
                     listeners: {
-                        "keypress": function(f, e) {
-                            // transfer focus on button on ENTER
-                            if (e.getKey() === e.ENTER) {
-                                popup.items.get(0).getFooterToolbar().getComponent('save').focus();
-                            }
-                        }
+                        "keypress": transferFocus
+                    }
+                }, {
+                    xtype: 'textfield',
+                    name: 'keywords',
+                    width: 280,
+                    emptyText: tr("comma separated keywords"),
+                    fieldLabel: tr("Keywords"),
+                    enableKeyEvents: true,
+                    selectOnFocus: true,
+                    listeners: {
+                        "keypress": transferFocus
                     }
                 }, {
                     xtype: 'textarea',
@@ -289,56 +311,13 @@ GEOR.workspace = (function() {
                     enableKeyEvents: true,
                     selectOnFocus: true,
                     listeners: {
-                        "keypress": function(f, e) {
-                            // transfer focus on button on ENTER
-                            if (e.getKey() === e.ENTER) {
-                                popup.items.get(0).getFooterToolbar().getComponent('save').focus();
-                            }
-                        }
+                        "keypress": transferFocus
                     }
                 }],
                 buttons: btns
             }]
         });
         popup.show();
-    };
-
-    /**
-     * Method: editOSM
-     * Creates handlers for OSM edition
-     */
-    var editOSM = function(options) {
-        var round = GEOR.util.round;
-        return function() {
-            var url, bounds = map.getExtent();
-            bounds.transform(
-                map.getProjectionObject(),
-                new OpenLayers.Projection("EPSG:4326")
-            );
-            if (options.protocol === 'lbrt') {
-                url = options.base + OpenLayers.Util.getParameterString({
-                    left: round(bounds.left, 5),
-                    bottom: round(bounds.bottom, 5),
-                    right: round(bounds.right, 5),
-                    top: round(bounds.top, 5)
-                });
-                frames[0].location.href = url;
-            } else if (options.protocol === 'llz') {
-                var c = bounds.getCenterLonLat();
-                /*
-                Zoom level determined based on the idea that, for OSM:
-                    maxResolution: 156543 -> zoom level 0
-                    numZoomLevels: 19
-                */
-                var zoom = Math.round((Math.log(156543) - Math.log(map.getResolution()))/Math.log(2));
-                url = options.base + OpenLayers.Util.getParameterString({
-                    lon: round(c.lon, 5),
-                    lat: round(c.lat, 5),
-                    zoom: Math.min(19, zoom - 1)
-                });
-                window.open(url);
-            }
-        };
     };
 
     /**
@@ -435,41 +414,6 @@ GEOR.workspace = (function() {
                             ptype: 'menuqtips'
                         }],
                         menu: getShareMenu()
-                    },'-', {
-                        text: tr("Edit in OSM"),
-                        iconCls: "geor-edit-osm",
-                        plugins: [{
-                            ptype: 'menuqtips'
-                        }],
-                        menu: [{
-                            text: tr("with iD"),
-                            qtip: tr("Recommended scale is 1:10.000"),
-                            handler: editOSM.call(this, {
-                                base: 'http://www.openstreetmap.org/edit?editor=id&',
-                                protocol: 'llz'
-                            })
-                        },{
-                            text: tr("with Potlatch2"),
-                            qtip: tr("Recommended scale is 1:10.000"),
-                            handler: editOSM.call(this, {
-                                base: 'http://www.openstreetmap.org/edit?editor=potlatch2&',
-                                protocol: 'llz'
-                            })
-                        },{
-                            text: tr("with JOSM"),
-                            qtip: tr("JOSM must be started with the remote control option"),
-                            handler: editOSM.call(this, {
-                                base: 'http://127.0.0.1:8111/load_and_zoom?',
-                                protocol: 'lbrt'
-                            })
-                        },{
-                            text: tr("with Walking Papers"),
-                            qtip: tr("Recommended scale is 1:10.000"),
-                            handler: editOSM.call(this, {
-                                base: 'http://walking-papers.org/?',
-                                protocol: 'llz'
-                            })
-                        }]
                     }]
                 })
             };
