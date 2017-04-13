@@ -582,7 +582,7 @@ GEOR.Annotation = Ext.extend(Ext.util.Observable, {
                             feature = formatGeoJSON.read(featureJSON,"Feature");
                         feature.style = style;
                         feature.layer = targetLayer;
-                        if ( style.label) {
+                        if ( style && style.label) {
                             feature.isLabel = true;
                         }
                         targetLayer.features.push(feature);
