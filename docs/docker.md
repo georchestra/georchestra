@@ -41,7 +41,7 @@ Optional, but recommended: [adjust the configuration](https://github.com/georche
 
 From the directory where you downloaded the `docker-compose` files, pull / update geOrchestra docker images to their latest version with:
 ```
-docker-compose pull
+sed -i '/build:/d' docker-compose.* && docker-compose pull
 ```
 
 Run geOrchestra with
