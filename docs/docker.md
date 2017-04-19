@@ -78,7 +78,7 @@ docker-compose -f docker-compose.yml -f docker-compose.other-apps.yml up
 ```
 
 In the above guide, images are pulled from docker hub, which means they've been compiled by our CI. 
-In case you have to build these images by yourself, please refer to the [docker images build instructions](../docker/README.md) or simply, to build all of them at once:
+In case you have to build these images by yourself, please refer to the [docker images build instructions](../docker/README.md) or simply, to build all of them at once, clone the current repository, and, from the repository root:
 ```
 make docker-build
 ```
