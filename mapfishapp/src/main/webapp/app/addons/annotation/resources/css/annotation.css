@@ -42,6 +42,14 @@
   background-image: url("../images/silk/kml_export.png") !important;
 }
 
+.gx-featureediting-save {
+  background-image: url("../images/silk/save.png") !important;
+}
+
+.gx-featureediting-load {
+  background-image: url("../images/silk/load.png") !important;
+}
+
 .annotation .x-toolbar {
     border: 0;
     background-image: none;
