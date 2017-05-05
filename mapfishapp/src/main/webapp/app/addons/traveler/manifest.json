@@ -62,6 +62,7 @@
         	"isochrone.messagetitle.failrequest": "Erreur",
         	"isochrone.messagetext.failrequest": "Le point de départ et le temps doivent être remplis !",
         	"isochrone.resulttextfield.value": "Résultat ",
+        	"Traveler.isochrone.options.title": "Options",
         	"Wrong geometry !" : "Aucune géométrie ou géométrie incorrecte !",
         	"traveler.referential.comboref.emptytext": "Saisir une valeur...",
         	"traveler.isochrone.button.saveonegeom.tooltip":"Enregistrer le plus grand isochrone de ce résultat sur le navigateur",

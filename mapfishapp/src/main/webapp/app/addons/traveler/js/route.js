@@ -666,7 +666,7 @@ GEOR.Addons.Traveler.route.createPanel = function(addon) {
                 xtype: "fieldset",
                 collapsible: true,
                 collapsed: true,
-                title: OpenLayers.i18n("traveler.options.title"),
+                title: OpenLayers.i18n("Traveler.route.options.title"),
                 cls: "fsOptions",
                 items: [{
                     xtype: "compositefield",
