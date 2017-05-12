@@ -86,7 +86,7 @@ As a result of the build process, you should find the geOrchestra artifacts into
 Now, let's [prepare the system](setup.md) to receive the webapps.
 
 Are you having problems with the build ?  
-Please have a look at our [continuous integration](https://sdi.georchestra.org/ci/job/georchestra-template/). If it builds and yours doesn't, the error is probably on your side.
+Please have a look at our [continuous integration](https://packages.georchestra.org/bot/). If it builds and yours doesn't, the error is probably on your side.
 
 
 
