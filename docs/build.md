@@ -85,9 +85,7 @@ In case you only want to build one module or a collection, the syntax is a bit d
 As a result of the build process, you should find the geOrchestra artifacts into the subfolders of the ```~/.m2/repository/org/``` directory.
 Now, let's [prepare the system](setup.md) to receive the webapps.
 
-Are you having problems with the build ?  
-Please have a look at our [continuous integration](https://packages.georchestra.org/bot/). If it builds and yours doesn't, the error is probably on your side.
-
+Are you having problems with the build ? Please ask on IRC [freenode#georchestra](https://kiwiirc.com/client/irc.freenode.net/georchestra).
 
 
 ## Advanced build options
