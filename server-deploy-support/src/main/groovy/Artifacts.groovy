@@ -38,7 +38,7 @@ class Artifacts {
      * if the artifact is of the form:  .+-<version>.war then the <version> is
      * replaced with the word private.
      *
-     * For example extractorapp-1.0.war will be mapped to extractorapp.war
+     * For example extractorapp-1.0.war will be mapped to extractorapp-private.war
      *
      * @param explicitMapping a function to override the default behaviour
      */
@@ -50,7 +50,7 @@ class Artifacts {
                 def regex = /(.+)-\d.+\.war/
                 if (file.name ==~ regex) {
                     def matcher = file.name =~ regex
-                    return matcher[0][1]+".war"
+                    return matcher[0][1]+"-private.war"
                 } else {
                     return file.name
                 }
