@@ -572,7 +572,7 @@ GEOR.Addons.Traveler.referential.routeCbAttribute = function(record, attStore, f
                     var feature = new OpenLayers.Feature.Vector(geometry);
                     arr[inputId] = feature.id;
                     layer.addFeatures(feature);
-                    GEOR.Addons.traveler.getRoad(addon);
+                    GEOR.Addons.Traveler.route.getRoad(addon);
                 }
             }
 
