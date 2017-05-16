@@ -42,6 +42,8 @@
     "i18n": {
         "en": {},        
         "fr": {
+        	"traveler.title.noright": "Accès interdit",
+        	"traveler.msg.noright": "Vous devez être connecté pour utiliser ce module. Merci de prendre contact avec un administrateur.",
         	"isochrone": "Isochrones",        	        
         	"isochrone.window.title": "Calcul d'isochrones",
         	"isochron.ban.emptytext": "Adresse....",

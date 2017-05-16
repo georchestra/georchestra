@@ -83,6 +83,14 @@ GEOR.Addons.Traveler = Ext.extend(GEOR.Addons.Base, {
      * record - {Ext.data.record} a record with the addon parameters
      */
     init: function(record) {
+    	var tr = OpenLayers.i18n;
+        // do not load addon if user is not connect to map viewer
+        if (GEOR.config.ANONYMOUS) {
+            return Ext.Msg.alert(
+            		tr("traveler.title.noright"),
+                tr("traveler.msg.noright"));
+        }
+    	
         var addon = this;
         if (!addon.map) { // init map addon if not exist
             addon.map = GeoExt.MapPanel.guess().map;
@@ -91,8 +99,8 @@ GEOR.Addons.Traveler = Ext.extend(GEOR.Addons.Base, {
         var items = [
             new Ext.menu.CheckItem( // manage isochrone tool
                 new Ext.Action({
-                    text: OpenLayers.i18n("isochrone"),
-                    qtip: OpenLayers.i18n("isochrone"),
+                    text: tr("isochrone"),
+                    qtip: tr("isochrone"),
                     map: this.map,
                     group: "_travel",
                     iconCls: "addon-isochrone-icon",
@@ -128,8 +136,8 @@ GEOR.Addons.Traveler = Ext.extend(GEOR.Addons.Base, {
                 })
             ), new Ext.menu.CheckItem( // manage route tool
                 new Ext.Action({
-                    text: OpenLayers.i18n("route"),
-                    qtip: OpenLayers.i18n("route"),
+                    text: tr("route"),
+                    qtip: tr("route"),
                     map: this.map,
                     group: "_travel",
                     iconCls: "addon-route-icon",
