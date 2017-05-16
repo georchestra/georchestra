@@ -493,8 +493,8 @@ GEOR.Addons.Traveler.referential.routeCbAttribute = function(record, attStore, f
             addon.layer().removeFeatures(point);
         }
 
-        if (addon.resultLayer()) {
-            addon.resultLayer().destroy();
+        if (addon.isoResLayer) {
+            addon.isoResLayer.destroy();
         }
     }
 

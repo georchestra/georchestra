@@ -894,8 +894,8 @@ GEOR.Addons.Traveler.isochrone.window = function(mode, fSet, exclusion, addon, t
         buttonAlign: "center",
         listeners: {
             "show": function(win) {
-                if (map) { // window location
-                    win.alignTo(map.div, "tl", [0, 100], false);
+                if (addon.map) { // window location
+                    win.alignTo(addon.map.div, "tl", [0, 100], false);
                 }
             },
             "close": function() { // manage close event
