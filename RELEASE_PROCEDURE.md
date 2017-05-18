@@ -137,3 +137,5 @@ geOrchestra 16.12 is now released, congrats !
 
 Finally, change the default branch to latest stable in the [georchestra](https://github.com/georchestra/georchestra/settings), [geonetwork](https://github.com/georchestra/geonetwork/settings), [template](https://github.com/georchestra/template/settings) and [datadir](https://github.com/georchestra/datadir/settings) repositories.
 ... and eventually in the geoserver and geofence repositories too.
+
+Do not forget to also update the [website](http://www.georchestra.org/software.html) !

@@ -119,7 +119,7 @@ for user in conn.entries:
     uid = user.uid.value
 
     # check if 'o' field exists
-    if "o" not in user:
+    if "o" not in user or len(user.o) == 0:
         print("No org specified, skipping this user : '%s'\n" % user.uid)
         continue
     else:
