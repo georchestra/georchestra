@@ -23,4 +23,4 @@ RUN apt-get update && \
     apt-get install -y patch && \
     rm -rf /var/lib/apt/lists/*
 ADD docker-entrypoint.sh.patch /
-RUN cd / && patch -p 0 < docker-entrypoint.sh.patch
+RUN cd /usr/local/bin && patch -p 0 < /docker-entrypoint.sh.patch
