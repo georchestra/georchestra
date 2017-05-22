@@ -24,7 +24,7 @@ The addon original config should look like this:
 	        "id": "traveler_0",
 	        "name": "Traveler",
 	        "enabled": true,
-	        "preloaded":true,
+	        "preloaded":false,
 	        "title": {
 	            "en": "Road measuring",
 	            "es": "Camino de medición",
