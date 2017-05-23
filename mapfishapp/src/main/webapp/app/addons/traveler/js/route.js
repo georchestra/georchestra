@@ -634,7 +634,7 @@ GEOR.Addons.Traveler.route.getRoad = function(addon, modeButton) {
                         })
                         if (steps.length > 0) {
                             if (Ext.getCmp("route_btnNav")) {
-                                Ext.getCmp("route_btnNav").show();
+                                //Ext.getCmp("route_btnNav").show(); // uncomment to display print button
                             }
                         }
                     }
