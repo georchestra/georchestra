@@ -244,38 +244,38 @@ GEOR.Addons.Traveler.route.removeFeature = function(addon, id) {
  * @returns method to insert new step in field set and refresh window layout
  */
 GEOR.Addons.Traveler.route.insertFset = function(addon) {
-    var panel = addon.routePanel;
-    var window = addon.routeWindow;
-    if (panel) {
-        var idx = panel.items && panel.items.length > 2 ? panel.items.length - 4 : false; // get index
-        if (idx) {            
-            panel.insert(idx, GEOR.Addons.Traveler.route.addStep(addon, true, false)); // add cross button to delete step            
-            panel.doLayout(); // force refresh panel
+        var panel = addon.routePanel;
+        var window = addon.routeWindow;
+        if (panel) {
+            var idx = panel.items && panel.items.length > 2 ? panel.items.length - 4 : false; // get index
+            if (idx) {
+                panel.insert(idx, GEOR.Addons.Traveler.route.addStep(addon, true, false)); // add cross button to delete step            
+                panel.doLayout(); // force refresh panel
+            }
         }
-    }
-},
+    },
 
-/**
- * Returns the opening state of the window
- * @param {Object} addon - Get attributes, objects from GEOR.Addon
- * @returns window without settings
- */
-GEOR.Addons.Traveler.route.refresh = function(addon) {
-    var map = addon.map;
-    addon.routeWindow = GEOR.Addons.Traveler.route.routeWindow(addon);
-    addon.featureArray = new Object();
-    if (GEOR.Addons.Traveler.route.pointsLayer(addon)) {
-        GEOR.Addons.Traveler.route.pointsLayer(addon).removeAllFeatures();
-    }
+    /**
+     * Returns the opening state of the window
+     * @param {Object} addon - Get attributes, objects from GEOR.Addon
+     * @returns window without settings
+     */
+    GEOR.Addons.Traveler.route.refresh = function(addon) {
+        var map = addon.map;
+        addon.routeWindow = GEOR.Addons.Traveler.route.routeWindow(addon);
+        addon.featureArray = new Object();
+        if (GEOR.Addons.Traveler.route.pointsLayer(addon)) {
+            GEOR.Addons.Traveler.route.pointsLayer(addon).removeAllFeatures();
+        }
 
-    if (GEOR.Addons.Traveler.route.linesLayer(addon)) {
-        GEOR.Addons.Traveler.route.pointsLayer(addon).removeAllFeatures();
-    }
+        if (GEOR.Addons.Traveler.route.linesLayer(addon)) {
+            GEOR.Addons.Traveler.route.pointsLayer(addon).removeAllFeatures();
+        }
 
-    if (Ext.getCmp("route_window")) {
-        return Ext.getCmp("route_window").show();
-    }
-};
+        if (Ext.getCmp("route_window")) {
+            return Ext.getCmp("route_window").show();
+        }
+    };
 
 /**
  * Returns the opening state of the window
@@ -387,6 +387,8 @@ GEOR.Addons.Traveler.route.addStep = function(addon, isStart, delBtn, idFset) {
                         var feature = new OpenLayers.Feature.Vector(point);
                         layer.addFeatures(feature); // add points to map
                         featureArray[combo.id] = feature.id; // update point - id table
+                        GEOR.Addons.Traveler.route.getRoad(addon);
+                        combo.setValue(record.json.properties.city + ", " + record.json.properties.citycode + " - " + record.json.properties.context);
                     }
                 },
                 scope: this
@@ -466,14 +468,14 @@ GEOR.Addons.Traveler.route.addStep = function(addon, isStart, delBtn, idFset) {
                 if (this.checked) {
                     banField.hide();
                     comboRef.show();
-                    if(addon.featureArray[comboRef.id] && Ext.getCmp(addon.featureArray[comboRef.id])){
-                    	Ext.getCmp(addon.featureArray[comboRef.id]).show();
+                    if (addon.featureArray[comboRef.id]) {
+                        Ext.getCmp(addon.featureArray[comboRef.id]).show()
                     }
                 } else {
                     banField.show();
                     comboRef.hide();
-                    if(addon.featureArray[comboRef.id] && Ext.getCmp(addon.featureArray[comboRef.id])){
-                    	Ext.getCmp(addon.featureArray[comboRef.id]).hide();
+                    if (addon.featureArray[comboRef.id]) {
+                        Ext.getCmp(addon.featureArray[comboRef.id]).hide()
                     }
                 }
             }
@@ -500,9 +502,9 @@ GEOR.Addons.Traveler.route.getRoad = function(addon, modeButton) {
     var url = addon.options.ROUTE_SERVICE;
     settings.origin = ""; // request settings
     settings.destination = "";
-    settings.srs = addon.map.getProjectionObject();        
-    if(modeButton){ // get pressed mode value
-        settings.graphName =  modeButton.fieldLabel;        
+    settings.srs = addon.map.getProjectionObject();
+    if (modeButton) { // get pressed mode value
+        settings.graphName = modeButton.fieldLabel;
     } else { // or get mode by buttons id
         if (Ext.getCmp("route_carBtn").pressed) {
             settings.graphName = "Voiture";
