@@ -53,6 +53,7 @@
         	"traveler.isochrone.boxlabel.bridge": "Ponts",
         	"traveler.isochrone.boxtooltip.toll":"Péages",
         	"traveler.isochron.result.title": "Résultat",
+        	"traveler.route.checkbox.referential": "Référentiel",
         	"traveler.referential.combolayer.tooltip": "Saisir une adresse à localiser",
         	"traveler.referential.combolayer.emptytext": "Choisir une couche...",
         	"traveler.isochrone.searchgeometry": "Géométrie",

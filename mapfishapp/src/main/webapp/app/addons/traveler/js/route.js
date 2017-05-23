@@ -460,7 +460,7 @@ GEOR.Addons.Traveler.route.addStep = function(addon, isStart, delBtn, idFset) {
     var checkItem = new Ext.form.Checkbox({ // create checkbox to display or hidden referential combo
         hideLabel: true,
         hidden: cbDisplay,
-        boxLabel: "Référentiels",
+        boxLabel: tr("traveler.route.checkbox.referential"),
         listeners: {
             "check": function() {
                 if (this.checked) {
