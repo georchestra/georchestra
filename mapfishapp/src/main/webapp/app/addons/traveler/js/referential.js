@@ -489,8 +489,8 @@ GEOR.Addons.Traveler.referential.routeCbAttribute = function(record, attStore, f
         var arr = addon.featureArray;
 
         if (arr[id] && arr[id] != "") {
-            var point = addon.layer().getFeatureById(arr[id]);
-            addon.layer().removeFeatures(point);
+            var point = addon.routePoints.getFeatureById(arr[id]);
+            addon.routePoints.removeFeatures(point);
         }
 
         if (addon.isoResLayer) {
