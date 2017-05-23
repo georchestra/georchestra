@@ -538,6 +538,7 @@ GEOR.Addons.Traveler.route.getRoad = function(addon, modeButton) {
                 exclusions.push(Ext.getCmp(el.id).value);
             };
         });
+        settings.exclusions = exclusions.join(";");
     }
     // get method param
     if (Ext.getCmp("route_radioTime").checked) {
