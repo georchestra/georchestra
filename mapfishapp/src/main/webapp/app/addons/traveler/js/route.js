@@ -466,9 +466,15 @@ GEOR.Addons.Traveler.route.addStep = function(addon, isStart, delBtn, idFset) {
                 if (this.checked) {
                     banField.hide();
                     comboRef.show();
+                    if(addon.featureArray[comboRef.id] && Ext.getCmp(addon.featureArray[comboRef.id])){
+                    	Ext.getCmp(addon.featureArray[comboRef.id]).show();
+                    }
                 } else {
                     banField.show();
                     comboRef.hide();
+                    if(addon.featureArray[comboRef.id] && Ext.getCmp(addon.featureArray[comboRef.id])){
+                    	Ext.getCmp(addon.featureArray[comboRef.id]).hide();
+                    }
                 }
             }
         }
