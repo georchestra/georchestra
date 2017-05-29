@@ -181,7 +181,9 @@ GEOR.getfeatureinfo = (function() {
             var featureType, gml = feature.gml, layerName;
             if (gml) { // set by OpenLayers.Format.GML's parseFeature
                 // GeoServer
-                if (gml.featureNSPrefix) {
+                if (results.hasOwnProperty(gml.featureType)) {
+                    results[gml.featureType].features.push(feature);
+                } else if (gml.featureNSPrefix) {
                     layerName = gml.featureNSPrefix + ":" + gml.featureType;
                     if (results.hasOwnProperty(layerName)) {
                         results[layerName].features.push(feature);
@@ -194,8 +196,6 @@ GEOR.getfeatureinfo = (function() {
                             features: [feature]
                         };
                     }
-                } else if (results.hasOwnProperty(gml.featureType)) {
-                    results[gml.featureType].features.push(feature);
                 }
             } else if (feature.type) { // set by OpenLayers.Format.WMSGetFeatureInfo's read_msGMLOutput
                 // MapServer
