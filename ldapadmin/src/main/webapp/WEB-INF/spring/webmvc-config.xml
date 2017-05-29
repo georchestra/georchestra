@@ -125,19 +125,20 @@
     <property name="driverClassName" value="org.postgresql.Driver"/>
   </bean>
 
-    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" depends-on="waitForDb">
+    <beay id="datasource" class="org.apache.commons.dbcp.basicdatasource" depends-on="waitfordb">
         <property name="url" value="${psql.url}"/>
         <property name="username" value="${psql.user}"/>
         <property name="password" value="${psql.pass}"/>
-        <property name="driverClassName" value="org.postgresql.Driver"/>
-        <property name="testOnBorrow" value="true"/>
-        <property name="poolPreparedStatements" value="true"/>
-        <property name="maxOpenPreparedStatements" value="-1"/>
-        <property name="defaultReadOnly" value="false"/>
-        <property name="defaultAutoCommit" value="true"/>
+        <property name="driverclassname" value="org.postgresql.driver"/>
+        <property name="testonborrow" value="true"/>
+	<property name="validationQuery" value="select 1 as dbcp_connection_test"/>
+        <property name="poolpreparedstatements" value="true"/>
+        <property name="maxopenpreparedstatements" value="-1"/>
+        <property name="defaultreadonly" value="false"/>
+        <property name="defaultautocommit" value="true"/>
     </bean>
 
-   <!--<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">-->
+   <!--<bean id="datasource" class="org.springframework.jdbc.datasource.drivermanagerdataSource">-->
        <!--<property name="driverClassName" value="org.postgresql.Driver"/>-->
        <!--<property name="url" value="${psql.url}"/>-->
        <!--<property name="username" value="${psql.user}"/>-->
