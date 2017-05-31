@@ -24,6 +24,7 @@
         <property name="url" value="${dlJdbcUrlOGC}"/>
         <property name="driverClassName" value="org.postgresql.Driver"/>
         <property name="testOnBorrow" value="true"/>
+        <property name="validationQuery" value="select 1 as dbcp_connection_test"/>
         <property name="poolPreparedStatements" value="true"/>
         <property name="maxOpenPreparedStatements" value="-1"/>
         <property name="defaultReadOnly" value="false"/>
