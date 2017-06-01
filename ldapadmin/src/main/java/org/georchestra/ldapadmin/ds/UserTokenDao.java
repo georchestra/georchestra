@@ -19,6 +19,7 @@
 
 package org.georchestra.ldapadmin.ds;
 
+import java.io.Closeable;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -135,14 +136,22 @@ public class UserTokenDao {
             LOG.error(logMsg, e);
             throw new DataServiceException(e);
         } finally {
-            if (c != null) {
-                try {
-                    c.close();
-                } catch (SQLException e) {
-                    LOG.error("Unable to close the connection to the database.");
-                    throw new DataServiceException(e);
-                }
+            closeQuietly(c);
+        }
+    }
+
+    private static void closeQuietly(Connection connection)
+    {
+        try
+        {
+            if (connection != null)
+            {
+                connection.close();
             }
+        }
+        catch (Exception e)
+        {
+            LOG.error("Unable to close the connection, it doesn't mean that the sql statement failed.");
         }
     }
 }
