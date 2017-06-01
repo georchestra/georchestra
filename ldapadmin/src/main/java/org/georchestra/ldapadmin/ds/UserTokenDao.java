@@ -60,18 +60,17 @@ public class UserTokenDao {
      * @throws DataServiceException
      */
     public void insertToken(String uid, String token) throws DataServiceException {
-        InsertUserTokenCommand cmd = new InsertUserTokenCommand();
+        Calendar cal = Calendar.getInstance();
+        Date date = cal.getTime();
+        Timestamp currentDay = new Timestamp(date.getTime());
 
         Map<String, Object> row = new HashMap<String, Object>(3);
         row.put(DatabaseSchema.UID_COLUMN, uid);
         row.put(DatabaseSchema.TOKEN_COLUMN, token);
-
-        Calendar cal = Calendar.getInstance();
-        Date date = cal.getTime();
-        Timestamp currentDay = new Timestamp(date.getTime());
         row.put(DatabaseSchema.CREATION_DATE_COLUMN, currentDay);
-        cmd.setRowValues(row);
 
+        InsertUserTokenCommand cmd = new InsertUserTokenCommand();
+        cmd.setRowValues(row);
         executeCmd(cmd, "Failed to insert the uid,token");
     }
 
@@ -87,7 +86,6 @@ public class UserTokenDao {
     public String findUserByToken(String token) throws DataServiceException, NameNotFoundException {
         QueryByTokenCommand cmd = new QueryByTokenCommand();
         cmd.setToken(token);
-
         executeCmd(cmd, "UserTokenDao.findUserByToken");
 
         List<Map<String, Object>> result = cmd.getResult();
@@ -104,6 +102,7 @@ public class UserTokenDao {
         QueryUserTokenExpiredCommand cmd = new QueryUserTokenExpiredCommand();
         cmd.setBeforeDate(expired);
         executeCmd(cmd, "UserTokenDao.delete");
+
         List<Map<String, Object>> result = cmd.getResult();
         return result;
     }
@@ -112,6 +111,7 @@ public class UserTokenDao {
         QueryByUidCommand cmd = new QueryByUidCommand();
         cmd.setUid(uid);
         executeCmd(cmd, "UserTokenDao.exist");
+
         List<Map<String, Object>> result = cmd.getResult();
         return !result.isEmpty();
     }
