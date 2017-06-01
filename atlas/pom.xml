@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.georchestra</groupId>
         <artifactId>root</artifactId>
-        <version>16.12</version>
+        <version>17.06-SNAPSHOT</version>
     </parent>
     <artifactId>atlas</artifactId>
     <packaging>war</packaging>
@@ -563,7 +563,7 @@
             <properties>
                 <dockerImageName>georchestra/${project.artifactId}</dockerImageName>
                 <dockerDatadirScmUrl>scm:git:https://github.com/georchestra/datadir.git</dockerDatadirScmUrl>
-                <dockerDatadirScmVersion>docker-16.12</dockerDatadirScmVersion>
+                <dockerDatadirScmVersion>docker-master</dockerDatadirScmVersion>
             </properties>
             <build>
                 <finalName>atlas</finalName>
