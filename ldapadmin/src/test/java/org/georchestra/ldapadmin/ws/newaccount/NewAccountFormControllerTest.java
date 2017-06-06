@@ -1,6 +1,7 @@
 package org.georchestra.ldapadmin.ws.newaccount;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.eq;
 
 import java.io.IOException;
@@ -35,6 +36,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.support.SessionStatus;
+import org.apache.commons.validator.routines.EmailValidator;
 
 public class NewAccountFormControllerTest {
 
@@ -291,5 +293,24 @@ public class NewAccountFormControllerTest {
                 + "phone=+331234567890, description=testing account, "
                 + "password=monkey123, confirmPassword=test, recaptcha_challenge_field=good, "
                 + "recaptcha_response_field=wrong]"));
+    }
+
+
+    /**
+     * Tests email address with new domains like .bzh or .alsace
+     */
+    @Test
+    public void testNewDomains(){
+
+        EmailValidator validator = EmailValidator.getInstance();
+        // Test valid email address
+        assertTrue(validator.isValid("mael@bretagne.bzh"));
+        assertTrue(validator.isValid("romain@champagne.alsace"));
+        assertTrue(validator.isValid("test@domain.com"));
+
+        // Test invalid email address
+        assertFalse(validator.isValid("test@domain.no-existent"));
+        assertFalse(validator.isValid("test@domain.qsdfgryzeh"));
+
     }
 }
