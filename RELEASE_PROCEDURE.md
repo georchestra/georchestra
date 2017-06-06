@@ -41,10 +41,12 @@ Update the default branch to `16.12`.
 
 Create a new branch deriving from `georchestra-gn3-master`, eg `georchestra-gn3-16.12`.
 
-In `georchestra-gn3-16.12`:
- * in `web/pom.xml` change `<dockerDatadirScmVersion>docker-master</dockerDatadirScmVersion>` into `<dockerDatadirScmVersion>docker-16.12</dockerDatadirScmVersion>`
- * 
+In branch `georchestra-gn3-16.12`, in file `web/pom.xml` change `<dockerDatadirScmVersion>docker-master</dockerDatadirScmVersion>` into `<dockerDatadirScmVersion>docker-16.12</dockerDatadirScmVersion>`
 
+Commit and push `georchestra-gn3-16.12`.
+
+Merge `georchestra-gn3-16.12` into `georchestra-gn3-master`, restore `<dockerDatadirScmVersion>docker-master</dockerDatadirScmVersion>` in file `web/pom.xml`.
+Commit and push `georchestra-gn3-master`.
 
 We're done for GeoNetwork !
 
@@ -107,7 +109,8 @@ git push origin 16.12
 
 ```
 git checkout master
-find ./ -name pom.xml -exec sed -i 's/16.12/17.06-SNAPSHOT/' {} \;
+find ./ -name pom.xml -exec sed -i 's#<dockerDatadirScmVersion>docker-16.12</dockerDatadirScmVersion>#<dockerDatadirScmVersion>docker-master</dockerDatadirScmVersion>#' {} \;
+find ./ -name pom.xml -exec sed -i 's#<version>16.12</version>#<version>17.06-SNAPSHOT</version>#' {} \;
 git submodule foreach 'git reset --hard'
 git commit -am "updated project version in pom.xml"
 ```
@@ -117,8 +120,8 @@ Let's update GN submodule too:
 ```
 cd geonetwork
 git fetch origin
-git checkout georchestra-17.06
-git pull origin georchestra-17.06
+git checkout georchestra-gn3-master
+git pull origin georchestra-gn3-master
 cd -
 ```
 
