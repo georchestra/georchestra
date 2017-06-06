@@ -25,3 +25,5 @@ For **OGC web services consumption**:
  * organisation, number of requests
 
 Each table can be exported to CSV for easy offline use.
+
+If one needs to plug a different client, the [analytics API doc](API.md) may be handy.
