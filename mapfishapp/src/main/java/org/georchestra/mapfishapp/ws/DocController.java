@@ -59,6 +59,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
  * - POST: ws/kml/ GET: ws/kml/{filename} <br />
  * - POST: ws/gml/ GET: ws/gml/{filename} <br />
  * - POST: ws/fe/  GET: ws/fe/{filename}  <br />
+ * - POST: ws/wkt/  GET: ws/wkt/{filename}  <br />
  * <br />
  * File can be sent via POST or by upload (max one file at a time)
  * <br />
@@ -124,6 +125,11 @@ public class DocController {
      * Absolute (from domain name) URL path where the fe service can be called
      */
     public static final String FE_URL = DOC_URL + "fe/";
+
+    /**
+     * Absolute (from domain name) URL path where the fe service can be called
+     */
+    public static final String WKT_URL = DOC_URL + "wkt/";
 
 
     public void init() throws IOException {
@@ -270,6 +276,27 @@ public class DocController {
     @RequestMapping(value="/fe/*", method=RequestMethod.GET)
     public void getFEFile(HttpServletRequest request, HttpServletResponse response) {
         getFile(new FEDocService(this.docTempDir, this.connectionPool), request, response);
+    }
+
+    /*======================= WKT ======================================================================*/
+    /**
+     * POST WKT entry point. Store the body of the request POST (or file by upload) in a temporary file.
+     * @param request contains in its body the file in the JSON format
+     * @param response contains the url path to get back the file in CSV: WKT_URL/{filename}
+     */
+    @RequestMapping(value="/wkt/", method=RequestMethod.POST)
+    public void storeWKTFile(HttpServletRequest request, HttpServletResponse response) {
+        storeFile(new WKTDocService(this.docTempDir, this.connectionPool), WKT_URL, request, response);
+    }
+
+    /**
+     * GET WKT entry point. Retrieve the right file previously stored corresponding to the REST argument.
+     * @param request no parameter. The parameter has to be provided REST style: WKT_URL/{filename}
+     * @param response contains the file content
+     */
+    @RequestMapping(value="/wkt/*", method=RequestMethod.GET)
+    public void getWKTFile(HttpServletRequest request, HttpServletResponse response) {
+        getFile(new WKTDocService(this.docTempDir, this.connectionPool), request, response);
     }
 
     /*======================= JSON to CSV =====================================================================*/
