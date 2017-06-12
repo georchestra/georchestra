@@ -17,6 +17,7 @@
  * @include GeoExt/widgets/grid/FeatureSelectionModel.js
  * @include OpenLayers/Format/GML.js
  * @include OpenLayers/Format/KML.js
+ * @include OpenLayers/Format/WKT.js
  * @include OpenLayers/Format/JSON.js
  * @include OpenLayers/Projection.js
  * @include OpenLayers/Request/XMLHttpRequest.js
@@ -126,7 +127,7 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
                     data: data
                 });
                 break;
-            default: // kml || gml
+            default: // kml || gml || wkt
                 for (var i=0; i<t; i++) {
                     record = this._store.getAt(i);
                     if (bypass || sm.isSelected(record)) {
@@ -141,7 +142,10 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
                     return;
                 }
                 var ip = this.map.getProjectionObject(),
-                    ep = new OpenLayers.Projection("EPSG:4326");
+                    // use the mouseprojection output proj
+                    ep = new OpenLayers.Projection(
+                        this.map.getControlsByClass("OpenLayers.Control.MousePosition")[0].displayProjection.projCode
+                    );
                 if (filetype == "gml") {
                     payload = (new OpenLayers.Format.GML({
                         featureNS: "http://www.georchestra.org/features",
@@ -152,6 +156,13 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
                 } else if (filetype == "kml") {
                     payload = (new OpenLayers.Format.KML({
                         'foldersName': "geOrchestra",
+                        'internalProjection': ip,
+                        // KML is always supposed to be EPSG:4326
+                        'externalProjection': new OpenLayers.Projection("EPSG:4326")
+                    })).write(features);
+                    break;
+                } else if (filetype == "wkt") {
+                    payload = (new OpenLayers.Format.WKT({
                         'internalProjection': ip,
                         'externalProjection': ep
                     })).write(features);
@@ -382,6 +393,11 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
                             text: "KML",
                             tooltip: tr("Export results as") + " KML",
                             handler: this._exportBtnHandler.createDelegate(this, ["kml"]),
+                            scope: this
+                        }, {
+                            text: "WKT",
+                            tooltip: tr("Export results as") + " WKT",
+                            handler: this._exportBtnHandler.createDelegate(this, ["wkt"]),
                             scope: this
                         }]
                     },{
