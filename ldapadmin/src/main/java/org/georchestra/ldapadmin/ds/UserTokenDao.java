@@ -19,6 +19,7 @@
 
 package org.georchestra.ldapadmin.ds;
 
+import java.io.Closeable;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -32,6 +33,7 @@ import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.georchestra.lib.sqlcommand.DataCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
 
@@ -58,36 +60,18 @@ public class UserTokenDao {
      * @throws DataServiceException
      */
     public void insertToken(String uid, String token) throws DataServiceException {
-        Connection c = null;
-        try {
-            InsertUserTokenCommand cmd = new InsertUserTokenCommand();
-            c = dataSource.getConnection();
-            cmd.setConnection(c);
+        Calendar cal = Calendar.getInstance();
+        Date date = cal.getTime();
+        Timestamp currentDay = new Timestamp(date.getTime());
 
-            Map<String, Object> row = new HashMap<String, Object>(3);
-            row.put(DatabaseSchema.UID_COLUMN, uid);
-            row.put(DatabaseSchema.TOKEN_COLUMN, token);
+        Map<String, Object> row = new HashMap<String, Object>(3);
+        row.put(DatabaseSchema.UID_COLUMN, uid);
+        row.put(DatabaseSchema.TOKEN_COLUMN, token);
+        row.put(DatabaseSchema.CREATION_DATE_COLUMN, currentDay);
 
-            Calendar cal = Calendar.getInstance();
-            Date date = cal.getTime();
-            Timestamp currentDay = new Timestamp(date.getTime());
-            row.put(DatabaseSchema.CREATION_DATE_COLUMN, currentDay);
-
-            cmd.setRowValues(row);
-            cmd.execute();
-        } catch (Exception e) {
-            LOG.error("Failed to insert the uid,token", e);
-            throw new DataServiceException(e);
-        } finally {
-            if (c != null) {
-                try {
-                    c.close();
-                } catch (SQLException e) {
-                    LOG.error("Unable to close the connection to the database.");
-                    throw new DataServiceException(e);
-                }
-            }
-        }
+        InsertUserTokenCommand cmd = new InsertUserTokenCommand();
+        cmd.setRowValues(row);
+        executeCmd(cmd, "Failed to insert the uid,token");
     }
 
     /**
@@ -100,125 +84,74 @@ public class UserTokenDao {
      * @throws NameNotFoundException
      */
     public String findUserByToken(String token) throws DataServiceException, NameNotFoundException {
-        Connection c = null;
-        try {
-            c = dataSource.getConnection();
-            QueryByTokenCommand cmd = new QueryByTokenCommand();
+        QueryByTokenCommand cmd = new QueryByTokenCommand();
+        cmd.setToken(token);
+        executeCmd(cmd, "UserTokenDao.findUserByToken");
 
-            cmd.setConnection(c);
+        List<Map<String, Object>> result = cmd.getResult();
 
-            cmd.setToken(token);
-            cmd.execute();
-
-            List<Map<String, Object>> result = cmd.getResult();
-
-            if (result.isEmpty()) {
-                throw new NameNotFoundException("the token " + token + " wasn't found.");
-            }
-
-            String uid = (String) result.get(0).get(DatabaseSchema.UID_COLUMN);
-
-            return uid;
-
-        } catch (Exception e) {
-            throw new DataServiceException(e);
-        } finally {
-            if (c != null) {
-                try {
-                    c.close();
-                } catch (SQLException e) {
-                    LOG.error("Unable to close the connection to the database.");
-                    throw new DataServiceException(e);
-                }
-            }
+        if (result.isEmpty()) {
+            throw new NameNotFoundException("the token " + token + " wasn't found.");
         }
+
+        String uid = (String) result.get(0).get(DatabaseSchema.UID_COLUMN);
+        return uid;
     }
 
     public List<Map<String, Object>> findBeforeDate(Date expired) throws DataServiceException {
-        Connection c = null;
-        try {
-            QueryUserTokenExpiredCommand cmd = new QueryUserTokenExpiredCommand();
+        QueryUserTokenExpiredCommand cmd = new QueryUserTokenExpiredCommand();
+        cmd.setBeforeDate(expired);
+        executeCmd(cmd, "UserTokenDao.delete");
 
-            c = dataSource.getConnection();
-            cmd.setConnection(c);
-
-            cmd.setBeforeDate(expired);
-            cmd.execute();
-
-            List<Map<String, Object>> result = cmd.getResult();
-
-            return result;
-
-        } catch (Exception e) {
-            throw new DataServiceException(e);
-        } finally {
-            if (c != null) {
-                try {
-                    c.close();
-                } catch (SQLException e) {
-                    LOG.error("Unable to close the connection to the database.");
-                    throw new DataServiceException(e);
-                }
-            }
-        }
+        List<Map<String, Object>> result = cmd.getResult();
+        return result;
     }
 
     public boolean exist(String uid) throws DataServiceException {
-        Connection c = null;
-        try {
-            QueryByUidCommand cmd = new QueryByUidCommand();
-            c = dataSource.getConnection();
-            cmd.setConnection(c);
+        QueryByUidCommand cmd = new QueryByUidCommand();
+        cmd.setUid(uid);
+        executeCmd(cmd, "UserTokenDao.exist");
 
-            cmd.setUid(uid);
-            cmd.execute();
-
-            List<Map<String, Object>> result = cmd.getResult();
-
-            return !result.isEmpty();
-
-        } catch (Exception e) {
-            throw new DataServiceException(e);
-        } finally {
-            if (c != null) {
-                try {
-                    c.close();
-                } catch (SQLException e) {
-                    LOG.error("Unable to close the connection to the database.");
-                    throw new DataServiceException(e);
-                }
-            }
-        }
-
+        List<Map<String, Object>> result = cmd.getResult();
+        return !result.isEmpty();
     }
 
     public void delete(String uid) throws DataServiceException {
-        Connection c = null;
-        try {
-            DeleteUserTokenCommand cmd = new DeleteUserTokenCommand();
-            c = dataSource.getConnection();
-            cmd.setConnection(c);
-
-            cmd.setUid(uid);
-
-            cmd.execute();
-
-        } catch (Exception e) {
-            LOG.error("Failed to insert the uid,token", e);
-            throw new DataServiceException(e);
-        } finally {
-            if (c != null) {
-                try {
-                    c.close();
-                } catch (SQLException e) {
-                    LOG.error("Unable to close the connection to the database.");
-                    throw new DataServiceException(e);
-                }
-            }
-        }
+        DeleteUserTokenCommand cmd = new DeleteUserTokenCommand();
+        cmd.setUid(uid);
+        executeCmd(cmd, "UserTokenDao.delete");
     }
 
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
+    }
+
+    private void executeCmd (DataCommand cmd, String logMsg) throws DataServiceException {
+        Connection c = null;
+        try {
+            c = dataSource.getConnection();
+            cmd.setConnection(c);
+            cmd.execute();
+        } catch (Exception e) {
+            LOG.error(logMsg, e);
+            throw new DataServiceException(e);
+        } finally {
+            closeQuietly(c);
+        }
+    }
+
+    private static void closeQuietly(Connection connection)
+    {
+        try
+        {
+            if (connection != null)
+            {
+                connection.close();
+            }
+        }
+        catch (Exception e)
+        {
+            LOG.error("Unable to close the connection, it doesn't mean that the sql statement failed.");
+        }
     }
 }
