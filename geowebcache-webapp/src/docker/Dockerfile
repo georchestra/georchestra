@@ -19,6 +19,9 @@ RUN ln -s /usr/share/java/jai_core.jar /var/lib/jetty/lib/ext/ && \
 
 ADD . /
 
+RUN mkdir /etc/georchestra /mnt/geowebcache_tiles && \
+    chown jetty:jetty /etc/georchestra /mnt/geowebcache_tiles
+
 VOLUME [ "/mnt/geowebcache_tiles", "/tmp", "/run/jetty" ]
 
 CMD ["sh", "-c", "exec java \

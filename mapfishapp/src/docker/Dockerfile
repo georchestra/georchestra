@@ -12,8 +12,8 @@ RUN ln -s /usr/share/java/gdal.jar /var/lib/jetty/lib/ext/
 
 ADD . /
 
-RUN mkdir /mnt/mapfishapp_uploads && \
-    chown jetty:jetty /mnt/mapfishapp_uploads
+RUN mkdir /etc/georchestra /mnt/mapfishapp_uploads && \
+    chown jetty:jetty /etc/georchestra /mnt/mapfishapp_uploads
 
 VOLUME [ "/mnt/mapfishapp_uploads", "/tmp", "/run/jetty" ]
 

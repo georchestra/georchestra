@@ -6,6 +6,9 @@ RUN java -jar "$JETTY_HOME/start.jar" --add-to-startd=jmx,jmx-remote,stats,gzip
 
 ADD . /
 
+RUN mkdir /etc/georchestra && \
+    chown jetty:jetty /etc/georchestra
+
 VOLUME [ "/tmp", "/run/jetty" ]
 
 CMD ["sh", "-c", "exec java \
