@@ -12,8 +12,8 @@ RUN apt-get update && \
 
 RUN ln -s /usr/share/java/gdal.jar /var/lib/jetty/lib/ext/
 
-RUN mkdir -p /var/local/uploads && \
-    chown jetty:jetty /var/local/uploads
+RUN mkdir -p /etc/georchestra /var/local/uploads && \
+    chown jetty:jetty /etc/georchestra /var/local/uploads
 
 VOLUME [ "/var/local/uploads", "/tmp", "/run/jetty" ]
 

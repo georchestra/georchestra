@@ -6,8 +6,8 @@ RUN java -jar "$JETTY_HOME/start.jar" --add-to-startd=jmx,jmx-remote,stats
 
 ADD . /
 
-RUN mkdir -p /var/local/tiles && \
-    chown jetty:jetty /var/local/tiles
+RUN mkdir -p /etc/georchestra /var/local/tiles && \
+    chown jetty:jetty /etc/georchestra /var/local/tiles
 
 VOLUME [ "/var/local/tiles", "/tmp", "/run/jetty" ]
 
