@@ -12,6 +12,9 @@ ADD . /
 
 RUN ln -s /usr/share/java/gdal.jar /var/lib/jetty/lib/ext/
 
+RUN mkdir /etc/georchestra /mnt/extractorapp_extracts && \
+    chown jetty:jetty /etc/georchestra /mnt/extractorapp_extracts
+
 VOLUME [ "/mnt/extractorapp_extracts", "/tmp", "/run/jetty" ]
 
 CMD ["sh", "-c", "exec java \
