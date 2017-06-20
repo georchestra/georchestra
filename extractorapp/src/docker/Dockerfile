@@ -12,6 +12,9 @@ RUN apt-get update && \
 
 RUN ln -s /usr/share/java/gdal.jar /var/lib/jetty/lib/ext/
 
+RUN mkdir -p /var/local/extracts && \
+    chown jetty:jetty /var/local/extracts
+
 VOLUME [ "/var/local/extracts", "/tmp", "/run/jetty" ]
 
 CMD ["sh", "-c", "exec java \

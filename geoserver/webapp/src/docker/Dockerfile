@@ -15,6 +15,9 @@ RUN java -jar "$JETTY_HOME/start.jar" --add-to-startd=jmx,jmx-remote,stats,jndi
 
 ADD . /
 
+RUN mkdir -p /var/local/geoserver /var/local/geodata /var/local/tiles && \
+    chown jetty:jetty /var/local/geoserver /var/local/geodata /var/local/tiles
+
 VOLUME [ "/var/local/geoserver", "/var/local/geodata", "/var/local/tiles", "/tmp", "/run/jetty" ]
 
 CMD ["sh", "-c", "exec java -Djava.io.tmpdir=/tmp/jetty \
