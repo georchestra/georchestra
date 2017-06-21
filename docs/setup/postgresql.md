@@ -52,10 +52,25 @@ If the **security proxy** is deployed and ```shared.ogc.statistics.activated``` 
 psql -d georchestra -f postgresql/05-ogc-server-statistics.sql
 ```
 
+### Extractorapp schema
+
+If the **extractor app** is deployed:
+```
+psql -d georchestra -f postgresql/01-create-extension.sql
+psql -d georchestra -f postgresql/09-extractor-app.sql
+```
+
+### Atlas schema
+
+If the **Atlas** is deployed:
+```
+psql -d georchestra -f postgresql/07-atlas.sql
+```
+
 ## Change ownership of database objects
- 
-Ensure geOrchestra database user is owner of database. If your database is dedicated to geOrchestra (no other 
-apps are running in same database), you can use following procedure to reset ownership of all objects to selected user, for 
+
+Ensure geOrchestra database user is owner of database. If your database is dedicated to geOrchestra (no other
+apps are running in same database), you can use following procedure to reset ownership of all objects to selected user, for
 example ```www-data``` :
 
 ```
@@ -65,6 +80,8 @@ psql -d georchestra -c "SELECT change_owner('mapfishapp', 'www-data');";
 psql -d georchestra -c "SELECT change_owner('downloadform', 'www-data');";
 psql -d georchestra -c "SELECT change_owner('ldapadmin', 'www-data');";
 psql -d georchestra -c "SELECT change_owner('ogcstatistics', 'www-data');";
+psql -d georchestra -c "SELECT change_owner('extractorapp', 'www-data');";
+psql -d georchestra -c "SELECT change_owner('atlas', 'www-data');";
 psql -d georchestra -c "SELECT change_owner('public', 'www-data');";
 ```
 
