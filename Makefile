@@ -14,27 +14,30 @@ docker-build-database:
 	docker pull postgres:9.4
 	docker-compose build database
 
-docker-build-gn3: docker-pull-jetty-jre8
+docker-build-gn3: build-deps docker-pull-jetty-jre8
 	cd geonetwork; \
 	../mvn -DskipTests clean install; \
 	cd web; \
 	../../mvn -P docker -DskipTests package docker:build
 
-docker-build-geoserver: docker-pull-jetty-jre7
+docker-build-geoserver: build-deps docker-pull-jetty-jre7
 	cd geoserver/geoserver-submodule/src; \
 	rm -rf ../data/citewfs-1.1/workspaces/sf/sf/E*; \
 	LANG=C ../../../mvn clean install -DskipTests; \
 	cd ../../webapp; \
 	../../mvn clean install docker:build -Pdocker -DskipTests
 
-docker-build-geoserver-geofence: docker-pull-jetty-jre7
+docker-build-geoserver-geofence: build-deps docker-pull-jetty-jre7
 	cd geoserver/geoserver-submodule/src; \
 	rm -fr ../data/citewfs-1.1/workspaces/sf/sf/E*; \
 	LANG=C ../../../mvn clean install -Pgeofence-server -DskipTests; \
 	cd ../../webapp; \
 	../../mvn clean install docker:build -Pdocker,geofence -DskipTests
 
-docker-build-georchestra: docker-pull-jetty-jre8 docker-build-database docker-build-ldap docker-build-geoserver docker-build-gn3
+docker-build-proxy: build-deps docker-pull-jetty-jre8
+	./mvn clean package docker:build -Pdocker -DskipTests --pl security-proxy
+
+docker-build-georchestra: build-deps docker-pull-jetty-jre8 docker-build-database docker-build-ldap docker-build-geoserver docker-build-gn3
 	./mvn clean package docker:build -Pdocker -DskipTests --pl extractorapp,cas-server-webapp,security-proxy,mapfishapp,header,ldapadmin,analytics,catalogapp,downloadform,geowebcache-webapp,atlas
 
 docker-build-dev:
