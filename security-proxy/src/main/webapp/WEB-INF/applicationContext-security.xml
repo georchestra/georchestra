@@ -197,14 +197,6 @@
         <property name="service" value="${proxyCallback}"/>
         <property name="sendRenew" value="false"/>
     </bean>
-    
-    <bean
-        id="messageSource"
-        class="org.springframework.context.support.ReloadableResourceBundleMessageSource"
-        p:basenames="WEB-INF/i18n/application"
-        p:defaultEncoding="UTF-8"
-        p:fallbackToSystemLocale="false">
-    </bean>
 	<!-- end cas config -->
 
 </beans>

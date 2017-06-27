@@ -163,7 +163,7 @@ shared.psql.url=psql://www-data:www-data@localhost/geonetwork
 # + example +
 # shared.download_form.activated=true
 # shared.download_form.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/downloadform
-# shared.download_form.pdfurl=/_static/usage.pdf
+# shared.download_form.pdfurl=/static/usage.pdf
 # or
 # shared.download_form.pdfurl=//url.to/cgu.pdf
 #
