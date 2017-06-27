@@ -721,11 +721,12 @@ public class Proxy {
                     Header authHeader = proxiedResponse.getFirstHeader("WWW-Authenticate");
                     finalResponse.setHeader("WWW-Authenticate", (authHeader == null) ? "Basic realm=\"Authentication required\"" : authHeader.getValue());
                 }
-
-                // 403 and 404 are handled by specific JSP files provided by the
-                // security-proxy webapp
-                if ((statusCode == 404) || (statusCode == 403)) {
-                    finalResponse.sendError(statusCode);
+                // handles 403, 404 and 500 specifically
+                // sometimes proxified webapps gives some useful informations,
+                // that have to be retrieved in order to facilitate the
+                // debugging
+                else if ((statusCode != 404) && (statusCode != 403) && (statusCode != 500)) {
+                    finalResponse.sendError(statusCode, reasonPhrase);
                     return;
                 }
             }

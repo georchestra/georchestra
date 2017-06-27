@@ -53,7 +53,7 @@
     </rule>
 
     <rule>
-        <from>^/(?!sec/|favicon.ico|receptor|j_spring_security_logout|j_spring_cas_security_check|header.jsp|_static/|cas-logout.jsp|403.jsp|404.jsp|casfailed.jsp)(.*)$</from>
+        <from>^/(?!sec/|favicon.ico|receptor|j_spring_security_logout|j_spring_cas_security_check|header.jsp|cas-logout.jsp|casfailed.jsp)(.*)$</from>
         <to type="forward" last="true">/sec/$1</to>
     </rule>
 </urlrewrite>

@@ -135,12 +135,6 @@ ProxyPassReverse /gateway http://localhost:8180/gateway
 ProxyPass /testPage http://localhost:8180/testPage
 ProxyPassReverse /testPage http://localhost:8180/testPage
 
-<Proxy http://localhost:8180/_static/*>
-    Require all granted
-</Proxy>
-ProxyPass /_static/ http://localhost:8180/_static/
-ProxyPassReverse /_static/ http://localhost:8180/_static/
-
 SetEnvIf Referer "^https://my\.sdi\.org/" mysdi
 <Proxy http://localhost:8180/proxy/*>
     Require env mysdi
