@@ -1,7 +1,7 @@
 # Docker
 
 Are you looking for a way to run geOrchestra on Docker ?
-Please read the dedicated [how-to](../docs/docker.md).
+Please read the dedicated [how-to](https://github.com/georchestra/docker).
 
 ## Building your own docker images for geOrchestra
 
