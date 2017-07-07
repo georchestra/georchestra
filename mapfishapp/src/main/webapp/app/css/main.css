@@ -519,3 +519,8 @@ div.olMapViewport {
 	background-color: #fff;
 }
 
+.x-selectable, .x-selectable * {
+        -moz-user-select: text!important;
+        -khtml-user-select: text!important;
+}
+
