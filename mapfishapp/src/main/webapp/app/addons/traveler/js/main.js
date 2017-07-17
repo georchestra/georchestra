@@ -144,8 +144,8 @@ GEOR.Addons.Traveler = Ext.extend(GEOR.Addons.Base, {
                     listeners: {
                         "click": function(box) {
                             if (!addon.routeWindow) {
-                                addon.routePoints = GEOR.Addons.Traveler.route.pointsLayer(addon); // start points layer
-                                addon.routeLines = GEOR.Addons.Traveler.route.linesLayer(addon); // result layer
+                            	addon.routeLines = GEOR.Addons.Traveler.route.linesLayer(addon); // result layer
+                            	addon.routePoints = GEOR.Addons.Traveler.route.pointsLayer(addon); // start points layer                                
                                 addon.routeControl = GEOR.Addons.Traveler.route.routeControl(addon);
                                 addon.routeWindow = GEOR.Addons.Traveler.route.routeWindow(addon);
                                 addon.routeWindow.show();
