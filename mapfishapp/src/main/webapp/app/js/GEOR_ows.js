@@ -113,9 +113,7 @@ GEOR.ows = (function() {
         "SERVICE": "WMS",
         // version not specified => highest version is returned
         // the correct parser will be used automagically.
-        //"VERSION": "1.1.1",
-        //
-        "FORMAT": "image/png"
+        //"VERSION": "1.1.1"
     };
 
     /**
