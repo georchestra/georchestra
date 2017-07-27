@@ -231,8 +231,8 @@
         </dependency>
         <dependency>
           <groupId>org.geonetwork-opensource</groupId>
-          <artifactId>geonetwork-main</artifactId>
-          <version>${project.version}</version>
+          <artifactId>${gn.artifact}</artifactId>
+          <version>${gn.version}</version>
           <type>war</type>
         </dependency>
         <dependency>
@@ -300,8 +300,8 @@
       <dependencies>
         <dependency>
           <groupId>org.geonetwork-opensource</groupId>
-          <artifactId>geonetwork-main</artifactId>
-          <version>${project.version}</version>
+          <artifactId>${gn.artifact}</artifactId>
+          <version>${gn.version}</version>
           <type>war</type>
         </dependency>
       </dependencies>
