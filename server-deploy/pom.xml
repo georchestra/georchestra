@@ -19,6 +19,17 @@
   </dependencies>
   <properties>
     <warsDir>target/wars</warsDir>
+    <!-- Note: with the GN3 integration, the artifacts from geonetwork
+         were renamed. Also, the georchestra GN3 fork now follows the
+         same versioning scheme as the upstream project (instead of using
+         the geOrchestra version).
+         If you are still on GN2, you should replace the 2 following
+         properties by:
+      <gn.artifact>geonetwork-main</gn.artifact>
+      <gn.version>${project.version}</gn.version>
+    -->
+    <gn.artifact>web-app</gn.artifact>
+    <gn.version>3.0.4-SNAPSHOT</gn.version>
   </properties>
   <build>
     <defaultGoal>generate-resources</defaultGoal>
@@ -128,8 +139,8 @@
         </dependency>
         <dependency>
           <groupId>org.geonetwork-opensource</groupId>
-          <artifactId>geonetwork-main</artifactId>
-          <version>${project.version}</version>
+          <artifactId>${gn.artifact}</artifactId>
+          <version>${gn.version}</version>
           <type>war</type>
         </dependency>
         <dependency>
