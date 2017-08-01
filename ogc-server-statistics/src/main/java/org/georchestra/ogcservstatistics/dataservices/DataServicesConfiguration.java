@@ -72,12 +72,12 @@ public final class DataServicesConfiguration {
 
 		Class.forName("org.postgresql.Driver");
 
-		if(this.connection == null){
+		if ((this.connection == null) || (this.connection.isClosed())) {
 			synchronized (this) {
-				
 				this.connection = DriverManager.getConnection(this.jdbcURL, this.user, this.password);
 			}
 		}
+
 		return this.connection;
 	}
 
