@@ -34,6 +34,9 @@ docker-build-geoserver-geofence: docker-pull-jetty-jre7
 	cd ../../webapp; \
 	../../mvn clean install docker:build -Pdocker,geofence -DskipTests
 
+docker-build-ldapadmin: docker-pull-jetty-jre8
+	./mvn clean package docker:build -Pdocker -DskipTests --pl ldapadmin
+
 docker-build-georchestra: docker-pull-jetty-jre8 docker-build-database docker-build-ldap docker-build-geoserver docker-build-gn3
 	./mvn clean package docker:build -Pdocker -DskipTests --pl extractorapp,cas-server-webapp,security-proxy,mapfishapp,header,ldapadmin,analytics,catalogapp,downloadform,geowebcache-webapp,atlas
 
