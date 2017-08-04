@@ -13,5 +13,5 @@ for dc_part in "${dc_parts[@]}"; do
 done
 
 # Recompute indexes (on a stopped service ONLY)
-slapindex -b ${dc_string}
+sudo -u openldap slapindex -b ${dc_string}
 echo "LDAP indexed"
