@@ -10,3 +10,4 @@ olcDbIndex: cn,uid eq
 add: olcDbIndex
 olcDbIndex: cn eq,sub,subfinal
 olcDbIndex: uid eq
+olcDbIndex: o eq
