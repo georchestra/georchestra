@@ -714,6 +714,7 @@ public class UsersController {
 		String title         = RequestUtil.getFieldValue(json, UserSchema.TITLE_KEY);
 		String description   = RequestUtil.getFieldValue(json, UserSchema.DESCRIPTION_KEY);
 		String manager       = RequestUtil.getFieldValue(json, UserSchema.MANAGER_KEY);
+		String context       = RequestUtil.getFieldValue(json, UserSchema.CONTEXT_KEY);
 		String org           = RequestUtil.getFieldValue(json, UserSchema.ORG_KEY);
 
 		if(givenName == null)
@@ -737,7 +738,20 @@ public class UsersController {
 
 		String commonName = AccountFactory.formatCommonName(givenName, surname);
 
-		Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, title, phone, description, postalAddress, postalCode, "", postOfficeBox, "", street, locality, facsimile, "","","","",manager,"", org);
+		Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, title, phone, description, postalAddress, postalCode, "", postOfficeBox, "", street, locality, facsimile, "","","","",manager,context, org);
+
+		String shadowExpire = RequestUtil.getFieldValue(json, UserSchema.SHADOW_EXPIRE_KEY);
+		if(shadowExpire != null) {
+			if("".equals(shadowExpire))
+				a.setShadowExpire(null);
+			else
+				try {
+					a.setShadowExpire((new SimpleDateFormat("yyyy-MM-dd")).parse(shadowExpire));
+				} catch (ParseException e) {
+					LOG.error(e.getMessage());
+					throw new IllegalArgumentException(e);
+				}
+		}
 
 		return a;
 
