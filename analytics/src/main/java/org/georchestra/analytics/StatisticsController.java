@@ -19,17 +19,29 @@
 
 package org.georchestra.analytics;
 
+import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
 
+import com.mchange.lang.StringUtils;
+import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.georchestra.analytics.dao.StatsRepo;
+import org.georchestra.analytics.util.DBConnection;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -160,6 +172,9 @@ public class StatisticsController {
 	@Autowired
 	private GeorchestraConfiguration georConfig;
 
+	private ComboPooledDataSource cpds;
+	private DBConnection db;
+
 	private DateTimeFormatter localInputFormatter;
 	private DateTimeFormatter dbOutputFormatter;
 
@@ -175,7 +190,7 @@ public class StatisticsController {
 	private static enum FORMAT { JSON, CSV }
 	private static enum REQUEST_TYPE { USAGE, EXTRACTION }
 
-	public StatisticsController(String localTimezone) {
+	public StatisticsController(String localTimezone) throws PropertyVetoException, SQLException {
 		// Parser to convert from local time to DB time (UTC)
 		this.localInputFormatter = DateTimeFormat.forPattern("yyyy-MM-dd")
 				.withZone(DateTimeZone.forID(localTimezone));
@@ -202,6 +217,11 @@ public class StatisticsController {
 				.withZone(DateTimeZone.forID("UTC"));
 		this.dbMonthOutputFormatter = DateTimeFormat.forPattern("yyyy-MM")
 				.withZone(DateTimeZone.forID(localTimezone));
+	}
+
+	@PostConstruct
+	public void init() throws PropertyVetoException, SQLException {
+		db = new DBConnection(georConfig.getProperty("dlJdbcUrlOGC"));
 	}
 
 	/**
@@ -273,7 +293,7 @@ public class StatisticsController {
 	            + "</code><br/>"
 	            + "is a valid request."
 	            + "")
-	public String combinedRequests(@RequestBody String payload, HttpServletResponse response) throws JSONException, ParseException {
+	public String combinedRequests(@RequestBody String payload, HttpServletResponse response) throws JSONException, ParseException, PropertyVetoException, SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		JSONObject input = null;
 		String userId  = null;
 		String groupId = null;
@@ -303,66 +323,56 @@ public class StatisticsController {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return null;
 		}
-		List<Object> lst = new ArrayList() ;
 		GRANULARITY g = guessGranularity(startDate, endDate);
-		if (userId != null) {
-			switch (g) {
+		Map<String, Object> values = new HashMap<String, Object>();
+
+		// Compute dates
+		values.put("startDate", startDate);
+		values.put("endDate", endDate);
+
+		// Compute expression to aggregate dates
+		String aggregateDate;
+		switch (g) {
 			case HOUR:
-				lst = statsRepository.getRequestCountForUserBetweenStartDateAndEndDateByHour(userId, startDate,
-						endDate);
+				aggregateDate = "YYYY-mm-dd HH24";
 				break;
 			case DAY:
-				lst = statsRepository.getRequestCountForUserBetweenStartDateAndEndDateByDay(userId, startDate, endDate);
+				aggregateDate = "YYYY-mm-dd";
 				break;
 			case WEEK:
-				lst = statsRepository.getRequestCountForUserBetweenStartDateAndEndDateByWeek(userId, startDate,
-						endDate);
+				aggregateDate = "YYYY-IW";
 				break;
 			case MONTH:
-				lst = statsRepository.getRequestCountForUserBetweenStartDateAndEndDateByMonth(userId, startDate,
-						endDate);
+				aggregateDate = "YYYY-mm";
 				break;
-			}
-		} else if (groupId != null){
-			switch (g) {
-			case HOUR:
-				lst = statsRepository.getRequestCountForGroupBetweenStartDateAndEndDateByHour(groupId, startDate,
-						endDate);
-				break;
-			case DAY:
-				lst = statsRepository.getRequestCountForGroupBetweenStartDateAndEndDateByDay(groupId, startDate, endDate);
-				break;
-			case WEEK:
-				lst = statsRepository.getRequestCountForGroupBetweenStartDateAndEndDateByWeek(groupId, startDate,
-						endDate);
-				break;
-			case MONTH:
-				lst = statsRepository.getRequestCountForGroupBetweenStartDateAndEndDateByMonth(groupId, startDate,
-						endDate);
-				break;
-			}
-		} else {
-			switch (g) {
-			case HOUR:
-				lst = statsRepository.getRequestCountBetweenStartDateAndEndDateByHour(startDate, endDate);
-				break;
-			case DAY:
-				lst = statsRepository.getRequestCountBetweenStartDateAndEndDateByDay(startDate, endDate);
-				break;
-			case WEEK:
-				lst = statsRepository.getRequestCountBetweenStartDateAndEndDateByWeek(startDate, endDate);
-				break;
-			case MONTH:
-				lst = statsRepository.getRequestCountBetweenStartDateAndEndDateByMonth(startDate, endDate);
-				break;
-			}
+			default:
+				throw new IllegalArgumentException("Invalid value for granularity");
 		}
+		values.put("aggregateDateExpression", aggregateDate);
+
+		String sql = "SELECT CAST(COUNT(*) AS integer) AS count, to_char(date, {aggregateDateExpression}) AS aggregate_date " +
+				"FROM ogcstatistics.ogc_services_log " +
+				"WHERE date >= CAST({startDate} AS timestamp without time zone) AND date < CAST({endDate} AS timestamp without time zone) ";
+
+		// Handle user and group
+		if (userId != null) {
+			values.put("user", userId);
+			sql += " AND user_name = {user} ";
+		}
+		if (groupId != null) {
+			values.put("group", groupId);
+			sql += " AND {group} = ANY (roles) ";
+		}
+
+		sql += "GROUP BY to_char(date, {aggregateDateExpression}) " +
+				"ORDER BY to_char(date, {aggregateDateExpression})";
+
+		ResultSet res = db.execute(db.generateQuery(sql,values));
 		JSONArray results = new JSONArray();
-		for (Object o : lst) {
-			Object[] row = (Object[]) o;
-			String date = (String) row[1];
-			date = this.convertUTCDateToLocal(date, g);
-			results.put(new JSONObject().put("count", row[0]).put("date", date));
+		while(res.next()) {
+			String date =  this.convertUTCDateToLocal(res.getString(2), g);
+			int count = res.getInt(1);
+			results.put(new JSONObject().put("count", count).put("aggregate_date", date));
 		}
 		return new JSONObject().put("results", results)
 				.put("granularity", g)

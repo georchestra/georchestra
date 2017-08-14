@@ -8,7 +8,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
+import java.beans.PropertyVetoException;
 import java.lang.reflect.Method;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 
@@ -318,7 +320,7 @@ public class StatisticsControllerTest {
 	}
 
 	@Test
-	public final void testGuessGranularity() throws ParseException {
+	public final void testGuessGranularity() throws ParseException, PropertyVetoException, SQLException {
 		StatisticsController ctrl = new StatisticsController("UTC");
 		Method m = ReflectionUtils.findMethod(ctrl.getClass(), "guessGranularity", String.class, String.class);
 		m.setAccessible(true);
@@ -355,7 +357,7 @@ public class StatisticsControllerTest {
 	}
 
 	@Test
-	public final void testConvertLocalDateToUTC(){
+	public final void testConvertLocalDateToUTC() throws PropertyVetoException, SQLException {
 
 		// Test with Paris timezone (positive offset with DST)
 		StatisticsController ctrl = new StatisticsController("Europe/Paris");
@@ -380,7 +382,7 @@ public class StatisticsControllerTest {
 	}
 
 	@Test
-	public final void testConvertUTCDateToLocal(){
+	public final void testConvertUTCDateToLocal() throws PropertyVetoException, SQLException {
 		// Test with Paris timezone (positive offset with DST)
 		StatisticsController ctrl = new StatisticsController("Europe/Paris");
 		Method m = ReflectionUtils.findMethod(ctrl.getClass(), "convertUTCDateToLocal", String.class, GRANULARITY.class);
