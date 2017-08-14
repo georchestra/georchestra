@@ -1,7 +1,6 @@
 package org.georchestra.analytics.util;
 
 import java.beans.PropertyVetoException;
-import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -38,7 +37,7 @@ public class DBConnection {
         }
     }
 
-    public String generateQuery(String sql, Map<String, Object> values) throws SQLException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public String generateQuery(String sql, Map<String, Object> values) throws SQLException {
 
         // Check connection to database
         this.checkConnection();

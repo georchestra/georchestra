@@ -23,12 +23,9 @@ import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
-import java.sql.Date;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -38,8 +35,6 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
 
-import com.mchange.lang.StringUtils;
-import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.georchestra.analytics.dao.StatsRepo;
 import org.georchestra.analytics.util.DBConnection;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
@@ -172,7 +167,6 @@ public class StatisticsController {
 	@Autowired
 	private GeorchestraConfiguration georConfig;
 
-	private ComboPooledDataSource cpds;
 	private DBConnection db;
 
 	private DateTimeFormatter localInputFormatter;
@@ -293,7 +287,7 @@ public class StatisticsController {
 	            + "</code><br/>"
 	            + "is a valid request."
 	            + "")
-	public String combinedRequests(@RequestBody String payload, HttpServletResponse response) throws JSONException, ParseException, PropertyVetoException, SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+	public String combinedRequests(@RequestBody String payload, HttpServletResponse response) throws JSONException, ParseException, SQLException {
 		JSONObject input = null;
 		String userId  = null;
 		String groupId = null;
@@ -390,7 +384,7 @@ public class StatisticsController {
 	 */
 	@RequestMapping(value="/layersUsage.json", method=RequestMethod.POST, produces= "application/json; charset=utf-8")
 	@ResponseBody
-	public String layersUsageJson(@RequestBody String payload, HttpServletResponse response) throws JSONException {
+	public String layersUsageJson(@RequestBody String payload, HttpServletResponse response) throws JSONException, SQLException {
 		return this.generateStats(payload, REQUEST_TYPE.USAGE, response, FORMAT.JSON);
 	}
 
@@ -405,7 +399,7 @@ public class StatisticsController {
 	 */
 	@RequestMapping(value="/layersUsage.csv", method=RequestMethod.POST, produces= "application/csv; charset=utf-8")
 	@ResponseBody
-	public String layersUsage(@RequestBody String payload, HttpServletResponse response) throws JSONException {
+	public String layersUsage(@RequestBody String payload, HttpServletResponse response) throws JSONException, SQLException {
 		return this.generateStats(payload, REQUEST_TYPE.USAGE, response, FORMAT.CSV);
 	}
 
@@ -420,7 +414,7 @@ public class StatisticsController {
 	 */
 	@RequestMapping(value="/layersExtraction.json", method=RequestMethod.POST, produces= "application/json; charset=utf-8")
 	@ResponseBody
-	public String layersExtractionJson(@RequestBody String payload, HttpServletResponse response) throws JSONException {
+	public String layersExtractionJson(@RequestBody String payload, HttpServletResponse response) throws JSONException, SQLException {
 		return this.generateStats(payload, REQUEST_TYPE.EXTRACTION, response, FORMAT.JSON);
 	}
 
@@ -474,7 +468,7 @@ public class StatisticsController {
 	 */
 	@RequestMapping(value="/layersExtraction.csv", method=RequestMethod.POST, produces= "application/csv; charset=utf-8")
 	@ResponseBody
-	public String layersExtractionCsv(@RequestBody String payload, HttpServletResponse response) throws JSONException {
+	public String layersExtractionCsv(@RequestBody String payload, HttpServletResponse response) throws JSONException, SQLException {
 		return this.generateStats(payload, REQUEST_TYPE.EXTRACTION, response, FORMAT.CSV);
 	}
 
@@ -487,7 +481,7 @@ public class StatisticsController {
 	 * @return
 	 * @throws JSONException
 	 */
-	private String generateStats(String payload, REQUEST_TYPE type, HttpServletResponse response, FORMAT format) throws JSONException {
+	private String generateStats(String payload, REQUEST_TYPE type, HttpServletResponse response, FORMAT format) throws JSONException,SQLException {
 
 		JSONObject input;
 		String userId, groupId;
@@ -512,73 +506,69 @@ public class StatisticsController {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return null;
 		}
-		List lst = null;
-		if (userId != null) {
-			if (limit != null)
-				switch (type) {
-					case EXTRACTION:
-						lst = statsRepository.getLayersExtractionForUserLimit(userId, startDate, endDate, limit); break;
-					case USAGE:
-						lst = statsRepository.getLayersStatisticsForUserLimit(userId, startDate, endDate, limit); break;
-				}
-			else
-				switch (type) {
-					case EXTRACTION:
-						lst = statsRepository.getLayersExtractionForUser(userId, startDate, endDate); break;
-					case USAGE:
-						lst = statsRepository.getLayersStatisticsForUser(userId, startDate, endDate); break;
-				}
-		} else if (groupId != null) {
-			if (limit != null)
-				switch (type) {
-					case EXTRACTION:
-						lst = statsRepository.getLayersExtractionForGroupLimit(groupId, startDate, endDate, limit); break;
-					case USAGE:
-						lst = statsRepository.getLayersStatisticsForGroupLimit(groupId, startDate, endDate, limit); break;
-				}
-			else
-				switch (type) {
-					case EXTRACTION:
-						lst = statsRepository.getLayersExtractionForGroup(groupId, startDate, endDate); break;
-					case USAGE:
-						lst = statsRepository.getLayersStatisticsForGroup(groupId, startDate, endDate); break;
-				}
+
+		String sql;
+		Map<String, Object> values = new HashMap<String, Object>();
+		values.put("startDate", startDate);
+		values.put("endDate", endDate);
+
+		if (type == REQUEST_TYPE.USAGE) {
+			sql = "SELECT layer, CAST(COUNT(*) AS integer) AS count " +
+				  "FROM ogcstatistics.ogc_services_log " +
+				  "WHERE date >= CAST({startDate} AS timestamp without time zone) AND date < CAST({endDate} AS timestamp without time zone) " +
+				  "AND layer != '' ";
+		} else if (type == REQUEST_TYPE.EXTRACTION){
+			sql = "SELECT layer_name AS layer, CAST(COUNT(*) AS integer) AS count " +
+				  "FROM extractorapp.extractor_layer_log " +
+				  "LEFT JOIN extractorapp.extractor_log " +
+				  "	ON (extractorapp.extractor_log.id = extractorapp.extractor_layer_log.extractor_log_id) " +
+			      "WHERE creation_date >= CAST({startDate} AS timestamp without time zone) AND creation_date < CAST({endDate} AS timestamp without time zone) " +
+				  "AND is_successful ";
 		} else {
-			if (limit != null)
-				switch (type) {
-					case EXTRACTION:
-						lst = statsRepository.getLayersExtractionLimit(startDate, endDate, limit); break;
-					case USAGE:
-						lst = statsRepository.getLayersStatisticsLimit(startDate, endDate, limit); break;
-				}
-			else
-				switch (type) {
-					case EXTRACTION:
-						lst = statsRepository.getLayersExtraction(startDate, endDate); break;
-					case USAGE:
-						lst = statsRepository.getLayersStatistics(startDate, endDate); break;
-				}
+			throw new IllegalArgumentException("Invalid request type : " + type);
 		}
+
+		if(groupId != null){
+			sql += " AND {group} = ANY(roles) ";
+			values.put("group", groupId);
+		}
+		if(userId != null){
+			sql += " AND username = {user} ";
+			values.put("user", userId);
+		}
+
+		if (type == REQUEST_TYPE.USAGE) {
+			sql += " GROUP BY layer " +
+				   "ORDER BY COUNT(*) DESC " ;
+		} else if (type == REQUEST_TYPE.EXTRACTION){
+			sql += " GROUP BY layer_name " +
+				   "ORDER BY COUNT(*) DESC";
+		} else {
+			throw new IllegalArgumentException("Invalid request type : " + type);
+		}
+
+		if(limit != null){
+			sql += " LIMIT {limit}";
+			values.put("limit", limit);
+		}
+
+		ResultSet sqlRes = db.execute(db.generateQuery(sql,values));
+
 		switch (format){
 			case JSON:
 				JSONArray results = new JSONArray();
-				for (Object o : lst) {
-					Object[] row = (Object[]) o;
-					results.put(new JSONObject().put("layer", row[0]).put("count", row[1]));
-				}
+				while(sqlRes.next())
+					results.put(new JSONObject().put("layer", sqlRes.getString("layer")).put("count", sqlRes.getInt("count")));
 				return new JSONObject().put("results", results)
 						.toString(4);
 			case CSV:
 				StringBuilder res = new StringBuilder("layer,count\n");
-				for (Object o : lst) {
-					Object[] row = (Object[]) o;
-					res.append(row[0] + "," + row[1] + "\n");
-				}
+				while(sqlRes.next())
+					res.append(sqlRes.getString("layer") + "," + sqlRes.getInt("count") + "\n");
 				return res.toString();
 			default:
 				throw new JSONException("Invalid format " + format);
 		}
-
 	}
 
 
