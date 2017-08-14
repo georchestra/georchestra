@@ -29,58 +29,18 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface StatsRepo extends PagingAndSortingRepository<Stats, Long> {
-	public List getRequestCountBetweenStartDateAndEndDateByHour(@Param("startDate") String startDate, @Param("endDate") String endDate);
-	public List getRequestCountBetweenStartDateAndEndDateByDay(@Param("startDate") String startDate, @Param("endDate") String endDate);
-	public List getRequestCountBetweenStartDateAndEndDateByWeek(@Param("startDate") String startDate, @Param("endDate") String endDate);
-	public List getRequestCountBetweenStartDateAndEndDateByMonth(@Param("startDate") String startDate, @Param("endDate") String endDate);
-	
-	public List getRequestCountForUserBetweenStartDateAndEndDateByHour(@Param("user") String user,
-			@Param("startDate") String startDate, @Param("endDate") String endDate);
 
-	public List getRequestCountForUserBetweenStartDateAndEndDateByDay(@Param("user") String user,
-			@Param("startDate") String startDate, @Param("endDate") String endDate);
+	List getLayersStatisticsForUser(@Param("user") String user, @Param("startDate") String startDate, @Param("endDate") String endDate);
 
-	public List getRequestCountForUserBetweenStartDateAndEndDateByWeek(@Param("user") String user,
-			@Param("startDate") String startDate, @Param("endDate") String endDate);
+	List getLayersStatisticsForUserLimit(@Param("user") String user, @Param("startDate") String startDate, @Param("endDate") String endDate, @Param("limit") int limit);
 
-	public List getRequestCountForUserBetweenStartDateAndEndDateByMonth(@Param("user") String user,
-			@Param("startDate") String startDate, @Param("endDate") String endDate);
+	List getLayersStatisticsForGroup(@Param("group") String group, @Param("startDate") String startDate, @Param("endDate") String endDate);
 
-	public List getRequestCountForGroupBetweenStartDateAndEndDateByHour(@Param("group") String group,
-			@Param("startDate") String startDate, @Param("endDate") String endDate);
+	List getLayersStatisticsForGroupLimit(@Param("group") String group, @Param("startDate") String startDate, @Param("endDate") String endDate, @Param("limit") int limit);
 
-	public List getRequestCountForGroupBetweenStartDateAndEndDateByDay(@Param("group") String group,
-			@Param("startDate") String startDate, @Param("endDate") String endDate);
+	List getLayersStatistics(@Param("startDate") String startDate, @Param("endDate") String endDate);
 
-	public List getRequestCountForGroupBetweenStartDateAndEndDateByWeek(@Param("group") String group,
-			@Param("startDate") String startDate, @Param("endDate") String endDate);
-
-	public List getRequestCountForGroupBetweenStartDateAndEndDateByMonth(@Param("group") String group,
-			@Param("startDate") String startDate, @Param("endDate") String endDate);
-
-	public List getDistinctUsers(@Param("startDate") String startDate, @Param("endDate") String endDate);
-	
-	public List getDistinctUsersByGroup(@Param("group") String group,
-			@Param("startDate") String startDate, @Param("endDate") String endDate);
-
-
-	public List getLayersStatisticsForUser(@Param("user") String user,
-			@Param("startDate") String startDate, @Param("endDate") String endDate);
-
-	public List getLayersStatisticsForUserLimit(@Param("user") String user,
-			@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("limit") int limit);
-
-	public List getLayersStatisticsForGroup(@Param("group") String group,
-			@Param("startDate") String startDate, @Param("endDate") String endDate);
-
-	public List getLayersStatisticsForGroupLimit(@Param("group") String group,
-			@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("limit") int limit);
-
-	public List getLayersStatistics(
-			@Param("startDate") String startDate, @Param("endDate") String endDate);
-
-	public List getLayersStatisticsLimit(
-			@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("limit") int limit);
+	List getLayersStatisticsLimit(@Param("startDate") String startDate, @Param("endDate") String endDate, @Param("limit") int limit);
 
 	List getLayersExtractionForUserLimit(@Param("user") String user,
 										 @Param("startDate") String startDate, @Param("endDate") String endDate,

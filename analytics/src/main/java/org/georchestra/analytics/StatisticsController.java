@@ -621,7 +621,7 @@ public class StatisticsController {
             + "<code>"
             + "{ startDate: 2015-01-01, endDate: 2015-12-01 }"
             + "</code>")
-	public void distinctUsers(@RequestBody String payload, HttpServletResponse response) throws JSONException, IOException {
+	public void distinctUsers(@RequestBody String payload, HttpServletResponse response) throws JSONException, IOException, InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
 		JSONObject input;
 		String groupId = null;
 		String startDate;
@@ -645,41 +645,49 @@ public class StatisticsController {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
-		List lst = null;
+
+		Map<String, Object> values = new HashMap<String, Object>();
+		values.put("startDate", startDate);
+		values.put("endDate", endDate);
+		String sql = "SELECT user_name, org, CAST(COUNT(*) AS integer) AS count " +
+				"FROM ogcstatistics.ogc_services_log " +
+				"WHERE date >= CAST({startDate} AS timestamp without time zone) AND date < CAST({endDate} AS timestamp without time zone) ";
+
 		if (groupId != null) {
-			lst = statsRepository.getDistinctUsersByGroup(groupId, startDate, endDate);
-		} else {
-			lst = statsRepository.getDistinctUsers(startDate, endDate);
+			values.put("group", groupId);
+			sql += " AND {group} = ANY (roles) ";
 		}
+
+		sql += "GROUP BY user_name, org " +
+			   "ORDER BY COUNT(*) DESC";
 
 		// Extract list of user to ignore in stats
 		Set<String> excluded_users = new HashSet<String>();
 		excluded_users.add("anonymousUser");
-		for(int i=1;true; i++){
+		for (int i = 1; true; i++) {
 			String user = this.georConfig.getProperty("excludedUser.uid" + i);
-			if(user != null)
+			if (user != null)
 				excluded_users.add(user);
 			else
 				break;
 		}
-
+		System.out.println(this.db.generateQuery(sql, values));
+		ResultSet res = this.db.execute(this.db.generateQuery(sql, values));
 		JSONArray results = new JSONArray();
-		for (Object o : lst) {
-			Object[] r = (Object[]) o;
-			// Don"t include excluded user stats
-			if(excluded_users.contains(r[0]))
+		while (res.next()) {
+			if (excluded_users.contains(res.getString("user_name")))
 				continue;
 			JSONObject row = new JSONObject();
-			row.put("user", r[0]);
-			row.put("organization", r[1]);
-			row.put("nb_requests", r[2]);
+			row.put("user", res.getString("user_name"));
+			row.put("organization", res.getString("org"));
+			row.put("nb_requests", res.getString("count"));
 			results.put(row);
 		}
-		String res = new JSONObject().put("results", results)
+		String jsonOutput = new JSONObject().put("results", results)
 				.toString(4);
 
 		PrintWriter writer = response.getWriter();
-		writer.print(res);
+		writer.print(jsonOutput);
 		writer.close();
 	}
 	
