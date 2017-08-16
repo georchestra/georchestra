@@ -1,8 +1,8 @@
 package org.georchestra.analytics.util;
 
+import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,15 +15,15 @@ import java.util.regex.Pattern;
 
 public class DBConnection {
 
+    private DataSource dataSource;
     private Pattern namedParameterPattern;
     private Connection nativeConnection;
-    private String jdbcUrl;
 
-    public DBConnection(String jdbcUrl) throws PropertyVetoException, SQLException {
+    public DBConnection(DataSource jpaDataSource) throws PropertyVetoException, SQLException {
 
         this.namedParameterPattern = Pattern.compile("\\{(\\w+)\\}");
-        this.jdbcUrl =  jdbcUrl;
-        this.nativeConnection = DriverManager.getConnection(jdbcUrl);
+        this.nativeConnection = jpaDataSource.getConnection();
+        this.dataSource = jpaDataSource;
     }
 
     private void checkConnection() throws SQLException {
@@ -37,7 +37,7 @@ public class DBConnection {
             } catch(SQLException ex){}
 
             // Try to reconnect to DB one time
-            this.nativeConnection = DriverManager.getConnection(jdbcUrl);
+            this.nativeConnection = this.dataSource.getConnection();
         }
     }
 

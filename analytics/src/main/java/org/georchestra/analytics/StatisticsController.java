@@ -33,6 +33,7 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 import org.georchestra.analytics.util.DBConnection;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
@@ -162,6 +163,9 @@ public class StatisticsController {
     @Autowired
 	private GeorchestraConfiguration georConfig;
 
+	@Autowired
+	private DataSource jpaDataSource;
+
 	private DBConnection db;
 
 	private DateTimeFormatter localInputFormatter;
@@ -210,7 +214,7 @@ public class StatisticsController {
 
 	@PostConstruct
 	public void init() throws PropertyVetoException, SQLException {
-		this.db = new DBConnection(georConfig.getProperty("dlJdbcUrlOGC"));
+		this.db = new DBConnection(this.jpaDataSource);
 	}
 	// Getter and setter for unit tests
 

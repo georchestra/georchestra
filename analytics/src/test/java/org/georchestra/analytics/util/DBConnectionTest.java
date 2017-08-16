@@ -1,5 +1,6 @@
 package org.georchestra.analytics.util;
 
+import org.apache.commons.dbcp.BasicDataSource;
 import org.georchestra.analytics.util.DBConnection;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.joda.time.DateTime;
@@ -26,7 +27,17 @@ public class DBConnectionTest {
         Map<String, String> env = System.getenv();
         Assume.assumeTrue(env.containsKey("JDBC_TEST_URL"));
 
-        DBConnection conn = new DBConnection(env.get("JDBC_TEST_URL"));
+        BasicDataSource dataSource = new BasicDataSource();
+        dataSource.setUrl(env.get("JDBC_TEST_URL"));
+        dataSource.setDriverClassName("org.postgresql.Driver");
+        dataSource.setTestOnBorrow(true);
+        dataSource.setValidationQuery("select 1 as dbcp_connection_test");
+        dataSource.setPoolPreparedStatements(true);
+        dataSource.setMaxOpenPreparedStatements(-1);
+        dataSource.setDefaultReadOnly(false);
+        dataSource.setDefaultAutoCommit(true);
+
+        DBConnection conn = new DBConnection(dataSource);
 
         String sql = "SELECT CAST(COUNT(*) AS integer) AS count, to_char(date, {aggregateDate}) " +
                 "FROM ogcstatistics.ogc_services_log " +
