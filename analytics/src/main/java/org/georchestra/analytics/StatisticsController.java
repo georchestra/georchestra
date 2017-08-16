@@ -215,7 +215,7 @@ public class StatisticsController {
 
 	@PostConstruct
 	public void init() throws PropertyVetoException, SQLException {
-		db = new DBConnection(georConfig.getProperty("dlJdbcUrlOGC"));
+		this.db = new DBConnection(georConfig.getProperty("dlJdbcUrlOGC"));
 	}
 
 	/**
@@ -289,42 +289,36 @@ public class StatisticsController {
 	            + "")
 	public String combinedRequests(@RequestBody String payload, HttpServletResponse response) throws JSONException, ParseException, SQLException {
 		JSONObject input = null;
-		String userId  = null;
-		String groupId = null;
-		String startDate;
-		String endDate;
+
+		// Parse Input
 		try {
 			input = new JSONObject(payload);
 			if (!input.has("startDate") || !input.has("endDate")) {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return null;
 			}
-
-			startDate = this.convertLocalDateToUTC(input.getString("startDate"));
-			endDate = this.convertLocalDateToUTC(input.getString("endDate"));
 		} catch (Throwable e) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return null;
 		}
-		if (input.has("user")) {
-			userId = input.getString("user");
-		}
-		if (input.has("group")) {
-			groupId = "ROLE_" + input.getString("group");
-		}
+
+		// Fetch date, user and group filters
+		Map<String, Object> sqlValues = new HashMap<String, Object>();
+		sqlValues.put("startDate", this.convertLocalDateToUTC(input.getString("startDate")));
+		sqlValues.put("endDate", this.convertLocalDateToUTC(input.getString("endDate")));
+
 		// not both group and user can be defined at the same time
-		if ((userId != null) && (groupId != null)) {
+		if (input.has("user") && input.has("group")) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return null;
 		}
-		GRANULARITY g = guessGranularity(startDate, endDate);
-		Map<String, Object> values = new HashMap<String, Object>();
-
-		// Compute dates
-		values.put("startDate", startDate);
-		values.put("endDate", endDate);
+		if (input.has("user"))
+			sqlValues.put("user", input.getString("user"));
+		if (input.has("group"))
+			sqlValues.put("group", "ROLE_" + input.getString("group"));
 
 		// Compute expression to aggregate dates
+		GRANULARITY g = guessGranularity((String) sqlValues.get("startDate"),(String) sqlValues.get("endDate"));
 		String aggregateDate;
 		switch (g) {
 			case HOUR:
@@ -342,31 +336,31 @@ public class StatisticsController {
 			default:
 				throw new IllegalArgumentException("Invalid value for granularity");
 		}
-		values.put("aggregateDateExpression", aggregateDate);
+		sqlValues.put("aggregateDateExpression", aggregateDate);
 
-		String sql = "SELECT CAST(COUNT(*) AS integer) AS count, to_char(date, {aggregateDateExpression}) AS aggregate_date " +
-				"FROM ogcstatistics.ogc_services_log " +
-				"WHERE date >= CAST({startDate} AS timestamp without time zone) AND date < CAST({endDate} AS timestamp without time zone) ";
+		// Generate SQL query
+		String sql = "SELECT CAST(COUNT(*) AS integer) AS count," +
+				"            to_char(date, {aggregateDateExpression}) AS aggregate_date " +
+				"     FROM ogcstatistics.ogc_services_log " +
+				"     WHERE date >= CAST({startDate} AS timestamp without time zone) " +
+				"     AND date < CAST({endDate} AS timestamp without time zone) ";
 
 		// Handle user and group
-		if (userId != null) {
-			values.put("user", userId);
+		if (input.has("user"))
 			sql += " AND user_name = {user} ";
-		}
-		if (groupId != null) {
-			values.put("group", groupId);
+		if (input.has("group"))
 			sql += " AND {group} = ANY (roles) ";
-		}
 
 		sql += "GROUP BY to_char(date, {aggregateDateExpression}) " +
 				"ORDER BY to_char(date, {aggregateDateExpression})";
 
-		ResultSet res = db.execute(db.generateQuery(sql,values));
+		// Fetch and format results
+		ResultSet res = db.execute(db.generateQuery(sql,sqlValues));
 		JSONArray results = new JSONArray();
 		while(res.next()) {
-			String date =  this.convertUTCDateToLocal(res.getString(2), g);
-			int count = res.getInt(1);
-			results.put(new JSONObject().put("count", count).put("aggregate_date", date));
+			String date =  this.convertUTCDateToLocal(res.getString("aggregate_date"), g);
+			int count = res.getInt("count");
+			results.put(new JSONObject().put("count", count).put("date", date));
 		}
 		return new JSONObject().put("results", results)
 				.put("granularity", g)
@@ -488,16 +482,20 @@ public class StatisticsController {
 		String startDate;
 		String endDate;
 		Integer limit;
+		Map<String, Object> sqlValues = new HashMap<String, Object>();
 
 		try {
 			input = new JSONObject(payload);
-			startDate = this.getStartDate(input);
-			endDate = this.getEndDate(input);
+			sqlValues.put("startDate", this.getStartDate(input));
+			sqlValues.put("endDate", this.getEndDate(input));
 			limit = this.getLimit(input);
 			userId = this.getUser(input);
 			groupId = this.getGroup(input);
+			sqlValues.put("group", groupId);
+			sqlValues.put("user", userId);
+			sqlValues.put("limit", limit);
 
-			if (startDate == null || endDate == null) {
+			if (sqlValues.get("startDate") == null || sqlValues.get("endDate") == null) {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return null;
 			}
@@ -508,9 +506,6 @@ public class StatisticsController {
 		}
 
 		String sql;
-		Map<String, Object> values = new HashMap<String, Object>();
-		values.put("startDate", startDate);
-		values.put("endDate", endDate);
 
 		if (type == REQUEST_TYPE.USAGE) {
 			sql = "SELECT layer, CAST(COUNT(*) AS integer) AS count " +
@@ -528,14 +523,10 @@ public class StatisticsController {
 			throw new IllegalArgumentException("Invalid request type : " + type);
 		}
 
-		if(groupId != null){
+		if(groupId != null)
 			sql += " AND {group} = ANY(roles) ";
-			values.put("group", groupId);
-		}
-		if(userId != null){
+		if(userId != null)
 			sql += " AND username = {user} ";
-			values.put("user", userId);
-		}
 
 		if (type == REQUEST_TYPE.USAGE) {
 			sql += " GROUP BY layer " +
@@ -549,10 +540,10 @@ public class StatisticsController {
 
 		if(limit != null){
 			sql += " LIMIT {limit}";
-			values.put("limit", limit);
+
 		}
 
-		ResultSet sqlRes = db.execute(db.generateQuery(sql,values));
+		ResultSet sqlRes = db.execute(db.generateQuery(sql,sqlValues));
 
 		switch (format){
 			case JSON:
@@ -620,33 +611,33 @@ public class StatisticsController {
 		response.setContentType("application/json; charset=UTF-8");
 		response.setCharacterEncoding("UTF-8");
 
+		Map<String, Object> sqlValues = new HashMap<String, Object>();
+
+		// Parse input
 		try {
 			input = new JSONObject(payload);
 			if (!input.has("startDate") || !input.has("endDate")) {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return;
 			}
-			startDate = this.convertLocalDateToUTC(input.getString("startDate"));
-			endDate = this.convertLocalDateToUTC(input.getString("endDate"));
+			sqlValues.put("startDate", this.convertLocalDateToUTC(input.getString("startDate")));
+			sqlValues.put("endDate", this.convertLocalDateToUTC(input.getString("endDate")));
+
 			if (input.has("group")) {
-				groupId = "ROLE_" + input.getString("group");
+				sqlValues.put("group", "ROLE_" + input.getString("group"));
 			}
 		} catch (Throwable e) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}
 
-		Map<String, Object> values = new HashMap<String, Object>();
-		values.put("startDate", startDate);
-		values.put("endDate", endDate);
+		// construct SQL query
 		String sql = "SELECT user_name, org, CAST(COUNT(*) AS integer) AS count " +
 				"FROM ogcstatistics.ogc_services_log " +
 				"WHERE date >= CAST({startDate} AS timestamp without time zone) AND date < CAST({endDate} AS timestamp without time zone) ";
 
-		if (groupId != null) {
-			values.put("group", groupId);
+		if (groupId != null)
 			sql += " AND {group} = ANY (roles) ";
-		}
 
 		sql += "GROUP BY user_name, org " +
 			   "ORDER BY COUNT(*) DESC";
@@ -661,8 +652,9 @@ public class StatisticsController {
 			else
 				break;
 		}
-		System.out.println(this.db.generateQuery(sql, values));
-		ResultSet res = this.db.execute(this.db.generateQuery(sql, values));
+
+		// Fetch and format results
+		ResultSet res = this.db.execute(this.db.generateQuery(sql, sqlValues));
 		JSONArray results = new JSONArray();
 		while (res.next()) {
 			if (excluded_users.contains(res.getString("user_name")))

@@ -32,6 +32,10 @@ public class DBConnection {
             Statement st = this.nativeConnection.createStatement();
             st.executeQuery("SELECT 1");
         } catch (SQLException e) {
+            try{
+                this.nativeConnection.close();
+            } catch(SQLException ex){}
+
             // Try to reconnect to DB one time
             this.nativeConnection = DriverManager.getConnection(jdbcUrl);
         }
