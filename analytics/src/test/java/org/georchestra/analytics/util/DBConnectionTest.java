@@ -22,6 +22,7 @@ public class DBConnectionTest {
     private GeorchestraConfiguration georConfig;
 
     @Test
+    // Test parameter remplacment
     public void testParameter() throws PropertyVetoException, SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 
         Map<String, String> env = System.getenv();

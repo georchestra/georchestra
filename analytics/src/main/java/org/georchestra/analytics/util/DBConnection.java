@@ -13,6 +13,28 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * The purpose of this class is to keep parameter replacment feature without using SQL prepared statements.
+ *
+ * Prepared statements implies that SQL plan execution is computed before parameters values are known. So with
+ * partitioned table, execution plan is always wrong and all tables are scanned. This lead to very long query.
+ * To fix this issue, this class, use a standard Statement instance to use parameter remplacment and then get raw SQL
+ * query with toString() method. Then a second method provide a reconnection feature and test db connection before
+ * sending real query to the database. If test fails, one reconnection is tried.
+ * Another feature of this class, it adds a name on sql parameter: '?' is replaced by parameter name in braces : {\w+}
+ *
+ * Example :
+ *
+ * String sql = "SELECT * FROM users WHERE group_name = {group} LIMIT {count}";
+ * Map<String, Object> sqlValues = new HashMap<String, Object>();
+ * sqlValues.put("group", "admin");
+ * sqlValues.put("count", 100);
+ *
+ * DBConnection db = new DBConnection(jpaDataSource);
+ * String rawSql = db.generateQuery(sql, sqlValues);
+ * ResultSet res = db.execute(rawSql);
+ *
+ */
 public class DBConnection {
 
     private DataSource dataSource;
