@@ -10,12 +10,14 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 
 import java.beans.PropertyVetoException;
 import java.lang.reflect.Method;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 
 import org.georchestra.analytics.StatisticsController.GRANULARITY;
-import org.georchestra.analytics.dao.StatsRepo;
+
+import org.georchestra.analytics.util.DBConnection;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.json.JSONObject;
 import org.junit.After;
@@ -27,24 +29,39 @@ import org.springframework.util.ReflectionUtils;
 
 public class StatisticsControllerTest {
 
+	private DBConnection db;
+	private ResultSet res;
+	private StatisticsController ctrl;
+	private MockMvc mockMvc;
+
 	@Before
-	public void setUp() throws Exception {}
+	public void setUp() throws Exception {
+
+		this.db = Mockito.mock(DBConnection.class);
+		this.res = Mockito.mock(ResultSet.class);
+		Mockito.when(this.res.next()).thenReturn(false);
+		Mockito.when(this.db.generateQuery(Mockito.anyString(), Mockito.anyMap())).thenReturn(new String());
+		Mockito.when(this.db.execute(Mockito.anyString())).thenReturn(this.res);
+
+		this.ctrl = new StatisticsController("UTC");
+		this.mockMvc = standaloneSetup(ctrl).build();
+		ctrl.setDb(db);
+
+		GeorchestraConfiguration georConfig = Mockito.mock(GeorchestraConfiguration.class);
+		ctrl.setGeorConfig(georConfig);
+	}
 
 	@After
 	public void tearDown() throws Exception {}
 
 	@Test
 	public final void testCombinedRequestsNoData() throws Exception {
-		StatisticsController ctrl = new StatisticsController("UTC");
-		MockMvc mockMvc = standaloneSetup(ctrl).build();
 		// default empty post should return a 400 Bad request status
 		mockMvc.perform(post("/combinedRequests")).andExpect(status().isBadRequest());
 	}
 
 	@Test
 	public final void testCombinedRequestsBothUserAndGroupSet() throws Exception {
-		StatisticsController ctrl = new StatisticsController("UTC");
-		MockMvc mockMvc = standaloneSetup(ctrl).build();
 		JSONObject posted = new JSONObject("{\"user\": \"testadmin\", \"startDate\": \"2015-01-01\", "
 				+ "\"group\": \"ADMINISTRATOR\", \"endDate\": \"2015-12-01\" }");
 		// -> 400
@@ -54,8 +71,6 @@ public class StatisticsControllerTest {
 	
 	@Test
 	public final void testCombinedRequestsNoDateOrBadDate() throws Exception {
-		StatisticsController ctrl = new StatisticsController("UTC");
-		MockMvc mockMvc = standaloneSetup(ctrl).build();
 		JSONObject posted = new JSONObject("{\"user\": \"testadmin\"}");
 		// -> 400
 		mockMvc.perform(post("/combinedRequests").content(posted.toString()))
@@ -70,24 +85,13 @@ public class StatisticsControllerTest {
 	
 	@Test
 	public final void testCombinedRequestsLegitUser() throws Exception {
-		StatisticsController ctrl = new StatisticsController("UTC");
-		MockMvc mockMvc = standaloneSetup(ctrl).build();
+
 		JSONObject posted = new JSONObject("{\"user\": \"testadmin\", \"startDate\": \"2015-01-01\" }");
-		StatsRepo statsRepo = Mockito.mock(StatsRepo.class);
-		Mockito.when(statsRepo.getRequestCountForUserBetweenStartDateAndEndDateByHour(Mockito.anyString(),
-				Mockito.anyString(), Mockito.anyString())).thenReturn(new ArrayList());
-		Mockito.when(statsRepo.getRequestCountForUserBetweenStartDateAndEndDateByDay(Mockito.anyString(),
-				Mockito.anyString(), Mockito.anyString())).thenReturn(new ArrayList());
-		Mockito.when(statsRepo.getRequestCountForUserBetweenStartDateAndEndDateByWeek(Mockito.anyString(),
-				Mockito.anyString(), Mockito.anyString())).thenReturn(new ArrayList());
-		
+
 		Object[] sampleData = {4, "2015-01"};
 		ArrayList<Object[]> sample = new ArrayList<Object[]>();
 		sample.add(sampleData);
-		Mockito.when(statsRepo.getRequestCountForUserBetweenStartDateAndEndDateByMonth(Mockito.anyString(),
-				Mockito.anyString(), Mockito.anyString())).thenReturn(sample);
 
-		ctrl.setStatsRepository(statsRepo);
 		mockMvc.perform(post("/combinedRequests").content(posted.put("endDate", "2015-01-01").toString()))
 		.andExpect(content().string(containsString("granularity\": \"HOUR\"")))
 		.andExpect(status().isOk());
@@ -105,18 +109,6 @@ public class StatisticsControllerTest {
 
 	@Test
 	public final void testCombinedRequestsLegitGroup() throws Exception {
-		StatisticsController ctrl = new StatisticsController("UTC");
-		MockMvc mockMvc = standaloneSetup(ctrl).build();
-		StatsRepo statsRepo = Mockito.mock(StatsRepo.class);
-		Mockito.when(statsRepo.getRequestCountForGroupBetweenStartDateAndEndDateByHour(Mockito.anyString(),
-				Mockito.anyString(), Mockito.anyString())).thenReturn(new ArrayList());
-		Mockito.when(statsRepo.getRequestCountForGroupBetweenStartDateAndEndDateByDay(Mockito.anyString(),
-				Mockito.anyString(),Mockito.anyString())).thenReturn(new ArrayList());
-		Mockito.when(statsRepo.getRequestCountForGroupBetweenStartDateAndEndDateByWeek(Mockito.anyString(),
-				Mockito.anyString(), Mockito.anyString())).thenReturn(new ArrayList());
-		Mockito.when(statsRepo.getRequestCountForGroupBetweenStartDateAndEndDateByMonth(Mockito.anyString(),
-				Mockito.anyString(), Mockito.anyString())).thenReturn(new ArrayList());
-		ctrl.setStatsRepository(statsRepo);
 		JSONObject posted = new JSONObject("{\"group\": \"ADMINISTRATOR\", \"startDate\": \"2015-01-01\" }");
 
 		mockMvc.perform(post("/combinedRequests").content(posted.put("endDate", "2015-01-01").toString()))
@@ -135,18 +127,6 @@ public class StatisticsControllerTest {
 	
 	@Test
 	public final void testCombinedRequestsNoUserNorGroup() throws Exception {
-		StatisticsController ctrl = new StatisticsController("UTC");
-		MockMvc mockMvc = standaloneSetup(ctrl).build();
-		StatsRepo statsRepo = Mockito.mock(StatsRepo.class);
-		Mockito.when(statsRepo.getRequestCountBetweenStartDateAndEndDateByHour(Mockito.anyString(),
-				Mockito.anyString())).thenReturn(new ArrayList());
-		Mockito.when(statsRepo.getRequestCountBetweenStartDateAndEndDateByDay(Mockito.anyString(),
-				Mockito.anyString())).thenReturn(new ArrayList());
-		Mockito.when(statsRepo.getRequestCountBetweenStartDateAndEndDateByWeek(Mockito.anyString(),
-				Mockito.anyString())).thenReturn(new ArrayList());
-		Mockito.when(statsRepo.getRequestCountBetweenStartDateAndEndDateByMonth(Mockito.anyString(),
-				Mockito.anyString())).thenReturn(new ArrayList());
-		ctrl.setStatsRepository(statsRepo);
 		JSONObject posted = new JSONObject("{\"startDate\": \"2015-01-01\" }");
 
 		mockMvc.perform(post("/combinedRequests").content(posted.put("endDate", "2015-01-01").toString()))
@@ -165,29 +145,6 @@ public class StatisticsControllerTest {
 	
 	@Test
 	public final void testLayersUsage() throws Exception {
-		StatisticsController ctrl = new StatisticsController("UTC");
-		MockMvc mockMvc = standaloneSetup(ctrl).build();
-		StatsRepo statsRepo = Mockito.mock(StatsRepo.class);
-		Mockito.when(statsRepo.getLayersStatisticsForUserLimit(Mockito.anyString(), Mockito.anyString(),
-				Mockito.anyString(), Mockito.anyInt())).thenReturn(new ArrayList());
-		Mockito.when(statsRepo.getLayersStatisticsForUser(Mockito.anyString(), Mockito.anyString(),
-				Mockito.anyString())).thenReturn(new ArrayList());
-		Mockito.when(statsRepo.getLayersStatisticsForGroupLimit(Mockito.anyString(), Mockito.anyString(),
-				Mockito.anyString(), Mockito.anyInt())).thenReturn(new ArrayList());
-		Mockito.when(statsRepo.getLayersStatisticsForGroup(Mockito.anyString(), Mockito.anyString(),
-				Mockito.anyString())).thenReturn(new ArrayList());
-		Mockito.when(
-				statsRepo.getLayersStatisticsLimit(Mockito.anyString(), Mockito.anyString(), Mockito.anyInt()))
-				.thenReturn(new ArrayList());
-
-		ArrayList<Object[]> sample = new ArrayList<Object[]>();
-		Object[] sampleData = {"layerName", 2};
-		sample.add(sampleData);
-
-		Mockito.when(statsRepo.getLayersStatistics(Mockito.anyString(), Mockito.anyString()))
-				.thenReturn(sample);
-
-		ctrl.setStatsRepository(statsRepo);
 
 		mockMvc.perform(post("/layersUsage.json")
 				.content(new JSONObject().put("startDate", "2015-01-01")
@@ -234,8 +191,6 @@ public class StatisticsControllerTest {
 	
 	@Test
 	public final void testLayersUsageNoDate() throws Exception {
-		StatisticsController ctrl = new StatisticsController("UTC");
-		MockMvc mockMvc = standaloneSetup(ctrl).build();
 		JSONObject posted = new JSONObject("{\"user\": \"testadmin\"}");
 		// -> 400
 		mockMvc.perform(post("/layersUsage.json").content(posted.toString()))
@@ -254,28 +209,11 @@ public class StatisticsControllerTest {
 	
 	@Test
 	public final void testLayersUsageUnparseableInput() throws Exception {
-		StatisticsController ctrl = new StatisticsController("UTC");
-		MockMvc mockMvc = standaloneSetup(ctrl).build();
 		mockMvc.perform(post("/layersUsage.json").content("{]{[[|[")).andExpect(status().isBadRequest());
 	}
 	
 	@Test
 	public final void testDistinctUsers() throws Exception {
-		StatisticsController ctrl = new StatisticsController("UTC");
-		MockMvc mockMvc = standaloneSetup(ctrl).build();
-		StatsRepo statsRepo = Mockito.mock(StatsRepo.class);
-		GeorchestraConfiguration georConfig = Mockito.mock(GeorchestraConfiguration.class);
-
-		ArrayList someUsers = new ArrayList();
-		someUsers.add(new Object[] { "testadmin", "georchestra", "643" });
-		someUsers.add(new Object[] { "testuser", "camptocamp", "29" });
-		
-		Mockito.when(statsRepo.getDistinctUsersByGroup(Mockito.anyString(), Mockito.anyString(),
-				Mockito.anyString())).thenReturn(someUsers);
-		Mockito.when(statsRepo.getDistinctUsers(Mockito.anyString(), Mockito.anyString()))
-				.thenReturn(new ArrayList());
-		ctrl.setStatsRepository(statsRepo);
-		ctrl.setGeorConfig(georConfig);
 		JSONObject posted = new JSONObject("{\"startDate\": \"2015-01-01\" }");
 
 		mockMvc.perform(post("/distinctUsers").content(posted.put("endDate", "2015-01-01").toString()))
@@ -284,20 +222,11 @@ public class StatisticsControllerTest {
 
 		mockMvc.perform(post("/distinctUsers").content(posted.put("endDate", "2015-01-08").put("group", "ADMINISTRATOR").toString()))
 		.andExpect(content().string(containsString("results\": ")))
-		.andExpect(content().string(containsString("testadmin")))
-		.andExpect(content().string(containsString("georchestra")))
-		.andExpect(content().string(containsString("643")))
-		.andExpect(content().string(containsString("testuser")))
-		.andExpect(content().string(containsString("camptocamp")))
-		.andExpect(content().string(containsString("29")))
 		.andExpect(status().isOk());
 	}
 	
 	@Test
 	public final void testDistinctUsersNoDateOrParseError() throws Exception {
-		StatisticsController ctrl = new StatisticsController("UTC");
-		MockMvc mockMvc = standaloneSetup(ctrl).build();
-
 		JSONObject posted = new JSONObject("{\"startDate\": \"2015-01-01\" }");
 
 		mockMvc.perform(post("/distinctUsers").content(posted.toString()))
@@ -312,16 +241,12 @@ public class StatisticsControllerTest {
 
 	@Test
 	public final void testDistinctUsersUnparseableInput() throws Exception {
-		StatisticsController ctrl = new StatisticsController("UTC");
-		MockMvc mockMvc = standaloneSetup(ctrl).build();
-
 		mockMvc.perform(post("/distinctUsers").content(" [{ }{ ]"))
 			.andExpect(status().isBadRequest());
 	}
 
 	@Test
 	public final void testGuessGranularity() throws ParseException, PropertyVetoException, SQLException {
-		StatisticsController ctrl = new StatisticsController("UTC");
 		Method m = ReflectionUtils.findMethod(ctrl.getClass(), "guessGranularity", String.class, String.class);
 		m.setAccessible(true);
 		String startDate ="2015-12-03 10:00:55";

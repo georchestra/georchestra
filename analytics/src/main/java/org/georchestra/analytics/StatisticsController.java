@@ -28,14 +28,12 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
 
-import org.georchestra.analytics.dao.StatsRepo;
 import org.georchestra.analytics.util.DBConnection;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.joda.time.DateTime;
@@ -162,9 +160,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class StatisticsController {
 
     @Autowired
-    private StatsRepo statsRepository;
-
-	@Autowired
 	private GeorchestraConfiguration georConfig;
 
 	private DBConnection db;
@@ -217,14 +212,7 @@ public class StatisticsController {
 	public void init() throws PropertyVetoException, SQLException {
 		this.db = new DBConnection(georConfig.getProperty("dlJdbcUrlOGC"));
 	}
-
-	/**
-     * Setter used mainly for testing purposes.
-     * @param statsRepository
-     */
-    public void setStatsRepository(StatsRepo statsRepository) {
-		this.statsRepository = statsRepository;
-	}
+	// Getter and setter for unit tests
 
 	public GeorchestraConfiguration getGeorConfig() {
 		return georConfig;
@@ -233,6 +221,12 @@ public class StatisticsController {
 	public void setGeorConfig(GeorchestraConfiguration georConfig) {
 		this.georConfig = georConfig;
 	}
+
+	public void setDb(DBConnection db) {
+		this.db = db;
+	}
+
+
 
 	/** Granularity used for the returned date type in combined requests statistics */
 	public static enum GRANULARITY { HOUR, DAY, WEEK, MONTH }
@@ -288,7 +282,9 @@ public class StatisticsController {
 	            + "is a valid request."
 	            + "")
 	public String combinedRequests(@RequestBody String payload, HttpServletResponse response) throws JSONException, ParseException, SQLException {
+
 		JSONObject input = null;
+		Map<String, Object> sqlValues = new HashMap<String, Object>();
 
 		// Parse Input
 		try {
@@ -297,15 +293,14 @@ public class StatisticsController {
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				return null;
 			}
+
+			sqlValues.put("startDate", this.convertLocalDateToUTC(input.getString("startDate")));
+			sqlValues.put("endDate", this.convertLocalDateToUTC(input.getString("endDate")));
+
 		} catch (Throwable e) {
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return null;
 		}
-
-		// Fetch date, user and group filters
-		Map<String, Object> sqlValues = new HashMap<String, Object>();
-		sqlValues.put("startDate", this.convertLocalDateToUTC(input.getString("startDate")));
-		sqlValues.put("endDate", this.convertLocalDateToUTC(input.getString("endDate")));
 
 		// not both group and user can be defined at the same time
 		if (input.has("user") && input.has("group")) {
@@ -318,7 +313,7 @@ public class StatisticsController {
 			sqlValues.put("group", "ROLE_" + input.getString("group"));
 
 		// Compute expression to aggregate dates
-		GRANULARITY g = guessGranularity((String) sqlValues.get("startDate"),(String) sqlValues.get("endDate"));
+		GRANULARITY g = this.guessGranularity((String) sqlValues.get("startDate"),(String) sqlValues.get("endDate"));
 		String aggregateDate;
 		switch (g) {
 			case HOUR:
@@ -339,7 +334,7 @@ public class StatisticsController {
 		sqlValues.put("aggregateDateExpression", aggregateDate);
 
 		// Generate SQL query
-		String sql = "SELECT CAST(COUNT(*) AS integer) AS count," +
+		String sql = "SELECT COUNT(*) AS count," +
 				"            to_char(date, {aggregateDateExpression}) AS aggregate_date " +
 				"     FROM ogcstatistics.ogc_services_log " +
 				"     WHERE date >= CAST({startDate} AS timestamp without time zone) " +
@@ -425,7 +420,7 @@ public class StatisticsController {
 	 */
 	@RequestMapping(value="/fullLayersExtraction.csv", method=RequestMethod.GET, produces= "application/csv; charset=utf-8")
 	@ResponseBody
-	public String fullLayersExtractionStats(@RequestParam String startDate, @RequestParam String endDate, HttpServletResponse response) throws JSONException {
+	public String fullLayersExtractionStats(@RequestParam String startDate, @RequestParam String endDate, HttpServletResponse response) throws JSONException, SQLException {
 
 		try {
 			if (startDate == null || endDate == null) {
@@ -440,13 +435,26 @@ public class StatisticsController {
 		response.setHeader("Content-Disposition", "attachment; filename=data.csv");
 		response.setContentType("application/csv; charset=utf-8");
 
-		List lst = statsRepository.getFullLayersExtraction(startDate, endDate);
+		String sql = "SELECT username, org, creation_date, CAST(duration AS text), creation_date + duration AS start_date, layer_name, is_successful, " +
+				"       trunc(CAST(ST_XMin(bbox) AS numeric), 5) || ',' || trunc(CAST(ST_YMin(bbox) AS numeric), 5) || ',' || " +
+				"       trunc(CAST(ST_XMax(bbox) AS numeric), 5) || ',' || trunc(CAST(ST_YMax(bbox) AS numeric), 5) AS bbox, " +
+				"       ST_Area(CAST(bbox AS geography), TRUE) / 1000000 AS area_km2 " +
+				"     FROM extractorapp.extractor_layer_log " +
+				"     LEFT JOIN extractorapp.extractor_log " +
+				"	    ON (extractorapp.extractor_log.id = extractorapp.extractor_layer_log.extractor_log_id) " +
+				"     WHERE creation_date >= CAST({startDate} AS timestamp without time zone) AND creation_date < CAST({endDate} AS timestamp without time zone) ";
+
+		Map<String, Object> sqlValues = new HashMap<String, Object>();
+		sqlValues.put("startDate", startDate);
+		sqlValues.put("endDate", endDate);
+
+		ResultSet sqlRes = this.db.execute(this.db.generateQuery(sql, sqlValues));
+
 		StringBuilder res = new StringBuilder("username;organization;creation_date;duration;end_date;layer_name;is_successful;bbox;area_km2\n");
-		for (Object o : lst) {
-			Object[] row = (Object[]) o;
+		while(sqlRes.next()){
 			for(int i=0; i<8; i++)
-				res.append(row[i] + ";");
-			res.append(row[8] + "\n");
+				res.append(sqlRes.getString(i) + ";");
+			res.append(sqlRes.getString(8) + "\n");
 		}
 		return res.toString();
 	}
@@ -508,12 +516,12 @@ public class StatisticsController {
 		String sql;
 
 		if (type == REQUEST_TYPE.USAGE) {
-			sql = "SELECT layer, CAST(COUNT(*) AS integer) AS count " +
+			sql = "SELECT layer, COUNT(*) AS count " +
 				  "FROM ogcstatistics.ogc_services_log " +
 				  "WHERE date >= CAST({startDate} AS timestamp without time zone) AND date < CAST({endDate} AS timestamp without time zone) " +
 				  "AND layer != '' ";
 		} else if (type == REQUEST_TYPE.EXTRACTION){
-			sql = "SELECT layer_name AS layer, CAST(COUNT(*) AS integer) AS count " +
+			sql = "SELECT layer_name AS layer, COUNT(*) AS count " +
 				  "FROM extractorapp.extractor_layer_log " +
 				  "LEFT JOIN extractorapp.extractor_log " +
 				  "	ON (extractorapp.extractor_log.id = extractorapp.extractor_layer_log.extractor_log_id) " +
@@ -525,23 +533,29 @@ public class StatisticsController {
 
 		if(groupId != null)
 			sql += " AND {group} = ANY(roles) ";
-		if(userId != null)
-			sql += " AND username = {user} ";
+		if(userId != null){
+			if (type == REQUEST_TYPE.USAGE) {
+				sql += " AND user_name = {user} ";
+			} else if (type == REQUEST_TYPE.EXTRACTION){
+				sql += " AND username = {user} ";
+			} else {
+				throw new IllegalArgumentException("Invalid request type : " + type);
+			}
+		}
+
 
 		if (type == REQUEST_TYPE.USAGE) {
 			sql += " GROUP BY layer " +
-				   "ORDER BY COUNT(*) DESC " ;
+				   " ORDER BY COUNT(*) DESC " ;
 		} else if (type == REQUEST_TYPE.EXTRACTION){
 			sql += " GROUP BY layer_name " +
-				   "ORDER BY COUNT(*) DESC";
+				   " ORDER BY COUNT(*) DESC";
 		} else {
 			throw new IllegalArgumentException("Invalid request type : " + type);
 		}
 
-		if(limit != null){
+		if(limit != null)
 			sql += " LIMIT {limit}";
-
-		}
 
 		ResultSet sqlRes = db.execute(db.generateQuery(sql,sqlValues));
 
@@ -632,7 +646,7 @@ public class StatisticsController {
 		}
 
 		// construct SQL query
-		String sql = "SELECT user_name, org, CAST(COUNT(*) AS integer) AS count " +
+		String sql = "SELECT user_name, org, COUNT(*) AS count " +
 				"FROM ogcstatistics.ogc_services_log " +
 				"WHERE date >= CAST({startDate} AS timestamp without time zone) AND date < CAST({endDate} AS timestamp without time zone) ";
 
@@ -662,7 +676,7 @@ public class StatisticsController {
 			JSONObject row = new JSONObject();
 			row.put("user", res.getString("user_name"));
 			row.put("organization", res.getString("org"));
-			row.put("nb_requests", res.getString("count"));
+			row.put("nb_requests", res.getInt("count"));
 			results.put(row);
 		}
 		String jsonOutput = new JSONObject().put("results", results)
