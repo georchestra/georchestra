@@ -560,8 +560,10 @@ public class UsersController {
     public void getUserRequiredFields(HttpServletResponse response) throws IOException{
         try {
             JSONArray fields = new JSONArray();
-            fields.put("uid");
-            fields.put("mail");
+            fields.put(UserSchema.UID_KEY);
+            fields.put(UserSchema.MAIL_KEY);
+            fields.put(UserSchema.SURNAME_KEY);
+            fields.put(UserSchema.GIVEN_NAME_KEY);
             ResponseUtil.buildResponse(response, fields.toString(4), HttpServletResponse.SC_OK);
         } catch (Exception e) {
             LOG.error(e.getMessage());
@@ -714,6 +716,7 @@ public class UsersController {
 		String title         = RequestUtil.getFieldValue(json, UserSchema.TITLE_KEY);
 		String description   = RequestUtil.getFieldValue(json, UserSchema.DESCRIPTION_KEY);
 		String manager       = RequestUtil.getFieldValue(json, UserSchema.MANAGER_KEY);
+		String context       = RequestUtil.getFieldValue(json, UserSchema.CONTEXT_KEY);
 		String org           = RequestUtil.getFieldValue(json, UserSchema.ORG_KEY);
 
 		if(givenName == null)
@@ -737,10 +740,21 @@ public class UsersController {
 
 		String commonName = AccountFactory.formatCommonName(givenName, surname);
 
-		Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, title, phone, description, postalAddress, postalCode, "", postOfficeBox, "", street, locality, facsimile, "","","","",manager,"", org);
+		Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, title, phone, description,
+				postalAddress, postalCode, "", postOfficeBox, "", street, locality, facsimile, "", "", "", "", manager,
+				context, org);
+
+		String shadowExpire = RequestUtil.getFieldValue(json, UserSchema.SHADOW_EXPIRE_KEY);
+		if (StringUtils.hasLength(shadowExpire)) {
+			try {
+				a.setShadowExpire((new SimpleDateFormat("yyyy-MM-dd")).parse(shadowExpire));
+			} catch (ParseException e) {
+				LOG.error(e.getMessage());
+				throw new IllegalArgumentException(e);
+			}
+		}
 
 		return a;
-
 	}
 
 	/**
