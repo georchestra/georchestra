@@ -560,8 +560,10 @@ public class UsersController {
     public void getUserRequiredFields(HttpServletResponse response) throws IOException{
         try {
             JSONArray fields = new JSONArray();
-            fields.put("uid");
-            fields.put("mail");
+            fields.put(UserSchema.UID_KEY);
+            fields.put(UserSchema.MAIL_KEY);
+            fields.put(UserSchema.SURNAME_KEY);
+            fields.put(UserSchema.GIVEN_NAME_KEY);
             ResponseUtil.buildResponse(response, fields.toString(4), HttpServletResponse.SC_OK);
         } catch (Exception e) {
             LOG.error(e.getMessage());
