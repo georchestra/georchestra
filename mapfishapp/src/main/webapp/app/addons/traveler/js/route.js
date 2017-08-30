@@ -293,9 +293,8 @@ GEOR.Addons.Traveler.route.addStep = function(addon, isStart, delBtn, idFset) {
     var window = addon.routeWindow ? addon.routeWindow : false;
     var panel = addon.routePanel ? addon.routePanel : false;
     var control = addon.routeControl;
-
-    var map = addon.map;
-
+    var map = addon.map;    
+    var to = new OpenLayers.Projection("EPSG:4326")
     var options = addon.options;
 
     var banStore = new Ext.data.JsonStore({
@@ -333,6 +332,16 @@ GEOR.Addons.Traveler.route.addStep = function(addon, isStart, delBtn, idFset) {
         totalProperty: 'limit',
         listeners: {
             "beforeload": function(q) {
+                //get lat long from map center
+                if ( addon.options.BAN_PRIORITY && map) { // control if option is activate in GEOR.custom.useMapCenter
+                    var x = map.getCenter().lon;
+                    var y = map.getCenter().lat;
+                    var geom = new OpenLayers.Geometry.Point(x, y).transform(map.getProjection(), to);
+                    if (geom.x && geom.y) {
+                    	banStore.baseParams.lon = geom.x;
+                    	banStore.baseParams.lat = geom.y;
+                    }
+                }            	
                 banStore.baseParams.q = banStore.baseParams["query"];
                 banStore.baseParams.limit = options.BAN_RESULT ? options.BAN_RESULT : 5;
                 delete banStore.baseParams["query"];
@@ -642,8 +651,8 @@ GEOR.Addons.Traveler.route.getRoad = function(addon, modeButton) {
                             })
                         })
                         if (steps.length > 0) {
-                            if (Ext.getCmp("route_btnNav")) {
-                                //Ext.getCmp("route_btnNav").show(); // uncomment to display print button
+                            if (Ext.getCmp("route_btnNav") && addon.options.IS_PRINTABLE) {
+                                Ext.getCmp("route_btnNav").show();
                             }
                         }
                     }

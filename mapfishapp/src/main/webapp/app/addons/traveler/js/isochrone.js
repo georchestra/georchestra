@@ -309,6 +309,7 @@ GEOR.Addons.Traveler.isochrone.ban = function(addon) {
     var epsg4326 = new OpenLayers.Projection("EPSG:4326");
     var layer = addon.isoLayer;
     var map = addon.map;
+    var to = new OpenLayers.Projection("EPSG:4326")
     var config = addon.options;
     var startPoints =  addon.isoStart ? addon.isoStart : false;
     var banStore = new Ext.data.JsonStore({ // create store that call service
@@ -346,6 +347,16 @@ GEOR.Addons.Traveler.isochrone.ban = function(addon) {
         totalProperty: "limit",
         listeners: {
             "beforeload": function(q) { // analyzes the input to obtain a result
+                //get lat long from map center
+                if ( addon.options.BAN_PRIORITY && map) { // control if option is activate in GEOR.custom.useMapCenter
+                    var x = map.getCenter().lon;
+                    var y = map.getCenter().lat;
+                    var geom = new OpenLayers.Geometry.Point(x, y).transform(map.getProjection(), to);
+                    if (geom.x && geom.y) {
+                    	banStore.baseParams.lon = geom.x;
+                    	banStore.baseParams.lat = geom.y;
+                    }
+                }            	
                 banStore.baseParams.q = banStore.baseParams["query"];
                 banStore.baseParams.limit = config.BAN_RESULT; // limit replies number 
                 delete banStore.baseParams["query"];
