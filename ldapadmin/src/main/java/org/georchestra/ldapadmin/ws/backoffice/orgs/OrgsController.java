@@ -95,7 +95,7 @@ public class OrgsController {
     /**
      * Set organization for one user
      */
-    @RequestMapping(value = REQUEST_MAPPING + "/{org}/{user:.+}", method = RequestMethod.POST)
+    @RequestMapping(value = REQUEST_MAPPING + "/{org:.+}/{user:.+}", method = RequestMethod.POST)
     public void addUserInOrg(@PathVariable String org, @PathVariable String user, HttpServletResponse response)
             throws IOException, DataServiceException {
 
@@ -110,7 +110,7 @@ public class OrgsController {
     /**
      * Remove user from organization
      */
-    @RequestMapping(value = REQUEST_MAPPING + "/{org}/{user:.+}", method = RequestMethod.DELETE)
+    @RequestMapping(value = REQUEST_MAPPING + "/{org:.+}/{user:.+}", method = RequestMethod.DELETE)
     public void removeUserfromOrg(@PathVariable String org, @PathVariable String user, HttpServletResponse response)
             throws IOException {
         this.orgDao.removeUser(org, user);
@@ -131,7 +131,7 @@ public class OrgsController {
      * * 'members' as json array ex: ["testadmin", "testuser"]
      *
      */
-    @RequestMapping(value = REQUEST_MAPPING + "/{cn}", method = RequestMethod.GET)
+    @RequestMapping(value = REQUEST_MAPPING + "/{cn:.+}", method = RequestMethod.GET)
     public void getOrgInfos(@PathVariable String cn, HttpServletResponse response) throws IOException, JSONException {
         Org org = this.orgDao.findByCommonName(cn);
         OrgExt orgExt = this.orgDao.findExtById(cn);
@@ -178,7 +178,7 @@ public class OrgsController {
      *  }
      *
      */
-    @RequestMapping(value = REQUEST_MAPPING + "/{commonName}", method = RequestMethod.PUT)
+    @RequestMapping(value = REQUEST_MAPPING + "/{commonName:.+}", method = RequestMethod.PUT)
     public void updateOrgInfos(@PathVariable String commonName,
                                HttpServletRequest request, HttpServletResponse response)
             throws IOException, JSONException {
@@ -261,7 +261,7 @@ public class OrgsController {
     /**
      * Delete one org
      */
-    @RequestMapping(value = REQUEST_MAPPING + "/{commonName}", method = RequestMethod.DELETE)
+    @RequestMapping(value = REQUEST_MAPPING + "/{commonName:.+}", method = RequestMethod.DELETE)
     public void deleteOrg(@PathVariable String commonName, HttpServletResponse response)
             throws IOException, JSONException {
         // delete entities in LDAP server
