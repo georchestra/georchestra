@@ -119,6 +119,9 @@ JAVA_OPTS="-Djava.awt.headless=true -XX:+UseConcMarkSweepGC"
 And later add these lines (change the ```STOREPASSWORD``` string):
 ```
 JAVA_OPTS="$JAVA_OPTS \
+              -Dgeorchestra.datadir=/etc/georchestra"
+
+JAVA_OPTS="$JAVA_OPTS \
               -Xms256m \
               -Xmx256m \
               -XX:MaxPermSize=128m"
@@ -208,6 +211,9 @@ JAVA_OPTS="-Djava.awt.headless=true -XX:+UseConcMarkSweepGC"
 And later add these lines (change the ```STOREPASSWORD``` string):
 ```
 JAVA_OPTS="$JAVA_OPTS \
+              -Dgeorchestra.datadir=/etc/georchestra"
+
+JAVA_OPTS="$JAVA_OPTS \
               -Xms2G \
               -Xmx2G \
               -XX:MaxPermSize=256m"
@@ -277,6 +283,14 @@ JAVA_OPTS="$JAVA_OPTS \
 Note: You can also override every geonetwork sub-data-directories by modifying
 the `/etc/georchestra/geonetwork/geonetwork.properties` file for convenience.
 
+#### Viewer
+
+If the "mapfishapp" viewer application is deployed:
+```
+JAVA_OPTS="$JAVA_OPTS \
+               -Dmapfish-print-config=/etc/georchestra/mapfishapp/print/config.yaml \
+               -Dorg.geotools.referencing.forceXY=true"
+```
 
 #### Extractor
 
