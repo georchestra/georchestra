@@ -21,6 +21,7 @@ CMD ["sh", "-c", "exec java \
 -Djava.io.tmpdir=/tmp/jetty \
 -Dgeorchestra.datadir=/etc/georchestra \
 -Dmapfish-print-config=/etc/georchestra/mapfishapp/print/config.yaml \
+-Dorg.geotools.referencing.forceXY=true \
 -Xms$XMS -Xmx$XMX \
 -XX:-UsePerfData \
 ${JAVA_OPTIONS} \
