@@ -12,8 +12,8 @@ notifications:
       - irc.freenode.net#georchestra
     template:
       - "%{repository}#%{build_number} (%{branch}) %{message} %{build_url}"
-install: mvn install -DskipTests -P-all,travis
-script: mvn integration-test -P-all,travis
+install: mvn install -DskipTests -P-all,travis -Dadditionalparam=-Xdoclint:none
+script: mvn integration-test -P-all,travis -Dadditionalparam=-Xdoclint:none
 addons:
   apt:
     packages:
