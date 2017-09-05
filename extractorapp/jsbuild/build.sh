@@ -29,7 +29,7 @@ ${mkdir} -p ${releasepath} ${releasepath}/lang
  if  [ ! -d ${venv} ] || [ $? -eq 0 ]; then
      echo "creating virtual env and installing jstools..."
      rm -rf ${venv}
-     virtualenv  --no-site-packages ${venv}
+     virtualenv --no-site-packages -p python3 ${venv}
      ${venv}/bin/pip install jstools
      echo "done."
  fi;

@@ -396,9 +396,7 @@
         <version>1.1</version>
         <executions>
           <execution>
-            <id>build-javascript</id>
-            <phase>generate-sources</phase>
-            <inherited>false</inherited>
+            <phase>process-sources</phase>
             <goals>
               <goal>exec</goal>
             </goals>
