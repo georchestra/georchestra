@@ -118,6 +118,16 @@ public class HomeController {
         return new ModelAndView("index", "c", model);
     }
 
+    /**
+     * JS configuration entry point.
+     *
+     * This end point is served by commons as it is also used in mapfishapp
+     */
+    @RequestMapping(value= "/app/js/GEOR_custom.js")
+    public void getGeorCustom(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        this.georConfig.getGeorCustom(request, response);
+    }
+
     private Map<String, Object> createModelFromStringOrSession(HttpServletRequest request, String str, boolean allowFake) {
         HttpSession session = request.getSession();
         if( str == null || str.trim() == "") {

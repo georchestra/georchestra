@@ -34,12 +34,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.xml.DOMConfigurator;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.context.ServletContextAware;
 
-@Controller
-public class GeorchestraConfiguration implements ServletContextAware {
+public class GeorchestraConfiguration {
 
     protected String globalDatadir;
     protected String contextDataDir;
@@ -136,13 +132,12 @@ public class GeorchestraConfiguration implements ServletContextAware {
     }
 
     /**
-     * This controller allows to intercept GEOR_custom.js used
+     * This method generate GEOR_custom.js used
      * in Mapfishapp and Extractorapp.
      * @param request
      * @param response
      * @throws Exception
      */
-    @RequestMapping(value= "/app/js/GEOR_custom.js")
     public void getGeorCustom(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         response.setContentType("application/javascript");
@@ -156,15 +151,9 @@ public class GeorchestraConfiguration implements ServletContextAware {
             }
         }
         // Fallback on the default one provided by the webapp
-        InputStream is = this.ctx.getResourceAsStream("/app/js/GEOR_custom.js");
+        InputStream is = request.getSession().getServletContext().getResourceAsStream("/app/js/GEOR_custom.js");
         byte[] content = IOUtils.toByteArray(is);
         response.getOutputStream().write(content);
         return;
-    }
-
-    @Override
-    public void setServletContext(ServletContext servletContext) {
-        this.ctx = servletContext;
-
     }
 }
