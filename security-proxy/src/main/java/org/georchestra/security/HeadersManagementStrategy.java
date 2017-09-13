@@ -20,6 +20,7 @@
 package org.georchestra.security;
 
 import static org.georchestra.security.HeaderNames.ACCEPT_ENCODING;
+import static org.georchestra.security.HeaderNames.BASIC_AUTH_HEADER;
 import static org.georchestra.security.HeaderNames.CONTENT_LENGTH;
 import static org.georchestra.security.HeaderNames.COOKIE_ID;
 import static org.georchestra.security.HeaderNames.HOST;
@@ -116,6 +117,10 @@ public class HeadersManagementStrategy {
                     continue;
                 }
                 if (headerName.equalsIgnoreCase(HOST)) {
+                    continue;
+                }
+                // Don't forward basic auth
+                if (headerName.equalsIgnoreCase(BASIC_AUTH_HEADER)) {
                     continue;
                 }
                 // Don't forward 'sec-*' headers, those headers must be managed by security-proxy
