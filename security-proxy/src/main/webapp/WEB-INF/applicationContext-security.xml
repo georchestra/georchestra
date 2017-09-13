@@ -75,11 +75,6 @@
 
     <!--  end custom -->
 
-    <s:authentication-manager alias="authenticationManager">
-        <s:authentication-provider ref='casAuthenticationProvider' />
-        <s:authentication-provider ref='ldapAuthenticationProvider' />
-    </s:authentication-manager>
-
     <bean id="basicAuthChallengeByUserAgent" class="org.georchestra.security.BasicAuthChallengeByUserAgent" init-method="init">
         <property name="challengeUserAgents">
             <list>
@@ -120,6 +115,8 @@
     </bean>
 
     <s:authentication-manager alias="authenticationManager">
+        <s:authentication-provider ref='casAuthenticationProvider' />
+        <s:authentication-provider ref='ldapAuthenticationProvider' />
         <s:authentication-provider ref="preauthAuthProvider" />
     </s:authentication-manager>
 
