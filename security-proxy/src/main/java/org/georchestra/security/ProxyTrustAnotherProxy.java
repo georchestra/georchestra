@@ -66,8 +66,12 @@ public class ProxyTrustAnotherProxy extends AbstractPreAuthenticatedProcessingFi
         try {
             if(this.trustedProxies.contains(InetAddress.getByName(request.getRemoteAddr()))){
                 String username = request.getHeader(AUTH_HEADER);
-                logger.debug("Request from a trusted proxy, so log in user : " + username);
-                request.getSession().setAttribute("pre-auth", true);
+                if(username != null){
+                    logger.debug("Request from a trusted proxy, so log in user : " + username);
+                    request.getSession().setAttribute("pre-auth", true);
+                } else {
+                    logger.debug("Request from a trusted proxy, but no sec-username header found");
+                }
                 return username;
             } else {
                 logger.debug("Request from a NON trusted proxy, bypassing log in");
