@@ -47,6 +47,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Actions": "Actions",
     "Incorrect server response.": "Réponse du serveur incorrecte.",
     "No features found.": "Aucun objet trouvé.",
+    "Reload": "Recharger",
     /* GEOR.js strings */
     "Cities": "Localités",
     "Recentering on GeoNames cities": "Recentrage sur localités<br />de la base GeoNames",
