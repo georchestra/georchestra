@@ -74,5 +74,7 @@
     <bean id="wxsController" class="org.georchestra.mapfishapp.ws.WxsJsonController" />
     
     <bean id="bufferController" class="org.georchestra.mapfishapp.ws.buffer.BufferController" />
+    
+    <bean id="georCustomController" class="org.georchestra.mapfishapp.ws.GeorCustomController" />
 
 </beans> 
