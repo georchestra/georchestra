@@ -563,6 +563,11 @@ GEOR.workspace = (function() {
                 }]
             }],
             buttons: [{
+                text: tr("Reload"),
+                handler: function() {
+                    sm.grid.getStore().reload();
+                }
+            }, {
                 text: tr("Close"),
                 handler: function() {
                     contextManagerWindow.close();

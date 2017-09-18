@@ -45,6 +45,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Type": "Тип",
     "Title": "Заголовок",
     "Actions": "Действия",
+    //"Reload": "Recharger",
     // TODO "Incorrect server response.": "Incorrect server response.",
     // TODO "No features found.": "No features found.",
     /* GEOR.js strings */
