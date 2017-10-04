@@ -46,6 +46,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.message.BasicHeader;
@@ -163,6 +164,11 @@ public class HeadersManagementStrategy {
                         headersLog.append("\n");
                     }
                 } else {
+                    // ignore Host and Content-Length header
+                    if(header.getName().equalsIgnoreCase(HttpHeaders.HOST) ||
+                            header.getName().equalsIgnoreCase(HttpHeaders.CONTENT_LENGTH))
+                        continue;
+
                     logger.debug("Adding header to proxyed request : " + header.getName() + "=" + header.getValue());
                     proxyRequest.addHeader(header);
                     headersLog.append("\t" + header.getName());
