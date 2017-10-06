@@ -456,9 +456,9 @@ public class StatisticsController {
 
 		StringBuilder res = new StringBuilder("username;organization;creation_date;duration;end_date;layer_name;is_successful;bbox;area_km2\n");
 		while(sqlRes.next()){
-			for(int i=0; i<8; i++)
+			for(int i=1; i<9; i++)
 				res.append(sqlRes.getString(i) + ";");
-			res.append(sqlRes.getString(8) + "\n");
+			res.append(sqlRes.getString(9) + "\n");
 		}
 		return res.toString();
 	}

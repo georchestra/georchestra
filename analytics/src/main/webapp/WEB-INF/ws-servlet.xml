@@ -96,5 +96,7 @@
         <constructor-arg value="analytics" />
     </bean>
 
+    <bean id="georCustomController" class="org.georchestra.analytics.GeorCustomController"/>
+
 </beans>
 
