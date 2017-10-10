@@ -73,6 +73,8 @@ sqlUpdates = {}
 for key in usersGroups:
     user = key
     matches = reg.match(user)
+    if not matches:
+        continue
     user = matches.group(1)
     members = usersGroups[key]
     sqlUpdates[user] = "ARRAY['" + "','".join(members) + "']"
