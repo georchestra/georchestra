@@ -4,6 +4,9 @@ ENV XMS=1G XMX=2G
 
 RUN java -jar "$JETTY_HOME/start.jar" --add-to-startd=jmx,jmx-remote,stats
 
+# Temporary switch to root
+USER root
+
 # add non-free for imageio
 RUN echo "deb http://ftp.fr.debian.org/debian jessie contrib non-free" >> /etc/apt/sources.list && \
     echo "deb http://security.debian.org/ jessie/updates contrib non-free" >> /etc/apt/sources.list && \
@@ -21,6 +24,9 @@ ADD . /
 
 RUN mkdir /mnt/geowebcache_tiles && \
     chown jetty:jetty /etc/georchestra /mnt/geowebcache_tiles
+
+# restore jetty user
+USER jetty
 
 VOLUME [ "/mnt/geowebcache_tiles", "/tmp", "/run/jetty" ]
 
