@@ -6,7 +6,13 @@ RUN java -jar "$JETTY_HOME/start.jar" --add-to-startd=jmx,jmx-remote,stats
 
 ADD . /
 
+# Temporary switch to root
+USER root
+
 RUN chown jetty:jetty /etc/georchestra
+
+# Restore jetty user
+USER jetty
 
 VOLUME [ "/tmp", "/run/jetty" ]
 
