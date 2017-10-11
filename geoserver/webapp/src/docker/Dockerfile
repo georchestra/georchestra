@@ -2,6 +2,13 @@ FROM jetty:9.2-jre7
 
 ENV XMS=1536M XMX=8G
 
+RUN java -jar "$JETTY_HOME/start.jar" --add-to-startd=jmx,jmx-remote,stats,jndi
+
+ADD . /
+
+# Temporary switch to root
+USER root
+
 RUN echo "deb http://httpredir.debian.org/debian jessie main contrib" > /etc/apt/sources.list \
     && echo "deb http://security.debian.org/ jessie/updates main contrib" >> /etc/apt/sources.list \
     && echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | debconf-set-selections \
@@ -11,16 +18,15 @@ RUN echo "deb http://httpredir.debian.org/debian jessie main contrib" > /etc/apt
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
 
-RUN java -jar "$JETTY_HOME/start.jar" --add-to-startd=jmx,jmx-remote,stats,jndi
-
-ADD . /
-
 RUN mkdir /mnt/geoserver_datadir /mnt/geoserver_geodata /mnt/geoserver_tiles && \
     chown jetty:jetty /etc/georchestra /mnt/geoserver_datadir /mnt/geoserver_geodata /mnt/geoserver_tiles
 
-VOLUME [ "/mnt/geoserver_datadir", "/mnt/geoserver_geodata", "/mnt/geoserver_tiles", "/tmp", "/run/jetty" ]
-
 RUN sed -i 's/threads.max=200/threads.max=50/g' /var/lib/jetty/start.d/server.ini
+
+# Restore jetty user
+USER jetty
+
+VOLUME [ "/mnt/geoserver_datadir", "/mnt/geoserver_geodata", "/mnt/geoserver_tiles", "/tmp", "/run/jetty" ]
 
 CMD ["sh", "-c", "exec java -Djava.io.tmpdir=/tmp/jetty \
 -Dgeorchestra.datadir=/etc/georchestra \
