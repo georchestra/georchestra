@@ -38,13 +38,10 @@ public class CheckFormAcceptance {
     private static final Log LOG = LogFactory.getLog(CheckFormAcceptance.class
             .getPackage().getName());
 
-    private final static String CHECK_FORM_ACCEPTANCE_QUERY = "SELECT "
-            + "           COUNT(id) "
-            + "FROM "
-            + "           downloadform.extractorapp_log "
-            + "WHERE "
-            + "           (username = null AND sessionid = ?) OR (username = ?  AND username IS NOT null) "
-            + "AND " + "           json_spec = ?;";
+    private final static String CHECK_FORM_ACCEPTANCE_QUERY = "SELECT COUNT(id) "
+            + "FROM downloadform.extractorapp_log "
+            + "WHERE (username IS null AND sessionid = ?) OR (username = ? AND username IS NOT null) "
+            + "AND json_spec = ?;";
 
     @Autowired
     private GeorchestraConfiguration georConfig;
