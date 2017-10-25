@@ -110,12 +110,12 @@ public class EmailFactoryImpl extends AbstractEmailFactory {
 	 * emails to the moderator to inform that a new user is waiting authorization.
 	 *
 	 * @param servletContext
-	 * @param from
+	 * @param userEmail
 	 * @param recipients
 	 * @return
 	 * @throws IOException
 	 */
-	public NewAccountRequiresModerationEmail createNewAccountRequiresModerationEmail(ServletContext servletContext, String from, String[] recipients) throws IOException {
+	public NewAccountRequiresModerationEmail createNewAccountRequiresModerationEmail(ServletContext servletContext, String userEmail, String[] recipients) throws IOException {
 	    // TODO: What is the purpose of this affectation ? Unused aftewards, and isn't it dangerous in a
 	    // context of a bean (only one instance shared at runtime ?) ?
 		super.emailSubject =this.newAccountRequiresModerationEmailSubject;
@@ -126,8 +126,8 @@ public class EmailFactoryImpl extends AbstractEmailFactory {
 				this.smtpHost,
 				this.smtpPort,
 				this.emailHtml,
-				this.replyTo,
-				from,
+				userEmail, // Reply-to
+				this.from, // From
 				this.bodyEncoding,
 				this.subjectEncoding,
 				this.languages,
