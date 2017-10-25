@@ -37,16 +37,17 @@ public class ExtractionTaskTest {
 
     private boolean pgAvailable;
     private int beforeCount;
+
     @Before
     public void setUp() throws Exception {
         try {
             Connection c = dataSource.getConnection();
             this.beforeCount = getLayerLogCount(c);
         } catch(Exception e) {
-            pgAvailable = false;
+            this.pgAvailable = false;
+            return;
         }
-        pgAvailable = true;
-
+        this.pgAvailable = true;
     }
 
     private int getLayerLogCount(Connection c) throws Exception {
