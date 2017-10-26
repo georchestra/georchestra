@@ -408,6 +408,18 @@
     <finalName>${project.artifactId}-${server}</finalName>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>3.0.0</version>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>${project.basedir}/node</directory>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+      <plugin>
         <artifactId>maven-war-plugin</artifactId>
         <version>2.6</version>
         <configuration>
@@ -581,7 +593,7 @@
       <plugin>
         <groupId>com.github.eirslett</groupId>
         <artifactId>frontend-maven-plugin</artifactId>
-        <version>1.0</version>
+        <version>1.6</version>
         <executions>
           <execution>
             <id>install-node-and-npm</id>
