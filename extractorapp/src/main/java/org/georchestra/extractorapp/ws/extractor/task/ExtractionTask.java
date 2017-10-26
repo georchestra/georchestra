@@ -428,9 +428,9 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 					"VALUES (?, ?, ?, ?)",
 					Statement.RETURN_GENERATED_KEYS);
 
-			pst.setString(1, this.requestConfig.username);
-			pst.setArray(2, c.createArrayOf("varchar", this.requestConfig.roles.split("\\s*;\\s*")));
-			pst.setString(3, this.requestConfig.org);
+			pst.setString(1, this.requestConfig.username == null ? "" : this.requestConfig.username);
+			pst.setArray(2, c.createArrayOf("varchar",this.requestConfig.roles == null ? new String[0] : this.requestConfig.roles.split("\\s*;\\s*")));
+			pst.setString(3, this.requestConfig.org == null ? "" : this.requestConfig.org);
 			pst.setString(4, this.requestConfig.requestUuid.toString());
 
 			this.logId = this.executeAndGetGeneratedKey(pst);
@@ -468,14 +468,8 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 				layerRequest.setDbLogId(this.executeAndGetGeneratedKey(pst));
 			}
 
-		} catch (SQLException e) {
-			LOG.error(e.getMessage());
-		} catch (TransformException e) {
-			LOG.error(e.getMessage());
-		} catch (NoSuchAuthorityCodeException e) {
-			LOG.error(e.getMessage());
-		} catch (FactoryException e) {
-			LOG.error(e.getMessage());
+		} catch (Exception e) {
+			LOG.error("Unable to log the extraction parameters in database", e);
 		} finally {
 			this.closeDbLinks(c, pst);
 		}
@@ -506,7 +500,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 			pst.executeUpdate();
 
 		} catch (SQLException e) {
-			LOG.error(e.getMessage());
+			LOG.error("Error occured when trying to set the extraction status to 'completed'", e);
 		} finally {
 			this.closeDbLinks(c, pst);
 		}
@@ -527,7 +521,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 			pst.setLong(1, request.getDbLogId());
 			pst.executeUpdate();
 		} catch (SQLException e) {
-			LOG.error(e.getMessage());
+			LOG.error("Error occured when trying to the set extraction status to 'errored'", e);
 		} finally {
 			this.closeDbLinks(c, pst);
 		}
@@ -540,22 +534,23 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 			if(c != null)
 				c.close();
 		} catch (SQLException e) {
-			LOG.warn(e.getMessage());
+			LOG.warn("Error when closing the connection to the database",e);
 		}
 	}
 
 	private Long executeAndGetGeneratedKey(PreparedStatement pst) throws SQLException {
 
 		int affectedRows = pst.executeUpdate();
-		if (affectedRows == 0)
+		if (affectedRows == 0) {
 			throw new SQLException("Failed to insert new stats");
-
+		}
 		ResultSet generatedKeys = pst.getGeneratedKeys();
 		Long logId;
-		if(generatedKeys.next())
+		if(generatedKeys.next()) {
 			logId = generatedKeys.getLong(1);
-		else
+		} else {
 			throw new SQLException("Failed to insert new stats");
+		}
 		generatedKeys.close();
 		return logId;
 	}
