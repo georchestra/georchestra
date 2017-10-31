@@ -14,13 +14,8 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 ADD *.sql /docker-entrypoint-initdb.d/
+# This script is used to skip loading of sample data if IGNORE_DATA var is set to yes
+ADD 000-skip_data.sh /docker-entrypoint-initdb.d/
 ADD license.txt /docker-entrypoint-initdb.d/
 ADD logo.png /docker-entrypoint-initdb.d/
-
-# tweak entrypoint to ignore some SQL file based on environement var IGNORE_DATA
-# If IGNORE_DATA contain 'yes' then *-data.sql will be ignored
-RUN apt-get update && \
-    apt-get install -y patch && \
-    rm -rf /var/lib/apt/lists/*
-ADD docker-entrypoint.sh.patch /
-RUN cd /usr/local/bin && patch -p 0 < /docker-entrypoint.sh.patch
+RUN chown -R postgres /docker-entrypoint-initdb.d/
