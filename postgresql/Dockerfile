@@ -10,7 +10,7 @@ MAINTAINER PSC "psc@georchestra.org"
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && \
-    apt-get install -y postgresql-9.4-postgis-2.3 && \
+    apt-get install -y postgresql-9.4-postgis-2.1 postgresql-9.4-postgis-2.3 && \
     rm -rf /var/lib/apt/lists/*
 
 ADD *.sql /docker-entrypoint-initdb.d/
