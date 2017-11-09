@@ -303,25 +303,13 @@ public class Proxy {
         if (request.getRequestURI().startsWith("/sec/proxy/")) {
             testLegalContentType(request);
             URL url;
-            InetAddress remoteAddress;
             try {
                 url = new URL(sURL);
-                remoteAddress = InetAddress.getByName(url.getHost());
             } catch (MalformedURLException e) { // not an url
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
                 return;
-            } catch (UnknownHostException e){
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
-                return;
             }
-
-            /*
-             * Disallow :
-             * - Class C IP address (isSiteLocalAddress())
-             * - not allowed urls defined in permissions.xml
-             * - URL defined is target-mappings.xml (urlIsProtected())
-             */
-            if (remoteAddress.isSiteLocalAddress() || proxyPermissions.isDenied(url) || urlIsProtected(request, url)) {
+            if (proxyPermissions.isDenied(url) || urlIsProtected(request, url)) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "URL is not allowed.");
                 return;
             }
