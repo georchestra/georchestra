@@ -1,6 +1,6 @@
 -- Return name of table that correspond to specified date, also create table if it does
 -- not exists and indexes on table of previous month
-CREATE OR REPLACE FUNCTION get_partition_table(my_date timestamp without time zone)
+CREATE OR REPLACE FUNCTION ogcstatistics.get_partition_table(my_date timestamp without time zone)
   RETURNS character varying AS
 $BODY$
 DECLARE
