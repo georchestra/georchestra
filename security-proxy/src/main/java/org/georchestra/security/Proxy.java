@@ -309,7 +309,7 @@ public class Proxy {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "URL is not allowed.");
                 return;
             }
-            handleRequest(request, response, type, sURL);
+            handleRequest(request, response, type, sURL, false);
         } else {
             handlePathEncodedRequests(request, response, type);
         }
@@ -536,7 +536,7 @@ public class Proxy {
                 }
             }
 
-            handleRequest(request, response, requestType, sURL);
+            handleRequest(request, response, requestType, sURL, true);
         } catch (IOException e) {
             logger.error("Error connecting to client", e);
         }
@@ -611,7 +611,7 @@ public class Proxy {
         }
     }
 
-    private void handleRequest(HttpServletRequest request, HttpServletResponse finalResponse, RequestType requestType, String sURL) {
+    private void handleRequest(HttpServletRequest request, HttpServletResponse finalResponse, RequestType requestType, String sURL, boolean localProxy) {
         HttpClientBuilder htb = HttpClients.custom().disableRedirectHandling();
 
         RequestConfig config = RequestConfig.custom().setSocketTimeout(this.httpClientTimeout).build();
@@ -678,6 +678,20 @@ public class Proxy {
                 logger.error("Unable to log the request into the statistics logger", e);
             }
 
+            if (localProxy) {
+                //
+                // Hack for geoserver
+                // Should not be here. We must use a ProxyTarget class and
+                // define
+                // if Host header should be forwarded or not.
+                //
+                request.getHeader("Host");
+                proxyingRequest.setHeader("Host", request.getHeader("Host"));
+
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Host header set to: " + proxyingRequest.getFirstHeader("Host").getValue() + " for proxy request.");
+                }
+            }
             proxiedResponse = executeHttpRequest(httpclient, proxyingRequest);
             StatusLine statusLine = proxiedResponse.getStatusLine();
             statusCode = statusLine.getStatusCode();
