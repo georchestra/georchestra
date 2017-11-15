@@ -171,7 +171,7 @@ objectClass: top
 objectClass: groupOfMembers
 cn: GN_EDITOR
 ou: 21
-description: This group grants edit rights in GeoNetwork and Mapfishapp
+description: This group grants edit rights in GeoNetwork
 member: uid=testeditor,ou=users,dc=georchestra,dc=org
 
 # GN_REVIEWER, roles, georchestra.org
@@ -180,7 +180,7 @@ objectClass: top
 objectClass: groupOfMembers
 cn: GN_REVIEWER
 ou: 22
-description: This group grants reviewer rights in GeoNetwork
+description: This group grants reviewer (publish) rights in GeoNetwork
 member: uid=testreviewer,ou=users,dc=georchestra,dc=org
 
 # USER, roles, georchestra.org
