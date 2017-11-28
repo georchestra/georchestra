@@ -11,7 +11,7 @@
   <name>GeoServer 2.x root module</name>
   <properties>
     <maven.test.skip>true</maven.test.skip>
-    <gs.version>2.8.3</gs.version>
+    <gs.version>2.12.1</gs.version>
     <gt.version>14.3</gt.version>
     <geofence.version>3.1-SNAPSHOT</geofence.version>
     <geoserver.webapp.groupId>org.geoserver.web</geoserver.webapp.groupId>
@@ -19,38 +19,6 @@
     <geoserver.webapp.version>${gs.version}</geoserver.webapp.version>
   </properties>
   <modules>
-    <module>geoserver-submodule/src</module>
+    <module>webapp</module>
   </modules>
-  <profiles>
-    <profile>
-      <id>geofence</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-      </activation>
-      <modules>
-        <module>geofence/src</module>
-        <!-- useless ?
-        <module>geofence-webapp</module>
-        -->
-        <module>webapp</module>
-      </modules>
-      <properties>
-        <geofence>geofence</geofence>
-        <!--
-        <geoserver.webapp.groupId>it.geosolutions.geofence.geoserver</geoserver.webapp.groupId>
-        <geoserver.webapp.artifactId>geofence-web-app</geoserver.webapp.artifactId>
-        <geoserver.webapp.version>${geofence.version}</geoserver.webapp.version>
-        -->
-      </properties>
-    </profile>
-    <profile>
-      <id>no_geofence</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <modules>
-        <module>webapp</module>
-      </modules>
-    </profile>
-  </profiles>
 </project>
