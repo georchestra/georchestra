@@ -43,3 +43,7 @@
 [submodule "extractorapp/src/main/webapp/lib/externals/ext"]
 	path = extractorapp/src/main/webapp/lib/externals/ext
 	url = https://github.com/georchestra/extjs.git
+[submodule "geoserver/geoserver-submodule"]
+	path = geoserver/geoserver-submodule
+	url = https://github.com/georchestra/geoserver.git
+
