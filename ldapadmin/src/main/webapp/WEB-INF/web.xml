@@ -32,16 +32,11 @@
     <servlet-mapping>
         <servlet-name>ldapadmin</servlet-name>
         <url-pattern>/</url-pattern>
-        <url-pattern>/privateui/</url-pattern>
         <url-pattern>/console/public/</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>default</servlet-name>
-        <url-pattern>/privateui/css/*</url-pattern>
-        <url-pattern>/privateui/js/*</url-pattern>
-        <url-pattern>/privateui/lib/*</url-pattern>
-        <url-pattern>/privateui/partials/*</url-pattern>
         <url-pattern>/account/css/*</url-pattern>
         <url-pattern>/account/fonts/*</url-pattern>
         <url-pattern>/account/js/*</url-pattern>
