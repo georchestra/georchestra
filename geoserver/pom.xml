@@ -12,13 +12,14 @@
   <properties>
     <maven.test.skip>true</maven.test.skip>
     <gs.version>2.12.1</gs.version>
-    <gt.version>14.3</gt.version>
-    <geofence.version>3.1-SNAPSHOT</geofence.version>
-    <geoserver.webapp.groupId>org.geoserver.web</geoserver.webapp.groupId>
-    <geoserver.webapp.artifactId>gs-web-app</geoserver.webapp.artifactId>
-    <geoserver.webapp.version>${gs.version}</geoserver.webapp.version>
+    <gt.version>18.1</gt.version>
+    <geofence.version>3.2-SNAPSHOT</geofence.version>
+    <jetty.version>9.2.13.v20150730</jetty.version>
+    <marlin.version>0.7.5-Unsafe</marlin.version>
+    <gs.spring.version>4.3.7.RELEASE</gs.spring.version>
   </properties>
   <modules>
+    <module>geoserver-submodule/src/web/core</module>
     <module>webapp</module>
   </modules>
 </project>
