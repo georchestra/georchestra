@@ -5,7 +5,7 @@ A new account has been created on @shared.homepage.url@ and is waiting for valid
 User name: {name}
 User ID: {uid}
 
-Visit @shared.url.scheme@://@shared.server.name@/ldapadmin/privateui/#/groups/PENDING to review the pending users.
+Visit @shared.url.scheme@://@shared.server.name@/ldapadmin/console/#/groups/PENDING/users to review the pending users.
 
 ---
 Sent by @shared.instance.name@ (@shared.homepage.url@)

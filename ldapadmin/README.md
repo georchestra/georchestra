@@ -111,7 +111,7 @@ Testing purpose:
 
  * deploy in Tomcat7
  * Then add the following url in your Internet navigator:
-   http://localhost:8286/ldapadmin/privateui/
+   http://localhost:8286/ldapadmin/console/
 
 Alternatively, run with jetty:
 
@@ -130,7 +130,7 @@ Alternatively, run with jetty:
   $ ../mvn -Dmaven.test.skip=true -Ptemplate jetty:run
   ```
  * Then point your navigator to the following address :
-   http://localhost:8286/ldapadmin/privateui/
+   http://localhost:8286/ldapadmin/console/
    
  Running ldapadmin with jetty will change web server port to *8286* (in order to integrate with others georchestra 
  instance : CAS, security proxy, ...)
@@ -202,33 +202,3 @@ All emails sent by the application should be configurable by the way of template
 The application should be able to find groups and users by the way of filters such as the ones used by the cas (have a look at the [cas maven filters](../config/defaults/cas-server-webapp/maven.filter#L4) and defined by the way of the variables shared.ldap.userSearchBaseDN and shared.ldap.groupSearchBaseDN defined in [config/shared.maven.filters](../config/shared.maven.filters#L10)
 
 The userPassword LDAP field should be SSHA encrypted on creation/update.
-
-Configure the look of the users list
-------------------------------------
-
-The file [config/default/ldapadmin/privateui/partials/users-list-table.html](../config/default/ldapadmin/privateui/partials/users-list-table.html) defines the way the users list is displayed in the `ldapadmin/privateui/#/users` page. By default, it lists the users, with three columns:
-
-* the first **mandatory** column is used to select a user for an action (eg. add the selected user to a group),
-* the second column contains the firstname and lastname of the user, with a link to the user administration page,
-* the last column shows the user organization.
-
-Replacing the file by the following sample code would show the login, name and organization of the users, and sort them alphabetically by their login:
-
-```html
-<thead>
-  <tr>
-    <th></th>
-    <th>Login</th>
-    <th>User</th>
-    <th>Organization</th>
-  </tr>
-</thead>
-<tbody>
-  <tr ng-repeat="user in users | filter:groupFilter | orderBy:'uid' " class="">
-    <td><input type="checkbox" ng-model="user.selected" /></td>
-    <td><a href="#/users/{{user.uid}}">{{user.uid}}</a></a></td>
-    <td>{{user.sn}} {{user.givenName}}</td>
-    <td>{{user.o}}</td>
-  </tr>
-</tbody>
-```

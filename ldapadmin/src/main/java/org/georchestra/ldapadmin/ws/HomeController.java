@@ -95,11 +95,6 @@ public class HomeController {
         }
     }
 
-    @RequestMapping(value="/privateui/")
-    public String privateui(HttpServletRequest request) throws IOException{
-        return "privateUi";
-    }
-
     @RequestMapping(value="/console/")
     public String consoleHome(HttpServletRequest request) throws IOException{
         return "consoleUi";

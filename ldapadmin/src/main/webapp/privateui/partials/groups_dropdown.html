@@ -1,8 +1,0 @@
-<ul class="dropdown-menu groups">
-  <li class="noclose" ng-class="{'dropdown-submenu': !data.group && data.nodes.length}"
-      ng-repeat="data in user_groups_tree" ng-include="'partials/groups_dropdown_item.html'">
-  <li class="divider"></li>
-  <li ng-class="{disabled: !groupsChanged}">
-    <a ng-click="apply()" href>Apply changes</a>
-  </li>
-</ul>
