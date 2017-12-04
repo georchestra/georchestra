@@ -5,7 +5,7 @@
 FROM dinkel/openldap
 
 RUN apt-get update && \
-    apt-get install -y ldap-utils && \
+    apt-get install -y ldap-utils procps && \
     rm -rf /var/lib/apt/lists/*
 
 USER openldap
