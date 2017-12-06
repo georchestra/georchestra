@@ -41,7 +41,7 @@ docker-build-georchestra: docker-pull-jetty-jre8 docker-build-database docker-bu
 	./mvn clean package docker:build -Pdocker -DskipTests --pl extractorapp,cas-server-webapp,security-proxy,mapfishapp,header,ldapadmin,analytics,catalogapp,downloadform,geowebcache-webapp,atlas
 
 docker-build-dev:
-	docker pull debian:jessie
+	docker pull debian:stretch
 	docker pull tianon/apache2
 	docker-compose build smtp courier-imap webmail geodata
 
