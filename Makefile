@@ -1,10 +1,10 @@
 # Docker related targets
 
 docker-pull-jetty-jre7:
-	docker pull jetty:9.2-jre7
+	docker pull jetty:9-jre7
 
 docker-pull-jetty-jre8:
-	docker pull jetty:9.3-jre8
+	docker pull jetty:9-jre8
 
 docker-build-ldap:
 	docker pull dinkel/openldap
