@@ -10,8 +10,8 @@ ADD . /
 USER root
 
 # add non-free for imageio
-RUN echo "deb http://ftp.fr.debian.org/debian jessie contrib non-free" >> /etc/apt/sources.list && \
-    echo "deb http://security.debian.org/ jessie/updates contrib non-free" >> /etc/apt/sources.list && \
+RUN echo "deb http://ftp.fr.debian.org/debian stretch contrib non-free" >> /etc/apt/sources.list && \
+    echo "deb http://security.debian.org/ stretch/updates contrib non-free" >> /etc/apt/sources.list && \
     apt-get update && \
     apt-get install -y libjai-core-java libjai-imageio-core-java && \
     rm -rf /var/lib/apt/lists/*
