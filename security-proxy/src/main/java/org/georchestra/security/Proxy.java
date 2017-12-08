@@ -26,6 +26,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.ProxySelector;
@@ -449,7 +450,15 @@ public class Proxy {
 
     private String buildForwardRequestURL(HttpServletRequest request) {
         String forwardRequestURI = request.getRequestURI();
-
+        // Makes sure the URL is decoded because some servlet containers
+        // (e.g. tomcat) provides the URL in an encoded manner, whereas
+        // jetty does not.
+        // Also we consider the whole geOrchestra stack to be full utf-8.
+        try {
+            forwardRequestURI = URLDecoder.decode(forwardRequestURI, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            logger.error("Unable to decode the URL, using the encoded version", e);
+        }
         String contextPath = request.getServletPath() + request.getContextPath();
         if (forwardRequestURI.length() <= contextPath.length()) {
             forwardRequestURI = "/";
