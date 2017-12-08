@@ -11,6 +11,7 @@
   <name>geOrchestra GeoServer Web Application</name>
   <properties>
     <packageName>georchestra-geoserver</packageName>
+    <datadirScmVersion>gs-2.12.1</datadirScmVersion>
   </properties>
   <dependencies>
     <dependency>
@@ -951,6 +952,8 @@
               <checkoutDirectory>${project.build.directory}/deb/etc/georchestra</checkoutDirectory>
               <connectionUrl>scm:git:https://github.com/georchestra/datadir.git</connectionUrl>
               <pushChanges>false</pushChanges>
+              <scmVersion>${datadirScmVersion}</scmVersion>
+              <scmVersionType>branch</scmVersionType>
             </configuration>
             <executions>
               <execution>
@@ -1037,6 +1040,8 @@
               <checkoutDirectory>${project.build.directory}/deb/etc/georchestra</checkoutDirectory>
               <connectionUrl>scm:git:https://github.com/georchestra/datadir.git</connectionUrl>
               <pushChanges>false</pushChanges>
+              <scmVersion>${datadirScmVersion}</scmVersion>
+              <scmVersionType>branch</scmVersionType>
             </configuration>
             <executions>
               <execution>
@@ -1123,7 +1128,7 @@
         <dockerDatadirScmUrl>scm:git:https://github.com/georchestra/datadir.git</dockerDatadirScmUrl>
         <dockerDatadirScmVersion>docker-master</dockerDatadirScmVersion>
         <dockerGeoserverDatadirScmUrl>scm:git:https://github.com/georchestra/geoserver_minimal_datadir.git</dockerGeoserverDatadirScmUrl>
-        <dockerGeoserverDatadirScmVersion>gs-2.12.1</dockerGeoserverDatadirScmVersion>
+        <dockerGeoserverDatadirScmVersion>${datadirScmVersion}</dockerGeoserverDatadirScmVersion>
       </properties>
       <build>
         <finalName>geoserver</finalName>
