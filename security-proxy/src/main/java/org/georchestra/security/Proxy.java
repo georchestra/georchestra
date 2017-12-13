@@ -200,6 +200,9 @@ public class Proxy {
                     fis = new FileInputStream(datadirPermissionsFile);
                     setProxyPermissions(Permissions.Create(fis));
                     fis.close();
+                } catch(Exception ex){
+                      logger.error("Error during proxy permissions configuration from "
+                              + datadirPermissionsFile.getAbsolutePath());
                 } finally {
                     fis.close();
                 }

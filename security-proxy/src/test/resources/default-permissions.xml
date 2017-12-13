@@ -1,0 +1,13 @@
+<permissions>
+    <allowByDefault>false</allowByDefault>
+    <allowed>
+        <urimatcher>
+            <host>localhost</host>
+        </urimatcher>
+    </allowed>
+    <denied>
+        <urimatcher>
+            <host>google.com</host>
+        </urimatcher>
+    </denied>
+</permissions>

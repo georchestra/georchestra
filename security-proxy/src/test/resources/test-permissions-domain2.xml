@@ -1,0 +1,18 @@
+<permissions>
+    <allowByDefault>false</allowByDefault>
+    <allowed>
+        <urimatcher>
+            <host>localhost</host>
+        </urimatcher>
+        <urimatcher>
+            <domain>.*\.georchestra\.org</domain>
+        </urimatcher>
+    </allowed>
+    <denied>
+        <urimatcher>
+            <domain>sdi.georchestra.org</domain>
+            <port>433</port>
+            <path>/geonetwork/</path>
+        </urimatcher>
+    </denied>
+</permissions>

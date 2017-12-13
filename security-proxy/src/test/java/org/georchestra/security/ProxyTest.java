@@ -50,26 +50,9 @@ public class ProxyTest {
                 return response;
             }
         };
-        String proxyPermissionsConfiguration = "<permissions>\n" +
-                "    <allowByDefault>false</allowByDefault>\n" +
-                "    <allowed>\n" +
-                "        <urimatcher>\n" +
-                "            <host>localhost</host>\n" +
-                "        </urimatcher>\n" +
-                "    </allowed>\n" +
-                "    <denied>\n" +
-                "        <urimatcher>\n" +
-                "            <host>google.com</host>\n" +
-                "        </urimatcher>\n" +
-                "    </denied>\n" +
-                "</permissions>\n" +
-                "\n";
 
-        try{
-            proxy.setProxyPermissions(Permissions.Create(new ByteArrayInputStream(proxyPermissionsConfiguration.getBytes())));
-        } catch (UnknownHostException e) {
-            assumeNoException(" some hosts unresolveable, check connectivity. Tests skipped.", e);
-        }
+        proxy.setProxyPermissionsFile("default-permissions.xml");
+        proxy.init();
 
         response = new BasicHttpResponse(HttpVersion.HTTP_1_1, 200, "OK");
         this.request = new MockHttpServletRequest("GET", "/sec/proxy/");
@@ -153,7 +136,7 @@ public class ProxyTest {
 
     @Test
     public void testLoadPermissions() throws Exception {
-        proxy = new Proxy();
+        Proxy proxy = new Proxy();
         proxy.setProxyPermissionsFile("test-permissions.xml");
         proxy.init();
 
@@ -175,7 +158,7 @@ public class ProxyTest {
 
     @Test
     public void testLoadEmptyPermissions() throws Exception {
-        proxy = new Proxy();
+        Proxy proxy = new Proxy();
         proxy.setProxyPermissionsFile("empty-permissions.xml");
         proxy.init();
 
@@ -184,7 +167,7 @@ public class ProxyTest {
 
     @Test
     public void testBuildUri() throws Exception {
-        proxy = new Proxy();
+        Proxy proxy = new Proxy();
         Method m = ReflectionUtils.findMethod(Proxy.class, "buildUri", URL.class);
         m.setAccessible(true);
 
@@ -194,5 +177,32 @@ public class ProxyTest {
 
         ret = (URI) ReflectionUtils.invokeMethod(m, proxy, new URL("https://sdi.georchestra.org/ldapadmin/account/recover?email=psc%2Btestuser%40georchestra.org"));
         assertTrue(ret.toString().contains("email=psc%2Btestuser%40georchestra.org"));
+    }
+
+    @Test
+    public void testLoadPermissionsWithDomain() throws Exception {
+        Proxy proxy = new Proxy();
+        proxy.setProxyPermissionsFile("test-permissions-domain.xml");
+        proxy.init();
+
+        Permissions proxyPermissions = proxy.getProxyPermissions();
+
+        assertFalse(proxyPermissions.isDenied(new URL("http://sdi-dev.georchestra.org/geoserver/")));
+        assertFalse(proxyPermissions.isDenied(new URL("http://sdi.georchestra.org:433/geonetwork/")));
+    }
+
+    /**
+     * Check with allowByDefault set to false, first check deny list and then allow list
+     */
+    @Test
+    public void testLoadPermissionsWithDomain2() throws Exception {
+        Proxy proxy = new Proxy();
+        proxy.setProxyPermissionsFile("test-permissions-domain2.xml");
+        proxy.init();
+
+        Permissions proxyPermissions = proxy.getProxyPermissions();
+
+        assertFalse(proxyPermissions.isDenied(new URL("http://sdi-dev.georchestra.org/geoserver/")));
+        assertTrue(proxyPermissions.isDenied(new URL("http://sdi.georchestra.org:433/geonetwork/")));
     }
 }

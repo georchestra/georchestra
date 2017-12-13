@@ -35,6 +35,8 @@ public class UriMatcher {
     private Pattern pathPattern;
     private HashSet<InetAddress> hostNames;
     private String host;
+    private String domain;
+    private Pattern domainPattern;
 
     public synchronized void init() throws UnknownHostException {
         this.hostNames = null;
@@ -48,15 +50,19 @@ public class UriMatcher {
             }
             this.pathPattern = Pattern.compile(this.path);
         }
+        this.domainPattern = null;
+        if (this.domain != null) {
+            this.domainPattern = Pattern.compile(this.domain);
+        }
     }
 
     public boolean matches(URL url) {
-        if (hostNames != null && !matchesHost(url)) {
+        if (hostNames != null && !matchesHost(url))
             return false;
-        }
-        if (port != -1 && !matchesPort(url)) {
+        if (domain != null && !matchesDomain(url))
             return false;
-        }
+        if (port != -1 && !matchesPort(url))
+            return false;
         return !(pathPattern != null && !matchesPath(url));
     }
 
@@ -86,6 +92,11 @@ public class UriMatcher {
         }
         return false;
     }
+
+    private boolean matchesDomain(URL url) {
+        return this.domainPattern.matcher(url.getHost()).matches();
+    }
+
 
     public UriMatcher setHost(String host) throws UnknownHostException {
         this.host = host;
