@@ -52,7 +52,7 @@ public class UriMatcher {
         }
         this.domainPattern = null;
         if (this.domain != null) {
-            this.domainPattern = Pattern.compile(this.domain);
+            this.domainPattern = Pattern.compile(this.domain, Pattern.CASE_INSENSITIVE);
         }
     }
 
