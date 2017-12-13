@@ -5,7 +5,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeNoException;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URL;
@@ -48,11 +50,23 @@ public class ProxyTest {
                 return response;
             }
         };
+        String proxyPermissionsConfiguration = "<permissions>\n" +
+                "    <allowByDefault>false</allowByDefault>\n" +
+                "    <allowed>\n" +
+                "        <urimatcher>\n" +
+                "            <host>localhost</host>\n" +
+                "        </urimatcher>\n" +
+                "    </allowed>\n" +
+                "    <denied>\n" +
+                "        <urimatcher>\n" +
+                "            <host>google.com</host>\n" +
+                "        </urimatcher>\n" +
+                "    </denied>\n" +
+                "</permissions>\n" +
+                "\n";
 
-        try {
-            proxy.setProxyPermissions(new Permissions().setAllowed(
-                    Collections.singletonList(new UriMatcher().setHost("localhost"))).setDenied(
-                    Collections.singletonList(new UriMatcher().setHost("google.com"))));
+        try{
+            proxy.setProxyPermissions(Permissions.Create(new ByteArrayInputStream(proxyPermissionsConfiguration.getBytes())));
         } catch (UnknownHostException e) {
             assumeNoException(" some hosts unresolveable, check connectivity. Tests skipped.", e);
         }
