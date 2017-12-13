@@ -86,9 +86,8 @@ public class ProxyTest {
         assertFalse(executed);
 
         this.httpResponse = new MockHttpServletResponse();
-        response = new BasicHttpResponse(HttpVersion.HTTP_1_1, 200, "OK");
         proxy.handleUrlGETRequest(request, httpResponse, "http://localhost:8080/extractorapp");
-        assertTrue(executed);
+        assertFalse(executed);
     }
 
     /**

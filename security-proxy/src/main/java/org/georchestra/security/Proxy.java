@@ -83,6 +83,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.ogcservstatistics.log4j.OGCServiceMessageFormatter;
 import org.georchestra.security.permissions.Permissions;
+import org.georchestra.security.permissions.UriMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.cas.ServiceProperties;
 import org.springframework.security.core.Authentication;
@@ -144,6 +145,7 @@ public class Proxy {
      * must be defined
      */
     private String defaultTarget;
+    private String publicHostname = "https://georchestra.mydomain.org/";
     private Map<String, String> targets = Collections.emptyMap();
     /**
      * must be defined
@@ -156,6 +158,7 @@ public class Proxy {
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
     private Permissions proxyPermissions = null;
+    private Permissions sameDomainPermissions;
     private String proxyPermissionsFile;
 
 
@@ -170,6 +173,14 @@ public class Proxy {
     }
 
     public void init() throws Exception {
+
+        // Create a deny permission for URL with same domain
+        String publicDomain = new URL(this.publicHostname).getHost();
+        this.sameDomainPermissions = new Permissions();
+        this.sameDomainPermissions.setDenied(Collections.singletonList(new UriMatcher().setDomain(publicDomain)));
+        this.sameDomainPermissions.setAllowByDefault(true);
+        this.sameDomainPermissions.init();
+
         if (targets != null) {
             for (String url : targets.values()) {
                 new URL(url); // test that it is a valid URL
@@ -320,7 +331,12 @@ public class Proxy {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
                 return;
             }
-            if (proxyPermissions.isDenied(url) || urlIsProtected(request, url)) {
+
+            /*
+             * - deny request with same domain as public_host
+             * - deny based on proxy-permissions.xml file
+             */
+            if(this.sameDomainPermissions.isDenied(url) || proxyPermissions.isDenied(url)){
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "URL is not allowed.");
                 return;
             }
@@ -1354,6 +1370,14 @@ public class Proxy {
 
     public Permissions getProxyPermissions() {
         return proxyPermissions;
+    }
+
+    public String getPublicHostname() {
+        return publicHostname;
+    }
+
+    public void setPublicHostname(String publicHostname) {
+        this.publicHostname = publicHostname;
     }
 
 }

@@ -121,6 +121,15 @@ public class UriMatcher {
         return port;
     }
 
+    public String getDomain() {
+        return domain;
+    }
+
+    public UriMatcher setDomain(String domain) {
+        this.domain = domain;
+        return this;
+    }
+
     public String getPath() {
         return path;
     }
