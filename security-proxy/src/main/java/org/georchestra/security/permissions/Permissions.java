@@ -20,10 +20,17 @@
 package org.georchestra.security.permissions;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import org.springframework.oxm.xstream.XStreamMarshaller;
 
+import javax.xml.transform.stream.StreamSource;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Jesse on 8/15/2014.
@@ -113,5 +120,16 @@ public class Permissions {
             this.allowed = Lists.newArrayList();
         }
         return this;
+    }
+
+    public static Permissions Create(InputStream source) throws ClassNotFoundException, IOException {
+        Map<String, Class<?>> aliases = Maps.newHashMap();
+        aliases.put(Permissions.class.getSimpleName().toLowerCase(), Permissions.class);
+        aliases.put(UriMatcher.class.getSimpleName().toLowerCase(), UriMatcher.class);
+        XStreamMarshaller unmarshaller = new XStreamMarshaller();
+        unmarshaller.setAliasesByType(aliases);
+        Permissions res = (Permissions) unmarshaller.unmarshal(new StreamSource(source));
+        res.init();
+        return res;
     }
 }

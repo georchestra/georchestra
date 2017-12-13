@@ -26,6 +26,8 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.ProxySelector;
@@ -33,7 +35,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.net.URLDecoder;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -53,7 +54,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -83,9 +83,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.ogcservstatistics.log4j.OGCServiceMessageFormatter;
 import org.georchestra.security.permissions.Permissions;
-import org.georchestra.security.permissions.UriMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.oxm.xstream.XStreamMarshaller;
 import org.springframework.security.cas.ServiceProperties;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -97,7 +95,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Maps;
 import com.google.common.io.Closer;
 
 /**
@@ -158,7 +155,7 @@ public class Proxy {
 
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
-    private Permissions proxyPermissions = new Permissions();
+    private Permissions proxyPermissions = null;
     private String proxyPermissionsFile;
 
 
@@ -178,21 +175,7 @@ public class Proxy {
                 new URL(url); // test that it is a valid URL
             }
         }
-        if (proxyPermissionsFile != null) {
-            Closer closer = Closer.create();
-            try {
-                final ClassLoader classLoader = Proxy.class.getClassLoader();
-                InputStream inStream = closer.register(classLoader.getResourceAsStream(proxyPermissionsFile));
-                Map<String, Class<?>> aliases = Maps.newHashMap();
-                aliases.put(Permissions.class.getSimpleName().toLowerCase(), Permissions.class);
-                aliases.put(UriMatcher.class.getSimpleName().toLowerCase(), UriMatcher.class);
-                XStreamMarshaller unmarshaller = new XStreamMarshaller();
-                unmarshaller.setAliasesByType(aliases);
-                setProxyPermissions((Permissions) unmarshaller.unmarshal(new StreamSource(inStream)));
-            } finally {
-                closer.close();
-            }
-        }
+
         // georchestra datadir autoconfiguration
         // dependency injection / properties setter() are made by Spring before
         // init() call
@@ -205,7 +188,36 @@ public class Proxy {
             for (String target : pTargets.stringPropertyNames()) {
                 targets.put(target, pTargets.getProperty(target));
             }
+
+            // Configure proxy permissions based on proxy-permissions.xml file in datadir
+            String datadirContext = georchestraConfiguration.getContextDataDir();
+            File datadirPermissionsFile = new File(String.format("%s%s%s", datadirContext,
+                    File.separator, "proxy-permissions.xml"));
+            if(datadirPermissionsFile.exists()){
+                logger.info("reading proxy permissions from " + datadirPermissionsFile.getAbsolutePath());
+                FileInputStream fis = null;
+                try {
+                    fis = new FileInputStream(datadirPermissionsFile);
+                    setProxyPermissions(Permissions.Create(fis));
+                    fis.close();
+                } finally {
+                    fis.close();
+                }
+            }
+
             logger.info("Done.");
+        }
+
+        // Proxy permissions not set by datadir
+        if (proxyPermissionsFile != null && proxyPermissions == null) {
+            Closer closer = Closer.create();
+            try {
+                final ClassLoader classLoader = Proxy.class.getClassLoader();
+                InputStream inStream = closer.register(classLoader.getResourceAsStream(proxyPermissionsFile));
+                setProxyPermissions(Permissions.Create(inStream));
+            } finally {
+                closer.close();
+            }
         }
     }
 
@@ -1335,7 +1347,6 @@ public class Proxy {
 
     public void setProxyPermissions(Permissions proxyPermissions) throws UnknownHostException {
         this.proxyPermissions = proxyPermissions;
-        this.proxyPermissions.init();
     }
 
     public Permissions getProxyPermissions() {
