@@ -12,7 +12,7 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.springframework.security.access.ConfigAttribute;
-import org.springframework.security.web.util.RequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.ReflectionUtils;
 
 public class SecurityProxyMetadataSourceTest {

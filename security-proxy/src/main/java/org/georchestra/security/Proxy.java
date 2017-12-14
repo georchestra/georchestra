@@ -49,7 +49,7 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
@@ -79,6 +79,7 @@ import org.georchestra.ogcservstatistics.log4j.OGCServiceMessageFormatter;
 import org.georchestra.security.permissions.Permissions;
 import org.georchestra.security.permissions.UriMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.cas.ServiceProperties;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -126,11 +127,6 @@ public class Proxy {
     protected static final Log logger = LogFactory.getLog(Proxy.class.getPackage().getName());
     protected static final Log statsLogger = LogFactory.getLog(Proxy.class.getPackage().getName() + ".statistics");
     protected static final Log commonLogger = LogFactory.getLog(Proxy.class.getPackage().getName() + ".statistics-common");
-
-
-    protected enum RequestType {
-        GET, POST, DELETE, PUT, TRACE, OPTIONS, HEAD
-    }
 
     @Autowired
     private GeorchestraConfiguration georchestraConfiguration;
@@ -280,42 +276,12 @@ public class Proxy {
 
     // ----------------- Method calls where request is encoded in a url
     // parameter of request ----------------- //
-    @RequestMapping(params = { "url", "!login" }, method = RequestMethod.POST)
-    public void handleUrlPOSTRequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) throws IOException {
-        handleUrlParamRequest(request, response, RequestType.POST, sURL);
+    @RequestMapping(params = { "url", "!login" })
+    public void handleUrlRequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) throws IOException {
+        handleUrlParamRequest(request, response, HttpMethod.valueOf(request.getMethod()), sURL);
     }
 
-    @RequestMapping(params = { "url", "!login" }, method = RequestMethod.GET)
-    public void handleUrlGETRequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) throws IOException {
-        handleUrlParamRequest(request, response, RequestType.GET, sURL);
-    }
-
-    @RequestMapping(params = { "url", "!login" }, method = RequestMethod.DELETE)
-    public void handleUrlDELETERequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) throws IOException {
-        handleUrlParamRequest(request, response, RequestType.DELETE, sURL);
-    }
-
-    @RequestMapping(params = { "url", "!login" }, method = RequestMethod.HEAD)
-    public void handleUrlHEADRequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) throws IOException {
-        handleUrlParamRequest(request, response, RequestType.HEAD, sURL);
-    }
-
-    @RequestMapping(params = { "url", "!login" }, method = RequestMethod.OPTIONS)
-    public void handleUrlOPTIONSRequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) throws IOException {
-        handleUrlParamRequest(request, response, RequestType.OPTIONS, sURL);
-    }
-
-    @RequestMapping(params = { "url", "!login" }, method = RequestMethod.PUT)
-    public void handleUrlPUTRequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) throws IOException {
-        handleUrlParamRequest(request, response, RequestType.PUT, sURL);
-    }
-
-    @RequestMapping(params = { "url", "!login" }, method = RequestMethod.TRACE)
-    public void handleUrlTRACERequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) throws IOException {
-        handleUrlParamRequest(request, response, RequestType.TRACE, sURL);
-    }
-
-    private void handleUrlParamRequest(HttpServletRequest request, HttpServletResponse response, RequestType type, String sURL) throws IOException {
+    private void handleUrlParamRequest(HttpServletRequest request, HttpServletResponse response, HttpMethod type, String sURL) throws IOException {
         if (request.getRequestURI().startsWith("/sec/proxy/")) {
             testLegalContentType(request);
             URL url;
@@ -421,34 +387,9 @@ public class Proxy {
 
     // ----------------- Method calls where request is encoded in path of
     // request ----------------- //
-    @RequestMapping(value="**", params = { "!url", "!login" }, method = RequestMethod.GET)
-    public void handleGETRequest(HttpServletRequest request, HttpServletResponse response) {
-        handlePathEncodedRequests(request, response, RequestType.GET);
-    }
-
-    @RequestMapping(value="**", params = { "!url", "!login" }, method = RequestMethod.POST)
-    public void handlePOSTRequest(HttpServletRequest request, HttpServletResponse response) {
-        handlePathEncodedRequests(request, response, RequestType.POST);
-    }
-
-    @RequestMapping(value="**", params = { "!url", "!login" }, method = RequestMethod.DELETE)
-    public void handleDELETERequest(HttpServletRequest request, HttpServletResponse response) {
-        handlePathEncodedRequests(request, response, RequestType.DELETE);
-    }
-
-    @RequestMapping(value="**", params = { "!url", "!login" }, method = RequestMethod.HEAD)
-    public void handleHEADRequest(HttpServletRequest request, HttpServletResponse response) {
-        handlePathEncodedRequests(request, response, RequestType.HEAD);
-    }
-
-    @RequestMapping(value="**", params = { "!url", "!login" }, method = RequestMethod.OPTIONS)
-    public void handleOPTIONSRequest(HttpServletRequest request, HttpServletResponse response) {
-        handlePathEncodedRequests(request, response, RequestType.OPTIONS);
-    }
-
-    @RequestMapping(value="**", params = { "!url", "!login" }, method = RequestMethod.PUT)
-    public void handlePUTRequest(HttpServletRequest request, HttpServletResponse response) {
-        handlePathEncodedRequests(request, response, RequestType.PUT);
+    @RequestMapping(params = { "!url", "!login" })
+    public void handleRequest(HttpServletRequest request, HttpServletResponse response) {
+        handlePathEncodedRequests(request, response, HttpMethod.valueOf(request.getMethod()));
     }
 
     /**
@@ -460,14 +401,9 @@ public class Proxy {
      * @throws IOException
      */
     @RequestMapping(value = "/", params = { "!url", "!login" })
-    public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void handleDefaultRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.sendRedirect(defaultTarget);
         return;
-    }
-
-    @RequestMapping(params = { "!url", "!login" }, method = RequestMethod.TRACE)
-    public void handleTRACERequest(HttpServletRequest request, HttpServletResponse response) {
-        handlePathEncodedRequests(request, response, RequestType.TRACE);
     }
 
     // ----------------- Implementation methods ----------------- //
@@ -499,12 +435,12 @@ public class Proxy {
      * Main entry point for methods where the request path is encoded in the
      * path of the URL
      */
-    private void handlePathEncodedRequests(HttpServletRequest request, HttpServletResponse response, RequestType requestType) {
+    private void handlePathEncodedRequests(HttpServletRequest request, HttpServletResponse response, HttpMethod type) {
         try {
             String contextPath = request.getServletPath() + request.getContextPath();
             String forwardRequestURI = buildForwardRequestURL(request);
 
-            logger.debug("handlePathEncodedRequests: -- Handling Request: " + requestType + ":" + forwardRequestURI + " from: " + request.getRemoteAddr());
+            logger.debug("handlePathEncodedRequests: -- Handling Request: " + type + ":" + forwardRequestURI + " from: " + request.getRemoteAddr());
 
             String sURL = findTarget(forwardRequestURI);
 
@@ -569,7 +505,7 @@ public class Proxy {
                 }
             }
 
-            handleRequest(request, response, requestType, sURL, true);
+            handleRequest(request, response, type, sURL, true);
         } catch (IOException e) {
             logger.error("Error connecting to client", e);
         }
@@ -644,7 +580,7 @@ public class Proxy {
         }
     }
 
-    private void handleRequest(HttpServletRequest request, HttpServletResponse finalResponse, RequestType requestType, String sURL, boolean localProxy) {
+    private void handleRequest(HttpServletRequest request, HttpServletResponse finalResponse, HttpMethod type, String sURL, boolean localProxy) {
         HttpClientBuilder htb = HttpClients.custom().disableRedirectHandling();
 
         RequestConfig config = RequestConfig.custom().setSocketTimeout(this.httpClientTimeout).build();
@@ -682,7 +618,8 @@ public class Proxy {
 
             logger.debug("Final request -- " + sURL);
 
-            HttpRequestBase proxyingRequest = makeRequest(request, requestType, sURL);
+
+            HttpRequestBase proxyingRequest = makeRequest(request, type, sURL);
             headerManagement.configureRequestHeaders(request, proxyingRequest, localProxy);
 
             try {
@@ -762,10 +699,10 @@ public class Proxy {
 
             // content type has to be valid
             if (isCharsetRequiredForContentType(contentType)) {
-                doHandleRequestCharsetRequired(request, finalResponse, requestType, proxiedResponse, contentType);
+                doHandleRequestCharsetRequired(request, finalResponse, type, proxiedResponse, contentType);
             } else {
                 logger.debug("charset not required for contentType: " + contentType);
-                doHandleRequest(request, finalResponse, requestType, proxiedResponse);
+                doHandleRequest(request, finalResponse, type, proxiedResponse);
             }
         } catch (IOException e) {
             // connection problem with the host
@@ -869,7 +806,7 @@ public class Proxy {
     /**
      * Direct copy of response
      */
-    private void doHandleRequest(HttpServletRequest request, HttpServletResponse finalResponse, RequestType requestType, HttpResponse proxiedResponse)
+    private void doHandleRequest(HttpServletRequest request, HttpServletResponse finalResponse, HttpMethod requestType, HttpResponse proxiedResponse)
             throws IOException {
 
         org.apache.http.StatusLine statusLine = proxiedResponse.getStatusLine();
@@ -914,14 +851,14 @@ public class Proxy {
         return new URI(rawUrl.toString());
     }
 
-    private HttpRequestBase makeRequest(HttpServletRequest request, RequestType requestType, String sURL) throws IOException {
+    private HttpRequestBase makeRequest(HttpServletRequest request, HttpMethod type, String sURL) throws IOException {
         HttpRequestBase targetRequest;
         try {
             // Split URL
             URL url = new URL(sURL);
             URI uri = buildUri(url);
 
-            switch (requestType) {
+            switch (type) {
             case GET: {
                 logger.debug("New request is: " + sURL + "\nRequest is GET");
 
@@ -1009,7 +946,7 @@ public class Proxy {
                 break;
             }
             default: {
-                String msg = requestType + " not yet supported";
+                String msg = type + " not yet supported";
                 logger.error(msg);
                 throw new IllegalArgumentException(msg);
             }
@@ -1046,7 +983,7 @@ public class Proxy {
      * transferring data, so data of any significant size should not enter this
      * method.
      */
-    private void doHandleRequestCharsetRequired(HttpServletRequest orignalRequest, HttpServletResponse finalResponse, RequestType requestType,
+    private void doHandleRequestCharsetRequired(HttpServletRequest orignalRequest, HttpServletResponse finalResponse, HttpMethod requestType,
             HttpResponse proxiedResponse, String contentType) {
 
         InputStream streamFromServer = null;

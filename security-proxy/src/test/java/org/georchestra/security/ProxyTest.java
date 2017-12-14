@@ -61,7 +61,7 @@ public class ProxyTest {
 
     @Test
     public void testGetUrlLegalUrl() throws Exception {
-        proxy.handleUrlGETRequest(request, httpResponse, "http://localhost:8080/path");
+        proxy.handleUrlRequest(request, httpResponse, "http://localhost:8080/path");
         assertTrue(executed);
     }
 
@@ -72,11 +72,11 @@ public class ProxyTest {
      */
     @Test
     public void testGetUrlTarget() throws Exception {
-        proxy.handleUrlGETRequest(request, httpResponse, "http://localhost:8080/geonetwork-private");
+        proxy.handleUrlRequest(request, httpResponse, "http://localhost:8080/geonetwork-private");
         assertFalse(executed);
 
         this.httpResponse = new MockHttpServletResponse();
-        proxy.handleUrlGETRequest(request, httpResponse, "http://localhost:8080/extractorapp");
+        proxy.handleUrlRequest(request, httpResponse, "http://localhost:8080/extractorapp");
         assertFalse(executed);
     }
 
@@ -87,31 +87,31 @@ public class ProxyTest {
     @Test
     public void testGetUrlLegalUrlButTarget() throws Exception {
         request = new MockHttpServletRequest("GET", "http://localhost:8080/geonetwork-private");
-        proxy.handleGETRequest(request, httpResponse);
+        proxy.handleRequest(request, httpResponse);
         assertFalse(executed);
 
         this.httpResponse = new MockHttpServletResponse();
         request = new MockHttpServletRequest("GET", "/geonetwork/srv/eng/something");
-        proxy.handleGETRequest(request, httpResponse);
+        proxy.handleRequest(request, httpResponse);
         assertTrue(executed);
 
         this.httpResponse = new MockHttpServletResponse();
         executed = false;
         request = new MockHttpServletRequest("GET", "/extractorapp/home");
-        proxy.handleGETRequest(request, httpResponse);
+        proxy.handleRequest(request, httpResponse);
         assertTrue(executed);
 
         this.httpResponse = new MockHttpServletResponse();
         executed = false;
         request = new MockHttpServletRequest("GET", "/unmapped/x");
-        proxy.handleGETRequest(request, httpResponse);
+        proxy.handleRequest(request, httpResponse);
         assertFalse(executed);
     }
 
     @Test
     public void testDefaultTarget() throws Exception {
         request = new MockHttpServletRequest("GET", "http://localhost:8080/");
-        proxy.handleRequest(request, httpResponse);
+        proxy.handleDefaultRequest(request, httpResponse);
 
         assertTrue(httpResponse.getRedirectedUrl().equals("/mapfishapp/"));
 
@@ -119,7 +119,7 @@ public class ProxyTest {
 
     @Test
     public void testGetUrlIllegalUrl() throws Exception {
-        proxy.handleUrlGETRequest(request, httpResponse, "http://www.google.com:8080/path");
+        proxy.handleUrlRequest(request, httpResponse, "http://www.google.com:8080/path");
         assertFalse(executed);
     }
 
