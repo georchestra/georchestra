@@ -192,6 +192,20 @@
       <artifactId>spring-webmvc</artifactId>
       <version>${gs.spring.version}</version>
     </dependency>
+    <!-- gs-sec-ldap explicitely needs v4.2.5, but the GS webapp upstream
+         uses v4.3.7 -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-tx</artifactId>
+      <version>${gs.spring.version}</version>
+    </dependency>
+    <!-- xml-apis is needed by gt-svg in v1.3.04, but the GS webapp upstream
+         uses v1.4.01 -->
+    <dependency>
+      <groupId>xml-apis</groupId>
+      <artifactId>xml-apis-ext</artifactId>
+      <version>1.4.01</version>
+    </dependency>
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>apache-log4j-extras</artifactId>
