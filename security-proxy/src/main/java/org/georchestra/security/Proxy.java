@@ -387,7 +387,7 @@ public class Proxy {
 
     // ----------------- Method calls where request is encoded in path of
     // request ----------------- //
-    @RequestMapping(params = { "!url", "!login" })
+    @RequestMapping(value="**", params = { "!url", "!login" })
     public void handleRequest(HttpServletRequest request, HttpServletResponse response) {
         handlePathEncodedRequests(request, response, HttpMethod.valueOf(request.getMethod()));
     }
