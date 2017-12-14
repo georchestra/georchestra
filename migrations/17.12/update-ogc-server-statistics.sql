@@ -92,4 +92,4 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE;
 
-COMMENT ON FUNCTION get_partition_table(timestamp without time zone) IS 'Return name of table that correspond to specified date, also create table if it does not exists and indexes on table of previous month';
+COMMENT ON FUNCTION ogcstatistics.get_partition_table(timestamp without time zone) IS 'Return name of table that correspond to specified date, also create table if it does not exists and indexes on table of previous month';
