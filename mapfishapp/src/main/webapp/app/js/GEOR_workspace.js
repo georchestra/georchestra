@@ -53,7 +53,8 @@ GEOR.workspace = (function() {
      * Handler for the button triggering the WMC save to catalog
      */
     var saveMDBtnHandler = function() {
-        var formPanel = this.findParentByType('form'), 
+        var formPanel = this.findParentByType('form'),
+            form = formPanel.getForm(),
             md = buildContextMD(formPanel);
         if (form.findField('title').getValue().length < 3) {
             GEOR.util.errorDialog({
