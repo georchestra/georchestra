@@ -28,6 +28,9 @@
 	    <s:custom-filter ref="casFilter" after="CAS_FILTER" />
         <s:custom-filter ref="filterSecurityInterceptor" after="EXCEPTION_TRANSLATION_FILTER" />
 	    <!--  <s:http-basic />  -->
+        <s:headers>
+            <s:frame-options policy="SAMEORIGIN" />
+        </s:headers>
 	    <s:anonymous granted-authority="ROLE_ANONYMOUS" />
 	    <s:logout logout-success-url="${logout-success-url}" />
      </s:http>
@@ -49,7 +52,7 @@
 				init-method="remap">
 				<property name="requestMap">
 					<map>
-						<!-- default geOrchestra rules (can be overriden in datadir) -->
+						<!-- default geOrchestra rules (can be overridden in datadir) -->
 						<entry key=".*\?.*login.*" value="ROLE_USER,ROLE_GN_EDITOR,ROLE_GN_REVIEWER,ROLE_GN_ADMIN,ROLE_ADMINISTRATOR" />
 						<entry key=".*\?.*casLogin.*" value="ROLE_USER,ROLE_GN_EDITOR,ROLE_GN_REVIEWER,ROLE_GN_ADMIN,ROLE_ADMINISTRATOR" />
 						<entry key="/extractorapp/admin/.*" value="ROLE_ADMINISTRATOR" />
