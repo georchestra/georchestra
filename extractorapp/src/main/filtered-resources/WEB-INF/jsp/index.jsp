@@ -37,8 +37,6 @@ Boolean anonymous = true;
 Boolean admin = false;
 Boolean editor = false;
 
-String lang = request.getParameter("lang");
-
 String instanceName = null;
 String defaultLanguage = null;
 String georCustomPath = "resources/app/js/GEOR_custom.js";
@@ -53,24 +51,31 @@ try {
     }
 } catch (Exception e) {}
 
-if (lang == null || (!lang.equals("en") && !lang.equals("es") && !lang.equals("fr") && !lang.equals("de"))) {
-    if (defaultLanguage != null) {
-        lang = defaultLanguage;
-      }
-      else {
-        lang = "${language}";
-      }
-}
 if ((instanceName == null) || (instanceName == "")) {
     instanceName = "${instance}";
 }
 
-Locale l = new Locale(lang);
-ResourceBundle resource = org.georchestra.extractorapp.ws.Utf8ResourceBundle.getBundle("org.georchestra.extractorapp.i18n.index",l);
+Locale rLocale = request.getLocale();
+ResourceBundle bundle = org.georchestra.extractorapp.ws.Utf8ResourceBundle.getBundle("org.georchestra.extractorapp.i18n.index", rLocale);
+
+String detectedLanguage = rLocale.getLanguage();
+String forcedLang = request.getParameter("lang");
+
+String lang = defaultLanguage;
+if (forcedLang != null) {
+    if (forcedLang.equals("en") || forcedLang.equals("es") || forcedLang.equals("ru") || forcedLang.equals("fr") || forcedLang.equals("de")) {
+        lang = forcedLang;
+    }
+} else {
+    if (detectedLanguage.equals("en") || detectedLanguage.equals("es") || detectedLanguage.equals("ru") || detectedLanguage.equals("fr") || detectedLanguage.equals("de")) {
+        lang = detectedLanguage;
+    }
+}
+
 javax.servlet.jsp.jstl.core.Config.set(
     request,
     javax.servlet.jsp.jstl.core.Config.FMT_LOCALIZATION_CONTEXT,
-    new javax.servlet.jsp.jstl.fmt.LocalizationContext(resource)
+    new javax.servlet.jsp.jstl.fmt.LocalizationContext(bundle)
 );
 
 String sec_roles = request.getHeader("sec-roles");
