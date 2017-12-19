@@ -58,24 +58,31 @@ try {
 // the context path (might not be the public context path ! -> to be improved with https://github.com/georchestra/georchestra/issues/227)
 String context = request.getContextPath().split("-")[0]; // eg /mapfishapp
 
-String lang = request.getParameter("lang");
-if (lang == null || (!lang.equals("en") && !lang.equals("es") && !lang.equals("ru") && !lang.equals("fr") && !lang.equals("de"))) {
-  if (defaultLanguage != null) {
-    lang = defaultLanguage;
-  }
-  else {
-    lang = "${language}";
-  }
-}
 if (instanceName == null) {
   instanceName = "${instance}";
 }
-Locale l = new Locale(lang);
-ResourceBundle resource = org.georchestra.mapfishapp.ws.Utf8ResourceBundle.getBundle("org.georchestra.mapfishapp.i18n.index",l);
+
+Locale rLocale = request.getLocale();
+ResourceBundle bundle = org.georchestra.mapfishapp.ws.Utf8ResourceBundle.getBundle("org.georchestra.mapfishapp.i18n.index", rLocale);
+
+String detectedLanguage = rLocale.getLanguage();
+String forcedLang = request.getParameter("lang");
+
+String lang = defaultLanguage;
+if (forcedLang != null) {
+    if (forcedLang.equals("en") || forcedLang.equals("es") || forcedLang.equals("ru") || forcedLang.equals("fr") || forcedLang.equals("de")) {
+        lang = forcedLang;
+    }
+} else {
+    if (detectedLanguage.equals("en") || detectedLanguage.equals("es") || detectedLanguage.equals("ru") || detectedLanguage.equals("fr") || detectedLanguage.equals("de")) {
+        lang = detectedLanguage;
+    }
+}
+
 javax.servlet.jsp.jstl.core.Config.set(
     request,
     javax.servlet.jsp.jstl.core.Config.FMT_LOCALIZATION_CONTEXT,
-    new javax.servlet.jsp.jstl.fmt.LocalizationContext(resource)
+    new javax.servlet.jsp.jstl.fmt.LocalizationContext(bundle)
 );
 
 String sec_roles = request.getHeader("sec-roles");
