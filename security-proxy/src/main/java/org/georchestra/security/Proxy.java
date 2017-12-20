@@ -681,7 +681,7 @@ public class Proxy {
             logger.debug("Final request -- " + sURL);
 
             HttpRequestBase proxyingRequest = makeRequest(request, requestType, sURL);
-            headerManagement.configureRequestHeaders(request, proxyingRequest);
+            headerManagement.configureRequestHeaders(request, proxyingRequest, localProxy);
 
             try {
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
