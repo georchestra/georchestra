@@ -203,7 +203,7 @@
          uses v1.4.01 -->
     <dependency>
       <groupId>xml-apis</groupId>
-      <artifactId>xml-apis-ext</artifactId>
+      <artifactId>xml-apis</artifactId>
       <version>1.4.01</version>
     </dependency>
     <dependency>
@@ -1224,10 +1224,21 @@
       <id>geofence</id>
       <properties>
         <packageName>georchestra-geoserver-geofence</packageName>
-        <dockerGeoserverDatadirScmVersion>geofence</dockerGeoserverDatadirScmVersion>
+        <dockerGeoserverDatadirScmVersion>geofence-2.12.1</dockerGeoserverDatadirScmVersion>
         <dockerImageName>georchestra/geoserver:${geofence}-${project.parent.version}</dockerImageName>
       </properties>
+      <dependencies>
+        <dependency>
+          <groupId>org.geoserver.community</groupId>
+          <artifactId>gs-geofence</artifactId>
+          <version>${gs.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.geoserver.community</groupId>
+          <artifactId>gs-geofence-server</artifactId>
+          <version>${gs.version}</version>
+        </dependency>
+      </dependencies>
     </profile>
-
   </profiles>
 </project>

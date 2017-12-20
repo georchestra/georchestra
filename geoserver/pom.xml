@@ -22,4 +22,13 @@
     <module>geoserver-submodule/src/web/core</module>
     <module>webapp</module>
   </modules>
+  <profiles>
+    <profile>
+      <id>geofence</id>
+      <modules>
+        <module>geoserver-submodule/src/community/geofence</module>
+        <module>geoserver-submodule/src/community/geofence-server</module>
+      </modules>
+    </profile>
+  </profiles>
 </project>
