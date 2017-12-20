@@ -48,7 +48,7 @@ public class UriMatcher {
             if (!this.path.startsWith("/")) {
                 this.path = "(/" + this.path + ")|(" + this.path + ")";
             }
-            this.pathPattern = Pattern.compile(this.path);
+            this.pathPattern = Pattern.compile(this.path, Pattern.CASE_INSENSITIVE);
         }
         this.domainPattern = null;
         if (this.domain != null) {

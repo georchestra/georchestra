@@ -1,0 +1,20 @@
+<permissions>
+    <allowByDefault>true</allowByDefault>
+    <denied>
+        <urimatcher>
+            <host>sdi.georchestra.org</host>
+        </urimatcher>
+        <urimatcher>
+            <domain>(.+\.)?google\..+</domain>
+        </urimatcher>
+        <urimatcher>
+            <port>8080</port>
+        </urimatcher>
+        <urimatcher>
+            <path>.*search.html</path>
+        </urimatcher>
+        <urimatcher>
+            <path>.*\.(php|asp)(\?.*)?$</path>
+        </urimatcher>
+    </denied>
+</permissions>

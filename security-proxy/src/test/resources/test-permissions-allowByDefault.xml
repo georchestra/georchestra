@@ -14,5 +14,8 @@
             <port>433</port>
             <path>/geonetwork/</path>
         </urimatcher>
+        <urimatcher>
+            <domain>.*\.google\..*</domain>
+        </urimatcher>
     </denied>
 </permissions>
