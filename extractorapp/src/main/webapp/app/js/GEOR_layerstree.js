@@ -683,19 +683,19 @@ GEOR.layerstree = (function() {
                                                 var res = parseFloat(node.firstChild.nodeValue),
                                                 unit = node.getAttribute("uom");
                                             }
-                                        } else {
+                                        } else if (!Ext.isIE11) {
                                             var res = xmldoc.evaluate(
                                                 GEOR.config.METADATA_RESOLUTION_XPATH, 
                                                 xmldoc, 
                                                 GEOR.util.mdNSResolver, 
-                                                XPathResult.NUMBER_TYPE, 
+                                                XPathResult.NUMBER_TYPE, // 1
                                                 null
                                             ).numberValue, // typically 0.5
                                             unit = xmldoc.evaluate(
                                                 GEOR.config.METADATA_RESOLUTION_XPATH+'/@uom', 
                                                 xmldoc, 
                                                 GEOR.util.mdNSResolver, 
-                                                XPathResult.STRING_TYPE, 
+                                                XPathResult.STRING_TYPE, // 2
                                                 null
                                             ).stringValue; // typically "m"
                                         }

@@ -180,7 +180,8 @@ Ext.namespace("GEOR");
         });
 
         Ext.isIE11 = navigator.userAgent.toLowerCase().lastIndexOf('rv:11') > -1;
-        Ext.isIE = Ext.isIE || Ext.isIE11;
+        //Ext.isIE = Ext.isIE || Ext.isIE11; // commented out because we need Ext.isIE to exclude IE11
+        // This is because it uses doc.evaluate as other browsers (see GEOR_layerstree.js)
 
         /*
          * Initialize the application.
