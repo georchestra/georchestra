@@ -63,7 +63,7 @@ if (active == null) {
 if (georLdapadminPublicContextPath != null)
     ldapadm = georLdapadminPublicContextPath;
 else
-    ldapadm = "${ldapadminPublicContextPath}";
+    ldapadm = "/ldapadmin";
 
 Locale rLocale = request.getLocale();
 ResourceBundle bundle = org.georchestra._header.Utf8ResourceBundle.getBundle("_header.i18n.index", rLocale);

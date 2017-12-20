@@ -52,7 +52,7 @@ try {
 } catch (Exception e) {}
 
 if ((instanceName == null) || (instanceName == "")) {
-    instanceName = "${instance}";
+    instanceName = "geOrchestra";
 }
 
 Locale rLocale = request.getLocale();

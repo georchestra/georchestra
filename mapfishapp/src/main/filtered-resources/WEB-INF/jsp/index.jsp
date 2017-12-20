@@ -59,7 +59,7 @@ try {
 String context = request.getContextPath().split("-")[0]; // eg /mapfishapp
 
 if (instanceName == null) {
-  instanceName = "${instance}";
+  instanceName = "geOrchestra";
 }
 
 Locale rLocale = request.getLocale();
