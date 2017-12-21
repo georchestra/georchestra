@@ -1225,7 +1225,7 @@
       <properties>
         <packageName>georchestra-geoserver-geofence</packageName>
         <dockerGeoserverDatadirScmVersion>geofence-2.12.1</dockerGeoserverDatadirScmVersion>
-        <dockerImageName>georchestra/geoserver:${geofence}-${project.parent.version}</dockerImageName>
+        <dockerImageName>georchestra/geoserver:geofence-${project.parent.version}</dockerImageName>
       </properties>
       <dependencies>
         <dependency>
