@@ -11,7 +11,7 @@ docker-build-ldap:
 	docker-compose build ldap
 
 docker-build-database:
-	docker pull postgres:9.4
+	docker pull postgres:10
 	docker-compose build database
 
 docker-build-gn3: docker-pull-jetty-jre8
