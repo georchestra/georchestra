@@ -28,15 +28,6 @@
 [submodule "geoserver/georchestra-geoserver/geoserver-checkouts/geoserver-stable"]
 	path = geoserver/georchestra-geoserver/geoserver-checkouts/geoserver-stable
 	url = https://github.com/geoserver/geoserver.git
-[submodule "catalogapp/src/main/webapp/lib/externals/ext"]
-	path = catalogapp/src/main/webapp/lib/externals/ext
-	url = https://github.com/probonogeek/extjs.git
-[submodule "catalogapp/src/main/webapp/lib/externals/openlayers"]
-	path = catalogapp/src/main/webapp/lib/externals/openlayers
-	url = https://github.com/openlayers/openlayers.git
-[submodule "catalogapp/src/main/webapp/lib/externals/geoext"]
-	path = catalogapp/src/main/webapp/lib/externals/geoext
-	url = https://github.com/geoext/geoext.git
 [submodule "geoserver/geoserver-submodule"]
 	path = geoserver/geoserver-submodule
 	url = https://github.com/georchestra/geoserver.git

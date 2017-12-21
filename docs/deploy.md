@@ -20,7 +20,6 @@ Once your system is ready, collect WAR files in a dedicated directory and rename
     mv security-proxy-${VERSION}-${PROFILE}.war ROOT.war
     mv analytics-${VERSION}-${PROFILE}.war analytics.war
     mv cas-server-webapp-${VERSION}-${PROFILE}.war cas.war
-    mv catalogapp-${VERSION}-${PROFILE}.war catalogapp.war
     mv downloadform-${VERSION}-${PROFILE}.war downloadform.war
     mv extractorapp-${VERSION}-${PROFILE}.war extractorapp.war
     mv geoserver-webapp-${VERSION}-${PROFILE}.war geoserver.war
@@ -74,7 +73,6 @@ However, this requires the build process to happen on the production host (or a 
     sudo service tomcat-georchestra stop
     cd /var/lib/tomcat-georchestra/webapps
     sudo ln -s ~/.m2/repository/org/georchestra/analytics/${VERSION}-SNAPSHOT/analytics-${VERSION}-SNAPSHOT-${PROFILE}.war analytics.war
-    sudo ln -s ~/.m2/repository/org/georchestra/catalogapp/${VERSION}-SNAPSHOT/catalogapp-${VERSION}-SNAPSHOT-${PROFILE}.war catalogapp.war
     sudo ln -s ~/.m2/repository/org/georchestra/downloadform/${VERSION}-SNAPSHOT/downloadform-${VERSION}-SNAPSHOT-${PROFILE}.war downloadform.war
     sudo ln -s ~/.m2/repository/org/georchestra/extractorapp/${VERSION}-SNAPSHOT/extractorapp-${VERSION}-SNAPSHOT-${PROFILE}.war extractorapp.war
     sudo ln -s ~/.m2/repository/org/geonetwork-opensource/web-app/3.0.4-SNAPSHOT/web-app-3.0.4-SNAPSHOT.war geonetwork.war
@@ -150,7 +148,6 @@ At the end of the procedure, you should see something like this in your console:
 [INFO]
 [INFO] --- maven-dependency-plugin:2.2:copy-dependencies (default) @ server-deploy ---
 [INFO] Copying cas-server-webapp-14.06-SNAPSHOT-myprofile.war to /var/cache/deploy/stable/checkout/server-deploy/target/wars/cas-server-webapp-14.06-SNAPSHOT-myprofile.war
-[INFO] Copying catalogapp-14.06-SNAPSHOT-myprofile.war to /var/cache/deploy/stable/checkout/server-deploy/target/wars/catalogapp-14.06-SNAPSHOT-myprofile.war
 [INFO] Copying geofence-webapp-14.06-SNAPSHOT-myprofile.war to /var/cache/deploy/stable/checkout/server-deploy/target/wars/geofence-webapp-14.06-SNAPSHOT-myprofile.war
 [INFO] Copying header-14.06-SNAPSHOT-myprofile.war to /var/cache/deploy/stable/checkout/server-deploy/target/wars/header-14.06-SNAPSHOT-myprofile.war
 [INFO] Copying extractorapp-14.06-SNAPSHOT-myprofile.war to /var/cache/deploy/stable/checkout/server-deploy/target/wars/extractorapp-14.06-SNAPSHOT-myprofile.war

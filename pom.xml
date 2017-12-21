@@ -340,7 +340,6 @@
         </plugins>
       </build>
       <modules>
-        <module>catalogapp</module>
         <module>extractorapp</module>
         <module>ldapadmin</module>
         <module>mapfishapp</module>
@@ -370,7 +369,6 @@
         <module>config</module>
         <module>server-deploy-support</module>
         <module>ogc-server-statistics</module>
-        <module>catalogapp</module>
         <module>extractorapp</module>
         <module>ldapadmin</module>
         <module>mapfishapp</module>
@@ -393,7 +391,6 @@
       </activation>
       <modules>
         <module>cas-server-webapp</module>
-        <module>catalogapp</module>
         <module>extractorapp</module>
         <module>geoserver</module>
         <module>geowebcache-webapp</module>
@@ -429,12 +426,6 @@
       <id>cas</id>
       <modules>
         <module>cas-server-webapp</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>catalogapp</id>
-      <modules>
-        <module>catalogapp</module>
       </modules>
     </profile>
     <profile>

@@ -28,7 +28,6 @@ user@computer:~/myprofile (15.12)$ tree -L 1
 ├── analytics
 ├── build_support
 ├── cas-server-webapp
-├── catalogapp
 ├── DeployScript.groovy
 ├── excluded
 ├── extractorapp
@@ -84,7 +83,7 @@ You should update the values for several properties, typically:
 
 ### Webapp overrides
 
-The files from the ```analytics```, ```cas-server-webapp```, ```catalogapp```, ```extractorapp```, ```geonetwork-client```, ```geonetwork-main```, ```header``` and ```mapfishapp``` directories are just overriding those from the webapps.
+The files from the ```analytics```, ```cas-server-webapp```, ```extractorapp```, ```geonetwork-client```, ```geonetwork-main```, ```header``` and ```mapfishapp``` directories are just overriding those from the webapps.
 
 This provides an easy way to customize stylesheets and images, but also to pass custom options to the javascript webapps.
 

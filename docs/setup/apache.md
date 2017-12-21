@@ -178,17 +178,6 @@ ProxyPassReverse /analytics/ http://localhost:8180/analytics/
 ```
 
 
-* ```catalogapp.conf```:
-
-```
-<Proxy http://localhost:8180/catalogapp/*>
-    Require all granted
-</Proxy>
-ProxyPass /catalogapp/ http://localhost:8180/catalogapp/ 
-ProxyPassReverse /catalogapp/ http://localhost:8180/catalogapp/
-```
-
-
 * ```downloadform.conf```:
 
 ```

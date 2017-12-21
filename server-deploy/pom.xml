@@ -109,12 +109,6 @@
         </dependency>
         <dependency>
           <groupId>${project.groupId}</groupId>
-          <artifactId>catalogapp</artifactId>
-          <version>${project.version}</version>
-          <type>war</type>
-        </dependency>
-        <dependency>
-          <groupId>${project.groupId}</groupId>
           <artifactId>extractorapp</artifactId>
           <version>${project.version}</version>
           <type>war</type>
@@ -196,12 +190,6 @@
         <dependency>
           <groupId>${project.groupId}</groupId>
           <artifactId>header</artifactId>
-          <version>${project.version}</version>
-          <type>war</type>
-        </dependency>
-        <dependency>
-          <groupId>${project.groupId}</groupId>
-          <artifactId>catalogapp</artifactId>
           <version>${project.version}</version>
           <type>war</type>
         </dependency>
@@ -389,17 +377,6 @@
         <dependency>
           <groupId>${project.groupId}</groupId>
           <artifactId>geofence-webapp</artifactId>
-          <version>${project.version}</version>
-          <type>war</type>
-        </dependency>
-      </dependencies>
-    </profile>
-    <profile>
-      <id>catalogapp</id>
-      <dependencies>
-        <dependency>
-          <groupId>${project.groupId}</groupId>
-          <artifactId>catalogapp</artifactId>
           <version>${project.version}</version>
           <type>war</type>
         </dependency>

@@ -1,9 +1,0 @@
-Manifest-Version: 1.0
-Class-Path: aopalliance-1.0.jar jcl-over-slf4j-1.6.1.jar jstl-1.2.jar 
- log4j-1.2.15.jar slf4j-api-1.6.1.jar slf4j-log4j12-1.6.1.jar spring-a
- op-3.0.5.RELEASE.jar spring-asm-3.0.5.RELEASE.jar spring-beans-3.0.5.
- RELEASE.jar spring-context-3.0.5.RELEASE.jar spring-context-support-3
- .0.5.RELEASE.jar spring-core-3.0.5.RELEASE.jar spring-expression-3.0.
- 5.RELEASE.jar spring-test-3.0.5.RELEASE.jar spring-web-3.0.5.RELEASE.
- jar spring-webmvc-3.0.5.RELEASE.jar
-

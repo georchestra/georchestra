@@ -38,7 +38,7 @@ docker-build-ldapadmin: docker-pull-jetty-jre8
 	./mvn clean package docker:build -Pdocker -DskipTests --pl ldapadmin
 
 docker-build-georchestra: docker-pull-jetty-jre8 docker-build-database docker-build-ldap docker-build-geoserver docker-build-gn3
-	./mvn clean package docker:build -Pdocker -DskipTests --pl extractorapp,cas-server-webapp,security-proxy,mapfishapp,header,ldapadmin,analytics,catalogapp,downloadform,geowebcache-webapp,atlas
+	./mvn clean package docker:build -Pdocker -DskipTests --pl extractorapp,cas-server-webapp,security-proxy,mapfishapp,header,ldapadmin,analytics,downloadform,geowebcache-webapp,atlas
 
 docker-build-dev:
 	docker pull debian:stretch
@@ -93,7 +93,7 @@ deb-build-geoserver-geofence: war-build-geoserver-geofence
 	../mvn clean package deb:package -PdebianPackage --pl webapp
 
 deb-build-georchestra: war-build-georchestra build-deps deb-build-geoserver
-	./mvn package deb:package -pl atlas,catalogapp,cas-server-webapp,downloadform,security-proxy,header,mapfishapp,extractorapp,analytics,geoserver/webapp,ldapadmin,geonetwork/web,geowebcache-webapp -PdebianPackage -DskipTests
+	./mvn package deb:package -pl atlas,cas-server-webapp,downloadform,security-proxy,header,mapfishapp,extractorapp,analytics,geoserver/webapp,ldapadmin,geonetwork/web,geowebcache-webapp -PdebianPackage -DskipTests
 
 # Base geOrchestra config and common modules
 build-deps:
