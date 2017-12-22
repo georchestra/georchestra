@@ -71,7 +71,7 @@ sed -i '/fakeuser/d' /tmp/groups.ldif
  * As a result of [#1108](https://github.com/georchestra/georchestra/issues/1108) and [#556](https://github.com/georchestra/georchestra/issues/556), the ogc-server-statistics model has been changed. To upgrade your database, you should follow this procedure:
 
 ```
-wget https://raw.githubusercontent.com/georchestra/georchestra/15.12/ogc-server-statistics/populate_stats_roles.py
+wget https://raw.githubusercontent.com/georchestra/georchestra/master/migrations/15.12/populate_stats_roles.py
 ```
 In this script, change the values of the following variables according to your configuration: LDAP_URI, BIND_WITH_CREDENTIALS, LDAP_BINDDN, LDAP_PASSWD, GROUPS_DN, GROUP_OBJECT_CLASS.
 
@@ -91,7 +91,7 @@ Check the sql migration file looks good.
 
 Next step is to execute the two migration scripts:
 ```
-wget https://raw.githubusercontent.com/georchestra/georchestra/15.12/ogc-server-statistics/update_to_1512.sql -O /tmp/update_to_1512.sql
+wget https://raw.githubusercontent.com/georchestra/georchestra/master/migrations/15.12/update_to_1512.sql -O /tmp/update_to_1512.sql
 psql -d georchestra -f /tmp/update_to_1512.sql
 psql -d georchestra -f /tmp/ogc-server-statistics-migration.sql
 ```
