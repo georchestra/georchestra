@@ -105,6 +105,21 @@ public class PermissionsTest {
     }
 
     @Test
+    public void testNetwork() throws IOException, ClassNotFoundException {
+        Permissions perm = this.load("test-permissions-uriMatcher.xml");
+
+        assertTrue(perm.isDenied(new URL("http://192.168.11.12/geoserver")));
+        assertFalse(perm.isDenied(new URL("http://192.168.0.0/geoserver")));
+        assertTrue(perm.isDenied(new URL("http://10.28.12.145/geoserver")));
+        assertFalse(perm.isDenied(new URL("http://yahoo.fr/geoserver")));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testNetworkBadFormat() throws IOException, ClassNotFoundException {
+        Permissions perm = this.load("test-permissions-network-bad-format.xml");
+    }
+
+    @Test
     public void testPort() throws IOException, ClassNotFoundException {
         Permissions perm = this.load("test-permissions-uriMatcher.xml");
 

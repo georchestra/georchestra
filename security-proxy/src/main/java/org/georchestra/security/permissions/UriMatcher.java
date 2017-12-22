@@ -26,6 +26,8 @@ import java.util.HashSet;
 import java.util.regex.Pattern;
 
 import com.google.common.collect.Sets;
+import org.apache.commons.net.util.SubnetUtils;
+
 /**
  * @author Jesse on 8/15/2014.
  */
@@ -35,6 +37,8 @@ public class UriMatcher {
     private Pattern pathPattern;
     private HashSet<InetAddress> hostNames;
     private String host;
+    private String network;
+    private SubnetUtils.SubnetInfo networkInfo;
     private String domain;
     private Pattern domainPattern;
 
@@ -54,6 +58,9 @@ public class UriMatcher {
         if (this.domain != null) {
             this.domainPattern = Pattern.compile(this.domain, Pattern.CASE_INSENSITIVE);
         }
+        if(this.network != null){
+            this.networkInfo = (new SubnetUtils(network)).getInfo();
+        }
     }
 
     public boolean matches(URL url) {
@@ -62,6 +69,8 @@ public class UriMatcher {
         if (domain != null && !matchesDomain(url))
             return false;
         if (port != -1 && !matchesPort(url))
+            return false;
+        if (network != null && !matchesNetwork(url))
             return false;
         return !(pathPattern != null && !matchesPath(url));
     }
@@ -87,6 +96,22 @@ public class UriMatcher {
 
         for (InetAddress inetAddress : allByName) {
             if (this.hostNames.contains(inetAddress)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean matchesNetwork(URL url) {
+        final InetAddress[] allByName;
+        try {
+            allByName = InetAddress.getAllByName(url.getHost());
+        } catch (UnknownHostException e) {
+            return false;
+        }
+
+        for (InetAddress inetAddress : allByName) {
+            if (this.networkInfo.isInRange(inetAddress.getHostAddress())) {
                 return true;
             }
         }
@@ -132,6 +157,14 @@ public class UriMatcher {
 
     public String getPath() {
         return path;
+    }
+
+    public String getNetwork() {
+        return network;
+    }
+
+    public void setNetwork(String network) {
+        this.network = network;
     }
 
     private Object readResolve() {
