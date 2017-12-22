@@ -730,6 +730,26 @@
       </dependencies>
     </profile>
     <profile>
+      <id>wps-download</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.geoserver.community</groupId>
+          <artifactId>gs-wps-download</artifactId>
+          <version>${gs.version}</version>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>mbtiles</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.geoserver.community</groupId>
+          <artifactId>gs-mbtiles</artifactId>
+          <version>${gs.version}</version>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
       <id>sfs-store</id>
       <dependencies>
         <dependency>
