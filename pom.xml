@@ -80,7 +80,6 @@
     <!-- <module>gt-ogr</module> now the geotools implementation is used -->
     <module>epsg-extension</module>
     <module>ogc-server-statistics</module>
-    <module>server-deploy-support</module>
     <module>commons</module>
   </modules>
   <build>
@@ -367,7 +366,6 @@
       </build>
       <modules>
         <module>config</module>
-        <module>server-deploy-support</module>
         <module>ogc-server-statistics</module>
         <module>extractorapp</module>
         <module>ldapadmin</module>
