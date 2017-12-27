@@ -84,7 +84,7 @@ GEOR.managelayers = (function() {
          * Fired before all layers are removed from map
          */
         "beforecontextcleared",
-        
+
         /**
          * @event beforecontextcleared
          * Fired after all layers are removed from map
@@ -148,6 +148,7 @@ GEOR.managelayers = (function() {
         url = url instanceof Array ? url[0] : url;
         return layerRecord.get("type") === "WMS" &&
             layerRecord.hasEquivalentWFS() &&
+            !layerRecord.get("layergroup") &&
             GEOR.config.EDITABLE_LAYERS.test(url);
     };
 
@@ -633,7 +634,7 @@ GEOR.managelayers = (function() {
             hasEquivalentWCS = (type === "WMS") ?
                 layerRecord.hasEquivalentWCS() : false,
             isVector = layer instanceof OpenLayers.Layer.Vector,
-            isBaseLayer = layerRecord.get("opaque") || 
+            isBaseLayer = layerRecord.get("opaque") ||
                 layer.transitionEffect === "resize",
             isSingleTile = layer.singleTile;
 
@@ -838,7 +839,7 @@ GEOR.managelayers = (function() {
                 }
             });
         }
-        
+
         if (isWMS) {
             menuItems.push({
                 text: tr('Tiled mode'),
