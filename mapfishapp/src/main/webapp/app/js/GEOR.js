@@ -314,7 +314,6 @@ Ext.namespace("GEOR");
                     if (previousTab) {
                         previousTab.clean();
                         panel.remove(previousTab);
-                        //previousTab.destroy();
                     }
                     return true;
                 }
