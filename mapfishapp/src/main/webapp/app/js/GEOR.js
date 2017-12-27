@@ -267,13 +267,6 @@ Ext.namespace("GEOR");
                 items: recenteringItems
             })
         ];
-
-        // this panel serves as the container for
-        // the "search results" tabs
-        var tab = new GEOR.ResultsPanel({
-            html: tr("resultspanel.emptytext")
-        });
-        var tabCreationLocked = false;
         
         var southPanel = new Ext.TabPanel({
             region: "south",
@@ -293,15 +286,7 @@ Ext.namespace("GEOR");
                 border: false,
                 frame: false
             },
-            items: [tab, {
-                id: 'addPanel', 
-                title: '+', 
-                tabTip: tr('Add query'), 
-                style: 'float: right;',
-                // hack:
-                lower: Ext.emptyFn,
-                raise: Ext.emptyFn
-            }],
+            items: [],
             listeners: {
                 'collapse': function(panel) {
                     panel.items.each(function(tab) {
@@ -312,18 +297,25 @@ Ext.namespace("GEOR");
                     panel.getActiveTab().raise();
                 },
                 'tabchange': function(panel, t) {
-                    if (t.id == 'addPanel' && !tabCreationLocked) {
-                        var tab = new GEOR.ResultsPanel({
-                            html: tr("resultspanel.emptytext")
-                        });
-                        panel.insert(panel.items.length-1, tab);
-                        panel.setActiveTab(tab);
-                    } else {
-                        panel.items.each(function(tab) {
-                            tab.lower();
-                        });
-                        t.raise();
+                    panel.items.each(function(tab) {
+                        tab.lower();
+                    });
+                    t && t.raise();
+                },
+                'beforeadd': function(panel, incomingTab) {
+                    // if new component itemId matches an already existing one
+                    // => clean previous tab
+                    var previousTab;
+                    panel.items.each(function(tab) {
+                        if (tab.itemId && tab.itemId == incomingTab.itemId) {
+                            previousTab = tab;
+                        }
+                    });
+                    if (previousTab) {
+                        previousTab.clean();
+                        panel.remove(previousTab);
                     }
+                    return true;
                 }
             }
         });
@@ -399,17 +391,6 @@ Ext.namespace("GEOR");
                 }
             }
         });
-        
-        // this is a utility method taking a lock 
-        // before the active tab is removed
-        // and releasing it after 
-        // to prevent unwanted tab creation
-        // when switching the active one to "+"
-        var removeActiveTab = function() {
-            tabCreationLocked = true;
-            southPanel.remove(southPanel.getActiveTab());
-            tabCreationLocked = false;
-        }
 
         // Handle layerstore initialisation
         // with wms/services/wmc from "panier"
@@ -425,9 +406,9 @@ Ext.namespace("GEOR");
         // but by the mapinit module, which handles them more appropriately
         GEOR.mapinit.events.on({
             "searchresults": function(options) {
-                removeActiveTab();
                 var tab = new GEOR.ResultsPanel({
                     html: tr("resultspanel.emptytext"),
+                    itemId: options.layerId,
                     tabTip: options.tooltip,
                     title: options.title,
                     map: map
@@ -437,7 +418,7 @@ Ext.namespace("GEOR");
                     // here we do have a valid model (got from describeFeatureType)
                     model: options.model
                 });
-                southPanel.insert(southPanel.items.length-1, tab);
+                southPanel.add(tab);
                 southPanel.setActiveTab(tab);
                 southPanel.expand();
                 tab._zoomToFeatures(options.features);
@@ -447,27 +428,12 @@ Ext.namespace("GEOR");
 
         if (GEOR.getfeatureinfo) {
             GEOR.getfeatureinfo.events.on({
-                "search": function(panelCfg) {
-                    var tab = southPanel.getActiveTab();
-                    if (tab) {
-                        tab.setTitle(tr("WMS Search"));
-                        tab.clean();
-                    }
-                    var panel = Ext.apply({
-                        bodyStyle: 'padding:5px'
-                    }, panelCfg);
-                    tab.removeAll();
-                    tab.add(panel);
-                    southPanel.doLayout();
-                    southPanel.expand();
-                },
                 "searchresults": function(options) {
-                    removeActiveTab();
+                    southPanel.expand();
                     Ext.iterate(options.results, function(featureType, result) {
                         var tab = new GEOR.ResultsPanel({
                             html: tr("resultspanel.emptytext"),
-                            //itemId: featureType, // XXX assume only one tab per featuretype ?
-                            // better done with layer.id
+                            itemId: result.layerId, // always one tab per featuretype
                             tabTip: result.tooltip,
                             title: result.title,
                             map: map
@@ -475,7 +441,7 @@ Ext.namespace("GEOR");
                         tab.populate({
                             features: result.features
                         });
-                        southPanel.insert(southPanel.items.length-1, tab);
+                        southPanel.add(tab);
                         southPanel.setActiveTab(tab);
                     });
                     southPanel.doLayout();
@@ -488,24 +454,11 @@ Ext.namespace("GEOR");
 
         if (GEOR.selectfeature) {
             GEOR.selectfeature.events.on({
-                "search": function(panelCfg) {
-                    var tab = southPanel.getActiveTab();
-                    if (tab) {
-                        tab.setTitle(tr("Select Feature"));
-                        tab.clean();
-                    }
-                    var panel = Ext.apply({
-                        bodyStyle: 'padding:5px'
-                    }, panelCfg);
-                    tab.removeAll();
-                    tab.add(panel);
-                    southPanel.doLayout();
-                    southPanel.expand();
-                },
                 "searchresults": function(options) {
-                    removeActiveTab();
+                    southPanel.expand();
                     var tab = new GEOR.ResultsPanel({
                         html: tr("resultspanel.emptytext"),
+                        itemId: options.layerId,
                         tabTip: options.tooltip,
                         noDelete: true, // deletion is useless: deactivate control in bbar
                         title: options.title,
@@ -516,7 +469,7 @@ Ext.namespace("GEOR");
                         features: options.features, 
                         addLayerToMap: options.addLayerToMap
                     });
-                    southPanel.insert(southPanel.items.length-1, tab);
+                    southPanel.add(tab);
                     southPanel.setActiveTab(tab);
                 },
                 "shutdown": function() {
@@ -550,26 +503,12 @@ Ext.namespace("GEOR");
                 GEOR.getfeatureinfo.deactivate();
                 southPanel.collapse();
             },
-            // events from querier windows:
-            "search": function(panelCfg) {
-                var tab = southPanel.getActiveTab();
-                if (tab) {
-                    tab.setTitle(tr("WFS Search"));
-                }
-                //southPanel.removeAll();
-                var panel = Ext.apply({
-                    bodyStyle: 'padding:5px'
-                }, panelCfg);
-                tab.removeAll();
-                tab.add(panel);
-                southPanel.doLayout();
-                southPanel.expand();
-            },
             "searchresults": function(options) {
-                removeActiveTab();
+                southPanel.expand();
                 var tab = new GEOR.ResultsPanel({
                     html: tr("resultspanel.emptytext"),
                     tabTip: options.tooltip,
+                    itemId: options.layerId, // internally used to link layer with its results tab
                     title: options.title,
                     map: map
                 });
@@ -578,7 +517,7 @@ Ext.namespace("GEOR");
                     // here we do have a valid model (got from describeFeatureType)
                     model: options.model
                 });
-                southPanel.insert(southPanel.items.length-1, tab);
+                southPanel.add(tab);
                 southPanel.setActiveTab(tab);
             }
         });

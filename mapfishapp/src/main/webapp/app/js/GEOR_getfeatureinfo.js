@@ -42,14 +42,7 @@ GEOR.getfeatureinfo = (function() {
          * options - {Object} A hash containing results
          */
         "searchresults",
-        /**
-         * Event: search
-         * Fires when the user presses the search button
-         *
-         * Listener arguments:
-         * panelCfg - {Object} Config object for a panel
-         */
-        "search",
+
         /**
          * Event: shutdown
          * Fires when GFI tool is deactivated
@@ -170,6 +163,7 @@ GEOR.getfeatureinfo = (function() {
             results[layer.params.LAYERS] = {
                 title: GEOR.util.shortenLayerName(layer),
                 tooltip: layer.name + " - " + tr("WMS GetFeatureInfo at ") + coordstr,
+                layerId: "getfeatureinfo_" + layer.params.LAYERS,
                 features: []
             };
         });
@@ -193,6 +187,7 @@ GEOR.getfeatureinfo = (function() {
                         results[layerName] = {
                             title: GEOR.util.shortenLayerName(layerName),
                             tooltip: layerName + " - " + tr("WMS GetFeatureInfo at ") + coordstr,
+                            layerId: "getfeatureinfo_" + layerName,
                             features: [feature]
                         };
                     }
@@ -216,17 +211,6 @@ GEOR.getfeatureinfo = (function() {
     var onBeforegetfeatureinfo = function() {
         // to let OL use its own cursor class:
         OpenLayers.Element.removeClass(map.viewPortDiv, "olDrawBox");
-
-        var msg;
-        if (ctrl.layers.length > 0) {
-            msg = "<div>Searching...</div>";
-        } else {
-            msg = "<div>No layer selected</div>";
-        }
-
-        observable.fireEvent("search", {
-            html: tr(msg)
-        });
     };
 
     /**
@@ -387,19 +371,9 @@ GEOR.getfeatureinfo = (function() {
                 });
             }
             if (layers.length == 0) {
-                observable.fireEvent("search", {
-                    html: tr("No active layers.")
-                });
                 observable.fireEvent("shutdown");
             } else if (state) {
                 Xsearch = (record === false ? true : false);
-                observable.fireEvent("search", {
-                    html: Xsearch ? 
-                        tr("Search on all active layers") :
-                        tr("<div>Search on objects active for NAME layer. " +
-                            "Click on the map.</div>",
-                            {'NAME': title})
-                });
 
                 var ctrlEventsConfig = {
                     "beforegetfeatureinfo": onBeforegetfeatureinfo,

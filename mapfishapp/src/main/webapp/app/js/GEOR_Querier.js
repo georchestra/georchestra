@@ -201,16 +201,8 @@ GEOR.Querier = Ext.extend(Ext.Window, {
              * Listener arguments:
              * options - {Object} A hash containing response, model and format
              */
-            "searchresults",
+            "searchresults"
 
-            /**
-             * @event search
-             * Fires when the user presses the search button
-             *
-             * Listener arguments:
-             * panelCfg - {Object} Config object for a panel 
-             */
-            "search"
         );
 
         GEOR.Querier.superclass.initComponent.call(this);
@@ -266,11 +258,6 @@ GEOR.Querier = Ext.extend(Ext.Window, {
             return;
         }
 
-        this.fireEvent("search", {
-            // TODO: tell on which layerRecord the search is running ?
-            html: this.tr("<div>Searching...</div>")
-        });
-
         // we deactivate draw controls before the request is done.
         this.filterbuilder.deactivateControls();
 
@@ -307,12 +294,14 @@ GEOR.Querier = Ext.extend(Ext.Window, {
                     new GEOR.FeatureDataModel({
                         attributeStore: this.attributeStore
                     }) : null,
-                    name = this.record.get("title");
+                    name = this.record.get("title"),
+                    layer = this.record.getLayer();
 
                 this.fireEvent("searchresults", {
                     features: response.features,
                     model: model,
                     tooltip: name + " - " + this.tr("WFS GetFeature on filter"),
+                    layerId: "querier_" + layer.id, // a unique ID for this layer
                     title: GEOR.util.shortenLayerName(name)
                 });
             },
