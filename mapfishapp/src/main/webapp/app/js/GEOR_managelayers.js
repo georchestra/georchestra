@@ -98,16 +98,8 @@ GEOR.managelayers = (function() {
          * Listener arguments:
          * options - {Object} A hash containing response, model and format
          */
-        "searchresults",
+        "searchresults"
 
-        /**
-         * @event search
-         * Fires when the user presses the search button
-         *
-         * Listener arguments:
-         * panelCfg - {Object} Config object for a panel
-         */
-        "search"
     );
 
     /**
@@ -789,9 +781,6 @@ GEOR.managelayers = (function() {
                             record: layerRecord,
                             map: layer.map,
                             listeners: {
-                                "search": function(panelCfg) {
-                                    observable.fireEvent("search", panelCfg);
-                                },
                                 "searchresults": function(options) {
                                     observable.fireEvent("searchresults", options);
                                 }

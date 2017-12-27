@@ -34,14 +34,7 @@ GEOR.selectfeature = (function() {
          * options - {Object} A hash containing response and format
          */
         "searchresults",
-        /**
-         * Event: search
-         * Fires when the user presses the search button
-         *
-         * Listener arguments:
-         * panelCfg - {Object} Config object for a panel 
-         */
-        "search",
+
         /**
          * Event: shutdown
          * Fires when GFI tool is deactivated
@@ -109,6 +102,7 @@ GEOR.selectfeature = (function() {
             features: fs,
             //ctrl: ctrl, // commented out to fix https://github.com/georchestra/georchestra/issues/785
             tooltip: ctrl.layer.name + " - " + tr("OpenLayers SelectFeature"),
+            layerId: "selectfeature_" + ctrl.layer.id,
             title: GEOR.util.shortenLayerName(ctrl.layer.name),
             // we do not want the generated vector layer 
             // to be added to the map object:
@@ -171,6 +165,7 @@ GEOR.selectfeature = (function() {
                 if (ctrl.events !== null) {
                     observable.fireEvent("searchresults", {
                         features: [],
+                        layerId: "selectfeature_" + ctrl.layer.id,
                         addLayerToMap: false
                     });
                     selectedFeatures = {};
@@ -210,11 +205,6 @@ GEOR.selectfeature = (function() {
                 title = record.get("title");
             }
             if (state) {
-                observable.fireEvent("search", {
-                    html: tr("<div>Select features activated on NAME layer. " +
-                          "Click on the map.</div>",
-                          {'NAME': title})
-                });
             
                 if (ctrl) {
                     ctrl.destroy();
@@ -265,6 +255,7 @@ GEOR.selectfeature = (function() {
                     // to deactivate the control if ctrl.events is null.
                     if (ctrl.events !== null) {
                         observable.fireEvent("searchresults", {
+                            layerId: "selectfeature_" + ctrl.layer.id,
                             features: [],
                             addLayerToMap: false
                         });
