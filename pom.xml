@@ -343,7 +343,6 @@
         <module>ldapadmin</module>
         <module>mapfishapp</module>
         <module>security-proxy</module>
-        <module>downloadform</module>
         <module>analytics</module>
         <module>header</module>
         <module>atlas</module>
@@ -371,7 +370,6 @@
         <module>ldapadmin</module>
         <module>mapfishapp</module>
         <module>security-proxy</module>
-        <module>downloadform</module>
         <module>analytics</module>
         <module>header</module>
         <module>atlas</module>
@@ -397,7 +395,6 @@
         <module>atlas</module>
         <module>security-proxy</module>
         <module>geonetwork</module>
-        <module>downloadform</module>
         <module>analytics</module>
         <module>header</module>
       </modules>
@@ -484,12 +481,6 @@
       <id>geonetwork</id>
       <modules>
         <module>geonetwork</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>downloadform</id>
-      <modules>
-        <module>downloadform</module>
       </modules>
     </profile>
     <profile>

@@ -18,7 +18,6 @@ Once your system is ready, collect WAR files in a dedicated directory and rename
     mv security-proxy-${VERSION}-${PROFILE}.war ROOT.war
     mv analytics-${VERSION}-${PROFILE}.war analytics.war
     mv cas-server-webapp-${VERSION}-${PROFILE}.war cas.war
-    mv downloadform-${VERSION}-${PROFILE}.war downloadform.war
     mv extractorapp-${VERSION}-${PROFILE}.war extractorapp.war
     mv geoserver-webapp-${VERSION}-${PROFILE}.war geoserver.war
     mv ldapadmin-${VERSION}-${PROFILE}.war ldapadmin.war
@@ -71,7 +70,6 @@ However, this requires the build process to happen on the production host (or a 
     sudo service tomcat-georchestra stop
     cd /var/lib/tomcat-georchestra/webapps
     sudo ln -s ~/.m2/repository/org/georchestra/analytics/${VERSION}-SNAPSHOT/analytics-${VERSION}-SNAPSHOT-${PROFILE}.war analytics.war
-    sudo ln -s ~/.m2/repository/org/georchestra/downloadform/${VERSION}-SNAPSHOT/downloadform-${VERSION}-SNAPSHOT-${PROFILE}.war downloadform.war
     sudo ln -s ~/.m2/repository/org/georchestra/extractorapp/${VERSION}-SNAPSHOT/extractorapp-${VERSION}-SNAPSHOT-${PROFILE}.war extractorapp.war
     sudo ln -s ~/.m2/repository/org/geonetwork-opensource/web-app/3.0.4-SNAPSHOT/web-app-3.0.4-SNAPSHOT.war geonetwork.war
     sudo ln -s ~/.m2/repository/org/georchestra/ldapadmin/${VERSION}-SNAPSHOT/ldapadmin-${VERSION}-SNAPSHOT-${PROFILE}.war ldapadmin.war

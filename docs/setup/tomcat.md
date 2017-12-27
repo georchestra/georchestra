@@ -459,7 +459,6 @@ def proxyDefaultTarget = "http://localhost:8280"
 
 properties['proxy.mapping'] = """
 <entry key="analytics"     value="proxyDefaultTarget/analytics/" />
-<entry key="downloadform"  value="proxyDefaultTarget/downloadform/" />
 <entry key="extractorapp"  value="proxyDefaultTarget/extractorapp/" />
 <entry key="geonetwork"    value="proxyDefaultTarget/geonetwork/" />
 <entry key="geoserver"     value="http://localhost:8380/geoserver/" />

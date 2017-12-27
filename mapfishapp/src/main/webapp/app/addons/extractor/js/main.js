@@ -2,7 +2,6 @@ Ext.namespace("GEOR.Addons");
 
 /*
  * TODO: 
- * - handle dlform
  * - handle ACLs
  * - wizard (1 choose layers (NOK report here) 2 choose extent 3 choose formats 4 enter email )
  * - modifyFeature control improved: non symetrical mode when OpenLayers.Control.ModifyFeature.RESIZE

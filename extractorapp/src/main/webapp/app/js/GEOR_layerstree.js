@@ -985,12 +985,6 @@ GEOR.layerstree = (function() {
                 },
                 layers: new Array(l)
             };
-            // send the JSESSIONID to the server as a validation token
-            // only if user is not connected and if dlform is set to true:
-            if (GEOR.config.DOWNLOAD_FORM && GEOR.data.anonymous) {
-                // see proposition 2 of http://applis-bretagne.fr/redmine/issues/2194#note-15
-                out.sessionid = GEOR.util.getCookie('JSESSIONID');
-            };
 
             var local;
             for (var i=0; i<l; i++) {

@@ -38,13 +38,6 @@ in the next query, replace every '@...@' with the values of your shared.maven.fi
 psql -d georchestra -c "INSERT INTO geofence.gf_gsinstance (id, baseURL, dateCreation, description, name, password, username) values (0, 'http(s)://@shared.server.name@/geoserver', 'now', 'locale geoserver', 'default-gs', '@shared.privileged.geoserver.pass@', '@shared.privileged.geoserver.user@');"
 ```
 
-## Download form schema
-
-If the **downloadform** module is deployed and ```shared.download_form.activated``` is true in your setup (false by default):
-```
-psql -d georchestra -f postgresql/03-downloadform.sql
-```
-
 ## OGC statistics schema
 
 If the **security proxy** is deployed and ```shared.ogc.statistics.activated``` is true in your setup (false by default):
@@ -77,7 +70,6 @@ example ```www-data``` :
 wget https://raw.githubusercontent.com/georchestra/georchestra/15.12/postgresql/fix-owner.sql -O /tmp/fix-owner.sql
 psql -d georchestra -f /tmp/fix-owner.sql
 psql -d georchestra -c "SELECT change_owner('mapfishapp', 'www-data');";
-psql -d georchestra -c "SELECT change_owner('downloadform', 'www-data');";
 psql -d georchestra -c "SELECT change_owner('ldapadmin', 'www-data');";
 psql -d georchestra -c "SELECT change_owner('ogcstatistics', 'www-data');";
 psql -d georchestra -c "SELECT change_owner('extractorapp', 'www-data');";
@@ -92,9 +84,7 @@ If **geonetwork** is to be deployed, you need to create a dedicated user and sch
 createuser -SDRI geonetwork
 psql -d georchestra -c "ALTER USER geonetwork WITH PASSWORD 'www-data';"
 psql -d georchestra -c 'CREATE SCHEMA AUTHORIZATION geonetwork;'
-psql -d georchestra -c 'GRANT USAGE ON SCHEMA downloadform TO "geonetwork";'
 psql -d georchestra -c "SELECT change_owner('geonetwork', 'geonetwork');";
-psql -d georchestra -c 'GRANT SELECT ON downloadform.geonetwork_log TO "geonetwork";'
 ```
 
 ## Cleanup maintenance function

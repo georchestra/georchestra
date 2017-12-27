@@ -5,4 +5,3 @@ instance=@shared.instance.name@
 language=@shared.language@
 
 dlJdbcUrlOGC=@shared.ogc.statistics.jdbcurl@?user=@shared.psql.user@&password=@shared.psql.pass@
-dlJdbcUrlDLForm=@shared.download_form.jdbcurl@?user=@shared.psql.user@&password=@shared.psql.pass@

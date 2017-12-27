@@ -45,7 +45,6 @@ import org.apache.commons.logging.LogFactory;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.extractorapp.ws.AbstractEmailFactory;
 import org.georchestra.extractorapp.ws.Email;
-import org.georchestra.extractorapp.ws.acceptance.CheckFormAcceptance;
 import org.georchestra.extractorapp.ws.extractor.task.ExecutionMetadata;
 import org.georchestra.extractorapp.ws.extractor.task.ExecutionPriority;
 import org.georchestra.extractorapp.ws.extractor.task.ExtractionManager;
@@ -89,7 +88,6 @@ public class ExtractorController implements ServletContextAware {
     private UsernamePasswordCredentials adminCredentials;
     private String secureHost;
     private long maxCoverageExtractionSize = Long.MAX_VALUE;
-    private CheckFormAcceptance checkFormAcceptance;
 
     private ExtractionManager extractionManager;
     private String userAgent;
@@ -115,10 +113,6 @@ public class ExtractorController implements ServletContextAware {
             String password = georConfig.getProperty("privileged_admin_pass");
             // Recreating a Credentials object
             adminCredentials = new UsernamePasswordCredentials(username, password);
-            boolean dlFormActivated = Boolean.parseBoolean(georConfig.getProperty("dlformactivated"));
-            String dlformJdbcUrl = georConfig.getProperty("dlformjdbcurl");
-            // Recreating a CheckFormAcceptance object
-            checkFormAcceptance = new CheckFormAcceptance(dlFormActivated, dlformJdbcUrl);
             this.dataSource.setJdbcUrl(this.georConfig.getProperty("jdbcurl"));
             LOG.info("geOrchestra datadir: done.");
         }
@@ -308,55 +302,50 @@ public class ExtractorController implements ServletContextAware {
             sessionId = null;
         }
 
-        if (checkFormAcceptance.isFormAccepted(sessionId, request.getHeader("sec-username"), postData)) {
-            UUID requestUuid = UUID.randomUUID();
+        UUID requestUuid = UUID.randomUUID();
 
-            URL urlObj = new URL(servletUrl);
-            if (urlObj.getPort() == urlObj.getDefaultPort()) {
-                urlObj = new URL(urlObj.getProtocol(), urlObj.getHost(), urlObj.getFile());
+        URL urlObj = new URL(servletUrl);
+        if (urlObj.getPort() == urlObj.getDefaultPort()) {
+            urlObj = new URL(urlObj.getProtocol(), urlObj.getHost(), urlObj.getFile());
+        }
+        StringBuilder url = new StringBuilder(urlObj.toString());
+        url.append(RESULTS_MAPPING);
+        url.append("?");
+        url.append(UUID_PARAM);
+        url.append("=");
+        url.append(requestUuid);
+
+        List<ExtractorLayerRequest> requests = Collections.unmodifiableList(ExtractorLayerRequest.parseJson(postData));
+        if (requests.size() > 0) {
+
+            String[] recipients = requests.get(0)._emails;
+            Email email = emailFactory.createEmail(request, recipients, url.toString());
+
+            String username = request.getHeader("sec-username");
+            String roles = request.getHeader("sec-roles");
+            String org = request.getHeader("sec-orgname");
+            RequestConfiguration requestConfig = new RequestConfiguration(requests, requestUuid, email, servletContext, testing, username, roles, org,
+                    adminCredentials, secureHost, extractionFolderPrefix, maxCoverageExtractionSize, remoteReproject, useCommandLineGDAL, postData, this.userAgent);
+            ExtractionTask extractor = new ExtractionTask(requestConfig, this.dataSource);
+
+            LOG.info("Sending mail to user");
+            try {
+                email.sendAck();
+            } catch (Throwable e) {
+                LOG.error("Error while sending the notification to the user.", e);
             }
-            StringBuilder url = new StringBuilder(urlObj.toString());
-            url.append(RESULTS_MAPPING);
-            url.append("?");
-            url.append(UUID_PARAM);
-            url.append("=");
-            url.append(requestUuid);
+            LOG.info("Extraction request submitted, request uuid = " + extractor.executionMetadata.getUuid());
 
-            List<ExtractorLayerRequest> requests = Collections.unmodifiableList(ExtractorLayerRequest.parseJson(postData));
-            if (requests.size() > 0) {
-
-                String[] recipients = requests.get(0)._emails;
-                Email email = emailFactory.createEmail(request, recipients, url.toString());
-
-                String username = request.getHeader("sec-username");
-                String roles = request.getHeader("sec-roles");
-                String org = request.getHeader("sec-orgname");
-                RequestConfiguration requestConfig = new RequestConfiguration(requests, requestUuid, email, servletContext, testing, username, roles, org,
-                        adminCredentials, secureHost, extractionFolderPrefix, maxCoverageExtractionSize, remoteReproject, useCommandLineGDAL, postData, this.userAgent);
-                ExtractionTask extractor = new ExtractionTask(requestConfig, this.dataSource);
-
-                LOG.info("Sending mail to user");
-                try {
-                    email.sendAck();
-                } catch (Throwable e) {
-                    LOG.error("Error while sending the notification to the user.", e);
-                }
-                LOG.info("Extraction request submitted, request uuid = " + extractor.executionMetadata.getUuid());
-
-                if (testing) {
-                    extractor.run();
-                } else {
-                    extractionManager.submit(extractor);
-                }
-
-                reponseData = replace(readFile(responseTemplateFile), url.toString(), recipients);
-
-                response.setCharacterEncoding(responseCharset);
-                response.setContentType(reponseMimeType);
+            if (testing) {
+                extractor.run();
+            } else {
+                extractionManager.submit(extractor);
             }
-        } else {
-            reponseData = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<response>\n" + "  <message>form not accepted</message>\n"
-                    + "  <success>false</success>\n" + "</response>";
+
+            reponseData = replace(readFile(responseTemplateFile), url.toString(), recipients);
+
+            response.setCharacterEncoding(responseCharset);
+            response.setContentType(reponseMimeType);
         }
         PrintWriter out = response.getWriter();
 
@@ -402,10 +391,6 @@ public class ExtractorController implements ServletContextAware {
 
     public void setSecureHost(String secureHost) {
         this.secureHost = secureHost;
-    }
-
-    public void setCheckFormAcceptance(CheckFormAcceptance a) {
-        this.checkFormAcceptance = a;
     }
 
     private String replace(String template, String url, String[] emails) {

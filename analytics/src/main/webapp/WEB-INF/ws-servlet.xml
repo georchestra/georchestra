@@ -60,18 +60,6 @@
 
     <bean name="ogc_model" class="org.georchestra.analytics.model.OGCStatsModel" />
 
-    <bean name="geonetwork_stats" class="org.georchestra.analytics.GeonetworkStats">
-        <constructor-arg ref="geonetwork_model" /> 
-    </bean>
-
-    <bean name="geonetwork_model" class="org.georchestra.analytics.model.GeonetworkStatsModel" />
-
-    <bean name="extractor_stats" class="org.georchestra.analytics.ExtractorStats">
-        <constructor-arg ref="extractor_model" /> 
-    </bean>
-
-    <bean name="extractor_model" class="org.georchestra.analytics.model.ExtractorStatsModel" />
-
     <bean id="viewResolver"
           class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>

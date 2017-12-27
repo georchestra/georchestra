@@ -178,17 +178,6 @@ ProxyPassReverse /analytics/ http://localhost:8180/analytics/
 ```
 
 
-* ```downloadform.conf```:
-
-```
-<Proxy http://localhost:8180/downloadform/*>
-    Require all granted
-</Proxy>
-ProxyPass /downloadform/ http://localhost:8180/downloadform/ 
-ProxyPassReverse /downloadform/ http://localhost:8180/downloadform/
-```
-
-
 * ```extractorapp.conf```:
 
 ```
