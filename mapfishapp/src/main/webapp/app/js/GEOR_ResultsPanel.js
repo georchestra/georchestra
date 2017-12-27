@@ -62,9 +62,6 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
      */
     sfControl: null,
 
-    //TODO doc
-    id: "resultPanel",
-
     /**
      * Property: noDelete
      * {Boolean} do not show the delete button

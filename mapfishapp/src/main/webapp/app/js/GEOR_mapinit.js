@@ -389,6 +389,7 @@ GEOR.mapinit = (function() {
                                     features: response.features,
                                     model: model,
                                     tooltip: initSearch.typename + " - " + tr("WFS GetFeature on filter"),
+                                    layerId: "mapinit_" + initSearch.typename + "_" + initSearch.owsurl,
                                     title: GEOR.util.shortenLayerName(initSearch.typename)
                                 });
                             },
