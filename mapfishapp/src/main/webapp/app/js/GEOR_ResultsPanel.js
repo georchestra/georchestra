@@ -570,7 +570,7 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
             this.removeAll();
             this.add({
                 bodyStyle: 'padding:1em;',
-                html: tr("<p>No result for that request.</p>")
+                html: tr("<p>No result for this request.</p>")
             });
             return;
         }
