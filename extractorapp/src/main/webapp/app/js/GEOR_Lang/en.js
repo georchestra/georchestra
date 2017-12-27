@@ -57,20 +57,6 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
     "BUFFER kilometer": "${BUFFER} kilometer",
     "BUFFER kilometers": "${BUFFER} kilometers",
     /* GEOR_data.js */
-    /* GEOR_dlform.js */
-    "dlform.blanktext":
-        "Check to accept the conditions of use",
-    "dlform.checkbox":
-        "<span style='font-weight:bold;'>I accept the <a href='" +
-        "${URL}' target='_blank'>terms of use</a> " +
-        "of the data.</span>",
-    "dlform.save.error":
-        "Impossible to save the form. " +
-        "Please contact the platform administrator.",
-    "dlform.mandatory.fields":
-        "<div style='font-size:12px;'>" +
-        "<span style='font-weight:bold;'>Bold</span> fields " +
-        "are mandatory.</div>",
     /* GEOR_layeroptions.js */
     "layeroptions.boundingbox":
         "Bounding box (in ${UNIT}, " +

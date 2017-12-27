@@ -16,15 +16,6 @@ services:
       - XMS=1G
       - XMX=2G
 
-  # downloadform services (disabled by default)
-  downloadform:
-    image: georchestra/downloadform:latest
-    volumes:
-      - /etc/georchestra:/etc/georchestra
-    environment:
-      - XMS=256M
-      - XMX=512M
-
   # atlas printing services, eventually queried by the mapfishapp atlas addon
   atlas:
     image: georchestra/atlas:latest

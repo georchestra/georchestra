@@ -44,7 +44,7 @@
         <to type="forward" last="true">/$1</to>
     </rule>
     <rule>
-      <from>^/(cas|analytics|downloadform|extractorapp|geonetwork|geoserver|geofence|geowebcache|header|ldapadmin|mapfishapp)$</from>
+      <from>^/(cas|analytics|extractorapp|geonetwork|geoserver|geofence|geowebcache|header|ldapadmin|mapfishapp)$</from>
       <to type="redirect" last="true">/$1/</to>
     </rule>
     <rule>

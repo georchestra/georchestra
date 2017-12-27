@@ -153,15 +153,6 @@ GEOR.config = (function() {
         LOGOUT_URL: "/j_spring_security_logout",
 
         /**
-         * Constant: DOWNLOAD_FORM
-         * Boolean: should the app display a form requesting user data and data usage ?
-         * If set to yes, setting up the dlform webapp is mandatory.
-         * Defaults to false
-         */
-        DOWNLOAD_FORM: getCustomParameter("DOWNLOAD_FORM",
-            false),
-
-        /**
          * Constant: PDF_URL
          * String: the URL to the downloaded data Terms Of Use
          *

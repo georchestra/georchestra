@@ -21,7 +21,6 @@
  * @include GEOR_proj4jsdefs.js
  * @include GEOR_data.js
  * @include GEOR_map.js
- * @include GEOR_dlform.js
  * @include GEOR_config.js
  * @include GEOR_ajaxglobal.js
  * @include GEOR_waiter.js
@@ -42,31 +41,12 @@ Ext.namespace("GEOR");
     var tr = OpenLayers.i18n;
 
     /**
-     * Handler which decides whether to show the DL Form.
-     */
-    var handleDlForm = function(email, b) {
-        if (GEOR.config.DOWNLOAD_FORM) {
-            // show popup with form
-            GEOR.dlform.show({
-                // callback once submitted :
-                callback: function() {
-                    GEOR.layerstree.extract(email, b);
-                }
-            });
-        } else {
-            GEOR.layerstree.extract(email, b);
-        }
-    };
-
-    /**
      * Handler for extract all checked layers button.
      */
     var extractHandler = function(b) {
         var emailRegexp = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
         var email = GEOR.data.email || (localStorage && localStorage.getItem('email'));
-        if (emailRegexp.test(email)) {
-            handleDlForm(email, b);
-        } else {
+        if (!emailRegexp.test(email)) {
             // prompt for valid email and process the extraction using a callback
             Ext.Msg.prompt(tr('Email'), tr('Enter a valid email address: '), function(btn, text){
                 if (btn == 'ok') {
@@ -75,7 +55,6 @@ Ext.namespace("GEOR");
                             localStorage.setItem('email', text);
                         }
                         GEOR.data.email = text;
-                        handleDlForm(text, b);
                     } else {
                         GEOR.util.errorDialog({
                             msg: tr("The email address is not valid. " +

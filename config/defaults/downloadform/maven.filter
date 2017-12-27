@@ -1,5 +1,0 @@
-# It is recommended that you do not copy this file into your own profile
-# (unless you know what you're doing)
-
-activated=@shared.download_form.activated@
-dlJdbcUrl=@shared.download_form.jdbcurl@?user=@shared.psql.user@&password=@shared.psql.pass@

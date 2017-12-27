@@ -21,10 +21,6 @@ emailHtml=@shared.email.html@
 privileged_admin_name=@shared.privileged.geoserver.user@
 privileged_admin_pass=@shared.privileged.geoserver.pass@
 
-dlformjdbcurl=@shared.download_form.jdbcurl@?user=@shared.psql.user@&amp;password=@shared.psql.pass@
-dlformactivated=@shared.download_form.activated@
-
-
 # filled by GenerateConfig.groovy:
 maxCoverageExtractionSize=99999999
 maxExtractions=100

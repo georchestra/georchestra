@@ -115,10 +115,6 @@ public class ExtractorController implements ServletContextAware {
             String password = georConfig.getProperty("privileged_admin_pass");
             // Recreating a Credentials object
             adminCredentials = new UsernamePasswordCredentials(username, password);
-            boolean dlFormActivated = Boolean.parseBoolean(georConfig.getProperty("dlformactivated"));
-            String dlformJdbcUrl = georConfig.getProperty("dlformjdbcurl");
-            // Recreating a CheckFormAcceptance object
-            checkFormAcceptance = new CheckFormAcceptance(dlFormActivated, dlformJdbcUrl);
             this.dataSource.setJdbcUrl(this.georConfig.getProperty("jdbcurl"));
             LOG.info("geOrchestra datadir: done.");
         }

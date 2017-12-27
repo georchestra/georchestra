@@ -14,7 +14,6 @@
     <script type="text/javascript" src="resources/app/js/GEOR_waiter.js"></script>
     <script type="text/javascript" src="resources/app/js/GEOR_data.js"></script>
     <script type="text/javascript" src="resources/app/js/GEOR_config.js"></script>
-    <script type="text/javascript" src="resources/app/js/GEOR_dlform.js"></script>
     <script type="text/javascript" src="resources/app/js/GEOR_proj4jsdefs.js"></script>
     <script type="text/javascript" src="resources/app/js/GEOR_toolbar.js"></script>
     <script type="text/javascript" src="resources/app/js/GEOR_scalecombo.js"></script>
