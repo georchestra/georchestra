@@ -9,7 +9,7 @@ So, here are the steps:
 
  * install the dependencies:
 ```
-sudo apt-get install postgresql-9.4-postgis-2.1 slapd ldap-utils apache2 ca-certificates tomcat8 tomcat8-user libgdal1h libgdal-java postfix
+sudo apt-get install postgresql-9.6-postgis-2.3 slapd ldap-utils apache2 ca-certificates tomcat8 tomcat8-user libgdal1h libgdal-java postfix
 ```
  
  * [set up the application database](setup/postgresql.md)
@@ -28,7 +28,12 @@ sudo apt-get install postgresql-9.4-postgis-2.1 slapd ldap-utils apache2 ca-cert
 
 ## Compatibility notes
 
-geOrchestra >= 15.06 has been tested on Debian 8 with Tomcat 6, 7 and 8. As a result, this guide assumes the OS is **Debian's latest stable** (Jessie) and **Tomcat 8** is deployed.
-This is also the recommended setup as of today.
+This guide assumes the OS is **Debian's latest stable** (Stretch) and **Tomcat 8** is deployed.
 
-Note that geOrchestra >= 15.12 deprecates tomcat6 and java 6.
+geOrchestra 17.12 has been tested with tomcat 8 on Debian 9 (Stretch). This is the recommended setup as of today.
+
+geOrchestra 16.12 has been tested on Debian 8 (Jessie) with Tomcat 8.
+
+geOrchestra >= 15.12 deprecates tomcat6 and java 6.
+
+geOrchestra 15.06 has been tested on Debian 8 with Tomcat 6, 7 and 8.

@@ -14,9 +14,9 @@ The key element for calling the GDAL native library from mapfishapp is the **ima
  * a GDAL Java native binding library, based on the JNI framework, named gdaljni, or ogrjni,
  * and the GDAL library.
 
-### Install GDAL from Debian Jessie packages : 
+### Install GDAL from Debian packages : 
 
-The latter can be installed, from Debian Jessie distributions, with some libgdal packages:
+The latter can be installed, in a Debian distribution, with the libgdal packages:
 ```
     apt-get install libgdal1h libgdal-java
 
