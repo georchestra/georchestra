@@ -7,27 +7,26 @@ You could just start with the viewer alone or the viewer and proxy + cas if you 
 
 Once your system is ready, collect WAR files in a dedicated directory and rename them:
 
-    PROFILE=myprofile
-    VERSION=15.12
+    VERSION=16.12
     
     mkdir -p /tmp/georchestra
     cd /tmp/georchestra
-    cp `find ~/.m2/repository/ -name "*-${VERSION}-${PROFILE}.war"` ./
+    cp `find ~/.m2/repository/ -name "*-${VERSION}.war"` ./
     cp ~/.m2/repository/org/geonetwork-opensource/web-app/3.0.4-SNAPSHOT/web-app-3.0.4-SNAPSHOT.war ./
-    
-    mv security-proxy-${VERSION}-${PROFILE}.war ROOT.war
-    mv analytics-${VERSION}-${PROFILE}.war analytics.war
-    mv cas-server-webapp-${VERSION}-${PROFILE}.war cas.war
-    mv extractorapp-${VERSION}-${PROFILE}.war extractorapp.war
-    mv geoserver-webapp-${VERSION}-${PROFILE}.war geoserver.war
-    mv ldapadmin-${VERSION}-${PROFILE}.war ldapadmin.war
-    mv mapfishapp-${VERSION}-${PROFILE}.war mapfishapp.war
-    mv header-${VERSION}-${PROFILE}.war header.war
+
+    mv security-proxy-${VERSION}.war ROOT.war
+    mv analytics-${VERSION}.war analytics.war
+    mv cas-server-webapp-${VERSION}.war cas.war
+    mv extractorapp-${VERSION}.war extractorapp.war
+    mv geoserver-webapp-${VERSION}.war geoserver.war
+    mv ldapadmin-${VERSION}.war ldapadmin.war
+    mv mapfishapp-${VERSION}.war mapfishapp.war
+    mv header-${VERSION}.war header.war
     mv web-app-3.0.4-SNAPSHOT.war geonetwork.war
 
 Optionally, if you do not plan to use GeoServer's integrated GeoWebCache, you can deploy a standalone version:
 
-    mv geowebcache-webapp-${VERSION}-${PROFILE}.war geowebcache.war
+    mv geowebcache-webapp-${VERSION}.war geowebcache.war
 
 Finally, dispatch geOrchestra webapps into your 3 Tomcat instances:
 
@@ -53,29 +52,28 @@ Tomcat is smart enough to detect when the link target is updated, and redeploy i
 
 However, this requires the build process to happen on the production host (or a NFS mount).
 
-    PROFILE=myprofile
     VERSION=14.06
 
     sudo service tomcat-proxycas stop
     cd /var/lib/tomcat-proxycas/webapps
-    sudo ln -s ~/.m2/repository/org/georchestra/security-proxy/${VERSION}-SNAPSHOT/security-proxy-${VERSION}-SNAPSHOT-${PROFILE}.war ROOT.war
-    sudo ln -s ~/.m2/repository/org/georchestra/cas-server-webapp/${VERSION}-SNAPSHOT/cas-server-webapp-${VERSION}-SNAPSHOT-${PROFILE}.war cas.war
+    sudo ln -s ~/.m2/repository/org/georchestra/security-proxy/${VERSION}-SNAPSHOT/security-proxy-${VERSION}-SNAPSHOT.war ROOT.war
+    sudo ln -s ~/.m2/repository/org/georchestra/cas-server-webapp/${VERSION}-SNAPSHOT/cas-server-webapp-${VERSION}-SNAPSHOT.war cas.war
     sudo service tomcat-proxycas start
 
     sudo service tomcat-geoserver stop
     cd /var/lib/tomcat-geoserver/webapps
-    sudo ln -s ~/.m2/repository/org/georchestra/geoserver-webapp/${VERSION}-SNAPSHOT/geoserver-webapp-${VERSION}-SNAPSHOT-${PROFILE}.war geoserver.war
+    sudo ln -s ~/.m2/repository/org/georchestra/geoserver-webapp/${VERSION}-SNAPSHOT/geoserver-webapp-${VERSION}-SNAPSHOT.war geoserver.war
     sudo service tomcat-geoserver start
     
     sudo service tomcat-georchestra stop
     cd /var/lib/tomcat-georchestra/webapps
-    sudo ln -s ~/.m2/repository/org/georchestra/analytics/${VERSION}-SNAPSHOT/analytics-${VERSION}-SNAPSHOT-${PROFILE}.war analytics.war
-    sudo ln -s ~/.m2/repository/org/georchestra/extractorapp/${VERSION}-SNAPSHOT/extractorapp-${VERSION}-SNAPSHOT-${PROFILE}.war extractorapp.war
+    sudo ln -s ~/.m2/repository/org/georchestra/analytics/${VERSION}-SNAPSHOT/analytics-${VERSION}-SNAPSHOT.war analytics.war
+    sudo ln -s ~/.m2/repository/org/georchestra/extractorapp/${VERSION}-SNAPSHOT/extractorapp-${VERSION}-SNAPSHOT.war extractorapp.war
     sudo ln -s ~/.m2/repository/org/geonetwork-opensource/web-app/3.0.4-SNAPSHOT/web-app-3.0.4-SNAPSHOT.war geonetwork.war
-    sudo ln -s ~/.m2/repository/org/georchestra/ldapadmin/${VERSION}-SNAPSHOT/ldapadmin-${VERSION}-SNAPSHOT-${PROFILE}.war ldapadmin.war
-    sudo ln -s ~/.m2/repository/org/georchestra/mapfishapp/${VERSION}-SNAPSHOT/mapfishapp-${VERSION}-SNAPSHOT-${PROFILE}.war mapfishapp.war
-    sudo ln -s ~/.m2/repository/org/georchestra/header/${VERSION}-SNAPSHOT/header-${VERSION}-SNAPSHOT-${PROFILE}.war header.war
-    sudo ln -s ~/.m2/repository/org/georchestra/geowebcache-webapp/${VERSION}-SNAPSHOT/geowebcache-webapp-${VERSION}-SNAPSHOT-${PROFILE}.war geowebcache.war
+    sudo ln -s ~/.m2/repository/org/georchestra/ldapadmin/${VERSION}-SNAPSHOT/ldapadmin-${VERSION}-SNAPSHOT.war ldapadmin.war
+    sudo ln -s ~/.m2/repository/org/georchestra/mapfishapp/${VERSION}-SNAPSHOT/mapfishapp-${VERSION}-SNAPSHOT.war mapfishapp.war
+    sudo ln -s ~/.m2/repository/org/georchestra/header/${VERSION}-SNAPSHOT/header-${VERSION}-SNAPSHOT.war header.war
+    sudo ln -s ~/.m2/repository/org/georchestra/geowebcache-webapp/${VERSION}-SNAPSHOT/geowebcache-webapp-${VERSION}-SNAPSHOT.war geowebcache.war
     sudo service tomcat-georchestra start
 
 # What's next ?
