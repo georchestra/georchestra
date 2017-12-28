@@ -1,6 +1,3 @@
-[submodule "mapfishapp/src/main/webapp/lib/externals/ext"]
-	path = mapfishapp/src/main/webapp/lib/externals/ext
-	url = https://github.com/probonogeek/extjs.git
 [submodule "mapfishapp/src/main/webapp/lib/externals/geoext"]
 	path = mapfishapp/src/main/webapp/lib/externals/geoext
 	url = https://github.com/georchestra/geoext.git
@@ -13,9 +10,6 @@
 [submodule "extractorapp/src/main/webapp/lib/externals/openlayers"]
 	path = extractorapp/src/main/webapp/lib/externals/openlayers
 	url = https://github.com/georchestra/openlayers.git
-[submodule "extractorapp/src/main/webapp/lib/externals/ext"]
-	path = extractorapp/src/main/webapp/lib/externals/ext
-	url = https://github.com/probonogeek/extjs.git
 [submodule "extractorapp/src/main/webapp/admin/extjs"]
 	path = extractorapp/src/main/webapp/admin/extjs
 	url = https://github.com/probonogeek/extjs.git
