@@ -61,20 +61,6 @@
 	        		<validationQuery>SELECT 1</validationQuery> 
                 </config>
             </resource>
-            <resource enabled="@shared.download_form.activated@">
-                <name>download-form-db</name>
-                <provider>jeeves.resources.dbms.ApacheDBCPool</provider>
-                <config>
-                    <user>${postgis.user}</user>
-                    <password>${postgis.pass}</password>
-                    <driver>${pg.jdbc.driver}</driver>
-                    <url>jdbc:${pg.jdbc.driver.url}://${postgis.host}:${postgis.port}/${postgis.db}</url>
-                    <maxActive>2</maxActive>
-                    <maxIdle>1</maxIdle>
-                    <minIdle>0</minIdle>
-                    <validationQuery>SELECT 1</validationQuery>
-                </config>
-          </resource>
         </replaceXML>
     </file>
     <file name=".*/WEB-INF/config.xml">

@@ -68,7 +68,7 @@ Ext.define('Analytics.controller.OGC', {
             scope: this
         });
         
-        // only done once in geonetwork controller:
-        //this.callParent();
+        // only done once in here:
+        this.callParent();
     }
 });

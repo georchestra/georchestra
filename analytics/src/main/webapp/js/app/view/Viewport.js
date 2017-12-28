@@ -20,12 +20,6 @@
 Ext.define('Analytics.view.Viewport', {
     extend: 'Ext.container.Viewport',
     requires: [
-        'Analytics.view.ExtractorLayers',
-        'Analytics.view.ExtractorUsers',
-        'Analytics.view.ExtractorGroups',
-        'Analytics.view.GeonetworkFiles',
-        'Analytics.view.GeonetworkUsers',
-        'Analytics.view.GeonetworkGroups',
         'Analytics.view.OGCLayers',
         'Analytics.view.OGCUsers',
         'Analytics.view.OGCGroups',
@@ -64,64 +58,13 @@ Ext.define('Analytics.view.Viewport', {
                 }]
             });
         }
-        if (GEOR.config.DOWNLOAD_FORM === true) {
-            tabs.push({
-                tabConfig: {
-                    title: tr('Personalized extractions'),
-                    tooltip: tr('Select this tab to access to the statistics of the extractor')
-                },
-                layout: 'border',
-                defaults: {border: false},
-                items: [{
-                    title: tr('Layers'),
-                    region: 'west',
-                    split: true,
-                    width: '50%',
-                    xtype: 'extractorlayerslist'
-                }, {
-                    title: tr('Users'),
-                    region: 'center',
-                    xtype: 'extractoruserslist'
-                },{
-                    title: tr('Organisms'),
-                    split: true,
-                    region: 'east',
-                    width: '25%',
-                    xtype: 'extractorgroupslist'
-                }]
-            }, {
-                tabConfig: {
-                    title: tr('Downloads from GeoNetwork'),
-                    tooltip: tr('Select this tab to access the statistics of downloads from the catalog')
-                },
-                layout: 'border',
-                defaults: {border: false},
-                items: [{
-                    title: tr('Files'),
-                    region: 'west',
-                    split: true,
-                    width: '50%',
-                    xtype: 'geonetworkfileslist'
-                }, {
-                    title: tr('Users'),
-                    region: 'center',
-                    xtype: 'geonetworkuserslist'
-                }, {
-                    title: tr('Organisms'),
-                    split: true,
-                    region: 'east',
-                    width: '25%',
-                    xtype: 'geonetworkgroupslist'
-                }]
-            });
-        }
         if (!tabs.length) {
             tabs.push({
                 tabConfig: {
                     title: tr('analytics')
                 },
                 bodyStyle: "padding: 10px;",
-                html: tr("Nothing to show in here, ogc services statistics and download form are deactivated. Please contact your administrator.")
+                html: tr("Nothing to show in here. Please contact your administrator.")
             });
         }
         this.items = [{

@@ -11,7 +11,7 @@
   <name>Analytics webapp</name>
   <description>
     Analytics is a GUI which displays monthly and global statistics on platform usage:
-    GeoNetwork downloads, custom data extractions and OGC web services consumption.
+    OGC web services consumption.
   </description>
   <url>http://www.georchestra.org</url>
   <properties>
