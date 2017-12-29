@@ -41,12 +41,12 @@ response.setHeader("Cache-Control", "private, max-age=31536000");
 */
 
 // Using georchestra autoconf
-String georLanguage = null;
+String defaultLanguage = null;
 String georLdapadminPublicContextPath = null;
 String ldapadm = null;
 try {
   ApplicationContext ctx = RequestContextUtils.getWebApplicationContext(request);
-  georLanguage = ctx.getBean(GeorchestraConfiguration.class).getProperty("language");
+  defaultLanguage = ctx.getBean(GeorchestraConfiguration.class).getProperty("language");
   georLdapadminPublicContextPath = ctx.getBean(GeorchestraConfiguration.class).getProperty("ldapadminPublicContextPath");
 } catch (Exception e) {}
 
@@ -60,26 +60,32 @@ if (active == null) {
     active = "none";
 }
 
-String lang = request.getParameter("lang");
-if (lang == null || (!lang.equals("en") && !lang.equals("es") && !lang.equals("ru") && !lang.equals("fr") && !lang.equals("de"))) {
-    if (georLanguage != null)
-        lang = georLanguage;
-    else
-        lang = "${language}";
-}
-
 if (georLdapadminPublicContextPath != null)
     ldapadm = georLdapadminPublicContextPath;
 else
-    ldapadm = "${ldapadminPublicContextPath}";
+    ldapadm = "/ldapadmin";
 
+Locale rLocale = request.getLocale();
+ResourceBundle bundle = org.georchestra._header.Utf8ResourceBundle.getBundle("_header.i18n.index", rLocale);
 
-Locale l = new Locale(lang);
-ResourceBundle resource = org.georchestra._header.Utf8ResourceBundle.getBundle("_header.i18n.index",l);
+String detectedLanguage = rLocale.getLanguage();
+String forcedLang = request.getParameter("lang");
+
+String lang = defaultLanguage;
+if (forcedLang != null) {
+    if (forcedLang.equals("en") || forcedLang.equals("es") || forcedLang.equals("ru") || forcedLang.equals("fr") || forcedLang.equals("de")) {
+        lang = forcedLang;
+    }
+} else {
+    if (detectedLanguage.equals("en") || detectedLanguage.equals("es") || detectedLanguage.equals("ru") || detectedLanguage.equals("fr") || detectedLanguage.equals("de")) {
+        lang = detectedLanguage;
+    }
+}
+
 javax.servlet.jsp.jstl.core.Config.set(
     request,
     javax.servlet.jsp.jstl.core.Config.FMT_LOCALIZATION_CONTEXT,
-    new javax.servlet.jsp.jstl.fmt.LocalizationContext(resource)
+    new javax.servlet.jsp.jstl.fmt.LocalizationContext(bundle)
 );
 
 Boolean extractor = false;
