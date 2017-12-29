@@ -124,7 +124,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "NAME layer on VALUE": "Capa ${NAME} sobre ${VALUE}",
     "Show metadata essentials in a window":
         "Mostrar metadatos básicos",
-    "Show metadata sheet in a new browser tab": 
+    "Show metadata sheet in a new browser tab":
         "Mostrar la ficha de metadatos en una nueva ventana",
     "more": "más",
     "Click to select or deselect the layer":
@@ -361,11 +361,11 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Invert selection": "Invertir la selección",
     "Actions on the selection or on all results if no row is selected":
         "Acciones en la selección o en todos los resultados, si no se selecciona ninguna fila",
-    "Store the geometry": 
+    "Store the geometry":
         "Guardar la geometría",
-    "Aggregates the geometries of the selected features and stores it in your browser for later use in the querier": 
+    "Aggregates the geometries of the selected features and stores it in your browser for later use in the querier":
         "La geometría de los objetos seleccionados se almacenan en el navegador para su uso posterior en consultas",
-    "Geometry successfully stored in this browser": 
+    "Geometry successfully stored in this browser":
         "La geometría fue registrada correctamente en el navegador",
     "Clean all results on the map and in the table": "Quitar los resultados" +
         "del mapa y en la tabla",
@@ -498,12 +498,6 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "The context title is mandatory": "Se requiere que el título mapa",
     "There was an error creating the metadata.": "Se ha producido un error al crear los metadatos.",
     "Share this map": "Comparte este mapa",
-    /*
-    "Mobile viewer": "Visualiseur mobile",
-    "Mobile compatible viewer on sdi.georchestra.org": "Visualiseur mobile sur sdi.georchestra.org",
-    "Desktop viewer": "Visualiseur web",
-    "Desktop viewer on sdi.georchestra.org": "Visualiseur web sur sdi.georchestra.org",
-    */
     "Abstract": "Resumen",
     "Context saving": "Guardando el mapa",
     "The file is required.": "Se requiere el nombre de archivo.",
@@ -523,7 +517,7 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Not required": "No requerido",
     "Synchronization failed.": "Error durante la sincronización.",
     "Edit activated": "Edición activada",
-    "Hover the feature you wish to edit, or choose \"new feature\" in the edit menu": 
+    "Hover the feature you wish to edit, or choose \"new feature\" in the edit menu":
         "Sobrevolar los objetos de la capa que " +
         "quiere modificar, o seleccionar \"nuevo objeto\" en el menú " +
         " de edición",

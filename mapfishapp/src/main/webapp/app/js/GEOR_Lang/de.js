@@ -121,7 +121,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "NAME layer on VALUE": "Layer ${NAME} auf ${VALUE}",
     "Show metadata essentials in a window":
         "Afficher les métadonnées basiques",
-    "Show metadata sheet in a new browser tab": 
+    "Show metadata sheet in a new browser tab":
         "Metadatei in neuem Fenster öffnen",
     "more": "mehr",
     "Click to select or deselect the layer":
@@ -356,11 +356,11 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Invert selection": "Auswahl umkehren",
     "Actions on the selection or on all results if no row is selected":
         "Aktien an der Auswahl oder an alle Ergebnisse, wenn keine Zeile ausgewählt ist",
-    "Store the geometry": 
+    "Store the geometry":
         "Geometrie speichern",
     "Aggregates the geometries of the selected features and stores it in your browser for later use in the querier":
         "Das ausgewählte Geometrieobjekt ist für eine künftige Benutzung im Suchfilter gespeichert",
-    "Geometry successfully stored in this browser": 
+    "Geometry successfully stored in this browser":
         "Geometrie erfolgreich im Webbrowser gespeichert.",
     "Clean all results on the map and in the table": "Löschen " +
         "der aufgezeichneten Ergebnisse auf Karte und Liste",
@@ -397,7 +397,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Untitled": "Ohne Titel",
     "styler.guidelines":
         "Benutzen Sie den Button \"+\" Um eine Klasse zu schaffen und den Button " +
-        "\"Analyse\" Um eine Gesamtklasse der thematischen Analyse zu erstellen.</p>", 
+        "\"Analyse\" Um eine Gesamtklasse der thematischen Analyse zu erstellen.</p>",
     "Analyze": "Analyse",
     "Add a class": "Klasse hinzufügen",
     "Delete the selected class": "Gewählte Klasse löschen",
@@ -487,9 +487,9 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "There was an error creating the metadata.": "Es gab einen Fehler beim Erstellen der Metadaten.",
     "Share this map": "Karte teilen",
     "Mobile viewer": "Kartenviewer für mobile Technologie",
-    "Mobile compatible viewer on sdi.georchestra.org": "Kartenviewer für mobile Technologie auf sdi.georchestra.org",
+    "Mobile compatible viewer": "Kartenviewer für mobile Technologie",
     "Desktop viewer": "Web Kartenviewer",
-    "Desktop viewer on sdi.georchestra.org": "Web Kartenviewer auf sdi.georchestra.org",
+    "Desktop viewer": "Web Kartenviewer",
     "Abstract": "Zusammen-" +
         "fassung",
     "Context saving": "Kartelspeicherung",
@@ -508,7 +508,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Required": "Pflicht",
     "Not required": "Nicht Pflicht",
     "Synchronization failed.": "Synchronisationsfehler",
-    "Edit activated": "Bearbeitung aktiviert", 
+    "Edit activated": "Bearbeitung aktiviert",
     "Hover the feature you wish to edit, or choose \"new feature\" in the edit menu": "Uberfliegen der zu verändernden Layerobjekte, oder wählen Sie \"neues Objekt\" im Layermenü",
     /* GeoExt.data.CSW.js */
     "no abstract": "Keine Zusammenfassung"

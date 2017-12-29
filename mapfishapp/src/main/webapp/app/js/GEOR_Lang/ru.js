@@ -103,7 +103,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "cswquerier.help.message": '<ul><li><b>@word</b> looks for "word" in the organization name.</li><li><b>#word</b> looks for "word" in the metadata keywords.</li><li><b>?word</b> broadens the search by looking for "word" in any metadata field.</li></ul>',
     //"Show metadata essentials in a window":
         //"Afficher les métadonnées basiques",
-    //"Show metadata sheet in a new browser tab": 
+    //"Show metadata sheet in a new browser tab":
         //"Afficher la métadonnée complète dans un nouvel onglet",
     "more": "более, ещё...",
     "Click to select or deselect the layer": "Нажать, чтобы выбрать или отменить выделение слоя.",
@@ -122,7 +122,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "No metadata matches the query.":
         "Aucune métadonnée ne correspond à la requête.",
     "Search limited to current map extent.": "Recherche limitée à l'étendue de la carte.",
-    */    
+    */
     /* GEOR_fileupload.js strings */
     "2D only": "2D",
     "Local file": "Локальный файл",
@@ -283,7 +283,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     //"Edit this panel's features symbology": "Editer la symbologie de la sélection",
     //"Reset": "Réinitialiser",
     //"Export is not possible: features have no geometry": "Export impossible : absence de géométries",
-    "resultspanel.maxfeature.reached": " <span ext:qtip=\"Используйте более совершенный навигатор для того, чтобы увеличить число фигурирующих на странице объектов.\">Максимальное число объектов достигнуто ${NB}</span>", 
+    "resultspanel.maxfeature.reached": " <span ext:qtip=\"Используйте более совершенный навигатор для того, чтобы увеличить число фигурирующих на странице объектов.\">Максимальное число объектов достигнуто ${NB}</span>",
     "NB results": "${NB} результатов",
     "One result": "Один результат",
     "No result": "Никакого результата нет",
@@ -293,11 +293,11 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     //"Invert selection": "Inverser la sélection",
     //"Actions on the selection or on all results if no row is selected":
     //    "Actions sur la sélection ou sur tous les résultats si aucun n'est sélectionné",
-    //"Store the geometry": 
+    //"Store the geometry":
     //    "Enregistrer la géométrie",
-    //"Aggregates the geometries of the selected features and stores it in your browser for later use in the querier": 
+    //"Aggregates the geometries of the selected features and stores it in your browser for later use in the querier":
     //    "La géométrie des objets sélectionnés est enregistrée pour un usage ultérieur dans le requêteur",
-    //"Geometry successfully stored in this browser": 
+    //"Geometry successfully stored in this browser":
     //    "Géométrie enregistrée avec succès sur ce navigateur",
     "Clean all results on the map and in the table": "Удалить все результаты с карты и таблицы.",
     "Zoom": "Zoom",
@@ -411,10 +411,6 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     //"The context title is mandatory": "Le titre du contexte est obligatoire",
     //"There was an error creating the metadata.": "La création de la métadonnée a échoué.",
     //"Share this map": "Partager cette carte",
-    //"Mobile viewer": "Visualiseur mobile",
-    //"Mobile compatible viewer on sdi.georchestra.org": "Visualiseur mobile sur sdi.georchestra.org",
-    //"Desktop viewer": "Visualiseur web",
-    //"Desktop viewer on sdi.georchestra.org": "Visualiseur web sur sdi.georchestra.org",
     //"Abstract": "Résumé",
     "Context saving": "Сохранение контекста",
     "The file is required.": "Требуется имя файла",
@@ -438,7 +434,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     //"Req.": "Req.", // requis
     //"Required": "Requis",
     //"Not required": "Non requis",
-    //"Edit activated": "Edition activée", 
+    //"Edit activated": "Edition activée",
     //"Hover the feature you wish to edit, or choose \"new feature\" in the edit menu": "Survolez les objets de la couche que vous souhaitez modifier, ou choisissez \"nouvel objet\" dans le menu d'édition de la couche",
     "Synchronization failed.": "Произошла ошибка во время процесса синхронизации.",
     /* GeoExt.data.CSW.js */

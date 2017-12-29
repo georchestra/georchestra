@@ -121,7 +121,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "NAME layer on VALUE": "Couche ${NAME} sur ${VALUE}",
     "Show metadata essentials in a window":
         "Afficher les métadonnées basiques",
-    "Show metadata sheet in a new browser tab": 
+    "Show metadata sheet in a new browser tab":
         "Afficher la métadonnée complète dans un nouvel onglet",
     "more": "plus",
     "Click to select or deselect the layer":
@@ -360,11 +360,11 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Invert selection": "Inverser la sélection",
     "Actions on the selection or on all results if no row is selected":
         "Actions sur la sélection ou sur tous les résultats si aucun n'est sélectionné",
-    "Store the geometry": 
+    "Store the geometry":
         "Enregistrer la géométrie",
-    "Aggregates the geometries of the selected features and stores it in your browser for later use in the querier": 
+    "Aggregates the geometries of the selected features and stores it in your browser for later use in the querier":
         "La géométrie des objets sélectionnés est enregistrée pour un usage ultérieur dans le requêteur",
-    "Geometry successfully stored in this browser": 
+    "Geometry successfully stored in this browser":
         "Géométrie enregistrée avec succès sur ce navigateur",
     "Clean all results on the map and in the table": "Supprimer les " +
         "résultats affichés sur la carte et dans le tableau",
@@ -497,9 +497,9 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "There was an error creating the metadata.": "La création de la métadonnée a échoué.",
     "Share this map": "Partager cette carte",
     "Mobile viewer": "Visualiseur mobile",
-    "Mobile compatible viewer on sdi.georchestra.org": "Visualiseur mobile sur sdi.georchestra.org",
+    "Mobile compatible viewer": "Visualiseur mobile",
     "Desktop viewer": "Visualiseur web",
-    "Desktop viewer on sdi.georchestra.org": "Visualiseur web sur sdi.georchestra.org",
+    "Desktop viewer": "Visualiseur web",
     "Abstract": "Résumé",
     "Context saving": "Sauvegarde de la carte",
     "The file is required.": "Un nom de fichier est nécessaire.",
@@ -518,7 +518,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Required": "Requis",
     "Not required": "Non requis",
     "Synchronization failed.": "Erreur lors de la synchronisation.",
-    "Edit activated": "Edition activée", 
+    "Edit activated": "Edition activée",
     "Hover the feature you wish to edit, or choose \"new feature\" in the edit menu": "Survolez les objets de la couche que vous souhaitez modifier, ou choisissez \"nouvel objet\" dans le menu d'édition de la couche",
     /* GeoExt.data.CSW.js */
     "no abstract": "pas de résumé"
