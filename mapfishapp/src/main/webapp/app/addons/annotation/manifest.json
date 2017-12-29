@@ -46,9 +46,9 @@
             "annotation.fillcolor": "Fill color",
             "annotation.outlinecolor": "Outline color",
             "annotation.name": "Name",
-            "annotation.no_title": "no title"
+            "annotation.no_title": "no title",
+            "annotation.fillOpacity": "Opacity"
         },
-        
         "es": {
             "annotation.drawing_tools": "Herramientas de dibujo",
             "annotation.delete_feature": "Borrar el objeto",
@@ -84,7 +84,8 @@
             "annotation.fillcolor": "Relleno",
             "annotation.outlinecolor": "Contorno",
             "annotation.name": "Nombre",
-            "annotation.no_title": "Sin título"
+            "annotation.no_title": "Sin título",
+            "annotation.fillOpacity": "Opacidad"
         },
         "fr": {
             "annotation.drawing_tools": "Outils de dessin",
@@ -159,8 +160,8 @@
             "annotation.fillcolor": "Füllfarbe",
             "annotation.outlinecolor": "Konturfarbe",
             "annotation.name": "Name",
-            "annotation.no_title": "Ohne Titel"
+            "annotation.no_title": "Ohne Titel",
+            "annotation.fillOpacity": "Opazität"
         }
     }
 }
-

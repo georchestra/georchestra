@@ -267,13 +267,13 @@ GEOR.FeaturePanel = Ext.extend(Ext.form.FormPanel, {
             });
         }
 
-        // Add item within feature panel for polygon, rectangle and ring  
+        // Add item within feature panel for polygon, rectangle and ring
         if (feature.geometry.CLASS_NAME === "OpenLayers.Geometry.Polygon" ) {
             if (!feature.isLabel) {
                 // Opacity
                 oItems.push({
-                	id:'opacitySlider',
-                	xtype: 'sliderfield',
+                    id: 'opacitySlider',
+                    xtype: 'sliderfield',
                     name: 'Opacity',
                     fieldLabel: OpenLayers.i18n('annotation.fillOpacity'),
                     value: feature.style.fillOpacity || 1,
@@ -283,7 +283,7 @@ GEOR.FeaturePanel = Ext.extend(Ext.form.FormPanel, {
                     decimalPrecision: 2,
                     increment: 0.01,
                     tipText: function(thumb){
-                    	var valOpacity = thumb.value;
+                        var valOpacity = thumb.value;
                         return String(Math.round(valOpacity*100)) + '%';
                     },
                     // Get default opacity value, give it to the feature style properties
@@ -297,7 +297,7 @@ GEOR.FeaturePanel = Ext.extend(Ext.form.FormPanel, {
                 });
             }
         }
-  
+
         Ext.apply(this, {items: oItems});
     },
 

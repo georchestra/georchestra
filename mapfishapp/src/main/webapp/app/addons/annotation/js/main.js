@@ -36,7 +36,7 @@ GEOR.Addons.Annotation = Ext.extend(GEOR.Addons.Base, {
                 scope: this
             }
         });
-  
+
         if (this.target) {
             // create a button to be inserted in toolbar:
             this.components = this.target.insertButton(this.position, {
