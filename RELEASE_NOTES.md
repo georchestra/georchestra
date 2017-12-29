@@ -1,7 +1,64 @@
-The development branch is master. It can be used for testing and reporting errors.
+The development branch is master. It can be used for testing and reporting
+errors.
 
-For production systems, you are advised to use the stable branch (currently 16.12).
+For production systems, you are advised to use the stable branch (currently
+17.12).
 This branch receives bug fixes as they arrive, during 12 months at least.
+
+
+Version 17.12
+=============
+
+Major highlights:
+ * GeoServer upgraded from 2.8.x to 2.12.x
+ * User interfaces now displayed with your user's favorite language
+ * A smart way to download and install geOrchestra, using the smallish
+ [georchestra/docker](https://github.com/georchestra/docker) repository
+ * Support for Debian 9
+
+Many thanks to those who made it possible, either through funding, or patches !
+
+New features:
+ * GeoServer 2.12.x - [#1847](https://github.com/georchestra/georchestra/pull/1847)
+ * Use the preferred language, as advertised by the browser - [#589](https://github.com/georchestra/georchestra/issues/589)
+ * mapfishapp - new "backgrounds" addon - [#1156](https://github.com/georchestra/georchestra/issues/1156)
+ * mapfishapp - add ability to export a feature as WKT - [#1741](https://github.com/georchestra/georchestra/issues/1741)
+
+Enhancements:
+ * mapfishapp & extractorapp: prevent browser warning about flash plugin - [#902](https://github.com/georchestra/georchestra/issues/902)
+ * mapfishapp - improved the metadata querier compatibility with the CSW spec - [#1785](https://github.com/georchestra/georchestra/issues/1785)
+ * mapfishapp - enable text selection in gridviews - [#1754](https://github.com/georchestra/georchestra/issues/1754)
+ * mapfishapp - disable editing for aggregate layers - [#1369](https://github.com/georchestra/georchestra/issues/1369)
+ * mapfishapp - annotation addon - add opacity handler for polygons - [#1862](https://github.com/georchestra/georchestra/issues/1862)
+ * proxy - homogeneized 503 page which does not request the header - [#1755](https://github.com/georchestra/georchestra/issues/1755)
+ * console - translated placeholders - [#1764](https://github.com/georchestra/georchestra/issues/1764)
+ * docker - switch to postgresql 10 - [#1853](https://github.com/georchestra/georchestra/issues/1853)
+ * support for Debian 9 (Stretch)
+
+Bug fixes:
+ * mapfishapp - fixed the results panel logic when querying aggregated layers - [#1845](https://github.com/georchestra/georchestra/issues/1845)
+ * mapfishapp - fix getfeatureinfo on layers served from /geoserver/ns/ows - [#1731](https://github.com/georchestra/georchestra/issues/1731)
+ * mapfishapp - metadata on map creation - [#1844](https://github.com/georchestra/georchestra/issues/1844)
+ * mapfishapp - fixed the buffer size - [#1833](https://github.com/georchestra/georchestra/issues/1833)
+ * mapfishapp - fixed the KML axis inversion when importing files - [#1774](https://github.com/georchestra/georchestra/issues/1774)
+ * mapfishapp - GetCapabilities shall not send FORMAT=image/png - [#1757](https://github.com/georchestra/georchestra/issues/1757)
+ * extractorapp - restored the possibility to anonymously extract data - [#1797](https://github.com/georchestra/georchestra/issues/1797)
+ * geonetwork - fix incorrect ressource caching - [#1729](https://github.com/georchestra/georchestra/issues/1729)
+ * ogc-server-statistics - reopen the JDBC connection if closed - [#1763](https://github.com/georchestra/georchestra/issues/1763)
+ * docker ldap - fix file permissions for indexing - [#1765](https://github.com/georchestra/georchestra/issues/1765)
+ * console - fix editing of orgs with a point at the end of the name - [#1770](https://github.com/georchestra/georchestra/issues/1770)
+ * ... and [many more](https://github.com/georchestra/georchestra/issues?q=milestone%3A17.12%20label%3Abug%20is%3Aclosed) !
+
+Deprecations:
+ * the downloadform module, which was not compatible with GeoNetwork 3 anymore,
+ and rarely used.
+ * the server-deploy groovy scripts, which were obsoleted by the docker hype.
+ * the catalogapp module, which was shiny compared to the GeoNetwork 2 UI, but
+ less relevant since we integrated GeoNetwork 3.
+ * the older ldapadmin privateui interface, which was replaced by the console.
+
+Read [how to migrate from 16.12 to 17.12](migrations/17.12/README.md).
+
 
 Version 16.12
 =============
@@ -634,5 +691,5 @@ Bug fixes:
  * mapfishapp: fixed XML documents missing the prolog, see http://applis-bretagne.fr/redmine/issues/4536
  * mapfishapp: WFS layer redraw was throwing an error, see http://applis-bretagne.fr/redmine/issues/4544
  * LDAP: group membership is now declared with memberUid = user uid rather than full dn, see https://github.com/georchestra/georchestra/pull/91
- 
+
 Read [how to migrate to 13.02](migrations/13.02/README.md).
