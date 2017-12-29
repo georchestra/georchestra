@@ -26,6 +26,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.ProxySelector;
@@ -449,7 +450,15 @@ public class Proxy {
 
     private String buildForwardRequestURL(HttpServletRequest request) {
         String forwardRequestURI = request.getRequestURI();
-
+        // Makes sure the URL is decoded because some servlet containers
+        // (e.g. tomcat) provides the URL in an encoded manner, whereas
+        // jetty does not.
+        // Also we consider the whole geOrchestra stack to be full utf-8.
+        try {
+            forwardRequestURI = URLDecoder.decode(forwardRequestURI, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            logger.error("Unable to decode the URL, using the encoded version", e);
+        }
         String contextPath = request.getServletPath() + request.getContextPath();
         if (forwardRequestURI.length() <= contextPath.length()) {
             forwardRequestURI = "/";
@@ -501,7 +510,7 @@ public class Proxy {
                 response.sendError(403, forwardRequestURI + " is a recursive call to this service.  That is not a legal request");
             }
 
-            if (request.getQueryString() != null && !isFormContentType(request)) {
+            if (request.getQueryString() != null) {
                 StringBuilder query = new StringBuilder("?");
                 Enumeration paramNames = request.getParameterNames();
                 boolean needCasValidation = false;
@@ -889,35 +898,26 @@ public class Proxy {
                 HttpPost post = new HttpPost(uri);
                 HttpEntity entity;
                 request.setCharacterEncoding("UTF8");
-                if (isFormContentType(request)) {
-                    logger.debug("Post is recognized as a form post.");
-                    List<NameValuePair> parameters = new ArrayList<NameValuePair>();
-                    for (Enumeration e = request.getParameterNames(); e.hasMoreElements();) {
-                        String name = (String) e.nextElement();
-                        String[] v = request.getParameterValues(name);
-                        for (String value : v) {
-                            NameValuePair nv = new BasicNameValuePair(name, value);
-                            parameters.add(nv);
-                        }
+                logger.debug("Post is recognized as a form post.");
+                List<NameValuePair> parameters = new ArrayList<NameValuePair>();
+                for (Enumeration e = request.getParameterNames(); e.hasMoreElements();) {
+                    String name = (String) e.nextElement();
+                    String[] v = request.getParameterValues(name);
+                    for (String value : v) {
+                        NameValuePair nv = new BasicNameValuePair(name, value);
+                        parameters.add(nv);
                     }
-                    String charset = request.getCharacterEncoding();
-                    try {
-                        Charset.forName(charset);
-                    } catch (Throwable t) {
-                        charset = null;
-                    }
-                    if (charset == null) {
-                        charset = defaultCharset;
-                    }
-                    entity = new UrlEncodedFormEntity(parameters, charset);
-                    post.setEntity(entity);
-
-                } else {
-                    logger.debug("Post is NOT recognized as a form post. (Not an error, just a comment)");
-                    int contentLength = request.getContentLength();
-                    ServletInputStream inputStream = request.getInputStream();
-                    entity = new InputStreamEntity(inputStream, contentLength);
                 }
+                String charset = request.getCharacterEncoding();
+                try {
+                    Charset.forName(charset);
+                } catch (Throwable t) {
+                    charset = null;
+                }
+                if (charset == null) {
+                    charset = defaultCharset;
+                }
+                entity = new UrlEncodedFormEntity(parameters, charset);
                 post.setEntity(entity);
                 targetRequest = post;
                 break;
@@ -977,16 +977,6 @@ public class Proxy {
         }
 
         return targetRequest;
-    }
-
-    private boolean isFormContentType(HttpServletRequest request) {
-        if (request.getContentType() == null) {
-            return false;
-        }
-        String contentType = request.getContentType().split(";")[0].trim();
-
-        boolean equalsIgnoreCase = "application/x-www-form-urlencoded".equalsIgnoreCase(contentType);
-        return equalsIgnoreCase;
     }
 
     /**
