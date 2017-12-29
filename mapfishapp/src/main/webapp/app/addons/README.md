@@ -25,6 +25,7 @@ We currently have the following addons available:
  * [atlas](atlas/README.md) allows users to print PDF with one feature per page.
  * [coordinates](coordinates/README.md) to let the user copy location coordinates.
  * [goto](goto/README.md) allows users to recenter the map on a location, given its coordinates.
+ * [backgrounds](background/README.md) add a button to the top toolbar, which allows to select a WMTS background layer.
 
 
 Finding more addons

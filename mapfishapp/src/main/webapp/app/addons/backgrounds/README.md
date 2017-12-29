@@ -1,19 +1,20 @@
 # Backgrounds
 
-This addon add a button to the toolbar which allow to select a WMTS background layer for the map in a configured list.
+This addon adds a button to the top toolbar, which allows to add a WMTS background layer to the map, from a configured list.
 
-Only one of the list's layer will be loaded, select another one will replace the previous one.
+Only one of the list's layer will be loaded. Selecting another one will replace the current one.
 
 author: @jusabatier
 
 ## Setup
 
-Edit the `GEOR_custom.js` file to add the required configuration:
+In your geOrchestra datadir, edit the `mapfishapp/addons/backgrounds/config.json` file to update the configuration:
 
-```js
-{
+```json
+[{
     "id": "backgrounds_0",
     "name": "Backgrounds",
+    "enabled": true,
     "title": {
         "en": "Background layers",
         "es": "Capas de fondo",
@@ -26,38 +27,28 @@ Edit the `GEOR_custom.js` file to add the required configuration:
     },
     "options": {
         "target": "tbar_12",
-        "layers_groups": [
-            {
-                "title": "OpenStreetMap - GéoBretagne",
-                "layers": [
-                    {
-                        "name": "Google",
-                        "url": "http://osm.geobretagne.fr/service/wmts/",
-                        "layer": "osm:google"
-                    },
-                    {
-                        "name": "Bing",
-                        "url": "http://osm.geobretagne.fr/service/wmts/",
-                        "layer": "osm:bing"
-                    },
-                    {
-                        "name": "Défaut",
-                        "url": "http://osm.geobretagne.fr/service/wmts/",
-                        "layer": "osm:map"
-                    }
-                ]
-            },
-            {
-              "title": "...",
-              "layers": []
-            }
-        ]
+        "layers_groups": [{
+            "title": "OpenStreetMap - GeoBretagne",
+            "layers": [{
+                    "name": "Google",
+                    "url": "https://osm.geobretagne.fr/service/wmts/",
+                    "layer": "osm:google"
+                },
+                {
+                    "name": "Bing",
+                    "url": "https://osm.geobretagne.fr/service/wmts/",
+                    "layer": "osm:bing"
+                },
+                {
+                    "name": "Default",
+                    "url": "https://osm.geobretagne.fr/service/wmts/",
+                    "layer": "osm:map"
+                }
+            ]
+        }]
     },
     "preloaded": true
-}
+}]
 ```
 
-Note : You can ajust the addon position in toolbar with :
-```js
-"target": "tbar_12"
-```
+Note: You can ajust the addon position in the toolbar with the `target` option.
