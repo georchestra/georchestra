@@ -267,6 +267,37 @@ GEOR.FeaturePanel = Ext.extend(Ext.form.FormPanel, {
             });
         }
 
+        // Add item within feature panel for polygon, rectangle and ring  
+        if (feature.geometry.CLASS_NAME === "OpenLayers.Geometry.Polygon" ) {
+            if (!feature.isLabel) {
+                // Opacity
+                oItems.push({
+                	id:'opacitySlider',
+                	xtype: 'sliderfield',
+                    name: 'Opacity',
+                    fieldLabel: OpenLayers.i18n('annotation.fillOpacity'),
+                    value: feature.style.fillOpacity || 1,
+                    width: 100,
+                    minValue: 0,
+                    maxValue: 1,
+                    decimalPrecision: 2,
+                    increment: 0.01,
+                    tipText: function(thumb){
+                    	var valOpacity = thumb.value;
+                        return String(Math.round(valOpacity*100)) + '%';
+                    },
+                    // Get default opacity value, give it to the feature style properties
+                    // and draw feature if value change
+                    listeners : {
+                        valid: function(slider) {
+                            feature.style.fillOpacity = slider.value;
+                            feature.layer.drawFeature(feature);
+                        },
+                    }
+                });
+            }
+        }
+  
         Ext.apply(this, {items: oItems});
     },
 
