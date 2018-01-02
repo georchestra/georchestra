@@ -13,7 +13,7 @@ RUN echo "deb http://httpredir.debian.org/debian stretch main contrib" > /etc/ap
     && echo "deb http://security.debian.org/ stretch/updates main contrib" >> /etc/apt/sources.list \
     && echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | debconf-set-selections \
     && apt-get update \
-    && apt-get install -y ttf-mscorefonts-installer \
+    && apt-get install -y ttf-mscorefonts-installer libgeos-dev libproj-dev \
     && apt-get clean \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
