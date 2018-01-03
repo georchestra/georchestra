@@ -21,6 +21,9 @@ public class ImpersonateUserRequestHeaderProviderTest {
         request.addHeader(HeaderNames.IMP_USERNAME, "imp-user");
         request.addHeader(HeaderNames.IMP_ROLES, "ROLE_IMP");
 
+        // Reset auth
+        SecurityContextHolder.getContext().setAuthentication(null);
+
         final ImpersonateUserRequestHeaderProvider provider = new ImpersonateUserRequestHeaderProvider();
         List<String> trustedUsers = new ArrayList<String>();
         trustedUsers.add("jeichar");

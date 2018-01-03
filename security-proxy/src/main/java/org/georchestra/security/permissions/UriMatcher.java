@@ -26,7 +26,7 @@ import java.util.HashSet;
 import java.util.regex.Pattern;
 
 import com.google.common.collect.Sets;
-import org.apache.commons.net.util.SubnetUtils;
+import org.springframework.security.web.util.matcher.IpAddressMatcher;
 
 /**
  * @author Jesse on 8/15/2014.
@@ -38,7 +38,7 @@ public class UriMatcher {
     private HashSet<InetAddress> hostNames;
     private String host;
     private String network;
-    private SubnetUtils.SubnetInfo networkInfo;
+    private IpAddressMatcher ipMatcher;
     private String domain;
     private Pattern domainPattern;
 
@@ -59,7 +59,7 @@ public class UriMatcher {
             this.domainPattern = Pattern.compile(this.domain, Pattern.CASE_INSENSITIVE);
         }
         if(this.network != null){
-            this.networkInfo = (new SubnetUtils(network)).getInfo();
+            this.ipMatcher = new IpAddressMatcher(network);
         }
     }
 
@@ -111,7 +111,7 @@ public class UriMatcher {
         }
 
         for (InetAddress inetAddress : allByName) {
-            if (this.networkInfo.isInRange(inetAddress.getHostAddress())) {
+            if (this.ipMatcher.matches(inetAddress.getHostAddress())) {
                 return true;
             }
         }

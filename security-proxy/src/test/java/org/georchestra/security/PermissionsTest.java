@@ -11,6 +11,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import org.springframework.security.web.util.matcher.IpAddressMatcher;
+
 public class PermissionsTest {
 
     private Permissions load(String permissionsFile) throws IOException, ClassNotFoundException {
@@ -88,9 +90,9 @@ public class PermissionsTest {
     public void testHost() throws IOException, ClassNotFoundException {
         Permissions perm = this.load("test-permissions-uriMatcher.xml");
 
+        // packages.georchestra.org has same IP address as sdi.georchestra.org
         assertTrue(perm.isDenied(new URL("http://packages.georchestra.org/test.html")));
         assertTrue(perm.isDenied(new URL("http://georchestra.org/test.html")));
-        assertFalse(perm.isDenied(new URL("http://www.georchestra.org/test.html")));
     }
 
     @Test
@@ -109,9 +111,33 @@ public class PermissionsTest {
         Permissions perm = this.load("test-permissions-uriMatcher.xml");
 
         assertTrue(perm.isDenied(new URL("http://192.168.11.12/geoserver")));
-        assertFalse(perm.isDenied(new URL("http://192.168.0.0/geoserver")));
+        assertTrue(perm.isDenied(new URL("http://192.168.0.0/geoserver")));
         assertTrue(perm.isDenied(new URL("http://10.28.12.145/geoserver")));
         assertFalse(perm.isDenied(new URL("http://yahoo.fr/geoserver")));
+    }
+
+    @Test
+    public void testNetworkIPv6() throws IOException, ClassNotFoundException {
+        Permissions perm = this.load("test-permissions-uriMatcher.xml");
+        assertTrue(perm.isDenied(new URL("http://www.georchestra.org/geoserver")));
+
+    }
+
+    @Test
+    public void testIPv6(){
+        IpAddressMatcher range = new IpAddressMatcher("192.168.0.0/16");
+        assertFalse(range.matches("2a04:4e42:400:0:0:0:0:403"));
+        assertTrue(range.matches("192.168.1.12"));
+        assertTrue(range.matches("192.168.0.0"));
+
+        range = new IpAddressMatcher("2a04:4e42::/32");
+        assertTrue(range.matches("2a04:4e42:400:0:0:0:0:403"));
+        assertTrue(range.matches("2a04:4e42:600:0:0:0:0:403"));
+        assertTrue(range.matches("2a04:4e42:600::"));
+        assertFalse(range.matches("2a04:4e43:600::"));
+        assertFalse(range.matches("2a04:4e43:400:0:0:0:0:403"));
+        assertFalse(range.matches("192.168.1.12"));
+        assertFalse(range.matches("192.168.0.0"));
     }
 
     @Test(expected = IllegalArgumentException.class)

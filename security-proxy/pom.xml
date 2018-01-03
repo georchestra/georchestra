@@ -12,7 +12,7 @@
   <url>http://www.georchestra.org</url>
   <properties>
     <spring.version>3.0.7.RELEASE</spring.version>
-    <security.version>3.1.6.RELEASE</security.version>
+    <security.version>3.2.10.RELEASE</security.version>
     <maven.test.skip>false</maven.test.skip>
   </properties>
   <dependencies>
@@ -98,6 +98,11 @@
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-ldap</artifactId>
+      <version>${security.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-web</artifactId>
       <version>${security.version}</version>
     </dependency>
     <dependency>

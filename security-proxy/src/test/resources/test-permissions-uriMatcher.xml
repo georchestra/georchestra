@@ -22,5 +22,8 @@
         <urimatcher>
             <network>10.28.0.0/16</network>
         </urimatcher>
+        <urimatcher>
+            <network>2a04:4e42::/32</network>
+        </urimatcher>
     </denied>
 </permissions>
