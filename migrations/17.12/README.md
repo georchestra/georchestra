@@ -23,3 +23,13 @@ CREATE INDEX ogc_services_log_y2016m10_date_idx ON ogcstatistics.ogc_services_lo
 ```
 
 You should create these indexes for all tables except for the current month.
+
+## Sources
+
+Due to submodule changes, upgrading your sources repository involves the following commands:
+```
+git fetch origin
+git checkout 17.12
+git submodule sync --recursive
+git submodule update --init --recursive --force
+```
