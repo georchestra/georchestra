@@ -247,7 +247,6 @@
           <scanIntervalSeconds>5</scanIntervalSeconds>
           <stopKey>JETTY_TOP</stopKey>
           <stopPort>8090</stopPort>
-          <reload>manual</reload>
           <httpConnector>
             <port>8180</port>
           </httpConnector>

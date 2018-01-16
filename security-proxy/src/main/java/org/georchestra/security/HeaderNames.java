@@ -41,4 +41,5 @@ public class HeaderNames {
     public static final String LOCATION = "location";
     public static final String TRANSFER_ENCODING = "Transfer-Encoding";
     public static final String CHUNKED = "chunked";
+    public static final String BASIC_AUTH_HEADER = "Authorization";
 }

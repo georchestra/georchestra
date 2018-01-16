@@ -20,6 +20,7 @@
 package org.georchestra.security;
 
 import static org.georchestra.security.HeaderNames.ACCEPT_ENCODING;
+import static org.georchestra.security.HeaderNames.BASIC_AUTH_HEADER;
 import static org.georchestra.security.HeaderNames.CONTENT_LENGTH;
 import static org.georchestra.security.HeaderNames.COOKIE_ID;
 import static org.georchestra.security.HeaderNames.HOST;
@@ -45,6 +46,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.message.BasicHeader;
@@ -91,51 +93,69 @@ public class HeadersManagementStrategy {
         Enumeration<String> headerNames = originalRequest.getHeaderNames();
         String headerName = null;
 
+        HttpSession session = originalRequest.getSession();
+
         StringBuilder headersLog = new StringBuilder("Request Headers:\n");
         headersLog
                 .append("==========================================================\n");
         if (referer != null) {
             addHeaderToRequestAndLog(proxyRequest, headersLog, REFERER_HEADER_NAME, this.referer);
         }
-        while (headerNames.hasMoreElements()) {
-            headerName = headerNames.nextElement();
-            if (headerName.compareToIgnoreCase(CONTENT_LENGTH) == 0) {
-                continue;
+
+        if(session.getAttribute("pre-auth") == null) {
+            while (headerNames.hasMoreElements()) {
+                headerName = headerNames.nextElement();
+                if (headerName.compareToIgnoreCase(CONTENT_LENGTH) == 0) {
+                    continue;
+                }
+                if (headerName.equalsIgnoreCase(COOKIE_ID)) {
+                    continue;
+                }
+                if (filter(originalRequest, headerName, proxyRequest)) {
+                    continue;
+                }
+                if (noAcceptEncoding && headerName.equalsIgnoreCase(ACCEPT_ENCODING)) {
+                    continue;
+                }
+                if (headerName.equalsIgnoreCase(HOST)) {
+                    continue;
+                }
+                // Don't forward basic auth
+                if (headerName.equalsIgnoreCase(BASIC_AUTH_HEADER)) {
+                    continue;
+                }
+                // Don't forward 'sec-*' headers, those headers must be managed by security-proxy
+                if (headerName.toLowerCase().startsWith(PROTECTED_HEADER_PREFIX)) {
+                    continue;
+                }
+                if (referer != null && headerName.equalsIgnoreCase(REFERER_HEADER_NAME)) {
+                    continue;
+                }
+                String value = originalRequest.getHeader(headerName);
+                addHeaderToRequestAndLog(proxyRequest, headersLog, headerName, value);
             }
-            if (headerName.equalsIgnoreCase(COOKIE_ID)) {
-                continue;
-            }
-            if (filter(originalRequest, headerName, proxyRequest)) {
-                continue;
-            }
-            if (noAcceptEncoding && headerName.equalsIgnoreCase(ACCEPT_ENCODING)) {
-                continue;
-            }
-            if (headerName.equalsIgnoreCase(HOST)) {
-                continue;
-            }
-            // Don't forward 'sec-*' headers, those headers must be managed by security-proxy
-            if(headerName.toLowerCase().startsWith(PROTECTED_HEADER_PREFIX)){
-                continue;
-            }
-            if (referer != null && headerName.equalsIgnoreCase(REFERER_HEADER_NAME)) {
-                continue;
-            }
-            String value = originalRequest.getHeader(headerName);
-            addHeaderToRequestAndLog(proxyRequest, headersLog, headerName, value);
         }
         // see https://github.com/georchestra/georchestra/issues/509:
         addHeaderToRequestAndLog(proxyRequest, headersLog, SEC_PROXY, "true");
 
         handleRequestCookies(originalRequest, proxyRequest, headersLog);
-        HttpSession session = originalRequest.getSession();
 
         for (HeaderProvider provider : headerProviders) {
+
+            // Don't include headers from security framework for request coming from trusted proxy
+            if(session.getAttribute("pre-auth") != null && (! (provider instanceof TrustedProxyRequestHeaderProvider))){
+                logger.debug("Bypassing header provider : " + provider.getClass().toString());
+                continue;
+            }
+
             for (Header header : provider.getCustomRequestHeaders(session, originalRequest)) {
+
+                logger.debug("Processing  header : " + header.getName() + " from " + provider.getClass().toString());
+
                 if ((header.getName().equalsIgnoreCase(SEC_USERNAME) ||
-                     header.getName().equalsIgnoreCase(SEC_ROLES)) &&
-                    proxyRequest.getHeaders(header.getName()) != null &&
-                    proxyRequest.getHeaders(header.getName()).length > 0) {
+                        header.getName().equalsIgnoreCase(SEC_ROLES)) &&
+                        proxyRequest.getHeaders(header.getName()) != null &&
+                        proxyRequest.getHeaders(header.getName()).length > 0) {
                     Header[] originalHeaders = proxyRequest.getHeaders(header.getName());
                     for (Header originalHeader : originalHeaders) {
                         headersLog.append("\t" + originalHeader.getName());
@@ -144,6 +164,12 @@ public class HeadersManagementStrategy {
                         headersLog.append("\n");
                     }
                 } else {
+                    // ignore Host and Content-Length header
+                    if(header.getName().equalsIgnoreCase(HttpHeaders.HOST) ||
+                            header.getName().equalsIgnoreCase(HttpHeaders.CONTENT_LENGTH))
+                        continue;
+
+                    logger.debug("Adding header to proxyed request : " + header.getName() + "=" + header.getValue());
                     proxyRequest.addHeader(header);
                     headersLog.append("\t" + header.getName());
                     headersLog.append("=");
@@ -160,6 +186,7 @@ public class HeadersManagementStrategy {
     }
 
     private void addHeaderToRequestAndLog(HttpRequestBase proxyRequest, StringBuilder headersLog, String headerName, String value) {
+        logger.debug("Add Header : " + headerName + " = " + value);
         proxyRequest.addHeader(new BasicHeader(headerName, value));
         headersLog.append("\t" + headerName);
         headersLog.append("=");
