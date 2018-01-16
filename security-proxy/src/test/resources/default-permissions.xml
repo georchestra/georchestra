@@ -1,0 +1,18 @@
+<permissions>
+    <allowByDefault>true</allowByDefault>
+    <allowed>
+        <urimatcher>
+            <domain>localhost</domain>
+            <port>8080</port>
+            <path>/path</path>
+        </urimatcher>
+    </allowed>
+    <denied>
+        <urimatcher>
+            <domain>.*google.com</domain>
+        </urimatcher>
+        <urimatcher>
+            <host>localhost</host>
+        </urimatcher>
+    </denied>
+</permissions>

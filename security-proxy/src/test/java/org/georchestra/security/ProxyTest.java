@@ -1,32 +1,24 @@
 package org.georchestra.security;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeNoException;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URL;
-import java.net.UnknownHostException;
-import java.util.Collections;
 import java.util.Map;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.message.BasicHttpResponse;
-import org.georchestra.security.permissions.Permissions;
-import org.georchestra.security.permissions.UriMatcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.google.common.collect.Maps;
 
@@ -49,13 +41,8 @@ public class ProxyTest {
             }
         };
 
-        try {
-            proxy.setProxyPermissions(new Permissions().setAllowed(
-                    Collections.singletonList(new UriMatcher().setHost("localhost"))).setDenied(
-                    Collections.singletonList(new UriMatcher().setHost("google.com"))));
-        } catch (UnknownHostException e) {
-            assumeNoException(" some hosts unresolveable, check connectivity. Tests skipped.", e);
-        }
+        proxy.setProxyPermissionsFile("default-permissions.xml");
+        proxy.init();
 
         response = new BasicHttpResponse(HttpVersion.HTTP_1_1, 200, "OK");
         this.request = new MockHttpServletRequest("GET", "/sec/proxy/");
@@ -89,9 +76,8 @@ public class ProxyTest {
         assertFalse(executed);
 
         this.httpResponse = new MockHttpServletResponse();
-        response = new BasicHttpResponse(HttpVersion.HTTP_1_1, 200, "OK");
         proxy.handleUrlGETRequest(request, httpResponse, "http://localhost:8080/extractorapp");
-        assertTrue(executed);
+        assertFalse(executed);
     }
 
     /**
@@ -138,39 +124,8 @@ public class ProxyTest {
     }
 
     @Test
-    public void testLoadPermissions() throws Exception {
-        proxy = new Proxy();
-        proxy.setProxyPermissionsFile("test-permissions.xml");
-        proxy.init();
-
-        final Permissions proxyPermissions = proxy.getProxyPermissions();
-        assertTrue(proxyPermissions.isAllowByDefault());
-        assertEquals(1, proxyPermissions.getAllowed().size());
-        assertEquals(1, proxyPermissions.getDenied().size());
-
-        assertEquals("localhost", proxyPermissions.getAllowed().get(0).getHost());
-        assertEquals(-1, proxyPermissions.getAllowed().get(0).getPort());
-        assertEquals(null, proxyPermissions.getAllowed().get(0).getPath());
-
-        assertEquals("localhost", proxyPermissions.getDenied().get(0).getHost());
-        assertEquals(433, proxyPermissions.getDenied().get(0).getPort());
-        assertEquals("/geonetwork/", proxyPermissions.getDenied().get(0).getPath());
-
-        assertTrue(proxyPermissions.isInitialized());
-    }
-
-    @Test
-    public void testLoadEmptyPermissions() throws Exception {
-        proxy = new Proxy();
-        proxy.setProxyPermissionsFile("empty-permissions.xml");
-        proxy.init();
-
-        // no exception? good
-    }
-
-    @Test
     public void testBuildUri() throws Exception {
-        proxy = new Proxy();
+        Proxy proxy = new Proxy();
         Method m = ReflectionUtils.findMethod(Proxy.class, "buildUri", URL.class);
         m.setAccessible(true);
 
@@ -181,4 +136,5 @@ public class ProxyTest {
         ret = (URI) ReflectionUtils.invokeMethod(m, proxy, new URL("https://sdi.georchestra.org/ldapadmin/account/recover?email=psc%2Btestuser%40georchestra.org"));
         assertTrue(ret.toString().contains("email=psc%2Btestuser%40georchestra.org"));
     }
+
 }

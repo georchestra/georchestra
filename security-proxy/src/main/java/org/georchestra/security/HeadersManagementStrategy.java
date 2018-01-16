@@ -87,7 +87,8 @@ public class HeadersManagementStrategy {
      * headers slightly
      */
     @SuppressWarnings("unchecked")
-    public synchronized void configureRequestHeaders(HttpServletRequest originalRequest, HttpRequestBase proxyRequest) {
+    public synchronized void configureRequestHeaders(HttpServletRequest originalRequest, HttpRequestBase proxyRequest,
+                                                     boolean localProxy) {
         Enumeration<String> headerNames = originalRequest.getHeaderNames();
         String headerName = null;
 
@@ -127,28 +128,30 @@ public class HeadersManagementStrategy {
         // see https://github.com/georchestra/georchestra/issues/509:
         addHeaderToRequestAndLog(proxyRequest, headersLog, SEC_PROXY, "true");
 
-        handleRequestCookies(originalRequest, proxyRequest, headersLog);
-        HttpSession session = originalRequest.getSession();
+        if(localProxy) {
+            handleRequestCookies(originalRequest, proxyRequest, headersLog);
+            HttpSession session = originalRequest.getSession();
 
-        for (HeaderProvider provider : headerProviders) {
-            for (Header header : provider.getCustomRequestHeaders(session, originalRequest)) {
-                if ((header.getName().equalsIgnoreCase(SEC_USERNAME) ||
-                     header.getName().equalsIgnoreCase(SEC_ROLES)) &&
-                    proxyRequest.getHeaders(header.getName()) != null &&
-                    proxyRequest.getHeaders(header.getName()).length > 0) {
-                    Header[] originalHeaders = proxyRequest.getHeaders(header.getName());
-                    for (Header originalHeader : originalHeaders) {
-                        headersLog.append("\t" + originalHeader.getName());
+            for (HeaderProvider provider : headerProviders) {
+                for (Header header : provider.getCustomRequestHeaders(session, originalRequest)) {
+                    if ((header.getName().equalsIgnoreCase(SEC_USERNAME) ||
+                            header.getName().equalsIgnoreCase(SEC_ROLES)) &&
+                            proxyRequest.getHeaders(header.getName()) != null &&
+                            proxyRequest.getHeaders(header.getName()).length > 0) {
+                        Header[] originalHeaders = proxyRequest.getHeaders(header.getName());
+                        for (Header originalHeader : originalHeaders) {
+                            headersLog.append("\t" + originalHeader.getName());
+                            headersLog.append("=");
+                            headersLog.append(originalHeader.getValue());
+                            headersLog.append("\n");
+                        }
+                    } else {
+                        proxyRequest.addHeader(header);
+                        headersLog.append("\t" + header.getName());
                         headersLog.append("=");
-                        headersLog.append(originalHeader.getValue());
+                        headersLog.append(header.getValue());
                         headersLog.append("\n");
                     }
-                } else {
-                    proxyRequest.addHeader(header);
-                    headersLog.append("\t" + header.getName());
-                    headersLog.append("=");
-                    headersLog.append(header.getValue());
-                    headersLog.append("\n");
                 }
             }
         }
