@@ -708,8 +708,18 @@ public class Proxy {
                 // 403 and 404 are handled by specific JSP files provided by the
                 // security-proxy webapp
                 if ((statusCode == 404) || (statusCode == 403)) {
-                    finalResponse.sendError(statusCode);
-                    return;
+                    // Hack for GN3.4: to protect against CSRF attacks, a token
+                    // is provided by the xml.info service. Even if the return
+                    // code is a 403, we are interested in getting the
+                    // Set-Cookie value.
+                    if (sURL.contains("/geonetwork/")) {
+                        Header setCookie = extractHeaderSetCookie(proxiedResponse);
+                        if (setCookie != null) {
+                            finalResponse.addHeader(setCookie.getName(), setCookie.getValue());
+                        }
+                        finalResponse.sendError(statusCode);
+                        return;
+                    }
                 }
             }
 
@@ -746,6 +756,23 @@ public class Proxy {
         } finally {
             httpclient.getConnectionManager().shutdown();
         }
+    }
+
+    private final static String setCookieHeader = "Set-Cookie";
+
+    /**
+     * Extracts the set-cookie http header from the downstream response.
+     *
+     * @param proxiedResponse
+     * @return the header if present, else null.
+     */
+    private Header extractHeaderSetCookie(HttpResponse proxiedResponse) {
+        for (Header h : proxiedResponse.getAllHeaders()) {
+            if (h.getName().equalsIgnoreCase(setCookieHeader)) {
+                return h;
+            }
+        }
+        return null;
     }
 
     @VisibleForTesting
@@ -884,26 +911,33 @@ public class Proxy {
                 HttpPost post = new HttpPost(uri);
                 HttpEntity entity;
                 request.setCharacterEncoding("UTF8");
-                logger.debug("Post is recognized as a form post.");
-                List<NameValuePair> parameters = new ArrayList<NameValuePair>();
-                for (Enumeration e = request.getParameterNames(); e.hasMoreElements();) {
-                    String name = (String) e.nextElement();
-                    String[] v = request.getParameterValues(name);
-                    for (String value : v) {
-                        NameValuePair nv = new BasicNameValuePair(name, value);
-                        parameters.add(nv);
+                if (isFormContentType(request)) {
+                    logger.debug("Post is a x-www-form-urlencoded POST");
+                    List<NameValuePair> parameters = new ArrayList<NameValuePair>();
+                    for (Enumeration e = request.getParameterNames(); e.hasMoreElements();) {
+                        String name = (String) e.nextElement();
+                        String[] v = request.getParameterValues(name);
+                        for (String value : v) {
+                            NameValuePair nv = new BasicNameValuePair(name, value);
+                            parameters.add(nv);
+                        }
                     }
+                    String charset = request.getCharacterEncoding();
+                    try {
+                        Charset.forName(charset);
+                    } catch (Throwable t) {
+                        charset = null;
+                    }
+                    if (charset == null) {
+                        charset = defaultCharset;
+                    }
+                    entity = new UrlEncodedFormEntity(parameters, charset);
+                } else {
+                    logger.debug("Post is a raw POST request");
+                    int contentLength = request.getContentLength();
+                    ServletInputStream inputStream = request.getInputStream();
+                    entity = new InputStreamEntity(inputStream, contentLength);
                 }
-                String charset = request.getCharacterEncoding();
-                try {
-                    Charset.forName(charset);
-                } catch (Throwable t) {
-                    charset = null;
-                }
-                if (charset == null) {
-                    charset = defaultCharset;
-                }
-                entity = new UrlEncodedFormEntity(parameters, charset);
                 post.setEntity(entity);
                 targetRequest = post;
                 break;
@@ -963,6 +997,22 @@ public class Proxy {
         }
 
         return targetRequest;
+    }
+
+    /**
+     * Returns if the request is a POST x-www-form-urlencoded or not.
+     *
+     * @param request
+     * @return true if this is the case, else false.
+     *
+     */
+    private boolean isFormContentType(HttpServletRequest request) {
+        if (request.getContentType() == null) {
+            return false;
+        }
+        String contentType = request.getContentType().split(";")[0].trim();
+
+        return "application/x-www-form-urlencoded".equalsIgnoreCase(contentType);
     }
 
     /**
