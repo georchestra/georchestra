@@ -89,7 +89,8 @@ public class HeadersManagementStrategy {
      * headers slightly
      */
     @SuppressWarnings("unchecked")
-    public synchronized void configureRequestHeaders(HttpServletRequest originalRequest, HttpRequestBase proxyRequest) {
+    public synchronized void configureRequestHeaders(HttpServletRequest originalRequest, HttpRequestBase proxyRequest,
+                                                     boolean localProxy) {
         Enumeration<String> headerNames = originalRequest.getHeaderNames();
         String headerName = null;
 
@@ -138,43 +139,43 @@ public class HeadersManagementStrategy {
         // see https://github.com/georchestra/georchestra/issues/509:
         addHeaderToRequestAndLog(proxyRequest, headersLog, SEC_PROXY, "true");
 
-        handleRequestCookies(originalRequest, proxyRequest, headersLog);
+        if(localProxy){
+            for (HeaderProvider provider : headerProviders) {
 
-        for (HeaderProvider provider : headerProviders) {
+                // Don't include headers from security framework for request coming from trusted proxy
+                if(session.getAttribute("pre-auth") != null && (! (provider instanceof TrustedProxyRequestHeaderProvider))){
+                    logger.debug("Bypassing header provider : " + provider.getClass().toString());
+                    continue;
+                }
 
-            // Don't include headers from security framework for request coming from trusted proxy
-            if(session.getAttribute("pre-auth") != null && (! (provider instanceof TrustedProxyRequestHeaderProvider))){
-                logger.debug("Bypassing header provider : " + provider.getClass().toString());
-                continue;
-            }
+                for (Header header : provider.getCustomRequestHeaders(session, originalRequest)) {
 
-            for (Header header : provider.getCustomRequestHeaders(session, originalRequest)) {
+                    logger.debug("Processing  header : " + header.getName() + " from " + provider.getClass().toString());
 
-                logger.debug("Processing  header : " + header.getName() + " from " + provider.getClass().toString());
+                    if ((header.getName().equalsIgnoreCase(SEC_USERNAME) ||
+                            header.getName().equalsIgnoreCase(SEC_ROLES)) &&
+                            proxyRequest.getHeaders(header.getName()) != null &&
+                            proxyRequest.getHeaders(header.getName()).length > 0) {
+                        Header[] originalHeaders = proxyRequest.getHeaders(header.getName());
+                        for (Header originalHeader : originalHeaders) {
+                            headersLog.append("\t" + originalHeader.getName());
+                            headersLog.append("=");
+                            headersLog.append(originalHeader.getValue());
+                            headersLog.append("\n");
+                        }
+                    } else {
+                        // ignore Host and Content-Length header
+                        if(header.getName().equalsIgnoreCase(HttpHeaders.HOST) ||
+                                header.getName().equalsIgnoreCase(HttpHeaders.CONTENT_LENGTH))
+                            continue;
 
-                if ((header.getName().equalsIgnoreCase(SEC_USERNAME) ||
-                        header.getName().equalsIgnoreCase(SEC_ROLES)) &&
-                        proxyRequest.getHeaders(header.getName()) != null &&
-                        proxyRequest.getHeaders(header.getName()).length > 0) {
-                    Header[] originalHeaders = proxyRequest.getHeaders(header.getName());
-                    for (Header originalHeader : originalHeaders) {
-                        headersLog.append("\t" + originalHeader.getName());
+                        logger.debug("Adding header to proxyed request : " + header.getName() + "=" + header.getValue());
+                        proxyRequest.addHeader(header);
+                        headersLog.append("\t" + header.getName());
                         headersLog.append("=");
-                        headersLog.append(originalHeader.getValue());
+                        headersLog.append(header.getValue());
                         headersLog.append("\n");
                     }
-                } else {
-                    // ignore Host and Content-Length header
-                    if(header.getName().equalsIgnoreCase(HttpHeaders.HOST) ||
-                            header.getName().equalsIgnoreCase(HttpHeaders.CONTENT_LENGTH))
-                        continue;
-
-                    logger.debug("Adding header to proxyed request : " + header.getName() + "=" + header.getValue());
-                    proxyRequest.addHeader(header);
-                    headersLog.append("\t" + header.getName());
-                    headersLog.append("=");
-                    headersLog.append(header.getValue());
-                    headersLog.append("\n");
                 }
             }
         }

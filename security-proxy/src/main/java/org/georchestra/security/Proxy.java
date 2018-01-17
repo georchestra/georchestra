@@ -27,15 +27,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.net.ProxySelector;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.net.URLDecoder;
-import java.net.UnknownHostException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.net.*;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,7 +48,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -86,7 +79,6 @@ import org.georchestra.ogcservstatistics.log4j.OGCServiceMessageFormatter;
 import org.georchestra.security.permissions.Permissions;
 import org.georchestra.security.permissions.UriMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.oxm.xstream.XStreamMarshaller;
 import org.springframework.security.cas.ServiceProperties;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -98,7 +90,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Maps;
 import com.google.common.io.Closer;
 
 /**
@@ -148,6 +139,7 @@ public class Proxy {
      * must be defined
      */
     private String defaultTarget;
+    private String publicHostname = "https://georchestra.mydomain.org/";
     private Map<String, String> targets = Collections.emptyMap();
     /**
      * must be defined
@@ -159,7 +151,8 @@ public class Proxy {
 
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
-    private Permissions proxyPermissions = new Permissions();
+    private Permissions proxyPermissions = null;
+    private Permissions sameDomainPermissions;
     private String proxyPermissionsFile;
 
 
@@ -174,26 +167,20 @@ public class Proxy {
     }
 
     public void init() throws Exception {
+
+        // Create a deny permission for URL with same domain
+        String publicDomain = new URL(this.publicHostname).getHost();
+        this.sameDomainPermissions = new Permissions();
+        this.sameDomainPermissions.setDenied(Collections.singletonList(new UriMatcher().setDomain(publicDomain)));
+        this.sameDomainPermissions.setAllowByDefault(true);
+        this.sameDomainPermissions.init();
+
         if (targets != null) {
             for (String url : targets.values()) {
                 new URL(url); // test that it is a valid URL
             }
         }
-        if (proxyPermissionsFile != null) {
-            Closer closer = Closer.create();
-            try {
-                final ClassLoader classLoader = Proxy.class.getClassLoader();
-                InputStream inStream = closer.register(classLoader.getResourceAsStream(proxyPermissionsFile));
-                Map<String, Class<?>> aliases = Maps.newHashMap();
-                aliases.put(Permissions.class.getSimpleName().toLowerCase(), Permissions.class);
-                aliases.put(UriMatcher.class.getSimpleName().toLowerCase(), UriMatcher.class);
-                XStreamMarshaller unmarshaller = new XStreamMarshaller();
-                unmarshaller.setAliasesByType(aliases);
-                setProxyPermissions((Permissions) unmarshaller.unmarshal(new StreamSource(inStream)));
-            } finally {
-                closer.close();
-            }
-        }
+
         // georchestra datadir autoconfiguration
         // dependency injection / properties setter() are made by Spring before
         // init() call
@@ -206,7 +193,39 @@ public class Proxy {
             for (String target : pTargets.stringPropertyNames()) {
                 targets.put(target, pTargets.getProperty(target));
             }
+
+            // Configure proxy permissions based on proxy-permissions.xml file in datadir
+            String datadirContext = georchestraConfiguration.getContextDataDir();
+            File datadirPermissionsFile = new File(String.format("%s%s%s", datadirContext,
+                    File.separator, "proxy-permissions.xml"));
+            if(datadirPermissionsFile.exists()){
+                logger.info("reading proxy permissions from " + datadirPermissionsFile.getAbsolutePath());
+                FileInputStream fis = null;
+                try {
+                    fis = new FileInputStream(datadirPermissionsFile);
+                    setProxyPermissions(Permissions.Create(fis));
+                    fis.close();
+                } catch(Exception ex){
+                      logger.error("Error during proxy permissions configuration from "
+                              + datadirPermissionsFile.getAbsolutePath());
+                } finally {
+                    fis.close();
+                }
+            }
+
             logger.info("Done.");
+        }
+
+        // Proxy permissions not set by datadir
+        if (proxyPermissionsFile != null && proxyPermissions == null) {
+            Closer closer = Closer.create();
+            try {
+                final ClassLoader classLoader = Proxy.class.getClassLoader();
+                InputStream inStream = closer.register(classLoader.getResourceAsStream(proxyPermissionsFile));
+                setProxyPermissions(Permissions.Create(inStream));
+            } finally {
+                closer.close();
+            }
         }
     }
 
@@ -306,11 +325,16 @@ public class Proxy {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
                 return;
             }
-            if (proxyPermissions.isDenied(url) || urlIsProtected(request, url)) {
+
+            /*
+             * - deny request with same domain as public_host
+             * - deny based on proxy-permissions.xml file
+             */
+            if(this.sameDomainPermissions.isDenied(url) || proxyPermissions.isDenied(url)){
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "URL is not allowed.");
                 return;
             }
-            handleRequest(request, response, type, sURL);
+            handleRequest(request, response, type, sURL, false);
         } else {
             handlePathEncodedRequests(request, response, type);
         }
@@ -545,7 +569,7 @@ public class Proxy {
                 }
             }
 
-            handleRequest(request, response, requestType, sURL);
+            handleRequest(request, response, requestType, sURL, true);
         } catch (IOException e) {
             logger.error("Error connecting to client", e);
         }
@@ -620,7 +644,7 @@ public class Proxy {
         }
     }
 
-    private void handleRequest(HttpServletRequest request, HttpServletResponse finalResponse, RequestType requestType, String sURL) {
+    private void handleRequest(HttpServletRequest request, HttpServletResponse finalResponse, RequestType requestType, String sURL, boolean localProxy) {
         HttpClientBuilder htb = HttpClients.custom().disableRedirectHandling();
 
         RequestConfig config = RequestConfig.custom().setSocketTimeout(this.httpClientTimeout).build();
@@ -659,7 +683,7 @@ public class Proxy {
             logger.debug("Final request -- " + sURL);
 
             HttpRequestBase proxyingRequest = makeRequest(request, requestType, sURL);
-            headerManagement.configureRequestHeaders(request, proxyingRequest);
+            headerManagement.configureRequestHeaders(request, proxyingRequest, localProxy);
 
             try {
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -1311,11 +1335,18 @@ public class Proxy {
 
     public void setProxyPermissions(Permissions proxyPermissions) throws UnknownHostException {
         this.proxyPermissions = proxyPermissions;
-        this.proxyPermissions.init();
     }
 
     public Permissions getProxyPermissions() {
         return proxyPermissions;
+    }
+
+    public String getPublicHostname() {
+        return publicHostname;
+    }
+
+    public void setPublicHostname(String publicHostname) {
+        this.publicHostname = publicHostname;
     }
 
 }

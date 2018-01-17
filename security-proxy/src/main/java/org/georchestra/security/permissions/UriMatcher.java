@@ -26,6 +26,8 @@ import java.util.HashSet;
 import java.util.regex.Pattern;
 
 import com.google.common.collect.Sets;
+import org.springframework.security.web.util.matcher.IpAddressMatcher;
+
 /**
  * @author Jesse on 8/15/2014.
  */
@@ -35,6 +37,10 @@ public class UriMatcher {
     private Pattern pathPattern;
     private HashSet<InetAddress> hostNames;
     private String host;
+    private String network;
+    private IpAddressMatcher ipMatcher;
+    private String domain;
+    private Pattern domainPattern;
 
     public synchronized void init() throws UnknownHostException {
         this.hostNames = null;
@@ -46,17 +52,26 @@ public class UriMatcher {
             if (!this.path.startsWith("/")) {
                 this.path = "(/" + this.path + ")|(" + this.path + ")";
             }
-            this.pathPattern = Pattern.compile(this.path);
+            this.pathPattern = Pattern.compile(this.path, Pattern.CASE_INSENSITIVE);
+        }
+        this.domainPattern = null;
+        if (this.domain != null) {
+            this.domainPattern = Pattern.compile(this.domain, Pattern.CASE_INSENSITIVE);
+        }
+        if(this.network != null){
+            this.ipMatcher = new IpAddressMatcher(network);
         }
     }
 
     public boolean matches(URL url) {
-        if (hostNames != null && !matchesHost(url)) {
+        if (hostNames != null && !matchesHost(url))
             return false;
-        }
-        if (port != -1 && !matchesPort(url)) {
+        if (domain != null && !matchesDomain(url))
             return false;
-        }
+        if (port != -1 && !matchesPort(url))
+            return false;
+        if (network != null && !matchesNetwork(url))
+            return false;
         return !(pathPattern != null && !matchesPath(url));
     }
 
@@ -87,6 +102,27 @@ public class UriMatcher {
         return false;
     }
 
+    private boolean matchesNetwork(URL url) {
+        final InetAddress[] allByName;
+        try {
+            allByName = InetAddress.getAllByName(url.getHost());
+        } catch (UnknownHostException e) {
+            return false;
+        }
+
+        for (InetAddress inetAddress : allByName) {
+            if (this.ipMatcher.matches(inetAddress.getHostAddress())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean matchesDomain(URL url) {
+        return this.domainPattern.matcher(url.getHost()).matches();
+    }
+
+
     public UriMatcher setHost(String host) throws UnknownHostException {
         this.host = host;
         return this;
@@ -110,8 +146,25 @@ public class UriMatcher {
         return port;
     }
 
+    public String getDomain() {
+        return domain;
+    }
+
+    public UriMatcher setDomain(String domain) {
+        this.domain = domain;
+        return this;
+    }
+
     public String getPath() {
         return path;
+    }
+
+    public String getNetwork() {
+        return network;
+    }
+
+    public void setNetwork(String network) {
+        this.network = network;
     }
 
     private Object readResolve() {

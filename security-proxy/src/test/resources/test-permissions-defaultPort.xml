@@ -1,0 +1,11 @@
+<permissions>
+    <allowByDefault>true</allowByDefault>
+    <denied>
+        <urimatcher>
+            <port>80</port>
+        </urimatcher>
+        <urimatcher>
+            <port>443</port>
+        </urimatcher>
+    </denied>
+</permissions>
