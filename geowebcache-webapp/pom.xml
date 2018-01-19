@@ -379,7 +379,7 @@
       <properties>
         <dockerImageName>georchestra/geowebcache</dockerImageName>
         <dockerDatadirScmUrl>scm:git:https://github.com/georchestra/datadir.git</dockerDatadirScmUrl>
-        <dockerDatadirScmVersion>docker-16.12</dockerDatadirScmVersion>
+        <dockerDatadirScmVersion>docker-${packageDatadirScmVersion}</dockerDatadirScmVersion>
       </properties>
       <build>
         <finalName>geowebcache</finalName>
