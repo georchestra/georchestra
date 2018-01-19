@@ -362,6 +362,8 @@
               <checkoutDirectory>${project.build.directory}/deb/etc/georchestra</checkoutDirectory>
               <connectionUrl>scm:git:https://github.com/georchestra/datadir.git</connectionUrl>
               <pushChanges>false</pushChanges>
+              <scmVersion>${project.parent.version}</scmVersion>
+              <scmVersionType>branch</scmVersionType>
             </configuration>
             <executions>
               <execution>
@@ -443,6 +445,8 @@
             <configuration>
               <checkoutDirectory>${project.build.directory}/deb/etc/georchestra</checkoutDirectory>
               <connectionUrl>scm:git:https://github.com/georchestra/datadir.git</connectionUrl>
+              <scmVersion>${project.parent.version}</scmVersion>
+              <scmVersionType>branch</scmVersionType>
               <pushChanges>false</pushChanges>
             </configuration>
             <executions>

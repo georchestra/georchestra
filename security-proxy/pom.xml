@@ -11,7 +11,7 @@
   <name>security-proxy Webapp</name>
   <url>http://www.georchestra.org</url>
   <properties>
-    <spring.version>3.0.7.RELEASE</spring.version>
+    <spring.version>3.2.18.RELEASE</spring.version>
     <security.version>3.2.10.RELEASE</security.version>
     <maven.test.skip>false</maven.test.skip>
   </properties>
@@ -106,29 +106,9 @@
       <version>${security.version}</version>
     </dependency>
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>apache-log4j-extras</artifactId>
-      <version>1.1</version>
-      <type>jar</type>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>1.4.3</version>
-      <scope>runtime</scope>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>ogc-server-statistics</artifactId>
       <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>log4j</groupId>
-          <artifactId>log4j</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
