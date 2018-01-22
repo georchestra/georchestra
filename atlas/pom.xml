@@ -15,6 +15,7 @@
         <geotools.version>11.0</geotools.version>
         <spring.version>4.1.8.RELEASE</spring.version>
         <spring.data.version>1.9.1.RELEASE</spring.data.version>
+        <packageDatadirScmVersion>16.12</packageDatadirScmVersion>
     </properties>
     <dependencies>
         <!-- Camel dependencies -->
@@ -401,7 +402,7 @@
                             <checkoutDirectory>${project.build.directory}/deb/etc/georchestra</checkoutDirectory>
                             <connectionUrl>scm:git:https://github.com/georchestra/datadir.git</connectionUrl>
                             <pushChanges>false</pushChanges>
-                            <scmVersion>${project.parent.version}</scmVersion>
+                            <scmVersion>${packageDatadirScmVersion}</scmVersion>
                             <scmVersionType>branch</scmVersionType>
                         </configuration>
                         <executions>
@@ -487,7 +488,7 @@
                             <checkoutDirectory>${project.build.directory}/deb/etc/georchestra</checkoutDirectory>
                             <connectionUrl>scm:git:https://github.com/georchestra/datadir.git</connectionUrl>
                             <pushChanges>false</pushChanges>
-                            <scmVersion>${project.parent.version}</scmVersion>
+                            <scmVersion>${packageDatadirScmVersion}</scmVersion>
                             <scmVersionType>branch</scmVersionType>
                         </configuration>
                         <executions>
@@ -572,7 +573,7 @@
             <properties>
                 <dockerImageName>georchestra/${project.artifactId}</dockerImageName>
                 <dockerDatadirScmUrl>scm:git:https://github.com/georchestra/datadir.git</dockerDatadirScmUrl>
-                <dockerDatadirScmVersion>docker-16.12</dockerDatadirScmVersion>
+                <dockerDatadirScmVersion>docker-${packageDatadirScmVersion}</dockerDatadirScmVersion>
             </properties>
             <build>
                 <finalName>atlas</finalName>
