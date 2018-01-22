@@ -13,6 +13,7 @@
   <properties>
     <maven.test.skip>false</maven.test.skip>
     <spring.version>3.1.0.RELEASE</spring.version>
+    <packageDatadirScmVersion>master</packageDatadirScmVersion>
   </properties>
   <dependencies>
     <dependency>
@@ -472,7 +473,7 @@
               <checkoutDirectory>${project.build.directory}/deb/etc/georchestra</checkoutDirectory>
               <connectionUrl>scm:git:https://github.com/georchestra/datadir.git</connectionUrl>
               <pushChanges>false</pushChanges>
-              <scmVersion>${project.parent.version}</scmVersion>
+              <scmVersion>${packageDatadirScmVersion}</scmVersion>
               <scmVersionType>branch</scmVersionType>
             </configuration>
             <executions>
@@ -556,7 +557,7 @@
               <checkoutDirectory>${project.build.directory}/deb/etc/georchestra</checkoutDirectory>
               <connectionUrl>scm:git:https://github.com/georchestra/datadir.git</connectionUrl>
               <pushChanges>false</pushChanges>
-              <scmVersion>${project.parent.version}</scmVersion>
+              <scmVersion>${packageDatadirScmVersion}</scmVersion>
               <scmVersionType>branch</scmVersionType>
             </configuration>
             <executions>
@@ -641,7 +642,7 @@
       <properties>
         <dockerImageName>georchestra/${project.artifactId}</dockerImageName>
         <dockerDatadirScmUrl>scm:git:https://github.com/georchestra/datadir.git</dockerDatadirScmUrl>
-        <dockerDatadirScmVersion>docker-master</dockerDatadirScmVersion>
+        <dockerDatadirScmVersion>docker-${packageDatadirScmVersion}</dockerDatadirScmVersion>
       </properties>
       <build>
         <finalName>${project.artifactId}</finalName>

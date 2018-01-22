@@ -18,6 +18,7 @@
     <spring.version>4.2.3.RELEASE</spring.version>
     <spring_data.version>1.11.1.RELEASE</spring_data.version>
     <postgres.version>9.4-1205-jdbc41</postgres.version>
+    <packageDatadirScmVersion>master</packageDatadirScmVersion>
   </properties>
   <dependencies>
     <dependency>
@@ -362,7 +363,7 @@
               <checkoutDirectory>${project.build.directory}/deb/etc/georchestra</checkoutDirectory>
               <connectionUrl>scm:git:https://github.com/georchestra/datadir.git</connectionUrl>
               <pushChanges>false</pushChanges>
-              <scmVersion>${project.parent.version}</scmVersion>
+              <scmVersion>${packageDatadirScmVersion}</scmVersion>
               <scmVersionType>branch</scmVersionType>
             </configuration>
             <executions>
@@ -445,7 +446,7 @@
             <configuration>
               <checkoutDirectory>${project.build.directory}/deb/etc/georchestra</checkoutDirectory>
               <connectionUrl>scm:git:https://github.com/georchestra/datadir.git</connectionUrl>
-              <scmVersion>${project.parent.version}</scmVersion>
+              <scmVersion>${packageDatadirScmVersion}</scmVersion>
               <scmVersionType>branch</scmVersionType>
               <pushChanges>false</pushChanges>
             </configuration>
@@ -531,7 +532,7 @@
       <properties>
         <dockerImageName>georchestra/${project.artifactId}</dockerImageName>
         <dockerDatadirScmUrl>scm:git:https://github.com/georchestra/datadir.git</dockerDatadirScmUrl>
-        <dockerDatadirScmVersion>docker-master</dockerDatadirScmVersion>
+        <dockerDatadirScmVersion>docker-${packageDatadirScmVersion}</dockerDatadirScmVersion>
       </properties>
       <build>
         <finalName>${project.artifactId}</finalName>
