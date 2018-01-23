@@ -30,6 +30,7 @@
     <!-- default when building without a profile specified -->
     <confdir>${project.build.directory}/conf</confdir>
     <encoding>UTF-8</encoding>
+    <log4j1.version>1.2.17</log4j1.version>
     <georchestra.version>${project.version}</georchestra.version>
     <postTreatmentScript><![CDATA[
 
