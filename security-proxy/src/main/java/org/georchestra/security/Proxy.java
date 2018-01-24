@@ -250,7 +250,7 @@ public class Proxy {
 
     /* ---------- end work around for no gateway option -------------- */
 
-    @RequestMapping(params = "login", method = { GET, POST })
+    @RequestMapping(value= "**", params = "login", method = { GET, POST })
     public void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, URISyntaxException {
         String uri = request.getRequestURI();
         if (uri.startsWith("sec")) {
