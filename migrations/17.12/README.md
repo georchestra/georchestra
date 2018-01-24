@@ -33,3 +33,26 @@ git checkout 17.12
 git submodule sync --recursive
 git submodule update --init --recursive --force
 ```
+
+## GeoServer - Notes for tomcat users
+
+the default Context attribute `useRelativeRedirects` seems to have changed from
+`false` to `true` in the new versions of Tomcat, making the redirections from
+the GeoServer UI fail.
+
+You will have to manually adapt your tomcat configuration to add the following in your `context.xml` file:
+
+```xml
+<Context useRelativeRedirects="false">
+```
+
+Forgetting to adjust your configuration will result in a unusable GeoServer UI.
+The first version of the HTTP specicifications required an absolute URL to be
+passed to the `Location` header, but since most browsers tolerate a relative
+URL, this constraint has been relaxed in the new version of the specifications.
+
+Nevertheless we preferred to keep the same behaviour across the servlet
+containers used in the geOrchestra community (mainly jetty and tomcat), and we
+actually require an absolute URL so that the Security-Proxy is able to rewrite
+these to point to a coherent destination.
+
