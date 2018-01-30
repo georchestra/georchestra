@@ -17,21 +17,26 @@
 from ldap3 import Connection, SUBTREE
 from ldap3 import MODIFY_ADD, MODIFY_DELETE
 import re
+from difflib import SequenceMatcher
 
 # Please configure following VARIABLE in order to match your local configuration
 
 # URI of LDAP server
 LDAP_URI = 'ldap://localhost:389'
 
+# Main LDAP domain
+LDAP_DOMAIN = 'dc=georchestra,dc=org'
+
 # credentials to use when connecting to LDAP
-LDAP_BINDDN = 'cn=admin,dc=georchestra,dc=org'
+LDAP_BINDDN = 'cn=admin,%s' % LDAP_DOMAIN
 LDAP_PASSWD = 'secret'
 
 # where to search orgs in LDAP
-ORGS_DN = 'ou=orgs,dc=georchestra,dc=org'
+ORGS_BRANCH_NAME = 'orgs'
+ORGS_DN = 'ou=%s,%s' % (ORGS_BRANCH_NAME, LDAP_DOMAIN)
 
 # where to search users in LDAP
-USERS_DN = 'ou=users,dc=georchestra,dc=org'
+USERS_DN = 'ou=users,%s' % LDAP_DOMAIN
 
 # object class of ldap object contaning user definition
 USER_OBJECT_CLASS = 'inetOrgPerson'
@@ -58,12 +63,13 @@ class OrganizationHelper:
        * generate unique organization identifier
        * create organization (empty registered)"""
 
-    sanitize_regexp = re.compile('[^a-zA-Z_]')
+    sanitize_regexp = re.compile('[^a-zA-Z0-9_-]')
 
     def __init__(self, base_user_dn, base_org_dn, connection):
         self.base_user_dn = base_user_dn
         self.base_org_dn = base_org_dn
         self.connection = connection
+        self.created_orgs = {}
 
     def sanitizeOrgName(self, org_name):
         return self.sanitize_regexp.sub('_', org_name)
@@ -85,14 +91,33 @@ class OrganizationHelper:
         else:
             print("Adding %s to %s" % (user_full_dn, org_full_dn))
 
+    def findSimilar(self, org_name):
+        max_ratio = 0
+        max_org_id = None
+        max_org_name = None
+        for key in self.created_orgs:
+            ratio = SequenceMatcher(None, org_name, self.created_orgs[key]).ratio()
+            if ratio > max_ratio:
+                max_ratio = ratio
+                max_org_id = key
+                max_org_name = self.created_orgs[key]
+            if(ratio > 0.6):
+                return (True, key, self.created_orgs[key], SequenceMatcher(None, org_name, self.created_orgs[key]).ratio())
+        return (False, max_org_id, max_org_name, max_ratio)
+
     def createOrg(self, org_id, org_name):
+        (match, similar_org_id, similar_org_name, score) = self.findSimilar(org_name)
+        if match:
+            print("Similar org detected : %s is similar to %s %s (%s)" % (org_name, similar_org_name, score, similar_org_id))
+        else :
+            print("No match found : Max ratio %s with : %s (%s)" % (score, similar_org_name, similar_org_id))
         if not self.connection.add("cn=%s,%s" % (org_id, self.base_org_dn),
                                    ["groupOfMembers", "top"],
                                    {"businessCategory" : "REGISTERED",
                                     "o" : org_name,
                                     "seeAlso": "o=%s,%s" % (org_id, self.base_org_dn)}):
             raise LdapError("Unable to create groupOfMembers : %s" % org_id)
-
+        self.created_orgs[org_id] = org_name
         if not self.connection.add("o=%s,%s" % (org_id, self.base_org_dn),
                                    ["organization", "top"]):
             raise LdapError("Unable to create organization : %s" % org_id)
@@ -105,6 +130,14 @@ reg = re.compile(r"^cn=([^,]+),%s" % ORGS_DN)
 
 conn = Connection(LDAP_URI, LDAP_BINDDN, LDAP_PASSWD, auto_bind=True)
 conn2 = Connection(LDAP_URI, LDAP_BINDDN, LDAP_PASSWD, auto_bind=True)
+
+# Create Orgs organizational unit if needed
+if not conn.search(search_base=LDAP_DOMAIN, search_filter='(ou=%s)' % ORGS_BRANCH_NAME):
+    if not conn.add(ORGS_DN,
+                               ["organizationalUnit", "top"],
+                               {"ou" : ORGS_BRANCH_NAME}):
+        raise LdapError("Unable to create orgs organizational unit")
+    print('Successful creation of %s entry' % ORGS_DN)
 
 conn.search(search_base=USERS_DN,
             search_filter='(objectClass=%s)' % USER_OBJECT_CLASS,
@@ -126,13 +159,13 @@ for user in conn.entries:
         print("Migrating User '%s' with org : '%s'" % (user.uid, user.o))
 
     # Sanitize org name
-    org_cn = orgHelper.sanitizeOrgName(user.o.value)
+    org_cn = orgHelper.sanitizeOrgName(user.o.value.strip())
     org_dn = "cn=%s,%s" % (org_cn, ORGS_DN)
 
     # check if organization exists and create it if necessary
     if not orgHelper.exists(org_cn):
         print("Creating new organization : %s" % (org_dn))
-        orgHelper.createOrg(org_cn, user.o.value)
+        orgHelper.createOrg(org_cn, user.o.value.strip())
 
     # add user to org (if not already present)
     orgHelper.addUserToOrg(user.uid, org_cn)
