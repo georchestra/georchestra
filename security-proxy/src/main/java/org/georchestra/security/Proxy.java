@@ -250,7 +250,7 @@ public class Proxy {
 
     /* ---------- end work around for no gateway option -------------- */
 
-    @RequestMapping(params = "login", method = { GET, POST })
+    @RequestMapping(value= "**", params = "login", method = { GET, POST })
     public void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, URISyntaxException {
         String uri = request.getRequestURI();
         if (uri.startsWith("sec")) {
@@ -427,32 +427,32 @@ public class Proxy {
 
     // ----------------- Method calls where request is encoded in path of
     // request ----------------- //
-    @RequestMapping(params = { "!url", "!login" }, method = RequestMethod.GET)
+    @RequestMapping(value="**", params = { "!url", "!login" }, method = RequestMethod.GET)
     public void handleGETRequest(HttpServletRequest request, HttpServletResponse response) {
         handlePathEncodedRequests(request, response, RequestType.GET);
     }
 
-    @RequestMapping(params = { "!url", "!login" }, method = RequestMethod.POST)
+    @RequestMapping(value="**", params = { "!url", "!login" }, method = RequestMethod.POST)
     public void handlePOSTRequest(HttpServletRequest request, HttpServletResponse response) {
         handlePathEncodedRequests(request, response, RequestType.POST);
     }
 
-    @RequestMapping(params = { "!url", "!login" }, method = RequestMethod.DELETE)
+    @RequestMapping(value="**", params = { "!url", "!login" }, method = RequestMethod.DELETE)
     public void handleDELETERequest(HttpServletRequest request, HttpServletResponse response) {
         handlePathEncodedRequests(request, response, RequestType.DELETE);
     }
 
-    @RequestMapping(params = { "!url", "!login" }, method = RequestMethod.HEAD)
+    @RequestMapping(value="**", params = { "!url", "!login" }, method = RequestMethod.HEAD)
     public void handleHEADRequest(HttpServletRequest request, HttpServletResponse response) {
         handlePathEncodedRequests(request, response, RequestType.HEAD);
     }
 
-    @RequestMapping(params = { "!url", "!login" }, method = RequestMethod.OPTIONS)
+    @RequestMapping(value="**", params = { "!url", "!login" }, method = RequestMethod.OPTIONS)
     public void handleOPTIONSRequest(HttpServletRequest request, HttpServletResponse response) {
         handlePathEncodedRequests(request, response, RequestType.OPTIONS);
     }
 
-    @RequestMapping(params = { "!url", "!login" }, method = RequestMethod.PUT)
+    @RequestMapping(value="**", params = { "!url", "!login" }, method = RequestMethod.PUT)
     public void handlePUTRequest(HttpServletRequest request, HttpServletResponse response) {
         handlePathEncodedRequests(request, response, RequestType.PUT);
     }
