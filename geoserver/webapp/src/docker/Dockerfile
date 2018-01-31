@@ -35,7 +35,6 @@ CMD ["sh", "-c", "exec java -Djava.io.tmpdir=/tmp/jetty \
 -DGEOWEBCACHE_CACHE_DIR=/mnt/geoserver_tiles \
 -DENABLE_JSONP=true \
 -Dhttps.protocols=TLSv1,TLSv1.1,TLSv1.2 \
--Dorg.geotools.image.reduceWarpAffine=false \
 -Xms$XMS -Xmx$XMX \
 -XX:SoftRefLRUPolicyMSPerMB=36000 \
 -XX:+UseParallelGC \
