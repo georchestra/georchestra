@@ -13,7 +13,7 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      #- "8080:8080"
+      - "8080:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./docker/ssl:/etc/traefik/ssl/
@@ -27,6 +27,12 @@ services:
       - "traefik.backend=sp"
       - "traefik.frontend.rule=Host:georchestra.mydomain.org"
       - "traefik.frontend.passHostHeader=true"
+
+  cas:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=cas"
+      - "traefik.frontend.rule=Host:georchestra.mydomain.org;PathPrefix:/cas"
 
   smtp:
     build: docker/smtp/smtp-sink
