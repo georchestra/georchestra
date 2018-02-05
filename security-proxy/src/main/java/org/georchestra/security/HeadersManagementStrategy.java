@@ -140,6 +140,7 @@ public class HeadersManagementStrategy {
         addHeaderToRequestAndLog(proxyRequest, headersLog, SEC_PROXY, "true");
 
         if(localProxy){
+            handleRequestCookies(originalRequest, proxyRequest, headersLog);
             for (HeaderProvider provider : headerProviders) {
 
                 // Don't include headers from security framework for request coming from trusted proxy
