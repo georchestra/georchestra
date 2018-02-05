@@ -1,180 +1,525 @@
 BEGIN;
 
+--
+-- Name: geofence; Type: SCHEMA; Schema: -; Owner: georchestra
+--
+
 CREATE SCHEMA geofence;
 
-SET search_path TO geofence;
 
-create table gf_gfuser (
-    id int8 not null,
-    dateCreation timestamp,
-    emailAddress varchar(255),
-    enabled bool not null,
-    extId varchar(255) unique,
-    fullName varchar(255),
-    name varchar(255) not null unique,
-    password varchar(255),
-    primary key (id)
+SET search_path = geofence, pg_catalog;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- Name: gf_adminrule; Type: TABLE; Schema: geofence; Owner: georchestra
+--
+
+CREATE TABLE gf_adminrule (
+    id bigint NOT NULL,
+    grant_type character varying(255) NOT NULL,
+    ip_high bigint,
+    ip_low bigint,
+    ip_size integer,
+    priority bigint NOT NULL,
+    rolename character varying(255),
+    username character varying(255),
+    workspace character varying(255),
+    instance_id bigint
 );
 
-create table gf_gsinstance (
-    id int8 not null,
-    baseURL varchar(255) not null,
-    dateCreation timestamp,
-    description varchar(255),
-    name varchar(255) not null,
-    password varchar(255) not null,
-    username varchar(255) not null,
-    primary key (id)
+
+ALTER TABLE gf_adminrule OWNER TO georchestra;
+
+--
+-- Name: gf_gfuser; Type: TABLE; Schema: geofence; Owner: georchestra
+--
+
+CREATE TABLE gf_gfuser (
+    id bigint NOT NULL,
+    datecreation timestamp without time zone,
+    emailaddress character varying(255),
+    enabled boolean NOT NULL,
+    extid character varying(255),
+    fullname character varying(255),
+    name character varying(255) NOT NULL,
+    password character varying(255)
 );
 
-create table gf_gsuser (
-    id int8 not null,
-    admin bool not null,
-    dateCreation timestamp,
-    emailAddress varchar(255),
-    enabled bool not null,
-    extId varchar(255) unique,
-    fullName varchar(255),
-    name varchar(255) not null unique,
-    password varchar(255),
-    primary key (id)
+
+ALTER TABLE gf_gfuser OWNER TO georchestra;
+
+--
+-- Name: gf_gsinstance; Type: TABLE; Schema: geofence; Owner: georchestra
+--
+
+CREATE TABLE gf_gsinstance (
+    id bigint NOT NULL,
+    baseurl character varying(255) NOT NULL,
+    datecreation timestamp without time zone,
+    description character varying(255),
+    name character varying(255) NOT NULL,
+    password character varying(255) NOT NULL,
+    username character varying(255) NOT NULL
 );
 
-create table gf_layer_attributes (
-    details_id int8 not null,
-    access_type varchar(255),
-    data_type varchar(255),
-    name varchar(255) not null,
-    primary key (details_id, name),
-    unique (details_id, name)
+
+ALTER TABLE gf_gsinstance OWNER TO georchestra;
+
+--
+-- Name: gf_gsuser; Type: TABLE; Schema: geofence; Owner: georchestra
+--
+
+CREATE TABLE gf_gsuser (
+    id bigint NOT NULL,
+    admin boolean NOT NULL,
+    datecreation timestamp without time zone,
+    emailaddress character varying(255),
+    enabled boolean NOT NULL,
+    extid character varying(255),
+    fullname character varying(255),
+    name character varying(255) NOT NULL,
+    password character varying(255)
 );
 
-create table gf_layer_custom_props (
-    details_id int8 not null,
-    propvalue varchar(255),
-    propkey varchar(255),
-    primary key (details_id, propkey)
+
+ALTER TABLE gf_gsuser OWNER TO georchestra;
+
+--
+-- Name: gf_layer_attributes; Type: TABLE; Schema: geofence; Owner: georchestra
+--
+
+CREATE TABLE gf_layer_attributes (
+    details_id bigint NOT NULL,
+    access_type character varying(255),
+    data_type character varying(255),
+    name character varying(255) NOT NULL
 );
 
-create table gf_layer_details (
-    id int8 not null,
+
+ALTER TABLE gf_layer_attributes OWNER TO georchestra;
+
+--
+-- Name: gf_layer_custom_props; Type: TABLE; Schema: geofence; Owner: georchestra
+--
+
+CREATE TABLE gf_layer_custom_props (
+    details_id bigint NOT NULL,
+    propvalue character varying(255),
+    propkey character varying(255) NOT NULL
+);
+
+
+ALTER TABLE gf_layer_custom_props OWNER TO georchestra;
+
+--
+-- Name: gf_layer_details; Type: TABLE; Schema: geofence; Owner: georchestra
+--
+
+CREATE TABLE gf_layer_details (
+    id bigint NOT NULL,
     area public.geometry,
-    cqlFilterRead varchar(4000),
-    cqlFilterWrite varchar(4000),
-    defaultStyle varchar(255),
-    type varchar(255),
-    rule_id int8 not null,
-    primary key (id),
-    unique (rule_id)
+    catalog_mode character varying(255),
+    cqlfilterread character varying(4000),
+    cqlfilterwrite character varying(4000),
+    defaultstyle character varying(255),
+    type character varying(255),
+    rule_id bigint NOT NULL
 );
 
-create table gf_layer_styles (
-    details_id int8 not null,
-    styleName varchar(255)
+
+ALTER TABLE gf_layer_details OWNER TO georchestra;
+
+--
+-- Name: gf_layer_styles; Type: TABLE; Schema: geofence; Owner: georchestra
+--
+
+CREATE TABLE gf_layer_styles (
+    details_id bigint NOT NULL,
+    stylename character varying(255)
 );
 
-create table gf_rule (
-    id int8 not null,
-    grant_type varchar(255) not null,
-    layer varchar(255),
-    priority int8 not null,
-    request varchar(255),
-    service varchar(255),
-    workspace varchar(255),
-    gsuser_id int8,
-    instance_id int8,
-    userGroup_id int8,
-    primary key (id),
-    unique (gsuser_id, userGroup_id, instance_id, service, request, workspace, layer)
+
+ALTER TABLE gf_layer_styles OWNER TO georchestra;
+
+--
+-- Name: gf_rule; Type: TABLE; Schema: geofence; Owner: georchestra
+--
+
+CREATE TABLE gf_rule (
+    id bigint NOT NULL,
+    grant_type character varying(255) NOT NULL,
+    ip_high bigint,
+    ip_low bigint,
+    ip_size integer,
+    layer character varying(255),
+    priority bigint NOT NULL,
+    request character varying(255),
+    rolename character varying(255),
+    service character varying(255),
+    username character varying(255),
+    workspace character varying(255),
+    instance_id bigint
 );
 
-create table gf_rule_limits (
-    id int8 not null,
+
+ALTER TABLE gf_rule OWNER TO georchestra;
+
+--
+-- Name: gf_rule_limits; Type: TABLE; Schema: geofence; Owner: georchestra
+--
+
+CREATE TABLE gf_rule_limits (
+    id bigint NOT NULL,
     area public.geometry,
-    rule_id int8 not null,
-    primary key (id),
-    unique (rule_id)
+    catalog_mode character varying(255),
+    rule_id bigint NOT NULL
 );
 
-create table gf_user_usergroups (
-    user_id int8 not null,
-    group_id int8 not null,
-    primary key (user_id, group_id)
+
+ALTER TABLE gf_rule_limits OWNER TO georchestra;
+
+--
+-- Name: gf_user_usergroups; Type: TABLE; Schema: geofence; Owner: georchestra
+--
+
+CREATE TABLE gf_user_usergroups (
+    user_id bigint NOT NULL,
+    group_id bigint NOT NULL
 );
 
-create table gf_usergroup (
-    id int8 not null,
-    dateCreation timestamp,
-    enabled bool not null,
-    extId varchar(255) unique,
-    name varchar(255) not null unique,
-    primary key (id)
+
+ALTER TABLE gf_user_usergroups OWNER TO georchestra;
+
+--
+-- Name: gf_usergroup; Type: TABLE; Schema: geofence; Owner: georchestra
+--
+
+CREATE TABLE gf_usergroup (
+    id bigint NOT NULL,
+    datecreation timestamp without time zone,
+    enabled boolean NOT NULL,
+    extid character varying(255),
+    name character varying(255) NOT NULL
 );
 
-create index idx_gsuser_name on gf_gsuser (name);
 
-alter table gf_layer_attributes
-    add constraint fk_attribute_layer
-    foreign key (details_id)
-    references gf_layer_details;
+ALTER TABLE gf_usergroup OWNER TO georchestra;
 
-alter table gf_layer_custom_props
-    add constraint fk_custom_layer
-    foreign key (details_id)
-    references gf_layer_details;
+--
+-- Name: hibernate_sequence; Type: SEQUENCE; Schema: geofence; Owner: georchestra
+--
 
-alter table gf_layer_details
-    add constraint fk_details_rule
-    foreign key (rule_id)
-    references gf_rule;
+CREATE SEQUENCE hibernate_sequence
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
 
-alter table gf_layer_styles
-    add constraint fk_styles_layer
-    foreign key (details_id)
-    references gf_layer_details;
 
-create index idx_rule_request on gf_rule (request);
+ALTER TABLE hibernate_sequence OWNER TO georchestra;
 
-create index idx_rule_layer on gf_rule (layer);
 
-create index idx_rule_service on gf_rule (service);
+--
+-- Name: hibernate_sequence; Type: SEQUENCE SET; Schema: geofence; Owner: georchestra
+--
 
-create index idx_rule_workspace on gf_rule (workspace);
+SELECT pg_catalog.setval('hibernate_sequence', 1, false);
 
-create index idx_rule_priority on gf_rule (priority);
 
-alter table gf_rule
-    add constraint fk_rule_user
-    foreign key (gsuser_id)
-    references gf_gsuser;
+--
+-- Name: gf_adminrule gf_adminrule_pkey; Type: CONSTRAINT; Schema: geofence; Owner: georchestra
+--
 
-alter table gf_rule
-    add constraint fk_rule_usergroup
-    foreign key (userGroup_id)
-    references gf_usergroup;
+ALTER TABLE ONLY gf_adminrule
+    ADD CONSTRAINT gf_adminrule_pkey PRIMARY KEY (id);
 
-alter table gf_rule
-    add constraint fk_rule_instance
-    foreign key (instance_id)
-    references gf_gsinstance;
 
-alter table gf_rule_limits
-    add constraint fk_limits_rule
-    foreign key (rule_id)
-    references gf_rule;
+--
+-- Name: gf_adminrule gf_adminrule_username_rolename_instance_id_workspace_key; Type: CONSTRAINT; Schema: geofence; Owner: georchestra
+--
 
-alter table gf_user_usergroups
-    add constraint fk_uug_user
-    foreign key (user_id)
-    references gf_gsuser;
+ALTER TABLE ONLY gf_adminrule
+    ADD CONSTRAINT gf_adminrule_username_rolename_instance_id_workspace_key UNIQUE (username, rolename, instance_id, workspace);
 
-alter table gf_user_usergroups
-    add constraint fk_uug_group
-    foreign key (group_id)
-    references gf_usergroup;
 
-create sequence hibernate_sequence;
+--
+-- Name: gf_gfuser gf_gfuser_extid_key; Type: CONSTRAINT; Schema: geofence; Owner: georchestra
+--
 
+ALTER TABLE ONLY gf_gfuser
+    ADD CONSTRAINT gf_gfuser_extid_key UNIQUE (extid);
+
+
+--
+-- Name: gf_gfuser gf_gfuser_name_key; Type: CONSTRAINT; Schema: geofence; Owner: georchestra
+--
+
+ALTER TABLE ONLY gf_gfuser
+    ADD CONSTRAINT gf_gfuser_name_key UNIQUE (name);
+
+
+--
+-- Name: gf_gfuser gf_gfuser_pkey; Type: CONSTRAINT; Schema: geofence; Owner: georchestra
+--
+
+ALTER TABLE ONLY gf_gfuser
+    ADD CONSTRAINT gf_gfuser_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: gf_gsinstance gf_gsinstance_pkey; Type: CONSTRAINT; Schema: geofence; Owner: georchestra
+--
+
+ALTER TABLE ONLY gf_gsinstance
+    ADD CONSTRAINT gf_gsinstance_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: gf_gsuser gf_gsuser_extid_key; Type: CONSTRAINT; Schema: geofence; Owner: georchestra
+--
+
+ALTER TABLE ONLY gf_gsuser
+    ADD CONSTRAINT gf_gsuser_extid_key UNIQUE (extid);
+
+
+--
+-- Name: gf_gsuser gf_gsuser_name_key; Type: CONSTRAINT; Schema: geofence; Owner: georchestra
+--
+
+ALTER TABLE ONLY gf_gsuser
+    ADD CONSTRAINT gf_gsuser_name_key UNIQUE (name);
+
+
+--
+-- Name: gf_gsuser gf_gsuser_pkey; Type: CONSTRAINT; Schema: geofence; Owner: georchestra
+--
+
+ALTER TABLE ONLY gf_gsuser
+    ADD CONSTRAINT gf_gsuser_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: gf_layer_attributes gf_layer_attributes_pkey; Type: CONSTRAINT; Schema: geofence; Owner: georchestra
+--
+
+ALTER TABLE ONLY gf_layer_attributes
+    ADD CONSTRAINT gf_layer_attributes_pkey PRIMARY KEY (details_id, name);
+
+
+--
+-- Name: gf_layer_custom_props gf_layer_custom_props_pkey; Type: CONSTRAINT; Schema: geofence; Owner: georchestra
+--
+
+ALTER TABLE ONLY gf_layer_custom_props
+    ADD CONSTRAINT gf_layer_custom_props_pkey PRIMARY KEY (details_id, propkey);
+
+
+--
+-- Name: gf_layer_details gf_layer_details_pkey; Type: CONSTRAINT; Schema: geofence; Owner: georchestra
+--
+
+ALTER TABLE ONLY gf_layer_details
+    ADD CONSTRAINT gf_layer_details_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: gf_layer_details gf_layer_details_rule_id_key; Type: CONSTRAINT; Schema: geofence; Owner: georchestra
+--
+
+ALTER TABLE ONLY gf_layer_details
+    ADD CONSTRAINT gf_layer_details_rule_id_key UNIQUE (rule_id);
+
+
+--
+-- Name: gf_rule_limits gf_rule_limits_pkey; Type: CONSTRAINT; Schema: geofence; Owner: georchestra
+--
+
+ALTER TABLE ONLY gf_rule_limits
+    ADD CONSTRAINT gf_rule_limits_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: gf_rule_limits gf_rule_limits_rule_id_key; Type: CONSTRAINT; Schema: geofence; Owner: georchestra
+--
+
+ALTER TABLE ONLY gf_rule_limits
+    ADD CONSTRAINT gf_rule_limits_rule_id_key UNIQUE (rule_id);
+
+
+--
+-- Name: gf_rule gf_rule_pkey; Type: CONSTRAINT; Schema: geofence; Owner: georchestra
+--
+
+ALTER TABLE ONLY gf_rule
+    ADD CONSTRAINT gf_rule_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: gf_rule gf_rule_username_rolename_instance_id_service_request_works_key; Type: CONSTRAINT; Schema: geofence; Owner: georchestra
+--
+
+ALTER TABLE ONLY gf_rule
+    ADD CONSTRAINT gf_rule_username_rolename_instance_id_service_request_works_key UNIQUE (username, rolename, instance_id, service, request, workspace, layer);
+
+
+--
+-- Name: gf_user_usergroups gf_user_usergroups_pkey; Type: CONSTRAINT; Schema: geofence; Owner: georchestra
+--
+
+ALTER TABLE ONLY gf_user_usergroups
+    ADD CONSTRAINT gf_user_usergroups_pkey PRIMARY KEY (user_id, group_id);
+
+
+--
+-- Name: gf_usergroup gf_usergroup_extid_key; Type: CONSTRAINT; Schema: geofence; Owner: georchestra
+--
+
+ALTER TABLE ONLY gf_usergroup
+    ADD CONSTRAINT gf_usergroup_extid_key UNIQUE (extid);
+
+
+--
+-- Name: gf_usergroup gf_usergroup_name_key; Type: CONSTRAINT; Schema: geofence; Owner: georchestra
+--
+
+ALTER TABLE ONLY gf_usergroup
+    ADD CONSTRAINT gf_usergroup_name_key UNIQUE (name);
+
+
+--
+-- Name: gf_usergroup gf_usergroup_pkey; Type: CONSTRAINT; Schema: geofence; Owner: georchestra
+--
+
+ALTER TABLE ONLY gf_usergroup
+    ADD CONSTRAINT gf_usergroup_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: idx_adminrule_priority; Type: INDEX; Schema: geofence; Owner: georchestra
+--
+
+CREATE INDEX idx_adminrule_priority ON gf_adminrule USING btree (priority);
+
+
+--
+-- Name: idx_adminrule_workspace; Type: INDEX; Schema: geofence; Owner: georchestra
+--
+
+CREATE INDEX idx_adminrule_workspace ON gf_adminrule USING btree (workspace);
+
+
+--
+-- Name: idx_gsuser_name; Type: INDEX; Schema: geofence; Owner: georchestra
+--
+
+CREATE INDEX idx_gsuser_name ON gf_gsuser USING btree (name);
+
+
+--
+-- Name: idx_rule_layer; Type: INDEX; Schema: geofence; Owner: georchestra
+--
+
+CREATE INDEX idx_rule_layer ON gf_rule USING btree (layer);
+
+
+--
+-- Name: idx_rule_priority; Type: INDEX; Schema: geofence; Owner: georchestra
+--
+
+CREATE INDEX idx_rule_priority ON gf_rule USING btree (priority);
+
+
+--
+-- Name: idx_rule_request; Type: INDEX; Schema: geofence; Owner: georchestra
+--
+
+CREATE INDEX idx_rule_request ON gf_rule USING btree (request);
+
+
+--
+-- Name: idx_rule_service; Type: INDEX; Schema: geofence; Owner: georchestra
+--
+
+CREATE INDEX idx_rule_service ON gf_rule USING btree (service);
+
+
+--
+-- Name: idx_rule_workspace; Type: INDEX; Schema: geofence; Owner: georchestra
+--
+
+CREATE INDEX idx_rule_workspace ON gf_rule USING btree (workspace);
+
+
+--
+-- Name: gf_adminrule fk_adminrule_instance; Type: FK CONSTRAINT; Schema: geofence; Owner: georchestra
+--
+
+ALTER TABLE ONLY gf_adminrule
+    ADD CONSTRAINT fk_adminrule_instance FOREIGN KEY (instance_id) REFERENCES gf_gsinstance(id);
+
+
+--
+-- Name: gf_layer_attributes fk_attribute_layer; Type: FK CONSTRAINT; Schema: geofence; Owner: georchestra
+--
+
+ALTER TABLE ONLY gf_layer_attributes
+    ADD CONSTRAINT fk_attribute_layer FOREIGN KEY (details_id) REFERENCES gf_layer_details(id);
+
+
+--
+-- Name: gf_layer_details fk_details_rule; Type: FK CONSTRAINT; Schema: geofence; Owner: georchestra
+--
+
+ALTER TABLE ONLY gf_layer_details
+    ADD CONSTRAINT fk_details_rule FOREIGN KEY (rule_id) REFERENCES gf_rule(id);
+
+
+--
+-- Name: gf_rule_limits fk_limits_rule; Type: FK CONSTRAINT; Schema: geofence; Owner: georchestra
+--
+
+ALTER TABLE ONLY gf_rule_limits
+    ADD CONSTRAINT fk_limits_rule FOREIGN KEY (rule_id) REFERENCES gf_rule(id);
+
+
+--
+-- Name: gf_rule fk_rule_instance; Type: FK CONSTRAINT; Schema: geofence; Owner: georchestra
+--
+
+ALTER TABLE ONLY gf_rule
+    ADD CONSTRAINT fk_rule_instance FOREIGN KEY (instance_id) REFERENCES gf_gsinstance(id);
+
+
+--
+-- Name: gf_layer_styles fk_styles_layer; Type: FK CONSTRAINT; Schema: geofence; Owner: georchestra
+--
+
+ALTER TABLE ONLY gf_layer_styles
+    ADD CONSTRAINT fk_styles_layer FOREIGN KEY (details_id) REFERENCES gf_layer_details(id);
+
+
+--
+-- Name: gf_user_usergroups fk_uug_group; Type: FK CONSTRAINT; Schema: geofence; Owner: georchestra
+--
+
+ALTER TABLE ONLY gf_user_usergroups
+    ADD CONSTRAINT fk_uug_group FOREIGN KEY (group_id) REFERENCES gf_usergroup(id);
+
+
+--
+-- Name: gf_user_usergroups fk_uug_user; Type: FK CONSTRAINT; Schema: geofence; Owner: georchestra
+--
+
+ALTER TABLE ONLY gf_user_usergroups
+    ADD CONSTRAINT fk_uug_user FOREIGN KEY (user_id) REFERENCES gf_gsuser(id);
+
+
+--
+-- PostgreSQL database dump complete
+--
 
 COMMIT;
-
