@@ -18,17 +18,17 @@ docker-build-gn3: docker-pull-jetty
 	../../mvn -P docker -DskipTests package docker:build
 
 docker-build-geoserver: docker-pull-jetty
-	cd geoserver/geoserver-submodule/src; \
-	rm -rf ../data/citewfs-1.1/workspaces/sf/sf/E*; \
-	LANG=C ../../../mvn clean install -DskipTests; \
-	cd ../../webapp; \
+	cd geoserver/; \
+	rm -rf geoserver-submodule/data/citewfs-1.1/workspaces/sf/sf/E*; \
+	LANG=C ../mvn clean install -DskipTests; \
+	cd webapp; \
 	../../mvn clean install docker:build -Pdocker,colormap,mbtiles,spatialite,wps-download,app-schema,control-flow,csw,feature-pregeneralized,gdal,importer,inspire,libjpeg-turbo,monitor,pyramid,wps -DskipTests
 
 docker-build-geoserver-geofence: docker-pull-jetty
-	cd geoserver/geoserver-submodule/src; \
-	rm -fr ../data/citewfs-1.1/workspaces/sf/sf/E*; \
-	LANG=C ../../../mvn clean install -Pgeofence-server -DskipTests; \
-	cd ../../webapp; \
+	cd geoserver; \
+	rm -fr geoserver-submodule/data/citewfs-1.1/workspaces/sf/sf/E*; \
+	LANG=C ../mvn clean install -Pgeofence -DskipTests; \
+	cd webapp; \
 	../../mvn clean install docker:build -Pdocker,colormap,mbtiles,spatialite,wps-download,app-schema,control-flow,csw,feature-pregeneralized,gdal,importer,inspire,libjpeg-turbo,monitor,pyramid,wps,geofence -DskipTests
 
 docker-build-ldapadmin: docker-pull-jetty
