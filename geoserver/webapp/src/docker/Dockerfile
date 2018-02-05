@@ -29,8 +29,7 @@ USER jetty
 VOLUME [ "/mnt/geoserver_datadir", "/mnt/geoserver_geodata", "/mnt/geoserver_tiles", "/tmp", "/run/jetty" ]
 
 CMD ["sh", "-c", "exec java -Djava.io.tmpdir=/tmp/jetty \
--Dgeorchestra.datadir=/etc/georchestra \
--Dgeofence.dir=/etc/georchestra/geoserver/geofence \
+-Dgeofence-ovr=file:/etc/georchestra/geoserver/geofence/geofence-datasource-ovr.properties \
 -DGEOSERVER_DATA_DIR=/mnt/geoserver_datadir \
 -DGEOWEBCACHE_CACHE_DIR=/mnt/geoserver_tiles \
 -DENABLE_JSONP=true \
