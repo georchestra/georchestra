@@ -41,6 +41,7 @@ services:
       - geoserver_datadir:/mnt/geoserver_datadir
       - geoserver_geodata:/mnt/geoserver_geodata
       - geoserver_tiles:/mnt/geoserver_tiles
+      - /etc/georchestra:/etc/georchestra
     environment:
       - XMS=256M
       - XMX=8G
