@@ -4,7 +4,7 @@ The security-proxy (aka SP) belongs to geOrchestra core, since it is the compone
  * handles user sessions
  * routes requests to webapps (except CAS)
  
-The behavior is controlled by the files from the `<datadir root>/security-proxy` folder, which can be found [here](https://github.com/georchestra/datadir/tree/master/security-proxy)
+The behavior is controlled by the files from the `<datadir_root>/security-proxy` folder, which can be found [here](https://github.com/georchestra/datadir/tree/master/security-proxy)
 
 ## SP-trust-SP feature
 
