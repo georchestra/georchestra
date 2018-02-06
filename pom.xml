@@ -296,6 +296,16 @@
   </reporting>
   <profiles>
     <profile>
+      <id>sentry-log4j</id>
+      <dependencies>
+        <dependency>
+          <groupId>io.sentry</groupId>
+          <artifactId>sentry-log4j</artifactId>
+          <version>1.6.7</version>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
       <id>localhost</id>
       <properties>
         <server>localhost</server>
