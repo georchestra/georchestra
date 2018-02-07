@@ -157,6 +157,11 @@
       <artifactId>log4j-over-slf4j</artifactId>
       <version>1.7.25</version>
     </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>apache-log4j-extras</artifactId>
+      <version>${log4j1.version}</version>
+    </dependency>
   </dependencies>
   <build>
     <finalName>ROOT-${server}</finalName>
