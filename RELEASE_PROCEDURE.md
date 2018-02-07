@@ -109,7 +109,7 @@ git push origin 16.12
 
 ```
 git checkout master
-find ./ -name pom.xml -exec sed -i 's#<dockerDatadirScmVersion>docker-16.12</dockerDatadirScmVersion>#<dockerDatadirScmVersion>docker-master</dockerDatadirScmVersion>#' {} \;
+find ./ -name pom.xml -exec sed -i 's#<packageDatadirScmVersion>16.12</packageDatadirScmVersion>#<packageDatadirScmVersion>master</packageDatadirScmVersion>#' {} \;
 find ./ -name pom.xml -exec sed -i 's#<version>16.12</version>#<version>17.06-SNAPSHOT</version>#' {} \;
 git submodule foreach 'git reset --hard'
 git commit -am "updated project version in pom.xml"
