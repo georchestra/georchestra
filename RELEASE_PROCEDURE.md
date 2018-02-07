@@ -84,9 +84,9 @@ cd -
 ```
 
 Manually update the files mentionning the current release version (```README.md``` and ```RELEASE_NOTES.md```).
-Also update the branch name for the Travis status logo, and change the `dockerDatadirScmVersion` parameter in every `pom.xml` to `docker-16.12`:
+Also update the branch name for the Travis status logo, and change the `packageDatadirScmVersion` parameter in every `pom.xml` to `docker-16.12`:
 ```
-find ./ -name pom.xml -exec sed -i 's#<dockerDatadirScmVersion>docker-master</dockerDatadirScmVersion>#<dockerDatadirScmVersion>docker-16.12</dockerDatadirScmVersion>#' {} \;
+find ./ -name pom.xml -exec sed -i 's#<packageDatadirScmVersion>master</packageDatadirScmVersion>#<packageDatadirScmVersion>16.12</packageDatadirScmVersion>#' {} \;
 ```
 
 Commit and propagate the changes:

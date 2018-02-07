@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.georchestra</groupId>
         <artifactId>root</artifactId>
-        <version>17.06-SNAPSHOT</version>
+        <version>17.12</version>
     </parent>
     <artifactId>atlas</artifactId>
     <packaging>war</packaging>
@@ -15,7 +15,7 @@
         <geotools.version>11.0</geotools.version>
         <spring.version>4.1.8.RELEASE</spring.version>
         <spring.data.version>1.9.1.RELEASE</spring.data.version>
-        <packageDatadirScmVersion>master</packageDatadirScmVersion>
+        <packageDatadirScmVersion>17.12</packageDatadirScmVersion>
     </properties>
     <dependencies>
         <!-- Camel dependencies -->
