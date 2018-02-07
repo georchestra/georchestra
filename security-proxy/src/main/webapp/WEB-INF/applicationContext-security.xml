@@ -7,11 +7,7 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/security
-<<<<<<< 41f5999f9802dbfa9e7edc505e3a5a3d4f7f8dc1
-        http://www.springframework.org/schema/security/spring-security-3.2.xsd
-=======
         http://www.springframework.org/schema/security/spring-security-4.2.xsd
->>>>>>> SP - update all dependencies
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd">
 
