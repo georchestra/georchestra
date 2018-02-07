@@ -1,15 +1,17 @@
 # Docker related targets
 
+DOCKER-COMPOSE-BIN=docker-compose
+
 docker-pull-jetty:
 	docker pull jetty:9-jre8
 
 docker-build-ldap:
 	docker pull dinkel/openldap
-	docker-compose build ldap
+	$(DOCKER-COMPOSE-BIN) build ldap
 
 docker-build-database:
 	docker pull postgres:10
-	docker-compose build database
+	$(DOCKER-COMPOSE-BIN) build database
 
 docker-build-gn3: docker-pull-jetty
 	cd geonetwork; \
@@ -40,20 +42,20 @@ docker-build-georchestra: docker-pull-jetty docker-build-database docker-build-l
 docker-build-dev:
 	docker pull debian:stretch
 	docker pull tianon/apache2
-	docker-compose build smtp courier-imap webmail geodata
+	$(DOCKER-COMPOSE-BIN) build smtp courier-imap webmail geodata
 
 docker-stop-rm:
-	docker-compose stop
-	docker-compose rm -f
+	$(DOCKER-COMPOSE-BIN) stop
+	$(DOCKER-COMPOSE-BIN) rm -f
 
 docker-clean-volumes:
-	docker-compose down --volumes --remove-orphans
+	$(DOCKER-COMPOSE-BIN) down --volumes --remove-orphans
 
 docker-clean-images:
-	docker-compose down --rmi 'all' --remove-orphans
+	$(DOCKER-COMPOSE-BIN) down --rmi 'all' --remove-orphans
 
 docker-clean-all:
-	docker-compose down --volumes --rmi 'all' --remove-orphans
+	$(DOCKER-COMPOSE-BIN) down --volumes --rmi 'all' --remove-orphans
 
 docker-build: build-deps docker-build-dev docker-build-gn3 docker-build-geoserver docker-build-georchestra
 
