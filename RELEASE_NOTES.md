@@ -20,7 +20,7 @@ Major highlights:
 Many thanks to those who made it possible, either through funding, or patches !
 
 New features:
- * GeoServer 2.12.x - [#1847](https://github.com/georchestra/georchestra/pull/1847)
+ * GeoServer 2.12.1 - [#1847](https://github.com/georchestra/georchestra/pull/1847)
  * GeoNetwork 3.4.1 - [#1611](https://github.com/georchestra/georchestra/issues/1611)
  * Use the preferred language, as advertised by the browser - [#589](https://github.com/georchestra/georchestra/issues/589)
  * mapfishapp - new "backgrounds" addon - [#1156](https://github.com/georchestra/georchestra/issues/1156)
