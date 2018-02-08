@@ -689,6 +689,22 @@ public class Proxy {
                 logger.error("Unable to log the request into the statistics logger", e);
             }
 
+            if (localProxy) {
+                //
+                // Hack for geoserver
+                // Should not be here. We must use a ProxyTarget class and
+                // define
+                // if Host header should be forwarded or not.
+                //
+                request.getHeader("Host");
+                proxyingRequest.setHeader("Host", request.getHeader("Host"));
+
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Host header set to: " + proxyingRequest.getFirstHeader("Host").getValue()
+                            + " for proxy request.");
+                }
+            }
+
             proxiedResponse = executeHttpRequest(httpclient, proxyingRequest);
             StatusLine statusLine = proxiedResponse.getStatusLine();
             statusCode = statusLine.getStatusCode();
