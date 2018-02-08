@@ -130,7 +130,7 @@ import com.google.common.io.Closer;
  * @author jesse.eichar@camptocamp.com
  */
 @Controller
-@RequestMapping("/*")
+@RequestMapping("/**")
 public class Proxy {
     protected static final Log logger = LogFactory.getLog(Proxy.class.getPackage().getName());
     protected static final Log statsLogger = LogFactory.getLog(Proxy.class.getPackage().getName() + ".statistics");
@@ -307,7 +307,7 @@ public class Proxy {
      * @throws IOException
      */
     @RequestMapping(value ="/proxy/", params = { "url", "!login" })
-    public void handleUrlParamRequest(HttpServletRequest request, HttpServletResponse response, String sURL) throws IOException {
+    public void handleUrlParamRequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) throws IOException {
         testLegalContentType(request);
         URL url;
         try {
@@ -328,6 +328,27 @@ public class Proxy {
         handleRequest(request, response, sURL, false);
     }
 
+    // ----------------- Method calls where request is encoded in path of
+    // request ----------------- //
+    @RequestMapping(value="**", params = { "!url", "!login" })
+    public void handleRequest(HttpServletRequest request, HttpServletResponse response) {
+        handlePathEncodedRequests(request, response);
+    }
+
+    /**
+     * Default redirection to defaultTarget. By default returns a 302 redirect to '/header/'. The
+     * parameter can be customized in the security-proxy.properties file.
+     *
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    @RequestMapping(value = "/", params = { "!url", "!login" })
+    public void handleDefaultRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.sendRedirect(defaultTarget);
+        return;
+    }
+    
     /**
      * Indicates whether the requested URL is a one protected by the
      * Security-proxy or not, e.g. urlIsProtected(mapfishapp) will generally
@@ -420,27 +441,6 @@ public class Proxy {
         }
         throw new IllegalArgumentException("ContentType " + contentType
                 + " is not permitted to be requested when the request is made through the URL parameter form.");
-    }
-
-    // ----------------- Method calls where request is encoded in path of
-    // request ----------------- //
-    @RequestMapping(value="**", params = { "!url", "!login" })
-    public void handleRequest(HttpServletRequest request, HttpServletResponse response) {
-        handlePathEncodedRequests(request, response);
-    }
-
-    /**
-     * Default redirection to defaultTarget. By default returns a 302 redirect to '/header/'. The
-     * parameter can be customized in the security-proxy.properties file.
-     *
-     * @param request
-     * @param response
-     * @throws IOException
-     */
-    @RequestMapping(value = "/", params = { "!url", "!login" })
-    public void handleDefaultRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.sendRedirect(defaultTarget);
-        return;
     }
 
     // ----------------- Implementation methods ----------------- //
