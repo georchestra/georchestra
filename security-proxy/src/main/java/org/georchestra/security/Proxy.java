@@ -23,13 +23,21 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.io.Closeable;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.net.*;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.ProxySelector;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -70,6 +78,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpTrace;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.InputStreamEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
@@ -87,7 +96,6 @@ import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -137,22 +145,21 @@ public class Proxy {
     private String defaultTarget;
     private String publicHostname = "https://georchestra.mydomain.org/";
     private Map<String, String> targets = Collections.emptyMap();
-    /**
-     * must be defined
-     */
     private HeadersManagementStrategy headerManagement = new HeadersManagementStrategy();
     private FilterRequestsStrategy strategyForFilteringRequests = new AcceptAllRequests();
     private List<String> requireCharsetContentTypes = Collections.emptyList();
     private String defaultCharset = "UTF-8";
 
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+    private ServicesMonitoring servicesMonitoring = null;
 
     private Permissions proxyPermissions = null;
     private Permissions sameDomainPermissions;
     private String proxyPermissionsFile;
 
-
     private Integer httpClientTimeout = 300000;
+
+    private final static String setCookieHeader = "Set-Cookie";
 
     public void setHttpClientTimeout(Integer timeout) {
         this.httpClientTimeout = timeout;
@@ -185,9 +192,9 @@ public class Proxy {
 
             Properties pTargets = georchestraConfiguration.loadCustomPropertiesFile("targets-mapping");
 
-            targets.clear();
+            this.targets.clear();
             for (String target : pTargets.stringPropertyNames()) {
-                targets.put(target, pTargets.getProperty(target));
+                this.targets.put(target, pTargets.getProperty(target));
             }
 
             // Configure proxy permissions based on proxy-permissions.xml file in datadir
@@ -211,6 +218,8 @@ public class Proxy {
 
             logger.info("Done.");
         }
+
+        this.servicesMonitoring = new ServicesMonitoring(targets);
 
         // Proxy permissions not set by datadir
         if (proxyPermissionsFile != null && proxyPermissions == null) {
@@ -264,46 +273,59 @@ public class Proxy {
         redirectStrategy.sendRedirect(request, response, uriBuilder.build().toString());
     }
 
+    /**
+     * Entrypoint used for monitoring purposes.
+     *
+     * @param request
+     * @param response
+     * @throws IOException
+     */
     @RequestMapping("/services_monitoring")
     public void servicesMonitoring(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        (new ServicesMonitoring(this.georchestraConfiguration.loadCustomPropertiesFile("targets-mapping"))).checkServices(request, response);
+        this.servicesMonitoring.checkServices(request, response);
     }
 
+    /**
+     * Entrypoint used for login.
+     *
+     * @param request
+     * @param response
+     * @param sURL
+     * @throws ServletException
+     * @throws IOException
+     */
     @RequestMapping(params = { "login", "url" }, method = { GET, POST })
     public void login(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) throws ServletException, IOException {
         redirectStrategy.sendRedirect(request, response, sURL);
     }
 
-    // ----------------- Method calls where request is encoded in a url
-    // parameter of request ----------------- //
-    @RequestMapping(params = { "url", "!login" })
-    public void handleUrlRequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) throws IOException {
-        handleUrlParamRequest(request, response, HttpMethod.valueOf(request.getMethod()), sURL);
-    }
-
-    private void handleUrlParamRequest(HttpServletRequest request, HttpServletResponse response, HttpMethod type, String sURL) throws IOException {
-        if (request.getRequestURI().startsWith("/sec/proxy/")) {
-            testLegalContentType(request);
-            URL url;
-            try {
-                url = new URL(sURL);
-            } catch (MalformedURLException e) { // not an url
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
-                return;
-            }
-
-            /*
-             * - deny request with same domain as public_host
-             * - deny based on proxy-permissions.xml file
-             */
-            if(this.sameDomainPermissions.isDenied(url) || proxyPermissions.isDenied(url)){
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "URL is not allowed.");
-                return;
-            }
-            handleRequest(request, response, type, sURL, false);
-        } else {
-            handlePathEncodedRequests(request, response, type);
+    /**
+     * Entry point used mainly for XHR requests using a URL-encoded parameter named url.
+     * @param request
+     * @param response
+     * @param sURL
+     * @throws IOException
+     */
+    @RequestMapping(value ="/proxy/", params = { "url", "!login" })
+    public void handleUrlParamRequest(HttpServletRequest request, HttpServletResponse response, String sURL) throws IOException {
+        testLegalContentType(request);
+        URL url;
+        try {
+            url = new URL(sURL);
+        } catch (MalformedURLException e) { // not an url
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+            return;
         }
+
+        /*
+         * - deny request with same domain as public_host - deny based on
+         * proxy-permissions.xml file
+         */
+        if (this.sameDomainPermissions.isDenied(url) || proxyPermissions.isDenied(url)) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "URL is not allowed.");
+            return;
+        }
+        handleRequest(request, response, sURL, false);
     }
 
     /**
@@ -333,6 +355,13 @@ public class Proxy {
         return false;
     }
 
+    /**
+     * Check if the request targets a host (host header) which is the same as the requested URL in parameter.
+     *
+     * @param request
+     * @param url
+     * @return true if the host in the request matches the host in the requested URL, false otherwise.
+     */
     private boolean isSameServer(HttpServletRequest request, URL url) {
         try {
             return InetAddress.getByName(request.getServerName()).equals(InetAddress.getByName(url.getHost()));
@@ -342,6 +371,14 @@ public class Proxy {
         }
     }
 
+    /**
+     * Check if the target url matches a security-proxified target.
+     *
+     * @param requestSegments
+     * @param target
+     * @return true if so, false otherwise.
+     * @throws MalformedURLException
+     */
     private boolean samePathPrefix(String[] requestSegments, String target) throws MalformedURLException {
         String[] targetSegments = splitRequestPath(new URL(target).getPath());
         for (int i = 0; i < targetSegments.length; i++) {
@@ -389,7 +426,7 @@ public class Proxy {
     // request ----------------- //
     @RequestMapping(value="**", params = { "!url", "!login" })
     public void handleRequest(HttpServletRequest request, HttpServletResponse response) {
-        handlePathEncodedRequests(request, response, HttpMethod.valueOf(request.getMethod()));
+        handlePathEncodedRequests(request, response);
     }
 
     /**
@@ -435,11 +472,11 @@ public class Proxy {
      * Main entry point for methods where the request path is encoded in the
      * path of the URL
      */
-    private void handlePathEncodedRequests(HttpServletRequest request, HttpServletResponse response, HttpMethod type) {
+    private void handlePathEncodedRequests(HttpServletRequest request, HttpServletResponse response) {
         try {
             String contextPath = request.getServletPath() + request.getContextPath();
             String forwardRequestURI = buildForwardRequestURL(request);
-
+            HttpMethod type = HttpMethod.resolve(request.getMethod());
             logger.debug("handlePathEncodedRequests: -- Handling Request: " + type + ":" + forwardRequestURI + " from: " + request.getRemoteAddr());
 
             String sURL = findTarget(forwardRequestURI);
@@ -505,7 +542,7 @@ public class Proxy {
                 }
             }
 
-            handleRequest(request, response, type, sURL, true);
+            handleRequest(request, response, sURL, true);
         } catch (IOException e) {
             logger.error("Error connecting to client", e);
         }
@@ -563,10 +600,6 @@ public class Proxy {
 
     private String findMatchingTarget(HttpServletRequest request) {
         String requestURI = buildForwardRequestURL(request);
-        return findMatchingTarget(requestURI);
-    }
-
-    private String findMatchingTarget(String requestURI) {
         String[] segments = splitRequestPath(requestURI);
 
         if (segments.length == 0) {
@@ -580,7 +613,15 @@ public class Proxy {
         }
     }
 
-    private void handleRequest(HttpServletRequest request, HttpServletResponse finalResponse, HttpMethod type, String sURL, boolean localProxy) {
+    /**
+     * Actually do the request to the proxified server.
+     *
+     * @param request the original request
+     * @param finalResponse the servlet response
+     * @param sURL the url to proxify onto
+     * @param localProxy true if the request targets a security-proxyfied webapp (e.g. mapfishapp, ...), false otherwise
+     */
+    private void handleRequest(HttpServletRequest request, HttpServletResponse finalResponse, String sURL, boolean localProxy) {
         HttpClientBuilder htb = HttpClients.custom().disableRedirectHandling();
 
         RequestConfig config = RequestConfig.custom().setSocketTimeout(this.httpClientTimeout).build();
@@ -590,7 +631,7 @@ public class Proxy {
         // Handle http proxy for external request.
         // Proxy must be configured by system variables (e.g.: -Dhttp.proxyHost=proxy -Dhttp.proxyPort=3128)
         htb.setRoutePlanner(new SystemDefaultRoutePlanner(ProxySelector.getDefault()));
-        HttpClient httpclient = htb.build();
+        CloseableHttpClient httpclient = htb.build();
 
         HttpResponse proxiedResponse = null;
         int statusCode = 500;
@@ -619,7 +660,7 @@ public class Proxy {
             logger.debug("Final request -- " + sURL);
 
 
-            HttpRequestBase proxyingRequest = makeRequest(request, type, sURL);
+            HttpRequestBase proxyingRequest = makeRequest(request, sURL);
             headerManagement.configureRequestHeaders(request, proxyingRequest, localProxy);
 
             try {
@@ -699,10 +740,10 @@ public class Proxy {
 
             // content type has to be valid
             if (isCharsetRequiredForContentType(contentType)) {
-                doHandleRequestCharsetRequired(request, finalResponse, type, proxiedResponse, contentType);
+                doHandleRequestCharsetRequired(request, finalResponse, proxiedResponse, contentType);
             } else {
                 logger.debug("charset not required for contentType: " + contentType);
-                doHandleRequest(request, finalResponse, type, proxiedResponse);
+                doHandleRequest(request, finalResponse, proxiedResponse);
             }
         } catch (IOException e) {
             // connection problem with the host
@@ -715,11 +756,13 @@ public class Proxy {
                 finalResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
         } finally {
-            httpclient.getConnectionManager().shutdown();
+            try {
+                httpclient.close();
+            } catch (IOException e) {
+                logger.error("Unable to close the httpclient", e);
+            }
         }
     }
-
-    private final static String setCookieHeader = "Set-Cookie";
 
     /**
      * Extracts the set-cookie http header from the downstream response.
@@ -806,7 +849,7 @@ public class Proxy {
     /**
      * Direct copy of response
      */
-    private void doHandleRequest(HttpServletRequest request, HttpServletResponse finalResponse, HttpMethod requestType, HttpResponse proxiedResponse)
+    private void doHandleRequest(HttpServletRequest request, HttpServletResponse finalResponse, HttpResponse proxiedResponse)
             throws IOException {
 
         org.apache.http.StatusLine statusLine = proxiedResponse.getStatusLine();
@@ -851,14 +894,15 @@ public class Proxy {
         return new URI(rawUrl.toString());
     }
 
-    private HttpRequestBase makeRequest(HttpServletRequest request, HttpMethod type, String sURL) throws IOException {
+    private HttpRequestBase makeRequest(HttpServletRequest request, String sURL) throws IOException {
         HttpRequestBase targetRequest;
         try {
             // Split URL
             URL url = new URL(sURL);
             URI uri = buildUri(url);
+            HttpMethod meth = HttpMethod.resolve(request.getMethod());
 
-            switch (type) {
+            switch (meth) {
             case GET: {
                 logger.debug("New request is: " + sURL + "\nRequest is GET");
 
@@ -946,7 +990,7 @@ public class Proxy {
                 break;
             }
             default: {
-                String msg = type + " not yet supported";
+                String msg = meth + " not yet supported";
                 logger.error(msg);
                 throw new IllegalArgumentException(msg);
             }
@@ -983,7 +1027,7 @@ public class Proxy {
      * transferring data, so data of any significant size should not enter this
      * method.
      */
-    private void doHandleRequestCharsetRequired(HttpServletRequest orignalRequest, HttpServletResponse finalResponse, HttpMethod requestType,
+    private void doHandleRequestCharsetRequired(HttpServletRequest orignalRequest, HttpServletResponse finalResponse,
             HttpResponse proxiedResponse, String contentType) {
 
         InputStream streamFromServer = null;
@@ -1043,7 +1087,7 @@ public class Proxy {
                 streamFromServer = new DeflaterInputStream(proxiedResponse.getEntity().getContent());
                 streamToClient = new DeflaterOutputStream(finalResponse.getOutputStream());
             } else {
-                doHandleRequest(orignalRequest, finalResponse, requestType, proxiedResponse);
+                doHandleRequest(orignalRequest, finalResponse, proxiedResponse);
                 return;
             }
 
@@ -1303,15 +1347,11 @@ public class Proxy {
         try {
             Charset.forName(defaultCharset);
         } catch (Throwable t) {
-            throw new IllegalArgumentException(defaultCharset + " is not supporte by current JVM");
+            throw new IllegalArgumentException(defaultCharset + " is not supported by current JVM");
         }
         this.defaultCharset = defaultCharset;
     }
 
-    /**
-     *
-     * @param redirectStrategy
-     */
     public void setRedirectStrategy(RedirectStrategy redirectStrategy) {
         this.redirectStrategy = redirectStrategy;
     }

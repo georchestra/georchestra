@@ -61,7 +61,7 @@ public class ProxyTest {
 
     @Test
     public void testGetUrlLegalUrl() throws Exception {
-        proxy.handleUrlRequest(request, httpResponse, "http://localhost:8080/path");
+        proxy.handleUrlParamRequest(request, httpResponse, "http://localhost:8080/path");
         assertTrue(executed);
     }
 
@@ -72,11 +72,11 @@ public class ProxyTest {
      */
     @Test
     public void testGetUrlTarget() throws Exception {
-        proxy.handleUrlRequest(request, httpResponse, "http://localhost:8080/geonetwork-private");
+        proxy.handleUrlParamRequest(request, httpResponse, "http://localhost:8080/geonetwork-private");
         assertFalse(executed);
 
         this.httpResponse = new MockHttpServletResponse();
-        proxy.handleUrlRequest(request, httpResponse, "http://localhost:8080/extractorapp");
+        proxy.handleUrlParamRequest(request, httpResponse, "http://localhost:8080/extractorapp");
         assertFalse(executed);
     }
 
@@ -119,7 +119,7 @@ public class ProxyTest {
 
     @Test
     public void testGetUrlIllegalUrl() throws Exception {
-        proxy.handleUrlRequest(request, httpResponse, "http://www.google.com:8080/path");
+        proxy.handleUrlParamRequest(request, httpResponse, "http://www.google.com:8080/path");
         assertFalse(executed);
     }
 
