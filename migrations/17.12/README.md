@@ -1,5 +1,7 @@
 # UPGRADING from 16.12 to 17.12
 
+This is work-in-progress - please contribute to this documentation, by submitting pull requests.
+
 ## Database
 
 In order to increase SQL query speed on the `ogcstatistics` schema, we added

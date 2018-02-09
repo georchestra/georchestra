@@ -10,7 +10,8 @@ Version 17.12
 =============
 
 Major highlights:
- * GeoServer upgraded from 2.8.x to 2.12.x
+ * GeoServer upgraded from 2.8 to 2.12.1
+ * GeoNetwork upgraded from 3.0 to 3.4.1
  * User interfaces now displayed with your user's favorite language
  * A smart way to download and install geOrchestra, using the smallish
  [georchestra/docker](https://github.com/georchestra/docker) repository
@@ -19,7 +20,8 @@ Major highlights:
 Many thanks to those who made it possible, either through funding, or patches !
 
 New features:
- * GeoServer 2.12.x - [#1847](https://github.com/georchestra/georchestra/pull/1847)
+ * GeoServer 2.12.1 - [#1847](https://github.com/georchestra/georchestra/pull/1847)
+ * GeoNetwork 3.4.1 - [#1611](https://github.com/georchestra/georchestra/issues/1611)
  * Use the preferred language, as advertised by the browser - [#589](https://github.com/georchestra/georchestra/issues/589)
  * mapfishapp - new "backgrounds" addon - [#1156](https://github.com/georchestra/georchestra/issues/1156)
  * mapfishapp - add ability to export a feature as WKT - [#1741](https://github.com/georchestra/georchestra/issues/1741)
