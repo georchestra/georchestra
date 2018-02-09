@@ -172,6 +172,8 @@ public class AddonController implements ServletContextAware {
             response.setContentType("image/png");
         } else if (("jpg".equalsIgnoreCase(ext)) || ("jpeg".equalsIgnoreCase(ext))) {
             response.setContentType("image/jpeg");
+        } else if (("htm".equalsIgnoreCase(ext)) || ("html".equalsIgnoreCase(ext))) {
+            response.setContentType("text/html");
         } else {
             response.setContentType("text/plain");
         }
