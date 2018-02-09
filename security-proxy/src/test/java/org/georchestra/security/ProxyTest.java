@@ -45,7 +45,7 @@ public class ProxyTest {
         proxy.init();
 
         response = new BasicHttpResponse(HttpVersion.HTTP_1_1, 200, "OK");
-        this.request = new MockHttpServletRequest("GET", "/sec/proxy/");
+        this.request = new MockHttpServletRequest("GET", "/proxy/");
         this.request.setServerName("localhost");
         this.request.setServerPort(80);
         this.httpResponse = new MockHttpServletResponse();
@@ -66,7 +66,7 @@ public class ProxyTest {
     }
 
     /**
-     * All url proxy requests (http://server/sec/proxy?url=...) that try to directly access protected services like extractorapp should
+     * All url proxy requests (http://server/proxy?url=...) that try to directly access protected services like extractorapp should
      * be rejected.  In the cases where the protected services are required, the url parameter should be the public url of the
      * protected service (not the private one).
      */
@@ -81,7 +81,7 @@ public class ProxyTest {
     }
 
     /**
-     * Ensure that when the proxy form: http://server.com/sec/geonetwork/srv/eng/home is used to access a protected service,
+     * Ensure that when the proxy form: http://server.com/geonetwork/srv/eng/home is used to access a protected service,
      * the request should always be allowed no matter the proxy permissions.
      */
     @Test

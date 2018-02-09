@@ -252,11 +252,6 @@ public class Proxy {
     @RequestMapping(value= "**", params = "login", method = { GET, POST })
     public void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, URISyntaxException {
         String uri = request.getRequestURI();
-        if (uri.startsWith("sec")) {
-            uri = uri.substring(3);
-        } else if (uri.startsWith("/sec")) {
-            uri = uri.substring(4);
-        }
 
         URIBuilder uriBuilder = new URIBuilder(uri);
         Enumeration parameterNames = request.getParameterNames();
@@ -671,7 +666,7 @@ public class Proxy {
                     org = originalHeader.getValue();
                 }
                 // no OGC SERVICE log if request going through /proxy/?url=
-                if (!request.getRequestURI().startsWith("/sec/proxy/")) {
+                if (!request.getRequestURI().startsWith("/proxy/")) {
                     String [] roles = new String[] {""};
                     try {
                         Header[] rolesHeaders = proxyingRequest.getHeaders("sec-roles");
