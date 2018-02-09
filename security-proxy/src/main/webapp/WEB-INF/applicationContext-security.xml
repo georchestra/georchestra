@@ -21,14 +21,15 @@
     <s:http entry-point-ref="casProcessingFilterEntryPoint" request-matcher="regex" realm="${realmName}" disable-url-rewriting="true">
         <s:custom-filter ref="trustAnotherProxy" before="PRE_AUTH_FILTER" />
         <s:custom-filter ref="basicAuthChallengeByUserAgent" before="CAS_FILTER" />
-	    <s:custom-filter ref="casFilter" after="CAS_FILTER" />
+        <s:custom-filter ref="casFilter" after="CAS_FILTER" />
         <s:custom-filter ref="filterSecurityInterceptor" after="EXCEPTION_TRANSLATION_FILTER" />
-	    <!--  <s:http-basic />  -->
+        <!--  <s:http-basic />  -->
         <s:headers>
-            <s:frame-options policy="SAMEORIGIN" />
+          <s:frame-options policy="SAMEORIGIN" />
         </s:headers>
-	    <s:anonymous granted-authority="ROLE_ANONYMOUS" />
-	    <s:logout logout-success-url="${logout-success-url}" />
+        <s:anonymous granted-authority="ROLE_ANONYMOUS" />
+        <s:logout logout-success-url="${logout-success-url}" />
+        <s:csrf disabled="true" />
      </s:http>
 
 	<bean id="filterSecurityInterceptor" class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">
