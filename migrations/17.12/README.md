@@ -4,6 +4,8 @@ This is work-in-progress - please contribute to this documentation, by submittin
 
 ## Database
 
+### ogcstatistics schema
+
 In order to increase SQL query speed on the `ogcstatistics` schema, we added
 several indexes to the database: one on the `user_name` and `date` columns for
 all the tables located in the `ogcstatics.ogc_services_log` partition, except
@@ -25,6 +27,10 @@ CREATE INDEX ogc_services_log_y2016m10_date_idx ON ogcstatistics.ogc_services_lo
 ```
 
 You should create these indexes for all tables except for the current month.
+
+### geonetwork schema
+
+TODO (please ask the mailing list in the mean time)
 
 ## Sources
 
