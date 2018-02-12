@@ -323,9 +323,16 @@ public class Proxy {
         handleRequest(request, response, sURL, false);
     }
 
-    // ----------------- Method calls where request is encoded in path of
-    // request ----------------- //
-    @RequestMapping(value="**", params = { "!url", "!login" })
+    /**
+     * Entry point used for security-proxified webapps. Note: the url parameter is sometimes used
+     * by the underlying webapps (e.g. mapfishapp and the mfprint configuration).
+     *
+     * @param request
+     * @param response
+     * @param sURL
+     * @throws IOException
+     */
+    @RequestMapping(value="**", params = { "!login" })
     public void handleRequest(HttpServletRequest request, HttpServletResponse response) {
         handlePathEncodedRequests(request, response);
     }
