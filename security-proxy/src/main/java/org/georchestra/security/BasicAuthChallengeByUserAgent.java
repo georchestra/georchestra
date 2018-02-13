@@ -125,7 +125,7 @@ public class BasicAuthChallengeByUserAgent extends BasicAuthenticationFilter {
             }
         } else {
             LOGGER.debug("Authorization header sent in the request, activating filter ...");
-            super.doFilter(request, response, chain);
+            super.doFilterInternal(request, response, chain);
         }
     }
 
