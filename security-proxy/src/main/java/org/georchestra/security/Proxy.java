@@ -325,7 +325,8 @@ public class Proxy {
 
     /**
      * Entry point used for security-proxified webapps. Note: the url parameter is sometimes used
-     * by the underlying webapps (e.g. mapfishapp and the mfprint configuration).
+     * by the underlying webapps (e.g. mapfishapp and the mfprint configuration). hence we need
+     * to allow it in the following "params" array.
      *
      * @param request
      * @param response
