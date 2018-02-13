@@ -39,6 +39,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 /**
@@ -56,8 +57,9 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
  */
 public class BasicAuthChallengeByUserAgent extends BasicAuthenticationFilter {
 
-    public BasicAuthChallengeByUserAgent(AuthenticationManager authenticationManager) {
-        super(authenticationManager);
+    public BasicAuthChallengeByUserAgent(AuthenticationManager authenticationManager,
+            AuthenticationEntryPoint authenticationEntryPoint) {
+        super(authenticationManager, authenticationEntryPoint);
     }
 
     private final List<Pattern> _userAgents = new ArrayList<Pattern>();

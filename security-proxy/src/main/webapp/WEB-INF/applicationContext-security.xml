@@ -76,8 +76,14 @@
 
     <!--  end custom -->
 
+    <bean id="basicAuthenticationEntryPoint"
+      class="org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint">
+      <property name="realmName" value="${realmName}" />
+    </bean>
+          
     <bean id="basicAuthChallengeByUserAgent" class="org.georchestra.security.BasicAuthChallengeByUserAgent" init-method="init">
         <constructor-arg ref="authenticationManager" />
+        <constructor-arg ref="basicAuthenticationEntryPoint" />
         <property name="challengeUserAgents">
             <list>
             	<!-- uncomment the lines for which you want a preemptive basic auth -->
