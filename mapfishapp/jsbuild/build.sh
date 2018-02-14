@@ -30,7 +30,7 @@ ${mkdir} -p ${releasepath} ${releasepath}/lang
      echo "creating virtual env and installing jstools..."
      rm -rf ${venv}
      virtualenv --no-site-packages ${venv}
-     ${venv}/bin/pip install jstools==0.6
+     ${venv}/bin/pip install jstools==0.6 -i https://pypi.python.org/simple/
      echo "done."
  fi;
 
