@@ -1,7 +1,7 @@
 Ext.namespace("GEOR.Addons");
 
 /*
- * TODO: 
+ * TODO:
  * - handle ACLs
  * - wizard (1 choose layers (NOK report here) 2 choose extent 3 choose formats 4 enter email )
  * - modifyFeature control improved: non symetrical mode when OpenLayers.Control.ModifyFeature.RESIZE
@@ -46,13 +46,6 @@ GEOR.Addons.Extractor = Ext.extend(GEOR.Addons.Base, {
                 "select": Ext.applyIf({}, style)
             })
         });
-        this.modifyControl = new OpenLayers.Control.ModifyFeature(this.layer, {
-            standalone: true,
-            mode: OpenLayers.Control.ModifyFeature.RESHAPE | 
-                OpenLayers.Control.ModifyFeature.RESIZE | 
-                OpenLayers.Control.ModifyFeature.DRAG,
-            autoActivate: true
-        });
 
         if (this.target) {
             // create a button to be inserted in toolbar:
@@ -78,7 +71,7 @@ GEOR.Addons.Extractor = Ext.extend(GEOR.Addons.Base, {
             this.showWindow();
         }
     },
-    
+
     createWindow: function() {
         var FIELD_WIDTH = 170,
             base = {
@@ -138,7 +131,7 @@ GEOR.Addons.Extractor = Ext.extend(GEOR.Addons.Base, {
         });
         return new Ext.Window({
             closable: true,
-            closeAction: 'hide',
+            closeAction: 'close',
             width: 330,
             height: 270,
             title: OpenLayers.i18n("addon_extractor_popup_title"),
@@ -150,10 +143,10 @@ GEOR.Addons.Extractor = Ext.extend(GEOR.Addons.Base, {
                 labelWidth: 120,
                 bodyStyle: "padding:5px;",
                 items: [
-                    this.srsField, 
-                    this.vectorFormatField, 
-                    this.rasterFormatField, 
-                    this.resField, 
+                    this.srsField,
+                    this.vectorFormatField,
+                    this.rasterFormatField,
+                    this.resField,
                     this.emailField
                 ]
             }],
@@ -181,13 +174,20 @@ GEOR.Addons.Extractor = Ext.extend(GEOR.Addons.Base, {
                     this.map.zoomToExtent(
                         this.layer.features[0].geometry.getBounds().scale(1.2)
                     );
+                    this.modifyControl = new OpenLayers.Control.ModifyFeature(this.layer, {
+                        standalone: true,
+                        mode: OpenLayers.Control.ModifyFeature.RESHAPE |
+                            OpenLayers.Control.ModifyFeature.RESIZE |
+                            OpenLayers.Control.ModifyFeature.DRAG,
+                        autoActivate: true
+                    });
                     this.map.addControl(this.modifyControl);
                     this.modifyControl.selectFeature(this.layer.features[0]);
                 },
                 "hide": function() {
-                    this.map.removeLayer(this.layer);
-                    this.modifyControl.unselectFeature(this.layer.features[0]);
                     this.map.removeControl(this.modifyControl);
+                    this.modifyControl.unselectFeature(this.layer.features[0]);
+                    this.map.removeLayer(this.layer);
                     this.item && this.item.setChecked(false);
                     this.components && this.components.toggle(false);
                 },
@@ -284,7 +284,7 @@ GEOR.Addons.Extractor = Ext.extend(GEOR.Addons.Base, {
         this.layer = null;
         this.jsonFormat = null;
         this.modifyControl = null;
-        
+
         GEOR.Addons.Base.prototype.destroy.call(this);
     }
 });

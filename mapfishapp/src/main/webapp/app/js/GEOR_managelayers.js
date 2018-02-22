@@ -800,14 +800,22 @@ GEOR.managelayers = (function() {
                 iconCls: 'geor-btn-download',
                 text: tr("Download data"),
                 handler: function() {
-                    submitData({
-                        layers: [{
-                            layername: layerRecord.get('name'),
-                            metadataURL: layer.metadataURL || "",
-                            owstype: isWMS ? "WMS" : "WFS",
-                            owsurl: isWMS ? layer.url : layer.protocol.url
-                        }]
-                    });
+                    // check extractor addon is loaded
+                    // use it preferably to the main extractorapp UI
+                    if (GEOR.Addons.Extractor
+                      && GEOR.tools.getAddonsState()["extractor_0"]) {
+                          var addon = GEOR.tools.getAddon("extractor_0");
+                          addon.showWindow();
+                    } else {
+                        submitData({
+                            layers: [{
+                                layername: layerRecord.get('name'),
+                                metadataURL: layer.metadataURL || "",
+                                owstype: isWMS ? "WMS" : "WFS",
+                                owsurl: isWMS ? layer.url : layer.protocol.url
+                            }]
+                        });
+                    }
                 }
             });
         }
