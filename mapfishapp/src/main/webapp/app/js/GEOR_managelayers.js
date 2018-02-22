@@ -27,6 +27,7 @@
  * @include GEOR_util.js
  * @include GEOR_Querier.js
  * @include GEOR_selectfeature.js
+ * @include GEOR_Download.js
  */
 
 Ext.namespace("GEOR");
@@ -797,8 +798,8 @@ GEOR.managelayers = (function() {
 
             insertSep();
             menuItems.push({
-                iconCls: 'geor-btn-download',
-                text: tr("Download data"),
+                iconCls: 'geor-btn-extract',
+                text: tr("Extract data"),
                 handler: function() {
                     // check extractor addon is loaded
                     // use it preferably to the main extractorapp UI
@@ -820,6 +821,21 @@ GEOR.managelayers = (function() {
             });
         }
 
+
+        if (GEOR.Download && (hasEquivalentWFS || isWFS)) {
+            menuItems.push({
+                iconCls: 'geor-btn-download',
+                text: tr("Download data"),
+                handler: function() {
+                    //debugger;
+                    new GEOR.Download({
+                        record: layerRecord,
+                        map: layer.map
+                    }).show();
+                }
+            });
+        }
+        
         if (isWMS || isWMTS) {
             menuItems.push("-");
             stylesMenu = createStylesMenu(layerRecord); // FIXME: should not be affected to a global var in this module !

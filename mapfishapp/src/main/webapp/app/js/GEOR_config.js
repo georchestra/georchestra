@@ -512,6 +512,16 @@ GEOR.config = (function() {
             ['ROLE_USER', 'ROLE_GN_REVIEWER', 'ROLE_GN_EDITOR', 'ROLE_GN_ADMIN']),
 
         /**
+         * Constant: ROLES_FOR_DOWNLOAD
+         * {Array} roles required for the download action to show up
+         * Empty array means the module is available for everyone
+         * ROLE_USER means the user needs to be connected.
+         * Defaults to ['ROLE_USER']
+         */
+        ROLES_FOR_DOWNLOAD: getCustomParameter("ROLES_FOR_STYLER",
+            ['ROLE_USER']),
+
+        /**
          * Constant: ROLES_FOR_QUERIER
          * {Array} roles required for the querier to show up
          * Empty array means the module is available for everyone
