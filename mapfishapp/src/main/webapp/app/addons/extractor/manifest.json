@@ -28,10 +28,10 @@
     },
     "i18n": {
         "en": {
-            "addon_extractor_popup_title": "Extraction parameters"
+            "addon_extractor_popup_title": "Extraction"
         },
         "es": {
-            "addon_extractor_popup_title": "Extraction parameters",
+            "addon_extractor_popup_title": "Extraction",
             "Close": "Close",
             "Extract": "Extract",
             "The extraction request succeeded, check your email.": "The extraction request succeeded, check your email.",
@@ -45,7 +45,7 @@
             "No layer is available for extraction.": "No layer is available for extraction."
         },
         "fr": {
-            "addon_extractor_popup_title": "Paramètres d'extraction",
+            "addon_extractor_popup_title": "Extraction",
             "Close": "Fermer",
             "Extract": "Extraire",
             "The extraction request succeeded, check your email.": "La demande d'extraction a été prise en compte. Surveillez votre courriel.",
@@ -59,7 +59,7 @@
             "No layer is available for extraction.": "Aucune couche n'est disponible pour l'extraction."
         },
          "de": {
-            "addon_extractor_popup_title": "Extraktions-parameter",
+            "addon_extractor_popup_title": "Extraktion",
             "Close": "Schließen",
             "Extract": "extrahieren",
             "The extraction request succeeded, check your email.": "erfolgreiche Extraktion. E-mail folgt.",

@@ -806,7 +806,9 @@ GEOR.managelayers = (function() {
                     if (GEOR.Addons.Extractor
                       && GEOR.tools.getAddonsState()["extractor_0"]) {
                           var addon = GEOR.tools.getAddon("extractor_0");
-                          addon.showWindow();
+                          addon.showWindow({
+                              record: layerRecord
+                          });
                     } else {
                         submitData({
                             layers: [{
@@ -825,7 +827,7 @@ GEOR.managelayers = (function() {
         if (GEOR.Download && (hasEquivalentWFS || isWFS)) {
             menuItems.push({
                 iconCls: 'geor-btn-download',
-                text: tr("Download data"),
+                text: tr("Download layer"),
                 handler: function() {
                     //debugger;
                     new GEOR.Download({
@@ -835,7 +837,7 @@ GEOR.managelayers = (function() {
                 }
             });
         }
-        
+
         if (isWMS || isWMTS) {
             menuItems.push("-");
             stylesMenu = createStylesMenu(layerRecord); // FIXME: should not be affected to a global var in this module !

@@ -17,14 +17,14 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* 
+/*
  * hide the OpenLayer.Control.ScaleLine bottom part
  */
 .olControlScaleLineBottom {
   display: none;
 }
 
-/* 
+/*
  * give the map a white background (useful for ovmap)
  */
 div.olMapViewport {
@@ -32,7 +32,7 @@ div.olMapViewport {
   text-align:left;
 }
 
-/* 
+/*
  * ovmap styling
  */
 .olControlOverviewMapElement {
@@ -41,7 +41,7 @@ div.olMapViewport {
   padding:10px 18px 10px 10px;
 }
 
-/* 
+/*
  * fix the scaleline position into the bbar
  */
 .olControlScaleLine{
@@ -103,7 +103,7 @@ div.olMapViewport {
 	text-overflow: ellipsis;
 }
 .geor-tree-node .x-tree-elbow, .geor-tree-node .x-tree-elbow-end {
-   width: 0px !important;    
+   width: 0px !important;
 }
 
 .x-tree-node-collapsed .x-tree-node-icon, .x-tree-node-expanded .x-tree-node-icon, .x-tree-node-leaf .gx-tree-layer-icon {
@@ -137,6 +137,9 @@ div.olMapViewport {
 }
 .geor-btn-download {
     background-image: url(../img/famfamfam/disk.png) !important;
+}
+.geor-btn-extract {
+    background-image: url(../img/famfamfam/shape_handles.png) !important;
 }
 .geor-service {
     background-image: url(../img/geosilk/server_map.png) !important;
@@ -228,10 +231,10 @@ div.olMapViewport {
 }
 
 .olControlAttribution {
-    font-size: smaller; 
+    font-size: smaller;
     left:0em;
     bottom:0em;
-    position: absolute; 
+    position: absolute;
     display: block;
 }
 .olControlAttribution a img {
@@ -523,4 +526,3 @@ div.olMapViewport {
         -moz-user-select: text!important;
         -khtml-user-select: text!important;
 }
-
