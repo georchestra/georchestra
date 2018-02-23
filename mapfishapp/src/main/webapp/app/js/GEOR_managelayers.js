@@ -872,7 +872,7 @@ GEOR.managelayers = (function() {
         if (hasEquivalentWFS || isWFS) {
             menuItems.push({
                 iconCls: 'geor-btn-download',
-                text: tr("Download data"),
+                text: tr("Download layer"),
                 menu: new Ext.menu.Menu({
                     items: [],
                     ignoreParentClicks: true,

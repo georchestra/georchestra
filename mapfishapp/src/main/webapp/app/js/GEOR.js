@@ -53,7 +53,7 @@ Ext.namespace("GEOR");
     // see http://applis-bretagne.fr/redmine/issues/4536
     var p = OpenLayers.Format.XML.prototype, fn = p.write;
     p.write = function(node) {
-        return '<?xml version="1.0" encoding="UTF-8"?>' + 
+        return '<?xml version="1.0" encoding="UTF-8"?>' +
             // fix for https://github.com/georchestra/georchestra/issues/773 :
             fn.apply(this, [node]).replace(new RegExp('xmlns:NS\\d+="" NS\\d+:', 'g'), '');
     };
@@ -91,7 +91,7 @@ Ext.namespace("GEOR");
             return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
         };
     }
-    
+
     // Redefine the grid template to enable text selection
     if (!Ext.grid.GridView.prototype.templates) {
         Ext.grid.GridView.prototype.templates = {};
@@ -108,7 +108,7 @@ Ext.namespace("GEOR");
 (function() {
 
     var checkRoles = function(module, okRoles) {
-        // module is available for everyone 
+        // module is available for everyone
         // if okRoles is empty or undefined:
         if (okRoles === undefined || okRoles.length === 0) {
             return;
@@ -176,7 +176,6 @@ Ext.namespace("GEOR");
         checkRoles('Querier', GEOR.config.ROLES_FOR_QUERIER);
         checkRoles('print', GEOR.config.ROLES_FOR_PRINTER);
         checkRoles('edit', GEOR.config.ROLES_FOR_EDIT);
-        checkRoles('Download', GEOR.config.ROLES_FOR_DOWNLOAD);
 
         // deactivate thesaurus tab in layer finder if required:
         if (!GEOR.config.THESAURUS_SEARCH) {
@@ -269,7 +268,7 @@ Ext.namespace("GEOR");
                 items: recenteringItems
             })
         ];
-        
+
         var southPanel = new Ext.TabPanel({
             region: "south",
             id: "southpanel",
@@ -365,10 +364,10 @@ Ext.namespace("GEOR");
          * the objective of making them independent.
          */
 
-        // When the wmc module is asked to restore a context, it informs 
-        // the mediator about it, with the number of WMS records 
+        // When the wmc module is asked to restore a context, it informs
+        // the mediator about it, with the number of WMS records
         // to restore. As a result, we're deactivating OGCExceptionReports.
-        // But we're always listening to describelayers. When the number of 
+        // But we're always listening to describelayers. When the number of
         // WMS layers to restore is reached, we're reactivating
         // OGCExceptionReports.
         var describeLayerCount;
@@ -381,7 +380,7 @@ Ext.namespace("GEOR");
         });
         GEOR.map.events.on({
             "describelayer": function(record) {
-                // update the layer panel in layer tree 
+                // update the layer panel in layer tree
                 // when the layer has been described:
                 GEOR.managelayers.updatePanel(record);
 
@@ -426,7 +425,7 @@ Ext.namespace("GEOR");
                 tab._zoomToFeatures(options.features);
             }
         });
-        
+
 
         if (GEOR.getfeatureinfo) {
             GEOR.getfeatureinfo.events.on({
@@ -468,7 +467,7 @@ Ext.namespace("GEOR");
                         map: map
                     });
                     tab.populate({
-                        features: options.features, 
+                        features: options.features,
                         addLayerToMap: options.addLayerToMap
                     });
                     southPanel.add(tab);

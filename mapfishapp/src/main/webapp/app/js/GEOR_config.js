@@ -480,7 +480,7 @@ GEOR.config = (function() {
         /**
          * Constant: LAYER_INFO_TEMPLATE
          * {String} The template used to format the layer tooltip
-         * The available variables are those of a GeoExt record 
+         * The available variables are those of a GeoExt record
          * and protocol, protocol_color, protocol_version, service, layername and short_abstract
          */
         LAYER_INFO_TEMPLATE: getCustomParameter("LAYER_INFO_TEMPLATE", [
@@ -510,16 +510,6 @@ GEOR.config = (function() {
          */
         ROLES_FOR_STYLER: getCustomParameter("ROLES_FOR_STYLER",
             ['ROLE_USER', 'ROLE_GN_REVIEWER', 'ROLE_GN_EDITOR', 'ROLE_GN_ADMIN']),
-
-        /**
-         * Constant: ROLES_FOR_DOWNLOAD
-         * {Array} roles required for the download action to show up
-         * Empty array means the module is available for everyone
-         * ROLE_USER means the user needs to be connected.
-         * Defaults to ['ROLE_USER']
-         */
-        ROLES_FOR_DOWNLOAD: getCustomParameter("ROLES_FOR_STYLER",
-            ['ROLE_USER']),
 
         /**
          * Constant: ROLES_FOR_QUERIER
@@ -626,8 +616,8 @@ GEOR.config = (function() {
 
         /**
          * Constant: EDITABLE_LAYERS
-         * {RegExp} 
-         * 
+         * {RegExp}
+         *
          */
         EDITABLE_LAYERS: getCustomParameter("EDITABLE_LAYERS",
             /.*/i),
@@ -644,13 +634,13 @@ GEOR.config = (function() {
          * Constant: SEND_MAP_TO
          * {Array} List of menu items configs
          *
-         * Each menu item config **must** have the following properties: 
+         * Each menu item config **must** have the following properties:
          *  - name: the link name. Will be localized by OpenLayers.i18n
-         *  - url: the template url for the link. Must contain one of 
-         *   {context_url}, {map_url} or {id} strings, which will be resp. 
+         *  - url: the template url for the link. Must contain one of
+         *   {context_url}, {map_url} or {id} strings, which will be resp.
          *   replaced by the generated WMC link, the map permalink and the map id.
          *
-         * Each menu item config **may** have the following properties: 
+         * Each menu item config **may** have the following properties:
          *  - qtip: the tip appearing on menu item hover. Will be localized by OpenLayers.i18n
          *  - iconCls: the CSS class which will be appended to the menu item
          */
