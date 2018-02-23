@@ -60,6 +60,7 @@ GEOR.ows = (function() {
         // for the use of geOrchestra only:
         {name: "type", type: "string"},
         {name: "_described", type: "boolean", defaultValue: false},
+        {name: "_wfs_capabilities"}, // object
         {name: "WCS_typeName", type: "string"},
         {name: "WCS_URL", type: "string"},
         {name: "WFS_typeName", type: "string"},
@@ -197,7 +198,7 @@ GEOR.ows = (function() {
 
         /**
          * Property: wmsVersionToExceptionsMapping
-         * {Object} We want WMS XML exceptions. 
+         * {Object} We want WMS XML exceptions.
          * But the EXCEPTIONS parameter value changes with the WMS version ...
          */
         wmsVersionToExceptionsMapping: {
@@ -307,7 +308,7 @@ GEOR.ows = (function() {
          * {String} The full URL string.
          */
         getWFSCapURL: function(record) {
-            var url = record.get("owsURL");
+            var url = record.owsURL || record.get("owsURL");
             var p = Ext.apply(
                 {"REQUEST": "GetCapabilities"},
                 WFS_BASE_PARAMS,
@@ -350,9 +351,9 @@ GEOR.ows = (function() {
                 baseParams: Ext.applyIf({
                     "REQUEST": "DescribeLayer",
                     "LAYERS": layer.params.LAYERS,
-                    // DescribeLayer should use the same WMS version 
+                    // DescribeLayer should use the same WMS version
                     // as the getmap requests on this layer: ... but ...
-                    "VERSION": "1.1.1", //rather than layer.params.VERSION, 
+                    "VERSION": "1.1.1", //rather than layer.params.VERSION,
                     // this is because describe layer 1.3.0 is not yet supported by GeoServer
                     // see: https://github.com/georchestra/georchestra/issues/186
                     "SLD_VERSION": "1.0.0", // force here a correct "SLD_VERSION" for WMS 1.1.1
@@ -437,14 +438,14 @@ GEOR.ows = (function() {
                         if (!data || !data.documentElement) {
                             data = resp.responseText;
                         }
-                        
+
                         // Begin hack
                         // Since WFS version is no more a default param, we need to retrieve the WFS version of the layer
                         // to initialize the WFSProtocol with matching version
                         // Ideally, we should call a capabilities request to get the WFS version, but it is too slow
                         // So we get the version from the describefeaturetype interpreting the gml version in the schema definition
                         var version;
-                        
+
                         if (resp.responseText.indexOf('http://www.opengis.net/gml/3.2') > 0) {
                         	version = "2.0.0";
                         } else if (resp.responseText.indexOf('http://www.opengis.net/gml') > 0 && resp.responseText.indexOf('gml/3.1.1/base/gml.xsd') > 0) {
@@ -453,7 +454,7 @@ GEOR.ows = (function() {
                         	version = "1.0.0";
                         }
                         // End hack
-                        
+
                         var format = new OpenLayers.Format.WFSDescribeFeatureType();
                         var jsObj = format.read(data);
 
@@ -549,7 +550,7 @@ GEOR.ows = (function() {
          *
          * Parameters:
          * options - {Object} An object with the properties:
-         * - mapSRS - {String} the current map SRS, which will be used to 
+         * - mapSRS - {String} the current map SRS, which will be used to
          *   choose the best available TileMatrixSet (optional).
          * - success - {Function} Callback function called when the
          *   store has been successfully loaded.
@@ -690,7 +691,7 @@ GEOR.ows = (function() {
                     {name: "name", type: "string"},
                     {name: "title", type: "string"},
                     {name: "namespace", type: "string", mapping: "featureNS"},
-                    {name: "abstract", type: "string"}                    
+                    {name: "abstract", type: "string"}
                 ]
             }, options.storeOptions);
             var store = new GeoExt.data.WFSCapabilitiesStore(storeOptions);

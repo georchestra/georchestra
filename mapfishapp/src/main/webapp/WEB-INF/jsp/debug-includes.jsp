@@ -11,7 +11,7 @@
     <script type="text/javascript" src="<%= context %>/lib/addins/loadingPanel/trunk/lib/OpenLayers/Control/LoadingPanel.js"></script>
 
     <script type="text/javascript" src="<%= context %>/lib/geoext.ux/ux/FeatureEditing/lib/GeoExt.ux/FeatureEditorGrid.js"></script>
-    
+
     <script type="text/javascript" src="<%= context %>/lib/externals/styler/lib/Styler/Util.js"></script>
     <script type="text/javascript" src="<%= context %>/lib/externals/styler/lib/Styler/SchemaManager.js"></script>
     <script type="text/javascript" src="<%= context %>/lib/externals/styler/lib/Styler/SLDManager.js"></script>
