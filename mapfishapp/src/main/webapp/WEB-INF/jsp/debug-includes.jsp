@@ -11,7 +11,7 @@
     <script type="text/javascript" src="<%= context %>/lib/addins/loadingPanel/trunk/lib/OpenLayers/Control/LoadingPanel.js"></script>
 
     <script type="text/javascript" src="<%= context %>/lib/geoext.ux/ux/FeatureEditing/lib/GeoExt.ux/FeatureEditorGrid.js"></script>
-    
+
     <script type="text/javascript" src="<%= context %>/lib/externals/styler/lib/Styler/Util.js"></script>
     <script type="text/javascript" src="<%= context %>/lib/externals/styler/lib/Styler/SchemaManager.js"></script>
     <script type="text/javascript" src="<%= context %>/lib/externals/styler/lib/Styler/SLDManager.js"></script>
@@ -81,7 +81,6 @@
     <script type="text/javascript" src="<%= context %>/app/js/GEOR_localStorage.js"></script>
     <script type="text/javascript" src="<%= context %>/app/js/GEOR_mapinit.js"></script>
     <script type="text/javascript" src="<%= context %>/app/js/GEOR_edit.js"></script>
-    <script type="text/javascript" src="<%= context %>/app/js/GEOR_Download.js"></script>
     <script type="text/javascript" src="<%= context %>/app/js/GEOR.js"></script>
     <!-- uncomment this for IE debugging -->
     <!--script type="text/javascript" src="https://getfirebug.com/firebug-lite-beta.js"></script-->

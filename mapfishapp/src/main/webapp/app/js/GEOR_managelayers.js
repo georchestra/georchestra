@@ -21,13 +21,13 @@
  * @include GeoExt/widgets/tree/LayerContainer.js
  * @include GeoExt/widgets/tree/TreeNodeUIEventMixin.js
  * @include OpenLayers/Format/JSON.js
+ * @include OpenLayers/Format/WFSCapabilities.js
  * @include GEOR_layerfinder.js
  * @include GEOR_edit.js
  * @include GEOR_ows.js
  * @include GEOR_util.js
  * @include GEOR_Querier.js
  * @include GEOR_selectfeature.js
- * @include GEOR_Download.js
  */
 
 Ext.namespace("GEOR");
@@ -611,6 +611,51 @@ GEOR.managelayers = (function() {
         }
     };
 
+    /**
+     * Method: createDLMenuItems
+     *
+     * Parameters:
+     * layerRecord - {GeoExt.data.LayerRecord}
+     *
+     * Returns:
+     * {Array} An array of menu items, empty if the WFS getCapabilities operation
+     * is still pending.
+     */
+    var createDLMenuItems = function(layerRecord) {
+        var menuItems = [];
+        // create menu items here, assuming the layerRecord has been hydrated
+        // elsewhere with the WFS capabilities response
+        var caps = layerRecord.get("_wfs_capabilities");
+        if (!caps) {
+            return [];
+        }
+        var allowedValues = {}, gf;
+        try {
+            gf = caps.operationsMetadata.GetFeature;
+            allowedValues = gf.parameters.outputFormat.allowedValues;
+        } catch(e) {
+            return [];
+        }
+        Ext.iterate(allowedValues, function(format, allowed){
+            menuItems.push({
+                text: format,
+                handler: function(item) {
+                    var url = OpenLayers.Util.urlAppend(
+                        layerRecord.get("WFS_URL"),
+                        OpenLayers.Util.getParameterString({
+                            SERVICE: "WFS",
+                            REQUEST: "GetFeature",
+                            VERSION: "1.0.0",
+                            TYPENAME: layerRecord.get("WFS_typeName"),
+                            OUTPUTFORMAT: item.text
+                        })
+                    );
+                    window.open(url);
+                }
+            });
+        });
+        return menuItems;
+    };
 
     /**
      * Method: createMenuItems
@@ -824,17 +869,65 @@ GEOR.managelayers = (function() {
         }
 
 
-        if (GEOR.Download && (hasEquivalentWFS || isWFS)) {
+        if (hasEquivalentWFS || isWFS) {
             menuItems.push({
                 iconCls: 'geor-btn-download',
-                text: tr("Download layer"),
-                handler: function() {
-                    //debugger;
-                    new GEOR.Download({
-                        record: layerRecord,
-                        map: layer.map
-                    }).show();
-                }
+                text: tr("Download data"),
+                menu: new Ext.menu.Menu({
+                    items: [],
+                    ignoreParentClicks: true,
+                    listeners: {
+                        "beforeshow": function(menu) {
+                            if (menu.items.length) {
+                                // allow menu appearance
+                                return true;
+                            }
+                            // launch a WFS capabilities request &
+                            // hydrate layerRecord
+                            var r = layerRecord,
+                                format = new OpenLayers.Format.WFSCapabilities();
+
+                            var pseudoRecord = {
+                                typeName: isWFS ?
+                                    r.get("WFS_typeName") : r.get("name"),
+                                owsURL: isWFS ?
+                                    layer.protocol.url : r.get("WFS_URL")
+                            };
+                            GEOR.waiter.show();
+                            OpenLayers.Request.GET({
+                                url: GEOR.ows.getWFSCapURL(pseudoRecord),
+                                success: function(response) {
+                                    try {
+                                        var c = format.read(response.responseXML
+                                            || response.responseText);
+                                        layerRecord.set("_wfs_capabilities", c);
+                                    } catch(e) {}
+                                },
+                                scope: this
+                            });
+
+                            // wait for the WFS getCapabilities to be finished
+                            var task = Ext.TaskMgr.start({
+                                run: function() {
+                                    var menuItems = createDLMenuItems(
+                                        layerRecord);
+                                    menu.removeAll();
+                                    if (!menuItems.length) {
+                                        menu.add(tr("Loading..."));
+                                    } else {
+                                        // create + add menu items
+                                        Ext.each(menuItems, function(item) {
+                                            menu.add(item);
+                                        });
+                                        // stop this task
+                                        Ext.TaskMgr.stop(task);
+                                    }
+                                },
+                                interval: 100
+                            });
+                        }
+                    }
+                })
             });
         }
 
