@@ -13,7 +13,10 @@
 
     <context:annotation-config/>
 
-    <mvc:resources mapping="/_static/**" location="/_static/" />
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
 
     <bean id="proxy"  init-method="init" class="org.georchestra.security.Proxy">
           <property name="publicHostname" value="${public.host:https://georchestra.mydomain.org/}"/>

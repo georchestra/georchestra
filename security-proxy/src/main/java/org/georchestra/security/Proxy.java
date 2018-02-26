@@ -130,7 +130,6 @@ import com.google.common.io.Closer;
  * @author jesse.eichar@camptocamp.com
  */
 @Controller
-@RequestMapping("/**")
 public class Proxy {
     protected static final Log logger = LogFactory.getLog(Proxy.class.getPackage().getName());
     protected static final Log statsLogger = LogFactory.getLog(Proxy.class.getPackage().getName() + ".statistics");
@@ -249,7 +248,7 @@ public class Proxy {
 
     /* ---------- end work around for no gateway option -------------- */
 
-    @RequestMapping(value= "**", params = "login", method = { GET, POST })
+    @RequestMapping(value= "/**", params = "login", method = { GET, POST })
     public void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, URISyntaxException {
         String uri = request.getRequestURI();
 
@@ -289,7 +288,7 @@ public class Proxy {
      * @throws ServletException
      * @throws IOException
      */
-    @RequestMapping(params = { "login", "url" }, method = { GET, POST })
+    @RequestMapping(value = "/**", params = { "login", "url" }, method = { GET, POST })
     public void login(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) throws ServletException, IOException {
         redirectStrategy.sendRedirect(request, response, sURL);
     }
@@ -333,7 +332,7 @@ public class Proxy {
      * @param sURL
      * @throws IOException
      */
-    @RequestMapping(value="**", params = { "!login" })
+    @RequestMapping(value = "/**", params = { "!login" })
     public void handleRequest(HttpServletRequest request, HttpServletResponse response) {
         handlePathEncodedRequests(request, response);
     }
@@ -458,12 +457,6 @@ public class Proxy {
             forwardRequestURI = URLDecoder.decode(forwardRequestURI, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             logger.error("Unable to decode the URL, using the encoded version", e);
-        }
-        String contextPath = request.getServletPath() + request.getContextPath();
-        if (forwardRequestURI.length() <= contextPath.length()) {
-            forwardRequestURI = "/";
-        } else {
-            forwardRequestURI = forwardRequestURI.substring(contextPath.length());
         }
 
         forwardRequestURI = forwardRequestURI.replaceAll("//", "/");
@@ -699,7 +692,6 @@ public class Proxy {
                 // define
                 // if Host header should be forwarded or not.
                 //
-                request.getHeader("Host");
                 proxyingRequest.setHeader("Host", request.getHeader("Host"));
 
                 if (logger.isDebugEnabled()) {
@@ -738,9 +730,9 @@ public class Proxy {
                         if (setCookie != null) {
                             finalResponse.addHeader(setCookie.getName(), setCookie.getValue());
                         }
-                        finalResponse.sendError(statusCode);
-                        return;
                     }
+                    finalResponse.sendError(statusCode);
+                    return;
                 }
             }
 
