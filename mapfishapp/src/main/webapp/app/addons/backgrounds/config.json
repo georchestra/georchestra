@@ -1,0 +1,35 @@
+[{
+    "id": "backgrounds_0",
+    "name": "Backgrounds",
+    "enabled": true,
+    "title": {
+        "en": "Background layers",
+        "es": "Capas de fondo",
+        "fr": "Fonds de plan"
+    },
+    "description": {
+        "en": "Select a background layer",
+        "es": "Seleccione una capa de fondo",
+        "fr": "Sélectionnez une couche de fond"
+    },
+    "options": {
+        "target": "tbar_12",
+        "layers_groups": [{
+            "title": "OpenStreetMap - GeoBretagne",
+            "layers": [{
+                "name": "Google",
+                "url": "https://osm.geobretagne.fr/gwc01/service/wmts",
+                "layer": "osm:google"
+            }, {
+                "name": "Bing",
+                "url": "https://osm.geobretagne.fr/gwc01/service/wmts",
+                "layer": "osm:bing"
+            }, {
+                "name": "Default",
+                "url": "https://osm.geobretagne.fr/gwc01/service/wmts",
+                "layer": "osm:map"
+            }]
+        }]
+    },
+    "preloaded": true
+}]
