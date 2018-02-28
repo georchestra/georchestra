@@ -51,8 +51,8 @@ class AnalyticsController {
     }
 
     this.requests = Analytics.get(options, () => {}, err)
-    this.requestsOptions = { ...options }
 
+    this.requestsOptions = { ...options }
     this.requestsOptions.service = 'combinedRequests.csv'
 
     let usageOptions = {

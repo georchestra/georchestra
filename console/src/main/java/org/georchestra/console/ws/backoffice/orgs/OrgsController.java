@@ -304,13 +304,15 @@ public class OrgsController {
         JSONObject res = new JSONObject();
         JSONObject map = new JSONObject();
         // Parse center
-        String[] rawCenter = this.georConfig.getProperty("AreaMapCenter").split("\\s*,\\s*");
-        JSONArray center = new JSONArray();
-        center.put(Double.parseDouble(rawCenter[0]));
-        center.put(Double.parseDouble(rawCenter[1]));
-        map.put("center", center);
-        map.put("zoom", this.georConfig.getProperty("AreaMapZoom"));
-        res.put("map", map);
+        try {
+            String[] rawCenter = this.georConfig.getProperty("AreaMapCenter").split("\\s*,\\s*");
+            JSONArray center = new JSONArray();
+            center.put(Double.parseDouble(rawCenter[0]));
+            center.put(Double.parseDouble(rawCenter[1]));
+            map.put("center", center);
+            map.put("zoom", this.georConfig.getProperty("AreaMapZoom"));
+            res.put("map", map);
+        } catch (Exception e){}
         JSONObject areas = new JSONObject();
         areas.put("url", this.georConfig.getProperty("AreasUrl"));
         areas.put("key", this.georConfig.getProperty("AreasKey"));

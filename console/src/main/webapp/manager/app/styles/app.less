@@ -332,7 +332,7 @@ section {
   }
   .map {
     height        : 650px;
-    width         : calc(100% + 60px);
+    width         : ~"calc(100% + 60px)";
     position      : relative;
     border-radius : 5px 0 0 5px;
     margin        : -15px 0 -15px -30px;
@@ -360,7 +360,7 @@ section {
   }
   @media (min-width: @large) {
     .map {
-      width : calc(100% + 30px);
+      width : ~"calc(100% + 30px)";
     }
     .alert-info {
       margin-top: -15px;
