@@ -147,7 +147,7 @@ public class UsersRolesControllerTest {
         fakeRoleList.add(userGrp);
 
         EqualsFilter accountFilter = new EqualsFilter("objectClass", "person");
-        EqualsFilter roleFilter = new EqualsFilter("objectClass", "roleOfMembers");
+        EqualsFilter roleFilter = new EqualsFilter("objectClass", "groupOfMembers");
 
         // Fake findAll() on AccountDao
         Mockito.when(ldapTemplate.search(Mockito.any(DistinguishedName.class), eq(accountFilter.encode()),

@@ -80,7 +80,7 @@ public class OrgsDao {
      * @return list of organizations
      */
     public List<Org> findAll(){
-        EqualsFilter filter = new EqualsFilter("objectClass", "roleOfMembers");
+        EqualsFilter filter = new EqualsFilter("objectClass", "groupOfMembers");
         return ldapTemplate.search(this.orgsSearchBaseDN, filter.encode(), new OrgsDao.OrgAttributesMapper());
     }
 
@@ -90,7 +90,7 @@ public class OrgsDao {
      * @return list of validated organizations
      */
     public List<Org> findValidated(){
-        EqualsFilter classFilter = new EqualsFilter("objectClass", "roleOfMembers");
+        EqualsFilter classFilter = new EqualsFilter("objectClass", "groupOfMembers");
         EqualsFilter validatedFilter = new EqualsFilter("businessCategory", Org.STATUS_REGISTERED);
         AndFilter filter = new AndFilter();
         filter.and(classFilter);
@@ -144,7 +144,7 @@ public class OrgsDao {
 
         AndFilter filter  = new AndFilter();
         filter.and(new EqualsFilter("member", userDn.toString()));
-        filter.and(new EqualsFilter("objectClass", "roleOfMembers"));
+        filter.and(new EqualsFilter("objectClass", "groupOfMembers"));
         List<Org> res = ldapTemplate.search(this.orgsSearchBaseDN, filter.encode(), new OrgsDao.OrgAttributesMapper());
         if(res.size() > 1)
             throw new DataServiceException("Multiple org for user : " + user);
@@ -208,7 +208,7 @@ public class OrgsDao {
         Attributes attrs = new BasicAttributes();
         BasicAttribute ocattr = new BasicAttribute("objectclass");
         ocattr.add("top");
-        ocattr.add("roleOfMembers");
+        ocattr.add("groupOfMembers");
 
         attrs.put(ocattr);
         attrs.put("cn", org.getId());

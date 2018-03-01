@@ -155,7 +155,7 @@ public class RoleDaoImpl implements RoleDao {
 		Name dn = buildRoleDn(roleID);
 		DirContextOperations context = ldapTemplate.lookupContext(dn);
 
-		context.setAttributeValues("objectclass", new String[] { "top", "roleOfMembers" });
+		context.setAttributeValues("objectclass", new String[] { "top", "groupOfMembers" });
 
 		try {
 
@@ -198,7 +198,7 @@ public class RoleDaoImpl implements RoleDao {
 		Name dnSvUser = buildRoleDn(roleName);
 
 		DirContextOperations ctx = ldapTemplate.lookupContext(dnSvUser);
-		ctx.setAttributeValues("objectclass", new String[] { "top", "roleOfMembers" });
+		ctx.setAttributeValues("objectclass", new String[] { "top", "groupOfMembers" });
 		ctx.removeAttributeValue("member", buildUserDn(uid).toString());
 
 		this.ldapTemplate.modifyAttributes(ctx);
@@ -232,7 +232,7 @@ public class RoleDaoImpl implements RoleDao {
 
 	public List<Role> findAll() throws DataServiceException {
 
-		EqualsFilter filter = new EqualsFilter("objectClass", "roleOfMembers");
+		EqualsFilter filter = new EqualsFilter("objectClass", "groupOfMembers");
 
 		List<Role> roleList = ldapTemplate.search(this.roleSearchBaseDN, filter.encode(), new RoleContextMapper());
 
@@ -245,7 +245,7 @@ public class RoleDaoImpl implements RoleDao {
 	}
 
 	public List<Role> findAllForUser(String userId) {
-		EqualsFilter grpFilter = new EqualsFilter("objectClass", "roleOfMembers");
+		EqualsFilter grpFilter = new EqualsFilter("objectClass", "groupOfMembers");
 		AndFilter filter = new AndFilter();
 		filter.and(grpFilter);
 		filter.and(new EqualsFilter("member", buildUserDn(userId).toString()));
@@ -255,7 +255,7 @@ public class RoleDaoImpl implements RoleDao {
 	public List<String> findUsers(final String roleName) throws DataServiceException{
 
 		AndFilter filter = new AndFilter();
-		filter.and(new EqualsFilter("objectClass", "roleOfMembers"));
+		filter.and(new EqualsFilter("objectClass", "groupOfMembers"));
 		filter.and(new EqualsFilter("cn", roleName));
 
 		return ldapTemplate.search(roleSearchBaseDN, filter.encode(), new RoleContextMapper());
@@ -354,7 +354,7 @@ public class RoleDaoImpl implements RoleDao {
 		}
 
 
-        EqualsFilter filter = new EqualsFilter("objectClass", "roleOfMembers");
+        EqualsFilter filter = new EqualsFilter("objectClass", "groupOfMembers");
         Integer uniqueNumber = AccountDaoImpl.findUniqueNumber(filter, uniqueNumberField, this.uniqueNumberCounter, ldapTemplate);
 
         // inserts the new role
@@ -373,7 +373,7 @@ public class RoleDaoImpl implements RoleDao {
 
 	private void mapToContext(Integer uniqueNumber, Role role, DirContextOperations context) {
 
-		context.setAttributeValues("objectclass", new String[] { "top", "roleOfMembers" });
+		context.setAttributeValues("objectclass", new String[] { "top", "groupOfMembers" });
 
         // person attributes
         if (uniqueNumber != null) {
