@@ -82,7 +82,7 @@ public class Validation {
 			Matcher m = regexp.matcher(field);
 			if(m.matches()){
 				// This is a org field, so remove 'org' prefix
-				String match = m.role(1);
+				String match = m.group(1);
 				match = match.substring(0, 1).toLowerCase() + match.substring(1);
 				this.requiredOrgFields.add(match);
 			} else {

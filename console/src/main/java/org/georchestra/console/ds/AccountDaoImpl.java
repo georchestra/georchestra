@@ -613,7 +613,7 @@ public final class AccountDaoImpl implements AccountDao {
                     if (org != null)
                         throw new RuntimeException("More than one org per user on " + account.getCommonName());
 
-                    org = m.role(2);
+                    org = m.group(2);
                 }
                 if (org != null)
                     account.setOrg(org);
