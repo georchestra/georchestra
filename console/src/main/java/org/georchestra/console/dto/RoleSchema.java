@@ -25,7 +25,7 @@ package org.georchestra.console.dto;
  * @author Mauricio Pazos
  *
  */
-public interface GroupSchema {
+public interface RoleSchema {
 	
 	public static final String COMMON_NAME_KEY = "cn"; // role name
 	public static final String DESCRIPTION_KEY = "description";

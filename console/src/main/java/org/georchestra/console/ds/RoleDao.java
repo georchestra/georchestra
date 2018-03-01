@@ -21,14 +21,14 @@ package org.georchestra.console.ds;
 
 import java.util.List;
 
-import org.georchestra.console.dto.Group;
+import org.georchestra.console.dto.Role;
 import org.springframework.ldap.NameNotFoundException;
 
 /**
  * @author Mauricio Pazos
  *
  */
-public interface GroupDao {
+public interface RoleDao {
 
 	/**
 	 * adds the user to the role
@@ -47,16 +47,16 @@ public interface GroupDao {
 	/**
 	 * Returns all roles. Each roles will contains its list of users.
 	 * 
-	 * @return list of {@link Group}
+	 * @return list of {@link Role}
 	 */
-	List<Group> findAll() throws DataServiceException;
+	List<Role> findAll() throws DataServiceException;
 
 	/**
 	 * Returns all roles for a given uid.
 	 *
-	 * @return list of {@link Group}
+	 * @return list of {@link Role}
 	 */
-	List<Group> findAllForUser(String userId) throws DataServiceException;
+	List<Role> findAllForUser(String userId) throws DataServiceException;
 
 	/**
 	 * Returns the role's users
@@ -104,7 +104,7 @@ public interface GroupDao {
 	 * @throws DataServiceException 
 	 * @throws DuplicatedCommonNameException if the role es present in the LDAP store
 	 */
-	void insert(Group role) throws DataServiceException, DuplicatedCommonNameException;
+	void insert(Role role) throws DataServiceException, DuplicatedCommonNameException;
 
 	/**
 	 * Removes the role
@@ -118,11 +118,11 @@ public interface GroupDao {
 	/**
 	 * Search the role based on the common name (cn)
 	 * @param commonName
-	 * @return {@link Group}
+	 * @return {@link Role}
 	 * 
 	 * @throws NameNotFoundException
 	 */
-	Group findByCommonName(String commonName) throws DataServiceException, NameNotFoundException;
+	Role findByCommonName(String commonName) throws DataServiceException, NameNotFoundException;
 
 	/**
 	 * Modifies the roles fields in the store
@@ -131,10 +131,10 @@ public interface GroupDao {
 	 * @param modified
 	 * 
 	 */
-	void update(String roleName, Group modified) throws DataServiceException, NameNotFoundException, DuplicatedCommonNameException;
+	void update(String roleName, Role modified) throws DataServiceException, NameNotFoundException, DuplicatedCommonNameException;
 
-	void addUsersInGroups(List<String> putGroup, List<String> users, final String originLogin)  throws DataServiceException, NameNotFoundException;
+	void addUsersInRoles(List<String> putRole, List<String> users, final String originLogin)  throws DataServiceException, NameNotFoundException;
 
-	void deleteUsersInGroups(List<String> deleteGroup, List<String> users, final String originLogin) throws DataServiceException, NameNotFoundException;
+	void deleteUsersInRoles(List<String> deleteRole, List<String> users, final String originLogin) throws DataServiceException, NameNotFoundException;
 	
 }

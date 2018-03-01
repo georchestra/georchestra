@@ -24,7 +24,7 @@ import org.springframework.ldap.core.support.LdapContextSource;
 public class AccountDaoTest {
 
     private AccountDao us;
-    private GroupDaoImpl roleDao;
+    private RoleDaoImpl roleDao;
     private LdapContextSource contextSource;
     private Account adminAccount;
 
@@ -54,9 +54,9 @@ public class AccountDaoTest {
         contextSource.setAuthenticationSource(authsrc);
 
         LdapTemplate ldapTemplate = new LdapTemplate(contextSource);
-        roleDao = new GroupDaoImpl();
+        roleDao = new RoleDaoImpl();
         roleDao.setLdapTemplate(ldapTemplate);
-        roleDao.setGroupSearchBaseDN("ou=roles");
+        roleDao.setRoleSearchBaseDN("ou=roles");
         roleDao.setUniqueNumberField("ou");
         roleDao.setUserSearchBaseDN("ou=users");
 

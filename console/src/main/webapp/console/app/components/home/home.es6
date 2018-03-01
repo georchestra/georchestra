@@ -11,7 +11,7 @@ class HomeController {
 
     this.$injector = $injector
 
-    $injector.get('Group').query(groups => {
+    $injector.get('Role').query(groups => {
       groups.forEach(group => {
         if (group.cn === PENDING) {
           this.pending = group

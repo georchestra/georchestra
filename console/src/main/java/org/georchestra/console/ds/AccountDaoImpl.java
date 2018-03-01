@@ -25,7 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.dao.AdminLogDao;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountFactory;
-import org.georchestra.console.dto.Group;
+import org.georchestra.console.dto.Role;
 import org.georchestra.console.dto.UserSchema;
 import org.georchestra.console.model.AdminLogEntry;
 import org.georchestra.console.model.AdminLogType;
@@ -68,7 +68,7 @@ public final class AccountDaoImpl implements AccountDao {
 
     private AccountContextMapper attributMapper;
     private LdapTemplate ldapTemplate;
-    private GroupDao roleDao;
+    private RoleDao roleDao;
     private OrgsDao orgDao;
     private String uniqueNumberField = "employeeNumber";
     private LdapRdn userSearchBaseDN;
@@ -86,7 +86,7 @@ public final class AccountDaoImpl implements AccountDao {
     public void setBasePath(String basePath) { this.basePath = basePath; }
 
     @Autowired
-    public AccountDaoImpl(LdapTemplate ldapTemplate, GroupDao roleDao, OrgsDao orgDao) {
+    public AccountDaoImpl(LdapTemplate ldapTemplate, RoleDao roleDao, OrgsDao orgDao) {
 
         this.ldapTemplate = ldapTemplate;
         this.roleDao = roleDao;
@@ -105,11 +105,11 @@ public final class AccountDaoImpl implements AccountDao {
         this.ldapTemplate = ldapTemplate;
     }
 
-    public GroupDao getGroupDao() {
+    public RoleDao getRoleDao() {
         return roleDao;
     }
 
-    public void setGroupDao(GroupDao roleDao) {
+    public void setRoleDao(RoleDao roleDao) {
         this.roleDao = roleDao;
     }
 
@@ -310,7 +310,7 @@ public final class AccountDaoImpl implements AccountDao {
     public synchronized void update(Account account, Account modified, String originLogin) throws DataServiceException, DuplicatedEmailException, NameNotFoundException {
        if (! account.getUid().equals(modified.getUid())) {
            ldapTemplate.rename(buildDn(account.getUid()), buildDn(modified.getUid()));
-           for (Group g : roleDao.findAllForUser(account.getUid())) {
+           for (Role g : roleDao.findAllForUser(account.getUid())) {
                roleDao.modifyUser(g.getName(), account.getUid(), modified.getUid());
            }
        }

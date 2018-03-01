@@ -34,7 +34,7 @@ import org.georchestra.console.dao.AdminLogDao;
 import org.georchestra.console.dto.*;
 import org.georchestra.console.model.AdminLogEntry;
 import org.georchestra.console.model.AdminLogType;
-import org.georchestra.console.ws.backoffice.roles.GroupProtected;
+import org.georchestra.console.ws.backoffice.roles.RoleProtected;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.AttributesMapper;
@@ -57,9 +57,9 @@ import org.springframework.ldap.support.LdapNameBuilder;
  * @author Mauricio Pazos
  *
  */
-public class GroupDaoImpl implements GroupDao {
+public class RoleDaoImpl implements RoleDao {
 
-	private static final Log LOG = LogFactory.getLog(GroupDaoImpl.class.getName());
+	private static final Log LOG = LogFactory.getLog(RoleDaoImpl.class.getName());
 
 	private LdapTemplate ldapTemplate;
 
@@ -67,7 +67,7 @@ public class GroupDaoImpl implements GroupDao {
 	private AdminLogDao logDao;
 	
 	@Autowired
-	private GroupProtected roles;
+	private RoleProtected roles;
 
 	private String uniqueNumberField = "ou";
 
@@ -88,7 +88,7 @@ public class GroupDaoImpl implements GroupDao {
 		this.uniqueNumberField = uniqueNumberField;
 	}
 
-	public void setGroupSearchBaseDN(String roleSearchBaseDN) throws InvalidNameException {
+	public void setRoleSearchBaseDN(String roleSearchBaseDN) throws InvalidNameException {
 		this.roleSearchBaseDN = LdapNameBuilder.newInstance(roleSearchBaseDN).build();
 	}
 
@@ -100,7 +100,7 @@ public class GroupDaoImpl implements GroupDao {
 		this.logDao = logDao;
 	}
 
-	public void setGroups(GroupProtected roles) {
+	public void setRoles(RoleProtected roles) {
 		this.roles = roles;
 	}
 
@@ -110,7 +110,7 @@ public class GroupDaoImpl implements GroupDao {
 	 * @param cn
 	 * @return
 	 */
-	private Name buildGroupDn(String cn) {
+	private Name buildRoleDn(String cn) {
 		try {
 			return LdapNameBuilder.newInstance(this.roleSearchBaseDN).add("cn", cn).build();
 		} catch (org.springframework.ldap.InvalidNameException ex){
@@ -139,7 +139,7 @@ public class GroupDaoImpl implements GroupDao {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.georchestra.console.ds.GroupDao#addUser(java.lang.String, java.lang.String)
+	 * @see org.georchestra.console.ds.RoleDao#addUser(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public void addUser(final String roleID, final String userId, final String originLogin) throws NameNotFoundException, DataServiceException {
@@ -152,7 +152,7 @@ public class GroupDaoImpl implements GroupDao {
 			* and re-call this method addUser(DSI_RENNES_AGRO_SCENE, ...)
 		 */
 
-		Name dn = buildGroupDn(roleID);
+		Name dn = buildRoleDn(roleID);
 		DirContextOperations context = ldapTemplate.lookupContext(dn);
 
 		context.setAttributeValues("objectclass", new String[] { "top", "roleOfMembers" });
@@ -164,7 +164,7 @@ public class GroupDaoImpl implements GroupDao {
 
 			// Add log entry for this modification
 			if(originLogin != null) {
-				AdminLogType logType = this.roles.isProtected(roleID) ? AdminLogType.SYSTEM_GROUP_CHANGE : AdminLogType.OTHER_GROUP_CHANGE;
+				AdminLogType logType = this.roles.isProtected(roleID) ? AdminLogType.SYSTEM_ROLE_CHANGE : AdminLogType.OTHER_ROLE_CHANGE;
 				AdminLogEntry log = new AdminLogEntry(originLogin, userId, logType, new Date());
 				this.logDao.save(log);
 			}
@@ -185,9 +185,9 @@ public class GroupDaoImpl implements GroupDao {
 	@Override
 	public void deleteUser(String uid, final String originLogin) throws DataServiceException {
 
-		List<Group> allGroups = findAllForUser(uid);
+		List<Role> allRoles = findAllForUser(uid);
 
-		for (Group role : allGroups) {
+		for (Role role : allRoles) {
 			deleteUser(role.getName(), uid, originLogin);
 		}
 	}
@@ -195,7 +195,7 @@ public class GroupDaoImpl implements GroupDao {
 	public void deleteUser(String roleName, String uid, final String originLogin) throws DataServiceException {
 		/* TODO Add hierarchic behaviour here like addUser method */
 
-		Name dnSvUser = buildGroupDn(roleName);
+		Name dnSvUser = buildRoleDn(roleName);
 
 		DirContextOperations ctx = ldapTemplate.lookupContext(dnSvUser);
 		ctx.setAttributeValues("objectclass", new String[] { "top", "roleOfMembers" });
@@ -206,12 +206,12 @@ public class GroupDaoImpl implements GroupDao {
 		// Add log entry for this modification
 		if(originLogin != null) {
 			AdminLogType logType;
-			if(roleName.equals(Group.PENDING)){
+			if(roleName.equals(Role.PENDING)){
 				logType = AdminLogType.ACCOUNT_MODERATION;
 			} else if(this.roles.isProtected(roleName)){
-				logType = AdminLogType.SYSTEM_GROUP_CHANGE;
+				logType = AdminLogType.SYSTEM_ROLE_CHANGE;
 			} else {
-				logType = AdminLogType.OTHER_GROUP_CHANGE;
+				logType = AdminLogType.OTHER_ROLE_CHANGE;
 			}
 			AdminLogEntry log = new AdminLogEntry(originLogin, uid, logType, new Date());
 			this.logDao.save(log);
@@ -221,35 +221,35 @@ public class GroupDaoImpl implements GroupDao {
 
     @Override
     public void modifyUser(String roleName, String oldUid, String newUid) throws DataServiceException {
-        Name dnGroup = buildGroupDn(roleName);
+        Name dnRole = buildRoleDn(roleName);
         String oldUserDn = buildUserDn(oldUid).toString();
         String newUserDn = buildUserDn(newUid).toString();
-        DirContextOperations ctx = ldapTemplate.lookupContext(dnGroup);
+        DirContextOperations ctx = ldapTemplate.lookupContext(dnRole);
         ctx.removeAttributeValue("member", oldUserDn);
         ctx.addAttributeValue("member", newUserDn);
         this.ldapTemplate.modifyAttributes(ctx);
     }
 
-	public List<Group> findAll() throws DataServiceException {
+	public List<Role> findAll() throws DataServiceException {
 
 		EqualsFilter filter = new EqualsFilter("objectClass", "roleOfMembers");
 
-		List<Group> roleList = ldapTemplate.search(this.roleSearchBaseDN, filter.encode(), new GroupContextMapper());
+		List<Role> roleList = ldapTemplate.search(this.roleSearchBaseDN, filter.encode(), new RoleContextMapper());
 
-		TreeSet<Group> sorted = new TreeSet<Group>();
-		for (Group g : roleList) {
+		TreeSet<Role> sorted = new TreeSet<Role>();
+		for (Role g : roleList) {
 			sorted.add(g);
 		}
 
-		return new LinkedList<Group>(sorted);
+		return new LinkedList<Role>(sorted);
 	}
 
-	public List<Group> findAllForUser(String userId) {
+	public List<Role> findAllForUser(String userId) {
 		EqualsFilter grpFilter = new EqualsFilter("objectClass", "roleOfMembers");
 		AndFilter filter = new AndFilter();
 		filter.and(grpFilter);
 		filter.and(new EqualsFilter("member", buildUserDn(userId).toString()));
-		return ldapTemplate.search(this.roleSearchBaseDN, filter.encode(),	new GroupContextMapper());
+		return ldapTemplate.search(this.roleSearchBaseDN, filter.encode(),	new RoleContextMapper());
 	}
 
 	public List<String> findUsers(final String roleName) throws DataServiceException{
@@ -258,7 +258,7 @@ public class GroupDaoImpl implements GroupDao {
 		filter.and(new EqualsFilter("objectClass", "roleOfMembers"));
 		filter.and(new EqualsFilter("cn", roleName));
 
-		return ldapTemplate.search(roleSearchBaseDN, filter.encode(), new GroupContextMapper());
+		return ldapTemplate.search(roleSearchBaseDN, filter.encode(), new RoleContextMapper());
 	}
 
 
@@ -269,11 +269,11 @@ public class GroupDaoImpl implements GroupDao {
 	 * @throws NameNotFoundException
 	 */
 	@Override
-	public Group findByCommonName(String commonName) throws DataServiceException, NameNotFoundException {
+	public Role findByCommonName(String commonName) throws DataServiceException, NameNotFoundException {
 
 		try{
-			Name dn = buildGroupDn(commonName);
-			Group g = (Group) ldapTemplate.lookup(dn, new GroupContextMapper());
+			Name dn = buildRoleDn(commonName);
+			Role g = (Role) ldapTemplate.lookup(dn, new RoleContextMapper());
 
 			return  g;
 
@@ -293,14 +293,14 @@ public class GroupDaoImpl implements GroupDao {
 	public void delete(final String commonName) throws DataServiceException, NameNotFoundException {
 
 		if (!this.roles.isProtected(commonName)) {
-			this.ldapTemplate.unbind(buildGroupDn(commonName), true);
+			this.ldapTemplate.unbind(buildRoleDn(commonName), true);
 		} else {
-			throw new DataServiceException("Group " + commonName + " is a protected role");
+			throw new DataServiceException("Role " + commonName + " is a protected role");
 		}
 
 	}
 
-	private static class GroupContextMapper implements ContextMapper {
+	private static class RoleContextMapper implements ContextMapper {
 
 		@Override
 		public Object mapFromContext(Object ctx) {
@@ -308,10 +308,10 @@ public class GroupDaoImpl implements GroupDao {
 			DirContextAdapter context = (DirContextAdapter) ctx;
 
 			// set the role name
-			Group g = GroupFactory.create();
-			g.setName(context.getStringAttribute(GroupSchema.COMMON_NAME_KEY));
+			Role g = RoleFactory.create();
+			g.setName(context.getStringAttribute(RoleSchema.COMMON_NAME_KEY));
 
-			g.setDescription(context.getStringAttribute(GroupSchema.DESCRIPTION_KEY));
+			g.setDescription(context.getStringAttribute(RoleSchema.DESCRIPTION_KEY));
 
 
 			// set the list of user
@@ -325,7 +325,7 @@ public class GroupDaoImpl implements GroupDao {
 		}
 
 		private Object[] getUsers(DirContextAdapter context) {
-			Object[] members = context.getObjectAttributes(GroupSchema.MEMBER_KEY);
+			Object[] members = context.getObjectAttributes(RoleSchema.MEMBER_KEY);
 			if(members == null){
 
 				members = new Object[0];
@@ -335,7 +335,7 @@ public class GroupDaoImpl implements GroupDao {
 	}
 
 	@Override
-	public synchronized void insert(Group role) throws DataServiceException, DuplicatedCommonNameException {
+	public synchronized void insert(Role role) throws DataServiceException, DuplicatedCommonNameException {
 
 		if( role.getName().length()== 0 ){
 			throw new IllegalArgumentException("given name is required");
@@ -358,7 +358,7 @@ public class GroupDaoImpl implements GroupDao {
         Integer uniqueNumber = AccountDaoImpl.findUniqueNumber(filter, uniqueNumberField, this.uniqueNumberCounter, ldapTemplate);
 
         // inserts the new role
-		Name dn = buildGroupDn(role.getName());
+		Name dn = buildRoleDn(role.getName());
 
 		DirContextAdapter context = new DirContextAdapter(dn);
 		mapToContext(uniqueNumber, role, context);
@@ -371,7 +371,7 @@ public class GroupDaoImpl implements GroupDao {
 		}
 	}
 
-	private void mapToContext(Integer uniqueNumber, Group role, DirContextOperations context) {
+	private void mapToContext(Integer uniqueNumber, Role role, DirContextOperations context) {
 
 		context.setAttributeValues("objectclass", new String[] { "top", "roleOfMembers" });
 
@@ -380,11 +380,11 @@ public class GroupDaoImpl implements GroupDao {
             setAccountField(context, uniqueNumberField, uniqueNumber.toString());
         }
 		// person attributes
-		setAccountField(context, GroupSchema.COMMON_NAME_KEY, role.getName());
+		setAccountField(context, RoleSchema.COMMON_NAME_KEY, role.getName());
 
-		setAccountField(context, GroupSchema.DESCRIPTION_KEY, role.getDescription());
+		setAccountField(context, RoleSchema.DESCRIPTION_KEY, role.getDescription());
 
-		setMemberField(context, GroupSchema.MEMBER_KEY, role.getUserList());
+		setMemberField(context, RoleSchema.MEMBER_KEY, role.getUserList());
 
 	}
 
@@ -433,7 +433,7 @@ public class GroupDaoImpl implements GroupDao {
 	 * @throws DuplicatedCommonNameException
 	 */
 	@Override
-	public synchronized void update(final String roleName, final Group role) throws DataServiceException, NameNotFoundException, DuplicatedCommonNameException {
+	public synchronized void update(final String roleName, final Role role) throws DataServiceException, NameNotFoundException, DuplicatedCommonNameException {
 
 		if( role.getName().length()== 0 ){
 			throw new IllegalArgumentException("given name is required");
@@ -454,8 +454,8 @@ public class GroupDaoImpl implements GroupDao {
             }
         }
 
-        Name sourceDn = buildGroupDn(roleName);
-        Name destDn = buildGroupDn(role.getName());
+        Name sourceDn = buildRoleDn(roleName);
+        Name destDn = buildRoleDn(role.getName());
 
 
         Integer uniqueNumber = (Integer) ldapTemplate.lookup(sourceDn, new AttributesMapper() {
@@ -512,19 +512,19 @@ public class GroupDaoImpl implements GroupDao {
 	}
 
 	@Override
-	public void addUsersInGroups(List<String> putGroup, List<String> users, final String originLogin)
+	public void addUsersInRoles(List<String> putRole, List<String> users, final String originLogin)
 			throws DataServiceException, NameNotFoundException {
 
-		for (String roleName : putGroup) {
+		for (String roleName : putRole) {
 			addUsers(roleName, users, originLogin);
 		}
 	}
 
 	@Override
-	public void deleteUsersInGroups(List<String> deleteGroup, List<String> users, final String originLogin)
+	public void deleteUsersInRoles(List<String> deleteRole, List<String> users, final String originLogin)
 			throws DataServiceException, NameNotFoundException {
 
-		for (String roleName : deleteGroup) {
+		for (String roleName : deleteRole) {
 			deleteUsers(roleName, users, originLogin);
 		}
 

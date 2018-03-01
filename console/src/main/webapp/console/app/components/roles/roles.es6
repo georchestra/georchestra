@@ -2,7 +2,7 @@ require('components/groups/groups.tpl')
 
 require('services/groups')
 
-class GroupsController {
+class RolesController {
 
   static $inject = [ '$injector', 'groupAdminList' ]
 
@@ -20,7 +20,7 @@ class GroupsController {
   }
 
   initialize (groupAdminList) {
-    this.activeGroup = this.activePromise.$$state.value
+    this.activeRole = this.activePromise.$$state.value
 
     let root = []
     let index = {}
@@ -48,11 +48,11 @@ class GroupsController {
     }
 
     this.isRoot = this.groups.length === Object.keys(index).length
-    this.enableBack = this.isRoot && this.activeGroup
+    this.enableBack = this.isRoot && this.activeRole
 
-    if (this.activeGroup) {
-      this.prefix = (this.activeGroup.children.length === 0)
-        ? this.index[this.activeGroup.parent] : this.activeGroup
+    if (this.activeRole) {
+      this.prefix = (this.activeRole.children.length === 0)
+        ? this.index[this.activeRole.parent] : this.activeRole
       this.enableBack = this.enableBack && this.prefix
     }
 
@@ -73,7 +73,7 @@ class GroupsController {
       (group.cn === active.cn) || // Active
       group.cn.substr(0, active.cn.length) === active.cn || // Active is prefix of group
       active.cn.indexOf(group.cn) === 0 || // Leafs
-      active.cn.substr(0, active.cn.lastIndexOf('_')) === group.cn // Group prefix of active
+      active.cn.substr(0, active.cn.lastIndexOf('_')) === group.cn // Role prefix of active
     )
 
     return result && this.adminList.concat(
@@ -86,7 +86,7 @@ class GroupsController {
       (active && active.cn.indexOf(group.cn) === 0))
   }
 
-  createGroup () {
+  createRole () {
     let $location = this.$injector.get('$location')
     $location.search('new', 'group')
   }
@@ -100,7 +100,7 @@ angular.module('admin_console')
     activePromise: '=',
     index: '=?'
   },
-  controller: GroupsController,
+  controller: RolesController,
   controllerAs: 'groups',
   templateUrl: 'components/groups/groups.tpl.html'
 })

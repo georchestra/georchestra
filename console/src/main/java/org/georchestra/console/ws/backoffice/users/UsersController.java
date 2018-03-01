@@ -31,7 +31,7 @@ import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.ds.ProtectedUserFilter;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountFactory;
-import org.georchestra.console.dto.Group;
+import org.georchestra.console.dto.Role;
 import org.georchestra.console.dto.Org;
 import org.georchestra.console.dto.UserSchema;
 import org.georchestra.console.mailservice.MailService;
@@ -378,7 +378,7 @@ public class UsersController {
 	 */
 	private void storeUser(Account account, String originLogin) throws DuplicatedEmailException, DataServiceException, IOException {
 		try {
-			this.accountDao.insert(account, Group.USER, originLogin);
+			this.accountDao.insert(account, Role.USER, originLogin);
 
 		} catch (DuplicatedEmailException e) {
 			LOG.error(e);

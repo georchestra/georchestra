@@ -20,25 +20,25 @@
 package org.georchestra.console.dto;
 
 /**
- * This factory creates instance of {@link Group}.
+ * This factory creates instance of {@link Role}.
  * 
  * 
  * @author Mauricio Pazos
  *
  */
-public class GroupFactory {
+public class RoleFactory {
 
-	private GroupFactory(){}
+	private RoleFactory(){}
 	
 	
-	public static Group create() {
+	public static Role create() {
 		
-		return new GroupImpl();
+		return new RoleImpl();
 	}
 
-	public static Group create(String commonName, String description) {
+	public static Role create(String commonName, String description) {
 		
-		Group g = new GroupImpl();
+		Role g = new RoleImpl();
 		
 		g.setName(commonName);
 		g.setDescription(description);

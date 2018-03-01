@@ -13,11 +13,11 @@ import org.georchestra.console.Configuration;
 import org.georchestra.console.bs.ReCaptchaParameters;
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.DataServiceException;
-import org.georchestra.console.ds.GroupDao;
+import org.georchestra.console.ds.RoleDao;
 import org.georchestra.console.ds.UserTokenDao;
 import org.georchestra.console.dto.Account;
-import org.georchestra.console.dto.Group;
-import org.georchestra.console.dto.GroupFactory;
+import org.georchestra.console.dto.Role;
+import org.georchestra.console.dto.RoleFactory;
 import org.georchestra.console.mailservice.EmailFactoryImpl;
 import org.georchestra.console.mailservice.MailService;
 import org.junit.After;
@@ -38,7 +38,7 @@ public class PasswordRecoveryFormControllerTest {
 
     private PasswordRecoveryFormController ctrl ;
     private AccountDao dao = Mockito.mock(AccountDao.class);
-    private GroupDao gdao = Mockito.mock(GroupDao.class);
+    private RoleDao gdao = Mockito.mock(RoleDao.class);
     private EmailFactoryImpl efi = Mockito.mock(EmailFactoryImpl.class);
     private MailService srv = new MailService(efi);
     private ReCaptchaParameters rep = new ReCaptchaParameters();
@@ -180,15 +180,15 @@ public class PasswordRecoveryFormControllerTest {
         Mockito.when(result.hasErrors()).thenReturn(false);
         Mockito.when(rec.checkAnswer(Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
             .thenReturn(rer);
-        ArrayList<Group> pendingUsersGroupList = new ArrayList();
+        ArrayList<Role> pendingUsersRoleList = new ArrayList();
         
-        pendingUsersGroupList.add(GroupFactory.create(Group.PENDING, "roles of pending users"));
-        Mockito.when(gdao.findAllForUser(Mockito.anyString())).thenReturn(pendingUsersGroupList);
+        pendingUsersRoleList.add(RoleFactory.create(Role.PENDING, "roles of pending users"));
+        Mockito.when(gdao.findAllForUser(Mockito.anyString())).thenReturn(pendingUsersRoleList);
         String ret = ctrl.generateToken(request, formBean, result, status);
         
         assertTrue(ret.equals("passwordRecoveryForm"));
-        for (Group g : pendingUsersGroupList){
-        assertTrue(g.getName().equals(Group.PENDING));
+        for (Role g : pendingUsersRoleList){
+        assertTrue(g.getName().equals(Role.PENDING));
 
         }
     } 

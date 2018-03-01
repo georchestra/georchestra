@@ -27,41 +27,41 @@ import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class GroupProtected {
+public class RoleProtected {
 
-	private static final Log LOG = LogFactory.getLog(GroupProtected.class.getName());
+	private static final Log LOG = LogFactory.getLog(RoleProtected.class.getName());
 
-	private Set<String> listOfprotectedGroups = new HashSet<String>();
+	private Set<String> listOfprotectedRoles = new HashSet<String>();
 
-	public GroupProtected() {
+	public RoleProtected() {
 	}
 
-	public Set<String> getListOfprotectedGroups() {
-		return listOfprotectedGroups;
+	public Set<String> getListOfprotectedRoles() {
+		return listOfprotectedRoles;
 	}
 
-	public void setListOfprotectedGroups(String[] listOfprotectedGroups) {
+	public void setListOfprotectedRoles(String[] listOfprotectedRoles) {
 
 		HashSet<String> res = new HashSet<String>();
-		res.addAll(Arrays.asList(listOfprotectedGroups));
-		this.listOfprotectedGroups = res;
+		res.addAll(Arrays.asList(listOfprotectedRoles));
+		this.listOfprotectedRoles = res;
 
 	}
 
 	/**
-	 * True if the Groups is a protected roles
+	 * True if the Roles is a protected roles
 	 * 
 	 * @param uid
 	 *            uid of role
 	 * 
-	 * @return True if the Groups is a protected roles
+	 * @return True if the Roles is a protected roles
 	 */
 	public boolean isProtected(final String uid) {
 
-		if (this.listOfprotectedGroups.isEmpty())
-			GroupProtected.LOG.warn("There isn't any protected roles configured");
+		if (this.listOfprotectedRoles.isEmpty())
+			RoleProtected.LOG.warn("There isn't any protected roles configured");
 
-		for (String reg : listOfprotectedGroups) {
+		for (String reg : listOfprotectedRoles) {
 			if (Pattern.matches(reg, uid))
 				return true;
 		}

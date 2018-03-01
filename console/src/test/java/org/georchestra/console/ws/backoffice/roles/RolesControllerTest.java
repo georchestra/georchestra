@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.georchestra.console.dao.AdminLogDao;
 import org.georchestra.console.ds.*;
-import org.georchestra.console.dto.Group;
-import org.georchestra.console.dto.GroupFactory;
+import org.georchestra.console.dto.Role;
+import org.georchestra.console.dto.RoleFactory;
 import org.georchestra.console.ws.backoffice.users.UserRule;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,11 +30,11 @@ import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-public class GroupsControllerTest {
+public class RolesControllerTest {
 
-	private GroupsController roleCtrl;
+	private RolesController roleCtrl;
 
-	private GroupDaoImpl roleDao;
+	private RoleDaoImpl roleDao;
 	private UserRule userRule;
 	private LdapTemplate ldapTemplate;
 	private LdapContextSource contextSource;
@@ -55,19 +55,19 @@ public class GroupsControllerTest {
 		userRule = new UserRule();
 		userRule.setListOfprotectedUsers(new String[] { "geoserver_privileged_user" });
 
-		GroupProtected roles = new GroupProtected();
-		roles.setListOfprotectedGroups(new String[] { "ADMINISTRATOR", "USER", "GN_.*", "MOD_.*" });
+		RoleProtected roles = new RoleProtected();
+		roles.setListOfprotectedRoles(new String[] { "ADMINISTRATOR", "USER", "GN_.*", "MOD_.*" });
 
 		// AdminLogDao logDao = new Adm
 
 		// Configures roleDao
-		roleDao = new GroupDaoImpl();
+		roleDao = new RoleDaoImpl();
 		roleDao.setLdapTemplate(ldapTemplate);
-		roleDao.setGroupSearchBaseDN("ou=roles");
+		roleDao.setRoleSearchBaseDN("ou=roles");
 		roleDao.setUniqueNumberField("ou");
 		roleDao.setUserSearchBaseDN("ou=users");
 		roleDao.setLogDao(logDao);
-		roleDao.setGroups(roles);
+		roleDao.setRoles(roles);
 
         OrgsDao orgsDao = new OrgsDao();
         orgsDao.setLdapTemplate(ldapTemplate);
@@ -77,7 +77,7 @@ public class GroupsControllerTest {
 
         AccountDao accountDao = new AccountDaoImpl(ldapTemplate, roleDao, orgsDao);
 
-		roleCtrl = new GroupsController(roleDao, userRule);
+		roleCtrl = new RolesController(roleDao, userRule);
 		roleCtrl.setAccountDao(accountDao);
 
 		request = new MockHttpServletRequest();
@@ -90,8 +90,8 @@ public class GroupsControllerTest {
 
     @Test
     public void findAllWithException() throws Exception {
-        roleDao = Mockito.mock(GroupDaoImpl.class);
-        roleCtrl.setGroupDao(roleDao);
+        roleDao = Mockito.mock(RoleDaoImpl.class);
+        roleCtrl.setRoleDao(roleDao);
 
         Mockito.doThrow(Exception.class).when(roleDao).findAll();
 
@@ -113,7 +113,7 @@ public class GroupsControllerTest {
     public void testFindByCNNotFound() throws Exception {
         Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (ContextMapper) Mockito.any());
 
-        roleCtrl.findByCN(response, "NOTEXISTINGGROUP");
+        roleCtrl.findByCN(response, "NOTEXISTINGROLE");
 
         JSONObject ret = new JSONObject(response.getContentAsString());
         assertTrue(response.getStatus() == HttpServletResponse.SC_NOT_FOUND);
@@ -126,7 +126,7 @@ public class GroupsControllerTest {
         Mockito.doThrow(DataServiceException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (ContextMapper) Mockito.any());
 
         try {
-            roleCtrl.findByCN(response, "NOTEXISTINGGROUP");
+            roleCtrl.findByCN(response, "NOTEXISTINGROLE");
         } catch (Throwable e) {
             JSONObject ret = new JSONObject(response.getContentAsString());
             assertTrue(e instanceof IOException);
@@ -137,7 +137,7 @@ public class GroupsControllerTest {
 
     @Test
     public void testFindByCN() throws Exception {
-        Group retAdmin = GroupFactory.create("ADMINISTRATOR", "administrator role");
+        Role retAdmin = RoleFactory.create("ADMINISTRATOR", "administrator role");
         Mockito.when(ldapTemplate.lookup((Name) Mockito.any(), (ContextMapper) Mockito.any())).thenReturn(retAdmin);
 
         roleCtrl.findByCN(response, "ADMINISTRATOR");
@@ -148,8 +148,8 @@ public class GroupsControllerTest {
     }
 
     @Test
-    public void testCreateDuplicateGroup() throws Exception {
-        request.setContent("{ \"cn\": \"MYGROUP\", \"description\": \"Description for the role\" }".getBytes());
+    public void testCreateDuplicateRole() throws Exception {
+        request.setContent("{ \"cn\": \"MYROLE\", \"description\": \"Description for the role\" }".getBytes());
 
         roleCtrl.create(request, response);
 
@@ -160,7 +160,7 @@ public class GroupsControllerTest {
 
     @Test
     public void testCreateDataServiceExceptionThrown() throws Exception {
-        request.setContent("{ \"cn\": \"MYGROUP\", \"description\": \"Description for the role\" }".getBytes());
+        request.setContent("{ \"cn\": \"MYROLE\", \"description\": \"Description for the role\" }".getBytes());
         Mockito.doThrow(DataServiceException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (ContextMapper) Mockito.any());
 
         try {
@@ -179,7 +179,7 @@ public class GroupsControllerTest {
      */
     @Test
     public void testCreate() throws Exception {
-        request.setContent("{ \"cn\": \"MYGROUP\", \"description\": \"Description for the role\" }".getBytes());
+        request.setContent("{ \"cn\": \"MYROLE\", \"description\": \"Description for the role\" }".getBytes());
         // ensures the mocked object does not return an already existing role
         // Raising NotFoundException instead
         Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (ContextMapper) Mockito.any());
@@ -188,7 +188,7 @@ public class GroupsControllerTest {
 
         JSONObject ret = new JSONObject(response.getContentAsString());
         assertTrue(ret.getJSONArray("users").length() == 0);
-        assertTrue(ret.getString("cn").equals("MYGROUP"));
+        assertTrue(ret.getString("cn").equals("MYROLE"));
         assertTrue(ret.getString("description").equals("Description for the role"));
         assertTrue(response.getStatus() == HttpServletResponse.SC_OK);
     }
@@ -265,7 +265,7 @@ public class GroupsControllerTest {
     @Test
     public void testUpdateNotFoundAtModification() throws Exception {
         request.setContent(" { \"cn\": \"newName\", \"description\": \"new Description\" } ".getBytes());
-        Group retAdmin = GroupFactory.create("ADMINISTRATOR", "administrator role");
+        Role retAdmin = RoleFactory.create("ADMINISTRATOR", "administrator role");
         Mockito.when(ldapTemplate.lookup((Name) Mockito.any(), (ContextMapper) Mockito.any())).thenReturn(retAdmin);
         Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (AttributesMapper) Mockito.any());
         Name dn = LdapNameBuilder.newInstance("ou=roles").add("cn", "newName").build();
@@ -283,7 +283,7 @@ public class GroupsControllerTest {
     @Test
     public void testUpdateDuplicateCN() throws Exception {
         request.setContent(" { \"cn\": \"newName\", \"description\": \"new Description\" } ".getBytes());
-        Group retAdmin = GroupFactory.create("ADMINISTRATOR", "administrator role");
+        Role retAdmin = RoleFactory.create("ADMINISTRATOR", "administrator role");
         Mockito.when(ldapTemplate.lookup((Name) Mockito.any(), (ContextMapper) Mockito.any())).thenReturn(retAdmin);
         Mockito.doThrow(DuplicatedCommonNameException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (AttributesMapper) Mockito.any());
         Name dn = LdapNameBuilder.newInstance("ou=roles").add("cn", "newName").build();
@@ -300,7 +300,7 @@ public class GroupsControllerTest {
     @Test
     public void testUpdateDataServiceExceptionAtUpdate() throws Exception {
         request.setContent(" { \"cn\": \"newName\", \"description\": \"new Description\" } ".getBytes());
-        Group retAdmin = GroupFactory.create("ADMINISTRATOR", "administrator role");
+        Role retAdmin = RoleFactory.create("ADMINISTRATOR", "administrator role");
         Mockito.when(ldapTemplate.lookup((Name) Mockito.any(), (ContextMapper) Mockito.any())).thenReturn(retAdmin);
         Mockito.doThrow(DataServiceException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (AttributesMapper) Mockito.any());
         Name dn = LdapNameBuilder.newInstance("ou=roles").add("cn", "newName").build();
@@ -319,7 +319,7 @@ public class GroupsControllerTest {
     @Test
     public void testUpdate() throws Exception {
         request.setContent(" { \"cn\": \"newName\", \"description\": \"new Description\" } ".getBytes());
-        Group retAdmin = GroupFactory.create("ADMINISTRATOR", "administrator role");
+        Role retAdmin = RoleFactory.create("ADMINISTRATOR", "administrator role");
         Mockito.when(ldapTemplate.lookup((Name) Mockito.any(), (ContextMapper) Mockito.any())).thenReturn(retAdmin);
         Mockito.when(ldapTemplate.lookup((Name) Mockito.any(), (AttributesMapper) Mockito.any())).thenReturn(-1);
 

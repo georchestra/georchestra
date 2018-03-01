@@ -5,9 +5,9 @@ require('services/contexts')
 
 class UserController {
 
-  static $inject = [ '$routeParams', '$injector', 'User', 'Group', 'Orgs' ]
+  static $inject = [ '$routeParams', '$injector', 'User', 'Role', 'Orgs' ]
 
-  constructor ($routeParams, $injector, User, Group, Orgs) {
+  constructor ($routeParams, $injector, User, Role, Orgs) {
     this.$injector = $injector
 
     let translate = $injector.get('translate')
@@ -33,7 +33,7 @@ class UserController {
         this.messages = this.$injector.get('Email').query({id: this.user.uid})
       }
     })
-    this.adminGroups = this.$injector.get('groupAdminList')()
+    this.adminRoles = this.$injector.get('groupAdminList')()
     switch (this.tab) {
       case 'infos':
         this.contexts = $injector.get('Contexts').query()
@@ -44,17 +44,17 @@ class UserController {
         break
       default:
     }
-    this.bindGroups()
+    this.bindRoles()
 
     this.required = $injector.get('UserRequired').get()
   }
 
-  bindGroups () {
-    const TMP_GROUP = 'TEMPORARY'
+  bindRoles () {
+    const TMP_ROLE = 'TEMPORARY'
 
     // Load group infos for every tab (for confirmation)
-    let Group = this.$injector.get('Group')
-    this.groups = Group.query()
+    let Role = this.$injector.get('Role')
+    this.groups = Role.query()
 
     this.user.$promise.then(() => {
       let groupAdminFilter = this.$injector.get('groupAdminFilter')
@@ -64,16 +64,16 @@ class UserController {
         this.groups.$promise
       ]).then(() => {
         this.user.groups = this.user.groups || []
-        this.user.adminGroups = this.user.adminGroups || {}
+        this.user.adminRoles = this.user.adminRoles || {}
         this.groups.forEach((group) => {
           if (group.users.indexOf(this.user.uid) >= 0) {
             if (groupAdminFilter(group)) {
-              this.user.adminGroups[group.cn] = true
+              this.user.adminRoles[group.cn] = true
             } else {
               this.user.groups.push(group.cn)
             }
           }
-          if (!groupAdminFilter(group) && group.cn !== TMP_GROUP) {
+          if (!groupAdminFilter(group) && group.cn !== TMP_ROLE) {
             notAdmin.push(group.cn)
           }
           if (group.cn === 'PENDING') {
@@ -240,7 +240,7 @@ class UserController {
   }
 
   confirm () {
-    angular.extend(this.user.adminGroups, {
+    angular.extend(this.user.adminRoles, {
       'PENDING': false,
       'USER': true
     })
@@ -248,13 +248,13 @@ class UserController {
   }
 
   activate ($scope) {
-    const TMP_GROUP = 'TEMPORARY'
+    const TMP_ROLE = 'TEMPORARY'
     let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
     let flash = this.$injector.get('Flash')
 
-    let saveGroups = function (newVal, oldVal) {
+    let saveRoles = function (newVal, oldVal) {
       if (!newVal || !oldVal) { return }
-      let removeTmp = g => g !== TMP_GROUP
+      let removeTmp = g => g !== TMP_ROLE
       newVal = newVal.filter(removeTmp)
       oldVal = oldVal.filter(removeTmp)
 
@@ -268,14 +268,14 @@ class UserController {
       this.$injector.get('translate')('users.roleUpdated', i18n)
       this.$injector.get('translate')('users.roleUpdateError', i18n)
 
-      this.groupPromise = this.$injector.get('GroupsUsers').save(
+      this.groupPromise = this.$injector.get('RolesUsers').save(
         {
           users: [ this.user.uid ],
           PUT: toPut,
           DELETE: toDel
         },
         () => {
-          this.$injector.get('Group').query().$promise.then(groups => {
+          this.$injector.get('Role').query().$promise.then(groups => {
             groups.forEach(g => {
               if (g.cn === 'PENDING') {
                 this.user.pending = g.users.indexOf(this.user.uid) >= 0
@@ -295,21 +295,21 @@ class UserController {
       this.user.$promise,
       this.groups.$promise
     ]).then(() => {
-      $scope.$watch(() => this.user.groups, saveGroups.bind(this))
+      $scope.$watch(() => this.user.groups, saveRoles.bind(this))
 
-      let previousGroups
+      let previousRoles
       $scope.$watchCollection(() => {
         let groups = []
-        for (let g in this.user.adminGroups) {
-          if (this.user.adminGroups[g]) { groups.push(g) }
+        for (let g in this.user.adminRoles) {
+          if (this.user.adminRoles[g]) { groups.push(g) }
         }
-        if (this.user.adminGroups) {
-          previousGroups = groups
+        if (this.user.adminRoles) {
+          previousRoles = groups
           return groups
         } else {
-          return previousGroups
+          return previousRoles
         }
-      }, saveGroups.bind(this))
+      }, saveRoles.bind(this))
     })
 
     if (this.tab === 'analytics') {

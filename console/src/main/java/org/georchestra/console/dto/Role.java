@@ -22,11 +22,11 @@ package org.georchestra.console.dto;
 import java.util.List;
 
 /**
- * This class represents a Group stored in the LDAP tree.
+ * This class represents a Role stored in the LDAP tree.
  * 
  * @author Mauricio Pazos
  */
-public interface Group {
+public interface Role {
 	
 	final String USER = "USER";
 	final String PENDING = "PENDING";

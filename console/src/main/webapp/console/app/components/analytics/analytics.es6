@@ -11,7 +11,7 @@ class AnalyticsController {
     this.$injector.get('translate')('analytics.all', this.i18n)
 
     this.group = $routeParams.group || 'all'
-    this.groups = this.$injector.get('Group').query(() => {
+    this.groups = this.$injector.get('Role').query(() => {
       this.groups = [ { cn: 'all' } ].concat(this.groups).map(g => {
         g.label = this.i18n[g.cn] || g.cn
         return g
@@ -77,7 +77,7 @@ class AnalyticsController {
     this.extractionOptions.service = 'layersExtraction.csv'
   }
 
-  setGroup () {
+  setRole () {
     let $router = this.$injector.get('$router')
     $router.navigate($router.generate('analytics', { group: this.group }))
   }

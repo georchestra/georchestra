@@ -4,12 +4,12 @@ import org.georchestra.console.dao.AdminLogDao;
 import org.georchestra.console.ds.AccountDaoImpl;
 import org.georchestra.console.ds.DataServiceException;
 import org.georchestra.console.ds.DuplicatedEmailException;
-import org.georchestra.console.ds.GroupDaoImpl;
+import org.georchestra.console.ds.RoleDaoImpl;
 import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountFactory;
 import org.georchestra.console.dto.UserSchema;
-import org.georchestra.console.ws.backoffice.roles.GroupProtected;
+import org.georchestra.console.ws.backoffice.roles.RoleProtected;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.After;
@@ -49,9 +49,9 @@ public class UsersControllerTest {
 
     private UsersController usersCtrl ;
     private AccountDaoImpl dao ;
-    private GroupDaoImpl roleDao ;
+    private RoleDaoImpl roleDao ;
     private UserRule userRule ;
-    private GroupProtected roles;
+    private RoleProtected roles;
 
     private MockHttpServletRequest request;
     private MockHttpServletResponse response;
@@ -63,7 +63,7 @@ public class UsersControllerTest {
 
         ldapTemplate = Mockito.mock(LdapTemplate.class);
         contextSource = Mockito.mock(LdapContextSource.class);
-        roles = Mockito.mock(GroupProtected.class);
+        roles = Mockito.mock(RoleProtected.class);
         AdminLogDao logDao = Mockito.mock(AdminLogDao.class);
 
 
@@ -73,12 +73,12 @@ public class UsersControllerTest {
         Mockito.when(roles.isProtected(Mockito.eq("USER"))).thenReturn(true);
 
         // Configures roleDao
-        roleDao = new GroupDaoImpl();
+        roleDao = new RoleDaoImpl();
         roleDao.setLdapTemplate(ldapTemplate);
-        roleDao.setGroupSearchBaseDN("ou=roles");
+        roleDao.setRoleSearchBaseDN("ou=roles");
         roleDao.setUniqueNumberField("ou");
         roleDao.setUserSearchBaseDN("ou=users");
-        roleDao.setGroups(this.roles);
+        roleDao.setRoles(this.roles);
         roleDao.setLogDao(logDao);
 
         OrgsDao orgsDao = new OrgsDao();
@@ -91,7 +91,7 @@ public class UsersControllerTest {
         dao = new AccountDaoImpl(ldapTemplate, roleDao, orgsDao);
         dao.setUniqueNumberField("employeeNumber");
         dao.setUserSearchBaseDN("ou=users");
-        dao.setGroupDao(roleDao);
+        dao.setRoleDao(roleDao);
         dao.setLogDao(logDao);
 
         usersCtrl = new UsersController(dao, userRule);

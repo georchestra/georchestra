@@ -1,10 +1,10 @@
 <div ng-if="groups.isRoot">
   <div class="alert alert-info">
-    <a ng-link="users({id: 'all'})" class="category" ng-class="{active: !groups.activeGroup}" translate>group.allusers</a>
+    <a ng-link="users({id: 'all'})" class="category" ng-class="{active: !groups.activeRole}" translate>group.allusers</a>
     <hr>
     <div class="create-btn">
       <a ng-link="newUser" class="btn btn-default" translate>group.newuser</a>
-      <a ng-click="groups.createGroup()" class="btn btn-default" translate>group.newgroup</a>
+      <a ng-click="groups.createRole()" class="btn btn-default" translate>group.newgroup</a>
     </div>
   </div>
 
@@ -12,10 +12,10 @@
 
   <h5 ng-if="groups.q == ''" translate>group.system</h5>
   <div ng-repeat="group in groups.adminList" ng-if="groups.q == ''">
-    <strong ng-if="(groups.activeGroup.cn == group.cn)">
+    <strong ng-if="(groups.activeRole.cn == group.cn)">
       {{::group.cn}} ({{::group.users.length}})
     </strong>
-    <a ng-link="users({id: group.cn})" ng-if="(groups.activeGroup.cn != group.cn)">
+    <a ng-link="users({id: group.cn})" ng-if="(groups.activeRole.cn != group.cn)">
       {{::group.cn}}
      ({{::group.users.length}})
    </a>
@@ -31,19 +31,19 @@
   </a>
   <span ng-if="groups.enableBack">{{groups.prefix.cn || 'group.all' | translate }}</span>
 
-  <div ng-repeat="group in groups.tree" ng-if="groups.filter(group, groups.activeGroup)">
+  <div ng-repeat="group in groups.tree" ng-if="groups.filter(group, groups.activeRole)">
 
-    <strong ng-if="(groups.activeGroup.cn == group.cn) && (group.children.length == 0)">
+    <strong ng-if="(groups.activeRole.cn == group.cn) && (group.children.length == 0)">
       {{::group | unprefix: groups.prefix}} ({{::group.users.length}})
     </strong>
     <a ng-link="users({id: group.cn})" title={{::group.description}}
-      ng-if="(groups.activeGroup.cn != group.cn) && (groups.prefix.cn.indexOf(group.cn)!=0)">
+      ng-if="(groups.activeRole.cn != group.cn) && (groups.prefix.cn.indexOf(group.cn)!=0)">
       <span ng-if="group.children.length > 0">+</span>
       {{::group | unprefix: groups.prefix}} ({{::group.users.length}})
     </a>
 
     <groups groups="group.children" active-promise="groups.activePromise" index="groups.index"
-    ng-if="groups.isExpanded(group, groups.activeGroup)"></groups>
+    ng-if="groups.isExpanded(group, groups.activeRole)"></groups>
 
   </div>
 

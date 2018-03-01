@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.georchestra.console.ds.AccountDaoImpl;
 import org.georchestra.console.ds.DataServiceException;
-import org.georchestra.console.ds.GroupDaoImpl;
+import org.georchestra.console.ds.RoleDaoImpl;
 import org.georchestra.console.ds.OrgsDao;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,7 +43,7 @@ public class ChangePasswordControllerTest {
     public void setUp() {
         ldapTemplate = Mockito.mock(LdapTemplate.class);
 
-        GroupDaoImpl roleDao = new GroupDaoImpl();
+        RoleDaoImpl roleDao = new RoleDaoImpl();
         roleDao.setLdapTemplate(ldapTemplate);
 
         OrgsDao orgsDao = new OrgsDao();

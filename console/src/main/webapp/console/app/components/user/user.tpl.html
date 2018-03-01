@@ -49,10 +49,10 @@
 
         <h4 translate>group.system</h4>
         <div class="form-group clearfix">
-          <div class="col-sm-6" ng-repeat="group in user.adminGroups">
+          <div class="col-sm-6" ng-repeat="group in user.adminRoles">
             <div class="checkbox">
               <label>
-                <input type="checkbox" ng-model="user.user.adminGroups[group]"> {{::group}}
+                <input type="checkbox" ng-model="user.user.adminRoles[group]"> {{::group}}
               </label>
             </div>
           </div>
