@@ -1,0 +1,56 @@
+# It is recommended that you do not copy this file into your own profile
+# (unless you know what you're doing)
+
+language=@shared.language@
+headerHeight=@shared.header.height@
+publicContextPath=@shared.console.contextpath@
+instanceName=@shared.instance.name@
+
+# LDAP
+ldapUrl=@shared.ldapUrl@
+baseDN=@shared.ldap.baseDn@
+ldapAdminDn=@shared.ldap.admin.dn@
+ldap.admin.password=@shared.ldap.admin.password@
+
+accountUniqueNumberField=employeeNumber
+groupUniqueNumberField=ou
+userSearchBaseDN=@shared.ldap.userSearchBaseDN@
+groupSearchBaseDN=@shared.ldap.groupSearchBaseDN@
+orgsSearchBaseDN=@shared.ldap.orgsSearchBaseDN@
+
+
+# list of protected user
+# example
+#protectedUser.uid1=@shared.privileged.geoserver.user@
+#protectedUser.uid2=other
+
+protectedUser.uid1=@shared.privileged.geoserver.user@
+
+# Database connection
+psql.url=@shared.console.jdbcurl@
+psql.user=@shared.psql.user@
+psql.pass=@shared.psql.pass@
+
+# Email properties
+smtpHost=@shared.smtp.host@
+smtpPort=@shared.smtp.port@
+
+replyTo=@shared.email.replyTo@
+from=@shared.email.from@
+emailHtml=@shared.email.html@
+warnUserIfUidModified=@shared.console.warnifuidmodified@
+# Moderation (enabled by default - we do not want people to be able to gain access to resources without the admin's consent)
+moderatorEmail=@shared.administrator.email@
+
+# filled by GenerateConfig.groovy
+privateKey=
+publicKey=
+subject.account.created=
+subject.account.in.process=
+subject.requires.moderation=
+subject.change.password=
+subject.account.uid.renamed=
+moderatedSignup=
+delayInDays=
+requiredFields=
+

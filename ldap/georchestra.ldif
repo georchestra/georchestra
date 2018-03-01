@@ -128,11 +128,11 @@ objectClass: groupOfMembers
 cn: GN
 ou: 25
 
-# MOD_LDAPADMIN, roles, georchestra.org
-dn: cn=MOD_LDAPADMIN,ou=roles,dc=georchestra,dc=org
+# SUPERUSER, roles, georchestra.org
+dn: cn=SUPERUSER,ou=roles,dc=georchestra,dc=org
 objectClass: top
 objectClass: groupOfMembers
-cn: MOD_LDAPADMIN
+cn: SUPERUSER
 ou: 10
 description: This group grants access to the LDAPadmin private User Interface
 member: uid=testadmin,ou=users,dc=georchestra,dc=org

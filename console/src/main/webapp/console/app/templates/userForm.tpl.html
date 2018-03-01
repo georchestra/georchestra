@@ -1,0 +1,122 @@
+<form class="form-horizontal" name="adminUserForm">
+
+  <div ng-if="!model">pas de model</div>
+
+  <div class="row user-form">
+
+    <div class="col-md-6">
+
+      <div class="form-group" ng-if="model.$promise" ng-class="{required: required.uid}">
+        <label class="col-sm-4" for="uid" translate>user.login</label>
+        <div class="col-sm-8">
+          <input ng-model="model.uid" class="form-control" id="uid" placeholder="{{'user.login' | translate}}" disabled ng-required="required.uid">
+        </div>
+      </div>
+
+      <div class="form-group form-group-sm" ng-class="{required: required.sn}">
+        <label class="col-sm-4" for="sn" translate>user.sn</label>
+        <div class="col-sm-8">
+          <input ng-model="model.sn" class="form-control" id="sn" placeholder="{{'user.sn' | translate}}" ng-required="required.sn">
+        </div>
+      </div>
+
+      <div class="form-group form-group-sm" ng-class="{required: required.givenName}">
+        <label class="col-sm-4" for="givenName" translate>user.gn</label>
+        <div class="col-sm-8">
+          <input ng-model="model.givenName" class="form-control" id="givenName" placeholder="{{'user.gn' | translate}}" ng-required="required.givenName">
+        </div>
+      </div>
+
+      <div class="form-group form-group-sm" ng-class="{required: required.cn}">
+        <label class="col-sm-4" for="commonName" translate>user.cn</label>
+        <div class="col-sm-8">
+          <input ng-model="model.cn" class="form-control" id="commonName" placeholder="{{'user.cn' | translate}}" disabled ng-required="required.cn">
+        </div>
+      </div>
+
+      <div class="form-group form-group-sm" ng-class="{required: required.mail}">
+        <label class="col-sm-4" for="email" translate>user.mail</label>
+        <div class="col-sm-8">
+          <input ng-model="model.mail" type="email" class="form-control" id="email" placeholder="{{'user.mail' | translate}}" ng-required="required.mail">
+        </div>
+      </div>
+      <div class="form-group form-group-sm" ng-class="{required: required.postalAddress}">
+        <label class="col-sm-4" for="address" translate>user.address</label>
+        <div class="col-sm-8">
+          <input ng-model="model.postalAddress" class="form-control" id="address" placeholder="{{'user.address' | translate}}" ng-required="required.postalAddress">
+        </div>
+      </div>
+
+      <div class="form-group form-group-sm" ng-class="{required: required.org}">
+        <label class="col-sm-4" for="organization" translate>user.org</label>
+        <div class="col-sm-8">
+          <input ng-model="model.org" class="form-control" id="organization" organizations model="model" promise="promise" placeholder="{{'user.org' | translate}}" ng-required="required.org">
+        </div>
+      </div>
+
+      <div class="form-group form-group-sm" ng-class="{required: required.description}">
+        <label class="col-sm-4" for="organization" translate>user.description</label>
+        <div class="col-sm-8">
+          <input ng-model="model.description" class="form-control" id="description" placeholder="{{'user.description' | translate}}" ng-required="required.description">
+        </div>
+      </div>
+      <div class="form-group form-group-sm" ng-class="{required: required.manager}">
+        <label class="col-sm-4" for="manager" translate>user.manager</label>
+        <div class="col-sm-8">
+          <input ng-model="model.manager" class="manager form-control" id="manager" managers promise="promise" ng-required="required.manager">
+        </div>
+      </div>
+      <div class="form-group form-group-sm" ng-class="{required: required.shadowExpire}">
+        <label class="col-sm-4" for="shadowExpire" translate>user.expire</label>
+        <div class="col-sm-8">
+          <input ng-model="model.shadowExpire" class="form-control" id="shadowExpire" placeholder="{{'user.expire' | translate}}" datepicker ng-required="required.shadowExpire">
+        </div>
+      </div>
+      <div class="form-group form-group-sm" ng-class="{required: required.preferredLanguage}">
+        <label class="col-sm-4" for="contexts" translate>user.context</label>
+        <div class="col-sm-8">
+          <select class="form-control" id="contexts" ng-model="model.preferredLanguage"  ng-required="required.preferredLanguage">
+            <option value="" translate>user.lastcontext</option>
+            <option ng-if="model.$promise" value="{{context.wmc}}" ng-repeat="context in user.contexts">{{context.label}}</option>
+            <option ng-if="!model.$promise" value="{{context.wmc}}" ng-repeat="context in newUser.contexts">{{context.label}}</option>
+          </select>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="col-md-6">
+
+      <div class="form-group" ng-if="model.$promise" ng-class="{required: required.preferredLanguage}">
+        <label class="col-sm-4" for="givenName" translate>user.password</label>
+        <a href="/console/account/passwordRecovery?email={{user.user.mail | encodeURIComponent}}"
+          target="_blank" class="col-sm-8 password">
+          <span translate>user.reset</span>
+          <i class="glyphicon glyphicon-new-window"></i>
+        </a>
+      </div>
+      <div class="form-group form-group-sm" ng-class="{required: required.telephoneNumber}">
+        <label class="col-sm-4" for="phone" translate>user.phone</label>
+        <div class="col-sm-8">
+          <input ng-model="model.telephoneNumber" class="form-control" id="phone" placeholder="{{'user.phone' | translate}}" ng-required="required.telephoneNumber">
+        </div>
+      </div>
+      <div class="form-group form-group-sm" ng-class="{required: required.facsimileTelephoneNumber}">
+        <label class="col-sm-4" for="fax" translate>user.fax</label>
+        <div class="col-sm-8">
+          <input ng-model="model.facsimileTelephoneNumber" class="form-control" id="fax" placeholder="{{'user.fax' | translate}}" ng-required="required.facsimileTelephoneNumber">
+        </div>
+      </div>
+
+      <div class="form-group form-group-sm" ng-class="{required: required.title}">
+        <label class="col-sm-4" for="title" translate>user.title</label>
+        <div class="col-sm-8">
+          <input ng-model="model.title" class="form-control" id="title" placeholder="{{'user.title' | translate}}" ng-required="required.title">
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</form>

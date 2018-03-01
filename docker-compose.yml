@@ -97,8 +97,8 @@ services:
       - XMS=256M
       - XMX=512M
 
-  ldapadmin:
-    image: georchestra/ldapadmin:latest
+  console:
+    image: georchestra/console:latest
     depends_on:
       - ldap
       - database

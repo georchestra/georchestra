@@ -47,7 +47,7 @@ String ldapadm = null;
 try {
   ApplicationContext ctx = RequestContextUtils.getWebApplicationContext(request);
   defaultLanguage = ctx.getBean(GeorchestraConfiguration.class).getProperty("language");
-  georLdapadminPublicContextPath = ctx.getBean(GeorchestraConfiguration.class).getProperty("ldapadminPublicContextPath");
+  georLdapadminPublicContextPath = ctx.getBean(GeorchestraConfiguration.class).getProperty("consolePublicContextPath");
 } catch (Exception e) {}
 
 // to prevent problems with proxies, and for now:
@@ -63,7 +63,7 @@ if (active == null) {
 if (georLdapadminPublicContextPath != null)
     ldapadm = georLdapadminPublicContextPath;
 else
-    ldapadm = "/ldapadmin";
+    ldapadm = "/console";
 
 Locale rLocale = request.getLocale();
 ResourceBundle bundle = org.georchestra._header.Utf8ResourceBundle.getBundle("_header.i18n.index", rLocale);
@@ -91,7 +91,7 @@ javax.servlet.jsp.jstl.core.Config.set(
 Boolean extractor = false;
 Boolean admin = false;
 Boolean catadmin = false;
-Boolean ldapadmin = false;
+Boolean console = false;
 Boolean analyticsadmin = false;
 Boolean extractorappadmin = false;
 String sec_roles = request.getHeader("sec-roles");
@@ -104,9 +104,9 @@ if(sec_roles != null) {
         if (roles[i].equals("ROLE_MOD_EXTRACTORAPP")) {
             extractor = true;
         }
-        if (roles[i].equals("ROLE_MOD_LDAPADMIN")) {
+        if (roles[i].equals("ROLE_SUPERUSER")) {
             admin = true;
-            ldapadmin = true;
+            console = true;
         }
         if (roles[i].equals("ROLE_GN_ADMIN")) {
             admin = true;
@@ -364,9 +364,9 @@ if(sec_roles != null) {
                     </c:choose>
 
                     <c:choose>
-                        <c:when test='<%= ldapadmin == true %>'>
+                        <c:when test='<%= console == true %>'>
                         <c:choose>
-                            <c:when test='<%= active.equals("ldapadmin") %>'>
+                            <c:when test='<%= active.equals("console") %>'>
                         <li class="active"><a><fmt:message key="users"/></a></li>
                             </c:when>
                             <c:otherwise>

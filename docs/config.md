@@ -63,7 +63,7 @@ Once you've finished, we think you should **at least** update these shared maven
  * ```shared.server.name```, is the server Fully Qualified Domain Name,
  * ```shared.ldap.admin.password``` is the ldap administrative account password,
  * ```shared.privileged.geoserver.pass``` is the password for a special geOrchestra admin user which is internally used, (see the [LDAP setup documentation](setup/openldap.md)),
- * ```shared.email.*``` are the settings related to email sending (used by ldapadmin and extractorapp)
+ * ```shared.email.*``` are the settings related to email sending (used by console and extractorapp)
  * ```shared.administrator.email``` is your email.
 
 ### Module-specific parameters

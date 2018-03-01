@@ -20,9 +20,9 @@ psql -d georchestra -f postgresql/02-mapfishapp.sql
 
 ## Ldapadmin schema
 
-If the **ldapadmin** webapp is deployed:
+If the **console** webapp is deployed:
 ```
-psql -d georchestra -f postgresql/04-ldapadmin.sql
+psql -d georchestra -f postgresql/04-console.sql
 ```
 
 ## GeoFence schema
@@ -70,7 +70,7 @@ example ```www-data``` :
 wget https://raw.githubusercontent.com/georchestra/georchestra/15.12/postgresql/fix-owner.sql -O /tmp/fix-owner.sql
 psql -d georchestra -f /tmp/fix-owner.sql
 psql -d georchestra -c "SELECT change_owner('mapfishapp', 'www-data');";
-psql -d georchestra -c "SELECT change_owner('ldapadmin', 'www-data');";
+psql -d georchestra -c "SELECT change_owner('console', 'www-data');";
 psql -d georchestra -c "SELECT change_owner('ogcstatistics', 'www-data');";
 psql -d georchestra -c "SELECT change_owner('extractorapp', 'www-data');";
 psql -d georchestra -c "SELECT change_owner('atlas', 'www-data');";

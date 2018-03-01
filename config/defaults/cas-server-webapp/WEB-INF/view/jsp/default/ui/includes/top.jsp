@@ -38,7 +38,7 @@
 String sharedInstanceName = "@shared.instance.name@";
 String sharedHomepageUrl = "@shared.homepage.url@";
 String sharedHeaderHeight = "@shared.header.height@";
-String sharedLdapadminContextpath = "@shared.ldapadmin.contextpath@";
+String sharedLdapadminContextpath = "@shared.console.contextpath@";
 
 try {
   ApplicationContext ctx = RequestContextUtils.getWebApplicationContext(request);
@@ -47,7 +47,7 @@ try {
     sharedInstanceName = georConfig.getProperty("instance.name");
     sharedHomepageUrl = georConfig.getProperty("homepage.url");
     sharedHeaderHeight = georConfig.getProperty("header.height");
-    sharedLdapadminContextpath = georConfig.getProperty("ldapadmin.contextpath");
+    sharedLdapadminContextpath = georConfig.getProperty("console.contextpath");
   }
 } catch (Exception e) {
   // Ignoring and keeping the default configuration

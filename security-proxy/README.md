@@ -15,7 +15,7 @@ This feature is rather confidential, since it involves two SP instances, while a
 A SP (2) may now trust requests coming from another SP (1) :
 
 ```
-Client --> SP1 --> SP2  --> ldapadmin
+Client --> SP1 --> SP2  --> console
                         | 
                         |----> geoserver
                         |
@@ -37,6 +37,6 @@ The SP2 `security-proxy.properties` file should have `trustedProxy` set to SP1 I
 The SP1 `targets-mapping.properties` configuration file should target SP2, eg with:
 ```properties
 geoserver=http://sp2:8080/geoserver/
-ldapadmin=http://sp2:8080/ldapadmin/
+console=http://sp2:8080/console/
 mapfishapp=http://sp2:8080/mapfishapp/
 ```
