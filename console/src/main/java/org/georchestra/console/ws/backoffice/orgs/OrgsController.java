@@ -335,7 +335,7 @@ public class OrgsController {
         areas.put("url", this.georConfig.getProperty("AreasUrl"));
         areas.put("key", this.georConfig.getProperty("AreasKey"));
         areas.put("value", this.georConfig.getProperty("AreasValue"));
-        areas.put("role", this.georConfig.getProperty("AreasRole"));
+        areas.put("role", this.georConfig.getProperty("AreasGroup"));
         res.put("areas", areas);
         ResponseUtil.buildResponse(response, res.toString(4), HttpServletResponse.SC_OK);
     }
