@@ -17,7 +17,7 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.ldapadmin.ds;
+package org.georchestra.console.ds;
 
 /**
  * Throws this exception if the e-mail field is present in an existent ldap account.

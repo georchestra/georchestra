@@ -17,10 +17,10 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.ldapadmin.dao;
+package org.georchestra.console.dao;
 
-import org.georchestra.ldapadmin.model.Attachment;
-import org.georchestra.ldapadmin.model.EmailTemplate;
+import org.georchestra.console.model.Attachment;
+import org.georchestra.console.model.EmailTemplate;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

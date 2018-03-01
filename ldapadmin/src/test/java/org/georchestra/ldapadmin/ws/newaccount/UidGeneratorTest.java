@@ -1,4 +1,4 @@
-package org.georchestra.ldapadmin.ws.newaccount;
+package org.georchestra.console.ws.newaccount;
 
 import static org.junit.Assert.assertEquals;
 

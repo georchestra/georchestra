@@ -1,4 +1,4 @@
-package org.georchestra.ldapadmin.model;
+package org.georchestra.console.model;
 
 import org.json.JSONException;
 import org.json.JSONObject;

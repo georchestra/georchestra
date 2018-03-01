@@ -17,11 +17,11 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.ldapadmin.ds;
+package org.georchestra.console.ds;
 
 
-import org.georchestra.ldapadmin.dto.Org;
-import org.georchestra.ldapadmin.dto.OrgExt;
+import org.georchestra.console.dto.Org;
+import org.georchestra.console.dto.OrgExt;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.DirContextOperations;

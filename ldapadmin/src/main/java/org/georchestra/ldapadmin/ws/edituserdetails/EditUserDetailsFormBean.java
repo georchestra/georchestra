@@ -17,7 +17,7 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.ldapadmin.ws.edituserdetails;
+package org.georchestra.console.ws.edituserdetails;
 
 /**
  * @author Mauricio Pazos

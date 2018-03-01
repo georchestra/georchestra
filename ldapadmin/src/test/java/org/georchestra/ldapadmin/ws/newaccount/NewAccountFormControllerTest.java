@@ -1,4 +1,4 @@
-package org.georchestra.ldapadmin.ws.newaccount;
+package org.georchestra.console.ws.newaccount;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
@@ -11,15 +11,15 @@ import java.util.List;
 import net.tanesha.recaptcha.ReCaptcha;
 import net.tanesha.recaptcha.ReCaptchaResponse;
 
-import org.georchestra.ldapadmin.bs.Moderator;
-import org.georchestra.ldapadmin.bs.ReCaptchaParameters;
-import org.georchestra.ldapadmin.ds.*;
-import org.georchestra.ldapadmin.dto.Account;
-import org.georchestra.ldapadmin.dto.AccountFactory;
+import org.georchestra.console.bs.Moderator;
+import org.georchestra.console.bs.ReCaptchaParameters;
+import org.georchestra.console.ds.*;
+import org.georchestra.console.dto.Account;
+import org.georchestra.console.dto.AccountFactory;
 
-import org.georchestra.ldapadmin.mailservice.EmailFactoryImpl;
-import org.georchestra.ldapadmin.mailservice.MailService;
-import org.georchestra.ldapadmin.ws.utils.Validation;
+import org.georchestra.console.mailservice.EmailFactoryImpl;
+import org.georchestra.console.mailservice.MailService;
+import org.georchestra.console.ws.utils.Validation;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

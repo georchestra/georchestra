@@ -248,15 +248,15 @@ ProxyPassReverse /header/ http://localhost:8180/header/
 ```
 
 
-* ```ldapadmin.conf```:
+* ```console.conf```:
 
 ```
 
-<Proxy http://localhost:8180/ldapadmin/*>
+<Proxy http://localhost:8180/console/*>
     Require all granted
 </Proxy>
-ProxyPass /ldapadmin/ http://localhost:8180/ldapadmin/
-ProxyPassReverse /ldapadmin/ http://localhost:8180/ldapadmin/
+ProxyPass /console/ http://localhost:8180/console/
+ProxyPassReverse /console/ http://localhost:8180/console/
 ```
 
 * ```mapfishapp.conf```:

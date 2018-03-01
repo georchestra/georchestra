@@ -17,12 +17,12 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.ldapadmin.ws.backoffice.users;
+package org.georchestra.console.ws.backoffice.users;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.ldapadmin.ds.AccountDao;
-import org.georchestra.ldapadmin.dto.Account;
+import org.georchestra.console.ds.AccountDao;
+import org.georchestra.console.dto.Account;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;

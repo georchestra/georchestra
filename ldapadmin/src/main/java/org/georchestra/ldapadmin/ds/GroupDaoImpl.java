@@ -17,7 +17,7 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.ldapadmin.ds;
+package org.georchestra.console.ds;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -30,11 +30,11 @@ import javax.naming.directory.Attributes;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.ldapadmin.dao.AdminLogDao;
-import org.georchestra.ldapadmin.dto.*;
-import org.georchestra.ldapadmin.model.AdminLogEntry;
-import org.georchestra.ldapadmin.model.AdminLogType;
-import org.georchestra.ldapadmin.ws.backoffice.groups.GroupProtected;
+import org.georchestra.console.dao.AdminLogDao;
+import org.georchestra.console.dto.*;
+import org.georchestra.console.model.AdminLogEntry;
+import org.georchestra.console.model.AdminLogType;
+import org.georchestra.console.ws.backoffice.groups.GroupProtected;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.AttributesMapper;
@@ -139,7 +139,7 @@ public class GroupDaoImpl implements GroupDao {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.georchestra.ldapadmin.ds.GroupDao#addUser(java.lang.String, java.lang.String)
+	 * @see org.georchestra.console.ds.GroupDao#addUser(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public void addUser(final String groupID, final String userId, final String originLogin) throws NameNotFoundException, DataServiceException {

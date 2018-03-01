@@ -1,16 +1,16 @@
-package org.georchestra.ldapadmin.ws.edituserdetails;
+package org.georchestra.console.ws.edituserdetails;
 
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.georchestra.ldapadmin.ds.AccountDao;
-import org.georchestra.ldapadmin.ds.OrgsDao;
-import org.georchestra.ldapadmin.dto.Account;
-import org.georchestra.ldapadmin.dto.AccountFactory;
-import org.georchestra.ldapadmin.dto.Org;
-import org.georchestra.ldapadmin.ws.utils.Validation;
+import org.georchestra.console.ds.AccountDao;
+import org.georchestra.console.ds.OrgsDao;
+import org.georchestra.console.dto.Account;
+import org.georchestra.console.dto.AccountFactory;
+import org.georchestra.console.dto.Org;
+import org.georchestra.console.ws.utils.Validation;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

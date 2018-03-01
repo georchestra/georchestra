@@ -17,7 +17,7 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.ldapadmin.ds;
+package org.georchestra.console.ds;
 
 /**
  * Provide information about the database schema
@@ -28,7 +28,7 @@ package org.georchestra.ldapadmin.ds;
 interface DatabaseSchema {
 	
 	final static String TABLE_USER_TOKEN = "user_token";
-	final static String SCHEMA_NAME = "ldapadmin";
+	final static String SCHEMA_NAME = "console";
 
 	// columns
 	final static String UID_COLUMN = "uid";

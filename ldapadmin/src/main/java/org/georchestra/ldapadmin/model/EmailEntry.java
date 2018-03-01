@@ -17,7 +17,7 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.ldapadmin.model;
+package org.georchestra.console.model;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,11 +39,11 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(schema = "ldapadmin", name = "admin_emails")
+@Table(schema = "console", name = "admin_emails")
 public class EmailEntry {
 
     @Id
-    @SequenceGenerator(name="admin_emails_id_seq", schema = "ldapadmin", sequenceName="admin_emails_id_seq", initialValue=1, allocationSize = 1)
+    @SequenceGenerator(name="admin_emails_id_seq", schema = "console", sequenceName="admin_emails_id_seq", initialValue=1, allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "admin_emails_id_seq")
     private long id;
     private String sender;
@@ -55,7 +55,7 @@ public class EmailEntry {
     private String body;
 
     @ManyToMany(targetEntity = Attachment.class, fetch = FetchType.EAGER)
-    @JoinTable(schema = "ldapadmin", name="admin_emails_attachments")
+    @JoinTable(schema = "console", name="admin_emails_attachments")
     private List<Attachment> attachments;
 
     public EmailEntry(){}

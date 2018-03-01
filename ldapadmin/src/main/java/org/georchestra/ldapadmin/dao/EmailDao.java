@@ -17,9 +17,9 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.ldapadmin.dao;
+package org.georchestra.console.dao;
 
-import org.georchestra.ldapadmin.model.EmailEntry;
+import org.georchestra.console.model.EmailEntry;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;

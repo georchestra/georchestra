@@ -17,19 +17,19 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.ldapadmin.ds;
+package org.georchestra.console.ds;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.ldapadmin.dao.AdminLogDao;
-import org.georchestra.ldapadmin.dto.Account;
-import org.georchestra.ldapadmin.dto.AccountFactory;
-import org.georchestra.ldapadmin.dto.Group;
-import org.georchestra.ldapadmin.dto.UserSchema;
-import org.georchestra.ldapadmin.model.AdminLogEntry;
-import org.georchestra.ldapadmin.model.AdminLogType;
-import org.georchestra.ldapadmin.ws.newaccount.UidGenerator;
+import org.georchestra.console.dao.AdminLogDao;
+import org.georchestra.console.dto.Account;
+import org.georchestra.console.dto.AccountFactory;
+import org.georchestra.console.dto.Group;
+import org.georchestra.console.dto.UserSchema;
+import org.georchestra.console.model.AdminLogEntry;
+import org.georchestra.console.model.AdminLogType;
+import org.georchestra.console.ws.newaccount.UidGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.AttributesMapper;

@@ -17,7 +17,7 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.ldapadmin.mailservice;
+package org.georchestra.console.mailservice;
 
 import java.io.BufferedReader;
 import java.io.File;

@@ -1,4 +1,4 @@
-package org.georchestra.ldapadmin.ds;
+package org.georchestra.console.ds;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
@@ -10,8 +10,8 @@ import javax.naming.directory.Attributes;
 import javax.naming.directory.BasicAttribute;
 import javax.naming.ldap.LdapName;
 
-import org.georchestra.ldapadmin.dto.Account;
-import org.georchestra.ldapadmin.dto.AccountFactory;
+import org.georchestra.console.dto.Account;
+import org.georchestra.console.dto.AccountFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -30,15 +30,15 @@ public class AccountDaoTest {
 
     @Before
     public void setUp() throws Exception {
-        assumeTrue(System.getProperty("ldapadmin.test.openldap.ldapurl") != null
-                && System.getProperty("ldapadmin.test.openldap.basedn") != null
-                && System.getProperty("ldapadmin.test.openldap.binddn") != null
-                && System.getProperty("ldapadmin.test.openldap.password") != null);
+        assumeTrue(System.getProperty("console.test.openldap.ldapurl") != null
+                && System.getProperty("console.test.openldap.basedn") != null
+                && System.getProperty("console.test.openldap.binddn") != null
+                && System.getProperty("console.test.openldap.password") != null);
 
-        String ldapUrl = System.getProperty("ldapadmin.test.openldap.ldapurl");
-        String baseDn = System.getProperty("ldapadmin.test.openldap.basedn");
-        String ldapAdminDn = System.getProperty("ldapadmin.test.openldap.binddn");
-        String ldapAdminDnPw = System.getProperty("ldapadmin.test.openldap.password");
+        String ldapUrl = System.getProperty("console.test.openldap.ldapurl");
+        String baseDn = System.getProperty("console.test.openldap.basedn");
+        String ldapAdminDn = System.getProperty("console.test.openldap.binddn");
+        String ldapAdminDnPw = System.getProperty("console.test.openldap.password");
 
         contextSource = new LdapContextSource();
         contextSource.setBase(baseDn);

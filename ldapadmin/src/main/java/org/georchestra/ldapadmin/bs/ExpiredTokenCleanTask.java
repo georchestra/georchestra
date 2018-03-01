@@ -17,7 +17,7 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.ldapadmin.bs;
+package org.georchestra.console.bs;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -26,8 +26,8 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.ldapadmin.ds.DataServiceException;
-import org.georchestra.ldapadmin.ds.UserTokenDao;
+import org.georchestra.console.ds.DataServiceException;
+import org.georchestra.console.ds.UserTokenDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

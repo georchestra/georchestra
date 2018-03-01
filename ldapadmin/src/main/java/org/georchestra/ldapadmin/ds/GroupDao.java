@@ -17,11 +17,11 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.ldapadmin.ds;
+package org.georchestra.console.ds;
 
 import java.util.List;
 
-import org.georchestra.ldapadmin.dto.Group;
+import org.georchestra.console.dto.Group;
 import org.springframework.ldap.NameNotFoundException;
 
 /**

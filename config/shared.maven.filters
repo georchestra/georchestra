@@ -54,10 +54,10 @@ shared.ogc.statistics.activated=false
 shared.ogc.statistics.db=georchestra
 shared.ogc.statistics.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.ogc.statistics.db@
 
-shared.ldapadmin.contextpath=/ldapadmin
-shared.ldapadmin.db=georchestra
-shared.ldapadmin.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.ldapadmin.db@
-shared.ldapadmin.warnifuidmodified=true
+shared.console.contextpath=/console
+shared.console.db=georchestra
+shared.console.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.console.db@
+shared.console.warnifuidmodified=true
 
 shared.mapfishapp.db=georchestra
 shared.mapfishapp.jdbcurl=jdbc:postgresql://@shared.psql.host@:@shared.psql.port@/@shared.mapfishapp.db@

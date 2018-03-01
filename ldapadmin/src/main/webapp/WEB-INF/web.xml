@@ -2,9 +2,9 @@
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="3.0" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 
     
-    <display-name>ldapadmin</display-name>
+    <display-name>console</display-name>
     
-    <description>ldapadmin application</description>
+    <description>console application</description>
     
     <distributable/>
 
@@ -20,7 +20,7 @@
     
     <!-- Handles Spring requests -->
     <servlet>
-        <servlet-name>ldapadmin</servlet-name>
+        <servlet-name>console</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <init-param>
             <param-name>contextConfigLocation</param-name>
@@ -30,7 +30,7 @@
     </servlet>
     <!-- url mapping -->
     <servlet-mapping>
-        <servlet-name>ldapadmin</servlet-name>
+        <servlet-name>console</servlet-name>
         <url-pattern>/</url-pattern>
         <url-pattern>/console/public/</url-pattern>
     </servlet-mapping>

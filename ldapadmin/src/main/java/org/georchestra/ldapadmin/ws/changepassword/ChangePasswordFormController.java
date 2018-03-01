@@ -17,16 +17,16 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.ldapadmin.ws.changepassword;
+package org.georchestra.console.ws.changepassword;
 
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.georchestra.ldapadmin.ds.AccountDao;
-import org.georchestra.ldapadmin.ds.DataServiceException;
-import org.georchestra.ldapadmin.ws.utils.PasswordUtils;
+import org.georchestra.console.ds.AccountDao;
+import org.georchestra.console.ds.DataServiceException;
+import org.georchestra.console.ws.utils.PasswordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

@@ -1,4 +1,4 @@
-package org.georchestra.ldapadmin.ws.passwordrecovery;
+package org.georchestra.console.ws.passwordrecovery;
 
 import static org.junit.Assert.assertTrue;
 
@@ -6,9 +6,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.georchestra.ldapadmin.ds.AccountDao;
-import org.georchestra.ldapadmin.ds.DataServiceException;
-import org.georchestra.ldapadmin.ds.UserTokenDao;
+import org.georchestra.console.ds.AccountDao;
+import org.georchestra.console.ds.DataServiceException;
+import org.georchestra.console.ds.UserTokenDao;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

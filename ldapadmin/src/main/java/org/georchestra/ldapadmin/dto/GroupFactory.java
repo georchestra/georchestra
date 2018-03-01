@@ -17,7 +17,7 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.ldapadmin.dto;
+package org.georchestra.console.dto;
 
 /**
  * This factory creates instance of {@link Group}.

@@ -39,7 +39,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link href='css/bootstrap.min.css' rel="stylesheet" />
     <link href="css/select2.css" rel="stylesheet" />
-    <link href='css/ldapadmin.css' rel="stylesheet" />
+    <link href='css/console.css' rel="stylesheet" />
     <title><s:message code="createAccountForm.title"/></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
@@ -114,8 +114,8 @@
                     </t:list>
 
 
-                    <link rel="stylesheet" href="/ldapadmin/console/public/libraries.css">
-                    <link rel="stylesheet" href="/ldapadmin/console/public/app.css">
+                    <link rel="stylesheet" href="/console/console/public/libraries.css">
+                    <link rel="stylesheet" href="/console/console/public/app.css">
                     <style>
                       .area {
                         margin: 2em;
@@ -126,9 +126,9 @@
                         border-bottom: 1em solid white;
                       }
                     </style>
-                    <script src="/ldapadmin/console/public/libraries.js"></script>
-                    <script src="/ldapadmin/console/public/templates.js"></script>
-                    <script src="/ldapadmin/console/public/app.js"></script>
+                    <script src="/console/console/public/libraries.js"></script>
+                    <script src="/console/console/public/templates.js"></script>
+                    <script src="/console/console/public/app.js"></script>
                     <script>require('app')</script>
 
                     <div ng-app="admin_console" ng-strict-di ng-controller="StandaloneController">

@@ -17,27 +17,27 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.ldapadmin.ws.backoffice.users;
+package org.georchestra.console.ws.backoffice.users;
 
 
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.ldapadmin.ds.AccountDao;
-import org.georchestra.ldapadmin.ds.DataServiceException;
-import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
-import org.georchestra.ldapadmin.ds.DuplicatedUidException;
-import org.georchestra.ldapadmin.ds.OrgsDao;
-import org.georchestra.ldapadmin.ds.ProtectedUserFilter;
-import org.georchestra.ldapadmin.dto.Account;
-import org.georchestra.ldapadmin.dto.AccountFactory;
-import org.georchestra.ldapadmin.dto.Group;
-import org.georchestra.ldapadmin.dto.Org;
-import org.georchestra.ldapadmin.dto.UserSchema;
-import org.georchestra.ldapadmin.mailservice.MailService;
-import org.georchestra.ldapadmin.ws.backoffice.utils.RequestUtil;
-import org.georchestra.ldapadmin.ws.backoffice.utils.ResponseUtil;
-import org.georchestra.ldapadmin.ws.utils.Validation;
+import org.georchestra.console.ds.AccountDao;
+import org.georchestra.console.ds.DataServiceException;
+import org.georchestra.console.ds.DuplicatedEmailException;
+import org.georchestra.console.ds.DuplicatedUidException;
+import org.georchestra.console.ds.OrgsDao;
+import org.georchestra.console.ds.ProtectedUserFilter;
+import org.georchestra.console.dto.Account;
+import org.georchestra.console.dto.AccountFactory;
+import org.georchestra.console.dto.Group;
+import org.georchestra.console.dto.Org;
+import org.georchestra.console.dto.UserSchema;
+import org.georchestra.console.mailservice.MailService;
+import org.georchestra.console.ws.backoffice.utils.RequestUtil;
+import org.georchestra.console.ws.backoffice.utils.ResponseUtil;
+import org.georchestra.console.ws.utils.Validation;
 import org.georchestra.lib.file.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;

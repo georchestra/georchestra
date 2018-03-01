@@ -1,15 +1,15 @@
-package org.georchestra.ldapadmin.ws.backoffice.users;
+package org.georchestra.console.ws.backoffice.users;
 
-import org.georchestra.ldapadmin.dao.AdminLogDao;
-import org.georchestra.ldapadmin.ds.AccountDaoImpl;
-import org.georchestra.ldapadmin.ds.DataServiceException;
-import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
-import org.georchestra.ldapadmin.ds.GroupDaoImpl;
-import org.georchestra.ldapadmin.ds.OrgsDao;
-import org.georchestra.ldapadmin.dto.Account;
-import org.georchestra.ldapadmin.dto.AccountFactory;
-import org.georchestra.ldapadmin.dto.UserSchema;
-import org.georchestra.ldapadmin.ws.backoffice.groups.GroupProtected;
+import org.georchestra.console.dao.AdminLogDao;
+import org.georchestra.console.ds.AccountDaoImpl;
+import org.georchestra.console.ds.DataServiceException;
+import org.georchestra.console.ds.DuplicatedEmailException;
+import org.georchestra.console.ds.GroupDaoImpl;
+import org.georchestra.console.ds.OrgsDao;
+import org.georchestra.console.dto.Account;
+import org.georchestra.console.dto.AccountFactory;
+import org.georchestra.console.dto.UserSchema;
+import org.georchestra.console.ws.backoffice.groups.GroupProtected;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.After;
@@ -197,7 +197,7 @@ public class UsersControllerTest {
                 put("l", "Chambéry").
                 put("postOfficeBox", "1234").
                 put("o", "GeoServer");
-        request.setRequestURI("/ldapadmin/users/geoserver");
+        request.setRequestURI("/console/users/geoserver");
         // geoserver_privileged_user is not a valid username automatically generated
         userRule.setListOfprotectedUsers(new String[]{"geoserver_privileged_user", "ggeoserverprivilegeduser"});
         request.setContent(reqUsr.toString().getBytes());
@@ -222,7 +222,7 @@ public class UsersControllerTest {
                 put("l", "Chambéry").
                 put("postOfficeBox", "1234").
                 put("o", "GeoServer");
-        request.setRequestURI("/ldapadmin/users/geoserver");
+        request.setRequestURI("/console/users/geoserver");
         request.setContent(reqUsr.toString().getBytes());
         Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup((Name) Mockito.any());
 
@@ -247,7 +247,7 @@ public class UsersControllerTest {
                 put("l", "Chambéry").
                 put("postOfficeBox", "1234").
                 put("o", "GeoServer");
-        request.setRequestURI("/ldapadmin/users/geoserver");
+        request.setRequestURI("/console/users/geoserver");
         request.setContent(reqUsr.toString().getBytes());
         Mockito.doThrow(DuplicatedEmailException.class).when(ldapTemplate).lookup((Name) Mockito.any());
 
@@ -271,7 +271,7 @@ public class UsersControllerTest {
                 put("postalCode", "73000").
                 put("l", "Chambéry").
                 put("postOfficeBox", "1234");
-        request.setRequestURI("/ldapadmin/users/geoserver");
+        request.setRequestURI("/console/users/geoserver");
         request.setContent(reqUsr.toString().getBytes());
         Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup((Name) Mockito.any());
         // TODO: Why 2 different codes checking that the user exists ?

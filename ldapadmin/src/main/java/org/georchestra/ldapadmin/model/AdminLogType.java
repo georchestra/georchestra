@@ -17,7 +17,7 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.ldapadmin.model;
+package org.georchestra.console.model;
 
 public enum AdminLogType {
 

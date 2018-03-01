@@ -44,11 +44,11 @@
         <to type="forward" last="true">/$1</to>
     </rule>
     <rule>
-      <from>^/(cas|analytics|extractorapp|geonetwork|geoserver|geofence|geowebcache|header|ldapadmin|mapfishapp)$</from>
+      <from>^/(cas|analytics|extractorapp|geonetwork|geoserver|geofence|geowebcache|header|console|mapfishapp)$</from>
       <to type="redirect" last="true">/$1/</to>
     </rule>
     <rule>
-      <from>^/(ldapadmin/console|extractorapp/admin)$</from>
+      <from>^/(console/console|extractorapp/admin)$</from>
       <to type="redirect" last="true">/$1/</to>
     </rule>
 

@@ -17,7 +17,7 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.ldapadmin.model;
+package org.georchestra.console.model;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,11 +31,11 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
-@Table(schema = "ldapadmin", name = "email_template")
+@Table(schema = "console", name = "email_template")
 public class EmailTemplate {
 
     @Id
-    @SequenceGenerator(name="email_template_id_seq", schema = "ldapadmin", sequenceName="email_template_id_seq", initialValue=1, allocationSize = 1)
+    @SequenceGenerator(name="email_template_id_seq", schema = "console", sequenceName="email_template_id_seq", initialValue=1, allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "email_template_id_seq")
     private long id;
     private String name;

@@ -1,4 +1,4 @@
-package org.georchestra.ldapadmin.ws.changepassword;
+package org.georchestra.console.ws.changepassword;
 
 import static org.junit.Assert.assertTrue;
 
@@ -10,10 +10,10 @@ import java.util.Map;
 import javax.naming.Name;
 import javax.servlet.http.HttpServletResponse;
 
-import org.georchestra.ldapadmin.ds.AccountDaoImpl;
-import org.georchestra.ldapadmin.ds.DataServiceException;
-import org.georchestra.ldapadmin.ds.GroupDaoImpl;
-import org.georchestra.ldapadmin.ds.OrgsDao;
+import org.georchestra.console.ds.AccountDaoImpl;
+import org.georchestra.console.ds.DataServiceException;
+import org.georchestra.console.ds.GroupDaoImpl;
+import org.georchestra.console.ds.OrgsDao;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;

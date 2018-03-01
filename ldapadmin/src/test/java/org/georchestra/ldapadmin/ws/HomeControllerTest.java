@@ -1,12 +1,12 @@
-package org.georchestra.ldapadmin.ws;
+package org.georchestra.console.ws;
 
 import static org.junit.Assert.assertTrue;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.georchestra.ldapadmin.Configuration;
-import org.georchestra.ldapadmin.bs.ExpiredTokenCleanTask;
-import org.georchestra.ldapadmin.bs.ExpiredTokenManagement;
+import org.georchestra.console.Configuration;
+import org.georchestra.console.bs.ExpiredTokenCleanTask;
+import org.georchestra.console.bs.ExpiredTokenManagement;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;

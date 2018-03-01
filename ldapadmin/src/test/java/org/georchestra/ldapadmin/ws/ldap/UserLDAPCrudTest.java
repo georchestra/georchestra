@@ -4,7 +4,7 @@
  *
  * @author Pierre Mauduit
  */
-package org.georchestra.ldapadmin.ws.ldap;
+package org.georchestra.console.ws.ldap;
 
 import org.junit.After;
 import org.junit.AfterClass;

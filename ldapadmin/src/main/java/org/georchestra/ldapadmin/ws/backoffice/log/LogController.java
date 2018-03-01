@@ -17,12 +17,12 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.ldapadmin.ws.backoffice.log;
+package org.georchestra.console.ws.backoffice.log;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.ldapadmin.dao.AdminLogDao;
-import org.georchestra.ldapadmin.model.AdminLogEntry;
+import org.georchestra.console.dao.AdminLogDao;
+import org.georchestra.console.model.AdminLogEntry;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -1,4 +1,4 @@
-package org.georchestra.ldapadmin.ws.backoffice.users;
+package org.georchestra.console.ws.backoffice.users;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

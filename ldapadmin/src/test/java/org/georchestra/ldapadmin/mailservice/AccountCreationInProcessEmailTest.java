@@ -1,4 +1,4 @@
-package org.georchestra.ldapadmin.mailservice;
+package org.georchestra.console.mailservice;
 
 import javax.servlet.ServletContext;
 

@@ -17,7 +17,7 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.ldapadmin.dto;
+package org.georchestra.console.dto;
 
 /**
  * Defines the name of the group's fields. They are consistent with the LDAP specification.

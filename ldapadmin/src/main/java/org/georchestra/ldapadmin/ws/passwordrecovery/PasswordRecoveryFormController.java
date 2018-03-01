@@ -17,7 +17,7 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.ldapadmin.ws.passwordrecovery;
+package org.georchestra.console.ws.passwordrecovery;
 
 import java.io.IOException;
 import java.util.List;
@@ -29,16 +29,16 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.ldapadmin.Configuration;
-import org.georchestra.ldapadmin.bs.ReCaptchaParameters;
-import org.georchestra.ldapadmin.ds.AccountDao;
-import org.georchestra.ldapadmin.ds.DataServiceException;
-import org.georchestra.ldapadmin.ds.GroupDao;
-import org.georchestra.ldapadmin.ds.UserTokenDao;
-import org.georchestra.ldapadmin.dto.Account;
-import org.georchestra.ldapadmin.dto.Group;
-import org.georchestra.ldapadmin.mailservice.MailService;
-import org.georchestra.ldapadmin.ws.utils.RecaptchaUtils;
+import org.georchestra.console.Configuration;
+import org.georchestra.console.bs.ReCaptchaParameters;
+import org.georchestra.console.ds.AccountDao;
+import org.georchestra.console.ds.DataServiceException;
+import org.georchestra.console.ds.GroupDao;
+import org.georchestra.console.ds.UserTokenDao;
+import org.georchestra.console.dto.Account;
+import org.georchestra.console.dto.Group;
+import org.georchestra.console.mailservice.MailService;
+import org.georchestra.console.ws.utils.RecaptchaUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.stereotype.Controller;

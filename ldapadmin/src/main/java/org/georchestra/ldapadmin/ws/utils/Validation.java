@@ -17,7 +17,7 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.ldapadmin.ws.utils;
+package org.georchestra.console.ws.utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;

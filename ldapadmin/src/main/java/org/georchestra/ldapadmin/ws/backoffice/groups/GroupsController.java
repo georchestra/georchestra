@@ -17,7 +17,7 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.ldapadmin.ws.backoffice.groups;
+package org.georchestra.console.ws.backoffice.groups;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -30,18 +30,18 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.ldapadmin.ds.AccountDao;
-import org.georchestra.ldapadmin.ds.DataServiceException;
-import org.georchestra.ldapadmin.ds.DuplicatedCommonNameException;
-import org.georchestra.ldapadmin.ds.GroupDao;
-import org.georchestra.ldapadmin.ds.ProtectedUserFilter;
-import org.georchestra.ldapadmin.dto.Account;
-import org.georchestra.ldapadmin.dto.Group;
-import org.georchestra.ldapadmin.dto.GroupFactory;
-import org.georchestra.ldapadmin.dto.GroupSchema;
-import org.georchestra.ldapadmin.ws.backoffice.users.UserRule;
-import org.georchestra.ldapadmin.ws.backoffice.utils.RequestUtil;
-import org.georchestra.ldapadmin.ws.backoffice.utils.ResponseUtil;
+import org.georchestra.console.ds.AccountDao;
+import org.georchestra.console.ds.DataServiceException;
+import org.georchestra.console.ds.DuplicatedCommonNameException;
+import org.georchestra.console.ds.GroupDao;
+import org.georchestra.console.ds.ProtectedUserFilter;
+import org.georchestra.console.dto.Account;
+import org.georchestra.console.dto.Group;
+import org.georchestra.console.dto.GroupFactory;
+import org.georchestra.console.dto.GroupSchema;
+import org.georchestra.console.ws.backoffice.users.UserRule;
+import org.georchestra.console.ws.backoffice.utils.RequestUtil;
+import org.georchestra.console.ws.backoffice.utils.ResponseUtil;
 import org.georchestra.lib.file.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;

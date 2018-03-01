@@ -4,7 +4,7 @@
 
 BEGIN;
 
-SET search_path TO ldapadmin,public,pg_catalog;
+SET search_path TO console,public,pg_catalog;
 
 CREATE TABLE admin_attachments (
   id bigserial,
@@ -21,7 +21,7 @@ CREATE TABLE email_template (
   CONSTRAINT email_template_pkey PRIMARY KEY (id)
 );
 
-CREATE TABLE ldapadmin.admin_emails (
+CREATE TABLE console.admin_emails (
   id bigserial,
   body text,
   date timestamp without time zone,

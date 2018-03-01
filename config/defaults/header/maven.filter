@@ -2,4 +2,4 @@
 # (unless you know what you're doing)
 
 language=@shared.language@
-ldapadminPublicContextPath=@shared.ldapadmin.contextpath@
+consolePublicContextPath=@shared.console.contextpath@

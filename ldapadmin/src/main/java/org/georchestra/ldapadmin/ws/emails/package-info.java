@@ -22,4 +22,4 @@
  *
  * Email can contain attachments stored in DB
  */
-package org.georchestra.ldapadmin.ws.emails;
+package org.georchestra.console.ws.emails;

@@ -53,9 +53,9 @@ angular.module('admin_console', [
 ])
 .controller('AppController', AppController)
 .controller('StandaloneController', StandaloneController)
-.constant('LDAP_ROOT_URI', '/ldapadmin/')
-.constant('LDAP_BASE_URI', '/ldapadmin/private/')
-.constant('LDAP_PUBLIC_URI', '/ldapadmin/public/')
+.constant('LDAP_ROOT_URI', '/console/')
+.constant('LDAP_BASE_URI', '/console/private/')
+.constant('LDAP_PUBLIC_URI', '/console/public/')
 .constant('MF_BASE_URI', '/mapfishapp/ws/')
 .constant('ANALYTICS_BASE_URI', '/analytics/ws/')
 .config([

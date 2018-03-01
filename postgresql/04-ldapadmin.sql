@@ -4,9 +4,9 @@
 
 BEGIN;
 
-CREATE SCHEMA ldapadmin;
+CREATE SCHEMA console;
 
-SET search_path TO ldapadmin,public,pg_catalog;
+SET search_path TO console,public,pg_catalog;
 
 
 CREATE TABLE user_token (

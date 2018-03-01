@@ -16,12 +16,12 @@ These pages should be light (no need to ship ExtJS).
 
 ### Lost Password
 
-The page asks for user email. An optional `email` parameter can be passed to preset the email field (eg: /ldapadmin/account/passwordRecovery?email=user@domain.tld).
+The page asks for user email. An optional `email` parameter can be passed to preset the email field (eg: /console/account/passwordRecovery?email=user@domain.tld).
 
 If the given email matches one of the LDAP users:
- * an email is sent to this user with a unique https URL to reset his password (eg: /ldapadmin/account/changePassword?token=54f23f27f6c5f23c68b9b5f9650839dc)
+ * an email is sent to this user with a unique https URL to reset his password (eg: /console/account/changePassword?token=54f23f27f6c5f23c68b9b5f9650839dc)
  * the page displays "an email was sent".
- * On the /ldapadmin/account/changePassword page:
+ * On the /console/account/changePassword page:
    * server-side check that token is valid (postgresql storage). If not, HTTP 400.
    * two fields ask for new password (client-side check for equality)
    * on form submission:
@@ -70,7 +70,7 @@ By default, geOrchestra uses global keys.
 
 To fight spam robots, it may be safer to get a proper pair of keys for your site. Go to https://www.google.com/recaptcha/admin/create and create a pair of private/public keys. Quoting the [documentation](https://developers.google.com/recaptcha/intro), *unless you select the "global key" option, the keys are unique to your domain and sub-domains.*
 
-Once created, set the following `ldapadmin` parameters with the value of the keys:
+Once created, set the following `console` parameters with the value of the keys:
 * `privateKey`
 * `publicKey`
 
@@ -78,9 +78,9 @@ See [the configuration guide](../config/README.md) for details on how to configu
 
 ### Set of required fields
 
-The ldapadmin configuration, in the config module, contains a `requiredFields` parameter that defaults to `firstName,surname,email,uid,password,confirmPassword`. Adding other fields, separated by commas, will make them mandatory in new account and edit forms. Note that this parameter only affects public UI.
+The console configuration, in the config module, contains a `requiredFields` parameter that defaults to `firstName,surname,email,uid,password,confirmPassword`. Adding other fields, separated by commas, will make them mandatory in new account and edit forms. Note that this parameter only affects public UI.
 
-For example, to impose the "Organisation" and "Title" fields to be not empty, set the following parameter in ldapadmin config
+For example, to impose the "Organisation" and "Title" fields to be not empty, set the following parameter in console config
 
 ```
 requiredFields=firstName,surname,email,uid,password,confirmPassword,org,title
@@ -111,28 +111,28 @@ Testing purpose:
 
  * deploy in Tomcat7
  * Then add the following url in your Internet navigator:
-   http://localhost:8286/ldapadmin/console/
+   http://localhost:8286/console/console/
 
 Alternatively, run with jetty:
 
-* the *first* time, you need to previously compile ldapadmin and all its dependencies
+* the *first* time, you need to previously compile console and all its dependencies
 
   ```
-  $ ./mvn -Dmaven.test.skip=true -Ptemplate -P-all,ldapadmin install;
+  $ ./mvn -Dmaven.test.skip=true -Ptemplate -P-all,console install;
   ```
 
-* then, each time you want to test a change in the configuration or the ldapadmin module:
+* then, each time you want to test a change in the configuration or the console module:
 
   ```
   $ cd config
   $ ../mvn -Ptemplate install
-  $ cd ../ldapadmin
+  $ cd ../console
   $ ../mvn -Dmaven.test.skip=true -Ptemplate jetty:run
   ```
  * Then point your navigator to the following address :
-   http://localhost:8286/ldapadmin/console/
+   http://localhost:8286/console/console/
    
- Running ldapadmin with jetty will change web server port to *8286* (in order to integrate with others georchestra 
+ Running console with jetty will change web server port to *8286* (in order to integrate with others georchestra 
  instance : CAS, security proxy, ...)
    
 ### Protected Users
@@ -164,7 +164,7 @@ So final list of protected users will be :
 Private UI
 ----------
 
-The private UI will be available at /ldapadmin for members of the MOD_LDAPADMIN group.
+The private UI will be available at /console for members of the MOD_LDAPADMIN group.
 
 See the wireframe in the current folder.
 

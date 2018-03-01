@@ -17,7 +17,7 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.ldapadmin.bs;
+package org.georchestra.console.bs;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;

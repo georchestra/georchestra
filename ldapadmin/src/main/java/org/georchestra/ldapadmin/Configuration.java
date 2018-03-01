@@ -17,7 +17,7 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.ldapadmin;
+package org.georchestra.console;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;

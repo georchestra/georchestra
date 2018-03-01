@@ -17,7 +17,7 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.ldapadmin.ws.backoffice.groups;
+package org.georchestra.console.ws.backoffice.groups;
 
 import java.util.Arrays;
 import java.util.HashSet;

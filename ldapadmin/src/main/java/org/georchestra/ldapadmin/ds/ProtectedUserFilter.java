@@ -17,12 +17,12 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.ldapadmin.ds;
+package org.georchestra.console.ds;
 
 import java.util.*;
 
-import org.georchestra.ldapadmin.Configuration;
-import org.georchestra.ldapadmin.dto.Account;
+import org.georchestra.console.Configuration;
+import org.georchestra.console.dto.Account;
 
 /**
  * This class filters the user identifier (uid), if it is a protected user.

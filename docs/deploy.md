@@ -19,7 +19,7 @@ Once your system is ready, collect WAR files in a dedicated directory and rename
     mv cas-server-webapp-${VERSION}.war cas.war
     mv extractorapp-${VERSION}.war extractorapp.war
     mv geoserver-webapp-${VERSION}.war geoserver.war
-    mv ldapadmin-${VERSION}.war ldapadmin.war
+    mv console-${VERSION}.war console.war
     mv mapfishapp-${VERSION}.war mapfishapp.war
     mv header-${VERSION}.war header.war
     mv web-app-3.0.4-SNAPSHOT.war geonetwork.war
@@ -70,7 +70,7 @@ However, this requires the build process to happen on the production host (or a 
     sudo ln -s ~/.m2/repository/org/georchestra/analytics/${VERSION}-SNAPSHOT/analytics-${VERSION}-SNAPSHOT.war analytics.war
     sudo ln -s ~/.m2/repository/org/georchestra/extractorapp/${VERSION}-SNAPSHOT/extractorapp-${VERSION}-SNAPSHOT.war extractorapp.war
     sudo ln -s ~/.m2/repository/org/geonetwork-opensource/web-app/3.0.4-SNAPSHOT/web-app-3.0.4-SNAPSHOT.war geonetwork.war
-    sudo ln -s ~/.m2/repository/org/georchestra/ldapadmin/${VERSION}-SNAPSHOT/ldapadmin-${VERSION}-SNAPSHOT.war ldapadmin.war
+    sudo ln -s ~/.m2/repository/org/georchestra/console/${VERSION}-SNAPSHOT/console-${VERSION}-SNAPSHOT.war console.war
     sudo ln -s ~/.m2/repository/org/georchestra/mapfishapp/${VERSION}-SNAPSHOT/mapfishapp-${VERSION}-SNAPSHOT.war mapfishapp.war
     sudo ln -s ~/.m2/repository/org/georchestra/header/${VERSION}-SNAPSHOT/header-${VERSION}-SNAPSHOT.war header.war
     sudo ln -s ~/.m2/repository/org/georchestra/geowebcache-webapp/${VERSION}-SNAPSHOT/geowebcache-webapp-${VERSION}-SNAPSHOT.war geowebcache.war

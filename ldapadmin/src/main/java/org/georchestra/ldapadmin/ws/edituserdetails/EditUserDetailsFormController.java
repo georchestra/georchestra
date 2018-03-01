@@ -17,15 +17,15 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.ldapadmin.ws.edituserdetails;
+package org.georchestra.console.ws.edituserdetails;
 
-import org.georchestra.ldapadmin.ds.AccountDao;
-import org.georchestra.ldapadmin.ds.DataServiceException;
-import org.georchestra.ldapadmin.ds.DuplicatedEmailException;
-import org.georchestra.ldapadmin.ds.OrgsDao;
-import org.georchestra.ldapadmin.dto.Account;
-import org.georchestra.ldapadmin.dto.Org;
-import org.georchestra.ldapadmin.ws.utils.Validation;
+import org.georchestra.console.ds.AccountDao;
+import org.georchestra.console.ds.DataServiceException;
+import org.georchestra.console.ds.DuplicatedEmailException;
+import org.georchestra.console.ds.OrgsDao;
+import org.georchestra.console.dto.Account;
+import org.georchestra.console.dto.Org;
+import org.georchestra.console.ws.utils.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

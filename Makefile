@@ -33,11 +33,11 @@ docker-build-geoserver-geofence: docker-pull-jetty
 	cd webapp; \
 	../../mvn clean install docker:build -Pdocker,colormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,gdal,importer,inspire,libjpeg-turbo,monitor,pyramid,wps,geofence -DskipTests
 
-docker-build-ldapadmin: docker-pull-jetty
-	./mvn clean package docker:build -Pdocker -DskipTests --pl ldapadmin
+docker-build-console: docker-pull-jetty
+	./mvn clean package docker:build -Pdocker -DskipTests --pl console
 
 docker-build-georchestra: docker-pull-jetty docker-build-database docker-build-ldap docker-build-geoserver docker-build-gn3
-	./mvn clean package docker:build -Pdocker -DskipTests --pl extractorapp,cas-server-webapp,security-proxy,mapfishapp,header,ldapadmin,analytics,geowebcache-webapp,atlas
+	./mvn clean package docker:build -Pdocker -DskipTests --pl extractorapp,cas-server-webapp,security-proxy,mapfishapp,header,console,analytics,geowebcache-webapp,atlas
 
 docker-build-dev:
 	docker pull debian:stretch
@@ -92,7 +92,7 @@ deb-build-geoserver-geofence: war-build-geoserver-geofence
 	../mvn clean package deb:package -PdebianPackage --pl webapp
 
 deb-build-georchestra: war-build-georchestra build-deps deb-build-geoserver
-	./mvn package deb:package -pl atlas,cas-server-webapp,security-proxy,header,mapfishapp,extractorapp,analytics,geoserver/webapp,ldapadmin,geonetwork/web,geowebcache-webapp -PdebianPackage -DskipTests
+	./mvn package deb:package -pl atlas,cas-server-webapp,security-proxy,header,mapfishapp,extractorapp,analytics,geoserver/webapp,console,geonetwork/web,geowebcache-webapp -PdebianPackage -DskipTests
 
 # Base geOrchestra config and common modules
 build-deps:

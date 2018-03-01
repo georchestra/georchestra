@@ -1,4 +1,4 @@
-package org.georchestra.ldapadmin.ws.backoffice.users;
+package org.georchestra.console.ws.backoffice.users;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -6,9 +6,9 @@ import static org.junit.Assume.assumeTrue;
 
 import java.util.HashMap;
 
-import org.georchestra.ldapadmin.ds.AccountDao;
-import org.georchestra.ldapadmin.ds.AccountDaoImpl;
-import org.georchestra.ldapadmin.dto.AccountImpl;
+import org.georchestra.console.ds.AccountDao;
+import org.georchestra.console.ds.AccountDaoImpl;
+import org.georchestra.console.dto.AccountImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -46,11 +46,11 @@ public class UsersExportTest {
     }
 
     private void setUpAgainstRealLdap() {
-        assumeTrue(System.getProperty("ldapadmin.test.openldap.ldapurl") != null
-                && System.getProperty("ldapadmin.test.openldap.basedn") != null);
+        assumeTrue(System.getProperty("console.test.openldap.ldapurl") != null
+                && System.getProperty("console.test.openldap.basedn") != null);
 
-        String ldapUrl = System.getProperty("ldapadmin.test.openldap.ldapurl");
-        String baseDn = System.getProperty("ldapadmin.test.openldap.basedn");
+        String ldapUrl = System.getProperty("console.test.openldap.ldapurl");
+        String baseDn = System.getProperty("console.test.openldap.basedn");
 
         DefaultSpringSecurityContextSource contextSource = new DefaultSpringSecurityContextSource(ldapUrl + baseDn);
         contextSource.setBase(baseDn);

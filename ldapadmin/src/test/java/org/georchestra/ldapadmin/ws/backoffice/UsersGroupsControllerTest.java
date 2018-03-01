@@ -1,4 +1,4 @@
-package org.georchestra.ldapadmin.ws.backoffice;
+package org.georchestra.console.ws.backoffice;
 
 
 import static org.hamcrest.Matchers.equalTo;
@@ -13,17 +13,17 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.ldapadmin.ds.AccountDaoImpl;
-import org.georchestra.ldapadmin.ds.GroupDaoImpl;
-import org.georchestra.ldapadmin.ds.OrgsDao;
-import org.georchestra.ldapadmin.dto.Account;
-import org.georchestra.ldapadmin.dto.AccountFactory;
-import org.georchestra.ldapadmin.dto.Group;
-import org.georchestra.ldapadmin.dto.GroupFactory;
-import org.georchestra.ldapadmin.dto.UserSchema;
-import org.georchestra.ldapadmin.ws.backoffice.groups.GroupsController;
-import org.georchestra.ldapadmin.ws.backoffice.users.UserRule;
-import org.georchestra.ldapadmin.ws.backoffice.users.UsersController;
+import org.georchestra.console.ds.AccountDaoImpl;
+import org.georchestra.console.ds.GroupDaoImpl;
+import org.georchestra.console.ds.OrgsDao;
+import org.georchestra.console.dto.Account;
+import org.georchestra.console.dto.AccountFactory;
+import org.georchestra.console.dto.Group;
+import org.georchestra.console.dto.GroupFactory;
+import org.georchestra.console.dto.UserSchema;
+import org.georchestra.console.ws.backoffice.groups.GroupsController;
+import org.georchestra.console.ws.backoffice.users.UserRule;
+import org.georchestra.console.ws.backoffice.users.UsersController;
 import org.hamcrest.Matchers;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -61,11 +61,11 @@ public class UsersGroupsControllerTest {
     private LdapContextSource contextSource;
 
 
-    private static String ENV_ACTIVATED = "ldapadmin.test.openldap.activated";
-    private static String ENV_BINDDN = "ldapadmin.test.openldap.binddn";
-    private static String ENV_PASSWORD = "ldapadmin.test.openldap.password";
-    private static String ENV_LDAPURL = "ldapadmin.test.openldap.ldapurl";
-    private static String ENV_BASEDN = "ldapadmin.test.openldap.basedn";
+    private static String ENV_ACTIVATED = "console.test.openldap.activated";
+    private static String ENV_BINDDN = "console.test.openldap.binddn";
+    private static String ENV_PASSWORD = "console.test.openldap.password";
+    private static String ENV_LDAPURL = "console.test.openldap.ldapurl";
+    private static String ENV_BASEDN = "console.test.openldap.basedn";
 
     private String basedn ;
     private boolean realLdapActivated ;
@@ -189,11 +189,11 @@ public class UsersGroupsControllerTest {
             // properties, e.g.:
             //
             // $ mvn clean test -Dtest=UsersGroupsControllerTest                        \
-            //        -Dldapadmin.test.openldap.activated=true                          \
-            //        -Dldapadmin.test.openldap.binddn="cn=admin,dc=georchestra,dc=org" \
-            //        -Dldapadmin.test.openldap.password=secret                         \
-            //        -Dldapadmin.test.openldap.ldapurl="ldap://localhost:389"          \
-            //        -Dldapadmin.test.openldap.basedn="dc=georchestra,dc=org"
+            //        -Dconsole.test.openldap.activated=true                          \
+            //        -Dconsole.test.openldap.binddn="cn=admin,dc=georchestra,dc=org" \
+            //        -Dconsole.test.openldap.password=secret                         \
+            //        -Dconsole.test.openldap.ldapurl="ldap://localhost:389"          \
+            //        -Dconsole.test.openldap.basedn="dc=georchestra,dc=org"
             //
             // This will activate the test onto a "real" OpenLDAP server,
             // giving some hints about the possible inconsistencies related

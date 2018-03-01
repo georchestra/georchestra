@@ -133,7 +133,7 @@ public class ProxyTest {
         "thesaurus=local.theme.pigma&id=http://ids.pigma.org/themes%23Eau&multiple=false&transformation=to-iso19139-keyword"));
         assertTrue(ret.toString().contains("id=http://ids.pigma.org/themes%23Eau"));
 
-        ret = (URI) ReflectionUtils.invokeMethod(m, proxy, new URL("https://sdi.georchestra.org/ldapadmin/account/recover?email=psc%2Btestuser%40georchestra.org"));
+        ret = (URI) ReflectionUtils.invokeMethod(m, proxy, new URL("https://sdi.georchestra.org/console/account/recover?email=psc%2Btestuser%40georchestra.org"));
         assertTrue(ret.toString().contains("email=psc%2Btestuser%40georchestra.org"));
     }
 

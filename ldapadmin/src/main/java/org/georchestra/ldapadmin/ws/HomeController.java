@@ -17,7 +17,7 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.ldapadmin.ws;
+package org.georchestra.console.ws;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,8 +33,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
-import org.georchestra.ldapadmin.Configuration;
-import org.georchestra.ldapadmin.bs.ExpiredTokenManagement;
+import org.georchestra.console.Configuration;
+import org.georchestra.console.bs.ExpiredTokenManagement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

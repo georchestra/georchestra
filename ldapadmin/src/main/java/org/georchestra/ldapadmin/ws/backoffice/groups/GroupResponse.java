@@ -17,14 +17,14 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.ldapadmin.ws.backoffice.groups;
+package org.georchestra.console.ws.backoffice.groups;
 
 import java.io.IOException;
 import java.util.List;
 
-import org.georchestra.ldapadmin.ds.ProtectedUserFilter;
-import org.georchestra.ldapadmin.dto.Group;
-import org.georchestra.ldapadmin.dto.GroupSchema;
+import org.georchestra.console.ds.ProtectedUserFilter;
+import org.georchestra.console.dto.Group;
+import org.georchestra.console.dto.GroupSchema;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

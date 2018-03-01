@@ -1,4 +1,4 @@
-package org.georchestra.ldapadmin.ds;
+package org.georchestra.console.ds;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

@@ -17,7 +17,7 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.ldapadmin.model;
+package org.georchestra.console.model;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,12 +35,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Entity
-@Table(schema = "ldapadmin", name = "admin_log")
+@Table(schema = "console", name = "admin_log")
 @NamedQuery(name = "AdminLogEntry.findByTargetPageable", query = "SELECT l FROM AdminLogEntry l WHERE l.target = :target ORDER BY l.date DESC")
 public class AdminLogEntry {
 
     @Id
-    @SequenceGenerator(name="admin_log_seq", schema = "ldapadmin", sequenceName="admin_log_seq", initialValue=1, allocationSize=1)
+    @SequenceGenerator(name="admin_log_seq", schema = "console", sequenceName="admin_log_seq", initialValue=1, allocationSize=1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "admin_log_seq")
     private long id;
     private String admin;

@@ -94,4 +94,4 @@ ldapvi --host localhost -D "cn=admin,dc=georchestra,dc=org" -w "secret" -b "dc=g
 ```
 
  * [Apache Directory Studio](http://directory.apache.org/studio/), a powerful desktop client.
- * our own [console](/ldapadmin/README.md) web application, available at ```/ldapadmin/console/``` to  members of the ```MOD_LDAPADMIN``` group, is probably the easiest one.
+ * our own [console](/console/README.md) web application, available at ```/console/console/``` to  members of the ```MOD_LDAPADMIN``` group, is probably the easiest one.

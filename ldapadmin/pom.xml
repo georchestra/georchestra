@@ -6,7 +6,7 @@
     <version>18.06-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>ldapadmin</artifactId>
+  <artifactId>console</artifactId>
   <packaging>war</packaging>
   <name>LDAP Admin</name>
   <url>http://www.georchestra.org</url>
@@ -562,7 +562,7 @@
         <artifactId>jetty-maven-plugin</artifactId>
         <version>9.2.11.v20150529</version>
         <configuration>
-          <webApp><contextPath>/ldapadmin</contextPath></webApp>
+          <webApp><contextPath>/console</contextPath></webApp>
           <scanIntervalSeconds>5</scanIntervalSeconds>
           <scanTargets>
             <scanTarget>src/main/java/</scanTarget>
@@ -698,7 +698,7 @@
             <artifactId>debian-maven-plugin</artifactId>
             <version>1.0.6</version>
             <configuration>
-              <packageName>georchestra-ldapadmin</packageName>
+              <packageName>georchestra-console</packageName>
               <packageDescription>geOrchestra LDAP management application</packageDescription>
               <projectOrganization>geOrchestra</projectOrganization>
               <maintainerName>PSC</maintainerName>

@@ -1,4 +1,4 @@
-package org.georchestra.ldapadmin.ws.backoffice.groups;
+package org.georchestra.console.ws.backoffice.groups;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
@@ -8,11 +8,11 @@ import java.io.IOException;
 import javax.naming.Name;
 import javax.servlet.http.HttpServletResponse;
 
-import org.georchestra.ldapadmin.dao.AdminLogDao;
-import org.georchestra.ldapadmin.ds.*;
-import org.georchestra.ldapadmin.dto.Group;
-import org.georchestra.ldapadmin.dto.GroupFactory;
-import org.georchestra.ldapadmin.ws.backoffice.users.UserRule;
+import org.georchestra.console.dao.AdminLogDao;
+import org.georchestra.console.ds.*;
+import org.georchestra.console.dto.Group;
+import org.georchestra.console.dto.GroupFactory;
+import org.georchestra.console.ws.backoffice.users.UserRule;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -340,7 +340,7 @@ public class GroupsControllerTest {
 		JSONObject toSend = new JSONObject().put("users", new JSONArray().put("testadmin").put("testuser"))
 				.put("PUT", new JSONArray().put("ADMINISTRATOR")).put("DELETE", new JSONArray().put("USERS"));
 		request.setContent(toSend.toString().getBytes());
-		request.setRequestURI("/ldapadmin/groups_users");
+		request.setRequestURI("/console/groups_users");
 		DirContextOperations context = Mockito.mock(DirContextOperations.class);
 		Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookupContext((Name) Mockito.any());
 
@@ -357,7 +357,7 @@ public class GroupsControllerTest {
 		JSONObject toSend = new JSONObject().put("users", new JSONArray().put("testadmin").put("testuser"))
 				.put("PUT", new JSONArray().put("ADMINISTRATOR")).put("DELETE", new JSONArray().put("USERS"));
 		request.setContent(toSend.toString().getBytes());
-		request.setRequestURI("/ldapadmin/groups_users");
+		request.setRequestURI("/console/groups_users");
 		// Well, this is unlikely to happen in real life, but the only thing
 		// we want to test is a JSONException being caught, no matter is the
 		// cause.
@@ -378,7 +378,7 @@ public class GroupsControllerTest {
 		JSONObject toSend = new JSONObject().put("users", new JSONArray().put("testadmin").put("testuser"))
 				.put("PUT", new JSONArray().put("ADMINISTRATOR")).put("DELETE", new JSONArray().put("USERS"));
 		request.setContent(toSend.toString().getBytes());
-		request.setRequestURI("/ldapadmin/groups_users");
+		request.setRequestURI("/console/groups_users");
 
 		Mockito.doThrow(DataServiceException.class).when(ldapTemplate).lookupContext((Name) Mockito.any());
 
@@ -397,7 +397,7 @@ public class GroupsControllerTest {
 		JSONObject toSend = new JSONObject().put("users", new JSONArray().put("testadmin").put("testuser"))
 				.put("PUT", new JSONArray().put("ADMINISTRATOR")).put("DELETE", new JSONArray().put("USERS"));
 		request.setContent(toSend.toString().getBytes());
-		request.setRequestURI("/ldapadmin/groups_users");
+		request.setRequestURI("/console/groups_users");
 		DirContextOperations context = Mockito.mock(DirContextOperations.class);
 		Mockito.when(ldapTemplate.lookupContext((Name) Mockito.any())).thenReturn(context);
 

@@ -17,7 +17,7 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.ldapadmin.ws.passwordrecovery;
+package org.georchestra.console.ws.passwordrecovery;
 
 import java.io.Serializable;
 

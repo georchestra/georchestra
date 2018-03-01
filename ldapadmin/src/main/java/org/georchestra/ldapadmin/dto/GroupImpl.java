@@ -17,7 +17,7 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.ldapadmin.dto;
+package org.georchestra.console.dto;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -37,7 +37,7 @@ class GroupImpl implements Group, Comparable<Group> {
 	private String description;
 
 	/* (non-Javadoc)
-	 * @see org.georchestra.ldapadmin.dto.Group#getCommonName()
+	 * @see org.georchestra.console.dto.Group#getCommonName()
 	 */
 	@Override
 	public String getName() {
@@ -45,7 +45,7 @@ class GroupImpl implements Group, Comparable<Group> {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.georchestra.ldapadmin.dto.Group#setCommonName(java.lang.String)
+	 * @see org.georchestra.console.dto.Group#setCommonName(java.lang.String)
 	 */
 	@Override
 	public void setName(String cn) {
@@ -53,7 +53,7 @@ class GroupImpl implements Group, Comparable<Group> {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.georchestra.ldapadmin.dto.Group#getMemberUid()
+	 * @see org.georchestra.console.dto.Group#getMemberUid()
 	 */
 	@Override
 	public List<String> getUserList() {
@@ -61,7 +61,7 @@ class GroupImpl implements Group, Comparable<Group> {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.georchestra.ldapadmin.dto.Group#setMemberUid(java.util.List)
+	 * @see org.georchestra.console.dto.Group#setMemberUid(java.util.List)
 	 */
 	@Override
 	public void setUserList(List<String> userUidList) {
@@ -76,7 +76,7 @@ class GroupImpl implements Group, Comparable<Group> {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.georchestra.ldapadmin.dto.Group#addMemberUid(java.lang.String)
+	 * @see org.georchestra.console.dto.Group#addMemberUid(java.lang.String)
 	 */
 	@Override
 	public void addUser(String userUid) {

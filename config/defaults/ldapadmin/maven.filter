@@ -3,7 +3,7 @@
 
 language=@shared.language@
 headerHeight=@shared.header.height@
-publicContextPath=@shared.ldapadmin.contextpath@
+publicContextPath=@shared.console.contextpath@
 instanceName=@shared.instance.name@
 
 # LDAP
@@ -27,7 +27,7 @@ orgsSearchBaseDN=@shared.ldap.orgsSearchBaseDN@
 protectedUser.uid1=@shared.privileged.geoserver.user@
 
 # Database connection
-psql.url=@shared.ldapadmin.jdbcurl@
+psql.url=@shared.console.jdbcurl@
 psql.user=@shared.psql.user@
 psql.pass=@shared.psql.pass@
 
@@ -38,7 +38,7 @@ smtpPort=@shared.smtp.port@
 replyTo=@shared.email.replyTo@
 from=@shared.email.from@
 emailHtml=@shared.email.html@
-warnUserIfUidModified=@shared.ldapadmin.warnifuidmodified@
+warnUserIfUidModified=@shared.console.warnifuidmodified@
 # Moderation (enabled by default - we do not want people to be able to gain access to resources without the admin's consent)
 moderatorEmail=@shared.administrator.email@
 

@@ -17,25 +17,25 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.ldapadmin.ws.emails;
+package org.georchestra.console.ws.emails;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
-import org.georchestra.ldapadmin.dao.AdminLogDao;
-import org.georchestra.ldapadmin.dao.AttachmentDao;
-import org.georchestra.ldapadmin.dao.EmailDao;
-import org.georchestra.ldapadmin.dao.EmailTemplateDao;
-import org.georchestra.ldapadmin.ds.AccountDao;
-import org.georchestra.ldapadmin.ds.DataServiceException;
-import org.georchestra.ldapadmin.dto.Account;
-import org.georchestra.ldapadmin.mailservice.EmailFactoryImpl;
-import org.georchestra.ldapadmin.model.AdminLogEntry;
-import org.georchestra.ldapadmin.model.AdminLogType;
-import org.georchestra.ldapadmin.model.Attachment;
-import org.georchestra.ldapadmin.model.EmailEntry;
-import org.georchestra.ldapadmin.model.EmailTemplate;
-import org.georchestra.ldapadmin.ws.backoffice.utils.ResponseUtil;
+import org.georchestra.console.dao.AdminLogDao;
+import org.georchestra.console.dao.AttachmentDao;
+import org.georchestra.console.dao.EmailDao;
+import org.georchestra.console.dao.EmailTemplateDao;
+import org.georchestra.console.ds.AccountDao;
+import org.georchestra.console.ds.DataServiceException;
+import org.georchestra.console.dto.Account;
+import org.georchestra.console.mailservice.EmailFactoryImpl;
+import org.georchestra.console.model.AdminLogEntry;
+import org.georchestra.console.model.AdminLogType;
+import org.georchestra.console.model.Attachment;
+import org.georchestra.console.model.EmailEntry;
+import org.georchestra.console.model.EmailTemplate;
+import org.georchestra.console.ws.backoffice.utils.ResponseUtil;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
