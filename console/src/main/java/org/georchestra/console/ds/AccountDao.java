@@ -63,12 +63,12 @@ public interface AccountDao {
 	 * Creates a new account
 	 * 
 	 * @param account
-	 * @param groupID
+	 * @param roleID
 	 * @param originLogin login of admin that create user
 	 * @throws DataServiceException
 	 * @throws DuplicatedEmailException
 	 */
-	void insert(final Account account, final String groupID, final String originLogin) throws DataServiceException, DuplicatedUidException, DuplicatedEmailException;
+	void insert(final Account account, final String roleID, final String originLogin) throws DataServiceException, DuplicatedUidException, DuplicatedEmailException;
 
 	/**
 	 * Updates the user account

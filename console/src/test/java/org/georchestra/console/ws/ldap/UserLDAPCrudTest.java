@@ -93,7 +93,7 @@ public class UserLDAPCrudTest {
 	/**
 	 * tests the user creation.
 	 *
-	 * It should attach a membership to the default group.
+	 * It should attach a membership to the default role.
 	 */
 	@Test
 	public void createUserTest() {
@@ -123,7 +123,7 @@ public class UserLDAPCrudTest {
 	/**
 	 * tests the user deletion.
 	 * - it should be able to remove the user from the LDAP directory.
-	 * - it should leave the membership of the group.
+	 * - it should leave the membership of the role.
 	 */
 	@Test
 	public void deleteUserTest() {

@@ -62,7 +62,7 @@ class NewAccountRequiresModerationEmail extends Email {
 	
 	public void sendMsg(final String userName, final String uid ) throws AddressException, MessagingException {
 
-		LOG.debug("New account user in the pending group. User ID: " + uid );
+		LOG.debug("New account user in the pending role. User ID: " + uid );
 		
 		String body = writeNewAccountMail(uid, userName);
 

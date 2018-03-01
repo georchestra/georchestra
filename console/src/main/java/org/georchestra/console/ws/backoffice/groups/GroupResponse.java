@@ -17,7 +17,7 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.console.ws.backoffice.groups;
+package org.georchestra.console.ws.backoffice.roles;
 
 import java.io.IOException;
 import java.util.List;
@@ -36,12 +36,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 public class GroupResponse {
 
-	private Group group;
+	private Group role;
 	private ProtectedUserFilter filter;
 
-	public GroupResponse(Group group, ProtectedUserFilter filter) {
+	public GroupResponse(Group role, ProtectedUserFilter filter) {
 
-		this.group = group;
+		this.role = role;
 		this.filter = filter;
 	}
 	
@@ -49,12 +49,12 @@ public class GroupResponse {
 		try{
 			JSONObject jsonGroup = new JSONObject();
 			
-			jsonGroup.put(GroupSchema.COMMON_NAME_KEY, this.group.getName());
+			jsonGroup.put(GroupSchema.COMMON_NAME_KEY, this.role.getName());
 
-			jsonGroup.put(GroupSchema.DESCRIPTION_KEY, this.group.getDescription());
+			jsonGroup.put(GroupSchema.DESCRIPTION_KEY, this.role.getDescription());
 
 			// adds the list of users
-			List<String> list = filter.filterStringList(this.group.getUserList());
+			List<String> list = filter.filterStringList(this.role.getUserList());
 
 			JSONArray membersArray = new JSONArray();
 			int j = 0;

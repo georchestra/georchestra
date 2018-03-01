@@ -182,7 +182,7 @@ public class PasswordRecoveryFormControllerTest {
             .thenReturn(rer);
         ArrayList<Group> pendingUsersGroupList = new ArrayList();
         
-        pendingUsersGroupList.add(GroupFactory.create(Group.PENDING, "groups of pending users"));
+        pendingUsersGroupList.add(GroupFactory.create(Group.PENDING, "roles of pending users"));
         Mockito.when(gdao.findAllForUser(Mockito.anyString())).thenReturn(pendingUsersGroupList);
         String ret = ctrl.generateToken(request, formBean, result, status);
         

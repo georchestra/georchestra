@@ -33,13 +33,13 @@ public interface Group {
 
 	/**
 	 * 
-	 * @return the name of this group
+	 * @return the name of this role
 	 */
 	String getName();
 	void  setName(String cn );
 
 	/**
-	 * Users of this group
+	 * Users of this role
 	 * 
 	 * @return the list of user 
 	 */
@@ -48,7 +48,7 @@ public interface Group {
 	void  setUserList(List<String> userUidList);
 	
 	/**
-	 * adds a user to this group
+	 * adds a user to this role
 	 * @param userUid a user dn
 	 */
 	void  addUser(String userUid);

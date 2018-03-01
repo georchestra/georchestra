@@ -25,7 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * A group and its users.
+ * A role and its users.
  *
  * @author Mauricio Pazos
  *

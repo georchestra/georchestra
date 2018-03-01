@@ -17,7 +17,7 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.console.ws.backoffice.groups;
+package org.georchestra.console.ws.backoffice.roles;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -49,17 +49,17 @@ public class GroupProtected {
 	}
 
 	/**
-	 * True if the Groups is a protected groups
+	 * True if the Groups is a protected roles
 	 * 
 	 * @param uid
-	 *            uid of group
+	 *            uid of role
 	 * 
-	 * @return True if the Groups is a protected groups
+	 * @return True if the Groups is a protected roles
 	 */
 	public boolean isProtected(final String uid) {
 
 		if (this.listOfprotectedGroups.isEmpty())
-			GroupProtected.LOG.warn("There isn't any protected groups configured");
+			GroupProtected.LOG.warn("There isn't any protected roles configured");
 
 		for (String reg : listOfprotectedGroups) {
 			if (Pattern.matches(reg, uid))

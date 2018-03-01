@@ -21,7 +21,7 @@ import org.georchestra.console.dto.AccountFactory;
 import org.georchestra.console.dto.Group;
 import org.georchestra.console.dto.GroupFactory;
 import org.georchestra.console.dto.UserSchema;
-import org.georchestra.console.ws.backoffice.groups.GroupsController;
+import org.georchestra.console.ws.backoffice.roles.GroupsController;
 import org.georchestra.console.ws.backoffice.users.UserRule;
 import org.georchestra.console.ws.backoffice.users.UsersController;
 import org.hamcrest.Matchers;
@@ -51,10 +51,10 @@ import javax.naming.directory.SearchControls;
 public class UsersGroupsControllerTest {
 
     private UsersController userCtrl;
-    private GroupsController groupCtrl;
+    private GroupsController roleCtrl;
 
     private AccountDaoImpl dao;
-    private GroupDaoImpl groupDao;
+    private GroupDaoImpl roleDao;
     private OrgsDao orgDao;
     private UserRule userRule;
     private LdapTemplate ldapTemplate;
@@ -135,9 +135,9 @@ public class UsersGroupsControllerTest {
         fakeAccountList.add(tempAccount);
 
 
-        // fake group List
+        // fake role List
         List<Group> fakeGroupList = new ArrayList<Group>();
-        Group adminGrp = GroupFactory.create("ADMINISTRATOR", "groups of the administrators");
+        Group adminGrp = GroupFactory.create("ADMINISTRATOR", "roles of the administrators");
         adminGrp.setUserList(Arrays.asList(new String[] {"testadmin"}));
 
         Group userGrp = GroupFactory.create("USER", "regular users");
@@ -147,14 +147,14 @@ public class UsersGroupsControllerTest {
         fakeGroupList.add(userGrp);
 
         EqualsFilter accountFilter = new EqualsFilter("objectClass", "person");
-        EqualsFilter groupFilter = new EqualsFilter("objectClass", "groupOfMembers");
+        EqualsFilter roleFilter = new EqualsFilter("objectClass", "roleOfMembers");
 
         // Fake findAll() on AccountDao
         Mockito.when(ldapTemplate.search(Mockito.any(DistinguishedName.class), eq(accountFilter.encode()),
                 Mockito.any(SearchControls.class),  Mockito.any(ContextMapper.class))).thenReturn(fakeAccountList);
 
         // Fake findAll() on GroupDao
-        Mockito.when(ldapTemplate.search(Mockito.any(DistinguishedName.class), eq(groupFilter.encode()),
+        Mockito.when(ldapTemplate.search(Mockito.any(DistinguishedName.class), eq(roleFilter.encode()),
                 Mockito.any(ContextMapper.class))).thenReturn(fakeGroupList);
 
         // Fake temporary account
@@ -206,12 +206,12 @@ public class UsersGroupsControllerTest {
         userRule.setListOfprotectedUsers(new String[] { "geoserver_privileged_user" });
 
 
-        // Configures groupDao
-        groupDao = new GroupDaoImpl();
-        groupDao.setLdapTemplate(ldapTemplate);
-        groupDao.setGroupSearchBaseDN("ou=roles");
-        groupDao.setUniqueNumberField("ou");
-        groupDao.setUserSearchBaseDN("ou=users");
+        // Configures roleDao
+        roleDao = new GroupDaoImpl();
+        roleDao.setLdapTemplate(ldapTemplate);
+        roleDao.setGroupSearchBaseDN("ou=roles");
+        roleDao.setUniqueNumberField("ou");
+        roleDao.setUserSearchBaseDN("ou=users");
 
         OrgsDao orgsDao = new OrgsDao();
         orgsDao.setLdapTemplate(ldapTemplate);
@@ -219,15 +219,15 @@ public class UsersGroupsControllerTest {
         orgsDao.setUserSearchBaseDN("ou=users");
 
         // configures AccountDao
-        dao = new AccountDaoImpl(ldapTemplate, groupDao, orgsDao);
+        dao = new AccountDaoImpl(ldapTemplate, roleDao, orgsDao);
         dao.setUniqueNumberField("employeeNumber");
         dao.setUserSearchBaseDN("ou=users");
-        dao.setGroupDao(groupDao);
+        dao.setGroupDao(roleDao);
 
         userCtrl = new UsersController(dao, userRule);
         userCtrl.setOrgDao(orgsDao);
-        groupCtrl = new GroupsController(groupDao, userRule);
-        groupCtrl.setAccountDao(dao);
+        roleCtrl = new GroupsController(roleDao, userRule);
+        roleCtrl.setAccountDao(dao);
       
     }
 
@@ -250,13 +250,13 @@ public class UsersGroupsControllerTest {
         request = new MockHttpServletRequest();
         response = new MockHttpServletResponse();
 
-        groupCtrl.findAll(request, response);
-        JSONArray groupJson = new JSONArray(response.getContentAsString());
+        roleCtrl.findAll(request, response);
+        JSONArray roleJson = new JSONArray(response.getContentAsString());
 
-        // Parses the output of groups controller
+        // Parses the output of roles controller
         Set<String> encounteredUsersInGroups = new HashSet<String>();
-        for (int i = 0; i < groupJson.length(); ++i) {
-            JSONObject curGrp = (JSONObject) groupJson.get(i);
+        for (int i = 0; i < roleJson.length(); ++i) {
+            JSONObject curGrp = (JSONObject) roleJson.get(i);
             JSONArray curUsrs = (JSONArray) curGrp.get("users");
             for (int j = 0; j < curUsrs.length(); ++j) {
                 encounteredUsersInGroups.add((String) curUsrs.get(j));
@@ -272,14 +272,14 @@ public class UsersGroupsControllerTest {
 
         // Actually test
 
-        // Every users in groups should exist
+        // Every users in roles should exist
         for (String user : encounteredUsersInGroups) {
-            collector.checkThat(user + " is not in the expected users, but is member of groups",
+            collector.checkThat(user + " is not in the expected users, but is member of roles",
                     encounteredUsers.contains(user), Matchers.equalTo(true));
         }
-        // Every users should be affected to at least one group
+        // Every users should be affected to at least one role
         for (String user : encounteredUsers) {
-            collector.checkThat(user + " is not in any groups",
+            collector.checkThat(user + " is not in any roles",
                     encounteredUsersInGroups.contains(user), Matchers.equalTo(true));
         }
 
@@ -296,34 +296,34 @@ public class UsersGroupsControllerTest {
         // This test needs to run onto a real LDAP
         assumeTrue(realLdapActivated);
 
-        // first, ensures the following group does not exist
+        // first, ensures the following role does not exist
         try {
-            groupDao.delete(TEST_GROUP_NAME);
+            roleDao.delete(TEST_GROUP_NAME);
         } catch (NameNotFoundException e) {
             LogFactory.getLog(this.getClass()).info(TEST_GROUP_NAME + " does not exist in the LDAP tree, it is safe to create it");
         }
         // Then creates it
-        Group testGrp = GroupFactory.create(TEST_GROUP_NAME, "sample group");
+        Group testGrp = GroupFactory.create(TEST_GROUP_NAME, "sample role");
         testGrp.addUser("uid=testadmin,ou=users," + basedn);
         testGrp.addUser("uid=testuser,ou=users," + basedn);
-        groupDao.insert(testGrp);
+        roleDao.insert(testGrp);
 
-        // Retrieves the saved group
-        Group retrievedGrp = groupDao.findByCommonName(TEST_GROUP_NAME);
+        // Retrieves the saved role
+        Group retrievedGrp = roleDao.findByCommonName(TEST_GROUP_NAME);
 
         collector.checkThat("Group should have contained 2 users", retrievedGrp.getUserList().size(), equalTo(2));
 
-        // Then modifies the group desc
-        retrievedGrp.setDescription("sample group with updated desc");
-        groupDao.update(TEST_GROUP_NAME, retrievedGrp);
+        // Then modifies the role desc
+        retrievedGrp.setDescription("sample role with updated desc");
+        roleDao.update(TEST_GROUP_NAME, retrievedGrp);
 
-        Group retrievedGrp2 = groupDao.findByCommonName(TEST_GROUP_NAME);
+        Group retrievedGrp2 = roleDao.findByCommonName(TEST_GROUP_NAME);
 
         // should still contain 2 users
         collector.checkThat("Group should have contained 2 users", retrievedGrp.getUserList().size(), equalTo(2));
 
-        // Actually deletes the group
-        groupDao.delete(TEST_GROUP_NAME);
+        // Actually deletes the role
+        roleDao.delete(TEST_GROUP_NAME);
 
     }
 }

@@ -306,7 +306,7 @@ public class OrgsController {
      * - initial map zoom
      * - ows service to retrieve area geometry 'url'
      * - attribute to use as label 'value'
-     * - attribute to use to group area 'group'
+     * - attribute to use to role area 'role'
      * - attribute to use as identifier 'key'
      *
      * Ex :
@@ -315,7 +315,7 @@ public class OrgsController {
      *   "areas" : { "url": "http://sdi.georchestra.org/geoserver/....;",
      *               "key": "insee_code",
      *               "value": "commune_name",
-     *               "group": "department_name"}
+     *               "role": "department_name"}
      * }
      */
 
@@ -335,7 +335,7 @@ public class OrgsController {
         areas.put("url", this.georConfig.getProperty("AreasUrl"));
         areas.put("key", this.georConfig.getProperty("AreasKey"));
         areas.put("value", this.georConfig.getProperty("AreasValue"));
-        areas.put("group", this.georConfig.getProperty("AreasGroup"));
+        areas.put("role", this.georConfig.getProperty("AreasGroup"));
         res.put("areas", areas);
         ResponseUtil.buildResponse(response, res.toString(4), HttpServletResponse.SC_OK);
     }

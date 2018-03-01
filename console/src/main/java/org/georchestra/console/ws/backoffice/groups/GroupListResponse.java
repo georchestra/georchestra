@@ -17,7 +17,7 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.console.ws.backoffice.groups;
+package org.georchestra.console.ws.backoffice.roles;
 
 import java.util.List;
 
@@ -30,7 +30,7 @@ import org.json.JSONObject;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * Returns the list of users / groups membership.
+ * Returns the list of users / roles membership.
  *
  * @author Mauricio Pazos
  *
@@ -38,26 +38,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 final class GroupListResponse {
 
-	private List<Group> groupList;
+	private List<Group> roleList;
 	private ProtectedUserFilter filter;
 
 	public GroupListResponse(List<Group> list, ProtectedUserFilter filter) {
-		this.groupList = list;
+		this.roleList = list;
 		this.filter = filter;
 	}
 	
 	public JSONArray toJsonArray() throws JSONException {
 		JSONArray jsonGroupArray = new JSONArray();
-    	for (Group group: this.groupList) {
+    	for (Group role: this.roleList) {
 
     		JSONObject jsonGroup = new JSONObject();
 
-    		jsonGroup.put(GroupSchema.COMMON_NAME_KEY, group.getName());
+    		jsonGroup.put(GroupSchema.COMMON_NAME_KEY, role.getName());
 
-    		jsonGroup.put(GroupSchema.DESCRIPTION_KEY, group.getDescription());
+    		jsonGroup.put(GroupSchema.DESCRIPTION_KEY, role.getDescription());
 
     		// adds the list of users
-    		List<String> list = filter.filterStringList(group.getUserList());
+    		List<String> list = filter.filterStringList(role.getUserList());
 
     		JSONArray membersArray = new JSONArray();
 

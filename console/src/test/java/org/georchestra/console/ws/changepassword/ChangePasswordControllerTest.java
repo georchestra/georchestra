@@ -43,15 +43,15 @@ public class ChangePasswordControllerTest {
     public void setUp() {
         ldapTemplate = Mockito.mock(LdapTemplate.class);
 
-        GroupDaoImpl groupDao = new GroupDaoImpl();
-        groupDao.setLdapTemplate(ldapTemplate);
+        GroupDaoImpl roleDao = new GroupDaoImpl();
+        roleDao.setLdapTemplate(ldapTemplate);
 
         OrgsDao orgsDao = new OrgsDao();
         orgsDao.setLdapTemplate(ldapTemplate);
         orgsDao.setUserSearchBaseDN("ou=users");
         orgsDao.setOrgsSearchBaseDN("ou=orgs");
 
-        AccountDaoImpl dao = new AccountDaoImpl(ldapTemplate, groupDao, orgsDao);
+        AccountDaoImpl dao = new AccountDaoImpl(ldapTemplate, roleDao, orgsDao);
         dao.setUserSearchBaseDN("ou=users");
         ctrl = new ChangePasswordFormController(dao);
 
