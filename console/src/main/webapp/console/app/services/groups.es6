@@ -24,7 +24,7 @@ angular.module('admin_console')
     'PENDING',
     'MOD_ANALYTICS',
     'MOD_EXTRACTORAPP',
-    'MOD_LDAPADMIN',
+    'SUPERUSER',
     'GN_ADMIN',
     'GN_EDITOR',
     'GN_REVIEWER',

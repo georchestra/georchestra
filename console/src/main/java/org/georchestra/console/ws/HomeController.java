@@ -80,7 +80,7 @@ public class HomeController {
             String redirectUrl;
             List<String> rolesList = Arrays.asList(roles.split(";"));
 
-            if (rolesList.contains("ROLE_MOD_LDAPADMIN")) {
+            if (rolesList.contains("ROLE_SUPERUSER")) {
                 redirectUrl = "/console/";
             } else {
                 redirectUrl = "/account/userdetails";

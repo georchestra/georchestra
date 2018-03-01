@@ -13,7 +13,7 @@ start_month=2015-10-20
 end_month=2016-12-27
 
 user=testuser
-group=MOD_LDAPADMIN
+group=SUPERUSER
 org=psc
 
 

@@ -161,10 +161,10 @@ So final list of protected users will be :
   * hidden_admin_user_trash
   * hidden_admin_user_backup
 
-Private UI
+Console UI
 ----------
 
-The private UI will be available at /console for members of the MOD_LDAPADMIN group.
+The console UI will be available at /console to users having the SUPERUSER role.
 
 See the wireframe in the current folder.
 

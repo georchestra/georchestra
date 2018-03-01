@@ -104,7 +104,7 @@ if(sec_roles != null) {
         if (roles[i].equals("ROLE_MOD_EXTRACTORAPP")) {
             extractor = true;
         }
-        if (roles[i].equals("ROLE_MOD_LDAPADMIN")) {
+        if (roles[i].equals("ROLE_SUPERUSER")) {
             admin = true;
             console = true;
         }

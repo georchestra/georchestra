@@ -72,7 +72,7 @@ public class HomeControllerTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        request.addHeader("sec-roles", "ROLE_MOD_LDAPADMIN");
+        request.addHeader("sec-roles", "ROLE_SUPERUSER");
         ctrl.root(request, response);
 
         assertTrue(response.getRedirectedUrl().endsWith("/console/"));

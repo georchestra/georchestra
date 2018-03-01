@@ -7,9 +7,9 @@ SET client_min_messages = warning;
 
 SET search_path = extractorapp, pg_catalog;
 
-INSERT INTO extractor_log (id, creation_date, duration, username, roles, org, request_id) VALUES (1, NOW() - (random() * '1 month'::interval), '00:00:07.548485', 'testadmin', '{ROLE_MOD_LDAPADMIN,ROLE_MOD_EXTRACTOR_APP}', 'psc', '6af2cec3-a828-4dee-8f4b-4e1dc61808f0');
-INSERT INTO extractor_log (id, creation_date, duration, username, roles, org, request_id) VALUES (2, NOW() - (random() * '1 month'::interval), '00:00:11.398534', 'testuser', '{ROLE_MOD_LDAPADMIN,ROLE_MOD_EXTRACTOR_APP}', 'psc', 'ff702dac-5159-4f73-b2eb-0681385bf49b');
-INSERT INTO extractor_log (id, creation_date, duration, username, roles, org, request_id) VALUES (3, NOW() - (random() * '1 month'::interval), '00:00:09.684684', 'testeditor', '{ROLE_MOD_LDAPADMIN,ROLE_MOD_EXTRACTOR_APP}', 'psc', 'de4168ea-4896-d5ef-7789-89a74b897ce9');
+INSERT INTO extractor_log (id, creation_date, duration, username, roles, org, request_id) VALUES (1, NOW() - (random() * '1 month'::interval), '00:00:07.548485', 'testadmin', '{ROLE_SUPERUSER,ROLE_MOD_EXTRACTOR_APP}', 'psc', '6af2cec3-a828-4dee-8f4b-4e1dc61808f0');
+INSERT INTO extractor_log (id, creation_date, duration, username, roles, org, request_id) VALUES (2, NOW() - (random() * '1 month'::interval), '00:00:11.398534', 'testuser', '{ROLE_SUPERUSER,ROLE_MOD_EXTRACTOR_APP}', 'psc', 'ff702dac-5159-4f73-b2eb-0681385bf49b');
+INSERT INTO extractor_log (id, creation_date, duration, username, roles, org, request_id) VALUES (3, NOW() - (random() * '1 month'::interval), '00:00:09.684684', 'testeditor', '{ROLE_SUPERUSER,ROLE_MOD_EXTRACTOR_APP}', 'psc', 'de4168ea-4896-d5ef-7789-89a74b897ce9');
 SELECT pg_catalog.setval('extractor_log_id_seq', 3, true);
 
 INSERT INTO extractor_layer_log (id, extractor_log_id, projection, resolution, format, bbox, owstype, owsurl, layer_name, is_successful) VALUES (1, 1, 'EPSG:2154', 10, 'shp', '0103000020E610000001000000050000002A76A3D255B500405ECCD7BDC37D49402A76A3D255B500406D650596BB7F4940B93F9115FFF500406D650596BB7F4940B93F9115FFF500405ECCD7BDC37D49402A76A3D255B500405ECCD7BDC37D4940', 'WFS', 'https://sdi.georchestra.org/geoserver/wfs?', 'test:adresse_dep59', true);
