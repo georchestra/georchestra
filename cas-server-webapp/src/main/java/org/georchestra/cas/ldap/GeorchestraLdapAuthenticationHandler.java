@@ -68,15 +68,15 @@ public class GeorchestraLdapAuthenticationHandler extends LdapAuthenticationHand
         this.baseDn = baseDn;
     }
 
-    public void setroleSearchFilter(String roleSearchFilter) {
+    public void setRoleSearchFilter(String roleSearchFilter) {
         this.roleSearchFilter = roleSearchFilter;
     }
 
-    public void setroleRoleAttribute(String roleRoleAttribute) {
+    public void setRoleRoleAttribute(String roleRoleAttribute) {
         this.roleRoleAttribute = roleRoleAttribute;
     }
 
-    public void setpendingRoleName(String pendingRoleName) {
+    public void setPendingRoleName(String pendingRoleName) {
         this.pendingRoleName = pendingRoleName;
     }
     /**
