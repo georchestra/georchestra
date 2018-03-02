@@ -48,7 +48,7 @@
       <div class="panel-body" ng-if="user.tab=='roles'">
 
         <h4 translate>role.system</h4>
-        <div class="form-role clearfix">
+        <div class="form-group clearfix">
           <div class="col-sm-6" ng-repeat="role in user.adminRoles">
             <div class="checkbox">
               <label>
@@ -61,7 +61,7 @@
         <hr>
 
         <h4 translate>role.app</h4>
-        <div class="form-role">
+        <div class="form-group">
           <select class="form-control" multiple chosen ng-model="user.user.roles" ng-options="role for role in user.roles"
           data-placeholder="Select roles">
           </select>
@@ -107,13 +107,13 @@
         </label>
 
         <form ng-if="user.compose" class="" ng-init="user.initCompose()">
-          <div class="form-role">
+          <div class="form-group">
             <label for="compose_title" translate>msg.title</label>
             <div>
               <input ng-model="user.compose.subject" class="form-control" id="compose_title" placeholder="{{'msg.title' | translate}}">
             </div>
           </div>
-          <div class="form-role">
+          <div class="form-group">
             <label for="compose_content" translate>msg.content</label>
             <div id="compose_content"></div>
           </div>

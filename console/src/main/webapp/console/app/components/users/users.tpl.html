@@ -57,14 +57,14 @@
       <div class="panel-body">
         <form class="form-horizontal" name="roleForm">
 
-          <div class="form-role" ng-class="{'has-error': roleForm.newRoleName.$invalid && roleForm.newRoleName.$dirty}">
+          <div class="form-group" ng-class="{'has-error': roleForm.newRoleName.$invalid && roleForm.newRoleName.$dirty}">
             <label for="newRoleName" class="col-sm-4 control-label" translate>users.newRole</label>
             <div class="col-sm-8">
               <input ng-model="users.newRoleName" id="newRoleName" class="form-control" name="newRoleName"
                 placeholder="{{ 'users.newRoleName' | translate}}" validate-role="users.roles"/>
             </div>
           </div>
-          <div class="form-role">
+          <div class="form-group">
             <label for="newRoleDesc" class="col-sm-4 control-label" translate>users.newRoleDesc</label>
             <div class="col-sm-8">
               <textarea ng-model="users.newRoleDesc" id="newRoleDesc" class="form-control" Desc="newRoleDesc"></textarea>
