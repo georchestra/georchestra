@@ -50,9 +50,9 @@ public class GeorchestraLdapAuthenticationHandler extends LdapAuthenticationHand
     private String adminUser;
     private String adminPassword;
     private String baseDn;
-    private String groupSearchFilter;
-    private String groupRoleAttribute;
-    private String pendingGroupName;
+    private String roleSearchFilter;
+    private String roleRoleAttribute;
+    private String pendingRoleName;
 
     private DefaultConnectionFactory connectionFactory;
 
@@ -68,16 +68,16 @@ public class GeorchestraLdapAuthenticationHandler extends LdapAuthenticationHand
         this.baseDn = baseDn;
     }
 
-    public void setGroupSearchFilter(String groupSearchFilter) {
-        this.groupSearchFilter = groupSearchFilter;
+    public void setroleSearchFilter(String roleSearchFilter) {
+        this.roleSearchFilter = roleSearchFilter;
     }
 
-    public void setGroupRoleAttribute(String groupRoleAttribute) {
-        this.groupRoleAttribute = groupRoleAttribute;
+    public void setroleRoleAttribute(String roleRoleAttribute) {
+        this.roleRoleAttribute = roleRoleAttribute;
     }
 
-    public void setPendingGroupName(String pendingGroupName) {
-        this.pendingGroupName = pendingGroupName;
+    public void setpendingRoleName(String pendingRoleName) {
+        this.pendingRoleName = pendingRoleName;
     }
     /**
      * Creates a new authentication handler that delegates to the given authenticator.
@@ -88,16 +88,16 @@ public class GeorchestraLdapAuthenticationHandler extends LdapAuthenticationHand
                                                 @NotNull String adminUser,
                                                 @NotNull String adminPassword,
                                                 @NotNull String baseDn,
-                                                @NotNull String groupSearchFilter,
-                                                @NotNull String groupRoleAttribute,
-                                                @NotNull String pendingGroupName) {
+                                                @NotNull String roleSearchFilter,
+                                                @NotNull String roleRoleAttribute,
+                                                @NotNull String pendingRoleName) {
         super(authenticator);
         this.adminUser = adminUser;
         this.adminPassword = adminPassword;
         this.baseDn = baseDn;
-        this.groupSearchFilter = groupSearchFilter;
-        this.groupRoleAttribute = groupRoleAttribute;
-        this.pendingGroupName = pendingGroupName;
+        this.roleSearchFilter = roleSearchFilter;
+        this.roleRoleAttribute = roleRoleAttribute;
+        this.pendingRoleName = pendingRoleName;
     }
 
     @Override
@@ -111,17 +111,17 @@ public class GeorchestraLdapAuthenticationHandler extends LdapAuthenticationHand
             conn.open(bindRequest);
 
             SearchOperation search = new SearchOperation(conn);
-            final String searchFilter = this.groupSearchFilter.replace("{1}", upc.getUsername());
+            final String searchFilter = this.roleSearchFilter.replace("{1}", upc.getUsername());
             SearchResult result = search.execute(
-                    new SearchRequest(this.baseDn, searchFilter, this.groupRoleAttribute)).getResult();
+                    new SearchRequest(this.baseDn, searchFilter, this.roleRoleAttribute)).getResult();
 
             if (result.getEntries().isEmpty()) {
                 throw new AccountException("User is not part of any groups.");
             }
             for (LdapEntry entry : result.getEntries()) {
-                final Collection<String> groupNames = entry.getAttribute(this.groupRoleAttribute).getStringValues();
+                final Collection<String> groupNames = entry.getAttribute(this.roleRoleAttribute).getStringValues();
                 for (String name : groupNames) {
-                    if (name.equals(this.pendingGroupName)) {
+                    if (name.equals(this.pendingRoleName)) {
                         throw new AccountException("User is still a pending user.");
                     }
                 }
