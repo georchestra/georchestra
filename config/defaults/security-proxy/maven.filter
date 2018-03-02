@@ -8,12 +8,12 @@ scheme=@shared.url.scheme@
 ldapUrl=@shared.ldapUrl@
 baseDN=@shared.ldap.baseDn@
 userSearchBaseDN=@shared.ldap.userSearchBaseDN@
-authoritiesBaseDN=@shared.ldap.groupSearchBaseDN@
+authoritiesBaseDN=@shared.ldap.roleSearchBaseDN@
 ldapAdminDn=@shared.ldap.admin.dn@
 ldap.admin.password=@shared.ldap.admin.password@
-authoritiesBaseDN=@shared.ldap.groupSearchBaseDN@
-groupRoleAttribute=@shared.ldap.groupRoleAttribute@
-groupSearchFilter=@shared.ldap.groupSearchFilter@
+authoritiesBaseDN=@shared.ldap.roleSearchBaseDN@
+roleRoleAttribute=@shared.ldap.roleRoleAttribute@
+roleSearchFilter=@shared.ldap.roleSearchFilter@
 orgsSearchBaseDN=@shared.ldap.orgsSearchBaseDN@
 
 cas.public.host=@shared.server.name@

@@ -157,7 +157,7 @@
     <bean id="ldapAuthoritiesPopulator" class="org.springframework.security.ldap.userdetails.DefaultLdapAuthoritiesPopulator">
         <constructor-arg ref="contextSource" />
         <constructor-arg value="${authoritiesBaseDN}" />
-        <property name="groupSearchFilter" value="${groupSearchFilter}"/>
+        <property name="roleSearchFilter" value="${roleSearchFilter}"/>
         <property name="rolePrefix" value="ROLE_"/>
         <property name="searchSubtree" value="true"/>
         <property name="convertToUpperCase" value="true"/>

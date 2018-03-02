@@ -9,7 +9,7 @@ public class WaitForLdap {
     private String useStartTLS;
     private String username;
     private String password;
-    private String groupSearchBaseDn;
+    private String roleSearchBaseDn;
 
     public void test() {
         ConnectionConfig connConfig = new ConnectionConfig(this.getLdapUrl());
@@ -21,12 +21,12 @@ public class WaitForLdap {
         for(int tryCount = 0; tryCount < 300; tryCount++) {
             try {
                 SearchExecutor executor = new SearchExecutor();
-                executor.setBaseDn(this.getGroupSearchBaseDn());
+                executor.setBaseDn(this.getRoleSearchBaseDn());
                 SearchResult result = executor.search(cf, "(uid=*)").getResult();
                 System.out.println("--------------------------------> LDAP OK <------------------------------------");
                 break;
             } catch (LdapException e) {
-                System.out.println("-------------> LDAP Not Ready waiting... on " + ldapUrl + " with login : " + username + " Searching entry with '(uid=*)' in "  + this.getGroupSearchBaseDn()  + " (" + tryCount + "/300) <---------------");
+                System.out.println("-------------> LDAP Not Ready waiting... on " + ldapUrl + " with login : " + username + " Searching entry with '(uid=*)' in "  + this.getRoleSearchBaseDn()  + " (" + tryCount + "/300) <---------------");
                 try { Thread.sleep(1000l); } catch (InterruptedException e1) {}
             }
 
@@ -73,11 +73,11 @@ public class WaitForLdap {
         return password;
     }
 
-    public void setGroupSearchBaseDn(String groupSearchBaseDn) {
-        this.groupSearchBaseDn = groupSearchBaseDn;
+    public void setRoleSearchBaseDn(String roleSearchBaseDn) {
+        this.roleSearchBaseDn = roleSearchBaseDn;
     }
 
-    public String getGroupSearchBaseDn() {
-        return groupSearchBaseDn;
+    public String getRoleSearchBaseDn() {
+        return roleSearchBaseDn;
     }
 }
