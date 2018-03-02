@@ -6,14 +6,14 @@
         © <a href="http://openstreetmap.org" rel="noopener noreferrer" target="blank_">Openstreetmap</a>
         contributors.
       </div>
-      <div class="btn-role selection">
-        <select ng-change="area.selectBy()" ng-model="area.role" class="btn btn-default btn-sm">
+      <div class="btn-group selection">
+        <select ng-change="area.selectBy()" ng-model="area.group" class="btn btn-default btn-sm">
           <option value="" selected disabled class="glyphicon glyphicon-ok-circle" translate>
             area.selection
           </option>
-          <option value="all" class="alternate">— {{ 'area.all' | translate }} —</option>
-          <option value="{{role}}" ng-repeat="role in area.roles">{{role}}</option>
-          <option value="none" class="alternate">— {{ 'area.none' | translate }} —</option>
+          <option value="all" class="alternate">— {{ 'area.all' | translate }} —</option>
+          <option value="{{group}}" ng-repeat="group in area.groups">{{group}}</option>
+          <option value="none" class="alternate">— {{ 'area.none' | translate }} —</option>
         </select>
         <button class="btn btn-default btn-sm ol-bbox" title="{{ 'area.selectByBBOX' | translate }}"
           ng-click="area.selectBBOX()" ng-class="{active: area.draw}" type="button" translate>
