@@ -116,11 +116,11 @@ public class GeorchestraLdapAuthenticationHandler extends LdapAuthenticationHand
                     new SearchRequest(this.baseDn, searchFilter, this.roleRoleAttribute)).getResult();
 
             if (result.getEntries().isEmpty()) {
-                throw new AccountException("User is not part of any groups.");
+                throw new AccountException("User has no roles.");
             }
             for (LdapEntry entry : result.getEntries()) {
-                final Collection<String> groupNames = entry.getAttribute(this.roleRoleAttribute).getStringValues();
-                for (String name : groupNames) {
+                final Collection<String> roleNames = entry.getAttribute(this.roleRoleAttribute).getStringValues();
+                for (String name : roleNames) {
                     if (name.equals(this.pendingRoleName)) {
                         throw new AccountException("User is still a pending user.");
                     }
