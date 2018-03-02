@@ -411,7 +411,7 @@ section {
 // DATE
 date {
   display : flex;
-  .input-role {
+  .input-group {
     width        : 16em;
     margin-right : 1em;
   }
@@ -444,7 +444,7 @@ date {
       select {
         max-width: 50%;
       }
-      .input-role {
+      .input-group {
         max-width: 15em;
       }
       input {

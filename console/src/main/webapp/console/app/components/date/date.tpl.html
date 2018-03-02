@@ -1,6 +1,6 @@
-<div class="input-daterange input-role" ng-show="date.option.value=='custom'">
+<div class="input-daterange input-group" ng-show="date.option.value=='custom'">
   <input type="text" class="form-control" name="start" ng-model="date.model.start" />
-  <span class="input-role-addon">{{ 'date.to' | translate }}</span>
+  <span class="input-group-addon">{{ 'date.to' | translate }}</span>
   <input type="text" class="form-control" name="end"  ng-model="date.model.end"/>
 </div>
 <select class="form-control" ng-class="{ 'custom' : date.option.value=='custom'}"
