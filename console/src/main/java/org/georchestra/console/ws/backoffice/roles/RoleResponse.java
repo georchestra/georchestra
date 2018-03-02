@@ -17,14 +17,14 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.console.ws.backoffice.groups;
+package org.georchestra.console.ws.backoffice.roles;
 
 import java.io.IOException;
 import java.util.List;
 
 import org.georchestra.console.ds.ProtectedUserFilter;
-import org.georchestra.console.dto.Group;
-import org.georchestra.console.dto.GroupSchema;
+import org.georchestra.console.dto.Role;
+import org.georchestra.console.dto.RoleSchema;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,27 +34,27 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @author Mauricio Pazos
  *
  */
-public class GroupResponse {
+public class RoleResponse {
 
-	private Group group;
+	private Role role;
 	private ProtectedUserFilter filter;
 
-	public GroupResponse(Group group, ProtectedUserFilter filter) {
+	public RoleResponse(Role role, ProtectedUserFilter filter) {
 
-		this.group = group;
+		this.role = role;
 		this.filter = filter;
 	}
 	
 	public String asJsonString() throws IOException {
 		try{
-			JSONObject jsonGroup = new JSONObject();
+			JSONObject jsonRole = new JSONObject();
 			
-			jsonGroup.put(GroupSchema.COMMON_NAME_KEY, this.group.getName());
+			jsonRole.put(RoleSchema.COMMON_NAME_KEY, this.role.getName());
 
-			jsonGroup.put(GroupSchema.DESCRIPTION_KEY, this.group.getDescription());
+			jsonRole.put(RoleSchema.DESCRIPTION_KEY, this.role.getDescription());
 
 			// adds the list of users
-			List<String> list = filter.filterStringList(this.group.getUserList());
+			List<String> list = filter.filterStringList(this.role.getUserList());
 
 			JSONArray membersArray = new JSONArray();
 			int j = 0;
@@ -63,9 +63,9 @@ public class GroupResponse {
 				membersArray.put(j, userUid);
 				j++;
 			}
-			jsonGroup.put("users", membersArray);
+			jsonRole.put("users", membersArray);
 			
-			return jsonGroup.toString();
+			return jsonRole.toString();
 			
 		} catch (JSONException ex){
 

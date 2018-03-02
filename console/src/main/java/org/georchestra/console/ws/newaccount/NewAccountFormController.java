@@ -33,7 +33,7 @@ import org.georchestra.console.ds.DuplicatedUidException;
 import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountFactory;
-import org.georchestra.console.dto.Group;
+import org.georchestra.console.dto.Role;
 import org.georchestra.console.dto.Org;
 import org.georchestra.console.dto.OrgExt;
 import org.georchestra.console.mailservice.MailService;
@@ -134,8 +134,8 @@ public final class NewAccountFormController {
 	}
 
 	/**
-	 * Creates a new account in ldap. If the application was configured as "moderator singnup" the new account is added in the PENDING group,
-	 * in other case, it will be inserted in the USER group
+	 * Creates a new account in ldap. If the application was configured as "moderator singnup" the new account is added in the PENDING role,
+	 * in other case, it will be inserted in the USER role
 	 *
 	 *
 	 * @param formBean
@@ -269,9 +269,9 @@ public final class NewAccountFormController {
 			if(!formBean.getOrg().equals("-"))
 				account.setOrg(formBean.getOrg());
 
-			String groupID = this.moderator.moderatedSignup() ? Group.PENDING : Group.USER;
+			String roleID = this.moderator.moderatedSignup() ? Role.PENDING : Role.USER;
 
-			this.accountDao.insert(account, groupID, request.getHeader("sec-username"));
+			this.accountDao.insert(account, roleID, request.getHeader("sec-username"));
 
 			final ServletContext servletContext = request.getSession().getServletContext();
 			if(this.moderator.moderatedSignup() ){

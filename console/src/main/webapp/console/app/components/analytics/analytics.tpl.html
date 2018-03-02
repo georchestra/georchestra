@@ -1,16 +1,16 @@
 <section class="analytics">
 
-  <date class="stats-conf" model="analytics.date" callback="analytics.load(analytics.group)"></date>
+  <date class="stats-conf" model="analytics.date" callback="analytics.load(analytics.role)"></date>
 
-  <select class="form-control stats-conf" ng-model="analytics.group" ng-change="analytics.setGroup()"
-    ng-options="group.cn as group.label for group in analytics.groups" chosen>
+  <select class="form-control stats-conf" ng-model="analytics.role" ng-change="analytics.setRole()"
+    ng-options="role.cn as role.label for role in analytics.roles" chosen>
   </select>
 
   <h3>
     <span translate>analytics.title</span>
-    <span ng-if="analytics.group != 'all'">
+    <span ng-if="analytics.role != 'all'">
       <span translate>for</span>
-      {{analytics.group}}
+      {{analytics.role}}
     </span>
   </h3>
 

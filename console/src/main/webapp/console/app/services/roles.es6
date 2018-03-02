@@ -1,6 +1,6 @@
 angular.module('admin_console')
-.factory('Group', ['$resource', 'LDAP_BASE_URI', ($resource, baseUri) =>
-  $resource(baseUri + 'groups/:id', {}, {
+.factory('Role', ['$resource', 'LDAP_BASE_URI', ($resource, baseUri) =>
+  $resource(baseUri + 'roles/:id', {}, {
     query: {
       cache: true,
       method: 'GET',
@@ -18,8 +18,8 @@ angular.module('admin_console')
       method: 'DELETE'
     }
   })
-]).factory('groupAdminList', [ () => {
-  const adminGroups = [
+]).factory('roleAdminList', [ () => {
+  const adminRoles = [
     'ADMINISTRATOR',
     'PENDING',
     'MOD_ANALYTICS',
@@ -31,7 +31,7 @@ angular.module('admin_console')
     'USER',
     'TEMPORARY'
   ]
-  return () => adminGroups
-}]).factory('groupAdminFilter', [ 'groupAdminList', (groupAdminList) =>
-  (group) => groupAdminList().indexOf(group.cn) >= 0
+  return () => adminRoles
+}]).factory('roleAdminFilter', [ 'roleAdminList', (roleAdminList) =>
+  (role) => roleAdminList().indexOf(role.cn) >= 0
 ])

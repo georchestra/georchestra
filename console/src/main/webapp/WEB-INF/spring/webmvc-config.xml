@@ -32,11 +32,11 @@
   <!--  Then the one from datadir with prio  1 -->
   <context:property-placeholder location="file:${georchestra.datadir}/console/console.properties" ignore-resource-not-found="true" ignore-unresolvable="true" order="1"/>
 
- <!--  First provided protectedgroups.properties from webapp with prio  2 -->
-  <context:property-placeholder location="/WEB-INF/spring/protectedgroups.properties" ignore-resource-not-found="true" ignore-unresolvable="true" order="2"/>
+ <!--  First provided protectedroles.properties from webapp with prio  2 -->
+  <context:property-placeholder location="/WEB-INF/spring/protectedroles.properties" ignore-resource-not-found="true" ignore-unresolvable="true" order="2"/>
 
   <!--  Then the one from datadir with prio  1 -->
-  <context:property-placeholder location="file:${georchestra.datadir}/console/protectedgroups.properties" ignore-resource-not-found="true" ignore-unresolvable="true" order="1"/>
+  <context:property-placeholder location="file:${georchestra.datadir}/console/protectedroles.properties" ignore-resource-not-found="true" ignore-unresolvable="true" order="1"/>
 
 
   <context:component-scan base-package="org.georchestra.console"/>
@@ -74,11 +74,11 @@
     <constructor-arg ref="contextSource"/>
   </bean>
 
-  <bean id="groupDao" class="org.georchestra.console.ds.GroupDaoImpl">
+  <bean id="roleDao" class="org.georchestra.console.ds.RoleDaoImpl">
     <property name="ldapTemplate" ref="ldapTemplate"/>
-    <property name="uniqueNumberField" value="${groupUniqueNumberField}"/>
+    <property name="uniqueNumberField" value="${roleUniqueNumberField}"/>
     <property name="userSearchBaseDN" value="${userSearchBaseDN}"/>
-    <property name="groupSearchBaseDN" value="${groupSearchBaseDN}"/>
+    <property name="roleSearchBaseDN" value="${roleSearchBaseDN}"/>
   </bean>
 
   <bean id="orgsDao" class="org.georchestra.console.ds.OrgsDao">
@@ -92,7 +92,7 @@
 
   <bean id="accountDao" class="org.georchestra.console.ds.AccountDaoImpl" init-method="init">
     <constructor-arg ref="ldapTemplate"/>
-    <constructor-arg ref="groupDao"/>
+    <constructor-arg ref="roleDao"/>
     <constructor-arg ref="orgsDao"/>
     <property name="uniqueNumberField" value="${accountUniqueNumberField}"/>
     <property name="userSearchBaseDN" value="${userSearchBaseDN}"/>
@@ -108,11 +108,11 @@
     </property>
   </bean>
   
-  <bean class="org.georchestra.console.ws.backoffice.groups.GroupProtected">
-    <property name="listOfprotectedGroups">
-      <description>Comma separated list of one or more protected Groups</description>
-        <!-- Groups are defined as a comma separated list of Groups name and can be override in data dir with "protectedGroupList" key-->
-      <value>${protectedGroupList:ADMINISTRATOR,USER,GN_.*,MOD_.*}</value>
+  <bean class="org.georchestra.console.ws.backoffice.roles.RoleProtected">
+    <property name="listOfprotectedRoles">
+      <description>Comma separated list of one or more protected Roles</description>
+        <!-- Roles are defined as a comma separated list of Roles name and can be override in data dir with "protectedRoleList" key-->
+      <value>${protectedRoleList:ADMINISTRATOR,USER,GN_.*,MOD_.*}</value>
     </property>
   </bean>
   

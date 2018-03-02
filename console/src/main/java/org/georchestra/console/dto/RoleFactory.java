@@ -20,16 +20,30 @@
 package org.georchestra.console.dto;
 
 /**
- * Defines the name of the group's fields. They are consistent with the LDAP specification.
+ * This factory creates instance of {@link Role}.
+ * 
  * 
  * @author Mauricio Pazos
  *
  */
-public interface GroupSchema {
-	
-	public static final String COMMON_NAME_KEY = "cn"; // group name
-	public static final String DESCRIPTION_KEY = "description";
-	public static final String MEMBER_KEY = "member";
+public class RoleFactory {
 
+	private RoleFactory(){}
+	
+	
+	public static Role create() {
+		
+		return new RoleImpl();
+	}
+
+	public static Role create(String commonName, String description) {
+		
+		Role g = new RoleImpl();
+		
+		g.setName(commonName);
+		g.setDescription(description);
+		
+		return g;
+	}
 
 }

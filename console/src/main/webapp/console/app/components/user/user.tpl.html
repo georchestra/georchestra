@@ -45,14 +45,14 @@
 
       </div>
 
-      <div class="panel-body" ng-if="user.tab=='groups'">
+      <div class="panel-body" ng-if="user.tab=='roles'">
 
-        <h4 translate>group.system</h4>
+        <h4 translate>role.system</h4>
         <div class="form-group clearfix">
-          <div class="col-sm-6" ng-repeat="group in user.adminGroups">
+          <div class="col-sm-6" ng-repeat="role in user.adminRoles">
             <div class="checkbox">
               <label>
-                <input type="checkbox" ng-model="user.user.adminGroups[group]"> {{::group}}
+                <input type="checkbox" ng-model="user.user.adminRoles[role]"> {{::role}}
               </label>
             </div>
           </div>
@@ -60,10 +60,10 @@
 
         <hr>
 
-        <h4 translate>group.app</h4>
+        <h4 translate>role.app</h4>
         <div class="form-group">
-          <select class="form-control" multiple chosen ng-model="user.user.groups" ng-options="group for group in user.groups"
-          data-placeholder="Select groups">
+          <select class="form-control" multiple chosen ng-model="user.user.roles" ng-options="role for role in user.roles"
+          data-placeholder="Select roles">
           </select>
         </div>
       </div>

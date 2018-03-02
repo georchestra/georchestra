@@ -25,19 +25,19 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * A group and its users.
+ * A role and its users.
  *
  * @author Mauricio Pazos
  *
  */
-class GroupImpl implements Group, Comparable<Group> {
+class RoleImpl implements Role, Comparable<Role> {
 
 	private String name;
 	private List<String> userList = new LinkedList<String>();
 	private String description;
 
 	/* (non-Javadoc)
-	 * @see org.georchestra.console.dto.Group#getCommonName()
+	 * @see org.georchestra.console.dto.Role#getCommonName()
 	 */
 	@Override
 	public String getName() {
@@ -45,7 +45,7 @@ class GroupImpl implements Group, Comparable<Group> {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.georchestra.console.dto.Group#setCommonName(java.lang.String)
+	 * @see org.georchestra.console.dto.Role#setCommonName(java.lang.String)
 	 */
 	@Override
 	public void setName(String cn) {
@@ -53,7 +53,7 @@ class GroupImpl implements Group, Comparable<Group> {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.georchestra.console.dto.Group#getMemberUid()
+	 * @see org.georchestra.console.dto.Role#getMemberUid()
 	 */
 	@Override
 	public List<String> getUserList() {
@@ -61,7 +61,7 @@ class GroupImpl implements Group, Comparable<Group> {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.georchestra.console.dto.Group#setMemberUid(java.util.List)
+	 * @see org.georchestra.console.dto.Role#setMemberUid(java.util.List)
 	 */
 	@Override
 	public void setUserList(List<String> userUidList) {
@@ -76,7 +76,7 @@ class GroupImpl implements Group, Comparable<Group> {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.georchestra.console.dto.Group#addMemberUid(java.lang.String)
+	 * @see org.georchestra.console.dto.Role#addMemberUid(java.lang.String)
 	 */
 	@Override
 	public void addUser(String userUid) {
@@ -98,7 +98,7 @@ class GroupImpl implements Group, Comparable<Group> {
 
 	@Override
 	public String toString() {
-		return "GroupImpl [name=" + name + ", userList=" + userList
+		return "RoleImpl [name=" + name + ", userList=" + userList
 				+ ", description=" + description
 				+ "]";
 	}
@@ -127,10 +127,10 @@ class GroupImpl implements Group, Comparable<Group> {
 	    if (obj == null) {
 		    return false;
 	    }
-	    if (!(obj instanceof GroupImpl)) {
+	    if (!(obj instanceof RoleImpl)) {
 		    return false;
 	    }
-	    GroupImpl other = (GroupImpl) obj;
+	    RoleImpl other = (RoleImpl) obj;
 	    if (name == null) {
 		    if (other.name != null) {
 			    return false;
@@ -142,7 +142,7 @@ class GroupImpl implements Group, Comparable<Group> {
     }
 
 	@Override
-    public int compareTo(Group o) {
+    public int compareTo(Role o) {
 
 	    return this.name.compareTo(o.getName());
     }

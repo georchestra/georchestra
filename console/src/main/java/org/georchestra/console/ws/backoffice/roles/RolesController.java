@@ -17,7 +17,7 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.console.ws.backoffice.groups;
+package org.georchestra.console.ws.backoffice.roles;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -33,12 +33,12 @@ import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.DataServiceException;
 import org.georchestra.console.ds.DuplicatedCommonNameException;
-import org.georchestra.console.ds.GroupDao;
+import org.georchestra.console.ds.RoleDao;
 import org.georchestra.console.ds.ProtectedUserFilter;
 import org.georchestra.console.dto.Account;
-import org.georchestra.console.dto.Group;
-import org.georchestra.console.dto.GroupFactory;
-import org.georchestra.console.dto.GroupSchema;
+import org.georchestra.console.dto.Role;
+import org.georchestra.console.dto.RoleFactory;
+import org.georchestra.console.dto.RoleSchema;
 import org.georchestra.console.ws.backoffice.users.UserRule;
 import org.georchestra.console.ws.backoffice.utils.RequestUtil;
 import org.georchestra.console.ws.backoffice.utils.ResponseUtil;
@@ -55,7 +55,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
- * Web Services to maintain the Groups information.
+ * Web Services to maintain the Roles information.
  *
  * @author Mauricio Pazos
  *
@@ -63,12 +63,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 
-public class GroupsController {
+public class RolesController {
 
-	private static final Log LOG = LogFactory.getLog(GroupsController.class.getName());
+	private static final Log LOG = LogFactory.getLog(RolesController.class.getName());
 
 	private static final String BASE_MAPPING = "/private";
-	private static final String BASE_RESOURCE = "groups";
+	private static final String BASE_RESOURCE = "roles";
 	private static final String REQUEST_MAPPING = BASE_MAPPING + "/" + BASE_RESOURCE;
 
 
@@ -78,14 +78,14 @@ public class GroupsController {
 
 	private static final String USER_NOT_FOUND = "user_not_found";
 
-	public static final String VIRTUAL_TEMPORARY_GROUP_NAME = "TEMPORARY";
-	private static final String VIRTUAL_TEMPORARY_GROUP_DESCRIPTION = "Virtual group that contains all temporary users";
+	public static final String VIRTUAL_TEMPORARY_ROLE_NAME = "TEMPORARY";
+	private static final String VIRTUAL_TEMPORARY_ROLE_DESCRIPTION = "Virtual role that contains all temporary users";
 
 
 	@Autowired
 	private AccountDao accountDao;
 
-	private GroupDao groupDao;
+	private RoleDao roleDao;
 	private ProtectedUserFilter filter;
 
         /**
@@ -108,13 +108,13 @@ public class GroupsController {
 	}
 
 	@Autowired
-	public GroupsController( GroupDao dao, UserRule userRule){
-		this.groupDao = dao;
+	public RolesController( RoleDao dao, UserRule userRule){
+		this.roleDao = dao;
 		this.filter = new ProtectedUserFilter( userRule.getListUidProtected() );
 	}
 
 	/**
-	 * Returns all groups. Each groups will contains its list of users.
+	 * Returns all roles. Each roles will contains its list of users.
 	 *
 	 * @param request
 	 * @param response
@@ -124,12 +124,12 @@ public class GroupsController {
 	public void findAll( HttpServletRequest request, HttpServletResponse response ) throws IOException{
 
 		try {
-			List<Group> list = this.groupDao.findAll();
+			List<Role> list = this.roleDao.findAll();
 
-			GroupListResponse listResponse = new GroupListResponse(list, this.filter);
+			RoleListResponse listResponse = new RoleListResponse(list, this.filter);
 
 			JSONArray jsonList = listResponse.toJsonArray();
-			jsonList.put(this.extractTemporaryGroupInformation());
+			jsonList.put(this.extractTemporaryRoleInformation());
 
 			ResponseUtil.buildResponse(response, jsonList.toString(4), HttpServletResponse.SC_OK);
 
@@ -146,35 +146,35 @@ public class GroupsController {
 	}
 
 	/**
-	 * Returns the detailed information of the group, with its list of users.
+	 * Returns the detailed information of the role, with its list of users.
 	 *
 	 * <p>
-	 * If the group identifier is not present in the ldap store an {@link IOException} will be throw.
+	 * If the role identifier is not present in the ldap store an {@link IOException} will be throw.
 	 * </p>
 	 * <p>
-	 * URL Format: [BASE_MAPPING]/groups/{cn}
+	 * URL Format: [BASE_MAPPING]/roles/{cn}
 	 * </p>
 	 * <p>
-	 * Example: [BASE_MAPPING]/groups/group44
+	 * Example: [BASE_MAPPING]/roles/role44
 	 * </p>
 	 *
-	 * @param response Returns the detailed information of the group as json
-	 * @param cn Comon name of group
+	 * @param response Returns the detailed information of the role as json
+	 * @param cn Comon name of role
 	 * @throws IOException
 	 */
 	@RequestMapping(value=REQUEST_MAPPING+"/{cn:.+}", method=RequestMethod.GET)
 	public void findByCN(HttpServletResponse response, @PathVariable String cn) throws IOException, JSONException {
 
-		String jsonGroup;
+		String jsonRole;
 
-		if(cn.equals(GroupsController.VIRTUAL_TEMPORARY_GROUP_NAME)) {
-			jsonGroup = this.extractTemporaryGroupInformation().toString();
+		if(cn.equals(RolesController.VIRTUAL_TEMPORARY_ROLE_NAME)) {
+			jsonRole = this.extractTemporaryRoleInformation().toString();
 		} else {
 
-			// searches the group
-			Group group;
+			// searches the role
+			Role role;
 			try {
-				group = this.groupDao.findByCommonName(cn);
+				role = this.roleDao.findByCommonName(cn);
 
 			} catch (NameNotFoundException e) {
 
@@ -193,17 +193,17 @@ public class GroupsController {
 				return;
 			}
 
-			// sets the group data in the response object
-			jsonGroup = (new GroupResponse(group, this.filter)).asJsonString();
+			// sets the role data in the response object
+			jsonRole = (new RoleResponse(role, this.filter)).asJsonString();
 
 		}
-		ResponseUtil.buildResponse(response, jsonGroup, HttpServletResponse.SC_OK);
+		ResponseUtil.buildResponse(response, jsonRole, HttpServletResponse.SC_OK);
 	}
 
-	private JSONObject extractTemporaryGroupInformation() throws JSONException {
+	private JSONObject extractTemporaryRoleInformation() throws JSONException {
 		JSONObject res = new JSONObject();
-		res.put("cn", GroupsController.VIRTUAL_TEMPORARY_GROUP_NAME);
-		res.put("description", GroupsController.VIRTUAL_TEMPORARY_GROUP_DESCRIPTION);
+		res.put("cn", RolesController.VIRTUAL_TEMPORARY_ROLE_NAME);
+		res.put("description", RolesController.VIRTUAL_TEMPORARY_ROLE_DESCRIPTION);
 
 		// Search temporary users in LDAP
 		JSONArray temporaryUsers = new JSONArray();
@@ -217,16 +217,16 @@ public class GroupsController {
 	/**
 	 *
 	 * <p>
-	 * Creates a new group.
+	 * Creates a new role.
 	 * </p>
 	 *
 	 * <pre>
 	 * <b>Request</b>
 	 *
-	 * group data:
+	 * role data:
 	 * {
-     *   "cn": "Name of the group"
-     *   "description": "Description for the group"
+     *   "cn": "Name of the role"
+     *   "description": "Description for the role"
      *   }
 	 * </pre>
 	 * <pre>
@@ -235,8 +235,8 @@ public class GroupsController {
 	 * <b>- Success case</b>
 	 *
 	 * {
-	 *  "cn": "Name of the group",
-	 *  "description": "Description for the group"
+	 *  "cn": "Name of the role",
+	 *  "description": "Description for the role"
 	 * }
 	 * </pre>
 	 *
@@ -249,13 +249,13 @@ public class GroupsController {
 
 		try{
 
-			Group group = createGroupFromRequestBody(request.getInputStream());
+			Role role = createRoleFromRequestBody(request.getInputStream());
 
-			this.groupDao.insert( group );
+			this.roleDao.insert( role );
 
-			GroupResponse groupResponse = new GroupResponse(group, this.filter);
+			RoleResponse roleResponse = new RoleResponse(role, this.filter);
 
-			String jsonResponse = groupResponse.asJsonString();
+			String jsonResponse = roleResponse.asJsonString();
 
 			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_OK);
 
@@ -276,17 +276,17 @@ public class GroupsController {
 
 
 	/**
-	 * Deletes the group.
+	 * Deletes the role.
 	 *
 	 * The request format is:
 	 * <pre>
-	 * [BASE_MAPPING]/groups/{cn}
+	 * [BASE_MAPPING]/roles/{cn}
 	 *
-	 * Where <b>cn</b> is the name of group to delete.
+	 * Where <b>cn</b> is the name of role to delete.
 	 * </pre>
 	 *
 	 * @param response
-	 * @param cn Common name of group to delete
+	 * @param cn Common name of role to delete
 	 * @throws IOException
 	 */
 	@RequestMapping(value = REQUEST_MAPPING + "/{cn:.+}", method = RequestMethod.DELETE)
@@ -294,7 +294,7 @@ public class GroupsController {
 			throws IOException {
 		try {
 
-			this.groupDao.delete(cn);
+			this.roleDao.delete(cn);
 
 			ResponseUtil.writeSuccess(response);
 
@@ -316,7 +316,7 @@ public class GroupsController {
 	}
 
 	/**
-	 * Modifies the group using the fields provided in the request body.
+	 * Modifies the role using the fields provided in the request body.
 	 * <p>
 	 * The fields that are not present in the parameters will remain untouched
 	 * in the LDAP store.
@@ -324,9 +324,9 @@ public class GroupsController {
 	 * 
 	 * <pre>
 	 * The request format is:
-	 * [BASE_MAPPING]/groups/{cn}
+	 * [BASE_MAPPING]/roles/{cn}
 	 *
-	 * Where <b>cn</b> is the name of group to update.
+	 * Where <b>cn</b> is the name of role to update.
 	 * </pre>
 	 * <p>
 	 * The request body should contains a the fields to modify using the JSON
@@ -338,10 +338,10 @@ public class GroupsController {
 	 * 
 	 * <pre>
 	 * <b>Request</b>
-	 * [BASE_MAPPING]/groups/users
+	 * [BASE_MAPPING]/roles/users
 	 *
 	 * <b>Body request: </b>
-	 * group data:
+	 * role data:
 	 * {
 	 *   "cn": "newName"
 	 *   "description": "new Description"
@@ -350,7 +350,7 @@ public class GroupsController {
 	 * </pre>
 	 *
 	 * @param request
-	 *            [BASE_MAPPING]/groups/{cn} body request {"cn": value1,
+	 *            [BASE_MAPPING]/roles/{cn} body request {"cn": value1,
 	 *            "description": value2 }
 	 * @param response
 	 *
@@ -361,10 +361,10 @@ public class GroupsController {
 	@RequestMapping(value=REQUEST_MAPPING+ "/{cn:.+}", method=RequestMethod.PUT)
 	public void update( HttpServletRequest request, HttpServletResponse response, @PathVariable String cn) throws IOException{
 
-		// searches the group
-		Group group;
+		// searches the role
+		Role role;
 		try {
-			group = this.groupDao.findByCommonName(cn);
+			role = this.roleDao.findByCommonName(cn);
 		} catch (NameNotFoundException e) {
 			ResponseUtil.writeError(response, NOT_FOUND);
 			return;
@@ -373,15 +373,15 @@ public class GroupsController {
 			throw new IOException(e);
 		}
 
-		// modifies the group data
+		// modifies the role data
 		try{
-			final Group modified = modifyGroup( group, request.getInputStream());
+			final Role modified = modifyRole( role, request.getInputStream());
 
-			this.groupDao.update(cn, modified);
+			this.roleDao.update(cn, modified);
 
-			GroupResponse groupResponse = new GroupResponse(group, this.filter);
+			RoleResponse roleResponse = new RoleResponse(role, this.filter);
 
-			String jsonResponse = groupResponse.asJsonString();
+			String jsonResponse = roleResponse.asJsonString();
 
 			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_OK);
 
@@ -410,28 +410,28 @@ public class GroupsController {
 	}
 
 	/**
-	 * Updates the users of group. This method will add or delete the group of users from the list of groups.
+	 * Updates the users of role. This method will add or delete the role of users from the list of roles.
 	 *
-	 * @param request	request [BASE_MAPPING]/groups_users body request {"users": [u1,u2,u3], "PUT": [g1,g2], "DELETE":[g3,g4] }
+	 * @param request	request [BASE_MAPPING]/roles_users body request {"users": [u1,u2,u3], "PUT": [g1,g2], "DELETE":[g3,g4] }
 	 * @param response
 	 * @throws IOException
 	 */
-	@RequestMapping(value=BASE_MAPPING+ "/groups_users", method=RequestMethod.POST)
+	@RequestMapping(value=BASE_MAPPING+ "/roles_users", method=RequestMethod.POST)
 	public void updateUsers( HttpServletRequest request, HttpServletResponse response) throws IOException{
 
 		try{
 
 			ServletInputStream is = request.getInputStream();
-			String strGroup = FileUtils.asString(is);
-			JSONObject json = new JSONObject(strGroup);
+			String strRole = FileUtils.asString(is);
+			JSONObject json = new JSONObject(strRole);
 
 			List<String> users = createUserList(json, "users");
 
-			List<String> putGroup = createUserList(json, "PUT");
-			this.groupDao.addUsersInGroups(putGroup, users, request.getHeader("sec-username"));
+			List<String> putRole = createUserList(json, "PUT");
+			this.roleDao.addUsersInRoles(putRole, users, request.getHeader("sec-username"));
 
-			List<String> deleteGroup = createUserList(json, "DELETE");
-			this.groupDao.deleteUsersInGroups(deleteGroup, users, request.getHeader("sec-username"));
+			List<String> deleteRole = createUserList(json, "DELETE");
+			this.roleDao.deleteUsersInRoles(deleteRole, users, request.getHeader("sec-username"));
 
 			ResponseUtil.writeSuccess(response);
 
@@ -480,48 +480,48 @@ public class GroupsController {
 	/**
 	 * Modifies the original field using the values in the inputStream.
 	 *
-	 * @param group group to modify
+	 * @param role role to modify
 	 * @param inputStream contains the new values
 	 *
-	 * @return the {@link Group} modified
+	 * @return the {@link Role} modified
 	 */
-	private Group modifyGroup(Group group, ServletInputStream inputStream) throws IOException{
+	private Role modifyRole(Role role, ServletInputStream inputStream) throws IOException{
 
-		String strGroup = FileUtils.asString(inputStream);
+		String strRole = FileUtils.asString(inputStream);
 		JSONObject json;
 		try {
-			json = new JSONObject(strGroup);
+			json = new JSONObject(strRole);
 		} catch (JSONException e) {
 			LOG.error(e.getMessage());
 			throw new IOException(e);
 		}
 
-		String cn = RequestUtil.getFieldValue(json, GroupSchema.COMMON_NAME_KEY);
+		String cn = RequestUtil.getFieldValue(json, RoleSchema.COMMON_NAME_KEY);
 		if (cn != null) {
-			group.setName(cn);
+			role.setName(cn);
 		}
 
-		String description = RequestUtil.getFieldValue(json, GroupSchema.DESCRIPTION_KEY);
+		String description = RequestUtil.getFieldValue(json, RoleSchema.DESCRIPTION_KEY);
 		if (description != null) {
-			group.setDescription(description);
+			role.setDescription(description);
 		}
 
-		return group;
+		return role;
 	}
 
-	private Group createGroupFromRequestBody(ServletInputStream is) throws IOException {
+	private Role createRoleFromRequestBody(ServletInputStream is) throws IOException {
 		try {
-			String strGroup = FileUtils.asString(is);
-			JSONObject json = new JSONObject(strGroup);
+			String strRole = FileUtils.asString(is);
+			JSONObject json = new JSONObject(strRole);
 
-			String commonName = RequestUtil.getFieldValue(json, GroupSchema.COMMON_NAME_KEY);
+			String commonName = RequestUtil.getFieldValue(json, RoleSchema.COMMON_NAME_KEY);
 			if(commonName == null){
-				throw new IllegalArgumentException(GroupSchema.COMMON_NAME_KEY + " is required" );
+				throw new IllegalArgumentException(RoleSchema.COMMON_NAME_KEY + " is required" );
 			}
 
-			String description = RequestUtil.getFieldValue(json, GroupSchema.DESCRIPTION_KEY);
+			String description = RequestUtil.getFieldValue(json, RoleSchema.DESCRIPTION_KEY);
 
-			Group g = GroupFactory.create(commonName, description);
+			Role g = RoleFactory.create(commonName, description);
 
 			return g;
 
@@ -535,8 +535,8 @@ public class GroupsController {
 	 * Method used for testing convenience.
 	 * @param gd
 	 */
-    public void setGroupDao(GroupDao gd) {
-        groupDao = gd;
+    public void setRoleDao(RoleDao gd) {
+        roleDao = gd;
     }
 
 	/**

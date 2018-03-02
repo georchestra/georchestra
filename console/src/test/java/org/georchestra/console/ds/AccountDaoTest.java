@@ -24,7 +24,7 @@ import org.springframework.ldap.core.support.LdapContextSource;
 public class AccountDaoTest {
 
     private AccountDao us;
-    private GroupDaoImpl groupDao;
+    private RoleDaoImpl roleDao;
     private LdapContextSource contextSource;
     private Account adminAccount;
 
@@ -54,11 +54,11 @@ public class AccountDaoTest {
         contextSource.setAuthenticationSource(authsrc);
 
         LdapTemplate ldapTemplate = new LdapTemplate(contextSource);
-        groupDao = new GroupDaoImpl();
-        groupDao.setLdapTemplate(ldapTemplate);
-        groupDao.setGroupSearchBaseDN("ou=roles");
-        groupDao.setUniqueNumberField("ou");
-        groupDao.setUserSearchBaseDN("ou=users");
+        roleDao = new RoleDaoImpl();
+        roleDao.setLdapTemplate(ldapTemplate);
+        roleDao.setRoleSearchBaseDN("ou=roles");
+        roleDao.setUniqueNumberField("ou");
+        roleDao.setUserSearchBaseDN("ou=users");
 
         OrgsDao orgsDao = new OrgsDao();
         orgsDao.setLdapTemplate(ldapTemplate);
@@ -66,7 +66,7 @@ public class AccountDaoTest {
         orgsDao.setUserSearchBaseDN("ou=users");
 
 
-        us = new AccountDaoImpl(ldapTemplate, groupDao, orgsDao);
+        us = new AccountDaoImpl(ldapTemplate, roleDao, orgsDao);
         ((AccountDaoImpl) us).setUserSearchBaseDN("ou=users");
 
         this.adminAccount = AccountFactory.createBrief("testadmin", "monkey123", "Test", "ADmin",

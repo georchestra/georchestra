@@ -17,58 +17,58 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.console.ws.backoffice.groups;
+package org.georchestra.console.ws.backoffice.roles;
 
 import java.util.List;
 
 import org.georchestra.console.ds.ProtectedUserFilter;
-import org.georchestra.console.dto.Group;
-import org.georchestra.console.dto.GroupSchema;
+import org.georchestra.console.dto.Role;
+import org.georchestra.console.dto.RoleSchema;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * Returns the list of users / groups membership.
+ * Returns the list of users / roles membership.
  *
  * @author Mauricio Pazos
  *
  */
 
-final class GroupListResponse {
+final class RoleListResponse {
 
-	private List<Group> groupList;
+	private List<Role> roleList;
 	private ProtectedUserFilter filter;
 
-	public GroupListResponse(List<Group> list, ProtectedUserFilter filter) {
-		this.groupList = list;
+	public RoleListResponse(List<Role> list, ProtectedUserFilter filter) {
+		this.roleList = list;
 		this.filter = filter;
 	}
 	
 	public JSONArray toJsonArray() throws JSONException {
-		JSONArray jsonGroupArray = new JSONArray();
-    	for (Group group: this.groupList) {
+		JSONArray jsonRoleArray = new JSONArray();
+    	for (Role role: this.roleList) {
 
-    		JSONObject jsonGroup = new JSONObject();
+    		JSONObject jsonRole = new JSONObject();
 
-    		jsonGroup.put(GroupSchema.COMMON_NAME_KEY, group.getName());
+    		jsonRole.put(RoleSchema.COMMON_NAME_KEY, role.getName());
 
-    		jsonGroup.put(GroupSchema.DESCRIPTION_KEY, group.getDescription());
+    		jsonRole.put(RoleSchema.DESCRIPTION_KEY, role.getDescription());
 
     		// adds the list of users
-    		List<String> list = filter.filterStringList(group.getUserList());
+    		List<String> list = filter.filterStringList(role.getUserList());
 
     		JSONArray membersArray = new JSONArray();
 
     		for(String userUid: list)
     			membersArray.put(userUid);
 
-    		jsonGroup.put("users", membersArray);
+    		jsonRole.put("users", membersArray);
 
-    		jsonGroupArray.put(jsonGroup);
+    		jsonRoleArray.put(jsonRole);
 		}
-		return jsonGroupArray;
+		return jsonRoleArray;
 	}
 
 }

@@ -145,33 +145,33 @@ Response
 
 ### CREATE
 
-Create group
+Create role
 
 Request
 
-    POST groups
+    POST roles
 
 Body parameters
 
     {
-        "cn": "Name of the group",
-        "description": "Description for the group"
+        "cn": "Name of the role",
+        "description": "Description for the role"
     }
 
 Reponse
 
     {
-        "cn": "Name of the group",
-        "description": "Description for the group"
+        "cn": "Name of the role",
+        "description": "Description for the role"
     }
     or
     { "success": false }
 
-### READ (Complete list of groups)
+### READ (Complete list of roles)
 
 Request
 
-    GET groups
+    GET roles
 
 Response
 
@@ -179,8 +179,8 @@ Response
         "cn": "Administrator",
         "users": ['pgiraud']
     }, {
-        "cn": "Name of the group",
-        "description": "Description for the group",
+        "cn": "Name of the role",
+        "description": "Description for the role",
         "users": []
     }]
 
@@ -189,29 +189,29 @@ Response
 
 Request
 
-    GET groups/:cn
+    GET roles/:cn
 
 Response
 
     {
-        "cn": "Name of the group",
-        "description": "Description for the group",
+        "cn": "Name of the role",
+        "description": "Description for the role",
         "users": ["uid0","uid1"]
     }
 
 ### UPDATE
 
-Modify group
+Modify role
 
 Request
 
-    PUT groups/:cn
+    PUT roles/:cn
 
 Body parameters
 
     {
-        "cn": "New name of the group",
-        "description": "Modified description for the group"
+        "cn": "New name of the role",
+        "description": "Modified description for the role"
     }
 
 Note: *Fields that are not present in the parameters should remain untouched
@@ -223,11 +223,11 @@ Reponse
 
 ### DELETE
 
-Delete group
+Delete role
 
 Request
 
-    DELETE groups/:cn
+    DELETE roles/:cn
 
 Response
 
@@ -237,11 +237,11 @@ Response
 
 ### UPDATE
 
-Add/Remove users to/from the given group
+Add/Remove users to/from the given role
 
 Request
 
-    POST groups_users
+    POST roles_users
 
 Body parameters
 
@@ -263,21 +263,21 @@ Curl can be used to test the client-server interface. To get the list of users:
 
     curl --request GET http://georchestra.mydomain.org/console/private/users/
 
-To create a new group
+To create a new role
 
 * create a temporary file
 
 ```
-nano /tmp/newgroup.json
+nano /tmp/newrole.json
 ```
 
 ```
 {
-    "cn": "Name of the group",
-    "description": "Description for the group"
+    "cn": "Name of the role",
+    "description": "Description for the role"
 }
 ```
 
 *  post this file
 
-    curl -H "Content-Type: application/json" -d @/tmp/newgroup.json --request POST http://georchestra.mydomain.org/console/private/groups
+    curl -H "Content-Type: application/json" -d @/tmp/newrole.json --request POST http://georchestra.mydomain.org/console/private/roles

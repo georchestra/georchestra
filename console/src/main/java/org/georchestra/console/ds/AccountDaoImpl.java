@@ -25,7 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.dao.AdminLogDao;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountFactory;
-import org.georchestra.console.dto.Group;
+import org.georchestra.console.dto.Role;
 import org.georchestra.console.dto.UserSchema;
 import org.georchestra.console.model.AdminLogEntry;
 import org.georchestra.console.model.AdminLogType;
@@ -68,7 +68,7 @@ public final class AccountDaoImpl implements AccountDao {
 
     private AccountContextMapper attributMapper;
     private LdapTemplate ldapTemplate;
-    private GroupDao groupDao;
+    private RoleDao roleDao;
     private OrgsDao orgDao;
     private String uniqueNumberField = "employeeNumber";
     private LdapRdn userSearchBaseDN;
@@ -86,10 +86,10 @@ public final class AccountDaoImpl implements AccountDao {
     public void setBasePath(String basePath) { this.basePath = basePath; }
 
     @Autowired
-    public AccountDaoImpl(LdapTemplate ldapTemplate, GroupDao groupDao, OrgsDao orgDao) {
+    public AccountDaoImpl(LdapTemplate ldapTemplate, RoleDao roleDao, OrgsDao orgDao) {
 
         this.ldapTemplate = ldapTemplate;
-        this.groupDao = groupDao;
+        this.roleDao = roleDao;
         this.orgDao = orgDao;
     }
 
@@ -105,12 +105,12 @@ public final class AccountDaoImpl implements AccountDao {
         this.ldapTemplate = ldapTemplate;
     }
 
-    public GroupDao getGroupDao() {
-        return groupDao;
+    public RoleDao getRoleDao() {
+        return roleDao;
     }
 
-    public void setGroupDao(GroupDao groupDao) {
-        this.groupDao = groupDao;
+    public void setRoleDao(RoleDao roleDao) {
+        this.roleDao = roleDao;
     }
 
     public void setUniqueNumberField(String uniqueNumberField) {
@@ -138,7 +138,7 @@ public final class AccountDaoImpl implements AccountDao {
      * @see {@link AccountDao#insert(Account, String, String)}
      */
     @Override
-    public synchronized void insert(final Account account, final String groupID, final String originLogin) throws DataServiceException,
+    public synchronized void insert(final Account account, final String roleID, final String originLogin) throws DataServiceException,
             DuplicatedUidException, DuplicatedEmailException {
 
         assert account != null;
@@ -189,7 +189,7 @@ public final class AccountDaoImpl implements AccountDao {
             this.ldapTemplate.bind(dn, context, null);
 
             // Add user to the role
-            this.groupDao.addUser(groupID, account.getUid(), originLogin);
+            this.roleDao.addUser(roleID, account.getUid(), originLogin);
 
             // Add user to the organization
             if(account.getOrg().length() > 0)
@@ -310,15 +310,15 @@ public final class AccountDaoImpl implements AccountDao {
     public synchronized void update(Account account, Account modified, String originLogin) throws DataServiceException, DuplicatedEmailException, NameNotFoundException {
        if (! account.getUid().equals(modified.getUid())) {
            ldapTemplate.rename(buildDn(account.getUid()), buildDn(modified.getUid()));
-           for (Group g : groupDao.findAllForUser(account.getUid())) {
-               groupDao.modifyUser(g.getName(), account.getUid(), modified.getUid());
+           for (Role g : roleDao.findAllForUser(account.getUid())) {
+               roleDao.modifyUser(g.getName(), account.getUid(), modified.getUid());
            }
        }
        update(modified, originLogin);
     }
 
     /**
-     * Removes the user account and the reference included in the group
+     * Removes the user account and the reference included in the role
      *
      * @param uid user to delete from LDAP
      * @param originLogin login of admin that request deletion
@@ -328,7 +328,7 @@ public final class AccountDaoImpl implements AccountDao {
     @Override
     public synchronized void delete(final String uid, final String originLogin) throws DataServiceException, NameNotFoundException {
 
-        this.groupDao.deleteUser(uid, originLogin);
+        this.roleDao.deleteUser(uid, originLogin);
         this.ldapTemplate.unbind(buildDn(uid), true);
 
     }
@@ -598,12 +598,12 @@ public final class AccountDaoImpl implements AccountDao {
             // Set Organization
             String org = null;
 
-            SortedSet<String> groups = context.getAttributeSortedStringSet("memberOf");
-            if(groups != null) {
-                Iterator<String> it = groups.iterator();
+            SortedSet<String> roles = context.getAttributeSortedStringSet("memberOf");
+            if(roles != null) {
+                Iterator<String> it = roles.iterator();
                 while (it.hasNext()) {
-                    String group = it.next();
-                    Matcher m = this.pattern.matcher(group);
+                    String role = it.next();
+                    Matcher m = this.pattern.matcher(role);
 
                     // Skip roles
                     if (!m.matches())

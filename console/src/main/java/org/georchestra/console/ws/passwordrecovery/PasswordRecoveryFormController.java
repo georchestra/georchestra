@@ -33,10 +33,10 @@ import org.georchestra.console.Configuration;
 import org.georchestra.console.bs.ReCaptchaParameters;
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.DataServiceException;
-import org.georchestra.console.ds.GroupDao;
+import org.georchestra.console.ds.RoleDao;
 import org.georchestra.console.ds.UserTokenDao;
 import org.georchestra.console.dto.Account;
-import org.georchestra.console.dto.Group;
+import org.georchestra.console.dto.Role;
 import org.georchestra.console.mailservice.MailService;
 import org.georchestra.console.ws.utils.RecaptchaUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +78,7 @@ public class PasswordRecoveryFormController  {
 	
 	// collaborations 
 	private AccountDao accountDao;
-	private GroupDao groupDao;
+	private RoleDao roleDao;
 	private MailService mailService;
 	private UserTokenDao userTokenDao;
 	private Configuration config;
@@ -87,10 +87,10 @@ public class PasswordRecoveryFormController  {
 	
 
 	@Autowired
-	public PasswordRecoveryFormController( AccountDao dao,GroupDao gDao, MailService mailSrv, UserTokenDao userTokenDao,
+	public PasswordRecoveryFormController( AccountDao dao,RoleDao gDao, MailService mailSrv, UserTokenDao userTokenDao,
 			Configuration cfg, ReCaptcha reCaptcha, ReCaptchaParameters reCaptchaParameters){
 		this.accountDao = dao;
-		this.groupDao = gDao;
+		this.roleDao = gDao;
 		this.mailService = mailSrv;
 		this.userTokenDao = userTokenDao;
 		this.config = cfg;
@@ -146,13 +146,13 @@ public class PasswordRecoveryFormController  {
 		
 		try {
 			Account account = this.accountDao.findByEmail(formBean.getEmail());
-			List<Group> group = this.groupDao.findAllForUser(account.getUid());
+			List<Role> role = this.roleDao.findAllForUser(account.getUid());
 			// Finds the user using the email as key, if it exists a new token is generated to include in the unique http URL.
 			
 
-			for (Group g : group) {
-				if (g.getName().equals(Group.PENDING)) {
-					throw new NameNotFoundException("User in PENDING group");
+			for (Role g : role) {
+				if (g.getName().equals(Role.PENDING)) {
+					throw new NameNotFoundException("User in PENDING role");
 				}
 			}
 			

@@ -1,7 +1,7 @@
 LDAPADMIN
 =========
 
-A webapp with a public interface and a private one, which allows to manage users and groups.
+A webapp with a public interface and a private one, which allows to manage users and roles.
 
 All strings and templates should take into account i18n (3 langs by default: en/es/fr)
 
@@ -45,8 +45,8 @@ Once submitted, the form disappears and a (configurable) message says something 
 
 What happens here ? 
  * Depending on a "MODERATED_SIGNUP" config option, new users will be recorded in the LDAP and affected to :
-   * the PENDING group if MODERATED_SIGNUP = true. An admin will then be able to move them to USERS group.
-   * the USERS group if MODERATED_SIGNUP = false.
+   * the PENDING role if MODERATED_SIGNUP = true. An admin will then be able to move them to USERS role.
+   * the USERS role if MODERATED_SIGNUP = false.
  * An email will be sent to one email address (configurable), saying that new users need an account.
 
 ### Edit user details
@@ -179,18 +179,18 @@ Dedicated to users:
 
 Featuring:
  * a form for user details,
- * a tree view of groups the user belongs to, with a checkbox selection model to edit. 
+ * a tree view of roles the user belongs to, with a checkbox selection model to edit. 
 
 When creating a new user (and only in this case), a **strong** password will be generated and sent to the new user by email.
 
 
 #### Left pane 
 
-Dedicated to groups:
- * tree view of groups, with intermediate nodes for group types (GN_*, EL_*, ...) - group types should be configurable
- * ability to filter users list by one group (on group name click)
- * button to add a new group 
- * button to remove a group (users will **not** be deleted)
+Dedicated to roles:
+ * tree view of roles, with intermediate nodes for role types (GN_*, EL_*, ...) - role types should be configurable
+ * ability to filter users list by one role (on role name click)
+ * button to add a new role 
+ * button to remove a role (users will **not** be deleted)
 
 
 
@@ -199,6 +199,6 @@ Notes
 
 All emails sent by the application should be configurable by the way of templates, as for extractorapp.
 
-The application should be able to find groups and users by the way of filters such as the ones used by the cas (have a look at the [cas maven filters](../config/defaults/cas-server-webapp/maven.filter#L4) and defined by the way of the variables shared.ldap.userSearchBaseDN and shared.ldap.groupSearchBaseDN defined in [config/shared.maven.filters](../config/shared.maven.filters#L10)
+The application should be able to find roles and users by the way of filters such as the ones used by the cas (have a look at the [cas maven filters](../config/defaults/cas-server-webapp/maven.filter#L4) and defined by the way of the variables shared.ldap.userSearchBaseDN and shared.ldap.roleSearchBaseDN defined in [config/shared.maven.filters](../config/shared.maven.filters#L10)
 
 The userPassword LDAP field should be SSHA encrypted on creation/update.
