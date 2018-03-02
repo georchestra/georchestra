@@ -1,7 +1,7 @@
 require('components/users/users.tpl')
 
 require('services/users')
-require('services/groups_users')
+require('services/roles_users')
 require('services/logs')
 require('services/messages')
 
@@ -15,7 +15,7 @@ class UsersController {
     this.q = ''
     this.itemsPerPage = 25
 
-    this.newRole = this.$injector.get('$location').$$search['new'] === 'group'
+    this.newRole = this.$injector.get('$location').$$search['new'] === 'role'
     this.newRoleName = ''
     this.delete = this.$injector.get('$location').$$search['delete'] === 'true'
     this.canDelete = false
@@ -24,12 +24,12 @@ class UsersController {
       this.allUsers = this.users.slice()
     })
 
-    this.groups = Role.query()
-    this.activePromise = this.groups.$promise.then(() => {
-      this.activeRole = this.groups.filter(g => g.cn === $routeParams.id)[0]
+    this.roles = Role.query()
+    this.activePromise = this.roles.$promise.then(() => {
+      this.activeRole = this.roles.filter(g => g.cn === $routeParams.id)[0]
       if (this.activeRole) {
         this.filter(this.activeRole)
-        this.canDelete = !this.$injector.get('groupAdminFilter')(
+        this.canDelete = !this.$injector.get('roleAdminFilter')(
           this.activeRole
         )
       }
@@ -38,17 +38,17 @@ class UsersController {
 
     let translate = this.$injector.get('translate')
     this.i18n = {}
-    translate('group.created', this.i18n)
-    translate('group.updated', this.i18n)
-    translate('group.deleted', this.i18n)
-    translate('group.error', this.i18n)
-    translate('group.deleteError', this.i18n)
+    translate('role.created', this.i18n)
+    translate('role.updated', this.i18n)
+    translate('role.deleted', this.i18n)
+    translate('role.error', this.i18n)
+    translate('role.deleteError', this.i18n)
   }
 
-  filter (group) {
+  filter (role) {
     this.users.$promise.then(() => {
       this.users = this.allUsers.filter(
-        user => (group.users.indexOf(user.uid) >= 0)
+        user => (role.users.indexOf(user.uid) >= 0)
       )
     })
   }
@@ -67,15 +67,15 @@ class UsersController {
     let $location = this.$injector.get('$location')
     let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
 
-    let group = new (this.$injector.get('Role'))()
-    group.cn = this.newRoleName
-    group.description = this.newRoleDesc
+    let role = new (this.$injector.get('Role'))()
+    role.cn = this.newRoleName
+    role.description = this.newRoleDesc
 
-    group.$save(
+    role.$save(
       () => {
         flash.create('success', this.i18n.created)
         $httpDefaultCache.removeAll()
-        $router.navigate($router.generate('users', {id: group.cn}))
+        $router.navigate($router.generate('users', {id: role.cn}))
         $location.url($location.path())
       },
       flash.create.bind(flash, 'danger', this.i18n.error)
@@ -85,7 +85,7 @@ class UsersController {
   activate ($scope) {
     let $location = this.$injector.get('$location')
     $scope.$watch(() => $location.search()['new'], (v) => {
-      this.newRole = v === 'group'
+      this.newRole = v === 'role'
     })
     $scope.$watch(() => $location.search()['delete'], (v) => {
       this.delete = v === 'true'
@@ -119,9 +119,9 @@ class UsersController {
     $('.content-description').on('blur', (e) => {
       this.$injector.get('Role').get(
         {id: this.activeRole.cn},
-        (group) => {
-          group.description = e.target.innerText
-          group.$update(() => {
+        (role) => {
+          role.description = e.target.innerText
+          role.$update(() => {
             $httpDefaultCache.removeAll()
             flash.create('success', this.i18n.updated)
           }, flash.create.bind(flash, 'danger', this.i18n.error))
@@ -140,9 +140,9 @@ angular.module('admin_console')
   require: 'ngModel',
   link: (scope, elm, attrs, ctrl) => {
     ctrl.$validators.validateRole = (modelValue, viewValue) => {
-      let groups = scope.$eval(attrs['validateRole'])
+      let roles = scope.$eval(attrs['validateRole'])
       let prefix = viewValue.substr(0, viewValue.lastIndexOf('_'))
-      return prefix === '' || groups.some(g => g.cn === prefix)
+      return prefix === '' || roles.some(g => g.cn === prefix)
     }
   }
 }))

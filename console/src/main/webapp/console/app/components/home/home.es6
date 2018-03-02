@@ -11,13 +11,13 @@ class HomeController {
 
     this.$injector = $injector
 
-    $injector.get('Role').query(groups => {
-      groups.forEach(group => {
-        if (group.cn === PENDING) {
-          this.pending = group
+    $injector.get('Role').query(roles => {
+      roles.forEach(role => {
+        if (role.cn === PENDING) {
+          this.pending = role
         }
-        if (group.cn === EXPIRED) {
-          this.expired = group
+        if (role.cn === EXPIRED) {
+          this.expired = role
         }
       })
     })

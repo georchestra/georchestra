@@ -10,9 +10,9 @@ class AnalyticsController {
     this.i18n = {}
     this.$injector.get('translate')('analytics.all', this.i18n)
 
-    this.group = $routeParams.group || 'all'
-    this.groups = this.$injector.get('Role').query(() => {
-      this.groups = [ { cn: 'all' } ].concat(this.groups).map(g => {
+    this.role = $routeParams.role || 'all'
+    this.roles = this.$injector.get('Role').query(() => {
+      this.roles = [ { cn: 'all' } ].concat(this.roles).map(g => {
         g.label = this.i18n[g.cn] || g.cn
         return g
       })
@@ -31,10 +31,10 @@ class AnalyticsController {
       extractions: [ 'layer', 'count' ]
     }
 
-    this.load((this.group !== 'all') ? this.group : undefined)
+    this.load((this.role !== 'all') ? this.role : undefined)
   }
 
-  load (group) {
+  load (role) {
     let i18n = {}
     this.$injector.get('translate')('analytics.errorload', i18n)
     this.$injector.get('translate')('users.roleUpdateError', i18n)
@@ -47,8 +47,8 @@ class AnalyticsController {
       startDate: this.date.start,
       endDate: this.date.end
     }
-    if (group && group !== 'all') {
-      options.group = group
+    if (role && role !== 'all') {
+      options.role = role
     }
 
     this.requests = Analytics.get(options, () => {}, err)
@@ -79,7 +79,7 @@ class AnalyticsController {
 
   setRole () {
     let $router = this.$injector.get('$router')
-    $router.navigate($router.generate('analytics', { group: this.group }))
+    $router.navigate($router.generate('analytics', { role: this.role }))
   }
 
 }

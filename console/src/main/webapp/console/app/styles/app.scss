@@ -28,7 +28,7 @@ iframe {
   overflow : hidden;
 }
 
-groups {
+roles {
   input {
     margin-bottom: 1em;
   }
@@ -73,7 +73,7 @@ section {
       font-weight : bold;
     }
   }
-  .groups-title {
+  .roles-title {
     margin-top    : 0;
     padding-top   : .1em;
     margin-bottom : 1em;
@@ -411,7 +411,7 @@ section {
 // DATE
 date {
   display : flex;
-  .input-group {
+  .input-role {
     width        : 16em;
     margin-right : 1em;
   }
@@ -444,7 +444,7 @@ date {
       select {
         max-width: 50%;
       }
-      .input-group {
+      .input-role {
         max-width: 15em;
       }
       input {

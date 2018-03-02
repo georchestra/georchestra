@@ -23,7 +23,7 @@ class AreaController {
   initialize (resps) {
     const [config] = resps
     this.ids = this.item.cities || []
-    this.groups = []
+    this.roles = []
 
     const buildStyle = (fillColor, strokeColor, width) => new ol.style.Style({
       fill: new ol.style.Fill({ color: fillColor }),
@@ -77,13 +77,13 @@ class AreaController {
       let selected = []
       vector.getSource().addFeatures(format.readFeatures(json, conf))
       vector.getSource().getFeatures().forEach(f => {
-        let group = f.get(config.areas.group)
+        let role = f.get(config.areas.role)
         let key = f.get(config.areas.key).toString()
-        if (this.groups.indexOf(group) < 0) {
-          this.groups.push(group)
+        if (this.roles.indexOf(role) < 0) {
+          this.roles.push(role)
         }
         f.set('_label', f.get(config.areas.value).toString() || '')
-        f.set('_group', group)
+        f.set('_role', role)
         f.setId(key)
         if (this.ids.indexOf(f.getId()) >= 0) selected.push(f)
       })
@@ -173,18 +173,18 @@ class AreaController {
     }
 
     this.selectBy = () => {
-      if (this.group === 'all') {
+      if (this.role === 'all') {
         updateSelection(vector.getSource().getFeatures())
         return
       }
-      if (this.group === 'none') {
+      if (this.role === 'none') {
         updateSelection([])
-        this.group = ''
+        this.role = ''
         return
       }
 
       let selected = vector.getSource().getFeatures().filter(
-        f => f.get('_group') === this.group
+        f => f.get('_role') === this.role
       )
       updateSelection(selected)
     }

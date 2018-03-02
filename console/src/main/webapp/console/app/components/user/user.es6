@@ -18,7 +18,7 @@ class UserController {
     translate('user.content', this.i18n)
     translate('org.select', this.i18n)
 
-    this.tabs = ['infos', 'groups', 'analytics', 'messages', 'logs', 'manage']
+    this.tabs = ['infos', 'roles', 'analytics', 'messages', 'logs', 'manage']
     this.tab = $routeParams.tab
 
     this.user = User.get({id: $routeParams.id}, (user) => {
@@ -33,7 +33,7 @@ class UserController {
         this.messages = this.$injector.get('Email').query({id: this.user.uid})
       }
     })
-    this.adminRoles = this.$injector.get('groupAdminList')()
+    this.adminRoles = this.$injector.get('roleAdminList')()
     switch (this.tab) {
       case 'infos':
         this.contexts = $injector.get('Contexts').query()
@@ -52,35 +52,35 @@ class UserController {
   bindRoles () {
     const TMP_ROLE = 'TEMPORARY'
 
-    // Load group infos for every tab (for confirmation)
+    // Load role infos for every tab (for confirmation)
     let Role = this.$injector.get('Role')
-    this.groups = Role.query()
+    this.roles = Role.query()
 
     this.user.$promise.then(() => {
-      let groupAdminFilter = this.$injector.get('groupAdminFilter')
+      let roleAdminFilter = this.$injector.get('roleAdminFilter')
       let notAdmin = []
       this.$injector.get('$q').all([
         this.user.$promise,
-        this.groups.$promise
+        this.roles.$promise
       ]).then(() => {
-        this.user.groups = this.user.groups || []
+        this.user.roles = this.user.roles || []
         this.user.adminRoles = this.user.adminRoles || {}
-        this.groups.forEach((group) => {
-          if (group.users.indexOf(this.user.uid) >= 0) {
-            if (groupAdminFilter(group)) {
-              this.user.adminRoles[group.cn] = true
+        this.roles.forEach((role) => {
+          if (role.users.indexOf(this.user.uid) >= 0) {
+            if (roleAdminFilter(role)) {
+              this.user.adminRoles[role.cn] = true
             } else {
-              this.user.groups.push(group.cn)
+              this.user.roles.push(role.cn)
             }
           }
-          if (!groupAdminFilter(group) && group.cn !== TMP_ROLE) {
-            notAdmin.push(group.cn)
+          if (!roleAdminFilter(role) && role.cn !== TMP_ROLE) {
+            notAdmin.push(role.cn)
           }
-          if (group.cn === 'PENDING') {
-            this.user.pending = group.users.indexOf(this.user.uid) >= 0
+          if (role.cn === 'PENDING') {
+            this.user.pending = role.users.indexOf(this.user.uid) >= 0
           }
         })
-        this.groups = notAdmin
+        this.roles = notAdmin
       })
     })
   }
@@ -268,15 +268,15 @@ class UserController {
       this.$injector.get('translate')('users.roleUpdated', i18n)
       this.$injector.get('translate')('users.roleUpdateError', i18n)
 
-      this.groupPromise = this.$injector.get('RolesUsers').save(
+      this.rolePromise = this.$injector.get('RolesUsers').save(
         {
           users: [ this.user.uid ],
           PUT: toPut,
           DELETE: toDel
         },
         () => {
-          this.$injector.get('Role').query().$promise.then(groups => {
-            groups.forEach(g => {
+          this.$injector.get('Role').query().$promise.then(roles => {
+            roles.forEach(g => {
               if (g.cn === 'PENDING') {
                 this.user.pending = g.users.indexOf(this.user.uid) >= 0
               }
@@ -293,19 +293,19 @@ class UserController {
 
     this.$injector.get('$q').all([
       this.user.$promise,
-      this.groups.$promise
+      this.roles.$promise
     ]).then(() => {
-      $scope.$watch(() => this.user.groups, saveRoles.bind(this))
+      $scope.$watch(() => this.user.roles, saveRoles.bind(this))
 
       let previousRoles
       $scope.$watchCollection(() => {
-        let groups = []
+        let roles = []
         for (let g in this.user.adminRoles) {
-          if (this.user.adminRoles[g]) { groups.push(g) }
+          if (this.user.adminRoles[g]) { roles.push(g) }
         }
         if (this.user.adminRoles) {
-          previousRoles = groups
-          return groups
+          previousRoles = roles
+          return roles
         } else {
           return previousRoles
         }

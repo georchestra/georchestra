@@ -8,13 +8,13 @@ class AppController {
         redirectTo: '/home' },
       { path: '/home',
         component: 'home' },
-      { path: '/analytics/:group',
+      { path: '/analytics/:role',
         component: 'analytics' },
       { path: '/orgs/:org',
         component: 'orgs' },
       { path: '/org/:org/:tab',
         component: 'org' },
-      { path: '/groups/:id/users',
+      { path: '/roles/:id/users',
         component: 'users' },
       { path: '/users/:id/:tab',
         component: 'user' },
@@ -85,7 +85,7 @@ require('components/analytics/analytics')
 require('components/orgs/orgs')
 require('components/org/org')
 require('components/home/home')
-require('components/groups/groups')
+require('components/roles/roles')
 require('components/logs/logs')
 require('components/newUser/newUser')
 require('components/stats/stats')
