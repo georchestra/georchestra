@@ -26,8 +26,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import net.tanesha.recaptcha.ReCaptcha;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -81,27 +79,22 @@ public final class NewAccountFormController {
 
 	private Moderator moderator;
 
-	private ReCaptcha reCaptcha;
-
 	private ReCaptchaParameters reCaptchaParameters;
 
 	private static final String[] fields = {"firstName","surname", "email", "phone", "org",
 	    "title", "description", "uid", "password", "confirmPassword"};
 
 	@Autowired
-	public NewAccountFormController(AccountDao dao, MailService mailSrv, Moderator moderatorRule,
-	        ReCaptcha reCaptcha, ReCaptchaParameters reCaptchaParameters) {
+	public NewAccountFormController(AccountDao dao, MailService mailSrv, Moderator moderatorRule, ReCaptchaParameters reCaptchaParameters) {
 		this.accountDao = dao;
 		this.mailService = mailSrv;
 		this.moderator = moderatorRule;
-		this.reCaptcha = reCaptcha;
 		this.reCaptchaParameters = reCaptchaParameters;
 	}
 
 	@InitBinder
 	public void initForm(WebDataBinder dataBinder) {
-		dataBinder.setAllowedFields(ArrayUtils.addAll(fields,
-		        new String[]{"recaptcha_challenge_field", "recaptcha_response_field"}));
+		dataBinder.setAllowedFields(ArrayUtils.addAll(fields, "recaptcha_response_field"));
 	}
 
 	@RequestMapping(value="/account/new", method=RequestMethod.GET)
@@ -121,7 +114,7 @@ public final class NewAccountFormController {
 	}
 
 	/**
-	 * Creates a new account in ldap. If the application was configured as "moderator singnup" the new account is added in the PENDING group,
+	 * Creates a new account in ldap. If the application was configured as "moderator signup" the new account is added in the PENDING group,
 	 * in other case, it will be inserted in the SV_USER group
 	 *
 	 *
@@ -140,12 +133,10 @@ public final class NewAccountFormController {
 						 SessionStatus sessionStatus)
 			throws IOException {
 
-		String remoteAddr = request.getRemoteAddr();
-
 		UserUtils.validate(formBean.getUid(), formBean.getFirstName(), formBean.getSurname(), result );
 		EmailUtils.validate(formBean.getEmail(), result);
 		PasswordUtils.validate(formBean.getPassword(), formBean.getConfirmPassword(), result);
-		new RecaptchaUtils(remoteAddr, this.reCaptcha).validate(formBean.getRecaptcha_challenge_field(), formBean.getRecaptcha_response_field(), result);
+		new RecaptchaUtils(this.reCaptchaParameters.getVerifyUrl(), this.reCaptchaParameters.getPrivateKey()).validate(formBean.getRecaptcha_response_field(), result);
 		Validation.validateField("phone", formBean.getPhone(), result);
 		Validation.validateField("title", formBean.getTitle(), result);
 		Validation.validateField("org", formBean.getOrg(), result);
