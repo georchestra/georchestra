@@ -84,13 +84,18 @@ function testConfirmPassword() {
 	}
 	return true;
 }
+/**
+ * First verification, be sure g-recaptcha-response textarea is not empty
+ */
 function testRecaptcha() {
-	var recaptcha_response_field = document.form.recaptcha_response_field.value;
-	removeError("recaptcha_response_field");
+	var recaptcha_response_field = document.getElementById("g-recaptcha-response").value;
+	removeError("g-recaptcha");
 	if (!isNotEmpty(recaptcha_response_field)) {
-		addError("recaptcha_response_field", "<s:message code="recaptcha_response_field.error.required" />");
+		addError("g-recaptcha", "<s:message code="recaptcha_response_field.error.required" />");
 		return false;
 	}
+	/** Server side won't accept attribute with - in it, so reuse the old one */
+	document.form.recaptcha_response_field.value=recaptcha_response_field;
 	return true;
 }
 function setFormError() {

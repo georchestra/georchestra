@@ -44,15 +44,8 @@ public class AccountFormBean implements Serializable{
 	private String password;
 	private String confirmPassword;
 
-	private String recaptcha_challenge_field;
 	private String recaptcha_response_field;
 
-	public String getRecaptcha_challenge_field() {
-		return recaptcha_challenge_field;
-	}
-	public void setRecaptcha_challenge_field(String recaptcha_challenge_field) {
-		this.recaptcha_challenge_field = recaptcha_challenge_field;
-	}
 	public String getRecaptcha_response_field() {
 		return recaptcha_response_field;
 	}
@@ -133,7 +126,6 @@ public class AccountFormBean implements Serializable{
 				+ ", email=" + email
 				+ ", phone=" + phone + ", description=" + description + ", password="
 				+ password + ", confirmPassword=" + confirmPassword
-				+ ", recaptcha_challenge_field=" + recaptcha_challenge_field
 				+ ", recaptcha_response_field=" + recaptcha_response_field
 				+ "]";
 	}
