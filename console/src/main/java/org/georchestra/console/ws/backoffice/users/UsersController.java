@@ -60,6 +60,7 @@ import java.io.IOException;
 import java.text.Normalizer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -149,6 +150,7 @@ public class UsersController {
 		try {
 			ProtectedUserFilter filter = new ProtectedUserFilter( this.userRule.getListUidProtected() );
 			List<Account> list = this.accountDao.findFilterBy(filter);
+			Collections.sort(list);
 
 			// Retrieve organizations list to display org name instead of org DN
 			List<Org> orgs = this.orgDao.findAll();
