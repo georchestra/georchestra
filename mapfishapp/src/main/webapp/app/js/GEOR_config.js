@@ -87,6 +87,28 @@ GEOR.config = (function() {
         /***** Beginning of config options which can be overriden by GEOR.custom *****/
 
         /**
+         * Constant: WFS_OUTPUTFORMATS_MAPPING
+         * This is a hash mapping WFS GetFeature outputFormats to human-readable
+         * strings.
+         */
+        WFS_OUTPUTFORMATS_MAPPING: getCustomParameter("WFS_OUTPUTFORMATS_MAPPING", {
+            "application/gml+xml; version=3.2": "GML 3.2.1",
+            "text/xml; subtype=gml/3.2": "GML 3.2.1",
+            "gml32": "GML 3.2.1",
+            "text/xml; subtype=gml/3.1.1": "GML 3.1.1",
+            "gml3": "GML 3.0",
+            "text/xml; subtype=gml/2.1.2": "GML 2.1.2",
+            "GML2": "GML 2.1.2",
+            "KML": "KML",
+            "application/vnd.google-earth.kml xml": "KML",
+            "application/vnd.google-earth.kml+xml": "KML",
+            "SHAPE-ZIP": "SHAPE-ZIP",
+            "application/json": "JSON",
+            "json": "JSON",
+            "csv": "CSV"
+        }),
+
+        /**
          * Constant: GEOSERVER_WFS_URL
          * The URL to GeoServer WFS.
          * This is required if and only if the "referentials" module is activated.
