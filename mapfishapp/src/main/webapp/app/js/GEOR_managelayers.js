@@ -636,9 +636,19 @@ GEOR.managelayers = (function() {
         } catch(e) {
             return [];
         }
+        var mapping = {}, availableFormats = [];
         Ext.iterate(allowedValues, function(format, allowed){
+            if (GEOR.config.WFS_OUTPUTFORMATS_MAPPING.hasOwnProperty(format)) {
+                mapping[GEOR.config.WFS_OUTPUTFORMATS_MAPPING[format]] = format;
+            }
+        });
+        Ext.iterate(mapping, function(displaystring, formatstring){
+            availableFormats.push(displaystring);
+        });
+        availableFormats.sort(GEOR.util.sortFn);
+        Ext.each(availableFormats, function(displayString){
             menuItems.push({
-                text: format,
+                text: displayString,
                 handler: function(item) {
                     var url = OpenLayers.Util.urlAppend(
                         layerRecord.get("WFS_URL"),
@@ -647,7 +657,7 @@ GEOR.managelayers = (function() {
                             REQUEST: "GetFeature",
                             VERSION: "1.0.0",
                             TYPENAME: layerRecord.get("WFS_typeName"),
-                            OUTPUTFORMAT: item.text
+                            OUTPUTFORMAT: mapping[displayString]
                         })
                     );
                     window.open(url);
