@@ -44,7 +44,7 @@ import javax.naming.InvalidNameException;
  * @author Mauricio Pazos
  *
  */
-public class AccountImpl implements Serializable, Account, Comparable<Account>{
+public class AccountImpl implements Serializable, Account{
 
 	private static final long serialVersionUID = -8022496448991887664L;
 
@@ -642,8 +642,8 @@ public class AccountImpl implements Serializable, Account, Comparable<Account>{
 			return this.org;
 	}
 
-	@Override
     public int compareTo(Account o) {
-		return this.uid.compareTo(o.getUid());
+		String fullName = this.getSurname() + " " + this.getGivenName();
+		return fullName.compareToIgnoreCase(o.getSurname() + " " + o.getGivenName());
     }
 }

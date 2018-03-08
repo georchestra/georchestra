@@ -50,6 +50,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Collections;
 
 @Controller
 public class OrgsController {
@@ -85,6 +86,7 @@ public class OrgsController {
     public void findAll(HttpServletResponse response) throws IOException, JSONException {
 
         List<Org> orgs = this.orgDao.findAll();
+        Collections.sort(orgs);
         JSONArray res = new JSONArray();
         for (Org org : orgs)
             res.put(org.toJson());

@@ -26,7 +26,7 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-public class Org {
+public class Org implements Comparable<Org> {
 
     public static final String JSON_ID = "id";
     public static final String JSON_NAME = "name";
@@ -119,6 +119,10 @@ public class Org {
 
     public String toString(){
         return this.getName();
+    }
+
+    public int compareTo(Org org) {
+        return this.getName().compareToIgnoreCase(org.getName());
     }
 
     public static Org createBrief(String name, String shortName){

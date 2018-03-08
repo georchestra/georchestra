@@ -30,7 +30,7 @@ import java.util.Date;
  * @author Mauricio Pazos
  *
  */
-public interface Account {
+public interface Account extends Comparable<Account>{
 
 	void setUid(String uid);
 
