@@ -296,6 +296,7 @@ log.info("Finished running variable substitution test")
 				<configuration>
 					<show>private</show>
 					<quiet>true</quiet>
+					<additionalparam>-Xdoclint:none</additionalparam>
 				</configuration>
 				<executions>
 					<execution>
