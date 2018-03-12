@@ -257,6 +257,10 @@ ProxyPassReverse /header/ http://localhost:8180/header/
 </Proxy>
 ProxyPass /ldapadmin/ http://localhost:8180/ldapadmin/
 ProxyPassReverse /ldapadmin/ http://localhost:8180/ldapadmin/
+
+RewriteCond %{REQUEST_URI} !^/ldapadmin/console/public/.*$
+RewriteCond %{REQUEST_URI} ^/ldapadmin/console/([home|users|org|orgs|groups|logs|analytics].*)$
+RewriteRule .* /ldapadmin/console/#/%1 [NE,R,L]
 ```
 
 * ```mapfishapp.conf```:
