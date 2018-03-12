@@ -257,6 +257,10 @@ ProxyPassReverse /header/ http://localhost:8180/header/
 </Proxy>
 ProxyPass /console/ http://localhost:8180/console/
 ProxyPassReverse /console/ http://localhost:8180/console/
+
+RewriteCond %{REQUEST_URI} !^/console/console/public/.*$
+RewriteCond %{REQUEST_URI} ^/console/console/([home|users|org|orgs|roles|logs|analytics].*)$
+RewriteRule .* /console/console/#/%1 [NE,R,L]
 ```
 
 * ```mapfishapp.conf```:
