@@ -37,7 +37,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 /**
@@ -54,6 +56,11 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
  * Time: 9:44 AM
  */
 public class BasicAuthChallengeByUserAgent extends BasicAuthenticationFilter {
+
+    public BasicAuthChallengeByUserAgent(AuthenticationManager authenticationManager,
+            AuthenticationEntryPoint authenticationEntryPoint) {
+        super(authenticationManager, authenticationEntryPoint);
+    }
 
     private final List<Pattern> _userAgents = new ArrayList<Pattern>();
     private boolean ignoreHttps = false;
@@ -94,15 +101,15 @@ public class BasicAuthChallengeByUserAgent extends BasicAuthenticationFilter {
     }
 
     @Override
-    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
-
-        if(!req.getScheme().equalsIgnoreCase("https") && ! ignoreHttps) {
+    protected void doFilterInternal(HttpServletRequest request,
+            HttpServletResponse response, FilterChain chain)
+                    throws IOException, ServletException {
+        if(!request.getScheme().equalsIgnoreCase("https") && ! ignoreHttps) {
             LOGGER.debug("not in HTTPS, skipping filter.");
-            chain.doFilter(req, res);
+            chain.doFilter(request, response);
             return;
         }
 
-        final HttpServletRequest request = (HttpServletRequest) req;
         String auth = request.getHeader("Authorization");
 
         /* no valid Authorization header sent preemptively */
@@ -111,14 +118,14 @@ public class BasicAuthChallengeByUserAgent extends BasicAuthenticationFilter {
             if (userAgentMatch(userAgent)) {
                 /* UA matched, return a 401 directly to the client */
                 LOGGER.debug("the user-agent matched and no Authorization header was sent, returning a 401.");
-                getAuthenticationEntryPoint().commence(request, (HttpServletResponse) res, _exception);
+                getAuthenticationEntryPoint().commence(request, response, _exception);
             } else {
                 LOGGER.debug("the user-agent does not match, skipping filter.");
-                chain.doFilter(req, res);
+                chain.doFilter(request, response);
             }
         } else {
             LOGGER.debug("Authorization header sent in the request, activating filter ...");
-            super.doFilter(req, res, chain);
+            super.doFilterInternal(request, response, chain);
         }
     }
 

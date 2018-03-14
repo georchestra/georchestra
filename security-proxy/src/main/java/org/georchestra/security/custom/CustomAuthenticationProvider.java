@@ -336,8 +336,7 @@ public class CustomAuthenticationProvider extends AbstractLdapAuthenticationProv
         } catch (IncorrectResultSizeDataAccessException incorrectResults) {
             if (incorrectResults.getActualSize() == 0) {
                 UsernameNotFoundException userNameNotFoundException = new UsernameNotFoundException(
-                        "User " + username + " not found in directory.",
-                        username);
+                        "User " + username + " not found in directory.");
                 userNameNotFoundException.initCause(incorrectResults);
                 throw badCredentials(userNameNotFoundException);
             }

@@ -6,6 +6,7 @@ import org.apache.http.client.fluent.Request;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -25,8 +26,9 @@ public class ServicesMonitoring {
 
     private Properties mappings;
 
-    public ServicesMonitoring(Properties mappings) throws IOException {
-        this.mappings = mappings;
+    public ServicesMonitoring(Map<String, String> targets) {
+        this.mappings = new Properties();
+        this.mappings.putAll(targets);
     }
 
     public void checkServices(HttpServletRequest request, HttpServletResponse response) throws IOException {

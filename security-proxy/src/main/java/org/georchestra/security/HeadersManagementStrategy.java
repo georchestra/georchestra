@@ -367,7 +367,7 @@ public class HeadersManagementStrategy {
 
 
     private void handleResponseCookies(String originalRequestURI, HttpServletResponse finalResponse, Header[] headers, HttpSession session, StringBuilder headersLog) {
-        String originalPath = originalRequestURI.substring("/sec/".length()).split("/")[0];
+        String originalPath = originalRequestURI.split("/")[0];
         for (Header header : headers) {
             String[] parts = header.getValue().split("(?i)Path=",2);
 

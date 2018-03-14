@@ -45,7 +45,7 @@ public class ProxyTest {
         proxy.init();
 
         response = new BasicHttpResponse(HttpVersion.HTTP_1_1, 200, "OK");
-        this.request = new MockHttpServletRequest("GET", "/sec/proxy/");
+        this.request = new MockHttpServletRequest("GET", "/proxy/");
         this.request.setServerName("localhost");
         this.request.setServerPort(80);
         this.httpResponse = new MockHttpServletResponse();
@@ -61,57 +61,57 @@ public class ProxyTest {
 
     @Test
     public void testGetUrlLegalUrl() throws Exception {
-        proxy.handleUrlGETRequest(request, httpResponse, "http://localhost:8080/path");
+        proxy.handleUrlParamRequest(request, httpResponse, "http://localhost:8080/path");
         assertTrue(executed);
     }
 
     /**
-     * All url proxy requests (http://server/sec/proxy?url=...) that try to directly access protected services like extractorapp should
+     * All url proxy requests (http://server/proxy?url=...) that try to directly access protected services like extractorapp should
      * be rejected.  In the cases where the protected services are required, the url parameter should be the public url of the
      * protected service (not the private one).
      */
     @Test
     public void testGetUrlTarget() throws Exception {
-        proxy.handleUrlGETRequest(request, httpResponse, "http://localhost:8080/geonetwork-private");
+        proxy.handleUrlParamRequest(request, httpResponse, "http://localhost:8080/geonetwork-private");
         assertFalse(executed);
 
         this.httpResponse = new MockHttpServletResponse();
-        proxy.handleUrlGETRequest(request, httpResponse, "http://localhost:8080/extractorapp");
+        proxy.handleUrlParamRequest(request, httpResponse, "http://localhost:8080/extractorapp");
         assertFalse(executed);
     }
 
     /**
-     * Ensure that when the proxy form: http://server.com/sec/geonetwork/srv/eng/home is used to access a protected service,
+     * Ensure that when the proxy form: http://server.com/geonetwork/srv/eng/home is used to access a protected service,
      * the request should always be allowed no matter the proxy permissions.
      */
     @Test
     public void testGetUrlLegalUrlButTarget() throws Exception {
         request = new MockHttpServletRequest("GET", "http://localhost:8080/geonetwork-private");
-        proxy.handleGETRequest(request, httpResponse);
+        proxy.handleRequest(request, httpResponse);
         assertFalse(executed);
 
         this.httpResponse = new MockHttpServletResponse();
         request = new MockHttpServletRequest("GET", "/geonetwork/srv/eng/something");
-        proxy.handleGETRequest(request, httpResponse);
+        proxy.handleRequest(request, httpResponse);
         assertTrue(executed);
 
         this.httpResponse = new MockHttpServletResponse();
         executed = false;
         request = new MockHttpServletRequest("GET", "/extractorapp/home");
-        proxy.handleGETRequest(request, httpResponse);
+        proxy.handleRequest(request, httpResponse);
         assertTrue(executed);
 
         this.httpResponse = new MockHttpServletResponse();
         executed = false;
         request = new MockHttpServletRequest("GET", "/unmapped/x");
-        proxy.handleGETRequest(request, httpResponse);
+        proxy.handleRequest(request, httpResponse);
         assertFalse(executed);
     }
 
     @Test
     public void testDefaultTarget() throws Exception {
         request = new MockHttpServletRequest("GET", "http://localhost:8080/");
-        proxy.handleRequest(request, httpResponse);
+        proxy.handleDefaultRequest(request, httpResponse);
 
         assertTrue(httpResponse.getRedirectedUrl().equals("/mapfishapp/"));
 
@@ -119,7 +119,7 @@ public class ProxyTest {
 
     @Test
     public void testGetUrlIllegalUrl() throws Exception {
-        proxy.handleUrlGETRequest(request, httpResponse, "http://www.google.com:8080/path");
+        proxy.handleUrlParamRequest(request, httpResponse, "http://www.google.com:8080/path");
         assertFalse(executed);
     }
 

@@ -7,7 +7,7 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/security
-        http://www.springframework.org/schema/security/spring-security-3.2.xsd
+        http://www.springframework.org/schema/security/spring-security-4.2.xsd
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd">
 
@@ -33,15 +33,13 @@
 	<bean id="filterSecurityInterceptor" class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">
 		<property name="authenticationManager" ref="authenticationManager" />
 		<property name="accessDecisionManager">
-			<bean id="accessDecisionManager"
-				class="org.springframework.security.access.vote.AffirmativeBased">
-				<property name="decisionVoters">
+			<bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
+				<constructor-arg>
 					<list>
 						<bean class="org.springframework.security.access.vote.RoleVoter" />
-						<bean
-							class="org.springframework.security.access.vote.AuthenticatedVoter" />
+						<bean class="org.springframework.security.access.vote.AuthenticatedVoter" />
 					</list>
-				</property>
+				</constructor-arg>
 			</bean>
 		</property>
 		<property name="securityMetadataSource">
@@ -83,6 +81,7 @@
     </s:authentication-manager>
 
     <bean id="basicAuthChallengeByUserAgent" class="org.georchestra.security.BasicAuthChallengeByUserAgent" init-method="init">
+        <constructor-arg ref="authenticationManager" />
         <property name="challengeUserAgents">
             <list>
                 <!-- uncomment the lines for which you want a preemptive basic auth -->
@@ -93,14 +92,7 @@
             </list>
         </property>
         <property name="ignoreHttps" value="true" />
-        <property name="ignoreFailure" value="false"/>
         <property name="credentialsCharset" value="UTF-8"/>
-        <property name="authenticationManager" ref="authenticationManager"/>
-        <property name="authenticationEntryPoint">
-		    <bean class="org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint">
-		        <property name="realmName" value="georchestra Realm" />
-		    </bean>
-        </property>
     </bean>
 
     <!-- This bean points at the embedded directory server created by the ldap-server element above  -->

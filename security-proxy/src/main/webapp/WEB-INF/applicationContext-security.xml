@@ -7,7 +7,7 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/security
-        http://www.springframework.org/schema/security/spring-security-3.2.xsd
+        http://www.springframework.org/schema/security/spring-security-4.2.xsd
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd">
 
@@ -21,25 +21,27 @@
     <s:http entry-point-ref="casProcessingFilterEntryPoint" request-matcher="regex" realm="${realmName}" disable-url-rewriting="true">
         <s:custom-filter ref="trustAnotherProxy" before="PRE_AUTH_FILTER" />
         <s:custom-filter ref="basicAuthChallengeByUserAgent" before="CAS_FILTER" />
-	    <s:custom-filter ref="casFilter" after="CAS_FILTER" />
+        <s:custom-filter ref="casFilter" after="CAS_FILTER" />
         <s:custom-filter ref="filterSecurityInterceptor" after="EXCEPTION_TRANSLATION_FILTER" />
-	    <!--  <s:http-basic />  -->
-	    <s:anonymous granted-authority="ROLE_ANONYMOUS" />
-	    <s:logout logout-success-url="${logout-success-url}" />
+        <!--  <s:http-basic />  -->
+        <s:headers>
+          <s:frame-options policy="SAMEORIGIN" />
+        </s:headers>
+        <s:anonymous granted-authority="ROLE_ANONYMOUS" />
+        <s:logout logout-success-url="${logout-success-url}" />
+        <s:csrf disabled="true" />
      </s:http>
 
 	<bean id="filterSecurityInterceptor" class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">
 		<property name="authenticationManager" ref="authenticationManager" />
 		<property name="accessDecisionManager">
-			<bean id="accessDecisionManager"
-				class="org.springframework.security.access.vote.AffirmativeBased">
-				<property name="decisionVoters">
+			<bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
+				<constructor-arg>
 					<list>
 						<bean class="org.springframework.security.access.vote.RoleVoter" />
-						<bean
-							class="org.springframework.security.access.vote.AuthenticatedVoter" />
+						<bean class="org.springframework.security.access.vote.AuthenticatedVoter" />
 					</list>
-				</property>
+				</constructor-arg>
 			</bean>
 		</property>
 		<property name="securityMetadataSource">
@@ -47,7 +49,7 @@
 				init-method="remap">
 				<property name="requestMap">
 					<map>
-						<!-- default geOrchestra rules (can be overriden in datadir) -->
+						<!-- default geOrchestra rules (can be overridden in datadir) -->
 						<entry key=".*\?.*login.*" value="ROLE_USER,ROLE_GN_EDITOR,ROLE_GN_REVIEWER,ROLE_GN_ADMIN,ROLE_ADMINISTRATOR" />
 						<entry key=".*\?.*casLogin.*" value="ROLE_USER,ROLE_GN_EDITOR,ROLE_GN_REVIEWER,ROLE_GN_ADMIN,ROLE_ADMINISTRATOR" />
 						<entry key="/extractorapp/admin/.*" value="ROLE_ADMINISTRATOR" />
@@ -74,7 +76,14 @@
 
     <!--  end custom -->
 
+    <bean id="basicAuthenticationEntryPoint"
+      class="org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint">
+      <property name="realmName" value="${realmName}" />
+    </bean>
+          
     <bean id="basicAuthChallengeByUserAgent" class="org.georchestra.security.BasicAuthChallengeByUserAgent" init-method="init">
+        <constructor-arg ref="authenticationManager" />
+        <constructor-arg ref="basicAuthenticationEntryPoint" />
         <property name="challengeUserAgents">
             <list>
             	<!-- uncomment the lines for which you want a preemptive basic auth -->
@@ -85,14 +94,7 @@
             </list>
         </property>
         <property name="ignoreHttps" value="true" />
-        <property name="ignoreFailure" value="false"/>
         <property name="credentialsCharset" value="UTF-8"/>
-        <property name="authenticationManager" ref="authenticationManager"/>
-        <property name="authenticationEntryPoint">
-		    <bean class="org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint">
-		        <property name="realmName" value="${realmName}" />
-		    </bean>
-        </property>
     </bean>
 
     <bean id="trustAnotherProxy" class="org.georchestra.security.ProxyTrustAnotherProxy" init-method="init">
