@@ -2,7 +2,7 @@ FROM jetty:9-jre8
 
 ENV XMS=1536M XMX=8G
 
-RUN java -jar "$JETTY_HOME/start.jar" --add-to-startd=jmx,jmx-remote,stats,jndi
+RUN java -jar "$JETTY_HOME/start.jar" --create-startd --add-to-start=jmx,jmx-remote,stats,jndi
 
 ADD . /
 
