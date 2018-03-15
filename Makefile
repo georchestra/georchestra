@@ -34,7 +34,7 @@ docker-build-geoserver-geofence: docker-pull-jetty
 	../../mvn clean install docker:build -Pdocker,colormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,gdal,importer,inspire,libjpeg-turbo,monitor,pyramid,wps,geofence -DskipTests
 
 docker-build-console: build-deps docker-pull-jetty
-	./mvn clean package docker:build -Pdocker -DskipTests --pl ldapadmin
+	./mvn clean package docker:build -Pdocker -DskipTests --pl console
 
 docker-build-georchestra: build-deps docker-pull-jetty docker-build-database docker-build-ldap docker-build-geoserver docker-build-gn3
 	./mvn clean package docker:build -Pdocker -DskipTests --pl extractorapp,cas-server-webapp,security-proxy,mapfishapp,header,console,analytics,geowebcache-webapp,atlas
