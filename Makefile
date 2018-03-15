@@ -33,10 +33,10 @@ docker-build-geoserver-geofence: docker-pull-jetty
 	cd webapp; \
 	../../mvn clean install docker:build -Pdocker,colormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,gdal,importer,inspire,libjpeg-turbo,monitor,pyramid,wps,geofence -DskipTests
 
-docker-build-ldapadmin: docker-pull-jetty
+docker-build-ldapadmin: build-deps docker-pull-jetty
 	./mvn clean package docker:build -Pdocker -DskipTests --pl ldapadmin
 
-docker-build-georchestra: docker-pull-jetty docker-build-database docker-build-ldap docker-build-geoserver docker-build-gn3
+docker-build-georchestra: build-deps docker-pull-jetty docker-build-database docker-build-ldap docker-build-geoserver docker-build-gn3
 	./mvn clean package docker:build -Pdocker -DskipTests --pl extractorapp,cas-server-webapp,security-proxy,mapfishapp,header,ldapadmin,analytics,geowebcache-webapp,atlas
 
 docker-build-dev:
@@ -57,7 +57,7 @@ docker-clean-images:
 docker-clean-all:
 	$(DOCKER-COMPOSE-BIN) down --volumes --rmi 'all' --remove-orphans
 
-docker-build: build-deps docker-build-dev docker-build-gn3 docker-build-geoserver docker-build-georchestra
+docker-build: docker-build-dev docker-build-gn3 docker-build-geoserver docker-build-georchestra
 
 
 # WAR related targets
