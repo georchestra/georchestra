@@ -271,6 +271,7 @@
             <configuration>
               <packageName>georchestra-geowebcache</packageName>
               <packageDescription>geOrchestra standalone GeoWebCache</packageDescription>
+              <packageRevision>${maven.build.timestamp}~${build.commit.id.abbrev}</packageRevision>
               <projectOrganization>geOrchestra</projectOrganization>
               <maintainerName>geOrchestra PSC</maintainerName>
               <maintainerEmail>psc@georchestra.org</maintainerEmail>

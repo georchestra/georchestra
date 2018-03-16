@@ -25,6 +25,7 @@
     <gmaven.version>1.0</gmaven.version>
     <gmaven.runtime.version>1.5</gmaven.runtime.version>
     <server>tpl</server>
+    <maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
     <geoserver_datadir>geoserver_datadir/</geoserver_datadir>
     <sub.target>dev</sub.target>
     <!-- default when building without a profile specified -->

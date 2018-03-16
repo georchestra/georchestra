@@ -285,6 +285,7 @@
             <configuration>
               <packageName>georchestra-cas</packageName>
               <packageDescription>geOrchestra CAS server</packageDescription>
+              <packageRevision>${maven.build.timestamp}~${build.commit.id.abbrev}</packageRevision>
               <projectOrganization>geOrchestra</projectOrganization>
               <maintainerName>PSC</maintainerName>
               <maintainerEmail>psc@georchestra.org</maintainerEmail>

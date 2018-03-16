@@ -321,6 +321,7 @@
             <configuration>
               <packageName>georchestra-security-proxy</packageName>
               <packageDescription>geOrchestra Security Proxy</packageDescription>
+              <packageRevision>${maven.build.timestamp}~${build.commit.id.abbrev}</packageRevision>
               <packageDependencies>
                 <packageDependency>debconf</packageDependency>
               </packageDependencies>
