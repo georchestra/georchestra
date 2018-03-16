@@ -119,6 +119,8 @@ public class WxsJsonControllerTest {
                 res.getStatus() == HttpServletResponse.SC_OK);
         assertTrue(String.format("Unexpected message: %s", res.getContentAsString()),
                 res.getContentAsString().contains("json to test WxsJsonController"));
+        assertTrue("Expected JSON, instead received " + res.getContentType(),
+                res.getContentType().equals("application/json; charset=utf-8"));
     }
 
 }
