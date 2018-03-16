@@ -83,7 +83,7 @@ public class AddonController implements ServletContextAware {
      */
     @RequestMapping(value= "/addons")
     public void getAddons(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        response.setContentType("application/json");
+        response.setContentType("application/json; charset=utf-8");
         JSONArray jsAddons = constructAddonsSpec();
 
         response.getOutputStream().write(jsAddons.toString(4).getBytes());
@@ -93,7 +93,7 @@ public class AddonController implements ServletContextAware {
     public void getAddonFile(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String pathInfo = request.getPathInfo().replaceFirst("/addons/", "");
         String path = getMfappAddonPath();
-        
+
         // Step 1: checks in the webapp directory
 
         // First check if the file is in the webapp directory
@@ -102,7 +102,7 @@ public class AddonController implements ServletContextAware {
         if (officialAddonPath == null) {
             LOG.error("Unexpected file requested (not in datadir): " + pathInfo);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;            
+            return;
         }
         Path officialAddonFile = new File(officialAddonPath).toPath();
         Path officialWebappPath = new File(context.getRealPath("/app/addons/")).toPath();
@@ -130,7 +130,7 @@ public class AddonController implements ServletContextAware {
         if (checkedPath == null) {
             LOG.error("Unexpected file requested (not in datadir): " + checkedPath);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;            
+            return;
         }
 
         Path reqPath = new File(checkedPath).toPath();
@@ -152,7 +152,7 @@ public class AddonController implements ServletContextAware {
         }
         dumpFile(response, actualFile);
     }
-    
+
     /**
      * This actually dumps the file to the user.
      *
@@ -168,6 +168,8 @@ public class AddonController implements ServletContextAware {
             response.setContentType("text/css");
         } else if ("js".equalsIgnoreCase(ext)) {
             response.setContentType("application/javascript");
+        } else if ("json".equalsIgnoreCase(ext)) {
+            response.setContentType("application/json; charset=utf-8");
         } else if ("png".equalsIgnoreCase(ext)) {
             response.setContentType("image/png");
         } else if (("jpg".equalsIgnoreCase(ext)) || ("jpeg".equalsIgnoreCase(ext))) {
@@ -200,7 +202,7 @@ public class AddonController implements ServletContextAware {
     private String getMfappOfficialAddonsPath() {
         return context.getRealPath("/app/addons");
     }
-    
+
     private JSONArray buildAddonSpecs(String path) {
         JSONArray addons = new JSONArray();
         String[] files = new File(path).list(DirectoryFileFilter.INSTANCE);
@@ -235,26 +237,26 @@ public class AddonController implements ServletContextAware {
 
         return addons;
     }
-    
+
     /**
      * Constructs the array of addons specifications. This is similar with what was defined statically in the GEOR_custom.js file.
      * It first scans the official addons, before scanning (if activated and available) the addons from the datadir.
-     * 
+     *
      * @return a JSON array with the addons specifications.
      * @throws JSONException
      */
     public JSONArray constructAddonsSpec() throws JSONException {
         JSONArray addons = new JSONArray();
-        
+
         // First, looks up the addons in the webapp dir
         String path1 = getMfappOfficialAddonsPath();
         addons = buildAddonSpecs(path1);
-        
-        
+
+
         String path2 = getMfappAddonPath();
-        
+
         JSONArray addons2 = new JSONArray();
-        
+
         if (path2 != null) {
             addons2 = buildAddonSpecs(path2);
         }
@@ -271,7 +273,7 @@ public class AddonController implements ServletContextAware {
             String currentInstanceId = cur.getString("id");
             // only adds the addon if not overridden in the datadir
             if (instanceAddon.get(currentInstanceId) == null) {
-                instanceAddon.put(cur.getString("id"), cur);       
+                instanceAddon.put(cur.getString("id"), cur);
             }
         }
 

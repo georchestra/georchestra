@@ -71,6 +71,7 @@ public class WxsJsonController implements ServletContextAware {
             return;
         }
         byte[] wxsJson = FileUtils.readFileToByteArray(wxsJsonF);
+        response.setContentType("application/json; charset=utf-8");
         response.getOutputStream().write(wxsJson);
         return;
     }
