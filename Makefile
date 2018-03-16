@@ -70,7 +70,7 @@ war-build-geoserver: build-deps
 
 war-build-geoserver-geofence: build-deps
 	cd geoserver/geoserver-submodule/src/; \
-	../../../mvn clean install -Pcolormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,gdal,importer,inspire,libjpeg-turbo,monitor,pyramid,wps,css,geofence-server -DskipTests; \
+	../../../mvn clean install -Pcolormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,gdal,importer,inspire,libjpeg-turbo,monitor,pyramid,wps,css,geofence-server -Dserver=geofence-generic -DskipTests; \
 	cd ../../..; \
 	./mvn clean install -pl geoserver/webapp
 
@@ -89,7 +89,7 @@ deb-build-geoserver: war-build-geoserver
 
 deb-build-geoserver-geofence: war-build-geoserver-geofence
 	cd geoserver; \
-	../mvn clean package deb:package -PdebianPackage --pl webapp
+	../mvn clean package deb:package -PdebianPackage,geofence -Dserver=geofence-generic --pl webapp
 
 deb-build-georchestra: war-build-georchestra build-deps deb-build-geoserver
 	./mvn package deb:package -pl atlas,cas-server-webapp,security-proxy,header,mapfishapp,extractorapp,analytics,geoserver/webapp,console,geonetwork/web,geowebcache-webapp -PdebianPackage -DskipTests
