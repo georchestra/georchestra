@@ -3,12 +3,13 @@
 	color: white;
 }
 
-/* Center repatcha image */ 
-#recaptcha_image img {
-	margin-left: auto;
-	margin-right: auto;
-}
-/* Fix 2px border issue */
-#recaptcha_response_field .input-group-addon {
-    border-left: 0 none;
+/* Center Captcha */
+.g-recaptcha {
+    margin: 15px auto !important;
+   	width: auto !important;
+   	height: auto !important;
+   	text-align: -webkit-center;
+   	text-align: -moz-center;
+   	text-align: -o-center;
+   	text-align: -ms-center;
 }
