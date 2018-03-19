@@ -13,7 +13,8 @@ RUN apt-get update && \
    apt-get install -y libgdal-java gdal-bin && \
    rm -rf /var/lib/apt/lists/*
 
-RUN ln -s /usr/share/java/gdal.jar /var/lib/jetty/lib/ext/
+RUN unzip -d /var/lib/jetty/webapps/mapfishapp /var/lib/jetty/webapps/mapfishapp.war
+RUN ln -s /usr/share/java/gdal.jar /var/lib/jetty/webapps/mapfishapp/WEB-INF/lib/
 
 RUN mkdir /mnt/mapfishapp_uploads && \
     chown jetty:jetty /etc/georchestra /mnt/mapfishapp_uploads
