@@ -74,7 +74,11 @@ GEOR.Addons.Extractor = Ext.extend(GEOR.Addons.Base, {
                 scope: this
             });
         }
-        if (this.options.showWindowOnStartup == true) {
+        var o = GEOR.util.splitURL(window.location.href);
+        if (this.options.showWindowOnStartup == true &&
+            o.params.hasOwnProperty("ADDONS") &&
+            o.params.ADDONS.indexOf(record.id) > -1) {
+
             this.showWindow();
         }
     },
