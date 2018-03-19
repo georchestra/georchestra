@@ -18,3 +18,7 @@ but please pay a particular attention in case of spring-security customizations
 in your profile, you would probably have to update your configuration, as the
 spring version bump will require some changes on the XML files especially.
 
+
+## Datadir changes
+
+With [#1919](https://github.com/georchestra/georchestra/issues/1919), `orgsSearchBaseDN` was renamed into `orgSearchBaseDN`. This impacts the console and security-proxy webapps. Please update your datadir files.
