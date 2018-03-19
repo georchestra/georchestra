@@ -215,7 +215,7 @@ public class UsersRolesControllerTest {
 
         OrgsDao orgsDao = new OrgsDao();
         orgsDao.setLdapTemplate(ldapTemplate);
-        orgsDao.setOrgsSearchBaseDN("ou=orgs");
+        orgsDao.setOrgSearchBaseDN("ou=orgs");
         orgsDao.setUserSearchBaseDN("ou=users");
 
         // configures AccountDao

@@ -83,7 +83,7 @@
 
   <bean id="orgsDao" class="org.georchestra.console.ds.OrgsDao">
     <property name="ldapTemplate" ref="ldapTemplate"/>
-    <property name="orgsSearchBaseDN" value="${orgsSearchBaseDN}"/>
+    <property name="orgSearchBaseDN" value="${orgSearchBaseDN}"/>
     <property name="userSearchBaseDN" value="${userSearchBaseDN}"/>
     <property name="basePath" value="${baseDN}"/>
     <property name="orgTypeValues" value="${orgTypeValues}"/>
@@ -97,7 +97,7 @@
     <property name="uniqueNumberField" value="${accountUniqueNumberField}"/>
     <property name="userSearchBaseDN" value="${userSearchBaseDN}"/>
     <property name="basePath" value="${baseDN}"/>
-    <property name="orgsSearchBaseDN" value="${orgsSearchBaseDN}"/>
+    <property name="orgSearchBaseDN" value="${orgSearchBaseDN}"/>
   </bean>
 
   <bean class="org.georchestra.console.ws.backoffice.users.UserRule">

@@ -49,7 +49,7 @@ public class ChangePasswordControllerTest {
         OrgsDao orgsDao = new OrgsDao();
         orgsDao.setLdapTemplate(ldapTemplate);
         orgsDao.setUserSearchBaseDN("ou=users");
-        orgsDao.setOrgsSearchBaseDN("ou=orgs");
+        orgsDao.setOrgSearchBaseDN("ou=orgs");
 
         AccountDaoImpl dao = new AccountDaoImpl(ldapTemplate, roleDao, orgsDao);
         dao.setUserSearchBaseDN("ou=users");
