@@ -13,7 +13,8 @@ RUN apt-get update && \
    apt-get install -y libgdal-java gdal-bin && \
    rm -rf /var/lib/apt/lists/*
 
-RUN ln -s /usr/share/java/gdal.jar /var/lib/jetty/lib/ext/
+RUN unzip -d /var/lib/jetty/webapps/extractorapp /var/lib/jetty/webapps/extractorapp.war
+RUN ln -s /usr/share/java/gdal.jar /var/lib/jetty/webapps/extractorapp/WEB-INF/lib/
 
 RUN mkdir /mnt/extractorapp_extracts && \
     chown jetty:jetty /etc/georchestra /mnt/extractorapp_extracts
