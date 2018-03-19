@@ -61,7 +61,7 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
     private LdapUserSearch      _userSearch;
     private Map<String, String> _headerMapping;
     private Pattern pattern;
-    private String orgsSearchBaseDN;
+    private String orgSearchBaseDN;
 
     @Autowired
     private LdapTemplate ldapTemplate;
@@ -69,14 +69,14 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
     @Autowired
     private GeorchestraConfiguration georchestraConfiguration;
 
-    public LdapUserDetailsRequestHeaderProvider(LdapUserSearch userSearch, String orgsSearchBaseDN, Map<String, String> headerMapping) {
+    public LdapUserDetailsRequestHeaderProvider(LdapUserSearch userSearch, String orgSearchBaseDN, Map<String, String> headerMapping) {
         Assert.notNull(userSearch, "userSearch must not be null");
         Assert.notNull(headerMapping, "headerMapping must not be null");
         this._userSearch = userSearch;
         this._headerMapping = headerMapping;
-        this.orgsSearchBaseDN = orgsSearchBaseDN;
+        this.orgSearchBaseDN = orgSearchBaseDN;
 
-        this.pattern = Pattern.compile("([^=,]+)=([^=,]+)," + orgsSearchBaseDN + ".*");
+        this.pattern = Pattern.compile("([^=,]+)=([^=,]+)," + orgSearchBaseDN + ".*");
     }
 
     public void init() throws IOException {
@@ -182,7 +182,7 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
                 // add sec-orgname
                 if(orgCn != null) {
                     try {
-                        DirContextOperations ctx = this.ldapTemplate.lookupContext("cn=" + orgCn + "," + this.orgsSearchBaseDN);
+                        DirContextOperations ctx = this.ldapTemplate.lookupContext("cn=" + orgCn + "," + this.orgSearchBaseDN);
                         headers.add(new BasicHeader("sec-orgname", ctx.getStringAttribute("o")));
                     }catch (RuntimeException ex){
                         logger.warn("Cannot find associated org with cn " + orgCn);

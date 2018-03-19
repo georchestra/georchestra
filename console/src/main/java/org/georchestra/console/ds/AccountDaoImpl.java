@@ -80,7 +80,7 @@ public final class AccountDaoImpl implements AccountDao {
     private static final Log LOG = LogFactory.getLog(AccountDaoImpl.class.getName());
 
     private String basePath;
-    private String orgsSearchBaseDN;
+    private String orgSearchBaseDN;
 
     public String getBasePath() { return basePath; }
     public void setBasePath(String basePath) { this.basePath = basePath; }
@@ -94,7 +94,7 @@ public final class AccountDaoImpl implements AccountDao {
     }
 
     public void init() {
-        this.attributMapper = new AccountContextMapper(this.getOrgsSearchBaseDN() + "," + this.getBasePath());
+        this.attributMapper = new AccountContextMapper(this.getOrgSearchBaseDN() + "," + this.getBasePath());
     }
 
     public LdapTemplate getLdapTemplate() {
@@ -125,12 +125,12 @@ public final class AccountDaoImpl implements AccountDao {
         this.logDao = logDao;
     }
 
-    public void setOrgsSearchBaseDN(String orgsSearchBaseDN) {
-        this.orgsSearchBaseDN = orgsSearchBaseDN;
+    public void setOrgSearchBaseDN(String orgSearchBaseDN) {
+        this.orgSearchBaseDN = orgSearchBaseDN;
     }
 
-    public String getOrgsSearchBaseDN() {
-        return orgsSearchBaseDN;
+    public String getOrgSearchBaseDN() {
+        return orgSearchBaseDN;
     }
 
 

@@ -48,7 +48,7 @@ import java.util.List;
 public class OrgsDao {
 
     private LdapTemplate ldapTemplate;
-    private Name orgsSearchBaseDN;
+    private Name orgSearchBaseDN;
     private Name userSearchBaseDN;
     private String basePath;
     private String[] orgTypeValues;
@@ -58,8 +58,8 @@ public class OrgsDao {
         this.ldapTemplate = ldapTemplate;
     }
 
-    public void setOrgsSearchBaseDN(String orgsSearchBaseDN) {
-        this.orgsSearchBaseDN = LdapNameBuilder.newInstance(orgsSearchBaseDN).build();
+    public void setOrgSearchBaseDN(String orgSearchBaseDN) {
+        this.orgSearchBaseDN = LdapNameBuilder.newInstance(orgSearchBaseDN).build();
     }
 
     public void setUserSearchBaseDN(String userSearchBaseDN) {
@@ -75,13 +75,13 @@ public class OrgsDao {
     }
 
     /**
-     * Search all organizations defined in ldap. this.orgsSearchBaseDN hold search path in ldap.
+     * Search all organizations defined in ldap. this.orgSearchBaseDN hold search path in ldap.
      *
      * @return list of organizations
      */
     public List<Org> findAll(){
         EqualsFilter filter = new EqualsFilter("objectClass", "groupOfMembers");
-        return ldapTemplate.search(this.orgsSearchBaseDN, filter.encode(), new OrgsDao.OrgAttributesMapper());
+        return ldapTemplate.search(this.orgSearchBaseDN, filter.encode(), new OrgsDao.OrgAttributesMapper());
     }
 
     /**
@@ -95,17 +95,17 @@ public class OrgsDao {
         AndFilter filter = new AndFilter();
         filter.and(classFilter);
         filter.and(validatedFilter);
-        return ldapTemplate.search(this.orgsSearchBaseDN, filter.encode(), new OrgsDao.OrgAttributesMapper());
+        return ldapTemplate.search(this.orgSearchBaseDN, filter.encode(), new OrgsDao.OrgAttributesMapper());
     }
 
     /**
-     * Search all organizations defined in ldap. this.orgsSearchBaseDN hold search path in ldap.
+     * Search all organizations defined in ldap. this.orgSearchBaseDN hold search path in ldap.
      *
      * @return list of organizations (ldap organization object)
      */
     public List<OrgExt> findAllExt(){
         EqualsFilter filter = new EqualsFilter("objectClass", "organization");
-        return ldapTemplate.search(this.orgsSearchBaseDN, filter.encode(), new OrgsDao.OrgExtAttributesMapper());
+        return ldapTemplate.search(this.orgSearchBaseDN, filter.encode(), new OrgsDao.OrgExtAttributesMapper());
     }
 
 
@@ -116,7 +116,7 @@ public class OrgsDao {
      * @return Org instance with specified DN
      */
     public Org findByCommonName(String commonName) {
-        Name dn = LdapNameBuilder.newInstance(this.orgsSearchBaseDN).add("cn", commonName).build();
+        Name dn = LdapNameBuilder.newInstance(this.orgSearchBaseDN).add("cn", commonName).build();
         return this.ldapTemplate.lookup(dn, new OrgsDao.OrgAttributesMapper());
     }
 
@@ -127,7 +127,7 @@ public class OrgsDao {
      * @return OrgExt instance corresponding to extended attributes
      */
     public OrgExt findExtById(String cn) {
-        Name dn = LdapNameBuilder.newInstance(this.orgsSearchBaseDN).add("o", cn).build();
+        Name dn = LdapNameBuilder.newInstance(this.orgSearchBaseDN).add("o", cn).build();
         return this.ldapTemplate.lookup(dn, new OrgsDao.OrgExtAttributesMapper());
     }
 
@@ -145,7 +145,7 @@ public class OrgsDao {
         AndFilter filter  = new AndFilter();
         filter.and(new EqualsFilter("member", userDn.toString()));
         filter.and(new EqualsFilter("objectClass", "groupOfMembers"));
-        List<Org> res = ldapTemplate.search(this.orgsSearchBaseDN, filter.encode(), new OrgsDao.OrgAttributesMapper());
+        List<Org> res = ldapTemplate.search(this.orgSearchBaseDN, filter.encode(), new OrgsDao.OrgAttributesMapper());
         if(res.size() > 1)
             throw new DataServiceException("Multiple org for user : " + user);
         if(res.size() == 1)
@@ -196,11 +196,11 @@ public class OrgsDao {
     }
 
     private Name buildOrgDN(String id){
-        return LdapNameBuilder.newInstance(this.orgsSearchBaseDN).add("cn", id).build();
+        return LdapNameBuilder.newInstance(this.orgSearchBaseDN).add("cn", id).build();
     }
 
     private Name buildOrgExtDN(String id){
-        return LdapNameBuilder.newInstance(this.orgsSearchBaseDN).add("o", id).build();
+        return LdapNameBuilder.newInstance(this.orgSearchBaseDN).add("o", id).build();
     }
 
 
@@ -212,7 +212,7 @@ public class OrgsDao {
 
         attrs.put(ocattr);
         attrs.put("cn", org.getId());
-        attrs.put("seeAlso", LdapNameBuilder.newInstance(this.orgsSearchBaseDN + "," + this.basePath)
+        attrs.put("seeAlso", LdapNameBuilder.newInstance(this.orgSearchBaseDN + "," + this.basePath)
                 .add("o", org.getId()).build().toString());
 
         // Mandatory attribute
@@ -313,7 +313,7 @@ public class OrgsDao {
     public Integer generateNumericId() {
 
         EqualsFilter filter = new EqualsFilter("objectClass", "organization");
-        List<OrgExt> orgs = ldapTemplate.search(this.orgsSearchBaseDN, filter.encode(), new OrgsDao.OrgExtAttributesMapper());
+        List<OrgExt> orgs = ldapTemplate.search(this.orgSearchBaseDN, filter.encode(), new OrgsDao.OrgExtAttributesMapper());
         Integer maxId = 0;
 
         for(OrgExt org : orgs){

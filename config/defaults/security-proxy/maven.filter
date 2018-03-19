@@ -14,7 +14,7 @@ ldap.admin.password=@shared.ldap.admin.password@
 authoritiesBaseDN=@shared.ldap.roleSearchBaseDN@
 roleRoleAttribute=@shared.ldap.roleRoleAttribute@
 roleSearchFilter=@shared.ldap.roleSearchFilter@
-orgsSearchBaseDN=@shared.ldap.orgsSearchBaseDN@
+orgSearchBaseDN=@shared.ldap.orgSearchBaseDN@
 
 cas.public.host=@shared.server.name@
 
