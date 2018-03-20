@@ -14,11 +14,6 @@
     </bean>
 
     <!--  url mapping is directly handled with the spring annotations written in the following controllers -->
-    <bean id="homecontroller" class="org.georchestra.extractorapp.ws.doc.HomeController" init-method="init">
-        <property name="maxCoverageExtractionSize" value="${maxCoverageExtractionSize}"/>
-    </bean>
-
-    <bean id="ogcproxy" class="org.georchestra.extractorapp.ws.doc.OGCProxy"/>
 
     <bean id="expire-daemon" init-method="startup" class="org.georchestra.extractorapp.ws.extractor.ExpiredArchiveDaemon">
       <property name="expiry" value="10"/> <!-- days -->
@@ -70,13 +65,6 @@
         <property name="emailAckTemplateFile" value="/WEB-INF/templates/extractor-email-ack-template.txt"/>
         <property name="extraKeywordsFile" value="/org/georchestra/extractorapp/i18n/extra_keywords_${language}.properties" />
         <property name="emailSubject" value="${emailsubject}"/>
-    </bean>
-
-    <!-- View resolver Required to access jsps in WEB-INF/jsp directory-->
-    <bean id="viewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
-        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
-        <property name="prefix" value="/WEB-INF/jsp/"/>
-        <property name="suffix" value=".jsp"/>
     </bean>
 
     <bean id="georchestraConfiguration" class="org.georchestra.commons.configuration.GeorchestraConfiguration">
