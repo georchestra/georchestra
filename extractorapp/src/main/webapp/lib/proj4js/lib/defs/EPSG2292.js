@@ -1,1 +1,0 @@
-Proj4js.defs["EPSG:2292"] = "+proj=sterea +lat_0=47.25 +lon_0=-63 +k=0.999912 +x_0=400000 +y_0=800000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs";

@@ -330,7 +330,7 @@
         <artifactId>maven-war-plugin</artifactId>
         <version>2.6</version>
         <configuration>
-          <packagingExcludes>**/docs/**,admin/extjs/examples/**,admin/extjs/src/**,admin/extjs/pkgs/**,lib/externals/ext/examples/**,lib/externals/ext/src/**,lib/externals/ext/pkgs/**,PostTreatment.groovy</packagingExcludes>
+          <packagingExcludes>**/docs/**,admin/extjs/examples/**,admin/extjs/src/**,admin/extjs/pkgs/**,PostTreatment.groovy</packagingExcludes>
         </configuration>
       </plugin>
       <plugin>
@@ -391,75 +391,9 @@
           </systemProperties>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>1.1</version>
-        <executions>
-          <execution>
-            <phase>process-sources</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <executable>jsbuild/${jsbuild.command}</executable>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-clean-plugin</artifactId>
-        <version>3.0.0</version>
-        <configuration>
-          <filesets>
-            <fileset>
-              <directory>jsbuild</directory>
-              <includes>
-                <include>env/**</include>
-              </includes>
-            </fileset>
-          </filesets>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
   <profiles>
-    <profile>
-      <id>Windows</id>
-      <activation>
-        <os>
-          <!-- name>Windows platform</name -->
-          <family>Windows</family>
-        </os>
-      </activation>
-      <properties>
-        <jsbuild.command>build.bat</jsbuild.command>
-      </properties>
-    </profile>
-    <profile>
-      <id>Unix</id>
-      <activation>
-        <os>
-          <!-- name>Unix platform</name -->
-          <family>unix</family>
-        </os>
-      </activation>
-      <properties>
-        <jsbuild.command>build.sh</jsbuild.command>
-      </properties>
-    </profile>
-    <profile>
-      <id>Macintosh</id>
-      <activation>
-        <os>
-          <!-- name>Macintosh platform</name -->
-          <family>mac</family>
-        </os>
-      </activation>
-      <properties>
-        <jsbuild.command>build.sh</jsbuild.command>
-      </properties>
-    </profile>
     <profile>
       <id>debianPackage</id>
       <build>

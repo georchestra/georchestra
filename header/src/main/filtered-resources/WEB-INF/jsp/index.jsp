@@ -101,9 +101,6 @@ if(sec_roles != null) {
         if (roles[i].equals("ROLE_GN_EDITOR") || roles[i].equals("ROLE_GN_REVIEWER") || roles[i].equals("ROLE_GN_ADMIN") || roles[i].equals("ROLE_ADMINISTRATOR") || roles[i].equals("ROLE_USER")) {
             anonymous = false;
         }
-        if (roles[i].equals("ROLE_MOD_EXTRACTORAPP")) {
-            extractor = true;
-        }
         if (roles[i].equals("ROLE_SUPERUSER")) {
             admin = true;
             console = true;
@@ -290,19 +287,6 @@ if(sec_roles != null) {
             <c:otherwise>
             <li><a href="/mapfishapp/"><fmt:message key="viewer"/></a></li>
             </c:otherwise>
-        </c:choose>
-
-        <c:choose>
-            <c:when test='<%= extractor == true %>'>
-            <c:choose>
-                <c:when test='<%= active.equals("extractorapp") %>'>
-            <li class="active"><a><fmt:message key="extractor"/></a></li>
-                </c:when>
-                <c:otherwise>
-            <li><a href="/extractorapp/"><fmt:message key="extractor"/></a></li>
-                </c:otherwise>
-            </c:choose>
-            </c:when>
         </c:choose>
 
         <c:choose>

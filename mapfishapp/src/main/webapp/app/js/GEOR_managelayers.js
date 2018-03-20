@@ -501,31 +501,6 @@ GEOR.managelayers = (function() {
     };
 
     /**
-     * Method: submitData
-     * If required, this method creates the form and uses it to
-     * submit the objet passed as a parameter
-     *
-     * Parameters:
-     * o - {Object} JS object which should be serialized + submitted
-     */
-    var submitData = function(o) {
-        form = form || Ext.DomHelper.append(Ext.getBody(), {
-            tag: "form",
-            action: "/extractorapp/",
-            target: "_blank",
-            method: "post"
-        });
-        var input = form[0] || Ext.DomHelper.append(form, {
-            tag: "input",
-            type: "hidden",
-            name: "data"
-        });
-        jsonFormat = jsonFormat || new OpenLayers.Format.JSON();
-        input.value = jsonFormat.write(o);
-        form.submit();
-    };
-
-    /**
      * Method: editHandler
      * Callback executed on edit menu item clicked
      *
@@ -849,6 +824,8 @@ GEOR.managelayers = (function() {
         }
 
         if ((hasEquivalentWFS || hasEquivalentWCS || isWFS)
+            && GEOR.Addons.Extractor
+            && GEOR.tools.getAddonsState()["extractor_0"]
             && (GEOR.config.ROLES.indexOf("ROLE_MOD_EXTRACTORAPP") >= 0)) {
 
             insertSep();
@@ -856,24 +833,10 @@ GEOR.managelayers = (function() {
                 iconCls: 'geor-btn-extract',
                 text: tr("Extract data"),
                 handler: function() {
-                    // check extractor addon is loaded
-                    // use it preferably to the main extractorapp UI
-                    if (GEOR.Addons.Extractor
-                      && GEOR.tools.getAddonsState()["extractor_0"]) {
-                          var addon = GEOR.tools.getAddon("extractor_0");
-                          addon.showWindow({
-                              record: layerRecord
-                          });
-                    } else {
-                        submitData({
-                            layers: [{
-                                layername: layerRecord.get('name'),
-                                metadataURL: layer.metadataURL || "",
-                                owstype: isWMS ? "WMS" : "WFS",
-                                owsurl: isWMS ? layer.url : layer.protocol.url
-                            }]
-                        });
-                    }
+                    var addon = GEOR.tools.getAddon("extractor_0");
+                    addon && addon.showWindow({
+                        record: layerRecord
+                    });
                 }
             });
         }
