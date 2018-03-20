@@ -1,5 +1,8 @@
 # UPGRADING from 17.12 to 18.06
 
+The `MOD_ANALYTICS` is not used anymore. You should remove it, and instead grant the `SUPERUSER` role to these users.
+The `MOD_EXTRACTORAPP` role was renamed into `EXTRACTORAPP`.
+
 ## Security-proxy rewrite
 
 After [PR #1902](https://github.com/georchestra/georchestra/pull/1902); the

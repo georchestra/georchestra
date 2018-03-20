@@ -826,7 +826,7 @@ GEOR.managelayers = (function() {
         if ((hasEquivalentWFS || hasEquivalentWCS || isWFS)
             && GEOR.Addons.Extractor
             && GEOR.tools.getAddonsState()["extractor_0"]
-            && (GEOR.config.ROLES.indexOf("ROLE_MOD_EXTRACTORAPP") >= 0)) {
+            && (GEOR.config.ROLES.indexOf("ROLE_EXTRACTORAPP") >= 0)) {
 
             insertSep();
             menuItems.push({

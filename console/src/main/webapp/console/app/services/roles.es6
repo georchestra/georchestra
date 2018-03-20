@@ -22,8 +22,7 @@ angular.module('admin_console')
   const adminRoles = [
     'ADMINISTRATOR',
     'PENDING',
-    'MOD_ANALYTICS',
-    'MOD_EXTRACTORAPP',
+    'EXTRACTORAPP',
     'SUPERUSER',
     'GN_ADMIN',
     'GN_EDITOR',

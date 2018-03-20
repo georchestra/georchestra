@@ -3,9 +3,9 @@
   <intercept-url pattern=".*\?.*casLogin.*" access="ROLE_USER,ROLE_GN_EDITOR,ROLE_GN_REVIEWER,ROLE_GN_ADMIN,ROLE_ADMINISTRATOR" />
   <intercept-url pattern="/extractorapp/admin/.*" access="ROLE_ADMINISTRATOR" />
   <intercept-url pattern="/extractorapp/jobs/.*" access="ROLE_ADMINISTRATOR" />
-  <intercept-url pattern="/extractorapp/.*" access="ROLE_MOD_EXTRACTORAPP" />
+  <intercept-url pattern="/extractorapp/.*" access="ROLE_EXTRACTORAPP" />
   <intercept-url pattern="/geofence/.*" access="ROLE_ADMINISTRATOR" />
-  <intercept-url pattern="/analytics/.*" access="ROLE_MOD_ANALYTICS" />
+  <intercept-url pattern="/analytics/.*" access="ROLE_SUPERUSER" />
   <intercept-url pattern="/console/console/.*" access="ROLE_SUPERUSER" />
   <intercept-url pattern="/console/private/.*" access="ROLE_SUPERUSER" />
   <intercept-url pattern="/console/account/userdetails" access="IS_AUTHENTICATED_FULLY" />
@@ -14,4 +14,3 @@
   <intercept-url pattern=".*/ogcproxy/.*" access="ROLE_NO_ONE" />
   <intercept-url pattern=".*" access="IS_AUTHENTICATED_ANONYMOUSLY,ROLE_USER,ROLE_GN_EDITOR,ROLE_GN_REVIEWER,ROLE_GN_ADMIN,ROLE_ADMINISTRATOR" />
 </http>
-

@@ -113,10 +113,6 @@ if(sec_roles != null) {
             admin = true;
             extractorappadmin = true;
         }
-        if (roles[i].equals("ROLE_MOD_ANALYTICS")) {
-            admin = true;
-            analyticsadmin = true;
-        }
     }
 }
 
@@ -335,7 +331,7 @@ if(sec_roles != null) {
                     </c:choose>
 
                     <c:choose>
-                        <c:when test='<%= analyticsadmin == true %>'>
+                        <c:when test='<%= console == true %>'>
                         <c:choose>
                             <c:when test='<%= active.equals("analytics") %>'>
                         <li class="active"><a href="/analytics/">analytics</a></li>

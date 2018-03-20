@@ -52,9 +52,9 @@
 						<entry key=".*\?.*casLogin.*" value="ROLE_USER,ROLE_GN_EDITOR,ROLE_GN_REVIEWER,ROLE_GN_ADMIN,ROLE_ADMINISTRATOR" />
 						<entry key="/extractorapp/admin/.*" value="ROLE_ADMINISTRATOR" />
 						<entry key="/extractorapp/jobs/.*" value="ROLE_ADMINISTRATOR" />
-						<entry key="/extractorapp/.*" value="ROLE_MOD_EXTRACTORAPP" />
+						<entry key="/extractorapp/.*" value="ROLE_EXTRACTORAPP" />
 						<entry key="/geofence/.*" value="ROLE_ADMINISTRATOR" />
-						<entry key="/analytics/.*" value="ROLE_MOD_ANALYTICS" />
+						<entry key="/analytics/.*" value="ROLE_SUPERUSER" />
 						<entry key="/console/privateui/.*" value="ROLE_SUPERUSER" />
 						<entry key="/console/private/.*" value="ROLE_SUPERUSER" />
 						<entry key="/console/console/.*" value="ROLE_SUPERUSER" />
