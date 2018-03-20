@@ -528,7 +528,7 @@ public class RolesController {
 			Pattern p = Pattern.compile("[A-Z0-9_]+");
 			if(!p.matcher(commonName).matches())
 				throw new IllegalArgumentException(RoleSchema.COMMON_NAME_KEY +
-						" must only contains upper case letter, digits and underscore" );
+						" should only contain uppercased letters, digits and underscores" );
 
 			String description = RequestUtil.getFieldValue(json, RoleSchema.DESCRIPTION_KEY);
 
