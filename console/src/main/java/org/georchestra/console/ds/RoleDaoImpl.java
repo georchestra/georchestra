@@ -342,7 +342,8 @@ public class RoleDaoImpl implements RoleDao {
 		}
 		// checks unique common name
 		try{
-			findByCommonName(role.getName());
+			if(findByCommonName(role.getName()) == null)
+				throw new NameNotFoundException("Not found");
 
 			throw new DuplicatedCommonNameException("there is a role with this name: " + role.getName());
 

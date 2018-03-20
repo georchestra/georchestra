@@ -1,5 +1,7 @@
 package org.georchestra.console.ws.backoffice.roles;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
 
@@ -42,6 +44,8 @@ public class RolesControllerTest {
 	private MockHttpServletRequest request;
 	private MockHttpServletResponse response;
 
+	private String roleSearchBaseDN = "ou=roles";
+
     @Before
 	public void setUp() throws Exception {
 		ldapTemplate = Mockito.mock(LdapTemplate.class);
@@ -63,7 +67,7 @@ public class RolesControllerTest {
 		// Configures roleDao
 		roleDao = new RoleDaoImpl();
 		roleDao.setLdapTemplate(ldapTemplate);
-		roleDao.setRoleSearchBaseDN("ou=roles");
+		roleDao.setRoleSearchBaseDN(this.roleSearchBaseDN);
 		roleDao.setUniqueNumberField("ou");
 		roleDao.setUserSearchBaseDN("ou=users");
 		roleDao.setLogDao(logDao);
@@ -149,6 +153,11 @@ public class RolesControllerTest {
 
     @Test
     public void testCreateDuplicateRole() throws Exception {
+
+        Name ldapFilter = LdapNameBuilder.newInstance(this.roleSearchBaseDN).add("cn", "MYROLE").build();
+        Role myRole = RoleFactory.create("MYROLE", "test role");
+        Mockito.when(ldapTemplate.lookup((Name) Mockito.eq(ldapFilter), (ContextMapper) Mockito.any())).thenReturn(myRole);
+
         request.setContent("{ \"cn\": \"MYROLE\", \"description\": \"Description for the role\" }".getBytes());
 
         roleCtrl.create(request, response);
@@ -171,6 +180,35 @@ public class RolesControllerTest {
             assertTrue(ret.getBoolean("success") == false);
             assertTrue(response.getStatus() == HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @Test
+    public void testCreateLowerCase() throws IOException, JSONException {
+        String roleName = "test_lower";
+        String roleDescription = "lower case role";
+        String content = "{ \"cn\": \"" + roleName + "\", \"description\": \"" + roleDescription + "\" }";
+        request.setContent(content.getBytes());
+
+        roleCtrl.create(request, response);
+
+        JSONObject ret = new JSONObject(response.getContentAsString());
+        assertEquals(ret.getString("cn"), roleName.toUpperCase());
+        assertEquals(ret.getString("description"), roleDescription);
+
+    }
+
+    @Test
+    public void testIllegalCharacter() throws IOException, JSONException {
+        String roleName = "tést_lower";
+        String roleDescription = "test illegal character";
+        String content = "{ \"cn\": \"" + roleName + "\", \"description\": \"" + roleDescription + "\" }";
+        request.setContent(content.getBytes());
+
+        roleCtrl.create(request, response);
+        assertEquals(response.getStatus(), HttpServletResponse.SC_CONFLICT);
+        JSONObject ret = new JSONObject(response.getContentAsString());
+        assertFalse(ret.getBoolean("success"));
+        assertEquals(ret.getString("error"), "illegal_character");
     }
 
     /**

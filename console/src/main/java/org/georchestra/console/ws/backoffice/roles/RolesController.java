@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -73,10 +74,10 @@ public class RolesController {
 
 
 	private static final String DUPLICATED_COMMON_NAME = "duplicated_common_name";
-
 	private static final String NOT_FOUND = "not_found";
-
 	private static final String USER_NOT_FOUND = "user_not_found";
+	private static final String ILLEGAL_CHARACTER = "illegal_character";
+
 
 	public static final String VIRTUAL_TEMPORARY_ROLE_NAME = "TEMPORARY";
 	private static final String VIRTUAL_TEMPORARY_ROLE_DESCRIPTION = "Virtual role that contains all temporary users";
@@ -271,6 +272,9 @@ public class RolesController {
 			ResponseUtil.buildResponse(response, buildErrorResponse(dsex.getMessage()),
 					HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			throw new IOException(dsex);
+		} catch (IllegalArgumentException ex){
+			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, ILLEGAL_CHARACTER);
+			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
 		}
 	}
 
@@ -509,7 +513,7 @@ public class RolesController {
 		return role;
 	}
 
-	private Role createRoleFromRequestBody(ServletInputStream is) throws IOException {
+	private Role createRoleFromRequestBody(ServletInputStream is) throws IOException, IllegalArgumentException {
 		try {
 			String strRole = FileUtils.asString(is);
 			JSONObject json = new JSONObject(strRole);
@@ -519,12 +523,21 @@ public class RolesController {
 				throw new IllegalArgumentException(RoleSchema.COMMON_NAME_KEY + " is required" );
 			}
 
+			// Capitalize role name and check format
+			commonName = commonName.toUpperCase();
+			Pattern p = Pattern.compile("[A-Z0-9_]+");
+			if(!p.matcher(commonName).matches())
+				throw new IllegalArgumentException(RoleSchema.COMMON_NAME_KEY +
+						" must only contains upper case letter, digits and underscore" );
+
 			String description = RequestUtil.getFieldValue(json, RoleSchema.DESCRIPTION_KEY);
 
 			Role g = RoleFactory.create(commonName, description);
 
 			return g;
 
+		} catch (IllegalArgumentException e) {
+			throw e;
 		} catch (Exception e) {
 			LOG.error(e.getMessage());
 			throw new IOException(e);
