@@ -48,7 +48,7 @@
     "openlayers": "^3.19.0",
     "promise-polyfill": "^6.0.2",
     "quill": "^1.0.0-rc.0",
-    "sass-brunch": "1.9.2",
+    "sass-brunch": "brunch/sass-brunch#2d47094d8c259f07030a99433bc935d1ab753914",
     "save-svg-as-png": "^1.0.3",
     "select2": "^4.0.2",
     "standard": "^8.6.0",
