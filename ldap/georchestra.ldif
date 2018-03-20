@@ -137,21 +137,12 @@ ou: 10
 description: This group grants access to the LDAPadmin private User Interface
 member: uid=testadmin,ou=users,dc=georchestra,dc=org
 
-# MOD_ANALYTICS, roles, georchestra.org
-dn: cn=MOD_ANALYTICS,ou=roles,dc=georchestra,dc=org
-objectClass: top
-objectClass: groupOfMembers
-cn: MOD_ANALYTICS
-ou: 11
-description: This group grants access to the Analytics application
-member: uid=testadmin,ou=users,dc=georchestra,dc=org
-
 # MOD_EXTRACTORAPP, roles, georchestra.org
 dn: cn=MOD_EXTRACTORAPP,ou=roles,dc=georchestra,dc=org
 objectClass: top
 objectClass: groupOfMembers
 cn: MOD_EXTRACTORAPP
-ou: 12
+ou: 11
 description: This group grants access to the Extractorapp application
 member: uid=testadmin,ou=users,dc=georchestra,dc=org
 

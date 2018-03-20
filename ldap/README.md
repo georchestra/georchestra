@@ -39,7 +39,6 @@ Please note that `test*` users should be deleted before going into production !
 The roles:
  * ```SUPERUSER``` grants access to the console webapp (where one can manage users and roles),
  * ```ADMINISTRATOR``` is for GeoServer administrators,
- * ```MOD_ANALYTICS``` grants access rights to the analytics application,
  * ```MOD_EXTRACTORAPP``` grants access to the extractor application,
  * ```GN_ADMIN``` is for GeoNetwork administrators,
  * ```GN_EDITOR``` is for metadata editors,
