@@ -452,11 +452,11 @@ When building the configuration module there are two Java system properties that
  
 One can specify them manually on the commandline:
 
-    mvn install -Dserver=template -Dsub.target=test
+    mvn install -Dserver=tpl -Dsub.target=test
     
 Or one can add a profile to <root>/pom.xml that declares the properties when the profile is enabled. There are examples in the pom already that be be used as templates.  The following example enables a profile:
   
-    mvn install -Ptemplate
+    mvn install -Ptpl
     
 See (http://maven.apache.org/guides/introduction/introduction-to-profiles.html) for more on maven profiles.
 
@@ -470,7 +470,7 @@ the geOrchestra build system will run a PostTreatment script if it is defined fo
 To declare a post treatment script, create a PostTreatment.groovy file in the project's configuration directory.  
 
 For example, to define a Post Treatment script for geonetwork-client in a project "template". 
-Create the file: config/configurations/template/geonetwork-client/PostTreatment.groovy.  This file should have the class:
+Create the file: config/configurations/tpl/geonetwork-client/PostTreatment.groovy.  This file should have the class:
 
     class PostTreatment {
 	    def run(def project, def log, def ant, def basedirFile, def configDir,

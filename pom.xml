@@ -24,7 +24,7 @@
     <spring.ldap.version>1.3.0.RELEASE</spring.ldap.version>
     <gmaven.version>1.0</gmaven.version>
     <gmaven.runtime.version>1.5</gmaven.runtime.version>
-    <server>template</server>
+    <server>tpl</server>
     <geoserver_datadir>geoserver_datadir/</geoserver_datadir>
     <sub.target>dev</sub.target>
     <!-- default when building without a profile specified -->
@@ -314,11 +314,11 @@
         <server>localhost</server>
       </properties>
     </profile>
-    <!-- template profile -->
+    <!-- tpl profile -->
     <profile>
-      <id>template</id>
+      <id>tpl</id>
       <properties>
-        <server>template</server>
+        <server>tpl</server>
       </properties>
     </profile>
     <!-- profile which skips dependency plugin execution -->

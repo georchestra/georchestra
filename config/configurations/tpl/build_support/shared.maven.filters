@@ -1,0 +1,179 @@
+# build_support/shared.maven.filters
+#
+# This file is the primary configuration file for your SDI (spatial data infrastructure).
+# It overrides the geOrchestra default parameters to suit your SDI environment.
+# Secondary configuration files refers to shared.maven.filters parameters using the syntax
+# @shared.[parameter.name]@
+
+
+# Instance name
+# This name appears in many places across the SDI, typically page titles.
+# Defaults to geOrchestra but could be GeoBretagne, GeoBolivia, etc
+# Caution: no accentuated chars are supported in this string (see https://github.com/georchestra/georchestra/issues/479)
+
+shared.instance.name=geOrchestra
+
+# --------------------------------------------------
+# PUBLIC URL
+# --------------------------------------------------
+
+# sets the public address and port of your SDI.
+# shared.server.port defaults to 80
+# + example +
+# If your server is http://localhost:8080/ :
+# shared.server.name=localhost
+# shared.server.port=8080
+
+# set shared.url.scheme to https 
+# and shared.server.port to 443
+# if your SDI is configured accordingly
+
+shared.server.name=georchestra.mydomain.org
+shared.url.scheme=https
+
+# sets the public address of your homepage.
+# Defaults to @shared.url.scheme@://@shared.server.name@/
+
+shared.homepage.url=@shared.url.scheme@://@shared.server.name@/
+
+# --------------------------------------------------
+# LANGUAGE
+# --------------------------------------------------
+
+# sets the language for all modules
+# May be one of the following: fr, es, en, de
+# Default value: en
+
+shared.language=en
+
+
+# --------------------------------------------------
+# HEADER
+# --------------------------------------------------
+
+# Sets the header height (in pixels) across all geOrchestra webapps
+# Defaults to 90
+
+shared.header.height=90
+
+# --------------------------------------------------
+# GEONETWORK
+# --------------------------------------------------
+
+shared.geonetwork.language=eng
+
+# --------------------------------------------------
+# LDAP
+# --------------------------------------------------
+
+# how geOrchestra should connect to the ldap directory
+
+shared.ldap.host=localhost
+shared.ldap.port=389
+
+# shared.ldapUrl is automatically computed with the above parameters.
+# note: if you choose port = 636, you should also change 
+# the protocol to ldaps below:
+shared.ldapUrl=ldap://@shared.ldap.host@:@shared.ldap.port@
+
+
+# how geOrchestra should query the ldap directory.
+# shared.ldap.baseDn is the top level of the directory tree
+# shared.ldap.userSearchBaseDN is the query filter for users
+# shared.ldap.groupSearchBaseDN is the query filter for roles
+# shared.ldap.orgsSearchBaseDN is the query filter for organizations
+# shared.ldap.admin.dn is the query filter for the ldap admin user
+# shared.ldap.admin.password is the ldap admin user password
+
+shared.ldap.baseDn=dc=georchestra,dc=org
+shared.ldap.userSearchBaseDN=ou=users
+shared.ldap.groupSearchBaseDN=ou=roles
+shared.ldap.orgsSearchBaseDN=ou=orgs
+shared.ldap.admin.dn=cn=admin,@shared.ldap.baseDn@
+shared.ldap.admin.password=secret
+
+
+# --------------------------------------------------
+# GEOSERVER
+# --------------------------------------------------
+
+# geOrchestra uses a privileged account to query geoserver
+# with full admin privileges.This user MUST exist in the ldap
+# directory and MUST belong to the ADMINISTRATOR group.
+
+shared.privileged.geoserver.user=geoserver_privileged_user
+shared.privileged.geoserver.pass=gerlsSnFd6SmM
+
+
+# --------------------------------------------------
+# SMTP / Emails
+# --------------------------------------------------
+
+# geOrchestra sends notification emails about pending
+# and completed extraction requests. Use the following parameters
+# according to your platform smtp gateway
+
+shared.smtp.host=localhost
+shared.smtp.port=25
+
+# for emails sent by extractorapp:
+
+shared.email.replyTo=psc\@georchestra.org
+shared.email.from=psc\@georchestra.org
+
+# the following email receives new account requests if ldapadmin
+# is configured with moderatedSignup = true (which is the default)
+# (have a look at your own GenerateConfig.groovy)
+
+shared.administrator.email=psc\@georchestra.org
+
+# send notification mails in HTML ?
+# Defaults to: false (ie. plain text emails)
+# If you change this value to true, you should also modify 
+# the email templates in order to have full HTML emails.
+
+shared.email.html=false
+
+
+# --------------------------------------------------
+# LOGFILES
+# --------------------------------------------------
+
+# geOrchestra redirects logs to the shared.log.dir directory.
+# This directory must exist and must be writeable by the tomcat user
+# + example +
+# shared.log.dir=/var/log/tomcat8
+#
+# Here we use /tmp because we want to prevent this kind of error 
+# http://applis-bretagne.fr/redmine/issues/4311 when Tomcat is not installed
+
+shared.log.dir=/tmp
+
+
+# --------------------------------------------------
+# DATABASES
+# --------------------------------------------------
+
+# geOrchestra stores some informations in several postgresql databases.
+# We assume that all databases are hosted on the same pg cluster,
+# but you may override this setting in the secondary configuration files.
+# Make sure that the pg_hba.conf allows connections from the server
+# hosting georchestra with the appropriate credentials.
+
+shared.psql.host=localhost
+shared.psql.port=5432
+shared.psql.user=www-data
+shared.psql.pass=www-data
+
+
+# --------------------------------------------------
+# OGC statistics
+# --------------------------------------------------
+
+# If the OGC statistics feature is activated,
+# all queries to the OGC web services will be logged in a db.
+# see ogc-server-statistics/database.sql
+
+shared.ogc.statistics.activated=false
+
+
