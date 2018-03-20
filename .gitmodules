@@ -19,9 +19,6 @@
 [submodule "mapfishapp/src/main/webapp/lib/externals/styler"]
 	path = mapfishapp/src/main/webapp/lib/externals/styler
 	url = https://github.com/georchestra/styler.git
-[submodule "config/configurations/template"]
-	path = config/configurations/template
-	url = https://github.com/georchestra/template.git
 [submodule "geotools"]
 	path = geotools
 	url = https://github.com/georchestra/geotools.git
