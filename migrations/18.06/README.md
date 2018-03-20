@@ -1,6 +1,7 @@
 # UPGRADING from 17.12 to 18.06
 
-The MOD_ANALYTICS is not used anymore. You shoudl remove it, and instead grant the SUPERUSER role to these users.
+The `MOD_ANALYTICS` is not used anymore. You should remove it, and instead grant the `SUPERUSER` role to these users.
+The `MOD_EXTRACTORAPP` role was renamed into `EXTRACTORAPP`.
 
 ## Security-proxy rewrite
 
@@ -24,4 +25,3 @@ spring version bump will require some changes on the XML files especially.
 ## Datadir changes
 
 With [#1919](https://github.com/georchestra/georchestra/issues/1919), `orgsSearchBaseDN` was renamed into `orgSearchBaseDN`. This impacts the console and security-proxy webapps. Please update your datadir files.
-
