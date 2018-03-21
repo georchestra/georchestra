@@ -100,7 +100,7 @@ build-deps:
 	./mvn clean install -pl config -Dmaven.javadoc.failOnError=false
 	./mvn clean install -pl commons,epsg-extension,ogc-server-statistics -Dmaven.javadoc.failOnError=false
 	cd config/; \
-	../mvn -Dserver=template install
+	../mvn -Dserver=tpl install
 
 # all
 all: war-build-georchestra deb-build-georchestra docker-build
