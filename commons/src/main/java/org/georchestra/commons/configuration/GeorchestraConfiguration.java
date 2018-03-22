@@ -44,6 +44,7 @@ public class GeorchestraConfiguration {
     protected ServletContext ctx;
 
     protected Properties applicationSpecificProperties = new Properties();
+    protected Properties commonProperties = new Properties();
 
     public String getContextDataDir() {
         return contextDataDir;
@@ -66,22 +67,15 @@ public class GeorchestraConfiguration {
                 return;
             }
             // loads the application context property file
-            FileInputStream propsFis = null;
             try {
-                try {
-                    // application-context
-                    propsFis = new FileInputStream(new File(contextDataDir, context + ".properties"));
-                    InputStreamReader isr = new InputStreamReader(propsFis, "UTF8");
-                    applicationSpecificProperties.load(isr);
-                } finally {
-                    if (propsFis != null) {
-                        propsFis.close();
-                    }
-                }
-            } catch (Exception e) {
-                activated = false;
-                return;
-            }
+                this.applicationSpecificProperties = this.loadCustomPropertiesFile(context);
+            } catch (Exception e) {}
+
+            // loads common context property file
+            try {
+                this.commonProperties = this.loadPropertiesFile(new File(String.format("%s%s%s",
+                        globalDatadir, File.separator, "common.properties")));
+            } catch (Exception e) {}
 
             // log4j configuration
             File log4jProperties = new File(contextDataDir, "log4j" + File.separator + "log4j.properties");
@@ -107,10 +101,14 @@ public class GeorchestraConfiguration {
      * @throws IOException
      */
     public Properties loadCustomPropertiesFile(String key) throws IOException {
+        return this.loadPropertiesFile(new File(contextDataDir, key + ".properties"));
+    }
+
+    private Properties loadPropertiesFile(File path) throws IOException {
         Properties prop = new Properties();
         FileInputStream fisProp = null;
         try {
-            fisProp = new FileInputStream(new File(contextDataDir, key + ".properties"));
+            fisProp = new FileInputStream(path);
             InputStreamReader isrProp = new InputStreamReader(fisProp, "UTF8");
             prop.load(isrProp);
         } finally {
@@ -122,9 +120,11 @@ public class GeorchestraConfiguration {
     }
 
     public String getProperty(String key) {
-        if ((applicationSpecificProperties == null) || (activated == false))
+        if (!this.activated)
             return null;
-        return applicationSpecificProperties.getProperty(key);
+        if (this.applicationSpecificProperties.getProperty(key) != null)
+            return this.applicationSpecificProperties.getProperty(key);
+        return this.commonProperties.getProperty(key);
     }
 
     public boolean activated() {
