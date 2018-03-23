@@ -88,10 +88,10 @@
   "area.search"           : "Search",
 
   "role.allusers"        : "All users",
-  "role.system"          : "System roles",
-  "role.app"             : "Application roles",
+  "role.system"          : "geOrchestra roles",
+  "role.app"             : "Other roles",
   "role.newuser"         : "New user",
-  "role.newrole"        : "New role",
+  "role.newrole"         : "New role",
   "role.users"           : "users",
   "role.filter_users"    : "Filter",
   "role.created"         : "Role created",
