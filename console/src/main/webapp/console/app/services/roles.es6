@@ -20,14 +20,14 @@ angular.module('admin_console')
   })
 ]).factory('roleAdminList', [ () => {
   const adminRoles = [
-    'ADMINISTRATOR',
-    'PENDING',
-    'EXTRACTORAPP',
     'SUPERUSER',
+    'ADMINISTRATOR',
     'GN_ADMIN',
     'GN_EDITOR',
     'GN_REVIEWER',
+    'EXTRACTORAPP',
     'USER',
+    'PENDING',
     'TEMPORARY'
   ]
   return () => adminRoles
