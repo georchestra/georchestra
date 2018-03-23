@@ -18,7 +18,7 @@ If **mapfishapp** is deployed:
 psql -d georchestra -f postgresql/02-mapfishapp.sql
 ```
 
-## Ldapadmin schema
+## Console schema
 
 If the **console** webapp is deployed:
 ```
