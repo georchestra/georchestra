@@ -63,9 +63,9 @@
       <tbody>
         <tr ng-repeat="log in home.logs.logs">
           <td>{{::log.date | date: 'medium'}}</td>
-          <td>{{::log.admin}}</td>
+          <td><a ng-link="user({id: log.admin, tab: 'infos'})">{{::log.admin}}</a></td>
           <td>{{::log.type}}</td>
-          <td>{{::log.target}}</td>
+          <td><a ng-link="user({id: log.target, tab: 'infos'})">{{::log.target}}</a></td>
         </tr>
       </tbody>
     </table>
