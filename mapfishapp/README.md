@@ -57,11 +57,11 @@ It is also possible to POST a JSON string to the home controller, for instance :
             "owstype": "WMS",
             "owsurl": "http://ids.pigma.org/geoserver/ign/wms"
         }],
-        "search":{
-    		"owsurl":"http://ids.pigma.org/geoserver/ows",
-    		"cql_filter": "id_dept = 48",
-    		"typename":"ign:ign_bdtopo_departement"
-    	}
+        "search": {
+            "owsurl":"http://ids.pigma.org/geoserver/ows",
+            "cql_filter": "id_dept = 48",
+            "typename":"ign:ign_bdtopo_departement"
+        }
     }
 
 In response, the viewer will :

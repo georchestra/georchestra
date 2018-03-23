@@ -109,7 +109,9 @@ GEOR.Addons.Backgrounds = Ext.extend(GEOR.Addons.Base, {
         }
         
         if( this._currentLayer != null ) {
-            this.map.removeLayer(this._currentLayer);
+            if( this.map.getLayerIndex(this._currentLayer) != -1 ) {
+                this.map.removeLayer(this._currentLayer);
+            }
             this._currentLayer = null;
         }
         
