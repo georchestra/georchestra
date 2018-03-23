@@ -35,7 +35,7 @@
         <tbody>
           <tr dir-paginate="user in home.connected.results | itemsPerPage: 10">
             <td title="{{::user.nb_requests}}">{{::user.nb_requests}}</td>
-            <td title="{{::user.user}}">{{::user.user}}</td>
+            <td title="{{::user.user}}"><a ng-link="user({id: user.user, tab: 'infos'})">{{::user.user}}</a></td>
             <td title="{{::user.organization}}">{{::user.organization}}</td>
           </tr>
         </tbody>
