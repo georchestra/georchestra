@@ -5,12 +5,11 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
-public class DatadirCommonTest {
+public class DatadirDefaultTest {
 
     @Test
-    public void testCommonProperty(){
+    public void testDefaultProperty(){
         this.setDatadir("datadir");
         GeorchestraConfiguration datadir = new GeorchestraConfiguration("webapp");
         assertEquals(datadir.getProperty("testWebapp"), "webapp");
@@ -19,8 +18,8 @@ public class DatadirCommonTest {
     }
 
     @Test
-    public void testWithoutCommonProperty(){
-        this.setDatadir("datadir-without-common");
+    public void testWithoutDefaultProperty(){
+        this.setDatadir("datadir-without-default");
         GeorchestraConfiguration datadir = new GeorchestraConfiguration("webapp");
         assertEquals(datadir.getProperty("testWebapp"), "webapp");
         assertNull(datadir.getProperty("testCommon"));
