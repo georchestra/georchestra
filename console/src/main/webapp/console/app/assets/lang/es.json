@@ -1,8 +1,8 @@
 {
-  "nav.dashboard"         : "Tableau de bord",
-  "nav.users"             : "Utilisateurs",
-  "nav.orgs"              : "Organismes",
-  "nav.analytics"         : "Statistiques",
+  "nav.dashboard"         : "Dashboard",
+  "nav.users"             : "Benutzer",
+  "nav.orgs"              : "Organismen",
+  "nav.analytics"         : "Statistiken",
   "nav.logs"              : "Logs",
 
   "home.users"            : "Gérer les utilisateurs",
@@ -117,7 +117,7 @@
   "users.user"            : "Utilisateur",
   "users.login"           : "Login",
   "users.organization"    : "Organisation",
-  "users.email"           : "Courriel",
+  "users.email"           : "EMail",
 
   "msg.compose"           : "Composer un message",
   "msg.date"              : "Date",
@@ -168,7 +168,7 @@
   "date.day"              : "Aujourd’hui",
   "date.week"             : "Dernière semaine",
   "date.month"            : "Dernier mois",
-  "date.3month"           : "Derniers 3 mois",
+  "date.3month"           : "Dernier 3 mois",
   "date.year"             : "Dernière année",
   "date.custom"           : "Choisir un intervalle",
   "date.to"               : "à"
