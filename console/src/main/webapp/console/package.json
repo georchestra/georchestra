@@ -15,13 +15,13 @@
     "whatwg-fetch": "^2.0.2"
   },
   "devDependencies": {
-    "angular": "1.5.0-rc.1",
+    "angular": ">=1.6",
     "angular-chosen": "1.0.8",
     "angular-chosen-localytics": "^1.4.0",
     "angular-flash-alert": "^1.1.1",
     "angular-new-router": "0.5.3",
-    "angular-resource": "1.5.0-rc.0",
-    "angular-sanitize": "1.5.8",
+    "angular-resource": ">=1.6",
+    "angular-sanitize": ">=1.6",
     "angular-templates-brunch-next": "0.0.7",
     "angular-translate": "^2.9.0",
     "angular-translate-loader-static-files": "^2.9.0",
