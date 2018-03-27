@@ -4,13 +4,16 @@ require('services/roles')
 
 class RolesController {
 
-  static $inject = [ '$injector', 'roleAdminList' ]
+  static $inject = [ '$injector' ]
 
-  constructor ($injector, roleAdminList) {
+  constructor ($injector) {
     this.$injector = $injector
+  }
 
+  $onInit () {
+    let roleAdminList = this.$injector.get('roleAdminList')
     if (this.roles.$promise) {
-      $injector.get('$q').all([
+      this.$injector.get('$q').all([
         this.roles.$promise,
         this.activePromise
       ]).then(this.initialize.bind(this, roleAdminList))

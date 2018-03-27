@@ -6,19 +6,26 @@ class StatsController {
 
   constructor ($element, $scope, $injector) {
     this.$injector = $injector
-    let initialize = this.initialize.bind(this, $element, $scope)
+    this.$element = $element
+    this.$scope = $scope
+  }
+
+  $onInit () {
+    let initialize = this.initialize.bind(this)
     if (this.data) {
       this.data.$promise.then(initialize)
     }
 
-    $scope.$watch('stats.data', (newVal, oldVal) => {
+    this.$scope.$watch('stats.data', (newVal, oldVal) => {
       if (oldVal !== newVal) {
         newVal.$promise.then(initialize)
       }
     })
   }
 
-  initialize ($element, $scope) {
+  initialize () {
+    let $element = this.$element
+
     var options
 
     this.parseData()
