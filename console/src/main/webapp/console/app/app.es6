@@ -64,7 +64,8 @@ angular.module('admin_console', [
   '$locationProvider',
   'paginationTemplateProvider',
   'LDAP_ROOT_URI',
-  ($componentLoader, $translate, $location, paginationTemplate, $uri) => {
+  '$qProvider',
+  ($componentLoader, $translate, $location, paginationTemplate, $uri, $qP) => {
     $componentLoader.setTemplateMapping(
     (name) => 'components/' + name + '/' + name + '.tpl.html')
     $translate
@@ -79,6 +80,7 @@ angular.module('admin_console', [
     .fallbackLanguage('en')
     $location.html5Mode(false)
     paginationTemplate.setPath('templates/dirPagination.tpl.html')
+    $qP.errorOnUnhandledRejections(false)
   }])
 
 require('components/analytics/analytics')
