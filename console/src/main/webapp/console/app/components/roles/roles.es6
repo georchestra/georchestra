@@ -3,14 +3,16 @@ require('components/roles/roles.tpl')
 require('services/roles')
 
 class RolesController {
+  static $inject = [ '$injector' ]
 
-  static $inject = [ '$injector', 'roleAdminList' ]
-
-  constructor ($injector, roleAdminList) {
+  constructor ($injector) {
     this.$injector = $injector
+  }
 
+  $onInit () {
+    let roleAdminList = this.$injector.get('roleAdminList')
     if (this.roles.$promise) {
-      $injector.get('$q').all([
+      this.$injector.get('$q').all([
         this.roles.$promise,
         this.activePromise
       ]).then(this.initialize.bind(this, roleAdminList))
@@ -90,21 +92,20 @@ class RolesController {
     let $location = this.$injector.get('$location')
     $location.search('new', 'role')
   }
-
 }
 
 angular.module('admin_console')
-.component('roles', {
-  bindings: {
-    roles: '=',
-    activePromise: '=',
-    index: '=?'
-  },
-  controller: RolesController,
-  controllerAs: 'roles',
-  templateUrl: 'components/roles/roles.tpl.html'
-})
-.filter('unprefix', () => (input, active) => {
-  if (!active) { return input.cn }
-  return (input.cn === active.cn) ? input.cn : input.cn.substr(active.cn.length + 1)
-})
+  .component('roles', {
+    bindings: {
+      roles: '=',
+      activePromise: '=',
+      index: '=?'
+    },
+    controller: RolesController,
+    controllerAs: 'roles',
+    templateUrl: 'components/roles/roles.tpl.html'
+  })
+  .filter('unprefix', () => (input, active) => {
+    if (!active) { return input.cn }
+    return (input.cn === active.cn) ? input.cn : input.cn.substr(active.cn.length + 1)
+  })

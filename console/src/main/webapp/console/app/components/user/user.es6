@@ -4,7 +4,6 @@ require('services/util')
 require('services/contexts')
 
 class UserController {
-
   static $inject = [ '$routeParams', '$injector', 'User', 'Role', 'Orgs' ]
 
   constructor ($routeParams, $injector, User, Role, Orgs) {
@@ -324,69 +323,68 @@ class UserController {
 UserController.prototype.activate.$inject = [ '$scope' ]
 
 angular.module('admin_console')
-.controller('UserController', UserController)
-.filter('encodeURIComponent', () => window.encodeURIComponent)
-.directive('managers', [ '$timeout', 'User', ($timeout, User) => ({
-  link: (scope, elm, attrs, ctrl) => {
-    let promise = scope.$eval(attrs['promise'])
-    let selUsers = []
-    User.query((users) => {
-      users.map((u) => {
-        let id = u.uid
-        selUsers.push({
-          id: id,
-          text: (u.sn || '') + ' ' + (u.givenName || '')
-        })
-      })
-      elm.select2({
-        placeholder: '',
-        allowClear: true,
-        data: selUsers
-      })
-      let cb = () => { $timeout(() => { elm.trigger('change') }) }
-      if (promise) {
-        promise.then(cb)
-      } else {
-        cb()
-      }
-    })
-  }
-})])
-.directive('organizations', [ '$timeout', 'Orgs', ($timeout, Orgs) => ({
-  link: (scope, elm, attrs, ctrl) => {
-    let promise = scope.$eval(attrs['promise'])
-    let user = scope.$eval(attrs['model'])
-
-    // Initialize pending value for new user
-    if (user.pending === undefined) {
-      user.pending = false
-    }
-    let selOrgs = []
-    Orgs.query((orgs) => {
-      orgs.forEach((o) => {
-        if (user.pending || o.status !== 'PENDING') {
-          selOrgs.push({
-            id: o.id,
-            text: o.name
+  .controller('UserController', UserController)
+  .filter('encodeURIComponent', () => window.encodeURIComponent)
+  .directive('managers', [ '$timeout', 'User', ($timeout, User) => ({
+    link: (scope, elm, attrs, ctrl) => {
+      let promise = scope.$eval(attrs['promise'])
+      let selUsers = []
+      User.query((users) => {
+        users.map((u) => {
+          let id = u.uid
+          selUsers.push({
+            id: id,
+            text: (u.sn || '') + ' ' + (u.givenName || '')
           })
+        })
+        elm.select2({
+          placeholder: '',
+          allowClear: true,
+          data: selUsers
+        })
+        let cb = () => { $timeout(() => { elm.trigger('change') }) }
+        if (promise) {
+          promise.then(cb)
+        } else {
+          cb()
         }
       })
-      elm.select2({
-        placeholder: '',
-        allowClear: true,
-        data: selOrgs
-      })
-      let cb = () => {
-        $timeout(() => {
-          elm.trigger('change')
-        })
-      }
-      if (promise) {
-        promise.then(cb)
-      } else {
-        cb()
-      }
-    })
-  }
-})])
+    }
+  })])
+  .directive('organizations', [ '$timeout', 'Orgs', ($timeout, Orgs) => ({
+    link: (scope, elm, attrs, ctrl) => {
+      let promise = scope.$eval(attrs['promise'])
+      let user = scope.$eval(attrs['model'])
 
+      // Initialize pending value for new user
+      if (user.pending === undefined) {
+        user.pending = false
+      }
+      let selOrgs = []
+      Orgs.query((orgs) => {
+        orgs.forEach((o) => {
+          if (user.pending || o.status !== 'PENDING') {
+            selOrgs.push({
+              id: o.id,
+              text: o.name
+            })
+          }
+        })
+        elm.select2({
+          placeholder: '',
+          allowClear: true,
+          data: selOrgs
+        })
+        let cb = () => {
+          $timeout(() => {
+            elm.trigger('change')
+          })
+        }
+        if (promise) {
+          promise.then(cb)
+        } else {
+          cb()
+        }
+      })
+    }
+  })])

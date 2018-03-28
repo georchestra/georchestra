@@ -4,7 +4,6 @@ require('components/area/area')
 require('services/orgs')
 
 class OrgController {
-
   static $inject = [ '$injector', '$routeParams' ]
 
   constructor ($injector, $routeParams) {
@@ -54,7 +53,6 @@ class OrgController {
       flash.create('success', this.i18n.updated)
     }, flash.create.bind(flash, 'danger', this.i18n.error))
   }
-
 }
 
 angular.module('admin_console').controller('OrgController', OrgController)

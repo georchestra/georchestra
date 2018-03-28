@@ -1,23 +1,25 @@
 require('components/area/area.tpl')
 
 class AreaController {
+  static $inject = [ '$injector', '$http' ]
 
-  static $inject = [ '$injector', '$q', '$http' ]
-
-  constructor ($injector, $q, $http) {
+  constructor ($injector, $http) {
     this.$injector = $injector
-    const CONFIG_URI = this.$injector.get('LDAP_PUBLIC_URI') + 'orgs/areaConfig.json'
 
     let translate = $injector.get('translate')
     this.i18n = {}
     translate('area.updated', this.i18n)
     translate('area.error', this.i18n)
+  }
 
+  $onInit () {
+    const $http = this.$injector.get('$http')
+    const CONFIG_URI = this.$injector.get('LDAP_PUBLIC_URI') + 'orgs/areaConfig.json'
     let promises = [ $http.get(CONFIG_URI).then(r => r.data) ]
     if (this.item.$promise) {
       promises.push(this.item.$promise)
     }
-    $q.all(promises).then(this.initialize.bind(this))
+    this.$injector.get('$q').all(promises).then(this.initialize.bind(this))
   }
 
   initialize (resps) {
@@ -200,16 +202,15 @@ class AreaController {
       flash.create('success', this.i18n.updated)
     }, flash.create.bind(flash, 'danger', this.i18n.error))
   }
-
 }
 
 angular.module('admin_console')
-.component('areas', {
-  bindings: {
-    item: '=',
-    callback: '='
-  },
-  controller: AreaController,
-  controllerAs: 'area',
-  templateUrl: 'components/area/area.tpl.html'
-})
+  .component('areas', {
+    bindings: {
+      item: '=',
+      callback: '='
+    },
+    controller: AreaController,
+    controllerAs: 'area',
+    templateUrl: 'components/area/area.tpl.html'
+  })

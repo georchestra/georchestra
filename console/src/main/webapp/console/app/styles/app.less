@@ -1,21 +1,21 @@
-$lightblue: #009FE3;
-$error: #a94442;
-$border: #ddd;
+@lightblue: #009FE3;
+@error: #a94442;
+@border: #ddd;
 
-$tablet: 768px;
-$large: 992px;
+@tablet: 768px;
+@large: 992px;
 
 
-@media (min-width: $tablet) {
+@media (min-width: @tablet) {
   .panel .panel-body {
     min-height : 22em;
   }
 }
 a {
-  color : $lightblue;
+  color : @lightblue;
 }
 .btn-primary {
-  background-color : $lightblue;
+  background-color : @lightblue;
 }
 body {
   padding-bottom: 2em;
@@ -51,15 +51,15 @@ roles {
 
 .col-md-10 {
   margin-top: 1em;
-  @media (min-width: $large) {
+  @media (min-width: @large) {
     margin-top: 0;
   }
 }
 
 section {
   .nav {
-    background: $lightblue;
-    @media (min-width: $large) {
+    background: @lightblue;
+    @media (min-width: @large) {
       margin : 0 -15px;
       border : none;
     }
@@ -73,7 +73,7 @@ section {
     li a:hover,
     li.active a:hover,
     li.active a {
-      background  : $lightblue;
+      background  : @lightblue;
       font-weight : bold;
     }
   }
@@ -89,7 +89,7 @@ section {
   padding : 6px 9px;
 }
 .pagination > .active > a {
-  background: $lightblue;
+  background: @lightblue;
 }
 
 // ANALYTICS
@@ -162,8 +162,8 @@ section {
         }
       }
       &.alert-info {
-        background-color : $lightblue;
-        border-color     : $lightblue;
+        background-color : @lightblue;
+        border-color     : @lightblue;
         padding          : 30px 15px;
         font-weight      : bold;
         a {
@@ -221,12 +221,12 @@ section {
 
 // ASIDE
 .aside {
-  @media (min-width: $large) {
-    border-right: 2px solid $lightblue;
+  @media (min-width: @large) {
+    border-right: 2px solid @lightblue;
   }
   .alert-info {
-    background-color : $lightblue;
-    border-color     : $lightblue;
+    background-color : @lightblue;
+    border-color     : @lightblue;
     a:not(.btn) {
       color          : white;
     }
@@ -280,7 +280,7 @@ section {
 }
 
 .users {
-  @media (min-width: $large) {
+  @media (min-width: @large) {
     margin: 0 -15px;
   }
   em {
@@ -289,7 +289,7 @@ section {
 }
 
 // STATS
-@media (min-width: $large) {
+@media (min-width: @large) {
   .chosen-container {
     width: 16em !important;
   }
@@ -305,7 +305,7 @@ section {
   }
   .progress-bar {
     border-radius    : 4px;
-    background-color : $lightblue;
+    background-color : @lightblue;
   }
   .alert {
     margin-top : 2em;
@@ -335,14 +335,14 @@ section {
     border-radius : 5px 0 0 5px;
     margin        : -15px 0 -15px -30px;
     border        : none;
-    border-right: 1px solid $border;
+    border-right: 1px solid @border;
   }
   .ol-zoom {
     top    : auto;
     bottom : .5em;
   }
   .ol-dragbox {
-    border-color: $lightblue;
+    border-color: @lightblue;
   }
   .ol-control button {
     background: rgba(0, 139, 207, .5);
@@ -356,7 +356,7 @@ section {
     border-radius: 0 4px 0 0;
     border-width: 0 0 1px 0;
   }
-  @media (min-width: $large) {
+  @media (min-width: @large) {
     .map {
       width : calc(100% + 30px);
     }
@@ -487,7 +487,7 @@ date {
     right: 0.35em;
     top: -0.4em;
     content: '*';
-    color: $lightblue;
+    color: @lightblue;
     opacity: .8;
     font-size: 200%;
     line-height: 1.4em;
@@ -550,5 +550,5 @@ date {
 }
 
 input.ng-invalid {
-  border-color: $error;
+  border-color: @error;
 }

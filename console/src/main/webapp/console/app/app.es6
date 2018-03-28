@@ -1,5 +1,4 @@
 class AppController {
-
   static $inject = [ '$scope', '$router', '$location' ]
 
   constructor ($scope, $router, $location) {
@@ -28,17 +27,14 @@ class AppController {
       route => $location.$$path.indexOf(route) === 1
     )
   }
-
 }
 
 class StandaloneController {
-
   static $inject = [ '$scope', 'Orgs' ]
 
   constructor ($scope, Org) {
     $scope.org = new Org()
   }
-
 }
 
 angular.module('admin_console', [
@@ -51,35 +47,37 @@ angular.module('admin_console', [
   'angularUtils.directives.dirPagination',
   'pascalprecht.translate'
 ])
-.controller('AppController', AppController)
-.controller('StandaloneController', StandaloneController)
-.constant('LDAP_ROOT_URI', '/console/')
-.constant('LDAP_BASE_URI', '/console/private/')
-.constant('LDAP_PUBLIC_URI', '/console/public/')
-.constant('MF_BASE_URI', '/mapfishapp/ws/')
-.constant('ANALYTICS_BASE_URI', '/analytics/ws/')
-.config([
-  '$componentLoaderProvider',
-  '$translateProvider',
-  '$locationProvider',
-  'paginationTemplateProvider',
-  'LDAP_ROOT_URI',
-  ($componentLoader, $translate, $location, paginationTemplate, $uri) => {
-    $componentLoader.setTemplateMapping(
-    (name) => 'components/' + name + '/' + name + '.tpl.html')
-    $translate
-    .useSanitizeValueStrategy('escape')
-    .useStaticFilesLoader({ prefix: $uri + 'console/public/lang/', suffix: '.json' })
-    .registerAvailableLanguageKeys(['en', 'fr'], {
-      'en_*': 'en',
-      'fr_*': 'fr',
-      '*': 'en'
-    })
-    .determinePreferredLanguage()
-    .fallbackLanguage('en')
-    $location.html5Mode(false)
-    paginationTemplate.setPath('templates/dirPagination.tpl.html')
-  }])
+  .controller('AppController', AppController)
+  .controller('StandaloneController', StandaloneController)
+  .constant('LDAP_ROOT_URI', '/console/')
+  .constant('LDAP_BASE_URI', '/console/private/')
+  .constant('LDAP_PUBLIC_URI', '/console/public/')
+  .constant('MF_BASE_URI', '/mapfishapp/ws/')
+  .constant('ANALYTICS_BASE_URI', '/analytics/ws/')
+  .config([
+    '$componentLoaderProvider',
+    '$translateProvider',
+    '$locationProvider',
+    'paginationTemplateProvider',
+    'LDAP_ROOT_URI',
+    '$qProvider',
+    ($componentLoader, $translate, $location, paginationTemplate, $uri, $qP) => {
+      $componentLoader.setTemplateMapping(
+        (name) => 'components/' + name + '/' + name + '.tpl.html')
+      $translate
+        .useSanitizeValueStrategy('escape')
+        .useStaticFilesLoader({ prefix: $uri + 'console/public/lang/', suffix: '.json' })
+        .registerAvailableLanguageKeys(['en', 'fr'], {
+          'en_*': 'en',
+          'fr_*': 'fr',
+          '*': 'en'
+        })
+        .determinePreferredLanguage()
+        .fallbackLanguage('en')
+      $location.html5Mode(false)
+      paginationTemplate.setPath('templates/dirPagination.tpl.html')
+      $qP.errorOnUnhandledRejections(false)
+    }])
 
 require('components/analytics/analytics')
 require('components/orgs/orgs')
