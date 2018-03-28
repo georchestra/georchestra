@@ -5,7 +5,7 @@
 <%@ page import="org.georchestra.commons.configuration.GeorchestraConfiguration" %>
 
 <%
-String headerHeight = "${headerHeight}";
+String headerHeight = "90";
 
 try {
   ApplicationContext ctx = RequestContextUtils.getWebApplicationContext(request);
@@ -14,7 +14,6 @@ try {
         headerHeight = ctx.getBean(GeorchestraConfiguration.class).getProperty("headerHeight");
   }
 } catch (Exception e) {}
-
 %>
 
 <c:choose>
