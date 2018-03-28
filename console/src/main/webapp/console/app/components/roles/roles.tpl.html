@@ -1,55 +1,26 @@
-<div ng-if="roles.isRoot">
-  <div class="alert alert-info">
-    <a ng-link="users({id: 'all'})" class="category" ng-class="{active: !roles.activeRole}" translate>role.allusers</a>
-    <hr>
-    <div class="create-btn">
-      <a ng-link="newUser" class="btn btn-default" translate>role.newuser</a>
-      <a ng-click="roles.createRole()" class="btn btn-default" translate>role.newrole</a>
-    </div>
-  </div>
-
-  <input ng-if="roles.isRoot" ng-model="roles.q" class="form-control input-sm" placeholder="{{'role.search' | translate}}">
-
-  <h5 ng-if="roles.q == ''" translate>role.system</h5>
-  <div ng-repeat="role in roles.adminList" ng-if="roles.q == ''">
-    <strong ng-if="(roles.activeRole.cn == role.cn)">
-      {{::role.cn}} ({{::role.users.length}})
-    </strong>
-    <a ng-link="users({id: role.cn})" ng-if="(roles.activeRole.cn != role.cn)">
-      {{::role.cn}}
-     ({{::role.users.length}})
-   </a>
+<div class="alert alert-info">
+  <a ng-link="users({id: 'all'})" class="category" ng-class="{active: !roles.activeRole}" translate>role.allusers</a>
+  <hr>
+  <div class="create-btn">
+    <a ng-link="newUser" class="btn btn-default" translate>role.newuser</a>
+    <a ng-click="roles.createRole()" class="btn btn-default" translate>role.newrole</a>
   </div>
 </div>
 
-<h5 ng-if="roles.isRoot && roles.q == ''" translate>role.app</h5>
+<input ng-model="roles.q" class="form-control input-sm" placeholder="{{'role.search' | translate}}">
 
-<div ng-if="roles.q == ''">
-
-  <a ng-if="roles.enableBack" class="btn btn-default btn-xs" ng-link="users({id: roles.prefix.parent})">
-    «
-  </a>
-  <span ng-if="roles.enableBack">{{roles.prefix.cn || 'role.all' | translate }}</span>
-
-  <div ng-repeat="role in roles.tree" ng-if="roles.filter(role, roles.activeRole)">
-
-    <strong ng-if="(roles.activeRole.cn == role.cn) && (role.children.length == 0)">
-      {{::role | unprefix: roles.prefix}} ({{::role.users.length}})
-    </strong>
-    <a ng-link="users({id: role.cn})" title={{::role.description}}
-      ng-if="(roles.activeRole.cn != role.cn) && (roles.prefix.cn.indexOf(role.cn)!=0)">
-      <span ng-if="role.children.length > 0">+</span>
-      {{::role | unprefix: roles.prefix}} ({{::role.users.length}})
-    </a>
-
-    <roles roles="role.children" active-promise="roles.activePromise" index="roles.index"
-    ng-if="roles.isExpanded(role, roles.activeRole)"></roles>
-
-  </div>
-
+<h5 ng-if="roles.q == ''" translate>role.system</h5>
+<div ng-repeat="role in roles.adminList" ng-if="roles.q == ''">
+  <strong ng-if="(roles.activeRole.cn == role.cn)">
+    {{::role.cn}} ({{::role.users.length}})
+  </strong>
+  <a ng-link="users({id: role.cn})" ng-if="(roles.activeRole.cn != role.cn)">
+    {{::role.cn}}
+   ({{::role.users.length}})
+ </a>
 </div>
 
-<div ng-repeat="(key, role) in roles.index" ng-if="roles.isRoot && roles.q != ''">
+<div ng-repeat="(key, role) in roles.index" ng-if="roles.q != ''">
   <a ng-link="users({id: role.cn})" title={{::role.description}}
       ng-if="role.cn.toLowerCase().indexOf(roles.q.toLowerCase()) >= 0">
     {{::role.cn}} ({{::role.users.length}})
