@@ -1,0 +1,9 @@
+Dear admin,
+
+A new account has been created and is waiting for validation.
+
+User name: {name}
+User ID: {uid}
+
+---
+Sent by geOrchestra
