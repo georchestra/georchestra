@@ -1,6 +1,5 @@
-require('components/roles/roles.tpl')
-
-require('services/roles')
+import 'components/roles/roles.tpl'
+import 'services/roles'
 
 class RolesController {
   static $inject = [ '$injector' ]
@@ -24,39 +23,11 @@ class RolesController {
   initialize (roleAdminList) {
     this.activeRole = this.activePromise.$$state.value
 
-    let root = []
     let index = {}
     this.q = (this.q) || ''
 
-    if (this.index) { // child
-      this.tree = this.roles
-    } else { // root
-      this.roles.forEach((role) => {
-        // Store for quick access
-        index[role.cn] = role
-        // Set parent for each role
-        role.parent = (role && role.cn.indexOf('_') > 0)
-          ? role.cn.substr(0, role.cn.lastIndexOf('_')) : 'all'
-        // Initialize children
-        role.children = role.children || []
-        if (role.cn.split('_').length === 1) {
-          root.push(role)
-        } else {
-          index[role.parent].children.push(role)
-        }
-      })
-      this.tree = root
-      this.index = index
-    }
-
-    this.isRoot = this.roles.length === Object.keys(index).length
-    this.enableBack = this.isRoot && this.activeRole
-
-    if (this.activeRole) {
-      this.prefix = (this.activeRole.children.length === 0)
-        ? this.index[this.activeRole.parent] : this.activeRole
-      this.enableBack = this.enableBack && this.prefix
-    }
+    this.roles.forEach(role => { index[role.cn] = role })
+    this.index = index
 
     let fullAdminList = roleAdminList()
     this.adminList = []
@@ -66,21 +37,6 @@ class RolesController {
         this.adminList.push(role)
       }
     }
-  }
-
-  filter (role, active) {
-    let result = (
-      !active || // All
-      ((active.parent === role.parent) && (active.children.length === 0)) || // Common ancestor without child
-      (role.cn === active.cn) || // Active
-      role.cn.substr(0, active.cn.length) === active.cn || // Active is prefix of role
-      active.cn.indexOf(role.cn) === 0 || // Leafs
-      active.cn.substr(0, active.cn.lastIndexOf('_')) === role.cn // Role prefix of active
-    )
-
-    return result && this.adminList.concat(
-      [ {cn: 'MOD'}, {cn: 'GN'} ] // Avoid empty parents
-    ).every(g => g.cn !== role.cn)
   }
 
   isExpanded (role, active) {
@@ -104,8 +60,4 @@ angular.module('admin_console')
     controller: RolesController,
     controllerAs: 'roles',
     templateUrl: 'components/roles/roles.tpl.html'
-  })
-  .filter('unprefix', () => (input, active) => {
-    if (!active) { return input.cn }
-    return (input.cn === active.cn) ? input.cn : input.cn.substr(active.cn.length + 1)
   })
