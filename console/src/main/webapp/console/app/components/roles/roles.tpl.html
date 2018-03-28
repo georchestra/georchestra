@@ -3,6 +3,8 @@
   <div class="col-md-4 aside">
 
     <div class="alert alert-info">
+      <a ng-link="roles({role: 'all'})" class="category" ng-class="{active: roles.role=='all'}" translate>roles.allroles</a>
+      <hr/>
       <div class="create-btn">
         <a ng-click="roles.create()" class="btn btn-default" translate>roles.newrole</a>
       </div>
