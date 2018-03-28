@@ -29,6 +29,7 @@ import org.georchestra.console.ds.DuplicatedEmailException;
 import org.georchestra.console.ds.DuplicatedUidException;
 import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.ds.ProtectedUserFilter;
+import org.georchestra.console.ds.RoleDao;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountFactory;
 import org.georchestra.console.dto.Role;
@@ -94,8 +95,12 @@ public class UsersController {
 	private static final String INVALID_DATE_FORMAT = "invalid_date_format";
 
 	private AccountDao accountDao;
+
 	@Autowired
 	private OrgsDao orgDao;
+
+	@Autowired
+	private RoleDao roleDao;
 
 	@Autowired
 	private Validation validation;
@@ -253,6 +258,44 @@ public class UsersController {
 			}
 		}
 
+	}
+
+
+	/**
+	 * Returns the profile of current user.
+	 *
+	 * <p>
+	 * URL Format: [BASE_MAPPING]/users/profile
+	 * </p>
+	 *
+	 * returns following format :
+	 *
+	 * <pre>
+	 * {
+	 *   uid: "testuser",
+	 *   org: "psc",
+	 *   roles: ["USER", "MOD_EXTRACTORAPP"]
+	 * }
+	 * </pre>
+	 */
+	@RequestMapping(value=REQUEST_MAPPING + "/profile", method=RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public String myProfile(HttpServletRequest request) throws DataServiceException, JSONException {
+
+		String uid = request.getHeader("sec-username");
+
+		Account user = this.accountDao.findByUID(uid);
+		user.getOrg();
+
+		JSONArray roles = new JSONArray();
+		for(Role role: this.roleDao.findAllForUser(uid))
+			roles.put(role.getName());
+		JSONObject res = new JSONObject();
+		res.put("uid", uid);
+		res.put("roles", roles);
+		res.put("org", user.getOrg());
+
+		return res.toString();
 	}
 
 	/**
