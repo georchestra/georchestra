@@ -4,6 +4,7 @@
   "nav.orgs"              : "Organismes",
   "nav.analytics"         : "Statistiques",
   "nav.logs"              : "Logs",
+  "nav.roles"             : "Rôles",
 
   "home.users"            : "Gérer les utilisateurs",
   "home.waiting_users"    : "utilisateurs en attente",
@@ -76,6 +77,23 @@
   "org.confirm"           : "Confirmer",
   "org.select"            : "Selectionner un organisme",
   "org.membersCount"      : "Membres",
+
+  "roles.title"           : "rôles",
+  "roles.allroles"        : "Tous",
+  "roles.newrole"         : "Nouveau rôle",
+  "roles.filter_roles"    : "Filtrer",
+
+  "role.save"             : "Enregistrer",
+  "role.updated"          : "roleanisme modifié",
+  "role.deleted"          : "roleanisme supprimé",
+  "role.created"          : "roleanisme créé",
+  "role.error"            : "Erreur lors de la création de l’roleanisme",
+  "role.warning"          : "Attention, cette action est irréversible — ",
+  "role.delete"           : "Supprimer l’roleanisme",
+  "role.rolelist"         : "Tous les rôles",
+  "role.confirm"          : "Confirmer",
+  "role.select"           : "Selectionner un rôle",
+  "role.membersCount"     : "Membres",
 
   "area.save"             : "Enregister la zone",
   "area.updated"          : "Aire de compétence mise à jour",
