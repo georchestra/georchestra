@@ -39,11 +39,6 @@ class RolesController {
     }
   }
 
-  isExpanded (role, active) {
-    return (role.children.length > 0 &&
-      (active && active.cn.indexOf(role.cn) === 0))
-  }
-
   createRole () {
     let $location = this.$injector.get('$location')
     $location.search('new', 'role')
