@@ -36,8 +36,10 @@ public class DelegationEntry {
     @Id
     private String uid;
     @Type(type = "org.georchestra.commons.PostGresArrayStringType")
+    @Column(name = "orgs", columnDefinition = "character varying[]")
     private String[] orgs;
     @Type(type = "org.georchestra.commons.PostGresArrayStringType")
+    @Column(name = "roles", columnDefinition = "character varying[]")
     private String[] roles;
 
     public DelegationEntry() {}
