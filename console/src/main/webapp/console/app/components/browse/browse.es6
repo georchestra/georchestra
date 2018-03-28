@@ -1,7 +1,7 @@
-import 'components/roles/roles.tpl'
+import 'components/browse/browse.tpl'
 import 'services/roles'
 
-class RolesController {
+class BrowseController {
   static $inject = [ '$injector' ]
 
   constructor ($injector) {
@@ -46,13 +46,13 @@ class RolesController {
 }
 
 angular.module('admin_console')
-  .component('roles', {
+  .component('browse', {
     bindings: {
       roles: '=',
       activePromise: '=',
       index: '=?'
     },
-    controller: RolesController,
+    controller: BrowseController,
     controllerAs: 'roles',
-    templateUrl: 'components/roles/roles.tpl.html'
+    templateUrl: 'components/browse/browse.tpl.html'
   })

@@ -13,7 +13,7 @@ class AppController {
         component: 'orgs' },
       { path: '/org/:org/:tab',
         component: 'org' },
-      { path: '/roles/:id/users',
+      { path: '/browse/:id/users',
         component: 'users' },
       { path: '/users/:id/:tab',
         component: 'user' },
@@ -83,7 +83,7 @@ require('components/analytics/analytics')
 require('components/orgs/orgs')
 require('components/org/org')
 require('components/home/home')
-require('components/roles/roles')
+require('components/browse/browse')
 require('components/logs/logs')
 require('components/newUser/newUser')
 require('components/stats/stats')
