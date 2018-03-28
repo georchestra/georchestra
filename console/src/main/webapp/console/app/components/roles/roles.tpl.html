@@ -1,0 +1,71 @@
+<section class="roles">
+
+  <div class="col-md-4 aside">
+
+    <div class="alert alert-info">
+      <div class="create-btn">
+        <a ng-click="roles.create()" class="btn btn-default" translate>roles.newrole</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="col-md-8">
+
+    <input type="text" class="filter-table form-control pull-right" ng-model="roles.q" placeholder="{{'roles.filter_roles' | translate}}"></input>
+    <i class="glyphicon glyphicon-remove-sign filter-table-reset" ng-show="roles.q != ''" ng-click="roles.q = ''"></i>
+    <h3 class="roles-title">{{roles.roles.length}} <span translate>roles.title</span></h3>
+
+    <table class="table table-striped table-condensed">
+
+      <thead>
+        <tr>
+          <th translate>role.name</th>
+          <th translate>role.membersCount</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr dir-paginate="role in roles.roles | filter:roles.q | itemsPerPage: roles.itemsPerPage">
+          <td>
+            <a ng-link="role({role: role.cn, tab: 'infos'})">
+              {{::role.cn}}
+            </a>
+          </td>
+          <td>{{::role.usersCount}}</td>
+        </tr>
+      </tbody>
+
+    </table>
+
+    <dir-pagination-controls></dir-pagination-controls>
+
+  </div>
+
+  <div ng-if="roles.newRole" class="background" ng-cloack>
+
+    <div class="panel panel-default">
+
+      <div class="panel-heading">
+        <a class="btn close" ng-click="roles.close()">&times;</a>
+        <span translate>roles.newrole</span>
+      </div>
+      <div class="panel-body">
+        <form class="form-horizontal" name="roleForm">
+
+          <div ng-inline="templates/roleForm.tpl.html"
+             ng-init="model=roles.newInstance;promise=roles.newInstance.$promise;required=roles.required;"></div>
+
+          <hr>
+          <button class="btn btn-primary pull-right" ng-disabled="roleForm.$invalid" ng-click="roles.saveRole()">
+            <span translate>users.save</span>
+          </button>
+          <button class="btn btn-link pull-right" ng-click="roles.close()" translate>users.cancel</button>
+        </form>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>

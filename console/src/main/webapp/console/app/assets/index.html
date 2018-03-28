@@ -24,11 +24,14 @@
       <li role="presentation" ng-class="{'active': isActive(['home'])}">
         <a ng-link="home" translate>nav.dashboard</a>
       </li>
-      <li role="presentation" ng-class="{'active': isActive(['users','roles'])}">
+      <li role="presentation" ng-class="{'active': isActive(['users','browse'])}">
         <a ng-link="users({'id': 'all'})" translate>nav.users</a>
       </li>
       <li role="presentation" ng-class="{'active': isActive(['orgs','org'])}">
         <a ng-link="orgs({'org': 'all'})" translate>nav.orgs</a>
+      </li>
+      <li role="presentation" ng-class="{'active': isActive(['roles','role'])}">
+        <a ng-link="roles({'role': 'all'})" translate>nav.roles</a>
       </li>
       <li role="presentation" ng-class="{'active': isActive(['analytics'])}">
         <a ng-link="analytics({'role': 'all'})" translate>nav.analytics</a>
