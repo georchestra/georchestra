@@ -21,7 +21,7 @@ CREATE TABLE email_template (
   CONSTRAINT email_template_pkey PRIMARY KEY (id)
 );
 
-CREATE TABLE console.admin_emails (
+CREATE TABLE admin_emails (
   id bigserial,
   body text,
   date timestamp without time zone,
@@ -29,6 +29,14 @@ CREATE TABLE console.admin_emails (
   sender text,
   subject character varying(255),
   CONSTRAINT admin_emails_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE delegations
+(
+  uid character varying(255) NOT NULL,
+  orgs character varying[],
+  roles character varying[],
+  CONSTRAINT delegations_pkey PRIMARY KEY (uid)
 );
 
 INSERT INTO email_template (content, name) VALUES ('Bonjour et bienvenue', 'Hello');
@@ -39,5 +47,7 @@ INSERT INTO admin_attachments (content, mimetype, name) VALUES (lo_import('/dock
 
 INSERT INTO admin_emails (body, date, recipient, sender, subject) VALUES ( 'Votre compte a été suprimé', '2016-05-18 09:31:47.928', 'testadmin', 'testadmin', 'Deleted');
 
+INSERT INTO delegations (uid, orgs, roles) VALUES ('testadmin', '{psc, psc2}', '{EXTRACTORAPP, GN_EDITOR}');
+INSERT INTO delegations (uid, orgs, roles) VALUES ('testuser', '{psc3, psc4}', '{GN_REVIEWER, GN_EDITOR}');
 
 COMMIT;

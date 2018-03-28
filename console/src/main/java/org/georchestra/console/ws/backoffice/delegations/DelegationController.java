@@ -25,18 +25,24 @@ import org.georchestra.console.dao.DelegationDao;
 import org.georchestra.console.ds.DataServiceException;
 import org.georchestra.console.ds.RoleDao;
 import org.georchestra.console.model.DelegationEntry;
+import org.georchestra.console.ws.backoffice.utils.ResponseUtil;
 import org.georchestra.lib.file.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Controller
@@ -51,6 +57,16 @@ public class DelegationController {
 	private DelegationDao delegationDao;
 	@Autowired
 	private RoleDao roleDao;
+
+	@ExceptionHandler(Exception.class)
+	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+	@ResponseBody
+	public String handleException(Exception e, HttpServletResponse response) throws IOException {
+		LOG.error(e.getMessage());
+		ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, e.getMessage()),
+				HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		throw new IOException(e);
+	}
 
 	@RequestMapping(value=REQUEST_MAPPING + "/delegations", method= RequestMethod.GET, produces = "application/json; charset=utf-8")
 	@ResponseBody
@@ -71,13 +87,7 @@ public class DelegationController {
 	public String findByUid(@PathVariable String uid) throws JSONException {
 
 		// TODO test if uid correspond to connected user if request came from delegated admin
-		DelegationEntry delegation = this.delegationDao.findOne(uid);
-
-		JSONObject res = new JSONObject();
-		res.put("orgs", delegation.getOrgs());
-		res.put("roles", delegation.getRoles());
-
-		return res.toString();
+		return this.delegationDao.findOne(uid).toJSON().toString();
 	}
 
 	@RequestMapping(value=REQUEST_MAPPING + "/{uid}", method= RequestMethod.POST, produces = "application/json; charset=utf-8")
