@@ -1,7 +1,6 @@
 require('components/date/date.tpl')
 
 class DateController {
-
   static $inject = [ '$injector', '$scope', '$element' ]
 
   constructor ($injector, $scope, $element) {
@@ -36,7 +35,6 @@ class DateController {
     }
     this.callback()
   }
-
 }
 
 angular.module('admin_console').component('date', {
@@ -48,9 +46,9 @@ angular.module('admin_console').component('date', {
   controllerAs: 'date',
   templateUrl: 'components/date/date.tpl.html'
 })
-.directive('datepicker', () => ({
-  require: 'ngModel',
-  link: (scope, elm, attrs, ctrl) => {
-    elm.datepicker({ format: 'yyyy-mm-dd' })
-  }
-}))
+  .directive('datepicker', () => ({
+    require: 'ngModel',
+    link: (scope, elm, attrs, ctrl) => {
+      elm.datepicker({ format: 'yyyy-mm-dd' })
+    }
+  }))

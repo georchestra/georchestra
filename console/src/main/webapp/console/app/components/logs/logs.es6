@@ -1,7 +1,6 @@
 require('components/logs/logs.tpl')
 
 class LogsController {
-
   static $inject = [ '$injector' ]
 
   constructor ($injector) {
@@ -46,7 +45,6 @@ class LogsController {
     this.date.start = this.$injector.get('date').getDefault()
     this.date.end = this.$injector.get('date').getEnd()
   }
-
 }
 
 let filterLogs = () => {
@@ -77,4 +75,4 @@ let filterLogs = () => {
 }
 
 angular.module('admin_console').controller('LogsController', LogsController)
-.filter('logs', filterLogs)
+  .filter('logs', filterLogs)

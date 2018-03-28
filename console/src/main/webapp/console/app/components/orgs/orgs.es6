@@ -2,7 +2,6 @@ require('components/orgs/orgs.tpl')
 require('services/orgs')
 
 class OrgsController {
-
   static $inject = [ '$injector', '$routeParams' ]
 
   constructor ($injector, $routeParams) {
@@ -79,7 +78,6 @@ class OrgsController {
       this.newOrg = v === 'org'
     })
   }
-
 }
 
 OrgsController.prototype.activate.$inject = [ '$scope' ]

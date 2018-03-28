@@ -5,7 +5,6 @@ require('services/translate')
 require('services/users')
 
 class NewUserController {
-
   static $inject = [ '$injector', 'translate', 'User' ]
 
   constructor ($injector, translate, User) {
@@ -35,8 +34,6 @@ class NewUserController {
       () => { flash.create('danger', this.i18n.error) }
     )
   }
-
 }
 
 angular.module('admin_console').controller('NewUserController', NewUserController)
-

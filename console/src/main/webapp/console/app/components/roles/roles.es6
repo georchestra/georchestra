@@ -3,7 +3,6 @@ require('components/roles/roles.tpl')
 require('services/roles')
 
 class RolesController {
-
   static $inject = [ '$injector' ]
 
   constructor ($injector) {
@@ -93,21 +92,20 @@ class RolesController {
     let $location = this.$injector.get('$location')
     $location.search('new', 'role')
   }
-
 }
 
 angular.module('admin_console')
-.component('roles', {
-  bindings: {
-    roles: '=',
-    activePromise: '=',
-    index: '=?'
-  },
-  controller: RolesController,
-  controllerAs: 'roles',
-  templateUrl: 'components/roles/roles.tpl.html'
-})
-.filter('unprefix', () => (input, active) => {
-  if (!active) { return input.cn }
-  return (input.cn === active.cn) ? input.cn : input.cn.substr(active.cn.length + 1)
-})
+  .component('roles', {
+    bindings: {
+      roles: '=',
+      activePromise: '=',
+      index: '=?'
+    },
+    controller: RolesController,
+    controllerAs: 'roles',
+    templateUrl: 'components/roles/roles.tpl.html'
+  })
+  .filter('unprefix', () => (input, active) => {
+    if (!active) { return input.cn }
+    return (input.cn === active.cn) ? input.cn : input.cn.substr(active.cn.length + 1)
+  })

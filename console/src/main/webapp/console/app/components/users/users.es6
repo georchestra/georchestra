@@ -6,7 +6,6 @@ require('services/logs')
 require('services/messages')
 
 class UsersController {
-
   static $inject = [ '$routeParams', '$injector', 'User', 'Role' ]
 
   constructor ($routeParams, $injector, User, Role) {
@@ -129,20 +128,19 @@ class UsersController {
       )
     })
   }
-
 }
 
 UsersController.prototype.activate.$inject = [ '$scope' ]
 
 angular.module('admin_console')
-.controller('UsersController', UsersController)
-.directive('validateRole', () => ({
-  require: 'ngModel',
-  link: (scope, elm, attrs, ctrl) => {
-    ctrl.$validators.validateRole = (modelValue, viewValue) => {
-      let roles = scope.$eval(attrs['validateRole'])
-      let prefix = viewValue.substr(0, viewValue.lastIndexOf('_'))
-      return prefix === '' || roles.some(g => g.cn === prefix)
+  .controller('UsersController', UsersController)
+  .directive('validateRole', () => ({
+    require: 'ngModel',
+    link: (scope, elm, attrs, ctrl) => {
+      ctrl.$validators.validateRole = (modelValue, viewValue) => {
+        let roles = scope.$eval(attrs['validateRole'])
+        let prefix = viewValue.substr(0, viewValue.lastIndexOf('_'))
+        return prefix === '' || roles.some(g => g.cn === prefix)
+      }
     }
-  }
-}))
+  }))

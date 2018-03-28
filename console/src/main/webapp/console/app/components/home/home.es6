@@ -1,7 +1,6 @@
 require('components/home/home.tpl')
 
 class HomeController {
-
   static $inject = [ '$injector' ]
 
   constructor ($injector) {
@@ -48,7 +47,6 @@ class HomeController {
       page: 0
     }, () => {}, error)
   }
-
 }
 
 angular.module('admin_console').controller('HomeController', HomeController)

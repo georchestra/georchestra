@@ -1,7 +1,6 @@
 require('components/stats/stats.tpl')
 
 class StatsController {
-
   static $inject = [ '$element', '$scope', '$injector' ]
 
   constructor ($element, $scope, $injector) {
@@ -145,19 +144,18 @@ class StatsController {
       series: [ [].concat(serie) ]
     }
   }
-
 }
 
 angular.module('admin_console')
-.component('stats', {
-  bindings: {
-    data: '=',
-    type: '=',
-    config: '=',
-    title: '=',
-    csvConfig: '='
-  },
-  controller: StatsController,
-  controllerAs: 'stats',
-  templateUrl: 'components/stats/stats.tpl.html'
-})
+  .component('stats', {
+    bindings: {
+      data: '=',
+      type: '=',
+      config: '=',
+      title: '=',
+      csvConfig: '='
+    },
+    controller: StatsController,
+    controllerAs: 'stats',
+    templateUrl: 'components/stats/stats.tpl.html'
+  })

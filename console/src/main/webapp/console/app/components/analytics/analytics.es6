@@ -4,7 +4,6 @@ require('components/date/date')
 require('services/analytics')
 
 class AnalyticsController {
-
   constructor ($injector, $routeParams) {
     this.$injector = $injector
     this.i18n = {}
@@ -81,7 +80,6 @@ class AnalyticsController {
     let $router = this.$injector.get('$router')
     $router.navigate($router.generate('analytics', { role: this.role }))
   }
-
 }
 
 AnalyticsController.$inject = [ '$injector', '$routeParams', 'Analytics' ]

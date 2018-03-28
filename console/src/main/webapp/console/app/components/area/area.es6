@@ -1,7 +1,6 @@
 require('components/area/area.tpl')
 
 class AreaController {
-
   static $inject = [ '$injector', '$http' ]
 
   constructor ($injector, $http) {
@@ -203,16 +202,15 @@ class AreaController {
       flash.create('success', this.i18n.updated)
     }, flash.create.bind(flash, 'danger', this.i18n.error))
   }
-
 }
 
 angular.module('admin_console')
-.component('areas', {
-  bindings: {
-    item: '=',
-    callback: '='
-  },
-  controller: AreaController,
-  controllerAs: 'area',
-  templateUrl: 'components/area/area.tpl.html'
-})
+  .component('areas', {
+    bindings: {
+      item: '=',
+      callback: '='
+    },
+    controller: AreaController,
+    controllerAs: 'area',
+    templateUrl: 'components/area/area.tpl.html'
+  })
