@@ -6,6 +6,9 @@
   "nav.logs"              : "Logs",
   "nav.roles"             : "Rôles",
 
+  "index.superuser"       : "Administrateur",
+  "index.delegated"       : "Délégation",
+
   "home.users"            : "Gérer les utilisateurs",
   "home.waiting_users"    : "utilisateurs en attente",
   "home.expired_users"    : "utilisateurs expirés aujourd’hui",

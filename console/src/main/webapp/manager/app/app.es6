@@ -1,7 +1,7 @@
 class AppController {
-  static $inject = [ '$scope', '$router', '$location' ]
+  static $inject = [ '$scope', '$router', '$location', 'Profile' ]
 
-  constructor ($scope, $router, $location) {
+  constructor ($scope, $router, $location, Profile) {
     $router.config([
       { path: '/',
         redirectTo: '/home' },
@@ -30,6 +30,11 @@ class AppController {
     $scope.isActive = (routes) => routes.some(
       route => $location.$$path.indexOf(route) === 1
     )
+
+    Profile.get((p) => {
+      $scope.profile = p.roles.indexOf('SUPERUSER') === -1
+        ? 'index.delegated' : 'index.superuser'
+    })
   }
 }
 

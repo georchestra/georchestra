@@ -20,6 +20,13 @@ angular.module('manager')
         isArray: false
       }
     })
+  ]).factory('Profile', ['$resource', 'LDAP_BASE_URI', ($resource, baseUri) =>
+    $resource(baseUri + 'users/profile', {}, {
+      query: {
+        method: 'GET',
+        isArray: false
+      }
+    })
   ]).factory('UserRequired', ['$resource', 'CONSOLE_PUBLIC_PATH', ($resource, baseUri) =>
     $resource(baseUri + 'users/requiredFields', {}, {
       get: {

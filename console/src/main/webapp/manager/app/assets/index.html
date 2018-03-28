@@ -20,6 +20,10 @@
 
   <div class="container">
 
+    <div class="profile label label-{{(profile === 'index.superuser') ? 'info' : 'warning'}} pull-right">
+      {{profile | translate}}
+    </div>
+
     <ul class="nav nav-tabs">
       <li role="presentation" ng-class="{'active': isActive(['home'])}">
         <a ng-link="home" translate>nav.dashboard</a>
