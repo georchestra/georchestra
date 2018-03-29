@@ -81,7 +81,7 @@ public class HomeController {
             List<String> rolesList = Arrays.asList(roles.split(";"));
 
             if (rolesList.contains("ROLE_SUPERUSER")) {
-                redirectUrl = "/console/";
+                redirectUrl = "/manager/";
             } else {
                 redirectUrl = "/account/userdetails";
             }
@@ -95,8 +95,8 @@ public class HomeController {
         }
     }
 
-    @RequestMapping(value="/console/")
+    @RequestMapping(value="/manager/")
     public String consoleHome(HttpServletRequest request) throws IOException{
-        return "consoleUi";
+        return "managerUi";
     }
 }

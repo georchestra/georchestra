@@ -1,1 +1,0 @@
-<%@ include file="../../console/public/index.html" %>

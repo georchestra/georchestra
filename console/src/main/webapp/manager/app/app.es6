@@ -70,7 +70,7 @@ angular.module('admin_console', [
         (name) => 'components/' + name + '/' + name + '.tpl.html')
       $translate
         .useSanitizeValueStrategy('escape')
-        .useStaticFilesLoader({ prefix: $uri + 'console/public/lang/', suffix: '.json' })
+        .useStaticFilesLoader({ prefix: $uri + 'manager/public/lang/', suffix: '.json' })
         .registerAvailableLanguageKeys(['en', 'fr', 'de', 'es'], {
           'en_*': 'en',
           'fr_*': 'fr',
