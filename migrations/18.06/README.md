@@ -25,3 +25,9 @@ spring version bump will require some changes on the XML files especially.
 ## Datadir changes
 
 With [#1919](https://github.com/georchestra/georchestra/issues/1919), `orgsSearchBaseDN` was renamed into `orgSearchBaseDN`. This impacts the console and security-proxy webapps. Please update your datadir files.
+
+
+## URL pattern changes
+
+First of all, ldapadmin webapp is renamed into console.
+Also, with [#1924](https://github.com/georchestra/georchestra/issues/1924), the admin console moves from `/ldapadmin/console/` to `/console/manager/`

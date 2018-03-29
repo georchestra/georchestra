@@ -57,7 +57,7 @@
 						<entry key="/analytics/.*" value="ROLE_SUPERUSER" />
 						<entry key="/console/privateui/.*" value="ROLE_SUPERUSER" />
 						<entry key="/console/private/.*" value="ROLE_SUPERUSER" />
-						<entry key="/console/console/.*" value="ROLE_SUPERUSER" />
+						<entry key="/console/manager/.*" value="ROLE_SUPERUSER" />
 						<entry key="/console/account/userdetails" value="IS_AUTHENTICATED_FULLY" />
 						<entry key="/console/account/changePassword" value="IS_AUTHENTICATED_FULLY" />
 						<entry key="/console/.*/emails" value="ROLE_SUPERUSER" />

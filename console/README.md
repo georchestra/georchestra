@@ -36,14 +36,14 @@ If the given email does not match one from the LDAP:
 ### Create account
 
 The page shows a form with typical fields: name, org, title, email, phone nb, details.
-The user will be able to pick a **strong** password (must have at least one of: special char, letters and numbers). 
+The user will be able to pick a **strong** password (must have at least one of: special char, letters and numbers).
 Password field will be repeated 2 times (client-side check for equality).
 
 There's also a captcha (for instance based on http://www.google.com/recaptcha) to prevent batch form submissions.
 
 Once submitted, the form disappears and a (configurable) message says something like "Your request has been submitted and should be processed in the next hours. Watch your email."
 
-What happens here ? 
+What happens here ?
  * Depending on a "MODERATED_SIGNUP" config option, new users will be recorded in the LDAP and affected to :
    * the PENDING role if MODERATED_SIGNUP = true. An admin will then be able to move them to USERS role.
    * the USERS role if MODERATED_SIGNUP = false.
@@ -51,7 +51,7 @@ What happens here ?
 
 ### Edit user details
 
-Two pages: 
+Two pages:
  * First one (default one): users should be able to edit a subset of LDAP fields, namely: sn, givenName, phone, facsimile, o, title, postalAddress (**not mail**). On this page, there will be a link to the userPassword change page.
  * userPassword change UI: will display 3 fields. The first one is the current user password, the two other ones are for the new one. If the two latest fields do not match (client-side check), the user won't be able to submit the form and the "new password mismatch" message will be displayed. If the current password is wrong (server side check), the form will be redisplayed with clean fields, and a message will display "invalid password".
 
@@ -107,11 +107,11 @@ Create the eclipse project
 
 ### Run (Testing)
 
-Testing purpose: 
+Testing purpose:
 
  * deploy in Tomcat7
  * Then add the following url in your Internet navigator:
-   http://localhost:8286/console/console/
+   http://localhost:8286/console/manager/
 
 Alternatively, run with jetty:
 
@@ -130,26 +130,26 @@ Alternatively, run with jetty:
   $ ../mvn -Dmaven.test.skip=true -Ptemplate jetty:run
   ```
  * Then point your navigator to the following address :
-   http://localhost:8286/console/console/
-   
- Running console with jetty will change web server port to *8286* (in order to integrate with others georchestra 
+   http://localhost:8286/console/manager/
+
+ Running console with jetty will change web server port to *8286* (in order to integrate with others georchestra
  instance : CAS, security proxy, ...)
-   
+
 ### Protected Users
 
-You can specify several user accounts that you want to protect against deletion or modification. For this purpose, you 
-have 'listOfprotectedUsers' property. This property holds a comma separated list of uid corresponding to users accounts 
+You can specify several user accounts that you want to protect against deletion or modification. For this purpose, you
+have 'listOfprotectedUsers' property. This property holds a comma separated list of uid corresponding to users accounts
 that should be protected.
 
-Default value is : 'geoserver_privileged_user' (which is a privileged user, internally used) but you can override this 
+Default value is : 'geoserver_privileged_user' (which is a privileged user, internally used) but you can override this
 in config template with key : "protectedUserList"
 
-Example : 
+Example :
 
     protectedUserList=geoserver_privileged_user,hidden_admin_user,hidden_admin_user_trash,hidden_admin_user_backup
 
 (Note that there is no space around comma !)
-    
+
 This will add following users to default protected list of users :
   * hidden_admin_user
   * hidden_admin_user_trash
@@ -168,7 +168,7 @@ The console UI will be available at /console to users having the SUPERUSER role.
 
 See the wireframe in the current folder.
 
-### Center pane 
+### Center pane
 
 Dedicated to users:
  * a toolbar with a "new user" button, and a "selected users" menu item (disabled when no user is selected)
@@ -179,17 +179,17 @@ Dedicated to users:
 
 Featuring:
  * a form for user details,
- * a tree view of roles the user belongs to, with a checkbox selection model to edit. 
+ * a tree view of roles the user belongs to, with a checkbox selection model to edit.
 
 When creating a new user (and only in this case), a **strong** password will be generated and sent to the new user by email.
 
 
-#### Left pane 
+#### Left pane
 
 Dedicated to roles:
  * tree view of roles, with intermediate nodes for role types (GN_*, EL_*, ...) - role types should be configurable
  * ability to filter users list by one role (on role name click)
- * button to add a new role 
+ * button to add a new role
  * button to remove a role (users will **not** be deleted)
 
 

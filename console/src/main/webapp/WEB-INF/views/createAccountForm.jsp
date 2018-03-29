@@ -114,8 +114,8 @@
                     </t:list>
 
 
-                    <link rel="stylesheet" href="/console/console/public/libraries.css">
-                    <link rel="stylesheet" href="/console/console/public/app.css">
+                    <link rel="stylesheet" href="/console/manager/public/libraries.css">
+                    <link rel="stylesheet" href="/console/manager/public/app.css">
                     <style>
                       .area {
                         margin: 2em;
@@ -126,9 +126,9 @@
                         border-bottom: 1em solid white;
                       }
                     </style>
-                    <script src="/console/console/public/libraries.js"></script>
-                    <script src="/console/console/public/templates.js"></script>
-                    <script src="/console/console/public/app.js"></script>
+                    <script src="/console/manager/public/libraries.js"></script>
+                    <script src="/console/manager/public/templates.js"></script>
+                    <script src="/console/manager/public/app.js"></script>
                     <script>require('app')</script>
 
                     <div ng-app="admin_console" ng-strict-di ng-controller="StandaloneController">

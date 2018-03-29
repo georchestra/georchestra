@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="3.0" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 
-    
+
     <display-name>console</display-name>
-    
+
     <description>console application</description>
-    
+
     <distributable/>
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>classpath*:META-INF/spring/applicationContext*.xml</param-value>
     </context-param>
-    
+
     <!-- Creates the Spring Container shared by all Servlets and Filters -->
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
-    
+
     <!-- Handles Spring requests -->
     <servlet>
         <servlet-name>console</servlet-name>
@@ -32,7 +32,7 @@
     <servlet-mapping>
         <servlet-name>console</servlet-name>
         <url-pattern>/</url-pattern>
-        <url-pattern>/console/public/</url-pattern>
+        <url-pattern>/manager/public/</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
@@ -40,14 +40,14 @@
         <url-pattern>/account/css/*</url-pattern>
         <url-pattern>/account/fonts/*</url-pattern>
         <url-pattern>/account/js/*</url-pattern>
-        <url-pattern>/console/public/*</url-pattern>
-        <url-pattern>/console/fonts/*</url-pattern>
+        <url-pattern>/manager/public/*</url-pattern>
+        <url-pattern>/manager/fonts/*</url-pattern>
     </servlet-mapping>
 
     <session-config>
         <session-timeout>10</session-timeout>
     </session-config>
-    
+
     <error-page>
         <exception-type>java.lang.Exception</exception-type>
         <location>/WEB-INF/views/uncaughtException.jsp</location>
@@ -60,7 +60,7 @@
         <error-code>403</error-code>
         <location>/WEB-INF/views/forbidden.jsp</location>
     </error-page>
-    
+
     <filter>
         <filter-name>characterEncodingFilter</filter-name>
         <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
@@ -77,7 +77,7 @@
         <filter-name>characterEncodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-    
+
     <!-- Database connection -->
     <!-- This source is definend in the [TOMCAT]/conf/context.xml file -->
     <!--resource-ref>
@@ -86,5 +86,5 @@
       <res-type>javax.sql.DataSource</res-type>
       <res-auth>Container</res-auth>
     </resource-ref-->
-    
+
 </web-app>
