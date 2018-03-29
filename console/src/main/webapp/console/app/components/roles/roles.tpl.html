@@ -1,28 +1,73 @@
-<div class="alert alert-info">
-  <a ng-link="users({id: 'all'})" class="category" ng-class="{active: !roles.activeRole}" translate>role.allusers</a>
-  <hr>
-  <div class="create-btn">
-    <a ng-link="newUser" class="btn btn-default" translate>role.newuser</a>
-    <a ng-click="roles.createRole()" class="btn btn-default" translate>role.newrole</a>
+<section class="roles">
+
+  <div class="col-md-4 aside">
+
+    <div class="alert alert-info">
+      <a ng-link="roles({role: 'all'})" class="category" ng-class="{active: roles.role=='all'}" translate>roles.allroles</a>
+      <hr/>
+      <div class="create-btn">
+        <a ng-click="roles.create()" class="btn btn-default" translate>roles.newrole</a>
+      </div>
+    </div>
+
   </div>
-</div>
 
-<input ng-model="roles.q" class="form-control input-sm" placeholder="{{'role.search' | translate}}">
+  <div class="col-md-8">
 
-<h5 ng-if="roles.q == ''" translate>role.system</h5>
-<div ng-repeat="role in roles.adminList" ng-if="roles.q == ''">
-  <strong ng-if="(roles.activeRole.cn == role.cn)">
-    {{::role.cn}} ({{::role.users.length}})
-  </strong>
-  <a ng-link="users({id: role.cn})" ng-if="(roles.activeRole.cn != role.cn)">
-    {{::role.cn}}
-   ({{::role.users.length}})
- </a>
-</div>
+    <input type="text" class="filter-table form-control pull-right" ng-model="roles.q" placeholder="{{'roles.filter_roles' | translate}}"></input>
+    <i class="glyphicon glyphicon-remove-sign filter-table-reset" ng-show="roles.q != ''" ng-click="roles.q = ''"></i>
+    <h3 class="roles-title">{{roles.roles.length}} <span translate>roles.title</span></h3>
 
-<div ng-repeat="(key, role) in roles.index" ng-if="roles.q != ''">
-  <a ng-link="users({id: role.cn})" title={{::role.description}}
-      ng-if="role.cn.toLowerCase().indexOf(roles.q.toLowerCase()) >= 0">
-    {{::role.cn}} ({{::role.users.length}})
-  </a>
-</div>
+    <table class="table table-striped table-condensed">
+
+      <thead>
+        <tr>
+          <th translate>role.cn</th>
+          <th translate>role.membersCount</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr dir-paginate="role in roles.roles | filter:roles.q | itemsPerPage: roles.itemsPerPage">
+          <td>
+            <a ng-link="role({role: role.cn, tab: 'infos'})">
+              {{::role.cn}}
+            </a>
+          </td>
+          <td>{{::role.usersCount}}</td>
+        </tr>
+      </tbody>
+
+    </table>
+
+    <dir-pagination-controls></dir-pagination-controls>
+
+  </div>
+
+  <div ng-if="roles.newRole" class="background" ng-cloack>
+
+    <div class="panel panel-default">
+
+      <div class="panel-heading">
+        <a class="btn close" ng-click="roles.close()">&times;</a>
+        <span translate>roles.newrole</span>
+      </div>
+      <div class="panel-body">
+        <form class="form-horizontal" name="roleForm">
+
+          <div ng-inline="templates/roleForm.tpl.html"
+             ng-init="model=roles.newInstance;promise=roles.newInstance.$promise;required=roles.required;"></div>
+
+          <hr>
+          <button class="btn btn-primary pull-right" ng-disabled="roleForm.$invalid" ng-click="roles.saveRole()">
+            <span translate>users.save</span>
+          </button>
+          <button class="btn btn-link pull-right" ng-click="roles.close()" translate>users.cancel</button>
+        </form>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>

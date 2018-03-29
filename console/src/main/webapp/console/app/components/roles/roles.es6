@@ -2,57 +2,78 @@ import 'components/roles/roles.tpl'
 import 'services/roles'
 
 class RolesController {
-  static $inject = [ '$injector' ]
+  static $inject = [ '$injector', '$routeParams' ]
 
-  constructor ($injector) {
+  constructor ($injector, $routeParams) {
     this.$injector = $injector
-  }
 
-  $onInit () {
-    let roleAdminList = this.$injector.get('roleAdminList')
-    if (this.roles.$promise) {
-      this.$injector.get('$q').all([
-        this.roles.$promise,
-        this.activePromise
-      ]).then(this.initialize.bind(this, roleAdminList))
-    } else {
-      this.initialize(roleAdminList)
+    this.role = $routeParams.role
+    this.roles = this.$injector.get('Role').query(() => {
+      this.roles.forEach(r => {
+        r.usersCount = r.users.length
+        delete r.users
+      })
+    })
+
+    this.q = ''
+    this.itemsPerPage = 15
+
+    this.newRole = this.$injector.get('$location').$$search['new'] === 'role'
+    if (this.newRole) {
+      const Role = this.$injector.get('Role')
+      this.newInstance = new Role({})
     }
+
+    let translate = this.$injector.get('translate')
+    this.i18n = {}
+    translate('role.created', this.i18n)
+    translate('role.updated', this.i18n)
+    translate('role.deleted', this.i18n)
+    translate('role.error', this.i18n)
+    translate('role.deleteError', this.i18n)
   }
 
-  initialize (roleAdminList) {
-    this.activeRole = this.activePromise.$$state.value
-
-    let index = {}
-    this.q = (this.q) || ''
-
-    this.roles.forEach(role => { index[role.cn] = role })
-    this.index = index
-
-    let fullAdminList = roleAdminList()
-    this.adminList = []
-    for (let idx in this.index) {
-      let role = this.index[idx]
-      if (fullAdminList.indexOf(role.cn) >= 0) {
-        this.adminList.push(role)
-      }
-    }
-  }
-
-  createRole () {
+  create () {
+    const Role = this.$injector.get('Role')
+    this.newInstance = new Role({})
     let $location = this.$injector.get('$location')
     $location.search('new', 'role')
   }
+
+  saveRole () {
+    let flash = this.$injector.get('Flash')
+    let $router = this.$injector.get('$router')
+    let $location = this.$injector.get('$location')
+    let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
+
+    this.newInstance.$save(
+      () => {
+        flash.create('success', this.i18n.created)
+        $httpDefaultCache.removeAll()
+        $router.navigate($router.generate('role', {
+          role: this.newInstance.cn,
+          tab: 'infos'
+        }))
+        $location.url($location.path())
+      },
+      flash.create.bind(flash, 'danger', this.i18n.error)
+    )
+  }
+
+  close () {
+    this.newRole = false
+    let $location = this.$injector.get('$location')
+    $location.url($location.path())
+  }
+
+  activate ($scope) {
+    let $location = this.$injector.get('$location')
+    $scope.$watch(() => $location.search()['new'], (v) => {
+      this.newRole = v === 'role'
+    })
+  }
 }
 
-angular.module('admin_console')
-  .component('roles', {
-    bindings: {
-      roles: '=',
-      activePromise: '=',
-      index: '=?'
-    },
-    controller: RolesController,
-    controllerAs: 'roles',
-    templateUrl: 'components/roles/roles.tpl.html'
-  })
+RolesController.prototype.activate.$inject = [ '$scope' ]
+
+angular.module('admin_console').controller('RolesController', RolesController)

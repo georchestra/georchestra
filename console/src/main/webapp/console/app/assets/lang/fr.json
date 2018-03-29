@@ -4,6 +4,7 @@
   "nav.orgs"              : "Organismes",
   "nav.analytics"         : "Statistiques",
   "nav.logs"              : "Logs",
+  "nav.roles"             : "Rôles",
 
   "home.users"            : "Gérer les utilisateurs",
   "home.waiting_users"    : "utilisateurs en attente",
@@ -55,7 +56,7 @@
   "user.orgFirst"         : "Confirmer d’abord l’organisme   : ",
 
   "orgs.title"            : "organismes",
-  "orgs.allorgs"          : "Tous",
+  "orgs.allorgs"          : "Tous les organismes",
   "orgs.pending"          : "En attente",
   "orgs.neworg"           : "Nouvel organisme",
   "orgs.filter_orgs"      : "Filtrer",
@@ -76,6 +77,25 @@
   "org.confirm"           : "Confirmer",
   "org.select"            : "Selectionner un organisme",
   "org.membersCount"      : "Membres",
+
+  "roles.title"           : "rôles",
+  "roles.allroles"        : "Tous les rôles",
+  "roles.newrole"         : "Nouveau rôle",
+  "roles.filter_roles"    : "Filtrer",
+
+  "role.save"             : "Enregistrer",
+  "role.updated"          : "Rôle modifié",
+  "role.deleted"          : "Rôle supprimé",
+  "role.created"          : "Rôle créé",
+  "role.error"            : "Erreur lors de la création du rôle",
+  "role.warning"          : "Attention, cette action est irréversible — ",
+  "role.delete"           : "Supprimer le rôle",
+  "role.rolelist"         : "Tous les rôles",
+  "role.confirm"          : "Confirmer",
+  "role.select"           : "Selectionner un rôle",
+  "role.membersCount"     : "Membres",
+  "role.description"      : "Description",
+  "role.cn"               : "Identifiant",
 
   "area.save"             : "Enregister la zone",
   "area.updated"          : "Aire de compétence mise à jour",
