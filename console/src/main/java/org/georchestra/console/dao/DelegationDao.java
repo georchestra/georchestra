@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 by the geOrchestra PSC
+ * Copyright (C) 2009-2018 by the geOrchestra PSC
  *
  * This file is part of geOrchestra.
  *
@@ -19,16 +19,9 @@
 
 package org.georchestra.console.dao;
 
-import org.georchestra.console.model.AdminLogEntry;
 import org.georchestra.console.model.DelegationEntry;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Repository
-public interface DelegationDao extends PagingAndSortingRepository<DelegationEntry, String> {
-
-}
+public interface DelegationDao extends PagingAndSortingRepository<DelegationEntry, String> {}
