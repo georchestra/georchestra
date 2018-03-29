@@ -6,7 +6,7 @@
   <intercept-url pattern="/extractorapp/.*" access="ROLE_EXTRACTORAPP" />
   <intercept-url pattern="/geofence/.*" access="ROLE_ADMINISTRATOR" />
   <intercept-url pattern="/analytics/.*" access="ROLE_SUPERUSER" />
-  <intercept-url pattern="/console/console/.*" access="ROLE_SUPERUSER" />
+  <intercept-url pattern="/console/manager/.*" access="ROLE_SUPERUSER" />
   <intercept-url pattern="/console/private/.*" access="ROLE_SUPERUSER" />
   <intercept-url pattern="/console/account/userdetails" access="IS_AUTHENTICATED_FULLY" />
   <intercept-url pattern="/console/account/changePassword" access="IS_AUTHENTICATED_FULLY" />
