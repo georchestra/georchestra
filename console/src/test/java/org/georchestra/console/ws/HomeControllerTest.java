@@ -75,7 +75,7 @@ public class HomeControllerTest {
         request.addHeader("sec-roles", "ROLE_SUPERUSER");
         ctrl.root(request, response);
 
-        assertTrue(response.getRedirectedUrl().endsWith("/console/"));
+        assertTrue(response.getRedirectedUrl().endsWith("/manager/"));
 
     }
 
