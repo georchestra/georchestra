@@ -67,9 +67,11 @@ angular.module('admin_console', [
       $translate
         .useSanitizeValueStrategy('escape')
         .useStaticFilesLoader({ prefix: $uri + 'console/public/lang/', suffix: '.json' })
-        .registerAvailableLanguageKeys(['en', 'fr'], {
+        .registerAvailableLanguageKeys(['en', 'fr', 'de', 'es'], {
           'en_*': 'en',
           'fr_*': 'fr',
+          'de_*': 'de',
+          'es_*': 'es',
           '*': 'en'
         })
         .determinePreferredLanguage()
