@@ -68,6 +68,10 @@
         </div>
       </div>
 
+      <div class="panel-body" ng-if="user.tab=='delegations' && profile === 'SUPERUSER'">
+        TRUITE {{profile}}
+      </div>
+
       <div class="panel-body user-analytics" ng-if="user.tab=='analytics'">
         <date class="stats-conf" model="user.date" callback="user.loadAnalyticsData()"></date>
         <h4 translate>analytics.title</h4>
