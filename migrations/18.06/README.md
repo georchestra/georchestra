@@ -26,6 +26,8 @@ spring version bump will require some changes on the XML files especially.
 
 With [#1919](https://github.com/georchestra/georchestra/issues/1919), `orgsSearchBaseDN` was renamed into `orgSearchBaseDN`. This impacts the console and security-proxy webapps. Please update your datadir files.
 
+With #1968 all connections to the DB are performed with role `georchestra` instead of `www-data`.
+
 
 ## URL pattern changes
 

@@ -26,8 +26,8 @@ shared.ldap.roleRoleAttribute=cn
 
 shared.psql.host=localhost
 shared.psql.port=5432
-shared.psql.user=www-data
-shared.psql.pass=www-data
+shared.psql.user=georchestra
+shared.psql.pass=georchestra
 
 # Configure GeoNetwork db connection to use Postgresql or PostGIS
 # Enable PostGIS using the following (Install PostGIS first)

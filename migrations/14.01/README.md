@@ -29,17 +29,17 @@ psql -d downloadform -c 'alter schema download rename to downloadform;'
 
 wget --no-check-certificate https://raw.githubusercontent.com/georchestra/georchestra/14.01/ldapadmin/database.sql -O /tmp/ldapadmin.sql
 psql -d ldapadmin -f /tmp/ldapadmin.sql
-psql -d ldapadmin -c 'GRANT ALL PRIVILEGES ON SCHEMA ldapadmin TO "www-data";'
-psql -d ldapadmin -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ldapadmin TO "www-data";'
-psql -d ldapadmin -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA ldapadmin TO "www-data";'
+psql -d ldapadmin -c 'GRANT ALL PRIVILEGES ON SCHEMA ldapadmin TO "georchestra";'
+psql -d ldapadmin -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ldapadmin TO "georchestra";'
+psql -d ldapadmin -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA ldapadmin TO "georchestra";'
 psql -d ldapadmin -c 'insert into ldapadmin.user_token (uid, token, creation_date) select uid, token, creation_date from public.user_token;'
 psql -d ldapadmin -c 'drop table public.user_token;'
 
 wget --no-check-certificate https://raw.githubusercontent.com/georchestra/georchestra/14.01/ogc-server-statistics/database.sql -O /tmp/ogcstatistics.sql
 psql -d ogcstatistics -f /tmp/ogcstatistics.sql
-psql -d ogcstatistics -c 'GRANT ALL PRIVILEGES ON SCHEMA ogcstatistics TO "www-data";'
-psql -d ogcstatistics -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ogcstatistics TO "www-data";'
-psql -d ogcstatistics -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA ogcstatistics TO "www-data";'
+psql -d ogcstatistics -c 'GRANT ALL PRIVILEGES ON SCHEMA ogcstatistics TO "georchestra";'
+psql -d ogcstatistics -c 'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA ogcstatistics TO "georchestra";'
+psql -d ogcstatistics -c 'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA ogcstatistics TO "georchestra";'
 psql -d ogcstatistics -c 'insert into ogcstatistics.ogc_services_log (id, user_name, date, service, layer, request, org) select id, user_name, date, service, layer, request, org from public.ogc_services_log;'
 psql -d ogcstatistics -c 'drop table public.ogc_services_log;'
 ```

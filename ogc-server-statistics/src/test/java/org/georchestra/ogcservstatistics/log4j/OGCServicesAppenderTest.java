@@ -83,8 +83,8 @@ public class OGCServicesAppenderTest {
 		assertNotNull(appender);
 
 		assertEquals("jdbc:postgresql://localhost:5432/testdb", appender.getJdbcURL());
-		assertEquals("www-data", appender.getDatabasePassword() );
-		assertEquals("www-data", appender.getDatabaseUser() );
+		assertEquals("georchestra", appender.getDatabasePassword() );
+		assertEquals("georchestra", appender.getDatabaseUser() );
 
 		assertTrue(appender.isActivated() );
 		assertEquals(1, appender.getBufferSize() );

@@ -99,23 +99,23 @@ Please note that the `ogc-server-statistics-migration.sql` script might take a v
 
 Finally, ensure geOrchestra database user is owner of database. If your database is dedicated to geOrchestra (no other
 apps are running in same database), you can use following procedure to reset ownership of all objects to selected user, for
-example ```www-data``` :
+example ```georchestra``` :
 
 ```
 wget https://raw.githubusercontent.com/georchestra/georchestra/15.12/postgresql/fix-owner.sql -O /tmp/fix-owner.sql
 psql -d georchestra -f /tmp/fix-owner.sql
-psql -d georchestra -c "SELECT change_owner('mapfishapp', 'www-data');";
-psql -d georchestra -c "SELECT change_owner('downloadform', 'www-data');";
-psql -d georchestra -c "SELECT change_owner('ldapadmin', 'www-data');";
-psql -d georchestra -c "SELECT change_owner('ogcstatistics', 'www-data');";
-psql -d georchestra -c "SELECT change_owner('public', 'www-data');";
+psql -d georchestra -c "SELECT change_owner('mapfishapp', 'georchestra');";
+psql -d georchestra -c "SELECT change_owner('downloadform', 'georchestra');";
+psql -d georchestra -c "SELECT change_owner('ldapadmin', 'georchestra');";
+psql -d georchestra -c "SELECT change_owner('ogcstatistics', 'georchestra');";
+psql -d georchestra -c "SELECT change_owner('public', 'georchestra');";
 # if you deploy geonetwork :
 psql -d georchestra -c "SELECT change_owner('geonetwork', 'geonetwork');";
 ```
 
 And if you deploy geofence :
 ```
-psql -d georchestra -c "SELECT change_owner('geofence', 'www-data');";
+psql -d georchestra -c "SELECT change_owner('geofence', 'georchestra');";
 ```
 
 Finally, you can drop maintenance function :

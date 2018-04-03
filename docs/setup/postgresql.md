@@ -2,9 +2,9 @@
 
 The "georchestra" database hosts several schemas, which are specific to the deployed modules:
 ```
-createuser -SDRI www-data
-createdb -E UTF8 -T template0 -O www-data georchestra
-psql -d georchestra -c "ALTER USER \"www-data\" WITH PASSWORD 'www-data';"
+createuser -SDRI georchestra
+createdb -E UTF8 -T template0 -O georchestra georchestra
+psql -d georchestra -c "ALTER USER \"georchestra\" WITH PASSWORD 'georchestra';"
 ```
 
 Note 1: It is of course possible to store webapp-specific schemas in separate databases, taking advantage of geOrchestra's extreme configurability.
@@ -64,17 +64,17 @@ psql -d georchestra -f postgresql/07-atlas.sql
 
 Ensure geOrchestra database user is owner of database. If your database is dedicated to geOrchestra (no other
 apps are running in same database), you can use following procedure to reset ownership of all objects to selected user, for
-example ```www-data``` :
+example ```georchestra``` :
 
 ```
 wget https://raw.githubusercontent.com/georchestra/georchestra/15.12/postgresql/fix-owner.sql -O /tmp/fix-owner.sql
 psql -d georchestra -f /tmp/fix-owner.sql
-psql -d georchestra -c "SELECT change_owner('mapfishapp', 'www-data');";
-psql -d georchestra -c "SELECT change_owner('console', 'www-data');";
-psql -d georchestra -c "SELECT change_owner('ogcstatistics', 'www-data');";
-psql -d georchestra -c "SELECT change_owner('extractorapp', 'www-data');";
-psql -d georchestra -c "SELECT change_owner('atlas', 'www-data');";
-psql -d georchestra -c "SELECT change_owner('public', 'www-data');";
+psql -d georchestra -c "SELECT change_owner('mapfishapp', 'georchestra');";
+psql -d georchestra -c "SELECT change_owner('console', 'georchestra');";
+psql -d georchestra -c "SELECT change_owner('ogcstatistics', 'georchestra');";
+psql -d georchestra -c "SELECT change_owner('extractorapp', 'georchestra');";
+psql -d georchestra -c "SELECT change_owner('atlas', 'georchestra');";
+psql -d georchestra -c "SELECT change_owner('public', 'georchestra');";
 ```
 
 ## GeoNetwork schema
@@ -82,7 +82,7 @@ psql -d georchestra -c "SELECT change_owner('public', 'www-data');";
 If **geonetwork** is to be deployed, you need to create a dedicated user and schema:
 ```
 createuser -SDRI geonetwork
-psql -d georchestra -c "ALTER USER geonetwork WITH PASSWORD 'www-data';"
+psql -d georchestra -c "ALTER USER geonetwork WITH PASSWORD 'georchestra';"
 psql -d georchestra -c 'CREATE SCHEMA AUTHORIZATION geonetwork;'
 psql -d georchestra -c "SELECT change_owner('geonetwork', 'geonetwork');";
 ```

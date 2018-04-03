@@ -61,7 +61,7 @@ It is now a schema inside the main database.
 
 This change requires that a "geonetwork" db user is created and granted rights:
 ```
-createuser -SDRIP geonetwork (the expected password for the default config is "www-data")
+createuser -SDRIP geonetwork (the expected password for the default config is "georchestra")
 psql -d georchestra -c 'CREATE SCHEMA geonetwork;'
 psql -d georchestra -c 'GRANT ALL PRIVILEGES ON SCHEMA geonetwork TO "geonetwork";'
 ```

@@ -162,8 +162,8 @@ shared.log.dir=/tmp
 
 shared.psql.host=localhost
 shared.psql.port=5432
-shared.psql.user=www-data
-shared.psql.pass=www-data
+shared.psql.user=georchestra
+shared.psql.pass=georchestra
 
 
 # --------------------------------------------------
