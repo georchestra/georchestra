@@ -35,7 +35,7 @@ class AppController {
 
     Profile.get((p) => {
       $scope.profile = p.roles.indexOf('SUPERUSER') === -1
-        ? 'index.delegated' : 'index.superuser'
+        ? 'DELEGATED' : 'SUPERUSER'
     })
   }
 }

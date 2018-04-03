@@ -7,8 +7,8 @@
   "nav.roles"             : "Rôles",
   "nav.delegations"       : "Délégations",
 
-  "index.superuser"       : "Administrateur",
-  "index.delegated"       : "Délégation",
+  "index.SUPERUSER"       : "Administrateur",
+  "index.DELEGATED"       : "Délégation",
 
   "home.users"            : "Gérer les utilisateurs",
   "home.waiting_users"    : "utilisateurs en attente",

@@ -20,8 +20,8 @@
 
   <div class="container">
 
-    <div class="profile label label-{{(profile === 'index.superuser') ? 'info' : 'warning'}} pull-right">
-      {{profile | translate}}
+    <div class="profile label label-{{(profile === 'SUPERUSER') ? 'info' : 'warning'}} pull-right">
+      {{ 'index.' + profile | translate}}
     </div>
 
     <ul class="nav nav-tabs">
