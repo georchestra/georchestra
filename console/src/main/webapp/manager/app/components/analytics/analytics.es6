@@ -84,4 +84,4 @@ class AnalyticsController {
 
 AnalyticsController.$inject = [ '$injector', '$routeParams', 'Analytics' ]
 
-angular.module('admin_console').controller('AnalyticsController', AnalyticsController)
+angular.module('manager').controller('AnalyticsController', AnalyticsController)

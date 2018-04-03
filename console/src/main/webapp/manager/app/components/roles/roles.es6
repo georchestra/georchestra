@@ -76,4 +76,4 @@ class RolesController {
 
 RolesController.prototype.activate.$inject = [ '$scope' ]
 
-angular.module('admin_console').controller('RolesController', RolesController)
+angular.module('manager').controller('RolesController', RolesController)

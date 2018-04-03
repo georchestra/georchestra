@@ -55,4 +55,4 @@ class OrgController {
   }
 }
 
-angular.module('admin_console').controller('OrgController', OrgController)
+angular.module('manager').controller('OrgController', OrgController)

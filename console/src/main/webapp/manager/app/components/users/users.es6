@@ -132,7 +132,7 @@ class UsersController {
 
 UsersController.prototype.activate.$inject = [ '$scope' ]
 
-angular.module('admin_console')
+angular.module('manager')
   .controller('UsersController', UsersController)
   .directive('validateRole', () => ({
     require: 'ngModel',

@@ -1,4 +1,4 @@
-angular.module('admin_console')
+angular.module('manager')
   .factory('translate', [ '$translate', ($translate) => (str, dict) => {
     let promise = $translate(str)
     if (dict) {

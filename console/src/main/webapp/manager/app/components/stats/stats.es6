@@ -146,7 +146,7 @@ class StatsController {
   }
 }
 
-angular.module('admin_console')
+angular.module('manager')
   .component('stats', {
     bindings: {
       data: '=',

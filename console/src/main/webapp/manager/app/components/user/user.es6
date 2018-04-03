@@ -322,7 +322,7 @@ class UserController {
 
 UserController.prototype.activate.$inject = [ '$scope' ]
 
-angular.module('admin_console')
+angular.module('manager')
   .controller('UserController', UserController)
   .filter('encodeURIComponent', () => window.encodeURIComponent)
   .directive('managers', [ '$timeout', 'User', ($timeout, User) => ({

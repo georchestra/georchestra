@@ -45,7 +45,7 @@ class BrowseController {
   }
 }
 
-angular.module('admin_console')
+angular.module('manager')
   .component('browse', {
     bindings: {
       roles: '=',

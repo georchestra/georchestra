@@ -74,5 +74,5 @@ let filterLogs = () => {
   }
 }
 
-angular.module('admin_console').controller('LogsController', LogsController)
+angular.module('manager').controller('LogsController', LogsController)
   .filter('logs', filterLogs)

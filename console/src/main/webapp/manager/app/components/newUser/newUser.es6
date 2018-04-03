@@ -36,4 +36,4 @@ class NewUserController {
   }
 }
 
-angular.module('admin_console').controller('NewUserController', NewUserController)
+angular.module('manager').controller('NewUserController', NewUserController)

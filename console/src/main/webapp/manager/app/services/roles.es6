@@ -1,4 +1,4 @@
-angular.module('admin_console')
+angular.module('manager')
   .factory('Role', ['$resource', 'LDAP_BASE_URI', ($resource, baseUri) =>
     $resource(baseUri + 'roles/:id', {}, {
       query: {

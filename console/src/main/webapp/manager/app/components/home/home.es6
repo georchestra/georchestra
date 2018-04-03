@@ -49,4 +49,4 @@ class HomeController {
   }
 }
 
-angular.module('admin_console').controller('HomeController', HomeController)
+angular.module('manager').controller('HomeController', HomeController)

@@ -41,7 +41,7 @@ class StandaloneController {
   }
 }
 
-angular.module('admin_console', [
+angular.module('manager', [
   'ngResource',
   'ngNewRouter',
   'ngSanitize',

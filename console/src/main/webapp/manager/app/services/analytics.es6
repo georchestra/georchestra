@@ -1,4 +1,4 @@
-angular.module('admin_console').factory('Analytics', [
+angular.module('manager').factory('Analytics', [
   '$resource', 'ANALYTICS_BASE_URI', ($resource, baseUri) => $resource(
     baseUri + ':service', { service: '@service' },
     {

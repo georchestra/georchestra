@@ -1,4 +1,4 @@
-angular.module('admin_console')
+angular.module('manager')
   .factory('Logs', ['$resource', 'LDAP_BASE_URI', ($resource, baseUri) =>
     $resource(baseUri + 'admin_logs/:limit/:page', {}, {
       query: {

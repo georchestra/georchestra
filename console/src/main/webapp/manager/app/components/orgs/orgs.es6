@@ -82,4 +82,4 @@ class OrgsController {
 
 OrgsController.prototype.activate.$inject = [ '$scope' ]
 
-angular.module('admin_console').controller('OrgsController', OrgsController)
+angular.module('manager').controller('OrgsController', OrgsController)

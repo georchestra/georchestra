@@ -204,7 +204,7 @@ class AreaController {
   }
 }
 
-angular.module('admin_console')
+angular.module('manager')
   .component('areas', {
     bindings: {
       item: '=',

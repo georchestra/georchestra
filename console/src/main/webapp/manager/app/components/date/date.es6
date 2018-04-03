@@ -37,7 +37,7 @@ class DateController {
   }
 }
 
-angular.module('admin_console').component('date', {
+angular.module('manager').component('date', {
   bindings: {
     model: '=',
     callback: '&'

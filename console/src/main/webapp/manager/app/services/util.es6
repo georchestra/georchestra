@@ -1,4 +1,4 @@
-angular.module('admin_console')
+angular.module('manager')
   .factory('date', () => {
     let format = 'YYYY-MM-DD'
 

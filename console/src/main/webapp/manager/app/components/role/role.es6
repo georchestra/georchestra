@@ -52,4 +52,4 @@ class RoleController {
   }
 }
 
-angular.module('admin_console').controller('RoleController', RoleController)
+angular.module('manager').controller('RoleController', RoleController)

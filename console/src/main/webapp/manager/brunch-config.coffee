@@ -1,7 +1,7 @@
 module.exports = config:
   plugins:
     ng_templates:
-      module: 'admin_console'
+      module: 'manager'
       relativePath: 'app/'
     babel:
       pattern: /\.es6/

@@ -131,7 +131,7 @@
                     <script src="/console/manager/public/app.js"></script>
                     <script>require('app')</script>
 
-                    <div ng-app="admin_console" ng-strict-di ng-controller="StandaloneController">
+                    <div ng-app="manager" ng-strict-di ng-controller="StandaloneController">
                       <areas item="org"></areas>
                     </div>
 
