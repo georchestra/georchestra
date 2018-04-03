@@ -50,6 +50,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.ldap.NameNotFoundException;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -122,10 +123,11 @@ public class RolesController {
 	 * @throws IOException
 	 */
 	@RequestMapping(value=REQUEST_MAPPING, method=RequestMethod.GET)
+	@PostFilter("hasPermission(filterObject, 'read')")
 	public void findAll( HttpServletRequest request, HttpServletResponse response ) throws IOException{
 
 		try {
-			List<Role> list = this.roleDao.findAll();
+			List<Role> list = this.findAll();
 
 			RoleListResponse listResponse = new RoleListResponse(list, this.filter);
 
@@ -142,9 +144,13 @@ public class RolesController {
 
 			throw new IOException(e);
 		}
-
-
 	}
+	
+	@PostFilter("hasPermission(#role, 'read')")
+	private List<Role> findAll() throws DataServiceException {
+		return this.roleDao.findAll();
+	}
+	
 
 	/**
 	 * Returns the detailed information of the role, with its list of users.

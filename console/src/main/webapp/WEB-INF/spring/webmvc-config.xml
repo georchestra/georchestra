@@ -16,8 +16,20 @@
             http://www.springframework.org/schema/data/jpa/spring-jpa-1.0.xsd
             http://www.springframework.org/schema/context
             http://www.springframework.org/schema/context/spring-context-3.0.xsd
+            http://www.springframework.org/schema/security
+            http://www.springframework.org/schema/security/spring-security-4.0.xsd
             http://www.springframework.org/schema/mvc
             http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+	<security:global-method-security pre-post-annotations="enabled">
+	  <security:expression-handler ref="expressionHandler"/>
+	</security:global-method-security>
+	
+	<bean id="expressionHandler" class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
+		<property name="permissionEvaluator" ref="consolePermissionEvaluator"/>
+	</bean>
+
+  <bean id="consolePermissionEvaluator" class="org.georchestra.console.ConsolePermissionEvaluator" />
 
   <!-- Directory to scan for repository classes -->
   <jpa:repositories base-package="org.georchestra.console.dao" />
