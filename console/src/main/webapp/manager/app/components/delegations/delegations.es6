@@ -14,14 +14,6 @@ class DelegationsController {
 
     this.q = ''
     this.itemsPerPage = 15
-
-    let translate = this.$injector.get('translate')
-    this.i18n = {}
-    translate('role.created', this.i18n)
-    translate('role.updated', this.i18n)
-    translate('role.deleted', this.i18n)
-    translate('role.error', this.i18n)
-    translate('role.deleteError', this.i18n)
   }
 }
 
