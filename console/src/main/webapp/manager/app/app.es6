@@ -17,6 +17,8 @@ class AppController {
         component: 'roles' },
       { path: '/role/:role/:tab',
         component: 'role' },
+      { path: '/delegations/:delegation',
+        component: 'delegations' },
       { path: '/browse/:id/users',
         component: 'users' },
       { path: '/users/:id/:tab',
@@ -95,6 +97,7 @@ require('components/orgs/orgs')
 require('components/org/org')
 require('components/roles/roles')
 require('components/role/role')
+require('components/delegations/delegations')
 require('components/home/home')
 require('components/browse/browse')
 require('components/logs/logs')

@@ -5,6 +5,7 @@
   "nav.analytics"         : "Statistiques",
   "nav.logs"              : "Logs",
   "nav.roles"             : "Rôles",
+  "nav.delegations"       : "Délégations",
 
   "index.superuser"       : "Administrateur",
   "index.delegated"       : "Délégation",
@@ -99,6 +100,8 @@
   "role.membersCount"     : "Membres",
   "role.description"      : "Description",
   "role.cn"               : "Identifiant",
+
+  "delegations.filter"    : "Filtrer",
 
   "area.save"             : "Enregister la zone",
   "area.updated"          : "Aire de compétence mise à jour",
