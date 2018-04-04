@@ -267,9 +267,10 @@ class UserController {
     let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
     let flash = this.$injector.get('Flash')
 
-    if ($scope.profile === 'SUPERUSER') {
+    $scope.$watch(() => $scope.profile, p => {
+      if (p !== 'SUPERUSER' || this.tabs.indexOf('delegations') !== -1) return
       this.tabs.splice(3, 0, 'delegations')
-    }
+    })
 
     let saveRoles = function (newVal, oldVal) {
       if (!newVal || !oldVal) { return }
