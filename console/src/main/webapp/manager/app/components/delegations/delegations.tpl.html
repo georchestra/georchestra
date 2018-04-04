@@ -19,7 +19,7 @@
       <tbody>
         <tr dir-paginate="delegation in delegations.delegations | filter:delegations.q | itemsPerPage: delegations.itemsPerPage">
           <td>
-            <a ng-link="user({id: delegation.uid, tab: 'infos'})">{{::delegation.uid}}</a>
+            <a ng-link="user({id: delegation.uid, tab: 'delegations'})">{{::delegation.uid}}</a>
           </td>
           <td>{{::delegation.orgs.join(', ')}}</td>
           <td>{{::delegation.roles.join(', ')}}</td>
