@@ -88,7 +88,7 @@
   "area.search"           : "Suchen",
 
   "role.allusers"        : "Alle Benutzer",
-  "role.system"          : "geOrchestra-Benutzer",
+  "role.system"          : "geOrchestra-Rollen",
   "role.app"             : "Andere Rollen",
   "role.newuser"         : "Neuer Benutzer",
   "role.newrole"         : "Neue Rolle",
