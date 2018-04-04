@@ -59,6 +59,8 @@
   "user.pendingmsg"       : "Utilisateur en attente ",
   "user.confirm"          : "Confirmer",
   "user.orgFirst"         : "Confirmer d’abord l’organisme   : ",
+  "user.hasdeleg"         : "Une délégation est active pour cet utilisateur",
+  "user.nodeleg"          : "Pas de délégation pour cet utilisateur",
 
   "orgs.title"            : "organismes",
   "orgs.allorgs"          : "Tous les organismes",
