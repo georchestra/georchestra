@@ -28,6 +28,22 @@ class UserController {
       } else {
         user.validOrg = true
       }
+      if (this.tab === 'delegations') {
+        const Delegations = $injector.get('Delegations')
+        Delegations.query(resp => {
+          let deleg = resp.delegations.find(x => x.uid === this.user.uid)
+          this.delegation = deleg || Delegations({
+            orgs: [],
+            roles: []
+          })
+          this.hasDelegation = (this.delegation.orgs.length !== 0) ||
+            (this.delegation.roles.length !== 0)
+          $injector.get('Orgs').query(orgs => {
+            this.orgs = orgs.filter(o => o.status !== 'PENDING').map(o => o.id)
+          })
+          Role.query(roles => { this.allRoles = roles.map(r => r.cn) })
+        })
+      }
       if (this.tab === 'messages') {
         this.messages = this.$injector.get('Email').query({id: this.user.uid})
       }
