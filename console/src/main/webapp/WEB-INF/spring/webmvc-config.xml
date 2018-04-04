@@ -8,9 +8,7 @@
        xmlns:jpa="http://www.springframework.org/schema/data/jpa"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:p="http://www.springframework.org/schema/p"
-
-
-        xsi:schemaLocation="http://www.springframework.org/schema/beans
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
             http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
             http://www.springframework.org/schema/data/jpa
             http://www.springframework.org/schema/data/jpa/spring-jpa-1.0.xsd
@@ -21,7 +19,7 @@
             http://www.springframework.org/schema/mvc
             http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-	<security:global-method-security pre-post-annotations="enabled">
+    <security:global-method-security pre-post-annotations="enabled" >
 	  <security:expression-handler ref="expressionHandler"/>
 	</security:global-method-security>
 	

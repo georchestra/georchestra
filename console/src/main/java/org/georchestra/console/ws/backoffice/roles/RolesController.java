@@ -34,8 +34,8 @@ import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.DataServiceException;
 import org.georchestra.console.ds.DuplicatedCommonNameException;
-import org.georchestra.console.ds.RoleDao;
 import org.georchestra.console.ds.ProtectedUserFilter;
+import org.georchestra.console.ds.RoleDao;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.Role;
 import org.georchestra.console.dto.RoleFactory;
@@ -48,7 +48,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.stereotype.Controller;
@@ -64,7 +63,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
  */
 
 @Controller
-
 public class RolesController {
 
 	private static final Log LOG = LogFactory.getLog(RolesController.class.getName());
@@ -146,7 +144,6 @@ public class RolesController {
 		}
 	}
 	
-	@PostFilter("hasPermission(#role, 'read')")
 	private List<Role> findAll() throws DataServiceException {
 		return this.roleDao.findAll();
 	}
