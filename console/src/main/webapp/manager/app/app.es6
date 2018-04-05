@@ -33,7 +33,7 @@ class AppController {
       route => $location.$$path.indexOf(route) === 1
     )
 
-    $scope.isSuperUser = (user) => user.adminRoles.SUPERUSER
+    $scope.isSuperUser = (user) => user.adminRoles && user.adminRoles.SUPERUSER
 
     Profile.get((p) => {
       $scope.profile = p.roles.indexOf('SUPERUSER') === -1
