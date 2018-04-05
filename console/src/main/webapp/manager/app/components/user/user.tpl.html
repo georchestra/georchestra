@@ -89,8 +89,8 @@
         <br>
         <hr>
         <div class="pull-right">
-          <button ng-click="user.deleteDelegation()" class="btn btn-link" translate>delegations.delete</button>
-          <button ng-click="user.saveDelegation()" class="btn btn-primary" translate>user.save</button>
+          <button ng-disabled="!user.activeDelegation" ng-click="user.deleteDelegation()" class="btn btn-link" translate>delegations.delete</button>
+          <button ng-disabled="!user.hasDelegation()" ng-click="user.saveDelegation()" class="btn btn-primary" translate>user.save</button>
         </div>
       </div>
 
