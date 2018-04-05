@@ -69,8 +69,8 @@
       </div>
 
       <div class="panel-heading text-center" ng-if="user.tab=='delegations' && profile === 'SUPERUSER'">
-        <span ng-if="user.activeDelegation" translate>user.hasdeleg</span>
-        <span ng-if="!user.activeDelegation" translate>user.nodeleg</span>
+        <span ng-if="user.activeDelegation" class="delegation_active" translate>user.hasdeleg</span>
+        <span ng-if="!user.activeDelegation" class="delegation_inactive" translate>user.nodeleg</span>
       </div>
 
       <div class="panel-body" ng-if="user.tab=='delegations' && profile === 'SUPERUSER'">
