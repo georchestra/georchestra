@@ -9,6 +9,7 @@
 
 	<security:http auto-config="true">
 	    <security:custom-filter position="PRE_AUTH_FILTER" ref="preAuthenticationFilter" />
+        <security:csrf disabled="true" />
 	</security:http>
 
 	  <bean id="preAuthenticationFilter" class="org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter">
