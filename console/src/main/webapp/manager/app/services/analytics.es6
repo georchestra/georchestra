@@ -1,5 +1,5 @@
 angular.module('manager').factory('Analytics', [
-  '$resource', 'ANALYTICS_BASE_URI', ($resource, baseUri) => $resource(
+  '$resource', 'ANALYTICS_SERVICES_PATH', ($resource, baseUri) => $resource(
     baseUri + ':service', { service: '@service' },
     {
       get: {
