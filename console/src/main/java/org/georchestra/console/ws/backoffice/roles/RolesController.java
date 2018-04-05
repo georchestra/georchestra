@@ -54,6 +54,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * Web Services to maintain the Roles information.
@@ -120,9 +121,10 @@ public class RolesController {
 	 * @param response
 	 * @throws IOException
 	 */
-	@RequestMapping(value=REQUEST_MAPPING, method=RequestMethod.GET)
+	@RequestMapping(value=REQUEST_MAPPING, method=RequestMethod.GET, produces="application/json; charset=utf-8")
 	@PostFilter("hasPermission(filterObject, 'read')")
-	public void findAll( HttpServletRequest request, HttpServletResponse response ) throws IOException{
+	@ResponseBody
+	public List<Role> findAll( HttpServletRequest request, HttpServletResponse response ) throws IOException{
 
 		try {
 			List<Role> list = this.findAll();
@@ -132,7 +134,7 @@ public class RolesController {
 			JSONArray jsonList = listResponse.toJsonArray();
 			jsonList.put(this.extractTemporaryRoleInformation());
 
-			ResponseUtil.buildResponse(response, jsonList.toString(4), HttpServletResponse.SC_OK);
+			return list;
 
 		} catch (Exception e) {
 
