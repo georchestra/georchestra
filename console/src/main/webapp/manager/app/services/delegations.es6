@@ -1,5 +1,5 @@
-angular.module('admin_console')
-  .factory('Delegations', ['$resource', 'LDAP_BASE_URI', ($resource, baseUri) =>
+angular.module('manager')
+  .factory('Delegations', ['$resource', 'CONSOLE_PRIVATE_PATH', ($resource, baseUri) =>
     $resource(baseUri + 'delegation/delegations', {}, {
       query: {
         cache: true,

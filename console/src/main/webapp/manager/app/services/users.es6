@@ -20,7 +20,7 @@ angular.module('manager')
         isArray: false
       }
     })
-  ]).factory('Profile', ['$resource', 'LDAP_BASE_URI', ($resource, baseUri) =>
+  ]).factory('Profile', ['$resource', 'CONSOLE_PRIVATE_PATH', ($resource, baseUri) =>
     $resource(baseUri + 'users/profile', {}, {
       query: {
         method: 'GET',

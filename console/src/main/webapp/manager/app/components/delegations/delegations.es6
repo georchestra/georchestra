@@ -14,5 +14,5 @@ class DelegationsController {
 }
 
 angular
-  .module('admin_console')
+  .module('manager')
   .controller('DelegationsController', DelegationsController)
