@@ -44,6 +44,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 @Controller
 public class DelegationController {
@@ -100,12 +102,20 @@ public class DelegationController {
 
 		DelegationEntry delegation = new DelegationEntry();
 		delegation.setUid(uid);
-		delegation.setOrgs(json.getJSONArray("orgs").join(",").split(","));
-		delegation.setRoles(json.getJSONArray("roles").join(",").split(","));
+		delegation.setOrgs(this.parseJSONArray(json.getJSONArray("orgs")));
+		delegation.setRoles(this.parseJSONArray(json.getJSONArray("roles")));
 		this.delegationDao.save(delegation);
 		this.roleDao.addUser("ORGADMIN", uid, request.getHeader("sec-username"));
 
-		return new JSONObject().put("result", "ok").toString();
+		return delegation.toJSON().toString();
+	}
+
+	private String[] parseJSONArray(JSONArray array) throws JSONException {
+		List<String> res = new LinkedList<String>();
+		for(int i=0; i< array.length(); i++){
+			res.add(array.getString(i));
+		}
+		return res.toArray(new String[res.size()]);
 	}
 
 	@RequestMapping(value=REQUEST_MAPPING + "/{uid}", method= RequestMethod.DELETE, produces = "application/json; charset=utf-8")
