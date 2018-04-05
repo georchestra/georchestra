@@ -1,12 +1,12 @@
 angular.module('manager')
-  .factory('Templates', ['$resource', 'LDAP_BASE_URI', ($resource, baseUri) =>
+  .factory('Templates', ['$resource', 'CONSOLE_PRIVATE_PATH', ($resource, baseUri) =>
     $resource(baseUri + '../emailTemplates', {}, {
       query: {
         cache: true,
         isArray: false
       }
     })
-  ]).factory('Mail', ['$resource', 'LDAP_BASE_URI', ($resource, baseUri) =>
+  ]).factory('Mail', ['$resource', 'CONSOLE_PRIVATE_PATH', ($resource, baseUri) =>
     $resource(baseUri + '../:id/sendEmail', {id: '@id'}, {
       save: {
         method: 'POST',
@@ -20,7 +20,7 @@ angular.module('manager')
         }
       }
     })
-  ]).factory('Attachments', ['$resource', 'LDAP_BASE_URI', ($resource, baseUri) =>
+  ]).factory('Attachments', ['$resource', 'CONSOLE_PRIVATE_PATH', ($resource, baseUri) =>
     $resource(baseUri + '../attachments', {}, {
       query: {
         cache: true,

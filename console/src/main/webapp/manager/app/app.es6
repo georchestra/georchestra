@@ -53,9 +53,9 @@ angular.module('manager', [
 ])
   .controller('AppController', AppController)
   .controller('StandaloneController', StandaloneController)
-  .constant('LDAP_ROOT_URI', '/console/')
-  .constant('LDAP_BASE_URI', '/console/private/')
-  .constant('LDAP_PUBLIC_URI', '/console/public/')
+  .constant('CONSOLE_BASE_PATH', '/console/')
+  .constant('CONSOLE_PRIVATE_PATH', '/console/private/')
+  .constant('CONSOLE_PUBLIC_PATH', '/console/public/')
   .constant('MF_BASE_URI', '/mapfishapp/ws/')
   .constant('ANALYTICS_BASE_URI', '/analytics/ws/')
   .config([
@@ -63,7 +63,7 @@ angular.module('manager', [
     '$translateProvider',
     '$locationProvider',
     'paginationTemplateProvider',
-    'LDAP_ROOT_URI',
+    'CONSOLE_BASE_PATH',
     '$qProvider',
     ($componentLoader, $translate, $location, paginationTemplate, $uri, $qP) => {
       $componentLoader.setTemplateMapping(

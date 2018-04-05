@@ -1,5 +1,5 @@
 angular.module('manager')
-  .factory('Logs', ['$resource', 'LDAP_BASE_URI', ($resource, baseUri) =>
+  .factory('Logs', ['$resource', 'CONSOLE_PRIVATE_PATH', ($resource, baseUri) =>
     $resource(baseUri + 'admin_logs/:limit/:page', {}, {
       query: {
         method: 'GET',
@@ -8,7 +8,7 @@ angular.module('manager')
       }
     })
   ])
-  .factory('UserLogs', ['$resource', 'LDAP_BASE_URI', ($resource, baseUri) =>
+  .factory('UserLogs', ['$resource', 'CONSOLE_PRIVATE_PATH', ($resource, baseUri) =>
     $resource(baseUri + 'admin_logs/:id/:limit/:page', {}, {
       query: {
         method: 'GET',

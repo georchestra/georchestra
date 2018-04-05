@@ -1,5 +1,5 @@
 angular.module('manager')
-  .factory('Orgs', ['$resource', 'LDAP_BASE_URI', ($resource, baseUri) =>
+  .factory('Orgs', ['$resource', 'CONSOLE_PRIVATE_PATH', ($resource, baseUri) =>
     $resource(baseUri + 'orgs/:id', {}, {
       query: {
         cache: true,
@@ -21,7 +21,7 @@ angular.module('manager')
         method: 'DELETE'
       }
     })
-  ]).factory('OrgsRequired', ['$resource', 'LDAP_PUBLIC_URI', ($resource, baseUri) =>
+  ]).factory('OrgsRequired', ['$resource', 'CONSOLE_PUBLIC_PATH', ($resource, baseUri) =>
     $resource(baseUri + 'orgs/requiredFields', {}, {
       query: {
         method: 'GET',
@@ -33,7 +33,7 @@ angular.module('manager')
         }
       }
     })
-  ]).factory('OrgsType', ['$resource', 'LDAP_PUBLIC_URI', ($resource, baseUri) =>
+  ]).factory('OrgsType', ['$resource', 'CONSOLE_PUBLIC_PATH', ($resource, baseUri) =>
     $resource(baseUri + 'orgs/orgTypeValues', {}, {
       query: {
         method: 'GET',

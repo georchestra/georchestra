@@ -1,5 +1,5 @@
 angular.module('manager')
-  .factory('Role', ['$resource', 'LDAP_BASE_URI', ($resource, baseUri) =>
+  .factory('Role', ['$resource', 'CONSOLE_PRIVATE_PATH', ($resource, baseUri) =>
     $resource(baseUri + 'roles/:id', {}, {
       query: {
         cache: true,
