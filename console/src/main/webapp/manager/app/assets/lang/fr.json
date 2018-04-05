@@ -104,6 +104,7 @@
   "role.description"      : "Description",
   "role.cn"               : "Identifiant",
   "role.favorite"         : "Favori",
+  "role.favorites"        : "Favoris",
 
   "delegations.filter"    : "Filtrer",
   "delegations.delete"    : "Supprimer",

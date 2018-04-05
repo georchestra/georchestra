@@ -33,6 +33,7 @@
             <a ng-link="role({role: role.cn, tab: 'infos'})">
               {{::role.cn}}
             </a>
+            &nbsp;<i class="glyphicon glyphicon-star-empty" ng-if="role.isFavorite"></i>
           </td>
           <td>{{::role.usersCount}}</td>
         </tr>

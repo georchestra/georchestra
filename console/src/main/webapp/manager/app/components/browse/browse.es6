@@ -37,6 +37,7 @@ class BrowseController {
         this.adminList.push(role)
       }
     }
+    this.favorite = role => role.isFavorite
   }
 
   createRole () {
