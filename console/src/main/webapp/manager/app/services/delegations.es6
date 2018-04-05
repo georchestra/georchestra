@@ -11,11 +11,13 @@ angular.module('admin_console')
         isArray: false
       },
       update: {
-        params: { id: '@uid' },
+        url: baseUri + 'delegation/:uid',
+        params: { uid: '@uid' },
         method: 'POST'
       },
-      delete: {
-        params: { id: '@uid' },
+      'delete': {
+        url: baseUri + 'delegation/:uid',
+        params: { uid: '@uid' },
         method: 'DELETE'
       }
     })

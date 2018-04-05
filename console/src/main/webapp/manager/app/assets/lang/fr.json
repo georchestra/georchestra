@@ -105,6 +105,11 @@
   "role.cn"               : "Identifiant",
 
   "delegations.filter"    : "Filtrer",
+  "delegations.delete"    : "Supprimer",
+
+  "delegation.dupdated"   : "Délégation mise à jour",
+  "delegation.ddeleted"   : "Délégation supprimée",
+  "delegation.derror"     : "Erreur lors de la mise à jour de la délégation",
 
   "area.save"             : "Enregister la zone",
   "area.updated"          : "Aire de compétence mise à jour",

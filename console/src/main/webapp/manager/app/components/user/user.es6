@@ -11,11 +11,10 @@ class UserController {
 
     let translate = $injector.get('translate')
     this.i18n = {}
-    translate('user.updated', this.i18n)
-    translate('user.error', this.i18n)
-    translate('user.deleted', this.i18n)
-    translate('user.content', this.i18n)
-    translate('org.select', this.i18n)
+    let strings = [
+      'user.updated', 'user.error', 'user.deleted', 'user.content',
+      'org.select', 'delegation.dupdated', 'delegation.ddeleted' ]
+    strings.map(str => translate(str, this.i18n))
 
     this.tabs = ['infos', 'roles', 'analytics', 'messages', 'logs', 'manage']
     this.tab = $routeParams.tab
@@ -32,12 +31,9 @@ class UserController {
         const Delegations = $injector.get('Delegations')
         Delegations.query(resp => {
           let deleg = resp.delegations.find(x => x.uid === this.user.uid)
-          this.delegation = deleg || Delegations({
-            orgs: [],
-            roles: []
-          })
-          this.hasDelegation = (this.delegation.orgs.length !== 0) ||
-            (this.delegation.roles.length !== 0)
+          let options = deleg || { orgs: [], roles: [], uid: this.user.uid }
+          this.delegation = new Delegations(options)
+          this.activeDelegation = this.hasDelegation()
           $injector.get('Orgs').query(orgs => {
             this.orgs = orgs.filter(o => o.status !== 'PENDING').map(o => o.id)
           })
@@ -62,6 +58,11 @@ class UserController {
     this.bindRoles()
 
     this.required = $injector.get('UserRequired').get()
+  }
+
+  hasDelegation () {
+    if (!this.delegation) return false
+    return (this.delegation.orgs.length !== 0) || (this.delegation.roles.length !== 0)
   }
 
   bindRoles () {
@@ -260,6 +261,29 @@ class UserController {
       'USER': true
     })
     this.$injector.get('$cacheFactory').get('$http').removeAll()
+  }
+
+  deleteDelegation () {
+    let flash = this.$injector.get('Flash')
+    let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
+    this.delegation.$delete(() => {
+      $httpDefaultCache.removeAll()
+      flash.create('success', this.i18n.ddeleted)
+      this.delegation = new (this.$injector.get('Delegations'))({
+        uid: this.user.uid, roles: [], orgs: []
+      })
+      this.activeDelegation = false
+    }, flash.create.bind(flash, 'danger', this.i18n.derror))
+  }
+
+  saveDelegation () {
+    let flash = this.$injector.get('Flash')
+    let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
+    this.delegation.$update(() => {
+      $httpDefaultCache.removeAll()
+      flash.create('success', this.i18n.dupdated)
+      this.activeDelegation = this.hasDelegation()
+    }, flash.create.bind(flash, 'danger', this.i18n.derror))
   }
 
   activate ($scope) {
