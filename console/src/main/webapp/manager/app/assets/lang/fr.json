@@ -103,6 +103,7 @@
   "role.membersCount"     : "Membres",
   "role.description"      : "Description",
   "role.cn"               : "Identifiant",
+  "role.favorite"         : "Favori",
 
   "delegations.filter"    : "Filtrer",
   "delegations.delete"    : "Supprimer",

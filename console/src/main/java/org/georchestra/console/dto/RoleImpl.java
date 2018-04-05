@@ -35,6 +35,7 @@ class RoleImpl implements Role, Comparable<Role> {
 	private String name;
 	private List<String> userList = new LinkedList<String>();
 	private String description;
+	private boolean isFavorite;
 
 	/* (non-Javadoc)
 	 * @see org.georchestra.console.dto.Role#getCommonName()
@@ -93,6 +94,16 @@ class RoleImpl implements Role, Comparable<Role> {
 	@Override
 	public String getDescription() {
 		return this.description;
+	}
+
+	@Override
+	public void setFavorite(boolean isFavorite) {
+		this.isFavorite = isFavorite;
+	}
+
+	@Override
+	public boolean isFavorite() {
+		return this.isFavorite;
 	}
 
 

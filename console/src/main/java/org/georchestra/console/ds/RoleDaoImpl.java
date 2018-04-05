@@ -310,14 +310,13 @@ public class RoleDaoImpl implements RoleDao {
 			// set the role name
 			Role g = RoleFactory.create();
 			g.setName(context.getStringAttribute(RoleSchema.COMMON_NAME_KEY));
-
 			g.setDescription(context.getStringAttribute(RoleSchema.DESCRIPTION_KEY));
-
+			boolean isFavorite = RoleSchema.FAVORITE_VALUE.equals(context.getStringAttribute(RoleSchema.FAVORITE_KEY));
+			g.setFavorite(isFavorite);
 
 			// set the list of user
 			Object[] members = getUsers(context);
 			for (int i = 0; i < members.length; i++) {
-
 				g.addUser((String) members[i]);
 			}
 
@@ -382,11 +381,10 @@ public class RoleDaoImpl implements RoleDao {
         }
 		// person attributes
 		setAccountField(context, RoleSchema.COMMON_NAME_KEY, role.getName());
-
 		setAccountField(context, RoleSchema.DESCRIPTION_KEY, role.getDescription());
-
 		setMemberField(context, RoleSchema.MEMBER_KEY, role.getUserList());
-
+		if(role.isFavorite())
+			setAccountField(context, RoleSchema.FAVORITE_KEY, RoleSchema.FAVORITE_VALUE);
 	}
 
 

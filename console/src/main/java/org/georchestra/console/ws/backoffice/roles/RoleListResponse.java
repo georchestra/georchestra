@@ -53,8 +53,8 @@ final class RoleListResponse {
     		JSONObject jsonRole = new JSONObject();
 
     		jsonRole.put(RoleSchema.COMMON_NAME_KEY, role.getName());
-
     		jsonRole.put(RoleSchema.DESCRIPTION_KEY, role.getDescription());
+    		jsonRole.put(RoleSchema.FAVORITE_JSON_KEY, role.isFavorite());
 
     		// adds the list of users
     		List<String> list = filter.filterStringList(role.getUserList());

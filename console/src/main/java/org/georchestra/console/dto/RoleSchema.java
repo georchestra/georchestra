@@ -27,9 +27,11 @@ package org.georchestra.console.dto;
  */
 public interface RoleSchema {
 	
-	public static final String COMMON_NAME_KEY = "cn"; // role name
-	public static final String DESCRIPTION_KEY = "description";
-	public static final String MEMBER_KEY = "member";
-
+	String COMMON_NAME_KEY = "cn"; // role name
+	String DESCRIPTION_KEY = "description";
+	String MEMBER_KEY = "member";
+	String FAVORITE_KEY = "businessCategory";
+	String FAVORITE_VALUE = "favorite";
+	String FAVORITE_JSON_KEY = "isFavorite";
 
 }
