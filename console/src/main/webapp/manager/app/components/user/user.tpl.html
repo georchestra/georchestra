@@ -73,7 +73,11 @@
         <span ng-if="!user.activeDelegation" class="delegation_inactive" translate>user.nodeleg</span>
       </div>
 
-      <div class="panel-body" ng-if="user.tab=='delegations' && profile === 'SUPERUSER'">
+      <div class="panel-body" ng-if="user.tab=='delegations' && profile === 'SUPERUSER' && isSuperUser(user.user)">
+        <p class="text-danger text-center delegation_restricted" translate>delegation.restricted</p>
+      </div>
+
+      <div class="panel-body" ng-if="user.tab=='delegations' && profile === 'SUPERUSER' && !isSuperUser(user.user)">
         <h4 translate>nav.orgs</h4>
         <div class="form-group">
           <select class="form-control" multiple chosen ng-model="user.delegation.orgs" ng-options="org for org in user.orgs"
