@@ -141,7 +141,7 @@ public class RolesControllerTest {
 
     @Test
     public void testFindByCN() throws Exception {
-        Role retAdmin = RoleFactory.create("ADMINISTRATOR", "administrator role");
+        Role retAdmin = RoleFactory.create("ADMINISTRATOR", "administrator role", false);
         Mockito.when(ldapTemplate.lookup((Name) Mockito.any(), (ContextMapper) Mockito.any())).thenReturn(retAdmin);
 
         roleCtrl.findByCN(response, "ADMINISTRATOR");
@@ -155,10 +155,10 @@ public class RolesControllerTest {
     public void testCreateDuplicateRole() throws Exception {
 
         Name ldapFilter = LdapNameBuilder.newInstance(this.roleSearchBaseDN).add("cn", "MYROLE").build();
-        Role myRole = RoleFactory.create("MYROLE", "test role");
+        Role myRole = RoleFactory.create("MYROLE", "test role", false);
         Mockito.when(ldapTemplate.lookup((Name) Mockito.eq(ldapFilter), (ContextMapper) Mockito.any())).thenReturn(myRole);
 
-        request.setContent("{ \"cn\": \"MYROLE\", \"description\": \"Description for the role\" }".getBytes());
+        request.setContent("{ \"cn\": \"MYROLE\", \"description\": \"Description for the role\", \"isFavorite\": false }".getBytes());
 
         roleCtrl.create(request, response);
 
@@ -169,7 +169,7 @@ public class RolesControllerTest {
 
     @Test
     public void testCreateDataServiceExceptionThrown() throws Exception {
-        request.setContent("{ \"cn\": \"MYROLE\", \"description\": \"Description for the role\" }".getBytes());
+        request.setContent("{ \"cn\": \"MYROLE\", \"description\": \"Description for the role\", \"isFavorite\": false }".getBytes());
         Mockito.doThrow(DataServiceException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (ContextMapper) Mockito.any());
 
         try {
@@ -186,7 +186,7 @@ public class RolesControllerTest {
     public void testCreateLowerCase() throws IOException, JSONException {
         String roleName = "test_lower";
         String roleDescription = "lower case role";
-        String content = "{ \"cn\": \"" + roleName + "\", \"description\": \"" + roleDescription + "\" }";
+        String content = "{ \"cn\": \"" + roleName + "\", \"description\": \"" + roleDescription + "\", \"isFavorite\": false }";
         request.setContent(content.getBytes());
 
         roleCtrl.create(request, response);
@@ -217,7 +217,7 @@ public class RolesControllerTest {
      */
     @Test
     public void testCreate() throws Exception {
-        request.setContent("{ \"cn\": \"MYROLE\", \"description\": \"Description for the role\" }".getBytes());
+        request.setContent("{ \"cn\": \"MYROLE\", \"description\": \"Description for the role\", \"isFavorite\": false }".getBytes());
         // ensures the mocked object does not return an already existing role
         // Raising NotFoundException instead
         Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (ContextMapper) Mockito.any());
@@ -303,7 +303,7 @@ public class RolesControllerTest {
     @Test
     public void testUpdateNotFoundAtModification() throws Exception {
         request.setContent(" { \"cn\": \"newName\", \"description\": \"new Description\" } ".getBytes());
-        Role retAdmin = RoleFactory.create("ADMINISTRATOR", "administrator role");
+        Role retAdmin = RoleFactory.create("ADMINISTRATOR", "administrator role", false);
         Mockito.when(ldapTemplate.lookup((Name) Mockito.any(), (ContextMapper) Mockito.any())).thenReturn(retAdmin);
         Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (AttributesMapper) Mockito.any());
         Name dn = LdapNameBuilder.newInstance("ou=roles").add("cn", "newName").build();
@@ -321,7 +321,7 @@ public class RolesControllerTest {
     @Test
     public void testUpdateDuplicateCN() throws Exception {
         request.setContent(" { \"cn\": \"newName\", \"description\": \"new Description\" } ".getBytes());
-        Role retAdmin = RoleFactory.create("ADMINISTRATOR", "administrator role");
+        Role retAdmin = RoleFactory.create("ADMINISTRATOR", "administrator role", false);
         Mockito.when(ldapTemplate.lookup((Name) Mockito.any(), (ContextMapper) Mockito.any())).thenReturn(retAdmin);
         Mockito.doThrow(DuplicatedCommonNameException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (AttributesMapper) Mockito.any());
         Name dn = LdapNameBuilder.newInstance("ou=roles").add("cn", "newName").build();
@@ -338,7 +338,7 @@ public class RolesControllerTest {
     @Test
     public void testUpdateDataServiceExceptionAtUpdate() throws Exception {
         request.setContent(" { \"cn\": \"newName\", \"description\": \"new Description\" } ".getBytes());
-        Role retAdmin = RoleFactory.create("ADMINISTRATOR", "administrator role");
+        Role retAdmin = RoleFactory.create("ADMINISTRATOR", "administrator role", false);
         Mockito.when(ldapTemplate.lookup((Name) Mockito.any(), (ContextMapper) Mockito.any())).thenReturn(retAdmin);
         Mockito.doThrow(DataServiceException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (AttributesMapper) Mockito.any());
         Name dn = LdapNameBuilder.newInstance("ou=roles").add("cn", "newName").build();
@@ -357,7 +357,7 @@ public class RolesControllerTest {
     @Test
     public void testUpdate() throws Exception {
         request.setContent(" { \"cn\": \"newName\", \"description\": \"new Description\" } ".getBytes());
-        Role retAdmin = RoleFactory.create("ADMINISTRATOR", "administrator role");
+        Role retAdmin = RoleFactory.create("ADMINISTRATOR", "administrator role", false);
         Mockito.when(ldapTemplate.lookup((Name) Mockito.any(), (ContextMapper) Mockito.any())).thenReturn(retAdmin);
         Mockito.when(ldapTemplate.lookup((Name) Mockito.any(), (AttributesMapper) Mockito.any())).thenReturn(-1);
 
