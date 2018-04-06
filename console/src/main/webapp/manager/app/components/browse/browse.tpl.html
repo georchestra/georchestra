@@ -20,7 +20,7 @@
 </div>
 
 <h5 ng-if="roles.q == ''" translate>role.favorites</h5>
-<div ng-repeat="role in roles.roles.filter(roles.favorite)" ng-if="roles.q == ''">
+<div ng-repeat="role in roles.roles.filter(roles.favoriteRole)" ng-if="roles.q == ''">
   <strong ng-if="(roles.activeRole.cn == role.cn)">
     {{::role.cn}} ({{::role.users.length}})
   </strong>

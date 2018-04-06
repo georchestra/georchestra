@@ -40,7 +40,7 @@ class AppController {
         ? 'DELEGATED' : 'SUPERUSER'
     })
 
-    $scope.isProtected = role => roleAdminList().indexOf(role.cn) !== -1
+    $scope.isProtectedRole = role => roleAdminList().indexOf(role.cn) !== -1
   }
 }
 
