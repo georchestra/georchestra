@@ -26,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.georchestra.console.bs.Moderator;
 import org.georchestra.console.bs.ReCaptchaParameters;
+import org.georchestra.console.dao.Delegation2Dao;
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.DataServiceException;
 import org.georchestra.console.ds.DuplicatedEmailException;
@@ -37,6 +38,7 @@ import org.georchestra.console.dto.Role;
 import org.georchestra.console.dto.Org;
 import org.georchestra.console.dto.OrgExt;
 import org.georchestra.console.mailservice.MailService;
+import org.georchestra.console.model.DelegationEntry;
 import org.georchestra.console.ws.utils.PasswordUtils;
 import org.georchestra.console.ws.utils.RecaptchaUtils;
 import org.georchestra.console.ws.utils.Validation;
@@ -57,6 +59,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -91,10 +94,16 @@ public final class NewAccountFormController {
 	private Validation validation;
 
 	@Autowired
-	public NewAccountFormController(AccountDao dao, OrgsDao orgDao, MailService mailSrv, Moderator moderatorRule,
-									ReCaptcha reCaptcha, ReCaptchaParameters reCaptchaParameters, Validation validation) {
+	private Delegation2Dao delegation2Dao;
+
+	@Autowired
+	public NewAccountFormController(AccountDao dao, OrgsDao orgDao, Delegation2Dao delegation2Dao,
+									MailService mailSrv, Moderator moderatorRule, ReCaptcha reCaptcha,
+									ReCaptchaParameters reCaptchaParameters,
+									Validation validation) {
 		this.accountDao = dao;
 		this.orgDao = orgDao;
+		this.delegation2Dao = delegation2Dao;
 		this.mailService = mailSrv;
 		this.moderator = moderatorRule;
 		this.reCaptcha = reCaptcha;
@@ -153,7 +162,7 @@ public final class NewAccountFormController {
 						 BindingResult result,
 						 SessionStatus sessionStatus,
 						 Model model)
-			throws IOException {
+			throws IOException, SQLException {
 
 		// Populate orgs droplist
 		model.addAttribute("orgs", this.getOrgs());
@@ -274,14 +283,24 @@ public final class NewAccountFormController {
 			this.accountDao.insert(account, roleID, request.getHeader("sec-username"));
 
 			final ServletContext servletContext = request.getSession().getServletContext();
-			if(this.moderator.moderatedSignup() ){
-				// email to the moderator
-				this.mailService.sendNewAccountRequiresModeration(servletContext, account.getUid(), account.getCommonName(), account.getEmail(), this.moderator.getModeratorEmail());
 
-				// email to the user
+			// email to the moderator
+			this.mailService.sendNewAccountRequiresModeration(servletContext, account.getUid(), account.getCommonName(), account.getEmail(), this.moderator.getModeratorEmail());
+
+			// email to delegated admin if org is specified
+			if(!formBean.getOrg().equals("-")) {
+				// and a delegation is defined
+				List<DelegationEntry> delegations = this.delegation2Dao.findByOrg(formBean.getOrg());
+				for(DelegationEntry delegation: delegations){
+					Account delegatedAdmin = this.accountDao.findByUID(delegation.getUid());
+					this.mailService.sendNewAccountRequiresModeration(servletContext, account.getUid(), account.getCommonName(), account.getEmail(), delegatedAdmin.getEmail());
+				}
+			}
+
+			// email to the user
+			if(this.moderator.moderatedSignup()){
 				this.mailService.sendAccountCreationInProcess(servletContext, account.getUid(), account.getCommonName(), account.getEmail());
 			} else {
-				// email to the user
 				this.mailService.sendAccountWasCreated(servletContext, account.getUid(), account.getCommonName(), account.getEmail());
 			}
 			sessionStatus.setComplete();
