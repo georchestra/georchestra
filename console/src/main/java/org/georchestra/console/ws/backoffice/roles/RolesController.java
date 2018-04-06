@@ -48,13 +48,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.ldap.NameNotFoundException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.prepost.PreFilter;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Web Services to maintain the Roles information.
@@ -114,6 +115,26 @@ public class RolesController {
 		this.filter = new ProtectedUserFilter( userRule.getListUidProtected() );
 	}
 
+	@ExceptionHandler(AccessDeniedException.class)
+	@ResponseStatus(value = HttpStatus.FORBIDDEN)
+	@ResponseBody
+	public String handleAccessDenied(Exception e, HttpServletResponse response) throws IOException {
+		LOG.error(e.getMessage());
+		ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, e.getMessage()),
+				HttpServletResponse.SC_FORBIDDEN);
+		throw new IOException(e);
+	}
+
+	@ExceptionHandler(Exception.class)
+	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+	@ResponseBody
+	public String handleException(Exception e, HttpServletResponse response) throws IOException {
+		LOG.error(e.getMessage());
+		ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, e.getMessage()),
+				HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		throw new IOException(e);
+	}
+
 	/**
 	 * Returns all roles. Each roles will contains its list of users.
 	 *
@@ -127,15 +148,9 @@ public class RolesController {
 	public List<Role> findAll( HttpServletRequest request, HttpServletResponse response ) throws IOException{
 
 		try {
-			List<Role> list = this.findAll();
-
-			RoleListResponse listResponse = new RoleListResponse(list, this.filter);
-
-			JSONArray jsonList = listResponse.toJsonArray();
-			jsonList.put(this.extractTemporaryRoleInformation());
-
+			List<Role> list = this.roleDao.findAll();
+			list.add(this.generateTemporaryRole());
 			return list;
-
 		} catch (Exception e) {
 
 			LOG.error(e.getMessage());
@@ -145,11 +160,6 @@ public class RolesController {
 			throw new IOException(e);
 		}
 	}
-	
-	private List<Role> findAll() throws DataServiceException {
-		return this.roleDao.findAll();
-	}
-	
 
 	/**
 	 * Returns the detailed information of the role, with its list of users.
@@ -206,6 +216,15 @@ public class RolesController {
 		ResponseUtil.buildResponse(response, jsonRole, HttpServletResponse.SC_OK);
 	}
 
+	private Role generateTemporaryRole() throws JSONException {
+		Role res = RoleFactory.create(RolesController.VIRTUAL_TEMPORARY_ROLE_NAME,
+				RolesController.VIRTUAL_TEMPORARY_ROLE_DESCRIPTION,
+				false);
+		for(Account a : this.accountDao.findByShadowExpire())
+			res.addUser(a.getUid());
+		return res;
+	}
+
 	private JSONObject extractTemporaryRoleInformation() throws JSONException {
 		JSONObject res = new JSONObject();
 		res.put(RoleSchema.COMMON_NAME_KEY, RolesController.VIRTUAL_TEMPORARY_ROLE_NAME);
@@ -252,6 +271,7 @@ public class RolesController {
 	 * @throws IOException
 	 */
 	@RequestMapping(value=REQUEST_MAPPING, method=RequestMethod.POST)
+	@PreAuthorize("hasRole('SUPERUSER')")
 	public void create( HttpServletRequest request, HttpServletResponse response ) throws IOException{
 
 		try{
@@ -300,6 +320,7 @@ public class RolesController {
 	 * @throws IOException
 	 */
 	@RequestMapping(value = REQUEST_MAPPING + "/{cn:.+}", method = RequestMethod.DELETE)
+	@PreAuthorize("hasRole('SUPERUSER')")
 	public void delete(HttpServletResponse response, @PathVariable String cn)
 			throws IOException {
 		try {
@@ -369,6 +390,7 @@ public class RolesController {
 	 *             store.
 	 */
 	@RequestMapping(value=REQUEST_MAPPING+ "/{cn:.+}", method=RequestMethod.PUT)
+	@PreAuthorize("hasRole('SUPERUSER')")
 	public void update( HttpServletRequest request, HttpServletResponse response, @PathVariable String cn) throws IOException{
 
 		// searches the role

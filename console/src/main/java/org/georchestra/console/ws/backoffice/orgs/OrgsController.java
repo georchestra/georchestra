@@ -95,32 +95,6 @@ public class OrgsController {
     }
 
     /**
-     * Set organization for one user
-     */
-    @RequestMapping(value = REQUEST_MAPPING + "/{org:.+}/{user:.+}", method = RequestMethod.POST)
-    public void addUserInOrg(@PathVariable String org, @PathVariable String user, HttpServletResponse response)
-            throws IOException, DataServiceException {
-
-        Org oldOrg = this.orgDao.findForUser(user);
-        if (oldOrg != null)
-            this.orgDao.removeUser(oldOrg.getId(), user);
-        this.orgDao.addUser(org, user);
-
-        ResponseUtil.writeSuccess(response);
-    }
-
-    /**
-     * Remove user from organization
-     */
-    @RequestMapping(value = REQUEST_MAPPING + "/{org:.+}/{user:.+}", method = RequestMethod.DELETE)
-    public void removeUserfromOrg(@PathVariable String org, @PathVariable String user, HttpServletResponse response)
-            throws IOException {
-        this.orgDao.removeUser(org, user);
-        ResponseUtil.writeSuccess(response);
-    }
-
-
-    /**
      * Retreive full information about one org as JSON document. Following keys will be available :
      *
      * * 'id' (not used)

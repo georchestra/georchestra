@@ -71,7 +71,7 @@ public class RequestUtil {
 		try {
 			value = json.getBoolean(fieldName);
 		} catch (JSONException e) {
-			return null;
+			return false;
 		}
 		return value;
 	}
