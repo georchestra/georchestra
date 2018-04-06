@@ -5,6 +5,10 @@
   "nav.analytics"         : "Estadísticas",
   "nav.logs"              : "Logs",
   "nav.roles"             : "Roles",
+  "nav.delegations"       : "Delegations",
+
+  "index.SUPERUSER"       : "Administrator",
+  "index.DELEGATED"       : "Delegation",
 
   "home.users"            : "Administrar los usuarios",
   "home.waiting_users"    : "Usuarios en espera",
@@ -18,6 +22,7 @@
 
   "tab.infos"             : "Informaciones",
   "tab.roles"             : "Roles",
+  "tab.delegations"       : "Delegations",
   "tab.analytics"         : "Estadísticas",
   "tab.messages"          : "Mensajes",
   "tab.logs"              : "Logs",
@@ -54,6 +59,8 @@
   "user.pendingmsg"       : "Usuario en espera de confirmación ",
   "user.confirm"          : "Confirmar",
   "user.orgFirst"         : "Primero confirmar la entidad: ",
+  "user.hasdeleg"         : "This user holds an admin delegation",
+  "user.nodeleg"          : "No admin delegation for this user",
 
   "orgs.title"            : "entidades",
   "orgs.allorgs"          : "Todas",
@@ -96,6 +103,16 @@
   "role.membersCount"     : "Miembros",
   "role.description"      : "Descripción",
   "role.cn"               : "Nombre",
+  "role.favorite"         : "Favorite",
+  "role.favorites"        : "Favorites",
+
+  "delegations.title"     : "delegations",
+  "delegations.filter"    : "Filter",
+  "delegations.delete"    : "Delete",
+  "delegation.dupdated"   : "Delegation updated",
+  "delegation.ddeleted"   : "Delegation deleted",
+  "delegation.derror"     : "Error while updating delegation",
+  "delegation.restricted" : "Adding a delegation to a SUPERUSER is not allowed.",
 
   "area.save"             : "Guardar la zona",
   "area.updated"          : "Zona de competencia actualizada",

@@ -59,8 +59,8 @@
   "user.pendingmsg"       : "Utilisateur en attente ",
   "user.confirm"          : "Confirmer",
   "user.orgFirst"         : "Confirmer d’abord l’organisme   : ",
-  "user.hasdeleg"         : "Une délégation est active pour cet utilisateur",
-  "user.nodeleg"          : "Pas de délégation pour cet utilisateur",
+  "user.hasdeleg"         : "Une délégation de gestion est active pour cet utilisateur",
+  "user.nodeleg"          : "Pas de délégation de gestion définie pour cet utilisateur",
 
   "orgs.title"            : "organismes",
   "orgs.allorgs"          : "Tous les organismes",
@@ -106,13 +106,13 @@
   "role.favorite"         : "Favori",
   "role.favorites"        : "Favoris",
 
+  "delegations.title"     : "délégations",
   "delegations.filter"    : "Filtrer",
   "delegations.delete"    : "Supprimer",
-
   "delegation.dupdated"   : "Délégation mise à jour",
   "delegation.ddeleted"   : "Délégation supprimée",
   "delegation.derror"     : "Erreur lors de la mise à jour de la délégation",
-  "delegation.restricted" : "Impossible d’ajouter une dégélation pour un administrateur.",
+  "delegation.restricted" : "Impossible d’ajouter une dégélation pour un SUPERUSER.",
 
   "area.save"             : "Enregister la zone",
   "area.updated"          : "Aire de compétence mise à jour",
