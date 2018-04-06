@@ -1,5 +1,5 @@
 class AppController {
-  static $inject = [ '$scope', '$router', '$location' , 'roleAdminList', 'Profile' ]
+  static $inject = [ '$scope', '$router', '$location', 'roleAdminList', 'Profile' ]
 
   constructor ($scope, $router, $location, roleAdminList, Profile) {
     $router.config([
