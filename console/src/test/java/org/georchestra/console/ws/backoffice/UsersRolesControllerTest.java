@@ -231,60 +231,6 @@ public class UsersRolesControllerTest {
       
     }
 
-    @After
-    public void tearDown() throws Exception {
-
-    }
-
-    @Test
-    public final void testUsersRoleController() throws Exception {
-
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpServletResponse response = new MockHttpServletResponse();
-
-        userCtrl.findAll(request, response);
-
-        JSONArray userJson = new JSONArray(response.getContentAsString());
-
-        // reinitialize objects before reusing on the 2nd controller
-        request = new MockHttpServletRequest();
-        response = new MockHttpServletResponse();
-
-        roleCtrl.findAll(request, response);
-        JSONArray roleJson = new JSONArray(response.getContentAsString());
-
-        // Parses the output of roles controller
-        Set<String> encounteredUsersInRoles = new HashSet<String>();
-        for (int i = 0; i < roleJson.length(); ++i) {
-            JSONObject curGrp = (JSONObject) roleJson.get(i);
-            JSONArray curUsrs = (JSONArray) curGrp.get("users");
-            for (int j = 0; j < curUsrs.length(); ++j) {
-                encounteredUsersInRoles.add((String) curUsrs.get(j));
-            }
-        }
-
-        // Parses the output of users controller
-        Set<String> encounteredUsers = new HashSet<String>();
-        for (int i = 0; i < userJson.length(); ++i) {
-            JSONObject currentUser = (JSONObject) userJson.get(i);
-            encounteredUsers.add(currentUser.getString("uid"));
-        }
-
-        // Actually test
-
-        // Every users in roles should exist
-        for (String user : encounteredUsersInRoles) {
-            collector.checkThat(user + " is not in the expected users, but is member of roles",
-                    encounteredUsers.contains(user), Matchers.equalTo(true));
-        }
-        // Every users should be affected to at least one role
-        for (String user : encounteredUsers) {
-            collector.checkThat(user + " is not in any roles",
-                    encounteredUsersInRoles.contains(user), Matchers.equalTo(true));
-        }
-
-    }
-
     private final String TEST_ROLE_NAME = "LDAPADMIN_TESTSUITE_SAMPLE_ROLE" ;
 
     /**
