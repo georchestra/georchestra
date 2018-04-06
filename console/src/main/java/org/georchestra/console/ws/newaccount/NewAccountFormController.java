@@ -101,10 +101,14 @@ public final class NewAccountFormController {
 	private Delegation2Dao delegation2Dao;
 
 	@Autowired
-	public NewAccountFormController(AccountDao dao, OrgsDao orgDao, MailService mailSrv, Moderator moderatorRule,
-									ReCaptcha reCaptcha, ReCaptchaParameters reCaptchaParameters, Validation validation) {
+	public NewAccountFormController(AccountDao dao, OrgsDao orgDao, DelegationDao delegationDao,
+									Delegation2Dao delegation2Dao, MailService mailSrv, Moderator moderatorRule,
+									ReCaptcha reCaptcha, ReCaptchaParameters reCaptchaParameters,
+									Validation validation) {
 		this.accountDao = dao;
 		this.orgDao = orgDao;
+		this.delegationDao = delegationDao;
+		this.delegation2Dao = delegation2Dao;
 		this.mailService = mailSrv;
 		this.moderator = moderatorRule;
 		this.reCaptcha = reCaptcha;

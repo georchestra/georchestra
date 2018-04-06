@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.eq;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -13,6 +14,8 @@ import net.tanesha.recaptcha.ReCaptchaResponse;
 
 import org.georchestra.console.bs.Moderator;
 import org.georchestra.console.bs.ReCaptchaParameters;
+import org.georchestra.console.dao.Delegation2Dao;
+import org.georchestra.console.dao.DelegationDao;
 import org.georchestra.console.ds.*;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountFactory;
@@ -41,6 +44,8 @@ public class NewAccountFormControllerTest {
     private NewAccountFormController ctrl ;
     private AccountDao dao = Mockito.mock(AccountDao.class);
     private OrgsDao org = Mockito.mock(OrgsDao.class);
+    private DelegationDao delegationDao = Mockito.mock(DelegationDao.class);
+    private Delegation2Dao delegation2Dao = Mockito.mock(Delegation2Dao.class);
     private EmailFactoryImpl efi = Mockito.mock(EmailFactoryImpl.class);
     private MailService srv = new MailService(efi);
     private Moderator  mod = new Moderator();
@@ -79,7 +84,7 @@ public class NewAccountFormControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        ctrl = new NewAccountFormController(dao, org, srv, mod, rec, rep, new Validation(""));
+        ctrl = new NewAccountFormController(dao, org, delegationDao, delegation2Dao, srv, mod, rec, rep, new Validation(""));
 
         // Mock admin account
         DistinguishedName dn = new DistinguishedName();
@@ -111,7 +116,7 @@ public class NewAccountFormControllerTest {
      * @throws IOException
      */
     @Test
-    public void testCreate() throws IOException {
+    public void testCreate() throws IOException, SQLException {
         configureLegitFormBean();
 
         String ret = ctrl.create(request, formBean, "", result, status, UiModel);
@@ -151,7 +156,7 @@ public class NewAccountFormControllerTest {
      * @throws IOException
      */
     @Test
-    public void testCreateNoModeration() throws IOException {
+    public void testCreateNoModeration() throws IOException, SQLException {
         configureLegitFormBean();
         mod.setModeratedSignup(false);
 
@@ -166,7 +171,7 @@ public class NewAccountFormControllerTest {
      * @throws IOException
      */
     @Test
-    public void testCreateWithFormErrors() throws IOException {
+    public void testCreateWithFormErrors() throws IOException, SQLException {
         configureLegitFormBean();
         Mockito.when(result.hasErrors()).thenReturn(true);
 
