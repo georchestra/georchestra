@@ -27,7 +27,6 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.georchestra.console.bs.Moderator;
 import org.georchestra.console.bs.ReCaptchaParameters;
 import org.georchestra.console.dao.Delegation2Dao;
-import org.georchestra.console.dao.DelegationDao;
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.DataServiceException;
 import org.georchestra.console.ds.DuplicatedEmailException;
@@ -95,19 +94,15 @@ public final class NewAccountFormController {
 	private Validation validation;
 
 	@Autowired
-	private DelegationDao delegationDao;
-
-	@Autowired
 	private Delegation2Dao delegation2Dao;
 
 	@Autowired
-	public NewAccountFormController(AccountDao dao, OrgsDao orgDao, DelegationDao delegationDao,
-									Delegation2Dao delegation2Dao, MailService mailSrv, Moderator moderatorRule,
-									ReCaptcha reCaptcha, ReCaptchaParameters reCaptchaParameters,
+	public NewAccountFormController(AccountDao dao, OrgsDao orgDao, Delegation2Dao delegation2Dao,
+									MailService mailSrv, Moderator moderatorRule, ReCaptcha reCaptcha,
+									ReCaptchaParameters reCaptchaParameters,
 									Validation validation) {
 		this.accountDao = dao;
 		this.orgDao = orgDao;
-		this.delegationDao = delegationDao;
 		this.delegation2Dao = delegation2Dao;
 		this.mailService = mailSrv;
 		this.moderator = moderatorRule;
