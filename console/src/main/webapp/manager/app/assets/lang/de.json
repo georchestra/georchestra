@@ -4,6 +4,7 @@
   "nav.orgs"              : "Organisationen",
   "nav.analytics"         : "Statistiken",
   "nav.logs"              : "Protokolle",
+  "nav.roles"             : "Rollen",
 
   "home.users"            : "Benutzer verwalten",
   "home.waiting_users"    : "wartende Benutzer",
@@ -76,6 +77,25 @@
   "org.confirm"           : "Bestätigen",
   "org.select"            : "Organisation auswählen",
   "org.membersCount"      : "Mitglieder",
+
+  "roles.title"           : "Rollen",
+  "roles.allroles"        : "Alle Rollen",
+  "roles.newrole"         : "Neue Rolle",
+  "roles.filter_roles"    : "Filter",
+
+  "role.save"             : "Speichern",
+  "role.updated"          : "Rolle aktualisiert",
+  "role.deleted"          : "Rolle gelöscht",
+  "role.created"          : "Rolle erstellt",
+  "role.error"            : "Fehler beim Erstellen der Rolle",
+  "role.warning"          : "Achtung, diese Aktion kann nicht rückgängig gemacht werden — ",
+  "role.delete"           : "Role löschen",
+  "role.rolelist"         : "Alle Rollen",
+  "role.confirm"          : "Bestätigen",
+  "role.select"           : "Wähle eine Rolle",
+  "role.membersCount"     : "Mitglieder",
+  "role.description"      : "Beschreibung",
+  "role.cn"               : "Name",
 
   "area.save"             : "Bereich speichern",
   "area.updated"          : "Bereich aktualisiert",

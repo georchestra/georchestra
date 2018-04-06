@@ -4,6 +4,7 @@
   "nav.orgs"              : "Entidades",
   "nav.analytics"         : "Estadísticas",
   "nav.logs"              : "Logs",
+  "nav.roles"             : "Roles",
 
   "home.users"            : "Administrar los usuarios",
   "home.waiting_users"    : "Usuarios en espera",
@@ -76,6 +77,25 @@
   "org.confirm"           : "Confirmar",
   "org.select"            : "Seleccionar una entidad",
   "org.membersCount"      : "Miembros",
+
+  "roles.title"           : "roles",
+  "roles.allroles"        : "Todas",
+  "roles.newrole"         : "Nuevo rol",
+  "roles.filter_roles"    : "Filtrar",
+
+  "role.save"             : "Guardar",
+  "role.updated"          : "Rol modificada",
+  "role.deleted"          : "Rol eliminada",
+  "role.created"          : "Rol creada",
+  "role.error"            : "Error al crear un rol",
+  "role.warning"          : "Cuidado, esta acción no se puede deshacer — ",
+  "role.delete"           : "Eliminar rol",
+  "role.rolelist"         : "Todos los roles",
+  "role.confirm"          : "Confirmar",
+  "role.select"           : "Elija un rol",
+  "role.membersCount"     : "Miembros",
+  "role.description"      : "Descripción",
+  "role.cn"               : "Nombre",
 
   "area.save"             : "Guardar la zona",
   "area.updated"          : "Zona de competencia actualizada",
@@ -163,7 +183,6 @@
   "analytics.extractions" : "Extracciones de capas",
   "analytics.saveAsPNG"   : "Guardar en PNG",
   "analytics.saveAsCSV"   : "Guardar en CSV",
-
 
   "date.day"              : "Hoy",
   "date.week"             : "Última semana",
