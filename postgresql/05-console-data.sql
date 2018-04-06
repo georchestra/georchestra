@@ -47,7 +47,7 @@ INSERT INTO admin_attachments (content, mimetype, name) VALUES (lo_import('/dock
 
 INSERT INTO admin_emails (body, date, recipient, sender, subject) VALUES ( 'Votre compte a été suprimé', '2016-05-18 09:31:47.928', 'testadmin', 'testadmin', 'Deleted');
 
-INSERT INTO delegations (uid, orgs, roles) VALUES ('testadmin', '{psc, psc2}', '{EXTRACTORAPP, GN_EDITOR}');
-INSERT INTO delegations (uid, orgs, roles) VALUES ('testuser', '{psc3, psc4}', '{GN_REVIEWER, GN_EDITOR}');
+INSERT INTO delegations (uid, orgs, roles) VALUES ('testeditor', '{psc, c2c}', '{EXTRACTORAPP, GN_EDITOR}');
+INSERT INTO delegations (uid, orgs, roles) VALUES ('testuser', '{psc, cra}', '{GN_REVIEWER, GN_EDITOR}');
 
 COMMIT;
