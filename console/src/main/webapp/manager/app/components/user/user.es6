@@ -30,7 +30,7 @@ class UserController {
       if (this.tab === 'delegations') {
         const Delegations = $injector.get('Delegations')
         Delegations.query(resp => {
-          let deleg = resp.delegations.find(x => x.uid === this.user.uid)
+          let deleg = resp.find(x => x.uid === this.user.uid)
           let options = deleg || { orgs: [], roles: [], uid: this.user.uid }
           this.delegation = new Delegations(options)
           this.activeDelegation = this.hasDelegation()
@@ -62,7 +62,7 @@ class UserController {
 
   hasDelegation () {
     if (!this.delegation) return false
-    return (this.delegation.orgs.length !== 0) || (this.delegation.roles.length !== 0)
+    return (this.delegation.orgs.length !== 0) && (this.delegation.roles.length !== 0)
   }
 
   bindRoles () {

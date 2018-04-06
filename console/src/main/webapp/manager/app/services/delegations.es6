@@ -4,8 +4,7 @@ angular.module('manager')
       query: {
         cache: true,
         method: 'GET',
-        // isArray: true
-        isArray: false
+        isArray: true
       },
       get: {
         isArray: false
