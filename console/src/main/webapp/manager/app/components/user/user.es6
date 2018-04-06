@@ -11,11 +11,10 @@ class UserController {
 
     let translate = $injector.get('translate')
     this.i18n = {}
-    translate('user.updated', this.i18n)
-    translate('user.error', this.i18n)
-    translate('user.deleted', this.i18n)
-    translate('user.content', this.i18n)
-    translate('org.select', this.i18n)
+    let strings = [
+      'user.updated', 'user.error', 'user.deleted', 'user.content',
+      'org.select', 'delegation.dupdated', 'delegation.ddeleted' ]
+    strings.map(str => translate(str, this.i18n))
 
     this.tabs = ['infos', 'roles', 'analytics', 'messages', 'logs', 'manage']
     this.tab = $routeParams.tab
@@ -27,6 +26,19 @@ class UserController {
         })
       } else {
         user.validOrg = true
+      }
+      if (this.tab === 'delegations') {
+        const Delegations = $injector.get('Delegations')
+        Delegations.query(resp => {
+          let deleg = resp.find(x => x.uid === this.user.uid)
+          let options = deleg || { orgs: [], roles: [], uid: this.user.uid }
+          this.delegation = new Delegations(options)
+          this.activeDelegation = this.hasDelegation()
+          $injector.get('Orgs').query(orgs => {
+            this.orgs = orgs.filter(o => o.status !== 'PENDING').map(o => o.id)
+          })
+          Role.query(roles => { this.allRoles = roles.map(r => r.cn) })
+        })
       }
       if (this.tab === 'messages') {
         this.messages = this.$injector.get('Email').query({id: this.user.uid})
@@ -46,6 +58,11 @@ class UserController {
     this.bindRoles()
 
     this.required = $injector.get('UserRequired').get()
+  }
+
+  hasDelegation () {
+    if (!this.delegation) return false
+    return (this.delegation.orgs.length !== 0) && (this.delegation.roles.length !== 0)
   }
 
   bindRoles () {
@@ -246,10 +263,38 @@ class UserController {
     this.$injector.get('$cacheFactory').get('$http').removeAll()
   }
 
+  deleteDelegation () {
+    let flash = this.$injector.get('Flash')
+    let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
+    this.delegation.$delete(() => {
+      $httpDefaultCache.removeAll()
+      flash.create('success', this.i18n.ddeleted)
+      this.delegation = new (this.$injector.get('Delegations'))({
+        uid: this.user.uid, roles: [], orgs: []
+      })
+      this.activeDelegation = false
+    }, flash.create.bind(flash, 'danger', this.i18n.derror))
+  }
+
+  saveDelegation () {
+    let flash = this.$injector.get('Flash')
+    let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
+    this.delegation.$update(() => {
+      $httpDefaultCache.removeAll()
+      flash.create('success', this.i18n.dupdated)
+      this.activeDelegation = this.hasDelegation()
+    }, flash.create.bind(flash, 'danger', this.i18n.derror))
+  }
+
   activate ($scope) {
     const TMP_ROLE = 'TEMPORARY'
     let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
     let flash = this.$injector.get('Flash')
+
+    $scope.$watch(() => $scope.profile, p => {
+      if (p !== 'SUPERUSER' || this.tabs.indexOf('delegations') !== -1) return
+      this.tabs.splice(3, 0, 'delegations')
+    })
 
     let saveRoles = function (newVal, oldVal) {
       if (!newVal || !oldVal) { return }

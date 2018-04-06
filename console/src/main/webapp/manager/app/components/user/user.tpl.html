@@ -68,6 +68,36 @@
         </div>
       </div>
 
+      <div class="panel-heading text-center" ng-if="user.tab=='delegations' && profile === 'SUPERUSER'">
+        <span ng-if="user.activeDelegation" class="delegation_active" translate>user.hasdeleg</span>
+        <span ng-if="!user.activeDelegation" class="delegation_inactive" translate>user.nodeleg</span>
+      </div>
+
+      <div class="panel-body" ng-if="user.tab=='delegations' && profile === 'SUPERUSER' && isSuperUser(user.user)">
+        <p class="text-danger text-center delegation_restricted" translate>delegation.restricted</p>
+      </div>
+
+      <div class="panel-body" ng-if="user.tab=='delegations' && profile === 'SUPERUSER' && !isSuperUser(user.user)">
+        <h4 translate>nav.orgs</h4>
+        <div class="form-group">
+          <select class="form-control" multiple chosen ng-model="user.delegation.orgs" ng-options="org for org in user.orgs"
+          data-placeholder="Select orgs">
+          </select>
+        </div>
+        <h4 translate>nav.roles</h4>
+        <div class="form-group">
+          <select class="form-control" multiple chosen ng-model="user.delegation.roles" ng-options="role for role in user.allRoles"
+          data-placeholder="Select roles">
+          </select>
+        </div>
+        <br>
+        <hr>
+        <div class="pull-right">
+          <button ng-disabled="!user.activeDelegation" ng-click="user.deleteDelegation()" class="btn btn-link" translate>delegations.delete</button>
+          <button ng-disabled="!user.hasDelegation()" ng-click="user.saveDelegation()" class="btn btn-primary" translate>user.save</button>
+        </div>
+      </div>
+
       <div class="panel-body user-analytics" ng-if="user.tab=='analytics'">
         <date class="stats-conf" model="user.date" callback="user.loadAnalyticsData()"></date>
         <h4 translate>analytics.title</h4>

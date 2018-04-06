@@ -20,6 +20,13 @@ angular.module('manager')
         isArray: false
       }
     })
+  ]).factory('Profile', ['$resource', 'CONSOLE_PRIVATE_PATH', ($resource, baseUri) =>
+    $resource(baseUri + 'users/profile', {}, {
+      query: {
+        method: 'GET',
+        isArray: false
+      }
+    })
   ]).factory('UserRequired', ['$resource', 'CONSOLE_PUBLIC_PATH', ($resource, baseUri) =>
     $resource(baseUri + 'users/requiredFields', {}, {
       get: {

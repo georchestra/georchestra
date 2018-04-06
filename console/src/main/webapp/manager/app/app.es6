@@ -1,7 +1,7 @@
 class AppController {
-  static $inject = [ '$scope', '$router', '$location' ]
+  static $inject = [ '$scope', '$router', '$location', 'Profile' ]
 
-  constructor ($scope, $router, $location) {
+  constructor ($scope, $router, $location, Profile) {
     $router.config([
       { path: '/',
         redirectTo: '/home' },
@@ -17,6 +17,8 @@ class AppController {
         component: 'roles' },
       { path: '/role/:role/:tab',
         component: 'role' },
+      { path: '/delegations/:delegation',
+        component: 'delegations' },
       { path: '/browse/:id/users',
         component: 'users' },
       { path: '/users/:id/:tab',
@@ -30,6 +32,13 @@ class AppController {
     $scope.isActive = (routes) => routes.some(
       route => $location.$$path.indexOf(route) === 1
     )
+
+    $scope.isSuperUser = (user) => user.adminRoles && user.adminRoles.SUPERUSER
+
+    Profile.get((p) => {
+      $scope.profile = p.roles.indexOf('SUPERUSER') === -1
+        ? 'DELEGATED' : 'SUPERUSER'
+    })
   }
 }
 
@@ -90,6 +99,7 @@ require('components/orgs/orgs')
 require('components/org/org')
 require('components/roles/roles')
 require('components/role/role')
+require('components/delegations/delegations')
 require('components/home/home')
 require('components/browse/browse')
 require('components/logs/logs')

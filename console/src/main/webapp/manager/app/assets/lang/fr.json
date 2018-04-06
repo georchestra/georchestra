@@ -5,6 +5,10 @@
   "nav.analytics"         : "Statistiques",
   "nav.logs"              : "Logs",
   "nav.roles"             : "Rôles",
+  "nav.delegations"       : "Délégations",
+
+  "index.SUPERUSER"       : "Administrateur",
+  "index.DELEGATED"       : "Délégation",
 
   "home.users"            : "Gérer les utilisateurs",
   "home.waiting_users"    : "utilisateurs en attente",
@@ -18,6 +22,7 @@
 
   "tab.infos"             : "Infos",
   "tab.roles"             : "Rôles",
+  "tab.delegations"       : "Délégations",
   "tab.analytics"         : "Statistiques",
   "tab.messages"          : "Messages",
   "tab.logs"              : "Logs",
@@ -54,6 +59,8 @@
   "user.pendingmsg"       : "Utilisateur en attente ",
   "user.confirm"          : "Confirmer",
   "user.orgFirst"         : "Confirmer d’abord l’organisme   : ",
+  "user.hasdeleg"         : "Une délégation est active pour cet utilisateur",
+  "user.nodeleg"          : "Pas de délégation pour cet utilisateur",
 
   "orgs.title"            : "organismes",
   "orgs.allorgs"          : "Tous les organismes",
@@ -96,6 +103,14 @@
   "role.membersCount"     : "Membres",
   "role.description"      : "Description",
   "role.cn"               : "Identifiant",
+
+  "delegations.filter"    : "Filtrer",
+  "delegations.delete"    : "Supprimer",
+
+  "delegation.dupdated"   : "Délégation mise à jour",
+  "delegation.ddeleted"   : "Délégation supprimée",
+  "delegation.derror"     : "Erreur lors de la mise à jour de la délégation",
+  "delegation.restricted" : "Impossible d’ajouter une dégélation pour un administrateur.",
 
   "area.save"             : "Enregister la zone",
   "area.updated"          : "Aire de compétence mise à jour",

@@ -81,7 +81,7 @@ public class DelegationController {
 		for(DelegationEntry delegation: delegations)
 			res.put(delegation.toJSON());
 
-		return new JSONObject().put("delegations", res).toString();
+		return res.toString();
 	}
 
 	@RequestMapping(value=REQUEST_MAPPING + "/{uid}", method= RequestMethod.GET, produces = "application/json; charset=utf-8")
