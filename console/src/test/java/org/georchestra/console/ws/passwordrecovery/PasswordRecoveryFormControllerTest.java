@@ -182,7 +182,7 @@ public class PasswordRecoveryFormControllerTest {
             .thenReturn(rer);
         ArrayList<Role> pendingUsersRoleList = new ArrayList();
         
-        pendingUsersRoleList.add(RoleFactory.create(Role.PENDING, "roles of pending users"));
+        pendingUsersRoleList.add(RoleFactory.create(Role.PENDING, "roles of pending users", false));
         Mockito.when(gdao.findAllForUser(Mockito.anyString())).thenReturn(pendingUsersRoleList);
         String ret = ctrl.generateToken(request, formBean, result, status);
         

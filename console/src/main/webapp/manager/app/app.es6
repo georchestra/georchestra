@@ -1,7 +1,7 @@
 class AppController {
-  static $inject = [ '$scope', '$router', '$location', 'Profile' ]
+  static $inject = [ '$scope', '$router', '$location', 'roleAdminList', 'Profile' ]
 
-  constructor ($scope, $router, $location, Profile) {
+  constructor ($scope, $router, $location, roleAdminList, Profile) {
     $router.config([
       { path: '/',
         redirectTo: '/home' },
@@ -39,6 +39,8 @@ class AppController {
       $scope.profile = p.roles.indexOf('SUPERUSER') === -1
         ? 'DELEGATED' : 'SUPERUSER'
     })
+
+    $scope.isProtectedRole = role => roleAdminList().indexOf(role.cn) !== -1
   }
 }
 

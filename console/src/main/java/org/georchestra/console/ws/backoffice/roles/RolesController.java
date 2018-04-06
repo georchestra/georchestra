@@ -203,8 +203,9 @@ public class RolesController {
 
 	private JSONObject extractTemporaryRoleInformation() throws JSONException {
 		JSONObject res = new JSONObject();
-		res.put("cn", RolesController.VIRTUAL_TEMPORARY_ROLE_NAME);
-		res.put("description", RolesController.VIRTUAL_TEMPORARY_ROLE_DESCRIPTION);
+		res.put(RoleSchema.COMMON_NAME_KEY, RolesController.VIRTUAL_TEMPORARY_ROLE_NAME);
+		res.put(RoleSchema.DESCRIPTION_KEY, RolesController.VIRTUAL_TEMPORARY_ROLE_DESCRIPTION);
+		res.put(RoleSchema.FAVORITE_JSON_KEY, false);
 
 		// Search temporary users in LDAP
 		JSONArray temporaryUsers = new JSONArray();
@@ -510,6 +511,10 @@ public class RolesController {
 			role.setDescription(description);
 		}
 
+		Boolean isFavorite = RequestUtil.getBooleanFieldValue(json, RoleSchema.FAVORITE_JSON_KEY);
+		if(isFavorite != null)
+			role.setFavorite(isFavorite);
+
 		return role;
 	}
 
@@ -531,8 +536,9 @@ public class RolesController {
 						" should only contain uppercased letters, digits and underscores" );
 
 			String description = RequestUtil.getFieldValue(json, RoleSchema.DESCRIPTION_KEY);
+			Boolean isFavorite = RequestUtil.getBooleanFieldValue(json, RoleSchema.FAVORITE_JSON_KEY);
 
-			Role g = RoleFactory.create(commonName, description);
+			Role g = RoleFactory.create(commonName, description, isFavorite);
 
 			return g;
 

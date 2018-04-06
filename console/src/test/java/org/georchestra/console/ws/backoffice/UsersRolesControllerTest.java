@@ -137,10 +137,10 @@ public class UsersRolesControllerTest {
 
         // fake role List
         List<Role> fakeRoleList = new ArrayList<Role>();
-        Role adminGrp = RoleFactory.create("ADMINISTRATOR", "roles of the administrators");
+        Role adminGrp = RoleFactory.create("ADMINISTRATOR", "roles of the administrators", false);
         adminGrp.setUserList(Arrays.asList(new String[] {"testadmin"}));
 
-        Role userGrp = RoleFactory.create("USER", "regular users");
+        Role userGrp = RoleFactory.create("USER", "regular users", false);
         userGrp.setUserList(Arrays.asList(new String[] {"testuser"}));
 
         fakeRoleList.add(adminGrp);
@@ -303,7 +303,7 @@ public class UsersRolesControllerTest {
             LogFactory.getLog(this.getClass()).info(TEST_ROLE_NAME + " does not exist in the LDAP tree, it is safe to create it");
         }
         // Then creates it
-        Role testGrp = RoleFactory.create(TEST_ROLE_NAME, "sample role");
+        Role testGrp = RoleFactory.create(TEST_ROLE_NAME, "sample role", false);
         testGrp.addUser("uid=testadmin,ou=users," + basedn);
         testGrp.addUser("uid=testuser,ou=users," + basedn);
         roleDao.insert(testGrp);

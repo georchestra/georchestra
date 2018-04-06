@@ -19,6 +19,17 @@
  </a>
 </div>
 
+<h5 ng-if="roles.q == ''" translate>role.favorites</h5>
+<div ng-repeat="role in roles.roles.filter(roles.favoriteRole)" ng-if="roles.q == ''">
+  <strong ng-if="(roles.activeRole.cn == role.cn)">
+    {{::role.cn}} ({{::role.users.length}})
+  </strong>
+  <a ng-link="users({id: role.cn})" ng-if="(roles.activeRole.cn != role.cn)">
+    {{::role.cn}}
+   ({{::role.users.length}})
+ </a>
+</div>
+
 <div ng-repeat="(key, role) in roles.index" ng-if="roles.q != ''">
   <a ng-link="users({id: role.cn})" title={{::role.description}}
       ng-if="role.cn.toLowerCase().indexOf(roles.q.toLowerCase()) >= 0">

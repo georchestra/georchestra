@@ -56,5 +56,9 @@ public interface Role {
 	void setDescription(String description);	
 
 	String getDescription();
-		
+
+	void setFavorite(boolean isFavorite);
+
+	boolean isFavorite();
+
 }
