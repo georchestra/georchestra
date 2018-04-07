@@ -7,8 +7,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.net.ssl.HttpsURLConnection;
-
+import org.georchestra.ldapadmin.ReCaptchaV2;
 import org.georchestra.ldapadmin.bs.Moderator;
 import org.georchestra.ldapadmin.bs.ReCaptchaParameters;
 import org.georchestra.ldapadmin.ds.AccountDao;
@@ -20,11 +19,9 @@ import org.georchestra.ldapadmin.dto.AccountFactory;
 
 import org.georchestra.ldapadmin.mailservice.EmailFactoryImpl;
 import org.georchestra.ldapadmin.mailservice.MailService;
-import org.georchestra.ldapadmin.ws.utils.RecaptchaUtils;
 import org.georchestra.ldapadmin.ws.utils.Validation;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.ldap.NameNotFoundException;
@@ -34,18 +31,18 @@ import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.support.SessionStatus;
 
 public class NewAccountFormControllerTest {
-
+		
     // Mocked objects needed by the controller default constructor
     private NewAccountFormController ctrl ;
     private AccountDao dao = Mockito.mock(AccountDao.class);
     private EmailFactoryImpl efi = Mockito.mock(EmailFactoryImpl.class);
     private MailService srv = new MailService(efi);
     private Moderator  mod = new Moderator();
+    private ReCaptchaV2 rec = Mockito.mock(ReCaptchaV2.class);
     private ReCaptchaParameters rep = new ReCaptchaParameters();
     private MockHttpServletRequest request = new MockHttpServletRequest();
     private LdapTemplate ldapTemplate = Mockito.mock(LdapTemplate.class);
@@ -56,7 +53,7 @@ public class NewAccountFormControllerTest {
     BindingResult result = Mockito.mock(BindingResult.class);
     SessionStatus status = Mockito.mock(SessionStatus.class);
 
-    private void configureLegitFormBean() throws IOException {
+    private void configureLegitFormBean() {
         Validation v = new Validation();
         v.setRequiredFields("uid\tfirstName\temail\tpassword\n");
 
@@ -71,14 +68,16 @@ public class NewAccountFormControllerTest {
         Mockito.when(formBean.getTitle()).thenReturn("+331234567890");
         Mockito.when(formBean.getOrg()).thenReturn("geOrchestra testing team");
         Mockito.when(formBean.getDescription()).thenReturn("Bot Unit Testing");
+        
+        Mockito.when(rec.isValid(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(true);
     }
-
 
     @Before
     public void setUp() throws Exception {
+    
     	rep.setVerifyUrl("https://localhost");
     	rep.setPrivateKey("privateKey");
-    	
+   	
         ctrl = new NewAccountFormController(dao, srv, mod, rep);
 
         // Mock admin account
@@ -108,14 +107,13 @@ public class NewAccountFormControllerTest {
      *
      * @throws IOException
      */
-    @Test @Ignore //TODO mock recaptcha v2 validation
+    @SuppressWarnings("static-access")
+	@Test
     public void testCreate() throws IOException {
         configureLegitFormBean();
-       
-        //Mockito.when(recaptchaUtils.validate(Mockito.anyString(), (Errors) Mockito.any())).thenReturn(true);
 
         String ret = ctrl.create(request, formBean, result, status);
-
+       
         assertTrue(ret.equals("welcomeNewUser"));
     }
 
@@ -149,7 +147,7 @@ public class NewAccountFormControllerTest {
      *
      * @throws IOException
      */
-    @Test @Ignore //TODO mock recaptcha v2 validation
+    @Test
     public void testCreateNoModeration() throws IOException {
         configureLegitFormBean();
         mod.setModeratedSignup(false);
@@ -164,7 +162,7 @@ public class NewAccountFormControllerTest {
      *
      * @throws IOException
      */
-    @Test @Ignore //TODO mock recaptcha v2 validation
+    @Test
     public void testCreateWithFormErrors() throws IOException {
         configureLegitFormBean();
         Mockito.when(result.hasErrors()).thenReturn(true);
@@ -179,7 +177,7 @@ public class NewAccountFormControllerTest {
      *
      * @throws Exception
      */
-    @Test @Ignore //TODO mock recaptcha v2 validation
+    @Test
     public void testCreateDuplicatedEmail() throws Exception {
         configureLegitFormBean();
         Mockito.doThrow(new DuplicatedEmailException("User already exists")).
@@ -209,7 +207,7 @@ public class NewAccountFormControllerTest {
      *
      * @throws Exception
      */
-    @Test @Ignore //TODO mock recaptcha v2 validation
+    @Test
     public void testCreateDuplicatedUid() throws Exception {
         configureLegitFormBean();
         Mockito.doThrow(new DuplicatedUidException("User ID already exists")).

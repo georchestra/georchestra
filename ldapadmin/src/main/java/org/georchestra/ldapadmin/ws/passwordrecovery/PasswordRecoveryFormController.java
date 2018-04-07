@@ -138,7 +138,7 @@ public class PasswordRecoveryFormController  {
 			return "passwordRecoveryForm";
 		}
 		
-		new RecaptchaUtils(this.reCaptchaParameters.getVerifyUrl(), this.reCaptchaParameters.getPrivateKey()).validate(formBean.getRecaptcha_response_field(), resultErrors);
+		RecaptchaUtils.validate(reCaptchaParameters, formBean.getRecaptcha_response_field(), resultErrors);
 		if(resultErrors.hasErrors()){
 			return "passwordRecoveryForm";
 		}

@@ -45,7 +45,6 @@ import org.georchestra.ldapadmin.ws.utils.RecaptchaUtils;
 import org.georchestra.ldapadmin.ws.utils.UserUtils;
 import org.georchestra.ldapadmin.ws.utils.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ldap.NameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -136,7 +135,7 @@ public final class NewAccountFormController {
 		UserUtils.validate(formBean.getUid(), formBean.getFirstName(), formBean.getSurname(), result );
 		EmailUtils.validate(formBean.getEmail(), result);
 		PasswordUtils.validate(formBean.getPassword(), formBean.getConfirmPassword(), result);
-		new RecaptchaUtils(this.reCaptchaParameters.getVerifyUrl(), this.reCaptchaParameters.getPrivateKey()).validate(formBean.getRecaptcha_response_field(), result);
+		RecaptchaUtils.validate(reCaptchaParameters, formBean.getRecaptcha_response_field(), result);
 		Validation.validateField("phone", formBean.getPhone(), result);
 		Validation.validateField("title", formBean.getTitle(), result);
 		Validation.validateField("org", formBean.getOrg(), result);

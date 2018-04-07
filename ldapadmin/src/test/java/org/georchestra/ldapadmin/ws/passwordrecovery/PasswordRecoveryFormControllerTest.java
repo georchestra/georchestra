@@ -10,6 +10,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.georchestra.ldapadmin.Configuration;
+import org.georchestra.ldapadmin.ReCaptchaV2;
 import org.georchestra.ldapadmin.bs.ReCaptchaParameters;
 import org.georchestra.ldapadmin.ds.AccountDao;
 import org.georchestra.ldapadmin.ds.DataServiceException;
@@ -22,7 +23,6 @@ import org.georchestra.ldapadmin.mailservice.EmailFactoryImpl;
 import org.georchestra.ldapadmin.mailservice.MailService;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.ldap.NameNotFoundException;
@@ -39,6 +39,7 @@ public class PasswordRecoveryFormControllerTest {
     private GroupDao gdao = Mockito.mock(GroupDao.class);
     private EmailFactoryImpl efi = Mockito.mock(EmailFactoryImpl.class);
     private MailService srv = new MailService(efi);
+    private ReCaptchaV2 rec = Mockito.mock(ReCaptchaV2.class);
     private ReCaptchaParameters rep = new ReCaptchaParameters();
     private UserTokenDao utd = Mockito.mock(UserTokenDao.class);
     private Configuration cfg = new Configuration();
@@ -102,7 +103,7 @@ public class PasswordRecoveryFormControllerTest {
 
     }
 
-    @Test @Ignore //TODO mock recaptcha v2 validation
+    @Test
     public void testGenerateTokenWithUserNotFound() throws Exception {
         prepareLegitRequest();
         Mockito.when(utd.exist(Mockito.anyString())).thenReturn(false);
@@ -123,12 +124,24 @@ public class PasswordRecoveryFormControllerTest {
         assertTrue(ret.equals("passwordRecoveryForm"));
     }
 
-    @Test @Ignore //TODO mock recaptcha v2 validation
+    @Test
     public void testGenerateToken() throws Exception {
         prepareLegitRequest();
 
         String ret = ctrl.generateToken(request, formBean, result, status);
         assertTrue(ret.equals("emailWasSent"));
+    }
+    
+    @Test
+    public void testBadCaptchaGenerateToken() throws Exception {
+        prepareLegitRequest();
+        Mockito.when(result.hasErrors()).thenReturn(false, true);
+        Mockito.when(rec.isValid(Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
+            .thenReturn(false);
+
+        String ret = ctrl.generateToken(request, formBean, result, status);
+
+        assertTrue(ret.equals("passwordRecoveryForm"));
     }
 
     /**
@@ -151,7 +164,7 @@ public class PasswordRecoveryFormControllerTest {
      * test for recovery password when user is a PENDING USER
      * @throws Exception 
     */ 
-    @Test @Ignore //TODO mock recaptcha v2 validation
+    @Test
     public void testPasswordRecoveryWithPendingUser() throws Exception {
         prepareLegitRequest();
         Mockito.when(result.hasErrors()).thenReturn(false);
