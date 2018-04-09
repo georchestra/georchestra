@@ -42,6 +42,8 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -56,10 +58,12 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpUtils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.Consts;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -77,7 +81,10 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpTrace;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.InputStreamEntity;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
@@ -226,6 +233,9 @@ public class Proxy {
             try {
                 final ClassLoader classLoader = Proxy.class.getClassLoader();
                 InputStream inStream = closer.register(classLoader.getResourceAsStream(proxyPermissionsFile));
+                if (inStream == null) {
+                    throw new RuntimeException("ProxyPermissionsFile not found");
+                }
                 setProxyPermissions(Permissions.Create(inStream));
             } finally {
                 closer.close();
@@ -465,6 +475,45 @@ public class Proxy {
     }
 
     /**
+     * Reconstructs the URL parameters in the original query string to the
+     * proxified webapps.
+     *
+     * @param request the original HttpServletRequest
+     * @return the query string as a String object.
+     * @throws IOException
+     * @throws UnsupportedEncodingException
+     */
+    private String reconstructUrlParameters(HttpServletRequest request) throws UnsupportedEncodingException, IOException {
+        StringBuilder query = new StringBuilder("");
+        String queryString = request.getQueryString();
+        if (queryString != null) {
+            query.append("?");
+            // URLEncodedUtils.parse() expects ISO-8859-1, passing as is even if it is actually in UTF-8
+            List<NameValuePair> paramNames = URLEncodedUtils.parse(queryString, Charset.forName("ISO-8859-1"));
+
+            for (NameValuePair p : paramNames) {
+                String name = p.getName();
+                String value = p.getValue();
+                // Skip login & ticket parameter
+                if (name.equals(ServiceProperties.DEFAULT_CAS_ARTIFACT_PARAMETER) || name.equals("login")) {
+                    continue;
+                }
+                if (query.length() > 1) {
+                    query.append('&');
+                }
+                if (value == null) {
+                    query.append(name);
+                    continue;
+                }
+                query.append(name);
+                query.append("=");
+                query.append(value);
+            }
+        }
+        return query.toString();
+    }
+
+    /**
      * Main entry point for methods where the request path is encoded in the
      * path of the URL
      */
@@ -503,41 +552,23 @@ public class Proxy {
                 response.sendError(403, forwardRequestURI + " is a recursive call to this service.  That is not a legal request");
             }
 
-            if (request.getQueryString() != null) {
-                StringBuilder query = new StringBuilder("?");
-                Enumeration paramNames = request.getParameterNames();
-                boolean needCasValidation = false;
-                while (paramNames.hasMoreElements()) {
-                    String name = (String) paramNames.nextElement();
-                    String[] values = request.getParameterValues(name);
-                    for (String string : values) {
-                        if (query.length() > 1) {
-                            query.append('&');
-                        }
-                        // special case: if we have a ticket parameter and no
-                        // authentication principal, we need to validate/open
-                        // the session against CAS server
-                        if ((request.getUserPrincipal() == null)
-                                && (name.equals(ServiceProperties.DEFAULT_CAS_ARTIFACT_PARAMETER))) {
-                           needCasValidation = true;
-                        } else {
-                            query.append(name);
-                            query.append('=');
-                            query.append(URLEncoder.encode(string, "UTF-8"));
-                        }
-                    }
-                }
-                sURL += query;
-                if ((needCasValidation) && (urlIsProtected(request, new URL(sURL)))) {
-                    // loginUrl: sends a redirect to the client with a ?login (or &login if other arguments)
-                    // since .*login patterns are protected by the SP, this would trigger an authentication
-                    // onto CAS (which should succeed if the user is already connected onto the platform).
-                    String loginUrl = String.format("%s%s%s", request.getPathInfo(), query, "login");
-                    redirectStrategy.sendRedirect(request, response, loginUrl);
-                    return;
-                }
+            final String query = reconstructUrlParameters(request);
+            boolean needCasValidation =  (request.getParameter(ServiceProperties.DEFAULT_CAS_ARTIFACT_PARAMETER) != null)
+                    && (request.getUserPrincipal() == null)
+                    && urlIsProtected(request, new URL(sURL));
+            // special case: if we have a ticket parameter and no
+            // authentication principal, we probably need to validate/open
+            // the session against CAS server
+            if (needCasValidation) {
+                // loginUrl: sends a redirect to the client with a ?login (or &login if other arguments)
+                // since .*login patterns are protected by the SP, this would trigger an authentication
+                // onto CAS (which should succeed if the user is already connected onto the platform).
+                String loginUrl = String.format("%s%s%s", request.getPathInfo(),
+                        StringUtils.isEmpty(query) ? "?" : query, "login");
+                redirectStrategy.sendRedirect(request, response, loginUrl);
+                return;
             }
-
+            sURL += query;
             handleRequest(request, response, sURL, true);
         } catch (IOException e) {
             logger.error("Error connecting to client", e);
