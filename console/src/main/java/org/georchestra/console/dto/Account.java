@@ -142,10 +142,6 @@ public interface Account extends Comparable<Account>{
 
 	String toCsv();
 
-	JSONObject toJSON() throws JSONException;
-	
-	String toFormatedString(String data);
-
 	void setShadowExpire(Date expireDate);
 
 	Date getShadowExpire();

@@ -8,7 +8,9 @@ import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.dao.DelegationDao;
 import org.georchestra.console.ds.OrgsDao;
+import org.georchestra.console.dto.Org;
 import org.georchestra.console.dto.Role;
+import org.georchestra.console.dto.SimpleAccount;
 import org.georchestra.console.model.DelegationEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.PermissionEvaluator;
@@ -41,14 +43,23 @@ public class ConsolePermissionEvaluator implements PermissionEvaluator {
                 return false;
             }
 
-            // Filter users in role and role itself
+            // Filter based on object type
             if (targetDomainObject instanceof Role) {
+                // Filter users in role and role itself
                 Role r = (Role) targetDomainObject;
                 List<String> userList = r.getUserList();
                 // Remove users not under delegation
                 userList.retainAll(this.advancedDelegationDao.findUsersUnderDelegation(username));
                 // Remove role not under delegation
                 return Arrays.asList(delegation.getRoles()).contains(r.getName());
+            } else if(targetDomainObject instanceof Org){
+                // Filter org
+                Org org = (Org) targetDomainObject;
+                return Arrays.asList(delegation.getOrgs()).contains(org.getName());
+            } else if(targetDomainObject instanceof SimpleAccount){
+                // filter account
+                SimpleAccount account = (SimpleAccount) targetDomainObject;
+                return Arrays.asList(delegation.getOrgs()).contains(account.getOrgId());
             }
         }
 

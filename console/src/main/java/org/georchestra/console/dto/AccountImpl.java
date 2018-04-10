@@ -23,8 +23,14 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 
 import javax.naming.ldap.LdapName;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.security.authentication.encoding.LdapShaPasswordEncoder;
@@ -49,48 +55,86 @@ public class AccountImpl implements Serializable, Account{
 	private static final long serialVersionUID = -8022496448991887664L;
 
 	// main data
+	@JsonProperty(UserSchema.UID_KEY)
 	private String uid; // uid
 
+	@JsonProperty(UserSchema.COMMON_NAME_KEY)
 	private String commonName; // cn: person's full name,  mandatory
+
+	@JsonProperty(UserSchema.SURNAME_KEY)
 	private String surname; // sn  mandatory
 
+	@JsonProperty(UserSchema.MAIL_KEY)
 	private String email;// mail
+
+	@JsonProperty(UserSchema.TELEPHONE_KEY)
 	private String phone;// telephoneNumber
+
+	@JsonProperty(UserSchema.DESCRIPTION_KEY)
 	private String description; // description
+
+	@JsonIgnore
 	private String password; // userPassword
+	@JsonIgnore
 	private String newPassword;
 
 	// user details
 	// sn, givenName, title, postalAddress, postalCode, registeredAddress, postOfficeBox, physicalDeliveryOfficeName
+	@JsonProperty(UserSchema.GIVEN_NAME_KEY)
 	private String givenName; // givenName (optional)
+
+	@JsonProperty(UserSchema.TITLE_KEY)
 	private String title; // title
+
+	@JsonProperty(UserSchema.POSTAL_ADDRESS_KEY)
 	private String postalAddress; //postalAddress
+
+	@JsonProperty(UserSchema.POSTAL_CODE_KEY)
 	private String postalCode; // postalCode
+
+	@JsonProperty(UserSchema.REGISTERED_ADDRESS_KEY)
 	private String registeredAddress; //registeredAddress
+
+	@JsonProperty(UserSchema.POST_OFFICE_BOX_KEY)
 	private String postOfficeBox; // postOfficeBox
+
+	@JsonProperty(UserSchema.PHYSICAL_DELIVERY_OFFICE_NAME_KEY)
 	private String physicalDeliveryOfficeName; //physicalDeliveryOfficeName
 
+	@JsonProperty(UserSchema.STREET_KEY)
 	private String street;
 
+	@JsonProperty(UserSchema.LOCALITY_KEY)
 	private String locality; // l
 
+	@JsonProperty(UserSchema.FACSIMILE_KEY)
 	private String facsimile;
 
+	@JsonProperty(UserSchema.MOBILE_KEY)
 	private String mobile;
 
+	@JsonProperty(UserSchema.ROOM_NUMBER_KEY)
 	private String roomNumber;
 
+	@JsonProperty(UserSchema.STATE_OR_PROVINCE_KEY)
 	private String stateOrProvince; // st
 
+	@JsonProperty(UserSchema.HOME_POSTAL_ADDRESS_KEY)
 	private String homePostalAddress;
 
+	@JsonProperty(UserSchema.SHADOW_EXPIRE_KEY)
+	@JsonFormat(shape = JsonFormat.Shape.STRING,
+			pattern = "yyyy-MM-dd")
 	private Date shadowExpire;
 
+	@JsonProperty(UserSchema.MANAGER_KEY)
 	private String manager;
 	
+	@JsonProperty(UserSchema.CONTEXT_KEY)
 	private String context;
 
 	// Organization from ou=orgs,dc=georchestra,dc=org
+	// Json export is defined on the getter getOrg()
 	private String org;
 
 	@Override
@@ -143,7 +187,7 @@ public class AccountImpl implements Serializable, Account{
 
 	    return v.write();
 	}
-	@Override
+
 	public String toFormatedString(String data) {
 
 	    String ret = new String("");
@@ -271,42 +315,6 @@ public class AccountImpl implements Serializable, Account{
 		return csv.toString();
 
 	}
-
-	@Override
-	public JSONObject toJSON() throws JSONException {
-		JSONObject res = new JSONObject();
-		res.put(UserSchema.UID_KEY, this.uid);
-		res.put(UserSchema.COMMON_NAME_KEY, this.commonName);
-		res.put(UserSchema.SURNAME_KEY, this.surname);
-		res.put(UserSchema.MAIL_KEY, this.email);
-		res.put(UserSchema.TELEPHONE_KEY, this.phone);
-		res.put(UserSchema.DESCRIPTION_KEY, this.description);
-		res.put(UserSchema.GIVEN_NAME_KEY, this.givenName);
-		res.put(UserSchema.TITLE_KEY, this.title);
-		res.put(UserSchema.POSTAL_ADDRESS_KEY, this.postalAddress);
-		res.put(UserSchema.POSTAL_CODE_KEY, this.postalCode);
-		res.put(UserSchema.REGISTERED_ADDRESS_KEY, this.registeredAddress);
-		res.put(UserSchema.POST_OFFICE_BOX_KEY, this.postOfficeBox);
-		res.put(UserSchema.PHYSICAL_DELIVERY_OFFICE_NAME_KEY, this.physicalDeliveryOfficeName);
-		res.put(UserSchema.STREET_KEY, this.street);
-		res.put(UserSchema.LOCALITY_KEY, this.locality);
-		res.put(UserSchema.FACSIMILE_KEY, this.facsimile);
-		res.put(UserSchema.MOBILE_KEY, this.mobile);
-		res.put(UserSchema.ROOM_NUMBER_KEY, this.roomNumber);
-		res.put(UserSchema.STATE_OR_PROVINCE_KEY, this.stateOrProvince);
-		res.put(UserSchema.HOME_POSTAL_ADDRESS_KEY, this.homePostalAddress);
-		if(this.shadowExpire != null) {
-			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-			res.put(UserSchema.SHADOW_EXPIRE_KEY, dateFormat.format(this.shadowExpire));
-		}
-		if(this.manager != null)
-			res.put(UserSchema.MANAGER_KEY, this.manager);
-		if(this.context != null)
-			res.put(UserSchema.CONTEXT_KEY, this.context);
-		res.put(UserSchema.ORG_KEY, this.getOrg());
-		return res;
-	}
-
 
 	@Override
 	public void setUid(String uid) {
@@ -564,8 +572,8 @@ public class AccountImpl implements Serializable, Account{
 	}
 
 	/* (non-Javadoc)
-         * @see java.lang.Object#hashCode()
-         */
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
     public int hashCode() {
 	    final int prime = 31;
@@ -576,44 +584,38 @@ public class AccountImpl implements Serializable, Account{
 	    result = prime * result + ((uid == null) ? 0 : uid.hashCode());
 	    return result;
     }
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-    @Override
-    public boolean equals(Object obj) {
-	    if (this == obj) {
-		    return true;
-	    }
-	    if (obj == null) {
-		    return false;
-	    }
-	    if (!(obj instanceof AccountImpl)) {
-		    return false;
-	    }
-	    AccountImpl other = (AccountImpl) obj;
-	    if (givenName == null) {
-		    if (other.givenName != null) {
-			    return false;
-		    }
-	    } else if (!givenName.equals(other.givenName)) {
-		    return false;
-	    }
-	    if (surname == null) {
-		    if (other.surname != null) {
-			    return false;
-		    }
-	    } else if (!surname.equals(other.surname)) {
-		    return false;
-	    }
-	    if (uid == null) {
-		    if (other.uid != null) {
-			    return false;
-		    }
-	    } else if (!uid.equals(other.uid)) {
-		    return false;
-	    }
-	    return true;
-    }
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		AccountImpl account = (AccountImpl) o;
+		return Objects.equals(uid, account.uid) &&
+				Objects.equals(commonName, account.commonName) &&
+				Objects.equals(surname, account.surname) &&
+				Objects.equals(email, account.email) &&
+				Objects.equals(phone, account.phone) &&
+				Objects.equals(description, account.description) &&
+				Objects.equals(givenName, account.givenName) &&
+				Objects.equals(title, account.title) &&
+				Objects.equals(postalAddress, account.postalAddress) &&
+				Objects.equals(postalCode, account.postalCode) &&
+				Objects.equals(registeredAddress, account.registeredAddress) &&
+				Objects.equals(postOfficeBox, account.postOfficeBox) &&
+				Objects.equals(physicalDeliveryOfficeName, account.physicalDeliveryOfficeName) &&
+				Objects.equals(street, account.street) &&
+				Objects.equals(locality, account.locality) &&
+				Objects.equals(facsimile, account.facsimile) &&
+				Objects.equals(mobile, account.mobile) &&
+				Objects.equals(roomNumber, account.roomNumber) &&
+				Objects.equals(stateOrProvince, account.stateOrProvince) &&
+				Objects.equals(homePostalAddress, account.homePostalAddress) &&
+				Objects.equals(shadowExpire, account.shadowExpire) &&
+				Objects.equals(manager, account.manager) &&
+				Objects.equals(context, account.context) &&
+				Objects.equals(org, account.org);
+	}
+
 	@Override
 	public String getStateOrProvince() {
 		return this.stateOrProvince;
@@ -635,6 +637,7 @@ public class AccountImpl implements Serializable, Account{
 	}
 
 	@Override
+	@JsonGetter(UserSchema.ORG_KEY)
 	public String getOrg() {
 		if(this.org == null)
 			return "";

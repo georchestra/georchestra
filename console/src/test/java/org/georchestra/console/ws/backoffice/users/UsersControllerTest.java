@@ -12,11 +12,9 @@ import org.georchestra.console.dto.UserSchema;
 import org.georchestra.console.ws.backoffice.roles.RoleProtected;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.springframework.http.HttpMethod;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextOperations;
@@ -28,29 +26,31 @@ import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
 import javax.naming.Name;
 import javax.naming.directory.SearchControls;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
 
 public class UsersControllerTest {
-    private LdapTemplate ldapTemplate ;
-    private LdapContextSource contextSource ;
+    private LdapTemplate ldapTemplate;
+    private LdapContextSource contextSource;
 
-    private UsersController usersCtrl ;
-    private AccountDaoImpl dao ;
-    private RoleDaoImpl roleDao ;
-    private UserRule userRule ;
+    private UsersController usersCtrl;
+    private AccountDaoImpl dao;
+    private RoleDaoImpl roleDao;
+    private UserRule userRule;
     private RoleProtected roles;
 
     private MockHttpServletRequest request;
@@ -65,7 +65,6 @@ public class UsersControllerTest {
         contextSource = Mockito.mock(LdapContextSource.class);
         roles = Mockito.mock(RoleProtected.class);
         AdminLogDao logDao = Mockito.mock(AdminLogDao.class);
-
 
         Mockito.when(contextSource.getBaseLdapPath())
             .thenReturn(new DistinguishedName("dc=georchestra,dc=org"));
@@ -95,74 +94,47 @@ public class UsersControllerTest {
         dao.setLogDao(logDao);
 
         usersCtrl = new UsersController(dao, userRule);
+        usersCtrl.setOrgDao(orgsDao);
 
         request = new MockHttpServletRequest();
         response = new MockHttpServletResponse();
 
-        // Set user connected through http header
-        request.addHeader("sec-username", "testadmin");
+        // Set user connected through spring security
+        List<GrantedAuthority> role = new LinkedList<GrantedAuthority>();
+        role.add(new SimpleGrantedAuthority("ROLE_SUPERUSER"));
+        Authentication auth = new PreAuthenticatedAuthenticationToken("testadmin",
+                null,
+                role);
+        SecurityContextHolder.getContext().setAuthentication(auth);
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @Test(expected = DataServiceException.class)
+    public void testFindAllException() throws DataServiceException {
+        Mockito.doThrow(DataServiceException.class).when(ldapTemplate)
+                .search(any(DistinguishedName.class), anyString(), any(SearchControls.class), any(ContextMapper.class));
+        usersCtrl.findAll();
     }
 
-    @Test
-    public void testFindAllException() throws Exception {
-        Mockito.doThrow(DataServiceException.class).when(ldapTemplate).search((Name) Mockito.any(),
-                Mockito.anyString(), (ContextMapper) Mockito.any());
-        try {
-            usersCtrl.findAll(request, response);
-        } catch (Throwable e) {
-            assertTrue(e instanceof IOException);
-            assertTrue(response.getStatus() == HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-	@Test
+	@Test(expected = NameNotFoundException.class)
 	public void testFindByUidEmpty() throws Exception {
-		
-		usersCtrl.findByUid("nonexistentuser", response);
-		String a = response.getContentAsString();
-		JSONObject ret = new JSONObject(response.getContentAsString());
-		assertTrue(response.getStatus() == HttpServletResponse.SC_NOT_FOUND);
-		assertFalse(ret.getBoolean("success"));
-		assertTrue(ret.getString("error").equals("not_found"));
-
-	}
-
-    @Test
-    public void testFindByUidProtected() throws Exception {
-        usersCtrl.findByUid("geoserver_privileged_user", response);
-
-        JSONObject ret = new JSONObject(response.getContentAsString());
-        assertTrue(response.getStatus() == HttpServletResponse.SC_CONFLICT);
-        assertFalse(ret.getBoolean("success"));
-        assertTrue(ret.getString("error").equals("The user is protected: geoserver_privileged_user"));
+		usersCtrl.findByUid("nonexistentuser");
     }
 
-    @Test
+    @Test(expected = AccessDeniedException.class)
+    public void testFindByUidProtected() throws Exception {
+        usersCtrl.findByUid("geoserver_privileged_user");
+    }
+
+    @Test(expected = NameNotFoundException.class)
     public void testFindByUidNotFound() throws Exception {
         Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (ContextMapper) Mockito.any());
-
-        usersCtrl.findByUid("notfounduser", response);
-
-        JSONObject ret = new JSONObject(response.getContentAsString());
-        assertTrue(response.getStatus() == HttpServletResponse.SC_NOT_FOUND);
-        assertFalse(ret.getBoolean("success"));
-        assertTrue(ret.getString("error").equals("not_found"));
+        usersCtrl.findByUid("notfounduser");
     }
 
-    @Test
+    @Test(expected = NameNotFoundException.class)
     public void testFindByUidDataServiceException() throws Exception {
         Mockito.doThrow(DataServiceException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (ContextMapper) Mockito.any());
-
-        try {
-            usersCtrl.findByUid("failingUser", response);
-        } catch (Throwable e) {
-            assertTrue(e instanceof IOException);
-            assertTrue(response.getStatus() == HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
+        usersCtrl.findByUid("failingUser");
     }
 
     @Test
@@ -170,21 +142,12 @@ public class UsersControllerTest {
         Account pmauduit = AccountFactory.createBrief("pmauduit", "monkey123", "Pierre", "Mauduit",
                 "pmauduit@localhost", "+33123456789", "developer", "");
 
-        Mockito.when(ldapTemplate.lookup(Mockito.any(DistinguishedName.class), eq(UserSchema.ATTR_TO_RETRIEVE), (ContextMapper) Mockito.any())).thenReturn(pmauduit);
-        usersCtrl.findByUid("pmauduit", response);
-
-        JSONObject ret = new JSONObject(response.getContentAsString());
-        assertTrue(response.getStatus() == HttpServletResponse.SC_OK);
-        assertTrue(ret.getString("uid").equals("pmauduit"));
-        assertTrue(ret.getString("mail").equals("pmauduit@localhost"));
-        assertTrue(ret.getString("title").equals("developer"));
-        assertTrue(ret.getString("sn").equals("Mauduit"));
-        assertTrue(ret.getString("description").isEmpty());
-        assertTrue(ret.getString("telephoneNumber").equals("+33123456789"));
-        assertTrue(ret.getString("givenName").equals("Pierre"));
+        Mockito.when(ldapTemplate.lookup(any(DistinguishedName.class), eq(UserSchema.ATTR_TO_RETRIEVE), any(ContextMapper.class))).thenReturn(pmauduit);
+        Account res = usersCtrl.findByUid("pmauduit");
+        assertEquals(pmauduit, res);
     }
 
-    @Test
+    @Test(expected = AccessDeniedException.class)
     public void testCreateProtectedUser() throws Exception {
         JSONObject reqUsr = new JSONObject().
                 put("sn", "geoserver privileged user").
@@ -203,15 +166,10 @@ public class UsersControllerTest {
         request.setContent(reqUsr.toString().getBytes());
         Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup((Name) Mockito.any());
 
-        usersCtrl.create(request, response);
-
-        JSONObject ret = new JSONObject(response.getContentAsString());
-        assertTrue(response.getStatus() == HttpServletResponse.SC_CONFLICT);
-        assertFalse(ret.getBoolean("success"));
-        assertTrue(ret.getString("error").equals("The user is protected: ggeoserverprivilegeduser"));
+        Account res = usersCtrl.create(request);
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testCreateIllegalArgumentException() throws Exception {
         JSONObject reqUsr = new JSONObject().
                 put("sn", "geoserver privileged user").
@@ -225,16 +183,10 @@ public class UsersControllerTest {
         request.setRequestURI("/console/users/geoserver");
         request.setContent(reqUsr.toString().getBytes());
         Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup((Name) Mockito.any());
-
-        usersCtrl.create(request, response);
-
-        JSONObject ret = new JSONObject(response.getContentAsString());
-        assertTrue(response.getStatus() == HttpServletResponse.SC_CONFLICT);
-        assertFalse(ret.getBoolean("success"));
-        assertTrue(ret.getString("error").equals("First Name is required"));
+        usersCtrl.create(request);
     }
 
-    @Test
+    @Test(expected = DuplicatedEmailException.class)
     public void testCreateDuplicateEmailException() throws Exception {
         JSONObject reqUsr = new JSONObject().
                 put("sn", "geoserver privileged user").
@@ -250,13 +202,7 @@ public class UsersControllerTest {
         request.setRequestURI("/console/users/geoserver");
         request.setContent(reqUsr.toString().getBytes());
         Mockito.doThrow(DuplicatedEmailException.class).when(ldapTemplate).lookup((Name) Mockito.any());
-
-        usersCtrl.create(request, response);
-
-        JSONObject ret = new JSONObject(response.getContentAsString());
-        assertTrue(response.getStatus() == HttpServletResponse.SC_CONFLICT);
-        assertFalse(ret.getBoolean("success"));
-        assertTrue(ret.getString("error").equals("duplicated_email"));
+        usersCtrl.create(request);
     }
 
     @Test
@@ -274,79 +220,49 @@ public class UsersControllerTest {
         request.setRequestURI("/console/users/geoserver");
         request.setContent(reqUsr.toString().getBytes());
         Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup((Name) Mockito.any());
-        // TODO: Why 2 different codes checking that the user exists ?
-        Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (ContextMapper) Mockito.any());
-
-
         Mockito.when(ldapTemplate.search((Name) Mockito.any(), Mockito.anyString(),(ContextMapper) Mockito.any()))
             .thenReturn(new ArrayList<Object>());
-
         Mockito.when(ldapTemplate.lookupContext(LdapNameBuilder.newInstance("cn=USER,ou=roles").build()))
             .thenReturn(Mockito.mock(DirContextOperations.class));
 
+        Account res = usersCtrl.create(request);
 
-        usersCtrl.create(request, response);
-
-        JSONObject ret = new JSONObject(response.getContentAsString());
-        assertTrue(response.getStatus() == HttpServletResponse.SC_OK);
-
-        assertTrue(ret.getString("uid").equals("ggeoserverprivilegeduser"));
-        assertTrue(ret.getString("mail").equals("tomcat@localhost"));
-        assertTrue(ret.getString("sn").equals("geoserver privileged user"));
-        assertTrue(ret.getString("facsimileTelephoneNumber").equals("+33123456788"));
-        assertTrue(ret.getString("street").equals("Avenue des Ducs de Savoie"));
-        assertTrue(ret.getString("l").equals("Chambéry"));
-        assertTrue(ret.getString("givenName").equals("GS Priv User"));
-        assertTrue(ret.getString("postalCode").equals("73000"));
-        assertTrue(ret.getString("roomNumber").equals(""));
-        assertTrue(ret.getString("telephoneNumber").equals("+331234567890"));
-        assertTrue(ret.getString("physicalDeliveryOfficeName").equals(""));
-        assertTrue(ret.getString("st").equals(""));
-        assertTrue(ret.getString("postOfficeBox").equals("1234"));
-        assertTrue(ret.getString("mobile").equals(""));
-
+        assertEquals(res.getUid(), "ggeoserverprivilegeduser");
+        assertEquals(res.getEmail(), "tomcat@localhost");
+        assertEquals(res.getSurname(), "geoserver privileged user");
+        assertEquals(res.getFacsimile(), "+33123456788");
+        assertEquals(res.getStreet(), "Avenue des Ducs de Savoie");
+        assertEquals(res.getLocality(), "Chambéry");
+        assertEquals(res.getGivenName(), "GS Priv User");
+        assertEquals(res.getPostalCode(), "73000");
+        assertEquals(res.getRoomNumber(), "");
+        assertEquals(res.getPhone(), "+331234567890");
+        assertEquals(res.getPhysicalDeliveryOfficeName(), "");
+        assertEquals(res.getStateOrProvince(), "");
+        assertEquals(res.getPostOfficeBox(), "1234");
+        assertEquals(res.getMobile(), "");
     }
 
-    @Test
+    @Test(expected = AccessDeniedException.class)
     public void testUpdateUserProtected() throws Exception {
-
-        usersCtrl.update(request, response, "geoserver_privileged_user");
-
-        JSONObject ret = new JSONObject(response.getContentAsString());
-        assertTrue(response.getStatus() == HttpServletResponse.SC_CONFLICT);
-        assertFalse(ret.getBoolean("success"));
-        assertTrue(ret.getString("error").equals("The user is protected, it cannot be updated: geoserver_privileged_user"));
+        usersCtrl.update("geoserver_privileged_user", request);
     }
 
-	@Test
+	@Test(expected = NameNotFoundException.class)
 	public void testUpdateUserNotFound() throws Exception {
-
 		Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate)
-				.lookup(eq(new DistinguishedName("uid=usernotfound,ou=users")), (ContextMapper) Mockito.any());
-
-		usersCtrl.update(request, response, "usernotfound");
-
-		JSONObject ret = new JSONObject(response.getContentAsString());
-		assertTrue(response.getStatus() == HttpServletResponse.SC_NOT_FOUND);
-		assertFalse(ret.getBoolean("success"));
-		assertTrue(ret.getString("error").equals("not_found"));
+				.lookup(eq(new DistinguishedName("uid=usernotfound,ou=users")), Mockito.any(ContextMapper.class));
+		usersCtrl.update("usernotfound", request);
 	}
 
-    @Test
+    @Test(expected = DataServiceException.class)
     public void testUpdateUserDataServiceException() throws Exception {
-
         Mockito.doThrow(DataServiceException.class).when(ldapTemplate)
-            .lookup(eq(new DistinguishedName("uid=pmauduit,ou=users")), (ContextMapper) Mockito.any());
-
-        try {
-            usersCtrl.update(request, response, "pmauduit");
-        } catch (Throwable e) {
-            assertTrue(e instanceof IOException);
-            assertTrue(response.getStatus() == HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
+                .lookup(eq(new DistinguishedName("uid=pmauduit,ou=users")), any(String[].class), any(ContextMapper.class));
+        usersCtrl.update("pmauduit", request);
     }
 
-    @Test
+    @Test(expected = DuplicatedEmailException.class)
     public void testUpdateDuplicatedEmailException() throws Exception {
         JSONObject reqUsr = new JSONObject().put("mail","tomcat2@localhost");
         request.setContent(reqUsr.toString().getBytes());
@@ -372,15 +288,10 @@ public class UsersControllerTest {
         Mockito.doReturn(fakedAccount).when(ldapTemplate).lookup(Mockito.any(DistinguishedName.class),
                 eq(UserSchema.ATTR_TO_RETRIEVE), (ContextMapper) Mockito.any());
 
-        usersCtrl.update(request, response, "pmauduit");
-
-        JSONObject ret = new JSONObject(response.getContentAsString());
-        assertTrue(response.getStatus() == HttpServletResponse.SC_CONFLICT);
-        assertFalse(ret.getBoolean("success"));
-        assertTrue(ret.getString("error").equals("duplicated_email"));
+        usersCtrl.update("pmauduit", request);
     }
 
-    @Test
+    @Test(expected = DataServiceException.class)
     public void testUpdateDataServiceExceptionWhileModifying() throws Exception {
         JSONObject reqUsr = new JSONObject().put("mail","tomcat2@localhost");
         request.setContent(reqUsr.toString().getBytes());
@@ -392,32 +303,19 @@ public class UsersControllerTest {
         Mockito.doReturn(fakedAccount).when(ldapTemplate).lookup((Name) Mockito.any(), eq(UserSchema.ATTR_TO_RETRIEVE), (ContextMapper) Mockito.any());
         Mockito.doThrow(DataServiceException.class).when(ldapTemplate).search(eq(DistinguishedName.EMPTY_PATH),
                 eq(mFilter),(SearchControls) Mockito.any(), (ContextMapper) Mockito.any());
-        
-        
 
-        try {
-            usersCtrl.update(request, response, "pmauduit");
-        } catch (Throwable e) {
-            assertTrue(e instanceof IOException);
-            assertTrue(response.getStatus() ==  HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
+        usersCtrl.update("pmauduit", request);
+
     }
 
-    @Test
+    @Test(expected = JSONException.class)
     public void testUpdateBadJSON() throws Exception {
         request.setContent("{[this is ] } not valid JSON obviously ....".getBytes());
-        Mockito.when(ldapTemplate.lookup(Mockito.any(Name.class), Mockito.any(ContextMapper.class))).thenReturn(
+        Mockito.when(ldapTemplate.lookup(any(Name.class), any(String[].class), any(ContextMapper.class))).thenReturn(
               AccountFactory.createBrief("pmauduit", "monkey123", "Pierre", "Mauduit",
               "pmt@c2c.com", "+123", "developer", "developer"));
-        try {
-            usersCtrl.update(request, response, "pmauduit");
-        } catch (Throwable e) {
-            assertTrue(e instanceof IOException);
-            JSONObject ret = new JSONObject(response.getContentAsString());
-            assertFalse(ret.getBoolean("success"));
-            assertTrue(ret.getString("error").equals("params_not_understood"));
-        }
 
+        usersCtrl.update("pmauduit", request);
     }
 
     @Test
@@ -433,10 +331,16 @@ public class UsersControllerTest {
                 .put("title", "CEO")
                 .put("description", "CEO geOrchestra Corporation")
                 .put("givenName", "newPierre");
+
         request.setContent(reqUsr.toString().getBytes());
-        Account fakedAccount = AccountFactory.createBrief("pmauduit", "monkey123", "Pierre",
-                "pmauduit", "pmauduit@georchestra.org", "+33123456789",
-                "developer & sysadmin", "dev&ops");
+        Account fakedAccount = AccountFactory.createBrief("pmauduit",
+                "monkey123",
+                "Pierre",
+                "pmauduit",
+                "pmauduit@georchestra.org",
+                "+33123456789",
+                "developer & sysadmin",
+                "dev&ops");
         Mockito.doReturn(fakedAccount).when(ldapTemplate).lookup((Name) Mockito.any(), (String[]) Mockito.any(), (ContextMapper) Mockito.any());
         // Returns the same account when searching it back
         String mFilter = "(&(objectClass=inetOrgPerson)(objectClass=organizationalPerson)"
@@ -447,18 +351,24 @@ public class UsersControllerTest {
                 eq(mFilter), (SearchControls) Mockito.any(), (ContextMapper) Mockito.any());
         Mockito.doReturn(Mockito.mock(DirContextOperations.class)).when(ldapTemplate).lookupContext((Name) Mockito.any());
 
-        usersCtrl.update(request, response, "pmauduit");
-
-        JSONObject ret = new JSONObject(response.getContentAsString());
-        assertTrue(response.getStatus() == HttpServletResponse.SC_OK);
+        Account ret = usersCtrl.update("pmauduit", request);
 
         // Add missing param in request
-        reqUsr.put("mail", "pmauduit@georchestra.org");
-        reqUsr.put("cn", "newPierre newPmauduit");
-        reqUsr.put("uid", "pmauduit");
-        reqUsr.put("org", "");
-        
-        assertTrue(UsersControllerTest.jsonEquals(reqUsr, ret));
+        assertEquals("newPmauduit", ret.getSurname());
+        assertEquals("newAddress", ret.getPostalAddress());
+        assertEquals("newPOBox", ret.getPostOfficeBox());
+        assertEquals("73000", ret.getPostalCode());
+        assertEquals("newStreet", ret.getStreet());
+        assertEquals("newLocality", ret.getLocality());
+        assertEquals("+33987654321", ret.getPhone());
+        assertEquals("+339182736745", ret.getFacsimile());
+        assertEquals("CEO", ret.getTitle());
+        assertEquals("CEO geOrchestra Corporation", ret.getDescription());
+        assertEquals("newPierre", ret.getGivenName());
+        assertEquals("pmauduit@georchestra.org", ret.getEmail());
+        assertEquals("newPierre newPmauduit", ret.getCommonName());
+        assertEquals("pmauduit", ret.getUid());
+        assertEquals("", ret.getOrg());
 
     }
 
@@ -496,60 +406,42 @@ public class UsersControllerTest {
         Mockito.doReturn(Mockito.mock(DirContextOperations.class)).
             when(ldapTemplate).lookupContext((Name) Mockito.any());
 
-        usersCtrl.update(request, response, "pmauduit");
+        Account ret = usersCtrl.update("pmauduit", request);
 
-        JSONObject ret = new JSONObject(response.getContentAsString());
-        assertTrue(response.getStatus() == HttpServletResponse.SC_OK);
-
-        // Add missing param in request
-        reqUsr.put("mail", "pmauduit@georchestra.org");
-        reqUsr.put("cn", "newPierre newPmauduit");
-        reqUsr.put("uid", "pmauduit");
-        reqUsr.put("org", "");
-
-        assertTrue(UsersControllerTest.jsonEquals(reqUsr, ret));
-
+        assertEquals("", ret.getPhone());
+        assertEquals("newPmauduit", ret.getSurname());
+        assertEquals("newAddress", ret.getPostalAddress());
+        assertEquals("newPOBox", ret.getPostOfficeBox());
+        assertEquals("73000", ret.getPostalCode());
+        assertEquals("newStreet", ret.getStreet());
+        assertEquals("newLocality", ret.getLocality());
+        assertEquals("", ret.getPhone());
+        assertEquals("+339182736745", ret.getFacsimile());
+        assertEquals("CEO", ret.getTitle());
+        assertEquals("CEO geOrchestra Corporation", ret.getDescription());
+        assertEquals("newPierre", ret.getGivenName());
+        assertEquals("pmauduit@georchestra.org", ret.getEmail());
+        assertEquals("newPierre newPmauduit", ret.getCommonName());
+        assertEquals("pmauduit", ret.getUid());
+        assertEquals("", ret.getOrg());
     }
 
-    @Test
+    @Test(expected = AccessDeniedException.class)
     public void testDeleteUserProtected() throws Exception {
         usersCtrl.delete("geoserver_privileged_user", request, response);
-
-        JSONObject ret = new JSONObject(response.getContentAsString());
-        assertTrue(response.getStatus() == HttpServletResponse.SC_CONFLICT);
-        assertFalse(ret.getBoolean("success"));
-        assertTrue(ret.getString("error").equals("The user is protected, it cannot be deleted: geoserver_privileged_user"));
-
     }
 
-    @Test
-    public void testDeleteDataServiceExceptionCaught() throws Exception {
+    @Test(expected = DataServiceException.class)
+    public void testDeleteDataServiceExDataServiceExceptionceptionCaught() throws Exception {
         Mockito.doThrow(DataServiceException.class).when(ldapTemplate).unbind((Name) Mockito.any(), eq(true));
-        boolean caught = false;
-
-
-        try {
-            usersCtrl.delete("pmauduit", request, response);
-        } catch (Throwable e) {
-            caught = true;
-            assertTrue(e instanceof IOException);
-            assertTrue(response.getStatus() == HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
-        assertTrue(caught);
+        usersCtrl.delete("pmauduit", request, response);
     }
 
-    @Test
+    @Test(expected = NameNotFoundException.class)
     public void testDeleteNotFoundExceptionCaught() throws Exception {
         Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).unbind((Name) Mockito.any(), eq(true));
-
         usersCtrl.delete("pmauduitnotfound", request, response);
-
-        JSONObject ret = new JSONObject(response.getContentAsString());
-        assertTrue(response.getStatus() == HttpServletResponse.SC_NOT_FOUND);
-        assertFalse(ret.getBoolean("success"));
-        assertTrue(ret.getString("error").equals("not_found"));
     }
-    
 
     @Test
     public void testResquestProducesDelete() throws Exception {
@@ -557,37 +449,4 @@ public class UsersControllerTest {
         assertTrue(response.getContentType().equals("application/json"));
     }
 
-
-    private static boolean jsonEquals(JSONObject a, JSONObject b){
-
-        Iterator<String> aIt = a.sortedKeys();
-        Set<String> aKeys = new HashSet<String>();
-        while(aIt.hasNext()){
-            String key = aIt.next();
-            aKeys.add(key);
-            String aValue = null;
-            String bValue = null;
-            try {
-                aValue = a.getString(key);
-                bValue = b.getString(key);
-            } catch (JSONException e) {
-                return false;
-            }
-
-            if(bValue == null)
-                return false;
-            if(!aValue.equals(bValue))
-                return false;
-        }
-        Iterator<String> bIt = b.sortedKeys();
-        Set<String> bKeys = new HashSet<String>();
-        while(bIt.hasNext()) {
-            String key = bIt.next();
-            bKeys.add(key);
-        }
-        if(bKeys.size() != aKeys.size())
-            return false;
-
-        return true;
-    }
 }

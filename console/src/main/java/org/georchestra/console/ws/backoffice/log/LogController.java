@@ -22,7 +22,11 @@ package org.georchestra.console.ws.backoffice.log;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.dao.AdminLogDao;
+import org.georchestra.console.dao.DelegationDao;
+import org.georchestra.console.ds.OrgsDao;
+import org.georchestra.console.dto.Org;
 import org.georchestra.console.model.AdminLogEntry;
+import org.georchestra.console.model.DelegationEntry;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,6 +35,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,6 +51,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -50,9 +62,14 @@ public class LogController {
 
 	private static final String BASE_MAPPING = "/private";
 	private static final String REQUEST_MAPPING = BASE_MAPPING + "/admin_logs";
+	private static GrantedAuthority ROLE_SUPERUSER = new SimpleGrantedAuthority("ROLE_SUPERUSER");
 
 	@Autowired
 	private AdminLogDao logDao;
+
+	@Autowired
+	private DelegationDao delegationDao;
+	private OrgsDao orgsDao;
 
 	/**
 	 * Returns array of logs using json syntax.
@@ -80,41 +97,47 @@ public class LogController {
 	 * </pre>
 	 *
 	 */
-	@RequestMapping(value=REQUEST_MAPPING + "/{target}/{limit}/{page}", method=RequestMethod.GET, produces = "application/json; charset=utf-8")
+	@RequestMapping(value=REQUEST_MAPPING + "/{target}/{limit}/{page}", method=RequestMethod.GET,
+			produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String find( HttpServletRequest request, @PathVariable String target, @PathVariable int limit, @PathVariable int page) throws JSONException {
+	public List<AdminLogEntry> find(@PathVariable String target, @PathVariable int limit, @PathVariable int page){
 
-		List<AdminLogEntry> logs = this.logDao.findByTarget(target, new PageRequest(page, limit, new Sort(Sort.Direction.DESC, "date")));
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-		JSONArray res = new JSONArray();
-		for(AdminLogEntry log: logs)
-			res.put(log.toJSON());
+		// Filter logs by orgs users if user is not SUPERUSER
+		if(!auth.getAuthorities().contains(ROLE_SUPERUSER)){
+			List<String> users = new ArrayList<String>();
+			DelegationEntry delegation = this.delegationDao.findOne(auth.getName());
+			String[] orgs = delegation.getOrgs();
+			for(String org: orgs)
+				users.addAll(this.orgsDao.findByCommonName(org).getMembers());
+			if(!users.contains(target))
+				throw new AccessDeniedException("User not under delegation");
+		}
 
-		return new JSONObject().put("logs", res).toString(4);
+		return this.logDao.findByTarget(target, new PageRequest(page, limit, new Sort(Sort.Direction.DESC, "date")));
 	}
 
 
-	@RequestMapping(value=REQUEST_MAPPING + "/{limit}/{page}", method=RequestMethod.GET, produces = "application/json; charset=utf-8")
+	@RequestMapping(value=REQUEST_MAPPING + "/{limit}/{page}", method=RequestMethod.GET,
+			produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String find( HttpServletRequest request, @PathVariable int limit, @PathVariable int page) throws JSONException {
+	public List<AdminLogEntry> find( HttpServletRequest request, @PathVariable int limit, @PathVariable int page){
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-		Page<AdminLogEntry> logs = this.logDao.findAll(new PageRequest(page, limit, new Sort(Sort.Direction.DESC, "date")));
+		// Filter logs by orgs users if user is not SUPERUSER
+		if(!auth.getAuthorities().contains(ROLE_SUPERUSER)){
+			List<String> users = new ArrayList<String>();
+			DelegationEntry delegation = this.delegationDao.findOne(auth.getName());
+			String[] orgs = delegation.getOrgs();
+			for(String org: orgs)
+				users.addAll(this.orgsDao.findByCommonName(org).getMembers());
+			return this.logDao.findByTargets(users.toArray(new String[users.size()]),
+					new PageRequest(page, limit, new Sort(Sort.Direction.DESC, "date")));
+		} else {
+			return this.logDao.findAll(new PageRequest(page, limit, new Sort(Sort.Direction.DESC, "date"))).getContent();
+		}
 
-		JSONArray res = new JSONArray();
-		for(AdminLogEntry log: logs)
-			res.put(log.toJSON());
-
-		return new JSONObject().put("logs", res).toString(4);
 	}
 
-	@ExceptionHandler(Exception.class)
-	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-	@ResponseBody
-	public String handleException(Exception e, HttpServletResponse response) throws JSONException {
-		LOG.error(e.getMessage());
-		response.setContentType("application/json; charset=utf-8");
-		JSONObject res = new JSONObject();
-		res.put("error", e.getMessage());
-		return res.toString();
-	}
 }

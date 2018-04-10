@@ -49,7 +49,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PostFilter;
@@ -121,36 +120,6 @@ public class RolesController {
 	public RolesController( RoleDao dao, UserRule userRule){
 		this.roleDao = dao;
 		this.filter = new ProtectedUserFilter( userRule.getListUidProtected() );
-	}
-
-	@ExceptionHandler(AccessDeniedException.class)
-	@ResponseStatus(value = HttpStatus.FORBIDDEN)
-	@ResponseBody
-	public String handleAccessDenied(Exception e, HttpServletResponse response) throws IOException {
-		LOG.error(e.getMessage());
-		ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, e.getMessage()),
-				HttpServletResponse.SC_FORBIDDEN);
-		throw new IOException(e);
-	}
-
-	@ExceptionHandler(NameNotFoundException.class)
-	@ResponseStatus(value = HttpStatus.NOT_FOUND)
-	@ResponseBody
-	public String handleNotFound(Exception e, HttpServletResponse response) throws IOException {
-		LOG.error(e.getMessage());
-		ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, e.getMessage()),
-				HttpServletResponse.SC_NOT_FOUND);
-		throw new IOException(e);
-	}
-
-	@ExceptionHandler(Exception.class)
-	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-	@ResponseBody
-	public String handleException(Exception e, HttpServletResponse response) throws IOException {
-		LOG.error(e.getMessage());
-		ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, e.getMessage()),
-				HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-		throw new IOException(e);
 	}
 
 	/**

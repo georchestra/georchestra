@@ -38,4 +38,6 @@ public interface AdminLogDao extends PagingAndSortingRepository<AdminLogEntry, L
 
     List<AdminLogEntry> findByTarget(String target, Pageable range);
 
+    List<AdminLogEntry> findByTargets(String[] targets, Pageable range);
+
 }
