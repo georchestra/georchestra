@@ -1,7 +1,7 @@
 package org.georchestra.console.ws.backoffice.roles;
 
 import org.georchestra.console.dao.AdminLogDao;
-import org.georchestra.console.dao.Delegation2Dao;
+import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.dao.DelegationDao;
 import org.georchestra.console.ds.*;
 import org.georchestra.console.dto.Role;
@@ -96,13 +96,13 @@ public class RolesControllerTest {
 		Mockito.when(delegationDao.findOne(Mockito.eq("testuser"))).thenReturn(resTestuser);
 		roleCtrl.setDelegationDao(delegationDao);
 
-        Delegation2Dao delegation2Dao = Mockito.mock(Delegation2Dao.class);
+        AdvancedDelegationDao advancedDelegationDao = Mockito.mock(AdvancedDelegationDao.class);
         Set<String> usersUnderDelegation = new HashSet<String>();
         usersUnderDelegation.add("testeditor");
         usersUnderDelegation.add("testreviewer");
 
-        Mockito.when(delegation2Dao.findUsersUnderDelegation(Mockito.eq("testuser"))).thenReturn(usersUnderDelegation);
-        roleCtrl.setDelegation2Dao(delegation2Dao);
+        Mockito.when(advancedDelegationDao.findUsersUnderDelegation(Mockito.eq("testuser"))).thenReturn(usersUnderDelegation);
+        roleCtrl.setAdvancedDelegationDao(advancedDelegationDao);
 
 		request = new MockHttpServletRequest();
 		response = new MockHttpServletResponse();

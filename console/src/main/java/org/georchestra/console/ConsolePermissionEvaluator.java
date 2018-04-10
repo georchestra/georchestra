@@ -5,7 +5,7 @@ import java.util.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.console.dao.Delegation2Dao;
+import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.dao.DelegationDao;
 import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.dto.Role;
@@ -25,7 +25,7 @@ public class ConsolePermissionEvaluator implements PermissionEvaluator {
     private DelegationDao delegationDao;
 
     @Autowired
-    private Delegation2Dao delegation2Dao;
+    private AdvancedDelegationDao advancedDelegationDao;
 
     @Autowired
     private OrgsDao orgsDao;
@@ -41,11 +41,12 @@ public class ConsolePermissionEvaluator implements PermissionEvaluator {
                 return false;
             }
 
+            // Filter users in role and role itself
             if (targetDomainObject instanceof Role) {
                 Role r = (Role) targetDomainObject;
                 List<String> userList = r.getUserList();
                 // Remove users not under delegation
-                userList.retainAll(this.delegation2Dao.findUsersUnderDelegation(username));
+                userList.retainAll(this.advancedDelegationDao.findUsersUnderDelegation(username));
                 // Remove role not under delegation
                 return Arrays.asList(delegation.getRoles()).contains(r.getName());
             }

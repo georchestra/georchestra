@@ -176,7 +176,7 @@
         <property name="entityManagerFactory" ref="entityManagerFactory" />
     </bean>
 
-  <bean id="delegation2Dao" class="org.georchestra.console.dao.Delegation2Dao"/>
+  <bean id="advancedDelegationDao" class="org.georchestra.console.dao.AdvancedDelegationDao"/>
 
   <bean id="expiredTokenCleanTask" class="org.georchestra.console.bs.ExpiredTokenCleanTask"/>
 

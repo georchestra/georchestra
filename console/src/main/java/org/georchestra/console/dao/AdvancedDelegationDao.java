@@ -15,7 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public class Delegation2Dao {
+public class AdvancedDelegationDao {
 
     @Autowired
     private JpaTransactionManager tm;

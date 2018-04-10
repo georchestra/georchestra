@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.console.dao.Delegation2Dao;
+import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.dao.DelegationDao;
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.DataServiceException;
@@ -54,7 +54,6 @@ import org.springframework.ldap.NameNotFoundException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.access.prepost.PreFilter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -92,7 +91,7 @@ public class RolesController {
 	private AccountDao accountDao;
 
 	@Autowired
-	private Delegation2Dao delegation2Dao;
+	private AdvancedDelegationDao advancedDelegationDao;
 	@Autowired
 	private DelegationDao delegationDao;
 
@@ -426,7 +425,7 @@ public class RolesController {
 
 	public void checkAuthorization(String delegatedAdmin, List<String> users, List<String> putRole, List<String> deleteRole) throws AccessDeniedException {
 		// Verify authorization
-		Set<String> usersUnderDelegation = this.delegation2Dao.findUsersUnderDelegation(delegatedAdmin);
+		Set<String> usersUnderDelegation = this.advancedDelegationDao.findUsersUnderDelegation(delegatedAdmin);
 		if(!usersUnderDelegation.containsAll(users))
 			throw new AccessDeniedException("Some users are not under delegation");
 		DelegationEntry delegation = this.delegationDao.findOne(delegatedAdmin);
@@ -542,12 +541,12 @@ public class RolesController {
         this.accountDao = ad;
     }
 
-	public Delegation2Dao getDelegation2Dao() {
-		return delegation2Dao;
+	public AdvancedDelegationDao getAdvancedDelegationDao() {
+		return advancedDelegationDao;
 	}
 
-	public void setDelegation2Dao(Delegation2Dao delegation2Dao) {
-		this.delegation2Dao = delegation2Dao;
+	public void setAdvancedDelegationDao(AdvancedDelegationDao advancedDelegationDao) {
+		this.advancedDelegationDao = advancedDelegationDao;
 	}
 
 	public DelegationDao getDelegationDao() {
