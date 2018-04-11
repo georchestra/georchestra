@@ -5,6 +5,8 @@ import org.georchestra.console.dto.Org;
 import org.georchestra.console.model.DelegationEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.annotation.PostConstruct;
 import java.sql.PreparedStatement;
@@ -16,6 +18,8 @@ import java.util.List;
 import java.util.Set;
 
 public class AdvancedDelegationDao {
+
+    public static final GrantedAuthority ROLE_SUPERUSER = new SimpleGrantedAuthority("ROLE_SUPERUSER");
 
     @Autowired
     private JpaTransactionManager tm;

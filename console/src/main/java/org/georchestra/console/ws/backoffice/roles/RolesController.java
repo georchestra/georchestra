@@ -131,9 +131,9 @@ public class RolesController {
 	@PostFilter("hasPermission(filterObject, 'read')")
 	@ResponseBody
 	public List<Role> findAll() throws DataServiceException {
-			List<Role> list = this.roleDao.findAll();
-			list.add(this.generateTemporaryRole());
-			return list;
+		List<Role> list = this.roleDao.findAll();
+		list.add(this.generateTemporaryRole());
+		return list;
 	}
 
 	/**

@@ -21,32 +21,39 @@ package org.georchestra.console.ws.backoffice.users;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.dto.Account;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Controller
 public class UsersExport {
 
     private AccountDao accountDao;
+
+    @Autowired
+    private AdvancedDelegationDao advancedDelegationDao;
 
     // Used for testing only
     public void setAccountDao(AccountDao accountDao) {
 		this.accountDao = accountDao;
 	}
 
-
-
-
 	private static final Log LOG = LogFactory.getLog(UsersController.class.getName());
-    
 
     // Outlook csv header
     private final String OUTLOOK_CSV_HEADER = "First Name,Middle Name,Last Name,Title,Suffix,Initials,Web Page,Gender,Birthday,Anniversary,"
@@ -65,53 +72,65 @@ public class UsersExport {
         this.accountDao = dao;
     }
     
-    
 
     @RequestMapping(value = "/private/users.csv", method = RequestMethod.POST,
             produces = "text/csv; charset=utf-8")
     @ResponseBody
-    public String getUsersAsCsv(@RequestParam(value="users") String users) throws Exception {
-        JSONArray jsonUsers = new JSONArray(users);
-        StringBuilder ret1 = new StringBuilder();
-        ret1.append(OUTLOOK_CSV_HEADER); // add csv outlook header
+    public String getUsersAsCsv(@RequestParam(value="users") String rawUsers) throws Exception {
+        Set<String> users = this.parseRequest(rawUsers);
+        StringBuilder res = new StringBuilder();
+        res.append(OUTLOOK_CSV_HEADER); // add csv outlook header
         
-        for(int i = 0; i < jsonUsers.length(); ++ i){
+        for(String user: users){
             try {
-                Account a = accountDao.findByUID(jsonUsers.getString(i));
-                ret1.append(a.toCsv());
+                Account a = accountDao.findByUID(user);
+                res.append(a.toCsv());
             } catch (NameNotFoundException e) {
-                LOG.error(String.format("User [%s] not found, skipping", jsonUsers.getString(i)), e);
+                LOG.error(String.format("User [%s] not found, skipping", user), e);
             }
         }
 
-        return ret1.toString();
+        return res.toString();
     }
-    
-
-    
 
     @RequestMapping(value = "/private/users.vcf", method = RequestMethod.POST,
             produces = "text/x-vcard; charset=utf-8")
     @ResponseBody
-    public String getUsersAsVcard(@RequestParam(value="users") String users) throws Exception {
-        JSONArray usersAr = new JSONArray(users);
+    public String getUsersAsVcard(@RequestParam(value="users") String rawUsers) throws Exception {
+        Set<String> users = this.parseRequest(rawUsers);
+
         StringBuilder ret = new StringBuilder();
-        for (int i = 0; i < usersAr.length(); ++ i) {
+        for (String user: users) {
             try {
-                Account a = accountDao.findByUID(usersAr.getString(i));
+                Account a = accountDao.findByUID(user);
                 ret.append(a.toVcf());
             } catch (NameNotFoundException e) {
-                LOG.error(String.format("User [%s] not found, skipping", usersAr.getString(i)), e);
+                LOG.error(String.format("User [%s] not found, skipping", user), e);
             }
         }
 
         return ret.toString();
-        
     }
 
-    
-    
-    
-    
+    /**
+     * Parse JSON string and check that connected user has permissions to view data on requested users
+     *
+     * @param rawUsers JSON string to parse
+     * @return Parsed user list
+     * @throws AccessDeniedException if current user does not have permissions to view data of all requested users
+     */
+    private Set<String> parseRequest(String rawUsers) throws JSONException {
+        JSONArray jsonUsers = new JSONArray(rawUsers);
+        Set<String> users = new HashSet<>();
+        for(int i=0;i<jsonUsers.length();i++)
+            users.add(jsonUsers.getString(i));
+
+        // check if user is under delegation for delegated admins
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if(!auth.getAuthorities().contains(this.advancedDelegationDao.ROLE_SUPERUSER))
+            if(!this.advancedDelegationDao.findUsersUnderDelegation(auth.getName()).containsAll(users))
+                throw new AccessDeniedException("Some user not under delegation");
+        return users;
+    }
 
 }
