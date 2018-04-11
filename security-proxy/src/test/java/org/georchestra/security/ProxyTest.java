@@ -9,6 +9,8 @@ import java.net.URI;
 import java.net.URL;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
@@ -16,6 +18,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.message.BasicHttpResponse;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.util.ReflectionUtils;
@@ -137,4 +140,75 @@ public class ProxyTest {
         assertTrue(ret.toString().contains("email=psc%2Btestuser%40georchestra.org"));
     }
 
+    @Test
+    public void testReconstructUrlParametersWithFormEncodedPost() throws Exception {
+        Method m = ReflectionUtils.findMethod(Proxy.class, "reconstructUrlParameters", HttpServletRequest.class);
+        m.setAccessible(true);
+
+        MockHttpServletRequest mockedRequest = new MockHttpServletRequest();
+        mockedRequest.setRequestURI("http://localhost/header/");
+        mockedRequest.setMethod(HttpMethod.POST.toString());
+        mockedRequest.setContent("param_passed_as_post=true".getBytes());
+        mockedRequest.setQueryString("active=geonetwork&extra=params");
+
+        String ret = (String) ReflectionUtils.invokeMethod(m, proxy, mockedRequest);
+
+        assertFalse("POSTed parameters found in the reconstructed query string",
+                ret.contains("param_passed_as_post"));
+    }
+
+    @Test
+    public void testReconstructUrlParametersEmptyStringURI() throws Exception {
+        Method m = ReflectionUtils.findMethod(Proxy.class, "reconstructUrlParameters", HttpServletRequest.class);
+        m.setAccessible(true);
+
+        MockHttpServletRequest mockedRequest = new MockHttpServletRequest();
+        mockedRequest.setRequestURI("http://localhost/header/");
+        String ret = (String) ReflectionUtils.invokeMethod(m, proxy, mockedRequest);
+
+        assertTrue("expected an empty query string", "".equals(ret));
+    }
+
+    @Test
+    public void testReconstructUrlParametersStringURIMultipleValues() throws Exception {
+        Method m = ReflectionUtils.findMethod(Proxy.class, "reconstructUrlParameters", HttpServletRequest.class);
+        m.setAccessible(true);
+
+        MockHttpServletRequest mockedRequest = new MockHttpServletRequest();
+        mockedRequest.setQueryString("extra=param1&extra=param2&another=param");
+
+        mockedRequest.setRequestURI("http://localhost/header/");
+        String ret = (String) ReflectionUtils.invokeMethod(m, proxy, mockedRequest);
+
+        assertTrue("multiple values for parameter name extra", ret.contains("extra=param1") && ret.contains("extra=param2"));
+    }
+
+    @Test
+    public void testReconstructUrlParametersStringURINoValue() throws Exception {
+        Method m = ReflectionUtils.findMethod(Proxy.class, "reconstructUrlParameters", HttpServletRequest.class);
+        m.setAccessible(true);
+
+        MockHttpServletRequest mockedRequest = new MockHttpServletRequest();
+        mockedRequest.setQueryString("ticket=bbb&login&nonvaluatedparam&5");
+
+        mockedRequest.setRequestURI("http://localhost/geoserver/");
+        String ret = (String) ReflectionUtils.invokeMethod(m, proxy, mockedRequest);
+
+        assertTrue("multiple values for parameter name extra", ret.contains("nonvaluatedparam") && ! ret.contains("login")
+                && ! ret.contains("ticket"));
+    }
+
+    @Test
+    public void testReconstructUrlParametersStringURIAccentedChar() throws Exception {
+        Method m = ReflectionUtils.findMethod(Proxy.class, "reconstructUrlParameters", HttpServletRequest.class);
+        m.setAccessible(true);
+
+        MockHttpServletRequest mockedRequest = new MockHttpServletRequest();
+        mockedRequest.setQueryString("éééààà=àéàéàé");
+
+        mockedRequest.setRequestURI("http://localhost/geoserver/");
+        String ret = (String) ReflectionUtils.invokeMethod(m, proxy, mockedRequest);
+
+        assertTrue("Parameters have been mangled", "?éééààà=àéàéàé".equals(ret));
+    }
 }
