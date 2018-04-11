@@ -54,6 +54,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -70,6 +71,8 @@ import org.springframework.web.bind.annotation.*;
 public class RolesController {
 
 	private static final Log LOG = LogFactory.getLog(RolesController.class.getName());
+
+	public static final GrantedAuthority ROLE_SUPERUSER = new SimpleGrantedAuthority("ROLE_SUPERUSER");
 
 	private static final String BASE_MAPPING = "/private";
 	private static final String BASE_RESOURCE = "roles";
@@ -153,13 +156,21 @@ public class RolesController {
 	 * @throws IOException
 	 */
 	@RequestMapping(value=REQUEST_MAPPING+"/{cn:.+}", method=RequestMethod.GET, produces="application/json; charset=utf-8")
-	@PostFilter("hasPermission(filterObject, 'read')")
 	@ResponseBody
 	public Role findByCN(@PathVariable String cn) throws DataServiceException {
+		Role res;
+
 		if(cn.equals(RolesController.VIRTUAL_TEMPORARY_ROLE_NAME))
-			return this.generateTemporaryRole();
+			res = this.generateTemporaryRole();
 		else
-			return this.roleDao.findByCommonName(cn);
+			res = this.roleDao.findByCommonName(cn);
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if(!auth.getAuthorities().contains(ROLE_SUPERUSER)) {
+			if(!Arrays.asList(this.delegationDao.findOne(auth.getName()).getRoles()).contains(cn))
+				throw new AccessDeniedException("Role not under delegation");
+			res.getUserList().retainAll(this.advancedDelegationDao.findUsersUnderDelegation(auth.getName()));
+		}
+		return res;
 	}
 
 	private Role generateTemporaryRole() {

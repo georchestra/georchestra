@@ -119,12 +119,18 @@ public class Org implements Comparable<Org> {
 
     @JsonGetter(OrgExt.JSON_ORG_TYPE)
     public String getOrgType(){
-        return this.orgExt.getOrgType();
+        if(this.orgExt == null)
+            return null;
+        else
+            return this.orgExt.getOrgType();
     }
 
     @JsonGetter(OrgExt.JSON_ADDRESS)
     public String getOrgAddress(){
-        return this.orgExt.getAddress();
+        if(this.orgExt == null)
+            return null;
+        else
+            return this.orgExt.getAddress();
     }
 
 

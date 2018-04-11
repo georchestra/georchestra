@@ -22,6 +22,7 @@ package org.georchestra.console.ws.backoffice.log;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.dao.AdminLogDao;
+import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.dao.DelegationDao;
 import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.dto.Org;
@@ -54,6 +55,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 public class LogController {
@@ -69,7 +71,10 @@ public class LogController {
 
 	@Autowired
 	private DelegationDao delegationDao;
+	@Autowired
 	private OrgsDao orgsDao;
+	@Autowired
+	private AdvancedDelegationDao advancedDelegationDao;
 
 	/**
 	 * Returns array of logs using json syntax.
@@ -127,12 +132,8 @@ public class LogController {
 
 		// Filter logs by orgs users if user is not SUPERUSER
 		if(!auth.getAuthorities().contains(ROLE_SUPERUSER)){
-			List<String> users = new ArrayList<String>();
-			DelegationEntry delegation = this.delegationDao.findOne(auth.getName());
-			String[] orgs = delegation.getOrgs();
-			for(String org: orgs)
-				users.addAll(this.orgsDao.findByCommonName(org).getMembers());
-			return this.logDao.findByTargets(users.toArray(new String[users.size()]),
+			Set<String> users = this.advancedDelegationDao.findUsersUnderDelegation(auth.getName());
+			return this.logDao.myFilter(users,
 					new PageRequest(page, limit, new Sort(Sort.Direction.DESC, "date")));
 		} else {
 			return this.logDao.findAll(new PageRequest(page, limit, new Sort(Sort.Direction.DESC, "date"))).getContent();

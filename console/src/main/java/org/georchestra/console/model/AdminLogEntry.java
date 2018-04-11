@@ -34,8 +34,8 @@ import java.util.Date;
 @NamedQueries(
         {@NamedQuery(name = "AdminLogEntry.findByTargetPageable",
                 query = "SELECT l FROM AdminLogEntry l WHERE l.target = :target ORDER BY l.date DESC"),
-         @NamedQuery(name = "AdminLogEntry.findByTargetsPageable",
-                 query = "SELECT l FROM AdminLogEntry l WHERE l.target = ANY(:targets) ORDER BY l.date DESC")})
+         @NamedQuery(name = "AdminLogEntry.myFilter",
+                 query = "SELECT l FROM AdminLogEntry l WHERE l.target IN :targets ORDER BY l.date DESC")})
 public class AdminLogEntry {
 
     @Id

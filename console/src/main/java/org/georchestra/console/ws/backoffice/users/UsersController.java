@@ -94,6 +94,8 @@ public class UsersController {
 	private static final String OTHER_ERROR = "other_error";
 	private static final String INVALID_DATE_FORMAT = "invalid_date_format";
 
+	private static GrantedAuthority ROLE_SUPERUSER = new SimpleGrantedAuthority("ROLE_SUPERUSER");
+
 	private AccountDao accountDao;
 
 	@Autowired
@@ -389,8 +391,9 @@ public class UsersController {
 		final Account modified = modifyAccount(AccountFactory.create(account), request.getInputStream());
 
 		if(!modified.getOrg().equals(originalOrg)){
-			if(!Arrays.asList(this.delegationDao.findOne(auth.getName()).getOrgs()).contains(modified.getOrg()))
-				throw new AccessDeniedException("User not under delegation");
+			if(!auth.getAuthorities().contains(ROLE_SUPERUSER))
+				if(!Arrays.asList(this.delegationDao.findOne(auth.getName()).getOrgs()).contains(modified.getOrg()))
+					throw new AccessDeniedException("User not under delegation");
 			if(originalOrg.length() > 0)
 				this.orgDao.removeUser(originalOrg, uid);
 			if(modified.getOrg().length() > 0)
@@ -431,6 +434,9 @@ public class UsersController {
 		this.checkAuthorization(uid);
 
 		this.accountDao.delete(uid, request.getHeader("sec-username"));
+
+		// Also delete delegation
+		this.delegationDao.delete(uid);
 
 		ResponseUtil.writeSuccess(response);
 	}

@@ -50,12 +50,13 @@ public class ConsolePermissionEvaluator implements PermissionEvaluator {
                 List<String> userList = r.getUserList();
                 // Remove users not under delegation
                 userList.retainAll(this.advancedDelegationDao.findUsersUnderDelegation(username));
+                r.setFavorite(true);
                 // Remove role not under delegation
                 return Arrays.asList(delegation.getRoles()).contains(r.getName());
             } else if(targetDomainObject instanceof Org){
                 // Filter org
                 Org org = (Org) targetDomainObject;
-                return Arrays.asList(delegation.getOrgs()).contains(org.getName());
+                return Arrays.asList(delegation.getOrgs()).contains(org.getId());
             } else if(targetDomainObject instanceof SimpleAccount){
                 // filter account
                 SimpleAccount account = (SimpleAccount) targetDomainObject;

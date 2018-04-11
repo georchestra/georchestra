@@ -49,11 +49,12 @@ public class RequestUtil {
 	public static String getFieldValue(final JSONObject json, final String fieldName) {
 		String value;
 		try {
-			value = json.getString(fieldName);
+			if(json.isNull(fieldName))
+				return null;
+			return json.getString(fieldName);
 		} catch (JSONException e) {
 			return null;
 		}
-		return value;
 	}
 
 	/**
