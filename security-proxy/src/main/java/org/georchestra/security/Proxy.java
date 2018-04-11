@@ -36,14 +36,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -58,12 +55,10 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpUtils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.Consts;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -82,9 +77,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpTrace;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.entity.ContentType;
 import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
@@ -495,19 +488,17 @@ public class Proxy {
                 String name = p.getName();
                 String value = p.getValue();
                 // Skip login & ticket parameter
-                if (name.equals(ServiceProperties.DEFAULT_CAS_ARTIFACT_PARAMETER) || name.equals("login")) {
+                if (ServiceProperties.DEFAULT_CAS_ARTIFACT_PARAMETER.equals(name) || "login".equals(name)) {
                     continue;
                 }
                 if (query.length() > 1) {
                     query.append('&');
                 }
-                if (value == null) {
-                    query.append(name);
-                    continue;
-                }
                 query.append(name);
-                query.append("=");
-                query.append(value);
+                if (value != null) {
+                    query.append("=");
+                    query.append(value);
+                }
             }
         }
         return query.toString();

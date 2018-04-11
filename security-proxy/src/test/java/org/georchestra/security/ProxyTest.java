@@ -7,18 +7,14 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URL;
-import java.nio.charset.Charset;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicHttpResponse;
 import org.junit.Before;
 import org.junit.Test;
@@ -170,7 +166,7 @@ public class ProxyTest {
         mockedRequest.setRequestURI("http://localhost/header/");
         String ret = (String) ReflectionUtils.invokeMethod(m, proxy, mockedRequest);
 
-        assertTrue("expected an empty query string", ret.equals(""));
+        assertTrue("expected an empty query string", "".equals(ret));
     }
 
     @Test
@@ -213,6 +209,6 @@ public class ProxyTest {
         mockedRequest.setRequestURI("http://localhost/geoserver/");
         String ret = (String) ReflectionUtils.invokeMethod(m, proxy, mockedRequest);
 
-        assertTrue("Parameters have been mangled", ret.equals("?éééààà=àéàéàé"));
+        assertTrue("Parameters have been mangled", "?éééààà=àéàéàé".equals(ret));
     }
 }
