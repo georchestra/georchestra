@@ -11,7 +11,8 @@
   <div class="col-md-2">
     <ul class="nav nav-pills nav-stacked">
       <li ng-repeat="tab in role.tabs" ng-class="{active: role.tab==tab}">
-        <a ng-link="role({role: role.role.cn, tab: tab})">{{ 'tab.' + tab | translate}}</a>
+        <a ng-link="role({role: role.role.cn, tab: tab})"
+          ng-if="!isProtectedRole(role.role) || tab != 'manage'">{{ 'tab.' + tab | translate}}</a>
       </li>
     </ul>
   </div>
@@ -33,7 +34,7 @@
         <div class="alert alert-danger clearfix">
           <i class="glyphicon glyphicon-exclamation-sign"></i>
           <span translate>role.warning</span>
-          <button  ng-click="role.delete()" class="btn btn-danger" translate>role.delete</button>
+          <button ng-click="role.delete()" class="btn btn-danger" translate>role.delete</button>
         </div>
       </div>
 
