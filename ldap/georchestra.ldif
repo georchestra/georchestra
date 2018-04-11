@@ -186,6 +186,8 @@ objectClass: groupOfMembers
 cn: ORGADMIN
 ou: 24
 description: This group is automaticly granted to all delegated admins
+member: uid=testuser,ou=users,dc=georchestra,dc=org
+member: uid=testeditor,ou=users,dc=georchestra,dc=org
 
 # orgs, georchestra.org
 dn: ou=orgs,dc=georchestra,dc=org
