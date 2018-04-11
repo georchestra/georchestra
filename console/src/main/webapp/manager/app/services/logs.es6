@@ -4,7 +4,7 @@ angular.module('manager')
       query: {
         method: 'GET',
         cache: true,
-        isArray: false
+        isArray: true
       }
     })
   ])
@@ -13,7 +13,7 @@ angular.module('manager')
       query: {
         method: 'GET',
         cache: true,
-        isArray: false
+        isArray: true
       }
     })
   ])

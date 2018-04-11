@@ -38,7 +38,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr dir-paginate="log in logs.logs.logs | logs: logs.type:logs.admin:logs.target:logs.date | orderBy: '-date' | itemsPerPage: logs.itemsPerPage">
+      <tr dir-paginate="log in logs.logs | logs: logs.type:logs.admin:logs.target:logs.date | orderBy: '-date' | itemsPerPage: logs.itemsPerPage">
         <td>{{::log.date | date: 'mediumDate'}}
         <td><a ng-link="user({id: log.admin, tab: 'infos'})">{{::log.admin}}</a>
         <td><a ng-link="user({id: log.target, tab: 'infos'})">{{::log.target}}</a>
