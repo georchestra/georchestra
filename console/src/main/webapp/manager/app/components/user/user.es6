@@ -35,7 +35,7 @@ class UserController {
           this.delegation = new Delegations(options)
           this.activeDelegation = this.hasDelegation()
           $injector.get('Orgs').query(orgs => {
-            this.orgs = orgs.filter(o => o.status !== 'PENDING').map(o => o.id)
+            this.orgs = orgs.filter(o => o.status !== 'PENDING')
           })
           Role.query(roles => { this.allRoles = roles.map(r => r.cn) })
         })
@@ -71,6 +71,7 @@ class UserController {
     // Load role infos for every tab (for confirmation)
     let Role = this.$injector.get('Role')
     this.roles = Role.query()
+    Role.query(roles => { this.allroles = roles.map(r => r.cn) })
 
     this.user.$promise.then(() => {
       let roleAdminFilter = this.$injector.get('roleAdminFilter')

@@ -416,15 +416,15 @@ public class OrgsController {
     private void updateFromRequest(Org org, JSONObject json){
 
         try{
-            org.setName(json.getString("name"));
+            org.setName(json.getString(Org.JSON_NAME));
         } catch (JSONException ex){}
 
         try{
-            org.setShortName(json.getString("shortName"));
+            org.setShortName(json.getString(Org.JSON_SHORT_NAME));
         } catch (JSONException ex){}
 
         try{
-            JSONArray cities = json.getJSONArray("cities");
+            JSONArray cities = json.getJSONArray(Org.JSON_CITIES);
             List<String> parsedCities = new LinkedList<String>();
             for(int i = 0; i < cities.length(); i++)
                 parsedCities.add(cities.getString(i));
@@ -432,7 +432,7 @@ public class OrgsController {
         } catch (JSONException ex){}
 
         try{
-            JSONArray members = json.getJSONArray("members");
+            JSONArray members = json.getJSONArray(Org.JSON_MEMBERS);
             List<String> parsedMembers = new LinkedList<String>();
             for(int i = 0; i < members.length(); i++)
                 parsedMembers.add(members.getString(i));
@@ -441,7 +441,7 @@ public class OrgsController {
 
 
         try{
-            org.setStatus(json.getString("status"));
+            org.setStatus(json.getString(Org.JSON_STATUS));
         } catch (JSONException ex){}
 
     }
@@ -458,11 +458,11 @@ public class OrgsController {
     private void updateFromRequest(OrgExt orgExt, JSONObject json){
 
         try{
-            orgExt.setOrgType(json.getString("type"));
+            orgExt.setOrgType(json.getString(OrgExt.JSON_ORG_TYPE));
         } catch (JSONException ex){}
 
         try{
-            orgExt.setAddress(json.getString("address"));
+            orgExt.setAddress(json.getString(OrgExt.JSON_ADDRESS));
         } catch (JSONException ex){}
 
     }

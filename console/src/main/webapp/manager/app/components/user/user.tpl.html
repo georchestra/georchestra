@@ -49,7 +49,7 @@
 
         <h4 translate>role.system</h4>
         <div class="form-group clearfix">
-          <div class="col-sm-6" ng-repeat="role in user.adminRoles">
+          <div class="col-sm-6" ng-repeat="role in user.adminRoles" ng-if="user.allroles.indexOf(role) !== -1">
             <div class="checkbox">
               <label>
                 <input type="checkbox" ng-model="user.user.adminRoles[role]"> {{::role}}
@@ -80,7 +80,7 @@
       <div class="panel-body" ng-if="user.tab=='delegations' && profile === 'SUPERUSER' && !isSuperUser(user.user)">
         <h4 translate>nav.orgs</h4>
         <div class="form-group">
-          <select class="form-control" multiple chosen ng-model="user.delegation.orgs" ng-options="org for org in user.orgs"
+          <select class="form-control" multiple chosen ng-model="user.delegation.orgs" ng-options="org.id as org.name for org in user.orgs"
           data-placeholder="Select orgs">
           </select>
         </div>
