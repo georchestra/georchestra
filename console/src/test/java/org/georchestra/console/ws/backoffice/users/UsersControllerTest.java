@@ -1,6 +1,7 @@
 package org.georchestra.console.ws.backoffice.users;
 
 import org.georchestra.console.dao.AdminLogDao;
+import org.georchestra.console.dao.DelegationDao;
 import org.georchestra.console.ds.AccountDaoImpl;
 import org.georchestra.console.ds.DataServiceException;
 import org.georchestra.console.ds.DuplicatedEmailException;
@@ -95,6 +96,7 @@ public class UsersControllerTest {
 
         usersCtrl = new UsersController(dao, userRule);
         usersCtrl.setOrgDao(orgsDao);
+        usersCtrl.setDelegationDao(Mockito.mock(DelegationDao.class));
 
         request = new MockHttpServletRequest();
         response = new MockHttpServletResponse();
@@ -446,7 +448,6 @@ public class UsersControllerTest {
     @Test
     public void testResquestProducesDelete() throws Exception {
         usersCtrl.delete("pmaudui", request, response);
-        assertTrue(response.getContentType().equals("application/json"));
     }
 
 }

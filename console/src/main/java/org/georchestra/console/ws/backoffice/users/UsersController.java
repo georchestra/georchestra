@@ -113,9 +113,12 @@ public class UsersController {
 	@Autowired
 	private Validation validation;
 
-
 	public void setOrgDao(OrgsDao orgDao) {
 		this.orgDao = orgDao;
+	}
+
+	public void setDelegationDao(DelegationDao delegationDao) {
+		this.delegationDao = delegationDao;
 	}
 
 	private UserRule userRule;
