@@ -47,7 +47,6 @@ public class RequestUtil {
 	 * @return the value
 	 */
 	public static String getFieldValue(final JSONObject json, final String fieldName) {
-		String value;
 		try {
 			if(json.isNull(fieldName))
 				return null;

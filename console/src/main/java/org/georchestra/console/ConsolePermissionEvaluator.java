@@ -20,7 +20,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 public class ConsolePermissionEvaluator implements PermissionEvaluator {
 
-    private static final Log LOG = LogFactory.getLog(ConsolePermissionEvaluator.class.getName());
     private static GrantedAuthority ROLE_SUPERUSER = new SimpleGrantedAuthority("ROLE_SUPERUSER");
 
     @Autowired
@@ -28,9 +27,6 @@ public class ConsolePermissionEvaluator implements PermissionEvaluator {
 
     @Autowired
     private AdvancedDelegationDao advancedDelegationDao;
-
-    @Autowired
-    private OrgsDao orgsDao;
 
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {

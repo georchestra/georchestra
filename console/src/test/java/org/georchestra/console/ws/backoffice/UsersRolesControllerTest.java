@@ -8,9 +8,7 @@ import static org.mockito.Matchers.eq;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.ds.AccountDaoImpl;
@@ -21,13 +19,7 @@ import org.georchestra.console.dto.AccountFactory;
 import org.georchestra.console.dto.Role;
 import org.georchestra.console.dto.RoleFactory;
 import org.georchestra.console.dto.UserSchema;
-import org.georchestra.console.ws.backoffice.roles.RolesController;
 import org.georchestra.console.ws.backoffice.users.UserRule;
-import org.georchestra.console.ws.backoffice.users.UsersController;
-import org.hamcrest.Matchers;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -42,16 +34,11 @@ import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.filter.PresentFilter;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.ldap.DefaultSpringSecurityContextSource;
 
 import javax.naming.directory.SearchControls;
 
 public class UsersRolesControllerTest {
-
-    private UsersController userCtrl;
-    private RolesController roleCtrl;
 
     private AccountDaoImpl dao;
     private RoleDaoImpl roleDao;
@@ -223,11 +210,6 @@ public class UsersRolesControllerTest {
         dao.setUniqueNumberField("employeeNumber");
         dao.setUserSearchBaseDN("ou=users");
         dao.setRoleDao(roleDao);
-
-        userCtrl = new UsersController(dao, userRule);
-        userCtrl.setOrgDao(orgsDao);
-        roleCtrl = new RolesController(roleDao, userRule);
-        roleCtrl.setAccountDao(dao);
       
     }
 

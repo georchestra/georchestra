@@ -20,8 +20,6 @@
 package org.georchestra.console.dto;
 
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
@@ -31,8 +29,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.security.authentication.encoding.LdapShaPasswordEncoder;
 
 import ezvcard.VCard;

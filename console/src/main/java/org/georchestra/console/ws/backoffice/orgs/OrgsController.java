@@ -61,8 +61,6 @@ import java.util.*;
 @Controller
 public class OrgsController {
 
-    private static final Log LOG = LogFactory.getLog(OrgsDao.class.getName());
-
     private static final String BASE_MAPPING = "/private";
     private static final String BASE_RESOURCE = "orgs";
     private static final String REQUEST_MAPPING = BASE_MAPPING + "/" + BASE_RESOURCE;

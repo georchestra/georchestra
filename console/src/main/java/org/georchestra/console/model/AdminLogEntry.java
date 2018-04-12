@@ -21,8 +21,6 @@ package org.georchestra.console.model;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import javax.persistence.*;
 import java.text.DateFormat;

@@ -141,7 +141,7 @@ public class RolesControllerTest {
         Mockito.when(ldapTemplate.lookup((Name) Mockito.any(), (ContextMapper) Mockito.any())).thenReturn(retAdmin);
 
         Role res = roleCtrl.findByCN("ADMINISTRATOR");
-        Assert.assertEquals(res, retAdmin);
+        assertEquals(res, retAdmin);
     }
 
     @Test
