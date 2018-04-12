@@ -25,6 +25,7 @@ angular.module('manager')
       'GN_ADMIN',
       'GN_EDITOR',
       'GN_REVIEWER',
+      'ORGADMIN',
       'EXTRACTORAPP',
       'USER',
       'PENDING',
