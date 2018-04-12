@@ -185,7 +185,7 @@ objectClass: top
 objectClass: groupOfMembers
 cn: ORGADMIN
 ou: 24
-description: This group is automaticly granted to all delegated admins
+description: This role is automatically granted to all users holding an admin delegation
 member: uid=testuser,ou=users,dc=georchestra,dc=org
 member: uid=testeditor,ou=users,dc=georchestra,dc=org
 
