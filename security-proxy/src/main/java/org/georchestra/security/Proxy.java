@@ -97,6 +97,7 @@ import org.springframework.security.web.RedirectStrategy;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.util.UriUtils;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.io.Closer;
@@ -494,10 +495,10 @@ public class Proxy {
                 if (query.length() > 1) {
                     query.append('&');
                 }
-                query.append(name);
+                query.append(UriUtils.encode(name, "UTF-8"));
                 if (value != null) {
                     query.append("=");
-                    query.append(value);
+                    query.append(UriUtils.encode(value, "UTF-8"));
                 }
             }
         }
