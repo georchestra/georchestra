@@ -74,12 +74,7 @@ let filterLogs = () => {
   }
 }
 
-let logDateFilter = () => {
-  return (date) => {
-    let format = 'YYYY-MM-DD HH:mm'
-    return moment(date).format(format)
-  }
-}
+const logDateFilter = () => date => moment(date).format('YYYY-MM-DD HH:mm')
 
 angular
   .module('manager')
