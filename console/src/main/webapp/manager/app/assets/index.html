@@ -20,7 +20,7 @@
 
   <div class="container">
 
-    <div class="profile label label-{{(profile === 'SUPERUSER') ? 'info' : 'warning'}} pull-right">
+    <div class="profile label label-{{(profile === 'SUPERUSER') ? 'info' : 'warning'}} pull-right" title="{{'index.' + profile + 'tip' | translate }}">
       {{ 'index.' + profile | translate}}
     </div>
 

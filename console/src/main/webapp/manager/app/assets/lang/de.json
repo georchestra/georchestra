@@ -9,6 +9,8 @@
 
   "index.SUPERUSER"       : "Administrator",
   "index.DELEGATED"       : "Delegation",
+  "index.SUPERUSERtip"    : "Mit Ihrer Rolle können Sie alle Konten bearbeiten",
+  "index.DELEGATEDtip"    : "Ihr Konto kann Benutzer einer Auswahl von Organisationen verwalten",
 
   "home.users"            : "Benutzer verwalten",
   "home.waiting_users"    : "wartende Benutzer",

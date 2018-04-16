@@ -9,6 +9,8 @@
 
   "index.SUPERUSER"       : "Administrateur",
   "index.DELEGATED"       : "Délégation",
+  "index.SUPERUSERtip"    : "Votre rôle permet de modifier l'ensemble des comptes",
+  "index.DELEGATEDtip"    : "Votre compte est habilité à gérer les utilisateurs d'une sélection d'organismes",
 
   "home.users"            : "Gérer les utilisateurs",
   "home.waiting_users"    : "utilisateurs en attente",
