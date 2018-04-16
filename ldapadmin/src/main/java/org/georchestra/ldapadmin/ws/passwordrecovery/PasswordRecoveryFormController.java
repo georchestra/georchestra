@@ -54,8 +54,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
-import net.tanesha.recaptcha.ReCaptcha;
-
 /**
  * Manage the user interactions required to implement the lost password workflow: 
  * <p>
@@ -83,27 +81,23 @@ public class PasswordRecoveryFormController  {
 	private MailService mailService;
 	private UserTokenDao userTokenDao;
 	private Configuration config;
-	private ReCaptcha reCaptcha;
-	private ReCaptchaParameters reCaptchaParameters;
-	
+	private ReCaptchaParameters reCaptchaParameters;	
 
 	@Autowired
 	public PasswordRecoveryFormController( AccountDao dao,GroupDao gDao, MailService mailSrv, UserTokenDao userTokenDao,
-			Configuration cfg, ReCaptcha reCaptcha, ReCaptchaParameters reCaptchaParameters){
+			Configuration cfg, ReCaptchaParameters reCaptchaParameters){
 		this.accountDao = dao;
 		this.groupDao = gDao;
 		this.mailService = mailSrv;
 		this.userTokenDao = userTokenDao;
 		this.config = cfg;
-		this.reCaptcha = reCaptcha;
-		this.reCaptchaParameters = reCaptchaParameters;
-		
+		this.reCaptchaParameters = reCaptchaParameters;	
 	}
 	
 	@InitBinder
 	public void initForm( WebDataBinder dataBinder) {
 		
-		dataBinder.setAllowedFields(new String[]{"email", "recaptcha_challenge_field", "recaptcha_response_field"});
+		dataBinder.setAllowedFields(new String[]{"email", "recaptcha_response_field"});
 	}
 	
 	@RequestMapping(value="/account/passwordRecovery", method=RequestMethod.GET)
@@ -143,11 +137,8 @@ public class PasswordRecoveryFormController  {
 		if(resultErrors.hasErrors()){
 			return "passwordRecoveryForm";
 		}
-
 		
-		
-		String remoteAddr = request.getRemoteAddr();
-		new RecaptchaUtils(remoteAddr, this.reCaptcha).validate(formBean.getRecaptcha_challenge_field(), formBean.getRecaptcha_response_field(), resultErrors);
+		RecaptchaUtils.validate(reCaptchaParameters, formBean.getRecaptcha_response_field(), resultErrors);
 		if(resultErrors.hasErrors()){
 			return "passwordRecoveryForm";
 		}
