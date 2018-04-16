@@ -9,6 +9,8 @@
 
   "index.SUPERUSER"       : "Administrator",
   "index.DELEGATED"       : "Delegation",
+  "index.SUPERUSERtip"    : "Tu función te permite editar todas las cuentas",
+  "index.DELEGATEDtip"    : "Su cuenta puede gestionar usuarios de una selección de organizaciones",
 
   "home.users"            : "Administrar los usuarios",
   "home.waiting_users"    : "Usuarios en espera",

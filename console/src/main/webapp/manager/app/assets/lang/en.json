@@ -9,6 +9,8 @@
 
   "index.SUPERUSER"       : "Administrator",
   "index.DELEGATED"       : "Delegation",
+  "index.SUPERUSERtip"    : "Your role allows you to manage all accounts",
+  "index.DELEGATEDtip"    : "Your account is allowed to manage users in a selection of Orgs",
 
   "home.users"            : "Manage users",
   "home.waiting_users"    : "waiting users",
