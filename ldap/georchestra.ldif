@@ -229,7 +229,7 @@ cn: c2c
 businessCategory: REGISTERED
 description: 4184
 member: uid=testeditor,ou=users,dc=georchestra,dc=org
-o: CampToCamp
+o: Camptocamp
 ou: C2C
 seeAlso: o=c2c,ou=orgs,dc=georchestra,dc=org
 
