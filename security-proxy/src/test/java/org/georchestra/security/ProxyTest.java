@@ -209,6 +209,37 @@ public class ProxyTest {
         mockedRequest.setRequestURI("http://localhost/geoserver/");
         String ret = (String) ReflectionUtils.invokeMethod(m, proxy, mockedRequest);
 
-        assertTrue("Parameters have been mangled", "?éééààà=àéàéàé".equals(ret));
+        assertTrue("Unexpected escaped query string", "?%C3%A9%C3%A9%C3%A9%C3%A0%C3%A0%C3%A0=%C3%A0%C3%A9%C3%A0%C3%A9%C3%A0%C3%A9".equals(ret));
+    }
+
+    @Test
+    public void testReconstructUrlParametersStringURIAccentedCharAndSpaces() throws Exception {
+        Method m = ReflectionUtils.findMethod(Proxy.class, "reconstructUrlParameters", HttpServletRequest.class);
+        m.setAccessible(true);
+
+        MockHttpServletRequest mockedRequest = new MockHttpServletRequest();
+        mockedRequest.setQueryString("ééé ààà=àéàéàé and spaces");
+
+        mockedRequest.setRequestURI("http://localhost/geoserver/");
+        String ret = (String) ReflectionUtils.invokeMethod(m, proxy, mockedRequest);
+
+        assertTrue("Unexpected escaped query string",
+                "?%C3%A9%C3%A9%C3%A9%20%C3%A0%C3%A0%C3%A0=%C3%A0%C3%A9%C3%A0%C3%A9%C3%A0%C3%A9%20and%20spaces".equals(ret));
+    }
+
+    @Test
+    public void testReconstructUrlParemetersGeonetwork() throws Exception {
+        Method m = ReflectionUtils.findMethod(Proxy.class, "reconstructUrlParameters", HttpServletRequest.class);
+        m.setAccessible(true);
+
+        MockHttpServletRequest mockedRequest = new MockHttpServletRequest();
+        mockedRequest.setQueryString("_content_type=json&template=y&fast=index&from=1&"
+                + "login&to=200&_isTemplate=y%20or%20n&sortBy=title&sortOrder=reverse");
+
+        mockedRequest.setRequestURI("/geonetwork/srv/eng/qi");
+        String ret = (String) ReflectionUtils.invokeMethod(m, proxy, mockedRequest);
+
+        assertTrue("Unexpected escaped query string",
+        "?_content_type=json&template=y&fast=index&from=1&to=200&_isTemplate=y%20or%20n&sortBy=title&sortOrder=reverse".equals(ret));
     }
 }
