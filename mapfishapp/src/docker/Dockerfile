@@ -14,6 +14,7 @@ RUN apt-get update && \
    rm -rf /var/lib/apt/lists/*
 
 RUN unzip -d /var/lib/jetty/webapps/mapfishapp /var/lib/jetty/webapps/mapfishapp.war
+RUN rm -f /var/lib/jetty/webapps/mapfishapp.war
 RUN ln -s /usr/share/java/gdal.jar /var/lib/jetty/webapps/mapfishapp/WEB-INF/lib/
 
 RUN mkdir /mnt/mapfishapp_uploads && \
