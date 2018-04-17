@@ -42,7 +42,7 @@ class AnalyticsController {
     let err = Flash.create.bind(Flash, 'danger', i18n.errorload)
 
     let options = {
-      service: 'combinedRequests',
+      service: 'combinedRequests.json',
       startDate: this.date.start,
       endDate: this.date.end
     }
@@ -51,6 +51,9 @@ class AnalyticsController {
     }
 
     this.requests = Analytics.get(options, () => {}, err)
+    this.requestsOptions = { ...options }
+
+    this.requestsOptions.service = 'combinedRequests.csv'
 
     let usageOptions = {
       ...options,
