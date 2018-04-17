@@ -129,30 +129,6 @@ public class Org implements Comparable<Org> {
             return this.orgExt.getAddress();
     }
 
-
-    //    public JSONObject toJson() throws JSONException {
-//        JSONObject res = new JSONObject();
-//        res.put(JSON_ID, this.getId());
-//        res.put(JSON_NAME, this.getName());
-//        res.put(JSON_SHORT_NAME, this.getShortName());
-//
-//        JSONArray cities = new JSONArray();
-//        if(this.getCities() != null)
-//            for(String city : this.getCities())
-//                cities.put(city);
-//        res.put(JSON_CITIES, cities);
-//
-//        if(this.getStatus() != null)
-//            res.put(JSON_STATUS, this.getStatus());
-//
-//        JSONArray members = new JSONArray();
-//        if(this.getMembers() != null)
-//            for(String member : this.getMembers())
-//                members.put(member);
-//        res.put(JSON_MEMBERS, members);
-//        return res;
-//    }
-
     public String toString(){
         return this.getName();
     }
@@ -161,12 +137,4 @@ public class Org implements Comparable<Org> {
         return this.getName().compareToIgnoreCase(org.getName());
     }
 
-//    public static Org createBrief(String name, String shortName){
-//        Org res = new Org();
-//        res.setName(name);
-//        res.setShortName(shortName);
-//        res.setId(name.replaceAll("[^\\w]", "_"));
-//        return res;
-//
-//    }
 }
