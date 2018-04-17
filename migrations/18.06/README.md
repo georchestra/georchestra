@@ -33,3 +33,7 @@ With #1968 all connections to the DB are performed with role `georchestra` inste
 
 First of all, ldapadmin webapp is renamed into console.
 Also, with [#1924](https://github.com/georchestra/georchestra/issues/1924), the admin console moves from `/ldapadmin/console/` to `/console/manager/`
+
+## ReCaptcha v2
+
+With [#1938](https://github.com/georchestra/georchestra/pull/1938) we upgraded ReCaptcha to v2, a mandatory step since v1 has been deprecated by Google. This requires that you generate a new public/private keypair on https://www.google.com/recaptcha/ and update your geOrchestra datadir according to [georchestra/datadir@0ff17b]( https://github.com/georchestra/datadir/commit/0ff17b3d2e7fb265dbf64fc0c65f7ee01ef39dea)
