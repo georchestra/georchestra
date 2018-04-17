@@ -19,12 +19,8 @@
 
 package org.georchestra.console.ws.backoffice.orgs;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
-import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.dao.DelegationDao;
-import org.georchestra.console.ds.DataServiceException;
 import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.dto.Org;
 import org.georchestra.console.dto.OrgExt;
@@ -36,7 +32,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -45,12 +40,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -66,6 +59,8 @@ public class OrgsController {
     private static final String REQUEST_MAPPING = BASE_MAPPING + "/" + BASE_RESOURCE;
     private static final String PUBLIC_REQUEST_MAPPING = "/public/" + BASE_RESOURCE;
 
+    private static GrantedAuthority ROLE_SUPERUSER = new SimpleGrantedAuthority("ROLE_SUPERUSER");
+
     @Autowired
     private OrgsDao orgDao;
 
@@ -76,16 +71,12 @@ public class OrgsController {
     private GeorchestraConfiguration georConfig;
 
     @Autowired
+    private DelegationDao delegationDao;
+
+    @Autowired
     public OrgsController(OrgsDao dao) {
         this.orgDao = dao;
     }
-
-    @Autowired
-    private AdvancedDelegationDao advancedDelegationDao;
-    @Autowired
-    private DelegationDao delegationDao;
-
-    private static GrantedAuthority ROLE_SUPERUSER = new SimpleGrantedAuthority("ROLE_SUPERUSER");
 
     /**
      * Return a list of available organization as json array

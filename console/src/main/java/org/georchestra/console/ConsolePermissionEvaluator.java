@@ -3,11 +3,8 @@ package org.georchestra.console;
 import java.io.Serializable;
 import java.util.*;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.dao.DelegationDao;
-import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.dto.Org;
 import org.georchestra.console.dto.Role;
 import org.georchestra.console.dto.SimpleAccount;
