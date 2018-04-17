@@ -19,7 +19,7 @@
 
 package org.georchestra.ldapadmin.ws.newaccount;
 
-import net.tanesha.recaptcha.ReCaptcha;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -84,30 +84,27 @@ public final class NewAccountFormController {
 
 	private Moderator moderator;
 
-	private ReCaptcha reCaptcha;
-
 	private ReCaptchaParameters reCaptchaParameters;
 
 	private Validation validation;
 
 	@Autowired
 	public NewAccountFormController(AccountDao dao, OrgsDao orgDao, MailService mailSrv, Moderator moderatorRule,
-									ReCaptcha reCaptcha, ReCaptchaParameters reCaptchaParameters, Validation validation) {
+									ReCaptchaParameters reCaptchaParameters, Validation validation) {
+
 		this.accountDao = dao;
 		this.orgDao = orgDao;
 		this.mailService = mailSrv;
 		this.moderator = moderatorRule;
-		this.reCaptcha = reCaptcha;
 		this.reCaptchaParameters = reCaptchaParameters;
 		this.validation = validation;
 	}
 
 	@InitBinder
 	public void initForm(WebDataBinder dataBinder) {
-		dataBinder.setAllowedFields(ArrayUtils.addAll(new String[]{"firstName","surname", "email", "phone",
+		dataBinder.setAllowedFields(new String[]{"firstName","surname", "email", "phone",
 				"org", "title", "description", "uid", "password", "confirmPassword", "createOrg", "orgName",
-				"orgShortName", "orgAddress", "orgType", "orgCities"},
-		        new String[]{"recaptcha_challenge_field", "recaptcha_response_field"}));
+				"orgShortName", "orgAddress", "orgType", "orgCities", "recaptcha_response_field"});
 	}
 
 	@RequestMapping(value="/account/new", method=RequestMethod.GET)
@@ -134,7 +131,7 @@ public final class NewAccountFormController {
 	}
 
 	/**
-	 * Creates a new account in ldap. If the application was configured as "moderator singnup" the new account is added in the PENDING group,
+	 * Creates a new account in ldap. If the application was configured with "moderated signup" the new account is added in the PENDING group,
 	 * in other case, it will be inserted in the USER group
 	 *
 	 *
@@ -189,8 +186,7 @@ public final class NewAccountFormController {
 		PasswordUtils.validate(formBean.getPassword(), formBean.getConfirmPassword(), result);
 
 		// Check captcha
-		new RecaptchaUtils(request.getRemoteAddr(), this.reCaptcha)
-				.validate(formBean.getRecaptcha_challenge_field(), formBean.getRecaptcha_response_field(), result);
+        RecaptchaUtils.validate(reCaptchaParameters, formBean.getRecaptcha_response_field(), result);
 
 		// Validate remaining fields
 		this.validation.validateUserField("phone", formBean.getPhone(), result);
