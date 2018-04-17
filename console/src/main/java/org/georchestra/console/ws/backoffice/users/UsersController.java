@@ -438,8 +438,9 @@ public class UsersController {
 
 		this.accountDao.delete(uid, request.getHeader("sec-username"));
 
-		// Also delete delegation
-		this.delegationDao.delete(uid);
+		// Also delete delegation if exists
+		if(this.delegationDao.findOne(uid) != null)
+			this.delegationDao.delete(uid);
 
 		ResponseUtil.writeSuccess(response);
 	}
