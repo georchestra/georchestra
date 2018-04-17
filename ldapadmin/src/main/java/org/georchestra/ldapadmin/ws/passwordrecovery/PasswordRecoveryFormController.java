@@ -132,11 +132,6 @@ public class PasswordRecoveryFormController  {
 						SessionStatus sessionStatus) 
 						throws IOException {
 		
-		EmailUtils.validate(formBean.getEmail(), resultErrors);
-		if(resultErrors.hasErrors()){
-			return "passwordRecoveryForm";
-		}
-		
 		RecaptchaUtils.validate(reCaptchaParameters, formBean.getRecaptcha_response_field(), resultErrors);
 		if(resultErrors.hasErrors()){
 			return "passwordRecoveryForm";

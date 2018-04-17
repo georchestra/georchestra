@@ -135,7 +135,7 @@ public class PasswordRecoveryFormControllerTest {
     @Test
     public void testBadCaptchaGenerateToken() throws Exception {
         prepareLegitRequest();
-        Mockito.when(result.hasErrors()).thenReturn(false, true);
+        Mockito.when(result.hasErrors()).thenReturn(true);
         Mockito.when(rec.isValid(Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
             .thenReturn(false);
 

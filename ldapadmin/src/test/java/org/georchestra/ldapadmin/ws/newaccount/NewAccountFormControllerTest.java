@@ -46,7 +46,7 @@ public class NewAccountFormControllerTest {
     private ReCaptchaParameters rep = new ReCaptchaParameters();
     private MockHttpServletRequest request = new MockHttpServletRequest();
     private LdapTemplate ldapTemplate = Mockito.mock(LdapTemplate.class);
-   
+    private Model UiModel = Mockito.mock(Model.class);
     private Account adminAccount;
 
     AccountFormBean formBean = Mockito.mock(AccountFormBean.class);
@@ -74,8 +74,8 @@ public class NewAccountFormControllerTest {
     
     	rep.setVerifyUrl("https://localhost");
     	rep.setPrivateKey("privateKey");
-   	
-        ctrl = new NewAccountFormController(dao, srv, mod, rep);
+        
+        ctrl = new NewAccountFormController(dao, org, srv, mod, rep, new Validation(""));
 
         // Mock admin account
         DistinguishedName dn = new DistinguishedName();
@@ -110,7 +110,7 @@ public class NewAccountFormControllerTest {
 	@Test
     public void testCreate() throws IOException {
         configureLegitFormBean();
-        String ret = ctrl.create(request, formBean, result, status);
+        String ret = ctrl.create(request, formBean, "", result, status, UiModel);
 
         assertTrue(ret.equals("welcomeNewUser"));
     }
