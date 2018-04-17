@@ -122,7 +122,7 @@ public class LogController {
 		// Filter logs by orgs users if user is not SUPERUSER
 		if(!auth.getAuthorities().contains(ROLE_SUPERUSER)){
 			Set<String> users = this.advancedDelegationDao.findUsersUnderDelegation(auth.getName());
-			return this.logDao.myFilter(users,
+			return this.logDao.myFindByTargets(users,
 					new PageRequest(page, limit, new Sort(Sort.Direction.DESC, "date")));
 		} else {
 			return this.logDao.findAll(new PageRequest(page, limit, new Sort(Sort.Direction.DESC, "date"))).getContent();
