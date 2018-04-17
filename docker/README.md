@@ -5,10 +5,12 @@ Please read the dedicated [how-to](https://github.com/georchestra/docker).
 
 ## Building your own docker images for geOrchestra
 
-To build all geOrchestra docker images, including complementary services (ssh, smtp, webmail), just type:
+To build all geOrchestra docker images, including complementary services (ssh, smtp, webmail), clone this repo, and, from the repository root, just type the following:
 ```
 make docker-build
 ```
+
+To see which images where built: `docker images | grep georchestra`
 
 Other useful makefile targets:
  * `docker-build-georchestra`: builds core geOrchestra images, including database & ldap

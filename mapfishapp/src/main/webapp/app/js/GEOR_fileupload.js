@@ -127,7 +127,9 @@ GEOR.fileupload = (function() {
     var formSuccess = function(form, action) {
         centerPanel.el.unmask();
         var features,
-            fc = (new OpenLayers.Format.JSON()).read(action.response.responseText);
+            fc = (new OpenLayers.Format.JSON({
+                    ignoreExtraDims: true
+                })).read(action.response.responseText);
         if (!fc) {
             errorAndReset(form, OpenLayers.i18n("Incorrect server response."));
             return;
