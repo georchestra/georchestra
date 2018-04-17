@@ -19,7 +19,8 @@
         <label class="col-sm-4" for="newRoleDesc" translate>role.description</label>
         <div class="col-sm-8">
           <textarea ng-model="model.description" class="form-control" id="newRoleDesc"
-            placeholder=""></textarea>
+                    ng-readonly="isProtectedRole(model)"
+                    placeholder=""></textarea>
         </div>
       </div>
 

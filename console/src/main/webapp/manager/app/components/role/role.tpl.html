@@ -24,8 +24,8 @@
       <div class="panel-body" ng-if="role.tab=='infos'">
         <div ng-inline="templates/roleForm.tpl.html"
           ng-init="model=role.role;promise=role.role.$promise;required=role.required;roleTypeValues=role.roleTypeValues"></div>
-        <hr>
-        <div class="pull-right">
+        <hr ng-if="!isProtectedRole(role.role)">
+        <div class="pull-right" ng-if="!isProtectedRole(role.role)">
           <button ng-click="role.save()" class="btn btn-primary" translate>role.save</button>
         </div>
       </div>
