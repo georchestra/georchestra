@@ -21,8 +21,8 @@ package org.georchestra.console.ws.utils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.ldapadmin.ReCaptchaV2;
-import org.georchestra.ldapadmin.bs.ReCaptchaParameters;
+import org.georchestra.console.ReCaptchaV2;
+import org.georchestra.console.bs.ReCaptchaParameters;
 import org.springframework.validation.Errors;
 
 /**
