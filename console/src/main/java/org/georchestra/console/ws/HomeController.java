@@ -80,7 +80,7 @@ public class HomeController {
             String redirectUrl;
             List<String> rolesList = Arrays.asList(roles.split(";"));
 
-            if (rolesList.contains("ROLE_SUPERUSER")) {
+            if (rolesList.contains("ROLE_SUPERUSER") || rolesList.contains("ROLE_ORGADMIN")) {
                 redirectUrl = "/manager/";
             } else {
                 redirectUrl = "/account/userdetails";

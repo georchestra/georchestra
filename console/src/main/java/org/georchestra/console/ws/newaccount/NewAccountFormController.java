@@ -26,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.georchestra.console.bs.Moderator;
 import org.georchestra.console.bs.ReCaptchaParameters;
-import org.georchestra.console.dao.Delegation2Dao;
+import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.DataServiceException;
 import org.georchestra.console.ds.DuplicatedEmailException;
@@ -94,16 +94,16 @@ public final class NewAccountFormController {
 	private Validation validation;
 
 	@Autowired
-	private Delegation2Dao delegation2Dao;
+	private AdvancedDelegationDao advancedDelegationDao;
 
 	@Autowired
-	public NewAccountFormController(AccountDao dao, OrgsDao orgDao, Delegation2Dao delegation2Dao,
+	public NewAccountFormController(AccountDao dao, OrgsDao orgDao, AdvancedDelegationDao advancedDelegationDao,
 									MailService mailSrv, Moderator moderatorRule, ReCaptcha reCaptcha,
 									ReCaptchaParameters reCaptchaParameters,
 									Validation validation) {
 		this.accountDao = dao;
 		this.orgDao = orgDao;
-		this.delegation2Dao = delegation2Dao;
+		this.advancedDelegationDao = advancedDelegationDao;
 		this.mailService = mailSrv;
 		this.moderator = moderatorRule;
 		this.reCaptcha = reCaptcha;
@@ -290,7 +290,7 @@ public final class NewAccountFormController {
 			// email to delegated admin if org is specified
 			if(!formBean.getOrg().equals("-")) {
 				// and a delegation is defined
-				List<DelegationEntry> delegations = this.delegation2Dao.findByOrg(formBean.getOrg());
+				List<DelegationEntry> delegations = this.advancedDelegationDao.findByOrg(formBean.getOrg());
 				for(DelegationEntry delegation: delegations){
 					Account delegatedAdmin = this.accountDao.findByUID(delegation.getUid());
 					this.mailService.sendNewAccountRequiresModeration(servletContext, account.getUid(), account.getCommonName(), account.getEmail(), delegatedAdmin.getEmail());

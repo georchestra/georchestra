@@ -20,9 +20,7 @@
 package org.georchestra.console.ws.backoffice.roles;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import javax.servlet.ServletInputStream;
@@ -31,15 +29,18 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.georchestra.console.dao.AdvancedDelegationDao;
+import org.georchestra.console.dao.DelegationDao;
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.DataServiceException;
 import org.georchestra.console.ds.DuplicatedCommonNameException;
-import org.georchestra.console.ds.RoleDao;
 import org.georchestra.console.ds.ProtectedUserFilter;
+import org.georchestra.console.ds.RoleDao;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.Role;
 import org.georchestra.console.dto.RoleFactory;
 import org.georchestra.console.dto.RoleSchema;
+import org.georchestra.console.model.DelegationEntry;
 import org.georchestra.console.ws.backoffice.users.UserRule;
 import org.georchestra.console.ws.backoffice.utils.RequestUtil;
 import org.georchestra.console.ws.backoffice.utils.ResponseUtil;
@@ -48,12 +49,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.ldap.NameNotFoundException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Web Services to maintain the Roles information.
@@ -63,10 +68,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
  */
 
 @Controller
-
 public class RolesController {
 
 	private static final Log LOG = LogFactory.getLog(RolesController.class.getName());
+
+	public static final GrantedAuthority ROLE_SUPERUSER = new SimpleGrantedAuthority("ROLE_SUPERUSER");
 
 	private static final String BASE_MAPPING = "/private";
 	private static final String BASE_RESOURCE = "roles";
@@ -85,6 +91,11 @@ public class RolesController {
 
 	@Autowired
 	private AccountDao accountDao;
+
+	@Autowired
+	private AdvancedDelegationDao advancedDelegationDao;
+	@Autowired
+	private DelegationDao delegationDao;
 
 	private RoleDao roleDao;
 	private ProtectedUserFilter filter;
@@ -117,33 +128,15 @@ public class RolesController {
 	/**
 	 * Returns all roles. Each roles will contains its list of users.
 	 *
-	 * @param request
-	 * @param response
 	 * @throws IOException
 	 */
-	@RequestMapping(value=REQUEST_MAPPING, method=RequestMethod.GET)
-	public void findAll( HttpServletRequest request, HttpServletResponse response ) throws IOException{
-
-		try {
-			List<Role> list = this.roleDao.findAll();
-
-			RoleListResponse listResponse = new RoleListResponse(list, this.filter);
-
-			JSONArray jsonList = listResponse.toJsonArray();
-			jsonList.put(this.extractTemporaryRoleInformation());
-
-			ResponseUtil.buildResponse(response, jsonList.toString(4), HttpServletResponse.SC_OK);
-
-		} catch (Exception e) {
-
-			LOG.error(e.getMessage());
-			ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
-					HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-
-			throw new IOException(e);
-		}
-
-
+	@RequestMapping(value=REQUEST_MAPPING, method=RequestMethod.GET, produces="application/json; charset=utf-8")
+	@PostFilter("hasPermission(filterObject, 'read')")
+	@ResponseBody
+	public List<Role> findAll() throws DataServiceException {
+		List<Role> list = this.roleDao.findAll();
+		list.add(this.generateTemporaryRole());
+		return list;
 	}
 
 	/**
@@ -159,60 +152,33 @@ public class RolesController {
 	 * Example: [BASE_MAPPING]/roles/role44
 	 * </p>
 	 *
-	 * @param response Returns the detailed information of the role as json
 	 * @param cn Comon name of role
 	 * @throws IOException
 	 */
-	@RequestMapping(value=REQUEST_MAPPING+"/{cn:.+}", method=RequestMethod.GET)
-	public void findByCN(HttpServletResponse response, @PathVariable String cn) throws IOException, JSONException {
+	@RequestMapping(value=REQUEST_MAPPING+"/{cn:.+}", method=RequestMethod.GET, produces="application/json; charset=utf-8")
+	@ResponseBody
+	public Role findByCN(@PathVariable String cn) throws DataServiceException {
+		Role res;
 
-		String jsonRole;
-
-		if(cn.equals(RolesController.VIRTUAL_TEMPORARY_ROLE_NAME)) {
-			jsonRole = this.extractTemporaryRoleInformation().toString();
-		} else {
-
-			// searches the role
-			Role role;
-			try {
-				role = this.roleDao.findByCommonName(cn);
-
-			} catch (NameNotFoundException e) {
-
-				ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(Boolean.FALSE, NOT_FOUND), HttpServletResponse.SC_NOT_FOUND);
-
-				return;
-
-			} catch (DataServiceException e) {
-				LOG.error(e.getMessage());
-				ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
-						HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-				throw new IOException(e);
-			} catch (IllegalArgumentException e) {
-				LOG.error(e.getMessage());
-				ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()), HttpServletResponse.SC_NOT_FOUND);
-				return;
-			}
-
-			// sets the role data in the response object
-			jsonRole = (new RoleResponse(role, this.filter)).asJsonString();
-
+		if(cn.equals(RolesController.VIRTUAL_TEMPORARY_ROLE_NAME))
+			res = this.generateTemporaryRole();
+		else
+			res = this.roleDao.findByCommonName(cn);
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if(!auth.getAuthorities().contains(ROLE_SUPERUSER)) {
+			if(!Arrays.asList(this.delegationDao.findOne(auth.getName()).getRoles()).contains(cn))
+				throw new AccessDeniedException("Role not under delegation");
+			res.getUserList().retainAll(this.advancedDelegationDao.findUsersUnderDelegation(auth.getName()));
 		}
-		ResponseUtil.buildResponse(response, jsonRole, HttpServletResponse.SC_OK);
+		return res;
 	}
 
-	private JSONObject extractTemporaryRoleInformation() throws JSONException {
-		JSONObject res = new JSONObject();
-		res.put(RoleSchema.COMMON_NAME_KEY, RolesController.VIRTUAL_TEMPORARY_ROLE_NAME);
-		res.put(RoleSchema.DESCRIPTION_KEY, RolesController.VIRTUAL_TEMPORARY_ROLE_DESCRIPTION);
-		res.put(RoleSchema.FAVORITE_JSON_KEY, false);
-
-		// Search temporary users in LDAP
-		JSONArray temporaryUsers = new JSONArray();
+	private Role generateTemporaryRole() {
+		Role res = RoleFactory.create(RolesController.VIRTUAL_TEMPORARY_ROLE_NAME,
+				RolesController.VIRTUAL_TEMPORARY_ROLE_DESCRIPTION,
+				false);
 		for(Account a : this.accountDao.findByShadowExpire())
-			temporaryUsers.put(a.getUid());
-		res.put("users",temporaryUsers);
-
+			res.addUser(a.getUid());
 		return res;
 	}
 
@@ -247,20 +213,15 @@ public class RolesController {
 	 * @throws IOException
 	 */
 	@RequestMapping(value=REQUEST_MAPPING, method=RequestMethod.POST)
+	@PreAuthorize("hasRole('SUPERUSER')")
 	public void create( HttpServletRequest request, HttpServletResponse response ) throws IOException{
 
 		try{
-
 			Role role = createRoleFromRequestBody(request.getInputStream());
-
 			this.roleDao.insert( role );
-
 			RoleResponse roleResponse = new RoleResponse(role, this.filter);
-
 			String jsonResponse = roleResponse.asJsonString();
-
 			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_OK);
-
 
 		} catch (DuplicatedCommonNameException emailex){
 
@@ -295,6 +256,7 @@ public class RolesController {
 	 * @throws IOException
 	 */
 	@RequestMapping(value = REQUEST_MAPPING + "/{cn:.+}", method = RequestMethod.DELETE)
+	@PreAuthorize("hasRole('SUPERUSER')")
 	public void delete(HttpServletResponse response, @PathVariable String cn)
 			throws IOException {
 		try {
@@ -364,6 +326,7 @@ public class RolesController {
 	 *             store.
 	 */
 	@RequestMapping(value=REQUEST_MAPPING+ "/{cn:.+}", method=RequestMethod.PUT)
+	@PreAuthorize("hasRole('SUPERUSER')")
 	public void update( HttpServletRequest request, HttpServletResponse response, @PathVariable String cn) throws IOException{
 
 		// searches the role
@@ -422,44 +385,36 @@ public class RolesController {
 	 * @throws IOException
 	 */
 	@RequestMapping(value=BASE_MAPPING+ "/roles_users", method=RequestMethod.POST)
-	public void updateUsers( HttpServletRequest request, HttpServletResponse response) throws IOException{
+	public void updateUsers( HttpServletRequest request, HttpServletResponse response) throws AccessDeniedException, IOException, JSONException, DataServiceException {
 
-		try{
+		JSONObject json = new JSONObject(FileUtils.asString(request.getInputStream()));
 
-			ServletInputStream is = request.getInputStream();
-			String strRole = FileUtils.asString(is);
-			JSONObject json = new JSONObject(strRole);
+		List<String> users = createUserList(json, "users");
+		List<String> putRole = createUserList(json, "PUT");
+		List<String> deleteRole = createUserList(json, "DELETE");
 
-			List<String> users = createUserList(json, "users");
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_SUPERUSER")))
+			this.checkAuthorization(auth.getName(), users, putRole, deleteRole);
 
-			List<String> putRole = createUserList(json, "PUT");
-			this.roleDao.addUsersInRoles(putRole, users, request.getHeader("sec-username"));
+		this.roleDao.addUsersInRoles(putRole, users, auth.getName());
+		this.roleDao.deleteUsersInRoles(deleteRole, users, auth.getName());
 
-			List<String> deleteRole = createUserList(json, "DELETE");
-			this.roleDao.deleteUsersInRoles(deleteRole, users, request.getHeader("sec-username"));
-
-			ResponseUtil.writeSuccess(response);
-
-		}  catch (NameNotFoundException e) {
-
-			ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(Boolean.FALSE, USER_NOT_FOUND), HttpServletResponse.SC_NOT_FOUND);
-
-			return;
-
-		}  catch (DataServiceException e){
-			LOG.error(e.getMessage());
-			ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
-					HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			throw new IOException(e);
-		} catch (JSONException e) {
-			LOG.error(e.getMessage());
-			ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
-					HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			throw new IOException(e);
-		}
+		ResponseUtil.writeSuccess(response);
 	}
 
+	public void checkAuthorization(String delegatedAdmin, List<String> users, List<String> putRole, List<String> deleteRole) throws AccessDeniedException {
+		// Verify authorization
+		Set<String> usersUnderDelegation = this.advancedDelegationDao.findUsersUnderDelegation(delegatedAdmin);
+		if(!usersUnderDelegation.containsAll(users))
+			throw new AccessDeniedException("Some users are not under delegation");
+		DelegationEntry delegation = this.delegationDao.findOne(delegatedAdmin);
+		if(!Arrays.asList(delegation.getRoles()).containsAll(putRole))
+			throw new AccessDeniedException("Some roles are not under delegation (put)");
+		if(!Arrays.asList(delegation.getRoles()).containsAll(deleteRole))
+			throw new AccessDeniedException("Some roles are not under delegation (delete)");
 
+	}
 
 	private List<String> createUserList(JSONObject json, String arrayKey) throws IOException {
 
@@ -566,6 +521,19 @@ public class RolesController {
         this.accountDao = ad;
     }
 
+	public AdvancedDelegationDao getAdvancedDelegationDao() {
+		return advancedDelegationDao;
+	}
 
+	public void setAdvancedDelegationDao(AdvancedDelegationDao advancedDelegationDao) {
+		this.advancedDelegationDao = advancedDelegationDao;
+	}
 
+	public DelegationDao getDelegationDao() {
+		return delegationDao;
+	}
+
+	public void setDelegationDao(DelegationDao delegationDao) {
+		this.delegationDao = delegationDao;
+	}
 }

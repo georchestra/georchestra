@@ -19,9 +19,6 @@
 
 package org.georchestra.console.dto;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.Date;
 
 /**
@@ -141,10 +138,6 @@ public interface Account extends Comparable<Account>{
 	String toVcf();
 
 	String toCsv();
-
-	JSONObject toJSON() throws JSONException;
-	
-	String toFormatedString(String data);
 
 	void setShadowExpire(Date expireDate);
 

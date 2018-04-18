@@ -12,7 +12,7 @@
   <url>http://www.georchestra.org</url>
   <properties>
     <aspectj.version>1.7.0.RC1</aspectj.version>
-    <java.version>1.6</java.version>
+    <java.version>1.7</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <roo.version>1.1.5.RELEASE</roo.version>
     <slf4j.version>1.6.4</slf4j.version>
@@ -255,12 +255,27 @@
       <version>${spring_ldap.version}</version>
     </dependency>
 
-    <!-- spring-security LDAP (password encryption) -->
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-core</artifactId>
+      <version>${spring_security.version}</version>
+    </dependency>
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-ldap</artifactId>
       <version>${spring_security.version}</version>
     </dependency>
+    <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-config</artifactId>
+        <version>${spring_security.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-web</artifactId>
+        <version>${spring_security.version}</version>
+    </dependency>
+
     <dependency>
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-commons</artifactId>
@@ -271,6 +286,12 @@
       <artifactId>spring-data-jpa</artifactId>
       <version>1.9.1.RELEASE</version>
     </dependency>
+    <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>2.9.5</version>
+    </dependency>
+
     <!-- commons -->
     <dependency>
       <groupId>commons-digester</groupId>

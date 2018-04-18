@@ -11,7 +11,7 @@
         <label class="col-sm-4" for="cn" translate>role.cn</label>
         <div class="col-sm-8">
           <input ng-model="model.cn" class="form-control" id="cn"
-            placeholder="" ng-required="true">
+            placeholder="" ng-required="true" ng-readonly="isProtectedRole(model)">
         </div>
       </div>
 
@@ -19,7 +19,8 @@
         <label class="col-sm-4" for="newRoleDesc" translate>role.description</label>
         <div class="col-sm-8">
           <textarea ng-model="model.description" class="form-control" id="newRoleDesc"
-            placeholder="" ></textarea>
+                    ng-readonly="isProtectedRole(model)"
+                    placeholder=""></textarea>
         </div>
       </div>
 

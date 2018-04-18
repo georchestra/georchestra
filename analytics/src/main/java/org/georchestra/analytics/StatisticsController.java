@@ -49,11 +49,7 @@ import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * This controller defines the entry point to return statistics based on user or groups, for a given
@@ -268,11 +264,11 @@ public class StatisticsController {
 	 *
 	 * @param payload the JSON object containing the input parameters
 	 * @param response the HttpServletResponse object.
-	 * @return a JSON string containing the requested aggregated statistics.
+	 * @return a JSON string or CSV doc containing the requested aggregated statistics.
 	 *
 	 * @throws JSONException
 	 */
-	@RequestMapping(value="/combinedRequests", method=RequestMethod.POST, produces= "application/json; charset=utf-8")
+	@RequestMapping(value="/combinedRequests.{format}", method=RequestMethod.POST)
 	@ResponseBody
     @ApiMethod(description="Returns the Total combined requests count group by time interval "
 	            + "(hour, day, week or month). It must be filtered by either a user or a group. "
@@ -285,7 +281,8 @@ public class StatisticsController {
 	            + "</code><br/>"
 	            + "is a valid request."
 	            + "")
-	public String combinedRequests(@RequestBody String payload, HttpServletResponse response) throws JSONException, ParseException, SQLException {
+	public String combinedRequests(@RequestBody String payload, @PathVariable String format, HttpServletResponse response)
+			throws JSONException, ParseException, SQLException {
 
 		JSONObject input = null;
 		Map<String, Object> sqlValues = new HashMap<String, Object>();
@@ -355,15 +352,41 @@ public class StatisticsController {
 
 		// Fetch and format results
 		ResultSet res = db.execute(db.generateQuery(sql,sqlValues));
-		JSONArray results = new JSONArray();
-		while(res.next()) {
-			String date =  this.convertUTCDateToLocal(res.getString("aggregate_date"), g);
-			int count = res.getInt("count");
-			results.put(new JSONObject().put("count", count).put("date", date));
+
+		response.setCharacterEncoding("utf-8");
+
+		if("json".equals(format)) {
+			response.setContentType("application/json");
+		} else if("csv".equals(format)) {
+			response.setContentType("application/csv");
+		} else {
+			throw new IllegalArgumentException("Invalid format : " + format);
 		}
-		return new JSONObject().put("results", results)
-				.put("granularity", g)
-				.toString(4);
+
+		JSONArray results = new JSONArray();
+		StringBuilder csv = new StringBuilder();
+		csv.append("date,count\n");
+
+		while (res.next()) {
+			String date = this.convertUTCDateToLocal(res.getString("aggregate_date"), g);
+			int count = res.getInt("count");
+			if("json".equals(format)) {
+				results.put(new JSONObject().put("count", count).put("date", date));
+			} else if("csv".equals(format)) {
+				csv.append(date + "," + count + "\n");
+			}
+		}
+
+		if("json".equals(format)) {
+			return new JSONObject().put("results", results)
+					.put("granularity", g)
+					.toString(4);
+		} else if("csv".equals(format)) {
+			return csv.toString();
+		} else {
+			throw new IllegalArgumentException("Invalid format : " + format);
+		}
+
 	}
 
 	/**

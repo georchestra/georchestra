@@ -14,7 +14,7 @@ import net.tanesha.recaptcha.ReCaptchaResponse;
 
 import org.georchestra.console.bs.Moderator;
 import org.georchestra.console.bs.ReCaptchaParameters;
-import org.georchestra.console.dao.Delegation2Dao;
+import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.ds.*;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountFactory;
@@ -42,7 +42,7 @@ public class NewAccountFormControllerTest {
     private NewAccountFormController ctrl ;
     private AccountDao dao = Mockito.mock(AccountDao.class);
     private OrgsDao org = Mockito.mock(OrgsDao.class);
-    private Delegation2Dao delegation2Dao = Mockito.mock(Delegation2Dao.class);
+    private AdvancedDelegationDao advancedDelegationDao = Mockito.mock(AdvancedDelegationDao.class);
     private EmailFactoryImpl efi = Mockito.mock(EmailFactoryImpl.class);
     private MailService srv = new MailService(efi);
     private Moderator  mod = new Moderator();
@@ -81,7 +81,7 @@ public class NewAccountFormControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        ctrl = new NewAccountFormController(dao, org, delegation2Dao, srv, mod, rec, rep, new Validation(""));
+        ctrl = new NewAccountFormController(dao, org, advancedDelegationDao, srv, mod, rec, rep, new Validation(""));
 
         // Mock admin account
         DistinguishedName dn = new DistinguishedName();

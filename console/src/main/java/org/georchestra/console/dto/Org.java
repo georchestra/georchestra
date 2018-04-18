@@ -19,13 +19,15 @@
 
 package org.georchestra.console.dto;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import java.util.LinkedList;
 import java.util.List;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Org implements Comparable<Org> {
 
     public static final String JSON_ID = "id";
@@ -41,10 +43,14 @@ public class Org implements Comparable<Org> {
     private String id;
     private String name;
     private String shortName;
-    private List<String> cities;
+    private List<String> cities = new LinkedList<String>();
     private String status;
-    private List<String> members;
+    private List<String> members = new LinkedList<String>();
 
+    @JsonIgnore
+    private OrgExt orgExt;
+
+    @JsonProperty(JSON_ID)
     public String getId() {
         return id;
     }
@@ -53,6 +59,7 @@ public class Org implements Comparable<Org> {
         this.id = id;
     }
 
+    @JsonProperty(JSON_NAME)
     public String getName() {
         return name;
     }
@@ -61,6 +68,7 @@ public class Org implements Comparable<Org> {
         this.name = name;
     }
 
+    @JsonProperty(JSON_SHORT_NAME)
     public String getShortName() {
         return shortName;
     }
@@ -70,6 +78,7 @@ public class Org implements Comparable<Org> {
             this.shortName = shortName;
     }
 
+    @JsonProperty(JSON_CITIES)
     public List<String> getCities() {
         return cities;
     }
@@ -78,6 +87,7 @@ public class Org implements Comparable<Org> {
         this.cities = cities;
     }
 
+    @JsonProperty(JSON_STATUS)
     public String getStatus() {
         return status;
     }
@@ -86,6 +96,7 @@ public class Org implements Comparable<Org> {
         this.status = status;
     }
 
+    @JsonProperty(JSON_MEMBERS)
     public List<String> getMembers() {
         return members;
     }
@@ -94,27 +105,28 @@ public class Org implements Comparable<Org> {
         this.members = members;
     }
 
-    public JSONObject toJson() throws JSONException {
-        JSONObject res = new JSONObject();
-        res.put(JSON_ID, this.getId());
-        res.put(JSON_NAME, this.getName());
-        res.put(JSON_SHORT_NAME, this.getShortName());
+    public OrgExt getOrgExt() {
+        return orgExt;
+    }
 
-        JSONArray cities = new JSONArray();
-        if(this.getCities() != null)
-            for(String city : this.getCities())
-                cities.put(city);
-        res.put(JSON_CITIES, cities);
+    public void setOrgExt(OrgExt orgExt) {
+        this.orgExt = orgExt;
+    }
 
-        if(this.getStatus() != null)
-            res.put(JSON_STATUS, this.getStatus());
+    @JsonGetter(OrgExt.JSON_ORG_TYPE)
+    public String getOrgType(){
+        if(this.orgExt == null)
+            return null;
+        else
+            return this.orgExt.getOrgType();
+    }
 
-        JSONArray members = new JSONArray();
-        if(this.getMembers() != null)
-            for(String member : this.getMembers())
-                members.put(member);
-        res.put(JSON_MEMBERS, members);
-        return res;
+    @JsonGetter(OrgExt.JSON_ADDRESS)
+    public String getOrgAddress(){
+        if(this.orgExt == null)
+            return null;
+        else
+            return this.orgExt.getAddress();
     }
 
     public String toString(){
@@ -125,12 +137,4 @@ public class Org implements Comparable<Org> {
         return this.getName().compareToIgnoreCase(org.getName());
     }
 
-    public static Org createBrief(String name, String shortName){
-        Org res = new Org();
-        res.setName(name);
-        res.setShortName(shortName);
-        res.setId(name.replaceAll("[^\\w]", "_"));
-        return res;
-
-    }
 }

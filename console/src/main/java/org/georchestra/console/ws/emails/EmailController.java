@@ -22,10 +22,7 @@ package org.georchestra.console.ws.emails;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
-import org.georchestra.console.dao.AdminLogDao;
-import org.georchestra.console.dao.AttachmentDao;
-import org.georchestra.console.dao.EmailDao;
-import org.georchestra.console.dao.EmailTemplateDao;
+import org.georchestra.console.dao.*;
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.DataServiceException;
 import org.georchestra.console.dto.Account;
@@ -35,22 +32,21 @@ import org.georchestra.console.model.AdminLogType;
 import org.georchestra.console.model.Attachment;
 import org.georchestra.console.model.EmailEntry;
 import org.georchestra.console.model.EmailTemplate;
-import org.georchestra.console.ws.backoffice.utils.ResponseUtil;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.ldap.NameNotFoundException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.activation.DataHandler;
 import javax.mail.Address;
@@ -101,6 +97,9 @@ public class EmailController {
     @Autowired
     private GeorchestraConfiguration georConfig;
 
+    @Autowired
+    private AdvancedDelegationDao advancedDelegationDao;
+
     private static final Log LOG = LogFactory.getLog(EmailController.class.getName());
     private Collection<String> recipientWhiteList;
 
@@ -127,7 +126,7 @@ public class EmailController {
                     produces = "application/json; charset=UTF-8")
     @ResponseBody
     public String emailsList(@PathVariable String recipient) throws JSONException {
-
+        this.checkAuthorisation(recipient);
         JSONArray emails = new JSONArray();
         for(EmailEntry email : this.emailRepository.findByRecipientOrderByDateDesc(recipient))
             emails.put(email.toJSON());
@@ -158,41 +157,40 @@ public class EmailController {
                             @RequestParam("content") String content,
                             @RequestParam("attachments") String attachmentsIds,
                             HttpServletRequest request,
-                            HttpServletResponse response) throws NameNotFoundException, DataServiceException, MessagingException, IOException {
-        try {
-						EmailEntry email = new EmailEntry();
-						String sender = request.getHeader("sec-username");
-						email.setSender(sender);
-						email.setRecipient(recipient);
-						email.setSubject(subject);
-						email.setDate(new Date());
-						email.setBody(content);
+                            HttpServletResponse response)
+            throws NameNotFoundException, DataServiceException, MessagingException, JSONException {
 
-            attachmentsIds = attachmentsIds.trim();
-            List<Attachment> attachments = new LinkedList<Attachment>();
-            if (attachmentsIds.length() > 0) {
-                String[] attachmentsIdsList = attachmentsIds.split("\\s?,\\s?");
-                for (String attId : attachmentsIdsList) {
-                    Attachment att = this.attachmentRepo.findOne(Long.parseLong(attId));
-                    if (att == null)
-                        throw new NameNotFoundException("Unable to find attachment with ID : " + attId);
-                    attachments.add(att);
-                }
+        this.checkAuthorisation(recipient);
+
+        EmailEntry email = new EmailEntry();
+        String sender = request.getHeader("sec-username");
+        email.setSender(sender);
+        email.setRecipient(recipient);
+        email.setSubject(subject);
+        email.setDate(new Date());
+        email.setBody(content);
+
+        attachmentsIds = attachmentsIds.trim();
+        List<Attachment> attachments = new LinkedList<Attachment>();
+        if (attachmentsIds.length() > 0) {
+            String[] attachmentsIdsList = attachmentsIds.split("\\s?,\\s?");
+            for (String attId : attachmentsIdsList) {
+                Attachment att = this.attachmentRepo.findOne(Long.parseLong(attId));
+                if (att == null)
+                    throw new NameNotFoundException("Unable to find attachment with ID : " + attId);
+                attachments.add(att);
             }
-            email.setAttachments(attachments);
-            this.send(email);
-						
-            AdminLogEntry log = new AdminLogEntry(sender, recipient, AdminLogType.EMAIL_SENT, new Date());
-            this.emailRepository.save(email);
-            response.setContentType("application/json");
-            return email.toJSON().toString();
-						
-        } catch (Exception ex) {
-            LOG.error(ex.getMessage());
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throw new IOException(ex);
         }
+        email.setAttachments(attachments);
+        this.send(email);
+
+        AdminLogEntry log = new AdminLogEntry(sender, recipient, AdminLogType.EMAIL_SENT, new Date());
+        this.emailRepository.save(email);
+        response.setContentType("application/json");
+        return email.toJSON().toString();
+
     }
+
 
 
     /**
@@ -413,14 +411,18 @@ public class EmailController {
 
     }
 
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    @ResponseBody
-    public String handleException(Exception e, HttpServletResponse response) throws JSONException, IOException {
-        LOG.error(e.getMessage());
-        ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, e.getMessage()),
-                HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        throw new IOException(e);
+    /**
+     * Check if recipient is under delegation for delegated admins
+     *
+     * @param recipient
+     * @throws AccessDeniedException if current does not have permissions on recipient
+     */
+    private void checkAuthorisation(String recipient){
+        // check if recipient is under delegation for delegated admins
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if(!auth.getAuthorities().contains(this.advancedDelegationDao.ROLE_SUPERUSER))
+            if(!this.advancedDelegationDao.findUsersUnderDelegation(auth.getName()).contains(recipient))
+                throw new AccessDeniedException("User " + recipient + " not under delegation");
     }
 
     /**
@@ -473,10 +475,16 @@ public class EmailController {
         if(this.recipientWhiteList.contains(recipient))
             return true;
 
-        // Check recipient in LDAP
+        // Check recipient in LDAP and against delegation for delegated admins
         try {
-            return this.accountDao.findByEmail(recipient) != null;
+            Account account = this.accountDao.findByEmail(recipient);
+            if(account == null)
+                return false;
+            this.checkAuthorisation(account.getUid());
+            return true;
         } catch (NameNotFoundException ex){
+            return false;
+        } catch (AccessDeniedException ex){
             return false;
         }
     }

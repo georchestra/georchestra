@@ -19,6 +19,8 @@
 
 package org.georchestra.console.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
 /**
@@ -35,6 +37,7 @@ public interface Role {
 	 * 
 	 * @return the name of this role
 	 */
+	@JsonProperty("cn")
 	String getName();
 	void  setName(String cn );
 
@@ -43,6 +46,7 @@ public interface Role {
 	 * 
 	 * @return the list of user 
 	 */
+	@JsonProperty("users")
 	List<String> getUserList();
 	
 	void  setUserList(List<String> userUidList);
@@ -59,6 +63,7 @@ public interface Role {
 
 	void setFavorite(boolean isFavorite);
 
+	@JsonProperty("isFavorite")
 	boolean isFavorite();
 
 }

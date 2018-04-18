@@ -8,9 +8,7 @@ import static org.mockito.Matchers.eq;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.ds.AccountDaoImpl;
@@ -21,13 +19,7 @@ import org.georchestra.console.dto.AccountFactory;
 import org.georchestra.console.dto.Role;
 import org.georchestra.console.dto.RoleFactory;
 import org.georchestra.console.dto.UserSchema;
-import org.georchestra.console.ws.backoffice.roles.RolesController;
 import org.georchestra.console.ws.backoffice.users.UserRule;
-import org.georchestra.console.ws.backoffice.users.UsersController;
-import org.hamcrest.Matchers;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -42,16 +34,11 @@ import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.filter.PresentFilter;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.ldap.DefaultSpringSecurityContextSource;
 
 import javax.naming.directory.SearchControls;
 
 public class UsersRolesControllerTest {
-
-    private UsersController userCtrl;
-    private RolesController roleCtrl;
 
     private AccountDaoImpl dao;
     private RoleDaoImpl roleDao;
@@ -223,66 +210,7 @@ public class UsersRolesControllerTest {
         dao.setUniqueNumberField("employeeNumber");
         dao.setUserSearchBaseDN("ou=users");
         dao.setRoleDao(roleDao);
-
-        userCtrl = new UsersController(dao, userRule);
-        userCtrl.setOrgDao(orgsDao);
-        roleCtrl = new RolesController(roleDao, userRule);
-        roleCtrl.setAccountDao(dao);
       
-    }
-
-    @After
-    public void tearDown() throws Exception {
-
-    }
-
-    @Test
-    public final void testUsersRoleController() throws Exception {
-
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpServletResponse response = new MockHttpServletResponse();
-
-        userCtrl.findAll(request, response);
-
-        JSONArray userJson = new JSONArray(response.getContentAsString());
-
-        // reinitialize objects before reusing on the 2nd controller
-        request = new MockHttpServletRequest();
-        response = new MockHttpServletResponse();
-
-        roleCtrl.findAll(request, response);
-        JSONArray roleJson = new JSONArray(response.getContentAsString());
-
-        // Parses the output of roles controller
-        Set<String> encounteredUsersInRoles = new HashSet<String>();
-        for (int i = 0; i < roleJson.length(); ++i) {
-            JSONObject curGrp = (JSONObject) roleJson.get(i);
-            JSONArray curUsrs = (JSONArray) curGrp.get("users");
-            for (int j = 0; j < curUsrs.length(); ++j) {
-                encounteredUsersInRoles.add((String) curUsrs.get(j));
-            }
-        }
-
-        // Parses the output of users controller
-        Set<String> encounteredUsers = new HashSet<String>();
-        for (int i = 0; i < userJson.length(); ++i) {
-            JSONObject currentUser = (JSONObject) userJson.get(i);
-            encounteredUsers.add(currentUser.getString("uid"));
-        }
-
-        // Actually test
-
-        // Every users in roles should exist
-        for (String user : encounteredUsersInRoles) {
-            collector.checkThat(user + " is not in the expected users, but is member of roles",
-                    encounteredUsers.contains(user), Matchers.equalTo(true));
-        }
-        // Every users should be affected to at least one role
-        for (String user : encounteredUsers) {
-            collector.checkThat(user + " is not in any roles",
-                    encounteredUsersInRoles.contains(user), Matchers.equalTo(true));
-        }
-
     }
 
     private final String TEST_ROLE_NAME = "LDAPADMIN_TESTSUITE_SAMPLE_ROLE" ;

@@ -57,7 +57,7 @@ public class StatisticsControllerTest {
 	@Test
 	public final void testCombinedRequestsNoData() throws Exception {
 		// default empty post should return a 400 Bad request status
-		mockMvc.perform(post("/combinedRequests")).andExpect(status().isBadRequest());
+		mockMvc.perform(post("/combinedRequests.json")).andExpect(status().isBadRequest());
 	}
 
 	@Test
@@ -65,7 +65,7 @@ public class StatisticsControllerTest {
 		JSONObject posted = new JSONObject("{\"user\": \"testadmin\", \"startDate\": \"2015-01-01\", "
 				+ "\"group\": \"ADMINISTRATOR\", \"endDate\": \"2015-12-01\" }");
 		// -> 400
-		mockMvc.perform(post("/combinedRequests").content(posted.toString()))
+		mockMvc.perform(post("/combinedRequests.json").content(posted.toString()))
 			.andExpect(status().isBadRequest());
 	}
 	
@@ -73,10 +73,10 @@ public class StatisticsControllerTest {
 	public final void testCombinedRequestsNoDateOrBadDate() throws Exception {
 		JSONObject posted = new JSONObject("{\"user\": \"testadmin\"}");
 		// -> 400
-		mockMvc.perform(post("/combinedRequests").content(posted.toString()))
+		mockMvc.perform(post("/combinedRequests.json").content(posted.toString()))
 			.andExpect(status().isBadRequest());
 		
-		mockMvc.perform(post("/combinedRequests").content(posted.put("startDate", "invalid")
+		mockMvc.perform(post("/combinedRequests.json").content(posted.put("startDate", "invalid")
 				.put("endDate", "invalid").toString()))
 		.andExpect(status().isBadRequest());
 	
@@ -92,16 +92,16 @@ public class StatisticsControllerTest {
 		ArrayList<Object[]> sample = new ArrayList<Object[]>();
 		sample.add(sampleData);
 
-		mockMvc.perform(post("/combinedRequests").content(posted.put("endDate", "2015-01-01").toString()))
+		mockMvc.perform(post("/combinedRequests.json").content(posted.put("endDate", "2015-01-01").toString()))
 		.andExpect(content().string(containsString("granularity\": \"HOUR\"")))
 		.andExpect(status().isOk());
-		mockMvc.perform(post("/combinedRequests").content(posted.put("endDate", "2015-01-08").toString()))
+		mockMvc.perform(post("/combinedRequests.json").content(posted.put("endDate", "2015-01-08").toString()))
 		.andExpect(content().string(containsString("granularity\": \"DAY\"")))
 		.andExpect(status().isOk());
-		mockMvc.perform(post("/combinedRequests").content(posted.put("endDate", "2015-12-01").toString()))
+		mockMvc.perform(post("/combinedRequests.json").content(posted.put("endDate", "2015-12-01").toString()))
 		.andExpect(content().string(containsString("granularity\": \"WEEK\"")))
 		.andExpect(status().isOk());
-		mockMvc.perform(post("/combinedRequests").content(posted.put("endDate", "2016-12-01").toString()))
+		mockMvc.perform(post("/combinedRequests.json").content(posted.put("endDate", "2016-12-01").toString()))
 			.andExpect(content().string(containsString("granularity\": \"MONTH\"")))
 			.andExpect(status().isOk());
 		
@@ -111,16 +111,16 @@ public class StatisticsControllerTest {
 	public final void testCombinedRequestsLegitGroup() throws Exception {
 		JSONObject posted = new JSONObject("{\"group\": \"ADMINISTRATOR\", \"startDate\": \"2015-01-01\" }");
 
-		mockMvc.perform(post("/combinedRequests").content(posted.put("endDate", "2015-01-01").toString()))
+		mockMvc.perform(post("/combinedRequests.json").content(posted.put("endDate", "2015-01-01").toString()))
 			.andExpect(content().string(containsString("granularity\": \"HOUR\"")))
 			.andExpect(status().isOk());
-		mockMvc.perform(post("/combinedRequests").content(posted.put("endDate", "2015-01-08").toString()))
+		mockMvc.perform(post("/combinedRequests.json").content(posted.put("endDate", "2015-01-08").toString()))
 		.andExpect(content().string(containsString("granularity\": \"DAY\"")))
 		.andExpect(status().isOk());
-		mockMvc.perform(post("/combinedRequests").content(posted.put("endDate", "2015-05-01").toString()))
+		mockMvc.perform(post("/combinedRequests.json").content(posted.put("endDate", "2015-05-01").toString()))
 		.andExpect(content().string(containsString("granularity\": \"WEEK\"")))
 		.andExpect(status().isOk());
-		mockMvc.perform(post("/combinedRequests").content(posted.put("endDate", "2016-02-01").toString()))
+		mockMvc.perform(post("/combinedRequests.json").content(posted.put("endDate", "2016-02-01").toString()))
 		.andExpect(content().string(containsString("granularity\": \"MONTH\"")))
 		.andExpect(status().isOk());
 	}
@@ -129,16 +129,16 @@ public class StatisticsControllerTest {
 	public final void testCombinedRequestsNoUserNorGroup() throws Exception {
 		JSONObject posted = new JSONObject("{\"startDate\": \"2015-01-01\" }");
 
-		mockMvc.perform(post("/combinedRequests").content(posted.put("endDate", "2015-01-01").toString()))
+		mockMvc.perform(post("/combinedRequests.json").content(posted.put("endDate", "2015-01-01").toString()))
 			.andExpect(content().string(containsString("granularity\": \"HOUR\"")))
 			.andExpect(status().isOk());
-		mockMvc.perform(post("/combinedRequests").content(posted.put("endDate", "2015-01-08").toString()))
+		mockMvc.perform(post("/combinedRequests.json").content(posted.put("endDate", "2015-01-08").toString()))
 		.andExpect(content().string(containsString("granularity\": \"DAY\"")))
 		.andExpect(status().isOk());
-		mockMvc.perform(post("/combinedRequests").content(posted.put("endDate", "2015-05-01").toString()))
+		mockMvc.perform(post("/combinedRequests.json").content(posted.put("endDate", "2015-05-01").toString()))
 		.andExpect(content().string(containsString("granularity\": \"WEEK\"")))
 		.andExpect(status().isOk());
-		mockMvc.perform(post("/combinedRequests").content(posted.put("endDate", "2016-02-01").toString()))
+		mockMvc.perform(post("/combinedRequests.json").content(posted.put("endDate", "2016-02-01").toString()))
 		.andExpect(content().string(containsString("granularity\": \"MONTH\"")))
 		.andExpect(status().isOk());
 	}

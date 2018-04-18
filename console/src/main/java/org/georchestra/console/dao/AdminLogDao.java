@@ -22,9 +22,11 @@ package org.georchestra.console.dao;
 import org.georchestra.console.model.AdminLogEntry;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -37,5 +39,7 @@ public interface AdminLogDao extends PagingAndSortingRepository<AdminLogEntry, L
     List<AdminLogEntry> findByTarget(String target);
 
     List<AdminLogEntry> findByTarget(String target, Pageable range);
+
+    List<AdminLogEntry> myFindByTargets(@Param("targets") Collection<String> targets, Pageable range);
 
 }

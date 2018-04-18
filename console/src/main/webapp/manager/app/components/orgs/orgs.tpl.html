@@ -5,8 +5,8 @@
     <div class="alert alert-info">
       <a ng-link="orgs({org: 'all'})" class="category" ng-class="{active: orgs.org=='all'}" translate>orgs.allorgs</a>
       <a ng-link="orgs({org: 'pending'})" class="category" ng-class="{active: orgs.org=='pending'}" translate>orgs.pending</a>
-      <hr>
-      <div class="create-btn">
+      <hr ng-if="profile === 'SUPERUSER'">
+      <div class="create-btn" ng-if="profile === 'SUPERUSER'">
         <a ng-click="orgs.create()" class="btn btn-default" translate>orgs.neworg</a>
       </div>
     </div>

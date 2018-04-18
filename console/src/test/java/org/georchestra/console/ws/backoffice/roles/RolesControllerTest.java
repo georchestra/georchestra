@@ -1,19 +1,12 @@
 package org.georchestra.console.ws.backoffice.roles;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
-
-import java.io.IOException;
-
-import javax.naming.Name;
-import javax.servlet.http.HttpServletResponse;
-
 import org.georchestra.console.dao.AdminLogDao;
+import org.georchestra.console.dao.AdvancedDelegationDao;
+import org.georchestra.console.dao.DelegationDao;
 import org.georchestra.console.ds.*;
 import org.georchestra.console.dto.Role;
 import org.georchestra.console.dto.RoleFactory;
+import org.georchestra.console.model.DelegationEntry;
 import org.georchestra.console.ws.backoffice.users.UserRule;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,15 +15,25 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.ldap.NameNotFoundException;
-import org.springframework.ldap.core.AttributesMapper;
-import org.springframework.ldap.core.ContextMapper;
-import org.springframework.ldap.core.DirContextOperations;
-import org.springframework.ldap.core.DistinguishedName;
-import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.ldap.core.*;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+
+import javax.naming.Name;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.*;
+
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.eq;
 
 public class RolesControllerTest {
 
@@ -84,59 +87,51 @@ public class RolesControllerTest {
 		roleCtrl = new RolesController(roleDao, userRule);
 		roleCtrl.setAccountDao(accountDao);
 
+		DelegationDao delegationDao = Mockito.mock(DelegationDao.class);
+        DelegationEntry resTestuser = new DelegationEntry();
+        resTestuser.setUid("testuser");
+        resTestuser.setOrgs(new String[]{"psc", "cra"});
+        resTestuser.setRoles(new String[]{"GN_REVIEWER", "GN_EDITOR"});
+		Mockito.when(delegationDao.findOne(Mockito.eq("testuser"))).thenReturn(resTestuser);
+		roleCtrl.setDelegationDao(delegationDao);
+
+        AdvancedDelegationDao advancedDelegationDao = Mockito.mock(AdvancedDelegationDao.class);
+        Set<String> usersUnderDelegation = new HashSet<String>();
+        usersUnderDelegation.add("testeditor");
+        usersUnderDelegation.add("testreviewer");
+
+        Mockito.when(advancedDelegationDao.findUsersUnderDelegation(Mockito.eq("testuser"))).thenReturn(usersUnderDelegation);
+        roleCtrl.setAdvancedDelegationDao(advancedDelegationDao);
+
 		request = new MockHttpServletRequest();
 		response = new MockHttpServletResponse();
 
-        // Set user connected through http header
-        request.addHeader("sec-username", "testadmin");
-
+        // Set user connected through spring security
+        List<GrantedAuthority> role = new LinkedList<GrantedAuthority>();
+        role.add(new SimpleGrantedAuthority("ROLE_SUPERUSER"));
+        Authentication auth = new PreAuthenticatedAuthenticationToken("testadmin",
+                null,
+                role);
+        SecurityContextHolder.getContext().setAuthentication(auth);
 	}
 
-    @Test
+    @Test(expected = Exception.class)
     public void findAllWithException() throws Exception {
         roleDao = Mockito.mock(RoleDaoImpl.class);
         roleCtrl.setRoleDao(roleDao);
-
         Mockito.doThrow(Exception.class).when(roleDao).findAll();
-
-        try {
-            roleCtrl.findAll(request, response);
-        } catch (Throwable e) {
-            assertTrue(e instanceof IOException);
-            assertTrue(response.getStatus() == HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
+        roleCtrl.findAll();
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testFindByCNEmpty() throws Exception {
-        roleCtrl.findByCN(response, "");
-        assertTrue(response.getStatus() == HttpServletResponse.SC_NOT_FOUND);
+        roleCtrl.findByCN("");
     }
 
-    @Test
-    public void testFindByCNNotFound() throws Exception {
-        Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (ContextMapper) Mockito.any());
-
-        roleCtrl.findByCN(response, "NOTEXISTINGROLE");
-
-        JSONObject ret = new JSONObject(response.getContentAsString());
-        assertTrue(response.getStatus() == HttpServletResponse.SC_NOT_FOUND);
-        assertTrue(ret.getString("error").equals("not_found"));
-        assertTrue(ret.getBoolean("success") == false);
-    }
-
-    @Test
+    @Test(expected = DataServiceException.class)
     public void testFindByCNDataServiceException() throws Exception {
         Mockito.doThrow(DataServiceException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (ContextMapper) Mockito.any());
-
-        try {
-            roleCtrl.findByCN(response, "NOTEXISTINGROLE");
-        } catch (Throwable e) {
-            JSONObject ret = new JSONObject(response.getContentAsString());
-            assertTrue(e instanceof IOException);
-            assertTrue(response.getStatus() == HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            assertTrue(ret.getBoolean("success") == false);
-        }
+        roleCtrl.findByCN("NOTEXISTINGROLE");
     }
 
     @Test
@@ -144,11 +139,8 @@ public class RolesControllerTest {
         Role retAdmin = RoleFactory.create("ADMINISTRATOR", "administrator role", false);
         Mockito.when(ldapTemplate.lookup((Name) Mockito.any(), (ContextMapper) Mockito.any())).thenReturn(retAdmin);
 
-        roleCtrl.findByCN(response, "ADMINISTRATOR");
-
-        JSONObject ret = new JSONObject(response.getContentAsString());
-        assertTrue(ret.get("cn").equals("ADMINISTRATOR"));
-        assertTrue(ret.get("description").equals("administrator role"));
+        Role res = roleCtrl.findByCN("ADMINISTRATOR");
+        assertEquals(res, retAdmin);
     }
 
     @Test
@@ -373,7 +365,7 @@ public class RolesControllerTest {
 
     }
 
-	@Test
+	@Test(expected = NameNotFoundException.class)
 	public void testUpdateUsersNotFoundException() throws Exception {
 		JSONObject toSend = new JSONObject().put("users", new JSONArray().put("testadmin").put("testuser"))
 				.put("PUT", new JSONArray().put("ADMINISTRATOR")).put("DELETE", new JSONArray().put("USERS"));
@@ -383,35 +375,20 @@ public class RolesControllerTest {
 		Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookupContext((Name) Mockito.any());
 
 		roleCtrl.updateUsers(request, response);
-
-		JSONObject ret = new JSONObject(response.getContentAsString());
-		assertTrue(response.getStatus() == HttpServletResponse.SC_NOT_FOUND);
-		assertTrue(!ret.getBoolean("success"));
-		assertTrue(ret.getString("error").equals("user_not_found"));
 	}
 
-	@Test
+	@Test(expected = JSONException.class)
 	public void testUpdateUsersJsonException() throws Exception {
 		JSONObject toSend = new JSONObject().put("users", new JSONArray().put("testadmin").put("testuser"))
 				.put("PUT", new JSONArray().put("ADMINISTRATOR")).put("DELETE", new JSONArray().put("USERS"));
-		request.setContent(toSend.toString().getBytes());
+        // Remove first char of json string so json is not parsable
+		request.setContent(toSend.toString().substring(1).getBytes());
 		request.setRequestURI("/console/roles_users");
-		// Well, this is unlikely to happen in real life, but the only thing
-		// we want to test is a JSONException being caught, no matter is the
-		// cause.
-		Mockito.doThrow(JSONException.class).when(ldapTemplate).lookupContext((Name) Mockito.any());
 
-		try {
-			roleCtrl.updateUsers(request, response);
-		} catch (Throwable e) {
-			assertTrue(e instanceof IOException);
-			JSONObject ret = new JSONObject(response.getContentAsString());
-			assertTrue(response.getStatus() == HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			assertTrue(!ret.getBoolean("success"));
-		}
+        roleCtrl.updateUsers(request, response);
 	}
 
-	@Test
+	@Test(expected = DataServiceException.class)
 	public void testUpdateUsersDataServiceException() throws Exception {
 		JSONObject toSend = new JSONObject().put("users", new JSONArray().put("testadmin").put("testuser"))
 				.put("PUT", new JSONArray().put("ADMINISTRATOR")).put("DELETE", new JSONArray().put("USERS"));
@@ -420,14 +397,7 @@ public class RolesControllerTest {
 
 		Mockito.doThrow(DataServiceException.class).when(ldapTemplate).lookupContext((Name) Mockito.any());
 
-		try {
-			roleCtrl.updateUsers(request, response);
-		} catch (Throwable e) {
-			assertTrue(e instanceof IOException);
-			JSONObject ret = new JSONObject(response.getContentAsString());
-			assertTrue(response.getStatus() == HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			assertTrue(!ret.getBoolean("success"));
-		}
+        roleCtrl.updateUsers(request, response);
 	}
 
 	@Test
@@ -446,4 +416,35 @@ public class RolesControllerTest {
 		assertTrue(ret.getBoolean("success"));
 	}
 
+	@Test
+    public void testCheckAuthorizationOK(){
+        roleCtrl.checkAuthorization("testuser",
+                Arrays.asList(new String[]{"testeditor", "testreviewer"}),
+                Arrays.asList(new String[]{"GN_REVIEWER"}),
+                Arrays.asList(new String[]{"GN_EDITOR"}));
+    }
+
+    @Test(expected = AccessDeniedException.class)
+    public void testCheckAuthorizationIllegalUser(){
+        roleCtrl.checkAuthorization("testuser",
+                Arrays.asList(new String[]{"testuser", "testreviewer"}),
+                Arrays.asList(new String[]{"GN_REVIEWER"}),
+                Arrays.asList(new String[]{"GN_EDITOR"}));
+    }
+
+    @Test(expected = AccessDeniedException.class)
+    public void testCheckAuthorizationIllegalRolePut(){
+        roleCtrl.checkAuthorization("testuser",
+                Arrays.asList(new String[]{"testeditor", "testreviewer"}),
+                Arrays.asList(new String[]{"GN_ADMIN"}),
+                Arrays.asList(new String[]{"GN_EDITOR"}));
+    }
+
+    @Test(expected = AccessDeniedException.class)
+    public void testCheckAuthorizationIllegalRoleDelete(){
+        roleCtrl.checkAuthorization("testuser",
+                Arrays.asList(new String[]{"testeditor", "testreviewer"}),
+                Arrays.asList(new String[]{"GN_REVIEWER"}),
+                Arrays.asList(new String[]{"GN_ADMIN"}));
+    }
 }

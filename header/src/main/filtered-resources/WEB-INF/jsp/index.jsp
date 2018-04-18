@@ -105,6 +105,10 @@ if(sec_roles != null) {
             admin = true;
             console = true;
         }
+        if (roles[i].equals("ROLE_ORGADMIN")) {
+            admin = true;
+            console = true;
+        }
         if (roles[i].equals("ROLE_GN_ADMIN")) {
             admin = true;
             catadmin = true;
@@ -350,7 +354,7 @@ if(sec_roles != null) {
                         <li class="active"><a><fmt:message key="users"/></a></li>
                             </c:when>
                             <c:otherwise>
-                        <li><a href="<%= ldapadm %>/console/"><fmt:message key="users"/></a></li>
+                        <li><a href="<%= ldapadm %>/manager/"><fmt:message key="users"/></a></li>
                             </c:otherwise>
                         </c:choose>
                         </c:when>

@@ -19,29 +19,27 @@
 
 package org.georchestra.console.model;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQuery;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Entity
 @Table(schema = "console", name = "admin_log")
-@NamedQuery(name = "AdminLogEntry.findByTargetPageable", query = "SELECT l FROM AdminLogEntry l WHERE l.target = :target ORDER BY l.date DESC")
+@NamedQueries(
+        {@NamedQuery(name = "AdminLogEntry.findByTargetPageable",
+                query = "SELECT l FROM AdminLogEntry l WHERE l.target = :target ORDER BY l.date DESC"),
+         @NamedQuery(name = "AdminLogEntry.myFindByTargets",
+                 query = "SELECT l FROM AdminLogEntry l WHERE l.target IN :targets ORDER BY l.date DESC")})
 public class AdminLogEntry {
 
     @Id
     @SequenceGenerator(name="admin_log_seq", schema = "console", sequenceName="admin_log_seq", initialValue=1, allocationSize=1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "admin_log_seq")
+    @JsonIgnore
     private long id;
     private String admin;
     private String target;
@@ -49,6 +47,7 @@ public class AdminLogEntry {
     private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
     @Column(updatable = false, nullable = false)
+    @JsonIgnore
     private Date date;
 
     public AdminLogEntry() {}
@@ -100,12 +99,9 @@ public class AdminLogEntry {
         this.date = date;
     }
 
-    public JSONObject toJSON() throws JSONException {
-        JSONObject res = new JSONObject();
-        res.put("admin", this.admin.toString());
-        res.put("target", this.target.toString());
-        res.put("type", this.type.toString());
-        res.put("date",  AdminLogEntry.dateFormat.format(this.date));
-        return res;
+    @JsonGetter("date")
+    public String getFormattedDate(){
+        return AdminLogEntry.dateFormat.format(this.date);
     }
+
 }

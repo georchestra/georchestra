@@ -4,8 +4,8 @@
 
     <div class="alert alert-info">
       <a ng-link="roles({role: 'all'})" class="category" ng-class="{active: roles.role=='all'}" translate>roles.allroles</a>
-      <hr/>
-      <div class="create-btn">
+      <hr ng-if="profile === 'SUPERUSER'"/>
+      <div class="create-btn" ng-if="profile === 'SUPERUSER'">
         <a ng-click="roles.create()" class="btn btn-default" translate>roles.newrole</a>
       </div>
     </div>
@@ -33,7 +33,7 @@
             <a ng-link="role({role: role.cn, tab: 'infos'})">
               {{::role.cn}}
             </a>
-            &nbsp;<i class="glyphicon glyphicon-star-empty" ng-if="role.isFavorite"></i>
+            &nbsp;<i class="glyphicon glyphicon-star-empty" ng-if="role.isFavorite && profile === 'SUPERUSER'"></i>
           </td>
           <td>{{::role.usersCount}}</td>
         </tr>
