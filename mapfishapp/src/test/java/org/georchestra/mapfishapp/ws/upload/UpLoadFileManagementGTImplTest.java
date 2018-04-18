@@ -39,21 +39,6 @@ public class UpLoadFileManagementGTImplTest {
         System.setProperty("org.geotools.referencing.forceXY", "true");
     }
 
-    @Before
-    public void setUp() {
-        // If travis-ci is detected, deactivate.
-        //
-        // we know that the JVM will crash, and our own CI with Jenkins will
-        // handle the test correctly anyway.
-        //
-        // see:
-        // https://github.com/travis-ci/travis-ci/issues/5599#issuecomment-182085831
-        String onTravisCi = System.getenv("TRAVIS");
-        if (onTravisCi != null) {
-            assumeFalse("Travis-ci detected, skipping test",
-                    onTravisCi.equalsIgnoreCase("true"));
-        }
-    }
     /**
      * Test method for
      * {@link mapfishapp.ws.upload.UpLoadFileManagement#getFeatureCollectionAsJSON()}
