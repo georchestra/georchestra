@@ -118,6 +118,10 @@ public class HeadersManagementStrategy {
                 if (noAcceptEncoding && headerName.equalsIgnoreCase(ACCEPT_ENCODING)) {
                     continue;
                 }
+                // It is the HttpClient's lib duty to add this header accordingly.
+                if (headerName.equalsIgnoreCase(TRANSFER_ENCODING)) {
+                    continue;
+                }
                 if (headerName.equalsIgnoreCase(HOST)) {
                     continue;
                 }
@@ -132,6 +136,7 @@ public class HeadersManagementStrategy {
                 if (referer != null && headerName.equalsIgnoreCase(REFERER_HEADER_NAME)) {
                     continue;
                 }
+                
                 String value = originalRequest.getHeader(headerName);
                 addHeaderToRequestAndLog(proxyRequest, headersLog, headerName, value);
             }
