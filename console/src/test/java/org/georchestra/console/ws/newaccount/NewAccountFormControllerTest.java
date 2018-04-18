@@ -9,9 +9,8 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
-import net.tanesha.recaptcha.ReCaptcha;
-import net.tanesha.recaptcha.ReCaptchaResponse;
 
+import org.georchestra.console.ReCaptchaV2;
 import org.georchestra.console.bs.Moderator;
 import org.georchestra.console.bs.ReCaptchaParameters;
 import org.georchestra.console.dao.AdvancedDelegationDao;
@@ -46,15 +45,12 @@ public class NewAccountFormControllerTest {
     private EmailFactoryImpl efi = Mockito.mock(EmailFactoryImpl.class);
     private MailService srv = new MailService(efi);
     private Moderator  mod = new Moderator();
-    private ReCaptcha  rec = Mockito.mock(ReCaptcha.class);
+    private ReCaptchaV2 rec = Mockito.mock(ReCaptchaV2.class);
     private ReCaptchaParameters rep = new ReCaptchaParameters();
-    private ReCaptchaResponse rer = Mockito.mock(ReCaptchaResponse.class);
     private MockHttpServletRequest request = new MockHttpServletRequest();
+    private LdapTemplate ldapTemplate = Mockito.mock(LdapTemplate.class);
     private Model UiModel = Mockito.mock(Model.class);
-
-
     private Account adminAccount;
-
 
     AccountFormBean formBean = Mockito.mock(AccountFormBean.class);
     BindingResult result = Mockito.mock(BindingResult.class);
@@ -67,21 +63,22 @@ public class NewAccountFormControllerTest {
         Mockito.when(formBean.getEmail()).thenReturn("test@localhost.com");
         Mockito.when(formBean.getPassword()).thenReturn("abc1234");
         Mockito.when(formBean.getConfirmPassword()).thenReturn("abc1234");
-        Mockito.when(formBean.getRecaptcha_challenge_field()).thenReturn("abc1234");
         Mockito.when(formBean.getRecaptcha_response_field()).thenReturn("abc1234");
         Mockito.when(formBean.getPhone()).thenReturn("+331234567890");
         Mockito.when(formBean.getTitle()).thenReturn("+331234567890");
         Mockito.when(formBean.getOrg()).thenReturn("geOrchestra testing team");
         Mockito.when(formBean.getDescription()).thenReturn("Bot Unit Testing");
 
-        Mockito.when(rec.checkAnswer(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(rer);
-        Mockito.when(rer.isValid()).thenReturn(true);
+        Mockito.when(rec.isValid(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(true);
     }
-
 
     @Before
     public void setUp() throws Exception {
-        ctrl = new NewAccountFormController(dao, org, advancedDelegationDao, srv, mod, rec, rep, new Validation(""));
+
+    	rep.setVerifyUrl("https://localhost");
+    	rep.setPrivateKey("privateKey");
+
+        ctrl = new NewAccountFormController(dao, org, advancedDelegationDao, srv, mod, rep, new Validation(""));
 
         // Mock admin account
         DistinguishedName dn = new DistinguishedName();
@@ -112,10 +109,10 @@ public class NewAccountFormControllerTest {
      *
      * @throws IOException
      */
-    @Test
+    @SuppressWarnings("static-access")
+	@Test
     public void testCreate() throws IOException, SQLException {
         configureLegitFormBean();
-
         String ret = ctrl.create(request, formBean, "", result, status, UiModel);
 
         assertTrue(ret.equals("welcomeNewUser"));
@@ -141,7 +138,6 @@ public class NewAccountFormControllerTest {
         assertTrue(expectedFields.contains("uid"));
         assertTrue(expectedFields.contains("password"));
         assertTrue(expectedFields.contains("confirmPassword"));
-        assertTrue(expectedFields.contains("recaptcha_challenge_field"));
         assertTrue(expectedFields.contains("recaptcha_response_field"));
     }
 
@@ -269,7 +265,6 @@ public class NewAccountFormControllerTest {
         t.setOrg("geOrchestra");
         t.setPassword("monkey123");
         t.setPhone("+331234567890");
-        t.setRecaptcha_challenge_field("good");
         t.setRecaptcha_response_field("wrong");
         t.setSurname("testmaster");
         t.setTitle("software engineer");
@@ -282,7 +277,6 @@ public class NewAccountFormControllerTest {
         assertTrue(t.getOrg().equals("geOrchestra"));
         assertTrue(t.getPassword().equals("monkey123"));
         assertTrue(t.getPhone().equals("+331234567890"));
-        assertTrue(t.getRecaptcha_challenge_field().equals("good"));
         assertTrue(t.getRecaptcha_response_field().equals("wrong"));
         assertTrue(t.getSurname().equals("testmaster"));
         assertTrue(t.getTitle().equals("software engineer"));
@@ -291,7 +285,7 @@ public class NewAccountFormControllerTest {
                 + "firstName=Test, surname=testmaster, org=geOrchestra, "
                 + "title=software engineer, email=test@localhost.com, "
                 + "phone=+331234567890, description=testing account, "
-                + "password=monkey123, confirmPassword=test, recaptcha_challenge_field=good, "
+                + "password=monkey123, confirmPassword=test, "
                 + "recaptcha_response_field=wrong]"));
     }
 

@@ -19,7 +19,7 @@
 
 package org.georchestra.console.ws.newaccount;
 
-import net.tanesha.recaptcha.ReCaptcha;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -87,8 +87,6 @@ public final class NewAccountFormController {
 
 	private Moderator moderator;
 
-	private ReCaptcha reCaptcha;
-
 	private ReCaptchaParameters reCaptchaParameters;
 
 	private Validation validation;
@@ -98,7 +96,7 @@ public final class NewAccountFormController {
 
 	@Autowired
 	public NewAccountFormController(AccountDao dao, OrgsDao orgDao, AdvancedDelegationDao advancedDelegationDao,
-									MailService mailSrv, Moderator moderatorRule, ReCaptcha reCaptcha,
+									MailService mailSrv, Moderator moderatorRule,
 									ReCaptchaParameters reCaptchaParameters,
 									Validation validation) {
 		this.accountDao = dao;
@@ -106,17 +104,15 @@ public final class NewAccountFormController {
 		this.advancedDelegationDao = advancedDelegationDao;
 		this.mailService = mailSrv;
 		this.moderator = moderatorRule;
-		this.reCaptcha = reCaptcha;
 		this.reCaptchaParameters = reCaptchaParameters;
 		this.validation = validation;
 	}
 
 	@InitBinder
 	public void initForm(WebDataBinder dataBinder) {
-		dataBinder.setAllowedFields(ArrayUtils.addAll(new String[]{"firstName","surname", "email", "phone",
+		dataBinder.setAllowedFields(new String[]{"firstName","surname", "email", "phone",
 				"org", "title", "description", "uid", "password", "confirmPassword", "createOrg", "orgName",
-				"orgShortName", "orgAddress", "orgType", "orgCities"},
-		        new String[]{"recaptcha_challenge_field", "recaptcha_response_field"}));
+				"orgShortName", "orgAddress", "orgType", "orgCities", "recaptcha_response_field"});
 	}
 
 	@RequestMapping(value="/account/new", method=RequestMethod.GET)
@@ -143,8 +139,8 @@ public final class NewAccountFormController {
 	}
 
 	/**
-	 * Creates a new account in ldap. If the application was configured as "moderator singnup" the new account is added in the PENDING role,
-	 * in other case, it will be inserted in the USER role
+	 * Creates a new account in ldap. If the application was configured with "moderated signup" the new account is added with the PENDING role,
+	 * in other case, it will be inserted with the USER role
 	 *
 	 *
 	 * @param formBean
@@ -198,8 +194,7 @@ public final class NewAccountFormController {
 		PasswordUtils.validate(formBean.getPassword(), formBean.getConfirmPassword(), result);
 
 		// Check captcha
-		new RecaptchaUtils(request.getRemoteAddr(), this.reCaptcha)
-				.validate(formBean.getRecaptcha_challenge_field(), formBean.getRecaptcha_response_field(), result);
+        RecaptchaUtils.validate(reCaptchaParameters, formBean.getRecaptcha_response_field(), result);
 
 		// Validate remaining fields
 		this.validation.validateUserField("phone", formBean.getPhone(), result);
@@ -332,7 +327,7 @@ public final class NewAccountFormController {
 			throw new IOException(e);
 		}
 	}
-	
+
 	@ModelAttribute("accountFormBean")
 	public AccountFormBean getAccountFormBean() {
 		return new AccountFormBean();

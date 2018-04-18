@@ -22,7 +22,7 @@
     <security:global-method-security pre-post-annotations="enabled" >
 	  <security:expression-handler ref="expressionHandler"/>
 	</security:global-method-security>
-	
+
 	<bean id="expressionHandler" class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
 		<property name="permissionEvaluator" ref="consolePermissionEvaluator"/>
 	</bean>
@@ -64,12 +64,11 @@
 
   <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" p:prefix="/WEB-INF/views/" p:suffix=".jsp" />
 
-  <bean id="recaptcha" class="net.tanesha.recaptcha.ReCaptchaImpl">
-    <property name="privateKey" value="${privateKey}"/>
-  </bean>
 
   <bean id="reCaptchaParameters" class="org.georchestra.console.bs.ReCaptchaParameters">
     <property name="publicKey" value="${publicKey}"/>
+    <property name="privateKey" value="${privateKey}"/>
+    <property name="verifyUrl" value="${verificationURL}"/>
   </bean>
 
   <!-- LDAP connection -->
@@ -117,7 +116,7 @@
       <value>${protectedUserList:geoserver_privileged_user}</value>
     </property>
   </bean>
-  
+
   <bean class="org.georchestra.console.ws.backoffice.roles.RoleProtected">
     <property name="listOfprotectedRoles">
       <description>Comma separated list of one or more protected Roles</description>
@@ -125,7 +124,7 @@
       <value>${protectedRoleList:ADMINISTRATOR,USER,GN_.*,MOD_.*}</value>
     </property>
   </bean>
-  
+
   <bean id="userTokenDao" class="org.georchestra.console.ds.UserTokenDao"/>
 
   <bean id="waitForDb" class="org.georchestra.commons.WaitForDb" init-method="test">
@@ -141,7 +140,7 @@
         <property name="password" value="${psql.pass}"/>
         <property name="driverClassName" value="org.postgresql.Driver"/>
         <property name="testOnBorrow" value="true"/>
-        <property name="validationQuery" value="select 1 as dbcp_connection_test"/> 
+        <property name="validationQuery" value="select 1 as dbcp_connection_test"/>
         <property name="poolPreparedStatements" value="true"/>
         <property name="maxOpenPreparedStatements" value="-1"/>
         <property name="defaultReadOnly" value="false"/>
@@ -182,7 +181,7 @@
 
   <!-- Resolves localized messages*.properties and application.properties
 		files in the application to allow for internationalization.
-		
+
 		The messages*.properties files translate Roo generated messages which are part
 		of the admin interface, the application.properties resource bundle localizes
 		all application specific messages such as entity names and menu items.
@@ -238,7 +237,7 @@
     <property name="changePasswordEmailFile" value="/WEB-INF/templates/changepassword-email-template.txt"/>
     <property name="changePasswordEmailSubject" value="${subject.change.password}"/>
     <property name="accountUidRenamedEmailFile" value="/WEB-INF/templates/account-uid-renamed.txt" />
-    <property name="accountUidRenamedEmailSubject" value="${subject.account.uid.renamed}" />    
+    <property name="accountUidRenamedEmailSubject" value="${subject.account.uid.renamed}" />
   </bean>
 
   <bean id="mailService" class="org.georchestra.console.mailservice.MailService">

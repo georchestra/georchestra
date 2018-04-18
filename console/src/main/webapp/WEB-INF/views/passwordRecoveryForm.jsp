@@ -27,9 +27,6 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 
-<%@ page import="net.tanesha.recaptcha.ReCaptcha" %>
-<%@ page import="net.tanesha.recaptcha.ReCaptchaFactory" %>
-
 <!DOCTYPE html>
 <!--TODO: set appropriate lang-->
 <!--TODO: favicon-->
@@ -40,6 +37,7 @@
 	<link href='css/console.css' rel="stylesheet" />
 	<title><s:message code="passwordRecoveryForm.title"/></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
     <%@ include file="header.jsp" %>
@@ -74,8 +72,7 @@
 			</fieldset>
 
 			<fieldset>
-				<legend><s:message code="passwordRecoveryForm.fieldset.reCaptcha"/></legend>
-				<t:recaptcha path="recaptcha_response_field" />
+				 <t:recaptcha path="g-recaptcha" />
 			</fieldset>
 
 			<fieldset>

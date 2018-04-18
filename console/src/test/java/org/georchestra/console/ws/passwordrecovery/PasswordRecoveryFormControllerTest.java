@@ -10,6 +10,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.georchestra.console.Configuration;
+import org.georchestra.console.ReCaptchaV2;
 import org.georchestra.console.bs.ReCaptchaParameters;
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.DataServiceException;
@@ -31,9 +32,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.support.SessionStatus;
 
-import net.tanesha.recaptcha.ReCaptcha;
-import net.tanesha.recaptcha.ReCaptchaResponse;
-
 public class PasswordRecoveryFormControllerTest {
 
     private PasswordRecoveryFormController ctrl ;
@@ -41,11 +39,10 @@ public class PasswordRecoveryFormControllerTest {
     private RoleDao gdao = Mockito.mock(RoleDao.class);
     private EmailFactoryImpl efi = Mockito.mock(EmailFactoryImpl.class);
     private MailService srv = new MailService(efi);
+    private ReCaptchaV2 rec = Mockito.mock(ReCaptchaV2.class);
     private ReCaptchaParameters rep = new ReCaptchaParameters();
     private UserTokenDao utd = Mockito.mock(UserTokenDao.class);
     private Configuration cfg = new Configuration();
-    private ReCaptcha rec = Mockito.mock(ReCaptcha.class);
-    private ReCaptchaResponse rer = Mockito.mock(ReCaptchaResponse.class);
     private Model model = Mockito.mock(Model.class);
     private HttpServletRequest request = new MockHttpServletRequest();
     PasswordRecoveryFormBean formBean = Mockito.mock(PasswordRecoveryFormBean.class);
@@ -54,7 +51,7 @@ public class PasswordRecoveryFormControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        ctrl = new PasswordRecoveryFormController(dao,gdao, srv, utd, cfg, rec, rep);
+        ctrl = new PasswordRecoveryFormController(dao,gdao, srv, utd, cfg, rep);
     }
 
     @After
@@ -63,11 +60,7 @@ public class PasswordRecoveryFormControllerTest {
 
     private void prepareLegitRequest() throws Exception {
         request = new MockHttpServletRequest();
-        Mockito.when(formBean.getRecaptcha_challenge_field()).thenReturn("valid");
         Mockito.when(formBean.getRecaptcha_response_field()).thenReturn("valid");
-        Mockito.when(rer.isValid()).thenReturn(true);
-        Mockito.when(rec.checkAnswer(Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
-            .thenReturn(rer);
         Account account = Mockito.mock(Account.class);
         Mockito.when(account.getUid()).thenReturn("1");
         Mockito.when(dao.findByEmail(Mockito.anyString())).thenReturn(account);
@@ -83,7 +76,6 @@ public class PasswordRecoveryFormControllerTest {
         List<String> expectedFields = Arrays.asList(bind.getAllowedFields());
 
         assertTrue(expectedFields.contains("email"));
-        assertTrue(expectedFields.contains("recaptcha_challenge_field"));
         assertTrue(expectedFields.contains("recaptcha_response_field"));
     }
 
@@ -120,7 +112,7 @@ public class PasswordRecoveryFormControllerTest {
         String ret = ctrl.generateToken(request, formBean, result, status);
         assertTrue(ret.equals("passwordRecoveryForm"));
     }
-    
+
 
     @Test
     public void testGenerateTokenBadEmail() throws Exception {
@@ -144,8 +136,8 @@ public class PasswordRecoveryFormControllerTest {
     public void testBadCaptchaGenerateToken() throws Exception {
         prepareLegitRequest();
         Mockito.when(result.hasErrors()).thenReturn(true);
-        Mockito.when(rec.checkAnswer(Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
-            .thenReturn(rer);
+        Mockito.when(rec.isValid(Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
+            .thenReturn(false);
 
         String ret = ctrl.generateToken(request, formBean, result, status);
 
@@ -161,19 +153,17 @@ public class PasswordRecoveryFormControllerTest {
         PasswordRecoveryFormBean b = new PasswordRecoveryFormBean();
 
         b.setEmail("test@localhost.com");
-        b.setRecaptcha_challenge_field("valid");
         b.setRecaptcha_response_field("valid");
 
-        assertTrue(b.getRecaptcha_challenge_field().equals(b.getRecaptcha_response_field()));
         assertTrue(b.getEmail().equals("test@localhost.com"));
         assertTrue(b.toString().equals("PasswordRecoveryFormBean [email=test@localhost.com, "
-                + "recaptcha_challenge_field=valid, recaptcha_response_field=valid]"));
+                + "recaptcha_response_field=valid]"));
 
     }
     /**
      * test for recovery password when user is a PENDING USER
-     * @throws Exception 
-    */ 
+     * @throws Exception
+    */
     @Test
     public void testPasswordRecoveryWithPendingUser() throws Exception {
         prepareLegitRequest();
@@ -181,15 +171,15 @@ public class PasswordRecoveryFormControllerTest {
         Mockito.when(rec.checkAnswer(Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
             .thenReturn(rer);
         ArrayList<Role> pendingUsersRoleList = new ArrayList();
-        
+
         pendingUsersRoleList.add(RoleFactory.create(Role.PENDING, "roles of pending users", false));
         Mockito.when(gdao.findAllForUser(Mockito.anyString())).thenReturn(pendingUsersRoleList);
         String ret = ctrl.generateToken(request, formBean, result, status);
-        
+
         assertTrue(ret.equals("passwordRecoveryForm"));
         for (Role g : pendingUsersRoleList){
         assertTrue(g.getName().equals(Role.PENDING));
 
         }
-    } 
+    }
 }
