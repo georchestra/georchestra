@@ -168,10 +168,7 @@ public class PasswordRecoveryFormControllerTest {
     public void testPasswordRecoveryWithPendingUser() throws Exception {
         prepareLegitRequest();
         Mockito.when(result.hasErrors()).thenReturn(false);
-        Mockito.when(rec.checkAnswer(Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
-            .thenReturn(rer);
         ArrayList<Role> pendingUsersRoleList = new ArrayList();
-
         pendingUsersRoleList.add(RoleFactory.create(Role.PENDING, "roles of pending users", false));
         Mockito.when(gdao.findAllForUser(Mockito.anyString())).thenReturn(pendingUsersRoleList);
         String ret = ctrl.generateToken(request, formBean, result, status);
