@@ -54,12 +54,10 @@
 
   <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" p:prefix="/WEB-INF/views/" p:suffix=".jsp" />
 
-  <bean id="recaptcha" class="net.tanesha.recaptcha.ReCaptchaImpl">
-    <property name="privateKey" value="${privateKey}"/>
-  </bean>
-
   <bean id="reCaptchaParameters" class="org.georchestra.ldapadmin.bs.ReCaptchaParameters">
     <property name="publicKey" value="${publicKey}"/>
+    <property name="privateKey" value="${privateKey}"/>
+    <property name="verifyUrl" value="${verificationURL}"/>
   </bean>
 
   <!-- LDAP connection -->
