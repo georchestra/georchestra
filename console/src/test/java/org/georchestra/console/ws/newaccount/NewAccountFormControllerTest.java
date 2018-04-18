@@ -48,7 +48,6 @@ public class NewAccountFormControllerTest {
     private ReCaptchaV2 rec = Mockito.mock(ReCaptchaV2.class);
     private ReCaptchaParameters rep = new ReCaptchaParameters();
     private MockHttpServletRequest request = new MockHttpServletRequest();
-    private LdapTemplate ldapTemplate = Mockito.mock(LdapTemplate.class);
     private Model UiModel = Mockito.mock(Model.class);
     private Account adminAccount;
 
