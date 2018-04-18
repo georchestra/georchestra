@@ -12,3 +12,4 @@ PostTreatment.groovy
 **/.settings
 .idea/
 *.iml
+*~
