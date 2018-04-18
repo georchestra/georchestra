@@ -89,11 +89,8 @@ class AreaController {
       if (!config.map) {
         this.map.getView().fit(vector.getSource().getExtent(), map.getSize())
       } else {
-        let view = new ol.View({
-          center: ol.proj.fromLonLat(config.map.center),
-          zoom: config.map.zoom
-        })
-        this.map.setView(view)
+        this.map.getView().setCenter(ol.proj.fromLonLat(config.map.center))
+        this.map.getView().setZoom(config.map.zoom)
       }
 
       updateSelection(selected)
