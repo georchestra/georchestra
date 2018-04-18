@@ -228,7 +228,7 @@
           </thead>
           <tbody>
             <tr dir-paginate="log in user.logs | itemsPerPage: 25">
-              <td>{{::log.date | date: 'mediumDate'}}</td>
+              <td>{{::log.date | logDate}}</td>
               <td>{{::log.admin}}</td>
               <td>{{::log.type}}</td>
             </tr>

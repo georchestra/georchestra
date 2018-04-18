@@ -74,5 +74,10 @@ let filterLogs = () => {
   }
 }
 
-angular.module('manager').controller('LogsController', LogsController)
+const logDateFilter = () => date => moment(date).format('YYYY-MM-DD HH:mm')
+
+angular
+  .module('manager')
+  .controller('LogsController', LogsController)
   .filter('logs', filterLogs)
+  .filter('logDate', logDateFilter)
