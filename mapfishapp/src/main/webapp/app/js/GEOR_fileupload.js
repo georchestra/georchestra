@@ -127,9 +127,7 @@ GEOR.fileupload = (function() {
     var formSuccess = function(form, action) {
         centerPanel.el.unmask();
         var features,
-            fc = (new OpenLayers.Format.JSON({
-                    ignoreExtraDims: true
-                })).read(action.response.responseText);
+            fc = (new OpenLayers.Format.JSON()).read(action.response.responseText);
         if (!fc) {
             errorAndReset(form, OpenLayers.i18n("Incorrect server response."));
             return;
@@ -137,7 +135,9 @@ GEOR.fileupload = (function() {
             errorAndReset(form, OpenLayers.i18n(fc.error));
             return;
         }
-        features = (new OpenLayers.Format.GeoJSON()).read(fc.geojson);
+        features = (new OpenLayers.Format.GeoJSON({
+            ignoreExtraDims: true
+        })).read(fc.geojson);
         if (!features || features.length == 0) {
             errorAndReset(form, OpenLayers.i18n("No features found."));
             return;
@@ -227,7 +227,7 @@ GEOR.fileupload = (function() {
                 });
             }
 
-            if (!GEOR.config.FILE_FORMAT_LIST || 
+            if (!GEOR.config.FILE_FORMAT_LIST ||
                 GEOR.config.FILE_FORMAT_LIST.length === 0) {
 
                 msg = tr("The service is unavailable.");
