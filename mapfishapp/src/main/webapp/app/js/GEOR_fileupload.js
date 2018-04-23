@@ -135,7 +135,9 @@ GEOR.fileupload = (function() {
             errorAndReset(form, OpenLayers.i18n(fc.error));
             return;
         }
-        features = (new OpenLayers.Format.GeoJSON()).read(fc.geojson);
+        features = (new OpenLayers.Format.GeoJSON({
+            ignoreExtraDims: true
+        })).read(fc.geojson);
         if (!features || features.length == 0) {
             errorAndReset(form, OpenLayers.i18n("No features found."));
             return;
@@ -225,7 +227,7 @@ GEOR.fileupload = (function() {
                 });
             }
 
-            if (!GEOR.config.FILE_FORMAT_LIST || 
+            if (!GEOR.config.FILE_FORMAT_LIST ||
                 GEOR.config.FILE_FORMAT_LIST.length === 0) {
 
                 msg = tr("The service is unavailable.");
