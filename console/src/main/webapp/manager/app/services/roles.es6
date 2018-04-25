@@ -10,7 +10,7 @@ angular.module('manager')
         isArray: false
       },
       update: {
-        params: { id: '@cn' },
+        params: { id: '@originalID' },
         method: 'PUT'
       },
       delete: {

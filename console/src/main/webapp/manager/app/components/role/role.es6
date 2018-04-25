@@ -19,14 +19,21 @@ class RoleController {
     translate('role.deleteError', this.i18n)
 
     this.role = $injector.get('Role').get({id: $routeParams.role})
+    this.originalID = $routeParams.role
   }
 
   save () {
     let flash = this.$injector.get('Flash')
     let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
+    let $router = this.$injector.get('$router')
+    this.role.originalID = this.originalID
     this.role.$update(() => {
       $httpDefaultCache.removeAll()
       flash.create('success', this.i18n.updated)
+      $router.navigate($router.generate('role', {
+        role: this.role.cn,
+        tab: 'infos'
+      }))
     }, flash.create.bind(flash, 'danger', this.i18n.error))
   }
 
