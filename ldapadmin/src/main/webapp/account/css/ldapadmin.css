@@ -1,15 +1,24 @@
 /* Keep the labels white, even when an error occurred */
 .has-error .label {
-	color: white;
+  color: white;
 }
 
 /* Center Captcha */
 .g-recaptcha {
-    margin: 15px auto !important;
-   	width: auto !important;
-   	height: auto !important;
-   	text-align: -webkit-center;
-   	text-align: -moz-center;
-   	text-align: -o-center;
-   	text-align: -ms-center;
+  margin: 15px auto !important;
+  width: auto !important;
+  height: auto !important;
+  text-align: -webkit-center;
+  text-align: -moz-center;
+  text-align: -o-center;
+  text-align: -ms-center;
+}
+
+#create_org_div {
+  display: none;
+  background-color: #eee;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 4px;
 }
