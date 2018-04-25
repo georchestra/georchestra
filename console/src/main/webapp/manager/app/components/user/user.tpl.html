@@ -49,7 +49,7 @@
 
         <h4 translate>role.system</h4>
         <div class="form-group clearfix">
-          <div class="col-sm-6" ng-repeat="role in user.adminRoles" ng-if="user.allroles.indexOf(role) !== -1">
+          <div class="col-sm-6" ng-repeat="role in user.adminRoles" ng-if="user.allroles.indexOf(role) !== -1 && role !== 'ORGADMIN'">
             <div class="checkbox">
               <label>
                 <input type="checkbox" ng-model="user.user.adminRoles[role]"> {{::role}}
