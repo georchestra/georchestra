@@ -438,6 +438,9 @@ public class RoleDaoImpl implements RoleDao {
 			throw new IllegalArgumentException("given name is required");
 		}
 
+		Name sourceDn = buildRoleDn(roleName);
+		Name destDn = buildRoleDn(role.getName());
+
         if (!role.getName().equals(roleName)) {
             // checks unique common name
             try{
@@ -451,45 +454,14 @@ public class RoleDaoImpl implements RoleDao {
                 LOG.debug("no account with name " + role.getName() + " can be found, it is then "
                         + "safe to rename the role.");
             }
+
+			ldapTemplate.rename(sourceDn, destDn);
         }
 
-        Name sourceDn = buildRoleDn(roleName);
-        Name destDn = buildRoleDn(role.getName());
+		DirContextOperations context = ldapTemplate.lookupContext(destDn);
+        mapToContext(null, role, context);
+		ldapTemplate.modifyAttributes(context);
 
-
-        Integer uniqueNumber = (Integer) ldapTemplate.lookup(sourceDn, new AttributesMapper() {
-            @Override
-            public Object mapFromAttributes(Attributes attributes) throws NamingException {
-                final Attribute attribute = attributes.get(uniqueNumberField);
-                if (attribute == null || attribute.size() == 0) {
-                    return -1;
-                }
-                try {
-                    return Integer.parseInt(attribute.get().toString());
-                } catch (NumberFormatException e) {
-                    return -1;
-                }
-            }
-        });
-
-        // because cn is part of distinguish name it cannot be updated. So the role is removed to include a new one with the new values
-        delete(roleName);
-
-        if (uniqueNumber == -1) {
-            // no unique number defined so just insert it and which will assign a unique number
-            insert(role);
-        } else {
-            // inserts the new role
-            DirContextAdapter context = new DirContextAdapter(destDn);
-            mapToContext(uniqueNumber, role, context);
-
-            try {
-                this.ldapTemplate.bind(destDn, context, null);
-            } catch (org.springframework.ldap.NamingException e) {
-                LOG.error(e);
-                throw new DataServiceException(e);
-            }
-        }
 	}
 
 	@Override

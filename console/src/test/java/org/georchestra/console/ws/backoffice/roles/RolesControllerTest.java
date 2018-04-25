@@ -301,6 +301,7 @@ public class RolesControllerTest {
         Name dn = LdapNameBuilder.newInstance("ou=roles").add("cn", "newName").build();
         Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup(eq(dn), (ContextMapper) Mockito.any());
 
+        Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookupContext((Name) Mockito.any());
         roleCtrl.update(request, response, "ADMINISTRATOR");
 
         JSONObject ret = new JSONObject(response.getContentAsString());
@@ -313,11 +314,16 @@ public class RolesControllerTest {
     @Test
     public void testUpdateDuplicateCN() throws Exception {
         request.setContent(" { \"cn\": \"newName\", \"description\": \"new Description\" } ".getBytes());
+
         Role retAdmin = RoleFactory.create("ADMINISTRATOR", "administrator role", false);
-        Mockito.when(ldapTemplate.lookup((Name) Mockito.any(), (ContextMapper) Mockito.any())).thenReturn(retAdmin);
-        Mockito.doThrow(DuplicatedCommonNameException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (AttributesMapper) Mockito.any());
-        Name dn = LdapNameBuilder.newInstance("ou=roles").add("cn", "newName").build();
-        Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup(eq(dn), (ContextMapper) Mockito.any());
+        Role retNewName = RoleFactory.create("newName", "new Description", false);
+        Name adminDn = LdapNameBuilder.newInstance("ou=roles").add("cn", "ADMINISTRATOR").build();
+        Name newNameDn = LdapNameBuilder.newInstance("ou=roles").add("cn", "newName").build();
+        Mockito.when(ldapTemplate.lookup(eq(adminDn), (ContextMapper) Mockito.any())).thenReturn(retAdmin);
+        Mockito.when(ldapTemplate.lookup(eq(newNameDn), (ContextMapper) Mockito.any())).thenReturn(retNewName);
+
+        DirContextOperations context = Mockito.mock(DirContextOperations.class);
+        Mockito.when(ldapTemplate.lookupContext((Name) Mockito.any())).thenReturn(context);
 
         roleCtrl.update(request, response, "ADMINISTRATOR");
 
@@ -335,6 +341,9 @@ public class RolesControllerTest {
         Mockito.doThrow(DataServiceException.class).when(ldapTemplate).lookup((Name) Mockito.any(), (AttributesMapper) Mockito.any());
         Name dn = LdapNameBuilder.newInstance("ou=roles").add("cn", "newName").build();
         Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup(eq(dn), (ContextMapper) Mockito.any());
+
+        DirContextOperations context = Mockito.mock(DirContextOperations.class);
+        Mockito.when(ldapTemplate.lookupContext((Name) Mockito.any())).thenReturn(context);
 
         try {
             roleCtrl.update(request, response, "ADMINISTRATOR");
@@ -355,6 +364,9 @@ public class RolesControllerTest {
 
         Name dn = LdapNameBuilder.newInstance("ou=roles").add("cn", "newName").build();
         Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate).lookup(eq(dn), (ContextMapper) Mockito.any());
+
+        DirContextOperations context = Mockito.mock(DirContextOperations.class);
+        Mockito.when(ldapTemplate.lookupContext((Name) Mockito.any())).thenReturn(context);
 
         roleCtrl.update(request, response, "USERS");
 
