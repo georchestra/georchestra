@@ -108,7 +108,8 @@
   "role.favorite"         : "Favorite",
   "role.favorites"        : "Favorites",
 
-  "delegations.title"     : "delegations",
+  "delegations.title"     : "delegation",
+  "delegations.title_no_delegations"     : "no delegation",
   "delegations.filter"    : "Filter",
   "delegations.delete"    : "Delete",
   "delegation.dupdated"   : "Delegation updated",
