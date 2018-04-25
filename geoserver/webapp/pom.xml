@@ -1258,18 +1258,38 @@
               <groupId>org.geoserver.geofence</groupId>
               <artifactId>geofence-model</artifactId>
             </exclusion>
+            <exclusion>
+              <groupId>com.vividsolutions</groupId>
+              <artifactId>jts</artifactId>
+            </exclusion>
           </exclusions>
         </dependency>
         <dependency>
           <groupId>org.geoserver.community</groupId>
           <artifactId>gs-geofence-server</artifactId>
           <version>${gs.version}</version>
+          <exclusions>
+            <exclusion>
+              <groupId>cglib</groupId>
+              <artifactId>cglib</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>com.vividsolutions</groupId>
+              <artifactId>jts</artifactId>
+            </exclusion>
+          </exclusions>
         </dependency>
         <!-- These are needed in the GeoFence geOrchestra integration but not mandatory in default GF setups -->
         <dependency>
           <groupId>org.hibernatespatial</groupId>
           <artifactId>hibernate-spatial-postgis</artifactId>
           <version>${hibernate-spatial-version}</version>
+          <exclusions>
+            <exclusion>
+              <groupId>com.vividsolutions</groupId>
+              <artifactId>jts</artifactId>
+            </exclusion>
+          </exclusions>
         </dependency>
         <dependency>
           <groupId>org.postgis</groupId>
