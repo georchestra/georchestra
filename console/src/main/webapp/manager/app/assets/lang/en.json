@@ -86,6 +86,7 @@
   "org.confirm"           : "Confirm",
   "org.select"            : "Select an organization",
   "org.membersCount"      : "Members count",
+  "org.ohasdeleg"         : "TODO: Les utilisateurs de cet organisme peuvent être gérés par le(s) utilisateur(s) suivant(s):",
 
   "roles.title"           : "roles",
   "roles.allroles"        : "All roles",

@@ -20,6 +20,13 @@
 
     <div class="panel panel-default" ng-class="{'panel-danger': org.org.status !== 'REGISTERED'}">
 
+      <div class="panel-heading text-center" ng-if="org.tab=='infos' && org.delegations.length > 0 && profile === 'SUPERUSER'">
+        <span translate>org.ohasdeleg</span>
+        <span ng-repeat="delegation in org.delegations">
+          <a ng-link="user({id: delegation.uid, tab: 'delegations'})">{{ delegation.uid }}</a>{{$last ? '' : ', '}}
+        </span>
+      </div>
+
       <div class="panel-heading text-center" ng-if="org.org.status !== 'REGISTERED'">
         <span translate>org.pendingmsg</span>
         <button class="btn btn-default" ng-click="org.confirm()" translate>org.confirm</button>
