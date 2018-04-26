@@ -86,6 +86,7 @@
   "org.confirm"           : "Bestätigen",
   "org.select"            : "Organisation auswählen",
   "org.membersCount"      : "Mitglieder",
+  "org.ohasdeleg"         : "Benutzer dieser Organisation können von folgenden Benutzern verwaltet werden:",
 
   "roles.title"           : "Rollen",
   "roles.allroles"        : "Alle Rollen",

@@ -22,6 +22,12 @@ class OrgController {
     this.org = $injector.get('Orgs').get({id: $routeParams.org})
     this.required = $injector.get('OrgsRequired').query()
     this.orgTypeValues = $injector.get('OrgsType').query()
+
+    // check if org is under delegation
+    const Delegations = $injector.get('Delegations')
+    Delegations.query(resp => {
+      this.delegations = resp.filter(d => d.orgs.indexOf($routeParams.org) !== -1)
+    })
   }
 
   save () {

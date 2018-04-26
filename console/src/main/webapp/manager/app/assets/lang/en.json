@@ -86,6 +86,7 @@
   "org.confirm"           : "Confirm",
   "org.select"            : "Select an organization",
   "org.membersCount"      : "Members count",
+  "org.ohasdeleg"         : "Users belonging to this Org can be managed by:",
 
   "roles.title"           : "roles",
   "roles.allroles"        : "All roles",
