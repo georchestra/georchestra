@@ -21,8 +21,16 @@
           <td>
             <a ng-link="user({id: delegation.uid, tab: 'delegations'})">{{::delegation.uid}}</a>
           </td>
-          <td>{{::delegation.orgs.join(', ')}}</td>
-          <td>{{::delegation.roles.join(', ')}}</td>
+          <td>
+            <span ng-repeat="org in delegation.orgs">
+            <a ng-link="org({org: org, tab: 'infos'})">{{ org }}</a>{{$last ? '' : ', '}}
+            </span>
+          </td>
+          <td>
+            <span ng-repeat="role in delegation.roles">
+              <a ng-link="role({role: role, tab: 'infos'})">{{ role }}</a>{{$last ? '' : ', '}}
+            </span>
+          </td>
         </tr>
       </tbody>
 
