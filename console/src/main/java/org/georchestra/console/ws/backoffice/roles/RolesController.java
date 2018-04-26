@@ -393,6 +393,10 @@ public class RolesController {
 		List<String> putRole = createUserList(json, "PUT");
 		List<String> deleteRole = createUserList(json, "DELETE");
 
+		// Don't allow modification of ORGADMIN role
+		if(putRole.contains("ORGADMIN") || deleteRole.contains("ORGADMIN"))
+			throw new IllegalArgumentException("ORGADMIN role cannot be add or delete");
+
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_SUPERUSER")))
 			this.checkAuthorization(auth.getName(), users, putRole, deleteRole);
