@@ -18,15 +18,17 @@ class RoleController {
     translate('role.deleted', this.i18n)
     translate('role.deleteError', this.i18n)
 
-    this.role = $injector.get('Role').get({id: $routeParams.role})
-    this.originalID = $routeParams.role
+    // Save original cn in case we change cn, because we need to
+    // use original cn with PUT request
+    this.role = $injector.get('Role').get(
+      {id: $routeParams.role},
+      role => { role.originalID = role.cn })
   }
 
   save () {
     let flash = this.$injector.get('Flash')
     let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
     let $router = this.$injector.get('$router')
-    this.role.originalID = this.originalID
     this.role.$update(() => {
       $httpDefaultCache.removeAll()
       flash.create('success', this.i18n.updated)
