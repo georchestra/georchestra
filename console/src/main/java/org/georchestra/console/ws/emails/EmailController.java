@@ -308,10 +308,9 @@ public class EmailController {
         LOG.debug("EMail request : " + payload.toString());
 
         // Instanciate MimeMessage
-        Properties props = System.getProperties();
-        props.put("mail.smtp.host", this.emailFactory.getSmtpHost());
-        props.put("mail.protocol.port", this.emailFactory.getSmtpPort());
-        Session session = Session.getInstance(props, null);
+        final Session session = Session.getInstance(System.getProperties(), null);
+        session.getProperties().setProperty("mail.smtp.host", this.emailFactory.getSmtpHost());
+        session.getProperties().setProperty("mail.smtp.port", (new Integer(this.emailFactory.getSmtpPort())).toString());
         MimeMessage message = new MimeMessage(session);
 
         // Generate From header
@@ -500,11 +499,9 @@ public class EmailController {
      */
     private void send(EmailEntry email) throws NameNotFoundException, DataServiceException, MessagingException {
 
-        final Properties props = System.getProperties();
-        props.put("mail.smtp.host", this.emailFactory.getSmtpHost());
-        props.put("mail.protocol.port", this.emailFactory.getSmtpPort());
-
-        final Session session = Session.getInstance(props, null);
+        final Session session = Session.getInstance(System.getProperties(), null);
+        session.getProperties().setProperty("mail.smtp.host", this.emailFactory.getSmtpHost());
+        session.getProperties().setProperty("mail.smtp.port", (new Integer(this.emailFactory.getSmtpPort())).toString());
         final MimeMessage message = new MimeMessage(session);
 
         Account recipient = this.accountDao.findByUID(email.getRecipient());

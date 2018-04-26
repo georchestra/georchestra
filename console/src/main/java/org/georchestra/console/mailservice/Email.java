@@ -162,11 +162,10 @@ public abstract class Email {
 			LOG.debug("body: "+ msg );
 		}
 
-		final Properties props = System.getProperties();
-        props.put("mail.smtp.host", smtpHost);
-        props.put("mail.protocol.port", smtpPort);
+        final Session session = Session.getInstance(System.getProperties(), null);
+        session.getProperties().setProperty("mail.smtp.host", smtpHost);
+        session.getProperties().setProperty("mail.smtp.port", (new Integer(smtpPort)).toString());
 
-        final Session session = Session.getInstance(props, null);
         final MimeMessage message = new MimeMessage(session);
 
         if (isValidEmailAddress(from)) {
