@@ -4,7 +4,13 @@
 
     <input type="text" class="filter-table form-control pull-right" ng-model="delegations.q" placeholder="{{'delegations.filter' | translate}}"></input>
     <i class="glyphicon glyphicon-remove-sign filter-table-reset" ng-show="delegations.q != ''" ng-click="delegations.q = ''"></i>
-    <h3 class="delegations-title">{{delegations.delegations.length}} <span translate>delegations.title</span></h3>
+    <h3 class="delegations-title">
+      <ng-pluralize count="delegations.delegations.length"
+                    when="{'0': '{{ &quot;delegations.title_no_delegations&quot; | translate }}',
+                           '1': '{} {{ &quot;delegations.title&quot; | translate }}',
+                           'other': '{} {{ &quot;delegations.title_plural&quot; | translate }}'}">
+      </ng-pluralize>
+    </h3>
 
     <table class="table table-striped table-condensed">
 

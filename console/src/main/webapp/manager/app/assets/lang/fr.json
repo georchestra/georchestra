@@ -108,7 +108,9 @@
   "role.favorite"         : "Favori",
   "role.favorites"        : "Favoris",
 
-  "delegations.title"     : "délégations",
+  "delegations.title"     : "délégation",
+  "delegations.title_plural" : "délégations",
+  "delegations.title_no_delegations" : "Pas de délégation",
   "delegations.filter"    : "Filtrer",
   "delegations.delete"    : "Supprimer",
   "delegation.dupdated"   : "Délégation mise à jour",
