@@ -6,7 +6,12 @@
 
     <input type="text" class="filter-table form-control pull-right" ng-model="users.q" placeholder="{{'role.filter_users' | translate}}"></input>
     <i class="glyphicon glyphicon-remove-sign filter-table-reset" ng-show="users.q != ''" ng-click="users.q = ''"></i>
-    <h3 ng-if="!users.activeRole" class="roles-title">{{users.users.length}} <span translate>role.users</span></h3>
+    <h3 ng-if="!users.activeRole" class="roles-title">
+      <ng-pluralize count="users.users.length"
+                    when="{'0': '{{ &quot;role.users_none&quot; | translate }}',
+                           '1': '{} {{ &quot;role.user&quot; | translate }}',
+                           'other': '{} {{ &quot;role.users&quot; | translate }}'}">
+    </h3>
     <h3 ng-if="users.activeRole" class="roles-title">
       {{users.activeRole.cn}}
       <button class="btn btn-default btn-xs delete" title="{{ 'role.delete' | translate }}"
