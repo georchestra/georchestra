@@ -26,6 +26,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.util.Arrays;
@@ -96,15 +97,14 @@ public class ExtractorController implements ServletContextAware {
     private GeorchestraConfiguration georConfig;
     private ComboPooledDataSource dataSource;
 
-    public void validateConfig() throws PropertyVetoException {
+    public void validateConfig() throws PropertyVetoException, MalformedURLException {
 
         this.dataSource = new ComboPooledDataSource();
         this.dataSource.setDriverClass("org.postgresql.Driver");
 
         if ((georConfig != null) && (georConfig.activated())) {
             LOG.info("geOrchestra datadir: reconfiguring bean ...");
-            servletUrl = georConfig.getProperty("servletUrl");
-            secureHost = georConfig.getProperty("secureHost");
+            this.setPublicUrl(georConfig.getProperty("publicUrl"));
             maxCoverageExtractionSize = Long.parseLong(georConfig.getProperty("maxCoverageExtractionSize"));
             remoteReproject = Boolean.parseBoolean(georConfig.getProperty("remoteReproject"));
             useCommandLineGDAL = Boolean.parseBoolean(georConfig.getProperty("useCommandLineGDAL"));
@@ -381,16 +381,22 @@ public class ExtractorController implements ServletContextAware {
      * Each instance of {link} will be replaced with the extraction bundle URL
      */
 
-    public void setServletUrl(String servletUrl) {
-        this.servletUrl = servletUrl;
+    public void setPublicUrl(String rawPublicUrl) throws MalformedURLException {
+
+        // extract hostname to set set secureHost
+        URL publicURL = new URL(rawPublicUrl);
+        this.secureHost = publicURL.getHost();
+
+        // Remove trailling slash
+        if (rawPublicUrl.endsWith("/"))
+            rawPublicUrl = rawPublicUrl.substring(0, rawPublicUrl.length() - 1);
+
+        // Append servlet context
+        this.servletUrl = rawPublicUrl + this.servletContext.getServletContextName();
     }
 
     public void setAdminCredentials(UsernamePasswordCredentials adminCredentials) {
         this.adminCredentials = adminCredentials;
-    }
-
-    public void setSecureHost(String secureHost) {
-        this.secureHost = secureHost;
     }
 
     private String replace(String template, String url, String[] emails) {
