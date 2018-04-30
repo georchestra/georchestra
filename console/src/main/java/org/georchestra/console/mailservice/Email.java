@@ -155,12 +155,14 @@ public abstract class Email {
     }
 
 
-	protected void sendMsg( final String msg) throws AddressException, MessagingException {
+	protected void sendMsg(String msg) throws AddressException, MessagingException {
 
 		if(LOG.isDebugEnabled() ){
-
 			LOG.debug("body: "+ msg );
 		}
+
+		// Replace {publicUrl} token with the configured public URL
+        msg = msg.replaceAll("\\{publicUrl\\}", this.georConfig.getProperty("publicUrl"));
 
         final Session session = Session.getInstance(System.getProperties(), null);
         session.getProperties().setProperty("mail.smtp.host", smtpHost);
