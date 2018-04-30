@@ -19,6 +19,7 @@
 
 package org.georchestra.console.model;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.hibernate.annotations.Type;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,6 +49,14 @@ public class DelegationEntry {
         this.uid = uid;
         this.orgs = orgs;
         this.roles = roles;
+    }
+
+    synchronized public void removeOrg(String orgToRemove){
+        this.orgs = ArrayUtils.removeElement(this.orgs, orgToRemove);
+    }
+
+    synchronized public void removeRole(String roleToremove){
+        this.roles = ArrayUtils.removeElement(this.roles, roleToremove);
     }
 
     public String getUid() {
