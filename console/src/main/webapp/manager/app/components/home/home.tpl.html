@@ -9,21 +9,31 @@
       </div>
       <div class="alert alert-danger" ng-if="home.pending && home.pending.users.length > 0">
         <a ng-link="users({id: home.pending.cn})">
-          {{::home.pending.users.length}} <span translate>home.waiting_users</span><br>
+          <span><ng-pluralize count="home.pending.users.length"
+                        when="{'1': '{} {{ &quot;home.waiting_user&quot; | translate }}',
+                               'other': '{} {{ &quot;home.waiting_users&quot; | translate }}'}">
+          </span><br>
           <span class="manage" translate>home.view_manage</span>
         </a>
       </div>
       <div class="alert alert-warning" ng-if="home.expired && home.expired.users.length > 0">
         <a ng-link="users({id: home.expired.cn})">
-          {{::home.expired.users.length}} <span translate>home.expired_users</span><br>
+          <span><ng-pluralize count="home.expired.users.length"
+                        when="{'1': '{} {{ &quot;home.expired_user&quot; | translate }}',
+                               'other': '{} {{ &quot;home.expired_users&quot; | translate }}'}">
+          </span><br>
           <span class="manage" translate>home.view_manage</span>
         </a>
       </div>
     </div>
 
     <div class="jumbotron">
-      <h1 ng-cloack>{{::home.connected.results.length}}</h1>
-      <p translate>home.connected</p>
+      <h1 ng-if="home.connected && home.connected.results.length > 0" ng-cloack>{{::home.connected.results.length}}</h1>
+      <p><ng-pluralize count="home.connected.results.length"
+                       when="{'0': '{{ &quot;home.connected_users_none&quot; | translate }}',
+                              '1': '{{ &quot;home.connected_user&quot; | translate }}',
+                              'other': '{{ &quot;home.connected_users&quot; | translate }}'}">
+      </p>
       <table class="table table-condensed">
         <thead>
           <tr>
