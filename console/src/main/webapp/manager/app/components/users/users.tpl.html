@@ -9,13 +9,9 @@
     <h3 ng-if="!users.activeRole" class="roles-title">{{users.users.length}} <span translate>role.users</span></h3>
     <h3 ng-if="users.activeRole" class="roles-title">
       {{users.activeRole.cn}}
-      <button class="btn btn-default btn-xs delete" title="{{ 'role.delete' | translate }}"
-        ng-click="users.deleteRole()" ng-show="users.canDelete">
-        <i class="glyphicon glyphicon-trash"></i>
-      </button>
     </h3>
     <p ng-if="users.activeRole">
-      <em class="content-description" contenteditable="true" ng-init="users.initEditable()">{{users.activeRole.description}}</em>
+      <em class="content-description">{{users.activeRole.description}}</em>
     </p>
 
     <table class="table table-striped table-condensed">
@@ -43,30 +39,6 @@
     </table>
 
     <dir-pagination-controls></dir-pagination-controls>
-
-  </div>
-
-  <div ng-if="users.delete" class="background" ng-cloack>
-
-    <div class="panel panel-default">
-
-      <div class="panel-heading">
-        <a class="btn close" ng-click="users.close()">&times;</a>
-        <span translate>users.confirm</span>
-      </div>
-      <div class="panel-body">
-        <p>
-          <span translate>users.confirmText</span>
-          «<em>{{users.activeRole.cn}}</em>» ?
-        </p>
-        <hr>
-        <button class="btn btn-primary pull-right" ng-click="users.confirmDeleteRole()">
-          <span translate>users.delete</span>
-        </button>
-        <button class="btn btn-link pull-right" ng-click="users.close()" translate>users.cancel</button>
-      </div>
-
-    </div>
 
   </div>
 
