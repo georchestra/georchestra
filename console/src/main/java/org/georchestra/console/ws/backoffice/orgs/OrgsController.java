@@ -20,6 +20,7 @@
 package org.georchestra.console.ws.backoffice.orgs;
 
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
+import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.dao.DelegationDao;
 import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.dto.Org;
@@ -49,6 +50,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.*;
 
 @Controller
@@ -72,6 +74,9 @@ public class OrgsController {
 
     @Autowired
     private DelegationDao delegationDao;
+
+    @Autowired
+    private AdvancedDelegationDao advancedDelegationDao;
 
     @Autowired
     public OrgsController(OrgsDao dao) {
@@ -243,7 +248,14 @@ public class OrgsController {
      */
     @RequestMapping(value = REQUEST_MAPPING + "/{commonName:.+}", method = RequestMethod.DELETE)
     @PreAuthorize("hasRole('SUPERUSER')")
-    public void deleteOrg(@PathVariable String commonName, HttpServletResponse response) throws IOException {
+    public void deleteOrg(@PathVariable String commonName, HttpServletResponse response) throws IOException, SQLException {
+
+        // Check if this role is part of a delegation
+        for(DelegationEntry delegation: this.advancedDelegationDao.findByOrg(commonName)){
+            delegation.removeOrg(commonName);
+            this.delegationDao.save(delegation);
+        }
+
         // delete entities in LDAP server
         this.orgDao.delete(this.orgDao.findExtById(commonName));
         this.orgDao.delete(this.orgDao.findByCommonName(commonName));

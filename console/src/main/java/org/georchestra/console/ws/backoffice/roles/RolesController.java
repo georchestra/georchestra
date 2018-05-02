@@ -261,6 +261,12 @@ public class RolesController {
 			throws IOException {
 		try {
 
+			// Check if this role is part of a delegation
+			for(DelegationEntry delegation: this.advancedDelegationDao.findByRole(cn)){
+				delegation.removeRole(cn);
+				this.delegationDao.save(delegation);
+			}
+
 			this.roleDao.delete(cn);
 
 			ResponseUtil.writeSuccess(response);
