@@ -73,23 +73,6 @@ class UsersController {
       this.newRole = v === 'role'
     })
   }
-
-  initEditable () {
-    let flash = this.$injector.get('Flash')
-    let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
-    $('.content-description').on('blur', (e) => {
-      this.$injector.get('Role').get(
-        {id: this.activeRole.cn},
-        (role) => {
-          role.description = e.target.innerText
-          role.$update(() => {
-            $httpDefaultCache.removeAll()
-            flash.create('success', this.i18n.updated)
-          }, flash.create.bind(flash, 'danger', this.i18n.error))
-        }
-      )
-    })
-  }
 }
 
 UsersController.prototype.activate.$inject = [ '$scope' ]
