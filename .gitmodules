@@ -4,27 +4,18 @@
 [submodule "mapfishapp/src/main/webapp/lib/externals/openlayers"]
 	path = mapfishapp/src/main/webapp/lib/externals/openlayers
 	url = https://github.com/georchestra/openlayers.git
-[submodule "extractorapp/src/main/webapp/admin/extjs"]
-	path = extractorapp/src/main/webapp/admin/extjs
-	url = https://github.com/probonogeek/extjs.git
 [submodule "analytics/src/main/webapp/js/lib/external/ext"]
 	path = analytics/src/main/webapp/js/lib/external/ext
 	url = https://github.com/probonogeek/extjs.git
 [submodule "geonetwork"]
 	path = geonetwork
 	url = https://github.com/georchestra/geonetwork.git
-[submodule "geoserver/georchestra-geoserver/geoserver-checkouts/geoserver-stable"]
-	path = geoserver/georchestra-geoserver/geoserver-checkouts/geoserver-stable
-	url = https://github.com/geoserver/geoserver.git
 [submodule "mapfishapp/src/main/webapp/lib/externals/styler"]
 	path = mapfishapp/src/main/webapp/lib/externals/styler
 	url = https://github.com/georchestra/styler.git
 [submodule "geotools"]
 	path = geotools
 	url = https://github.com/georchestra/geotools.git
-[submodule "docker/geoserver_datadir"]
-	path = docker/geoserver_datadir
-	url = https://github.com/georchestra/geoserver_minimal_datadir.git
 [submodule "docker/smtp"]
 	path = docker/smtp
 	url = https://github.com/camptocamp/docker_smtp.git
@@ -34,4 +25,3 @@
 [submodule "geoserver/geoserver-submodule"]
 	path = geoserver/geoserver-submodule
 	url = https://github.com/georchestra/geoserver.git
-
