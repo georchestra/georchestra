@@ -38,7 +38,7 @@ class HomeController {
     this.connected = Analytics.get(options, () => {}, error)
     this.requests = Analytics.get({
       ...options,
-      service: 'combinedRequests',
+      service: 'combinedRequests.json',
       startDate: $injector.get('date').getFromDiff('week')
     }, () => {}, error)
 
