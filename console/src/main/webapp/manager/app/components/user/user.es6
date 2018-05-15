@@ -130,7 +130,7 @@ class UserController {
       let error = flash.create.bind(flash, 'danger', i18n.errorload)
       let Analytics = this.$injector.get('Analytics')
       let options = {
-        service: 'combinedRequests',
+        service: 'combinedRequests.json',
         user: this.user.uid,
         startDate: this.date.start,
         endDate: this.date.end
