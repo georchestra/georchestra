@@ -691,9 +691,10 @@ public class Proxy {
             statusCode = statusLine.getStatusCode();
             String reasonPhrase = statusLine.getReasonPhrase();
 
-            if (reasonPhrase != null && statusCode > 399) {
+            if (reasonPhrase != null && statusCode >= 400) {
                 if (logger.isWarnEnabled()) {
-                    logger.warn("Error occurred. statuscode: " + statusCode + ", reason: " + reasonPhrase);
+                    logger.warn("Downstream server returned a status code which could be an error. "
+                            + "Statuscode: " + statusCode + ", reason: " + reasonPhrase);
                 }
 
                 if (statusCode == 401) {
@@ -728,7 +729,6 @@ public class Proxy {
                 adjustLocation(request, proxiedResponse, finalResponse);
             }
             // get content type
-
             String contentType = null;
             if (proxiedResponse.getEntity() != null && proxiedResponse.getEntity().getContentType() != null) {
                 contentType = proxiedResponse.getEntity().getContentType().getValue();
