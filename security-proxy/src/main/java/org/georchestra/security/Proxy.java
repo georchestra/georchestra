@@ -76,7 +76,6 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpTrace;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -97,7 +96,6 @@ import org.springframework.security.web.RedirectStrategy;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.util.UriUtils;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.io.Closer;
@@ -470,43 +468,6 @@ public class Proxy {
     }
 
     /**
-     * Reconstructs the URL parameters in the original query string to the
-     * proxified webapps.
-     *
-     * @param request the original HttpServletRequest
-     * @return the query string as a String object.
-     * @throws IOException
-     * @throws UnsupportedEncodingException
-     */
-    private String reconstructUrlParameters(HttpServletRequest request) throws UnsupportedEncodingException, IOException {
-        StringBuilder query = new StringBuilder("");
-        String queryString = request.getQueryString();
-        if (queryString != null) {
-            query.append("?");
-            // URLEncodedUtils.parse() expects ISO-8859-1, passing as is even if it is actually in UTF-8
-            List<NameValuePair> paramNames = URLEncodedUtils.parse(queryString, Charset.forName("ISO-8859-1"));
-
-            for (NameValuePair p : paramNames) {
-                String name = p.getName();
-                String value = p.getValue();
-                // Skip login & ticket parameter
-                if (ServiceProperties.DEFAULT_CAS_ARTIFACT_PARAMETER.equals(name) || "login".equals(name)) {
-                    continue;
-                }
-                if (query.length() > 1) {
-                    query.append('&');
-                }
-                query.append(UriUtils.encode(name, "UTF-8"));
-                if (value != null) {
-                    query.append("=");
-                    query.append(UriUtils.encode(value, "UTF-8"));
-                }
-            }
-        }
-        return query.toString();
-    }
-
-    /**
      * Main entry point for methods where the request path is encoded in the
      * path of the URL
      */
@@ -545,7 +506,7 @@ public class Proxy {
                 response.sendError(403, forwardRequestURI + " is a recursive call to this service.  That is not a legal request");
             }
 
-            final String query = reconstructUrlParameters(request);
+            final String query = request.getQueryString();
             boolean needCasValidation =  (request.getParameter(ServiceProperties.DEFAULT_CAS_ARTIFACT_PARAMETER) != null)
                     && (request.getUserPrincipal() == null)
                     && urlIsProtected(request, new URL(sURL));
@@ -561,7 +522,8 @@ public class Proxy {
                 redirectStrategy.sendRedirect(request, response, loginUrl);
                 return;
             }
-            sURL += query;
+            if(query != null)
+                sURL += "?" + query;
             handleRequest(request, response, sURL, true);
         } catch (IOException e) {
             logger.error("Error connecting to client", e);
