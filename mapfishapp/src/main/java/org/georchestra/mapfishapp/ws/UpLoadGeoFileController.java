@@ -23,10 +23,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.UUID;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -497,23 +501,75 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
                 }
             }
 
-            // create a CRS object from the srs parameter
-            CoordinateReferenceSystem crs = null;
-            try {
-                final String crsParam = request.getParameter("srs");
-                if ((crsParam != null) && (crsParam.length() > 0)) {
-                    crs = CRS.decode(crsParam);
-                }
-            } catch (NoSuchAuthorityCodeException e) {
-                LOG.error(e.getMessage());
-                throw new IllegalArgumentException(e);
-            } catch (FactoryException e) {
-                LOG.error(e.getMessage());
-                throw new IOException(e);
-            }
+            // Test if ogr2ogr command line tools is available
+            String org2orgBinaryName = "ogr2ogr";
+            String[] systemPaths = System.getenv("PATH").split(":");
 
-            // retrieves the feature collection and write the response
-            writeOKResponse(response, fileManagement, crs);
+            File ogr2ogr = null;
+
+            for(String path: systemPaths){
+                File pathToChek = new File(path + File.separator + org2orgBinaryName);
+                if(pathToChek.exists() && pathToChek.canExecute()) {
+                    ogr2ogr = pathToChek;
+                    break;
+                }
+            }
+            if(ogr2ogr != null){
+                File geoFile = new File(fileManagement.searchGeoFile());
+                if(geoFile == null) {
+                    LOG.error("Cannot find path to geo file");
+                    throw new IOException("Cannot find path to geo file");
+                }
+                if(! geoFile.exists() || ! geoFile.canRead()){
+                    LOG.error("Geo file cannot be read or does not exists");
+                    throw new IOException("Geo file cannot be read or does not exists");
+                }
+
+                // Construct command line
+                List<String> commandline = new ArrayList<String>();
+                commandline.add(ogr2ogr.getAbsolutePath());
+                commandline.add("-f");
+                commandline.add("GeoJSON");
+                commandline.add("/vsistdout/");
+                commandline.add(geoFile.getAbsolutePath());
+
+                response.setCharacterEncoding(responseCharset);
+                response.setContentType("text/html");
+                response.setStatus(HttpServletResponse.SC_OK);
+                PrintWriter out = response.getWriter();
+
+                out.print("{\"success\": \"true\", \"geojson\":");
+
+                Process exec = Runtime.getRuntime().exec(commandline.toArray(new String[commandline.size()]));
+                BufferedReader stdOutReader = new BufferedReader(new InputStreamReader(exec.getInputStream()));
+                String line;
+                while ((line = stdOutReader.readLine()) != null) {
+                    out.println(line);
+                }
+                out.println("}");
+                out.flush();
+                exec.waitFor();
+
+            } else {
+
+                    // create a CRS object from the srs parameter
+                CoordinateReferenceSystem crs = null;
+                try {
+                    final String crsParam = request.getParameter("srs");
+                    if ((crsParam != null) && (crsParam.length() > 0)) {
+                        crs = CRS.decode(crsParam);
+                    }
+                } catch (NoSuchAuthorityCodeException e) {
+                    LOG.error(e.getMessage());
+                    throw new IllegalArgumentException(e);
+                } catch (FactoryException e) {
+                    LOG.error(e.getMessage());
+                    throw new IOException(e);
+                }
+
+                // retrieves the feature collection and write the response
+                writeOKResponse(response, fileManagement, crs);
+            }
 
         } catch (IOException e) {
             LOG.error(e);
@@ -638,8 +694,6 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
      *
      * @param response
      * @param st
-     * @param workDirectory
-     * @param httpStatusCode
      * @throws IOException
      */
     private void writeErrorResponse(HttpServletResponse response,

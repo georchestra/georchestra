@@ -422,7 +422,7 @@ public class UpLoadFileManagement {
      *
      * @return the geofile
      */
-    private String searchGeoFile() {
+    public String searchGeoFile() {
 
         for (String fileName : this.fileDescriptor.listOfFiles) {
 
