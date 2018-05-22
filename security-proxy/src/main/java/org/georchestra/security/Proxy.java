@@ -280,37 +280,37 @@ public class Proxy {
 
     // ----------------- Method calls where request is encoded in a url
     // parameter of request ----------------- //
-    @RequestMapping(params = { "url", "!login" }, method = RequestMethod.POST)
+    @RequestMapping(value="/proxy/", params = { "url", "!login" }, method = RequestMethod.POST)
     public void handleUrlPOSTRequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) throws IOException {
         handleUrlParamRequest(request, response, RequestType.POST, sURL);
     }
 
-    @RequestMapping(params = { "url", "!login" }, method = RequestMethod.GET)
+    @RequestMapping(value="/proxy/", params = { "url", "!login" }, method = RequestMethod.GET)
     public void handleUrlGETRequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) throws IOException {
         handleUrlParamRequest(request, response, RequestType.GET, sURL);
     }
 
-    @RequestMapping(params = { "url", "!login" }, method = RequestMethod.DELETE)
+    @RequestMapping(value="/proxy/", params = { "url", "!login" }, method = RequestMethod.DELETE)
     public void handleUrlDELETERequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) throws IOException {
         handleUrlParamRequest(request, response, RequestType.DELETE, sURL);
     }
 
-    @RequestMapping(params = { "url", "!login" }, method = RequestMethod.HEAD)
+    @RequestMapping(value="/proxy/", params = { "url", "!login" }, method = RequestMethod.HEAD)
     public void handleUrlHEADRequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) throws IOException {
         handleUrlParamRequest(request, response, RequestType.HEAD, sURL);
     }
 
-    @RequestMapping(params = { "url", "!login" }, method = RequestMethod.OPTIONS)
+    @RequestMapping(value="/proxy/", params = { "url", "!login" }, method = RequestMethod.OPTIONS)
     public void handleUrlOPTIONSRequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) throws IOException {
         handleUrlParamRequest(request, response, RequestType.OPTIONS, sURL);
     }
 
-    @RequestMapping(params = { "url", "!login" }, method = RequestMethod.PUT)
+    @RequestMapping(value="/proxy/", params = { "url", "!login" }, method = RequestMethod.PUT)
     public void handleUrlPUTRequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) throws IOException {
         handleUrlParamRequest(request, response, RequestType.PUT, sURL);
     }
 
-    @RequestMapping(params = { "url", "!login" }, method = RequestMethod.TRACE)
+    @RequestMapping(value="/proxy/", params = { "url", "!login" }, method = RequestMethod.TRACE)
     public void handleUrlTRACERequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) throws IOException {
         handleUrlParamRequest(request, response, RequestType.TRACE, sURL);
     }
@@ -421,34 +421,39 @@ public class Proxy {
 
     // ----------------- Method calls where request is encoded in path of
     // request ----------------- //
-    @RequestMapping(value="**", params = { "!url", "!login" }, method = RequestMethod.GET)
+    @RequestMapping(value="**", params = { "!login" }, method = RequestMethod.GET)
     public void handleGETRequest(HttpServletRequest request, HttpServletResponse response) {
         handlePathEncodedRequests(request, response, RequestType.GET);
     }
 
-    @RequestMapping(value="**", params = { "!url", "!login" }, method = RequestMethod.POST)
+    @RequestMapping(value="**", params = { "!login" }, method = RequestMethod.POST)
     public void handlePOSTRequest(HttpServletRequest request, HttpServletResponse response) {
         handlePathEncodedRequests(request, response, RequestType.POST);
     }
 
-    @RequestMapping(value="**", params = { "!url", "!login" }, method = RequestMethod.DELETE)
+    @RequestMapping(value="**", params = { "!login" }, method = RequestMethod.DELETE)
     public void handleDELETERequest(HttpServletRequest request, HttpServletResponse response) {
         handlePathEncodedRequests(request, response, RequestType.DELETE);
     }
 
-    @RequestMapping(value="**", params = { "!url", "!login" }, method = RequestMethod.HEAD)
+    @RequestMapping(value="**", params = { "!login" }, method = RequestMethod.HEAD)
     public void handleHEADRequest(HttpServletRequest request, HttpServletResponse response) {
         handlePathEncodedRequests(request, response, RequestType.HEAD);
     }
 
-    @RequestMapping(value="**", params = { "!url", "!login" }, method = RequestMethod.OPTIONS)
+    @RequestMapping(value="**", params = { "!login" }, method = RequestMethod.OPTIONS)
     public void handleOPTIONSRequest(HttpServletRequest request, HttpServletResponse response) {
         handlePathEncodedRequests(request, response, RequestType.OPTIONS);
     }
 
-    @RequestMapping(value="**", params = { "!url", "!login" }, method = RequestMethod.PUT)
+    @RequestMapping(value="**", params = { "!login" }, method = RequestMethod.PUT)
     public void handlePUTRequest(HttpServletRequest request, HttpServletResponse response) {
         handlePathEncodedRequests(request, response, RequestType.PUT);
+    }
+
+    @RequestMapping(value="**", params = { "!login" }, method = RequestMethod.TRACE)
+    public void handleTRACERequest(HttpServletRequest request, HttpServletResponse response) {
+        handlePathEncodedRequests(request, response, RequestType.TRACE);
     }
 
     /**
@@ -465,10 +470,6 @@ public class Proxy {
         return;
     }
 
-    @RequestMapping(params = { "!url", "!login" }, method = RequestMethod.TRACE)
-    public void handleTRACERequest(HttpServletRequest request, HttpServletResponse response) {
-        handlePathEncodedRequests(request, response, RequestType.TRACE);
-    }
 
     // ----------------- Implementation methods ----------------- //
 
