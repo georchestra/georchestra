@@ -78,16 +78,16 @@
       </div>
 
       <div class="panel-body" ng-if="user.tab=='delegations' && profile === 'SUPERUSER' && !isSuperUser(user.user)">
-        <h4 translate>nav.orgs</h4>
-        <div class="form-group">
-          <select class="form-control" multiple chosen ng-model="user.delegation.orgs" ng-options="org.id as org.name for org in user.orgs"
-          data-placeholder="Select orgs">
-          </select>
-        </div>
-        <h4 translate>nav.roles</h4>
+        <h4 translate>user.manages_roles</h4>
         <div class="form-group">
           <select class="form-control" multiple chosen ng-model="user.delegation.roles" ng-options="role for role in user.allRoles"
           data-placeholder="Select roles">
+          </select>
+        </div>
+        <h4 translate>user.manages_orgs</h4>
+        <div class="form-group">
+          <select class="form-control" multiple chosen ng-model="user.delegation.orgs" ng-options="org.id as org.name for org in user.orgs"
+          data-placeholder="Select orgs">
           </select>
         </div>
         <br>

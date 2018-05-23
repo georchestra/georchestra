@@ -67,6 +67,8 @@
   "user.orgFirst"         : "Zuerst Organisation bestätigen  : ",
   "user.hasdeleg"         : "This user holds an admin delegation",
   "user.nodeleg"          : "No admin delegation for this user",
+  "user.manages_roles"    : "Manage roles:",
+  "user.manages_orgs"     : "Among users belonging to organisations:",
 
   "orgs.title_plural"     : "Organisationen",
   "orgs.title_one"        : "Organisation",
