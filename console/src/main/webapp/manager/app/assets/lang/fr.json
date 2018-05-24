@@ -67,8 +67,8 @@
   "user.orgFirst"         : "Confirmer d’abord l’organisme   : ",
   "user.hasdeleg"         : "Une délégation de gestion est active pour cet utilisateur",
   "user.nodeleg"          : "Pas de délégation de gestion définie pour cet utilisateur",
-  "user.manages_roles"    : "Gérer l'attribution de ces rôles :",
-  "user.manages_orgs"     : "Parmi les utilisateurs appartenant à ces organismes :",
+  "user.manages_roles"    : "Gère l'attribution des rôles :",
+  "user.manages_orgs"     : "Parmi les utilisateurs appartenant aux organismes :",
 
   "orgs.title_plural"     : "organismes",
   "orgs.title_one"        : "organisme",
