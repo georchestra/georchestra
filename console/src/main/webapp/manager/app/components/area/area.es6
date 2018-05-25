@@ -86,6 +86,7 @@ class AreaController {
         if (this.ids.indexOf(f.getId()) >= 0) selected.push(f)
       })
 
+      this.map.set('config', config.map)
       if (!config.map) {
         this.map.getView().fit(vector.getSource().getExtent(), map.getSize())
       } else {
