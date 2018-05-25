@@ -248,7 +248,18 @@
         $( "#createOrg" ).change(function() {
             if($( "#createOrg" ).prop( "checked" ) ){
                 setTimeout(function() {
-                  angular.element($('areas .map')[0]).scope().area.map.updateSize();
+
+                    var map = angular.element($('areas .map')[0]).scope().area.map;
+                    map.updateSize();
+                    var config = map.get('config')
+
+                    if (!config) {
+                        map.getView().fit(map.getLayers().item(1).getSource().getExtent(), map.getSize())
+                    } else {
+                        map.getView().setCenter(ol.proj.fromLonLat(config.center))
+                        map.getView().setZoom(config.zoom)
+                    }
+
                 }, 300);
                 $("#create_org_div").show(200);
                 $("#org").prop("disabled", true);
