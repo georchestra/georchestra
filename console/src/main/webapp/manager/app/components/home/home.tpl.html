@@ -34,7 +34,7 @@
                               '1': '{{ &quot;home.connected_user&quot; | translate }}',
                               'other': '{{ &quot;home.connected_users&quot; | translate }}'}">
       </p>
-      <table class="table table-condensed">
+      <table class="table table-condensed" ng-if="home.connected.results && home.connected.results.length > 0">
         <thead>
           <tr>
             <th translate>home.nb_requests</th>
