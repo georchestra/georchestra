@@ -171,13 +171,6 @@ public class Proxy {
 
     public void init() throws Exception {
 
-        // Create a deny permission for URL with same domain
-        String publicDomain = new URL(this.publicHostname).getHost();
-        this.sameDomainPermissions = new Permissions();
-        this.sameDomainPermissions.setDenied(Collections.singletonList(new UriMatcher().setDomain(publicDomain)));
-        this.sameDomainPermissions.setAllowByDefault(true);
-        this.sameDomainPermissions.init();
-
         if (targets != null) {
             for (String url : targets.values()) {
                 new URL(url); // test that it is a valid URL
@@ -189,6 +182,8 @@ public class Proxy {
         // init() call
         if ((georchestraConfiguration != null) && (georchestraConfiguration.activated())) {
             logger.info("geOrchestra configuration detected, reconfiguration in progress ...");
+
+            this.publicHostname = georchestraConfiguration.getProperty("publicUrl");
 
             Properties pTargets = georchestraConfiguration.loadCustomPropertiesFile("targets-mapping");
 
@@ -218,6 +213,13 @@ public class Proxy {
 
             logger.info("Done.");
         }
+
+        // Create a deny permission for URL with same domain
+        String publicDomain = new URL(this.publicHostname).getHost();
+        this.sameDomainPermissions = new Permissions();
+        this.sameDomainPermissions.setDenied(Collections.singletonList(new UriMatcher().setDomain(publicDomain)));
+        this.sameDomainPermissions.setAllowByDefault(true);
+        this.sameDomainPermissions.init();
 
         this.servicesMonitoring = new ServicesMonitoring(targets);
 
@@ -333,7 +335,6 @@ public class Proxy {
      *
      * @param request
      * @param response
-     * @param sURL
      * @throws IOException
      */
     @RequestMapping(value = "/**", params = { "!login" })
@@ -1400,14 +1401,6 @@ public class Proxy {
 
     public Permissions getProxyPermissions() {
         return proxyPermissions;
-    }
-
-    public String getPublicHostname() {
-        return publicHostname;
-    }
-
-    public void setPublicHostname(String publicHostname) {
-        this.publicHostname = publicHostname;
     }
 
 }
