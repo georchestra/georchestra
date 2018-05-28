@@ -975,8 +975,10 @@
     </profile>
     <profile>
       <id>debianPackage</id>
+      <properties>
+        <server>generic</server>
+      </properties>
       <build>
-        <finalName>geoserver-generic</finalName>
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
