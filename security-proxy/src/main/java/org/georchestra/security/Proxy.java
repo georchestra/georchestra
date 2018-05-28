@@ -183,7 +183,7 @@ public class Proxy {
         if ((georchestraConfiguration != null) && (georchestraConfiguration.activated())) {
             logger.info("geOrchestra configuration detected, reconfiguration in progress ...");
 
-            this.publicHostname = georchestraConfiguration.getProperty("publicUrl");
+            this.publicHostname = georchestraConfiguration.getProperty("public.host");
 
             Properties pTargets = georchestraConfiguration.loadCustomPropertiesFile("targets-mapping");
 
