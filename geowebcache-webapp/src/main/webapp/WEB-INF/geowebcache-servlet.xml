@@ -46,7 +46,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
     </bean>
 
     <bean id="gwcURLMangler" class="org.geowebcache.util.GeorchestraURLMangler">
-        <constructor-arg value="${baseUrl}" />
+        <constructor-arg value="${publicUrl}" />
         <constructor-arg value="${contextPath}" />
     </bean>
 
@@ -55,8 +55,17 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
       <constructor-arg value="geowebcache" />
     </bean>
 
-    <context:property-placeholder location="classpath:gwc.properties" ignore-resource-not-found="true" ignore-unresolvable="true" order="1" />
+    <context:property-placeholder location="classpath:gwc.properties"
+                                  ignore-resource-not-found="true"
+                                  ignore-unresolvable="true"
+                                  order="2" />
+    <context:property-placeholder location="file:${georchestra.datadir}/default.properties"
+                                  ignore-resource-not-found="true"
+                                  ignore-unresolvable="true"
+                                  order="1" />
     <context:property-placeholder location="file:${georchestra.datadir}/geowebcache/geowebcache.properties"
-      ignore-resource-not-found="true" ignore-unresolvable="true"  order="0" />
+                                  ignore-resource-not-found="true"
+                                  ignore-unresolvable="true"
+                                  order="0" />
 
 </beans>

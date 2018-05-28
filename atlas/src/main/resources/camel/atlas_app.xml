@@ -24,8 +24,12 @@
       location="file:${georchestra.datadir}/atlas/atlas.properties"
       ignore-resource-not-found="true" ignore-unresolvable="true" order="1" />
 
+    <context:property-placeholder
+            location="file:${georchestra.datadir}/default.properties"
+            ignore-resource-not-found="true" ignore-unresolvable="true" order="2" />
+
     <context:property-placeholder location="classpath:atlas.properties"
-      ignore-resource-not-found="true" ignore-unresolvable="true" order="2" />
+      ignore-resource-not-found="true" ignore-unresolvable="true" order="3" />
 
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
         <property name="driverClass" value="org.postgresql.Driver"/>

@@ -29,6 +29,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.console.Configuration;
 import org.georchestra.console.bs.ReCaptchaParameters;
 import org.georchestra.console.ds.AccountDao;
@@ -81,6 +82,9 @@ public class PasswordRecoveryFormController  {
 	private UserTokenDao userTokenDao;
 	private Configuration config;
 	private ReCaptchaParameters reCaptchaParameters;
+
+	@Autowired
+	private GeorchestraConfiguration georConfig;
 
 	@Autowired
 	public PasswordRecoveryFormController( AccountDao dao,RoleDao gDao, MailService mailSrv, UserTokenDao userTokenDao,
@@ -161,7 +165,7 @@ public class PasswordRecoveryFormController  {
 			this.userTokenDao.insertToken(account.getUid(), token);
 
 			String contextPath = this.config.getPublicContextPath();
-			String url = makeChangePasswordURL(request.getServerName(), request.getServerPort(), contextPath, token);
+			String url = makeChangePasswordURL(this.georConfig.getProperty("publicUrl"), contextPath, token);
 
 			ServletContext servletContext = request.getSession().getServletContext();
 			this.mailService.sendChangePasswordURL(servletContext, account.getUid(), account.getCommonName(), url, account.getEmail());
@@ -189,17 +193,11 @@ public class PasswordRecoveryFormController  {
 	 *
 	 * @return a new URL to change password
 	 */
-	private String makeChangePasswordURL(final String host, final int port, final String contextPath, final String token) {
+	private String makeChangePasswordURL(final String publicUrl, final String contextPath, final String token) {
 
-		StringBuilder strBuilder = new StringBuilder("");
-		if ((port == 80) || (port == 443)) {
-			strBuilder.append("https://").append(host);
-		} else {
-			strBuilder.append("http://").append(host).append(":").append(port);
-		}
+		StringBuilder strBuilder = new StringBuilder(publicUrl);
 		strBuilder.append(contextPath);
 		strBuilder.append( "/account/newPassword?token=").append(token);
-
 		String url = strBuilder.toString();
 
 		if(LOG.isDebugEnabled()){
@@ -212,5 +210,9 @@ public class PasswordRecoveryFormController  {
 	@ModelAttribute("passwordRecoveryFormBean")
 	public PasswordRecoveryFormBean getPasswordRecoveryFormBean() {
 		return new PasswordRecoveryFormBean();
+	}
+
+	public void setGeorConfig(GeorchestraConfiguration georConfig) {
+		this.georConfig = georConfig;
 	}
 }

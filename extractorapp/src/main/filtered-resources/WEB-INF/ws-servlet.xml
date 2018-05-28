@@ -23,8 +23,6 @@
 
     <bean id="extractor-controller" init-method="validateConfig" class="org.georchestra.extractorapp.ws.extractor.ExtractorController">
         <property name="responseTemplateFile" value="/WEB-INF/templates/extractor-http-response-template.xml"/>
-        <property name="servletUrl" value="${servletUrl}"/>
-        <property name="secureHost" value="${secureHost}"/>
         <property name="emailFactory" ref="emailFactory"/>
         <property name="reponseMimeType" value="application/xml"/>
         <property name="responseCharset" value="UTF-8"/>
