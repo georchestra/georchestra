@@ -20,6 +20,7 @@
 --%>
 <!DOCTYPE html>
 
+<%@ page language="java" %>
 <%@ page pageEncoding="UTF-8" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -27,24 +28,52 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
+<%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
+<%@ page import="org.springframework.context.ApplicationContext" %>
+<%@ page import="org.springframework.web.servlet.support.RequestContextUtils" %>
+<%@ page import="org.georchestra.commons.configuration.GeorchestraConfiguration" %>
+
+<%
+
+String sharedInstanceName = "@shared.instance.name@";
+String sharedHomepageUrl = "@shared.homepage.url@";
+String headerHeight = "90px";
+String headerUrl = "/header/";
+String sharedLdapadminContextpath = "@shared.console.contextpath@";
+
+try {
+  ApplicationContext ctx = RequestContextUtils.getWebApplicationContext(request);
+  GeorchestraConfiguration georConfig = (GeorchestraConfiguration) ctx.getBean(GeorchestraConfiguration.class);
+  if (georConfig.activated()) {
+    sharedInstanceName = georConfig.getProperty("instance.name");
+    sharedHomepageUrl = georConfig.getProperty("homepage.url");
+    headerHeight = georConfig.getProperty("headerHeight");
+    headerUrl = georConfig.getProperty("headerUrl");
+    sharedLdapadminContextpath = georConfig.getProperty("console.contextpath");
+  }
+} catch (Exception e) {
+  // Ignoring and keeping the default configuration
+}
+
+%>
+
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  
-  <title>CAS &#8211; Central Authentication Service</title>
-  
+
+  <title>CAS - <%= sharedInstanceName %></title>
+
   <spring:theme code="standard.custom.css.file" var="customCssFile" />
   <link rel="stylesheet" href="<c:url value="${customCssFile}" />" />
-  <link rel="icon" href="<c:url value="/favicon.ico" />" type="image/x-icon" />
-  
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.1/html5shiv.js" type="text/javascript"></script>
   <![endif]-->
 </head>
 <body id="cas">
+
+<iframe src="<%= headerUrl %>" style="width:100%;height:<%= headerHeight %>px;border:none;overflow:hidden;" scrolling="no" frameborder="0"></iframe>
+
   <div id="container">
-      <header>
-        <a id="logo" href="http://www.jasig.org" title="<spring:message code="logo.title" />">Jasig</a>
-        <h1>Central Authentication Service (CAS)</h1>
-      </header>
       <div id="content">
