@@ -323,13 +323,6 @@ In ```/var/lib/tomcat-georchestra/conf/server.xml```:
 
 ```
 
-If the console webapp is deployed, the connector must also include these options:
-```
-               proxyName="georchestra.mydomain.org"
-               proxyPort="80"
-```
-(where ```georchestra.mydomain.org``` is your server FQDN)
-
 ### Start the instance
 
 ```
