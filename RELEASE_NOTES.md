@@ -8,50 +8,50 @@ This branch receives bug fixes as they arrive, during 12 months at least.
 Version 18.06
 =============
 
-Release crafted for the [GeoGrandEst](https://twitter.com/geograndest) project, with contributions from other SDIs.
+Release crafted for the [GeoGrandEst](https://twitter.com/geograndest) project, with contributions from other SDIs.  
 Thank you all for your continuous support !
 
 Major highlights:
  * Console webapp (formerly ldapadmin) overhauled, allows granting limited administration rights to a selection of users.
- * GeoServer updated to 2.13 with #1995
+ * GeoServer updated to 2.13 with [#1995](https://github.com/georchestra/georchestra/issues/1995)
  * GeoNetwork 3.4: a better overall integration
 
 New features:
- * console - delegation of rights to a selection of users. SDI administrators are now able to allow any LDAP user to manage a selection of roles in a selection of orgs.
- * console - emails sent upon user registration now dynamically target LDAP users with roles SUPERUSER or ORGADMIN. If a pending user has filled the org field and a valid delegation is registered with this org, users with the delegation will be able to moderate the incoming user.  #1981
- * console - map fits vector data extent #2052
- * console - supports more languages (german & spanish translations added) #1965
- * console - reCAPTCHA upgraded to V2 version #1928
- * mapfishapp - allows direct vector layer download if WFS service advertises [expected formats](https://github.com/georchestra/georchestra/pull/1929/files) #1909 #1929
- * mapfishapp - the "extract layer" menu action is displayed when the extractor addon is loaded #1909
- * geonetwork - several metadata can now be sent at once to viewer & extractor #1809
+ * console - delegation of rights to a selection of users. SDI administrators can allow any LDAP user to manage a selection of roles in a selection of orgs.
+ * console - emails sent upon user registration now dynamically target LDAP users with roles SUPERUSER or ORGADMIN. If a pending user has filled the org field and a valid delegation is registered with this org, users with the delegation will be able to moderate the incoming user.  [#1981](https://github.com/georchestra/georchestra/issues/1981)
+ * console - map fits vector data extent [#2052](https://github.com/georchestra/georchestra/issues/2052)
+ * console - supports more languages (german & spanish translations added) [#1965](https://github.com/georchestra/georchestra/issues/1965)
+ * console - reCAPTCHA upgraded to V2 version [#1928](https://github.com/georchestra/georchestra/issues/1928)
+ * mapfishapp - allows direct vector layer download if WFS service advertises [expected formats](https://github.com/georchestra/georchestra/pull/1929/files) [#1909](https://github.com/georchestra/georchestra/issues/1909) [#1929](https://github.com/georchestra/georchestra/issues/1929)
+ * mapfishapp - the "extract layer" menu action is displayed when the extractor addon is loaded [#1909](https://github.com/georchestra/georchestra/issues/1909)
+ * geonetwork - several metadata can now be sent at once to viewer & extractor [#1809](https://github.com/georchestra/georchestra/issues/1809)
 
 Enhancements:
- * console - roles can be renamed #2025
- * console - logs displayed using international date format #1988
- * console - the dependency on config.jar was removed #1966
- * console - added http links between objects #1951
- * console - http links now open in new tab (aka fix non routable URLs) #1930
- * console - description field allows more text #1826
- * console - roles are created capitalized #1813
- * console - org list alphabetically sorted #1814
- * mapfishapp - allow reading KML 3D files #2000
- * all - header url is now configurable in datadir #1922
+ * console - roles can be renamed [#2025](https://github.com/georchestra/georchestra/issues/2025)
+ * console - logs displayed using international date format [#1988](https://github.com/georchestra/georchestra/issues/1988)
+ * console - the dependency on config.jar was removed [#1966](https://github.com/georchestra/georchestra/issues/1966)
+ * console - added http links between objects [#1951](https://github.com/georchestra/georchestra/issues/1951)
+ * console - http links now open in new tab (aka fix non routable URLs) [#1930](https://github.com/georchestra/georchestra/issues/1930)
+ * console - description field allows more text [#1826](https://github.com/georchestra/georchestra/issues/1826)
+ * console - roles are created capitalized [#1813](https://github.com/georchestra/georchestra/issues/1813)
+ * console - org list alphabetically sorted [#1814](https://github.com/georchestra/georchestra/issues/1814)
+ * mapfishapp - allow reading KML 3D files [#2000](https://github.com/georchestra/georchestra/issues/2000)
+ * all - header url is now configurable in datadir [#1922](https://github.com/georchestra/georchestra/issues/1922)
 
 Bug fixes:
- * console - prevent empty error flash message during app load #2004
- * console - fixed broken fonts #2053
- * console - fixed npm / brunch build #2047
- * console - fixed loading of email configuration #2026
- * console - fixed singular / plural strings with ngPluralize #2024 #1989
- * console - fixed broken maven-frontend-plugin with the debianPackage profile #1898
- * console - updated jquery and other dependencies #1882
- * proxy - discards the `transfer-encoding` header in the proxified request #2012
- * mapfishapp - fixed mapfishapp/ws/*.json `content-type` header not specified #1934
- * mapfishapp & extractorapp - fixed GDAL bindings integration in docker images #1939
- * backgrounds addon - fixed "cannot read property 'id' of null" error #1900
- * geonetwork - fixed broken "view layer" & "download data" actions #1977
- * geonetwork - top toolbar does not overlap header anymore #2013
+ * console - prevent empty error flash message during app load [#2004](https://github.com/georchestra/georchestra/issues/2004)
+ * console - fixed broken fonts [#2053](https://github.com/georchestra/georchestra/issues/2053)
+ * console - fixed npm / brunch build [#2047](https://github.com/georchestra/georchestra/issues/2047)
+ * console - fixed loading of email configuration [#2026](https://github.com/georchestra/georchestra/issues/2026)
+ * console - fixed singular / plural strings with ngPluralize [#2024](https://github.com/georchestra/georchestra/issues/2024) [#1989](https://github.com/georchestra/georchestra/issues/1989)
+ * console - fixed broken maven-frontend-plugin with the debianPackage profile [#1898](https://github.com/georchestra/georchestra/issues/1898)
+ * console - updated jquery and other dependencies [#1882](https://github.com/georchestra/georchestra/issues/1882)
+ * proxy - discards the `transfer-encoding` header in the proxified request [#2012](https://github.com/georchestra/georchestra/issues/2012)
+ * mapfishapp - fixed mapfishapp/ws/*.json `content-type` header not specified [#1934](https://github.com/georchestra/georchestra/issues/1934)
+ * mapfishapp & extractorapp - fixed GDAL bindings integration in docker images [#1939](https://github.com/georchestra/georchestra/issues/1939)
+ * backgrounds addon - fixed "cannot read property 'id' of null" error [#1900](https://github.com/georchestra/georchestra/issues/1900)
+ * geonetwork - fixed broken "view layer" & "download data" actions [#1977](https://github.com/georchestra/georchestra/issues/1977)
+ * geonetwork - top toolbar does not overlap header anymore [#2013](https://github.com/georchestra/georchestra/issues/2013)
 
 
 Deprecations:
