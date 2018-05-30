@@ -58,6 +58,8 @@ Deprecations:
  * the extractorapp user interface was removed in favor of the viewer addon named "[extractor](/mapfishapp/src/main/webapp/app/addons/extractor/README.md)"
  * `docker-compose` files have been removed from the sources repository. They
  belong to the [georchestra/docker](https://github.com/georchestra/docker) repository.
+ * console - browing roles as a tree was not a good idea ! It's now replaced with favorite roles, which are shared between users allowed to manage users within the console.
+
 
 Read [how to migrate from 17.12 to 18.06](migrations/18.06/README.md).
 
