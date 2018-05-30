@@ -1,6 +1,6 @@
 class AppController {
   static $inject = [
-    '$scope', '$router', '$location', '$translate', 'roleAdminList', 'Profile',
+    '$scope', '$router', '$location', '$translate', 'roleAdminList', 'Profile'
   ]
 
   constructor ($scope, $router, $location, $translate, roleAdminList, Profile) {
