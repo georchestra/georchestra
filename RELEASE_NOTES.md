@@ -46,6 +46,7 @@ Bug fixes:
  * console - fixed singular / plural strings with ngPluralize [#2024](https://github.com/georchestra/georchestra/issues/2024) [#1989](https://github.com/georchestra/georchestra/issues/1989)
  * console - fixed broken maven-frontend-plugin with the debianPackage profile [#1898](https://github.com/georchestra/georchestra/issues/1898)
  * console - updated jquery and other dependencies [#1882](https://github.com/georchestra/georchestra/issues/1882)
+ * console - fixed link to manager on user details page [#2063](https://github.com/georchestra/georchestra/issues/2063)
  * proxy - discards the `transfer-encoding` header in the proxified request [#2012](https://github.com/georchestra/georchestra/issues/2012)
  * mapfishapp - fixed mapfishapp/ws/*.json `content-type` header not specified [#1934](https://github.com/georchestra/georchestra/issues/1934)
  * mapfishapp & extractorapp - fixed GDAL bindings integration in docker images [#1939](https://github.com/georchestra/georchestra/issues/1939)
