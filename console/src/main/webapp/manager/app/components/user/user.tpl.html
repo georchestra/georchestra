@@ -61,9 +61,10 @@
         <hr>
 
         <h4 translate>role.app</h4>
-        <div class="form-group">
-          <select class="form-control" multiple chosen ng-model="user.user.roles" ng-options="role for role in user.roles"
-          data-placeholder="Select roles">
+        <div class="form-group" ng-if="$translate.isReady()">
+          <select class="form-control" multiple ng-model="user.user.roles"
+             ng-options="role for role in user.roles" chosen
+             placeholder-text-multiple="'user.select_role'|translate">
           </select>
         </div>
       </div>

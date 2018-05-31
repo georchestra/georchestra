@@ -1,7 +1,9 @@
 class AppController {
-  static $inject = [ '$scope', '$router', '$location', 'roleAdminList', 'Profile' ]
+  static $inject = [
+    '$scope', '$router', '$location', '$translate', 'roleAdminList', 'Profile'
+  ]
 
-  constructor ($scope, $router, $location, roleAdminList, Profile) {
+  constructor ($scope, $router, $location, $translate, roleAdminList, Profile) {
     $router.config([
       { path: '/',
         redirectTo: '/home' },
@@ -41,6 +43,7 @@ class AppController {
     })
 
     $scope.isProtectedRole = role => roleAdminList().indexOf(role.cn) !== -1
+    $scope.$translate = $translate
   }
 }
 
