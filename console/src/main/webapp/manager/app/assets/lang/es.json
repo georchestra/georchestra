@@ -120,8 +120,8 @@
   "role.favorite"         : "Favorite",
   "role.favorites"        : "Favorites",
 
-  "delegations.title"     : "Delegación de administración",
-  "delegations.title_plural" : "Delegaciones de administración",
+  "delegations.title"     : "delegación de administración",
+  "delegations.title_plural" : "delegaciones de administración",
   "delegations.title_no_delegations" : "Ninguna delegación de administración",
   "delegations.filter"    : "Filtrar",
   "delegations.delete"    : "Eliminar",
