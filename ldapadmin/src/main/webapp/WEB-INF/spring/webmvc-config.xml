@@ -128,7 +128,7 @@
         <property name="user" value="${psql.user}"/>
         <property name="password" value="${psql.pass}"/>
         <property name="driverClass" value="org.postgresql.Driver"/>
-        <property name="maxPoolSize" value="5"/>
+        <property name="maxPoolSize" value="10"/>
         <property name="minPoolSize" value="1"/>
     </bean>
 
