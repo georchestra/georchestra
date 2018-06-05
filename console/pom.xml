@@ -352,6 +352,11 @@
       <version>5.0.3.Final</version>
     </dependency>
     <dependency>
+      <groupId>com.mchange</groupId>
+      <artifactId>c3p0</artifactId>
+      <version>0.9.5.2</version>
+    </dependency>
+    <dependency>
       <groupId>javax.validation</groupId>
       <artifactId>validation-api</artifactId>
       <version>1.0.0.GA</version>
@@ -368,6 +373,17 @@
       <artifactId>jta</artifactId>
       <version>1.1</version>
       <classifier/>
+    </dependency>
+    <dependency>
+      <groupId>com.googlecode.ez-vcard</groupId>
+      <artifactId>ez-vcard</artifactId>
+      <version>0.9.7</version>
+    </dependency>
+    <!-- geOrchestra commons -->
+    <dependency>
+      <groupId>org.georchestra</groupId>
+      <artifactId>georchestra-commons</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>commons-pool</groupId>
@@ -408,17 +424,6 @@
           <artifactId>xml-apis</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>com.googlecode.ez-vcard</groupId>
-      <artifactId>ez-vcard</artifactId>
-      <version>0.9.7</version>
-    </dependency>
-    <!-- geOrchestra commons -->
-    <dependency>
-      <groupId>org.georchestra</groupId>
-      <artifactId>georchestra-commons</artifactId>
-      <version>${project.version}</version>
     </dependency>
   </dependencies>
   <build>
