@@ -352,7 +352,7 @@ GEOR.mapinit = (function() {
         });
 
         // support for JSON search parameter
-        if( initSearch.hasOwnProperty('typename') && initSearch.hasOwnProperty('owsurl') && initSearch.hasOwnProperty('cql_filter') ) {
+        if(initSearch && initSearch.hasOwnProperty('typename') && initSearch.hasOwnProperty('owsurl') && initSearch.hasOwnProperty('cql_filter') ) {
             var record = {
                 typeName: initSearch.typename,
                 owsURL: initSearch.owsurl
