@@ -33,6 +33,7 @@ import static org.georchestra.security.HeaderNames.TRANSFER_ENCODING;
 import static org.georchestra.security.HeaderNames.PROTECTED_HEADER_PREFIX;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -270,108 +271,45 @@ public class HeadersManagementStrategy {
     /**
      * Copy headers from the proxy response to the final response
      */
-    public synchronized void copyResponseHeaders(HttpServletRequest originalRequest, String originalRequestURI, HttpResponse proxyResponse, HttpServletResponse finalResponse, Map<String,String> proxyTargets) {
+    public synchronized void copyResponseHeaders(HttpServletRequest originalRequest, String originalRequestURI, HttpResponse proxyResponse, HttpServletResponse finalResponse,
+            Map<String,String> proxyTargets) {
         HttpSession session = originalRequest.getSession(true);
-
-        StringBuilder headersLog = new StringBuilder("Response Headers:\n");
-        headersLog
-                .append("==========================================================\n");
-
+        Collection<String> protectedHeaders = finalResponse.getHeaderNames();
+        
         // Set Response headers
         for (Header header : proxyResponse.getAllHeaders()) {
-            headersLog.append("\t");
             if (header.getName().equalsIgnoreCase(HeaderNames.SET_COOKIE_ID)) {
                 continue;
-            } else if (LOCATION.equalsIgnoreCase(header.getName())) {
-//            	DO NOTHING
-//            	Handle in Proxy.java
-//            	if (logger.isDebugEnabled()) {
-//            		logger.debug("handle location header: " + header.getValue());
-//            	}
-//            	Header locationHeader = handleLocation(originalRequest, header, proxyTargets);
-//            	finalResponse.addHeader(locationHeader.getName(), locationHeader.getValue());
-			} else if (defaultIgnores(header)){
-                headersLog.append("-- IGNORING -- ");
+            } else if (defaultIgnores(header)) {
+                continue;
             } else {
-                finalResponse.addHeader(header.getName(), header.getValue());
+                // if the header is not in the servlet response, add it
+                // else (header is already present in the servlet response),
+                // make sure the value is erased by the one sent by the downstream webapp.
+                //
+                // The code voluntary misses the corner case where the header is already present
+                // in the serlvet response but appears twice or more in the webapp response.
+                if (! protectedHeaders.contains(header.getName())) {
+                    finalResponse.addHeader(header.getName(), header.getValue());
+                } else {
+                    finalResponse.setHeader(header.getName(), header.getValue());
+                }
             }
-            headersLog.append(header.getName());
-            headersLog.append("=");
-            headersLog.append(header.getValue());
-            headersLog.append("\n");
         }
 
         for(HeaderProvider provider : headerProviders) {
             for (Header header : provider.getCustomResponseHeaders()) {
                 finalResponse.addHeader(header.getName(), header.getValue());
-                headersLog.append("\t" + header.getName());
-                headersLog.append("=");
-                headersLog.append(header.getValue());
-                headersLog.append("\n");
             }
         }
 
         Header[] cookieHeaders = proxyResponse.getHeaders(HeaderNames.SET_COOKIE_ID);
         if(cookieHeaders!=null) {
-            handleResponseCookies(originalRequestURI, finalResponse, cookieHeaders, session,headersLog);
-        }
-
-        headersLog
-                .append("==========================================================\n");
-
-        if (logger.isTraceEnabled()) {
-        	logger.trace(headersLog.toString());
+            handleResponseCookies(originalRequestURI, finalResponse, cookieHeaders, session);
         }
     }
 
-    private Header handleLocation(HttpServletRequest request, Header locationHeader, Map<String,String> proxyTargets) {
-    	String locationValue = null;
-    	for (String proxyTargetKey : proxyTargets.keySet()) {
-    		if (logger.isDebugEnabled()) {
-    			logger.debug("Test proxyTarget: " + proxyTargets.get(proxyTargetKey) + " against: " + locationHeader.getValue());
-    		}
-    		if (locationHeader.getValue().startsWith(proxyTargets.get(proxyTargetKey))) {
-    			locationValue = "/" + proxyTargetKey + "/" + locationHeader.getValue().substring(proxyTargets.get(proxyTargetKey).length());
-    			if (logger.isDebugEnabled()) {
-    				logger.debug("Adjust location header on redirection from: " + locationHeader.getValue() + " to: " + locationValue);
-    			}
-    			Header newLocationHeader = new BasicHeader(locationHeader.getName(), locationValue);
-    			return newLocationHeader;
-    		}
-    		else {
-    			String newLocation = sanitizeLocation(request, locationHeader.getValue(), proxyTargets);
-    			if (!locationHeader.getValue().equals(newLocation)) {
-    				if (logger.isDebugEnabled()) {
-        				logger.debug("Adjust location header on redirection from: " + locationHeader.getValue() + " to: " + newLocation);
-        			}
-
-    				Header newLocationHeader = new BasicHeader(locationHeader.getName(), newLocation);
-        			return newLocationHeader;
-    			}
-    		}
-    	}
-
-    	return locationHeader;
-    }
-
-    private String sanitizeLocation(HttpServletRequest request, String location, Map<String,String> targets) {
-    	if (location.startsWith("/")) {
-    		String [] requestPath = StringUtils.split(location.substring(1), "/");
-    		if (logger.isDebugEnabled()) {
-    			if (requestPath.length > 0)
-    				logger.debug("Sanitize location: " + requestPath[0]);
-    		}
-    		if (requestPath.length > 0 && targets.containsKey(requestPath[0])) {
-    			requestPath[0] = targets.get(requestPath[0]);
-    			return StringUtils.arrayToDelimitedString(requestPath, "/");
-    		}
-    	}
-
-    	return location;
-    }
-
-
-    private void handleResponseCookies(String originalRequestURI, HttpServletResponse finalResponse, Header[] headers, HttpSession session, StringBuilder headersLog) {
+    private void handleResponseCookies(String originalRequestURI, HttpServletResponse finalResponse, Header[] headers, HttpSession session) {
         String originalPath = originalRequestURI.split("/")[0];
         for (Header header : headers) {
             String[] parts = header.getValue().split("(?i)Path=",2);
@@ -386,7 +324,7 @@ public class HeadersManagementStrategy {
                     if(parts.length == 2) {
                         path = parts[1];
                     }
-                    storeJsessionHeader(session, path.trim(), cookie,headersLog);
+                    storeJsessionHeader(session, path.trim(), cookie);
                 } else {
                     if(cookies.length()>0) cookies.append("; ");
                     cookies.append(cookie);
@@ -396,16 +334,12 @@ public class HeadersManagementStrategy {
             if(cookies.length() > 0) {
                 cookies.append("; Path= /" + originalPath);
                 finalResponse.addHeader(HeaderNames.SET_COOKIE_ID, cookies.toString());
-                headersLog.append("\t" + HeaderNames.SET_COOKIE_ID);
-                headersLog.append("=");
-                headersLog.append(cookies);
-                headersLog.append("\n");
             }
 
         }
     }
 
-    private void storeJsessionHeader(HttpSession session, String path, String cookie, StringBuilder headersLog) {
+    private void storeJsessionHeader(HttpSession session, String path, String cookie) {
         Map<String,String> map = (Map<String, String>) session.getAttribute(HeaderNames.JSESSION_ID);
         if(map==null) {
             map = new HashMap<String,String>();
@@ -421,13 +355,6 @@ public class HeadersManagementStrategy {
 
         }
         map.put(path,cookie);
-
-        headersLog.append("\tStoring JSESSION cookie ");
-        headersLog.append(cookie);
-        headersLog.append(" for path ");
-        headersLog.append(path);
-        headersLog.append("\n");
-
     }
 
     private boolean defaultIgnores(Header header) {
