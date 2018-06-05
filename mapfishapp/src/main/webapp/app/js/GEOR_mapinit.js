@@ -51,7 +51,7 @@ GEOR.mapinit = (function() {
      * {Array} shorthand for GEOR.initstate
      */
     var initState = null;
-    
+
     /**
      * Property: initSearch
      * {Object} shorthand for GEOR.initsearch
@@ -72,7 +72,7 @@ GEOR.mapinit = (function() {
 
     /**
      * Method: customRecenter
-     * Convenient method telling whether to use the WMC bbox 
+     * Convenient method telling whether to use the WMC bbox
      * or the incoming GET parameters
      *
      * Returns:
@@ -101,7 +101,7 @@ GEOR.mapinit = (function() {
             var z;
             if (GEOR.config.CUSTOM_RADIUS !== '') {
                 var radius = parseInt(GEOR.config.CUSTOM_RADIUS),
-                    bounds = new OpenLayers.Bounds(forcedCenter.lon, forcedCenter.lat, 
+                    bounds = new OpenLayers.Bounds(forcedCenter.lon, forcedCenter.lat,
                         forcedCenter.lon, forcedCenter.lat),
                     units = mapProjObj.getUnits();
 
@@ -164,7 +164,7 @@ GEOR.mapinit = (function() {
                 // GEOR.ajaxglobal.init has not run yet:
                 GEOR.waiter.hide();
                 try {
-                    GEOR.wmc.read(response.responseXML || response.responseText, 
+                    GEOR.wmc.read(response.responseXML || response.responseText,
                         options.resetMap || true, !customRecenter());
 
                     options.success && options.success.call(this);
@@ -339,7 +339,7 @@ GEOR.mapinit = (function() {
                             record.getLayer().params.CQL_FILTER = item.cql_filter;
                         }
                     }
-                    
+
                     // set metadataURLs in record, data comes from GeoNetwork
                     if (item.metadataURL) {
                         record.set("metadataURLs", [item.metadataURL]);
@@ -350,15 +350,15 @@ GEOR.mapinit = (function() {
                 }
             }
         });
-        
+
         // support for JSON search parameter
-        if( initSearch.hasOwnProperty('typename') && initSearch.hasOwnProperty('owsurl') && initSearch.hasOwnProperty('cql_filter') ) {
+        if(initSearch && initSearch.hasOwnProperty('typename') && initSearch.hasOwnProperty('owsurl') && initSearch.hasOwnProperty('cql_filter') ) {
             var record = {
                 typeName: initSearch.typename,
                 owsURL: initSearch.owsurl
             }
             var filter = (new OpenLayers.Format.CQL()).read(initSearch.cql_filter);
-            
+
             var attStore = GEOR.ows.WFSDescribeFeatureType(record, {
                 extractFeatureNS: true,
                 success: function() {
@@ -371,7 +371,7 @@ GEOR.mapinit = (function() {
                         // we have a geometry
                         var r = attStore.getAt(idx);
                         geometryName = r.get('name');
-                        
+
                         GEOR.ows.WFSProtocol(record, layerStore.map, {geometryName: geometryName}).read({
                             maxFeatures: GEOR.config.MAX_FEATURES,
                             propertyNames: layerFields || [],
@@ -380,11 +380,11 @@ GEOR.mapinit = (function() {
                                 if (!response.success()) {
                                     return;
                                 }
-                                
+
                                 var model =  (attStore.getCount() > 0) ? new GEOR.FeatureDataModel({
                                     attributeStore: attStore
                                 }) : null;
-                                
+
                                 observable.fireEvent("searchresults", {
                                     features: response.features,
                                     model: model,
@@ -526,7 +526,7 @@ GEOR.mapinit = (function() {
 
     /**
      * Method: toGeoJSONSuccess
-     * Success callback for file to geojson conversion 
+     * Success callback for file to geojson conversion
      *
      */
     var toGeoJSONSuccess = function(resp) {
@@ -556,7 +556,7 @@ GEOR.mapinit = (function() {
         var recordType = GeoExt.data.LayerRecord.create(
             GEOR.ows.getRecordFields()
         );
-        var filename, 
+        var filename,
             cmpts = GEOR.config.CUSTOM_FILE.split('/');
         if (cmpts.length) {
             filename = cmpts[cmpts.length-1];
@@ -584,7 +584,7 @@ GEOR.mapinit = (function() {
          * Observable object
          */
         events: observable,
-        
+
         /**
          * APIMethod: init
          * Initialize this module
@@ -599,7 +599,7 @@ GEOR.mapinit = (function() {
             cb = callback || OpenLayers.Util.Void;
 
             // the default WMC is either the one provided by the admin in GEOR.custom,
-            // or the first one publicized by mapfishapp's ContextController.java 
+            // or the first one publicized by mapfishapp's ContextController.java
             // in GEOR.config.CONTEXTS
             GEOR.config.DEFAULT_WMC = GEOR.custom.DEFAULT_WMC ||
                 // first context publicized by ContextController:
