@@ -42,10 +42,10 @@ GEOR.config = (function() {
     return {
         /**
          * Constant: HEADER_HEIGHT
-         * Integer value representing the header height, as set in the shared maven filters
+         * Integer value representing the header height, as set in the datadir
          * Defaults to 90
          */
-        HEADER_HEIGHT: getCustomParameter("HEADER_HEIGHT", 90),
+        HEADER_HEIGHT: window.headerHeight,
 
         /**
          * Constant: ANONYMOUS
