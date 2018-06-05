@@ -119,7 +119,7 @@ public class PermissionsTest {
     @Test
     public void testNetworkIPv6() throws IOException, ClassNotFoundException {
         Permissions perm = this.load("test-permissions-uriMatcher.xml");
-        assertTrue(perm.isDenied(new URL("http://www.georchestra.org/geoserver")));
+        assertTrue(perm.isDenied(new URL("http://www.google.com/geoserver")));
 
     }
 

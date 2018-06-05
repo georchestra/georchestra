@@ -25,5 +25,8 @@
         <urimatcher>
             <network>2a04:4e42::/32</network>
         </urimatcher>
+        <urimatcher>
+            <network>2a00:1450::/29</network>
+        </urimatcher>
     </denied>
 </permissions>
