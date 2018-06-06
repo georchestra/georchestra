@@ -749,6 +749,16 @@
       </dependencies>
     </profile>
     <profile>
+      <id>vectortiles</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.geoserver.extension</groupId>
+          <artifactId>gs-vectortiles</artifactId>
+          <version>${gs.version}</version>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
       <id>sfs-store</id>
       <dependencies>
         <dependency>
