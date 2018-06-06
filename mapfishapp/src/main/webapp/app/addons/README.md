@@ -10,6 +10,7 @@ They can be hosted on https://github.com/georchestra/addons
 If generic enough, they are pushed to the main repository, precisely in the [current directory](./).
 We currently have the following addons available:
  * [annotation](annotation/README.md) tools.
+ * [ban geocoder](bangeocoder/README.md) tools.
  * [cadastre](cadastre/README.md) which allows users to locate a feature (typically a parcel) based on cascading drop downs (eg: state, then city, then borough).
  * [extractor](extractor/README.md) which relies on the services offered by the [extractorapp](/extractorapp/README.md) geOrchestra module.
  * [magnifier](magnifier/README.md) which allows one to explore a map area with configured imagery.
