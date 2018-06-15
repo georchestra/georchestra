@@ -34,7 +34,7 @@
 
     <bean class="org.georchestra.mapfishapp.ws.UpLoadGeoFileController" init-method="init">
         <property name="responseCharset" value="UTF-8"/>
-        <property name="tempDirectory" value="${docTempDir}/geoFileUploadsCache"/>
+        <property name="tempDirectory" value="/geoFileUploadsCache"/>
         <property name="zipSizeLimit" value="8388608"/>
         <property name="kmlSizeLimit" value="8388608"/>
         <property name="gpxSizeLimit" value="8388608"/>
@@ -44,14 +44,14 @@
 
 
     <bean id="pgpool" class="org.georchestra.mapfishapp.model.ConnectionPool" init-method="init">
-        <property name="jdbcUrl" value="${jdbcUrl}" /> 
+        <property name="jdbcUrl" value="jdbc:postgresql://localhost:5432/georchestra?user=georchestra&amp;password=georchestra" /> 
     </bean>
 
     <!-- Documents controller -->
     <bean class="org.georchestra.mapfishapp.ws.DocController" init-method="init">
-        <property name="docTempDir" value="${docTempDir}"/>
+        <property name="docTempDir" value="/tmp"/>
         <property name="credentials">
-            <map>${credentials}</map>
+            <map><entry key="georchestra.mydomain.org"><bean class="org.apache.commons.httpclient.UsernamePasswordCredentials"><constructor-arg index="0" value="geoserver_privileged_user:gerlsSnFd6SmM" /></bean></entry></map>
         </property>
     </bean>
 

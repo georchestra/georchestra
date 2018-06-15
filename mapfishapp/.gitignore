@@ -1,5 +1,0 @@
-src/main/webapp/default.wmc
-src/main/webapp/*.json
-src/main/webapp/print/
-src/main/webapp/WEB-INF/ws-servlet.xml
-src/main/webapp/contexts/
