@@ -13,7 +13,7 @@ Thank you all for your continuous support !
 
 Major highlights:
  * Console webapp (formerly ldapadmin) overhauled, allows granting limited administration rights to a selection of users.
- * GeoServer updated to 2.13 with [#1995](https://github.com/georchestra/georchestra/issues/1995)
+ * GeoServer updated to 2.12
  * GeoNetwork 3.4: a better overall integration
 
 New features:
