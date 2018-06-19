@@ -8,7 +8,7 @@
 
 <%
 
-String headerHeight = "90px";
+String headerHeight = "90";
 String headerUrl = "/header/";
 
 try {
