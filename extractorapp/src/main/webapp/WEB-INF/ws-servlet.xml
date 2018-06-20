@@ -26,14 +26,14 @@
         <property name="emailFactory" ref="emailFactory"/>
         <property name="reponseMimeType" value="application/xml"/>
         <property name="responseCharset" value="UTF-8"/>
-        <property name="maxCoverageExtractionSize" value="${maxCoverageExtractionSize}"/>
-        <property name="remoteReproject" value="${remoteReproject}"/>
-        <property name="useCommandLineGDAL" value="${useCommandLineGDAL}"/>
-        <property name="extractionFolderPrefix" value="${extractionFolderPrefix}"/>
+        <property name="maxCoverageExtractionSize" value="99999999"/>
+        <property name="remoteReproject" value="true"/>
+        <property name="useCommandLineGDAL" value="false"/>
+        <property name="extractionFolderPrefix" value="proj-extract-"/>
         <property name="adminCredentials">
             <bean class="org.apache.commons.httpclient.UsernamePasswordCredentials">
-                <constructor-arg index="0" value="${privileged_admin_name}"/>
-                <constructor-arg index="1" value="${privileged_admin_pass}"/>
+                <constructor-arg index="0" value="geoserver_privileged_user"/>
+                <constructor-arg index="1" value="xxxxxxxx"/>
             </bean>
           </property>
           <property name="extractionManager" ref="extractionManager"/>
@@ -49,20 +49,20 @@
     </bean>
 
     <!-- Email configuration -->
-    <bean id="emailFactory" class="${emailfactory}" init-method="init">
-        <property name="smtpHost" value="${smtpHost}"/>
-        <property name="smtpPort" value="${smtpPort}"/>
-        <property name="emailHtml" value="${emailHtml}"/>
-        <property name="replyTo" value="${replyTo}"/>
-        <property name="from" value="${from}"/>
+    <bean id="emailFactory" class="org.georchestra.extractorapp.ws.EmailFactoryDefault" init-method="init">
+        <property name="smtpHost" value="localhost"/>
+        <property name="smtpPort" value="25"/>
+        <property name="emailHtml" value="false"/>
+        <property name="replyTo" value="psc@georchestra.org"/>
+        <property name="from" value="psc@georchestra.org"/>
         <property name="bodyEncoding" value="UTF-8"/>
         <property name="subjectEncoding" value="UTF-8"/>
-        <property name="languages" value="${language}"/>
+        <property name="languages" value="en"/>
         <property name="expireDeamon" ref="expire-daemon"/>
         <property name="emailTemplateFile" value="/WEB-INF/templates/extractor-email-template.txt"/>
         <property name="emailAckTemplateFile" value="/WEB-INF/templates/extractor-email-ack-template.txt"/>
-        <property name="extraKeywordsFile" value="/org/georchestra/extractorapp/i18n/extra_keywords_${language}.properties" />
-        <property name="emailSubject" value="${emailsubject}"/>
+        <property name="extraKeywordsFile" value="/org/georchestra/extractorapp/i18n/extra_keywords_en.properties" />
+        <property name="emailSubject" value="[geOrchestra] Your extraction request"/>
     </bean>
 
     <bean id="georchestraConfiguration" class="org.georchestra.commons.configuration.GeorchestraConfiguration">
