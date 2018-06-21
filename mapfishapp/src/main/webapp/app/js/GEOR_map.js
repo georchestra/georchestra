@@ -183,7 +183,7 @@ GEOR.map = (function() {
         // see GEOR.initmap and startup WMC file
         var options = {
             projection: GEOR.config.MAP_SRS,
-            units: tr("m"),
+            units: "m",
             allOverlays: true,
             scales: SCALES,
             maxExtent: new OpenLayers.Bounds(

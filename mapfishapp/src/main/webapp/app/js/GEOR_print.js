@@ -113,11 +113,11 @@ GEOR.print = (function() {
         copyright: "",
         scaleLbl: "",
         dateLbl: "",
-        showOverview: true,
+        showOverview: false,
         showNorth: true,
         showScalebar: true,
         showDate: true,
-        showLegend: true
+        showLegend: false
     };
 
     /**
