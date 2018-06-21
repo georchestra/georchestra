@@ -318,13 +318,14 @@ GEOR.managelayers = (function() {
     var createInfoButton = function(layerRecord) {
         var layer = layerRecord.get("layer"),
             isWMS = layerRecord.get("type") == "WMS",
-            isWMTS = layerRecord.get("type") == "WMTS";
+            isWMTS = layerRecord.get("type") == "WMTS",
+            isVector = layer instanceof OpenLayers.Layer.Vector;
         return {
             xtype: 'button',
             // for vector layers, the button is always enabled:
             disabled: (isWMS || isWMTS) ?
                 !(layerRecord.get("queryable")) :
-                false,
+                !isVector, // account for eg TMS layers added by addons
             iconCls: 'geor-btn-info',
             allowDepress: true,
             enableToggle: true,
