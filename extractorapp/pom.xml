@@ -376,7 +376,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-antrun-plugin</artifactId>
-            <version>1.6</version>
+            <version>1.7</version>
             <executions>
               <execution>
                 <id>remove-useless-directories</id>
@@ -421,11 +421,12 @@
             <configuration>
               <packageName>georchestra-extractorapp</packageName>
               <packageDescription>geOrchestra Extractor</packageDescription>
+              <packageVersion>${project.packageVersion}</packageVersion>
+              <packageRevision>${maven.build.timestamp}~${build.commit.id.abbrev}</packageRevision>
               <projectOrganization>geOrchestra</projectOrganization>
               <maintainerName>PSC</maintainerName>
               <maintainerEmail>psc@georchestra.org</maintainerEmail>
               <excludeAllDependencies>true</excludeAllDependencies>
-              <snapshotRevisionFile>${project.build.directory}</snapshotRevisionFile>
             </configuration>
           </plugin>
         </plugins>
