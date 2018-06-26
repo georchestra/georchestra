@@ -226,11 +226,12 @@
             <configuration>
               <packageName>georchestra-downloadform</packageName>
               <packageDescription>geOrchestra DownloadForm</packageDescription>
+              <packageVersion>${project.packageVersion}</packageVersion>
+              <packageRevision>${maven.build.timestamp}~${build.commit.id.abbrev}</packageRevision>
               <projectOrganization>geOrchestra</projectOrganization>
               <maintainerName>PSC</maintainerName>
               <maintainerEmail>psc@georchestra.org</maintainerEmail>
               <excludeAllDependencies>true</excludeAllDependencies>
-              <snapshotRevisionFile>${project.build.directory}</snapshotRevisionFile>
             </configuration>
           </plugin>
         </plugins>
