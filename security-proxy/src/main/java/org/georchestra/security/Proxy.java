@@ -142,6 +142,7 @@ public class Proxy {
      */
     private String defaultTarget;
     private String publicHostname = "https://georchestra.mydomain.org/";
+
     private Map<String, String> targets = Collections.emptyMap();
     private HeadersManagementStrategy headerManagement = new HeadersManagementStrategy();
     private FilterRequestsStrategy strategyForFilteringRequests = new AcceptAllRequests();
@@ -163,6 +164,10 @@ public class Proxy {
         this.httpClientTimeout = timeout;
     }
 
+    public void setPublicHostname(String publicHostname) {
+        this.publicHostname = publicHostname;
+    }
+
     public Integer getHttpClientTimeout() {
         return httpClientTimeout;
     }
@@ -180,8 +185,6 @@ public class Proxy {
         // init() call
         if ((georchestraConfiguration != null) && (georchestraConfiguration.activated())) {
             logger.info("geOrchestra configuration detected, reconfiguration in progress ...");
-
-            this.publicHostname = georchestraConfiguration.getProperty("public.host");
 
             Properties pTargets = georchestraConfiguration.loadCustomPropertiesFile("targets-mapping");
 
