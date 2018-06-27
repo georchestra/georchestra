@@ -141,7 +141,7 @@ public class Proxy {
      * must be defined
      */
     private String defaultTarget;
-    private String publicHostname = "https://georchestra.mydomain.org/";
+    private String publicHostname = "https://georchestra.mydomain.org";
 
     private Map<String, String> targets = Collections.emptyMap();
     private HeadersManagementStrategy headerManagement = new HeadersManagementStrategy();
