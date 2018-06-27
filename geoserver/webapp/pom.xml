@@ -891,7 +891,6 @@
               <packageName>${packageName}</packageName>
               <packageDescription>geOrchestra GeoServer</packageDescription>
               <packageVersion>${project.packageVersion}</packageVersion>
-              <packageRevision>${maven.build.timestamp}~${build.commit.id.abbrev}</packageRevision>
               <packageDependencies>
                 <packageDependency>debconf</packageDependency>
               </packageDependencies>

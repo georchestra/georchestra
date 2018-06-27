@@ -535,7 +535,6 @@
               <packageName>georchestra-extractorapp</packageName>
               <packageDescription>geOrchestra Extractor</packageDescription>
               <packageVersion>${project.packageVersion}</packageVersion>
-              <packageRevision>${maven.build.timestamp}~${build.commit.id.abbrev}</packageRevision>
               <projectOrganization>geOrchestra</projectOrganization>
               <maintainerName>PSC</maintainerName>
               <maintainerEmail>psc@georchestra.org</maintainerEmail>
