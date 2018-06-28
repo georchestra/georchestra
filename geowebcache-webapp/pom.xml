@@ -226,7 +226,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-antrun-plugin</artifactId>
-            <version>1.6</version>
+            <version>1.7</version>
             <executions>
               <execution>
                 <id>remove-useless-directories</id>
@@ -234,7 +234,7 @@
                 <configuration>
                   <target>
                     <delete includeemptydirs="true">
-                      <fileset dir="${project.build.directory}/deb/etc/georchestra">
+                      <fileset defaultexcludes="false" dir="${project.build.directory}/deb/etc/georchestra">
                         <include name="**/*" />
                         <exclude name="geowebcache/**" />
                       </fileset>
@@ -271,11 +271,11 @@
             <configuration>
               <packageName>georchestra-geowebcache</packageName>
               <packageDescription>geOrchestra standalone GeoWebCache</packageDescription>
+              <packageVersion>${project.packageVersion}</packageVersion>
               <projectOrganization>geOrchestra</projectOrganization>
               <maintainerName>geOrchestra PSC</maintainerName>
               <maintainerEmail>psc@georchestra.org</maintainerEmail>
               <excludeAllDependencies>true</excludeAllDependencies>
-              <snapshotRevisionFile>${project.build.directory}</snapshotRevisionFile>
             </configuration>
           </plugin>
         </plugins>
