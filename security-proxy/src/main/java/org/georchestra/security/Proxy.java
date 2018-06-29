@@ -455,16 +455,6 @@ public class Proxy {
 
     private String buildForwardRequestURL(HttpServletRequest request) {
         String forwardRequestURI = request.getRequestURI();
-        // Makes sure the URL is decoded because some servlet containers
-        // (e.g. tomcat) provides the URL in an encoded manner, whereas
-        // jetty does not.
-        // Also we consider the whole geOrchestra stack to be full utf-8.
-        try {
-            forwardRequestURI = URLDecoder.decode(forwardRequestURI, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            logger.error("Unable to decode the URL, using the encoded version", e);
-        }
-
         forwardRequestURI = forwardRequestURI.replaceAll("//", "/");
 
         return forwardRequestURI;
