@@ -64,7 +64,7 @@ installs the following files:
  * geoserver compiled using the ```libjpeg-turbo``` profile
  
  eg:
- ```./mvn -P-all,geoserver -Plibjpeg-turbo -Dserver=myprofile -Dmaven.test.skip=true clean install```
+ ```mvn -P-all,geoserver -Plibjpeg-turbo -Dserver=myprofile -Dmaven.test.skip=true clean install```
 
  * in ```/etc/default/tomcat-geoserver0```:
 ```

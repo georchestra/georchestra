@@ -95,13 +95,13 @@ Note that email, uid, password and confirmPassword are always required.
 Build:
 
 ```
-../mvn install -Dmaven.test.skip=true
+mvn install -Dmaven.test.skip=true
 ```
 
 Create the eclipse project
 
 ```
-../mvn eclipse:eclipse
+mvn eclipse:eclipse
 ```
 
 
@@ -118,16 +118,16 @@ Alternatively, run with jetty:
 * the *first* time, you need to previously compile console and all its dependencies
 
   ```
-  $ ./mvn -Dmaven.test.skip=true -Ptemplate -P-all,console install;
+  $ mvn -Dmaven.test.skip=true -Ptemplate -P-all,console install;
   ```
 
 * then, each time you want to test a change in the configuration or the console module:
 
   ```
   $ cd config
-  $ ../mvn -Ptemplate install
+  $ mvn -Ptemplate install
   $ cd ../console
-  $ ../mvn -Dmaven.test.skip=true -Ptemplate jetty:run
+  $ mvn -Dmaven.test.skip=true -Ptemplate jetty:run
   ```
  * Then point your navigator to the following address :
    http://localhost:8286/console/manager/

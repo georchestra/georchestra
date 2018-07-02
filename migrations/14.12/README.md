@@ -79,5 +79,5 @@ If you experience build issues, please clear your local maven repository (rm -rf
 Our [continuous integration process](https://sdi.georchestra.org/ci/job/georchestra-template/) now checks every day that all geOrchestra modules (including GeoFence) build smoothly.  
 We also make sure that the following geoserver extensions are compatible: app-schema, authkey, charts, control-flow, css, csw, dds, dxf, feature-aggregate, feature-pregeneralized, geosearch, gdal, imagemap, inspire, istyler, kml, libjpeg-turbo, mysql, ogr, pyramid, script, spatialite, xslt, wps, w3ds. They can be integrated in your geoserver deployment by adding them in the build command line, eg with
 ```
-./mvn -Dserver=template -Dmaven.test.skip=true -Pgeofence -Pcontrol-flow,css,csw,gdal,inspire,kml,libjpeg-turbo,ogr,pyramid,spatialite,wps,w3ds clean install
+mvn -Dserver=template -Dmaven.test.skip=true -Pgeofence -Pcontrol-flow,css,csw,gdal,inspire,kml,libjpeg-turbo,ogr,pyramid,spatialite,wps,w3ds clean install
 ```

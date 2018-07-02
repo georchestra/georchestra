@@ -42,7 +42,7 @@ Now, you should have your own configuration in ```~/georchestra/config/configura
 Let's see if it builds:
 ```
 cd ~/georchestra/config
-../mvn -Dserver=myprofile install
+mvn -Dserver=myprofile install
 ```
 
 SUCCESS ? Good, you're ready for the next step.  
@@ -66,19 +66,19 @@ export MAVEN_OPTS="-XX:MaxPermSize=512M"
 Build Geonetwork
 ```
 cd geonetwork
-../mvn -DskipTests clean install
+mvn -DskipTests clean install
 cd ..
 ```
 
 Build **all modules** (except GeoFence).
 ```
-./mvn -Dmaven.test.skip=true -Dserver=myprofile clean install
+mvn -Dmaven.test.skip=true -Dserver=myprofile clean install
 ```
 
 
 In case you only want to build one module or a collection, the syntax is a bit different:
 ```
-./mvn -Dmaven.test.skip=true -Dserver=myprofile -P-all,module1,module2 clean install
+mvn -Dmaven.test.skip=true -Dserver=myprofile -P-all,module1,module2 clean install
 ```
 ... where ```moduleX``` can be one of: ```analytics```, ```cas```, ```extractorapp```, ```geonetwork```, ```geofence```, ```geoserver```, ```geowebcache```, ```header```, ```console```, ```mapfishapp```, ```security-proxy```.
 
@@ -99,7 +99,7 @@ This is achieved through the use of the ```sub.target``` property in the maven c
 
 Example:
 ```
-./mvn -Dserver=myprofile -Dsub.target=prod -Dmaven.test.skip=true clean install
+mvn -Dserver=myprofile -Dsub.target=prod -Dmaven.test.skip=true clean install
 ```
 
 Depending on the ```sub.target``` value, it is possible to alter one or several config options (typically: shared maven filters, but not exclusively). 
@@ -151,7 +151,7 @@ To build GeoServer with one or several extensions, one can use the profiles defi
 
 Example building geoserver only, with the control-flow, css, csw, gdal, inspire, pyramid and wps extensions:
 ```
-./mvn -P-all,geoserver -Pcontrol-flow,css,csw,gdal,inspire,pyramid,wps -Dserver=myprofile -Dmaven.test.skip=true clean install 
+mvn -P-all,geoserver -Pcontrol-flow,css,csw,gdal,inspire,pyramid,wps -Dserver=myprofile -Dmaven.test.skip=true clean install 
 ```
 
 ### geoserver.war.excludes
@@ -163,15 +163,15 @@ As a result, the JAI classes are useless for GeoServer.
 
 Build GeoServer with:
 ```
-./mvn -P-all,geoserver '-Dgeoserver.war.excludes=WEB-INF/lib/jai_*.jar' -Dserver=myprofile -Dmaven.test.skip=true clean install
+mvn -P-all,geoserver '-Dgeoserver.war.excludes=WEB-INF/lib/jai_*.jar' -Dserver=myprofile -Dmaven.test.skip=true clean install
 ```
 
 Another use of the property is when building GeoServer without the integrated GeoWebCache:
 ```
-./mvn -P-all,geoserver '-Dgeoserver.war.excludes=WEB-INF/lib/*gwc*.jar' -Dserver=myprofile -Dmaven.test.skip=true clean install
+mvn -P-all,geoserver '-Dgeoserver.war.excludes=WEB-INF/lib/*gwc*.jar' -Dserver=myprofile -Dmaven.test.skip=true clean install
 ```
 
 Both can be combined with:
 ```
-./mvn -P-all,geoserver '-Dgeoserver.war.excludes=WEB-INF/lib/*gwc*.jar,WEB-INF/lib/jai_*.jar' -Dserver=myprofile -Dmaven.test.skip=true clean install
+mvn -P-all,geoserver '-Dgeoserver.war.excludes=WEB-INF/lib/*gwc*.jar,WEB-INF/lib/jai_*.jar' -Dserver=myprofile -Dmaven.test.skip=true clean install
 ```
