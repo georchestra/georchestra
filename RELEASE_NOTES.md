@@ -60,7 +60,7 @@ Deprecations:
  * `docker-compose` files have been removed from the sources repository. They
  belong to the [georchestra/docker](https://github.com/georchestra/docker) repository.
  * console - browing roles as a tree was not a good idea ! It's now replaced with favorite roles, which are shared between users allowed to manage users within the console.
-
+ * local maven has been removed, in favor of the one provided by distributions, see [#2060](https://github.com/georchestra/georchestra/issues/2060)
 
 Read [how to migrate from 17.12 to 18.06](migrations/18.06/README.md).
 

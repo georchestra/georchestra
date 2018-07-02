@@ -228,21 +228,21 @@ This mode is useful for **demo** or **development** purposes.
 The *first* time only, you have to compile mapfishapp and it's dependencies.  
 From the project root:
 
-    $ ./mvn -Dmaven.test.skip=true -Ptemplate -P-all,mapfishapp install
+    $ mvn -Dmaven.test.skip=true -Ptemplate -P-all,mapfishapp install
 
 Clone the [geOrchestra datadir](https://github.com/georchestra/datadir/) into eg `/etc/georchestra`, checkouting the same branch name as your geOrchestra sources.
 
 Once this is done, running mapfishapp is pretty simple with Jetty:
 
     $ cd mapfishapp
-    $ ../mvn -Dgeorchestra.datadir=/etc/georchestra -Dmapfish-print-config=/etc/georchestra/mapfishapp/print/config.yaml jetty:run
+    $ mvn -Dgeorchestra.datadir=/etc/georchestra -Dmapfish-print-config=/etc/georchestra/mapfishapp/print/config.yaml jetty:run
 
 Then, point your browser to [http://localhost:8287/mapfishapp/?noheader=true](http://localhost:8287/mapfishapp/?noheader=true).
 
 Please note that if you make changes to your configuration, you have to run this command again:
 
     $ cd config
-    $ ../mvn install
+    $ mvn install
 
 
 **Want to trick the viewer into thinking you're logged in ?**

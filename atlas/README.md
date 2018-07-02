@@ -17,7 +17,7 @@ As the other webapps from geOrchestra, you can build this one using the
 following command, considering you already are in the current directory:
 
 ```
-$ ../mvn clean install
+$ mvn clean install
 ```
 
 ## Binary installation
