@@ -259,7 +259,7 @@ ProxyPass /console/ http://localhost:8180/console/
 ProxyPassReverse /console/ http://localhost:8180/console/
 
 RewriteCond %{REQUEST_URI} !^/console/manager/public/.*$
-RewriteCond %{REQUEST_URI} ^/console/manager/([home|users|org|orgs|roles|logs|analytics|delegations].*)$
+RewriteCond %{REQUEST_URI} ^/console/manager/([home|users|org|orgs|role|roles|logs|analytics|delegations].*)$
 RewriteRule .* /console/manager/#/%1 [NE,R,L]
 ```
 
