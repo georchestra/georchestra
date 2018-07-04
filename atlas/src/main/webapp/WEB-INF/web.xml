@@ -9,6 +9,12 @@
         <param-value>classpath:camel/atlas_app.xml</param-value>
     </context-param>
 
+    <context-param>
+      <param-name>org.eclipse.jetty.servlet.Default.dirAllowed</param-name>
+      <param-value>false</param-value>
+    </context-param>
+
+
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>

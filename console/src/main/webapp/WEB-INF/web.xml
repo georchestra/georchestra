@@ -9,16 +9,21 @@
     <distributable/>
 
     <context-param>
-        <param-name>contextConfigLocation</param-name>
-        <param-value>
-            classpath*:META-INF/spring/applicationContext*.xml
-        	WEB-INF/spring/applicationContext*.xml
-        </param-value>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>
+        classpath*:META-INF/spring/applicationContext*.xml
+        WEB-INF/spring/applicationContext*.xml
+      </param-value>
     </context-param>
 
-	<listener>
-    	<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
-	</listener>
+    <context-param>
+      <param-name>org.eclipse.jetty.servlet.Default.dirAllowed</param-name>
+      <param-value>false</param-value>
+    </context-param>
+
+    <listener>
+      <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+    </listener>
 
     <!-- Creates the Spring Container shared by all Servlets and Filters -->
 
