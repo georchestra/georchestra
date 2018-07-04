@@ -106,6 +106,22 @@ objectClass: organizationalUnit
 objectClass: top
 ou: roles
 
+# testdelegatedadmin, users, georchestra.org
+dn: uid=testdelegatedadmin,ou=users,dc=georchestra,dc=org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: shadowAccount
+objectClass: top
+uid: testdelegatedadmin
+givenName: Test
+sn: DELEGATEDADMIN
+description: Utilisateur avec delegation
+employeeNumber: 7
+userPassword:: e1NIQX02OGRFejBlb25BYkdjVm1aWkFoQVVDYmo3bTQ9
+mail: psc+testdelegatedadmin@georchestra.org
+cn: testdelegatedadmin
+
 
 # ADMINISTRATOR, roles, georchestra.org
 dn: cn=ADMINISTRATOR,ou=roles,dc=georchestra,dc=org
@@ -184,6 +200,7 @@ member: uid=testuser,ou=users,dc=georchestra,dc=org
 member: uid=testeditor,ou=users,dc=georchestra,dc=org
 member: uid=testreviewer,ou=users,dc=georchestra,dc=org
 member: uid=testadmin,ou=users,dc=georchestra,dc=org
+member: uid=testdelegatedadmin,ou=users,dc=georchestra,dc=org
 
 # ORGADMIN, roles, georchestra.org
 dn: cn=ORGADMIN,ou=roles,dc=georchestra,dc=org
@@ -192,8 +209,7 @@ objectClass: groupOfMembers
 cn: ORGADMIN
 ou: 24
 description: This role is automatically granted to all users holding an admin delegation
-member: uid=testuser,ou=users,dc=georchestra,dc=org
-member: uid=testeditor,ou=users,dc=georchestra,dc=org
+member: uid=testdelegatedadmin,ou=users,dc=georchestra,dc=org
 
 # orgs, georchestra.org
 dn: ou=orgs,dc=georchestra,dc=org
