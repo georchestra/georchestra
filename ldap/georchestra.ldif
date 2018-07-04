@@ -84,6 +84,22 @@ employeeNumber: 5
 description: Do not modify.  This is a required user for extractorapp, geofence, mapfishapp...
 userPassword:: e1NIQX1XMlY4d2UrOFdNanpma28rMUtZVDFZcWZFVDQ9
 
+# testpendinguser, users, georchestra.org
+dn: uid=testpendinguser,ou=users,dc=georchestra,dc=org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: shadowAccount
+objectClass: top
+uid: testpendinguser
+givenName: Test
+sn: PENDINGUSER
+description: Utilisateur en attente de validation
+employeeNumber: 6
+userPassword:: e1NIQX16cnJXRCtmbnc2QjZGVDRpcFVYMzh0d1VxRHM9
+mail: psc+testpendinguser@georchestra.org
+cn: testpendinguser
+
 # roles, georchestra.org
 dn: ou=roles,dc=georchestra,dc=org
 objectClass: organizationalUnit
@@ -109,6 +125,7 @@ objectClass: groupOfMembers
 cn: PENDING
 ou: 2
 description: This group does not grant any right inside the SDI. Users in this group are requesting a fully fledged account.
+member: uid=testpendinguser,ou=users,dc=georchestra,dc=org
 
 # SUPERUSER, roles, georchestra.org
 dn: cn=SUPERUSER,ou=roles,dc=georchestra,dc=org
@@ -239,3 +256,19 @@ member: uid=testreviewer,ou=users,dc=georchestra,dc=org
 o: Conseil régional d'Alsace
 ou: CRA
 seeAlso: o=cra,ou=orgs,dc=georchestra,dc=org
+
+dn: o=pendingorg,ou=orgs,dc=georchestra,dc=org
+objectClass: organization
+objectClass: top
+o: pendingorg
+businessCategory: COMPANY
+postalAddress: Null island
+
+dn: cn=pendingorg,ou=orgs,dc=georchestra,dc=org
+objectClass: groupOfMembers
+objectClass: top
+cn: pendingorg
+businessCategory: PENDING
+description: 59107
+member: uid=testpendinguser,ou=users,dc=georchestra,dc=org
+o: Organisme fictif en attente de validation
