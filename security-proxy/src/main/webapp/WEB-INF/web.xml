@@ -12,6 +12,12 @@
             /WEB-INF/applicationContext-security.xml
         </param-value>
   </context-param>
+
+  <context-param>
+    <param-name>org.eclipse.jetty.servlet.Default.dirAllowed</param-name>
+    <param-value>false</param-value>
+  </context-param>
+
   <filter>
     <filter-name>UTF8Filter</filter-name>
     <filter-class>org.georchestra.security.UTF8Filter</filter-class>
