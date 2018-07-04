@@ -94,7 +94,7 @@ objectClass: top
 uid: testpendinguser
 givenName: Test
 sn: PENDINGUSER
-description: Utilisateur en attente de validation
+description: User pending admin validation
 employeeNumber: 6
 userPassword:: e1NIQX16cnJXRCtmbnc2QjZGVDRpcFVYMzh0d1VxRHM9
 mail: psc+testpendinguser@georchestra.org
@@ -110,7 +110,7 @@ objectClass: top
 uid: testdelegatedadmin
 givenName: Test
 sn: DELEGATEDADMIN
-description: Utilisateur avec delegation
+description: User with admin delegation
 employeeNumber: 7
 userPassword:: e1NIQX02OGRFejBlb25BYkdjVm1aWkFoQVVDYmo3bTQ9
 mail: psc+testdelegatedadmin@georchestra.org
@@ -286,6 +286,6 @@ cn: pendingorg
 businessCategory: PENDING
 description: 59107
 member: uid=testpendinguser,ou=users,dc=georchestra,dc=org
-o: Organisme fictif en attente de validation
+o: Fictive org pending admin validation
 ou: PENDINGORG
 seeAlso: o=pendingorg,ou=orgs,dc=georchestra,dc=org
