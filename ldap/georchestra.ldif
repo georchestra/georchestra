@@ -12,7 +12,6 @@ objectClass: inetOrgPerson
 objectClass: shadowAccount
 objectClass: top
 mail: psc+testuser@georchestra.org
-o: geOrchestra
 uid: testuser
 givenName: Test
 sn: USER
@@ -36,7 +35,6 @@ description: Reviewer
 employeeNumber: 2
 userPassword:: e1NIQX1Nb3IzdXZ5cnpISWpHK0crSEcvblhxZW8reWc9
 mail: psc+testreviewer@georchestra.org
-o: geOrchestra
 cn: testreviewer
 
 # testeditor, users, georchestra.org
@@ -53,7 +51,6 @@ description: editor
 employeeNumber: 3
 userPassword:: e1NIQX1mVTFvSmdzV0FEZ1ZtTHBHeHBxdFBVa2RiekU9
 mail: psc+testeditor@georchestra.org
-o: geOrchestra
 cn: testeditor
 
 # testadmin, users, georchestra.org
@@ -70,7 +67,6 @@ description: Admin user
 employeeNumber: 4
 userPassword:: e1NIQX1kREU1SkEvMkVpVTRGMFFObUt5eXpuazUrN1E9
 mail: psc+testadmin@georchestra.org
-o: geOrchestra
 cn: testadmin
 
 # geoserver_privileged_user, users, georchestra.org
