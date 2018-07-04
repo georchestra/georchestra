@@ -100,12 +100,6 @@ userPassword:: e1NIQX16cnJXRCtmbnc2QjZGVDRpcFVYMzh0d1VxRHM9
 mail: psc+testpendinguser@georchestra.org
 cn: testpendinguser
 
-# roles, georchestra.org
-dn: ou=roles,dc=georchestra,dc=org
-objectClass: organizationalUnit
-objectClass: top
-ou: roles
-
 # testdelegatedadmin, users, georchestra.org
 dn: uid=testdelegatedadmin,ou=users,dc=georchestra,dc=org
 objectClass: inetOrgPerson
@@ -122,6 +116,11 @@ userPassword:: e1NIQX02OGRFejBlb25BYkdjVm1aWkFoQVVDYmo3bTQ9
 mail: psc+testdelegatedadmin@georchestra.org
 cn: testdelegatedadmin
 
+# roles, georchestra.org
+dn: ou=roles,dc=georchestra,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: roles
 
 # ADMINISTRATOR, roles, georchestra.org
 dn: cn=ADMINISTRATOR,ou=roles,dc=georchestra,dc=org
