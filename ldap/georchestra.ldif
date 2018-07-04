@@ -287,3 +287,5 @@ businessCategory: PENDING
 description: 59107
 member: uid=testpendinguser,ou=users,dc=georchestra,dc=org
 o: Organisme fictif en attente de validation
+ou: PENDINGORG
+seeAlso: o=pendingorg,ou=orgs,dc=georchestra,dc=org
