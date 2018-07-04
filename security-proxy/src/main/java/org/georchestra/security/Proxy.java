@@ -876,7 +876,8 @@ public class Proxy {
         if(url.getPort() != -1)
             rawUrl.append(":" + String.valueOf(url.getPort()));
 
-        rawUrl.append(uri.getRawPath()); // Use encoded version from URI class
+        rawUrl.append(uri.getPath()); // Do not URL-encode, and take the request
+        // as it originally comes instead of doing extra-encoding.
 
         if(url.getQuery() != null)
             rawUrl.append("?" + url.getQuery()); // Use already encoded query part
