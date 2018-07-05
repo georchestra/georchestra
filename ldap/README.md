@@ -29,9 +29,11 @@ It creates 3 Organisational Units (ou):
 
 The basic users:
  * ```testuser``` has the USER role. The password is **testuser**.
+ * ```testpendinguser``` has the PENDING role, which means an admin has to validate it. The password is **testpendinguser**.
  * ```testreviewer``` has the USER & GN_REVIEWER roles. The password is **testreviewer**.
  * ```testeditor``` has the USER & GN_EDITOR roles. The password is **testeditor**.
  * ```testadmin``` has the USER, GN_ADMIN, ADMINISTRATOR and MOD_* roles. The password is **testadmin**
+ * ```testdelegatedadmin``` has the USER role. Is able to grant the EXTRACTORAPP & GN_EDITOR roles to members of the psc & c2c orgs. The password is **testdelegatedadmin**
  * ```geoserver_privileged_user``` is a required user. It is internally used by the extractorapp, mapfishapp & geofence modules. The default password is ```gerlsSnFd6SmM``` (you should change it, and update the ```shared.privileged.geoserver.pass``` option in your shared.maven.filters file).
 
 Please note that `test*` users should be deleted before going into production !
