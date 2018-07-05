@@ -138,5 +138,12 @@ public class ProxyTest {
 
         ret = (URI) ReflectionUtils.invokeMethod(m, proxy, new URL("https://sdi.georchestra.org/console/account/recover?email=psc%2Btestuser%40georchestra.org"));
         assertTrue(ret.toString().contains("email=psc%2Btestuser%40georchestra.org"));
+
+        // defunct URLs:
+        // http://localhost:8080/geonetwork/srv/api/0.1/standards/iso19139/codelists/gmd%3ADS_InitiativeTypeCode
+        // SP will re-encode %3A to %253A
+        // see https://github.com/georchestra/georchestra/issues/2020#issuecomment-402449307
+        ret = (URI) ReflectionUtils.invokeMethod(m, proxy, new URL("http://localhost:8080/geonetwork/srv/api/0.1/standards/iso19139/codelists/gmd%3ADS_InitiativeTypeCode"));
+        assertTrue(! ret.toString().contains("%253ADS"));
     }
 }
