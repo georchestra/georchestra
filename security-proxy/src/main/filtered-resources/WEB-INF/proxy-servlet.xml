@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:p="http://www.springframework.org/schema/p"
     xmlns:context="http://www.springframework.org/schema/context"
     xmlns:mvc="http://www.springframework.org/schema/mvc"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
 						http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 						http://www.springframework.org/schema/context
                         http://www.springframework.org/schema/context/spring-context.xsd
@@ -109,16 +109,9 @@
         </property>
     </bean>
 
-    <context:property-placeholder location="/WEB-INF/security-proxy.properties"
-      ignore-resource-not-found="true" ignore-unresolvable="true" order="3" />
-
-    <!-- using the one from the geOrchestra datadir first (if available) -->
-    <context:property-placeholder
-      location="file:${georchestra.datadir}/security-proxy/security-proxy.properties"
-      ignore-resource-not-found="true" ignore-unresolvable="true" order="2" />
-
-    <context:property-placeholder
-      location="file:${georchestra.datadir}/default.properties"
-      ignore-resource-not-found="true" ignore-unresolvable="true" order="1" />
+    <context:property-placeholder location="/WEB-INF/security-proxy.properties,
+      file:${georchestra.datadir}/security-proxy/security-proxy.properties,
+      file:${georchestra.datadir}/default.properties"
+      ignore-resource-not-found="true" ignore-unresolvable="true" />
 
 </beans>
