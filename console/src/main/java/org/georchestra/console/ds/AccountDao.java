@@ -135,7 +135,18 @@ public interface AccountDao {
 	 * @throws NameNotFoundException
 	 */
 	Account findByEmail(final String email) throws DataServiceException, NameNotFoundException;
-	
+
+	/**
+	 * Returns a list of account that have specified role.
+	 *
+	 * @param role
+	 * @return List of {@link Account}
+	 *
+	 * @throws DataServiceException
+	 * @throws NameNotFoundException
+	 */
+	List<Account> findByRole(final String role) throws DataServiceException, NameNotFoundException;
+
 	/**
 	 * Add the new password. This method is part of the "lost password" workflow to maintan the old password and the new password until the
 	 * user can confirm that he had asked for a new password.   

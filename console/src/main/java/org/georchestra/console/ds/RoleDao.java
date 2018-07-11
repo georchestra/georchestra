@@ -59,13 +59,6 @@ public interface RoleDao {
 	List<Role> findAllForUser(String userId) throws DataServiceException;
 
 	/**
-	 * Returns the role's users
-	 * 
-	 * @return list of user uid
-	 */
-	List<String> findUsers(final String roleName) throws DataServiceException;
-
-	/**
 	 * Deletes the user from all roles 
 	 *
 	 * @param uid

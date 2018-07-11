@@ -9,7 +9,6 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
-
 import org.georchestra.console.ReCaptchaV2;
 import org.georchestra.console.bs.Moderator;
 import org.georchestra.console.bs.ReCaptchaParameters;
@@ -18,8 +17,7 @@ import org.georchestra.console.ds.*;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountFactory;
 
-import org.georchestra.console.mailservice.EmailFactoryImpl;
-import org.georchestra.console.mailservice.MailService;
+import org.georchestra.console.mailservice.EmailFactory;
 import org.georchestra.console.ws.utils.Validation;
 import org.junit.After;
 import org.junit.Before;
@@ -39,11 +37,11 @@ public class NewAccountFormControllerTest {
 
     // Mocked objects needed by the controller default constructor
     private NewAccountFormController ctrl ;
-    private AccountDao dao = Mockito.mock(AccountDao.class);
+    private AccountDao accountDao = Mockito.mock(AccountDao.class);
     private OrgsDao org = Mockito.mock(OrgsDao.class);
+    private RoleDao roleDao = Mockito.mock(RoleDao.class);
     private AdvancedDelegationDao advancedDelegationDao = Mockito.mock(AdvancedDelegationDao.class);
-    private EmailFactoryImpl efi = Mockito.mock(EmailFactoryImpl.class);
-    private MailService srv = new MailService(efi);
+    private EmailFactory efi = Mockito.mock(EmailFactory.class);
     private Moderator  mod = new Moderator();
     private ReCaptchaV2 rec = Mockito.mock(ReCaptchaV2.class);
     private ReCaptchaParameters rep = new ReCaptchaParameters();
@@ -77,7 +75,12 @@ public class NewAccountFormControllerTest {
     	rep.setVerifyUrl("https://localhost");
     	rep.setPrivateKey("privateKey");
 
-        ctrl = new NewAccountFormController(dao, org, advancedDelegationDao, srv, mod, rep, new Validation(""));
+        ctrl = new NewAccountFormController(mod, rep, new Validation(""));
+        ctrl.setAccountDao(accountDao);
+        ctrl.setOrgDao(org);
+        ctrl.setAdvancedDelegationDao(advancedDelegationDao);
+        ctrl.setEmailFactory(efi);
+        ctrl.setRoleDao(roleDao);
 
         // Mock admin account
         DistinguishedName dn = new DistinguishedName();
@@ -87,7 +90,7 @@ public class NewAccountFormControllerTest {
                 "postmastrer@localhost", "+33123456789", "admin", "");
         this.request.addHeader("sec-username", "testadmin"); // Set user connected through http header
         try {
-            Mockito.when(this.dao.findByUID(eq("testadmin"))).thenReturn(this.adminAccount);
+            Mockito.when(this.accountDao.findByUID(eq("testadmin"))).thenReturn(this.adminAccount);
         } catch (DataServiceException e) {
             assertTrue(false);
         } catch (NameNotFoundException e) {
@@ -181,7 +184,7 @@ public class NewAccountFormControllerTest {
     public void testCreateDuplicatedEmail() throws Exception {
         configureLegitFormBean();
         Mockito.doThrow(new DuplicatedEmailException("User already exists")).
-            when(dao).insert((Account) Mockito.any(), Mockito.anyString(), Mockito.anyString());
+            when(accountDao).insert((Account) Mockito.any(), Mockito.anyString(), Mockito.anyString());
 
         String ret = ctrl.create(request, formBean, "", result, status, UiModel);
 
@@ -193,7 +196,7 @@ public class NewAccountFormControllerTest {
     public void testCreateUserWithError() throws Exception {
         configureLegitFormBean();
         Mockito.doThrow(new DataServiceException("Something went wrong when dealing with LDAP")).
-            when(dao).insert((Account) Mockito.any(), Mockito.anyString(), Mockito.anyString());
+            when(accountDao).insert((Account) Mockito.any(), Mockito.anyString(), Mockito.anyString());
 
         try {
             ctrl.create(request, formBean, "", result, status, UiModel);
@@ -211,7 +214,7 @@ public class NewAccountFormControllerTest {
     public void testCreateDuplicatedUid() throws Exception {
         configureLegitFormBean();
         Mockito.doThrow(new DuplicatedUidException("User ID already exists")).
-            when(dao).insert((Account) Mockito.any(), Mockito.anyString(), Mockito.anyString());
+            when(accountDao).insert((Account) Mockito.any(), Mockito.anyString(), Mockito.anyString());
 
         String ret = ctrl.create(request, formBean, "", result, status, UiModel);
 
@@ -220,7 +223,7 @@ public class NewAccountFormControllerTest {
 
         // Same scenario, but unable to generate a new UID
         Mockito.doThrow(new DataServiceException("something has messed up")).
-            when(dao).generateUid(Mockito.anyString());
+            when(accountDao).generateUid(Mockito.anyString());
         try {
             ctrl.create(request, formBean, "", result, status, UiModel);
         } catch (Throwable e) {

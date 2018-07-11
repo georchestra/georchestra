@@ -33,7 +33,7 @@ import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.ds.ProtectedUserFilter;
 import org.georchestra.console.ds.RoleDao;
 import org.georchestra.console.dto.*;
-import org.georchestra.console.mailservice.MailService;
+import org.georchestra.console.mailservice.EmailFactory;
 import org.georchestra.console.model.DelegationEntry;
 import org.georchestra.console.ws.backoffice.utils.RequestUtil;
 import org.georchestra.console.ws.backoffice.utils.ResponseUtil;
@@ -57,6 +57,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.mail.MessagingException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -124,12 +125,11 @@ public class UsersController {
 	private UserRule userRule;
 	
 	@Autowired
-	private MailService mailService;
+	private EmailFactory emailFactory;
 
-	public void setMailService(MailService mailService) {
-		this.mailService = mailService;
+	public void setEmailFactory(EmailFactory emailFactory) {
+		this.emailFactory = emailFactory;
 	}
-
 	@Autowired
 	private Boolean warnUserIfUidModified = false;
 
@@ -377,7 +377,7 @@ public class UsersController {
 	@ResponseBody
 	public Account update(@PathVariable String uid, HttpServletRequest request)
 			throws IOException, NameNotFoundException, DataServiceException,
-			DuplicatedEmailException, ParseException, JSONException {
+			DuplicatedEmailException, ParseException, JSONException, MessagingException {
 
 		if(this.userRule.isProtected(uid) )
 			throw new AccessDeniedException("The user is protected, it cannot be updated: " + uid);
@@ -408,8 +408,8 @@ public class UsersController {
 
 		boolean uidChanged = ( ! modified.getUid().equals(account.getUid()));
 		if ((uidChanged) && (warnUserIfUidModified)) {
-			this.mailService.sendAccountUidRenamed(request.getSession().getServletContext(),
-					modified.getUid(), modified.getCommonName(), modified.getEmail());
+			this.emailFactory.sendAccountUidRenamedEmail(request.getSession().getServletContext(), new String[]{modified.getEmail()},
+					modified.getCommonName(), modified.getUid());
 		}
 		return modified;
 	}

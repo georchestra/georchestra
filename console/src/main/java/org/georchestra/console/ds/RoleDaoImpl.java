@@ -252,14 +252,6 @@ public class RoleDaoImpl implements RoleDao {
 		return ldapTemplate.search(this.roleSearchBaseDN, filter.encode(),	new RoleContextMapper());
 	}
 
-	public List<String> findUsers(final String roleName) throws DataServiceException{
-
-		AndFilter filter = new AndFilter();
-		filter.and(new EqualsFilter("objectClass", "groupOfMembers"));
-		filter.and(new EqualsFilter("cn", roleName));
-
-		return ldapTemplate.search(roleSearchBaseDN, filter.encode(), new RoleContextMapper());
-	}
 
 
 	/**

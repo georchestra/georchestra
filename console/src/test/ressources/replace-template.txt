@@ -1,0 +1,7 @@
+publicUrl {publicUrl}
+{uid : {uid}
+var1 : {var1}
+uid {uid}
+name {name}
+{---}
+{test}

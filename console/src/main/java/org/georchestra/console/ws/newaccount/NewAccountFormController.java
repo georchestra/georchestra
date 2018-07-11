@@ -20,24 +20,19 @@
 package org.georchestra.console.ws.newaccount;
 
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.georchestra.console.bs.Moderator;
 import org.georchestra.console.bs.ReCaptchaParameters;
 import org.georchestra.console.dao.AdvancedDelegationDao;
-import org.georchestra.console.ds.AccountDao;
-import org.georchestra.console.ds.DataServiceException;
-import org.georchestra.console.ds.DuplicatedEmailException;
-import org.georchestra.console.ds.DuplicatedUidException;
-import org.georchestra.console.ds.OrgsDao;
+import org.georchestra.console.ds.*;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountFactory;
 import org.georchestra.console.dto.Role;
 import org.georchestra.console.dto.Org;
 import org.georchestra.console.dto.OrgExt;
-import org.georchestra.console.mailservice.MailService;
+import org.georchestra.console.mailservice.EmailFactory;
 import org.georchestra.console.model.DelegationEntry;
 import org.georchestra.console.ws.utils.PasswordUtils;
 import org.georchestra.console.ws.utils.RecaptchaUtils;
@@ -55,6 +50,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
+import javax.mail.MessagingException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -80,10 +76,20 @@ public final class NewAccountFormController {
 
 	private static final Log LOG = LogFactory.getLog(NewAccountFormController.class.getName());
 
+	@Autowired
 	private AccountDao accountDao;
+
+	@Autowired
 	private OrgsDao orgDao;
 
-	private MailService mailService;
+	@Autowired
+	private EmailFactory emailFactory;
+
+	@Autowired
+	private AdvancedDelegationDao advancedDelegationDao;
+
+	@Autowired
+	private RoleDao roleDao;
 
 	private Moderator moderator;
 
@@ -92,17 +98,9 @@ public final class NewAccountFormController {
 	private Validation validation;
 
 	@Autowired
-	private AdvancedDelegationDao advancedDelegationDao;
-
-	@Autowired
-	public NewAccountFormController(AccountDao dao, OrgsDao orgDao, AdvancedDelegationDao advancedDelegationDao,
-									MailService mailSrv, Moderator moderatorRule,
+	public NewAccountFormController(Moderator moderatorRule,
 									ReCaptchaParameters reCaptchaParameters,
 									Validation validation) {
-		this.accountDao = dao;
-		this.orgDao = orgDao;
-		this.advancedDelegationDao = advancedDelegationDao;
-		this.mailService = mailSrv;
 		this.moderator = moderatorRule;
 		this.reCaptchaParameters = reCaptchaParameters;
 		this.validation = validation;
@@ -279,24 +277,36 @@ public final class NewAccountFormController {
 
 			final ServletContext servletContext = request.getSession().getServletContext();
 
-			// email to the moderator
-			this.mailService.sendNewAccountRequiresModeration(servletContext, account.getUid(), account.getCommonName(), account.getEmail(), this.moderator.getModeratorEmail());
+			// List of recipients for notification email
+			List<String> recipients = new LinkedList<>();
 
-			// email to delegated admin if org is specified
+			// retrieve emails of all users with SUPERUSER role
+			List<Account> admins = this.accountDao.findByRole("SUPERUSER");
+			for(Account admin : admins) {
+				recipients.add(admin.getEmail());
+			}
+			// Retrieve emails of delegated admin if org is specified
 			if(!formBean.getOrg().equals("-")) {
 				// and a delegation is defined
 				List<DelegationEntry> delegations = this.advancedDelegationDao.findByOrg(formBean.getOrg());
-				for(DelegationEntry delegation: delegations){
+
+				for (DelegationEntry delegation : delegations) {
 					Account delegatedAdmin = this.accountDao.findByUID(delegation.getUid());
-					this.mailService.sendNewAccountRequiresModeration(servletContext, account.getUid(), account.getCommonName(), account.getEmail(), delegatedAdmin.getEmail());
+					recipients.add(delegatedAdmin.getEmail());
 				}
 			}
 
-			// email to the user
+			// Select email template based on moderation configuration for admin and user and send emails
 			if(this.moderator.moderatedSignup()){
-				this.mailService.sendAccountCreationInProcess(servletContext, account.getUid(), account.getCommonName(), account.getEmail());
+				this.emailFactory.sendNewAccountRequiresModerationEmail(servletContext, recipients.toArray(new String[recipients.size()]),
+						account.getCommonName(), account.getUid(), account.getEmail());
+				this.emailFactory.sendAccountCreationInProcessEmail(servletContext, new String[]{account.getEmail()},
+						account.getCommonName(), account.getUid());
 			} else {
-				this.mailService.sendAccountWasCreated(servletContext, account.getUid(), account.getCommonName(), account.getEmail());
+				this.emailFactory.sendNewAccountNotificationEmail(servletContext,recipients.toArray(new String[recipients.size()]),
+						account.getCommonName(), account.getUid(), account.getEmail());
+				this.emailFactory.sendAccountWasCreatedEmail(servletContext, new String[]{account.getEmail()},
+						account.getCommonName(), account.getUid());
 			}
 			sessionStatus.setComplete();
 
@@ -323,7 +333,8 @@ public final class NewAccountFormController {
 			}
 
 		} catch (DataServiceException e) {
-
+			throw new IOException(e);
+		} catch (MessagingException e) {
 			throw new IOException(e);
 		}
 	}
@@ -359,5 +370,25 @@ public final class NewAccountFormController {
 			orgsName.put(org.getId(), org.getName());
 
 		return orgsName;
+	}
+
+	public void setAccountDao(AccountDao accountDao) {
+		this.accountDao = accountDao;
+	}
+
+	public void setOrgDao(OrgsDao orgDao) {
+		this.orgDao = orgDao;
+	}
+
+	public void setEmailFactory(EmailFactory emailFactory) {
+		this.emailFactory = emailFactory;
+	}
+
+	public void setAdvancedDelegationDao(AdvancedDelegationDao advancedDelegationDao) {
+		this.advancedDelegationDao = advancedDelegationDao;
+	}
+
+	public void setRoleDao(RoleDao roleDao) {
+		this.roleDao = roleDao;
 	}
 }

@@ -1,0 +1,10 @@
+Cher Administrateur,
+
+Un nouveau compte vient d'être créé sur {publicUrl}/ :
+
+* UID   : {uid}
+* nom  : {name}
+* Email : {email}
+
+---
+Envoyé par geOrchestra ({publicUrl}/)
