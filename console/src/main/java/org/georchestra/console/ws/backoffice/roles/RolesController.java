@@ -495,10 +495,10 @@ public class RolesController {
 
 			// Capitalize role name and check format
 			commonName = commonName.toUpperCase();
-			Pattern p = Pattern.compile("[A-Z0-9_]+");
+			Pattern p = Pattern.compile("[A-Z0-9_-]+");
 			if(!p.matcher(commonName).matches())
 				throw new IllegalArgumentException(RoleSchema.COMMON_NAME_KEY +
-						" should only contain uppercased letters, digits and underscores" );
+						" should only contain uppercased letters, digits, dashes and underscores" );
 
 			String description = RequestUtil.getFieldValue(json, RoleSchema.DESCRIPTION_KEY);
 			Boolean isFavorite = RequestUtil.getBooleanFieldValue(json, RoleSchema.FAVORITE_JSON_KEY);
