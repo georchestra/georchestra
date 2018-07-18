@@ -19,13 +19,11 @@
 
 package org.georchestra.console.mailservice;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.Properties;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.georchestra.commons.configuration.GeorchestraConfiguration;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -34,85 +32,68 @@ import javax.mail.Transport;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.servlet.ServletContext;
+import java.io.*;
+import java.util.Arrays;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.georchestra.commons.configuration.GeorchestraConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
-
-public abstract class Email {
+public class Email {
 
 	protected static final Log LOG = LogFactory.getLog(Email.class.getName());
 
-	private String smtpHost;
-    private int smtpPort = -1;
-    private String emailHtml;
+    private String smtpHost;
+    private int smtpPort;
+    private boolean emailHtml;
     private String replyTo;
     private String from;
     private String bodyEncoding;
     private String subjectEncoding;
-    private String[] languages;
+    private String templateEncoding;
     private String[] recipients;
     private String subject;
-
-	private String fileTemplate;
-
 	private String emailBody;
 
 	protected GeorchestraConfiguration georConfig;
-	
-    public Email( String[] recipients,
-			final String emailSubject, final String smtpHost, final int smtpPort, final String emailHtml,
-			final String replyTo, final String from, final String bodyEncoding,
-			final String subjectEncoding, final String[] languages, String fileTemplate, GeorchestraConfiguration georConfig) {
 
-		this.recipients = recipients;
-		this.subject = emailSubject;
-		this.smtpHost = smtpHost;
-		this.smtpPort = smtpPort;
-		this.emailHtml = emailHtml;
-		this.replyTo = replyTo;
-		this.from = from;
-		this.bodyEncoding = bodyEncoding;
-		this.subjectEncoding = subjectEncoding;
-		this.languages = languages;
-		this.fileTemplate = fileTemplate;
-		this.georConfig = georConfig;
+    public Email(String[] recipients,
+                 String emailSubject, String smtpHost, int smtpPort, boolean emailHtml, String replyTo, String from,
+                 String bodyEncoding, String subjectEncoding, String templateEncoding, String fileTemplate,
+                 ServletContext servletContext, GeorchestraConfiguration georConfig) {
 
-		if(LOG.isDebugEnabled()){
-			LOG.debug("Email instanciated: " + this.toString());
-		}
-	}
+        this.recipients = recipients;
+        this.subject = emailSubject;
+        this.smtpHost = smtpHost;
+        this.smtpPort = smtpPort;
+        this.emailHtml = emailHtml;
+        this.replyTo = replyTo;
+        this.from = from;
+        this.bodyEncoding = bodyEncoding;
+        this.subjectEncoding = subjectEncoding;
+        this.templateEncoding = templateEncoding;
+        this.georConfig = georConfig;
 
-
-
-    @Override
-	public String toString() {
-		return "Email [smtpHost=" + smtpHost
-				+ ", smtpPort=" + smtpPort + ", emailHtml=" + emailHtml
-				+ ", replyTo=" + replyTo + ", from=" + from + ", bodyEncoding=" + bodyEncoding
-				+ ", subjectEncoding=" + subjectEncoding + ", languages="
-				+ Arrays.toString(languages) + ", recipients="
-				+ Arrays.toString(recipients) + ", subject=" + subject
-				+ ", fileTemplate=" + fileTemplate + ", emailBody=" + emailBody
-				+ "]";
-	}
-
-	/**
-     * Read the body from template
-     * @return String the formatted message
-     */
-    protected String getBodyTemplate() {
-
-    	if(this.emailBody == null){
-    		this.emailBody = loadBody(toAbsolutePath(this.fileTemplate));
-    	}
-    	return this.emailBody;
+        // Load template from filesystem
+        this.emailBody = this.loadBody(servletContext.getRealPath(fileTemplate));
     }
 
-    protected abstract String toAbsolutePath(String fileTemplate);
+    public void set(String key, String value) {
+        this.emailBody = this.emailBody.replaceAll("\\{" + key + "\\}", value);
+    }
+
+    @Override
+    public String toString() {
+        return "Email{" +
+                "smtpHost='" + smtpHost + '\'' +
+                ", smtpPort=" + smtpPort +
+                ", emailHtml='" + emailHtml + '\'' +
+                ", replyTo='" + replyTo + '\'' +
+                ", from='" + from + '\'' +
+                ", bodyEncoding='" + bodyEncoding + '\'' +
+                ", subjectEncoding='" + subjectEncoding + '\'' +
+                ", recipients=" + Arrays.toString(recipients) +
+                ", subject='" + subject + '\'' +
+                ", emailBody='" + emailBody + '\'' +
+                '}';
+    }
 
     /**
      * Loads the body template.
@@ -126,7 +107,7 @@ public abstract class Email {
         if ((georConfig != null) && (georConfig.activated())) {
             try {
                 String basename = FilenameUtils.getName(fileName);
-                return FileUtils.readFileToString(new File(georConfig.getContextDataDir(), "templates/" + basename));
+                return FileUtils.readFileToString(new File(georConfig.getContextDataDir(), "templates/" + basename), templateEncoding);
             } catch (IOException e) {
                 LOG.error("Unable to get the template from geOrchestra datadir. Falling back on the default template provided by the webapp.", e);
             }
@@ -135,13 +116,7 @@ public abstract class Email {
     	BufferedReader reader = null;
     	String body = null;
         try {
-        	reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), "UTF-8") );
-        	StringBuilder builder = new StringBuilder();
-            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-                builder.append(line).append("\n");
-            }
-            body = builder.toString();
-
+            body = FileUtils.readFileToString(new File(fileName), templateEncoding);
         } catch (Exception e ){
         	LOG.error(e);
         } finally {
@@ -154,15 +129,15 @@ public abstract class Email {
         return body;
     }
 
+    public MimeMessage send() throws MessagingException {
+        return this.send(true);
+    }
 
-	protected void sendMsg(String msg) throws AddressException, MessagingException {
-
-		if(LOG.isDebugEnabled() ){
-			LOG.debug("body: "+ msg );
-		}
+	public MimeMessage send(boolean reallySend) throws MessagingException {
 
 		// Replace {publicUrl} token with the configured public URL
-        msg = msg.replaceAll("\\{publicUrl\\}", this.georConfig.getProperty("publicUrl"));
+        this.emailBody = this.emailBody.replaceAll("\\{publicUrl\\}", this.georConfig.getProperty("publicUrl"));
+        LOG.debug("body: " + this.emailBody);
 
         final Session session = Session.getInstance(System.getProperties(), null);
         session.getProperties().setProperty("mail.smtp.host", smtpHost);
@@ -173,41 +148,33 @@ public abstract class Email {
         if (isValidEmailAddress(from)) {
             message.setFrom(new InternetAddress(from));
         }
-        boolean validRecipients = false;
         for (String recipient : recipients) {
-            if (isValidEmailAddress(recipient)) {
-                validRecipients = true;
-                message.addRecipient(Message.RecipientType.TO,
-                        new InternetAddress(recipient));
-            }
+            if (!isValidEmailAddress(recipient))
+                throw new AddressException("Invalid recipient : " + recipient);
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
+        }
+        if (isValidEmailAddress(replyTo)){
+            message.setReplyTo(new InternetAddress[]{new InternetAddress(replyTo)});
         }
 
-        if (!validRecipients) {
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(from));
-            message.setSubject(
-                    "[ERREUR] Message non délivré : "
-                            + subject,
-                            subjectEncoding);
-        } else {
-            message.setSubject(subject, subjectEncoding);
-        }
+        message.setSubject(subject, subjectEncoding);
 
-        if (msg != null) {
-            /* See http://www.rgagnon.com/javadetails/java-0321.html */
-            if ("true".equalsIgnoreCase(emailHtml)) {
-                message.setContent(msg, "text/html; charset=" + bodyEncoding);
+        if (this.emailBody != null) {
+            if (emailHtml) {
+                message.setContent(this.emailBody, "text/html; charset=" + bodyEncoding);
             } else {
-                message.setContent(msg, "text/plain; charset=" + bodyEncoding);
+                message.setContent(this.emailBody, "text/plain; charset=" + bodyEncoding);
             }
-            LOG.debug(msg);
         }
 
-        Transport.send(message);
-        LOG.debug("email has been sent to:\n"
-                + Arrays.toString(recipients));
+        // Finally send the message
+        if(reallySend)
+            Transport.send(message);
+        LOG.debug("email has been sent to:\n" + Arrays.toString(recipients));
+        return message;
 	}
 
-	protected static boolean isValidEmailAddress(String address) {
+	private static boolean isValidEmailAddress(String address) {
         if (address == null) {
             return false;
         }

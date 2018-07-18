@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
+import javax.mail.MessagingException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -38,7 +39,7 @@ import org.georchestra.console.ds.RoleDao;
 import org.georchestra.console.ds.UserTokenDao;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.Role;
-import org.georchestra.console.mailservice.MailService;
+import org.georchestra.console.mailservice.EmailFactory;
 import org.georchestra.console.ws.utils.RecaptchaUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
@@ -78,7 +79,7 @@ public class PasswordRecoveryFormController  {
 	// collaborations
 	private AccountDao accountDao;
 	private RoleDao roleDao;
-	private MailService mailService;
+	private EmailFactory emailFactory;
 	private UserTokenDao userTokenDao;
 	private Configuration config;
 	private ReCaptchaParameters reCaptchaParameters;
@@ -87,11 +88,11 @@ public class PasswordRecoveryFormController  {
 	private GeorchestraConfiguration georConfig;
 
 	@Autowired
-	public PasswordRecoveryFormController( AccountDao dao,RoleDao gDao, MailService mailSrv, UserTokenDao userTokenDao,
+	public PasswordRecoveryFormController( AccountDao dao,RoleDao gDao, EmailFactory emailFactory, UserTokenDao userTokenDao,
 			Configuration cfg, ReCaptchaParameters reCaptchaParameters){
 		this.accountDao = dao;
 		this.roleDao = gDao;
-		this.mailService = mailSrv;
+		this.emailFactory = emailFactory;
 		this.userTokenDao = userTokenDao;
 		this.config = cfg;
 		this.reCaptchaParameters = reCaptchaParameters;
@@ -146,7 +147,6 @@ public class PasswordRecoveryFormController  {
 			List<Role> role = this.roleDao.findAllForUser(account.getUid());
 			// Finds the user using the email as key, if it exists a new token is generated to include in the unique http URL.
 
-
 			for (Role g : role) {
 				if (g.getName().equals(Role.PENDING)) {
 					throw new NameNotFoundException("User in PENDING role");
@@ -154,8 +154,6 @@ public class PasswordRecoveryFormController  {
 			}
 
 			String token = UUID.randomUUID().toString();
-
-
 
 			// if there is a previous token it is removed
 			if( this.userTokenDao.exist(account.getUid()) ) {
@@ -168,22 +166,18 @@ public class PasswordRecoveryFormController  {
 			String url = makeChangePasswordURL(this.georConfig.getProperty("publicUrl"), contextPath, token);
 
 			ServletContext servletContext = request.getSession().getServletContext();
-			this.mailService.sendChangePasswordURL(servletContext, account.getUid(), account.getCommonName(), url, account.getEmail());
-
+			this.emailFactory.sendChangePasswordEmail(servletContext, new String[]{account.getEmail()}, account.getCommonName(),  account.getUid(), url);
 			sessionStatus.setComplete();
 
 			return "emailWasSent";
 
 		} catch (DataServiceException e) {
-
 			throw new IOException(e);
-
 		} catch (NameNotFoundException e) {
-
 			resultErrors.rejectValue("email", "email.error.notFound", "No user found for this email.");
-
 			return "passwordRecoveryForm";
-
+		} catch (MessagingException e) {
+			throw new IOException(e);
 		}
 	}
 

@@ -1,0 +1,7 @@
+publicUrl http://localhost:8080
+{uid : testadmin
+var1 : value1
+uid testadmin
+name Test Admin
+{---}
+{test}

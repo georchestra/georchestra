@@ -44,6 +44,7 @@ import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.filter.Filter;
 import org.springframework.ldap.filter.PresentFilter;
+import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.security.authentication.encoding.LdapShaPasswordEncoder;
 
 import javax.naming.Name;
@@ -81,6 +82,7 @@ public final class AccountDaoImpl implements AccountDao {
 
     private String basePath;
     private String orgSearchBaseDN;
+    private String roleSearchBaseDN;
 
     public String getBasePath() { return basePath; }
     public void setBasePath(String basePath) { this.basePath = basePath; }
@@ -133,6 +135,9 @@ public final class AccountDaoImpl implements AccountDao {
         return orgSearchBaseDN;
     }
 
+    public void setRoleSearchBaseDN(String roleSearchBaseDN) {
+        this.roleSearchBaseDN = roleSearchBaseDN;
+    }
 
     /**
      * @see {@link AccountDao#insert(Account, String, String)}
@@ -409,6 +414,29 @@ public final class AccountDaoImpl implements AccountDao {
 
         return account;
     }
+
+    /**
+     * @see {@link AccountDao#findByRole(String)}
+     */
+    @Override
+    public List<Account> findByRole(final String role) throws DataServiceException, NameNotFoundException {
+
+        SearchControls sc = new SearchControls();
+        sc.setReturningAttributes(UserSchema.ATTR_TO_RETRIEVE);
+        sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
+
+        AndFilter filter = new AndFilter();
+        filter.and(new EqualsFilter("objectClass", "inetOrgPerson"));
+        filter.and(new EqualsFilter("objectClass", "organizationalPerson"));
+        filter.and(new EqualsFilter("objectClass", "person"));
+
+        Name memberOfValue = LdapNameBuilder.newInstance(basePath).add(this.roleSearchBaseDN).add("cn", role).build();
+        filter.and(new EqualsFilter("memberOf", memberOfValue.toString()));
+
+        return ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(),sc, attributMapper);
+    }
+
+
 
     public boolean exist(final String uid) throws DataServiceException {
 

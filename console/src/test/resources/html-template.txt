@@ -1,0 +1,12 @@
+<h1>Dear Administrator</h1>,
+
+A new user sign up on <a href="{publicUrl}/">{publicUrl}/</a> with following informations:
+
+<ul>
+    <li> UID   : {uid}</li>
+    <li> name  : {name}</li>
+    <li> Email : {email}</li>
+</ul>
+
+<hr>
+Sent by geOrchestra ({publicUrl}/)

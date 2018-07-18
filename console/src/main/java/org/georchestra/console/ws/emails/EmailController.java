@@ -26,7 +26,7 @@ import org.georchestra.console.dao.*;
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.DataServiceException;
 import org.georchestra.console.dto.Account;
-import org.georchestra.console.mailservice.EmailFactoryImpl;
+import org.georchestra.console.mailservice.EmailFactory;
 import org.georchestra.console.model.AdminLogEntry;
 import org.georchestra.console.model.AdminLogType;
 import org.georchestra.console.model.Attachment;
@@ -89,7 +89,7 @@ public class EmailController {
 	private AccountDao accountDao;
 
     @Autowired
-    private EmailFactoryImpl emailFactory;
+    private EmailFactory emailFactory;
 
     @Autowired
     private AdminLogDao logRepo;
@@ -308,10 +308,7 @@ public class EmailController {
         LOG.debug("EMail request : " + payload.toString());
 
         // Instanciate MimeMessage
-        final Session session = Session.getInstance(System.getProperties(), null);
-        session.getProperties().setProperty("mail.smtp.host", this.emailFactory.getSmtpHost());
-        session.getProperties().setProperty("mail.smtp.port", (new Integer(this.emailFactory.getSmtpPort())).toString());
-        MimeMessage message = new MimeMessage(session);
+        MimeMessage message = this.emailFactory.createEmptyMessage();
 
         // Generate From header
         InternetAddress from = new InternetAddress();
@@ -499,10 +496,7 @@ public class EmailController {
      */
     private void send(EmailEntry email) throws NameNotFoundException, DataServiceException, MessagingException {
 
-        final Session session = Session.getInstance(System.getProperties(), null);
-        session.getProperties().setProperty("mail.smtp.host", this.emailFactory.getSmtpHost());
-        session.getProperties().setProperty("mail.smtp.port", (new Integer(this.emailFactory.getSmtpPort())).toString());
-        final MimeMessage message = new MimeMessage(session);
+        final MimeMessage message = this.emailFactory.createEmptyMessage();
 
         Account recipient = this.accountDao.findByUID(email.getRecipient());
         InternetAddress[] senders = {new InternetAddress(this.accountDao.findByUID(email.getSender()).getEmail())};

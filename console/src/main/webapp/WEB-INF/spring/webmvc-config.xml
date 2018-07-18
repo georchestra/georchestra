@@ -107,6 +107,7 @@
     <property name="userSearchBaseDN" value="${userSearchBaseDN}"/>
     <property name="basePath" value="${baseDN}"/>
     <property name="orgSearchBaseDN" value="${orgSearchBaseDN}"/>
+    <property name="roleSearchBaseDN" value="${roleSearchBaseDN}"/>
   </bean>
 
   <bean class="org.georchestra.console.ws.backoffice.users.UserRule">
@@ -215,15 +216,15 @@
   </bean>
 
   <!-- Email Factory configuration -->
-  <bean id="emailFactory" class="org.georchestra.console.mailservice.EmailFactoryImpl" init-method="freeze">
+  <bean id="emailFactory" class="org.georchestra.console.mailservice.EmailFactory" >
     <property name="smtpHost" value="${smtpHost}"/>
-    <property name="smtpPort" value="${smtpPort}"/>
+    <property name="smtpPort" value="${smtpPort:-1}"/>
     <property name="emailHtml" value="${emailHtml}"/>
     <property name="replyTo" value="${replyTo}"/>
     <property name="from" value="${from}"/>
     <property name="bodyEncoding" value="UTF-8"/>
     <property name="subjectEncoding" value="UTF-8"/>
-    <property name="languages" value="${language}"/>
+    <property name="templateEncoding" value="${templateEncoding:UTF-8}"/>
     <property name="accountWasCreatedEmailFile" value="/WEB-INF/templates/newaccount-was-created-template.txt"/>
     <property name="accountWasCreatedEmailSubject" value="${subject.account.created}"/>
     <property name="accountCreationInProcessEmailFile" value="/WEB-INF/templates/account-creation-in-progress-template.txt"/>
@@ -234,10 +235,8 @@
     <property name="changePasswordEmailSubject" value="${subject.change.password}"/>
     <property name="accountUidRenamedEmailFile" value="/WEB-INF/templates/account-uid-renamed.txt" />
     <property name="accountUidRenamedEmailSubject" value="${subject.account.uid.renamed}" />
-  </bean>
-
-  <bean id="mailService" class="org.georchestra.console.mailservice.MailService">
-    <constructor-arg ref="emailFactory"/>
+    <property name="newAccountNotificationEmailFile" value="/WEB-INF/templates/newaccount-notification-template.txt"/>
+    <property name="newAccountNotificationEmailSubject" value="${subject.new.account.notification}"/>
   </bean>
 
   <bean id="moderator" class="org.georchestra.console.bs.Moderator">

@@ -20,8 +20,7 @@ import org.georchestra.console.ds.UserTokenDao;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.Role;
 import org.georchestra.console.dto.RoleFactory;
-import org.georchestra.console.mailservice.EmailFactoryImpl;
-import org.georchestra.console.mailservice.MailService;
+import org.georchestra.console.mailservice.EmailFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,8 +37,7 @@ public class PasswordRecoveryFormControllerTest {
     private PasswordRecoveryFormController ctrl ;
     private AccountDao dao = Mockito.mock(AccountDao.class);
     private RoleDao gdao = Mockito.mock(RoleDao.class);
-    private EmailFactoryImpl efi = Mockito.mock(EmailFactoryImpl.class);
-    private MailService srv = new MailService(efi);
+    private EmailFactory efi = Mockito.mock(EmailFactory.class);
     private ReCaptchaV2 rec = Mockito.mock(ReCaptchaV2.class);
     private ReCaptchaParameters rep = new ReCaptchaParameters();
     private UserTokenDao utd = Mockito.mock(UserTokenDao.class);
@@ -54,7 +52,7 @@ public class PasswordRecoveryFormControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        ctrl = new PasswordRecoveryFormController(dao,gdao, srv, utd, cfg, rep);
+        ctrl = new PasswordRecoveryFormController(dao,gdao, efi, utd, cfg, rep);
         ctrl.setGeorConfig(this.georConfig);
         Mockito.when(this.georConfig.getProperty(Mockito.eq("publicUrl")))
                 .thenReturn("https://georchestra.mydomain.org");
