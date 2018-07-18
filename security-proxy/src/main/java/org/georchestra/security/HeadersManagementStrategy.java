@@ -100,7 +100,8 @@ public class HeadersManagementStrategy {
         StringBuilder headersLog = new StringBuilder("Request Headers:\n");
         headersLog
                 .append("==========================================================\n");
-        if (referer != null) {
+
+        if (!localProxy && referer != null) {
             addHeaderToRequestAndLog(proxyRequest, headersLog, REFERER_HEADER_NAME, this.referer);
         }
 
@@ -134,7 +135,7 @@ public class HeadersManagementStrategy {
                 if (headerName.toLowerCase().startsWith(PROTECTED_HEADER_PREFIX)) {
                     continue;
                 }
-                if (referer != null && headerName.equalsIgnoreCase(REFERER_HEADER_NAME)) {
+                if (!localProxy && referer != null && headerName.equalsIgnoreCase(REFERER_HEADER_NAME)) {
                     continue;
                 }
                 

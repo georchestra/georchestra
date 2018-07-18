@@ -28,7 +28,7 @@ public class HeaderNames {
     public static final String PROTECTED_HEADER_PREFIX = "sec-";
     public static final String SEC_USERNAME = "sec-username";
     public static final String SEC_ROLES = "sec-roles";
-    public static final String REFERER_HEADER_NAME = "referer";
+    public static final String REFERER_HEADER_NAME = "Referer";
     static final String IMP_ROLES = "imp-roles";
     static final String IMP_USERNAME = "imp-username";
     public static final String JSESSION_ID = "JSESSIONID";
