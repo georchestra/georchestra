@@ -546,7 +546,7 @@
         <checksumPolicy>ignore</checksumPolicy>
       </snapshots>
       <id>georchestra</id>
-      <url>https://packages.georchestra.org/maven/repository</url>
+      <url>https://packages.georchestra.org/artifactory/maven</url>
     </repository>
     <!-- geotools -->
     <repository>
