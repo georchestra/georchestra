@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.georchestra</groupId>
     <artifactId>root</artifactId>
-    <version>18.06-SNAPSHOT</version>
+    <version>18.06</version>
   </parent>
   <artifactId>analytics</artifactId>
   <packaging>war</packaging>
@@ -18,7 +18,7 @@
     <spring.version>4.2.3.RELEASE</spring.version>
     <spring_data.version>1.11.1.RELEASE</spring_data.version>
     <postgres.version>9.4-1205-jdbc41</postgres.version>
-    <packageDatadirScmVersion>master</packageDatadirScmVersion>
+    <packageDatadirScmVersion>18.06</packageDatadirScmVersion>
   </properties>
   <dependencies>
     <dependency>

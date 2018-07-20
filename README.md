@@ -1,6 +1,6 @@
 # geOrchestra
 
-[![Build Status](https://travis-ci.org/georchestra/georchestra.svg?branch=17.12)](https://travis-ci.org/georchestra/georchestra)
+[![Build Status](https://travis-ci.org/georchestra/georchestra.svg?branch=18.06)](https://travis-ci.org/georchestra/georchestra)
 [![Codacy Badge](https://api.codacy.com/project/badge/grade/a879ac64588d4357ab72e79cd8026f99)](https://www.codacy.com/app/georchestra/georchestra)
 
 geOrchestra is a complete **Spatial Data Infrastructure** solution.
@@ -11,7 +11,7 @@ It features a **metadata catalog** (GeoNetwork 3.4), an **OGC server** (GeoServe
 ## Releases
 
 A new release is published every 6 months and is supported during 12 months.
-Stable versions are named by their release date, eg 17.12 (latest stable) was supposed to be be published in december 2017 (but the truth is, it was released february 2018).
+Stable versions are named by their release date, eg 18.06 (latest stable) was published in June 2018.
 
 Have a look at the [release notes](RELEASE_NOTES.md) for more information.
 
@@ -41,7 +41,7 @@ For help setting up your instance, or for dev-related questions, use the [#georc
 ## More
 
 Additional information can be found in the [georchestra.org](http://www.georchestra.org/) website and in the following links:
- * [catalog](https://github.com/georchestra/geonetwork/blob/georchestra-gn3-15.12/README.md): standard GeoNetwork with a light customization,
+ * [catalog](https://github.com/georchestra/geonetwork/blob/georchestra-gn3.4-18.06/README.md): standard GeoNetwork with a light customization,
  * [viewer](mapfishapp/README.md) (aka mapfishapp): a robust, OGC-compliant webgis with editing capabilities,
  * [extractor](extractorapp/README.md) (aka extractorapp): able to create zips from data served through OGC web services and send an email when your extraction is done,
  * [geoserver](http://geoserver.org/): the reference implementation for many OGC web services,

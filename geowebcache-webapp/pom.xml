@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.georchestra</groupId>
     <artifactId>root</artifactId>
-    <version>18.06-SNAPSHOT</version>
+    <version>18.06</version>
   </parent>
   <artifactId>geowebcache-webapp</artifactId>
   <packaging>war</packaging>
@@ -14,7 +14,7 @@
     <geowebcache.war.excludes/>
     <maven.test.skip>false</maven.test.skip>
     <geowebcache.version>1.8.1</geowebcache.version>
-    <packageDatadirScmVersion>master</packageDatadirScmVersion>
+    <packageDatadirScmVersion>18.06</packageDatadirScmVersion>
   </properties>
   <dependencies>
     <dependency>
