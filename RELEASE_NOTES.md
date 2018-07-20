@@ -2,13 +2,13 @@ The development branch is master. It can be used for testing and reporting
 errors.
 
 For production systems, you are advised to use the stable branch (currently
-17.12).
+18.06).
 This branch receives bug fixes as they arrive, during 12 months at least.
 
 Version 18.06
 =============
 
-Release crafted for the [GeoGrandEst](https://twitter.com/geograndest) project, with contributions from other SDIs.  
+Release crafted for the [GeoGrandEst](https://twitter.com/geograndest) project, with contributions from other SDIs and individuals (mostly @landryb and @jusabatier).
 Thank you all for your continuous support !
 
 Major highlights:
@@ -35,8 +35,12 @@ Enhancements:
  * console - description field allows more text [#1826](https://github.com/georchestra/georchestra/issues/1826)
  * console - roles are created capitalized [#1813](https://github.com/georchestra/georchestra/issues/1813)
  * console - org list alphabetically sorted [#1814](https://github.com/georchestra/georchestra/issues/1814)
+ * console - migating from `dbcp.BasicDataSource` to `c3p0.ComboPooledDataSource` [#2070](https://github.com/georchestra/georchestra/issues/2070)
  * mapfishapp - allow reading KML 3D files [#2000](https://github.com/georchestra/georchestra/issues/2000)
+ * mapfishapp - disable by default printing of legend and mini map [#2087](https://github.com/georchestra/georchestra/issues/2087)
+ * geoserver - dockerfile does not force GC [#2120](https://github.com/georchestra/georchestra/issues/2120)
  * all - header url is now configurable in datadir [#1922](https://github.com/georchestra/georchestra/issues/1922)
+ * all - debian packages now have packageRevision set to the date of build and short commit id [#1936](https://github.com/georchestra/georchestra/issues/1936)
 
 Bug fixes:
  * console - prevent empty error flash message during app load [#2004](https://github.com/georchestra/georchestra/issues/2004)
@@ -48,12 +52,16 @@ Bug fixes:
  * console - updated jquery and other dependencies [#1882](https://github.com/georchestra/georchestra/issues/1882)
  * console - fixed link to manager on user details page [#2063](https://github.com/georchestra/georchestra/issues/2063)
  * proxy - discards the `transfer-encoding` header in the proxified request [#2012](https://github.com/georchestra/georchestra/issues/2012)
+ * proxy - fixed Referer header in proxied requests to local webapps [#2130](https://github.com/georchestra/georchestra/issues/2130)
+ * proxy - do not extra encode path [#2020](https://github.com/georchestra/georchestra/pull/2118)
  * mapfishapp - fixed mapfishapp/ws/*.json `content-type` header not specified [#1934](https://github.com/georchestra/georchestra/issues/1934)
+ * mapfishapp - fixed layer permalink [#2073](https://github.com/georchestra/georchestra/issues/2073)
+ * mapfishapp - fixed race condition which prevented simultaneous use of the print feature [#2134](https://github.com/georchestra/georchestra/issues/2134)
  * mapfishapp & extractorapp - fixed GDAL bindings integration in docker images [#1939](https://github.com/georchestra/georchestra/issues/1939)
  * backgrounds addon - fixed "cannot read property 'id' of null" error [#1900](https://github.com/georchestra/georchestra/issues/1900)
  * geonetwork - fixed broken "view layer" & "download data" actions [#1977](https://github.com/georchestra/georchestra/issues/1977)
  * geonetwork - top toolbar does not overlap header anymore [#2013](https://github.com/georchestra/georchestra/issues/2013)
-
+ * all - disable directory listing on jetty [#2115](https://github.com/georchestra/georchestra/issues/2115)
 
 Deprecations:
  * the extractorapp user interface was removed in favor of the viewer addon named "[extractor](/mapfishapp/src/main/webapp/app/addons/extractor/README.md)"
@@ -61,6 +69,7 @@ Deprecations:
  belong to the [georchestra/docker](https://github.com/georchestra/docker) repository.
  * console - browing roles as a tree was not a good idea ! It's now replaced with favorite roles, which are shared between users allowed to manage users within the console.
  * local maven has been removed, in favor of the one provided by distributions, see [#2060](https://github.com/georchestra/georchestra/issues/2060)
+ * The ability to override webapp files throught the use of the config module (and template config) was removed for the console, mapfishapp, extractorapp & header, see [#1417](https://github.com/georchestra/georchestra/issues/1417). This is still work in progress at the current time of writing for other modules.
 
 Read [how to migrate from 17.12 to 18.06](migrations/18.06/README.md).
 
@@ -124,7 +133,7 @@ Read [how to migrate from 16.12 to 17.12](migrations/17.12/README.md).
 Version 16.12
 =============
 
-This release represents one year of contributions. It's a HUGE one !  
+This release represents one year of contributions. It's a HUGE one !
 Major highlights include:
  * a brand new console to manage efficiently users, orgs and roles
  * an atlas webapp, which allows users to have features from a layer printed as multipage PDF
@@ -354,7 +363,7 @@ Read [how to migrate from 14.06 to 14.12](migrations/14.12/README.md).
 Version 14.06
 ==============
 
-Contributions from Rennes, CIGAL, GeoBretagne, GeoPicardie, PIGMA, GeoBolivia, ViennAgglo & developers on their free time.  
+Contributions from Rennes, CIGAL, GeoBretagne, GeoPicardie, PIGMA, GeoBolivia, ViennAgglo & developers on their free time.
 Note on the 13.06 release: end-of-life was in april, earlier this year. As a result, it will not receive bug fixes anymore.
 
 New features:

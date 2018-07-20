@@ -7,7 +7,7 @@ With [#1902](https://github.com/georchestra/georchestra/pull/1902), the security
 First of all, you should note that the `ldapadmin` webapp was renamed into `console`.
 Also, with [#1924](https://github.com/georchestra/georchestra/issues/1924), the admin console path changed from `/ldapadmin/console/` to `/console/manager/`.
 
-The extractorapp UI has been removed and replaced with a viewer addon (which makes sense to not duplicate viewing efforts).  
+The extractorapp UI has been removed and replaced with a viewer addon (which makes sense to not duplicate viewing efforts).
 Users may still requests extractions, provided the extractorapp webapp is installed and the extractor addon activated. Forcing this addon to load on viewer startup may be achieved using eg `/mapfishapp/?addons=extractor_0`.
 
 With [#1902](https://github.com/georchestra/georchestra/pull/1902), the security-proxy has been refactored. As a consequence:
@@ -40,6 +40,9 @@ If you plan to upgrade your existing datadir (matching version 17.12), here's a 
  * ...
 
 As you can see, this release introduces a [default.properties](https://github.com/georchestra/datadir/blob/master/default.properties) file at the datadir root, which factorizes variables across apps. It can be omitted, but then, its variables should be replicated in webapp specific properties files.
+
+Also, the `moderatorEmail` config option from the ldapadmin/console module was removed.
+With [#2124](https://github.com/georchestra/georchestra/pull/2124), moderation emails are now dynamically sent to users having the `SUPERUSER` role (plus Org-scoped admins, if any).
 
 ## Upgrading your databases
 
