@@ -146,10 +146,10 @@ public final class OGCServiceParser {
 		
 		String msg = message.toUpperCase();
 		// checks if it is an ogc service
-		for (int i = 0; i < SERVICE_TYPE.length; i++) {
-			if (msg.contains(SERVICE_TYPE[i])) {
+		for (String serviceType : SERVICE_TYPE) {
+			if (msg.contains(serviceType)) {
 				
-				String service = SERVICE_TYPE[i].substring(SERVICE_KEYWORD.length());
+				String service = serviceType.substring(SERVICE_KEYWORD.length());
 				return removeQuote(service);
 			}
 		}
@@ -164,10 +164,10 @@ public final class OGCServiceParser {
 
 		String msg = message.toUpperCase();
 		// checks if it is an ogc service
-		for (int i = 0; i < REQUEST_TYPE.length; i++) {
-			if (msg.contains(REQUEST_TYPE[i])) {
+		for (String requestType : REQUEST_TYPE) {
+			if (msg.contains(requestType)) {
 				
-				String request = REQUEST_TYPE[i].substring(REQUEST_KEYWORD.length());
+				String request = requestType.substring(REQUEST_KEYWORD.length());
 				return removeQuote(request);
 			}
 		}
@@ -261,11 +261,11 @@ public final class OGCServiceParser {
 		String msg = request.toUpperCase();
 
 		List<String> layerList = Collections.emptyList();
-		for (int i = 0; i < LAYER_KEYWORD.length; i++) {
-			if (msg.contains(LAYER_KEYWORD[i])) {
+		for (String layerKeyword : LAYER_KEYWORD) {
+			if (msg.contains(layerKeyword)) {
 
-				int begin = msg.indexOf(LAYER_KEYWORD[i]);
-				begin = begin + LAYER_KEYWORD[i].length();
+				int begin = msg.indexOf(layerKeyword);
+				begin = begin + layerKeyword.length();
 				String layers = msg.substring(begin);
 				int end = searchEndOfLayerValue(layers);
 				layers = layers.substring(0, end);
