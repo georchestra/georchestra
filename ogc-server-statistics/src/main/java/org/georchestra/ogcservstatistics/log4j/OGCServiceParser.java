@@ -312,7 +312,6 @@ public final class OGCServiceParser {
 		List<String> layerList = new LinkedList<String>();
 		
 		StringBuilder currentLayer = new StringBuilder(strLayerList.length());
-		currentLayer.append("");
 		for(int i = 0; i < strLayerList.length(); i++){
 
 			if(strLayerList.charAt(i) == COMMA){
