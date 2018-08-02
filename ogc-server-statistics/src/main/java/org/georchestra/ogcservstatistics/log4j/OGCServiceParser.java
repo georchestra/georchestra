@@ -25,7 +25,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -123,6 +122,8 @@ public final class OGCServiceParser {
 	private static final String OGC_MSG_SPLITTER = "[" + OGCServiceMessageFormatter.SEPARATOR + "]";
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat(OGCServiceMessageFormatter.DATE_FORMAT);
 
+	private static final List<String> HAS_TO_CREATE_A_LOG_WITHOUT_LAYER = Arrays.asList(new String [] {""});
+
 	static {
 		// sorts the delimiters to allow binary search
 		Arrays.sort(DELIMITER);
@@ -179,11 +180,6 @@ public final class OGCServiceParser {
 
 		// for each layer adds a log to the list
 		List<String> layerList = parseLayer(request);
-
-		boolean hasToCreateALogWithoutLayer = layerList.isEmpty();
-		if (hasToCreateALogWithoutLayer) {
-			layerList.add("");
-		}
 
 		for(String layer : layerList){
 			Map<String, Object>  log = new HashMap<String, Object>(6);
@@ -243,7 +239,7 @@ public final class OGCServiceParser {
 	 * @return a list of layer names
 	 */
 	private static List<String> parseLayer(final String request) {
-		List<String> layerList = Collections.emptyList();
+		List<String> layerList = HAS_TO_CREATE_A_LOG_WITHOUT_LAYER;
 		for (String layerKeyword : LAYER_KEYWORD) {
 			if (request.contains(layerKeyword)) {
 
