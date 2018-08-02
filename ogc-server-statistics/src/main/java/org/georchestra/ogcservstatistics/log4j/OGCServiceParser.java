@@ -59,10 +59,16 @@ public final class OGCServiceParser {
 	private static final String WFS = "WFS";
 	private static final String WMS = "WMS";
 	private static final String WCS = "WCS";
-	private static final String[] SERVICE_TYPES =
-		{ 	SERVICE_KEYWORD+WFS,SERVICE_KEYWORD+WCS, SERVICE_KEYWORD+WMS, 
-			SERVICE_KEYWORD+ "WMTS", 
-			SERVICE_KEYWORD+"\"WFS\"", SERVICE_KEYWORD+"\"WCS\"", SERVICE_KEYWORD+"\"WMTS\"" };
+	private static final String WMTS = "WMTS";
+	private static final String[] SERVICE_TYPES = {
+		SERVICE_KEYWORD + WFS,
+		SERVICE_KEYWORD + WCS,
+		SERVICE_KEYWORD + WMS,
+		SERVICE_KEYWORD + WMTS,
+		SERVICE_KEYWORD + "\"" + WFS + "\"",
+		SERVICE_KEYWORD + "\"" + WCS + "\"",
+		SERVICE_KEYWORD + "\"" + WMTS + "\""
+	};
 	
 	// request type
 	private static final String GETCAPABILITIES = "GETCAPABILITIES";
