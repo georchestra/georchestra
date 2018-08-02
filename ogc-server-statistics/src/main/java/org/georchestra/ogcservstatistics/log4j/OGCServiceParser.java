@@ -32,8 +32,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.spi.LoggingEvent;
-
 /**
  * This parse recognizes an OGC service taking into account the syntax convention 
  * implemented by {@link OGCServiceMessageFormatter}.
@@ -155,7 +153,7 @@ public final class OGCServiceParser {
 		// parses service and layer from request
 		String request = URLDecoder.decode(splittedMessage[2], "UTF-8");
 		String service = parseService(request);
-		String ogcReq = parseRequest(request).toLowerCase();
+		String ogcReq = parseOperationName(request).toLowerCase();
 
 		boolean undefinedService = "".equals(service);
 		if (undefinedService) return logList;
@@ -228,7 +226,7 @@ public final class OGCServiceParser {
 		return "";
 	}
 
-	private static String parseRequest(final String message){
+	private static String parseOperationName(final String message){
 
 		String msg = message.toUpperCase();
 		for (String pattern : OPERATION_NAME_PATTERNS) {
