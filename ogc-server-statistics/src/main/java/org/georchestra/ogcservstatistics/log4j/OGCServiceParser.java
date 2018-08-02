@@ -123,7 +123,7 @@ public final class OGCServiceParser {
 		// sorts the delimiters to allow binary search
 		Arrays.sort(DELIMITER);
 	}
-	
+
 	private OGCServiceParser(){
 		// utility class
 	}
@@ -215,34 +215,24 @@ public final class OGCServiceParser {
 		// for each layer adds a log to the list
 		List<Map<String, Object>> logList = new LinkedList<Map<String,Object>>(); 
 		List<String> layerList = parseLayer(request);
-		if(layerList.isEmpty() ){
-			// create a log without layer
+
+		boolean hasToCreateALogWithoutLayer = layerList.isEmpty();
+		if (hasToCreateALogWithoutLayer) {
+			layerList.add("");
+		}
+
+		for(String layer : layerList){
 			Map<String, Object>  log = new HashMap<String, Object>(6);
-			
+
 			log.put(USER_COLUMN, user );
 			log.put(DATE_COLUMN, date);
 			log.put(SERVICE_COLUMN, service );
-			log.put(LAYER_COLUMN, "" );
+			log.put(LAYER_COLUMN, layer.toLowerCase() );
 			log.put(REQUEST_COLUMN, ogcReq );
 			log.put(ORG_COLUMN, org);
 			log.put(SECROLE_COLUMN, roles);
-			
-			logList.add(log);
-		} else{ // there are one ore more layers
-			
-			for(String layer : layerList){
-				Map<String, Object>  log = new HashMap<String, Object>(6);
-				
-				log.put(USER_COLUMN, user );
-				log.put(DATE_COLUMN, date);
-				log.put(SERVICE_COLUMN, service );
-				log.put(LAYER_COLUMN, layer.toLowerCase() );
-				log.put(REQUEST_COLUMN, ogcReq );
-				log.put(ORG_COLUMN, org);
-				log.put(SECROLE_COLUMN, roles);
 
-				logList.add(log);
-			}
+			logList.add(log);
 		}
 		return logList;
 	}
