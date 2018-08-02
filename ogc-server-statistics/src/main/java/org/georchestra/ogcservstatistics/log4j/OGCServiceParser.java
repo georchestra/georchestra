@@ -52,7 +52,6 @@ public final class OGCServiceParser {
 	public final static String ORG_COLUMN = "org";
 	public final static String SECROLE_COLUMN = "roles";
 
-
 	private static final String SERVICE_KEYWORD = "SERVICE=";
 	private static final String REQUEST_KEYWORD = "REQUEST=";
 			
@@ -60,7 +59,7 @@ public final class OGCServiceParser {
 	private static final String WFS = "WFS";
 	private static final String WMS = "WMS";
 	private static final String WCS = "WCS";
-	private static final String[] SERVICE_TYPE = 
+	private static final String[] SERVICE_TYPES =
 		{ 	SERVICE_KEYWORD+WFS,SERVICE_KEYWORD+WCS, SERVICE_KEYWORD+WMS, 
 			SERVICE_KEYWORD+ "WMTS", 
 			SERVICE_KEYWORD+"\"WFS\"", SERVICE_KEYWORD+"\"WCS\"", SERVICE_KEYWORD+"\"WMTS\"" };
@@ -77,6 +76,7 @@ public final class OGCServiceParser {
 	private static final String DESCRIBECOVERAGE = "DESCRIBECOVERAGE";
 	private static final String GETTILE = "GETTILE";
 	private static final String GETSTYLES = "GETSTYLES";
+
 	// WFS2 support
 	private static final String GETPROPERTYVALUE = "GETPROPERTYVALUE";
 	private static final String LOCKFEATURE = "LOCKFEATURE";
@@ -85,12 +85,8 @@ public final class OGCServiceParser {
 	private static final String DESCRIBESTOREDQUERIES = "DESCRIBESTOREDQUERIES";
 	private static final String CREATESTOREDQUERY = "CREATESTOREDQUERY";
 	private static final String DROPSTOREDQUERY = "DROPSTOREDQUERY";
-	
 
-
-
-	
-	private static final String[] REQUEST_TYPE = 
+	private static final String[] REQUEST_TYPES =
 		{ 	REQUEST_KEYWORD+GETCAPABILITIES,
 			REQUEST_KEYWORD+GETMAP,
 			REQUEST_KEYWORD+GETLEGENDGRAPHIC,
@@ -214,7 +210,7 @@ public final class OGCServiceParser {
 
 		String msg = message.toUpperCase();
 		// checks if it is an ogc service
-		for (String serviceType : SERVICE_TYPE) {
+		for (String serviceType : SERVICE_TYPES) {
 			if (msg.contains(serviceType)) {
 
 				String service = serviceType.substring(SERVICE_KEYWORD.length());
@@ -231,7 +227,7 @@ public final class OGCServiceParser {
 	private static String parseRequest(final String message){
 
 		String msg = message.toUpperCase();
-		for (String requestType : REQUEST_TYPE) {
+		for (String requestType : REQUEST_TYPES) {
 			if (msg.contains(requestType)) {
 
 				String request = requestType.substring(REQUEST_KEYWORD.length());
