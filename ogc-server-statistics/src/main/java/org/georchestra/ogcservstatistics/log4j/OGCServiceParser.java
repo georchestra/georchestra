@@ -162,7 +162,6 @@ public final class OGCServiceParser {
 	private static String parseRequest(final String message){
 
 		String msg = message.toUpperCase();
-		// checks if it is an ogc service
 		for (String requestType : REQUEST_TYPE) {
 			if (msg.contains(requestType)) {
 				
