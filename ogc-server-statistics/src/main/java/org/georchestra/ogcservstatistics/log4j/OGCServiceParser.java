@@ -138,43 +138,6 @@ public final class OGCServiceParser {
 		
 		return !"".equals(service);
 	}
-	/**
-	 * Parses the OGC service.
-	 * 
-	 * @param message
-	 * 
-	 * @return an OGC service symbol, "" in other case.
-	 */
-	private static String parseService(final String message){
-		
-		String msg = message.toUpperCase();
-		// checks if it is an ogc service
-		for (String serviceType : SERVICE_TYPE) {
-			if (msg.contains(serviceType)) {
-				
-				String service = serviceType.substring(SERVICE_KEYWORD.length());
-				return removeQuoteAndTrim(service);
-			}
-		}
-		// Particular case: the following does not contain the WMS service key 
-		if(msg.contains(OPERATION_GET_LEGEND_GRAPHIC)){
-			return WMS;
-		}
-		return "";
-	}
-	
-	private static String parseRequest(final String message){
-
-		String msg = message.toUpperCase();
-		for (String requestType : REQUEST_TYPE) {
-			if (msg.contains(requestType)) {
-				
-				String request = requestType.substring(REQUEST_KEYWORD.length());
-				return removeQuoteAndTrim(request);
-			}
-		}
-		return "";
-	}
 
 	/**
 	 * Parses the request string in order to extract service, layer, user, date
@@ -238,6 +201,44 @@ public final class OGCServiceParser {
 			logList.add(log);
 		}
 		return logList;
+	}
+
+	/**
+	 * Parses the OGC service.
+	 *
+	 * @param message
+	 *
+	 * @return an OGC service symbol, "" in other case.
+	 */
+	private static String parseService(final String message){
+
+		String msg = message.toUpperCase();
+		// checks if it is an ogc service
+		for (String serviceType : SERVICE_TYPE) {
+			if (msg.contains(serviceType)) {
+
+				String service = serviceType.substring(SERVICE_KEYWORD.length());
+				return removeQuoteAndTrim(service);
+			}
+		}
+		// Particular case: the following does not contain the WMS service key
+		if(msg.contains(OPERATION_GET_LEGEND_GRAPHIC)){
+			return WMS;
+		}
+		return "";
+	}
+
+	private static String parseRequest(final String message){
+
+		String msg = message.toUpperCase();
+		for (String requestType : REQUEST_TYPE) {
+			if (msg.contains(requestType)) {
+
+				String request = requestType.substring(REQUEST_KEYWORD.length());
+				return removeQuoteAndTrim(request);
+			}
+		}
+		return "";
 	}
 
 	/**
