@@ -218,18 +218,16 @@ public class OGCServicesAppender extends AppenderSkeleton {
 
 		try {
 
-			if (OGCServiceParser.isOGCService(event)) {
+			String msg = event.getRenderedMessage();
+			List<Map<String, Object>> logList = OGCServiceParser.parseLog(msg);
 
-				String msg = event.getRenderedMessage();
-				List<Map<String, Object>> logList = OGCServiceParser.parseLog(msg);
-				
-				for (Map<String, Object> log : logList) {
-					this.buffer.add(log);
-					if (this.buffer.size() >= this.bufferSize) {
-						flushBuffer();
-					}
-				} 
-			} 
+			for (Map<String, Object> log : logList) {
+				this.buffer.add(log);
+				if (this.buffer.size() >= this.bufferSize) {
+					flushBuffer();
+				}
+			}
+			
 		} catch (Exception ex) {
 			errorHandler.error("Failed to insert the ogc service record", ex,
 					ErrorCode.WRITE_FAILURE);

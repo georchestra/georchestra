@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.georchestra</groupId>
     <artifactId>root</artifactId>
-    <version>18.06</version>
+    <version>18.12-SNAPSHOT</version>
   </parent>
   <artifactId>cas-server-webapp</artifactId>
   <packaging>war</packaging>
@@ -30,7 +30,7 @@
   <properties>
     <spring.version>3.2.6.RELEASE</spring.version>
     <cas.version>4.0.0</cas.version>
-    <packageDatadirScmVersion>18.06</packageDatadirScmVersion>
+    <packageDatadirScmVersion>master</packageDatadirScmVersion>
   </properties>
   <dependencies>
     <dependency>
