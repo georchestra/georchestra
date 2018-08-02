@@ -119,10 +119,8 @@ public final class OGCServiceParser {
 		"LAYERS=", "LAYER=","TYPENAME=", "QUERY_LAYERS="
 	};
 
-	private static final String OPERATION_GET_LEGEND_GRAPHIC = "GETLEGENDGRAPHIC";
 	private static final char COMMA = ',';
 	private static final char QUOTE = '\"';
-	
 	private static final char[]  DELIMITER = {'&', ' ',  '\r', '\t', '>' };
 	private static final String OGC_MSG_SPLITTER = "[" + OGCServiceMessageFormatter.SEPARATOR + "]";
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat(OGCServiceMessageFormatter.DATE_FORMAT);
@@ -227,7 +225,7 @@ public final class OGCServiceParser {
 			}
 		}
 		// Particular case: the following does not contain the WMS service key
-		if(msg.contains(OPERATION_GET_LEGEND_GRAPHIC)){
+		if(msg.contains(GETLEGENDGRAPHIC)){
 			return WMS;
 		}
 		return "";
