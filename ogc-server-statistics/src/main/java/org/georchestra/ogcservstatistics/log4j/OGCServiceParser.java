@@ -119,10 +119,14 @@ public final class OGCServiceParser {
 	private static final char QUOTE = '\"';
 	
 	private static final char[]  DELIMITER = {'&', ' ',  '\r', '\t', '>' };
+	private static final String OGC_MSG_SPLITTER = "[" + OGCServiceMessageFormatter.SEPARATOR + "]";
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat(OGCServiceMessageFormatter.DATE_FORMAT);
+
 	static{
 		// sorts the delimiters to allow binary search
 		Arrays.sort(DELIMITER);
 	}
+
 
 	private OGCServiceParser(){
 		// utility class
@@ -183,17 +187,16 @@ public final class OGCServiceParser {
 	 */
 	public static List<Map<String, Object>> parseLog(final String message) throws ParseException, UnsupportedEncodingException {
 
-		String[] splittedMessage = message.split("["+OGCServiceMessageFormatter.SEPARATOR+"]");
+		String[] splittedMessage = message.split(OGC_MSG_SPLITTER);
 		if(splittedMessage.length < 3){
 			throw new ParseException("the message has not be recognized. Use OGCServiceMessageFormatter.format(...) to build the message", 0);
 		}
 
 		// extracts user 
-		final String user=  splittedMessage[0];
+		String user=  splittedMessage[0];
 		
 		// extracts date
-		DateFormat format = new SimpleDateFormat(OGCServiceMessageFormatter.DATE_FORMAT);
-		Date date = format.parse(splittedMessage[1]);
+		Date date = DATE_FORMAT.parse(splittedMessage[1]);
 		
 		// parses service and layer from request
 		String request = URLDecoder.decode(splittedMessage[2], "UTF-8");
