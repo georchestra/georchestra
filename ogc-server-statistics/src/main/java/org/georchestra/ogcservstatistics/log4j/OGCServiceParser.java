@@ -114,7 +114,7 @@ public final class OGCServiceParser {
 	};
 	
 	private static final String[] LAYER_KEYWORD = {
-		"LAYERS=", "LAYER=","TYPENAME=", "QUERY_LAYERS="
+		"LAYERS=", "LAYER=","TYPENAME=", "QUERY_LAYERS=", "COVERAGEID="
 	};
 
 	private static final char COMMA = ',';
