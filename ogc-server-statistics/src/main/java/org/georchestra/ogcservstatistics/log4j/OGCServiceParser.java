@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.spi.LoggingEvent;
-import org.georchestra.ogcservstatistics.dataservices.InsertCommand;
 
 /**
  * This parse recognizes an OGC service taking into account the syntax convention 
@@ -150,7 +149,7 @@ public final class OGCServiceParser {
 			if (msg.contains(serviceType)) {
 				
 				String service = serviceType.substring(SERVICE_KEYWORD.length());
-				return removeQuote(service);
+				return removeQuoteAndTrim(service);
 			}
 		}
 		// Particular case: the following does not contain the WMS service key 
@@ -168,7 +167,7 @@ public final class OGCServiceParser {
 			if (msg.contains(requestType)) {
 				
 				String request = requestType.substring(REQUEST_KEYWORD.length());
-				return removeQuote(request);
+				return removeQuoteAndTrim(request);
 			}
 		}
 		return "";
@@ -316,7 +315,7 @@ public final class OGCServiceParser {
 
 			if(strLayerList.charAt(i) == COMMA){
 
-				layerList.add(removeQuote(currentLayer.toString()));
+				layerList.add(removeQuoteAndTrim(currentLayer.toString()));
 				
 				int capacity = strLayerList.length() - currentLayer.length();
 				currentLayer = new StringBuilder(capacity);
@@ -326,22 +325,14 @@ public final class OGCServiceParser {
 		}
 		if( !"".equals(currentLayer) ){
 			
-			layerList.add(removeQuote(currentLayer.toString()));
+			layerList.add(removeQuoteAndTrim(currentLayer.toString()));
 		}
 		
 		return layerList;
 	}
 
-	/**
-	 * Remove quotes from string
-	 * @param string
-	 * @return string without string
-	 */
-	private static String removeQuote(String string) {
-
-		string = string.replace(QUOTE, ' ');
-		
-		return string.trim();
+	private static String removeQuoteAndTrim(String string) {
+		return string.replace(QUOTE, ' ').trim();
 	}
 
 }
