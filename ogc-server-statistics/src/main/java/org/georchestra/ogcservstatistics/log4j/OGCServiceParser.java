@@ -151,7 +151,7 @@ public final class OGCServiceParser {
 		}
 
 		// parses service and layer from request
-		String request = URLDecoder.decode(splittedMessage[2], "UTF-8");
+		String request = URLDecoder.decode(splittedMessage[2], "UTF-8").toUpperCase();
 		String service = parseService(request);
 		String ogcReq = parseOperationName(request).toLowerCase();
 
@@ -209,28 +209,24 @@ public final class OGCServiceParser {
 	 * @return an OGC service symbol, "" in other case.
 	 */
 	private static String parseService(final String message){
-
-		String msg = message.toUpperCase();
 		// checks if it is an ogc service
 		for (String pattern : SERVICE_TYPE_PATTERNS) {
-			if (msg.contains(pattern)) {
+			if (message.contains(pattern)) {
 
 				String service = pattern.substring(SERVICE_KEYWORD.length());
 				return removeQuoteAndTrim(service);
 			}
 		}
 		// Particular case: the following does not contain the WMS service key
-		if(msg.contains(GETLEGENDGRAPHIC)){
+		if(message.contains(GETLEGENDGRAPHIC)){
 			return WMS;
 		}
 		return "";
 	}
 
 	private static String parseOperationName(final String message){
-
-		String msg = message.toUpperCase();
 		for (String pattern : OPERATION_NAME_PATTERNS) {
-			if (msg.contains(pattern)) {
+			if (message.contains(pattern)) {
 
 				String request = pattern.substring(REQUEST_KEYWORD.length());
 				return removeQuoteAndTrim(request);
@@ -247,16 +243,13 @@ public final class OGCServiceParser {
 	 * @return a list of layer names
 	 */
 	private static List<String> parseLayer(final String request) {
-
-		String msg = request.toUpperCase();
-
 		List<String> layerList = Collections.emptyList();
 		for (String layerKeyword : LAYER_KEYWORD) {
-			if (msg.contains(layerKeyword)) {
+			if (request.contains(layerKeyword)) {
 
-				int begin = msg.indexOf(layerKeyword);
+				int begin = request.indexOf(layerKeyword);
 				begin = begin + layerKeyword.length();
-				String layers = msg.substring(begin);
+				String layers = request.substring(begin);
 				int end = searchEndOfLayerValue(layers);
 				layers = layers.substring(0, end);
 				
