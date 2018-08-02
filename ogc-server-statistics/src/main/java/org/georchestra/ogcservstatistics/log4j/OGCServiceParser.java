@@ -60,7 +60,7 @@ public final class OGCServiceParser {
 	private static final String WMS = "WMS";
 	private static final String WCS = "WCS";
 	private static final String WMTS = "WMTS";
-	private static final String[] SERVICE_TYPES = {
+	private static final String[] SERVICE_TYPE_PATTERNS = {
 		SERVICE_KEYWORD + WFS,
 		SERVICE_KEYWORD + WCS,
 		SERVICE_KEYWORD + WMS,
@@ -93,7 +93,7 @@ public final class OGCServiceParser {
 	private static final String CREATESTOREDQUERY = "CREATESTOREDQUERY";
 	private static final String DROPSTOREDQUERY = "DROPSTOREDQUERY";
 
-	private static final String[] REQUEST_TYPES = {
+	private static final String[] OPERATION_NAME_PATTERNS = {
 		REQUEST_KEYWORD + GETCAPABILITIES,
 		REQUEST_KEYWORD + GETMAP,
 		REQUEST_KEYWORD + GETLEGENDGRAPHIC,
@@ -217,10 +217,10 @@ public final class OGCServiceParser {
 
 		String msg = message.toUpperCase();
 		// checks if it is an ogc service
-		for (String serviceType : SERVICE_TYPES) {
-			if (msg.contains(serviceType)) {
+		for (String pattern : SERVICE_TYPE_PATTERNS) {
+			if (msg.contains(pattern)) {
 
-				String service = serviceType.substring(SERVICE_KEYWORD.length());
+				String service = pattern.substring(SERVICE_KEYWORD.length());
 				return removeQuoteAndTrim(service);
 			}
 		}
@@ -234,10 +234,10 @@ public final class OGCServiceParser {
 	private static String parseRequest(final String message){
 
 		String msg = message.toUpperCase();
-		for (String requestType : REQUEST_TYPES) {
-			if (msg.contains(requestType)) {
+		for (String pattern : OPERATION_NAME_PATTERNS) {
+			if (msg.contains(pattern)) {
 
-				String request = requestType.substring(REQUEST_KEYWORD.length());
+				String request = pattern.substring(REQUEST_KEYWORD.length());
 				return removeQuoteAndTrim(request);
 			}
 		}
