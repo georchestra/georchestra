@@ -125,21 +125,14 @@ public final class OGCServiceParser {
 	private static final String OGC_MSG_SPLITTER = "[" + OGCServiceMessageFormatter.SEPARATOR + "]";
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat(OGCServiceMessageFormatter.DATE_FORMAT);
 
-	static{
+	static {
 		// sorts the delimiters to allow binary search
 		Arrays.sort(DELIMITER);
 	}
 
 
-	private OGCServiceParser(){
+	private OGCServiceParser() {
 		// utility class
-	}
-
-	public  static boolean isOGCService(LoggingEvent event) {
-		
-		String service = parseService(event.getMessage().toString());
-		
-		return !"".equals(service);
 	}
 
 	/**
@@ -152,11 +145,20 @@ public final class OGCServiceParser {
 	 * @throws UnsupportedEncodingException 
 	 */
 	public static List<Map<String, Object>> parseLog(final String message) throws ParseException, UnsupportedEncodingException {
+		List<Map<String, Object>> logList = new LinkedList<Map<String,Object>>();
 
 		String[] splittedMessage = message.split(OGC_MSG_SPLITTER);
 		if(splittedMessage.length < 3){
 			throw new ParseException("the message has not be recognized. Use OGCServiceMessageFormatter.format(...) to build the message", 0);
 		}
+
+		// parses service and layer from request
+		String request = URLDecoder.decode(splittedMessage[2], "UTF-8");
+		String service = parseService(request);
+		String ogcReq = parseRequest(request).toLowerCase();
+
+		boolean undefinedService = "".equals(service);
+		if (undefinedService) return logList;
 
 		// extracts user 
 		String user=  splittedMessage[0];
@@ -164,11 +166,7 @@ public final class OGCServiceParser {
 		// extracts date
 		Date date = DATE_FORMAT.parse(splittedMessage[1]);
 		
-		// parses service and layer from request
-		String request = URLDecoder.decode(splittedMessage[2], "UTF-8");
-		String service = parseService(request);
-		String ogcReq = parseRequest(request).toLowerCase();
-		
+
 		// parses org (it is optional) and sec roles
 		String org;
 		String roles;
@@ -182,7 +180,6 @@ public final class OGCServiceParser {
 		
 
 		// for each layer adds a log to the list
-		List<Map<String, Object>> logList = new LinkedList<Map<String,Object>>(); 
 		List<String> layerList = parseLayer(request);
 
 		boolean hasToCreateALogWithoutLayer = layerList.isEmpty();
