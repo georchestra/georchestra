@@ -144,8 +144,7 @@ public final class OGCServiceParser {
 	 */
 	private static String parseService(final String message){
 		
-		String msg = new String(message); // defensive copy 
-		msg = msg.toUpperCase();
+		String msg = message.toUpperCase();
 		// checks if it is an ogc service
 		for (int i = 0; i < SERVICE_TYPE.length; i++) {
 			if (msg.contains(SERVICE_TYPE[i])) {
@@ -162,9 +161,8 @@ public final class OGCServiceParser {
 	}
 	
 	private static String parseRequest(final String message){
-		
-		String msg = new String(message); // defensive copy 
-		msg = msg.toUpperCase();
+
+		String msg = message.toUpperCase();
 		// checks if it is an ogc service
 		for (int i = 0; i < REQUEST_TYPE.length; i++) {
 			if (msg.contains(REQUEST_TYPE[i])) {
@@ -187,8 +185,7 @@ public final class OGCServiceParser {
 	 */
 	public static List<Map<String, Object>> parseLog(final String message) throws ParseException, UnsupportedEncodingException {
 
-		String work = new String(message);
-		String[] splittedMessage = work.split("["+OGCServiceMessageFormatter.SEPARATOR+"]");
+		String[] splittedMessage = message.split("["+OGCServiceMessageFormatter.SEPARATOR+"]");
 		if(splittedMessage.length < 3){
 			throw new ParseException("the message has not be recognized. Use OGCServiceMessageFormatter.format(...) to build the message", 0);
 		}
@@ -261,8 +258,7 @@ public final class OGCServiceParser {
 	 */
 	private static List<String> parseLayer(final String request) {
 
-		String msg = new String(request); // defensive copy
-		msg = msg.toUpperCase();
+		String msg = request.toUpperCase();
 
 		List<String> layerList = Collections.emptyList();
 		for (int i = 0; i < LAYER_KEYWORD.length; i++) {
