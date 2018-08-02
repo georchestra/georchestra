@@ -117,7 +117,7 @@ public final class OGCServiceParser {
 		"LAYERS=", "LAYER=","TYPENAME=", "QUERY_LAYERS=", "COVERAGEID="
 	};
 
-	private static final char COMMA = ',';
+	private static final String COMMA = ",";
 	private static final char QUOTE = '\"';
 	private static final char[]  DELIMITER = {'&', ' ',  '\r', '\t', '>' };
 	private static final String OGC_MSG_SPLITTER = "[" + OGCServiceMessageFormatter.SEPARATOR + "]";
@@ -298,28 +298,12 @@ public final class OGCServiceParser {
 	 * @return List of layers
 	 */
 	private static List<String> buildLayerList(final String strLayerList) {
-		
-		List<String> layerList = new LinkedList<String>();
-		
-		StringBuilder currentLayer = new StringBuilder(strLayerList.length());
-		for(int i = 0; i < strLayerList.length(); i++){
-
-			if(strLayerList.charAt(i) == COMMA){
-
-				layerList.add(removeQuoteAndTrim(currentLayer.toString()));
-				
-				int capacity = strLayerList.length() - currentLayer.length();
-				currentLayer = new StringBuilder(capacity);
-			} else {
-				currentLayer.append(strLayerList.charAt(i));
-			}
+		List<String> layers = new LinkedList<String>();
+		String[] layersToBeautify = strLayerList.split(COMMA);
+		for (String layerToBeautify : layersToBeautify) {
+			layers.add(removeQuoteAndTrim(layerToBeautify));
 		}
-		if( !"".equals(currentLayer) ){
-			
-			layerList.add(removeQuoteAndTrim(currentLayer.toString()));
-		}
-		
-		return layerList;
+		return layers;
 	}
 
 	private static String removeQuoteAndTrim(String string) {
