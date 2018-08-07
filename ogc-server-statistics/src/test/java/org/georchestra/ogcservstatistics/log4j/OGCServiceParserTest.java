@@ -1,5 +1,6 @@
 package org.georchestra.ogcservstatistics.log4j;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -39,4 +40,33 @@ public class OGCServiceParserTest {
 		List<Map<String, Object>> lstWhenUnknownService = OGCServiceParser.parseLog(NONEXISTANT_SERVICE);
 		assertTrue(lstWhenUnknownService.isEmpty());
 	}
+
+	@Test
+	public void parseGetCoverage() throws Exception {
+		String GET_COVERAGE_REQUEST = "anonymousUser|2013/12/18 13:57:00|http://localhost/geoserver/ows?SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=$WCS_COVERAGEID&FORMAT=image/tiff&SUBSET=$WCS_SUBSET1&SUBSET=$WCS_SUBSET2";
+		List<Map<String, Object>> logEntries = OGCServiceParser.parseLog(GET_COVERAGE_REQUEST);
+		assertEquals(1, logEntries.size());
+		assertEquals("getcoverage", logEntries.get(0).get("request"));
+		assertEquals("$wcs_coverageid", logEntries.get(0).get("layer"));
+	}
+
+	@Test
+	public void parseGetCoverageManyLayer() throws Exception {
+		String GET_COVERAGE_REQUEST = "anonymousUser|2013/12/18 13:57:00|http://localhost/geoserver/ows?SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=arBres,animaux&FORMAT=image/tiff&SUBSET=$WCS_SUBSET1&SUBSET=$WCS_SUBSET2";
+		List<Map<String, Object>> logEntries = OGCServiceParser.parseLog(GET_COVERAGE_REQUEST);
+		assertEquals(2, logEntries.size());
+		assertEquals("getcoverage", logEntries.get(0).get("request"));
+		assertEquals("arbres", logEntries.get(0).get("layer"));
+		assertEquals("animaux", logEntries.get(1).get("layer"));
+	}
+
+	@Test
+	public void parseGetCoverageNoLayer() throws Exception {
+		String GET_COVERAGE_REQUEST = "anonymousUser|2013/12/18 13:57:00|http://localhost/geoserver/ows?SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&FORMAT=image/tiff&SUBSET=$WCS_SUBSET1&SUBSET=$WCS_SUBSET2";
+		List<Map<String, Object>> logEntries = OGCServiceParser.parseLog(GET_COVERAGE_REQUEST);
+		assertEquals(1, logEntries.size());
+		assertEquals("getcoverage", logEntries.get(0).get("request"));
+		assertEquals("", logEntries.get(0).get("layer"));
+	}
+
 }
