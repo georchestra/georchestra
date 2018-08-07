@@ -61,11 +61,7 @@ public final class OGCServiceParser {
 		SERVICE_KEYWORD + WFS,
 		SERVICE_KEYWORD + WCS,
 		SERVICE_KEYWORD + WMS,
-		SERVICE_KEYWORD + WMTS,
-		SERVICE_KEYWORD + "\"" + WFS + "\"",
-		SERVICE_KEYWORD + "\"" + WCS + "\"",
-		SERVICE_KEYWORD + "\"" + WMS + "\"",
-		SERVICE_KEYWORD + "\"" + WMTS + "\""
+		SERVICE_KEYWORD + WMTS
 	};
 	
 	// request type
