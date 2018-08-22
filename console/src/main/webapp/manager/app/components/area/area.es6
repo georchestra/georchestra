@@ -73,16 +73,17 @@ class AreaController {
         featureProjection: map.getView().getProjection()
       }
       let selected = []
+      json.features.forEach(f => {
+        f.id = f.properties[config.areas.key].toString()
+      })
       vector.getSource().addFeatures(format.readFeatures(json, conf))
       vector.getSource().getFeatures().forEach(f => {
         let group = f.get(config.areas.group)
-        let key = f.get(config.areas.key).toString()
         if (this.groups.indexOf(group) < 0) {
           this.groups.push(group)
         }
         f.set('_label', f.get(config.areas.value).toString() || '')
         f.set('_group', group)
-        f.setId(key)
         if (this.ids.indexOf(f.getId()) >= 0) selected.push(f)
       })
 
