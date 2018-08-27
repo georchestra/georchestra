@@ -31,6 +31,7 @@ class RoleController {
     let $router = this.$injector.get('$router')
     this.role.$update(() => {
       $httpDefaultCache.removeAll()
+      this.role.originalID = this.role.cn
       flash.create('success', this.i18n.updated)
       $router.navigate($router.generate('role', {
         role: this.role.cn,
