@@ -79,7 +79,8 @@ angular.module('manager', [
     'paginationTemplateProvider',
     'CONSOLE_BASE_PATH',
     '$qProvider',
-    ($componentLoader, $translate, $location, paginationTemplate, $uri, $qP) => {
+    '$httpProvider',
+    ($componentLoader, $translate, $location, paginationTemplate, $uri, $qP, $httpProvider) => {
       $componentLoader.setTemplateMapping(
         (name) => 'components/' + name + '/' + name + '.tpl.html')
       $translate
@@ -97,6 +98,16 @@ angular.module('manager', [
       $location.html5Mode(false)
       paginationTemplate.setPath('templates/dirPagination.tpl.html')
       $qP.errorOnUnhandledRejections(false)
+      // see https://github.com/georchestra/georchestra/issues/1695 {{{
+      if (!$httpProvider.defaults.headers.get) {
+        $httpProvider.defaults.headers.get = {}
+      }
+      // disable IE ajax request caching
+      $httpProvider.defaults.headers.get['If-Modified-Since'] = 'Mon, 26 Jul 1997 05:00:00 GMT'
+      // extra
+      $httpProvider.defaults.headers.get['Cache-Control'] = 'no-cache'
+      $httpProvider.defaults.headers.get['Pragma'] = 'no-cache'
+      // }}}
     }])
 
 require('components/analytics/analytics')
