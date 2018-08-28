@@ -1,0 +1,5 @@
+dn: uid=testadmin,ou=users,dc=georchestra,dc=org
+changetype: modify
+replace: userpassword
+userpassword: TESTADMIN_PASSWORD
+

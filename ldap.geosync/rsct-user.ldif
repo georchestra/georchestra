@@ -1,0 +1,11 @@
+dn: uid=georchestra-restreint,ou=users,dc=georchestra,dc=org
+mail: ernest.chiarello@gmail.com
+uid: georchestra-restreint
+givenName: georchestra-restreint
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+sn: georchestra-restreint
+cn: georchestra georchestra-restreint
+userpassword: {SSHA}wSCVIRaRXKdD/7XNVBZRBJWBfDQINTMk

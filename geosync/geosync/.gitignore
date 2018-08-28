@@ -1,0 +1,5 @@
+*.conf
+**/*.conf
+
+*.pyc
+**/*.pyc

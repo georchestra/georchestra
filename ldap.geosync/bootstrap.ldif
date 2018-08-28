@@ -1,0 +1,20 @@
+# Database settings
+dn: olcDatabase=mdb,cn=config
+objectClass: olcDatabaseConfig
+objectClass: olcMdbConfig
+olcSuffix: dc=georchestra,dc=org
+olcDbDirectory: /var/lib/ldap
+olcRootDN: cn=admin,dc=georchestra,dc=org
+olcRootPW: secret
+olcDbIndex: objectClass eq
+olcDbIndex: cn eq,sub,subfinal
+olcDbIndex: mail eq,sub,subfinal
+olcDbIndex: member eq
+olcDbIndex: uid eq
+olcLastMod: TRUE
+olcDbCheckpoint: 512 30
+olcDbMaxSize: 1073741824
+olcAccess: to attrs=userPassword by dn="cn=admin,dc=georchestra,dc=org" write by anonymous auth by self write by * none
+olcAccess: to attrs=shadowLastChange by self write by * read
+olcAccess: to dn.base="" by * read
+olcAccess: to * by dn="cn=admin,dc=georchestra,dc=org" write by * read

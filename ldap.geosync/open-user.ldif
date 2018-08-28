@@ -1,0 +1,11 @@
+dn: uid=georchestra-ouvert,ou=users,dc=georchestra,dc=org
+mail: thema-info@univ-fcomte.fr,
+uid: georchestra-ouvert
+givenName: georchestra-ouvert
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+sn: georchestra-ouvert
+cn: georchestra georchestra-ouvert
+userpassword: {SSHA}wSCVIRaRXKdD/7XNVBZRBJWBfDQINTMk

@@ -1,0 +1,1 @@
+*/5 08-20 * * 1-5 /root/ad2ldap_sync.py >> /var/log/georchestra/ad2ldap_sync.log

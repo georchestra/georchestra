@@ -1,0 +1,16 @@
+share_directory=/mnt/georchestra-ouvert/owncloudsync
+host=SERVER_URL
+dbhost=database
+dbuser=geosync
+dbpass=sonmotdepasse
+ocl_host=OCL_URL
+ocl_login=georchestra-ouvert
+ocl_passwd=sonmotdepasse
+login=georchestra-ouvert
+passwd=sonmotdepasse
+workspace=geosync-ouvert
+workspace_roles="ROLE_ANONYMOUS,ROLE_AUTHENTICATED,GROUP_ADMIN,ADMIN"
+datastore=geosync_shp_open
+pg_datastore=geosync_pg_open
+db=geosync_data_open
+logs=georchestra-ouvert
