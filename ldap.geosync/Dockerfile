@@ -4,17 +4,22 @@
 
 FROM dinkel/openldap
 
-# 
+# set the env variable DEBIAN_FRONTEND to noninteractive
+ENV DEBIAN_FRONTEND noninteractive
+ENV TERM linux
+
+# set timezone
 RUN echo $TZ > /etc/timezone && \
     apt-get update && apt-get install -y tzdata && \
     rm /etc/localtime && \
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
-    dpkg-reconfigure -f noninteractive tzdata && \
-    apt-get clean
+    dpkg-reconfigure -f noninteractive tzdata
 
 # add packages
-RUN apt-get install -y ldap-utils python python-ldap cron sasl2-bin procps
-RUN rm -rf /var/lib/apt/lists/*
+RUN apt-get install -y python python-ldap cron sasl2-bin procps
+RUN apt-get install -y apt-utils
+RUN apt install -y ldap-utils
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # add ldif files for georchestra
 USER openldap
