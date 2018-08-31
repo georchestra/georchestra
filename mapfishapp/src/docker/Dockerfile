@@ -9,12 +9,6 @@ ADD . /
 # Temporary switch to root
 USER root
 
-RUN apt-get update && \
-   apt-get install -y libgdal-java gdal-bin && \
-   rm -rf /var/lib/apt/lists/*
-
-RUN ln -s /usr/share/java/gdal.jar /var/lib/jetty/lib/ext/
-
 RUN mkdir /var/local/uploads && \
     chown jetty:jetty /etc/georchestra /var/local/uploads
 
