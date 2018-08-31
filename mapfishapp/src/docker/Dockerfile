@@ -9,14 +9,6 @@ ADD . /
 # Temporary switch to root
 USER root
 
-RUN apt-get update && \
-   apt-get install -y libgdal-java gdal-bin && \
-   rm -rf /var/lib/apt/lists/*
-
-RUN unzip -d /var/lib/jetty/webapps/mapfishapp /var/lib/jetty/webapps/mapfishapp.war && \
-    ln -s /usr/share/java/gdal.jar /var/lib/jetty/webapps/mapfishapp/WEB-INF/lib/ && \
-    rm -f /var/lib/jetty/webapps/mapfishapp.war
-
 RUN mkdir /mnt/mapfishapp_uploads && \
     chown jetty:jetty /etc/georchestra /mnt/mapfishapp_uploads
 
