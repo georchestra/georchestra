@@ -9,7 +9,7 @@ class OrgController {
   constructor ($injector, $routeParams) {
     this.$injector = $injector
 
-    this.tabs = ['infos', 'area', 'manage']
+    this.tabs = ['infos', 'area', 'users', 'manage']
     this.tab = $routeParams.tab
 
     let translate = $injector.get('translate')
@@ -27,6 +27,10 @@ class OrgController {
     const Delegations = $injector.get('Delegations')
     Delegations.query(resp => {
       this.delegations = resp.filter(d => d.orgs.indexOf($routeParams.org) !== -1)
+    })
+    const User = $injector.get('User')
+    User.query(users => {
+      this.users = users.filter(u => u.org === this.org.name)
     })
   }
 

@@ -34,6 +34,7 @@
   "tab.logs"              : "Logs",
   "tab.manage"            : "Gérer",
   "tab.area"              : "Zone de compétence",
+  "tab.users"             : "Membres",
 
   "user.userlist"         : "Tous les utilisateurs",
   "user.updated"          : "Utilisateur modifié",
