@@ -57,6 +57,7 @@
           <thead>
             <tr>
               <th translate>users.user</th>
+              <th translate>user.org</th>
             </tr>
           </thead>
 
@@ -64,6 +65,11 @@
             <tr ng-repeat="user in org.users">
               <td>
                 <a ng-link="user({id: user.uid, tab: 'infos'})">{{::user.sn}} {{::user.givenName}}</a>
+              </td>
+              <td>
+                <a href="javascript:void(0)" ng-click="org.unassociate(user.uid)" class="text-danger">
+                  <i class="glyphicon glyphicon-remove"></i>
+                </a>
               </td>
             </tr>
           </tbody>

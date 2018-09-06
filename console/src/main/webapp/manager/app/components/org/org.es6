@@ -18,6 +18,7 @@ class OrgController {
     translate('org.error', this.i18n)
     translate('org.deleted', this.i18n)
     translate('org.deleteError', this.i18n)
+    translate('org.userremoved', this.i18n)
 
     this.org = $injector.get('Orgs').get({id: $routeParams.org})
     this.required = $injector.get('OrgsRequired').query()
@@ -28,7 +29,11 @@ class OrgController {
     Delegations.query(resp => {
       this.delegations = resp.filter(d => d.orgs.indexOf($routeParams.org) !== -1)
     })
-    const User = $injector.get('User')
+    this.loadUsers()
+  }
+
+  loadUsers () {
+    const User = this.$injector.get('User')
     User.query(users => {
       this.users = users.filter(u => u.org === this.org.name)
     })
@@ -55,13 +60,28 @@ class OrgController {
   }
 
   confirm () {
-    let flash = this.$injector.get('Flash')
-    let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
+    const flash = this.$injector.get('Flash')
+    const $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
     this.org.status = 'REGISTERED'
     this.org.$update(() => {
       $httpDefaultCache.removeAll()
       flash.create('success', this.i18n.updated)
     }, flash.create.bind(flash, 'danger', this.i18n.error))
+  }
+
+  unassociate (uid) {
+    const User = this.$injector.get('User')
+    const flash = this.$injector.get('Flash')
+    const $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
+
+    User.update({
+      uid: uid,
+      org: ''
+    }).$promise.then(() => {
+      $httpDefaultCache.removeAll()
+      this.loadUsers()
+      flash.create('success', this.i18n.userremoved)
+    })
   }
 }
 

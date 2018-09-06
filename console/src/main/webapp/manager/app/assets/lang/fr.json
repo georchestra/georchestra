@@ -97,6 +97,7 @@
   "org.select"            : "Selectionner un organisme",
   "org.membersCount"      : "Membres",
   "org.ohasdeleg"         : "Les utilisateurs de cet organisme peuvent être gérés par le(s) utilisateur(s) suivant(s):",
+  "org.userremoved"       : "L'utilisateur a été retiré de l'organisme.",
 
   "roles.title_plural"    : "rôles",
   "roles.title_one"       : "rôle",
