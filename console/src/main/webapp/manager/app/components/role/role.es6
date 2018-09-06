@@ -8,7 +8,7 @@ class RoleController {
   constructor ($injector, $routeParams) {
     this.$injector = $injector
 
-    this.tabs = ['infos', 'manage']
+    this.tabs = ['infos', 'users', 'manage']
     this.tab = $routeParams.tab
 
     let translate = $injector.get('translate')
@@ -23,6 +23,15 @@ class RoleController {
     this.role = $injector.get('Role').get(
       {id: $routeParams.role},
       role => { role.originalID = role.cn })
+    this.loadUsers()
+  }
+
+  loadUsers () {
+    const User = this.$injector.get('User')
+    User.query(users => {
+      this.users = users.filter(u => this.role.users.indexOf(u.uid) >= 0)
+      this.notUsers = users.filter(u => this.role.users.indexOf(u.uid) === -1)
+    })
   }
 
   save () {
