@@ -52,6 +52,18 @@
                                '1': '{} {{ &quot;role.user&quot; | translate }}',
                                'other': '{} {{ &quot;role.users&quot; | translate }}'}">
         </h3>
+
+        <form class="form-inline pull-right">
+          <div class="form-group">
+            <label for="orguser" translate>org.userlabel</label>
+            <select class="pull-right form-control input-sm" ng-model="org.user"
+               id="orguser" ng-change="org.associate()"
+               data-placeholder-text-single="'…' | translate"
+               ng-options="u.uid as (u.sn + ' ' + u.givenName) for u in org.notUsers" chosen>
+            </select>
+          </div>
+        </form>
+
         <table class="table table-striped table-condensed">
 
           <thead>
@@ -67,7 +79,7 @@
                 <a ng-link="user({id: user.uid, tab: 'infos'})">{{::user.sn}} {{::user.givenName}}</a>
               </td>
               <td>
-                <a href="javascript:void(0)" ng-click="org.unassociate(user.uid)" class="text-danger">
+                <a href="javascript:void(0)" ng-click="org.associate(user.uid, true)" class="text-danger">
                   <i class="glyphicon glyphicon-remove"></i>
                 </a>
               </td>

@@ -98,6 +98,8 @@
   "org.membersCount"      : "Membres",
   "org.ohasdeleg"         : "Les utilisateurs de cet organisme peuvent être gérés par le(s) utilisateur(s) suivant(s):",
   "org.userremoved"       : "L'utilisateur a été retiré de l'organisme.",
+  "org.useradded"         : "L'utilisateur a été ajouté à l'organisme.",
+  "org.userlabel"         : "Ajouter",
 
   "roles.title_plural"    : "rôles",
   "roles.title_one"       : "rôle",

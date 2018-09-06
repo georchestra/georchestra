@@ -19,6 +19,7 @@ class OrgController {
     translate('org.deleted', this.i18n)
     translate('org.deleteError', this.i18n)
     translate('org.userremoved', this.i18n)
+    translate('org.useradded', this.i18n)
 
     this.org = $injector.get('Orgs').get({id: $routeParams.org})
     this.required = $injector.get('OrgsRequired').query()
@@ -36,6 +37,7 @@ class OrgController {
     const User = this.$injector.get('User')
     User.query(users => {
       this.users = users.filter(u => u.org === this.org.name)
+      this.notUsers = users.filter(u => u.org !== this.org.name)
     })
   }
 
@@ -69,18 +71,20 @@ class OrgController {
     }, flash.create.bind(flash, 'danger', this.i18n.error))
   }
 
-  unassociate (uid) {
+  associate (uid, unassociate = false) {
+    if (!uid) uid = this.user
+    if (!uid) return
     const User = this.$injector.get('User')
     const flash = this.$injector.get('Flash')
     const $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
 
     User.update({
       uid: uid,
-      org: ''
+      org: unassociate ? '' : this.org.id
     }).$promise.then(() => {
       $httpDefaultCache.removeAll()
       this.loadUsers()
-      flash.create('success', this.i18n.userremoved)
+      flash.create('success', unassociate ? this.i18n.userremoved : this.i18n.useradded)
     })
   }
 }
