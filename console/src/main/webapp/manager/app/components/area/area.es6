@@ -1,5 +1,15 @@
 require('components/area/area.tpl')
 
+const buildStyle = (fillColor, strokeColor, width) => new ol.style.Style({
+  fill: new ol.style.Fill({ color: fillColor }),
+  stroke: new ol.style.Stroke({ color: strokeColor, width: width || 1 })
+})
+const highlightStyle = buildStyle([255, 0, 0, 0.5], [255, 0, 0, 0.2])
+const highlight = feature => {
+  feature.setStyle(highlightStyle)
+  setTimeout(() => feature.setStyle(), 250)
+}
+
 class AreaController {
   static $inject = [ '$injector', '$http' ]
 
@@ -27,11 +37,6 @@ class AreaController {
     this.ids = this.item.cities || []
     this.groups = []
 
-    const buildStyle = (fillColor, strokeColor, width) => new ol.style.Style({
-      fill: new ol.style.Fill({ color: fillColor }),
-      stroke: new ol.style.Stroke({ color: strokeColor, width: width || 1 })
-    })
-
     const vector = new ol.layer.Vector({
       source: new ol.source.Vector(),
       style: buildStyle([ 255, 255, 255, 0.1 ], [ 0, 0, 0, 0.2 ])
@@ -57,12 +62,6 @@ class AreaController {
     this.collection = select.getFeatures()
 
     const format = new ol.format.GeoJSON()
-
-    const highlightStyle = buildStyle([255, 0, 0, 0.5], [255, 0, 0, 0.2])
-    const highlight = (feature) => {
-      feature.setStyle(highlightStyle)
-      setTimeout(() => feature.setStyle(), 250)
-    }
 
     this.loading = true
     this.$injector.get('$http').get(config.areas.url).then(
@@ -95,13 +94,13 @@ class AreaController {
         this.map.getView().setZoom(config.map.zoom)
       }
 
-      updateSelection(selected)
+      this.updateSelection(selected)
       this.loading = false
     })
 
     map.getInteractions().push(select)
     select.on('select', (e) => {
-      updateSelection([], true)
+      this.updateSelection([], true)
       e.selected.map(highlight)
     })
 
@@ -116,7 +115,7 @@ class AreaController {
         dragBox.getGeometry().getExtent(),
         (feature) => { selected.push(feature) }
       )
-      updateSelection(selected, true)
+      this.updateSelection(selected, true)
       dragBox.setActive(this.draw = false)
       select.setActive(true)
     })
@@ -150,30 +149,14 @@ class AreaController {
         let f = vector.getSource().getFeatureById(item.getAttribute('data-id'))
         if (select.getFeatures().getArray().indexOf(f) >= 0) {
           select.getFeatures().remove(f)
-          updateSelection([], true)
+          this.updateSelection([], true)
         } else {
-          updateSelection([f], true)
+          this.updateSelection([f], true)
         }
         f.setStyle(buildStyle([255, 0, 0, 0.5], [255, 0, 0, 0.2]))
         setTimeout(() => f.setStyle(), 350)
       }
     })
-
-    const updateSelection = (features, cumulative = false) => {
-      this.$injector.get('$timeout')(() => {
-        if (!cumulative) this.collection.clear()
-        const uniques = this.collection.getArray().concat(features).filter(
-          (item, index, self) => index === self.indexOf(item)
-        )
-        this.collection.clear()
-        this.collection.extend(uniques)
-        this.ids = uniques.map(f => f.getId())
-        features.map(highlight)
-        this.collection.getArray().sort(
-          (a, b) => a.get('_label').localeCompare(b.get('_label'))
-        )
-      })
-    }
 
     this.selectBBOX = () => {
       select.setActive(false)
@@ -182,11 +165,11 @@ class AreaController {
 
     this.selectBy = () => {
       if (this.group === 'all') {
-        updateSelection(vector.getSource().getFeatures())
+        this.updateSelection(vector.getSource().getFeatures())
         return
       }
       if (this.group === 'none') {
-        updateSelection([])
+        this.updateSelection([])
         this.group = ''
         return
       }
@@ -194,8 +177,30 @@ class AreaController {
       let selected = vector.getSource().getFeatures().filter(
         f => f.get('_group') === this.group
       )
-      updateSelection(selected)
+      this.updateSelection(selected)
     }
+  }
+
+  updateSelection (features, cumulative = false) {
+    this.$injector.get('$timeout')(() => {
+      if (!cumulative) this.collection.clear()
+      const uniques = this.collection.getArray().concat(features).filter(
+        (item, index, self) => index === self.indexOf(item)
+      )
+      this.collection.clear()
+      this.collection.extend(uniques)
+      this.ids = uniques.map(f => f.getId())
+      features.map(highlight)
+      this.collection.getArray().sort(
+        (a, b) => a.get('_label').localeCompare(b.get('_label'))
+      )
+    })
+  }
+
+  removeFromSelection (feature) {
+    highlight(feature)
+    this.collection.remove(feature)
+    this.ids = this.collection.getArray().map(f => f.getId())
   }
 
   save () {
@@ -210,13 +215,12 @@ class AreaController {
   }
 }
 
-angular.module('manager')
-  .component('areas', {
-    bindings: {
-      item: '=',
-      callback: '='
-    },
-    controller: AreaController,
-    controllerAs: 'area',
-    templateUrl: 'components/area/area.tpl.html'
-  })
+angular.module('manager').component('areas', {
+  bindings: {
+    item: '=',
+    callback: '='
+  },
+  controller: AreaController,
+  controllerAs: 'area',
+  templateUrl: 'components/area/area.tpl.html'
+})
