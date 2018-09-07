@@ -39,6 +39,9 @@
     
     <ul class="list">
       <li dir-paginate="f in area.collection.getArray() | itemsPerPage: 25">
+        <a class="text-danger pull-right" href="javascript:void(0)" ng-click="area.removeFromSelection(f)">
+          <i class="glyphicon glyphicon-remove"></i>
+        </a>
         {{f.get('_label')}}
       </li>
     </ul>
