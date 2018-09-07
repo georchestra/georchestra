@@ -83,7 +83,6 @@ class RoleController {
     const flash = this.$injector.get('Flash')
     const RolesUsers = this.$injector.get('RolesUsers')
     const $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
-    const $router = this.$injector.get('$router')
 
     RolesUsers.save({
       users: [ uid ],
@@ -96,7 +95,6 @@ class RoleController {
     }, () => {
       flash.create('danger', 'FAIL')
     })
-
   }
 }
 
