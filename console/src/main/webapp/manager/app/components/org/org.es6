@@ -21,7 +21,9 @@ class OrgController {
     translate('org.userremoved', this.i18n)
     translate('org.useradded', this.i18n)
 
-    this.org = $injector.get('Orgs').get({id: $routeParams.org})
+    this.org = $injector.get('Orgs').get({
+      id: $routeParams.org
+    }, () => this.loadUsers())
     this.required = $injector.get('OrgsRequired').query()
     this.orgTypeValues = $injector.get('OrgsType').query()
 
@@ -30,7 +32,6 @@ class OrgController {
     Delegations.query(resp => {
       this.delegations = resp.filter(d => d.orgs.indexOf($routeParams.org) !== -1)
     })
-    this.loadUsers()
   }
 
   loadUsers () {
