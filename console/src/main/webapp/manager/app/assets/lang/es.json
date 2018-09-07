@@ -34,6 +34,7 @@
   "tab.logs"              : "Logs",
   "tab.manage"            : "Administrar",
   "tab.area"              : "Zona de competencia",
+  "tab.users"             : "**TODO**",
 
   "user.userlist"         : "Todos los usuarios",
   "user.updated"          : "Usuario modificado",
@@ -96,6 +97,9 @@
   "org.select"            : "Seleccionar una entidad",
   "org.membersCount"      : "Miembros",
   "org.ohasdeleg"         : "Los usuarios de esta organización pueden ser administrados por los siguientes usuarios:",
+  "org.userremoved"       : "**TODO**",
+  "org.useradded"         : "**TODO**",
+  "org.userlabel"         : "**TODO**",
 
   "roles.title_plural"    : "roles",
   "roles.title_one"       : "role",
@@ -119,6 +123,9 @@
   "role.cn"               : "Nombre",
   "role.favorite"         : "Favorite",
   "role.favorites"        : "Favorites",
+  "role.useradded"        : "**TODO**",
+  "role.userremoved"      : "**TODO**",
+  "role.userlabel"        : "**TODO**",
 
   "delegations.title"     : "delegación de administración",
   "delegations.title_plural" : "delegaciones de administración",

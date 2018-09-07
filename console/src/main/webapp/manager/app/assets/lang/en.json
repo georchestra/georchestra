@@ -34,6 +34,7 @@
   "tab.logs"              : "Logs",
   "tab.manage"            : "Manage",
   "tab.area"              : "Area",
+  "tab.users"             : "Members",
 
   "user.userlist"         : "All users",
   "user.updated"          : "User updated",
@@ -93,9 +94,12 @@
   "org.orglist"           : "All orgs",
   "org.pendingmsg"        : "Pending organisation",
   "org.confirm"           : "Confirm",
-  "org.select"            : "Select an organization",
+  "org.select"            : "Select an organisation",
   "org.membersCount"      : "Members count",
   "org.ohasdeleg"         : "Users belonging to this Org can be managed by:",
+  "org.userremoved"       : "User has been removed from organisation",
+  "org.useradded"         : "User has been added to organisation",
+  "org.userlabel"         : "Add",
 
   "roles.title_plural"    : "roles",
   "roles.title_one"       : "role",
@@ -119,6 +123,9 @@
   "role.cn"               : "Id",
   "role.favorite"         : "Favorite",
   "role.favorites"        : "Favorites",
+  "role.useradded"        : "User has been removed from role",
+  "role.userremoved"      : "User has been added to role",
+  "role.userlabel"        : "Add",
 
   "delegations.title"     : "management delegation",
   "delegations.title_plural" : "management delegations",

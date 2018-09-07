@@ -34,6 +34,7 @@
   "tab.logs"              : "Protokolle",
   "tab.manage"            : "Verwalten",
   "tab.area"              : "Bereich",
+  "tab.users"             : "**TODO**",
 
   "user.userlist"         : "Alle Benutzer",
   "user.updated"          : "Benutzer aktualisiert",
@@ -96,6 +97,9 @@
   "org.select"            : "Organisation auswählen",
   "org.membersCount"      : "Mitglieder",
   "org.ohasdeleg"         : "Benutzer dieser Organisation können von folgenden Benutzern verwaltet werden:",
+  "org.userremoved"       : "**TODO**",
+  "org.useradded"         : "**TODO**",
+  "org.userlabel"         : "**TODO**",
 
   "roles.title_plural"    : "Rollen",
   "roles.title_one"       : "Rolle",
@@ -119,6 +123,9 @@
   "role.cn"               : "Name",
   "role.favorite"         : "Favorite",
   "role.favorites"        : "Favorites",
+  "role.useradded"        : "**TODO**",
+  "role.userremoved"      : "**TODO**",
+  "role.userlabel"        : "**TODO**",
 
   "delegations.title"     : "management delegation",
   "delegations.title_plural" : "management delegations",
