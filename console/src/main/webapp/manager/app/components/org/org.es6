@@ -12,6 +12,8 @@ class OrgController {
     this.tabs = ['infos', 'area', 'users', 'manage']
     this.tab = $routeParams.tab
 
+    this.itemsPerPage = 15
+
     let translate = $injector.get('translate')
     this.i18n = {}
     translate('org.updated', this.i18n)

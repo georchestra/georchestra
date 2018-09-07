@@ -59,7 +59,7 @@
           </thead>
 
           <tbody>
-            <tr ng-repeat="user in role.users">
+            <tr dir-paginate="user in role.users | itemsPerPage: role.itemsPerPage">
               <td>
                 <a ng-link="user({id: user.uid, tab: 'infos'})">{{::user.sn}} {{::user.givenName}}</a>
               </td>
@@ -72,6 +72,8 @@
           </tbody>
 
         </table>
+
+        <dir-pagination-controls></dir-pagination-controls>
 
       </div>
 

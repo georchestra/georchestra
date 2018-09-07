@@ -11,6 +11,8 @@ class RoleController {
     this.tabs = ['infos', 'users', 'manage']
     this.tab = $routeParams.tab
 
+    this.itemsPerPage = 15
+
     let translate = $injector.get('translate')
     this.i18n = {}
     translate('role.updated', this.i18n)
