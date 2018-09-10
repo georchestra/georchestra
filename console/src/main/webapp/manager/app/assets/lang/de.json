@@ -148,8 +148,8 @@
   "area.all"              : "Alle",
   "area.none"             : "Keine",
   "area.search"           : "Suchen",
-  "area.import"           : "**TODO**",
-  "area.export"           : "**TODO**",
+  "area.import"           : "CSV importieren",
+  "area.export"           : "CSV exportieren",
 
   "role.allusers"         : "Alle Benutzer",
   "role.system"           : "geOrchestra-Rollen",
