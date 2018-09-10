@@ -31,6 +31,7 @@
   </div>
 
   <div class="col-md-4" ng-if="!area.maponly">
+
     <p class="alert alert-info">
       {{area.collection.getArray().length}} {{ 'area.area' | translate }}
       <button ng-if="area.item.$resolved" class="btn btn-default btn-sm" ng-click="area.save()" translate>area.save</button>
@@ -38,7 +39,7 @@
     </p>
     
     <ul class="list">
-      <li dir-paginate="f in area.collection.getArray() | itemsPerPage: 25">
+      <li dir-paginate="f in area.collection.getArray() | itemsPerPage: 20">
         <a class="text-danger pull-right" href="javascript:void(0)" ng-click="area.removeFromSelection(f)">
           <i class="glyphicon glyphicon-remove"></i>
         </a>
@@ -46,6 +47,12 @@
       </li>
     </ul>
     <dir-pagination-controls max-size="7"></dir-pagination-controls>
+
+    <div class="btn-group">
+      <button class="btn btn-default btn-sm" ng-click="area.import()" translate>area.import</button>
+      <button class="btn btn-default btn-sm" ng-click="area.export()" translate>area.export</button>
+    </div>
+
   </div>
 
   <div class="loading" ng-show="area.loading">

@@ -224,6 +224,18 @@ class AreaController {
       flash.create('success', this.i18n.updated)
     }, flash.create.bind(flash, 'danger', this.i18n.error))
   }
+
+  export () {
+    const a = document.createElement('a')
+    a.href = window.URL.createObjectURL(new Blob(
+      [ this.ids.join('\n') ],
+      { type: 'text/csv' }
+    ))
+    a.download = 'export.csv'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+  }
 }
 
 angular.module('manager').component('areas', {
