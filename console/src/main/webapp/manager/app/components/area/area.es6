@@ -8,13 +8,15 @@ const highlightStyle = buildStyle([255, 0, 0, 0.5], [255, 0, 0, 0.2])
 const highlight = feature => {
   feature.setStyle(highlightStyle)
   setTimeout(() => feature.setStyle(), 250)
+  return feature
 }
 
 class AreaController {
-  static $inject = [ '$injector', '$http' ]
+  static $inject = [ '$injector', '$http', '$scope' ]
 
-  constructor ($injector, $http) {
+  constructor ($injector, $http, $scope) {
     this.$injector = $injector
+    this.$scope = $scope
 
     let translate = $injector.get('translate')
     this.i18n = {}
@@ -42,6 +44,7 @@ class AreaController {
       source: new ol.source.Vector(),
       style: buildStyle([ 255, 255, 255, 0.1 ], [ 0, 0, 0, 0.2 ])
     })
+    this.source = vector.getSource()
 
     const map = new ol.Map({
       target: document.querySelector('.map'),
@@ -235,6 +238,27 @@ class AreaController {
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
+  }
+
+  import () {
+    const fileInput = document.createElement('input')
+    const reader = new window.FileReader()
+    fileInput.type = 'file'
+    fileInput.accept = 'text/csv'
+    this.ids = []
+    this.collection.clear()
+    reader.onload = () => this.$scope.$apply(() => {
+      reader.result.split('\n').forEach(id => {
+        let f = this.source.getFeatureById(id)
+        if (!f) return
+        this.collection.push(highlight(f))
+        this.ids.push(id)
+      })
+    })
+    fileInput.addEventListener(
+      'change',
+      () => reader.readAsBinaryString(fileInput.files[0]))
+    fileInput.click()
   }
 }
 
