@@ -6,6 +6,7 @@
 <%
 String headerHeight = "90";
 String headerUrl = "/header/";
+Boolean userCantChooseUid = false;
 
 try {
   ApplicationContext ctx = RequestContextUtils.getWebApplicationContext(request);
@@ -13,6 +14,7 @@ try {
         && (((GeorchestraConfiguration) ctx.getBean(GeorchestraConfiguration.class)).activated())) {
         headerHeight = ctx.getBean(GeorchestraConfiguration.class).getProperty("headerHeight");
         headerUrl = ctx.getBean(GeorchestraConfiguration.class).getProperty("headerUrl");
+        userCantChooseUid = Boolean.parseBoolean(ctx.getBean(GeorchestraConfiguration.class).getProperty("userCantChooseUid"));
   }
 } catch (Exception e) {}
 %>
