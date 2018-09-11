@@ -22,6 +22,7 @@ class AreaController {
     this.i18n = {}
     translate('area.updated', this.i18n)
     translate('area.error', this.i18n)
+    this.canExport = window.Blob && window.FileReader
   }
 
   $onInit () {
