@@ -2,7 +2,21 @@
 # Dockerfile for the geOrchestra openldap service
 #
 
-FROM dinkel/ldap:latest
+FROM debian:stretch
+
+ENV OPENLDAP_VERSION 2.4.44
+ENV RUN_AS_UID 101
+ENV RUN_AS_GID 101
+
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
+        slapd=${OPENLDAP_VERSION}* && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN mv /etc/ldap /etc/ldap.dist
+
+COPY docker/modules/ /etc/ldap.dist/modules
 
 RUN apt-get update && \
     apt-get install -y ldap-utils procps && \
@@ -20,8 +34,10 @@ ADD docker/docker-entrypoint.d/* /docker-entrypoint.d/
 ADD docker/docker-entrypoint.sh /
 RUN chmod +x /docker-entrypoint.d/*
 
-ENV RUN_AS_UID 101
-ENV RUN_AS_GID 101
+EXPOSE 389
+
+VOLUME ["/etc/ldap", "/var/lib/ldap"]
+
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
 
 CMD [ "sh", "-c", "exec slapd -d 32768 -u ${RUN_AS_UID} -g ${RUN_AS_GID}" ]

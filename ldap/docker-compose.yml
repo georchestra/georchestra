@@ -1,0 +1,11 @@
+version: '2'
+services:
+  ldap:
+    image: georchestra/ldap
+    build: ./
+    environment:
+      - SLAPD_DOMAIN=georchestra.org
+      - SLAPD_ORGANIZATION=geOrchestra
+      - SLAPD_PASSWORD=secret
+    ports:
+      - '3899:389'
