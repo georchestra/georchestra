@@ -1,16 +1,11 @@
 #!/bin/bash
 
 # test if already initialized
-if [ ! -d /etc/ldap/slapd.d ]; then
-
-    # init ldap config
-    echo -n "Init with upstream entrypoint..."
-    /entrypoint.sh true
-    echo "Init: OK"
+if [ ! -f /etc/ldap/slapd.d/initialized ]; then
 
     # start slapd in background
     echo -n "Starting slapd daemon in background..."
-    slapd -u openldap -g openldap -h "ldapi:/// ldap://127.0.0.1/"
+    slapd -u ${RUN_AS_UID} -g ${RUN_AS_GID} -h "ldapi:/// ldap://127.0.0.1/"
     echo "Started: OK"
 
     echo -n "Waiting for LDAP deamon to start..."
@@ -64,6 +59,7 @@ if [ ! -d /etc/ldap/slapd.d ]; then
     done;
     echo "Waiting: OK"
 
+    touch /etc/ldap/slapd.d/initialized
 else
     echo "LDAP already initialized !"
 fi
