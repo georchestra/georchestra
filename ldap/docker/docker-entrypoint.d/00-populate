@@ -10,7 +10,7 @@ if [ ! -d /etc/ldap/slapd.d ]; then
 
     # start slapd in background
     echo -n "Starting slapd daemon in background..."
-    slapd -u openldap -g openldap -h "ldapi:/// ldap://127.0.0.1/"
+    slapd -u ${RUN_AS_UID} -g ${RUN_AS_GID} -h "ldapi:/// ldap://127.0.0.1/"
     echo "Started: OK"
 
     echo -n "Waiting for LDAP deamon to start..."
