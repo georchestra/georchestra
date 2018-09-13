@@ -37,7 +37,7 @@
 
        def server=project.properties['server']
        def subTarget=project.properties['subTarget']
-       
+
        def params = new Parameters(
            project: project,
            target: server,
@@ -46,7 +46,7 @@
            ant: ant
        )
        params.init(false)
-       
+
        new PostTreatment().run(this, log, ant, project.basedir, params.projectDir, server, subTarget, project.build.directory)
 
 ]]></postTreatmentScript>

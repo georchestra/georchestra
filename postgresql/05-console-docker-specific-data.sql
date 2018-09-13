@@ -2,6 +2,7 @@
 -- Paths for the files are Dockerfile-specific, hence in this separate file.
 -- Adapt to your use-case in the non-docker case.
 --
+SET search_path TO console,public,pg_catalog;
 
 BEGIN;
 
