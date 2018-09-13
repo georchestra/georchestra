@@ -102,7 +102,7 @@ GEOR.config = (function() {
             "KML": "KML",
             "application/vnd.google-earth.kml xml": "KML",
             "application/vnd.google-earth.kml+xml": "KML",
-            "SHAPE-ZIP": "SHAPE-ZIP",
+            "SHAPE-ZIP": "SHAPEFILE",
             "application/json": "JSON",
             "json": "JSON",
             "csv": "CSV"
