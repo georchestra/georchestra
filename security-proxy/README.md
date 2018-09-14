@@ -8,12 +8,12 @@ The behavior is controlled by the files from the `<datadir_root>/security-proxy`
 
 ## How-to integrate a new application in geOrchestra ?
 
-The goal here is to take advantage of the [SSO](https://en.wikipedia.org/wiki/Single_sign-on) feature for the new application without having to "CASify" it.
+The goal here is to benefit from the [SSO](https://en.wikipedia.org/wiki/Single_sign-on) feature for the new application without having to "CASify" it.
 
 ### Proxy configuration
 
 It may sound obvious, but the new application has to be proxified by the security-proxy first !
-This can be configured in the [targets-mapping](https://github.com/georchestra/datadir/blob/master/security-proxy/targets-mapping.properties) file, which can be found in geOrchestra datadir. Remember: changes to this file require the security proxy to be restarted.
+It can be done in the [targets-mapping](https://github.com/georchestra/datadir/blob/master/security-proxy/targets-mapping.properties) file, which can be found in geOrchestra datadir. Remember: changes in this file requires to restart the security proxy.
 This file maps public URLs to internal (private) URLs.
 For instance, the `header=http://localhost:8280/header/` line means "requests hitting the /header path should be routed to http://localhost:8280/header".
 
@@ -24,7 +24,7 @@ This can be done very easily with the [security-mappings](https://github.com/geo
 In this file, the last line starting with `<intercept-url pattern=".*" access="IS_AUTHENTICATED_ANONYMOUSLY,ROLE_USER...` means "by default, grant access to every path for anonymous and authenticated users". This means the frontend app is already available to every user, once proxified.
 
 To restrict access to the backend, one just has to insert a new line before the last one.
-Here we choose to restrict backend access to people having the `ADMINISTRATOR` role:
+In the example below, we choose to restrict backend access to people having the `ADMINISTRATOR` role:
 ```xml
 <intercept-url pattern="/newapp/backend" access="ROLE_ADMINISTRATOR" />
 ```
@@ -38,10 +38,10 @@ It is also possible to create a specific role which grants access to the backend
 
 #### Headers
 
-With every request, the proxy adds specific HTTP headers, so the application knows:
+With every request, the proxy adds specific HTTP headers, allowing the application to know:
  * if the request comes from a registered user, or an anonymous one - this is `sec-username` (not provided if anonymous).
  * which roles the user bears - `sec-roles` is a semi-colon separated list of roles (not provided if anonymous).
- * which organisation the user belongs to - `sec-orgname` provides the human-readable organisation title while `sec-org` is mapped onto the organisation id (LDAP's cn).
+ * which organisation the user belongs to - `sec-orgname` provides the human-readable organisation title while `sec-org` is mapped onto the organisation id (LDAP's `cn`).
 
 Several other user properties are also provided as headers:
  * `sec-email` is the user email
@@ -51,8 +51,8 @@ Several other user properties are also provided as headers:
 
 Additional headers can be configured in the proxy with the [headers-mappings](https://github.com/georchestra/datadir/blob/master/security-proxy/headers-mappings.xml) file.
 
-With the headers an application receives, it should be able to handle requests appropriately.
-Some applications will require a direct connection to the LDAP (where users, roles and organisations objects are stored), for instance to list all Organisations.
+The application handles requests appropriately thanks to the headers received.
+Some applications will require a direct connection to the LDAP (where users, roles and organisations objects are stored), for instance to list all organisations.
 
 #### Entrypoints
 
