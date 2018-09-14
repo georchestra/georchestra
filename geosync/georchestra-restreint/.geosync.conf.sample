@@ -1,0 +1,16 @@
+share_directory=/mnt/georchestra-restreint/owncloudsync
+host=SERVER_URL
+dbhost=database
+dbuser=geosync
+dbpass=sonmotdepasse
+ocl_host=OCL_URL
+ocl_login=georchestra-restreint
+ocl_passwd=sonmotdepasse
+login=georchestra-restreint
+passwd=sonmotdepasse
+workspace=geosync-restreint
+workspace_roles="ROLE_AUTHENTICATED,GROUP_ADMIN,ADMIN"
+datastore=geosync_shp_rsct
+pg_datastore=geosync_pg_rsct
+db=geosync_data_rsct
+logs=georchestra-restreint

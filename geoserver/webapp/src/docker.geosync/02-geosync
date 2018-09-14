@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# suppression de https:// dans $SERVER_URL
+URL=`echo $SERVER_URL | sed -re 's/https:\/\/(.*)/\1/'`
+# configuration globale de geoserver
+perl -p -i -e "s/georchestra.mydomain.org/$URL/" /mnt/geoserver_datadir/global.xml
+
+mkdir /mnt/geoserver_datadir/data
+
+mkdir /mnt/geoserver_datadir/data/geosync-ouvert
+mkdir /mnt/geoserver_datadir/data/geosync-restreint
+
+mkdir /mnt/geoserver_datadir/data/geosync-ouvert/geosync_shp_open
+mkdir /mnt/geoserver_datadir/data/geosync-restreint/geosync_shp_rsct
+
+chown -R jetty:jetty /mnt/geoserver_datadir/data
+
+# modification de webdefault.xml
+perl -p -i -e "s/<\/web-app>/<Ernest><\/Ernest>\n<\/web-app>/" /usr/local/jetty/etc/webdefault.xml
+

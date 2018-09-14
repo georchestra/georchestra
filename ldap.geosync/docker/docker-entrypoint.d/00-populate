@@ -1,0 +1,86 @@
+#!/bin/bash
+
+# test if already initialized
+if [ ! -d /etc/ldap/slapd.d ]; then
+
+    # init ldap config
+    echo -n "Init with upstream entrypoint..."
+    /entrypoint.sh true
+    echo "Init: OK"
+
+    # start slapd in background
+    echo -n "Starting slapd daemon in background..."
+    slapd -u openldap -g openldap -h "ldapi:/// ldap://127.0.0.1/"
+    echo "Started: OK"
+
+    echo -n "Waiting for LDAP deamon to start..."
+    while true; do
+        sleep 1
+        ldapsearch -x >/dev/null 2>&1
+        if [ $? -eq 0 ]; then
+            break
+        fi
+    done;
+    echo "Waiting: OK"
+
+    # Getting the LDAP domain...
+    dc_string=""
+    IFS="."; declare -a dc_parts=($SLAPD_DOMAIN); unset IFS
+    for dc_part in "${dc_parts[@]}"; do
+        if [ -z "$dc_string" ]
+          then
+            dc_string="dc=$dc_part"
+          else
+            dc_string="$dc_string,dc=$dc_part"
+        fi
+    done
+
+    echo "Adding olcSaslHost in ldap"
+    ldapadd -Y EXTERNAL -H ldapi:/// -f /tmp/LDAP/cn-config.ldif
+
+    echo "Populating LDAP tree..."
+    sed -i 's/mdb/hdb/' /tmp/memberof.ldif
+    ldapadd -Y EXTERNAL -H ldapi:/// -f /tmp/memberof.ldif
+    if [ "$IGNORE_DATA" = 'true' ]; then
+        echo "$0: ignoring /tmp/georchestra.ldif";
+    else
+        perl -p -i -e "s/georchestra.org/${SLAPD_DOMAIN}/"         /tmp/georchestra.ldif
+        perl -p -i -e "s/dc=georchestra,dc=org/${dc_string}/"      /tmp/georchestra.ldif
+        ldapadd -D "cn=admin,${dc_string}" -w "$SLAPD_PASSWORD" -f /tmp/georchestra.ldif
+
+        echo "adding georchestra-xxxx users"
+        echo "setting georchestra-xxxx in admin groups"
+        for file in open-user.ldif rsct-user.ldif open-user-groups.ldif rsct-user-groups.ldif
+        do
+            perl -p -i -e "s/dc=georchestra,dc=org/${dc_string}/"     /tmp/LDAP/${file}
+            ldapadd -D"cn=admin,${dc_string}" -w "$SLAPD_PASSWORD" -f /tmp/LDAP/${file}
+        done
+
+    fi
+    echo "Populating LDAP tree: OK"
+
+    echo "Changing testadmin default password"
+    perl -p -i -e "s/dc=georchestra,dc=org/${dc_string}/"       /tmp/testadmin.ldif
+    perl -p -i -e "s/TESTADMIN_PASSWORD/${TESTADMIN_PASSWORD}/" /tmp/testadmin.ldif
+    ldapmodify -c -D "cn=admin,dc=georchestra,dc=org" -w "$SLAPD_PASSWORD" -f /tmp/testadmin.ldif
+
+    echo "Creating indexes..."
+    ldapmodify -Y EXTERNAL -H ldapi:/// -f /tmp/indexes.ldif
+    echo "Indexes: OK"
+
+    pkill slapd
+
+    # wait for ldap to stop
+    echo -n "Waiting for LDAP to stop..."
+    while true; do
+        sleep 1
+        pgrep slapd >/dev/null 2>&1
+        if [ $? -ne 0 ]; then
+            break
+        fi
+    done;
+    echo "Waiting: OK"
+
+else
+    echo "LDAP already initialized !"
+fi

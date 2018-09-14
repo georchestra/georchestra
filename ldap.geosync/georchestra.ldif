@@ -1,0 +1,291 @@
+# users, georchestra.org
+dn: ou=users,dc=georchestra,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: users
+
+# testuser, users, georchestra.org
+dn: uid=testuser,ou=users,dc=georchestra,dc=org
+objectClass: organizationalPerson
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: shadowAccount
+objectClass: top
+mail: psc+testuser@georchestra.org
+uid: testuser
+givenName: Test
+sn: USER
+l: SRID=4326;POLYGON((-5.76043921875 48.698689609375,-2.02508765625 50.104939609375,2.45733421875 51.423298984375,7.51104515625 47.644002109375,6.23663109375 45.842244296875,7.29131859375 42.853963046875,3.59991234375 41.975056796875,-2.55243140625 43.601033359375,-5.76043921875 48.698689609375))
+description: USER
+employeeNumber: 1
+userPassword:: e1NIQX1SY1Z4b1ZiZHp2UVRVYWNUdk4zdVc2ZnBWR0E9
+cn: testuser
+
+# testreviewer, users, georchestra.org
+dn: uid=testreviewer,ou=users,dc=georchestra,dc=org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: shadowAccount
+objectClass: top
+uid: testreviewer
+givenName: Test
+sn: REVIEWER
+description: Reviewer
+employeeNumber: 2
+userPassword:: e1NIQX1Nb3IzdXZ5cnpISWpHK0crSEcvblhxZW8reWc9
+mail: psc+testreviewer@georchestra.org
+cn: testreviewer
+
+# testeditor, users, georchestra.org
+dn: uid=testeditor,ou=users,dc=georchestra,dc=org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: shadowAccount
+objectClass: top
+uid: testeditor
+givenName: Test
+sn: EDITOR
+description: editor
+employeeNumber: 3
+userPassword:: e1NIQX1mVTFvSmdzV0FEZ1ZtTHBHeHBxdFBVa2RiekU9
+mail: psc+testeditor@georchestra.org
+cn: testeditor
+
+# testadmin, users, georchestra.org
+dn: uid=testadmin,ou=users,dc=georchestra,dc=org
+objectClass: organizationalPerson
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: shadowAccount
+objectClass: top
+uid: testadmin
+givenName: Test
+sn: ADMIN
+description: Admin user
+employeeNumber: 4
+userPassword:: e1NIQX1kREU1SkEvMkVpVTRGMFFObUt5eXpuazUrN1E9
+mail: psc+testadmin@georchestra.org
+cn: testadmin
+
+# geoserver_privileged_user, users, georchestra.org
+dn: uid=geoserver_privileged_user,ou=users,dc=georchestra,dc=org
+sn: geoserver_privileged_user
+objectClass: organizationalPerson
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: shadowAccount
+objectClass: top
+mail: psc+geoserver_privileged_user@georchestra.org
+uid: geoserver_privileged_user
+cn: geoserver_privileged_user
+employeeNumber: 5
+description: Do not modify.  This is a required user for extractorapp, geofence, mapfishapp...
+userPassword:: e1NIQX1XMlY4d2UrOFdNanpma28rMUtZVDFZcWZFVDQ9
+
+# testpendinguser, users, georchestra.org
+dn: uid=testpendinguser,ou=users,dc=georchestra,dc=org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: shadowAccount
+objectClass: top
+uid: testpendinguser
+givenName: Test
+sn: PENDINGUSER
+description: User pending admin validation
+employeeNumber: 6
+userPassword:: e1NIQX16cnJXRCtmbnc2QjZGVDRpcFVYMzh0d1VxRHM9
+mail: psc+testpendinguser@georchestra.org
+cn: testpendinguser
+
+# testdelegatedadmin, users, georchestra.org
+dn: uid=testdelegatedadmin,ou=users,dc=georchestra,dc=org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: shadowAccount
+objectClass: top
+uid: testdelegatedadmin
+givenName: Test
+sn: DELEGATEDADMIN
+description: User with admin delegation
+employeeNumber: 7
+userPassword:: e1NIQX02OGRFejBlb25BYkdjVm1aWkFoQVVDYmo3bTQ9
+mail: psc+testdelegatedadmin@georchestra.org
+cn: testdelegatedadmin
+
+# roles, georchestra.org
+dn: ou=roles,dc=georchestra,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: roles
+
+# ADMINISTRATOR, roles, georchestra.org
+dn: cn=ADMINISTRATOR,ou=roles,dc=georchestra,dc=org
+objectClass: top
+objectClass: groupOfMembers
+cn: ADMINISTRATOR
+ou: 1
+description: This group grants admin access to GeoServer
+member: uid=geoserver_privileged_user,ou=users,dc=georchestra,dc=org
+member: uid=testadmin,ou=users,dc=georchestra,dc=org
+
+
+# PENDING, roles, georchestra.org
+dn: cn=PENDING,ou=roles,dc=georchestra,dc=org
+objectClass: top
+objectClass: groupOfMembers
+cn: PENDING
+ou: 2
+description: This group does not grant any right inside the SDI. Users in this group are requesting a fully fledged account.
+member: uid=testpendinguser,ou=users,dc=georchestra,dc=org
+
+# SUPERUSER, roles, georchestra.org
+dn: cn=SUPERUSER,ou=roles,dc=georchestra,dc=org
+objectClass: top
+objectClass: groupOfMembers
+cn: SUPERUSER
+ou: 10
+description: This group grants access to the LDAPadmin private User Interface
+member: uid=testadmin,ou=users,dc=georchestra,dc=org
+
+# EXTRACTORAPP, roles, georchestra.org
+dn: cn=EXTRACTORAPP,ou=roles,dc=georchestra,dc=org
+objectClass: top
+objectClass: groupOfMembers
+cn: EXTRACTORAPP
+ou: 11
+description: This group grants access to the Extractorapp application
+member: uid=testadmin,ou=users,dc=georchestra,dc=org
+
+
+# GN_ADMIN, roles, georchestra.org
+dn: cn=GN_ADMIN,ou=roles,dc=georchestra,dc=org
+objectClass: top
+objectClass: groupOfMembers
+cn: GN_ADMIN
+ou: 20
+description: This group grants admin access to GeoNetwork
+member: uid=testadmin,ou=users,dc=georchestra,dc=org
+
+# GN_EDITOR, roles, georchestra.org
+dn: cn=GN_EDITOR,ou=roles,dc=georchestra,dc=org
+objectClass: top
+objectClass: groupOfMembers
+cn: GN_EDITOR
+ou: 21
+description: This group grants edit rights in GeoNetwork
+member: uid=testeditor,ou=users,dc=georchestra,dc=org
+
+# GN_REVIEWER, roles, georchestra.org
+dn: cn=GN_REVIEWER,ou=roles,dc=georchestra,dc=org
+objectClass: top
+objectClass: groupOfMembers
+cn: GN_REVIEWER
+ou: 22
+description: This group grants reviewer (publish) rights in GeoNetwork
+member: uid=testreviewer,ou=users,dc=georchestra,dc=org
+
+# USER, roles, georchestra.org
+dn: cn=USER,ou=roles,dc=georchestra,dc=org
+objectClass: top
+objectClass: groupOfMembers
+cn: USER
+ou: 23
+description: This group grants basic, authenticated access to the whole SDI
+member: uid=testuser,ou=users,dc=georchestra,dc=org
+member: uid=testeditor,ou=users,dc=georchestra,dc=org
+member: uid=testreviewer,ou=users,dc=georchestra,dc=org
+member: uid=testadmin,ou=users,dc=georchestra,dc=org
+member: uid=testdelegatedadmin,ou=users,dc=georchestra,dc=org
+
+# ORGADMIN, roles, georchestra.org
+dn: cn=ORGADMIN,ou=roles,dc=georchestra,dc=org
+objectClass: top
+objectClass: groupOfMembers
+cn: ORGADMIN
+ou: 24
+description: This role is automatically granted to all users holding an admin delegation
+member: uid=testdelegatedadmin,ou=users,dc=georchestra,dc=org
+
+# orgs, georchestra.org
+dn: ou=orgs,dc=georchestra,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: orgs
+
+dn: o=psc,ou=orgs,dc=georchestra,dc=org
+objectClass: organization
+objectClass: top
+o: psc
+businessCategory: ASSOCIATION
+postalAddress: 127 rue georchestra, 73590 Chamblille
+
+dn: cn=psc,ou=orgs,dc=georchestra,dc=org
+objectClass: groupOfMembers
+objectClass: top
+cn: psc
+businessCategory: REGISTERED
+description: 4184,684,9849,7987,797898,5797,579,97,49,797,97
+member: uid=testadmin,ou=users,dc=georchestra,dc=org
+member: uid=testuser,ou=users,dc=georchestra,dc=org
+o: Project Steering Committee
+ou: PSC
+seeAlso: o=psc,ou=orgs,dc=georchestra,dc=org
+
+
+dn: o=c2c,ou=orgs,dc=georchestra,dc=org
+objectClass: organization
+objectClass: top
+o: c2c
+businessCategory: COMPANY
+postalAddress: 18 Rue du lac Saint André, 73000 Chambéry
+
+dn: cn=c2c,ou=orgs,dc=georchestra,dc=org
+objectClass: groupOfMembers
+objectClass: top
+cn: c2c
+businessCategory: REGISTERED
+description: 4184
+member: uid=testeditor,ou=users,dc=georchestra,dc=org
+o: Camptocamp
+ou: C2C
+seeAlso: o=c2c,ou=orgs,dc=georchestra,dc=org
+
+dn: o=cra,ou=orgs,dc=georchestra,dc=org
+objectClass: organization
+objectClass: top
+o: cra
+businessCategory: COMPANY
+postalAddress: Rue Jean Wenger - Valentin, 67000 Strasbourg
+
+dn: cn=cra,ou=orgs,dc=georchestra,dc=org
+objectClass: groupOfMembers
+objectClass: top
+cn: cra
+businessCategory: REGISTERED
+description: 4184
+member: uid=testreviewer,ou=users,dc=georchestra,dc=org
+o: Conseil régional d'Alsace
+ou: CRA
+seeAlso: o=cra,ou=orgs,dc=georchestra,dc=org
+
+dn: o=pendingorg,ou=orgs,dc=georchestra,dc=org
+objectClass: organization
+objectClass: top
+o: pendingorg
+businessCategory: COMPANY
+postalAddress: Null island
+
+dn: cn=pendingorg,ou=orgs,dc=georchestra,dc=org
+objectClass: groupOfMembers
+objectClass: top
+cn: pendingorg
+businessCategory: PENDING
+description: 59107
+member: uid=testpendinguser,ou=users,dc=georchestra,dc=org
+o: Fictive org pending admin validation
+ou: PENDINGORG
+seeAlso: o=pendingorg,ou=orgs,dc=georchestra,dc=org

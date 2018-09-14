@@ -1,0 +1,56 @@
+#!/bin/bash
+
+echo "Setting saslauth files for LDAP"
+
+echo "SLAPD_DC_STRING : ${SLAPD_DC_STRING}"
+echo "AD_DC_STRING : ${AD_DC_STRING}"
+echo "AD_PASSWORD : ${AD_PASSWORD}"
+echo "AD_DOMAIN : ${AD_DOMAIN}"
+echo "AD_SERVER : ${AD_SERVER}"
+
+# /etc/ldap/ldap.conf
+cmd='perl -p -i -e "s/dc=georchestra,dc=org/${SLAPD_DC_STRING}/" /tmp/LDAP/ldap.conf'
+echo $cmd
+eval $cmd
+cp /tmp/LDAP/ldap.conf  /etc/ldap/ldap.conf
+
+# /etc/ldap/sasl2/slapd.conf
+cp /tmp/LDAP/slapd.conf /etc/ldap/sasl2/slapd.conf
+
+# /etc/saslauthd.conf
+cmd='perl -p -i -e "s/dc=ad,dc=georchestra,dc=org/${AD_DC_STRING}/" /etc/saslauthd.conf'
+echo $cmd
+eval $cmd
+cmd='perl -p -i -e "s/ad-server.georchestra.org/${AD_SERVER}/"      /etc/saslauthd.conf'
+echo $cmd
+eval $cmd
+cmd='perl -p -i -e "s/ad_secret/${AD_PASSWORD}/"                    /etc/saslauthd.conf'
+echo $cmd
+eval $cmd
+
+# /root/ad2ldap_sync.py
+echo "Template ad2ldap_sync.py"
+cmd='perl -p -i -e "s/ad.georchestra.org/${AD_DOMAIN}/"             /root/ad2ldap_sync.py'
+echo $cmd
+eval $cmd
+cmd='perl -p -i -e "s/dc=ad,dc=georchestra,dc=org/${AD_DC_STRING}/" /root/ad2ldap_sync.py'
+echo $cmd
+eval $cmd
+cmd='perl -p -i -e "s/dc=georchestra,dc=org/${SLAPD_DC_STRING}/"    /root/ad2ldap_sync.py'
+echo $cmd
+eval $cmd
+
+# /root/.ldap.conf (attention à l'ordre de passage des substitutions)
+cmd='perl -p -i -e "s/ad_secret/${AD_PASSWORD}/"                    /root/.ldap.conf'
+echo $cmd
+eval $cmd
+cmd='perl -p -i -e "s/dc=ad,dc=georchestra,dc=org/${AD_DC_STRING}/" /root/.ldap.conf'
+echo $cmd
+eval $cmd
+cmd='perl -p -i -e "s/ad-server.georchestra.org/${AD_SERVER}/"      /root/.ldap.conf'
+echo $cmd
+eval $cmd
+cmd='perl -p -i -e "s/dc=georchestra,dc=org/${SLAPD_DC_STRING}/"    /root/.ldap.conf'
+echo $cmd
+eval $cmd
+

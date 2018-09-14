@@ -6,6 +6,8 @@ SET search_path TO console,public,pg_catalog;
 
 BEGIN;
 
+SET search_path TO console,public,pg_catalog;
+
 INSERT INTO admin_attachments (content, mimetype, name) VALUES (lo_import('/docker-entrypoint-initdb.d/license.txt'), 'text/plain', 'license.txt');
 INSERT INTO admin_attachments (content, mimetype, name) VALUES (lo_import('/docker-entrypoint-initdb.d/logo.png'), 'image/png', 'logo.png');
 

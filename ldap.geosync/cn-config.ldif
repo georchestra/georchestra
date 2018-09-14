@@ -1,0 +1,10 @@
+dn: cn=config
+changetype: modify
+add: olcSaslHost
+olcSaslHost: localhost
+
+dn: cn=config
+changetype: modify
+add: olcSaslSecProps
+olcSaslSecProps: none
+

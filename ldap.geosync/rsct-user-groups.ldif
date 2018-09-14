@@ -1,0 +1,24 @@
+dn: cn=ADMINISTRATOR,ou=roles,dc=georchestra,dc=org
+changetype: modify
+add: member
+member: uid=georchestra-restreint,ou=users,dc=georchestra,dc=org
+
+dn: cn=MOD_LDAPADMIN,ou=roles,dc=georchestra,dc=org
+changetype: modify
+add: member
+member: uid=georchestra-restreint,ou=users,dc=georchestra,dc=org
+
+dn: cn=MOD_ANALYTICS,ou=roles,dc=georchestra,dc=org
+changetype: modify
+add: member
+member: uid=georchestra-restreint,ou=users,dc=georchestra,dc=org
+
+dn: cn=GN_EDITOR,ou=roles,dc=georchestra,dc=org
+changetype: modify
+add: member
+member: uid=georchestra-restreint,ou=users,dc=georchestra,dc=org
+
+dn: cn=GN_ADMIN,ou=roles,dc=georchestra,dc=org
+changetype: modify
+add: member
+member: uid=georchestra-restreint,ou=users,dc=georchestra,dc=org
