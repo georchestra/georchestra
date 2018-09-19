@@ -5,7 +5,10 @@ services:
     build: ./
     environment:
       - SLAPD_DOMAIN=georchestra.org
-      - SLAPD_ORGANIZATION=geOrchestra
+      - SLAPD_ORGANIZATION=georchestra
       - SLAPD_PASSWORD=secret
+    volumes:
+      - ldap_data:/var/lib/ldap
+      - ldap_config:/etc/ldap
     ports:
       - '3899:389'
