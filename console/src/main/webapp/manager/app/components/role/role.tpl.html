@@ -54,7 +54,7 @@
           <thead>
             <tr>
               <th translate>users.user</th>
-              <th translate>user.role</th>
+              <th translate>user.action</th>
             </tr>
           </thead>
 
@@ -64,7 +64,7 @@
                 <a ng-link="user({id: user.uid, tab: 'infos'})">{{::user.sn}} {{::user.givenName}}</a>
               </td>
               <td>
-                <a href="javascript:void(0)" ng-click="role.associate(user.uid, true)" class="text-danger">
+                <a href="javascript:void(0)" ng-click="role.associate(user.uid, true)" class="text-danger" title="{{role.i18n.remove}}">
                   <i class="glyphicon glyphicon-remove"></i>
                 </a>
               </td>

@@ -21,6 +21,7 @@ class RoleController {
     translate('role.deleteError', this.i18n)
     translate('role.userremoved', this.i18n)
     translate('role.useradded', this.i18n)
+    translate('user.remove', this.i18n)
 
     this.loadRoleAndUsers($routeParams.role)
   }

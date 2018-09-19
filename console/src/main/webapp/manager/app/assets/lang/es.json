@@ -71,6 +71,8 @@
   "user.manages_roles"    : "Administra la asignación de los siguientes roles:",
   "user.manages_orgs"     : "Parte de los usuarios miembros de las siguientes organizaciones:",
   "user.select_role"      : "Seleccionar un rol",
+  "user.action"           : "**TODO**",
+  "user.remove"           : "**TODO**",
 
   "orgs.title_plural"     : "organizaciones",
   "orgs.title_one"        : "organización",

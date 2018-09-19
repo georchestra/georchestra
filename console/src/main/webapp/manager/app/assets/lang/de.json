@@ -71,6 +71,8 @@
   "user.manages_roles"    : "Manage roles:",
   "user.manages_orgs"     : "Among users belonging to organisations:",
   "user.select_role"      : "Select a role",
+  "user.action"           : "**TODO**",
+  "user.remove"           : "**TODO**",
 
   "orgs.title_plural"     : "Organisationen",
   "orgs.title_one"        : "Organisation",

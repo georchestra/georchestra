@@ -71,6 +71,8 @@
   "user.manages_roles"    : "Gère l'attribution des rôles :",
   "user.manages_orgs"     : "Parmi les utilisateurs appartenant aux organismes :",
   "user.select_role"      : "Sélectionner un rôle",
+  "user.action"           : "Action",
+  "user.remove"           : "Retirer",
 
   "orgs.title_plural"     : "organismes",
   "orgs.title_one"        : "organisme",

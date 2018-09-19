@@ -22,6 +22,7 @@ class OrgController {
     translate('org.deleteError', this.i18n)
     translate('org.userremoved', this.i18n)
     translate('org.useradded', this.i18n)
+    translate('user.remove', this.i18n)
 
     this.org = $injector.get('Orgs').get({
       id: $routeParams.org
