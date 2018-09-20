@@ -48,10 +48,17 @@ class AppController {
 }
 
 class StandaloneController {
-  static $inject = [ '$scope', 'Orgs' ]
+  static $inject = [ '$scope', 'Orgs', 'User' ]
 
-  constructor ($scope, Org) {
-    $scope.org = new Org()
+  constructor ($scope, Org, User) {
+    if (!window.org) {
+      $scope.org = new Org()
+      return
+    }
+
+    $scope.org = Org.get({id: window.org}, () => User.query(users => {
+      $scope.users = users.filter(u => u.org === $scope.org.name)
+    }))
   }
 }
 
