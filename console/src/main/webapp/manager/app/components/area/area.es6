@@ -23,6 +23,7 @@ class AreaController {
   }
 
   $onInit () {
+    this.maponly = this.readonly === 'true'
     const $http = this.$injector.get('$http')
     const CONFIG_URI = this.$injector.get('CONSOLE_PUBLIC_PATH') + 'orgs/areaConfig.json'
     let promises = [ $http.get(CONFIG_URI).then(r => r.data) ]
@@ -217,6 +218,7 @@ class AreaController {
 
 angular.module('manager').component('areas', {
   bindings: {
+    readonly: '=',
     item: '=',
     callback: '='
   },
