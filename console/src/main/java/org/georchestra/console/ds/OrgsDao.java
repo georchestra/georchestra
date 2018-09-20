@@ -22,8 +22,11 @@ package org.georchestra.console.ds;
 
 import org.georchestra.console.dto.Org;
 import org.georchestra.console.dto.OrgExt;
+import org.georchestra.console.dto.ReferenceAware;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.AttributesMapper;
+import org.springframework.ldap.core.ContextMapper;
+import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.filter.AndFilter;
@@ -117,7 +120,7 @@ public class OrgsDao {
      */
     public Org findByCommonName(String commonName) {
         Name dn = LdapNameBuilder.newInstance(this.orgSearchBaseDN).add("cn", commonName).build();
-        return this.ldapTemplate.lookup(dn, new OrgsDao.OrgAttributesMapper());
+        return this.ldapTemplate.lookup(dn, new ContextMapperSecuringReferenceAndMappingAttributes<Org>(new OrgAttributesMapper()));
     }
 
     /**
@@ -128,7 +131,7 @@ public class OrgsDao {
      */
     public OrgExt findExtById(String cn) {
         Name dn = LdapNameBuilder.newInstance(this.orgSearchBaseDN).add("o", cn).build();
-        return this.ldapTemplate.lookup(dn, new OrgsDao.OrgExtAttributesMapper());
+        return this.ldapTemplate.lookup(dn, new ContextMapperSecuringReferenceAndMappingAttributes<OrgExt>(new OrgExtAttributesMapper()));
     }
 
     /**
@@ -164,11 +167,15 @@ public class OrgsDao {
     }
 
     public void update(Org org){
-        this.ldapTemplate.rebind(buildOrgDN(org.getId()), null, buildAttributes(org));
+        Name newName = buildOrgDN(org.getId());
+        this.ldapTemplate.rename(org.getReference().getDn(), newName);
+        this.ldapTemplate.rebind(newName, null, buildAttributes(org));
     }
 
-    public void update(OrgExt org){
-        this.ldapTemplate.rebind(buildOrgExtDN(org.getId()), null, buildAttributes(org));
+    public void update(OrgExt orgExt){
+        Name newName = buildOrgExtDN(orgExt.getId());
+        this.ldapTemplate.rename(orgExt.getReference().getDn(), newName);
+        this.ldapTemplate.rebind(newName, null, buildAttributes(orgExt));
     }
 
     public void delete(Org org){
@@ -399,6 +406,23 @@ public class OrgsDao {
                 return null;
             else
                 return (String) att.get();
+        }
+    }
+
+    private class ContextMapperSecuringReferenceAndMappingAttributes<T extends ReferenceAware>  implements ContextMapper<T> {
+
+        AttributesMapper<T> attributesMapper;
+
+        public ContextMapperSecuringReferenceAndMappingAttributes(AttributesMapper<T> attributesMapper) {
+            this.attributesMapper = attributesMapper;
+        }
+
+        @Override
+        public T mapFromContext(Object o) throws NamingException {
+            DirContextAdapter dirContext = (DirContextAdapter) o;
+            T dto = attributesMapper.mapFromAttributes(dirContext.getAttributes());
+            dto.setReference(dirContext);
+            return dto;
         }
     }
 }
