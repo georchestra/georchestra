@@ -47,7 +47,7 @@
 			<h1><s:message code="editUserDetailsForm.title"/> <small><s:message code="editUserDetailsForm.subtitle" /></small></h1>
 		</div>
 		<p class="lead"><s:message code="editUserDetailsForm.description" /></p>
-		<form:form id="form" name="form" method="post" action="userdetails" modelAttribute="editUserDetailsFormBean" cssClass="form-horizontal col-lg-6 col-lg-offset-1" onsubmit="return validate();">
+    <form:form id="form" name="form" method="post" action="userdetails" modelAttribute="editUserDetailsFormBean" cssClass="form-horizontal col-lg-6 col-lg-offset-1" onsubmit="return validate();">
 
 			<c:if test="${not empty success}">
 			<div id="message" class="alert alert-dismissable alert-success">
@@ -143,8 +143,50 @@
 						<button type="submit" class="btn btn-primary btn-lg"><s:message code="submit.label"/> </button>
 					</div>
 				</div>
-			</div>
+			</fieldset>
 		</form:form>
+
+    <!-- angularjs app dependencies -->
+    <link rel="stylesheet" href="/console/manager/public/libraries.css">
+    <link rel="stylesheet" href="/console/manager/public/app.css">
+    <style>
+      .area {
+        margin: 2em;
+        background: white;
+      }
+      .area .map {
+        height: 200px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      .area .map canvas {
+        border-radius: 3px;
+      }
+    </style>
+    <script src="/console/manager/public/libraries.js"></script>
+    <script src="/console/manager/public/templates.js"></script>
+    <script src="/console/manager/public/app.js"></script>
+    <script>window.org = 'psc'</script>
+    <script>require('app')</script>
+    <!-- /angularjs app dependencies -->
+
+    <div class="col-lg5" ng-app="manager" ng-strict-di ng-controller="StandaloneController">
+      <fieldset>
+        <legend>Organisme «PSC» <em>**</em></legend>
+
+        <h4>Aire de compétence <em>**</em></h4>
+        <areas item="org" readonly="'true'"></areas>
+
+        <h4>Membres <em>**</em></h4>
+        <ul>
+        <li dir-paginate="user in users | itemsPerPage: 4">
+          {{::user.sn}} {{::user.givenName}}
+        </li>
+        </ul>
+
+        <dir-pagination-controls></dir-pagination-controls>
+      </fieldset>
+    </div>
 	</div>
 	<script src="//code.jquery.com/jquery.js"></script>
 	<script src='js/bootstrap.min.js'></script>
