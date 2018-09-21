@@ -751,7 +751,7 @@ GEOR.ows = (function() {
     var p = OpenLayers.Layer.WMS.prototype, fn = p.getFullRequestString;
     p.getFullRequestString = function() {
         var params = this.params;
-        if (params.VERSION == "1.3.0" && /mapfishapp/.test(params.SLD)) {
+        if (params.VERSION == "1.3.0" && /ws\/sld\/geodoc/.test(params.SLD)) {
             // force SLD version when handling our own SLD documents:
             params.SLD_VERSION = "1.0.0";
         }
