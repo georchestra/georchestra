@@ -417,7 +417,9 @@ public class OrgsController {
      * @throws JSONException If something went wrong during information extraction from json document
      */
     private void updateFromRequest(Org org, JSONObject json){
-
+        try{
+            org.setId(json.getString(Org.JSON_NAME));
+        } catch (JSONException ex){}
         try{
             org.setName(json.getString(Org.JSON_NAME));
         } catch (JSONException ex){}
@@ -459,7 +461,9 @@ public class OrgsController {
      * @throws JSONException If something went wrong during information extraction from json document
      */
     private void updateFromRequest(OrgExt orgExt, JSONObject json){
-
+        try{
+            orgExt.setId(json.getString(Org.JSON_NAME));
+        } catch (JSONException ex){}
         try{
             orgExt.setOrgType(json.getString(OrgExt.JSON_ORG_TYPE));
         } catch (JSONException ex){}

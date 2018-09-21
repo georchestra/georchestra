@@ -20,10 +20,12 @@
 package org.georchestra.console.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.ldap.core.DirContextAdapter;
 
-public class OrgExt {
+public class OrgExt implements ReferenceAware {
 
     public static final String JSON_ADDRESS = "address";
     public static final String JSON_ID = "id";
@@ -34,6 +36,9 @@ public class OrgExt {
     private String orgType;
     private String address;
     private Integer numericId;
+
+    @JsonIgnore
+    private DirContextAdapter reference;
 
     public String getId() {
         return id;
@@ -88,5 +93,13 @@ public class OrgExt {
                 ", address='" + address + '\'' +
                 ", numericId='" + numericId + '\'' +
                 '}';
+    }
+
+    public DirContextAdapter getReference() {
+        return reference;
+    }
+
+    public void setReference(DirContextAdapter reference) {
+        this.reference = reference;
     }
 }
