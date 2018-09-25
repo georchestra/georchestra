@@ -23,6 +23,7 @@ import org.georchestra.console.dto.Account;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.filter.Filter;
 
+import javax.naming.ldap.LdapName;
 import java.util.List;
 
 /**
@@ -41,15 +42,37 @@ public interface AccountDao {
 	 * @throws DataServiceException
 	 */
 	boolean exist(final String uid) throws DataServiceException;
-	
+
 	/**
-	 * Returns all accounts
-	 * 
-	 * @return List of {@link Account}
-	 * @throws DataServiceException
+	 * users in LDAP directory with shadowExpire field filled
+	 *
+	 * @return List of Account that have a shadowExpire attribute
 	 */
-	List<Account> findAll() throws DataServiceException;
-	
+
+	List<Account> findByShadowExpire();
+
+	/**
+	 * Returns the account that contains the email provided as parameter.
+	 *
+	 * @param email
+	 * @return {@link Account}
+	 *
+	 * @throws DataServiceException
+	 * @throws NameNotFoundException
+	 */
+	Account findByEmail(final String email) throws DataServiceException, NameNotFoundException;
+
+	/**
+	 * Returns a list of account that have specified role.
+	 *
+	 * @param role
+	 * @return List of {@link Account}
+	 *
+	 * @throws DataServiceException
+	 * @throws NameNotFoundException
+	 */
+	List<Account> findByRole(final String role) throws DataServiceException, NameNotFoundException;
+
 	/**
 	 * Returns all accounts that accomplish the provided filter.
 	 * 
@@ -63,12 +86,11 @@ public interface AccountDao {
 	 * Creates a new account
 	 * 
 	 * @param account
-	 * @param roleID
 	 * @param originLogin login of admin that create user
 	 * @throws DataServiceException
 	 * @throws DuplicatedEmailException
 	 */
-	void insert(final Account account, final String roleID, final String originLogin) throws DataServiceException, DuplicatedUidException, DuplicatedEmailException;
+	void insert(final Account account, final String originLogin) throws DataServiceException, DuplicatedUidException, DuplicatedEmailException;
 
 	/**
 	 * Updates the user account
@@ -103,15 +125,7 @@ public interface AccountDao {
 	void changePassword(final String uid, final String password)throws DataServiceException;
 
 
-	/**
-	 * Deletes the account
-	 * 
-	 * @param uid
-	 * @param originLogin login of admin that make request
-	 * @throws DataServiceException
-	 * @throws NameNotFoundException
-	 */
-	void delete(final String uid, final String originLogin) throws DataServiceException, NameNotFoundException;
+	void delete(Account account, final String originLogin) throws DataServiceException, NameNotFoundException;
 
 	/**
 	 * Returns the account that contains the uid provided as parameter.
@@ -124,28 +138,6 @@ public interface AccountDao {
 	 * @throws NameNotFoundException
 	 */
 	Account findByUID(final String uid)throws DataServiceException, NameNotFoundException;
-
-	/**
-	 * Returns the account that contains the email provided as parameter.
-	 * 
-	 * @param email
-	 * @return {@link Account}
-	 * 
-	 * @throws DataServiceException
-	 * @throws NameNotFoundException
-	 */
-	Account findByEmail(final String email) throws DataServiceException, NameNotFoundException;
-
-	/**
-	 * Returns a list of account that have specified role.
-	 *
-	 * @param role
-	 * @return List of {@link Account}
-	 *
-	 * @throws DataServiceException
-	 * @throws NameNotFoundException
-	 */
-	List<Account> findByRole(final String role) throws DataServiceException, NameNotFoundException;
 
 	/**
 	 * Add the new password. This method is part of the "lost password" workflow to maintan the old password and the new password until the
@@ -163,24 +155,11 @@ public interface AccountDao {
 	 *  
 	 * @return a new uid
 	 * 
-	 * @throws DataServiceException
 	 */
-	String generateUid(String uid) throws DataServiceException;
+	String generateUid(String uid);
 
-	/**
-	 * users in LDAP directory with shadowExpire field filled
-	 *
-	 * @return List of Account that have a shadowExpire attribute
-	 */
+	boolean hasUserDnChanged(Account account, Account modified);
 
-	List<Account> findByShadowExpire();
-
-	/**
-	 * Finds all accounts given a list of blacklisted users and a LDAP filter
-	 *
-	 * @return List of Account that are not in the ProtectedUserFilter, and which
-	 * complies with the provided LDAP filter.
-	 */
-	List<Account> find(final ProtectedUserFilter uidFilter, Filter f);
+	LdapName buildUserDn(Account account);
 
 }

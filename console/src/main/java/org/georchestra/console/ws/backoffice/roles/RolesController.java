@@ -65,6 +65,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Web Services to maintain the Roles information.
@@ -225,6 +226,7 @@ public class RolesController {
 
 		try{
 			Role role = createRoleFromRequestBody(request.getInputStream());
+
 			this.roleDao.insert( role );
 			RoleResponse roleResponse = new RoleResponse(role, this.filter);
 			String jsonResponse = roleResponse.asJsonString();
@@ -406,6 +408,16 @@ public class RolesController {
 		List<String> putRole = createUserList(json, "PUT");
 		List<String> deleteRole = createUserList(json, "DELETE");
 
+		List<Account> accounts = users.stream()
+				.map(userUuid -> {
+			try {
+				return accountDao.findByUID(userUuid);
+			} catch (DataServiceException e) {
+				return null;
+			}})
+				.filter(account -> null != account)
+				.collect(Collectors.toList());
+
 		// Don't allow modification of ORGADMIN role
 		if(putRole.contains("ORGADMIN") || deleteRole.contains("ORGADMIN"))
 			throw new IllegalArgumentException("ORGADMIN role cannot be add or delete");
@@ -414,8 +426,10 @@ public class RolesController {
 		if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_SUPERUSER")))
 			this.checkAuthorization(auth.getName(), users, putRole, deleteRole);
 
-		this.roleDao.addUsersInRoles(putRole, users, auth.getName());
-		this.roleDao.deleteUsersInRoles(deleteRole, users, auth.getName());
+		// 10/01/19, please TODO, wonder wether rebind should suffice
+
+		this.roleDao.addUsersInRoles(putRole, accounts, auth.getName());
+		this.roleDao.deleteUsersInRoles(deleteRole, accounts, auth.getName());
 
 		ResponseUtil.writeSuccess(response);
 	}
@@ -510,9 +524,9 @@ public class RolesController {
 			String description = RequestUtil.getFieldValue(json, RoleSchema.DESCRIPTION_KEY);
 			Boolean isFavorite = RequestUtil.getBooleanFieldValue(json, RoleSchema.FAVORITE_JSON_KEY);
 
-			Role g = RoleFactory.create(commonName, description, isFavorite);
+			Role role = RoleFactory.create(commonName, description, isFavorite);
 
-			return g;
+			return role;
 
 		} catch (IllegalArgumentException e) {
 			throw e;

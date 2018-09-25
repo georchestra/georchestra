@@ -22,8 +22,10 @@ package org.georchestra.console.ws.backoffice.delegations;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.dao.DelegationDao;
+import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.DataServiceException;
 import org.georchestra.console.ds.RoleDao;
+import org.georchestra.console.dto.Account;
 import org.georchestra.console.model.DelegationEntry;
 import org.georchestra.console.ws.backoffice.utils.ResponseUtil;
 import org.georchestra.lib.file.FileUtils;
@@ -59,6 +61,9 @@ public class DelegationController {
 	private DelegationDao delegationDao;
 	@Autowired
 	private RoleDao roleDao;
+	@Autowired
+	private AccountDao accountDao;
+
 
 	@ExceptionHandler(Exception.class)
 	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
@@ -105,7 +110,8 @@ public class DelegationController {
 		delegation.setOrgs(this.parseJSONArray(json.getJSONArray("orgs")));
 		delegation.setRoles(this.parseJSONArray(json.getJSONArray("roles")));
 		this.delegationDao.save(delegation);
-		this.roleDao.addUser("ORGADMIN", uid, request.getHeader("sec-username"));
+		Account account = accountDao.findByUID(uid);
+		this.roleDao.addUser("ORGADMIN", account, request.getHeader("sec-username"));
 
 		return delegation.toJSON().toString();
 	}
@@ -124,7 +130,7 @@ public class DelegationController {
 
 		// TODO deny if request came from delegated admin
 		this.delegationDao.delete(uid);
-		this.roleDao.deleteUser("ORGADMIN", uid, request.getHeader("sec-username"));
+		this.roleDao.deleteUser("ORGADMIN", accountDao.findByUID(uid), request.getHeader("sec-username"));
 		return new JSONObject().put("result", "ok").toString();
 	}
 

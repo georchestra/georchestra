@@ -1,11 +1,5 @@
 package org.georchestra.console.ws.backoffice.users;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
-
-import java.util.HashMap;
-
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.AccountDaoImpl;
 import org.georchestra.console.dto.AccountImpl;
@@ -14,6 +8,12 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.security.ldap.DefaultSpringSecurityContextSource;
+
+import java.util.HashMap;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 public class UsersExportTest {
 
@@ -61,8 +61,9 @@ public class UsersExportTest {
 
         LdapTemplate ldapTemplate = new LdapTemplate(contextSource);
 
-        AccountDaoImpl adao = new AccountDaoImpl(ldapTemplate, null, null);
+        AccountDaoImpl adao = new AccountDaoImpl(ldapTemplate);
         adao.setUserSearchBaseDN("ou=users");
+
         us.setAccountDao(adao);
     }
 

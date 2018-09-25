@@ -1,32 +1,30 @@
 package org.georchestra.console.ws.changepassword;
 
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.naming.Name;
-import javax.servlet.http.HttpServletResponse;
-
 import org.georchestra.console.ds.AccountDaoImpl;
 import org.georchestra.console.ds.DataServiceException;
-import org.georchestra.console.ds.RoleDaoImpl;
 import org.georchestra.console.ds.OrgsDao;
+import org.georchestra.console.ds.RoleDaoImpl;
+import org.georchestra.console.ws.utils.PasswordUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.springframework.ldap.core.ContextSource;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.LdapTemplate;
-import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.support.SessionStatus;
+
+import javax.naming.Name;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertTrue;
 
 public class ChangePasswordControllerTest {
 
@@ -48,12 +46,14 @@ public class ChangePasswordControllerTest {
 
         OrgsDao orgsDao = new OrgsDao();
         orgsDao.setLdapTemplate(ldapTemplate);
-        orgsDao.setUserSearchBaseDN("ou=users");
         orgsDao.setOrgSearchBaseDN("ou=orgs");
 
-        AccountDaoImpl dao = new AccountDaoImpl(ldapTemplate, roleDao, orgsDao);
+        AccountDaoImpl dao = new AccountDaoImpl(ldapTemplate);
         dao.setUserSearchBaseDN("ou=users");
+        dao.setOrgSearchBaseDN("ou=orgs");
+        dao.setOrgSearchBaseDN("ou=orgs");
         ctrl = new ChangePasswordFormController(dao);
+        ctrl.passwordUtils = new PasswordUtils();
 
         model = Mockito.mock(Model.class);
         request = new MockHttpServletRequest();

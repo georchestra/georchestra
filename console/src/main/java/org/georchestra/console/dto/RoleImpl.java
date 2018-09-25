@@ -105,6 +105,15 @@ class RoleImpl implements Role, Comparable<Role> {
 		return this.isFavorite;
 	}
 
+	@Override
+	public boolean isPending() {
+		return false;
+	}
+
+	@Override
+	public void setPending(boolean pending) {
+
+	}
 
 	@Override
 	public String toString() {
@@ -156,6 +165,5 @@ class RoleImpl implements Role, Comparable<Role> {
 
 	    return this.name.compareTo(o.getName());
     }
-
 
 }

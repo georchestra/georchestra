@@ -19,6 +19,7 @@
 
 package org.georchestra.console.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
@@ -31,7 +32,6 @@ import java.util.List;
 public interface Role {
 	
 	final String USER = "USER";
-	final String PENDING = "PENDING";
 
 	/**
 	 * 
@@ -48,7 +48,7 @@ public interface Role {
 	 */
 	@JsonProperty("users")
 	List<String> getUserList();
-	
+
 	void  setUserList(List<String> userUidList);
 	
 	/**
@@ -65,5 +65,9 @@ public interface Role {
 
 	@JsonProperty("isFavorite")
 	boolean isFavorite();
+
+	boolean isPending();
+
+	void setPending(boolean pending);
 
 }

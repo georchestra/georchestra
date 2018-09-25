@@ -77,26 +77,25 @@
 
   <bean id="roleDao" class="org.georchestra.console.ds.RoleDaoImpl">
     <property name="ldapTemplate" ref="ldapTemplate"/>
-    <property name="userSearchBaseDN" value="${userSearchBaseDN}"/>
+    <property name="basePath" value="${baseDN}"/>
     <property name="roleSearchBaseDN" value="${roleSearchBaseDN}"/>
   </bean>
 
   <bean id="orgsDao" class="org.georchestra.console.ds.OrgsDao">
     <property name="ldapTemplate" ref="ldapTemplate"/>
-    <property name="orgSearchBaseDN" value="${orgSearchBaseDN}"/>
-    <property name="userSearchBaseDN" value="${userSearchBaseDN}"/>
     <property name="basePath" value="${baseDN}"/>
     <property name="orgTypeValues" value="${orgTypeValues}"/>
+    <property name="orgSearchBaseDN" value="${orgSearchBaseDN}"/>
+    <property name="pendingOrgSearchBaseDN" value="${pendingOrgSearchBaseDN}"/>
   </bean>
-
 
   <bean id="accountDao" class="org.georchestra.console.ds.AccountDaoImpl" init-method="init">
     <constructor-arg ref="ldapTemplate"/>
-    <constructor-arg ref="roleDao"/>
-    <constructor-arg ref="orgsDao"/>
-    <property name="userSearchBaseDN" value="${userSearchBaseDN}"/>
     <property name="basePath" value="${baseDN}"/>
+    <property name="userSearchBaseDN" value="${userSearchBaseDN}"/>
+    <property name="pendingUserSearchBaseDN" value="${pendingUserSearchBaseDN}"/>
     <property name="orgSearchBaseDN" value="${orgSearchBaseDN}"/>
+    <property name="pendingOrgSearchBaseDN" value="${pendingOrgSearchBaseDN}"/>
     <property name="roleSearchBaseDN" value="${roleSearchBaseDN}"/>
   </bean>
 
@@ -250,5 +249,7 @@
   <bean id="georchestraConfiguration" class="org.georchestra.commons.configuration.GeorchestraConfiguration">
     <constructor-arg value="console"/>
   </bean>
+
+  <bean id="passwordUtils" class="org.georchestra.console.ws.utils.PasswordUtils"/>
 
 </beans>

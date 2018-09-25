@@ -26,6 +26,9 @@ import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.ServletContext;
+import java.util.List;
+
+import static java.util.Collections.singletonList;
 
 /**
  * Manage e-mails required for this application
@@ -62,10 +65,10 @@ public class EmailFactory {
 	private String newAccountNotificationEmailFile;
 	private String newAccountNotificationEmailSubject;
 
-	public void sendAccountWasCreatedEmail(ServletContext servletContext, String[] recipients,
+	public void sendAccountWasCreatedEmail(ServletContext servletContext, String recipient,
 										   String userName, String uid ) throws MessagingException {
 		Email email =  new Email(
-				recipients,
+				singletonList(recipient),
 				this.accountWasCreatedEmailSubject,
 				this.smtpHost,
 				this.smtpPort,
@@ -87,11 +90,11 @@ public class EmailFactory {
 	/**
 	 * e-mail to the user to inform the account requires the moderator's singnup
 	 */
-	public void sendAccountCreationInProcessEmail(ServletContext servletContext, String[] recipients,
+	public void sendAccountCreationInProcessEmail(ServletContext servletContext, String recipient,
 												  String userName, String uid) throws MessagingException {
 
 		Email email =  new Email(
-				recipients,
+				singletonList(recipient),
 				this.accountCreationInProcessEmailSubject,
 				this.smtpHost,
 				this.smtpPort,
@@ -113,7 +116,7 @@ public class EmailFactory {
 	 * emails to the moderator to inform that a new user is waiting authorization.
 	 */
 
-	public void sendNewAccountRequiresModerationEmail(ServletContext servletContext, String[] recipients,
+	public void sendNewAccountRequiresModerationEmail(ServletContext servletContext, List<String>  recipients,
 													  String userName, String uid, String userEmail) throws MessagingException {
 
 		Email email =  new Email(
@@ -135,10 +138,10 @@ public class EmailFactory {
 		email.send();
 	}
 
-	public void sendChangePasswordEmail(ServletContext servletContext, String[] recipients,
+	public void sendChangePasswordEmail(ServletContext servletContext, String recipient,
 										String userName, String uid, String url) throws MessagingException {
 		Email email = new Email(
-				recipients,
+				singletonList(recipient),
 				this.changePasswordEmailSubject,
 				this.smtpHost,
 				this.smtpPort,
@@ -157,11 +160,11 @@ public class EmailFactory {
 		email.send();
 	}
 
-	public void sendAccountUidRenamedEmail(ServletContext servletContext, String[] recipients,
+	public void sendAccountUidRenamedEmail(ServletContext servletContext, String recipient,
 										   String userName, String uid) throws MessagingException {
 
 		Email email = new Email(
-				recipients,
+				singletonList(recipient),
 				this.accountUidRenamedEmailSubject,
 				this.smtpHost,
 				this.smtpPort,
@@ -179,7 +182,7 @@ public class EmailFactory {
 		email.send();
 	}
 
-	public void sendNewAccountNotificationEmail(ServletContext servletContext, String[] recipients,
+	public void sendNewAccountNotificationEmail(ServletContext servletContext, List<String> recipients,
 												String userName, String uid, String userEmail) throws MessagingException {
 
 		Email email =  new Email(

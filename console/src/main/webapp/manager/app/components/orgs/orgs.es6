@@ -10,7 +10,7 @@ class OrgsController {
     this.org = $routeParams.org
     this.orgs = this.$injector.get('Orgs').query(() => {
       if (this.org === 'pending') {
-        this.orgs = this.orgs.filter(o => o.status !== 'REGISTERED')
+        this.orgs = this.orgs.filter(o => o.pending)
       }
       this.orgs.forEach(org => {
         org.membersCount = org.members.length

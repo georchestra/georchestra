@@ -51,7 +51,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Controller
 public class OrgsController {
@@ -230,9 +236,6 @@ public class OrgsController {
         // Update org and orgExt fields
         this.updateFromRequest(org, json);
         this.updateFromRequest(orgExt, json);
-
-        // Validate org
-        org.setStatus(Org.STATUS_REGISTERED);
 
         // Persist changes to LDAP server
         this.orgDao.insert(org);
@@ -416,39 +419,23 @@ public class OrgsController {
      * @param json Json document to take information from
      * @throws JSONException If something went wrong during information extraction from json document
      */
-    private void updateFromRequest(Org org, JSONObject json){
-        try{
-            org.setId(json.getString(Org.JSON_SHORT_NAME));
-        } catch (JSONException ex){}
-        try{
-            org.setName(json.getString(Org.JSON_NAME));
-        } catch (JSONException ex){}
-
-        try{
-            org.setShortName(json.getString(Org.JSON_SHORT_NAME));
-        } catch (JSONException ex){}
-
-        try{
-            JSONArray cities = json.getJSONArray(Org.JSON_CITIES);
-            List<String> parsedCities = new LinkedList<String>();
-            for(int i = 0; i < cities.length(); i++)
-                parsedCities.add(cities.getString(i));
-            org.setCities(parsedCities);
-        } catch (JSONException ex){}
-
-        try{
-            JSONArray members = json.getJSONArray(Org.JSON_MEMBERS);
-            List<String> parsedMembers = new LinkedList<String>();
-            for(int i = 0; i < members.length(); i++)
-                parsedMembers.add(members.getString(i));
-            org.setMembers(parsedMembers);
-        } catch (JSONException ex){}
-
-
-        try{
-            org.setStatus(json.getString(Org.JSON_STATUS));
-        } catch (JSONException ex){}
-
+    protected void updateFromRequest(Org org, JSONObject json){
+        org.setId(json.optString(Org.JSON_SHORT_NAME));
+        org.setName(json.optString(Org.JSON_NAME));
+        org.setShortName(json.optString(Org.JSON_SHORT_NAME));
+        if (!json.isNull(Org.JSON_CITIES)) {
+            org.setCities(StreamSupport
+                .stream(json.optJSONArray(Org.JSON_CITIES).spliterator(), false)
+                .map(Object::toString)
+                .collect(Collectors.toList()));
+        }
+        if (!json.isNull(Org.JSON_MEMBERS)) {
+            org.setMembers(StreamSupport
+                .stream(json.optJSONArray(Org.JSON_MEMBERS).spliterator(), false)
+                .map(Object::toString)
+                .collect(Collectors.toList()));
+        }
+        org.setPending(json.optBoolean(Org.JSON_PENDING));
     }
 
     /**
@@ -460,18 +447,11 @@ public class OrgsController {
      * @param json Json document to take information from
      * @throws JSONException If something went wrong during information extraction from json document
      */
-    private void updateFromRequest(OrgExt orgExt, JSONObject json){
-        try{
-            orgExt.setId(json.getString(Org.JSON_SHORT_NAME));
-        } catch (JSONException ex){}
-        try{
-            orgExt.setOrgType(json.getString(OrgExt.JSON_ORG_TYPE));
-        } catch (JSONException ex){}
-
-        try{
-            orgExt.setAddress(json.getString(OrgExt.JSON_ADDRESS));
-        } catch (JSONException ex){}
-
+    private void updateFromRequest(OrgExt orgExt, JSONObject json) {
+        orgExt.setId(json.optString(Org.JSON_SHORT_NAME));
+        orgExt.setOrgType(json.optString(OrgExt.JSON_ORG_TYPE));
+        orgExt.setAddress(json.optString(OrgExt.JSON_ADDRESS));
+        orgExt.setPending(json.optBoolean(Org.JSON_PENDING));
     }
 
     /**

@@ -33,25 +33,21 @@ public final class PasswordUtils  {
 	public static final int SIZE = 8;
 
 	@Autowired
-	private static Validation validation;
+	private Validation validation;
 
-	private PasswordUtils(){
-		// utility class
+	public void setValidation(Validation validation) {
+		this.validation = validation;
 	}
 
-	public static void setValidation(Validation validation) {
-		PasswordUtils.validation = validation;
-	}
-
-	public static void validate(final String password, final String confirmPassword, Errors errors) {
+	public void validate(final String password, final String confirmPassword, Errors errors) {
 
 		final String pwd1 = password.trim();
 		final String pwd2 = confirmPassword.trim();
 
-		if(!StringUtils.hasLength(pwd1) && PasswordUtils.validation.isUserFieldRequired("password"))
+		if(!StringUtils.hasLength(pwd1) && validation.isUserFieldRequired("password"))
 			errors.rejectValue("password", "password.error.required", "required");
 
-		if(!StringUtils.hasLength(pwd2) && PasswordUtils.validation.isUserFieldRequired("confirmPassword"))
+		if(!StringUtils.hasLength(pwd2) && validation.isUserFieldRequired("confirmPassword"))
 			errors.rejectValue("confirmPassword", "confirmPassword.error.required", "required");
 
 		if(StringUtils.hasLength(pwd1) && StringUtils.hasLength(pwd2)){

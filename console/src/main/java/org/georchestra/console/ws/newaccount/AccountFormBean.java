@@ -116,10 +116,7 @@ public class AccountFormBean implements Serializable{
 	public String getSurname() {
 		return surname;
 	}
-	public void setSurname(String sn){
-
-		this.surname = sn;
-	}
+	public void setSurname(String sn){this.surname = sn;}
 	public boolean getCreateOrg() {
 		return createOrg;
 	}

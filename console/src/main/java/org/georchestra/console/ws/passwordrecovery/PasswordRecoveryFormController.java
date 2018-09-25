@@ -150,13 +150,10 @@ public class PasswordRecoveryFormController  {
 
 		try {
 			Account account = this.accountDao.findByEmail(formBean.getEmail());
-			List<Role> role = this.roleDao.findAllForUser(account.getUid());
 			// Finds the user using the email as key, if it exists a new token is generated to include in the unique http URL.
 
-			for (Role g : role) {
-				if (g.getName().equals(Role.PENDING)) {
-					throw new NameNotFoundException("User in PENDING role");
-				}
+			if (account.isPending()) {
+				throw new NameNotFoundException("User is pending");
 			}
 
 			String token = UUID.randomUUID().toString();
@@ -172,7 +169,7 @@ public class PasswordRecoveryFormController  {
 			String url = makeChangePasswordURL(this.georConfig.getProperty("publicUrl"), contextPath, token);
 
 			ServletContext servletContext = request.getSession().getServletContext();
-			this.emailFactory.sendChangePasswordEmail(servletContext, new String[]{account.getEmail()}, account.getCommonName(),  account.getUid(), url);
+			this.emailFactory.sendChangePasswordEmail(servletContext, account.getEmail(), account.getCommonName(),  account.getUid(), url);
 			sessionStatus.setComplete();
 
 			return "emailWasSent";

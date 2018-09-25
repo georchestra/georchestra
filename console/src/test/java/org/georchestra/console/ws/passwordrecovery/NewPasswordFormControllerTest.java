@@ -1,14 +1,9 @@
 package org.georchestra.console.ws.passwordrecovery;
 
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.DataServiceException;
 import org.georchestra.console.ds.UserTokenDao;
+import org.georchestra.console.ws.utils.PasswordUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +14,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.support.SessionStatus;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
+
 public class NewPasswordFormControllerTest {
 
     private AccountDao accountDao = Mockito.mock(AccountDao.class);
@@ -27,6 +28,7 @@ public class NewPasswordFormControllerTest {
 
     @Before
     public void setUp() throws Exception {
+        ctrl.passwordUtils = new PasswordUtils();
     }
 
     @After
@@ -113,7 +115,7 @@ public class NewPasswordFormControllerTest {
         formBean.setPassword("password");
 
         try {
-        ctrl.newPassword(formBean, result, sessionStatus);
+            ctrl.newPassword(formBean, result, sessionStatus);
         } catch (Throwable e) {
             assertTrue(e instanceof IOException);
         }

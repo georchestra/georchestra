@@ -221,6 +221,7 @@ public class AccountFactory {
 		a.setShadowExpire(o.getShadowExpire());
 		a.setContext(o.getContext());
 		a.setOrg(o.getOrg());
+		a.setPending(o.isPending());
 
 		return a;
 	}

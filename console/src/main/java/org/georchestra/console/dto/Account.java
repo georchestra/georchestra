@@ -150,4 +150,8 @@ public interface Account extends Comparable<Account>{
 	String getContext();
 	
 	void setContext(String context);
+
+	boolean isPending();
+
+	void setPending(boolean pending);
 }

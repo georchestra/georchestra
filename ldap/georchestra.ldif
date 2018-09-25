@@ -4,6 +4,12 @@ objectClass: organizationalUnit
 objectClass: top
 ou: users
 
+# pendingusers, georchestra.org
+dn: ou=pendingusers,dc=georchestra,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: pendingusers
+
 # testuser, users, georchestra.org
 dn: uid=testuser,ou=users,dc=georchestra,dc=org
 objectClass: organizationalPerson
@@ -85,7 +91,7 @@ description: Do not modify.  This is a required user for extractorapp, geofence,
 userPassword:: e1NIQX1XMlY4d2UrOFdNanpma28rMUtZVDFZcWZFVDQ9
 
 # testpendinguser, users, georchestra.org
-dn: uid=testpendinguser,ou=users,dc=georchestra,dc=org
+dn: uid=testpendinguser,ou=pendingusers,dc=georchestra,dc=org
 objectClass: inetOrgPerson
 objectClass: organizationalPerson
 objectClass: person
@@ -131,16 +137,6 @@ ou: 1
 description: This group grants admin access to GeoServer
 member: uid=geoserver_privileged_user,ou=users,dc=georchestra,dc=org
 member: uid=testadmin,ou=users,dc=georchestra,dc=org
-
-
-# PENDING, roles, georchestra.org
-dn: cn=PENDING,ou=roles,dc=georchestra,dc=org
-objectClass: top
-objectClass: groupOfMembers
-cn: PENDING
-ou: 2
-description: This group does not grant any right inside the SDI. Users in this group are requesting a fully fledged account.
-member: uid=testpendinguser,ou=users,dc=georchestra,dc=org
 
 # SUPERUSER, roles, georchestra.org
 dn: cn=SUPERUSER,ou=roles,dc=georchestra,dc=org
@@ -216,18 +212,24 @@ objectClass: organizationalUnit
 objectClass: top
 ou: orgs
 
+# orgs, georchestra.org
+dn: ou=pendingorgs,dc=georchestra,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: pendingorgs
+
+
 dn: o=psc,ou=orgs,dc=georchestra,dc=org
 objectClass: organization
 objectClass: top
 o: psc
-businessCategory: ASSOCIATION
+businessCategory: Association
 postalAddress: 127 rue georchestra, 73590 Chamblille
 
 dn: cn=psc,ou=orgs,dc=georchestra,dc=org
 objectClass: groupOfMembers
 objectClass: top
 cn: psc
-businessCategory: REGISTERED
 description: 4184,684,9849,7987,797898,5797,579,97,49,797,97
 member: uid=testadmin,ou=users,dc=georchestra,dc=org
 member: uid=testuser,ou=users,dc=georchestra,dc=org
@@ -240,14 +242,13 @@ dn: o=c2c,ou=orgs,dc=georchestra,dc=org
 objectClass: organization
 objectClass: top
 o: c2c
-businessCategory: COMPANY
+businessCategory: Company
 postalAddress: 18 Rue du lac Saint André, 73000 Chambéry
 
 dn: cn=c2c,ou=orgs,dc=georchestra,dc=org
 objectClass: groupOfMembers
 objectClass: top
 cn: c2c
-businessCategory: REGISTERED
 description: 4184
 member: uid=testeditor,ou=users,dc=georchestra,dc=org
 o: Camptocamp
@@ -258,34 +259,32 @@ dn: o=cra,ou=orgs,dc=georchestra,dc=org
 objectClass: organization
 objectClass: top
 o: cra
-businessCategory: COMPANY
+businessCategory: Company
 postalAddress: Rue Jean Wenger - Valentin, 67000 Strasbourg
 
 dn: cn=cra,ou=orgs,dc=georchestra,dc=org
 objectClass: groupOfMembers
 objectClass: top
 cn: cra
-businessCategory: REGISTERED
 description: 4184
 member: uid=testreviewer,ou=users,dc=georchestra,dc=org
 o: Conseil régional d'Alsace
 ou: CRA
 seeAlso: o=cra,ou=orgs,dc=georchestra,dc=org
 
-dn: o=pendingorg,ou=orgs,dc=georchestra,dc=org
+dn: o=pendingorg,ou=pendingorgs,dc=georchestra,dc=org
 objectClass: organization
 objectClass: top
 o: pendingorg
-businessCategory: COMPANY
+businessCategory: Company
 postalAddress: Null island
 
-dn: cn=pendingorg,ou=orgs,dc=georchestra,dc=org
+dn: cn=pendingorg,ou=pendingorgs,dc=georchestra,dc=org
 objectClass: groupOfMembers
 objectClass: top
 cn: pendingorg
-businessCategory: PENDING
 description: 59107
-member: uid=testpendinguser,ou=users,dc=georchestra,dc=org
+member: uid=testpendinguser,ou=pendingusers,dc=georchestra,dc=org
 o: Fictive org pending admin validation
 ou: PENDINGORG
 seeAlso: o=pendingorg,ou=orgs,dc=georchestra,dc=org

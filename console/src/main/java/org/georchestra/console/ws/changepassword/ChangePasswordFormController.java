@@ -19,11 +19,6 @@
 
 package org.georchestra.console.ws.changepassword;
 
-import java.io.IOException;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.DataServiceException;
 import org.georchestra.console.ws.utils.PasswordUtils;
@@ -40,6 +35,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 /**
  * This controller is responsible of manage the user interactions required for changing the user account's password.
  * <p>
@@ -54,6 +53,8 @@ public class ChangePasswordFormController {
 
 	private AccountDao accountDao;
 
+	@Autowired
+	protected PasswordUtils passwordUtils;
 
 	@Autowired
 	public ChangePasswordFormController( AccountDao dao){
@@ -127,7 +128,7 @@ public class ChangePasswordFormController {
             return null;
 		}
 
-		PasswordUtils.validate( formBean.getPassword(), formBean.getConfirmPassword(), result);
+		passwordUtils.validate( formBean.getPassword(), formBean.getConfirmPassword(), result);
 
 		if(result.hasErrors()){
 

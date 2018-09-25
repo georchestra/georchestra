@@ -58,9 +58,7 @@ public class EditUserDetailsFormBean implements java.io.Serializable {
 	public void setSurname(String surname) {
 		this.surname = surname;
 	}
-	public String getFirstName() {
-		return firstName;
-	}
+	public String getFirstName() { return firstName; }
 	public void setFirstName(String givenName) {
 		this.firstName = givenName;
 	}

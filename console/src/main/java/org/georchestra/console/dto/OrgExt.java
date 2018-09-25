@@ -36,6 +36,8 @@ public class OrgExt implements ReferenceAware {
     private String orgType;
     private String address;
     private Integer numericId;
+    @JsonIgnore
+    private boolean isPending;
 
     @JsonIgnore
     private DirContextAdapter reference;
@@ -72,6 +74,13 @@ public class OrgExt implements ReferenceAware {
         this.numericId = numericId;
     }
 
+    public boolean isPending() {
+        return isPending;
+    }
+
+    public void setPending(boolean pending) {
+        isPending = pending;
+    }
 
     public JSONObject toJson() throws JSONException {
         JSONObject res = new JSONObject();
