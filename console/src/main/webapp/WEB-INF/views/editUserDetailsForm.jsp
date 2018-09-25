@@ -42,6 +42,9 @@
 <body>
     <%@ include file="header.jsp" %>
 
+
+    <script>var org= ${org};</script>
+
 	<div class="container">
 		<div class="page-header">
 			<h1><s:message code="editUserDetailsForm.title"/> <small><s:message code="editUserDetailsForm.subtitle" /></small></h1>

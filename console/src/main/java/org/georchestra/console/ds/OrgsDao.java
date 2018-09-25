@@ -143,7 +143,11 @@ public class OrgsDao {
      */
     public Org findForUser(String user) throws DataServiceException {
 
-        Name userDn = LdapNameBuilder.newInstance(this.userSearchBaseDN).add("uid", user).build();
+        Name userDn = LdapNameBuilder
+                .newInstance(this.basePath)
+                .add(this.userSearchBaseDN)
+                .add("uid", user)
+                .build();
 
         AndFilter filter  = new AndFilter();
         filter.and(new EqualsFilter("member", userDn.toString()));

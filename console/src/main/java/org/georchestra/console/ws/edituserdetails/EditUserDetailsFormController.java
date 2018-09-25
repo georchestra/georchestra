@@ -19,11 +19,15 @@
 
 package org.georchestra.console.ws.edituserdetails;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.DataServiceException;
 import org.georchestra.console.ds.DuplicatedEmailException;
 import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.dto.Account;
+import org.georchestra.console.dto.AccountImpl;
 import org.georchestra.console.dto.Org;
 import org.georchestra.console.ws.utils.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,11 +97,12 @@ public class EditUserDetailsFormController {
 		}
 
 		try {
+			Account userAccount = this.accountDao.findByUID(request.getHeader("sec-username"));
+
+			model.addAttribute(createForm(userAccount));
+			model.addAttribute("org", orgToJson(this.orgsDao.findForUser(userAccount.getUid())));
 
 			HttpSession session = request.getSession();
-			EditUserDetailsFormBean formBean = createForm(this.accountDao.findByUID(request.getHeader("sec-username")));
-
-			model.addAttribute(formBean);
 			for (String f : fields) {
 				if (this.validation.isUserFieldRequired(f)) {
 					session.setAttribute(f + "Required", "true");
@@ -235,5 +240,32 @@ public class EditUserDetailsFormController {
 	@ModelAttribute("editUserDetailsFormBean")
 	public EditUserDetailsFormBean getEditUserDetailsFormBean() {
 		return new EditUserDetailsFormBean();
+	}
+
+	private ObjectNode orgToJson(Org org) {
+		ObjectMapper objectMapper = new ObjectMapper();
+		if (org == null) {
+			return objectMapper.createObjectNode();
+		}
+
+		ObjectNode jsonOrg = objectMapper.valueToTree(org);
+		jsonOrg.replace("members", org.getMembers().stream()
+				.map(x -> uncheckedFindAccountByUID(x, objectMapper))
+				.collect(
+						() -> new ArrayNode(objectMapper.getNodeFactory()),
+						(col, elem) -> col.add(elem),
+						(col1, col2) -> col1.addAll(col2)));
+		return jsonOrg;
+	}
+
+	private ObjectNode uncheckedFindAccountByUID(String uid, ObjectMapper objectMapper) {
+		Account account;
+		try {
+			account = this.accountDao.findByUID(uid);
+		} catch (Exception e) {
+			account = new AccountImpl();
+			account.setUid(uid);
+		}
+		return objectMapper.valueToTree(account);
 	}
 }
