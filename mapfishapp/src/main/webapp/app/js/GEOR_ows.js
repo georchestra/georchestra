@@ -621,14 +621,14 @@ GEOR.ows = (function() {
         hydrateLayerRecord: function(record, options) {
             var url = record.get('layer').url,
                 layername = record.get('name');
-            if (!options.useMainService && url.indexOf("geoserver/wms") > 0) {
+            if (!options.useMainService && url.indexOf(GEOR.config.GEOSERVER_WMS_URL) > 0) {
                 // try to use virtual service instead of main service
                 var nsalias,
                     t = layername.split(':');
                 if (t.length > 1) {
                     nsalias = t.shift();
                     layername = t.shift();
-                    url = url.replace("geoserver/wms", "geoserver/"+nsalias+"/wms");
+                    url = url.replace(GEOR.config.GEOSERVER_WMS_URL, GEOR.config.GEOSERVER_WMS_URL.split('/')[1]+"/"+nsalias+"/wms");
                 }
             }
             GEOR.waiter.show();
