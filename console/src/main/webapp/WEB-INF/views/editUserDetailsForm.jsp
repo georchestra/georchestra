@@ -182,7 +182,7 @@
 
         <h4><translate>Membres</translate></h4>
         <ul>
-        <li dir-paginate="user in users | itemsPerPage: 4">
+        <li dir-paginate="user in users | itemsPerPage: 10">
           {{::user.sn}} {{::user.givenName}}
         </li>
         </ul>
