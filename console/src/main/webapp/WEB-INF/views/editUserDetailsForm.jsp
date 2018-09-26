@@ -169,18 +169,18 @@
     <script src="/console/manager/public/libraries.js"></script>
     <script src="/console/manager/public/templates.js"></script>
     <script src="/console/manager/public/app.js"></script>
-    <script>window.org = 'psc'</script>
     <script>require('app')</script>
     <!-- /angularjs app dependencies -->
 
     <div class="col-lg5" ng-app="manager" ng-strict-di ng-controller="StandaloneController">
       <fieldset>
-        <legend>Organisme «PSC» <em>**</em></legend>
+        <legend><translate>Organisme</translate> «{{org.name}}»</legend>
 
-        <h4>Aire de compétence <em>**</em></h4>
+        <h4><translate>Aire de compétence</translate></h4>
         <areas item="org" readonly="'true'"></areas>
+        <br>
 
-        <h4>Membres <em>**</em></h4>
+        <h4><translate>Membres</translate></h4>
         <ul>
         <li dir-paginate="user in users | itemsPerPage: 4">
           {{::user.sn}} {{::user.givenName}}
