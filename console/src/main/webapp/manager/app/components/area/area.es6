@@ -95,6 +95,12 @@ class AreaController {
         this.map.getView().setZoom(config.map.zoom)
       }
 
+      if (selected.length > 0) {
+        let extent = ol.extent.createEmpty()
+        selected.forEach(f => ol.extent.extend(extent, f.getGeometry().getExtent()))
+        this.map.getView().fit(extent, map.getSize())
+      }
+
       this.updateSelection(selected)
       this.loading = false
     })
