@@ -56,9 +56,8 @@ class StandaloneController {
       return
     }
 
-    $scope.org = Org.get({id: window.org}, () => User.query(users => {
-      $scope.users = users.filter(u => u.org === $scope.org.name)
-    }))
+    $scope.org = window.org
+    $scope.users = window.org.members
   }
 }
 
