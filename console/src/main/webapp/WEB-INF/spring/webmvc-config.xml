@@ -85,7 +85,6 @@
 
   <bean id="roleDao" class="org.georchestra.console.ds.RoleDaoImpl">
     <property name="ldapTemplate" ref="ldapTemplate"/>
-    <property name="uniqueNumberField" value="${roleUniqueNumberField}"/>
     <property name="userSearchBaseDN" value="${userSearchBaseDN}"/>
     <property name="roleSearchBaseDN" value="${roleSearchBaseDN}"/>
   </bean>
@@ -103,7 +102,6 @@
     <constructor-arg ref="ldapTemplate"/>
     <constructor-arg ref="roleDao"/>
     <constructor-arg ref="orgsDao"/>
-    <property name="uniqueNumberField" value="${accountUniqueNumberField}"/>
     <property name="userSearchBaseDN" value="${userSearchBaseDN}"/>
     <property name="basePath" value="${baseDN}"/>
     <property name="orgSearchBaseDN" value="${orgSearchBaseDN}"/>

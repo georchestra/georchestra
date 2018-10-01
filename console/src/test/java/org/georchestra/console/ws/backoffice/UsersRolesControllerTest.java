@@ -1,19 +1,10 @@
 package org.georchestra.console.ws.backoffice;
 
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assume.assumeTrue;
-import static org.mockito.Matchers.eq;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.ds.AccountDaoImpl;
-import org.georchestra.console.ds.RoleDaoImpl;
 import org.georchestra.console.ds.OrgsDao;
+import org.georchestra.console.ds.RoleDaoImpl;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountFactory;
 import org.georchestra.console.dto.Role;
@@ -37,6 +28,14 @@ import org.springframework.ldap.filter.PresentFilter;
 import org.springframework.security.ldap.DefaultSpringSecurityContextSource;
 
 import javax.naming.directory.SearchControls;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assume.assumeTrue;
+import static org.mockito.Matchers.eq;
 
 public class UsersRolesControllerTest {
 
@@ -197,7 +196,6 @@ public class UsersRolesControllerTest {
         roleDao = new RoleDaoImpl();
         roleDao.setLdapTemplate(ldapTemplate);
         roleDao.setRoleSearchBaseDN("ou=roles");
-        roleDao.setUniqueNumberField("ou");
         roleDao.setUserSearchBaseDN("ou=users");
 
         OrgsDao orgsDao = new OrgsDao();
@@ -207,7 +205,6 @@ public class UsersRolesControllerTest {
 
         // configures AccountDao
         dao = new AccountDaoImpl(ldapTemplate, roleDao, orgsDao);
-        dao.setUniqueNumberField("employeeNumber");
         dao.setUserSearchBaseDN("ou=users");
         dao.setRoleDao(roleDao);
       

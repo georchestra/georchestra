@@ -88,7 +88,6 @@ public class UsersControllerTest {
         roleDao = new RoleDaoImpl();
         roleDao.setLdapTemplate(ldapTemplate);
         roleDao.setRoleSearchBaseDN("ou=roles");
-        roleDao.setUniqueNumberField("ou");
         roleDao.setUserSearchBaseDN("ou=users");
         roleDao.setRoles(this.roles);
         roleDao.setLogDao(logDao);
@@ -101,7 +100,6 @@ public class UsersControllerTest {
 
         // configures AccountDao
         dao = new AccountDaoImpl(ldapTemplate, roleDao, orgsDao);
-        dao.setUniqueNumberField("employeeNumber");
         dao.setUserSearchBaseDN("ou=users");
         dao.setRoleDao(roleDao);
         dao.setLogDao(logDao);

@@ -3,7 +3,11 @@ package org.georchestra.console.ws.backoffice.roles;
 import org.georchestra.console.dao.AdminLogDao;
 import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.dao.DelegationDao;
-import org.georchestra.console.ds.*;
+import org.georchestra.console.ds.AccountDao;
+import org.georchestra.console.ds.AccountDaoImpl;
+import org.georchestra.console.ds.DataServiceException;
+import org.georchestra.console.ds.OrgsDao;
+import org.georchestra.console.ds.RoleDaoImpl;
 import org.georchestra.console.dto.Role;
 import org.georchestra.console.dto.RoleFactory;
 import org.georchestra.console.model.DelegationEntry;
@@ -15,7 +19,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.ldap.NameNotFoundException;
-import org.springframework.ldap.core.*;
+import org.springframework.ldap.core.AttributesMapper;
+import org.springframework.ldap.core.ContextMapper;
+import org.springframework.ldap.core.DirContextOperations;
+import org.springframework.ldap.core.DistinguishedName;
+import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -30,9 +38,15 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 import javax.naming.Name;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
 
 public class RolesControllerTest {
@@ -71,7 +85,6 @@ public class RolesControllerTest {
 		roleDao = new RoleDaoImpl();
 		roleDao.setLdapTemplate(ldapTemplate);
 		roleDao.setRoleSearchBaseDN(this.roleSearchBaseDN);
-		roleDao.setUniqueNumberField("ou");
 		roleDao.setUserSearchBaseDN("ou=users");
 		roleDao.setLogDao(logDao);
 		roleDao.setRoles(roles);

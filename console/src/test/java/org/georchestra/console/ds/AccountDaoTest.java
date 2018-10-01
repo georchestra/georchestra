@@ -57,7 +57,6 @@ public class AccountDaoTest {
         roleDao = new RoleDaoImpl();
         roleDao.setLdapTemplate(ldapTemplate);
         roleDao.setRoleSearchBaseDN("ou=roles");
-        roleDao.setUniqueNumberField("ou");
         roleDao.setUserSearchBaseDN("ou=users");
 
         OrgsDao orgsDao = new OrgsDao();

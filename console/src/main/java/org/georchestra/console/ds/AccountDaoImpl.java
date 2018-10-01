@@ -32,14 +32,12 @@ import org.georchestra.console.model.AdminLogType;
 import org.georchestra.console.ws.newaccount.UidGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
-import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.DistinguishedName;
 import org.springframework.ldap.core.LdapRdn;
 import org.springframework.ldap.core.LdapTemplate;
-import org.springframework.ldap.filter.AbstractFilter;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.filter.Filter;
@@ -48,16 +46,12 @@ import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.security.authentication.encoding.LdapShaPasswordEncoder;
 
 import javax.naming.Name;
-import javax.naming.NamingException;
-import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchControls;
 import javax.naming.ldap.LdapName;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -73,9 +67,7 @@ public final class AccountDaoImpl implements AccountDao {
     private LdapTemplate ldapTemplate;
     private RoleDao roleDao;
     private OrgsDao orgDao;
-    private String uniqueNumberField = "employeeNumber";
     private LdapRdn userSearchBaseDN;
-    private AtomicInteger uniqueNumberCounter = new AtomicInteger(-1);
 
     @Autowired
     private AdminLogDao logDao;
@@ -115,10 +107,6 @@ public final class AccountDaoImpl implements AccountDao {
 
     public void setRoleDao(RoleDao roleDao) {
         this.roleDao = roleDao;
-    }
-
-    public void setUniqueNumberField(String uniqueNumberField) {
-        this.uniqueNumberField = uniqueNumberField;
     }
 
     public void setUserSearchBaseDN(String userSearchBaseDN) {
@@ -186,9 +174,8 @@ public final class AccountDaoImpl implements AccountDao {
             filter.and(new EqualsFilter("objectClass", "organizationalPerson"));
             filter.and(new EqualsFilter("objectClass", "person"));
 
-            Integer uniqueNumber = findUniqueNumber(filter, uniqueNumberField, this.uniqueNumberCounter, ldapTemplate);
             DirContextAdapter context = new DirContextAdapter(dn);
-            mapToContext(uniqueNumber, account, context);
+            mapToContext(account, context);
 
             // Maps the password separately
             context.setAttributeValue(UserSchema.USER_PASSWORD_KEY, account.getPassword());
@@ -205,56 +192,6 @@ public final class AccountDaoImpl implements AccountDao {
         } catch (NameNotFoundException e) {
             throw new DataServiceException(e);
         }
-    }
-
-    static Integer findUniqueNumber(AbstractFilter searchFilter, final String uniqueNumberField,
-            AtomicInteger uniqueNumber, LdapTemplate ldapTemplate) {
-        if (uniqueNumberField == null || uniqueNumberField.trim().isEmpty()) {
-            return null;
-        }
-        if (uniqueNumber.get() < 0) {
-            @SuppressWarnings("unchecked")
-            final List<Integer> uniqueIds = ldapTemplate.search(USERS_BRANCH_NAME, searchFilter.encode(),
-                    new AttributesMapper() {
-                        @Override
-                        public Object mapFromAttributes(Attributes attributes) throws NamingException {
-                            final Attribute attribute = attributes.get(uniqueNumberField);
-                            if (attribute == null) {
-                                return 0;
-                            }
-                            final Object number = attribute.get();
-                            if (number != null) {
-                                try {
-                                    return Integer.valueOf(number.toString());
-                                } catch (NumberFormatException e) {
-                                    return 0;
-                                }
-                            }
-                            return 0;
-                        }
-                    });
-
-            for (Integer uniqueId : uniqueIds) {
-                if (uniqueId != null && uniqueId > uniqueNumber.get()) {
-                    uniqueNumber.set(uniqueId);
-                }
-            }
-            if (uniqueNumber.get() < 0) {
-                uniqueNumber.set(0);
-            }
-            uniqueNumber.incrementAndGet();
-        }
-
-        boolean isUnique = false;
-        while (!isUnique) {
-            AndFilter filter = new AndFilter();
-            filter.and(searchFilter);
-            filter.and(new EqualsFilter(uniqueNumberField, uniqueNumber.get()));
-            isUnique = ldapTemplate.search(USERS_BRANCH_NAME, filter.encode(), new AccountContextMapper(""))
-                    .isEmpty();
-            uniqueNumber.incrementAndGet();
-        }
-        return uniqueNumber.get();
     }
 
     /**
@@ -299,7 +236,7 @@ public final class AccountDaoImpl implements AccountDao {
         Name dn = buildDn(account.getUid());
         DirContextOperations context = ldapTemplate.lookupContext(dn);
 
-        mapToContext(null /* don't update number */, account, context);
+        mapToContext(account, context);
 
         ldapTemplate.modifyAttributes(context);
 
@@ -492,19 +429,15 @@ public final class AccountDaoImpl implements AccountDao {
     /**
      * Maps the following the account object to the following LDAP entry schema:
      *
-     * @param uniqueNumber
      * @param account
      * @param context
      */
-    private void mapToContext(Integer uniqueNumber, Account account, DirContextOperations context) {
+    private void mapToContext(Account account, DirContextOperations context) {
 
         context.setAttributeValues("objectclass", new String[] { "top", "person", "organizationalPerson",
                 "inetOrgPerson", "shadowAccount" });
 
         // person attributes
-        if (uniqueNumber != null) {
-            setAccountField(context, uniqueNumberField, uniqueNumber.toString());
-        }
         setAccountField(context, UserSchema.SURNAME_KEY, account.getSurname());
 
         setAccountField(context, UserSchema.COMMON_NAME_KEY, account.getCommonName());
