@@ -62,12 +62,11 @@ import java.util.regex.Pattern;
  */
 public final class AccountDaoImpl implements AccountDao {
 
-    public static final LdapName USERS_BRANCH_NAME = LdapNameBuilder.newInstance("ou=users").build();
+    private LdapName userSearchBaseDN;
     private AccountContextMapper attributMapper;
     private LdapTemplate ldapTemplate;
     private RoleDao roleDao;
     private OrgsDao orgDao;
-    private LdapRdn userSearchBaseDN;
 
     @Autowired
     private AdminLogDao logDao;
@@ -110,7 +109,7 @@ public final class AccountDaoImpl implements AccountDao {
     }
 
     public void setUserSearchBaseDN(String userSearchBaseDN) {
-        this.userSearchBaseDN = new LdapRdn(userSearchBaseDN);
+        this.userSearchBaseDN = LdapNameBuilder.newInstance(userSearchBaseDN).build();
     }
 
     public void setLogDao(AdminLogDao logDao) {
@@ -286,7 +285,7 @@ public final class AccountDaoImpl implements AccountDao {
         sc.setReturningAttributes(UserSchema.ATTR_TO_RETRIEVE);
         sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
         EqualsFilter filter = new EqualsFilter("objectClass", "person");
-        return ldapTemplate.search(USERS_BRANCH_NAME, filter.encode(), sc, attributMapper);
+        return ldapTemplate.search(userSearchBaseDN, filter.encode(), sc, attributMapper);
     }
     
     @Override
@@ -297,7 +296,7 @@ public final class AccountDaoImpl implements AccountDao {
         AndFilter and = new AndFilter();
         and.and( new EqualsFilter("objectClass", "person"));
         and.and(f);
-        List<Account> l = ldapTemplate.search(USERS_BRANCH_NAME, and.encode(), sc, attributMapper);
+        List<Account> l = ldapTemplate.search(userSearchBaseDN, and.encode(), sc, attributMapper);
         return filterProtected.filterUsersList(l);
     }
 
@@ -344,7 +343,7 @@ public final class AccountDaoImpl implements AccountDao {
         filter.and(new EqualsFilter("objectClass", "person"));
         filter.and(new EqualsFilter("mail", email));
 
-        List<Account> accountList = ldapTemplate.search(USERS_BRANCH_NAME, filter.encode(),sc,
+        List<Account> accountList = ldapTemplate.search(userSearchBaseDN, filter.encode(),sc,
                 attributMapper);
         if (accountList.isEmpty()) {
             throw new NameNotFoundException("There is no user with this email: " + email);
@@ -372,7 +371,7 @@ public final class AccountDaoImpl implements AccountDao {
         Name memberOfValue = LdapNameBuilder.newInstance(basePath).add(this.roleSearchBaseDN).add("cn", role).build();
         filter.and(new EqualsFilter("memberOf", memberOfValue.toString()));
 
-        return ldapTemplate.search(USERS_BRANCH_NAME, filter.encode(),sc, attributMapper);
+        return ldapTemplate.search(userSearchBaseDN, filter.encode(),sc, attributMapper);
     }
 
 
@@ -380,7 +379,7 @@ public final class AccountDaoImpl implements AccountDao {
     public boolean exist(final String uid) throws DataServiceException {
 
         try {
-            DistinguishedName dn = buildDn(uid.toLowerCase());
+            LdapName dn = buildDn(uid.toLowerCase());
             ldapTemplate.lookup(dn);
             return true;
         } catch (NameNotFoundException ex) {
@@ -395,12 +394,11 @@ public final class AccountDaoImpl implements AccountDao {
      *            user id
      * @return
      */
-    private DistinguishedName buildDn(String uid) {
-        DistinguishedName dn = new DistinguishedName();
-        dn.add(userSearchBaseDN);
-        dn.add("uid", uid);
-
-        return dn;
+    private LdapName buildDn(String uid) {
+        LdapNameBuilder builder = LdapNameBuilder.newInstance();
+        builder.add(userSearchBaseDN);
+        builder.add("uid", uid);
+        return builder.build();
     }
 
     /**
@@ -699,7 +697,7 @@ public final class AccountDaoImpl implements AccountDao {
         filter.and(new EqualsFilter("objectClass", "person"));
         filter.and(new PresentFilter("shadowExpire"));
 
-        return ldapTemplate.search(USERS_BRANCH_NAME, filter.encode(),sc, attributMapper);
+        return ldapTemplate.search(userSearchBaseDN, filter.encode(),sc, attributMapper);
 
     }
 }

@@ -50,13 +50,6 @@ import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.mock;
 
 public class UsersControllerTest {
-    private static final ArgumentMatcher<LdapName> OU_USERS_MATCHER = new ArgumentMatcher<LdapName>() {
-                @Override
-                public boolean matches(Object o) {
-                    return ((LdapName) o).toString().equalsIgnoreCase("ou=users");
-                }
-            };
-
     private LdapTemplate ldapTemplate;
     private LdapContextSource contextSource;
 
@@ -123,7 +116,7 @@ public class UsersControllerTest {
     @Test(expected = DataServiceException.class)
     public void testFindAllException() throws DataServiceException {
         Mockito.doThrow(DataServiceException.class).when(ldapTemplate)
-                .search(any(DistinguishedName.class), anyString(), any(SearchControls.class), any(ContextMapper.class));
+                .search(any(Name.class), anyString(), any(SearchControls.class), any(ContextMapper.class));
         usersCtrl.findAll();
     }
 
@@ -154,7 +147,7 @@ public class UsersControllerTest {
         Account pmauduit = AccountFactory.createBrief("pmauduit", "monkey123", "Pierre", "Mauduit",
                 "pmauduit@localhost", "+33123456789", "developer", "");
 
-        Mockito.when(ldapTemplate.lookup(any(DistinguishedName.class), eq(UserSchema.ATTR_TO_RETRIEVE), any(ContextMapper.class))).thenReturn(pmauduit);
+        Mockito.when(ldapTemplate.lookup(any(LdapName.class), eq(UserSchema.ATTR_TO_RETRIEVE), any(ContextMapper.class))).thenReturn(pmauduit);
         Account res = usersCtrl.findByUid("pmauduit");
         assertEquals(pmauduit, res);
     }
@@ -263,14 +256,14 @@ public class UsersControllerTest {
 	@Test(expected = NameNotFoundException.class)
 	public void testUpdateUserNotFound() throws Exception {
 		Mockito.doThrow(NameNotFoundException.class).when(ldapTemplate)
-				.lookup(eq(new DistinguishedName("uid=usernotfound,ou=users")), any(ContextMapper.class));
+				.lookup(argThat(getMatcherFor("uid=usernotfound,ou=users")), any(ContextMapper.class));
 		usersCtrl.update("usernotfound", request);
 	}
 
     @Test(expected = DataServiceException.class)
     public void testUpdateUserDataServiceException() throws Exception {
         Mockito.doThrow(DataServiceException.class).when(ldapTemplate)
-                .lookup(eq(new DistinguishedName("uid=pmauduit,ou=users")), any(String[].class), any(ContextMapper.class));
+                .lookup(argThat(getMatcherFor("uid=pmauduit,ou=users")), any(String[].class), any(ContextMapper.class));
         usersCtrl.update("pmauduit", request);
     }
 
@@ -294,10 +287,10 @@ public class UsersControllerTest {
 
         List<Account> listFakedAccount = new ArrayList<Account>();
         listFakedAccount.add(fakedAccount2);
-        Mockito.doReturn(listFakedAccount).when(ldapTemplate).search(argThat(OU_USERS_MATCHER),
+        Mockito.doReturn(listFakedAccount).when(ldapTemplate).search(argThat(getMatcherFor("ou=users")),
                 eq(filter.encode()), any(SearchControls.class), any(ContextMapper.class));
 
-        Mockito.doReturn(fakedAccount).when(ldapTemplate).lookup(any(DistinguishedName.class),
+        Mockito.doReturn(fakedAccount).when(ldapTemplate).lookup(any(Name.class),
                 eq(UserSchema.ATTR_TO_RETRIEVE), any(ContextMapper.class));
 
         usersCtrl.update("pmauduit", request);
@@ -313,7 +306,7 @@ public class UsersControllerTest {
         String mFilter = "(&(objectClass=inetOrgPerson)(objectClass=organizationalPerson)"
                 + "(objectClass=person)(mail=tomcat2@localhost))";
         Mockito.doReturn(fakedAccount).when(ldapTemplate).lookup(any(Name.class), eq(UserSchema.ATTR_TO_RETRIEVE), any(ContextMapper.class));
-        Mockito.doThrow(DataServiceException.class).when(ldapTemplate).search(Mockito.argThat(OU_USERS_MATCHER),
+        Mockito.doThrow(DataServiceException.class).when(ldapTemplate).search(argThat(getMatcherFor("ou=users")),
                 eq(mFilter), any(SearchControls.class), any(ContextMapper.class));
 
         usersCtrl.update("pmauduit", request);
@@ -359,7 +352,7 @@ public class UsersControllerTest {
                 + "(objectClass=person)(mail=tomcat2@localhost))";
         List<Account> listFakedAccount = new ArrayList<Account>();
         listFakedAccount.add(fakedAccount);
-        Mockito.doReturn(listFakedAccount).when(ldapTemplate).search(argThat(OU_USERS_MATCHER),
+        Mockito.doReturn(listFakedAccount).when(ldapTemplate).search(argThat(getMatcherFor("ou=users")),
                 eq(mFilter), any(SearchControls.class), any(ContextMapper.class));
         Mockito.doReturn(mock(DirContextOperations.class)).when(ldapTemplate).lookupContext(any(Name.class));
 
@@ -413,7 +406,7 @@ public class UsersControllerTest {
 
         List<Account> listFakedAccount = new ArrayList<Account>();
         listFakedAccount.add(fakedAccount);
-        Mockito.doReturn(listFakedAccount).when(ldapTemplate).search(argThat(OU_USERS_MATCHER),
+        Mockito.doReturn(listFakedAccount).when(ldapTemplate).search(argThat(getMatcherFor("ou=users")),
                 eq(filter.encode()), any(SearchControls.class), any(ContextMapper.class));
         Mockito.doReturn(mock(DirContextOperations.class)).
             when(ldapTemplate).lookupContext(any(Name.class));
@@ -460,4 +453,12 @@ public class UsersControllerTest {
         usersCtrl.delete("pmaudui", request, response);
     }
 
+    private ArgumentMatcher<LdapName> getMatcherFor(final String dn) {
+        return new ArgumentMatcher<LdapName>() {
+            @Override
+            public boolean matches(Object o) {
+                return ((LdapName) o).toString().equalsIgnoreCase(dn);
+            }
+        };
+    }
 }
