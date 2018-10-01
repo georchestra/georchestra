@@ -174,13 +174,13 @@
 
     <div class="col-lg5" ng-app="manager" ng-strict-di ng-controller="StandaloneController">
       <fieldset>
-        <legend><translate>Organisme</translate> «{{org.name}}»</legend>
+        <legend><s:message code="editUserDetailsForm.organisation" /> «{{org.name}}»</legend>
 
-        <h4><translate>Aire de compétence</translate></h4>
+        <h4><s:message code="editUserDetailsForm.areaOfCompetence" /></h4>
         <areas item="org" readonly="'true'"></areas>
         <br>
 
-        <h4><translate>Membres</translate></h4>
+        <h4><s:message code="editUserDetailsForm.members" /></h4>
         <ul>
         <li dir-paginate="user in users | itemsPerPage: 10">
           {{::user.sn}} {{::user.givenName}}
