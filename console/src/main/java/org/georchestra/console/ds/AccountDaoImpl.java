@@ -52,6 +52,7 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchControls;
+import javax.naming.ldap.LdapName;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -67,6 +68,7 @@ import java.util.regex.Pattern;
  */
 public final class AccountDaoImpl implements AccountDao {
 
+    public static final LdapName USERS_BRANCH_NAME = LdapNameBuilder.newInstance("ou=users").build();
     private AccountContextMapper attributMapper;
     private LdapTemplate ldapTemplate;
     private RoleDao roleDao;
@@ -212,7 +214,7 @@ public final class AccountDaoImpl implements AccountDao {
         }
         if (uniqueNumber.get() < 0) {
             @SuppressWarnings("unchecked")
-            final List<Integer> uniqueIds = ldapTemplate.search(DistinguishedName.EMPTY_PATH, searchFilter.encode(),
+            final List<Integer> uniqueIds = ldapTemplate.search(USERS_BRANCH_NAME, searchFilter.encode(),
                     new AttributesMapper() {
                         @Override
                         public Object mapFromAttributes(Attributes attributes) throws NamingException {
@@ -248,7 +250,7 @@ public final class AccountDaoImpl implements AccountDao {
             AndFilter filter = new AndFilter();
             filter.and(searchFilter);
             filter.and(new EqualsFilter(uniqueNumberField, uniqueNumber.get()));
-            isUnique = ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(), new AccountContextMapper(""))
+            isUnique = ldapTemplate.search(USERS_BRANCH_NAME, filter.encode(), new AccountContextMapper(""))
                     .isEmpty();
             uniqueNumber.incrementAndGet();
         }
@@ -347,7 +349,7 @@ public final class AccountDaoImpl implements AccountDao {
         sc.setReturningAttributes(UserSchema.ATTR_TO_RETRIEVE);
         sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
         EqualsFilter filter = new EqualsFilter("objectClass", "person");
-        return ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(), sc, attributMapper);
+        return ldapTemplate.search(USERS_BRANCH_NAME, filter.encode(), sc, attributMapper);
     }
     
     @Override
@@ -358,7 +360,7 @@ public final class AccountDaoImpl implements AccountDao {
         AndFilter and = new AndFilter();
         and.and( new EqualsFilter("objectClass", "person"));
         and.and(f);
-        List<Account> l = ldapTemplate.search(DistinguishedName.EMPTY_PATH, and.encode(), sc, attributMapper);
+        List<Account> l = ldapTemplate.search(USERS_BRANCH_NAME, and.encode(), sc, attributMapper);
         return filterProtected.filterUsersList(l);
     }
 
@@ -405,7 +407,7 @@ public final class AccountDaoImpl implements AccountDao {
         filter.and(new EqualsFilter("objectClass", "person"));
         filter.and(new EqualsFilter("mail", email));
 
-        List<Account> accountList = ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(),sc,
+        List<Account> accountList = ldapTemplate.search(USERS_BRANCH_NAME, filter.encode(),sc,
                 attributMapper);
         if (accountList.isEmpty()) {
             throw new NameNotFoundException("There is no user with this email: " + email);
@@ -433,7 +435,7 @@ public final class AccountDaoImpl implements AccountDao {
         Name memberOfValue = LdapNameBuilder.newInstance(basePath).add(this.roleSearchBaseDN).add("cn", role).build();
         filter.and(new EqualsFilter("memberOf", memberOfValue.toString()));
 
-        return ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(),sc, attributMapper);
+        return ldapTemplate.search(USERS_BRANCH_NAME, filter.encode(),sc, attributMapper);
     }
 
 
@@ -764,7 +766,7 @@ public final class AccountDaoImpl implements AccountDao {
         filter.and(new EqualsFilter("objectClass", "person"));
         filter.and(new PresentFilter("shadowExpire"));
 
-        return ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(),sc, attributMapper);
+        return ldapTemplate.search(USERS_BRANCH_NAME, filter.encode(),sc, attributMapper);
 
     }
 }

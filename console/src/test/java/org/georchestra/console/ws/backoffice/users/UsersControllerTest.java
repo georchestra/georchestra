@@ -5,8 +5,8 @@ import org.georchestra.console.dao.DelegationDao;
 import org.georchestra.console.ds.AccountDaoImpl;
 import org.georchestra.console.ds.DataServiceException;
 import org.georchestra.console.ds.DuplicatedEmailException;
-import org.georchestra.console.ds.RoleDaoImpl;
 import org.georchestra.console.ds.OrgsDao;
+import org.georchestra.console.ds.RoleDaoImpl;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountFactory;
 import org.georchestra.console.dto.UserSchema;
@@ -15,6 +15,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.ContextMapper;
@@ -36,15 +37,26 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 
 import javax.naming.Name;
 import javax.naming.directory.SearchControls;
-import java.util.*;
+import javax.naming.ldap.LdapName;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.mock;
 
 public class UsersControllerTest {
+    private static final ArgumentMatcher<LdapName> OU_USERS_MATCHER = new ArgumentMatcher<LdapName>() {
+                @Override
+                public boolean matches(Object o) {
+                    return ((LdapName) o).toString().equalsIgnoreCase("ou=users");
+                }
+            };
+
     private LdapTemplate ldapTemplate;
     private LdapContextSource contextSource;
 
@@ -62,10 +74,10 @@ public class UsersControllerTest {
         userRule = new UserRule();
         userRule.setListOfprotectedUsers(new String[] { "geoserver_privileged_user" });
 
-        ldapTemplate = Mockito.mock(LdapTemplate.class);
-        contextSource = Mockito.mock(LdapContextSource.class);
-        roles = Mockito.mock(RoleProtected.class);
-        AdminLogDao logDao = Mockito.mock(AdminLogDao.class);
+        ldapTemplate = mock(LdapTemplate.class);
+        contextSource = mock(LdapContextSource.class);
+        roles = mock(RoleProtected.class);
+        AdminLogDao logDao = mock(AdminLogDao.class);
 
         Mockito.when(contextSource.getBaseLdapPath())
             .thenReturn(new DistinguishedName("dc=georchestra,dc=org"));
@@ -96,7 +108,7 @@ public class UsersControllerTest {
 
         usersCtrl = new UsersController(dao, userRule);
         usersCtrl.setOrgDao(orgsDao);
-        usersCtrl.setDelegationDao(Mockito.mock(DelegationDao.class));
+        usersCtrl.setDelegationDao(mock(DelegationDao.class));
 
         request = new MockHttpServletRequest();
         response = new MockHttpServletResponse();
@@ -225,7 +237,7 @@ public class UsersControllerTest {
         Mockito.when(ldapTemplate.search(any(Name.class), anyString(), any(ContextMapper.class)))
             .thenReturn(new ArrayList<>());
         Mockito.when(ldapTemplate.lookupContext(LdapNameBuilder.newInstance("cn=USER,ou=roles").build()))
-            .thenReturn(Mockito.mock(DirContextOperations.class));
+            .thenReturn(mock(DirContextOperations.class));
 
         Account res = usersCtrl.create(request);
 
@@ -284,7 +296,7 @@ public class UsersControllerTest {
 
         List<Account> listFakedAccount = new ArrayList<Account>();
         listFakedAccount.add(fakedAccount2);
-        Mockito.doReturn(listFakedAccount).when(ldapTemplate).search(eq(DistinguishedName.EMPTY_PATH),
+        Mockito.doReturn(listFakedAccount).when(ldapTemplate).search(argThat(OU_USERS_MATCHER),
                 eq(filter.encode()), any(SearchControls.class), any(ContextMapper.class));
 
         Mockito.doReturn(fakedAccount).when(ldapTemplate).lookup(any(DistinguishedName.class),
@@ -303,7 +315,7 @@ public class UsersControllerTest {
         String mFilter = "(&(objectClass=inetOrgPerson)(objectClass=organizationalPerson)"
                 + "(objectClass=person)(mail=tomcat2@localhost))";
         Mockito.doReturn(fakedAccount).when(ldapTemplate).lookup(any(Name.class), eq(UserSchema.ATTR_TO_RETRIEVE), any(ContextMapper.class));
-        Mockito.doThrow(DataServiceException.class).when(ldapTemplate).search(eq(DistinguishedName.EMPTY_PATH),
+        Mockito.doThrow(DataServiceException.class).when(ldapTemplate).search(Mockito.argThat(OU_USERS_MATCHER),
                 eq(mFilter), any(SearchControls.class), any(ContextMapper.class));
 
         usersCtrl.update("pmauduit", request);
@@ -349,9 +361,9 @@ public class UsersControllerTest {
                 + "(objectClass=person)(mail=tomcat2@localhost))";
         List<Account> listFakedAccount = new ArrayList<Account>();
         listFakedAccount.add(fakedAccount);
-        Mockito.doReturn(listFakedAccount).when(ldapTemplate).search(eq(DistinguishedName.EMPTY_PATH),
+        Mockito.doReturn(listFakedAccount).when(ldapTemplate).search(argThat(OU_USERS_MATCHER),
                 eq(mFilter), any(SearchControls.class), any(ContextMapper.class));
-        Mockito.doReturn(Mockito.mock(DirContextOperations.class)).when(ldapTemplate).lookupContext(any(Name.class));
+        Mockito.doReturn(mock(DirContextOperations.class)).when(ldapTemplate).lookupContext(any(Name.class));
 
         Account ret = usersCtrl.update("pmauduit", request);
 
@@ -403,9 +415,9 @@ public class UsersControllerTest {
 
         List<Account> listFakedAccount = new ArrayList<Account>();
         listFakedAccount.add(fakedAccount);
-        Mockito.doReturn(listFakedAccount).when(ldapTemplate).search(eq(DistinguishedName.EMPTY_PATH),
+        Mockito.doReturn(listFakedAccount).when(ldapTemplate).search(argThat(OU_USERS_MATCHER),
                 eq(filter.encode()), any(SearchControls.class), any(ContextMapper.class));
-        Mockito.doReturn(Mockito.mock(DirContextOperations.class)).
+        Mockito.doReturn(mock(DirContextOperations.class)).
             when(ldapTemplate).lookupContext(any(Name.class));
 
         Account ret = usersCtrl.update("pmauduit", request);
