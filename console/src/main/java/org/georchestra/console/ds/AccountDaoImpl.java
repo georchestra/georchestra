@@ -32,14 +32,12 @@ import org.georchestra.console.model.AdminLogType;
 import org.georchestra.console.ws.newaccount.UidGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
-import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.DistinguishedName;
 import org.springframework.ldap.core.LdapRdn;
 import org.springframework.ldap.core.LdapTemplate;
-import org.springframework.ldap.filter.AbstractFilter;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.filter.Filter;
@@ -48,15 +46,12 @@ import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.security.authentication.encoding.LdapShaPasswordEncoder;
 
 import javax.naming.Name;
-import javax.naming.NamingException;
-import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchControls;
+import javax.naming.ldap.LdapName;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -67,13 +62,11 @@ import java.util.regex.Pattern;
  */
 public final class AccountDaoImpl implements AccountDao {
 
+    private LdapName userSearchBaseDN;
     private AccountContextMapper attributMapper;
     private LdapTemplate ldapTemplate;
     private RoleDao roleDao;
     private OrgsDao orgDao;
-    private String uniqueNumberField = "employeeNumber";
-    private LdapRdn userSearchBaseDN;
-    private AtomicInteger uniqueNumberCounter = new AtomicInteger(-1);
 
     @Autowired
     private AdminLogDao logDao;
@@ -115,12 +108,8 @@ public final class AccountDaoImpl implements AccountDao {
         this.roleDao = roleDao;
     }
 
-    public void setUniqueNumberField(String uniqueNumberField) {
-        this.uniqueNumberField = uniqueNumberField;
-    }
-
     public void setUserSearchBaseDN(String userSearchBaseDN) {
-        this.userSearchBaseDN = new LdapRdn(userSearchBaseDN);
+        this.userSearchBaseDN = LdapNameBuilder.newInstance(userSearchBaseDN).build();
     }
 
     public void setLogDao(AdminLogDao logDao) {
@@ -184,9 +173,8 @@ public final class AccountDaoImpl implements AccountDao {
             filter.and(new EqualsFilter("objectClass", "organizationalPerson"));
             filter.and(new EqualsFilter("objectClass", "person"));
 
-            Integer uniqueNumber = findUniqueNumber(filter, uniqueNumberField, this.uniqueNumberCounter, ldapTemplate);
             DirContextAdapter context = new DirContextAdapter(dn);
-            mapToContext(uniqueNumber, account, context);
+            mapToContext(account, context);
 
             // Maps the password separately
             context.setAttributeValue(UserSchema.USER_PASSWORD_KEY, account.getPassword());
@@ -203,56 +191,6 @@ public final class AccountDaoImpl implements AccountDao {
         } catch (NameNotFoundException e) {
             throw new DataServiceException(e);
         }
-    }
-
-    static Integer findUniqueNumber(AbstractFilter searchFilter, final String uniqueNumberField,
-            AtomicInteger uniqueNumber, LdapTemplate ldapTemplate) {
-        if (uniqueNumberField == null || uniqueNumberField.trim().isEmpty()) {
-            return null;
-        }
-        if (uniqueNumber.get() < 0) {
-            @SuppressWarnings("unchecked")
-            final List<Integer> uniqueIds = ldapTemplate.search(DistinguishedName.EMPTY_PATH, searchFilter.encode(),
-                    new AttributesMapper() {
-                        @Override
-                        public Object mapFromAttributes(Attributes attributes) throws NamingException {
-                            final Attribute attribute = attributes.get(uniqueNumberField);
-                            if (attribute == null) {
-                                return 0;
-                            }
-                            final Object number = attribute.get();
-                            if (number != null) {
-                                try {
-                                    return Integer.valueOf(number.toString());
-                                } catch (NumberFormatException e) {
-                                    return 0;
-                                }
-                            }
-                            return 0;
-                        }
-                    });
-
-            for (Integer uniqueId : uniqueIds) {
-                if (uniqueId != null && uniqueId > uniqueNumber.get()) {
-                    uniqueNumber.set(uniqueId);
-                }
-            }
-            if (uniqueNumber.get() < 0) {
-                uniqueNumber.set(0);
-            }
-            uniqueNumber.incrementAndGet();
-        }
-
-        boolean isUnique = false;
-        while (!isUnique) {
-            AndFilter filter = new AndFilter();
-            filter.and(searchFilter);
-            filter.and(new EqualsFilter(uniqueNumberField, uniqueNumber.get()));
-            isUnique = ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(), new AccountContextMapper(""))
-                    .isEmpty();
-            uniqueNumber.incrementAndGet();
-        }
-        return uniqueNumber.get();
     }
 
     /**
@@ -297,7 +235,7 @@ public final class AccountDaoImpl implements AccountDao {
         Name dn = buildDn(account.getUid());
         DirContextOperations context = ldapTemplate.lookupContext(dn);
 
-        mapToContext(null /* don't update number */, account, context);
+        mapToContext(account, context);
 
         ldapTemplate.modifyAttributes(context);
 
@@ -347,7 +285,7 @@ public final class AccountDaoImpl implements AccountDao {
         sc.setReturningAttributes(UserSchema.ATTR_TO_RETRIEVE);
         sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
         EqualsFilter filter = new EqualsFilter("objectClass", "person");
-        return ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(), sc, attributMapper);
+        return ldapTemplate.search(userSearchBaseDN, filter.encode(), sc, attributMapper);
     }
     
     @Override
@@ -358,7 +296,7 @@ public final class AccountDaoImpl implements AccountDao {
         AndFilter and = new AndFilter();
         and.and( new EqualsFilter("objectClass", "person"));
         and.and(f);
-        List<Account> l = ldapTemplate.search(DistinguishedName.EMPTY_PATH, and.encode(), sc, attributMapper);
+        List<Account> l = ldapTemplate.search(userSearchBaseDN, and.encode(), sc, attributMapper);
         return filterProtected.filterUsersList(l);
     }
 
@@ -405,7 +343,7 @@ public final class AccountDaoImpl implements AccountDao {
         filter.and(new EqualsFilter("objectClass", "person"));
         filter.and(new EqualsFilter("mail", email));
 
-        List<Account> accountList = ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(),sc,
+        List<Account> accountList = ldapTemplate.search(userSearchBaseDN, filter.encode(),sc,
                 attributMapper);
         if (accountList.isEmpty()) {
             throw new NameNotFoundException("There is no user with this email: " + email);
@@ -433,7 +371,7 @@ public final class AccountDaoImpl implements AccountDao {
         Name memberOfValue = LdapNameBuilder.newInstance(basePath).add(this.roleSearchBaseDN).add("cn", role).build();
         filter.and(new EqualsFilter("memberOf", memberOfValue.toString()));
 
-        return ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(),sc, attributMapper);
+        return ldapTemplate.search(userSearchBaseDN, filter.encode(),sc, attributMapper);
     }
 
 
@@ -441,7 +379,7 @@ public final class AccountDaoImpl implements AccountDao {
     public boolean exist(final String uid) throws DataServiceException {
 
         try {
-            DistinguishedName dn = buildDn(uid.toLowerCase());
+            LdapName dn = buildDn(uid.toLowerCase());
             ldapTemplate.lookup(dn);
             return true;
         } catch (NameNotFoundException ex) {
@@ -456,12 +394,11 @@ public final class AccountDaoImpl implements AccountDao {
      *            user id
      * @return
      */
-    private DistinguishedName buildDn(String uid) {
-        DistinguishedName dn = new DistinguishedName();
-        dn.add(userSearchBaseDN);
-        dn.add("uid", uid);
-
-        return dn;
+    private LdapName buildDn(String uid) {
+        LdapNameBuilder builder = LdapNameBuilder.newInstance();
+        builder.add(userSearchBaseDN);
+        builder.add("uid", uid);
+        return builder.build();
     }
 
     /**
@@ -490,19 +427,15 @@ public final class AccountDaoImpl implements AccountDao {
     /**
      * Maps the following the account object to the following LDAP entry schema:
      *
-     * @param uniqueNumber
      * @param account
      * @param context
      */
-    private void mapToContext(Integer uniqueNumber, Account account, DirContextOperations context) {
+    private void mapToContext(Account account, DirContextOperations context) {
 
         context.setAttributeValues("objectclass", new String[] { "top", "person", "organizationalPerson",
                 "inetOrgPerson", "shadowAccount" });
 
         // person attributes
-        if (uniqueNumber != null) {
-            setAccountField(context, uniqueNumberField, uniqueNumber.toString());
-        }
         setAccountField(context, UserSchema.SURNAME_KEY, account.getSurname());
 
         setAccountField(context, UserSchema.COMMON_NAME_KEY, account.getCommonName());
@@ -764,7 +697,7 @@ public final class AccountDaoImpl implements AccountDao {
         filter.and(new EqualsFilter("objectClass", "person"));
         filter.and(new PresentFilter("shadowExpire"));
 
-        return ldapTemplate.search(DistinguishedName.EMPTY_PATH, filter.encode(),sc, attributMapper);
+        return ldapTemplate.search(userSearchBaseDN, filter.encode(),sc, attributMapper);
 
     }
 }

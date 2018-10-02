@@ -19,25 +19,17 @@
 
 package org.georchestra.console.ds;
 
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.naming.InvalidNameException;
-import javax.naming.Name;
-import javax.naming.NamingException;
-import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.dao.AdminLogDao;
-import org.georchestra.console.dto.*;
+import org.georchestra.console.dto.Role;
+import org.georchestra.console.dto.RoleFactory;
+import org.georchestra.console.dto.RoleSchema;
 import org.georchestra.console.model.AdminLogEntry;
 import org.georchestra.console.model.AdminLogType;
 import org.georchestra.console.ws.backoffice.roles.RoleProtected;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
-import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
@@ -48,6 +40,14 @@ import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.support.LdapNameBuilder;
+
+import javax.naming.InvalidNameException;
+import javax.naming.Name;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.TreeSet;
 
 
 /**
@@ -69,12 +69,8 @@ public class RoleDaoImpl implements RoleDao {
 	@Autowired
 	private RoleProtected roles;
 
-	private String uniqueNumberField = "ou";
-
 	private Name roleSearchBaseDN;
 	private LdapRdn userSearchBaseDN;
-
-	private AtomicInteger uniqueNumberCounter = new AtomicInteger(-1);
 
 	public LdapTemplate getLdapTemplate() {
 		return ldapTemplate;
@@ -82,10 +78,6 @@ public class RoleDaoImpl implements RoleDao {
 
 	public void setLdapTemplate(LdapTemplate ldapTemplate) {
 		this.ldapTemplate = ldapTemplate;
-	}
-
-	public void setUniqueNumberField(String uniqueNumberField) {
-		this.uniqueNumberField = uniqueNumberField;
 	}
 
 	public void setRoleSearchBaseDN(String roleSearchBaseDN) throws InvalidNameException {
@@ -347,13 +339,12 @@ public class RoleDaoImpl implements RoleDao {
 
 
         EqualsFilter filter = new EqualsFilter("objectClass", "groupOfMembers");
-        Integer uniqueNumber = AccountDaoImpl.findUniqueNumber(filter, uniqueNumberField, this.uniqueNumberCounter, ldapTemplate);
 
         // inserts the new role
 		Name dn = buildRoleDn(role.getName());
 
 		DirContextAdapter context = new DirContextAdapter(dn);
-		mapToContext(uniqueNumber, role, context);
+		mapToContext(role, context);
 
 		try {
 		  this.ldapTemplate.bind(dn, context, null);
@@ -363,14 +354,11 @@ public class RoleDaoImpl implements RoleDao {
 		}
 	}
 
-	private void mapToContext(Integer uniqueNumber, Role role, DirContextOperations context) {
+	private void mapToContext(Role role, DirContextOperations context) {
 
 		context.setAttributeValues("objectclass", new String[] { "top", "groupOfMembers" });
 
         // person attributes
-        if (uniqueNumber != null) {
-            setAccountField(context, uniqueNumberField, uniqueNumber.toString());
-        }
 		// person attributes
 		setAccountField(context, RoleSchema.COMMON_NAME_KEY, role.getName());
 		setAccountField(context, RoleSchema.DESCRIPTION_KEY, role.getDescription());
@@ -451,7 +439,7 @@ public class RoleDaoImpl implements RoleDao {
         }
 
 		DirContextOperations context = ldapTemplate.lookupContext(destDn);
-        mapToContext(null, role, context);
+        mapToContext(role, context);
 		ldapTemplate.modifyAttributes(context);
 
 	}
