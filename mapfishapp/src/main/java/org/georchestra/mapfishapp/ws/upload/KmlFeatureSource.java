@@ -90,8 +90,6 @@ class KmlFeatureSource {
     /**
      * Read the kml version from file in order to set the kml configuration.
      *
-     * @param is
-     * @return
      * @throws IOException
      * @throws UnsupportedGeofileFormatException
      */

@@ -50,11 +50,4 @@ public final class MockReader implements FeatureGeoFileReader {
 	public boolean isSupportedFormat(FileFormat fileFormat) {
 		throw new UnsupportedOperationException("unsupported");
 	}
-
-	@Override
-	public boolean allowsGeoToolsFallback() {
-		// TODO Auto-generated method stub
-		return true;
-	}
-
 }
