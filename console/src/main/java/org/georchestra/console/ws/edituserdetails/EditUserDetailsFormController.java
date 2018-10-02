@@ -197,6 +197,7 @@ public class EditUserDetailsFormController {
 			this.accountDao.update(account, request.getHeader("sec-username"));
 
 			model.addAttribute("success", true);
+			model.addAttribute("org", orgToJson(this.orgsDao.findForUser(account.getUid())));
 
 			return "editUserDetailsForm";
 
