@@ -1,17 +1,17 @@
 # Docker related targets
 
-DOCKER-COMPOSE-BIN=docker-compose
-
 docker-pull-jetty:
 	docker pull jetty:9-jre8
 
 docker-build-ldap:
 	docker pull dinkel/openldap
-	$(DOCKER-COMPOSE-BIN) build ldap
+	cd ldap; \
+	docker build -t georchestra/ldap
 
 docker-build-database:
 	docker pull postgres:10
-	$(DOCKER-COMPOSE-BIN) build database
+	cd postgresql; \
+	docker build georchestra/database
 
 docker-build-gn3: docker-pull-jetty
 	cd geonetwork; \
@@ -20,7 +20,7 @@ docker-build-gn3: docker-pull-jetty
 	mvn -P docker -DskipTests package docker:build
 
 docker-build-geoserver: docker-pull-jetty
-	cd geoserver/; \
+	cd geoserver; \
 	rm -rf geoserver-submodule/data/citewfs-1.1/workspaces/sf/sf/E*; \
 	LANG=C mvn clean install -DskipTests; \
 	cd webapp; \
@@ -39,23 +39,27 @@ docker-build-console: build-deps docker-pull-jetty
 docker-build-georchestra: build-deps docker-pull-jetty docker-build-database docker-build-ldap docker-build-geoserver docker-build-gn3
 	mvn clean package docker:build -Pdocker -DskipTests --pl extractorapp,cas-server-webapp,security-proxy,mapfishapp,header,console,analytics,geowebcache-webapp,atlas
 
-docker-build-dev:
+docker-build-smtp:
 	docker pull debian:stretch
-	docker pull tianon/apache2
-	$(DOCKER-COMPOSE-BIN) build smtp courier-imap webmail geodata
+	cd docker/smtp/smtp-sink; \
+	docker build -t camptocamp/smtp-sink .
 
-docker-stop-rm:
-	$(DOCKER-COMPOSE-BIN) stop
-	$(DOCKER-COMPOSE-BIN) rm -f
+docker-build-imap:
+	docker pull debian:stretch
+	cd docker/smtp/courier-imap; \
+	docker build -t camptocamp/courier-imap .
 
-docker-clean-volumes:
-	$(DOCKER-COMPOSE-BIN) down --volumes --remove-orphans
+docker-build-webmail:
+	docker pull debian:stretch
+	cd docker/smtp/webmail; \
+	docker build -t camptocamp/sqwebmail .
 
-docker-clean-images:
-	$(DOCKER-COMPOSE-BIN) down --rmi 'all' --remove-orphans
+docker-build-geodata:
+	docker pull debian:stretch
+	cd docker/ssh_data; \
+	docker build -t georchestra/ssh_data .
 
-docker-clean-all:
-	$(DOCKER-COMPOSE-BIN) down --volumes --rmi 'all' --remove-orphans
+docker-build-dev: docker-build-smtp docker-build-imap docker-build-webmail docker-build-geodata
 
 docker-build: docker-build-dev docker-build-gn3 docker-build-geoserver docker-build-georchestra
 
