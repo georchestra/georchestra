@@ -4,7 +4,7 @@ docker-pull-jetty:
 	docker pull jetty:9-jre8
 
 docker-build-ldap:
-	docker pull dinkel/openldap
+	docker pull debian:stretch
 	cd ldap; \
 	docker build -t georchestra/ldap .
 
