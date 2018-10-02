@@ -6,12 +6,12 @@ docker-pull-jetty:
 docker-build-ldap:
 	docker pull dinkel/openldap
 	cd ldap; \
-	docker build -t georchestra/ldap
+	docker build -t georchestra/ldap .
 
 docker-build-database:
 	docker pull postgres:10
 	cd postgresql; \
-	docker build georchestra/database
+	docker build georchestra/database .
 
 docker-build-gn3: docker-pull-jetty
 	cd geonetwork; \
