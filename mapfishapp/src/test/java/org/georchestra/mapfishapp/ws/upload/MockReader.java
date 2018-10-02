@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
+import org.json.JSONArray;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -36,6 +37,11 @@ public final class MockReader implements FeatureGeoFileReader {
 		
 		throw new RuntimeException("unsupported");
 		
+	}
+
+	@Override
+	public JSONArray getFormatListAsJSON() {
+		return new JSONArray();
 	}
 
 	/* (non-Javadoc)

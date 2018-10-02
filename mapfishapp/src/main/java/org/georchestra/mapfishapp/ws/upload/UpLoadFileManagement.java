@@ -19,18 +19,6 @@
 
 package org.georchestra.mapfishapp.ws.upload;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -43,6 +31,18 @@ import org.json.JSONArray;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  * This class is responsible to maintain the uploaded file. It includes the
@@ -78,7 +78,7 @@ public class UpLoadFileManagement {
 
     private String                       workDirectory;
 
-    private AbstractFeatureGeoFileReader reader;
+    private FeatureGeoFileReader reader;
 
     private UpLoadFileManagement() {
         // use the method factory
@@ -87,7 +87,7 @@ public class UpLoadFileManagement {
     public static UpLoadFileManagement create() {
 
         UpLoadFileManagement manager = new UpLoadFileManagement();
-        manager.reader = new AbstractFeatureGeoFileReader();
+        manager.reader = new GeotoolsFeatureReader();
         return manager;
     }
 

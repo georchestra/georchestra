@@ -19,12 +19,13 @@
 
 package org.georchestra.mapfishapp.ws.upload;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.referencing.operation.projection.ProjectionException;
+import org.json.JSONArray;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Feature geofile reader interface.
@@ -70,6 +71,8 @@ interface FeatureGeoFileReader {
             final FileFormat fileFormat,
             final CoordinateReferenceSystem targetCrs) throws IOException,
             UnsupportedGeofileFormatException, ProjectionException;
+
+    JSONArray getFormatListAsJSON();
 
     /**
      * @return List of available {@link FileFormat}

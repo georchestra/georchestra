@@ -19,20 +19,19 @@
 
 package org.georchestra.mapfishapp.ws;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.georchestra.mapfishapp.ws.upload.AbstractFeatureGeoFileReader;
+import org.georchestra.mapfishapp.ws.upload.GeotoolsFeatureReader;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AbstractController implements ApplicationContextAware {
 
@@ -71,7 +70,7 @@ public class AbstractController implements ApplicationContextAware {
             radius = null;
         }
         model.put("radius", radius);
-        model.put("fileFormatList", new AbstractFeatureGeoFileReader().getFormatListAsJSON());
+        model.put("fileFormatList", new GeotoolsFeatureReader().getFormatListAsJSON());
         model.put("debug", Boolean.parseBoolean(request.getParameter("debug")));
 
         addContextsToModel(model);
@@ -168,7 +167,7 @@ public class AbstractController implements ApplicationContextAware {
         }
         model.put("radius", radius);
 
-        model.put("fileFormatList", new AbstractFeatureGeoFileReader().getFormatListAsJSON());
+        model.put("fileFormatList", new GeotoolsFeatureReader().getFormatListAsJSON());
         model.put("data", data);
         model.put("search", search);
 
