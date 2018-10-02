@@ -15,44 +15,44 @@ Note 2: PostGIS extensions are not required in the georchestra database, unless 
 
 If **mapfishapp** is deployed:
 ```
-psql -d georchestra -f postgresql/02-mapfishapp.sql
+psql -d georchestra -f postgresql/020-mapfishapp.sql
 ```
 
 ## Console schema
 
 If the **console** webapp is deployed:
 ```
-psql -d georchestra -f postgresql/04-console.sql
+psql -d georchestra -f postgresql/040-console.sql
 ```
 
 ## GeoFence schema
 
 If **geofence** is deployed:
 ```
-psql -d georchestra -c 'CREATE EXTENSION postgis;'
-psql -d georchestra -f postgresql/08-geofence.sql
+psql -d georchestra -f postgresql/010-create-extension.sql
+psql -d georchestra -f postgresql/080-geofence.sql
 ```
 
 ## OGC statistics schema
 
 If the **security proxy** is deployed and ```shared.ogc.statistics.activated``` is true in your setup (false by default):
 ```
-psql -d georchestra -f postgresql/06-ogc-server-statistics.sql
+psql -d georchestra -f postgresql/050-ogc-server-statistics.sql
 ```
 
 ### Extractorapp schema
 
 If the **extractor app** is deployed:
 ```
-psql -d georchestra -f postgresql/01-create-extension.sql
-psql -d georchestra -f postgresql/09-extractor-app.sql
+psql -d georchestra -f postgresql/010-create-extension.sql
+psql -d georchestra -f postgresql/090-extractor-app.sql
 ```
 
 ### Atlas schema
 
 If the **Atlas** is deployed:
 ```
-psql -d georchestra -f postgresql/07-atlas.sql
+psql -d georchestra -f postgresql/060-atlas.sql
 ```
 
 ## Change ownership of database objects
