@@ -10,6 +10,7 @@ angular.module('manager')
         cache: true
       },
       update: {
+        params: { id: '@originalID' },
         method: 'PUT'
       }
     })

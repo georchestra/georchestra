@@ -20,6 +20,7 @@ class UserController {
     this.tab = $routeParams.tab
 
     this.user = User.get({id: $routeParams.id}, (user) => {
+      user.originalID = user.uid
       if (user.org && user.org !== '') {
         user.orgObj = Orgs.get({'id': user.org}, org => {
           user.validOrg = org.status === 'REGISTERED'
@@ -182,11 +183,18 @@ class UserController {
   }
 
   save () {
-    let flash = this.$injector.get('Flash')
-    let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
+    const flash = this.$injector.get('Flash')
+    const $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
+    const $router = this.$injector.get('$router')
     this.user.$update(() => {
       $httpDefaultCache.removeAll()
+      this.user.originalID = this.user.uid
       flash.create('success', this.i18n.updated)
+      // To update URI if uid has changed
+      $router.navigate($router.generate('user', {
+        id: this.user.uid,
+        tab: 'infos'
+      }))
     }, flash.create.bind(flash, 'danger', this.i18n.error))
   }
 
