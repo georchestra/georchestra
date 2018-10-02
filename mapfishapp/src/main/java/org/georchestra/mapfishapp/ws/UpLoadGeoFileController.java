@@ -79,18 +79,6 @@ import org.xml.sax.SAXParseException;
  * One of the following implementation can be set:
  *
  * <p>
- * <br>
- * OGR Implementation</br> accepts the following files: <lu>
- * <li>ESRI Shape in zip: shp, shx, prj file are expected</li>
- * <li>MapInfo MIF in zip: mif, mid file are expected</li>
- * <li>MapInfo TAB in zip: tab, id, map, dat are expected</li>
- * <li>kml</li>
- * <li>gpx</li>
- * <li>gml</li>
- * </lu>
- * </p>
- * <p>
- * <br>
  * Geotools Implementation </br> expects the following files <lu>
  * <li>ESRI Shape in zip: shp, shx, prj file are expected</li>
  * <li>MapInfo in zip: mif, mid file are expected</li>
@@ -204,12 +192,6 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
                 return "{\"success\": \"false\", \"error\":\"fileupload_error_incompleteSHP\", \"msg\": \"incomplete shapefile\"}";
             }
         },
-        incompleteTAB {
-            @Override
-            public String getMessage(final String detail) {
-                return "{\"success\": \"false\", \"error\":\"fileupload_error_incompleteTAB\", \"msg\": \"incomplete TAB file\"}";
-            }
-        },
         ready {
             @Override
             public String getMessage(final String detail) {
@@ -237,9 +219,7 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 
     private long zipSizeLimit;
     private long kmlSizeLimit;
-    private long gpxSizeLimit;
     private long gmlSizeLimit;
-    private long osmSizeLimit;
 
     /**
      * The current file that was upload an is in processing
@@ -267,16 +247,8 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
         this.kmlSizeLimit = kmlSizeLimit;
     }
 
-    public void setGpxSizeLimit(long gpxSizeLimit) {
-        this.gpxSizeLimit = gpxSizeLimit;
-    }
-
     public void setGmlSizeLimit(long gmlSizeLimit) {
         this.gmlSizeLimit = gmlSizeLimit;
-    }
-
-    public void setOsmSizeLimit(long osmSizeLimit) {
-        this.osmSizeLimit = osmSizeLimit;
     }
 
     /**
@@ -717,12 +689,8 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
             throw new IllegalStateException("zipSizeLimit was not set");
         if (this.kmlSizeLimit <= 0)
             throw new IllegalStateException("kmlSizeLimit was not set");
-        if (this.gpxSizeLimit <= 0)
-            throw new IllegalStateException("gpxSizeLimit was not set");
         if (this.gmlSizeLimit <= 0)
             throw new IllegalStateException("gmlSizeLimit was not set");
-        if (this.osmSizeLimit <= 0)
-            throw new IllegalStateException("osmSizeLimit was not set");
 
         if ("zip".equalsIgnoreCase(fileExtension)) {
 
@@ -732,17 +700,9 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 
             return this.kmlSizeLimit;
 
-        } else if ("gpx".equalsIgnoreCase(fileExtension)) {
-
-            return this.gpxSizeLimit;
-
         } else if ("gml".equalsIgnoreCase(fileExtension)) {
 
             return this.gmlSizeLimit;
-
-        } else if ("osm".equalsIgnoreCase(fileExtension)) {
-
-            return this.osmSizeLimit;
 
         } else {
             throw new IllegalArgumentException("Unsupported format");
@@ -818,10 +778,6 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
             // msg = "incomplete shapefile"
             if (!fileManagement.checkSHPCompletness()) {
                 return Status.incompleteSHP;
-            }
-        } else if (fileManagement.isTAB()) {
-            if (!fileManagement.checkTABCompletness()) {
-                return Status.incompleteTAB;
             }
         }
 

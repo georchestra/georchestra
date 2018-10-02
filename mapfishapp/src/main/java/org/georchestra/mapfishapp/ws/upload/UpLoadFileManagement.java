@@ -55,10 +55,6 @@ public class UpLoadFileManagement {
 
     private static final Log LOG = LogFactory.getLog(UpLoadFileManagement.class.getPackage().getName());
 
-    public enum Implementation {
-        geotools, ogr
-    };
-
     private static List<String>          VALID_EXTENSIONS;
     static {
 
@@ -70,25 +66,12 @@ public class UpLoadFileManagement {
         VALID_EXTENSIONS.add("SHX");
         VALID_EXTENSIONS.add("QIX");
 
-        // TAB
-        VALID_EXTENSIONS.add("TAB");
-        VALID_EXTENSIONS.add("ID");
-        VALID_EXTENSIONS.add("MAP");
-        VALID_EXTENSIONS.add("DAT");
-
         // MIF
         VALID_EXTENSIONS.add("MIF");
         VALID_EXTENSIONS.add("MID");
 
         VALID_EXTENSIONS.add("GML");
-
         VALID_EXTENSIONS.add("KML");
-
-        VALID_EXTENSIONS.add("GPX");
-
-        // OSM
-        VALID_EXTENSIONS.add("OSM");
-
     }
 
     private FileDescriptor               fileDescriptor;
@@ -101,39 +84,10 @@ public class UpLoadFileManagement {
         // use the method factory
     }
 
-    /**
-     * Creates an instance of {@link UpLoadFileManagement} which is set to use
-     * the implementation specified as parameter.
-     *
-     * @param impl
-     *            implementation
-     * @throws IOException
-     */
-    public static UpLoadFileManagement create(Implementation impl)
-            throws IOException {
-
-        UpLoadFileManagement manager = new UpLoadFileManagement();
-        if (Implementation.geotools == impl) {
-            manager.reader = new AbstractFeatureGeoFileReader(
-                    new GeotoolsFeatureReader());
-        } else {
-            manager.reader = new AbstractFeatureGeoFileReader(
-                    new OGRFeatureReader());
-        }
-        return manager;
-    }
-
-    /**
-     * Creates an instance of {@link UpLoadFileManagement} which is set to use
-     * the OGR implementation if only if gdal/ogr is installed in the system
-     *
-     * @return new instance of {@link UpLoadFileManagement}
-     */
     public static UpLoadFileManagement create() {
 
         UpLoadFileManagement manager = new UpLoadFileManagement();
         manager.reader = new AbstractFeatureGeoFileReader();
-
         return manager;
     }
 
@@ -296,10 +250,6 @@ public class UpLoadFileManagement {
 
     public boolean isSHP() {
         return this.fileDescriptor.listOfExtensions.contains("SHP");
-    }
-
-    public boolean isTAB() {
-        return this.fileDescriptor.listOfExtensions.contains("TAB");
     }
 
     /**
