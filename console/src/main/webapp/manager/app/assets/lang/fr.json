@@ -34,6 +34,7 @@
   "tab.logs"              : "Logs",
   "tab.manage"            : "Gérer",
   "tab.area"              : "Zone de compétence",
+  "tab.users"             : "Membres",
 
   "user.userlist"         : "Tous les utilisateurs",
   "user.updated"          : "Utilisateur modifié",
@@ -70,6 +71,8 @@
   "user.manages_roles"    : "Gère l'attribution des rôles :",
   "user.manages_orgs"     : "Parmi les utilisateurs appartenant aux organismes :",
   "user.select_role"      : "Sélectionner un rôle",
+  "user.action"           : "Action",
+  "user.remove"           : "Retirer",
 
   "orgs.title_plural"     : "organismes",
   "orgs.title_one"        : "organisme",
@@ -96,6 +99,9 @@
   "org.select"            : "Selectionner un organisme",
   "org.membersCount"      : "Membres",
   "org.ohasdeleg"         : "Les utilisateurs de cet organisme peuvent être gérés par le(s) utilisateur(s) suivant(s):",
+  "org.userremoved"       : "L'utilisateur a été retiré de l'organisme.",
+  "org.useradded"         : "L'utilisateur a été ajouté à l'organisme.",
+  "org.userlabel"         : "Ajouter",
 
   "roles.title_plural"    : "rôles",
   "roles.title_one"       : "rôle",
@@ -119,6 +125,9 @@
   "role.cn"               : "Identifiant",
   "role.favorite"         : "Favori",
   "role.favorites"        : "Favoris",
+  "role.useradded"        : "L'utilisateur a été ajouté au rôle.",
+  "role.userremoved"      : "L'utilisateur a été supprimé du rôle.",
+  "role.userlabel"        : "Ajouter",
 
   "delegations.title"     : "délégation de gestion",
   "delegations.title_plural" : "délégations de gestion",

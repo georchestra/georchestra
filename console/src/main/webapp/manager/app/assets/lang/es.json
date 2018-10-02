@@ -34,6 +34,7 @@
   "tab.logs"              : "Logs",
   "tab.manage"            : "Administrar",
   "tab.area"              : "Zona de competencia",
+  "tab.users"             : "Miembros",
 
   "user.userlist"         : "Todos los usuarios",
   "user.updated"          : "Usuario modificado",
@@ -70,6 +71,8 @@
   "user.manages_roles"    : "Administra la asignación de los siguientes roles:",
   "user.manages_orgs"     : "Parte de los usuarios miembros de las siguientes organizaciones:",
   "user.select_role"      : "Seleccionar un rol",
+  "user.action"           : "Operation",
+  "user.remove"           : "Eliminar",
 
   "orgs.title_plural"     : "organizaciones",
   "orgs.title_one"        : "organización",
@@ -96,6 +99,9 @@
   "org.select"            : "Seleccionar una entidad",
   "org.membersCount"      : "Miembros",
   "org.ohasdeleg"         : "Los usuarios de esta organización pueden ser administrados por los siguientes usuarios:",
+  "org.userremoved"       : "El usuario ha sido eliminado de la organización.",
+  "org.useradded"         : "El usuario ha sido añadido a la organización.",
+  "org.userlabel"         : "Añadir",
 
   "roles.title_plural"    : "roles",
   "roles.title_one"       : "role",
@@ -119,6 +125,9 @@
   "role.cn"               : "Nombre",
   "role.favorite"         : "Favorite",
   "role.favorites"        : "Favorites",
+  "role.useradded"        : "El usuario ha sido añadido al rol.",
+  "role.userremoved"      : "El usuario ha sido eliminado del rol.",
+  "role.userlabel"        : "Añadir",
 
   "delegations.title"     : "delegación de administración",
   "delegations.title_plural" : "delegaciones de administración",

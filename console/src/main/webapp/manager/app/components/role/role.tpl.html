@@ -30,6 +30,53 @@
         </div>
       </div>
 
+      <div class="panel-body" ng-if="role.tab=='users'">
+        <h3 class="roles-title">
+          <ng-pluralize count="role.users.length"
+                        when="{'0': '{{ &quot;role.users_none&quot; | translate }}',
+                               '1': '{} {{ &quot;role.user&quot; | translate }}',
+                               'other': '{} {{ &quot;role.users&quot; | translate }}'}">
+        </h3>
+
+        <form class="form-inline pull-right">
+          <div class="form-group">
+            <label for="role" translate>role.userlabel</label>
+            <select class="pull-right form-control input-sm" ng-model="role.user"
+               id="role" ng-change="role.associate()"
+               data-placeholder-text-single="'…' | translate"
+               ng-options="u.uid as (u.sn + ' ' + u.givenName) for u in role.notUsers" chosen>
+            </select>
+          </div>
+        </form>
+
+        <table class="table table-striped table-condensed">
+
+          <thead>
+            <tr>
+              <th translate>users.user</th>
+              <th translate>user.action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr dir-paginate="user in role.users | itemsPerPage: role.itemsPerPage">
+              <td>
+                <a ng-link="user({id: user.uid, tab: 'infos'})">{{::user.sn}} {{::user.givenName}}</a>
+              </td>
+              <td>
+                <a href="javascript:void(0)" ng-click="role.associate(user.uid, true)" class="text-danger" title="{{role.i18n.remove}}">
+                  <i class="glyphicon glyphicon-remove"></i>
+                </a>
+              </td>
+            </tr>
+          </tbody>
+
+        </table>
+
+        <dir-pagination-controls></dir-pagination-controls>
+
+      </div>
+
       <div class="panel-body" ng-if="role.tab=='manage'">
         <div class="alert alert-danger clearfix">
           <i class="glyphicon glyphicon-exclamation-sign"></i>

@@ -9,8 +9,10 @@ class OrgController {
   constructor ($injector, $routeParams) {
     this.$injector = $injector
 
-    this.tabs = ['infos', 'area', 'manage']
+    this.tabs = ['infos', 'area', 'users', 'manage']
     this.tab = $routeParams.tab
+
+    this.itemsPerPage = 15
 
     let translate = $injector.get('translate')
     this.i18n = {}
@@ -18,8 +20,13 @@ class OrgController {
     translate('org.error', this.i18n)
     translate('org.deleted', this.i18n)
     translate('org.deleteError', this.i18n)
+    translate('org.userremoved', this.i18n)
+    translate('org.useradded', this.i18n)
+    translate('user.remove', this.i18n)
 
-    this.org = $injector.get('Orgs').get({id: $routeParams.org})
+    this.org = $injector.get('Orgs').get({
+      id: $routeParams.org
+    }, () => this.loadUsers())
     this.required = $injector.get('OrgsRequired').query()
     this.orgTypeValues = $injector.get('OrgsType').query()
 
@@ -27,6 +34,14 @@ class OrgController {
     const Delegations = $injector.get('Delegations')
     Delegations.query(resp => {
       this.delegations = resp.filter(d => d.orgs.indexOf($routeParams.org) !== -1)
+    })
+  }
+
+  loadUsers () {
+    const User = this.$injector.get('User')
+    User.query(users => {
+      this.users = users.filter(u => u.org === this.org.name)
+      this.notUsers = users.filter(u => u.org !== this.org.name)
     })
   }
 
@@ -51,13 +66,30 @@ class OrgController {
   }
 
   confirm () {
-    let flash = this.$injector.get('Flash')
-    let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
+    const flash = this.$injector.get('Flash')
+    const $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
     this.org.status = 'REGISTERED'
     this.org.$update(() => {
       $httpDefaultCache.removeAll()
       flash.create('success', this.i18n.updated)
     }, flash.create.bind(flash, 'danger', this.i18n.error))
+  }
+
+  associate (uid, unassociate = false) {
+    if (!uid) uid = this.user
+    if (!uid) return
+    const User = this.$injector.get('User')
+    const flash = this.$injector.get('Flash')
+    const $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
+
+    User.update({
+      uid: uid,
+      org: unassociate ? '' : this.org.id
+    }).$promise.then(() => {
+      $httpDefaultCache.removeAll()
+      this.loadUsers()
+      flash.create('success', unassociate ? this.i18n.userremoved : this.i18n.useradded)
+    })
   }
 }
 
