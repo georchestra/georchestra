@@ -43,7 +43,7 @@ try {
   GeorchestraConfiguration georConfig = (GeorchestraConfiguration) ctx.getBean(GeorchestraConfiguration.class);
   if (georConfig.activated()) {
     sharedInstanceName = georConfig.getProperty("instance.name");
-    sharedHomepageUrl = georConfig.getProperty("homepage.url");
+    sharedHomepageUrl = georConfig.getProperty("publicUrl");
   }
 } catch (Exception e) {
   // ignoring
