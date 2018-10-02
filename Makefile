@@ -11,7 +11,7 @@ docker-build-ldap:
 docker-build-database:
 	docker pull postgres:10
 	cd postgresql; \
-	docker build georchestra/database .
+	docker build -t georchestra/database .
 
 docker-build-gn3: docker-pull-jetty
 	cd geonetwork; \
