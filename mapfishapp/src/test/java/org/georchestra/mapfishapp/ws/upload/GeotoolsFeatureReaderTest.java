@@ -37,12 +37,11 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 public class GeotoolsFeatureReaderTest {
 
-	private AbstractFeatureGeoFileReader reader;
+	private FeatureGeoFileReader reader;
 
 	@Before
 	public void setup() {
-		reader = new AbstractFeatureGeoFileReader();
-		reader.readerImpl = new GeotoolsFeatureReader();
+		reader = new GeotoolsFeatureReader();
 	}
 	
 	public GeotoolsFeatureReaderTest() {
