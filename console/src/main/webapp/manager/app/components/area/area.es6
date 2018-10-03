@@ -106,6 +106,10 @@ class AreaController {
     })
 
     map.getInteractions().push(select)
+    if (this.maponly) {
+      select.setActive(false)
+    }
+
     select.on('select', (e) => {
       this.updateSelection([], true)
       e.selected.map(highlight)
