@@ -642,7 +642,6 @@ public class AccountImpl implements Serializable, Account{
 	}
 
     public int compareTo(Account o) {
-		String fullName = this.getSurname() + " " + this.getGivenName();
-		return fullName.compareToIgnoreCase(o.getSurname() + " " + o.getGivenName());
+		return o.getEmail().compareToIgnoreCase(this.email);
     }
 }
