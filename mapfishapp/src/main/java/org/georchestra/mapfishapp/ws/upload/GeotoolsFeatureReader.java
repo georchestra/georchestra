@@ -19,13 +19,7 @@
 
 package org.georchestra.mapfishapp.ws.upload;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
-import java.util.HashMap;
-
+import com.vividsolutions.jts.geom.Geometry;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,13 +38,19 @@ import org.geotools.referencing.CRS;
 import org.geotools.referencing.operation.projection.ProjectionException;
 import org.geotools.xml.Configuration;
 import org.geotools.xml.PullParser;
+import org.json.JSONArray;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 
-import com.vividsolutions.jts.geom.Geometry;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
+import java.util.HashMap;
 
 /**
  * This class is a façade to the Geotools data management implementations.
@@ -59,7 +59,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * @author Mauricio Pazos
  *
  */
-class GeotoolsFeatureReader implements FeatureGeoFileReader {
+public class GeotoolsFeatureReader implements FeatureGeoFileReader {
 
     private static final Log   LOG     = LogFactory.getLog(GeotoolsFeatureReader.class.getPackage().getName());
 
@@ -70,6 +70,17 @@ class GeotoolsFeatureReader implements FeatureGeoFileReader {
                                                         FileFormat.kml };
 
     public GeotoolsFeatureReader() {}
+
+    @Override
+    public JSONArray getFormatListAsJSON() {
+        JSONArray ret = new JSONArray();
+
+        FileFormat[] ff = getFormatList();
+        for (FileFormat f: ff) {
+            ret.put(f.toString());
+        }
+        return ret;
+    }
 
     @Override
     public FileFormat[] getFormatList() {
@@ -349,11 +360,4 @@ class GeotoolsFeatureReader implements FeatureGeoFileReader {
         }
         return false;
     }
-
-	@Override
-	public boolean allowsGeoToolsFallback() {
-		// GeoTools cannot fallback onto itself
-		return false;
-	}
-
 }

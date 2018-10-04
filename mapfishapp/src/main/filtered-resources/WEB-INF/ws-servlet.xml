@@ -37,9 +37,7 @@
         <property name="tempDirectory" value="${docTempDir}/geoFileUploadsCache"/>
         <property name="zipSizeLimit" value="8388608"/>
         <property name="kmlSizeLimit" value="8388608"/>
-        <property name="gpxSizeLimit" value="8388608"/>
         <property name="gmlSizeLimit" value="8388608"/>
-        <property name="osmSizeLimit" value="8388608"/>
     </bean>
 
 
