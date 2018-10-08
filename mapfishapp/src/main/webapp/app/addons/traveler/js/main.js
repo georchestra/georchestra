@@ -84,12 +84,6 @@ GEOR.Addons.Traveler = Ext.extend(GEOR.Addons.Base, {
      */
     init: function(record) {
     	var tr = OpenLayers.i18n;
-        // do not load addon if user is not connect to map viewer
-        if (GEOR.config.ANONYMOUS) {
-            return Ext.Msg.alert(
-            		tr("traveler.title.noright"),
-                tr("traveler.msg.noright"));
-        }
     	
         var addon = this;
         if (!addon.map) { // init map addon if not exist
