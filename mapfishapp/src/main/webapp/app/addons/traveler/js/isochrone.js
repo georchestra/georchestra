@@ -566,7 +566,7 @@ GEOR.Addons.Traveler.isochrone.pointFset = function(addon, ban) {
     }
     var fields = new Ext.form.FieldSet({
         autoWidht: true,
-        hideLabel: true,
+        title: tr("Traveler.isochrone.startpoint"),
         cls: "isochrone-fieldset",
         id: "iso_input",
         items: [ban]
@@ -923,7 +923,7 @@ GEOR.Addons.Traveler.isochrone.window = function(mode, fSet, exclusion, addon, t
             id: "iso_panel",
             items: [mode, fSet, {
                 xtype: "fieldset",
-                fieldLabel: "isochrones",
+                title: tr("isochrone"),
                 cls: "isochrone-fieldset",
                 id: "iso_timeFset",
                 items: [timeFields]

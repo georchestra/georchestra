@@ -352,6 +352,7 @@ GEOR.Addons.Traveler.route.addStep = function(addon, isStart, delBtn, idFset) {
     // create element to contain waypoint's fields
     var fSet = new Ext.form.FieldSet({
         autoWidht: true,
+        title: (idFset=="startPoint" ? tr("Traveler.route.start"): (delBtn == false ? tr("Traveler.route.step"): tr("Traveler.route.end"))),
         cls: "fsStep",
         id: idFset
     });
