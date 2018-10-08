@@ -937,7 +937,7 @@ GEOR.Addons.Traveler.isochrone.window = function(mode, fSet, exclusion, addon, t
                 cls: "isochrone-fieldset-params",
                 id: "iso_options",
                 title: tr("Traveler.isochrone.options.title"),
-                items: [timeFields, exclusion]
+                items: [exclusion]
             }, {
                 xtype: "spacer",
                 height: "3"
