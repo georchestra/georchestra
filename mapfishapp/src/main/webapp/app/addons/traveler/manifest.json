@@ -48,7 +48,7 @@
         	"isochrone.window.title": "Calcul d'isochrones",
         	"isochron.ban.emptytext": "Adresse....",
         	"isochrone.ban.tooltip": "Saisir une adresse à afficher sur la carte",
-        	"isochrone.draw.tooltip" : "Dessiner un point à main levé",
+		"isochrone.draw.tooltip" : "Sélectionner un point sur la carte",
         	"traveler.isochrone.boxlabel.tunels": "Tunnels",
         	"traveler.isochrone.boxlabel.bridge": "Ponts",
         	"traveler.isochrone.boxtooltip.toll":"Péages",
@@ -78,12 +78,13 @@
         	"traveler.isochrone.msg.notimes":"Veuillez renseigner au moins un temps de calcul.",
         	"Traveler.isochrone.msg.outoflimit":"Le nombre de point est supérieure à la limite fixée.",
         	"Traveler.isochrone.msg.loader":"Calcul en cours...",
+		"Traveler.isochrone.startpoint":"Point de départ",
         	"isochrone.button.vehicle": "Déplacement en voiture",
         	"isochrone.button.pedestrian": "Déplacement piéton",
         	"Traveler.route.drawpoint.tooltip": "Dessiner un point à main levé",
         	"Traveler.route.addpoint.tooltip": "Ajouter une étape",
         	"Traveler.route.removepoint.tooltip": "Supprimer l'étape",
-        	"Traveler.route.refresh.tooltip": "Restaurer la fenêtre",
+		"Traveler.route.refresh.tooltip": "Recalculer l'itinéraire",
         	"Traveler.route.print.tooltip": "Exporter le détail de l'itinéraire",
         	"Traveler.route.result.title": "Détail du parcours",
         	"Traveler.route.windowtitle": "Calcul d'itinéraire",
@@ -101,6 +102,9 @@
   	        "Traveler.route.tunnels.tooltip" : "Eviter les tunnels",
   	        "Traveler.route.options.title": "Options",
   	        "Traveler.route.result.distance":"Distance ",
+		"Traveler.route.start":"Départ",
+		"Traveler.route.step":"Etape",
+		"Traveler.route.end":"Arrivée",
   	        "Traveler.route.result.time" : "Temps "  	               	
         } 
     }
