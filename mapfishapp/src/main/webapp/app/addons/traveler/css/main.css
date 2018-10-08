@@ -76,9 +76,6 @@
 	background-color: white !important ;
 }
 
-.isochrone-mode-button .x-btn-mr, .isochrone-mode-button .x-btn-ml, .isochrone-mode-button .x-btn-tr, .isochrone-mode-button .x-btn-tl, .isochrone-mode-button .x-btn-bc, .isochrone-mode-button .x-btn-tc,.isochrone-mode-button .x-btn-bl,.isochrone-mode-button .x-btn-br {
-	border: none;
-}
 .isochrone-mode-button, .isochrone-mode-button .x-btn-pressed{
 	padding-top: 3px;
 	background-color: white !important;
@@ -115,11 +112,6 @@
 	width:76px;
 	margin-left:auto;
 	margin-right:auto;
-}
-
-/* ISOCHRONE & ROUTE -----------> STYLE FOR BORDER AROUND ACTIONS BUTTONS */
-.actionBtn .x-btn-mr, .actionBtn .x-btn-ml, .actionBtn .x-btn-tr, .actionBtn .x-btn-tl, .actionBtn .x-btn-bc, .actionBtn .x-btn-tc,.actionBtn .x-btn-bl,.actionBtn .x-btn-br{
-	border:none;
 }
 
 /* ISOCHRONE & ROUTE -----------> STYLE FOR HOVER AROUND BUTTON */
