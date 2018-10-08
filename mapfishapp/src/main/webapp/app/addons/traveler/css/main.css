@@ -162,19 +162,16 @@
 .gpsIcon {
 	background-image: url(../img/16px/gps-pressed.png);
 	background-repeat:no-repeat;
-	margin-left:-16px !important;	
 }
 
 .gpsIcon:hover {
 	background-image: url(../img/16px/gps-blue.png);
 	background-repeat:no-repeat;
-	margin-left:-16px !important;	
 }
 
 .addIcon {
 	background-image: url(../img/16px/add-blue-simple.png);
 	background-repeat:no-repeat;
-	margin-left:-5px !important;		
 }
 .addIcon:hover{
 	background-image: url(../img/16px/add-white-pressed.png);
@@ -183,13 +180,11 @@
 .addHover{
 	background-image: url(../img/16px/add-pressed.png);
 	background-repeat:no-repeat;
-	margin-left:-5px !important;		
 }
 
 .rmIcon {
 	background-image: url(../img/16px/clear-blue.png);
 	background-repeat:no-repeat;
-	margin-left:-5px !important;		
 }
 
 .rmIcon:hover{
