@@ -220,6 +220,7 @@
 /* STYLE FOR COMPOSITEFIELD  */
 
 .cpMode {
+	padding-top: 3px;
 	width:76px;
 	margin-left:auto;
 	margin-right:auto;
