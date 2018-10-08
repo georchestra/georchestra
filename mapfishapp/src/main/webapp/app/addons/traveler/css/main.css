@@ -10,14 +10,9 @@
 
 /* ISOCHRONE -----------> GLOBAL STYLE FOR FIELDSET */
 
-.isochrone-fieldset{
-	margin-right:auto;
-	margin-left:20%;
-}
-
-.isochrone-fieldset{
-	margin-right:auto;
-	margin-left:20%;
+.isochrone-fieldset, .isochrone-fieldset-params{
+	margin-right:5%;
+	margin-left:5%;
 }
 
 /* ISOCHRONE -----------> STYLE FOR BAN FIELDSET */
@@ -28,11 +23,6 @@
 /* ISOCHRONE -----------> STYLE FOR PARAMS FIELDSET  */
 .isochrone-fieldset-params .x-fieldset-header-text, .fsInfo .x-fieldset-header-text {
 	font-size:12px;
-}
-
-.isochrone-fieldset-params {
-	margin-right:auto;
-	margin-left:20%;
 }
 
 .isochrone-fieldset-params .x-tool {
@@ -217,8 +207,8 @@
 }
 
 .fsOptions, .fsInfo {
-	margin-right:auto;
-	margin-left:20%;
+	margin-right:5%;
+	margin-left:5%;
 }
 
 .fsOptions .x-tool, .fsInfo .x-tool {
@@ -231,8 +221,8 @@
 
 
 .fsStep{
-	margin-right:auto;
-	margin-left:20%;
+	margin-right:5%;
+	margin-left:5%;
 }
 
 .fsInfo {
