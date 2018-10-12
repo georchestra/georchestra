@@ -34,6 +34,7 @@
         <property name="password" value="${psql.pass}"/>
         <property name="maxPoolSize" value="5"/>
         <property name="minPoolSize" value="1"/>
+        <property name="automaticTestTable" value="cpds_connection_test"/>
     </bean>
 
     <bean id="populateProperties" class="org.georchestra.atlas.CamelPopulatePropertiesComponent">
