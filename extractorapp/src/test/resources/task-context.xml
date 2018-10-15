@@ -10,6 +10,7 @@
   <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
     <property name="driverClass" value="org.hsqldb.jdbc.JDBCDriver" />
     <property name="jdbcUrl" value="jdbc:postgresql://localhost:5432/georchestra?user=georchestra&amp;password=georchestra" />
+    <property name="automaticTestTable" value="cpds_connection_test"/>
   </bean>
 
 
