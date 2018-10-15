@@ -19,18 +19,6 @@
 
 package org.georchestra.mapfishapp.ws.upload;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,6 +32,18 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
 /**
  * This class is responsible to maintain the uploaded file. It includes the
  * method to save, unzip, and check the geofiles.
@@ -54,10 +54,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class UpLoadFileManagement {
 
     private static final Log LOG = LogFactory.getLog(UpLoadFileManagement.class.getPackage().getName());
-
-    public enum Implementation {
-        geotools, ogr
-    };
 
     private static List<String>          VALID_EXTENSIONS;
     static {
@@ -70,70 +66,28 @@ public class UpLoadFileManagement {
         VALID_EXTENSIONS.add("SHX");
         VALID_EXTENSIONS.add("QIX");
 
-        // TAB
-        VALID_EXTENSIONS.add("TAB");
-        VALID_EXTENSIONS.add("ID");
-        VALID_EXTENSIONS.add("MAP");
-        VALID_EXTENSIONS.add("DAT");
-
         // MIF
         VALID_EXTENSIONS.add("MIF");
         VALID_EXTENSIONS.add("MID");
 
         VALID_EXTENSIONS.add("GML");
-
         VALID_EXTENSIONS.add("KML");
-
-        VALID_EXTENSIONS.add("GPX");
-
-        // OSM
-        VALID_EXTENSIONS.add("OSM");
-
     }
 
     private FileDescriptor               fileDescriptor;
 
     private String                       workDirectory;
 
-    private AbstractFeatureGeoFileReader reader;
+    private FeatureGeoFileReader reader;
 
     private UpLoadFileManagement() {
         // use the method factory
     }
 
-    /**
-     * Creates an instance of {@link UpLoadFileManagement} which is set to use
-     * the implementation specified as parameter.
-     *
-     * @param impl
-     *            implementation
-     * @throws IOException
-     */
-    public static UpLoadFileManagement create(Implementation impl)
-            throws IOException {
-
-        UpLoadFileManagement manager = new UpLoadFileManagement();
-        if (Implementation.geotools == impl) {
-            manager.reader = new AbstractFeatureGeoFileReader(
-                    new GeotoolsFeatureReader());
-        } else {
-            manager.reader = new AbstractFeatureGeoFileReader(
-                    new OGRFeatureReader());
-        }
-        return manager;
-    }
-
-    /**
-     * Creates an instance of {@link UpLoadFileManagement} which is set to use
-     * the OGR implementation if only if gdal/ogr is installed in the system
-     *
-     * @return new instance of {@link UpLoadFileManagement}
-     */
     public static UpLoadFileManagement create() {
 
         UpLoadFileManagement manager = new UpLoadFileManagement();
-        manager.reader = new AbstractFeatureGeoFileReader();
-
+        manager.reader = new GeotoolsFeatureReader();
         return manager;
     }
 
@@ -296,10 +250,6 @@ public class UpLoadFileManagement {
 
     public boolean isSHP() {
         return this.fileDescriptor.listOfExtensions.contains("SHP");
-    }
-
-    public boolean isTAB() {
-        return this.fileDescriptor.listOfExtensions.contains("TAB");
     }
 
     /**

@@ -642,6 +642,6 @@ public class AccountImpl implements Serializable, Account{
 	}
 
     public int compareTo(Account o) {
-		return o.getEmail().compareToIgnoreCase(this.email);
+		return o.getUid().compareToIgnoreCase(this.uid);
     }
 }

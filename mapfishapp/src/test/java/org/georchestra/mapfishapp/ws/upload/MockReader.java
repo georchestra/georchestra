@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
+import org.json.JSONArray;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -38,6 +39,11 @@ public final class MockReader implements FeatureGeoFileReader {
 		
 	}
 
+	@Override
+	public JSONArray getFormatListAsJSON() {
+		return new JSONArray();
+	}
+
 	/* (non-Javadoc)
 	 * @see org.georchestra.mapfishapp.ws.upload.FeatureFileReaderImplementor#getFormatList()
 	 */
@@ -50,11 +56,4 @@ public final class MockReader implements FeatureGeoFileReader {
 	public boolean isSupportedFormat(FileFormat fileFormat) {
 		throw new UnsupportedOperationException("unsupported");
 	}
-
-	@Override
-	public boolean allowsGeoToolsFallback() {
-		// TODO Auto-generated method stub
-		return true;
-	}
-
 }
