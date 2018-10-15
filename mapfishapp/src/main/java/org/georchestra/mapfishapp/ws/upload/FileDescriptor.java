@@ -63,9 +63,7 @@ public class FileDescriptor {
         assert originalFileExt != null;
         return "zip".equalsIgnoreCase(originalFileExt)
                 || "kml".equalsIgnoreCase(originalFileExt)
-                || "gpx".equalsIgnoreCase(originalFileExt)
-                || "gml".equalsIgnoreCase(originalFileExt)
-                || "osm".equalsIgnoreCase(originalFileExt);
+                || "gml".equalsIgnoreCase(originalFileExt);
     }
 
     public boolean isZipFile() {
