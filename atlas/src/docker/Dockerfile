@@ -4,7 +4,7 @@ ENV XMS=512M XMX=2G
 
 RUN java -jar "$JETTY_HOME/start.jar" --create-startd --add-to-start=jmx,jmx-remote,stats
 
-ADD . /
+COPY --chown=jetty:jetty . /
 
 VOLUME [ "/tmp", "/run/jetty" ]
 

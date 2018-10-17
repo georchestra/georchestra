@@ -4,7 +4,7 @@ ENV XMS=1G XMX=2G
 
 RUN java -jar "$JETTY_HOME/start.jar" --create-startd --add-to-start=jmx,jmx-remote,stats
 
-ADD . /
+COPY --chown=jetty:jetty . /
 
 # Temporary switch to root
 USER root
@@ -16,7 +16,7 @@ RUN echo "deb http://ftp.fr.debian.org/debian stretch contrib non-free" >> /etc/
     rm -rf /var/lib/apt/lists/*
 
 RUN mkdir /mnt/geowebcache_tiles && \
-    chown jetty:jetty /etc/georchestra /mnt/geowebcache_tiles
+    chown jetty:jetty /mnt/geowebcache_tiles
 
 # restore jetty user
 USER jetty

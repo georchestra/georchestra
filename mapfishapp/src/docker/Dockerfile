@@ -4,13 +4,13 @@ ENV XMS=1G XMX=2G
 
 RUN java -jar "$JETTY_HOME/start.jar" --create-startd --add-to-start=jmx,jmx-remote,stats
 
-ADD . /
+COPY --chown=jetty:jetty . /
 
 # Temporary switch to root
 USER root
 
 RUN mkdir /mnt/mapfishapp_uploads && \
-    chown jetty:jetty /etc/georchestra /mnt/mapfishapp_uploads
+    chown jetty:jetty /mnt/mapfishapp_uploads
 
 # Restore jetty user
 USER jetty

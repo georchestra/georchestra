@@ -4,7 +4,7 @@ ENV XMS=1G XMX=2G
 
 RUN java -jar "$JETTY_HOME/start.jar" --create-startd --add-to-start=jmx,jmx-remote,stats
 
-ADD . /
+COPY --chown=jetty:jetty . /
 
 # Temporary switch to root
 USER root
@@ -18,7 +18,7 @@ RUN unzip -d /var/lib/jetty/webapps/extractorapp /var/lib/jetty/webapps/extracto
     rm -f /var/lib/jetty/webapps/extractorapp.war
 
 RUN mkdir /mnt/extractorapp_extracts && \
-    chown jetty:jetty /etc/georchestra /mnt/extractorapp_extracts
+    chown jetty:jetty /mnt/extractorapp_extracts
 
 # Restore jetty user
 USER jetty
