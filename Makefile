@@ -9,7 +9,7 @@ docker-build-ldap:
 	docker build -t georchestra/ldap .
 
 docker-build-database:
-	docker pull postgres:10
+	docker pull postgres:11
 	cd postgresql; \
 	docker build -t georchestra/database .
 
