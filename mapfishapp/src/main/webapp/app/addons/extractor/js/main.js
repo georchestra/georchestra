@@ -281,7 +281,7 @@ GEOR.Addons.Extractor = Ext.extend(GEOR.Addons.Base, {
         var okLayers = [],
             // extract only one layer or all visible ones ?
             layers = this.layerRecord ?
-                [this.layerRecord] : this.mapPanel.layers;
+                [this.layerRecord] : this.mapPanel.layers.getRange();
         Ext.each(layers, function(r) {
             var layer = r.getLayer();
             if (!layer.getVisibility() || !layer.url) {
