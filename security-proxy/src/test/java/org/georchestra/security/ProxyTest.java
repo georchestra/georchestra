@@ -1,7 +1,16 @@
 package org.georchestra.security;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import com.google.common.collect.Maps;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpVersion;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.apache.http.message.BasicHttpResponse;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.util.ReflectionUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -9,21 +18,8 @@ import java.net.URI;
 import java.net.URL;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpVersion;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.message.BasicHttpResponse;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.http.HttpMethod;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.util.ReflectionUtils;
-
-import com.google.common.collect.Maps;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class ProxyTest {
     private Proxy proxy;
@@ -38,7 +34,7 @@ public class ProxyTest {
         executed = false;
         proxy = new Proxy() {
             @Override
-            protected HttpResponse executeHttpRequest(HttpClient httpclient, HttpRequestBase proxyingRequest) throws IOException {
+            protected HttpResponse executeHttpRequest(CloseableHttpAsyncClient httpclient, HttpRequestBase proxyingRequest) throws IOException {
                 executed = true;
                 return response;
             }
