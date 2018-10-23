@@ -19,52 +19,18 @@
 
 package org.georchestra.security;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.net.ProxySelector;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.net.UnknownHostException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.zip.DeflaterInputStream;
-import java.util.zip.DeflaterOutputStream;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
-
-import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.io.Closer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.ProtocolException;
 import org.apache.http.StatusLine;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpDelete;
@@ -75,13 +41,15 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpTrace;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
+import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HttpContext;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.ogcservstatistics.log4j.OGCServiceMessageFormatter;
 import org.georchestra.security.permissions.Permissions;
@@ -97,8 +65,43 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.io.Closer;
+import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.ProxySelector;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.UnknownHostException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.zip.DeflaterInputStream;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
  * This proxy provides an indirect access to a remote host to retrieve data.
@@ -132,7 +135,17 @@ import com.google.common.io.Closer;
 public class Proxy {
     protected static final Log logger = LogFactory.getLog(Proxy.class.getPackage().getName());
     protected static final Log statsLogger = LogFactory.getLog(Proxy.class.getPackage().getName() + ".statistics");
-    protected static final Log commonLogger = LogFactory.getLog(Proxy.class.getPackage().getName() + ".statistics-common");
+    private static final org.apache.http.client.RedirectStrategy NO_REDIRECT_STRATEGY = new org.apache.http.client.RedirectStrategy() {
+        @Override
+        public boolean isRedirected(HttpRequest httpRequest, HttpResponse httpResponse, HttpContext httpContext) throws ProtocolException {
+            return false;
+        }
+
+        @Override
+        public HttpUriRequest getRedirect(HttpRequest httpRequest, HttpResponse httpResponse, HttpContext httpContext) throws ProtocolException {
+            return null;
+        }
+    };
 
     @Autowired
     private GeorchestraConfiguration georchestraConfiguration;
@@ -159,6 +172,7 @@ public class Proxy {
     private Integer httpClientTimeout = 300000;
 
     private final static String setCookieHeader = "Set-Cookie";
+    private HttpAsyncClientBuilder httpAsyncClientBuilder;
 
     public void setHttpClientTimeout(Integer timeout) {
         this.httpClientTimeout = timeout;
@@ -238,6 +252,7 @@ public class Proxy {
                 closer.close();
             }
         }
+        httpAsyncClientBuilder = createHttpAsyncClientBuilder();
     }
 
     /* ---------- start work around for no gateway option -------------- */
@@ -597,16 +612,9 @@ public class Proxy {
      * @param localProxy true if the request targets a security-proxyfied webapp (e.g. mapfishapp, ...), false otherwise
      */
     private void handleRequest(HttpServletRequest request, HttpServletResponse finalResponse, String sURL, boolean localProxy) {
-        HttpClientBuilder htb = HttpClients.custom().disableRedirectHandling();
 
-        RequestConfig config = RequestConfig.custom().setSocketTimeout(this.httpClientTimeout).build();
-        htb.setDefaultRequestConfig(config);
-
-        //
-        // Handle http proxy for external request.
-        // Proxy must be configured by system variables (e.g.: -Dhttp.proxyHost=proxy -Dhttp.proxyPort=3128)
-        htb.setRoutePlanner(new SystemDefaultRoutePlanner(ProxySelector.getDefault()));
-        CloseableHttpClient httpclient = htb.build();
+        CloseableHttpAsyncClient httpclient = httpAsyncClientBuilder.build();
+        httpclient.start();
 
         HttpResponse proxiedResponse = null;
         int statusCode = 500;
@@ -735,7 +743,7 @@ public class Proxy {
                 logger.debug("charset not required for contentType: " + contentType);
                 doHandleRequest(request, finalResponse, proxiedResponse);
             }
-        } catch (IOException e) {
+        } catch (IOException | ExecutionException | InterruptedException | TimeoutException e) {
             // connection problem with the host
             logger.error("Exception occured when trying to connect to the remote host: ", e);
             try {
@@ -754,6 +762,19 @@ public class Proxy {
         }
     }
 
+    private HttpAsyncClientBuilder createHttpAsyncClientBuilder() {
+        HttpAsyncClientBuilder htb = HttpAsyncClients.custom().setRedirectStrategy(NO_REDIRECT_STRATEGY);
+
+        RequestConfig config = RequestConfig.custom().setSocketTimeout(this.httpClientTimeout).build();
+        htb.setDefaultRequestConfig(config);
+
+        //
+        // Handle http proxy for external request.
+        // Proxy must be configured by system variables (e.g.: -Dhttp.proxyHost=proxy -Dhttp.proxyPort=3128)
+        htb.setRoutePlanner(new SystemDefaultRoutePlanner(ProxySelector.getDefault()));
+        return htb;
+    }
+
     /**
      * Extracts the set-cookie http header from the downstream response.
      *
@@ -770,8 +791,9 @@ public class Proxy {
     }
 
     @VisibleForTesting
-    protected HttpResponse executeHttpRequest(HttpClient httpclient, HttpRequestBase proxyingRequest) throws IOException {
-        return httpclient.execute(proxyingRequest);
+    protected HttpResponse executeHttpRequest(CloseableHttpAsyncClient httpclient, HttpRequestBase proxyingRequest) throws IOException, TimeoutException, ExecutionException, InterruptedException {
+        Future<HttpResponse> future = httpclient.execute(proxyingRequest, null);
+        return future.get(5, TimeUnit.MINUTES);
     }
 
     private void copyLocationHeaders(HttpResponse proxiedResponse, HttpServletResponse finalResponse) {
