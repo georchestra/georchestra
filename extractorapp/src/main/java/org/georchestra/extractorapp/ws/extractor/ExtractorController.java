@@ -387,9 +387,8 @@ public class ExtractorController implements ServletContextAware {
         URL publicURL = new URL(rawPublicUrl);
         this.secureHost = publicURL.getHost();
 
-        // Remove trailling slash
-        if (rawPublicUrl.endsWith("/"))
-            rawPublicUrl = rawPublicUrl.substring(0, rawPublicUrl.length() - 1);
+        if (!rawPublicUrl.endsWith("/"))
+            rawPublicUrl = String.format("%s/", rawPublicUrl);
 
         // Append servlet context
         this.servletUrl = rawPublicUrl + this.servletContext.getServletContextName();
