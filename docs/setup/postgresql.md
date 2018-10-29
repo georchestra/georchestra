@@ -62,12 +62,13 @@ apps are running in same database), you can use following procedure to reset own
 example ```georchestra``` :
 
 ```
-wget https://raw.githubusercontent.com/georchestra/georchestra/15.12/postgresql/fix-owner.sql -O /tmp/fix-owner.sql
+wget https://raw.githubusercontent.com/georchestra/georchestra/master/postgresql/fix-owner.sql -O /tmp/fix-owner.sql
 psql -d georchestra -f /tmp/fix-owner.sql
 psql -d georchestra -c "SELECT change_owner('mapfishapp', 'georchestra');";
 psql -d georchestra -c "SELECT change_owner('console', 'georchestra');";
 psql -d georchestra -c "SELECT change_owner('ogcstatistics', 'georchestra');";
 psql -d georchestra -c "SELECT change_owner('extractorapp', 'georchestra');";
+psql -d georchestra -c "SELECT change_owner('geofence', 'georchestra');";
 psql -d georchestra -c "SELECT change_owner('atlas', 'georchestra');";
 psql -d georchestra -c "SELECT change_owner('public', 'georchestra');";
 ```

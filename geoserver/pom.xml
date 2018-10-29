@@ -30,5 +30,11 @@
         <module>geoserver-submodule/src/community/geofence-server</module>
       </modules>
     </profile>
+    <profile>
+      <id>s3-geotiff</id>
+      <modules>
+        <module>geoserver-submodule/src/community/s3-geotiff</module>
+      </modules>
+    </profile>
   </profiles>
 </project>

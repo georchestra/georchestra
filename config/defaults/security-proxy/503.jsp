@@ -36,7 +36,7 @@
   </head>
   <body lang=FR>
     <div id="wrapper">
-      <img src="http://www.georchestra.org/public/logos/georchestra_logo.png" alt="geOrchestra" />
+      <img src="https://www.georchestra.org/public/logos/georchestra_logo.png" alt="geOrchestra" />
       <s:message code="503.body"/>
     </div>
   </body>

@@ -19,14 +19,6 @@
 
 package org.georchestra.console.ws.backoffice.roles;
 
-import java.io.IOException;
-import java.util.*;
-import java.util.regex.Pattern;
-
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.dao.AdvancedDelegationDao;
@@ -58,7 +50,21 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * Web Services to maintain the Roles information.
@@ -135,6 +141,7 @@ public class RolesController {
 	@ResponseBody
 	public List<Role> findAll() throws DataServiceException {
 		List<Role> list = this.roleDao.findAll();
+		list.stream().forEach(role -> {role.setUserList(filter.filterStringList(role.getUserList()));});
 		list.add(this.generateTemporaryRole());
 		return list;
 	}
