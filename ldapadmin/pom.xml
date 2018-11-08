@@ -417,6 +417,9 @@
             <fileset>
               <directory>${project.basedir}/node</directory>
             </fileset>
+            <fileset>
+              <directory>${project.basedir}/src/main/webapp/console/public</directory>
+            </fileset>
           </filesets>
         </configuration>
       </plugin>
