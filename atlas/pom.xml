@@ -314,44 +314,7 @@
             </plugins>
         </pluginManagement>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.groovy.maven</groupId>
-                <artifactId>gmaven-plugin</artifactId>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.georchestra</groupId>
-                        <artifactId>config</artifactId>
-                        <version>${project.version}</version>
-                        <classifier>${server}</classifier>
-                    </dependency>
-                  </dependencies>
-                </plugin>
-                <plugin>
-                  <artifactId>maven-antrun-plugin</artifactId>
-                  <executions>
-                    <execution>
-                      <id>serverConfigCopy</id>
-                      <phase>generate-sources</phase>
-                      <configuration>
-                        <tasks>
-                         <copy todir="${basedir}/src/main/webapp/" overwrite="true" verbose="true" failonerror="false">
-                            <fileset dir="${confdir}/${project.artifactId}">
-                              <exclude name="**/maven.filter"/>
-                            </fileset>
-                          </copy>
-                        </tasks>
-                      </configuration>
-                      <goals>
-                        <goal>run</goal>
-                      </goals>
-                    </execution>
-                  </executions>
-                </plugin>
-                <!-- needed for jetty:run maven target -->
+            <!-- needed for jetty:run maven target -->
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
