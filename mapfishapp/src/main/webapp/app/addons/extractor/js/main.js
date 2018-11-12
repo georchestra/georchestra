@@ -211,6 +211,7 @@ GEOR.Addons.Extractor = Ext.extend(GEOR.Addons.Base, {
                     this.map.removeControl(this.modifyControl);
                     this.modifyControl.unselectFeature(this.layer.features[0]);
                     this.map.removeLayer(this.layer);
+                    this.layer.destroyFeatures();
                     this.item && this.item.setChecked(false);
                     this.components && this.components.toggle(false);
                     this.layerRecord = null;
