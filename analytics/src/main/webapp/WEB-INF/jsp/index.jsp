@@ -34,14 +34,18 @@
 
 <%
 String defaultLanguage = null, defaultInstanceName = null, instanceName = null;
+String headerHeight = "90";
+String headerUrl = "/header/";
 
-String defaultConfigJs = "resources/js/app/config.js";
 try {
   ApplicationContext ctx = RequestContextUtils.getWebApplicationContext(request);
-  if (ctx.getBean(GeorchestraConfiguration.class).activated()) {
-    defaultLanguage = ctx.getBean(GeorchestraConfiguration.class).getProperty("language");
-    defaultInstanceName = ctx.getBean(GeorchestraConfiguration.class).getProperty("instance");
-    defaultConfigJs = "ws/app/js/GEOR_custom.js";
+  GeorchestraConfiguration georConfig = (GeorchestraConfiguration) ctx.getBean(GeorchestraConfiguration.class);
+  
+  if (georConfig.activated()) {
+    defaultLanguage = georConfig.getProperty("language");
+    defaultInstanceName = georConfig.getProperty("instance");
+    headerHeight = georConfig.getProperty("headerHeight");
+    headerUrl = georConfig.getProperty("headerUrl");
   }
 } catch (Exception e) {}
 
@@ -81,7 +85,7 @@ javax.servlet.jsp.jstl.core.Config.set(
 
     <head>
         <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
-        <title lang="<%= lang%>" dir="ltr"><fmt:message key="title.analytics"/> - <%= instanceName %></title>
+        <title lang="<%= lang %>" dir="ltr"><fmt:message key="title.analytics"/> - <%= instanceName %></title>
         <link rel="stylesheet" type="text/css" href="resources/js/lib/external/ext/resources/css/ext-all-gray.css" />
         <link rel="stylesheet" type="text/css" href="resources/css/app.css" />
         <style type="text/css">
@@ -125,7 +129,7 @@ javax.servlet.jsp.jstl.core.Config.set(
             });
         </script>
         <script type="text/javascript" src="resources/js/app/Application.js"></script>
-        <script type="text/javascript" src="<%= defaultConfigJs %>"></script>
+        <script type="text/javascript" src="ws/app/js/GEOR_custom.js"></script>
 
         <noscript><p><fmt:message key="need.javascript"/></p></noscript>
     </body>
