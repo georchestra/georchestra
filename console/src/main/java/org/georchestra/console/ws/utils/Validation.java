@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
  * Possible values:
  * *
  *
- * There is hardcoded mandatory field for user and organizations creation:
+ * There are hardcoded mandatory fields for user and organizations creation:
  *
  * mandatory user fields:
  * * email

@@ -38,7 +38,9 @@
     <link href='css/console.css' rel="stylesheet" />
     <title><s:message code="createAccountForm.title"/></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <c:if test="${recaptchaActivated}">
+      <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    </c:if>
 </head>
 
 <body>
@@ -155,9 +157,11 @@
                 </t:password>
             </fieldset>
 
+            <c:if test="${recaptchaActivated}">
             <fieldset>
                 <t:recaptcha path="g-recaptcha" />
             </fieldset>
+            </c:if>
 
             <fieldset>
                 <div class="form-group">
@@ -218,7 +222,7 @@
     /* Validate the form */
     function validate() {
         if (testFirstname() & testSurname() & testEmail() & testUid() & testPassword() & testConfirmPassword() &
-                testRecaptcha() & testField("phone") & testField("title") & testField("description") & testOrg()
+               <c:if test="${recaptchaActivated}"> testRecaptcha() & </c:if> testField("phone") & testField("title") & testField("description") & testOrg()
         ) {
             return true;
         } else {
