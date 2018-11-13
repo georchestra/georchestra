@@ -43,13 +43,15 @@ public class AdvancedDelegationDao {
 
     public List<DelegationEntry> findByOrg(String org) throws SQLException {
         List<DelegationEntry> res = new LinkedList<DelegationEntry>();
-        this.byOrgStatement.setString(1,org);
+        recreateStamentIfConnectionClosed();
+        this.byOrgStatement.setString(1, org);
         return this.parseResults(this.byOrgStatement.executeQuery());
     }
 
     public List<DelegationEntry> findByRole(String cn) throws SQLException {
         List<DelegationEntry> res = new LinkedList<DelegationEntry>();
-        this.byRoleStatement.setString(1,cn);
+        recreateStamentIfConnectionClosed();
+        this.byRoleStatement.setString(1, cn);
         return this.parseResults(this.byRoleStatement.executeQuery());
     }
 
@@ -70,7 +72,7 @@ public class AdvancedDelegationDao {
 
     private List<DelegationEntry> parseResults(ResultSet sql) throws SQLException {
         List<DelegationEntry> res = new LinkedList<DelegationEntry>();
-        while(sql.next())
+        while (sql.next())
             res.add(this.hydrateFromSQLResult(sql));
         return res;
     }
@@ -81,5 +83,11 @@ public class AdvancedDelegationDao {
                 sql.getString("orgs").split(","),
                 sql.getString("roles").split(","));
         return res;
+    }
+
+    private void recreateStamentIfConnectionClosed() throws SQLException {
+        if(!this.byOrgStatement.getConnection().isValid(0)) {
+            this.init();
+        }
     }
 }
