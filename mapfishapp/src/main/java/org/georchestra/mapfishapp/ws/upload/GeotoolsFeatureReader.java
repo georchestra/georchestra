@@ -307,8 +307,7 @@ public class GeotoolsFeatureReader implements FeatureGeoFileReader {
 
         ShapefileDataStoreFactory storeFactory = new ShapefileDataStoreFactory();
 
-        FileDataStore store = storeFactory
-                .createDataStore(file.toURI().toURL());
+        FileDataStore store = storeFactory.createDataStore(file.toURL());
 
         String typeName = FilenameUtils.getBaseName(file.getAbsolutePath());
 
