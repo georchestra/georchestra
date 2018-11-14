@@ -94,12 +94,14 @@
 	<script type="text/javascript">
     /* Validate the form */
     function validate() {
-<c:when test="${recaptchaActivated}">
+<c:choose>
+  <c:when test="${recaptchaActivated}">
         if (testEmail() & testRecaptcha()) {
-</c:when>
-<c:otherwise>
+  </c:when>
+  <c:otherwise>
         if (testEmail()) {
-</c:otherwise>
+  </c:otherwise>
+</c:choose>
             return true;
         } else {
             setFormError();
