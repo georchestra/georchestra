@@ -1,5 +1,6 @@
 package org.georchestra.console.dao;
 
+import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.dto.Org;
 import org.georchestra.console.model.DelegationEntry;
@@ -30,27 +31,29 @@ public class AdvancedDelegationDao {
     @Autowired
     private OrgsDao orgsDao;
 
-    private PreparedStatement byOrgStatement;
-    private PreparedStatement byRoleStatement;
+    @Autowired
+    private ComboPooledDataSource ds;
 
     @PostConstruct
     public void init() throws SQLException {
-        this.byOrgStatement = this.tm.getDataSource().getConnection().prepareStatement(
-                "SELECT uid, array_to_string(orgs, ',') AS orgs, array_to_string(roles, ',') AS roles FROM console.delegations WHERE ? = ANY(orgs)");
-        this.byRoleStatement = this.tm.getDataSource().getConnection().prepareStatement(
-                "SELECT uid, array_to_string(orgs, ',') AS orgs, array_to_string(roles, ',') AS roles FROM console.delegations WHERE ? = ANY(roles)");
+        ds.setTestConnectionOnCheckin(true);
+        ds.setTestConnectionOnCheckout(true);
     }
 
     public List<DelegationEntry> findByOrg(String org) throws SQLException {
         List<DelegationEntry> res = new LinkedList<DelegationEntry>();
-        this.byOrgStatement.setString(1,org);
-        return this.parseResults(this.byOrgStatement.executeQuery());
+        PreparedStatement byOrgStatement = ds.getConnection().prepareStatement(
+                "SELECT uid, array_to_string(orgs, ',') AS orgs, array_to_string(roles, ',') AS roles FROM console.delegations WHERE ? = ANY(orgs)");
+        byOrgStatement.setString(1, org);
+        return this.parseResults(byOrgStatement.executeQuery());
     }
 
     public List<DelegationEntry> findByRole(String cn) throws SQLException {
         List<DelegationEntry> res = new LinkedList<DelegationEntry>();
-        this.byRoleStatement.setString(1,cn);
-        return this.parseResults(this.byRoleStatement.executeQuery());
+        PreparedStatement byRoleStatement = ds.getConnection().prepareStatement(
+                "SELECT uid, array_to_string(orgs, ',') AS orgs, array_to_string(roles, ',') AS roles FROM console.delegations WHERE ? = ANY(roles)");
+        byRoleStatement.setString(1, cn);
+        return this.parseResults(byRoleStatement.executeQuery());
     }
 
     public Set<String> findUsersUnderDelegation(String delegatedAdmin) {
@@ -70,7 +73,7 @@ public class AdvancedDelegationDao {
 
     private List<DelegationEntry> parseResults(ResultSet sql) throws SQLException {
         List<DelegationEntry> res = new LinkedList<DelegationEntry>();
-        while(sql.next())
+        while (sql.next())
             res.add(this.hydrateFromSQLResult(sql));
         return res;
     }
