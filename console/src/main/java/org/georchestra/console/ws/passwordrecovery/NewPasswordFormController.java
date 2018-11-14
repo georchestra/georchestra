@@ -62,7 +62,9 @@ public class NewPasswordFormController {
 		this.userTokenDao = userTokenDao;
 	}
 	
-	
+	@Autowired
+	private boolean reCaptchaActivated;
+
 	@InitBinder
 	public void initForm( WebDataBinder dataBinder) {
 		
@@ -84,7 +86,8 @@ public class NewPasswordFormController {
 	 */
 	@RequestMapping(value="/account/newPassword", method=RequestMethod.GET)
 	public String setupForm(@RequestParam("token") String token, Model model) throws IOException{
-		
+
+		model.addAttribute("recaptchaActivated", reCaptchaActivated);
 
 		try{
 			final String uid = this.userTokenDao.findUserByToken(token);

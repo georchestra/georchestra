@@ -85,6 +85,9 @@ public class PasswordRecoveryFormController  {
 	private ReCaptchaParameters reCaptchaParameters;
 
 	@Autowired
+	private boolean reCaptchaActivated;
+
+	@Autowired
 	private GeorchestraConfiguration georConfig;
 
 	@Autowired
@@ -112,6 +115,7 @@ public class PasswordRecoveryFormController  {
 		formBean.setEmail(email);
 
 		model.addAttribute(formBean);
+		model.addAttribute("recaptchaActivated", this.reCaptchaActivated);
 		session.setAttribute("reCaptchaPublicKey", this.reCaptchaParameters.getPublicKey());
 
 		return "passwordRecoveryForm";
@@ -137,7 +141,9 @@ public class PasswordRecoveryFormController  {
 						SessionStatus sessionStatus)
 						throws IOException {
 
-		RecaptchaUtils.validate(reCaptchaParameters, formBean.getRecaptcha_response_field(), resultErrors);
+		if (reCaptchaActivated) {
+			RecaptchaUtils.validate(reCaptchaParameters, formBean.getRecaptcha_response_field(), resultErrors);
+		}
 		if(resultErrors.hasErrors()){
 			return "passwordRecoveryForm";
 		}
