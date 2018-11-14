@@ -50,7 +50,7 @@
 			<h1><s:message code="editUserDetailsForm.title"/> <small><s:message code="editUserDetailsForm.subtitle" /></small></h1>
 		</div>
 		<p class="lead"><s:message code="editUserDetailsForm.description" /></p>
-    <form:form id="form" name="form" method="post" action="userdetails" modelAttribute="editUserDetailsFormBean" cssClass="form-horizontal col-lg-6 col-lg-offset-1" onsubmit="return validate();">
+    <form:form id="form" name="form" method="post" action="userdetails" modelAttribute="editUserDetailsFormBean" cssClass="form-horizontal col-lg-6" onsubmit="return validate();">
 
 			<c:if test="${not empty success}">
 			<div id="message" class="alert alert-dismissable alert-success">
@@ -172,7 +172,7 @@
     <script>require('app')</script>
     <!-- /angularjs app dependencies -->
 
-    <div class="col-lg5" ng-app="manager" ng-strict-di ng-controller="StandaloneController">
+    <div class="col-lg-5 col-lg-offset-1" ng-app="manager" ng-strict-di ng-controller="StandaloneController">
       <fieldset>
         <legend><s:message code="editUserDetailsForm.organisation" /> «{{org.name}}»</legend>
 
