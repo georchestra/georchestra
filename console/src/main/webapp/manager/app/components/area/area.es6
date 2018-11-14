@@ -30,6 +30,7 @@ class AreaController {
     const $http = this.$injector.get('$http')
     const CONFIG_URI = this.$injector.get('CONSOLE_PUBLIC_PATH') + 'orgs/areaConfig.json'
     let promises = [ $http.get(CONFIG_URI).then(r => r.data) ]
+    this.canExport = this.canExport && this.item.id
     if (this.item.$promise) {
       promises.push(this.item.$promise)
     }
