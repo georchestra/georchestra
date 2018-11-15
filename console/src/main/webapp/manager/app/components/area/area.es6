@@ -8,18 +8,21 @@ const highlightStyle = buildStyle([255, 0, 0, 0.5], [255, 0, 0, 0.2])
 const highlight = feature => {
   feature.setStyle(highlightStyle)
   setTimeout(() => feature.setStyle(), 250)
+  return feature
 }
 
 class AreaController {
-  static $inject = [ '$injector', '$http' ]
+  static $inject = [ '$injector', '$http', '$scope' ]
 
-  constructor ($injector, $http) {
+  constructor ($injector, $http, $scope) {
     this.$injector = $injector
+    this.$scope = $scope
 
     let translate = $injector.get('translate')
     this.i18n = {}
     translate('area.updated', this.i18n)
     translate('area.error', this.i18n)
+    this.canExport = window.Blob && window.FileReader
   }
 
   $onInit () {
@@ -27,6 +30,7 @@ class AreaController {
     const $http = this.$injector.get('$http')
     const CONFIG_URI = this.$injector.get('CONSOLE_PUBLIC_PATH') + 'orgs/areaConfig.json'
     let promises = [ $http.get(CONFIG_URI).then(r => r.data) ]
+    this.canExport = this.canExport && this.item.id
     if (this.item.$promise) {
       promises.push(this.item.$promise)
     }
@@ -42,6 +46,7 @@ class AreaController {
       source: new ol.source.Vector(),
       style: buildStyle([ 255, 255, 255, 0.1 ], [ 0, 0, 0, 0.2 ])
     })
+    this.source = vector.getSource()
 
     const map = new ol.Map({
       target: document.querySelector('.map'),
@@ -223,6 +228,40 @@ class AreaController {
       $httpDefaultCache.removeAll()
       flash.create('success', this.i18n.updated)
     }, flash.create.bind(flash, 'danger', this.i18n.error))
+  }
+
+  export () {
+    const a = document.createElement('a')
+    a.href = window.URL.createObjectURL(new Blob(
+      [ this.ids.join('\n') ],
+      { type: 'text/csv' }
+    ))
+    a.download = 'export.csv'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+  }
+
+  import () {
+    const fileInput = document.createElement('input')
+    const reader = new window.FileReader()
+    fileInput.type = 'file'
+    fileInput.accept = 'text/csv'
+    this.ids = []
+    this.collection.clear()
+    reader.onload = () => this.$scope.$apply(() => {
+      reader.result.split('\n').forEach(line => {
+        const [id] = line.split(/,|;/)
+        let f = this.source.getFeatureById(id)
+        if (!f) return
+        this.collection.push(highlight(f))
+        this.ids.push(id)
+      })
+    })
+    fileInput.addEventListener(
+      'change',
+      () => reader.readAsBinaryString(fileInput.files[0]))
+    fileInput.click()
   }
 }
 

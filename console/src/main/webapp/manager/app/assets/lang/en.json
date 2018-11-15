@@ -36,6 +36,9 @@
   "tab.area"              : "Area",
   "tab.users"             : "Members",
 
+  "area.import"           : "Import CSV",
+  "area.export"           : "Export CSV",
+
   "user.userlist"         : "All users",
   "user.updated"          : "User updated",
   "user.deleted"          : "User deleted",
