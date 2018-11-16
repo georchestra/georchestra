@@ -9,7 +9,8 @@ venv="${buildpath}/env"
 #
 # Command path definitions
 #
-python="/usr/bin/python"
+python="/usr/bin/python2"
+virtualenv="/usr/bin/virtualenv --python=${python}"
 mkdir="/bin/mkdir"
 rm="/bin/rm"
 sh="/bin/sh"
@@ -29,7 +30,7 @@ ${mkdir} -p ${releasepath} ${releasepath}/lang
  if  [ ! -d ${venv} ] || [ $? -eq 0 ]; then
      echo "creating virtual env and installing jstools..."
      rm -rf ${venv}
-     virtualenv --no-site-packages ${venv}
+     ${virtualenv} --no-site-packages ${venv}
      ${venv}/bin/pip install jstools==0.6 -i https://pypi.python.org/simple/
      echo "done."
  fi;
