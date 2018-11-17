@@ -82,6 +82,12 @@ mvn -Dmaven.test.skip=true -Dserver=myprofile -P-all,module1,module2 clean insta
 ```
 ... where ```moduleX``` can be one of: ```analytics```, ```cas```, ```extractorapp```, ```geonetwork```, ```geofence```, ```geoserver```, ```geowebcache```, ```header```, ```console```, ```mapfishapp```, ```security-proxy```.
 
+Alternately, if you want to build all projects but one (say ```geowebcache-webapp```):
+
+```bash
+mvn -Dmaven.test.skip=true -Dserver=myprofile --projects \!geowebcache-webapp clean install
+```
+
 As a result of the build process, you should find the geOrchestra artifacts into the subfolders of the ```~/.m2/repository/org/``` directory.
 Now, let's [prepare the system](setup.md) to receive the webapps.
 
