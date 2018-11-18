@@ -7,7 +7,8 @@
         "projections": [{
             "srs": "EPSG:4326", 
             "name": "WGS 84",
-            "labels": ["Longitude", "Latitude"]
+            "labels": ["Longitude", "Latitude"],
+            "decimalPrecision": 10
         }],
         "graphicStyle": {
             "graphicName": "star",

@@ -25,7 +25,8 @@ GEOR.Addons.Goto = Ext.extend(GEOR.Addons.Base, {
         this.store = new Ext.data.JsonStore({
             data: this.options.projections,
             idProperty: "srs",
-            fields: ["srs", "name", "labels"]
+            fields: ["srs", "name", "labels",
+                {name: "decimalPrecision", defaultValue: 2}]
         });
         if (this.store.getCount() > 0) {
             this.defaultSRS = this.store.getAt(0);
@@ -84,8 +85,10 @@ GEOR.Addons.Goto = Ext.extend(GEOR.Addons.Base, {
         var fields = this.getFields();
         fields.x.setValue("");
         fields.x.label.update(r.get("labels")[0]+this.sep);
+        fields.x.decimalPrecision = r.get("decimalPrecision");
         fields.y.setValue("");
         fields.y.label.update(r.get("labels")[1]+this.sep);
+        fields.y.decimalPrecision = r.get("decimalPrecision");
     },
 
     /**
@@ -123,6 +126,7 @@ GEOR.Addons.Goto = Ext.extend(GEOR.Addons.Base, {
                         anchor: "-1em",
                         name: "x",
                         fieldLabel: this.defaultSRS.get("labels")[0],
+                        decimalPrecision: this.defaultSRS.get("decimalPrecision"),
                         enableKeyEvents: true,
                         listeners: {
                             "keypress": this.onKeyPressed,
@@ -135,6 +139,7 @@ GEOR.Addons.Goto = Ext.extend(GEOR.Addons.Base, {
                         anchor: "-1em",
                         name: "y",
                         fieldLabel: this.defaultSRS.get("labels")[1],
+                        decimalPrecision: this.defaultSRS.get("decimalPrecision"),
                         enableKeyEvents: true,
                         listeners: {
                             "keypress": this.onKeyPressed,
