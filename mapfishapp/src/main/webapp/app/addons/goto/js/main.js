@@ -13,7 +13,6 @@ GEOR.Addons.Goto = Ext.extend(GEOR.Addons.Base, {
      * record - {Ext.data.record} a record with the addon parameters
      */
     init: function(record) {
-        this.defaultSRS = this.options.projections[0];
         this.sep = OpenLayers.i18n("labelSeparator");
         this.layer = new OpenLayers.Layer.Vector("__georchestra_goto_addon", {
             displayInLayerSwitcher: false,
@@ -28,6 +27,11 @@ GEOR.Addons.Goto = Ext.extend(GEOR.Addons.Base, {
             idProperty: "srs",
             fields: ["srs", "name", "labels"]
         });
+        if (this.store.getCount() > 0) {
+            this.defaultSRS = this.store.getAt(0);
+        } else {
+            alert("Goto addon: config error - no projection defined in options.")
+        }
 
         this.combo = new Ext.form.ComboBox({
             mode: "local",
@@ -118,7 +122,7 @@ GEOR.Addons.Goto = Ext.extend(GEOR.Addons.Base, {
                         xtype: "numberfield",
                         anchor: "-1em",
                         name: "x",
-                        fieldLabel: this.defaultSRS.labels[0],
+                        fieldLabel: this.defaultSRS.get("labels")[0],
                         enableKeyEvents: true,
                         listeners: {
                             "keypress": this.onKeyPressed,
@@ -130,7 +134,7 @@ GEOR.Addons.Goto = Ext.extend(GEOR.Addons.Base, {
                         xtype: "numberfield",
                         anchor: "-1em",
                         name: "y",
-                        fieldLabel: this.defaultSRS.labels[1],
+                        fieldLabel: this.defaultSRS.get("labels")[1],
                         enableKeyEvents: true,
                         listeners: {
                             "keypress": this.onKeyPressed,
