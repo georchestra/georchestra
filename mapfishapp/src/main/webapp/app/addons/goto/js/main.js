@@ -31,7 +31,7 @@ GEOR.Addons.Goto = Ext.extend(GEOR.Addons.Base, {
         if (this.store.getCount() > 0) {
             this.defaultSRS = this.store.getAt(0);
         } else {
-            alert("Goto addon: config error - no projection defined in options.")
+            alert("Goto addon: config error - no projection defined in options.");
         }
 
         this.combo = new Ext.form.ComboBox({
