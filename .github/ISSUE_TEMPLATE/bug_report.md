@@ -9,7 +9,7 @@ A clear and concise description of what the bug is.
 
 **geOrchestra version or branch**
 
-eg: 16.12 or 17.12 or master ?
+eg: 17.12 or 18.06 or master ?
 
 **To Reproduce**
 Steps to reproduce the behavior:
