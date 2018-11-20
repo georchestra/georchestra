@@ -25,9 +25,9 @@ public class WaitForDb {
                 break;
             } catch (SQLException e) {
                 System.out.println("------------------------> DB not ready - waiting <---------------------------");
-                System.out.print(" url: ");
+                System.out.print(" url:             ");
                 System.out.println(this.getUrl());
-                System.out.print(" username: ");
+                System.out.print(" username:        ");
                 System.out.println(this.getUsername());
                 System.out.print(" driverClassName: ");
                 System.out.println(this.getDriverClassName());
