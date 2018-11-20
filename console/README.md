@@ -76,7 +76,7 @@ Once created, set the following `console` parameters with the value of the keys:
 
 See [the configuration guide](../config/README.md) for details on how to configure these two parameters.
 
-### Set of required fields
+### Set of required fields
 
 The console configuration, in the config module, contains a `requiredFields` parameter that defaults to `firstName,surname,email,uid,password,confirmPassword`. Adding other fields, separated by commas, will make them mandatory in new account and edit forms. Note that this parameter only affects public UI.
 
