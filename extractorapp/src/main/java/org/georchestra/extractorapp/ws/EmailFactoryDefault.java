@@ -79,7 +79,13 @@ public class EmailFactoryDefault extends AbstractEmailFactory {
 
             public void sendAck() throws AddressException, MessagingException {
                 LOG.debug("preparing to send extraction acknowledgement email");
-                sendMsg(msgAck);
+                String msg = new String(msgAck);
+                if (msg != null) {
+                    msg = msg.replaceAll("\\{publicUrl\\}", this.georConfig.getProperty("publicUrl"));
+                }
+                // Normalize newlines
+                msg = msg.replaceAll("\n[\n]+", "\n\n");
+                sendMsg(msg);
             }
         };
     }
