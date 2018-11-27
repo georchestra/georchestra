@@ -261,6 +261,12 @@
           <httpConnector>
             <port>8180</port>
           </httpConnector>
+          <systemProperties>
+            <systemProperty>
+              <name>georchestra.datadir</name>
+              <value>/etc/georchestra</value>
+            </systemProperty>
+          </systemProperties>
         </configuration>
       </plugin>
     </plugins>
