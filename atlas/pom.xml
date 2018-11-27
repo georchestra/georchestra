@@ -329,6 +329,12 @@
                     <httpConnector>
                         <port>8291</port>
                     </httpConnector>
+                    <systemProperties>
+                        <systemProperty>
+                            <name>georchestra.datadir</name>
+                            <value>/etc/georchestra</value>
+                        </systemProperty>
+                    </systemProperties>
                 </configuration>
             </plugin>
 
