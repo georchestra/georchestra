@@ -98,7 +98,7 @@ For each extraction job, two emails are sent :
 Templates for these emails can be found in config/defaults/extractorapp/WEB-INF/templates/
 This gives you the opportunity to override them by copying to your own profile.
 
-By default, the ack mail template does not support string substitution, but the second email template does.
+By default, the ack mail template does not support string substitution (apart from `{publicUrl}`, that will be replaced by the instance URL), but the second email template does.
 These variables are:
  * **link** the HTTP link to download the data,
  * **emails** the recipient emails,
