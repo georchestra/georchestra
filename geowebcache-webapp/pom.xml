@@ -178,6 +178,12 @@
           </webAppConfig>
           <stopKey>GWC_JETTY_STOP</stopKey>
           <stopPort>8090</stopPort>
+          <systemProperties>
+            <systemProperty>
+              <name>georchestra.datadir</name>
+              <value>/etc/georchestra</value>
+            </systemProperty>
+          </systemProperties>
         </configuration>
       </plugin>
     </plugins>
