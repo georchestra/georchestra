@@ -2,3 +2,4 @@ src/main/webapp/header.jsp
 src/main/webapp/js/app/config.js
 src/main/webapp/WEB-INF/analytics.properties
 src/main/webapp/WEB-INF/jsp/index.jsp
+src/main/webapp/WEB-INF/jsp/header.jsp
