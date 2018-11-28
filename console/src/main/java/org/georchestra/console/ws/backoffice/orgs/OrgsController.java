@@ -192,15 +192,15 @@ public class OrgsController {
     /**
      * Create a new org based on JSON document sent by browser. JSON document may contain following keys :
      *
-     * * 'name' (mandatory)
-     * * 'shortName'
+     * * 'name'
+     * * 'shortName' (mandatory)
      * * 'cities' as json array ex: [654,865498,98364,9834534,984984,6978984,98498]
      * * 'status'
      * * 'type'
      * * 'address'
      * * 'members' as json array ex: ["testadmin", "testuser"]
      *
-     * All fields are optional except 'name' which is used to generate organization identifier.
+     * All fields are optional except 'shortName' which is used to generate organization identifier.
      *
      * A new JSON document will be return to browser with a complete description of created org. @see updateOrgInfos()
      * for JSON format.
@@ -213,14 +213,14 @@ public class OrgsController {
         JSONObject json = this.parseRequest(request);
 
         // Validate request against required fields for admin part
-        if (!this.validation.validateOrgField("name", json))
-            throw new IOException("required field : name");
+        if (!this.validation.validateOrgField("shortName", json))
+            throw new IOException("required field : shortName");
 
         Org org = new Org();
         OrgExt orgExt = new OrgExt();
 
-        // Generate string identifier based on name
-        String id = this.orgDao.generateId(json.getString(Org.JSON_NAME));
+        // Generate string identifier based on shortName
+        String id = this.orgDao.generateId(json.getString(Org.JSON_SHORT_NAME));
         org.setId(id);
         orgExt.setId(id);
 
@@ -418,7 +418,7 @@ public class OrgsController {
      */
     private void updateFromRequest(Org org, JSONObject json){
         try{
-            org.setId(json.getString(Org.JSON_NAME));
+            org.setId(json.getString(Org.JSON_SHORT_NAME));
         } catch (JSONException ex){}
         try{
             org.setName(json.getString(Org.JSON_NAME));
@@ -462,7 +462,7 @@ public class OrgsController {
      */
     private void updateFromRequest(OrgExt orgExt, JSONObject json){
         try{
-            orgExt.setId(json.getString(Org.JSON_NAME));
+            orgExt.setId(json.getString(Org.JSON_SHORT_NAME));
         } catch (JSONException ex){}
         try{
             orgExt.setOrgType(json.getString(OrgExt.JSON_ORG_TYPE));
