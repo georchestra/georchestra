@@ -172,13 +172,17 @@ public class OrgsDao {
 
     public void update(Org org){
         Name newName = buildOrgDN(org.getId());
-        this.ldapTemplate.rename(org.getReference().getDn(), newName);
+        if (newName.compareTo(org.getReference().getDn()) != 0) {
+            this.ldapTemplate.rename(org.getReference().getDn(), newName);
+        }
         this.ldapTemplate.rebind(newName, null, buildAttributes(org));
     }
 
     public void update(OrgExt orgExt){
         Name newName = buildOrgExtDN(orgExt.getId());
-        this.ldapTemplate.rename(orgExt.getReference().getDn(), newName);
+        if (newName.compareTo(orgExt.getReference().getDn()) != 0) {
+            this.ldapTemplate.rename(orgExt.getReference().getDn(), newName);
+        }
         this.ldapTemplate.rebind(newName, null, buildAttributes(orgExt));
     }
 
