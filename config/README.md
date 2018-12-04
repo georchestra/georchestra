@@ -203,14 +203,14 @@ Maps:
 
 List:
 
-  // create a list. Result Type is java.util.List
-  def list = ['value1', 'value2']
-  // short hand to add new value
-  list << 'newValue'
-  // normal java.util.List method to add many
-  list.addAll( ['nv1', 'nv2'] )
-  // Access an element in list
-  list[2]
+    // create a list. Result Type is java.util.List
+    def list = ['value1', 'value2']
+    // short hand to add new value
+    list << 'newValue'
+    // normal java.util.List method to add many
+    list.addAll( ['nv1', 'nv2'] )
+    // Access an element in list
+    list[2]
 
 For more on collections in groovy see: http://groovy.codehaus.org/Collections
 
@@ -486,17 +486,18 @@ These scripts will have access to the same classes the GenerateConfig scripts do
 *Note*: Not all projects support post treatment scripts.  Check the pom.xml for the project and check:
 
  * The gmaven plugin has been added to the project as follows:
-	<plugin>
-		<groupId>org.codehaus.groovy.maven</groupId>
-		<artifactId>gmaven-plugin</artifactId>
-		<dependencies>
-			<dependency>
-					<groupId>${project.groupId}</groupId>
-					<artifactId>config</artifactId>
-					<version>${project.version}</version>
-			</dependency>
-		</dependencies>
-	</plugin>
+
+        <plugin>
+                <groupId>org.codehaus.groovy.maven</groupId>
+                <artifactId>gmaven-plugin</artifactId>
+                <dependencies>
+                        <dependency>
+                                <groupId>${project.groupId}</groupId>
+                                <artifactId>config</artifactId>
+                                <version>${project.version}</version>
+                        </dependency>
+                </dependencies>
+        </plugin>
  * The property _postTreatmentScript_ does not override the property defined in the root pom.xml.  (Defining this property is a way to disable the post treatment script for projects that need the gmaven plugin but don't need the post treatment script execution)
  
 Since one of the more common tasks will be to add a minification step the following example illustrates how to do this.
