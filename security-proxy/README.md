@@ -49,7 +49,7 @@ Several other user properties are also provided as headers:
  * `sec-lastname` is the second name (LDAP `sn`)
  * `sec-tel` is the user phone number (LDAP `telephoneNumber`)
 
-Additional headers can be configured in the proxy with the [headers-mappings](https://github.com/georchestra/datadir/blob/master/security-proxy/headers-mappings.xml) file.
+Additional headers can be configured in the proxy with the [headers-mapping](https://github.com/georchestra/datadir/blob/master/security-proxy/headers-mapping.properties) file.
 
 The application handles requests appropriately thanks to the headers received.
 Some applications will require a direct connection to the LDAP (where users, roles and organisations objects are stored), for instance to list all organisations.
