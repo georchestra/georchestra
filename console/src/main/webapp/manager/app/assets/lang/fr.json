@@ -49,7 +49,7 @@
   "user.cn"               : "Nom complet",
   "user.mail"             : "Courriel",
   "user.address"          : "Adresse",
-  "user.org"              : "Organisation",
+  "user.org"              : "Organisme",
   "user.description"      : "Description",
   "user.manager"          : "Manager",
   "user.expire"           : "Date d'expiration",
@@ -84,7 +84,7 @@
 
   "org.name"              : "Nom",
   "org.shortName"         : "Nom court",
-  "org.type"              : "Type d’organisation",
+  "org.type"              : "Type d’organisme",
   "org.address"           : "Adresse",
   "org.save"              : "Enregistrer",
   "org.updated"           : "Organisme modifié",
@@ -182,7 +182,7 @@
   "users.roleUpdateError" : "Erreur à l'association du rôle",
   "users.user"            : "Utilisateur",
   "users.login"           : "Login",
-  "users.organization"    : "Organisation",
+  "users.organization"    : "Organisme",
   "users.email"           : "Courriel",
 
   "msg.compose"           : "Composer un message",
