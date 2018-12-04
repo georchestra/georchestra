@@ -24,7 +24,7 @@
 <log4j:configuration debug="false" xmlns:log4j="http://jakarta.apache.org/log4j/">
 
     <appender name="cas" class="org.apache.log4j.DailyRollingFileAppender">
-       <param name="File" value="@shared.log.dir@/cas-server-webapp.log" />
+       <param name="File" value="/tmp/cas-server-webapp.log" />
        <param name="DatePattern" value="'.'yyyy-MM-dd" />
        <layout class="org.apache.log4j.PatternLayout">
           <param name="ConversionPattern" value="[%p] %d %c %M - %m%n"/>          
@@ -37,22 +37,22 @@
         apply DEBUG level logging on a an org.springframework.* package level (i.e. org.springframework.dao)
     -->
     <logger name="org.springframework">
-        <level value="@other.framework.log.level@" />
+        <level value="WARN" />
         <appender-ref ref="cas" />
     </logger>
 
     <logger name="org.springframework.webflow">
-        <level value="@other.framework.log.level@" />
+        <level value="WARN" />
         <appender-ref ref="cas" />
     </logger>
 
     <logger name="org.jasig" additivity="true">
-        <level value="@shared.default.log.level@" />
+        <level value="WARN" />
         <appender-ref ref="cas" />
     </logger>
 
     <logger name="com.github.inspektr.audit.support.Slf4jLoggingAuditTrailManager">
-        <level value="@shared.default.log.level@" />
+        <level value="WARN" />
         <appender-ref ref="cas" />
     </logger>
 
@@ -62,7 +62,7 @@
         cleartext authentication credentials
     -->
     <logger name="org.jasig.cas.web.flow" additivity="true">
-        <level value="@shared.default.log.level@" />
+        <level value="WARN" />
         <appender-ref ref="cas" />
     </logger>
 
@@ -71,7 +71,7 @@
       logger to System.out.
     -->
     <root>
-        <level value="@shared.default.log.level@" />
+        <level value="WARN" />
         <appender-ref ref="cas" />
     </root>
 </log4j:configuration>
