@@ -20,13 +20,13 @@ mvn install -Dserver=myproj -Dsub.target=test
 
  1. Build config module
   1. Execute the configuration/myproj/build_support/GenerateConfig.groovy script
-    * **Note:** the value test (value of sub.target property) is passed to GenerateConfig.groovy as the subTarget parameter
+     * **Note:** the value test (value of sub.target property) is passed to GenerateConfig.groovy as the subTarget parameter
   2. copy files from [default, configuration/myproj/ and target/generate] to target/classes
-    * All text files are processed and all @propertyName@ tags are replaced by properties loaded from (top has priority):
-      * target/generated/shared.maven.filters
-      * configuration/myproj/build_support/shared.maven.filters
-      * config/shared.maven.filters
-    * Note: build_support directory is not copied
+     * All text files are processed and all @propertyName@ tags are replaced by properties loaded from (top has priority):
+       * target/generated/shared.maven.filters
+       * configuration/myproj/build_support/shared.maven.filters
+       * config/shared.maven.filters
+     * Note: build_support directory is not copied
   3. The files in target/classes are bundled up as a jar and installed in the local repository
  2. Build the other modules in geOrchestra
    1. in the maven prepare-resources phase that unpacks the config jar into the modules target directory
@@ -37,16 +37,16 @@ Module Components
 =================
 
 - config
- - shared.maven.filters
- - defaults - contains configuration settings and default branding
-  - DeployScript.groovy - the default deploy script
-  - each sub-directory is a name of one of the geOrchestra modules. The purpose of each sub-directory is to override files in the actual project module refer to.  For example the file security-proxy/WEB-INF/classes/log4j.properties in the defaults folder will overwrite the WEB-INF/classes/log4j.properties file in the security proxy war if it exists. If the file does not exist, the file will be added to the war. Note: this is a very convenient place for config files which should be shipped with the project, but which are meant to be overridden by instance specific files.
- - configuration  - contains all the configurations that can be built by configuration module
-  - <config> - directory containing all files that differ from the defaults for a particular target platform.  the name of the directory matches the server java property. (mvn -Dserver=config for example)
-    - build_support - special directory that is *NOT* copied to the config
-      - GenerateConfig.groovy - Script for creating/copying configuration files.
-      - shared.maven.filters - Properties referenced by the main shared.maven.filters or properties that will override the main share.maven.filter properties
- - src - contains [Groovy](http://groovy.codehaus.org/) files for helping implement *GenerateConfig.groovy* scripts (see below)
+  - shared.maven.filters
+  - defaults - contains configuration settings and default branding
+    - DeployScript.groovy - the default deploy script
+    - each sub-directory is a name of one of the geOrchestra modules. The purpose of each sub-directory is to override files in the actual project module refer to.  For example the file security-proxy/WEB-INF/classes/log4j.properties in the defaults folder will overwrite the WEB-INF/classes/log4j.properties file in the security proxy war if it exists. If the file does not exist, the file will be added to the war. Note: this is a very convenient place for config files which should be shipped with the project, but which are meant to be overridden by instance specific files.
+  - configuration  - contains all the configurations that can be built by configuration module
+    - <config> - directory containing all files that differ from the defaults for a particular target platform.  the name of the directory matches the server java property. (mvn -Dserver=config for example)
+      - build_support - special directory that is *NOT* copied to the config
+        - GenerateConfig.groovy - Script for creating/copying configuration files.
+        - shared.maven.filters - Properties referenced by the main shared.maven.filters or properties that will override the main share.maven.filter properties
+  - src - contains [Groovy](http://groovy.codehaus.org/) files for helping implement *GenerateConfig.groovy* scripts (see below)
 
 shared.maven.filters
 ====================
@@ -301,10 +301,10 @@ See http://groovy.codehaus.org/Creating+XML+using+Groovy%27s+MarkupBuilder for m
 The text update class assists in updating raw text file by searching for occurances of regular expressions and replacing the matched section with the new text.  This example also illustrates how one can take the text from a geOrchestra module (in this case Geonetwork) and update that text.
 
  1. Load <root>/geonetwork/web-client/src/main/resources/apps/georchestra/js/Settings.js into memory
-   * Note: the from path is constructed from: <fromProject>/<from>/<path>
+    * Note: the from path is constructed from: <fromProject>/<from>/<path>
  2. The pattern GeoNetwork\.Util\.defaultLocale\s*=\s*'eng' is replaced with "GeoNetwork.Util.defaultLocale = 'fre'"
-   * Note: List Javascript the /.../ indicates a regular expression.
-   * Note: Currently all matches of the regular expression are replaced
+    * Note: List Javascript the /.../ indicates a regular expression.
+    * Note: Currently all matches of the regular expression are replaced
  3. The text is written out to target/generated/geonetwork-client/apps/georchestra/js/Settings.js
 
 Example Code:
