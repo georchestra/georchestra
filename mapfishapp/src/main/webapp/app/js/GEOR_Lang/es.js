@@ -153,7 +153,6 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
         "Los formatos aceptados son los siguientes: ",
     "Use ZIP compression for multifiles formats, such as":
         "Usar compresión ZIP para los formatos multiarchivos, como",
-    "fileupload_error_incompleteMIF": "Archivo MIF/MID incompleto.",
     "fileupload_error_incompleteSHP": "Archivo shapefile incompleto.",
     "fileupload_error_incompleteTAB": "Archivo TAB incompleto.",
     "fileupload_error_ioError": "Error de I/O en el servidor. Contactar el administrador de la plataforma para más detalles.",

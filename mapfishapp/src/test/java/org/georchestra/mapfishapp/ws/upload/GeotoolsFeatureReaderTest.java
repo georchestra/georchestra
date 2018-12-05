@@ -178,31 +178,6 @@ public class GeotoolsFeatureReaderTest {
 	}
 	
 	
-	@Test
-	public void testMIFFormat() throws Exception {
-
-		String fullName = makeFullName("pigma_regions_POLYGON.mif");
-		File file = new File(fullName);
-		
-		SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.mif);
-		
-		assertFeatureCollection(fc,  93, 4326);
-	}
-	
-	
-	@Test
-	public void testMIFFormatTo2154() throws Exception {
-		
-		final int epsgCode = 2154;
-
-		String fullName = makeFullName("pigma_regions_POLYGON.mif");
-		File file = new File(fullName);
-		
-		SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.mif, CRS.decode("EPSG:"+ epsgCode));
-		
-		assertFeatureCollection(fc,  93, epsgCode);
-	}
-
 	@Test 
 	public void testGML2Format() throws Exception {
 
@@ -448,7 +423,7 @@ public class GeotoolsFeatureReaderTest {
 	public void testGetFormatList() throws IOException {
 
 		
-		EnumSet<FileFormat> gtRequiredFormats = EnumSet.of(FileFormat.shp, FileFormat.mif, FileFormat.gml, FileFormat.kml);
+		EnumSet<FileFormat> gtRequiredFormats = EnumSet.of(FileFormat.shp, FileFormat.gml, FileFormat.kml);
 		
 		FileFormat[] formats = reader.getFormatList();
 		for (int i = 0; i < formats.length; i++) {

@@ -81,7 +81,6 @@ import org.xml.sax.SAXParseException;
  * <p>
  * Geotools Implementation </br> expects the following files <lu>
  * <li>ESRI Shape in zip: shp, shx, prj file are expected</li>
- * <li>MapInfo in zip: mif, mid file are expected</li>
  * <li>kml</li>
  * <li>gml</li>
  * </lu>
@@ -178,12 +177,6 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
             @Override
             public String getMessage(final String detail) {
                 return "{\"success\": \"false\", \"error\":\"fileupload_error_multipleFiles\", \"msg\": \"multiple files\"}";
-            }
-        },
-        incompleteMIF {
-            @Override
-            public String getMessage(final String detail) {
-                return "{\"success\": \"false\", \"error\":\"fileupload_error_incompleteMIF\", \"msg\": \"incomplete MIF/MID\"}";
             }
         },
         incompleteSHP {
@@ -753,10 +746,9 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
      * @return
      */
     private Status checkGeoFiles(UpLoadFileManagement fileManagement) {
-        // a zip file is unzipped to a temporary place and *.SHP, *.shp, *.MIF,
-        // *.MID, *.mif, *.mid files are looked for at the root of the archive.
-        // If several SHP files are found or several MIF or several MID, the
-        // error message is "multiple files"
+        // a zip file is unzipped to a temporary place and *.SHP and *.shp files
+        // are looked for at the root of the archive.
+        // If several SHP files are found, the error message is "multiple files"
         if (!fileManagement.checkGeoFileExtension()) {
             return Status.unsupportedFormat;
         }
@@ -765,14 +757,7 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
             return Status.multiplefiles;
         }
 
-        if (fileManagement.isMIF()) {
-            // if filename.mif is found, it is assumed that filename.mid exists
-            // too. If not: msg = "incomplete mif/mid
-            if (!fileManagement.checkMIFCompletness()) {
-                return Status.incompleteMIF;
-            }
-
-        } else if (fileManagement.isSHP()) {
+        if (fileManagement.isSHP()) {
             // if filename.shp is found, it is assumed that filename.shx and
             // filename.prj are also present (the DBF is not mandatory). If not:
             // msg = "incomplete shapefile"

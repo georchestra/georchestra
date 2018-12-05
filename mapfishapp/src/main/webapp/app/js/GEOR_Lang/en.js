@@ -58,7 +58,6 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
     "NB metadata match the query.": "${NB} metadata match the query.",
     /* GEOR_editing.js strings */
     /* GEOR_fileupload.js strings */
-    "fileupload_error_incompleteMIF": "Incomplete MIF/MID file.",
     "fileupload_error_incompleteSHP": "Incomplete shapefile.",
     "fileupload_error_incompleteTAB": "Incomplete TAB file.",
     "fileupload_error_ioError": "Server-side I/O exception. Contact platform administrator for more details.",

@@ -148,7 +148,6 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Upload a vector data file.": "Laden einer Datei mit vektoriellen Daten",
     "The allowed formats are the following: ": "folgende Formate sind gestattet : ",
     "Use ZIP compression for multifiles formats, such as": "Benützen Sie ZIP um Multidatei-Format zu komprimieren wie",
-    "fileupload_error_incompleteMIF": "Datei MIF/MID nicht komplett.",
     "fileupload_error_incompleteSHP": "Datei SHP nicht komplett.",
     "fileupload_error_incompleteTAB": "Datei TAB nicht komplett.",
     "fileupload_error_ioError": "I/O Fehler. Kontaktieren Sie den Administrator.",

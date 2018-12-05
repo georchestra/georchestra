@@ -195,40 +195,6 @@ public class UpLoadFileManagementGTImplTest {
 
     }
 
-    @Test
-    public void testMIFAsJSON() throws Exception {
-
-        String fileName = "pigma_regions_POLYGON.mif";
-        String fullName = makeFullName(fileName);
-
-        testGetGeofileToJSON(fullName, null);
-    }
-
-    /**
-     * Tests the coordinates order.
-     * 
-     * @throws Exception
-     */
-    @Test
-    public void testMIFCoordinatesEPSG4326() throws Exception {
-
-        String fileName = "mif_4326_accidents.mif";
-        String fullName = makeFullName(fileName);
-
-        String json = testGetGeofileToJSON(fullName, "EPSG:4326");
-
-        assertCoordinateContains(-2.265330624649336, 48.421434814828025, json);
-    }
-
-    @Test
-    public void testMIFAsJSONReprojectedTo2154() throws Exception {
-
-        String fileName = "pigma_regions_POLYGON.mif";
-        String fullName = makeFullName(fileName);
-
-        testGetGeofileToJSON(fullName, "EPSG:2154");
-    }
-
     /**
      * Tests the coordinates order.
      * 

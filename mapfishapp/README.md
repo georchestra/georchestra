@@ -5,7 +5,7 @@ Mapfishapp is geOrchestra's advanced viewer and editor.
 
 With it, you can :
  * browse through CSW, WMTS, WMS & WFS services and add any layer to the current map,
- * upload geo files for viewing (shapefile, mif/mid, tab, kml, gml, gpx),
+ * upload geo files for viewing (shapefile, tab, kml, gml, gpx),
  * create custom SLDs and style WMS layers, 
  * query layers either with a simple tool or an advanced one supporting conditions on attributes and geometries,
  * share your map with a permalink, or save it as a WMC file and restore it later,
