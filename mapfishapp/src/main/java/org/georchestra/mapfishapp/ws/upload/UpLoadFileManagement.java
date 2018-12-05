@@ -66,10 +66,6 @@ public class UpLoadFileManagement {
         VALID_EXTENSIONS.add("SHX");
         VALID_EXTENSIONS.add("QIX");
 
-        // MIF
-        VALID_EXTENSIONS.add("MIF");
-        VALID_EXTENSIONS.add("MID");
-
         VALID_EXTENSIONS.add("GML");
         VALID_EXTENSIONS.add("KML");
     }
@@ -222,11 +218,11 @@ public class UpLoadFileManagement {
     }
 
     /**
-     * a zip file is unzipped to a temporary place and *.shp, *.mid, *.tab files
-     * are looked for at the root of the archive. If several SHP or several MIF
+     * a zip file is unzipped to a temporary place and *.shp, *.tab files
+     * are looked for at the root of the archive. If several SHP
      * or several TAB files are found, the error message is "multiple files"
      *
-     * @return true if the work directory contain only a one shp or mid or tab
+     * @return true if the work directory contain only a one shp or tab
      */
     public boolean checkSingleGeoFile() {
 
@@ -244,23 +240,8 @@ public class UpLoadFileManagement {
         return true;
     }
 
-    public boolean isMIF() {
-        return this.fileDescriptor.listOfExtensions.contains("MIF");
-    }
-
     public boolean isSHP() {
         return this.fileDescriptor.listOfExtensions.contains("SHP");
-    }
-
-    /**
-     * if filename.mif is found, it is assumed that filename.mid exists too.
-     *
-     * @return false if fid file doesn't exist.
-     */
-    public boolean checkMIFCompletness() {
-
-        return      this.fileDescriptor.listOfExtensions.contains("MIF")
-                &&  this.fileDescriptor.listOfExtensions.contains("MID");
     }
 
     /**
@@ -293,7 +274,7 @@ public class UpLoadFileManagement {
      * format:
      *
      * <ul>
-     * <li>zip: shp, mif, tab</li>
+     * <li>zip: shp, tab</li>
      * <li>kml</li>
      * <li>gpx</li>
      * <li>gml</li>
@@ -302,7 +283,6 @@ public class UpLoadFileManagement {
      * <pre>
      * the file SRS is obtained :
      * 	from the prj file for shapefiles
-     * 	directly from the mif/mid files
      * 	directly from the GML features
      * 	assumed EPSG:4326 for all kml files
      * 	assumed EPSG:4326 for all gpx files
@@ -361,7 +341,6 @@ public class UpLoadFileManagement {
      * Searches, in the set of file uploaded, a file with a geofile extension.
      * <ul>
      * <li>shp</li>
-     * <li>mif</li>
      * <li>tab</li>
      * <li>kml</li>
      * <li>gpx</li>

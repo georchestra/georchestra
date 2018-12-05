@@ -28,7 +28,7 @@ package org.georchestra.mapfishapp.ws.upload;
  */
 public enum FileFormat {
 
-    shp, mif, gml, kml;
+    shp, gml, kml;
 
     public static boolean contains(final String ext) {
 

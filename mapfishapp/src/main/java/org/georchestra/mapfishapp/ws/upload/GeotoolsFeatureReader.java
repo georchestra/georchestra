@@ -28,7 +28,6 @@ import org.geotools.data.DataStore;
 import org.geotools.data.FileDataStore;
 import org.geotools.data.Query;
 import org.geotools.data.collection.ListFeatureCollection;
-import org.geotools.data.mif.MIFDataStoreFactory;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;
@@ -65,7 +64,6 @@ public class GeotoolsFeatureReader implements FeatureGeoFileReader {
 
     private final FileFormat[] formats = new FileFormat[] {
                                                         FileFormat.shp,
-                                                        FileFormat.mif,
                                                         FileFormat.gml,
                                                         FileFormat.kml };
 
@@ -107,8 +105,6 @@ public class GeotoolsFeatureReader implements FeatureGeoFileReader {
         switch (fileFormat) {
         case shp:
             return readShpFile(file, targetCRS);
-        case mif:
-            return readMifFile(file, targetCRS);
         case gml:
             return readGmlFile(file, targetCRS);
         case kml:
@@ -269,30 +265,6 @@ public class GeotoolsFeatureReader implements FeatureGeoFileReader {
 
             in.close();
         }
-    }
-
-    /**
-     * Reads the features from MIF file.
-     *
-     * @param file
-     * @return {@link SimpleFeatureCollection}
-     *
-     * @throws IOException
-     */
-    private SimpleFeatureCollection readMifFile(final File file,
-            final CoordinateReferenceSystem crs) throws IOException {
-
-        MIFDataStoreFactory storeFactory = new MIFDataStoreFactory();
-
-        HashMap<String, Serializable> params = new HashMap<String, Serializable>();
-        params.put(MIFDataStoreFactory.PARAM_PATH.key, file.getAbsolutePath());
-        DataStore store = storeFactory.createDataStore(params);
-
-        String typeName = FilenameUtils.getBaseName(file.getAbsolutePath());
-
-        SimpleFeatureCollection features = retrieveFeatures(typeName, store, crs);
-
-        return features;
     }
 
     /**

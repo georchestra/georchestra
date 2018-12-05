@@ -46,7 +46,7 @@ GEOR.fileupload = (function() {
         "selectionchanged"
     );
 
-    var MULTI_FILES_FORMATS = ['shp', 'mif', 'tab'];
+    var MULTI_FILES_FORMATS = ['shp', 'tab'];
 
     /**
      * Property: tr
@@ -240,15 +240,21 @@ GEOR.fileupload = (function() {
                         supportedMulti.push(f);
                     }
                 });
-                var last = supportedMulti.pop().toUpperCase();
-                msg = [
+                var msgArray = [
                     '<b>', tr("Upload a vector data file."), '</b><br/><br/>',
                     tr("The allowed formats are the following: "),
                     GEOR.config.FILE_FORMAT_LIST.join(", ").toUpperCase(), '. (',
-                    tr("2D only"),') <br/>',
-                    tr("Use ZIP compression for multifiles formats, such as"),
-                    " ", supportedMulti.join(', ').toUpperCase(), " ", tr("or"), " ", last
-                ].join('');
+                    tr("2D only"),') <br/>'
+                ]
+                if (supportedMulti.length > 0) {
+                    var last = supportedMulti.pop().toUpperCase();
+                    msgArray = msgArray.concat([tr("Use ZIP compression for multifiles formats, such as"), " "])
+                    if (supportedMulti.length > 0) {
+                        msgArray = msgArray.concat([supportedMulti.join(', ').toUpperCase(), " ", tr("or"), " "])
+                    }
+                    msgArray.push(last)
+                }
+                msg = msgArray.join('');
 
             }
 
