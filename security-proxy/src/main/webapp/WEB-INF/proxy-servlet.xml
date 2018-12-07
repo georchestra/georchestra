@@ -32,7 +32,7 @@
 
           <property name="targets">
                <map>
-                    ${proxy.mapping}
+                    
                </map>
           </property>
           <property name="requireCharsetContentTypes">
@@ -65,7 +65,7 @@
              own referrer header
 
              Comment out property to use client referrer instead of this host -->
-        <property name="referer" value="${scheme}://${public_host}/"/>
+        <property name="referer" value="${public.host}/"/>
         <property name="headerProviders">
             <list>
                 <bean class="org.georchestra.security.TrustedProxyRequestHeaderProvider" />
@@ -73,7 +73,7 @@
                 <bean class="org.georchestra.security.ImpersonateUserRequestHeaderProvider" init-method="init">
                     <property name="trustedUsers">
                         <list>
-                            <value>${privileged_admin_name}</value>
+                            <value>geoserver_privileged_user</value>
                         </list>
                     </property>
                 </bean>
@@ -82,7 +82,7 @@
                     <constructor-arg index="1" value="${orgSearchBaseDN}"/>
                     <constructor-arg index="2">
                         <map>
-                        ${header.mapping}
+                        
                         </map>
                     </constructor-arg>
                 </bean>
@@ -96,7 +96,7 @@
                     <property name="includes">
                         <list>
                             <!-- set the patterns of urls that (when matched) will have the x-forwarded-* headers removed -->
-                            ${remove.xforwarded.headers}
+                            
                         </list>
                     </property>
                     <property name="excludes">
