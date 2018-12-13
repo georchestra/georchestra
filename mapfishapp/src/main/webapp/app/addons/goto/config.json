@@ -6,11 +6,11 @@
         "projections": [{
             "srs": "EPSG:4326", 
             "name": "WGS 84",
-            "labels": ["Longitude", "Latitude"]
+            "coordinates": "lonlat"
         }, {
             "srs": "EPSG:2154", 
             "name": "Lambert 93",
-            "labels": ["X", "Y"]
+            "coordinates": "xy"
         }]
     },
     "title": {

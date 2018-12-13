@@ -25,7 +25,7 @@ GEOR.Addons.Goto = Ext.extend(GEOR.Addons.Base, {
         this.store = new Ext.data.JsonStore({
             data: this.options.projections,
             idProperty: "srs",
-            fields: ["srs", "name", "labels"]
+            fields: ["srs", "name", "coordinates", "labels"]
         });
         if (this.store.getCount() > 0) {
             this.defaultSRS = this.store.getAt(0);
@@ -77,15 +77,31 @@ GEOR.Addons.Goto = Ext.extend(GEOR.Addons.Base, {
     },
 
     /**
+     * Method: getCoodinatesLabel
+     *
+     */
+    getCoordinatesLabel: function(r, idx) {
+        if ((idx !== 0) && (idx !== 1)) {
+            alert("Goto addon: the only values accepted in idx are 0 and 1, got: " + idx)
+        }
+        if (r.get("coordinates") === "") {
+            // retro-compatibility: we fall back to the labels field if the coordinates field is not present
+            return r.get("labels")[idx]
+        } else {
+            return OpenLayers.i18n("goto.coordinates." + r.get("coordinates") + "." + idx);
+        }
+    },
+
+    /**
      * Method: onComboSelect
      *
      */
     onComboSelect: function(cb, r) {
         var fields = this.getFields();
         fields.x.setValue("");
-        fields.x.label.update(r.get("labels")[0]+this.sep);
+        fields.x.label.update(this.getCoordinatesLabel(r, 0) + this.sep);
         fields.y.setValue("");
-        fields.y.label.update(r.get("labels")[1]+this.sep);
+        fields.y.label.update(this.getCoordinatesLabel(r, 1) + this.sep);
     },
 
     /**
@@ -122,7 +138,7 @@ GEOR.Addons.Goto = Ext.extend(GEOR.Addons.Base, {
                         xtype: "numberfield",
                         anchor: "-1em",
                         name: "x",
-                        fieldLabel: this.defaultSRS.get("labels")[0],
+                        fieldLabel: this.getCoordinatesLabel(this.defaultSRS, 0),
                         enableKeyEvents: true,
                         listeners: {
                             "keypress": this.onKeyPressed,
@@ -134,7 +150,7 @@ GEOR.Addons.Goto = Ext.extend(GEOR.Addons.Base, {
                         xtype: "numberfield",
                         anchor: "-1em",
                         name: "y",
-                        fieldLabel: this.defaultSRS.get("labels")[1],
+                        fieldLabel: this.getCoordinatesLabel(this.defaultSRS, 1),
                         enableKeyEvents: true,
                         listeners: {
                             "keypress": this.onKeyPressed,

@@ -7,7 +7,7 @@
         "projections": [{
             "srs": "EPSG:4326", 
             "name": "WGS 84",
-            "labels": ["Longitude", "Latitude"]
+            "coordinates": "lonlat"
         }],
         "graphicStyle": {
             "graphicName": "star",
@@ -20,19 +20,35 @@
     "i18n": {
         "en": {
             "goto.title": "Location",
-            "goto.srs.label": "Spatial reference system"
+            "goto.srs.label": "Spatial reference system",
+            "goto.coordinates.xy.0": "X",
+            "goto.coordinates.xy.1": "Y",
+            "goto.coordinates.lonlat.0": "Longitude",
+            "goto.coordinates.lonlat.1": "Latitude"
         },
         "es": {
             "goto.title": "Localización",
-            "goto.srs.label": "Sistema de referencia"
+            "goto.srs.label": "Sistema de referencia",
+            "goto.coordinates.xy.0": "X",
+            "goto.coordinates.xy.1": "Y",
+            "goto.coordinates.lonlat.0": "Longitud",
+            "goto.coordinates.lonlat.1": "Latitud"
         },
         "fr": {
             "goto.title": "Position",
-            "goto.srs.label": "Système de coordonnées"
+            "goto.srs.label": "Système de coordonnées",
+            "goto.coordinates.xy.0": "X",
+            "goto.coordinates.xy.1": "Y",
+            "goto.coordinates.lonlat.0": "Longitude",
+            "goto.coordinates.lonlat.1": "Latitude"
         },
         "de": {
             "goto.title": "Lokalisierung",
-            "goto.srs.label": "Referenzsystem"
+            "goto.srs.label": "Referenzsystem",
+            "goto.coordinates.xy.0": "X",
+            "goto.coordinates.xy.1": "Y",
+            "goto.coordinates.lonlat.0": "Länge",
+            "goto.coordinates.lonlat.1": "Breite"
         }
     }
 }
