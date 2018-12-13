@@ -74,10 +74,10 @@
             "tab1field3label": "Parcel"
         },
         "es": {
-            "addon_cadastre_popup_title": "Parcel lookup",
-            "sync map extent": "sync map extent",
-            "tab1title": "by reference",
-            "tab2title": "by owner",
+            "addon_cadastre_popup_title": "Búsqueda de parcela",
+            "sync map extent": "sincronizar la extensión del mapa",
+            "tab1title": "por referencia",
+            "tab2title": "por propietario",
             "tab1field1label": "Ciudad",
             "tab2field1label": "Ciudad",
             "tab1field2label": "Sección",
