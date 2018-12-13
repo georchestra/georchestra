@@ -28,13 +28,11 @@ Example addon config:
         "projections": [{
             "srs": "EPSG:4326",
             "name": "WGS84",
-            "decimals": 6,
-            "labels": ["Longitude", "Latitude"]
+            "decimals": 6
         }, {
             "srs": "EPSG:2154",
             "name": "Lambert 93",
-            "decimals": 1,
-            "labels": ["X", "Y"]
+            "decimals": 1
         }]
     }
 }]
