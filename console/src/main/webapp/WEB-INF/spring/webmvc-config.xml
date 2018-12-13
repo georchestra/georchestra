@@ -64,6 +64,9 @@
 
   <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" p:prefix="/WEB-INF/views/" p:suffix=".jsp" />
 
+  <bean id="reCaptchaActivated" class="java.lang.Boolean">
+    <constructor-arg value="${recaptcha.activated:true}" />
+  </bean>
 
   <bean id="reCaptchaParameters" class="org.georchestra.console.bs.ReCaptchaParameters">
     <property name="publicKey" value="${publicKey}"/>

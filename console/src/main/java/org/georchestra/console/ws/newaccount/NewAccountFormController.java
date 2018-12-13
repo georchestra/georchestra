@@ -93,6 +93,8 @@ public final class NewAccountFormController {
 
 	private Moderator moderator;
 
+	@Autowired
+	private boolean reCaptchaActivated;
 	private ReCaptchaParameters reCaptchaParameters;
 
 	private Validation validation;
@@ -123,6 +125,8 @@ public final class NewAccountFormController {
 		model.addAttribute("orgs", this.getOrgs());
 		// Populate org type droplist
 		model.addAttribute("orgTypes", this.getOrgTypes());
+
+		model.addAttribute("recaptchaActivated", this.reCaptchaActivated);
 
 		session.setAttribute("reCaptchaPublicKey", this.reCaptchaParameters.getPublicKey());
 		for(String f: this.validation.getRequiredUserFields())
@@ -192,8 +196,9 @@ public final class NewAccountFormController {
 		PasswordUtils.validate(formBean.getPassword(), formBean.getConfirmPassword(), result);
 
 		// Check captcha
-        RecaptchaUtils.validate(reCaptchaParameters, formBean.getRecaptcha_response_field(), result);
-
+		if (reCaptchaActivated) {
+		    RecaptchaUtils.validate(reCaptchaParameters, formBean.getRecaptcha_response_field(), result);
+		}
 		// Validate remaining fields
 		this.validation.validateUserField("phone", formBean.getPhone(), result);
 		this.validation.validateUserField("title", formBean.getTitle(), result);

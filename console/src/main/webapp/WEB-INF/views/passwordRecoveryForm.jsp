@@ -37,7 +37,9 @@
 	<link href='css/console.css' rel="stylesheet" />
 	<title><s:message code="passwordRecoveryForm.title"/></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<c:if test="${recaptchaActivated}">
 	<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+</c:if>
 </head>
 <body>
     <%@ include file="header.jsp" %>
@@ -71,9 +73,11 @@
 				</t:input>
 			</fieldset>
 
+<c:if test="${recaptchaActivated}">
 			<fieldset>
 				 <t:recaptcha path="g-recaptcha" />
 			</fieldset>
+</c:if>
 
 			<fieldset>
 				<div class="form-group">
@@ -90,7 +94,14 @@
 	<script type="text/javascript">
     /* Validate the form */
     function validate() {
+<c:choose>
+  <c:when test="${recaptchaActivated}">
         if (testEmail() & testRecaptcha()) {
+  </c:when>
+  <c:otherwise>
+        if (testEmail()) {
+  </c:otherwise>
+</c:choose>
             return true;
         } else {
             setFormError();
