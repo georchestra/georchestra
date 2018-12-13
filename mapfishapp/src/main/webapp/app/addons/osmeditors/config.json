@@ -20,7 +20,7 @@
     "description": {
         "en": "Lauch an edit session of the collaborative map OpenStreetMap for current geographic extent",
         "fr": "Lancer l'édition de la carte collaborative OpenStreetMap pour la zone présentée dans le visualisateur",
-        "es": "Comenzar a editar el mapa de OpenStreetMap de colaboración para el área que se muestra en el visor",
+        "es": "Comenzar a editar el mapa colaborativo OpenStreetMap para el área que se muestra en el visor",
         "de": "Starten Sie die OpenStreetMap kollaborative Karte für die im Viewer angezeigt Bereich Bearbeitung"
     }
 }]
