@@ -3,14 +3,14 @@
     "name": "BANGeocoder",
     "enabled": false,
     "title": {
-        "en": "Recherche d'adresse sur la BAN",
-        "es": "Recherche d'adresse sur la BAN",
+        "en": "Address search from the BAN",
+        "es": "Búsqueda de dirección en la BAN",
         "fr": "Recherche d'adresse sur la BAN"
     },
     "description": {
-        "en": "Recherche d'adresses dans la Base d'Addresse Nationale (France)",
-        "es": "Recherche d'adresses dans la Base d'Addresse Nationale (France)",
-        "fr": "Recherche d'adresses dans la Base d'Addresse Nationale (France)"
+        "en": "Address search from the National Addresses Database (France)",
+        "es": "Búsqueda de dirección en la Base Nacional de Direcciones (Francia)",
+        "fr": "Recherche d'adresses dans la Base Addresse Nationale (France)"
     },
     "options": {
         "limitResponse": 5
