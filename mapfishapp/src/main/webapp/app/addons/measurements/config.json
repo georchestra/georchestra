@@ -11,7 +11,7 @@
     },
     "description": {
         "en": "Distance and area measuring tools. Measures are cumulative, they can also be printed & exported.",
-        "es": "Herramientas de medición de superficies y distancias. Las medidas son acumulativos, que también se pueden imprimir y exportación.",
+        "es": "Herramientas de medición de superficies y distancias. Las medidas son acumulativas, y también se pueden imprimir y exportar.",
         "fr": "Outils de mesure de distances et de surfaces. Les mesures sont persistantes, et peuvent être imprimées & exportées.",
         "de": "Werkzeuge zum Messen von Entfernungen und Flächen. Die Messungen können auch gedruckt und exportiert werden."
     }
