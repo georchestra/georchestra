@@ -20,7 +20,7 @@
             "srs": "EPSG:4326", 
             "name": "WGS84",
             "decimals": 6,
-            "labels": ["Longitude", "Latitude"]
+            "coordinates": "lonlat"
         }]
     }
 }]
