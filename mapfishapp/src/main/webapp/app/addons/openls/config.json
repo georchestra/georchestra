@@ -4,12 +4,12 @@
         "enabled": false,
         "title": {
             "en": "OpenLS recentering",
-            "es": "OpenLS recentering",
+            "es": "Centrar con OpenLS",
             "fr": "Recentrage OpenLS"
         },
         "description": {
             "en": "OpenLS recentering",
-            "es": "OpenLS recentering",
+            "es": "Centrar con OpenLS",
             "fr": "Recentrage OpenLS"
         },
         "options": {
