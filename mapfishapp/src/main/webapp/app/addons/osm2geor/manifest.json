@@ -19,7 +19,7 @@
         }, {
             "name": {
                 "en": "Shops",
-                "es": "Compras",
+                "es": "Comercios",
                 "fr": "Commerces",
                 "de": "Geschäfte"
             },
@@ -59,7 +59,7 @@
         }, {
             "name": {
                 "en": "Natural",
-                "es": "",
+                "es": "Naturaleza",
                 "fr": "Nature",
                 "de": ""
             },
@@ -75,7 +75,7 @@
         }, {
             "name": {
                 "en": "Power",
-                "es": "Poder",
+                "es": "Energía",
                 "fr": "Energie",
                 "de": "Macht"
             },
@@ -139,7 +139,7 @@
         }, {
             "name": {
                 "en": "Point Object, knowing the beginning of its name",
-                "es": "Objeto Point, sabiendo el comienzo de su nombre",
+                "es": "Objeto punto, sabiendo el inicio de su nombre",
                 "fr": "Objet ponctuel, connaissant le début de son nom",
                 "de": "Punktobjekt, zu wissen, den Anfang seines Namens"
             },
@@ -147,7 +147,7 @@
         }, {
             "name": {
                 "en": "Point Object, knowing the beginning of its name, case insensitive",
-                "es": "Objeto Point, sabiendo el inicio de su nombre, mayúsculas y minúsculas",
+                "es": "Objeto punto, sabiendo el inicio de su nombre, respetando mayúsculas y minúsculas",
                 "fr": "Objet ponctuel, connaissant le début de son nom, insensible à la casse",
                 "de": "Punktobjekt, zu wissen, den Anfang seines Namens, Groß- und Kleinschreibung"
             },
@@ -155,7 +155,7 @@
         }, {
             "name": {
                 "en": "All bus stops with shelters",
-                "es": "Todas las paradas de autobús con refugios",
+                "es": "Todas las paradas de autobús con cobertizo",
                 "fr": "Tous les arrêts de bus avec abris",
                 "de": "Alle Bushaltestellen mit Unterständen"
             },
@@ -249,9 +249,9 @@
             "osm2geor_run": "Ejecutar",
             "osm2geor_syntaxerror": "error de sintaxis",
             "osm2geor_cannotget": "No se puede obtener objetos de la base de OSM",
-            "osm2geor_nostoredgeom": "Cannot use {{GEOMETRY}} since no geometry is currently stored",
-            "osm2geor_nopolygon": "Cannot perform query with a linear or point geometry",
-            "osm2geor_multipolygon": "Cannot perform query with a multipolygon, sorry !",
+            "osm2geor_nostoredgeom": "No se puede usar {{GEOMETRY}} porque no hay geometrías almacenadas",
+            "osm2geor_nopolygon": "No se puede hacer la consulta con un punto o una línea",
+            "osm2geor_multipolygon": "No se puede hacer la consulta con un multi-polígono",
             "osm2geor_help_url": "http://wiki.openstreetmap.org/wiki/Overpass_API/Language_Guide"
         },
         "fr": {
