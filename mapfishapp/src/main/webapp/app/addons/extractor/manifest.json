@@ -31,18 +31,18 @@
             "addon_extractor_popup_title": "Extraction"
         },
         "es": {
-            "addon_extractor_popup_title": "Extraction",
-            "Close": "Close",
-            "Extract": "Extract",
-            "The extraction request succeeded, check your email.": "The extraction request succeeded, check your email.",
-            "The extraction request failed.": "El pedido de extracción falló.",
-            "SRS": "SRS",
-            "Format for vectors": "Format for vectors",
-            "Format for rasters": "Format for rasters",
-            "Resolution for rasters (cm)": "Resolution for rasters (cm)",
-            "Email": "Email",
-            "This field should be an e-mail address in the format user@domain.com": "This field should be an e-mail address in the format user@domain.com",
-            "No layer is available for extraction.": "No layer is available for extraction."
+            "addon_extractor_popup_title": "Extracción",
+            "Close": "Cerrar",
+            "Extract": "Extraer",
+            "The extraction request succeeded, check your email.": "Extracción solicitada, verifique su correo electrónico.",
+            "The extraction request failed.": "Error en la solicitud de extracción.",
+            "SRS": "Sistema de referencia espacial (SRS)",
+            "Format for vectors": "Formato para vectores",
+            "Format for rasters": "Formato para rasters",
+            "Resolution for rasters (cm)": "Resolución para rasters (cm)",
+            "Email": "Correo electrónico",
+            "This field should be an e-mail address in the format user@domain.com": "Este campo tiene que contener una dirección de correo electrónico en el formato user@domain.com",
+            "No layer is available for extraction.": "Ninguna capa permite la extracción de datos."
         },
         "fr": {
             "addon_extractor_popup_title": "Extraction",
