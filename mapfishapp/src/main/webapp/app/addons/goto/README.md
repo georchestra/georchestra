@@ -27,12 +27,10 @@ Example configuration:
     "options": {
         "projections": [{
             "srs": "EPSG:4326",
-            "name": "WGS84",
-            "labels": ["Longitude", "Latitude"]
+            "name": "WGS84"
         }, {
             "srs": "EPSG:2154",
-            "name": "Lambert 93",
-            "labels": ["X", "Y"]
+            "name": "Lambert 93"
         }]
     }
 }]
