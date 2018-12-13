@@ -25,7 +25,7 @@ GEOR.Addons.Goto = Ext.extend(GEOR.Addons.Base, {
         this.store = new Ext.data.JsonStore({
             data: this.options.projections,
             idProperty: "srs",
-            fields: ["srs", "name", "coordinates", "labels"]
+            fields: ["srs", "name"]
         });
         if (this.store.getCount() > 0) {
             this.defaultSRS = this.store.getAt(0);
@@ -84,11 +84,15 @@ GEOR.Addons.Goto = Ext.extend(GEOR.Addons.Base, {
         if ((idx !== 0) && (idx !== 1)) {
             alert("Goto addon: the only values accepted in idx are 0 and 1, got: " + idx)
         }
-        if (r.get("coordinates") === "") {
-            // retro-compatibility: we fall back to the labels field if the coordinates field is not present
-            return r.get("labels")[idx]
+        var p = new OpenLayers.Projection(r.get("srs"));
+        if (!p.proj) {
+            alert("Goto addon: missing definition of "+projCode+" for the labels!");
+            return;
+        }
+        if (p.proj.projName === "longlat") {
+            return OpenLayers.i18n("goto.coordinates.longlat." + idx);
         } else {
-            return OpenLayers.i18n("goto.coordinates." + r.get("coordinates") + "." + idx);
+            return OpenLayers.i18n("goto.coordinates.xy." + idx);
         }
     },
 

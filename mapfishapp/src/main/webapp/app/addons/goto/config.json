@@ -5,12 +5,10 @@
     "options": {
         "projections": [{
             "srs": "EPSG:4326", 
-            "name": "WGS 84",
-            "coordinates": "lonlat"
+            "name": "WGS 84"
         }, {
             "srs": "EPSG:2154", 
-            "name": "Lambert 93",
-            "coordinates": "xy"
+            "name": "Lambert 93"
         }]
     },
     "title": {
