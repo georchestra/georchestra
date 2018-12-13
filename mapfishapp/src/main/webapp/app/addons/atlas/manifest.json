@@ -91,12 +91,12 @@
             "atlas_submit": "Enviar",
             "atlas_cancel": "Cancelar",
             "atlas_connect_printserver_error": "No se puede conectar al servidor de impresión",
-            "atlas_submit_success": "Atlas request is successfully submitted.",
-            "atlas_submit_fail": "Atlas request to the print server failed.",
-            "atlas_too_many_features": "Too many features to build atlas, please launch atlas generation from the result panel with less than ",
-            "atlas_too_many_features_after_nb": " features.",
-            "atlas_no_pages": "There is no atlas pages to print.",
-            "atlas_form_invalid": "Invalid form"
+            "atlas_submit_success": "La solicitud de atlas ha sido enviada correctamente.",
+            "atlas_submit_fail": "Error durante el envío de la solicitud de atlas al servidor de impresión.",
+            "atlas_too_many_features": "Demasiados objetos para poder construir el atlas, por favor lanzar la generación del atlas con menos de ",
+            "atlas_too_many_features_after_nb": " objetos.",
+            "atlas_no_pages": "No hay páginas para imprimir en el atlas.",
+            "atlas_form_invalid": "Formulario inválido"
         },
         "fr": {
             "atlas_failed": "La génération de l'atlas a échoué",
