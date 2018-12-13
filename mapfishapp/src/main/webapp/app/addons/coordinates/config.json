@@ -19,8 +19,7 @@
         "projections": [{
             "srs": "EPSG:4326", 
             "name": "WGS84",
-            "decimals": 6,
-            "coordinates": "lonlat"
+            "decimals": 6
         }]
     }
 }]

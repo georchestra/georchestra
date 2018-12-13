@@ -10,38 +10,37 @@
         "projections": [{
             "srs": "EPSG:4326",
             "name": "WGS84",
-            "decimals": 6,
-            "coordinates": "lonlat"
+            "decimals": 6
         }]
     },
     "i18n": {
         "en": {
             "Coordinates": "Coordinates",
-            "coordinates.coordinates.xy.0": "X",
-            "coordinates.coordinates.xy.1": "Y",
-            "coordinates.coordinates.lonlat.0": "Longitude",
-            "coordinates.coordinates.lonlat.1": "Latitude"
+            "coordinates.xy.0": "X",
+            "coordinates.xy.1": "Y",
+            "coordinates.longlat.0": "Longitude",
+            "coordinates.longlat.1": "Latitude"
         },
         "es": {
             "Coordinates": "Coordenadas",
-            "coordinates.coordinates.xy.0": "X",
-            "coordinates.coordinates.xy.1": "Y",
-            "coordinates.coordinates.lonlat.0": "Longitud",
-            "coordinates.coordinates.lonlat.1": "Latitud"
+            "coordinates.xy.0": "X",
+            "coordinates.xy.1": "Y",
+            "coordinates.longlat.0": "Longitud",
+            "coordinates.longlat.1": "Latitud"
         },
         "fr": {
             "Coordinates": "Coordonnées",
-            "coordinates.coordinates.xy.0": "X",
-            "coordinates.coordinates.xy.1": "Y",
-            "coordinates.coordinates.lonlat.0": "Longitude",
-            "coordinates.coordinates.lonlat.1": "Latitude"
+            "coordinates.xy.0": "X",
+            "coordinates.xy.1": "Y",
+            "coordinates.longlat.0": "Longitude",
+            "coordinates.longlat.1": "Latitude"
         },
         "de": {
             "Coordinates": "Koordinaten",
-            "coordinates.coordinates.xy.0": "X",
-            "coordinates.coordinates.xy.1": "Y",
-            "coordinates.coordinates.lonlat.0": "Länge",
-            "coordinates.coordinates.lonlat.1": "Breite"
+            "coordinates.xy.0": "X",
+            "coordinates.xy.1": "Y",
+            "coordinates.longlat.0": "Länge",
+            "coordinates.longlat.1": "Breite"
         }
     }
 }
