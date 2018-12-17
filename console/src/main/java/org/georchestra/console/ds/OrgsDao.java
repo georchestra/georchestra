@@ -346,7 +346,8 @@ public class OrgsDao {
         context.setAttributeValue("o", org.getId());
         setOrgField(context, "businessCategory", org.getOrgType());
         setOrgField(context, "postalAddress", org.getAddress());
-        setOrgField(context, "destinationIndicator", org.getNumericId().toString());
+        if(org.getNumericId() != null)
+            setOrgField(context, "destinationIndicator", org.getNumericId().toString());
     }
 
     private void setOrgField(DirContextOperations context, String fieldName, Object value) {
