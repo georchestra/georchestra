@@ -118,33 +118,6 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <version>2.2</version>
-        <configuration>
-          <warSourceDirectory>${gwc.unpack.dir}</warSourceDirectory>
-          <webXml>${basedir}/src/main/webapp/WEB-INF/web.xml</webXml>
-          <filter>${confdir}/${project.artifactId}/maven.filter</filter>
-          <webResources>
-            <resource>
-              <filtering>false</filtering>
-              <directory>src/main/webapp</directory>
-              <excludes>
-                <exclude>gwc.properties</exclude>
-              </excludes>
-            </resource>
-            <resource>
-              <filtering>false</filtering>
-              <directory>${confdir}/${project.artifactId}</directory>
-              <excludes>
-                <exclude>maven.filter</exclude>
-                <exclude>README</exclude>
-              </excludes>
-            </resource>
-          </webResources>
-        </configuration>
-      </plugin>
-      <plugin>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
         <version>7.5.0.v20110901</version>
@@ -173,7 +146,7 @@
             <contextPath>/gwc</contextPath>
             <descriptor>${basedir}/src/main/webapp/WEB-INF/web.xml</descriptor>
             <baseResource implementation="org.eclipse.jetty.util.resource.ResourceCollection">
-              <resourcesAsCSV>${basedir}/src/main/webapp,${confdir}/${project.artifactId},${gwc.unpack.dir}</resourcesAsCSV>
+              <resourcesAsCSV>${basedir}/src/main/webapp,${gwc.unpack.dir}</resourcesAsCSV>
             </baseResource>
           </webAppConfig>
           <stopKey>GWC_JETTY_STOP</stopKey>
