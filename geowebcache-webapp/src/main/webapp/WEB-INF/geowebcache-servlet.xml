@@ -55,7 +55,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
       <constructor-arg value="geowebcache" />
     </bean>
 
-    <context:property-placeholder location="classpath:gwc.properties, file:${georchestra.datadir}/default.properties, file:${georchestra.datadir}/geowebcache/geowebcache.properties"
+    <context:property-placeholder location="classpath:geowebcache.properties, file:${georchestra.datadir}/default.properties, file:${georchestra.datadir}/geowebcache/geowebcache.properties"
                                   ignore-resource-not-found="true"
                                   ignore-unresolvable="true" />
 
