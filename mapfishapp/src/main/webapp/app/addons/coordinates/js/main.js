@@ -107,14 +107,13 @@ GEOR.Addons.Coordinates = Ext.extend(GEOR.Addons.Base, {
             orig = new OpenLayers.Projection(this.map.getProjection())
             out = [];
         Ext.each(this.options.projections, function(p) {
-            var g = geom.clone().transform(
-                orig, new OpenLayers.Projection(p.srs)
-            );
+            var dest = new OpenLayers.Projection(p.srs)
+            var g = geom.clone().transform(orig, dest);
             var str = [
                 "<div class=\"coords\">",
                     "<p><b>", p.name,"</b></p>",
-                    "<p>", p.labels[0], this.tr("labelSeparator"), GEOR.util.round(g.x, p.decimals),"</p>",
-                    "<p>", p.labels[1], this.tr("labelSeparator"), GEOR.util.round(g.y, p.decimals),"</p>",
+                    "<p>", this.getCoordinatesLabel(dest, 0), this.tr("labelSeparator"), GEOR.util.round(g.x, p.decimals),"</p>",
+                    "<p>", this.getCoordinatesLabel(dest, 1), this.tr("labelSeparator"), GEOR.util.round(g.y, p.decimals),"</p>",
                 "</div>"
             ].join("");
             out.push(str);
@@ -128,6 +127,21 @@ GEOR.Addons.Coordinates = Ext.extend(GEOR.Addons.Base, {
      */
     tr: function(str) {
         return OpenLayers.i18n(str);
+    },
+
+    /**
+     * Method: getCoodinatesLabel
+     *
+     */
+    getCoordinatesLabel: function(p, idx) {
+        if ((idx !== 0) && (idx !== 1)) {
+            alert("Coordinates addon: the only values accepted in idx are 0 and 1, got: " + idx)
+        }
+        if (p.proj.projName === "longlat") {
+            return OpenLayers.i18n("coordinates.longlat." + idx);
+        } else {
+            return OpenLayers.i18n("coordinates.xy." + idx);
+        }
     },
 
     /**

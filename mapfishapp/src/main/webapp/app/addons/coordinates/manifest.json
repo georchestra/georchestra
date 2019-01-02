@@ -10,22 +10,37 @@
         "projections": [{
             "srs": "EPSG:4326",
             "name": "WGS84",
-            "decimals": 6,
-            "labels": ["Longitude", "Latitude"]
+            "decimals": 6
         }]
     },
     "i18n": {
         "en": {
-            "Coordinates": "Coordinates"
+            "Coordinates": "Coordinates",
+            "coordinates.xy.0": "X",
+            "coordinates.xy.1": "Y",
+            "coordinates.longlat.0": "Longitude",
+            "coordinates.longlat.1": "Latitude"
         },
         "es": {
-            "Coordinates": "Coordenadas"
+            "Coordinates": "Coordenadas",
+            "coordinates.xy.0": "X",
+            "coordinates.xy.1": "Y",
+            "coordinates.longlat.0": "Longitud",
+            "coordinates.longlat.1": "Latitud"
         },
         "fr": {
-            "Coordinates": "Coordonnées"
+            "Coordinates": "Coordonnées",
+            "coordinates.xy.0": "X",
+            "coordinates.xy.1": "Y",
+            "coordinates.longlat.0": "Longitude",
+            "coordinates.longlat.1": "Latitude"
         },
         "de": {
-            "Coordinates": "Koordinaten"
+            "Coordinates": "Koordinaten",
+            "coordinates.xy.0": "X",
+            "coordinates.xy.1": "Y",
+            "coordinates.longlat.0": "Länge",
+            "coordinates.longlat.1": "Breite"
         }
     }
 }
