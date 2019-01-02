@@ -40,4 +40,6 @@ CMD ["sh", "-c", "exec java -Djava.io.tmpdir=/tmp/jetty \
 -XX:SoftRefLRUPolicyMSPerMB=36000 \
 -XX:-UsePerfData \
 ${JAVA_OPTIONS} \
+-Djetty.jmxremote.rmiregistryhost=0.0.0.0 \
+-Djetty.jmxremote.rmiserverhost=0.0.0.0 \
 -jar /usr/local/jetty/start.jar" ]

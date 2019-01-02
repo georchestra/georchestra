@@ -30,4 +30,6 @@ CMD ["sh", "-c", "exec java \
 -Xms$XMS -Xmx$XMX \
 -XX:-UsePerfData \
 ${JAVA_OPTIONS} \
+-Djetty.jmxremote.rmiregistryhost=0.0.0.0 \
+-Djetty.jmxremote.rmiserverhost=0.0.0.0 \
 -jar /usr/local/jetty/start.jar"]
