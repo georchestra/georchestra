@@ -21,15 +21,10 @@
     <jpa:repositories base-package="org.georchestra.atlas.repository" />
 
     <context:property-placeholder
-      location="file:${georchestra.datadir}/atlas/atlas.properties"
-      ignore-resource-not-found="true" ignore-unresolvable="true" order="1" />
-
-    <context:property-placeholder
-            location="file:${georchestra.datadir}/default.properties"
-            ignore-resource-not-found="true" ignore-unresolvable="true" order="2" />
-
-    <context:property-placeholder location="classpath:atlas.properties"
-      ignore-resource-not-found="true" ignore-unresolvable="true" order="3" />
+      location="file:${georchestra.datadir}/default.properties,
+                classpath:atlas.properties,
+                file:${georchestra.datadir}/atlas/atlas.properties"
+      ignore-resource-not-found="true" ignore-unresolvable="true" />
 
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
         <property name="driverClass" value="org.postgresql.Driver"/>
