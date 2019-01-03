@@ -36,18 +36,7 @@
 
   <context:annotation-config/>
 
-  <!--  First provided console.properties from webapp with prio  2 -->
-  <context:property-placeholder location="/WEB-INF/spring/console.properties" ignore-resource-not-found="true" ignore-unresolvable="true" order="2"/>
-
-  <!--  Then the one from datadir with prio  1 -->
-  <context:property-placeholder location="file:${georchestra.datadir}/console/console.properties" ignore-resource-not-found="true" ignore-unresolvable="true" order="1"/>
-
- <!--  First provided protectedroles.properties from webapp with prio  2 -->
-  <context:property-placeholder location="/WEB-INF/spring/protectedroles.properties" ignore-resource-not-found="true" ignore-unresolvable="true" order="2"/>
-
-  <!--  Then the one from datadir with prio  1 -->
-  <context:property-placeholder location="file:${georchestra.datadir}/console/protectedroles.properties" ignore-resource-not-found="true" ignore-unresolvable="true" order="1"/>
-
+  <context:property-placeholder location="/WEB-INF/spring/console.properties, /WEB-INF/spring/protectedroles.properties, file:${georchestra.datadir}/console/console.properties, file:${georchestra.datadir}/console/protectedroles.properties" ignore-resource-not-found="true" ignore-unresolvable="true" />
 
   <context:component-scan base-package="org.georchestra.console"/>
 
