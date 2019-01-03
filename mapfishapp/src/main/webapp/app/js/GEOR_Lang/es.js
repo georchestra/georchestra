@@ -280,6 +280,10 @@ OpenLayers.Lang.es = OpenLayers.Util.extend(OpenLayers.Lang.es, {
     "Error while loading file": "Error al cargar el archivo",
     /* GEOR_mappanel.js strings */
     "Coordinates in ": "Coordenadas en ",
+    "coordinates.short.x": "X",
+    "coordinates.short.y": "Y",
+    "coordinates.short.longitude": "Lon",
+    "coordinates.short.latitude": "Lat",
     "scale picker": "Escala",
     /* GEOR_ows.js strings */
     "The NAME layer was not found in WMS service.":

@@ -231,6 +231,10 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     //"Error while loading file": "Erreur au chargement du fichier",
     /* GEOR_mappanel.js strings */
     "Coordinates in ": "Координаты в ",
+    "coordinates.short.x": "X",
+    "coordinates.short.y": "Y",
+    "coordinates.short.longitude": "Дол",
+    "coordinates.short.latitude": "Шир",
     "scale picker": "масштаб",
     /* GEOR_ows.js strings */
     "The NAME layer was not found in WMS service.": "Слой ${NAME} не был найден в сервисе WMS (Web Map Service : Cервис Веб-Карт).",

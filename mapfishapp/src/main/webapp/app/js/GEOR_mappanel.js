@@ -57,12 +57,12 @@ GEOR.mappanel = (function() {
         }
         if (p.proj.projName === "longlat") {
             format = function(n) {return OpenLayers.Number.format(n, 5)};
-            firstPrefix = "Lon = ";
-            secondPrefix = ", Lat = ";
+            firstPrefix = tr("coordinates.short.longitude") + " = ";
+            secondPrefix = ", " + tr("coordinates.short.latitude") + " = ";
         } else {
             format = function(n) {return OpenLayers.Number.format(n, 0)};
-            firstPrefix = "X = ";
-            secondPrefix = ", Y = ";
+            firstPrefix = tr("coordinates.short.x") + " = ";
+            secondPrefix = ", " + tr("coordinates.short.y") + " = ";
         }
         return function(lonlat) {
             return [firstPrefix, format(lonlat.lon), 
