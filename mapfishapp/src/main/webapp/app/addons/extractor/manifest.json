@@ -41,7 +41,6 @@
             "Format for rasters": "Format for rasters",
             "Resolution for rasters (cm)": "Resolution for rasters (cm)",
             "Email": "Email",
-            "This field should be an e-mail address in the format user@domain.com": "This field should be an e-mail address in the format user@domain.com",
             "No layer is available for extraction.": "No layer is available for extraction."
         },
         "fr": {
@@ -55,7 +54,6 @@
             "Format for rasters": "Format des couches rasters",
             "Resolution for rasters (cm)": "Résolution des couches rasters (en cm)",
             "Email": "Courriel",
-            "This field should be an e-mail address in the format user@domain.com": "Ce champ doit être une adresse email au format utilisateur@domaine.com",
             "No layer is available for extraction.": "Aucune couche n'est disponible pour l'extraction."
         },
          "de": {
@@ -69,7 +67,6 @@
             "Format for rasters": "Format des Layerrasters",
             "Resolution for rasters (cm)": "Layer auflösung in cm",
             "Email": "Email Adresse",
-            "This field should be an e-mail address in the format user@domain.com": "Formularfeld muss eine e-mailadresse beinhalten",
             "No layer is available for extraction.": "No layer is available for extraction."
         }
     }
