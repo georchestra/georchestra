@@ -25,12 +25,12 @@ GEOR.Addons.Goto = Ext.extend(GEOR.Addons.Base, {
         this.store = new Ext.data.JsonStore({
             data: this.options.projections,
             idProperty: "srs",
-            fields: ["srs", "name"]
+            fields: ["srs", "name", {name: "decimalPrecision", defaultValue: 2}]
         });
         if (this.store.getCount() > 0) {
             this.defaultSRS = this.store.getAt(0);
         } else {
-            alert("Goto addon: config error - no projection defined in options.")
+            alert("Goto addon: config error - no projection defined in options.");
         }
 
         this.combo = new Ext.form.ComboBox({
@@ -104,8 +104,10 @@ GEOR.Addons.Goto = Ext.extend(GEOR.Addons.Base, {
         var fields = this.getFields();
         fields.x.setValue("");
         fields.x.label.update(this.getCoordinatesLabel(r, 0) + this.sep);
+        fields.x.decimalPrecision = r.get("decimalPrecision");
         fields.y.setValue("");
         fields.y.label.update(this.getCoordinatesLabel(r, 1) + this.sep);
+        fields.y.decimalPrecision = r.get("decimalPrecision");
     },
 
     /**
@@ -143,6 +145,7 @@ GEOR.Addons.Goto = Ext.extend(GEOR.Addons.Base, {
                         anchor: "-1em",
                         name: "x",
                         fieldLabel: this.getCoordinatesLabel(this.defaultSRS, 0),
+                        decimalPrecision: this.defaultSRS.get("decimalPrecision"),
                         enableKeyEvents: true,
                         listeners: {
                             "keypress": this.onKeyPressed,
@@ -155,6 +158,7 @@ GEOR.Addons.Goto = Ext.extend(GEOR.Addons.Base, {
                         anchor: "-1em",
                         name: "y",
                         fieldLabel: this.getCoordinatesLabel(this.defaultSRS, 1),
+                        decimalPrecision: this.defaultSRS.get("decimalPrecision"),
                         enableKeyEvents: true,
                         listeners: {
                             "keypress": this.onKeyPressed,

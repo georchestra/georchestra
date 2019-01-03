@@ -5,7 +5,8 @@
     "options": {
         "projections": [{
             "srs": "EPSG:4326", 
-            "name": "WGS 84"
+            "name": "WGS 84",
+            "decimalPrecision": 6
         }, {
             "srs": "EPSG:2154", 
             "name": "Lambert 93"
