@@ -97,8 +97,8 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher {
             georHeaderInclude = georHeaderInclude.replace("@instance.name@", instanceName);
             georHeaderInclude = georHeaderInclude.replace("@header.height@", headerHeight);
         } else {
-            // Default values (nested into the gwc.properties)
-            InputStream defaultGwcProp = this.getClass().getResourceAsStream("/gwc.properties");
+            // Default values (nested into the geowebcache.properties)
+            InputStream defaultGwcProp = this.getClass().getResourceAsStream("/geowebcache.properties");
             
             try {
                 Properties prop = new Properties();
