@@ -241,6 +241,14 @@
               <name>org.geotools.referencing.forceXY</name>
               <value>true</value>
             </systemProperty>
+            <systemProperty>
+              <name>georchestra.datadir</name>
+              <value>/etc/georchestra</value>
+            </systemProperty>
+            <systemProperty>
+              <name>mapfish-print-config</name>
+              <value>/etc/georchestra/mapfishapp/print/config.yaml</value>
+            </systemProperty>
           </systemProperties>
         </configuration>
       </plugin>

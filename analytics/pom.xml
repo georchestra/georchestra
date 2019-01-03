@@ -208,6 +208,12 @@
           <httpConnector>
             <port>8280</port>
           </httpConnector>
+          <systemProperties>
+            <systemProperty>
+              <name>georchestra.datadir</name>
+              <value>/etc/georchestra</value>
+          </systemProperty>
+        </systemProperties>
         </configuration>
       </plugin>
     </plugins>

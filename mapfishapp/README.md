@@ -235,7 +235,11 @@ Clone the [geOrchestra datadir](https://github.com/georchestra/datadir/) into eg
 Once this is done, running mapfishapp is pretty simple with Jetty:
 
     $ cd mapfishapp
-    $ mvn -Dgeorchestra.datadir=/etc/georchestra -Dmapfish-print-config=/etc/georchestra/mapfishapp/print/config.yaml jetty:run
+    $ mvn jetty:run
+
+If you installed the datadir in another directory, eg `/var/tmp/georchestra`, you will have to provide the following options:
+
+    $ mvn -Dgeorchestra.datadir=/var/tmp/georchestra -Dmapfish-print-config=/var/tmp/georchestra/mapfishapp/print/config.yaml jetty:run
 
 Then, point your browser to [http://localhost:8287/mapfishapp/?noheader=true](http://localhost:8287/mapfishapp/?noheader=true).
 

@@ -341,6 +341,10 @@
               <name>extractor.storage.dir</name>
               <value>target/</value>
             </systemProperty>
+            <systemProperty>
+              <name>georchestra.datadir</name>
+              <value>/etc/georchestra</value>
+            </systemProperty>
           </systemProperties>
         </configuration>
       </plugin>
