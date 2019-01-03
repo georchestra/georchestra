@@ -25,9 +25,9 @@
             "openls.field_label": "Address"
         },
         "es": {
-            "openls.window_title": "Freetext search recentering (OpenLS)",
-            "openls.field_emptytext": "eg: 13 Rue de Tolbiac, Paris",
-            "openls.field_label": "Address"
+            "openls.window_title": "Centrar mediante búsqueda de texto libre (OpenLS)",
+            "openls.field_emptytext": "ej: 13 Rue de Tolbiac, Paris",
+            "openls.field_label": "Dirección"
         },
         "fr": {
             "openls.window_title": "Recentrage par adresse libre (OpenLS)",

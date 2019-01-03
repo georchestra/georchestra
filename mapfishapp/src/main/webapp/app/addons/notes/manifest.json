@@ -15,12 +15,12 @@
         },
         "es": {
             "notes_cannotsave": "No se puede guardar la nota",
-            "notes_saved": "La nota se guarda",
+            "notes_saved": "La nota fue guardada",
             "notes_title": "Añadir una nota",
             "notes_follow_up": "Enviar información de seguimiento",
-            "notes_email": "Correo electrónico ",
+            "notes_email": "Correo electrónico",
             "notes_comment": "Comentario",
-            "notes_submit": "Envio",
+            "notes_submit": "Enviar",
             "notes_cancel": "Cancelar"
         },
         "fr": {

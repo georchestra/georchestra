@@ -7,14 +7,14 @@
         "icon": "img/marker-18.png"
     },
     "title": {
-        "en": "Notes : Report map issues",
-        "es": "Notes : Report map issues",
+        "en": "Notes: Report map issues",
+        "es": "Notas: Reportar anomalias en el mapa",
         "fr": "Notes : Signaler des anomalies cartographiques",
         "de": "Notes : Report map issues"
     },
     "description": {
         "en": "Create notes to report map issues",
-        "es": "Create notes to report map issues",
+        "es": "Crear notas para reportar anomalias en el mapa",
         "fr": "Créez des notes pour signaler des anomalies cartographiques",
         "de": "Create notes to report map issues"
     }

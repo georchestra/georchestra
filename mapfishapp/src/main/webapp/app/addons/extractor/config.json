@@ -9,7 +9,7 @@
         },
         "description": {
             "en": "This addon allows one to download data from the layers visible on the map",
-            "es": "This addon allows one to download data from the layers visible on the map",
+            "es": "Este addon permite descargar datos de las capas visibles en el mapa",
             "fr": "Cet addon permet de télécharger les données des couches visibles sur la carte"
         },
         "roles": [

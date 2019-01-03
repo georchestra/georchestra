@@ -6,8 +6,8 @@
             "field": "label",
             "tip": {
                 "fr": "<b>Recherche rapide d'une référence</b><br>Tapez \"d numero_de_dossier\" pour obtenir l'affichage du dossier",
-                "en": "...",
-                "es": "...",
+                "en": "<b>Quick reference search</b><br>Type \"d numero_de_dossier\" to view the folder",
+                "es": "<b>Búsqueda rápida de una referencia</b><br>Ingresar el \"d numero_de_dossier\" para visualizar la carpeta",
                 "de": "..."
             },
             "searches": [{

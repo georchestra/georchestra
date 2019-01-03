@@ -62,7 +62,7 @@
             "annotation.export_as_kml": "Exportar",
             "annotation.export_as_kml_tip": "Exportar a KML",
             "annotation.save": "Guardar",
-            "annotation.save_tip": "Guarde características extraídas",
+            "annotation.save_tip": "Guardar características extraídas",
             "annotation.load": "Carga",
             "annotation.load_tip": "Cargar características previamente guardados",
             "annotation.modify": "Modificar",

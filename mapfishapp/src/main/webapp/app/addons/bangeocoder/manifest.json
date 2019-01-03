@@ -10,17 +10,17 @@
     },
     "i18n": {
         "en": {
-            "banGeocoder.window_title": "Adresse researcher",
+            "banGeocoder.window_title": "Address search",
             "Loading...": "Loading",
-            "banGeocoder.field_emptytext": "Ex : 11 Rue Louis de Broglie, 22300 Lannion",
+            "banGeocoder.field_emptytext": "Ex: 11 Rue Louis de Broglie, 22300 Lannion",
             "banGeocoder.field_label": "Address",
             "Result": "Result"
         },
         "es": {
-            "banGeocoder.window_title": "Adresse researcher",
-            "Loading...": "Loading",
-            "banGeocoder.field_emptytext": "Ex : 11 Rue Louis de Broglie, 22300 Lannion",
-            "banGeocoder.field_label": "Address",
+            "banGeocoder.window_title": "Búsqueda de dirección",
+            "Loading...": "Cargando",
+            "banGeocoder.field_emptytext": "Ej: 11 Rue Louis de Broglie, 22300 Lannion",
+            "banGeocoder.field_label": "Dirección",
             "Result": "Resultado"
         },
         "fr": {
@@ -31,7 +31,7 @@
             "Result": "Résultat"
         },
         "de": {
-            "banGeocoder.window_title": "Adresse researcher",
+            "banGeocoder.window_title": "Adresse search",
             "Loading...": "Loading",
             "banGeocoder.field_emptytext": "Ex : 11 Rue Louis de Broglie, 22300 Lannion",
             "banGeocoder.field_label": "Address",
