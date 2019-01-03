@@ -11,16 +11,8 @@
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:property-placeholder location="/WEB-INF/security-proxy.properties"
-        ignore-resource-not-found="true" ignore-unresolvable="true" order="3" />
-
-    <context:property-placeholder
-            location="file:${georchestra.datadir}/default.properties"
-            ignore-resource-not-found="true" ignore-unresolvable="true" order="2" />
-
-    <context:property-placeholder
-        location="file:${georchestra.datadir}/security-proxy/security-proxy.properties"
-        ignore-resource-not-found="true" ignore-unresolvable="true" order="1" />
+    <context:property-placeholder location="/WEB-INF/security-proxy.properties, file:${georchestra.datadir}/default.properties, file:${georchestra.datadir}/security-proxy/security-proxy.properties"
+        ignore-resource-not-found="true" ignore-unresolvable="true" />
 
     <s:http entry-point-ref="casProcessingFilterEntryPoint" request-matcher="regex" realm="${realmName}" disable-url-rewriting="true">
         <s:custom-filter ref="trustAnotherProxy" before="PRE_AUTH_FILTER" />
