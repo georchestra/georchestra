@@ -69,12 +69,9 @@
 
     <!-- Substitutes any ${...} variables in this (and loaded) spring configuration file
 				with values from the properties file -->
-    <context:property-placeholder location="/WEB-INF/analytics.properties"
-        ignore-resource-not-found="true" ignore-unresolvable="true" order="2" />
-
-    <context:property-placeholder
-        location="file:${georchestra.datadir}/analytics/analytics.properties"
-        ignore-resource-not-found="true" ignore-unresolvable="true" order="1" />
+    <context:property-placeholder location="/WEB-INF/analytics.properties,
+        file:${georchestra.datadir}/analytics/analytics.properties"
+        ignore-resource-not-found="true" ignore-unresolvable="true" />
 
     <bean id="statisticsController" class="org.georchestra.analytics.StatisticsController">
         <constructor-arg name="localTimezone" value="${localTimezone}"/>
