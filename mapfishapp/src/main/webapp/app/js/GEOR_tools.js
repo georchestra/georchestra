@@ -164,11 +164,11 @@ GEOR.tools = (function() {
                         )
                     });
                     if (count == 0 && !silent) {
-                        GEOR.helper.msg(tr("Tools"), 
-                            tr("Your new addons are now available in the tools menu."));
+                        GEOR.helper.msg(tr("Tools"),
+                            tr("New tools are now available"));
                     }
                 };
-            // get corresponding manifest.json 
+            // get corresponding manifest.json
             OpenLayers.Request.GET({
                 url: addonPath + "manifest.json",
                 success: function(response) {
@@ -177,15 +177,14 @@ GEOR.tools = (function() {
                         return;
                     }
                     count -= 1;
-                    var js = [], 
+                    var js = [],
                         o = (new OpenLayers.Format.JSON()).read(
                             response.responseText
-                        ),
-                        popmsg = false; // no message popping down by default
+                        );
                     // handle i18n
                     if (o.i18n) {
                         Ext.iterate(o.i18n, function(k, v) {
-                            OpenLayers.Lang[k] = 
+                            OpenLayers.Lang[k] =
                                 OpenLayers.Util.extend(OpenLayers.Lang[k], v);
                         });
                     }
@@ -208,8 +207,8 @@ GEOR.tools = (function() {
                                 return;
                             }
                             // init addon
-                            var addon = new GEOR.Addons[addonName](mapPanel, Ext.apply({}, 
-                                r.get("options") || {}, 
+                            var addon = new GEOR.Addons[addonName](mapPanel, Ext.apply({},
+                                r.get("options") || {},
                                 o.default_options || {}
                             ));
                             addonsCache[r.id] = addon;
@@ -225,31 +224,28 @@ GEOR.tools = (function() {
                                 }
                             }
                             if (addon.item) {
-                                // "one addon hidden in the tools menu" means
-                                // that the popping down message has to be displayed:
-                                popmsg = true;
+                                // "one addon hidden in the tools menu"
                                 // handle menuitem qtip:
                                 addon.item.on('afterrender', GEOR.util.registerTip);
                                 // here we know it should be inserted at position i from the beginning
                                 menu.insert(i + 2, addon.item);
                             } else if (addon.items) {
                                 // the addon publishes an array of menu items
-                                popmsg = true;
                                 Ext.each(addon.items, function(item) {
                                     item.on('afterrender', GEOR.util.registerTip);
                                     menu.insert(i + 2, item);
                                 });
                             } else {
-                                // if there is no addon.item, it means the addon takes care of 
+                                // if there is no addon.item, it means the addon takes care of
                                 // inserting his own component into the viewport
                                 // and calling doLayout on the parent component.
                             }
                         }, this, true); // preserveOrder set to true is important to be able to extend classes
                     }
                     // inform user:
-                    if (popmsg && count == 0 && !silent) {
-                        GEOR.helper.msg(tr("Tools"), 
-                            tr("Your new tools are now available in the tools menu."));
+                    if (count == 0 && !silent) {
+                        GEOR.helper.msg(tr("Tools"),
+                            tr("New tools are now available"));
                     }
                 },
                 failure: failure
@@ -301,7 +297,7 @@ GEOR.tools = (function() {
      * Creates/shows the tools selection window
      */
     var showToolSelection = function() {
-        var target = (GEOR.config.ANIMATE_WINDOWS) ? 
+        var target = (GEOR.config.ANIMATE_WINDOWS) ?
             this.el : undefined;
 
         if (win) {
@@ -331,7 +327,7 @@ GEOR.tools = (function() {
                             '<img src="{[this.thumb(values)]}" class="thumb" />',
                         '</td></tr></table>',
                     '</div>',
-                '</tpl>', 
+                '</tpl>',
             {
                 compiled: true,
                 disableFormats: true,

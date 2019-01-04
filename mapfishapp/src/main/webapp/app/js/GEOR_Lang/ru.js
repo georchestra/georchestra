@@ -366,7 +366,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Available tools:": "Инструменты в распоряжении",
     "Click to select or deselect the tool": "Щёлкните для того, чтобы выбрать инструмент или отменить его",
     "Could not load addon ADDONNAME": "Невозможно загрузить аддон ${ADDONNAME}",
-    //"Your new tools are now available in the tools menu.": 'Vos nouveaux outils sont disponibles dans le menu "outils"',
+    //"New tools are now available": "De nouveaux outils sont disponibles",
     /* GEOR_util.js strings */
     "Characters": "Письменность",
     "Digital": "Цифровой",

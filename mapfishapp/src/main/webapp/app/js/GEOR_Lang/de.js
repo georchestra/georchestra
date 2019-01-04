@@ -439,7 +439,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Available tools:": "Werkzeuge vorhanden :",
     "Click to select or deselect the tool": "Klicken um das Werkzeug abzuwählen",
     "Could not load addon ADDONNAME": "${ADDONNAME} Addon laden unmöglich",
-    "Your new tools are now available in the tools menu.": 'Ihre neuen Werkzeuge sind jetzt im Werkzeuge-Menu verfügbar',
+    "New tools are now available": "Neuen Werkzeuge sind jetzt verfügbar",
     /* GEOR_util.js strings */
     "Characters": "Zeichen",
     "Digital": "Digital",
