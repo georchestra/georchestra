@@ -218,7 +218,7 @@
         <artifactId>maven-war-plugin</artifactId>
         <version>2.6</version>
         <configuration>
-          <packagingExcludes>**/ext/examples/**,**/ext/pkgs/**,**/docs/**,**/openlayers/examples/**,**/openlayers/tests/**,PostTreatment.groovy</packagingExcludes>
+          <packagingExcludes>**/ext/examples/**,**/ext/pkgs/**,**/docs/**,**/openlayers/examples/**,**/openlayers/tests/**</packagingExcludes>
         </configuration>
       </plugin>
       <!-- needed for jetty:run maven target -->

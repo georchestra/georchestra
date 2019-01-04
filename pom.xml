@@ -24,7 +24,6 @@
     <spring.ldap.version>1.3.0.RELEASE</spring.ldap.version>
     <gmaven.version>1.0</gmaven.version>
     <gmaven.runtime.version>1.5</gmaven.runtime.version>
-    <server>tpl</server>
     <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
     <geoserver_datadir>geoserver_datadir/</geoserver_datadir>
     <sub.target>dev</sub.target>
@@ -33,23 +32,6 @@
     <encoding>UTF-8</encoding>
     <log4j1.version>1.2.17</log4j1.version>
     <georchestra.version>${project.version}</georchestra.version>
-    <postTreatmentScript><![CDATA[
-
-       def server=project.properties['server']
-       def subTarget=project.properties['subTarget']
-
-       def params = new Parameters(
-           project: project,
-           target: server,
-           subTarget: subTarget,
-           log: log,
-           ant: ant
-       )
-       params.init(false)
-
-       new PostTreatment().run(this, log, ant, project.basedir, params.projectDir, server, subTarget, project.build.directory)
-
-]]></postTreatmentScript>
   </properties>
   <mailingLists>
     <mailingList>
@@ -78,7 +60,6 @@
     <developerConnection>scm:git:git@github.com:georchestra/georchestra.git</developerConnection>
   </scm>
   <modules>
-    <module>config</module>
     <!-- <module>gt-ogr</module> now the geotools implementation is used -->
     <module>epsg-extension</module>
     <module>ogc-server-statistics</module>
@@ -138,51 +119,6 @@
      <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>org.codehaus.groovy.maven</groupId>
-          <artifactId>gmaven-plugin</artifactId>
-          <version>1.0</version>
-          <executions>
-            <execution>
-              <id>create-missingpost-treatment</id>
-              <phase>prepare-package</phase>
-              <goals>
-                <goal>execute</goal>
-              </goals>
-              <configuration>
-                <source><![CDATA[
-                  def confDir = new File(project.build.directory, "conf")
-                  def treatmentFile = new File(confDir, project.artifactId+"/PostTreatment.groovy")
-                  if(confDir.exists() && !treatmentFile.exists()){
-                    treatmentFile.parentFile.mkdirs()
-                    treatmentFile << """
-                      class PostTreatment {
-                        def run(def project, def log, def ant, def basedirFile, def configDir,
-                                def target, def subTarget, def targetDir) {
-                                  log.info("No post treatment required for this project")
-                            }
-                        }
-                    """
-                  }
-                  ]]></source>
-              </configuration>
-            </execution>
-            <execution>
-              <id>post-treatment-script</id>
-              <phase>prepare-package</phase>
-              <goals>
-                <goal>execute</goal>
-              </goals>
-              <configuration>
-                <scriptpath>
-                  <element>${project.build.directory}/conf/${project.artifactId}</element>
-                  <element>${project.build.directory}/conf/scripts</element>
-                </scriptpath>
-                <source>${postTreatmentScript}</source>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
           <version>2.5</version>
@@ -197,33 +133,6 @@
               <nonFilteredFileExtension>odg</nonFilteredFileExtension>
             </nonFilteredFileExtensions>
           </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-dependency-plugin</artifactId>
-          <version>2.3</version>
-          <executions>
-            <execution>
-              <id>unpack-config</id>
-              <goals>
-                <goal>unpack</goal>
-              </goals>
-              <phase>initialize</phase>
-              <configuration>
-                <artifactItems>
-                  <artifactItem>
-                    <groupId>org.georchestra</groupId>
-                    <artifactId>config</artifactId>
-                    <version>${georchestra.version}</version>
-                    <classifier>${server}</classifier>
-                  </artifactItem>
-                </artifactItems>
-                <overWriteSnapshots>true</overWriteSnapshots>
-                <overWriteReleases>true</overWriteReleases>
-                <outputDirectory>${confdir}</outputDirectory>
-              </configuration>
-            </execution>
-          </executions>
         </plugin>
         <plugin>
           <groupId>org.mortbay.jetty</groupId>
@@ -333,19 +242,6 @@
         </dependency>
       </dependencies>
     </profile>
-    <profile>
-      <id>localhost</id>
-      <properties>
-        <server>localhost</server>
-      </properties>
-    </profile>
-    <!-- tpl profile -->
-    <profile>
-      <id>tpl</id>
-      <properties>
-        <server>tpl</server>
-      </properties>
-    </profile>
     <!-- profile which skips dependency plugin execution -->
     <profile>
       <id>generate-site</id>
@@ -403,7 +299,6 @@
         </plugins>
       </build>
       <modules>
-        <module>config</module>
         <module>ogc-server-statistics</module>
         <module>extractorapp</module>
         <module>console</module>

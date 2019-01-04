@@ -130,11 +130,6 @@ upstream	https://github.com/georchestra/geoserver_minimal_data_dir.git (fetch)
 upstream	https://github.com/georchestra/geoserver_minimal_data_dir.git (push)
 ```
 
-In case you do not see any remote, you may add one with, eg: (adapt user and repository)
-```
-sudo -u tomcat8 git remote add origin https://gitlab.com/user/myprofile.git
-```
-
 Once your "origin" remote is setup, you don't have to do this anymore.  
 Just push the changes with:
 ```
