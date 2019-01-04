@@ -195,7 +195,7 @@
         <artifactId>maven-war-plugin</artifactId>
         <version>2.6</version>
         <configuration>
-          <packagingExcludes>**/docs/**,js/lib/external/ext/examples/**,js/lib/external/ext/builds/**,js/lib/external/ext/pkgs/**,PostTreatment.groovy</packagingExcludes>
+          <packagingExcludes>**/docs/**,js/lib/external/ext/examples/**,js/lib/external/ext/builds/**,js/lib/external/ext/pkgs/**</packagingExcludes>
         </configuration>
       </plugin>
       <plugin>
