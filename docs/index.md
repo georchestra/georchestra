@@ -36,13 +36,13 @@ For help setting up your instance, or for dev-related questions, use the [#georc
 
 Additional information can be found in the [georchestra.org](http://www.georchestra.org/) website and in the following links:
  * [catalog](https://github.com/georchestra/geonetwork/blob/georchestra-gn3.4-18.06/README.md): standard GeoNetwork with a light customization,
- * [viewer](mapfishapp/README.md) (aka mapfishapp): a robust, OGC-compliant webgis with editing capabilities,
- * [extractor](extractorapp/README.md) (aka extractorapp): able to create zips from data served through OGC web services and send an email when your extraction is done,
+ * [viewer](https://github.com/georchestra/georchestra/blob/master/mapfishapp/README.md) (aka mapfishapp): a robust, OGC-compliant webgis with editing capabilities,
+ * [extractor](https://github.com/georchestra/georchestra/blob/master/extractorapp/README.md) (aka extractorapp): able to create zips from data served through OGC web services and send an email when your extraction is done,
  * [geoserver](http://geoserver.org/): the reference implementation for many OGC web services,
  * [geowebcache](http://geowebcache.org/): a fast and easy to use tile cache,
  * [geofence](https://github.com/georchestra/geofence/blob/georchestra/georchestra.md): optional, advanced OGC web services security,
- * [analytics](analytics/README.md): admin-oriented module, a front-end to the [ogc-server-statistics](ogc-server-statistics/README.md) module,
- * [console](console/README.md): also an admin-oriented module, to manage users and groups,
- * [header](header/README.md): the common header which is used by all modules,
- * [epsg-extension](epsg-extension/README.md): a plugin to override the geotools srs definitions.
- * [atlas](atlas/README.md): a server-side component to print multi-page PDF with one geographic feature per page.
+ * [analytics](https://github.com/georchestra/georchestra/blob/master/analytics/README.md): admin-oriented module, a front-end to the [ogc-server-statistics](https://github.com/georchestra/georchestra/blob/master/ogc-server-statistics/README.md) module,
+ * [console](https://github.com/georchestra/georchestra/blob/master/console/README.md): also an admin-oriented module, to manage users and groups,
+ * [header](https://github.com/georchestra/georchestra/blob/master/header/README.md): the common header which is used by all modules,
+ * [epsg-extension](https://github.com/georchestra/georchestra/blob/master/epsg-extension/README.md): a plugin to override the geotools srs definitions.
+ * [atlas](https://github.com/georchestra/georchestra/blob/master/atlas/README.md): a server-side component to print multi-page PDF with one geographic feature per page.
