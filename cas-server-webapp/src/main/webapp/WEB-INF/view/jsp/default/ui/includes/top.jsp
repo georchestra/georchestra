@@ -37,7 +37,7 @@
 
 String sharedInstanceName = "@shared.instance.name@";
 String sharedHomepageUrl = "@shared.homepage.url@";
-String headerHeight = "90px";
+String headerHeight = "90";
 String headerUrl = "/header/";
 String sharedLdapadminContextpath = "@shared.console.contextpath@";
 
