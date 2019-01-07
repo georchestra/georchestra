@@ -16,11 +16,11 @@ Depending on your goals and skills, there are several ways to install geOrchestr
 
  * a [docker composition](https://github.com/georchestra/docker/blob/master/docker-compose.yml), which pulls pre-built images from [docker hub](https://hub.docker.com/u/georchestra/), is perfect for a quick start. Provided you have a good download speed and recent machine (8Gb required), you'll be up and running within 10 minutes. Read [how to run geOrchestra on Docker](https://github.com/georchestra/docker/blob/master/README.md) here. Not recommended for production as is, since it pulls images tagged `latest`, matching this repos's `master` branch (frequently broken).
  * a contributed [ansible playbook](https://github.com/georchestra/ansible) allows you to spin an instance in a few minutes. This is probably the easiest way to create a small server, since it takes care of installing the middleware, fetching the webapps and configuring them. Same issue as above: it pulls debian packages from the master branch, frequently broken.
- * generic [debian (or yum) packages](https://packages.georchestra.org/) are perfect to create complex production architectures, but you'll have to [install and configure the middleware](docs/setup.md) first. The community provides these packages on a "best effort" basis, with no warranty at all.
+ * generic [debian (or yum) packages](https://packages.georchestra.org/) are perfect to create complex production architectures, but you'll have to [install and configure the middleware](setup.md) first. The community provides these packages on a "best effort" basis, with no warranty at all.
  * you could also use the [generic wars](https://packages.georchestra.org/) with their "[datadir](https://github.com/georchestra/datadir)", as an alternate method. The above packages provide both.
- * finally, [building from the sources](docs/build.md) is the most flexible solution. You get custom WAR files, packages or docker images that you can [deploy](docs/deploy.md) to dev, test, or production servers.
+ * finally, [building from the sources](build.md) is the most flexible solution. You get custom WAR files, packages or docker images that you can [deploy](deploy.md) to dev, test, or production servers.
 
-If you opt for the middleware setup by yourself, there are several [optimizations](docs/optimizations.md), [good practices](docs/good_practices.md) and [tutorials](docs/tutorials.md) that are worth reading.
+If you opt for the middleware setup by yourself, there are several [optimizations](optimizations.md), [good practices](good_practices.md) and [tutorials](tutorials.md) that are worth reading.
 Note that the minimum system requirement is 2 cores and 8Gb RAM, but we recommend at least 4 cores and 16 Gb RAM for a production instance.
 More RAM is of course better !
 
