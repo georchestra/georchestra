@@ -138,9 +138,6 @@ GEOR.Addons.Extractor = Ext.extend(GEOR.Addons.Base, {
         });
         this.emailField = new Ext.form.TextField({
             name: "email",
-            vtype: "email",
-            vtypeText: OpenLayers.i18n('This field should be an e-mail address'+
-                ' in the format user@domain.com'),
             allowBlank: false,
             width: FIELD_WIDTH,
             labelSeparator: OpenLayers.i18n("labelSeparator"),

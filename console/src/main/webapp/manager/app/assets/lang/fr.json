@@ -137,7 +137,7 @@
   "delegation.dupdated"   : "Délégation mise à jour",
   "delegation.ddeleted"   : "Délégation supprimée",
   "delegation.derror"     : "Erreur lors de la mise à jour de la délégation",
-  "delegation.restricted" : "Impossible d’ajouter une dégélation pour un SUPERUSER.",
+  "delegation.restricted" : "Impossible d’ajouter une délégation pour un SUPERUSER.",
 
   "area.save"             : "Enregister la zone",
   "area.updated"          : "Aire de compétence mise à jour",
