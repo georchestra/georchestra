@@ -84,6 +84,7 @@ class OrgController {
 
     User.update({
       uid: uid,
+      originalID: uid,
       org: unassociate ? '' : this.org.id
     }).$promise.then(() => {
       $httpDefaultCache.removeAll()
