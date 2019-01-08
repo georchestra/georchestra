@@ -495,7 +495,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     // no trailing comma
 });
 
-GeoExt.Lang.add("fr", {
+GeoExt.Lang.add("de", {
     "GeoExt.ux.FeatureEditorGrid.prototype": {
         deleteMsgTitle: "Löschung",
         deleteMsg: "löschen bestätigen ?",

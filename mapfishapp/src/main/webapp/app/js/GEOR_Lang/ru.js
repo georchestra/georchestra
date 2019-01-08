@@ -426,7 +426,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     // no trailing comma
 });
 
-GeoExt.Lang.add("fr", {
+GeoExt.Lang.add("ru", {
     "GeoExt.ux.FeatureEditorGrid.prototype": {
         deleteMsgTitle: "Delete Feature?",
         deleteMsg: "Are you sure you want to delete this feature?",
