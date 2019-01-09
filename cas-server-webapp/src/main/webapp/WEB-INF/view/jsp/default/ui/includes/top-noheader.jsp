@@ -36,14 +36,14 @@
 <%
 
 
-String sharedInstanceName = "@shared.instance.name@";
-String sharedHomepageUrl = "@shared.homepage.url@";
+String instanceName = "geOrchestra";
+String homepageUrl = "/";
 try {
   ApplicationContext ctx = RequestContextUtils.getWebApplicationContext(request);
   GeorchestraConfiguration georConfig = (GeorchestraConfiguration) ctx.getBean(GeorchestraConfiguration.class);
   if (georConfig.activated()) {
-    sharedInstanceName = georConfig.getProperty("instance.name");
-    sharedHomepageUrl = georConfig.getProperty("publicUrl");
+    instanceName = georConfig.getProperty("instance.name");
+    homepageUrl = georConfig.getProperty("publicUrl");
   }
 } catch (Exception e) {
   // ignoring
@@ -55,7 +55,7 @@ try {
 <head>
   <meta charset="UTF-8" />
 
-  <title>CAS - <%= sharedInstanceName  %></title>
+  <title>CAS - <%= instanceName  %></title>
 
   <spring:theme code="standard.custom.css.file" var="customCssFile" />
   <link rel="stylesheet" href="<c:url value="${customCssFile}" />" />
