@@ -62,7 +62,7 @@
     </section>
 
     <section class="row">
-      <a href="<%= sharedLdapadminContextpath %>/account/new"><spring:message code="screen.welcome.link.newaccount" /></a> - <a href="<%= sharedLdapadminContextpath %>/account/passwordRecovery"><spring:message code="screen.welcome.link.forgot" /></a>
+      <a href="<%= consoleContextpath %>/account/new"><spring:message code="screen.welcome.link.newaccount" /></a> - <a href="<%= consoleContextpath %>/account/passwordRecovery"><spring:message code="screen.welcome.link.forgot" /></a>
     </section>
 
   </form:form>
