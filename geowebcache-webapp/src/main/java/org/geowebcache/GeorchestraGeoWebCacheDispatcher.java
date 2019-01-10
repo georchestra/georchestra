@@ -52,7 +52,7 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher {
     
     private String georHeaderInclude = "<html>"
 +"  <head>"
-+"    <title>GeoWebCache - @instance.name@</title>"
++"    <title>GeoWebCache - @instanceName@</title>"
 +"    <style type=\"text/css\">"
 +"      body, td {"
 +"        font-family: Verdana,Arial,'Bitstream Vera Sans',Helvetica,sans-serif;"
@@ -92,9 +92,9 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher {
 
     protected void init() throws IOException {
         if ((georchestraConfiguration != null) && (georchestraConfiguration.activated())) {
-            String instanceName = georchestraConfiguration.getProperty("instance.name");
+            String instanceName = georchestraConfiguration.getProperty("instanceName");
             String headerHeight = georchestraConfiguration.getProperty("header.height");
-            georHeaderInclude = georHeaderInclude.replace("@instance.name@", instanceName);
+            georHeaderInclude = georHeaderInclude.replace("@instanceName@", instanceName);
             georHeaderInclude = georHeaderInclude.replace("@header.height@", headerHeight);
         } else {
             // Default values (nested into the geowebcache.properties)
@@ -103,7 +103,7 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher {
             try {
                 Properties prop = new Properties();
                 prop.load(defaultGwcProp);
-                georHeaderInclude = georHeaderInclude.replace("@instance.name@", prop.getProperty("instance.name", "geOrchestra"));
+                georHeaderInclude = georHeaderInclude.replace("@instanceName@", prop.getProperty("instanceName", "geOrchestra"));
                 georHeaderInclude = georHeaderInclude.replace("@header.height@", prop.getProperty("header.height", "90"));
             } finally {
                 if (defaultGwcProp != null)

@@ -42,7 +42,7 @@ try {
   ApplicationContext ctx = RequestContextUtils.getWebApplicationContext(request);
   GeorchestraConfiguration georConfig = (GeorchestraConfiguration) ctx.getBean(GeorchestraConfiguration.class);
   if (georConfig.activated()) {
-    instanceName = georConfig.getProperty("instance.name");
+    instanceName = georConfig.getProperty("instanceName");
     homepageUrl = georConfig.getProperty("publicUrl");
   }
 } catch (Exception e) {

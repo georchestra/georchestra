@@ -45,7 +45,7 @@ String georCustomPath = "/app/js/GEOR_custom.js";
 
 try {
   ApplicationContext ctx = RequestContextUtils.getWebApplicationContext(request);
-  instanceName = ctx.getBean(GeorchestraConfiguration.class).getProperty("instance");
+  instanceName = ctx.getBean(GeorchestraConfiguration.class).getProperty("instanceName");
   defaultLanguage = ctx.getBean(GeorchestraConfiguration.class).getProperty("language");
   if ((ctx.getBean(GeorchestraConfiguration.class) != null)
     && (((GeorchestraConfiguration) ctx.getBean(GeorchestraConfiguration.class)).activated())) {
