@@ -33,7 +33,7 @@
 <%@ page import="org.georchestra.commons.configuration.GeorchestraConfiguration" %>
 
 <%
-String defaultLanguage = null, instanceName = null;
+String defaultLanguage = "en", instanceName = "geOrchestra";
 String headerHeight = "90";
 String headerUrl = "/header/";
 
@@ -47,10 +47,8 @@ try {
     headerHeight = georConfig.getProperty("headerHeight");
     headerUrl = georConfig.getProperty("headerUrl");
   }
-} catch (Exception e) {}
-
-if (instanceName == null) {
-  instanceName = "geOrchestra";
+} catch (Exception e) {
+  // Ignoring and keeping the default configuration
 }
 
 Locale rLocale = request.getLocale();

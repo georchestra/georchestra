@@ -39,28 +39,25 @@ Boolean anonymous = true;
 Boolean admin = false;
 Boolean georDatadirActivated = false;
 
-String instanceName = null;
-String defaultLanguage = null;
+String instanceName = "geOrchestra";
+String defaultLanguage = "en";
 String georCustomPath = "/app/js/GEOR_custom.js";
 
 try {
   ApplicationContext ctx = RequestContextUtils.getWebApplicationContext(request);
-  instanceName = ctx.getBean(GeorchestraConfiguration.class).getProperty("instanceName");
-  defaultLanguage = ctx.getBean(GeorchestraConfiguration.class).getProperty("language");
   if ((ctx.getBean(GeorchestraConfiguration.class) != null)
     && (((GeorchestraConfiguration) ctx.getBean(GeorchestraConfiguration.class)).activated())) {
       georDatadirActivated = true;
+      instanceName = ctx.getBean(GeorchestraConfiguration.class).getProperty("instanceName");
+      defaultLanguage = ctx.getBean(GeorchestraConfiguration.class).getProperty("language");
       georCustomPath = "/ws/app/js/GEOR_custom.js";
     }
 } catch (Exception e) {
+  // Ignoring and keeping the default configuration
 }
 
 // the context path (might not be the public context path ! -> to be improved with https://github.com/georchestra/georchestra/issues/227)
 String context = request.getContextPath().split("-")[0]; // eg /mapfishapp
-
-if (instanceName == null) {
-  instanceName = "geOrchestra";
-}
 
 Locale rLocale = request.getLocale();
 ResourceBundle bundle = org.georchestra.mapfishapp.ws.Utf8ResourceBundle.getBundle("org.georchestra.mapfishapp.i18n.index", rLocale);
