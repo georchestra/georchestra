@@ -1254,8 +1254,8 @@ GEOR.managelayers = (function() {
             // are too much for me :
             delay: 50,
             changeVisibilityDelay: 50,
-            // we're also monitoring the layer visibility:
-            changeVisibility: true,
+            // we're not monitoring layer visibility:
+            changeVisibility: false,
             aggressive: true,
             layer: layer,
             plugins: new GeoExt.LayerOpacitySliderTip()
