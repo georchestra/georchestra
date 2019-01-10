@@ -2,7 +2,7 @@
 
 This folder holds the required files to configure and populate an OpenLDAP directory before installing the [geOrchestra](http://www.georchestra.org) SDI.  
 
-Please refer to the [geOrchestra documentation](https://github.com/georchestra/georchestra/blob/master/README.md) for instructions, and **use the branch matching your geOrchestra version** !
+Please refer to the [geOrchestra documentation](https://github.com/georchestra/georchestra/blob/master/README.md) for instructions.
 
 ## groupofmembers.ldif
 
@@ -34,7 +34,7 @@ The basic users:
  * ```testeditor``` has the USER & GN_EDITOR roles. The password is **testeditor**.
  * ```testadmin``` has the USER, GN_ADMIN, ADMINISTRATOR and MOD_* roles. The password is **testadmin**
  * ```testdelegatedadmin``` has the USER role. Is able to grant the EXTRACTORAPP & GN_EDITOR roles to members of the psc & c2c orgs. The password is **testdelegatedadmin**
- * ```geoserver_privileged_user``` is a required user. It is internally used by the extractorapp, mapfishapp & geofence modules. The default password is ```gerlsSnFd6SmM``` (you should change it, and update the ```shared.privileged.geoserver.pass``` option in your shared.maven.filters file).
+ * ```geoserver_privileged_user``` is a required user. It is internally used by the extractorapp, mapfishapp & geofence modules. The default password is ```gerlsSnFd6SmM``` (you should change it, and update the datadir as explain in its [README](https://github.com/georchestra/datadir/blob/18.06/README.md)).
 
 Please note that `test*` users should be deleted before going into production !
 
