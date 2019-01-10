@@ -27,7 +27,7 @@ It's easy to restrict the list to the most useful ones: in the WMS and WCS admin
 
 ## Standalone GeoWebCache 
 
-For the standalone GeoWebCache, the proxy should be automatically configured (via [gwc.properties](https://github.com/georchestra/georchestra/blob/14.06/config/defaults/geowebcache-webapp/WEB-INF/classes/gwc.properties)). 
+For the standalone GeoWebCache, the proxy should be automatically configured (via [geowebcache.properties](https://github.com/georchestra/datadir/blob/18.06/geowebcache/geowebcache.properties)).
 
 ## GeoNetwork
 
@@ -38,9 +38,9 @@ On the  ```/geonetwork/srv/eng/config``` page, you should:
 In the server section, fill the fields according to your setup, eg:
 ```
 Preferred Protocol  HTTP
-Host                sdi.georchestra.org
+Host                georchestra.mydomain.org
 Port                80 	￼     
-Secure Port	￼        8443
+Secure Port	    8443
 ```
 
  * enable "XLINK RESOLVER"
@@ -53,6 +53,6 @@ Secure Port	￼        8443
 In GeoFence, you should configure your geoserver instance with:
  * instance name = default-gs
  * description = my geoserver instance
- * base url = http://my.sdi.org/geoserver
+ * base url = http://georchestra.mydomain.org/geoserver
  * username = geoserver_privileged_user 
- * password = the LDAP password of the above user, which should be the same as [the one referenced in your config](https://github.com/georchestra/template/blob/14.06/build_support/shared.maven.filters#L103).
+ * password = the LDAP password of the above user, which should be the same as [the one referenced in your datadir](https://github.com/georchestra/datadir/blob/18.06/README.md).
