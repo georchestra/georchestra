@@ -20,6 +20,9 @@
 package org.georchestra.console.ds;
 
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.dto.Org;
 import org.georchestra.console.dto.OrgExt;
 import org.georchestra.console.dto.ReferenceAware;
@@ -42,6 +45,7 @@ import javax.naming.directory.BasicAttributes;
 import javax.naming.ldap.LdapName;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -50,6 +54,7 @@ import java.util.List;
  */
 public class OrgsDao {
 
+    private static final Log LOG = LogFactory.getLog(OrgsDao.class.getName());
     private LdapTemplate ldapTemplate;
     private Name orgSearchBaseDN;
     private Name userSearchBaseDN;
@@ -172,14 +177,22 @@ public class OrgsDao {
 
     public void update(Org org){
         Name newName = buildOrgDN(org.getId());
-        this.ldapTemplate.rename(org.getReference().getDn(), newName);
-        this.ldapTemplate.rebind(newName, null, buildAttributes(org));
+        if (newName.compareTo(org.getReference().getDn()) != 0) {
+            this.ldapTemplate.rename(org.getReference().getDn(), newName);
+        }
+        DirContextOperations context = this.ldapTemplate.lookupContext(newName);
+        mapToContext(org, context);
+        this.ldapTemplate.modifyAttributes(context);
     }
 
     public void update(OrgExt orgExt){
         Name newName = buildOrgExtDN(orgExt.getId());
-        this.ldapTemplate.rename(orgExt.getReference().getDn(), newName);
-        this.ldapTemplate.rebind(newName, null, buildAttributes(orgExt));
+        if (newName.compareTo(orgExt.getReference().getDn()) != 0) {
+            this.ldapTemplate.rename(orgExt.getReference().getDn(), newName);
+        }
+        DirContextOperations context = this.ldapTemplate.lookupContext(newName);
+        mapToContext(orgExt, context);
+        this.ldapTemplate.modifyAttributes(context);
     }
 
     public void delete(Org org){
@@ -268,6 +281,48 @@ public class OrgsDao {
         return attrs;
     }
 
+    private void mapToContext(Org org, DirContextOperations context) {
+        context.setAttributeValues("objectClass", new String[] { "top", "groupOfMembers" });
+
+        // mandatory attrs
+        context.setAttributeValue("cn", org.getId());
+        context.setAttributeValue("ou", org.getShortName());
+        context.setAttributeValue("seeAlso", LdapNameBuilder.newInstance(this.orgSearchBaseDN + "," + this.basePath)
+                .add("o", org.getId()).build().toString());
+
+        // optional attrs ?
+        setOrgField(context, "o", org.getName());
+        setOrgField(context, "businessCategory", org.getStatus());
+
+        if(org.getMembers() != null && org.getMembers().size() > 0) {
+            List<String> membersDn = new ArrayList<String>();
+            for (String member : org.getMembers())
+                membersDn.add(buildUserDN(member).toString());
+            context.setAttributeValues("member", membersDn.toArray());
+        }
+
+        // todo: properly handle existing attrs ?
+        if(org.getCities() != null) {
+            StringBuilder buffer = new StringBuilder();
+            List<String> descriptions = new ArrayList<String>();
+            int maxFieldSize = 1000;
+
+            for (String city : org.getCities()) {
+                if (buffer.length() > maxFieldSize) {
+                    descriptions.add(buffer.substring(1));
+                    buffer = new StringBuilder();
+                }
+                buffer.append("," + city);
+            }
+            if (buffer.length() > 0)
+                descriptions.add(buffer.substring(1));
+
+            if(descriptions.size() > 0)
+                context.setAttributeValues("description", descriptions.toArray());
+        }
+    }
+
+
     private Attributes buildAttributes(OrgExt org) {
         Attributes attrs = new BasicAttributes();
         BasicAttribute ocattr = new BasicAttribute("objectclass");
@@ -284,6 +339,32 @@ public class OrgsDao {
             attrs.put("destinationIndicator", org.getNumericId().toString());
 
         return attrs;
+    }
+
+    private void mapToContext(OrgExt org, DirContextOperations context) {
+        context.setAttributeValues("objectClass", new String[] { "top", "organization" });
+        context.setAttributeValue("o", org.getId());
+        setOrgField(context, "businessCategory", org.getOrgType());
+        setOrgField(context, "postalAddress", org.getAddress());
+        if(org.getNumericId() != null)
+            setOrgField(context, "destinationIndicator", org.getNumericId().toString());
+    }
+
+    private void setOrgField(DirContextOperations context, String fieldName, Object value) {
+        if ((value instanceof String && !StringUtils.isEmpty(value.toString()))
+             || (!(value instanceof String) && value != null)) {
+            context.setAttributeValue(fieldName, value);
+        } else {
+            Object[] values = context.getObjectAttributes(fieldName);
+            if (values != null) {
+                if (values.length == 1) {
+                    LOG.info("Removing attribute " + fieldName);
+                    context.removeAttributeValue(fieldName, values[0]);
+                } else {
+                    LOG.error("Multiple values encountered for field " + fieldName + ", expected a single value");
+                }
+            }
+        }
     }
 
     public String[] getOrgTypeValues() {
