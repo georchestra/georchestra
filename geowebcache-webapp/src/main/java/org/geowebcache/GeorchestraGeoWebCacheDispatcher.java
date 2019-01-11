@@ -67,7 +67,7 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher {
 +"  <body>"
 +"    <!-- geOrchestra header -->"
 +"    <div id=\"go_head\">"
-+"      <iframe src=\"/header/?active=geowebcache\" style=\"width:100%;height:@header.height@px;border:none;overflow:hidden;\" scrolling=\"no\" frameborder=\"0\"></iframe>"
++"      <iframe src=\"/header/?active=geowebcache\" style=\"width:100%;height:@headerHeight@px;border:none;overflow:hidden;\" scrolling=\"no\" frameborder=\"0\"></iframe>"
 +"    </div>"
 +"    <!-- end of geOrchestra header -->";
     /**
@@ -93,9 +93,9 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher {
     protected void init() throws IOException {
         if ((georchestraConfiguration != null) && (georchestraConfiguration.activated())) {
             String instanceName = georchestraConfiguration.getProperty("instanceName");
-            String headerHeight = georchestraConfiguration.getProperty("header.height");
+            String headerHeight = georchestraConfiguration.getProperty("headerHeight");
             georHeaderInclude = georHeaderInclude.replace("@instanceName@", instanceName);
-            georHeaderInclude = georHeaderInclude.replace("@header.height@", headerHeight);
+            georHeaderInclude = georHeaderInclude.replace("@headerHeight@", headerHeight);
         } else {
             // Default values (nested into the geowebcache.properties)
             InputStream defaultGwcProp = this.getClass().getResourceAsStream("/geowebcache.properties");
@@ -104,7 +104,7 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher {
                 Properties prop = new Properties();
                 prop.load(defaultGwcProp);
                 georHeaderInclude = georHeaderInclude.replace("@instanceName@", prop.getProperty("instanceName", "geOrchestra"));
-                georHeaderInclude = georHeaderInclude.replace("@header.height@", prop.getProperty("header.height", "90"));
+                georHeaderInclude = georHeaderInclude.replace("@headerHeight@", prop.getProperty("headerHeight", "90"));
             } finally {
                 if (defaultGwcProp != null)
                     defaultGwcProp.close();
