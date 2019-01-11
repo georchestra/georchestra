@@ -35,7 +35,7 @@ psql -d georchestra -f postgresql/080-geofence.sql
 
 ## OGC statistics schema
 
-If the **security proxy** is deployed and ```OGC_STATISTICS``` is true in your setup ([true by default](https://github.com/georchestra/datadir/blob/18.06/analytics/js/GEOR_custom.js#L4)):
+If the **security proxy**' is deployed and its log4j uses the `org.georchestra.ogcservstatistics.log4j.OGCServicesAppender` as configured in the [datadir](https://github.com/georchestra/datadir/blob/docker-master/security-proxy/log4j/log4j.properties):
 ```
 psql -d georchestra -f postgresql/050-ogc-server-statistics.sql
 ```
