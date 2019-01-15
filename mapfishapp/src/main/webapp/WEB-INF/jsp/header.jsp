@@ -15,8 +15,8 @@ try {
   ApplicationContext ctx = RequestContextUtils.getWebApplicationContext(request);
   GeorchestraConfiguration georConfig = (GeorchestraConfiguration) ctx.getBean(GeorchestraConfiguration.class);
   if (georConfig.activated()) {
-    headerHeight = georConfig.getProperty("headerHeight");
-    headerUrl = georConfig.getProperty("headerUrl");
+    headerHeight = georConfig.getProperty("headerHeight", headerHeight);
+    headerUrl = georConfig.getProperty("headerUrl", headerUrl);
   }
 } catch (Exception e) {
   // Ignoring and keeping the default configuration

@@ -48,8 +48,8 @@ try {
   if ((ctx.getBean(GeorchestraConfiguration.class) != null)
     && (((GeorchestraConfiguration) ctx.getBean(GeorchestraConfiguration.class)).activated())) {
       georDatadirActivated = true;
-      instanceName = ctx.getBean(GeorchestraConfiguration.class).getProperty("instanceName");
-      defaultLanguage = ctx.getBean(GeorchestraConfiguration.class).getProperty("language");
+      instanceName = ctx.getBean(GeorchestraConfiguration.class).getProperty("instanceName", instanceName);
+      defaultLanguage = ctx.getBean(GeorchestraConfiguration.class).getProperty("language", defaultLanguage);
       georCustomPath = "/ws/app/js/GEOR_custom.js";
     }
 } catch (Exception e) {
