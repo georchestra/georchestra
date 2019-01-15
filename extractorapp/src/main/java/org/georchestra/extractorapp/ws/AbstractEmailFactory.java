@@ -47,7 +47,6 @@ public abstract class AbstractEmailFactory {
 	protected String from;
 	protected String bodyEncoding;
 	protected String subjectEncoding;
-	protected String[] languages;
 	protected ExpiredArchiveDaemon expireDeamon;
 	protected String  emailAckTemplateFile;
 	protected String  emailTemplateFile;
@@ -69,7 +68,6 @@ public abstract class AbstractEmailFactory {
             emailHtml = georConfig.getProperty("emailHtml");
             replyTo = georConfig.getProperty("replyTo");
             from = georConfig.getProperty("from");
-            languages = georConfig.getProperty("language").split(",");
             extraKeywordsFile = String.format("i18n/extra_keywords_%s", georConfig.getProperty("language"));
             emailSubject = georConfig.getProperty("emailsubject");
             emailAckTemplateFile = String.format("%s/templates/extractor-email-ack-template.tpl", georConfig.getContextDataDir());
@@ -229,13 +227,6 @@ public abstract class AbstractEmailFactory {
     public void setSubjectEncoding(String subjectEncoding) {
         checkState();
         this.subjectEncoding = subjectEncoding;
-    }
-    public String[] getLanguages() {
-        return languages;
-    }
-    public void setLanguages(String[] languages) {
-        checkState();
-        this.languages = languages;
     }
     public ExpiredArchiveDaemon getExpireDeamon() {
     	return this.expireDeamon;

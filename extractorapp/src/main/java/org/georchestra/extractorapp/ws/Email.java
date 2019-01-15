@@ -52,7 +52,6 @@ public abstract class Email {
     private String from;
     private String bodyEncoding;
     private String subjectEncoding;
-    private String[] languages;
     private String[] recipients;
     private String subject;
     
@@ -62,7 +61,7 @@ public abstract class Email {
             final String emailSubject, final String smtpHost,
             final int smtpPort, final String emailHtml, final String replyTo,
             final String from, final String bodyEncoding,
-            final String subjectEncoding, final String[] languages, GeorchestraConfiguration georConfig) {
+            final String subjectEncoding, GeorchestraConfiguration georConfig) {
 
         this.recipients = recipients;
         this.subject = emailSubject;
@@ -73,7 +72,6 @@ public abstract class Email {
         this.from = from;
         this.bodyEncoding = bodyEncoding;
         this.subjectEncoding = subjectEncoding;
-        this.languages = languages;
         this.georConfig = georConfig;
     }
 
