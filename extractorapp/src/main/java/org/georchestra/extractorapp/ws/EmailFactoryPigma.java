@@ -78,6 +78,7 @@ public class EmailFactoryPigma extends AbstractEmailFactory {
 			String msg = new String(msgAck);
 			if (msg != null) {
 				msg = msg.replaceAll("\\{publicUrl\\}", this.georConfig.getProperty("publicUrl"));
+				msg = msg.replaceAll("\\{instanceName\\}", this.georConfig.getProperty("instanceName"));
 			}
 			// Normalize newlines
 			msg = msg.replaceAll("\n[\n]+", "\n\n");

@@ -59,6 +59,7 @@ public class EmailFactoryDefault extends AbstractEmailFactory {
                 String msg = new String(msgDone);
                 if (msg != null) {
                     msg = msg.replaceAll("\\{publicUrl\\}", this.georConfig.getProperty("publicUrl"));
+                    msg = msg.replaceAll("\\{instanceName\\}", this.georConfig.getProperty("instanceName"));
                     msg = msg.replace("{link}", url);
                     msg = msg.replace("{emails}", Arrays.toString(recipients));
                     msg = msg.replace("{expiry}", String.valueOf(expiry));
@@ -82,6 +83,7 @@ public class EmailFactoryDefault extends AbstractEmailFactory {
                 String msg = new String(msgAck);
                 if (msg != null) {
                     msg = msg.replaceAll("\\{publicUrl\\}", this.georConfig.getProperty("publicUrl"));
+                    msg = msg.replaceAll("\\{instanceName\\}", this.georConfig.getProperty("instanceName"));
                 }
                 // Normalize newlines
                 msg = msg.replaceAll("\n[\n]+", "\n\n");
