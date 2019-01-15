@@ -471,7 +471,7 @@ GEOR.config = (function() {
             country: 'FR',         // France
             //adminCode1: '75',    // Region
             style: 'short',        // verbosity of results
-            lang: 'fr',
+            lang: 'en',
             featureClass: 'P',     // class category: populated places
             maxRows: 20            // maximal number of results
         }),
