@@ -32,7 +32,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.console.Configuration;
 import org.georchestra.console.bs.ExpiredTokenManagement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,9 +52,6 @@ public class HomeController {
     private ExpiredTokenManagement tokenManagement;
 
     private Configuration config;
-
-    @Autowired
-    private GeorchestraConfiguration georConfig;
 
     @Autowired
     private ServletContext context;
