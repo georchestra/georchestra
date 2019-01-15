@@ -41,7 +41,7 @@ public class EmailFactoryDefault extends AbstractEmailFactory {
 
         return new Email(request, recipients, emailSubject, this.smtpHost,
                 this.smtpPort, this.emailHtml, this.replyTo, this.from,
-                this.bodyEncoding, this.subjectEncoding, this.languages, this.georConfig) {
+                this.bodyEncoding, this.subjectEncoding, this.georConfig) {
             public void sendDone(List<String> successes, List<String> failures,
                     List<String> oversized, long fileSize)
                     throws MessagingException {

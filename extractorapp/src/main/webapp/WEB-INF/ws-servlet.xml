@@ -57,7 +57,6 @@
         <property name="from" value="psc@georchestra.org"/>
         <property name="bodyEncoding" value="UTF-8"/>
         <property name="subjectEncoding" value="UTF-8"/>
-        <property name="languages" value="en"/>
         <property name="expireDeamon" ref="expire-daemon"/>
         <property name="emailTemplateFile" value="/WEB-INF/templates/extractor-email-template.txt"/>
         <property name="emailAckTemplateFile" value="/WEB-INF/templates/extractor-email-ack-template.txt"/>

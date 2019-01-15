@@ -37,7 +37,6 @@ public class EmailDefaultParams {
     private String from;
     private String bodyEncoding;
     private String subjectEncoding;
-    private String[] languages;
     
     private boolean frozen = false;
     
@@ -57,7 +56,6 @@ public class EmailDefaultParams {
         from = defaults.from;
         bodyEncoding = defaults.bodyEncoding;
         subjectEncoding = defaults.subjectEncoding;
-        languages = defaults.languages;
     }
     
     // -------------- Not public API -------------- // 
@@ -156,12 +154,5 @@ public class EmailDefaultParams {
     public void setSubjectEncoding(String subjectEncoding) {
         checkState();
         this.subjectEncoding = subjectEncoding;
-    }
-    public String[] getLanguages() {
-        return languages;
-    }
-    public void setLanguages(String[] languages) {
-        checkState();
-        this.languages = languages;
     }
 }
