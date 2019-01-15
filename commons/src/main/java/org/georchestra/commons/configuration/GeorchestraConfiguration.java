@@ -119,12 +119,18 @@ public class GeorchestraConfiguration {
         return prop;
     }
 
-    public String getProperty(String key) {
+    public String getProperty(String key, String defaultValue) {
         if (!this.activated)
-            return null;
+            return defaultValue;
         if (this.applicationSpecificProperties.getProperty(key) != null)
             return this.applicationSpecificProperties.getProperty(key);
-        return this.defaultProperties.getProperty(key);
+        if (this.defaultProperties.getProperty(key) != null)
+            return this.defaultProperties.getProperty(key);
+        return defaultValue;
+    }
+
+    public String getProperty(String key) {
+        return getProperty(key, null);
     }
 
     public boolean activated() {
