@@ -41,13 +41,12 @@ response.setHeader("Cache-Control", "private, max-age=31536000");
 */
 
 // Using georchestra autoconf
-String defaultLanguage = null;
-String georLdapadminPublicContextPath = null;
-String ldapadm = null;
+String defaultLanguage = "en";
+String consolePublicContextPath = "/console";
 try {
   ApplicationContext ctx = RequestContextUtils.getWebApplicationContext(request);
-  defaultLanguage = ctx.getBean(GeorchestraConfiguration.class).getProperty("language");
-  georLdapadminPublicContextPath = ctx.getBean(GeorchestraConfiguration.class).getProperty("consolePublicContextPath");
+  defaultLanguage = ctx.getBean(GeorchestraConfiguration.class).getProperty("language", defaultLanguage);
+  consolePublicContextPath = ctx.getBean(GeorchestraConfiguration.class).getProperty("consolePublicContextPath", consolePublicContextPath);
 } catch (Exception e) {}
 
 // to prevent problems with proxies, and for now:
@@ -59,11 +58,6 @@ String active = request.getParameter("active");
 if (active == null) {
     active = "none";
 }
-
-if (georLdapadminPublicContextPath != null)
-    ldapadm = georLdapadminPublicContextPath;
-else
-    ldapadm = "/console";
 
 Locale rLocale = request.getLocale();
 ResourceBundle bundle = org.georchestra._header.Utf8ResourceBundle.getBundle("_header.i18n.index", rLocale);
@@ -354,7 +348,7 @@ if(sec_roles != null) {
                         <li class="active"><a><fmt:message key="users"/></a></li>
                             </c:when>
                             <c:otherwise>
-                        <li><a href="<%= ldapadm %>/manager/"><fmt:message key="users"/></a></li>
+                        <li><a href="<%= consolePublicContextPath %>/manager/"><fmt:message key="users"/></a></li>
                             </c:otherwise>
                         </c:choose>
                         </c:when>
@@ -369,7 +363,7 @@ if(sec_roles != null) {
         <c:choose>
             <c:when test='<%= anonymous == false %>'>
         <p class="logged">
-            <a href="<%=ldapadm %>/account/userdetails"><%=request.getHeader("sec-username") %></a><span class="light"> | </span><a href="/logout"><fmt:message key="logout"/></a>
+            <a href="<%=consolePublicContextPath %>/account/userdetails"><%=request.getHeader("sec-username") %></a><span class="light"> | </span><a href="/logout"><fmt:message key="logout"/></a>
         </p>
             </c:when>
             <c:otherwise>

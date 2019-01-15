@@ -42,10 +42,10 @@ try {
   GeorchestraConfiguration georConfig = (GeorchestraConfiguration) ctx.getBean(GeorchestraConfiguration.class);
   
   if (georConfig.activated()) {
-    defaultLanguage = georConfig.getProperty("language");
-    instanceName = georConfig.getProperty("instanceName");
-    headerHeight = georConfig.getProperty("headerHeight");
-    headerUrl = georConfig.getProperty("headerUrl");
+    defaultLanguage = georConfig.getProperty("language", defaultLanguage);
+    instanceName = georConfig.getProperty("instanceName", instanceName);
+    headerHeight = georConfig.getProperty("headerHeight", headerHeight);
+    headerUrl = georConfig.getProperty("headerUrl", headerUrl);
   }
 } catch (Exception e) {
   // Ignoring and keeping the default configuration
