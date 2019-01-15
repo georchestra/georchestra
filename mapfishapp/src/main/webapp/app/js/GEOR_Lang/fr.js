@@ -77,10 +77,6 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "Proportional symbols": "Symboles proportionnels",
     /* GEOR_FeatureDataModel.js strings */
     "objects": "objets",
-    /* GEOR_address.js strings */
-    "Go to: ": "Aller à : ",
-    "searching...": "recherche en cours...",
-    "adressSearchExemple": "ex: 4, Hugo, Brest",
     /* GEOR_ajaxglobal.js strings strings */
     "Server did not respond.": "Le serveur n'a pas répondu.",
     "Server access denied.": "Le serveur a refusé de répondre.",
@@ -160,6 +156,7 @@ OpenLayers.Lang.fr = OpenLayers.Util.extend(OpenLayers.Lang.fr, {
     "server upload error: ERROR":
         "L'upload du fichier a échoué. ${ERROR}",
     /* GEOR_geonames.js strings */
+    "Go to: ": "Aller à : ",
     /* GEOR_getfeatureinfo.js strings */
     "<div>Searching...</div>": "<div>Recherche en cours...</div>",
     "<div>No layer selected</div>": "<div>Aucune couche sélectionnée</div>",

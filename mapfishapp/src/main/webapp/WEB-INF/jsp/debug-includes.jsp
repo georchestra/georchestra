@@ -5,7 +5,6 @@
     <script type="text/javascript" src="<%= context %>/lib/externals/openlayers/lib/OpenLayers.js"></script>
     <script type="text/javascript" src="<%= context %>/lib/externals/openlayers/lib/OpenLayers/Lang/<%= lang %>.js"></script>
     <script type="text/javascript" src="<%= context %>/lib/externals/geoext/lib/GeoExt.js"></script>
-    <script type="text/javascript" src="<%= context %>/lib/externals/sandbox/ux/OpenAddressesSearchCombo/lib/GeoExt.ux/OpenAddressesSearchCombo.js"></script>
     <script type="text/javascript" src="<%= context %>/lib/externals/ext/src/locale/ext-lang-<%= lang %>.js"></script>
 
     <script type="text/javascript" src="<%= context %>/lib/addins/loadingPanel/trunk/lib/OpenLayers/Control/LoadingPanel.js"></script>
@@ -60,7 +59,6 @@
     <script type="text/javascript" src="<%= context %>/app/js/GEOR_referentials.js"></script>
     <script type="text/javascript" src="<%= context %>/app/js/GEOR_geonames.js"></script>
     <script type="text/javascript" src="<%= context %>/app/js/GEOR_helper.js"></script>
-    <script type="text/javascript" src="<%= context %>/app/js/GEOR_address.js"></script>
     <script type="text/javascript" src="<%= context %>/app/js/GEOR_scalecombo.js"></script>
     <script type="text/javascript" src="<%= context %>/app/js/GEOR_tools.js"></script>
     <script type="text/javascript" src="<%= context %>/app/js/GEOR_toolbar.js"></script>

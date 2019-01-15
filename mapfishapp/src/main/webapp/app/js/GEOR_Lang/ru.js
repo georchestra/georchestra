@@ -73,10 +73,6 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "Proportional symbols": "Пропорциональные символы",
     /* GEOR_FeatureDataModel.js strings */
     "objects": "объекты",
-    /* GEOR_address.js strings */
-    "Go to: ": "Перейти в...",
-    "searching...": "Идёт поиск...",
-    "adressSearchExemple": "пример поиска адреса : 4, Hugo, Brest",
     /* GEOR_ajaxglobal.js strings strings */
     "Server did not respond.": "Сервер не дал ответа",
     "Server access denied.": "Cервер отказался отвечать",
@@ -140,6 +136,7 @@ OpenLayers.Lang.ru = OpenLayers.Util.extend(OpenLayers.Lang.ru, {
     "fileupload_error_unsupportedFormat": "This format is not supported.",*/
     // TODO "server upload error: ERROR": "Upload failed. ${ERROR}",
     /* GEOR_geonames.js strings */
+    "Go to: ": "Перейти в...",
     /* GEOR_getfeatureinfo.js strings */
     "<div>Searching...</div>": "<div>Идёт поиск...</div>",
     "<div>Search on objects active for NAME layer. Click on the map.</div>": "<div>Поиск объектов запущен на слое ${NAME}. Щёлкните мышкой на карте.</div>",

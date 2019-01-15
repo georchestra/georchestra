@@ -22,7 +22,6 @@
  * @include GEOR_mappanel.js
  * @include GEOR_managelayers.js
  * @include GEOR_geonames.js
- * @include GEOR_address.js
  * @include GEOR_referentials.js
  * @include GEOR_ajaxglobal.js
  * @include GEOR_localStorage.js
@@ -210,12 +209,6 @@ Ext.namespace("GEOR");
                 tabTip: tr("Recentering on a selection of referential layers")
             }, GEOR.referentials.create(map, GEOR.config.NS_LOC))
         ];
-        if (GEOR.address && GEOR.config.RECENTER_ON_ADDRESSES) {
-            recenteringItems.push(Ext.apply({
-                title: tr("Addresses"),
-                tabTip: tr("Recentering on a given address")
-            }, GEOR.address.create(map)));
-        }
 
         /*
          * Create the page's layout.

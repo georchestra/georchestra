@@ -77,10 +77,6 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "Proportional symbols": "Proportionale Symbole",
     /* GEOR_FeatureDataModel.js strings */
     "objects": "Objekte",
-    /* GEOR_address.js strings */
-    "Go to: ": "Gehen zu : ",
-    "searching...": "suchen...",
-    "adressSearchExemple": "z.B.: Hausnummer, Straße, Ort",
     /* GEOR_ajaxglobal.js strings strings */
     "Server did not respond.": "Der Server hat nicht geantwortet.",
     "Server access denied.": "Der Server verweigert die Verbindung.",
@@ -159,6 +155,7 @@ OpenLayers.Lang.de = OpenLayers.Util.extend(OpenLayers.Lang.de, {
     "server upload error: ERROR":
         "Fehler beim Dateihochladen. ${ERROR}",
     /* GEOR_geonames.js strings */
+    "Go to: ": "Gehen zu : ",
     /* GEOR_getfeatureinfo.js strings */
     "<div>Searching...</div>": "<div>suchen...</div>",
     "<div>No layer selected</div>": "<div>kein Layer markiert</div>",
