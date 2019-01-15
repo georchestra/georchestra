@@ -137,6 +137,7 @@ public class Email {
 
 		// Replace {publicUrl} token with the configured public URL
         this.emailBody = this.emailBody.replaceAll("\\{publicUrl\\}", this.georConfig.getProperty("publicUrl"));
+        this.emailBody = this.emailBody.replaceAll("\\{instanceName\\}", this.georConfig.getProperty("instanceName"));
         LOG.debug("body: " + this.emailBody);
 
         final Session session = Session.getInstance(System.getProperties(), null);
