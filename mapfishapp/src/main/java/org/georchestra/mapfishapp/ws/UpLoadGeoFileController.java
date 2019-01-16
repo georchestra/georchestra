@@ -300,8 +300,6 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 
             fileManagement.setWorkDirectory(workDirectory);
 
-            long fileSize = 0;
-
             // upload file action
             if (request instanceof MultipartHttpServletRequest) {
                 MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
@@ -316,7 +314,6 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
                 }
                 String fileName = (String) fileNames.next();
                 upLoadFile = multipartRequest.getFile(fileName);
-                fileSize = upLoadFile.getSize();
                 currentFile = createFileDescriptor(upLoadFile
                         .getOriginalFilename());
             }
@@ -395,7 +392,6 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
                         + guessedExtension);
                 FileUtils.moveFile(destFile, renamedFile);
                 currentFile = new FileDescriptor(renamedFile.getCanonicalPath());
-                fileSize = renamedFile.length();
                 fileManagement.setFileDescriptor(currentFile);
                 fileManagement.setSaveFile(renamedFile);
                 fileManagement.addFileExtension(guessedExtension);
