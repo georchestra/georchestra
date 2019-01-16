@@ -154,7 +154,7 @@ public class Proxy {
      * must be defined
      */
     private String defaultTarget;
-    private String publicHostname = "https://georchestra.mydomain.org";
+    private String publicUrl = "https://georchestra.mydomain.org";
 
     private Map<String, String> targets = Collections.emptyMap();
     private HeadersManagementStrategy headerManagement = new HeadersManagementStrategy();
@@ -178,8 +178,8 @@ public class Proxy {
         this.httpClientTimeout = timeout;
     }
 
-    public void setPublicHostname(String publicHostname) {
-        this.publicHostname = publicHostname;
+    public void setPublicUrl(String publicUrl) {
+        this.publicUrl = publicUrl;
     }
 
     public Integer getHttpClientTimeout() {
@@ -230,7 +230,7 @@ public class Proxy {
         }
 
         // Create a deny permission for URL with same domain
-        String publicDomain = new URL(this.publicHostname).getHost();
+        String publicDomain = new URL(this.publicUrl).getHost();
         this.sameDomainPermissions = new Permissions();
         this.sameDomainPermissions.setDenied(Collections.singletonList(new UriMatcher().setDomain(publicDomain)));
         this.sameDomainPermissions.setAllowByDefault(true);
@@ -334,7 +334,7 @@ public class Proxy {
         }
 
         /*
-         * - deny request with same domain as public_host - deny based on
+         * - deny request with same domain as publicUrl - deny based on
          * proxy-permissions.xml file
          */
         if (this.sameDomainPermissions.isDenied(url) || proxyPermissions.isDenied(url)) {
