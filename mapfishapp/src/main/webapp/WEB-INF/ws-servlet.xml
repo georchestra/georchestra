@@ -22,8 +22,6 @@
     <bean id="multipartResolver"
       class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <property name="maxUploadSize">
-            <!--  Note: this value should be the maximum size specified at the bean 
-                  org.georchestra.mapfishapp.ws.UpLoadGeoFileController -->
             <value>8388608</value>
         </property>
         <property name="maxInMemorySize">
