@@ -37,6 +37,9 @@ If you need more information, please ask on the [geOrchestra mailing list](https
 
 For help setting up your instance, or for dev-related questions, use the [#georchestra](https://kiwiirc.com/client/irc.freenode.net/georchestra) IRC channel or the [dev/tech list](https://groups.google.com/forum/#!forum/georchestra-dev).
 
+If you found a bug or want to propose improvements and new features, please [fill a new issue](https://github.com/georchestra/georchestra/issues/new/choose) in the GitHub tracker.
+
+If you want to report a **security issue**, please don't fill an issue. Instead, send a mail to <psc@georchestra.org>, you will be later contacted for more details.
 
 ## More
 
