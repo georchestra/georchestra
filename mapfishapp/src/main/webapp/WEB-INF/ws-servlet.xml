@@ -26,7 +26,7 @@
                   org.georchestra.mapfishapp.ws.UpLoadGeoFileController -->
             <value>8388608</value>
         </property>
-        <property name="MaxInMemorySize">
+        <property name="maxInMemorySize">
             <!--  default value 10240 bytes -->
             <value>10240</value> 
         </property>
