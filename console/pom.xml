@@ -89,6 +89,12 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers</artifactId>
+      <version>1.10.5</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.tuckey</groupId>
       <artifactId>urlrewritefilter</artifactId>
       <version>3.0.4</version>
