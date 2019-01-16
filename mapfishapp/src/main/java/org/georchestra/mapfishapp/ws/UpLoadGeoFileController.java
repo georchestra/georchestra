@@ -210,10 +210,6 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
     private String responseCharset;
     private String tempDirectory;
 
-    private long zipSizeLimit;
-    private long kmlSizeLimit;
-    private long gmlSizeLimit;
-
     /**
      * The current file that was upload an is in processing
      *
@@ -230,18 +226,6 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 
     public void setResponseCharset(String responseCharset) {
         this.responseCharset = responseCharset;
-    }
-
-    public void setZipSizeLimit(long zipSizeLimit) {
-        this.zipSizeLimit = zipSizeLimit;
-    }
-
-    public void setKmlSizeLimit(long kmlSizeLimit) {
-        this.kmlSizeLimit = kmlSizeLimit;
-    }
-
-    public void setGmlSizeLimit(long gmlSizeLimit) {
-        this.gmlSizeLimit = gmlSizeLimit;
     }
 
     /**
@@ -429,19 +413,6 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 
             // processes the uploaded || downloaded file
             Status st = Status.ready;
-
-            // validates the size, depending on the file type.
-            // - it's a double-check, since normally
-            // a MaxUploadSizeExceededException has already been
-            // launched and handled
-            long limit = getSizeLimit(currentFile.originalFileExt);
-            if (fileSize > limit) {
-                long size = limit / MEGABYTE; // converts to Mb
-                final String msg = Status.sizeError.getMessage(size + "MB");
-                writeErrorResponse(response, Status.sizeError, msg,
-                        HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE);
-                return;
-            }
 
             // geofile uploaded - in case of downloaded file,
             // this has already been done.
@@ -667,39 +638,6 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
         }
 
         return null;
-    }
-
-    /**
-     * Returns the size limit (bytes) taking into account the file format.
-     *
-     * @param fileExtension
-     *
-     * @return the limit
-     */
-    private long getSizeLimit(final String fileExtension) {
-
-        if (this.zipSizeLimit <= 0)
-            throw new IllegalStateException("zipSizeLimit was not set");
-        if (this.kmlSizeLimit <= 0)
-            throw new IllegalStateException("kmlSizeLimit was not set");
-        if (this.gmlSizeLimit <= 0)
-            throw new IllegalStateException("gmlSizeLimit was not set");
-
-        if ("zip".equalsIgnoreCase(fileExtension)) {
-
-            return this.zipSizeLimit;
-
-        } else if ("kml".equalsIgnoreCase(fileExtension)) {
-
-            return this.kmlSizeLimit;
-
-        } else if ("gml".equalsIgnoreCase(fileExtension)) {
-
-            return this.gmlSizeLimit;
-
-        } else {
-            throw new IllegalArgumentException("Unsupported format");
-        }
     }
 
     /**
