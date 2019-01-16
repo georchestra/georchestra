@@ -1,6 +1,8 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: Create a report to help us improve.
+
+If the bug is a security issue, please **do not fill an issue**, and instead send a mail to <psc@georchestra.org>.
 
 ---
 
