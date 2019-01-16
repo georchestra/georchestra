@@ -81,7 +81,7 @@ public class HeadersManagementStrategy {
 
     public void init() {
         if ((georchestraConfiguration != null) && (georchestraConfiguration.activated())) {
-            referer = georchestraConfiguration.getProperty("public.host");
+            referer = georchestraConfiguration.getProperty("publicUrl");
         }
     }
 

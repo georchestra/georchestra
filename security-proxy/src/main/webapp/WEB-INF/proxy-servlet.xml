@@ -19,7 +19,7 @@
     </bean>
 
     <bean id="proxy"  init-method="init" class="org.georchestra.security.Proxy">
-          <property name="publicHostname" value="${public.host:https://georchestra.mydomain.org}"/>
+          <property name="publicHostname" value="${publicUrl:https://georchestra.mydomain.org}"/>
           <property name="headerManagement" ref="headerManagementBean"/>
           <property name="defaultCharset" value="UTF-8"/>
           <property name="defaultTarget" value="${defaultTarget:/header/}" />
@@ -65,7 +65,7 @@
              own referrer header
 
              Comment out property to use client referrer instead of this host -->
-        <property name="referer" value="${public.host}/"/>
+        <property name="referer" value="${publicUrl}/"/>
         <property name="headerProviders">
             <list>
                 <bean class="org.georchestra.security.TrustedProxyRequestHeaderProvider" />

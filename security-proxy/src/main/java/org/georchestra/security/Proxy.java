@@ -334,7 +334,7 @@ public class Proxy {
         }
 
         /*
-         * - deny request with same domain as public_host - deny based on
+         * - deny request with same domain as publicUrl - deny based on
          * proxy-permissions.xml file
          */
         if (this.sameDomainPermissions.isDenied(url) || proxyPermissions.isDenied(url)) {
