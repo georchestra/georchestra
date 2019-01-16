@@ -35,17 +35,17 @@ Here we describe how to configure the properties related to the [proxy-servlet.x
 
 The `proxy` bean is created at [proxy-servlet.xml](./src/main/webapp/WEB-INF/proxy-servlet.xml#L21-L61) using the [org.georchestra.security.Proxy](./src/main/java/org/georchestra/security/Proxy.java) class.
 
-#### `publicHostname` property
+#### `publicUrl` property
 
-The [`publicHostname` property](./src/main/java/org/georchestra/security/Proxy.java#L157) can be configured as follows:
+The [`publicUrl` property](./src/main/java/org/georchestra/security/Proxy.java#L157) can be configured as follows:
 
 | Priority | From                                                                                                                                                           | Code                                                                                        | Value                              | Comments |
 | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | ---------------------------------- | -------- |
-| Lowest   | [Default value](./src/main/java/org/georchestra/security/Proxy.java#L157)                                                                                      | `private String publicHostname = "https://georchestra.mydomain.org";`                       | `https://georchestra.mydomain.org` |          |
-|          | [Bean creation](./src/main/webapp/WEB-INF/proxy-servlet.xml#L22) / default placeholder value                                                                   | `<property name="publicHostname" value="${publicUrl:https://georchestra.mydomain.org}"/>`   | `https://georchestra.mydomain.org` |          |
-|          | [Bean creation](./src/main/webapp/WEB-INF/proxy-servlet.xml#L22) / [Hardcoded application context property file](#hardcoded-application-context-property-file) | `<property name="publicHostname" value="${publicUrl:https://georchestra.mydomain.org}"/>`   |                                    | Not set  |
-|          | [Bean creation](./src/main/webapp/WEB-INF/proxy-servlet.xml#L22) / [Datadir common context property file](#datadir-common-context-property-file)               | `<property name="publicHostname" value="${publicUrl:https://georchestra.mydomain.org}"/>`   | `https://georchestra.mydomain.org` |          |
-| Highest  | [Bean creation](./src/main/webapp/WEB-INF/proxy-servlet.xml#L22) / [Datadir application context property file](#datadir-application-context-property-file)     | `<property name="publicHostname" value="${publicUrl:https://georchestra.mydomain.org}"/>`   |                                    | Not set  |
+| Lowest   | [Default value](./src/main/java/org/georchestra/security/Proxy.java#L157)                                                                                      | `private String publicUrl = "https://georchestra.mydomain.org";`                       | `https://georchestra.mydomain.org` |          |
+|          | [Bean creation](./src/main/webapp/WEB-INF/proxy-servlet.xml#L22) / default placeholder value                                                                   | `<property name="publicUrl" value="${publicUrl:https://georchestra.mydomain.org}"/>`   | `https://georchestra.mydomain.org` |          |
+|          | [Bean creation](./src/main/webapp/WEB-INF/proxy-servlet.xml#L22) / [Hardcoded application context property file](#hardcoded-application-context-property-file) | `<property name="publicUrl" value="${publicUrl:https://georchestra.mydomain.org}"/>`   |                                    | Not set  |
+|          | [Bean creation](./src/main/webapp/WEB-INF/proxy-servlet.xml#L22) / [Datadir common context property file](#datadir-common-context-property-file)               | `<property name="publicUrl" value="${publicUrl:https://georchestra.mydomain.org}"/>`   | `https://georchestra.mydomain.org` |          |
+| Highest  | [Bean creation](./src/main/webapp/WEB-INF/proxy-servlet.xml#L22) / [Datadir application context property file](#datadir-application-context-property-file)     | `<property name="publicUrl" value="${publicUrl:https://georchestra.mydomain.org}"/>`   |                                    | Not set  |
 
 #### `defaultTarget` property
 
