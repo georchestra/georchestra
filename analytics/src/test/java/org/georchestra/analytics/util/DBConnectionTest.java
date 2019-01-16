@@ -2,7 +2,6 @@ package org.georchestra.analytics.util;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.georchestra.analytics.util.DBConnection;
-import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Assume;
@@ -17,9 +16,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DBConnectionTest {
-
-    @Autowired
-    private GeorchestraConfiguration georConfig;
 
     @Test
     // Test parameter remplacment
