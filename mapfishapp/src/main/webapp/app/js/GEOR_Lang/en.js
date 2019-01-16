@@ -29,7 +29,6 @@ OpenLayers.Lang.en = OpenLayers.Util.extend(OpenLayers.Lang.en, {
         "Feature attributes will be displayed in this panel.</p>",
     /* GEOR_ClassificationPanel.js strings */
     /* GEOR_FeatureDataModel.js strings */
-    /* GEOR_address.js strings */
     /* GEOR_ajaxglobal.js strings strings */
     "ajax.badresponse":
         "The server responded, but the content of the response is " +

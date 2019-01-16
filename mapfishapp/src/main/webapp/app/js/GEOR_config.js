@@ -302,23 +302,6 @@ GEOR.config = (function() {
             1000 / 39.37 / 0.28),
 
         /**
-         * Constant: RECENTER_ON_ADDRESSES
-         * {Boolean} whether to display the recenter on addresses tab.
-         * Defaults to false
-         */
-        RECENTER_ON_ADDRESSES: getCustomParameter("RECENTER_ON_ADDRESSES",
-            false),
-
-        /**
-         * Constant: ADDRESS_URL
-         * {String} The URL to the OpenAddresses web service.
-         * Required if and only if RECENTER_ON_ADDRESSES is set to true.
-         * Defaults to "/addrapp/addresses"
-         */
-        ADDRESS_URL: getCustomParameter("ADDRESS_URL",
-            "/addrapp/addresses"),
-
-        /**
          * Constant: DEACCENTUATE_REFERENTIALS_QUERYSTRING
          * {Boolean} Whether to deaccentuate the referentials widget query string
          * Defaults to true
