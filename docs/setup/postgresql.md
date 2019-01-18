@@ -2,14 +2,13 @@
 
 The "georchestra" database hosts several schemas, which are specific to the deployed modules:
 ```
-createuser -SDRI georchestra
-createdb -E UTF8 -T template0 -O georchestra georchestra
-psql -d georchestra -c "ALTER USER \"georchestra\" WITH PASSWORD 'georchestra';"
+CREATE USER georchestra WITH NOCREATEDB NOCREATEROLE PASSWORD 'georchestra';
+CREATE DATABASE georchestra WITH OWNER georchestra TEMPLATE template0 ENCODING UTF8;
 ```
 
 Note 1: It is of course possible to store webapp-specific schemas in separate databases, taking advantage of geOrchestra's extreme configurability.
 
-Note 2: PostGIS extensions are not required in the georchestra database, unless GeoFence is deployed (see below), or ```shared.psql.jdbc.driver=org.postgis.DriverWrapper``` in your configuration (but this is not the default setup).
+Note 2: PostGIS extensions are not required in the georchestra database, unless GeoFence is deployed (see below).
 
 ## Viewer schema
 
