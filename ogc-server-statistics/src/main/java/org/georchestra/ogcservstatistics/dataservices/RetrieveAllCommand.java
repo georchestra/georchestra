@@ -37,7 +37,7 @@ final public class RetrieveAllCommand extends AbstractQueryCommand{
 	final static String USER__COLUMN = "user_name";
 	final static String SERVICE_COLUMN = "service";
 	final static String LAYER_COLUMN = "layer";
-	final static String SECROLE_COLUMN = "secrole";
+	final static String SECROLE_COLUMN = "roles";
 
 	
 	final static String SQL = " SELECT "+ DATE_COLUMN+ "," + USER__COLUMN +","+ SERVICE_COLUMN+","+LAYER_COLUMN+","+SECROLE_COLUMN  
