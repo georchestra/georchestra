@@ -19,6 +19,10 @@
 
 package org.georchestra.ogcservstatistics.dataservices;
 
+import static org.georchestra.ogcservstatistics.dataservices.LogColumns.QUALIFIED_TABLE_NAME;
+import static org.georchestra.ogcservstatistics.dataservices.LogColumns.LAYER_COLUMN;
+import static org.georchestra.ogcservstatistics.dataservices.LogColumns.USER_COLUMN;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -31,11 +35,9 @@ import java.util.Map;
  * @author Mauricio Pazos
  *
  */
-final public class RetrieveLayerConnectionsForUserCommand extends AbstractQueryCommand {
-
-	final static String USER_COLUMN 		= "user_name";
-	final static String LAYER_COLUMN 		= "layer";
-	final static String CONNECTIONS_COLUMN 	= "connections";
+public final class RetrieveLayerConnectionsForUserCommand extends AbstractQueryCommand {
+	
+	private static final String CONNECTIONS_COLUMN 	= "connections";
 
 	/**
 	 * builds the sql query taking into account if a month is or isn't specified.
@@ -49,7 +51,7 @@ final public class RetrieveLayerConnectionsForUserCommand extends AbstractQueryC
 		sql.append(" SELECT ")
 				.append(USER_COLUMN).append(",").append(LAYER_COLUMN )
 				.append(",count(").append(LAYER_COLUMN).append(") as ").append(CONNECTIONS_COLUMN)
-				.append(" FROM ogcstatistics.OGC_SERVICES_LOG");
+				.append(" FROM ").append(QUALIFIED_TABLE_NAME);
 		if(this.month > 0){
 			sql.append(" WHERE EXTRACT(ISOYEAR FROM date) = ? AND EXTRACT(MONTH FROM date) = ?");
 		} else {

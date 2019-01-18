@@ -77,31 +77,17 @@ public abstract class AbstractQueryCommand extends AbstractDataCommand implement
         assert this.connection != null: "database connection is null, use setConnection";
 
         // executes the sql statement and  populates the list with the data present in the result set
-        ResultSet rs = null;
-        PreparedStatement pStmt=null;
-        try {
-            pStmt = prepareStatement();
-          
-            rs = pStmt.executeQuery();
-            
-			this.resultList = new LinkedList<Map<String,Object>>();
+        try (PreparedStatement pStmt = prepareStatement()){
+			try (ResultSet rs = pStmt.executeQuery()) {
 
-            while (rs.next()) {
-                this.resultList.add( getRow(rs));
-            }
+				this.resultList = new LinkedList<>();
 
+				while (rs.next()) {
+					this.resultList.add(getRow(rs));
+				}
+			}
         } catch (SQLException e) {
-            
-            throw new DataCommandException(e.getMessage());
-            
-        } finally{
-            try {
-                if(rs != null) rs.close();
-                if(pStmt != null) pStmt.close();
-                
-            } catch (SQLException e1) {
-                throw new DataCommandException(e1.getMessage());
-            } 
+            throw new DataCommandException(e);
         }
 	}
 

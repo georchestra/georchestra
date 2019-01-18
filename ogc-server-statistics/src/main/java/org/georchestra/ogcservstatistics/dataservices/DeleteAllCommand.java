@@ -19,6 +19,8 @@
 
 package org.georchestra.ogcservstatistics.dataservices;
 
+import static org.georchestra.ogcservstatistics.dataservices.LogColumns.QUALIFIED_TABLE_NAME;
+
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -28,7 +30,7 @@ import java.sql.Statement;
  * @author Mauricio Pazos
  *
  */
-final public class DeleteAllCommand extends AbstractDataCommand {
+public final class DeleteAllCommand extends AbstractDataCommand {
 
 	/**
 	 * This method will execute a SQL Delete!
@@ -37,23 +39,10 @@ final public class DeleteAllCommand extends AbstractDataCommand {
 	 */
 	@Override
 	public void execute() throws DataCommandException {
-
-		//PreparedStatement pStmt=null;
-		Statement pStmt=null;
-        try {
-			pStmt = this.connection.createStatement();
-			pStmt.execute("DELETE FROM ogcstatistics.OGC_SERVICES_LOG");
-			
+        try (Statement pStmt = this.connection.createStatement()){
+			pStmt.execute(String.format("DELETE FROM %s", QUALIFIED_TABLE_NAME));
 		} catch (SQLException e) {
-			e.printStackTrace();
 			throw new DataCommandException(e);
-		} finally{
-            try {
-                if(pStmt != null) pStmt.close();
-                
-            } catch (SQLException e1) {
-                throw new DataCommandException(e1.getMessage());
-            } 
 		}
 	}
 }

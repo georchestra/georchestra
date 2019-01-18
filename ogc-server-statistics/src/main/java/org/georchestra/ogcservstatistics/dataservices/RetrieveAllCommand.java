@@ -19,6 +19,13 @@
 
 package org.georchestra.ogcservstatistics.dataservices;
 
+import static org.georchestra.ogcservstatistics.dataservices.LogColumns.DATE_COLUMN;
+import static org.georchestra.ogcservstatistics.dataservices.LogColumns.LAYER_COLUMN;
+import static org.georchestra.ogcservstatistics.dataservices.LogColumns.QUALIFIED_TABLE_NAME;
+import static org.georchestra.ogcservstatistics.dataservices.LogColumns.SECROLE_COLUMN;
+import static org.georchestra.ogcservstatistics.dataservices.LogColumns.SERVICE_COLUMN;
+import static org.georchestra.ogcservstatistics.dataservices.LogColumns.USER_COLUMN;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -31,31 +38,21 @@ import java.util.Map;
  * @author Mauricio Pazos
  *
  */
-final public class RetrieveAllCommand extends AbstractQueryCommand{
+public final class RetrieveAllCommand extends AbstractQueryCommand{
 
-	final static String DATE_COLUMN = "date";
-	final static String USER__COLUMN = "user_name";
-	final static String SERVICE_COLUMN = "service";
-	final static String LAYER_COLUMN = "layer";
-	final static String SECROLE_COLUMN = "roles";
-
-	
-	final static String SQL = " SELECT "+ DATE_COLUMN+ "," + USER__COLUMN +","+ SERVICE_COLUMN+","+LAYER_COLUMN+","+SECROLE_COLUMN  
-							+ " FROM ogcstatistics.OGC_SERVICES_LOG"
-							+ " ORDER BY "+ DATE_COLUMN+ "," + USER__COLUMN +","+ SERVICE_COLUMN+","+LAYER_COLUMN+","+SECROLE_COLUMN;
+	private static final String SQL = " SELECT "+ DATE_COLUMN+ "," + USER_COLUMN +","+ SERVICE_COLUMN+","+LAYER_COLUMN+","+SECROLE_COLUMN  
+							+ " FROM " + QUALIFIED_TABLE_NAME 
+							+ " ORDER BY "+ DATE_COLUMN+ "," + USER_COLUMN +","+ SERVICE_COLUMN+","+LAYER_COLUMN+","+SECROLE_COLUMN;
  	
 	protected PreparedStatement prepareStatement() throws SQLException{
-
-		PreparedStatement pStmt = this.connection.prepareStatement(SQL);
-		
-		return pStmt;
+		return connection.prepareStatement(SQL);
 	}
 
 	protected Map<String, Object> getRow(ResultSet rs) throws SQLException{
 		
-		Map<String,Object> row = new HashMap<String, Object>(5);
+		Map<String,Object> row = new HashMap<>(5);
 		row.put(DATE_COLUMN, rs.getDate(DATE_COLUMN));
-		row.put(USER__COLUMN, rs.getString(USER__COLUMN));
+		row.put(USER_COLUMN, rs.getString(USER_COLUMN));
 		row.put(SERVICE_COLUMN, rs.getString(SERVICE_COLUMN));
 		row.put(LAYER_COLUMN, rs.getString(LAYER_COLUMN));
 		row.put(SECROLE_COLUMN, rs.getString(SECROLE_COLUMN));

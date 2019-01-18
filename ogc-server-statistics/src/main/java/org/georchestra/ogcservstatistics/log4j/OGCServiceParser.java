@@ -19,6 +19,14 @@
 
 package org.georchestra.ogcservstatistics.log4j;
 
+import static org.georchestra.ogcservstatistics.dataservices.LogColumns.DATE_COLUMN;
+import static org.georchestra.ogcservstatistics.dataservices.LogColumns.LAYER_COLUMN;
+import static org.georchestra.ogcservstatistics.dataservices.LogColumns.ORG_COLUMN;
+import static org.georchestra.ogcservstatistics.dataservices.LogColumns.REQUEST_COLUMN;
+import static org.georchestra.ogcservstatistics.dataservices.LogColumns.SECROLE_COLUMN;
+import static org.georchestra.ogcservstatistics.dataservices.LogColumns.SERVICE_COLUMN;
+import static org.georchestra.ogcservstatistics.dataservices.LogColumns.USER_COLUMN;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.text.DateFormat;
@@ -39,15 +47,6 @@ import java.util.Map;
  *
  */
 public final class OGCServiceParser {
-
-	// Key for hashmap that holds logs information
-	public final static String DATE_COLUMN = "date";
-	public final static String USER_COLUMN = "user_name";
-	public final static String SERVICE_COLUMN = "service";
-	public final static String LAYER_COLUMN = "layer";
-	public final static String REQUEST_COLUMN = "request";
-	public final static String ORG_COLUMN = "org";
-	public final static String SECROLE_COLUMN = "roles";
 
 	private static final String SERVICE_KEYWORD = "SERVICE=";
 	private static final String REQUEST_KEYWORD = "REQUEST=";

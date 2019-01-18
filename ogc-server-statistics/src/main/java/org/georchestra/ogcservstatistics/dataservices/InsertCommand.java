@@ -19,9 +19,15 @@
 
 package org.georchestra.ogcservstatistics.dataservices;
 
-import org.georchestra.ogcservstatistics.log4j.OGCServiceParser;
+import static org.georchestra.ogcservstatistics.dataservices.LogColumns.DATE_COLUMN;
+import static org.georchestra.ogcservstatistics.dataservices.LogColumns.LAYER_COLUMN;
+import static org.georchestra.ogcservstatistics.dataservices.LogColumns.ORG_COLUMN;
+import static org.georchestra.ogcservstatistics.dataservices.LogColumns.QUALIFIED_TABLE_NAME;
+import static org.georchestra.ogcservstatistics.dataservices.LogColumns.REQUEST_COLUMN;
+import static org.georchestra.ogcservstatistics.dataservices.LogColumns.SECROLE_COLUMN;
+import static org.georchestra.ogcservstatistics.dataservices.LogColumns.SERVICE_COLUMN;
+import static org.georchestra.ogcservstatistics.dataservices.LogColumns.USER_COLUMN;
 
-import java.sql.Array;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Map;
@@ -34,72 +40,66 @@ import java.util.Map;
  */
 public final class InsertCommand extends AbstractDataCommand {
 
-	private static final String SQL_INSERT= "INSERT INTO ogcstatistics.ogc_services_log(" + OGCServiceParser.USER_COLUMN +
-			"," + OGCServiceParser.DATE_COLUMN +
-			"," + OGCServiceParser.SERVICE_COLUMN +
-			"," + OGCServiceParser.LAYER_COLUMN +
-			"," + OGCServiceParser.REQUEST_COLUMN +
-			"," + OGCServiceParser.ORG_COLUMN +
-			"," + OGCServiceParser.SECROLE_COLUMN +
-			") VALUES (?, ?, ?, ?, ?, ?, string_to_array(?, ','))";
-	
+	private static final String SQL_INSERT = "INSERT INTO " + QUALIFIED_TABLE_NAME + "(" + USER_COLUMN + ","
+			+ DATE_COLUMN + "," + SERVICE_COLUMN + "," + LAYER_COLUMN + "," + REQUEST_COLUMN + "," + ORG_COLUMN + ","
+			+ SECROLE_COLUMN + ") VALUES (?, ?, ?, ?, ?, ?, string_to_array(?, ','))";
+
 	private Map<String, Object> rowValues;
-	
 
 	public void setRowValues(final Map<String, Object> ogcServiceLog) {
-		
+
 		this.rowValues = ogcServiceLog;
 	}
 
 	private PreparedStatement prepareStatement() throws SQLException {
 
-        assert this.connection != null: "database connection is null, use setConnection";
+		assert this.connection != null : "database connection is null, use setConnection";
 
-        PreparedStatement pStmt = this.connection.prepareStatement(SQL_INSERT);
-        pStmt.setString(1, (String)this.rowValues.get(OGCServiceParser.USER_COLUMN));
+		PreparedStatement pStmt = this.connection.prepareStatement(SQL_INSERT);
+		pStmt.setString(1, (String) this.rowValues.get(USER_COLUMN));
 
-		java.sql.Timestamp sqlDate = new java.sql.Timestamp(((java.util.Date) this.rowValues.get(OGCServiceParser.DATE_COLUMN)).getTime());
+		java.sql.Timestamp sqlDate = new java.sql.Timestamp(
+				((java.util.Date) this.rowValues.get(DATE_COLUMN)).getTime());
 		pStmt.setTimestamp(2, sqlDate);
-		pStmt.setString(3, ((String)this.rowValues.get(OGCServiceParser.SERVICE_COLUMN)).trim());
-        pStmt.setString(4, ((String)this.rowValues.get(OGCServiceParser.LAYER_COLUMN)).trim());
-        pStmt.setString(5, ((String)this.rowValues.get(OGCServiceParser.REQUEST_COLUMN)).trim());
-        pStmt.setString(6, ((String)this.rowValues.get(OGCServiceParser.ORG_COLUMN)).trim());
-        pStmt.setString(7, ((String)this.rowValues.get(OGCServiceParser.SECROLE_COLUMN)).trim());
-        
+		pStmt.setString(3, ((String) this.rowValues.get(SERVICE_COLUMN)).trim());
+		pStmt.setString(4, ((String) this.rowValues.get(LAYER_COLUMN)).trim());
+		pStmt.setString(5, ((String) this.rowValues.get(REQUEST_COLUMN)).trim());
+		pStmt.setString(6, ((String) this.rowValues.get(ORG_COLUMN)).trim());
+		pStmt.setString(7, ((String) this.rowValues.get(SECROLE_COLUMN)).trim());
+
 		return pStmt;
 	}
 
 	@Override
 	public void execute() throws DataCommandException {
-		
-        assert this.connection != null: "database connection is null, use setConnection";
 
-        // executes the sql statement and checks that the update operation will be inserted one row in the table
-        PreparedStatement pStmt=null;
-        try {
-        	this.connection.setAutoCommit(false);
-            pStmt = prepareStatement();
-            pStmt.executeUpdate();
-            this.connection.commit();
-        } catch (SQLException e) {
-        	if(this.connection != null){
-        		try {
-					this.connection.rollback();
-				} catch (SQLException e1) {
-					e1.printStackTrace();
-		            throw new DataCommandException(e.getMessage());
-				}
-	            throw new DataCommandException(e.getMessage());
-        	}
-        } finally{
-            try {
-                if(pStmt != null) pStmt.close();
-            	this.connection.setAutoCommit(true);
-                
-            } catch (SQLException e1) {
-                throw new DataCommandException(e1.getMessage());
-            } 
-        }
-		
+		assert this.connection != null : "database connection is null, use setConnection";
+
+		try {
+			this.connection.setAutoCommit(false);
+		} catch (SQLException e) {
+			throw new DataCommandException(e);
+		}
+
+		// executes the sql statement and checks that the update operation will be
+		// inserted one row in the table
+		try (PreparedStatement pStmt = prepareStatement()) {
+			pStmt.executeUpdate();
+			this.connection.commit();
+		} catch (SQLException e) {
+			try {
+				this.connection.rollback();
+			} catch (SQLException e1) {
+				throw new DataCommandException(e);
+			}
+			throw new DataCommandException(e);
+		} finally {
+			try {
+				this.connection.setAutoCommit(true);
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+				//ignore, it's bad practice to throw exceptions in finally blocks
+			}
+		}
 	}
 }
