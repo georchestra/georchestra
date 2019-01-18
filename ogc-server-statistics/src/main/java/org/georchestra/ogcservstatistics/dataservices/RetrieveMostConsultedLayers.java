@@ -19,8 +19,8 @@
 
 package org.georchestra.ogcservstatistics.dataservices;
 
-import static org.georchestra.ogcservstatistics.dataservices.LogColumns.QUALIFIED_TABLE_NAME;
 import static org.georchestra.ogcservstatistics.dataservices.LogColumns.LAYER_COLUMN;
+import static org.georchestra.ogcservstatistics.dataservices.LogColumns.QUALIFIED_TABLE_NAME;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

@@ -19,6 +19,8 @@
 
 package org.georchestra.ogcservstatistics.log4j;
 
+import static java.util.regex.Pattern.CASE_INSENSITIVE;
+import static java.util.regex.Pattern.compile;
 import static org.georchestra.ogcservstatistics.dataservices.LogColumns.DATE_COLUMN;
 import static org.georchestra.ogcservstatistics.dataservices.LogColumns.LAYER_COLUMN;
 import static org.georchestra.ogcservstatistics.dataservices.LogColumns.ORG_COLUMN;
@@ -33,11 +35,15 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.regex.Pattern;
 
 /**
  * This parse recognizes an OGC service taking into account the syntax convention 
@@ -48,21 +54,24 @@ import java.util.Map;
  */
 public final class OGCServiceParser {
 
-	private static final String SERVICE_KEYWORD = "SERVICE=";
-	private static final String REQUEST_KEYWORD = "REQUEST=";
-			
-	// service types
-	private static final String WFS = "WFS";
-	private static final String WMS = "WMS";
-	private static final String WCS = "WCS";
-	private static final String WMTS = "WMTS";
-	private static final String[] SERVICE_TYPE_PATTERNS = {
-		SERVICE_KEYWORD + WFS,
-		SERVICE_KEYWORD + WCS,
-		SERVICE_KEYWORD + WMS,
-		SERVICE_KEYWORD + WMTS
-	};
-	
+    // service types
+    private static final String WFS = "WFS";
+    private static final String WMS = "WMS";
+    private static final String WCS = "WCS";
+    private static final String WMTS = "WMTS";
+
+    private static Map<Pattern, String> SERVICE_PATTERNS = new HashMap<>();
+    static {
+	SERVICE_PATTERNS.put(compile(".*\\bservice=wms\\b.*", CASE_INSENSITIVE), WMS);
+	SERVICE_PATTERNS.put(compile(".*\\bWMS\\?\\n*[\\s\\S]*", CASE_INSENSITIVE), WMS);
+	SERVICE_PATTERNS.put(compile(".*\\bservice=wfs\\b.*", CASE_INSENSITIVE), WFS);
+	SERVICE_PATTERNS.put(compile(".*\\bWFS\\?\\n*[\\s\\S]*", CASE_INSENSITIVE), WFS);
+	SERVICE_PATTERNS.put(compile(".*\\bWFSDISPATCHER\\?\\n*[\\s\\S]*", CASE_INSENSITIVE), WFS);
+	SERVICE_PATTERNS.put(compile(".*\\bservice=wcs\\b.*", CASE_INSENSITIVE), WCS);
+	SERVICE_PATTERNS.put(compile(".*\\bWCS\\?\\n*[\\s\\S]*", CASE_INSENSITIVE), WCS);
+	SERVICE_PATTERNS.put(compile(".*\\bservice=wmts\\b.*", CASE_INSENSITIVE), WMTS);
+    }
+
 	// request type
 	private static final String GETCAPABILITIES = "GETCAPABILITIES";
 	private static final String GETMAP = "GETMAP";
@@ -85,28 +94,30 @@ public final class OGCServiceParser {
 	private static final String CREATESTOREDQUERY = "CREATESTOREDQUERY";
 	private static final String DROPSTOREDQUERY = "DROPSTOREDQUERY";
 
-	private static final String[] OPERATION_NAME_PATTERNS = {
-		REQUEST_KEYWORD + GETCAPABILITIES,
-		REQUEST_KEYWORD + GETMAP,
-		REQUEST_KEYWORD + GETLEGENDGRAPHIC,
-		REQUEST_KEYWORD + GETFEATUREINFO,
-		REQUEST_KEYWORD + DESCRIBELAYER,
-		REQUEST_KEYWORD + GETFEATURE,
-		REQUEST_KEYWORD + DESCRIBEFEATURETYPE,
-		REQUEST_KEYWORD + GETCOVERAGE,
-		REQUEST_KEYWORD + DESCRIBECOVERAGE,
-		REQUEST_KEYWORD + GETTILE,
-		REQUEST_KEYWORD + GETSTYLES,
-		// WFS2
-		REQUEST_KEYWORD + GETPROPERTYVALUE,
-		REQUEST_KEYWORD + LOCKFEATURE,
-		REQUEST_KEYWORD + GETFEATUREWITHLOCK,
-		REQUEST_KEYWORD + LISTSTOREDQUERIES,
-		REQUEST_KEYWORD + DESCRIBESTOREDQUERIES,
-		REQUEST_KEYWORD + CREATESTOREDQUERY,
-		REQUEST_KEYWORD + DROPSTOREDQUERY
-	};
-	
+    private static Map<Pattern, String> OPERATION_NAME_PATTERNS = new HashMap<>();
+    static {
+	OPERATION_NAME_PATTERNS.put(compile(".*\\brequest=getcapabilities\\b.*", CASE_INSENSITIVE), GETCAPABILITIES);
+	OPERATION_NAME_PATTERNS.put(compile(".*\\brequest=getmap\\b.*", CASE_INSENSITIVE), GETMAP);
+	OPERATION_NAME_PATTERNS.put(compile(".*\\brequest=GETLEGENDGRAPHIC\\b.*", CASE_INSENSITIVE), GETLEGENDGRAPHIC);
+	OPERATION_NAME_PATTERNS.put(compile(".*\\brequest=GETFEATUREINFO\\b.*", CASE_INSENSITIVE), GETFEATUREINFO);
+	OPERATION_NAME_PATTERNS.put(compile(".*\\brequest=DESCRIBELAYER\\b.*", CASE_INSENSITIVE), DESCRIBELAYER);
+	OPERATION_NAME_PATTERNS.put(compile(".*\\brequest=GETFEATURE\\b.*", CASE_INSENSITIVE), GETFEATURE);
+	OPERATION_NAME_PATTERNS.put(compile(".*\\brequest=DESCRIBEFEATURETYPE\\b.*", CASE_INSENSITIVE), DESCRIBEFEATURETYPE);
+	OPERATION_NAME_PATTERNS.put(compile(".*\\brequest=GETCOVERAGE\\b.*", CASE_INSENSITIVE), GETCOVERAGE);
+	OPERATION_NAME_PATTERNS.put(compile(".*\\brequest=DESCRIBECOVERAGE\\b.*", CASE_INSENSITIVE), DESCRIBECOVERAGE);
+	OPERATION_NAME_PATTERNS.put(compile(".*\\brequest=GETTILE\\b.*", CASE_INSENSITIVE), GETTILE);
+	OPERATION_NAME_PATTERNS.put(compile(".*\\brequest=GETSTYLES\\b.*", CASE_INSENSITIVE), GETSTYLES);
+	OPERATION_NAME_PATTERNS.put(compile(".*\\brequest=GETPROPERTYVALUE\\b.*", CASE_INSENSITIVE), GETPROPERTYVALUE);
+	OPERATION_NAME_PATTERNS.put(compile(".*\\brequest=LOCKFEATURE\\b.*", CASE_INSENSITIVE), LOCKFEATURE);
+	OPERATION_NAME_PATTERNS.put(compile(".*\\brequest=GETFEATUREWITHLOCK\\b.*", CASE_INSENSITIVE), GETFEATUREWITHLOCK);
+	OPERATION_NAME_PATTERNS.put(compile(".*\\brequest=LISTSTOREDQUERIES\\b.*", CASE_INSENSITIVE), LISTSTOREDQUERIES);
+	OPERATION_NAME_PATTERNS.put(compile(".*\\brequest=DESCRIBESTOREDQUERIES\\b.*", CASE_INSENSITIVE),
+		DESCRIBESTOREDQUERIES);
+	OPERATION_NAME_PATTERNS.put(compile(".*\\brequest=CREATESTOREDQUERY.*", CASE_INSENSITIVE), CREATESTOREDQUERY);
+	OPERATION_NAME_PATTERNS.put(compile(".*\\brequest=DROPSTOREDQUERY.*", CASE_INSENSITIVE), DROPSTOREDQUERY);
+	OPERATION_NAME_PATTERNS.put(compile(".*\\brequest=getmap.*", CASE_INSENSITIVE), GETMAP);
+    };
+
 	private static final String[] LAYER_KEYWORD = {
 		"LAYERS=", "LAYER=","TYPENAME=", "QUERY_LAYERS=", "COVERAGEID="
 	};
@@ -115,9 +126,8 @@ public final class OGCServiceParser {
 	private static final char QUOTE = '\"';
 	private static final char[]  DELIMITER = {'&', ' ',  '\r', '\t', '>' };
 	private static final String OGC_MSG_SPLITTER = "[" + OGCServiceMessageFormatter.SEPARATOR + "]";
-	private static final DateFormat DATE_FORMAT = new SimpleDateFormat(OGCServiceMessageFormatter.DATE_FORMAT);
 
-	private static final List<String> HAS_TO_CREATE_A_LOG_WITHOUT_LAYER = Arrays.asList(new String [] {""});
+	private static final List<String> HAS_TO_CREATE_A_LOG_WITHOUT_LAYER = Collections.singletonList("");
 
 	static {
 		// sorts the delimiters to allow binary search
@@ -139,7 +149,7 @@ public final class OGCServiceParser {
 	 * @throws UnsupportedEncodingException 
 	 */
 	public static List<Map<String, Object>> parseLog(final String message) throws ParseException, UnsupportedEncodingException {
-		List<Map<String, Object>> logList = new LinkedList<Map<String,Object>>();
+		List<Map<String, Object>> logList = new LinkedList<>();
 
 		String[] splittedMessage = message.split(OGC_MSG_SPLITTER);
 		if(splittedMessage.length < 3){
@@ -147,7 +157,7 @@ public final class OGCServiceParser {
 		}
 
 		// parses service and layer from request
-		String request = URLDecoder.decode(splittedMessage[2], "UTF-8").toUpperCase();
+		String request = URLDecoder.decode(splittedMessage[2], "UTF-8");
 		String service = parseService(request);
 		String ogcReq = parseOperationName(request).toLowerCase();
 
@@ -158,7 +168,8 @@ public final class OGCServiceParser {
 		String user=  splittedMessage[0];
 		
 		// extracts date
-		Date date = DATE_FORMAT.parse(splittedMessage[1]);
+		DateFormat formatter = new SimpleDateFormat(OGCServiceMessageFormatter.DATE_FORMAT);
+		Date date = formatter.parse(splittedMessage[1]);
 		
 
 		// parses org (it is optional) and sec roles
@@ -177,7 +188,7 @@ public final class OGCServiceParser {
 		List<String> layerList = parseLayer(request);
 
 		for(String layer : layerList){
-			Map<String, Object>  log = new HashMap<String, Object>(6);
+			Map<String, Object>  log = new HashMap<>(6);
 
 			log.put(USER_COLUMN, user );
 			log.put(DATE_COLUMN, date);
@@ -199,32 +210,23 @@ public final class OGCServiceParser {
 	 *
 	 * @return an OGC service symbol, "" in other case.
 	 */
-	private static String parseService(final String message){
+	private static String parseService(final String message) {
 		// checks if it is an ogc service
-		for (String pattern : SERVICE_TYPE_PATTERNS) {
-			if (message.contains(pattern)) {
+		String service = SERVICE_PATTERNS.entrySet().stream().filter(e -> e.getKey().matcher(message).matches())
+				.map(Entry<Pattern, String>::getValue).findFirst().orElse("");
 
-				String service = pattern.substring(SERVICE_KEYWORD.length());
-				return removeQuoteAndTrim(service);
-			}
-		}
 		// Particular case: the following does not contain the WMS service key
-		if(message.contains(GETLEGENDGRAPHIC)){
-			return WMS;
+		if (service.isEmpty() && message.contains(GETLEGENDGRAPHIC)) {
+			service = WMS;
 		}
-		return "";
+		return service;
 	}
 
-	private static String parseOperationName(final String message){
-		for (String pattern : OPERATION_NAME_PATTERNS) {
-			if (message.contains(pattern)) {
-
-				String request = pattern.substring(REQUEST_KEYWORD.length());
-				return removeQuoteAndTrim(request);
-			}
-		}
-		return "";
-	}
+    private static String parseOperationName(final String message) {
+	Optional<String> operationName = OPERATION_NAME_PATTERNS.entrySet().stream().parallel()
+		.filter(e -> e.getKey().matcher(message).matches()).map(Entry<Pattern, String>::getValue).findFirst();
+	return operationName.orElse("");
+    }
 
 	/**
 	 * Parses the layer name
@@ -234,13 +236,18 @@ public final class OGCServiceParser {
 	 * @return a list of layer names
 	 */
 	private static List<String> parseLayer(final String request) {
+	    //only convert to upper case the request URL, in case it has a large POST body
+	    final int newlineIndex = request.indexOf('\n');
+	    String matchLayersStr = newlineIndex == -1? request : request.substring(0, newlineIndex);
+	    matchLayersStr= matchLayersStr.toUpperCase();
+	    
 		List<String> layerList = HAS_TO_CREATE_A_LOG_WITHOUT_LAYER;
 		for (String layerKeyword : LAYER_KEYWORD) {
-			if (request.contains(layerKeyword)) {
+			if (matchLayersStr.contains(layerKeyword)) {
 
-				int begin = request.indexOf(layerKeyword);
+				int begin = matchLayersStr.indexOf(layerKeyword);
 				begin = begin + layerKeyword.length();
-				String layers = request.substring(begin);
+				String layers = matchLayersStr.substring(begin);
 				int end = searchEndOfLayerValue(layers);
 				layers = layers.substring(0, end);
 				
@@ -282,7 +289,7 @@ public final class OGCServiceParser {
 	 * @return List of layers
 	 */
 	private static List<String> buildLayerList(final String strLayerList) {
-		List<String> layers = new LinkedList<String>();
+		List<String> layers = new LinkedList<>();
 		String[] layersToBeautify = strLayerList.split(COMMA);
 		for (String layerToBeautify : layersToBeautify) {
 			layers.add(removeQuoteAndTrim(layerToBeautify));
@@ -293,5 +300,4 @@ public final class OGCServiceParser {
 	private static String removeQuoteAndTrim(String string) {
 		return string.replace(QUOTE, ' ').trim();
 	}
-
 }

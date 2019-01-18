@@ -1,16 +1,21 @@
 package org.georchestra.ogcservstatistics.log4j;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.georchestra.ogcservstatistics.util.Utility;
 import org.junit.Test;
 
 public class OGCServiceParserTest {
 	@Test
-	public void testParseRequest() throws Exception {
+	public void testParseRequestMatchingOGCServiceParam() throws Exception {
 		String[] REQUESTS_TO_BE_PARSED = {
 				"anonymousUser|2013/12/18 12:18:00|http://localhost/geoserver?SERVICE=WmTS&REQUEST=GeTTILE",
 				"anonymousUser|2013/12/18 12:21:00|http://localhost/mapserver?SeRVICE=WMS&REQUEsT=GETStyles",
@@ -67,6 +72,46 @@ public class OGCServiceParserTest {
 		assertEquals(1, logEntries.size());
 		assertEquals("getcoverage", logEntries.get(0).get("request"));
 		assertEquals("", logEntries.get(0).get("layer"));
+	}
+
+	public @Test void postWcsDescribeCoverage() throws UnsupportedEncodingException, ParseException {
+		testResourceRequest("postWcsDescribeCoverage.txt", "WCS");
+	}
+
+	public @Test void postWcsGetCoverage() throws UnsupportedEncodingException, ParseException {
+		testResourceRequest("postWcsGetCoverage.txt", "WCS");
+	}
+
+	public @Test void postWfsDelete() throws UnsupportedEncodingException, ParseException {
+		testResourceRequest("postWfsDelete.txt", "WFS");
+	}
+
+	public @Test void postWfsGetFeature() throws UnsupportedEncodingException, ParseException {
+		testResourceRequest("postWfsGetFeature.txt", "WFS");
+	}
+
+	public @Test void postWfsInsert() throws UnsupportedEncodingException, ParseException {
+		testResourceRequest("postWfsInsert.txt", "WFS");
+	}
+
+	public @Test void postWfsUpdate() throws UnsupportedEncodingException, ParseException {
+		testResourceRequest("postWfsUpdate.txt", "WFS");
+	}
+
+	private void testResourceRequest(final String resourceName, final String expectedService) throws UnsupportedEncodingException, ParseException {
+		String request = Utility.loadRequest(resourceName);
+		String user = "user";
+		Date time = new Date();
+		String org = "c2c";
+		String[] roles = new String[] { "ROLE1", "ROLE2" };
+
+		String formattedMessage = OGCServiceMessageFormatter.format(user, time, request, org, roles);
+
+		List<Map<String, Object>> logEntries = OGCServiceParser.parseLog(formattedMessage);
+		assertNotNull(logEntries);
+		assertEquals(1, logEntries.size());
+		Map<String, Object> entry = logEntries.get(0);
+		assertEquals(expectedService, entry.get("service"));
 	}
 
 }

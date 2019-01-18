@@ -14,16 +14,14 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
-import org.georchestra.ogcservstatistics.util.Utility;
-
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.georchestra.ogcservstatistics.OGCServStatisticsException;
 import org.georchestra.ogcservstatistics.calculations.OGCServiceStatistics;
 import org.georchestra.ogcservstatistics.dataservices.DataServicesConfiguration;
 import org.georchestra.ogcservstatistics.dataservices.DeleteAllCommand;
-import org.georchestra.ogcservstatistics.log4j.OGCServiceMessageFormatter;
-import org.georchestra.ogcservstatistics.log4j.OGCServicesAppender;
+import org.georchestra.ogcservstatistics.util.Utility;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -42,26 +40,29 @@ import org.junit.Test;
  */
 public class OGCServicesAppenderTest {
 
-	
-	private static final Logger LOGGER = Logger.getLogger(OGCServicesAppenderTest.class.getName());
-	
-	static{
-		// WARNING: because this test will delete all log before execute the test method
-		// you should configure a test table in the log4j.properties file
-		
-		String file = "src/test/resources/org/georchestra/ogcservstatistics/log4j.properties";
-		PropertyConfigurator.configure(file);
-		try {
-			DeleteAllCommand cmd = new DeleteAllCommand();
-			Connection connection = DataServicesConfiguration.getInstance().getConnection();
-			cmd.setConnection(connection);
-			cmd.execute();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+    private Logger LOGGER;
 
+    public static @BeforeClass void initialize() {
+	// WARNING: because this test will delete all log before execute the test method
+	// you should configure a test table in the log4j.properties file
+
+	String file = "src/test/resources/org/georchestra/ogcservstatistics/log4j.properties";
+	OGCServiceStatistics.configure(file);
+	try {
+	    DeleteAllCommand cmd = new DeleteAllCommand();
+	    Connection connection = DataServicesConfiguration.getInstance().getConnection();
+	    cmd.setConnection(connection);
+	    cmd.execute();
+	} catch (Exception e) {
+	    e.printStackTrace();
 	}
-	
+
+    }
+
+    public @Before void before() {
+	LOGGER = Logger.getLogger(OGCServicesAppenderTest.class.getName());
+    }
+
 	/**
 	 * tests that exists the {@link OGCServicesAppender}
 	 */
