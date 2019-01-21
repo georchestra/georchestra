@@ -146,7 +146,7 @@
 
             <fieldset>
                 <legend><s:message code="createAccountForm.fieldset.credentials"/></legend>
-                <t:input path="uid" required="${uidRequired}" readonly="<%= userCantChooseUid %>" appendIcon="user">
+                <t:input path="uid" required="${uidRequired}" readonly="<%= readonlyUid %>" appendIcon="user">
                     <jsp:attribute name="label"><s:message code="uid.label" /></jsp:attribute>
                 </t:input>
                 <t:password path="password" required="${passwordRequired}" spanId="pwdQuality" appendIcon="lock" onblur="passwordOnBlur();" onchange="cleanConfirmPassword();feedbackPassStrength('pwdQuality', value);" onkeypress="cleanConfirmPassword();" onkeyup="feedbackPassStrength('pwdQuality', value);">
