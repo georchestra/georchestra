@@ -18,6 +18,7 @@
     </site>
   </distributionManagement>
   <properties>
+    <java.version>1.8</java.version>
     <gt.version>9.2</gt.version>
     <spring.version>2.5.6.SEC01</spring.version>
     <security.version>2.0.5.RELEASE</security.version>
@@ -91,6 +92,15 @@
          <artifactId>dependency-check-maven</artifactId>
          <version>3.2.1</version>
        </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
        <plugin>
          <groupId>org.apache.maven.plugins</groupId>
          <artifactId>maven-antrun-plugin</artifactId>
@@ -142,12 +152,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>2.3.2</version>
-          <configuration>
-            <source>1.6</source>
-            <target>1.6</target>
-            <encoding>UTF-8</encoding>
-          </configuration>
+          <version>3.8.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
