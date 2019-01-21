@@ -22,6 +22,7 @@ package org.georchestra.console.ds;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.dao.AdminLogDao;
+import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.Role;
 import org.georchestra.console.dto.RoleFactory;
 import org.georchestra.console.dto.RoleSchema;
@@ -33,21 +34,17 @@ import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
-import org.springframework.ldap.core.DistinguishedName;
-import org.springframework.ldap.core.LdapRdn;
 import org.springframework.ldap.core.LdapTemplate;
-import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.support.LdapNameBuilder;
 
-import javax.naming.InvalidNameException;
 import javax.naming.Name;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 
 /**
@@ -63,29 +60,40 @@ public class RoleDaoImpl implements RoleDao {
 
 	private LdapTemplate ldapTemplate;
 
+	private String basePath;
+    private String roleSearchBaseDN;
+
+	public void setBasePath(String basePath)
+    {
+		this.basePath = basePath;
+	}
+
+    public void setRoleSearchBaseDN(String roleSearchBaseDN)
+    {
+        this.roleSearchBaseDN = roleSearchBaseDN;
+    }
+
 	@Autowired
 	private AdminLogDao logDao;
-	
+
+	@Autowired
+	private AccountDao accountDao;
+
 	@Autowired
 	private RoleProtected roles;
-
-	private Name roleSearchBaseDN;
-	private LdapRdn userSearchBaseDN;
-
-	public LdapTemplate getLdapTemplate() {
-		return ldapTemplate;
-	}
 
 	public void setLdapTemplate(LdapTemplate ldapTemplate) {
 		this.ldapTemplate = ldapTemplate;
 	}
 
-	public void setRoleSearchBaseDN(String roleSearchBaseDN) throws InvalidNameException {
-		this.roleSearchBaseDN = LdapNameBuilder.newInstance(roleSearchBaseDN).build();
-	}
 
-	public void setUserSearchBaseDN(String userSearchBaseDN) {
-		this.userSearchBaseDN = new LdapRdn(userSearchBaseDN);
+
+	public Name buildRoleDn(String cn) {
+		try {
+			return LdapNameBuilder.newInstance(this.roleSearchBaseDN).add("cn", cn).build();
+		} catch (org.springframework.ldap.InvalidNameException ex){
+			throw new IllegalArgumentException(ex.getMessage());
+		}
 	}
 
 	public void setLogDao(AdminLogDao logDao) {
@@ -96,45 +104,11 @@ public class RoleDaoImpl implements RoleDao {
 		this.roles = roles;
 	}
 
-    /**
-	 * Create an ldap entry for the role
-	 *
-	 * @param cn
-	 * @return
-	 */
-	private Name buildRoleDn(String cn) {
-		try {
-			return LdapNameBuilder.newInstance(this.roleSearchBaseDN).add("cn", cn).build();
-		} catch (org.springframework.ldap.InvalidNameException ex){
-			throw new IllegalArgumentException(ex.getMessage());
-		}
+	public void setAccountDao(AccountDao accountDao) {
+		this.accountDao = accountDao;
 	}
 
-	/**
-	 * Create an ldap entry for the user
-	 *
-	 * @param uid
-	 * @return DistinguishedName the dn of the user.
-	 */
-	private DistinguishedName buildUserDn(String uid) {
-		DistinguishedName dn = new DistinguishedName();
-		try {
-			LdapContextSource ctxsrc = (LdapContextSource) this.ldapTemplate.getContextSource();
-			dn.addAll(ctxsrc.getBaseLdapPath());
-		} catch (InvalidNameException e) {
-		    LOG.error("unable to construct the userDn: "+e.getMessage());
-		}
-		dn.add(userSearchBaseDN);
-		dn.add("uid", uid);
-
-		return dn;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.georchestra.console.ds.RoleDao#addUser(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void addUser(final String roleID, final String userId, final String originLogin) throws NameNotFoundException, DataServiceException {
+	public void addUser(String roleID, Account user, String originLogin) throws DataServiceException, NameNotFoundException {
 
 
 		/* TODO Add hierarchic behaviour here :
@@ -151,13 +125,13 @@ public class RoleDaoImpl implements RoleDao {
 
 		try {
 
-			context.addAttributeValue("member", buildUserDn(userId).toString(), false);
+			context.addAttributeValue("member", accountDao.buildUserDn(user) + "," + basePath, false);
 			this.ldapTemplate.modifyAttributes(context);
 
 			// Add log entry for this modification
 			if(originLogin != null) {
 				AdminLogType logType = this.roles.isProtected(roleID) ? AdminLogType.SYSTEM_ROLE_CHANGE : AdminLogType.OTHER_ROLE_CHANGE;
-				AdminLogEntry log = new AdminLogEntry(originLogin, userId, logType, new Date());
+				AdminLogEntry log = new AdminLogEntry(originLogin, user.getUid(), logType, new Date());
 				this.logDao.save(log);
 			}
 
@@ -168,65 +142,59 @@ public class RoleDaoImpl implements RoleDao {
 
 	}
 
-	/**
-	 * Removes the uid from all roles
-	 *
-	 * @param uid user to remove
-	 * @param originLogin login of admin that make request
-	 */
 	@Override
-	public void deleteUser(String uid, final String originLogin) throws DataServiceException {
+	public void deleteUser(Account account, final String originLogin) throws DataServiceException {
 
-		List<Role> allRoles = findAllForUser(uid);
+		List<Role> allRoles = findAllForUser(account);
 
 		for (Role role : allRoles) {
-			deleteUser(role.getName(), uid, originLogin);
+			deleteUser(role.getName(), account, originLogin);
 		}
 	}
 
-	public void deleteUser(String roleName, String uid, final String originLogin) throws DataServiceException {
+	public void deleteUser(String roleName, Account account, final String originLogin) throws DataServiceException {
 		/* TODO Add hierarchic behaviour here like addUser method */
 
 		Name dnSvUser = buildRoleDn(roleName);
 
 		DirContextOperations ctx = ldapTemplate.lookupContext(dnSvUser);
 		ctx.setAttributeValues("objectclass", new String[] { "top", "groupOfMembers" });
-		ctx.removeAttributeValue("member", buildUserDn(uid).toString());
+		ctx.removeAttributeValue("member", accountDao.buildUserDn(account).toString());
 
 		this.ldapTemplate.modifyAttributes(ctx);
 
 		// Add log entry for this modification
 		if(originLogin != null) {
 			AdminLogType logType;
-			if(roleName.equals(Role.PENDING)){
-				logType = AdminLogType.ACCOUNT_MODERATION;
-			} else if(this.roles.isProtected(roleName)){
+			if(this.roles.isProtected(roleName)){
 				logType = AdminLogType.SYSTEM_ROLE_CHANGE;
 			} else {
 				logType = AdminLogType.OTHER_ROLE_CHANGE;
 			}
-			AdminLogEntry log = new AdminLogEntry(originLogin, uid, logType, new Date());
+			AdminLogEntry log = new AdminLogEntry(originLogin, account.getUid(), logType, new Date());
 			this.logDao.save(log);
 
 		}
 	}
 
     @Override
-    public void modifyUser(String roleName, String oldUid, String newUid) throws DataServiceException {
-        Name dnRole = buildRoleDn(roleName);
-        String oldUserDn = buildUserDn(oldUid).toString();
-        String newUserDn = buildUserDn(newUid).toString();
-        DirContextOperations ctx = ldapTemplate.lookupContext(dnRole);
-        ctx.removeAttributeValue("member", oldUserDn);
-        ctx.addAttributeValue("member", newUserDn);
-        this.ldapTemplate.modifyAttributes(ctx);
+    public void modifyUser(Account oldAccount, Account newAccount) throws DataServiceException {
+		for (Role role : findAllForUser(oldAccount)) {
+			Name dnRole = buildRoleDn(role.getName());
+			String oldUserDn = accountDao.buildUserDn(oldAccount).toString();
+			String newUserDn = accountDao.buildUserDn(newAccount).toString();
+			DirContextOperations ctx = ldapTemplate.lookupContext(dnRole);
+			ctx.removeAttributeValue("member", oldUserDn);
+			ctx.addAttributeValue("member", newUserDn);
+			this.ldapTemplate.modifyAttributes(ctx);
+		}
     }
 
-	public List<Role> findAll() throws DataServiceException {
+	public List<Role> findAll() {
 
 		EqualsFilter filter = new EqualsFilter("objectClass", "groupOfMembers");
 
-		List<Role> roleList = ldapTemplate.search(this.roleSearchBaseDN, filter.encode(), new RoleContextMapper());
+		List<Role> roleList = ldapTemplate.search(roleSearchBaseDN, filter.encode(), new RoleContextMapper());
 
 		TreeSet<Role> sorted = new TreeSet<Role>();
 		for (Role g : roleList) {
@@ -236,12 +204,12 @@ public class RoleDaoImpl implements RoleDao {
 		return new LinkedList<Role>(sorted);
 	}
 
-	public List<Role> findAllForUser(String userId) {
+	public List<Role> findAllForUser(Account account) {
 		EqualsFilter grpFilter = new EqualsFilter("objectClass", "groupOfMembers");
 		AndFilter filter = new AndFilter();
 		filter.and(grpFilter);
-		filter.and(new EqualsFilter("member", buildUserDn(userId).toString()));
-		return ldapTemplate.search(this.roleSearchBaseDN, filter.encode(),	new RoleContextMapper());
+		filter.and(new EqualsFilter("member", accountDao.buildUserDn(account).toString()));
+		return ldapTemplate.search(roleSearchBaseDN, filter.encode(),	new RoleContextMapper());
 	}
 
 
@@ -358,23 +326,25 @@ public class RoleDaoImpl implements RoleDao {
 
 		context.setAttributeValues("objectclass", new String[] { "top", "groupOfMembers" });
 
-        // person attributes
-		// person attributes
 		setAccountField(context, RoleSchema.COMMON_NAME_KEY, role.getName());
 		setAccountField(context, RoleSchema.DESCRIPTION_KEY, role.getDescription());
-		setMemberField(context, RoleSchema.MEMBER_KEY, role.getUserList());
+		context.setAttributeValues(RoleSchema.MEMBER_KEY,role.getUserList().stream()
+				.map(userUid -> {
+					try {
+						return accountDao.findByUID(userUid);
+					} catch (DataServiceException e) {
+						return null;
+					}})
+				.filter(account -> null != account)
+				.map(account -> accountDao.buildUserDn(account))
+				.collect(Collectors.toList()).toArray());
 		if(role.isFavorite())
 			setAccountField(context, RoleSchema.FAVORITE_KEY, RoleSchema.FAVORITE_VALUE);
 	}
 
 
-    private void setMemberField(DirContextOperations context,
-            String memberAttr, List<String> users) {
-        List<String> usersFullDn = new ArrayList<String>(users.size());
-        for (String uid : users) {
-            usersFullDn.add(buildUserDn(uid).encode());
-        }
-        context.setAttributeValues(memberAttr, usersFullDn.toArray());
+    private void setMemberField(DirContextOperations context, String memberAttr, List<Account> users) {
+         users.stream();
     }
 
 	/**
@@ -445,25 +415,25 @@ public class RoleDaoImpl implements RoleDao {
 	}
 
 	@Override
-	public void addUsers(String roleName, List<String> addList, final String originLogin) throws NameNotFoundException, DataServiceException {
+	public void addUsers(String roleName, List<Account> addList, final String originLogin) throws NameNotFoundException, DataServiceException {
 
-		for (String uid : addList) {
-			addUser(roleName, uid, originLogin);
+		for (Account account : addList) {
+			addUser(roleName, account, originLogin);
 		}
 	}
 
 	@Override
-	public void deleteUsers(String roleName, List<String> deleteList, final String originLogin)
+	public void deleteUsers(String roleName, List<Account> deleteList, final String originLogin)
 			throws DataServiceException, NameNotFoundException {
 
-		for (String uid : deleteList) {
-			deleteUser(roleName, uid, originLogin);
+		for (Account account : deleteList) {
+			deleteUser(roleName, account, originLogin);
 		}
 
 	}
 
 	@Override
-	public void addUsersInRoles(List<String> putRole, List<String> users, final String originLogin)
+	public void addUsersInRoles(List<String> putRole, List<Account> users, final String originLogin)
 			throws DataServiceException, NameNotFoundException {
 
 		for (String roleName : putRole) {
@@ -472,7 +442,7 @@ public class RoleDaoImpl implements RoleDao {
 	}
 
 	@Override
-	public void deleteUsersInRoles(List<String> deleteRole, List<String> users, final String originLogin)
+	public void deleteUsersInRoles(List<String> deleteRole, List<Account> users, final String originLogin)
 			throws DataServiceException, NameNotFoundException {
 
 		for (String roleName : deleteRole) {

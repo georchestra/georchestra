@@ -19,8 +19,6 @@
 
 package org.georchestra.console.ws.passwordrecovery;
 
-import java.io.IOException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.ds.AccountDao;
@@ -41,6 +39,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
+import java.io.IOException;
+
 /**
  * This controller implements the interactions required to ask for a new password based on a token provide.
  *
@@ -52,6 +52,9 @@ import org.springframework.web.bind.support.SessionStatus;
 public class NewPasswordFormController {
 
 	private static final Log LOG = LogFactory.getLog(NewPasswordFormController.class.getName());
+
+	@Autowired
+	protected PasswordUtils passwordUtils;
 
 	private AccountDao accountDao;
 	private UserTokenDao userTokenDao;
@@ -130,8 +133,7 @@ public class NewPasswordFormController {
 						SessionStatus sessionStatus)
 						throws IOException {
 
-
-		PasswordUtils.validate( formBean.getPassword(), formBean.getConfirmPassword(), result);
+		passwordUtils.validate( formBean.getPassword(), formBean.getConfirmPassword(), result);
 
 
 		if(result.hasErrors()){

@@ -68,7 +68,7 @@ class OrgController {
   confirm () {
     const flash = this.$injector.get('Flash')
     const $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
-    this.org.status = 'REGISTERED'
+    this.org.pending = false
     this.org.$update(() => {
       $httpDefaultCache.removeAll()
       flash.create('success', this.i18n.updated)

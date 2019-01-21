@@ -47,13 +47,10 @@ public class RequestUtil {
 	 * @return the value
 	 */
 	public static String getFieldValue(final JSONObject json, final String fieldName) {
-		try {
-			if(json.isNull(fieldName))
-				return null;
-			return json.getString(fieldName);
-		} catch (JSONException e) {
+		if(json.isNull(fieldName)) {
 			return null;
 		}
+		return json.opt(fieldName).toString();
 	}
 
 	/**

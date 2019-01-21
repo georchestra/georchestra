@@ -20,7 +20,6 @@
 package org.georchestra.console.ws.backoffice.users;
 
 
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.dao.AdvancedDelegationDao;
@@ -32,7 +31,13 @@ import org.georchestra.console.ds.DuplicatedUidException;
 import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.ds.ProtectedUserFilter;
 import org.georchestra.console.ds.RoleDao;
-import org.georchestra.console.dto.*;
+import org.georchestra.console.dto.Account;
+import org.georchestra.console.dto.AccountFactory;
+import org.georchestra.console.dto.AccountImpl;
+import org.georchestra.console.dto.Org;
+import org.georchestra.console.dto.Role;
+import org.georchestra.console.dto.SimpleAccount;
+import org.georchestra.console.dto.UserSchema;
 import org.georchestra.console.mailservice.EmailFactory;
 import org.georchestra.console.model.DelegationEntry;
 import org.georchestra.console.ws.backoffice.utils.RequestUtil;
@@ -65,7 +70,12 @@ import java.io.IOException;
 import java.text.Normalizer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Web Services to maintain the User information.
@@ -86,15 +96,6 @@ public class UsersController {
 	private static final String BASE_MAPPING = "/private";
 	private static final String REQUEST_MAPPING = BASE_MAPPING + "/users";
 	private static final String PUBLIC_REQUEST_MAPPING = "/public/users";
-
-	private static final String DUPLICATED_EMAIL = "duplicated_email";
-	private static final String PARAMS_NOT_UNDERSTOOD = "params_not_understood";
-	private static final String NOT_FOUND = "not_found";
-	private static final String UNABLE_TO_ENCODE = "unable_to_encode";
-	private static final String INVALID_VALUE = "invalid_value";
-	private static final String OTHER_ERROR = "other_error";
-	private static final String INVALID_DATE_FORMAT = "invalid_date_format";
-
 	private static GrantedAuthority ROLE_SUPERUSER = new SimpleGrantedAuthority("ROLE_SUPERUSER");
 
 	private AccountDao accountDao;
@@ -114,13 +115,8 @@ public class UsersController {
 	@Autowired
 	private Validation validation;
 
-	public void setOrgDao(OrgsDao orgDao) {
-		this.orgDao = orgDao;
-	}
-
-	public void setDelegationDao(DelegationDao delegationDao) {
-		this.delegationDao = delegationDao;
-	}
+	@Autowired
+	private Boolean warnUserIfUidModified = false;
 
 	private UserRule userRule;
 	
@@ -130,8 +126,18 @@ public class UsersController {
 	public void setEmailFactory(EmailFactory emailFactory) {
 		this.emailFactory = emailFactory;
 	}
-	@Autowired
-	private Boolean warnUserIfUidModified = false;
+
+	public void setOrgDao(OrgsDao orgDao) {
+		this.orgDao = orgDao;
+	}
+
+	public void setDelegationDao(DelegationDao delegationDao) {
+		this.delegationDao = delegationDao;
+	}
+
+	public void setRoleDao(RoleDao roleDao) {
+		this.roleDao = roleDao;
+	}
 
 	public void setWarnUserIfUidModified(boolean warnUserIfUidModified) {
 		this.warnUserIfUidModified = warnUserIfUidModified;
@@ -171,11 +177,11 @@ public class UsersController {
 
 		// Retrieve organizations list to display org name instead of org DN
 		List<Org> orgs = this.orgDao.findAll();
-		Map<String, String> orgNames = new HashMap<String, String>();
+		Map<String, String> orgNames = new HashMap();
 		for(Org org: orgs)
 			orgNames.put(org.getId(), org.getName());
 
-		List<SimpleAccount> res = new LinkedList<SimpleAccount>();
+		List<SimpleAccount> res = new LinkedList();
 		for(Account account: list) {
 			SimpleAccount simpleAccount = new SimpleAccount(account);
 			// Set Org Name with the human readable org name
@@ -243,8 +249,10 @@ public class UsersController {
 		Account user = this.accountDao.findByUID(auth.getName());
 
 		JSONArray roles = new JSONArray();
-		for(Role role: this.roleDao.findAllForUser(auth.getName()))
+
+		for(Role role: this.roleDao.findAllForUser(user)) {
 			roles.put(role.getName());
+		}
 		JSONObject res = new JSONObject();
 		res.put("uid", auth.getName());
 		res.put("roles", roles);
@@ -320,8 +328,9 @@ public class UsersController {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
 		// Verify that org is under delegation if user is not SUPERUSER
+		String requestOriginator = auth.getName();
 		if(!auth.getAuthorities().contains(this.advancedDelegationDao.ROLE_SUPERUSER)){
-			DelegationEntry delegation = this.delegationDao.findOne(auth.getName());
+			DelegationEntry delegation = this.delegationDao.findOne(requestOriginator);
 			if(!Arrays.asList(delegation.getOrgs()).contains(account.getOrg()))
 				throw new AccessDeniedException("Org not under delegation");
 		}
@@ -330,7 +339,12 @@ public class UsersController {
 			throw new AccessDeniedException("The user is protected: " + account.getUid());
 
 		// Saves the user in the LDAP
-		this.accountDao.insert(account, Role.USER, auth.getName());
+		accountDao.insert(account, requestOriginator);
+		roleDao.addUser(Role.USER, account, requestOriginator);
+		if(account.getOrg().length() > 0) {
+			Org org = orgDao.findByCommonName(account.getOrg());
+			orgDao.addUser(org, account);
+		}
 
 		return account;
 	}
@@ -397,18 +411,25 @@ public class UsersController {
 			if(!auth.getAuthorities().contains(ROLE_SUPERUSER))
 				if(!Arrays.asList(this.delegationDao.findOne(auth.getName()).getOrgs()).contains(modified.getOrg()))
 					throw new AccessDeniedException("User not under delegation");
-			if(originalOrg.length() > 0)
-				this.orgDao.removeUser(originalOrg, uid);
-			if(modified.getOrg().length() > 0)
-				this.orgDao.addUser(modified.getOrg(), uid);
+			if(originalOrg.length() > 0) {
+				Org org = orgDao.findByCommonName(originalOrg);
+				this.orgDao.removeUser(org, account);
+			}
+			if(modified.getOrg().length() > 0) {
+				Org org = orgDao.findByCommonName(modified.getOrg());
+				orgDao.addUser(org, account);
+			}
 		}
 
 		// Finally store account in LDAP
-		this.accountDao.update(account, modified, auth.getName());
+		accountDao.update(account, modified, auth.getName());
+		if (accountDao.hasUserDnChanged(account, modified)) {
+			roleDao.modifyUser(account, modified);
+		}
 
 		boolean uidChanged = ( ! modified.getUid().equals(account.getUid()));
 		if ((uidChanged) && (warnUserIfUidModified)) {
-			this.emailFactory.sendAccountUidRenamedEmail(request.getSession().getServletContext(), new String[]{modified.getEmail()},
+			this.emailFactory.sendAccountUidRenamedEmail(request.getSession().getServletContext(), modified.getEmail(),
 					modified.getCommonName(), modified.getUid());
 		}
 		return modified;
@@ -436,11 +457,14 @@ public class UsersController {
 		// check if user is under delegation for delegated admins
 		this.checkAuthorization(uid);
 
-		this.accountDao.delete(uid, request.getHeader("sec-username"));
+		Account account = accountDao.findByUID(uid);
+		String requestOriginator = request.getHeader("sec-username");
+		roleDao.deleteUser(account, requestOriginator);
+		accountDao.delete(account, requestOriginator);
 
 		// Also delete delegation if exists
-		if(this.delegationDao.findOne(uid) != null)
-			this.delegationDao.delete(uid);
+		if(delegationDao.findOne(uid) != null)
+			delegationDao.delete(uid);
 
 		ResponseUtil.writeSuccess(response);
 	}
@@ -571,15 +595,13 @@ public class UsersController {
 				account.setShadowExpire((new SimpleDateFormat("yyyy-MM-dd")).parse(shadowExpire));
 		}
 
+		account.setPending(RequestUtil.getBooleanFieldValue(json, UserSchema.PENDING));
+
 		return account;
 	}
 
 	/**
 	 * Create a new account from the body request.
-	 *
-	 * @param is
-	 * @return
-	 * @throws IOException
 	 */
 	private Account createAccountFromRequestBody(ServletInputStream is) throws IllegalArgumentException, IOException {
 

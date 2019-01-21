@@ -25,7 +25,6 @@ import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.dao.AdminLogDao;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountFactory;
-import org.georchestra.console.dto.Role;
 import org.georchestra.console.dto.UserSchema;
 import org.georchestra.console.model.AdminLogEntry;
 import org.georchestra.console.model.AdminLogType;
@@ -35,8 +34,6 @@ import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
-import org.springframework.ldap.core.DistinguishedName;
-import org.springframework.ldap.core.LdapRdn;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
@@ -54,6 +51,8 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This class is responsible of maintaining the user accounts (CRUD operations).
@@ -61,79 +60,65 @@ import java.util.regex.Pattern;
  * @author Mauricio Pazos
  */
 public final class AccountDaoImpl implements AccountDao {
+    private static final Log LOG = LogFactory.getLog(AccountDaoImpl.class.getName());
 
-    private LdapName userSearchBaseDN;
     private AccountContextMapper attributMapper;
     private LdapTemplate ldapTemplate;
-    private RoleDao roleDao;
-    private OrgsDao orgDao;
+    private LdapName userSearchBaseDN;
+    private LdapName pendingUserSearchBaseDN;
+    private String roleSearchBaseDN;
+    private String basePath;
+    private String orgSearchBaseDN;
+    private String pendingOrgSearchBaseDN;
+
 
     @Autowired
     private AdminLogDao logDao;
 
-    private static final Log LOG = LogFactory.getLog(AccountDaoImpl.class.getName());
-
-    private String basePath;
-    private String orgSearchBaseDN;
-    private String roleSearchBaseDN;
-
-    public String getBasePath() { return basePath; }
-    public void setBasePath(String basePath) { this.basePath = basePath; }
-
     @Autowired
-    public AccountDaoImpl(LdapTemplate ldapTemplate, RoleDao roleDao, OrgsDao orgDao) {
-
+    public AccountDaoImpl(LdapTemplate ldapTemplate) {
         this.ldapTemplate = ldapTemplate;
-        this.roleDao = roleDao;
-        this.orgDao = orgDao;
     }
 
     public void init() {
-        this.attributMapper = new AccountContextMapper(this.getOrgSearchBaseDN() + "," + this.getBasePath());
-    }
-
-    public LdapTemplate getLdapTemplate() {
-        return ldapTemplate;
+        this.attributMapper = new AccountContextMapper(pendingUserSearchBaseDN, orgSearchBaseDN + "," + basePath, pendingOrgSearchBaseDN + "," + basePath);
     }
 
     public void setLdapTemplate(LdapTemplate ldapTemplate) {
         this.ldapTemplate = ldapTemplate;
     }
 
-    public RoleDao getRoleDao() {
-        return roleDao;
-    }
-
-    public void setRoleDao(RoleDao roleDao) {
-        this.roleDao = roleDao;
-    }
-
     public void setUserSearchBaseDN(String userSearchBaseDN) {
         this.userSearchBaseDN = LdapNameBuilder.newInstance(userSearchBaseDN).build();
     }
 
-    public void setLogDao(AdminLogDao logDao) {
-        this.logDao = logDao;
+    public void setPendingUserSearchBaseDN(String pendingUserSearchBaseDN) {
+        this.pendingUserSearchBaseDN = LdapNameBuilder.newInstance(pendingUserSearchBaseDN).build();
     }
 
     public void setOrgSearchBaseDN(String orgSearchBaseDN) {
         this.orgSearchBaseDN = orgSearchBaseDN;
     }
 
-    public String getOrgSearchBaseDN() {
-        return orgSearchBaseDN;
+    public void setPendingOrgSearchBaseDN(String pendingOrgSearchBaseDN) {
+        this.pendingOrgSearchBaseDN = pendingOrgSearchBaseDN;
     }
 
     public void setRoleSearchBaseDN(String roleSearchBaseDN) {
         this.roleSearchBaseDN = roleSearchBaseDN;
     }
 
-    /**
-     * @see {@link AccountDao#insert(Account, String, String)}
-     */
+    public void setBasePath(String basePath) {
+        this.basePath = basePath;
+    }
+
+    public void setLogDao(AdminLogDao logDao) {
+        this.logDao = logDao;
+    }
+
     @Override
-    public synchronized void insert(final Account account, final String roleID, final String originLogin) throws DataServiceException,
-            DuplicatedUidException, DuplicatedEmailException {
+    public synchronized void insert(final Account account, final String originLogin)
+            throws DataServiceException, DuplicatedUidException, DuplicatedEmailException {
 
         assert account != null;
 
@@ -167,11 +152,7 @@ public final class AccountDaoImpl implements AccountDao {
 
         // inserts the new user account
         try {
-            Name dn = buildDn(uid);
-            AndFilter filter = new AndFilter();
-            filter.and(new EqualsFilter("objectClass", "inetOrgPerson"));
-            filter.and(new EqualsFilter("objectClass", "organizationalPerson"));
-            filter.and(new EqualsFilter("objectClass", "person"));
+            Name dn = buildUserDn(account);
 
             DirContextAdapter context = new DirContextAdapter(dn);
             mapToContext(account, context);
@@ -181,37 +162,14 @@ public final class AccountDaoImpl implements AccountDao {
 
             this.ldapTemplate.bind(dn, context, null);
 
-            // Add user to the role
-            this.roleDao.addUser(roleID, account.getUid(), originLogin);
-
-            // Add user to the organization
-            if(account.getOrg().length() > 0)
-                this.orgDao.addUser(account.getOrg(), account.getUid());
-
         } catch (NameNotFoundException e) {
             throw new DataServiceException(e);
         }
     }
 
-    /**
-     * @see {@link AccountDao#update(Account, String)}
-     */
     @Override
     public synchronized void update(final Account account, String originLogin) throws DataServiceException, DuplicatedEmailException {
-
-        // checks mandatory fields
-        if (account.getUid().length() == 0) {
-            throw new IllegalArgumentException("uid is required");
-        }
-        if (account.getSurname().length() == 0) {
-            throw new IllegalArgumentException("surname is required");
-        }
-        if (account.getCommonName().length() == 0) {
-            throw new IllegalArgumentException("common name is required");
-        }
-        if (account.getGivenName().length() == 0) {
-            throw new IllegalArgumentException("given name is required");
-        }
+        checkMandatoryFields(account);
 
         // checks unique email
         try {
@@ -232,7 +190,7 @@ public final class AccountDaoImpl implements AccountDao {
         }
 
         // update the entry in the ldap tree
-        Name dn = buildDn(account.getUid());
+        Name dn = buildUserDn(account);
         DirContextOperations context = ldapTemplate.lookupContext(dn);
 
         mapToContext(account, context);
@@ -246,182 +204,198 @@ public final class AccountDaoImpl implements AccountDao {
         }
     }
 
-    /**
-     * @see {@link AccountDao#update(Account, Account, String)}
-     */
     @Override
     public synchronized void update(Account account, Account modified, String originLogin) throws DataServiceException, DuplicatedEmailException, NameNotFoundException {
-       if (! account.getUid().equals(modified.getUid())) {
-           ldapTemplate.rename(buildDn(account.getUid()), buildDn(modified.getUid()));
-           for (Role g : roleDao.findAllForUser(account.getUid())) {
-               roleDao.modifyUser(g.getName(), account.getUid(), modified.getUid());
-           }
+       if (hasUserDnChanged(account, modified)) {
+           ldapTemplate.rename(buildUserDn(account), buildUserDn(modified));
        }
        update(modified, originLogin);
     }
 
-    /**
-     * Removes the user account and the reference included in the role
-     *
-     * @param uid user to delete from LDAP
-     * @param originLogin login of admin that request deletion
-     *
-     * @see {@link AccountDao#delete(String, String)}
-     */
     @Override
-    public synchronized void delete(final String uid, final String originLogin) throws DataServiceException, NameNotFoundException {
-
-        this.roleDao.deleteUser(uid, originLogin);
-        this.ldapTemplate.unbind(buildDn(uid), true);
-
+    public boolean hasUserDnChanged(Account account, Account modified) {
+        return !buildUserDn(account).equals(buildUserDn(modified));
     }
 
-    /**
-     * @see {@link AccountDao#findAll()}
-     */
     @Override
-    public List<Account> findAll() throws DataServiceException {
-        SearchControls sc = new SearchControls();
-        sc.setReturningAttributes(UserSchema.ATTR_TO_RETRIEVE);
-        sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
-        EqualsFilter filter = new EqualsFilter("objectClass", "person");
-        return ldapTemplate.search(userSearchBaseDN, filter.encode(), sc, attributMapper);
+    public synchronized void delete(Account account, final String originLogin) throws NameNotFoundException {
+        this.ldapTemplate.unbind(buildUserDn(account), true);
     }
-    
+
     @Override
-    public List<Account> find(final ProtectedUserFilter filterProtected, Filter f) {
-        SearchControls sc = new SearchControls();
-        sc.setReturningAttributes(UserSchema.ATTR_TO_RETRIEVE);
-        sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
-        AndFilter and = new AndFilter();
-        and.and( new EqualsFilter("objectClass", "person"));
-        and.and(f);
-        List<Account> l = ldapTemplate.search(userSearchBaseDN, and.encode(), sc, attributMapper);
-        return filterProtected.filterUsersList(l);
+    public Account findByUID(final String uid) throws NameNotFoundException{
+        if(uid == null) {
+            throw new NameNotFoundException("Cannot find user with uid : " + uid + " in LDAP server");
+        }
+        try {
+            Account a = (Account) ldapTemplate.lookup(buildUserDn(uid.toLowerCase(), false), UserSchema.ATTR_TO_RETRIEVE, attributMapper);
+            if(a != null) {return a;}
+        }
+        catch (NameNotFoundException e){
+            try {
+                Account a = (Account) ldapTemplate.lookup(buildUserDn(uid.toLowerCase(), true), UserSchema.ATTR_TO_RETRIEVE, attributMapper);
+                if (a != null) {
+                    return a;
+                }
+            } catch (Exception ex) {};
+        }
+        throw new NameNotFoundException("Cannot find user with uid : " + uid + " in LDAP server");
+    }
+
+    @Override
+    public List<Account> findByShadowExpire() {
+        return new AccountSearcher()
+                .and(new PresentFilter("shadowExpire"))
+                .and(new EqualsFilter("objectClass", "shadowAccount"))
+                .getActiveOrPendingAccounts();
+    }
+
+    @Override
+    public Account findByEmail(final String email) throws DataServiceException, NameNotFoundException {
+        List<Account> accountList = new AccountSearcher()
+                .and(new EqualsFilter("mail", email))
+                .getActiveOrPendingAccounts();
+        if (accountList.isEmpty()) {
+            throw new NameNotFoundException("There is no user with this email: " + email);
+        }
+        return accountList.get(0);
+    }
+
+    @Override
+    public List<Account> findByRole(final String role) throws DataServiceException, NameNotFoundException {
+        Name memberOfValue = LdapNameBuilder.newInstance(basePath).add(roleSearchBaseDN).add("cn", role).build();
+        return new AccountSearcher()
+                .and(new EqualsFilter("memberOf", memberOfValue.toString()))
+                .getActiveOrPendingAccounts();
     }
 
     @Override
     public List<Account> findFilterBy(final ProtectedUserFilter filterProtected) throws DataServiceException {
-
-        List<Account> allUsers = findAll();
-
-        List<Account> list = filterProtected.filterUsersList(allUsers);
-
-        return list;
+        List<Account> allUsers = new AccountSearcher()
+                .getActiveOrPendingAccounts();
+        return filterProtected.filterUsersList(allUsers);
     }
 
-    /**
-     * @see {@link AccountDao#findByUID(String)}
-     */
     @Override
-    public Account findByUID(final String uid) throws NameNotFoundException{
-
-        if(uid == null)
-            throw new NameNotFoundException("Cannot find user with uid : " + uid + " in LDAP server");
-
-        Account a = (Account) ldapTemplate.lookup(buildDn(uid.toLowerCase()), UserSchema.ATTR_TO_RETRIEVE, attributMapper);
-        if(a == null)
-            throw new NameNotFoundException("Cannot find user with uid : " + uid + " in LDAP server");
-        else
-            return a;
-
-    }
-
-    /**
-     * @see {@link AccountDao#findByEmail(String)}
-     */
-    @Override
-    public Account findByEmail(final String email) throws DataServiceException, NameNotFoundException {
-
-        SearchControls sc = new SearchControls();
-        sc.setReturningAttributes(UserSchema.ATTR_TO_RETRIEVE);
-        sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
-
-        AndFilter filter = new AndFilter();
-        filter.and(new EqualsFilter("objectClass", "inetOrgPerson"));
-        filter.and(new EqualsFilter("objectClass", "organizationalPerson"));
-        filter.and(new EqualsFilter("objectClass", "person"));
-        filter.and(new EqualsFilter("mail", email));
-
-        List<Account> accountList = ldapTemplate.search(userSearchBaseDN, filter.encode(),sc,
-                attributMapper);
-        if (accountList.isEmpty()) {
-            throw new NameNotFoundException("There is no user with this email: " + email);
-        }
-        Account account = accountList.get(0);
-
-        return account;
-    }
-
-    /**
-     * @see {@link AccountDao#findByRole(String)}
-     */
-    @Override
-    public List<Account> findByRole(final String role) throws DataServiceException, NameNotFoundException {
-
-        SearchControls sc = new SearchControls();
-        sc.setReturningAttributes(UserSchema.ATTR_TO_RETRIEVE);
-        sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
-
-        AndFilter filter = new AndFilter();
-        filter.and(new EqualsFilter("objectClass", "inetOrgPerson"));
-        filter.and(new EqualsFilter("objectClass", "organizationalPerson"));
-        filter.and(new EqualsFilter("objectClass", "person"));
-
-        Name memberOfValue = LdapNameBuilder.newInstance(basePath).add(this.roleSearchBaseDN).add("cn", role).build();
-        filter.and(new EqualsFilter("memberOf", memberOfValue.toString()));
-
-        return ldapTemplate.search(userSearchBaseDN, filter.encode(),sc, attributMapper);
-    }
-
-
-
-    public boolean exist(final String uid) throws DataServiceException {
+    public boolean exist(final String uid) {
 
         try {
-            LdapName dn = buildDn(uid.toLowerCase());
-            ldapTemplate.lookup(dn);
+            ldapTemplate.lookup(buildUserDn(uid.toLowerCase(), false));
             return true;
         } catch (NameNotFoundException ex) {
+            try {
+                ldapTemplate.lookup(buildUserDn(uid.toLowerCase(), true));
+                return true;
+            }  catch (NameNotFoundException e) {}
             return false;
         }
     }
 
     /**
-     * Create an ldap entry for the user
+     * Adds the new password in the user password array. The new password is
+     * maintained in array with two userPassword attributes.
      *
-     * @param uid
-     *            user id
-     * @return
+     * <pre>
+     * Format:
+     * userPassword[0] : old password
+     * userPassword[1] : new password
+     * </pre>
+     *
+     * @see {@link AccountDao#addNewPassword(String, String)}
      */
-    private LdapName buildDn(String uid) {
-        LdapNameBuilder builder = LdapNameBuilder.newInstance();
-        builder.add(userSearchBaseDN);
-        builder.add("uid", uid);
-        return builder.build();
+    @Override
+    public void addNewPassword(String uid, String newPassword) {
+        if (StringUtils.isEmpty(uid)) {
+            throw new IllegalArgumentException("uid is required");
+        }
+        if (StringUtils.isEmpty(newPassword)) {
+            throw new IllegalArgumentException("password is required");
+        }
+        // update the entry in the LDAP tree
+        DirContextOperations context = ldapTemplate.lookupContext(buildUserDn(uid, false));
+
+        LdapShaPasswordEncoder lspe = new LdapShaPasswordEncoder();
+        String encrypted = lspe.encodePassword(newPassword, String.valueOf(System.currentTimeMillis()).getBytes());
+
+        final String pwd = "userPassword";
+        Object[] pwdValues = context.getObjectAttributes(pwd);
+        if (pwdValues.length < 2) {
+            // adds the new password
+            context.addAttributeValue(pwd, encrypted, false);
+        } else {
+            // update the last password with the new password
+            pwdValues[1] = newPassword;
+            context.setAttributeValues(pwd, pwdValues);
+        }
+
+        ldapTemplate.modifyAttributes(context);
     }
 
     /**
-     * Checks that mandatory fields are present in the {@link Account}
+     * Generate a new uid based on the provided uid
+     *
+     * @param
+     *
+     * @return the proposed uid
      */
-    private void checkMandatoryFields(Account a) throws IllegalArgumentException {
+    @Override
+    public String generateUid(String uid) {
 
-        // required by the account entry
-        if (a.getUid().length() <= 0) {
+        String newUid = UidGenerator.next(uid);
+
+        while (exist(newUid)) {
+
+            newUid = UidGenerator.next(newUid);
+        }
+
+        return newUid;
+    }
+
+    @Override
+    public LdapName buildUserDn(Account account) {
+        return buildUserDn(account.getUid(), account.isPending());
+    }
+
+    @Override
+    public void changePassword(final String uid, final String password) throws DataServiceException {
+
+        if (StringUtils.isEmpty(uid)) {
             throw new IllegalArgumentException("uid is required");
         }
+        if (StringUtils.isEmpty(password)) {
+            throw new IllegalArgumentException("password is required");
+        }
 
-        // required field in Person object
-        if (a.getGivenName().length() <= 0) {
+        DirContextOperations context = ldapTemplate.lookupContext(buildUserDn(uid, false));
+
+        // the following action removes the old password. It there are two
+        // passwords (old and new password) they will
+        // be replaced by a single user password
+        LdapShaPasswordEncoder lspe = new LdapShaPasswordEncoder();
+        String encrypted = lspe.encodePassword(password, String.valueOf(System.currentTimeMillis()).getBytes());
+
+        context.setAttributeValue("userPassword", encrypted);
+
+        ldapTemplate.modifyAttributes(context);
+    }
+
+    private void checkMandatoryFields(Account account) throws IllegalArgumentException {
+
+        if (account.getUid().length() <= 0) {
+            throw new IllegalArgumentException("uid is required");
+        }
+        if (account.getGivenName().length() <= 0) {
             throw new IllegalArgumentException("Given name (cn) is required");
         }
-        if (a.getSurname().length() <= 0) {
+        if (account.getSurname().length() <= 0) {
             throw new IllegalArgumentException("surname name (sn) is required");
         }
-        if (a.getEmail().length() <= 0) {
+        if (account.getEmail().length() <= 0) {
             throw new IllegalArgumentException("email is required");
         }
-
+        if (account.getCommonName().length() == 0) {
+            throw new IllegalArgumentException("common name is required");
+        }
     }
 
     /**
@@ -479,7 +453,7 @@ public final class AccountDaoImpl implements AccountDao {
         setAccountField(context, UserSchema.HOME_POSTAL_ADDRESS_KEY, account.getHomePostalAddress());
 
         if(account.getManager() != null)
-            setAccountField(context, UserSchema.MANAGER_KEY, "uid=" + account.getManager() + "," + this.userSearchBaseDN.toString() + "," + this.getBasePath());
+            setAccountField(context, UserSchema.MANAGER_KEY, "uid=" + account.getManager() + "," + userSearchBaseDN.toString() + "," + basePath);
         else
             setAccountField(context, UserSchema.MANAGER_KEY, null);
 
@@ -509,14 +483,14 @@ public final class AccountDaoImpl implements AccountDao {
         }
     }
 
-    public static class AccountContextMapper implements ContextMapper {
+    static public class AccountContextMapper implements ContextMapper {
 
-        private final String orgBasePath;
         private final Pattern pattern;
+        private LdapName pendingUserSearchBaseDN;
 
-        public AccountContextMapper(String orgBasePath) {
-            this.orgBasePath = orgBasePath;
-            this.pattern = Pattern.compile("([^=,]+)=([^=,]+)," + this.orgBasePath + "$");
+        public AccountContextMapper(LdapName pendingUserSearchBaseDN, String orgBasePath, String pendingOrgBasePath) {
+            this.pendingUserSearchBaseDN = pendingUserSearchBaseDN;
+            this.pattern = Pattern.compile(String.format("([^=,]+)=([^=,]+),((%s)|(%s))$", orgBasePath, pendingOrgBasePath));
         }
 
         @Override
@@ -524,7 +498,8 @@ public final class AccountDaoImpl implements AccountDao {
 
             DirContextAdapter context = (DirContextAdapter) ctx;
 
-            Account account = AccountFactory.createFull(context.getStringAttribute(UserSchema.UID_KEY),
+            Account account = AccountFactory.createFull(
+                    context.getStringAttribute(UserSchema.UID_KEY),
                     context.getStringAttribute(UserSchema.COMMON_NAME_KEY),
                     context.getStringAttribute(UserSchema.SURNAME_KEY),
                     context.getStringAttribute(UserSchema.GIVEN_NAME_KEY),
@@ -580,6 +555,7 @@ public final class AccountDaoImpl implements AccountDao {
                     account.setOrg(org);
             }
 
+            account.setPending(context.getDn().startsWith(pendingUserSearchBaseDN));
 
             return account;
         }
@@ -597,107 +573,51 @@ public final class AccountDaoImpl implements AccountDao {
         return false;
     }
 
-    @Override
-    public void changePassword(final String uid, final String password) throws DataServiceException {
-
-        if (StringUtils.isEmpty(uid)) {
-            throw new IllegalArgumentException("uid is required");
-        }
-        if (StringUtils.isEmpty(password)) {
-            throw new IllegalArgumentException("password is required");
-        }
-
-        // update the entry in the ldap tree
-        Name dn = buildDn(uid);
-        DirContextOperations context = ldapTemplate.lookupContext(dn);
-
-        // the following action removes the old password. It there are two
-        // passwords (old and new password) they will
-        // be replaced by a single user password
-        LdapShaPasswordEncoder lspe = new LdapShaPasswordEncoder();
-        String encrypted = lspe.encodePassword(password, String.valueOf(System.currentTimeMillis()).getBytes());
-
-        context.setAttributeValue("userPassword", encrypted);
-
-        ldapTemplate.modifyAttributes(context);
+    private LdapName buildUserDn(String uid, boolean pending) {
+        LdapNameBuilder builder = LdapNameBuilder.newInstance();
+        builder.add(pending ? pendingUserSearchBaseDN : userSearchBaseDN);
+        builder.add("uid", uid);
+        return builder.build();
     }
 
-    /**
-     * Adds the new password in the user password array. The new password is
-     * maintained in array with two userPassword attributes.
-     *
-     * <pre>
-     * Format:
-     * userPassword[0] : old password
-     * userPassword[1] : new password
-     * </pre>
-     *
-     * @see {@link AccountDao#addNewPassword(String, String)}
-     */
-    @Override
-    public void addNewPassword(String uid, String newPassword) {
-        if (uid.length() == 0) {
-            throw new IllegalArgumentException("uid is required");
-        }
-        if (newPassword.length() == 0) {
-            throw new IllegalArgumentException("new password is required");
-        }
-        LdapShaPasswordEncoder lspe = new LdapShaPasswordEncoder();
-        String encrypted = lspe.encodePassword(newPassword, String.valueOf(System.currentTimeMillis()).getBytes());
-        // update the entry in the LDAP tree
-        Name dn = buildDn(uid);
-        DirContextOperations context = ldapTemplate.lookupContext(dn);
+    private class AccountSearcher {
 
-        final String pwd = "userPassword";
-        Object[] pwdValues = context.getObjectAttributes(pwd);
-        if (pwdValues.length < 2) {
-            // adds the new password
-            context.addAttributeValue(pwd, encrypted, false);
-        } else {
-            // update the last password with the new password
-            pwdValues[1] = newPassword;
-            context.setAttributeValues(pwd, pwdValues);
+        private AndFilter filter;
+
+        public List<Account> getActiveAccounts() {
+            SearchControls sc = createSearchControls();
+            return ldapTemplate.search(userSearchBaseDN, filter.encode(), sc, attributMapper);
         }
 
-        ldapTemplate.modifyAttributes(context);
-    }
-
-    /**
-     * Generate a new uid based on the provided uid
-     *
-     * @param
-     *
-     * @return the proposed uid
-     */
-    @Override
-    public String generateUid(String uid) throws DataServiceException {
-
-        String newUid = UidGenerator.next(uid);
-
-        while (exist(newUid)) {
-
-            newUid = UidGenerator.next(newUid);
+        public List<Account> getPendingAccounts() {
+            SearchControls sc = createSearchControls();
+            return ldapTemplate.search(pendingUserSearchBaseDN, filter.encode(), sc, attributMapper);
         }
 
-        return newUid;
-    }
+        public List<Account> getActiveOrPendingAccounts() {
+            SearchControls sc = createSearchControls();
+            List<Account> active = ldapTemplate.search(userSearchBaseDN, filter.encode(), sc, attributMapper);
+            List<Account> pending =  ldapTemplate.search(pendingUserSearchBaseDN, filter.encode(), sc, attributMapper);
+            return Stream.concat(active.stream(), pending.stream()).collect(Collectors.toList());
+        }
 
+        public AccountSearcher() {
+            filter =  new AndFilter()
+                    .and(new EqualsFilter("objectClass", "inetOrgPerson"))
+                    .and(new EqualsFilter("objectClass", "organizationalPerson"))
+                    .and(new EqualsFilter("objectClass", "person"));
+        }
 
-    @Override
-    public List<Account> findByShadowExpire() {
+        public AccountSearcher and(Filter filter) {
+            this.filter.and(filter);
+            return this;
+        }
 
-        SearchControls sc = new SearchControls();
-        sc.setReturningAttributes(UserSchema.ATTR_TO_RETRIEVE);
-        sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
-
-        AndFilter filter = new AndFilter();
-        filter.and(new EqualsFilter("objectClass", "shadowAccount"));
-        filter.and(new EqualsFilter("objectClass", "inetOrgPerson"));
-        filter.and(new EqualsFilter("objectClass", "organizationalPerson"));
-        filter.and(new EqualsFilter("objectClass", "person"));
-        filter.and(new PresentFilter("shadowExpire"));
-
-        return ldapTemplate.search(userSearchBaseDN, filter.encode(),sc, attributMapper);
-
+        private SearchControls createSearchControls() {
+            SearchControls sc = new SearchControls();
+            sc.setReturningAttributes(UserSchema.ATTR_TO_RETRIEVE);
+            sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
+            return sc;
+        }
     }
 }

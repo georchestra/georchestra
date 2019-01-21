@@ -18,7 +18,7 @@
 
   <div class="col-md-10">
 
-    <div class="panel panel-default" ng-class="{'panel-danger': org.org.status !== 'REGISTERED'}">
+    <div class="panel panel-default" ng-class="{'panel-danger': org.org.pending}">
 
       <div class="panel-heading text-center" ng-if="org.tab=='infos' && org.delegations.length > 0 && profile === 'SUPERUSER'">
         <span translate>org.ohasdeleg</span>
@@ -27,7 +27,7 @@
         </span>
       </div>
 
-      <div class="panel-heading text-center" ng-if="org.org.status !== 'REGISTERED'">
+      <div class="panel-heading text-center" ng-if="org.org.pending">
         <span translate>org.pendingmsg</span>
         <button class="btn btn-default" ng-click="org.confirm()" translate>org.confirm</button>
       </div>

@@ -1,10 +1,5 @@
 package org.georchestra.console.ws.edituserdetails;
 
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-import java.util.List;
-
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.dto.Account;
@@ -19,8 +14,17 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.MapBindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.support.SessionStatus;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+
+import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 public class EditUserDetailsFormControllerTest {
@@ -160,6 +164,34 @@ public class EditUserDetailsFormControllerTest {
 
     }
 
+    @Test
+    public void testEditUserMissingRequiredField() throws IOException {
+        request.addHeader("sec-username", "mtester");
+        EditUserDetailsFormBean formBeanWithMissingField = new EditUserDetailsFormBean();
+        BindingResult resultErrors = new MapBindingResult(new HashMap<>(), "errors");
+        ctrl = new EditUserDetailsFormController(dao, orgsDao, new Validation("firstName,surname,org,orgType"));
+
+        ctrl.edit(request, response, model, formBeanWithMissingField, resultErrors, sessionStatus);
+
+        assertEquals("required", resultErrors.getFieldError("firstName").getDefaultMessage());
+        assertEquals("required", resultErrors.getFieldError("surname").getDefaultMessage());
+        assertEquals(2, resultErrors.getFieldErrorCount());
+    }
 
 
+    @Test
+    public void specialValidators() throws IOException {
+        request.addHeader("sec-username", "mtester");
+        EditUserDetailsFormBean formBeanWithMissingField = new EditUserDetailsFormBean();
+        BindingResult resultErrors = new MapBindingResult(new HashMap<>(), "errors");
+        ctrl = new EditUserDetailsFormController(dao, orgsDao, new Validation("phone,facsimile,title,description,postalAddress"));
+
+        ctrl.edit(request, response, model, formBeanWithMissingField, resultErrors, sessionStatus);
+
+        assertEquals("required", resultErrors.getFieldError("phone").getDefaultMessage());
+        assertEquals("required", resultErrors.getFieldError("facsimile").getDefaultMessage());
+        assertEquals("required", resultErrors.getFieldError("title").getDefaultMessage());
+        assertEquals("required", resultErrors.getFieldError("description").getDefaultMessage());
+        assertEquals("required", resultErrors.getFieldError("postalAddress").getDefaultMessage());
+    }
 }

@@ -23,7 +23,7 @@ class UserController {
       user.originalID = user.uid
       if (user.org && user.org !== '') {
         user.orgObj = Orgs.get({'id': user.org}, org => {
-          user.validOrg = org.status === 'REGISTERED'
+          user.validOrg = !org.pending
         })
       } else {
         user.validOrg = true
@@ -36,7 +36,7 @@ class UserController {
           this.delegation = new Delegations(options)
           this.activeDelegation = this.hasDelegation()
           $injector.get('Orgs').query(orgs => {
-            this.orgs = orgs.filter(o => o.status !== 'PENDING')
+            this.orgs = orgs.filter(o => !o.pending)
           })
           Role.query(roles => { this.allRoles = roles.map(r => r.cn) })
         })
@@ -93,9 +93,6 @@ class UserController {
           }
           if (!roleAdminFilter(role) && role.cn !== TMP_ROLE) {
             notAdmin.push(role.cn)
-          }
-          if (role.cn === 'PENDING') {
-            this.user.pending = role.users.indexOf(this.user.uid) >= 0
           }
         })
         this.roles = notAdmin
@@ -265,11 +262,8 @@ class UserController {
   }
 
   confirm () {
-    angular.extend(this.user.adminRoles, {
-      'PENDING': false,
-      'USER': true
-    })
-    this.$injector.get('$cacheFactory').get('$http').removeAll()
+    this.user.pending = false
+    this.save()
   }
 
   deleteDelegation () {
@@ -328,13 +322,6 @@ class UserController {
           DELETE: toDel
         },
         () => {
-          this.$injector.get('Role').query().$promise.then(roles => {
-            roles.forEach(g => {
-              if (g.cn === 'PENDING') {
-                this.user.pending = g.users.indexOf(this.user.uid) >= 0
-              }
-            })
-          })
           flash.create('success', i18n.roleUpdated)
           $httpDefaultCache.removeAll()
         },
@@ -417,7 +404,7 @@ angular.module('manager')
       let selOrgs = []
       Orgs.query((orgs) => {
         orgs.forEach((o) => {
-          if (user.pending || o.status !== 'PENDING') {
+          if (user.pending || !o.pending) {
             selOrgs.push({
               id: o.id,
               text: o.name

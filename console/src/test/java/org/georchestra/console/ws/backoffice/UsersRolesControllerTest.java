@@ -41,7 +41,6 @@ public class UsersRolesControllerTest {
 
     private AccountDaoImpl dao;
     private RoleDaoImpl roleDao;
-    private OrgsDao orgDao;
     private UserRule userRule;
     private LdapTemplate ldapTemplate;
     private LdapContextSource contextSource;
@@ -191,23 +190,20 @@ public class UsersRolesControllerTest {
         userRule = new UserRule();
         userRule.setListOfprotectedUsers(new String[] { "geoserver_privileged_user" });
 
-
         // Configures roleDao
         roleDao = new RoleDaoImpl();
         roleDao.setLdapTemplate(ldapTemplate);
         roleDao.setRoleSearchBaseDN("ou=roles");
-        roleDao.setUserSearchBaseDN("ou=users");
 
         OrgsDao orgsDao = new OrgsDao();
         orgsDao.setLdapTemplate(ldapTemplate);
         orgsDao.setOrgSearchBaseDN("ou=orgs");
-        orgsDao.setUserSearchBaseDN("ou=users");
 
         // configures AccountDao
-        dao = new AccountDaoImpl(ldapTemplate, roleDao, orgsDao);
+        dao = new AccountDaoImpl(ldapTemplate);
         dao.setUserSearchBaseDN("ou=users");
-        dao.setRoleDao(roleDao);
-      
+        dao.setOrgSearchBaseDN("ou=orgs");
+        dao.setRoleSearchBaseDN("ou=roles");
     }
 
     private final String TEST_ROLE_NAME = "LDAPADMIN_TESTSUITE_SAMPLE_ROLE" ;

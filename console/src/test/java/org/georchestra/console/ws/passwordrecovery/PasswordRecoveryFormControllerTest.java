@@ -45,9 +45,9 @@ public class PasswordRecoveryFormControllerTest {
     private Model model = Mockito.mock(Model.class);
     private HttpServletRequest request = new MockHttpServletRequest();
     private GeorchestraConfiguration georConfig = Mockito.mock(GeorchestraConfiguration.class);
-    PasswordRecoveryFormBean formBean = Mockito.mock(PasswordRecoveryFormBean.class);
-    BindingResult result = Mockito.mock(BindingResult.class);
-    SessionStatus status = Mockito.mock(SessionStatus.class);
+    private PasswordRecoveryFormBean formBean = Mockito.mock(PasswordRecoveryFormBean.class);
+    private BindingResult result = Mockito.mock(BindingResult.class);
+    private SessionStatus status = Mockito.mock(SessionStatus.class);
 
 
     @Before
@@ -63,10 +63,15 @@ public class PasswordRecoveryFormControllerTest {
     }
 
     private void prepareLegitRequest() throws Exception {
+        prepareLegitRequest(false);
+    }
+
+    private void prepareLegitRequest(boolean isPending) throws Exception {
         request = new MockHttpServletRequest();
         Mockito.when(formBean.getRecaptcha_response_field()).thenReturn("valid");
         Account account = Mockito.mock(Account.class);
         Mockito.when(account.getUid()).thenReturn("1");
+        Mockito.when(account.isPending()).thenReturn(isPending);
         Mockito.when(dao.findByEmail(Mockito.anyString())).thenReturn(account);
         Mockito.when(utd.exist(Mockito.anyString())).thenReturn(true);
     }
@@ -170,17 +175,10 @@ public class PasswordRecoveryFormControllerTest {
     */
     @Test
     public void testPasswordRecoveryWithPendingUser() throws Exception {
-        prepareLegitRequest();
+        prepareLegitRequest(true);
         Mockito.when(result.hasErrors()).thenReturn(false);
-        ArrayList<Role> pendingUsersRoleList = new ArrayList();
-        pendingUsersRoleList.add(RoleFactory.create(Role.PENDING, "roles of pending users", false));
-        Mockito.when(gdao.findAllForUser(Mockito.anyString())).thenReturn(pendingUsersRoleList);
         String ret = ctrl.generateToken(request, formBean, result, status);
 
         assertTrue(ret.equals("passwordRecoveryForm"));
-        for (Role g : pendingUsersRoleList){
-        assertTrue(g.getName().equals(Role.PENDING));
-
-        }
     }
 }

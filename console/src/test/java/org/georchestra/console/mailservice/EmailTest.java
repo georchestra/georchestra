@@ -21,7 +21,7 @@ import java.util.List;
 public class EmailTest {
 
 
-    private String[] recipients;
+    private List<String> recipients;
     private String emailSubject;
     private String smtpHost;
     private int smtpPort;
@@ -43,7 +43,7 @@ public class EmailTest {
 
     @Before
     public void doSetUp() {
-        this.recipients = new String[]{"admin@georchestra.com", "delegated@georchestra.com"};
+        this.recipients = Arrays.asList("admin@georchestra.com", "delegated@georchestra.com");
         this.emailSubject = "your account has been created";
         this.smtpHost = "127.0.0.1";
         this.smtpPort = 25;
@@ -87,7 +87,7 @@ public class EmailTest {
         for(Address address : addresses){
             toList.add(address.toString());
         }
-        assertEquals("emails listed in TO: field", Arrays.asList(this.recipients), toList);
+        assertEquals("emails listed in TO: field", this.recipients, toList);
 
         // Check FROM: field
         assertEquals("email in FROM: field", this.from, message.getFrom()[0].toString());
