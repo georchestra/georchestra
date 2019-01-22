@@ -91,10 +91,6 @@ These variables are:
 
 These template variables are defined in [EmailFactoryDefault.java](src/main/java/extractorapp/ws/EmailFactoryDefault.java)
 
-Note that you are free to define your own variables by using a custom EmailFactory, such as [extractorapp/src/main/java/org/georchestra/extractorapp/ws/EmailFactoryPigma.java](src/main/java/org/georchestra/extractorapp/ws/EmailFactoryPigma.java).
-In this case, be sure to specify `emailfactory=org.georchestra.extractorapp.ws.EmailFactoryPigma` in your_config/extractorapp/maven.filter
-
-
 How to run the extractor without Tomcat ?
 =========================================
 
