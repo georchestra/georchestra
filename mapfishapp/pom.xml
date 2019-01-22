@@ -301,6 +301,12 @@
         <configuration>
           <filesets>
             <fileset>
+              <directory>${project.basedir}/src/main/webapp</directory>
+              <includes>
+                <include>build/**</include>
+              </includes>
+            </fileset>
+            <fileset>
               <directory>jsbuild</directory>
               <includes>
                 <include>env/**</include>
