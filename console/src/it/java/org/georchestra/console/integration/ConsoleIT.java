@@ -1,4 +1,4 @@
-package org.georchestra.console.ws.utils;
+package org.georchestra.console.integration;
 
 import java.beans.PropertyVetoException;
 
@@ -13,7 +13,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -35,22 +34,16 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 @Configuration
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ContextConfiguration(locations = { "classpath:/webmvc-config-test.xml" })
-public class ConsoleIntegrationTest {
+public class ConsoleIT {
 
 	@ClassRule
-	public static GenericContainer georchestraLdap = new GenericContainer("georchestra/ldap")
-			.withExposedPorts(389)
-			.withEnv("SLAPD_ORGANISATION", "georchestra")
-			.withEnv("SLAPD_DOMAIN", "georchestra.org")
-			.withEnv("SLAPD_PASSWORD", "secret")
-			.withEnv("SLAPD_ADDITIONAL_MODULES", "groupofmembers");
+	public static GenericContainer georchestraLdap = new GenericContainer("georchestra/ldap").withExposedPorts(389)
+			.withEnv("SLAPD_ORGANISATION", "georchestra").withEnv("SLAPD_DOMAIN", "georchestra.org")
+			.withEnv("SLAPD_PASSWORD", "secret").withEnv("SLAPD_ADDITIONAL_MODULES", "groupofmembers");
 
 	@ClassRule
 	public static GenericContainer georchestraDatabase = new GenericContainer("georchestra/database")
-			.withExposedPorts(5432)
-			.withEnv("POSTGRES_USER", "georchestra")
-			.withEnv("POSTGRES_PASSWORD", "georchestra");
-
+			.withExposedPorts(5432).withEnv("POSTGRES_USER", "georchestra").withEnv("POSTGRES_PASSWORD", "georchestra");
 
 	// <bean id="waitForDb" class="org.georchestra.commons.WaitForDb"
 	// init-method="test">
@@ -82,8 +75,7 @@ public class ConsoleIntegrationTest {
 	// <property name="minPoolSize" value="1"/>
 	// <property name="automaticTestTable" value="cpds_connection_test"/>
 	// </bean>
-	public @Bean(name = "dataSource") @DependsOn("waitForDb") @Autowired DataSource psqlDataSource(WaitForDb wd)
-			throws PropertyVetoException {
+	public @Bean(name = "dataSource") @Autowired DataSource psqlDataSource(WaitForDb wd) throws PropertyVetoException {
 
 		ComboPooledDataSource pool = new ComboPooledDataSource();
 		pool.setJdbcUrl(wd.getUrl());
