@@ -6,6 +6,7 @@ package org.georchestra.ogcservstatistics.calculations;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -14,10 +15,12 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.georchestra.ogcservstatistics.OGCServStatisticsException;
-import org.georchestra.ogcservstatistics.calculations.OGCServiceStatistics;
+import org.georchestra.ogcservstatistics.dataservices.DataCommandException;
 import org.georchestra.ogcservstatistics.dataservices.DataServicesConfiguration;
 import org.georchestra.ogcservstatistics.dataservices.DeleteAllCommand;
 import org.georchestra.ogcservstatistics.log4j.OGCServiceMessageFormatter;
+import org.georchestra.ogcservstatistics.log4j.OGCServicesAppender;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 
@@ -33,52 +36,44 @@ import org.junit.Test;
  */
 public class OGCServiceStatisticsTest {
 
-	private final static Logger LOGGER = Logger.getLogger( OGCServiceStatisticsTest.class);
+	//There's no logger configured for this package, use OGCServicesAppender's
+	private final static Logger LOGGER = Logger.getLogger( OGCServicesAppender.class);
+	
 	private final static Date time = Calendar.getInstance().getTime();
 	
-	static{
+	public static @BeforeClass void initialize() throws ClassNotFoundException, SQLException, DataCommandException {
 		// WARNING: because this test will delete all log before execute the test method
 		// you should configure a test table in the log4j.properties file
 		final String file = "src/test/resources/org/georchestra/ogcservstatistics/log4j.properties";
 		OGCServiceStatistics.configure(file);
 
-		try {
-			// the log table Initialize
-			
-			DeleteAllCommand cmd = new DeleteAllCommand();
-			cmd.setConnection(DataServicesConfiguration.getInstance().getConnection());
-			cmd.execute();
-			
-			// add the initial logs
+		// the log table Initialize
 
-			// user101: one request layer1 (WFS) and two for layer2 (using WFS and WMS) 
-			String request;
-			String [] roles = null;
-			
-			request = "http://www.someserver.com/wfs.cgi&SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=layer1&FILTER=<Filter><Within><PropertyName>InWaterA_1M/wkbGeom<PropertyName><gml:Envelope><gml:lowerCorner>10 10<gml:lowerCorner><gml:upperCorner>20 20</gml:upperCorner></gml:Envelope></Within></Filter>";
-			LOGGER.info(OGCServiceMessageFormatter.format("user101", request,"",roles));
-			
-			request = "http://www.someserver.com/wfs.cgi&SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=layer2&FILTER=<Filter><Within><PropertyName>InWaterA_1M/wkbGeom<PropertyName><gml:Envelope><gml:lowerCorner>10 10<gml:lowerCorner><gml:upperCorner>20 20</gml:upperCorner></gml:Envelope></Within></Filter>";
-			LOGGER.info(OGCServiceMessageFormatter.format("user102", request,"",roles));
-			
-			request = "http://www.someserver.com/geoserver/wms?SERVICE=WMS&LAYERS=layer2&TRANSPARENT=true&VERSION=1.1.1&FORMAT=image%2Fpng&REQUEST=GetMap&STYLES=&SRS=EPSG%3A2154&BBOX=358976.61292821,6395407.8064641,430656.57422103,6467087.7677569&WIDTH=512&HEIGHT=512";
-			LOGGER.info(OGCServiceMessageFormatter.format("user101", request,"",roles));
-			
-			// user102: one request layer1 using WFS and other using WMS
-			request = "http://www.someserver.com/wfs.cgi&SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=layer1&FILTER=<Filter><Within><PropertyName>InWaterA_1M/wkbGeom<PropertyName><gml:Envelope><gml:lowerCorner>10 10<gml:lowerCorner><gml:upperCorner>20 20</gml:upperCorner></gml:Envelope></Within></Filter>";
-			LOGGER.info(OGCServiceMessageFormatter.format("user101", request,"",roles));
-			
-			request = "http://www.someserver.com/geoserver/wms?SERVICE=WMS&LAYERS=layer1&TRANSPARENT=true&VERSION=1.1.1&FORMAT=image%2Fpng&REQUEST=GetMap&STYLES=&SRS=EPSG%3A2154&BBOX=358976.61292821,6395407.8064641,430656.57422103,6467087.7677569&WIDTH=512&HEIGHT=512";
-			LOGGER.info(OGCServiceMessageFormatter.format("user101", request,"",roles));
-			
-			
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	
-	
-	
+		DeleteAllCommand cmd = new DeleteAllCommand();
+		cmd.setConnection(DataServicesConfiguration.getInstance().getConnection());
+		cmd.execute();
+
+		// add the initial logs
+
+		// user101: one request layer1 (WFS) and two for layer2 (using WFS and WMS)
+		String request;
+		String[] roles = new String[] {"ROLE1", "ROLE2"};
+
+		request = "http://www.someserver.com/wfs.cgi&SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=layer1&FILTER=<Filter><Within><PropertyName>InWaterA_1M/wkbGeom<PropertyName><gml:Envelope><gml:lowerCorner>10 10<gml:lowerCorner><gml:upperCorner>20 20</gml:upperCorner></gml:Envelope></Within></Filter>";
+		LOGGER.info(OGCServiceMessageFormatter.format("user101", request, "", roles));
+
+		request = "http://www.someserver.com/wfs.cgi&SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=layer2&FILTER=<Filter><Within><PropertyName>InWaterA_1M/wkbGeom<PropertyName><gml:Envelope><gml:lowerCorner>10 10<gml:lowerCorner><gml:upperCorner>20 20</gml:upperCorner></gml:Envelope></Within></Filter>";
+		LOGGER.info(OGCServiceMessageFormatter.format("user102", request, "", roles));
+
+		request = "http://www.someserver.com/geoserver/wms?SERVICE=WMS&LAYERS=layer2&TRANSPARENT=true&VERSION=1.1.1&FORMAT=image%2Fpng&REQUEST=GetMap&STYLES=&SRS=EPSG%3A2154&BBOX=358976.61292821,6395407.8064641,430656.57422103,6467087.7677569&WIDTH=512&HEIGHT=512";
+		LOGGER.info(OGCServiceMessageFormatter.format("user101", request, "", roles));
+
+		// user102: one request layer1 using WFS and other using WMS
+		request = "http://www.someserver.com/wfs.cgi&SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&TYPENAME=layer1&FILTER=<Filter><Within><PropertyName>InWaterA_1M/wkbGeom<PropertyName><gml:Envelope><gml:lowerCorner>10 10<gml:lowerCorner><gml:upperCorner>20 20</gml:upperCorner></gml:Envelope></Within></Filter>";
+		LOGGER.info(OGCServiceMessageFormatter.format("user101", request, "", roles));
+
+		request = "http://www.someserver.com/geoserver/wms?SERVICE=WMS&LAYERS=layer1&TRANSPARENT=true&VERSION=1.1.1&FORMAT=image%2Fpng&REQUEST=GetMap&STYLES=&SRS=EPSG%3A2154&BBOX=358976.61292821,6395407.8064641,430656.57422103,6467087.7677569&WIDTH=512&HEIGHT=512";
+		LOGGER.info(OGCServiceMessageFormatter.format("user101", request, "", roles));
 	}
 	
 	/**

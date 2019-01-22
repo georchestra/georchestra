@@ -19,7 +19,9 @@
 
 package org.georchestra.ogcservstatistics.dataservices;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 /**
  * This Singleton maintains the configuration data required to access to the database where
