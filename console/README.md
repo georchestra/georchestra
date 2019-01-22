@@ -105,7 +105,7 @@ mvn eclipse:eclipse
 ```
 
 
-### Run (Testing)
+### Manual Testing
 
 Testing purpose:
 
@@ -134,6 +134,42 @@ Alternatively, run with jetty:
 
  Running console with jetty will change web server port to *8286* (in order to integrate with others georchestra
  instance : CAS, security proxy, ...)
+
+### Integration Testing
+
+While `mvn test` will run the unit tests but not the integration tests, `mvn verify` (or any goal past that, like `mvn install`) is used to run (also) integration tests.
+
+A convenient `skipUT` property was added to allow ignoring the unit tests and to run only the integration tests. e.g.:
+`mvn -DskipUT=true verify`. The standard `-DskipTests` flag can't be used becuase it will make maven also ignore the integration tests.
+
+Integration test sources and resources are under `src/it/java` and `src/it/resources` respectively, and follow the convention of calling test classes `**IT.java`.
+
+Running integration tests and require connecting to geOrchestra's LDAP and Postgres instances.
+
+In order to automate these external resources, the [docker-maven-plugin](fabric8io/docker-maven-plugin) is used, which engages in the regular maven build lifecycle, launching the `georchestra/ldap` and `georchestra/database` docker images on the `pre-integration-test` phase and shuting them down in `post-integration-test`.
+
+Integration tests are run after `test` and `package`, and consists of the `pre-integration-test` -> `integration-test` -> `post-integration-test` -> `verify` phases.
+
+**Do not** run `mvn integration-test` directly as it won't have a chance to properly shut down the external resources (the docker containers in this case).
+
+See the `pom.xml` file to check how the `docker-maven-plugin` is configured. It essentially launches the two mentioned containers and uses dynamic port mapping on port `389` for `georchestra/ldap` and port `5432` for `georchestra/database`. These mapped ports are then exposed by the `maven-failsafe-plugin` (the one used to run integration tests) as environment variables `ldap_port` and `psql_port` to the test JVM, which in turn are picked up by Spring while resolving `src/it/resources/console-it.properties` property source:
+
+```
+ldapUrl=ldap://localhost:${ldap_port}
+psql.url=jdbc:postgresql://localhost:${psql_port}/georchestra
+```
+
+#### Running from an IDE while developing
+
+Whilre writing integration tests, it could be cumbersome to wait for the launch and shut down of test containers.
+
+In this case it's better to have `georchestra/ldap` and `georchestra/database` containers already running and instructing the test run to use them directly.
+
+To do so launch them externally mapping the ports 389 and 5432 as appropriate,  and create a launch configuration for the test class being working on, and set the `-Dpsql_port=<db mapped port> -Dldap_port=<ldap mapped port>`.
+
+When the test case is finished, make sure to run `mvn verify` to check it works properly within the maven build cycle.
+
+Finally, when writing integration tests, make sure they're self contained and would not be affected by any existing data in the external resources.
 
 ### Protected Users
 

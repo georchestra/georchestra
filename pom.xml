@@ -143,6 +143,7 @@
         <!-- configure failsafe to run integration tests. Use mvn verify to run only integration tests -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
+        <inherited>true</inherited> <!-- propagate config to child projects -->
         <configuration>
           <skip>${skipIT}</skip>
         </configuration>

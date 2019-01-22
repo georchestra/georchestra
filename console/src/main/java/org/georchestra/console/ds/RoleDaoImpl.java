@@ -338,8 +338,11 @@ public class RoleDaoImpl implements RoleDao {
 				.filter(account -> null != account)
 				.map(account -> accountDao.buildUserDn(account))
 				.collect(Collectors.toList()).toArray());
-		if(role.isFavorite())
+		if (role.isFavorite()) {
 			setAccountField(context, RoleSchema.FAVORITE_KEY, RoleSchema.FAVORITE_VALUE);
+		} else {
+			context.removeAttributeValue(RoleSchema.FAVORITE_KEY, RoleSchema.FAVORITE_VALUE);
+		}
 	}
 
 
