@@ -23,7 +23,6 @@ givenName: Test
 sn: USER
 l: SRID=4326;POLYGON((-5.76043921875 48.698689609375,-2.02508765625 50.104939609375,2.45733421875 51.423298984375,7.51104515625 47.644002109375,6.23663109375 45.842244296875,7.29131859375 42.853963046875,3.59991234375 41.975056796875,-2.55243140625 43.601033359375,-5.76043921875 48.698689609375))
 description: USER
-employeeNumber: 1
 userPassword:: e1NIQX1SY1Z4b1ZiZHp2UVRVYWNUdk4zdVc2ZnBWR0E9
 cn: testuser
 
@@ -38,7 +37,6 @@ uid: testreviewer
 givenName: Test
 sn: REVIEWER
 description: Reviewer
-employeeNumber: 2
 userPassword:: e1NIQX1Nb3IzdXZ5cnpISWpHK0crSEcvblhxZW8reWc9
 mail: psc+testreviewer@georchestra.org
 cn: testreviewer
@@ -54,7 +52,6 @@ uid: testeditor
 givenName: Test
 sn: EDITOR
 description: editor
-employeeNumber: 3
 userPassword:: e1NIQX1mVTFvSmdzV0FEZ1ZtTHBHeHBxdFBVa2RiekU9
 mail: psc+testeditor@georchestra.org
 cn: testeditor
@@ -70,7 +67,6 @@ uid: testadmin
 givenName: Test
 sn: ADMIN
 description: Admin user
-employeeNumber: 4
 userPassword:: e1NIQX1kREU1SkEvMkVpVTRGMFFObUt5eXpuazUrN1E9
 mail: psc+testadmin@georchestra.org
 cn: testadmin
@@ -86,7 +82,6 @@ objectClass: top
 mail: psc+geoserver_privileged_user@georchestra.org
 uid: geoserver_privileged_user
 cn: geoserver_privileged_user
-employeeNumber: 5
 description: Do not modify.  This is a required user for extractorapp, geofence, mapfishapp...
 userPassword:: e1NIQX1XMlY4d2UrOFdNanpma28rMUtZVDFZcWZFVDQ9
 
@@ -101,7 +96,6 @@ uid: testpendinguser
 givenName: Test
 sn: PENDINGUSER
 description: User pending admin validation
-employeeNumber: 6
 userPassword:: e1NIQX16cnJXRCtmbnc2QjZGVDRpcFVYMzh0d1VxRHM9
 mail: psc+testpendinguser@georchestra.org
 cn: testpendinguser
@@ -117,7 +111,6 @@ uid: testdelegatedadmin
 givenName: Test
 sn: DELEGATEDADMIN
 description: User with admin delegation
-employeeNumber: 7
 userPassword:: e1NIQX02OGRFejBlb25BYkdjVm1aWkFoQVVDYmo3bTQ9
 mail: psc+testdelegatedadmin@georchestra.org
 cn: testdelegatedadmin
@@ -133,7 +126,6 @@ dn: cn=ADMINISTRATOR,ou=roles,dc=georchestra,dc=org
 objectClass: top
 objectClass: groupOfMembers
 cn: ADMINISTRATOR
-ou: 1
 description: This group grants admin access to GeoServer
 member: uid=geoserver_privileged_user,ou=users,dc=georchestra,dc=org
 member: uid=testadmin,ou=users,dc=georchestra,dc=org
@@ -143,7 +135,6 @@ dn: cn=SUPERUSER,ou=roles,dc=georchestra,dc=org
 objectClass: top
 objectClass: groupOfMembers
 cn: SUPERUSER
-ou: 10
 description: This group grants access to the LDAPadmin private User Interface
 member: uid=testadmin,ou=users,dc=georchestra,dc=org
 
@@ -152,7 +143,6 @@ dn: cn=EXTRACTORAPP,ou=roles,dc=georchestra,dc=org
 objectClass: top
 objectClass: groupOfMembers
 cn: EXTRACTORAPP
-ou: 11
 description: This group grants access to the Extractorapp application
 member: uid=testadmin,ou=users,dc=georchestra,dc=org
 
@@ -162,7 +152,6 @@ dn: cn=GN_ADMIN,ou=roles,dc=georchestra,dc=org
 objectClass: top
 objectClass: groupOfMembers
 cn: GN_ADMIN
-ou: 20
 description: This group grants admin access to GeoNetwork
 member: uid=testadmin,ou=users,dc=georchestra,dc=org
 
@@ -171,7 +160,6 @@ dn: cn=GN_EDITOR,ou=roles,dc=georchestra,dc=org
 objectClass: top
 objectClass: groupOfMembers
 cn: GN_EDITOR
-ou: 21
 description: This group grants edit rights in GeoNetwork
 member: uid=testeditor,ou=users,dc=georchestra,dc=org
 
@@ -180,7 +168,6 @@ dn: cn=GN_REVIEWER,ou=roles,dc=georchestra,dc=org
 objectClass: top
 objectClass: groupOfMembers
 cn: GN_REVIEWER
-ou: 22
 description: This group grants reviewer (publish) rights in GeoNetwork
 member: uid=testreviewer,ou=users,dc=georchestra,dc=org
 
@@ -189,7 +176,6 @@ dn: cn=USER,ou=roles,dc=georchestra,dc=org
 objectClass: top
 objectClass: groupOfMembers
 cn: USER
-ou: 23
 description: This group grants basic, authenticated access to the whole SDI
 member: uid=testuser,ou=users,dc=georchestra,dc=org
 member: uid=testeditor,ou=users,dc=georchestra,dc=org
@@ -202,7 +188,6 @@ dn: cn=ORGADMIN,ou=roles,dc=georchestra,dc=org
 objectClass: top
 objectClass: groupOfMembers
 cn: ORGADMIN
-ou: 24
 description: This role is automatically granted to all users holding an admin delegation
 member: uid=testdelegatedadmin,ou=users,dc=georchestra,dc=org
 
