@@ -375,10 +375,12 @@ public class RoleDaoImpl implements RoleDao {
 		setAccountField(context, RoleSchema.COMMON_NAME_KEY, role.getName());
 		setAccountField(context, RoleSchema.DESCRIPTION_KEY, role.getDescription());
 		setMemberField(context, RoleSchema.MEMBER_KEY, role.getUserList());
-		if(role.isFavorite())
+		if (role.isFavorite()) {
 			setAccountField(context, RoleSchema.FAVORITE_KEY, RoleSchema.FAVORITE_VALUE);
+		} else {
+			context.removeAttributeValue(RoleSchema.FAVORITE_KEY, RoleSchema.FAVORITE_VALUE);
+		}
 	}
-
 
     private void setMemberField(DirContextOperations context,
             String memberAttr, List<String> users) {
