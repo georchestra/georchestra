@@ -42,8 +42,8 @@ import org.georchestra.mapfishapp.ws.DocServiceException;
 import org.georchestra.mapfishapp.ws.classif.ClassifierCommand.E_ClassifType;
 import org.geotools.data.DataSourceException;
 import org.geotools.data.FeatureSource;
-import org.geotools.data.wfs.impl.WFSContentDataStore;
-import org.geotools.data.wfs.impl.WFSDataStoreFactory;
+import org.geotools.data.wfs.WFSDataStore;
+import org.geotools.data.wfs.WFSDataStoreFactory;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.FeatureCollection;
@@ -140,7 +140,7 @@ public class SLDClassifier {
         try {
             
             // connect to the remote WFS
-            WFSContentDataStore wfs = connectToWFS(_command.getWFSUrl());
+        	WFSDataStore wfs = connectToWFS(_command.getWFSUrl());
             
             // check if property name exists
             SimpleFeatureType ft = wfs.getSchema(_wfsngTypeName);
@@ -325,7 +325,7 @@ public class SLDClassifier {
      * @param wfs datastore
      * @return data type as Class
      */
-    private Class<?> getDataType(WFSContentDataStore wfs) {
+    private Class<?> getDataType(WFSDataStore wfs) {
         SimpleFeatureType schema;
         Class<?> clazz = null;
         try {
@@ -347,8 +347,8 @@ public class SLDClassifier {
      * @throws DocServiceException 
      */
     @SuppressWarnings("unchecked")
-    private WFSContentDataStore connectToWFS(final URL wfsUrl) throws DocServiceException {   
-    	WFSContentDataStore wfs = null;
+    private WFSDataStore connectToWFS(final URL wfsUrl) throws DocServiceException {   
+    	WFSDataStore wfs = null;
         Map m = new HashMap();
         try {
             UsernamePasswordCredentials credentials = findCredentials(wfsUrl);

@@ -12,18 +12,21 @@
   <url>http://www.georchestra.org</url>
   <properties>
     <maven.test.skip>false</maven.test.skip>
-    <spring.version>3.1.0.RELEASE</spring.version>
+    <!-- Override parent version with 2.1.1-georchestra. Revisit. -->
+    <mapfish.version>2.1.1-georchestra</mapfish.version>
   </properties>
   <dependencies>
     <dependency>
+      <groupId>org.jdom</groupId>
+      <artifactId>jdom</artifactId>
+    </dependency>
+    <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
-      <version>2.6</version>
     </dependency>
     <dependency>
       <groupId>org.tuckey</groupId>
       <artifactId>urlrewritefilter</artifactId>
-      <version>3.0.4</version>
       <exclusions>
         <exclusion>
           <groupId>commons-logging</groupId>
@@ -31,122 +34,74 @@
         </exclusion>
       </exclusions>
     </dependency>
-    <!-- Testing -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.11</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-all</artifactId>
-      <version>1.9.5</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-mock</artifactId>
-      <version>2.0.3</version>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>
-      <version>${spring.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>commons-fileupload</groupId>
       <artifactId>commons-fileupload</artifactId>
-      <version>1.3.1</version>
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>1.4</version>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>jstl</artifactId>
-      <version>1.1.2</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <version>2.4</version>
+      <artifactId>javax.servlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>taglibs</groupId>
       <artifactId>standard</artifactId>
-      <version>1.1.2</version>
     </dependency>
     <dependency>
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
-      <version>20080701</version>
     </dependency>
     <!-- print module -->
     <dependency>
       <groupId>org.mapfish.print</groupId>
       <artifactId>print-lib</artifactId>
-      <version>2.1.1-georchestra</version>
     </dependency>
     <!-- Note: the print module also depends on slf4j -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
-      <version>1.7.5</version>
     </dependency>
     <!-- geotools -->
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-main</artifactId>
-      <version>${gt.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-wfs-ng</artifactId>
-      <version>${gt.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-shapefile</artifactId>
-      <version>${gt.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gt-ogr-core</artifactId>
-      <version>${gt.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gt-ogr-jni</artifactId>
-      <version>${gt.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.gdal</groupId>
-          <artifactId>gdal</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.geotools.xsd</groupId>
       <artifactId>gt-xsd-kml</artifactId>
       <version>${gt.version}</version>
     </dependency>
+     
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-geojson</artifactId>
-      <version>${gt.version}</version>
     </dependency>
     <!-- geotools - handles ESPG -->
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-epsg-hsql</artifactId>
-      <version>${gt.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -167,13 +122,11 @@
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
-      <version>${log4j1.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>apache-log4j-extras</artifactId>
-      <version>1.1</version>
       <type>jar</type>
       <scope>runtime</scope>
     </dependency>
@@ -190,6 +143,22 @@
       <groupId>org.georchestra</groupId>
       <artifactId>georchestra-commons</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <!-- Testing -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
   <build>
@@ -214,7 +183,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <version>2.6</version>
         <configuration>
           <packagingExcludes>**/ext/examples/**,**/ext/pkgs/**,**/docs/**,**/openlayers/examples/**,**/openlayers/tests/**</packagingExcludes>
         </configuration>
@@ -263,7 +231,6 @@
         <!-- http://mojo.codehaus.org/exec-maven-plugin/ -->
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
-        <version>1.1</version>
         <executions>
           <execution>
             <phase>process-sources</phase>
