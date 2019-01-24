@@ -1,6 +1,23 @@
+/*
+ * Copyright (C) 2019 by the geOrchestra PSC
+ *
+ * This file is part of geOrchestra.
+ *
+ * geOrchestra is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * geOrchestra is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.georchestra.console.integration;
 
-import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -9,70 +26,36 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.log4j.Logger;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 /**
  * Integration tests for {@code /private/roles} role management API.
  */
 @RunWith(SpringRunner.class)
-@EnableWebMvc
-@ContextConfiguration(locations = { "classpath:/webmvc-config-test.xml" })
-@PropertySource("classpath:console-it.properties")
 @WebAppConfiguration
+@ContextConfiguration(locations = { "classpath:/webmvc-config-test.xml" })
 public class RolesIT {
 	private static Logger LOGGER = Logger.getLogger(RolesIT.class);
 
-	private @Autowired LdapTemplate ldapTemplateSanityCheck;
-
-	private @Value("${ldap_port}") int ldapPort;
-
-	private @Value("${psql_port}") int psqlPort;
-
-	public @Rule TestName testName = new TestName();
-
-	@Autowired
-	private WebApplicationContext wac;
-
-	private MockMvc mockMvc;
+	public @Rule @Autowired IntegrationTestSupport support;
 
 	private String roleName;
-
-	public static @BeforeClass void init() {
-	}
-
-	public @Before void before() {
-		System.err.printf("############# %s: psql_port: %s, ldap_port: %s\n", testName.getMethodName(), psqlPort,
-				ldapPort);
-		// pre-flight sanity check
-		assertNotNull(ldapTemplateSanityCheck.lookup("cn=admin"));
-		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
-	}
 
 	private void deleteQuiet() {
 		try {
 			delete();
 		} catch (Exception e) {
-			LOGGER.info(String.format("Error deleting role %s at %s", roleName, testName.getMethodName()), e);
+			LOGGER.info(String.format("Error deleting role %s at %s", roleName, support.testName()), e);
 		}
 	}
 
@@ -81,7 +64,7 @@ public class RolesIT {
 	}
 
 	private ResultActions delete(String roleName) throws Exception {
-		return this.mockMvc.perform(MockMvcRequestBuilders.delete("/private/roles/{cn}", roleName));
+		return support.perform(MockMvcRequestBuilders.delete("/private/roles/{cn}", roleName));
 	}
 
 	private ResultActions create() throws Exception {
@@ -91,17 +74,17 @@ public class RolesIT {
 
 	private ResultActions create(String name) throws Exception {
 		String body = "{ \"cn\": \"" + name + "\", \"description\": \"Role Description\", \"isFavorite\": false }";
-		return this.mockMvc.perform(post("/private/roles").content(body));
+		return support.perform(post("/private/roles").content(body));
 	}
 
 	private ResultActions update(String name, String description, boolean isFavorite) throws Exception {
 		String body = "{ \"cn\": \"" + name + "\", \"description\": \"" + description + "\", \"isFavorite\": "
 				+ isFavorite + " }";
-		return this.mockMvc.perform(put("/private/roles/{cn}", name).content(body));
+		return support.perform(put("/private/roles/{cn}", name).content(body));
 	}
 
 	private ResultActions get(String name) throws Exception {
-		return this.mockMvc.perform(MockMvcRequestBuilders.get("/private/roles/{cn}", name));
+		return support.perform(MockMvcRequestBuilders.get("/private/roles/{cn}", name));
 	}
 
 	@WithMockUser(username = "user", roles = "USER")
