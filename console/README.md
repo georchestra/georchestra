@@ -137,6 +137,9 @@ Alternatively, run with jetty:
 
 ### Integration Testing
 
+> TL;DR: run integration tests with `mvn verify -Pit`. The `it` maven profile enables the tests and starts the `ldap` and `database` docker containers at the `pre-integration-test` phase and kills them on `post-integration-test`.
+
+
 While `mvn test` will run the unit tests but not the integration tests, `mvn verify` (or any goal past that, like `mvn install`) is used to run (also) integration tests.
 
 A convenient `skipUT` property was added to allow ignoring the unit tests and to run only the integration tests. e.g.:
