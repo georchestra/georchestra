@@ -208,7 +208,7 @@ public class RoleDaoImpl implements RoleDao {
 		EqualsFilter grpFilter = new EqualsFilter("objectClass", "groupOfMembers");
 		AndFilter filter = new AndFilter();
 		filter.and(grpFilter);
-		filter.and(new EqualsFilter("member", accountDao.buildUserDn(account).toString()));
+		filter.and(new EqualsFilter("member", accountDao.buildUserDn(account) + "," + basePath));
 		return ldapTemplate.search(roleSearchBaseDN, filter.encode(),	new RoleContextMapper());
 	}
 
