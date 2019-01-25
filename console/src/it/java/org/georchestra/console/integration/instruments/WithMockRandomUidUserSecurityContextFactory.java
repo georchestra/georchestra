@@ -19,7 +19,7 @@ public class WithMockRandomUidUserSecurityContextFactory implements WithSecurity
 
         @Override
         public SecurityContext createSecurityContext(WithMockRandomUidUser customUser) {
-            String userAdminName = "IT_USER_" + RandomStringUtils.randomAlphabetic(8).toUpperCase();
+            String userAdminName = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
 
             Set<SimpleGrantedAuthority> grantedAuthorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_SUPERUSER"));
             User principal = new User(userAdminName, "password", true, true, true, true, grantedAuthorities);

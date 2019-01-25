@@ -238,7 +238,7 @@ public class OrgsDao {
 
     public void addUser(Org org, Account user){
         DirContextOperations context = ldapTemplate.lookupContext(buildOrgDN(org));
-        context.addAttributeValue("member", accountDao.buildUserDn(user)+ "," + basePath, false);
+        context.addAttributeValue("member", accountDao.buildUserDn(user) + "," + basePath, false);
         this.ldapTemplate.modifyAttributes(context);
     }
 

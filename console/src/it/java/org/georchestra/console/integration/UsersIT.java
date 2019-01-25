@@ -14,6 +14,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -28,7 +29,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 import static org.junit.Assert.assertNotNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @RunWith(SpringRunner.class)
@@ -68,7 +71,7 @@ public class UsersIT {
 
     @WithMockRandomUidUser
     public @Test
-    void testCreate() throws Exception {
+    void testProfile() throws Exception {
         String userName = ((User)(SecurityContextHolder.getContext().getAuthentication().getPrincipal())).getUsername();
         createUser(userName);
 
@@ -84,12 +87,29 @@ public class UsersIT {
 
     }
 
+    @WithMockRandomUidUser
+    public @Test
+    void testChangeOrgAndUid() throws Exception {
+        String userName = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
+        String newUserName = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
+        createUser(userName);
+
+        mockMvc.perform(put("/private/users/" + userName).content(readRessourceToString("/testData/createUserPayload.json")
+                .replace("{uuid}", newUserName)
+                .replace("psc", "cra")));
+
+
+        mockMvc.perform(get("/private/users/" + newUserName))
+                .andExpect(jsonPath("$.org").value("cra"))
+                .andExpect(jsonPath("$.uid").value(newUserName));
+    }
+
     private void createUser(String userName) throws Exception {
         mockMvc.perform(post("/private/users").content(readRessourceToString("/testData/createUserPayload.json").replace("{uuid}", userName)));
     }
 
     private ResultActions getProfile() throws Exception {
-        return this.mockMvc.perform(MockMvcRequestBuilders.get("/private/users/profile"));
+        return this.mockMvc.perform(get("/private/users/profile"));
     }
 
     private String createRole() throws Exception {
