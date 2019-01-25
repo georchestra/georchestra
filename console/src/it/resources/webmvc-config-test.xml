@@ -217,17 +217,17 @@
     <property name="bodyEncoding" value="UTF-8"/>
     <property name="subjectEncoding" value="UTF-8"/>
     <property name="templateEncoding" value="${templateEncoding:UTF-8}"/>
-    <property name="accountWasCreatedEmailFile" value="/WEB-INF/templates/newaccount-was-created-template.txt"/>
+    <property name="accountWasCreatedEmailFile" value="/templates/newaccount-was-created-template.txt"/>
     <property name="accountWasCreatedEmailSubject" value="${subject.account.created}"/>
-    <property name="accountCreationInProcessEmailFile" value="/WEB-INF/templates/account-creation-in-progress-template.txt"/>
+    <property name="accountCreationInProcessEmailFile" value="/templates/account-creation-in-progress-template.txt"/>
     <property name="accountCreationInProcessEmailSubject" value="${subject.account.in.process}"/>
-    <property name="newAccountRequiresModerationEmailFile" value="/WEB-INF/templates/newaccount-requires-moderation-template.txt"/>
+    <property name="newAccountRequiresModerationEmailFile" value="/templates/newaccount-requires-moderation-template.txt"/>
     <property name="newAccountRequiresModerationEmailSubject" value="${subject.requires.moderation}"/>
-    <property name="changePasswordEmailFile" value="/WEB-INF/templates/changepassword-email-template.txt"/>
+    <property name="changePasswordEmailFile" value="/templates/changepassword-email-template.txt"/>
     <property name="changePasswordEmailSubject" value="${subject.change.password}"/>
-    <property name="accountUidRenamedEmailFile" value="/WEB-INF/templates/account-uid-renamed.txt" />
+    <property name="accountUidRenamedEmailFile" value="/templates/account-uid-renamed.txt" />
     <property name="accountUidRenamedEmailSubject" value="${subject.account.uid.renamed}" />
-    <property name="newAccountNotificationEmailFile" value="/WEB-INF/templates/newaccount-notification-template.txt"/>
+    <property name="newAccountNotificationEmailFile" value="/templates/newaccount-notification-template.txt"/>
     <property name="newAccountNotificationEmailSubject" value="${subject.new.account.notification}"/>
   </bean>
 

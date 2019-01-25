@@ -212,4 +212,8 @@ public class PasswordRecoveryFormController  {
 	public void setGeorConfig(GeorchestraConfiguration georConfig) {
 		this.georConfig = georConfig;
 	}
+	
+	public void setEmailFactory(EmailFactory emailFactory) {
+	    this.emailFactory = emailFactory;
+	}
 }
