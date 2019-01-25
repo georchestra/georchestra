@@ -71,6 +71,7 @@ public class Validation {
 
 		// Add mandatory field for org
 		this.requiredOrgFields.add("name");
+		this.requiredOrgFields.add("shortName");
 
 		// Extract all fields starting by Org and change next letter to lower case
 		// orgShortName --> shortName

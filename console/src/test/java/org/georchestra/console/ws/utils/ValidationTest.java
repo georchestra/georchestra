@@ -31,6 +31,7 @@ public class ValidationTest {
         Set<String> requiredOrgFields = new HashSet<String>();
 
         requiredOrgFields.add("name");
+        requiredOrgFields.add("shortName");
 
         Assert.assertEquals(validation.getRequiredOrgFields(), requiredOrgFields);
 

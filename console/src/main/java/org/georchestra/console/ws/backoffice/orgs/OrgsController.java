@@ -273,6 +273,7 @@ public class OrgsController {
     public void getUserRequiredFields(HttpServletResponse response) throws IOException, JSONException {
             JSONArray fields = new JSONArray();
             fields.put("name");
+            fields.put("shortName");
             ResponseUtil.buildResponse(response, fields.toString(4), HttpServletResponse.SC_OK);
     }
 
