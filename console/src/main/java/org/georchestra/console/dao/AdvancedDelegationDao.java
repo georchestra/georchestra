@@ -9,6 +9,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.annotation.PostConstruct;
+import javax.sql.DataSource;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -28,12 +30,14 @@ public class AdvancedDelegationDao {
     private OrgsDao orgsDao;
 
     @Autowired
-    private ComboPooledDataSource ds;
+    private DataSource ds;
 
     @PostConstruct
     public void init() throws SQLException {
-        ds.setTestConnectionOnCheckin(true);
-        ds.setTestConnectionOnCheckout(true);
+        if (ds instanceof ComboPooledDataSource) {
+            ((ComboPooledDataSource) ds).setTestConnectionOnCheckin(true);
+            ((ComboPooledDataSource) ds).setTestConnectionOnCheckout(true);
+        }
     }
 
     public List<DelegationEntry> findByOrg(String org) throws SQLException {

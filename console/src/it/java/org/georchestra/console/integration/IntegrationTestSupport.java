@@ -62,51 +62,61 @@ import org.springframework.web.context.WebApplicationContext;
  * </pre>
  */
 public @Service class IntegrationTestSupport extends ExternalResource {
-	private static Logger LOGGER = Logger.getLogger(IntegrationTestSupport.class);
+    private static Logger LOGGER = Logger.getLogger(IntegrationTestSupport.class);
 
-	private @Autowired LdapTemplate ldapTemplate;
+    private @Autowired LdapTemplate ldapTemplate;
 
-	private @Value("${ldap_port}") int ldapPort;
+    private @Value("${ldap_port}") int ldapPort;
 
-	private @Value("${psql_port}") int psqlPort;
+    private @Value("${psql_port}") int psqlPort;
+    private @Value("${psql.user}") String psqlUser;
+    private @Value("${psql.pass}") String psqlPassword;
 
-	private TestName testName = new TestName();
+    private TestName testName = new TestName();
 
-	@Autowired
-	private WebApplicationContext wac;
+    @Autowired
+    private WebApplicationContext wac;
 
-	private MockMvc mockMvc;
+    private MockMvc mockMvc;
 
-	public @Override Statement apply(Statement base, Description description) {
-		testName.apply(base, description);
-		return super.apply(base, description);
-	}
+    public @Override Statement apply(Statement base, Description description) {
+        testName.apply(base, description);
+        return super.apply(base, description);
+    }
 
-	protected @Override void before() {
-		LOGGER.debug(String.format("############# %s: psql_port: %s, ldap_port: %s\n", testName.getMethodName(),
-				psqlPort, ldapPort));
-		// pre-flight sanity check
-		assertNotNull(ldapTemplate.lookup("cn=admin"));
-		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
-	}
+    protected @Override void before() {
+        LOGGER.debug(String.format("############# %s: psql_port: %s, ldap_port: %s\n", testName.getMethodName(),
+                psqlPort, ldapPort));
+        // pre-flight sanity check
+        assertNotNull(ldapTemplate.lookup("cn=admin"));
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
+    }
 
-	protected @Override void after() {
+    protected @Override void after() {
 
-	}
+    }
 
-	public int ldapPort() {
-		return ldapPort;
-	}
+    public int ldapPort() {
+        return ldapPort;
+    }
 
-	public int psqlPort() {
-		return psqlPort;
-	}
+    public int psqlPort() {
+        return psqlPort;
+    }
 
-	public ResultActions perform(RequestBuilder requestBuilder) throws Exception {
-		return mockMvc.perform(requestBuilder);
-	}
+    public String psqlUser() {
+        return psqlUser;
+    }
 
-	public String testName() {
-		return testName.getMethodName();
-	}
+    public String psqlPassword() {
+        return psqlPassword;
+    }
+
+    public ResultActions perform(RequestBuilder requestBuilder) throws Exception {
+        return mockMvc.perform(requestBuilder);
+    }
+
+    public String testName() {
+        return testName.getMethodName();
+    }
 }
