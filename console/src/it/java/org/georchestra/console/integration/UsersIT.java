@@ -88,7 +88,7 @@ public class UsersIT {
 
     }
 
-    @WithMockUser
+    @WithMockRandomUidUser
     public @Test
     void changeOrgAndUid() throws Exception {
         String userName = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();

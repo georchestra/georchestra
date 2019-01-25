@@ -298,30 +298,34 @@ public class OrgsDao {
         }
     }
 
-    public String generateId(String org_name) throws IOException {
+    public String reGenerateId(String orgName, String allowedId) throws IOException {
         // Check name
-        if(org_name == null || org_name.length() == 0)
+        if(orgName == null || orgName.length() == 0)
             throw new IOException("Invalid org name");
 
-        String id = org_name.replaceAll("\\W", "_");
-
-        try {
-            this.findByCommonName(id);
-        } catch (NameNotFoundException ex){
-            return id;
-        }
+        String id = orgName.replaceAll("\\W", "_");
 
         int i = 0;
-        while(true){
-            i++;
+        String suffix = "";
+
+        while(i < 250){
+            String cnToConsider = id + suffix;
             try{
-                this.findByCommonName(id + i);
-                break;
+                if (cnToConsider.equalsIgnoreCase(allowedId)) {
+                    return allowedId;
+                }
+                this.findByCommonName(cnToConsider);
+                i++;
+                suffix = "" + i;
             } catch (NameNotFoundException ex){
-                continue;
+                return cnToConsider;
             }
         }
-        return id + i;
+        throw new IOException("Trouble when generating id/cn for org.");
+    }
+
+    public String generateId(String org_name) throws IOException {
+        return reGenerateId(org_name, "");
     }
 
     public Integer generateNumericId() {

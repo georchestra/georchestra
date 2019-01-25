@@ -185,6 +185,7 @@ public class OrgsController {
 
         // Update org and orgExt fields
         this.updateFromRequest(org, json);
+        orgExt.setId(org.getId());
         this.updateFromRequest(orgExt, json);
 
         // Persist changes to LDAP server
@@ -223,18 +224,12 @@ public class OrgsController {
             throw new IOException("required field : shortName");
 
         Org org = new Org();
-        OrgExt orgExt = new OrgExt();
-
-        // Generate string identifier based on shortName
-        String id = this.orgDao.generateId(json.getString(Org.JSON_SHORT_NAME));
-        org.setId(id);
-        orgExt.setId(id);
-
-        // Generate unique numeric identifier
-        orgExt.setNumericId(this.orgDao.generateNumericId());
-
-        // Update org and orgExt fields
+        org.setId("");
         this.updateFromRequest(org, json);
+
+        OrgExt orgExt = new OrgExt();
+        orgExt.setNumericId(this.orgDao.generateNumericId());
+        orgExt.setId(org.getId());
         this.updateFromRequest(orgExt, json);
 
         // Persist changes to LDAP server
@@ -419,8 +414,8 @@ public class OrgsController {
      * @param json Json document to take information from
      * @throws JSONException If something went wrong during information extraction from json document
      */
-    protected void updateFromRequest(Org org, JSONObject json){
-        org.setId(json.optString(Org.JSON_SHORT_NAME));
+    protected void updateFromRequest(Org org, JSONObject json) throws IOException {
+        org.setId(orgDao.reGenerateId(json.optString(Org.JSON_SHORT_NAME), org.getId()));
         org.setName(json.optString(Org.JSON_NAME));
         org.setShortName(json.optString(Org.JSON_SHORT_NAME));
         if (!json.isNull(Org.JSON_CITIES)) {
@@ -448,7 +443,6 @@ public class OrgsController {
      * @throws JSONException If something went wrong during information extraction from json document
      */
     private void updateFromRequest(OrgExt orgExt, JSONObject json) {
-        orgExt.setId(json.optString(Org.JSON_SHORT_NAME));
         orgExt.setOrgType(json.optString(OrgExt.JSON_ORG_TYPE));
         orgExt.setAddress(json.optString(OrgExt.JSON_ADDRESS));
         orgExt.setPending(json.optBoolean(Org.JSON_PENDING));
