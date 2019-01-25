@@ -5,7 +5,6 @@ import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.dto.Org;
 import org.georchestra.console.model.DelegationEntry;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -23,9 +22,6 @@ public class AdvancedDelegationDao {
     public static final GrantedAuthority ROLE_SUPERUSER = new SimpleGrantedAuthority("ROLE_SUPERUSER");
 
     @Autowired
-    private JpaTransactionManager tm;
-
-    @Autowired
     private DelegationDao delegationDao;
 
     @Autowired
@@ -41,7 +37,6 @@ public class AdvancedDelegationDao {
     }
 
     public List<DelegationEntry> findByOrg(String org) throws SQLException {
-        List<DelegationEntry> res = new LinkedList<DelegationEntry>();
         PreparedStatement byOrgStatement = ds.getConnection().prepareStatement(
                 "SELECT uid, array_to_string(orgs, ',') AS orgs, array_to_string(roles, ',') AS roles FROM console.delegations WHERE ? = ANY(orgs)");
         byOrgStatement.setString(1, org);
@@ -49,7 +44,6 @@ public class AdvancedDelegationDao {
     }
 
     public List<DelegationEntry> findByRole(String cn) throws SQLException {
-        List<DelegationEntry> res = new LinkedList<DelegationEntry>();
         PreparedStatement byRoleStatement = ds.getConnection().prepareStatement(
                 "SELECT uid, array_to_string(orgs, ',') AS orgs, array_to_string(roles, ',') AS roles FROM console.delegations WHERE ? = ANY(roles)");
         byRoleStatement.setString(1, cn);
