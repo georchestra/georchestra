@@ -352,7 +352,11 @@ public final class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public LdapName buildUserDn(Account account) {
+    public String buildFullUserDn(Account account) {
+        return String.format("%s,%s", buildUserDn(account.getUid(), account.isPending()), basePath);
+    }
+
+    private LdapName buildUserDn(Account account) {
         return buildUserDn(account.getUid(), account.isPending());
     }
 

@@ -178,7 +178,7 @@ public class OrgsDao {
      */
     public Org findForUser(Account userAccount) throws DataServiceException {
 
-        String userDn = accountDao.buildUserDn(userAccount).toString() +  "," + basePath;
+        String userDn = accountDao.buildFullUserDn(userAccount);
 
         AndFilter filter  = new AndFilter();
         filter.and(new EqualsFilter("member", userDn));
@@ -238,13 +238,13 @@ public class OrgsDao {
 
     public void addUser(Org org, Account user){
         DirContextOperations context = ldapTemplate.lookupContext(buildOrgDN(org));
-        context.addAttributeValue("member", accountDao.buildUserDn(user) + "," + basePath, false);
+        context.addAttributeValue("member", accountDao.buildFullUserDn(user), false);
         this.ldapTemplate.modifyAttributes(context);
     }
 
     public void removeUser(Org org, Account user){
         DirContextOperations ctx = ldapTemplate.lookupContext(buildOrgDN(org));
-        ctx.removeAttributeValue("member", accountDao.buildUserDn(user) + "," + basePath);
+        ctx.removeAttributeValue("member", accountDao.buildFullUserDn(user));
         this.ldapTemplate.modifyAttributes(ctx);
     }
 
@@ -270,7 +270,7 @@ public class OrgsDao {
                         }
                     })
                     .filter(account -> null != account)
-                    .map(account -> accountDao.buildUserDn(account).toString() + "," + basePath)
+                    .map(account -> accountDao.buildFullUserDn(account))
                     .collect(Collectors.toList()).toArray(new String[] {}));
         }
 

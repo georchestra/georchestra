@@ -125,7 +125,7 @@ public class RoleDaoImpl implements RoleDao {
 
 		try {
 
-			context.addAttributeValue("member", accountDao.buildUserDn(user) + "," + basePath, false);
+			context.addAttributeValue("member", accountDao.buildFullUserDn(user), false);
 			this.ldapTemplate.modifyAttributes(context);
 
 			// Add log entry for this modification
@@ -159,7 +159,7 @@ public class RoleDaoImpl implements RoleDao {
 
 		DirContextOperations ctx = ldapTemplate.lookupContext(dnSvUser);
 		ctx.setAttributeValues("objectclass", new String[] { "top", "groupOfMembers" });
-		ctx.removeAttributeValue("member", accountDao.buildUserDn(account).toString());
+		ctx.removeAttributeValue("member", accountDao.buildFullUserDn(account));
 
 		this.ldapTemplate.modifyAttributes(ctx);
 
@@ -181,8 +181,8 @@ public class RoleDaoImpl implements RoleDao {
     public void modifyUser(Account oldAccount, Account newAccount) throws DataServiceException {
 		for (Role role : findAllForUser(oldAccount)) {
 			Name dnRole = buildRoleDn(role.getName());
-			String oldUserDn = accountDao.buildUserDn(oldAccount).toString();
-			String newUserDn = accountDao.buildUserDn(newAccount).toString();
+			String oldUserDn = accountDao.buildFullUserDn(oldAccount);
+			String newUserDn = accountDao.buildFullUserDn(newAccount);
 			DirContextOperations ctx = ldapTemplate.lookupContext(dnRole);
 			ctx.removeAttributeValue("member", oldUserDn);
 			ctx.addAttributeValue("member", newUserDn);
@@ -208,7 +208,7 @@ public class RoleDaoImpl implements RoleDao {
 		EqualsFilter grpFilter = new EqualsFilter("objectClass", "groupOfMembers");
 		AndFilter filter = new AndFilter();
 		filter.and(grpFilter);
-		filter.and(new EqualsFilter("member", accountDao.buildUserDn(account) + "," + basePath));
+		filter.and(new EqualsFilter("member", accountDao.buildFullUserDn(account)));
 		return ldapTemplate.search(roleSearchBaseDN, filter.encode(),	new RoleContextMapper());
 	}
 
@@ -336,7 +336,7 @@ public class RoleDaoImpl implements RoleDao {
 						return null;
 					}})
 				.filter(account -> null != account)
-				.map(account -> accountDao.buildUserDn(account))
+				.map(account -> accountDao.buildFullUserDn(account))
 				.collect(Collectors.toList()).toArray());
 		if (role.isFavorite()) {
 			setAccountField(context, RoleSchema.FAVORITE_KEY, RoleSchema.FAVORITE_VALUE);
