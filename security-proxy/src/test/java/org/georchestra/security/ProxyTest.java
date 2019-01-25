@@ -1,5 +1,9 @@
 package org.georchestra.security;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import com.google.common.collect.Maps;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
@@ -9,6 +13,7 @@ import org.apache.http.message.BasicHttpResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.util.ReflectionUtils;
@@ -17,12 +22,10 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class ProxyTest {
     private Proxy proxy;
@@ -31,6 +34,7 @@ public class ProxyTest {
     private MockHttpServletRequest request;
     private MockHttpServletResponse httpResponse;
 
+    private Map<String, String> targets;
     @Before
     public void setUp() throws Exception {
         response = null;
@@ -53,7 +57,7 @@ public class ProxyTest {
         this.request.setServerPort(80);
         this.httpResponse = new MockHttpServletResponse();
 
-        Map<String, String> targets = Maps.newHashMap();
+        targets = Maps.newHashMap();
         targets.put("geonetwork", "http://www.google.com/geonetwork-private");
         targets.put("extractorapp", "http://localhost/extractorapp-private");
         proxy.setTargets(targets);
@@ -146,4 +150,55 @@ public class ProxyTest {
         ret = (URI) ReflectionUtils.invokeMethod(m, proxy, new URL("http://localhost:8080/geonetwork/srv/api/0.1/standards/iso19139/codelists/gmd%3ADS_InitiativeTypeCode"));
         assertTrue(! ret.toString().contains("%253ADS"));
     }
+    
+    @Test
+    public void testRedirectPassThru() throws Exception{
+        response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.FOUND.value(), "Temporarily moved");
+        final String expected = "http://acme.com";
+        response.setHeader("Location", expected);
+        
+        proxy.handleUrlParamRequest(request, httpResponse, "http://localhost:8080/path");
+        assertTrue(executed);
+        assertEquals(HttpStatus.FOUND.value(), httpResponse.getStatus());
+        assertTrue(httpResponse.getHeaderNames().contains("Location"));
+        List<String> values = httpResponse.getHeaders("Location");
+        assertEquals("Location header should have a single value, got: " + values, 1, values.size());
+        assertEquals(expected, values.get(0));
+    }
+
+    @Test
+    public void testMovedPermanentlyPassThru() throws Exception{
+        response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.MOVED_PERMANENTLY.value(), "Temporarily moved");
+        final String expected = "http://acme.com";
+        response.setHeader("Location", expected);
+        
+        proxy.handleUrlParamRequest(request, httpResponse, "http://localhost:8080/path");
+        assertTrue(executed);
+        assertEquals(HttpStatus.MOVED_PERMANENTLY.value(), httpResponse.getStatus());
+        assertTrue(httpResponse.getHeaderNames().contains("Location"));
+        List<String> values = httpResponse.getHeaders("Location");
+        assertEquals("Location header should have a single value, got: " + values, 1, values.size());
+        assertEquals(expected, values.get(0));
+    }
+    
+    @Test
+    public void testRedirectLocationIsProxified() throws Exception{
+        //when calling /geonetwork/somepath...
+        request = new MockHttpServletRequest("GET", "/geonetwork/somepath");
+        //then server returns a redirect to "http://www.google.com/geonetwork-private/privatepath?param1=A&param2=B"
+        response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.FOUND.value(), "Temporarily moved");
+        response.setHeader("Location", "http://www.google.com/geonetwork-private/privatepath?param1=A&param2=B");
+
+        //and proxy should override the Location response header as instructed in the mappings
+        final String expected = "/geonetwork/privatepath?param1=A&param2=B";
+        
+        proxy.handleUrlParamRequest(request, httpResponse, "http://localhost:8080/path");
+        assertTrue(executed);
+        assertEquals(HttpStatus.FOUND.value(), httpResponse.getStatus());
+        assertTrue(httpResponse.getHeaderNames().contains("Location"));
+        List<String> values = httpResponse.getHeaders("Location");
+        assertEquals("Location header should have a single value, got: " + values, 1, values.size());
+        assertEquals(expected, values.get(0));
+    }
+
 }
