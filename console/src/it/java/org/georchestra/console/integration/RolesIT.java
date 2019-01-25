@@ -28,7 +28,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
@@ -50,8 +49,6 @@ public class RolesIT {
 	private @Value("${psql_port}") int psqlPort;
 
 	public @Rule TestName testName = new TestName();
-
-	RestTemplate restTemplate = new RestTemplate();
 
 	@Autowired
 	private WebApplicationContext wac;
