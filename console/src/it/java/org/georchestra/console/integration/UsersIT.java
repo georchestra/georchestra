@@ -114,6 +114,17 @@ public class UsersIT {
         mockMvc.perform(get("/account/userdetails").header("sec-username", userName)).andExpect(status().isOk());
     }
 
+    @WithMockRandomUidUser
+    public @Test
+    void users() throws Exception {
+        String userName = ((User)(SecurityContextHolder.getContext().getAuthentication().getPrincipal())).getUsername();
+        createUser(userName);
+
+        mockMvc.perform(get("/private/users"))
+                .andExpect(jsonPath("$[?(@.pending in [false])].['pending']").exists())
+                .andExpect(jsonPath("$[?(@.pending in [true])].['pending']").exists());
+    }
+
     private void createUser(String userName) throws Exception {
         mockMvc.perform(post("/private/users").content(readRessourceToString("/testData/createUserPayload.json").replace("{uuid}", userName)));
     }
