@@ -33,6 +33,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @EnableWebMvc
@@ -71,7 +72,7 @@ public class UsersIT {
 
     @WithMockRandomUidUser
     public @Test
-    void testProfile() throws Exception {
+    void profile() throws Exception {
         String userName = ((User)(SecurityContextHolder.getContext().getAuthentication().getPrincipal())).getUsername();
         createUser(userName);
 
@@ -87,9 +88,9 @@ public class UsersIT {
 
     }
 
-    @WithMockRandomUidUser
+    @WithMockUser
     public @Test
-    void testChangeOrgAndUid() throws Exception {
+    void changeOrgAndUid() throws Exception {
         String userName = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
         String newUserName = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
         createUser(userName);
@@ -102,6 +103,15 @@ public class UsersIT {
         mockMvc.perform(get("/private/users/" + newUserName))
                 .andExpect(jsonPath("$.org").value("cra"))
                 .andExpect(jsonPath("$.uid").value(newUserName));
+    }
+
+    @WithMockRandomUidUser
+    public @Test
+    void userDetail() throws Exception {
+        String userName = ((User)(SecurityContextHolder.getContext().getAuthentication().getPrincipal())).getUsername();
+        createUser(userName);
+
+        mockMvc.perform(get("/account/userdetails").header("sec-username", userName)).andExpect(status().isOk());
     }
 
     private void createUser(String userName) throws Exception {

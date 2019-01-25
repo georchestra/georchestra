@@ -178,10 +178,10 @@ public class OrgsDao {
      */
     public Org findForUser(Account userAccount) throws DataServiceException {
 
-        Name userDn = accountDao.buildUserDn(userAccount);
+        String userDn = accountDao.buildUserDn(userAccount).toString() +  "," + basePath;
 
         AndFilter filter  = new AndFilter();
-        filter.and(new EqualsFilter("member", userDn.toString()));
+        filter.and(new EqualsFilter("member", userDn));
         filter.and(new EqualsFilter("objectClass", "groupOfMembers"));
         List<Org> res = null;
         try {
