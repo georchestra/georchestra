@@ -346,10 +346,6 @@ public class RoleDaoImpl implements RoleDao {
 	}
 
 
-    private void setMemberField(DirContextOperations context, String memberAttr, List<Account> users) {
-         users.stream();
-    }
-
 	/**
 	 * if the value is not null then sets the value in the context.
 	 *
