@@ -1,0 +1,13 @@
+version: 1
+
+# pendingusers, georchestra.org
+dn: ou=pendingusers,dc=georchestra,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: pendingusers
+
+# orgs, georchestra.org
+dn: ou=pendingorgs,dc=georchestra,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: pendingorgs
