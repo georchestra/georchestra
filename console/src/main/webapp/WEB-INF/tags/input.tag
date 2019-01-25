@@ -7,6 +7,7 @@
 <%@attribute name="cssClass" required="false" type="java.lang.String"%>
 <%@attribute name="label" required="false" type="java.lang.String"%>
 <%@attribute name="required" required="false" type="java.lang.Boolean"%>
+<%@attribute name="readonly" required="false" type="java.lang.Boolean"%>
 <%@attribute name="onchange" required="false" type="java.lang.String"%>
 <%@attribute name="onkeyup" required="false" type="java.lang.String"%>
 <%@attribute name="appendIcon" required="false" type="java.lang.String"%>
@@ -20,7 +21,7 @@
 			<c:if test="${not empty appendIcon}">
 				<div class="input-group">
 			</c:if>
-				<form:input path="${path}" size="30" maxlength="80" cssClass="${empty cssClass ? 'form-control' : cssClass}" onkeyup="${onkeyup}" onchange="${onchange}" />
+				<form:input path="${path}" size="30" maxlength="80" readonly="${empty readonly ? 'false' : readonly}" cssClass="${empty cssClass ? 'form-control' : cssClass}" onkeyup="${onkeyup}" onchange="${onchange}" />
 			<c:if test="${not empty appendIcon}">
 					<span class="input-group-addon"><i class="glyphicon glyphicon-${appendIcon}"></i></span>
 				</div>
