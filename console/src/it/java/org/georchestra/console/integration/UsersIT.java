@@ -1,8 +1,7 @@
 package org.georchestra.console.integration;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.georchestra.console.integration.instruments.ModifiableUsernameToken;
-import org.georchestra.console.integration.instruments.WithMockCustomUser;
+import org.georchestra.console.integration.instruments.WithMockRandomUidUser;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -14,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -53,8 +53,6 @@ public class UsersIT {
 
     private MockMvc mockMvc;
 
-    String userAdminName;
-
     public static @BeforeClass
     void init() {
     }
@@ -68,18 +66,19 @@ public class UsersIT {
 
     }
 
-    @WithMockCustomUser
+    @WithMockRandomUidUser
     public @Test
     void testCreate() throws Exception {
-        userAdminName = "IT_USER_" + RandomStringUtils.randomAlphabetic(8).toUpperCase();
-        ((ModifiableUsernameToken)SecurityContextHolder.getContext().getAuthentication()).setUserName(userAdminName);
-        createUser(userAdminName);
+        String userName = ((User)(SecurityContextHolder.getContext().getAuthentication().getPrincipal())).getUsername();
+        createUser(userName);
+
+        getProfile().andExpect(jsonPath("$.roles[0]").value("USER"));
+
         String role1Name = createRole();
         String role2Name = createRole();
-        setRole(userAdminName, role1Name, role2Name);
-        SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+        setRole(userName, role1Name, role2Name);
 
-        getProfile(userAdminName)
+        getProfile()
                 .andExpect(jsonPath("$.roles[1]").value(role1Name))
                 .andExpect(jsonPath("$.roles[2]").value(role2Name));
 
@@ -89,7 +88,7 @@ public class UsersIT {
         mockMvc.perform(post("/private/users").content(readRessourceToString("/testData/createUserPayload.json").replace("{uuid}", userName)));
     }
 
-    private ResultActions getProfile(String name) throws Exception {
+    private ResultActions getProfile() throws Exception {
         return this.mockMvc.perform(MockMvcRequestBuilders.get("/private/users/profile"));
     }
 

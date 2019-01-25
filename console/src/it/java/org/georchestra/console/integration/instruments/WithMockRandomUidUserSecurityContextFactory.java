@@ -1,6 +1,8 @@
 package org.georchestra.console.integration.instruments;
 
 
+import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -11,16 +13,18 @@ import org.springframework.security.test.context.support.WithSecurityContextFact
 import java.util.Collections;
 import java.util.Set;
 
-public class WithMockCustomUserSecurityContextFactory implements WithSecurityContextFactory<WithMockCustomUser> {
+public class WithMockRandomUidUserSecurityContextFactory implements WithSecurityContextFactory<WithMockRandomUidUser> {
 
-    WithMockCustomUserSecurityContextFactory() {}
+    WithMockRandomUidUserSecurityContextFactory() {}
 
         @Override
-        public SecurityContext createSecurityContext(WithMockCustomUser customUser) {
-            Set<SimpleGrantedAuthority> grantedAuthorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_SUPERUSER"));
-            User principal = new User("tmp", "password", true, true, true, true, grantedAuthorities);
+        public SecurityContext createSecurityContext(WithMockRandomUidUser customUser) {
+            String userAdminName = "IT_USER_" + RandomStringUtils.randomAlphabetic(8).toUpperCase();
 
-            Authentication auth = new ModifiableUsernameToken(principal, principal.getPassword(), principal.getAuthorities());
+            Set<SimpleGrantedAuthority> grantedAuthorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_SUPERUSER"));
+            User principal = new User(userAdminName, "password", true, true, true, true, grantedAuthorities);
+
+            Authentication auth = new UsernamePasswordAuthenticationToken(principal, principal.getPassword(), principal.getAuthorities());
 
             SecurityContext context = SecurityContextHolder.createEmptyContext();
             context.setAuthentication(auth);
