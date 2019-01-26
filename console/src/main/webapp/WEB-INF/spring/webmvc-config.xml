@@ -36,7 +36,7 @@
 
   <context:annotation-config/>
 
-  <context:property-placeholder location="/WEB-INF/spring/console.properties, /WEB-INF/spring/protectedroles.properties, file:${georchestra.datadir}/console/console.properties, file:${georchestra.datadir}/console/protectedroles.properties" ignore-resource-not-found="true" ignore-unresolvable="true" />
+  <context:property-placeholder location="/WEB-INF/spring/console.properties, /WEB-INF/spring/protectedroles.properties, file:${georchestra.datadir}/default.properties, file:${georchestra.datadir}/console/console.properties, file:${georchestra.datadir}/console/protectedroles.properties" ignore-resource-not-found="true" ignore-unresolvable="true" />
 
   <context:component-scan base-package="org.georchestra.console"/>
 

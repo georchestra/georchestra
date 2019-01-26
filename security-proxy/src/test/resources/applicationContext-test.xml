@@ -14,7 +14,7 @@
     <!--  This file should be the closest possible from the applicationContext-security.xml file, as
           it ensures no problem with bean instanciation will be encountered at runtime -->
 
-    <context:property-placeholder location="/WEB-INF/security-proxy.properties, file:${georchestra.datadir}/security-proxy/security-proxy.properties"
+    <context:property-placeholder location="/WEB-INF/security-proxy.properties, file:${georchestra.datadir}/default.properties, file:${georchestra.datadir}/security-proxy/security-proxy.properties"
         ignore-resource-not-found="true" ignore-unresolvable="true" />
 
     <s:http entry-point-ref="casProcessingFilterEntryPoint" request-matcher="regex" realm="${realmName}" disable-url-rewriting="true">
