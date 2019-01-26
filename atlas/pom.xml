@@ -12,6 +12,7 @@
     <url>http://www.georchestra.org</url>
     <properties>
         <packageDatadirScmVersion>master</packageDatadirScmVersion>
+        <server>generic</server>
     </properties>
     <dependencies>
         <!-- Camel dependencies -->

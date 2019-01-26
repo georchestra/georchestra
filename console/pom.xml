@@ -16,6 +16,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <roo.version>1.1.5.RELEASE</roo.version>
     <packageDatadirScmVersion>master</packageDatadirScmVersion>
+    <server>generic</server>
   </properties>
   <repositories>
     <repository>

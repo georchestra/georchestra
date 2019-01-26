@@ -15,6 +15,7 @@
     <maven.test.skip>false</maven.test.skip>
     <geowebcache.version>1.8.1</geowebcache.version>
     <packageDatadirScmVersion>master</packageDatadirScmVersion>
+    <server>generic</server>
   </properties>
   <dependencies>
     <dependency>

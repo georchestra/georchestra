@@ -14,6 +14,7 @@
     <maven.test.skip>false</maven.test.skip>
     <packageDatadirScmVersion>master</packageDatadirScmVersion>
     <gt.version>9.2</gt.version>
+    <server>generic</server>
   </properties>
   <dependencies>
     <dependency>

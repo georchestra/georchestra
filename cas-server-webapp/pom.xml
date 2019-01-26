@@ -29,6 +29,7 @@
   <name>Jasig CAS Web Application</name>
   <properties>
     <packageDatadirScmVersion>master</packageDatadirScmVersion>
+    <server>generic</server>
   </properties>
   <dependencies>
     <dependency>
