@@ -163,7 +163,6 @@ public class Proxy {
     private String defaultCharset = "UTF-8";
 
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
-    private ServicesMonitoring servicesMonitoring = null;
 
     private Permissions proxyPermissions = null;
     private Permissions sameDomainPermissions;
@@ -236,8 +235,6 @@ public class Proxy {
         this.sameDomainPermissions.setAllowByDefault(true);
         this.sameDomainPermissions.init();
 
-        this.servicesMonitoring = new ServicesMonitoring(targets);
-
         // Proxy permissions not set by datadir
         if (proxyPermissionsFile != null && proxyPermissions == null) {
             Closer closer = Closer.create();
@@ -287,18 +284,6 @@ public class Proxy {
         }
 
         redirectStrategy.sendRedirect(request, response, uriBuilder.build().toString());
-    }
-
-    /**
-     * Entrypoint used for monitoring purposes.
-     *
-     * @param request
-     * @param response
-     * @throws IOException
-     */
-    @RequestMapping("/services_monitoring")
-    public void servicesMonitoring(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        this.servicesMonitoring.checkServices(request, response);
     }
 
     /**
