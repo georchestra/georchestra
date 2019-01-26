@@ -67,7 +67,7 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher {
 +"  <body>"
 +"    <!-- geOrchestra header -->"
 +"    <div id=\"go_head\">"
-+"      <iframe src=\"/header/?active=geowebcache\" style=\"width:100%;height:@headerHeight@px;border:none;overflow:hidden;\" scrolling=\"no\" frameborder=\"0\"></iframe>"
++"      <iframe src=\"@headerUrl@?active=geowebcache\" style=\"width:100%;height:@headerHeight@px;border:none;overflow:hidden;\" scrolling=\"no\" frameborder=\"0\"></iframe>"
 +"    </div>"
 +"    <!-- end of geOrchestra header -->";
     /**
@@ -94,8 +94,10 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher {
         if ((georchestraConfiguration != null) && (georchestraConfiguration.activated())) {
             String instanceName = georchestraConfiguration.getProperty("instanceName");
             String headerHeight = georchestraConfiguration.getProperty("headerHeight");
+            String headerUrl = georchestraConfiguration.getProperty("headerUrl");
             georHeaderInclude = georHeaderInclude.replace("@instanceName@", instanceName);
             georHeaderInclude = georHeaderInclude.replace("@headerHeight@", headerHeight);
+            georHeaderInclude = georHeaderInclude.replace("@headerUrl@", headerUrl);
         } else {
             // Default values (nested into the geowebcache.properties)
             InputStream defaultGwcProp = this.getClass().getResourceAsStream("/geowebcache.properties");
@@ -105,6 +107,7 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher {
                 prop.load(defaultGwcProp);
                 georHeaderInclude = georHeaderInclude.replace("@instanceName@", prop.getProperty("instanceName", "geOrchestra"));
                 georHeaderInclude = georHeaderInclude.replace("@headerHeight@", prop.getProperty("headerHeight", "90"));
+                georHeaderInclude = georHeaderInclude.replace("@headerUrl@", prop.getProperty("headerUrl", "/header/"));
             } finally {
                 if (defaultGwcProp != null)
                     defaultGwcProp.close();
