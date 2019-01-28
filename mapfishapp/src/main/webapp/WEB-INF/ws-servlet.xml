@@ -54,6 +54,12 @@
         <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
         <property name="prefix" value="/WEB-INF/jsp/"/>
         <property name="suffix" value=".jsp"/>
+        <property name="attributes">
+            <map>
+                <entry key="instanceName" value="#{georchestraConfiguration.getProperty('instanceName', 'geOrchestra')}" />
+                <entry key="georCustomPath" value="#{georchestraConfiguration.getProperty('georCustomPath', '/ws/app/js/GEOR_custom.js')}" />
+            </map>
+        </property>
       </bean>
 
     <bean id="georchestraConfiguration" class="org.georchestra.commons.configuration.GeorchestraConfiguration">

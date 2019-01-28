@@ -39,18 +39,14 @@ Boolean anonymous = true;
 Boolean admin = false;
 Boolean georDatadirActivated = false;
 
-String instanceName = "geOrchestra";
 String defaultLanguage = "en";
-String georCustomPath = "/app/js/GEOR_custom.js";
 
 try {
   ApplicationContext ctx = RequestContextUtils.getWebApplicationContext(request);
   if ((ctx.getBean(GeorchestraConfiguration.class) != null)
     && (((GeorchestraConfiguration) ctx.getBean(GeorchestraConfiguration.class)).activated())) {
       georDatadirActivated = true;
-      instanceName = ctx.getBean(GeorchestraConfiguration.class).getProperty("instanceName", instanceName);
       defaultLanguage = ctx.getBean(GeorchestraConfiguration.class).getProperty("language", defaultLanguage);
-      georCustomPath = "/ws/app/js/GEOR_custom.js";
     }
 } catch (Exception e) {
   // Ignoring and keeping the default configuration
@@ -126,7 +122,7 @@ if(sec_roles != null) {
             font: normal 12px arial,tahoma,sans-serif;
         }
     </style>
-    <title lang="<%= lang %>" dir="ltr"><fmt:message key="title.visual"/> - <%= instanceName %></title>
+    <title lang="<%= lang %>" dir="ltr"><fmt:message key="title.visual"/> - ${instanceName}</title>
 
     <link rel="stylesheet" type="text/css" href="<%= context %>/lib/externals/ext/resources/css/ext-all.css" />
     <link rel="stylesheet" type="text/css" href="<%= context %>/lib/externals/ext/resources/css/xtheme-gray.css" />
@@ -164,7 +160,7 @@ if(sec_roles != null) {
     <!--
         loading custom parameters (see build profile)
     -->
-    <script type="text/javascript" src="<%= context %><%= georCustomPath %>"></script>
+    <script type="text/javascript" src="<%= context %>${georCustomPath}"></script>
     
     <c:choose>
         <c:when test='<%= request.getParameter("debug") != null %>'>
