@@ -11,17 +11,21 @@ import org.junit.Assume;
 import org.junit.Test;
 import org.postgresql.ds.PGSimpleDataSource;
 
+import com.google.common.base.Strings;
+
 public class DBConnectionTest {
 
     @Test
     // Test parameter remplacment
     public void testParameter() throws PropertyVetoException, SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-
-        Map<String, String> env = System.getenv();
-        Assume.assumeTrue(env.containsKey("JDBC_TEST_URL"));
+        String url = System.getProperty("JDBC_TEST_URL");
+        if(Strings.isNullOrEmpty(url)) {
+            url = System.getenv("JDBC_TEST_URL");
+        }
+        Assume.assumeTrue(!Strings.isNullOrEmpty(url));
 
         PGSimpleDataSource dataSource = new PGSimpleDataSource();
-        dataSource.setUrl(env.get("JDBC_TEST_URL"));
+        dataSource.setUrl(url);
         DBConnection conn = new DBConnection(dataSource);
 
         String sql = "SELECT CAST(COUNT(*) AS integer) AS count, to_char(date, {aggregateDate}) " +
