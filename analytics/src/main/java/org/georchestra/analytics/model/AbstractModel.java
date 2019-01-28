@@ -35,7 +35,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class AbstractModel {
-
+    
 	@Autowired
 	protected DataSource jpaDataSource;
 
@@ -122,8 +122,7 @@ public class AbstractModel {
 			}
 
 			//long mstime = System.currentTimeMillis();
-			String finalQuery = st.toString();
-			rs = con.createStatement().executeQuery(finalQuery);
+			rs = st.executeQuery();
 			//Logger.getLogger("stat").warning("Count duration : " + (System.currentTimeMillis() - mstime) + "ms : " + finalQuery);
 
 		    if(rs.next())
@@ -189,8 +188,8 @@ public class AbstractModel {
 			int count = getCount(con, q, month, year, sort, extraFilters);
 			st = prepareStatement(con, q, month, year, start, limit, sort, extraFilters);
 			//long mstime = System.currentTimeMillis();
-			String finalQuery = st.toString();
-			rs = con.createStatement().executeQuery(finalQuery);
+			
+			rs = st.executeQuery();
 			//Logger.getLogger("stat").warning("Data duration : " + (System.currentTimeMillis() - mstime) + "ms : " + finalQuery);
 			//rs = st.executeQuery();
 
