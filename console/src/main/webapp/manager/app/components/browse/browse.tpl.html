@@ -1,5 +1,6 @@
 <div class="alert alert-info">
   <a ng-link="users({id: 'all'})" class="category" ng-class="{active: !roles.activeRole}" translate>role.allusers</a>
+  <a ng-link="users({id: 'pending'})" class="category" ng-class="{active: roles.activeRole.cn === 'PENDING'}" translate>users.pending</a>
   <hr>
   <div class="create-btn">
     <a ng-link="newUser" class="btn btn-default" translate>role.newuser</a>

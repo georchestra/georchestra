@@ -21,9 +21,17 @@ class UsersController {
       this.allUsers = this.users.slice()
     })
 
+    let active = $routeParams.id
+
     this.roles = Role.query()
     this.activePromise = this.roles.$promise.then(() => {
-      this.activeRole = this.roles.filter(g => g.cn === $routeParams.id)[0]
+      this.activeRole = this.roles.filter(g => g.cn === active)[0]
+      if (active === 'pending') {
+        this.activeRole = {
+          cn: 'PENDING',
+          description: 'users.pending_desc'
+        }
+      }
       if (this.activeRole) {
         this.filter(this.activeRole)
       }
@@ -33,6 +41,11 @@ class UsersController {
 
   filter (role) {
     this.users.$promise.then(() => {
+      // Special case for pending
+      if (role.cn === 'PENDING') {
+        this.users = this.allUsers.filter(user => user.pending)
+        return
+      }
       this.users = this.allUsers.filter(
         user => (role.users.indexOf(user.uid) >= 0)
       )
