@@ -38,6 +38,7 @@ import java.util.Iterator;
 import java.util.Random;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
@@ -46,7 +47,6 @@ import javax.xml.validation.Validator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.mapfishapp.model.ConnectionPool;
 import org.jdom.Document;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
@@ -54,7 +54,6 @@ import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.slf4j.Logger;
 import org.xml.sax.SAXException;
 
 
@@ -83,14 +82,14 @@ public abstract class A_DocService {
     /**
      * Db connection pool (shared between services).
      */
-    protected ConnectionPool pgPool;
+    protected DataSource pgPool;
 
 	/**
 	 * Sets pgPool (used for testing).
 	 *
 	 * @param pgPool
 	 */
-	public void setPgPool(ConnectionPool pgPool) {
+	public void setPgPool(DataSource pgPool) {
 		this.pgPool = pgPool;
 	}
 
@@ -141,7 +140,7 @@ public abstract class A_DocService {
      * @param MIMEType
      * @param docTempDirectory
      */
-    public A_DocService(final String fileExtension, final String MIMEType,  final String docTempDirectory, ConnectionPool pgpool) {
+    public A_DocService(final String fileExtension, final String MIMEType,  final String docTempDirectory, DataSource pgpool) {
         _fileExtension = fileExtension;
         _MIMEType = MIMEType;
         pgPool = pgpool;

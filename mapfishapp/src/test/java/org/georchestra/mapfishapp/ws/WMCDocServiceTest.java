@@ -13,14 +13,14 @@ import java.sql.ResultSet;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.tools.ant.filters.StringInputStream;
-import org.georchestra.mapfishapp.model.ConnectionPool;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.util.ReflectionUtils;
 import org.xml.sax.SAXParseException;
@@ -53,7 +53,7 @@ public class WMCDocServiceTest {
 
     @Test
     public void testADocServiceListFiles() throws Exception {
-        ConnectionPool pgPool = Mockito.mock(ConnectionPool.class);
+        DataSource pgPool = Mockito.mock(DataSource.class);
         Connection c = Mockito.mock(Connection.class);
         PreparedStatement st = Mockito.mock(PreparedStatement.class);
         ResultSet rs = Mockito.mock(ResultSet.class);

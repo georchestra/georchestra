@@ -5,10 +5,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.georchestra.mapfishapp.model.ConnectionPool;
+import javax.sql.DataSource;
+
 import org.mockito.Mockito;
 
-public class MockConnectionPool extends ConnectionPool {
+public class MockConnectionPool{
 
 	Connection mockedConnection = Mockito.mock(Connection.class);
 	PreparedStatement mockedStatementSet = Mockito.mock(PreparedStatement.class);
@@ -19,11 +20,18 @@ public class MockConnectionPool extends ConnectionPool {
 	ResultSet rsGet = Mockito.mock(ResultSet.class);
 	ResultSet rsGet2 = Mockito.mock(ResultSet.class);
 
-	public MockConnectionPool(String jdbcUrl) { 
-		super(jdbcUrl);
-	}
-	
-	public Connection getConnection() throws SQLException {
+    public DataSource create() {
+        try {
+            setUpMocks();
+            DataSource mockDs = Mockito.mock(DataSource.class);
+            Mockito.when(mockDs.getConnection()).thenReturn(mockedConnection);
+            return mockDs;
+        } catch (SQLException e) {
+            throw new RuntimeException("shouldn't happen");
+        }
+    }    
+
+	private void setUpMocks() throws SQLException  {
 
 		
 		Mockito.when(mockedConnection.prepareStatement("INSERT INTO mapfishapp.geodocs (username, standard, raw_file_content, "
@@ -49,13 +57,9 @@ public class MockConnectionPool extends ConnectionPool {
 		
 		Mockito.when(mockedStatementGet.executeQuery()).thenReturn(rsGet);
 		Mockito.when(mockedStatementGet2.executeQuery()).thenReturn(rsGet2);
-		
-
-		return mockedConnection;
 	}
 	public void setExpectedDocument(String s) throws SQLException {
 		Mockito.when(rsGet2.getString(Mockito.anyInt())).thenReturn(s);
 	}
-	
 
 }

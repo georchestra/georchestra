@@ -19,7 +19,7 @@
 
 package org.georchestra.mapfishapp.ws;
 
-import org.georchestra.mapfishapp.model.ConnectionPool;
+import javax.sql.DataSource;
 
 /**
  * This service handles the storage and the loading of a GML file
@@ -33,7 +33,7 @@ public class GMLDocService extends A_DocService {
     public static final String FILE_EXTENSION = ".gml";
     public static final String MIME_TYPE = "application/gml+xml";
 
-    public GMLDocService(final String tempDir, ConnectionPool pgpool) {
+    public GMLDocService(final String tempDir, DataSource pgpool) {
         super(FILE_EXTENSION, MIME_TYPE, tempDir, pgpool);
     }
 

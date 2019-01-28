@@ -22,6 +22,7 @@ package org.georchestra.mapfishapp.ws;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+import javax.sql.DataSource;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -29,7 +30,6 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang.StringUtils;
-import org.georchestra.mapfishapp.model.ConnectionPool;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
@@ -52,7 +52,7 @@ public class WMCDocService extends A_DocService {
     public static final String MIME_TYPE = "application/vnd.ogc.context+xml";
     public static final String SCHEMA_URL = "http://schemas.opengis.net/context/1.1.0/context.xsd";
 
-    public WMCDocService(final String tempDir, ConnectionPool pgpool) {
+    public WMCDocService(final String tempDir, DataSource pgpool) {
         super(FILE_EXTENSION, MIME_TYPE, tempDir, pgpool);
     }
 

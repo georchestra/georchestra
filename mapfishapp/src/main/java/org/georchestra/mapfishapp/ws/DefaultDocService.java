@@ -19,7 +19,7 @@
 
 package org.georchestra.mapfishapp.ws;
 
-import org.georchestra.mapfishapp.model.ConnectionPool;
+import javax.sql.DataSource;
 
 /**
  * This is a convenient class that provides a basic DocService.
@@ -39,7 +39,7 @@ public class DefaultDocService extends A_DocService {
 	 * @param tempDir
 	 */
 	@SuppressWarnings("unused")
-    private DefaultDocService(final String tempDir, ConnectionPool pgpool) {
+    private DefaultDocService(final String tempDir, DataSource pgpool) {
         super("", "", tempDir, pgpool);
     }
     
@@ -51,7 +51,7 @@ public class DefaultDocService extends A_DocService {
      * @param MIMEType
      * @param tempDir
      */
-    public DefaultDocService(final String fileExtension, final String MIMEType, final String tempDir, ConnectionPool pgpool ) {
+    public DefaultDocService(final String fileExtension, final String MIMEType, final String tempDir, DataSource pgpool ) {
         super(fileExtension, MIMEType, tempDir, pgpool);
     }
 

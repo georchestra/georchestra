@@ -19,7 +19,7 @@
 
 package org.georchestra.mapfishapp.ws;
 
-import org.georchestra.mapfishapp.model.ConnectionPool;
+import javax.sql.DataSource;
 
 /**
  * This service handles the storage and the loading of a Filter Encoding file
@@ -34,7 +34,7 @@ public class FEDocService extends A_DocService {
     public static final String FILE_EXTENSION = ".xml";
     public static final String MIME_TYPE = "application/xml";
 
-    public FEDocService(final String tempDir, ConnectionPool pgpool) {
+    public FEDocService(final String tempDir, DataSource pgpool) {
         super(FILE_EXTENSION, MIME_TYPE, tempDir, pgpool);
     }
 
