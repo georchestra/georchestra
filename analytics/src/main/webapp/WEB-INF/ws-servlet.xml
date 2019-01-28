@@ -19,42 +19,11 @@
         <property name="driverClass" value="org.postgresql.Driver"/>
         <property name="maxPoolSize" value="10"/>
         <property name="minPoolSize" value="1"/>
+        <property name="testConnectionOnCheckout" value="true"/>
+        <!-- no need for this, JDBC4 has Connection.isValid() which the pool will check and is optimized by each driver implementation 
         <property name="automaticTestTable" value="cpds_connection_test"/>
+        -->
     </bean>
-
-<!-- 
-    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" depends-on="waitForDb">
-        <property name="url" value="${dlJdbcUrlOGC}"/>
-        <property name="driverClassName" value="org.postgresql.Driver"/>
-        <property name="testOnBorrow" value="true"/>
-        <property name="validationQuery" value="select 1 as dbcp_connection_test"/>
-        <property name="poolPreparedStatements" value="true"/>
-        <property name="maxOpenPreparedStatements" value="-1"/>
-        <property name="defaultReadOnly" value="false"/>
-        <property name="defaultAutoCommit" value="true"/>
-    </bean>
- 
-   <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-       <property name="dataSource" ref="dataSource" />
-       <property name="persistenceUnitName" value="statsPersistenceUnit" />
-       <property name="persistenceXmlLocation" value="classpath:persistence.xml"/>
-       <property name="jpaVendorAdapter">
-           <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
-       </property>
-       <property name="jpaProperties">
-           <props>
-               <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL94Dialect</prop>
-               <prop key="hibernate.show_sql">true</prop>
-               <prop key="hibernate.format_sql">true</prop>
-               <prop key="hibernate.hbm2ddl.auto">validate</prop>
-           </props>
-       </property>
-   </bean>
-
-    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <property name="entityManagerFactory" ref="entityManagerFactory" />
-    </bean>
--->
  
     <bean id="homecontroller" class="org.georchestra.analytics.HomeController"/>
 
