@@ -13,10 +13,10 @@ import org.postgresql.ds.PGSimpleDataSource;
 
 import com.google.common.base.Strings;
 
-public class DBConnectionTest {
+public class QueryBuilderTest {
 
     @Test
-    // Test parameter remplacment
+    // Test parameter replacement
     public void testParameter() throws PropertyVetoException, SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         String url = System.getProperty("JDBC_TEST_URL");
         if(Strings.isNullOrEmpty(url)) {
@@ -26,7 +26,7 @@ public class DBConnectionTest {
 
         PGSimpleDataSource dataSource = new PGSimpleDataSource();
         dataSource.setUrl(url);
-        DBConnection conn = new DBConnection(dataSource);
+        QueryBuilder builder = new QueryBuilder();
 
         String sql = "SELECT CAST(COUNT(*) AS integer) AS count, to_char(date, {aggregateDate}) " +
                 "FROM ogcstatistics.ogc_services_log " +
@@ -41,7 +41,7 @@ public class DBConnectionTest {
         values.put("aggregateDate", "YYYY-mm-dd HH24");
         values.put("user","biloute");
 
-        String finalQuery = conn.generateQuery(sql, values);
+        String finalQuery = builder.generateQuery(sql, values);
 
         String sqlWithReplacments = "SELECT CAST(COUNT(*) AS integer) AS count, to_char(date, 'YYYY-mm-dd HH24') " +
                 "FROM ogcstatistics.ogc_services_log " +

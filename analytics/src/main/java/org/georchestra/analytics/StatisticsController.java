@@ -23,19 +23,20 @@ import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
-import org.georchestra.analytics.util.DBConnection;
+import org.georchestra.analytics.util.QueryBuilder;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -49,7 +50,14 @@ import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.google.common.annotations.VisibleForTesting;
 
 /**
  * This controller defines the entry point to return statistics based on user or groups, for a given
@@ -162,7 +170,7 @@ public class StatisticsController {
 	@Autowired
 	private DataSource dataSource;
 
-	private DBConnection db;
+	private final QueryBuilder queryBuilder = new QueryBuilder();
 
 	private DateTimeFormatter localInputFormatter;
 	private DateTimeFormatter dbOutputFormatter;
@@ -208,10 +216,6 @@ public class StatisticsController {
 				.withZone(DateTimeZone.forID(localTimezone));
 	}
 
-	@PostConstruct
-	public void init() throws PropertyVetoException, SQLException {
-		this.db = new DBConnection(this.dataSource);
-	}
 	// Getter and setter for unit tests
 
 	public GeorchestraConfiguration getGeorConfig() {
@@ -222,8 +226,8 @@ public class StatisticsController {
 		this.georConfig = georConfig;
 	}
 
-	public void setDb(DBConnection db) {
-		this.db = db;
+	public @VisibleForTesting void setDataSource(DataSource ds) {
+		this.dataSource = ds;
 	}
 
 
@@ -351,41 +355,43 @@ public class StatisticsController {
 				"ORDER BY to_char(date, {aggregateDateExpression})";
 
 		// Fetch and format results
-		ResultSet res = db.execute(db.generateQuery(sql,sqlValues));
+        final String generatedQuery = queryBuilder.generateQuery(sql, sqlValues);
+        try (Connection c = dataSource.getConnection(); //
+                Statement st = c.createStatement(); //
+                ResultSet res = st.executeQuery(generatedQuery)) {
 
-		response.setCharacterEncoding("utf-8");
+            response.setCharacterEncoding("utf-8");
 
-		if("json".equals(format)) {
-			response.setContentType("application/json");
-		} else if("csv".equals(format)) {
-			response.setContentType("application/csv");
-		} else {
-			throw new IllegalArgumentException("Invalid format : " + format);
-		}
+            if ("json".equals(format)) {
+                response.setContentType("application/json");
+            } else if ("csv".equals(format)) {
+                response.setContentType("application/csv");
+            } else {
+                throw new IllegalArgumentException("Invalid format : " + format);
+            }
 
-		JSONArray results = new JSONArray();
-		StringBuilder csv = new StringBuilder();
-		csv.append("date,count\n");
+            JSONArray results = new JSONArray();
+            StringBuilder csv = new StringBuilder();
+            csv.append("date,count\n");
 
-		while (res.next()) {
-			String date = this.convertUTCDateToLocal(res.getString("aggregate_date"), g);
-			int count = res.getInt("count");
-			if("json".equals(format)) {
-				results.put(new JSONObject().put("count", count).put("date", date));
-			} else if("csv".equals(format)) {
-				csv.append(date + "," + count + "\n");
-			}
-		}
+            while (res.next()) {
+                String date = this.convertUTCDateToLocal(res.getString("aggregate_date"), g);
+                int count = res.getInt("count");
+                if ("json".equals(format)) {
+                    results.put(new JSONObject().put("count", count).put("date", date));
+                } else if ("csv".equals(format)) {
+                    csv.append(date + "," + count + "\n");
+                }
+            }
 
-		if("json".equals(format)) {
-			return new JSONObject().put("results", results)
-					.put("granularity", g)
-					.toString(4);
-		} else if("csv".equals(format)) {
-			return csv.toString();
-		} else {
-			throw new IllegalArgumentException("Invalid format : " + format);
-		}
+            if ("json".equals(format)) {
+                return new JSONObject().put("results", results).put("granularity", g).toString(4);
+            } else if ("csv".equals(format)) {
+                return csv.toString();
+            } else {
+                throw new IllegalArgumentException("Invalid format : " + format);
+            }
+        }
 
 	}
 
@@ -475,15 +481,20 @@ public class StatisticsController {
 		sqlValues.put("startDate", startDate);
 		sqlValues.put("endDate", endDate);
 
-		ResultSet sqlRes = this.db.execute(this.db.generateQuery(sql, sqlValues));
+        final String generatedQuery = queryBuilder.generateQuery(sql, sqlValues);
+        try (Connection c = dataSource.getConnection(); //
+                Statement st = c.createStatement(); //
+                ResultSet sqlRes = st.executeQuery(generatedQuery)) {
 
-		StringBuilder res = new StringBuilder("username;organization;creation_date;duration;end_date;layer_name;is_successful;bbox;area_km2\n");
-		while(sqlRes.next()){
-			for(int i=1; i<9; i++)
-				res.append(sqlRes.getString(i) + ";");
-			res.append(sqlRes.getString(9) + "\n");
-		}
-		return res.toString();
+            StringBuilder res = new StringBuilder(
+                    "username;organization;creation_date;duration;end_date;layer_name;is_successful;bbox;area_km2\n");
+            while (sqlRes.next()) {
+                for (int i = 1; i < 9; i++)
+                    res.append(sqlRes.getString(i) + ";");
+                res.append(sqlRes.getString(9) + "\n");
+            }
+            return res.toString();
+        }
 	}
 
 	/**
@@ -582,23 +593,27 @@ public class StatisticsController {
 		if(limit != null)
 			sql += " LIMIT {limit}";
 
-		ResultSet sqlRes = db.execute(db.generateQuery(sql,sqlValues));
+        final String generatedQuery = queryBuilder.generateQuery(sql, sqlValues);
+        try (Connection c = dataSource.getConnection(); //
+                Statement st = c.createStatement(); //
+                ResultSet sqlRes = st.executeQuery(generatedQuery)) {
 
-		switch (format){
-			case JSON:
-				JSONArray results = new JSONArray();
-				while(sqlRes.next())
-					results.put(new JSONObject().put("layer", sqlRes.getString("layer")).put("count", sqlRes.getInt("count")));
-				return new JSONObject().put("results", results)
-						.toString(4);
-			case CSV:
-				StringBuilder res = new StringBuilder("layer,count\n");
-				while(sqlRes.next())
-					res.append(sqlRes.getString("layer") + "," + sqlRes.getInt("count") + "\n");
-				return res.toString();
-			default:
-				throw new JSONException("Invalid format " + format);
-		}
+            switch (format) {
+            case JSON:
+                JSONArray results = new JSONArray();
+                while (sqlRes.next())
+                    results.put(new JSONObject().put("layer", sqlRes.getString("layer")).put("count",
+                            sqlRes.getInt("count")));
+                return new JSONObject().put("results", results).toString(4);
+            case CSV:
+                StringBuilder res = new StringBuilder("layer,count\n");
+                while (sqlRes.next())
+                    res.append(sqlRes.getString("layer") + "," + sqlRes.getInt("count") + "\n");
+                return res.toString();
+            default:
+                throw new JSONException("Invalid format " + format);
+            }
+        }
 	}
 
 
@@ -690,24 +705,27 @@ public class StatisticsController {
 				break;
 		}
 
-		// Fetch and format results
-		ResultSet res = this.db.execute(this.db.generateQuery(sql, sqlValues));
-		JSONArray results = new JSONArray();
-		while (res.next()) {
-			if (excluded_users.contains(res.getString("user_name")))
-				continue;
-			JSONObject row = new JSONObject();
-			row.put("user", res.getString("user_name"));
-			row.put("organization", res.getString("org"));
-			row.put("nb_requests", res.getInt("count"));
-			results.put(row);
-		}
-		String jsonOutput = new JSONObject().put("results", results)
-				.toString(4);
+        // Fetch and format results
+        final String generatedQuery = queryBuilder.generateQuery(sql, sqlValues);
+        try (Connection c = dataSource.getConnection(); //
+                Statement st = c.createStatement(); //
+                ResultSet res = st.executeQuery(generatedQuery)) {
+            JSONArray results = new JSONArray();
+            while (res.next()) {
+                if (excluded_users.contains(res.getString("user_name")))
+                    continue;
+                JSONObject row = new JSONObject();
+                row.put("user", res.getString("user_name"));
+                row.put("organization", res.getString("org"));
+                row.put("nb_requests", res.getInt("count"));
+                results.put(row);
+            }
+            String jsonOutput = new JSONObject().put("results", results).toString(4);
 
-		PrintWriter writer = response.getWriter();
-		writer.print(jsonOutput);
-		writer.close();
+            PrintWriter writer = response.getWriter();
+            writer.print(jsonOutput);
+            writer.close();
+        }
 	}
 	
 	/**
