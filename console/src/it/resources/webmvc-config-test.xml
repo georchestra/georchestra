@@ -129,10 +129,11 @@
         <property name="user" value="${psql.user}"/>
         <property name="password" value="${psql.pass}"/>
         <property name="driverClass" value="org.postgresql.Driver"/>
-        <property name="maxPoolSize" value="${dataSource.maxPoolSize}"/>
+        <property name="initialPoolSize" value="1"/>
         <property name="minPoolSize" value="${dataSource.minPoolSize}"/>
+        <property name="maxPoolSize" value="${dataSource.maxPoolSize}"/>
         <property name="checkoutTimeout" value = "${dataSource.timeout}"/>
-        <property name="automaticTestTable" value="cpds_connection_test"/>
+        <property name="testConnectionOnCheckout" value="true"/>
     </bean>
 
    <!--<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">-->

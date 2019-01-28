@@ -55,7 +55,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.support.SessionStatus;
-import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Integration test case for
@@ -82,33 +81,17 @@ public class PasswordRecoverySurvivesDatabaseRestartIT {
         assertTrue(maxPoolSize > 0);
     }
 
-    public @Test void testSurvivesDatabaseRestartGET() throws Exception {
-
-        support.perform(get("/account/passwordRecovery?email=me%40provider.com")).andDo(print())
-                .andExpect(status().isOk());
+    public @Test void testSurvivesDatabaseRestartPOST() throws Exception {
 
         forceCloseConnectionsBehindPool();
 
-        ModelAndView modelAndView = support.perform(get("/account/passwordRecovery?email=me%40provider.com"))
-                .andDo(print()).andExpect(status().isOk())//
-                .andReturn().getModelAndView();
-        PasswordRecoveryFormBean bean = (PasswordRecoveryFormBean) modelAndView.getModel()
-                .get("passwordRecoveryFormBean");
-        assertNotNull(bean);
-
-    }
-
-    public @Test void testSurvivesDatabaseRestartPOST() throws Exception {
-
         PasswordRecoveryFormBean bean = (PasswordRecoveryFormBean) support//
-                .perform(get("/account/passwordRecovery?email=psc+testuser@georchestra.org")).andDo(print())
+                .perform(get("/account/passwordRecovery?email=psc+testuser@georchestra.org"))//
                 .andExpect(status().isOk())//
                 .andReturn()//
                 .getModelAndView()//
                 .getModel()//
                 .get("passwordRecoveryFormBean");
-
-        forceCloseConnectionsBehindPool();
 
         GeorchestraConfiguration spiedConfig = Mockito.spy(georchestraConfig);
         controller.setGeorConfig(spiedConfig);
@@ -129,10 +112,14 @@ public class PasswordRecoverySurvivesDatabaseRestartIT {
         Connection testConnection = null;
         List<Connection> consumeAll = new ArrayList<>();
         for (int i = 0; i < maxPoolSize; i++) {
-            Connection connection = ds.getConnection();
-            consumeAll.add(connection);
-            if (i == 0) {
-                testConnection = connection;
+            try {
+                Connection connection = ds.getConnection();
+                consumeAll.add(connection);
+                if (i == 0) {
+                    testConnection = connection;
+                }
+            } catch (SQLException timedOut) {
+                //
             }
         }
         for (Connection c : consumeAll) {
@@ -168,6 +155,8 @@ public class PasswordRecoverySurvivesDatabaseRestartIT {
             } catch (SQLException e2) {
                 assertThat(e2.getMessage(), containsString("This connection has been closed"));
             }
+        } finally {
+            testConnection.close();
         }
 
     }
