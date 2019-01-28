@@ -1,6 +1,7 @@
 package org.georchestra.commons;
 
-import org.apache.commons.dbcp.BasicDataSource;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
 
@@ -12,15 +13,15 @@ public class WaitForDb {
     private String driverClassName;
 
     public void test(){
-        BasicDataSource db =  new BasicDataSource();
-        db.setUrl(this.getUrl());
-        db.setUsername(this.getUsername());
-        db.setPassword(this.getPassword());
-        db.setDriverClassName(this.getDriverClassName());
-
+        try {
+            Class.forName(driverClassName);
+        } catch (ClassNotFoundException e) {
+            System.err.printf("CONFIGURATION ERROR: Unable to load JDBC driver '%s'", driverClassName);
+            throw new RuntimeException(e);
+        }
+        
         while(true) {
-            try {
-                db.getConnection();
+            try (Connection connection = DriverManager.getConnection(url, username, password)){
                 System.out.println("--------------------------------> DB OK <------------------------------------");
                 break;
             } catch (SQLException e) {
