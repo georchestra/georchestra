@@ -1,16 +1,6 @@
 package org.georchestra.console.dao;
 
-import com.mchange.v2.c3p0.ComboPooledDataSource;
-import org.georchestra.console.ds.OrgsDao;
-import org.georchestra.console.dto.Org;
-import org.georchestra.console.model.DelegationEntry;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-
-import javax.annotation.PostConstruct;
-import javax.sql.DataSource;
-
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,6 +8,15 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
+import javax.sql.DataSource;
+
+import org.georchestra.console.ds.OrgsDao;
+import org.georchestra.console.dto.Org;
+import org.georchestra.console.model.DelegationEntry;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 public class AdvancedDelegationDao {
 
@@ -32,26 +31,26 @@ public class AdvancedDelegationDao {
     @Autowired
     private DataSource ds;
 
-    @PostConstruct
-    public void init() throws SQLException {
-        if (ds instanceof ComboPooledDataSource) {
-            ((ComboPooledDataSource) ds).setTestConnectionOnCheckin(true);
-            ((ComboPooledDataSource) ds).setTestConnectionOnCheckout(true);
+    public List<DelegationEntry> findByOrg(String org) throws SQLException {
+        final String sql = "SELECT uid, array_to_string(orgs, ',') AS orgs, array_to_string(roles, ',') AS roles FROM console.delegations WHERE ? = ANY(orgs)";
+        try (Connection c = ds.getConnection(); //
+                PreparedStatement byOrgStatement = c.prepareStatement(sql)) {
+            byOrgStatement.setString(1, org);
+            try (ResultSet resultSet = byOrgStatement.executeQuery()) {
+                return this.parseResults(resultSet);
+            }
         }
     }
 
-    public List<DelegationEntry> findByOrg(String org) throws SQLException {
-        PreparedStatement byOrgStatement = ds.getConnection().prepareStatement(
-                "SELECT uid, array_to_string(orgs, ',') AS orgs, array_to_string(roles, ',') AS roles FROM console.delegations WHERE ? = ANY(orgs)");
-        byOrgStatement.setString(1, org);
-        return this.parseResults(byOrgStatement.executeQuery());
-    }
-
     public List<DelegationEntry> findByRole(String cn) throws SQLException {
-        PreparedStatement byRoleStatement = ds.getConnection().prepareStatement(
-                "SELECT uid, array_to_string(orgs, ',') AS orgs, array_to_string(roles, ',') AS roles FROM console.delegations WHERE ? = ANY(roles)");
-        byRoleStatement.setString(1, cn);
-        return this.parseResults(byRoleStatement.executeQuery());
+        final String sql = "SELECT uid, array_to_string(orgs, ',') AS orgs, array_to_string(roles, ',') AS roles FROM console.delegations WHERE ? = ANY(roles)";
+        try (Connection c = ds.getConnection(); //
+                PreparedStatement byRoleStatement = c.prepareStatement(sql)) {
+            byRoleStatement.setString(1, cn);
+            try (ResultSet resultSet = byRoleStatement.executeQuery()) {
+                return this.parseResults(resultSet);
+            }
+        }
     }
 
     public Set<String> findUsersUnderDelegation(String delegatedAdmin) {
