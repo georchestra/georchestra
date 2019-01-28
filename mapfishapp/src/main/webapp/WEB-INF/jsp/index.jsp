@@ -38,18 +38,6 @@
 Boolean anonymous = true;
 Boolean admin = false;
 
-String defaultLanguage = "en";
-
-try {
-  ApplicationContext ctx = RequestContextUtils.getWebApplicationContext(request);
-  if ((ctx.getBean(GeorchestraConfiguration.class) != null)
-    && (((GeorchestraConfiguration) ctx.getBean(GeorchestraConfiguration.class)).activated())) {
-      defaultLanguage = ctx.getBean(GeorchestraConfiguration.class).getProperty("language", defaultLanguage);
-    }
-} catch (Exception e) {
-  // Ignoring and keeping the default configuration
-}
-
 // the context path (might not be the public context path ! -> to be improved with https://github.com/georchestra/georchestra/issues/227)
 String context = request.getContextPath().split("-")[0]; // eg /mapfishapp
 
@@ -59,7 +47,7 @@ ResourceBundle bundle = org.georchestra.mapfishapp.ws.Utf8ResourceBundle.getBund
 String detectedLanguage = rLocale.getLanguage();
 String forcedLang = request.getParameter("lang");
 
-String lang = defaultLanguage;
+String lang = request.getParameter("defaultLanguage");
 if (forcedLang != null) {
     if (forcedLang.equals("en") || forcedLang.equals("es") || forcedLang.equals("ru") || forcedLang.equals("fr") || forcedLang.equals("de")) {
         lang = forcedLang;

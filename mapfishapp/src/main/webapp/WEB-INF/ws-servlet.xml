@@ -57,6 +57,7 @@
         <property name="attributes">
             <map>
                 <entry key="instanceName" value="#{georchestraConfiguration.getProperty('instanceName', 'geOrchestra')}" />
+                <entry key="defaultLanguage" value="#{georchestraConfiguration.getProperty('georCustomPath', 'en')}" />
                 <entry key="georCustomPath" value="#{georchestraConfiguration.getProperty('georCustomPath', '/ws/app/js/GEOR_custom.js')}" />
             </map>
         </property>
