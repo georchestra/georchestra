@@ -44,9 +44,8 @@
                         <version>${log4j1.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>postgresql</groupId>
+			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>8.4-701.jdbc3</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
