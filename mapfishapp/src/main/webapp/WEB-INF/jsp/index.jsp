@@ -37,7 +37,6 @@
 <%
 Boolean anonymous = true;
 Boolean admin = false;
-Boolean georDatadirActivated = false;
 
 String defaultLanguage = "en";
 
@@ -45,7 +44,6 @@ try {
   ApplicationContext ctx = RequestContextUtils.getWebApplicationContext(request);
   if ((ctx.getBean(GeorchestraConfiguration.class) != null)
     && (((GeorchestraConfiguration) ctx.getBean(GeorchestraConfiguration.class)).activated())) {
-      georDatadirActivated = true;
       defaultLanguage = ctx.getBean(GeorchestraConfiguration.class).getProperty("language", defaultLanguage);
     }
 } catch (Exception e) {
