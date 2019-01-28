@@ -20,19 +20,16 @@
         <property name="driverClassName" value="org.postgresql.Driver"/>
     </bean>
 
-    <bean id="jpaDataSource" class="org.apache.commons.dbcp.BasicDataSource" depends-on="waitForDb">
-        <property name="url" value="${dlJdbcUrlOGC}"/>
-        <property name="driverClassName" value="org.postgresql.Driver"/>
-        <property name="testOnBorrow" value="true"/>
-        <property name="validationQuery" value="select 1 as dbcp_connection_test"/>
-        <property name="poolPreparedStatements" value="true"/>
-        <property name="maxOpenPreparedStatements" value="-1"/>
-        <property name="defaultReadOnly" value="false"/>
-        <property name="defaultAutoCommit" value="true"/>
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" depends-on="waitForDb">
+        <property name="jdbcUrl" value="${dlJdbcUrlOGC}"/>
+        <property name="driverClass" value="org.postgresql.Driver"/>
+        <property name="maxPoolSize" value="10"/>
+        <property name="minPoolSize" value="1"/>
+        <property name="automaticTestTable" value="cpds_connection_test"/>
     </bean>
 
    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-       <property name="dataSource" ref="jpaDataSource" />
+       <property name="dataSource" ref="dataSource" />
        <property name="persistenceUnitName" value="statsPersistenceUnit" />
        <property name="persistenceXmlLocation" value="classpath:persistence.xml"/>
        <property name="jpaVendorAdapter">

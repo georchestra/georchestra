@@ -1,19 +1,15 @@
 package org.georchestra.analytics.util;
 
-import org.apache.commons.dbcp.BasicDataSource;
-import org.georchestra.analytics.util.DBConnection;
-import org.joda.time.DateTime;
-import org.junit.Assert;
-import org.junit.Assume;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.beans.PropertyVetoException;
 import java.lang.reflect.InvocationTargetException;
-import java.sql.Date;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.junit.Assert;
+import org.junit.Assume;
+import org.junit.Test;
+import org.postgresql.ds.PGSimpleDataSource;
 
 public class DBConnectionTest {
 
@@ -24,16 +20,8 @@ public class DBConnectionTest {
         Map<String, String> env = System.getenv();
         Assume.assumeTrue(env.containsKey("JDBC_TEST_URL"));
 
-        BasicDataSource dataSource = new BasicDataSource();
+        PGSimpleDataSource dataSource = new PGSimpleDataSource();
         dataSource.setUrl(env.get("JDBC_TEST_URL"));
-        dataSource.setDriverClassName("org.postgresql.Driver");
-        dataSource.setTestOnBorrow(true);
-        dataSource.setValidationQuery("select 1 as dbcp_connection_test");
-        dataSource.setPoolPreparedStatements(true);
-        dataSource.setMaxOpenPreparedStatements(-1);
-        dataSource.setDefaultReadOnly(false);
-        dataSource.setDefaultAutoCommit(true);
-
         DBConnection conn = new DBConnection(dataSource);
 
         String sql = "SELECT CAST(COUNT(*) AS integer) AS count, to_char(date, {aggregateDate}) " +
