@@ -35,7 +35,7 @@ public class DBConnectionTest {
                 "GROUP BY to_char(date, {aggregateDate}) " +
                 "ORDER BY to_char(date, {aggregateDate})";
 
-        Map<String, Object> values = new HashMap<String, Object>();
+        Map<String, String> values = new HashMap<>();
         values.put("startDate", "2017-08-15");
         values.put("endDate", "2017-09-15");
         values.put("aggregateDate", "YYYY-mm-dd HH24");

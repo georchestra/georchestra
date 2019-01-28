@@ -1,17 +1,15 @@
 package org.georchestra.analytics.util;
 
-import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.sql.DataSource;
 
 /**
  * The purpose of this class is to keep parameter replacment feature without
@@ -65,33 +63,27 @@ public class DBConnection {
         }
     }
 
-    public String generateQuery(String sql, Map<String, Object> values) throws SQLException {
+    public String generateQuery(String sql, Map<String, String> values) throws SQLException {
 
         // Check connection to database
         this.checkConnection();
 
-        List<String> parameterNames = new LinkedList<String>();
-
         // Replace named parameter with standard prepared statement parameter : '?'
         Matcher m = this.namedParameterPattern.matcher(sql);
+        
         while (m.find()) {
             String parameterName = m.group(1);
-            parameterNames.add(parameterName);
-            sql = sql.replaceFirst("\\{" + parameterName + "\\}", "?");
+            if (!values.containsKey(parameterName)) {
+                throw new IllegalArgumentException(
+                        "No value specified for parameter : " + parameterName + " in " + sql);
+            }
+            String parameterValue = values.get(parameterName);
+            String value = null==parameterValue? "null" : String.format("'%s'", parameterValue);
+            sql = sql.replaceFirst("\\{" + parameterName + "\\}", value);
             m = this.namedParameterPattern.matcher(sql);
         }
 
-        // Create statement
-        PreparedStatement st = this.nativeConnection.prepareStatement(sql);
-
-        for (int i = 0; i < parameterNames.size(); i++) {
-            // Check if parameter is defined
-            if (!values.containsKey(parameterNames.get(i)))
-                throw new IllegalArgumentException(
-                        "No value specified for parameter : " + parameterNames.get(i) + " in " + sql);
-            st.setObject(i + 1, values.get(parameterNames.get(i)));
-        }
-        return st.toString();
+        return sql;
     }
 
     public ResultSet execute(String query) throws SQLException {

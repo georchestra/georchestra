@@ -285,7 +285,7 @@ public class StatisticsController {
 			throws JSONException, ParseException, SQLException {
 
 		JSONObject input = null;
-		Map<String, Object> sqlValues = new HashMap<String, Object>();
+		Map<String, String> sqlValues = new HashMap<>();
 
 		// Parse Input
 		try {
@@ -471,7 +471,7 @@ public class StatisticsController {
 				"	    ON (extractorapp.extractor_log.id = extractorapp.extractor_layer_log.extractor_log_id) " +
 				"     WHERE creation_date >= CAST({startDate} AS timestamp without time zone) AND creation_date < CAST({endDate} AS timestamp without time zone) ";
 
-		Map<String, Object> sqlValues = new HashMap<String, Object>();
+		Map<String, String> sqlValues = new HashMap<>();
 		sqlValues.put("startDate", startDate);
 		sqlValues.put("endDate", endDate);
 
@@ -514,10 +514,8 @@ public class StatisticsController {
 
 		JSONObject input;
 		String userId, groupId;
-		String startDate;
-		String endDate;
-		Integer limit;
-		Map<String, Object> sqlValues = new HashMap<String, Object>();
+		String limit;
+		Map<String, String> sqlValues = new HashMap<>();
 
 		try {
 			input = new JSONObject(payload);
@@ -646,13 +644,11 @@ public class StatisticsController {
 	public void distinctUsers(@RequestBody String payload, HttpServletResponse response) throws JSONException, IOException, InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
 		JSONObject input;
 		String groupId = null;
-		String startDate;
-		String endDate;
 
 		response.setContentType("application/json; charset=UTF-8");
 		response.setCharacterEncoding("UTF-8");
 
-		Map<String, Object> sqlValues = new HashMap<String, Object>();
+		Map<String, String> sqlValues = new HashMap<>();
 
 		// Parse input
 		try {
@@ -677,7 +673,7 @@ public class StatisticsController {
 				"FROM ogcstatistics.ogc_services_log " +
 				"WHERE date >= CAST({startDate} AS timestamp without time zone) AND date < CAST({endDate} AS timestamp without time zone) ";
 
-		if (groupId != null)
+		if (groupId != null)//REVISIT: dead code
 			sql += " AND {group} = ANY (roles) ";
 
 		sql += "GROUP BY user_name, org " +
@@ -798,9 +794,9 @@ public class StatisticsController {
 			return null;
 	}
 
-	private Integer getLimit(JSONObject payload) throws JSONException {
+	private String getLimit(JSONObject payload) throws JSONException {
 		if(payload.has("limit"))
-			return payload.getInt("limit");
+			return String.valueOf(payload.getInt("limit"));
 		else
 			return null;
 	}
