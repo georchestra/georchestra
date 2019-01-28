@@ -160,7 +160,7 @@ public class StatisticsController {
 	private GeorchestraConfiguration georConfig;
 
 	@Autowired
-	private DataSource jpaDataSource;
+	private DataSource dataSource;
 
 	private DBConnection db;
 
@@ -210,7 +210,7 @@ public class StatisticsController {
 
 	@PostConstruct
 	public void init() throws PropertyVetoException, SQLException {
-		this.db = new DBConnection(this.jpaDataSource);
+		this.db = new DBConnection(this.dataSource);
 	}
 	// Getter and setter for unit tests
 
