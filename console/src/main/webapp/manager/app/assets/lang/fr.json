@@ -184,6 +184,8 @@
   "users.login"           : "Login",
   "users.organization"    : "Organisme",
   "users.email"           : "Courriel",
+  "users.pending"         : "En attente",
+  "users.pending_desc"    : "Utilisateurs en attente de validation",
 
   "msg.compose"           : "Composer un message",
   "msg.date"              : "Date",

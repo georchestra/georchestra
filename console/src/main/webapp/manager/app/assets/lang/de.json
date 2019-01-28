@@ -184,6 +184,8 @@
   "users.login"           : "Login",
   "users.organization"    : "Organisation",
   "users.email"           : "E-Mail",
+  "users.pending"         : "***TODO***",
+  "users.pending_desc"    : "***TODO***",
 
   "msg.compose"           : "Nachricht erstellen",
   "msg.date"              : "Datum",
