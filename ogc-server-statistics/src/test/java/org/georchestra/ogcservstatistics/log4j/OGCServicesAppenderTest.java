@@ -3,6 +3,7 @@
  */
 package org.georchestra.ogcservstatistics.log4j;
 
+import static org.awaitility.Awaitility.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.awaitility.Duration;
 import org.georchestra.ogcservstatistics.OGCServStatisticsException;
 import org.georchestra.ogcservstatistics.calculations.OGCServiceStatistics;
 import org.georchestra.ogcservstatistics.dataservices.DataServicesConfiguration;
@@ -59,7 +61,7 @@ public class OGCServicesAppenderTest {
     }
 
     public @Before void before() {
-	LOGGER = Logger.getLogger(OGCServicesAppenderTest.class.getName());
+        LOGGER = Logger.getLogger(OGCServicesAppenderTest.class.getName());
     }
 
 	/**
@@ -526,8 +528,9 @@ public class OGCServicesAppenderTest {
 
 		LOGGER.info(ogcServiceMessage);
 
-		logList = OGCServiceStatistics.list();
-		assertEquals(logSizeBefore + expectedLogs, logList.size());
+		final int expected = logSizeBefore + expectedLogs;
+        await().atMost(Duration.TWO_SECONDS)
+                .untilAsserted(() -> assertEquals(expected, OGCServiceStatistics.list().size()));
 	}
 
 }

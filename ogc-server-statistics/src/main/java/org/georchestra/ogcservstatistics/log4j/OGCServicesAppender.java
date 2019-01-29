@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ForkJoinPool;
 
 import javax.sql.DataSource;
 
@@ -95,17 +97,6 @@ public class OGCServicesAppender extends AppenderSkeleton {
 	private String jdbcURL = "";
 
 	/**
-	 * size of LoggingEvent buffer before writing to the database. 
-	 * Default is 1.
-	 */
-	protected int bufferSize = 1;
-
-	/**
-	 * ArrayList holding the buffer of Logging Events.
-	 */
-	protected ArrayList<Map<String, Object>> buffer;
-
-	/**
 	 * Activated 
 	 * true: 	it log ogc services 
 	 * false: 	it does not log ogc services
@@ -117,7 +108,6 @@ public class OGCServicesAppender extends AppenderSkeleton {
 
 	public OGCServicesAppender() {
 		super();
-		this.buffer = new ArrayList<Map<String, Object>>(this.bufferSize);
 	}
 
 	public String getJdbcURL(){
@@ -144,14 +134,12 @@ public class OGCServicesAppender extends AppenderSkeleton {
 		this.databasePassword = databasePassword;
 	}
 
-	public int getBufferSize() {
-		return this.bufferSize;
-	}
+    public @Deprecated int getBufferSize() {
+        return 1;
+    }
 
-	public void setBufferSize(int newBufferSize) {
-		this.bufferSize = newBufferSize;
-		this.buffer.ensureCapacity(this.bufferSize);
-	}
+    public @Deprecated void setBufferSize(int newBufferSize) {
+    }
 	
 	public boolean isActivated() {
 		return activated;
@@ -175,65 +163,52 @@ public class OGCServicesAppender extends AppenderSkeleton {
         Objects.requireNonNull(dataSource, "dataSource can't be null");
         dataServiceConfiguration.initialize(dataSource);
     }
-	/**
+	
+    /**
      * Appends the OGC Service in the table.
      * 
      * The string present in buffer is parsed, if it is an interesting OGC service
      * then extracts the data required to insert a row in the table.
      * 
-     * <p>
-     * This method is called from inside the {@code synchronized} method
-     * {@link AppenderSkeleton#doAppend}
+     * @implNote This method is called from inside the {@code synchronized} method
+     *           {@link AppenderSkeleton#doAppend}, as it calls
+     *           {@link OGCServiceParser#parseLog} and runs one
+     *           {@link InsertCommand} per parsed entry, the job is done
+     *           asynchronously on the platforms' default {@link ForkJoinPool} to
+     *           avoid hindering application performance.
      */
 	@Override
-	protected void append(LoggingEvent event) {
-
-		if (!this.activated)
+	protected void append(final LoggingEvent event) {
+	    //do not run if not activated or closed
+		if (!this.activated && !this.closed)
 			return;
-
-		try {
-
-			String msg = event.getRenderedMessage();
-			List<Map<String, Object>> logList = OGCServiceParser.parseLog(msg);
-
-			for (Map<String, Object> log : logList) {
-				this.buffer.add(log);
-				if (this.buffer.size() >= this.bufferSize) {
-					flushBuffer();
-				}
-			}
-			
-		} catch (Exception ex) {
-			errorHandler.error("Failed to insert the ogc service record", ex,
-					ErrorCode.WRITE_FAILURE);
-		}
-	}
-
-
-	/**
-	 * Inserts in the database table the OGC Service logs maintained in the appender buffer 
-	 * @throws OGCServStatisticsException 
-	 */
-	private void flushBuffer() {
 		
-		ArrayList<Map<String, Object>> removed = new ArrayList<>(this.buffer.size());
-		for (Map<String,Object> log: this.buffer) {
-
-			insert(log);
-			removed.add(log);
-		}
-		this.buffer.removeAll(removed);
+        CompletableFuture.runAsync(() -> {
+            try {
+                // let it finish if the task was issued even if the appender was closed after
+                // the fact
+                if(!this.activated) {
+                    return;
+                }
+                String msg = event.getRenderedMessage();
+                List<Map<String, Object>> logList = OGCServiceParser.parseLog(msg);
+                insert(logList);
+            } catch (Exception ex) {
+                errorHandler.error("Failed to insert the ogc service record", ex, ErrorCode.WRITE_FAILURE);
+            }
+        });
 	}
 
 
-	private void insert(Map<String, Object> ogcServiceRecord)  {
+	private void insert(List<Map<String, Object>> ogcServiceRecords)  {
 
 		try (Connection c = dataServiceConfiguration.getConnection()){
-			InsertCommand cmd = new InsertCommand();
-			cmd.setConnection(c);
-			cmd.setRowValues( ogcServiceRecord);
-			cmd.execute();
-
+            for (Map<String, Object> entry : ogcServiceRecords) {
+                InsertCommand cmd = new InsertCommand();
+                cmd.setConnection(c);
+                cmd.setRowValues(entry);
+                cmd.execute();
+            }
 		} catch (Exception e) {
 
 			errorHandler.error("Failed to insert the log", e,
@@ -252,12 +227,7 @@ public class OGCServicesAppender extends AppenderSkeleton {
 	 */
 	@Override
 	public void close() {
-		try {
-			flushBuffer();
-		} finally {
-		    this.closed = true;
-		}
-		
+	    this.closed = true;
 	}
 
 	@Override

@@ -3,6 +3,7 @@
  */
 package org.georchestra.ogcservstatistics.calculations;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.awaitility.Duration;
 import org.georchestra.ogcservstatistics.OGCServStatisticsException;
 import org.georchestra.ogcservstatistics.dataservices.DataCommandException;
 import org.georchestra.ogcservstatistics.dataservices.DataServicesConfiguration;
@@ -92,6 +94,7 @@ public class OGCServiceStatisticsTest {
 	 */
 	@Test
 	public void testList() throws Exception {
+        await().atMost(Duration.TWO_SECONDS).until(() -> !OGCServiceStatistics.list().isEmpty());
 		List<Map<String,Object>> list = OGCServiceStatistics.list();
 		assertTrue(list.size() > 0);
 		
@@ -130,6 +133,9 @@ public class OGCServiceStatisticsTest {
 	@Test
 	public void testRetrieveConnectionsForLayer() throws Exception {
 		
+        await().atMost(Duration.TWO_SECONDS).until(() -> OGCServiceStatistics
+                .retrieveConnectionsForLayer(getYear(this.time), getMonth(this.time)).size() > 0);
+
 		List<Map<String,Object>> list = OGCServiceStatistics.retrieveConnectionsForLayer(getYear(this.time),getMonth(this.time));
 		assertTrue(list.size() > 0);
 		
@@ -153,10 +159,11 @@ public class OGCServiceStatisticsTest {
 	 */
 	@Test
 	public void testRetrieveConnectionsForLayerForYear() throws Exception {
+
+        await().atMost(Duration.TWO_SECONDS)
+                .until(() -> OGCServiceStatistics.retrieveConnectionsForLayer(getYear(this.time)).size() > 0);
 		
-		List<Map<String,Object>> list = OGCServiceStatistics.retrieveConnectionsForLayer(getYear(this.time));
-		assertTrue(list.size() > 0);
-		
+        List<Map<String,Object>> list = OGCServiceStatistics.retrieveConnectionsForLayer(getYear(this.time));
 		for (Map<String,Object> row : list) {
 
 			assertTrue(row.containsKey("layer"));
