@@ -19,7 +19,7 @@
 
 package org.georchestra.lib.sqlcommand;
 
-import java.sql.Connection;
+import javax.sql.DataSource;
 
 /**
  * @author Mauricio Pazos
@@ -28,10 +28,9 @@ import java.sql.Connection;
 public interface DataCommand {
 
 	/**
-	 * Database connection
-	 * @param connection
+	 * @param dataSource connection provider
 	 */
-	public void setConnection(Connection connection);
+	public void setDataSource(DataSource dataSource);
 
 	/**
 	 * Execute the sql command specified

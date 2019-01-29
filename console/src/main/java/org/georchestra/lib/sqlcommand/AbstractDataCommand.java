@@ -19,16 +19,14 @@
 
 package org.georchestra.lib.sqlcommand;
 
-import java.sql.Connection;
+import javax.sql.DataSource;
 
 public abstract class AbstractDataCommand implements DataCommand {
 
-	protected Connection connection;
+    protected DataSource dataSource;
 
-	@Override
-	public void setConnection(Connection connection) {
-		this.connection = connection;
-	}
-
-
+    @Override
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 }

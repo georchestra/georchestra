@@ -19,6 +19,7 @@
 
 package org.georchestra.lib.sqlcommand;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
@@ -45,38 +46,26 @@ public abstract class AbstractUpdateCommand extends AbstractDataCommand{
 	 */
 	@Override
 	public void execute() throws DataCommandException {
-        assert this.connection != null: "database connection is null, use setConnection";
+        assert (this.dataSource != null) : "database connection pool is null, use setDataSource";
 
-        // executes the sql statement and checks that the update operation will be inserted one row in the table
-        PreparedStatement pStmt=null;
-        try {
-        	this.connection.setAutoCommit(false);
-            pStmt = prepareStatement();
-            int updatedRows = pStmt.executeUpdate();
-            this.connection.commit();
-            
-            if(updatedRows < 1){
-                throw new DataCommandException("Fail executing. " + pStmt.toString());
+        // executes the sql statement and checks that the update operation will be
+        // inserted one row in the table
+        try (Connection connection = dataSource.getConnection()) {
+            connection.setAutoCommit(false);
+            try (PreparedStatement pStmt = prepareStatement(connection)) {
+                int updatedRows = pStmt.executeUpdate();
+                connection.commit();
+                if (updatedRows < 1) {
+                    throw new DataCommandException("Database update produced no changes: " + pStmt.toString());
+                }
+            } catch (SQLException statementError) {
+                connection.rollback();
+                throw new DataCommandException(statementError);
+            } finally {
+                connection.setAutoCommit(true);
             }
-
         } catch (SQLException e) {
-        	if(this.connection != null){
-        		try {
-					this.connection.rollback();
-				} catch (SQLException e1) {
-					e1.printStackTrace();
-		            throw new DataCommandException(e.getMessage());
-				}
-	            throw new DataCommandException(e.getMessage());
-        	}
-        } finally{
-            try {
-                if(pStmt != null) pStmt.close();
-            	this.connection.setAutoCommit(true);
-                
-            } catch (SQLException e1) {
-                throw new DataCommandException(e1.getMessage());
-            } 
+            throw new DataCommandException(e);
         }
 	}
 
@@ -86,7 +75,7 @@ public abstract class AbstractUpdateCommand extends AbstractDataCommand{
 	 * @return {@link PreparedStatement}
 	 * @throws SQLException
 	 */
-	protected abstract PreparedStatement prepareStatement() throws SQLException;
+	protected abstract PreparedStatement prepareStatement(Connection connection) throws SQLException;
 	
 
 }

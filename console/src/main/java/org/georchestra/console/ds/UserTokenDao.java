@@ -19,9 +19,6 @@
 
 package org.georchestra.console.ds;
 
-import java.io.Closeable;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
@@ -34,6 +31,7 @@ import javax.sql.DataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.lib.sqlcommand.DataCommand;
+import org.georchestra.lib.sqlcommand.DataCommandException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
 
@@ -127,31 +125,12 @@ public class UserTokenDao {
     }
 
     private void executeCmd (DataCommand cmd, String logMsg) throws DataServiceException {
-        Connection c = null;
         try {
-            c = dataSource.getConnection();
-            cmd.setConnection(c);
+            cmd.setDataSource(dataSource);
             cmd.execute();
-        } catch (Exception e) {
+        } catch (DataCommandException e) {
             LOG.error(logMsg, e);
             throw new DataServiceException(e);
-        } finally {
-            closeQuietly(c);
-        }
-    }
-
-    private static void closeQuietly(Connection connection)
-    {
-        try
-        {
-            if (connection != null)
-            {
-                connection.close();
-            }
-        }
-        catch (Exception e)
-        {
-            LOG.error("Unable to close the connection, it doesn't mean that the sql statement failed.");
         }
     }
 }
