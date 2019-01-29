@@ -52,9 +52,11 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HttpContext;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.ogcservstatistics.log4j.OGCServiceMessageFormatter;
+import org.georchestra.ogcservstatistics.log4j.OGCServicesAppender;
 import org.georchestra.security.permissions.Permissions;
 import org.georchestra.security.permissions.UriMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.cas.ServiceProperties;
 import org.springframework.security.core.Authentication;
@@ -69,6 +71,8 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
+
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
@@ -151,6 +155,11 @@ public class Proxy {
     private GeorchestraConfiguration georchestraConfiguration;
 
     /**
+     * Data source to set on {@link OGCServicesAppender#setDataSource}
+     */
+    private @Autowired @Qualifier("ogcStatsDataSource") DataSource ogcStatsDataSource;
+    
+    /**
      * must be defined
      */
     private String defaultTarget;
@@ -187,6 +196,8 @@ public class Proxy {
 
     public void init() throws Exception {
 
+        OGCServicesAppender.setDataSource(ogcStatsDataSource);
+        
         if (targets != null) {
             for (String url : targets.values()) {
                 new URL(url); // test that it is a valid URL
