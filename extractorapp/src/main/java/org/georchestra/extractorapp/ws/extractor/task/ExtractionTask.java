@@ -20,23 +20,24 @@
 package org.georchestra.extractorapp.ws.extractor.task;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.StringWriter;
-import java.io.FileOutputStream;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import com.mchange.v2.c3p0.ComboPooledDataSource;
+import javax.sql.DataSource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.extractorapp.ws.extractor.ExtractorController;
@@ -64,7 +65,7 @@ import org.opengis.referencing.operation.TransformException;
 public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 	private static final Log LOG = LogFactory.getLog(ExtractionTask.class
 			.getPackage().getName());
-	private final ComboPooledDataSource datasource;
+	private final DataSource datasource;
 
 	private static final int EXTRACTION_ATTEMPTS = 3;
 	public final ExecutionMetadata executionMetadata;
@@ -72,7 +73,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 	private RequestConfiguration requestConfig;
 	private Long logId;
 
-	public ExtractionTask(RequestConfiguration requestConfig, ComboPooledDataSource datasource)
+	public ExtractionTask(RequestConfiguration requestConfig, DataSource datasource)
 			throws NoSuchAuthorityCodeException, MalformedURLException, JSONException, FactoryException {
 		this.requestConfig = requestConfig;
 		this.datasource = datasource;
@@ -95,7 +96,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 		executionMetadata.setRunning();
 		requestConfig.setThreadLocal();
 		this.statSetRunning();
-
+		//REVISIT: won't the task be kept in a running state indefinitely if any of the two statements bellow fail?
 		final File tmpDir = FileUtils.createTempDirectory();
 		final File tmpExtractionBundle = mkDirTmpExtractionBundle(tmpDir, requestConfig.extractionFolderPrefix+requestConfig.requestUuid .toString());
 
@@ -413,129 +414,108 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 	 * Stats methods
 	 */
 
-	private void statSetRunning() {
+    private void statSetRunning() {
 
-		Connection c = null;
-		PreparedStatement pst = null;
-		try {
-			c = this.datasource.getConnection();
+        final String logInsertSql = "INSERT INTO extractorapp.extractor_log " + "(username, " + // 1
+                "roles, " + // 2
+                "org, " + // 3
+                "request_id) " + // 4
+                "VALUES (?, ?, ?, ?)";
+        final String layerLogSql = "INSERT INTO extractorapp.extractor_layer_log " + "(extractor_log_id, " + // 1
+                "projection, " + // 2
+                "resolution, " + // 3
+                "format, " + // 4
+                "bbox, " + // 5, 6, 7, 8
+                "owstype, " + // 9
+                "owsurl, " + // 10
+                "layer_name) " + // 11
+                "VALUES (?, ?, ?, ?, " + "ST_SetSRID(ST_MakeBox2D(ST_Point(?, ?), ST_Point(? ,?)), 4326), "
+                + "?, ?, ?)";
 
-			pst = c.prepareStatement("INSERT INTO extractorapp.extractor_log " +
-					"(username, " +  // 1
-					"roles, " +      // 2
-					"org, " +        // 3
-					"request_id) " + // 4
-					"VALUES (?, ?, ?, ?)",
-					Statement.RETURN_GENERATED_KEYS);
+        try (Connection c = datasource.getConnection()) {
+            c.setAutoCommit(false);
+            try (PreparedStatement logPst = c.prepareStatement(logInsertSql, Statement.RETURN_GENERATED_KEYS);
+                    PreparedStatement layerPst = c.prepareStatement(layerLogSql, Statement.RETURN_GENERATED_KEYS)) {
 
-			pst.setString(1, this.requestConfig.username == null ? "" : this.requestConfig.username);
-			pst.setArray(2, c.createArrayOf("varchar",this.requestConfig.roles == null ? new String[0] : this.requestConfig.roles.split("\\s*;\\s*")));
-			pst.setString(3, this.requestConfig.org == null ? "" : this.requestConfig.org);
-			pst.setString(4, this.requestConfig.requestUuid.toString());
+                logPst.setString(1, this.requestConfig.username == null ? "" : this.requestConfig.username);
+                logPst.setArray(2, c.createArrayOf("varchar", this.requestConfig.roles == null ? new String[0]
+                        : this.requestConfig.roles.split("\\s*;\\s*")));
+                logPst.setString(3, this.requestConfig.org == null ? "" : this.requestConfig.org);
+                logPst.setString(4, this.requestConfig.requestUuid.toString());
 
-			this.logId = this.executeAndGetGeneratedKey(pst);
-			pst.close();
+                this.logId = this.executeAndGetGeneratedKey(logPst);
 
-			pst = c.prepareStatement("INSERT INTO extractorapp.extractor_layer_log " +
-					"(extractor_log_id, " +  // 1
-					"projection, " +         // 2
-					"resolution, " +         // 3
-					"format, " +             // 4
-					"bbox, " +               // 5, 6, 7, 8
-					"owstype, " +            // 9
-					"owsurl, " +             // 10
-					"layer_name) " +         // 11
-					"VALUES (?, ?, ?, ?, " +
-					"ST_SetSRID(ST_MakeBox2D(ST_Point(?, ?), ST_Point(? ,?)), 4326), " +
-					"?, ?, ?)",
-					Statement.RETURN_GENERATED_KEYS);
+                layerPst.setLong(1, this.logId);
+                for (ExtractorLayerRequest layerRequest : this.requestConfig.requests) {
+                    layerPst.setString(2, layerRequest._epsg);
+                    layerPst.setDouble(3, layerRequest._resolution);
+                    layerPst.setString(4, layerRequest._format);
+                    BoundingBox bbox = layerRequest._bbox.toBounds(CRS.decode("EPSG:4326"));
+                    layerPst.setDouble(5, bbox.getMinX());
+                    layerPst.setDouble(6, bbox.getMinY());
+                    layerPst.setDouble(7, bbox.getMaxX());
+                    layerPst.setDouble(8, bbox.getMaxY());
+                    layerPst.setString(9, layerRequest._owsType.toString());
+                    layerPst.setString(10, layerRequest._url.toString());
+                    layerPst.setString(11, layerRequest._layerName);
 
-			pst.setLong(1, this.logId);
-
-			for (ExtractorLayerRequest layerRequest : this.requestConfig.requests) {
-				pst.setString(2, layerRequest._epsg);
-				pst.setDouble(3, layerRequest._resolution);
-				pst.setString(4, layerRequest._format);
-				BoundingBox bbox = layerRequest._bbox.toBounds(CRS.decode("EPSG:4326"));
-				pst.setDouble(5, bbox.getMinX());
-				pst.setDouble(6, bbox.getMinY());
-				pst.setDouble(7, bbox.getMaxX());
-				pst.setDouble(8, bbox.getMaxY());
-				pst.setString(9, layerRequest._owsType.toString());
-				pst.setString(10, layerRequest._url.toString());
-				pst.setString(11, layerRequest._layerName);
-
-				layerRequest.setDbLogId(this.executeAndGetGeneratedKey(pst));
-			}
-
-		} catch (Exception e) {
-			LOG.error("Unable to log the extraction parameters in database", e);
-		} finally {
-			this.closeDbLinks(c, pst);
-		}
-
-	}
+                    layerRequest.setDbLogId(this.executeAndGetGeneratedKey(layerPst));
+                }
+                c.commit();
+            } catch (SQLException e) {
+                c.rollback();
+                throw e;
+            } finally {
+                c.setAutoCommit(true);
+            }
+        } catch (Exception e) {
+            LOG.error("Unable to log the extraction parameters in database", e);
+        }
+    }
 
 	private void statSetCompleted() {
 
-		Connection c = null;
-		PreparedStatement pst = null;
-		try {
-			c = this.datasource.getConnection();
+        final String updateLayerSql = "UPDATE extractorapp.extractor_layer_log " +
+                "SET is_successful = TRUE " +
+                "WHERE extractor_log_id = ? AND is_successful IS NULL";
+        
+        final String updateLogSql = "UPDATE extractorapp.extractor_log " +
+                "SET duration = NOW() - creation_date " +
+                "WHERE id = ?";
+        
+        try (Connection c = this.datasource.getConnection()) {
+            c.setAutoCommit(false);
+            try (PreparedStatement layerPst = c.prepareStatement(updateLayerSql); //
+                    PreparedStatement logPst = c.prepareStatement(updateLogSql)) {
 
-			pst = c.prepareStatement("UPDATE extractorapp.extractor_layer_log " +
-					"SET is_successful = TRUE " +
-					"WHERE extractor_log_id = ? AND is_successful IS NULL");
+                layerPst.setLong(1, this.logId);
+                layerPst.executeUpdate();
 
-			pst.setLong(1, this.logId);
-			pst.executeUpdate();
-			pst.close();
-
-			// Update duration
-			pst = c.prepareStatement("UPDATE extractorapp.extractor_log " +
-					"SET duration = NOW() - creation_date " +
-					"WHERE id = ?");
-
-			pst.setLong(1, this.logId);
-			pst.executeUpdate();
-
-		} catch (SQLException e) {
-			LOG.error("Error occured when trying to set the extraction status to 'completed'", e);
-		} finally {
-			this.closeDbLinks(c, pst);
-		}
-
+                // Update duration
+                logPst.setLong(1, this.logId);
+                logPst.executeUpdate();
+                c.commit();
+            }catch(SQLException e) {
+                c.rollback();
+                throw e;
+            }finally {
+                c.setAutoCommit(true);
+            }
+        } catch (SQLException e) {
+            LOG.error("Error occured when trying to set the extraction status to 'completed'", e);
+        }
 	}
 
 	private void statSetError(ExtractorLayerRequest request) {
+        try (Connection c = this.datasource.getConnection();
+                PreparedStatement pst = c.prepareStatement(
+                        "UPDATE extractorapp.extractor_layer_log SET is_successful = FALSE WHERE id = ?")) {
 
-		Connection c = null;
-		PreparedStatement pst = null;
-		try {
-			c = this.datasource.getConnection();
-
-			pst = c.prepareStatement("UPDATE extractorapp.extractor_layer_log " +
-					"SET is_successful = FALSE " +
-					"WHERE id = ?");
-
-			pst.setLong(1, request.getDbLogId());
-			pst.executeUpdate();
-		} catch (SQLException e) {
-			LOG.error("Error occured when trying to the set extraction status to 'errored'", e);
-		} finally {
-			this.closeDbLinks(c, pst);
-		}
-	}
-
-	private void closeDbLinks(Connection c, PreparedStatement pst) {
-		try {
-			if(pst != null)
-				pst.close();
-			if(c != null)
-				c.close();
-		} catch (SQLException e) {
-			LOG.warn("Error when closing the connection to the database",e);
-		}
+            pst.setLong(1, request.getDbLogId());
+            pst.executeUpdate();
+        } catch (SQLException e) {
+            LOG.error("Error occured when trying to the set extraction status to 'errored'", e);
+        }
 	}
 
 	private Long executeAndGetGeneratedKey(PreparedStatement pst) throws SQLException {
