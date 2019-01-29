@@ -17,12 +17,12 @@
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" depends-on="waitForDb">
         <property name="jdbcUrl" value="${dlJdbcUrlOGC}"/>
         <property name="driverClass" value="org.postgresql.Driver"/>
-        <property name="maxPoolSize" value="10"/>
-        <property name="minPoolSize" value="1"/>
-        <property name="testConnectionOnCheckout" value="true"/>
-        <!-- no need for this, JDBC4 has Connection.isValid() which the pool will check and is optimized by each driver implementation 
-        <property name="automaticTestTable" value="cpds_connection_test"/>
-        -->
+        <property name="initialPoolSize" value="1"/>
+        <property name="minPoolSize" value="${dataSource.minPoolSize}"/>
+        <property name="maxPoolSize" value="${dataSource.maxPoolSize}"/>
+        <property name="checkoutTimeout" value = "${dataSource.timeout}"/>
+        <property name="acquireIncrement" value="2"/>
+        <property name="testConnectionOnCheckout" value="true"/> <!-- Uses JDBC4's Connection.isValid() -->
     </bean>
  
     <bean id="homecontroller" class="org.georchestra.analytics.HomeController"/>
