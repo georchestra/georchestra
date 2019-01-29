@@ -1,5 +1,5 @@
-LDAPADMIN
-=========
+Console
+=======
 
 A webapp with a public interface and a private one, which allows to manage users and roles.
 
