@@ -143,7 +143,7 @@ Alternatively, run with jetty:
 While `mvn test` will run the unit tests but not the integration tests, `mvn verify` (or any goal past that, like `mvn install`) is used to run (also) integration tests.
 
 A convenient `skipUT` property was added to allow ignoring the unit tests and to run only the integration tests. e.g.:
-`mvn -DskipUT=true verify`. The standard `-DskipTests` flag can't be used becuase it will make maven also ignore the integration tests.
+`mvn -DskipUT=true verify`. The standard `-DskipTests` flag can't be used because it will make maven also ignore the integration tests.
 
 Integration test sources and resources are under `src/it/java` and `src/it/resources` respectively, and follow the convention of calling test classes `**IT.java`.
 
@@ -164,7 +164,7 @@ psql.url=jdbc:postgresql://localhost:${psql_port}/georchestra
 
 #### Running from an IDE while developing
 
-Whilre writing integration tests, it could be cumbersome to wait for the launch and shut down of test containers.
+While writing integration tests, it could be cumbersome to wait for the launch and shut down of test containers.
 
 In this case it's better to have `georchestra/ldap` and `georchestra/database` containers already running and instructing the test run to use them directly.
 
