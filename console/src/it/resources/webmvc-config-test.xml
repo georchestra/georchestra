@@ -30,13 +30,13 @@
   <bean id="consolePermissionEvaluator" class="org.georchestra.console.ConsolePermissionEvaluator" />
 
   <!-- Directory to scan for repository classes -->
-  <jpa:repositories base-package="org.georchestra.console.dao" />
+  <jpa:repositories base-package="org.georchestra.console.dao, org.georchestra.console.model" />
 
   <mvc:annotation-driven/>
 
   <context:annotation-config/>
 
-  <context:property-placeholder location="/WEB-INF/spring/console.properties, /WEB-INF/spring/protectedroles.properties, file:${georchestra.datadir}/console/console.properties, file:${georchestra.datadir}/console/protectedroles.properties" ignore-resource-not-found="true" ignore-unresolvable="true" />
+  <context:property-placeholder location="classpath:/console-it.properties" ignore-resource-not-found="false" ignore-unresolvable="false" />
 
   <context:component-scan base-package="org.georchestra.console"/>
 
@@ -144,10 +144,11 @@
    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
        <property name="dataSource" ref="dataSource" />
        <property name="persistenceUnitName" value="myPU" />
-       <property name="persistenceXmlLocation" value="classpath:persistence.xml"/>
+       <property name="persistenceXmlLocation" value="classpath:/persistence-it.xml"/>
        <property name="jpaVendorAdapter">
            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
        </property>
+       <property name="packagesToScan" value="org.georchestra.console.model" />
        <property name="jpaProperties">
            <props>
                <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL94Dialect</prop>

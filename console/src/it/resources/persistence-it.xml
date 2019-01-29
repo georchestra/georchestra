@@ -1,0 +1,18 @@
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+
+  <persistence-unit name="myPU">
+    <!-- 
+      Need to explicitly declare the Entity classes here, whilst in the persistence.xml file in src/main/resource is not needed.
+      Apparently because JPA will look for Entity classes in the same compilation unit by default (i.e. the tests jar in this case)
+      and hence won't find them.
+     -->
+    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+    <class>org.georchestra.console.model.AdminLogEntry</class>
+    <class>org.georchestra.console.model.Attachment</class>
+    <class>org.georchestra.console.model.DelegationEntry</class>
+    <class>org.georchestra.console.model.EmailEntry</class>
+    <class>org.georchestra.console.model.EmailTemplate</class>
+  </persistence-unit>
+</persistence>

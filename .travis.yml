@@ -14,7 +14,7 @@ notifications:
       - "%{repository}#%{build_number} (%{branch}) %{message} %{build_url}"
 before_script: sudo sh -c 'echo 0 > /proc/sys/net/ipv6/conf/all/disable_ipv6'
 install: mvn install -DskipTests -P-all,travis -Dadditionalparam=-Xdoclint:none
-script: mvn integration-test -P-all,travis -Dadditionalparam=-Xdoclint:none
+script: mvn verify -P-all,travis,it -Dadditionalparam=-Xdoclint:none
 addons:
   apt:
     packages:
