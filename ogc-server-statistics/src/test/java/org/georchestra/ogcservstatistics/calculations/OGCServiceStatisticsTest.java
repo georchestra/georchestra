@@ -6,6 +6,7 @@ package org.georchestra.ogcservstatistics.calculations;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
@@ -49,10 +50,12 @@ public class OGCServiceStatisticsTest {
 
 		// the log table Initialize
 
-		DeleteAllCommand cmd = new DeleteAllCommand();
-		cmd.setConnection(DataServicesConfiguration.getInstance().getConnection());
-		cmd.execute();
-
+        try (Connection c = DataServicesConfiguration.getInstance().getConnection()) {
+            DeleteAllCommand cmd = new DeleteAllCommand();
+            cmd.setConnection(c);
+            cmd.execute();
+        }
+		
 		// add the initial logs
 
 		// user101: one request layer1 (WFS) and two for layer2 (using WFS and WMS)

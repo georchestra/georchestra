@@ -48,9 +48,8 @@ public class OGCServicesAppenderTest {
 
 	String file = "src/test/resources/org/georchestra/ogcservstatistics/log4j.properties";
 	OGCServiceStatistics.configure(file);
-	try {
+	try (Connection connection = DataServicesConfiguration.getInstance().getConnection()){
 	    DeleteAllCommand cmd = new DeleteAllCommand();
-	    Connection connection = DataServicesConfiguration.getInstance().getConnection();
 	    cmd.setConnection(connection);
 	    cmd.execute();
 	} catch (Exception e) {

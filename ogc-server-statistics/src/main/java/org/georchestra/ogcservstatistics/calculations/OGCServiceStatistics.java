@@ -19,6 +19,7 @@
 
 package org.georchestra.ogcservstatistics.calculations;
 
+import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
 
@@ -353,8 +354,8 @@ public final class OGCServiceStatistics {
 	 */
 	private static List<Map<String, Object>> execute(QueryCommand cmd) 
 			throws OGCServStatisticsException{
-		try {
-			cmd.setConnection(dsConfiguration.getConnection());
+		try (Connection c = dsConfiguration.getConnection()){
+			cmd.setConnection(c);
 
 			cmd.execute();
 
