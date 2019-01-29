@@ -9,6 +9,23 @@
 
     <context:annotation-config/>
 
+    <context:property-placeholder
+      location="file:${georchestra.datadir}/default.properties,
+                classpath:extractorapp.properties,
+                file:${georchestra.datadir}/extractorapp/extractorapp.properties"
+      ignore-resource-not-found="true" ignore-unresolvable="true" />
+
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="driverClass" value="org.postgresql.Driver"/>
+        <property name="jdbcUrl" value="${jdbcurl}"/>
+        <property name="initialPoolSize" value="1"/>
+        <property name="minPoolSize" value="${dataSource.minPoolSize}"/>
+        <property name="maxPoolSize" value="${dataSource.maxPoolSize}"/>
+        <property name="checkoutTimeout" value = "${dataSource.timeout}"/>
+        <property name="acquireIncrement" value="1"/>
+        <property name="testConnectionOnCheckout" value="true"/> <!-- Uses JDBC4's Connection.isValid() -->
+    </bean>
+
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="basename" value="messages"/>
     </bean>
