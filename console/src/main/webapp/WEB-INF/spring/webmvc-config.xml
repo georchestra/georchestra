@@ -129,9 +129,12 @@
         <property name="user" value="${psql.user}"/>
         <property name="password" value="${psql.pass}"/>
         <property name="driverClass" value="org.postgresql.Driver"/>
-        <property name="maxPoolSize" value="10"/>
-        <property name="minPoolSize" value="1"/>
-        <property name="automaticTestTable" value="cpds_connection_test"/>
+        <property name="initialPoolSize" value="1"/>
+        <property name="minPoolSize" value="${dataSource.minPoolSize}"/>
+        <property name="maxPoolSize" value="${dataSource.maxPoolSize}"/>
+        <property name="checkoutTimeout" value = "${dataSource.timeout}"/>
+        <property name="acquireIncrement" value="2"/>
+        <property name="testConnectionOnCheckout" value="true"/> <!-- Uses JDBC4's Connection.isValid() -->
     </bean>
 
    <!--<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">-->
