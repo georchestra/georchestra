@@ -125,6 +125,31 @@ public class UsersIT {
                 .andExpect(jsonPath("$[?(@.pending in [true])].['pending']").exists());
     }
 
+    @WithMockRandomUidUser
+    public @Test
+    void updateUsers() throws Exception {
+        String userName1 = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
+        String userName2 = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
+        createUser(userName1);
+        createUser(userName2);
+        String role1Name = createRole();
+        String role2Name = createRole();
+        String role3Name = createRole();
+        String role4Name = createRole();
+        setRole(userName1, role1Name, role2Name);
+        setRole(userName1, role3Name, role4Name);
+
+        String body = String.format("{ \"users\":[\"%s\",\"%s\"],\"PUT\":[\"%s\",\"%s\"],\"DELETE\":[\"%s\",\"%s\"]}", userName1, userName2, role1Name, role3Name, role2Name, role4Name);
+        this.mockMvc.perform(post("/private/roles_users").content(body));
+
+        mockMvc.perform(get("/private/roles/" + role1Name)).andExpect(jsonPath("$.users[0]").value(userName1));
+        mockMvc.perform(get("/private/roles/" + role1Name)).andExpect(jsonPath("$.users[1]").value(userName2));
+        mockMvc.perform(get("/private/roles/" + role3Name)).andExpect(jsonPath("$.users[0]").value(userName1));
+        mockMvc.perform(get("/private/roles/" + role3Name)).andExpect(jsonPath("$.users[1]").value(userName2));
+        mockMvc.perform(get("/private/roles/" + role2Name)).andExpect(jsonPath("$.users").isEmpty());
+        mockMvc.perform(get("/private/roles/" + role4Name)).andExpect(jsonPath("$.users").isEmpty());
+    }
+
     private void createUser(String userName) throws Exception {
         mockMvc.perform(post("/private/users").content(readRessourceToString("/testData/createUserPayload.json").replace("{uuid}", userName)));
     }
