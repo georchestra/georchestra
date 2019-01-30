@@ -35,6 +35,8 @@
         <property name="minPoolSize" value="${dataSource.minPoolSize}"/>
         <property name="maxPoolSize" value="${dataSource.maxPoolSize}"/>
         <property name="checkoutTimeout" value = "${dataSource.timeout}"/>
+        <property name="idleConnectionTestPeriod" value="30"/>
+        <property name="maxIdleTime" value = "${dataSource.maxIdleTime}"/>
         <property name="acquireIncrement" value="1"/>
         <property name="testConnectionOnCheckout" value="true"/> <!-- Uses JDBC4's Connection.isValid() -->
     </bean>

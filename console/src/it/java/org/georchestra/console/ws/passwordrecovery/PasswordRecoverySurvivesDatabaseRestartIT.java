@@ -128,7 +128,7 @@ public class PasswordRecoverySurvivesDatabaseRestartIT {
             }
         }
 
-        assertThat(countConnections(testConnection), greaterThanOrEqualTo(maxPoolSize));
+        assertThat(countConnections(testConnection), greaterThanOrEqualTo(maxPoolSize - 1));
 
         // create a connection outside the connection pool
         try (Connection conn = DriverManager.getConnection(pgConnectionUrl, support.psqlUser(),
@@ -137,7 +137,7 @@ public class PasswordRecoverySurvivesDatabaseRestartIT {
             assertThat(initialConnections, greaterThanOrEqualTo(maxPoolSize));
 
             final int terminateConnections = terminateConnections(conn);
-            assertThat(terminateConnections, greaterThanOrEqualTo(maxPoolSize));
+            assertThat(terminateConnections, greaterThanOrEqualTo(maxPoolSize - 1));
         } catch (SQLException e) {
             e.printStackTrace();
             throw e;

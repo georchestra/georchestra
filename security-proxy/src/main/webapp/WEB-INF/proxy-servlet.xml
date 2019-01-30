@@ -124,6 +124,8 @@
         <property name="minPoolSize" value="${ogcStats.minPoolSize}"/>
         <property name="maxPoolSize" value="${ogcStats.maxPoolSize}"/>
         <property name="checkoutTimeout" value = "${ogcStats.timeout}"/>
+        <property name="idleConnectionTestPeriod" value="30"/>
+        <property name="maxIdleTime" value = "${ogcStats.maxIdleTime}"/>
         <property name="acquireIncrement" value="2"/>
         <property name="testConnectionOnCheckout" value="true"/> <!-- Uses JDBC4's Connection.isValid() -->
     </bean>
