@@ -5,13 +5,17 @@ package org.georchestra.ogcservstatistics.log4j;
 
 import static org.junit.Assert.assertEquals;
 
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.georchestra.ogcservstatistics.calculations.OGCServiceStatistics;
+import org.georchestra.ogcservstatistics.calculations.OGCServiceStatisticsIT;
+import org.georchestra.ogcservstatistics.util.IntegrationTestSupport;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 /**
@@ -21,18 +25,15 @@ import org.junit.Test;
  * @author Mauricio Pazos
  *
  */
-public class DisableLoggingTest {
+public class DisableLoggingIT {
 
     private Logger LOGGER;
 
-    public static @BeforeClass void initialize() {
-	// activated=false in the porperties files
-	String file = "src/test/resources/org/georchestra/ogcservstatistics/log4j-disable.properties";
-	OGCServiceStatistics.configure(file);
-    }
+    public static @ClassRule IntegrationTestSupport support = new IntegrationTestSupport();
 
     public @Before void before() {
-	LOGGER = Logger.getLogger(OGCServicesAppenderTest.class.getName());
+        support.disableAppender();
+        LOGGER = Logger.getLogger(OGCServicesAppenderIT.class.getName());
     }
 
     /**
@@ -50,7 +51,7 @@ public class DisableLoggingTest {
 	String ogcServiceMessage = OGCServiceMessageFormatter.format("userNoInsert!", request, "", roles);
 
 	LOGGER.info(ogcServiceMessage);
-
+	Thread.sleep(300);
 	logList = OGCServiceStatistics.list();
 	assertEquals(logSizeBefore, logList.size());
     }

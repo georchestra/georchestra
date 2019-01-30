@@ -875,7 +875,6 @@
           <plugin>
             <groupId>io.fabric8</groupId>
             <artifactId>docker-maven-plugin</artifactId>
-            <version>0.28.0</version>
             <executions>
               <execution>
                 <id>prepare-containers</id>
