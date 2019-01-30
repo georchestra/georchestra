@@ -1362,4 +1362,8 @@ public class Proxy {
         return proxyPermissions;
     }
 
+    public @VisibleForTesting void setOgcStatsDataSource(DataSource ogcStatsDataSource) {
+        this.ogcStatsDataSource = ogcStatsDataSource;
+    }
+
 }
