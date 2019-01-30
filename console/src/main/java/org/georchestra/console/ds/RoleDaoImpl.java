@@ -305,9 +305,6 @@ public class RoleDaoImpl implements RoleDao {
 		            + "then be safely created." );
 		}
 
-
-        EqualsFilter filter = new EqualsFilter("objectClass", "groupOfMembers");
-
         // inserts the new role
 		Name dn = buildRoleDn(role.getName());
 
@@ -413,16 +410,14 @@ public class RoleDaoImpl implements RoleDao {
 
 	}
 
-	@Override
-	public void addUsers(String roleName, List<Account> addList, final String originLogin) throws NameNotFoundException, DataServiceException {
+	private void addUsers(String roleName, List<Account> addList, final String originLogin) throws NameNotFoundException, DataServiceException {
 
 		for (Account account : addList) {
 			addUser(roleName, account, originLogin);
 		}
 	}
 
-	@Override
-	public void deleteUsers(String roleName, List<Account> deleteList, final String originLogin)
+	private void deleteUsers(String roleName, List<Account> deleteList, final String originLogin)
 			throws DataServiceException, NameNotFoundException {
 
 		for (Account account : deleteList) {

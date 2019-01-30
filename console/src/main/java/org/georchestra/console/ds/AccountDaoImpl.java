@@ -588,16 +588,6 @@ public final class AccountDaoImpl implements AccountDao {
 
         private AndFilter filter;
 
-        public List<Account> getActiveAccounts() {
-            SearchControls sc = createSearchControls();
-            return ldapTemplate.search(userSearchBaseDN, filter.encode(), sc, attributMapper);
-        }
-
-        public List<Account> getPendingAccounts() {
-            SearchControls sc = createSearchControls();
-            return ldapTemplate.search(pendingUserSearchBaseDN, filter.encode(), sc, attributMapper);
-        }
-
         public List<Account> getActiveOrPendingAccounts() {
             SearchControls sc = createSearchControls();
             List<Account> active = ldapTemplate.search(userSearchBaseDN, filter.encode(), sc, attributMapper);
