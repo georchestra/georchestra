@@ -31,10 +31,10 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
-import org.georchestra.mapfishapp.model.ConnectionPool;
 import org.georchestra.mapfishapp.ws.classif.ClassifierCommand;
 import org.georchestra.mapfishapp.ws.classif.SLDClassifier;
 import org.geotools.data.wfs.impl.WFSDataStoreFactory;
@@ -45,6 +45,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+
+import com.google.common.annotations.VisibleForTesting;
 
 // TODO: KML, GML, CSV services: do not store files, this is useless
 // instead, implement a generic "echo" service with custom mime type, as specified by client.
@@ -84,7 +86,7 @@ public class DocController {
 
     /** the connection pool used by the document services*/
     @Autowired
-    private ConnectionPool connectionPool;
+    private DataSource connectionPool;
 
     /**
      * variable name that has to be used on client side
@@ -154,7 +156,7 @@ public class DocController {
 
 
 	// needed for tests
-	public void setConnectionPool(ConnectionPool cp) {
+	public @VisibleForTesting void setConnectionPool(DataSource cp) {
 	    connectionPool = cp;
     }
 

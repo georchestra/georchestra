@@ -19,10 +19,15 @@
 
 package org.georchestra.ogcservstatistics.log4j;
 
-import java.sql.SQLException;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ForkJoinPool;
+
+import javax.sql.DataSource;
 
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.spi.ErrorCode;
@@ -37,11 +42,15 @@ import org.georchestra.ogcservstatistics.dataservices.InsertCommand;
  * database table.
  * <p>
  * <b>Usage:</b>
- * </p>
- * To configure this module you must to include this appender in the log4j.properties file.
- * The example shows how to configure the appender to work with postgres database: 
+ * There are two ways of configuring the target database this appender will insert log entries to.
+ * The first and preferred one since geOrchestra 18.12, is that the client code calls 
+ * {@link OGCServicesAppender#setDataSource(DataSource)} with an appropriately configured 
+ * connection pool.
+ * <p>
+ * Additionally, and for backwards compatibility, the database URL and connection credentials
+ * can be set on the {@code log4j.properties} configuration as follows:
  * <pre>
- * 
+ * <code>
  * log4j.rootLogger= INFO, OGCSERVICES
  * log4j.appender.OGCSERVICES=org.georchestra.ogcservstatistics.log4j.OGCServicesAppender
  * log4j.appender.OGCSERVICES.activated=true
@@ -49,7 +58,7 @@ import org.georchestra.ogcservstatistics.dataservices.InsertCommand;
  * log4j.appender.OGCSERVICES.databaseUser=postgres
  * log4j.appender.OGCSERVICES.databasePassword=postgres
  * log4j.appender.OGCSERVICES.bufferSize=1
- * 
+ * </code>
  * </pre>
  * <p>
  * Note: you could improve the performance increasing the <b>bufferSize</b> value.
@@ -87,23 +96,6 @@ public class OGCServicesAppender extends AppenderSkeleton {
 
 	private String jdbcURL = "";
 
-	protected String databaseName = "";
-
-	protected String databaseHost = "";
-
-	protected String databasePort = "";
-
-	/**
-	 * size of LoggingEvent buffer before writing to the database. 
-	 * Default is 1.
-	 */
-	protected int bufferSize = 1;
-
-	/**
-	 * ArrayList holding the buffer of Logging Events.
-	 */
-	protected ArrayList<Map<String, Object>> buffer;
-
 	/**
 	 * Activated 
 	 * true: 	it log ogc services 
@@ -111,22 +103,11 @@ public class OGCServicesAppender extends AppenderSkeleton {
 	 */
 	protected boolean activated = false;
 
-	private DataServicesConfiguration dataServiceConfiguration = DataServicesConfiguration.getInstance();
+	private static DataServicesConfiguration dataServiceConfiguration = DataServicesConfiguration.getInstance();
 
 
 	public OGCServicesAppender() {
 		super();
-		this.buffer = new ArrayList<Map<String, Object>>(this.bufferSize);
-	}
-
-	
-	public String getDatabaseName() {
-		return databaseName;
-	}
-
-
-	public void setDatabaseName(String databaseName) {
-		this.databaseName = databaseName;
 	}
 
 	public String getJdbcURL(){
@@ -136,26 +117,6 @@ public class OGCServicesAppender extends AppenderSkeleton {
 	public void setJdbcURL(String jdbcURL){
 		this.jdbcURL = jdbcURL;
 	}
-
-	public String getDatabaseHost() {
-		return databaseHost;
-	}
-
-
-	public void setDatabaseHost(String databaseHost) {
-		this.databaseHost = databaseHost;
-	}
-
-
-	public String getDatabasePort() {
-		return databasePort;
-	}
-
-
-	public void setDatabasePort(String databasePort) {
-		this.databasePort = databasePort;
-	}
-
 
 	public String getDatabaseUser() {
 		return databaseUser;
@@ -173,14 +134,12 @@ public class OGCServicesAppender extends AppenderSkeleton {
 		this.databasePassword = databasePassword;
 	}
 
-	public int getBufferSize() {
-		return this.bufferSize;
-	}
+    public @Deprecated int getBufferSize() {
+        return 1;
+    }
 
-	public void setBufferSize(int newBufferSize) {
-		this.bufferSize = newBufferSize;
-		this.buffer.ensureCapacity(this.bufferSize);
-	}
+    public @Deprecated void setBufferSize(int newBufferSize) {
+    }
 	
 	public boolean isActivated() {
 		return activated;
@@ -195,70 +154,61 @@ public class OGCServicesAppender extends AppenderSkeleton {
 	 * In this case the configuration is set.
 	 *  
 	 */
+    @Override
+    public void activateOptions() {
+        dataServiceConfiguration.initialize(getJdbcURL(), getDatabaseUser(), getDatabasePassword());
+    }
+
+    public static void setDataSource(DataSource dataSource) {
+        Objects.requireNonNull(dataSource, "dataSource can't be null");
+        dataServiceConfiguration.initialize(dataSource);
+    }
+	
+    /**
+     * Appends the OGC Service in the table.
+     * 
+     * The string present in buffer is parsed, if it is an interesting OGC service
+     * then extracts the data required to insert a row in the table.
+     * 
+     * @implNote This method is called from inside the {@code synchronized} method
+     *           {@link AppenderSkeleton#doAppend}, as it calls
+     *           {@link OGCServiceParser#parseLog} and runs one
+     *           {@link InsertCommand} per parsed entry, the job is done
+     *           asynchronously on the platforms' default {@link ForkJoinPool} to
+     *           avoid hindering application performance.
+     */
 	@Override
-	public void activateOptions() {
-		
-		this.dataServiceConfiguration.setUser(getDatabaseUser());
-		this.dataServiceConfiguration.setPassword(getDatabasePassword());
-		this.dataServiceConfiguration.setJdbcURL(getJdbcURL());
-	}
-
-
-	/**
-	 * Appends the OGC Service in the table.
-	 * 
-	 * The string present in buffer is parsed, if it is an interesting OGC
-	 * service then extracts the data required to insert a row in the table.
-	 */
-	@Override
-	protected void append(LoggingEvent event) {
-
-		if (!this.activated)
+	protected void append(final LoggingEvent event) {
+	    //do not run if not activated or closed
+		if (!this.activated && !this.closed)
 			return;
-
-		try {
-
-			String msg = event.getRenderedMessage();
-			List<Map<String, Object>> logList = OGCServiceParser.parseLog(msg);
-
-			for (Map<String, Object> log : logList) {
-				this.buffer.add(log);
-				if (this.buffer.size() >= this.bufferSize) {
-					flushBuffer();
-				}
-			}
-			
-		} catch (Exception ex) {
-			errorHandler.error("Failed to insert the ogc service record", ex,
-					ErrorCode.WRITE_FAILURE);
-		}
-	}
-
-
-	/**
-	 * Inserts in the database table the OGC Service logs maintained in the appender buffer 
-	 * @throws OGCServStatisticsException 
-	 */
-	private void flushBuffer() {
 		
-		ArrayList<Map<String, Object>> removed = new ArrayList<Map<String,Object>>(this.buffer.size());
-		for (Map<String,Object> log: this.buffer) {
-
-			insert(log);
-			removed.add(log);
-		}
-		this.buffer.removeAll(removed);
+        CompletableFuture.runAsync(() -> {
+            try {
+                // let it finish if the task was issued even if the appender was closed after
+                // the fact
+                if(!this.activated) {
+                    return;
+                }
+                String msg = event.getRenderedMessage();
+                List<Map<String, Object>> logList = OGCServiceParser.parseLog(msg);
+                insert(logList);
+            } catch (Exception ex) {
+                errorHandler.error("Failed to insert the ogc service record", ex, ErrorCode.WRITE_FAILURE);
+            }
+        });
 	}
 
 
-	private void insert(Map<String, Object> ogcServiceRecord)  {
+	private void insert(List<Map<String, Object>> ogcServiceRecords)  {
 
-		try {
-			InsertCommand cmd = new InsertCommand();
-			cmd.setConnection(this.dataServiceConfiguration .getConnection());
-			cmd.setRowValues( ogcServiceRecord);
-			cmd.execute();
-
+		try (Connection c = dataServiceConfiguration.getConnection()){
+            for (Map<String, Object> entry : ogcServiceRecords) {
+                InsertCommand cmd = new InsertCommand();
+                cmd.setConnection(c);
+                cmd.setRowValues(entry);
+                cmd.execute();
+            }
 		} catch (Exception e) {
 
 			errorHandler.error("Failed to insert the log", e,
@@ -277,17 +227,7 @@ public class OGCServicesAppender extends AppenderSkeleton {
 	 */
 	@Override
 	public void close() {
-		try {
-
-			flushBuffer();
-			this.dataServiceConfiguration.closeConnection();
-			
-		} catch (SQLException e) {
-			this.errorHandler.error("Error closing connection", e, ErrorCode.GENERIC_FAILURE);
-		} finally {
-		    this.closed = true;
-		}
-		
+	    this.closed = true;
 	}
 
 	@Override

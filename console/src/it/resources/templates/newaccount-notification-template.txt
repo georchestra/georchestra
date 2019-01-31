@@ -1,0 +1,10 @@
+Dear admin,
+
+A new user signed up on {publicUrl}/ !
+
+User name: {name}
+User email: {email}
+User ID: {uid}
+
+---
+Sent by {instanceName} ({publicUrl}/)

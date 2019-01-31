@@ -1,40 +1,32 @@
 package org.georchestra.analytics.util;
 
-import org.apache.commons.dbcp.BasicDataSource;
-import org.georchestra.analytics.util.DBConnection;
-import org.joda.time.DateTime;
-import org.junit.Assert;
-import org.junit.Assume;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.beans.PropertyVetoException;
 import java.lang.reflect.InvocationTargetException;
-import java.sql.Date;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DBConnectionTest {
+import org.junit.Assert;
+import org.junit.Assume;
+import org.junit.Test;
+import org.postgresql.ds.PGSimpleDataSource;
+
+import com.google.common.base.Strings;
+
+public class QueryBuilderTest {
 
     @Test
-    // Test parameter remplacment
+    // Test parameter replacement
     public void testParameter() throws PropertyVetoException, SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        String url = System.getProperty("JDBC_TEST_URL");
+        if(Strings.isNullOrEmpty(url)) {
+            url = System.getenv("JDBC_TEST_URL");
+        }
+        Assume.assumeTrue(!Strings.isNullOrEmpty(url));
 
-        Map<String, String> env = System.getenv();
-        Assume.assumeTrue(env.containsKey("JDBC_TEST_URL"));
-
-        BasicDataSource dataSource = new BasicDataSource();
-        dataSource.setUrl(env.get("JDBC_TEST_URL"));
-        dataSource.setDriverClassName("org.postgresql.Driver");
-        dataSource.setTestOnBorrow(true);
-        dataSource.setValidationQuery("select 1 as dbcp_connection_test");
-        dataSource.setPoolPreparedStatements(true);
-        dataSource.setMaxOpenPreparedStatements(-1);
-        dataSource.setDefaultReadOnly(false);
-        dataSource.setDefaultAutoCommit(true);
-
-        DBConnection conn = new DBConnection(dataSource);
+        PGSimpleDataSource dataSource = new PGSimpleDataSource();
+        dataSource.setUrl(url);
+        QueryBuilder builder = new QueryBuilder();
 
         String sql = "SELECT CAST(COUNT(*) AS integer) AS count, to_char(date, {aggregateDate}) " +
                 "FROM ogcstatistics.ogc_services_log " +
@@ -43,13 +35,13 @@ public class DBConnectionTest {
                 "GROUP BY to_char(date, {aggregateDate}) " +
                 "ORDER BY to_char(date, {aggregateDate})";
 
-        Map<String, Object> values = new HashMap<String, Object>();
+        Map<String, String> values = new HashMap<>();
         values.put("startDate", "2017-08-15");
         values.put("endDate", "2017-09-15");
         values.put("aggregateDate", "YYYY-mm-dd HH24");
         values.put("user","biloute");
 
-        String finalQuery = conn.generateQuery(sql, values);
+        String finalQuery = builder.generateQuery(sql, values);
 
         String sqlWithReplacments = "SELECT CAST(COUNT(*) AS integer) AS count, to_char(date, 'YYYY-mm-dd HH24') " +
                 "FROM ogcstatistics.ogc_services_log " +

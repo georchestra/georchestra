@@ -19,6 +19,7 @@
 
 package org.georchestra.console.ds;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -63,9 +64,9 @@ class QueryUserTokenExpiredCommand extends org.georchestra.lib.sqlcommand.Abstra
 	 * Prepares the Statement setting the year and month.
 	 */
 	@Override
-	protected PreparedStatement prepareStatement() throws SQLException {
+	protected PreparedStatement prepareStatement(Connection connection) throws SQLException {
 
-		PreparedStatement pStmt = this.connection.prepareStatement(getSQLStatement());
+		PreparedStatement pStmt = connection.prepareStatement(getSQLStatement());
 
 		Timestamp time = new Timestamp(this.beforeDate.getTime());
 

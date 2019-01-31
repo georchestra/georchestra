@@ -3,6 +3,9 @@ package org.georchestra.analytics;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.matchers.JUnitMatchers.containsString;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -10,14 +13,16 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 
 import java.beans.PropertyVetoException;
 import java.lang.reflect.Method;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.ParseException;
 import java.util.ArrayList;
 
-import org.georchestra.analytics.StatisticsController.GRANULARITY;
+import javax.sql.DataSource;
 
-import org.georchestra.analytics.util.DBConnection;
+import org.georchestra.analytics.StatisticsController.GRANULARITY;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.json.JSONObject;
 import org.junit.After;
@@ -29,23 +34,25 @@ import org.springframework.util.ReflectionUtils;
 
 public class StatisticsControllerTest {
 
-	private DBConnection db;
-	private ResultSet res;
 	private StatisticsController ctrl;
 	private MockMvc mockMvc;
 
 	@Before
 	public void setUp() throws Exception {
 
-		this.db = Mockito.mock(DBConnection.class);
-		this.res = Mockito.mock(ResultSet.class);
-		Mockito.when(this.res.next()).thenReturn(false);
-		Mockito.when(this.db.generateQuery(Mockito.anyString(), Mockito.anyMap())).thenReturn(new String());
-		Mockito.when(this.db.execute(Mockito.anyString())).thenReturn(this.res);
+		DataSource mockDS = mock(DataSource.class);
+		Connection mockConn = mock(Connection.class);
+		Statement mockSt = mock(Statement.class);
+		ResultSet res = mock(ResultSet.class);
+		
+		when(mockDS.getConnection()).thenReturn(mockConn);
+		when(mockConn.createStatement()).thenReturn(mockSt);
+		when(mockSt.executeQuery(anyString())).thenReturn(res);
+		when(res.next()).thenReturn(false);
 
 		this.ctrl = new StatisticsController("UTC");
 		this.mockMvc = standaloneSetup(ctrl).build();
-		ctrl.setDb(db);
+		ctrl.setDataSource(mockDS);
 
 		GeorchestraConfiguration georConfig = Mockito.mock(GeorchestraConfiguration.class);
 		ctrl.setGeorConfig(georConfig);

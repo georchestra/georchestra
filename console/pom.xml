@@ -23,7 +23,6 @@
     <spring_security.version>4.2.3.RELEASE</spring_security.version>
     <spring_data.version>1.11.1.RELEASE</spring_data.version>
 
-    <postgres.version>9.4-1205-jdbc41</postgres.version>
     <packageDatadirScmVersion>master</packageDatadirScmVersion>
   </properties>
   <repositories>
@@ -354,7 +353,6 @@
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
-      <version>${postgres.version}</version>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
@@ -369,7 +367,6 @@
     <dependency>
       <groupId>com.mchange</groupId>
       <artifactId>c3p0</artifactId>
-      <version>0.9.5.2</version>
     </dependency>
     <dependency>
       <groupId>javax.validation</groupId>
@@ -413,34 +410,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>commons-dbcp</groupId>
-      <artifactId>commons-dbcp</artifactId>
-      <version>1.4</version>
-      <classifier />
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>commons-pool</groupId>
-          <artifactId>commons-pool</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xerces</groupId>
-          <artifactId>xerces</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xerces</groupId>
-          <artifactId>xercesImpl</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xml-apis</groupId>
-          <artifactId>xml-apis</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>org.powermock</groupId>
       <artifactId>powermock-module-junit4</artifactId>
       <version>1.6.4</version>
@@ -450,6 +419,11 @@
       <groupId>org.powermock</groupId>
       <artifactId>powermock-api-mockito</artifactId>
       <version>1.6.4</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.awaitility</groupId>
+      <artifactId>awaitility</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -901,7 +875,6 @@
           <plugin>
             <groupId>io.fabric8</groupId>
             <artifactId>docker-maven-plugin</artifactId>
-            <version>0.28.0</version>
             <executions>
               <execution>
                 <id>prepare-containers</id>

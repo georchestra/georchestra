@@ -8,6 +8,7 @@ import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.message.BasicHttpResponse;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.util.ReflectionUtils;
@@ -17,6 +18,8 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URL;
 import java.util.Map;
+
+import javax.sql.DataSource;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -39,7 +42,8 @@ public class ProxyTest {
                 return response;
             }
         };
-
+        DataSource ogcStatsDataSource = Mockito.mock(DataSource.class);
+        proxy.setOgcStatsDataSource(ogcStatsDataSource);
         proxy.setProxyPermissionsFile("default-permissions.xml");
         proxy.init();
 

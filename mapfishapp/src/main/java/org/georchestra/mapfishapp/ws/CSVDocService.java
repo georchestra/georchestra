@@ -20,7 +20,7 @@
 package org.georchestra.mapfishapp.ws;
 
 import javax.servlet.http.HttpServletResponse;
-import org.georchestra.mapfishapp.model.ConnectionPool;
+import javax.sql.DataSource;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,7 +42,7 @@ public class CSVDocService extends A_DocService {
     public static final String COLUMNS_FIELD = "columns";
     public static final String RECORDS_FIELD = "data";
     
-    public CSVDocService(final String tempDir, ConnectionPool pgpool) {
+    public CSVDocService(final String tempDir, DataSource pgpool) {
         super(FILE_EXTENSION, MIME_TYPE, tempDir, pgpool);
     }
 

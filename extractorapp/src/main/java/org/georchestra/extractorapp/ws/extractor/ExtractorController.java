@@ -38,8 +38,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
-import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -95,13 +95,9 @@ public class ExtractorController implements ServletContextAware {
 
     @Autowired
     private GeorchestraConfiguration georConfig;
-    private ComboPooledDataSource dataSource;
+    private @Autowired DataSource dataSource;
 
     public void validateConfig() throws PropertyVetoException, MalformedURLException {
-
-        this.dataSource = new ComboPooledDataSource();
-        this.dataSource.setDriverClass("org.postgresql.Driver");
-
         if ((georConfig != null) && (georConfig.activated())) {
             LOG.info("geOrchestra datadir: reconfiguring bean ...");
             this.setPublicUrl(georConfig.getProperty("publicUrl"));
@@ -113,7 +109,6 @@ public class ExtractorController implements ServletContextAware {
             String password = georConfig.getProperty("privileged_admin_pass");
             // Recreating a Credentials object
             adminCredentials = new UsernamePasswordCredentials(username, password);
-            this.dataSource.setJdbcUrl(this.georConfig.getProperty("jdbcurl"));
             LOG.info("geOrchestra datadir: done.");
         }
         if (extractionManager == null) {

@@ -150,7 +150,7 @@ public class UserTokenDaoTest {
         try {
             userTokenDao.insertToken("123456", "myToken");
         } catch (Exception e) {
-            assertEquals("sql error, for test", e.getCause().getMessage());
+            assertEquals("sql error, for test", e.getMessage());
         }
     }
 }

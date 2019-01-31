@@ -2,56 +2,31 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:context="http://www.springframework.org/schema/context"
-    xmlns:jpa="http://www.springframework.org/schema/data/jpa"
     xsi:schemaLocation="http://www.springframework.org/schema/beans
     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-    http://www.springframework.org/schema/data/jpa
-    http://www.springframework.org/schema/data/jpa/spring-jpa-1.0.xsd
     http://www.springframework.org/schema/context
     http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
     <context:annotation-config/>
-
-	<!--  JPA & Database-related beans -->
-	<jpa:repositories base-package="org.georchestra.analytics.dao" />
 
     <bean id="waitForDb" class="org.georchestra.commons.WaitForDb" init-method="test">
         <property name="url" value="${dlJdbcUrlOGC}"/>
         <property name="driverClassName" value="org.postgresql.Driver"/>
     </bean>
 
-    <bean id="jpaDataSource" class="org.apache.commons.dbcp.BasicDataSource" depends-on="waitForDb">
-        <property name="url" value="${dlJdbcUrlOGC}"/>
-        <property name="driverClassName" value="org.postgresql.Driver"/>
-        <property name="testOnBorrow" value="true"/>
-        <property name="validationQuery" value="select 1 as dbcp_connection_test"/>
-        <property name="poolPreparedStatements" value="true"/>
-        <property name="maxOpenPreparedStatements" value="-1"/>
-        <property name="defaultReadOnly" value="false"/>
-        <property name="defaultAutoCommit" value="true"/>
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" depends-on="waitForDb">
+        <property name="jdbcUrl" value="${dlJdbcUrlOGC}"/>
+        <property name="driverClass" value="org.postgresql.Driver"/>
+        <property name="initialPoolSize" value="1"/>
+        <property name="minPoolSize" value="${dataSource.minPoolSize}"/>
+        <property name="maxPoolSize" value="${dataSource.maxPoolSize}"/>
+        <property name="checkoutTimeout" value = "${dataSource.timeout}"/>
+        <property name="idleConnectionTestPeriod" value="30"/>
+        <property name="maxIdleTime" value = "${dataSource.maxIdleTime}"/>
+        <property name="acquireIncrement" value="2"/>
+        <property name="testConnectionOnCheckout" value="true"/> <!-- Uses JDBC4's Connection.isValid() -->
     </bean>
-
-   <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-       <property name="dataSource" ref="jpaDataSource" />
-       <property name="persistenceUnitName" value="statsPersistenceUnit" />
-       <property name="persistenceXmlLocation" value="classpath:persistence.xml"/>
-       <property name="jpaVendorAdapter">
-           <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
-       </property>
-       <property name="jpaProperties">
-           <props>
-               <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL94Dialect</prop>
-               <prop key="hibernate.show_sql">false</prop>
-               <prop key="hibernate.format_sql">false</prop>
-               <prop key="hibernate.hbm2ddl.auto">validate</prop>
-           </props>
-       </property>
-   </bean>
-
-    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <property name="entityManagerFactory" ref="entityManagerFactory" />
-    </bean>
-
+ 
     <bean id="homecontroller" class="org.georchestra.analytics.HomeController"/>
 
     <bean name="ogc_stats" class="org.georchestra.analytics.OGCStats">

@@ -20,8 +20,11 @@
 package org.georchestra.ogcservstatistics.dataservices;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
+
+import javax.sql.DataSource;
+
+import org.postgresql.ds.PGSimpleDataSource;
 
 /**
  * This Singleton maintains the configuration data required to access to the database where
@@ -34,10 +37,8 @@ public final class DataServicesConfiguration {
 
 	
 	private static final DataServicesConfiguration THIS = new DataServicesConfiguration();
-	private Connection connection;
-	private String user;
-	private String password;
-	private String jdbcURL;
+
+	private DataSource dataSource;
 	
 	private DataServicesConfiguration(){
 		
@@ -48,52 +49,28 @@ public final class DataServicesConfiguration {
 		return THIS;
 	}
 	
-	public void setJdbcURL(String jdbcURL) {
-		this.jdbcURL = jdbcURL;
+	public void initialize(String jdbcURL, String user, String password) {
+        PGSimpleDataSource nonPoolingDS = null;
+        if (jdbcURL != null && !jdbcURL.trim().isEmpty()) {
+            nonPoolingDS = new PGSimpleDataSource();
+            nonPoolingDS.setUrl(jdbcURL);
+            nonPoolingDS.setUser(user);
+            nonPoolingDS.setPassword(password);
+        }
+	    this.dataSource = nonPoolingDS;
 	}
 	
-
-	public void setUser(String user) {
-
-		this.user = user;
+	public void initialize(DataSource dataSource) {
+	    this.dataSource = dataSource;
 	}
-
-	public void setPassword(String password) {
-		
-		this.password = password;
-	}
-
-
+	
 	/**
-	 * The connection to database
+	 * A connection to database, make sure the client code closes it.
 	 * 
 	 * @return {@link Connection}
 	 * @throws SQLException
 	 */
-	public Connection getConnection() throws SQLException, ClassNotFoundException {
-
-		Class.forName("org.postgresql.Driver");
-
-		if ((this.connection == null) || (this.connection.isClosed())) {
-			synchronized (this) {
-				this.connection = DriverManager.getConnection(this.jdbcURL, this.user, this.password);
-			}
-		}
-
-		return this.connection;
+	public Connection getConnection() throws SQLException{
+	    return dataSource.getConnection();
 	}
-
-	public void closeConnection() throws SQLException {
-
-		if (this.connection != null) {
-			synchronized (this) {
-				if (!this.connection.isClosed()) {
-					this.connection.close();
-				}
-				this.connection = null;
-			}
-		}
-	}
-
-
 }

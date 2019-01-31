@@ -19,8 +19,11 @@
 
 package org.georchestra.ogcservstatistics.calculations;
 
+import java.net.URL;
+import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.georchestra.ogcservstatistics.OGCServStatisticsException;
@@ -53,11 +56,15 @@ public final class OGCServiceStatistics {
 	 * 
 	 * @param log4jPropertiesFile
 	 */
-	public static void configure(final String log4jPropertiesFile){
+	public static void configure(final URL log4jPropertiesFile){
 		PropertyConfigurator.configure(log4jPropertiesFile);
 	}
 
-	/**
+    public static void configure(final Properties props){
+        PropertyConfigurator.configure(props);
+    }
+
+    /**
 	 * Lists all ogc services log
 	 * 
 	 * @return List of pairs (fieldName, fieldValue)
@@ -353,8 +360,8 @@ public final class OGCServiceStatistics {
 	 */
 	private static List<Map<String, Object>> execute(QueryCommand cmd) 
 			throws OGCServStatisticsException{
-		try {
-			cmd.setConnection(dsConfiguration.getConnection());
+		try (Connection c = dsConfiguration.getConnection()){
+			cmd.setConnection(c);
 
 			cmd.execute();
 

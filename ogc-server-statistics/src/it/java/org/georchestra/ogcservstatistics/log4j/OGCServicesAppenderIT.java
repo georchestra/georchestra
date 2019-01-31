@@ -3,11 +3,11 @@
  */
 package org.georchestra.ogcservstatistics.log4j;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.sql.Connection;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
@@ -15,13 +15,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.awaitility.Duration;
 import org.georchestra.ogcservstatistics.OGCServStatisticsException;
 import org.georchestra.ogcservstatistics.calculations.OGCServiceStatistics;
-import org.georchestra.ogcservstatistics.dataservices.DataServicesConfiguration;
-import org.georchestra.ogcservstatistics.dataservices.DeleteAllCommand;
+import org.georchestra.ogcservstatistics.util.IntegrationTestSupport;
 import org.georchestra.ogcservstatistics.util.Utility;
 import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -38,29 +38,20 @@ import org.junit.Test;
  * @author Mauricio Pazos
  *
  */
-public class OGCServicesAppenderTest {
+public class OGCServicesAppenderIT {
 
     private Logger LOGGER;
 
-    public static @BeforeClass void initialize() {
-	// WARNING: because this test will delete all log before execute the test method
-	// you should configure a test table in the log4j.properties file
+    public static @ClassRule IntegrationTestSupport support = new IntegrationTestSupport();
 
-	String file = "src/test/resources/org/georchestra/ogcservstatistics/log4j.properties";
-	OGCServiceStatistics.configure(file);
-	try {
-	    DeleteAllCommand cmd = new DeleteAllCommand();
-	    Connection connection = DataServicesConfiguration.getInstance().getConnection();
-	    cmd.setConnection(connection);
-	    cmd.execute();
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
-
+    public @Before void initialize() {
+        // WARNING: because this test will delete all log before execute the test method
+        // you should configure a test table in the log4j.properties file
+        support.deleteAllEntries();
     }
 
     public @Before void before() {
-	LOGGER = Logger.getLogger(OGCServicesAppenderTest.class.getName());
+        LOGGER = Logger.getLogger(OGCServicesAppenderIT.class.getName());
     }
 
 	/**
@@ -527,8 +518,9 @@ public class OGCServicesAppenderTest {
 
 		LOGGER.info(ogcServiceMessage);
 
-		logList = OGCServiceStatistics.list();
-		assertEquals(logSizeBefore + expectedLogs, logList.size());
+		final int expected = logSizeBefore + expectedLogs;
+        await().atMost(Duration.TWO_SECONDS)
+                .untilAsserted(() -> assertEquals(expected, OGCServiceStatistics.list().size()));
 	}
 
 }

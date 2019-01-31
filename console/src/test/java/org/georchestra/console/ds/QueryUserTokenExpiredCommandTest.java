@@ -2,6 +2,9 @@ package org.georchestra.console.ds;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,9 +12,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.sql.DataSource;
 
 import org.georchestra.lib.sqlcommand.DataCommandException;
 import org.junit.After;
@@ -21,21 +25,32 @@ import org.mockito.Mockito;
 
 public class QueryUserTokenExpiredCommandTest {
 
-    QueryUserTokenExpiredCommand query = new QueryUserTokenExpiredCommand();
-    Connection c = Mockito.mock(Connection.class);
-    PreparedStatement pstmt = Mockito.mock(PreparedStatement.class);
-    ResultSet resultSet = Mockito.mock(ResultSet.class);
+    private DataSource mockDS;
+    private QueryUserTokenExpiredCommand query;
+    private Connection connection;
+    private PreparedStatement pstmt;
+    private ResultSet resultSet;
 
     @Before
     public void setUp() throws Exception {
-        query.setConnection(c);
-        Mockito.when(c.prepareStatement(Mockito.anyString())).thenReturn(pstmt);
-        query.setBeforeDate(new Date());
-        Mockito.when(pstmt.executeQuery()).thenReturn(resultSet);
-        Map<String,Object> map = new HashMap<String,Object>();
+        mockDS = mock(DataSource.class);
+        connection = mock(Connection.class);
+        pstmt = mock(PreparedStatement.class);
+        resultSet = mock(ResultSet.class);
+        
+        when(mockDS.getConnection()).thenReturn(connection);
+        when(connection.prepareStatement(anyString())).thenReturn(pstmt);
+        
+        when(pstmt.executeQuery()).thenReturn(resultSet);
+
         Mockito.when(resultSet.getString(Mockito.anyString())).thenReturn("uid", "token");
         Mockito.when(resultSet.getTimestamp(Mockito.anyString())).thenReturn(new Timestamp(0));
         Mockito.when(resultSet.next()).thenReturn(true, false);
+
+        
+        query = new QueryUserTokenExpiredCommand();
+        query.setDataSource(mockDS);
+        query.setBeforeDate(new Date());
     }
 
     @After
@@ -44,7 +59,7 @@ public class QueryUserTokenExpiredCommandTest {
 
     @Test
     public void testPrepareStatement() throws SQLException {
-        PreparedStatement pstmt = query.prepareStatement();
+        PreparedStatement pstmt = query.prepareStatement(connection);
         // Well, these objects have been mocked, this test
         // just ensures that everything went well.
         assertTrue(pstmt != null);
@@ -65,7 +80,7 @@ public class QueryUserTokenExpiredCommandTest {
 
     @Test
     public void testExecuteNoConnection() throws DataCommandException {
-        query.setConnection(null);
+        query.setDataSource(null);
         try {
             query.execute();
         } catch (Throwable e) {
@@ -78,7 +93,7 @@ public class QueryUserTokenExpiredCommandTest {
 
     @Test
     public void testExecuteAndGetResult() throws DataCommandException {
-        query.setConnection(c);
+        query.setDataSource(mockDS);
         query.execute();
         List<Map<String, Object>> ret = query.getResult();
 

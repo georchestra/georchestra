@@ -38,6 +38,7 @@ import java.util.Iterator;
 import java.util.Random;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
@@ -46,7 +47,6 @@ import javax.xml.validation.Validator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.mapfishapp.model.ConnectionPool;
 import org.jdom.Document;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
@@ -54,7 +54,6 @@ import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.slf4j.Logger;
 import org.xml.sax.SAXException;
 
 
@@ -83,14 +82,14 @@ public abstract class A_DocService {
     /**
      * Db connection pool (shared between services).
      */
-    protected ConnectionPool pgPool;
+    protected DataSource pgPool;
 
 	/**
 	 * Sets pgPool (used for testing).
 	 *
 	 * @param pgPool
 	 */
-	public void setPgPool(ConnectionPool pgPool) {
+	public void setPgPool(DataSource pgPool) {
 		this.pgPool = pgPool;
 	}
 
@@ -141,7 +140,7 @@ public abstract class A_DocService {
      * @param MIMEType
      * @param docTempDirectory
      */
-    public A_DocService(final String fileExtension, final String MIMEType,  final String docTempDirectory, ConnectionPool pgpool) {
+    public A_DocService(final String fileExtension, final String MIMEType,  final String docTempDirectory, DataSource pgpool) {
         _fileExtension = fileExtension;
         _MIMEType = MIMEType;
         pgPool = pgpool;
@@ -195,24 +194,19 @@ public abstract class A_DocService {
         String standard = _fileExtension.substring(1);
 
         // write data to Db
-        Connection connection = null;
-        PreparedStatement st = null;
-        try {
-            connection = pgPool.getConnection();
-            st = connection.prepareStatement("INSERT INTO mapfishapp.geodocs (username, standard, raw_file_content, file_hash) VALUES (?,?,?,?);");
-            st.setString(1, username);
-            st.setString(2, standard);
-            st.setString(3, _content);
-            st.setString(4, hash);
-            st.executeUpdate();
-        }
-        catch (SQLException e) {
+        try (Connection connection = pgPool.getConnection()) {
+            String sql = "INSERT INTO mapfishapp.geodocs (username, standard, raw_file_content, file_hash) VALUES (?,?,?,?);";
+            try (PreparedStatement st = connection.prepareStatement(sql)) {
+                st.setString(1, username);
+                st.setString(2, standard);
+                st.setString(3, _content);
+                st.setString(4, hash);
+                st.executeUpdate();
+            }
+        }catch (SQLException e) {
+            LOG.error(e);
             throw new RuntimeException(e);
-        } finally {
-            if (st != null) try { st.close(); } catch (SQLException e) {LOG.error(e);}
-            if (connection != null) try { connection.close(); } catch (SQLException e) {LOG.error(e);}
         }
-
         return DOC_PREFIX + hash + _fileExtension;
     }
 
@@ -253,83 +247,64 @@ public abstract class A_DocService {
     public JSONArray listFiles(String username) throws Exception {
         JSONArray res = new JSONArray();
 
-        Connection connection = null;
-        PreparedStatement st = null;
-
-        try {
-            connection = pgPool.getConnection();
-            st = connection.prepareStatement("SELECT file_hash, created_at, last_access, access_count, raw_file_content " +
+        try (Connection connection = pgPool.getConnection()){
+            String sql = "SELECT file_hash, created_at, last_access, access_count, raw_file_content " +
                     "FROM mapfishapp.geodocs " +
                     "WHERE standard = ? AND username = ? " +
-                    "ORDER BY created_at DESC");
-            st.setString(1, _fileExtension.substring(1));
-            st.setString(2, username);
-            ResultSet rs = st.executeQuery();
-            while (rs.next()) {
-                JSONObject entry = new JSONObject();
+                    "ORDER BY created_at DESC";
+            try (PreparedStatement st = connection.prepareStatement(sql)) {
+                st.setString(1, _fileExtension.substring(1));
+                st.setString(2, username);
+                try (ResultSet rs = st.executeQuery()) {
+                    while (rs.next()) {
+                        JSONObject entry = new JSONObject();
 
-                // Add common fields, all standards have these fields
-                entry.put("hash", rs.getString("file_hash"));
-                entry.put("created_at", rs.getString("created_at"));
-                entry.put("last_access", rs.getString("last_access"));
-                entry.put("access_count", rs.getString("access_count"));
+                        // Add common fields, all standards have these fields
+                        entry.put("hash", rs.getString("file_hash"));
+                        entry.put("created_at", rs.getString("created_at"));
+                        entry.put("last_access", rs.getString("last_access"));
+                        entry.put("access_count", rs.getString("access_count"));
 
-                // Add standard specific fields
-                JSONObject standardSpecificEntry;
-                try  {
-                    standardSpecificEntry = this.extractsStandardSpecificEntries(rs.getBinaryStream("raw_file_content"));
-                } catch (Exception e) {
-                    LOG.error("Unable to parse the document [hash: " + rs.getString("file_hash") + "]. Skipping.");
-                    continue;
-                }
-                Iterator<String> it = standardSpecificEntry.keys();
-                while(it.hasNext()){
-                    String field = it.next();
-                    entry.put(field, standardSpecificEntry.get(field));
-                }
-                res.put(entry);
-            }
-            return res;
-        } finally {
-            if (st != null) {
-                try {
-                    st.close();
-                } catch (SQLException e) {
-                    LOG.error(e);
+                        // Add standard specific fields
+                        JSONObject standardSpecificEntry;
+                        try {
+                            standardSpecificEntry = this
+                                    .extractsStandardSpecificEntries(rs.getBinaryStream("raw_file_content"));
+                        } catch (Exception e) {
+                            LOG.error("Unable to parse the document [hash: " + rs.getString("file_hash")
+                                    + "]. Skipping.");
+                            continue;
+                        }
+                        Iterator<String> it = standardSpecificEntry.keys();
+                        while (it.hasNext()) {
+                            String field = it.next();
+                            entry.put(field, standardSpecificEntry.get(field));
+                        }
+                        res.put(entry);
+                    }
                 }
             }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    LOG.error(e);
-                }
-            }
+        }catch(SQLException e) {
+            LOG.error(e);
         }
-
+        return res;
     }
 
     public void deleteFile(String filename, String username) throws Exception {
+        try (Connection connection = pgPool.getConnection()) {
+            String sql = "DELETE FROM mapfishapp.geodocs WHERE file_hash = ? AND username = ?";
+            try (PreparedStatement st = connection.prepareStatement(sql)) {
+                st.setString(1, filename);
+                st.setString(2, username);
 
-        Connection connection = null;
-        PreparedStatement st = null;
-
-        try {
-            connection = pgPool.getConnection();
-
-            st = connection.prepareStatement("DELETE FROM mapfishapp.geodocs " +
-                    "WHERE file_hash = ? AND username = ?");
-            st.setString(1, filename);
-            st.setString(2, username);
-
-            if(st.executeUpdate() != 1) {
-                throw new SQLException("Unable to find record with file_hash : " + filename + " and username : " + username);
+                if (st.executeUpdate() != 1) {
+                    throw new SQLException(
+                            "Unable to find record with file_hash : " + filename + " and username : " + username);
+                }
             }
-        } finally {
-            if (st != null) try { st.close(); } catch (SQLException e) {LOG.error(e);}
-            if (connection != null) try { connection.close(); } catch (SQLException e) {LOG.error(e);}
+        } catch (SQLException e) {
+            LOG.error(e);
         }
-
     }
 
     /*========================Accessor Methods====================================================*/
@@ -467,27 +442,20 @@ public abstract class A_DocService {
         // test fileName to know if file is stored in db or file.
         if (fileName.length() == 4+32+DOC_PREFIX.length()) {
             // newest database storage
-            ResultSet rs = null;
-            PreparedStatement st = null;
-            Connection connection = null;
-
-            boolean exists = false;
             int count = 0;
-            try {
-                connection = pgPool.getConnection();
-                st = connection.prepareStatement("SELECT count(*)::integer from mapfishapp.geodocs WHERE file_hash = ?;");
-                st.setString(1, fileName.substring(DOC_PREFIX.length(), DOC_PREFIX.length() + 32));
-                rs = st.executeQuery();
-
-                if (rs.next()) {
-                    count = rs.getInt(1);
+            try (Connection connection = pgPool.getConnection()) {
+                String sql = "SELECT count(*)::integer from mapfishapp.geodocs WHERE file_hash = ?;";
+                try (PreparedStatement st = connection.prepareStatement(sql)) {
+                    st.setString(1, fileName.substring(DOC_PREFIX.length(), DOC_PREFIX.length() + 32));
+                    try (ResultSet rs = st.executeQuery()) {
+                        if (rs.next()) {
+                            count = rs.getInt(1);
+                        }
+                    }
                 }
-            } catch(SQLException e) {
+            } catch (SQLException e) {
+                LOG.error(e);
                 throw new RuntimeException(e);
-            } finally {
-                if (rs != null) try { rs.close(); } catch (SQLException e) {LOG.error(e);}
-                if (st != null) try { st.close(); } catch (SQLException e) {LOG.error(e);}
-                if (connection != null) try { connection.close(); } catch (SQLException e) {LOG.error(e);}
             }
 
             return count > 0;
@@ -528,32 +496,26 @@ public abstract class A_DocService {
         if (fileName.length() == 4+32+DOC_PREFIX.length()) {
             String hash = fileName.substring(DOC_PREFIX.length(), DOC_PREFIX.length() + 32);
             // newest database storage
-            ResultSet rs = null;
-            PreparedStatement st = null;
-            Connection connection = null;
-            try {
-                connection = pgPool.getConnection();
-                st = connection.prepareStatement("SELECT raw_file_content from mapfishapp.geodocs WHERE file_hash = ?;");
-                st.setString(1, hash);
-                rs = st.executeQuery();
-
-                if (rs.next()) {
-                    content = rs.getString(1);
+            try (Connection connection = pgPool.getConnection()){
+                String sql = "SELECT raw_file_content from mapfishapp.geodocs WHERE file_hash = ?;";
+                try (PreparedStatement st = connection.prepareStatement(sql)) {
+                    st.setString(1, hash);
+                    try(ResultSet rs = st.executeQuery()){
+                        if (rs.next()) {
+                            content = rs.getString(1);
+                        }
+                    }
                 }
-
-                // now that we have loaded the content, update the metadata fields
-                st = connection.prepareStatement("UPDATE mapfishapp.geodocs set last_access = now() , access_count = access_count + 1 WHERE file_hash = ?;");
-                st.setString(1, hash);
-                st.executeUpdate();
-            }
-            catch (SQLException e) {
+                sql = "UPDATE mapfishapp.geodocs set last_access = now() , access_count = access_count + 1 WHERE file_hash = ?;";
+                try (PreparedStatement st = connection.prepareStatement(sql)) {
+                    // now that we have loaded the content, update the metadata fields
+                    st.setString(1, hash);
+                    st.executeUpdate();
+                }
+            }catch (SQLException e) {
+                LOG.error(e);
                 throw new RuntimeException(e);
-            } finally {
-                if (rs != null) try { rs.close(); } catch (SQLException e) {LOG.error(e);}
-                if (st != null) try { st.close(); } catch (SQLException e) {LOG.error(e);}
-                if (connection != null) try { connection.close(); } catch (SQLException e) {LOG.error(e);}
             }
-
         } else {
             // plain old "file" storage
             File file = new File(_tempDirectory + File.separatorChar + fileName);

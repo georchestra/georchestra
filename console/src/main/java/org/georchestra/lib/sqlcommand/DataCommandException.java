@@ -38,6 +38,7 @@ public class DataCommandException extends Exception {
 		super(e);
 	}
 
-	
-	
+    public DataCommandException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

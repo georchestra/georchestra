@@ -9,6 +9,9 @@
     http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
     <context:annotation-config/>
+ 
+    <context:property-placeholder location="classpath:mapfishapp.properties, file:${georchestra.datadir}/mapfishapp/mapfishapp.properties" ignore-resource-not-found="true" ignore-unresolvable="true" />
+
     <!-- autoscan these packages, the classic beans are defined in
          the next of the file. -->
     <context:component-scan base-package="org.georchestra.mapfishapp.addons.*"/>
@@ -17,6 +20,19 @@
 
     <!--  url mapping is directly handled with the spring annotations written in the following controllers -->
     <bean class="org.georchestra.mapfishapp.ws.OGCProxy" />
+
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="jdbcUrl" value="${jdbcUrl}"/>
+        <property name="driverClass" value="org.postgresql.Driver"/>
+        <property name="initialPoolSize" value="1"/>
+        <property name="minPoolSize" value="${dataSource.minPoolSize}"/>
+        <property name="maxPoolSize" value="${dataSource.maxPoolSize}"/>
+        <property name="checkoutTimeout" value = "${dataSource.timeout}"/>
+        <property name="idleConnectionTestPeriod" value="30"/>
+        <property name="maxIdleTime" value = "${dataSource.maxIdleTime}"/>
+        <property name="acquireIncrement" value="2"/>
+        <property name="testConnectionOnCheckout" value="true"/> <!-- Uses JDBC4's Connection.isValid() -->
+    </bean>
 
     <!-- File uploads --> 
     <bean id="multipartResolver"
@@ -33,11 +49,6 @@
     <bean class="org.georchestra.mapfishapp.ws.UpLoadGeoFileController" init-method="init">
         <property name="responseCharset" value="UTF-8"/>
         <property name="tempDirectory" value="/geoFileUploadsCache"/>
-    </bean>
-
-
-    <bean id="pgpool" class="org.georchestra.mapfishapp.model.ConnectionPool" init-method="init">
-        <property name="jdbcUrl" value="jdbc:postgresql://localhost:5432/georchestra?user=georchestra&amp;password=georchestra" /> 
     </bean>
 
     <!-- Documents controller -->

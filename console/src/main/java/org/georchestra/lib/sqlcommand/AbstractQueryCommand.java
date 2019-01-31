@@ -19,6 +19,7 @@
 
 package org.georchestra.lib.sqlcommand;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -45,38 +46,26 @@ public abstract class AbstractQueryCommand extends AbstractDataCommand {
 	 * This template method executes the sql statement specified in the prepareStatement method.
 	 */
 	@Override
-	public void execute() throws DataCommandException {
+    public void execute() throws DataCommandException {
 
-        assert (this.connection != null) : "database connection is null, use setConnection";
+        assert (this.dataSource != null) : "database connection pool is null, use setDataSource";
 
-        // executes the sql statement and  populates the list with the data present in the result set
-        ResultSet rs = null;
-        PreparedStatement pStmt=null;
-        try {
-            pStmt = prepareStatement();
+        // executes the sql statement and populates the list with the data present in
+        // the result set
+        try (Connection c = dataSource.getConnection(); //
+                PreparedStatement pStmt = prepareStatement(c); //
+                ResultSet rs = pStmt.executeQuery()) {
 
-            rs = pStmt.executeQuery();
-
-			this.resultList = new LinkedList<Map<String,Object>>();
+            this.resultList = new LinkedList<Map<String, Object>>();
 
             while (rs.next()) {
-                this.resultList.add( getRow(rs));
+                this.resultList.add(getRow(rs));
             }
 
         } catch (SQLException e) {
-
-            throw new DataCommandException(e.getMessage());
-
-        } finally{
-            try {
-                if(rs != null) rs.close();
-                if(pStmt != null) pStmt.close();
-
-            } catch (SQLException e1) {
-                throw new DataCommandException(e1.getMessage());
-            }
+            throw new DataCommandException(e.getMessage(), e);
         }
-	}
+    }
 
 	/**
 	 * The subclass must to define the sql statement to exectue
@@ -84,7 +73,7 @@ public abstract class AbstractQueryCommand extends AbstractDataCommand {
 	 * @return {@link PreparedStatement}}
 	 * @throws SQLException
 	 */
-	protected abstract PreparedStatement prepareStatement() throws SQLException;
+	protected abstract PreparedStatement prepareStatement(Connection connection) throws SQLException;
 
 
 	/**

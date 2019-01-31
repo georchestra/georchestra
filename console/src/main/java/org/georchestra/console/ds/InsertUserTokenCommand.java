@@ -19,6 +19,7 @@
 
 package org.georchestra.console.ds;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -53,11 +54,8 @@ final class InsertUserTokenCommand extends AbstractUpdateCommand{
 
 
 	@Override
-	protected PreparedStatement prepareStatement() throws SQLException {
-
-        assert this.connection != null: "database connection is null, use setConnection";
-
-        PreparedStatement pStmt = this.connection.prepareStatement(SQL_INSERT);
+	protected PreparedStatement prepareStatement(Connection connection) throws SQLException {
+        PreparedStatement pStmt = connection.prepareStatement(SQL_INSERT);
 
         pStmt.setString(1, (String)this.rowValues.get(DatabaseSchema.UID_COLUMN));
 		pStmt.setString(2, (String)this.rowValues.get(DatabaseSchema.TOKEN_COLUMN));

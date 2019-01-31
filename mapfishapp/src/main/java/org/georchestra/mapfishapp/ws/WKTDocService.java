@@ -19,7 +19,7 @@
 
 package org.georchestra.mapfishapp.ws;
 
-import org.georchestra.mapfishapp.model.ConnectionPool;
+import javax.sql.DataSource;
 
 /**
  * This service handles the storage and the loading of a WKT file on a temporary directory.
@@ -33,7 +33,7 @@ public class WKTDocService extends A_DocService {
     public static final String FILE_EXTENSION = ".wkt";
     public static final String MIME_TYPE = "text/plain";
 
-    public WKTDocService(final String tempDir, ConnectionPool pgpool) {
+    public WKTDocService(final String tempDir, DataSource pgpool) {
         super(FILE_EXTENSION, MIME_TYPE, tempDir, pgpool);
     }
 

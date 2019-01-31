@@ -19,6 +19,7 @@
 
 package org.georchestra.console.ds;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
@@ -44,11 +45,9 @@ final class DeleteUserTokenCommand extends AbstractUpdateCommand{
 
 
 	@Override
-	protected PreparedStatement prepareStatement() throws SQLException {
+	protected PreparedStatement prepareStatement(Connection connection) throws SQLException {
 
-        assert this.connection != null: "database connection is null, use setConnection";
-
-        PreparedStatement pStmt = this.connection.prepareStatement(SQL);
+	    PreparedStatement pStmt = connection.prepareStatement(SQL);
 
         pStmt.setString(1, this.uid);
 		
