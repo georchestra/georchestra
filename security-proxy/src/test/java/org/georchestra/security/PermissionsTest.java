@@ -90,8 +90,8 @@ public class PermissionsTest {
     public void testHost() throws IOException, ClassNotFoundException {
         Permissions perm = this.load("test-permissions-uriMatcher.xml");
 
-        // packages.georchestra.org has same IP address as sdi.georchestra.org
-        assertTrue(perm.isDenied(new URL("http://packages.georchestra.org/test.html")));
+        // sdi-stable.georchestra.org has same IP address as sdi.georchestra.org
+        assertTrue(perm.isDenied(new URL("http://sdi-stable.georchestra.org/test.html")));
         assertTrue(perm.isDenied(new URL("http://georchestra.org/test.html")));
     }
 
