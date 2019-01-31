@@ -10,6 +10,10 @@
         <to type="forward">/ws/index.jsp</to>
     </rule>
     <rule>
+        <from>^/resources/js/lib/external/ext/(.*)$</from>
+        <to type="forward">/webjars/extjs/4.1.1a/$1</to>
+    </rule>
+    <rule>
         <from>^/ws/(.*)$</from>
         <to type="forward">/ws/$1</to>
     </rule>

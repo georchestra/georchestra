@@ -20,6 +20,10 @@
   </properties>
   <dependencies>
     <dependency>
+      <groupId>org.webjars</groupId>
+      <artifactId>extjs</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>
       <scope>compile</scope>
@@ -128,9 +132,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <configuration>
-          <packagingExcludes>**/docs/**,js/lib/external/ext/examples/**,js/lib/external/ext/builds/**,js/lib/external/ext/pkgs/**</packagingExcludes>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.eclipse.jetty</groupId>

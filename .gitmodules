@@ -4,12 +4,6 @@
 [submodule "mapfishapp/src/main/webapp/lib/externals/openlayers"]
 	path = mapfishapp/src/main/webapp/lib/externals/openlayers
 	url = https://github.com/georchestra/openlayers.git
-[submodule "extractorapp/src/main/webapp/admin/extjs"]
-	path = extractorapp/src/main/webapp/admin/extjs
-	url = https://github.com/probonogeek/extjs.git
-[submodule "analytics/src/main/webapp/js/lib/external/ext"]
-	path = analytics/src/main/webapp/js/lib/external/ext
-	url = https://github.com/probonogeek/extjs.git
 [submodule "geonetwork"]
 	path = geonetwork
 	url = https://github.com/georchestra/geonetwork.git
