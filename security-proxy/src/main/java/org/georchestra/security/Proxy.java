@@ -28,6 +28,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.ProtocolException;
 import org.apache.http.StatusLine;
@@ -67,6 +68,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.annotation.Nullable;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -92,6 +94,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -663,7 +666,7 @@ public class Proxy {
                     statsLogger.info(OGCServiceMessageFormatter.format(authentication.getName(), sURL, org, roles));
                 
                 }
-                	
+                    
             } catch (Exception e) {
                 logger.error("Unable to log the request into the statistics logger", e);
             }
@@ -705,11 +708,19 @@ public class Proxy {
                 }
             }
 
-            headerManagement.copyResponseHeaders(request, request.getRequestURI(), proxiedResponse, finalResponse, this.targets);
-
-            if (statusCode == 302 || statusCode == 301) {
-                adjustLocation(request, proxiedResponse, finalResponse);
+            //Handle redirects
+            if (statusCode == HttpStatus.SC_MOVED_PERMANENTLY || statusCode == HttpStatus.SC_MOVED_TEMPORARILY) {
+                Optional<String> adjustedLocation = adjustLocation(request, proxiedResponse);
+                if (adjustedLocation.isPresent()) {
+                    finalResponse.setStatus(statusCode);
+                    finalResponse.setHeader("Location", adjustedLocation.get());
+                } else {
+                    finalResponse.sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Unable to proxify redirect URL");
+                }
+                return;
             }
+
+            headerManagement.copyResponseHeaders(request, request.getRequestURI(), proxiedResponse, finalResponse, this.targets);
             // get content type
             String contentType = null;
             if (proxiedResponse.getEntity() != null && proxiedResponse.getEntity().getContentType() != null) {
@@ -777,43 +788,34 @@ public class Proxy {
         return future.get(5, TimeUnit.MINUTES);
     }
 
-    private void copyLocationHeaders(HttpResponse proxiedResponse, HttpServletResponse finalResponse) {
-        for (Header locationHeader : proxiedResponse.getHeaders("Location")) {
-            finalResponse.addHeader(locationHeader.getName(), locationHeader.getValue());
-        }
+    private @Nullable String extractLocationHeader(HttpResponse proxiedResponse) {
+        Header location = proxiedResponse.getFirstHeader("Location");
+        return location == null ? null : location.getValue();
     }
 
-    private void adjustLocation(HttpServletRequest request, HttpResponse proxiedResponse, HttpServletResponse finalResponse) {
+    private Optional<String> adjustLocation(HttpServletRequest request, HttpResponse proxiedResponse) {
         if (logger.isDebugEnabled()) {
             logger.debug("adjustLocation called for request: " + request.getRequestURI());
         }
-        String target = findMatchingTarget(request);
-
-        if (logger.isDebugEnabled()) {
-            logger.debug("adjustLocation found target: " + target + " for request: " + request.getRequestURI());
-        }
-
-        if (target == null) {
-            copyLocationHeaders(proxiedResponse, finalResponse);
-            return;
-        }
-
-        String baseURL = targets.get(target);
-        URI baseURI = null;
-
-        try {
-            baseURI = new URI(baseURL);
-        } catch (URISyntaxException e) {
-            copyLocationHeaders(proxiedResponse, finalResponse);
-            return;
-        }
-
-        for (Header locationHeader : proxiedResponse.getHeaders("Location")) {
+        
+        final String target = findMatchingTarget(request);
+        final String locationHeader = extractLocationHeader(proxiedResponse);
+        
+        String adjustedLocation = locationHeader;
+        
+        if (target != null) {
             if (logger.isDebugEnabled()) {
-                logger.debug("adjustLocation process header: " + locationHeader.getValue());
+                logger.debug("adjustLocation found target: " + target + " for request: " + request.getRequestURI());
             }
+
+            final String baseURL = targets.get(target);
+            final URI baseURI;
             try {
-                URI locationURI = new URI(locationHeader.getValue());
+                baseURI = new URI(baseURL);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("adjustLocation process header: " + locationHeader);
+                }
+                URI locationURI = new URI(locationHeader);
                 URI resolvedURI = baseURI.resolve(locationURI);
 
                 if (logger.isDebugEnabled()) {
@@ -821,22 +823,22 @@ public class Proxy {
                 }
                 if (resolvedURI.toString().startsWith(baseURI.toString())) {
                     // proxiedResponse.removeHeader(locationHeader);
-                    String newLocation = "/" + target + "/" + resolvedURI.toString().substring(baseURI.toString().length());
-                    finalResponse.addHeader("Location", newLocation);
-                    // Header newLocationHeader = new BasicHeader("Location",
-                    // newLocation);
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("adjustLocation from: " + locationHeader.getValue() + " to " + newLocation);
+                    String resolvedSuffix = resolvedURI.toString().substring(baseURI.toString().length());
+                    String newLocation = "/" + target;
+                    if(!resolvedSuffix.startsWith("/")) {
+                        newLocation += "/";
                     }
-                    // proxiedResponse.addHeader(newLocationHeader);
-                } else {
-                    finalResponse.addHeader(locationHeader.getName(), locationHeader.getValue());
+                    newLocation += resolvedSuffix;
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("adjustLocation from: " + locationHeader + " to " + newLocation);
+                    }
+                    adjustedLocation = newLocation;
                 }
             } catch (URISyntaxException e) {
-                finalResponse.addHeader(locationHeader.getName(), locationHeader.getValue());
+                logger.info("Error creating baseURI from baseURL, leaving original Location header untouched", e);
             }
         }
-
+        return Optional.ofNullable(adjustedLocation);
     }
 
     /**
