@@ -8,8 +8,6 @@ ADD . /
 
 VOLUME [ "/tmp", "/run/jetty" ]
 
-ENTRYPOINT [ "/docker-entrypoint.sh" ]
-
 CMD ["sh", "-c", "exec java \
 -Djava.io.tmpdir=/tmp/jetty \
 -Dgeorchestra.datadir=/etc/georchestra \
