@@ -10,8 +10,10 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.BasicConfigurator;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.json.JSONArray;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -20,6 +22,10 @@ import org.springframework.util.ReflectionUtils;
 
 public class AddonControllerTest {
 
+	public static @BeforeClass void init(){
+		BasicConfigurator.configure();
+	}
+	
     @Test
     public void testConstructAddonsSpec() throws Exception {
         AddonController ac = new AddonController();

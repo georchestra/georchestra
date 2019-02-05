@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -193,7 +194,7 @@ public class ExtractorControllerTest {
 		try {
 			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			JSONObject jObj = new JSONObject();
-			jObj.put("uuid", 1);
+			jObj.put("uuid", UUID.randomUUID().toString());
 			jObj.put("priority", 0);
 			jObj.put("status", 	"RUNNING");
 			jObj.put("requestor", "pmauduit");

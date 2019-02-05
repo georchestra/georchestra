@@ -220,7 +220,8 @@ public class AddonController implements ServletContextAware {
                 continue;
             }
             try {
-                JSONArray parsed = new JSONArray(FileUtils.readFileToString(curConfig));
+                String contents = FileUtils.readFileToString(curConfig, "UTF-8");
+				JSONArray parsed = new JSONArray(contents);
                 for (int j = 0; j < parsed.length(); ++j) {
                     JSONObject addonInstance = parsed.getJSONObject(j);
                     addons.put(addonInstance);

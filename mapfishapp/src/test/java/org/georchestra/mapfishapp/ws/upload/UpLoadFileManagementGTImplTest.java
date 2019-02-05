@@ -126,8 +126,10 @@ public class UpLoadFileManagementGTImplTest {
 		JSONArray jsonArray = list.getJSONArray("features");
 		JSONObject reg = jsonArray.getJSONObject(0);
 
+		assertNotNull(getJsonFieldValue(reg, "id"));
+		assertNotNull(getJsonFieldValue(reg, "geometry"));
+
 		JSONObject properties = reg.getJSONObject("properties");
-		assertNotNull(getJsonFieldValue(properties, "id"));
 		assertNotNull(getJsonFieldValue(properties, "date"));
 		assertNotNull(getJsonFieldValue(properties, "plage_hora"));
 		assertNotNull(getJsonFieldValue(properties, "jour_nuit"));
@@ -152,11 +154,11 @@ public class UpLoadFileManagementGTImplTest {
 		assertNotNull(getJsonFieldValue(properties, "f_annee"));
 	}
 
-    private String getJsonFieldValue(JSONObject properties, String field) {
+    private Object getJsonFieldValue(JSONObject properties, String field) {
 
-        String value;
+        Object value;
         try {
-            value = properties.getString(field);
+            value = properties.get(field);
         } catch (JSONException e) {
             value = null;
         }

@@ -11,10 +11,6 @@
     <name>Atlas Webapp</name>
     <url>http://www.georchestra.org</url>
     <properties>
-        <camel.version>2.16.1</camel.version>
-        <geotools.version>11.0</geotools.version>
-        <spring.version>4.1.8.RELEASE</spring.version>
-        <spring.data.version>1.9.1.RELEASE</spring.data.version>
         <packageDatadirScmVersion>master</packageDatadirScmVersion>
     </properties>
     <dependencies>
@@ -22,57 +18,46 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
-            <version>${camel.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-spring</artifactId>
-            <version>${camel.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-http4</artifactId>
-            <version>${camel.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jsonpath</artifactId>
-            <version>${camel.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-context</artifactId>
-            <version>${camel.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-exec</artifactId>
-            <version>${camel.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache-extras.camel-extra</groupId>
             <artifactId>camel-hibernate</artifactId>
-            <version>2.14.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jpa</artifactId>
-            <version>${camel.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-groovy</artifactId>
-            <version>${camel.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-servlet</artifactId>
-            <version>${camel.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-gson</artifactId>
-            <version>${camel.version}</version>
         </dependency>
         <dependency>
           <groupId>org.apache.camel</groupId>
@@ -83,164 +68,132 @@
          <dependency>
            <groupId>ch.qos.logback</groupId>
            <artifactId>logback-classic</artifactId>
-           <version>1.1.7</version>
          </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.12</version>
         </dependency>
         <dependency>
           <groupId>org.hibernate</groupId>
           <artifactId>hibernate-core</artifactId>
-          <version>5.0.3.Final</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
-            <version>5.0.3.Final</version>
         </dependency>
         <dependency>
           <groupId>org.mapfish.print</groupId>
           <artifactId>print-lib</artifactId>
-          <version>3.5-SNAPSHOT</version>
         </dependency>
         <!-- Needed by mfpv3 at runtime, see
              https://github.com/mapfish/mapfish-print/issues/418 -->
         <dependency>
           <groupId>com.codahale.metrics</groupId>
           <artifactId>metrics-httpclient</artifactId>
-          <version>3.0.2</version>
         </dependency>
         <dependency>
           <groupId>com.codahale.metrics</groupId>
           <artifactId>metrics-healthchecks</artifactId>
-          <version>3.0.2</version>
         </dependency>
         <dependency>
           <groupId>com.codahale.metrics</groupId>
           <artifactId>metrics-logback</artifactId>
-          <version>3.0.2</version>
         </dependency>
         <dependency>
           <groupId>com.codahale.metrics</groupId>
           <artifactId>metrics-jvm</artifactId>
-          <version>3.0.2</version>
         </dependency>
         <dependency>
           <groupId>com.readytalk</groupId>
           <artifactId>metrics3-statsd</artifactId>
-          <version>4.1.0</version>
         </dependency>
         <dependency>
           <groupId>org.codehaus.jsr166-mirror</groupId>
           <artifactId>jsr166y</artifactId>
-          <version>1.7.0</version>
         </dependency>
         <dependency>
           <groupId>org.yaml</groupId>
           <artifactId>snakeyaml</artifactId>
-          <version>1.13</version>
         </dependency>
         <dependency>
           <groupId>org.geotools</groupId>
           <artifactId>gt-epsg-hsql</artifactId>
-          <version>${geotools.version}</version>
         </dependency>
         <dependency>
           <groupId>org.geotools</groupId>
           <artifactId>gt-render</artifactId>
-          <version>${geotools.version}</version>
         </dependency>
         <dependency>
           <groupId>org.geotools</groupId>
           <artifactId>gt-geojson</artifactId>
-          <version>${geotools.version}</version>
         </dependency>
         <dependency>
           <groupId>org.geotools</groupId>
           <artifactId>gt-geotiff</artifactId>
-          <version>${geotools.version}</version>
         </dependency>
         <dependency>
           <groupId>org.geotools</groupId>
           <artifactId>gt-wms</artifactId>
-          <version>${geotools.version}</version>
         </dependency>
         <dependency>
           <groupId>org.geotools.xsd</groupId>
           <artifactId>gt-xsd-gml3</artifactId>
-          <version>${geotools.version}</version>
         </dependency>
         <dependency>
           <groupId>org.geotools</groupId>
           <artifactId>gt-svg</artifactId>
-          <version>${geotools.version}</version>
         </dependency>
         <dependency>
           <groupId>org.geotools</groupId>
           <artifactId>gt-cql</artifactId>
-          <version>${geotools.version}</version>
         </dependency>
         <dependency>
           <groupId>com.google.guava</groupId>
           <artifactId>guava</artifactId>
-          <version>16.0.1</version>
         </dependency>
         <dependency>
           <groupId>net.sf.jasperreports</groupId>
           <artifactId>jasperreports</artifactId>
-          <version>6.1.1</version>
         </dependency>
         <dependency>
           <groupId>net.sf.jasperreports</groupId>
           <artifactId>jasperreports-fonts</artifactId>
-          <version>6.0.0</version>
         </dependency>
         <dependency>
           <groupId>org.springframework.security</groupId>
           <artifactId>spring-security-core</artifactId>
-          <version>4.1.0.RELEASE</version>
         </dependency>
         <dependency>
           <groupId>org.springframework.security</groupId>
           <artifactId>spring-security-web</artifactId>
-          <version>4.1.0.RELEASE</version>
         </dependency>
         <dependency>
           <groupId>org.springframework</groupId>
           <artifactId>spring-context-support</artifactId>
-          <version>${spring.version}</version>
         </dependency>
         <dependency>
           <groupId>org.springframework</groupId>
           <artifactId>spring-expression</artifactId>
-          <version>${spring.version}</version>
         </dependency>
         <dependency>
           <groupId>org.springframework</groupId>
           <artifactId>spring-beans</artifactId>
-          <version>${spring.version}</version>
         </dependency>
         <dependency>
           <groupId>org.springframework</groupId>
           <artifactId>spring-web</artifactId>
-          <version>${spring.version}</version>
         </dependency>
         <dependency>
           <groupId>org.springframework</groupId>
           <artifactId>spring-core</artifactId>
-          <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.velocity</groupId>
             <artifactId>velocity</artifactId>
-            <version>1.7</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jpa</artifactId>
-            <version>${spring.data.version}</version>
         </dependency>
         <dependency>
             <groupId>org.georchestra</groupId>
@@ -250,12 +203,10 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20080701</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>3.0-alpha-1</version>
+            <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -269,13 +220,11 @@
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>itextpdf</artifactId>
-            <version>5.5.9</version>
           </dependency>
           <!-- Test scope -->
           <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
             <scope>test</scope>
           </dependency>
       </dependencies>

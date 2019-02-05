@@ -7,8 +7,8 @@ import java.net.URL;
 import java.util.Map;
 
 import org.geotools.data.ows.SimpleHttpClient;
-import org.geotools.data.wfs.impl.WFSContentDataStore;
-import org.geotools.data.wfs.impl.WFSDataStoreFactory;
+import org.geotools.data.wfs.WFSDataStore;
+import org.geotools.data.wfs.WFSDataStoreFactory;
 import org.geotools.data.wfs.internal.WFSClient;
 import org.geotools.data.wfs.internal.WFSConfig;
 import org.geotools.ows.ServiceException;
@@ -16,7 +16,7 @@ import org.geotools.ows.ServiceException;
 public class MockWFSDataStoreFactory extends WFSDataStoreFactory {
 
 	@Override
-	public WFSContentDataStore createDataStore(Map arg0) throws IOException {
+	public WFSDataStore createDataStore(Map arg0) throws IOException {
         // connect to remote WFS
 
 		WFSConfig conf = WFSConfig.fromParams(arg0);
@@ -28,7 +28,7 @@ public class MockWFSDataStoreFactory extends WFSDataStoreFactory {
 		} catch (ServiceException e) {
 			fail("Unable to instantiate a WFSClient: " + e.getMessage());
 		}
-		WFSContentDataStore mockDs = new WFSContentDataStore(wfsclient);	
+		WFSDataStore mockDs = new WFSDataStore(wfsclient);	
 		return mockDs; 
 	}
 }
