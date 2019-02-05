@@ -426,8 +426,6 @@ public class RolesController {
 		if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_SUPERUSER")))
 			this.checkAuthorization(auth.getName(), users, putRole, deleteRole);
 
-		// 10/01/19, please TODO, wonder wether rebind should suffice
-
 		this.roleDao.addUsersInRoles(putRole, accounts, auth.getName());
 		this.roleDao.deleteUsersInRoles(deleteRole, accounts, auth.getName());
 

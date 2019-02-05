@@ -185,6 +185,8 @@
   "users.login"           : "Login",
   "users.organization"    : "Organization",
   "users.email"           : "Mail",
+  "users.pending"         : "Waiting validation",
+  "users.pending_desc"    : "Users waiting for validation",
 
   "msg.compose"           : "Compose message",
   "msg.date"              : "Date",

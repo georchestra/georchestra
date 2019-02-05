@@ -352,7 +352,11 @@ public final class AccountDaoImpl implements AccountDao {
     }
 
     @Override
-    public LdapName buildUserDn(Account account) {
+    public String buildFullUserDn(Account account) {
+        return String.format("%s,%s", buildUserDn(account.getUid(), account.isPending()), basePath);
+    }
+
+    private LdapName buildUserDn(Account account) {
         return buildUserDn(account.getUid(), account.isPending());
     }
 
@@ -583,16 +587,6 @@ public final class AccountDaoImpl implements AccountDao {
     private class AccountSearcher {
 
         private AndFilter filter;
-
-        public List<Account> getActiveAccounts() {
-            SearchControls sc = createSearchControls();
-            return ldapTemplate.search(userSearchBaseDN, filter.encode(), sc, attributMapper);
-        }
-
-        public List<Account> getPendingAccounts() {
-            SearchControls sc = createSearchControls();
-            return ldapTemplate.search(pendingUserSearchBaseDN, filter.encode(), sc, attributMapper);
-        }
 
         public List<Account> getActiveOrPendingAccounts() {
             SearchControls sc = createSearchControls();

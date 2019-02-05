@@ -43,9 +43,6 @@ public interface RoleDao {
 
 	void addUser(String  roleID, Account user, final String originLogin) throws DataServiceException, NameNotFoundException;
 
-
-	void addUsers(String cn, List<Account> addList, final String originLogin) throws DataServiceException, NameNotFoundException;
-
 	/**
 	 * Returns all roles. Each roles will contains its list of users.
 	 * 
@@ -56,8 +53,6 @@ public interface RoleDao {
 	List<Role> findAllForUser(Account account) throws DataServiceException;
 
 	void deleteUser(Account account, final String originLogin) throws DataServiceException;
-
-	void deleteUsers(String cn, List<Account> deleteList, String originLogin) throws DataServiceException, NameNotFoundException;
 
 	/**
 	 * Deletes the user from the role

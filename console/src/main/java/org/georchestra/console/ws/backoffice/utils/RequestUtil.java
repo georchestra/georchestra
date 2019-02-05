@@ -47,17 +47,11 @@ public class RequestUtil {
 	 * @return the value
 	 */
 	public static String getFieldValue(final JSONObject json, final String fieldName) {
-		if(json.isNull(fieldName)) {
-			return null;
-		}
-		return json.opt(fieldName).toString();
+		return json.optString(fieldName, null);
 	}
 
 	/**
 	 * Returns the boolean value associated to the fieldName.
-	 *
-	 * If the fieldName value is not present in the JSON object a null value is returned.
-	 *
 	 * @param json
 	 * @param fieldName
 	 *

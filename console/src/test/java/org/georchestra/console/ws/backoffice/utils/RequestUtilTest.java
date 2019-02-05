@@ -1,5 +1,6 @@
 package org.georchestra.console.ws.backoffice.utils;
 
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.json.JSONException;
@@ -25,6 +26,24 @@ public class RequestUtilTest {
 
         // Actually getting a string with fully qualified class
         assertTrue(ret.contains("MockHttpServletRequest"));
+    }
+
+    @Test
+    public void getFieldValueReturnNullWhenNoFound() throws JSONException {
+        JSONObject testObj = new JSONObject("{ \"number\": 5 }");
+
+        String ret = RequestUtil.getFieldValue(testObj, "i_am_not_defined_in_the_json");
+
+        assertNull(ret);
+    }
+
+    @Test
+    public void getFieldValueReturnBlankWhenFoundBlank() throws JSONException {
+        JSONObject testObj = new JSONObject("{ \"number\": \"\" }");
+
+        String ret = RequestUtil.getFieldValue(testObj, "number");
+
+        assertTrue(ret.equals(""));
     }
 
 }

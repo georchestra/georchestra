@@ -160,6 +160,6 @@ public interface AccountDao {
 
 	boolean hasUserDnChanged(Account account, Account modified);
 
-	LdapName buildUserDn(Account account);
+	String buildFullUserDn(Account account);
 
 }

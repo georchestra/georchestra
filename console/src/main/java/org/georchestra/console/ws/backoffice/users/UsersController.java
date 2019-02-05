@@ -595,7 +595,10 @@ public class UsersController {
 				account.setShadowExpire((new SimpleDateFormat("yyyy-MM-dd")).parse(shadowExpire));
 		}
 
-		account.setPending(RequestUtil.getBooleanFieldValue(json, UserSchema.PENDING));
+		try {
+			account.setPending(json.getBoolean(UserSchema.PENDING));
+		} catch (JSONException e) {
+		}
 
 		return account;
 	}

@@ -7,10 +7,12 @@ import org.json.JSONObject;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.io.IOException;
+
 public class OrgsControllerTest {
 
     @Test
-    public void updateFromRequestTakePendingIntoAccount() throws JSONException {
+    public void updateFromRequestTakePendingIntoAccount() throws JSONException, IOException {
         OrgsDao mockOrgsDao = Mockito.mock(OrgsDao.class);
         OrgsController toTest = new OrgsController(mockOrgsDao);
         Org mockOrg = Mockito.mock(Org.class);

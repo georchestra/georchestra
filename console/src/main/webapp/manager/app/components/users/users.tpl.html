@@ -13,10 +13,11 @@
                            'other': '{} {{ &quot;role.users&quot; | translate }}'}">
     </h3>
     <h3 ng-if="users.activeRole" class="roles-title">
-      {{users.activeRole.cn}}
+      <span ng-if="users.activeRole.cn!=='PENDING'">{{users.activeRole.cn}}</span>
+      <span ng-if="users.activeRole.cn==='PENDING'" translate>users.pending</span>
     </h3>
     <p ng-if="users.activeRole">
-      <em class="content-description">{{users.activeRole.description}}</em>
+      <em class="content-description">{{users.activeRole.description | translate}}</em>
     </p>
 
     <table class="table table-striped table-condensed">
