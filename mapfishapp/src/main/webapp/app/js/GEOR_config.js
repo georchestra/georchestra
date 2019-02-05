@@ -587,10 +587,10 @@ GEOR.config = (function() {
         /**
          * Constant: HELP_URL
          * {String} URL of the help ressource.
-         * Defaults to "http://cms.geobretagne.fr/assistance"
+         * Defaults to "http://cms.geobretagne.fr/etiquettes/tutoriels"
          */
         HELP_URL: getCustomParameter("HELP_URL",
-            "http://cms.geobretagne.fr/assistance"),
+            "http://cms.geobretagne.fr/etiquettes/tutoriels"),
 
         /**
          * Constant: CONTEXT_LOADED_INDICATOR_DURATION

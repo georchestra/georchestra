@@ -654,7 +654,7 @@ GEOR.mapinit = (function() {
                 // Handle the case where OGC layers/servers are being sent via GET parameters...
                 // eg ?layername=commune_bdcarto,opendata:carroyage
                 // &owstype=WMSLayer,WMSLayer
-                // &owsurl=http://geobretagne.fr/geoserver/dreal_b/ows,https://preprod.ppige-npdc.fr/geoserver/ows
+                // &owsurl=http://geobretagne.fr/geoserver/dreal_b/ows,https://ppige-npdc.fr/geoserver/ows
                 var p = GEOR.util.splitURL(window.location.href).params;
                 if (p.hasOwnProperty('LAYERNAME') && p.hasOwnProperty('OWSTYPE')
                     && p.hasOwnProperty('OWSURL')) {
