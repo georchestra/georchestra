@@ -38,11 +38,10 @@
     <bean id="multipartResolver"
       class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <property name="maxUploadSize">
-            <value>8388608</value>
+            <value>#{georchestraConfiguration.getProperty("maxUploadSize", 8388608)}</value>
         </property>
         <property name="maxInMemorySize">
-            <!--  default value 10240 bytes -->
-            <value>10240</value> 
+            <value>#{georchestraConfiguration.getProperty("maxInMemorySize", 10240)}</value>
         </property>
     </bean>
 
