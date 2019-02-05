@@ -108,8 +108,8 @@
           {{model.uid}} (<a href="javascript:void(0)" ng-click="view.edit_login=!view.edit_login">change</a>)
         </div>
         <div class="col-sm-8" ng-if="view.edit_login">
-          <!-- Server validation should match this pattern: /^[a-z]+\w*$/ -->
-          <input ng-model="model.uid" class="form-control" id="uid" placeholder="{{'user.login' | translate}}" ng-required="required.uid" ng-pattern="'^[a-z]+\\\\w*$'">
+          <!-- Server validation is in java/org/georchestra/console/ws/newaccount/NewAccountFormController.java -->
+          <input ng-model="model.uid" class="form-control" id="uid" placeholder="{{'user.login' | translate}}" ng-required="required.uid" ng-pattern="'^[a-zA-Z][a-zA-Z0-9\\\\.\\\\-]*$'">
         </div>
       </div>
 
