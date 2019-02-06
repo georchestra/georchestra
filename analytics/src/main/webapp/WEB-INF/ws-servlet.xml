@@ -45,6 +45,7 @@
     <!-- Substitutes any ${...} variables in this (and loaded) spring configuration file
 				with values from the properties file -->
     <context:property-placeholder location="/WEB-INF/analytics.properties,
+        file:${georchestra.datadir}/default.properties,
         file:${georchestra.datadir}/analytics/analytics.properties"
         ignore-resource-not-found="true" ignore-unresolvable="true" />
 
