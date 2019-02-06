@@ -13,6 +13,7 @@
   <properties>
     <finalName>header</finalName>
     <packageDatadirScmVersion>master</packageDatadirScmVersion>
+    <server>generic</server>
   </properties>
   <dependencies>
     <dependency>

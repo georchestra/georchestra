@@ -12,6 +12,7 @@
   <url>http://www.georchestra.org</url>
   <properties>
     <maven.test.skip>false</maven.test.skip>
+    <server>generic</server>
   </properties>
   <dependencies>
     <dependency>

@@ -17,6 +17,7 @@
     <jetty.version>9.2.13.v20150730</jetty.version>
     <marlin.version>0.7.5-Unsafe</marlin.version>
     <gs.spring.version>4.3.7.RELEASE</gs.spring.version>
+    <server>generic</server>
   </properties>
   <modules>
     <module>geoserver-submodule/src/web/core</module>
