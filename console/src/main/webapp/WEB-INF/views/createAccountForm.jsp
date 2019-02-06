@@ -184,7 +184,7 @@
         var name = document.form.firstName.value;
         var surname = document.form.surname.value;
         var str = stringDeaccentuate(name.toLowerCase().charAt(0)+ surname.toLowerCase());
-        str = str.replace(/\W*/g, '');
+        str = str.replace(/[^a-z0-9_.-]*/gi, '');
         document.form.uid.value = str;
     }
     /**
