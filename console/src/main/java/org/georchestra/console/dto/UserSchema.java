@@ -58,6 +58,7 @@ public interface UserSchema {
 
 	// Only used in JSON output
 	public static final String ORG_KEY = "org";
+	public static final String ORG_ID_KEY = "orgId";
 
 
 	public static final String[] ATTR_TO_RETRIEVE = {UID_KEY, COMMON_NAME_KEY, SURNAME_KEY, GIVEN_NAME_KEY, STREET_KEY,
