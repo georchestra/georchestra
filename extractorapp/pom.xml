@@ -12,7 +12,7 @@
   <url>http://www.georchestra.org</url>
   <properties>
     <maven.test.skip>false</maven.test.skip>
-    <packageDatadirScmVersion>master</packageDatadirScmVersion>
+    <packageDatadirScmVersion>18.12</packageDatadirScmVersion>
     <gt.version>9.2</gt.version>
     <server>generic</server>
   </properties>

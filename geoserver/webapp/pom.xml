@@ -11,7 +11,7 @@
   <name>geOrchestra GeoServer Web Application</name>
   <properties>
     <packageName>georchestra-geoserver</packageName>
-    <packageDatadirScmVersion>master</packageDatadirScmVersion>
+    <packageDatadirScmVersion>18.12</packageDatadirScmVersion>
   </properties>
   <dependencies>
     <dependency>

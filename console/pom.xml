@@ -15,7 +15,7 @@
     <skipIT>true</skipIT> <!-- disable integration tests by default, use the "it" profile to run them which enables them-->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <roo.version>1.1.5.RELEASE</roo.version>
-    <packageDatadirScmVersion>master</packageDatadirScmVersion>
+    <packageDatadirScmVersion>18.12</packageDatadirScmVersion>
     <server>generic</server>
   </properties>
   <repositories>
