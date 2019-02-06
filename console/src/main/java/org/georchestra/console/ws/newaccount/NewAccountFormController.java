@@ -322,7 +322,7 @@ public final class NewAccountFormController {
 			// A valid user identifier (uid) can only contain characters, numbers, hyphens or dot.
 			// It must begin with a character.
 			// keep in sync with the regexp in webapp/manager/app/templates/userForm.tpl.html
-			Pattern regexp = Pattern.compile("[a-zA-Z][a-zA-Z0-9\\.\\-]*");
+			Pattern regexp = Pattern.compile("[a-zA-Z][a-zA-Z0-9_\\.\\-]*");
 			Matcher m = regexp.matcher(formBean.getUid());
 			if(!m.matches())
 				result.rejectValue("uid", "uid.error.invalid", "required");
