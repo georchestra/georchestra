@@ -28,6 +28,8 @@ USER jetty
 
 VOLUME [ "/mnt/geoserver_datadir", "/mnt/geoserver_geodata", "/mnt/geoserver_tiles", "/tmp", "/run/jetty" ]
 
+ENTRYPOINT [ "/docker-entrypoint.sh" ]
+
 CMD ["sh", "-c", "exec java -Djava.io.tmpdir=/tmp/jetty \
 -Dgeofence-ovr=file:/etc/georchestra/geoserver/geofence/geofence-datasource-ovr.properties \
 -Dgeorchestra.datadir=/etc/georchestra \
