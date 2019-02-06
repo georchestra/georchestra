@@ -17,7 +17,7 @@ public class SimpleAccount {
     @JsonProperty(UserSchema.ORG_KEY)
     private String orgName;
 
-    @JsonIgnore
+    @JsonProperty(UserSchema.ORG_ID_KEY)
     private String orgId;
 
     @JsonProperty(UserSchema.MAIL_KEY)
