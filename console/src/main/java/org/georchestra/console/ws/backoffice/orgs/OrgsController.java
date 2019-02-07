@@ -19,6 +19,7 @@
 
 package org.georchestra.console.ws.backoffice.orgs;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.dao.DelegationDao;
@@ -168,7 +169,7 @@ public class OrgsController {
             produces="application/json; charset=utf-8")
     @ResponseBody
     public Org updateOrgInfos(@PathVariable String commonName, HttpServletRequest request)
-            throws IOException, JSONException {
+            throws IOException, JSONException, SQLException {
 
         this.checkOrgAuthorization(commonName);
 
@@ -190,6 +191,17 @@ public class OrgsController {
 
         // Persist changes to LDAP server
         this.orgDao.update(org);
+
+        if (!commonName.equals(org.getId())) {
+            for (DelegationEntry delegation : this.advancedDelegationDao.findByOrg(commonName)) {
+                delegation.removeOrg(commonName);
+                delegation.setOrgs(ArrayUtils.add(delegation.getOrgs(), org.getId()));
+                this.delegationDao.save(delegation);
+            }
+        }
+
+
+
         this.orgDao.update(orgExt);
 
         org.setOrgExt(orgExt);

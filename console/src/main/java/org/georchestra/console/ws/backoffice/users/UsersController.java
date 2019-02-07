@@ -423,12 +423,21 @@ public class UsersController {
 
 		// Finally store account in LDAP
 		accountDao.update(account, modified, auth.getName());
+
 		if (accountDao.hasUserDnChanged(account, modified)) {
 			roleDao.modifyUser(account, modified);
 		}
 
-		boolean uidChanged = ( ! modified.getUid().equals(account.getUid()));
-		if ((uidChanged) && (warnUserIfUidModified)) {
+		if (accountDao.hasUserLoginChanged(account, modified)) {
+			DelegationEntry delegationEntry = delegationDao.findOne(account.getUid());
+			if (delegationEntry != null) {
+				delegationDao.delete(delegationEntry);
+				delegationEntry.setUid(modified.getUid());
+				delegationDao.save(delegationEntry);
+			}
+		}
+
+		if (accountDao.hasUserLoginChanged(account, modified) && warnUserIfUidModified) {
 			this.emailFactory.sendAccountUidRenamedEmail(request.getSession().getServletContext(), modified.getEmail(),
 					modified.getCommonName(), modified.getUid());
 		}

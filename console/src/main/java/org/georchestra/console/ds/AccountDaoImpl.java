@@ -218,6 +218,11 @@ public final class AccountDaoImpl implements AccountDao {
     }
 
     @Override
+    public boolean hasUserLoginChanged(Account account, Account modified) {
+        return !account.getUid().equals(modified.getUid());
+    }
+
+    @Override
     public synchronized void delete(Account account, final String originLogin) throws NameNotFoundException {
         this.ldapTemplate.unbind(buildUserDn(account), true);
     }
