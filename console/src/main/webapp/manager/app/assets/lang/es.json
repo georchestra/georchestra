@@ -51,7 +51,7 @@
   "user.address"          : "Dirección",
   "user.org"              : "Organización",
   "user.description"      : "Descripción",
-  "user.manager"          : "Administrador",
+  "user.manager"          : "Responsable",
   "user.expire"           : "Fecha de expiración",
   "user.context"          : "Contexto",
   "user.reset"            : "Volver a generar",
