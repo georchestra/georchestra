@@ -45,8 +45,8 @@ Once submitted, the form disappears and a (configurable) message says something 
 
 What happens here ?
  * Depending on a "MODERATED_SIGNUP" config option, new users will be recorded in the LDAP and affected to :
-   * the PENDING role if MODERATED_SIGNUP = true. An admin will then be able to move them to USERS role.
-   * the USERS role if MODERATED_SIGNUP = false.
+   * the `ou=users` LDAP organizational unit if MODERATED_SIGNUP = false,
+   * the `ou=pendingusers` LDAP organizational unit if MODERATED_SIGNUP = true. An admin will then be able to move them to `ou=users`.
  * An email will be sent to one email address (configurable), saying that new users need an account.
 
 ### Edit user details
