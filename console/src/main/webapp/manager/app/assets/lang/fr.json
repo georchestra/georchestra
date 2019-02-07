@@ -60,7 +60,7 @@
   "user.gn"               : "Prénom",
   "user.phone"            : "Téléphone",
   "user.fax"              : "Fax",
-  "user.title"            : "Titre",
+  "user.title"            : "Fonction",
   "user.lastcontext"      : "Dernier contexte",
   "user.warning"          : "Attention, cette action est irréversible — ",
   "user.pendingmsg"       : "Utilisateur en attente ",

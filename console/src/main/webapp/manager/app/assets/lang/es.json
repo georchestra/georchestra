@@ -60,7 +60,7 @@
   "user.gn"               : "Nombres",
   "user.phone"            : "Teléfono",
   "user.fax"              : "Fax",
-  "user.title"            : "Título",
+  "user.title"            : "Puesto",
   "user.lastcontext"      : "Último contexto",
   "user.warning"          : "Cuidado, esta acción no se puede deshacer — ",
   "user.pendingmsg"       : "Usuario en espera de confirmación ",

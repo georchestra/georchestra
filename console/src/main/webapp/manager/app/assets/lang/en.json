@@ -63,7 +63,7 @@
   "user.gn"               : "First Name",
   "user.phone"            : "Phone",
   "user.fax"              : "Fax",
-  "user.title"            : "Title",
+  "user.title"            : "Job title",
   "user.lastcontext"      : "Last context",
   "user.warning"          : "Warning, this action is irreversible — ",
   "user.pendingmsg"       : "Pending user ",
