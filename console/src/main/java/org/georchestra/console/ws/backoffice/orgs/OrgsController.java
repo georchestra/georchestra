@@ -74,16 +74,16 @@ public class OrgsController {
     private OrgsDao orgDao;
 
     @Autowired
-    private Validation validation;
+    protected Validation validation;
 
     @Autowired
     private GeorchestraConfiguration georConfig;
 
     @Autowired
-    private DelegationDao delegationDao;
+    protected DelegationDao delegationDao;
 
     @Autowired
-    private AdvancedDelegationDao advancedDelegationDao;
+    protected AdvancedDelegationDao advancedDelegationDao;
 
     @Autowired
     public OrgsController(OrgsDao dao) {
