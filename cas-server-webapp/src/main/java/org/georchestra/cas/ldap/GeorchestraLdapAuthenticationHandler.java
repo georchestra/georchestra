@@ -41,7 +41,7 @@ import org.ldaptive.SearchResult;
 import org.ldaptive.auth.Authenticator;
 
 /**
- * Extends Ldap authentication handler by checking whether the user is pending or valid.
+ * Extends Ldap authentication handler by checking whether the user has at least one role.
  *
  * @author Jesse on 6/26/2014.
  */
@@ -52,7 +52,6 @@ public class GeorchestraLdapAuthenticationHandler extends LdapAuthenticationHand
     private String baseDn;
     private String roleSearchFilter;
     private String roleRoleAttribute;
-    private String pendingRoleName;
 
     private DefaultConnectionFactory connectionFactory;
 
@@ -76,9 +75,6 @@ public class GeorchestraLdapAuthenticationHandler extends LdapAuthenticationHand
         this.roleRoleAttribute = roleRoleAttribute;
     }
 
-    public void setPendingRoleName(String pendingRoleName) {
-        this.pendingRoleName = pendingRoleName;
-    }
     /**
      * Creates a new authentication handler that delegates to the given authenticator.
      *
@@ -89,15 +85,13 @@ public class GeorchestraLdapAuthenticationHandler extends LdapAuthenticationHand
                                                 @NotNull String adminPassword,
                                                 @NotNull String baseDn,
                                                 @NotNull String roleSearchFilter,
-                                                @NotNull String roleRoleAttribute,
-                                                @NotNull String pendingRoleName) {
+                                                @NotNull String roleRoleAttribute) {
         super(authenticator);
         this.adminUser = adminUser;
         this.adminPassword = adminPassword;
         this.baseDn = baseDn;
         this.roleSearchFilter = roleSearchFilter;
         this.roleRoleAttribute = roleRoleAttribute;
-        this.pendingRoleName = pendingRoleName;
     }
 
     @Override
@@ -117,14 +111,6 @@ public class GeorchestraLdapAuthenticationHandler extends LdapAuthenticationHand
 
             if (result.getEntries().isEmpty()) {
                 throw new AccountException("User has no roles.");
-            }
-            for (LdapEntry entry : result.getEntries()) {
-                final Collection<String> roleNames = entry.getAttribute(this.roleRoleAttribute).getStringValues();
-                for (String name : roleNames) {
-                    if (name.equals(this.pendingRoleName)) {
-                        throw new AccountException("User is still a pending user.");
-                    }
-                }
             }
         } catch (LdapException e) {
             throw new PreventedException("Unexpected LDAP error", e);
