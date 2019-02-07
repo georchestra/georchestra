@@ -140,7 +140,7 @@
   "delegation.restricted" : "Impossible d’ajouter une délégation pour un SUPERUSER.",
 
   "area.save"             : "Enregistrer la zone",
-  "area.updated"          : "Aire de compétence mise à jour",
+  "area.updated"          : "Zone de compétence mise à jour",
   "area.error"            : "Erreur d’enregistrement",
   "area.selectByBBOX"     : "Sélection par BBOX",
   "area.selection"        : "Sélection",
