@@ -170,7 +170,7 @@ public class PasswordRecoveryFormControllerTest {
 
     }
     /**
-     * test for recovery password when user is a PENDING USER
+     * test for recovery password when user is a pending user
      * @throws Exception
     */
     @Test
