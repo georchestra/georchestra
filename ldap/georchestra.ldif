@@ -85,7 +85,7 @@ cn: geoserver_privileged_user
 description: Do not modify.  This is a required user for extractorapp, geofence, mapfishapp...
 userPassword:: e1NIQX1XMlY4d2UrOFdNanpma28rMUtZVDFZcWZFVDQ9
 
-# testpendinguser, users, georchestra.org
+# testpendinguser, pendingusers, georchestra.org
 dn: uid=testpendinguser,ou=pendingusers,dc=georchestra,dc=org
 objectClass: inetOrgPerson
 objectClass: organizationalPerson
@@ -197,7 +197,7 @@ objectClass: organizationalUnit
 objectClass: top
 ou: orgs
 
-# orgs, georchestra.org
+# pendingorgs, georchestra.org
 dn: ou=pendingorgs,dc=georchestra,dc=org
 objectClass: organizationalUnit
 objectClass: top

@@ -54,9 +54,9 @@ public interface UserSchema {
 	public static final String MANAGER_KEY = "manager";
 	public static final String CONTEXT_KEY = "preferredLanguage";
 	public static final String MEMBER_OF = "memberOf";
-	public static final String PENDING = "pending";
 
 	// Only used in JSON output
+	public static final String PENDING = "pending";
 	public static final String ORG_KEY = "org";
 	public static final String ORG_ID_KEY = "orgId";
 

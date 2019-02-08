@@ -172,8 +172,10 @@ public final class NewAccountFormController {
 	}
 
 	/**
-	 * Creates a new account in ldap. If the application was configured with "moderated signup" the new account is added with the PENDING role,
-	 * in other case, it will be inserted with the USER role
+	 * Creates a new account in ldap. If the application was configured with
+	 * "moderated signup" the new account is added inside "ou=pendingusers"
+	 * LDAP organizational unit, in the other case, it's inserted in the
+	 * "ou=users" organization unit.
 	 *
 	 *
 	 * @param formBean

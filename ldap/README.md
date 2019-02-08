@@ -22,19 +22,21 @@ This files creates the root DN, which is by default ```dc=georchestra,dc=org```.
 
 This file creates a basic LDAP tree for geOrchestra.
 
-It creates 3 Organisational Units (ou):
- * one for users: ```ou=users,dc=georchestra,dc=org``` 
- * an other one for roles: ```ou=roles,dc=georchestra,dc=org```
- * a last one for orgs: ```ou=orgs,dc=georchestra,dc=org```
+It creates 5 Organisational Units (ou):
+ * one for users: ```ou=users,dc=georchestra,dc=org```
+ * one for pending users (waiting for validation): ```ou=pendingusers,dc=georchestra,dc=org```
+ * one for roles: ```ou=roles,dc=georchestra,dc=org```
+ * one for orgs: ```ou=orgs,dc=georchestra,dc=org```
+ * and a last one for pending orgs (waiting for validation): ```ou=pendingorgs,dc=georchestra,dc=org```
 
 The basic users:
  * ```testuser``` has the USER role. The password is **testuser**.
- * ```testpendinguser``` has the PENDING role, which means an admin has to validate it. The password is **testpendinguser**.
  * ```testreviewer``` has the USER & GN_REVIEWER roles. The password is **testreviewer**.
  * ```testeditor``` has the USER & GN_EDITOR roles. The password is **testeditor**.
- * ```testadmin``` has the USER, GN_ADMIN, ADMINISTRATOR and MOD_* roles. The password is **testadmin**
- * ```testdelegatedadmin``` has the USER role. Is able to grant the EXTRACTORAPP & GN_EDITOR roles to members of the psc & c2c orgs. The password is **testdelegatedadmin**
+ * ```testadmin``` has the USER, GN_ADMIN, ADMINISTRATOR and MOD_* roles. The password is **testadmin**.
+ * ```testdelegatedadmin``` has the USER role. Is able to grant the EXTRACTORAPP & GN_EDITOR roles to members of the psc & c2c orgs. The password is **testdelegatedadmin**.
  * ```geoserver_privileged_user``` is a required user. It is internally used by the extractorapp, mapfishapp & geofence modules. The default password is ```gerlsSnFd6SmM``` (you should change it, and update the datadir as explained in its [README](https://github.com/georchestra/datadir/blob/18.06/README.md)).
+ * ```testpendinguser``` is inside the pending users organizational unit, which means an admin has to validate it. The password is **testpendinguser**.
 
 Please note that `test*` users should be deleted before going into production !
 
@@ -45,7 +47,16 @@ The roles:
  * ```GN_ADMIN``` is for GeoNetwork administrators,
  * ```GN_EDITOR``` is for metadata editors,
  * ```GN_REVIEWER``` is for metadata reviewers,
- * ```USER``` is for the basic SDI users,
- * ```PENDING``` is the landing group for people asking an account on the platform. This group gives no right by default.
+ * ```USER``` is for the basic SDI users.
 
 Other roles can be defined by the platform administrator, using eg the console.
+
+Finally, it creates 4 organizations:
+ * `psc` with the following members: `testadmin` and `testuser`
+ * `c2c` with the following member: `testeditor`
+ * `cra` with the following member: `testreviewer`
+ * `pendingorg`, inside the pending orgs organizational unitm, which means an admin has to validate it. It contains the following member: `testpendinguser`.
+
+Note that for each organization, two objects are created in the LDAP tree:
+ * an `organization` object that contains the fields that describe the organization (`o`, `businessCategory`, `postalAddress`)
+ * a `groupOfMembers` object that mainly contains one `member` entry for each of its members.

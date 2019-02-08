@@ -106,7 +106,6 @@
         <constructor-arg value="${ldap.authn.roleSearchBaseDn}" />
         <constructor-arg value="${ldap.authn.roleSearchFilter}" />
         <constructor-arg value="${ldap.authn.roleRoleAttribute}" />
-        <constructor-arg value="${ldap.authn.pendingRoleName}" />
 
     </bean>
 
