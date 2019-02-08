@@ -11,6 +11,7 @@ import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountFactory;
 import org.georchestra.console.dto.Org;
 import org.georchestra.console.dto.UserSchema;
+import org.georchestra.console.model.DelegationEntry;
 import org.georchestra.console.ws.backoffice.roles.RoleProtected;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,6 +53,7 @@ import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.when;
 
 public class UsersControllerTest {
@@ -66,6 +68,7 @@ public class UsersControllerTest {
 
     private MockHttpServletRequest request;
     private MockHttpServletResponse response;
+    private DelegationDao mockDelegationDao;
 
     @Before
     public void setUp() {
@@ -108,7 +111,8 @@ public class UsersControllerTest {
         orgsDao.setAccountDao(dao);
         usersCtrl = new UsersController(dao, userRule);
         usersCtrl.setOrgDao(orgsDao);
-        usersCtrl.setDelegationDao(mock(DelegationDao.class));
+        mockDelegationDao = mock(DelegationDao.class);
+        usersCtrl.setDelegationDao(mockDelegationDao);
         usersCtrl.setRoleDao(roleDao);
 
         request = new MockHttpServletRequest();
@@ -337,6 +341,7 @@ public class UsersControllerTest {
     @Test
     public void testUpdate() throws Exception {
         Mockito.reset(ldapTemplate);
+        Mockito.reset(mockDelegationDao);
 
         JSONObject reqUsr = new JSONObject().put("sn","newPmauduit")
                 .put("postalAddress", "newAddress")
@@ -350,7 +355,8 @@ public class UsersControllerTest {
                 .put("description", "CEO geOrchestra Corporation")
                 .put("givenName", "newPierre")
                 .put("pending", "true")
-                .put("org", "new_org");
+                .put("org", "new_org")
+                .put("uid", "pMaUdUiT");
 
         request.setContent(reqUsr.toString().getBytes());
 
@@ -377,7 +383,7 @@ public class UsersControllerTest {
         Mockito.doReturn(mock(DirContextOperations.class)).when(ldapTemplate).lookupContext(argThat(new ArgumentMatcher<Name>() {
             @Override
             public boolean matches(Object o) {
-                return o.toString().startsWith("uid=pmauduit,ou=pendingusers");
+                return o.toString().startsWith("uid=pMaUdUiT,ou=pendingusers");
             }
         }));
         Mockito.doReturn(mockDirCtxForPsc).when(ldapTemplate).lookupContext(argThat(new ArgumentMatcher<Name>() {
@@ -412,6 +418,10 @@ public class UsersControllerTest {
             }
         }), any(ContextMapper.class));
 
+        DelegationEntry toBeModified =  new DelegationEntry();
+        toBeModified.setUid("dummy");
+        Mockito.when(mockDelegationDao.findOne("pmauduit")).thenReturn(toBeModified);
+
         Account ret = usersCtrl.update("pmauduit", request);
 
         // Add missing param in request
@@ -428,7 +438,7 @@ public class UsersControllerTest {
         assertEquals("newPierre", ret.getGivenName());
         assertEquals("pmauduit@georchestra.org", ret.getEmail());
         assertEquals("newPierre newPmauduit", ret.getCommonName());
-        assertEquals("pmauduit", ret.getUid());
+        assertEquals("pMaUdUiT", ret.getUid());
         assertEquals(true, ret.isPending());
         assertEquals("new_org", ret.getOrg());
 
@@ -439,10 +449,58 @@ public class UsersControllerTest {
 
         assertEquals("uid=pmauduit,ou=users,dc=georchestra,dc=org", delDnCaptor.getValue());
         assertEquals("uid=pmauduit,ou=users,dc=georchestra,dc=org", addDnCaptor.getValue());
+
+        Mockito.verify(mockDelegationDao).delete(toBeModified);
+        Mockito.verify(mockDelegationDao).save(toBeModified);
+        assertEquals("pMaUdUiT", toBeModified.getUid());
     }
 
     @Test
+    public void updateUidChangeButNoAssociatedDelegation() throws Exception {
+        Mockito.reset(ldapTemplate);
+        Mockito.reset(mockDelegationDao);
+
+        JSONObject reqUsr = new JSONObject()
+                .put("sn","newPmauduit")
+                .put("uid", "pMaUdUiT")
+                .put("org", "psc");
+
+        request.setContent(reqUsr.toString().getBytes());
+
+        Account initialState = AccountFactory.createBrief("pmauduit",
+                "monkey123",
+                "Pierre",
+                "pmauduit",
+                "pmauduit@georchestra.org",
+                "+33123456789",
+                "developer & sysadmin",
+                "dev&ops");
+        initialState.setPending(false);
+        initialState.setOrg("psc");
+
+        Mockito.doReturn(initialState).when(ldapTemplate).lookup(any(Name.class), any(String[].class), any(ContextMapper.class));
+
+        Mockito.doReturn(mock(DirContextOperations.class)).when(ldapTemplate).lookupContext(argThat(new ArgumentMatcher<Name>() {
+            @Override
+            public boolean matches(Object o) {
+                return o.toString().startsWith("uid=pMaUdUiT,ou=users");
+            }
+        }));
+
+
+        Mockito.when(mockDelegationDao.findOne("pmauduit")).thenReturn(null);
+
+        usersCtrl.update("pmauduit", request);
+
+        Mockito.verify(mockDelegationDao, never()).delete(anyString());
+        Mockito.verify(mockDelegationDao, never()).save(any(DelegationEntry.class));
+    }
+
+
+    @Test
     public void testUpdateEmptyTelephoneNumber() throws Exception {
+        Mockito.reset(mockDelegationDao);
+
         JSONObject reqUsr = new JSONObject().put("sn","newPmauduit")
                 .put("postalAddress", "newAddress")
                 .put("postOfficeBox", "newPOBox")
@@ -493,12 +551,27 @@ public class UsersControllerTest {
         assertEquals("newPierre newPmauduit", ret.getCommonName());
         assertEquals("pmauduit", ret.getUid());
         assertEquals("", ret.getOrg());
+
+        Mockito.verify(mockDelegationDao, never()).findOne(anyString());
+        Mockito.verify(mockDelegationDao, never()).delete(anyString());
+        Mockito.verify(mockDelegationDao, never()).save(any(DelegationEntry.class));
+
     }
 
     @Test(expected = AccessDeniedException.class)
     public void testDeleteUserProtected() throws Exception {
+        Mockito.reset(mockDelegationDao);
+
         mockLookup("geoserver_privileged_user", false);
+
+        DelegationEntry toBeDeleted =  new DelegationEntry();
+        Mockito.when(mockDelegationDao.findOne("geoserver_privileged_user")).thenReturn(toBeDeleted);
+
         usersCtrl.delete("geoserver_privileged_user", request, response);
+
+        Mockito.verify(mockDelegationDao).delete(toBeDeleted);
+        Mockito.verify(mockDelegationDao, never()).save(any(DelegationEntry.class));
+
     }
 
     @Test(expected = DataServiceException.class)
