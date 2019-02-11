@@ -92,7 +92,7 @@
         <property name="allowIfAllAbstainDecisions" value="false" />
         <property name="decisionVoters">
             <list>
-                <ref local="roleVoter" />
+                <ref bean="roleVoter" />
             </list>
         </property>
     </bean>
