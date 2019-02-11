@@ -980,6 +980,14 @@
       <name>Spring releases</name>
       <url>https://repo.spring.io/release</url>
     </repository>
+    <repository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>atlassian</id>
+      <name>Atlassian Repository</name>
+      <url>https://maven.atlassian.com/3rdparty/</url>
+    </repository>
   </repositories>
   <pluginRepositories>
     <pluginRepository>
