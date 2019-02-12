@@ -21,44 +21,44 @@
     <jpa:repositories base-package="org.georchestra.atlas.repository" />
 
     <context:property-placeholder
-      location="classpath:atlas.properties,
+      location="
                 file:${georchestra.datadir}/default.properties,
                 file:${georchestra.datadir}/atlas/atlas.properties"
       ignore-resource-not-found="true" ignore-unresolvable="true" />
 
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
         <property name="driverClass" value="org.postgresql.Driver"/>
-        <property name="jdbcUrl" value="${psql.url}"/>
-        <property name="user" value="${psql.user}"/>
-        <property name="password" value="${psql.pass}"/>
+        <property name="jdbcUrl" value="${psql.url:jdbc:postgresql://localhost:5432/georchestra}"/>
+        <property name="user" value="${psql.user:georchestra}"/>
+        <property name="password" value="${psql.pass:georchestra}"/>
         <property name="initialPoolSize" value="1"/>
-        <property name="minPoolSize" value="${dataSource.minPoolSize}"/>
-        <property name="maxPoolSize" value="${dataSource.maxPoolSize}"/>
-        <property name="checkoutTimeout" value = "${dataSource.timeout}"/>
+        <property name="minPoolSize" value="${dataSource.minPoolSize:1}"/>
+        <property name="maxPoolSize" value="${dataSource.maxPoolSize:5}"/>
+        <property name="checkoutTimeout" value = "${dataSource.timeout:2000}"/>
         <property name="idleConnectionTestPeriod" value="30"/>
-        <property name="maxIdleTime" value = "${dataSource.maxIdleTime}"/>
+        <property name="maxIdleTime" value = "${dataSource.maxIdleTime:60}"/>
         <property name="acquireIncrement" value="1"/>
         <property name="testConnectionOnCheckout" value="true"/> <!-- Uses JDBC4's Connection.isValid() -->
     </bean>
 
     <bean id="populateProperties" class="org.georchestra.atlas.CamelPopulatePropertiesComponent">
-        <property name="baseUrl" value="${atlas.baseUrl}"/>
+        <property name="baseUrl" value="${atlas.baseUrl:https://georchestra.mydomain.org/atlas}"/>
     </bean>
 
     <bean id="specAsPdf" class="org.georchestra.atlas.CamelMapfishPrintComponent" init-method="init" />
 
     <bean id="prepareMail" class="org.georchestra.atlas.AtlasMailComponent" init-method="init">
-        <property name="georBaseUrl" value="${atlas.baseUrl}" />
-        <property name="emailFrom" value="${atlas.emailFrom}" />
-        <property name="emailSubject" value="${atlas.emailSubject}" />
+        <property name="georBaseUrl" value="${atlas.baseUrl:https://georchestra.mydomain.org/atlas}" />
+        <property name="emailFrom" value="${atlas.emailFrom:noreply+atlas@georchestra.org}" />
+        <property name="emailSubject" value="${atlas.emailSubject:[geOrchestra] Your Atlas request}" />
     </bean>
 
     <bean id="bundlePdf" class="org.georchestra.atlas.BundlePdfComponent" init-method="init">
-        <property name="tempDir" value="${atlas.temporaryDirectory}" />
+        <property name="tempDir" value="${atlas.temporaryDirectory:/tmp/atlas}" />
     </bean>
 
     <bean id="jobController" class="org.georchestra.atlas.JobController" init-method="init">
-        <property name="tempDir" value="${atlas.temporaryDirectory}" />
+        <property name="tempDir" value="${atlas.temporaryDirectory:/tmp/atlas}" />
     </bean>
 
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
