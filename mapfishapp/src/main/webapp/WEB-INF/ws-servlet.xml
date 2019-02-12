@@ -37,12 +37,8 @@
     <!-- File uploads --> 
     <bean id="multipartResolver"
       class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-        <property name="maxUploadSize">
-            <value>#{georchestraConfiguration.getProperty("maxUploadSize", 8388608)}</value>
-        </property>
-        <property name="maxInMemorySize">
-            <value>#{georchestraConfiguration.getProperty("maxInMemorySize", 10240)}</value>
-        </property>
+        <property name="maxUploadSize" value="${maxUploadSize:8388608}"/>
+        <property name="maxInMemorySize" value="${maxInMemorySize:10240}"/>
     </bean>
 
     <bean class="org.georchestra.mapfishapp.ws.UpLoadGeoFileController" init-method="init">
@@ -66,9 +62,9 @@
         <property name="suffix" value=".jsp"/>
         <property name="attributes">
             <map>
-                <entry key="instanceName" value="#{georchestraConfiguration.getProperty('instanceName', 'geOrchestra')}" />
-                <entry key="defaultLanguage" value="#{georchestraConfiguration.getProperty('language', 'en')}" />
-                <entry key="georCustomPath" value="#{georchestraConfiguration.getProperty('georCustomPath', '/ws/app/js/GEOR_custom.js')}" />
+                <entry key="instanceName" value="${instanceName:geOrchestra}" />
+                <entry key="defaultLanguage" value="${language:en}" />
+                <entry key="georCustomPath" value="${georCustomPath:/ws/app/js/GEOR_custom.js}" />
                 <entry key="headerHeight" value="${headerHeight:90}" />
                 <entry key="headerUrl" value="${headerUrl:/header/}" />
             </map>
