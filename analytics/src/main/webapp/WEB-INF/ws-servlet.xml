@@ -40,6 +40,14 @@
         <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
         <property name="prefix" value="/WEB-INF/jsp/"/>
         <property name="suffix" value=".jsp"/>
+        <property name="attributes">
+            <map>
+                <entry key="instanceName" value="${instanceName:geOrchestra}"/>
+                <entry key="defaultLanguage" value="${language:en}"/>
+                <entry key="headerUrl" value="${headerUrl:/header/}"/>
+                <entry key="headerHeight" value="${headerHeight:90}"/>
+            </map>
+        </property>
     </bean>
 
     <!-- Substitutes any ${...} variables in this (and loaded) spring configuration file
