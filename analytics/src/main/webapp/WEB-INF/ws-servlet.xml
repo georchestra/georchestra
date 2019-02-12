@@ -10,19 +10,19 @@
     <context:annotation-config/>
 
     <bean id="waitForDb" class="org.georchestra.commons.WaitForDb" init-method="test">
-        <property name="url" value="${dlJdbcUrlOGC}"/>
+        <property name="url" value="${dlJdbcUrlOGC:jdbc:postgresql://localhost:5432/georchestra?user=georchestra&amp;password=georchestra}"/>
         <property name="driverClassName" value="org.postgresql.Driver"/>
     </bean>
 
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" depends-on="waitForDb">
-        <property name="jdbcUrl" value="${dlJdbcUrlOGC}"/>
+        <property name="jdbcUrl" value="${dlJdbcUrlOGC:jdbc:postgresql://localhost:5432/georchestra?user=georchestra&amp;password=georchestra}"/>
         <property name="driverClass" value="org.postgresql.Driver"/>
         <property name="initialPoolSize" value="1"/>
-        <property name="minPoolSize" value="${dataSource.minPoolSize}"/>
-        <property name="maxPoolSize" value="${dataSource.maxPoolSize}"/>
-        <property name="checkoutTimeout" value = "${dataSource.timeout}"/>
+        <property name="minPoolSize" value="${dataSource.minPoolSize:2}"/>
+        <property name="maxPoolSize" value="${dataSource.maxPoolSize:2}"/>
+        <property name="checkoutTimeout" value = "${dataSource.timeout:2000}"/>
         <property name="idleConnectionTestPeriod" value="30"/>
-        <property name="maxIdleTime" value = "${dataSource.maxIdleTime}"/>
+        <property name="maxIdleTime" value = "${dataSource.maxIdleTime:60}"/>
         <property name="acquireIncrement" value="2"/>
         <property name="testConnectionOnCheckout" value="true"/> <!-- Uses JDBC4's Connection.isValid() -->
     </bean>
@@ -44,13 +44,13 @@
 
     <!-- Substitutes any ${...} variables in this (and loaded) spring configuration file
 				with values from the properties file -->
-    <context:property-placeholder location="/WEB-INF/analytics.properties,
+    <context:property-placeholder location="
         file:${georchestra.datadir}/default.properties,
         file:${georchestra.datadir}/analytics/analytics.properties"
         ignore-resource-not-found="true" ignore-unresolvable="true" />
 
     <bean id="statisticsController" class="org.georchestra.analytics.StatisticsController">
-        <constructor-arg name="localTimezone" value="${localTimezone}"/>
+        <constructor-arg name="localTimezone" value="${localTimezone:Europe/Paris}"/>
     </bean>
 
     <bean id="georchestraConfiguration" class="org.georchestra.commons.configuration.GeorchestraConfiguration">
