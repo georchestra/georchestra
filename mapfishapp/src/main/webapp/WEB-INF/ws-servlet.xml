@@ -44,6 +44,7 @@
     <bean class="org.georchestra.mapfishapp.ws.UpLoadGeoFileController" init-method="init">
         <property name="responseCharset" value="UTF-8"/>
         <property name="tempDirectory" value="/geoFileUploadsCache"/>
+        <property name="docTempDir" value="${docTempDir:/tmp}"/>
     </bean>
 
     <!-- Documents controller -->
