@@ -41,7 +41,7 @@ public class EmailFactoryDefault extends AbstractEmailFactory {
 
         return new Email(request, recipients, emailSubject, this.smtpHost,
                 this.smtpPort, this.emailHtml, this.replyTo, this.from,
-                this.bodyEncoding, this.subjectEncoding, this.georConfig) {
+                this.bodyEncoding, this.subjectEncoding, this.publicUrl, this.instanceName) {
             public void sendDone(List<String> successes, List<String> failures,
                     List<String> oversized, long fileSize)
                     throws MessagingException {
@@ -58,8 +58,8 @@ public class EmailFactoryDefault extends AbstractEmailFactory {
                 LOG.debug("preparing to send extraction result email");
                 String msg = new String(msgDone);
                 if (msg != null) {
-                    msg = msg.replaceAll("\\{publicUrl\\}", this.georConfig.getProperty("publicUrl"));
-                    msg = msg.replaceAll("\\{instanceName\\}", this.georConfig.getProperty("instanceName"));
+                    msg = msg.replaceAll("\\{publicUrl\\}", publicUrl);
+                    msg = msg.replaceAll("\\{instanceName\\}", instanceName);
                     msg = msg.replace("{link}", url);
                     msg = msg.replace("{emails}", Arrays.toString(recipients));
                     msg = msg.replace("{expiry}", String.valueOf(expiry));
@@ -82,8 +82,8 @@ public class EmailFactoryDefault extends AbstractEmailFactory {
                 LOG.debug("preparing to send extraction acknowledgement email");
                 String msg = new String(msgAck);
                 if (msg != null) {
-                    msg = msg.replaceAll("\\{publicUrl\\}", this.georConfig.getProperty("publicUrl"));
-                    msg = msg.replaceAll("\\{instanceName\\}", this.georConfig.getProperty("instanceName"));
+                    msg = msg.replaceAll("\\{publicUrl\\}", publicUrl);
+                    msg = msg.replaceAll("\\{instanceName\\}", instanceName);
                 }
                 // Normalize newlines
                 msg = msg.replaceAll("\n[\n]+", "\n\n");
