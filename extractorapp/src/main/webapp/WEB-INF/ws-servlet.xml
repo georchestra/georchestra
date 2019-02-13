@@ -82,6 +82,8 @@
         <property name="extraKeywordsFile" value="/org/georchestra/extractorapp/i18n/extra_keywords_en.properties" />
         <property name="emailSubject" value="${emailSubject:[geOrchestra] Your extraction request}"/>
         <property name="language" value="${language:en}"/>
+        <property name="publicUrl" value="${publicUrl:https://georchestra.mydomain.org}"/>
+        <property name="instanceName" value="${instanceName:geOrchestra}"/>
     </bean>
 
     <bean id="georchestraConfiguration" class="org.georchestra.commons.configuration.GeorchestraConfiguration">

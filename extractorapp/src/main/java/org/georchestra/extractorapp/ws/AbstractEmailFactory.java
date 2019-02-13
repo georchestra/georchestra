@@ -53,6 +53,8 @@ public abstract class AbstractEmailFactory {
 	protected String  extraKeywordsFile;
 	protected String  emailSubject;
 	protected String  language;
+	protected String  publicUrl;
+	protected String  instanceName;
 
     private boolean frozen = false;
 
@@ -248,5 +250,13 @@ public abstract class AbstractEmailFactory {
 
 	public void setLanguage(String language) {
 		this.language = language;
+	}
+
+	public void setPublicUrl(String publicUrl) {
+		this.publicUrl = publicUrl;
+	}
+
+	public void setInstanceName(String instanceName) {
+		this.instanceName = instanceName;
 	}
 }
