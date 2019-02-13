@@ -52,6 +52,7 @@ public abstract class AbstractEmailFactory {
 	protected String  emailTemplateFile;
 	protected String  extraKeywordsFile;
 	protected String  emailSubject;
+	protected String  language;
 
     private boolean frozen = false;
 
@@ -63,13 +64,7 @@ public abstract class AbstractEmailFactory {
     public void init() {
         if ((georConfig != null) && (georConfig.activated())) {
             LOG.info("geOrchestra datadir: reconfiguring bean " + this.getClass());
-            smtpHost = georConfig.getProperty("smtpHost");
-            smtpPort = Integer.parseInt(georConfig.getProperty("smtpPort"));
-            emailHtml = georConfig.getProperty("emailHtml");
-            replyTo = georConfig.getProperty("replyTo");
-            from = georConfig.getProperty("from");
-            extraKeywordsFile = String.format("i18n/extra_keywords_%s", georConfig.getProperty("language"));
-            emailSubject = georConfig.getProperty("emailsubject");
+            extraKeywordsFile = String.format("i18n/extra_keywords_%s", language);
             emailAckTemplateFile = String.format("%s/templates/extractor-email-ack-template.tpl", georConfig.getContextDataDir());
             emailTemplateFile = String.format("%s/templates/extractor-email-template.tpl", georConfig.getContextDataDir());
             LOG.info("geOrchestra datadir: done.");
@@ -249,5 +244,9 @@ public abstract class AbstractEmailFactory {
 
 	public void setEmailSubject(String emailSubject) {
 		this.emailSubject = emailSubject;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
 	}
 }
