@@ -1,6 +1,5 @@
 package org.georchestra.console.ws.emails;
 
-import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.DataServiceException;
 import org.georchestra.console.dto.Account;
@@ -20,21 +19,12 @@ import static org.mockito.Mockito.eq;
 
 public class EmailControllerTest {
 
-    private GeorchestraConfiguration georConfig;
     private HttpServletRequest request;
     private EmailController ctrl;
     private AccountDao accountDao;
 
     @Before
     public void setUpConfiguration() throws MessagingException {
-
-        // Mock configuration
-        this.georConfig = mock(GeorchestraConfiguration.class);
-        when(georConfig.getProperty(eq("emailProxyMaxRecipient"))).thenReturn("10");
-        when(georConfig.getProperty(eq("emailProxyMaxBodySize"))).thenReturn("10000");
-        when(georConfig.getProperty(eq("emailProxyMaxSubjectSize"))).thenReturn("200");
-        when(georConfig.getProperty(eq("emailProxyRecipientWhitelist")))
-                .thenReturn("psc@georchestra.org, postmaster@georchestra.org, listmaster@georchestra.org");
 
         // Mock headers
         this.request = mock(HttpServletRequest.class);
@@ -45,7 +35,10 @@ public class EmailControllerTest {
 
         // Instanciate controller
         this.ctrl = new EmailController();
-        this.ctrl.setGeorConfig(this.georConfig);
+        this.ctrl.setEmailProxyMaxRecipient("10");
+        this.ctrl.setEmailProxyMaxBodySize("10000");
+        this.ctrl.setEmailProxyMaxSubjectSize("200");
+        this.ctrl.setEmailProxyRecipientWhitelist("psc@georchestra.org, postmaster@georchestra.org, listmaster@georchestra.org");
 
         // Account DAO
         this.accountDao = mock(AccountDao.class);
