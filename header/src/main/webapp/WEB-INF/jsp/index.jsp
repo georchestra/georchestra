@@ -28,7 +28,6 @@
 <%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
 <%@ page import="org.springframework.context.ApplicationContext" %>
 <%@ page import="org.springframework.web.servlet.support.RequestContextUtils" %>
-<%@ page import="org.georchestra.commons.configuration.GeorchestraConfiguration" %>
 
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ page isELIgnored="false" %>
@@ -39,15 +38,6 @@ Boolean anonymous = true;
 response.setDateHeader("Expires", 31536000);
 response.setHeader("Cache-Control", "private, max-age=31536000");
 */
-
-// Using georchestra autoconf
-String defaultLanguage = "en";
-String consolePublicContextPath = "/console";
-try {
-  ApplicationContext ctx = RequestContextUtils.getWebApplicationContext(request);
-  defaultLanguage = ctx.getBean(GeorchestraConfiguration.class).getProperty("language", defaultLanguage);
-  consolePublicContextPath = ctx.getBean(GeorchestraConfiguration.class).getProperty("consolePublicContextPath", consolePublicContextPath);
-} catch (Exception e) {}
 
 // to prevent problems with proxies, and for now:
 response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
@@ -65,7 +55,7 @@ ResourceBundle bundle = org.georchestra._header.Utf8ResourceBundle.getBundle("_h
 String detectedLanguage = rLocale.getLanguage();
 String forcedLang = request.getParameter("lang");
 
-String lang = defaultLanguage;
+String lang = request.getParameter("defaultLanguage");
 if (forcedLang != null) {
     if (forcedLang.equals("en") || forcedLang.equals("es") || forcedLang.equals("ru") || forcedLang.equals("fr") || forcedLang.equals("de")) {
         lang = forcedLang;
@@ -348,7 +338,7 @@ if(sec_roles != null) {
                         <li class="active"><a><fmt:message key="users"/></a></li>
                             </c:when>
                             <c:otherwise>
-                        <li><a href="<%= consolePublicContextPath %>/manager/"><fmt:message key="users"/></a></li>
+                        <li><a href="${consolePublicContextPath}/manager/"><fmt:message key="users"/></a></li>
                             </c:otherwise>
                         </c:choose>
                         </c:when>
@@ -363,7 +353,7 @@ if(sec_roles != null) {
         <c:choose>
             <c:when test='<%= anonymous == false %>'>
         <p class="logged">
-            <a href="<%=consolePublicContextPath %>/account/userdetails"><%=request.getHeader("sec-username") %></a><span class="light"> | </span><a href="/logout"><fmt:message key="logout"/></a>
+            <a href="${consolePublicContextPath}/account/userdetails"><%=request.getHeader("sec-username") %></a><span class="light"> | </span><a href="/logout"><fmt:message key="logout"/></a>
         </p>
             </c:when>
             <c:otherwise>
