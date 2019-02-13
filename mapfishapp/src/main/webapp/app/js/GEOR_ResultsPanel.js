@@ -57,7 +57,7 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
 
     /**
      * Property: sfControl
-     * {OpenLayers.Control.SelectFeature} The control used for the 
+     * {OpenLayers.Control.SelectFeature} The control used for the
      * feature selection model
      */
     sfControl: null,
@@ -252,7 +252,7 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
      */
     _storeGeometry: function() {
         // compute aggregation of geometries
-        var features = (this._vectorLayer.selectedFeatures.length ? 
+        var features = (this._vectorLayer.selectedFeatures.length ?
             this._vectorLayer.selectedFeatures : this._vectorLayer.features),
             components = [], type;
         Ext.each(features, function(feature) {
@@ -464,7 +464,7 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
                         handler: function() {
                             var grid = this.findByType("grid")[0];
                             if (grid) {
-                                var sm = grid.getSelectionModel(),                            
+                                var sm = grid.getSelectionModel(),
                                     recordsToSelect = [];
                                 this._store.each(function(record) {
                                     if (!sm.isSelected(record)) {
@@ -614,8 +614,8 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
         this._store = new GeoExt.data.FeatureStore({
             layer: this._vectorLayer,
             fields: this._model.toStoreFields()/*,
-            initDir: (options.addLayerToMap === false) ? 
-                GeoExt.data.FeatureStore.LAYER_TO_STORE : 
+            initDir: (options.addLayerToMap === false) ?
+                GeoExt.data.FeatureStore.LAYER_TO_STORE :
                 GeoExt.data.FeatureStore.LAYER_TO_STORE|GeoExt.data.FeatureStore.STORE_TO_LAYER
             */
         });
@@ -683,7 +683,9 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
     clean: function() {
         if (this._vectorLayer) {
             this._vectorLayer.setVisibility(false);
-            this.map.removeLayer(this._vectorLayer);
+            if (this.map.layers.indexOf(this._vectorLayer)>-1) {
+                this.map.removeLayer(this._vectorLayer);
+            }
         }
     },
 
