@@ -20,7 +20,6 @@
 package org.georchestra.console.ws.backoffice.orgs;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.dao.DelegationDao;
 import org.georchestra.console.ds.OrgsDao;
@@ -34,6 +33,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -77,9 +77,6 @@ public class OrgsController {
     protected Validation validation;
 
     @Autowired
-    private GeorchestraConfiguration georConfig;
-
-    @Autowired
     protected DelegationDao delegationDao;
 
     @Autowired
@@ -89,6 +86,49 @@ public class OrgsController {
     public OrgsController(OrgsDao dao) {
         this.orgDao = dao;
     }
+
+    /**
+     * Areas map configuration
+     *
+     * This map appears on the /console/account/new page, when the user checks
+     * the "my org does not exist" checkbox.
+     * Currently the map is configured with the EPSG:4326 SRS.
+     */
+
+    /* Center of map */
+    @Value("${AreaMapCenter:1.77, 47.3}")
+    private String areaMapCenter;
+
+    /* Zoom of map */
+    @Value("${AreaMapZoom:6}")
+    private String areaMapZoom;
+
+    /* URL of a static file or a service with a GeoJSON FeatureCollection
+     * object string in EPSG:4326.
+     *
+     * Example of a "dynamic" areasUrl:
+     *   https://my.server.org/geoserver/ows?SERVICE=WFS&REQUEST=GetFeature&typeName=gadm:gadm_for_countries&outputFormat=json&cql_filter=ISO='FRA' or ISO='BEL'
+     */
+    @Value("${AreasUrl:https://www.geopicardie.fr/public/communes_simplified.json}")
+    private String areasUrl;
+
+    /* The following properties are used to configure the map widget behavior */
+
+    /* Key stored in the org LDAP record to uniquely identify a feature. */
+    @Value("${AreasKey:INSEE_COM}")
+    private String areasKey;
+
+    /* Feature "nice name" which appears in the widget list once selected. */
+    @Value("${AreasValue:NOM_COM}")
+    private String areasValue;
+
+    /* Feature property which is used to group together areas.
+     *
+     * eg: if the GeoJSON file represents regions, then AreasGroup might be the
+     * property with the "state name".
+     */
+    @Value("${AreasGroup:NOM_DEP}")
+    private String areasGroup;
 
     /**
      * Return a list of available organization as json array
@@ -328,19 +368,19 @@ public class OrgsController {
         JSONObject map = new JSONObject();
         // Parse center
         try {
-            String[] rawCenter = this.georConfig.getProperty("AreaMapCenter").split("\\s*,\\s*");
+            String[] rawCenter = areaMapCenter.split("\\s*,\\s*");
             JSONArray center = new JSONArray();
             center.put(Double.parseDouble(rawCenter[0]));
             center.put(Double.parseDouble(rawCenter[1]));
             map.put("center", center);
-            map.put("zoom", this.georConfig.getProperty("AreaMapZoom"));
+            map.put("zoom", areaMapZoom);
             res.put("map", map);
         } catch (Exception e){}
         JSONObject areas = new JSONObject();
-        areas.put("url", this.georConfig.getProperty("AreasUrl"));
-        areas.put("key", this.georConfig.getProperty("AreasKey"));
-        areas.put("value", this.georConfig.getProperty("AreasValue"));
-        areas.put("group", this.georConfig.getProperty("AreasGroup"));
+        areas.put("url", areasUrl);
+        areas.put("key", areasKey);
+        areas.put("value", areasValue);
+        areas.put("group", areasGroup);
         res.put("areas", areas);
         ResponseUtil.buildResponse(response, res.toString(4), HttpServletResponse.SC_OK);
     }
@@ -470,13 +510,5 @@ public class OrgsController {
      */
     private JSONObject parseRequest(HttpServletRequest request) throws IOException, JSONException {
         return new JSONObject(FileUtils.asString(request.getInputStream()));
-    }
-
-    public GeorchestraConfiguration getGeorConfig() {
-        return georConfig;
-    }
-
-    public void setGeorConfig(GeorchestraConfiguration georConfig) {
-        this.georConfig = georConfig;
     }
 }
