@@ -11,19 +11,18 @@
 
     <context:property-placeholder
       location="file:${georchestra.datadir}/default.properties,
-                classpath:extractorapp.properties,
                 file:${georchestra.datadir}/extractorapp/extractorapp.properties"
       ignore-resource-not-found="true" ignore-unresolvable="true" />
 
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
         <property name="driverClass" value="org.postgresql.Driver"/>
-        <property name="jdbcUrl" value="${jdbcurl}"/>
+        <property name="jdbcUrl" value="${jdbcurl:jdbc:postgresql://localhost:5432/georchestra?user=georchestra&amp;password=georchestra}"/>
         <property name="initialPoolSize" value="1"/>
-        <property name="minPoolSize" value="${dataSource.minPoolSize}"/>
-        <property name="maxPoolSize" value="${dataSource.maxPoolSize}"/>
-        <property name="checkoutTimeout" value = "${dataSource.timeout}"/>
+        <property name="minPoolSize" value="${dataSource.minPoolSize:1}"/>
+        <property name="maxPoolSize" value="${dataSource.maxPoolSize:10}"/>
+        <property name="checkoutTimeout" value = "${dataSource.timeout:2000}"/>
         <property name="idleConnectionTestPeriod" value="30"/>
-        <property name="maxIdleTime" value = "${dataSource.maxIdleTime}"/>
+        <property name="maxIdleTime" value = "${dataSource.maxIdleTime:60}"/>
         <property name="acquireIncrement" value="1"/>
         <property name="testConnectionOnCheckout" value="true"/> <!-- Uses JDBC4's Connection.isValid() -->
     </bean>
