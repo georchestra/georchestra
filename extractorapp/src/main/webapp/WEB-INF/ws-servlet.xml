@@ -40,18 +40,19 @@
     </bean>
 
     <bean id="extractor-controller" init-method="validateConfig" class="org.georchestra.extractorapp.ws.extractor.ExtractorController">
+        <property name="publicUrl" value="${publicUrl:https://georchestra.mydomain.org}"/>
         <property name="responseTemplateFile" value="/WEB-INF/templates/extractor-http-response-template.xml"/>
         <property name="emailFactory" ref="emailFactory"/>
         <property name="reponseMimeType" value="application/xml"/>
         <property name="responseCharset" value="UTF-8"/>
-        <property name="maxCoverageExtractionSize" value="99999999"/>
-        <property name="remoteReproject" value="true"/>
-        <property name="useCommandLineGDAL" value="false"/>
-        <property name="extractionFolderPrefix" value="proj-extract-"/>
+        <property name="maxCoverageExtractionSize" value="${maxCoverageExtractionSize:99999999}"/>
+        <property name="remoteReproject" value="${remoteReproject:true}"/>
+        <property name="useCommandLineGDAL" value="${useCommandLineGDAL:false}"/>
+        <property name="extractionFolderPrefix" value="${extractionFolderPrefix:extraction-}"/>
         <property name="adminCredentials">
             <bean class="org.apache.commons.httpclient.UsernamePasswordCredentials">
-                <constructor-arg index="0" value="geoserver_privileged_user"/>
-                <constructor-arg index="1" value="xxxxxxxx"/>
+                <constructor-arg index="0" value="${privileged_admin_name:geoserver_privileged_user}"/>
+                <constructor-arg index="1" value="${privileged_admin_pass:gerlsSnFd6SmM}"/>
             </bean>
           </property>
           <property name="extractionManager" ref="extractionManager"/>
