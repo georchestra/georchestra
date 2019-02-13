@@ -683,7 +683,9 @@ GEOR.ResultsPanel = Ext.extend(Ext.Panel, {
     clean: function() {
         if (this._vectorLayer) {
             this._vectorLayer.setVisibility(false);
-            this.map.removeLayer(this._vectorLayer);
+            if (this.map.layers.indexOf(this._vectorLayer)>-1) {
+                this.map.removeLayer(this._vectorLayer);
+            }
         }
     },
 
