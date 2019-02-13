@@ -40,18 +40,12 @@
 
   <context:component-scan base-package="org.georchestra.console"/>
 
-  <!-- Resolves views selected for rendering by @Controllers to .jsp resources
-	   in the /WEB-INF/views directory
-  -->
-  <bean class="org.georchestra.console.Configuration">
-    <property name="publicContextPath" value="${publicContextPath:/console}"/>
-  </bean>
-
   <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" p:prefix="/WEB-INF/views/" p:suffix=".jsp">
     <property name="attributes">
       <map>
         <entry key="headerHeight" value="${headerHeight:90}" />
         <entry key="headerUrl" value="${headerUrl:/header/}" />
+        <entry key="publicContextPath" value="${publicContextPath:/console}"/>
       </map>
     </property>
   </bean>
@@ -236,6 +230,8 @@
     <property name="accountUidRenamedEmailSubject" value="${subject.account.uid.renamed:[geOrchestra] New login for your account}" />
     <property name="newAccountNotificationEmailFile" value="/WEB-INF/templates/newaccount-notification-template.txt"/>
     <property name="newAccountNotificationEmailSubject" value="${subject.new.account.notification:[geOrchestra] New account created}"/>
+    <property name="publicUrl" value="${publicUrl:https://georchestra.mydomain.org}"/>
+    <property name="instanceName" value="${instanceName:geOrchestra}"/>
   </bean>
 
   <bean id="moderator" class="org.georchestra.console.bs.Moderator">

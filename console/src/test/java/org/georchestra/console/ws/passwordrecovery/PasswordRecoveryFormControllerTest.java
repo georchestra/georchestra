@@ -9,7 +9,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.georchestra.console.Configuration;
 import org.georchestra.console.ReCaptchaV2;
 import org.georchestra.console.bs.ReCaptchaParameters;
 import org.georchestra.console.ds.AccountDao;
@@ -40,7 +39,6 @@ public class PasswordRecoveryFormControllerTest {
     private ReCaptchaV2 rec = Mockito.mock(ReCaptchaV2.class);
     private ReCaptchaParameters rep = new ReCaptchaParameters();
     private UserTokenDao utd = Mockito.mock(UserTokenDao.class);
-    private Configuration cfg = new Configuration();
     private Model model = Mockito.mock(Model.class);
     private HttpServletRequest request = new MockHttpServletRequest();
     private PasswordRecoveryFormBean formBean = Mockito.mock(PasswordRecoveryFormBean.class);
@@ -50,8 +48,9 @@ public class PasswordRecoveryFormControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        ctrl = new PasswordRecoveryFormController(dao,gdao, efi, utd, cfg, rep);
+        ctrl = new PasswordRecoveryFormController(dao,gdao, efi, utd, rep);
         ctrl.setPublicUrl("https://georchestra.mydomain.org");
+        ctrl.setPublicContextPath("/console");
     }
 
     @After

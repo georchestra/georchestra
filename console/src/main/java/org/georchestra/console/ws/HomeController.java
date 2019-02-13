@@ -32,9 +32,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.console.Configuration;
 import org.georchestra.console.bs.ExpiredTokenManagement;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -51,17 +51,17 @@ public class HomeController {
     private static final Log LOG = LogFactory.getLog(HomeController.class.getName());
     private ExpiredTokenManagement tokenManagement;
 
-    private Configuration config;
+    @Value("${publicContextPath:/console}")
+    private String publicContextPath;
 
     @Autowired
     private ServletContext context;
 
     @Autowired
-    public HomeController(ExpiredTokenManagement tokenManagment, Configuration cfg) {
+    public HomeController(ExpiredTokenManagement tokenManagment) {
         if(LOG.isDebugEnabled()){
           LOG.debug("home controller initialization");
         }
-        this.config = cfg;
 
         this.tokenManagement = tokenManagment;
         this.tokenManagement.start();
@@ -82,17 +82,21 @@ public class HomeController {
                 redirectUrl = "/account/userdetails";
             }
             if (LOG.isDebugEnabled()) {
-                LOG.debug("root page request -> redirection to " + config.getPublicContextPath() + redirectUrl);
+                LOG.debug("root page request -> redirection to " + publicContextPath + redirectUrl);
             }
-            response.sendRedirect(config.getPublicContextPath() + redirectUrl);
+            response.sendRedirect(publicContextPath + redirectUrl);
         } else {
             // redirect to CAS
-            response.sendRedirect(config.getPublicContextPath() + "/account/userdetails?login");
+            response.sendRedirect(publicContextPath + "/account/userdetails?login");
         }
     }
 
     @RequestMapping(value="/manager/")
     public String consoleHome(HttpServletRequest request) throws IOException{
         return "managerUi";
+    }
+
+    public void setPublicContextPath(String publicContextPath) {
+        this.publicContextPath = publicContextPath;
     }
 }

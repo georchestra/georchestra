@@ -30,7 +30,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.console.Configuration;
 import org.georchestra.console.bs.ReCaptchaParameters;
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.DataServiceException;
@@ -81,23 +80,24 @@ public class PasswordRecoveryFormController  {
 	private RoleDao roleDao;
 	private EmailFactory emailFactory;
 	private UserTokenDao userTokenDao;
-	private Configuration config;
 	private ReCaptchaParameters reCaptchaParameters;
 
 	@Autowired
 	private boolean reCaptchaActivated;
+
+	@Value("${publicContextPath:/console}")
+	private String publicContextPath;
 
 	@Value("${publicUrl:https://georchestra.mydomain.org}")
 	private String publicUrl;
 
 	@Autowired
 	public PasswordRecoveryFormController( AccountDao dao,RoleDao gDao, EmailFactory emailFactory, UserTokenDao userTokenDao,
-			Configuration cfg, ReCaptchaParameters reCaptchaParameters){
+			ReCaptchaParameters reCaptchaParameters){
 		this.accountDao = dao;
 		this.roleDao = gDao;
 		this.emailFactory = emailFactory;
 		this.userTokenDao = userTokenDao;
-		this.config = cfg;
 		this.reCaptchaParameters = reCaptchaParameters;
 	}
 
@@ -165,8 +165,7 @@ public class PasswordRecoveryFormController  {
 
 			this.userTokenDao.insertToken(account.getUid(), token);
 
-			String contextPath = this.config.getPublicContextPath();
-			String url = makeChangePasswordURL(publicUrl, contextPath, token);
+			String url = makeChangePasswordURL(publicUrl, publicContextPath, token);
 
 			ServletContext servletContext = request.getSession().getServletContext();
 			this.emailFactory.sendChangePasswordEmail(servletContext, account.getEmail(), account.getCommonName(),  account.getUid(), url);
@@ -215,5 +214,9 @@ public class PasswordRecoveryFormController  {
 	
 	public void setPublicUrl(String publicUrl) {
 	    this.publicUrl = publicUrl;
+	}
+	
+	public void setPublicContextPath(String publicContextPath) {
+	    this.publicContextPath = publicContextPath;
 	}
 }
