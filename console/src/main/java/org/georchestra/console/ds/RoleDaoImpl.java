@@ -342,7 +342,6 @@ public class RoleDaoImpl implements RoleDao {
 		}
 	}
 
-
 	/**
 	 * if the value is not null then sets the value in the context.
 	 *
