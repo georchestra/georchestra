@@ -54,12 +54,15 @@ public class Email {
     private String subject;
 	private String emailBody;
 
+    private String publicUrl;
+    private String instanceName;
 	protected GeorchestraConfiguration georConfig;
 
     public Email( List<String> recipients,
                  String emailSubject, String smtpHost, int smtpPort, boolean emailHtml, String replyTo, String from,
                  String bodyEncoding, String subjectEncoding, String templateEncoding, String fileTemplate,
-                 ServletContext servletContext, GeorchestraConfiguration georConfig) {
+                 ServletContext servletContext, GeorchestraConfiguration georConfig,
+                 String publicUrl, String instanceName) {
 
         this.recipients = recipients;
         this.subject = emailSubject;
@@ -72,6 +75,8 @@ public class Email {
         this.subjectEncoding = subjectEncoding;
         this.templateEncoding = templateEncoding;
         this.georConfig = georConfig;
+        this.publicUrl = publicUrl;
+        this.instanceName = instanceName;
 
         // Load template from filesystem
         this.emailBody = this.loadBody(servletContext.getRealPath(fileTemplate));
@@ -138,8 +143,8 @@ public class Email {
 	public MimeMessage send(boolean reallySend) throws MessagingException {
 
 		// Replace {publicUrl} token with the configured public URL
-        this.emailBody = this.emailBody.replaceAll("\\{publicUrl\\}", this.georConfig.getProperty("publicUrl"));
-        this.emailBody = this.emailBody.replaceAll("\\{instanceName\\}", this.georConfig.getProperty("instanceName"));
+        this.emailBody = this.emailBody.replaceAll("\\{publicUrl\\}", publicUrl);
+        this.emailBody = this.emailBody.replaceAll("\\{instanceName\\}", instanceName);
         LOG.debug("body: " + this.emailBody);
 
         final Session session = Session.getInstance(System.getProperties(), null);

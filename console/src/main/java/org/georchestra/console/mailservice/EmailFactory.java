@@ -65,6 +65,9 @@ public class EmailFactory {
 	private String newAccountNotificationEmailFile;
 	private String newAccountNotificationEmailSubject;
 
+	private String publicUrl;
+	private String instanceName;
+
 	public void sendAccountWasCreatedEmail(ServletContext servletContext, String recipient,
 										   String userName, String uid ) throws MessagingException {
 		Email email =  new Email(
@@ -80,7 +83,9 @@ public class EmailFactory {
 				this.templateEncoding,
 				this.accountWasCreatedEmailFile,
 				servletContext,
-				this.georConfig);
+				this.georConfig,
+				this.publicUrl,
+				this.instanceName);
 		email.set("name", userName);
 		email.set("uid", uid);
 		email.send();
@@ -106,7 +111,9 @@ public class EmailFactory {
 				this.templateEncoding,
 				this.accountCreationInProcessEmailFile,
 				servletContext,
-				this.georConfig);
+				this.georConfig,
+				this.publicUrl,
+				this.instanceName);
 		email.set("name", userName);
 		email.set("uid", uid);
 		email.send();
@@ -132,7 +139,9 @@ public class EmailFactory {
 				this.templateEncoding,
 				this.newAccountRequiresModerationEmailFile,
 				servletContext,
-				this.georConfig);
+				this.georConfig,
+				this.publicUrl,
+				this.instanceName);
 		email.set("name", userName);
 		email.set("uid", uid);
 		email.send();
@@ -153,7 +162,9 @@ public class EmailFactory {
 				this.templateEncoding,
 				this.changePasswordEmailFile,
 				servletContext,
-				this.georConfig);
+				this.georConfig,
+				this.publicUrl,
+				this.instanceName);
 		email.set("name", userName);
 		email.set("uid", uid);
 		email.set("url", url);
@@ -176,7 +187,9 @@ public class EmailFactory {
 				this.templateEncoding,
 				this.accountUidRenamedEmailFile,
 				servletContext,
-				this.georConfig);
+				this.georConfig,
+				this.publicUrl,
+				this.instanceName);
 		email.set("name", userName);
 		email.set("uid", uid);
 		email.send();
@@ -198,7 +211,9 @@ public class EmailFactory {
 				this.templateEncoding,
 				this.newAccountNotificationEmailFile,
 				servletContext,
-				this.georConfig);
+				this.georConfig,
+				this.publicUrl,
+				this.instanceName);
 		email.set("name", userName);
 		email.set("uid", uid);
 		email.set("email", userEmail);
@@ -299,5 +314,13 @@ public class EmailFactory {
 
 	public void setNewAccountNotificationEmailSubject(String newAccountNotificationEmailSubject) {
 		this.newAccountNotificationEmailSubject = newAccountNotificationEmailSubject;
+	}
+
+	public void setPublicUrl(String publicUrl) {
+		this.publicUrl = publicUrl;
+	}
+
+	public void setInstanceName(String instanceName) {
+		this.instanceName = instanceName;
 	}
 }
