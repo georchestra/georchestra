@@ -79,7 +79,7 @@ import com.google.common.annotations.VisibleForTesting;
 public class DocController {
 
 	/** the temporary directory used by the document services*/
-    private String docTempDir;
+    private String docTempDir = "/tmp";
 
     @Autowired
     public GeorchestraConfiguration georchestraConfiguration;
@@ -136,8 +136,6 @@ public class DocController {
 
     public void init() throws IOException {
         if (georchestraConfiguration.activated()) {
-            docTempDir = georchestraConfiguration.getProperty("docTempDir");
-
             Properties userPasswordCreds = georchestraConfiguration.loadCustomPropertiesFile("credentials");
             credentials.clear();
             for (String key : userPasswordCreds.stringPropertyNames()) {
