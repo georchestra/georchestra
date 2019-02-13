@@ -30,7 +30,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.console.Configuration;
 import org.georchestra.console.bs.ReCaptchaParameters;
 import org.georchestra.console.ds.AccountDao;
@@ -42,6 +41,7 @@ import org.georchestra.console.dto.Role;
 import org.georchestra.console.mailservice.EmailFactory;
 import org.georchestra.console.ws.utils.RecaptchaUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -87,8 +87,8 @@ public class PasswordRecoveryFormController  {
 	@Autowired
 	private boolean reCaptchaActivated;
 
-	@Autowired
-	private GeorchestraConfiguration georConfig;
+	@Value("${publicUrl:https://georchestra.mydomain.org}")
+	private String publicUrl;
 
 	@Autowired
 	public PasswordRecoveryFormController( AccountDao dao,RoleDao gDao, EmailFactory emailFactory, UserTokenDao userTokenDao,
@@ -166,7 +166,7 @@ public class PasswordRecoveryFormController  {
 			this.userTokenDao.insertToken(account.getUid(), token);
 
 			String contextPath = this.config.getPublicContextPath();
-			String url = makeChangePasswordURL(this.georConfig.getProperty("publicUrl"), contextPath, token);
+			String url = makeChangePasswordURL(publicUrl, contextPath, token);
 
 			ServletContext servletContext = request.getSession().getServletContext();
 			this.emailFactory.sendChangePasswordEmail(servletContext, account.getEmail(), account.getCommonName(),  account.getUid(), url);
@@ -208,12 +208,12 @@ public class PasswordRecoveryFormController  {
 	public PasswordRecoveryFormBean getPasswordRecoveryFormBean() {
 		return new PasswordRecoveryFormBean();
 	}
-
-	public void setGeorConfig(GeorchestraConfiguration georConfig) {
-		this.georConfig = georConfig;
-	}
 	
 	public void setEmailFactory(EmailFactory emailFactory) {
 	    this.emailFactory = emailFactory;
+	}
+	
+	public void setPublicUrl(String publicUrl) {
+	    this.publicUrl = publicUrl;
 	}
 }
