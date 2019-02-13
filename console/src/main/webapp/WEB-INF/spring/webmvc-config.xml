@@ -51,7 +51,14 @@
     <bean class="org.georchestra.console.ConfigurationInterceptor"/>
   </mvc:interceptors>
 
-  <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" p:prefix="/WEB-INF/views/" p:suffix=".jsp" />
+  <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" p:prefix="/WEB-INF/views/" p:suffix=".jsp">
+    <property name="attributes">
+      <map>
+        <entry key="headerHeight" value="${headerHeight:90}" />
+        <entry key="headerUrl" value="${headerUrl:/header/}" />
+      </map>
+    </property>
+  </bean>
 
   <bean id="reCaptchaActivated" class="java.lang.Boolean">
     <constructor-arg value="${recaptcha.activated:false}" />
