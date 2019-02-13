@@ -62,8 +62,8 @@
     </bean>
 
     <bean id="extractionManager" class="org.georchestra.extractorapp.ws.extractor.task.ExtractionManager" init-method="init">
-        <property name="minThreads" value="1"/>
-        <property name="maxExtractions" value="100"/>
+        <property name="minThreads" value="${minThreads:1}"/>
+        <property name="maxExtractions" value="${maxExtractions:100}"/>
     </bean>
 
     <!-- Email configuration -->
