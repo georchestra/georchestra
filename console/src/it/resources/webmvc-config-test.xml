@@ -47,10 +47,6 @@
     <property name="publicContextPath" value="${publicContextPath:/console}"/>
   </bean>
 
-  <mvc:interceptors>
-    <bean class="org.georchestra.console.ConfigurationInterceptor"/>
-  </mvc:interceptors>
-
   <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" p:prefix="/WEB-INF/views/" p:suffix=".jsp">
     <property name="attributes">
       <map>
