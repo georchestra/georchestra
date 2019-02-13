@@ -22,7 +22,6 @@ package org.georchestra.console;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -41,15 +40,7 @@ public final class Configuration {
 
 	private String publicContextPath;
 
-	@Autowired
-	private GeorchestraConfiguration georConfig;
-
 	public String getPublicContextPath() {
-
-	    if ((georConfig != null) && (georConfig.activated())) {
-	        LOG.debug("GeorchestraConfiguration activated, using publicContextPath from the geOrchestra datadir.");
-	        return georConfig.getProperty("publicContextPath");
-	    }
 
 	    // Falls back on the original behaviour
 		checkConfiguration();
