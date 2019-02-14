@@ -208,6 +208,7 @@ dn: o=psc,ou=orgs,dc=georchestra,dc=org
 objectClass: organization
 objectClass: top
 o: psc
+description: Association PSC geOrchestra
 businessCategory: Association
 postalAddress: 127 rue georchestra, 73590 Chamblille
 
@@ -221,7 +222,69 @@ member: uid=testuser,ou=users,dc=georchestra,dc=org
 o: Project Steering Committee
 ou: PSC
 seeAlso: o=psc,ou=orgs,dc=georchestra,dc=org
+seeAlso: uid=psc,ou=orgs,dc=georchestra,dc=org
 
+dn: uid=psc,ou=orgs,dc=georchestra,dc=org
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+cn: psc
+sn: psc
+uid: psc
+jpegPhoto:: /9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBQgMFBofBgYHCg0dHhwHBwgMFB0j
+ HAcJCw8aLCgfCQsTHCI3NCcMEhwgKTQ5LhkgJyw0PTwzJC4wMTgyNDL/2wBDAQkJDBgyMjIyCQs
+ NITIyMjIMDRwyMjIyMhghMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wA
+ ARCAAyAMQDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAHwEAA
+ wEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIh
+ MUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUp
+ TVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7
+ i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAtREAAgECBAQDBAcFB
+ AQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygp
+ KjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJm
+ aoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9
+ oADAMBAAIRAxEAPwD3+iisrxF4ms9MgaXUnIjXhUHWeVuixD1c00uy8kNLsvJGozqo+dgo6sx/h
+ A9TWNL458PxnE3iTR0boUMycH35r5o8W/EvV9Xc/bLp4bfP7jT4jhY1/wCmg7n3P4YrlhjtXfDC
+ fzz+R2wwv88j7TtL+2nXNldW86dpImBH/fSmp6+NNJ1/ULBw2kX89tIOd0Z++PSRehB9wa+jvht
+ 8Uo9ZQrerHFfIN08a9LqL+9CPY9R2rGvh2tnddfIyrUGtnfv5He0VxHiz4ky2ky2/hzSzqWosPM
+ 8jOFs0I63De456jA6mqZb4mgbtnhJj977GN+SPQPn/ANmrFU31cV1RkoPq4rqj0OiuM8G/Ec6hI
+ 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
+labeledURI: https://www.georchestra.org/ 
 
 dn: o=c2c,ou=orgs,dc=georchestra,dc=org
 objectClass: organization
