@@ -66,7 +66,17 @@
         p:viewClass="org.springframework.web.servlet.view.InternalResourceView"
         p:prefix="/WEB-INF/view/jsp/"
         p:suffix=".jsp"
-        p:order="1"/>
+        p:order="1">
+    <property name="attributes">
+      <map>
+        <entry key="publicUrl" value="${publicUrl:https://georchestra.mydomain.org}" />
+        <entry key="instanceName" value="${instanceName:geOrchestra}" />
+        <entry key="consoleContextPath" value="${console.contextpath:/console}" />
+        <entry key="headerHeight" value="${headerHeight:90}" />
+        <entry key="headerUrl" value="${headerUrl:/header/}" />
+      </map>
+    </property>
+  </bean>
   
   <bean id="errorHandlerResolver" class="org.jasig.cas.web.FlowExecutionExceptionResolver"/>
 

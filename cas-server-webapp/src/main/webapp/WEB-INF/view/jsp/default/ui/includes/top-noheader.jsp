@@ -28,34 +28,11 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
-<%@ page import="org.springframework.context.ApplicationContext" %>
-<%@ page import="org.springframework.web.servlet.support.RequestContextUtils" %>
-<%@ page import="org.georchestra.commons.configuration.GeorchestraConfiguration" %>
-
-<%
-
-
-String instanceName = "geOrchestra";
-String homepageUrl = "/";
-try {
-  ApplicationContext ctx = RequestContextUtils.getWebApplicationContext(request);
-  GeorchestraConfiguration georConfig = (GeorchestraConfiguration) ctx.getBean(GeorchestraConfiguration.class);
-  if (georConfig.activated()) {
-    instanceName = georConfig.getProperty("instanceName");
-    homepageUrl = georConfig.getProperty("publicUrl");
-  }
-} catch (Exception e) {
-  // ignoring
-}
-
-%>
-
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
 
-  <title>CAS - <%= instanceName  %></title>
+  <title>CAS - ${instanceName}</title>
 
   <spring:theme code="standard.custom.css.file" var="customCssFile" />
   <link rel="stylesheet" href="<c:url value="${customCssFile}" />" />
