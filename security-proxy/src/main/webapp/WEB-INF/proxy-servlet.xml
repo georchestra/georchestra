@@ -65,7 +65,7 @@
             </list>
           </property>
     </bean>
-    <bean id="headerManagementBean" init-method="init"
+    <bean id="headerManagementBean"
           class="org.georchestra.security.HeadersManagementStrategy">
         <!-- If set then the referrer header will always be the current server even if client sends its
              own referrer header

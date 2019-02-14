@@ -51,7 +51,6 @@ import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.message.BasicHeader;
-import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
@@ -72,17 +71,8 @@ public class HeadersManagementStrategy {
     private List<HeaderFilter> filters = new ArrayList<HeaderFilter>(1);
     private String referer = null;
 
-    @Autowired
-    private GeorchestraConfiguration georchestraConfiguration;
-
     public HeadersManagementStrategy() {
         filters.add(new SecurityRequestHeaderFilter());
-    }
-
-    public void init() {
-        if ((georchestraConfiguration != null) && (georchestraConfiguration.activated())) {
-            referer = georchestraConfiguration.getProperty("publicUrl");
-        }
     }
 
     /**
