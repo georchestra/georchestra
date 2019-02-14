@@ -272,4 +272,4 @@ description: 59107
 member: uid=testpendinguser,ou=pendingusers,dc=georchestra,dc=org
 o: Fictive org pending admin validation
 ou: PENDINGORG
-seeAlso: o=pendingorg,ou=orgs,dc=georchestra,dc=org
+seeAlso: o=pendingorg,ou=pendingorgs,dc=georchestra,dc=org
