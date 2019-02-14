@@ -95,7 +95,9 @@
 
     <bean id="trustAnotherProxy" class="org.georchestra.security.ProxyTrustAnotherProxy" init-method="init">
         <property name="authenticationManager" ref="authenticationManager" />
-        <property name="georchestraConfiguration" ref="georchestraConfiguration"></property>
+        <!-- Note that the default value of trustedProxy is an empty string. It can only be
+             set to a list of trusted proxies through the datadir -->
+        <property name="rawProxyValue" value="${trustedProxy}" />
     </bean>
 
 
