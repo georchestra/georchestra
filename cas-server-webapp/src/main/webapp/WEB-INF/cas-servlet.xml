@@ -33,7 +33,7 @@
 
   <!-- Theme Resolver -->
   <bean id="themeResolver" class="org.jasig.cas.services.web.ServiceThemeResolver"
-        p:defaultThemeName="${cas.themeResolver.defaultThemeName}"
+        p:defaultThemeName="${cas.themeResolver.defaultThemeName:cas-theme-default}"
         p:argumentExtractors-ref="argumentExtractors"
         p:servicesManager-ref="servicesManager">
     <property name="mobileBrowsers">
@@ -51,7 +51,7 @@
         p:order="0">
     <property name="basenames">
       <util:list>
-        <value>${cas.viewResolver.basename}</value>
+        <value>${cas.viewResolver.basename:default_views}</value>
         <value>protocol_views</value>
       </util:list>
     </property>
@@ -212,7 +212,7 @@
         p:centralAuthenticationService-ref="centralAuthenticationService"/>
 
   <bean id="statisticsController" class="org.jasig.cas.web.StatisticsController"
-        p:casTicketSuffix="${host.name}" c:ticketRegistry-ref="ticketRegistry" />
+        p:casTicketSuffix="${host.name:georchestra.mydomain.org}" c:ticketRegistry-ref="ticketRegistry" />
 
   <bean id="logoutAction" class="org.jasig.cas.web.flow.LogoutAction"
         p:servicesManager-ref="servicesManager"
