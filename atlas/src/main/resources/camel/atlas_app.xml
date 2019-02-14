@@ -92,8 +92,19 @@
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   streamCache="true">
 
-        <!-- TODO order ? -->
-        <propertyPlaceholder id="properties" location="classpath:atlas.properties,file:${georchestra.datadir}/atlas/atlas.properties"
+        <!--
+            The two files are loaded, and the second one overrides the properties from the first one, if any
+            Note also that the camel placeholders use the {{...}} syntax, not ${...} as in Spring
+            For more information, see the doc: https://camel.apache.org/using-propertyplaceholder.html
+
+            Note also that, according to the doc, it SEEMS that the second properties files can include
+            Spring placeholders (${...}) to dereference properties from the first one.
+            TODO: confirm the latter paragraph.
+        -->
+        <propertyPlaceholder id="properties"
+            location="
+                file:${georchestra.datadir}/default.properties,
+                file:${georchestra.datadir}/atlas/atlas.properties"
             ignoreMissingLocation="true" />
 
         <dataFormats>
@@ -310,11 +321,11 @@
                 <choice>
                     <when>
                         <simple>${property.outputFormat} == "pdf"</simple>
-                        <to uri="file://?fileName=/{{atlas.temporaryDirectory}}/${property.jobId}/${property.CamelSplitIndex}.pdf"/>
+                        <to uri="file://?fileName=/{{atlas.temporaryDirectory:/tmp/atlas}}/${property.jobId}/${property.CamelSplitIndex}.pdf"/>
                     </when>
                     <!-- use filename from spec for ZIP format -->
                     <otherwise>
-                        <to uri="file://?fileName=/{{atlas.temporaryDirectory}}/${property.jobId}/${property.filename}"/>
+                        <to uri="file://?fileName=/{{atlas.temporaryDirectory:/tmp/atlas}}/${property.jobId}/${property.filename}"/>
                     </otherwise>
                 </choice>
 
@@ -331,7 +342,7 @@
             </choice>
 
             <!--  dumps the PDF / ZIP to a file -->
-            <to uri="file://?fileName=/{{atlas.temporaryDirectory}}/${property.jobId}/${property.token}.${property.outputFormat}"/>
+            <to uri="file://?fileName=/{{atlas.temporaryDirectory:/tmp/atlas}}/${property.jobId}/${property.token}.${property.outputFormat}"/>
 
             <transform>
                 <simple>${property.originalObject}</simple>
@@ -343,7 +354,7 @@
             <!-- Sets all the necessary properties to send a mail, see AtlasMailComponent Java class -->
             <to uri="bean:prepareMail" />
             <!-- Actually send the mail -->
-            <to uri="smtp://{{smtpHost}}:{{smtpPort}}/" />
+            <to uri="smtp://{{smtpHost:localhost}}:{{smtpPort:25}}/" />
         </route>
     </camelContext>
 </beans>
