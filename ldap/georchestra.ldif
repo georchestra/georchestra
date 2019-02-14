@@ -284,12 +284,13 @@ jpegPhoto:: /9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBQgMFBofBgYHCg0dHhwHBwgMFB0j
  ooARVA+6AB0AHb6Uw2sOcmCLd13YGc/WpKKADFMWCMHKRIG/icAZb6mn0UAMjhjX/VRovdto+8f
  fFK8aMP3iKw7qw6/gadRQAwW8eMCKML1CYGAR6D2p9FFABRRRQAUUUUAFFFFABRRRQAUUUUAFFF
  FABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAA/9k=
-labeledURI: https://www.georchestra.org/ 
+labeledURI: https://www.georchestra.org/
 
 dn: o=c2c,ou=orgs,dc=georchestra,dc=org
 objectClass: organization
 objectClass: top
 o: c2c
+description: Camptocamp SAS France
 businessCategory: Company
 postalAddress: 18 Rue du lac Saint André, 73000 Chambéry
 
@@ -302,11 +303,23 @@ member: uid=testeditor,ou=users,dc=georchestra,dc=org
 o: Camptocamp
 ou: C2C
 seeAlso: o=c2c,ou=orgs,dc=georchestra,dc=org
+seeAlso: uid=c2c,ou=orgs,dc=georchestra,dc=org
+
+dn: uid=c2c,ou=orgs,dc=georchestra,dc=org
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+cn: c2c
+sn: c2c
+uid: c2c
+labeledURI: https://www.camptocamp.com/
 
 dn: o=cra,ou=orgs,dc=georchestra,dc=org
 objectClass: organization
 objectClass: top
 o: cra
+description: Conseil Régional
 businessCategory: Company
 postalAddress: Rue Jean Wenger - Valentin, 67000 Strasbourg
 
@@ -319,13 +332,25 @@ member: uid=testreviewer,ou=users,dc=georchestra,dc=org
 o: Conseil régional d'Alsace
 ou: CRA
 seeAlso: o=cra,ou=orgs,dc=georchestra,dc=org
+seeAlso: uid=cra,ou=orgs,dc=georchestra,dc=org
+
+dn: uid=cra,ou=orgs,dc=georchestra,dc=org
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+cn: cra
+sn: cra
+uid: cra
+labeledURI: https://www.grandest.fr/
 
 dn: o=pendingorg,ou=pendingorgs,dc=georchestra,dc=org
 objectClass: organization
 objectClass: top
 o: pendingorg
+description: Pending org on Null Island
 businessCategory: Company
-postalAddress: Null island
+postalAddress: Null Island
 
 dn: cn=pendingorg,ou=pendingorgs,dc=georchestra,dc=org
 objectClass: groupOfMembers
@@ -335,4 +360,15 @@ description: 59107
 member: uid=testpendinguser,ou=pendingusers,dc=georchestra,dc=org
 o: Fictive org pending admin validation
 ou: PENDINGORG
-seeAlso: o=pendingorg,ou=orgs,dc=georchestra,dc=org
+seeAlso: o=pendingorg,ou=pendingorgs,dc=georchestra,dc=org
+seeAlso: uid=pendingorg,ou=pendingorgs,dc=georchestra,dc=org
+
+dn: uid=pendingorg,ou=pendingorgs,dc=georchestra,dc=org
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+cn: pendingorg
+sn: pendingorg
+uid: pendingorg
+labeledURI: https://www.fictive.pending.org/
