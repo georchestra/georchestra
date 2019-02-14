@@ -1,4 +1,9 @@
-version: '2'
+version: '3'
+
+volumes:
+  ldap_data_test:
+  ldap_config_test:
+
 services:
   ldap:
     image: georchestra/ldap
@@ -7,8 +12,9 @@ services:
       - SLAPD_DOMAIN=georchestra.org
       - SLAPD_ORGANIZATION=georchestra
       - SLAPD_PASSWORD=secret
+      - SLAPD_ADDITIONAL_MODULES=groupofmembers
     volumes:
-      - ldap_data:/var/lib/ldap
-      - ldap_config:/etc/ldap
+      - ldap_data_test:/var/lib/ldap
+      - ldap_config_test:/etc/ldap
     ports:
-      - '3899:389'
+      - '10389:389'
