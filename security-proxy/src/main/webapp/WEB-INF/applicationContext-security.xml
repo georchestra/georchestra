@@ -11,10 +11,10 @@
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:property-placeholder location="/WEB-INF/security-proxy.properties, file:${georchestra.datadir}/default.properties, file:${georchestra.datadir}/security-proxy/security-proxy.properties"
+    <context:property-placeholder location="file:${georchestra.datadir}/default.properties, file:${georchestra.datadir}/security-proxy/security-proxy.properties"
         ignore-resource-not-found="true" ignore-unresolvable="true" />
 
-    <s:http entry-point-ref="casProcessingFilterEntryPoint" request-matcher="regex" realm="${realmName}" disable-url-rewriting="true">
+    <s:http entry-point-ref="casProcessingFilterEntryPoint" request-matcher="regex" realm="${realmName:georchestra}" disable-url-rewriting="true">
         <s:custom-filter ref="trustAnotherProxy" before="PRE_AUTH_FILTER" />
         <s:custom-filter ref="basicAuthChallengeByUserAgent" before="CAS_FILTER" />
         <s:custom-filter ref="casFilter" after="CAS_FILTER" />
@@ -24,7 +24,7 @@
           <s:frame-options policy="SAMEORIGIN" />
         </s:headers>
         <s:anonymous granted-authority="ROLE_ANONYMOUS" />
-        <s:logout logout-success-url="${logout-success-url}" />
+        <s:logout logout-success-url="${logout-success-url:https://georchestra.mydomain.org/cas/logout?fromgeorchestra}" />
         <s:csrf disabled="true" />
      </s:http>
 
@@ -74,7 +74,7 @@
 
     <bean id="basicAuthenticationEntryPoint"
       class="org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint">
-      <property name="realmName" value="${realmName}" />
+      <property name="realmName" value="${realmName:georchestra}" />
     </bean>
 
     <bean id="basicAuthChallengeByUserAgent" class="org.georchestra.security.BasicAuthChallengeByUserAgent" init-method="init">
@@ -120,9 +120,9 @@
 
     <!-- This bean points at the embedded directory server created by the ldap-server element above  -->
     <bean id="contextSource" class="org.springframework.security.ldap.DefaultSpringSecurityContextSource">
-        <constructor-arg value="${ldapUrl}/${baseDN}"/>
-        <property name="userDn" value="${ldapAdminDn}" />
-	    <property name="password" value="${ldap.admin.password}" />
+        <constructor-arg value="${ldapUrl:ldap://localhost}/${baseDN:dc=georchestra,dc=org}"/>
+        <property name="userDn" value="${ldapAdminDn:cn=admin,dc=georchestra,dc=org}" />
+	    <property name="password" value="${ldap.admin.password:secret}" />
         <property name="baseEnvironmentProperties">
 	        <map>
                 <entry>
@@ -136,16 +136,16 @@
      </bean>
 
     <bean id="ldapUserSearch" class="org.springframework.security.ldap.search.FilterBasedLdapUserSearch">
-        <constructor-arg index="0" value="${userSearchBaseDN}"/>
-        <constructor-arg index="1" value="${userSearchFilter}"/>
+        <constructor-arg index="0" value="${userSearchBaseDN:ou=users}"/>
+        <constructor-arg index="1" value="${userSearchFilter:(uid={0})}"/>
         <constructor-arg index="2" ref="contextSource" />
     </bean>
 
     <bean id="LdapContextSource" class="org.springframework.ldap.core.support.LdapContextSource">
-        <property name="url" value="${ldapUrl}"/>
-        <property name="base" value="${baseDN}"/>
-        <property name="userDn" value="${ldapAdminDn}"/>
-        <property name="password" value="${ldap.admin.password}"/>
+        <property name="url" value="${ldapUrl:ldap://localhost}"/>
+        <property name="base" value="${baseDN:dc=georchestra,dc=org}"/>
+        <property name="userDn" value="${ldapAdminDn:cn=admin,dc=georchestra,dc=org}"/>
+        <property name="password" value="${ldap.admin.password:secret}"/>
     </bean>
 
     <bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate">
@@ -154,8 +154,8 @@
 
     <bean id="ldapAuthoritiesPopulator" class="org.springframework.security.ldap.userdetails.DefaultLdapAuthoritiesPopulator">
         <constructor-arg ref="contextSource" />
-        <constructor-arg value="${authoritiesBaseDN}" />
-        <property name="groupSearchFilter" value="${roleSearchFilter}"/>
+        <constructor-arg value="${authoritiesBaseDN:ou=roles}" />
+        <property name="groupSearchFilter" value="${roleSearchFilter:(member=uid={1},ou=users,dc=georchestra,dc=org)}"/>
         <property name="rolePrefix" value="ROLE_"/>
         <property name="searchSubtree" value="true"/>
         <property name="convertToUpperCase" value="true"/>
@@ -196,7 +196,7 @@
     </bean>
 
     <bean id="casProcessingFilterEntryPoint" class="org.springframework.security.cas.web.CasAuthenticationEntryPoint">
-        <property name="loginUrl" value="${casLoginUrl}"/>
+        <property name="loginUrl" value="${casLoginUrl:https://georchestra.mydomain.org/cas/login}"/>
         <property name="serviceProperties" ref="serviceProperties"/>
     </bean>
 
@@ -205,14 +205,14 @@
 		<property name="serviceProperties" ref="serviceProperties" />
 		<property name="ticketValidator">
 			<bean class="org.jasig.cas.client.validation.Cas20ServiceTicketValidator">
-				<constructor-arg index="0" value="${casTicketValidation}" />
+				<constructor-arg index="0" value="${casTicketValidation:https://georchestra.mydomain.org/cas}" />
 			</bean>
 		</property>
 		<property name="key" value="security-proxy" />
 	</bean>
 
     <bean id="serviceProperties" class="org.springframework.security.cas.ServiceProperties">
-        <property name="service" value="${proxyCallback}"/>
+        <property name="service" value="${proxyCallback:https://georchestra.mydomain.org/login/cas}"/>
         <property name="sendRenew" value="false"/>
     </bean>
 

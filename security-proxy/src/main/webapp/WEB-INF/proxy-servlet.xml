@@ -26,7 +26,7 @@
           <property name="proxyPermissionsFile" value="permissions.xml"/>
           <property name="httpClientTimeout">
               <bean class="java.lang.Integer">
-                  <constructor-arg value="${http_client_timeout}" />
+                  <constructor-arg value="${http_client_timeout:1200000}" />
               </bean>
           </property>
 
@@ -65,7 +65,7 @@
              own referrer header
 
              Comment out property to use client referrer instead of this host -->
-        <property name="referer" value="${publicUrl}/"/>
+        <property name="referer" value="${publicUrl:https://georchestra.mydomain.org}/"/>
         <property name="headerProviders">
             <list>
                 <bean class="org.georchestra.security.TrustedProxyRequestHeaderProvider" />
@@ -79,7 +79,7 @@
                 </bean>
                 <bean class="org.georchestra.security.LdapUserDetailsRequestHeaderProvider" init-method="init">
                     <constructor-arg index="0" ref="ldapUserSearch"/>
-                    <constructor-arg index="1" value="${orgSearchBaseDN}"/>
+                    <constructor-arg index="1" value="${orgSearchBaseDN:ou=orgs}"/>
                     <constructor-arg index="2">
                         <map>
                         
@@ -109,23 +109,23 @@
         </property>
     </bean>
 
-    <context:property-placeholder location="/WEB-INF/security-proxy.properties,
+    <context:property-placeholder location="
       file:${georchestra.datadir}/default.properties,
       file:${georchestra.datadir}/security-proxy/security-proxy.properties"
       ignore-resource-not-found="true" ignore-unresolvable="true" />
 
     <!-- DataSource used for the ogc-server-stats OGC request stats logger -->
     <bean id="ogcStatsDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
-        <property name="jdbcUrl" value="${ogcStats.jdbcURL}"/>
-        <property name="user" value="${ogcStats.databaseUser}"/>
-        <property name="password" value="${ogcStats.databasePassword}"/>
+        <property name="jdbcUrl" value="${ogcStats.jdbcURL:jdbc:postgresql://database:5432/georchestra}"/>
+        <property name="user" value="${ogcStats.databaseUser:georchestra}"/>
+        <property name="password" value="${ogcStats.databasePassword:georchestra}"/>
         <property name="driverClass" value="org.postgresql.Driver"/>
         <property name="initialPoolSize" value="1"/>
-        <property name="minPoolSize" value="${ogcStats.minPoolSize}"/>
-        <property name="maxPoolSize" value="${ogcStats.maxPoolSize}"/>
-        <property name="checkoutTimeout" value = "${ogcStats.timeout}"/>
+        <property name="minPoolSize" value="${ogcStats.minPoolSize:1}"/>
+        <property name="maxPoolSize" value="${ogcStats.maxPoolSize:5}"/>
+        <property name="checkoutTimeout" value = "${ogcStats.timeout:2000}"/>
         <property name="idleConnectionTestPeriod" value="30"/>
-        <property name="maxIdleTime" value = "${ogcStats.maxIdleTime}"/>
+        <property name="maxIdleTime" value = "${ogcStats.maxIdleTime:60}"/>
         <property name="acquireIncrement" value="2"/>
         <property name="testConnectionOnCheckout" value="true"/> <!-- Uses JDBC4's Connection.isValid() -->
     </bean>
