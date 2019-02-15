@@ -21,44 +21,44 @@
     <jpa:repositories base-package="org.georchestra.atlas.repository" />
 
     <context:property-placeholder
-      location="classpath:atlas.properties,
+      location="
                 file:${georchestra.datadir}/default.properties,
                 file:${georchestra.datadir}/atlas/atlas.properties"
       ignore-resource-not-found="true" ignore-unresolvable="true" />
 
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
         <property name="driverClass" value="org.postgresql.Driver"/>
-        <property name="jdbcUrl" value="${psql.url}"/>
-        <property name="user" value="${psql.user}"/>
-        <property name="password" value="${psql.pass}"/>
+        <property name="jdbcUrl" value="${psql.url:jdbc:postgresql://localhost:5432/georchestra}"/>
+        <property name="user" value="${psql.user:georchestra}"/>
+        <property name="password" value="${psql.pass:georchestra}"/>
         <property name="initialPoolSize" value="1"/>
-        <property name="minPoolSize" value="${dataSource.minPoolSize}"/>
-        <property name="maxPoolSize" value="${dataSource.maxPoolSize}"/>
-        <property name="checkoutTimeout" value = "${dataSource.timeout}"/>
+        <property name="minPoolSize" value="${dataSource.minPoolSize:1}"/>
+        <property name="maxPoolSize" value="${dataSource.maxPoolSize:5}"/>
+        <property name="checkoutTimeout" value = "${dataSource.timeout:2000}"/>
         <property name="idleConnectionTestPeriod" value="30"/>
-        <property name="maxIdleTime" value = "${dataSource.maxIdleTime}"/>
+        <property name="maxIdleTime" value = "${dataSource.maxIdleTime:60}"/>
         <property name="acquireIncrement" value="1"/>
         <property name="testConnectionOnCheckout" value="true"/> <!-- Uses JDBC4's Connection.isValid() -->
     </bean>
 
     <bean id="populateProperties" class="org.georchestra.atlas.CamelPopulatePropertiesComponent">
-        <property name="baseUrl" value="${atlas.baseUrl}"/>
+        <property name="baseUrl" value="${atlas.baseUrl:https://georchestra.mydomain.org/atlas}"/>
     </bean>
 
     <bean id="specAsPdf" class="org.georchestra.atlas.CamelMapfishPrintComponent" init-method="init" />
 
     <bean id="prepareMail" class="org.georchestra.atlas.AtlasMailComponent" init-method="init">
-        <property name="georBaseUrl" value="${atlas.baseUrl}" />
-        <property name="emailFrom" value="${atlas.emailFrom}" />
-        <property name="emailSubject" value="${atlas.emailSubject}" />
+        <property name="georBaseUrl" value="${atlas.baseUrl:https://georchestra.mydomain.org/atlas}" />
+        <property name="emailFrom" value="${atlas.emailFrom:noreply+atlas@georchestra.org}" />
+        <property name="emailSubject" value="${atlas.emailSubject:[geOrchestra] Your Atlas request}" />
     </bean>
 
     <bean id="bundlePdf" class="org.georchestra.atlas.BundlePdfComponent" init-method="init">
-        <property name="tempDir" value="${atlas.temporaryDirectory}" />
+        <property name="tempDir" value="${atlas.temporaryDirectory:/tmp/atlas}" />
     </bean>
 
     <bean id="jobController" class="org.georchestra.atlas.JobController" init-method="init">
-        <property name="tempDir" value="${atlas.temporaryDirectory}" />
+        <property name="tempDir" value="${atlas.temporaryDirectory:/tmp/atlas}" />
     </bean>
 
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
@@ -92,8 +92,19 @@
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   streamCache="true">
 
-        <!-- TODO order ? -->
-        <propertyPlaceholder id="properties" location="classpath:atlas.properties,file:${georchestra.datadir}/atlas/atlas.properties"
+        <!--
+            The two files are loaded, and the second one overrides the properties from the first one, if any
+            Note also that the camel placeholders use the {{...}} syntax, not ${...} as in Spring
+            For more information, see the doc: https://camel.apache.org/using-propertyplaceholder.html
+
+            Note also that, according to the doc, it SEEMS that the second properties files can include
+            Spring placeholders (${...}) to dereference properties from the first one.
+            TODO: confirm the latter paragraph.
+        -->
+        <propertyPlaceholder id="properties"
+            location="
+                file:${georchestra.datadir}/default.properties,
+                file:${georchestra.datadir}/atlas/atlas.properties"
             ignoreMissingLocation="true" />
 
         <dataFormats>
@@ -310,11 +321,11 @@
                 <choice>
                     <when>
                         <simple>${property.outputFormat} == "pdf"</simple>
-                        <to uri="file://?fileName=/{{atlas.temporaryDirectory}}/${property.jobId}/${property.CamelSplitIndex}.pdf"/>
+                        <to uri="file://?fileName=/{{atlas.temporaryDirectory:/tmp/atlas}}/${property.jobId}/${property.CamelSplitIndex}.pdf"/>
                     </when>
                     <!-- use filename from spec for ZIP format -->
                     <otherwise>
-                        <to uri="file://?fileName=/{{atlas.temporaryDirectory}}/${property.jobId}/${property.filename}"/>
+                        <to uri="file://?fileName=/{{atlas.temporaryDirectory:/tmp/atlas}}/${property.jobId}/${property.filename}"/>
                     </otherwise>
                 </choice>
 
@@ -331,7 +342,7 @@
             </choice>
 
             <!--  dumps the PDF / ZIP to a file -->
-            <to uri="file://?fileName=/{{atlas.temporaryDirectory}}/${property.jobId}/${property.token}.${property.outputFormat}"/>
+            <to uri="file://?fileName=/{{atlas.temporaryDirectory:/tmp/atlas}}/${property.jobId}/${property.token}.${property.outputFormat}"/>
 
             <transform>
                 <simple>${property.originalObject}</simple>
@@ -343,7 +354,7 @@
             <!-- Sets all the necessary properties to send a mail, see AtlasMailComponent Java class -->
             <to uri="bean:prepareMail" />
             <!-- Actually send the mail -->
-            <to uri="smtp://{{smtpHost}}:{{smtpPort}}/" />
+            <to uri="smtp://{{smtpHost:localhost}}:{{smtpPort:25}}/" />
         </route>
     </camelContext>
 </beans>
