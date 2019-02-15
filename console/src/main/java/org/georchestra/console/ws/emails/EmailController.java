@@ -21,7 +21,6 @@ package org.georchestra.console.ws.emails;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.console.dao.*;
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.DataServiceException;
@@ -36,6 +35,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
@@ -95,13 +95,36 @@ public class EmailController {
     private AdminLogDao logRepo;
 
     @Autowired
-    private GeorchestraConfiguration georConfig;
-
-    @Autowired
     private AdvancedDelegationDao advancedDelegationDao;
 
     private static final Log LOG = LogFactory.getLog(EmailController.class.getName());
     private Collection<String> recipientWhiteList;
+
+    /**
+     * Email proxy configuration
+     *
+     * Basically, this webapp can send emails on behalf of LDAP users.
+     * The service endpoint is available at /console/emailProxy
+     * Usage is restricted to users having the MOD_EMAILPROXY role by default,
+     * cf https://github.com/georchestra/datadir/blob/master/security-proxy/security-mappings.xml
+     * see https://github.com/georchestra/georchestra/pull/1572 for more information.
+     *
+     * These restrictions have been implemented to prevent spammers.
+     */
+    @Value("${emailProxyFromAddress:no-reply@georchestra.org}")
+    private String emailProxyFromAddress;
+
+    @Value("${emailProxyMaxRecipient:10}")
+    private String emailProxyMaxRecipient;
+
+    @Value("${emailProxyMaxBodySize:10000}")
+    private String emailProxyMaxBodySize;
+
+    @Value("${emailProxyMaxSubjectSize:200}")
+    private String emailProxyMaxSubjectSize;
+
+    @Value("${emailProxyRecipientWhitelist:psc@georchestra.org, postmaster@georchestra.org, listmaster@georchestra.org}")
+    private String emailProxyRecipientWhitelist;
 
     /*
      * produces = MediaType.APPLICATION_JSON_VALUE
@@ -312,7 +335,7 @@ public class EmailController {
 
         // Generate From header
         InternetAddress from = new InternetAddress();
-        from.setAddress(this.georConfig.getProperty("emailProxyFromAddress"));
+        from.setAddress(emailProxyFromAddress);
         from.setPersonal(request.getHeader("sec-firstname") + " " + request.getHeader("sec-lastname"));
         message.setFrom(from);
 
@@ -354,9 +377,9 @@ public class EmailController {
             throw new JSONException("No subject specified, 'subject' field is required");
 
         // Check subject size
-        if(payload.getString("subject").length() > Integer.parseInt(georConfig.getProperty("emailProxyMaxSubjectSize")))
+        if(payload.getString("subject").length() > Integer.parseInt(emailProxyMaxSubjectSize))
             throw new IllegalArgumentException("Subject is too long, it should not exceed " +
-                    georConfig.getProperty("emailProxyMaxSubjectSize") + " bytes");
+                    emailProxyMaxSubjectSize + " bytes");
     }
 
     /**
@@ -370,9 +393,9 @@ public class EmailController {
             throw new JSONException("No body specified, 'body' field is required");
 
         // Check subject and body size
-        if(payload.getString("body").length() > Integer.parseInt(georConfig.getProperty("emailProxyMaxBodySize")))
+        if(payload.getString("body").length() > Integer.parseInt(emailProxyMaxBodySize))
             throw new IllegalArgumentException("Body is too long, it should not exceed " +
-                    georConfig.getProperty("emailProxyMaxBodySize") + " bytes");
+                    emailProxyMaxBodySize + " bytes");
 
     }
 
@@ -390,9 +413,9 @@ public class EmailController {
             throw new JSONException("One of 'to', 'cc' or 'bcc' must be present in request");
 
         // Check recipient count against proxyMaxRecipient
-        if((to.length + cc.length + bcc.length) > Integer.parseInt(georConfig.getProperty("emailProxyMaxRecipient")))
+        if((to.length + cc.length + bcc.length) > Integer.parseInt(emailProxyMaxRecipient))
             throw new IllegalArgumentException("Too many recipient in request, max recipient : "
-                    + georConfig.getProperty("emailProxyMaxRecipient"));
+                    + emailProxyMaxRecipient);
 
         // Check Recipients validity
         for(int i = 0; i < to.length; i++)
@@ -465,7 +488,7 @@ public class EmailController {
     private boolean recipientIsAllowed(String recipient) throws DataServiceException {
         // Load configuration if not already loaded
         if(this.recipientWhiteList == null)
-            this.recipientWhiteList = Arrays.asList(this.georConfig.getProperty("emailProxyRecipientWhitelist").split("\\s*,\\s*"));
+            this.recipientWhiteList = Arrays.asList(emailProxyRecipientWhitelist.split("\\s*,\\s*"));
 
         // Check recipient in whitelist
         if(this.recipientWhiteList.contains(recipient))
@@ -528,11 +551,6 @@ public class EmailController {
         Transport.send(message);
     }
 
-    // Setter for unit tests
-    public void setGeorConfig(GeorchestraConfiguration georConfig) {
-        this.georConfig = georConfig;
-    }
-
     // Getter for unit tests
     public AccountDao getAccountDao() {
         return accountDao;
@@ -542,4 +560,23 @@ public class EmailController {
         this.accountDao = accountDao;
     }
 
+    public void setEmailProxyFromAddress(String emailProxyFromAddress) {
+        this.emailProxyFromAddress = emailProxyFromAddress;
+    }
+
+    public void setEmailProxyMaxRecipient(String emailProxyMaxRecipient) {
+        this.emailProxyMaxRecipient = emailProxyMaxRecipient;
+    }
+
+    public void setEmailProxyMaxBodySize(String emailProxyMaxBodySize) {
+        this.emailProxyMaxBodySize = emailProxyMaxBodySize;
+    }
+
+    public void setEmailProxyMaxSubjectSize(String emailProxyMaxSubjectSize) {
+        this.emailProxyMaxSubjectSize = emailProxyMaxSubjectSize;
+    }
+
+    public void setEmailProxyRecipientWhitelist(String emailProxyRecipientWhitelist) {
+        this.emailProxyRecipientWhitelist = emailProxyRecipientWhitelist;
+    }
 }

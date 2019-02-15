@@ -36,39 +36,36 @@
 
   <context:annotation-config/>
 
-  <context:property-placeholder location="/WEB-INF/spring/console.properties, /WEB-INF/spring/protectedroles.properties, file:${georchestra.datadir}/default.properties, file:${georchestra.datadir}/console/console.properties, file:${georchestra.datadir}/console/protectedroles.properties" ignore-resource-not-found="true" ignore-unresolvable="true" />
+  <context:property-placeholder location="file:${georchestra.datadir}/default.properties, file:${georchestra.datadir}/console/console.properties, file:${georchestra.datadir}/console/protectedroles.properties" ignore-resource-not-found="true" ignore-unresolvable="true" />
 
   <context:component-scan base-package="org.georchestra.console"/>
 
-  <!-- Resolves views selected for rendering by @Controllers to .jsp resources
-	   in the /WEB-INF/views directory
-  -->
-  <bean class="org.georchestra.console.Configuration">
-    <property name="publicContextPath" value="${publicContextPath}"/>
+  <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" p:prefix="/WEB-INF/views/" p:suffix=".jsp">
+    <property name="attributes">
+      <map>
+        <entry key="headerHeight" value="${headerHeight:90}" />
+        <entry key="headerUrl" value="${headerUrl:/header/}" />
+        <entry key="publicContextPath" value="${publicContextPath:/console}"/>
+      </map>
+    </property>
   </bean>
 
-  <mvc:interceptors>
-    <bean class="org.georchestra.console.ConfigurationInterceptor"/>
-  </mvc:interceptors>
-
-  <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" p:prefix="/WEB-INF/views/" p:suffix=".jsp" />
-
   <bean id="reCaptchaActivated" class="java.lang.Boolean">
-    <constructor-arg value="${recaptcha.activated:true}" />
+    <constructor-arg value="${recaptcha.activated:false}" />
   </bean>
 
   <bean id="reCaptchaParameters" class="org.georchestra.console.bs.ReCaptchaParameters">
-    <property name="publicKey" value="${publicKey}"/>
-    <property name="privateKey" value="${privateKey}"/>
-    <property name="verifyUrl" value="${verificationURL}"/>
+    <property name="publicKey" value="${publicKey:6LfTgF4UAAAAADphdZKi6ocxIpn9MSzt8wRBFmmd}"/>
+    <property name="privateKey" value="${privateKey:6LfTgF4UAAAAAL-FJJecf36W69hEaC4qZ1yu_s5-}"/>
+    <property name="verifyUrl" value="${verificationURL:https://www.google.com/recaptcha/api/siteverify}"/>
   </bean>
 
   <!-- LDAP connection -->
   <bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
-    <property name="url" value="${ldapUrl}"/>
-    <property name="base" value="${baseDN}"/>
-    <property name="userDn" value="${ldapAdminDn}"/>
-    <property name="password" value="${ldap.admin.password}"/>
+    <property name="url" value="${ldapUrl:ldap://localhost:389}"/>
+    <property name="base" value="${baseDN:dc=georchestra,dc=org}"/>
+    <property name="userDn" value="${ldapAdminDn:cn=admin,dc=georchestra,dc=org}"/>
+    <property name="password" value="${ldap.admin.password:secret}"/>
   </bean>
 
   <bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate">
@@ -77,73 +74,73 @@
 
   <bean id="roleDao" class="org.georchestra.console.ds.RoleDaoImpl">
     <property name="ldapTemplate" ref="ldapTemplate"/>
-    <property name="basePath" value="${baseDN}"/>
-    <property name="roleSearchBaseDN" value="${roleSearchBaseDN}"/>
+    <property name="basePath" value="${baseDN:dc=georchestra,dc=org}"/>
+    <property name="roleSearchBaseDN" value="${roleSearchBaseDN:ou=roles}"/>
   </bean>
 
   <bean id="orgsDao" class="org.georchestra.console.ds.OrgsDao">
     <property name="ldapTemplate" ref="ldapTemplate"/>
-    <property name="basePath" value="${baseDN}"/>
-    <property name="orgTypeValues" value="${orgTypeValues}"/>
+    <property name="basePath" value="${baseDN:dc=georchestra,dc=org}"/>
+    <property name="orgTypeValues" value="${orgTypeValues:Association,Company,NGO,Individual,Other}"/>
     <property name="orgSearchBaseDN" value="${orgSearchBaseDN}"/>
-    <property name="pendingOrgSearchBaseDN" value="${pendingOrgSearchBaseDN}"/>
+    <property name="pendingOrgSearchBaseDN" value="${pendingOrgSearchBaseDN:ou=pendingorgs}"/>
   </bean>
 
   <bean id="accountDao" class="org.georchestra.console.ds.AccountDaoImpl" init-method="init">
     <constructor-arg ref="ldapTemplate"/>
-    <property name="basePath" value="${baseDN}"/>
-    <property name="userSearchBaseDN" value="${userSearchBaseDN}"/>
-    <property name="pendingUserSearchBaseDN" value="${pendingUserSearchBaseDN}"/>
-    <property name="orgSearchBaseDN" value="${orgSearchBaseDN}"/>
-    <property name="pendingOrgSearchBaseDN" value="${pendingOrgSearchBaseDN}"/>
-    <property name="roleSearchBaseDN" value="${roleSearchBaseDN}"/>
+    <property name="basePath" value="${baseDN:dc=georchestra,dc=org}"/>
+    <property name="userSearchBaseDN" value="${userSearchBaseDN:ou=users}"/>
+    <property name="pendingUserSearchBaseDN" value="${pendingUserSearchBaseDN:ou=pendingusers}"/>
+    <property name="orgSearchBaseDN" value="${orgSearchBaseDN:ou=orgs}"/>
+    <property name="pendingOrgSearchBaseDN" value="${pendingOrgSearchBaseDN:ou=pendingorgs}"/>
+    <property name="roleSearchBaseDN" value="${roleSearchBaseDN:ou=roles}"/>
   </bean>
 
   <bean class="org.georchestra.console.ws.backoffice.users.UserRule">
     <property name="listOfprotectedUsers">
       <description>Comma separated list of one or more user identifiers (uid) of protected user</description>
-        <!-- Users are defined as a comma separated list of uid and can be overridden in data dir with "protectedUserList" key-->
-      <value>${protectedUserList:geoserver_privileged_user}</value>
+        <!-- Users are defined as a comma separated list of uid and can be overridden in data dir with "protectedUsersList" key-->
+        <value>${protectedUsersList:geoserver_privileged_user}</value>
     </property>
   </bean>
 
   <bean class="org.georchestra.console.ws.backoffice.roles.RoleProtected">
     <property name="listOfprotectedRoles">
       <description>Comma separated list of one or more protected Roles</description>
-        <!-- Roles are defined as a comma separated list of Roles name and can be override in data dir with "protectedRoleList" key-->
-      <value>${protectedRoleList:ADMINISTRATOR,USER,GN_.*,MOD_.*}</value>
+        <!-- Roles are defined as a comma separated list of Roles name and can be override in data dir with "protectedRolesList" key-->
+      <value>${protectedRolesList:SUPERUSER,ADMINISTRATOR,ORGADMIN,USER,EXTRACTORAPP,GN_.*}</value>
     </property>
   </bean>
 
   <bean id="userTokenDao" class="org.georchestra.console.ds.UserTokenDao"/>
 
   <bean id="waitForDb" class="org.georchestra.commons.WaitForDb" init-method="test">
-    <property name="url" value="${psql.url}"/>
-    <property name="username" value="${psql.user}"/>
-    <property name="password" value="${psql.pass}"/>
+    <property name="url" value="${psql.url:jdbc:postgresql://localhost:5432/georchestra}"/>
+    <property name="username" value="${psql.user:georchestra}"/>
+    <property name="password" value="${psql.pass:georchestra}"/>
     <property name="driverClassName" value="org.postgresql.Driver"/>
   </bean>
 
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" depends-on="waitForDb">
-        <property name="jdbcUrl" value="${psql.url}"/>
-        <property name="user" value="${psql.user}"/>
-        <property name="password" value="${psql.pass}"/>
+        <property name="jdbcUrl" value="${psql.url:jdbc:postgresql://localhost:5432/georchestra}"/>
+        <property name="user" value="${psql.user:georchestra}"/>
+        <property name="password" value="${psql.pass:georchestra}"/>
         <property name="driverClass" value="org.postgresql.Driver"/>
         <property name="initialPoolSize" value="1"/>
-        <property name="minPoolSize" value="${dataSource.minPoolSize}"/>
-        <property name="maxPoolSize" value="${dataSource.maxPoolSize}"/>
-        <property name="checkoutTimeout" value = "${dataSource.timeout}"/>
+        <property name="minPoolSize" value="${dataSource.minPoolSize:2}"/>
+        <property name="maxPoolSize" value="${dataSource.maxPoolSize:10}"/>
+        <property name="checkoutTimeout" value = "${dataSource.timeout:1000}"/>
         <property name="idleConnectionTestPeriod" value="30"/>
-        <property name="maxIdleTime" value = "${dataSource.maxIdleTime}"/>
+        <property name="maxIdleTime" value = "${dataSource.maxIdleTime:60}"/>
         <property name="acquireIncrement" value="2"/>
         <property name="testConnectionOnCheckout" value="true"/> <!-- Uses JDBC4's Connection.isValid() -->
     </bean>
 
    <!--<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">-->
        <!--<property name="driverClassName" value="org.postgresql.Driver"/>-->
-       <!--<property name="url" value="${psql.url}"/>-->
-       <!--<property name="username" value="${psql.user}"/>-->
-       <!--<property name="password" value="${psql.pass}"/>-->
+       <!--<property name="url" value="${psql.url:jdbc:postgresql://localhost:5432/georchestra}"/>-->
+       <!--<property name="username" value="${psql.user:georchestra}"/>-->
+       <!--<property name="password" value="${psql.pass:georchestra}"/>-->
    <!--</bean>-->
 
    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
@@ -212,43 +209,45 @@
 
   <!-- Email Factory configuration -->
   <bean id="emailFactory" class="org.georchestra.console.mailservice.EmailFactory" >
-    <property name="smtpHost" value="${smtpHost}"/>
-    <property name="smtpPort" value="${smtpPort:-1}"/>
-    <property name="emailHtml" value="${emailHtml}"/>
-    <property name="replyTo" value="${replyTo}"/>
-    <property name="from" value="${from}"/>
+    <property name="smtpHost" value="${smtpHost:localhost}"/>
+    <property name="smtpPort" value="${smtpPort:25}"/>
+    <property name="emailHtml" value="${emailHtml:false}"/>
+    <property name="replyTo" value="${replyTo:georchestra+testadmin@georchestra.mydomain.org}"/>
+    <property name="from" value="${from:georchestra+testadmin@georchestra.mydomain.org}"/>
     <property name="bodyEncoding" value="UTF-8"/>
     <property name="subjectEncoding" value="UTF-8"/>
     <property name="templateEncoding" value="${templateEncoding:UTF-8}"/>
     <property name="accountWasCreatedEmailFile" value="/WEB-INF/templates/newaccount-was-created-template.txt"/>
-    <property name="accountWasCreatedEmailSubject" value="${subject.account.created}"/>
+    <property name="accountWasCreatedEmailSubject" value="${subject.account.created:[geOrchestra] Your account has been created}"/>
     <property name="accountCreationInProcessEmailFile" value="/WEB-INF/templates/account-creation-in-progress-template.txt"/>
-    <property name="accountCreationInProcessEmailSubject" value="${subject.account.in.process}"/>
+    <property name="accountCreationInProcessEmailSubject" value="${subject.account.in.process:[geOrchestra] Your new account is waiting for validation}"/>
     <property name="newAccountRequiresModerationEmailFile" value="/WEB-INF/templates/newaccount-requires-moderation-template.txt"/>
-    <property name="newAccountRequiresModerationEmailSubject" value="${subject.requires.moderation}"/>
+    <property name="newAccountRequiresModerationEmailSubject" value="${subject.requires.moderation:[geOrchestra] New account waiting for validation}"/>
     <property name="changePasswordEmailFile" value="/WEB-INF/templates/changepassword-email-template.txt"/>
-    <property name="changePasswordEmailSubject" value="${subject.change.password}"/>
+    <property name="changePasswordEmailSubject" value="${subject.change.password:[geOrchestra] Update your password}"/>
     <property name="accountUidRenamedEmailFile" value="/WEB-INF/templates/account-uid-renamed.txt" />
-    <property name="accountUidRenamedEmailSubject" value="${subject.account.uid.renamed}" />
+    <property name="accountUidRenamedEmailSubject" value="${subject.account.uid.renamed:[geOrchestra] New login for your account}" />
     <property name="newAccountNotificationEmailFile" value="/WEB-INF/templates/newaccount-notification-template.txt"/>
-    <property name="newAccountNotificationEmailSubject" value="${subject.new.account.notification}"/>
+    <property name="newAccountNotificationEmailSubject" value="${subject.new.account.notification:[geOrchestra] New account created}"/>
+    <property name="publicUrl" value="${publicUrl:https://georchestra.mydomain.org}"/>
+    <property name="instanceName" value="${instanceName:geOrchestra}"/>
   </bean>
 
   <bean id="moderator" class="org.georchestra.console.bs.Moderator">
-    <property name="moderatedSignup" value="${moderatedSignup}"/>
-    <property name="moderatorEmail" value="${moderatorEmail}"/>
+    <property name="moderatedSignup" value="${moderatedSignup:true}"/>
+    <property name="moderatorEmail" value="${moderatorEmail:georchestra+testadmin@georchestra.mydomain.org}"/>
   </bean>
 
   <bean id="expiredTokenManagement" class="org.georchestra.console.bs.ExpiredTokenManagement">
-    <property name="delayInDays" value="${delayInDays}"/>
+    <property name="delayInDays" value="${delayInDays:1}"/>
   </bean>
 
   <bean id="validation" class="org.georchestra.console.ws.utils.Validation">
-    <constructor-arg value="${requiredFields}" name="requiredFields" type="java.lang.String"/>
+    <constructor-arg value="${requiredFields:firstName,surname,org,orgType}" name="requiredFields" type="java.lang.String"/>
   </bean>
 
   <bean id="warnUserIfUidModified" class="java.lang.Boolean">
-    <constructor-arg value="${warnUserIfUidModified}" />
+    <constructor-arg value="${warnUserIfUidModified:true}" />
   </bean>
 
   <bean id="georchestraConfiguration" class="org.georchestra.commons.configuration.GeorchestraConfiguration">

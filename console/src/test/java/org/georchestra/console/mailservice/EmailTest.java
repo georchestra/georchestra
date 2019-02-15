@@ -37,6 +37,7 @@ public class EmailTest {
     private ServletContext servletContext;
     private GeorchestraConfiguration georchestraConfiguration;
     private String publicUrl;
+    private String instanceName;
 
     private Email mail;
 
@@ -59,6 +60,7 @@ public class EmailTest {
         this.servletContext = Mockito.mock(ServletContext.class);
         this.georchestraConfiguration = Mockito.mock(GeorchestraConfiguration.class);
         this.publicUrl = "http://localhost:8080";
+        this.instanceName = "geOrchestra";
         Mockito.when(this.servletContext.getRealPath(this.simpleTemplate))
                 .thenReturn(this.getClass().getClassLoader().getResource(this.simpleTemplate).getPath());
         Mockito.when(this.servletContext.getRealPath(this.htmlTemplate))
@@ -69,14 +71,13 @@ public class EmailTest {
                 .thenReturn(this.getClass().getClassLoader().getResource(this.isoTemplate).getPath());
         Mockito.when(this.servletContext.getRealPath(this.replaceTemplate))
                 .thenReturn(this.getClass().getClassLoader().getResource(this.replaceTemplate).getPath());
-        Mockito.when(this.georchestraConfiguration.getProperty(Mockito.eq("publicUrl")))
-                .thenReturn(this.publicUrl);
     }
 
     @Test
     public void testRecipientFromEtc() throws MessagingException, IOException {
         Email email = new Email(recipients, emailSubject, smtpHost, smtpPort, false, replyTo, from, "us/ascii",
-                "us/ascii", "ascii", this.simpleTemplate, this.servletContext, this.georchestraConfiguration);
+                "us/ascii", "ascii", this.simpleTemplate, this.servletContext, this.georchestraConfiguration,
+                publicUrl, instanceName);
 
         // Generate message
         MimeMessage message = email.send(false);
@@ -111,7 +112,8 @@ public class EmailTest {
     @Test
     public void testHtmlEmail() throws MessagingException, IOException {
         Email email = new Email(recipients, emailSubject, smtpHost, smtpPort, true, replyTo, from, "us/ascii",
-                "us/ascii", "ascii", this.htmlTemplate, this.servletContext, this.georchestraConfiguration);
+                "us/ascii", "ascii", this.htmlTemplate, this.servletContext, this.georchestraConfiguration,
+                publicUrl, instanceName);
 
         // Generate message
         Message message = email.send(false);
@@ -125,7 +127,8 @@ public class EmailTest {
     @Test
     public void testUTF8EmailEncoding() throws MessagingException, IOException {
         Email email = new Email(recipients, "Compte créé", smtpHost, smtpPort, false, replyTo, from, "UTF-8",
-                "UTF-8", "UTF-8", this.utf8Template, this.servletContext, this.georchestraConfiguration);
+                "UTF-8", "UTF-8", this.utf8Template, this.servletContext, this.georchestraConfiguration,
+                publicUrl, instanceName);
 
         // Generate message
         Message message = email.send(false);
@@ -139,7 +142,8 @@ public class EmailTest {
     @Test
     public void testLatinEmailEncoding() throws IOException, MessagingException {
         Email email = new Email(recipients, "Compte créé", smtpHost, smtpPort, false, replyTo, from, "UTF-8",
-                "UTF-8", "ISO-8859-15", this.isoTemplate, this.servletContext, this.georchestraConfiguration);
+                "UTF-8", "ISO-8859-15", this.isoTemplate, this.servletContext, this.georchestraConfiguration,
+                publicUrl, instanceName);
 
         // Generate message
         Message message = email.send(false);
@@ -154,7 +158,8 @@ public class EmailTest {
     @Test
     public void testReplace() throws IOException, MessagingException {
         Email email = new Email(recipients, "Compte créé", smtpHost, smtpPort, false, replyTo, from, "UTF-8",
-                "UTF-8", "ISO-8859-15", this.replaceTemplate, this.servletContext, this.georchestraConfiguration);
+                "UTF-8", "ISO-8859-15", this.replaceTemplate, this.servletContext, this.georchestraConfiguration,
+                publicUrl, instanceName);
         email.set("uid", "testadmin");
         email.set("var1", "value1");
         email.set("name", "Test Admin");

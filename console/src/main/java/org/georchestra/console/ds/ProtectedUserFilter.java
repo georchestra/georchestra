@@ -21,7 +21,6 @@ package org.georchestra.console.ds;
 
 import java.util.*;
 
-import org.georchestra.console.Configuration;
 import org.georchestra.console.dto.Account;
 
 /**
