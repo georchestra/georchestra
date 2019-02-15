@@ -103,8 +103,7 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 
     public void init() {
         if ((georConfig != null) && (georConfig.activated())) {
-            String baseTmpDirectory = georConfig.getProperty("docTempDir");
-            File tmpDir = new File(baseTmpDirectory, "/geoFileUploadsCache");
+            File tmpDir = new File(this.docTempDir, "/geoFileUploadsCache");
             if (! tmpDir.exists()) {
                 try {
                 FileUtils.forceMkdir(tmpDir);
@@ -209,6 +208,7 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
     // constants configured in the ws-servlet.xml file
     private String responseCharset;
     private String tempDirectory;
+    private String docTempDir = "/tmp";
 
     /**
      * The current file that was upload an is in processing
@@ -222,6 +222,10 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 
     public void setTempDirectory(String tempDirectory) {
         this.tempDirectory = tempDirectory;
+    }
+
+    public void setDocTempDir(String docTempDir) {
+        this.docTempDir = docTempDir;
     }
 
     public void setResponseCharset(String responseCharset) {

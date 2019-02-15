@@ -15,10 +15,20 @@
         <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"></property>
         <property name="prefix" value="/WEB-INF/jsp/"></property>
         <property name="suffix" value=".jsp"></property>
+        <property name="attributes">
+            <map>
+                <entry key="defaultLanguage" value="${language:en}" />
+                <entry key="consolePublicContextPath" value="${consolePublicContextPath:/console}" />
+            </map>
+        </property>
     </bean>
 
     <bean id="georchestraConfiguration" class="org.georchestra.commons.configuration.GeorchestraConfiguration">
         <constructor-arg value="header" />
     </bean>
 
+    <context:property-placeholder
+        location="file:${georchestra.datadir}/default.properties, file:${georchestra.datadir}/header/header.properties"
+        ignore-resource-not-found="true"
+        ignore-unresolvable="true" />
 </beans>

@@ -43,7 +43,6 @@ import javax.sql.DataSource;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.extractorapp.ws.AbstractEmailFactory;
 import org.georchestra.extractorapp.ws.Email;
 import org.georchestra.extractorapp.ws.extractor.task.ExecutionMetadata;
@@ -93,24 +92,9 @@ public class ExtractorController implements ServletContextAware {
     private ExtractionManager extractionManager;
     private String userAgent;
 
-    @Autowired
-    private GeorchestraConfiguration georConfig;
     private @Autowired DataSource dataSource;
 
     public void validateConfig() throws PropertyVetoException, MalformedURLException {
-        if ((georConfig != null) && (georConfig.activated())) {
-            LOG.info("geOrchestra datadir: reconfiguring bean ...");
-            this.setPublicUrl(georConfig.getProperty("publicUrl"));
-            maxCoverageExtractionSize = Long.parseLong(georConfig.getProperty("maxCoverageExtractionSize"));
-            remoteReproject = Boolean.parseBoolean(georConfig.getProperty("remoteReproject"));
-            useCommandLineGDAL = Boolean.parseBoolean(georConfig.getProperty("useCommandLineGDAL"));
-            extractionFolderPrefix = georConfig.getProperty("extractionFolderPrefix");
-            String username = georConfig.getProperty("privileged_admin_name");
-            String password = georConfig.getProperty("privileged_admin_pass");
-            // Recreating a Credentials object
-            adminCredentials = new UsernamePasswordCredentials(username, password);
-            LOG.info("geOrchestra datadir: done.");
-        }
         if (extractionManager == null) {
             throw new AssertionError("A extractionManager needs to be defined in spring configuration");
         }

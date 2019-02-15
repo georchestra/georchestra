@@ -39,7 +39,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 
-import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.console.integration.IntegrationTestSupport;
 import org.georchestra.console.mailservice.EmailFactory;
 import org.junit.Before;
@@ -75,8 +74,6 @@ public class PasswordRecoverySurvivesDatabaseRestartIT {
 
     private @Autowired PasswordRecoveryFormController controller;
 
-    private @Autowired GeorchestraConfiguration georchestraConfig;
-
     public @Before void before() {
         assertTrue(maxPoolSize > 0);
     }
@@ -93,9 +90,7 @@ public class PasswordRecoverySurvivesDatabaseRestartIT {
                 .getModel()//
                 .get("passwordRecoveryFormBean");
 
-        GeorchestraConfiguration spiedConfig = Mockito.spy(georchestraConfig);
-        controller.setGeorConfig(spiedConfig);
-        Mockito.doReturn("http://georchestra.test.org").when(spiedConfig).getProperty(Mockito.eq("publicUrl"));
+        controller.setPublicUrl("http://georchestra.test.org");
         controller.setEmailFactory(Mockito.mock(EmailFactory.class));
 
         HttpServletRequest request = new MockHttpServletRequest("POST", "/account/passwordRecovery");

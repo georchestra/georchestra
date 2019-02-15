@@ -11,19 +11,18 @@
 
     <context:property-placeholder
       location="file:${georchestra.datadir}/default.properties,
-                classpath:extractorapp.properties,
                 file:${georchestra.datadir}/extractorapp/extractorapp.properties"
       ignore-resource-not-found="true" ignore-unresolvable="true" />
 
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
         <property name="driverClass" value="org.postgresql.Driver"/>
-        <property name="jdbcUrl" value="${jdbcurl}"/>
+        <property name="jdbcUrl" value="${jdbcurl:jdbc:postgresql://localhost:5432/georchestra?user=georchestra&amp;password=georchestra}"/>
         <property name="initialPoolSize" value="1"/>
-        <property name="minPoolSize" value="${dataSource.minPoolSize}"/>
-        <property name="maxPoolSize" value="${dataSource.maxPoolSize}"/>
-        <property name="checkoutTimeout" value = "${dataSource.timeout}"/>
+        <property name="minPoolSize" value="${dataSource.minPoolSize:1}"/>
+        <property name="maxPoolSize" value="${dataSource.maxPoolSize:10}"/>
+        <property name="checkoutTimeout" value = "${dataSource.timeout:2000}"/>
         <property name="idleConnectionTestPeriod" value="30"/>
-        <property name="maxIdleTime" value = "${dataSource.maxIdleTime}"/>
+        <property name="maxIdleTime" value = "${dataSource.maxIdleTime:60}"/>
         <property name="acquireIncrement" value="1"/>
         <property name="testConnectionOnCheckout" value="true"/> <!-- Uses JDBC4's Connection.isValid() -->
     </bean>
@@ -41,18 +40,19 @@
     </bean>
 
     <bean id="extractor-controller" init-method="validateConfig" class="org.georchestra.extractorapp.ws.extractor.ExtractorController">
+        <property name="publicUrl" value="${publicUrl:https://georchestra.mydomain.org}"/>
         <property name="responseTemplateFile" value="/WEB-INF/templates/extractor-http-response-template.xml"/>
         <property name="emailFactory" ref="emailFactory"/>
         <property name="reponseMimeType" value="application/xml"/>
         <property name="responseCharset" value="UTF-8"/>
-        <property name="maxCoverageExtractionSize" value="99999999"/>
-        <property name="remoteReproject" value="true"/>
-        <property name="useCommandLineGDAL" value="false"/>
-        <property name="extractionFolderPrefix" value="proj-extract-"/>
+        <property name="maxCoverageExtractionSize" value="${maxCoverageExtractionSize:99999999}"/>
+        <property name="remoteReproject" value="${remoteReproject:true}"/>
+        <property name="useCommandLineGDAL" value="${useCommandLineGDAL:false}"/>
+        <property name="extractionFolderPrefix" value="${extractionFolderPrefix:extraction-}"/>
         <property name="adminCredentials">
             <bean class="org.apache.commons.httpclient.UsernamePasswordCredentials">
-                <constructor-arg index="0" value="geoserver_privileged_user"/>
-                <constructor-arg index="1" value="xxxxxxxx"/>
+                <constructor-arg index="0" value="${privileged_admin_name:geoserver_privileged_user}"/>
+                <constructor-arg index="1" value="${privileged_admin_pass:gerlsSnFd6SmM}"/>
             </bean>
           </property>
           <property name="extractionManager" ref="extractionManager"/>
@@ -63,24 +63,27 @@
     </bean>
 
     <bean id="extractionManager" class="org.georchestra.extractorapp.ws.extractor.task.ExtractionManager" init-method="init">
-        <property name="minThreads" value="1"/>
-        <property name="maxExtractions" value="100"/>
+        <property name="minThreads" value="${minThreads:1}"/>
+        <property name="maxExtractions" value="${maxExtractions:100}"/>
     </bean>
 
     <!-- Email configuration -->
     <bean id="emailFactory" class="org.georchestra.extractorapp.ws.EmailFactoryDefault" init-method="init">
-        <property name="smtpHost" value="localhost"/>
-        <property name="smtpPort" value="25"/>
-        <property name="emailHtml" value="false"/>
-        <property name="replyTo" value="psc@georchestra.org"/>
-        <property name="from" value="psc@georchestra.org"/>
+        <property name="smtpHost" value="${smtpHost:localhost}"/>
+        <property name="smtpPort" value="${smtpPort:25}"/>
+        <property name="emailHtml" value="${emailHtml:false}"/>
+        <property name="replyTo" value="${replyTo:psc@georchestra.org}"/>
+        <property name="from" value="${from:psc@georchestra.org}"/>
         <property name="bodyEncoding" value="UTF-8"/>
         <property name="subjectEncoding" value="UTF-8"/>
         <property name="expireDeamon" ref="expire-daemon"/>
         <property name="emailTemplateFile" value="/WEB-INF/templates/extractor-email-template.txt"/>
         <property name="emailAckTemplateFile" value="/WEB-INF/templates/extractor-email-ack-template.txt"/>
         <property name="extraKeywordsFile" value="/org/georchestra/extractorapp/i18n/extra_keywords_en.properties" />
-        <property name="emailSubject" value="[geOrchestra] Your extraction request"/>
+        <property name="emailSubject" value="${emailSubject:[geOrchestra] Your extraction request}"/>
+        <property name="language" value="${language:en}"/>
+        <property name="publicUrl" value="${publicUrl:https://georchestra.mydomain.org}"/>
+        <property name="instanceName" value="${instanceName:geOrchestra}"/>
     </bean>
 
     <bean id="georchestraConfiguration" class="org.georchestra.commons.configuration.GeorchestraConfiguration">

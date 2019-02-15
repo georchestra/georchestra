@@ -4,7 +4,6 @@ import static org.junit.Assert.assertTrue;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.georchestra.console.Configuration;
 import org.georchestra.console.bs.ExpiredTokenCleanTask;
 import org.georchestra.console.bs.ExpiredTokenManagement;
 import org.junit.Before;
@@ -22,13 +21,13 @@ public class HomeControllerTest {
     private HomeController ctrl;
     private ExpiredTokenCleanTask tokenTask = Mockito.mock(ExpiredTokenCleanTask.class);
     private ExpiredTokenManagement expiredTokenMgmt = new ExpiredTokenManagement(tokenTask);
-    private Configuration configuration = new Configuration();
 
 
     @Before
     public void setUp() {
         expiredTokenMgmt.setDelayInDays(1);
-        ctrl = new HomeController(expiredTokenMgmt, configuration);
+        ctrl = new HomeController(expiredTokenMgmt);
+        ctrl.setPublicContextPath("/console");
     }
 
     @Test

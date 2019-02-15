@@ -34,7 +34,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.commons.configuration.GeorchestraConfiguration;
 
 public abstract class Email {
 
@@ -54,14 +53,15 @@ public abstract class Email {
     private String subjectEncoding;
     private String[] recipients;
     private String subject;
-    
-    protected GeorchestraConfiguration georConfig;
+    private String publicUrl;
+    private String instanceName;
 
     public Email(HttpServletRequest request, String[] recipients,
             final String emailSubject, final String smtpHost,
             final int smtpPort, final String emailHtml, final String replyTo,
             final String from, final String bodyEncoding,
-            final String subjectEncoding, GeorchestraConfiguration georConfig) {
+            final String subjectEncoding, final String publicUrl,
+            final String instanceName) {
 
         this.recipients = recipients;
         this.subject = emailSubject;
@@ -72,7 +72,8 @@ public abstract class Email {
         this.from = from;
         this.bodyEncoding = bodyEncoding;
         this.subjectEncoding = subjectEncoding;
-        this.georConfig = georConfig;
+        this.publicUrl = publicUrl;
+        this.instanceName = instanceName;
     }
 
     public abstract void sendAck() throws AddressException, MessagingException;

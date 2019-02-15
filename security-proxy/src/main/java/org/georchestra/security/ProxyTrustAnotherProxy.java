@@ -9,25 +9,19 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 
 public class ProxyTrustAnotherProxy extends AbstractPreAuthenticatedProcessingFilter {
 
     private static String AUTH_HEADER = "sec-username";
-    private static String CONFIG_KEY = "trustedProxy";
     private static final Log logger = LogFactory.getLog(ProxyTrustAnotherProxy.class.getPackage().getName());
 
-    private GeorchestraConfiguration georchestraConfiguration;
+    /* The default value is an empty list of trusted proxies */
+    private String rawProxyValue = "";
     private Set<InetAddress> trustedProxies = new HashSet<InetAddress>();
 
     public void init() throws UnknownHostException {
-        if (! georchestraConfiguration.activated()) {
-            logger.info("trusting security-proxies only works in datadir mode. Skipping bean configuration");
-            return;
-        }
-        String rawProxyValue = georchestraConfiguration.getProperty(CONFIG_KEY);
-        if (rawProxyValue == null) {
+        if (rawProxyValue == "") {
             logger.info("\"trustedProxy\" property is not defined. Skipping bean configuration");
             return;
         }
@@ -88,11 +82,7 @@ public class ProxyTrustAnotherProxy extends AbstractPreAuthenticatedProcessingFi
         return "N/A";
     }
 
-    public void setGeorchestraConfiguration(GeorchestraConfiguration georchestraConfiguration) {
-        this.georchestraConfiguration = georchestraConfiguration;
-    }
-
-    public GeorchestraConfiguration getGeorchestraConfiguration() {
-        return georchestraConfiguration;
+    public void setRawProxyValue(String rawProxyValue) {
+        this.rawProxyValue = rawProxyValue;
     }
 }

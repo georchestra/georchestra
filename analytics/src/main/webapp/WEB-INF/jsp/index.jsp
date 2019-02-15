@@ -33,31 +33,13 @@
 <%@ page import="org.georchestra.commons.configuration.GeorchestraConfiguration" %>
 
 <%
-String defaultLanguage = "en", instanceName = "geOrchestra";
-String headerHeight = "90";
-String headerUrl = "/header/";
-
-try {
-  ApplicationContext ctx = RequestContextUtils.getWebApplicationContext(request);
-  GeorchestraConfiguration georConfig = (GeorchestraConfiguration) ctx.getBean(GeorchestraConfiguration.class);
-  
-  if (georConfig.activated()) {
-    defaultLanguage = georConfig.getProperty("language", defaultLanguage);
-    instanceName = georConfig.getProperty("instanceName", instanceName);
-    headerHeight = georConfig.getProperty("headerHeight", headerHeight);
-    headerUrl = georConfig.getProperty("headerUrl", headerUrl);
-  }
-} catch (Exception e) {
-  // Ignoring and keeping the default configuration
-}
-
 Locale rLocale = request.getLocale();
 ResourceBundle bundle = Utf8ResourceBundle.getBundle("analytics.i18n.index", rLocale);
 
 String detectedLanguage = rLocale.getLanguage();
 String forcedLang = request.getParameter("lang");
 
-String lang = defaultLanguage;
+String lang = request.getParameter("defaultLanguage");
 if (forcedLang != null) {
     if (forcedLang.equals("en") || forcedLang.equals("es") || forcedLang.equals("ru") || forcedLang.equals("fr") || forcedLang.equals("de")) {
         lang = forcedLang;
@@ -81,7 +63,7 @@ javax.servlet.jsp.jstl.core.Config.set(
 
     <head>
         <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
-        <title lang="<%= lang %>" dir="ltr"><fmt:message key="title.analytics"/> - <%= instanceName %></title>
+        <title lang="<%= lang %>" dir="ltr"><fmt:message key="title.analytics"/> - ${instanceName}</title>
         <link rel="stylesheet" type="text/css" href="resources/js/lib/external/ext/resources/css/ext-all-gray.css" />
         <link rel="stylesheet" type="text/css" href="resources/css/app.css" />
         <style type="text/css">
