@@ -33,16 +33,16 @@
        
 	<!-- ID Generators -->
 	<bean id="ticketGrantingTicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator"
-        c:maxLength="50" c:suffix="${host.name}" />
+        c:maxLength="50" c:suffix="${host.name:georchestra.mydomain.org}" />
 
 	<bean id="serviceTicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator"
-        c:maxLength="20" c:suffix="${host.name}" />
+        c:maxLength="20" c:suffix="${host.name:georchestra.mydomain.org}" />
 
     <bean id="loginTicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator"
-        c:maxLength="30" c:suffix="${host.name}" />
+        c:maxLength="30" c:suffix="${host.name:georchestra.mydomain.org}" />
     	
     <bean id="proxy20TicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator"
-        c:maxLength="20" c:suffix="${host.name}" />
+        c:maxLength="20" c:suffix="${host.name:georchestra.mydomain.org}" />
 	 
 	<util:map id="uniqueIdGeneratorsMap">
 		<entry
