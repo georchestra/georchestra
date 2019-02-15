@@ -82,11 +82,6 @@ public class OrgsController {
     @Autowired
     protected AdvancedDelegationDao advancedDelegationDao;
 
-    @Autowired
-    public OrgsController(OrgsDao dao) {
-        this.orgDao = dao;
-    }
-
     /**
      * Areas map configuration
      *
@@ -129,6 +124,11 @@ public class OrgsController {
      */
     @Value("${AreasGroup:NOM_DEP}")
     private String areasGroup;
+
+    @Autowired
+    public OrgsController(OrgsDao dao) {
+        this.orgDao = dao;
+    }
 
     /**
      * Return a list of available organization as json array
