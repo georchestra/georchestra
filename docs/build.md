@@ -35,7 +35,7 @@ In your `~/.m2/settings.xml`, add a mirror:
 
 You should install the required packages:
 ```
-sudo apt-get install python-virtualenv openjdk-7-jdk ant ant-optional
+sudo apt-get install python-virtualenv openjdk-8-jdk ant ant-optional
 ```
 
 ## Build the modules
@@ -43,11 +43,6 @@ sudo apt-get install python-virtualenv openjdk-7-jdk ant ant-optional
 Building your SDI is just few command-lines away.
 ```
 cd ~/georchestra
-```
-
-If your JDK version is < 8:
-```
-export MAVEN_OPTS="-XX:MaxPermSize=512M"
 ```
 
 Build Geonetwork
