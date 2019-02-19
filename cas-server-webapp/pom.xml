@@ -30,6 +30,25 @@
   <properties>
     <packageDatadirScmVersion>18.12</packageDatadirScmVersion>
     <server>generic</server>
+    
+    <!-- spring version revert start -->
+    <!-- 
+    	See https://github.com/georchestra/georchestra/issues/2492
+    	cas-server-webapp doesn't work with Spring 4. 
+    	An upgrade of org.jasig.cas:*:4.0.0 is required.
+    	is required. https://mvnrepository.com/artifact/org.jasig.cas/cas-server-core/4.2.7 is a possibility,
+    	although latest version is from 2016.
+    	The project moved from org.jasig.cas to org.apereo.cas since then.
+    	Upgrading to https://mvnrepository.com/artifact/org.apereo.cas/cas-server-core/5.3.8
+    	would be preferred as it works with Spring 4.x, or 
+    	https://mvnrepository.com/artifact/org.apereo.cas/cas-server-core/6.0.1
+    	for Spring 5.x
+    -->
+    <spring.version>3.2.6.RELEASE</spring.version>
+    <spring-security.version>3.2.0.RELEASE</spring-security.version>
+    <hibernate.version>4.1.0.Final</hibernate.version>
+    <hibernate-validator.version>4.2.0.Final</hibernate-validator.version>
+    <!-- spring version revert end -->
   </properties>
   <dependencies>
     <dependency>

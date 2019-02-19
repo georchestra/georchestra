@@ -708,10 +708,14 @@ public class Proxy {
                 }
             }
 
+            //process response headers before handling redirect or performing request
+            headerManagement.copyResponseHeaders(request, request.getRequestURI(), proxiedResponse, finalResponse, this.targets);
+
             //Handle redirects
             if (statusCode == HttpStatus.SC_MOVED_PERMANENTLY || statusCode == HttpStatus.SC_MOVED_TEMPORARILY) {
                 Optional<String> adjustedLocation = adjustLocation(request, proxiedResponse);
                 if (adjustedLocation.isPresent()) {
+                	logger.debug("Handling redirect to " + adjustedLocation.get());
                     finalResponse.setStatus(statusCode);
                     finalResponse.setHeader("Location", adjustedLocation.get());
                 } else {
@@ -720,7 +724,6 @@ public class Proxy {
                 return;
             }
 
-            headerManagement.copyResponseHeaders(request, request.getRequestURI(), proxiedResponse, finalResponse, this.targets);
             // get content type
             String contentType = null;
             if (proxiedResponse.getEntity() != null && proxiedResponse.getEntity().getContentType() != null) {
