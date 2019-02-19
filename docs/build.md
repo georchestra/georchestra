@@ -13,6 +13,24 @@ By default, this will always fetch the latest stable version.
 
 Go grab some coffee in the mean time, or read on...
 
+## Use a mirror to fetch dependencies
+
+In your `~/.m2/settings.xml`, add a mirror:
+```xml
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+ http://maven.apache.org/xsd/settings-1.0.0.xsd">
+ <mirrors>
+   <mirror>
+     <id>artifactory-georchestra</id>
+     <mirrorOf>*</mirrorOf>
+     <url>https://packages.georchestra.org/artifactory/maven</url>
+   </mirror>
+ </mirrors>
+</settings>
+```
+
 ## Install the dependencies
 
 You should install the required packages:
