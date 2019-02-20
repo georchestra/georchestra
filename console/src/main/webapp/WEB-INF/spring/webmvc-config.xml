@@ -45,6 +45,7 @@
       <map>
         <entry key="headerHeight" value="${headerHeight:90}" />
         <entry key="headerUrl" value="${headerUrl:/header/}" />
+        <entry key="readonlyUid" value="${readonlyUid:false}" />
         <entry key="publicContextPath" value="${publicContextPath:/console}"/>
       </map>
     </property>
