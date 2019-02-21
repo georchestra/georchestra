@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockServletContext;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -18,6 +19,7 @@ import java.util.Date;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import javax.servlet.ServletContext;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -29,10 +31,16 @@ public class ExtractorControllerTest {
 	private static final String UUID_PARAM = "uuid";
 
 	private ExtractorController ec;
+	private MockServletContext ctx;
 
 	@Before
 	public void setUp() {
+		ctx = new MockServletContext();
+		ctx.setContextPath("/extractorapp/");
+
 		ec = new ExtractorController();
+		ec.setServletContext(ctx);
+		ec.setPublicUrl("https://georchestra.mydomain.org");
 	}
 
 	@After
