@@ -49,8 +49,8 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
     </bean>
 
     <bean id="gwcURLMangler" class="org.geowebcache.util.GeorchestraURLMangler">
-        <constructor-arg value="${publicUrl}" />
-        <constructor-arg value="${contextPath}" />
+        <constructor-arg value="${publicUrl:https://georchestra.mydomain.org}" />
+        <constructor-arg value="${contextPath:/geowebcache}" />
     </bean>
 
     <context:property-placeholder location="file:${georchestra.datadir}/default.properties, file:${georchestra.datadir}/geowebcache/geowebcache.properties"
