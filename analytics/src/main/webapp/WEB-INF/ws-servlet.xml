@@ -57,8 +57,13 @@
         file:${georchestra.datadir}/analytics/analytics.properties"
         ignore-resource-not-found="true" ignore-unresolvable="true" />
 
+    <!-- Takes care of converting a comma-separated list into a Collection or an Array.
+         Used in statisticsController bean with the excludedUsers property -->
+    <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean" />
+
     <bean id="statisticsController" class="org.georchestra.analytics.StatisticsController">
         <constructor-arg name="localTimezone" value="${localTimezone:Europe/Paris}"/>
+        <property name="excludedUsers" value="${excludedUsers,geoserver_privileged_user}"/>
     </bean>
 
     <bean id="georchestraConfiguration" class="org.georchestra.commons.configuration.GeorchestraConfiguration">
