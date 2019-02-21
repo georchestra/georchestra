@@ -37,7 +37,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
 import org.georchestra.analytics.util.QueryBuilder;
-import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
@@ -164,9 +163,6 @@ import com.google.common.annotations.VisibleForTesting;
         + "related to users and groups, and their use of the infrastructure.")
 public class StatisticsController {
 
-    @Autowired
-	private GeorchestraConfiguration georConfig;
-
 	@Autowired
 	private DataSource dataSource;
 
@@ -220,14 +216,6 @@ public class StatisticsController {
 	}
 
 	// Getter and setter for unit tests
-
-	public GeorchestraConfiguration getGeorConfig() {
-		return georConfig;
-	}
-
-	public void setGeorConfig(GeorchestraConfiguration georConfig) {
-		this.georConfig = georConfig;
-	}
 
 	public @VisibleForTesting void setDataSource(DataSource ds) {
 		this.dataSource = ds;
