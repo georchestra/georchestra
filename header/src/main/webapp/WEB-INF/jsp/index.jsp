@@ -25,9 +25,6 @@
 <%@ page language="java" %>
 <%@ page import="java.util.*" %>
 <%@ page import="org.georchestra._header.Utf8ResourceBundle" %>
-<%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
-<%@ page import="org.springframework.context.ApplicationContext" %>
-<%@ page import="org.springframework.web.servlet.support.RequestContextUtils" %>
 
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ page isELIgnored="false" %>
