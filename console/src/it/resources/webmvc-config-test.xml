@@ -234,8 +234,8 @@
     <property name="instanceName" value="${instanceName:geOrchestra}"/>
   </bean>
 
-  <bean id="moderator" class="org.georchestra.console.bs.Moderator">
-    <property name="moderatedSignup" value="${moderatedSignup:true}"/>
+  <bean id="moderatedSignup" class="java.lang.Boolean">
+    <constructor-arg value="${moderatedSignup:true}" />
   </bean>
 
   <bean id="expiredTokenManagement" class="org.georchestra.console.bs.ExpiredTokenManagement">
