@@ -236,7 +236,6 @@
 
   <bean id="moderator" class="org.georchestra.console.bs.Moderator">
     <property name="moderatedSignup" value="${moderatedSignup:true}"/>
-    <property name="moderatorEmail" value="${moderatorEmail:georchestra+testadmin@georchestra.mydomain.org}"/>
   </bean>
 
   <bean id="expiredTokenManagement" class="org.georchestra.console.bs.ExpiredTokenManagement">
