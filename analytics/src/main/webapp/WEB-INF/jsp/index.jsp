@@ -39,7 +39,7 @@ ResourceBundle bundle = Utf8ResourceBundle.getBundle("analytics.i18n.index", rLo
 String detectedLanguage = rLocale.getLanguage();
 String forcedLang = request.getParameter("lang");
 
-String lang = request.getParameter("defaultLanguage");
+String lang = (String) request.getAttribute("defaultLanguage");
 if (forcedLang != null) {
     if (forcedLang.equals("en") || forcedLang.equals("es") || forcedLang.equals("ru") || forcedLang.equals("fr") || forcedLang.equals("de")) {
         lang = forcedLang;
