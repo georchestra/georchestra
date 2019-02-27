@@ -1,10 +1,6 @@
 <%@ page language="java" %>
 <%@ page pageEncoding="UTF-8"%>
 
-<%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
-<%@ page import="org.springframework.context.ApplicationContext" %>
-<%@ page import="org.springframework.web.servlet.support.RequestContextUtils" %>
-
     <script type="text/javascript">
         var headerHeight = ${headerHeight};
     </script>
