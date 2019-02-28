@@ -458,6 +458,7 @@ public class OrgsController {
         orgExt.setOrgType(json.optString(OrgExt.JSON_ORG_TYPE));
         orgExt.setAddress(json.optString(OrgExt.JSON_ADDRESS));
         orgExt.setPending(json.optBoolean(Org.JSON_PENDING));
+        orgExt.setDescription(json.optString(Org.JSON_DESCRIPTION));
     }
 
     /**

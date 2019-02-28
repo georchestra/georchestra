@@ -45,10 +45,13 @@ import javax.naming.ldap.LdapName;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.joining;
 
 /**
  * This class manage organization membership
@@ -336,6 +339,8 @@ public class OrgsDao {
             context.setAttributeValue("businessCategory", orgExt.getOrgType());
         if(orgExt.getAddress() != null)
             context.setAttributeValue("postalAddress", orgExt.getAddress());
+        if(orgExt.getDescription() != null && orgExt.getDescription().length() > 0)
+            context.setAttributeValue("description", orgExt.getDescription());
     }
 
     private class OrgAttributesMapper implements AttributesMapper<Org> {
@@ -348,47 +353,17 @@ public class OrgsDao {
 
         public Org mapFromAttributes(Attributes attrs) throws NamingException {
             Org org = new Org();
-            org.setId(asString(attrs.get("cn")));
-            org.setName(asString(attrs.get("o")));
-            org.setShortName(asString(attrs.get("ou")));
-            if(attrs.get("description") != null)
-                org.setCities(Arrays.asList(asString(attrs.get("description")).split(",")));
-            else
-                org.setCities(new LinkedList<String>());
-            List<String> rawMembers = asListString(attrs.get("member"));
-            List<String> filteredMembers = new LinkedList<String>();
-            for (String member : rawMembers) {
-                LdapNameBuilder dn = LdapNameBuilder.newInstance(member);
-                LdapName name = dn.build();
-                filteredMembers.add(name.getRdn(name.size() - 1 ).getValue().toString());
-            }
-            org.setMembers(filteredMembers);
+            org.setId(asStringStream(attrs, "cn").collect(joining(",")));
+            org.setName(asStringStream(attrs, "o").collect(joining(",")));
+            org.setShortName(asStringStream(attrs, "ou").collect(joining(",")));
+            org.setCities(asStringStream(attrs, "description").collect(Collectors.toList()));
+            org.setMembers(asStringStream(attrs, "member")
+                    .map(raw ->  LdapNameBuilder.newInstance(raw))
+                    .map(dn -> dn.build())
+                    .map(name -> name.getRdn(name.size() - 1 ).getValue().toString())
+                    .collect(Collectors.toList()));
             org.setPending(pending);
             return org;
-        }
-
-        public String asString(Attribute att) throws NamingException {
-            if(att == null)
-                return null;
-            else {
-                StringBuilder buffer = new StringBuilder();
-                for(int i = 0; i < att.size(); i++)
-                    buffer.append("," + att.get(i));
-                return buffer.length() > 0 ? buffer.substring(1) : "";
-            }
-        }
-
-        public List<String> asListString(Attribute att) throws NamingException {
-            List<String> res = new LinkedList<String>();
-
-            if(att == null)
-                return res;
-
-
-            for(int i=0; i< att.size();i++)
-                res.add((String) att.get(i));
-
-            return res;
         }
     }
 
@@ -405,15 +380,9 @@ public class OrgsDao {
             orgExt.setId(asString(attrs.get("o")));
             orgExt.setOrgType(asString(attrs.get("businessCategory")));
             orgExt.setAddress(asString(attrs.get("postalAddress")));
+            orgExt.setDescription(asStringStream(attrs,"description").collect(joining(",")));
             orgExt.setPending(isPending);
             return orgExt;
-        }
-
-        public Integer asInteger(Attribute att) throws NamingException {
-            if(att == null)
-                return null;
-            else
-                return Integer.parseInt(asString(att));
         }
 
         public String asString(Attribute att) throws NamingException {
@@ -421,6 +390,17 @@ public class OrgsDao {
                 return null;
             else
                 return (String) att.get();
+        }
+    }
+
+    public Stream<String> asStringStream(Attributes attributes, String attributeName) throws NamingException {
+        Attribute attribute = attributes.get(attributeName);
+        if (attribute == null) {
+            return Stream.empty();
+        }
+        else {
+            return Collections.list(attribute.getAll()).stream()
+                    .map(Object::toString);
         }
     }
 
