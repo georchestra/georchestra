@@ -213,9 +213,6 @@ public final class NewAccountFormController {
 				org.setId(orgId);
 				orgExt.setId(orgId);
 
-				// Generate numeric identifier
-				orgExt.setNumericId(orgDao.generateNumericId());
-
 				// Store name, short name, orgType and address
 				org.setName(formBean.getOrgName());
 				org.setShortName(formBean.getOrgShortName());

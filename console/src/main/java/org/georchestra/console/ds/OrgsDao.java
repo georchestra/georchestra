@@ -328,21 +328,6 @@ public class OrgsDao {
         return reGenerateId(org_name, "");
     }
 
-    public Integer generateNumericId() {
-        List<OrgExt> orgExts = findAllExt();
-        Integer maxId = 0;
-
-        for(OrgExt orgExt : orgExts){
-            Integer orgId = orgExt.getNumericId();
-            if(orgId == null)
-                continue;
-            if(orgId > maxId)
-                maxId = orgId;
-        }
-
-        return maxId + 1;
-    }
-
     private void mapToContext(OrgExt orgExt, DirContextOperations context) {
         context.setAttributeValues("objectclass", new String[] {"top", "organization"});
 
@@ -351,8 +336,6 @@ public class OrgsDao {
             context.setAttributeValue("businessCategory", orgExt.getOrgType());
         if(orgExt.getAddress() != null)
             context.setAttributeValue("postalAddress", orgExt.getAddress());
-        if(orgExt.getNumericId() != null)
-            context.setAttributeValue("destinationIndicator", orgExt.getNumericId().toString());
     }
 
     private class OrgAttributesMapper implements AttributesMapper<Org> {
@@ -422,7 +405,6 @@ public class OrgsDao {
             orgExt.setId(asString(attrs.get("o")));
             orgExt.setOrgType(asString(attrs.get("businessCategory")));
             orgExt.setAddress(asString(attrs.get("postalAddress")));
-            orgExt.setNumericId(asInteger(attrs.get("destinationIndicator")));
             orgExt.setPending(isPending);
             return orgExt;
         }

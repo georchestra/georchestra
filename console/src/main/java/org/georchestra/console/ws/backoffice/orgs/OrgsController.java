@@ -280,7 +280,6 @@ public class OrgsController {
         this.updateFromRequest(org, json);
 
         OrgExt orgExt = new OrgExt();
-        orgExt.setNumericId(this.orgDao.generateNumericId());
         orgExt.setId(org.getId());
         this.updateFromRequest(orgExt, json);
 
