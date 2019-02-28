@@ -67,6 +67,15 @@ public class OrgsIT {
 				.andExpect(jsonPath("$.pending").value(false));
 	}
 
+	@WithMockUser(username = "admin", roles = "SUPERUSER")
+	public @Test void createAndGetWithEmptyDescription() throws Exception {
+		String orgName = ("it_org_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
+
+		create(orgName);
+
+		support.perform(get("/private/orgs/" + orgName))
+			.andExpect(jsonPath("$.description").value(""));
+	}
 
 	private ResultActions create(String name) throws Exception {
 		return support.perform(post("/private/orgs").content(support.readRessourceToString("/testData/createOrgPayload.json").replace("{shortName}", name)));
