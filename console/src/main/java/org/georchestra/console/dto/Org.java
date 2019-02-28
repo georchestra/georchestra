@@ -23,6 +23,7 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.springframework.ldap.core.DirContextAdapter;
 
 import java.util.LinkedList;
@@ -45,7 +46,6 @@ public class Org implements Comparable<Org>, ReferenceAware {
     private List<String> cities = new LinkedList<String>();
     private List<String> members = new LinkedList<String>();
     private boolean isPending;
-    private String description = "";
 
     @JsonIgnore
     private DirContextAdapter reference;
@@ -99,10 +99,6 @@ public class Org implements Comparable<Org>, ReferenceAware {
         this.members = members;
     }
 
-    public OrgExt getOrgExt() {
-        return orgExt;
-    }
-
     public void setOrgExt(OrgExt orgExt) {
         this.orgExt = orgExt;
     }
@@ -150,10 +146,9 @@ public class Org implements Comparable<Org>, ReferenceAware {
 
     @JsonProperty(JSON_DESCRIPTION)
     public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
+        if(this.orgExt == null)
+            return null;
+        else
+            return orgExt.getDescription();
     }
 }

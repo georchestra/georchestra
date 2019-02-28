@@ -33,6 +33,7 @@ public class OrgExt implements ReferenceAware {
     private String id;
     private String orgType;
     private String address;
+    private String description;
 
     @JsonIgnore
     private boolean isPending;
@@ -72,12 +73,21 @@ public class OrgExt implements ReferenceAware {
         isPending = pending;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     @Override
     public String toString() {
         return "OrgExt{" +
                 "id='" + id + '\'' +
                 ", orgType='" + orgType + '\'' +
                 ", address='" + address + '\'' +
+                ", description='" + description + '\'' +
                 '}';
     }
 

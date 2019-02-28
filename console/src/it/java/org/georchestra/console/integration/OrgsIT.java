@@ -50,7 +50,7 @@ public class OrgsIT {
 	public @Test void createAndGet() throws Exception {
 		String orgName = ("IT_ORG_ " + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
 
-		ResultActions rs = create(orgName)
+		create(orgName)
 				.andExpect(status().isOk())
 				.andExpect(content().contentTypeCompatibleWith("application/json"))
 				.andExpect(jsonPath("$.id").value(orgName.replace(" ", "_").toLowerCase()))
@@ -77,8 +77,24 @@ public class OrgsIT {
 			.andExpect(jsonPath("$.description").value(""));
 	}
 
+	@WithMockUser(username = "admin", roles = "SUPERUSER")
+	public @Test void createAndGetWithDescription() throws Exception {
+		String orgName = ("it_org_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
+
+		create(orgName, "/testData/createOrgWithMoreFieldsPayload.json");
+
+		support.perform(get("/private/orgs/" + orgName))
+				.andExpect(jsonPath("$.description").value("Nullam iaculis blandit justo, sed pellentesque justo ullamcorper eu.\nSed at justo quis leo fermentum suscipit.\nAliquam erat massa, euismod sed massa non, tempus faucibus est."));
+	}
+
+
+
 	private ResultActions create(String name) throws Exception {
-		return support.perform(post("/private/orgs").content(support.readRessourceToString("/testData/createOrgPayload.json").replace("{shortName}", name)));
+		return create(name,"/testData/createOrgPayload.json");
+	}
+
+	private ResultActions create(String name, String payloadResourcePath) throws Exception {
+		return support.perform(post("/private/orgs").content(support.readRessourceToString(payloadResourcePath).replace("{shortName}", name)));
 	}
 
 }
