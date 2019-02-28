@@ -36,6 +36,9 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+
 /**
  * A junit {@link Rule} that can be {@code @Autowired} into integration tests,
  * validates the ldap and database external resources and sets up a mock MVC.
@@ -118,5 +121,11 @@ public @Service class IntegrationTestSupport extends ExternalResource {
 
     public String testName() {
         return testName.getMethodName();
+    }
+
+    public String readRessourceToString(String name) throws URISyntaxException, IOException {
+        java.net.URL url = this.getClass().getResource(name);
+        java.nio.file.Path resPath = java.nio.file.Paths.get(url.toURI());
+        return new String(java.nio.file.Files.readAllBytes(resPath), "UTF8");
     }
 }

@@ -15,9 +15,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -58,7 +55,7 @@ public class UsersIT {
         String newUserName = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
         createUser(userName);
 
-        support.perform(put("/private/users/" + userName).content(readRessourceToString("/testData/createUserPayload.json")
+        support.perform(put("/private/users/" + userName).content(support.readRessourceToString("/testData/createUserPayload.json")
                 .replace("{uuid}", newUserName)
                 .replace("psc", "cra")));
 
@@ -114,7 +111,7 @@ public class UsersIT {
     }
 
     private void createUser(String userName) throws Exception {
-        support.perform(post("/private/users").content(readRessourceToString("/testData/createUserPayload.json").replace("{uuid}", userName)));
+        support.perform(post("/private/users").content(support.readRessourceToString("/testData/createUserPayload.json").replace("{uuid}", userName)));
     }
 
     private ResultActions getProfile() throws Exception {
@@ -133,9 +130,4 @@ public class UsersIT {
         support.perform(post("/private/roles_users").content(body));
     }
 
-    private String readRessourceToString(String name) throws URISyntaxException, IOException {
-        java.net.URL url = this.getClass().getResource(name);
-        java.nio.file.Path resPath = java.nio.file.Paths.get(url.toURI());
-        return new String(java.nio.file.Files.readAllBytes(resPath), "UTF8");
-    }
 }
