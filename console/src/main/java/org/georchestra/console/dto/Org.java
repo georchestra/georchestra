@@ -43,7 +43,6 @@ public class Org implements Comparable<Org>, ReferenceAware {
     private String name;
     private String shortName;
     private List<String> cities = new LinkedList<String>();
-    private String status;
     private List<String> members = new LinkedList<String>();
     private boolean isPending;
     private String description = "";
