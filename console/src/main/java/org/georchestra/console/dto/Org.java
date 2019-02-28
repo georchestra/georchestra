@@ -37,6 +37,7 @@ public class Org implements Comparable<Org>, ReferenceAware {
     public static final String JSON_CITIES = "cities";
     public static final String JSON_MEMBERS = "members";
     public static final String JSON_PENDING = "pending";
+    public static final String JSON_DESCRIPTION = "description";
 
     private String id;
     private String name;
@@ -45,6 +46,7 @@ public class Org implements Comparable<Org>, ReferenceAware {
     private String status;
     private List<String> members = new LinkedList<String>();
     private boolean isPending;
+    private String description = "";
 
     @JsonIgnore
     private DirContextAdapter reference;
@@ -145,5 +147,14 @@ public class Org implements Comparable<Org>, ReferenceAware {
 
     public void setPending(boolean pending) {
         isPending = pending;
+    }
+
+    @JsonProperty(JSON_DESCRIPTION)
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
