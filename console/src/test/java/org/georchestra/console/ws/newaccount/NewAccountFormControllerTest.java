@@ -16,6 +16,7 @@ import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountFactory;
 import org.georchestra.console.dto.Org;
 import org.georchestra.console.dto.OrgExt;
+import org.georchestra.console.dto.ReferenceAware;
 import org.georchestra.console.mailservice.EmailFactory;
 import org.georchestra.console.ws.utils.PasswordUtils;
 import org.georchestra.console.ws.utils.Validation;
@@ -57,6 +58,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -164,10 +166,12 @@ public class NewAccountFormControllerTest {
         String ret = toTest.create(request, formBean, "", mockedValidationReports, status, UiModel);
 
         assertTrue(ret.equals("welcomeNewUser"));
-        ArgumentCaptor<Org> orgCaptor = ArgumentCaptor.forClass(Org.class);
-        verify(mockOrgDao).insert(orgCaptor.capture());
-        assertTrue(orgCaptor.getValue().isPending());
-        verify(mockOrgDao).insert(any(OrgExt.class));
+        ArgumentCaptor<ReferenceAware> orgCaptor = ArgumentCaptor.forClass(ReferenceAware.class);
+        verify(mockOrgDao, times(2)).insert(orgCaptor.capture());
+        assertTrue(orgCaptor.getAllValues().get(0).isPending());
+        assertTrue(orgCaptor.getAllValues().get(0).getClass().equals(Org.class));
+        assertTrue(orgCaptor.getAllValues().get(1).isPending());
+        assertTrue(orgCaptor.getAllValues().get(1).getClass().equals(OrgExt.class));
 
     }
 
@@ -180,10 +184,12 @@ public class NewAccountFormControllerTest {
         String ret = toTest.create(request, formBean, "", mockedValidationReports, status, UiModel);
 
         assertTrue(ret.equals("welcomeNewUser"));
-        ArgumentCaptor<Org> orgCaptor = ArgumentCaptor.forClass(Org.class);
-        verify(mockOrgDao).insert(orgCaptor.capture());
-        assertFalse(orgCaptor.getValue().isPending());
-        verify(mockOrgDao).insert(any(OrgExt.class));
+        ArgumentCaptor<ReferenceAware> orgCaptor = ArgumentCaptor.forClass(ReferenceAware.class);
+        verify(mockOrgDao, times(2)).insert(orgCaptor.capture());
+        assertFalse(orgCaptor.getAllValues().get(0).isPending());
+        assertTrue(orgCaptor.getAllValues().get(0).getClass().equals(Org.class));
+        assertFalse(orgCaptor.getAllValues().get(1).isPending());
+        assertTrue(orgCaptor.getAllValues().get(1).getClass().equals(OrgExt.class));
     }
 
     /**

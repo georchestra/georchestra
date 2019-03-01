@@ -21,6 +21,7 @@ package org.georchestra.console.dto;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.georchestra.console.ds.OrgsDao;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.ldap.core.DirContextAdapter;
@@ -97,5 +98,10 @@ public class OrgExt implements ReferenceAware {
 
     public void setReference(DirContextAdapter reference) {
         this.reference = reference;
+    }
+
+    @Override
+    public OrgsDao.Extension getExtension(OrgsDao orgDao) {
+        return orgDao.getExtension(this);
     }
 }

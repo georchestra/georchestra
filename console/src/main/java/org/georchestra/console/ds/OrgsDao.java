@@ -57,14 +57,111 @@ public class OrgsDao {
 
     private static final Log LOG = LogFactory.getLog(OrgsDao.class.getName());
 
+    @Autowired
+    private AccountDao accountDao;
+
     private LdapTemplate ldapTemplate;
     private String[] orgTypeValues;
     private String basePath;
     private String orgSearchBaseDN;
     private String pendingOrgSearchBaseDN;
+    private OrgExtension orgExtension = new OrgExtension();
+    private OrgExtExtension orgExtExtension = new OrgExtExtension();
 
-    @Autowired
-    private AccountDao accountDao;
+
+    public interface Extension<T> {
+        Name buildOrgDN(T org);
+
+        void mapToContext(T org, DirContextOperations context);
+    }
+
+    class OrgExtension implements Extension<Org> {
+
+        @Override
+        public Name buildOrgDN(Org org) {
+            return LdapNameBuilder.newInstance(org.isPending() ? pendingOrgSearchBaseDN : orgSearchBaseDN)
+                    .add("cn", org.getId()).build();
+        }
+
+        @Override
+        public void mapToContext(Org org, DirContextOperations context) {
+            context.setAttributeValues("objectclass", new String[] {"top", "groupOfMembers"});
+
+            context.setAttributeValue("cn", org.getId());
+            String seeAlsoValue = LdapNameBuilder.newInstance(orgSearchBaseDN + "," + basePath).add("o", org.getId()).build().toString();
+            context.setAttributeValue("seeAlso", seeAlsoValue);
+
+            // Mandatory attribute
+            context.setAttributeValue("o", org.getName());
+
+            if (org.getMembers() != null) {
+                context.setAttributeValues("member",
+                        org.getMembers().stream()
+                                .map(userUid -> {
+                                    try {
+                                        return accountDao.findByUID(userUid);
+                                    } catch (DataServiceException e) {
+                                        return null;
+                                    }
+                                })
+                                .filter(account -> null != account)
+                                .map(account -> accountDao.buildFullUserDn(account))
+                                .collect(Collectors.toList()).toArray(new String[] {}));
+            }
+
+            // Optional ones
+            if(org.getShortName() != null)
+                context.setAttributeValue("ou", org.getShortName());
+
+            if(org.getCities() != null) {
+                StringBuilder buffer = new StringBuilder();
+                List<String> descriptions = new ArrayList();
+                int maxFieldSize = 1000;
+
+                for (String city : org.getCities()) {
+                    if (buffer.length() > maxFieldSize) {
+                        descriptions.add(buffer.substring(1));
+                        buffer = new StringBuilder();
+                    }
+                    buffer.append("," + city);
+                }
+                if (buffer.length() > 0)
+                    descriptions.add(buffer.substring(1));
+
+                if(descriptions.size() > 0)
+                    context.setAttributeValues("description", descriptions.toArray());
+            }
+        }
+    }
+
+    class OrgExtExtension implements Extension<OrgExt> {
+
+        @Override
+        public Name buildOrgDN(OrgExt orgExt) {
+            return LdapNameBuilder.newInstance(orgExt.isPending() ? pendingOrgSearchBaseDN : orgSearchBaseDN)
+                    .add("o", orgExt.getId()).build();
+        }
+
+        @Override
+        public void mapToContext(OrgExt org, DirContextOperations context) {
+            context.setAttributeValues("objectclass", new String[] {"top", "organization"});
+
+            context.setAttributeValue("o", org.getId());
+            if(org.getOrgType() != null)
+                context.setAttributeValue("businessCategory", org.getOrgType());
+            if(org.getAddress() != null)
+                context.setAttributeValue("postalAddress", org.getAddress());
+            setOrDeleteField(context, "description", org.getDescription());
+        }
+    }
+
+    public Extension<Org> getExtension(Org org) {
+        return orgExtension;
+    }
+
+    public Extension<OrgExt> getExtension(OrgExt org) {
+        return orgExtExtension;
+    }
 
     public void setLdapTemplate(LdapTemplate ldapTemplate) {
         this.ldapTemplate = ldapTemplate;
@@ -92,16 +189,6 @@ public class OrgsDao {
 
     public void setAccountDao(AccountDao accountDao) {
         this.accountDao = accountDao;
-    }
-
-    public Name buildOrgDN(Org org) {
-        return LdapNameBuilder.newInstance(org.isPending() ? pendingOrgSearchBaseDN : orgSearchBaseDN)
-                .add("cn", org.getId()).build();
-    }
-
-    private Name buildOrgExtDN(OrgExt orgExt){
-        return LdapNameBuilder.newInstance(orgExt.isPending() ? pendingOrgSearchBaseDN : orgSearchBaseDN)
-                .add("o", orgExt.getId()).build();
     }
 
     /**
@@ -196,106 +283,36 @@ public class OrgsDao {
         return res.get(0);
     }
 
-    public void insert(Org org){
-        DirContextAdapter context = new DirContextAdapter(buildOrgDN(org));
-        mapToContext(org, context);
+    public void insert(ReferenceAware org){
+        DirContextAdapter context = new DirContextAdapter(org.getExtension(this).buildOrgDN(org));
+        org.getExtension(this).mapToContext(org, context);
         ldapTemplate.bind(context);
     }
 
-    public void insert(OrgExt orgExt){
-        DirContextAdapter context = new DirContextAdapter(buildOrgExtDN(orgExt));
-        mapToContext(orgExt, context);
-        ldapTemplate.bind(context);
-    }
-
-    public void update(Org org){
-        Name newName = buildOrgDN(org);
+    public void update(ReferenceAware org){
+        Name newName = org.getExtension(this).buildOrgDN(org);
         if (newName.compareTo(org.getReference().getDn()) != 0) {
             this.ldapTemplate.rename(org.getReference().getDn(), newName);
         }
         DirContextOperations context = this.ldapTemplate.lookupContext(newName);
-        mapToContext(org, context);
+        org.getExtension(this).mapToContext(org, context);
         this.ldapTemplate.modifyAttributes(context);
     }
 
-    public void update(OrgExt orgExt){
-        Name newName = buildOrgExtDN(orgExt);
-        if (newName.compareTo(orgExt.getReference().getDn()) != 0) {
-            this.ldapTemplate.rename(orgExt.getReference().getDn(), newName);
-        }
-        DirContextOperations context = this.ldapTemplate.lookupContext(newName);
-        mapToContext(orgExt, context);
-        this.ldapTemplate.modifyAttributes(context);
-    }
-
-    public void delete(Org org){
-        this.ldapTemplate.unbind(buildOrgDN(org));
-    }
-
-    public void delete(OrgExt orgExt){
-        this.ldapTemplate.unbind(buildOrgExtDN(orgExt));
+    public void delete(ReferenceAware org){
+        this.ldapTemplate.unbind(org.getExtension(this).buildOrgDN(org));
     }
 
     public void addUser(Org org, Account user){
-        DirContextOperations context = ldapTemplate.lookupContext(buildOrgDN(org));
+        DirContextOperations context = ldapTemplate.lookupContext(orgExtension.buildOrgDN(org));
         context.addAttributeValue("member", accountDao.buildFullUserDn(user), false);
         this.ldapTemplate.modifyAttributes(context);
     }
 
     public void removeUser(Org org, Account user){
-        DirContextOperations ctx = ldapTemplate.lookupContext(buildOrgDN(org));
+        DirContextOperations ctx = ldapTemplate.lookupContext(orgExtension.buildOrgDN(org));
         ctx.removeAttributeValue("member", accountDao.buildFullUserDn(user));
         this.ldapTemplate.modifyAttributes(ctx);
-    }
-
-    private void mapToContext(Org org, DirContextOperations context) {
-
-        context.setAttributeValues("objectclass", new String[] {"top", "groupOfMembers"});
-
-        context.setAttributeValue("cn", org.getId());
-        String seeAlsoValue = LdapNameBuilder.newInstance(orgSearchBaseDN + "," + basePath).add("o", org.getId()).build().toString();
-        context.setAttributeValue("seeAlso", seeAlsoValue);
-
-        // Mandatory attribute
-        context.setAttributeValue("o", org.getName());
-
-        if (org.getMembers() != null) {
-            context.setAttributeValues("member",
-                org.getMembers().stream()
-                    .map(userUid -> {
-                        try {
-                            return accountDao.findByUID(userUid);
-                        } catch (DataServiceException e) {
-                            return null;
-                        }
-                    })
-                    .filter(account -> null != account)
-                    .map(account -> accountDao.buildFullUserDn(account))
-                    .collect(Collectors.toList()).toArray(new String[] {}));
-        }
-
-        // Optional ones
-        if(org.getShortName() != null)
-            context.setAttributeValue("ou", org.getShortName());
-
-        if(org.getCities() != null) {
-            StringBuilder buffer = new StringBuilder();
-            List<String> descriptions = new ArrayList();
-            int maxFieldSize = 1000;
-
-            for (String city : org.getCities()) {
-                if (buffer.length() > maxFieldSize) {
-                    descriptions.add(buffer.substring(1));
-                    buffer = new StringBuilder();
-                }
-                buffer.append("," + city);
-            }
-            if (buffer.length() > 0)
-                descriptions.add(buffer.substring(1));
-
-            if(descriptions.size() > 0)
-                context.setAttributeValues("description", descriptions.toArray());
-        }
     }
 
     public String reGenerateId(String orgName, String allowedId) throws IOException {
@@ -328,17 +345,6 @@ public class OrgsDao {
         return reGenerateId(org_name, "");
     }
 
-    private void mapToContext(OrgExt orgExt, DirContextOperations context) {
-        context.setAttributeValues("objectclass", new String[] {"top", "organization"});
-
-        context.setAttributeValue("o", orgExt.getId());
-        if(orgExt.getOrgType() != null)
-            context.setAttributeValue("businessCategory", orgExt.getOrgType());
-        if(orgExt.getAddress() != null)
-            context.setAttributeValue("postalAddress", orgExt.getAddress());
-        setOrDeleteField(context, "description", orgExt.getDescription());
-    }
-
     private void setOrDeleteField(DirContextOperations context, String fieldName, String value) {
         try {
             if (value == null || value.length() ==0) {
@@ -353,8 +359,6 @@ public class OrgsDao {
             // no need to remove an nonexistant attribute
         }
     }
-
-
 
     private class OrgAttributesMapper implements AttributesMapper<Org> {
 
@@ -398,12 +402,14 @@ public class OrgsDao {
             return orgExt;
         }
 
-        public String asString(Attribute att) throws NamingException {
-            if(att == null)
-                return null;
-            else
-                return (String) att.get();
-        }
+
+    }
+
+    public String asString(Attribute att) throws NamingException {
+        if(att == null)
+            return null;
+        else
+            return (String) att.get();
     }
 
     public Stream<String> asStringStream(Attributes attributes, String attributeName) throws NamingException {
