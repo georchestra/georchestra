@@ -93,7 +93,15 @@ public class OrgsIT {
 				.andExpect(jsonPath("$.description").value("Nullam iaculis blandit justo, sed pellentesque justo ullamcorper eu.\nSed at justo quis leo fermentum suscipit.\nAliquam erat massa, euismod sed massa non, tempus faucibus est."));
 	}
 
+	@WithMockUser(username = "admin", roles = "SUPERUSER")
+	public @Test void createAndGetWithUrl() throws Exception {
+		String orgName = ("it_org_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
 
+		create(orgName, "/testData/createOrgWithMoreFieldsPayload.json");
+
+		support.perform(get("/private/orgs/" + orgName))
+				.andExpect(jsonPath("$.url").value("www.111111111111111111111111111111111111111111111111111111111111.com"));
+	}
 
 	@WithMockUser(username = "admin", roles = "SUPERUSER")
 	public @Test void deleteDescription() throws Exception {

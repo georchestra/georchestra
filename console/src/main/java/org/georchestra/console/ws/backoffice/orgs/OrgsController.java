@@ -24,8 +24,9 @@ import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.dao.DelegationDao;
 import org.georchestra.console.ds.OrgsDao;
-import org.georchestra.console.dto.Org;
-import org.georchestra.console.dto.OrgExt;
+import org.georchestra.console.dto.orgs.Org;
+import org.georchestra.console.dto.orgs.OrgDetail;
+import org.georchestra.console.dto.orgs.OrgExt;
 import org.georchestra.console.model.DelegationEntry;
 import org.georchestra.console.ws.backoffice.utils.ResponseUtil;
 import org.georchestra.console.ws.utils.Validation;
@@ -122,7 +123,9 @@ public class OrgsController {
 
         Org org = this.orgDao.findByCommonName(cn);
         OrgExt orgExt = this.orgDao.findExtById(cn);
+        OrgDetail orgDetail = this.orgDao.findDetailById(cn);
         org.setOrgExt(orgExt);
+        org.setOrgDetail(orgDetail);
         return org;
     }
 
@@ -242,11 +245,18 @@ public class OrgsController {
         orgExt.setId(org.getId());
         this.updateFromRequest(orgExt, json);
 
+        OrgDetail orgDetail = new OrgDetail();
+        orgDetail.setId(org.getId());
+        this.updateFromRequest(orgDetail, json);
+
         // Persist changes to LDAP server
         this.orgDao.insert(org);
         this.orgDao.insert(orgExt);
+        this.orgDao.insert(orgDetail);
 
         org.setOrgExt(orgExt);
+        org.setOrgDetail(orgDetail);
+
         return org;
     }
 
@@ -267,6 +277,7 @@ public class OrgsController {
         // delete entities in LDAP server
         this.orgDao.delete(this.orgDao.findExtById(commonName));
         this.orgDao.delete(this.orgDao.findByCommonName(commonName));
+        this.orgDao.delete(this.orgDao.findDetailById(commonName));
         ResponseUtil.writeSuccess(response);
     }
 
@@ -441,6 +452,11 @@ public class OrgsController {
                 .map(Object::toString)
                 .collect(Collectors.toList()));
         }
+        org.setPending(json.optBoolean(Org.JSON_PENDING));
+    }
+
+    protected void updateFromRequest(OrgDetail org, JSONObject json) throws IOException {
+        org.setUrl(json.optString(Org.JSON_URL));
         org.setPending(json.optBoolean(Org.JSON_PENDING));
     }
 

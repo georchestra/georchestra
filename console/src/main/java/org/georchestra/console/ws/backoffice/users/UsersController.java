@@ -34,7 +34,7 @@ import org.georchestra.console.ds.RoleDao;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountFactory;
 import org.georchestra.console.dto.AccountImpl;
-import org.georchestra.console.dto.Org;
+import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.dto.Role;
 import org.georchestra.console.dto.SimpleAccount;
 import org.georchestra.console.dto.UserSchema;

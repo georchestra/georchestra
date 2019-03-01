@@ -4,7 +4,7 @@ import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountFactory;
-import org.georchestra.console.dto.Org;
+import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.ws.utils.Validation;
 import org.junit.After;
 import org.junit.Before;

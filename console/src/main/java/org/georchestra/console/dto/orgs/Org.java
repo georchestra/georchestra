@@ -17,20 +17,19 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.console.dto;
+package org.georchestra.console.dto.orgs;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.georchestra.console.ds.OrgsDao;
-import org.springframework.ldap.core.DirContextAdapter;
 
 import java.util.LinkedList;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Org implements Comparable<Org>, ReferenceAware {
+public class Org extends AbstractOrg implements Comparable<Org> {
 
     public static final String JSON_ID = "id";
     public static final String JSON_NAME = "name";
@@ -39,19 +38,19 @@ public class Org implements Comparable<Org>, ReferenceAware {
     public static final String JSON_MEMBERS = "members";
     public static final String JSON_PENDING = "pending";
     public static final String JSON_DESCRIPTION = "description";
+    public static final String JSON_URL = "url";
 
     private String id;
     private String name;
     private String shortName;
     private List<String> cities = new LinkedList<String>();
     private List<String> members = new LinkedList<String>();
-    private boolean isPending;
-
-    @JsonIgnore
-    private DirContextAdapter reference;
 
     @JsonIgnore
     private OrgExt orgExt;
+
+    @JsonIgnore
+    private OrgDetail orgDetail;
 
     @JsonProperty(JSON_ID)
     public String getId() {
@@ -103,6 +102,10 @@ public class Org implements Comparable<Org>, ReferenceAware {
         this.orgExt = orgExt;
     }
 
+    public void setOrgDetail(OrgDetail orgDetail) {
+        this.orgDetail = orgDetail;
+    }
+
     @JsonGetter(OrgExt.JSON_ORG_TYPE)
     public String getOrgType(){
         if(this.orgExt == null)
@@ -127,14 +130,6 @@ public class Org implements Comparable<Org>, ReferenceAware {
         return this.getName().compareToIgnoreCase(org.getName());
     }
 
-    public DirContextAdapter getReference() {
-        return reference;
-    }
-
-    public void setReference(DirContextAdapter reference) {
-        this.reference = reference;
-    }
-
     @Override
     public OrgsDao.Extension getExtension(OrgsDao orgDao) {
         return orgDao.getExtension(this);
@@ -145,10 +140,6 @@ public class Org implements Comparable<Org>, ReferenceAware {
         return isPending;
     }
 
-    public void setPending(boolean pending) {
-        isPending = pending;
-    }
-
     @JsonProperty(JSON_DESCRIPTION)
     public String getDescription() {
         if(this.orgExt == null)
@@ -156,4 +147,13 @@ public class Org implements Comparable<Org>, ReferenceAware {
         else
             return orgExt.getDescription();
     }
+
+    @JsonProperty(JSON_URL)
+    public String getUrl() {
+        if(this.orgDetail == null)
+            return null;
+        else
+            return orgDetail.getUrl();
+    }
+
 }

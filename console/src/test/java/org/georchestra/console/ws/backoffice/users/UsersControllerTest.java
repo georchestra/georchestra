@@ -9,7 +9,7 @@ import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.ds.RoleDaoImpl;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountFactory;
-import org.georchestra.console.dto.Org;
+import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.dto.UserSchema;
 import org.georchestra.console.model.DelegationEntry;
 import org.georchestra.console.ws.backoffice.roles.RoleProtected;
