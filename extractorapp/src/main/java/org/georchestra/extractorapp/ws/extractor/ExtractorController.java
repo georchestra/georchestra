@@ -367,15 +367,17 @@ public class ExtractorController implements ServletContextAware {
     }
 
     public void setSecureHostAndServletUrl(String rawPublicUrl) throws MalformedURLException {
-        // extract hostname to set set secureHost
+        // extract hostname to set secureHost
         URL publicURL = new URL(rawPublicUrl);
         this.secureHost = publicURL.getHost();
 
-        if (!rawPublicUrl.endsWith("/"))
-            rawPublicUrl = String.format("%s/", rawPublicUrl);
+        String servletBaseUrl = rawPublicUrl;
+
+        if (!servletBaseUrl.endsWith("/"))
+            servletBaseUrl = String.format("%s/", servletBaseUrl);
 
         // Append servlet context
-        this.servletUrl = rawPublicUrl + this.servletContext.getServletContextName();
+        this.servletUrl = servletBaseUrl + this.servletContext.getServletContextName();
     }
 
     public void setAdminCredentials(UsernamePasswordCredentials adminCredentials) {
