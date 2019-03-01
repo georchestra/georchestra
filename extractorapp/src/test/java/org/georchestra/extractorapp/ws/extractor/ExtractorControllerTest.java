@@ -19,7 +19,6 @@ import java.util.Date;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import javax.servlet.ServletContext;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
