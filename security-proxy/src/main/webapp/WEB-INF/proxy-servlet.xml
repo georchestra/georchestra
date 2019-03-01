@@ -77,11 +77,7 @@
                 <bean class="org.georchestra.security.TrustedProxyRequestHeaderProvider" />
                 <bean class="org.georchestra.security.SecurityRequestHeaderProvider"/>
                 <bean class="org.georchestra.security.ImpersonateUserRequestHeaderProvider" init-method="init">
-                    <property name="trustedUsers">
-                        <list>
-                            <value>geoserver_privileged_user</value>
-                        </list>
-                    </property>
+                    <property name="trustedUsers" value="${trustedUsers:geoserver_privileged_user}"/>
                 </bean>
                 <bean class="org.georchestra.security.LdapUserDetailsRequestHeaderProvider" init-method="init">
                     <constructor-arg index="0" ref="ldapUserSearch"/>
