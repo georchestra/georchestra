@@ -23,8 +23,9 @@ package org.georchestra.console.ds;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.dto.Account;
-import org.georchestra.console.dto.Org;
-import org.georchestra.console.dto.OrgExt;
+import org.georchestra.console.dto.orgs.Org;
+import org.georchestra.console.dto.orgs.OrgDetail;
+import org.georchestra.console.dto.orgs.OrgExt;
 import org.georchestra.console.dto.ReferenceAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
@@ -67,6 +68,7 @@ public class OrgsDao {
     private String pendingOrgSearchBaseDN;
     private OrgExtension orgExtension = new OrgExtension();
     private OrgExtExtension orgExtExtension = new OrgExtExtension();
+    private OrgDetailExtension orgDetailExtension = new OrgDetailExtension();
 
 
     public interface Extension<T> {
@@ -155,12 +157,36 @@ public class OrgsDao {
         }
     }
 
+    class OrgDetailExtension implements Extension<OrgDetail> {
+
+        @Override
+        public Name buildOrgDN(OrgDetail org) {
+            return LdapNameBuilder.newInstance(org.isPending() ? pendingOrgSearchBaseDN : orgSearchBaseDN)
+                    .add("uid", org.getId()).build();
+        }
+
+        @Override
+        public void mapToContext(OrgDetail org, DirContextOperations context) {
+            context.setAttributeValues("objectclass", new String[] { "top", "person", "organizationalPerson", "inetOrgPerson"});
+
+            context.setAttributeValue("uid", org.getId());
+            context.setAttributeValue("sn", org.getId());
+            context.setAttributeValue("cn", org.getId());
+            setOrDeleteField(context, "labeledURI", org.getUrl());
+
+        }
+    }
+
     public Extension<Org> getExtension(Org org) {
         return orgExtension;
     }
 
     public Extension<OrgExt> getExtension(OrgExt org) {
         return orgExtExtension;
+    }
+
+    public Extension getExtension(OrgDetail orgDetail) {
+        return orgDetailExtension;
     }
 
     public void setLdapTemplate(LdapTemplate ldapTemplate) {
@@ -256,6 +282,16 @@ public class OrgsDao {
         } catch (NameNotFoundException ex) {
             Name dn = LdapNameBuilder.newInstance(pendingOrgSearchBaseDN).add("o", cn).build();
             return ldapTemplate.lookup(dn, new OrgExtContextMapper(true));
+        }
+    }
+
+    public OrgDetail findDetailById(String cn) {
+        try {
+            Name dn = LdapNameBuilder.newInstance(orgSearchBaseDN).add("uid", cn).build();
+            return ldapTemplate.lookup(dn, new OrgDetailContextMapper(false));
+        } catch (NameNotFoundException ex) {
+            Name dn = LdapNameBuilder.newInstance(pendingOrgSearchBaseDN).add("uid", cn).build();
+            return ldapTemplate.lookup(dn, new OrgDetailContextMapper(true));
         }
     }
 
@@ -401,8 +437,23 @@ public class OrgsDao {
             orgExt.setPending(isPending);
             return orgExt;
         }
+    }
 
+    private class OrgDetailAttributesMapper implements AttributesMapper<OrgDetail> {
 
+        private boolean isPending;
+
+        public OrgDetailAttributesMapper(boolean isPending) {
+            this.isPending = isPending;
+        }
+
+        public OrgDetail mapFromAttributes(Attributes attrs) throws NamingException {
+            OrgDetail org = new OrgDetail();
+            org.setId(asString(attrs.get("uid")));
+            org.setUrl(asStringStream(attrs,"labeledURI").collect(joining(",")));
+            org.setPending(isPending);
+            return org;
+        }
     }
 
     public String asString(Attribute att) throws NamingException {
@@ -441,16 +492,20 @@ public class OrgsDao {
     }
 
     private class OrgContextMapper extends ContextMapperSecuringReferenceAndMappingAttributes<Org> {
-
         public OrgContextMapper(boolean pending) {
             super(new OrgAttributesMapper(pending));
         }
     }
 
     private class OrgExtContextMapper extends ContextMapperSecuringReferenceAndMappingAttributes<OrgExt> {
-
         public OrgExtContextMapper(boolean isPending) {
             super(new OrgExtAttributesMapper(isPending));
+        }
+    }
+
+    private class OrgDetailContextMapper extends ContextMapperSecuringReferenceAndMappingAttributes<OrgDetail> {
+        public OrgDetailContextMapper(boolean isPending) {
+            super(new OrgDetailAttributesMapper(isPending));
         }
     }
 }
