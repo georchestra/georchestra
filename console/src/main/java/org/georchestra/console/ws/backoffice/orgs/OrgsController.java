@@ -165,8 +165,7 @@ public class OrgsController {
      *  }
      *
      */
-    @RequestMapping(value = REQUEST_MAPPING + "/{commonName:.+}", method = RequestMethod.PUT,
-            produces="application/json; charset=utf-8")
+    @RequestMapping(value = REQUEST_MAPPING + "/{commonName:.+}", method = RequestMethod.PUT, produces="application/json; charset=utf-8")
     @ResponseBody
     public Org updateOrgInfos(@PathVariable String commonName, HttpServletRequest request)
             throws IOException, JSONException, SQLException {

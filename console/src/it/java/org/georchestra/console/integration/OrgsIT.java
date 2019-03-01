@@ -31,8 +31,11 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import java.util.regex.Pattern;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -43,6 +46,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @PropertySource("classpath:console-it.properties")
 @WebAppConfiguration
 public class OrgsIT {
+
+	public static final String CREATE_ORG_WITH_MORE_FIELDS_PAYLOAD = "/testData/createOrgWithMoreFieldsPayload.json";
+	public static final String CREATE_ORG_BASE_FIELD_PAYLOAD_JSON = "/testData/createOrgPayload.json";
 
 	public @Rule @Autowired IntegrationTestSupport support;
 
@@ -89,8 +95,24 @@ public class OrgsIT {
 
 
 
+	@WithMockUser(username = "admin", roles = "SUPERUSER")
+	public @Test void deleteDescription() throws Exception {
+		String orgName = ("it_org_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
+		create(orgName, CREATE_ORG_WITH_MORE_FIELDS_PAYLOAD);
+
+		String payloadWithEmptyDesc = Pattern.compile("\"description\": \".*\"")
+				.matcher(support.readRessourceToString(CREATE_ORG_WITH_MORE_FIELDS_PAYLOAD).replace("{shortName}", orgName))
+				.replaceAll("\"description\": \"\"");
+		support.perform(put("/private/orgs/" + orgName)
+				.content(payloadWithEmptyDesc));
+
+		support.perform(get("/private/orgs/" + orgName))
+				.andExpect(jsonPath("$.description").value(""));
+	}
+
+
 	private ResultActions create(String name) throws Exception {
-		return create(name,"/testData/createOrgPayload.json");
+		return create(name, CREATE_ORG_BASE_FIELD_PAYLOAD_JSON);
 	}
 
 	private ResultActions create(String name, String payloadResourcePath) throws Exception {

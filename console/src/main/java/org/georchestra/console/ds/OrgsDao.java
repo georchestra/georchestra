@@ -336,9 +336,25 @@ public class OrgsDao {
             context.setAttributeValue("businessCategory", orgExt.getOrgType());
         if(orgExt.getAddress() != null)
             context.setAttributeValue("postalAddress", orgExt.getAddress());
-        if(orgExt.getDescription() != null && orgExt.getDescription().length() > 0)
-            context.setAttributeValue("description", orgExt.getDescription());
+        setOrDeleteField(context, "description", orgExt.getDescription());
     }
+
+    private void setOrDeleteField(DirContextOperations context, String fieldName, String value) {
+        try {
+            if (value == null || value.length() ==0) {
+                Attribute attributeToDelete = context.getAttributes().get(fieldName);
+                if (attributeToDelete != null) {
+                    Collections.list(attributeToDelete.getAll()).stream().forEach(x -> context.removeAttributeValue(fieldName, x));
+                }
+            } else {
+                context.setAttributeValue(fieldName, value);
+            }
+        } catch (NamingException e) {
+            // no need to remove an nonexistant attribute
+        }
+    }
+
+
 
     private class OrgAttributesMapper implements AttributesMapper<Org> {
 
