@@ -81,6 +81,7 @@ public class ExtractorController implements ServletContextAware {
     private AbstractEmailFactory emailFactory;
     private ServletContext servletContext;
     private String servletUrl;
+    private String publicUrl;
     private String extractionFolderPrefix;
     private boolean remoteReproject = true;
     private boolean useCommandLineGDAL = false;
@@ -95,6 +96,7 @@ public class ExtractorController implements ServletContextAware {
     private @Autowired DataSource dataSource;
 
     public void validateConfig() throws PropertyVetoException, MalformedURLException {
+        setSecureHostAndServletUrl(this.publicUrl);
         if (extractionManager == null) {
             throw new AssertionError("A extractionManager needs to be defined in spring configuration");
         }
@@ -360,8 +362,11 @@ public class ExtractorController implements ServletContextAware {
      * Each instance of {link} will be replaced with the extraction bundle URL
      */
 
-    public void setPublicUrl(String rawPublicUrl) throws MalformedURLException {
+    public void setPublicUrl(String publicUrl) {
+        this.publicUrl = publicUrl;
+    }
 
+    public void setSecureHostAndServletUrl(String rawPublicUrl) throws MalformedURLException {
         // extract hostname to set set secureHost
         URL publicURL = new URL(rawPublicUrl);
         this.secureHost = publicURL.getHost();
