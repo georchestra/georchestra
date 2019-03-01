@@ -30,11 +30,10 @@ public class ExtractorControllerTest {
 	private static final String UUID_PARAM = "uuid";
 
 	private ExtractorController ec;
-	private MockServletContext ctx;
 
 	@Before
 	public void setUp() {
-		ctx = new MockServletContext();
+		MockServletContext ctx = new MockServletContext();
 		ctx.setContextPath("/extractorapp/");
 
 		ec = new ExtractorController();
