@@ -43,19 +43,17 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
         <constructor-arg ref="gwcXmlConfig"/>
         <constructor-arg ref="gwcRuntimeStats"/>
         <property name="defaultStorageFinder" ref="gwcDefaultStorageFinder"/>
+        <property name="instanceName" value="${instanceName:geOrchestra}"/>
+        <property name="headerUrl" value="${headerUrl:/header/}"/>
+        <property name="headerHeight" value="${headerHeight:90}"/>
     </bean>
 
     <bean id="gwcURLMangler" class="org.geowebcache.util.GeorchestraURLMangler">
-        <constructor-arg value="${publicUrl}" />
-        <constructor-arg value="${contextPath}" />
+        <constructor-arg value="${publicUrl:https://georchestra.mydomain.org}" />
+        <constructor-arg value="${contextPath:/geowebcache}" />
     </bean>
 
-    <!-- geOrchestra Commons -->
-    <bean id="georchestraConfiguration" class="org.georchestra.commons.configuration.GeorchestraConfiguration">
-      <constructor-arg value="geowebcache" />
-    </bean>
-
-    <context:property-placeholder location="classpath:geowebcache.properties, file:${georchestra.datadir}/default.properties, file:${georchestra.datadir}/geowebcache/geowebcache.properties"
+    <context:property-placeholder location="file:${georchestra.datadir}/default.properties, file:${georchestra.datadir}/geowebcache/geowebcache.properties"
                                   ignore-resource-not-found="true"
                                   ignore-unresolvable="true" />
 

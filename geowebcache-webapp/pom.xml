@@ -55,19 +55,6 @@
       <type>jar</type>
       <scope>runtime</scope>
     </dependency>
-    <dependency>
-      <groupId>${project.parent.groupId}</groupId>
-      <artifactId>georchestra-commons</artifactId>
-      <version>${project.parent.version}</version>
-      <exclusions>
-        <!-- apache commons-io is already provided by vanilla GWC,
-             we do not want to mess the classloader up  -->
-        <exclusion>
-          <groupId>commons-io</groupId>
-          <artifactId>commons-io</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
   </dependencies>
   <build>
     <finalName>geowebcache-${server}</finalName>
