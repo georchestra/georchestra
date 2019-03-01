@@ -77,18 +77,13 @@
       <property name="realmName" value="${realmName:georchestra}" />
     </bean>
 
-    <bean id="basicAuthChallengeByUserAgent" class="org.georchestra.security.BasicAuthChallengeByUserAgent" init-method="init">
+    <bean id="basicAuthChallengeByUserAgent" class="org.georchestra.security.BasicAuthChallengeByUserAgent">
         <constructor-arg ref="authenticationManager" />
         <constructor-arg ref="basicAuthenticationEntryPoint" />
-        <property name="challengeUserAgents">
-            <list>
-            	<!-- uncomment the lines for which you want a preemptive basic auth -->
-            	<!-- note that this will prevent access to public layers for users with no account -->
-                <!--value>.*ArcGIS.*</value-->
-                <!--value>.*uDig.*</value-->
-                <!--value>.*QGIS.*</value-->
-            </list>
-        </property>
+        <!-- preemptive basic auth -->
+        <!-- note that this will prevent access to public layers for users with no account -->
+        <!-- Comma-separated list of user agents, eg: ".*ArcGIS.*,.*uDig.*,.*QGIS.*" -->
+        <property name="userAgents" value="${userAgents:}"/>
         <property name="ignoreHttps" value="true" />
         <property name="credentialsCharset" value="UTF-8"/>
     </bean>
