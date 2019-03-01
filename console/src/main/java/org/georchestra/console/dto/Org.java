@@ -23,6 +23,7 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.georchestra.console.ds.OrgsDao;
 import org.springframework.ldap.core.DirContextAdapter;
 
 import java.util.LinkedList;
@@ -132,6 +133,11 @@ public class Org implements Comparable<Org>, ReferenceAware {
 
     public void setReference(DirContextAdapter reference) {
         this.reference = reference;
+    }
+
+    @Override
+    public OrgsDao.Extension getExtension(OrgsDao orgDao) {
+        return orgDao.getExtension(this);
     }
 
     @JsonProperty(JSON_PENDING)

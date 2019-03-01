@@ -192,6 +192,7 @@ public class OrgsDaoTest {
 
         when(validOrg.getMembers()).thenReturn(members);
         when(validOrg.getId()).thenReturn("momorg");
+        when(validOrg.getExtension(any())).thenReturn(toTest.getExtension(validOrg));
         DirContextAdapter mockDirContextAdapter = mock(DirContextAdapter.class);
         when(validOrg.getReference()).thenReturn(mockDirContextAdapter);
         when(mockDirContextAdapter.getDn()).thenReturn(LdapNameBuilder.newInstance("cn=momorg,ou=pendingorgs").build());
