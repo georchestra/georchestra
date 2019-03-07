@@ -16,6 +16,7 @@ import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountFactory;
 import org.georchestra.console.dto.orgs.AbstractOrg;
 import org.georchestra.console.dto.orgs.Org;
+import org.georchestra.console.dto.orgs.OrgDetail;
 import org.georchestra.console.dto.orgs.OrgExt;
 import org.georchestra.console.dto.ReferenceAware;
 import org.georchestra.console.mailservice.EmailFactory;
@@ -168,11 +169,13 @@ public class NewAccountFormControllerTest {
 
         assertTrue(ret.equals("welcomeNewUser"));
         ArgumentCaptor<AbstractOrg> orgCaptor = ArgumentCaptor.forClass(AbstractOrg.class);
-        verify(mockOrgDao, times(2)).insert(orgCaptor.capture());
+        verify(mockOrgDao, times(3)).insert(orgCaptor.capture());
         assertTrue(orgCaptor.getAllValues().get(0).isPending());
         assertTrue(orgCaptor.getAllValues().get(0).getClass().equals(Org.class));
         assertTrue(orgCaptor.getAllValues().get(1).isPending());
         assertTrue(orgCaptor.getAllValues().get(1).getClass().equals(OrgExt.class));
+        assertTrue(orgCaptor.getAllValues().get(2).isPending());
+        assertTrue(orgCaptor.getAllValues().get(2).getClass().equals(OrgDetail.class));
 
     }
 
@@ -186,11 +189,13 @@ public class NewAccountFormControllerTest {
 
         assertTrue(ret.equals("welcomeNewUser"));
         ArgumentCaptor<AbstractOrg> orgCaptor = ArgumentCaptor.forClass(AbstractOrg.class);
-        verify(mockOrgDao, times(2)).insert(orgCaptor.capture());
+        verify(mockOrgDao, times(3)).insert(orgCaptor.capture());
         assertFalse(orgCaptor.getAllValues().get(0).isPending());
         assertTrue(orgCaptor.getAllValues().get(0).getClass().equals(Org.class));
         assertFalse(orgCaptor.getAllValues().get(1).isPending());
         assertTrue(orgCaptor.getAllValues().get(1).getClass().equals(OrgExt.class));
+        assertFalse(orgCaptor.getAllValues().get(2).isPending());
+        assertTrue(orgCaptor.getAllValues().get(2).getClass().equals(OrgDetail.class));
     }
 
     /**
