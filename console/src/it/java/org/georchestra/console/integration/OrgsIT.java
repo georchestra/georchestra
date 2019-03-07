@@ -104,6 +104,16 @@ public class OrgsIT {
 	}
 
 	@WithMockUser(username = "admin", roles = "SUPERUSER")
+	public @Test void createAndGetWithEmptyUrl() throws Exception {
+		String orgName = ("it_org_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
+
+		create(orgName);
+
+		support.perform(get("/private/orgs/" + orgName))
+				.andExpect(jsonPath("$.url").value(""));
+	}
+
+	@WithMockUser(username = "admin", roles = "SUPERUSER")
 	public @Test void deleteDescription() throws Exception {
 		String orgName = ("it_org_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
 		create(orgName, CREATE_ORG_WITH_MORE_FIELDS_PAYLOAD);
@@ -118,6 +128,20 @@ public class OrgsIT {
 				.andExpect(jsonPath("$.description").value(""));
 	}
 
+	@WithMockUser(username = "admin", roles = "SUPERUSER")
+	public @Test void deleteUrl() throws Exception {
+		String orgName = ("it_org_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
+		create(orgName, CREATE_ORG_WITH_MORE_FIELDS_PAYLOAD);
+
+		String payloadWithEmptyDesc = Pattern.compile("\"url\": \".*\"")
+				.matcher(support.readRessourceToString(CREATE_ORG_WITH_MORE_FIELDS_PAYLOAD).replace("{shortName}", orgName))
+				.replaceAll("\"url\": \"\"");
+		support.perform(put("/private/orgs/" + orgName)
+				.content(payloadWithEmptyDesc));
+
+		support.perform(get("/private/orgs/" + orgName))
+				.andExpect(jsonPath("$.url").value(""));
+	}
 
 	private ResultActions create(String name) throws Exception {
 		return create(name, CREATE_ORG_BASE_FIELD_PAYLOAD_JSON);
