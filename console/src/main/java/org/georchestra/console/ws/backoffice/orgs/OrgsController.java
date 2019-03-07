@@ -185,12 +185,14 @@ public class OrgsController {
         // Retrieve current orgs state from ldap
         Org org = this.orgDao.findByCommonName(commonName);
         OrgExt orgExt = this.orgDao.findExtById(commonName);
+        OrgDetail orgDetail = this.orgDao.findDetailById(commonName);
 
         // Update org and orgExt fields
         this.updateFromRequest(org, json);
         orgExt.setId(org.getId());
+        orgDetail.setId(org.getId());
         this.updateFromRequest(orgExt, json);
-
+        this.updateFromRequest(orgDetail, json);
         // Persist changes to LDAP server
         this.orgDao.update(org);
 
@@ -205,8 +207,9 @@ public class OrgsController {
 
 
         this.orgDao.update(orgExt);
-
+        this.orgDao.update(orgDetail);
         org.setOrgExt(orgExt);
+        org.setOrgDetail(orgDetail);
         return org;
     }
 
@@ -455,9 +458,10 @@ public class OrgsController {
         org.setPending(json.optBoolean(Org.JSON_PENDING));
     }
 
-    protected void updateFromRequest(OrgDetail org, JSONObject json) throws IOException {
+    protected void updateFromRequest(OrgDetail org, JSONObject json) {
         org.setUrl(json.optString(Org.JSON_URL));
         org.setPending(json.optBoolean(Org.JSON_PENDING));
+        org.setUrl(json.optString(Org.JSON_URL));
     }
 
     /**
