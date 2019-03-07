@@ -42,6 +42,21 @@
         </div>
       </div>
 
+      <div class="form-group form-group-sm" ng-class="{required: required.description}">
+        <label class="col-sm-4" for="address" translate>org.description</label>
+        <div class="col-sm-8">
+          <textarea ng-model="model.description" class="form-control" id="description"
+                    placeholder="" ng-required="required.description"></textarea>
+        </div>
+      </div>
+
+      <div class="form-group form-group-sm" ng-class="{required: required.url}">
+        <label class="col-sm-4" for="url" translate>org.url</label>
+        <div class="col-sm-8">
+          <textarea ng-model="model.url" class="form-control" id="url"
+                    placeholder="" ng-required="required.url"></textarea>
+        </div>
+      </div>
     </div>
 
   </div>

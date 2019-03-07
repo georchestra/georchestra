@@ -4,6 +4,7 @@ import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.dao.DelegationDao;
 import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.dto.orgs.Org;
+import org.georchestra.console.dto.orgs.OrgDetail;
 import org.georchestra.console.dto.orgs.OrgExt;
 import org.georchestra.console.model.DelegationEntry;
 import org.georchestra.console.ws.utils.Validation;
@@ -43,6 +44,7 @@ public class OrgsControllerTest {
     private OrgExt mockOrgExt;
     private OrgsDao mockOrgsDao;
     private DelegationDao delegationDaoMock;
+    private OrgDetail mockOrgDetail;
 
     @Before
     public void grantRight()
@@ -118,6 +120,7 @@ public class OrgsControllerTest {
         delegationDaoMock = mock(DelegationDao.class);
         mockOrg = mock(Org.class);
         mockOrgExt = mock(OrgExt.class);
+        mockOrgDetail = mock(OrgDetail.class);
         AdvancedDelegationDao advancedDelegationDaoMock = mock(AdvancedDelegationDao.class);
         Validation mockValidation = mock(Validation.class);
         when(mockValidation.validateOrgField(anyString(), any(JSONObject.class))).thenReturn(true);
@@ -127,6 +130,7 @@ public class OrgsControllerTest {
         toTest.validation = mockValidation;
         when(mockOrgsDao.findByCommonName("csc")).thenReturn(mockOrg);
         when(mockOrgsDao.findExtById("csc")).thenReturn(mockOrgExt);
+        when(mockOrgsDao.findDetailById("csc")).thenReturn(mockOrgDetail);
         mockEntry1 = mock(DelegationEntry.class);
         mockEntry2 = mock(DelegationEntry.class);
         Mockito.when(advancedDelegationDaoMock.findByOrg("csc")).thenReturn(Arrays.asList(new DelegationEntry[]{mockEntry1, mockEntry2}));
