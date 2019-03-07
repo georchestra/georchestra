@@ -26,4 +26,6 @@ public abstract class AbstractOrg implements ReferenceAware {
     public void setReference(DirContextAdapter reference) {
         this.reference = reference;
     }
+
+    public abstract String getId();
 }
