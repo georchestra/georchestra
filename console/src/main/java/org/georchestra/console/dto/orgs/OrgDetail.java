@@ -9,7 +9,7 @@ public class OrgDetail extends AbstractOrg {
 
 
     @Override
-    public OrgsDao.Extension getExtension(OrgsDao orgDao) {
+    public OrgsDao.Extension<OrgDetail> getExtension(OrgsDao orgDao) {
         return orgDao.getExtension(this);
     }
 

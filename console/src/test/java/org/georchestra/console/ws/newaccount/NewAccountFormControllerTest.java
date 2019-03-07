@@ -14,6 +14,7 @@ import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.ds.RoleDao;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountFactory;
+import org.georchestra.console.dto.orgs.AbstractOrg;
 import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.dto.orgs.OrgExt;
 import org.georchestra.console.dto.ReferenceAware;
@@ -166,7 +167,7 @@ public class NewAccountFormControllerTest {
         String ret = toTest.create(request, formBean, "", mockedValidationReports, status, UiModel);
 
         assertTrue(ret.equals("welcomeNewUser"));
-        ArgumentCaptor<ReferenceAware> orgCaptor = ArgumentCaptor.forClass(ReferenceAware.class);
+        ArgumentCaptor<AbstractOrg> orgCaptor = ArgumentCaptor.forClass(AbstractOrg.class);
         verify(mockOrgDao, times(2)).insert(orgCaptor.capture());
         assertTrue(orgCaptor.getAllValues().get(0).isPending());
         assertTrue(orgCaptor.getAllValues().get(0).getClass().equals(Org.class));
@@ -184,7 +185,7 @@ public class NewAccountFormControllerTest {
         String ret = toTest.create(request, formBean, "", mockedValidationReports, status, UiModel);
 
         assertTrue(ret.equals("welcomeNewUser"));
-        ArgumentCaptor<ReferenceAware> orgCaptor = ArgumentCaptor.forClass(ReferenceAware.class);
+        ArgumentCaptor<AbstractOrg> orgCaptor = ArgumentCaptor.forClass(AbstractOrg.class);
         verify(mockOrgDao, times(2)).insert(orgCaptor.capture());
         assertFalse(orgCaptor.getAllValues().get(0).isPending());
         assertTrue(orgCaptor.getAllValues().get(0).getClass().equals(Org.class));

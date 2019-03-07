@@ -75,7 +75,7 @@ public class OrgExt extends AbstractOrg {
     }
 
     @Override
-    public OrgsDao.Extension getExtension(OrgsDao orgDao) {
+    public OrgsDao.Extension<OrgExt> getExtension(OrgsDao orgDao) {
         return orgDao.getExtension(this);
     }
 }

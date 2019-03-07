@@ -50,9 +50,7 @@ public class OrgsControllerTest {
         // Set user connected through spring security
         List<GrantedAuthority> role = new LinkedList<GrantedAuthority>();
         role.add(new SimpleGrantedAuthority("ROLE_SUPERUSER"));
-        Authentication auth = new PreAuthenticatedAuthenticationToken("testadmin",
-                null,
-                role);
+        Authentication auth = new PreAuthenticatedAuthenticationToken("testadmin",null, role);
         SecurityContextHolder.getContext().setAuthentication(auth);
     }
 

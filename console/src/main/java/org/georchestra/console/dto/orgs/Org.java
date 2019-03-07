@@ -131,7 +131,7 @@ public class Org extends AbstractOrg implements Comparable<Org> {
     }
 
     @Override
-    public OrgsDao.Extension getExtension(OrgsDao orgDao) {
+    public OrgsDao.Extension<Org> getExtension(OrgsDao orgDao) {
         return orgDao.getExtension(this);
     }
 
