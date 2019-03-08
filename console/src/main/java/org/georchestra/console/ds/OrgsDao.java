@@ -126,8 +126,10 @@ public class OrgsDao {
 
         @Override
         public void mapPayloadToContext(Org org, DirContextOperations context) {
-            String seeAlsoValue = LdapNameBuilder.newInstance(orgSearchBaseDN + "," + basePath).add("o", org.getId()).build().toString();
-            context.setAttributeValue("seeAlso", seeAlsoValue);
+            String seeAlsoValueExt = LdapNameBuilder.newInstance((org.isPending() ? pendingOrgSearchBaseDN : orgSearchBaseDN) + "," + basePath).add("o", org.getId()).build().toString();
+            String seeAlsoValueDetail = LdapNameBuilder.newInstance((org.isPending() ? pendingOrgSearchBaseDN : orgSearchBaseDN) + "," + basePath).add("uid", org.getId()).build().toString();
+
+            context.setAttributeValues("seeAlso", new String[] {seeAlsoValueExt, seeAlsoValueDetail});
 
             // Mandatory attribute
             context.setAttributeValue("o", org.getName());
