@@ -57,6 +57,14 @@
                     placeholder="" ng-required="required.url"></textarea>
         </div>
       </div>
+
+      <div class="form-group form-group-sm" ng-class="{required: required.logo}">
+        <label class="col-sm-4" for="logo" translate>org.logo</label>
+        <div class="col-sm-8">
+          <textarea ng-model="model.logo" class="form-control" id="logo"
+                    placeholder="" ng-required="required.logo"></textarea>
+        </div>
+      </div>
     </div>
 
   </div>

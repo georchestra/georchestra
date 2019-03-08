@@ -55,6 +55,7 @@ public class AccountFormBean implements Serializable{
 	private String orgType;
 	private String orgDescription;
 	private String orgUrl;
+	private String orgLogo;
 
 	public String getRecaptcha_response_field() {
 		return recaptcha_response_field;
@@ -167,6 +168,12 @@ public class AccountFormBean implements Serializable{
 	}
 	public void setOrgUrl(String orgUrl) {
 		this.orgUrl = orgUrl;
+	}
+	public String getOrgLogo() {
+		return orgLogo;
+	}
+	public void setOrgLogo(String orgLogo) {
+		this.orgLogo = orgLogo;
 	}
 
 	@Override
