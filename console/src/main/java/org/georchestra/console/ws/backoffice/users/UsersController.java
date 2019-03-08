@@ -478,13 +478,8 @@ public class UsersController {
 		ResponseUtil.writeSuccess(response);
 	}
 
-	/**
-     * Return a list of required fields for user creation
-     *
-     * return a JSON array with required fields.
-     */
     @RequestMapping(value = PUBLIC_REQUEST_MAPPING + "/requiredFields", method = RequestMethod.GET)
-    public void getUserRequiredFields(HttpServletResponse response) throws IOException{
+    public void getUserCreationRequiredFields(HttpServletResponse response) throws IOException{
         try {
             JSONArray fields = new JSONArray();
             fields.put(UserSchema.UID_KEY);

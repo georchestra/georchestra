@@ -292,30 +292,16 @@ public class OrgsController {
         ResponseUtil.writeSuccess(response);
     }
 
-    /**
-     * Return a list of required fields for org creation
-     *
-     * return a JSON array with required fields. Possible values :
-     *
-     * * 'shortName'
-     * * 'address'
-     * * 'type'
-     */
     @RequestMapping(value = PUBLIC_REQUEST_MAPPING + "/requiredFields", method = RequestMethod.GET)
-    public void getUserRequiredFields(HttpServletResponse response) throws IOException, JSONException {
+    public void getRequiredFieldsForOrgCreation(HttpServletResponse response) throws IOException, JSONException {
             JSONArray fields = new JSONArray();
             fields.put("name");
             fields.put("shortName");
             ResponseUtil.buildResponse(response, fields.toString(4), HttpServletResponse.SC_OK);
     }
 
-    /**
-     * Return a list of possible values for organization type
-     *
-     * return a JSON array with possible value
-     */
     @RequestMapping(value = PUBLIC_REQUEST_MAPPING +"/orgTypeValues", method = RequestMethod.GET)
-    public void getOrgTypeValues(HttpServletResponse response) throws IOException, JSONException {
+    public void getOrganisationTypePossibleValues(HttpServletResponse response) throws IOException, JSONException {
         JSONArray fields = new JSONArray();
         for(String field : this.orgDao.getOrgTypeValues())
             fields.put(field);
