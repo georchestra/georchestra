@@ -501,7 +501,7 @@ public class OrgsDao {
 
     public String asString(Attribute att) throws NamingException {
         if(att == null)
-            return null;
+            return "";
         else
             return (String) att.get();
     }

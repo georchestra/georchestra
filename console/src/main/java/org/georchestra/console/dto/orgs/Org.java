@@ -77,8 +77,7 @@ public class Org extends AbstractOrg implements Comparable<Org> {
     }
 
     public void setShortName(String shortName) {
-        if(shortName != null && shortName.length() > 0)
-            this.shortName = shortName;
+        this.shortName = shortName;
     }
 
     @JsonProperty(JSON_CITIES)
