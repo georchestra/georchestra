@@ -148,7 +148,7 @@ public final class NewAccountFormController {
 	public void initForm(WebDataBinder dataBinder) {
 		dataBinder.setAllowedFields(new String[]{"firstName","surname", "email", "phone",
 				"org", "title", "description", "uid", "password", "confirmPassword", "createOrg", "orgName",
-				"orgShortName", "orgAddress", "orgType", "orgCities", "orgDescription", "orgUrl", "recaptcha_response_field"});
+				"orgShortName", "orgAddress", "orgType", "orgCities", "orgDescription", "orgUrl", "orgLogo", "recaptcha_response_field"});
 	}
 
 	@RequestMapping(value="/account/new", method=RequestMethod.GET)
@@ -223,6 +223,7 @@ public final class NewAccountFormController {
 				orgExt.setOrgType(formBean.getOrgType());
 				orgExt.setDescription(formBean.getOrgDescription());
 				orgDetail.setUrl(formBean.getOrgUrl());
+				orgDetail.setLogo(formBean.getOrgLogo());
 				// Parse and store cities
 				orgCities = orgCities.trim();
 				if (orgCities.length() > 0)
