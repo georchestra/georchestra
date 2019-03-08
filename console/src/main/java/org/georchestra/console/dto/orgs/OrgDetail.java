@@ -6,7 +6,7 @@ public class OrgDetail extends AbstractOrg {
 
     private String url;
     private String id;
-
+    private String logo;
 
     @Override
     public OrgsDao.Extension<OrgDetail> getExtension(OrgsDao orgDao) {
@@ -27,5 +27,14 @@ public class OrgDetail extends AbstractOrg {
 
     public String getUrl() {
         return url;
+    }
+
+
+    public String getLogo() {
+        return logo;
+    }
+
+    public void setLogo(String logo) {
+        this.logo = logo;
     }
 }

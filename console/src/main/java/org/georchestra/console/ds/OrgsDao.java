@@ -45,6 +45,7 @@ import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -245,6 +246,7 @@ public class OrgsDao {
             context.setAttributeValue("sn", org.getId());
             context.setAttributeValue("cn", org.getId());
             setOrDeleteField(context, "labeledURI", org.getUrl());
+            setOrDeletePhoto(context, "jpegPhoto", org.getLogo());
         }
 
         @Override
@@ -264,6 +266,7 @@ public class OrgsDao {
                     OrgDetail org = new OrgDetail();
                     org.setId(asString(attrs.get("uid")));
                     org.setUrl(asStringStream(attrs, "labeledURI").collect(joining(",")));
+                    org.setLogo(asPhoto(attrs.get("jpegPhoto")));
                     org.setPending(pending);
                     return org;
                 }
@@ -481,11 +484,33 @@ public class OrgsDao {
         }
     }
 
+    private void setOrDeletePhoto(DirContextOperations context, String fieldName, String value) {
+        try {
+            if (value == null || value.length() ==0) {
+                Attribute attributeToDelete = context.getAttributes().get(fieldName);
+                if (attributeToDelete != null) {
+                    Collections.list(attributeToDelete.getAll()).stream().forEach(x -> context.removeAttributeValue(fieldName, x));
+                }
+            } else {
+                context.setAttributeValue(fieldName, Base64.getMimeDecoder().decode(value));
+            }
+        } catch (NamingException e) {
+            // no need to remove an nonexistant attribute
+        }
+    }
+
     public String asString(Attribute att) throws NamingException {
         if(att == null)
             return null;
         else
             return (String) att.get();
+    }
+
+    public String asPhoto(Attribute att) throws NamingException {
+        if(att == null)
+            return "";
+        else
+            return Base64.getMimeEncoder().encodeToString((byte[])att.get());
     }
 
     public Stream<String> asStringStream(Attributes attributes, String attributeName) throws NamingException {

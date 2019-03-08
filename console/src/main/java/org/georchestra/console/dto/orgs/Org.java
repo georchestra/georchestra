@@ -39,6 +39,7 @@ public class Org extends AbstractOrg implements Comparable<Org> {
     public static final String JSON_PENDING = "pending";
     public static final String JSON_DESCRIPTION = "description";
     public static final String JSON_URL = "url";
+    public static final String JSON_LOGO = "logo";
 
     private String id;
     private String name;
@@ -156,4 +157,11 @@ public class Org extends AbstractOrg implements Comparable<Org> {
             return orgDetail.getUrl();
     }
 
+    @JsonProperty(JSON_LOGO)
+    public String getLogo() {
+        if(this.orgDetail == null)
+            return null;
+        else
+            return orgDetail.getLogo();
+    }
 }
