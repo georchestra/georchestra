@@ -361,6 +361,7 @@ public final class NewAccountFormController {
 			validation.validateOrgField("shortName", formBean.getOrgShortName(), result);
 			validation.validateOrgField("address", formBean.getOrgAddress(), result);
 			validation.validateOrgField("type", formBean.getOrgType(), result);
+			validation.validateUrlFieldWithSpecificMsg("orgUrl", formBean.getOrgUrl(), result);
 		} else {
 			validation.validateUserField("org", formBean.getOrg(), result);
 		}

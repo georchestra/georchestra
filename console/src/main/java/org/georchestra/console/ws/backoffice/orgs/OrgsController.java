@@ -182,6 +182,10 @@ public class OrgsController {
         if (!this.validation.validateOrgField("name", json))
             throw new IOException("required field : name");
 
+        if (!this.validation.validateUrl(json.optString(Org.JSON_URL))) {
+            throw new IOException(String.format("bad org url format: %s", json.optString(Org.JSON_URL)));
+        }
+
         // Retrieve current orgs state from ldap
         Org org = this.orgDao.findByCommonName(commonName);
         OrgExt orgExt = this.orgDao.findExtById(commonName);
@@ -239,6 +243,10 @@ public class OrgsController {
         // Validate request against required fields for admin part
         if (!this.validation.validateOrgField("shortName", json))
             throw new IOException("required field : shortName");
+
+        if (!this.validation.validateUrl(json.optString(Org.JSON_URL))) {
+            throw new IOException(String.format("bad org url format: %s", json.optString(Org.JSON_URL)));
+        }
 
         Org org = new Org();
         org.setId("");

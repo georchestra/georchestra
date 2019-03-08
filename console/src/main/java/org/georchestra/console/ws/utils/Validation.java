@@ -24,6 +24,8 @@ import org.json.JSONObject;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -160,5 +162,26 @@ public class Validation {
 
 	public boolean validateOrgField(String field, String value){
 		return !this.isOrgFieldRequired(field) || StringUtils.hasLength(value);
+	}
+
+	public boolean validateUrl(String value) {
+		if (value == null || value.length() == 0) {
+			return true;
+		}
+		try {
+			new URL(value);
+			return true;
+		}
+		catch (MalformedURLException e) {
+			return false;
+		}
+	}
+
+	public boolean validateUrlFieldWithSpecificMsg (String fullyQualifiedField, String value, Errors errors) {
+		if (!validateUrl(value)) {
+			errors.rejectValue(fullyQualifiedField, "error.badUrl", "badUrl");
+			return false;
+		}
+		return true;
 	}
 }

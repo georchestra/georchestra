@@ -103,7 +103,7 @@ public class OrgsIT {
 		create(orgName, "/testData/createOrgWithMoreFieldsPayload.json");
 
 		support.perform(get("/private/orgs/" + orgName))
-				.andExpect(jsonPath("$.url").value("www.111111111111111111111111111111111111111111111111111111111111.com"));
+				.andExpect(jsonPath("$.url").value("http://www.111111111111111111111111111111111111111111111111111111111111.com"));
 	}
 
 	@WithMockUser(username = "admin", roles = "SUPERUSER")

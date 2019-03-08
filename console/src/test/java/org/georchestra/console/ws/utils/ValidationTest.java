@@ -4,8 +4,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
+import org.springframework.validation.MapBindingResult;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class ValidationTest {
@@ -106,5 +112,18 @@ public class ValidationTest {
         Assert.assertFalse(v.validateOrgField("required_org_field", ""));
         Assert.assertFalse(v.validateOrgField("required_org_field", (String) null));
 
+    }
+
+    @Test
+    public void validateBadUrl() {
+        Validation v = new Validation("");
+
+        Errors errors = new MapBindingResult(new HashMap<>(), "errors");
+
+        Assert.assertTrue(v.validateUrlFieldWithSpecificMsg("orgUrl", "", errors));
+
+        Assert.assertFalse(v.validateUrlFieldWithSpecificMsg("orgUrl", "radada", errors));
+
+        Assert.assertTrue(v.validateUrlFieldWithSpecificMsg("orgUrl", "http://www.hereisthefish.org", errors));
     }
 }

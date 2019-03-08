@@ -124,6 +124,7 @@ public class OrgsControllerTest {
         AdvancedDelegationDao advancedDelegationDaoMock = mock(AdvancedDelegationDao.class);
         Validation mockValidation = mock(Validation.class);
         when(mockValidation.validateOrgField(anyString(), any(JSONObject.class))).thenReturn(true);
+        when(mockValidation.validateUrl(anyString())).thenReturn(true);
         OrgsController toTest = new OrgsController(mockOrgsDao);
         toTest.delegationDao = delegationDaoMock;
         toTest.advancedDelegationDao = advancedDelegationDaoMock;
