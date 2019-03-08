@@ -102,6 +102,9 @@
   "org.userremoved"       : "Der Benutzer wurde aus der Organisation entfernt.",
   "org.useradded"         : "Der Benutzer wurde der Organisation hinzugefügt.",
   "org.userlabel"         : "Hinzufügen",
+  "org.description"       : "Beschreibung",
+  "org.url"               : "Url",
+  "org.logo"              : "Logo",
 
   "roles.title_plural"    : "Rollen",
   "roles.title_one"       : "Rolle",
