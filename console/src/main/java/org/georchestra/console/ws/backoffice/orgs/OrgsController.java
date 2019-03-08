@@ -462,6 +462,7 @@ public class OrgsController {
         org.setUrl(json.optString(Org.JSON_URL));
         org.setPending(json.optBoolean(Org.JSON_PENDING));
         org.setUrl(json.optString(Org.JSON_URL));
+        org.setLogo(json.optString(Org.JSON_LOGO));
     }
 
     /**

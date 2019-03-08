@@ -19,6 +19,7 @@
 package org.georchestra.console.integration;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.hamcrest.Matcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,8 +32,10 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
+import static org.hamcrest.Matchers.stringContainsInOrder;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -114,6 +117,30 @@ public class OrgsIT {
 	}
 
 	@WithMockUser(username = "admin", roles = "SUPERUSER")
+	public @Test void createAndGetWithLogo() throws Exception {
+		String orgName = ("it_org_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
+
+		create(orgName, "/testData/createOrgWithMoreFieldsPayload.json");
+
+		support.perform(get("/private/orgs/" + orgName))
+				.andExpect(jsonPath("$.logo").value(stringContainsInOrder(Arrays.asList(
+						"/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBQgMFBofBgYHCg0dHhwHBwgMFB0jHAcJCw8aLCgf",
+						"cH35r5o8W/EvV9Xc/bLp4bfP7jT4jhY1/wCmg7n3P4YrlhjtXfDCfzz+R2wwv88j7TtL+2nXNldW",
+						"BRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAA/9k="))));
+	}
+
+	@WithMockUser(username = "admin", roles = "SUPERUSER")
+	public @Test void createAndGetWithEmptyLogo() throws Exception {
+		String orgName = ("it_org_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
+
+		create(orgName);
+
+		support.perform(get("/private/orgs/" + orgName))
+				.andExpect(jsonPath("$.logo").value(""));
+	}
+
+
+	@WithMockUser(username = "admin", roles = "SUPERUSER")
 	public @Test void deleteDescription() throws Exception {
 		String orgName = ("it_org_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
 		create(orgName, CREATE_ORG_WITH_MORE_FIELDS_PAYLOAD);
@@ -141,6 +168,21 @@ public class OrgsIT {
 
 		support.perform(get("/private/orgs/" + orgName))
 				.andExpect(jsonPath("$.url").value(""));
+	}
+
+	@WithMockUser(username = "admin", roles = "SUPERUSER")
+	public @Test void deleteLogo() throws Exception {
+		String orgName = ("it_org_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
+		create(orgName, CREATE_ORG_WITH_MORE_FIELDS_PAYLOAD);
+
+		String payloadWithEmptyDesc = Pattern.compile("\"logo\": \".*\"")
+				.matcher(support.readRessourceToString(CREATE_ORG_WITH_MORE_FIELDS_PAYLOAD).replace("{shortName}", orgName))
+				.replaceAll("\"logo\": \"\"");
+		support.perform(put("/private/orgs/" + orgName)
+				.content(payloadWithEmptyDesc));
+
+		support.perform(get("/private/orgs/" + orgName))
+				.andExpect(jsonPath("$.logo").value(""));
 	}
 
 	private ResultActions create(String name) throws Exception {
