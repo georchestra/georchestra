@@ -51,7 +51,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
  * basic authentication expect a basic authentication challenge in order to authenticate.
  * <p/>
  * This filter will check the user-agent and, if a match is found, send a basic auth challenge.
- * Note that it first checks if the user had already been authenticated, and don't send a basic auth challenge in that case.
+ * Note that it first checks if the user had already been authenticated, and doesn't send a basic auth challenge in that case.
  * <p/>
  * User: Jesse
  * Date: 11/7/13
