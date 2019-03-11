@@ -240,6 +240,12 @@
               <!-- This obviously requires the geoserver git submodule to be in sync in the source code tree -->
               <directory>${project.basedir}/../geoserver-submodule/src/web/app/src/main/webapp</directory>
             </resource>
+            <resource>
+              <!-- Add any additional dependency that cannot be fetched from a repository.-->
+              <directory>${project.basedir}/../lib/${gs.version}</directory>
+              <targetPath>WEB-INF/lib</targetPath>
+              <include>**</include>
+            </resource>
           </webResources>
           <packagingExcludes>
             <!--
@@ -980,7 +986,27 @@
           <groupId>org.geoserver.community</groupId>
           <artifactId>gs-s3-geotiff</artifactId>
           <version>${gs.version}</version>
+          <!-- instead of excluding the buggy gt-s3-geotiff version here, leave it and let maven-war-plugin exclude it
+          from WEB-INF/lib, so that the transitive dependencies are still added -->
+          <!-- 
+          <exclusions>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-s3-geotiff</artifactId>              
+            </exclusion>
+          </exclusions>
+          -->
         </dependency>
+        <!-- include the patched gt-s3-geotiff with the fixed version, stored as part of the project because of GeoServer 2.15.x EOL -->
+        <!-- 
+        <dependency>
+          <groupId>org.geotools</groupId>
+          <artifactId>gt-s3-geotiff</artifactId>
+          <version>18-SNAPSHOT</version>
+          <scope>system</scope>
+          <systemPath>${project.basedir}/../lib/${gs.version}/gt-s3-geotiff-18-SNAPSHOT.jar</systemPath>
+        </dependency>
+         -->
       </dependencies>
     </profile>
     <profile>

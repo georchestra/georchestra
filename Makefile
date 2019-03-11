@@ -68,13 +68,13 @@ docker-build: docker-build-dev docker-build-gn3 docker-build-geoserver docker-bu
 
 war-build-geoserver: build-deps
 	cd geoserver/geoserver-submodule/src/; \
-	mvn clean install -Pcolormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,gdal,importer,inspire,libjpeg-turbo,monitor,pyramid,wps,css -DskipTests; \
+	mvn clean install -Pcolormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,gdal,importer,inspire,libjpeg-turbo,monitor,pyramid,wps,css,s3-getotiff -DskipTests; \
 	cd ../../..; \
 	mvn clean install -pl geoserver/webapp
 
 war-build-geoserver-geofence: build-deps
 	cd geoserver/geoserver-submodule/src/; \
-	mvn clean install -Pcolormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,gdal,importer,inspire,libjpeg-turbo,monitor,pyramid,wps,css,geofence-server -Dserver=geofence-generic -DskipTests; \
+	mvn clean install -Pcolormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,gdal,importer,inspire,libjpeg-turbo,monitor,pyramid,wps,css,geofence-server,s3-geotiff -Dserver=geofence-generic -DskipTests; \
 	cd ../../..; \
 	mvn clean install -pl geoserver/webapp
 
