@@ -228,7 +228,7 @@ objectClass: groupOfMembers
 objectClass: top
 cn: psc
 businessCategory: REGISTERED
-description: 4184,684,9849,7987,797898,5797,579,97,49,797,97
+description: 62053,62267,62565,62685,62696,62862,62562
 member: uid=testadmin,ou=users,dc=georchestra,dc=org
 member: uid=testuser,ou=users,dc=georchestra,dc=org
 o: Project Steering Committee
@@ -248,7 +248,7 @@ objectClass: groupOfMembers
 objectClass: top
 cn: c2c
 businessCategory: REGISTERED
-description: 4184
+description: 62053
 member: uid=testeditor,ou=users,dc=georchestra,dc=org
 o: Camptocamp
 ou: C2C
@@ -266,7 +266,7 @@ objectClass: groupOfMembers
 objectClass: top
 cn: cra
 businessCategory: REGISTERED
-description: 4184
+description: 62053
 member: uid=testreviewer,ou=users,dc=georchestra,dc=org
 o: Conseil régional d'Alsace
 ou: CRA
