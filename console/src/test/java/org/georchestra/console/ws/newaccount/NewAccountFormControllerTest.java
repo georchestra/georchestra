@@ -3,7 +3,6 @@ package org.georchestra.console.ws.newaccount;
 import org.apache.commons.io.input.ReaderInputStream;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.georchestra.console.ReCaptchaV2;
-import org.georchestra.console.bs.Moderator;
 import org.georchestra.console.bs.ReCaptchaParameters;
 import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.ds.AccountDao;
@@ -71,7 +70,7 @@ public class NewAccountFormControllerTest {
     private OrgsDao mockOrgDao = mock(OrgsDao.class);
     private AdvancedDelegationDao advancedDelegationDao = mock(AdvancedDelegationDao.class);
     private EmailFactory efi = mock(EmailFactory.class);
-    private Moderator  mod = new Moderator();
+    private boolean moderatedSignup = true;
     private ReCaptchaV2 rec = mock(ReCaptchaV2.class);
     private ReCaptchaParameters rep = new ReCaptchaParameters();
     private MockHttpServletRequest request = new MockHttpServletRequest();
@@ -146,7 +145,7 @@ public class NewAccountFormControllerTest {
     @Test
     public void createNoModeration() throws IOException, SQLException, DuplicatedEmailException, DataServiceException, DuplicatedUidException {
         configureFormBean();
-        mod.setModeratedSignup(false);
+        toTest.setModeratedSignup(false);
 
         String ret = toTest.create(request, formBean, "", mockedValidationReports, status, UiModel);
 
@@ -175,7 +174,7 @@ public class NewAccountFormControllerTest {
     public void nominalCreateWithNewOrgModeration() throws IOException, SQLException, DuplicatedEmailException, DataServiceException, DuplicatedUidException {
         configureFormBean();
         when(formBean.getCreateOrg()).thenReturn(true);
-        mod.setModeratedSignup(false);
+        toTest.setModeratedSignup(false);
 
         String ret = toTest.create(request, formBean, "", mockedValidationReports, status, UiModel);
 
@@ -403,7 +402,7 @@ public class NewAccountFormControllerTest {
         PasswordUtils passwordUtils = new PasswordUtils();
         passwordUtils.setValidation(validation);
 
-        NewAccountFormController toTest = new NewAccountFormController(mod, rep, validation);
+        NewAccountFormController toTest = new NewAccountFormController(rep, validation);
         toTest.setAccountDao(mockAccountDao);
         toTest.setOrgDao(mockOrgDao);
         toTest.setAdvancedDelegationDao(advancedDelegationDao);

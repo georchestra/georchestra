@@ -21,15 +21,12 @@ package org.geowebcache;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
-import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.geowebcache.config.Configuration;
 import org.geowebcache.demo.Demo;
 import org.geowebcache.grid.GridSetBroker;
@@ -47,9 +44,22 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher {
     private final TileLayerDispatcher tileLayerDispatcher;
     private final GridSetBroker gridSetBroker;
 
-    @Autowired
-    private GeorchestraConfiguration georchestraConfiguration;
-    
+    private String instanceName;
+    private String headerUrl;
+    private String headerHeight;
+
+    public void setInstanceName(String instanceName) {
+        this.instanceName = instanceName;
+    }
+
+    public void setHeaderUrl(String headerUrl) {
+        this.headerUrl = headerUrl;
+    }
+
+    public void setHeaderHeight(String headerHeight) {
+        this.headerHeight = headerHeight;
+    }
+
     private String georHeaderInclude = "<html>"
 +"  <head>"
 +"    <title>GeoWebCache - @instanceName@</title>"
@@ -91,28 +101,9 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher {
     }
 
     protected void init() throws IOException {
-        if ((georchestraConfiguration != null) && (georchestraConfiguration.activated())) {
-            String instanceName = georchestraConfiguration.getProperty("instanceName");
-            String headerHeight = georchestraConfiguration.getProperty("headerHeight");
-            String headerUrl = georchestraConfiguration.getProperty("headerUrl");
-            georHeaderInclude = georHeaderInclude.replace("@instanceName@", instanceName);
-            georHeaderInclude = georHeaderInclude.replace("@headerHeight@", headerHeight);
-            georHeaderInclude = georHeaderInclude.replace("@headerUrl@", headerUrl);
-        } else {
-            // Default values (nested into the geowebcache.properties)
-            InputStream defaultGwcProp = this.getClass().getResourceAsStream("/geowebcache.properties");
-            
-            try {
-                Properties prop = new Properties();
-                prop.load(defaultGwcProp);
-                georHeaderInclude = georHeaderInclude.replace("@instanceName@", prop.getProperty("instanceName", "geOrchestra"));
-                georHeaderInclude = georHeaderInclude.replace("@headerHeight@", prop.getProperty("headerHeight", "90"));
-                georHeaderInclude = georHeaderInclude.replace("@headerUrl@", prop.getProperty("headerUrl", "/header/"));
-            } finally {
-                if (defaultGwcProp != null)
-                    defaultGwcProp.close();
-            }
-        }
+        georHeaderInclude = georHeaderInclude.replace("@instanceName@", this.instanceName);
+        georHeaderInclude = georHeaderInclude.replace("@headerHeight@", this.headerHeight);
+        georHeaderInclude = georHeaderInclude.replace("@headerUrl@", this.headerUrl);
     }
     
     @Override

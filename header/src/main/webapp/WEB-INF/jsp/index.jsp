@@ -25,9 +25,6 @@
 <%@ page language="java" %>
 <%@ page import="java.util.*" %>
 <%@ page import="org.georchestra._header.Utf8ResourceBundle" %>
-<%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
-<%@ page import="org.springframework.context.ApplicationContext" %>
-<%@ page import="org.springframework.web.servlet.support.RequestContextUtils" %>
 
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ page isELIgnored="false" %>
@@ -55,7 +52,7 @@ ResourceBundle bundle = org.georchestra._header.Utf8ResourceBundle.getBundle("_h
 String detectedLanguage = rLocale.getLanguage();
 String forcedLang = request.getParameter("lang");
 
-String lang = request.getParameter("defaultLanguage");
+String lang = (String) request.getAttribute("defaultLanguage");
 if (forcedLang != null) {
     if (forcedLang.equals("en") || forcedLang.equals("es") || forcedLang.equals("ru") || forcedLang.equals("fr") || forcedLang.equals("de")) {
         lang = forcedLang;

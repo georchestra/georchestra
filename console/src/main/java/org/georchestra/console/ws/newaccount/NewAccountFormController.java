@@ -23,7 +23,6 @@ package org.georchestra.console.ws.newaccount;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.routines.EmailValidator;
-import org.georchestra.console.bs.Moderator;
 import org.georchestra.console.bs.ReCaptchaParameters;
 import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.ds.AccountDao;
@@ -101,7 +100,8 @@ public final class NewAccountFormController {
 	@Autowired
 	protected PasswordUtils passwordUtils;
 
-	private Moderator moderator;
+	@Autowired
+	private boolean moderatedSignup = true;
 
 	@Autowired
 	protected boolean reCaptchaActivated;
@@ -110,10 +110,9 @@ public final class NewAccountFormController {
 	private Validation validation;
 
 	@Autowired
-	public NewAccountFormController(Moderator moderatorRule,
+	public NewAccountFormController(
 									ReCaptchaParameters reCaptchaParameters,
 									Validation validation) {
-		this.moderator = moderatorRule;
 		this.reCaptchaParameters = reCaptchaParameters;
 		this.validation = validation;
 	}
@@ -132,6 +131,10 @@ public final class NewAccountFormController {
 
 	public void setAdvancedDelegationDao(AdvancedDelegationDao advancedDelegationDao) {
 		this.advancedDelegationDao = advancedDelegationDao;
+	}
+
+	public void setModeratedSignup(boolean moderatedSignup) {
+		this.moderatedSignup = moderatedSignup;
 	}
 
 	public void setRoleDao(RoleDao roleDao) {
@@ -224,8 +227,8 @@ public final class NewAccountFormController {
 				if (orgCities.length() > 0)
 					org.setCities(Arrays.asList(orgCities.split("\\s*,\\s*")));
 
-				org.setPending(moderator.moderatedSignup());
-				orgExt.setPending(moderator.moderatedSignup());
+				org.setPending(this.moderatedSignup);
+				orgExt.setPending(this.moderatedSignup);
 				// Persist changes to LDAP server
 				orgDao.insert(org);
 				orgDao.insert(orgExt);
@@ -254,7 +257,7 @@ public final class NewAccountFormController {
 			if(!formBean.getOrg().equals("-"))
 				account.setOrg(formBean.getOrg());
 
-			account.setPending(moderator.moderatedSignup());
+			account.setPending(this.moderatedSignup);
 
 			String requestOriginator = request.getHeader("sec-username");
 			accountDao.insert(account,  requestOriginator);
@@ -283,7 +286,7 @@ public final class NewAccountFormController {
 			}
 
 			// Select email template based on moderation configuration for admin and user and send emails
-			if(moderator.moderatedSignup()){
+			if(this.moderatedSignup){
 				emailFactory.sendNewAccountRequiresModerationEmail(servletContext, recipients,
 						account.getCommonName(), account.getUid(), account.getEmail());
 				emailFactory.sendAccountCreationInProcessEmail(servletContext, account.getEmail(),

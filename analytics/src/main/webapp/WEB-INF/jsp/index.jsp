@@ -27,10 +27,6 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ page pageEncoding="UTF-8"%>
 <%@ page isELIgnored="false" %>
-<%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
-<%@ page import="org.springframework.context.ApplicationContext" %>
-<%@ page import="org.springframework.web.servlet.support.RequestContextUtils" %>
-<%@ page import="org.georchestra.commons.configuration.GeorchestraConfiguration" %>
 
 <%
 Locale rLocale = request.getLocale();
@@ -39,7 +35,7 @@ ResourceBundle bundle = Utf8ResourceBundle.getBundle("analytics.i18n.index", rLo
 String detectedLanguage = rLocale.getLanguage();
 String forcedLang = request.getParameter("lang");
 
-String lang = request.getParameter("defaultLanguage");
+String lang = (String) request.getAttribute("defaultLanguage");
 if (forcedLang != null) {
     if (forcedLang.equals("en") || forcedLang.equals("es") || forcedLang.equals("ru") || forcedLang.equals("fr") || forcedLang.equals("de")) {
         lang = forcedLang;
