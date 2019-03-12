@@ -215,7 +215,7 @@ dn: cn=psc,ou=orgs,dc=georchestra,dc=org
 objectClass: groupOfMembers
 objectClass: top
 cn: psc
-description: 4184,684,9849,7987,797898,5797,579,97,49,797,97
+description: 62053,62267,62565,62685,62696,62862,62562
 member: uid=testadmin,ou=users,dc=georchestra,dc=org
 member: uid=testuser,ou=users,dc=georchestra,dc=org
 o: Project Steering Committee
@@ -234,7 +234,7 @@ dn: cn=c2c,ou=orgs,dc=georchestra,dc=org
 objectClass: groupOfMembers
 objectClass: top
 cn: c2c
-description: 4184
+description: 62053
 member: uid=testeditor,ou=users,dc=georchestra,dc=org
 o: Camptocamp
 ou: C2C
@@ -251,7 +251,7 @@ dn: cn=cra,ou=orgs,dc=georchestra,dc=org
 objectClass: groupOfMembers
 objectClass: top
 cn: cra
-description: 4184
+description: 62053
 member: uid=testreviewer,ou=users,dc=georchestra,dc=org
 o: Conseil régional d'Alsace
 ou: CRA
