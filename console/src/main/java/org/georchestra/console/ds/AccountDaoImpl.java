@@ -45,6 +45,7 @@ import org.springframework.security.authentication.encoding.LdapShaPasswordEncod
 import javax.naming.Name;
 import javax.naming.directory.SearchControls;
 import javax.naming.ldap.LdapName;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -416,7 +417,7 @@ public final class AccountDaoImpl implements AccountDao {
     private void mapToContext(Account account, DirContextOperations context) {
 
         context.setAttributeValues("objectclass", new String[] { "top", "person", "organizationalPerson",
-                "inetOrgPerson", "shadowAccount" });
+                "inetOrgPerson", "shadowAccount", "georchestraUser" });
 
         // person attributes
         setAccountField(context, UserSchema.SURNAME_KEY, account.getSurname());
@@ -471,6 +472,12 @@ public final class AccountDaoImpl implements AccountDao {
             setAccountField(context, UserSchema.SHADOW_EXPIRE_KEY, String.valueOf(account.getShadowExpire().getTime() / 1000));
         else
             setAccountField(context, UserSchema.SHADOW_EXPIRE_KEY, null);
+
+        // georchestraUser attributes
+        if(account.getPrivacyPolicyAgreementDate() != null)
+            setAccountField(context, UserSchema.PRIVACY_POLICY_AGREEMENT_DATE_KEY, String.valueOf(account.getPrivacyPolicyAgreementDate().toEpochDay()));
+        else
+            setAccountField(context, UserSchema.PRIVACY_POLICY_AGREEMENT_DATE_KEY, null);
 
         setAccountField(context, UserSchema.CONTEXT_KEY, account.getContext());
     }
@@ -537,6 +544,13 @@ public final class AccountDaoImpl implements AccountDao {
                 Long shadowExpire = Long.parseLong(rawShadowExpire);
                 shadowExpire *= 1000; // Convert to milliseconds
                 account.setShadowExpire(new Date(shadowExpire));
+            }
+
+            // The privacy policy agreement date is stored in the LDAP as epoch day (days since 1970-01-01), as in Unix shadow
+            String rawPrivacyPolicyAgreementDate = context.getStringAttribute(UserSchema.PRIVACY_POLICY_AGREEMENT_DATE_KEY);
+            if(rawPrivacyPolicyAgreementDate != null){
+                Long privacyPolicyAgreementDate = Long.parseLong(rawPrivacyPolicyAgreementDate);
+                account.setPrivacyPolicyAgreementDate(LocalDate.ofEpochDay(privacyPolicyAgreementDate));
             }
 
 
