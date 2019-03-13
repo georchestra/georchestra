@@ -41,6 +41,7 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 import javax.naming.Name;
 import javax.naming.directory.SearchControls;
 import javax.naming.ldap.LdapName;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -235,7 +236,8 @@ public class UsersControllerTest {
                 put("street", "Avenue des Ducs de Savoie").
                 put("postalCode", "73000").
                 put("l", "Chambéry").
-                put("postOfficeBox", "1234");
+                put("postOfficeBox", "1234").
+                put("privacyPolicyAgreementDate", "2019-03-12");
         request.setRequestURI("/console/users/geoserver");
         request.setContent(reqUsr.toString().getBytes());
         doThrow(NameNotFoundException.class).when(ldapTemplate).lookup(any(Name.class));
@@ -261,6 +263,7 @@ public class UsersControllerTest {
         assertEquals(res.getPostOfficeBox(), "1234");
         assertEquals(res.getMobile(), "");
         assertEquals(res.isPending(), false);
+        assertEquals(res.getPrivacyPolicyAgreementDate(), LocalDate.of(2019, 3, 12));
     }
 
     @Test(expected = AccessDeniedException.class)
@@ -356,7 +359,8 @@ public class UsersControllerTest {
                 .put("givenName", "newPierre")
                 .put("pending", "true")
                 .put("org", "new_org")
-                .put("uid", "pMaUdUiT");
+                .put("uid", "pMaUdUiT")
+                .put("privacyPolicyAgreementDate", "");
 
         request.setContent(reqUsr.toString().getBytes());
 
@@ -441,6 +445,7 @@ public class UsersControllerTest {
         assertEquals("pMaUdUiT", ret.getUid());
         assertEquals(true, ret.isPending());
         assertEquals("new_org", ret.getOrg());
+        assertEquals(null, ret.getPrivacyPolicyAgreementDate());
 
         ArgumentCaptor<String> delDnCaptor = ArgumentCaptor.forClass(String.class);
         Mockito.verify(mockDirCtxForPsc).removeAttributeValue(anyString(), delDnCaptor.capture());
