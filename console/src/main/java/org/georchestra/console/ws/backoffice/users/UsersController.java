@@ -70,6 +70,8 @@ import java.io.IOException;
 import java.text.Normalizer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeParseException;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -604,6 +606,14 @@ public class UsersController {
 				account.setShadowExpire((new SimpleDateFormat("yyyy-MM-dd")).parse(shadowExpire));
 		}
 
+		String privacyPolicyAgreementDate = RequestUtil.getFieldValue(json, UserSchema.PRIVACY_POLICY_AGREEMENT_DATE_KEY);
+		if(privacyPolicyAgreementDate != null) {
+			if("".equals(privacyPolicyAgreementDate ))
+				account.setPrivacyPolicyAgreementDate(null);
+			else
+				account.setPrivacyPolicyAgreementDate(LocalDate.parse(privacyPolicyAgreementDate));
+		}
+
 		try {
 			account.setPending(json.getBoolean(UserSchema.PENDING));
 		} catch (JSONException e) {
@@ -671,6 +681,16 @@ public class UsersController {
 			try {
 				a.setShadowExpire((new SimpleDateFormat("yyyy-MM-dd")).parse(shadowExpire));
 			} catch (ParseException e) {
+				LOG.error(e.getMessage());
+				throw new IllegalArgumentException(e);
+			}
+		}
+
+		String privacyPolicyAgreementDate = RequestUtil.getFieldValue(json, UserSchema.PRIVACY_POLICY_AGREEMENT_DATE_KEY);
+		if (StringUtils.hasLength(privacyPolicyAgreementDate)) {
+			try {
+				a.setPrivacyPolicyAgreementDate(LocalDate.parse(privacyPolicyAgreementDate));
+			} catch (DateTimeParseException e) {
 				LOG.error(e.getMessage());
 				throw new IllegalArgumentException(e);
 			}
