@@ -43,6 +43,7 @@ public class AccountFormBean implements Serializable{
 	private String description;
 	private String password;
 	private String confirmPassword;
+	private boolean privacyPolicyAgreed;
 
 	private String recaptcha_response_field;
 
@@ -113,6 +114,12 @@ public class AccountFormBean implements Serializable{
 	public void setConfirmPassword(String confirmPassword) {
 		this.confirmPassword = confirmPassword;
 	}
+	public boolean getPrivacyPolicyAgreed() {
+		return privacyPolicyAgreed;
+	}
+	public void setPrivacyPolicyAgreed(boolean privacyPolicyAgreed) {
+		this.privacyPolicyAgreed = privacyPolicyAgreed;
+	}
 	public String getSurname() {
 		return surname;
 	}
@@ -155,6 +162,7 @@ public class AccountFormBean implements Serializable{
 				+ ", email=" + email
 				+ ", phone=" + phone + ", description=" + description + ", password="
 				+ password + ", confirmPassword=" + confirmPassword
+				+ ", privacyPolicyAgreed=" + privacyPolicyAgreed
 				+ ", recaptcha_response_field=" + recaptcha_response_field
 				+ "]";
 	}

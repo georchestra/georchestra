@@ -144,6 +144,11 @@ public class Validation {
 		return !this.isUserFieldRequired(field) || StringUtils.hasLength(value);
 	}
 
+	public void validatePrivacyPolicyAgreedField (boolean value, Errors errors) {
+		if(!value)
+			errors.rejectValue("privacyPolicyAgreed", "error.required", "required");
+	}
+
 	public boolean validateOrgField(String field, JSONObject json){
 		try {
 			return !this.isOrgFieldRequired(field) || (json.has(field) && StringUtils.hasLength(json.getString(field)));
