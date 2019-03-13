@@ -165,7 +165,7 @@
                         <s:message code="privacyPolicyAgreed.label" />
                     </jsp:attribute>
                     <jsp:attribute name="checkboxLabel">
-                        <s:message code="privacyPolicyAgreed.checkboxLabel" />
+                        <s:message code="privacyPolicyAgreed.checkboxLabel" arguments="${privacyPolicyAgreementUrl}" />
                     </jsp:attribute>
                 </t:privacyPolicyAgreement>
             </fieldset>

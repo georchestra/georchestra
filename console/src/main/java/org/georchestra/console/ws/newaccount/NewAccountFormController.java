@@ -113,6 +113,9 @@ public final class NewAccountFormController {
 	protected boolean privacyPolicyAgreementActivated;
 
 	@Autowired
+	protected String privacyPolicyAgreementUrl;
+
+	@Autowired
 	protected Clock clock;
 
 	private Validation validation;
@@ -170,6 +173,7 @@ public final class NewAccountFormController {
 		populateOrgsAndOrgTypes(model);
 
 		model.addAttribute("privacyPolicyAgreementActivated", this.privacyPolicyAgreementActivated);
+		model.addAttribute("privacyPolicyAgreementUrl", this.privacyPolicyAgreementUrl);
 
 		model.addAttribute("recaptchaActivated", this.reCaptchaActivated);
 
