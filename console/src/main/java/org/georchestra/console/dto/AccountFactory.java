@@ -217,6 +217,7 @@ public class AccountFactory {
 		a.setRoomNumber(o.getRoomNumber());
 		a.setStateOrProvince(o.getStateOrProvince());
 		a.setHomePostalAddress(o.getHomePostalAddress());
+		a.setPrivacyPolicyAgreementDate(o.getPrivacyPolicyAgreementDate());
 		a.setManager(o.getManager());
 		a.setShadowExpire(o.getShadowExpire());
 		a.setContext(o.getContext());

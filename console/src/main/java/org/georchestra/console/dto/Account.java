@@ -20,6 +20,7 @@
 package org.georchestra.console.dto;
 
 import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * Account data transfer object.
@@ -142,6 +143,10 @@ public interface Account extends Comparable<Account>{
 	void setShadowExpire(Date expireDate);
 
 	Date getShadowExpire();
+
+	void setPrivacyPolicyAgreementDate(LocalDate privacyPolicyAgreementDate);
+
+	LocalDate getPrivacyPolicyAgreementDate();
 
 	String getManager();
 	
