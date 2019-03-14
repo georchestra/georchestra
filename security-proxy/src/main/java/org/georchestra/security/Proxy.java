@@ -678,10 +678,10 @@ public class Proxy {
 
             // content type has to be valid
             if (isCharsetRequiredForContentType(contentType)) {
-                doHandleRequestCharsetRequired(request, finalResponse, proxiedResponse, contentType);
+                doHandleRequestCharsetRequired(request, finalResponse, proxiedResponse);
             } else {
                 logger.debug("charset not required for contentType: " + contentType);
-                doHandleRequest(request, finalResponse, proxiedResponse);
+                doHandleRequest(finalResponse, proxiedResponse);
             }
         } catch (IOException | ExecutionException | InterruptedException | TimeoutException e) {
             // connection problem with the host
@@ -775,7 +775,7 @@ public class Proxy {
     /**
      * Direct copy of response
      */
-    private void doHandleRequest(HttpServletRequest request, HttpServletResponse finalResponse, HttpResponse proxiedResponse)
+    private void doHandleRequest(HttpServletResponse finalResponse, HttpResponse proxiedResponse)
             throws IOException {
 
         org.apache.http.StatusLine statusLine = proxiedResponse.getStatusLine();
@@ -950,7 +950,7 @@ public class Proxy {
      * method.
      */
     private void doHandleRequestCharsetRequired(HttpServletRequest originalRequest, HttpServletResponse finalResponse,
-            HttpResponse proxiedResponse, String contentType) {
+            HttpResponse proxiedResponse) {
 
         InputStream streamFromServer = null;
         OutputStream streamToClient = null;
@@ -1004,7 +1004,7 @@ public class Proxy {
                 streamFromServer = new DeflaterInputStream(proxiedResponse.getEntity().getContent());
                 streamToClient = new DeflaterOutputStream(finalResponse.getOutputStream());
             } else {
-                doHandleRequest(originalRequest, finalResponse, proxiedResponse);
+                doHandleRequest(finalResponse, proxiedResponse);
                 return;
             }
 
