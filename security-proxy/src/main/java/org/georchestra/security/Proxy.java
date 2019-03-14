@@ -226,16 +226,12 @@ public class Proxy {
                     File.separator, "proxy-permissions.xml"));
             if(datadirPermissionsFile.exists()){
                 logger.info("reading proxy permissions from " + datadirPermissionsFile.getAbsolutePath());
-                FileInputStream fis = null;
-                try {
-                    fis = new FileInputStream(datadirPermissionsFile);
+
+                try (FileInputStream fis = new FileInputStream(datadirPermissionsFile)) {
                     setProxyPermissions(Permissions.Create(fis));
-                    fis.close();
                 } catch(Exception ex){
                       logger.error("Error during proxy permissions configuration from "
                               + datadirPermissionsFile.getAbsolutePath());
-                } finally {
-                    fis.close();
                 }
             }
 
@@ -251,16 +247,13 @@ public class Proxy {
 
         // Proxy permissions not set by datadir
         if (proxyPermissionsFile != null && proxyPermissions == null) {
-            Closer closer = Closer.create();
-            try {
+            try (Closer closer = Closer.create()) {
                 final ClassLoader classLoader = Proxy.class.getClassLoader();
                 InputStream inStream = closer.register(classLoader.getResourceAsStream(proxyPermissionsFile));
                 if (inStream == null) {
                     throw new RuntimeException("ProxyPermissionsFile not found");
                 }
                 setProxyPermissions(Permissions.Create(inStream));
-            } finally {
-                closer.close();
             }
         }
         httpAsyncClientBuilder = createHttpAsyncClientBuilder();
@@ -612,13 +605,14 @@ public class Proxy {
      */
     private void handleRequest(HttpServletRequest request, HttpServletResponse finalResponse, String sURL, boolean localProxy) {
 
-        CloseableHttpAsyncClient httpclient = httpAsyncClientBuilder.build();
-        httpclient.start();
 
-        HttpResponse proxiedResponse = null;
-        int statusCode = 500;
 
-        try {
+        try (CloseableHttpAsyncClient httpclient = httpAsyncClientBuilder.build()) {
+            httpclient.start();
+
+            HttpResponse proxiedResponse = null;
+            int statusCode = 500;
+
             URL url = null;
             try {
                 url = new URL(sURL);
@@ -747,12 +741,6 @@ public class Proxy {
                 // error occured while trying to return the
                 // "service unavailable status"
                 finalResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            }
-        } finally {
-            try {
-                httpclient.close();
-            } catch (IOException e) {
-                logger.error("Unable to close the httpclient", e);
             }
         }
     }
