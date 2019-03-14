@@ -103,7 +103,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.zip.DeflaterInputStream;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.GZIPInputStream;
@@ -1030,7 +1029,7 @@ public class Proxy {
                     if (s.length() > 200) {
 
                         logger.trace("attempting to read charset from: " + s);
-                        String charset = getCharset(s); // extract charset
+                        String charset = extractCharsetAsFromXmlNode(s);
 
                         if (charset == null) {
 
@@ -1107,7 +1106,7 @@ public class Proxy {
      * @param header String that should contain the encoding attribute and its value
      * @return the charset. null if not found
      */
-    protected String getCharset(String header) {
+    protected String extractCharsetAsFromXmlNode(String header) {
         Matcher matcher = ENCODING_IN_XML_REGEX_PATTERN.matcher(header);
 
         if (matcher.find()) {
