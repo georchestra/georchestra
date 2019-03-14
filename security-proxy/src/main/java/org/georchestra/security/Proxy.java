@@ -634,10 +634,8 @@ public class Proxy {
             String reasonPhrase = statusLine.getReasonPhrase();
 
             if (reasonPhrase != null && statusCode >= 400) {
-                if (logger.isWarnEnabled()) {
-                    logger.warn("Downstream server returned a status code which could be an error. "
-                            + "Statuscode: " + statusCode + ", reason: " + reasonPhrase);
-                }
+                logger.warn("Downstream server returned a status code which could be an error. "
+                        + "Statuscode: " + statusCode + ", reason: " + reasonPhrase);
 
                 if (statusCode == 401) {
                     //
@@ -742,10 +740,8 @@ public class Proxy {
     }
 
     private Optional<String> adjustLocation(HttpServletRequest request, HttpResponse proxiedResponse) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("adjustLocation called for request: " + request.getRequestURI());
-        }
-        
+        logger.debug("adjustLocation called for request: " + request.getRequestURI());
+
         final String target = findMatchingTarget(request);
         final String locationHeader = extractLocationHeader(proxiedResponse);
         
@@ -760,15 +756,11 @@ public class Proxy {
             final URI baseURI;
             try {
                 baseURI = new URI(baseURL);
-                if (logger.isDebugEnabled()) {
-                    logger.debug("adjustLocation process header: " + locationHeader);
-                }
+                logger.debug("adjustLocation process header: " + locationHeader);
                 URI locationURI = new URI(locationHeader);
                 URI resolvedURI = baseURI.resolve(locationURI);
 
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Test location header: " + resolvedURI.toString() + " against: " + baseURI.toString());
-                }
+                logger.debug("Test location header: " + resolvedURI.toString() + " against: " + baseURI.toString());
                 if (resolvedURI.toString().startsWith(baseURI.toString())) {
                     // proxiedResponse.removeHeader(locationHeader);
                     String resolvedSuffix = resolvedURI.toString().substring(baseURI.toString().length());
@@ -777,9 +769,7 @@ public class Proxy {
                         newLocation += "/";
                     }
                     newLocation += resolvedSuffix;
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("adjustLocation from: " + locationHeader + " to " + newLocation);
-                    }
+                    logger.debug("adjustLocation from: " + locationHeader + " to " + newLocation);
                     adjustedLocation = newLocation;
                 }
             } catch (URISyntaxException e) {
@@ -1005,12 +995,9 @@ public class Proxy {
             // getContentEncoding(proxiedResponse.getAllHeaders());
             String contentEncoding = getContentEncoding(proxiedResponse.getHeaders("Content-Encoding"));
 
-            if (logger.isDebugEnabled()) {
-
-                String cskString = "\tisCharSetKnown=" + isCharsetKnown;
-                String cEString = "\tcontentEncoding=" + contentEncoding;
-                logger.debug("Charset is required so verifying that it has been added to the headers\n" + cskString + "\n" + cEString);
-            }
+            String cskString = "\tisCharSetKnown=" + isCharsetKnown;
+            String cEString = "\tcontentEncoding=" + contentEncoding;
+            logger.debug("Charset is required so verifying that it has been added to the headers\n" + cskString + "\n" + cEString);
 
             if (contentEncoding == null || isCharsetKnown) {
                 // A simple stream can do the job for data that is not in content encoded
@@ -1045,35 +1032,26 @@ public class Proxy {
                     // s has to be long enough to contain the encoding
                     if (s.length() > 200) {
 
-                        if (logger.isTraceEnabled()) {
-                            logger.trace("attempting to read charset from: " + s);
-                        }
+                        logger.trace("attempting to read charset from: " + s);
                         String charset = getCharset(s); // extract charset
 
                         if (charset == null) {
-                            if (logger.isTraceEnabled()) {
-                                logger.trace("unable to find charset from raw ASCII data.  Trying to unzip it");
-                            }
+                            logger.trace("unable to find charset from raw ASCII data.  Trying to unzip it");
 
                             // the charset cannot be found, IE users must be warned
                             // that the request cannot be fulfilled, nothing good would happen otherwise
                         }
                         if (charset == null) {
                             String guessedCharset = null;
-                            if (logger.isDebugEnabled()) {
-                                logger.debug("unable to find charset so using the first one from the accept-charset request header");
-                            }
+                            logger.debug("unable to find charset so using the first one from the accept-charset request header");
+
                             String calculateDefaultCharset = calculateDefaultCharset(orignalRequest);
                             if (calculateDefaultCharset != null) {
                                 guessedCharset = calculateDefaultCharset;
-                                if (logger.isDebugEnabled()) {
-                                    logger.debug("hopefully the server responded with this charset: " + calculateDefaultCharset);
-                                }
+                                logger.debug("hopefully the server responded with this charset: " + calculateDefaultCharset);
                             } else {
                                 guessedCharset = defaultCharset;
-                                if (logger.isDebugEnabled()) {
-                                    logger.debug("unable to find charset, so using default:" + defaultCharset);
-                                }
+                                logger.debug("unable to find charset, so using default:" + defaultCharset);
                             }
                             String adjustedContentType = proxiedResponse.getEntity().getContentType().getValue() + ";charset=" + guessedCharset;
                             finalResponse.setHeader("Content-Type", adjustedContentType);
@@ -1081,9 +1059,7 @@ public class Proxy {
                             finalResponse.setCharacterEncoding(guessedCharset);
 
                         } else {
-                            if (logger.isDebugEnabled()) {
-                                logger.debug("found charset: " + charset);
-                            }
+                            logger.debug("found charset: " + charset);
                             String adjustedContentType = proxiedResponse.getEntity().getContentType().getValue() + ";charset=" + charset;
                             finalResponse.setHeader("Content-Type", adjustedContentType);
                             first = false; // we found the encoding, don't try to do it again
@@ -1170,16 +1146,12 @@ public class Proxy {
      */
     private String getContentEncoding(Header[] headers) {
         if (headers == null || headers.length == 0) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("No content-encoding header for this request.");
-            }
+            logger.debug("No content-encoding header for this request.");
             return null;
         }
         for (Header header : headers) {
             String headerName = header.getName();
-            if (logger.isDebugEnabled()) {
-                logger.debug("Check content-encoding against header: " + headerName + " : " + header.getValue());
-            }
+            logger.debug("Check content-encoding against header: " + headerName + " : " + header.getValue());
             if (headerName != null && "Content-Encoding".equalsIgnoreCase(headerName)) {
                 return header.getValue();
             }
