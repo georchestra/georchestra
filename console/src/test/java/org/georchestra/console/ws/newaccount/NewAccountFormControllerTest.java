@@ -70,7 +70,6 @@ public class NewAccountFormControllerTest {
     private OrgsDao mockOrgDao = mock(OrgsDao.class);
     private AdvancedDelegationDao advancedDelegationDao = mock(AdvancedDelegationDao.class);
     private EmailFactory efi = mock(EmailFactory.class);
-    private boolean moderatedSignup = true;
     private ReCaptchaV2 rec = mock(ReCaptchaV2.class);
     private ReCaptchaParameters rep = new ReCaptchaParameters();
     private MockHttpServletRequest request = new MockHttpServletRequest();
