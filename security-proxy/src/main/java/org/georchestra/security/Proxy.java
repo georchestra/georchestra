@@ -1036,12 +1036,6 @@ public class Proxy {
                         String charset = getCharset(s); // extract charset
 
                         if (charset == null) {
-                            logger.trace("unable to find charset from raw ASCII data.  Trying to unzip it");
-
-                            // the charset cannot be found, IE users must be warned
-                            // that the request cannot be fulfilled, nothing good would happen otherwise
-                        }
-                        if (charset == null) {
 
                             logger.debug("unable to find charset so using the first one from the accept-charset request header");
 
