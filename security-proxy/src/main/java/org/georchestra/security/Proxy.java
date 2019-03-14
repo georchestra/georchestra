@@ -396,13 +396,7 @@ public class Proxy {
     }
 
     private String[] splitRequestPath(String requestURI) {
-        String[] requestSegments;
-        if (requestURI.charAt(0) == '/') {
-            requestSegments = StringUtils.split(requestURI.substring(1), '/');
-        } else {
-            requestSegments = StringUtils.split(requestURI, '/');
-        }
-        return requestSegments;
+        return filter(requestURI.split("/"));
     }
 
     /**
