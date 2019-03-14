@@ -90,6 +90,7 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
@@ -102,6 +103,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.zip.DeflaterInputStream;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.GZIPInputStream;
@@ -1270,40 +1272,27 @@ public class Proxy {
         return false;
     }
 
-    private String[] filter(String[] one) {
-        ArrayList<String> result = new ArrayList<String>();
-
-        for (String string : one) {
-            if (string.length() > 0) {
-                result.add(string);
-            }
-        }
-        return result.toArray(new String[result.size()]);
+    protected String[] filter(String[] one) {
+        return Arrays.stream(one).filter(x -> x.length() > 0).toArray(String[]::new);
     }
 
     /**
-     * Check to see if the call is recursive based on forwardRequestURI
-     * startsWith contextPath
+     * Check to see if the call is recursive based on forwardRequestURI startsWith contextPath.
      */
-    private boolean isRecursiveCallToProxy(String forwardRequestURI, String contextPath) {
-        String[] one = forwardRequestURI.split("/");
-        String[] two = contextPath.split("/");
-
-        one = filter(one);
-        two = filter(two);
+    protected boolean isRecursiveCallToProxy(String forwardRequestURI, String contextPath) {
+        String[] one = filter(forwardRequestURI.split("/"));
+        String[] two = filter(contextPath.split("/"));
 
         if (one.length < two.length) {
             return false;
         }
 
-        boolean match = true;
         for (int i = 0; i < two.length && i < one.length; i++) {
-            String s2 = two[i];
-            String s1 = one[i];
-
-            match &= s2.equalsIgnoreCase(s1);
+            if (!(two[i].equalsIgnoreCase(one[i]))) {
+                return false;
+            }
         }
-        return match;
+        return true;
     }
 
     public void setDefaultTarget(String defaultTarget) {
