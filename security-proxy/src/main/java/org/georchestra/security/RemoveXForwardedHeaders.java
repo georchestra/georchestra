@@ -19,9 +19,7 @@
 
 package org.georchestra.security;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.Properties;
 import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
@@ -30,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
@@ -56,23 +53,6 @@ public class RemoveXForwardedHeaders implements HeaderFilter {
     @VisibleForTesting
     void checkConfiguration() {
         Assert.isTrue(includes.isEmpty() || excludes.isEmpty(), "Only includes or excludes can be defined not both.");
-    }
-
-    @Autowired
-    private GeorchestraConfiguration georchestraConfiguration;
-
-    public void init() throws IOException {
-        if ((georchestraConfiguration != null) && (georchestraConfiguration.activated())) {
-            Properties removedHeadersProps = georchestraConfiguration.loadCustomPropertiesFile("removed-xforwarded-headers");
-            int i = 0;
-            String header;
-            includes.clear();
-            while ((header = removedHeadersProps.getProperty("header" + i + ".value")) != null) {
-                includes.add(Pattern.compile(header));
-                i++;
-            }
-        }
-
     }
 
     @Override

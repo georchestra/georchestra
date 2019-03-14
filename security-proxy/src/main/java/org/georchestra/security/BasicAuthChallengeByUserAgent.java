@@ -19,13 +19,9 @@
 
 package org.georchestra.security;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.regex.Pattern;
 
 import javax.servlet.FilterChain;
@@ -62,43 +58,10 @@ public class BasicAuthChallengeByUserAgent extends BasicAuthenticationFilter {
         super(authenticationManager, authenticationEntryPoint);
     }
 
-    private final List<Pattern> _userAgents = new ArrayList<Pattern>();
+    private final List<Pattern> userAgents = new ArrayList<Pattern>();
     private boolean ignoreHttps = false;
     private static final Log LOGGER = LogFactory.getLog(BasicAuthChallengeByUserAgent.class.getPackage().getName());
     private AuthenticationException _exception = new AuthenticationException("No basic authentication credentials provided") {};
-
-    public void init() throws IOException {
-        // GeorchestraConfiguration is a regular spring bean, which won't be
-        // accessible from this bean (which is a spring-security one). We have no
-        // other choice than doing configuration by hand.
-        String datadir = System.getProperty("georchestra.datadir");
-        Properties uaProps = new Properties();
-        if (datadir != null) {
-            File contextDatadir = new File(datadir, "security-proxy");
-            if (! contextDatadir.exists()) {
-                return;
-            }
-            FileInputStream fisProp = null;
-            try {
-                fisProp = new FileInputStream(new File(contextDatadir, "user-agents.properties"));
-                InputStreamReader isrProp = new InputStreamReader(fisProp, "UTF8");
-                _userAgents.clear();
-                uaProps.load(isrProp);
-            } finally {
-                if (fisProp != null) {
-                    fisProp.close();
-                }
-            }
-        }
-        if (! uaProps.isEmpty()) {
-            int i = 0;
-            String ua;
-            while ((ua = uaProps.getProperty("useragent" + i + ".value")) != null) {
-                _userAgents.add(Pattern.compile(ua));
-                i++;
-            }
-        }
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -131,7 +94,7 @@ public class BasicAuthChallengeByUserAgent extends BasicAuthenticationFilter {
 
     private boolean userAgentMatch(Object attribute) {
         if (attribute!=null) {
-            for (Pattern userAgent : _userAgents) {
+            for (Pattern userAgent : userAgents) {
                 if (userAgent.matcher(attribute.toString()).matches()) {
                     return true;
                 }
@@ -144,10 +107,10 @@ public class BasicAuthChallengeByUserAgent extends BasicAuthenticationFilter {
     /**
      * Set the user-agents the string is parsed as a Regex expression.
      */
-    public void setChallengeUserAgents(List<String> userAgents) {
-        _userAgents.clear();
+    public void setUserAgents(List<String> userAgents) {
+        this.userAgents.clear();
         for (String userAgent : userAgents) {
-            _userAgents.add(Pattern.compile(userAgent));
+            this.userAgents.add(Pattern.compile(userAgent));
         }
     }
 
