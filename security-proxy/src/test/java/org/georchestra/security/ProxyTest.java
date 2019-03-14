@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -231,5 +232,27 @@ public class ProxyTest {
         assertTrue(toTest.isCharsetRequiredForContentType("Zebu;youpi"));
         assertTrue(toTest.isCharsetRequiredForContentType("LONG"));
         assertFalse(toTest.isCharsetRequiredForContentType("ascii;long"));
+    }
+
+    @Test
+    public void charsetForName() {
+        assertEquals("US-ASCII", Charset.forName("us-ascii").displayName());
+
+        boolean thrown = false;
+        try {
+            Charset dummy = Charset.forName(null);
+        } catch (Throwable t) {
+            thrown = true;
+        }
+
+        assertTrue(thrown);
+
+        thrown = false;
+        try {
+            Charset dummy = Charset.forName("momo");
+        } catch (Throwable t) {
+            thrown = true;
+        }
+        assertTrue(thrown);
     }
 }
