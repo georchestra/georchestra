@@ -1099,29 +1099,22 @@ public class Proxy {
         return null;
     }
 
+    private static final Pattern ENCODING_IN_XML_REGEX_PATTERN = Pattern.compile("encoding=['\"]([A-Za-z][A-Za-z0-9._-]*)['\"]");
+
     /**
      * Extract the encoding from a string which is the header node of an xml file
      *
      * @param header String that should contain the encoding attribute and its value
      * @return the charset. null if not found
      */
-    private String getCharset(String header) {
-        Pattern pattern = null;
-        String charset = null;
-        try {
-            // use a regexp but we could also use string functions such as indexOf...
-            pattern = Pattern.compile("encoding=(['\"])([A-Za-z]([A-Za-z0-9._]|-)*)");
-        } catch (Exception e) {
-            throw new RuntimeException("expression syntax invalid");
-        }
+    protected String getCharset(String header) {
+        Matcher matcher = ENCODING_IN_XML_REGEX_PATTERN.matcher(header);
 
-        Matcher matcher = pattern.matcher(header);
         if (matcher.find()) {
-            String encoding = matcher.group();
-            charset = encoding.split("['\"]")[1];
+            return matcher.group(1);
         }
 
-        return charset;
+        return null;
     }
 
     /**
