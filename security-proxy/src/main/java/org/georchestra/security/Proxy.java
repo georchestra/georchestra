@@ -1042,29 +1042,26 @@ public class Proxy {
                             // that the request cannot be fulfilled, nothing good would happen otherwise
                         }
                         if (charset == null) {
-                            String guessedCharset = null;
+
                             logger.debug("unable to find charset so using the first one from the accept-charset request header");
 
                             String calculateDefaultCharset = calculateDefaultCharset(orignalRequest);
                             if (calculateDefaultCharset != null) {
-                                guessedCharset = calculateDefaultCharset;
-                                logger.debug("hopefully the server responded with this charset: " + calculateDefaultCharset);
+                                charset = calculateDefaultCharset;
+                                logger.debug("hopefully the server responded with this charset: " + charset);
                             } else {
-                                guessedCharset = defaultCharset;
-                                logger.debug("unable to find charset, so using default:" + defaultCharset);
+                                charset = defaultCharset;
+                                logger.debug("unable to find charset, so using default:" + charset);
                             }
-                            String adjustedContentType = proxiedResponse.getEntity().getContentType().getValue() + ";charset=" + guessedCharset;
-                            finalResponse.setHeader("Content-Type", adjustedContentType);
-                            first = false; // we found the encoding, don't try to do it again
-                            finalResponse.setCharacterEncoding(guessedCharset);
 
                         } else {
                             logger.debug("found charset: " + charset);
-                            String adjustedContentType = proxiedResponse.getEntity().getContentType().getValue() + ";charset=" + charset;
-                            finalResponse.setHeader("Content-Type", adjustedContentType);
-                            first = false; // we found the encoding, don't try to do it again
-                            finalResponse.setCharacterEncoding(charset);
+
                         }
+                        String adjustedContentType = proxiedResponse.getEntity().getContentType().getValue() + ";charset=" + charset;
+                        finalResponse.setHeader("Content-Type", adjustedContentType);
+                        finalResponse.setCharacterEncoding(charset);
+                        first = false; // we found the encoding, don't try to do it again
                     }
                 }
 
