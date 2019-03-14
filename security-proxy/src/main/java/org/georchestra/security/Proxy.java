@@ -163,10 +163,7 @@ public class Proxy {
      * Data source to set on {@link OGCServicesAppender#setDataSource}
      */
     private @Autowired @Qualifier("ogcStatsDataSource") DataSource ogcStatsDataSource;
-    
-    /**
-     * must be defined
-     */
+
     private String defaultTarget;
     private String publicUrl = "https://georchestra.mydomain.org";
 
@@ -297,12 +294,6 @@ public class Proxy {
 
     /**
      * Entrypoint used for login.
-     *
-     * @param request
-     * @param response
-     * @param sURL
-     * @throws ServletException
-     * @throws IOException
      */
     @RequestMapping(value = "/**", params = { "login", "url" }, method = { GET, POST })
     public void login(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) throws ServletException, IOException {
@@ -311,10 +302,6 @@ public class Proxy {
 
     /**
      * Entry point used mainly for XHR requests using a URL-encoded parameter named url.
-     * @param request
-     * @param response
-     * @param sURL
-     * @throws IOException
      */
     @RequestMapping(value ="/proxy/", params = { "url", "!login" })
     public void handleUrlParamRequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) throws IOException {
@@ -322,15 +309,12 @@ public class Proxy {
         URL url;
         try {
             url = new URL(sURL);
-        } catch (MalformedURLException e) { // not an url
+        } catch (MalformedURLException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
             return;
         }
 
-        /*
-         * - deny request with same domain as publicUrl - deny based on
-         * proxy-permissions.xml file
-         */
+        // deny request with same domain as publicUrl - deny based on proxy-permissions.xml file
         if (this.sameDomainPermissions.isDenied(url) || proxyPermissions.isDenied(url)) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "URL is not allowed.");
             return;
@@ -341,11 +325,7 @@ public class Proxy {
     /**
      * Entry point used for security-proxified webapps. Note: the url parameter is sometimes used
      * by the underlying webapps (e.g. mapfishapp and the mfprint configuration). hence we need
-     * to allow it in the following "params" array.
-     *
-     * @param request
-     * @param response
-     * @throws IOException
+     * to allow it in the following "params" array.*
      */
     @RequestMapping(value = "/**", params = { "!login" })
     public void handleRequest(HttpServletRequest request, HttpServletResponse response) {
@@ -355,10 +335,6 @@ public class Proxy {
     /**
      * Default redirection to defaultTarget. By default returns a 302 redirect to '/header/'. The
      * parameter can be customized in the security-proxy.properties file.
-     *
-     * @param request
-     * @param response
-     * @throws IOException
      */
     @RequestMapping(value = "/", params = { "!url", "!login" })
     public void handleDefaultRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -372,13 +348,10 @@ public class Proxy {
      * return true (unless if mapfishapp is not configured on this geOrchestra
      * instance, which is probably unlikely).
      *
-     * @param request
-     *            the HttpServletRequest
-     * @param url
-     *            the requested url
+     * @param request the HttpServletRequest
+     * @param url the requested url
      * @return true if the url is protected by the SP, false otherwise.
      *
-     * @throws IOException
      */
     private boolean urlIsProtected(HttpServletRequest request, URL url) throws IOException {
         if (isSameServer(request, url)) {
@@ -396,8 +369,6 @@ public class Proxy {
     /**
      * Check if the request targets a host (host header) which is the same as the requested URL in parameter.
      *
-     * @param request
-     * @param url
      * @return true if the host in the request matches the host in the requested URL, false otherwise.
      */
     private boolean isSameServer(HttpServletRequest request, URL url) {
@@ -412,10 +383,7 @@ public class Proxy {
     /**
      * Check if the target url matches a security-proxified target.
      *
-     * @param requestSegments
-     * @param target
      * @return true if so, false otherwise.
-     * @throws MalformedURLException
      */
     private boolean samePathPrefix(String[] requestSegments, String target) throws MalformedURLException {
         String[] targetSegments = splitRequestPath(new URL(target).getPath());
@@ -460,8 +428,6 @@ public class Proxy {
                 + " is not permitted to be requested when the request is made through the URL parameter form.");
     }
 
-    // ----------------- Implementation methods ----------------- //
-
     private String buildForwardRequestURL(HttpServletRequest request) {
         String forwardRequestURI = request.getRequestURI();
         forwardRequestURI = forwardRequestURI.replaceAll("//", "/");
@@ -470,8 +436,7 @@ public class Proxy {
     }
 
     /**
-     * Main entry point for methods where the request path is encoded in the
-     * path of the URL
+     * Main entry point for methods where the request path is encoded in the path of the URL
      */
     private void handlePathEncodedRequests(HttpServletRequest request, HttpServletResponse response) {
         try {
@@ -606,9 +571,6 @@ public class Proxy {
      * @param localProxy true if the request targets a security-proxyfied webapp (e.g. mapfishapp, ...), false otherwise
      */
     private void handleRequest(HttpServletRequest request, HttpServletResponse finalResponse, String sURL, boolean localProxy) {
-
-
-
         try (CloseableHttpAsyncClient httpclient = httpAsyncClientBuilder.build()) {
             httpclient.start();
 
@@ -636,7 +598,6 @@ public class Proxy {
             }
 
             logger.debug("Final request -- " + sURL);
-
 
             HttpRequestBase proxyingRequest = makeRequest(request, sURL);
             headerManagement.configureRequestHeaders(request, proxyingRequest, localProxy);
@@ -686,13 +647,10 @@ public class Proxy {
                     finalResponse.setHeader("WWW-Authenticate", (authHeader == null) ? "Basic realm=\"Authentication required\"" : authHeader.getValue());
                 }
 
-                // 403 and 404 are handled by specific JSP files provided by the
-                // security-proxy webapp
+                // 403 and 404 are handled by specific JSP files provided by the security-proxy webapp
                 if ((statusCode == 404) || (statusCode == 403)) {
-                    // Hack for GN3.4: to protect against CSRF attacks, a token
-                    // is provided by the xml.info service. Even if the return
-                    // code is a 403, we are interested in getting the
-                    // Set-Cookie value.
+                    // Hack for GN3.4: to protect against CSRF attacks, a token is provided by the xml.info service.
+                    // Even if the return code is a 403, we are interested in getting the Set-Cookie value.
                     if (sURL.contains("/geonetwork/")) {
                         Header setCookie = extractHeaderSetCookie(proxiedResponse);
                         if (setCookie != null) {
@@ -740,8 +698,7 @@ public class Proxy {
             try {
                 finalResponse.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
             } catch (IOException e2) {
-                // error occured while trying to return the
-                // "service unavailable status"
+                // error occured while trying to return the "service unavailable status"
                 finalResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
         }
@@ -753,7 +710,6 @@ public class Proxy {
         RequestConfig config = RequestConfig.custom().setSocketTimeout(this.httpClientTimeout).build();
         htb.setDefaultRequestConfig(config);
 
-        //
         // Handle http proxy for external request.
         // Proxy must be configured by system variables (e.g.: -Dhttp.proxyHost=proxy -Dhttp.proxyPort=3128)
         htb.setRoutePlanner(new SystemDefaultRoutePlanner(ProxySelector.getDefault()));
@@ -763,7 +719,6 @@ public class Proxy {
     /**
      * Extracts the set-cookie http header from the downstream response.
      *
-     * @param proxiedResponse
      * @return the header if present, else null.
      */
     private Header extractHeaderSetCookie(HttpResponse proxiedResponse) {
@@ -886,7 +841,6 @@ public class Proxy {
     private HttpRequestBase makeRequest(HttpServletRequest request, String sURL) throws IOException {
         HttpRequestBase targetRequest;
         try {
-            // Split URL
             URL url = new URL(sURL);
             URI uri = buildUri(url);
             HttpMethod meth = HttpMethod.resolve(request.getMethod());
@@ -996,7 +950,6 @@ public class Proxy {
     /**
      * Returns if the request is a POST x-www-form-urlencoded or not.
      *
-     * @param request
      * @return true if this is the case, else false.
      *
      */
@@ -1060,15 +1013,13 @@ public class Proxy {
             }
 
             if (contentEncoding == null || isCharsetKnown) {
-                // A simple stream can do the job for data that is not in
-                // content encoded
+                // A simple stream can do the job for data that is not in content encoded
                 // but also for data content encoded with a known charset
                 streamFromServer = proxiedResponse.getEntity().getContent();
                 streamToClient = finalResponse.getOutputStream();
             } else if (!isCharsetKnown && ("gzip".equalsIgnoreCase(contentEncoding) || "x-gzip".equalsIgnoreCase(contentEncoding))) {
                 // the charset is unknown and the data are compressed in gzip
-                // we add the gzip wrapper to be able to read/write the stream
-                // content
+                // we add the gzip wrapper to be able to read/write the stream content
                 streamFromServer = new GZIPInputStream(proxiedResponse.getEntity().getContent());
                 streamToClient = new GZIPOutputStream(finalResponse.getOutputStream());
             } else if ("deflate".equalsIgnoreCase(contentEncoding) && !isCharsetKnown) {
@@ -1082,16 +1033,14 @@ public class Proxy {
 
             byte[] buf = new byte[1024]; // read maximum 1024 bytes
             int len; // number of bytes read from the stream
-            boolean first = true; // helps to find the encoding once and only
-                                  // once
+            boolean first = true; // helps to find the encoding once and only once
             String s = ""; // piece of file that should contain the encoding
             while ((len = streamFromServer.read(buf)) > 0) {
 
                 if (first && !isCharsetKnown) {
                     // charset is unknown try to find it in the file content
                     for (int i = 0; i < len; i++) {
-                        s += (char) buf[i]; // get the beginning of the file as
-                                            // ASCII
+                        s += (char) buf[i]; // get the beginning of the file as ASCII
                     }
                     // s has to be long enough to contain the encoding
                     if (s.length() > 200) {
@@ -1106,10 +1055,8 @@ public class Proxy {
                                 logger.trace("unable to find charset from raw ASCII data.  Trying to unzip it");
                             }
 
-                            // the charset cannot be found, IE users must be
-                            // warned
-                            // that the request cannot be fulfilled, nothing
-                            // good would happen otherwise
+                            // the charset cannot be found, IE users must be warned
+                            // that the request cannot be fulfilled, nothing good would happen otherwise
                         }
                         if (charset == null) {
                             String guessedCharset = null;
@@ -1130,8 +1077,7 @@ public class Proxy {
                             }
                             String adjustedContentType = proxiedResponse.getEntity().getContentType().getValue() + ";charset=" + guessedCharset;
                             finalResponse.setHeader("Content-Type", adjustedContentType);
-                            first = false; // we found the encoding, don't try
-                                           // to do it again
+                            first = false; // we found the encoding, don't try to do it again
                             finalResponse.setCharacterEncoding(guessedCharset);
 
                         } else {
@@ -1140,8 +1086,7 @@ public class Proxy {
                             }
                             String adjustedContentType = proxiedResponse.getEntity().getContentType().getValue() + ";charset=" + charset;
                             finalResponse.setHeader("Content-Type", adjustedContentType);
-                            first = false; // we found the encoding, don't try
-                                           // to do it again
+                            first = false; // we found the encoding, don't try to do it again
                             finalResponse.setCharacterEncoding(charset);
                         }
                     }
@@ -1193,20 +1138,16 @@ public class Proxy {
     }
 
     /**
-     * Extract the encoding from a string which is the header node of an xml
-     * file
+     * Extract the encoding from a string which is the header node of an xml file
      *
-     * @param header
-     *            String that should contain the encoding attribute and its
-     *            value
+     * @param header String that should contain the encoding attribute and its value
      * @return the charset. null if not found
      */
     private String getCharset(String header) {
         Pattern pattern = null;
         String charset = null;
         try {
-            // use a regexp but we could also use string functions such as
-            // indexOf...
+            // use a regexp but we could also use string functions such as indexOf...
             pattern = Pattern.compile("encoding=(['\"])([A-Za-z]([A-Za-z0-9._]|-)*)");
         } catch (Exception e) {
             throw new RuntimeException("expression syntax invalid");
@@ -1222,13 +1163,10 @@ public class Proxy {
     }
 
     /**
-     * Gets the encoding of the content sent by the remote host: extracts the
-     * content-encoding header
+     * Gets the encoding of the content sent by the remote host: extracts the content-encoding header
      *
-     * @param headers
-     *            headers of the HttpURLConnection
-     * @return null if not exists otherwise name of the encoding (gzip,
-     *         deflate...)
+     * @param headers headers of the HttpURLConnection
+     * @return null if not exists otherwise name of the encoding (gzip, deflate...)
      */
     private String getContentEncoding(Header[] headers) {
         if (headers == null || headers.length == 0) {
@@ -1238,7 +1176,6 @@ public class Proxy {
             return null;
         }
         for (Header header : headers) {
-            // Header header = headers[i];
             String headerName = header.getName();
             if (logger.isDebugEnabled()) {
                 logger.debug("Check content-encoding against header: " + headerName + " : " + header.getValue());
@@ -1254,7 +1191,6 @@ public class Proxy {
     /**
      * Check if the content type is accepted by the proxy
      *
-     * @param contentType
      * @return true: valid; false: not valid
      */
     protected boolean isCharsetRequiredForContentType(final String contentType) {
