@@ -264,8 +264,8 @@ public class ProxyTest {
 
         Proxy toTest = new Proxy();
 
-        assertEquals("UTF-8", toTest.getCharset(toParse));
-        assertEquals("UTF-8", toTest.getCharset(toParse2));
-        assertEquals("Ehj_.-", toTest.getCharset(toParse3));
+        assertEquals("UTF-8", toTest.extractCharsetAsFromXmlNode(toParse));
+        assertEquals("UTF-8", toTest.extractCharsetAsFromXmlNode(toParse2));
+        assertEquals("Ehj_.-", toTest.extractCharsetAsFromXmlNode(toParse3));
     }
 }
