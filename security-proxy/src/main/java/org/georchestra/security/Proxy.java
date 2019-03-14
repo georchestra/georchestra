@@ -949,7 +949,7 @@ public class Proxy {
      * transferring data, so data of any significant size should not enter this
      * method.
      */
-    private void doHandleRequestCharsetRequired(HttpServletRequest orignalRequest, HttpServletResponse finalResponse,
+    private void doHandleRequestCharsetRequired(HttpServletRequest originalRequest, HttpServletResponse finalResponse,
             HttpResponse proxiedResponse, String contentType) {
 
         InputStream streamFromServer = null;
@@ -1004,44 +1004,24 @@ public class Proxy {
                 streamFromServer = new DeflaterInputStream(proxiedResponse.getEntity().getContent());
                 streamToClient = new DeflaterOutputStream(finalResponse.getOutputStream());
             } else {
-                doHandleRequest(orignalRequest, finalResponse, proxiedResponse);
+                doHandleRequest(originalRequest, finalResponse, proxiedResponse);
                 return;
             }
 
             byte[] buf = new byte[1024]; // read maximum 1024 bytes
             int len; // number of bytes read from the stream
             boolean first = true; // helps to find the encoding once and only once
-            String s = ""; // piece of file that should contain the encoding
+            String payloadBegin = ""; // piece of file that should contain the encoding
             while ((len = streamFromServer.read(buf)) > 0) {
 
                 if (first && !isCharsetKnown) {
                     // charset is unknown try to find it in the file content
                     for (int i = 0; i < len; i++) {
-                        s += (char) buf[i]; // get the beginning of the file as ASCII
+                        payloadBegin += (char) buf[i]; // get the beginning of the file as ASCII
                     }
-                    // s has to be long enough to contain the encoding
-                    if (s.length() > 200) {
-
-                        logger.trace("attempting to read charset from: " + s);
-                        String charset = extractCharsetAsFromXmlNode(s);
-
-                        if (charset == null) {
-
-                            logger.debug("unable to find charset so using the first one from the accept-charset request header");
-
-                            String calculateDefaultCharset = calculateDefaultCharset(orignalRequest);
-                            if (calculateDefaultCharset != null) {
-                                charset = calculateDefaultCharset;
-                                logger.debug("hopefully the server responded with this charset: " + charset);
-                            } else {
-                                charset = defaultCharset;
-                                logger.debug("unable to find charset, so using default:" + charset);
-                            }
-
-                        } else {
-                            logger.debug("found charset: " + charset);
-
-                        }
+                    // payloadBegin has to be long enough to contain the encoding
+                    if (payloadBegin.length() > 200) {
+                        String charset = manageToInferACharset(payloadBegin, originalRequest);
                         String adjustedContentType = proxiedResponse.getEntity().getContentType().getValue() + ";charset=" + charset;
                         finalResponse.setHeader("Content-Type", adjustedContentType);
                         finalResponse.setCharacterEncoding(charset);
@@ -1065,14 +1045,46 @@ public class Proxy {
         }
     }
 
-    private String calculateDefaultCharset(HttpServletRequest originalRequest) {
+    private String manageToInferACharset(String payloadBegin, HttpServletRequest originalRequest) {
+        logger.trace("attempting to read charset from: " + payloadBegin);
+        String charset = extractCharsetAsFromXmlNode(payloadBegin);
+
+        if (charset == null) {
+            logger.debug("unable to find charset so using the first one from the accept-charset request header");
+            charset = charsetFromRequestOrDefault(originalRequest);
+        } else {
+            logger.debug("found charset: " + charset);
+
+        }
+        return charset;
+    }
+
+    private static final Pattern ENCODING_IN_XML_REGEX_PATTERN = Pattern.compile("encoding=['\"]([A-Za-z][A-Za-z0-9._-]*)['\"]");
+
+    /**
+     * Extract the encoding from a string which is the header node of an xml file
+     *
+     * @param header String that should contain the encoding attribute and its value
+     * @return the charset. null if not found
+     */
+    protected String extractCharsetAsFromXmlNode(String header) {
+        Matcher matcher = ENCODING_IN_XML_REGEX_PATTERN.matcher(header);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return null;
+    }
+
+    private String charsetFromRequestOrDefault(HttpServletRequest originalRequest) {
         String acceptCharset = originalRequest.getHeader("accept-charset");
 
         if (acceptCharset != null) {
-           return acceptCharset.split(",")[0];
+            String charset = acceptCharset.split(",")[0];
+            logger.debug("charset from original request: " + charset);
+            return charset;
         }
-
-        return null;
+        logger.debug("unable to find charset, so using default:" + defaultCharset);
+        return defaultCharset;
     }
 
     private IOException close(Closeable stream, IOException... previousExceptions) {
@@ -1089,24 +1101,6 @@ public class Proxy {
         if (previousExceptions.length > 0) {
             return previousExceptions[0];
         }
-        return null;
-    }
-
-    private static final Pattern ENCODING_IN_XML_REGEX_PATTERN = Pattern.compile("encoding=['\"]([A-Za-z][A-Za-z0-9._-]*)['\"]");
-
-    /**
-     * Extract the encoding from a string which is the header node of an xml file
-     *
-     * @param header String that should contain the encoding attribute and its value
-     * @return the charset. null if not found
-     */
-    protected String extractCharsetAsFromXmlNode(String header) {
-        Matcher matcher = ENCODING_IN_XML_REGEX_PATTERN.matcher(header);
-
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-
         return null;
     }
 
