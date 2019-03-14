@@ -1078,13 +1078,11 @@ public class Proxy {
     private String calculateDefaultCharset(HttpServletRequest originalRequest) {
         String acceptCharset = originalRequest.getHeader("accept-charset");
 
-        String calculatedCharset = null;
-
         if (acceptCharset != null) {
-            calculatedCharset = acceptCharset.split(",")[0];
+           return acceptCharset.split(",")[0];
         }
 
-        return calculatedCharset;
+        return null;
     }
 
     private IOException close(Closeable stream, IOException... previousExceptions) {
