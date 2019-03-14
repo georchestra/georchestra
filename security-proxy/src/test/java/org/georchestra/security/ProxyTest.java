@@ -255,4 +255,17 @@ public class ProxyTest {
         }
         assertTrue(thrown);
     }
+
+    @Test
+    public void attemptingToReadCharsetFromXml() {
+        String toParse = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+        String toParse2 = "<?xml version=\'1.0\' encoding=\'UTF-8\'?>";
+        String toParse3 = "<?xml version=\'1.0\' encoding=\'Ehj_.-\'\"coin\"?>";
+
+        Proxy toTest = new Proxy();
+
+        assertEquals("UTF-8", toTest.getCharset(toParse));
+        assertEquals("UTF-8", toTest.getCharset(toParse2));
+        assertEquals("Ehj_.-", toTest.getCharset(toParse3));
+    }
 }
