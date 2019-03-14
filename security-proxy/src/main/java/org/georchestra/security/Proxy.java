@@ -864,9 +864,6 @@ public class Proxy {
                     try {
                         Charset.forName(charset);
                     } catch (Throwable t) {
-                        charset = null;
-                    }
-                    if (charset == null) {
                         charset = defaultCharset;
                     }
                     entity = new UrlEncodedFormEntity(parameters, charset);
