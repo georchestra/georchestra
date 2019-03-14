@@ -762,7 +762,6 @@ public class Proxy {
 
                 logger.debug("Test location header: " + resolvedURI.toString() + " against: " + baseURI.toString());
                 if (resolvedURI.toString().startsWith(baseURI.toString())) {
-                    // proxiedResponse.removeHeader(locationHeader);
                     String resolvedSuffix = resolvedURI.toString().substring(baseURI.toString().length());
                     String newLocation = "/" + target;
                     if(!resolvedSuffix.startsWith("/")) {
@@ -777,6 +776,7 @@ public class Proxy {
             }
         }
         return Optional.ofNullable(adjustedLocation);
+
     }
 
     /**
