@@ -1303,10 +1303,6 @@ public class Proxy {
         this.targets = targets;
     }
 
-    public void setContextpath(String contextpath) {
-        // this.contextpath = contextpath;
-    }
-
     public void setHeaderManagement(HeadersManagementStrategy headerManagement) {
         this.headerManagement = headerManagement;
     }
