@@ -25,7 +25,13 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
+<<<<<<< HEAD
 import javax.sql.DataSource;
+=======
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+>>>>>>> e965071ae... rewrite filter and array compare method
 
 public class ProxyTest {
     private Proxy proxy;
@@ -201,4 +207,24 @@ public class ProxyTest {
         assertEquals(expected, values.get(0));
     }
 
+    @Test
+    public void filterOne() {
+        Proxy toTest = new Proxy();
+
+        String[] filtered = toTest.filter(new String[] {"", "here", "", "the", "", "fish"});
+
+        assertArrayEquals(new String[] {"here", "the", "fish"}, filtered);
+    }
+
+    @Test
+    public void isRecursiveCallToProxy() {
+        Proxy toTest = new Proxy();
+        assertFalse(toTest.isRecursiveCallToProxy("/a/b/c", "/a/b/c/d"));
+        assertFalse(toTest.isRecursiveCallToProxy("/a/b/c", "/a/b/d"));
+        assertFalse(toTest.isRecursiveCallToProxy("", "a"));
+        assertTrue(toTest.isRecursiveCallToProxy("/a/b/c/d", ""));
+        assertTrue(toTest.isRecursiveCallToProxy("a/b/c", "/a/b/c"));
+        assertTrue(toTest.isRecursiveCallToProxy("a/b/c/d", "/a/b/c"));
+    }
 }
+
