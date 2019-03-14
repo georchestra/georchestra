@@ -1,9 +1,5 @@
 package org.georchestra.security;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import com.google.common.collect.Maps;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
@@ -18,20 +14,19 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.util.ReflectionUtils;
 
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-<<<<<<< HEAD
-import javax.sql.DataSource;
-=======
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
->>>>>>> e965071ae... rewrite filter and array compare method
 
 public class ProxyTest {
     private Proxy proxy;
@@ -219,6 +214,7 @@ public class ProxyTest {
     @Test
     public void isRecursiveCallToProxy() {
         Proxy toTest = new Proxy();
+
         assertFalse(toTest.isRecursiveCallToProxy("/a/b/c", "/a/b/c/d"));
         assertFalse(toTest.isRecursiveCallToProxy("/a/b/c", "/a/b/d"));
         assertFalse(toTest.isRecursiveCallToProxy("", "a"));
@@ -226,5 +222,14 @@ public class ProxyTest {
         assertTrue(toTest.isRecursiveCallToProxy("a/b/c", "/a/b/c"));
         assertTrue(toTest.isRecursiveCallToProxy("a/b/c/d", "/a/b/c"));
     }
-}
 
+    @Test
+    public void isCharsetRequiredForContentType() {
+        Proxy toTest = new Proxy();
+        toTest.setRequireCharsetContentTypes(Arrays.asList(new String[] {"zebu", "long"}));
+
+        assertTrue(toTest.isCharsetRequiredForContentType("Zebu;youpi"));
+        assertTrue(toTest.isCharsetRequiredForContentType("LONG"));
+        assertFalse(toTest.isCharsetRequiredForContentType("ascii;long"));
+    }
+}
