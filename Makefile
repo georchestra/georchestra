@@ -33,6 +33,9 @@ docker-build-geoserver-geofence: docker-pull-jetty
 	cd webapp; \
 	mvn clean install docker:build -Pdocker,colormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,gdal,importer,inspire,libjpeg-turbo,monitor,pyramid,wps,geofence -DskipTests
 
+docker-build-proxy: build-deps docker-pull-jetty
+	mvn clean package docker:build -Pdocker -DskipTests --pl security-proxy
+
 docker-build-console: build-deps docker-pull-jetty
 	mvn clean package docker:build -Pdocker -DskipTests --pl console
 
