@@ -120,7 +120,6 @@ public class BasicAuthChallengeByUserAgent extends BasicAuthenticationFilter {
             return;
         }
 
-        final HttpServletRequest request = (HttpServletRequest) req;
         String auth = request.getHeader("Authorization");
 
         /* no valid Authorization header sent preemptively */
