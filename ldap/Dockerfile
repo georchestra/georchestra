@@ -40,7 +40,7 @@ VOLUME ["/etc/ldap", "/var/lib/ldap"]
 
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
 
-CMD [ "sh", "-c", "exec slapd -d 32768 -u ${RUN_AS_UID} -g ${RUN_AS_GID}" ]
+CMD [ "sh", "-c", "exec slapd -d ${SLAPD_LOG_LEVEL:-32768} -u ${RUN_AS_UID} -g ${RUN_AS_GID}" ]
 
 HEALTHCHECK --interval=30s --timeout=10s \
   CMD ldapsearch \

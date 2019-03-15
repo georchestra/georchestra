@@ -13,6 +13,7 @@ services:
       - SLAPD_ORGANIZATION=georchestra
       - SLAPD_PASSWORD=secret
       - SLAPD_ADDITIONAL_MODULES=groupofmembers
+      - SLAPD_LOG_LEVEL=32768
     volumes:
       - ldap_data_test:/var/lib/ldap
       - ldap_config_test:/etc/ldap
