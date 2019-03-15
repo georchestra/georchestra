@@ -116,7 +116,7 @@ public class BasicAuthChallengeByUserAgent extends BasicAuthenticationFilter {
 
         if(!authenticationIsRequired()) {
             LOGGER.debug("the user has already been authenticated, skipping filter.");
-            chain.doFilter(req, res);
+            chain.doFilter(request, response);
             return;
         }
 
