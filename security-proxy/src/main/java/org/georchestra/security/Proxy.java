@@ -26,6 +26,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpException;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -44,12 +46,20 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpTrace;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
+import org.apache.http.message.BasicHttpRequest;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.nio.ContentDecoder;
+import org.apache.http.nio.IOControl;
+import org.apache.http.nio.protocol.AbstractAsyncResponseConsumer;
+import org.apache.http.nio.protocol.BasicAsyncRequestProducer;
+import org.apache.http.nio.protocol.HttpAsyncRequestProducer;
+import org.apache.http.nio.protocol.HttpAsyncResponseConsumer;
 import org.apache.http.protocol.HttpContext;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.ogcservstatistics.log4j.OGCServiceMessageFormatter;
@@ -81,6 +91,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.ProxySelector;
@@ -88,6 +100,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -97,8 +112,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
@@ -723,7 +738,59 @@ public class Proxy {
 
     @VisibleForTesting
     protected HttpResponse executeHttpRequest(CloseableHttpAsyncClient httpclient, HttpRequestBase proxyingRequest) throws IOException, TimeoutException, ExecutionException, InterruptedException {
-        Future<HttpResponse> future = httpclient.execute(proxyingRequest, null);
+        CompletableFuture<HttpResponse> future = new CompletableFuture<HttpResponse>();
+
+        PipedOutputStream pos = new PipedOutputStream();
+        PipedInputStream pis = new PipedInputStream(pos);
+        WritableByteChannel channel = Channels.newChannel(pos);
+
+        HttpAsyncResponseConsumer<Boolean> consumer = new AbstractAsyncResponseConsumer<Boolean>() {
+
+            private ByteBuffer bbuf =  ByteBuffer.allocate(8192);
+            private HttpResponse httpResponse;
+
+            protected void onEntityEnclosed(HttpEntity entity, ContentType contentType) throws IOException {
+                HttpEntity streamEntity = new InputStreamEntity(pis, contentType);
+                httpResponse.setEntity(streamEntity);
+                future.complete(httpResponse);
+            }
+
+            protected void onContentReceived(ContentDecoder decoder, IOControl ioctrl) throws IOException {
+                int bytesRead = decoder.read(this.bbuf);
+                if (bytesRead > 0) {
+                    this.bbuf.flip();
+                    channel.write(this.bbuf);
+                    this.bbuf.clear();
+                }
+            }
+
+            protected void releaseResources() {
+                try {
+                    channel.close();
+                    pos.close();
+                    pis.close();
+                } catch (IOException e) {
+                }
+            }
+
+            @Override
+            protected void onResponseReceived(HttpResponse httpResponse) throws HttpException, IOException {
+                this.httpResponse = httpResponse;
+            }
+
+            @Override
+            protected Boolean buildResult(HttpContext httpContext) throws Exception {
+                return Boolean.TRUE;
+            }
+
+        };
+
+        HttpAsyncRequestProducer producer = new BasicAsyncRequestProducer(
+                new HttpHost(proxyingRequest.getURI().getHost(), proxyingRequest.getURI().getPort()),
+                new BasicHttpRequest(proxyingRequest.getRequestLine()));
+
+        httpclient.execute(producer, consumer, null);
+
         return future.get(5, TimeUnit.MINUTES);
     }
 
@@ -778,10 +845,8 @@ public class Proxy {
     private void doHandleRequest(HttpServletResponse finalResponse, HttpResponse proxiedResponse)
             throws IOException {
 
-        org.apache.http.StatusLine statusLine = proxiedResponse.getStatusLine();
+        finalResponse.setStatus(proxiedResponse.getStatusLine().getStatusCode());
 
-        int statusCode = statusLine.getStatusCode();
-        finalResponse.setStatus(statusCode);
         HttpEntity entity = proxiedResponse.getEntity();
         if (entity != null) {
             // Send the Response
