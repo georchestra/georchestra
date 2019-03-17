@@ -786,7 +786,7 @@ public class Proxy {
 
         HttpAsyncRequestProducer producer = new BasicAsyncRequestProducer(
                 new HttpHost(proxyingRequest.getURI().getHost(), proxyingRequest.getURI().getPort()),
-                new BasicHttpRequest(proxyingRequest.getRequestLine()));
+                proxyingRequest);
 
         httpclient.execute(producer, consumer, null);
 
