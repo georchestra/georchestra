@@ -768,7 +768,6 @@ public class Proxy {
                 try {
                     channel.close();
                     pos.close();
-                    pis.close();
                 } catch (IOException e) {
                 }
             }
