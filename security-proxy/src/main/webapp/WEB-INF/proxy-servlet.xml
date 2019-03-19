@@ -76,7 +76,7 @@
             <list>
                 <bean class="org.georchestra.security.TrustedProxyRequestHeaderProvider" />
                 <bean class="org.georchestra.security.SecurityRequestHeaderProvider"/>
-                <bean class="org.georchestra.security.ImpersonateUserRequestHeaderProvider" init-method="init">
+                <bean class="org.georchestra.security.ImpersonateUserRequestHeaderProvider">
                     <property name="trustedUsers" value="${trustedUsers:geoserver_privileged_user}"/>
                 </bean>
                 <bean class="org.georchestra.security.LdapUserDetailsRequestHeaderProvider" init-method="init">
@@ -93,7 +93,7 @@
         <property name="filters">
             <list>
                 <bean class="org.georchestra.security.SecurityRequestHeaderFilter" />
-                <bean class="org.georchestra.security.RemoveXForwardedHeaders" init-method="init">
+                <bean class="org.georchestra.security.RemoveXForwardedHeaders">
                     <!-- Only one of includes or excludes may have elements -->
 
                     <!-- set the patterns of urls that (when matched) will have the x-forwarded-* headers removed -->
