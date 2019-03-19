@@ -25,7 +25,6 @@ import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.orgs.AbstractOrg;
 import org.georchestra.console.dto.orgs.Org;
-import org.georchestra.console.dto.orgs.OrgDetail;
 import org.georchestra.console.dto.orgs.OrgExt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
@@ -70,7 +69,6 @@ public class OrgsDao {
     private String pendingOrgSearchBaseDN;
     private OrgExtension orgExtension = new OrgExtension();
     private OrgExtExtension orgExtExtension = new OrgExtExtension();
-    private OrgDetailExtension orgDetailExtension = new OrgDetailExtension();
 
     public abstract class Extension<T extends AbstractOrg> {
 
@@ -127,9 +125,8 @@ public class OrgsDao {
         @Override
         public void mapPayloadToContext(Org org, DirContextOperations context) {
             String seeAlsoValueExt = LdapNameBuilder.newInstance((org.isPending() ? pendingOrgSearchBaseDN : orgSearchBaseDN) + "," + basePath).add("o", org.getId()).build().toString();
-            String seeAlsoValueDetail = LdapNameBuilder.newInstance((org.isPending() ? pendingOrgSearchBaseDN : orgSearchBaseDN) + "," + basePath).add("uid", org.getId()).build().toString();
 
-            context.setAttributeValues("seeAlso", new String[] {seeAlsoValueExt, seeAlsoValueDetail});
+            context.setAttributeValue("seeAlso", seeAlsoValueExt);
 
             // Mandatory attribute
             context.setAttributeValue("o", org.getName());
@@ -213,6 +210,8 @@ public class OrgsDao {
             if(org.getAddress() != null)
                 context.setAttributeValue("postalAddress", org.getAddress());
             setOrDeleteField(context, "description", org.getDescription());
+            setOrDeleteField(context, "labeledURI", org.getUrl());
+            setOrDeletePhoto(context, "jpegPhoto", org.getLogo());
         }
 
         @Override
@@ -222,7 +221,7 @@ public class OrgsDao {
 
         @Override
         String[] getObjectClass() {
-            return new String[] {"top", "organization"};
+            return new String[] {"top", "organization", "georchestraOrg"};
         }
 
         @Override
@@ -234,43 +233,10 @@ public class OrgsDao {
                     orgExt.setOrgType(asString(attrs.get("businessCategory")));
                     orgExt.setAddress(asString(attrs.get("postalAddress")));
                     orgExt.setDescription(asStringStream(attrs,"description").collect(joining(",")));
+                    orgExt.setUrl(asStringStream(attrs, "labeledURI").collect(joining(",")));
+                    orgExt.setLogo(asPhoto(attrs.get("jpegPhoto")));
                     orgExt.setPending(pending);
                     return orgExt;
-                }
-            };
-        }
-    }
-
-    class OrgDetailExtension extends Extension<OrgDetail> {
-
-        @Override
-        public void mapPayloadToContext(OrgDetail org, DirContextOperations context) {
-            context.setAttributeValue("sn", org.getId());
-            context.setAttributeValue("cn", org.getId());
-            setOrDeleteField(context, "labeledURI", org.getUrl());
-            setOrDeletePhoto(context, "jpegPhoto", org.getLogo());
-        }
-
-        @Override
-        String getLdapKeyField() {
-            return "uid";
-        }
-
-        @Override
-        String[] getObjectClass() {
-            return new String[] { "top", "person", "organizationalPerson", "inetOrgPerson"};
-        }
-
-        @Override
-        AttributesMapper<OrgDetail> getAttributeMapper(boolean pending) {
-            return new AttributesMapper() {
-                public OrgDetail mapFromAttributes(Attributes attrs) throws NamingException {
-                    OrgDetail org = new OrgDetail();
-                    org.setId(asString(attrs.get("uid")));
-                    org.setUrl(asStringStream(attrs, "labeledURI").collect(joining(",")));
-                    org.setLogo(asPhoto(attrs.get("jpegPhoto")));
-                    org.setPending(pending);
-                    return org;
                 }
             };
         }
@@ -282,10 +248,6 @@ public class OrgsDao {
 
     public Extension<OrgExt> getExtension(OrgExt org) {
         return orgExtExtension;
-    }
-
-    public Extension<OrgDetail> getExtension(OrgDetail orgDetail) {
-        return orgDetailExtension;
     }
 
     public void setLdapTemplate(LdapTemplate ldapTemplate) {
@@ -374,12 +336,6 @@ public class OrgsDao {
      */
     public OrgExt findExtById(String cn) {
         OrgExt org = new OrgExt();
-        org.setId(cn);
-        return getExtension(org).findById(org);
-    }
-
-    public OrgDetail findDetailById(String cn) {
-        OrgDetail org = new OrgDetail();
         org.setId(cn);
         return getExtension(org).findById(org);
     }

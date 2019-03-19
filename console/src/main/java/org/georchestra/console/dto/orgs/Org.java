@@ -50,9 +50,6 @@ public class Org extends AbstractOrg implements Comparable<Org> {
     @JsonIgnore
     private OrgExt orgExt;
 
-    @JsonIgnore
-    private OrgDetail orgDetail;
-
     @JsonProperty(JSON_ID)
     public String getId() {
         return id;
@@ -102,10 +99,6 @@ public class Org extends AbstractOrg implements Comparable<Org> {
         this.orgExt = orgExt;
     }
 
-    public void setOrgDetail(OrgDetail orgDetail) {
-        this.orgDetail = orgDetail;
-    }
-
     @JsonGetter(OrgExt.JSON_ORG_TYPE)
     public String getOrgType(){
         if(this.orgExt == null)
@@ -150,17 +143,17 @@ public class Org extends AbstractOrg implements Comparable<Org> {
 
     @JsonProperty(JSON_URL)
     public String getUrl() {
-        if(this.orgDetail == null)
+        if(this.orgExt == null)
             return null;
         else
-            return orgDetail.getUrl();
+            return orgExt.getUrl();
     }
 
     @JsonProperty(JSON_LOGO)
     public String getLogo() {
-        if(this.orgDetail == null)
+        if(this.orgExt == null)
             return null;
         else
-            return orgDetail.getLogo();
+            return orgExt.getLogo();
     }
 }

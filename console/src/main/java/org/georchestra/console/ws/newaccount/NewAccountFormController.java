@@ -34,7 +34,6 @@ import org.georchestra.console.ds.RoleDao;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountFactory;
 import org.georchestra.console.dto.orgs.Org;
-import org.georchestra.console.dto.orgs.OrgDetail;
 import org.georchestra.console.dto.orgs.OrgExt;
 import org.georchestra.console.dto.Role;
 import org.georchestra.console.mailservice.EmailFactory;
@@ -226,13 +225,11 @@ public final class NewAccountFormController {
 			try {
 				Org org = new Org();
 				OrgExt orgExt = new OrgExt();
-				OrgDetail orgDetail = new OrgDetail();
 
 				// Generate textual identifier based on name
 				String orgId = orgDao.generateId(formBean.getOrgShortName());
 				org.setId(orgId);
 				orgExt.setId(orgId);
-				orgDetail.setId(orgId);
 
 				// Store name, short name, orgType and address
 				org.setName(formBean.getOrgName());
@@ -240,8 +237,8 @@ public final class NewAccountFormController {
 				orgExt.setAddress(formBean.getOrgAddress());
 				orgExt.setOrgType(formBean.getOrgType());
 				orgExt.setDescription(formBean.getOrgDescription());
-				orgDetail.setUrl(formBean.getOrgUrl());
-				orgDetail.setLogo(formBean.getOrgLogo());
+				orgExt.setUrl(formBean.getOrgUrl());
+				orgExt.setLogo(formBean.getOrgLogo());
 				// Parse and store cities
 				orgCities = orgCities.trim();
 				if (orgCities.length() > 0)
@@ -249,11 +246,9 @@ public final class NewAccountFormController {
 
 				org.setPending(this.moderatedSignup);
 				orgExt.setPending(this.moderatedSignup);
-				orgDetail.setPending(this.moderatedSignup);
 				// Persist changes to LDAP server
 				orgDao.insert(org);
 				orgDao.insert(orgExt);
-				orgDao.insert(orgDetail);
 
 				// Set real org identifier in form
 				formBean.setOrg(orgId);

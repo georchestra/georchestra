@@ -31,6 +31,8 @@ public class OrgExt extends AbstractOrg {
     private String orgType;
     private String address;
     private String description;
+    private String url;
+    private String logo;
 
     public String getId() {
         return id;
@@ -62,6 +64,22 @@ public class OrgExt extends AbstractOrg {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getLogo() {
+        return logo;
+    }
+
+    public void setLogo(String logo) {
+        this.logo = logo;
     }
 
     @Override
