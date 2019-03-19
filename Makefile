@@ -22,16 +22,16 @@ docker-build-gn3: docker-pull-jetty
 docker-build-geoserver: docker-pull-jetty
 	cd geoserver; \
 	rm -rf geoserver-submodule/data/citewfs-1.1/workspaces/sf/sf/E*; \
-	LANG=C mvn clean install -DskipTests; \
+	LANG=C mvn clean install -DskipTests -Ps3-geotiff; \
 	cd webapp; \
-	mvn clean install docker:build -Pdocker,colormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,gdal,importer,inspire,libjpeg-turbo,monitor,pyramid,wps -DskipTests
+	mvn clean install docker:build -Pdocker,colormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,gdal,importer,inspire,libjpeg-turbo,monitor,pyramid,wps,s3-geotiff -DskipTests
 
 docker-build-geoserver-geofence: docker-pull-jetty
 	cd geoserver; \
 	rm -fr geoserver-submodule/data/citewfs-1.1/workspaces/sf/sf/E*; \
-	LANG=C mvn clean install -Pgeofence -DskipTests; \
+	LANG=C mvn clean install -Pgeofence,s3-geotiff -DskipTests; \
 	cd webapp; \
-	mvn clean install docker:build -Pdocker,colormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,gdal,importer,inspire,libjpeg-turbo,monitor,pyramid,wps,geofence -DskipTests
+	mvn clean install docker:build -Pdocker,colormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,gdal,importer,inspire,libjpeg-turbo,monitor,pyramid,wps,geofence,s3-geotiff -DskipTests
 
 docker-build-console: build-deps docker-pull-jetty
 	mvn clean package docker:build -Pdocker -DskipTests --pl console
@@ -68,13 +68,13 @@ docker-build: docker-build-dev docker-build-gn3 docker-build-geoserver docker-bu
 
 war-build-geoserver: build-deps
 	cd geoserver/geoserver-submodule/src/; \
-	mvn clean install -Pcolormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,gdal,importer,inspire,libjpeg-turbo,monitor,pyramid,wps,css -DskipTests; \
+	mvn clean install -Pcolormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,gdal,importer,inspire,libjpeg-turbo,monitor,pyramid,wps,css,s3-getotiff -DskipTests; \
 	cd ../../..; \
 	mvn clean install -pl geoserver/webapp
 
 war-build-geoserver-geofence: build-deps
 	cd geoserver/geoserver-submodule/src/; \
-	mvn clean install -Pcolormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,gdal,importer,inspire,libjpeg-turbo,monitor,pyramid,wps,css,geofence-server -Dserver=geofence-generic -DskipTests; \
+	mvn clean install -Pcolormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,gdal,importer,inspire,libjpeg-turbo,monitor,pyramid,wps,css,geofence-server,s3-geotiff -Dserver=geofence-generic -DskipTests; \
 	cd ../../..; \
 	mvn clean install -pl geoserver/webapp
 
