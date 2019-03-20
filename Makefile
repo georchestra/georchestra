@@ -35,6 +35,9 @@ docker-build-geoserver-geofence: docker-pull-jetty
 	cd webapp; \
 	mvn clean install docker:build -Pdocker,geofence,${GEOSERVER_EXTENSION_PROFILES} -DskipTests
 
+docker-build-proxy: build-deps docker-pull-jetty
+	mvn clean package docker:build -Pdocker -DskipTests --pl security-proxy
+
 docker-build-console: build-deps docker-pull-jetty
 	mvn clean package docker:build -Pdocker -DskipTests --pl console
 
