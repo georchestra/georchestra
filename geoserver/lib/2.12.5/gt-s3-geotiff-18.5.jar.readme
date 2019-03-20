@@ -1,0 +1,5 @@
+This is gt-s3-getotiff-18-SNAPHOT meant to
+replace gt-s3-geotiff-18.5.jar in 
+geoserver/WEB-INF/lib, with fixes
+that didn't make it to the official 18.5
+GeoTools release

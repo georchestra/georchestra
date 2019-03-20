@@ -1,5 +1,7 @@
 # Docker related targets
 
+GEOSERVER_EXTENSION_PROFILES=colormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,gdal,importer,inspire,libjpeg-turbo,monitor,pyramid,wps,css,s3-geotiff
+
 docker-pull-jetty:
 	docker pull jetty:9-jre8
 
@@ -22,16 +24,16 @@ docker-build-gn3: docker-pull-jetty
 docker-build-geoserver: docker-pull-jetty
 	cd geoserver; \
 	rm -rf geoserver-submodule/data/citewfs-1.1/workspaces/sf/sf/E*; \
-	LANG=C mvn clean install -DskipTests; \
+	LANG=C mvn clean install -DskipTests -Dfmt.skip=true -P${GEOSERVER_EXTENSION_PROFILES}; \
 	cd webapp; \
-	mvn clean install docker:build -Pdocker,colormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,gdal,importer,inspire,libjpeg-turbo,monitor,pyramid,wps -DskipTests
+	mvn clean install docker:build -Pdocker,${GEOSERVER_EXTENSION_PROFILES} -DskipTests
 
 docker-build-geoserver-geofence: docker-pull-jetty
 	cd geoserver; \
 	rm -fr geoserver-submodule/data/citewfs-1.1/workspaces/sf/sf/E*; \
-	LANG=C mvn clean install -Pgeofence -DskipTests; \
+	LANG=C mvn clean install -DskipTests -Dfmt.skip=true -Pgeofence-server,${GEOSERVER_EXTENSION_PROFILES} ; \
 	cd webapp; \
-	mvn clean install docker:build -Pdocker,colormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,gdal,importer,inspire,libjpeg-turbo,monitor,pyramid,wps,geofence -DskipTests
+	mvn clean install docker:build -Pdocker,geofence,${GEOSERVER_EXTENSION_PROFILES} -DskipTests
 
 docker-build-console: build-deps docker-pull-jetty
 	mvn clean package docker:build -Pdocker -DskipTests --pl console
@@ -71,15 +73,15 @@ docker-build: docker-build-dev docker-build-gn3 docker-build-geoserver docker-bu
 
 war-build-geoserver: build-deps
 	cd geoserver/geoserver-submodule/src/; \
-	mvn clean install -Pcolormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,gdal,importer,inspire,libjpeg-turbo,monitor,pyramid,wps,css -DskipTests; \
+	mvn clean install -DskipTests -Dfmt.skip=true -P${GEOSERVER_EXTENSION_PROFILES} ; \
 	cd ../../..; \
-	mvn clean install -pl geoserver/webapp
+	mvn clean install -pl geoserver/webapp -P${GEOSERVER_EXTENSION_PROFILES}
 
 war-build-geoserver-geofence: build-deps
 	cd geoserver/geoserver-submodule/src/; \
-	mvn clean install -Pcolormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,gdal,importer,inspire,libjpeg-turbo,monitor,pyramid,wps,css,geofence-server -Dserver=geofence-generic -DskipTests; \
+	mvn clean install -DskipTests -Dfmt.skip=true -Dserver=geofence-generic -Pgeofence-server,${GEOSERVER_EXTENSION_PROFILES} ; \
 	cd ../../..; \
-	mvn clean install -pl geoserver/webapp
+	mvn clean install -pl geoserver/webapp -Pgeofence,${GEOSERVER_EXTENSION_PROFILES}
 
 war-build-gn3:
 	mvn clean install -f geonetwork/pom.xml -DskipTests
@@ -92,11 +94,11 @@ war-build-georchestra: war-build-gn3 war-build-geoserver
 
 deb-build-geoserver: war-build-geoserver
 	cd geoserver; \
-	mvn clean package deb:package -PdebianPackage --pl webapp
+	mvn clean package deb:package -pl webapp -PdebianPackage,${GEOSERVER_EXTENSION_PROFILES}
 
 deb-build-geoserver-geofence: war-build-geoserver-geofence
 	cd geoserver; \
-	mvn clean package deb:package -PdebianPackage,geofence -Dserver=geofence-generic --pl webapp
+	mvn clean package deb:package -pl webapp -PdebianPackage,geofence,${GEOSERVER_EXTENSION_PROFILES}
 
 deb-build-georchestra: war-build-georchestra build-deps deb-build-geoserver
 	mvn package deb:package -pl atlas,cas-server-webapp,security-proxy,header,mapfishapp,extractorapp,analytics,geoserver/webapp,console,geonetwork/web,geowebcache-webapp -PdebianPackage -DskipTests
