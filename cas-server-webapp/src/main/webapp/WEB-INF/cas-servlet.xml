@@ -222,7 +222,7 @@
         p:centralAuthenticationService-ref="centralAuthenticationService"/>
 
   <bean id="statisticsController" class="org.jasig.cas.web.StatisticsController"
-        p:casTicketSuffix="${host.name:georchestra.mydomain.org}" c:ticketRegistry-ref="ticketRegistry" />
+        p:casTicketSuffix="${host.name:${domainName:georchestra.mydomain.org}}" c:ticketRegistry-ref="ticketRegistry" />
 
   <bean id="logoutAction" class="org.jasig.cas.web.flow.LogoutAction"
         p:servicesManager-ref="servicesManager"
