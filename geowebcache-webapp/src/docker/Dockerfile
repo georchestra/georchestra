@@ -9,12 +9,6 @@ ADD . /
 # Temporary switch to root
 USER root
 
-# add non-free for imageio
-RUN echo "deb http://ftp.fr.debian.org/debian stretch contrib non-free" >> /etc/apt/sources.list && \
-    echo "deb http://security.debian.org/ stretch/updates contrib non-free" >> /etc/apt/sources.list && \
-    apt-get update && \
-    rm -rf /var/lib/apt/lists/*
-
 RUN mkdir /mnt/geowebcache_tiles && \
     chown jetty:jetty /etc/georchestra /mnt/geowebcache_tiles
 
