@@ -42,15 +42,15 @@
     </bean>
 
     <bean id="populateProperties" class="org.georchestra.atlas.CamelPopulatePropertiesComponent">
-        <property name="baseUrl" value="${atlas.baseUrl:${publicUrl:https://georchestra.mydomain.org}/atlas}"/>
+        <property name="baseUrl" value="${atlas.baseUrl:${publicUrl}/atlas}"/>
     </bean>
 
     <bean id="specAsPdf" class="org.georchestra.atlas.CamelMapfishPrintComponent" init-method="init" />
 
     <bean id="prepareMail" class="org.georchestra.atlas.AtlasMailComponent" init-method="init">
-        <property name="georBaseUrl" value="${atlas.baseUrl:${publicUrl:https://georchestra.mydomain.org}/atlas}" />
+        <property name="georBaseUrl" value="${atlas.baseUrl:${publicUrl}/atlas}" />
         <property name="emailFrom" value="${atlas.emailFrom:noreply+atlas@georchestra.org}" />
-        <property name="emailSubject" value="${atlas.emailSubject:[${instanceName:geOrchestra}] Your Atlas request}" />
+        <property name="emailSubject" value="${atlas.emailSubject:[${instanceName}] Your Atlas request}" />
     </bean>
 
     <bean id="bundlePdf" class="org.georchestra.atlas.BundlePdfComponent" init-method="init">

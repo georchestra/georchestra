@@ -18,14 +18,14 @@
         <property name="suffix" value=".jsp"/>
         <property name="attributes">
             <map>
-                <entry key="headerHeight" value="${headerHeight:90}" />
-                <entry key="headerUrl" value="${headerUrl:/header/}" />
+                <entry key="headerHeight" value="${headerHeight}" />
+                <entry key="headerUrl" value="${headerUrl}" />
             </map>
         </property>
     </bean>
 
     <bean id="proxy"  init-method="init" class="org.georchestra.security.Proxy">
-          <property name="publicUrl" value="${publicUrl:https://georchestra.mydomain.org}"/>
+          <property name="publicUrl" value="${publicUrl}"/>
           <property name="headerManagement" ref="headerManagementBean"/>
           <property name="defaultCharset" value="UTF-8"/>
           <property name="defaultTarget" value="${defaultTarget:/header/}" />
@@ -71,7 +71,7 @@
              own referrer header
 
              Comment out property to use client referrer instead of this host -->
-        <property name="referer" value="${publicUrl:https://georchestra.mydomain.org}/"/>
+        <property name="referer" value="${publicUrl}/"/>
         <property name="headerProviders">
             <list>
                 <bean class="org.georchestra.security.TrustedProxyRequestHeaderProvider" />

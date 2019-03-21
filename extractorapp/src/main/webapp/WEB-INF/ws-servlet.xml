@@ -40,7 +40,7 @@
     </bean>
 
     <bean id="extractor-controller" init-method="validateConfig" class="org.georchestra.extractorapp.ws.extractor.ExtractorController">
-        <property name="publicUrl" value="${publicUrl:https://georchestra.mydomain.org}"/>
+        <property name="publicUrl" value="${publicUrl}"/>
         <property name="responseTemplateFile" value="/WEB-INF/templates/extractor-http-response-template.xml"/>
         <property name="emailFactory" ref="emailFactory"/>
         <property name="reponseMimeType" value="application/xml"/>
@@ -80,10 +80,10 @@
         <property name="emailTemplateFile" value="/WEB-INF/templates/extractor-email-template.txt"/>
         <property name="emailAckTemplateFile" value="/WEB-INF/templates/extractor-email-ack-template.txt"/>
         <property name="extraKeywordsFile" value="/org/georchestra/extractorapp/i18n/extra_keywords_en.properties" />
-        <property name="emailSubject" value="${emailSubject:[${instanceName:geOrchestra}] Your extraction request}"/>
-        <property name="language" value="${language:en}"/>
-        <property name="publicUrl" value="${publicUrl:https://georchestra.mydomain.org}"/>
-        <property name="instanceName" value="${instanceName:geOrchestra}"/>
+        <property name="emailSubject" value="${emailSubject:[${instanceName}] Your extraction request}"/>
+        <property name="language" value="${language}"/>
+        <property name="publicUrl" value="${publicUrl}"/>
+        <property name="instanceName" value="${instanceName}"/>
     </bean>
 
     <bean id="georchestraConfiguration" class="org.georchestra.commons.configuration.GeorchestraConfiguration">
