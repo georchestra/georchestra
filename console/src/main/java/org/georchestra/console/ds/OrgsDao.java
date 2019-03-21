@@ -85,7 +85,7 @@ public class OrgsDao {
             return objectClassFilter;
         }
 
-        Name buildOrgDN(T org) {
+        public Name buildOrgDN(T org) {
             return LdapNameBuilder.newInstance(org.isPending() ? pendingOrgSearchBaseDN : orgSearchBaseDN)
                     .add(getLdapKeyField(), org.getId()).build();
         }
@@ -111,13 +111,13 @@ public class OrgsDao {
             }
         }
 
-        abstract void mapPayloadToContext(T org, DirContextOperations context);
+        protected abstract void mapPayloadToContext(T org, DirContextOperations context);
 
-        abstract String getLdapKeyField();
+        protected abstract String getLdapKeyField();
 
-        abstract String[] getObjectClass();
+        protected abstract String[] getObjectClass();
 
-        abstract AttributesMapper<T> getAttributeMapper(boolean pending);
+        public abstract AttributesMapper<T> getAttributeMapper(boolean pending);
     }
 
     class OrgExtension extends Extension<Org> {
@@ -171,17 +171,17 @@ public class OrgsDao {
         }
 
         @Override
-        String getLdapKeyField() {
+        protected String getLdapKeyField() {
             return "cn";
         }
 
         @Override
-        String[] getObjectClass() {
+        protected String[] getObjectClass() {
             return new String[] {"top", "groupOfMembers"};
         }
 
         @Override
-        AttributesMapper<Org> getAttributeMapper(boolean pending) {
+        public AttributesMapper<Org> getAttributeMapper(boolean pending) {
             return new AttributesMapper() {
                 public Org mapFromAttributes(Attributes attrs) throws NamingException {
                     Org org = new Org();
@@ -215,17 +215,17 @@ public class OrgsDao {
         }
 
         @Override
-        String getLdapKeyField() {
+        protected String getLdapKeyField() {
             return "o";
         }
 
         @Override
-        String[] getObjectClass() {
+        protected String[] getObjectClass() {
             return new String[] {"top", "organization", "georchestraOrg"};
         }
 
         @Override
-        AttributesMapper<OrgExt> getAttributeMapper(boolean pending) {
+        public AttributesMapper<OrgExt> getAttributeMapper(boolean pending) {
             return new AttributesMapper() {
                 public OrgExt mapFromAttributes(Attributes attrs) throws NamingException {
                     OrgExt orgExt = new OrgExt();

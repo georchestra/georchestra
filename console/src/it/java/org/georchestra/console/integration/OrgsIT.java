@@ -19,7 +19,6 @@
 package org.georchestra.console.integration;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.hamcrest.Matcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
