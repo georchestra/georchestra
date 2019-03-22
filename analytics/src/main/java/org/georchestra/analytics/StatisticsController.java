@@ -37,7 +37,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
 import org.georchestra.analytics.util.QueryBuilder;
-import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
@@ -164,9 +163,6 @@ import com.google.common.annotations.VisibleForTesting;
         + "related to users and groups, and their use of the infrastructure.")
 public class StatisticsController {
 
-    @Autowired
-	private GeorchestraConfiguration georConfig;
-
 	@Autowired
 	private DataSource dataSource;
 
@@ -183,6 +179,9 @@ public class StatisticsController {
 	private DateTimeFormatter dbMonthInputFormatter;
 	private DateTimeFormatter dbMonthOutputFormatter;
 	private DateTimeFormatter dbDayInputFormatter;
+
+	// List of users to ignore in stats
+	private Set<String> excludedUsers;
 
 	private static enum FORMAT { JSON, CSV }
 	private static enum REQUEST_TYPE { USAGE, EXTRACTION }
@@ -218,16 +217,13 @@ public class StatisticsController {
 
 	// Getter and setter for unit tests
 
-	public GeorchestraConfiguration getGeorConfig() {
-		return georConfig;
-	}
-
-	public void setGeorConfig(GeorchestraConfiguration georConfig) {
-		this.georConfig = georConfig;
-	}
-
 	public @VisibleForTesting void setDataSource(DataSource ds) {
 		this.dataSource = ds;
+	}
+
+	public void setExcludedUsers(Set<String> excludedUsers) {
+		excludedUsers.add("anonymousUser");
+		this.excludedUsers = excludedUsers;
 	}
 
 
@@ -694,17 +690,6 @@ public class StatisticsController {
 		sql += "GROUP BY user_name, org " +
 			   "ORDER BY COUNT(*) DESC";
 
-		// Extract list of user to ignore in stats
-		Set<String> excluded_users = new HashSet<String>();
-		excluded_users.add("anonymousUser");
-		for (int i = 1; true; i++) {
-			String user = this.georConfig.getProperty("excludedUser.uid" + i);
-			if (user != null)
-				excluded_users.add(user);
-			else
-				break;
-		}
-
         // Fetch and format results
         final String generatedQuery = queryBuilder.generateQuery(sql, sqlValues);
         try (Connection c = dataSource.getConnection(); //
@@ -712,7 +697,7 @@ public class StatisticsController {
                 ResultSet res = st.executeQuery(generatedQuery)) {
             JSONArray results = new JSONArray();
             while (res.next()) {
-                if (excluded_users.contains(res.getString("user_name")))
+                if (this.excludedUsers.contains(res.getString("user_name")))
                     continue;
                 JSONObject row = new JSONObject();
                 row.put("user", res.getString("user_name"));
