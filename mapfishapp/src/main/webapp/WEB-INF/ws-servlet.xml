@@ -63,11 +63,11 @@
         <property name="suffix" value=".jsp"/>
         <property name="attributes">
             <map>
-                <entry key="instanceName" value="${instanceName:geOrchestra}" />
-                <entry key="defaultLanguage" value="${language:en}" />
+                <entry key="instanceName" value="${instanceName}" />
+                <entry key="defaultLanguage" value="${language}" />
                 <entry key="georCustomPath" value="${georCustomPath:/ws/app/js/GEOR_custom.js}" />
-                <entry key="headerHeight" value="${headerHeight:90}" />
-                <entry key="headerUrl" value="${headerUrl:/header/}" />
+                <entry key="headerHeight" value="${headerHeight}" />
+                <entry key="headerUrl" value="${headerUrl}" />
             </map>
         </property>
       </bean>

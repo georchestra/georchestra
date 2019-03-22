@@ -55,8 +55,8 @@ public class AdvancedDelegationDaoIT {
 
     private @Autowired ComboPooledDataSource ds;
 
-    private @Value("${dataSource.maxPoolSize}") int maxConnections;
-    private @Value("${dataSource.timeout}") int timeoutMillis;
+    private @Value("${dataSource.maxPoolSize:10}") int maxConnections;
+    private @Value("${dataSource.timeout:1000}") int timeoutMillis;
 
     public @Before void before() {
         assertThat(timeoutMillis, Matchers.greaterThan(0));

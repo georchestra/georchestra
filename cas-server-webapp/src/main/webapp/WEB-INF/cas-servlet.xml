@@ -69,11 +69,11 @@
         p:order="1">
     <property name="attributes">
       <map>
-        <entry key="publicUrl" value="${publicUrl:https://georchestra.mydomain.org}" />
-        <entry key="instanceName" value="${instanceName:geOrchestra}" />
+        <entry key="publicUrl" value="${publicUrl}" />
+        <entry key="instanceName" value="${instanceName}" />
         <entry key="consoleContextPath" value="${console.contextpath:/console}" />
-        <entry key="headerHeight" value="${headerHeight:90}" />
-        <entry key="headerUrl" value="${headerUrl:/header/}" />
+        <entry key="headerHeight" value="${headerHeight}" />
+        <entry key="headerUrl" value="${headerUrl}" />
       </map>
     </property>
   </bean>
@@ -222,7 +222,7 @@
         p:centralAuthenticationService-ref="centralAuthenticationService"/>
 
   <bean id="statisticsController" class="org.jasig.cas.web.StatisticsController"
-        p:casTicketSuffix="${host.name:georchestra.mydomain.org}" c:ticketRegistry-ref="ticketRegistry" />
+        p:casTicketSuffix="${host.name:${domainName}}" c:ticketRegistry-ref="ticketRegistry" />
 
   <bean id="logoutAction" class="org.jasig.cas.web.flow.LogoutAction"
         p:servicesManager-ref="servicesManager"

@@ -24,7 +24,7 @@
           <s:frame-options policy="SAMEORIGIN" />
         </s:headers>
         <s:anonymous granted-authority="ROLE_ANONYMOUS" />
-        <s:logout logout-success-url="${logout-success-url:https://georchestra.mydomain.org/cas/logout?fromgeorchestra}" />
+        <s:logout logout-success-url="${logout-success-url:${publicUrl}/cas/logout?fromgeorchestra}" />
         <s:csrf disabled="true" />
      </s:http>
 
@@ -193,7 +193,7 @@
     </bean>
 
     <bean id="casProcessingFilterEntryPoint" class="org.springframework.security.cas.web.CasAuthenticationEntryPoint">
-        <property name="loginUrl" value="${casLoginUrl:https://georchestra.mydomain.org/cas/login}"/>
+        <property name="loginUrl" value="${casLoginUrl:${publicUrl}/cas/login}"/>
         <property name="serviceProperties" ref="serviceProperties"/>
     </bean>
 
@@ -202,14 +202,14 @@
 		<property name="serviceProperties" ref="serviceProperties" />
 		<property name="ticketValidator">
 			<bean class="org.jasig.cas.client.validation.Cas20ServiceTicketValidator">
-				<constructor-arg index="0" value="${casTicketValidation:https://georchestra.mydomain.org/cas}" />
+				<constructor-arg index="0" value="${casTicketValidation:${publicUrl}/cas}" />
 			</bean>
 		</property>
 		<property name="key" value="security-proxy" />
 	</bean>
 
     <bean id="serviceProperties" class="org.springframework.security.cas.ServiceProperties">
-        <property name="service" value="${proxyCallback:https://georchestra.mydomain.org/login/cas}"/>
+        <property name="service" value="${proxyCallback:${publicUrl}/login/cas}"/>
         <property name="sendRenew" value="false"/>
     </bean>
 

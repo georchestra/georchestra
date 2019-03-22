@@ -88,7 +88,7 @@ public class PasswordRecoveryFormController  {
 	@Value("${publicContextPath:/console}")
 	private String publicContextPath;
 
-	@Value("${publicUrl:https://georchestra.mydomain.org}")
+	@Value("${publicUrl}")
 	private String publicUrl;
 
 	@Autowired

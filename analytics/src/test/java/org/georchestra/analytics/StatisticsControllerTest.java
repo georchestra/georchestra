@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import javax.sql.DataSource;
 
 import org.georchestra.analytics.StatisticsController.GRANULARITY;
-import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
@@ -53,9 +52,6 @@ public class StatisticsControllerTest {
 		this.ctrl = new StatisticsController("UTC");
 		this.mockMvc = standaloneSetup(ctrl).build();
 		ctrl.setDataSource(mockDS);
-
-		GeorchestraConfiguration georConfig = Mockito.mock(GeorchestraConfiguration.class);
-		ctrl.setGeorConfig(georConfig);
 	}
 
 	@After

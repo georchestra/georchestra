@@ -36,15 +36,15 @@
 
   <context:annotation-config/>
 
-  <context:property-placeholder location="classpath:/console-it.properties, classpath:/protectedroles-it.properties" ignore-resource-not-found="false" ignore-unresolvable="false" />
+  <context:property-placeholder location="classpath:/default-it.properties, classpath:/console-it.properties, classpath:/protectedroles-it.properties" ignore-resource-not-found="false" ignore-unresolvable="false" />
 
   <context:component-scan base-package="org.georchestra.console"/>
 
   <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" p:prefix="/WEB-INF/views/" p:suffix=".jsp">
     <property name="attributes">
       <map>
-        <entry key="headerHeight" value="${headerHeight:90}" />
-        <entry key="headerUrl" value="${headerUrl:/header/}" />
+        <entry key="headerHeight" value="${headerHeight}" />
+        <entry key="headerUrl" value="${headerUrl}" />
         <entry key="publicContextPath" value="${publicContextPath:/console}"/>
       </map>
     </property>
@@ -219,19 +219,19 @@
     <property name="subjectEncoding" value="UTF-8"/>
     <property name="templateEncoding" value="${templateEncoding:UTF-8}"/>
     <property name="accountWasCreatedEmailFile" value="/WEB-INF/templates/newaccount-was-created-template.txt"/>
-    <property name="accountWasCreatedEmailSubject" value="${subject.account.created:[geOrchestra] Your account has been created}"/>
+    <property name="accountWasCreatedEmailSubject" value="${subject.account.created:[${instanceName}] Your account has been created}"/>
     <property name="accountCreationInProcessEmailFile" value="/WEB-INF/templates/account-creation-in-progress-template.txt"/>
-    <property name="accountCreationInProcessEmailSubject" value="${subject.account.in.process:[geOrchestra] Your new account is waiting for validation}"/>
+    <property name="accountCreationInProcessEmailSubject" value="${subject.account.in.process:[${instanceName}] Your new account is waiting for validation}"/>
     <property name="newAccountRequiresModerationEmailFile" value="/WEB-INF/templates/newaccount-requires-moderation-template.txt"/>
-    <property name="newAccountRequiresModerationEmailSubject" value="${subject.requires.moderation:[geOrchestra] New account waiting for validation}"/>
+    <property name="newAccountRequiresModerationEmailSubject" value="${subject.requires.moderation:[${instanceName}] New account waiting for validation}"/>
     <property name="changePasswordEmailFile" value="/WEB-INF/templates/changepassword-email-template.txt"/>
-    <property name="changePasswordEmailSubject" value="${subject.change.password:[geOrchestra] Update your password}"/>
+    <property name="changePasswordEmailSubject" value="${subject.change.password:[${instanceName}] Update your password}"/>
     <property name="accountUidRenamedEmailFile" value="/WEB-INF/templates/account-uid-renamed.txt" />
-    <property name="accountUidRenamedEmailSubject" value="${subject.account.uid.renamed:[geOrchestra] New login for your account}" />
+    <property name="accountUidRenamedEmailSubject" value="${subject.account.uid.renamed:[${instanceName}] New login for your account}" />
     <property name="newAccountNotificationEmailFile" value="/WEB-INF/templates/newaccount-notification-template.txt"/>
-    <property name="newAccountNotificationEmailSubject" value="${subject.new.account.notification:[geOrchestra] New account created}"/>
-    <property name="publicUrl" value="${publicUrl:https://georchestra.mydomain.org}"/>
-    <property name="instanceName" value="${instanceName:geOrchestra}"/>
+    <property name="newAccountNotificationEmailSubject" value="${subject.new.account.notification:[${instanceName}] New account created}"/>
+    <property name="publicUrl" value="${publicUrl}"/>
+    <property name="instanceName" value="${instanceName}"/>
   </bean>
 
   <bean id="moderatedSignup" class="java.lang.Boolean">

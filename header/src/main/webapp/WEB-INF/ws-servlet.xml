@@ -17,7 +17,7 @@
         <property name="suffix" value=".jsp"></property>
         <property name="attributes">
             <map>
-                <entry key="defaultLanguage" value="${language:en}" />
+                <entry key="defaultLanguage" value="${language}" />
                 <entry key="consolePublicContextPath" value="${consolePublicContextPath:/console}" />
             </map>
         </property>
