@@ -22,7 +22,7 @@
     <bean class="org.georchestra.mapfishapp.ws.OGCProxy" />
 
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
-        <property name="jdbcUrl" value="${jdbcUrl:jdbc:postgresql://localhost:5432/georchestra?user=georchestra&amp;password=georchestra}"/>
+        <property name="jdbcUrl" value="${jdbcUrl:jdbc:postgresql://localhost:5432/${pgsqlDatabase}?user=${pgsqlUser}&amp;password=${pgsqlPassword}}"/>
         <property name="driverClass" value="org.postgresql.Driver"/>
         <property name="initialPoolSize" value="1"/>
         <property name="minPoolSize" value="${dataSource.minPoolSize:1}"/>

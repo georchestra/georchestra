@@ -115,9 +115,9 @@
 
     <!-- DataSource used for the ogc-server-stats OGC request stats logger -->
     <bean id="ogcStatsDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
-        <property name="jdbcUrl" value="${ogcStats.jdbcURL:jdbc:postgresql://database:5432/georchestra}"/>
-        <property name="user" value="${ogcStats.databaseUser:georchestra}"/>
-        <property name="password" value="${ogcStats.databasePassword:georchestra}"/>
+        <property name="jdbcUrl" value="${ogcStats.jdbcURL:jdbc:postgresql://database:5432/${pgsqlDatabase}}"/>
+        <property name="user" value="${pgsqlUser}"/>
+        <property name="password" value="${pgsqlPassword}"/>
         <property name="driverClass" value="org.postgresql.Driver"/>
         <property name="initialPoolSize" value="1"/>
         <property name="minPoolSize" value="${ogcStats.minPoolSize:1}"/>
