@@ -111,7 +111,7 @@ public class EmailController {
      *
      * These restrictions have been implemented to prevent spammers.
      */
-    @Value("${emailProxyFromAddress:no-reply@georchestra.org}")
+    @Value("${emailProxyFromAddress:${administratorEmail}}")
     private String emailProxyFromAddress;
 
     @Value("${emailProxyMaxRecipient:10}")
@@ -123,7 +123,7 @@ public class EmailController {
     @Value("${emailProxyMaxSubjectSize:200}")
     private String emailProxyMaxSubjectSize;
 
-    @Value("${emailProxyRecipientWhitelist:psc@georchestra.org, postmaster@georchestra.org, listmaster@georchestra.org}")
+    @Value("${emailProxyRecipientWhitelist:${administratorEmail}}")
     private String emailProxyRecipientWhitelist;
 
     /*
