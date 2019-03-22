@@ -36,7 +36,7 @@
 
   <context:annotation-config/>
 
-  <context:property-placeholder location="classpath:/console-it.properties, classpath:/protectedroles-it.properties" ignore-resource-not-found="false" ignore-unresolvable="false" />
+  <context:property-placeholder location="classpath:/default-it.properties, classpath:/console-it.properties, classpath:/protectedroles-it.properties" ignore-resource-not-found="false" ignore-unresolvable="false" />
 
   <context:component-scan base-package="org.georchestra.console"/>
 
