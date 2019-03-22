@@ -40,12 +40,18 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
         <constructor-arg ref="gwcTLDispatcher"/>
         <constructor-arg ref="gwcGridSetBroker"/>
         <constructor-arg ref="gwcStorageBroker"/>
-        <constructor-arg ref="gwcXmlConfig"/>
+        <constructor-arg ref="gwcXmlConfigGeorchestra"/>
         <constructor-arg ref="gwcRuntimeStats"/>
         <property name="defaultStorageFinder" ref="gwcDefaultStorageFinder"/>
         <property name="instanceName" value="${instanceName}"/>
         <property name="headerUrl" value="${headerUrl}"/>
         <property name="headerHeight" value="${headerHeight}"/>
+    </bean>
+
+    <!-- The location of a static configuration file for GeoWebCache. -->
+    <bean id="gwcXmlConfigGeorchestra" class="org.geowebcache.config.XMLConfiguration">
+        <constructor-arg ref="gwcAppCtx" />
+        <constructor-arg value="${configurationDir:/tmp/gwc_config}" />
     </bean>
 
     <bean id="gwcURLMangler" class="org.geowebcache.util.GeorchestraURLMangler">
