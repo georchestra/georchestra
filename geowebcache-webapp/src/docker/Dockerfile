@@ -9,13 +9,13 @@ ADD . /
 # Temporary switch to root
 USER root
 
-RUN mkdir /mnt/geowebcache_tiles && \
-    chown jetty:jetty /etc/georchestra /mnt/geowebcache_tiles
+RUN mkdir /mnt/geowebcache_tiles /mnt/geowebcache_datadir && \
+    chown jetty:jetty /etc/georchestra /mnt/geowebcache_tiles /mnt/geowebcache_datadir
 
 # restore jetty user
 USER jetty
 
-VOLUME [ "/mnt/geowebcache_tiles", "/tmp", "/run/jetty" ]
+VOLUME [ "/mnt/geowebcache_datadir", "/mnt/geowebcache_tiles", "/tmp", "/run/jetty" ]
 
 CMD ["sh", "-c", "exec java \
 -Djava.io.tmpdir=/tmp/jetty \
