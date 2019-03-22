@@ -82,7 +82,7 @@
     <property name="ldapTemplate" ref="ldapTemplate"/>
     <property name="basePath" value="${baseDN:dc=georchestra,dc=org}"/>
     <property name="orgTypeValues" value="${orgTypeValues:Association,Company,NGO,Individual,Other}"/>
-    <property name="orgSearchBaseDN" value="${orgSearchBaseDN}"/>
+    <property name="orgSearchBaseDN" value="${orgSearchBaseDN:ou=orgs}"/>
     <property name="pendingOrgSearchBaseDN" value="${pendingOrgSearchBaseDN:ou=pendingorgs}"/>
   </bean>
 
