@@ -140,7 +140,7 @@
        <!--<property name="driverClassName" value="org.postgresql.Driver"/>-->
        <!--<property name="url" value="${psql.url:jdbc:postgresql://localhost:5432/${pgsqlDatabase}}"/>-->
        <!--<property name="username" value="${pgsqlUser:georchestra}"/>-->
-       <!--<property name="password" value="${pgsqlDatabase:georchestra}"/>-->
+       <!--<property name="password" value="${pgsqlPassword:georchestra}"/>-->
    <!--</bean>-->
 
    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
