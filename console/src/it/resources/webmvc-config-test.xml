@@ -123,8 +123,8 @@
 
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" depends-on="waitForDb">
         <property name="jdbcUrl" value="${psql.url:jdbc:postgresql://localhost:5432/${pgsqlDatabase}}"/>
-        <property name="user" value="${pgsqlUser:georchestra}"/>
-        <property name="password" value="${pgsqlPassword:georchestra}"/>
+        <property name="user" value="${pgsqlUser}"/>
+        <property name="password" value="${pgsqlPassword}"/>
         <property name="driverClass" value="org.postgresql.Driver"/>
         <property name="initialPoolSize" value="1"/>
         <property name="minPoolSize" value="${dataSource.minPoolSize:2}"/>
@@ -139,8 +139,8 @@
    <!--<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">-->
        <!--<property name="driverClassName" value="org.postgresql.Driver"/>-->
        <!--<property name="url" value="${psql.url:jdbc:postgresql://localhost:5432/${pgsqlDatabase}}"/>-->
-       <!--<property name="username" value="${pgsqlUser:georchestra}"/>-->
-       <!--<property name="password" value="${pgsqlPassword:georchestra}"/>-->
+       <!--<property name="username" value="${pgsqlUser}"/>-->
+       <!--<property name="password" value="${pgsqlPassword}"/>-->
    <!--</bean>-->
 
    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
