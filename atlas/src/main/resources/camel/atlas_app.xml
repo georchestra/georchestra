@@ -49,7 +49,7 @@
 
     <bean id="prepareMail" class="org.georchestra.atlas.AtlasMailComponent" init-method="init">
         <property name="georBaseUrl" value="${atlas.baseUrl:${publicUrl}/atlas}" />
-        <property name="emailFrom" value="${atlas.emailFrom:noreply+atlas@georchestra.org}" />
+        <property name="emailFrom" value="${atlas.emailFrom:${administratorEmail}}" />
         <property name="emailSubject" value="${atlas.emailSubject:[${instanceName}] Your Atlas request}" />
     </bean>
 
