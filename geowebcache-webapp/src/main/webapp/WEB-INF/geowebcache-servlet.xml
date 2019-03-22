@@ -43,13 +43,13 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
         <constructor-arg ref="gwcXmlConfig"/>
         <constructor-arg ref="gwcRuntimeStats"/>
         <property name="defaultStorageFinder" ref="gwcDefaultStorageFinder"/>
-        <property name="instanceName" value="${instanceName:geOrchestra}"/>
-        <property name="headerUrl" value="${headerUrl:/header/}"/>
-        <property name="headerHeight" value="${headerHeight:90}"/>
+        <property name="instanceName" value="${instanceName}"/>
+        <property name="headerUrl" value="${headerUrl}"/>
+        <property name="headerHeight" value="${headerHeight}"/>
     </bean>
 
     <bean id="gwcURLMangler" class="org.geowebcache.util.GeorchestraURLMangler">
-        <constructor-arg value="${publicUrl:https://georchestra.mydomain.org}" />
+        <constructor-arg value="${publicUrl}" />
         <constructor-arg value="${contextPath:/geowebcache}" />
     </bean>
 
