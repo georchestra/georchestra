@@ -159,7 +159,7 @@ See the `pom.xml` file to check how the `docker-maven-plugin` is configured. It 
 
 ```
 ldapUrl=ldap://localhost:${ldap_port}
-psql.url=jdbc:postgresql://localhost:${psql_port}/georchestra
+jdbcUrl=jdbc:postgresql://localhost:${psql_port}/georchestra
 ```
 
 #### Running from an IDE while developing
