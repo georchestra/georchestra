@@ -43,9 +43,6 @@ public class GeorchestraConfiguration {
     protected String contextName;
     protected ServletContext ctx;
 
-    protected Properties applicationSpecificProperties = new Properties();
-    protected Properties defaultProperties = new Properties();
-
     public String getContextDataDir() {
         return contextDataDir;
     }
@@ -66,16 +63,6 @@ public class GeorchestraConfiguration {
                 contextDataDir = null;
                 return;
             }
-            // loads the application context property file
-            try {
-                this.applicationSpecificProperties = this.loadCustomPropertiesFile(context);
-            } catch (Exception e) {}
-
-            // loads common context property file
-            try {
-                this.defaultProperties = this.loadPropertiesFile(new File(String.format("%s%s%s",
-                        globalDatadir, File.separator, "default.properties")));
-            } catch (Exception e) {}
 
             // log4j configuration
             File log4jProperties = new File(contextDataDir, "log4j" + File.separator + "log4j.properties");
@@ -117,20 +104,6 @@ public class GeorchestraConfiguration {
             }
         }
         return prop;
-    }
-
-    public String getProperty(String key, String defaultValue) {
-        if (!this.activated)
-            return defaultValue;
-        if (this.applicationSpecificProperties.getProperty(key) != null)
-            return this.applicationSpecificProperties.getProperty(key);
-        if (this.defaultProperties.getProperty(key) != null)
-            return this.defaultProperties.getProperty(key);
-        return defaultValue;
-    }
-
-    public String getProperty(String key) {
-        return getProperty(key, null);
     }
 
     public boolean activated() {
