@@ -20,7 +20,6 @@
 package org.georchestra.security;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.io.Closer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -52,7 +51,6 @@ import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
-import org.apache.http.message.BasicHttpRequest;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.nio.ContentDecoder;
 import org.apache.http.nio.IOControl;
@@ -84,7 +82,6 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
-
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
@@ -260,14 +257,12 @@ public class Proxy {
 
         // Proxy permissions not set by datadir
         if (proxyPermissionsFile != null && proxyPermissions == null) {
-            try (Closer closer = Closer.create()) {
-                final ClassLoader classLoader = Proxy.class.getClassLoader();
-                InputStream inStream = closer.register(classLoader.getResourceAsStream(proxyPermissionsFile));
-                if (inStream == null) {
-                    throw new RuntimeException("ProxyPermissionsFile not found");
-                }
-                setProxyPermissions(Permissions.Create(inStream));
+            final ClassLoader classLoader = Proxy.class.getClassLoader();
+            InputStream inStream = classLoader.getResourceAsStream(proxyPermissionsFile);
+            if (inStream == null) {
+                throw new RuntimeException("ProxyPermissionsFile not found");
             }
+            setProxyPermissions(Permissions.Create(inStream));
         }
         httpAsyncClientBuilder = createHttpAsyncClientBuilder();
     }
@@ -740,30 +735,34 @@ public class Proxy {
     protected HttpResponse executeHttpRequest(CloseableHttpAsyncClient httpclient, HttpRequestBase proxyingRequest) throws IOException, TimeoutException, ExecutionException, InterruptedException {
         CompletableFuture<HttpResponse> future = new CompletableFuture<HttpResponse>();
 
-        PipedOutputStream pos = new PipedOutputStream();
-        PipedInputStream pis = new PipedInputStream(pos);
-        WritableByteChannel channel = Channels.newChannel(pos);
-
         HttpAsyncResponseConsumer<Boolean> consumer = new AbstractAsyncResponseConsumer<Boolean>() {
 
             private ByteBuffer bbuf =  ByteBuffer.allocate(8192);
             private HttpResponse httpResponse;
+            private PipedOutputStream pos = new PipedOutputStream();
+            private PipedInputStream pis = new PipedInputStream(pos);
+            private WritableByteChannel channel = Channels.newChannel(pos);
 
+            @Override
             protected void onEntityEnclosed(HttpEntity entity, ContentType contentType) throws IOException {
                 HttpEntity streamEntity = new InputStreamEntity(pis, contentType);
                 httpResponse.setEntity(streamEntity);
                 future.complete(httpResponse);
             }
 
+            @Override
             protected void onContentReceived(ContentDecoder decoder, IOControl ioctrl) throws IOException {
                 int bytesRead = decoder.read(this.bbuf);
                 if (bytesRead > 0) {
                     this.bbuf.flip();
-                    channel.write(this.bbuf);
+                    while(this.bbuf.hasRemaining()) {
+                        channel.write(this.bbuf);
+                    }
                     this.bbuf.clear();
                 }
             }
 
+            @Override
             protected void releaseResources() {
                 try {
                     channel.close();
