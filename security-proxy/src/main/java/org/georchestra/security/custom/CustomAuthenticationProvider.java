@@ -39,6 +39,7 @@ import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.DistinguishedName;
 import org.springframework.ldap.core.support.BaseLdapPathContextSource;
+import org.springframework.ldap.core.support.DefaultDirObjectFactory;
 import org.springframework.ldap.support.LdapUtils;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -214,6 +215,7 @@ public class CustomAuthenticationProvider extends AbstractLdapAuthenticationProv
         env.put(Context.SECURITY_CREDENTIALS, password);
         env.put(Context.INITIAL_CONTEXT_FACTORY,
                 "com.sun.jndi.ldap.LdapCtxFactory");
+        env.put(Context.OBJECT_FACTORIES, DefaultDirObjectFactory.class.getName());
 
         try {
             return contextFactory.createContext(env);
