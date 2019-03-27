@@ -20,12 +20,13 @@
 package org.georchestra.security;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.io.Closer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpException;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -44,12 +45,19 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpTrace;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.nio.ContentDecoder;
+import org.apache.http.nio.IOControl;
+import org.apache.http.nio.protocol.AbstractAsyncResponseConsumer;
+import org.apache.http.nio.protocol.BasicAsyncRequestProducer;
+import org.apache.http.nio.protocol.HttpAsyncRequestProducer;
+import org.apache.http.nio.protocol.HttpAsyncResponseConsumer;
 import org.apache.http.protocol.HttpContext;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.ogcservstatistics.log4j.OGCServiceMessageFormatter;
@@ -74,13 +82,14 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
-
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.ProxySelector;
@@ -88,16 +97,20 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
@@ -161,10 +174,7 @@ public class Proxy {
      * Data source to set on {@link OGCServicesAppender#setDataSource}
      */
     private @Autowired @Qualifier("ogcStatsDataSource") DataSource ogcStatsDataSource;
-    
-    /**
-     * must be defined
-     */
+
     private String defaultTarget;
     private String publicUrl = "https://georchestra.mydomain.org";
 
@@ -226,16 +236,12 @@ public class Proxy {
                     File.separator, "proxy-permissions.xml"));
             if(datadirPermissionsFile.exists()){
                 logger.info("reading proxy permissions from " + datadirPermissionsFile.getAbsolutePath());
-                FileInputStream fis = null;
-                try {
-                    fis = new FileInputStream(datadirPermissionsFile);
+
+                try (FileInputStream fis = new FileInputStream(datadirPermissionsFile)) {
                     setProxyPermissions(Permissions.Create(fis));
-                    fis.close();
                 } catch(Exception ex){
                       logger.error("Error during proxy permissions configuration from "
                               + datadirPermissionsFile.getAbsolutePath());
-                } finally {
-                    fis.close();
                 }
             }
 
@@ -251,17 +257,12 @@ public class Proxy {
 
         // Proxy permissions not set by datadir
         if (proxyPermissionsFile != null && proxyPermissions == null) {
-            Closer closer = Closer.create();
-            try {
-                final ClassLoader classLoader = Proxy.class.getClassLoader();
-                InputStream inStream = closer.register(classLoader.getResourceAsStream(proxyPermissionsFile));
-                if (inStream == null) {
-                    throw new RuntimeException("ProxyPermissionsFile not found");
-                }
-                setProxyPermissions(Permissions.Create(inStream));
-            } finally {
-                closer.close();
+            final ClassLoader classLoader = Proxy.class.getClassLoader();
+            InputStream inStream = classLoader.getResourceAsStream(proxyPermissionsFile);
+            if (inStream == null) {
+                throw new RuntimeException("ProxyPermissionsFile not found");
             }
+            setProxyPermissions(Permissions.Create(inStream));
         }
         httpAsyncClientBuilder = createHttpAsyncClientBuilder();
     }
@@ -302,12 +303,6 @@ public class Proxy {
 
     /**
      * Entrypoint used for login.
-     *
-     * @param request
-     * @param response
-     * @param sURL
-     * @throws ServletException
-     * @throws IOException
      */
     @RequestMapping(value = "/**", params = { "login", "url" }, method = { GET, POST })
     public void login(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) throws ServletException, IOException {
@@ -316,10 +311,6 @@ public class Proxy {
 
     /**
      * Entry point used mainly for XHR requests using a URL-encoded parameter named url.
-     * @param request
-     * @param response
-     * @param sURL
-     * @throws IOException
      */
     @RequestMapping(value ="/proxy/", params = { "url", "!login" })
     public void handleUrlParamRequest(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String sURL) throws IOException {
@@ -327,15 +318,12 @@ public class Proxy {
         URL url;
         try {
             url = new URL(sURL);
-        } catch (MalformedURLException e) { // not an url
+        } catch (MalformedURLException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
             return;
         }
 
-        /*
-         * - deny request with same domain as publicUrl - deny based on
-         * proxy-permissions.xml file
-         */
+        // deny request with same domain as publicUrl - deny based on proxy-permissions.xml file
         if (this.sameDomainPermissions.isDenied(url) || proxyPermissions.isDenied(url)) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "URL is not allowed.");
             return;
@@ -346,11 +334,7 @@ public class Proxy {
     /**
      * Entry point used for security-proxified webapps. Note: the url parameter is sometimes used
      * by the underlying webapps (e.g. mapfishapp and the mfprint configuration). hence we need
-     * to allow it in the following "params" array.
-     *
-     * @param request
-     * @param response
-     * @throws IOException
+     * to allow it in the following "params" array.*
      */
     @RequestMapping(value = "/**", params = { "!login" })
     public void handleRequest(HttpServletRequest request, HttpServletResponse response) {
@@ -360,10 +344,6 @@ public class Proxy {
     /**
      * Default redirection to defaultTarget. By default returns a 302 redirect to '/header/'. The
      * parameter can be customized in the security-proxy.properties file.
-     *
-     * @param request
-     * @param response
-     * @throws IOException
      */
     @RequestMapping(value = "/", params = { "!url", "!login" })
     public void handleDefaultRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -377,13 +357,10 @@ public class Proxy {
      * return true (unless if mapfishapp is not configured on this geOrchestra
      * instance, which is probably unlikely).
      *
-     * @param request
-     *            the HttpServletRequest
-     * @param url
-     *            the requested url
+     * @param request the HttpServletRequest
+     * @param url the requested url
      * @return true if the url is protected by the SP, false otherwise.
      *
-     * @throws IOException
      */
     private boolean urlIsProtected(HttpServletRequest request, URL url) throws IOException {
         if (isSameServer(request, url)) {
@@ -401,8 +378,6 @@ public class Proxy {
     /**
      * Check if the request targets a host (host header) which is the same as the requested URL in parameter.
      *
-     * @param request
-     * @param url
      * @return true if the host in the request matches the host in the requested URL, false otherwise.
      */
     private boolean isSameServer(HttpServletRequest request, URL url) {
@@ -417,10 +392,7 @@ public class Proxy {
     /**
      * Check if the target url matches a security-proxified target.
      *
-     * @param requestSegments
-     * @param target
      * @return true if so, false otherwise.
-     * @throws MalformedURLException
      */
     private boolean samePathPrefix(String[] requestSegments, String target) throws MalformedURLException {
         String[] targetSegments = splitRequestPath(new URL(target).getPath());
@@ -434,13 +406,7 @@ public class Proxy {
     }
 
     private String[] splitRequestPath(String requestURI) {
-        String[] requestSegments;
-        if (requestURI.charAt(0) == '/') {
-            requestSegments = StringUtils.split(requestURI.substring(1), '/');
-        } else {
-            requestSegments = StringUtils.split(requestURI, '/');
-        }
-        return requestSegments;
+        return filter(requestURI.split("/"));
     }
 
     /**
@@ -465,8 +431,6 @@ public class Proxy {
                 + " is not permitted to be requested when the request is made through the URL parameter form.");
     }
 
-    // ----------------- Implementation methods ----------------- //
-
     private String buildForwardRequestURL(HttpServletRequest request) {
         String forwardRequestURI = request.getRequestURI();
         forwardRequestURI = forwardRequestURI.replaceAll("//", "/");
@@ -475,8 +439,7 @@ public class Proxy {
     }
 
     /**
-     * Main entry point for methods where the request path is encoded in the
-     * path of the URL
+     * Main entry point for methods where the request path is encoded in the path of the URL
      */
     private void handlePathEncodedRequests(HttpServletRequest request, HttpServletResponse response) {
         try {
@@ -611,14 +574,12 @@ public class Proxy {
      * @param localProxy true if the request targets a security-proxyfied webapp (e.g. mapfishapp, ...), false otherwise
      */
     private void handleRequest(HttpServletRequest request, HttpServletResponse finalResponse, String sURL, boolean localProxy) {
+        try (CloseableHttpAsyncClient httpclient = httpAsyncClientBuilder.build()) {
+            httpclient.start();
 
-        CloseableHttpAsyncClient httpclient = httpAsyncClientBuilder.build();
-        httpclient.start();
+            HttpResponse proxiedResponse = null;
+            int statusCode = 500;
 
-        HttpResponse proxiedResponse = null;
-        int statusCode = 500;
-
-        try {
             URL url = null;
             try {
                 url = new URL(sURL);
@@ -640,7 +601,6 @@ public class Proxy {
             }
 
             logger.debug("Final request -- " + sURL);
-
 
             HttpRequestBase proxyingRequest = makeRequest(request, sURL);
             headerManagement.configureRequestHeaders(request, proxyingRequest, localProxy);
@@ -677,10 +637,8 @@ public class Proxy {
             String reasonPhrase = statusLine.getReasonPhrase();
 
             if (reasonPhrase != null && statusCode >= 400) {
-                if (logger.isWarnEnabled()) {
-                    logger.warn("Downstream server returned a status code which could be an error. "
-                            + "Statuscode: " + statusCode + ", reason: " + reasonPhrase);
-                }
+                logger.warn("Downstream server returned a status code which could be an error. "
+                        + "Statuscode: " + statusCode + ", reason: " + reasonPhrase);
 
                 if (statusCode == 401) {
                     //
@@ -690,13 +648,10 @@ public class Proxy {
                     finalResponse.setHeader("WWW-Authenticate", (authHeader == null) ? "Basic realm=\"Authentication required\"" : authHeader.getValue());
                 }
 
-                // 403 and 404 are handled by specific JSP files provided by the
-                // security-proxy webapp
+                // 403 and 404 are handled by specific JSP files provided by the security-proxy webapp
                 if ((statusCode == 404) || (statusCode == 403)) {
-                    // Hack for GN3.4: to protect against CSRF attacks, a token
-                    // is provided by the xml.info service. Even if the return
-                    // code is a 403, we are interested in getting the
-                    // Set-Cookie value.
+                    // Hack for GN3.4: to protect against CSRF attacks, a token is provided by the xml.info service.
+                    // Even if the return code is a 403, we are interested in getting the Set-Cookie value.
                     if (sURL.contains("/geonetwork/")) {
                         Header setCookie = extractHeaderSetCookie(proxiedResponse);
                         if (setCookie != null) {
@@ -733,10 +688,10 @@ public class Proxy {
 
             // content type has to be valid
             if (isCharsetRequiredForContentType(contentType)) {
-                doHandleRequestCharsetRequired(request, finalResponse, proxiedResponse, contentType);
+                doHandleRequestCharsetRequired(request, finalResponse, proxiedResponse);
             } else {
                 logger.debug("charset not required for contentType: " + contentType);
-                doHandleRequest(request, finalResponse, proxiedResponse);
+                doHandleRequest(finalResponse, proxiedResponse);
             }
         } catch (IOException | ExecutionException | InterruptedException | TimeoutException e) {
             // connection problem with the host
@@ -744,15 +699,8 @@ public class Proxy {
             try {
                 finalResponse.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
             } catch (IOException e2) {
-                // error occured while trying to return the
-                // "service unavailable status"
+                // error occured while trying to return the "service unavailable status"
                 finalResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            }
-        } finally {
-            try {
-                httpclient.close();
-            } catch (IOException e) {
-                logger.error("Unable to close the httpclient", e);
             }
         }
     }
@@ -763,7 +711,6 @@ public class Proxy {
         RequestConfig config = RequestConfig.custom().setSocketTimeout(this.httpClientTimeout).build();
         htb.setDefaultRequestConfig(config);
 
-        //
         // Handle http proxy for external request.
         // Proxy must be configured by system variables (e.g.: -Dhttp.proxyHost=proxy -Dhttp.proxyPort=3128)
         htb.setRoutePlanner(new SystemDefaultRoutePlanner(ProxySelector.getDefault()));
@@ -773,7 +720,6 @@ public class Proxy {
     /**
      * Extracts the set-cookie http header from the downstream response.
      *
-     * @param proxiedResponse
      * @return the header if present, else null.
      */
     private Header extractHeaderSetCookie(HttpResponse proxiedResponse) {
@@ -787,7 +733,62 @@ public class Proxy {
 
     @VisibleForTesting
     protected HttpResponse executeHttpRequest(CloseableHttpAsyncClient httpclient, HttpRequestBase proxyingRequest) throws IOException, TimeoutException, ExecutionException, InterruptedException {
-        Future<HttpResponse> future = httpclient.execute(proxyingRequest, null);
+        CompletableFuture<HttpResponse> future = new CompletableFuture<HttpResponse>();
+
+        HttpAsyncResponseConsumer<Boolean> consumer = new AbstractAsyncResponseConsumer<Boolean>() {
+
+            private ByteBuffer bbuf =  ByteBuffer.allocate(8192);
+            private HttpResponse httpResponse;
+            private PipedOutputStream pos = new PipedOutputStream();
+            private PipedInputStream pis = new PipedInputStream(pos);
+            private WritableByteChannel channel = Channels.newChannel(pos);
+
+            @Override
+            protected void onEntityEnclosed(HttpEntity entity, ContentType contentType) throws IOException {
+                HttpEntity streamEntity = new InputStreamEntity(pis, contentType);
+                httpResponse.setEntity(streamEntity);
+                future.complete(httpResponse);
+            }
+
+            @Override
+            protected void onContentReceived(ContentDecoder decoder, IOControl ioctrl) throws IOException {
+                int bytesRead = decoder.read(this.bbuf);
+                if (bytesRead > 0) {
+                    this.bbuf.flip();
+                    while(this.bbuf.hasRemaining()) {
+                        channel.write(this.bbuf);
+                    }
+                    this.bbuf.clear();
+                }
+            }
+
+            @Override
+            protected void releaseResources() {
+                try {
+                    channel.close();
+                    pos.close();
+                } catch (IOException e) {
+                }
+            }
+
+            @Override
+            protected void onResponseReceived(HttpResponse httpResponse) throws HttpException, IOException {
+                this.httpResponse = httpResponse;
+            }
+
+            @Override
+            protected Boolean buildResult(HttpContext httpContext) throws Exception {
+                return Boolean.TRUE;
+            }
+
+        };
+
+        HttpAsyncRequestProducer producer = new BasicAsyncRequestProducer(
+                new HttpHost(proxyingRequest.getURI().getHost(), proxyingRequest.getURI().getPort()),
+                proxyingRequest);
+
+        httpclient.execute(producer, consumer, null);
+
         return future.get(5, TimeUnit.MINUTES);
     }
 
@@ -797,10 +798,8 @@ public class Proxy {
     }
 
     private Optional<String> adjustLocation(HttpServletRequest request, HttpResponse proxiedResponse) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("adjustLocation called for request: " + request.getRequestURI());
-        }
-        
+        logger.debug("adjustLocation called for request: " + request.getRequestURI());
+
         final String target = findMatchingTarget(request);
         final String locationHeader = extractLocationHeader(proxiedResponse);
         
@@ -815,26 +814,19 @@ public class Proxy {
             final URI baseURI;
             try {
                 baseURI = new URI(baseURL);
-                if (logger.isDebugEnabled()) {
-                    logger.debug("adjustLocation process header: " + locationHeader);
-                }
+                logger.debug("adjustLocation process header: " + locationHeader);
                 URI locationURI = new URI(locationHeader);
                 URI resolvedURI = baseURI.resolve(locationURI);
 
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Test location header: " + resolvedURI.toString() + " against: " + baseURI.toString());
-                }
+                logger.debug("Test location header: " + resolvedURI.toString() + " against: " + baseURI.toString());
                 if (resolvedURI.toString().startsWith(baseURI.toString())) {
-                    // proxiedResponse.removeHeader(locationHeader);
                     String resolvedSuffix = resolvedURI.toString().substring(baseURI.toString().length());
                     String newLocation = "/" + target;
                     if(!resolvedSuffix.startsWith("/")) {
                         newLocation += "/";
                     }
                     newLocation += resolvedSuffix;
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("adjustLocation from: " + locationHeader + " to " + newLocation);
-                    }
+                    logger.debug("adjustLocation from: " + locationHeader + " to " + newLocation);
                     adjustedLocation = newLocation;
                 }
             } catch (URISyntaxException e) {
@@ -842,18 +834,17 @@ public class Proxy {
             }
         }
         return Optional.ofNullable(adjustedLocation);
+
     }
 
     /**
      * Direct copy of response
      */
-    private void doHandleRequest(HttpServletRequest request, HttpServletResponse finalResponse, HttpResponse proxiedResponse)
+    private void doHandleRequest(HttpServletResponse finalResponse, HttpResponse proxiedResponse)
             throws IOException {
 
-        org.apache.http.StatusLine statusLine = proxiedResponse.getStatusLine();
+        finalResponse.setStatus(proxiedResponse.getStatusLine().getStatusCode());
 
-        int statusCode = statusLine.getStatusCode();
-        finalResponse.setStatus(statusCode);
         HttpEntity entity = proxiedResponse.getEntity();
         if (entity != null) {
             // Send the Response
@@ -896,7 +887,6 @@ public class Proxy {
     private HttpRequestBase makeRequest(HttpServletRequest request, String sURL) throws IOException {
         HttpRequestBase targetRequest;
         try {
-            // Split URL
             URL url = new URL(sURL);
             URI uri = buildUri(url);
             HttpMethod meth = HttpMethod.resolve(request.getMethod());
@@ -930,9 +920,6 @@ public class Proxy {
                     try {
                         Charset.forName(charset);
                     } catch (Throwable t) {
-                        charset = null;
-                    }
-                    if (charset == null) {
                         charset = defaultCharset;
                     }
                     entity = new UrlEncodedFormEntity(parameters, charset);
@@ -1006,7 +993,6 @@ public class Proxy {
     /**
      * Returns if the request is a POST x-www-form-urlencoded or not.
      *
-     * @param request
      * @return true if this is the case, else false.
      *
      */
@@ -1026,8 +1012,8 @@ public class Proxy {
      * transferring data, so data of any significant size should not enter this
      * method.
      */
-    private void doHandleRequestCharsetRequired(HttpServletRequest orignalRequest, HttpServletResponse finalResponse,
-            HttpResponse proxiedResponse, String contentType) {
+    private void doHandleRequestCharsetRequired(HttpServletRequest originalRequest, HttpServletResponse finalResponse,
+            HttpResponse proxiedResponse) {
 
         InputStream streamFromServer = null;
         OutputStream streamToClient = null;
@@ -1062,23 +1048,18 @@ public class Proxy {
             // getContentEncoding(proxiedResponse.getAllHeaders());
             String contentEncoding = getContentEncoding(proxiedResponse.getHeaders("Content-Encoding"));
 
-            if (logger.isDebugEnabled()) {
-
-                String cskString = "\tisCharSetKnown=" + isCharsetKnown;
-                String cEString = "\tcontentEncoding=" + contentEncoding;
-                logger.debug("Charset is required so verifying that it has been added to the headers\n" + cskString + "\n" + cEString);
-            }
+            String cskString = "\tisCharSetKnown=" + isCharsetKnown;
+            String cEString = "\tcontentEncoding=" + contentEncoding;
+            logger.debug("Charset is required so verifying that it has been added to the headers\n" + cskString + "\n" + cEString);
 
             if (contentEncoding == null || isCharsetKnown) {
-                // A simple stream can do the job for data that is not in
-                // content encoded
+                // A simple stream can do the job for data that is not in content encoded
                 // but also for data content encoded with a known charset
                 streamFromServer = proxiedResponse.getEntity().getContent();
                 streamToClient = finalResponse.getOutputStream();
             } else if (!isCharsetKnown && ("gzip".equalsIgnoreCase(contentEncoding) || "x-gzip".equalsIgnoreCase(contentEncoding))) {
                 // the charset is unknown and the data are compressed in gzip
-                // we add the gzip wrapper to be able to read/write the stream
-                // content
+                // we add the gzip wrapper to be able to read/write the stream content
                 streamFromServer = new GZIPInputStream(proxiedResponse.getEntity().getContent());
                 streamToClient = new GZIPOutputStream(finalResponse.getOutputStream());
             } else if ("deflate".equalsIgnoreCase(contentEncoding) && !isCharsetKnown) {
@@ -1086,74 +1067,28 @@ public class Proxy {
                 streamFromServer = new DeflaterInputStream(proxiedResponse.getEntity().getContent());
                 streamToClient = new DeflaterOutputStream(finalResponse.getOutputStream());
             } else {
-                doHandleRequest(orignalRequest, finalResponse, proxiedResponse);
+                doHandleRequest(finalResponse, proxiedResponse);
                 return;
             }
 
             byte[] buf = new byte[1024]; // read maximum 1024 bytes
             int len; // number of bytes read from the stream
-            boolean first = true; // helps to find the encoding once and only
-                                  // once
-            String s = ""; // piece of file that should contain the encoding
+            boolean first = true; // helps to find the encoding once and only once
+            String payloadBegin = ""; // piece of file that should contain the encoding
             while ((len = streamFromServer.read(buf)) > 0) {
 
                 if (first && !isCharsetKnown) {
                     // charset is unknown try to find it in the file content
                     for (int i = 0; i < len; i++) {
-                        s += (char) buf[i]; // get the beginning of the file as
-                                            // ASCII
+                        payloadBegin += (char) buf[i]; // get the beginning of the file as ASCII
                     }
-                    // s has to be long enough to contain the encoding
-                    if (s.length() > 200) {
-
-                        if (logger.isTraceEnabled()) {
-                            logger.trace("attempting to read charset from: " + s);
-                        }
-                        String charset = getCharset(s); // extract charset
-
-                        if (charset == null) {
-                            if (logger.isTraceEnabled()) {
-                                logger.trace("unable to find charset from raw ASCII data.  Trying to unzip it");
-                            }
-
-                            // the charset cannot be found, IE users must be
-                            // warned
-                            // that the request cannot be fulfilled, nothing
-                            // good would happen otherwise
-                        }
-                        if (charset == null) {
-                            String guessedCharset = null;
-                            if (logger.isDebugEnabled()) {
-                                logger.debug("unable to find charset so using the first one from the accept-charset request header");
-                            }
-                            String calculateDefaultCharset = calculateDefaultCharset(orignalRequest);
-                            if (calculateDefaultCharset != null) {
-                                guessedCharset = calculateDefaultCharset;
-                                if (logger.isDebugEnabled()) {
-                                    logger.debug("hopefully the server responded with this charset: " + calculateDefaultCharset);
-                                }
-                            } else {
-                                guessedCharset = defaultCharset;
-                                if (logger.isDebugEnabled()) {
-                                    logger.debug("unable to find charset, so using default:" + defaultCharset);
-                                }
-                            }
-                            String adjustedContentType = proxiedResponse.getEntity().getContentType().getValue() + ";charset=" + guessedCharset;
-                            finalResponse.setHeader("Content-Type", adjustedContentType);
-                            first = false; // we found the encoding, don't try
-                                           // to do it again
-                            finalResponse.setCharacterEncoding(guessedCharset);
-
-                        } else {
-                            if (logger.isDebugEnabled()) {
-                                logger.debug("found charset: " + charset);
-                            }
-                            String adjustedContentType = proxiedResponse.getEntity().getContentType().getValue() + ";charset=" + charset;
-                            finalResponse.setHeader("Content-Type", adjustedContentType);
-                            first = false; // we found the encoding, don't try
-                                           // to do it again
-                            finalResponse.setCharacterEncoding(charset);
-                        }
+                    // payloadBegin has to be long enough to contain the encoding
+                    if (payloadBegin.length() > 200) {
+                        String charset = manageToInferACharset(payloadBegin, originalRequest);
+                        String adjustedContentType = proxiedResponse.getEntity().getContentType().getValue() + ";charset=" + charset;
+                        finalResponse.setHeader("Content-Type", adjustedContentType);
+                        finalResponse.setCharacterEncoding(charset);
+                        first = false; // we found the encoding, don't try to do it again
                     }
                 }
 
@@ -1173,16 +1108,46 @@ public class Proxy {
         }
     }
 
-    private String calculateDefaultCharset(HttpServletRequest originalRequest) {
+    private String manageToInferACharset(String payloadBegin, HttpServletRequest originalRequest) {
+        logger.trace("attempting to read charset from: " + payloadBegin);
+        String charset = extractCharsetAsFromXmlNode(payloadBegin);
+
+        if (charset == null) {
+            logger.debug("unable to find charset so using the first one from the accept-charset request header");
+            charset = charsetFromRequestOrDefault(originalRequest);
+        } else {
+            logger.debug("found charset: " + charset);
+
+        }
+        return charset;
+    }
+
+    private static final Pattern ENCODING_IN_XML_REGEX_PATTERN = Pattern.compile("encoding=['\"]([A-Za-z][A-Za-z0-9._-]*)['\"]");
+
+    /**
+     * Extract the encoding from a string which is the header node of an xml file
+     *
+     * @param header String that should contain the encoding attribute and its value
+     * @return the charset. null if not found
+     */
+    protected String extractCharsetAsFromXmlNode(String header) {
+        Matcher matcher = ENCODING_IN_XML_REGEX_PATTERN.matcher(header);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return null;
+    }
+
+    private String charsetFromRequestOrDefault(HttpServletRequest originalRequest) {
         String acceptCharset = originalRequest.getHeader("accept-charset");
 
-        String calculatedCharset = null;
-
         if (acceptCharset != null) {
-            calculatedCharset = acceptCharset.split(",")[0];
+            String charset = acceptCharset.split(",")[0];
+            logger.debug("charset from original request: " + charset);
+            return charset;
         }
-
-        return calculatedCharset;
+        logger.debug("unable to find charset, so using default:" + defaultCharset);
+        return defaultCharset;
     }
 
     private IOException close(Closeable stream, IOException... previousExceptions) {
@@ -1203,56 +1168,19 @@ public class Proxy {
     }
 
     /**
-     * Extract the encoding from a string which is the header node of an xml
-     * file
+     * Gets the encoding of the content sent by the remote host: extracts the content-encoding header
      *
-     * @param header
-     *            String that should contain the encoding attribute and its
-     *            value
-     * @return the charset. null if not found
-     */
-    private String getCharset(String header) {
-        Pattern pattern = null;
-        String charset = null;
-        try {
-            // use a regexp but we could also use string functions such as
-            // indexOf...
-            pattern = Pattern.compile("encoding=(['\"])([A-Za-z]([A-Za-z0-9._]|-)*)");
-        } catch (Exception e) {
-            throw new RuntimeException("expression syntax invalid");
-        }
-
-        Matcher matcher = pattern.matcher(header);
-        if (matcher.find()) {
-            String encoding = matcher.group();
-            charset = encoding.split("['\"]")[1];
-        }
-
-        return charset;
-    }
-
-    /**
-     * Gets the encoding of the content sent by the remote host: extracts the
-     * content-encoding header
-     *
-     * @param headers
-     *            headers of the HttpURLConnection
-     * @return null if not exists otherwise name of the encoding (gzip,
-     *         deflate...)
+     * @param headers headers of the HttpURLConnection
+     * @return null if not exists otherwise name of the encoding (gzip, deflate...)
      */
     private String getContentEncoding(Header[] headers) {
         if (headers == null || headers.length == 0) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("No content-encoding header for this request.");
-            }
+            logger.debug("No content-encoding header for this request.");
             return null;
         }
         for (Header header : headers) {
-            // Header header = headers[i];
             String headerName = header.getName();
-            if (logger.isDebugEnabled()) {
-                logger.debug("Check content-encoding against header: " + headerName + " : " + header.getValue());
-            }
+            logger.debug("Check content-encoding against header: " + headerName + " : " + header.getValue());
             if (headerName != null && "Content-Encoding".equalsIgnoreCase(headerName)) {
                 return header.getValue();
             }
@@ -1264,7 +1192,6 @@ public class Proxy {
     /**
      * Check if the content type is accepted by the proxy
      *
-     * @param contentType
      * @return true: valid; false: not valid
      */
     protected boolean isCharsetRequiredForContentType(final String contentType) {
@@ -1282,40 +1209,27 @@ public class Proxy {
         return false;
     }
 
-    private String[] filter(String[] one) {
-        ArrayList<String> result = new ArrayList<String>();
-
-        for (String string : one) {
-            if (string.length() > 0) {
-                result.add(string);
-            }
-        }
-        return result.toArray(new String[result.size()]);
+    protected String[] filter(String[] one) {
+        return Arrays.stream(one).filter(x -> x.length() > 0).toArray(String[]::new);
     }
 
     /**
-     * Check to see if the call is recursive based on forwardRequestURI
-     * startsWith contextPath
+     * Check to see if the call is recursive based on forwardRequestURI startsWith contextPath.
      */
-    private boolean isRecursiveCallToProxy(String forwardRequestURI, String contextPath) {
-        String[] one = forwardRequestURI.split("/");
-        String[] two = contextPath.split("/");
-
-        one = filter(one);
-        two = filter(two);
+    protected boolean isRecursiveCallToProxy(String forwardRequestURI, String contextPath) {
+        String[] one = filter(forwardRequestURI.split("/"));
+        String[] two = filter(contextPath.split("/"));
 
         if (one.length < two.length) {
             return false;
         }
 
-        boolean match = true;
         for (int i = 0; i < two.length && i < one.length; i++) {
-            String s2 = two[i];
-            String s1 = one[i];
-
-            match &= s2.equalsIgnoreCase(s1);
+            if (!(two[i].equalsIgnoreCase(one[i]))) {
+                return false;
+            }
         }
-        return match;
+        return true;
     }
 
     public void setDefaultTarget(String defaultTarget) {
@@ -1324,10 +1238,6 @@ public class Proxy {
 
     public void setTargets(Map<String, String> targets) {
         this.targets = targets;
-    }
-
-    public void setContextpath(String contextpath) {
-        // this.contextpath = contextpath;
     }
 
     public void setHeaderManagement(HeadersManagementStrategy headerManagement) {
