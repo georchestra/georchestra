@@ -1,9 +1,5 @@
 package org.georchestra.security;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import com.google.common.collect.Maps;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
@@ -18,14 +14,20 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.util.ReflectionUtils;
 
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class ProxyTest {
     private Proxy proxy;
@@ -201,4 +203,69 @@ public class ProxyTest {
         assertEquals(expected, values.get(0));
     }
 
+    @Test
+    public void filterOne() {
+        Proxy toTest = new Proxy();
+
+        String[] filtered = toTest.filter(new String[] {"", "here", "", "the", "", "fish"});
+
+        assertArrayEquals(new String[] {"here", "the", "fish"}, filtered);
+    }
+
+    @Test
+    public void isRecursiveCallToProxy() {
+        Proxy toTest = new Proxy();
+
+        assertFalse(toTest.isRecursiveCallToProxy("/a/b/c", "/a/b/c/d"));
+        assertFalse(toTest.isRecursiveCallToProxy("/a/b/c", "/a/b/d"));
+        assertFalse(toTest.isRecursiveCallToProxy("", "a"));
+        assertTrue(toTest.isRecursiveCallToProxy("/a/b/c/d", ""));
+        assertTrue(toTest.isRecursiveCallToProxy("a/b/c", "/a/b/c"));
+        assertTrue(toTest.isRecursiveCallToProxy("a/b/c/d", "/a/b/c"));
+    }
+
+    @Test
+    public void isCharsetRequiredForContentType() {
+        Proxy toTest = new Proxy();
+        toTest.setRequireCharsetContentTypes(Arrays.asList(new String[] {"zebu", "long"}));
+
+        assertTrue(toTest.isCharsetRequiredForContentType("Zebu;youpi"));
+        assertTrue(toTest.isCharsetRequiredForContentType("LONG"));
+        assertFalse(toTest.isCharsetRequiredForContentType("ascii;long"));
+    }
+
+    @Test
+    public void charsetForName() {
+        assertEquals("US-ASCII", Charset.forName("us-ascii").displayName());
+
+        boolean thrown = false;
+        try {
+            Charset dummy = Charset.forName(null);
+        } catch (Throwable t) {
+            thrown = true;
+        }
+
+        assertTrue(thrown);
+
+        thrown = false;
+        try {
+            Charset dummy = Charset.forName("momo");
+        } catch (Throwable t) {
+            thrown = true;
+        }
+        assertTrue(thrown);
+    }
+
+    @Test
+    public void attemptingToReadCharsetFromXml() {
+        String toParse = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+        String toParse2 = "<?xml version=\'1.0\' encoding=\'UTF-8\'?>";
+        String toParse3 = "<?xml version=\'1.0\' encoding=\'Ehj_.-\'\"coin\"?>";
+
+        Proxy toTest = new Proxy();
+
+        assertEquals("UTF-8", toTest.extractCharsetAsFromXmlNode(toParse));
+        assertEquals("UTF-8", toTest.extractCharsetAsFromXmlNode(toParse2));
+        assertEquals("Ehj_.-", toTest.extractCharsetAsFromXmlNode(toParse3));
+    }
 }
