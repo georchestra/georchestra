@@ -115,7 +115,7 @@
 
     <!-- DataSource used for the ogc-server-stats OGC request stats logger -->
     <bean id="ogcStatsDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
-        <property name="jdbcUrl" value="${jdbcURL}"/>
+        <property name="jdbcUrl" value="jdbc:postgresql://${pgsqlHost}:${pgsqlPort}/${pgsqlDatabase}"/>
         <property name="user" value="${pgsqlUser}"/>
         <property name="password" value="${pgsqlPassword}"/>
         <property name="driverClass" value="org.postgresql.Driver"/>

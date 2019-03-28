@@ -70,7 +70,7 @@ public class PasswordRecoverySurvivesDatabaseRestartIT {
 
     private @Value("${dataSource.maxPoolSize}") int maxPoolSize;
 
-    private @Value("${jdbcUrl}") String pgConnectionUrl;
+    private @Value("jdbc:postgresql://${pgsqlHost}:${pgsqlPort}/${pgsqlDatabase}") String pgConnectionUrl;
 
     private @Autowired PasswordRecoveryFormController controller;
 

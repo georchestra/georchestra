@@ -28,7 +28,7 @@
 
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
         <property name="driverClass" value="org.postgresql.Driver"/>
-        <property name="jdbcUrl" value="${jdbcUrl}"/>
+        <property name="jdbcUrl" value="jdbc:postgresql://${pgsqlHost}:${pgsqlPort}/${pgsqlDatabase}"/>
         <property name="user" value="${pgsqlUser}"/>
         <property name="password" value="${pgsqlPassword}"/>
         <property name="initialPoolSize" value="1"/>
