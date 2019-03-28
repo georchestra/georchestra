@@ -101,8 +101,8 @@
         p:principalIdAttribute="uid"
         p:connectionFactory-ref="connectionFactory">
         <constructor-arg ref="authenticator" />
-        <constructor-arg value="${ldap.admin.username:cn=admin,dc=georchestra,dc=org}" />
-        <constructor-arg value="${ldap.admin.password:secret}" />
+        <constructor-arg value="${ldapAdminDn}" />
+        <constructor-arg value="${ldapAdminPassword}" />
         <constructor-arg value="${ldap.authn.roleSearchBaseDn:ou=roles,dc=georchestra,dc=org}" />
         <constructor-arg value="${ldap.authn.roleSearchFilter:(member=uid={1},ou=users,dc=georchestra,dc=org)}" />
         <constructor-arg value="${ldap.authn.roleRoleAttribute:cn}" />
@@ -141,8 +141,8 @@
         <property name="ldapUrl" value="ldap://${ldapHost}:${ldapPort}"/>
         <property name="connectTimeout" value="${ldap.connectTimeout:30000}"/>
         <property name="useStartTLS" value="${ldap.useStartTLS:false}"/>
-        <property name="username" value="${ldap.admin.username:cn=admin,dc=georchestra,dc=org}"/>
-        <property name="password" value="${ldap.admin.password:secret}"/>
+        <property name="username" value="${ldapAdminDn}"/>
+        <property name="password" value="${ldapAdminPassword}"/>
         <property name="roleSearchBaseDn" value="${ldap.authn.roleSearchBaseDn:ou=roles,dc=georchestra,dc=org}"/>
     </bean>
 

@@ -65,8 +65,8 @@
   <bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
     <property name="url" value="ldap://${ldapHost}:${ldapPort}"/>
     <property name="base" value="${ldapBaseDn}"/>
-    <property name="userDn" value="${ldapAdminDn:cn=admin,dc=georchestra,dc=org}"/>
-    <property name="password" value="${ldap.admin.password:secret}"/>
+    <property name="userDn" value="${ldapAdminDn}"/>
+    <property name="password" value="${ldapAdminPassword}"/>
   </bean>
 
   <bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate">
