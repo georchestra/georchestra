@@ -103,8 +103,8 @@
         <constructor-arg ref="authenticator" />
         <constructor-arg value="${ldapAdminDn}" />
         <constructor-arg value="${ldapAdminPassword}" />
-        <constructor-arg value="${ldap.authn.roleSearchBaseDn:ou=roles,dc=georchestra,dc=org}" />
-        <constructor-arg value="${ldap.authn.roleSearchFilter:(member=uid={1},ou=users,dc=georchestra,dc=org)}" />
+        <constructor-arg value="${ldapRolesRdn},${ldapBaseDn}" />
+        <constructor-arg value="${ldap.authn.roleSearchFilter:(member=uid={1},${ldapUsersRdn},${ldapBaseDn})}" />
         <constructor-arg value="${ldap.authn.roleRoleAttribute:cn}" />
 
     </bean>
@@ -143,7 +143,7 @@
         <property name="useStartTLS" value="${ldap.useStartTLS:false}"/>
         <property name="username" value="${ldapAdminDn}"/>
         <property name="password" value="${ldapAdminPassword}"/>
-        <property name="roleSearchBaseDn" value="${ldap.authn.roleSearchBaseDn:ou=roles,dc=georchestra,dc=org}"/>
+        <property name="roleSearchBaseDn" value="${ldapRolesRdn},${ldapBaseDn}"/>
     </bean>
 
     <bean id="connectionPool" class="org.ldaptive.pool.BlockingConnectionPool"

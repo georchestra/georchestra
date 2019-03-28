@@ -76,14 +76,14 @@
   <bean id="roleDao" class="org.georchestra.console.ds.RoleDaoImpl">
     <property name="ldapTemplate" ref="ldapTemplate"/>
     <property name="basePath" value="${ldapBaseDn}"/>
-    <property name="roleSearchBaseDN" value="${roleSearchBaseDN:ou=roles}"/>
+    <property name="roleSearchBaseDN" value="${ldapRolesRdn}"/>
   </bean>
 
   <bean id="orgsDao" class="org.georchestra.console.ds.OrgsDao">
     <property name="ldapTemplate" ref="ldapTemplate"/>
     <property name="basePath" value="${ldapBaseDn}"/>
     <property name="orgTypeValues" value="${orgTypeValues:Association,Company,NGO,Individual,Other}"/>
-    <property name="orgSearchBaseDN" value="${orgSearchBaseDN:ou=orgs}"/>
+    <property name="orgSearchBaseDN" value="${ldapOrgsRdn}"/>
     <property name="pendingOrgSearchBaseDN" value="${pendingOrgSearchBaseDN:ou=pendingorgs}"/>
   </bean>
 
@@ -92,9 +92,9 @@
     <property name="basePath" value="${ldapBaseDn}"/>
     <property name="userSearchBaseDN" value="${ldapUsersRdn}"/>
     <property name="pendingUserSearchBaseDN" value="${pendingUserSearchBaseDN:ou=pendingusers}"/>
-    <property name="orgSearchBaseDN" value="${orgSearchBaseDN:ou=orgs}"/>
+    <property name="orgSearchBaseDN" value="${ldapOrgsRdn}"/>
     <property name="pendingOrgSearchBaseDN" value="${pendingOrgSearchBaseDN:ou=pendingorgs}"/>
-    <property name="roleSearchBaseDN" value="${roleSearchBaseDN:ou=roles}"/>
+    <property name="roleSearchBaseDN" value="${ldapRolesRdn}"/>
   </bean>
 
   <bean class="org.georchestra.console.ws.backoffice.users.UserRule">
