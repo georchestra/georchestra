@@ -170,7 +170,7 @@
        | FormatDnResolver is preferable for directories that support it, such as Active Directory.
        -->
     <bean id="pooledSearchDnResolver" class="org.ldaptive.auth.PooledSearchDnResolver"
-        p:baseDn="${ldap.authn.userSearchBaseDn:ou=users,dc=georchestra,dc=org}"
+        p:baseDn="${ldapUsersRdn},${ldapBaseDn}"
         p:allowMultipleDns="false"
         p:connectionFactory-ref="pooledLdapConnectionFactory"
         p:userFilter="${ldap.authn.searchFilter:(uid={user})}" />

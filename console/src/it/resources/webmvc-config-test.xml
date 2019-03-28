@@ -89,7 +89,7 @@
   <bean id="accountDao" class="org.georchestra.console.ds.AccountDaoImpl" init-method="init">
     <constructor-arg ref="ldapTemplate"/>
     <property name="basePath" value="${ldapBaseDn}"/>
-    <property name="userSearchBaseDN" value="${userSearchBaseDN:ou=users}"/>
+    <property name="userSearchBaseDN" value="${ldapUsersRdn}"/>
     <property name="pendingUserSearchBaseDN" value="${pendingUserSearchBaseDN:ou=pendingusers}"/>
     <property name="orgSearchBaseDN" value="${orgSearchBaseDN:ou=orgs}"/>
     <property name="pendingOrgSearchBaseDN" value="${pendingOrgSearchBaseDN:ou=pendingorgs}"/>

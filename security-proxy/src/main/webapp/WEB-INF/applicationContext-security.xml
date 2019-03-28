@@ -133,7 +133,7 @@
      </bean>
 
     <bean id="ldapUserSearch" class="org.springframework.security.ldap.search.FilterBasedLdapUserSearch">
-        <constructor-arg index="0" value="${userSearchBaseDN:ou=users}"/>
+        <constructor-arg index="0" value="${ldapUsersRdn}"/>
         <constructor-arg index="1" value="${userSearchFilter:(uid={0})}"/>
         <constructor-arg index="2" ref="contextSource" />
     </bean>

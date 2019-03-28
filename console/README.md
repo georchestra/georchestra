@@ -241,6 +241,6 @@ Notes
 
 All emails sent by the application should be configurable by the way of templates, as for extractorapp.
 
-The application should be able to find roles and users by the way of filters such as the ones used by the cas (have a look at the [cas maven filters](../config/defaults/cas-server-webapp/maven.filter#L4) and defined by the way of the variables shared.ldap.userSearchBaseDN and shared.ldap.roleSearchBaseDN defined in [config/shared.maven.filters](../config/shared.maven.filters#L10)
+The application should be able to find roles and users by the way of filters defined using the properties ldapUsersRdn and ldapRolesRdn in [default.properties](https://github.com/georchestra/datadir/blob/master/default.properties)
 
 The userPassword LDAP field should be SSHA encrypted on creation/update.
