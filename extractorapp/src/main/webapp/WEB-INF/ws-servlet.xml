@@ -40,7 +40,7 @@
     </bean>
 
     <bean id="extractor-controller" init-method="validateConfig" class="org.georchestra.extractorapp.ws.extractor.ExtractorController">
-        <property name="publicUrl" value="${publicUrl}"/>
+        <property name="publicUrl" value="${scheme}://${domainName}"/>
         <property name="responseTemplateFile" value="/WEB-INF/templates/extractor-http-response-template.xml"/>
         <property name="emailFactory" ref="emailFactory"/>
         <property name="reponseMimeType" value="application/xml"/>
@@ -82,7 +82,7 @@
         <property name="extraKeywordsFile" value="/org/georchestra/extractorapp/i18n/extra_keywords_en.properties" />
         <property name="emailSubject" value="${emailSubject:[${instanceName}] Your extraction request}"/>
         <property name="language" value="${language}"/>
-        <property name="publicUrl" value="${publicUrl}"/>
+        <property name="publicUrl" value="${scheme}://${domainName}"/>
         <property name="instanceName" value="${instanceName}"/>
     </bean>
 

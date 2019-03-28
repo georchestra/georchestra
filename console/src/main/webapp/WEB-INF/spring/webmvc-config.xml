@@ -230,7 +230,7 @@
     <property name="accountUidRenamedEmailSubject" value="${subject.account.uid.renamed:[${instanceName}] New login for your account}" />
     <property name="newAccountNotificationEmailFile" value="/WEB-INF/templates/newaccount-notification-template.txt"/>
     <property name="newAccountNotificationEmailSubject" value="${subject.new.account.notification:[${instanceName}] New account created}"/>
-    <property name="publicUrl" value="${publicUrl}"/>
+    <property name="publicUrl" value="${scheme}://${domainName}"/>
     <property name="instanceName" value="${instanceName}"/>
   </bean>
 
