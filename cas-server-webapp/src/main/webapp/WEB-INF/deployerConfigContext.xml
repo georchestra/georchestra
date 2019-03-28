@@ -117,7 +117,7 @@
        | See http://www.ldaptive.org/docs/guide/connections for more information.
        -->
     <bean id="connectionConfig" class="org.ldaptive.ConnectionConfig"
-        p:ldapUrl="${ldap.url:ldap://127.0.1.1:389}"
+        p:ldapUrl="ldap://${ldapHost}:${ldapPort}"
         p:connectTimeout="${ldap.connectTimeout:30000}"
         p:useStartTLS="${ldap.useStartTLS:false}" />
 
@@ -138,7 +138,7 @@
     <bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
 
     <bean id="waitForLdap" class="org.georchestra.cas.ldap.WaitForLdap" init-method="test">
-        <property name="ldapUrl" value="${ldap.url:ldap://127.0.1.1:389}"/>
+        <property name="ldapUrl" value="ldap://${ldapHost}:${ldapPort}"/>
         <property name="connectTimeout" value="${ldap.connectTimeout:30000}"/>
         <property name="useStartTLS" value="${ldap.useStartTLS:false}"/>
         <property name="username" value="${ldap.admin.username:cn=admin,dc=georchestra,dc=org}"/>

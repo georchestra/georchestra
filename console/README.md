@@ -158,7 +158,8 @@ Integration tests are run after `test` and `package`, and consists of the `pre-i
 See the `pom.xml` file to check how the `docker-maven-plugin` is configured. It essentially launches the two mentioned containers and uses dynamic port mapping on port `389` for `georchestra/ldap` and port `5432` for `georchestra/database`. These mapped ports are then exposed by the `maven-failsafe-plugin` (the one used to run integration tests) as environment variables `ldap_port` and `psql_port` to the test JVM, which in turn are picked up by Spring while resolving `src/it/resources/console-it.properties` property source:
 
 ```
-ldapUrl=ldap://localhost:${ldap_port}
+ldapHost=localhost
+ldapPort=${ldap_port}
 pgsqlHost=localhost
 pgsqlPort=${psql_port}
 pgsqlDatabase=georchestra
