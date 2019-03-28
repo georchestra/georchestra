@@ -63,7 +63,7 @@
   <!-- LDAP connection -->
   <bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
     <property name="url" value="ldap://${ldapHost}:${ldapPort}"/>
-    <property name="base" value="${baseDN:dc=georchestra,dc=org}"/>
+    <property name="base" value="${ldapBaseDn}"/>
     <property name="userDn" value="${ldapAdminDn:cn=admin,dc=georchestra,dc=org}"/>
     <property name="password" value="${ldap.admin.password:secret}"/>
   </bean>
@@ -74,13 +74,13 @@
 
   <bean id="roleDao" class="org.georchestra.console.ds.RoleDaoImpl">
     <property name="ldapTemplate" ref="ldapTemplate"/>
-    <property name="basePath" value="${baseDN:dc=georchestra,dc=org}"/>
+    <property name="basePath" value="${ldapBaseDn}"/>
     <property name="roleSearchBaseDN" value="${roleSearchBaseDN:ou=roles}"/>
   </bean>
 
   <bean id="orgsDao" class="org.georchestra.console.ds.OrgsDao">
     <property name="ldapTemplate" ref="ldapTemplate"/>
-    <property name="basePath" value="${baseDN:dc=georchestra,dc=org}"/>
+    <property name="basePath" value="${ldapBaseDn}"/>
     <property name="orgTypeValues" value="${orgTypeValues:Association,Company,NGO,Individual,Other}"/>
     <property name="orgSearchBaseDN" value="${orgSearchBaseDN:ou=orgs}"/>
     <property name="pendingOrgSearchBaseDN" value="${pendingOrgSearchBaseDN:ou=pendingorgs}"/>
@@ -88,7 +88,7 @@
 
   <bean id="accountDao" class="org.georchestra.console.ds.AccountDaoImpl" init-method="init">
     <constructor-arg ref="ldapTemplate"/>
-    <property name="basePath" value="${baseDN:dc=georchestra,dc=org}"/>
+    <property name="basePath" value="${ldapBaseDn}"/>
     <property name="userSearchBaseDN" value="${userSearchBaseDN:ou=users}"/>
     <property name="pendingUserSearchBaseDN" value="${pendingUserSearchBaseDN:ou=pendingusers}"/>
     <property name="orgSearchBaseDN" value="${orgSearchBaseDN:ou=orgs}"/>
