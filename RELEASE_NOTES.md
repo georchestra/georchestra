@@ -2,8 +2,86 @@ The development branch is master. It can be used for testing and reporting
 errors.
 
 For production systems, you are advised to use the stable branch (currently
-18.06).
+18.12).
 This branch receives bug fixes as they arrive, during 12 months at least.
+
+
+Version 18.12
+=============
+
+This release comes with numerous improvements regarding stability, security & ease of use.
+Many thanks to [CRAIG](https://www.craig.fr/), [GeoGrandEst](https://www.geograndest.fr/), [Deutsche Telekom](https://www.telekom.com) and others for the contributions.
+Upgrading is highly recommended !
+
+Major highlights:
+ * Many improvements in the console application to ease user management
+ * Support for S3 and S3-like hosted [cloud optimized geotiff](https://www.cogeo.org/) files
+ * Configuration made simple with factorized properties across modules & sensible defaults
+ * Improved stability of database and LDAP connection pools
+
+New features:
+ * geoserver - support for `s3-geotiff` coverage stores - [#2543](https://github.com/georchestra/georchestra/issues/2543) with [georchestra/datadir#140](https://github.com/georchestra/datadir/pull/140)
+ * console - manage organization members from any organization page - [#2080](https://github.com/georchestra/georchestra/issues/2080)
+ * console - allow removal of a single feature from the organization area - [#2099](https://github.com/georchestra/georchestra/issues/2099)
+ * console - user page shows organization area & members list - [#2125](https://github.com/georchestra/georchestra/issues/2125)
+ * console - import/export organization area as csv - [#2100](https://github.com/georchestra/georchestra/issues/2100)
+ * console - allow an administrator to set the login field readonly on the account creation page - [#2162](https://github.com/georchestra/georchestra/issues/2162)
+
+Enhancements:
+ * console - pattern enforced for login string - [#2448](https://github.com/georchestra/georchestra/issues/2448)
+ * console - added the possibility to disable recaptcha for account creation - [#2239](https://github.com/georchestra/georchestra/issues/2239)
+ * console - docker integration tests - [#2403](https://github.com/georchestra/georchestra/issues/2403)
+ * console - user organization displayed as link - [#2452](https://github.com/georchestra/georchestra/issues/2452)
+ * console - template emails explained - [georchestra/datadir#84](https://github.com/georchestra/datadir/pull/84)
+ * geonetwork - docker entrypoint waits for db & ldap hosts as defined in datadir - [georchestra/geonetwork#110](https://github.com/georchestra/geonetwork/issues/110)
+ * geonetwork - avoid sending JSESSIONID as part of the URL - [georchestra/geonetwork#109](https://github.com/georchestra/geonetwork/issues/109)
+ * geonetwork - decreased docker image size - [georchestra/geonetwork#92](https://github.com/georchestra/geonetwork/issues/92)
+ * geonetwork - improve map thumbnails display in homepage - [georchestra/geonetwork#86](https://github.com/georchestra/geonetwork/issues/86)
+ * geoserver - avoid sending JSESSIONID as part of the URL - [georchestra/geoserver#17](https://github.com/georchestra/geoserver/issues/17)
+ * geowebcache - ability to host the configuration file in another directory than the tile cache - [#2555](https://github.com/georchestra/georchestra/issues/2555)
+ * mapfishapp - added ability to configure maximum file upload size - [georchestra/datadir#115](https://github.com/georchestra/datadir/pull/115)
+ * proxy - add documentation regarding application integration - [#2166](https://github.com/georchestra/georchestra/issues/2166)
+ * proxy - change for ASYNC apache http client - [#2219](https://github.com/georchestra/georchestra/issues/2219)
+ * postgresql 11 - [#2218](https://github.com/georchestra/georchestra/issues/2218)
+ * all - harmonize JDBC configuration and best practices - [#2414](https://github.com/georchestra/georchestra/issues/2414)
+ * all - harmonize spring and other important dependency versions - [#2405](https://github.com/georchestra/georchestra/issues/2405)
+
+Bug fixes:
+ * console - update delegations when user or role ldap uid changes - [#2473](https://github.com/georchestra/georchestra/issues/2473)
+ * console - misleading translations for the `title` field - [#2468](https://github.com/georchestra/georchestra/issues/2468)
+ * console - IE11 does not refresh the user listing after user deletion - [#1695](https://github.com/georchestra/georchestra/issues/1695)
+ * console - renaming an organization does not rename the corresponding LDAP objects - [#2107](https://github.com/georchestra/georchestra/issues/2107)
+ * extractor - addon should not modify map extent when extracting - [#2232](https://github.com/georchestra/georchestra/issues/2232)
+ * geonetwork - fixed error saving group -  [georchestra/geonetwork#104](https://github.com/georchestra/geonetwork/issues/104)
+ * geonetwork - fixed 404 on custom locales files - [georchestra/geonetwork#100](https://github.com/georchestra/geonetwork/issues/100)
+ * geonetwork - disabled directory listing - [georchestra/geonetwork#80](https://github.com/georchestra/geonetwork/issues/80)
+ * geonetwork - avoid trailing slash for extraction service- [georchestra/geonetwork#81](https://github.com/georchestra/geonetwork/issues/81)
+ * geonetwork - make file uploads private by default - [georchestra/geonetwork#82](https://github.com/georchestra/geonetwork/issues/82)
+ * geonetwork - mix latest maps grid overflow - [georchestra/geonetwork#83](https://github.com/georchestra/geonetwork/issues/83)
+ * geonetwork - fix "impossible to connect to service" on metadata page - [georchestra/geonetwork#84](https://github.com/georchestra/geonetwork/issues/84)
+ * geonetwork - point JCS diskPath to java tmpdir - [georchestra/geonetwork#87](https://github.com/georchestra/geonetwork/issues/87)
+ * ldap - fix docker image build after upstream changes - [#2190](https://github.com/georchestra/georchestra/issues/2190)
+ * mapfishapp - fixed vector layer query error - [#2501](https://github.com/georchestra/georchestra/issues/2501)
+ * mapfishapp - fixed printing with https layers over SNI - [#2183](https://github.com/georchestra/georchestra/issues/2183)
+ * mapfishapp - fixed the language we extend in GeoExt i18n - [#2356](https://github.com/georchestra/georchestra/issues/2356)
+ * mapfishapp - explicitly call the Python2 interpreter with virtualenv - [#2247](https://github.com/georchestra/georchestra/issues/2247)
+ * mapfishapp - fixed reading shapefiles with spaces in their names - [#2240](https://github.com/georchestra/georchestra/issues/2240)
+ * mapfishapp - enforce SLD 1.0.0 when the style comes from the viewer - [#2175](https://github.com/georchestra/georchestra/issues/2175)
+ * makefile - fixed missing geoserver extensions - [#2549](https://github.com/georchestra/georchestra/issues/2549)
+ * ogc-server-statistics - fixed ogc-server-statistics to pass all tests - [#2392](https://github.com/georchestra/georchestra/issues/2392)
+ * ogc-server-statistics - fixed logging WCS 2.0.1 requests fails to persist coverageid - [#2049](https://github.com/georchestra/georchestra/issues/2049)
+ * proxy - handle response headers before handling redirects - [#2516](https://github.com/georchestra/georchestra/issues/2516)
+ * proxy - fixed duplicate Location header when proxy handles redirects - [#2413](https://github.com/georchestra/georchestra/issues/2413)
+ * all - fixed missing Jetty module leading to unexpected redirections to http - [#2165](https://github.com/georchestra/georchestra/issues/2165)
+
+Deprecations:
+ * mapfishapp - removed support for MIF/MID file upload - [#2315](https://github.com/georchestra/georchestra/issues/2315)
+ * config module 100% removed - client-side overrides should be done by forking the project or extending docker images
+ * `PENDING` role does not exist anymore - pending users are stored in a different organizational unit - see [#2108](https://github.com/georchestra/georchestra/issues/2108)
+
+
+Read [how to migrate from 18.06 to 18.12](migrations/18.12/README.md).
+
 
 Version 18.06
 =============

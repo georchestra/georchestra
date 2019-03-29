@@ -55,7 +55,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
     </bean>
 
     <bean id="gwcURLMangler" class="org.geowebcache.util.GeorchestraURLMangler">
-        <constructor-arg value="${publicUrl}" />
+        <constructor-arg value="${scheme}://${domainName}" />
         <constructor-arg value="${contextPath:/geowebcache}" />
     </bean>
 

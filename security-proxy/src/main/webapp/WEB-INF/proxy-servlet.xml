@@ -25,7 +25,7 @@
     </bean>
 
     <bean id="proxy"  init-method="init" class="org.georchestra.security.Proxy">
-          <property name="publicUrl" value="${publicUrl}"/>
+          <property name="publicUrl" value="${scheme}://${domainName}"/>
           <property name="headerManagement" ref="headerManagementBean"/>
           <property name="defaultCharset" value="UTF-8"/>
           <property name="defaultTarget" value="${defaultTarget:/header/}" />
@@ -71,7 +71,7 @@
              own referrer header
 
              Comment out property to use client referrer instead of this host -->
-        <property name="referer" value="${publicUrl}/"/>
+        <property name="referer" value="${scheme}://${domainName}/"/>
         <property name="headerProviders">
             <list>
                 <bean class="org.georchestra.security.TrustedProxyRequestHeaderProvider" />
@@ -81,7 +81,7 @@
                 </bean>
                 <bean class="org.georchestra.security.LdapUserDetailsRequestHeaderProvider" init-method="init">
                     <constructor-arg index="0" ref="ldapUserSearch"/>
-                    <constructor-arg index="1" value="${orgSearchBaseDN:ou=orgs}"/>
+                    <constructor-arg index="1" value="${ldapOrgsRdn}"/>
                     <constructor-arg index="2">
                         <map>
                         
@@ -115,9 +115,9 @@
 
     <!-- DataSource used for the ogc-server-stats OGC request stats logger -->
     <bean id="ogcStatsDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
-        <property name="jdbcUrl" value="${ogcStats.jdbcURL:jdbc:postgresql://database:5432/georchestra}"/>
-        <property name="user" value="${ogcStats.databaseUser:georchestra}"/>
-        <property name="password" value="${ogcStats.databasePassword:georchestra}"/>
+        <property name="jdbcUrl" value="jdbc:postgresql://${pgsqlHost}:${pgsqlPort}/${pgsqlDatabase}"/>
+        <property name="user" value="${pgsqlUser}"/>
+        <property name="password" value="${pgsqlPassword}"/>
         <property name="driverClass" value="org.postgresql.Driver"/>
         <property name="initialPoolSize" value="1"/>
         <property name="minPoolSize" value="${ogcStats.minPoolSize:1}"/>
