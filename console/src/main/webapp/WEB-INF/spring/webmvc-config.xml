@@ -63,10 +63,10 @@
 
   <!-- LDAP connection -->
   <bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
-    <property name="url" value="${ldapUrl:ldap://localhost:389}"/>
-    <property name="base" value="${baseDN:dc=georchestra,dc=org}"/>
-    <property name="userDn" value="${ldapAdminDn:cn=admin,dc=georchestra,dc=org}"/>
-    <property name="password" value="${ldap.admin.password:secret}"/>
+    <property name="url" value="ldap://${ldapHost}:${ldapPort}"/>
+    <property name="base" value="${ldapBaseDn}"/>
+    <property name="userDn" value="${ldapAdminDn}"/>
+    <property name="password" value="${ldapAdminPassword}"/>
   </bean>
 
   <bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate">
@@ -75,26 +75,26 @@
 
   <bean id="roleDao" class="org.georchestra.console.ds.RoleDaoImpl">
     <property name="ldapTemplate" ref="ldapTemplate"/>
-    <property name="basePath" value="${baseDN:dc=georchestra,dc=org}"/>
-    <property name="roleSearchBaseDN" value="${roleSearchBaseDN:ou=roles}"/>
+    <property name="basePath" value="${ldapBaseDn}"/>
+    <property name="roleSearchBaseDN" value="${ldapRolesRdn}"/>
   </bean>
 
   <bean id="orgsDao" class="org.georchestra.console.ds.OrgsDao">
     <property name="ldapTemplate" ref="ldapTemplate"/>
-    <property name="basePath" value="${baseDN:dc=georchestra,dc=org}"/>
+    <property name="basePath" value="${ldapBaseDn}"/>
     <property name="orgTypeValues" value="${orgTypeValues:Association,Company,NGO,Individual,Other}"/>
-    <property name="orgSearchBaseDN" value="${orgSearchBaseDN:ou=orgs}"/>
+    <property name="orgSearchBaseDN" value="${ldapOrgsRdn}"/>
     <property name="pendingOrgSearchBaseDN" value="${pendingOrgSearchBaseDN:ou=pendingorgs}"/>
   </bean>
 
   <bean id="accountDao" class="org.georchestra.console.ds.AccountDaoImpl" init-method="init">
     <constructor-arg ref="ldapTemplate"/>
-    <property name="basePath" value="${baseDN:dc=georchestra,dc=org}"/>
-    <property name="userSearchBaseDN" value="${userSearchBaseDN:ou=users}"/>
+    <property name="basePath" value="${ldapBaseDn}"/>
+    <property name="userSearchBaseDN" value="${ldapUsersRdn}"/>
     <property name="pendingUserSearchBaseDN" value="${pendingUserSearchBaseDN:ou=pendingusers}"/>
-    <property name="orgSearchBaseDN" value="${orgSearchBaseDN:ou=orgs}"/>
+    <property name="orgSearchBaseDN" value="${ldapOrgsRdn}"/>
     <property name="pendingOrgSearchBaseDN" value="${pendingOrgSearchBaseDN:ou=pendingorgs}"/>
-    <property name="roleSearchBaseDN" value="${roleSearchBaseDN:ou=roles}"/>
+    <property name="roleSearchBaseDN" value="${ldapRolesRdn}"/>
   </bean>
 
   <bean class="org.georchestra.console.ws.backoffice.users.UserRule">
@@ -116,16 +116,16 @@
   <bean id="userTokenDao" class="org.georchestra.console.ds.UserTokenDao"/>
 
   <bean id="waitForDb" class="org.georchestra.commons.WaitForDb" init-method="test">
-    <property name="url" value="${psql.url:jdbc:postgresql://localhost:5432/georchestra}"/>
-    <property name="username" value="${psql.user:georchestra}"/>
-    <property name="password" value="${psql.pass:georchestra}"/>
+    <property name="url" value="jdbc:postgresql://${pgsqlHost}:${pgsqlPort}/${pgsqlDatabase}"/>
+    <property name="username" value="${pgsqlUser}"/>
+    <property name="password" value="${pgsqlPassword}"/>
     <property name="driverClassName" value="org.postgresql.Driver"/>
   </bean>
 
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" depends-on="waitForDb">
-        <property name="jdbcUrl" value="${psql.url:jdbc:postgresql://localhost:5432/georchestra}"/>
-        <property name="user" value="${psql.user:georchestra}"/>
-        <property name="password" value="${psql.pass:georchestra}"/>
+        <property name="jdbcUrl" value="jdbc:postgresql://${pgsqlHost}:${pgsqlPort}/${pgsqlDatabase}"/>
+        <property name="user" value="${pgsqlUser}"/>
+        <property name="password" value="${pgsqlPassword}"/>
         <property name="driverClass" value="org.postgresql.Driver"/>
         <property name="initialPoolSize" value="1"/>
         <property name="minPoolSize" value="${dataSource.minPoolSize:2}"/>
@@ -139,9 +139,9 @@
 
    <!--<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">-->
        <!--<property name="driverClassName" value="org.postgresql.Driver"/>-->
-       <!--<property name="url" value="${psql.url:jdbc:postgresql://localhost:5432/georchestra}"/>-->
-       <!--<property name="username" value="${psql.user:georchestra}"/>-->
-       <!--<property name="password" value="${psql.pass:georchestra}"/>-->
+       <!--<property name="url" value="jdbc:postgresql://${pgsqlHost}:${pgsqlPort}/${pgsqlDatabase}"/>-->
+       <!--<property name="username" value="${pgsqlUser}"/>-->
+       <!--<property name="password" value="${pgsqlPassword}"/>-->
    <!--</bean>-->
 
    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
@@ -213,8 +213,8 @@
     <property name="smtpHost" value="${smtpHost:localhost}"/>
     <property name="smtpPort" value="${smtpPort:25}"/>
     <property name="emailHtml" value="${emailHtml:false}"/>
-    <property name="replyTo" value="${replyTo:georchestra+testadmin@georchestra.mydomain.org}"/>
-    <property name="from" value="${from:georchestra+testadmin@georchestra.mydomain.org}"/>
+    <property name="replyTo" value="${replyTo:${administratorEmail}}"/>
+    <property name="from" value="${from:${administratorEmail}}"/>
     <property name="bodyEncoding" value="UTF-8"/>
     <property name="subjectEncoding" value="UTF-8"/>
     <property name="templateEncoding" value="${templateEncoding:UTF-8}"/>
@@ -230,7 +230,7 @@
     <property name="accountUidRenamedEmailSubject" value="${subject.account.uid.renamed:[${instanceName}] New login for your account}" />
     <property name="newAccountNotificationEmailFile" value="/WEB-INF/templates/newaccount-notification-template.txt"/>
     <property name="newAccountNotificationEmailSubject" value="${subject.new.account.notification:[${instanceName}] New account created}"/>
-    <property name="publicUrl" value="${publicUrl}"/>
+    <property name="publicUrl" value="${scheme}://${domainName}"/>
     <property name="instanceName" value="${instanceName}"/>
   </bean>
 

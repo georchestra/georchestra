@@ -24,7 +24,7 @@
           <s:frame-options policy="SAMEORIGIN" />
         </s:headers>
         <s:anonymous granted-authority="ROLE_ANONYMOUS" />
-        <s:logout logout-success-url="${logout-success-url:${publicUrl}/cas/logout?fromgeorchestra}" />
+        <s:logout logout-success-url="${logout-success-url:${scheme}://${domainName}/cas/logout?fromgeorchestra}" />
         <s:csrf disabled="true" />
      </s:http>
 
@@ -117,9 +117,9 @@
 
     <!-- This bean points at the embedded directory server created by the ldap-server element above  -->
     <bean id="contextSource" class="org.springframework.security.ldap.DefaultSpringSecurityContextSource">
-        <constructor-arg value="${ldapUrl:ldap://localhost}/${baseDN:dc=georchestra,dc=org}"/>
-        <property name="userDn" value="${ldapAdminDn:cn=admin,dc=georchestra,dc=org}" />
-	    <property name="password" value="${ldap.admin.password:secret}" />
+        <constructor-arg value="ldap://${ldapHost}/${ldapBaseDn}"/>
+        <property name="userDn" value="${ldapAdminDn}" />
+	    <property name="password" value="${ldapAdminPassword}" />
         <property name="baseEnvironmentProperties">
 	        <map>
                 <entry>
@@ -133,16 +133,16 @@
      </bean>
 
     <bean id="ldapUserSearch" class="org.springframework.security.ldap.search.FilterBasedLdapUserSearch">
-        <constructor-arg index="0" value="${userSearchBaseDN:ou=users}"/>
+        <constructor-arg index="0" value="${ldapUsersRdn}"/>
         <constructor-arg index="1" value="${userSearchFilter:(uid={0})}"/>
         <constructor-arg index="2" ref="contextSource" />
     </bean>
 
     <bean id="LdapContextSource" class="org.springframework.ldap.core.support.LdapContextSource">
-        <property name="url" value="${ldapUrl:ldap://localhost}"/>
-        <property name="base" value="${baseDN:dc=georchestra,dc=org}"/>
-        <property name="userDn" value="${ldapAdminDn:cn=admin,dc=georchestra,dc=org}"/>
-        <property name="password" value="${ldap.admin.password:secret}"/>
+        <property name="url" value="ldap://${ldapHost}"/>
+        <property name="base" value="${ldapBaseDn}"/>
+        <property name="userDn" value="${ldapAdminDn}"/>
+        <property name="password" value="${ldapAdminPassword}"/>
     </bean>
 
     <bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate">
@@ -151,8 +151,8 @@
 
     <bean id="ldapAuthoritiesPopulator" class="org.springframework.security.ldap.userdetails.DefaultLdapAuthoritiesPopulator">
         <constructor-arg ref="contextSource" />
-        <constructor-arg value="${authoritiesBaseDN:ou=roles}" />
-        <property name="groupSearchFilter" value="${roleSearchFilter:(member=uid={1},ou=users,dc=georchestra,dc=org)}"/>
+        <constructor-arg value="${ldapRolesRdn}" />
+        <property name="groupSearchFilter" value="${roleSearchFilter:(member=uid={1},${ldapUsersRdn},${ldapBaseDn})}"/>
         <property name="rolePrefix" value="ROLE_"/>
         <property name="searchSubtree" value="true"/>
         <property name="convertToUpperCase" value="true"/>
@@ -193,7 +193,7 @@
     </bean>
 
     <bean id="casProcessingFilterEntryPoint" class="org.springframework.security.cas.web.CasAuthenticationEntryPoint">
-        <property name="loginUrl" value="${casLoginUrl:${publicUrl}/cas/login}"/>
+        <property name="loginUrl" value="${casLoginUrl:${scheme}://${domainName}/cas/login}"/>
         <property name="serviceProperties" ref="serviceProperties"/>
     </bean>
 
@@ -202,14 +202,14 @@
 		<property name="serviceProperties" ref="serviceProperties" />
 		<property name="ticketValidator">
 			<bean class="org.jasig.cas.client.validation.Cas20ServiceTicketValidator">
-				<constructor-arg index="0" value="${casTicketValidation:${publicUrl}/cas}" />
+				<constructor-arg index="0" value="${casTicketValidation:${scheme}://${domainName}/cas}" />
 			</bean>
 		</property>
 		<property name="key" value="security-proxy" />
 	</bean>
 
     <bean id="serviceProperties" class="org.springframework.security.cas.ServiceProperties">
-        <property name="service" value="${proxyCallback:${publicUrl}/login/cas}"/>
+        <property name="service" value="${proxyCallback:${scheme}://${domainName}/login/cas}"/>
         <property name="sendRenew" value="false"/>
     </bean>
 

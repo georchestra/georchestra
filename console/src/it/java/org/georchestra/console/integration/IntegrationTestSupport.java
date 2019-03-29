@@ -69,8 +69,8 @@ public @Service class IntegrationTestSupport extends ExternalResource {
     private @Value("${ldap_port}") int ldapPort;
 
     private @Value("${psql_port}") int psqlPort;
-    private @Value("${psql.user}") String psqlUser;
-    private @Value("${psql.pass}") String psqlPassword;
+    private @Value("${pgsqlUser}") String psqlUser;
+    private @Value("${pgsqlPassword}") String psqlPassword;
 
     private TestName testName = new TestName();
 

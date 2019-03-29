@@ -28,9 +28,9 @@
 
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
         <property name="driverClass" value="org.postgresql.Driver"/>
-        <property name="jdbcUrl" value="${psql.url:jdbc:postgresql://localhost:5432/georchestra}"/>
-        <property name="user" value="${psql.user:georchestra}"/>
-        <property name="password" value="${psql.pass:georchestra}"/>
+        <property name="jdbcUrl" value="jdbc:postgresql://${pgsqlHost}:${pgsqlPort}/${pgsqlDatabase}"/>
+        <property name="user" value="${pgsqlUser}"/>
+        <property name="password" value="${pgsqlPassword}"/>
         <property name="initialPoolSize" value="1"/>
         <property name="minPoolSize" value="${dataSource.minPoolSize:1}"/>
         <property name="maxPoolSize" value="${dataSource.maxPoolSize:5}"/>
@@ -42,14 +42,14 @@
     </bean>
 
     <bean id="populateProperties" class="org.georchestra.atlas.CamelPopulatePropertiesComponent">
-        <property name="baseUrl" value="${atlas.baseUrl:${publicUrl}/atlas}"/>
+        <property name="baseUrl" value="${atlas.baseUrl:${scheme}://${domainName}/atlas}"/>
     </bean>
 
     <bean id="specAsPdf" class="org.georchestra.atlas.CamelMapfishPrintComponent" init-method="init" />
 
     <bean id="prepareMail" class="org.georchestra.atlas.AtlasMailComponent" init-method="init">
-        <property name="georBaseUrl" value="${atlas.baseUrl:${publicUrl}/atlas}" />
-        <property name="emailFrom" value="${atlas.emailFrom:noreply+atlas@georchestra.org}" />
+        <property name="georBaseUrl" value="${atlas.baseUrl:${scheme}://${domainName}/atlas}" />
+        <property name="emailFrom" value="${atlas.emailFrom:${administratorEmail}}" />
         <property name="emailSubject" value="${atlas.emailSubject:[${instanceName}] Your Atlas request}" />
     </bean>
 

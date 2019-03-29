@@ -101,10 +101,10 @@
         p:principalIdAttribute="uid"
         p:connectionFactory-ref="connectionFactory">
         <constructor-arg ref="authenticator" />
-        <constructor-arg value="${ldap.admin.username:cn=admin,dc=georchestra,dc=org}" />
-        <constructor-arg value="${ldap.admin.password:secret}" />
-        <constructor-arg value="${ldap.authn.roleSearchBaseDn:ou=roles,dc=georchestra,dc=org}" />
-        <constructor-arg value="${ldap.authn.roleSearchFilter:(member=uid={1},ou=users,dc=georchestra,dc=org)}" />
+        <constructor-arg value="${ldapAdminDn}" />
+        <constructor-arg value="${ldapAdminPassword}" />
+        <constructor-arg value="${ldapRolesRdn},${ldapBaseDn}" />
+        <constructor-arg value="${ldap.authn.roleSearchFilter:(member=uid={1},${ldapUsersRdn},${ldapBaseDn})}" />
         <constructor-arg value="${ldap.authn.roleRoleAttribute:cn}" />
 
     </bean>
@@ -117,7 +117,7 @@
        | See http://www.ldaptive.org/docs/guide/connections for more information.
        -->
     <bean id="connectionConfig" class="org.ldaptive.ConnectionConfig"
-        p:ldapUrl="${ldap.url:ldap://127.0.1.1:389}"
+        p:ldapUrl="ldap://${ldapHost}:${ldapPort}"
         p:connectTimeout="${ldap.connectTimeout:30000}"
         p:useStartTLS="${ldap.useStartTLS:false}" />
 
@@ -138,12 +138,12 @@
     <bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
 
     <bean id="waitForLdap" class="org.georchestra.cas.ldap.WaitForLdap" init-method="test">
-        <property name="ldapUrl" value="${ldap.url:ldap://127.0.1.1:389}"/>
+        <property name="ldapUrl" value="ldap://${ldapHost}:${ldapPort}"/>
         <property name="connectTimeout" value="${ldap.connectTimeout:30000}"/>
         <property name="useStartTLS" value="${ldap.useStartTLS:false}"/>
-        <property name="username" value="${ldap.admin.username:cn=admin,dc=georchestra,dc=org}"/>
-        <property name="password" value="${ldap.admin.password:secret}"/>
-        <property name="roleSearchBaseDn" value="${ldap.authn.roleSearchBaseDn:ou=roles,dc=georchestra,dc=org}"/>
+        <property name="username" value="${ldapAdminDn}"/>
+        <property name="password" value="${ldapAdminPassword}"/>
+        <property name="roleSearchBaseDn" value="${ldapRolesRdn},${ldapBaseDn}"/>
     </bean>
 
     <bean id="connectionPool" class="org.ldaptive.pool.BlockingConnectionPool"
@@ -170,7 +170,7 @@
        | FormatDnResolver is preferable for directories that support it, such as Active Directory.
        -->
     <bean id="pooledSearchDnResolver" class="org.ldaptive.auth.PooledSearchDnResolver"
-        p:baseDn="${ldap.authn.userSearchBaseDn:ou=users,dc=georchestra,dc=org}"
+        p:baseDn="${ldapUsersRdn},${ldapBaseDn}"
         p:allowMultipleDns="false"
         p:connectionFactory-ref="pooledLdapConnectionFactory"
         p:userFilter="${ldap.authn.searchFilter:(uid={user})}" />

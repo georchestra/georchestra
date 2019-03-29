@@ -69,7 +69,7 @@
         p:order="1">
     <property name="attributes">
       <map>
-        <entry key="publicUrl" value="${publicUrl}" />
+        <entry key="publicUrl" value="${scheme}://${domainName}" />
         <entry key="instanceName" value="${instanceName}" />
         <entry key="consoleContextPath" value="${console.contextpath:/console}" />
         <entry key="headerHeight" value="${headerHeight}" />
