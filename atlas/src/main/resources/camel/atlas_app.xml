@@ -354,7 +354,7 @@
             <!-- Sets all the necessary properties to send a mail, see AtlasMailComponent Java class -->
             <to uri="bean:prepareMail" />
             <!-- Actually send the mail -->
-            <to uri="smtp://{{smtpHost:localhost}}:{{smtpPort:25}}/" />
+            <to uri="smtp://{{smtpHost}}:{{smtpPort}}/" />
         </route>
     </camelContext>
 </beans>

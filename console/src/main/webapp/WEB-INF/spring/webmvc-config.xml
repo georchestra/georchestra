@@ -210,8 +210,8 @@
 
   <!-- Email Factory configuration -->
   <bean id="emailFactory" class="org.georchestra.console.mailservice.EmailFactory" >
-    <property name="smtpHost" value="${smtpHost:localhost}"/>
-    <property name="smtpPort" value="${smtpPort:25}"/>
+    <property name="smtpHost" value="${smtpHost}"/>
+    <property name="smtpPort" value="${smtpPort}"/>
     <property name="emailHtml" value="${emailHtml:false}"/>
     <property name="replyTo" value="${replyTo:${administratorEmail}}"/>
     <property name="from" value="${from:${administratorEmail}}"/>
