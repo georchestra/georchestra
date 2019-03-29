@@ -77,7 +77,7 @@ Bug fixes:
 Deprecations:
  * mapfishapp - removed support for MIF/MID file upload - [#2315](https://github.com/georchestra/georchestra/issues/2315)
  * config module 100% removed - client-side overrides should be done by forking the project or extending docker images
- * `PENDING` role does not exist anymore - pending users are stored in a different organizational unit - see https://github.com/georchestra/georchestra/issues/2108
+ * `PENDING` role does not exist anymore - pending users are stored in a different organizational unit - see [#2108](https://github.com/georchestra/georchestra/issues/2108)
 
 
 Read [how to migrate from 18.06 to 18.12](migrations/18.12/README.md).
