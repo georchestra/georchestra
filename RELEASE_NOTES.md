@@ -2,11 +2,11 @@ The development branch is master. It can be used for testing and reporting
 errors.
 
 For production systems, you are advised to use the stable branch (currently
-18.12).
+19.04).
 This branch receives bug fixes as they arrive, during 12 months at least.
 
 
-Version 18.12
+Version 19.04
 =============
 
 This release comes with numerous improvements regarding stability, security & ease of use.
@@ -80,7 +80,7 @@ Deprecations:
  * `PENDING` role does not exist anymore - pending users are stored in a different organizational unit - see [#2108](https://github.com/georchestra/georchestra/issues/2108)
 
 
-Read [how to migrate from 18.06 to 18.12](migrations/18.12/README.md).
+Read [how to migrate from 18.06 to 19.04](migrations/19.04/README.md).
 
 
 Version 18.06

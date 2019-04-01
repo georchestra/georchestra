@@ -1,6 +1,6 @@
 # geOrchestra
 
-[![Build Status](https://travis-ci.org/georchestra/georchestra.svg?branch=18.06)](https://travis-ci.org/georchestra/georchestra)
+[![Build Status](https://travis-ci.org/georchestra/georchestra.svg?branch=19.04)](https://travis-ci.org/georchestra/georchestra)
 [![Codacy Badge](https://api.codacy.com/project/badge/grade/a879ac64588d4357ab72e79cd8026f99)](https://www.codacy.com/app/georchestra/georchestra)
 
 geOrchestra is a complete **Spatial Data Infrastructure** solution.
