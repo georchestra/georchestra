@@ -22,13 +22,13 @@
   <parent>
     <groupId>org.georchestra</groupId>
     <artifactId>root</artifactId>
-    <version>18.12</version>
+    <version>19.04</version>
   </parent>
   <artifactId>cas-server-webapp</artifactId>
   <packaging>war</packaging>
   <name>Jasig CAS Web Application</name>
   <properties>
-    <packageDatadirScmVersion>18.12</packageDatadirScmVersion>
+    <packageDatadirScmVersion>19.04</packageDatadirScmVersion>
     <server>generic</server>
     
     <!-- spring version revert start -->

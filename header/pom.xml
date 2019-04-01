@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.georchestra</groupId>
     <artifactId>root</artifactId>
-    <version>18.12</version>
+    <version>19.04</version>
   </parent>
   <artifactId>header</artifactId>
   <packaging>war</packaging>
@@ -12,7 +12,7 @@
   <url>http://www.georchestra.org</url>
   <properties>
     <finalName>header</finalName>
-    <packageDatadirScmVersion>18.12</packageDatadirScmVersion>
+    <packageDatadirScmVersion>19.04</packageDatadirScmVersion>
     <server>generic</server>
   </properties>
   <dependencies>

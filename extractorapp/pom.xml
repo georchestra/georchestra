@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.georchestra</groupId>
     <artifactId>root</artifactId>
-    <version>18.12</version>
+    <version>19.04</version>
   </parent>
   <artifactId>extractorapp</artifactId>
   <packaging>war</packaging>
@@ -12,7 +12,7 @@
   <url>http://www.georchestra.org</url>
   <properties>
     <maven.test.skip>false</maven.test.skip>
-    <packageDatadirScmVersion>18.12</packageDatadirScmVersion>
+    <packageDatadirScmVersion>19.04</packageDatadirScmVersion>
     <gt.version>9.2</gt.version>
     <server>generic</server>
   </properties>
