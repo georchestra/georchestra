@@ -1,4 +1,8 @@
 version: '2'
+volumes:
+    ldap_data:
+    ldap_config:
+
 services:
   ldap:
     image: georchestra/ldap
