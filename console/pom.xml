@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.georchestra</groupId>
     <artifactId>root</artifactId>
-    <version>18.12</version>
+    <version>19.04</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>console</artifactId>
@@ -15,7 +15,7 @@
     <skipIT>true</skipIT> <!-- disable integration tests by default, use the "it" profile to run them which enables them-->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <roo.version>1.1.5.RELEASE</roo.version>
-    <packageDatadirScmVersion>18.12</packageDatadirScmVersion>
+    <packageDatadirScmVersion>19.04</packageDatadirScmVersion>
     <server>generic</server>
   </properties>
   <repositories>

@@ -4,14 +4,14 @@
   <parent>
     <groupId>org.georchestra</groupId>
     <artifactId>geoserver-root</artifactId>
-    <version>18.12</version>
+    <version>19.04</version>
   </parent>
   <artifactId>geoserver-webapp</artifactId>
   <packaging>war</packaging>
   <name>geOrchestra GeoServer Web Application</name>
   <properties>
     <packageName>georchestra-geoserver</packageName>
-    <packageDatadirScmVersion>18.12</packageDatadirScmVersion>
+    <packageDatadirScmVersion>19.04</packageDatadirScmVersion>
   </properties>
   <dependencies>
     <dependency>
