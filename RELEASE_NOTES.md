@@ -57,7 +57,7 @@ Bug fixes:
  * geonetwork - disabled directory listing - [georchestra/geonetwork#80](https://github.com/georchestra/geonetwork/issues/80)
  * geonetwork - avoid trailing slash for extraction service- [georchestra/geonetwork#81](https://github.com/georchestra/geonetwork/issues/81)
  * geonetwork - make file uploads private by default - [georchestra/geonetwork#82](https://github.com/georchestra/geonetwork/issues/82)
- * geonetwork - mix latest maps grid overflow - [georchestra/geonetwork#83](https://github.com/georchestra/geonetwork/issues/83)
+ * geonetwork - fix latest maps grid overflow - [georchestra/geonetwork#83](https://github.com/georchestra/geonetwork/issues/83)
  * geonetwork - fix "impossible to connect to service" on metadata page - [georchestra/geonetwork#84](https://github.com/georchestra/geonetwork/issues/84)
  * geonetwork - point JCS diskPath to java tmpdir - [georchestra/geonetwork#87](https://github.com/georchestra/geonetwork/issues/87)
  * ldap - fix docker image build after upstream changes - [#2190](https://github.com/georchestra/georchestra/issues/2190)
