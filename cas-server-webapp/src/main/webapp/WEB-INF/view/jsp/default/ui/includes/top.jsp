@@ -32,7 +32,7 @@
 <head>
   <meta charset="UTF-8" />
 
-  <title>CAS - ${instanceName}</title>
+  <title>CAS - <spring:eval expression="@propertyConfigurer.getProperty('instanceName')" /></title>
 
   <spring:theme code="standard.custom.css.file" var="customCssFile" />
   <link rel="stylesheet" href="<c:url value="${customCssFile}" />" />
@@ -44,7 +44,10 @@
 </head>
 <body id="cas">
 
-<iframe src="${headerUrl}" style="width:100%;height:${headerHeight}px;border:none;overflow:hidden;" scrolling="no" frameborder="0"></iframe>
-
+<iframe
+    src="<spring:eval expression="@propertyConfigurer.getProperty('headerUrl')" />"
+    style="width:100%;height:<spring:eval expression="@propertyConfigurer.getProperty('headerHeight')" />px;border:none;overflow:hidden;" scrolling="no" frameborder="0">
+</iframe>
+<p></p>
   <div id="container">
       <div id="content">
