@@ -58,6 +58,9 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.ProgressListener;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -81,6 +84,7 @@ public class WfsExtractor {
     protected static final Log LOG = LogFactory.getLog(WcsExtractor.class.getPackage().getName());
 
     private static final FilterFactory2 filterFactory = CommonFactoryFinder.getFilterFactory2 (GeoTools.getDefaultHints ());
+    private static final Set<String> supportedFormats = ImmutableSet.of("shp", "mif", "tab", "kml");
     
     /**
      * Enumerate general types of geometries we accept. Multi/normal is ignored
@@ -218,6 +222,8 @@ public class WfsExtractor {
         if (request._owsType != OWSType.WFS) {
             throw new IllegalArgumentException (request._owsType + "must be WFS for the WfsExtractor");
         }
+		Preconditions.checkArgument(request._format != null && supportedFormats.contains(request._format.toLowerCase()),
+				"%s is not a recognized vector format", request._format);
 
         Map<String, Serializable> params = new HashMap<String, Serializable> ();
         params.put (WFSDataStoreFactory.URL.key, request.capabilitiesURL ("WFS","1.0.0"));
@@ -296,11 +302,10 @@ public class WfsExtractor {
         } else if ("tab".equalsIgnoreCase(request._format)) {
             featuresWriter = new OGRFeatureWriter(progressListener, sourceSchema,  basedir, OGRFeatureWriter.FileFormat.tab, features);
             bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.tab, request._projection, progressListener );
-        } else if ("kml".equalsIgnoreCase(request._format)) {
+        } else {
+        	Preconditions.checkState("kml".equalsIgnoreCase(request._format)); 
             featuresWriter = new OGRFeatureWriter(progressListener, sourceSchema, basedir, OGRFeatureWriter.FileFormat.kml, features);
             bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.kml, request._projection, progressListener );
-        } else {
-            throw new IllegalArgumentException(request._format + " is not a recognized vector format");
         }
         //generates the feature files and bbox file
         featuresWriter.generateFiles();
