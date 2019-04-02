@@ -80,6 +80,8 @@ public class WfsExtractor {
 
     protected static final Log LOG = LogFactory.getLog(WcsExtractor.class.getPackage().getName());
 
+    private static final FilterFactory2 filterFactory = CommonFactoryFinder.getFilterFactory2 (GeoTools.getDefaultHints ());
+    
     /**
      * Enumerate general types of geometries we accept. Multi/normal is ignored
      * because shapefiles are always multigeom
@@ -320,7 +322,6 @@ public class WfsExtractor {
                 bbox = request._bbox.transform (schema.getCoordinateReferenceSystem (), true, 10);
             }
 
-            FilterFactory2 filterFactory = CommonFactoryFinder.getFilterFactory2 (GeoTools.getDefaultHints ());
             String propertyName = schema.getGeometryDescriptor ().getLocalName ();
             PropertyName geomProperty = filterFactory.property (propertyName);
             Geometry bboxGeom = new GeometryFactory ().toGeometry (bbox);
