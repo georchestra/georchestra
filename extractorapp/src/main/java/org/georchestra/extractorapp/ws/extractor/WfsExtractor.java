@@ -45,6 +45,7 @@ import org.geotools.feature.NameImpl;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.geotools.util.NullProgressListener;
+import org.geotools.wfs.v2_0.WFS;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
@@ -224,6 +225,7 @@ public class WfsExtractor {
         }
 		Preconditions.checkArgument(request._format != null && supportedFormats.contains(request._format.toLowerCase()),
 				"%s is not a recognized vector format", request._format);
+    	Preconditions.checkArgument(OWSType.WFS.equals(request._owsType));
 
         Map<String, Serializable> params = new HashMap<String, Serializable> ();
         params.put (WFSDataStoreFactory.URL.key, request.capabilitiesURL ("WFS","1.0.0"));
@@ -318,43 +320,37 @@ public class WfsExtractor {
 	/* This method is default for testing purposes */
     Query createQuery (ExtractorLayerRequest request, FeatureType schema) throws IOException, TransformException,
             FactoryException {
-        switch (request._owsType) {
-        case WFS:
-
-            // bbox may not be in the same projection as the data so it sometimes necessary to reproject the request BBOX
-            ReferencedEnvelope bbox = request._bbox;
-            if (schema.getCoordinateReferenceSystem () != null) {
-                bbox = request._bbox.transform (schema.getCoordinateReferenceSystem (), true, 10);
-            }
-
-            String propertyName = schema.getGeometryDescriptor ().getLocalName ();
-            PropertyName geomProperty = filterFactory.property (propertyName);
-            Geometry bboxGeom = new GeometryFactory ().toGeometry (bbox);
-            String epsgCode = "EPSG:"+CRS.lookupEpsgCode(bbox.getCoordinateReferenceSystem(),false);
-            bboxGeom.setUserData(epsgCode);
-
-            Literal geometry = filterFactory.literal (bboxGeom);
-            Intersects filter = filterFactory.intersects (geomProperty, geometry);
-
-            List<String> properties = new ArrayList<String> ();
-            for (PropertyDescriptor desc : schema.getDescriptors ()) {
-                if (desc instanceof GeometryDescriptor && desc != schema.getGeometryDescriptor ()) {
-                    // shapefiles can only have one geometry so skip any
-                    // geometry descriptor that is not the default
-                    continue;
-                } else {
-                    properties.add (desc.getName ().getLocalPart ());
-                }
-            }
-
-            String[] propArray = properties.toArray (new String[properties.size ()]);
-            Query query = new Query (request.getWFSName(), filter, propArray);
-
-            query.setCoordinateSystemReproject (request._projection);
-
-            return query;
-        default:
-            return null;
+        // bbox may not be in the same projection as the data so it sometimes necessary to reproject the request BBOX
+        ReferencedEnvelope bbox = request._bbox;
+        if (schema.getCoordinateReferenceSystem () != null) {
+            bbox = request._bbox.transform (schema.getCoordinateReferenceSystem (), true, 10);
         }
+
+        String propertyName = schema.getGeometryDescriptor ().getLocalName ();
+        PropertyName geomProperty = filterFactory.property (propertyName);
+        Geometry bboxGeom = new GeometryFactory ().toGeometry (bbox);
+        String epsgCode = "EPSG:"+CRS.lookupEpsgCode(bbox.getCoordinateReferenceSystem(),false);
+        bboxGeom.setUserData(epsgCode);
+
+        Literal geometry = filterFactory.literal (bboxGeom);
+        Intersects filter = filterFactory.intersects (geomProperty, geometry);
+
+        List<String> properties = new ArrayList<String> ();
+        for (PropertyDescriptor desc : schema.getDescriptors ()) {
+            if (desc instanceof GeometryDescriptor && desc != schema.getGeometryDescriptor ()) {
+                // shapefiles can only have one geometry so skip any
+                // geometry descriptor that is not the default
+                continue;
+            } else {
+                properties.add (desc.getName ().getLocalPart ());
+            }
+        }
+
+        String[] propArray = properties.toArray (new String[properties.size ()]);
+        Query query = new Query (request.getWFSName(), filter, propArray);
+
+        query.setCoordinateSystemReproject (request._projection);
+
+        return query;
     }
 }
