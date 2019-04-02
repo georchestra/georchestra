@@ -27,12 +27,16 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%-------------------------------------------- var --------------------------------------------%>
+<spring:eval expression="@propertyConfigurer.getProperty('instanceName')" var="instanceName"/>
+<spring:eval expression="@propertyConfigurer.getProperty('headerUrl')" var="headerUrl"/>
+<spring:eval expression="@propertyConfigurer.getProperty('headerHeight')" var="headerHeight"/>
 
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
 
-  <title>CAS - <spring:eval expression="@propertyConfigurer.getProperty('instanceName')" /></title>
+  <title>CAS - ${instanceName}</title>
 
   <spring:theme code="standard.custom.css.file" var="customCssFile" />
   <link rel="stylesheet" href="<c:url value="${customCssFile}" />" />
@@ -45,8 +49,8 @@
 <body id="cas">
 
 <iframe
-    src="<spring:eval expression="@propertyConfigurer.getProperty('headerUrl')" />"
-    style="width:100%;height:<spring:eval expression="@propertyConfigurer.getProperty('headerHeight')" />px;border:none;overflow:hidden;" scrolling="no" frameborder="0">
+    src="${headerUrl}"
+    style="width:100%;height:${headerHeight}px;border:none;overflow:hidden;" scrolling="no" frameborder="0">
 </iframe>
 <p></p>
   <div id="container">

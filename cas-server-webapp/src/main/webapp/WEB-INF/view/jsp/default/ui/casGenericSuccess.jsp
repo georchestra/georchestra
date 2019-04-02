@@ -19,6 +19,9 @@
 
 --%>
 <jsp:directive.include file="includes/top-noheader.jsp" />
+
+<spring:eval expression="@propertyConfigurer.getProperty('publicUrl')" var="publicUrl"/>
+
   <script type="text/javascript">
     window.setTimeout(function() {
           window.location = "${publicUrl}";

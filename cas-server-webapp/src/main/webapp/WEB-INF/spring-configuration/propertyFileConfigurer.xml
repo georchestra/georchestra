@@ -43,7 +43,7 @@
         can be moved between tiers without modification.
         ,
     </description>
-    
+
     <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
         <property name="locations">
             <list>
@@ -53,6 +53,4 @@
         </property>
     </bean>
     <context:property-placeholder properties-ref="propertyConfigurer"/>
-
-
 </beans>
