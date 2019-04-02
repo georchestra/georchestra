@@ -1,12 +1,15 @@
 package org.georchestra.extractorapp.ws.extractor;
 
+import static com.google.common.base.Preconditions.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
+import javax.annotation.Nullable;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
@@ -29,8 +32,10 @@ import org.geotools.data.DataStoreFinder;
 import org.geotools.data.Query;
 import org.geotools.data.Transaction;
 import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.data.store.ContentDataStore;
 import org.geotools.data.store.ContentFeatureSource;
+import org.geotools.data.store.ReprojectingFeatureCollection;
 import org.geotools.data.wfs.impl.WFSContentDataStore;
 import org.geotools.data.wfs.impl.WFSDataStoreFactory;
 import org.geotools.data.wfs.internal.DescribeFeatureTypeRequest;
@@ -42,6 +47,7 @@ import org.geotools.data.wfs.internal.v1_x.MapServerWFSStrategy;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.factory.GeoTools;
 import org.geotools.feature.NameImpl;
+import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.geotools.util.NullProgressListener;
@@ -51,11 +57,13 @@ import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
+import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.spatial.Intersects;
 import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.ProgressListener;
 
@@ -220,12 +228,13 @@ public class WfsExtractor {
      * @return the directory that contains the extracted file
      */
     public File extract (ExtractorLayerRequest request) throws IOException, TransformException, FactoryException {
-        if (request._owsType != OWSType.WFS) {
+    	checkNotNull(request);
+    	if (request._owsType != OWSType.WFS) {
             throw new IllegalArgumentException (request._owsType + "must be WFS for the WfsExtractor");
         }
-		Preconditions.checkArgument(request._format != null && supportedFormats.contains(request._format.toLowerCase()),
+		checkArgument(request._format != null && supportedFormats.contains(request._format.toLowerCase()),
 				"%s is not a recognized vector format", request._format);
-    	Preconditions.checkArgument(OWSType.WFS.equals(request._owsType));
+		checkNotNull(request._bbox, "Bounding box not specified");
 
         Map<String, Serializable> params = new HashMap<String, Serializable> ();
         params.put (WFSDataStoreFactory.URL.key, request.capabilitiesURL ("WFS","1.0.0"));
@@ -278,8 +287,8 @@ public class WfsExtractor {
             }
         }
 
-        Query query = createQuery(request, sourceSchema);
-        SimpleFeatureCollection features = sourceDs.getFeatureSource(typeName).getFeatures(query);
+        SimpleFeatureSource featureSource = sourceDs.getFeatureSource(typeName);
+        SimpleFeatureCollection features = getFeatures(request, sourceSchema, featureSource);
 
         ProgressListener progressListener = new NullProgressListener () {
             @Override
@@ -317,39 +326,51 @@ public class WfsExtractor {
         return basedir;
     }
 
+	private SimpleFeatureCollection getFeatures(ExtractorLayerRequest request, SimpleFeatureType sourceSchema,
+			SimpleFeatureSource featureSource) throws IOException, TransformException, FactoryException {
+		
+		Query query = createQuery(request, sourceSchema);
+		SimpleFeatureCollection features = featureSource.getFeatures(query);
+		
+		CoordinateReferenceSystem returnedCrs = features.getSchema().getCoordinateReferenceSystem();
+		CoordinateReferenceSystem targetCrs = request._projection;
+		// current version (9.2) of WFS datastore does not perform reprojection
+		if (!CRS.equalsIgnoreMetadata(targetCrs, returnedCrs)) {
+			features = new ReprojectingFeatureCollection(features, targetCrs);
+		}
+		
+		return features;
+	}
+
 	/* This method is default for testing purposes */
     Query createQuery (ExtractorLayerRequest request, FeatureType schema) throws IOException, TransformException,
             FactoryException {
-        // bbox may not be in the same projection as the data so it sometimes necessary to reproject the request BBOX
-        ReferencedEnvelope bbox = request._bbox;
-        if (schema.getCoordinateReferenceSystem () != null) {
-            bbox = request._bbox.transform (schema.getCoordinateReferenceSystem (), true, 10);
-        }
 
-        String propertyName = schema.getGeometryDescriptor ().getLocalName ();
-        PropertyName geomProperty = filterFactory.property (propertyName);
-        Geometry bboxGeom = new GeometryFactory ().toGeometry (bbox);
-        String epsgCode = "EPSG:"+CRS.lookupEpsgCode(bbox.getCoordinateReferenceSystem(),false);
-        bboxGeom.setUserData(epsgCode);
+		final CoordinateReferenceSystem nativeCrs = schema.getCoordinateReferenceSystem();
 
-        Literal geometry = filterFactory.literal (bboxGeom);
-        Intersects filter = filterFactory.intersects (geomProperty, geometry);
-
-        List<String> properties = new ArrayList<String> ();
-        for (PropertyDescriptor desc : schema.getDescriptors ()) {
-            if (desc instanceof GeometryDescriptor && desc != schema.getGeometryDescriptor ()) {
-                // shapefiles can only have one geometry so skip any
-                // geometry descriptor that is not the default
-                continue;
-            } else {
-                properties.add (desc.getName ().getLocalPart ());
-            }
-        }
-
-        String[] propArray = properties.toArray (new String[properties.size ()]);
-        Query query = new Query (request.getWFSName(), filter, propArray);
-
-        query.setCoordinateSystemReproject (request._projection);
+		final Filter filter;
+		final String[] properties;
+		if (null==schema.getGeometryDescriptor()) {
+			filter = Filter.EXCLUDE;
+			properties = Query.ALL_NAMES;
+		} else {
+			GeometryDescriptor defGeom = schema.getGeometryDescriptor();
+			PropertyName propertyName = filterFactory.property(defGeom.getLocalName());
+	        ReferencedEnvelope bbox = request._bbox;
+	        // bbox may not be in the same projection as the data so it sometimes necessary to reproject the request BBOX
+			if (!CRS.equalsIgnoreMetadata(nativeCrs, bbox.getCoordinateReferenceSystem())) {
+				bbox = bbox.transform(nativeCrs, true, 10);
+			}
+			Geometry bboxGeom = JTS.toGeometry(bbox);
+			filter = filterFactory.intersects(propertyName, filterFactory.literal(bboxGeom));
+			properties = schema.getDescriptors().stream()//
+					// shapefiles can only have one geometry so skip any
+					// geometry descriptor that is not the default
+					.filter(d -> d instanceof GeometryDescriptor ? d.equals(defGeom) : true)//
+					.map(d -> d.getName().getLocalPart())//
+					.toArray(String[]::new);
+		}
+		Query query = new Query(request.getWFSName(), filter, properties);
 
         return query;
     }
