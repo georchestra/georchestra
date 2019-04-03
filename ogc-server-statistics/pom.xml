@@ -77,7 +77,7 @@
                 </executions>
                 <configuration>
                   <environmentVariables>
-                    <!-- set the environment variable for Spring to resolve the connection URL psql as the 
+                    <!-- set the environment variable for Spring to resolve the connection URL psql as the
                       mapped port set up by docker-maven-plugin bellow -->
                     <psql_port>${database_container.port}</psql_port>
                   </environmentVariables>

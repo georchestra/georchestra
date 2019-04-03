@@ -11,7 +11,7 @@
     <name>Atlas Webapp</name>
     <url>http://www.georchestra.org</url>
     <properties>
-        <packageDatadirScmVersion>18.12</packageDatadirScmVersion>
+        <packageDatadirScmVersion>19.04</packageDatadirScmVersion>
         <server>generic</server>
     </properties>
     <dependencies>

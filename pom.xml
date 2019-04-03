@@ -3,9 +3,9 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <!-- Depending on a released version of spring-boot-dependencies provides a curated list of dependency versions for all 
-      modules. See https://github.com/spring-projects/spring-boot/blob/v1.5.19.RELEASE/spring-boot-dependencies/pom.xml which is 
-      the last release of the 1.x series, defining dependencies for Spring 4.3.22.RELEASE and related dependencies that are known 
+    <!-- Depending on a released version of spring-boot-dependencies provides a curated list of dependency versions for all
+      modules. See https://github.com/spring-projects/spring-boot/blob/v1.5.19.RELEASE/spring-boot-dependencies/pom.xml which is
+      the last release of the 1.x series, defining dependencies for Spring 4.3.22.RELEASE and related dependencies that are known
       to work well with that spring version -->
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-dependencies</artifactId>
@@ -470,7 +470,7 @@
         <version>3.6</version>
       </dependency>
       <dependency>
-        <!-- beware of upgrading this dependency, any version higher than 2.4.0 breaks mapfishapp's WMCDocServiceTest.testXEEOnExtractRealFileName() 
+        <!-- beware of upgrading this dependency, any version higher than 2.4.0 breaks mapfishapp's WMCDocServiceTest.testXEEOnExtractRealFileName()
           which checks for XML External Entity (XXE) attacks -->
         <groupId>xerces</groupId>
         <artifactId>xercesImpl</artifactId>

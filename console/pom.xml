@@ -15,7 +15,7 @@
     <skipIT>true</skipIT> <!-- disable integration tests by default, use the "it" profile to run them which enables them-->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <roo.version>1.1.5.RELEASE</roo.version>
-    <packageDatadirScmVersion>18.12</packageDatadirScmVersion>
+    <packageDatadirScmVersion>19.04</packageDatadirScmVersion>
     <server>generic</server>
   </properties>
   <repositories>
@@ -789,7 +789,7 @@
             </executions>
             <configuration>
               <environmentVariables>
-                <!-- expose these two environment variables for Spring to resolve the connection URLs to ldap and psql as the 
+                <!-- expose these two environment variables for Spring to resolve the connection URLs to ldap and psql as the
                   mapped ports set up by docker-maven-plugin bellow -->
                 <psql_port>${database_container.port}</psql_port>
                 <ldap_port>${ldap_container.port}</ldap_port>
@@ -836,7 +836,7 @@
                           <SLAPD_ADDITIONAL_MODULES>groupofmembers</SLAPD_ADDITIONAL_MODULES>
                         </env>
                         <wait>
-                          <!-- Need to figure out a good way to make sure the ldap service is ready before the tests are run. 
+                          <!-- Need to figure out a good way to make sure the ldap service is ready before the tests are run.
                             The healthy check seems to be good enough but the tests still can't connect -->
                           <time>20000</time>
                           <!-- <healthy>true</healthy> -->

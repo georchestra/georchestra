@@ -11,7 +11,7 @@
   <name>geOrchestra GeoServer Web Application</name>
   <properties>
     <packageName>georchestra-geoserver</packageName>
-    <packageDatadirScmVersion>18.12</packageDatadirScmVersion>
+    <packageDatadirScmVersion>19.04</packageDatadirScmVersion>
   </properties>
   <dependencies>
     <dependency>
@@ -988,17 +988,17 @@
           <version>${gs.version}</version>
           <!-- instead of excluding the buggy gt-s3-geotiff version here, leave it and let maven-war-plugin exclude it
           from WEB-INF/lib, so that the transitive dependencies are still added -->
-          <!-- 
+          <!--
           <exclusions>
             <exclusion>
               <groupId>org.geotools</groupId>
-              <artifactId>gt-s3-geotiff</artifactId>              
+              <artifactId>gt-s3-geotiff</artifactId>
             </exclusion>
           </exclusions>
           -->
         </dependency>
         <!-- include the patched gt-s3-geotiff with the fixed version, stored as part of the project because of GeoServer 2.15.x EOL -->
-        <!-- 
+        <!--
         <dependency>
           <groupId>org.geotools</groupId>
           <artifactId>gt-s3-geotiff</artifactId>

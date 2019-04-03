@@ -2,11 +2,11 @@ The development branch is master. It can be used for testing and reporting
 errors.
 
 For production systems, you are advised to use the stable branch (currently
-18.12).
+19.04).
 This branch receives bug fixes as they arrive, during 12 months at least.
 
 
-Version 18.12
+Version 19.04
 =============
 
 This release comes with numerous improvements regarding stability, security & ease of use.
@@ -57,7 +57,7 @@ Bug fixes:
  * geonetwork - disabled directory listing - [georchestra/geonetwork#80](https://github.com/georchestra/geonetwork/issues/80)
  * geonetwork - avoid trailing slash for extraction service- [georchestra/geonetwork#81](https://github.com/georchestra/geonetwork/issues/81)
  * geonetwork - make file uploads private by default - [georchestra/geonetwork#82](https://github.com/georchestra/geonetwork/issues/82)
- * geonetwork - mix latest maps grid overflow - [georchestra/geonetwork#83](https://github.com/georchestra/geonetwork/issues/83)
+ * geonetwork - fix latest maps grid overflow - [georchestra/geonetwork#83](https://github.com/georchestra/geonetwork/issues/83)
  * geonetwork - fix "impossible to connect to service" on metadata page - [georchestra/geonetwork#84](https://github.com/georchestra/geonetwork/issues/84)
  * geonetwork - point JCS diskPath to java tmpdir - [georchestra/geonetwork#87](https://github.com/georchestra/geonetwork/issues/87)
  * ldap - fix docker image build after upstream changes - [#2190](https://github.com/georchestra/georchestra/issues/2190)
@@ -80,7 +80,7 @@ Deprecations:
  * `PENDING` role does not exist anymore - pending users are stored in a different organizational unit - see [#2108](https://github.com/georchestra/georchestra/issues/2108)
 
 
-Read [how to migrate from 18.06 to 18.12](migrations/18.12/README.md).
+Read [how to migrate from 18.06 to 19.04](migrations/19.04/README.md).
 
 
 Version 18.06

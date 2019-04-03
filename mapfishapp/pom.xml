@@ -14,12 +14,12 @@
     <maven.test.skip>false</maven.test.skip>
     <!-- Override parent version with 2.1.1-georchestra. Revisit. -->
     <mapfish.version>2.1.1-georchestra</mapfish.version>
-    <!-- 
+    <!--
     	downgrade parent's 20180813 version or org.mapfish.print.servlet.MapPrinterServlet.getInfo
-    	throws java.lang.NoSuchMethodError: org.json.JSONWriter.<init>(Ljava/io/Writer;)V 
+    	throws java.lang.NoSuchMethodError: org.json.JSONWriter.<init>(Ljava/io/Writer;)V
     -->
     <json.version>20080701</json.version>
-    
+
     <server>generic</server>
   </properties>
   <dependencies>
@@ -105,7 +105,7 @@
       <artifactId>gt-xsd-kml</artifactId>
       <version>${gt.version}</version>
     </dependency>
-     
+
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-geojson</artifactId>
