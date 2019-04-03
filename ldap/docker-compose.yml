@@ -6,6 +6,7 @@ services:
     environment:
       - SLAPD_DOMAIN=georchestra.org
       - SLAPD_ORGANIZATION=geOrchestra
+      - SLAPD_ADDITIONAL_MODULES=groupofmembers
       - SLAPD_PASSWORD=secret
       - SLAPD_LOG_LEVEL=32768
     ports:
