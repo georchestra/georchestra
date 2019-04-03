@@ -38,6 +38,9 @@ docker-build-geoserver-geofence: docker-pull-jetty
 docker-build-proxy: build-deps docker-pull-jetty
 	mvn clean package docker:build -Pdocker -DskipTests --pl security-proxy
 
+docker-build-cas: build-deps docker-pull-jetty
+	mvn clean package docker:build -Pdocker -DskipTests --pl cas-server-webapp
+
 docker-build-console: build-deps docker-pull-jetty
 	mvn clean package docker:build -Pdocker -DskipTests --pl console
 

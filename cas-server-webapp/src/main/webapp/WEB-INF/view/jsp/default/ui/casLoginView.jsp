@@ -20,7 +20,7 @@
 --%>
 <jsp:directive.include file="includes/top.jsp" />
 
-<spring:eval expression="@propertyConfigurer.getProperty('consoleContextpath')" var="consoleContextpath"/>
+<spring:eval expression="@propertyConfigurer.getProperty('console.contextpath') ?: '/console'"  var="consoleContextpath"/>
 <spring:eval expression="@propertyConfigurer.getProperty('loginTicket')" var="loginTicket"/>
 <spring:eval expression="@propertyConfigurer.getProperty('flowExecutionKey')" var="flowExecutionKey"/>
 
@@ -66,7 +66,8 @@
     </section>
 
     <section class="row">
-      <a href="${consoleContextpath}/account/new"><spring:message code="screen.welcome.link.newaccount" /></a> - <a href="${consoleContextpath}/account/passwordRecovery"><spring:message code="screen.welcome.link.forgot" /></a>
+      <a href="${consoleContextpath}/account/new"><spring:message code="screen.welcome.link.newaccount" /></a>
+      - <a href="${consoleContextpath}/account/passwordRecovery"><spring:message code="screen.welcome.link.forgot" /></a>
     </section>
 
   </form:form>
