@@ -1,17 +1,19 @@
 # Docker related targets
 
+BRANCH=18.06
+
 docker-pull-jetty:
 	docker pull jetty:9-jre8
 
 docker-build-ldap:
 	docker pull debian:stretch
 	cd ldap; \
-	docker build -t georchestra/ldap .
+	docker build -t georchestra/ldap:${BRANCH} .
 
 docker-build-database:
 	docker pull postgres:10
 	cd postgresql; \
-	docker build -t georchestra/database .
+	docker build -t georchestra/database:${BRANCH} .
 
 docker-build-gn3: docker-pull-jetty
 	cd geonetwork; \
