@@ -87,6 +87,10 @@
         <constructor-arg value="atlas" />
     </bean>
 
+    <bean id="georLogger" class="org.slf4j.LoggerFactory" factory-method="getLogger" xmlns="http://www.springframework.org/schema/beans">
+        <constructor-arg value="org.georchestra.georLogger" />
+    </bean>
+
     <!-- A context component that has some utility components to handle typical tasks -->
     <camelContext id="atlas" xmlns="http://camel.apache.org/schema/spring"
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -146,7 +150,7 @@
         <!-- route which receives the posted data from the rest endpoint /print defined above -->
         <route id="save_print_request">
             <from uri="direct:save_print_request"/>
-            <log message="Email from requesting user : ${header['sec-email']}" loggingLevel="INFO"/>
+            <log message="Email from requesting user : ${header['sec-email']}" loggingLevel="INFO" loggerRef="georLogger"/>
             <setProperty propertyName="requestingUserEmail">
                 <simple>header['sec-email']</simple>
             </setProperty>
@@ -157,7 +161,7 @@
             <to uri="direct:checkArgs"/>
             <!-- store in DB queue -->
             <to uri="jpa:org.georchestra.atlas.AtlasJob?persistenceUnit=myPU"/>
-            <log message="Storing request to DB with ID : ${body.id}" loggingLevel="INFO"/>
+            <log message="Storing request to DB with ID : ${body.id}" loggingLevel="INFO" loggerRef="georLogger"/>
             <transform>
                 <simple>${body.id}</simple>
             </transform>
@@ -175,7 +179,7 @@
         <route id="split_and_send_request">
             <!--  polls the DB for incoming requests -->
             <from uri="jpa:org.georchestra.atlas.AtlasJob?transactionManager=#transactionManager&amp;persistenceUnit=myPU&amp;consumer.lockModeType=NONE&amp;consumer.delay=2000&amp;maximumResults=1&amp;consumeDelete=false&amp;consumer.query=FROM org.georchestra.atlas.AtlasJob WHERE state = 'TODO' ORDER BY id"/>
-            <log message="New request from DB from ${exchangeProperty.requestingUserEmail}" loggingLevel="INFO"/>
+            <log message="New request from DB from ${exchangeProperty.requestingUserEmail}" loggingLevel="INFO" loggerRef="georLogger"/>
             <!--  Modifies the state of the job -->
             <script>
                 <groovy>request.body.setState(org.georchestra.atlas.AtlasJobState.IN_PROGRESS)</groovy>
@@ -312,7 +316,7 @@
                         </transform>
                     </otherwise>
                 </choice>
-                <log message="print request : ${body}" loggingLevel="INFO"/>
+                <log message="print request : ${body}" loggingLevel="INFO" loggerRef="georLogger"/>
                 <!-- Wires to the bean which will actually call the MF Print -->
                 <to uri="bean:specAsPdf?method=toMapfishPrintPdf"/>
 
@@ -329,7 +333,7 @@
                     </otherwise>
                 </choice>
 
-                <log message="${property.jobId} / ${property.CamelSplitIndex} Done !" loggingLevel="INFO"/>
+                <log message="${property.jobId} / ${property.CamelSplitIndex} Done !" loggingLevel="INFO" loggerRef="georLogger"/>
             </split>
             <choice>
                     <when>
