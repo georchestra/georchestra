@@ -512,7 +512,7 @@ public class UsersController {
 	 *
 	 * @throws IOException
 	 */
-	private Account modifyAccount(Account account, ServletInputStream inputStream) throws IOException, JSONException, ParseException {
+	private Account modifyAccount(Account account, ServletInputStream inputStream) throws IOException, JSONException, ParseException, IllegalArgumentException {
 
 		String strUser = FileUtils.asString(inputStream);
 		JSONObject json = new JSONObject(strUser);
@@ -611,7 +611,12 @@ public class UsersController {
 			if("".equals(privacyPolicyAgreementDate ))
 				account.setPrivacyPolicyAgreementDate(null);
 			else
-				account.setPrivacyPolicyAgreementDate(LocalDate.parse(privacyPolicyAgreementDate));
+				try {
+					account.setPrivacyPolicyAgreementDate(LocalDate.parse(privacyPolicyAgreementDate));
+				} catch (DateTimeParseException e) {
+					LOG.error(e.getMessage());
+					throw new IllegalArgumentException(e);
+				}
 		}
 
 		try {
