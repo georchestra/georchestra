@@ -332,7 +332,7 @@
     <profile>
       <id>docker</id>
       <properties>
-        <dockerImageName>georchestra/cas</dockerImageName>
+        <dockerImageName>georchestra/cas:${project.version}</dockerImageName>
         <dockerDatadirScmUrl>scm:git:https://github.com/georchestra/datadir.git</dockerDatadirScmUrl>
         <dockerDatadirScmVersion>docker-${packageDatadirScmVersion}</dockerDatadirScmVersion>
       </properties>

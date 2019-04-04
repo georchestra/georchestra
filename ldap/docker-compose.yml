@@ -6,11 +6,12 @@ volumes:
 
 services:
   ldap:
-    image: georchestra/ldap
+    image: georchestra/ldap:18.06
     build: ./
     environment:
       - SLAPD_DOMAIN=georchestra.org
       - SLAPD_ORGANIZATION=georchestra
+      - SLAPD_ADDITIONAL_MODULES=groupofmembers
       - SLAPD_PASSWORD=secret
       - SLAPD_ADDITIONAL_MODULES=groupofmembers
       - SLAPD_LOG_LEVEL=32768
