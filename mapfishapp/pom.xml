@@ -546,7 +546,7 @@
     <profile>
       <id>docker</id>
       <properties>
-        <dockerImageName>georchestra/${project.artifactId}</dockerImageName>
+        <dockerImageName>georchestra/${project.artifactId}:${project.version}</dockerImageName>
         <dockerDatadirScmUrl>scm:git:https://github.com/georchestra/datadir.git</dockerDatadirScmUrl>
         <dockerDatadirScmVersion>docker-master</dockerDatadirScmVersion>
       </properties>
