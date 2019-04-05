@@ -774,6 +774,9 @@ public class Proxy {
             @Override
             protected void onResponseReceived(HttpResponse httpResponse) throws HttpException, IOException {
                 this.httpResponse = httpResponse;
+                if (httpResponse.getEntity() == null) {
+                    future.complete(httpResponse);
+                }
             }
 
             @Override
