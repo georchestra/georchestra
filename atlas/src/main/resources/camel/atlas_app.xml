@@ -31,8 +31,8 @@
         <property name="jdbcUrl" value="jdbc:postgresql://${pgsqlHost}:${pgsqlPort}/${pgsqlDatabase}"/>
         <property name="user" value="${pgsqlUser}"/>
         <property name="password" value="${pgsqlPassword}"/>
-        <property name="initialPoolSize" value="1"/>
-        <property name="minPoolSize" value="${dataSource.minPoolSize:1}"/>
+        <property name="initialPoolSize" value="2"/>
+        <property name="minPoolSize" value="${dataSource.minPoolSize:2}"/>
         <property name="maxPoolSize" value="${dataSource.maxPoolSize:5}"/>
         <property name="checkoutTimeout" value = "${dataSource.timeout:2000}"/>
         <property name="idleConnectionTestPeriod" value="30"/>

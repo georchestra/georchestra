@@ -137,7 +137,7 @@
         <property name="user" value="${pgsqlUser}"/>
         <property name="password" value="${pgsqlPassword}"/>
         <property name="driverClass" value="org.postgresql.Driver"/>
-        <property name="initialPoolSize" value="1"/>
+        <property name="initialPoolSize" value="2"/>
         <property name="minPoolSize" value="${dataSource.minPoolSize:2}"/>
         <property name="maxPoolSize" value="${dataSource.maxPoolSize:10}"/>
         <property name="checkoutTimeout" value = "${dataSource.timeout:1000}"/>
