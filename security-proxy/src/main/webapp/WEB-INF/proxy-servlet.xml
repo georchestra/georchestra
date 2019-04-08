@@ -119,8 +119,8 @@
         <property name="user" value="${pgsqlUser}"/>
         <property name="password" value="${pgsqlPassword}"/>
         <property name="driverClass" value="org.postgresql.Driver"/>
-        <property name="initialPoolSize" value="1"/>
-        <property name="minPoolSize" value="${ogcStats.minPoolSize:1}"/>
+        <property name="initialPoolSize" value="2"/>
+        <property name="minPoolSize" value="${ogcStats.minPoolSize:2}"/>
         <property name="maxPoolSize" value="${ogcStats.maxPoolSize:5}"/>
         <property name="checkoutTimeout" value = "${ogcStats.timeout:2000}"/>
         <property name="idleConnectionTestPeriod" value="30"/>
