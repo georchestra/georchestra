@@ -62,6 +62,7 @@
   "user.fax"              : "Fax",
   "user.title"            : "Fonction",
   "user.lastcontext"      : "Dernier contexte",
+  "user.privacyPolicyAgreementDate" : "Date d'acceptation des conditions",
   "user.warning"          : "Attention, cette action est irréversible — ",
   "user.pendingmsg"       : "Utilisateur en attente ",
   "user.confirm"          : "Confirmer",

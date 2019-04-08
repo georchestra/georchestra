@@ -61,6 +61,16 @@
     <property name="verifyUrl" value="${verificationURL:https://www.google.com/recaptcha/api/siteverify}"/>
   </bean>
 
+  <bean id="clock" class="java.time.Clock" factory-method="systemDefaultZone" />
+
+  <bean id="privacyPolicyAgreementActivated" class="java.lang.Boolean">
+    <constructor-arg value="${privacy.policy.agreement.activated:false}" />
+  </bean>
+
+  <bean id="privacyPolicyAgreementUrl" class="java.lang.String">
+    <constructor-arg value="${privacy.policy.agreement.url:}" />
+  </bean>
+
   <!-- LDAP connection -->
   <bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
     <property name="url" value="ldap://${ldapHost}:${ldapPort}"/>

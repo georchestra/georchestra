@@ -62,6 +62,7 @@
   "user.fax"              : "Fax",
   "user.title"            : "Puesto",
   "user.lastcontext"      : "Último contexto",
+  "user.privacyPolicyAgreementDate" : "Fecha de aceptación de las condiciones",
   "user.warning"          : "Cuidado, esta acción no se puede deshacer — ",
   "user.pendingmsg"       : "Usuario en espera de confirmación ",
   "user.confirm"          : "Confirmar",

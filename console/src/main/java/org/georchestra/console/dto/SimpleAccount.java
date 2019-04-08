@@ -2,6 +2,10 @@ package org.georchestra.console.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+
+import java.time.LocalDate;
 
 public class SimpleAccount {
 
@@ -26,6 +30,10 @@ public class SimpleAccount {
     @JsonProperty(UserSchema.PENDING)
     private boolean pending;
 
+    @JsonProperty(UserSchema.PRIVACY_POLICY_AGREEMENT_DATE_KEY)
+    @JsonSerialize(using = ToStringSerializer.class)
+    private LocalDate privacyPolicyAgreementDate;
+
     public SimpleAccount(Account account) {
         this.uid = account.getUid();
         this.givenName = account.getGivenName();
@@ -33,6 +41,7 @@ public class SimpleAccount {
         this.orgId = account.getOrg();
         this.email = account.getEmail();
         this.pending = account.isPending();
+        this.privacyPolicyAgreementDate = account.getPrivacyPolicyAgreementDate();
     }
 
     public String getUid() {
@@ -89,5 +98,13 @@ public class SimpleAccount {
 
     public void setPending(boolean pending) {
         this.pending = pending;
+    }
+
+    public LocalDate getPrivacyPolicyAgreementDate() {
+        return this.privacyPolicyAgreementDate;
+    }
+
+    public void setPrivacyPolicyAgreementDate(LocalDate privacyPolicyAgreementDate) {
+        this.privacyPolicyAgreementDate = privacyPolicyAgreementDate;
     }
 }

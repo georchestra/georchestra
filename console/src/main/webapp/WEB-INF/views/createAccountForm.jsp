@@ -157,6 +157,20 @@
                 </t:password>
             </fieldset>
 
+            <c:if test="${privacyPolicyAgreementActivated}">
+            <fieldset>
+                <legend><s:message code="createAccountForm.fieldset.privacyPolicyAgreement"/></legend>
+                <t:privacyPolicyAgreement path="privacyPolicyAgreed" required="true">
+                    <jsp:attribute name="label">
+                        <s:message code="privacyPolicyAgreed.label" />
+                    </jsp:attribute>
+                    <jsp:attribute name="checkboxLabel">
+                        <s:message code="privacyPolicyAgreed.checkboxLabel" arguments="${privacyPolicyAgreementUrl}" />
+                    </jsp:attribute>
+                </t:privacyPolicyAgreement>
+            </fieldset>
+            </c:if>
+
             <c:if test="${recaptchaActivated}">
             <fieldset>
                 <t:recaptcha path="g-recaptcha" />
@@ -222,7 +236,9 @@
     /* Validate the form */
     function validate() {
         if (testFirstname() & testSurname() & testEmail() & testUid() & testPassword() & testConfirmPassword() &
-               <c:if test="${recaptchaActivated}"> testRecaptcha() & </c:if> testField("phone") & testField("title") & testField("description") & testOrg()
+               <c:if test="${recaptchaActivated}"> testRecaptcha() & </c:if>
+               <c:if test="${privacyPolicyAgreementActivated}"> testPrivacyPolicyAgreed() & </c:if>
+               testField("phone") & testField("title") & testField("description") & testOrg()
         ) {
             return true;
         } else {

@@ -60,6 +60,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.Clock;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -107,6 +109,15 @@ public final class NewAccountFormController {
 	protected boolean reCaptchaActivated;
 	private ReCaptchaParameters reCaptchaParameters;
 
+	@Autowired
+	protected boolean privacyPolicyAgreementActivated;
+
+	@Autowired
+	protected String privacyPolicyAgreementUrl;
+
+	@Autowired
+	protected Clock clock;
+
 	private Validation validation;
 
 	@Autowired
@@ -149,7 +160,8 @@ public final class NewAccountFormController {
 	@InitBinder
 	public void initForm(WebDataBinder dataBinder) {
 		dataBinder.setAllowedFields(new String[]{"firstName","surname", "email", "phone",
-				"org", "title", "description", "uid", "password", "confirmPassword", "createOrg", "orgName",
+				"org", "title", "description", "uid", "password", "confirmPassword",
+				"privacyPolicyAgreed", "createOrg", "orgName",
 				"orgShortName", "orgAddress", "orgType", "orgCities", "recaptcha_response_field"});
 	}
 
@@ -159,6 +171,9 @@ public final class NewAccountFormController {
 		HttpSession session = request.getSession();
 
 		populateOrgsAndOrgTypes(model);
+
+		model.addAttribute("privacyPolicyAgreementActivated", this.privacyPolicyAgreementActivated);
+		model.addAttribute("privacyPolicyAgreementUrl", this.privacyPolicyAgreementUrl);
 
 		model.addAttribute("recaptchaActivated", this.reCaptchaActivated);
 
@@ -259,6 +274,10 @@ public final class NewAccountFormController {
 
 			account.setPending(this.moderatedSignup);
 
+			if (privacyPolicyAgreementActivated) {
+				account.setPrivacyPolicyAgreementDate(LocalDate.now(clock));
+			}
+
 			String requestOriginator = request.getHeader("sec-username");
 			accountDao.insert(account,  requestOriginator);
 			roleDao.addUser(Role.USER, account, requestOriginator);
@@ -345,6 +364,11 @@ public final class NewAccountFormController {
 		// Check captcha
 		if (reCaptchaActivated) {
 			RecaptchaUtils.validate(reCaptchaParameters, formBean.getRecaptcha_response_field(), result);
+		}
+
+		// Check if the user has agreed to the privacy policy
+		if (privacyPolicyAgreementActivated) {
+			validation.validatePrivacyPolicyAgreedField(formBean.getPrivacyPolicyAgreed(), result);
 		}
 
 		// Validate remaining fields

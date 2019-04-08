@@ -20,6 +20,7 @@
 package org.georchestra.console.dto;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Objects;
 
@@ -29,6 +30,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import org.springframework.security.authentication.encoding.LdapShaPasswordEncoder;
 
 import ezvcard.VCard;
@@ -123,6 +126,10 @@ public class AccountImpl implements Serializable, Account{
 			pattern = "yyyy-MM-dd")
 	private Date shadowExpire;
 
+	@JsonProperty(UserSchema.PRIVACY_POLICY_AGREEMENT_DATE_KEY)
+	@JsonSerialize(using = ToStringSerializer.class)
+	private LocalDate privacyPolicyAgreementDate;
+
 	@JsonProperty(UserSchema.MANAGER_KEY)
 	private String manager;
 	
@@ -161,6 +168,7 @@ public class AccountImpl implements Serializable, Account{
 				", stateOrProvince='" + stateOrProvince + '\'' +
 				", homePostalAddress='" + homePostalAddress + '\'' +
 				", shadowExpire='" + shadowExpire + '\'' +
+				", privacyPolicyAgreementDate='" + privacyPolicyAgreementDate + '\'' +
 				", context='" + context + '\'' +
 				", org='" + org + '\'' +
 				'}';
@@ -540,6 +548,12 @@ public class AccountImpl implements Serializable, Account{
 	public Date getShadowExpire() { return this.shadowExpire; }
 
 	@Override
+	public void setPrivacyPolicyAgreementDate(LocalDate privacyPolicyAgreementDate) { this.privacyPolicyAgreementDate = privacyPolicyAgreementDate; }
+
+	@Override
+	public LocalDate getPrivacyPolicyAgreementDate() { return this.privacyPolicyAgreementDate; }
+
+	@Override
 	public String getManager() {
 		return manager;
 	}
@@ -608,6 +622,7 @@ public class AccountImpl implements Serializable, Account{
 				Objects.equals(stateOrProvince, account.stateOrProvince) &&
 				Objects.equals(homePostalAddress, account.homePostalAddress) &&
 				Objects.equals(shadowExpire, account.shadowExpire) &&
+				Objects.equals(privacyPolicyAgreementDate, account.privacyPolicyAgreementDate) &&
 				Objects.equals(manager, account.manager) &&
 				Objects.equals(context, account.context) &&
 				Objects.equals(org, account.org);

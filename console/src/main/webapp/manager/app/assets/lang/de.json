@@ -62,6 +62,7 @@
   "user.fax"              : "Fax",
   "user.title"            : "Titel",
   "user.lastcontext"      : "Letzter Kontext",
+  "user.privacyPolicyAgreementDate" : "Date of agreement to conditions",
   "user.warning"          : "Achtung, diese Aktion kann nicht rückgängig gemacht werden — ",
   "user.pendingmsg"       : "Ausstehende Benutzer ",
   "user.confirm"          : "Bestätigen",

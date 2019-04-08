@@ -100,6 +100,13 @@
         </div>
       </div>
 
+      <div class="form-group form-group-sm" ng-class="{required: required.privacyPolicyAgreementDate}">
+        <label class="col-sm-4" for="privacyPolicyAgreementDate" translate>user.privacyPolicyAgreementDate</label>
+        <div class="col-sm-8">
+          <input ng-model="model.privacyPolicyAgreementDate" class="form-control" id="privacyPolicyAgreementDate" placeholder="{{'user.privacyPolicyAgreementDate' | translate}}" datepicker ng-required="required.privacyPolicyAgreementDate">
+        </div>
+      </div>
+
       <hr>
 
       <div class="form-group" ng-if="model.$promise" ng-class="{required: required.uid}">

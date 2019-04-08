@@ -1,0 +1,15 @@
+dn: cn=georchestra, cn=schema, cn=config
+objectClass: olcSchemaConfig
+cn: georchestra
+olcObjectClasses: ( 1.3.6.1.4.1.53611.1.1.1
+    NAME 'georchestraUser'
+    DESC 'georchestra user'
+    SUP top
+    AUXILIARY
+    MAY privacyPolicyAgreementDate )
+olcAttributeTypes: ( 1.3.6.1.4.1.53611.1.2.1
+    NAME 'privacyPolicyAgreementDate'
+    DESC 'Epoch day when a user agrees to the privacy policy (terms and conditions)'
+    EQUALITY integerMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
+    SINGLE-VALUE )

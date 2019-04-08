@@ -123,6 +123,7 @@ public class NewAccountFormControllerTest {
         assertTrue(allowedField.contains("password"));
         assertTrue(allowedField.contains("confirmPassword"));
         assertTrue(allowedField.contains("recaptcha_response_field"));
+        assertTrue(allowedField.contains("privacyPolicyAgreed"));
     }
 
     @Test
@@ -277,6 +278,7 @@ public class NewAccountFormControllerTest {
         t.setSurname("testmaster");
         t.setTitle("software engineer");
         t.setUid("123123-21465456-3434");
+        t.setPrivacyPolicyAgreed(false);
 
         assertTrue(t.getConfirmPassword().equals("test"));
         assertTrue(t.getDescription().equals("testing account"));
@@ -294,6 +296,7 @@ public class NewAccountFormControllerTest {
                 + "title=software engineer, email=test@localhost.com, "
                 + "phone=+331234567890, description=testing account, "
                 + "password=monkey123, confirmPassword=test, "
+                + "privacyPolicyAgreed=false, "
                 + "recaptcha_response_field=wrong]", t.toString());
     }
 
@@ -317,6 +320,7 @@ public class NewAccountFormControllerTest {
     public void requiredFieldsUndefined() throws IOException, SQLException {
         NewAccountFormController toTest = createToTest("firstName,surname,org,orgType");
         toTest.reCaptchaActivated = true;
+        toTest.privacyPolicyAgreementActivated = true;
         AccountFormBean formBean = new AccountFormBean();
         formBean.setPassword("");
         formBean.setConfirmPassword("");
@@ -332,18 +336,21 @@ public class NewAccountFormControllerTest {
         assertEquals("required", resultErrors.getFieldError("org").getDefaultMessage());
         assertEquals("required", resultErrors.getFieldError("password").getDefaultMessage());
         assertEquals("required", resultErrors.getFieldError("confirmPassword").getDefaultMessage());
+        assertEquals("required", resultErrors.getFieldError("privacyPolicyAgreed").getDefaultMessage());
 
-        assertEquals(8, resultErrors.getFieldErrorCount());
+        assertEquals(9, resultErrors.getFieldErrorCount());
     }
 
     @Test
     public void specialValidators() throws IOException, SQLException {
         NewAccountFormController toTest = createToTest("firstName,surname,org,orgType,phone,title,description");
+        toTest.privacyPolicyAgreementActivated = true;
         AccountFormBean formBean = new AccountFormBean();
         formBean.setUid("I am no compliant !!!!");
         formBean.setEmail("I am no compliant !!!!");
         formBean.setPassword("Pré$ident");
         formBean.setConfirmPassword("lapinmalin");
+        formBean.setPrivacyPolicyAgreed(false);
         BindingResult resultErrors = new MapBindingResult(new HashMap<>(), "errors");
 
         toTest.create(request, formBean, "", resultErrors, status, UiModel);
@@ -354,6 +361,7 @@ public class NewAccountFormControllerTest {
         assertEquals("required", resultErrors.getFieldError("phone").getDefaultMessage());
         assertEquals("required", resultErrors.getFieldError("title").getDefaultMessage());
         assertEquals("required", resultErrors.getFieldError("description").getDefaultMessage());
+        assertEquals("required", resultErrors.getFieldError("privacyPolicyAgreed").getDefaultMessage());
     }
 
     @Test
@@ -368,6 +376,7 @@ public class NewAccountFormControllerTest {
         formBean.setConfirmPassword("testtest");
         formBean.setPassword("testtest");
         formBean.setRecaptcha_response_field("success");
+        formBean.setPrivacyPolicyAgreed(true);
         mockRecaptchaSucess();
         BindingResult resultErrors = new MapBindingResult(new HashMap<>(), "errors");
 
@@ -392,6 +401,7 @@ public class NewAccountFormControllerTest {
         when(formBean.getTitle()).thenReturn("+331234567890");
         when(formBean.getOrg()).thenReturn("geOrchestra testing team");
         when(formBean.getDescription()).thenReturn("Bot Unit Testing");
+        when(formBean.getPrivacyPolicyAgreed()).thenReturn(true);
 
         when(rec.isValid(anyString(), anyString(), anyString())).thenReturn(true);
     }

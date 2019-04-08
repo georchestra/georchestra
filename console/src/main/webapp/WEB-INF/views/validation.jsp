@@ -84,6 +84,15 @@ function testConfirmPassword() {
 	}
 	return true;
 }
+function testPrivacyPolicyAgreed(){
+    removeError("privacyPolicyAgreed");
+    if(!$('#privacyPolicyAgreed').is(':checked')){
+	addError("privacyPolicyAgreed", "<s:message code="privacyPolicyAgreed.error.notChecked" />");
+	return false;
+    }
+    return true;
+}
+
 /**
  * First verification, be sure g-recaptcha-response textarea is not empty
  */

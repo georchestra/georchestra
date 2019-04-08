@@ -65,6 +65,7 @@
   "user.fax"              : "Fax",
   "user.title"            : "Job title",
   "user.lastcontext"      : "Last context",
+  "user.privacyPolicyAgreementDate" : "Date of agreement to conditions",
   "user.warning"          : "Warning, this action is irreversible — ",
   "user.pendingmsg"       : "Pending user ",
   "user.confirm"          : "Confirm",
