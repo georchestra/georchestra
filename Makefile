@@ -1,7 +1,7 @@
 # Docker related targets
 
 GEOSERVER_EXTENSION_PROFILES=colormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,gdal,importer,inspire,libjpeg-turbo,monitor,pyramid,wps,css,s3-geotiff
-BRANCH=19.04
+BTAG=latest
 
 docker-pull-jetty:
 	docker pull jetty:9-jre8
@@ -9,12 +9,12 @@ docker-pull-jetty:
 docker-build-ldap:
 	docker pull debian:stretch
 	cd ldap; \
-	docker build -t georchestra/ldap:${BRANCH} .
+	docker build -t georchestra/ldap:${BTAG} .
 
 docker-build-database:
 	docker pull postgres:11
 	cd postgresql; \
-	docker build -t georchestra/database:${BRANCH} .
+	docker build -t georchestra/database:${BTAG} .
 
 docker-build-gn3: docker-pull-jetty
 	cd geonetwork; \
