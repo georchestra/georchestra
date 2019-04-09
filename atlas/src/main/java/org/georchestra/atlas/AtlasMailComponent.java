@@ -5,7 +5,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Handler;
 import org.apache.velocity.app.VelocityEngine;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
-import org.jfree.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -78,8 +77,8 @@ public class AtlasMailComponent {
      * 
      * The e-mail is supposed to be UTF-8 encoded.
      *
-     * @param jobId
-     * @return string the formatted e-mail
+     * @param job AltlasJob to format.
+     * @return string of the formatted e-mail
      */
     @VisibleForTesting
     public String formatMail(AtlasJob job) {
@@ -93,7 +92,7 @@ public class AtlasMailComponent {
         try {
             outputFormat = job.getOutputFormat();
         } catch (JSONException e) {
-            Log.error("unable to parse the outputformat of the Job " + job, e);
+            log.error("unable to parse the outputformat of the Job " + job, e);
         }
 
         model.put("extension", outputFormat);
