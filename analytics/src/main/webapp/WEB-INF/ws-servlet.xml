@@ -17,7 +17,7 @@
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" depends-on="waitForDb">
         <property name="jdbcUrl" value="jdbc:postgresql://${pgsqlHost}:${pgsqlPort}/${pgsqlDatabase}?user=${pgsqlUser}&amp;password=${pgsqlPassword}"/>
         <property name="driverClass" value="org.postgresql.Driver"/>
-        <property name="initialPoolSize" value="1"/>
+        <property name="initialPoolSize" value="2"/>
         <property name="minPoolSize" value="${dataSource.minPoolSize:2}"/>
         <property name="maxPoolSize" value="${dataSource.maxPoolSize:2}"/>
         <property name="checkoutTimeout" value = "${dataSource.timeout:2000}"/>
