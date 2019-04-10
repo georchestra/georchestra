@@ -67,15 +67,6 @@
         p:prefix="/WEB-INF/view/jsp/"
         p:suffix=".jsp"
         p:order="1">
-    <property name="attributes">
-      <map>
-        <entry key="publicUrl" value="${scheme}://${domainName}" />
-        <entry key="instanceName" value="${instanceName}" />
-        <entry key="consoleContextPath" value="${console.contextpath:/console}" />
-        <entry key="headerHeight" value="${headerHeight}" />
-        <entry key="headerUrl" value="${headerUrl}" />
-      </map>
-    </property>
   </bean>
   
   <bean id="errorHandlerResolver" class="org.jasig.cas.web.FlowExecutionExceptionResolver"/>
