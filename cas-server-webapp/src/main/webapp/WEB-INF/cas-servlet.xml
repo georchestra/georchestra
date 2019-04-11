@@ -61,13 +61,6 @@
   <bean id="localeResolver" class="org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver" />
 
   <bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor"/>
-
-  <bean id="urlBasedViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver"
-        p:viewClass="org.springframework.web.servlet.view.InternalResourceView"
-        p:prefix="/WEB-INF/view/jsp/"
-        p:suffix=".jsp"
-        p:order="1">
-  </bean>
   
   <bean id="errorHandlerResolver" class="org.jasig.cas.web.FlowExecutionExceptionResolver"/>
 
