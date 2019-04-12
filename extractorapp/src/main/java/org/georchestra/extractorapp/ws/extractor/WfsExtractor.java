@@ -1,17 +1,17 @@
 package org.georchestra.extractorapp.ws.extractor;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nullable;
-import javax.xml.XMLConstants;
-import javax.xml.namespace.QName;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,49 +30,30 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.Query;
-import org.geotools.data.Transaction;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;
-import org.geotools.data.store.ContentDataStore;
-import org.geotools.data.store.ContentFeatureSource;
 import org.geotools.data.store.ReprojectingFeatureCollection;
-import org.geotools.data.wfs.impl.WFSContentDataStore;
 import org.geotools.data.wfs.impl.WFSDataStoreFactory;
-import org.geotools.data.wfs.internal.DescribeFeatureTypeRequest;
-import org.geotools.data.wfs.internal.DescribeFeatureTypeResponse;
-import org.geotools.data.wfs.internal.WFSClient;
-import org.geotools.data.wfs.internal.WFSConfig;
-import org.geotools.data.wfs.internal.parsers.EmfAppSchemaParser;
-import org.geotools.data.wfs.internal.v1_x.MapServerWFSStrategy;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.factory.GeoTools;
-import org.geotools.feature.NameImpl;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.geotools.util.NullProgressListener;
-import org.geotools.wfs.v2_0.WFS;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.feature.type.Name;
-import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
-import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.spatial.Intersects;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.ProgressListener;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
@@ -80,8 +61,6 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 
 /**
  * Obtains data from a WFS and write the data out to the filesystem
@@ -92,8 +71,8 @@ public class WfsExtractor {
 
     protected static final Log LOG = LogFactory.getLog(WcsExtractor.class.getPackage().getName());
 
-    private static final FilterFactory2 filterFactory = CommonFactoryFinder.getFilterFactory2 (GeoTools.getDefaultHints ());
-    private static final Set<String> supportedFormats = ImmutableSet.of("shp", "mif", "tab", "kml");
+    private static final FilterFactory2 FILTER_FACTORY = CommonFactoryFinder.getFilterFactory2 (GeoTools.getDefaultHints ());
+    private static final Set<String> SUPPORTED_FORMATS = ImmutableSet.of("shp", "mif", "tab", "kml");
     
     /**
      * Enumerate general types of geometries we accept. Multi/normal is ignored
@@ -232,9 +211,9 @@ public class WfsExtractor {
     	if (request._owsType != OWSType.WFS) {
             throw new IllegalArgumentException (request._owsType + "must be WFS for the WfsExtractor");
         }
-		checkArgument(request._format != null && supportedFormats.contains(request._format.toLowerCase()),
-				"%s is not a recognized vector format", request._format);
-		checkNotNull(request._bbox, "Bounding box not specified");
+        checkArgument(request._format != null && SUPPORTED_FORMATS.contains(request._format.toLowerCase()),
+                "%s is not a recognized vector format", request._format);
+        checkNotNull(request._bbox, "Bounding box not specified");
 
         Map<String, Serializable> params = new HashMap<String, Serializable> ();
         params.put (WFSDataStoreFactory.URL.key, request.capabilitiesURL ("WFS","1.0.0"));
@@ -314,7 +293,7 @@ public class WfsExtractor {
             featuresWriter = new OGRFeatureWriter(progressListener, sourceSchema,  basedir, OGRFeatureWriter.FileFormat.tab, features);
             bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.tab, request._projection, progressListener );
         } else {
-        	Preconditions.checkState("kml".equalsIgnoreCase(request._format)); 
+            checkState("kml".equalsIgnoreCase(request._format), "Shouldn't happen, aldready checked format is in SUPPORTED_FORMATS");
             featuresWriter = new OGRFeatureWriter(progressListener, sourceSchema, basedir, OGRFeatureWriter.FileFormat.kml, features);
             bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.kml, request._projection, progressListener );
         }
@@ -326,51 +305,51 @@ public class WfsExtractor {
         return basedir;
     }
 
-	private SimpleFeatureCollection getFeatures(ExtractorLayerRequest request, SimpleFeatureType sourceSchema,
-			SimpleFeatureSource featureSource) throws IOException, TransformException, FactoryException {
-		
-		Query query = createQuery(request, sourceSchema);
-		SimpleFeatureCollection features = featureSource.getFeatures(query);
-		
-		CoordinateReferenceSystem returnedCrs = features.getSchema().getCoordinateReferenceSystem();
-		CoordinateReferenceSystem targetCrs = request._projection;
-		// current version (9.2) of WFS datastore does not perform reprojection
-		if (!CRS.equalsIgnoreMetadata(targetCrs, returnedCrs)) {
-			features = new ReprojectingFeatureCollection(features, targetCrs);
-		}
-		
-		return features;
-	}
+    private SimpleFeatureCollection getFeatures(ExtractorLayerRequest request, SimpleFeatureType sourceSchema,
+            SimpleFeatureSource featureSource) throws IOException, TransformException, FactoryException {
+
+        Query query = createQuery(request, sourceSchema);
+        SimpleFeatureCollection features = featureSource.getFeatures(query);
+
+        CoordinateReferenceSystem returnedCrs = features.getSchema().getCoordinateReferenceSystem();
+        CoordinateReferenceSystem targetCrs = request._projection;
+        // current version (9.2) of WFS datastore does not perform reprojection
+        if (!CRS.equalsIgnoreMetadata(targetCrs, returnedCrs)) {
+            features = new ReprojectingFeatureCollection(features, targetCrs);
+        }
+
+        return features;
+    }
 
 	/* This method is default for testing purposes */
     Query createQuery (ExtractorLayerRequest request, FeatureType schema) throws IOException, TransformException,
             FactoryException {
 
-		final CoordinateReferenceSystem nativeCrs = schema.getCoordinateReferenceSystem();
-
-		final Filter filter;
-		final String[] properties;
-		if (null==schema.getGeometryDescriptor()) {
-			filter = Filter.EXCLUDE;
-			properties = Query.ALL_NAMES;
-		} else {
-			GeometryDescriptor defGeom = schema.getGeometryDescriptor();
-			PropertyName propertyName = filterFactory.property(defGeom.getLocalName());
-	        ReferencedEnvelope bbox = request._bbox;
-	        // bbox may not be in the same projection as the data so it sometimes necessary to reproject the request BBOX
-			if (!CRS.equalsIgnoreMetadata(nativeCrs, bbox.getCoordinateReferenceSystem())) {
-				bbox = bbox.transform(nativeCrs, true, 10);
-			}
-			Geometry bboxGeom = JTS.toGeometry(bbox);
-			filter = filterFactory.intersects(propertyName, filterFactory.literal(bboxGeom));
-			properties = schema.getDescriptors().stream()//
-					// shapefiles can only have one geometry so skip any
-					// geometry descriptor that is not the default
-					.filter(d -> d instanceof GeometryDescriptor ? d.equals(defGeom) : true)//
-					.map(d -> d.getName().getLocalPart())//
-					.toArray(String[]::new);
-		}
-		Query query = new Query(request.getWFSName(), filter, properties);
+        final Filter filter;
+        final String[] properties;
+        if (null == schema.getGeometryDescriptor()) {
+            filter = Filter.EXCLUDE;
+            properties = Query.ALL_NAMES;
+        } else {
+            final CoordinateReferenceSystem nativeCrs = schema.getCoordinateReferenceSystem();
+            GeometryDescriptor defGeom = schema.getGeometryDescriptor();
+            PropertyName propertyName = FILTER_FACTORY.property(defGeom.getLocalName());
+            ReferencedEnvelope bbox = request._bbox;
+            // bbox may not be in the same projection as the data so it sometimes necessary
+            // to reproject the request BBOX
+            if (!CRS.equalsIgnoreMetadata(nativeCrs, bbox.getCoordinateReferenceSystem())) {
+                bbox = bbox.transform(nativeCrs, true, 10);
+            }
+            Geometry bboxGeom = JTS.toGeometry(bbox);
+            filter = FILTER_FACTORY.intersects(propertyName, FILTER_FACTORY.literal(bboxGeom));
+            properties = schema.getDescriptors().stream()//
+                    // shapefiles can only have one geometry so skip any
+                    // geometry descriptor that is not the default
+                    .filter(d -> d instanceof GeometryDescriptor ? d.equals(defGeom) : true)//
+                    .map(d -> d.getName().getLocalPart())//
+                    .toArray(String[]::new);
+        }
+        Query query = new Query(request.getWFSName(), filter, properties);
 
         return query;
     }
