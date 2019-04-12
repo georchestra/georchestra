@@ -321,9 +321,7 @@ public class WfsExtractor {
         return features;
     }
 
-	/* This method is default for testing purposes */
-    Query createQuery (ExtractorLayerRequest request, FeatureType schema) throws IOException, TransformException,
-            FactoryException {
+    private Query createQuery (ExtractorLayerRequest request, FeatureType schema) throws TransformException, FactoryException{
 
         final Filter filter;
         final String[] properties;
