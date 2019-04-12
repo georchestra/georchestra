@@ -128,8 +128,8 @@
   "role.cn"               : "Id",
   "role.favorite"         : "Favorite",
   "role.favorites"        : "Favorites",
-  "role.useradded"        : "User has been removed from role",
-  "role.userremoved"      : "User has been added to role",
+  "role.userremoved"      : "User has been removed from role",
+  "role.useradded"        : "User has been added to role",
   "role.userlabel"        : "Add",
 
   "delegations.title"     : "management delegation",
