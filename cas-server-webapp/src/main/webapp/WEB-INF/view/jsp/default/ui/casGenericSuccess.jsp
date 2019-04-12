@@ -20,12 +20,9 @@
 --%>
 <jsp:directive.include file="includes/top-noheader.jsp" />
 
-<spring:eval expression="@propertyConfigurer.getProperty('scheme')" var="scheme"/>
-<spring:eval expression="@propertyConfigurer.getProperty('domainName')" var="domainName"/>
-
   <script type="text/javascript">
     window.setTimeout(function() {
-          window.location = "${scheme}://${domainName}";
+          window.location = "${publicUrl}";
     }, 1000);
   </script>
   <div id="msg" class="success">

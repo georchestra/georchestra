@@ -46,6 +46,24 @@
     </property>
   </bean>
 
+  <util:map id="props" map-class="java.util.HashMap">
+    <entry key="publicUrl">
+      <value>${server.name}</value>
+    </entry>
+    <entry key="instanceName">
+      <value>${instanceName}</value>
+    </entry>
+    <entry key="headerUrl">
+      <value>${headerUrl}</value>
+    </entry>
+    <entry key="headerHeight">
+      <value>${headerHeight}</value>
+    </entry>
+    <entry key="consoleContextpath">
+      <value>${console.contextpath:/console}</value>
+    </entry>
+  </util:map>
+
   <!-- View Resolver -->
   <bean id="viewResolver" class="org.springframework.web.servlet.view.ResourceBundleViewResolver"
         p:order="0">
@@ -61,13 +79,6 @@
   <bean id="localeResolver" class="org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver" />
 
   <bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor"/>
-
-  <bean id="urlBasedViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver"
-        p:viewClass="org.springframework.web.servlet.view.InternalResourceView"
-        p:prefix="/WEB-INF/view/jsp/"
-        p:suffix=".jsp"
-        p:order="1">
-  </bean>
   
   <bean id="errorHandlerResolver" class="org.jasig.cas.web.FlowExecutionExceptionResolver"/>
 
