@@ -46,6 +46,24 @@
     </property>
   </bean>
 
+  <util:map id="props" map-class="java.util.HashMap">
+    <entry key="publicUrl">
+      <value>${server.name}</value>
+    </entry>
+    <entry key="instanceName">
+      <value>${instanceName}</value>
+    </entry>
+    <entry key="headerUrl">
+      <value>${headerUrl}</value>
+    </entry>
+    <entry key="headerHeight">
+      <value>${headerHeight}</value>
+    </entry>
+    <entry key="consoleContextpath">
+      <value>${console.contextpath:/console}</value>
+    </entry>
+  </util:map>
+
   <!-- View Resolver -->
   <bean id="viewResolver" class="org.springframework.web.servlet.view.ResourceBundleViewResolver"
         p:order="0">

@@ -20,10 +20,6 @@
 --%>
 <jsp:directive.include file="includes/top.jsp" />
 
-<spring:eval expression="@propertyConfigurer.getProperty('console.contextpath') ?: '/console'"  var="consoleContextpath"/>
-<spring:eval expression="@propertyConfigurer.getProperty('loginTicket')" var="loginTicket"/>
-<spring:eval expression="@propertyConfigurer.getProperty('flowExecutionKey')" var="flowExecutionKey"/>
-
 <div class="box" id="login">
   <form:form method="post" id="fm1" commandName="${commandName}" htmlEscape="true">
 

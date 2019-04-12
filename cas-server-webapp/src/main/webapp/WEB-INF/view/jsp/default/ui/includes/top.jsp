@@ -27,10 +27,6 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%-------------------------------------------- var --------------------------------------------%>
-<spring:eval expression="@propertyConfigurer.getProperty('instanceName')" var="instanceName"/>
-<spring:eval expression="@propertyConfigurer.getProperty('headerUrl')" var="headerUrl"/>
-<spring:eval expression="@propertyConfigurer.getProperty('headerHeight')" var="headerHeight"/>
 
 <html lang="en">
 <head>

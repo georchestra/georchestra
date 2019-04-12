@@ -19,17 +19,10 @@
 
 --%>
 <jsp:directive.include file="includes/top-noheader.jsp" />
-<%--
-We could use ${publicURl} but right now, the property loader (PropertiesFactoryBean in
-spring-configuration/propertyFileConfigurer.xml) can't handle nested var in properties file. The solution could be the
-use of PropertySourcesPlaceholderConfigurer but at the moment it does not work well with the cas.
---%>
-<spring:eval expression="@propertyConfigurer.getProperty('scheme')" var="scheme"/>
-<spring:eval expression="@propertyConfigurer.getProperty('domainName')" var="domainName"/>
 
   <script type="text/javascript">
     window.setTimeout(function() {
-          window.location = "${scheme}://${domainName}";
+          window.location = "${publicUrl}";
     }, 1000);
   </script>
   <div id="msg" class="success">
