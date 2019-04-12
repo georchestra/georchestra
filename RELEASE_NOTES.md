@@ -52,6 +52,7 @@ Bug fixes:
  * console - IE11 does not refresh the user listing after user deletion - [#1695](https://github.com/georchestra/georchestra/issues/1695)
  * console - renaming an organization does not rename the corresponding LDAP objects - [#2107](https://github.com/georchestra/georchestra/issues/2107)
  * extractor - addon should not modify map extent when extracting - [#2232](https://github.com/georchestra/georchestra/issues/2232)
+ * extractor - fix vector data reprojection - [#1906](https://github.com/georchestra/georchestra/issues/1906)
  * geonetwork - fixed error saving group -  [georchestra/geonetwork#104](https://github.com/georchestra/geonetwork/issues/104)
  * geonetwork - fixed 404 on custom locales files - [georchestra/geonetwork#100](https://github.com/georchestra/geonetwork/issues/100)
  * geonetwork - disabled directory listing - [georchestra/geonetwork#80](https://github.com/georchestra/geonetwork/issues/80)
