@@ -1,0 +1,331 @@
+openapi: 3.0.0
+# Added by API Auto Mocking Plugin
+servers:
+  - description: Default Server
+    url: https://georchestra.mydomain.org/extractorapp/
+info:
+  version: "1.0.0"
+  title: 'Extractorapp 1.0 API'
+  description: Extractorapp 1.0 API
+
+tags: 
+  - name: Jobs
+    description: Jobs tasks
+  - name: Extractor
+    description: extractor tasks
+  
+paths:
+  /jobs/list:
+    get:
+      tags: 
+        - Jobs
+      summary: List current tasks
+      operationId: listTasks
+      parameters:
+        - $ref: '#/components/parameters/sec-username'
+        - $ref: '#/components/parameters/sec-roles'
+        - $ref: '#/components/parameters/sec-orgname'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskList'
+                
+  /extractor/package:
+    get:
+      tags: 
+        - Extractor
+      summary: ''
+      operationId: getExtractionResults
+      parameters: 
+        - $ref: '#/components/parameters/uuid'
+        - $ref: '#/components/parameters/sec-username'
+        - $ref: '#/components/parameters/sec-roles'
+        - $ref: '#/components/parameters/sec-orgname'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/zip:
+              schema:
+                $ref: '#/components/schemas/ZipFile'
+          headers:
+            Content-Disposition:
+              schema:
+                type: string
+  
+  /extractor/initiate:
+    post:
+      tags: 
+        - Extractor
+      summary: 'Initiate an extraction for the provided layers and their settings'
+      operationId: extract
+      parameters:
+        - $ref: '#/components/parameters/sec-username'
+        - $ref: '#/components/parameters/sec-roles'
+        - $ref: '#/components/parameters/sec-orgname'
+      requestBody:
+        $ref: '#/components/requestBodies/ExtractRequestBody'
+      responses:
+        200:
+          description: "Extraction started"
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ExtractResponse'
+
+  /extractor/tasks:
+    get:
+      tags: 
+        - Extractor
+      summary: 'Lists the tasks waiting in the extraction queue'
+      operationId: getTaskQueue
+      parameters:
+        - $ref: '#/components/parameters/sec-username'
+        - $ref: '#/components/parameters/sec-roles'
+        - $ref: '#/components/parameters/sec-orgname'
+      responses:
+        200:
+          description: "Task queue"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskQueue'
+  
+  /extractor/task/{uuid}:
+    parameters:
+    - name: uuid
+      in: path
+      description: Task identifier
+      required: true
+      schema:
+        type: string
+        format: uuid
+    put:
+      tags: 
+        - Extractor
+      description: Analyzes the changes required in the task described in the parameter. 
+                   This method supposes that only one change is done in one call.
+      operationId: updateTask
+      parameters:
+        - $ref: '#/components/parameters/sec-username'
+        - $ref: '#/components/parameters/sec-roles'
+        - $ref: '#/components/parameters/sec-orgname'
+      requestBody:
+        content:
+          application:json:
+            schema:
+              $ref: '#/components/schemas/TaskDescriptor'
+      responses:
+        200:
+          description: "Task updated, no content"
+
+components:
+  parameters:
+    uuid:
+      in: query
+      name: uuid
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Unique extraction identifier
+    sec-username:
+      in: header
+      name: sec-username
+      schema:
+        type: string
+    sec-roles:
+      in: header
+      name: sec-roles
+      schema:
+        type: string
+      example: ROLE_SUPERUSER, ROLE_ADMINISTRATOR
+    sec-orgname:
+      in: header
+      name: sec-orgname
+      schema:
+        type: string
+  
+  requestBodies:
+    ExtractRequestBody:
+      description: request to initiate an extraction
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ExtractRequest'
+  schemas:
+    ExtractRequest:
+      type: object
+      properties:
+        emails:
+          type: array
+          items:
+            type: string
+          example: [psc@georchestra.org, user@example.com]
+        globalProperties:
+          $ref: '#/components/schemas/ExtractionOptions'
+        layers:
+          $ref: '#/components/schemas/ExtractorLayer'
+          
+    ExtractResponse:
+      type: object
+      xml: 
+        name: response
+      properties:
+        success:
+          type: boolean
+        link:
+          type: string
+          format: url
+          example: 'https://georchestra.mydomain.org/extractorapp/extractor/package?uuid={requestUuid}'
+        emails:
+          type: string
+          example: '[psc@georchestra.org, user@example.com]'
+        
+    BoundingBox:
+      description: '[minx, miny, maxx, maxy]'
+      type: array
+      items:
+        type: number
+        format: double
+      example:
+        [-180, -90, 180, 90]
+
+    ReferencedBoundingBox:
+      type: object
+      properties:
+        srs:
+          type: string
+          example: 'EPSG:4326'
+        value:
+          $ref: '#/components/schemas/BoundingBox'
+            
+    ExtractionOptions:
+      type: object
+      properties:
+        projection:
+          type: string
+          example: 'EPSG:4326'
+        vectorFormat:
+          type: string
+          enum: [shp, mif, tab, kml]
+        rasterFormat:
+          type: string
+          enum: [jpeg2000, jp2, jp2ecw, jp2k, geotiff, gtiff, geotif, gtif, png, gif, jpeg, tiff, tif, ecw]
+        bbox:
+          $ref: '#/components/schemas/ReferencedBoundingBox'
+        resolution:
+          type: number
+          format: double
+
+    ExtractorLayer:
+      type: object
+      required:
+        - layerName
+        - owsUrl
+        - owsType
+      properties:
+        layerName:
+          type: string
+          example: roads
+        owsUrl:
+          type: string
+          format: url
+          example: https://georchestra.mydomain.org/services/geoserver/ows
+        owsType:
+          type: string
+          enum: [WFS, WCS]
+        format:
+          type: string
+          enum: [shp, mif, tab, kml, jpeg2000, jp2, jp2ecw, jp2k, geotiff, gtiff, geotif, gtif, png, gif, jpeg, tiff, tif, ecw]
+        namespace:
+          type: string
+          example: georchestra
+        isoMetadataURL:
+          type: string
+          format: url
+        projection:
+          type: string
+          example: 'EPSG:4326'
+        bbox:
+          $ref: '#/components/schemas/ReferencedBoundingBox'
+        resolution:
+          type: number
+          format: double
+
+    ZipFile:
+      type: string
+      format: binary
+      
+    ExecutionState:
+      type: string 
+      enum: [WAITING, RUNNING, PAUSED, COMPLETED, CANCELLED]
+    ExecutionPriority:
+      type: string 
+      enum: [LOW, MEDIUM, HIGH]
+
+    TaskList:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskInfo'
+    TaskInfo:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        state:
+          $ref: '#/components/schemas/ExecutionState'
+        priority:
+          $ref: '#/components/schemas/ExecutionPriority'
+        
+    TaskQueue:
+      type: object
+      properties:
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskDescriptor'
+    TaskDescriptor:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        requestor:
+          type: string
+        priority:
+          type: integer
+          format: int32
+        status:
+          $ref: '#/components/schemas/ExecutionState'
+        request_ts:
+          type: string
+          format: date_time
+        begin_ts:
+          type: string
+          format: date_time
+        end_ts:
+          type: string
+          format: date_time
+        spec:
+          $ref: '#/components/schemas/ExtractRequest'
+
+  securitySchemes:
+    password:
+      type: oauth2
+      flows:
+        password:
+          tokenUrl: 'http://example.com/oauth/token'
+          scopes:
+            write: allows modifying resources
+            read: allows reading resources
