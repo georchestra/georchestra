@@ -93,7 +93,7 @@ public class EmailFactory {
 	}
 
 	/**
-	 * e-mail to the user to inform the account requires the moderator's singnup
+	 * e-mail to the user to inform the account requires the moderator's validation
 	 */
 	public void sendAccountCreationInProcessEmail(ServletContext servletContext, String recipient,
 												  String userName, String uid) throws MessagingException {
