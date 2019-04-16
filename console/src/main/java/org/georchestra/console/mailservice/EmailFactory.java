@@ -144,6 +144,7 @@ public class EmailFactory {
 				this.instanceName);
 		email.set("name", userName);
 		email.set("uid", uid);
+		email.set("email", userEmail);
 		email.send();
 	}
 
