@@ -135,6 +135,11 @@
       <version>${gs.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.geoserver.extension</groupId>
+      <artifactId>gs-jp2k</artifactId>
+      <version>${gs.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.geotools.jdbc</groupId>
       <artifactId>gt-jdbc-postgis</artifactId>
       <version>${gt.version}</version>
