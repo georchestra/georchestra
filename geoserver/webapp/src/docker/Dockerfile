@@ -14,9 +14,16 @@ RUN echo "deb http://httpredir.debian.org/debian stretch main contrib" > /etc/ap
     && echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | debconf-set-selections \
     && apt-get update \
     && apt-get install -y ttf-mscorefonts-installer \
+    && apt-get install -y wget \
     && apt-get clean \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
+
+# install libjpeg turbo
+RUN wget https://sourceforge.net/projects/libjpeg-turbo/files/1.5.3/libjpeg-turbo-official_1.5.3_amd64.deb \
+    && dpkg -i libjpeg-turbo-official_1.5.3_amd64.deb \
+    && apt-get -f install \
+    && rm libjpeg-turbo-official_1.5.3_amd64.deb
 
 RUN mkdir /mnt/geoserver_datadir /mnt/geoserver_geodata /mnt/geoserver_tiles /mnt/geoserver_native_libs && \
     chown jetty:jetty /etc/georchestra /mnt/geoserver_datadir /mnt/geoserver_geodata /mnt/geoserver_tiles /mnt/geoserver_native_libs
@@ -30,7 +37,8 @@ VOLUME [ "/mnt/geoserver_datadir", "/mnt/geoserver_geodata", "/mnt/geoserver_til
 
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
 
-CMD ["sh", "-c", "exec java -Djava.io.tmpdir=/tmp/jetty -Djava.library.path=/mnt/geoserver_native_libs \
+CMD ["sh", "-c", "exec java -Djava.io.tmpdir=/tmp/jetty \
+-Djava.library.path=/opt/libjpeg-turbo/lib64:/mnt/geoserver_native_libs \
 -Dgeofence-ovr=file:/etc/georchestra/geoserver/geofence/geofence-datasource-ovr.properties \
 -Dgeorchestra.datadir=/etc/georchestra \
 -DGEOSERVER_DATA_DIR=/mnt/geoserver_datadir \
