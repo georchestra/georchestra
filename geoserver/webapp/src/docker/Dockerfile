@@ -18,19 +18,19 @@ RUN echo "deb http://httpredir.debian.org/debian stretch main contrib" > /etc/ap
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
 
-RUN mkdir /mnt/geoserver_datadir /mnt/geoserver_geodata /mnt/geoserver_tiles && \
-    chown jetty:jetty /etc/georchestra /mnt/geoserver_datadir /mnt/geoserver_geodata /mnt/geoserver_tiles
+RUN mkdir /mnt/geoserver_datadir /mnt/geoserver_geodata /mnt/geoserver_tiles /mnt/geoserver_native_libs && \
+    chown jetty:jetty /etc/georchestra /mnt/geoserver_datadir /mnt/geoserver_geodata /mnt/geoserver_tiles /mnt/geoserver_native_libs
 
 RUN sed -i 's/threads.max=200/threads.max=50/g' /var/lib/jetty/start.d/server.ini
 
 # Restore jetty user
 USER jetty
 
-VOLUME [ "/mnt/geoserver_datadir", "/mnt/geoserver_geodata", "/mnt/geoserver_tiles", "/tmp", "/run/jetty" ]
+VOLUME [ "/mnt/geoserver_datadir", "/mnt/geoserver_geodata", "/mnt/geoserver_tiles", "/mnt/geoserver_native_libs", "/tmp", "/run/jetty" ]
 
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
 
-CMD ["sh", "-c", "exec java -Djava.io.tmpdir=/tmp/jetty \
+CMD ["sh", "-c", "exec java -Djava.io.tmpdir=/tmp/jetty -Djava.library.path=/mnt/geoserver_native_libs \
 -Dgeofence-ovr=file:/etc/georchestra/geoserver/geofence/geofence-datasource-ovr.properties \
 -Dgeorchestra.datadir=/etc/georchestra \
 -DGEOSERVER_DATA_DIR=/mnt/geoserver_datadir \
