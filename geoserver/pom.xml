@@ -19,6 +19,7 @@
     <gs.spring.version>4.3.7.RELEASE</gs.spring.version>
   </properties>
   <modules>
+    <module>geoserver-submodule/src/gwc</module>
     <module>geoserver-submodule/src/web/core</module>
     <module>webapp</module>
   </modules>
