@@ -675,8 +675,8 @@ public class Proxy {
                     finalResponse.setHeader("Location", adjustedLocation.get());
                 } else {
                     finalResponse.sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR, "Unable to proxify redirect URL");
+                    return;
                 }
-                return;
             }
 
             // get content type
