@@ -427,6 +427,11 @@ public class UsersController {
 		accountDao.update(account, modified, auth.getName());
 
 		if (accountDao.hasUserDnChanged(account, modified)) {
+			// account was validated by a moderator, notify user
+			if (account.isPending() && ! modified.isPending()) {
+				this.emailFactory.sendAccountWasCreatedEmail(request.getSession().getServletContext(),
+						modified.getEmail(), modified.getCommonName(), modified.getUid());
+			}
 			roleDao.modifyUser(account, modified);
 		}
 
