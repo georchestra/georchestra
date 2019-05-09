@@ -25,6 +25,7 @@
     <commons-digester.version>1.7</commons-digester.version>
   </properties>
   <modules>
+    <module>geoserver-submodule/src/gwc</module>
     <module>geoserver-submodule/src/web/core</module>
     <module>webapp</module>
   </modules>

@@ -126,7 +126,7 @@ dn: cn=ADMINISTRATOR,ou=roles,dc=georchestra,dc=org
 objectClass: top
 objectClass: groupOfMembers
 cn: ADMINISTRATOR
-description: This group grants admin access to GeoServer
+description: This role grants admin access to GeoServer
 member: uid=geoserver_privileged_user,ou=users,dc=georchestra,dc=org
 member: uid=testadmin,ou=users,dc=georchestra,dc=org
 
@@ -135,7 +135,7 @@ dn: cn=SUPERUSER,ou=roles,dc=georchestra,dc=org
 objectClass: top
 objectClass: groupOfMembers
 cn: SUPERUSER
-description: This group grants access to the LDAPadmin private User Interface
+description: This role grants full control of users, roles & organizations via the console application
 member: uid=testadmin,ou=users,dc=georchestra,dc=org
 
 # EXTRACTORAPP, roles, georchestra.org
@@ -143,7 +143,7 @@ dn: cn=EXTRACTORAPP,ou=roles,dc=georchestra,dc=org
 objectClass: top
 objectClass: groupOfMembers
 cn: EXTRACTORAPP
-description: This group grants access to the Extractorapp application
+description: This role allows users to extract geodata
 member: uid=testadmin,ou=users,dc=georchestra,dc=org
 
 
@@ -152,7 +152,7 @@ dn: cn=GN_ADMIN,ou=roles,dc=georchestra,dc=org
 objectClass: top
 objectClass: groupOfMembers
 cn: GN_ADMIN
-description: This group grants admin access to GeoNetwork
+description: This role grants admin access to GeoNetwork
 member: uid=testadmin,ou=users,dc=georchestra,dc=org
 
 # GN_EDITOR, roles, georchestra.org
@@ -160,7 +160,7 @@ dn: cn=GN_EDITOR,ou=roles,dc=georchestra,dc=org
 objectClass: top
 objectClass: groupOfMembers
 cn: GN_EDITOR
-description: This group grants edit rights in GeoNetwork
+description: This role grants edit rights in GeoNetwork
 member: uid=testeditor,ou=users,dc=georchestra,dc=org
 
 # GN_REVIEWER, roles, georchestra.org
@@ -168,15 +168,38 @@ dn: cn=GN_REVIEWER,ou=roles,dc=georchestra,dc=org
 objectClass: top
 objectClass: groupOfMembers
 cn: GN_REVIEWER
-description: This group grants reviewer (publish) rights in GeoNetwork
+description: This role grants reviewer (publish) rights in GeoNetwork
 member: uid=testreviewer,ou=users,dc=georchestra,dc=org
+
+# CKAN_SYSADMIN, roles, georchestra.org
+dn: cn=CKAN_SYSADMIN,ou=roles,dc=georchestra,dc=org
+objectClass: top
+objectClass: groupOfMembers
+cn: CKAN_SYSADMIN
+description: This role grants full admin rights to CKAN
+member: uid=testadmin,ou=users,dc=georchestra,dc=org
+
+# CKAN_ADMIN, roles, georchestra.org
+dn: cn=CKAN_ADMIN,ou=roles,dc=georchestra,dc=org
+objectClass: top
+objectClass: groupOfMembers
+cn: CKAN_ADMIN
+description: This role grants admin rights in CKAN, scoped to user's org
+
+# CKAN_EDITOR, roles, georchestra.org
+dn: cn=CKAN_EDITOR,ou=roles,dc=georchestra,dc=org
+objectClass: top
+objectClass: groupOfMembers
+cn: CKAN_EDITOR
+description: This role grants metadata edit rights in CKAN, scoped to user's org
+member: uid=testeditor,ou=users,dc=georchestra,dc=org
 
 # USER, roles, georchestra.org
 dn: cn=USER,ou=roles,dc=georchestra,dc=org
 objectClass: top
 objectClass: groupOfMembers
 cn: USER
-description: This group grants basic, authenticated access to the whole SDI
+description: This role is required to log into geOrchestra
 member: uid=testuser,ou=users,dc=georchestra,dc=org
 member: uid=testeditor,ou=users,dc=georchestra,dc=org
 member: uid=testreviewer,ou=users,dc=georchestra,dc=org
