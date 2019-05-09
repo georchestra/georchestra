@@ -128,7 +128,7 @@ objectClass: top
 objectClass: groupOfMembers
 cn: ADMINISTRATOR
 ou: 1
-description: This group grants admin access to GeoServer
+description: This role grants admin access to GeoServer
 member: uid=geoserver_privileged_user,ou=users,dc=georchestra,dc=org
 member: uid=testadmin,ou=users,dc=georchestra,dc=org
 
@@ -139,7 +139,7 @@ objectClass: top
 objectClass: groupOfMembers
 cn: PENDING
 ou: 2
-description: This group does not grant any right inside the SDI. Users in this group are requesting a fully fledged account.
+description: This role does not grant any right inside the SDI. Users with this role are requesting a fully fledged account.
 member: uid=testpendinguser,ou=users,dc=georchestra,dc=org
 
 # SUPERUSER, roles, georchestra.org
@@ -148,7 +148,7 @@ objectClass: top
 objectClass: groupOfMembers
 cn: SUPERUSER
 ou: 10
-description: This group grants access to the LDAPadmin private User Interface
+description: This role grants full control of users, roles & organizations via the console application
 member: uid=testadmin,ou=users,dc=georchestra,dc=org
 
 # EXTRACTORAPP, roles, georchestra.org
@@ -157,7 +157,7 @@ objectClass: top
 objectClass: groupOfMembers
 cn: EXTRACTORAPP
 ou: 11
-description: This group grants access to the Extractorapp application
+description: This role allows users to extract geodata
 member: uid=testadmin,ou=users,dc=georchestra,dc=org
 
 
@@ -167,7 +167,7 @@ objectClass: top
 objectClass: groupOfMembers
 cn: GN_ADMIN
 ou: 20
-description: This group grants admin access to GeoNetwork
+description: This role grants admin access to GeoNetwork
 member: uid=testadmin,ou=users,dc=georchestra,dc=org
 
 # GN_EDITOR, roles, georchestra.org
@@ -176,7 +176,7 @@ objectClass: top
 objectClass: groupOfMembers
 cn: GN_EDITOR
 ou: 21
-description: This group grants edit rights in GeoNetwork
+description: This role grants edit rights in GeoNetwork
 member: uid=testeditor,ou=users,dc=georchestra,dc=org
 
 # GN_REVIEWER, roles, georchestra.org
@@ -185,8 +185,34 @@ objectClass: top
 objectClass: groupOfMembers
 cn: GN_REVIEWER
 ou: 22
-description: This group grants reviewer (publish) rights in GeoNetwork
+description: This role grants reviewer (publish) rights in GeoNetwork
 member: uid=testreviewer,ou=users,dc=georchestra,dc=org
+
+# CKAN_SYSADMIN, roles, georchestra.org
+dn: cn=CKAN_SYSADMIN,ou=roles,dc=georchestra,dc=org
+objectClass: top
+objectClass: groupOfMembers
+cn: CKAN_SYSADMIN
+ou: 30
+description: This role grants full admin rights to CKAN
+member: uid=testadmin,ou=users,dc=georchestra,dc=org
+
+# CKAN_ADMIN, roles, georchestra.org
+dn: cn=CKAN_ADMIN,ou=roles,dc=georchestra,dc=org
+objectClass: top
+objectClass: groupOfMembers
+cn: CKAN_ADMIN
+ou: 31
+description: This role grants admin rights in CKAN, scoped to user's org
+
+# CKAN_EDITOR, roles, georchestra.org
+dn: cn=CKAN_EDITOR,ou=roles,dc=georchestra,dc=org
+objectClass: top
+objectClass: groupOfMembers
+cn: CKAN_EDITOR
+ou: 32
+description: This role grants metadata edit rights in CKAN, scoped to user's org
+member: uid=testeditor,ou=users,dc=georchestra,dc=org
 
 # USER, roles, georchestra.org
 dn: cn=USER,ou=roles,dc=georchestra,dc=org
@@ -194,7 +220,7 @@ objectClass: top
 objectClass: groupOfMembers
 cn: USER
 ou: 23
-description: This group grants basic, authenticated access to the whole SDI
+description: This role is required to log into geOrchestra
 member: uid=testuser,ou=users,dc=georchestra,dc=org
 member: uid=testeditor,ou=users,dc=georchestra,dc=org
 member: uid=testreviewer,ou=users,dc=georchestra,dc=org
