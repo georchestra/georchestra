@@ -18,6 +18,10 @@
   </properties>
   <dependencies>
     <dependency>
+      <groupId>org.webjars</groupId>
+      <artifactId>extjs</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.tuckey</groupId>
       <artifactId>urlrewritefilter</artifactId>
       <exclusions>
@@ -268,9 +272,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <configuration>
-          <packagingExcludes>**/docs/**,admin/extjs/examples/**,admin/extjs/src/**,admin/extjs/pkgs/**</packagingExcludes>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.eclipse.jetty</groupId>
