@@ -10,19 +10,22 @@
   <packaging>pom</packaging>
   <name>GeoServer 2.x root module</name>
   <properties>
-    <maven.test.skip>true</maven.test.skip>
-    <gs.version>2.12.5</gs.version>
-    <gt.version>18.5</gt.version>
-    <geofence.version>3.2-SNAPSHOT</geofence.version>
-    <jetty.version>9.2.13.v20150730</jetty.version>
-    <marlin.version>0.7.5-Unsafe</marlin.version>
-    <gs.spring.version>4.3.7.RELEASE</gs.spring.version>
     <server>generic</server>
+    <skipTests>true</skipTests>
+    <gs.version>2.15.0</gs.version>
+    <gt.version>21.0</gt.version>
+    <geofence.version>3.4.2</geofence.version>
+    <jetty.version>9.4.12.v20180830</jetty.version>
+    <marlin.version>0.9.3</marlin.version>
+    <jackson.version>2.9.7</jackson.version>
     <!-- overrides the versions provided by spring-boot in the geOrchestra root pom -->
-    <hibernate.version>3.6.0.Final</hibernate.version>
-    <spring.version>4.3.7.RELEASE</spring.version>
+    <spring.version>5.1.1.RELEASE</spring.version>
+    <spring-security.version>5.1.1.RELEASE</spring-security.version>
+    <hibernate.version>3.6.9.Final</hibernate.version>
+<!--
     <commons-beanutils.version>1.8.0</commons-beanutils.version>
     <commons-digester.version>1.7</commons-digester.version>
+-->
   </properties>
   <modules>
     <module>geoserver-submodule/src/gwc</module>

@@ -1,0 +1,8 @@
+This is gt-s3-getotiff-21-SNAPHOT meant to
+replace gt-s3-geotiff-21.0.jar in 
+geoserver/WEB-INF/lib, with fixes
+that didn't make it to the official 21.0 
+GeoTools release from Tue Feb 2019, whilst
+the patch is from Mon Mar 2019 at commit
+c73b886b1, and hence will be available in
+the next 21.1 GeoTools release.
