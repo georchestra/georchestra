@@ -20,36 +20,36 @@ docker-build-gn3: docker-pull-jetty
 	cd geonetwork; \
 	mvn -DskipTests clean install; \
 	cd web; \
-	mvn -P docker -DskipTests package docker:build
+	mvn -P docker -DskipTests package docker:build -DdockerImageTags=${BTAG}
 
 docker-build-geoserver: docker-pull-jetty
 	cd geoserver; \
 	rm -rf geoserver-submodule/data/citewfs-1.1/workspaces/sf/sf/E*; \
 	LANG=C mvn clean install -DskipTests -Dfmt.skip=true -P${GEOSERVER_EXTENSION_PROFILES}; \
 	cd webapp; \
-	mvn clean install docker:build -Pdocker,${GEOSERVER_EXTENSION_PROFILES} -DskipTests
+	mvn clean install docker:build -DdockerImageTags=${BTAG} -Pdocker,${GEOSERVER_EXTENSION_PROFILES} -DskipTests
 
 docker-build-geoserver-geofence: docker-pull-jetty
 	cd geoserver; \
 	rm -fr geoserver-submodule/data/citewfs-1.1/workspaces/sf/sf/E*; \
 	LANG=C mvn clean install -DskipTests -Dfmt.skip=true -Pgeofence-server,${GEOSERVER_EXTENSION_PROFILES} ; \
 	cd webapp; \
-	mvn clean install docker:build -Pdocker,geofence,${GEOSERVER_EXTENSION_PROFILES} -DskipTests
+	mvn clean install docker:build -DdockerImageTags=${BTAG} -Pdocker,geofence,${GEOSERVER_EXTENSION_PROFILES} -DskipTests
 
 docker-build-proxy: build-deps docker-pull-jetty
-	mvn clean package docker:build -Pdocker -DskipTests --pl security-proxy
+	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl security-proxy
 
 docker-build-cas: build-deps docker-pull-jetty
-	mvn clean package docker:build -Pdocker -DskipTests --pl cas-server-webapp
+	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl cas-server-webapp
 
 docker-build-console: build-deps docker-pull-jetty
-	mvn clean package docker:build -Pdocker -DskipTests --pl console
+	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl console
 
 docker-build-mapfishapp: build-deps docker-pull-jetty
-	mvn clean package docker:build -Pdocker -DskipTests --pl mapfishapp
+	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl mapfishapp
 
 docker-build-georchestra: build-deps docker-pull-jetty docker-build-database docker-build-ldap docker-build-geoserver docker-build-gn3
-	mvn clean package docker:build -Pdocker -DskipTests --pl extractorapp,cas-server-webapp,security-proxy,mapfishapp,header,console,analytics,geowebcache-webapp,atlas
+	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl extractorapp,cas-server-webapp,security-proxy,mapfishapp,header,console,analytics,geowebcache-webapp,atlas
 
 docker-build-smtp:
 	docker pull debian:stretch
