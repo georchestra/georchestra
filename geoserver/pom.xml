@@ -36,8 +36,8 @@
     <profile>
       <id>geofence</id>
       <modules>
-        <module>geoserver-submodule/src/community/geofence</module>
-        <module>geoserver-submodule/src/community/geofence-server</module>
+        <module>geoserver-submodule/src/extension/geofence</module>
+        <module>geoserver-submodule/src/extension/geofence-server</module>
       </modules>
     </profile>
     <profile>
