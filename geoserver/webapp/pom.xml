@@ -1289,6 +1289,10 @@
               <groupId>com.vividsolutions</groupId>
               <artifactId>jts</artifactId>
             </exclusion>
+            <exclusion>
+              <groupId>org.hibernate.javax.persistence</groupId>
+              <artifactId>hibernate-jpa-2.0-api</artifactId>
+            </exclusion>
           </exclusions>
         </dependency>
         <!-- These are needed in the GeoFence geOrchestra integration but not mandatory in default GF setups -->
