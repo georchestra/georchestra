@@ -5,7 +5,7 @@ volumes:
 
 services:
   ldap:
-    image: georchestra/ldap:18.06
+    image: georchestra/ldap:19.04
     build: ./
     environment:
       - SLAPD_DOMAIN=georchestra.org
