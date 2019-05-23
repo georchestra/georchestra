@@ -38,7 +38,7 @@
     <guava.version>23.5-jre</guava.version>
     <postgres.version>42.2.5</postgres.version>
     <json.version>20180813</json.version>
-    <camel.version>2.16.1</camel.version>
+    <camel.version>2.24.0</camel.version>
     <camel-extras.version>2.14.1</camel-extras.version>
     <mapfish.version>3.5.0</mapfish.version>
     <metrics.version>3.0.2</metrics.version>
