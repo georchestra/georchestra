@@ -5,20 +5,20 @@ class HomeController {
 
   constructor ($injector) {
     const LOG_LIMIT = 15
-    const PENDING = 'PENDING'
     const EXPIRED = 'TEMPORARY'
 
     this.$injector = $injector
 
     $injector.get('Role').query(roles => {
       roles.forEach(role => {
-        if (role.cn === PENDING) {
-          this.pending = role
-        }
         if (role.cn === EXPIRED) {
           this.expired = role
         }
       })
+    })
+    this.pendingCount = 0
+    $injector.get('User').query(users => {
+      this.pendingCount = users.filter(u => u.pending).length
     })
 
     this.i18n = {}
