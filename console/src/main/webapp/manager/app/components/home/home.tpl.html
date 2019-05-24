@@ -7,9 +7,9 @@
         <i class="glyphicon glyphicon-user pull-right"></i>
         <a ng-link="users({id: 'all'})" translate>home.users</a>
       </div>
-      <div class="alert alert-danger" ng-if="home.pending && home.pending.users.length > 0">
-        <a ng-link="users({id: home.pending.cn})">
-          <span><ng-pluralize count="home.pending.users.length"
+      <div class="alert alert-danger" ng-if="home.pendingCount > 0">
+        <a ng-link="users({id: 'pending'})">
+          <span><ng-pluralize count="home.pendingCount"
                         when="{'1': '{} {{ &quot;home.waiting_user&quot; | translate }}',
                                'other': '{} {{ &quot;home.waiting_users&quot; | translate }}'}">
           </span><br>
