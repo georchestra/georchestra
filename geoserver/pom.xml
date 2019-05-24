@@ -28,6 +28,8 @@
 -->
   </properties>
   <modules>
+    <module>geoserver-submodule/src/main</module>
+    <module>geoserver-submodule/src/restconfig</module>
     <module>geoserver-submodule/src/gwc</module>
     <module>geoserver-submodule/src/web/core</module>
     <module>webapp</module>
