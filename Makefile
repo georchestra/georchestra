@@ -24,14 +24,12 @@ docker-build-gn3: docker-pull-jetty
 
 docker-build-geoserver: docker-pull-jetty
 	cd geoserver; \
-	rm -rf geoserver-submodule/data/citewfs-1.1/workspaces/sf/sf/E*; \
 	LANG=C mvn clean install -DskipTests -Dfmt.skip=true -P${GEOSERVER_EXTENSION_PROFILES}; \
 	cd webapp; \
 	mvn clean install docker:build -DdockerImageTags=${BTAG} -Pdocker,${GEOSERVER_EXTENSION_PROFILES} -DskipTests
 
 docker-build-geoserver-geofence: docker-pull-jetty
 	cd geoserver; \
-	rm -fr geoserver-submodule/data/citewfs-1.1/workspaces/sf/sf/E*; \
 	LANG=C mvn clean install -DskipTests -Dfmt.skip=true -Pgeofence-server,${GEOSERVER_EXTENSION_PROFILES} ; \
 	cd webapp; \
 	mvn clean install docker:build -DdockerImageTags=${BTAG} -Pdocker,geofence,${GEOSERVER_EXTENSION_PROFILES} -DskipTests
