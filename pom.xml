@@ -604,6 +604,11 @@
     <pluginManagement>
       <plugins>
         <plugin>
+          <groupId>pl.project13.maven</groupId>
+          <artifactId>git-commit-id-plugin</artifactId>
+	  <version>3.0.0</version>
+        </plugin>
+        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
           <version>2.5</version>
@@ -802,7 +807,6 @@
           <plugin>
             <groupId>pl.project13.maven</groupId>
             <artifactId>git-commit-id-plugin</artifactId>
-            <version>2.1.10</version>
             <configuration>
               <skip>true</skip>
             </configuration>

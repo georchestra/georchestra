@@ -211,16 +211,16 @@
               <include>**</include>
             </resource>
           </webResources>
+          <!--
+            - imageio-ext-kakadu-1.2.1.jar: we provide a patched version that supports Kakadu 7,
+              as of https://github.com/geosolutions-it/imageio-ext/pull/207
+            - imageio-ext-kakadujni-5.2.6.jar: this is kdu_jni.jar renamed. We exclude it and provide
+              v7.10.6 by lack of a mechanism for the user to easily install the version that comes
+              with his kakadu build. 
+           -->
           <packagingExcludes>
-            <!--
-                 wicket 1.4.12 explicitely needs slf4j 1.5.8, the build system
-                 is made so that we end up with both versions in the WAR,
-                 polluting the classpath.
-                 Best way to address the issue is to exclude the problematic dependency,
-                 note that this is what the official doc does:
-                 https://maven.apache.org/plugins/maven-war-plugin/examples/including-excluding-files-from-war.html
-             -->
-            WEB-INF/lib/slf4j-api-1.5.8.jar
+            WEB-INF/lib/imageio-ext-kakadu-1.2.1.jar,
+            WEB-INF/lib/imageio-ext-kakadujni-5.2.6.jar
           </packagingExcludes>
         </configuration>
       </plugin>

@@ -14,21 +14,30 @@ RUN echo "deb http://httpredir.debian.org/debian stretch main contrib" > /etc/ap
     && echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | debconf-set-selections \
     && apt-get update \
     && apt-get install -y ttf-mscorefonts-installer \
+    && apt-get install -y wget \
     && apt-get clean \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
 
-RUN mkdir /mnt/geoserver_datadir /mnt/geoserver_geodata /mnt/geoserver_tiles && \
-    chown jetty:jetty /etc/georchestra /mnt/geoserver_datadir /mnt/geoserver_geodata /mnt/geoserver_tiles
+# install libjpeg turbo
+RUN wget https://sourceforge.net/projects/libjpeg-turbo/files/1.5.3/libjpeg-turbo-official_1.5.3_amd64.deb \
+    && dpkg -i libjpeg-turbo-official_1.5.3_amd64.deb \
+    && apt-get -f install \
+    && rm libjpeg-turbo-official_1.5.3_amd64.deb
+
+RUN mkdir /mnt/geoserver_datadir /mnt/geoserver_geodata /mnt/geoserver_tiles /mnt/geoserver_native_libs && \
+    chown jetty:jetty /etc/georchestra /mnt/geoserver_datadir /mnt/geoserver_geodata /mnt/geoserver_tiles /mnt/geoserver_native_libs
 
 RUN sed -i 's/threads.max=200/threads.max=50/g' /var/lib/jetty/start.d/server.ini
 
 # Restore jetty user
 USER jetty
 
-VOLUME [ "/mnt/geoserver_datadir", "/mnt/geoserver_geodata", "/mnt/geoserver_tiles", "/tmp", "/run/jetty" ]
+VOLUME [ "/mnt/geoserver_datadir", "/mnt/geoserver_geodata", "/mnt/geoserver_tiles", "/mnt/geoserver_native_libs", "/tmp", "/run/jetty" ]
 
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
+
+ENV LD_LIBRARY_PATH=/mnt/geoserver_native_libs:/opt/libjpeg-turbo/lib64
 
 CMD ["sh", "-c", "exec java -Djava.io.tmpdir=/tmp/jetty \
 -Dgeofence-ovr=file:/etc/georchestra/geoserver/geofence/geofence-datasource-ovr.properties \

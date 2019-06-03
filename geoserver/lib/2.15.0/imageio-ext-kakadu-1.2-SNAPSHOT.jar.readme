@@ -1,0 +1,4 @@
+This replaces the imageio-ext-kakadu-1.2.1.jar that
+comes with GeoServer 2.15.0 with support for Kakadu
+7 as per the following pull request:
+https://github.com/geosolutions-it/imageio-ext/pull/207:
