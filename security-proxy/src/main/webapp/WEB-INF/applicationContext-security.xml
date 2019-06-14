@@ -16,14 +16,14 @@
 
 	<bean id="allowSemicolonHttpFirewall" class="org.springframework.security.web.firewall.StrictHttpFirewall">
 		<!-- 
-			Set allowSemicolon = true to avoid errors 
+			Allows configuring the allowSemicolon StrictHttpFirewall property to avoid errors 
 		    like 'the request was rejected because the URL contained a potentially malicious String ";"'
 		    ";" in URL's come in the form http://<domain>/<path>;jsessionid=xxxx OR in static resource 
 		    URLs (e.g to reference bundles of JS files (minified on the fly)). 
 		    In general, proxied applications are discouraged to disclose jsessionid this way, and shall use a cookie instead.
 		    Some applications like though can't be modified to use cookies, hence this configuration.
 		 --> 
-	  	<property name="allowSemicolon" value="true"/> 
+	  	<property name="allowSemicolon" value="${allowSemicolon:false}"/> 
 	</bean> 
 	<s:http-firewall ref="allowSemicolonHttpFirewall"/>
 
