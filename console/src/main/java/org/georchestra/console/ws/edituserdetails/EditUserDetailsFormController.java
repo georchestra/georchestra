@@ -29,6 +29,7 @@ import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountImpl;
 import org.georchestra.console.dto.orgs.Org;
+import org.georchestra.console.dto.orgs.OrgExt;
 import org.georchestra.console.ws.utils.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -99,7 +100,10 @@ public class EditUserDetailsFormController {
 			Account userAccount = this.accountDao.findByUID(request.getHeader("sec-username"));
 
 			model.addAttribute(createForm(userAccount));
-			model.addAttribute("org", orgToJson(this.orgsDao.findForUser(userAccount)));
+			Org org = this.orgsDao.findForUser(userAccount);
+			OrgExt orgExt = this.orgsDao.findExtById(org.getId());
+			org.setOrgExt(orgExt);
+			model.addAttribute("org", orgToJson(org));
 
 			HttpSession session = request.getSession();
 			for (String f : fields) {
