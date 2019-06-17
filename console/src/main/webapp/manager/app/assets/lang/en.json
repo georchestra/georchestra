@@ -110,6 +110,8 @@
   "org.url"               : "Url",
   "org.logo"              : "Logo",
 
+  "imageinput.label"      : "Upload image",
+
   "roles.title_plural"    : "roles",
   "roles.title_one"       : "role",
   "roles.title_none"      : "No role",

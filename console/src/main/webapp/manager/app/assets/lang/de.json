@@ -107,6 +107,8 @@
   "org.url"               : "Url",
   "org.logo"              : "Logo",
 
+  "imageinput.label"      : "** TO BE TRANSLATED **",
+
   "roles.title_plural"    : "Rollen",
   "roles.title_one"       : "Rolle",
   "roles.title_none"      : "Keine Rolle",
