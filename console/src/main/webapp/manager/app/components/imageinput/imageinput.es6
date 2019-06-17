@@ -27,7 +27,7 @@ class ImageinputController {
     })
   }
 
-  delete() {
+  delete () {
     this.model[this.attribute] = ''
   }
 }

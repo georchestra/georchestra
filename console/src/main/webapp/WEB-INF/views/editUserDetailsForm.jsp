@@ -175,6 +175,14 @@
     <div class="col-lg-5 col-lg-offset-1" ng-app="manager" ng-strict-di ng-controller="StandaloneController">
       <fieldset>
         <legend><s:message code="editUserDetailsForm.organisation" /> «{{org.name}}»</legend>
+        <a ng-if="org.url && org.logo" href="{{org.url}}">
+          <img src="data:image/jpeg;base64,{{org.logo}}"/>
+        </a>
+        <a ng-if="org.url && !org.logo" href="{{org.url}}">
+            <s:message code="editUserDetailsForm.url" />
+        </a>
+        <img src="data:image/jpeg;base64,{{org.logo}}" ng-if="!org.url && org.logo"/>
+        <p ng-if="org.description">{{org.description}}</p>
 
         <h4><s:message code="editUserDetailsForm.areaOfCompetence" /></h4>
         <areas item="org" readonly="'true'"></areas>
