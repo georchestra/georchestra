@@ -107,6 +107,7 @@
   "org.url"               : "Url",
   "org.logo"              : "Logo",
 
+  "imageinput.label"      : "Charger une image",
 
   "roles.title_plural"    : "rôles",
   "roles.title_one"       : "rôle",
