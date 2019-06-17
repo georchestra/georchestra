@@ -30,7 +30,8 @@
 
   <table class="table table-bordered table-striped" ng-show="stats.view=='table'">
     <tr ng-repeat="value in stats.serie track by $index">
-      <td>{{stats.parsed.labels[stats.serie.length - $index -1]}}</td>
+      <td ng-if="stats.type === 'bar'">{{stats.parsed.labels[$index]}}</td>
+      <td ng-if="stats.type !== 'bar'">{{stats.parsed.labels[stats.serie.length - $index -1]}}</td>
       <td>{{value}}</td>
     </tr>
   </table>
