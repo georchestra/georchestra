@@ -29,7 +29,7 @@
         <s:custom-filter ref="filterSecurityInterceptor" after="EXCEPTION_TRANSLATION_FILTER" />
         <!--  <s:http-basic />  -->
         <s:headers>
-          <s:frame-options policy="SAMEORIGIN" />
+          <s:frame-options disabled="true"/>
         </s:headers>
         <s:anonymous granted-authority="ROLE_ANONYMOUS" />
         <s:logout logout-success-url="${logout-success-url}" />
