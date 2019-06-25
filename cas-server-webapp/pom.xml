@@ -48,6 +48,7 @@
     <spring-security.version>3.2.0.RELEASE</spring-security.version>
     <hibernate.version>4.1.0.Final</hibernate.version>
     <hibernate-validator.version>4.2.0.Final</hibernate-validator.version>
+    <context.name>cas</context.name>
     <!-- spring version revert end -->
   </properties>
   <dependencies>
@@ -369,9 +370,8 @@
               <dockerDirectory>${project.basedir}/src/docker</dockerDirectory>
               <resources>
                 <resource>
-                  <targetPath>/var/lib/jetty/webapps</targetPath>
-                  <directory>${project.build.directory}</directory>
-                  <include>cas.war</include>
+                  <targetPath>/var/lib/jetty/webapps/${context.name}</targetPath>
+                  <directory>${project.build.directory}/${context.name}</directory>
                 </resource>
                 <resource>
                   <targetPath>/etc/georchestra</targetPath>
