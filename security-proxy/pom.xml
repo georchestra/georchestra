@@ -13,6 +13,7 @@
   <properties>
     <maven.test.skip>false</maven.test.skip>
     <server>generic</server>
+    <context.name>ROOT</context.name>
   </properties>
   <dependencies>
     <dependency>
@@ -395,9 +396,8 @@
               <dockerDirectory>${project.basedir}/src/docker</dockerDirectory>
               <resources>
                 <resource>
-                  <targetPath>/var/lib/jetty/webapps</targetPath>
-                  <directory>${project.build.directory}</directory>
-                  <include>ROOT.war</include>
+                  <targetPath>/var/lib/jetty/webapps/${context.name}</targetPath>
+                  <directory>${project.build.directory}/${context.name}</directory>
                 </resource>
                 <resource>
                   <targetPath>/etc/georchestra</targetPath>
