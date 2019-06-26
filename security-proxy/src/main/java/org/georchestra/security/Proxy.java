@@ -753,12 +753,13 @@ public class Proxy {
             @Override
             protected void onContentReceived(ContentDecoder decoder, IOControl ioctrl) throws IOException {
                 int bytesRead = decoder.read(this.bbuf);
-                if (bytesRead > 0) {
+                while (bytesRead > 0) {
                     this.bbuf.flip();
                     while(this.bbuf.hasRemaining()) {
                         channel.write(this.bbuf);
                     }
                     this.bbuf.clear();
+                    bytesRead = decoder.read(this.bbuf);
                 }
             }
 
