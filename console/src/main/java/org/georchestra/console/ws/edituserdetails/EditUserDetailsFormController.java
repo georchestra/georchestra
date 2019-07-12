@@ -101,8 +101,10 @@ public class EditUserDetailsFormController {
 
 			model.addAttribute(createForm(userAccount));
 			Org org = this.orgsDao.findForUser(userAccount);
-			OrgExt orgExt = this.orgsDao.findExtById(org.getId());
-			org.setOrgExt(orgExt);
+			if (org != null) {
+				OrgExt orgExt = this.orgsDao.findExtById(org.getId());
+				org.setOrgExt(orgExt);
+			}
 			model.addAttribute("org", orgToJson(org));
 
 			HttpSession session = request.getSession();
