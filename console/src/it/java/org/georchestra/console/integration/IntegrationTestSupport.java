@@ -123,7 +123,7 @@ public @Service class IntegrationTestSupport extends ExternalResource {
         return testName.getMethodName();
     }
 
-    public String readRessourceToString(String name) throws URISyntaxException, IOException {
+    public String readResourceToString(String name) throws URISyntaxException, IOException {
         java.net.URL url = this.getClass().getResource(name);
         java.nio.file.Path resPath = java.nio.file.Paths.get(url.toURI());
         return new String(java.nio.file.Files.readAllBytes(resPath), "UTF8");

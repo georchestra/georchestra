@@ -55,7 +55,7 @@ public class UsersIT {
         String newUserName = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
         createUser(userName);
 
-        support.perform(put("/private/users/" + userName).content(support.readRessourceToString("/testData/createUserPayload.json")
+        support.perform(put("/private/users/" + userName).content(support.readResourceToString("/testData/createUserPayload.json")
                 .replace("{uuid}", newUserName)
                 .replace("psc", "cra")));
 
@@ -111,7 +111,7 @@ public class UsersIT {
     }
 
     private void createUser(String userName) throws Exception {
-        support.perform(post("/private/users").content(support.readRessourceToString("/testData/createUserPayload.json").replace("{uuid}", userName)));
+        support.perform(post("/private/users").content(support.readResourceToString("/testData/createUserPayload.json").replace("{uuid}", userName)));
     }
 
     private ResultActions getProfile() throws Exception {

@@ -145,7 +145,7 @@ public class OrgsIT {
 		create(orgName, CREATE_ORG_WITH_MORE_FIELDS_PAYLOAD);
 
 		String payloadWithEmptyDesc = Pattern.compile("\"description\": \".*\"")
-				.matcher(support.readRessourceToString(CREATE_ORG_WITH_MORE_FIELDS_PAYLOAD).replace("{shortName}", orgName))
+				.matcher(support.readResourceToString(CREATE_ORG_WITH_MORE_FIELDS_PAYLOAD).replace("{shortName}", orgName))
 				.replaceAll("\"description\": \"\"");
 		support.perform(put("/private/orgs/" + orgName)
 				.content(payloadWithEmptyDesc));
@@ -160,7 +160,7 @@ public class OrgsIT {
 		create(orgName, CREATE_ORG_WITH_MORE_FIELDS_PAYLOAD);
 
 		String payloadWithEmptyDesc = Pattern.compile("\"url\": \".*\"")
-				.matcher(support.readRessourceToString(CREATE_ORG_WITH_MORE_FIELDS_PAYLOAD).replace("{shortName}", orgName))
+				.matcher(support.readResourceToString(CREATE_ORG_WITH_MORE_FIELDS_PAYLOAD).replace("{shortName}", orgName))
 				.replaceAll("\"url\": \"\"");
 		support.perform(put("/private/orgs/" + orgName)
 				.content(payloadWithEmptyDesc));
@@ -175,7 +175,7 @@ public class OrgsIT {
 		create(orgName, CREATE_ORG_WITH_MORE_FIELDS_PAYLOAD);
 
 		String payloadWithEmptyDesc = Pattern.compile("\"logo\": \".*\"")
-				.matcher(support.readRessourceToString(CREATE_ORG_WITH_MORE_FIELDS_PAYLOAD).replace("{shortName}", orgName))
+				.matcher(support.readResourceToString(CREATE_ORG_WITH_MORE_FIELDS_PAYLOAD).replace("{shortName}", orgName))
 				.replaceAll("\"logo\": \"\"");
 		support.perform(put("/private/orgs/" + orgName)
 				.content(payloadWithEmptyDesc));
@@ -189,7 +189,7 @@ public class OrgsIT {
 	}
 
 	private ResultActions create(String name, String payloadResourcePath) throws Exception {
-		return support.perform(post("/private/orgs").content(support.readRessourceToString(payloadResourcePath).replace("{shortName}", name)));
+		return support.perform(post("/private/orgs").content(support.readResourceToString(payloadResourcePath).replace("{shortName}", name)));
 	}
 
 }
