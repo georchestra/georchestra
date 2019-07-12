@@ -26,7 +26,6 @@ import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -147,33 +146,6 @@ public class OrgsDaoTest {
         when(mockDirContext.getAttributes()).thenReturn(attributes);
         when(mockDirContext.getDn()).thenReturn(new LdapName("cn=pending,ou=pendingorgs"));
         Org deserializedOrg = (Org) contextMapperCaptor.getValue().mapFromContext(mockDirContext);
-        assertTrue(deserializedOrg.isPending());
-    }
-
-    @Test
-    public void findPendingOrgForUser() throws NamingException, DataServiceException {
-        LdapTemplate mockLdapTemplate = mock(LdapTemplate.class);
-        OrgsDao toTest = createToTest(mockLdapTemplate);
-        Org pendingOrg = mock(Org.class);
-        mockOrgSearchResultDependingOnDn(mockLdapTemplate, pendingOrg, "ou=pendingorgs");
-        mockOrgSearchResultDependingOnDn(mockLdapTemplate, null, "ou=orgs");
-        AccountImpl userAccount = new AccountImpl();
-        userAccount.setUid("dummy");
-
-        Org org = toTest.findForUser(userAccount);
-
-        assertEquals(org, pendingOrg);
-
-        ArgumentCaptor<AttributesMapper> attributesMapperCaptor = ArgumentCaptor.forClass(AttributesMapper.class);
-        verify(mockLdapTemplate).search(argThat(new ArgumentMatcher<String>() {
-            @Override
-            public boolean matches(Object o) {
-                return o.toString().startsWith("ou=pendingorgs");
-            }
-        }), anyString(), attributesMapperCaptor.capture());
-
-        Attributes attributes = mock(Attributes.class);
-        Org deserializedOrg = (Org) attributesMapperCaptor.getValue().mapFromAttributes(attributes);
         assertTrue(deserializedOrg.isPending());
     }
 

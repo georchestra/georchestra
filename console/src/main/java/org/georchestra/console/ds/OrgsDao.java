@@ -340,31 +340,6 @@ public class OrgsDao {
         return getExtension(org).findById(org);
     }
 
-    /**
-     * @return Org instance corresponding to organization of specified user or null if no organization is linked to this user
-     * @throws DataServiceException if more than one organization is linked to specified user
-     */
-    public Org findForUser(Account userAccount) throws DataServiceException {
-        Org org = new Org();
-
-        String userDn = accountDao.buildFullUserDn(userAccount);
-
-        AndFilter filter  = new AndFilter();
-        filter.and(new EqualsFilter("member", userDn));
-        filter.and(new EqualsFilter("objectClass", "groupOfMembers"));
-        List<Org> res = null;
-        try {
-            res = ldapTemplate.search(orgSearchBaseDN, filter.encode(), getExtension(org).getAttributeMapper(false));
-        } catch (NameNotFoundException ex) {
-            res = ldapTemplate.search(pendingOrgSearchBaseDN, filter.encode(), getExtension(org).getAttributeMapper(true));
-        }
-
-        if(res.size() > 1) {
-            throw new DataServiceException("Multiple org for user : " + userAccount.getUid());
-        }
-        return res.get(0);
-    }
-
     public void insert(AbstractOrg org){
         DirContextAdapter context = new DirContextAdapter(org.getExtension(this).buildOrgDN(org));
         org.getExtension(this).mapToContext(org, context);

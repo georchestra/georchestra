@@ -100,7 +100,7 @@ public class EditUserDetailsFormController {
 			Account userAccount = this.accountDao.findByUID(request.getHeader("sec-username"));
 
 			model.addAttribute(createForm(userAccount));
-			Org org = this.orgsDao.findForUser(userAccount);
+			Org org = this.orgsDao.findByCommonName(userAccount.getOrg());
 			if (org != null) {
 				OrgExt orgExt = this.orgsDao.findExtById(org.getId());
 				org.setOrgExt(orgExt);
@@ -200,7 +200,7 @@ public class EditUserDetailsFormController {
 			accountDao.update(account, request.getHeader("sec-username"));
 
 			model.addAttribute("success", true);
-			model.addAttribute("org", orgToJson(this.orgsDao.findForUser(account)));
+			model.addAttribute("org", orgToJson(this.orgsDao.findByCommonName(account.getOrg())));
 
 			return "editUserDetailsForm";
 
