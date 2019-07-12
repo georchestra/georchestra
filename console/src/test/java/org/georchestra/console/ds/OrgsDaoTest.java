@@ -40,12 +40,14 @@ public class OrgsDaoTest {
         Account account = new AccountImpl();
         account.setPending(false);
         account.setUid("iamnotpending");
+        account.setOrg("csc");
 
         Org targetOrg = new Org();
         targetOrg.setId("csc");
         targetOrg.setPending(true);
+        when(mockLdapTemplate.lookup(any(Name.class), any(ContextMapper.class))).thenReturn(targetOrg);
 
-        toTest.addUser(targetOrg, account);
+        toTest.linkUser(account);
 
         ArgumentCaptor<DirContextOperations> contextCaptor = ArgumentCaptor.forClass(DirContextOperations.class);
         Mockito.verify(mockLdapTemplate).modifyAttributes(contextCaptor.capture());
@@ -64,12 +66,14 @@ public class OrgsDaoTest {
         Account account = new AccountImpl();
         account.setPending(true);
         account.setUid("iampending");
+        account.setOrg("csc");
 
         Org targetOrg = new Org();
         targetOrg.setId("csc");
         targetOrg.setPending(false);
+        when(mockLdapTemplate.lookup(any(Name.class), any(ContextMapper.class))).thenReturn(targetOrg);
 
-        toTest.addUser(targetOrg, account);
+        toTest.linkUser(account);
 
         ArgumentCaptor<DirContextOperations> contextCaptor = ArgumentCaptor.forClass(DirContextOperations.class);
         Mockito.verify(mockLdapTemplate).modifyAttributes(contextCaptor.capture());

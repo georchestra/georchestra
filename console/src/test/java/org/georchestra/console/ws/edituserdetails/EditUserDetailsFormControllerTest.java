@@ -88,7 +88,7 @@ public class EditUserDetailsFormControllerTest {
         org.setName("geOrchestra testing LLC");
 
         Mockito.when(this.orgsDao.findByCommonName(Mockito.eq("georTest"))).thenReturn(org);
-        Mockito.when(this.orgsDao.findByCommonName(Mockito.eq(""))).thenThrow(new InvalidNameException(new javax.naming.InvalidNameException()));
+        Mockito.when(this.orgsDao.findByCommonName(Mockito.eq(""))).thenReturn(null);
     }
 
     @After

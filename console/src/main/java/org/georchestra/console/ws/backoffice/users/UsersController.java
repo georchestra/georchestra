@@ -346,10 +346,9 @@ public class UsersController {
 		accountDao.insert(account, requestOriginator);
 
 		roleDao.addUser(Role.USER, account, requestOriginator);
-		if(account.getOrg().length() > 0) {
-			Org org = orgDao.findByCommonName(account.getOrg());
-			orgDao.addUser(org, account);
-		}
+
+		orgDao.linkUser(account);
+
 		return account;
 	}
 
@@ -412,10 +411,7 @@ public class UsersController {
 			if(!auth.getAuthorities().contains(ROLE_SUPERUSER))
 				if(!Arrays.asList(this.delegationDao.findOne(auth.getName()).getOrgs()).contains(originalAcount.getOrg()))
 					throw new AccessDeniedException("User not under delegation");
-			if(originalAcount.getOrg().length() > 0) {
-				Org org = orgDao.findByCommonName(originalAcount.getOrg());
-				this.orgDao.removeUser(org, originalAcount);
-			}
+			orgDao.unlinkUser(originalAcount);
 		}
 
 		accountDao.update(originalAcount, modifiedAccount, auth.getName());
@@ -424,10 +420,7 @@ public class UsersController {
 			if(!auth.getAuthorities().contains(ROLE_SUPERUSER))
 				if(!Arrays.asList(this.delegationDao.findOne(auth.getName()).getOrgs()).contains(modifiedAccount.getOrg()))
 					throw new AccessDeniedException("User not under delegation");
-			if(modifiedAccount.getOrg().length() > 0) {
-				Org org = orgDao.findByCommonName(modifiedAccount.getOrg());
-				orgDao.addUser(org, modifiedAccount);
-			}
+			orgDao.linkUser(modifiedAccount);
 		}
 
 		if (accountDao.hasUserDnChanged(originalAcount, modifiedAccount)) {

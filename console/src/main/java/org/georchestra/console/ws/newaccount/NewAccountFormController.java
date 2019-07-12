@@ -283,10 +283,7 @@ public final class NewAccountFormController {
 			String requestOriginator = request.getHeader("sec-username");
 			accountDao.insert(account,  requestOriginator);
 			roleDao.addUser(Role.USER, account, requestOriginator);
-			if(account.getOrg().length() > 0) {
-				Org org = orgDao.findByCommonName(account.getOrg());
-				orgDao.addUser(org, account);
-			}
+			orgDao.linkUser(account);
 
 			final ServletContext servletContext = request.getSession().getServletContext();
 
