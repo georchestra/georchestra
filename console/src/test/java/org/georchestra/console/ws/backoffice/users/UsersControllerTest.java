@@ -453,7 +453,7 @@ public class UsersControllerTest {
         Mockito.verify(mockDirCtxForNewOrg).addAttributeValue(anyString(), addDnCaptor.capture(), eq(false));
 
         assertEquals("uid=pmauduit,ou=users,dc=georchestra,dc=org", delDnCaptor.getValue());
-        assertEquals("uid=pmauduit,ou=users,dc=georchestra,dc=org", addDnCaptor.getValue());
+        assertEquals("uid=pMaUdUiT,ou=pendingusers,dc=georchestra,dc=org", addDnCaptor.getValue());
 
         Mockito.verify(mockDelegationDao).delete(toBeModified);
         Mockito.verify(mockDelegationDao).save(toBeModified);

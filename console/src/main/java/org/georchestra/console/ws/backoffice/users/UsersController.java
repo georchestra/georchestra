@@ -405,51 +405,53 @@ public class UsersController {
 		this.checkAuthorization(uid);
 
 		// searches the account
-		final Account account = this.accountDao.findByUID(uid);
-		String originalOrg = account.getOrg();
+		Account originalAcount = this.accountDao.findByUID(uid);
+		Account modifiedAccount = modifyAccount(AccountFactory.create(originalAcount), request.getInputStream());
 
-		// modifies the account data
-		final Account modified = modifyAccount(AccountFactory.create(account), request.getInputStream());
-
-		if(!modified.getOrg().equals(originalOrg)){
+		if(!modifiedAccount.getOrg().equals(originalAcount.getOrg())){
 			if(!auth.getAuthorities().contains(ROLE_SUPERUSER))
-				if(!Arrays.asList(this.delegationDao.findOne(auth.getName()).getOrgs()).contains(modified.getOrg()))
+				if(!Arrays.asList(this.delegationDao.findOne(auth.getName()).getOrgs()).contains(originalAcount.getOrg()))
 					throw new AccessDeniedException("User not under delegation");
-			if(originalOrg.length() > 0) {
-				Org org = orgDao.findByCommonName(originalOrg);
-				this.orgDao.removeUser(org, account);
-			}
-			if(modified.getOrg().length() > 0) {
-				Org org = orgDao.findByCommonName(modified.getOrg());
-				orgDao.addUser(org, account);
+			if(originalAcount.getOrg().length() > 0) {
+				Org org = orgDao.findByCommonName(originalAcount.getOrg());
+				this.orgDao.removeUser(org, originalAcount);
 			}
 		}
 
-		// Finally store account in LDAP
-		accountDao.update(account, modified, auth.getName());
-		if (accountDao.hasUserDnChanged(account, modified)) {
-		// account was validated by a moderator, notify user
-		if (account.isPending() && ! modified.isPending()) {
-			this.emailFactory.sendAccountWasCreatedEmail(request.getSession().getServletContext(),
-					modified.getEmail(), modified.getCommonName(), modified.getUid());
+		accountDao.update(originalAcount, modifiedAccount, auth.getName());
+
+		if(!modifiedAccount.getOrg().equals(originalAcount.getOrg())){
+			if(!auth.getAuthorities().contains(ROLE_SUPERUSER))
+				if(!Arrays.asList(this.delegationDao.findOne(auth.getName()).getOrgs()).contains(modifiedAccount.getOrg()))
+					throw new AccessDeniedException("User not under delegation");
+			if(modifiedAccount.getOrg().length() > 0) {
+				Org org = orgDao.findByCommonName(modifiedAccount.getOrg());
+				orgDao.addUser(org, modifiedAccount);
+			}
 		}
-			roleDao.modifyUser(account, modified);
+
+		if (accountDao.hasUserDnChanged(originalAcount, modifiedAccount)) {
+			// account was validated by a moderator, notify user
+			if (originalAcount.isPending() && ! modifiedAccount.isPending()) {
+				this.emailFactory.sendAccountWasCreatedEmail(request.getSession().getServletContext(),
+						modifiedAccount.getEmail(), modifiedAccount.getCommonName(), modifiedAccount.getUid());
+			}
+			roleDao.modifyUser(originalAcount, modifiedAccount);
 		}
-	
-		if (accountDao.hasUserLoginChanged(account, modified)) {
-			DelegationEntry delegationEntry = delegationDao.findOne(account.getUid());
+
+		if (accountDao.hasUserLoginChanged(originalAcount, modifiedAccount)) {
+			DelegationEntry delegationEntry = delegationDao.findOne(originalAcount.getUid());
 			if (delegationEntry != null) {
 				delegationDao.delete(delegationEntry);
-				delegationEntry.setUid(modified.getUid());
+				delegationEntry.setUid(modifiedAccount.getUid());
 				delegationDao.save(delegationEntry);
 			}
 		}
-	
-		if (accountDao.hasUserLoginChanged(account, modified) && warnUserIfUidModified) {
-			this.emailFactory.sendAccountUidRenamedEmail(request.getSession().getServletContext(), modified.getEmail(),
-					modified.getCommonName(), modified.getUid());
+		if (accountDao.hasUserLoginChanged(originalAcount, modifiedAccount) && warnUserIfUidModified) {
+			this.emailFactory.sendAccountUidRenamedEmail(request.getSession().getServletContext(), modifiedAccount.getEmail(),
+					modifiedAccount.getCommonName(), modifiedAccount.getUid());
 		}
-		return modified;
+		return modifiedAccount;
 	}
 
 	/**
