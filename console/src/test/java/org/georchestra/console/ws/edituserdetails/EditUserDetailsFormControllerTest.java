@@ -150,7 +150,7 @@ public class EditUserDetailsFormControllerTest {
        request.addHeader("sec-username", "mtester");
 
        String ret = ctrl.edit(request, response, model, formBean, resultErrors, sessionStatus);
-       
+
        assertTrue(ret.equals("editUserDetailsForm"));
     }
 
