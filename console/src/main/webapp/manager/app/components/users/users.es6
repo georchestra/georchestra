@@ -13,6 +13,8 @@ class UsersController {
 
     this.q = ''
     this.itemsPerPage = 25
+    this.selection = []
+    this.filterSelected = false
 
     this.newRole = this.$injector.get('$location').$$search['new'] === 'role'
     this.newRoleName = ''
@@ -37,6 +39,7 @@ class UsersController {
       }
       return this.activeRole
     })
+    this.selectionFilter = this.selectionFilter.bind(this)
   }
 
   filter (role) {
@@ -50,6 +53,31 @@ class UsersController {
         user => (role.users.indexOf(user.uid) >= 0)
       )
     })
+  }
+
+  toggleSelected (uid) {
+    if (this.selection.indexOf(uid) >= 0) {
+      this.selection = this.selection.filter(id => id !== uid)
+    } else {
+      this.selection.push(uid)
+    }
+  }
+
+  select (sel) {
+    switch (sel) {
+      case 'all':
+        this.selection = this.allUsers.map(u => u.uid)
+        break
+      case 'none':
+        this.selection = []
+        break
+    }
+  }
+
+  selectionFilter(u) {
+    return (this.filterSelected)
+      ? this.selection.indexOf(u.uid) >= 0
+      : true
   }
 
   close () {
