@@ -49,7 +49,7 @@
 
       <tbody>
         <tr dir-paginate="user in users.users | filter:users.q | filter:users.selectionFilter | itemsPerPage: users.itemsPerPage | orderBy : 'sn'">
-          <td>
+          <td class="users-checkboxes">
             <input type="checkbox" ng-click="users.toggleSelected(user.uid)" ng-checked="users.selection.indexOf(user.uid)>=0">
           </td>
           <td>
