@@ -74,7 +74,7 @@ class UsersController {
     }
   }
 
-  selectionFilter(u) {
+  selectionFilter (u) {
     return (this.filterSelected)
       ? this.selection.indexOf(u.uid) >= 0
       : true
