@@ -192,6 +192,10 @@
   "users.email"           : "Correo electrónico",
   "users.pending"         : "Pendientes",
   "users.pending_desc"    : "Usuarios pendientes de validación",
+  "users.filter_selected" : "**** TODO / translate ****",
+
+  "sel.all"               : "**** TODO / translate ****",
+  "sel.none"              : "**** TODO / translate ****",
 
   "msg.compose"           : "Redactar un mensaje",
   "msg.date"              : "Fecha",

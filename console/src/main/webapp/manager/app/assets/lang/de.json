@@ -192,6 +192,10 @@
   "users.email"           : "E-Mail",
   "users.pending"         : "***TODO***",
   "users.pending_desc"    : "***TODO***",
+  "users.filter_selected" : "**** TODO / translate ****",
+
+  "sel.all"               : "**** TODO / translate ****",
+  "sel.none"              : "**** TODO / translate ****",
 
   "msg.compose"           : "Nachricht erstellen",
   "msg.date"              : "Datum",

@@ -193,6 +193,10 @@
   "users.email"           : "Mail",
   "users.pending"         : "Waiting validation",
   "users.pending_desc"    : "Users waiting for validation",
+  "users.filter_selected" : "View selected only",
+
+  "sel.all"               : "All",
+  "sel.none"              : "None",
 
   "msg.compose"           : "Compose message",
   "msg.date"              : "Date",
