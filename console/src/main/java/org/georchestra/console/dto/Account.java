@@ -136,10 +136,6 @@ public interface Account extends Comparable<Account>{
 
 	String getOrg();
 
-	String toVcf();
-
-	String toCsv();
-
 	void setShadowExpire(Date expireDate);
 
 	Date getShadowExpire();

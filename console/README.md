@@ -155,13 +155,13 @@ Integration tests are run after `test` and `package`, and consists of the `pre-i
 
 **Do not** run `mvn integration-test` directly as it won't have a chance to properly shut down the external resources (the docker containers in this case).
 
-See the `pom.xml` file to check how the `docker-maven-plugin` is configured. It essentially launches the two mentioned containers and uses dynamic port mapping on port `389` for `georchestra/ldap` and port `5432` for `georchestra/database`. These mapped ports are then exposed by the `maven-failsafe-plugin` (the one used to run integration tests) as environment variables `ldap_port` and `psql_port` to the test JVM, which in turn are picked up by Spring while resolving `src/it/resources/console-it.properties` property source:
+See the `pom.xml` file to check how the `docker-maven-plugin` is configured. It essentially launches the two mentioned containers and uses dynamic port mapping on port `389` for `georchestra/ldap` and port `5432` for `georchestra/database`. These mapped ports are then exposed by the `maven-failsafe-plugin` (the one used to run integration tests) as environment variables `ldapPort` and `pgsqlPort` to the test JVM, which in turn are picked up by Spring while resolving `src/it/resources/console-it.properties` property source:
 
 ```
 ldapHost=localhost
-ldapPort=${ldap_port}
+ldapPort=${ldapPort}
 pgsqlHost=localhost
-pgsqlPort=${psql_port}
+pgsqlPort=${pgsqlPort}
 pgsqlDatabase=georchestra
 ```
 
@@ -171,7 +171,7 @@ While writing integration tests, it could be cumbersome to wait for the launch a
 
 In this case it's better to have `georchestra/ldap` and `georchestra/database` containers already running and instructing the test run to use them directly.
 
-To do so launch them externally mapping the ports 389 and 5432 as appropriate,  and create a launch configuration for the test class being working on, and set the `-Dpsql_port=<db mapped port> -Dldap_port=<ldap mapped port>`.
+To do so launch them externally mapping the ports 389 and 5432 as appropriate,  and create a launch configuration for the test class being working on, and set the `-DpgsqlPort=<db mapped port> -DldapPort=<ldap mapped port>`.
 
 When the test case is finished, make sure to run `mvn verify` to check it works properly within the maven build cycle.
 

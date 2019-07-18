@@ -36,6 +36,7 @@
     <skipIT>false</skipIT>
     <gt.version>19.4</gt.version> <!-- this is the latest gt release that uses com.vividsolutions:jts. Upgrading to 20+ implies porting mapfishapp to use org.locationtech.jts:jts-core -->
     <guava.version>23.5-jre</guava.version>
+    <lombok.version>1.18.4</lombok.version>
     <postgres.version>42.2.5</postgres.version>
     <json.version>20180813</json.version>
     <camel.version>2.16.1</camel.version>
@@ -85,6 +86,12 @@
   </modules>
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>${lombok.version}</version>
+	<scope>provided</scope>
+      </dependency>
       <dependency>
         <groupId>org.webjars</groupId>
         <artifactId>extjs</artifactId>

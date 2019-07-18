@@ -1,5 +1,16 @@
 package org.georchestra.console.ws.backoffice.users;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+
+import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.AccountDaoImpl;
 import org.georchestra.console.dto.AccountImpl;
@@ -7,13 +18,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.ldap.DefaultSpringSecurityContextSource;
-
-import java.util.HashMap;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
 
 public class UsersExportTest {
 
@@ -21,14 +29,20 @@ public class UsersExportTest {
 
     @Before
     public void setUp() throws Exception {
-        AccountDao mockedDao = Mockito.mock(AccountDao.class);
+        AccountDao mockedDao = mock(AccountDao.class);
         AccountImpl a = new AccountImpl();
         a.setCommonName("Pierre");
         a.setSurname("Mauduit");
         a.setEmail("abc@example.com");
 
+        Authentication auth = mock(Authentication.class);
+        Collection<GrantedAuthority> authorities = Collections.singleton(AdvancedDelegationDao.ROLE_SUPERUSER);
+        doReturn(authorities).when(auth).getAuthorities();
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
         Mockito.when(mockedDao.findByUID(Mockito.anyString())).thenReturn(a);
-        us = new UsersExport(mockedDao);
+        UserInfoExporter exporter = new UserInfoExporterImpl(mockedDao);
+        us = new UsersExport(exporter);
     }
 
     @Test
@@ -45,6 +59,8 @@ public class UsersExportTest {
         assertTrue("expected ret containing BEGIN:VCARD, not found", s.startsWith("BEGIN:VCARD"));
     }
 
+    // TODO: these tests are never being run, refactor them as proper integration
+    // tests
     private void setUpAgainstRealLdap() {
         assumeTrue(System.getProperty("console.test.openldap.ldapurl") != null
                 && System.getProperty("console.test.openldap.basedn") != null);
@@ -64,7 +80,7 @@ public class UsersExportTest {
         AccountDaoImpl adao = new AccountDaoImpl(ldapTemplate);
         adao.setUserSearchBaseDN("ou=users");
 
-        us.setAccountDao(adao);
+//        us.setAccountDao(adao);
     }
 
     @Test
@@ -75,7 +91,7 @@ public class UsersExportTest {
         assertTrue("VCARD should contain both email address for testadmin and testuser",
                 vcf.contains("psc+testuser@georchestra.org") && vcf.contains("psc+testadmin@georchestra.org"));
     }
-    
+
     @Test
     public void testGetUsersAsCsvAgainstOpenLdap() throws Exception {
         setUpAgainstRealLdap();
@@ -85,6 +101,5 @@ public class UsersExportTest {
                 csv.contains("psc+testuser@georchestra.org") && csv.contains("psc+testadmin@georchestra.org"));
         assertTrue("CSV should contain 3 lines", csv.split("\r\n").length == 3);
     }
-    
 
 }

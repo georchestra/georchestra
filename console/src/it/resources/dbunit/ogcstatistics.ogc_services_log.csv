@@ -1,0 +1,7 @@
+id,user_name,date,service,layer,org,request,roles
+100001,"user1","2019-03-25 01:00:59","WMS","layer1","org1","GetMap","ROLE_1,ROLE_2"
+100002,"user2","2019-03-25 01:00:59","WFS","layer2","org2","GetMap","ROLE_3,ROLE_4"
+100003,"user1","2019-03-25 01:00:59","WCS","null","org1","GetFeatures","ROLE_1,ROLE_2"
+100004,"user2","2019-03-25 01:00:59","WMS","layer4","org2","GetFeatures","ROLE_3,ROLE_4"
+100005,"user1","2019-03-25 01:00:59","WFS","layer5","org1","GetMap","ROLE_1,ROLE_2"
+100006,"user2","2019-03-25 01:00:59","WCS","layer6","org2","GetFeatures","ROLE_3,ROLE_4"

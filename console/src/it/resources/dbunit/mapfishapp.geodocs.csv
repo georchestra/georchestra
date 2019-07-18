@@ -1,0 +1,6 @@
+id,username,standard,file_hash,created_at,last_access,access_count,raw_file_content
+100001,user1,SLD,abc1111,"2019-03-25 01:00:59","2019-03-26 10:01:00",11,"<styledLayerDescriptor />"
+100002,user2,SLD,abc2222,"2019-03-25 02:00:59","2019-03-26 10:02:00",12,"<styledLayerDescriptor />"
+100003,user1,SLD,abc3333,"2019-03-25 03:00:59","2019-03-26 10:03:00",13,"<styledLayerDescriptor />"
+100004,user2,SLD,abc4444,"2019-03-25 04:00:59","2019-03-26 10:04:00",14,"<styledLayerDescriptor />"
+100005,user1,SLD,abc5555,"2019-03-25 05:00:59","2019-03-26 10:05:00",15,"<styledLayerDescriptor />"
