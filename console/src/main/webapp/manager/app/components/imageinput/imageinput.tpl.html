@@ -1,0 +1,22 @@
+<div class="row">
+  <div class="col-md-4">
+    <label class="btn btn-primary">
+      <span translate>imageinput.label</span>
+      <input
+        type="file"
+        accept="image/*"
+        class="image-input"
+        style="display:none;"
+      />
+    </label>
+  </div>
+  <div class="col-md-8" ng-show="imageinput.model[imageinput.attribute]">
+    <button ng-click="imageinput.delete()" class="close delete-logo">
+      &times;
+    </button>
+    <img
+      class="preview img-responsive"
+      src="data:image/jpeg;base64,{{imageinput.model[imageinput.attribute]}}"
+    />
+  </div>
+</div>

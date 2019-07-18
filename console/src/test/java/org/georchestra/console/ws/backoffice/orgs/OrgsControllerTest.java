@@ -3,8 +3,8 @@ package org.georchestra.console.ws.backoffice.orgs;
 import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.dao.DelegationDao;
 import org.georchestra.console.ds.OrgsDao;
-import org.georchestra.console.dto.Org;
-import org.georchestra.console.dto.OrgExt;
+import org.georchestra.console.dto.orgs.Org;
+import org.georchestra.console.dto.orgs.OrgExt;
 import org.georchestra.console.model.DelegationEntry;
 import org.georchestra.console.ws.utils.Validation;
 import org.json.JSONException;
@@ -50,9 +50,7 @@ public class OrgsControllerTest {
         // Set user connected through spring security
         List<GrantedAuthority> role = new LinkedList<GrantedAuthority>();
         role.add(new SimpleGrantedAuthority("ROLE_SUPERUSER"));
-        Authentication auth = new PreAuthenticatedAuthenticationToken("testadmin",
-                null,
-                role);
+        Authentication auth = new PreAuthenticatedAuthenticationToken("testadmin",null, role);
         SecurityContextHolder.getContext().setAuthentication(auth);
     }
 
@@ -123,6 +121,7 @@ public class OrgsControllerTest {
         AdvancedDelegationDao advancedDelegationDaoMock = mock(AdvancedDelegationDao.class);
         Validation mockValidation = mock(Validation.class);
         when(mockValidation.validateOrgField(anyString(), any(JSONObject.class))).thenReturn(true);
+        when(mockValidation.validateUrl(anyString())).thenReturn(true);
         OrgsController toTest = new OrgsController(mockOrgsDao);
         toTest.delegationDao = delegationDaoMock;
         toTest.advancedDelegationDao = advancedDelegationDaoMock;

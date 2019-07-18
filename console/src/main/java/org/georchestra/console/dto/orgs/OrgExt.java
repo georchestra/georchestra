@@ -17,15 +17,12 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.georchestra.console.dto;
+package org.georchestra.console.dto.orgs;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.springframework.ldap.core.DirContextAdapter;
+import org.georchestra.console.ds.OrgsDao;
 
-public class OrgExt implements ReferenceAware {
+public class OrgExt extends AbstractOrg {
 
     public static final String JSON_ADDRESS = "address";
     public static final String JSON_ORG_TYPE = "orgType";
@@ -33,12 +30,9 @@ public class OrgExt implements ReferenceAware {
     private String id;
     private String orgType;
     private String address;
-
-    @JsonIgnore
-    private boolean isPending;
-
-    @JsonIgnore
-    private DirContextAdapter reference;
+    private String description;
+    private String url;
+    private String logo;
 
     public String getId() {
         return id;
@@ -64,12 +58,28 @@ public class OrgExt implements ReferenceAware {
         this.address = address;
     }
 
-    public boolean isPending() {
-        return isPending;
+    public String getDescription() {
+        return description;
     }
 
-    public void setPending(boolean pending) {
-        isPending = pending;
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getLogo() {
+        return logo;
+    }
+
+    public void setLogo(String logo) {
+        this.logo = logo;
     }
 
     @Override
@@ -78,14 +88,12 @@ public class OrgExt implements ReferenceAware {
                 "id='" + id + '\'' +
                 ", orgType='" + orgType + '\'' +
                 ", address='" + address + '\'' +
+                ", description='" + description + '\'' +
                 '}';
     }
 
-    public DirContextAdapter getReference() {
-        return reference;
-    }
-
-    public void setReference(DirContextAdapter reference) {
-        this.reference = reference;
+    @Override
+    public OrgsDao.Extension<OrgExt> getExtension(OrgsDao orgDao) {
+        return orgDao.getExtension(this);
     }
 }

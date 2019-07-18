@@ -2,6 +2,7 @@ require('components/org/org.tpl')
 require('templates/orgForm.tpl')
 require('components/area/area')
 require('services/orgs')
+require('components/imageinput/imageinput')
 
 class OrgController {
   static $inject = [ '$injector', '$routeParams' ]

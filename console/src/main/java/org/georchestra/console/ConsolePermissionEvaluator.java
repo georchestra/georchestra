@@ -5,7 +5,7 @@ import java.util.*;
 
 import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.dao.DelegationDao;
-import org.georchestra.console.dto.Org;
+import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.dto.Role;
 import org.georchestra.console.dto.SimpleAccount;
 import org.georchestra.console.model.DelegationEntry;

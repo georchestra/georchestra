@@ -33,8 +33,8 @@ import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.ds.RoleDao;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountFactory;
-import org.georchestra.console.dto.Org;
-import org.georchestra.console.dto.OrgExt;
+import org.georchestra.console.dto.orgs.Org;
+import org.georchestra.console.dto.orgs.OrgExt;
 import org.georchestra.console.dto.Role;
 import org.georchestra.console.mailservice.EmailFactory;
 import org.georchestra.console.model.DelegationEntry;
@@ -162,7 +162,7 @@ public final class NewAccountFormController {
 		dataBinder.setAllowedFields(new String[]{"firstName","surname", "email", "phone",
 				"org", "title", "description", "uid", "password", "confirmPassword",
 				"privacyPolicyAgreed", "createOrg", "orgName",
-				"orgShortName", "orgAddress", "orgType", "orgCities", "recaptcha_response_field"});
+				"orgShortName", "orgAddress", "orgType", "orgCities", "orgDescription", "orgUrl", "orgLogo", "recaptcha_response_field"});
 	}
 
 	@RequestMapping(value="/account/new", method=RequestMethod.GET)
@@ -236,7 +236,9 @@ public final class NewAccountFormController {
 				org.setShortName(formBean.getOrgShortName());
 				orgExt.setAddress(formBean.getOrgAddress());
 				orgExt.setOrgType(formBean.getOrgType());
-
+				orgExt.setDescription(formBean.getOrgDescription());
+				orgExt.setUrl(formBean.getOrgUrl());
+				orgExt.setLogo(formBean.getOrgLogo());
 				// Parse and store cities
 				orgCities = orgCities.trim();
 				if (orgCities.length() > 0)
@@ -381,6 +383,10 @@ public final class NewAccountFormController {
 			validation.validateOrgField("shortName", formBean.getOrgShortName(), result);
 			validation.validateOrgField("address", formBean.getOrgAddress(), result);
 			validation.validateOrgField("type", formBean.getOrgType(), result);
+			validation.validateOrgField("url", formBean.getOrgUrl(), result);
+			validation.validateOrgField("description", formBean.getDescription(), result);
+			validation.validateOrgField("logo", formBean.getOrgLogo(), result);
+			validation.validateUrlFieldWithSpecificMsg("orgUrl", formBean.getOrgUrl(), result);
 		} else {
 			validation.validateUserField("org", formBean.getOrg(), result);
 		}

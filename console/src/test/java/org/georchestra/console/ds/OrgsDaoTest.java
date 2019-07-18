@@ -2,7 +2,7 @@ package org.georchestra.console.ds;
 
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountImpl;
-import org.georchestra.console.dto.Org;
+import org.georchestra.console.dto.orgs.Org;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
@@ -27,9 +27,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -192,6 +190,7 @@ public class OrgsDaoTest {
 
         when(validOrg.getMembers()).thenReturn(members);
         when(validOrg.getId()).thenReturn("momorg");
+        when(validOrg.getExtension(any())).thenReturn(toTest.getExtension(validOrg));
         DirContextAdapter mockDirContextAdapter = mock(DirContextAdapter.class);
         when(validOrg.getReference()).thenReturn(mockDirContextAdapter);
         when(mockDirContextAdapter.getDn()).thenReturn(LdapNameBuilder.newInstance("cn=momorg,ou=pendingorgs").build());

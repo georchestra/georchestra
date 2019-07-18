@@ -112,6 +112,17 @@
                         <jsp:attribute name="label"><s:message code="org.creation.orgType"/></jsp:attribute>
                     </t:list>
 
+                    <t:input path="orgDescription" required="${orgDescriptionRequired}">
+                        <jsp:attribute name="label"><s:message code="org.creation.orgDescription"/></jsp:attribute>
+                    </t:input>
+
+                    <t:input path="orgUrl" required="${orgUrlRequired}">
+                        <jsp:attribute name="label"><s:message code="org.creation.orgUrl"/></jsp:attribute>
+                    </t:input>
+
+                    <t:textarea path="orgLogo" required="${orgLogoRequired}">
+                        <jsp:attribute name="label"><s:message code="org.creation.orgLogo"/></jsp:attribute>
+                    </t:textarea>
 
                     <link rel="stylesheet" href="/console/manager/public/libraries.css">
                     <link rel="stylesheet" href="/console/manager/public/app.css">

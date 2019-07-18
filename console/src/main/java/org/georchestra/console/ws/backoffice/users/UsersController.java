@@ -34,7 +34,7 @@ import org.georchestra.console.ds.RoleDao;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountFactory;
 import org.georchestra.console.dto.AccountImpl;
-import org.georchestra.console.dto.Org;
+import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.dto.Role;
 import org.georchestra.console.dto.SimpleAccount;
 import org.georchestra.console.dto.UserSchema;
@@ -485,13 +485,8 @@ public class UsersController {
 		ResponseUtil.writeSuccess(response);
 	}
 
-	/**
-     * Return a list of required fields for user creation
-     *
-     * return a JSON array with required fields.
-     */
     @RequestMapping(value = PUBLIC_REQUEST_MAPPING + "/requiredFields", method = RequestMethod.GET)
-    public void getUserRequiredFields(HttpServletResponse response) throws IOException{
+    public void getUserCreationRequiredFields(HttpServletResponse response) throws IOException{
         try {
             JSONArray fields = new JSONArray();
             fields.put(UserSchema.UID_KEY);

@@ -23,8 +23,8 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.dao.DelegationDao;
 import org.georchestra.console.ds.OrgsDao;
-import org.georchestra.console.dto.Org;
-import org.georchestra.console.dto.OrgExt;
+import org.georchestra.console.dto.orgs.Org;
+import org.georchestra.console.dto.orgs.OrgExt;
 import org.georchestra.console.model.DelegationEntry;
 import org.georchestra.console.ws.backoffice.utils.ResponseUtil;
 import org.georchestra.console.ws.utils.Validation;
@@ -205,8 +205,7 @@ public class OrgsController {
      *  }
      *
      */
-    @RequestMapping(value = REQUEST_MAPPING + "/{commonName:.+}", method = RequestMethod.PUT,
-            produces="application/json; charset=utf-8")
+    @RequestMapping(value = REQUEST_MAPPING + "/{commonName:.+}", method = RequestMethod.PUT, produces="application/json; charset=utf-8")
     @ResponseBody
     public Org updateOrgInfos(@PathVariable String commonName, HttpServletRequest request)
             throws IOException, JSONException, SQLException {
@@ -220,6 +219,10 @@ public class OrgsController {
         if (!this.validation.validateOrgField("name", json))
             throw new IOException("required field : name");
 
+        if (!this.validation.validateUrl(json.optString(Org.JSON_URL))) {
+            throw new IOException(String.format("bad org url format: %s", json.optString(Org.JSON_URL)));
+        }
+
         // Retrieve current orgs state from ldap
         Org org = this.orgDao.findByCommonName(commonName);
         OrgExt orgExt = this.orgDao.findExtById(commonName);
@@ -228,7 +231,6 @@ public class OrgsController {
         this.updateFromRequest(org, json);
         orgExt.setId(org.getId());
         this.updateFromRequest(orgExt, json);
-
         // Persist changes to LDAP server
         this.orgDao.update(org);
 
@@ -240,10 +242,7 @@ public class OrgsController {
             }
         }
 
-
-
         this.orgDao.update(orgExt);
-
         org.setOrgExt(orgExt);
         return org;
     }
@@ -274,6 +273,10 @@ public class OrgsController {
         // Validate request against required fields for admin part
         if (!this.validation.validateOrgField("shortName", json))
             throw new IOException("required field : shortName");
+
+        if (!this.validation.validateUrl(json.optString(Org.JSON_URL))) {
+            throw new IOException(String.format("bad org url format: %s", json.optString(Org.JSON_URL)));
+        }
 
         Org org = new Org();
         org.setId("");
@@ -311,30 +314,16 @@ public class OrgsController {
         ResponseUtil.writeSuccess(response);
     }
 
-    /**
-     * Return a list of required fields for org creation
-     *
-     * return a JSON array with required fields. Possible values :
-     *
-     * * 'shortName'
-     * * 'address'
-     * * 'type'
-     */
     @RequestMapping(value = PUBLIC_REQUEST_MAPPING + "/requiredFields", method = RequestMethod.GET)
-    public void getUserRequiredFields(HttpServletResponse response) throws IOException, JSONException {
+    public void getRequiredFieldsForOrgCreation(HttpServletResponse response) throws IOException, JSONException {
             JSONArray fields = new JSONArray();
             fields.put("name");
             fields.put("shortName");
             ResponseUtil.buildResponse(response, fields.toString(4), HttpServletResponse.SC_OK);
     }
 
-    /**
-     * Return a list of possible values for organization type
-     *
-     * return a JSON array with possible value
-     */
     @RequestMapping(value = PUBLIC_REQUEST_MAPPING +"/orgTypeValues", method = RequestMethod.GET)
-    public void getOrgTypeValues(HttpServletResponse response) throws IOException, JSONException {
+    public void getOrganisationTypePossibleValues(HttpServletResponse response) throws IOException, JSONException {
         JSONArray fields = new JSONArray();
         for(String field : this.orgDao.getOrgTypeValues())
             fields.put(field);
@@ -498,6 +487,9 @@ public class OrgsController {
         orgExt.setOrgType(json.optString(OrgExt.JSON_ORG_TYPE));
         orgExt.setAddress(json.optString(OrgExt.JSON_ADDRESS));
         orgExt.setPending(json.optBoolean(Org.JSON_PENDING));
+        orgExt.setDescription(json.optString(Org.JSON_DESCRIPTION));
+        orgExt.setUrl(json.optString(Org.JSON_URL));
+        orgExt.setLogo(json.optString(Org.JSON_LOGO));
     }
 
     /**
