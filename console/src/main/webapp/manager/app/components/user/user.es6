@@ -411,7 +411,25 @@ angular.module('manager')
             })
           }
         })
+        // create template to format selected element
+        let formatSelect = (state) => {
+          if (!state.id) {
+            return state.text
+          }
+          // find corresponding organization id
+          let orgId = ''
+          for (let org of selOrgs) {
+            if (org.text === state.text) {
+              orgId = org.id
+              break
+            }
+          }
+          // return template, which close list on click
+          let $state = $('<a href="/console/manager/#!/org/' + orgId + '/infos" onclick="$(\'#' + elm[0].id + '\').select2(\'close\')">' + state.text + '</a>')
+          return $state
+        }
         elm.select2({
+          templateSelection: formatSelect,
           placeholder: '',
           allowClear: true,
           data: selOrgs
