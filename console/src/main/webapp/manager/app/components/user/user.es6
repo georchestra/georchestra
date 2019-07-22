@@ -392,7 +392,7 @@ angular.module('manager')
       })
     }
   })])
-  .directive('organizations', [ '$timeout', 'Orgs', ($timeout, Orgs) => ({
+  .directive('organizations', [ '$timeout', '$router', 'Orgs', ($timeout, $router, Orgs) => ({
     link: (scope, elm, attrs, ctrl) => {
       let promise = scope.$eval(attrs['promise'])
       let user = scope.$eval(attrs['model'])
@@ -412,24 +412,13 @@ angular.module('manager')
           }
         })
         // create template to format selected element
-        let formatSelect = (state) => {
-          if (!state.id) {
-            return state.text
-          }
-          // find corresponding organization id
-          let orgId = ''
-          for (let org of selOrgs) {
-            if (org.text === state.text) {
-              orgId = org.id
-              break
-            }
-          }
-          // return template, which close list on click
-          let $state = $('<a href="/console/manager/#!/org/' + orgId + '/infos" onclick="$(\'#' + elm[0].id + '\').select2(\'close\')">' + state.text + '</a>')
-          return $state
+        const formatSelected = (state) => {
+          if (!state.id) return state.text
+          const route = $router.generate('org', {org: state.id, tab: 'infos'})
+          return $(`<a href="#!${route}">${state.text}</a>`)
         }
         elm.select2({
-          templateSelection: formatSelect,
+          templateSelection: formatSelected,
           placeholder: '',
           allowClear: true,
           data: selOrgs
