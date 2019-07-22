@@ -44,7 +44,7 @@ psql -d georchestra -f postgresql/050-ogc-server-statistics.sql
 If the **extractor app** is deployed:
 ```
 psql -d georchestra -f postgresql/010-create-extension.sql
-psql -d georchestra -f postgresql/090-extractor-app.sql
+psql -d georchestra -f postgresql/090-extractorapp.sql
 ```
 
 ### Atlas schema
