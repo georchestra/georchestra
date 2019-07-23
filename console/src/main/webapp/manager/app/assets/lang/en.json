@@ -107,10 +107,10 @@
   "org.useradded"         : "User has been added to organization",
   "org.userlabel"         : "Add",
   "org.description"       : "Description",
-  "org.url"               : "Url",
+  "org.url"               : "Website",
   "org.logo"              : "Logo",
 
-  "imageinput.label"      : "Upload image",
+  "imageinput.label"      : "Upload logo",
 
   "roles.title_plural"    : "roles",
   "roles.title_one"       : "role",

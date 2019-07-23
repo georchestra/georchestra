@@ -104,10 +104,10 @@
   "org.useradded"         : "L'utilisateur a été ajouté à l'organisme.",
   "org.userlabel"         : "Ajouter",
   "org.description"       : "Description",
-  "org.url"               : "Url",
+  "org.url"               : "Site web",
   "org.logo"              : "Logo",
 
-  "imageinput.label"      : "Charger une image",
+  "imageinput.label"      : "Charger un logo",
 
   "roles.title_plural"    : "rôles",
   "roles.title_one"       : "rôle",

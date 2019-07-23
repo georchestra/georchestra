@@ -104,10 +104,10 @@
   "org.useradded"         : "Der Benutzer wurde der Organisation hinzugefügt.",
   "org.userlabel"         : "Hinzufügen",
   "org.description"       : "Beschreibung",
-  "org.url"               : "Url",
+  "org.url"               : "Webseite",
   "org.logo"              : "Logo",
 
-  "imageinput.label"      : "** TO BE TRANSLATED **",
+  "imageinput.label"      : "Logo laden",
 
   "roles.title_plural"    : "Rollen",
   "roles.title_one"       : "Rolle",
