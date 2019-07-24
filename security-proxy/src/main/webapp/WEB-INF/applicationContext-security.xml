@@ -130,7 +130,7 @@
 
     <!-- This bean points at the embedded directory server created by the ldap-server element above  -->
     <bean id="contextSource" class="org.springframework.security.ldap.DefaultSpringSecurityContextSource">
-        <constructor-arg value="ldap://${ldapHost}/${ldapBaseDn}"/>
+        <constructor-arg value="${ldapScheme}://${ldapHost}:${ldapPort}/${ldapBaseDn}"/>
         <property name="userDn" value="${ldapAdminDn}" />
 	    <property name="password" value="${ldapAdminPassword}" />
         <property name="baseEnvironmentProperties">
@@ -152,7 +152,7 @@
     </bean>
 
     <bean id="LdapContextSource" class="org.springframework.ldap.core.support.LdapContextSource">
-        <property name="url" value="ldap://${ldapHost}"/>
+        <property name="url" value="${ldapScheme}://${ldapHost}:${ldapPort}"/>
         <property name="base" value="${ldapBaseDn}"/>
         <property name="userDn" value="${ldapAdminDn}"/>
         <property name="password" value="${ldapAdminPassword}"/>

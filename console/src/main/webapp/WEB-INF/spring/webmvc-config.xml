@@ -73,7 +73,7 @@
 
   <!-- LDAP connection -->
   <bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
-    <property name="url" value="ldap://${ldapHost}:${ldapPort}"/>
+    <property name="url" value="${ldapScheme}://${ldapHost}:${ldapPort}"/>
     <property name="base" value="${ldapBaseDn}"/>
     <property name="userDn" value="${ldapAdminDn}"/>
     <property name="password" value="${ldapAdminPassword}"/>
