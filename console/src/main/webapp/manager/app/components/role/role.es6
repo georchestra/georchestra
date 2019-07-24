@@ -8,6 +8,8 @@ class RoleController {
   constructor ($injector, $routeParams) {
     this.$injector = $injector
 
+    this.q = ''
+
     this.tabs = ['infos', 'users', 'manage']
     this.tab = $routeParams.tab
 

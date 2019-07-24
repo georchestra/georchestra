@@ -53,14 +53,18 @@
                                'other': '{} {{ &quot;role.users&quot; | translate }}'}">
         </h3>
 
-        <form class="form-inline pull-right">
-          <div class="form-group">
+        <form class="form-inline row-fluid">
+          <div class="form-group pull-right">
             <label for="orguser" translate>org.userlabel</label>
             <select class="pull-right form-control input-sm" ng-model="org.user"
                id="orguser" ng-change="org.associate()"
                data-placeholder-text-single="'…' | translate"
                ng-options="u.uid as (u.sn + ' ' + u.givenName) for u in org.notUsers" chosen>
             </select>
+          </div>
+          <div>
+            <input type="text" class="form-control" ng-model="org.q" placeholder="{{'role.filter_users' | translate}}"></input>
+            <i class="glyphicon glyphicon-remove-sign org-filter-table-reset" ng-show="org.q != ''" ng-click="org.q = ''"></i>          
           </div>
         </form>
 
@@ -74,7 +78,7 @@
           </thead>
 
           <tbody>
-            <tr dir-paginate="user in org.users | itemsPerPage: org.itemsPerPage | orderBy : 'sn'">
+            <tr dir-paginate="user in org.users | filter: org.q | itemsPerPage: org.itemsPerPage | orderBy : 'sn'">
               <td>
                 <a ng-link="user({id: user.uid, tab: 'infos'})">{{::user.sn}} {{::user.givenName}}</a>
               </td>

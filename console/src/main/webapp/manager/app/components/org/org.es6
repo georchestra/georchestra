@@ -10,6 +10,8 @@ class OrgController {
   constructor ($injector, $routeParams) {
     this.$injector = $injector
 
+    this.q = ''
+
     this.tabs = ['infos', 'area', 'users', 'manage']
     this.tab = $routeParams.tab
 
