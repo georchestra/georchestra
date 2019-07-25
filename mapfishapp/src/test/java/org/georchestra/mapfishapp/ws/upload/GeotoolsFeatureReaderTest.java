@@ -428,9 +428,9 @@ public class GeotoolsFeatureReaderTest {
         while (it.hasNext()) {
             SimpleFeature f = it.next();
             counter++;
-            Assert.assertEquals(f.getAttributeCount(), 3);
+            Assert.assertEquals(3, f.getAttributeCount());
         }
-        Assert.assertEquals(counter, 19);
+        Assert.assertEquals(19, counter);
     }
 
     @Test
@@ -439,7 +439,7 @@ public class GeotoolsFeatureReaderTest {
 		File file = new File(fullName);
 		SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.geojson);
 		assertFalse(fc.isEmpty());
-		assertEquals(fc.size(), 19);
+		assertEquals(19, fc.size());
 		SimpleFeatureType schema = fc.getSchema();
 		assertNotNull(schema);
 		CoordinateReferenceSystem crs = schema.getCoordinateReferenceSystem();
@@ -455,13 +455,14 @@ public class GeotoolsFeatureReaderTest {
 		CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:3857");
 		SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.geojson, targetCRS);
 		assertFalse(fc.isEmpty());
-		assertEquals(fc.size(), 19);
+		assertEquals(19, fc.size());
 		SimpleFeatureType schema = fc.getSchema();
 		assertNotNull(schema);
 		CoordinateReferenceSystem crs = schema.getCoordinateReferenceSystem();
 		assertNotNull(crs);
 		assertEquals(targetCRS, crs);
 	}
+    
     /**
      * Returns path+fileName
      * @param fileName
