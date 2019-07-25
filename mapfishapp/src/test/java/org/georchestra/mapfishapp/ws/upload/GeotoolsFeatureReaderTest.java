@@ -4,6 +4,7 @@
 package org.georchestra.mapfishapp.ws.upload;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -13,14 +14,12 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.EnumSet;
 
-import org.geotools.data.DefaultFeatureResults;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.referencing.CRS;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.notification.RunListener;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
@@ -435,23 +434,34 @@ public class GeotoolsFeatureReaderTest {
     }
 
     @Test
-    public void testGeoJSONProject() throws Exception{
-        String fullName = makeFullName("canton-73.geojson");
-        File file = new File(fullName);
-        SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.geojson, CRS.decode("EPSG:4326"));
-        Assert.assertFalse(fc.isEmpty());
-        Assert.assertEquals(fc.size(), 19);
-    }
+	public void testGeoJSON() throws Exception {
+		String fullName = makeFullName("canton-73.geojson");
+		File file = new File(fullName);
+		SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.geojson);
+		assertFalse(fc.isEmpty());
+		assertEquals(fc.size(), 19);
+		SimpleFeatureType schema = fc.getSchema();
+		assertNotNull(schema);
+		CoordinateReferenceSystem crs = schema.getCoordinateReferenceSystem();
+		assertNotNull(crs);
+		CoordinateReferenceSystem defaultCRS = CRS.decode("EPSG:4326");
+		assertEquals(defaultCRS, crs);
+	}
 
-    @Test
-    public void testGeoJSONReProject() throws Exception{
-        String fullName = makeFullName("canton-73.geojson");
-        File file = new File(fullName);
-        SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.geojson, CRS.decode("EPSG:3857"));
-        Assert.assertFalse(fc.isEmpty());
-        Assert.assertEquals(fc.size(), 19);
-    }
-
+	@Test
+	public void testGeoJSONReProject() throws Exception {
+		String fullName = makeFullName("canton-73.geojson");
+		File file = new File(fullName);
+		CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:3857");
+		SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.geojson, targetCRS);
+		assertFalse(fc.isEmpty());
+		assertEquals(fc.size(), 19);
+		SimpleFeatureType schema = fc.getSchema();
+		assertNotNull(schema);
+		CoordinateReferenceSystem crs = schema.getCoordinateReferenceSystem();
+		assertNotNull(crs);
+		assertEquals(targetCRS, crs);
+	}
     /**
      * Returns path+fileName
      * @param fileName
