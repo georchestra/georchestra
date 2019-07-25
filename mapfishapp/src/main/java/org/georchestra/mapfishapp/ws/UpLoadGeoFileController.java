@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -43,10 +44,13 @@ import org.apache.commons.logging.LogFactory;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.mapfishapp.ws.upload.FileDescriptor;
 import org.georchestra.mapfishapp.ws.upload.UpLoadFileManagement;
+import org.geotools.feature.FeatureIterator;
+import org.geotools.geojson.feature.FeatureJSON;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.operation.projection.ProjectionException;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -62,6 +66,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 /**
@@ -210,6 +215,9 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
     private String tempDirectory;
     private String docTempDir = "/tmp";
 
+	// for test purposes only
+	boolean allowFileProtocol;
+
     /**
      * The current file that was upload an is in processing
      *
@@ -327,12 +335,14 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 
                 URL toDl = new URL(urlProvided);
 
-                if (!("http".equals(toDl.getProtocol()))
-                        && (!("https".equals(toDl.getProtocol())))) {
-                    writeErrorResponse(response, Status.unsupportedProtocol,
-                            HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                    return;
-                }
+				final String protocol = toDl.getProtocol();
+				if ("file".equals(protocol) && this.allowFileProtocol) {
+					LOG.debug("Loading from file " + toDl);
+				} else if (!("http".equals(protocol) || "https".equals(protocol))) {
+					writeErrorResponse(response, Status.unsupportedProtocol,
+							HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					return;
+				}
                 String tempName = UUID.randomUUID().toString();
                 File destFile = new File(workDirectory, tempName);
                 FileUtils.copyURLToFile(toDl, destFile);
@@ -342,50 +352,7 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
                 // derivative
                 // at the current state of supported formats (see
                 // FileDescriptor.isValidFormat())
-                String guessedExtension = "";
-                try {
-                    ZipFile zif = new ZipFile(destFile.getCanonicalPath());
-                    guessedExtension = "zip";
-                    zif.close();
-                } catch (ZipException e) {
-                    LOG.debug("provided file is not a ZIP file");
-                }
-                if (StringUtils.isBlank(guessedExtension)) {
-                    DocumentBuilderFactory factory = DocumentBuilderFactory
-                            .newInstance();
-                    DocumentBuilder builder;
-
-                    try {
-                        builder = factory.newDocumentBuilder();
-                        Document doc = builder.parse(destFile);
-
-                        // manages messed-up xml documents, selects the first
-                        // significant element (i.e. which is not a comment).
-                        NodeList lst = doc.getChildNodes();
-                        String rootElement = "";
-                        int i = 0;
-                        do {
-                            if (i < lst.getLength())
-                                rootElement = lst.item(i++).getNodeName();
-                            // last element (unlikely to happen):
-                            // and we only found #comment elements
-                            else
-                                rootElement = "";
-                        } while ("#comment".equals(rootElement));
-
-                        if ("osm".equals(rootElement)) {
-                            guessedExtension = "osm";
-                        } else if ("kml".equals(rootElement)) {
-                            guessedExtension = "kml";
-                        } else if ("gpx".equals(rootElement)) {
-                            guessedExtension = "gpx";
-                        } else if (rootElement.contains("FeatureCollection")) {
-                            guessedExtension = "gml";
-                        }
-                    } catch (SAXParseException e) {
-                        LOG.debug("provided file is not an XML file either, giving up.");
-                    }
-                }
+				String guessedExtension = guessFileTypeExtension(destFile);
                 // if guessedExtension is still blank, give up
                 if (StringUtils.isBlank(guessedExtension)) {
                     writeErrorResponse(response, Status.unsupportedFormat);
@@ -465,7 +432,79 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
         }
     }
 
-    /**
+	// naive file detection heuristics
+	// the downloaded file should either be a ZIP file, a json file, or an XML
+	// derivative
+	// at the current state of supported formats (seeFileDescriptor.isValidFormat())
+	private String guessFileTypeExtension(File file) throws Exception {
+		try {
+			ZipFile zif = new ZipFile(file.getCanonicalPath());
+			zif.close();
+			return "zip";
+		} catch (ZipException e) {
+			LOG.debug("provided file is not a ZIP file");
+		}
+		String xmlExtension = tryGetXmlExtension(file);
+		if (!StringUtils.isBlank(xmlExtension)) {
+			return xmlExtension;
+		}
+		if (isGeoJSON(file)) {
+			return "geojson";
+		}
+		return null;
+	}
+
+	private boolean isGeoJSON(File file) {
+		FeatureJSON fjson = new FeatureJSON();
+		try {
+			FeatureIterator<SimpleFeature> featureIterator = fjson.streamFeatureCollection(file);
+			featureIterator.hasNext();
+			featureIterator.close();
+			return true;
+		} catch (Exception e) {
+			LOG.debug("provided file is not a GeoJSON file: " + e.getMessage());
+		}
+		return false;
+	}
+
+	private String tryGetXmlExtension(File file) throws ParserConfigurationException, SAXException, IOException {
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder;
+
+		try {
+			builder = factory.newDocumentBuilder();
+			Document doc = builder.parse(file);
+
+			// manages messed-up xml documents, selects the first
+			// significant element (i.e. which is not a comment).
+			NodeList lst = doc.getChildNodes();
+			String rootElement = "";
+			int i = 0;
+			do {
+				if (i < lst.getLength())
+					rootElement = lst.item(i++).getNodeName();
+				// last element (unlikely to happen):
+				// and we only found #comment elements
+				else
+					rootElement = "";
+			} while ("#comment".equals(rootElement));
+
+			if ("osm".equals(rootElement)) {
+				return "osm";
+			} else if ("kml".equals(rootElement)) {
+				return "kml";
+			} else if ("gpx".equals(rootElement)) {
+				return "gpx";
+			} else if (rootElement.contains("FeatureCollection")) {
+				return "gml";
+			}
+		} catch (SAXParseException e) {
+			LOG.debug("provided file is not an XML file either, giving up.");
+		}
+		return null;
+	}
+
+	/**
      * Write the features in the response object.
      * <p>
      * The output to build is like to

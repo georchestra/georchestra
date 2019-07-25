@@ -19,6 +19,7 @@ import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.referencing.CRS;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -44,7 +45,7 @@ public class GeotoolsFeatureReaderTest {
         reader = new GeotoolsFeatureReader();
     }
 
-    public GeotoolsFeatureReaderTest() {
+    public static @BeforeClass void SetUpGeoToolsReferencing() {
         System.setProperty("org.geotools.referencing.forceXY", "true");
     }
 
@@ -465,7 +466,7 @@ public class GeotoolsFeatureReaderTest {
     
 	@Test
 	public void testGeoJSONMixedFeatureTypes() throws Exception {
-		String fullName = makeFullName("geojson_mixed_feautre_types.json");
+		String fullName = makeFullName("geojson_mixed_feautre_types.geojson");
 		File file = new File(fullName);
 		SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.geojson);
 		assertEquals(2, fc.size());
