@@ -1,0 +1,26 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[5.873,45.8387],[5.8815,45.8269],[5.9027,45.827],[5.873,45.8387]]]
+      },
+      "properties": {
+        "common": "F1",
+        "f1_specific": "prop from F1"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString","coordinates": [[5.9428,45.6766],[5.916,45.6719]]
+      },
+      "properties": {
+        "common": "F2",
+        "f2_specific": 2
+      }
+    }
+  ]
+}

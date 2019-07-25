@@ -68,6 +68,8 @@ public class UpLoadFileManagement {
 
         VALID_EXTENSIONS.add("GML");
         VALID_EXTENSIONS.add("KML");
+
+        VALID_EXTENSIONS.add("GEOJSON");
     }
 
     private FileDescriptor               fileDescriptor;
@@ -278,6 +280,7 @@ public class UpLoadFileManagement {
      * <li>kml</li>
      * <li>gpx</li>
      * <li>gml</li>
+     * <li>geojson</li>
      * </ul>
      *
      * <pre>
@@ -345,6 +348,7 @@ public class UpLoadFileManagement {
      * <li>kml</li>
      * <li>gpx</li>
      * <li>gml</li>
+     * <li>geojson</li>
      * </ul>
      *
      * Returns the name of geofile.

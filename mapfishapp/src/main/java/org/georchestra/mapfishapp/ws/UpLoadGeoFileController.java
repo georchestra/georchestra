@@ -489,8 +489,7 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);
 
-        PrintWriter out = response.getWriter();
-        try {
+        try (PrintWriter out = response.getWriter()) {
 
             fileManagement.writeFeatureCollectionAsJSON(json_out, crs);
 
@@ -516,9 +515,6 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
             writeErrorResponse(response, Status.projectionError,
                     e.getMessage(),
                     HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        } finally {
-            if (out != null)
-                out.close();
         }
     }
 
