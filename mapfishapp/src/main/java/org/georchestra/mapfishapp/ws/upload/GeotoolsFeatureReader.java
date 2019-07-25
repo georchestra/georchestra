@@ -120,8 +120,14 @@ public class GeotoolsFeatureReader implements FeatureGeoFileReader {
 		fjson.setEncodeFeatureCollectionBounds(true);
 
 		try (InputStream in = new FileInputStream(file)) {
-			// parse the whole file and null encode the key/value that are present in some
-			// key but not all.
+			// Build a schema with properties from all features, in case the file contains
+			// mixed type features
+			boolean nullValuesEncoded = false;
+			SimpleFeatureType targetSchema = fjson.readFeatureCollectionSchema(in, nullValuesEncoded);
+			fjson.setFeatureType(targetSchema);
+		}
+
+		try (InputStream in = new FileInputStream(file)) {
 			SimpleFeatureCollection sfc = (SimpleFeatureCollection) fjson.readFeatureCollection(in);
 
 			SimpleFeatureType sft = sfc.getSchema();

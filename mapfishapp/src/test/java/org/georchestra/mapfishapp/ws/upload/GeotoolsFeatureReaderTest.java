@@ -463,6 +463,23 @@ public class GeotoolsFeatureReaderTest {
 		assertEquals(targetCRS, crs);
 	}
     
+	@Test
+	public void testGeoJSONMixedFeatureTypes() throws Exception {
+		String fullName = makeFullName("geojson_mixed_feautre_types.json");
+		File file = new File(fullName);
+		SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.geojson);
+		assertEquals(2, fc.size());
+		SimpleFeatureType schema = fc.getSchema();
+		CoordinateReferenceSystem crs = schema.getCoordinateReferenceSystem();
+		CoordinateReferenceSystem defaultCRS = CRS.decode("EPSG:4326");
+		assertEquals(defaultCRS, crs);
+		
+		assertNotNull(schema.getDescriptor("geometry"));
+		assertNotNull(schema.getDescriptor("common"));
+		assertNotNull(schema.getDescriptor("f1_specific"));
+		assertNotNull(schema.getDescriptor("f2_specific"));
+	}
+
     /**
      * Returns path+fileName
      * @param fileName
