@@ -32,9 +32,9 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashSet;
@@ -76,7 +76,7 @@ public class UsersExport {
     @RequestMapping(value = "/private/users.csv", method = RequestMethod.POST,
             produces = "text/csv; charset=utf-8")
     @ResponseBody
-    public String getUsersAsCsv(@RequestParam(value="users") String rawUsers) throws Exception {
+    public String getUsersAsCsv(@RequestBody String rawUsers) throws Exception {
         Set<String> users = this.parseRequest(rawUsers);
         StringBuilder res = new StringBuilder();
         res.append(OUTLOOK_CSV_HEADER); // add csv outlook header
@@ -96,7 +96,7 @@ public class UsersExport {
     @RequestMapping(value = "/private/users.vcf", method = RequestMethod.POST,
             produces = "text/x-vcard; charset=utf-8")
     @ResponseBody
-    public String getUsersAsVcard(@RequestParam(value="users") String rawUsers) throws Exception {
+    public String getUsersAsVcard(@RequestBody String rawUsers) throws Exception {
         Set<String> users = this.parseRequest(rawUsers);
 
         StringBuilder ret = new StringBuilder();

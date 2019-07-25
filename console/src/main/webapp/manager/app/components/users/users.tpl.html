@@ -47,7 +47,14 @@
     </table>
 
     <dir-pagination-controls></dir-pagination-controls>
-
+    <div class="pull-left row-fluid">
+      <a ng-click="users.exportAsCsv(users.users | filter: users.q)" class="btn btn-primary" title="{{'users.titleCsv' | translate}}">
+        <i class="glyphicon glyphicon-file"></i> <span translate>users.csv</span>
+      </a>
+      <a ng-click="users.exportAsVcf(users.users | filter: users.q)" class="btn btn-primary" title="{{'users.titleVcard' | translate}}">
+        <i class="glyphicon glyphicon-user"></i> <span translate>users.vcard</span>
+      </a>
+    </div>
   </div>
 
 </section>

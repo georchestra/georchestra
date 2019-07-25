@@ -193,6 +193,11 @@
   "users.email"           : "Mail",
   "users.pending"         : "Waiting validation",
   "users.pending_desc"    : "Users waiting for validation",
+  "users.exportError"     : "Failed export request",
+  "users.titleCsv"        : "Export users as csv",
+  "users.titleVcard"      : "Export users as vcard",
+  "users.csv"             : "CSV",
+  "users.vcard"           : "Vcard",
 
   "msg.compose"           : "Compose message",
   "msg.date"              : "Date",

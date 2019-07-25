@@ -192,6 +192,11 @@
   "users.email"           : "Correo electrónico",
   "users.pending"         : "Pendientes",
   "users.pending_desc"    : "Usuarios pendientes de validación",
+  "users.exportError"     : "Solicitud de exportación fallida",
+  "users.titleCsv"        : "Exportar usuarios a csv",
+  "users.titleVcard"      : "Exportar usuarios a Vcard",
+  "users.csv"             : "CSV",
+  "users.vcard"           : "Vcard",
 
   "msg.compose"           : "Redactar un mensaje",
   "msg.date"              : "Fecha",

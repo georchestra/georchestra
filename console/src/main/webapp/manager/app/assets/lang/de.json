@@ -192,6 +192,12 @@
   "users.email"           : "E-Mail",
   "users.pending"         : "***TODO***",
   "users.pending_desc"    : "***TODO***",
+  "users.exportError"     : "Exportanfrage fehlgeschlagen",
+  "users.titleCsv"        : "Benutzer auf Csv exportieren",
+  "users.titleVcard"      : "Benutzer auf Vcard exportieren",
+  "users.csv"             : "CSV",
+  "users.vcard"           : "Vcard",
+
 
   "msg.compose"           : "Nachricht erstellen",
   "msg.date"              : "Datum",
