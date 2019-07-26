@@ -190,12 +190,12 @@
   "users.login"           : "Login",
   "users.organization"    : "Organisation",
   "users.email"           : "E-Mail",
-  "users.pending"         : "***TODO***",
-  "users.pending_desc"    : "***TODO***",
-  "users.filter_selected" : "**** TODO / translate ****",
+  "users.pending"         : "Ausstehende Benutzer",
+  "users.pending_desc"    : "Benutzer warten auf Validierung",
+  "users.filter_selected" : "Nur Auswahl anzeigen",
 
-  "sel.all"               : "**** TODO / translate ****",
-  "sel.none"              : "**** TODO / translate ****",
+  "sel.all"               : "Alle",
+  "sel.none"              : "Keine",
 
   "msg.compose"           : "Nachricht erstellen",
   "msg.date"              : "Datum",
