@@ -66,7 +66,7 @@ class UsersController {
   select (sel) {
     switch (sel) {
       case 'all':
-        this.selection = this.allUsers.map(u => u.uid)
+        this.selection = this.users.map(u => u.uid)
         break
       case 'none':
         this.selection = []
