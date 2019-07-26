@@ -17,6 +17,7 @@ module.exports = config:
           'vendor/angular-sanitize.js',
           'vendor/auto-complete.min.js',
           'vendor/bootstrap-datepicker.js',
+          'vendor/bootstrap.min.js',
           'vendor/router.es5.js',
           'vendor/chosen.jquery.js',
           'vendor/angular-chosen.js',

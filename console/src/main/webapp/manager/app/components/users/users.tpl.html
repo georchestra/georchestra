@@ -7,7 +7,7 @@
     <input type="text" class="filter-table form-control pull-right" ng-model="users.q" placeholder="{{'role.filter_users' | translate}}"></input>
     <i class="glyphicon glyphicon-remove-sign filter-table-reset" ng-show="users.q != ''" ng-click="users.q = ''"></i>
     <h3 ng-if="!users.activeRole" class="roles-title">
-      <ng-pluralize count="users.users.length"
+      <ng-pluralize count="(users.users | filter: users.q | filter:users.selectionFilter).length"
                     when="{'0': '{{ &quot;role.users_none&quot; | translate }}',
                            '1': '{} {{ &quot;role.user&quot; | translate }}',
                            'other': '{} {{ &quot;role.users&quot; | translate }}'}">
@@ -24,6 +24,22 @@
 
       <thead>
         <tr>
+          <th>
+            <div class="btn-group users-selection">
+              <button type="button" class="btn btn-primary" ng-if="users.selection.length>0">
+                {{users.selection.length}}
+              </button>
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu">
+                <li><a href="javascript:void(0)" ng-click="users.select('none')" translate>sel.none</a></li>
+                <li><a href="javascript:void(0)" ng-click="users.select('all')" translate>sel.all</a></li>
+                <li role="separator" class="divider" ng-show="users.selection.length !== 0"></li>
+                <li><a href="javascript:void(0)" ng-show="users.selection.length !== 0">Action on selection</a></li>
+              </ul>
+            </div>
+          </th>
           <th translate>users.user</th>
           <th translate>users.login</th>
           <th translate>users.organization</th>
@@ -32,7 +48,10 @@
       </thead>
 
       <tbody>
-        <tr dir-paginate="user in users.users | filter:users.q | itemsPerPage: users.itemsPerPage | orderBy : 'sn'">
+        <tr dir-paginate="user in users.users | filter:users.q | filter:users.selectionFilter | itemsPerPage: users.itemsPerPage | orderBy : 'sn'">
+          <td class="users-checkboxes">
+            <input type="checkbox" ng-click="users.toggleSelected(user.uid)" ng-checked="users.selection.indexOf(user.uid)>=0">
+          </td>
           <td>
             <a ng-link="user({id: user.uid, tab: 'infos'})">{{::user.sn}} {{::user.givenName}}</a>
           </td>
@@ -46,6 +65,10 @@
 
     </table>
 
+    <label class="pull-right checkbox">
+      <input type="checkbox" ng-model="users.filterSelected"></input>
+      <span translate>users.filter_selected</span>
+    </label>
     <dir-pagination-controls></dir-pagination-controls>
 
   </div>
