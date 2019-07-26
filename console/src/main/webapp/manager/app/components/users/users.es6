@@ -64,9 +64,10 @@ class UsersController {
   }
 
   select (sel) {
+    const filter = this.$injector.get('$filter')('filter')
     switch (sel) {
       case 'all':
-        this.selection = this.users.map(u => u.uid)
+        this.selection = filter(this.users, this.q).map(u => u.uid)
         break
       case 'none':
         this.selection = []
