@@ -40,14 +40,16 @@ import org.georchestra.console.dto.SimpleAccount;
 import org.georchestra.console.dto.UserSchema;
 import org.georchestra.console.mailservice.EmailFactory;
 import org.georchestra.console.model.DelegationEntry;
+import org.georchestra.console.ws.backoffice.users.GDPRAccountWorker.DeletedAccountSummary;
 import org.georchestra.console.ws.backoffice.utils.RequestUtil;
 import org.georchestra.console.ws.backoffice.utils.ResponseUtil;
-import org.georchestra.console.ws.utils.Validation;
 import org.georchestra.lib.file.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PostFilter;
@@ -60,6 +62,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.mail.MessagingException;
@@ -114,8 +117,7 @@ public class UsersController {
 	@Autowired
 	private AdvancedDelegationDao advancedDelegationDao;
 
-	@Autowired
-	private Validation validation;
+    private @Autowired GDPRAccountWorker gdprInfoWorker;
 
 	@Autowired
 	private Boolean warnUserIfUidModified = false;
@@ -140,7 +142,7 @@ public class UsersController {
 	public void setRoleDao(RoleDao roleDao) {
 		this.roleDao = roleDao;
 	}
-
+	
 	public void setWarnUserIfUidModified(boolean warnUserIfUidModified) {
 		this.warnUserIfUidModified = warnUserIfUidModified;
 	}
@@ -326,7 +328,7 @@ public class UsersController {
 	public Account create(HttpServletRequest request)
 			throws IOException, DuplicatedEmailException, DataServiceException, DuplicatedUidException {
 
-		Account account = createAccountFromRequestBody(request.getInputStream());
+		final Account account = createAccountFromRequestBody(request.getInputStream());
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
 		// Verify that org is under delegation if user is not SUPERUSER
@@ -342,12 +344,12 @@ public class UsersController {
 
 		// Saves the user in the LDAP
 		accountDao.insert(account, requestOriginator);
+
 		roleDao.addUser(Role.USER, account, requestOriginator);
 		if(account.getOrg().length() > 0) {
 			Org org = orgDao.findByCommonName(account.getOrg());
 			orgDao.addUser(org, account);
 		}
-
 		return account;
 	}
 
@@ -403,7 +405,7 @@ public class UsersController {
 		this.checkAuthorization(uid);
 
 		// searches the account
-		Account account = this.accountDao.findByUID(uid);
+		final Account account = this.accountDao.findByUID(uid);
 		String originalOrg = account.getOrg();
 
 		// modifies the account data
@@ -425,16 +427,15 @@ public class UsersController {
 
 		// Finally store account in LDAP
 		accountDao.update(account, modified, auth.getName());
-
 		if (accountDao.hasUserDnChanged(account, modified)) {
-			// account was validated by a moderator, notify user
-			if (account.isPending() && ! modified.isPending()) {
-				this.emailFactory.sendAccountWasCreatedEmail(request.getSession().getServletContext(),
-						modified.getEmail(), modified.getCommonName(), modified.getUid());
-			}
+		// account was validated by a moderator, notify user
+		if (account.isPending() && ! modified.isPending()) {
+			this.emailFactory.sendAccountWasCreatedEmail(request.getSession().getServletContext(),
+					modified.getEmail(), modified.getCommonName(), modified.getUid());
+		}
 			roleDao.modifyUser(account, modified);
 		}
-
+	
 		if (accountDao.hasUserLoginChanged(account, modified)) {
 			DelegationEntry delegationEntry = delegationDao.findOne(account.getUid());
 			if (delegationEntry != null) {
@@ -443,7 +444,7 @@ public class UsersController {
 				delegationDao.save(delegationEntry);
 			}
 		}
-
+	
 		if (accountDao.hasUserLoginChanged(account, modified) && warnUserIfUidModified) {
 			this.emailFactory.sendAccountUidRenamedEmail(request.getSession().getServletContext(), modified.getEmail(),
 					modified.getCommonName(), modified.getUid());
@@ -473,7 +474,7 @@ public class UsersController {
 		// check if user is under delegation for delegated admins
 		this.checkAuthorization(uid);
 
-		Account account = accountDao.findByUID(uid);
+		final Account account = accountDao.findByUID(uid);
 		String requestOriginator = request.getHeader("sec-username");
 		roleDao.deleteUser(account, requestOriginator);
 		accountDao.delete(account, requestOriginator);
@@ -483,6 +484,37 @@ public class UsersController {
 			delegationDao.delete(uid);
 
 		ResponseUtil.writeSuccess(response);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/private/users/gdpr/delete", produces = "application/json")
+	public ResponseEntity<DeletedUserDataInfo> deleteUserSensitiveData(//
+			@RequestParam(required = false, name = "uid") String uid, //
+			HttpServletRequest request, //
+			HttpServletResponse response) throws DataServiceException {
+
+		String accountId = uid;
+		if (accountId == null) {
+			accountId = SecurityContextHolder.getContext().getAuthentication().getName();
+		}
+		
+		if (this.userRule.isProtected(accountId))
+			throw new AccessDeniedException("The user is protected, it cannot be deleted: " + accountId);
+
+		// check if user is under delegation for delegated admins
+		this.checkAuthorization(accountId);
+
+		final Account account = accountDao.findByUID(accountId);
+		DeletedAccountSummary summary = gdprInfoWorker.deleteAccountRecords(account);
+
+		DeletedUserDataInfo responseValue = DeletedUserDataInfo.builder().account(accountId)//
+				.metadata(summary.getMetadataRecords())//
+				.extractor(summary.getExtractorRecords())//
+				.geodocs(summary.getGeodocsRecords())//
+				.metadata(summary.getMetadataRecords())//
+				.ogcStats(summary.getOgcStatsRecords())//
+				.build();
+
+		return new ResponseEntity<>(responseValue, HttpStatus.OK);
 	}
 
     @RequestMapping(value = PUBLIC_REQUEST_MAPPING + "/requiredFields", method = RequestMethod.GET)

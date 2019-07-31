@@ -30,13 +30,13 @@
   <bean id="consolePermissionEvaluator" class="org.georchestra.console.ConsolePermissionEvaluator" />
 
   <!-- Directory to scan for repository classes -->
-  <jpa:repositories base-package="org.georchestra.console.dao, org.georchestra.console.model" />
+  <jpa:repositories base-package="org.georchestra.console.dao" />
 
   <mvc:annotation-driven/>
 
   <context:annotation-config/>
 
-  <context:property-placeholder location="classpath:/default-it.properties, classpath:/console-it.properties, classpath:/protectedroles-it.properties" ignore-resource-not-found="false" ignore-unresolvable="false" />
+  <context:property-placeholder location="classpath:/default-it.properties, classpath:console-it.properties, file:${georchestra.datadir}/default.properties, file:${georchestra.datadir}/console/console.properties, file:${georchestra.datadir}/console/protectedroles.properties" ignore-resource-not-found="true" ignore-unresolvable="true" />
 
   <context:component-scan base-package="org.georchestra.console"/>
 
@@ -45,6 +45,7 @@
       <map>
         <entry key="headerHeight" value="${headerHeight}" />
         <entry key="headerUrl" value="${headerUrl}" />
+        <entry key="readonlyUid" value="${readonlyUid:false}" />
         <entry key="publicContextPath" value="${publicContextPath:/console}"/>
       </map>
     </property>
@@ -105,7 +106,13 @@
     <property name="pendingOrgSearchBaseDN" value="${pendingOrgSearchBaseDN:ou=pendingorgs}"/>
     <property name="roleSearchBaseDN" value="${ldapRolesRdn}"/>
   </bean>
-
+  
+  <bean id="AccountGDPRDao" class="org.georchestra.console.ds.AccountGDPRDaoImpl"/>
+  
+  <bean id="userInfoExporter" class="org.georchestra.console.ws.backoffice.users.UserInfoExporterImpl"/>
+  
+  <bean id="GDPRAccountWorker" class="org.georchestra.console.ws.backoffice.users.GDPRAccountWorker"/>
+  
   <bean class="org.georchestra.console.ws.backoffice.users.UserRule">
     <property name="listOfprotectedUsers">
       <description>Comma separated list of one or more user identifiers (uid) of protected user</description>
@@ -156,11 +163,10 @@
    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
        <property name="dataSource" ref="dataSource" />
        <property name="persistenceUnitName" value="myPU" />
-       <property name="persistenceXmlLocation" value="classpath:/persistence-it.xml"/>
+       <property name="persistenceXmlLocation" value="classpath:persistence-it.xml"/>
        <property name="jpaVendorAdapter">
            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
        </property>
-       <property name="packagesToScan" value="org.georchestra.console.model" />
        <property name="jpaProperties">
            <props>
                <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL94Dialect</prop>
@@ -169,6 +175,7 @@
                <prop key="hibernate.hbm2ddl.auto">update</prop>
            </props>
        </property>
+       <property name="packagesToScan" value="org.georchestra.console.model" />
    </bean>
 
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">

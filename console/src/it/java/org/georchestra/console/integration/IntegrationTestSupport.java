@@ -69,9 +69,9 @@ public @Service class IntegrationTestSupport extends ExternalResource {
 
     private @Autowired LdapTemplate ldapTemplate;
 
-    private @Value("${ldap_port}") int ldapPort;
+    private @Value("${ldapPort}") int ldapPort;
 
-    private @Value("${psql_port}") int psqlPort;
+    private @Value("${pgsqlPort}") int psqlPort;
     private @Value("${pgsqlUser}") String psqlUser;
     private @Value("${pgsqlPassword}") String psqlPassword;
 
@@ -88,7 +88,7 @@ public @Service class IntegrationTestSupport extends ExternalResource {
     }
 
     protected @Override void before() {
-        LOGGER.debug(String.format("############# %s: psql_port: %s, ldap_port: %s\n", testName.getMethodName(),
+        LOGGER.debug(String.format("############# %s: pgsqlPort: %s, ldapPort: %s\n", testName.getMethodName(),
                 psqlPort, ldapPort));
         // pre-flight sanity check
         assertNotNull(ldapTemplate.lookup("cn=admin"));

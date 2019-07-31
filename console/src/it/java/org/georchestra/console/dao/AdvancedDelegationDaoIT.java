@@ -38,6 +38,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -46,6 +47,7 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
+@PropertySource("classpath:/console-it.properties")
 @ContextConfiguration(locations = { "classpath:/webmvc-config-test.xml" })
 public class AdvancedDelegationDaoIT {
 

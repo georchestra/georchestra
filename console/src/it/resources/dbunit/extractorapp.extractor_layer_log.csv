@@ -1,0 +1,5 @@
+id,extractor_log_id,projection,resolution,format,owstype,layer_name,is_successful,owsurl,bbox
+100001,100001,"EPSG:4326",1000,"geotiff","WCS","layer1",true,"http://localhost/geoserver/wcs?","SRID=4326;POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))"
+100002,100001,"EPSG:4326",500,"shp","WFS","layer2",true,"http://localhost/geoserver/wfs?","SRID=4326;POLYGON((0 0, 0 1, 1 1, 1 0, 0 0))"
+100003,100002,"EPSG:4326",1000,"geotiff","WCS","layer1",true,"http://localhost/geoserver/wcs?","SRID=4326;POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))"
+100004,100002,"EPSG:4326",500,"shp","WFS","layer2",true,"http://localhost/geoserver/wfs?","SRID=4326;POLYGON((0 0, 0 1, 1 1, 1 0, 0 0))"
