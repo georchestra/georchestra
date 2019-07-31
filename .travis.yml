@@ -1,20 +1,17 @@
 language: java
+jdk:
+  - openjdk8
 sudo: false
 git:
   depth: 1
   submodules: true
-cache:
-  directories:
-    - $HOME/.m2
+
 notifications:
   irc:
     channels:
       - irc.freenode.net#georchestra
     template:
       - "%{repository}#%{build_number} (%{branch}) %{message} %{build_url}"
-before_script: sudo sh -c 'echo 0 > /proc/sys/net/ipv6/conf/all/disable_ipv6'
-install: ./mvnw --no-transfer-progress -B install -DskipTests -P-all,travis -Dadditionalparam=-Xdoclint:none
-script: ./mvnw --no-transfer-progress verify -P-all,travis,it -Dadditionalparam=-Xdoclint:none
 addons:
   apt:
     packages:
@@ -22,3 +19,23 @@ addons:
       - ant-optional
       - python-virtualenv
       - python-pip
+cache:
+  directories:
+    - $HOME/.m2
+
+before_install:
+  - echo "making sure python2/virtualenv are where mapfishapp/jsbuild/build.sh expects them"
+  - /usr/bin/python2 --version
+  - /usr/local/bin/virtualenv --python=/usr/bin/python2 --version
+  - sudo ln -s /usr/local/bin/virtualenv /usr/bin/virtualenv
+  - /usr/bin/virtualenv --python=/usr/bin/python2 --version
+
+install:
+  - ./mvnw --no-transfer-progress -B install -P-all,travis -Dadditionalparam=-Xdoclint:none -DskipTests
+
+before_script: 
+  - sudo sh -c 'echo 0 > /proc/sys/net/ipv6/conf/all/disable_ipv6'
+
+script:
+  - ./mvnw --no-transfer-progress verify -P-all,travis,it -Dadditionalparam=-Xdoclint:none
+
