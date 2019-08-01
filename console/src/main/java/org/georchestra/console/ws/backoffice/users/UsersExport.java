@@ -21,6 +21,8 @@ package org.georchestra.console.ws.backoffice.users;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -34,31 +36,32 @@ import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.ds.DataServiceException;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import lombok.NonNull;
 
 @Controller
 public class UsersExport {
 
-    private @Autowired GDPRAccountWorker gdprInfoExporter;
+    private @Autowired
+    GDPRAccountWorker gdprInfoExporter;
 
     private UserInfoExporter accountInfoExporter;
 
     @Autowired
     private AdvancedDelegationDao advancedDelegationDao;
 
-    public @Autowired UsersExport(UserInfoExporter accountInfoExporter) {
+    public @Autowired
+    UsersExport(UserInfoExporter accountInfoExporter) {
         this.accountInfoExporter = accountInfoExporter;
     }
 
@@ -96,23 +99,25 @@ public class UsersExport {
         }
     }
 
-    @RequestMapping(value = "/private/users.csv", method = RequestMethod.POST, produces = "text/csv; charset=utf-8")
+    @PostMapping(value = "/private/users.csv", consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = "text/csv; charset=utf-8")
     @ResponseBody
-    public String getUsersAsCsv(@RequestParam(value = "users") String rawUsers) throws Exception {
-        String[] users = parseUserNamesFromJSONArray(rawUsers); 
-        checkAccessPermissionToUsersData(users);
+    public String getUsersAsCsv(@RequestBody String users) throws Exception {
+        String[] parsedUsers = parseUserNamesFromJSONArray(users);
+        checkAccessPermissionToUsersData(parsedUsers);
         @NonNull
-        String response = accountInfoExporter.exportUsersAsCsv(users);
-        return response;
+        String csvUsers = accountInfoExporter.exportUsersAsCsv(parsedUsers);
+        return csvUsers;
     }
 
-    @RequestMapping(value = "/private/users.vcf", method = RequestMethod.POST, produces = "text/x-vcard; charset=utf-8")
+    @PostMapping(value = "/private/users.vcf", consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = "text/x-vcard; charset=utf-8")
     @ResponseBody
-    public String getUsersAsVcard(@RequestParam(value = "users") String rawUsers) throws Exception {
-        String[] users = parseUserNamesFromJSONArray(rawUsers); 
-        checkAccessPermissionToUsersData(users);
+    public String getUsersAsVcard(@RequestBody String users) throws Exception {
+        String[] parsedUsers = parseUserNamesFromJSONArray(users);
+        checkAccessPermissionToUsersData(parsedUsers);
         @NonNull
-        String vcards = accountInfoExporter.exportUsersAsVcard(users);
+        String vcards = accountInfoExporter.exportUsersAsVcard(parsedUsers);
         return vcards;
     }
 
@@ -128,6 +133,7 @@ public class UsersExport {
 
     /**
      * Checks that the calling user has permissions to view data regarding the requested users
+     *
      * @throws AccessDeniedException if current user does not have permissions to
      *                               view data of all requested users
      */
@@ -136,7 +142,7 @@ public class UsersExport {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (!auth.getAuthorities().contains(AdvancedDelegationDao.ROLE_SUPERUSER)) {
             Set<String> usersUnderDelegation = this.advancedDelegationDao.findUsersUnderDelegation(auth.getName());
-            List<String> invalid = Arrays.asList(users).stream().filter(u -> !usersUnderDelegation.contains(u))
+            List<String> invalid = Arrays.stream(users).filter(u -> !usersUnderDelegation.contains(u))
                     .collect(Collectors.toList());
             if (!invalid.isEmpty()) {
                 throw new AccessDeniedException("Some users are not under delegation: " + invalid);
