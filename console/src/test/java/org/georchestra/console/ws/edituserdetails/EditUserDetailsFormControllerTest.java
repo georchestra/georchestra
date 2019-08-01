@@ -10,6 +10,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.ldap.InvalidNameException;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.ui.Model;
@@ -44,6 +45,7 @@ public class EditUserDetailsFormControllerTest {
 
     private Model model = Mockito.mock(Model.class);
     private Account mtesterAccount;
+    private Account mtesterAccountNoOrg;
 
     @Before
     public void setUp() throws Exception {
@@ -69,14 +71,24 @@ public class EditUserDetailsFormControllerTest {
                 "test engineer",
                 "description");
         mtesterAccount.setOrg("georTest");
-
         Mockito.when(dao.findByUID(Mockito.eq("mtester"))).thenReturn(mtesterAccount);
+
+        this.mtesterAccountNoOrg = AccountFactory.createBrief("mtesterNoOrg",
+                "12345",
+                "testFirst",
+                "misterTest",
+                "email",
+                "+331234567891",
+                "test engineer",
+                "description");
+        Mockito.when(dao.findByUID(Mockito.eq("mtesterNoOrg"))).thenReturn(mtesterAccountNoOrg);
 
         Org org = new Org();
         org.setId("georTest");
         org.setName("geOrchestra testing LLC");
 
         Mockito.when(this.orgsDao.findByCommonName(Mockito.eq("georTest"))).thenReturn(org);
+        Mockito.when(this.orgsDao.findByCommonName(Mockito.eq(""))).thenReturn(null);
     }
 
     @After
@@ -136,8 +148,29 @@ public class EditUserDetailsFormControllerTest {
     @Test
     public void testEdit() throws Exception {
        request.addHeader("sec-username", "mtester");
+
        String ret = ctrl.edit(request, response, model, formBean, resultErrors, sessionStatus);
+
        assertTrue(ret.equals("editUserDetailsForm"));
+    }
+
+    @Test
+    public void testSetupFormNoOrg() throws Exception {
+        request.addHeader("sec-username", "mtesterNoOrg");
+        Mockito.when(dao.findByUID(Mockito.anyString())).thenReturn(this.mtesterAccount);
+
+        String ret = ctrl.setupForm(request, response, model);
+
+        assertTrue(ret.equals("editUserDetailsForm"));
+    }
+
+    @Test
+    public void testEditNoOrg() throws Exception {
+        request.addHeader("sec-username", "mtesterNoOrg");
+
+        String ret = ctrl.edit(request, response, model, formBean, resultErrors, sessionStatus);
+
+        assertTrue(ret.equals("editUserDetailsForm"));
     }
 
     /**

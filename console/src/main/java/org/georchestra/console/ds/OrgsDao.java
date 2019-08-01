@@ -323,9 +323,21 @@ public class OrgsDao {
      * @return Org instance with specified DN
      */
     public Org findByCommonName(String commonName) {
+        if (commonName.length() <= 0) {
+            return null;
+        }
         Org org = new Org();
         org.setId(commonName);
         return getExtension(org).findById(org);
+    }
+
+    public Org findByCommonNameWithExt(Account user) {
+        Org org = findByCommonName(user.getOrg());
+        if (org == null) {
+            return null;
+        }
+        org.setOrgExt(findExtById(org.getId()));
+        return org;
     }
 
     /**
@@ -338,31 +350,6 @@ public class OrgsDao {
         OrgExt org = new OrgExt();
         org.setId(cn);
         return getExtension(org).findById(org);
-    }
-
-    /**
-     * @return Org instance corresponding to organization of specified user or null if no organization is linked to this user
-     * @throws DataServiceException if more than one organization is linked to specified user
-     */
-    public Org findForUser(Account userAccount) throws DataServiceException {
-        Org org = new Org();
-
-        String userDn = accountDao.buildFullUserDn(userAccount);
-
-        AndFilter filter  = new AndFilter();
-        filter.and(new EqualsFilter("member", userDn));
-        filter.and(new EqualsFilter("objectClass", "groupOfMembers"));
-        List<Org> res = null;
-        try {
-            res = ldapTemplate.search(orgSearchBaseDN, filter.encode(), getExtension(org).getAttributeMapper(false));
-        } catch (NameNotFoundException ex) {
-            res = ldapTemplate.search(pendingOrgSearchBaseDN, filter.encode(), getExtension(org).getAttributeMapper(true));
-        }
-
-        if(res.size() > 1) {
-            throw new DataServiceException("Multiple org for user : " + userAccount.getUid());
-        }
-        return res.get(0);
     }
 
     public void insert(AbstractOrg org){
@@ -385,13 +372,21 @@ public class OrgsDao {
         this.ldapTemplate.unbind(org.getExtension(this).buildOrgDN(org));
     }
 
-    public void addUser(Org org, Account user){
+    public void linkUser(Account user){
+        if (user.getOrg().length() <= 0) {
+            return;
+        }
+        Org org = findByCommonName(user.getOrg());
         DirContextOperations context = ldapTemplate.lookupContext(orgExtension.buildOrgDN(org));
         context.addAttributeValue("member", accountDao.buildFullUserDn(user), false);
         this.ldapTemplate.modifyAttributes(context);
     }
 
-    public void removeUser(Org org, Account user){
+    public void unlinkUser(Account user){
+        if (user.getOrg().length() <= 0) {
+            return;
+        }
+        Org org = findByCommonName(user.getOrg());
         DirContextOperations ctx = ldapTemplate.lookupContext(orgExtension.buildOrgDN(org));
         ctx.removeAttributeValue("member", accountDao.buildFullUserDn(user));
         this.ldapTemplate.modifyAttributes(ctx);

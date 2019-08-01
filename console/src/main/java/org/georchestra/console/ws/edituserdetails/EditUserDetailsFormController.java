@@ -100,11 +100,7 @@ public class EditUserDetailsFormController {
 			Account userAccount = this.accountDao.findByUID(request.getHeader("sec-username"));
 
 			model.addAttribute(createForm(userAccount));
-			Org org = this.orgsDao.findForUser(userAccount);
-			if (org != null) {
-				OrgExt orgExt = this.orgsDao.findExtById(org.getId());
-				org.setOrgExt(orgExt);
-			}
+			Org org =  orgsDao.findByCommonNameWithExt(userAccount);
 			model.addAttribute("org", orgToJson(org));
 
 			HttpSession session = request.getSession();
@@ -141,13 +137,7 @@ public class EditUserDetailsFormController {
 		formBean.setFacsimile(account.getFacsimile());
 		formBean.setDescription(account.getDescription());
 		formBean.setPostalAddress(account.getPostalAddress());
-
-		if(account.getOrg().length() > 0) {
-			Org org = this.orgsDao.findByCommonName(account.getOrg());
-			formBean.setOrg(org.getName());
-		} else {
-			formBean.setOrg("");
-		}
+		formBean.setOrg(account.getOrg());
 
 		return formBean;
 	}
@@ -200,7 +190,8 @@ public class EditUserDetailsFormController {
 			accountDao.update(account, request.getHeader("sec-username"));
 
 			model.addAttribute("success", true);
-			model.addAttribute("org", orgToJson(this.orgsDao.findForUser(account)));
+			Org org = orgsDao.findByCommonName(account.getOrg());
+			model.addAttribute("org", orgToJson(org));
 
 			return "editUserDetailsForm";
 
