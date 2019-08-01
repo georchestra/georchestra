@@ -47,7 +47,7 @@ public class UserInfoExporterImpl implements UserInfoExporter {
             + "Other Address PO Box,Other City,Other State,Other Postal Code,Other Country,Callback,Car Phone,ISDN,Radio Phone,TTY/TDD Phone,Telex,"
             + "User 1,User 2,User 3,User 4,Keywords,Mileage,Hobby,Billing Information,Directory Server,Sensitivity,Priority,Private,Categories\r\n";
 
-    private @Value("ldap://${ldapHost}:${ldapPort}") String ldapUrl;
+    private @Value("${ldapScheme}://${ldapHost}:${ldapPort}") String ldapUrl;
     private @Value("${ldapAdminDn:cn=admin,dc=georchestra,dc=org}") String ldapUserName;
     private @Value("${ldapAdminPassword:secret}") String ldapPassword;
     private @Value("${ldapUsersRdn:ou=users},${ldapBaseDn:dc=georchestra,dc=org}") String userSearchBaseDn;
