@@ -21,8 +21,6 @@ package org.georchestra.console.ws.backoffice.users;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -36,7 +34,6 @@ import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.ds.DataServiceException;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
@@ -100,7 +97,7 @@ public class UsersExport {
     }
 
     @PostMapping(value = "/private/users.csv", consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = "text/csv; charset=utf-8")
+            produces = "text/comma-separated-values; charset=utf-8")
     @ResponseBody
     public String getUsersAsCsv(@RequestBody String users) throws Exception {
         String[] parsedUsers = parseUserNamesFromJSONArray(users);

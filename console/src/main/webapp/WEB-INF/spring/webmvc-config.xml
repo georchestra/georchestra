@@ -32,12 +32,7 @@
   <!-- Directory to scan for repository classes -->
   <jpa:repositories base-package="org.georchestra.console.dao" />
 
-  <mvc:annotation-driven>
-    <mvc:message-converters>
-      <bean class="org.georchestra.console.ws.utils.converter.CsvMessageConverter" />
-      <bean class="org.georchestra.console.ws.utils.converter.VcardMessageConverter" />
-    </mvc:message-converters>
-  </mvc:annotation-driven>
+  <mvc:annotation-driven/>
 
   <context:annotation-config/>
 
