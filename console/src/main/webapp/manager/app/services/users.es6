@@ -40,4 +40,15 @@ angular.module('manager')
         }
       }
     })
+  ]).factory('ExportCSV', ['$resource', 'CONSOLE_PRIVATE_PATH', ($resource, baseUri) =>
+    $resource(baseUri + 'users.csv', {}, {
+      get: {
+        method: 'POST',
+        cache: false,
+        transformRequest: data => $.param(data),
+        headers: {
+          'Content-Type': 'multipart/x-www-form-urlencoded'
+        }
+      }
+    })
   ])

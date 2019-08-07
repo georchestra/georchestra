@@ -81,6 +81,18 @@ class UsersController {
       : true
   }
 
+  exportCSV () {
+    this.$injector.get('ExportCSV').get({
+      users: this.selection
+    }, data => {
+      const blob = new Blob([data], { type: 'type/csv' })
+      window.open(window.URL.createObjectURL(blob))
+    })
+  }
+
+  exportVCard () {
+  }
+
   close () {
     this.newRole = false
     this.newRoleName = ''
