@@ -82,15 +82,31 @@ class UsersController {
   }
 
   exportCSV () {
-    this.$injector.get('ExportCSV').get({
-      users: this.selection
-    }, data => {
-      const blob = new Blob([data], { type: 'type/csv' })
+    const download = this.$injector.get('ExportCSV')
+    download(this.selection).then(result => {
+      if (result.status !== 200) {
+        throw new Error(`Cannot fetch users list. error ${result.status}`)
+      }
+      const blob = new Blob([result.data], { type: 'text/csv' })
       window.open(window.URL.createObjectURL(blob))
+    }).catch(err => {
+      let flash = this.$injector.get('Flash')
+      flash.create('danger', err)
     })
   }
 
   exportVCard () {
+    const download = this.$injector.get('ExportVCard')
+    download(this.selection).then(result => {
+      if (result.status !== 200) {
+        throw new Error(`Cannot fetch users list. error ${result.status}`)
+      }
+      const blob = new Blob([result.data], { type: 'text/x-vcard' })
+      window.open(window.URL.createObjectURL(blob))
+    }).catch(err => {
+      let flash = this.$injector.get('Flash')
+      flash.create('danger', err)
+    })
   }
 
   close () {
