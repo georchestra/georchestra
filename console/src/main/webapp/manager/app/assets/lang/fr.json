@@ -196,6 +196,8 @@
 
   "sel.all"               : "Tous",
   "sel.none"              : "Aucun",
+  "sel.export_csv"        : "Export CSV",
+  "sel.export_vcard"      : "Export VCard",
 
   "msg.compose"           : "Composer un message",
   "msg.date"              : "Date",

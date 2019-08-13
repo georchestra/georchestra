@@ -37,7 +37,32 @@ angular.module('manager')
           let response = {}
           JSON.parse(data).forEach(key => { response[key] = true })
           return response
+        },
+        headers: {
+          'Content-Type': 'application/json'
         }
       }
     })
+  ]).factory('ExportCSV', ['$http', 'CONSOLE_PRIVATE_PATH', ($http, baseUri) => {
+    return users => {
+      return $http.post(baseUri + 'users.csv', users, {
+        cache: false,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'text/comma-separated-values'
+        }
+      })
+    }
+  }
+  ]).factory('ExportVCard', ['$http', 'CONSOLE_PRIVATE_PATH', ($http, baseUri) => {
+    return users => {
+      return $http.post(baseUri + 'users.vcf', users, {
+        cache: false,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'text/x-vcard'
+        }
+      })
+    }
+  }
   ])
