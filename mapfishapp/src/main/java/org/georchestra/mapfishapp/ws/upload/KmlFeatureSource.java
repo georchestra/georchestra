@@ -19,15 +19,19 @@
 
 package org.georchestra.mapfishapp.ws.upload;
 
+import static javax.xml.stream.XMLStreamConstants.END_DOCUMENT;
+import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import javax.xml.namespace.QName;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,16 +46,14 @@ import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * <p>
- *	Access to the kml file. This implementation support kml 2.1 and 2.2.
+ * Access to the kml file. This implementation support kml 2.1 and 2.2.
  *
  *
  * </p>
+ * 
  * @author Mauricio Pazos
  *
  */
@@ -59,9 +61,9 @@ class KmlFeatureSource {
 
     private static final Log LOG = LogFactory.getLog(GeotoolsFeatureReader.class.getPackage().getName());
 
-    private Configuration    configuration;
-    private QName            qname;
-    private File             file;
+    private Configuration configuration;
+    private QName qname;
+    private File file;
 
     /**
      * Creates a source to read the features present in the kml file
@@ -69,20 +71,21 @@ class KmlFeatureSource {
      * @param file
      * @throws IOException
      * @throws UnsupportedGeofileFormatException If the kml format is not supported
+     * @throws FactoryConfigurationError 
+     * @throws XMLStreamException 
      */
-    public KmlFeatureSource( File file) throws IOException, UnsupportedGeofileFormatException{
+    public KmlFeatureSource(File file) throws IOException, UnsupportedGeofileFormatException, XMLStreamException, FactoryConfigurationError {
 
         this.file = file;
 
         this.configuration = getConfig(this.file);
 
-        if(configuration instanceof org.geotools.kml.v22.KMLConfiguration){
+        if (configuration instanceof org.geotools.kml.v22.KMLConfiguration) {
             this.qname = org.geotools.kml.v22.KML.Placemark;
         } else {
             this.qname = org.geotools.kml.KML.Placemark;
 
         }
-
 
     }
 
@@ -92,87 +95,61 @@ class KmlFeatureSource {
      * @throws IOException
      * @throws UnsupportedGeofileFormatException
      */
-    private Configuration getConfig(File f) throws  IOException, UnsupportedGeofileFormatException {
+    private Configuration getConfig(File f)
+            throws IOException, UnsupportedGeofileFormatException{
 
         // detect the kml version from input stream
-
-        SAXParserFactory factory = SAXParserFactory.newInstance();
-        InputStream is = null;
-        try {
-            SAXParser parser = factory.newSAXParser();
-
-            DefaultHandler handle = getSaxHandleKMLVersion();
-
-            is = new FileInputStream(f);
-
-            parser.parse(is, handle);
-
-
-
-        } catch (ParserConfigurationException e) {
-
-            LOG.error(e.getMessage());
-            throw new IOException(e.getMessage());
-
-        } catch (SAXException e) {
-            // it the configuration  property was not set in the parse process the file is not recognized.
-            if( ! (e.getCause() instanceof FundKMLVersionException) ) {
-                throw new UnsupportedGeofileFormatException("This file was not recognized as a valid kml format");
+        try (InputStream in = new FileInputStream(f)) {
+            // e.g.: <kml xmlns="http://www.opengis.net/kml/2.2"
+            // xmlns:kml="http://www.opengis.net/kml/2.2"
+            // xmlns:atom="http://www.w3.org/2005/Atom">
+            XMLStreamReader reader;
+            try {
+                reader = XMLInputFactory.newInstance().createXMLStreamReader(in);
+            } catch (XMLStreamException | FactoryConfigurationError e) {
+                throw new IOException(e);
             }
-
-        } finally {
-            if(is != null) is.close();
-        }
-        return  this.configuration;
-    }
-
-    /**
-     * SAX handle to scan the kml version.
-     * <p>
-     * This process will set the kml configuration property taking into account the file version.
-     * </p>
-     * @return
-     */
-    private DefaultHandler getSaxHandleKMLVersion(){
-
-        return new DefaultHandler() {
-
-            public void startElement(String uri, String localName,String qName, Attributes attributes) throws SAXException {
-
-
-                if(qName.equalsIgnoreCase("kml")){
-                    String value = attributes.getValue(0);
-                    String version = value.substring(value.length() - 3, value.length());
-                    if(version.equals("2.2")){
-                        configuration = new org.geotools.kml.v22.KMLConfiguration();
-                        throw new SAXException(new FundKMLVersionException() );
-                    } else if (version.equals("2.1") || (version.equals("2.0"))){
-                        configuration = new org.geotools.kml.KMLConfiguration();
-                        throw new SAXException(new FundKMLVersionException() );
-                    } else {
-                        final String message = "KML version detected: " + version + ". There is no available binding for this version";
-                        LOG.error(message);
-                        throw new SAXException(message);
+            int tag;
+            do {
+                tag = reader.next();
+                if (tag == START_ELEMENT && reader.getNamespaceCount() > 0) {
+                    for (int i = 0; i < reader.getNamespaceCount(); i++) {
+                        String namespaceURI = reader.getNamespaceURI(i);
+                        if (namespaceURI.startsWith("http://www.opengis.net/kml/")) {
+                            String version = namespaceURI.substring("http://www.opengis.net/kml/".length());
+                            if (version.equals("2.2")) {
+                                return new org.geotools.kml.v22.KMLConfiguration();
+                            } else if (version.equals("2.1") || (version.equals("2.0"))) {
+                                return new org.geotools.kml.KMLConfiguration();
+                            } else {
+                                final String message = "KML version detected: " + version
+                                        + ". There is no available binding for this version";
+                                LOG.error(message);
+                                throw new UnsupportedGeofileFormatException(message);
+                            }
+                        }
                     }
-
                 }
-            }
-        };
-
+            } while (tag != START_ELEMENT && tag != END_DOCUMENT);
+        } catch (XMLStreamException e) {
+            throw new IOException(e);
+        }
+        return null;
     }
-
+    
     /**
      * Reads the kml file
      * <p>
      * Note: only Filter.INCLUDE is implemented
-     *</p>
+     * </p>
+     * 
      * @param q
      * @return {@link ListFeatureCollection }
      */
     public SimpleFeatureCollection getFeatures(Query q) throws IOException {
 
         InputStream is = new FileInputStream(this.file);
-        try{
+        try {
 
             CoordinateReferenceSystem sourceCRS = q.getCoordinateSystem();
             CoordinateReferenceSystem targetCRS = q.getCoordinateSystemReproject();
@@ -187,7 +164,7 @@ class KmlFeatureSource {
             ListFeatureCollection list = null;
             SimpleFeature f;
 
-            while ((f = (SimpleFeature)parser.parse()) != null) {
+            while ((f = (SimpleFeature) parser.parse()) != null) {
 
                 Geometry geom = (Geometry) f.getDefaultGeometry();
 
@@ -211,8 +188,9 @@ class KmlFeatureSource {
             }
 
             return list;
-        } catch (Exception e ){
-            LOG.error(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
             throw new IOException(e.getMessage());
         } finally {
             is.close();
