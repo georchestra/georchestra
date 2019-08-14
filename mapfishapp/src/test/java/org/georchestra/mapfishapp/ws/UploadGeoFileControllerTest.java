@@ -51,6 +51,7 @@ public class UploadGeoFileControllerTest {
 		controller.toGeoJsonFromURL(response, url, null);
 
 		String responseBody = response.getContentAsString();
+                assertEquals("application/json", response.getContentType());
 		assertEquals(responseBody, 500, response.getStatus());
 
 		JSONObject jsonresponse = (JSONObject) new JSONParser().parse(responseBody);
@@ -64,6 +65,7 @@ public class UploadGeoFileControllerTest {
 		controller.toGeoJsonFromURL(response, url, null);
 
 		String responseBody = response.getContentAsString();
+		assertEquals("application/json", response.getContentType());
 		JSONObject jsonresponse = (JSONObject) new JSONParser().parse(responseBody);
 		assertEquals(responseBody, "true", jsonresponse.get("success"));
 		assertEquals(responseBody, 200, response.getStatus());
@@ -75,6 +77,7 @@ public class UploadGeoFileControllerTest {
 		controller.toGeoJsonFromURL(response, url, "EPSG:3857");
 
 		String responseBody = response.getContentAsString();
+                assertEquals("application/json", response.getContentType());
 		JSONObject jsonresponse = (JSONObject) new JSONParser().parse(responseBody);
 		assertEquals(responseBody, "true", jsonresponse.get("success"));
 		assertEquals(responseBody, 200, response.getStatus());
