@@ -32,7 +32,7 @@
   <!-- Directory to scan for repository classes -->
   <jpa:repositories base-package="org.georchestra.console.dao" />
 
-  <mvc:annotation-driven/>
+  <mvc:annotation-driven content-negotiation-manager="contentNegotiationManager" />
 
   <context:annotation-config/>
 
@@ -271,4 +271,8 @@
   </bean>
 
   <bean id="passwordUtils" class="org.georchestra.console.ws.utils.PasswordUtils"/>
+
+  <bean id="contentNegotiationManager" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+    <property name="favorPathExtension" value="false" />
+  </bean>
 </beans>

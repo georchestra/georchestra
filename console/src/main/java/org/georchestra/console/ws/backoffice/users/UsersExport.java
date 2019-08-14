@@ -97,7 +97,7 @@ public class UsersExport {
     }
 
     @PostMapping(value = "/private/export/users.csv", consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = "text/comma-separated-values; charset=utf-8")
+            produces = "text/csv; charset=utf-8")
     @ResponseBody
     public String getUsersAsCsv(@RequestBody String users) throws Exception {
         String[] parsedUsers = parseUserNamesFromJSONArray(users);

@@ -49,7 +49,7 @@ angular.module('manager')
         cache: false,
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'text/comma-separated-values'
+          'Accept': 'text/csv'
         }
       })
     }
