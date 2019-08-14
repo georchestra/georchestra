@@ -290,7 +290,7 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
             @RequestParam(name = "url", required = true) URL url, //
             @RequestParam(name = "srs", required = false) String targetSRS) throws Exception {
 
-        LOG.info(String.format("toGeoJsonFromURL(%s, %s)", url, targetSRS));
+        LOG.debug(String.format("toGeoJsonFromURL(%s, %s)", url, targetSRS));
         if (!validateRemoteURLProtocol(url)) {
             writeErrorResponse(response, Status.unsupportedProtocol, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return;
@@ -336,14 +336,13 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
     @RequestMapping(value = "/togeojson", //
             method = RequestMethod.POST, //
             params = { "!url" }, //
-            produces = "application/json"
-    )
+            produces = "application/json")
     public void toGeoJsonFromMultipart(//
             HttpServletResponse response, //
             @RequestParam(name = "geofile", required = true) MultipartFile geofile,
             @RequestParam(name = "srs", required = false) String targetSRS) throws Exception {
 
-        LOG.info(String.format("toGeoJsonFromMultipart(%s, %s)", geofile.getOriginalFilename(), targetSRS));
+        LOG.debug(String.format("toGeoJsonFromMultipart(%s, %s)", geofile.getOriginalFilename(), targetSRS));
 
         if (geofile.getOriginalFilename().isEmpty()) {
             throw new IOException("a file is expected");
@@ -677,20 +676,23 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
      * @return
      * @throws IOException
      */
-    private File makeDirectoryForRequest(File tempDirectory) throws IOException {
-
+    private File makeDirectoryForRequest(final File tempDirectory) throws IOException {
         // create a temporal root directory if it doesn't exist
-        tempDirectory.mkdirs();
-        Preconditions.checkState(tempDirectory.isDirectory());
+        if(!tempDirectory.exists() && !tempDirectory.mkdirs()) {
+            throw new IOException("Unable to create tem directory " + tempDirectory.getAbsolutePath());
+        }
+        Preconditions.checkState(tempDirectory.isDirectory(), "%s is not a directory", tempDirectory);
         File requestDirectory = new File(tempDirectory, UUID.randomUUID().toString());
         if (!requestDirectory.mkdir()) {
             throw new IOException("cannot create the directory " + requestDirectory);
         }
+        LOG.debug("Created request temp directory: " + requestDirectory.getAbsolutePath());
         return requestDirectory;
     }
 
     private void cleanTemporalDirectory(File workDirectory) throws IOException {
         FileUtils.cleanDirectory(workDirectory);
+        LOG.debug("Removing request temp directory " + workDirectory.getAbsolutePath());
         boolean removed = workDirectory.delete();
         if (!removed) {
             LOG.warn("cannot remove temporary directory: " + workDirectory.getAbsolutePath());
