@@ -116,17 +116,6 @@
       <artifactId>gt-epsg-hsql</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gt-imageio-ext-gdal</artifactId>
-      <version>${gt.version}</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>imageio-ext-gdal-bindings</artifactId>
-          <groupId>it.geosolutions.imageio-ext</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
       <type>jar</type>
