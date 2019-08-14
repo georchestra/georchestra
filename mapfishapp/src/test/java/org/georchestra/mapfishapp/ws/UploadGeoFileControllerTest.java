@@ -84,6 +84,18 @@ public class UploadGeoFileControllerTest {
 		assertFeatureCollection(jsonresponse, "EPSG:3857", 2);
 	}
 
+    public @Test void testUploadKMLFromURL() throws Exception {
+        URL url = fileURL("recettage.kml");
+        controller.toGeoJsonFromURL(response, url, null);
+
+        String responseBody = response.getContentAsString();
+        assertEquals("application/json", response.getContentType());
+        JSONObject jsonresponse = (JSONObject) new JSONParser().parse(responseBody);
+        assertEquals(responseBody, "true", jsonresponse.get("success"));
+        assertEquals(responseBody, 200, response.getStatus());
+        assertFeatureCollection(jsonresponse, null, 5);
+    }
+
 	private void assertFeatureCollection(JSONObject response, String expectedSRS, int expectedFeatureCount) {
 		JSONObject featureCollection = (JSONObject) response.get("geojson");
 		assertNotNull(response.toString(), featureCollection);
