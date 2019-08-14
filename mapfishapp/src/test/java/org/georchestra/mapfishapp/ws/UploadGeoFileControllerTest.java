@@ -36,7 +36,7 @@ public class UploadGeoFileControllerTest {
     public @Before void before() {
 		controller = new UpLoadGeoFileController();
 		controller.setDocTempDir(tmpFolder.getRoot().getAbsolutePath());
-		controller.setTempDirectory(tmpFolder.getRoot().getAbsolutePath());
+		controller.setTempDirectory(tmpFolder.getRoot());
 		controller.allowFileProtocol = true;
 
 		request = new MockHttpServletRequest();
@@ -48,8 +48,7 @@ public class UploadGeoFileControllerTest {
 
 	public @Test void testUploadUnsupportedFileType() throws Exception {
 		URL url = fileURL("pigma_regions_POLYGON.dat");
-		request.setParameter("url", url.toExternalForm());
-		controller.toGeoJson(request, response);
+		controller.toGeoJsonFromURL(response, url, null);
 
 		String responseBody = response.getContentAsString();
 		assertEquals(responseBody, 500, response.getStatus());
@@ -62,8 +61,7 @@ public class UploadGeoFileControllerTest {
 
 	public @Test void testUploadGeoJSONFromURL() throws Exception {
 		URL url = fileURL("geojson_mixed_feautre_types.geojson");
-		request.setParameter("url", url.toExternalForm());
-		controller.toGeoJson(request, response);
+		controller.toGeoJsonFromURL(response, url, null);
 
 		String responseBody = response.getContentAsString();
 		JSONObject jsonresponse = (JSONObject) new JSONParser().parse(responseBody);
@@ -74,9 +72,7 @@ public class UploadGeoFileControllerTest {
 
 	public @Test void testUploadGeoJSONReproject() throws Exception {
 		URL url = fileURL("geojson_mixed_feautre_types.geojson");
-		request.setParameter("url", url.toExternalForm());
-		request.setParameter("srs", "EPSG:3857");
-		controller.toGeoJson(request, response);
+		controller.toGeoJsonFromURL(response, url, "EPSG:3857");
 
 		String responseBody = response.getContentAsString();
 		JSONObject jsonresponse = (JSONObject) new JSONParser().parse(responseBody);
