@@ -19,6 +19,7 @@ VOLUME [ "/mnt/mapfishapp_uploads", "/tmp", "/run/jetty" ]
 
 CMD ["sh", "-c", "exec java \
 -Djava.io.tmpdir=/tmp/jetty \
+-Duser.home=/mnt/mapfishapp_uploads \
 -Dgeorchestra.datadir=/etc/georchestra \
 -Dmapfish-print-config=/etc/georchestra/mapfishapp/print/config.yaml \
 -Dorg.geotools.referencing.forceXY=true \
