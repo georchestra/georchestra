@@ -20,12 +20,14 @@
 package org.georchestra.mapfishapp.ws;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.Writer;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.zip.ZipException;
@@ -44,6 +46,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.mapfishapp.ws.upload.FileDescriptor;
+import org.georchestra.mapfishapp.ws.upload.UnsupportedGeofileFormatException;
 import org.georchestra.mapfishapp.ws.upload.UpLoadFileManagement;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.geojson.feature.FeatureJSON;
@@ -53,9 +56,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -172,6 +175,13 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
                         + detail + "\"}";
             }
         },
+        unsupportedTargetCRS {
+            @Override
+            public String getMessage(final String detail) {
+                return "{\"success\":false, \"error\":\"fileupload_error_projectionError\", \"msg\": \"Unsupported target Coordinate Reference System: "
+                        + detail + "\"}";
+            }
+        },
         sizeError {
             @Override
             public String getMessage(String detail) {
@@ -189,6 +199,12 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
             @Override
             public String getMessage(final String detail) {
                 return "{\"success\": \"false\", \"error\":\"fileupload_error_incompleteSHP\", \"msg\": \"incomplete shapefile\"}";
+            }
+        },
+        unzipError {
+            @Override
+            public String getMessage(final String detail) {
+                return "{\"success\": \"false\", \"error\":\"fileupload_error_zipfile\", \"msg\": \"Error reading zip file\"}";
             }
         },
         ready {
@@ -391,34 +407,38 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
     }
 
     private void transformAndSend(UpLoadFileManagement fileManagement, @Nullable String targetSRS,
-            HttpServletResponse response) throws Exception {
-        try {
-            // processes the uploaded || downloaded file
-            Status st = Status.ready;
+            HttpServletResponse response) {
 
-            // if the uploaded file is a zip file then checks its content
-            if (fileManagement.containsZipFile()) {
+        // processes the uploaded || downloaded file
+        Status st = Status.ready;
+
+        // if the uploaded file is a zip file then checks its content
+        if (fileManagement.containsZipFile()) {
+            try {
                 fileManagement.unzip();
-                st = checkGeoFiles(fileManagement);
-                if (st != Status.ok) {
-                    writeErrorResponse(response, st);
-                    return;
-                }
+            } catch (IOException e) {
+                writeErrorResponse(response, Status.unzipError);
+                return;
             }
-
-            // create a CRS object from the srs parameter
-            final @Nullable CoordinateReferenceSystem crs = parseCRS(targetSRS);
-
-            // retrieves the feature collection and write the response
-            writeOKResponse(response, fileManagement, crs);
-
-        } catch (IOException e) {
-            LOG.error(e);
-            throw new IOException(e);
-        } catch (ProjectionException e) {
-            LOG.error(e.getMessage());
-            throw e;
+            st = checkGeoFiles(fileManagement);
+            if (st != Status.ok) {
+                writeErrorResponse(response, st);
+                return;
+            }
         }
+
+        // create a CRS object from the srs parameter
+        @Nullable
+        CoordinateReferenceSystem crs;
+        try {
+            crs = parseCRS(targetSRS);
+        } catch (IOException e) {
+            writeErrorResponse(response, Status.unsupportedTargetCRS, targetSRS, HttpStatus.BAD_REQUEST.value());
+            return;
+        }
+
+        // retrieves the feature collection and write the response
+        writeOKResponse(response, fileManagement, crs);
     }
 
     private @Nullable CoordinateReferenceSystem parseCRS(String targetSRS) throws IOException {
@@ -427,9 +447,6 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
             if (!StringUtils.isEmpty(targetSRS)) {
                 crs = CRS.decode(targetSRS);
             }
-        } catch (NoSuchAuthorityCodeException e) {
-            LOG.error(e.getMessage());
-            throw new IllegalArgumentException(e);
         } catch (FactoryException e) {
             LOG.error(e.getMessage());
             throw new IOException(e);
@@ -524,37 +541,48 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
      * @throws Exception
      */
     private void writeOKResponse(final HttpServletResponse response, final UpLoadFileManagement fileManagement,
-            final CoordinateReferenceSystem crs) throws Exception {
+            final CoordinateReferenceSystem crs) {
 
-        StringWriter json_out = new StringWriter();
+        final File tmpJsonFile = new File(fileManagement.getWorkDirectory(), "tmpresponse.json");
+        try (Writer writer = new FileWriter(tmpJsonFile)) {
+            // builds the following response:
+            // "{\"success\": \"true\", \"geojson\":" + jsonFeatures+"}");
+            writer.write("{\"success\": \"true\", \"geojson\":");
 
+            fileManagement.writeFeatureCollectionAsJSON(writer, crs);
+
+            writer.write("}");
+            writer.flush();
+        } catch (OutOfMemoryError unlikely) {
+            LOG.error(unlikely);
+            writeErrorResponse(response, Status.outOfMemoryError, buildOutOfMemoryErrorMessage(),
+                    HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE);
+            return;
+        } catch (IOException e) {
+            LOG.error(e);
+            writeErrorResponse(response, Status.ioError, e.getMessage(), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return;
+        } catch (ProjectionException e) {
+            LOG.error(e);
+            writeErrorResponse(response, Status.projectionError, e.getMessage(),
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return;
+        } catch (UnsupportedGeofileFormatException e) {
+            LOG.error(e);
+            writeErrorResponse(response, Status.unsupportedFormat, e.getMessage(),
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return;
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("RESPONSE: OK");
+        }
         response.setCharacterEncoding(responseCharset);
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_OK);
-
-        try (PrintWriter out = response.getWriter()) {
-
-            fileManagement.writeFeatureCollectionAsJSON(json_out, crs);
-
-            // builds the following response:
-            // "{\"success\": \"true\", \"geojson\":" + jsonFeatures+"}");
-            out.print("{\"success\": \"true\", \"geojson\":");
-            out.print(json_out.toString());
-            out.println("}");
-
-            out.flush();
-
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("RESPONSE: OK");
-            }
-        } catch (OutOfMemoryError e) {
-            writeErrorResponse(response, Status.outOfMemoryError, buildOutOfMemoryErrorMessage(),
-                    HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE);
-        } catch (IOException e) {
-            writeErrorResponse(response, Status.ioError, e.getMessage(), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        } catch (ProjectionException e) {
-            writeErrorResponse(response, Status.projectionError, e.getMessage(),
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        try {
+            Files.copy(tmpJsonFile.toPath(), response.getOutputStream());
+        } catch (IOException streamClosedByClient) {
+            LOG.trace(streamClosedByClient);
         }
     }
 
@@ -571,7 +599,7 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
      */
     private void writeErrorResponse(HttpServletResponse response, final Status st, final String errorDetail,
             final int responseStatusError) {
-        response.reset();
+//        response.reset();
         PrintWriter out = null;
         try {
             out = response.getWriter();
@@ -579,12 +607,7 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
             response.setContentType("application/json");
             response.setStatus(responseStatusError);
 
-            String statusMsg;
-            if ("".equals(errorDetail)) {
-                statusMsg = st.getMessage();
-            } else {
-                statusMsg = st.getMessage(errorDetail);
-            }
+            String statusMsg = StringUtils.isEmpty(errorDetail) ? st.getMessage() : st.getMessage(errorDetail);
             out.println(statusMsg);
             out.flush();
 
@@ -678,7 +701,7 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
      */
     private File makeDirectoryForRequest(final File tempDirectory) throws IOException {
         // create a temporal root directory if it doesn't exist
-        if(!tempDirectory.exists() && !tempDirectory.mkdirs()) {
+        if (!tempDirectory.exists() && !tempDirectory.mkdirs()) {
             throw new IOException("Unable to create tem directory " + tempDirectory.getAbsolutePath());
         }
         Preconditions.checkState(tempDirectory.isDirectory(), "%s is not a directory", tempDirectory);
