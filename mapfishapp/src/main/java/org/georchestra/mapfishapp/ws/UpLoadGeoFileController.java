@@ -334,7 +334,8 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
      */
     @RequestMapping(value = "/togeojson", //
             method = RequestMethod.POST, //
-            params = { "!url" } //
+            params = { "!url" }, //
+            produces = "application/json"
     )
     public void toGeoJsonFromMultipart(//
             HttpServletResponse response, //
@@ -565,7 +566,7 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
         StringWriter json_out = new StringWriter();
 
         response.setCharacterEncoding(responseCharset);
-        response.setContentType("text/html");
+        response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_OK);
 
         PrintWriter out = response.getWriter();
@@ -616,7 +617,7 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
         try {
             out = response.getWriter();
             response.setCharacterEncoding(responseCharset);
-            response.setContentType("text/html");
+            response.setContentType("application/json");
             response.setStatus(responseStatusError);
 
             String statusMsg;
