@@ -72,7 +72,7 @@ public class UpLoadFileManagement {
 
     private FileDescriptor               fileDescriptor;
 
-    private String                       workDirectory;
+    private File                         workDirectory;
 
     private FeatureGeoFileReader reader;
 
@@ -97,14 +97,12 @@ public class UpLoadFileManagement {
         while (entries.hasMoreElements()) {
 
             ZipEntry entry = entries.nextElement();
-            String path = workDirectory + File.separator + entry.getName();
-
-            String extension = FilenameUtils.getExtension(path).toUpperCase();
+            File outFile = new File(workDirectory, entry.getName());
+            String extension = FilenameUtils.getExtension(outFile.getName()).toUpperCase();
             if (VALID_EXTENSIONS.contains(extension)) {
-                File outFile = new File(path);
                 extractFile(zipFile, entry, outFile);
             } else {
-                makeDirectory(path);
+                makeDirectory(outFile.getParentFile());
             }
         }
         zipFile.close();
@@ -116,12 +114,9 @@ public class UpLoadFileManagement {
      * @param path
      * @throws IOException
      */
-    private void makeDirectory(String path) throws IOException {
-
-        File newDirectory = new File(path);
-        if (!newDirectory.exists()) {
-            makeDirectory(newDirectory.getParent());
-            newDirectory.mkdir();
+    private void makeDirectory(File path) throws IOException {
+        if (!path.isDirectory()) {
+            path.mkdirs();
         }
     }
 
@@ -172,7 +167,7 @@ public class UpLoadFileManagement {
         try {
             // transfers the uploaded file to the work directory
             final String originalFileName = uploadFile.getOriginalFilename();
-            File outFile = new File(this.workDirectory + "/" + originalFileName);
+            File outFile = new File(this.workDirectory, originalFileName);
             uploadFile.transferTo(outFile);
 
             this.fileDescriptor.savedFile = outFile;
@@ -365,7 +360,7 @@ public class UpLoadFileManagement {
         return null;
     }
 
-    public void setWorkDirectory(String workDirectory) {
+    public void setWorkDirectory(File workDirectory) {
         this.workDirectory = workDirectory;
     }
 

@@ -7,6 +7,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URL;
@@ -287,7 +288,7 @@ public class UpLoadFileManagementGTImplTest {
 
         UpLoadFileManagement fm = create();
 
-        fm.setWorkDirectory(FilenameUtils.getFullPath(fileName));
+        fm.setWorkDirectory(new File(fileName).getParentFile());
         fm.setFileDescriptor(fd);
 
         StringWriter out = new StringWriter();
