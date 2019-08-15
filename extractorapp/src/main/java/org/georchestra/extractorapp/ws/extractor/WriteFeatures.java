@@ -88,9 +88,6 @@ public class WriteFeatures implements FeatureVisitor {
             String uniqueName = toUniqueName (type, usedAttNames, i, attName);
             AttributeTypeBuilder attBuilder = new AttributeTypeBuilder ();
             attBuilder.init (desc);
-            if(dsFactory instanceof MifDatastoreFactory && desc.getType().getBinding().isAssignableFrom(Short.class)) {
-            	attBuilder.setBinding(Integer.class);
-            }
             builder.add (attBuilder.buildDescriptor (uniqueName));
         }
 	}
@@ -169,7 +166,7 @@ public class WriteFeatures implements FeatureVisitor {
         Set<Entry<String, String>> entries = _attNameMapping.entrySet ();
         for (Entry<String, String> entry : entries) {
             Object value = simpleFeature.getAttribute (entry.getKey ());
-            builder.set (entry.getValue (),value);
+            builder.set (entry.getValue(), value);
         }
         SimpleFeature copy = builder.buildFeature (id);
         return copy;

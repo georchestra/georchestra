@@ -41,7 +41,8 @@ final class ShpFeatureWriter extends FileFeatureWriter {
 	 */
 	@Override
 	protected DatastoreFactory getDatastoreFactory() throws  IOException{
-		return new ShpDatastoreFactory();
+		ShpDatastoreFactory factory = new ShpDatastoreFactory();
+		return factory;
 	}
 
 }

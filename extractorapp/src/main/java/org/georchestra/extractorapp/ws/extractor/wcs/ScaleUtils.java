@@ -19,13 +19,14 @@
 
 package org.georchestra.extractorapp.ws.extractor.wcs;
 
-import javax.measure.converter.UnitConverter;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
+import javax.measure.UnitConverter;
+import javax.measure.quantity.Length;
 
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import tec.uom.se.unit.Units;
 
 /**
  * Methods for calculating the ScaleDenominator
@@ -47,15 +48,15 @@ final class ScaleUtils {
 
 	public static double fromMeterToCrs(double value,
 			CoordinateReferenceSystem crs) {
-		Unit<?> unit = getUnit(crs);
-		UnitConverter converter = SI.METER.getConverterTo(unit);
+		Unit<Length> unit = (Unit<Length>) getUnit(crs);
+		UnitConverter converter = Units.METRE.getConverterTo(unit);
 		return converter.convert(value);
 	}
 
 	public static double fromCrsToMeter(double value,
 			CoordinateReferenceSystem crs) {
-		Unit<?> unit = getUnit(crs);
-		UnitConverter converter = unit.getConverterTo(javax.measure.unit.SI.METER);
+		Unit<Length> unit = (Unit<Length>) getUnit(crs);
+		UnitConverter converter = unit.getConverterTo(Units.METRE);
 		return converter.convert(value);
 	}
 

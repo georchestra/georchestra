@@ -179,14 +179,14 @@ public class WcsExtractorTest extends AbstractTestWithServer {
         assertTrue(this.serverWasCalled);
 
         final String[] fileNames = extract.list();
-        assertEquals(Arrays.toString(fileNames), 4, fileNames.length);
+        assertEquals(Arrays.toString(fileNames), 3, fileNames.length);
 
         Set<String> extensions = new HashSet<String>();
         for (String fileName : fileNames) {
             extensions.add(Files.getFileExtension(fileName));
         }
 
-        assertTrue(Arrays.toString(fileNames), extensions.containsAll(Arrays.asList("tif", "tfw", "prj", "tab")));
+        assertTrue(Arrays.toString(fileNames), extensions.containsAll(Arrays.asList("tif", "tfw", "prj")));
 
         for (File file : extract.listFiles()) {
             assertTrue(file.length() > 0);

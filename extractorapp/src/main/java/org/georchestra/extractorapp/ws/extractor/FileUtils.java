@@ -37,7 +37,6 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import org.georchestra.extractorapp.ws.ExtractorException;
-import org.georchestra.extractorapp.ws.extractor.OGRFeatureWriter.FileFormat;
 import org.georchestra.extractorapp.ws.extractor.WfsExtractor.GeomType;
 import org.opengis.feature.simple.SimpleFeatureType;
 

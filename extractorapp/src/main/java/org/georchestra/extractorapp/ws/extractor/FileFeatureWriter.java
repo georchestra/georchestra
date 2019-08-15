@@ -100,7 +100,7 @@ abstract class FileFeatureWriter implements FeatureWriterStrategy {
 			return files;
 			
 		} catch (IOException e ){
-			
+			e.printStackTrace();
         	final String message = "Failed generation: " + this.schema.getName() + " - "  +  e.getMessage();
 			LOG.error(message);        	
 			

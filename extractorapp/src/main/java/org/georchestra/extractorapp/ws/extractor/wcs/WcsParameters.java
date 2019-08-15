@@ -37,7 +37,6 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  * 
  * @author jeichar
  */
-@SuppressWarnings("deprecation")
 class WcsParameters {
     public static final DefaultParameterDescriptor<String> FORMAT = DefaultParameterDescriptor.create ("format", "Output format of map, as stated in the GetCapabilities", String.class, "geotiff", false);
     public static final DefaultParameterDescriptor<String> CRS = DefaultParameterDescriptor.create ("crs", "Coordinate Reference System in which the request is expressed", String.class, "EPSG:4326", false);

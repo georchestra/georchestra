@@ -19,13 +19,12 @@
 
 package org.georchestra.extractorapp.ws.extractor.wcs;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.geotools.coverage.grid.io.AbstractGridFormat;
 import org.geotools.coverage.grid.io.imageio.GeoToolsWriteParams;
-import org.geotools.factory.Hints;
+import org.geotools.util.factory.Hints;
 import org.opengis.coverage.grid.Format;
 import org.opengis.coverage.grid.GridCoverageWriter;
 import org.opengis.parameter.ParameterValueGroup;

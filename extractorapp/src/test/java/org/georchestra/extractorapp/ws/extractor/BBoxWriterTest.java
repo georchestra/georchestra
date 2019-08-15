@@ -7,7 +7,6 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 
-import org.georchestra.extractorapp.ws.extractor.OGRFeatureWriter.FileFormat;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.junit.Test;
@@ -25,22 +24,9 @@ public class BBoxWriterTest {
 	@Test
 	public void testBBoxSHP() throws Exception{
 		
-		testBBox(OGRFeatureWriter.FileFormat.shp);
+		testBBox(FileFormat.shp);
 	}
 	
-	@Test
-	public void testBBoxTAB() throws Exception{
-		
-		testBBox(OGRFeatureWriter.FileFormat.tab);
-	}
-
-	@Test
-	public void testBBoxMIF() throws Exception{
-		
-		
-		testBBox( OGRFeatureWriter.FileFormat.mif);
-	}
-
 	private void testBBox( FileFormat format) throws Exception{
 		
 		CoordinateReferenceSystem crs = CRS.decode("EPSG:2154");
