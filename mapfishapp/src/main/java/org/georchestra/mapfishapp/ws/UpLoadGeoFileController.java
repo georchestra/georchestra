@@ -19,6 +19,9 @@
 
 package org.georchestra.mapfishapp.ws;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.TEXT_HTML;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -28,6 +31,8 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.net.URL;
 import java.nio.file.Files;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.zip.ZipException;
@@ -58,8 +63,11 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -277,7 +285,7 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
         JSONArray formatList = fileManagement.getFormatListAsJSON();
 
         response.setCharacterEncoding(responseCharset);
-        response.setContentType("application/json");
+        response.setContentType("text/html");
 
         PrintWriter out = response.getWriter();
         try {
@@ -304,7 +312,8 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
     public void toGeoJsonFromURL(//
             HttpServletResponse response, //
             @RequestParam(name = "url", required = true) URL url, //
-            @RequestParam(name = "srs", required = false) String targetSRS) throws Exception {
+            @RequestParam(name = "srs", required = false) String targetSRS, @RequestHeader HttpHeaders requestHeaders)
+            throws Exception {
 
         LOG.debug(String.format("toGeoJsonFromURL(%s, %s)", url, targetSRS));
         if (!validateRemoteURLProtocol(url)) {
@@ -320,8 +329,7 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
                 UpLoadFileManagement fileManagement = UpLoadFileManagement.create();
                 fileManagement.setWorkDirectory(workDirectory);
                 fileManagement.setFileDescriptor(fileDescriptor);
-                // fileManagement.addFileExtension(FilenameUtils.getExtension(file.getName()));
-                transformAndSend(fileManagement, targetSRS, response);
+                transformAndSend(fileManagement, targetSRS, response, resolveResponseContentType(requestHeaders));
             } else {
                 writeErrorResponse(response, Status.unsupportedFormat);
                 return;
@@ -356,7 +364,8 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
     public void toGeoJsonFromMultipart(//
             HttpServletResponse response, //
             @RequestParam(name = "geofile", required = true) MultipartFile geofile,
-            @RequestParam(name = "srs", required = false) String targetSRS) throws Exception {
+            @RequestParam(name = "srs", required = false) String targetSRS, //
+            @RequestHeader HttpHeaders requestHeaders) throws Exception {
 
         LOG.debug(String.format("toGeoJsonFromMultipart(%s, %s)", geofile.getOriginalFilename(), targetSRS));
 
@@ -376,10 +385,30 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
             }
             fileManagement.setFileDescriptor(currentFile);
             fileManagement.save(geofile);
-            transformAndSend(fileManagement, targetSRS, response);
+
+            MediaType forceResponseType = resolveResponseContentType(requestHeaders);
+            transformAndSend(fileManagement, targetSRS, response, forceResponseType);
         } finally {
             cleanTemporalDirectory(workDirectory);
         }
+    }
+
+    private MediaType resolveResponseContentType(HttpHeaders requestHeaders) {
+        // Workaround for the fact that the Ext.js form submission does not allow to
+        // specify the Accept request header, and returning application/json when it
+        // wasn't requested makes the response not being parsed and throwing a
+        // javascript error. It asks for text/html instead.
+        List<MediaType> accept = requestHeaders == null ? Collections.emptyList() : requestHeaders.getAccept();
+        boolean jsonRequested = accept.stream().anyMatch(APPLICATION_JSON::includes);
+        boolean htmlRequested = accept.stream().anyMatch(TEXT_HTML::includes);
+
+        MediaType forceResponseType = htmlRequested && !jsonRequested ? TEXT_HTML : APPLICATION_JSON;
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(
+                    String.format("MediaType requested: %s, returning: %s, text/html requested: %s, json requested: %s",
+                            accept, forceResponseType, htmlRequested, jsonRequested));
+        }
+        return forceResponseType;
     }
 
     private Optional<FileDescriptor> downloadURL(URL toDl, final File workDirectory) throws IOException, Exception {
@@ -407,7 +436,7 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
     }
 
     private void transformAndSend(UpLoadFileManagement fileManagement, @Nullable String targetSRS,
-            HttpServletResponse response) {
+            HttpServletResponse response, MediaType forceResponseType) {
 
         // processes the uploaded || downloaded file
         Status st = Status.ready;
@@ -438,7 +467,7 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
         }
 
         // retrieves the feature collection and write the response
-        writeOKResponse(response, fileManagement, crs);
+        writeOKResponse(response, fileManagement, crs, forceResponseType);
     }
 
     private @Nullable CoordinateReferenceSystem parseCRS(String targetSRS) throws IOException {
@@ -537,11 +566,12 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
      * @param response
      * @param fileManagement
      * @param crs
+     * @param forceResponseType
      *
      * @throws Exception
      */
     private void writeOKResponse(final HttpServletResponse response, final UpLoadFileManagement fileManagement,
-            final CoordinateReferenceSystem crs) {
+            final CoordinateReferenceSystem crs, MediaType forceResponseType) {
 
         final File tmpJsonFile = new File(fileManagement.getWorkDirectory(), "tmpresponse.json");
         try (Writer writer = new FileWriter(tmpJsonFile)) {
@@ -577,7 +607,7 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
             LOG.debug("RESPONSE: OK");
         }
         response.setCharacterEncoding(responseCharset);
-        response.setContentType("application/json");
+        response.setContentType(forceResponseType.toString());
         response.setStatus(HttpServletResponse.SC_OK);
         try {
             Files.copy(tmpJsonFile.toPath(), response.getOutputStream());
@@ -751,5 +781,4 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 
         return Status.ok;
     }
-
 }
