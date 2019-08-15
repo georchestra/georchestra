@@ -10,9 +10,6 @@
 [submodule "mapfishapp/src/main/webapp/lib/externals/styler"]
 	path = mapfishapp/src/main/webapp/lib/externals/styler
 	url = https://github.com/georchestra/styler.git
-[submodule "geotools"]
-	path = geotools
-	url = https://github.com/georchestra/geotools.git
 [submodule "docker/smtp"]
 	path = docker/smtp
 	url = https://github.com/camptocamp/docker_smtp.git
