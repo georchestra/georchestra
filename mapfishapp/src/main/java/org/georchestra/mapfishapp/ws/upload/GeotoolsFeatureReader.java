@@ -27,7 +27,6 @@ import java.io.InputStream;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.geotools.GML.Version;
 import org.geotools.data.DataStore;
 import org.geotools.data.FileDataStore;
 import org.geotools.data.Query;
@@ -42,16 +41,16 @@ import org.geotools.geojson.feature.FeatureJSON;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.operation.projection.ProjectionException;
-import org.geotools.xml.Configuration;
-import org.geotools.xml.PullParser;
+import org.geotools.wfs.GML.Version;
+import org.geotools.xsd.Configuration;
+import org.geotools.xsd.PullParser;
 import org.json.JSONArray;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
-
-import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * This class is a façade to the Geotools data management implementations.
