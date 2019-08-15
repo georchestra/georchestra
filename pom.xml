@@ -34,7 +34,7 @@
     <skipUT>false</skipUT>
     <!-- flag to disable integration tests -->
     <skipIT>false</skipIT>
-    <gt.version>19.4</gt.version> <!-- this is the latest gt release that uses com.vividsolutions:jts. Upgrading to 20+ implies porting mapfishapp to use org.locationtech.jts:jts-core -->
+    <gt.version>21.2</gt.version>
     <guava.version>23.5-jre</guava.version>
     <lombok.version>1.18.4</lombok.version>
     <postgres.version>42.2.5</postgres.version>
