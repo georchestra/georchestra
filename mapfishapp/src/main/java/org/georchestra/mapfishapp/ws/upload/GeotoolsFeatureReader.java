@@ -148,8 +148,10 @@ public class GeotoolsFeatureReader implements FeatureGeoFileReader {
     }
 
     /**
-     * Reads the GML file. The method try to read using GML2 if it cannot then try
-     * using GML3
+     * Reads the GML file.
+     * <p>
+     * Implementation note: the method try to read using GML3, since it's a superset
+     * of GML2, but if it fails it'll try the GML2 parser nonetheless
      *
      * @param file
      * @param targetCRS
@@ -158,18 +160,12 @@ public class GeotoolsFeatureReader implements FeatureGeoFileReader {
      */
     private SimpleFeatureCollection readGmlFile(File file, CoordinateReferenceSystem targetCRS)
             throws IOException, ProjectionException {
-
-        SimpleFeatureCollection fc = null;
         try {
-            fc = readGmlFile(file, targetCRS, Version.GML2);
-        } catch (IOException e) {
-            LOG.warn("fails reading with GML2 reader. Try using GML3");
-
-            fc = readGmlFile(file, targetCRS, Version.GML3);
-
-            LOG.warn("GML3 readier ends successful");
+            return readGmlFile(file, targetCRS, Version.GML3);
+        } catch (IOException | RuntimeException e) {
+            LOG.info("Failure reading with GML3 parser. Trying with GML2");
         }
-        return fc;
+        return readGmlFile(file, targetCRS, Version.GML2);
     }
 
     /**
