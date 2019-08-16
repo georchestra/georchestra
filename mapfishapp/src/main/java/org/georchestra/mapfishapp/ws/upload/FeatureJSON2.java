@@ -107,7 +107,7 @@ final class FeatureJSON2 extends FeatureJSON {
             obj.put("crs", toMap(crs));
         }
 
-        obj.put("features", new FeatureCollectionEncoder((SimpleFeatureCollection) features, gjson));
+        obj.put("features", new FeatureCollectionEncoder((SimpleFeatureCollection) features));
         GeoJSONUtil.encode(obj, output);
     }
 
@@ -157,15 +157,10 @@ final class FeatureJSON2 extends FeatureJSON {
         return obj;
     }
 
-    class FeatureEncoder implements JSONStreamAware {
+    private class FeatureEncoder implements JSONStreamAware {
 
-        SimpleFeatureType featureType;
-        SimpleFeature feature;
-
-        public FeatureEncoder(SimpleFeature feature) {
-            this(feature.getType());
-            this.feature = feature;
-        }
+        private SimpleFeatureType featureType;
+        private SimpleFeature feature;
 
         public FeatureEncoder(SimpleFeatureType featureType) {
             this.featureType = featureType;
@@ -213,23 +208,21 @@ final class FeatureJSON2 extends FeatureJSON {
 
         private void writeProperty(JSONWriter writer, Property p) throws JSONException {
             final Object value = p.getValue();
-            if (value == null && !!isEncodeNullValues()) {
-                return;
-            }
+            if (value != null || isEncodeNullValues()) {
+                final PropertyDescriptor descriptor = p.getDescriptor();
+                final String propertyName = descriptor.getName().getLocalPart();
 
-            final PropertyDescriptor descriptor = p.getDescriptor();
-            final String propertyName = descriptor.getName().getLocalPart();
-
-            // handle special types separately, everything else as a string or literal (is
-            // it?)
-            if (value instanceof Envelope) {
-                writeVerbatimValue(writer, propertyName, gjson.toString((Envelope) value));
-            } else if (value instanceof BoundingBox) {
-                writeVerbatimValue(writer, propertyName, gjson.toString((BoundingBox) value));
-            } else if (value instanceof Geometry) {
-                writeVerbatimValue(writer, propertyName, gjson.toString((Geometry) value));
-            } else if (value != null || isEncodeNullValues()) {
-                writer.key(propertyName).value(value);
+                // handle special types separately, everything else as a string or literal (is
+                // it?)
+                if (value instanceof Envelope) {
+                    writeVerbatimValue(writer, propertyName, FeatureJSON2.this.gjson.toString((Envelope) value));
+                } else if (value instanceof BoundingBox) {
+                    writeVerbatimValue(writer, propertyName, FeatureJSON2.this.gjson.toString((BoundingBox) value));
+                } else if (value instanceof Geometry) {
+                    writeVerbatimValue(writer, propertyName, FeatureJSON2.this.gjson.toString((Geometry) value));
+                } else if (value != null || isEncodeNullValues()) {
+                    writer.key(propertyName).value(value);
+                }
             }
         }
 
@@ -237,14 +230,14 @@ final class FeatureJSON2 extends FeatureJSON {
             Geometry geometry = (Geometry) feature.getDefaultGeometry();
             // note: this is still too much for streaming, gjson.toString(geometry) builds a
             // Map and then converts to String
-            String value = geometry == null ? null : gjson.toString(geometry);
+            String value = geometry == null ? null : FeatureJSON2.this.gjson.toString(geometry);
             writeVerbatimValue(writer, "geometry", value);
         }
 
         private void writeBounds(JSONWriter writer) throws JSONException {
             if (isEncodeFeatureBounds()) {
                 BoundingBox bbox = feature.getBounds();
-                String value = bbox == null ? null : gjson.toString(bbox);
+                String value = bbox == null ? null : FeatureJSON2.this.gjson.toString(bbox);
                 writeVerbatimValue(writer, "bbox", value);
             }
         }
@@ -266,14 +259,12 @@ final class FeatureJSON2 extends FeatureJSON {
         }
     }
 
-    class FeatureCollectionEncoder implements JSONStreamAware {
+    private class FeatureCollectionEncoder implements JSONStreamAware {
 
-        SimpleFeatureCollection features;
-        GeometryJSON gjson;
+        private SimpleFeatureCollection features;
 
-        public FeatureCollectionEncoder(SimpleFeatureCollection features, GeometryJSON gjson) {
+        public FeatureCollectionEncoder(SimpleFeatureCollection features) {
             this.features = features;
-            this.gjson = gjson;
         }
 
         public @Override void writeJSONString(Writer out) throws IOException {

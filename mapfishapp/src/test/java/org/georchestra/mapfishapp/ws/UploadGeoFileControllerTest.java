@@ -2,7 +2,6 @@ package org.georchestra.mapfishapp.ws;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -18,7 +17,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.springframework.http.HttpHeaders;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 public class UploadGeoFileControllerTest {
@@ -27,11 +25,9 @@ public class UploadGeoFileControllerTest {
 
     public @Rule TemporaryFolder tmpFolder = new TemporaryFolder();
 
-    private MockHttpServletRequest request;
-
     private MockHttpServletResponse response;
 
-    public static @BeforeClass void SetUpGeoToolsReferencing() {
+    public static @BeforeClass void setUpGeoToolsReferencing() {
         System.setProperty("org.geotools.referencing.forceXY", "true");
     }
 
@@ -39,13 +35,8 @@ public class UploadGeoFileControllerTest {
         controller = new UpLoadGeoFileController();
         controller.setDocTempDir(tmpFolder.getRoot().getAbsolutePath());
         controller.setTempDirectory(tmpFolder.getRoot());
-        controller.allowFileProtocol = true;
-
-        request = new MockHttpServletRequest();
+        controller.setAllowFileProtocol(true);
         response = new MockHttpServletResponse();
-
-        request.setPathInfo("/togeojson");
-        request.setMethod("POST");
     }
 
     public @Test void testUploadUnsupportedFileType() throws Exception {
@@ -158,7 +149,7 @@ public class UploadGeoFileControllerTest {
     private URL fileURL(String fileName) throws Exception {
         Class<?> base = GeotoolsFeatureReader.class;
         try (InputStream in = base.getResourceAsStream(fileName)) {
-            assertTrue(true);// would've thrown an NPE if the resource does not exist
+            assertNotNull(in);// would've thrown an NPE if the resource does not exist
         }
         URL url = base.getResource(fileName);
         return url;

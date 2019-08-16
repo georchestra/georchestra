@@ -91,7 +91,7 @@ class KmlFeatureSource {
         try {
             KMLCRS = CRS.decode("EPSG:4326", true);
         } catch (FactoryException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
     /**
@@ -156,9 +156,9 @@ class KmlFeatureSource {
                         if (namespaceURI.startsWith("http://www.opengis.net/kml/")
                                 || namespaceURI.startsWith("http://earth.google.com/kml/")) {
                             String version = namespaceURI.substring(4 + namespaceURI.indexOf("kml/"));
-                            if (version.equals("2.2")) {
+                            if ("2.2".equals(version)) {
                                 return new org.geotools.kml.v22.KMLConfiguration();
-                            } else if (version.equals("2.1") || (version.equals("2.0"))) {
+                            } else if ("2.1".equals(version) || "2.0".equals(version)) {
                                 return new org.geotools.kml.KMLConfiguration();
                             } else {
                                 final String message = "KML version detected: " + version
@@ -307,7 +307,7 @@ class KmlFeatureSource {
                     feature = (SimpleFeature) this.xsdPullParser.parse();
                 } catch (XMLStreamException | IOException | SAXException e) {
                     close();
-                    throw new RuntimeException(e);
+                    throw new IllegalStateException(e);
                 }
                 return feature == null ? endOfData() : feature;
             }
