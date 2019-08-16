@@ -26,6 +26,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.FactoryConfigurationError;
@@ -35,17 +39,36 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.geotools.data.DataUtilities;
 import org.geotools.data.Query;
 import org.geotools.data.collection.ListFeatureCollection;
+import org.geotools.data.crs.ForceCoordinateSystemFeatureResults;
 import org.geotools.data.simple.SimpleFeatureCollection;
-import org.geotools.geometry.jts.JTS;
+import org.geotools.data.store.ReTypingFeatureCollection;
+import org.geotools.data.store.ReprojectingFeatureCollection;
+import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.SchemaException;
+import org.geotools.feature.collection.AdaptorFeatureCollection;
+import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
+import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.xsd.Configuration;
 import org.geotools.xsd.PullParser;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.Point;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.GeometryDescriptor;
+import org.opengis.feature.type.Name;
+import org.opengis.feature.type.PropertyDescriptor;
+import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
+import org.xml.sax.SAXException;
+
+import com.google.common.collect.AbstractIterator;
+import com.google.common.io.Closeables;
 
 /**
  * <p>
@@ -61,8 +84,22 @@ class KmlFeatureSource {
 
     private static final Log LOG = LogFactory.getLog(GeotoolsFeatureReader.class.getPackage().getName());
 
+    private static final CoordinateReferenceSystem KMLCRS;
+    static {
+        try {
+            KMLCRS = CRS.decode("EPSG:4326", true);
+        } catch (FactoryException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    /**
+     * base feature type for kml features, used when no Schema element is specified
+     */
+    private static final SimpleFeatureType KMLFeatureType21 = buildKMLFeatureType(org.geotools.kml.KML.Placemark);
+    private static final SimpleFeatureType KMLFeatureType22 = buildKMLFeatureType(org.geotools.kml.v22.KML.Placemark);
+
     private Configuration configuration;
-    private QName qname;
+    private SimpleFeatureType schema;
     private File file;
 
     /**
@@ -71,20 +108,20 @@ class KmlFeatureSource {
      * @param file
      * @throws IOException
      * @throws UnsupportedGeofileFormatException If the kml format is not supported
-     * @throws FactoryConfigurationError 
-     * @throws XMLStreamException 
+     * @throws FactoryConfigurationError
+     * @throws XMLStreamException
      */
-    public KmlFeatureSource(File file) throws IOException, UnsupportedGeofileFormatException, XMLStreamException, FactoryConfigurationError {
+    public KmlFeatureSource(File file)
+            throws IOException, UnsupportedGeofileFormatException, XMLStreamException, FactoryConfigurationError {
 
         this.file = file;
 
         this.configuration = getConfig(this.file);
 
         if (configuration instanceof org.geotools.kml.v22.KMLConfiguration) {
-            this.qname = org.geotools.kml.v22.KML.Placemark;
+            this.schema = KMLFeatureType22;
         } else {
-            this.qname = org.geotools.kml.KML.Placemark;
-
+            this.schema = KMLFeatureType21;
         }
 
     }
@@ -95,8 +132,7 @@ class KmlFeatureSource {
      * @throws IOException
      * @throws UnsupportedGeofileFormatException
      */
-    private Configuration getConfig(File f)
-            throws IOException, UnsupportedGeofileFormatException{
+    private Configuration getConfig(File f) throws IOException, UnsupportedGeofileFormatException {
 
         // detect the kml version from input stream
         try (InputStream in = new FileInputStream(f)) {
@@ -115,8 +151,9 @@ class KmlFeatureSource {
                 if (tag == START_ELEMENT && reader.getNamespaceCount() > 0) {
                     for (int i = 0; i < reader.getNamespaceCount(); i++) {
                         String namespaceURI = reader.getNamespaceURI(i);
-                        if (namespaceURI.startsWith("http://www.opengis.net/kml/")) {
-                            String version = namespaceURI.substring("http://www.opengis.net/kml/".length());
+                        if (namespaceURI.startsWith("http://www.opengis.net/kml/")
+                                || namespaceURI.startsWith("http://earth.google.com/kml/")) {
+                            String version = namespaceURI.substring(4 + namespaceURI.indexOf("kml/"));
                             if (version.equals("2.2")) {
                                 return new org.geotools.kml.v22.KMLConfiguration();
                             } else if (version.equals("2.1") || (version.equals("2.0"))) {
@@ -136,66 +173,167 @@ class KmlFeatureSource {
         }
         return null;
     }
-    
+
     /**
      * Reads the kml file
      * <p>
      * Note: only Filter.INCLUDE is implemented
      * </p>
      * 
-     * @param q
+     * @param query
      * @return {@link ListFeatureCollection }
      */
-    public SimpleFeatureCollection getFeatures(Query q) throws IOException {
+    public SimpleFeatureCollection getFeatures(Query query) throws IOException {
+        SimpleFeatureCollection collection = toFeatureCollection();
 
-        InputStream is = new FileInputStream(this.file);
-        try {
-
-            CoordinateReferenceSystem sourceCRS = q.getCoordinateSystem();
-            CoordinateReferenceSystem targetCRS = q.getCoordinateSystemReproject();
-
-            MathTransform mathTransform = null;
-            if ((targetCRS != null) && !sourceCRS.equals(targetCRS)) {
-                mathTransform = CRS.findMathTransform(sourceCRS, targetCRS, true);
-            }
-
-            PullParser parser = new PullParser(configuration, is, this.qname);
-
-            ListFeatureCollection list = null;
-            SimpleFeature f;
-
-            while ((f = (SimpleFeature) parser.parse()) != null) {
-
-                Geometry geom = (Geometry) f.getDefaultGeometry();
-
-                int srid = geom.getFactory().getSRID();
-                if (srid < 0) {
-                    srid = 4326; // set the default
-                    sourceCRS = CRS.decode("EPSG:" + srid);
-                }
-                geom.setSRID(srid);
-
-                if (mathTransform != null) {
-                    // transformation is required
-                    Geometry reprojectedGeometry = JTS.transform(geom, mathTransform);
-                    f.setDefaultGeometry(reprojectedGeometry);
-                }
-                if (list == null) {
-                    list = new ListFeatureCollection(f.getFeatureType());
-                }
-
-                list.add(f);
-            }
-
-            return list;
-        } catch (Exception e) {
-            e.printStackTrace();
-            LOG.error(e.getMessage(), e);
-            throw new IOException(e.getMessage());
-        } finally {
-            is.close();
+        CoordinateReferenceSystem sourceCrs = collection.getSchema().getCoordinateReferenceSystem();
+        CoordinateReferenceSystem targetCRS = query.getCoordinateSystemReproject();
+        if (targetCRS != null && !CRS.equalsIgnoreMetadata(sourceCrs, targetCRS)) {
+            collection = new ReprojectingFeatureCollection(collection, targetCRS);
         }
 
+        // Remove the Style property
+        SimpleFeatureType schema = collection.getSchema();
+        if (null != schema.getDescriptor("Style")) {
+            String[] properties = schema.getDescriptors().stream().map(PropertyDescriptor::getName)
+                    .map(Name::getLocalPart).filter(name -> !"Style".equals(name)).collect(Collectors.toList())
+                    .toArray(new String[0]);
+            SimpleFeatureType targetType;
+            try {
+                targetType = DataUtilities.createSubType(schema, properties);
+            } catch (SchemaException e) {
+                throw new IOException(e);
+            }
+            collection = new ReTypingFeatureCollection(collection, targetType);
+        }
+        return collection;
     }
 
+    private SimpleFeatureCollection toFeatureCollection() throws IOException {
+        SimpleFeatureCollection collection = new PullParserFeatureCollection(this.configuration, this.file,
+                this.schema);
+
+        GeometryDescriptor geometryDescriptor = collection.getSchema().getGeometryDescriptor();
+        CoordinateReferenceSystem crs = geometryDescriptor.getCoordinateReferenceSystem();
+        if (null == crs) {
+            FeatureCollection<SimpleFeatureType, SimpleFeature> forceCrsCollection;
+            try {
+                forceCrsCollection = new ForceCoordinateSystemFeatureResults(collection, KMLCRS);
+            } catch (SchemaException e) {
+                throw new IOException(e);
+            }
+            collection = DataUtilities.simple(forceCrsCollection);
+        }
+
+        return collection;
+    }
+
+    private static class PullParserFeatureCollection extends AdaptorFeatureCollection {
+
+        private final Configuration configuration;
+        private final File file;
+
+        private List<PullParserIterator> openIterators = new CopyOnWriteArrayList<>();
+
+        public PullParserFeatureCollection(Configuration configuration, File file, SimpleFeatureType memberType) {
+            super(file.getName(), memberType);
+            this.configuration = configuration;
+            this.file = file;
+        }
+
+        public @Override ReferencedEnvelope getBounds() {
+            return null;
+        }
+
+        /**
+         * @return {@code Integer.MAX_VALUE} as specified by the method contract when
+         *         the number of items is unknown
+         */
+        public @Override int size() {
+            return Integer.MAX_VALUE;
+        }
+
+        protected @Override Iterator<SimpleFeature> openIterator() {
+            PullParserIterator iterator;
+            try {
+                Name typeName = getSchema().getName();
+                QName qname = new QName(typeName.getNamespaceURI(), typeName.getLocalPart());
+                iterator = new PullParserIterator(configuration, file, qname);
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
+            openIterators.add(iterator);
+            return iterator;
+        }
+
+        protected @Override void closeIterator(Iterator<SimpleFeature> iterator) {
+            boolean removed = openIterators.remove(iterator);
+            if (removed) {
+                ((PullParserIterator) iterator).close();
+            }
+        }
+
+        private static class PullParserIterator extends AbstractIterator<SimpleFeature> {
+            private PullParser xsdPullParser;
+
+            private InputStream stream;
+
+            public PullParserIterator(Configuration configuration, File file, QName qname) throws IOException {
+                this.stream = new FileInputStream(file);
+                this.xsdPullParser = new PullParser(configuration, stream, qname);
+            }
+
+            public void close() {
+                Closeables.closeQuietly(stream);
+            }
+
+            protected @Override SimpleFeature computeNext() {
+                SimpleFeature feature;
+                try {
+                    feature = (SimpleFeature) this.xsdPullParser.parse();
+                } catch (XMLStreamException | IOException | SAXException e) {
+                    close();
+                    throw new RuntimeException(e);
+                }
+                return feature == null ? endOfData() : feature;
+            }
+
+        }
+    }
+
+    private static SimpleFeatureType buildKMLFeatureType(QName typeName) {
+        SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
+        tb.setNamespaceURI(typeName.getNamespaceURI());
+        tb.setName(typeName.getLocalPart());
+
+        // &lt;element minOccurs="0" name="name" type="string"/&gt;
+        tb.add("name", String.class);
+        // &lt;element default="1" minOccurs="0" name="visibility" type="boolean"/&gt;
+        tb.add("visibility", Boolean.class);
+        // &lt;element default="1" minOccurs="0" name="open" type="boolean"/&gt;
+        tb.add("open", Boolean.class);
+        // &lt;element minOccurs="0" name="address" type="string"/&gt;
+        tb.add("address", String.class);
+        // &lt;element minOccurs="0" name="phoneNumber" type="string"/&gt;
+        tb.add("phoneNumber", String.class);
+        // &lt;element minOccurs="0" name="Snippet" type="kml:SnippetType"/&gt;
+        // tb.add("Snippet",String.class):
+        // &lt;element minOccurs="0" name="description" type="string"/&gt;
+        tb.add("description", String.class);
+        // &lt;element minOccurs="0" ref="kml:LookAt"/&gt;
+        tb.add("LookAt", Point.class);
+        // &lt;element minOccurs="0" ref="kml:TimePrimitive"/&gt;
+        // tb.add("TimePrimitive", ...);
+        // &lt;element minOccurs="0" ref="kml:styleUrl"/&gt;
+        tb.add("Style", FeatureTypeStyle.class);
+        // &lt;element maxOccurs="unbounded" minOccurs="0" ref="kml:StyleSelector"/&gt;
+
+        // &lt;element minOccurs="0" ref="kml:Region"/&gt;
+        tb.add("Region", LinearRing.class, KMLCRS);
+        tb.add("Geometry", Geometry.class, KMLCRS);
+        // Force the default geometry attribute to the Geometry, otherwise LookAt or
+        // Region would take precedence
+        tb.setDefaultGeometry("Geometry");
+        return tb.buildFeatureType();
+    }
 }
