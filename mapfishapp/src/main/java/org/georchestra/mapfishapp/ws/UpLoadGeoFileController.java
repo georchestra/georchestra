@@ -120,6 +120,21 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
     @Autowired
     private GeorchestraConfiguration georConfig;
 
+    // constants configured in the ws-servlet.xml file
+    private String responseCharset;
+    private File tempDirectory;
+    private String docTempDir = "/tmp";
+
+    // for test purposes only
+    private boolean allowFileProtocol;
+
+    /**
+     * For testing
+     */
+    public void setAllowFileProtocol(boolean allow) {
+        this.allowFileProtocol = allow;
+    }
+    
     public void init() {
         if ((georConfig != null) && (georConfig.activated())) {
             File tmpDir = new File(this.docTempDir, "/geoFileUploadsCache");
@@ -235,14 +250,6 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
         };
 
     }
-
-    // constants configured in the ws-servlet.xml file
-    private String responseCharset;
-    private File tempDirectory;
-    private String docTempDir = "/tmp";
-
-    // for test purposes only
-    boolean allowFileProtocol;
 
     /**
      * The current file that was upload an is in processing
@@ -636,12 +643,12 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
      */
     private void writeErrorResponse(HttpServletResponse response, final Status st, final String errorDetail,
             final int responseStatusError, MediaType forceResponseType) {
-//        response.reset();
+
         PrintWriter out = null;
         try {
             out = response.getWriter();
             response.setCharacterEncoding(responseCharset);
-            response.setContentType("application/json");
+            response.setContentType(forceResponseType.toString());
             response.setStatus(responseStatusError);
 
             String statusMsg = StringUtils.isEmpty(errorDetail) ? st.getMessage() : st.getMessage(errorDetail);
