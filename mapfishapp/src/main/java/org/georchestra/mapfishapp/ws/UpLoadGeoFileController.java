@@ -82,6 +82,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterators;
 
 /**
  * This controller is responsible for uploading a geofiles and transform their
@@ -278,14 +279,16 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
      * @param response
      * @throws IOException
      */
-    @RequestMapping(value = "/formats", method = RequestMethod.GET)
-    public void formats(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    @RequestMapping(value = "/formats", method = RequestMethod.GET, produces = "application/json")
+    public void formats(HttpServletRequest request, //
+            HttpServletResponse response, //
+            @RequestHeader HttpHeaders requestHeaders) throws IOException {
 
         UpLoadFileManagement fileManagement = UpLoadFileManagement.create();
         JSONArray formatList = fileManagement.getFormatListAsJSON();
 
         response.setCharacterEncoding(responseCharset);
-        response.setContentType("text/html");
+        response.setContentType(resolveResponseContentType(requestHeaders).toString());
 
         PrintWriter out = response.getWriter();
         try {
@@ -312,12 +315,14 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
     public void toGeoJsonFromURL(//
             HttpServletResponse response, //
             @RequestParam(name = "url", required = true) URL url, //
-            @RequestParam(name = "srs", required = false) String targetSRS, @RequestHeader HttpHeaders requestHeaders)
-            throws Exception {
+            @RequestParam(name = "srs", required = false) String targetSRS, //
+            @RequestHeader HttpHeaders requestHeaders) throws Exception {
 
         LOG.debug(String.format("toGeoJsonFromURL(%s, %s)", url, targetSRS));
+        MediaType forceResponseType = resolveResponseContentType(requestHeaders);
         if (!validateRemoteURLProtocol(url)) {
-            writeErrorResponse(response, Status.unsupportedProtocol, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            writeErrorResponse(response, Status.unsupportedProtocol, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    forceResponseType);
             return;
         }
 
@@ -329,9 +334,9 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
                 UpLoadFileManagement fileManagement = UpLoadFileManagement.create();
                 fileManagement.setWorkDirectory(workDirectory);
                 fileManagement.setFileDescriptor(fileDescriptor);
-                transformAndSend(fileManagement, targetSRS, response, resolveResponseContentType(requestHeaders));
+                transformAndSend(fileManagement, targetSRS, response, forceResponseType);
             } else {
-                writeErrorResponse(response, Status.unsupportedFormat);
+                writeErrorResponse(response, Status.unsupportedFormat, forceResponseType);
                 return;
             }
         } finally {
@@ -368,6 +373,7 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
             @RequestHeader HttpHeaders requestHeaders) throws Exception {
 
         LOG.debug(String.format("toGeoJsonFromMultipart(%s, %s)", geofile.getOriginalFilename(), targetSRS));
+        MediaType forceResponseType = resolveResponseContentType(requestHeaders);
 
         if (geofile.getOriginalFilename().isEmpty()) {
             throw new IOException("a file is expected");
@@ -380,13 +386,12 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
             FileDescriptor currentFile = createFileDescriptor(geofile.getOriginalFilename());
             // validates the format
             if (!currentFile.isValidFormat()) {
-                writeErrorResponse(response, Status.unsupportedFormat);
+                writeErrorResponse(response, Status.unsupportedFormat, forceResponseType);
                 return;
             }
             fileManagement.setFileDescriptor(currentFile);
             fileManagement.save(geofile);
 
-            MediaType forceResponseType = resolveResponseContentType(requestHeaders);
             transformAndSend(fileManagement, targetSRS, response, forceResponseType);
         } finally {
             cleanTemporalDirectory(workDirectory);
@@ -446,12 +451,12 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
             try {
                 fileManagement.unzip();
             } catch (IOException e) {
-                writeErrorResponse(response, Status.unzipError);
+                writeErrorResponse(response, Status.unzipError, forceResponseType);
                 return;
             }
             st = checkGeoFiles(fileManagement);
             if (st != Status.ok) {
-                writeErrorResponse(response, st);
+                writeErrorResponse(response, st, forceResponseType);
                 return;
             }
         }
@@ -462,7 +467,8 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
         try {
             crs = parseCRS(targetSRS);
         } catch (IOException e) {
-            writeErrorResponse(response, Status.unsupportedTargetCRS, targetSRS, HttpStatus.BAD_REQUEST.value());
+            writeErrorResponse(response, Status.unsupportedTargetCRS, targetSRS, HttpStatus.BAD_REQUEST.value(),
+                    forceResponseType);
             return;
         }
 
@@ -586,21 +592,22 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
         } catch (OutOfMemoryError unlikely) {
             LOG.error(unlikely);
             writeErrorResponse(response, Status.outOfMemoryError, buildOutOfMemoryErrorMessage(),
-                    HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE);
+                    HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE, forceResponseType);
             return;
         } catch (IOException e) {
             LOG.error(e);
-            writeErrorResponse(response, Status.ioError, e.getMessage(), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            writeErrorResponse(response, Status.ioError, e.getMessage(), HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    forceResponseType);
             return;
         } catch (ProjectionException e) {
             LOG.error(e);
             writeErrorResponse(response, Status.projectionError, e.getMessage(),
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR, forceResponseType);
             return;
         } catch (UnsupportedGeofileFormatException e) {
             LOG.error(e);
             writeErrorResponse(response, Status.unsupportedFormat, e.getMessage(),
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR, forceResponseType);
             return;
         }
         if (LOG.isDebugEnabled()) {
@@ -628,7 +635,7 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
      * @throws IOException
      */
     private void writeErrorResponse(HttpServletResponse response, final Status st, final String errorDetail,
-            final int responseStatusError) {
+            final int responseStatusError, MediaType forceResponseType) {
 //        response.reset();
         PrintWriter out = null;
         try {
@@ -666,14 +673,14 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
      * @param httpStatusCode
      * @throws IOException
      */
-    private void writeErrorResponse(HttpServletResponse response, final Status st) {
-        writeErrorResponse(response, st, "", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+    private void writeErrorResponse(HttpServletResponse response, final Status st, MediaType forceResponseType) {
+        writeErrorResponse(response, st, "", HttpServletResponse.SC_INTERNAL_SERVER_ERROR, forceResponseType);
     }
 
-    private void writeErrorResponse(HttpServletResponse response, final Status st, int httpStatusCode)
-            throws IOException {
+    private void writeErrorResponse(HttpServletResponse response, final Status st, int httpStatusCode,
+            MediaType forceResponseType) throws IOException {
 
-        writeErrorResponse(response, st, "", httpStatusCode);
+        writeErrorResponse(response, st, "", httpStatusCode, forceResponseType);
     }
 
     /**
@@ -705,6 +712,10 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 
         LOG.error(exception.getMessage());
 
+        HttpHeaders headers = new HttpHeaders();
+        Iterators.forEnumeration(request.getHeaderNames())
+                .forEachRemaining(name -> headers.add(name, request.getHeader(name)));
+        MediaType forceResponseType = resolveResponseContentType(headers);
         if (exception instanceof MaxUploadSizeExceededException) {
 
             MaxUploadSizeExceededException sizeException = (MaxUploadSizeExceededException) exception;
@@ -712,11 +723,11 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
                                                                      // to Mb
             writeErrorResponse(response, Status.sizeError,
                     "The configured maximum size is " + size + " MB. (" + sizeException.getMaxUploadSize() + " bytes)",
-                    HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE);
+                    HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE, forceResponseType);
         } else {
 
             writeErrorResponse(response, Status.ioError, exception.getMessage(),
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR, forceResponseType);
         }
 
         return null;

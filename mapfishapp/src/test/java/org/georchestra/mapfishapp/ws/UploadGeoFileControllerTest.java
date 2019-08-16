@@ -86,8 +86,33 @@ public class UploadGeoFileControllerTest {
         assertFeatureCollection(jsonresponse, "EPSG:3857", 2);
     }
 
-    public @Test void testUploadKMLFromURL() throws Exception {
+    public @Test void testUploadKML22FromURL() throws Exception {
         URL url = fileURL("recettage.kml");
+        controller.toGeoJsonFromURL(response, url, null, null);
+
+        String responseBody = response.getContentAsString();
+        assertEquals("application/json", response.getContentType());
+        JSONObject jsonresponse = (JSONObject) new JSONParser().parse(responseBody);
+        assertEquals(responseBody, "true", jsonresponse.get("success"));
+        assertEquals(responseBody, 200, response.getStatus());
+        assertFeatureCollection(jsonresponse, null, 5);
+    }
+
+    public @Test void testUploadKML22FromURLReproject() throws Exception {
+        URL url = fileURL("recettage.kml");
+        controller.toGeoJsonFromURL(response, url, "EPSG:3857", null);
+
+        String responseBody = response.getContentAsString();
+        System.err.println(responseBody);
+        assertEquals("application/json", response.getContentType());
+        JSONObject jsonresponse = (JSONObject) new JSONParser().parse(responseBody);
+        assertEquals(responseBody, "true", jsonresponse.get("success"));
+        assertEquals(responseBody, 200, response.getStatus());
+        assertFeatureCollection(jsonresponse, "EPSG:3857", 5);
+    }
+
+    public @Test void testUploadKML21FromURL() throws Exception {
+        URL url = fileURL("recettage_v21.kml");
         controller.toGeoJsonFromURL(response, url, null, null);
 
         String responseBody = response.getContentAsString();
