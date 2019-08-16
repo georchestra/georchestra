@@ -307,7 +307,8 @@ public class UpLoadFileManagement {
                 this.fileDescriptor.geoFileType, crs);
 
         // TODO FeatureJSON2 is a workaround to solve the crs bug
-        FeatureJSON fjson = new FeatureJSON2(new GeometryJSON(18));
+        // q: which crs bug? where is it documented?
+        FeatureJSON fjson = new FeatureJSON2(new GeometryJSON(15));
         SimpleFeatureType schema = featureCollection.getSchema();
 
         fjson.setFeatureType(schema);
