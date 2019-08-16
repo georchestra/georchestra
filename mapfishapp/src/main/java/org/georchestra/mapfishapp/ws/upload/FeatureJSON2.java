@@ -48,6 +48,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.geometry.BoundingBox;
 import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -73,45 +74,54 @@ final class FeatureJSON2 extends FeatureJSON {
     }
 
     /**
-     * REDEFINED Writes a feature collection as GeoJSON.
+     * Override to encode the CRS from the feature collection schema instead of its
+     * bounds, in case bounds is {@code null}, but the CRS still needs to be encoded
      *
      * @param features The feature collection.
      * @param output   The output. See {@link GeoJSONUtil#toWriter(Object)} for
      *                 details.
      */
-    public @Override void writeFeatureCollection(@SuppressWarnings("rawtypes") FeatureCollection features,
-            Object output) throws IOException {
+    @SuppressWarnings("rawtypes")
+    public @Override void writeFeatureCollection(FeatureCollection features, Object output) throws IOException {
         LinkedHashMap<String, Object> obj = new LinkedHashMap<String, Object>();
         obj.put("type", "FeatureCollection");
-        if (isEncodeFeatureCollectionBounds() || isEncodeFeatureCollectionCRS()) {
+        final ReferencedEnvelope bounds = features.getBounds();
 
-            final ReferencedEnvelope bounds = features.getBounds();
-
-            if (isEncodeFeatureCollectionBounds() && bounds != null) {
-
-                obj.put("bbox", new JSONStreamAware() {
-
-                    public void writeJSONString(Writer out) throws IOException {
-                        JSONArray.writeJSONString(
-                                Arrays.asList(bounds.getMinX(), bounds.getMinY(), bounds.getMaxX(), bounds.getMaxY()),
-                                out);
-                    }
-                });
-            }
-//         This return the crs present in the store it is necessary the crs present in the feature collection's schema
-//          if (encodeFeatureCollectionCRS) {
-//              obj.put("crs", createCRS(bounds.getCoordinateReferenceSystem()));
-//          }
-            if (isEncodeFeatureCollectionCRS()) {
-                CoordinateReferenceSystem coordinateReferenceSystem = features.getSchema()
-                        .getCoordinateReferenceSystem();
-                if (coordinateReferenceSystem != null) // FIXME have a look at this
-                    obj.put("crs", toMap(coordinateReferenceSystem));
-            }
-
+        if (bounds != null && isEncodeFeatureCollectionBounds()) {
+            obj.put("bbox", new JSONStreamAware() {
+                public void writeJSONString(Writer out) throws IOException {
+                    JSONArray.writeJSONString(
+                            Arrays.asList(bounds.getMinX(), bounds.getMinY(), bounds.getMaxX(), bounds.getMaxY()), out);
+                }
+            });
         }
+        CoordinateReferenceSystem crs = features.getSchema().getCoordinateReferenceSystem();
+        if (crs != null && (isEncodeFeatureCollectionCRS() || isStandardCRS(crs))) {
+            obj.put("crs", toMap(crs));
+        }
+
         obj.put("features", new FeatureCollectionEncoder(features, gjson));
         GeoJSONUtil.encode(obj, output);
+    }
+
+    /**
+     * Check for GeoJSON default (EPSG:4326 in easting/northing order).
+     *
+     * @return true if crs is the default for GeoJSON
+     * @throws NoSuchAuthorityCodeException
+     * @throws FactoryException
+     */
+    private boolean isStandardCRS(CoordinateReferenceSystem crs) {
+        if (crs == null) {
+            return true;
+        }
+        try {
+            boolean longitudeFirst = true;
+            CoordinateReferenceSystem standardCRS = CRS.decode("EPSG:4326", longitudeFirst);
+            return CRS.equalsIgnoreMetadata(crs, standardCRS);
+        } catch (Exception unexpected) {
+            return false; // no way to tell
+        }
     }
 
     /**
@@ -227,7 +237,7 @@ final class FeatureJSON2 extends FeatureJSON {
             }
         }
 
-        public String toJSONString() {
+        public @Override String toJSONString() {
             return toJSONString(feature);
         }
     }
@@ -243,40 +253,23 @@ final class FeatureJSON2 extends FeatureJSON {
             this.gjson = gjson;
         }
 
-        public void writeJSONString(Writer out) throws IOException {
+        public @Override void writeJSONString(Writer out) throws IOException {
             SimpleFeatureType ft = (SimpleFeatureType) features.getSchema();
             FeatureEncoder featureEncoder = new FeatureEncoder(ft);
-            JSONWriter jsRet = new JSONWriter(out);
-            try {
-                jsRet.array();
-                FeatureIterator i = features.features();
-                try {
-                    if (i == null) {
-                        jsRet.endArray();
-                        return;
+            JSONWriter writer = new JSONWriter(out);
+            try (FeatureIterator featureIterator = features.features()) {
+                writer.array();
+                while (featureIterator.hasNext()) {
+                    Feature f = featureIterator.next();
+                    if (f instanceof SimpleFeature) {
+                        writer.value(new JSONObject(featureEncoder.toJSONString((SimpleFeature) f)));
                     }
-                    while (i.hasNext()) {
-                        Feature f = i.next();
-                        try {
-                            if (f instanceof SimpleFeature) {
-                                jsRet.value(new JSONObject(featureEncoder.toJSONString((SimpleFeature) f)));
-                            }
-                        } catch (NullPointerException e) {
-                            LOG.error("Unable to convert feature into JSON, skipping it. " + e.getMessage());
-                        }
-                    }
-                } catch (Throwable e) {
-                    LOG.error("Unable to convert the featurecollection into JSON: " + e.getMessage());
-                    LOG.error("Ignoring ...");
-                } finally {
-                    if (i != null) {
-                        i.close();
-                    }
-                    jsRet.endArray();
                 }
-
+                writer.endArray();
             } catch (JSONException e) {
-                LOG.error("Unable to generate JSON: " + e.getMessage());
+                String msg = "Unable to generate JSON: " + e.getMessage();
+                LOG.error(msg);
+                throw new IOException(msg, e);
             }
         }
     }
