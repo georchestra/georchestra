@@ -22,6 +22,7 @@ package org.georchestra.mapfishapp.ws.upload;
 import static javax.xml.stream.XMLStreamConstants.END_DOCUMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -286,7 +287,7 @@ class KmlFeatureSource {
             }
         }
 
-        private static class PullParserIterator extends AbstractIterator<SimpleFeature> {
+        private static class PullParserIterator extends AbstractIterator<SimpleFeature> implements Closeable {
             private PullParser xsdPullParser;
 
             private InputStream stream;
@@ -296,7 +297,7 @@ class KmlFeatureSource {
                 this.xsdPullParser = new PullParser(configuration, stream, qname);
             }
 
-            public void close() {
+            public @Override void close() {
                 Closeables.closeQuietly(stream);
             }
 
