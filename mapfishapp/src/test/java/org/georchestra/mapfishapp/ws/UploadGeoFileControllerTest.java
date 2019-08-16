@@ -103,7 +103,6 @@ public class UploadGeoFileControllerTest {
         controller.toGeoJsonFromURL(response, url, "EPSG:3857", null);
 
         String responseBody = response.getContentAsString();
-        System.err.println(responseBody);
         assertEquals("application/json", response.getContentType());
         JSONObject jsonresponse = (JSONObject) new JSONParser().parse(responseBody);
         assertEquals(responseBody, "true", jsonresponse.get("success"));

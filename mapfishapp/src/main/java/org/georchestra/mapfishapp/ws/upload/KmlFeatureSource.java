@@ -68,6 +68,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.xml.sax.SAXException;
 
 import com.google.common.collect.AbstractIterator;
+import com.google.common.collect.Iterators;
 import com.google.common.io.Closeables;
 
 /**
@@ -99,7 +100,7 @@ class KmlFeatureSource {
     private static final SimpleFeatureType KMLFeatureType22 = buildKMLFeatureType(org.geotools.kml.v22.KML.Placemark);
 
     private Configuration configuration;
-    private SimpleFeatureType schema;
+    private SimpleFeatureType defaultSchema;
     private File file;
 
     /**
@@ -119,9 +120,9 @@ class KmlFeatureSource {
         this.configuration = getConfig(this.file);
 
         if (configuration instanceof org.geotools.kml.v22.KMLConfiguration) {
-            this.schema = KMLFeatureType22;
+            this.defaultSchema = KMLFeatureType22;
         } else {
-            this.schema = KMLFeatureType21;
+            this.defaultSchema = KMLFeatureType21;
         }
 
     }
@@ -211,7 +212,7 @@ class KmlFeatureSource {
 
     private SimpleFeatureCollection toFeatureCollection() throws IOException {
         SimpleFeatureCollection collection = new PullParserFeatureCollection(this.configuration, this.file,
-                this.schema);
+                this.defaultSchema);
 
         GeometryDescriptor geometryDescriptor = collection.getSchema().getGeometryDescriptor();
         CoordinateReferenceSystem crs = geometryDescriptor.getCoordinateReferenceSystem();
@@ -232,13 +233,27 @@ class KmlFeatureSource {
 
         private final Configuration configuration;
         private final File file;
+        private final QName qname;
 
         private List<PullParserIterator> openIterators = new CopyOnWriteArrayList<>();
 
-        public PullParserFeatureCollection(Configuration configuration, File file, SimpleFeatureType memberType) {
-            super(file.getName(), memberType);
+        public PullParserFeatureCollection(Configuration configuration, File file, SimpleFeatureType defaultSchema) {
+            super(file.getName(), defaultSchema);
             this.configuration = configuration;
             this.file = file;
+            Name typeName = defaultSchema.getName();
+            this.qname = new QName(typeName.getNamespaceURI(), typeName.getLocalPart());
+            // check if there're features, might have a different schema than the default
+            // (by means of Schema/[SimpleField]+ elements in the KML file)
+            Iterator<SimpleFeature> iterator = openIterator();
+            try {
+                SimpleFeature feature = Iterators.getNext(iterator, null);
+                if (feature != null) {
+                    super.schema = feature.getType();
+                }
+            } finally {
+                closeIterator(iterator);
+            }
         }
 
         public @Override ReferencedEnvelope getBounds() {
@@ -256,8 +271,6 @@ class KmlFeatureSource {
         protected @Override Iterator<SimpleFeature> openIterator() {
             PullParserIterator iterator;
             try {
-                Name typeName = getSchema().getName();
-                QName qname = new QName(typeName.getNamespaceURI(), typeName.getLocalPart());
                 iterator = new PullParserIterator(configuration, file, qname);
             } catch (IOException e) {
                 throw new IllegalStateException(e);
