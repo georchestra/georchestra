@@ -13,11 +13,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.EnumSet;
+import java.util.stream.Collectors;
 
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.referencing.CRS;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -26,6 +26,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
+import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -347,8 +348,8 @@ public class GeotoolsFeatureReaderTest {
 
         SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.gml);
 
-        Assert.assertNotNull(fc);
-        Assert.assertTrue(!fc.isEmpty());
+        assertNotNull(fc);
+        assertTrue(!fc.isEmpty());
     }
 
     @Test
@@ -359,7 +360,7 @@ public class GeotoolsFeatureReaderTest {
 
         SimpleFeatureCollection featureCollection = reader.getFeatureCollection(file, FileFormat.kml);
 
-        Assert.assertTrue(!featureCollection.isEmpty());
+        assertTrue(!featureCollection.isEmpty());
     }
 
     @Test
@@ -370,31 +371,31 @@ public class GeotoolsFeatureReaderTest {
 
         SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.kml);
 
-        Assert.assertTrue(!fc.isEmpty());
+        assertFalse(fc.isEmpty());
 
         SimpleFeature f = fc.features().next();
 
-        Assert.assertNotNull(f.getProperty("id"));
-        Assert.assertNotNull(f.getProperty("date"));
-        Assert.assertNotNull(f.getProperty("plage_hora"));
-        Assert.assertNotNull(f.getProperty("jour_nuit"));
-        Assert.assertNotNull(f.getProperty("meteo"));
-        Assert.assertNotNull(f.getProperty("voie_type"));
-        Assert.assertNotNull(f.getProperty("milieu"));
-        Assert.assertNotNull(f.getProperty("tues_nb"));
-        Assert.assertNotNull(f.getProperty("tues_18_24"));
-        Assert.assertNotNull(f.getProperty("tues_moto_"));
-        Assert.assertNotNull(f.getProperty("tues_pieto"));
-        Assert.assertNotNull(f.getProperty("tues_velo_"));
-        Assert.assertNotNull(f.getProperty("vehicules_"));
-        Assert.assertNotNull(f.getProperty("vehicules_"));
-        Assert.assertNotNull(f.getProperty("commune"));
-        Assert.assertNotNull(f.getProperty("departemen"));
-        Assert.assertNotNull(f.getProperty("commentair"));
-        Assert.assertNotNull(f.getProperty("consolide"));
-        Assert.assertNotNull(f.getProperty("anciennete"));
-        Assert.assertNotNull(f.getProperty("f_mois"));
-        Assert.assertNotNull(f.getProperty("f_annee"));
+        assertNotNull(f.getProperty("id"));
+        assertNotNull(f.getProperty("date"));
+        assertNotNull(f.getProperty("plage_hora"));
+        assertNotNull(f.getProperty("jour_nuit"));
+        assertNotNull(f.getProperty("meteo"));
+        assertNotNull(f.getProperty("voie_type"));
+        assertNotNull(f.getProperty("milieu"));
+        assertNotNull(f.getProperty("tues_nb"));
+        assertNotNull(f.getProperty("tues_18_24"));
+        assertNotNull(f.getProperty("tues_moto_"));
+        assertNotNull(f.getProperty("tues_pieto"));
+        assertNotNull(f.getProperty("tues_velo_"));
+        assertNotNull(f.getProperty("vehicules_"));
+        assertNotNull(f.getProperty("vehicules_"));
+        assertNotNull(f.getProperty("commune"));
+        assertNotNull(f.getProperty("departemen"));
+        assertNotNull(f.getProperty("commentair"));
+        assertNotNull(f.getProperty("consolide"));
+        assertNotNull(f.getProperty("anciennete"));
+        assertNotNull(f.getProperty("f_mois"));
+        assertNotNull(f.getProperty("f_annee"));
 
     }
 
@@ -422,15 +423,15 @@ public class GeotoolsFeatureReaderTest {
         String fullName = makeFullName("canton-73.geojson");
         File file = new File(fullName);
         SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.geojson);
-        Assert.assertFalse(fc.isEmpty());
+        assertFalse(fc.isEmpty());
         int counter = 0;
         SimpleFeatureIterator it = fc.features();
         while (it.hasNext()) {
             SimpleFeature f = it.next();
             counter++;
-            Assert.assertEquals(3, f.getAttributeCount());
+            assertEquals(3, f.getAttributeCount());
         }
-        Assert.assertEquals(19, counter);
+        assertEquals(19, counter);
     }
 
     @Test
