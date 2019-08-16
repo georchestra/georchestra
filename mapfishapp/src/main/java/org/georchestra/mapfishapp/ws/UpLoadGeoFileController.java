@@ -90,9 +90,9 @@ import com.google.common.collect.Iterators;
  *
  * <pre>
  * In case of success, returns
- *              {"success":"true","geojson":"{"type":"FeatureCollection","features":[...]}"}
+ * 		{"success":"true","geojson":"{"type":"FeatureCollection","features":[...]}"}
  * with
- *              Content-Type: text/html (cf introductory paragraph regarding file uploads
+ * 		Content-Type: text/html (cf introductory paragraph regarding file uploads
  *      in http://docs.sencha.com/ext-js/3-4/?print=/api/Ext.form.BasicForm)
  * </pre>
  *

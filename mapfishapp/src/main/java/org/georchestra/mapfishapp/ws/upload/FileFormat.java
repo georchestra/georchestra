@@ -28,16 +28,15 @@ package org.georchestra.mapfishapp.ws.upload;
  */
 public enum FileFormat {
 
-    shp, gml, kml;
+    shp, gml, kml, geojson;
 
     public static boolean contains(final String ext) {
 
         String lcExt = ext.toLowerCase();
 
         FileFormat[] formats = values();
-        for (int i = 0; i < formats.length; i++) {
-
-            if (formats[i].toString().equals(lcExt)) {
+        for (FileFormat format : formats) {
+            if (format.toString().equals(lcExt)) {
                 return true;
             }
         }

@@ -31,10 +31,13 @@ import org.geotools.data.DataStore;
 import org.geotools.data.FileDataStore;
 import org.geotools.data.Query;
 import org.geotools.data.collection.ListFeatureCollection;
+import org.geotools.data.crs.ForceCoordinateSystemFeatureResults;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.data.store.ReprojectingFeatureCollection;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotools.geojson.feature.FeatureJSON;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.operation.projection.ProjectionException;
@@ -52,281 +55,299 @@ import org.opengis.referencing.operation.MathTransform;
 /**
  * This class is a façade to the Geotools data management implementations.
  *
- *
  * @author Mauricio Pazos
- *
  */
 public class GeotoolsFeatureReader implements FeatureGeoFileReader {
 
-    private static final Log   LOG     = LogFactory.getLog(GeotoolsFeatureReader.class.getPackage().getName());
+	private static final Log LOG = LogFactory.getLog(GeotoolsFeatureReader.class.getPackage().getName());
 
-    private final FileFormat[] formats = new FileFormat[] {
-                                                        FileFormat.shp,
-                                                        FileFormat.gml,
-                                                        FileFormat.kml };
+	private final FileFormat[] formats = new FileFormat[] { FileFormat.shp, FileFormat.gml, FileFormat.kml,
+			FileFormat.geojson };
 
-    public GeotoolsFeatureReader() {}
+	public GeotoolsFeatureReader() {
+	}
 
-    @Override
-    public JSONArray getFormatListAsJSON() {
-        JSONArray ret = new JSONArray();
+	@Override
+	public JSONArray getFormatListAsJSON() {
+		JSONArray ret = new JSONArray();
 
-        FileFormat[] ff = getFormatList();
-        for (FileFormat f: ff) {
-            ret.put(f.toString());
-        }
-        return ret;
-    }
+		FileFormat[] ff = getFormatList();
+		for (FileFormat f : ff) {
+			ret.put(f.toString());
+		}
+		return ret;
+	}
 
-    @Override
-    public FileFormat[] getFormatList() {
-        return formats;
-    }
+	@Override
+	public FileFormat[] getFormatList() {
+		return formats;
+	}
 
-    @Override
-    public SimpleFeatureCollection getFeatureCollection(
-            final File file,
-            final FileFormat fileFormat) throws IOException,
-            UnsupportedGeofileFormatException, ProjectionException {
+	@Override
+	public SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat)
+			throws IOException, UnsupportedGeofileFormatException, ProjectionException {
 
-        return getFeatureCollection(file, fileFormat, null);
-    }
+		return getFeatureCollection(file, fileFormat, null);
+	}
 
-    @Override
-    public SimpleFeatureCollection getFeatureCollection(final File file,
-            final FileFormat fileFormat,
-            final CoordinateReferenceSystem targetCRS) throws IOException,
-            UnsupportedGeofileFormatException, ProjectionException {
+	@Override
+	public SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat,
+			final CoordinateReferenceSystem targetCRS)
+			throws IOException, UnsupportedGeofileFormatException, ProjectionException {
 
-        assert file != null && fileFormat != null;
+		assert file != null && fileFormat != null;
 
-        switch (fileFormat) {
-        case shp:
-            return readShpFile(file, targetCRS);
-        case gml:
-            return readGmlFile(file, targetCRS);
-        case kml:
-            return readKmlFile(file, targetCRS);
+		switch (fileFormat) {
+		case shp:
+			return readShpFile(file, targetCRS);
+		case gml:
+			return readGmlFile(file, targetCRS);
+		case kml:
+			return readKmlFile(file, targetCRS);
+		case geojson:
+			return readGeoJSONFile(file, targetCRS);
+		default:
+			throw new UnsupportedGeofileFormatException("Unsuported format: " + fileFormat.toString());
+		}
+	}
 
-        default:
-            throw new UnsupportedGeofileFormatException("Unsuported format: "
-                    + fileFormat.toString());
-        }
-    }
+	private SimpleFeatureCollection readGeoJSONFile(File file, CoordinateReferenceSystem targetCRS)
+			throws IOException, ProjectionException {
 
-    /**
-     * Reads the GML file. The method try to read using GML2 if it cannot then
-     * try using GML3
-     *
-     * @param file
-     * @param targetCRS
-     * @return {@link SimpleFeatureCollection}
-     * @throws IOException
-     */
-    private SimpleFeatureCollection readGmlFile(File file,
-            CoordinateReferenceSystem targetCRS) throws IOException, ProjectionException {
+		final FeatureJSON fjson = new FeatureJSON();
+		fjson.setEncodeFeatureCollectionCRS(true);
+		fjson.setEncodeFeatureCollectionBounds(true);
 
-        SimpleFeatureCollection fc = null;
-        try {
-            fc = readGmlFile(file, targetCRS, Version.GML2);
-        } catch (IOException e) {
-            LOG.warn("fails reading with GML2 reader. Try using GML3");
+		try (InputStream in = new FileInputStream(file)) {
+			// Build a schema with properties from all features, in case the file contains
+			// mixed type features
+			boolean nullValuesEncoded = false;
+			SimpleFeatureType targetSchema = fjson.readFeatureCollectionSchema(in, nullValuesEncoded);
+			fjson.setFeatureType(targetSchema);
+		}
 
-            fc = readGmlFile(file, targetCRS, Version.GML3);
+		try (InputStream in = new FileInputStream(file)) {
+			SimpleFeatureCollection sfc = (SimpleFeatureCollection) fjson.readFeatureCollection(in);
 
-            LOG.warn("GML3 readier ends successful");
-        }
-        return fc;
-    }
+			SimpleFeatureType sft = sfc.getSchema();
+			CoordinateReferenceSystem sourceCRS = sft.getCoordinateReferenceSystem();
+			if (sourceCRS == null) {
+				sourceCRS = CRS.decode("EPSG:4326");
+				sfc = new ForceCoordinateSystemFeatureResults(sfc, sourceCRS);
+			}
+			if (targetCRS != null && !CRS.equalsIgnoreMetadata(sourceCRS, targetCRS)) {
+				sfc = new ReprojectingFeatureCollection(sfc, targetCRS);
+			}
+			return sfc;
+		} catch (IOException e) {
+			LOG.error(e.getMessage());
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage());
+			throw new IOException(e);
+		}
+	}
 
-    /**
-     * Creates a feature collection from a kml file. CRS EPSG:4326 is assumed
-     * for the kml file.
-     *
-     * @param file
-     * @param targetCRS
-     * @return
-     * @throws IOException
-     */
-    private SimpleFeatureCollection readKmlFile(final File file, final CoordinateReferenceSystem targetCRS) throws IOException {
+	/**
+	 * Reads the GML file. The method try to read using GML2 if it cannot then try
+	 * using GML3
+	 *
+	 * @param file
+	 * @param targetCRS
+	 * @return {@link SimpleFeatureCollection}
+	 * @throws IOException
+	 */
+	private SimpleFeatureCollection readGmlFile(File file, CoordinateReferenceSystem targetCRS)
+			throws IOException, ProjectionException {
 
+		SimpleFeatureCollection fc = null;
+		try {
+			fc = readGmlFile(file, targetCRS, Version.GML2);
+		} catch (IOException e) {
+			LOG.warn("fails reading with GML2 reader. Try using GML3");
 
-        try {
-            // as default EPSG:4326 is assumed
-            CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:4326");
+			fc = readGmlFile(file, targetCRS, Version.GML3);
 
-            KmlFeatureSource reader = new KmlFeatureSource(file);
-            Query q = new Query();
-            q.setFilter(Filter.INCLUDE);
-            q.setCoordinateSystem(sourceCRS);
-            q.setCoordinateSystemReproject(targetCRS);
+			LOG.warn("GML3 readier ends successful");
+		}
+		return fc;
+	}
 
-            SimpleFeatureCollection list = reader.getFeatures(q);
+	/**
+	 * Creates a feature collection from a kml file. CRS EPSG:4326 is assumed for
+	 * the kml file.
+	 *
+	 * @param file
+	 * @param targetCRS
+	 * @return
+	 * @throws IOException
+	 */
+	private SimpleFeatureCollection readKmlFile(final File file, final CoordinateReferenceSystem targetCRS)
+			throws IOException {
 
-            return list;
+		try {
+			// as default EPSG:4326 is assumed
+			CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:4326");
 
-        } catch (Exception e) {
-            LOG.error(e.getMessage());
-            throw new IOException(e);
+			KmlFeatureSource reader = new KmlFeatureSource(file);
+			Query q = new Query();
+			q.setFilter(Filter.INCLUDE);
+			q.setCoordinateSystem(sourceCRS);
+			q.setCoordinateSystemReproject(targetCRS);
 
-        }
-    }
+			SimpleFeatureCollection list = reader.getFeatures(q);
 
-    /**
-     * Creates a feature collection from a GML file.
-     *
-     * @param file
-     *            a gml file
-     * @param targetCRS
-     *            target crs
-     * @param version
-     *            gml version
-     *
-     * @return {@link SimpleFeatureCollection}
-     * @throws IOException, ProjectionException
-     */
-    private SimpleFeatureCollection readGmlFile(final File file,
-            final CoordinateReferenceSystem targetCRS, final Version version)
-            throws IOException, ProjectionException {
+			return list;
 
-        InputStream in = new FileInputStream(file);
-        try {
-            Configuration cfg = (version == Version.GML2) ? new org.geotools.gml2.GMLConfiguration()
-                    : new org.geotools.gml3.GMLConfiguration();
-            PullParser parser = new PullParser(cfg, in, SimpleFeature.class);
+		} catch (Exception e) {
+			LOG.error(e.getMessage());
+			throw new IOException(e);
 
-            int targetSRID = 0;
-            if (targetCRS != null) {
-                targetSRID = CRS.lookupEpsgCode(targetCRS, true);
-            }
+		}
+	}
 
-            CoordinateReferenceSystem sourceCRS;
-            MathTransform mathTransform = null;
-            ListFeatureCollection fc = null;
-            SimpleFeature feature;
-            while ((feature = (SimpleFeature) parser.parse()) != null) {
+	/**
+	 * Creates a feature collection from a GML file.
+	 *
+	 * @param file      a gml file
+	 * @param targetCRS target crs
+	 * @param version   gml version
+	 * @return {@link SimpleFeatureCollection}
+	 * @throws IOException, ProjectionException
+	 */
+	private SimpleFeatureCollection readGmlFile(final File file, final CoordinateReferenceSystem targetCRS,
+			final Version version) throws IOException, ProjectionException {
 
-                Geometry geom = (Geometry) feature.getDefaultGeometry();
+		InputStream in = new FileInputStream(file);
+		try {
+			Configuration cfg = (version == Version.GML2) ? new org.geotools.gml2.GMLConfiguration()
+					: new org.geotools.gml3.GMLConfiguration();
+			PullParser parser = new PullParser(cfg, in, SimpleFeature.class);
 
-                // initializes the feature collection using the crs and the
-                // feature type of the first feature
-                if (fc == null) {
+			int targetSRID = 0;
+			if (targetCRS != null) {
+				targetSRID = CRS.lookupEpsgCode(targetCRS, true);
+			}
 
-                    int srid = geom.getSRID();
-                    if (srid > 0) {
-                        sourceCRS = CRS.decode("EPSG:" + srid);
-                    } else {
-                        sourceCRS = CRS.decode("EPSG:4326"); // if the crs is not present 4326 is assumed
-                    }
+			CoordinateReferenceSystem sourceCRS;
+			MathTransform mathTransform = null;
+			ListFeatureCollection fc = null;
+			SimpleFeature feature;
+			while ((feature = (SimpleFeature) parser.parse()) != null) {
 
-                    SimpleFeatureType type;
-                    if ((targetCRS != null) && !sourceCRS.equals(targetCRS)) {
-                        // transforms the feature type to the target crs, creates the feature collection
-                        // and finds the math transformation required
-                        type = SimpleFeatureTypeBuilder.retype(
-                                feature.getFeatureType(), targetCRS);
+				Geometry geom = (Geometry) feature.getDefaultGeometry();
 
-                        mathTransform = CRS.findMathTransform(sourceCRS,
-                                targetCRS, true);
-                    } else {
-                        // uses the original feature type
-                        type = SimpleFeatureTypeBuilder.retype(
-                                feature.getFeatureType(), sourceCRS);
-                    }
-                    fc = new ListFeatureCollection(type);
+				// initializes the feature collection using the crs and the
+				// feature type of the first feature
+				if (fc == null) {
 
-                }
-                // reproject the feature's geometry it it is necessary before
-                // add the feature to the new feature collection.
-                if (mathTransform != null) {
-                    // transformation is required
-                    Geometry reprojectedGeometry = JTS.transform(geom,
-                            mathTransform);
-                    reprojectedGeometry.setSRID(targetSRID);
-                    feature.setDefaultGeometry(reprojectedGeometry);
-                }
-                fc.add(feature);
-            }
-            if (fc == null) {
-                final String msg = "Fail reading GML file (" + version + "). It cannot read the file "+ file.getAbsoluteFile();
-                LOG.warn(msg);
-                throw new IOException(msg);
-            }
-            return fc;
-        } catch (ProjectionException e) {
-            throw e;
-        } catch (Exception e) {
-            LOG.error(e.getMessage());
-            throw new IOException(e);
+					int srid = geom.getSRID();
+					if (srid > 0) {
+						sourceCRS = CRS.decode("EPSG:" + srid);
+					} else {
+						sourceCRS = CRS.decode("EPSG:4326"); // if the crs is not present 4326 is assumed
+					}
 
-        } finally {
+					SimpleFeatureType type;
+					if ((targetCRS != null) && !sourceCRS.equals(targetCRS)) {
+						// transforms the feature type to the target crs, creates the feature collection
+						// and finds the math transformation required
+						type = SimpleFeatureTypeBuilder.retype(feature.getFeatureType(), targetCRS);
 
-            in.close();
-        }
-    }
+						mathTransform = CRS.findMathTransform(sourceCRS, targetCRS, true);
+					} else {
+						// uses the original feature type
+						type = SimpleFeatureTypeBuilder.retype(feature.getFeatureType(), sourceCRS);
+					}
+					fc = new ListFeatureCollection(type);
 
-    /**
-     * Reads the features from Shape file.
-     *
-     * @param file
-     * @return {@link SimpleFeatureCollection}
-     *
-     * @throws IOException
-     */
-    private SimpleFeatureCollection readShpFile(final File file, final CoordinateReferenceSystem crs) throws IOException {
+				}
+				// reproject the feature's geometry it it is necessary before
+				// add the feature to the new feature collection.
+				if (mathTransform != null) {
+					// transformation is required
+					Geometry reprojectedGeometry = JTS.transform(geom, mathTransform);
+					reprojectedGeometry.setSRID(targetSRID);
+					feature.setDefaultGeometry(reprojectedGeometry);
+				}
+				fc.add(feature);
+			}
+			if (fc == null) {
+				final String msg = "Fail reading GML file (" + version + "). It cannot read the file "
+						+ file.getAbsoluteFile();
+				LOG.warn(msg);
+				throw new IOException(msg);
+			}
+			return fc;
+		} catch (ProjectionException e) {
+			throw e;
+		} catch (Exception e) {
+			LOG.error(e.getMessage());
+			throw new IOException(e);
 
-        ShapefileDataStoreFactory storeFactory = new ShapefileDataStoreFactory();
+		} finally {
 
-        FileDataStore store = storeFactory.createDataStore(file.toURL());
+			in.close();
+		}
+	}
 
-        String typeName = FilenameUtils.getBaseName(file.getAbsolutePath());
+	/**
+	 * Reads the features from Shape file.
+	 *
+	 * @param file
+	 * @return {@link SimpleFeatureCollection}
+	 * @throws IOException
+	 */
+	private SimpleFeatureCollection readShpFile(final File file, final CoordinateReferenceSystem crs)
+			throws IOException {
 
-        SimpleFeatureCollection features = retrieveFeatures(typeName, store,
-                crs);
+		ShapefileDataStoreFactory storeFactory = new ShapefileDataStoreFactory();
 
-        return features;
-    }
+		FileDataStore store = storeFactory.createDataStore(file.toURL());
 
-    /**
-     * Retrieves the features from store
-     *
-     * @param typeName
-     * @param store
-     * @param targetCRS
-     *            when the target crs is provided the reatures are reprojected
-     * @return
-     * @throws IOException
-     */
-    private SimpleFeatureCollection retrieveFeatures(final String typeName,
-            final DataStore store, final CoordinateReferenceSystem targetCRS)
-            throws IOException {
+		String typeName = FilenameUtils.getBaseName(file.getAbsolutePath());
 
-        SimpleFeatureType schema = store.getSchema(typeName);
+		SimpleFeatureCollection features = retrieveFeatures(typeName, store, crs);
 
-        Query query = new Query(schema.getTypeName(), Filter.INCLUDE);
+		return features;
+	}
 
-        CoordinateReferenceSystem baseCRS = store.getSchema(
-                schema.getTypeName()).getCoordinateReferenceSystem();
-        query.setCoordinateSystem(baseCRS);
-        if (targetCRS != null) {
-            query.setCoordinateSystemReproject(targetCRS);
-        }
+	/**
+	 * Retrieves the features from store
+	 *
+	 * @param typeName
+	 * @param store
+	 * @param targetCRS when the target crs is provided the reatures are reprojected
+	 * @return
+	 * @throws IOException
+	 */
+	private SimpleFeatureCollection retrieveFeatures(final String typeName, final DataStore store,
+			final CoordinateReferenceSystem targetCRS) throws IOException {
 
-        SimpleFeatureSource featureSource = store.getFeatureSource(schema
-                .getTypeName());
+		SimpleFeatureType schema = store.getSchema(typeName);
 
-        SimpleFeatureCollection features = featureSource.getFeatures(query);
+		Query query = new Query(schema.getTypeName(), Filter.INCLUDE);
 
-        return features;
-    }
+		CoordinateReferenceSystem baseCRS = store.getSchema(schema.getTypeName()).getCoordinateReferenceSystem();
+		query.setCoordinateSystem(baseCRS);
+		if (targetCRS != null) {
+			query.setCoordinateSystemReproject(targetCRS);
+		}
 
-    @Override
-    public boolean isSupportedFormat(FileFormat fileFormat) {
-        for (FileFormat supported : this.formats) {
-            if (fileFormat == supported) {
-                return true;
-            }
-        }
-        return false;
-    }
+		SimpleFeatureSource featureSource = store.getFeatureSource(schema.getTypeName());
+
+		SimpleFeatureCollection features = featureSource.getFeatures(query);
+
+		return features;
+	}
+
+	@Override
+	public boolean isSupportedFormat(FileFormat fileFormat) {
+		for (FileFormat supported : this.formats) {
+			if (fileFormat == supported) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
