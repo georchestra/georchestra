@@ -127,7 +127,7 @@ public class UsersExport {
 
         // check if user is under delegation for delegated admins
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if(!auth.getAuthorities().contains(this.advancedDelegationDao.ROLE_SUPERUSER))
+        if(auth != null && !auth.getAuthorities().contains(this.advancedDelegationDao.ROLE_SUPERUSER))
             if(!this.advancedDelegationDao.findUsersUnderDelegation(auth.getName()).containsAll(users))
                 throw new AccessDeniedException("Some user not under delegation");
         return users;
