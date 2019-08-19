@@ -99,7 +99,9 @@ class UsersController {
       const a = document.createElement('a')
       a.href = window.URL.createObjectURL(blob)
       a.target = '_blank'
-      a.download = `users.${fileType}`
+      const filter = this.$injector.get('$filter')
+      const date = filter('date')(new Date(), 'yyyyMMdd-HHmmss')
+      a.download = `${date}_users_export.${fileType}`
       document.body.appendChild(a) // create the link "a"
       a.click() // click the link "a"
       document.body.removeChild(a)
