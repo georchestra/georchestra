@@ -14,8 +14,6 @@
         "defaultSRS": "EPSG:4326",
         "vectorFormatData": [
             ["shp", "Shapefile"],
-            ["mif", "Mif/Mid"],
-            ["tab", "TAB"],
             ["kml", "KML"]
         ],
         "defaultVectorFormat": "shp",
