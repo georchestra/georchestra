@@ -20,8 +20,8 @@ import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
-import org.geotools.data.wfs.impl.WFSDataStoreFactory;
-import org.geotools.util.NullProgressListener;
+import org.geotools.data.util.NullProgressListener;
+import org.geotools.data.wfs.WFSDataStoreFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,6 +31,8 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.FactoryException;
@@ -42,8 +44,6 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
 
 
 public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
@@ -145,7 +145,7 @@ public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
         assertTrue(this.serverWasCalled);
 
         final File[] fileNames = extract.listFiles();
-        assertEquals(8, fileNames.length);
+        assertEquals(10, fileNames.length);
         assertBoundingPolygon(extract);
 
         Collection<File> shapefiles = Collections2.filter(Arrays.asList(fileNames), new Predicate<File>() {
@@ -179,7 +179,6 @@ public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
 
     @Test
     public void testExtract_1_0_0_KmlOutput() throws Exception {
-        assumeOgrPresent();
 
         WfsExtractor wfsExtractor = new WfsExtractor(testDir.getRoot());
         ExtractorLayerRequest request = createLayerRequestObject("sf:archsites", "kml");
@@ -190,7 +189,7 @@ public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
         assertTrue(this.serverWasCalled);
 
         List<String> fileNames = Arrays.asList(extract.list());
-        assertEquals(5, extract.listFiles().length);
+        assertEquals(6, extract.listFiles().length);
         assertBoundingPolygon(extract);
 
         Collections2.filter(fileNames, new Predicate<String>() {
@@ -199,14 +198,6 @@ public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
                 return input.toLowerCase().endsWith("kml");
             }
         });
-    }
-
-    private void assumeOgrPresent() {
-        try {
-            Class.forName("org.gdal.ogr.ogrJNI");
-        } catch (ClassNotFoundException e) {
-            Assume.assumeNoException("OGR JNI does not seem to be reachable,  skipping test", e);
-        }
     }
 
     @Test
@@ -238,42 +229,16 @@ public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
     }
 
     @Test
-    @Ignore("Currently MIF export always fails")
-    public void testOgrFeatureWriterFromShapeToMif() throws Exception {
-        DataStore ds = new ShapefileDataStoreFactory().createDataStore(this.getClass().getResource("/shp/savoie.shp"));
-
-        SimpleFeatureType schema = ds.getSchema("savoie");
-        SimpleFeatureCollection c = ds.getFeatureSource("savoie").getFeatures();
-
-        FeatureWriterStrategy fw = new OGRFeatureWriter(
-                new NullProgressListener(), schema,
-                testDir.newFolder("miftest"), OGRFeatureWriter.FileFormat.mif,
-                c);
-        File[] results = {};
-        try {
-            results = fw.generateFiles();
-        } catch (IllegalStateException e) {
-            Assume.assumeNoException(e);
-        }
-
-        for (File i : results) {
-            assertTrue("file does not exist or is empty: "+ i.getName(), (i.exists() && i.length() > 0));
-        }
-
-    }
-
-
-    @Test
     public void testOgrFeatureWriterFromShapeToKml() throws Exception {
-        assumeOgrPresent();
+
         DataStore ds = new ShapefileDataStoreFactory().createDataStore(this.getClass().getResource("/shp/savoie.shp"));
 
         SimpleFeatureType schema = ds.getSchema("savoie");
         SimpleFeatureCollection c = ds.getFeatureSource("savoie").getFeatures();
 
-        FeatureWriterStrategy fw = new OGRFeatureWriter(
+        FeatureWriterStrategy fw = new KMLFeatureWriter(
                 new NullProgressListener(), schema,
-                testDir.newFolder("kmltest"), OGRFeatureWriter.FileFormat.kml,
+                testDir.newFolder("kmltest"),
                 c);
 
         File[] results = {};
@@ -288,35 +253,6 @@ public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
             assertTrue("file does not exist or is empty: "+ i.getName(), (i.exists() && i.length() > 0));
         }
 
-    }
-
-    @Test
-    @Ignore("Currently MIF export always fails")
-    public void testExtract_1_0_0_Mif() throws Exception {
-
-        WfsExtractor wfsExtractor = new WfsExtractor(testDir.getRoot());
-        ExtractorLayerRequest request = createLayerRequestObject("sf:archsites", "mif");
-
-        File extract = null;
-        try {
-            extract = wfsExtractor.extract(request);
-        } catch(IllegalStateException e){
-            Assume.assumeNoException(e);
-        }
-
-        assertTrue(this.usesVersion1_0_0);
-        assertTrue(this.serverWasCalled);
-
-        List<String> fileNames = Arrays.asList(extract.list());
-        assertEquals(6, extract.listFiles().length);
-        assertBoundingPolygon(extract);
-
-        Collections2.filter(fileNames, new Predicate<String>() {
-            @Override
-            public boolean apply(String input) {
-                return input.toLowerCase().endsWith("tab");
-            }
-        });
     }
 
     private void assertBoundingPolygon(File extractDir) throws IOException {

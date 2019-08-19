@@ -14,6 +14,7 @@
     <geowebcache.war.excludes/>
     <maven.test.skip>false</maven.test.skip>
     <geowebcache.version>1.8.1</geowebcache.version>
+    <gt.version>14.1</gt.version><!-- must match the version used by gwc@geowebcache.version -->
     <packageDatadirScmVersion>19.04</packageDatadirScmVersion>
     <server>generic</server>
   </properties>

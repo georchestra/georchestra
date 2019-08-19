@@ -22,19 +22,17 @@ package org.georchestra.extractorapp.ws.extractor;
 import java.io.File;
 import java.io.IOException;
 
-import org.georchestra.extractorapp.ws.extractor.OGRFeatureWriter.FileFormat;
 import org.geotools.data.DataUtilities;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.ProgressListener;
-
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Polygon;
 
 
 /**
@@ -47,7 +45,7 @@ public class BBoxWriter {
 	
 
 	// Properties of the bbox FeatureType 
-	private static final String GEOMETRY_PROPERTY = "geom";
+	private static final String GEOMETRY_PROPERTY = "the_geom";
 	private static final String ID_PROPERTY = "id";
 	
 	
@@ -96,7 +94,7 @@ public class BBoxWriter {
 		SimpleFeature bboxFeature = createFeature(geom, type);
 
 		// writes the file
-        SimpleFeatureCollection features = DataUtilities.collection(new SimpleFeature[]{bboxFeature});
+        SimpleFeatureCollection features = DataUtilities.collection(bboxFeature);
         
         // bbox in shapefile format
         FeatureWriterStrategy writer = new ShpFeatureWriter(this.progress, features.getSchema(), this.baseDir, features);
@@ -136,7 +134,7 @@ public class BBoxWriter {
 
 		SimpleFeature feature = DataUtilities.template(type);
 		
-		feature.setAttribute(ID_PROPERTY, 1); // this field is required by mif/mid format
+		feature.setAttribute(ID_PROPERTY, 1);
 		feature.setAttribute(GEOMETRY_PROPERTY, geom);
 		
 		return feature;

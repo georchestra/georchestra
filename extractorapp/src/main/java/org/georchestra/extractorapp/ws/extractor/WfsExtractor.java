@@ -2,7 +2,6 @@ package org.georchestra.extractorapp.ws.extractor;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,34 +32,34 @@ import org.geotools.data.Query;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.data.store.ReprojectingFeatureCollection;
-import org.geotools.data.wfs.impl.WFSDataStoreFactory;
+import org.geotools.data.util.NullProgressListener;
+import org.geotools.data.wfs.WFSDataStoreFactory;
 import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.factory.GeoTools;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
-import org.geotools.util.NullProgressListener;
+import org.geotools.util.factory.GeoTools;
+import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.PropertyName;
+import org.opengis.geometry.Geometry;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.ProgressListener;
 
 import com.google.common.collect.ImmutableSet;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
 
 /**
  * Obtains data from a WFS and write the data out to the filesystem
@@ -235,17 +234,14 @@ public class WfsExtractor {
         }
 
         DataStore sourceDs = DataStoreFinder.getDataStore(params);
-        // WFS-ng: we need to convert the schema name
 
         String typeName = request.getWFSName();
-        SimpleFeatureType sourceSchema = null;
+        SimpleFeatureType sourceSchema;
         // prefixed typeName
         if (typeName.contains(":")) {
-            typeName = typeName.replaceFirst(":", "_");
             sourceSchema = sourceDs.getSchema(typeName);
-        }
-        // Not prefixed one (mapserver ?)
-        else {
+        }else {
+            // Not prefixed one (mapserver ?)
             // Recreating the datastore forcing wfs 1.1.0, so that (presuming
             // the remote server is actually powered by MapServer), we would
             // have a typename prefixed with the same convention as before.
@@ -253,6 +249,7 @@ public class WfsExtractor {
             //params.put(WFSDataStoreFactory.WFS_STRATEGY.key, "mapserver");
             sourceDs = DataStoreFinder.getDataStore(params);
             String[] typeNames = sourceDs.getTypeNames();
+            sourceSchema = null;
             for (String s : typeNames) {
                 if (s.contains(typeName)) {
                     typeName = s;
@@ -282,21 +279,19 @@ public class WfsExtractor {
         FeatureWriterStrategy featuresWriter;
         BBoxWriter bboxWriter;
         LOG.debug("Number of features returned : " + features.size());
-        if ("shp".equalsIgnoreCase(request._format)) {
+        switch(request._format.toLowerCase()) {
+        case "shp":
             featuresWriter = new ShpFeatureWriter(progressListener, sourceSchema, basedir, features);
-            bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.shp, request._projection, progressListener );
-        } else if ("mif".equalsIgnoreCase(request._format)) {
-            //featuresWriter = new MifFeatureWriter(progressListener, sourceSchema, basedir, features);
-            featuresWriter = new OGRFeatureWriter(progressListener, sourceSchema,  basedir, OGRFeatureWriter.FileFormat.mif, features);
-            bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.mif, request._projection, progressListener );
-        } else if ("tab".equalsIgnoreCase(request._format)) {
-            featuresWriter = new OGRFeatureWriter(progressListener, sourceSchema,  basedir, OGRFeatureWriter.FileFormat.tab, features);
-            bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.tab, request._projection, progressListener );
-        } else {
-            checkState("kml".equalsIgnoreCase(request._format), "Shouldn't happen, aldready checked format is in SUPPORTED_FORMATS");
-            featuresWriter = new OGRFeatureWriter(progressListener, sourceSchema, basedir, OGRFeatureWriter.FileFormat.kml, features);
-            bboxWriter = new BBoxWriter(request._bbox, basedir, OGRFeatureWriter.FileFormat.kml, request._projection, progressListener );
+            bboxWriter = new BBoxWriter(request._bbox, basedir, FileFormat.shp, request._projection, progressListener );
+            break;
+        case "kml":
+            featuresWriter = new KMLFeatureWriter(progressListener, sourceSchema, basedir, features);
+            bboxWriter = new BBoxWriter(request._bbox, basedir, FileFormat.kml, request._projection, progressListener );
+            break;
+        default:
+            throw new IllegalStateException("Shouldn't happen, aldready checked format is in SUPPORTED_FORMATS");
         }
+
         //generates the feature files and bbox file
         featuresWriter.generateFiles();
 
@@ -338,7 +333,7 @@ public class WfsExtractor {
             if (!CRS.equalsIgnoreMetadata(nativeCrs, bbox.getCoordinateReferenceSystem())) {
                 bbox = bbox.transform(nativeCrs, true, 10);
             }
-            Geometry bboxGeom = JTS.toGeometry(bbox);
+            Polygon bboxGeom = JTS.toGeometry(bbox);
             filter = FILTER_FACTORY.intersects(propertyName, FILTER_FACTORY.literal(bboxGeom));
             properties = schema.getDescriptors().stream()//
                     // shapefiles can only have one geometry so skip any

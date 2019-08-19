@@ -58,16 +58,15 @@ import org.geotools.coverage.grid.io.GridFormatFinder;
 import org.geotools.coverage.grid.io.UnknownFormat;
 import org.geotools.coverage.processing.Operations;
 import org.geotools.data.ServiceInfo;
-import org.geotools.data.mif.MIFProjReader;
-import org.geotools.factory.GeoTools;
-import org.geotools.factory.Hints;
 import org.geotools.gce.geotiff.GeoTiffWriter;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.parameter.Parameter;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.operation.matrix.XAffineTransform;
+import org.geotools.referencing.util.CRSUtilities;
 import org.geotools.renderer.lite.RendererUtilities;
-import org.geotools.resources.CRSUtilities;
+import org.geotools.util.factory.GeoTools;
+import org.geotools.util.factory.Hints;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.grid.Format;
 import org.opengis.coverage.grid.GridCoverage;
@@ -463,7 +462,7 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
     }
 
     /**
-     * Write world image extensions : TFW, PRJ, TAB
+     * Write world image extensions : TFW, PRJ
      * @param request
      * @param file
      * @param in
@@ -524,9 +523,8 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
             throw new RuntimeException(e.getMessage());
         }
 
-        // Generate TFW TAB PRJ files
+        // Generate TFW PRJ files
         createWorldFile(transform, ext, baseFilePath);
-        createTABFile(transformedBBox, width, height, baseFilePath, ext);
         createPrjFile(request.responseCRS, baseFilePath);
     }
 
@@ -699,86 +697,6 @@ public class WcsCoverageReader extends AbstractGridCoverage2DReader {
         } finally {
             out.close();
         }
-    }
-
-    private void createTABFile(ReferencedEnvelope transformedBBox, final int width, final int height,
-            final String baseFile, final String ext) throws IOException {
-
-    	final StringBuffer buff = new StringBuffer(baseFile);
-        buff.append(".tab");
-        final File tabFile = new File(buff.toString());
-
-        final PrintWriter out = new PrintWriter(new FileOutputStream(tabFile));
-
-        try {
-            out.println("!table");
-            out.println("!version 300");
-            out.println("!charset UTF-8");
-            out.println("");
-            out.println("Definition Table");
-            out.println("File " + tabFile.getName().replace(".tab", ".") + ext);
-            out.println("Type \"RASTER\"");
-            out.println("("+transformedBBox.getMinX()+","+transformedBBox.getMinY()+") (0,0) Label \"Pt 1\",");
-            out.println("("+transformedBBox.getMaxX()+","+transformedBBox.getMinY()+") ("+width+",0) Label \"Pt 2\",");
-            out.println("("+transformedBBox.getMaxX()+","+transformedBBox.getMaxY()+") ("+width+","+height+") Label \"Pt 3\",");
-            out.println("("+transformedBBox.getMinX()+","+transformedBBox.getMaxY()+") (0,"+height+") Label \"Pt 4\",");
-
-            InputStream in = WcsCoverageReader.class.getClassLoader().getResourceAsStream("org/georchestra/extractorapp/proj4MapinfoTab.properties");
-            Properties properties = new Properties();
-            properties.load(in);
-
-            MIFProjReader tabProjReader = new MIFProjReader();
-
-            Iterator<ReferenceIdentifier> iter = transformedBBox.getCoordinateReferenceSystem().getIdentifiers().iterator();
-            String crsCode = iter.next().toString();
-            int crs = Integer.valueOf(crsCode.replace("EPSG:", ""));
-
-            out.println("CoordSys Earth Projection " + tabProjReader.toMifCoordSys(crs));
-            out.print("units \"" + CRSUtilities.getUnit(transformedBBox.getCoordinateReferenceSystem().getCoordinateSystem()).toString() + "\"");
-
-            /**
-            GeneralDerivedCRS crs = (GeneralDerivedCRS)request.responseCRS;
-            Conversion conversionFromBase = crs.getConversionFromBase();
-
-            Unit<?> unit = CRSUtilities.getUnit(crs.getCoordinateSystem());
-            GeodeticDatum datum = (GeodeticDatum)crs.getDatum();
-
-            // Specific MAPINFO TAB format
-            String projType = conversionFromBase.getMethod().getName().getCode();
-            String datumCode = datum.getEllipsoid().getName().getCode();
-
-            Map <String, Integer> projectionTypes = new HashMap<String, Integer>();
-            projectionTypes.put("Lambert Conic Conformal (2SP)", 3);
-
-            Map <String, Integer> datumCodes = new HashMap<String, Integer>();
-            datumCodes.put("GRS 1980", 33);
-
-            // get params from CRS
-            Map<String, String> params= new HashMap<String, String>();
-            for (final GeneralParameterValue param : conversionFromBase.getParameterValues().values()) {
-            	if (param instanceof ParameterValue) {
-            		final double value = ((ParameterValue<?>) param).doubleValue();
-            		params.put(param.getDescriptor().getName().getCode(), String.valueOf(value));
-            	}
-            }
-
-            out.print("CoordSys Earth ");
-            out.print("Projection " + projectionTypes.get(projType) + ", ");
-            out.print(datumCodes.get(datumCode) + ", ");
-            out.print(unit.toString() + ", ");
-            out.print(params.get("central_meridian") + ", ");
-            out.print(params.get("latitude_of_origin") + ", ");
-            out.print(params.get("standard_parallel_2") + ", ");
-            out.print(params.get("standard_parallel_1") + ", ");
-            out.print(params.get("false_easting") + ", ");
-            out.print(params.get("false_northing") + ", ");
-            **/
-
-            out.flush();
-        } finally {
-            out.close();
-        }
-
     }
 
     /* ------------------- Shared support methods ------------------- */

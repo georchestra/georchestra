@@ -1,33 +1,24 @@
 package org.georchestra.extractorapp.ws.extractor.wcs;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import javax.measure.converter.ConversionException;
-import javax.measure.unit.Unit;
+import javax.measure.Unit;
 
 import org.geotools.referencing.CRS;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 
 public class ScaleUtilsTest {
 
-	@Before
-	public void setUp() throws Exception {
-	}
-
-	@After
-	public void tearDown() throws Exception {
-	}
-
 	@Test
 	public final void testGetUnit() throws NoSuchAuthorityCodeException, FactoryException {
 		Unit u1 = ScaleUtils.getUnit(CRS.decode("EPSG:4326"));
-		assertTrue("°".equals(u1.toString()));
+		assertEquals("°", u1.toString());
 		Unit u2 = ScaleUtils.getUnit(CRS.decode("EPSG:2154"));
-		assertTrue("m".equals(u2.toString()));
+		assertEquals("m", u2.toString());
 		boolean nosuchAuthEx = false;
 		try {
 			ScaleUtils.getUnit(CRS.decode("Wrong:EPSG"));
@@ -58,7 +49,7 @@ public class ScaleUtilsTest {
 		boolean convExEncountered = false;
 		try {
 			ScaleUtils.fromCrsToMeter(10, CRS.decode("EPSG:4326"));
-		} catch (ConversionException e) {
+		} catch (Exception e) {
 			convExEncountered = true;
 		}
 		assertTrue("Should have encountered a ConverstionException", convExEncountered);

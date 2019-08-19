@@ -13,7 +13,6 @@
   <properties>
     <maven.test.skip>false</maven.test.skip>
     <packageDatadirScmVersion>19.04</packageDatadirScmVersion>
-    <gt.version>9.2</gt.version>
     <server>generic</server>
   </properties>
   <dependencies>
@@ -90,30 +89,6 @@
       <groupId>org.geotools</groupId>
       <artifactId>gt-shapefile</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gt-mif</artifactId>
-      <version>${gt.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gt-ogr-core</artifactId>
-      <version>${gt.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gt-ogr-jni</artifactId>
-      <version>${gt.version}</version>
-      <!-- Same remark as above: this can lead to mismatch between already provided jars -->
-      <!-- (native libraries loaded twice or more ...)                                   -->
-      <exclusions>
-        <exclusion>
-          <groupId>org.gdal</groupId>
-          <artifactId>gdal</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-geotiff</artifactId>
