@@ -87,17 +87,19 @@ class UsersController {
       if (result.status !== 200) {
         throw new Error(`Cannot fetch users list. error ${result.status}`)
       }
-      let extension = fileType
-      let mimetype = `text/${fileType}`
-      if (fileType === 'vcf') {
-        mimetype = 'text/x-vcard'
+      let mimetype = ''
+      switch (fileType) {
+        case 'vcf':
+          mimetype = 'text/x-vcard'
+          break
+        default:
+          mimetype = `text/${fileType}`
       }
       const blob = new Blob([result.data], { type: mimetype })
       const a = document.createElement('a')
-      const fileURL = window.URL.createObjectURL(blob)
-      a.href = fileURL
+      a.href = window.URL.createObjectURL(blob)
       a.target = '_blank'
-      a.download = `users.${extension}`
+      a.download = `users.${fileType}`
       document.body.appendChild(a) // create the link "a"
       a.click() // click the link "a"
       document.body.removeChild(a)
@@ -111,7 +113,7 @@ class UsersController {
     this.export_('csv')
   }
 
-  exportVCard () {
+  exportVCF () {
     this.export_('vcf')
   }
 
