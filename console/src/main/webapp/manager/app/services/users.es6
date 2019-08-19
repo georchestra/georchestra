@@ -45,18 +45,18 @@ angular.module('manager')
     })
   ]).factory('ExportCSV', ['$http', 'CONSOLE_PRIVATE_PATH', ($http, baseUri) => {
     return users => {
-      return $http.post(baseUri + 'users.csv', users, {
+      return $http.post(baseUri + 'export/users.csv', users, {
         cache: false,
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'text/comma-separated-values'
+          'Accept': 'text/csv'
         }
       })
     }
   }
   ]).factory('ExportVCard', ['$http', 'CONSOLE_PRIVATE_PATH', ($http, baseUri) => {
     return users => {
-      return $http.post(baseUri + 'users.vcf', users, {
+      return $http.post(baseUri + 'export/users.vcf', users, {
         cache: false,
         headers: {
           'Content-Type': 'application/json',

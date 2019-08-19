@@ -96,8 +96,8 @@ public class UsersExport {
         }
     }
 
-    @PostMapping(value = "/private/users.csv", consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = "text/comma-separated-values; charset=utf-8")
+    @PostMapping(value = "/private/export/users.csv", consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = "text/csv; charset=utf-8")
     @ResponseBody
     public String getUsersAsCsv(@RequestBody String users) throws Exception {
         String[] parsedUsers = parseUserNamesFromJSONArray(users);
@@ -107,7 +107,7 @@ public class UsersExport {
         return csvUsers;
     }
 
-    @PostMapping(value = "/private/users.vcf", consumes = MediaType.APPLICATION_JSON_VALUE,
+    @PostMapping(value = "/private/export/users.vcf", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = "text/x-vcard; charset=utf-8")
     @ResponseBody
     public String getUsersAsVcard(@RequestBody String users) throws Exception {
