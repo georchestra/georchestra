@@ -20,51 +20,47 @@
 package org.georchestra.mapfishapp.ws.upload;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Predicate;
+
+import javax.annotation.Nullable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
-import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.geojson.GeoJSONUtil;
-import org.geotools.geojson.feature.AttributeIO;
-import org.geotools.geojson.feature.CRSHandler;
-import org.geotools.geojson.feature.DefaultAttributeIO;
-import org.geotools.geojson.feature.FeatureCollectionHandler;
-import org.geotools.geojson.feature.FeatureHandler;
 import org.geotools.geojson.feature.FeatureJSON;
-import org.geotools.geojson.feature.FeatureTypeAttributeIO;
 import org.geotools.geojson.geom.GeometryJSON;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.JSONString;
 import org.json.JSONWriter;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONAware;
 import org.json.simple.JSONStreamAware;
-import org.json.simple.parser.JSONParser;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
-import org.opengis.feature.Feature;
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.GeometryDescriptor;
+import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.geometry.BoundingBox;
 import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import com.google.common.base.Preconditions;
+
 /**
- * This is a workaround to fix the problem found in the CRS generation.
- * For more details about this fix see {@link #writeFeatureCollection(FeatureCollection, Object)}
+ * This is a workaround to fix the problem found in the CRS generation. For more
+ * details about this fix see
+ * {@link #writeFeatureCollection(FeatureCollection, Object)}
  *
  * @author Mauricio Pazos
  */
@@ -72,618 +68,221 @@ final class FeatureJSON2 extends FeatureJSON {
 
     private static final Log LOG = LogFactory.getLog(FeatureJSON2.class.getPackage().getName());
 
-    GeometryJSON gjson;
-    SimpleFeatureType featureType;
-    AttributeIO attio;
-    boolean encodeFeatureBounds = false;
-    boolean encodeFeatureCollectionBounds = false;
-    boolean encodeFeatureCRS = false;
-    boolean encodeFeatureCollectionCRS = false;
-    boolean encodeNullValues = false;
+    private GeometryJSON gjson;
 
     public FeatureJSON2() {
         this(new GeometryJSON());
     }
 
     public FeatureJSON2(GeometryJSON gjson) {
+        super(gjson);
         this.gjson = gjson;
-        attio = new DefaultAttributeIO();
     }
 
     /**
-     * Sets the target feature type for parsing.
-     * <p>
-     * Setting the target feature type will help the geojson parser determine the type of feature
-     * properties during properties. When the type is not around all properties are returned as
-     * a string.
-     * </p>
-     *
-     * @param featureType The feature type. Parsed features will reference this feature type.
-     */
-    public void setFeatureType(SimpleFeatureType featureType) {
-        this.featureType = featureType;
-        this.attio = new FeatureTypeAttributeIO(featureType);
-    }
-
-    /**
-     * Sets the flag controlling whether feature bounds are encoded.
-     *
-     * @see #isEncodeFeatureBounds()
-     */
-    public void setEncodeFeatureBounds(boolean encodeFeatureBounds) {
-        this.encodeFeatureBounds = encodeFeatureBounds;
-    }
-
-    /**
-     * The flag controlling whether feature bounds are encoded.
-     * <p>
-     * When set each feature object will contain a "bbox" attribute whose value is an array
-     * containing the elements of the bounding box (in x1,y1,x2,y2 order) of the feature
-     * </p>
-     */
-    public boolean isEncodeFeatureBounds() {
-        return encodeFeatureBounds;
-    }
-
-    /**
-     * Sets the flag controlling whether feature collection bounds are encoded.
-     *
-     * @see #isEncodeFeatureCollectionBounds()
-     */
-    public void setEncodeFeatureCollectionBounds(boolean encodeFeatureCollectionBounds) {
-        this.encodeFeatureCollectionBounds = encodeFeatureCollectionBounds;
-    }
-
-    /**
-     * The flag controlling whether feature collection bounds are encoded.
-     * <p>
-     * When set the feature collection object will contain a "bbox" attribute whose value is an
-     * array containing elements of the bounding box (in x1,y1,x2,y2 order) of the feature
-     * collection.
-     * </p>
-     */
-    public boolean isEncodeFeatureCollectionBounds() {
-        return encodeFeatureCollectionBounds;
-    }
-
-    /**
-     * Sets the flag controlling whether feature coordinate reference systems are encoded.
-     *
-     * @see #isEncodeFeatureCRS()
-     */
-    public void setEncodeFeatureCRS(boolean encodeFeatureCRS) {
-        this.encodeFeatureCRS = encodeFeatureCRS;
-    }
-
-    /**
-     * The flag controlling whether feature coordinate reference systems are encoded.
-     * <p>
-     * When set each feature object will contain a "crs" attribute describing the
-     * coordinate reference system of the feature.
-     * </p>
-     *
-     */
-    public boolean isEncodeFeatureCRS() {
-        return encodeFeatureCRS;
-    }
-
-    /**
-     * Sets the flag controlling whether feature collection coordinate reference systems are encoded.
-     *
-     * @see #isEncodeFeatureCollectionCRS()
-     */
-    public void setEncodeFeatureCollectionCRS(boolean encodeFeatureCollectionCRS) {
-        this.encodeFeatureCollectionCRS = encodeFeatureCollectionCRS;
-    }
-
-    /**
-     * The flag controlling whether feature collection coordinate reference systems are encoded.
-     * <p>
-     * When set the feature collection object will contain a "crs" attribute describing the
-     * coordinate reference system of the feature collection.
-     * </p>
-     */
-    public boolean isEncodeFeatureCollectionCRS() {
-        return encodeFeatureCollectionCRS;
-    }
-
-    /**
-     * Sets the flag controlling whether properties with null values are encoded.
-     *
-     * @see #isEncodeNullValues()
-     */
-    public void setEncodeNullValues(boolean encodeNullValues) {
-        this.encodeNullValues = encodeNullValues;
-    }
-
-    /**
-     * The flag controlling whether properties with null values are encoded.
-     * <p>
-     * When set, properties with null values are encoded as null in the GeoJSON document.
-     * </p>
-     */
-    public boolean isEncodeNullValues() {
-        return encodeNullValues;
-    }
-
-    /**
-     * Writes a feature as GeoJSON.
-     *
-     * @param feature The feature.
-     * @param output The output. See {@link GeoJSONUtil#toWriter(Object)} for details.
-     */
-    public void writeFeature(SimpleFeature feature, Object output) throws IOException {
-        GeoJSONUtil.encode(new FeatureEncoder(feature).toJSONString(), output);
-    }
-
-    /**
-     * Writes a feature as GeoJSON.
-     * <p>
-     * This method calls through to {@link #writeFeature(FeatureCollection, Object)}
-     * </p>
-     * @param feature The feature.
-     * @param output The output stream.
-     */
-    public void writeFeature(SimpleFeature feature, OutputStream output) throws IOException {
-        writeFeature(feature, (Object)output);
-    }
-
-    /**
-     * Writes a feature as GeoJSON returning the result as a string.
-     *
-     * @param geometry The geometry.
-     *
-     * @return The geometry encoded as GeoJSON
-     */
-    public String toString(SimpleFeature feature) throws IOException {
-        StringWriter w = new StringWriter();
-        writeFeature(feature, w);
-        return w.toString();
-    }
-
-    /**
-     * Reads a feature from GeoJSON.
-     *
-     * @param input The input. See {@link GeoJSONUtil#toReader(Object)} for details.
-     * @return The feature.
-     *
-     * @throws IOException In the event of a parsing error or if the input json is invalid.
-     */
-    public SimpleFeature readFeature(Object input) throws IOException {
-        return GeoJSONUtil.parse(new FeatureHandler(
-            featureType != null ? new SimpleFeatureBuilder(featureType): null, attio
-        ), input, false);
-    }
-
-    /**
-     * Reads a feature from GeoJSON.
-     * <p>
-     * This method calls through to {@link #readFeature(Object)}
-     * </p>
-     * @param input The input stream.
-     * @return The feature.
-     *
-     * @throws IOException In the event of a parsing error or if the input json is invalid.
-     */
-    public SimpleFeature readFeature(InputStream input) throws IOException {
-        return readFeature((Object)input);
-    }
-  /**
-   * REDEFINED
-   * Writes a feature collection as GeoJSON.
-   *
-   * @param features The feature collection.
-   * @param output The output. See {@link GeoJSONUtil#toWriter(Object)} for details.
-   */
-  public void writeFeatureCollection(FeatureCollection features, Object output) throws IOException {
-      LinkedHashMap<String, Object> obj = new LinkedHashMap<String, Object> ();
-      obj.put("type", "FeatureCollection");
-      if (encodeFeatureCollectionBounds || encodeFeatureCollectionCRS) {
-
-          final ReferencedEnvelope bounds = features.getBounds();
-
-          if (encodeFeatureCollectionBounds) {
-
-              obj.put("bbox", new JSONStreamAware() {
-
-                  public void writeJSONString(Writer out) throws IOException {
-                      JSONArray.writeJSONString(Arrays.asList(bounds.getMinX(),
-                              bounds.getMinY(),bounds.getMaxX(),bounds.getMaxY()), out);
-                  }
-              });
-          }
-// 			This return the crs present in the store it is necessary the crs present in the feature collection's schema
-//          if (encodeFeatureCollectionCRS) {
-//              obj.put("crs", createCRS(bounds.getCoordinateReferenceSystem()));
-//          }
-			if (encodeFeatureCollectionCRS) {
-				CoordinateReferenceSystem coordinateReferenceSystem = features.getSchema().getCoordinateReferenceSystem();
-				if(coordinateReferenceSystem != null) // FIXME have a look at this
-					obj.put("crs", createCRS(coordinateReferenceSystem));
-			}
-
-      }
-      obj.put("features", new FeatureCollectionEncoder(features, gjson));
-      GeoJSONUtil.encode(obj, output);
-  }
-
-    /**
-     * Writes a feature collection as GeoJSON.
-     * <p>
-     * This method calls through to {@link #writeFeatureCollection(FeatureCollection, Object)}
-     * </p>
-     * @param features The feature collection.
-     * @param output The output stream to write to.
-     */
-    public void writeFeatureCollection(FeatureCollection features, OutputStream output) throws IOException {
-        writeFeatureCollection(features, (Object)output);
-    }
-
-    /**
-     * Reads a feature collection from GeoJSON.
-     * <p>
-     * Warning that this method will load the entire feature collection into memory. For large
-     * feature collections {@link #streamFeatureCollection(Object)} should be used.
-     * </p>
-     *
-     * @param input The input. See {@link GeoJSONUtil#toReader(Object)} for details.
-     * @return The feature collection.
-     *
-     * @throws IOException In the event of a parsing error or if the input json is invalid.
-     */
-//    public FeatureCollection readFeatureCollection(Object input) throws IOException {
-//    	DefaultFeatureCollection features = new DefaultFeatureCollection(null, null);
-//        FeatureCollectionIterator it = (FeatureCollectionIterator) streamFeatureCollection(input);
-//        while(it.hasNext()) {
-//            features.add(it.next());
-//        }
-//
-//        //check for the case of a crs specified post features in the json
-//        if (features.getSchema().getCoordinateReferenceSystem() == null
-//                && it.getHandler().getCRS() != null ) {
-//            try {
-//                features = new ForceCoordinateSystemFeatureResults(features, it.getHandler().getCRS());
-//            } catch (SchemaException e) {
-//                throw (IOException) new IOException().initCause(e);
-//            }
-//        }
-//        return features;
-//    }
-
-    /**
-     * Reads a feature collection from GeoJSON.
-     * <p>
-     * Warning that this method will load the entire feature collection into memory. For large
-     * feature collections {@link #streamFeatureCollection(Object)} should be used.
-     * </p>
-     * <p>
-     * This method calls through to {@link #readFeatureCollection(Object)}.
-     * </p>
-     *
-     * @param input The input stream.
-     * @return The feature collection.
-     *
-     * @throws IOException In the event of a parsing error or if the input json is invalid.
-     */
-    public FeatureCollection readFeatureCollection(InputStream input) throws IOException {
-        return readFeatureCollection((Object)input);
-    }
-
-    /**
-     * Reads a feature collection from GeoJSON streaming back the contents via an iterator.
-     *
-     * @param input The input. See {@link GeoJSONUtil#toReader(Object)} for details.
-     *
-     * @return A feature iterator.
-     *
-     * @throws IOException In the event of a parsing error or if the input json is invalid.
-     */
-    public FeatureIterator<SimpleFeature> streamFeatureCollection(Object input) throws IOException {
-        return new FeatureCollectionIterator(input);
-    }
-
-    /**
-     * Writes a feature collection as GeoJSON returning the result as a string.
+     * Override to encode the CRS from the feature collection schema instead of its
+     * bounds, in case bounds is {@code null}, but the CRS still needs to be encoded
      *
      * @param features The feature collection.
-     *
-     * @return The feature collection encoded as GeoJSON
+     * @param output   The output. See {@link GeoJSONUtil#toWriter(Object)} for
+     *                 details.
      */
-    public String toString(FeatureCollection features) throws IOException {
-        StringWriter w = new StringWriter();
-        writeFeatureCollection(features, w);
-        return w.toString();
+    @SuppressWarnings("rawtypes")
+    public @Override void writeFeatureCollection(FeatureCollection features, Object output) throws IOException {
+        Preconditions.checkArgument(features instanceof SimpleFeatureCollection);
+        LinkedHashMap<String, Object> obj = new LinkedHashMap<String, Object>();
+        obj.put("type", "FeatureCollection");
+        final ReferencedEnvelope bounds = features.getBounds();
+
+        if (bounds != null && isEncodeFeatureCollectionBounds()) {
+            obj.put("bbox", new JSONStreamAware() {
+                public void writeJSONString(Writer out) throws IOException {
+                    JSONArray.writeJSONString(
+                            Arrays.asList(bounds.getMinX(), bounds.getMinY(), bounds.getMaxX(), bounds.getMaxY()), out);
+                }
+            });
+        }
+        CoordinateReferenceSystem crs = features.getSchema().getCoordinateReferenceSystem();
+        if (crs != null && (isEncodeFeatureCollectionCRS() || isStandardCRS(crs))) {
+            obj.put("crs", toMap(crs));
+        }
+
+        obj.put("features", new FeatureCollectionEncoder((SimpleFeatureCollection) features));
+        GeoJSONUtil.encode(obj, output);
     }
 
     /**
-     * Writes a coordinate reference system as GeoJSON.
+     * Check for GeoJSON default (EPSG:4326 in easting/northing order).
      *
-     * @param crs The coordinate reference system.
-     * @param output The output. See {@link GeoJSONUtil#toWriter(Object)} for details.
+     * @return true if crs is the default for GeoJSON
+     * @throws NoSuchAuthorityCodeException
+     * @throws FactoryException
      */
-    public void writeCRS(CoordinateReferenceSystem crs, Object output) throws IOException {
-        GeoJSONUtil.encode(createCRS(crs), output);
+    private boolean isStandardCRS(CoordinateReferenceSystem crs) {
+        if (crs == null) {
+            return true;
+        }
+        try {
+            boolean longitudeFirst = true;
+            CoordinateReferenceSystem standardCRS = CRS.decode("EPSG:4326", longitudeFirst);
+            return CRS.equalsIgnoreMetadata(crs, standardCRS);
+        } catch (Exception unexpected) {
+            return false; // no way to tell
+        }
     }
 
     /**
-     * Writes a coordinate reference system as GeoJSON.
-     * <p>
-     * This method calls through to {@link #writeCRS(CoordinateReferenceSystem, Object)}
-     * </p>
-     * @param crs The coordinate reference system.
-     * @param output The output stream.
+     * Create a properties map for the provided crs.
+     *
+     * @param crs CoordinateReferenceSystem or null for default
+     * @return properties map naming crs identifier
+     * @throws IOException
      */
-    public void writeCRS(CoordinateReferenceSystem crs, OutputStream output) throws IOException {
-        writeCRS(crs, (Object) output);
-    }
-
-    Map<String,Object> createCRS(CoordinateReferenceSystem crs) throws IOException {
-        Map<String,Object> obj = new LinkedHashMap<String,Object>();
+    private Map<String, Object> toMap(CoordinateReferenceSystem crs) throws IOException {
+        Map<String, Object> obj = new LinkedHashMap<String, Object>();
         obj.put("type", "name");
 
-        Map<String,Object> props = new LinkedHashMap<String, Object>();
-        try {
-            props.put("name", CRS.lookupIdentifier(crs, true));
+        Map<String, Object> props = new LinkedHashMap<String, Object>();
+        if (crs == null) {
+            props.put("name", "EPSG:4326");
+        } else {
+            try {
+                String identifier = CRS.lookupIdentifier(crs, true);
+                props.put("name", identifier);
+            } catch (FactoryException e) {
+                throw (IOException) new IOException("Error looking up crs identifier").initCause(e);
+            }
         }
-        catch (FactoryException e) {
-            throw (IOException) new IOException("Error looking up crs identifier").initCause(e);
-        }
-
         obj.put("properties", props);
         return obj;
     }
 
-    /**
-     * Reads a coordinate reference system from GeoJSON.
-     * <p>
-     * This method only handles named coordinate reference system objects.
-     * </p>
-     *
-     * @param input The input. See {@link GeoJSONUtil#toReader(Object)} for details.
-     * @return The coordinate reference system.
-     *
-     * @throws IOException In the event of a parsing error or if the input json is invalid.
-     */
-    public CoordinateReferenceSystem readCRS(Object input) throws IOException {
-        return GeoJSONUtil.parse(new CRSHandler(), input, false);
-    }
+    private class FeatureEncoder implements JSONStreamAware {
 
-    /**
-     * Reads a coordinate reference system from GeoJSON.
-     * <p>
-     * This method only handles named coordinate reference system objects.
-     * </p>
-     * <p>
-     * This method calls through to {@link #readCRS(Object)}
-     * </p>
-     *
-     * @param input The input. See {@link GeoJSONUtil#toReader(Object)} for details.
-     * @return The coordinate reference system.
-     *
-     * @throws IOException In the event of a parsing error or if the input json is invalid.
-     */
-    public CoordinateReferenceSystem readCRS(InputStream input) throws IOException {
-        return readCRS((Object)input);
-    }
-
-    /**
-     * Writes a coordinate reference system as GeoJSON returning the result as a string.
-     *
-     * @param crs The coordinate reference system.
-     *
-     * @return The coordinate reference system encoded as GeoJSON
-     */
-    public String toString(CoordinateReferenceSystem crs) throws IOException {
-        StringWriter writer = new StringWriter();
-        writeCRS(crs, writer);
-        return writer.toString();
-   }
-
-    class FeatureEncoder implements JSONAware {
-
-        SimpleFeatureType featureType;
-        SimpleFeature feature;
-
-        public FeatureEncoder(SimpleFeature feature) {
-            this(feature.getType());
-            this.feature = feature;
-        }
+        private SimpleFeatureType featureType;
+        private SimpleFeature feature;
 
         public FeatureEncoder(SimpleFeatureType featureType) {
             this.featureType = featureType;
         }
 
-        public String toJSONString(SimpleFeature feature) {
+        public FeatureEncoder feature(SimpleFeature feature) {
+            this.feature = feature;
+            return this;
+        }
+
+        public @Override void writeJSONString(Writer out) throws IOException {
             try {
-            JSONObject ret = new JSONObject();
-            ret.put("type", "Feature");
-            //crs
-            if (encodeFeatureCRS) {
-                CoordinateReferenceSystem crs =
-                    feature.getFeatureType().getCoordinateReferenceSystem();
-                if (crs != null) {
-                    try {
-                        ret.put("crs", FeatureJSON2.this.toString(crs));
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
-            //bounding box
-            if (encodeFeatureBounds) {
-                BoundingBox bbox = feature.getBounds();
-                ret.put("bbox", gjson.toString(bbox));
-            }
-
-            //geometry
-            if (feature.getDefaultGeometry() != null) {
-                JSONObject geom = new JSONObject(gjson.toString((Geometry) feature.getDefaultGeometry()));
-                ret.put("geometry", geom);
-            }
-
-            //properties
-            int gindex = featureType.getGeometryDescriptor() != null ?
-                    featureType.indexOf(featureType.getGeometryDescriptor().getLocalName()) :
-                    -1;
-
-            JSONObject jsProp = new JSONObject();
-
-            boolean attributesWritten = false;
-            for (int i = 0; i < featureType.getAttributeCount(); i++) {
-                AttributeDescriptor ad = featureType.getDescriptor(i);
-
-                // skip the default geometry, it's already encoded
-                if (i == gindex) {
-                    continue;
-                }
-
-                Object value = feature.getAttribute(i);
-
-                if (!encodeNullValues && value == null) {
-                    //skip
-                    continue;
-                }
-
-                attributesWritten = true;
-
-                // handle special types separately, everything else as a string or literal
-                if (value instanceof Envelope) {
-                    jsProp.put(ad.getLocalName(), gjson.toString((Envelope)value));
-                } else if (value instanceof BoundingBox) {
-                    jsProp.put(ad.getLocalName(), gjson.toString((BoundingBox)value));
-                } else if (value instanceof Geometry) {
-                    jsProp.put(ad.getLocalName(), gjson.toString((Geometry) value));
-                } else {
-                    jsProp.put(ad.getLocalName(), value);
-                }
-            }
-
-            ret.put("properties", jsProp);
-
-            ret.put("id", feature.getID());
-
-            return ret.toString(4);
-
+                writeJSON(new JSONWriter(out));
             } catch (JSONException e) {
-                LOG.error("Unable to encode the feature into GeoJSON, returning an empty object.");
-                return "{}";
+                throw new IOException(e);
             }
         }
 
-        public String toJSONString() {
-            return toJSONString(feature);
+        public void writeJSON(JSONWriter writer) throws IOException, JSONException {
+            writer.object();
+            writer.key("type").value("Feature");
+            writer.key("id").value(feature.getID());
+            writeCrs(writer);
+            writeBounds(writer);
+            writeGeometry(writer);
+            writeProperties(writer);
+            writer.endObject();
+        }
+
+        private void writeProperties(JSONWriter writer) throws JSONException {
+            writer.key("properties");
+            writer.object();
+
+            GeometryDescriptor defaultGeometry = featureType.getGeometryDescriptor();
+            Predicate<Property> predicate = p -> !p.getDescriptor().getName().equals(defaultGeometry.getName());
+
+            for (Property p : feature.getProperties()) {
+                if (predicate.test(p)) {
+                    writeProperty(writer, p);
+                }
+            }
+
+            writer.endObject();
+        }
+
+        private void writeProperty(JSONWriter writer, Property p) throws JSONException {
+            final Object value = p.getValue();
+            if (value != null || isEncodeNullValues()) {
+                final PropertyDescriptor descriptor = p.getDescriptor();
+                final String propertyName = descriptor.getName().getLocalPart();
+
+                // handle special types separately, everything else as a string or literal (is
+                // it?)
+                if (value instanceof Envelope) {
+                    writeVerbatimValue(writer, propertyName, FeatureJSON2.this.gjson.toString((Envelope) value));
+                } else if (value instanceof BoundingBox) {
+                    writeVerbatimValue(writer, propertyName, FeatureJSON2.this.gjson.toString((BoundingBox) value));
+                } else if (value instanceof Geometry) {
+                    writeVerbatimValue(writer, propertyName, FeatureJSON2.this.gjson.toString((Geometry) value));
+                } else if (value != null || isEncodeNullValues()) {
+                    writer.key(propertyName).value(value);
+                }
+            }
+        }
+
+        private void writeGeometry(JSONWriter writer) throws JSONException {
+            Geometry geometry = (Geometry) feature.getDefaultGeometry();
+            // note: this is still too much for streaming, gjson.toString(geometry) builds a
+            // Map and then converts to String
+            String value = geometry == null ? null : FeatureJSON2.this.gjson.toString(geometry);
+            writeVerbatimValue(writer, "geometry", value);
+        }
+
+        private void writeBounds(JSONWriter writer) throws JSONException {
+            if (isEncodeFeatureBounds()) {
+                BoundingBox bbox = feature.getBounds();
+                String value = bbox == null ? null : FeatureJSON2.this.gjson.toString(bbox);
+                writeVerbatimValue(writer, "bbox", value);
+            }
+        }
+
+        private void writeCrs(JSONWriter writer) throws IOException, JSONException {
+            if (isEncodeFeatureCRS()) {
+                CoordinateReferenceSystem crs = featureType.getCoordinateReferenceSystem();
+                writeVerbatimValue(writer, "crs", crs == null ? null : FeatureJSON2.this.toString(crs));
+            }
+        }
+
+        private void writeVerbatimValue(JSONWriter writer, String key, @Nullable String value) throws JSONException {
+            if (value != null) {
+                JSONString verbatim = () -> value;
+                writer.key(key).value(verbatim);
+            } else if (isEncodeNullValues()) {
+                writer.key(key).value(null);
+            }
         }
     }
 
-    class FeatureCollectionEncoder implements JSONStreamAware {
+    private class FeatureCollectionEncoder implements JSONStreamAware {
 
-        FeatureCollection features;
-        GeometryJSON gjson;
+        private SimpleFeatureCollection features;
 
-        public FeatureCollectionEncoder(FeatureCollection features, GeometryJSON gjson) {
+        public FeatureCollectionEncoder(SimpleFeatureCollection features) {
             this.features = features;
-            this.gjson = gjson;
         }
 
-        public void writeJSONString(Writer out) throws IOException {
+        public @Override void writeJSONString(Writer out) throws IOException {
             SimpleFeatureType ft = (SimpleFeatureType) features.getSchema();
             FeatureEncoder featureEncoder = new FeatureEncoder(ft);
-            JSONWriter jsRet = new JSONWriter(out);
-            try {
-                jsRet.array();
-                FeatureIterator i = features.features();
-                try {
-                    if (i == null) {
-                        jsRet.endArray();
-                        return;
-                    }
-                    while (i.hasNext()) {
-                        Feature f = i.next();
-                        try {
-                            if (f instanceof SimpleFeature) {
-                                jsRet.value(new JSONObject(featureEncoder.toJSONString((SimpleFeature) f)));
-                            }
-                        } catch (NullPointerException e) {
-                            LOG.error("Unable to convert feature into JSON, skipping it. " + e.getMessage());
-                        }
-                    }
-                }  catch (Throwable e) {
-                    LOG.error("Unable to convert the featurecollection into JSON: " + e.getMessage());
-                    LOG.error("Ignoring ...");
-                }finally {
-                    if (i != null) {
-                        i.close();
-                    }
-                    jsRet.endArray();
+            JSONWriter writer = new JSONWriter(out);
+            try (FeatureIterator<SimpleFeature> featureIterator = features.features()) {
+                writer.array();
+                while (featureIterator.hasNext()) {
+                    featureEncoder.feature(featureIterator.next()).writeJSON(writer);
                 }
-
+                writer.endArray();
             } catch (JSONException e) {
-                LOG.error("Unable to generate JSON: " + e.getMessage());
+                String msg = "Unable to generate JSON: " + e.getMessage();
+                LOG.error(msg);
+                throw new IOException(msg, e);
             }
         }
     }
-
-    class FeatureCollectionIterator implements FeatureIterator<SimpleFeature> {
-
-        Reader reader;
-        FeatureCollectionHandler handler;
-        JSONParser parser;
-        SimpleFeature next;
-
-        FeatureCollectionIterator(Object input) {
-            try {
-                this.reader = GeoJSONUtil.toReader(input);
-            }
-            catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            this.parser = new JSONParser();
-        }
-
-        FeatureCollectionHandler getHandler() {
-            return handler;
-        }
-
-        public boolean hasNext() {
-            if (next != null) {
-                return true;
-            }
-
-            if (handler == null) {
-                handler = new FeatureCollectionHandler(featureType,  attio);
-                //handler = GeoJSONUtil.trace(handler, IFeatureCollectionHandler.class);
-            }
-            next = readNext();
-            return next != null;
-        }
-
-        public SimpleFeature next() {
-            SimpleFeature feature = next;
-            next = null;
-            return feature;
-        }
-
-        SimpleFeature readNext() {
-            try {
-                parser.parse(reader, handler, true);
-                return handler.getValue();
-            }
-            catch(Exception e) {
-                throw new RuntimeException(e);
-            }
-
-        }
-
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
-
-        public void close() {
-            reader = null;
-            parser = null;
-            handler = null;
-        }
-    }
-
 
 }

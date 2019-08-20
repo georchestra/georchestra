@@ -19,18 +19,26 @@
 
 package org.georchestra.mapfishapp.ws;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.TEXT_HTML;
+
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.Writer;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.net.URL;
-import java.util.Iterator;
+import java.nio.file.Files;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
@@ -43,6 +51,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.commons.configuration.GeorchestraConfiguration;
 import org.georchestra.mapfishapp.ws.upload.FileDescriptor;
+import org.georchestra.mapfishapp.ws.upload.UnsupportedGeofileFormatException;
 import org.georchestra.mapfishapp.ws.upload.UpLoadFileManagement;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.geojson.feature.FeatureJSON;
@@ -52,15 +61,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
@@ -68,6 +80,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterators;
 
 /**
  * This controller is responsible for uploading a geofiles and transform their
@@ -84,11 +99,11 @@ import org.xml.sax.SAXParseException;
  * One of the following implementation can be set:
  *
  * <p>
- * Geotools Implementation </br> expects the following files <lu>
+ * Geotools Implementation </br>
+ * expects the following files <lu>
  * <li>ESRI Shape in zip: shp, shx, prj file are expected</li>
  * <li>kml</li>
- * <li>gml</li>
- * </lu>
+ * <li>gml</li> </lu>
  * </p>
  *
  *
@@ -98,29 +113,44 @@ import org.xml.sax.SAXParseException;
 @Controller
 public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 
-    private static final Log LOG = LogFactory
-            .getLog(UpLoadGeoFileController.class.getPackage().getName());
+    private static final Log LOG = LogFactory.getLog(UpLoadGeoFileController.class.getPackage().getName());
 
     private static final int MEGABYTE = 1048576;
 
     @Autowired
     private GeorchestraConfiguration georConfig;
 
+    // constants configured in the ws-servlet.xml file
+    private String responseCharset;
+    private File tempDirectory;
+    private String docTempDir = "/tmp";
+
+    // for test purposes only
+    private boolean allowFileProtocol;
+
+    /**
+     * For testing
+     */
+    public void setAllowFileProtocol(boolean allow) {
+        this.allowFileProtocol = allow;
+    }
+    
     public void init() {
         if ((georConfig != null) && (georConfig.activated())) {
             File tmpDir = new File(this.docTempDir, "/geoFileUploadsCache");
-            if (! tmpDir.exists()) {
+            if (!tmpDir.exists()) {
                 try {
-                FileUtils.forceMkdir(tmpDir);
+                    FileUtils.forceMkdir(tmpDir);
                 } catch (Exception e) {
                     LOG.error("Unable to create default upload directory, please check configuration", e);
                     // Using default (webapp-provided in ws-servlet.xml)
                     return;
                 }
             }
-            tempDirectory = tmpDir.getAbsolutePath();
+            tempDirectory = tmpDir;
         }
     }
+
     /**
      * Status of the upload process
      *
@@ -146,8 +176,7 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
         ioError {
             @Override
             public String getMessage(final String detail) {
-                return "{\"success\":false, \"error\":\"fileupload_error_ioError\", \"msg\": \""
-                        + detail + "\"}";
+                return "{\"success\":false, \"error\":\"fileupload_error_ioError\", \"msg\": \"" + detail + "\"}";
             }
 
         },
@@ -170,6 +199,13 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
                         + detail + "\"}";
             }
         },
+        unsupportedTargetCRS {
+            @Override
+            public String getMessage(final String detail) {
+                return "{\"success\":false, \"error\":\"fileupload_error_projectionError\", \"msg\": \"Unsupported target Coordinate Reference System: "
+                        + detail + "\"}";
+            }
+        },
         sizeError {
             @Override
             public String getMessage(String detail) {
@@ -189,11 +225,16 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
                 return "{\"success\": \"false\", \"error\":\"fileupload_error_incompleteSHP\", \"msg\": \"incomplete shapefile\"}";
             }
         },
+        unzipError {
+            @Override
+            public String getMessage(final String detail) {
+                return "{\"success\": \"false\", \"error\":\"fileupload_error_zipfile\", \"msg\": \"Error reading zip file\"}";
+            }
+        },
         ready {
             @Override
             public String getMessage(final String detail) {
-                throw new UnsupportedOperationException(
-                        "no message is associated to this status");
+                throw new UnsupportedOperationException("no message is associated to this status");
             }
         };
 
@@ -210,14 +251,6 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 
     }
 
-    // constants configured in the ws-servlet.xml file
-    private String responseCharset;
-    private String tempDirectory;
-    private String docTempDir = "/tmp";
-
-	// for test purposes only
-	boolean allowFileProtocol;
-
     /**
      * The current file that was upload an is in processing
      *
@@ -228,7 +261,7 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
         return new FileDescriptor(fileName);
     }
 
-    public void setTempDirectory(String tempDirectory) {
+    public void setTempDirectory(File tempDirectory) {
         this.tempDirectory = tempDirectory;
     }
 
@@ -253,15 +286,16 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
      * @param response
      * @throws IOException
      */
-    @RequestMapping(value = "/formats", method = RequestMethod.GET)
-    public void formats(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
+    @RequestMapping(value = "/formats", method = RequestMethod.GET, produces = "application/json")
+    public void formats(HttpServletRequest request, //
+            HttpServletResponse response, //
+            @RequestHeader HttpHeaders requestHeaders) throws IOException {
 
         UpLoadFileManagement fileManagement = UpLoadFileManagement.create();
         JSONArray formatList = fileManagement.getFormatListAsJSON();
 
         response.setCharacterEncoding(responseCharset);
-        response.setContentType("application/json");
+        response.setContentType(resolveResponseContentType(requestHeaders).toString());
 
         PrintWriter out = response.getWriter();
         try {
@@ -274,237 +308,267 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
     }
 
     /**
-     * Load the file provide in the request. The content of this file is
-     * returned as a json object. If an CRS is provided the resultant features
-     * will be transformed to that CRS before.
+     * Load the file provided in the request. The content of this file is returned
+     * as a json object. If an CRS is provided the resultant features will be
+     * projected to that CRS before.
      * <p>
      * The file is maintained in a temporal store that will be cleaned when the
      * response has be done.
      * </p>
-     *
-     * @param request
-     *            The expected parameters are geofile (or url) and srs. In case
-     *            a url is provided, the file can be fetched remotely and
-     *            analyzed as if it was posted.
-     *
-     * @param response
-     * @throws IOException
      */
-    @RequestMapping(value = "/togeojson/*", method = RequestMethod.POST)
-    public void toGeoJson(HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+    @RequestMapping(value = "/togeojson", //
+            method = { RequestMethod.POST, RequestMethod.GET }, //
+            produces = "application/json")
+    public void toGeoJsonFromURL(//
+            HttpServletResponse response, //
+            @RequestParam(name = "url", required = true) URL url, //
+            @RequestParam(name = "srs", required = false) String targetSRS, //
+            @RequestHeader HttpHeaders requestHeaders) throws Exception {
 
-        String urlProvided = request.getParameter("url");
-
-        if (!(request instanceof MultipartHttpServletRequest) && StringUtils.isBlank(urlProvided)) {
-            final String msg = "Multipart form or Post form with file parameter expected";
-            LOG.fatal(msg);
-            throw new IOException(msg);
+        LOG.debug(String.format("toGeoJsonFromURL(%s, %s)", url, targetSRS));
+        MediaType forceResponseType = resolveResponseContentType(requestHeaders);
+        if (!validateRemoteURLProtocol(url)) {
+            writeErrorResponse(response, Status.unsupportedProtocol, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    forceResponseType);
+            return;
         }
 
-        String workDirectory = null;
+        final File workDirectory = makeDirectoryForRequest(this.tempDirectory);
         try {
-            UpLoadFileManagement fileManagement = UpLoadFileManagement.create();
-            FileDescriptor currentFile = null;
-            MultipartFile upLoadFile = null;
-
-            workDirectory = makeDirectoryForRequest(this.tempDirectory);
-
-            fileManagement.setWorkDirectory(workDirectory);
-
-            // upload file action
-            if (request instanceof MultipartHttpServletRequest) {
-                MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-
-                // create the file descriptor using the original file name which
-                // is in the multipartRequest object
-                Iterator<?> fileNames = multipartRequest.getFileNames();
-                if (!fileNames.hasNext()) {
-                    final String msg = "a file is expected";
-                    LOG.error(msg);
-                    throw new IOException(msg);
-                }
-                String fileName = (String) fileNames.next();
-                upLoadFile = multipartRequest.getFile(fileName);
-                currentFile = createFileDescriptor(upLoadFile
-                        .getOriginalFilename());
-            }
-
-            // download file
-            else if (StringUtils.isNotBlank(urlProvided)) {
-
-                URL toDl = new URL(urlProvided);
-
-				final String protocol = toDl.getProtocol();
-				if ("file".equals(protocol) && this.allowFileProtocol) {
-					LOG.debug("Loading from file " + toDl);
-				} else if (!("http".equals(protocol) || "https".equals(protocol))) {
-					writeErrorResponse(response, Status.unsupportedProtocol,
-							HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-					return;
-				}
-                String tempName = UUID.randomUUID().toString();
-                File destFile = new File(workDirectory, tempName);
-                FileUtils.copyURLToFile(toDl, destFile);
-
-                // naive file detection
-                // the downloaded file should either be a ZIP file or an XML
-                // derivative
-                // at the current state of supported formats (see
-                // FileDescriptor.isValidFormat())
-				String guessedExtension = guessFileTypeExtension(destFile);
-                // if guessedExtension is still blank, give up
-                if (StringUtils.isBlank(guessedExtension)) {
-                    writeErrorResponse(response, Status.unsupportedFormat);
-                    return;
-                }
-
-                File renamedFile = new File(destFile.getAbsoluteFile() + "."
-                        + guessedExtension);
-                FileUtils.moveFile(destFile, renamedFile);
-                currentFile = new FileDescriptor(renamedFile.getCanonicalPath());
-                fileManagement.setFileDescriptor(currentFile);
-                fileManagement.setSaveFile(renamedFile);
-                fileManagement.addFileExtension(guessedExtension);
-                // single file (not zip)
-                if (! "zip".equals(guessedExtension))
-                    fileManagement.addFile(renamedFile);
-
-            }
-
-            // validates the format
-            if (!currentFile.isValidFormat()) {
-                writeErrorResponse(response, Status.unsupportedFormat);
+            Optional<FileDescriptor> downloadedFile = downloadURL(url, workDirectory);
+            if (downloadedFile.isPresent()) {
+                FileDescriptor fileDescriptor = downloadedFile.get();
+                UpLoadFileManagement fileManagement = UpLoadFileManagement.create();
+                fileManagement.setWorkDirectory(workDirectory);
+                fileManagement.setFileDescriptor(fileDescriptor);
+                transformAndSend(fileManagement, targetSRS, response, forceResponseType);
+            } else {
+                writeErrorResponse(response, Status.unsupportedFormat, forceResponseType);
                 return;
             }
-
-            // processes the uploaded || downloaded file
-            Status st = Status.ready;
-
-            // geofile uploaded - in case of downloaded file,
-            // this has already been done.
-            if (upLoadFile != null) {
-                // saves the file in the temporary directory
-                fileManagement.setFileDescriptor(currentFile);
-                fileManagement.save(upLoadFile);
-            }
-
-            // if the uploaded file is a zip file then checks its content
-            if (fileManagement.containsZipFile()) {
-                fileManagement.unzip();
-
-                st = checkGeoFiles(fileManagement);
-                if (st != Status.ok) {
-                    writeErrorResponse(response, st);
-                    return;
-                }
-            }
-
-            // create a CRS object from the srs parameter
-            CoordinateReferenceSystem crs = null;
-            try {
-                final String crsParam = request.getParameter("srs");
-                if ((crsParam != null) && (crsParam.length() > 0)) {
-                    crs = CRS.decode(crsParam);
-                }
-            } catch (NoSuchAuthorityCodeException e) {
-                LOG.error(e.getMessage());
-                throw new IllegalArgumentException(e);
-            } catch (FactoryException e) {
-                LOG.error(e.getMessage());
-                throw new IOException(e);
-            }
-
-            // retrieves the feature collection and write the response
-            writeOKResponse(response, fileManagement, crs);
-
-        } catch (IOException e) {
-            LOG.error(e);
-            throw new IOException(e);
-        } catch (ProjectionException e) {
-            LOG.error(e.getMessage());
-            throw e;
-        }
-
-        finally {
-            if (workDirectory != null)
-                cleanTemporalDirectory(workDirectory);
+        } finally {
+            cleanTemporalDirectory(workDirectory);
         }
     }
 
-	// naive file detection heuristics
-	// the downloaded file should either be a ZIP file, a json file, or an XML
-	// derivative
-	// at the current state of supported formats (seeFileDescriptor.isValidFormat())
-	private String guessFileTypeExtension(File file) throws Exception {
-		try {
-			ZipFile zif = new ZipFile(file.getCanonicalPath());
-			zif.close();
-			return "zip";
-		} catch (ZipException e) {
-			LOG.debug("provided file is not a ZIP file");
-		}
-		String xmlExtension = tryGetXmlExtension(file);
-		if (!StringUtils.isBlank(xmlExtension)) {
-			return xmlExtension;
-		}
-		if (isGeoJSON(file)) {
-			return "geojson";
-		}
-		return null;
-	}
+    private boolean validateRemoteURLProtocol(URL url) {
+        final String protocol = url.getProtocol();
+        if ("file".equals(protocol) && this.allowFileProtocol) {
+            LOG.debug("Loading from file " + url);
+            return true;
+        }
+        return "http".equals(protocol) || "https".equals(protocol);
+    }
 
-	private boolean isGeoJSON(File file) {
-		FeatureJSON fjson = new FeatureJSON();
-		try {
-			FeatureIterator<SimpleFeature> featureIterator = fjson.streamFeatureCollection(file);
-			featureIterator.hasNext();
-			featureIterator.close();
-			return true;
-		} catch (Exception e) {
-			LOG.debug("provided file is not a GeoJSON file: " + e.getMessage());
-		}
-		return false;
-	}
+    /**
+     * Load the file provided in the request body. The content of this file is
+     * returned as a json object. If an CRS is provided the resultant features will
+     * be projected to that CRS before.
+     * <p>
+     * The file is maintained in a temporal store that will be cleaned when the
+     * response has be done.
+     * </p>
+     */
+    @RequestMapping(value = "/togeojson", //
+            method = RequestMethod.POST, //
+            params = { "!url" }, //
+            produces = "application/json")
+    public void toGeoJsonFromMultipart(//
+            HttpServletResponse response, //
+            @RequestParam(name = "geofile", required = true) MultipartFile geofile,
+            @RequestParam(name = "srs", required = false) String targetSRS, //
+            @RequestHeader HttpHeaders requestHeaders) throws Exception {
 
-	private String tryGetXmlExtension(File file) throws ParserConfigurationException, SAXException, IOException {
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder;
+        LOG.debug(String.format("toGeoJsonFromMultipart(%s, %s)", geofile.getOriginalFilename(), targetSRS));
+        MediaType forceResponseType = resolveResponseContentType(requestHeaders);
 
-		try {
-			builder = factory.newDocumentBuilder();
-			Document doc = builder.parse(file);
+        if (geofile.getOriginalFilename().isEmpty()) {
+            throw new IOException("a file is expected");
+        }
 
-			// manages messed-up xml documents, selects the first
-			// significant element (i.e. which is not a comment).
-			NodeList lst = doc.getChildNodes();
-			String rootElement = "";
-			int i = 0;
-			do {
-				if (i < lst.getLength())
-					rootElement = lst.item(i++).getNodeName();
-				// last element (unlikely to happen):
-				// and we only found #comment elements
-				else
-					rootElement = "";
-			} while ("#comment".equals(rootElement));
+        final File workDirectory = makeDirectoryForRequest(this.tempDirectory);
+        try {
+            UpLoadFileManagement fileManagement = UpLoadFileManagement.create();
+            fileManagement.setWorkDirectory(workDirectory);
+            FileDescriptor currentFile = createFileDescriptor(geofile.getOriginalFilename());
+            // validates the format
+            if (!currentFile.isValidFormat()) {
+                writeErrorResponse(response, Status.unsupportedFormat, forceResponseType);
+                return;
+            }
+            fileManagement.setFileDescriptor(currentFile);
+            fileManagement.save(geofile);
 
-			if ("osm".equals(rootElement)) {
-				return "osm";
-			} else if ("kml".equals(rootElement)) {
-				return "kml";
-			} else if ("gpx".equals(rootElement)) {
-				return "gpx";
-			} else if (rootElement.contains("FeatureCollection")) {
-				return "gml";
-			}
-		} catch (SAXParseException e) {
-			LOG.debug("provided file is not an XML file either, giving up.");
-		}
-		return null;
-	}
+            transformAndSend(fileManagement, targetSRS, response, forceResponseType);
+        } finally {
+            cleanTemporalDirectory(workDirectory);
+        }
+    }
 
-	/**
+    private MediaType resolveResponseContentType(HttpHeaders requestHeaders) {
+        // Workaround for the fact that the Ext.js form submission does not allow to
+        // specify the Accept request header, and returning application/json when it
+        // wasn't requested makes the response not being parsed and throwing a
+        // javascript error. It asks for text/html instead.
+        List<MediaType> accept = requestHeaders == null ? Collections.emptyList() : requestHeaders.getAccept();
+        boolean jsonRequested = accept.stream().anyMatch(APPLICATION_JSON::includes);
+        boolean htmlRequested = accept.stream().anyMatch(TEXT_HTML::includes);
+
+        MediaType forceResponseType = htmlRequested && !jsonRequested ? TEXT_HTML : APPLICATION_JSON;
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(
+                    String.format("MediaType requested: %s, returning: %s, text/html requested: %s, json requested: %s",
+                            accept, forceResponseType, htmlRequested, jsonRequested));
+        }
+        return forceResponseType;
+    }
+
+    private Optional<FileDescriptor> downloadURL(URL toDl, final File workDirectory) throws IOException, Exception {
+        FileDescriptor descriptor = null;
+        String tempName = UUID.randomUUID().toString();
+        File destFile = new File(workDirectory, tempName);
+        FileUtils.copyURLToFile(toDl, destFile);
+
+        // naive file detection the downloaded file should either be a ZIP file or an
+        // XML derivative at the current state of supported formats (see
+        // FileDescriptor.isValidFormat())
+        String guessedExtension = guessFileTypeExtension(destFile);
+        // if guessedExtension is still blank, give up
+        if (!StringUtils.isBlank(guessedExtension)) {
+            File file = new File(destFile.getAbsoluteFile() + "." + guessedExtension);
+            FileUtils.moveFile(destFile, file);
+            FileDescriptor fd = new FileDescriptor(file.getAbsolutePath());
+            if (fd.isValidFormat()) {
+                fd.savedFile = file;
+                fd.listOfFiles.add(file.getAbsolutePath());
+                descriptor = fd;
+            }
+        }
+        return Optional.ofNullable(descriptor);
+    }
+
+    private void transformAndSend(UpLoadFileManagement fileManagement, @Nullable String targetSRS,
+            HttpServletResponse response, MediaType forceResponseType) {
+
+        // processes the uploaded || downloaded file
+        Status st = Status.ready;
+
+        // if the uploaded file is a zip file then checks its content
+        if (fileManagement.containsZipFile()) {
+            try {
+                fileManagement.unzip();
+            } catch (IOException e) {
+                writeErrorResponse(response, Status.unzipError, forceResponseType);
+                return;
+            }
+            st = checkGeoFiles(fileManagement);
+            if (st != Status.ok) {
+                writeErrorResponse(response, st, forceResponseType);
+                return;
+            }
+        }
+
+        // create a CRS object from the srs parameter
+        @Nullable
+        CoordinateReferenceSystem crs;
+        try {
+            crs = parseCRS(targetSRS);
+        } catch (IOException e) {
+            writeErrorResponse(response, Status.unsupportedTargetCRS, targetSRS, HttpStatus.BAD_REQUEST.value(),
+                    forceResponseType);
+            return;
+        }
+
+        // retrieves the feature collection and write the response
+        writeOKResponse(response, fileManagement, crs, forceResponseType);
+    }
+
+    private @Nullable CoordinateReferenceSystem parseCRS(String targetSRS) throws IOException {
+        CoordinateReferenceSystem crs = null;
+        try {
+            if (!StringUtils.isEmpty(targetSRS)) {
+                crs = CRS.decode(targetSRS);
+            }
+        } catch (FactoryException e) {
+            LOG.error(e.getMessage());
+            throw new IOException(e);
+        }
+        return crs;
+    }
+
+    // naive file detection heuristics
+    // the downloaded file should either be a ZIP file, a json file, or an XML
+    // derivative
+    // at the current state of supported formats (seeFileDescriptor.isValidFormat())
+    private String guessFileTypeExtension(File file) throws Exception {
+        try {
+            ZipFile zif = new ZipFile(file.getCanonicalPath());
+            zif.close();
+            return "zip";
+        } catch (ZipException e) {
+            LOG.debug("provided file is not a ZIP file");
+        }
+        String xmlExtension = tryGetXmlExtension(file);
+        if (!StringUtils.isBlank(xmlExtension)) {
+            return xmlExtension;
+        }
+        if (isGeoJSON(file)) {
+            return "geojson";
+        }
+        return null;
+    }
+
+    private boolean isGeoJSON(File file) {
+        FeatureJSON fjson = new FeatureJSON();
+        try {
+            FeatureIterator<SimpleFeature> featureIterator = fjson.streamFeatureCollection(file);
+            featureIterator.hasNext();
+            featureIterator.close();
+            return true;
+        } catch (Exception e) {
+            LOG.debug("provided file is not a GeoJSON file: " + e.getMessage());
+        }
+        return false;
+    }
+
+    private String tryGetXmlExtension(File file) throws ParserConfigurationException, SAXException, IOException {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder;
+
+        try {
+            builder = factory.newDocumentBuilder();
+            Document doc = builder.parse(file);
+
+            // manages messed-up xml documents, selects the first
+            // significant element (i.e. which is not a comment).
+            NodeList lst = doc.getChildNodes();
+            String rootElement = "";
+            int i = 0;
+            do {
+                if (i < lst.getLength())
+                    rootElement = lst.item(i++).getNodeName();
+                // last element (unlikely to happen):
+                // and we only found #comment elements
+                else
+                    rootElement = "";
+            } while ("#comment".equals(rootElement));
+
+            if ("osm".equals(rootElement)) {
+                return "osm";
+            } else if ("kml".equals(rootElement)) {
+                return "kml";
+            } else if ("gpx".equals(rootElement)) {
+                return "gpx";
+            } else if (rootElement.contains("FeatureCollection")) {
+                return "gml";
+            }
+        } catch (SAXParseException e) {
+            LOG.debug("provided file is not an XML file either, giving up.");
+        }
+        return null;
+    }
+
+    /**
      * Write the features in the response object.
      * <p>
      * The output to build is like to
@@ -515,45 +579,54 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
      * @param response
      * @param fileManagement
      * @param crs
+     * @param forceResponseType
      *
      * @throws Exception
      */
-    private void writeOKResponse(final HttpServletResponse response,
-            final UpLoadFileManagement fileManagement,
-            final CoordinateReferenceSystem crs) throws Exception {
+    private void writeOKResponse(final HttpServletResponse response, final UpLoadFileManagement fileManagement,
+            final CoordinateReferenceSystem crs, MediaType forceResponseType) {
 
-        StringWriter json_out = new StringWriter();
-
-        response.setCharacterEncoding(responseCharset);
-        response.setContentType("text/html");
-        response.setStatus(HttpServletResponse.SC_OK);
-
-        try (PrintWriter out = response.getWriter()) {
-
-            fileManagement.writeFeatureCollectionAsJSON(json_out, crs);
-
+        final File tmpJsonFile = new File(fileManagement.getWorkDirectory(), "tmpresponse.json");
+        try (Writer writer = new FileWriter(tmpJsonFile)) {
             // builds the following response:
             // "{\"success\": \"true\", \"geojson\":" + jsonFeatures+"}");
-            out.print("{\"success\": \"true\", \"geojson\":");
-            out.print(json_out.toString());
-            out.println("}");
+            writer.write("{\"success\": \"true\", \"geojson\":");
 
-            out.flush();
+            fileManagement.writeFeatureCollectionAsJSON(writer, crs);
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("RESPONSE: OK");
-            }
-        } catch (OutOfMemoryError e) {
-            writeErrorResponse(response, Status.outOfMemoryError,
-                    buildOutOfMemoryErrorMessage(),
-                    HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE);
+            writer.write("}");
+            writer.flush();
+        } catch (OutOfMemoryError unlikely) {
+            LOG.error(unlikely);
+            writeErrorResponse(response, Status.outOfMemoryError, buildOutOfMemoryErrorMessage(),
+                    HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE, forceResponseType);
+            return;
         } catch (IOException e) {
-            writeErrorResponse(response, Status.ioError, e.getMessage(),
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            LOG.error(e);
+            writeErrorResponse(response, Status.ioError, e.getMessage(), HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    forceResponseType);
+            return;
         } catch (ProjectionException e) {
-            writeErrorResponse(response, Status.projectionError,
-                    e.getMessage(),
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            LOG.error(e);
+            writeErrorResponse(response, Status.projectionError, e.getMessage(),
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR, forceResponseType);
+            return;
+        } catch (UnsupportedGeofileFormatException e) {
+            LOG.error(e);
+            writeErrorResponse(response, Status.unsupportedFormat, e.getMessage(),
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR, forceResponseType);
+            return;
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("RESPONSE: OK");
+        }
+        response.setCharacterEncoding(responseCharset);
+        response.setContentType(forceResponseType.toString());
+        response.setStatus(HttpServletResponse.SC_OK);
+        try {
+            Files.copy(tmpJsonFile.toPath(), response.getOutputStream());
+        } catch (IOException streamClosedByClient) {
+            LOG.trace(streamClosedByClient);
         }
     }
 
@@ -568,23 +641,17 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
      *
      * @throws IOException
      */
-    private void writeErrorResponse(HttpServletResponse response,
-            final Status st, final String errorDetail,
-            final int responseStatusError) {
-        response.reset();
+    private void writeErrorResponse(HttpServletResponse response, final Status st, final String errorDetail,
+            final int responseStatusError, MediaType forceResponseType) {
+
         PrintWriter out = null;
         try {
             out = response.getWriter();
             response.setCharacterEncoding(responseCharset);
-            response.setContentType("text/html");
+            response.setContentType(forceResponseType.toString());
             response.setStatus(responseStatusError);
 
-            String statusMsg;
-            if ("".equals(errorDetail)) {
-                statusMsg = st.getMessage();
-            } else {
-                statusMsg = st.getMessage(errorDetail);
-            }
+            String statusMsg = StringUtils.isEmpty(errorDetail) ? st.getMessage() : st.getMessage(errorDetail);
             out.println(statusMsg);
             out.flush();
 
@@ -613,16 +680,14 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
      * @param httpStatusCode
      * @throws IOException
      */
-    private void writeErrorResponse(HttpServletResponse response,
-            final Status st) {
-        writeErrorResponse(response, st, "",
-                HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+    private void writeErrorResponse(HttpServletResponse response, final Status st, MediaType forceResponseType) {
+        writeErrorResponse(response, st, "", HttpServletResponse.SC_INTERNAL_SERVER_ERROR, forceResponseType);
     }
 
-    private void writeErrorResponse(HttpServletResponse response,
-            final Status st, int httpStatusCode) throws IOException {
+    private void writeErrorResponse(HttpServletResponse response, final Status st, int httpStatusCode,
+            MediaType forceResponseType) throws IOException {
 
-        writeErrorResponse(response, st, "", httpStatusCode);
+        writeErrorResponse(response, st, "", httpStatusCode, forceResponseType);
     }
 
     /**
@@ -634,11 +699,9 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 
         MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
         final long max = memoryMXBean.getHeapMemoryUsage().getMax() / MEGABYTE;
-        final long used = memoryMXBean.getHeapMemoryUsage().getUsed()
-                / MEGABYTE;
+        final long used = memoryMXBean.getHeapMemoryUsage().getUsed() / MEGABYTE;
         final String msg = Status.outOfMemoryError
-                .getMessage("There is not enough memory. Maximum = " + max
-                        + "Mb, Used = " + used + " Mb.");
+                .getMessage("There is not enough memory. Maximum = " + max + "Mb, Used = " + used + " Mb.");
 
         LOG.error(msg);
 
@@ -647,29 +710,31 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 
     /**
      * Handles the exception throws by the {@link CommonsMultipartResolver}. A
-     * response error will be made if the size of the uploaded file is greater
-     * than the configured maximum (see ws-servlet.xml for more details).
+     * response error will be made if the size of the uploaded file is greater than
+     * the configured maximum (see ws-servlet.xml for more details).
      */
     @Override
-    public ModelAndView resolveException(HttpServletRequest request,
-            HttpServletResponse response, Object handler, Exception exception) {
+    public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler,
+            Exception exception) {
 
         LOG.error(exception.getMessage());
 
+        HttpHeaders headers = new HttpHeaders();
+        Iterators.forEnumeration(request.getHeaderNames())
+                .forEachRemaining(name -> headers.add(name, request.getHeader(name)));
+        MediaType forceResponseType = resolveResponseContentType(headers);
         if (exception instanceof MaxUploadSizeExceededException) {
 
             MaxUploadSizeExceededException sizeException = (MaxUploadSizeExceededException) exception;
             long size = sizeException.getMaxUploadSize() / MEGABYTE; // converts
                                                                      // to Mb
             writeErrorResponse(response, Status.sizeError,
-                    "The configured maximum size is " + size + " MB. ("
-                            + sizeException.getMaxUploadSize() + " bytes)",
-                    HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE);
+                    "The configured maximum size is " + size + " MB. (" + sizeException.getMaxUploadSize() + " bytes)",
+                    HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE, forceResponseType);
         } else {
 
-            writeErrorResponse(response, Status.ioError,
-                    exception.getMessage(),
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            writeErrorResponse(response, Status.ioError, exception.getMessage(),
+                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR, forceResponseType);
         }
 
         return null;
@@ -682,34 +747,27 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
      * @return
      * @throws IOException
      */
-    private String makeDirectoryForRequest(String tempDirectory)
-            throws IOException {
-
+    private File makeDirectoryForRequest(final File tempDirectory) throws IOException {
         // create a temporal root directory if it doesn't exist
-        File root = new File(tempDirectory);
-        if (!root.exists()) {
-            root.mkdirs();
+        if (!tempDirectory.exists() && !tempDirectory.mkdirs()) {
+            throw new IOException("Unable to create tem directory " + tempDirectory.getAbsolutePath());
         }
-        String pathname = tempDirectory + File.separator + UUID.randomUUID();
-        File requestDirectory = new File(pathname);
-        Boolean succeed = requestDirectory.mkdir();
-        if (!succeed) {
-            throw new IOException("cannot create the directory " + pathname);
+        Preconditions.checkState(tempDirectory.isDirectory(), "%s is not a directory", tempDirectory);
+        File requestDirectory = new File(tempDirectory, UUID.randomUUID().toString());
+        if (!requestDirectory.mkdir()) {
+            throw new IOException("cannot create the directory " + requestDirectory);
         }
-
-        String workDirectory = requestDirectory.getAbsolutePath();
-
-        return workDirectory;
+        LOG.debug("Created request temp directory: " + requestDirectory.getAbsolutePath());
+        return requestDirectory;
     }
 
-    private void cleanTemporalDirectory(String workDirectory)
-            throws IOException {
-        File file = new File(workDirectory);
-        FileUtils.cleanDirectory(file);
-        boolean removed = file.delete();
-        if (!removed)
-            throw new IOException("cannot remove the directory: "
-                    + file.getAbsolutePath());
+    private void cleanTemporalDirectory(File workDirectory) throws IOException {
+        FileUtils.cleanDirectory(workDirectory);
+        LOG.debug("Removing request temp directory " + workDirectory.getAbsolutePath());
+        boolean removed = workDirectory.delete();
+        if (!removed) {
+            LOG.warn("cannot remove temporary directory: " + workDirectory.getAbsolutePath());
+        }
     }
 
     /**
@@ -741,5 +799,4 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
 
         return Status.ok;
     }
-
 }

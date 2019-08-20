@@ -19,19 +19,6 @@
 
 package org.georchestra.mapfishapp.ws.upload;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.geotools.data.simple.SimpleFeatureCollection;
-import org.geotools.data.simple.SimpleFeatureIterator;
-import org.geotools.geojson.feature.FeatureJSON;
-import org.geotools.geojson.geom.GeometryJSON;
-import org.geotools.referencing.operation.projection.ProjectionException;
-import org.json.JSONArray;
-import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -43,6 +30,18 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.geojson.feature.FeatureJSON;
+import org.geotools.geojson.geom.GeometryJSON;
+import org.geotools.referencing.operation.projection.ProjectionException;
+import org.json.JSONArray;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * This class is responsible to maintain the uploaded file. It includes the
@@ -74,7 +73,7 @@ public class UpLoadFileManagement {
 
     private FileDescriptor               fileDescriptor;
 
-    private String                       workDirectory;
+    private File                         workDirectory;
 
     private FeatureGeoFileReader reader;
 
@@ -99,14 +98,12 @@ public class UpLoadFileManagement {
         while (entries.hasMoreElements()) {
 
             ZipEntry entry = entries.nextElement();
-            String path = workDirectory + File.separator + entry.getName();
-
-            String extension = FilenameUtils.getExtension(path).toUpperCase();
+            File outFile = new File(workDirectory, entry.getName());
+            String extension = FilenameUtils.getExtension(outFile.getName()).toUpperCase();
             if (VALID_EXTENSIONS.contains(extension)) {
-                File outFile = new File(path);
                 extractFile(zipFile, entry, outFile);
             } else {
-                makeDirectory(path);
+                makeDirectory(outFile.getParentFile());
             }
         }
         zipFile.close();
@@ -118,12 +115,9 @@ public class UpLoadFileManagement {
      * @param path
      * @throws IOException
      */
-    private void makeDirectory(String path) throws IOException {
-
-        File newDirectory = new File(path);
-        if (!newDirectory.exists()) {
-            makeDirectory(newDirectory.getParent());
-            newDirectory.mkdir();
+    private void makeDirectory(File path) throws IOException {
+        if (!path.isDirectory()) {
+            path.mkdirs();
         }
     }
 
@@ -174,7 +168,7 @@ public class UpLoadFileManagement {
         try {
             // transfers the uploaded file to the work directory
             final String originalFileName = uploadFile.getOriginalFilename();
-            File outFile = new File(this.workDirectory + "/" + originalFileName);
+            File outFile = new File(this.workDirectory, originalFileName);
             uploadFile.transferTo(outFile);
 
             this.fileDescriptor.savedFile = outFile;
@@ -297,7 +291,8 @@ public class UpLoadFileManagement {
      *            transformed.
      * @throws IOException
      */
-    public void writeFeatureCollectionAsJSON(Writer writer, final CoordinateReferenceSystem crs) throws Exception {
+    public void writeFeatureCollectionAsJSON(Writer writer, final CoordinateReferenceSystem crs)
+            throws IOException, ProjectionException, UnsupportedGeofileFormatException {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("CRS to reproject:" + crs);
@@ -308,36 +303,17 @@ public class UpLoadFileManagement {
         String fileName = searchGeoFile();
         assert fileName != null;
 
-        SimpleFeatureIterator featuresIterator = null;
-        try {
-            SimpleFeatureCollection featureCollection = this.reader.getFeatureCollection(new File(fileName),
-                            								this.fileDescriptor.geoFileType, crs);
-            if (featureCollection == null) {
-                return;
-            }
-            // TODO FeatureJSON2 is a workaround to solve the crs bug
-            FeatureJSON fjson = new FeatureJSON2(new GeometryJSON(18));
-            SimpleFeatureType schema = featureCollection.getSchema();
+        SimpleFeatureCollection featureCollection = this.reader.getFeatureCollection(new File(fileName),
+                this.fileDescriptor.geoFileType, crs);
 
-            fjson.setFeatureType(schema);
-            fjson.setEncodeFeatureCollectionCRS(true);
+        // Using FeatureJSON2 which encodes the crs even if the collection is empty
+        FeatureJSON fjson = new FeatureJSON2(new GeometryJSON(15));
+        SimpleFeatureType schema = featureCollection.getSchema();
 
-            fjson.writeFeatureCollection(featureCollection, writer);
+        fjson.setFeatureType(schema);
+        fjson.setEncodeFeatureCollectionCRS(true);
 
-        } catch (ProjectionException e) {
-            LOG.error("Failed reading " + fileName + ": " + e.getMessage());
-            throw e;
-        }
-        catch (Exception e) {
-
-            final String message = "Failed reading " + FilenameUtils.getName(fileName) + ".  "
-                    + e.getMessage();
-            LOG.error(message);
-            throw new IOException(message, e);
-
-        } finally {
-            if (featuresIterator != null) featuresIterator.close();
-        }
+        fjson.writeFeatureCollection(featureCollection, writer);
     }
 
     /**
@@ -369,8 +345,12 @@ public class UpLoadFileManagement {
         return null;
     }
 
-    public void setWorkDirectory(String workDirectory) {
+    public void setWorkDirectory(File workDirectory) {
         this.workDirectory = workDirectory;
+    }
+    
+    public File getWorkDirectory() {
+        return this.workDirectory;
     }
 
     public void setFileDescriptor(FileDescriptor geoFile) {

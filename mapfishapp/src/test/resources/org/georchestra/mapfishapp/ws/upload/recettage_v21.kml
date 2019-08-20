@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.1" xmlns:kml="http://earth.google.com/kml/2.1">
+  <Document>
+    <name><![CDATA[autoroutes]]></name>
+    <open>1</open>
+    <Snippet maxLines="0"><![CDATA[]]>
+    </Snippet>
+    <description><![CDATA[Exported from autoroutes]]></description>
+    <Style id="FEATURES">
+      <LineStyle>
+        <color>aaf042f2</color>
+        <width>4</width>
+      </LineStyle>
+      <BalloonStyle>
+        <text>
+<![CDATA[]]>
+        </text>
+      </BalloonStyle>
+    </Style>
+    <Style id="FEATURES_LABELS">
+      <IconStyle>
+        <color>00000000</color>
+        <Icon>
+          <href>http://maps.google.com/mapfiles/kml/shapes/placemark_circle.png</href>
+        </Icon>
+      </IconStyle>
+      <LabelStyle>
+        <color>FFFFFFFF</color>
+        <scale>0.8</scale>
+      </LabelStyle>
+    </Style>
+    <Folder>
+      <name>Features</name>
+      <Region>
+        <LatLonAltBox>
+          <north>51.1</north>
+          <south>50</south>
+          <east>4.25</east>
+          <west>1.4</west>
+        </LatLonAltBox>
+        <Lod>
+          <minLodPixels>500</minLodPixels>
+        </Lod>
+      </Region>
+      <open>0</open>
+      <Placemark>
+        <name><![CDATA[A1]]></name>
+        <Snippet maxLines="0"><![CDATA[]]>
+        </Snippet>
+        <styleUrl>#FEATURES</styleUrl>
+        <LineString>
+          <extrude>0</extrude>
+          <tessellate>1</tessellate>
+          <altitudeMode>clampedToGround</altitudeMode>
+          <coordinates>
+            3.08403434867509,50.6153726428796,0
+            2.88378730356687,50.0224780060526,0
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[A16]]></name>
+        <Snippet maxLines="0"><![CDATA[]]>
+        </Snippet>
+        <styleUrl>#FEATURES</styleUrl>
+        <LineString>
+          <extrude>0</extrude>
+          <tessellate>1</tessellate>
+          <altitudeMode>clampedToGround</altitudeMode>
+          <coordinates>
+            2.56303642125087,51.0572872947436,0
+            1.74975543175946,50.2535476946302,0
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[A2]]></name>
+        <Snippet maxLines="0"><![CDATA[]]>
+        </Snippet>
+        <styleUrl>#FEATURES</styleUrl>
+        <LineString>
+          <extrude>0</extrude>
+          <tessellate>1</tessellate>
+          <altitudeMode>clampedToGround</altitudeMode>
+          <coordinates>
+            2.88961022013136,50.0263789922968,0
+            2.97432966318479,50.4294423292706,0
+          </coordinates>
+        </LineString>
+      </Placemark>
+    </Folder>
+    <Folder>
+      <name>Feature
+        Labels (<![CDATA[NUMERO]]>)
+      </name>
+      <Region>
+        <LatLonAltBox>
+          <north>51.1</north>
+          <south>50</south>
+          <east>4.25</east>
+          <west>1.4</west>
+        </LatLonAltBox>
+        <Lod>
+          <minLodPixels>1000</minLodPixels>
+        </Lod>
+      </Region>
+      <open>0</open>
+      <Placemark>
+        <name><![CDATA[A1]]></name>
+        <styleUrl>#FEATURES_LABELS</styleUrl>
+        <Point>
+          <extrude>0</extrude>
+          <altitudeMode>clampedToGround</altitudeMode>
+          <coordinates>2.93748714584326,50.3453841478634,0</coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[A16]]></name>
+        <styleUrl>#FEATURES_LABELS</styleUrl>
+        <Point>
+          <extrude>0</extrude>
+          <altitudeMode>clampedToGround</altitudeMode>
+          <coordinates>1.77790348087453,50.9073003432887,0</coordinates>
+        </Point>
+      </Placemark>
+    </Folder>
+  </Document>
+</kml>

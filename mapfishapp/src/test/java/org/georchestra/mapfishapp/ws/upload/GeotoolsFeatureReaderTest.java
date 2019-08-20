@@ -17,7 +17,6 @@ import java.util.EnumSet;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.referencing.CRS;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -25,8 +24,6 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -44,7 +41,7 @@ public class GeotoolsFeatureReaderTest {
         reader = new GeotoolsFeatureReader();
     }
 
-    public static @BeforeClass void SetUpGeoToolsReferencing() {
+    public static @BeforeClass void setUpGeoToolsReferencing() {
         System.setProperty("org.geotools.referencing.forceXY", "true");
     }
 
@@ -117,24 +114,7 @@ public class GeotoolsFeatureReaderTest {
 
         assertTrue(expectedEPSG == CRS.lookupEpsgCode(schemaCRS, true));
 
-        SimpleFeatureIterator iter = fc.features();
-        try {
-            int i = 0;
-            while (iter.hasNext()) {
-
-                SimpleFeature f = iter.next();
-
-                Geometry geom = (Geometry) f.getDefaultGeometry();
-                assert (geom.getSRID() == expectedEPSG);
-
-
-                i++;
-            }
-            assertTrue(countExpected == i);
-
-        } finally {
-            iter.close();
-        }
+        assertEquals(countExpected, fc.size());
     }
 
     private void assertFeatureCollection(SimpleFeatureCollection fc, final int countExpected, final int expectedEPSG) throws Exception {
@@ -167,14 +147,6 @@ public class GeotoolsFeatureReaderTest {
         // from qgis
         CoordinateReferenceSystem crs = t.getCoordinateReferenceSystem();
         assertTrue(expectedEPSG == CRS.lookupEpsgCode(crs, true));
-    }
-
-    private void assertGeometryCRS(final GeometryDescriptor geom, final int expectedEPSG) throws FactoryException {
-
-        CoordinateReferenceSystem crs = geom.getType().getCoordinateReferenceSystem();
-        Integer code = CRS.lookupEpsgCode(crs, true);
-        assertTrue(code == expectedEPSG);
-
     }
 
 
@@ -296,8 +268,6 @@ public class GeotoolsFeatureReaderTest {
             assertTrue(expectedEPSG == code);
         }
 
-        double x;
-        double y;
         SimpleFeatureIterator iter = fc.features();
         try {
             while (iter.hasNext()) {
@@ -347,8 +317,8 @@ public class GeotoolsFeatureReaderTest {
 
         SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.gml);
 
-        Assert.assertNotNull(fc);
-        Assert.assertTrue(!fc.isEmpty());
+        assertNotNull(fc);
+        assertFalse(fc.isEmpty());
     }
 
     @Test
@@ -359,7 +329,7 @@ public class GeotoolsFeatureReaderTest {
 
         SimpleFeatureCollection featureCollection = reader.getFeatureCollection(file, FileFormat.kml);
 
-        Assert.assertTrue(!featureCollection.isEmpty());
+        assertFalse(featureCollection.isEmpty());
     }
 
     @Test
@@ -370,31 +340,31 @@ public class GeotoolsFeatureReaderTest {
 
         SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.kml);
 
-        Assert.assertTrue(!fc.isEmpty());
+        assertFalse(fc.isEmpty());
 
         SimpleFeature f = fc.features().next();
 
-        Assert.assertNotNull(f.getProperty("id"));
-        Assert.assertNotNull(f.getProperty("date"));
-        Assert.assertNotNull(f.getProperty("plage_hora"));
-        Assert.assertNotNull(f.getProperty("jour_nuit"));
-        Assert.assertNotNull(f.getProperty("meteo"));
-        Assert.assertNotNull(f.getProperty("voie_type"));
-        Assert.assertNotNull(f.getProperty("milieu"));
-        Assert.assertNotNull(f.getProperty("tues_nb"));
-        Assert.assertNotNull(f.getProperty("tues_18_24"));
-        Assert.assertNotNull(f.getProperty("tues_moto_"));
-        Assert.assertNotNull(f.getProperty("tues_pieto"));
-        Assert.assertNotNull(f.getProperty("tues_velo_"));
-        Assert.assertNotNull(f.getProperty("vehicules_"));
-        Assert.assertNotNull(f.getProperty("vehicules_"));
-        Assert.assertNotNull(f.getProperty("commune"));
-        Assert.assertNotNull(f.getProperty("departemen"));
-        Assert.assertNotNull(f.getProperty("commentair"));
-        Assert.assertNotNull(f.getProperty("consolide"));
-        Assert.assertNotNull(f.getProperty("anciennete"));
-        Assert.assertNotNull(f.getProperty("f_mois"));
-        Assert.assertNotNull(f.getProperty("f_annee"));
+        assertNotNull(f.getProperty("id"));
+        assertNotNull(f.getProperty("date"));
+        assertNotNull(f.getProperty("plage_hora"));
+        assertNotNull(f.getProperty("jour_nuit"));
+        assertNotNull(f.getProperty("meteo"));
+        assertNotNull(f.getProperty("voie_type"));
+        assertNotNull(f.getProperty("milieu"));
+        assertNotNull(f.getProperty("tues_nb"));
+        assertNotNull(f.getProperty("tues_18_24"));
+        assertNotNull(f.getProperty("tues_moto_"));
+        assertNotNull(f.getProperty("tues_pieto"));
+        assertNotNull(f.getProperty("tues_velo_"));
+        assertNotNull(f.getProperty("vehicules_"));
+        assertNotNull(f.getProperty("vehicules_"));
+        assertNotNull(f.getProperty("commune"));
+        assertNotNull(f.getProperty("departemen"));
+        assertNotNull(f.getProperty("commentair"));
+        assertNotNull(f.getProperty("consolide"));
+        assertNotNull(f.getProperty("anciennete"));
+        assertNotNull(f.getProperty("f_mois"));
+        assertNotNull(f.getProperty("f_annee"));
 
     }
 
@@ -422,15 +392,15 @@ public class GeotoolsFeatureReaderTest {
         String fullName = makeFullName("canton-73.geojson");
         File file = new File(fullName);
         SimpleFeatureCollection fc = reader.getFeatureCollection(file, FileFormat.geojson);
-        Assert.assertFalse(fc.isEmpty());
+        assertFalse(fc.isEmpty());
         int counter = 0;
         SimpleFeatureIterator it = fc.features();
         while (it.hasNext()) {
             SimpleFeature f = it.next();
             counter++;
-            Assert.assertEquals(3, f.getAttributeCount());
+            assertEquals(3, f.getAttributeCount());
         }
-        Assert.assertEquals(19, counter);
+        assertEquals(19, counter);
     }
 
     @Test
