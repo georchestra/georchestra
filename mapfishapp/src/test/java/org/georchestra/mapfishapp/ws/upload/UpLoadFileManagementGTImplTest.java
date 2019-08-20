@@ -6,8 +6,8 @@ package org.georchestra.mapfishapp.ws.upload;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeFalse;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URL;
@@ -19,11 +19,10 @@ import org.geotools.referencing.CRS;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.Before;
 import org.junit.Test;
+import org.locationtech.jts.geom.Point;
 import org.opengis.feature.simple.SimpleFeature;
 
-import com.vividsolutions.jts.geom.Point;
 
 /**
  * Unit Test for {@link UpLoadFileManagement}
@@ -52,7 +51,7 @@ public class UpLoadFileManagementGTImplTest {
         String fileName = "points-4326.shp";
         String fullName = makeFullName(fileName);
 
-        testGetGeofileToJSON(fullName, null);
+        assertNotNull(testGetGeofileToJSON(fullName, null));
     }
 
     @Test
@@ -61,7 +60,7 @@ public class UpLoadFileManagementGTImplTest {
         String fileName = "points-4326.shp";
         String fullName = makeFullName(fileName);
 
-        testGetGeofileToJSON(fullName, "EPSG:2154");
+        assertNotNull(testGetGeofileToJSON(fullName, "EPSG:2154"));
     }
 
     /**
@@ -76,7 +75,7 @@ public class UpLoadFileManagementGTImplTest {
         String fullName = makeFullName(fileName);
 
         String json = testGetGeofileToJSON(fullName, "EPSG:4326");
-
+        assertNotNull(json);
         assertCoordinateContains(-2.265330624649336, 48.421434814828025, json);
     }
 
@@ -95,7 +94,7 @@ public class UpLoadFileManagementGTImplTest {
         String fullName = makeFullName(fileName);
 
         String json = testGetGeofileToJSON(fullName, null);
-
+        assertNotNull(json);
         assertCoordinateContains(-2.265330624649336, 48.421434814828025, json);
     }
 
@@ -106,12 +105,12 @@ public class UpLoadFileManagementGTImplTest {
         String fullName = makeFullName(fileName);
 
         String regions = testGetGeofileToJSON(fullName, null);
-
+        assertNotNull(regions);
         JSONObject list = new JSONObject(regions);
         JSONArray jsonArray = list.getJSONArray("features");
         JSONObject reg = jsonArray.getJSONObject(0);
         String id = reg.getString("id");
-
+        assertNotNull(id);
     }
 
 	@Test
@@ -178,7 +177,7 @@ public class UpLoadFileManagementGTImplTest {
         String fullName = makeFullName(fileName);
 
         String json = testGetGeofileToJSON(fullName, "EPSG:4326");
-
+        assertNotNull(json);
         assertCoordinateContains(-2.265330624649336, 48.421434814828025, json);
     }
 
@@ -193,7 +192,7 @@ public class UpLoadFileManagementGTImplTest {
         String fileName = "border.gml";
         String fullName = makeFullName(fileName);
 
-        testGetGeofileToJSON(fullName, null);
+        assertNotNull(testGetGeofileToJSON(fullName, null));
 
     }
 
@@ -210,7 +209,7 @@ public class UpLoadFileManagementGTImplTest {
 
         	
         String json = testGetGeofileToJSON(fullName, "EPSG:4326");
-
+        assertNotNull(json);
         assertCoordinateContains(-2.265330624649336, 48.421434814828025, json);
     }
 
@@ -227,7 +226,7 @@ public class UpLoadFileManagementGTImplTest {
         String fullName = makeFullName(fileName);
 
         String json = testGetGeofileToJSON(fullName, "EPSG:3857");
-
+        assertNotNull(json);
         assertCoordinateContains(-252175.451614371791948,
                 6177255.152005254290998, json);
     }
@@ -289,7 +288,7 @@ public class UpLoadFileManagementGTImplTest {
 
         UpLoadFileManagement fm = create();
 
-        fm.setWorkDirectory(FilenameUtils.getFullPath(fileName));
+        fm.setWorkDirectory(new File(fileName).getParentFile());
         fm.setFileDescriptor(fd);
 
         StringWriter out = new StringWriter();
