@@ -81,32 +81,42 @@ class UsersController {
       : true
   }
 
-  exportCSV () {
-    const download = this.$injector.get('ExportCSV')
+  export_ (fileType) {
+    const download = this.$injector.get(`Export${fileType.toUpperCase()}`)
     download(this.selection).then(result => {
       if (result.status !== 200) {
         throw new Error(`Cannot fetch users list. error ${result.status}`)
       }
-      const blob = new Blob([result.data], { type: 'text/csv' })
-      window.open(window.URL.createObjectURL(blob))
+      let mimetype = ''
+      switch (fileType) {
+        case 'vcf':
+          mimetype = 'text/x-vcard'
+          break
+        default:
+          mimetype = `text/${fileType}`
+      }
+      const blob = new Blob([result.data], { type: mimetype })
+      const a = document.createElement('a')
+      a.href = window.URL.createObjectURL(blob)
+      a.target = '_blank'
+      const filter = this.$injector.get('$filter')
+      const date = filter('date')(new Date(), 'yyyyMMdd-HHmmss')
+      a.download = `${date}_users_export.${fileType}`
+      document.body.appendChild(a) // create the link "a"
+      a.click() // click the link "a"
+      document.body.removeChild(a)
     }).catch(err => {
       let flash = this.$injector.get('Flash')
       flash.create('danger', err)
     })
   }
 
-  exportVCard () {
-    const download = this.$injector.get('ExportVCard')
-    download(this.selection).then(result => {
-      if (result.status !== 200) {
-        throw new Error(`Cannot fetch users list. error ${result.status}`)
-      }
-      const blob = new Blob([result.data], { type: 'text/x-vcard' })
-      window.open(window.URL.createObjectURL(blob))
-    }).catch(err => {
-      let flash = this.$injector.get('Flash')
-      flash.create('danger', err)
-    })
+  exportCSV () {
+    this.export_('csv')
+  }
+
+  exportVCF () {
+    this.export_('vcf')
   }
 
   close () {

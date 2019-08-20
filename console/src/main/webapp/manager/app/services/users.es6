@@ -54,7 +54,7 @@ angular.module('manager')
       })
     }
   }
-  ]).factory('ExportVCard', ['$http', 'CONSOLE_PRIVATE_PATH', ($http, baseUri) => {
+  ]).factory('ExportVCF', ['$http', 'CONSOLE_PRIVATE_PATH', ($http, baseUri) => {
     return users => {
       return $http.post(baseUri + 'export/users.vcf', users, {
         cache: false,
