@@ -19,6 +19,9 @@
   </distributionManagement>
   <properties>
     <gt.version>9.2</gt.version>
+    <formatter-maven-plugin.version>2.10.0</formatter-maven-plugin.version>
+    <fmt.skip>false</fmt.skip>
+    <fmt.action>format</fmt.action><!-- or fmt.action 'validate' -->
     <spring.version>2.5.6.SEC01</spring.version>
     <security.version>2.0.5.RELEASE</security.version>
     <spring.ldap.version>1.3.0.RELEASE</spring.ldap.version>
@@ -137,6 +140,35 @@
      </plugins>
      <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>net.revelc.code.formatter</groupId>
+          <artifactId>formatter-maven-plugin</artifactId>
+          <version>${formatter-maven-plugin.version}</version>
+         <inherited>true</inherited>
+          <executions>
+            <execution>
+              <goals>
+                <goal>${fmt.action}</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <skip>${fmt.skip}</skip>
+            <configFile>${maven.multiModuleProjectDirectory}/.mvn/formatter.xml</configFile>
+            <compilerSource>${java.version}</compilerSource>
+            <compilerCompliance>${java.version}</compilerCompliance>
+            <compilerTargetPlatform>${java.version}</compilerTargetPlatform>
+            <!-- Use Unix and Mac style line endings -->
+            <lineEnding>LF</lineEnding>
+            <encoding>${encoding}</encoding>
+            <skipJsFormatting>true</skipJsFormatting>
+            <skipCssFormatting>true</skipCssFormatting>
+            <skipHtmlFormatting>true</skipHtmlFormatting>
+            <skipJsonFormatting>true</skipJsonFormatting>
+            <skipXmlFormatting>true</skipXmlFormatting>
+            <skipJavaFormatting>false</skipJavaFormatting>
+          </configuration>
+        </plugin>
         <plugin>
           <groupId>org.codehaus.groovy.maven</groupId>
           <artifactId>gmaven-plugin</artifactId>
