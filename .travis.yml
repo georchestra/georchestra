@@ -31,11 +31,11 @@ before_install:
   - /usr/bin/virtualenv --python=/usr/bin/python2 --version
 
 install:
-  - ./mvnw --no-transfer-progress -B install -P-all,travis -Dadditionalparam=-Xdoclint:none -DskipTests
+  - ./mvnw --no-transfer-progress -B -Dfmt.action=validate install -P-all,travis -Dadditionalparam=-Xdoclint:none -DskipTests
 
 before_script: 
   - sudo sh -c 'echo 0 > /proc/sys/net/ipv6/conf/all/disable_ipv6'
 
 script:
-  - ./mvnw --no-transfer-progress verify -P-all,travis,it -Dadditionalparam=-Xdoclint:none
+  - ./mvnw --no-transfer-progress verify -Dfmt.skip=true -P-all,travis,it -Dadditionalparam=-Xdoclint:none
 
