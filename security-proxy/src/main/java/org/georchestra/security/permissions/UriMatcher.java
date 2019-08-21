@@ -25,12 +25,20 @@ import java.net.UnknownHostException;
 import java.util.HashSet;
 import java.util.regex.Pattern;
 
-import com.google.common.collect.Sets;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.springframework.security.web.util.matcher.IpAddressMatcher;
+
+import com.google.common.collect.Sets;
 
 /**
  * @author Jesse on 8/15/2014.
  */
+@XmlRootElement(name = "urimatcher")
+@XmlAccessorType(XmlAccessType.NONE)
 public class UriMatcher {
     private int port = -1;
     private String path;
@@ -41,6 +49,13 @@ public class UriMatcher {
     private IpAddressMatcher ipMatcher;
     private String domain;
     private Pattern domainPattern;
+
+    public UriMatcher() {
+        
+    }
+    public UriMatcher(String domain) {
+        this.domain = domain;
+    }
 
     public synchronized void init() throws UnknownHostException {
         this.hostNames = null;
@@ -123,43 +138,39 @@ public class UriMatcher {
     }
 
 
-    public UriMatcher setHost(String host) throws UnknownHostException {
+    public void setHost(String host) throws UnknownHostException {
         this.host = host;
-        return this;
     }
 
-    public UriMatcher setPort(int port) {
+    public void setPort(int port) {
         this.port = port;
-        return this;
     }
 
-    public UriMatcher setPath(String path) {
+    public void setPath(String path) {
         this.path = path;
-        return this;
     }
 
-    public String getHost() {
+    public @XmlElement String getHost() {
         return host;
     }
 
-    public int getPort() {
+    public @XmlElement int getPort() {
         return port;
     }
 
-    public String getDomain() {
+    public @XmlElement String getDomain() {
         return domain;
     }
 
-    public UriMatcher setDomain(String domain) {
+    public void setDomain(String domain) {
         this.domain = domain;
-        return this;
     }
 
-    public String getPath() {
+    public @XmlElement String getPath() {
         return path;
     }
 
-    public String getNetwork() {
+    public @XmlElement String getNetwork() {
         return network;
     }
 

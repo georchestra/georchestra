@@ -1,23 +1,22 @@
 package org.georchestra.security;
 
-import org.georchestra.security.permissions.Permissions;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
+import org.georchestra.security.permissions.Permissions;
+import org.junit.Test;
 import org.springframework.security.web.util.matcher.IpAddressMatcher;
 
 public class PermissionsTest {
 
-    private Permissions load(String permissionsFile) throws IOException, ClassNotFoundException {
+    private Permissions load(String permissionsFile) throws IOException {
         InputStream inStream = this.getClass().getClassLoader().getResource(permissionsFile).openStream();
-        return Permissions.Create(inStream);
+        return Permissions.parse(inStream);
     }
 
     @Test
@@ -47,7 +46,7 @@ public class PermissionsTest {
     }
 
     @Test
-    public void testAllowBydefault() throws IOException, ClassNotFoundException {
+    public void testAllowBydefault() throws IOException {
         Permissions perm = this.load("test-permissions-allowByDefault.xml");
 
         // Test URL not defined in xml: example.org
@@ -67,7 +66,7 @@ public class PermissionsTest {
     }
 
     @Test
-    public void testDenyBydefault() throws IOException, ClassNotFoundException {
+    public void testDenyBydefault() throws IOException {
         Permissions perm = this.load("test-permissions-denyByDefault.xml");
 
         // Test URL not defined in xml: example.org
@@ -87,7 +86,7 @@ public class PermissionsTest {
     }
 
     @Test
-    public void testHost() throws IOException, ClassNotFoundException {
+    public void testHost() throws IOException {
         Permissions perm = this.load("test-permissions-uriMatcher.xml");
 
         // sdi-stable.georchestra.org has same IP address as sdi.georchestra.org
@@ -96,7 +95,7 @@ public class PermissionsTest {
     }
 
     @Test
-    public void testDomain() throws IOException, ClassNotFoundException {
+    public void testDomain() throws IOException {
         Permissions perm = this.load("test-permissions-uriMatcher.xml");
 
         assertTrue(perm.isDenied(new URL("http://www.google.fr/test.html")));
@@ -107,7 +106,7 @@ public class PermissionsTest {
     }
 
     @Test
-    public void testNetwork() throws IOException, ClassNotFoundException {
+    public void testNetwork() throws IOException {
         Permissions perm = this.load("test-permissions-uriMatcher.xml");
 
         assertTrue(perm.isDenied(new URL("http://192.168.11.12/geoserver")));
@@ -117,7 +116,7 @@ public class PermissionsTest {
     }
 
     @Test
-    public void testNetworkIPv6() throws IOException, ClassNotFoundException {
+    public void testNetworkIPv6() throws IOException {
         Permissions perm = this.load("test-permissions-uriMatcher.xml");
         assertTrue(perm.isDenied(new URL("http://www.google.com/geoserver")));
 
@@ -141,12 +140,12 @@ public class PermissionsTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testNetworkBadFormat() throws IOException, ClassNotFoundException {
-        Permissions perm = this.load("test-permissions-network-bad-format.xml");
+    public void testNetworkBadFormat() throws IOException {
+        this.load("test-permissions-network-bad-format.xml");
     }
 
     @Test
-    public void testPort() throws IOException, ClassNotFoundException {
+    public void testPort() throws IOException {
         Permissions perm = this.load("test-permissions-uriMatcher.xml");
 
         assertFalse(perm.isDenied(new URL("http://www.example.org/google.html")));
@@ -156,7 +155,7 @@ public class PermissionsTest {
     }
 
     @Test
-    public void testDefaultPort() throws IOException, ClassNotFoundException {
+    public void testDefaultPort() throws IOException {
         Permissions perm = this.load("test-permissions-defaultPort.xml");
 
         assertTrue(perm.isDenied(new URL("http://www.example.org/google.html")));
@@ -168,7 +167,7 @@ public class PermissionsTest {
     }
 
     @Test
-    public void testPath() throws IOException, ClassNotFoundException {
+    public void testPath() throws IOException {
         Permissions perm = this.load("test-permissions-uriMatcher.xml");
 
         assertTrue(perm.isDenied(new URL("http://www.example.org/search.html")));

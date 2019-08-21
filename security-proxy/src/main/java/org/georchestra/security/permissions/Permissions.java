@@ -19,36 +19,41 @@
 
 package org.georchestra.security.permissions;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import org.springframework.oxm.xstream.XStreamMarshaller;
-
-import javax.xml.transform.stream.StreamSource;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.List;
-import java.util.Map;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import com.google.common.collect.Lists;
 
 /**
  * @author Jesse on 8/15/2014.
  */
+@XmlRootElement(name = "permissions")
+@XmlAccessorType(XmlAccessType.PROPERTY)
 public class Permissions {
     private List<UriMatcher> allowed = Lists.newArrayList();
     private List<UriMatcher> denied = Lists.newArrayList();
-    private boolean allowByDefault = false;
-    private boolean initialized = false;
+    private boolean allowByDefault;
+    private boolean initialized;
 
-    public Permissions setAllowed(List<UriMatcher> allowed) {
+    public void setAllowed(List<UriMatcher> allowed) {
         this.allowed = allowed;
-        return this;
     }
 
-    public Permissions setDenied(List<UriMatcher> denied) {
+    public void setDenied(List<UriMatcher> denied) {
         this.denied = denied;
-        return this;
     }
 
     public boolean isDenied(URL url) {
@@ -80,14 +85,19 @@ public class Permissions {
         return false;
     }
 
+    @XmlElementWrapper(name = "allowed")
+    @XmlElementRef(type = UriMatcher.class)
     public List<UriMatcher> getAllowed() {
         return allowed;
     }
 
+    @XmlElementWrapper(name = "denied")
+    @XmlElementRef(type = UriMatcher.class)
     public List<UriMatcher> getDenied() {
         return denied;
     }
 
+    @XmlElement
     public boolean isAllowByDefault() {
         return allowByDefault;
     }
@@ -111,25 +121,16 @@ public class Permissions {
         return this.initialized;
     }
 
-
-    private Object readResolve() {
-        if (this.denied == null) {
-            this.denied = Lists.newArrayList();
+    public static Permissions parse(InputStream source) throws IOException {
+        try {
+            JAXBContext jaxbContext = JAXBContext.newInstance(Permissions.class, UriMatcher.class);
+            Unmarshaller unamrshaller = jaxbContext.createUnmarshaller();
+            Permissions permissions = (Permissions) unamrshaller.unmarshal(source);
+            permissions.init();
+            return permissions;
+        } catch (JAXBException e) {
+            e.printStackTrace();
+            throw new IOException(e);
         }
-        if (this.allowed == null) {
-            this.allowed = Lists.newArrayList();
-        }
-        return this;
-    }
-
-    public static Permissions Create(InputStream source) throws ClassNotFoundException, IOException {
-        Map<String, Class<?>> aliases = Maps.newHashMap();
-        aliases.put(Permissions.class.getSimpleName().toLowerCase(), Permissions.class);
-        aliases.put(UriMatcher.class.getSimpleName().toLowerCase(), UriMatcher.class);
-        XStreamMarshaller unmarshaller = new XStreamMarshaller();
-        unmarshaller.setAliasesByType(aliases);
-        Permissions res = (Permissions) unmarshaller.unmarshal(new StreamSource(source));
-        res.init();
-        return res;
     }
 }
