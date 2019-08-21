@@ -30,6 +30,9 @@
   </distributionManagement>
   <properties>
     <java.version>1.8</java.version>
+    <formatter-maven-plugin.version>2.10.0</formatter-maven-plugin.version>
+    <fmt.skip>false</fmt.skip>
+    <fmt.action>format</fmt.action><!-- or fmt.action 'validate' -->
     <!-- flag to disable unit tests when running integration tests (mvn verify). If skipTests were used also IT would be skipped -->
     <skipUT>false</skipUT>
     <!-- flag to disable integration tests -->
@@ -599,6 +602,35 @@
     </plugins>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>net.revelc.code.formatter</groupId>
+          <artifactId>formatter-maven-plugin</artifactId>
+          <version>${formatter-maven-plugin.version}</version>
+         <inherited>true</inherited>
+          <executions>
+            <execution>
+              <goals>
+                <goal>${fmt.action}</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <skip>${fmt.skip}</skip>
+            <configFile>${maven.multiModuleProjectDirectory}/.mvn/formatter.xml</configFile>
+            <compilerSource>${java.version}</compilerSource>
+            <compilerCompliance>${java.version}</compilerCompliance>
+            <compilerTargetPlatform>${java.version}</compilerTargetPlatform>
+            <!-- Use Unix and Mac style line endings -->
+            <lineEnding>LF</lineEnding>
+            <encoding>${encoding}</encoding>
+            <skipJsFormatting>true</skipJsFormatting>
+            <skipCssFormatting>true</skipCssFormatting>
+            <skipHtmlFormatting>true</skipHtmlFormatting>
+            <skipJsonFormatting>true</skipJsonFormatting>
+            <skipXmlFormatting>true</skipXmlFormatting>
+            <skipJavaFormatting>false</skipJavaFormatting>
+          </configuration>
+        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
