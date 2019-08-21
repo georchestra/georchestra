@@ -262,6 +262,10 @@
             </plugins>
         </pluginManagement>
         <plugins>
+            <plugin>
+              <groupId>net.revelc.code.formatter</groupId>
+              <artifactId>formatter-maven-plugin</artifactId>
+            </plugin>
             <!-- needed for jetty:run maven target -->
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
