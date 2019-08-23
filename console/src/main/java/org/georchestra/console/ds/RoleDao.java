@@ -37,12 +37,13 @@ public interface RoleDao {
 	 * @param userId
 	 * @param originLogin login of admin that generate this request
 	 * @throws NameNotFoundException
-	 * @throws DataServiceException 
+	 * @throws DataServiceException
 	 */
-	void addUser(String  roleID, String userId, final String originLogin) throws DataServiceException, NameNotFoundException;
+	void addUser(String roleID, String userId, final String originLogin)
+			throws DataServiceException, NameNotFoundException;
 
-
-	void addUsers(String cn, List<String> addList, final String originLogin) throws DataServiceException, NameNotFoundException;
+	void addUsers(String cn, List<String> addList, final String originLogin)
+			throws DataServiceException, NameNotFoundException;
 
 	/**
 	 * Returns all roles. Each roles will contains its list of users.
@@ -59,7 +60,7 @@ public interface RoleDao {
 	List<Role> findAllForUser(String userId) throws DataServiceException;
 
 	/**
-	 * Deletes the user from all roles 
+	 * Deletes the user from all roles
 	 *
 	 * @param uid
 	 * @param originLogin login of admin that generate this request
@@ -67,7 +68,8 @@ public interface RoleDao {
 	 */
 	void deleteUser(String uid, final String originLogin) throws DataServiceException;
 
-	void deleteUsers(String cn, List<String> deleteList, String originLogin) throws DataServiceException, NameNotFoundException;
+	void deleteUsers(String cn, List<String> deleteList, String originLogin)
+			throws DataServiceException, NameNotFoundException;
 
 	/**
 	 * Deletes the user from the role
@@ -94,8 +96,9 @@ public interface RoleDao {
 	 * 
 	 * @param role
 	 * 
-	 * @throws DataServiceException 
-	 * @throws DuplicatedCommonNameException if the role es present in the LDAP store
+	 * @throws DataServiceException
+	 * @throws DuplicatedCommonNameException if the role es present in the LDAP
+	 *                                       store
 	 */
 	void insert(Role role) throws DataServiceException, DuplicatedCommonNameException;
 
@@ -106,10 +109,11 @@ public interface RoleDao {
 	 * @throws DataServiceException
 	 * @throws NameNotFoundException
 	 */
-	void delete(String commonName) throws DataServiceException,	NameNotFoundException;
+	void delete(String commonName) throws DataServiceException, NameNotFoundException;
 
 	/**
 	 * Search the role based on the common name (cn)
+	 * 
 	 * @param commonName
 	 * @return {@link Role}
 	 * 
@@ -124,10 +128,13 @@ public interface RoleDao {
 	 * @param modified
 	 * 
 	 */
-	void update(String roleName, Role modified) throws DataServiceException, NameNotFoundException, DuplicatedCommonNameException;
+	void update(String roleName, Role modified)
+			throws DataServiceException, NameNotFoundException, DuplicatedCommonNameException;
 
-	void addUsersInRoles(List<String> putRole, List<String> users, final String originLogin)  throws DataServiceException, NameNotFoundException;
+	void addUsersInRoles(List<String> putRole, List<String> users, final String originLogin)
+			throws DataServiceException, NameNotFoundException;
 
-	void deleteUsersInRoles(List<String> deleteRole, List<String> users, final String originLogin) throws DataServiceException, NameNotFoundException;
-	
+	void deleteUsersInRoles(List<String> deleteRole, List<String> users, final String originLogin)
+			throws DataServiceException, NameNotFoundException;
+
 }

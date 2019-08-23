@@ -26,14 +26,14 @@ import java.util.Map;
  * @author Mauricio Pazos
  *
  */
-public interface QueryCommand extends DataCommand{
-	
+public interface QueryCommand extends DataCommand {
 
 	/**
 	 * Results of query execution
-	 * @return  List of pairs fieldName, fieldValue. 
+	 * 
+	 * @return List of pairs fieldName, fieldValue.
 	 */
-	public List<Map<String,Object>> getResult();
+	public List<Map<String, Object>> getResult();
 
 	/**
 	 * @param year required parameter

@@ -35,45 +35,45 @@ public class ConnectionPool {
 
 	private String jdbcUrl;
 
-	public ConnectionPool() {}
-
-	public ConnectionPool (String jdbcUrl) {
-	    this.jdbcUrl = jdbcUrl;
+	public ConnectionPool() {
 	}
 
-    public void init() {
-        String actualJdbcUrl = jdbcUrl;
+	public ConnectionPool(String jdbcUrl) {
+		this.jdbcUrl = jdbcUrl;
+	}
 
-        if (georchestraConfiguration.activated()) {
-            String supersededJdbcUrl = georchestraConfiguration.getProperty("jdbcUrl");
-            if (supersededJdbcUrl != null) {
-                actualJdbcUrl = supersededJdbcUrl;
-            }
-        }
+	public void init() {
+		String actualJdbcUrl = jdbcUrl;
 
-        basicDataSource = new BasicDataSource();
-        basicDataSource.setDriverClassName("org.postgresql.Driver");
-        basicDataSource.setTestOnBorrow(true);
-        basicDataSource.setPoolPreparedStatements(true);
-        basicDataSource.setMaxOpenPreparedStatements(-1);
-        basicDataSource.setDefaultReadOnly(false);
-        basicDataSource.setDefaultAutoCommit(true);
+		if (georchestraConfiguration.activated()) {
+			String supersededJdbcUrl = georchestraConfiguration.getProperty("jdbcUrl");
+			if (supersededJdbcUrl != null) {
+				actualJdbcUrl = supersededJdbcUrl;
+			}
+		}
 
-        basicDataSource.setUrl(actualJdbcUrl);
-    }
-    /**
+		basicDataSource = new BasicDataSource();
+		basicDataSource.setDriverClassName("org.postgresql.Driver");
+		basicDataSource.setTestOnBorrow(true);
+		basicDataSource.setPoolPreparedStatements(true);
+		basicDataSource.setMaxOpenPreparedStatements(-1);
+		basicDataSource.setDefaultReadOnly(false);
+		basicDataSource.setDefaultAutoCommit(true);
 
-     *
-     * @param jdbcUrl
-     */
+		basicDataSource.setUrl(actualJdbcUrl);
+	}
+
+	/**
+	 *
+	 * 
+	 * @param jdbcUrl
+	 */
 	public void setJdbcUrl(String jdbcUrl) {
-	    this.jdbcUrl = jdbcUrl;
+		this.jdbcUrl = jdbcUrl;
 	}
 
-    public Connection getConnection() throws SQLException
-    {
-        return basicDataSource.getConnection();
-    }
+	public Connection getConnection() throws SQLException {
+		return basicDataSource.getConnection();
+	}
 
 }
-

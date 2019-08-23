@@ -20,102 +20,101 @@ import org.springframework.ldap.core.AuthenticationSource;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
 
-
 public class AccountDaoTest {
 
-    private AccountDao us;
-    private RoleDaoImpl roleDao;
-    private LdapContextSource contextSource;
-    private Account adminAccount;
+	private AccountDao us;
+	private RoleDaoImpl roleDao;
+	private LdapContextSource contextSource;
+	private Account adminAccount;
 
-    @Before
-    public void setUp() throws Exception {
-        assumeTrue(System.getProperty("console.test.openldap.ldapurl") != null
-                && System.getProperty("console.test.openldap.basedn") != null
-                && System.getProperty("console.test.openldap.binddn") != null
-                && System.getProperty("console.test.openldap.password") != null);
+	@Before
+	public void setUp() throws Exception {
+		assumeTrue(System.getProperty("console.test.openldap.ldapurl") != null
+				&& System.getProperty("console.test.openldap.basedn") != null
+				&& System.getProperty("console.test.openldap.binddn") != null
+				&& System.getProperty("console.test.openldap.password") != null);
 
-        String ldapUrl = System.getProperty("console.test.openldap.ldapurl");
-        String baseDn = System.getProperty("console.test.openldap.basedn");
-        String ldapAdminDn = System.getProperty("console.test.openldap.binddn");
-        String ldapAdminDnPw = System.getProperty("console.test.openldap.password");
+		String ldapUrl = System.getProperty("console.test.openldap.ldapurl");
+		String baseDn = System.getProperty("console.test.openldap.basedn");
+		String ldapAdminDn = System.getProperty("console.test.openldap.binddn");
+		String ldapAdminDnPw = System.getProperty("console.test.openldap.password");
 
-        contextSource = new LdapContextSource();
-        contextSource.setBase(baseDn);
-        contextSource.setUrl(ldapUrl);
-        contextSource.setBaseEnvironmentProperties(new HashMap<String, Object>());
-        contextSource.setUserDn(ldapAdminDn);
-        contextSource.setPassword(ldapAdminDnPw);
-        contextSource.setAnonymousReadOnly(true);
-        contextSource.setCacheEnvironmentProperties(false);
-        AuthenticationSource authsrc =  Mockito.mock(AuthenticationSource.class);
-        Mockito.when(authsrc.getPrincipal()).thenReturn(ldapAdminDn);
-        Mockito.when(authsrc.getCredentials()).thenReturn(ldapAdminDnPw);
-        contextSource.setAuthenticationSource(authsrc);
+		contextSource = new LdapContextSource();
+		contextSource.setBase(baseDn);
+		contextSource.setUrl(ldapUrl);
+		contextSource.setBaseEnvironmentProperties(new HashMap<String, Object>());
+		contextSource.setUserDn(ldapAdminDn);
+		contextSource.setPassword(ldapAdminDnPw);
+		contextSource.setAnonymousReadOnly(true);
+		contextSource.setCacheEnvironmentProperties(false);
+		AuthenticationSource authsrc = Mockito.mock(AuthenticationSource.class);
+		Mockito.when(authsrc.getPrincipal()).thenReturn(ldapAdminDn);
+		Mockito.when(authsrc.getCredentials()).thenReturn(ldapAdminDnPw);
+		contextSource.setAuthenticationSource(authsrc);
 
-        LdapTemplate ldapTemplate = new LdapTemplate(contextSource);
-        roleDao = new RoleDaoImpl();
-        roleDao.setLdapTemplate(ldapTemplate);
-        roleDao.setRoleSearchBaseDN("ou=roles");
-        roleDao.setUniqueNumberField("ou");
-        roleDao.setUserSearchBaseDN("ou=users");
+		LdapTemplate ldapTemplate = new LdapTemplate(contextSource);
+		roleDao = new RoleDaoImpl();
+		roleDao.setLdapTemplate(ldapTemplate);
+		roleDao.setRoleSearchBaseDN("ou=roles");
+		roleDao.setUniqueNumberField("ou");
+		roleDao.setUserSearchBaseDN("ou=users");
 
-        OrgsDao orgsDao = new OrgsDao();
-        orgsDao.setLdapTemplate(ldapTemplate);
-        orgsDao.setOrgSearchBaseDN("ou=orgs");
-        orgsDao.setUserSearchBaseDN("ou=users");
+		OrgsDao orgsDao = new OrgsDao();
+		orgsDao.setLdapTemplate(ldapTemplate);
+		orgsDao.setOrgSearchBaseDN("ou=orgs");
+		orgsDao.setUserSearchBaseDN("ou=users");
 
+		us = new AccountDaoImpl(ldapTemplate, roleDao, orgsDao);
+		((AccountDaoImpl) us).setUserSearchBaseDN("ou=users");
 
-        us = new AccountDaoImpl(ldapTemplate, roleDao, orgsDao);
-        ((AccountDaoImpl) us).setUserSearchBaseDN("ou=users");
+		this.adminAccount = AccountFactory.createBrief("testadmin", "monkey123", "Test", "ADmin",
+				"postmastrer@localhost", "+33123456789", "admin", "");
+	}
 
-        this.adminAccount = AccountFactory.createBrief("testadmin", "monkey123", "Test", "ADmin",
-                "postmastrer@localhost", "+33123456789", "admin", "");
-    }
+	@Test
+	public void testBlankFields_issues_1086_1096() throws Exception {
+		Account testadminAc = us.findByUID("testadmin");
+		us.update(testadminAc, this.adminAccount.getUid());
 
-    @Test
-    public void testBlankFields_issues_1086_1096() throws Exception {
-        Account testadminAc  = us.findByUID("testadmin");
-        us.update(testadminAc, this.adminAccount.getUid());
-        
-        Attributes attrs = contextSource.getReadWriteContext().getAttributes(new LdapName("uid=testadmin,ou=users"));
-            
-        boolean hasStillUserPassword = attrs.get("userPassword") != null;
+		Attributes attrs = contextSource.getReadWriteContext().getAttributes(new LdapName("uid=testadmin,ou=users"));
 
-        us.update(testadminAc, "testadmin");
+		boolean hasStillUserPassword = attrs.get("userPassword") != null;
 
-        assertTrue("No userPassword found for testadmin, expected one", hasStillUserPassword);
-    }
+		us.update(testadminAc, "testadmin");
 
-    @Test
-    public void testUpdateAcountAccount() throws Exception {
-        Account testadminAc  = us.findByUID("testadmin");
-        String oldUid = testadminAc.getUid();
+		assertTrue("No userPassword found for testadmin, expected one", hasStillUserPassword);
+	}
 
-        Account newTestAdminAc = AccountFactory.create(testadminAc);
-        assertTrue(newTestAdminAc.getUid().equals(testadminAc.getUid()));
+	@Test
+	public void testUpdateAcountAccount() throws Exception {
+		Account testadminAc = us.findByUID("testadmin");
+		String oldUid = testadminAc.getUid();
 
-        newTestAdminAc.setUid("testadminblah");
+		Account newTestAdminAc = AccountFactory.create(testadminAc);
+		assertTrue(newTestAdminAc.getUid().equals(testadminAc.getUid()));
 
-        us.update(testadminAc, newTestAdminAc, this.adminAccount.getUid());
+		newTestAdminAc.setUid("testadminblah");
 
-        Attributes attrs = contextSource.getReadWriteContext().getAttributes(new LdapName("uid=testadminblah,ou=users"));
-        Object o = attrs.get("uid");
-        boolean correctlyrenamed = ((BasicAttribute) o).get(0).toString().equals("testadminblah");
-        boolean encounteredNamingEx = false;
-        try {
-            Attributes oldAttrs = contextSource.getReadWriteContext().getAttributes(new LdapName("uid=testadmin,ou=users"));
-        } catch (NamingException e) {
-            encounteredNamingEx = true;
-        }
+		us.update(testadminAc, newTestAdminAc, this.adminAccount.getUid());
 
+		Attributes attrs = contextSource.getReadWriteContext()
+				.getAttributes(new LdapName("uid=testadminblah,ou=users"));
+		Object o = attrs.get("uid");
+		boolean correctlyrenamed = ((BasicAttribute) o).get(0).toString().equals("testadminblah");
+		boolean encounteredNamingEx = false;
+		try {
+			Attributes oldAttrs = contextSource.getReadWriteContext()
+					.getAttributes(new LdapName("uid=testadmin,ou=users"));
+		} catch (NamingException e) {
+			encounteredNamingEx = true;
+		}
 
-        // restoring testadmin in its initial state
-        us.update(newTestAdminAc, testadminAc, this.adminAccount.getUid());
+		// restoring testadmin in its initial state
+		us.update(newTestAdminAc, testadminAc, this.adminAccount.getUid());
 
-        assertTrue("Was able to find testadmin back (found some attributes), none expected", encounteredNamingEx);
-        assertTrue("Wrong uid encountered (found " + o.toString() + " instead of testadminblah", correctlyrenamed);
+		assertTrue("Was able to find testadmin back (found some attributes), none expected", encounteredNamingEx);
+		assertTrue("Wrong uid encountered (found " + o.toString() + " instead of testadminblah", correctlyrenamed);
 
-    }
- 
+	}
+
 }

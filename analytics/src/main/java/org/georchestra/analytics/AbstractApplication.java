@@ -36,6 +36,7 @@ import org.json.JSONObject;
 
 /**
  * Abstract class for all controllers from the webapp Analytics.
+ * 
  * @author fgravin
  *
  */
@@ -50,17 +51,17 @@ public abstract class AbstractApplication {
 	String sort = "count DESC";
 	String filter = "";
 
-    private static List<String> allowedProperties = Arrays.asList("service", "layer", "request", // Layer tab
-            "user_name", // User tab
-            "org", // organization tab
-            "count" // every tab
-    );
+	private static List<String> allowedProperties = Arrays.asList("service", "layer", "request", // Layer tab
+			"user_name", // User tab
+			"org", // organization tab
+			"count" // every tab
+	);
 
-    private static List<String> allowedDirections = Arrays.asList("ASC", "DESC");
+	private static List<String> allowedDirections = Arrays.asList("ASC", "DESC");
 
 	/**
-	 * Checks all the parameters from the request and fill class attributes.
-	 * Return false if any parameters is missing or malformed.
+	 * Checks all the parameters from the request and fill class attributes. Return
+	 * false if any parameters is missing or malformed.
 	 *
 	 * @param request
 	 * @param msg
@@ -69,15 +70,16 @@ public abstract class AbstractApplication {
 	protected boolean getAllParameters(HttpServletRequest request, StringBuilder msg) {
 
 		try {
-			if(!getDateParameters(request)) return false;
+			if (!getDateParameters(request))
+				return false;
 
 			start = Integer.valueOf(request.getParameter("start"));
 			limit = Integer.valueOf(request.getParameter("limit"));
 			JSONObject obj = new JSONArray(request.getParameter("sort")).getJSONObject(0);
 
-			if (! allowedProperties.contains(obj.getString("property"))
-			        || ! allowedDirections.contains(obj.getString("direction"))) {
-			    throw new IllegalArgumentException("Unexpected parameters provided");
+			if (!allowedProperties.contains(obj.getString("property"))
+					|| !allowedDirections.contains(obj.getString("direction"))) {
+				throw new IllegalArgumentException("Unexpected parameters provided");
 			}
 			sort = obj.getString("property") + " " + obj.getString("direction");
 			filter = request.getParameter("filter");
@@ -89,14 +91,15 @@ public abstract class AbstractApplication {
 			msg.append("One param is missing");
 			return false;
 		} catch (IllegalArgumentException e) {
-		    return false;
+			return false;
 		}
 		return true;
 	}
 
 	/**
-	 * Check the month and year parameters and fill the class attributes.
-	 * Return false if one's missing or bad formatted
+	 * Check the month and year parameters and fill the class attributes. Return
+	 * false if one's missing or bad formatted
+	 * 
 	 * @param request
 	 * @return
 	 */
@@ -104,21 +107,20 @@ public abstract class AbstractApplication {
 
 		try {
 			month = Integer.valueOf(request.getParameter("month"));
-			year  = Integer.valueOf(request.getParameter("year"));
-		}
-		catch (NumberFormatException e) {
+			year = Integer.valueOf(request.getParameter("year"));
+		} catch (NumberFormatException e) {
 			return false;
 		}
 
-		if (month<0 || month > 12) {
+		if (month < 0 || month > 12) {
 			return false;
 		}
 		return true;
 	}
 
 	/**
-	 * Send the unsuccessful response containing success:false, and the message
-	 * from an error
+	 * Send the unsuccessful response containing success:false, and the message from
+	 * an error
 	 *
 	 * @param out response stream to write the message in
 	 * @param msg error message
@@ -134,7 +136,7 @@ public abstract class AbstractApplication {
 	/**
 	 * Report an error if exception is thrown during the SQL or JSON process.
 	 *
-	 * @param out response stream to write an error message
+	 * @param out      response stream to write an error message
 	 * @param response
 	 * @param e
 	 * @throws Exception
@@ -148,9 +150,10 @@ public abstract class AbstractApplication {
 	}
 
 	/**
-	 * Updates the response ContentType and header to make the browser download the CSV file
+	 * Updates the response ContentType and header to make the browser download the
+	 * CSV file
 	 *
-	 * @param csv the CSV content as String
+	 * @param csv      the CSV content as String
 	 * @param filename the filename the CSV will be saved under
 	 * @param response
 	 * @throws Exception
@@ -158,34 +161,36 @@ public abstract class AbstractApplication {
 	protected void respondCSV(String csv, final String filename, HttpServletResponse response) throws Exception {
 		response.setContentType("text/csv");
 		response.setContentLength(csv.getBytes().length);
-		response.setHeader("Content-Disposition", "attachment; filename=\""+filename+CSVUtil.CSV_EXT+"\"");
+		response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + CSVUtil.CSV_EXT + "\"");
 		response.getWriter().write(csv);
 	}
 
 	/**
-	 * Generic method from all WS. Will call the strategy.process method which refer to the
-	 * WS' model. This model will return result as JSONObject. This object will be returned
-	 * in response. If no error occurs, the response will contain success:true, the total
-	 * number of results, and an array of results.
-	 * If an exception is thrown during the request, a JSON response with success:false will be returned.
-	 * If an error occurs during SQL or JSON process, an exception will be thrown.
+	 * Generic method from all WS. Will call the strategy.process method which refer
+	 * to the WS' model. This model will return result as JSONObject. This object
+	 * will be returned in response. If no error occurs, the response will contain
+	 * success:true, the total number of results, and an array of results. If an
+	 * exception is thrown during the request, a JSON response with success:false
+	 * will be returned. If an error occurs during SQL or JSON process, an exception
+	 * will be thrown.
 	 *
 	 * @param request
 	 * @param response
-	 * @param strategy contains the method to call the model and retrieve the results
+	 * @param strategy contains the method to call the model and retrieve the
+	 *                 results
 	 * @throws Exception
 	 */
-	protected void getStats(HttpServletRequest request, HttpServletResponse response, StrategyController strategy) throws Exception {
+	protected void getStats(HttpServletRequest request, HttpServletResponse response, StrategyController strategy)
+			throws Exception {
 
-		OutputStream out  = response.getOutputStream();
+		OutputStream out = response.getOutputStream();
 		StringBuilder msg = new StringBuilder();
 
-		if(!this.getAllParameters(request, msg)) {
+		if (!this.getAllParameters(request, msg)) {
 			sendSuccessFalse(out, msg.toString());
-		}
-		else {
+		} else {
 			try {
-				JSONObject object  = strategy.process();
+				JSONObject object = strategy.process();
 				out.write(object.toString().getBytes());
 
 			} catch (Exception e) {
@@ -195,31 +200,31 @@ public abstract class AbstractApplication {
 	}
 
 	/**
-	 * Generic method from all WS. Will call the strategy.process method which refers to the
-	 * WS' model. This model will return result as JSONObject. This object will then be
-	 * parsed to write a CSV file which will be returned in the response, using response header as
-	 * CSV file.
+	 * Generic method from all WS. Will call the strategy.process method which
+	 * refers to the WS' model. This model will return result as JSONObject. This
+	 * object will then be parsed to write a CSV file which will be returned in the
+	 * response, using response header as CSV file.
 	 *
 	 * @param request
 	 * @param response
 	 * @param strategy contain the method to call the model an retrieve results
 	 * @throws Exception
 	 */
-	protected void exportCSV(HttpServletRequest request, HttpServletResponse response, String csvFileName, StrategyController strategy) throws Exception {
+	protected void exportCSV(HttpServletRequest request, HttpServletResponse response, String csvFileName,
+			StrategyController strategy) throws Exception {
 
-		if(!this.getDateParameters(request)) {
-			OutputStream out  = response.getOutputStream();
+		if (!this.getDateParameters(request)) {
+			OutputStream out = response.getOutputStream();
 			sendSuccessFalse(out, "Invalid parameters");
-		}
-		else {
-			String csv=null;
+		} else {
+			String csv = null;
 			try {
-				JSONObject object  = strategy.process();
+				JSONObject object = strategy.process();
 				csv = CSVUtil.JSONToCSV(object);
 				csvFileName = String.valueOf(year) + "-" + String.format("%02d", month) + "-" + csvFileName;
 
 			} catch (Exception e) {
-				OutputStream out  = response.getOutputStream();
+				OutputStream out = response.getOutputStream();
 				reportError(out, response, e);
 			}
 			respondCSV(csv, csvFileName, response);

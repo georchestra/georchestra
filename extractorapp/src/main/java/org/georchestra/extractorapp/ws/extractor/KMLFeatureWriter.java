@@ -43,14 +43,11 @@ final class KMLFeatureWriter extends FileFeatureWriter {
 	 * New instance of {@link OGRFeatureWriter}
 	 *
 	 * @param progressListener
-	 * @param schema		output schema
-	 * @param basedir		output folder
-	 * @param features		input the set of Features to write
+	 * @param schema           output schema
+	 * @param basedir          output folder
+	 * @param features         input the set of Features to write
 	 */
-	public KMLFeatureWriter(
-			ProgressListener progresListener,
-			SimpleFeatureType schema,
-			File basedir,
+	public KMLFeatureWriter(ProgressListener progresListener, SimpleFeatureType schema, File basedir,
 			SimpleFeatureCollection features) {
 
 		super(progresListener, schema, basedir, features);
@@ -61,7 +58,7 @@ final class KMLFeatureWriter extends FileFeatureWriter {
 	 * @return {@link ShpDatastoreFactory}
 	 */
 	@Override
-	protected DatastoreFactory getDatastoreFactory() throws  IOException{
+	protected DatastoreFactory getDatastoreFactory() throws IOException {
 		return null;
 	}
 
@@ -84,44 +81,42 @@ final class KMLFeatureWriter extends FileFeatureWriter {
 		File[] files = null;
 		FileOutputStream fop = null;
 
-		SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder ();
-		builder.setName (schema.getName ());
+		SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+		builder.setName(schema.getName());
 
-		try{
-			File file = new File(basedir, builder.getName() + "."+ extension());
+		try {
+			File file = new File(basedir, builder.getName() + "." + extension());
 			fop = new FileOutputStream(file);
 
 			Encoder encoder = new Encoder(new KMLConfiguration());
 			encoder.setIndenting(true);
 
-			encoder.encode(features, KML.kml, fop );
+			encoder.encode(features, KML.kml, fop);
 
 			files = new File[1];
 			files[0] = file;
 
-			if(LOG.isDebugEnabled()){
+			if (LOG.isDebugEnabled()) {
 
 				for (int i = 0; i < files.length; i++) {
-					LOG.debug("Generated file: " + files[i].getAbsolutePath() );
+					LOG.debug("Generated file: " + files[i].getAbsolutePath());
 				}
 			}
 			fop.flush();
 			return files;
 
-		} catch (IOException e ){
+		} catch (IOException e) {
 
-			final String message = "Failed generation: " + this.schema.getName() + " - "  +  e.getMessage();
+			final String message = "Failed generation: " + this.schema.getName() + " - " + e.getMessage();
 			LOG.error(message);
 
 			throw e;
-		}
-		finally {
-			if(fop != null) {
+		} finally {
+			if (fop != null) {
 				fop.close();
 			}
 
 		}
 	}
-
 
 }

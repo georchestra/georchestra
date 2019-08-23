@@ -31,30 +31,31 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
  * Configuration interceptor
  *
  * <p>
- * This class adds the configuration parameters to model before calling Controllers.
+ * This class adds the configuration parameters to model before calling
+ * Controllers.
  * </p>
  *
  * @author Sylvain Lesage
  *
  */
-public class ConfigurationInterceptor extends HandlerInterceptorAdapter{
+public class ConfigurationInterceptor extends HandlerInterceptorAdapter {
 
 	@Autowired
 	private Configuration config;
 
 	@Autowired
 	private GeorchestraConfiguration georConfig;
-	   
+
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-	    throws Exception {
+			throws Exception {
 
 		HttpSession currentSession = request.getSession();
 		currentSession.setAttribute("publicContextPath", config.getPublicContextPath());
 
 		if ((georConfig != null) && (georConfig.activated())) {
-		  currentSession.setAttribute("headerHeight", georConfig.getProperty("headerHeight"));
+			currentSession.setAttribute("headerHeight", georConfig.getProperty("headerHeight"));
 		} else {
-		  currentSession.setAttribute("headerHeight", "90");
+			currentSession.setAttribute("headerHeight", "90");
 		}
 		return true;
 	}

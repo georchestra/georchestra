@@ -16,20 +16,18 @@ import org.georchestra.ogcservstatistics.calculations.OGCServiceStatistics;
 import org.georchestra.ogcservstatistics.log4j.OGCServiceMessageFormatter;
 import org.junit.Test;
 
-
 /**
- * Test case for activated key. It is configured in false to avoid the insertion of log messages
+ * Test case for activated key. It is configured in false to avoid the insertion
+ * of log messages
  * 
  * @author Mauricio Pazos
  *
  */
 public class DisableLoggingTest {
 
-	
 	private static final Logger LOGGER = Logger.getLogger(OGCServicesAppenderTest.class);
 
-
-	static{
+	static {
 		// activated=false in the porperties files
 		String file = "src/test/resources/org/georchestra/ogcservstatistics/log4j-disable.properties";
 		PropertyConfigurator.configure(file);
@@ -37,24 +35,25 @@ public class DisableLoggingTest {
 
 	/**
 	 * the following log message is not inserted
+	 * 
 	 * @throws Exception
 	 */
 	@Test
 	public void testOGCOperationLogging() throws Exception {
-		
+
 		List<Map<String, Object>> logList = OGCServiceStatistics.list();
 		final int logSizeBefore = logList.size();
 
 		final Date time = Calendar.getInstance().getTime();
 
-		final String  request = "http://www.someserver.com/geoserver/wfs/WfsDispatcher?REQUEST=DescribeFeatureType&TYPENAME=ign%3Acommune&SERVICE=WFS&VERSION=1.0.0";
-		String [] roles = null;
-		String ogcServiceMessage = OGCServiceMessageFormatter.format("userNoInsert!",request,"",roles);
+		final String request = "http://www.someserver.com/geoserver/wfs/WfsDispatcher?REQUEST=DescribeFeatureType&TYPENAME=ign%3Acommune&SERVICE=WFS&VERSION=1.0.0";
+		String[] roles = null;
+		String ogcServiceMessage = OGCServiceMessageFormatter.format("userNoInsert!", request, "", roles);
 
 		LOGGER.info(ogcServiceMessage);
 
 		logList = OGCServiceStatistics.list();
-		assertEquals(logList.size(), logSizeBefore );
+		assertEquals(logList.size(), logSizeBefore);
 	}
-	
+
 }

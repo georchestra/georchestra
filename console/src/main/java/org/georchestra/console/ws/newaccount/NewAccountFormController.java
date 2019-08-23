@@ -19,7 +19,6 @@
 
 package org.georchestra.console.ws.newaccount;
 
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.routines.EmailValidator;
@@ -71,7 +70,7 @@ import java.util.regex.Pattern;
  *
  */
 @Controller
-@SessionAttributes(types={AccountFormBean.class})
+@SessionAttributes(types = { AccountFormBean.class })
 public final class NewAccountFormController {
 
 	private static final Log LOG = LogFactory.getLog(NewAccountFormController.class.getName());
@@ -98,9 +97,8 @@ public final class NewAccountFormController {
 	private Validation validation;
 
 	@Autowired
-	public NewAccountFormController(Moderator moderatorRule,
-									ReCaptchaParameters reCaptchaParameters,
-									Validation validation) {
+	public NewAccountFormController(Moderator moderatorRule, ReCaptchaParameters reCaptchaParameters,
+			Validation validation) {
 		this.moderator = moderatorRule;
 		this.reCaptchaParameters = reCaptchaParameters;
 		this.validation = validation;
@@ -108,13 +106,13 @@ public final class NewAccountFormController {
 
 	@InitBinder
 	public void initForm(WebDataBinder dataBinder) {
-		dataBinder.setAllowedFields(new String[]{"firstName","surname", "email", "phone",
-				"org", "title", "description", "uid", "password", "confirmPassword", "createOrg", "orgName",
-				"orgShortName", "orgAddress", "orgType", "orgCities", "recaptcha_response_field"});
+		dataBinder.setAllowedFields(new String[] { "firstName", "surname", "email", "phone", "org", "title",
+				"description", "uid", "password", "confirmPassword", "createOrg", "orgName", "orgShortName",
+				"orgAddress", "orgType", "orgCities", "recaptcha_response_field" });
 	}
 
-	@RequestMapping(value="/account/new", method=RequestMethod.GET)
-	public String setupForm(HttpServletRequest request, Model model) throws IOException{
+	@RequestMapping(value = "/account/new", method = RequestMethod.GET)
+	public String setupForm(HttpServletRequest request, Model model) throws IOException {
 
 		HttpSession session = request.getSession();
 		AccountFormBean formBean = new AccountFormBean();
@@ -125,11 +123,11 @@ public final class NewAccountFormController {
 		model.addAttribute("orgTypes", this.getOrgTypes());
 
 		session.setAttribute("reCaptchaPublicKey", this.reCaptchaParameters.getPublicKey());
-		for(String f: this.validation.getRequiredUserFields())
+		for (String f : this.validation.getRequiredUserFields())
 			session.setAttribute(f + "Required", "true");
 
 		// Convert to camelcase with 'org' prefix 'shortName' --> 'orgShortName'
-		for(String f: this.validation.getRequiredOrgFields())
+		for (String f : this.validation.getRequiredOrgFields())
 			session.setAttribute("org" + f.substring(0, 1).toUpperCase() + f.substring(1, f.length()) + "Required",
 					"true");
 
@@ -137,8 +135,9 @@ public final class NewAccountFormController {
 	}
 
 	/**
-	 * Creates a new account in ldap. If the application was configured with "moderated signup" the new account is added with the PENDING role,
-	 * in other case, it will be inserted with the USER role
+	 * Creates a new account in ldap. If the application was configured with
+	 * "moderated signup" the new account is added with the PENDING role, in other
+	 * case, it will be inserted with the USER role
 	 *
 	 *
 	 * @param formBean
@@ -149,13 +148,9 @@ public final class NewAccountFormController {
 	 *
 	 * @throws IOException
 	 */
-	@RequestMapping(value="/account/new", method=RequestMethod.POST)
-	public String create(HttpServletRequest request,
-						 @ModelAttribute AccountFormBean formBean,
-						 @RequestParam("orgCities") String orgCities,
-						 BindingResult result,
-						 SessionStatus sessionStatus,
-						 Model model)
+	@RequestMapping(value = "/account/new", method = RequestMethod.POST)
+	public String create(HttpServletRequest request, @ModelAttribute AccountFormBean formBean,
+			@RequestParam("orgCities") String orgCities, BindingResult result, SessionStatus sessionStatus, Model model)
 			throws IOException, SQLException {
 
 		// Populate orgs droplist
@@ -165,21 +160,22 @@ public final class NewAccountFormController {
 		model.addAttribute("orgTypes", this.getOrgTypes());
 
 		// uid validation
-		if(!this.validation.validateUserField("uid", formBean.getUid())){
+		if (!this.validation.validateUserField("uid", formBean.getUid())) {
 			result.rejectValue("uid", "uid.error.required", "required");
 		} else {
-			// A valid user identifier (uid) can only contain characters, numbers, hyphens or dot.
+			// A valid user identifier (uid) can only contain characters, numbers, hyphens
+			// or dot.
 			// It must begin with a character.
 			Pattern regexp = Pattern.compile("[a-zA-Z][a-zA-Z0-9.-]*");
 			Matcher m = regexp.matcher(formBean.getUid());
-			if(!m.matches())
+			if (!m.matches())
 				result.rejectValue("uid", "uid.error.invalid", "required");
 		}
 
 		// first name and surname validation
-		if(!this.validation.validateUserField("firstName", formBean.getFirstName()))
+		if (!this.validation.validateUserField("firstName", formBean.getFirstName()))
 			result.rejectValue("firstName", "firstName.error.required", "required");
-		if(!this.validation.validateUserField("surname", formBean.getSurname()))
+		if (!this.validation.validateUserField("surname", formBean.getSurname()))
 			result.rejectValue("surname", "surname.error.required", "required");
 
 		// email validation
@@ -192,7 +188,7 @@ public final class NewAccountFormController {
 		PasswordUtils.validate(formBean.getPassword(), formBean.getConfirmPassword(), result);
 
 		// Check captcha
-        RecaptchaUtils.validate(reCaptchaParameters, formBean.getRecaptcha_response_field(), result);
+		RecaptchaUtils.validate(reCaptchaParameters, formBean.getRecaptcha_response_field(), result);
 
 		// Validate remaining fields
 		this.validation.validateUserField("phone", formBean.getPhone(), result);
@@ -200,7 +196,7 @@ public final class NewAccountFormController {
 		this.validation.validateUserField("description", formBean.getDescription(), result);
 
 		// Create org if needed
-		if(formBean.getCreateOrg() && ! result.hasErrors()){
+		if (formBean.getCreateOrg() && !result.hasErrors()) {
 			try {
 
 				// Check required fields
@@ -228,14 +224,14 @@ public final class NewAccountFormController {
 
 				// Parse and store cities
 				orgCities = orgCities.trim();
-				if(orgCities.length() > 0)
+				if (orgCities.length() > 0)
 					org.setCities(Arrays.asList(orgCities.split("\\s*,\\s*")));
 
 				// Set default value
 				org.setStatus(Org.STATUS_PENDING);
 
 				// Persist changes to LDAP server
-				if(!result.hasErrors()){
+				if (!result.hasErrors()) {
 					this.orgDao.insert(org);
 					this.orgDao.insert(orgExt);
 
@@ -251,24 +247,17 @@ public final class NewAccountFormController {
 			this.validation.validateUserField("org", formBean.getOrg(), result);
 		}
 
-		if(result.hasErrors())
+		if (result.hasErrors())
 			return "createAccountForm";
-
 
 		// inserts the new account
 		try {
 
-			Account account =  AccountFactory.createBrief(
-					formBean.getUid().toLowerCase(),
-					formBean.getPassword(),
-					formBean.getFirstName(),
-					formBean.getSurname(),
-					formBean.getEmail(),
-					formBean.getPhone(),
-					formBean.getTitle(),
-					formBean.getDescription() );
+			Account account = AccountFactory.createBrief(formBean.getUid().toLowerCase(), formBean.getPassword(),
+					formBean.getFirstName(), formBean.getSurname(), formBean.getEmail(), formBean.getPhone(),
+					formBean.getTitle(), formBean.getDescription());
 
-			if(!formBean.getOrg().equals("-"))
+			if (!formBean.getOrg().equals("-"))
 				account.setOrg(formBean.getOrg());
 
 			String roleID = this.moderator.moderatedSignup() ? Role.PENDING : Role.USER;
@@ -282,11 +271,11 @@ public final class NewAccountFormController {
 
 			// retrieve emails of all users with SUPERUSER role
 			List<Account> admins = this.accountDao.findByRole("SUPERUSER");
-			for(Account admin : admins) {
+			for (Account admin : admins) {
 				recipients.add(admin.getEmail());
 			}
 			// Retrieve emails of delegated admin if org is specified
-			if(!formBean.getOrg().equals("-")) {
+			if (!formBean.getOrg().equals("-")) {
 				// and a delegation is defined
 				List<DelegationEntry> delegations = this.advancedDelegationDao.findByOrg(formBean.getOrg());
 
@@ -296,16 +285,19 @@ public final class NewAccountFormController {
 				}
 			}
 
-			// Select email template based on moderation configuration for admin and user and send emails
-			if(this.moderator.moderatedSignup()){
-				this.emailFactory.sendNewAccountRequiresModerationEmail(servletContext, recipients.toArray(new String[recipients.size()]),
-						account.getCommonName(), account.getUid(), account.getEmail());
-				this.emailFactory.sendAccountCreationInProcessEmail(servletContext, new String[]{account.getEmail()},
+			// Select email template based on moderation configuration for admin and user
+			// and send emails
+			if (this.moderator.moderatedSignup()) {
+				this.emailFactory.sendNewAccountRequiresModerationEmail(servletContext,
+						recipients.toArray(new String[recipients.size()]), account.getCommonName(), account.getUid(),
+						account.getEmail());
+				this.emailFactory.sendAccountCreationInProcessEmail(servletContext, new String[] { account.getEmail() },
 						account.getCommonName(), account.getUid());
 			} else {
-				this.emailFactory.sendNewAccountNotificationEmail(servletContext,recipients.toArray(new String[recipients.size()]),
-						account.getCommonName(), account.getUid(), account.getEmail());
-				this.emailFactory.sendAccountWasCreatedEmail(servletContext, new String[]{account.getEmail()},
+				this.emailFactory.sendNewAccountNotificationEmail(servletContext,
+						recipients.toArray(new String[recipients.size()]), account.getCommonName(), account.getUid(),
+						account.getEmail());
+				this.emailFactory.sendAccountWasCreatedEmail(servletContext, new String[] { account.getEmail() },
 						account.getCommonName(), account.getUid());
 			}
 			sessionStatus.setComplete();
@@ -320,7 +312,7 @@ public final class NewAccountFormController {
 		} catch (DuplicatedUidException e) {
 
 			try {
-				String proposedUid = this.accountDao.generateUid( formBean.getUid() );
+				String proposedUid = this.accountDao.generateUid(formBean.getUid());
 
 				formBean.setUid(proposedUid);
 
@@ -344,29 +336,29 @@ public final class NewAccountFormController {
 		return new AccountFormBean();
 	}
 
-
 	public Map<String, String> getOrgTypes() {
 		Map<String, String> orgTypes = new LinkedHashMap<String, String>();
-		for(String orgType: this.orgDao.getOrgTypeValues())
+		for (String orgType : this.orgDao.getOrgTypeValues())
 			orgTypes.put(orgType, orgType);
 		return orgTypes;
 	}
 
 	/**
 	 * Create a sorted Map of organization sorted by human readable name
+	 * 
 	 * @return
-     */
+	 */
 	public Map<String, String> getOrgs() {
 		List<Org> orgs = this.orgDao.findValidated();
 		Collections.sort(orgs, new Comparator<Org>() {
 			@Override
-			public int compare(Org o1, Org o2){
-				return  o1.getName().compareTo(o2.getName());
+			public int compare(Org o1, Org o2) {
+				return o1.getName().compareTo(o2.getName());
 			}
 		});
 
 		Map<String, String> orgsName = new LinkedHashMap<String, String>();
-		for(Org org : orgs)
+		for (Org org : orgs)
 			orgsName.put(org.getId(), org.getName());
 
 		return orgsName;

@@ -30,29 +30,28 @@ import org.georchestra.lib.sqlcommand.AbstractUpdateCommand;
  * @author Mauricio Pazos
  *
  */
-final class DeleteUserTokenCommand extends AbstractUpdateCommand{
+final class DeleteUserTokenCommand extends AbstractUpdateCommand {
 
+	private static final String SQL = "DELETE FROM " + DatabaseSchema.SCHEMA_NAME + "."
+			+ DatabaseSchema.TABLE_USER_TOKEN + " WHERE " + DatabaseSchema.UID_COLUMN + " = ?";
 
-	private static final String SQL= "DELETE FROM "+ DatabaseSchema.SCHEMA_NAME + "." + DatabaseSchema.TABLE_USER_TOKEN + " WHERE "+ DatabaseSchema.UID_COLUMN + " = ?";
-	
 	private String uid;
-	
-	public void setUid(String uid) {
-		
-		this.uid =uid;
-	}
 
+	public void setUid(String uid) {
+
+		this.uid = uid;
+	}
 
 	@Override
 	protected PreparedStatement prepareStatement() throws SQLException {
 
-        assert this.connection != null: "database connection is null, use setConnection";
+		assert this.connection != null : "database connection is null, use setConnection";
 
-        PreparedStatement pStmt = this.connection.prepareStatement(SQL);
+		PreparedStatement pStmt = this.connection.prepareStatement(SQL);
 
-        pStmt.setString(1, this.uid);
-		
+		pStmt.setString(1, this.uid);
+
 		return pStmt;
 	}
-	
+
 }

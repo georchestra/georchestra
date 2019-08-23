@@ -18,50 +18,49 @@ import java.util.Map;
 
 public class DBConnectionTest {
 
-    @Autowired
-    private GeorchestraConfiguration georConfig;
+	@Autowired
+	private GeorchestraConfiguration georConfig;
 
-    @Test
-    // Test parameter remplacment
-    public void testParameter() throws PropertyVetoException, SQLException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+	@Test
+	// Test parameter remplacment
+	public void testParameter() throws PropertyVetoException, SQLException, NoSuchMethodException,
+			IllegalAccessException, InvocationTargetException {
 
-        Map<String, String> env = System.getenv();
-        Assume.assumeTrue(env.containsKey("JDBC_TEST_URL"));
+		Map<String, String> env = System.getenv();
+		Assume.assumeTrue(env.containsKey("JDBC_TEST_URL"));
 
-        BasicDataSource dataSource = new BasicDataSource();
-        dataSource.setUrl(env.get("JDBC_TEST_URL"));
-        dataSource.setDriverClassName("org.postgresql.Driver");
-        dataSource.setTestOnBorrow(true);
-        dataSource.setValidationQuery("select 1 as dbcp_connection_test");
-        dataSource.setPoolPreparedStatements(true);
-        dataSource.setMaxOpenPreparedStatements(-1);
-        dataSource.setDefaultReadOnly(false);
-        dataSource.setDefaultAutoCommit(true);
+		BasicDataSource dataSource = new BasicDataSource();
+		dataSource.setUrl(env.get("JDBC_TEST_URL"));
+		dataSource.setDriverClassName("org.postgresql.Driver");
+		dataSource.setTestOnBorrow(true);
+		dataSource.setValidationQuery("select 1 as dbcp_connection_test");
+		dataSource.setPoolPreparedStatements(true);
+		dataSource.setMaxOpenPreparedStatements(-1);
+		dataSource.setDefaultReadOnly(false);
+		dataSource.setDefaultAutoCommit(true);
 
-        DBConnection conn = new DBConnection(dataSource);
+		DBConnection conn = new DBConnection(dataSource);
 
-        String sql = "SELECT CAST(COUNT(*) AS integer) AS count, to_char(date, {aggregateDate}) " +
-                "FROM ogcstatistics.ogc_services_log " +
-                "WHERE date >= CAST({startDate} AS timestamp without time zone) AND date < CAST({endDate} AS timestamp without time zone) " +
-                "AND user = {user} " +
-                "GROUP BY to_char(date, {aggregateDate}) " +
-                "ORDER BY to_char(date, {aggregateDate})";
+		String sql = "SELECT CAST(COUNT(*) AS integer) AS count, to_char(date, {aggregateDate}) "
+				+ "FROM ogcstatistics.ogc_services_log "
+				+ "WHERE date >= CAST({startDate} AS timestamp without time zone) AND date < CAST({endDate} AS timestamp without time zone) "
+				+ "AND user = {user} " + "GROUP BY to_char(date, {aggregateDate}) "
+				+ "ORDER BY to_char(date, {aggregateDate})";
 
-        Map<String, Object> values = new HashMap<String, Object>();
-        values.put("startDate", "2017-08-15");
-        values.put("endDate", "2017-09-15");
-        values.put("aggregateDate", "YYYY-mm-dd HH24");
-        values.put("user","biloute");
+		Map<String, Object> values = new HashMap<String, Object>();
+		values.put("startDate", "2017-08-15");
+		values.put("endDate", "2017-09-15");
+		values.put("aggregateDate", "YYYY-mm-dd HH24");
+		values.put("user", "biloute");
 
-        String finalQuery = conn.generateQuery(sql, values);
+		String finalQuery = conn.generateQuery(sql, values);
 
-        String sqlWithReplacments = "SELECT CAST(COUNT(*) AS integer) AS count, to_char(date, 'YYYY-mm-dd HH24') " +
-                "FROM ogcstatistics.ogc_services_log " +
-                "WHERE date >= CAST('2017-08-15' AS timestamp without time zone) AND date < CAST('2017-09-15' AS timestamp without time zone) " +
-                "AND user = 'biloute' " +
-                "GROUP BY to_char(date, 'YYYY-mm-dd HH24') " +
-                "ORDER BY to_char(date, 'YYYY-mm-dd HH24')";
+		String sqlWithReplacments = "SELECT CAST(COUNT(*) AS integer) AS count, to_char(date, 'YYYY-mm-dd HH24') "
+				+ "FROM ogcstatistics.ogc_services_log "
+				+ "WHERE date >= CAST('2017-08-15' AS timestamp without time zone) AND date < CAST('2017-09-15' AS timestamp without time zone) "
+				+ "AND user = 'biloute' " + "GROUP BY to_char(date, 'YYYY-mm-dd HH24') "
+				+ "ORDER BY to_char(date, 'YYYY-mm-dd HH24')";
 
-        Assert.assertEquals(sqlWithReplacments, finalQuery);
-    }
+		Assert.assertEquals(sqlWithReplacments, finalQuery);
+	}
 }

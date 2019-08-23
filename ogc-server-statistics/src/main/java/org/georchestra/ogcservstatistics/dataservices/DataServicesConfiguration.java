@@ -22,34 +22,32 @@ package org.georchestra.ogcservstatistics.dataservices;
 import java.sql.*;
 
 /**
- * This Singleton maintains the configuration data required to access to the database where
- * the ogc services are logged.  
+ * This Singleton maintains the configuration data required to access to the
+ * database where the ogc services are logged.
  * 
  * @author Mauricio Pazos
  *
  */
 public final class DataServicesConfiguration {
 
-	
 	private static final DataServicesConfiguration THIS = new DataServicesConfiguration();
 	private Connection connection;
 	private String user;
 	private String password;
 	private String jdbcURL;
-	
-	private DataServicesConfiguration(){
-		
+
+	private DataServicesConfiguration() {
+
 	}
-	
-	public static DataServicesConfiguration getInstance(){
+
+	public static DataServicesConfiguration getInstance() {
 
 		return THIS;
 	}
-	
+
 	public void setJdbcURL(String jdbcURL) {
 		this.jdbcURL = jdbcURL;
 	}
-	
 
 	public void setUser(String user) {
 
@@ -57,10 +55,9 @@ public final class DataServicesConfiguration {
 	}
 
 	public void setPassword(String password) {
-		
+
 		this.password = password;
 	}
-
 
 	/**
 	 * The connection to database
@@ -92,6 +89,5 @@ public final class DataServicesConfiguration {
 			}
 		}
 	}
-
 
 }

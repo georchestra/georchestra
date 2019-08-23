@@ -24,21 +24,21 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 /**
- * Request for CSW. 
+ * Request for CSW.
  * 
- * This class is responsibe to build the request required by the metadata catalog (CSW).
+ * This class is responsibe to build the request required by the metadata
+ * catalog (CSW).
  * 
  * @author Mauricio Pazos
  *
  */
 class CSWRequest {
 
-
 	private URL url = null;
 	private Integer timeout = Integer.valueOf(60000);
 	private String user;
 	private String password;
-	
+
 	public URL getUrl() {
 		return url;
 	}
@@ -63,12 +63,10 @@ class CSWRequest {
 		return password;
 	}
 
-
 	public void setURL(URL url) {
-		
+
 		this.url = url;
 	}
-	
 
 	public void setUser(String userName) {
 
@@ -83,9 +81,5 @@ class CSWRequest {
 	public URI buildURI() throws URISyntaxException {
 		return this.url.toURI();
 	}
-	
-	
-
-
 
 }

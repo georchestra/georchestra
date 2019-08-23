@@ -29,13 +29,13 @@ import org.springframework.security.core.AuthenticationException;
  */
 public class GatewayEnabledCasAuthenticationProvider extends CasAuthenticationProvider {
 
-    @Override
-    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        try {
-            return super.authenticate(authentication);
-        } catch (BadCredentialsException e){
-            return authentication;
-        }
-    }
-    
+	@Override
+	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+		try {
+			return super.authenticate(authentication);
+		} catch (BadCredentialsException e) {
+			return authentication;
+		}
+	}
+
 }

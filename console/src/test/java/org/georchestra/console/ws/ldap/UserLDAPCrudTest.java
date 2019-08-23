@@ -17,8 +17,6 @@ import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
 
-
-
 public class UserLDAPCrudTest {
 	private static LdapContextSource lctxs = null;
 	private static LdapTemplate ltmpl = null;
@@ -43,12 +41,14 @@ public class UserLDAPCrudTest {
 		// removing users
 		try {
 			ltmpl.unbind("ou=users", true);
-		} catch (NamingException e) {}
+		} catch (NamingException e) {
+		}
 
 		// removing roles
 		try {
 			ltmpl.unbind("ou=roles", true);
-		} catch (NamingException e) {}
+		} catch (NamingException e) {
+		}
 
 		// recreating ou=users
 		try {
@@ -57,7 +57,9 @@ public class UserLDAPCrudTest {
 			ctx.addAttributeValue("objectClass", "organizationalUnit");
 			ctx.addAttributeValue("ou", "users");
 			ltmpl.bind(ctx);
-		} catch (Exception e) {};
+		} catch (Exception e) {
+		}
+		;
 
 		// recreating ou=roles
 		try {
@@ -66,18 +68,22 @@ public class UserLDAPCrudTest {
 			ctx.addAttributeValue("objectClass", "organizationalUnit");
 			ctx.addAttributeValue("ou", "roles");
 			ltmpl.bind(ctx);
-		} catch (Exception e) {};
+		} catch (Exception e) {
+		}
+		;
 
 	}
 
 	@After
 	public void tearDown() {
 		try {
-		ltmpl.unbind("ou=users", true);
-		} catch (NamingException e) {}
+			ltmpl.unbind("ou=users", true);
+		} catch (NamingException e) {
+		}
 		try {
-		ltmpl.unbind("ou=roles", true);
-		} catch (NamingException e) {}
+			ltmpl.unbind("ou=roles", true);
+		} catch (NamingException e) {
+		}
 	}
 
 	@BeforeClass
@@ -121,9 +127,8 @@ public class UserLDAPCrudTest {
 	}
 
 	/**
-	 * tests the user deletion.
-	 * - it should be able to remove the user from the LDAP directory.
-	 * - it should leave the membership of the role.
+	 * tests the user deletion. - it should be able to remove the user from the LDAP
+	 * directory. - it should leave the membership of the role.
 	 */
 	@Test
 	public void deleteUserTest() {

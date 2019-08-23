@@ -21,19 +21,16 @@ package org.georchestra.console.model;
 
 public enum AdminLogType {
 
-    ACCOUNT_MODERATION("Account moderation"),
-    SYSTEM_ROLE_CHANGE("System role"),
-    OTHER_ROLE_CHANGE("Other role"),
-    LDAP_ATTRIBUTE_CHANGE("User attributes"),
-    EMAIL_SENT("Email sent");
+	ACCOUNT_MODERATION("Account moderation"), SYSTEM_ROLE_CHANGE("System role"), OTHER_ROLE_CHANGE("Other role"),
+	LDAP_ATTRIBUTE_CHANGE("User attributes"), EMAIL_SENT("Email sent");
 
-    private String name;
+	private String name;
 
-    private AdminLogType(String name){
-        this.name = name;
-    }
+	private AdminLogType(String name) {
+		this.name = name;
+	}
 
-    public String toString(){ return name; }
+	public String toString() {
+		return name;
+	}
 }
-
-

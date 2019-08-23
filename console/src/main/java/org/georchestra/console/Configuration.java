@@ -46,12 +46,12 @@ public final class Configuration {
 
 	public String getPublicContextPath() {
 
-	    if ((georConfig != null) && (georConfig.activated())) {
-	        LOG.debug("GeorchestraConfiguration activated, using publicContextPath from the geOrchestra datadir.");
-	        return georConfig.getProperty("publicContextPath");
-	    }
+		if ((georConfig != null) && (georConfig.activated())) {
+			LOG.debug("GeorchestraConfiguration activated, using publicContextPath from the geOrchestra datadir.");
+			return georConfig.getProperty("publicContextPath");
+		}
 
-	    // Falls back on the original behaviour
+		// Falls back on the original behaviour
 		checkConfiguration();
 		return this.publicContextPath;
 	}
@@ -63,13 +63,11 @@ public final class Configuration {
 			return;
 		}
 
-		LOG.info("password recovery context was configured: "+ this.publicContextPath);
+		LOG.info("password recovery context was configured: " + this.publicContextPath);
 	}
 
 	public void setPublicContextPath(String publicContextPath) {
 		this.publicContextPath = publicContextPath;
 	}
-
-
 
 }

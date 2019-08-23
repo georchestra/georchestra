@@ -17,7 +17,7 @@ public class MockWFSDataStoreFactory extends WFSDataStoreFactory {
 
 	@Override
 	public WFSContentDataStore createDataStore(Map arg0) throws IOException {
-        // connect to remote WFS
+		// connect to remote WFS
 
 		WFSConfig conf = WFSConfig.fromParams(arg0);
 		WFSClient wfsclient = null;
@@ -28,7 +28,7 @@ public class MockWFSDataStoreFactory extends WFSDataStoreFactory {
 		} catch (ServiceException e) {
 			fail("Unable to instantiate a WFSClient: " + e.getMessage());
 		}
-		WFSContentDataStore mockDs = new WFSContentDataStore(wfsclient);	
-		return mockDs; 
+		WFSContentDataStore mockDs = new WFSContentDataStore(wfsclient);
+		return mockDs;
 	}
 }

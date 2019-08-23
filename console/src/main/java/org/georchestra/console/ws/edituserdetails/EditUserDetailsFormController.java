@@ -51,7 +51,7 @@ import java.io.IOException;
  *
  */
 @Controller
-@SessionAttributes(types=EditUserDetailsFormBean.class)
+@SessionAttributes(types = EditUserDetailsFormBean.class)
 public class EditUserDetailsFormController {
 
 	private OrgsDao orgsDao;
@@ -60,23 +60,24 @@ public class EditUserDetailsFormController {
 	private Validation validation;
 
 	@Autowired
-	public EditUserDetailsFormController(AccountDao dao, OrgsDao orgsDao, Validation validation){
+	public EditUserDetailsFormController(AccountDao dao, OrgsDao orgsDao, Validation validation) {
 		this.accountDao = dao;
 		this.orgsDao = orgsDao;
 		this.validation = validation;
 	}
 
-	private static final String[] fields = {"uid", "firstName", "surname", "email", "title", "phone", "facsimile", "org", "description", "postalAddress"};
+	private static final String[] fields = { "uid", "firstName", "surname", "email", "title", "phone", "facsimile",
+			"org", "description", "postalAddress" };
 
 	@InitBinder
-	public void initForm( WebDataBinder dataBinder) {
+	public void initForm(WebDataBinder dataBinder) {
 
 		dataBinder.setAllowedFields(fields);
 	}
 
-
 	/**
-	 * Retrieves the account data and sets the model before presenting the edit form view.
+	 * Retrieves the account data and sets the model before presenting the edit form
+	 * view.
 	 *
 	 * @param model
 	 *
@@ -84,10 +85,10 @@ public class EditUserDetailsFormController {
 	 *
 	 * @throws IOException
 	 */
-	@RequestMapping(value="/account/userdetails", method=RequestMethod.GET)
-	public String setupForm(HttpServletRequest request, HttpServletResponse response,  Model model) throws IOException{
+	@RequestMapping(value = "/account/userdetails", method = RequestMethod.GET)
+	public String setupForm(HttpServletRequest request, HttpServletResponse response, Model model) throws IOException {
 
-		if(request.getHeader("sec-username") == null) {
+		if (request.getHeader("sec-username") == null) {
 			response.sendError(HttpServletResponse.SC_FORBIDDEN);
 			return null;
 		}
@@ -112,7 +113,6 @@ public class EditUserDetailsFormController {
 		}
 	}
 
-
 	/**
 	 * Creates a form based on the account data.
 	 *
@@ -131,7 +131,7 @@ public class EditUserDetailsFormController {
 		formBean.setFacsimile(account.getFacsimile());
 		formBean.setDescription(account.getDescription());
 		formBean.setPostalAddress(account.getPostalAddress());
-		if(account.getOrg().length() > 0) {
+		if (account.getOrg().length() > 0) {
 			Org org = this.orgsDao.findByCommonName(account.getOrg());
 			formBean.setOrg(org.getName());
 		} else {
@@ -142,38 +142,34 @@ public class EditUserDetailsFormController {
 	}
 
 	/**
-	 * Generates a new password, then an e-mail is sent to the user to inform that a new password is available.
+	 * Generates a new password, then an e-mail is sent to the user to inform that a
+	 * new password is available.
 	 *
-	 * @param formBean		Contains the user's email
-	 * @param resultErrors 	will be updated with the list of found errors.
+	 * @param formBean      Contains the user's email
+	 * @param resultErrors  will be updated with the list of found errors.
 	 * @param sessionStatus
 	 *
 	 * @return the next view
 	 *
 	 * @throws IOException
 	 */
-	@RequestMapping(value="/account/userdetails", method=RequestMethod.POST)
-	public String edit(
-						HttpServletRequest request,
-						HttpServletResponse response,
-						Model model,
-						@ModelAttribute EditUserDetailsFormBean formBean,
-						BindingResult resultErrors,
-						SessionStatus sessionStatus)
-						throws IOException {
+	@RequestMapping(value = "/account/userdetails", method = RequestMethod.POST)
+	public String edit(HttpServletRequest request, HttpServletResponse response, Model model,
+			@ModelAttribute EditUserDetailsFormBean formBean, BindingResult resultErrors, SessionStatus sessionStatus)
+			throws IOException {
 		String uid = formBean.getUid();
 		try {
-			if(!request.getHeader("sec-username").equals(uid))
+			if (!request.getHeader("sec-username").equals(uid))
 				response.sendError(HttpServletResponse.SC_FORBIDDEN);
 		} catch (NullPointerException e) {
 			response.sendError(HttpServletResponse.SC_FORBIDDEN);
 		}
 
 		// Validate first name and surname
-		if(!StringUtils.hasLength(formBean.getFirstName()) && this.validation.isUserFieldRequired("firstName"))
+		if (!StringUtils.hasLength(formBean.getFirstName()) && this.validation.isUserFieldRequired("firstName"))
 			resultErrors.rejectValue("firstName", "firstName.error.required", "required");
 
-		if(!StringUtils.hasLength( formBean.getSurname() ) && this.validation.isUserFieldRequired("surname"))
+		if (!StringUtils.hasLength(formBean.getSurname()) && this.validation.isUserFieldRequired("surname"))
 			resultErrors.rejectValue("surname", "surname.error.required", "required");
 
 		this.validation.validateUserField("phone", formBean.getPhone(), resultErrors);
@@ -182,7 +178,7 @@ public class EditUserDetailsFormController {
 		this.validation.validateUserField("description", formBean.getDescription(), resultErrors);
 		this.validation.validateUserField("postalAddress", formBean.getPostalAddress(), resultErrors);
 
-		if(resultErrors.hasErrors())
+		if (resultErrors.hasErrors())
 			return "editUserDetailsForm";
 
 		// updates the account details
@@ -198,14 +194,14 @@ public class EditUserDetailsFormController {
 		} catch (DuplicatedEmailException e) {
 
 			// right now the email cannot be edited (review requirement)
-			//resultErrors.addError(new ObjectError("email", "Exist a user with this e-mail"));
+			// resultErrors.addError(new ObjectError("email", "Exist a user with this
+			// e-mail"));
 			return "createAccountForm";
 
 		} catch (DataServiceException e) {
 
 			throw new IOException(e);
 		}
-
 
 	}
 
@@ -217,13 +213,11 @@ public class EditUserDetailsFormController {
 	 *
 	 * @return modified account
 	 */
-	private Account modify(
-			Account account,
-			EditUserDetailsFormBean formBean) {
+	private Account modify(Account account, EditUserDetailsFormBean formBean) {
 
-		account.setGivenName( formBean.getFirstName() );
+		account.setGivenName(formBean.getFirstName());
 		account.setSurname(formBean.getSurname());
-		account.setTitle( formBean.getTitle() );
+		account.setTitle(formBean.getTitle());
 		account.setPhone(formBean.getPhone());
 		account.setFacsimile(formBean.getFacsimile());
 		account.setDescription(formBean.getDescription());
@@ -231,7 +225,7 @@ public class EditUserDetailsFormController {
 
 		return account;
 	}
-	
+
 	@ModelAttribute("editUserDetailsFormBean")
 	public EditUserDetailsFormBean getEditUserDetailsFormBean() {
 		return new EditUserDetailsFormBean();

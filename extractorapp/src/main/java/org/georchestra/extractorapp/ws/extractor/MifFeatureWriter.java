@@ -37,16 +37,15 @@ class MifFeatureWriter extends FileFeatureWriter {
 
 	/**
 	 * new instance of MifFeatureWriter
+	 * 
 	 * @param progressListerner
 	 * @param schema
 	 * @param basedir
 	 * @param features
 	 */
-	public MifFeatureWriter(ProgressListener progressListerner,
-			SimpleFeatureType schema,
-			File basedir,
+	public MifFeatureWriter(ProgressListener progressListerner, SimpleFeatureType schema, File basedir,
 			SimpleFeatureCollection features) {
-		
+
 		super(progressListerner, schema, basedir, features);
 	}
 
@@ -56,10 +55,8 @@ class MifFeatureWriter extends FileFeatureWriter {
 	 * @return a {@link MifDatastoreFactory}
 	 */
 	@Override
-	protected DatastoreFactory getDatastoreFactory(){
+	protected DatastoreFactory getDatastoreFactory() {
 		return new MifDatastoreFactory();
 	}
-	
-	
 
 }
