@@ -31,7 +31,8 @@ import org.georchestra.console.ds.UserTokenDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * This task searches and removes the expired tokens generated when for the "lost password" use case.
+ * This task searches and removes the expired tokens generated when for the
+ * "lost password" use case.
  *
  * @author Mauricio Pazos
  *
@@ -69,7 +70,7 @@ public class ExpiredTokenCleanTask implements Runnable {
 		Date expired = new Date(now - this.delayInMilliseconds);
 
 		try {
-			List<Map<String, Object>>  userTokenToDelete = userTokenDao.findBeforeDate(expired);
+			List<Map<String, Object>> userTokenToDelete = userTokenDao.findBeforeDate(expired);
 			for (Map<String, Object> userToken : userTokenToDelete) {
 				try {
 					userTokenDao.delete((String) userToken.get("uid"));

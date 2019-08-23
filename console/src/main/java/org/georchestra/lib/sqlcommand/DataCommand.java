@@ -34,6 +34,7 @@ public interface DataCommand {
 
 	/**
 	 * Execute the sql command specified
+	 * 
 	 * @throws DataCommandException
 	 */
 	public void execute() throws DataCommandException;

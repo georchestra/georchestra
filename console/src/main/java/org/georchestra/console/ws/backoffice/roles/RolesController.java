@@ -85,16 +85,13 @@ public class RolesController {
 	private static final String BASE_RESOURCE = "roles";
 	private static final String REQUEST_MAPPING = BASE_MAPPING + "/" + BASE_RESOURCE;
 
-
 	private static final String DUPLICATED_COMMON_NAME = "duplicated_common_name";
 	private static final String NOT_FOUND = "not_found";
 	private static final String USER_NOT_FOUND = "user_not_found";
 	private static final String ILLEGAL_CHARACTER = "illegal_character";
 
-
 	public static final String VIRTUAL_TEMPORARY_ROLE_NAME = "TEMPORARY";
 	private static final String VIRTUAL_TEMPORARY_ROLE_DESCRIPTION = "Virtual role that contains all temporary users";
-
 
 	@Autowired
 	private AccountDao accountDao;
@@ -107,17 +104,16 @@ public class RolesController {
 	private RoleDao roleDao;
 	private ProtectedUserFilter filter;
 
-        /**
-     * Builds a JSON response in case of error.
-     *
-     * @param mesg
-     *            a descriptive message of the encountered error.
-     * @return a string of the response.
-     *
-     * TODO: This code sounds pretty similar to what is done in
-     * ResponseUtil.java:buildResponseMessage() and might deserve
-     * a refactor.
-     */
+	/**
+	 * Builds a JSON response in case of error.
+	 *
+	 * @param mesg a descriptive message of the encountered error.
+	 * @return a string of the response.
+	 *
+	 *         TODO: This code sounds pretty similar to what is done in
+	 *         ResponseUtil.java:buildResponseMessage() and might deserve a
+	 *         refactor.
+	 */
 
 	private String buildErrorResponse(String mesg) {
 		HashMap<String, Object> map = new HashMap<String, Object>();
@@ -127,9 +123,9 @@ public class RolesController {
 	}
 
 	@Autowired
-	public RolesController( RoleDao dao, UserRule userRule){
+	public RolesController(RoleDao dao, UserRule userRule) {
 		this.roleDao = dao;
-		this.filter = new ProtectedUserFilter( userRule.getListUidProtected() );
+		this.filter = new ProtectedUserFilter(userRule.getListUidProtected());
 	}
 
 	/**
@@ -137,12 +133,14 @@ public class RolesController {
 	 *
 	 * @throws IOException
 	 */
-	@RequestMapping(value=REQUEST_MAPPING, method=RequestMethod.GET, produces="application/json; charset=utf-8")
+	@RequestMapping(value = REQUEST_MAPPING, method = RequestMethod.GET, produces = "application/json; charset=utf-8")
 	@PostFilter("hasPermission(filterObject, 'read')")
 	@ResponseBody
 	public List<Role> findAll() throws DataServiceException {
 		List<Role> list = this.roleDao.findAll();
-		list.stream().forEach(role -> {role.setUserList(filter.filterStringList(role.getUserList()));});
+		list.stream().forEach(role -> {
+			role.setUserList(filter.filterStringList(role.getUserList()));
+		});
 		list.add(this.generateTemporaryRole());
 		return list;
 	}
@@ -151,7 +149,8 @@ public class RolesController {
 	 * Returns the detailed information of the role, with its list of users.
 	 *
 	 * <p>
-	 * If the role identifier is not present in the ldap store an {@link IOException} will be throw.
+	 * If the role identifier is not present in the ldap store an
+	 * {@link IOException} will be throw.
 	 * </p>
 	 * <p>
 	 * URL Format: [BASE_MAPPING]/roles/{cn}
@@ -163,18 +162,19 @@ public class RolesController {
 	 * @param cn Comon name of role
 	 * @throws IOException
 	 */
-	@RequestMapping(value=REQUEST_MAPPING+"/{cn:.+}", method=RequestMethod.GET, produces="application/json; charset=utf-8")
+	@RequestMapping(value = REQUEST_MAPPING
+			+ "/{cn:.+}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public Role findByCN(@PathVariable String cn) throws DataServiceException {
 		Role res;
 
-		if(cn.equals(RolesController.VIRTUAL_TEMPORARY_ROLE_NAME))
+		if (cn.equals(RolesController.VIRTUAL_TEMPORARY_ROLE_NAME))
 			res = this.generateTemporaryRole();
 		else
 			res = this.roleDao.findByCommonName(cn);
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if(!auth.getAuthorities().contains(ROLE_SUPERUSER)) {
-			if(!Arrays.asList(this.delegationDao.findOne(auth.getName()).getRoles()).contains(cn))
+		if (!auth.getAuthorities().contains(ROLE_SUPERUSER)) {
+			if (!Arrays.asList(this.delegationDao.findOne(auth.getName()).getRoles()).contains(cn))
 				throw new AccessDeniedException("Role not under delegation");
 			res.getUserList().retainAll(this.advancedDelegationDao.findUsersUnderDelegation(auth.getName()));
 		}
@@ -183,9 +183,8 @@ public class RolesController {
 
 	private Role generateTemporaryRole() {
 		Role res = RoleFactory.create(RolesController.VIRTUAL_TEMPORARY_ROLE_NAME,
-				RolesController.VIRTUAL_TEMPORARY_ROLE_DESCRIPTION,
-				false);
-		for(Account a : this.accountDao.findByShadowExpire())
+				RolesController.VIRTUAL_TEMPORARY_ROLE_DESCRIPTION, false);
+		for (Account a : this.accountDao.findByShadowExpire())
 			res.addUser(a.getUid());
 		return res;
 	}
@@ -201,10 +200,11 @@ public class RolesController {
 	 *
 	 * role data:
 	 * {
-     *   "cn": "Name of the role"
-     *   "description": "Description for the role"
-     *   }
+	 *   "cn": "Name of the role"
+	 *   "description": "Description for the role"
+	 *   }
 	 * </pre>
+	 * 
 	 * <pre>
 	 * <b>Response</b>
 	 *
@@ -220,40 +220,40 @@ public class RolesController {
 	 * @param response
 	 * @throws IOException
 	 */
-	@RequestMapping(value=REQUEST_MAPPING, method=RequestMethod.POST)
+	@RequestMapping(value = REQUEST_MAPPING, method = RequestMethod.POST)
 	@PreAuthorize("hasRole('SUPERUSER')")
-	public void create( HttpServletRequest request, HttpServletResponse response ) throws IOException{
+	public void create(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-		try{
+		try {
 			Role role = createRoleFromRequestBody(request.getInputStream());
 
-			this.roleDao.insert( role );
+			this.roleDao.insert(role);
 			RoleResponse roleResponse = new RoleResponse(role, this.filter);
 			String jsonResponse = roleResponse.asJsonString();
 			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_OK);
 
-		} catch (DuplicatedCommonNameException emailex){
+		} catch (DuplicatedCommonNameException emailex) {
 
 			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, DUPLICATED_COMMON_NAME);
 
 			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
 
-		} catch (DataServiceException dsex){
+		} catch (DataServiceException dsex) {
 			LOG.error(dsex.getMessage());
 			ResponseUtil.buildResponse(response, buildErrorResponse(dsex.getMessage()),
 					HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			throw new IOException(dsex);
-		} catch (IllegalArgumentException ex){
+		} catch (IllegalArgumentException ex) {
 			String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, ILLEGAL_CHARACTER);
 			ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_CONFLICT);
 		}
 	}
 
-
 	/**
 	 * Deletes the role.
 	 *
 	 * The request format is:
+	 * 
 	 * <pre>
 	 * [BASE_MAPPING]/roles/{cn}
 	 *
@@ -261,17 +261,16 @@ public class RolesController {
 	 * </pre>
 	 *
 	 * @param response
-	 * @param cn Common name of role to delete
+	 * @param cn       Common name of role to delete
 	 * @throws IOException
 	 */
 	@RequestMapping(value = REQUEST_MAPPING + "/{cn:.+}", method = RequestMethod.DELETE)
 	@PreAuthorize("hasRole('SUPERUSER')")
-	public void delete(HttpServletResponse response, @PathVariable String cn)
-			throws IOException {
+	public void delete(HttpServletResponse response, @PathVariable String cn) throws IOException {
 		try {
 
 			// Check if this role is part of a delegation
-			for(DelegationEntry delegation: this.advancedDelegationDao.findByRole(cn)){
+			for (DelegationEntry delegation : this.advancedDelegationDao.findByRole(cn)) {
 				delegation.removeRole(cn);
 				this.delegationDao.save(delegation);
 			}
@@ -282,8 +281,7 @@ public class RolesController {
 
 		} catch (NameNotFoundException e) {
 			LOG.error(e.getMessage());
-			ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
-					HttpServletResponse.SC_NOT_FOUND);
+			ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()), HttpServletResponse.SC_NOT_FOUND);
 		} catch (DataServiceException e) {
 			LOG.error(e.getMessage());
 			ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
@@ -300,8 +298,8 @@ public class RolesController {
 	/**
 	 * Modifies the role using the fields provided in the request body.
 	 * <p>
-	 * The fields that are not present in the parameters will remain untouched
-	 * in the LDAP store.
+	 * The fields that are not present in the parameters will remain untouched in
+	 * the LDAP store.
 	 * </p>
 	 * 
 	 * <pre>
@@ -331,18 +329,17 @@ public class RolesController {
 	 *
 	 * </pre>
 	 *
-	 * @param request
-	 *            [BASE_MAPPING]/roles/{cn} body request {"cn": value1,
-	 *            "description": value2 }
+	 * @param request  [BASE_MAPPING]/roles/{cn} body request {"cn": value1,
+	 *                 "description": value2 }
 	 * @param response
 	 *
-	 * @throws IOException
-	 *             if the uid does not exist or fails to access to the LDAP
-	 *             store.
+	 * @throws IOException if the uid does not exist or fails to access to the LDAP
+	 *                     store.
 	 */
-	@RequestMapping(value=REQUEST_MAPPING+ "/{cn:.+}", method=RequestMethod.PUT)
+	@RequestMapping(value = REQUEST_MAPPING + "/{cn:.+}", method = RequestMethod.PUT)
 	@PreAuthorize("hasRole('SUPERUSER')")
-	public void update( HttpServletRequest request, HttpServletResponse response, @PathVariable String cn) throws IOException{
+	public void update(HttpServletRequest request, HttpServletResponse response, @PathVariable String cn)
+			throws IOException {
 
 		// searches the role
 		Role role;
@@ -352,13 +349,13 @@ public class RolesController {
 			ResponseUtil.writeError(response, NOT_FOUND);
 			return;
 		} catch (DataServiceException e) {
-		    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			throw new IOException(e);
 		}
 
 		// modifies the role data
-		try{
-			final Role modified = modifyRole( role, request.getInputStream());
+		try {
+			final Role modified = modifyRole(role, request.getInputStream());
 
 			this.roleDao.update(cn, modified);
 
@@ -370,9 +367,10 @@ public class RolesController {
 
 			ResponseUtil.writeSuccess(response);
 
-		}  catch (NameNotFoundException e) {
+		} catch (NameNotFoundException e) {
 
-			ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(Boolean.FALSE, NOT_FOUND), HttpServletResponse.SC_NOT_FOUND);
+			ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(Boolean.FALSE, NOT_FOUND),
+					HttpServletResponse.SC_NOT_FOUND);
 
 			return;
 
@@ -384,7 +382,7 @@ public class RolesController {
 
 			return;
 
-		}  catch (DataServiceException e){
+		} catch (DataServiceException e) {
 			LOG.error(e.getMessage());
 			ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
 					HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -393,14 +391,17 @@ public class RolesController {
 	}
 
 	/**
-	 * Updates the users of role. This method will add or delete the role of users from the list of roles.
+	 * Updates the users of role. This method will add or delete the role of users
+	 * from the list of roles.
 	 *
-	 * @param request	request [BASE_MAPPING]/roles_users body request {"users": [u1,u2,u3], "PUT": [g1,g2], "DELETE":[g3,g4] }
+	 * @param request  request [BASE_MAPPING]/roles_users body request {"users":
+	 *                 [u1,u2,u3], "PUT": [g1,g2], "DELETE":[g3,g4] }
 	 * @param response
 	 * @throws IOException
 	 */
-	@RequestMapping(value=BASE_MAPPING+ "/roles_users", method=RequestMethod.POST)
-	public void updateUsers( HttpServletRequest request, HttpServletResponse response) throws AccessDeniedException, IOException, JSONException, DataServiceException {
+	@RequestMapping(value = BASE_MAPPING + "/roles_users", method = RequestMethod.POST)
+	public void updateUsers(HttpServletRequest request, HttpServletResponse response)
+			throws AccessDeniedException, IOException, JSONException, DataServiceException {
 
 		JSONObject json = new JSONObject(FileUtils.asString(request.getInputStream()));
 
@@ -408,22 +409,20 @@ public class RolesController {
 		List<String> putRole = createUserList(json, "PUT");
 		List<String> deleteRole = createUserList(json, "DELETE");
 
-		List<Account> accounts = users.stream()
-				.map(userUuid -> {
+		List<Account> accounts = users.stream().map(userUuid -> {
 			try {
 				return accountDao.findByUID(userUuid);
 			} catch (DataServiceException e) {
 				return null;
-			}})
-				.filter(account -> null != account)
-				.collect(Collectors.toList());
+			}
+		}).filter(account -> null != account).collect(Collectors.toList());
 
 		// Don't allow modification of ORGADMIN role
-		if(putRole.contains("ORGADMIN") || deleteRole.contains("ORGADMIN"))
+		if (putRole.contains("ORGADMIN") || deleteRole.contains("ORGADMIN"))
 			throw new IllegalArgumentException("ORGADMIN role cannot be add or delete");
 
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if(!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_SUPERUSER")))
+		if (!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_SUPERUSER")))
 			this.checkAuthorization(auth.getName(), users, putRole, deleteRole);
 
 		this.roleDao.addUsersInRoles(putRole, accounts, auth.getName());
@@ -432,21 +431,21 @@ public class RolesController {
 		ResponseUtil.writeSuccess(response);
 	}
 
-	public void checkAuthorization(String delegatedAdmin, List<String> users, List<String> putRole, List<String> deleteRole) throws AccessDeniedException {
+	public void checkAuthorization(String delegatedAdmin, List<String> users, List<String> putRole,
+			List<String> deleteRole) throws AccessDeniedException {
 		// Verify authorization
 		Set<String> usersUnderDelegation = this.advancedDelegationDao.findUsersUnderDelegation(delegatedAdmin);
-		if(!usersUnderDelegation.containsAll(users))
+		if (!usersUnderDelegation.containsAll(users))
 			throw new AccessDeniedException("Some users are not under delegation");
 		DelegationEntry delegation = this.delegationDao.findOne(delegatedAdmin);
-		if(!Arrays.asList(delegation.getRoles()).containsAll(putRole))
+		if (!Arrays.asList(delegation.getRoles()).containsAll(putRole))
 			throw new AccessDeniedException("Some roles are not under delegation (put)");
-		if(!Arrays.asList(delegation.getRoles()).containsAll(deleteRole))
+		if (!Arrays.asList(delegation.getRoles()).containsAll(deleteRole))
 			throw new AccessDeniedException("Some roles are not under delegation (delete)");
 
 	}
 
 	private List<String> createUserList(JSONObject json, String arrayKey) throws IOException {
-
 
 		try {
 
@@ -469,12 +468,12 @@ public class RolesController {
 	/**
 	 * Modifies the original field using the values in the inputStream.
 	 *
-	 * @param role role to modify
+	 * @param role        role to modify
 	 * @param inputStream contains the new values
 	 *
 	 * @return the {@link Role} modified
 	 */
-	private Role modifyRole(Role role, ServletInputStream inputStream) throws IOException{
+	private Role modifyRole(Role role, ServletInputStream inputStream) throws IOException {
 
 		String strRole = FileUtils.asString(inputStream);
 		JSONObject json;
@@ -496,7 +495,7 @@ public class RolesController {
 		}
 
 		Boolean isFavorite = RequestUtil.getBooleanFieldValue(json, RoleSchema.FAVORITE_JSON_KEY);
-		if(isFavorite != null)
+		if (isFavorite != null)
 			role.setFavorite(isFavorite);
 
 		return role;
@@ -508,16 +507,16 @@ public class RolesController {
 			JSONObject json = new JSONObject(strRole);
 
 			String commonName = RequestUtil.getFieldValue(json, RoleSchema.COMMON_NAME_KEY);
-			if(commonName == null){
-				throw new IllegalArgumentException(RoleSchema.COMMON_NAME_KEY + " is required" );
+			if (commonName == null) {
+				throw new IllegalArgumentException(RoleSchema.COMMON_NAME_KEY + " is required");
 			}
 
 			// Capitalize role name and check format
 			commonName = commonName.toUpperCase();
 			Pattern p = Pattern.compile("[A-Z0-9_-]+");
-			if(!p.matcher(commonName).matches())
-				throw new IllegalArgumentException(RoleSchema.COMMON_NAME_KEY +
-						" should only contain uppercased letters, digits, dashes and underscores" );
+			if (!p.matcher(commonName).matches())
+				throw new IllegalArgumentException(RoleSchema.COMMON_NAME_KEY
+						+ " should only contain uppercased letters, digits, dashes and underscores");
 
 			String description = RequestUtil.getFieldValue(json, RoleSchema.DESCRIPTION_KEY);
 			Boolean isFavorite = RequestUtil.getBooleanFieldValue(json, RoleSchema.FAVORITE_JSON_KEY);
@@ -536,19 +535,21 @@ public class RolesController {
 
 	/**
 	 * Method used for testing convenience.
+	 * 
 	 * @param gd
 	 */
-    public void setRoleDao(RoleDao gd) {
-        roleDao = gd;
-    }
+	public void setRoleDao(RoleDao gd) {
+		roleDao = gd;
+	}
 
 	/**
 	 * Method used for testing convenience.
+	 * 
 	 * @param ad
 	 */
-    public void setAccountDao(AccountDao ad) {
-        this.accountDao = ad;
-    }
+	public void setAccountDao(AccountDao ad) {
+		this.accountDao = ad;
+	}
 
 	public AdvancedDelegationDao getAdvancedDelegationDao() {
 		return advancedDelegationDao;

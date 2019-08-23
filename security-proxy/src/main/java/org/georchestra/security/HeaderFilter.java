@@ -29,9 +29,10 @@ import javax.servlet.http.HttpServletRequest;
  * @author jeichar
  */
 public interface HeaderFilter {
-    /**
-     * If this method returns true the header will <strong>not</strong> be added to the proxy request.
-     */
-    boolean filter(String headerName, HttpServletRequest originalRequest, HttpRequestBase proxyRequest);
+	/**
+	 * If this method returns true the header will <strong>not</strong> be added to
+	 * the proxy request.
+	 */
+	boolean filter(String headerName, HttpServletRequest originalRequest, HttpRequestBase proxyRequest);
 
 }

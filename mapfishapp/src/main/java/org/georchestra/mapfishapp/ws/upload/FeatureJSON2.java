@@ -66,223 +66,223 @@ import com.google.common.base.Preconditions;
  */
 final class FeatureJSON2 extends FeatureJSON {
 
-    private static final Log LOG = LogFactory.getLog(FeatureJSON2.class.getPackage().getName());
+	private static final Log LOG = LogFactory.getLog(FeatureJSON2.class.getPackage().getName());
 
-    private GeometryJSON gjson;
+	private GeometryJSON gjson;
 
-    public FeatureJSON2() {
-        this(new GeometryJSON());
-    }
+	public FeatureJSON2() {
+		this(new GeometryJSON());
+	}
 
-    public FeatureJSON2(GeometryJSON gjson) {
-        super(gjson);
-        this.gjson = gjson;
-    }
+	public FeatureJSON2(GeometryJSON gjson) {
+		super(gjson);
+		this.gjson = gjson;
+	}
 
-    /**
-     * Override to encode the CRS from the feature collection schema instead of its
-     * bounds, in case bounds is {@code null}, but the CRS still needs to be encoded
-     *
-     * @param features The feature collection.
-     * @param output   The output. See {@link GeoJSONUtil#toWriter(Object)} for
-     *                 details.
-     */
-    @SuppressWarnings("rawtypes")
-    public @Override void writeFeatureCollection(FeatureCollection features, Object output) throws IOException {
-        Preconditions.checkArgument(features instanceof SimpleFeatureCollection);
-        LinkedHashMap<String, Object> obj = new LinkedHashMap<String, Object>();
-        obj.put("type", "FeatureCollection");
-        final ReferencedEnvelope bounds = features.getBounds();
+	/**
+	 * Override to encode the CRS from the feature collection schema instead of its
+	 * bounds, in case bounds is {@code null}, but the CRS still needs to be encoded
+	 *
+	 * @param features The feature collection.
+	 * @param output   The output. See {@link GeoJSONUtil#toWriter(Object)} for
+	 *                 details.
+	 */
+	@SuppressWarnings("rawtypes")
+	public @Override void writeFeatureCollection(FeatureCollection features, Object output) throws IOException {
+		Preconditions.checkArgument(features instanceof SimpleFeatureCollection);
+		LinkedHashMap<String, Object> obj = new LinkedHashMap<String, Object>();
+		obj.put("type", "FeatureCollection");
+		final ReferencedEnvelope bounds = features.getBounds();
 
-        if (bounds != null && isEncodeFeatureCollectionBounds()) {
-            obj.put("bbox", new JSONStreamAware() {
-                public void writeJSONString(Writer out) throws IOException {
-                    JSONArray.writeJSONString(
-                            Arrays.asList(bounds.getMinX(), bounds.getMinY(), bounds.getMaxX(), bounds.getMaxY()), out);
-                }
-            });
-        }
-        CoordinateReferenceSystem crs = features.getSchema().getCoordinateReferenceSystem();
-        if (crs != null && (isEncodeFeatureCollectionCRS() || isStandardCRS(crs))) {
-            obj.put("crs", toMap(crs));
-        }
+		if (bounds != null && isEncodeFeatureCollectionBounds()) {
+			obj.put("bbox", new JSONStreamAware() {
+				public void writeJSONString(Writer out) throws IOException {
+					JSONArray.writeJSONString(
+							Arrays.asList(bounds.getMinX(), bounds.getMinY(), bounds.getMaxX(), bounds.getMaxY()), out);
+				}
+			});
+		}
+		CoordinateReferenceSystem crs = features.getSchema().getCoordinateReferenceSystem();
+		if (crs != null && (isEncodeFeatureCollectionCRS() || isStandardCRS(crs))) {
+			obj.put("crs", toMap(crs));
+		}
 
-        obj.put("features", new FeatureCollectionEncoder((SimpleFeatureCollection) features));
-        GeoJSONUtil.encode(obj, output);
-    }
+		obj.put("features", new FeatureCollectionEncoder((SimpleFeatureCollection) features));
+		GeoJSONUtil.encode(obj, output);
+	}
 
-    /**
-     * Check for GeoJSON default (EPSG:4326 in easting/northing order).
-     *
-     * @return true if crs is the default for GeoJSON
-     * @throws NoSuchAuthorityCodeException
-     * @throws FactoryException
-     */
-    private boolean isStandardCRS(CoordinateReferenceSystem crs) {
-        if (crs == null) {
-            return true;
-        }
-        try {
-            boolean longitudeFirst = true;
-            CoordinateReferenceSystem standardCRS = CRS.decode("EPSG:4326", longitudeFirst);
-            return CRS.equalsIgnoreMetadata(crs, standardCRS);
-        } catch (Exception unexpected) {
-            return false; // no way to tell
-        }
-    }
+	/**
+	 * Check for GeoJSON default (EPSG:4326 in easting/northing order).
+	 *
+	 * @return true if crs is the default for GeoJSON
+	 * @throws NoSuchAuthorityCodeException
+	 * @throws FactoryException
+	 */
+	private boolean isStandardCRS(CoordinateReferenceSystem crs) {
+		if (crs == null) {
+			return true;
+		}
+		try {
+			boolean longitudeFirst = true;
+			CoordinateReferenceSystem standardCRS = CRS.decode("EPSG:4326", longitudeFirst);
+			return CRS.equalsIgnoreMetadata(crs, standardCRS);
+		} catch (Exception unexpected) {
+			return false; // no way to tell
+		}
+	}
 
-    /**
-     * Create a properties map for the provided crs.
-     *
-     * @param crs CoordinateReferenceSystem or null for default
-     * @return properties map naming crs identifier
-     * @throws IOException
-     */
-    private Map<String, Object> toMap(CoordinateReferenceSystem crs) throws IOException {
-        Map<String, Object> obj = new LinkedHashMap<String, Object>();
-        obj.put("type", "name");
+	/**
+	 * Create a properties map for the provided crs.
+	 *
+	 * @param crs CoordinateReferenceSystem or null for default
+	 * @return properties map naming crs identifier
+	 * @throws IOException
+	 */
+	private Map<String, Object> toMap(CoordinateReferenceSystem crs) throws IOException {
+		Map<String, Object> obj = new LinkedHashMap<String, Object>();
+		obj.put("type", "name");
 
-        Map<String, Object> props = new LinkedHashMap<String, Object>();
-        if (crs == null) {
-            props.put("name", "EPSG:4326");
-        } else {
-            try {
-                String identifier = CRS.lookupIdentifier(crs, true);
-                props.put("name", identifier);
-            } catch (FactoryException e) {
-                throw (IOException) new IOException("Error looking up crs identifier").initCause(e);
-            }
-        }
-        obj.put("properties", props);
-        return obj;
-    }
+		Map<String, Object> props = new LinkedHashMap<String, Object>();
+		if (crs == null) {
+			props.put("name", "EPSG:4326");
+		} else {
+			try {
+				String identifier = CRS.lookupIdentifier(crs, true);
+				props.put("name", identifier);
+			} catch (FactoryException e) {
+				throw (IOException) new IOException("Error looking up crs identifier").initCause(e);
+			}
+		}
+		obj.put("properties", props);
+		return obj;
+	}
 
-    private class FeatureEncoder implements JSONStreamAware {
+	private class FeatureEncoder implements JSONStreamAware {
 
-        private SimpleFeatureType featureType;
-        private SimpleFeature feature;
+		private SimpleFeatureType featureType;
+		private SimpleFeature feature;
 
-        public FeatureEncoder(SimpleFeatureType featureType) {
-            this.featureType = featureType;
-        }
+		public FeatureEncoder(SimpleFeatureType featureType) {
+			this.featureType = featureType;
+		}
 
-        public FeatureEncoder feature(SimpleFeature feature) {
-            this.feature = feature;
-            return this;
-        }
+		public FeatureEncoder feature(SimpleFeature feature) {
+			this.feature = feature;
+			return this;
+		}
 
-        public @Override void writeJSONString(Writer out) throws IOException {
-            try {
-                writeJSON(new JSONWriter(out));
-            } catch (JSONException e) {
-                throw new IOException(e);
-            }
-        }
+		public @Override void writeJSONString(Writer out) throws IOException {
+			try {
+				writeJSON(new JSONWriter(out));
+			} catch (JSONException e) {
+				throw new IOException(e);
+			}
+		}
 
-        public void writeJSON(JSONWriter writer) throws IOException, JSONException {
-            writer.object();
-            writer.key("type").value("Feature");
-            writer.key("id").value(feature.getID());
-            writeCrs(writer);
-            writeBounds(writer);
-            writeGeometry(writer);
-            writeProperties(writer);
-            writer.endObject();
-        }
+		public void writeJSON(JSONWriter writer) throws IOException, JSONException {
+			writer.object();
+			writer.key("type").value("Feature");
+			writer.key("id").value(feature.getID());
+			writeCrs(writer);
+			writeBounds(writer);
+			writeGeometry(writer);
+			writeProperties(writer);
+			writer.endObject();
+		}
 
-        private void writeProperties(JSONWriter writer) throws JSONException {
-            writer.key("properties");
-            writer.object();
+		private void writeProperties(JSONWriter writer) throws JSONException {
+			writer.key("properties");
+			writer.object();
 
-            GeometryDescriptor defaultGeometry = featureType.getGeometryDescriptor();
-            Predicate<Property> predicate = p -> !p.getDescriptor().getName().equals(defaultGeometry.getName());
+			GeometryDescriptor defaultGeometry = featureType.getGeometryDescriptor();
+			Predicate<Property> predicate = p -> !p.getDescriptor().getName().equals(defaultGeometry.getName());
 
-            for (Property p : feature.getProperties()) {
-                if (predicate.test(p)) {
-                    writeProperty(writer, p);
-                }
-            }
+			for (Property p : feature.getProperties()) {
+				if (predicate.test(p)) {
+					writeProperty(writer, p);
+				}
+			}
 
-            writer.endObject();
-        }
+			writer.endObject();
+		}
 
-        private void writeProperty(JSONWriter writer, Property p) throws JSONException {
-            final Object value = p.getValue();
-            if (value != null || isEncodeNullValues()) {
-                final PropertyDescriptor descriptor = p.getDescriptor();
-                final String propertyName = descriptor.getName().getLocalPart();
+		private void writeProperty(JSONWriter writer, Property p) throws JSONException {
+			final Object value = p.getValue();
+			if (value != null || isEncodeNullValues()) {
+				final PropertyDescriptor descriptor = p.getDescriptor();
+				final String propertyName = descriptor.getName().getLocalPart();
 
-                // handle special types separately, everything else as a string or literal (is
-                // it?)
-                if (value instanceof Envelope) {
-                    writeVerbatimValue(writer, propertyName, FeatureJSON2.this.gjson.toString((Envelope) value));
-                } else if (value instanceof BoundingBox) {
-                    writeVerbatimValue(writer, propertyName, FeatureJSON2.this.gjson.toString((BoundingBox) value));
-                } else if (value instanceof Geometry) {
-                    writeVerbatimValue(writer, propertyName, FeatureJSON2.this.gjson.toString((Geometry) value));
-                } else if (value != null || isEncodeNullValues()) {
-                    writer.key(propertyName).value(value);
-                }
-            }
-        }
+				// handle special types separately, everything else as a string or literal (is
+				// it?)
+				if (value instanceof Envelope) {
+					writeVerbatimValue(writer, propertyName, FeatureJSON2.this.gjson.toString((Envelope) value));
+				} else if (value instanceof BoundingBox) {
+					writeVerbatimValue(writer, propertyName, FeatureJSON2.this.gjson.toString((BoundingBox) value));
+				} else if (value instanceof Geometry) {
+					writeVerbatimValue(writer, propertyName, FeatureJSON2.this.gjson.toString((Geometry) value));
+				} else if (value != null || isEncodeNullValues()) {
+					writer.key(propertyName).value(value);
+				}
+			}
+		}
 
-        private void writeGeometry(JSONWriter writer) throws JSONException {
-            Geometry geometry = (Geometry) feature.getDefaultGeometry();
-            // note: this is still too much for streaming, gjson.toString(geometry) builds a
-            // Map and then converts to String
-            String value = geometry == null ? null : FeatureJSON2.this.gjson.toString(geometry);
-            writeVerbatimValue(writer, "geometry", value);
-        }
+		private void writeGeometry(JSONWriter writer) throws JSONException {
+			Geometry geometry = (Geometry) feature.getDefaultGeometry();
+			// note: this is still too much for streaming, gjson.toString(geometry) builds a
+			// Map and then converts to String
+			String value = geometry == null ? null : FeatureJSON2.this.gjson.toString(geometry);
+			writeVerbatimValue(writer, "geometry", value);
+		}
 
-        private void writeBounds(JSONWriter writer) throws JSONException {
-            if (isEncodeFeatureBounds()) {
-                BoundingBox bbox = feature.getBounds();
-                String value = bbox == null ? null : FeatureJSON2.this.gjson.toString(bbox);
-                writeVerbatimValue(writer, "bbox", value);
-            }
-        }
+		private void writeBounds(JSONWriter writer) throws JSONException {
+			if (isEncodeFeatureBounds()) {
+				BoundingBox bbox = feature.getBounds();
+				String value = bbox == null ? null : FeatureJSON2.this.gjson.toString(bbox);
+				writeVerbatimValue(writer, "bbox", value);
+			}
+		}
 
-        private void writeCrs(JSONWriter writer) throws IOException, JSONException {
-            if (isEncodeFeatureCRS()) {
-                CoordinateReferenceSystem crs = featureType.getCoordinateReferenceSystem();
-                writeVerbatimValue(writer, "crs", crs == null ? null : FeatureJSON2.this.toString(crs));
-            }
-        }
+		private void writeCrs(JSONWriter writer) throws IOException, JSONException {
+			if (isEncodeFeatureCRS()) {
+				CoordinateReferenceSystem crs = featureType.getCoordinateReferenceSystem();
+				writeVerbatimValue(writer, "crs", crs == null ? null : FeatureJSON2.this.toString(crs));
+			}
+		}
 
-        private void writeVerbatimValue(JSONWriter writer, String key, @Nullable String value) throws JSONException {
-            if (value != null) {
-                JSONString verbatim = () -> value;
-                writer.key(key).value(verbatim);
-            } else if (isEncodeNullValues()) {
-                writer.key(key).value(null);
-            }
-        }
-    }
+		private void writeVerbatimValue(JSONWriter writer, String key, @Nullable String value) throws JSONException {
+			if (value != null) {
+				JSONString verbatim = () -> value;
+				writer.key(key).value(verbatim);
+			} else if (isEncodeNullValues()) {
+				writer.key(key).value(null);
+			}
+		}
+	}
 
-    private class FeatureCollectionEncoder implements JSONStreamAware {
+	private class FeatureCollectionEncoder implements JSONStreamAware {
 
-        private SimpleFeatureCollection features;
+		private SimpleFeatureCollection features;
 
-        public FeatureCollectionEncoder(SimpleFeatureCollection features) {
-            this.features = features;
-        }
+		public FeatureCollectionEncoder(SimpleFeatureCollection features) {
+			this.features = features;
+		}
 
-        public @Override void writeJSONString(Writer out) throws IOException {
-            SimpleFeatureType ft = (SimpleFeatureType) features.getSchema();
-            FeatureEncoder featureEncoder = new FeatureEncoder(ft);
-            JSONWriter writer = new JSONWriter(out);
-            try (FeatureIterator<SimpleFeature> featureIterator = features.features()) {
-                writer.array();
-                while (featureIterator.hasNext()) {
-                    featureEncoder.feature(featureIterator.next()).writeJSON(writer);
-                }
-                writer.endArray();
-            } catch (JSONException e) {
-                String msg = "Unable to generate JSON: " + e.getMessage();
-                LOG.error(msg);
-                throw new IOException(msg, e);
-            }
-        }
-    }
+		public @Override void writeJSONString(Writer out) throws IOException {
+			SimpleFeatureType ft = (SimpleFeatureType) features.getSchema();
+			FeatureEncoder featureEncoder = new FeatureEncoder(ft);
+			JSONWriter writer = new JSONWriter(out);
+			try (FeatureIterator<SimpleFeature> featureIterator = features.features()) {
+				writer.array();
+				while (featureIterator.hasNext()) {
+					featureEncoder.feature(featureIterator.next()).writeJSON(writer);
+				}
+				writer.endArray();
+			} catch (JSONException e) {
+				String msg = "Unable to generate JSON: " + e.getMessage();
+				LOG.error(msg);
+				throw new IOException(msg, e);
+			}
+		}
+	}
 
 }

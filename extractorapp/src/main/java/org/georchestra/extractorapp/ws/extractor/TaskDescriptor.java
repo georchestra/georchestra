@@ -13,7 +13,6 @@ import org.georchestra.extractorapp.ws.extractor.task.ExecutionState;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
 /**
  * Maintains the task information.
  *
@@ -24,13 +23,13 @@ final class TaskDescriptor {
 
 	/** keys used in the json object */
 	public static final String UUID_KEY = "uuid";
-    public static final String PRIORITY_KEY = "priority";
-    public static final String STATE_KEY = "status";
-    public static final String REQUESTOR_KEY = "requestor";
-    public static final String SPEC_KEY = "spec";
-    public static final String REQUEST_TS_KEY =  "request_ts";
-    public static final String BEGIN_TS_KEY = "begin_ts";
-    public static final String END_TS_KEY = "end_ts";
+	public static final String PRIORITY_KEY = "priority";
+	public static final String STATE_KEY = "status";
+	public static final String REQUESTOR_KEY = "requestor";
+	public static final String SPEC_KEY = "spec";
+	public static final String REQUEST_TS_KEY = "request_ts";
+	public static final String BEGIN_TS_KEY = "begin_ts";
+	public static final String END_TS_KEY = "end_ts";
 
 	private final String id;
 	private final ExecutionPriority priority;
@@ -50,9 +49,9 @@ final class TaskDescriptor {
 
 		try {
 			JSONObject jsonTask = new JSONObject(strJsonTask);
-	    	this.id  = jsonTask.getString(UUID_KEY);
+			this.id = jsonTask.getString(UUID_KEY);
 
-	    	final int intPriority = jsonTask.getInt(PRIORITY_KEY);
+			final int intPriority = jsonTask.getInt(PRIORITY_KEY);
 			this.priority = toPriority(intPriority);
 
 			final String strState = jsonTask.getString(STATE_KEY);
@@ -71,13 +70,14 @@ final class TaskDescriptor {
 			this.endTime = toDate(strEndDate);
 
 		} catch (JSONException e) {
-			throw new IllegalArgumentException("Task error:" + e.getMessage() );
+			throw new IllegalArgumentException("Task error:" + e.getMessage());
 		}
 
 	}
 
 	/**
 	 * Constructor for copy
+	 * 
 	 * @param toCopy
 	 */
 	public TaskDescriptor(ExecutionMetadata toCopy) {
@@ -87,9 +87,9 @@ final class TaskDescriptor {
 		this.state = toCopy.getState();
 		this.requestor = toCopy.getRequestor();
 		try {
-			this.spec = JSONUtil.parseStringToJSon( toCopy.getSpec() );
+			this.spec = JSONUtil.parseStringToJSon(toCopy.getSpec());
 		} catch (JSONException e) {
-			throw new IllegalArgumentException("Spec error:" + e.getMessage() );
+			throw new IllegalArgumentException("Spec error:" + e.getMessage());
 		}
 		this.requestTime = toCopy.getRequestTime();
 
@@ -100,7 +100,6 @@ final class TaskDescriptor {
 	public String getID() {
 		return this.id;
 	}
-
 
 	public ExecutionState getState() {
 		return state;
@@ -135,7 +134,8 @@ final class TaskDescriptor {
 	}
 
 	public static Date toDate(final String strDate) {
-		if("".equals(strDate) )return null;
+		if ("".equals(strDate))
+			return null;
 		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date date = null;
 		try {
@@ -149,19 +149,20 @@ final class TaskDescriptor {
 
 	}
 
-	public static ExecutionPriority toPriority(int intPriority){
+	public static ExecutionPriority toPriority(int intPriority) {
 
-		for (ExecutionPriority p: ExecutionPriority.values()) {
-			if(p.ordinal() == intPriority){
+		for (ExecutionPriority p : ExecutionPriority.values()) {
+			if (p.ordinal() == intPriority) {
 				return p;
 			}
 		}
-		throw new IllegalStateException("Illegal execution priority" +intPriority);
+		throw new IllegalStateException("Illegal execution priority" + intPriority);
 	}
 
 	public static String formatDate(Date date) {
 
-		if(date == null) return "";
+		if (date == null)
+			return "";
 
 		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String strDate = dateFormatter.format(date);

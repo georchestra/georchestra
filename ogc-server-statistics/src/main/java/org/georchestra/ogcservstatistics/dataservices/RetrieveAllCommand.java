@@ -38,25 +38,25 @@ import java.util.Map;
  * @author Mauricio Pazos
  *
  */
-public final class RetrieveAllCommand extends AbstractQueryCommand{
+public final class RetrieveAllCommand extends AbstractQueryCommand {
 
-	private static final String SQL = " SELECT "+ DATE_COLUMN+ "," + USER_COLUMN +","+ SERVICE_COLUMN+","+LAYER_COLUMN+","+SECROLE_COLUMN  
-							+ " FROM " + QUALIFIED_TABLE_NAME 
-							+ " ORDER BY "+ DATE_COLUMN+ "," + USER_COLUMN +","+ SERVICE_COLUMN+","+LAYER_COLUMN+","+SECROLE_COLUMN;
- 	
-	protected PreparedStatement prepareStatement() throws SQLException{
+	private static final String SQL = " SELECT " + DATE_COLUMN + "," + USER_COLUMN + "," + SERVICE_COLUMN + ","
+			+ LAYER_COLUMN + "," + SECROLE_COLUMN + " FROM " + QUALIFIED_TABLE_NAME + " ORDER BY " + DATE_COLUMN + ","
+			+ USER_COLUMN + "," + SERVICE_COLUMN + "," + LAYER_COLUMN + "," + SECROLE_COLUMN;
+
+	protected PreparedStatement prepareStatement() throws SQLException {
 		return connection.prepareStatement(SQL);
 	}
 
-	protected Map<String, Object> getRow(ResultSet rs) throws SQLException{
-		
-		Map<String,Object> row = new HashMap<>(5);
+	protected Map<String, Object> getRow(ResultSet rs) throws SQLException {
+
+		Map<String, Object> row = new HashMap<>(5);
 		row.put(DATE_COLUMN, rs.getDate(DATE_COLUMN));
 		row.put(USER_COLUMN, rs.getString(USER_COLUMN));
 		row.put(SERVICE_COLUMN, rs.getString(SERVICE_COLUMN));
 		row.put(LAYER_COLUMN, rs.getString(LAYER_COLUMN));
 		row.put(SECROLE_COLUMN, rs.getString(SECROLE_COLUMN));
-		
+
 		return row;
 	}
 

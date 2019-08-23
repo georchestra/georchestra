@@ -20,13 +20,14 @@
 package org.georchestra.console.dto;
 
 /**
- * Defines the name of the role's fields. They are consistent with the LDAP specification.
+ * Defines the name of the role's fields. They are consistent with the LDAP
+ * specification.
  * 
  * @author Mauricio Pazos
  *
  */
 public interface RoleSchema {
-	
+
 	String COMMON_NAME_KEY = "cn"; // role name
 	String DESCRIPTION_KEY = "description";
 	String MEMBER_KEY = "member";

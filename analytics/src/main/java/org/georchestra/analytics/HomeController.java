@@ -31,10 +31,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class HomeController {
-    
-    @RequestMapping(value = "/index.jsp", method=RequestMethod.GET)
-    public ModelAndView handleIndex(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        return new ModelAndView("index");
-    }
-    
+
+	@RequestMapping(value = "/index.jsp", method = RequestMethod.GET)
+	public ModelAndView handleIndex(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		return new ModelAndView("index");
+	}
+
 }

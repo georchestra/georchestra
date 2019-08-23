@@ -32,16 +32,16 @@ import org.georchestra.lib.sqlcommand.AbstractUpdateCommand;
  *
  * @author Mauricio Pazos
  */
-final class InsertUserTokenCommand extends AbstractUpdateCommand{
+final class InsertUserTokenCommand extends AbstractUpdateCommand {
 
-
-	private static final String SQL_INSERT= "INSERT INTO "+ DatabaseSchema.SCHEMA_NAME + "." + DatabaseSchema.TABLE_USER_TOKEN+ " ("+DatabaseSchema.UID_COLUMN+","+ DatabaseSchema.TOKEN_COLUMN+ ","+DatabaseSchema.CREATION_DATE_COLUMN+") VALUES (?, ?, ?)";
+	private static final String SQL_INSERT = "INSERT INTO " + DatabaseSchema.SCHEMA_NAME + "."
+			+ DatabaseSchema.TABLE_USER_TOKEN + " (" + DatabaseSchema.UID_COLUMN + "," + DatabaseSchema.TOKEN_COLUMN
+			+ "," + DatabaseSchema.CREATION_DATE_COLUMN + ") VALUES (?, ?, ?)";
 
 	private Map<String, Object> rowValues;
 
 	/**
-	 * Sets the uid and token in the command.
-	 * To
+	 * Sets the uid and token in the command. To
 	 *
 	 * @param row (UID_COLUMN, value)(TOKEN_COLUMN, value) (TIMESTAMP_COLUMN, value)
 	 */
@@ -52,17 +52,15 @@ final class InsertUserTokenCommand extends AbstractUpdateCommand{
 		this.rowValues = row;
 	}
 
-
 	@Override
 	protected PreparedStatement prepareStatement(Connection connection) throws SQLException {
-        PreparedStatement pStmt = connection.prepareStatement(SQL_INSERT);
+		PreparedStatement pStmt = connection.prepareStatement(SQL_INSERT);
 
-        pStmt.setString(1, (String)this.rowValues.get(DatabaseSchema.UID_COLUMN));
-		pStmt.setString(2, (String)this.rowValues.get(DatabaseSchema.TOKEN_COLUMN));
+		pStmt.setString(1, (String) this.rowValues.get(DatabaseSchema.UID_COLUMN));
+		pStmt.setString(2, (String) this.rowValues.get(DatabaseSchema.TOKEN_COLUMN));
 		pStmt.setTimestamp(3, (Timestamp) this.rowValues.get(DatabaseSchema.CREATION_DATE_COLUMN));
 
 		return pStmt;
 	}
-
 
 }

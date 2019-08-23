@@ -1,7 +1,7 @@
 package org.georchestra.extractorapp.ws.extractor;
 
 /**
- * Task was not found in the task queue. 
+ * Task was not found in the task queue.
  * 
  * 
  * @author Mauricio Pazos
@@ -17,6 +17,5 @@ public class TaskNotFoundException extends Exception {
 	public TaskNotFoundException(String msg) {
 		super(msg);
 	}
-	
 
 }

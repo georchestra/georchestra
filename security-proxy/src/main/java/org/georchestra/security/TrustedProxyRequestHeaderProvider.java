@@ -14,23 +14,23 @@ import java.util.Enumeration;
 
 public class TrustedProxyRequestHeaderProvider extends HeaderProvider {
 
-    private static final Log logger = LogFactory.getLog(ProxyTrustAnotherProxy.class.getPackage().getName());
+	private static final Log logger = LogFactory.getLog(ProxyTrustAnotherProxy.class.getPackage().getName());
 
-    @SuppressWarnings("unchecked")
-    @Override
-    protected Collection<Header> getCustomRequestHeaders(HttpSession session, HttpServletRequest originalRequest) {
-        if (session.getAttribute("pre-auth") != null) {
-            Collection<Header> headers = new ArrayList<Header>();
-            Enumeration<String> e = originalRequest.getHeaderNames();
-            while (e.hasMoreElements()) {
-                String headerName = e.nextElement();
-                originalRequest.getHeader(headerName);
-                logger.debug("Adding header: " + headerName + ", value: " + originalRequest.getHeader(headerName));
-                headers.add(new BasicHeader(headerName, originalRequest.getHeader(headerName)));
-            }
-            return headers;
-        } else {
-            return Collections.emptyList();
-        }
-    }
+	@SuppressWarnings("unchecked")
+	@Override
+	protected Collection<Header> getCustomRequestHeaders(HttpSession session, HttpServletRequest originalRequest) {
+		if (session.getAttribute("pre-auth") != null) {
+			Collection<Header> headers = new ArrayList<Header>();
+			Enumeration<String> e = originalRequest.getHeaderNames();
+			while (e.hasMoreElements()) {
+				String headerName = e.nextElement();
+				originalRequest.getHeader(headerName);
+				logger.debug("Adding header: " + headerName + ", value: " + originalRequest.getHeader(headerName));
+				headers.add(new BasicHeader(headerName, originalRequest.getHeader(headerName)));
+			}
+			return headers;
+		} else {
+			return Collections.emptyList();
+		}
+	}
 }

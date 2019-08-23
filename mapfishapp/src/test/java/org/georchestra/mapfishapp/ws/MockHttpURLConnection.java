@@ -11,24 +11,33 @@ import java.util.List;
 import java.util.Map;
 
 final class MockHttpURLConnection extends HttpURLConnection {
-	private Map<String, List<String> > requestProperties = new HashMap<String,List<String>>();
+	private Map<String, List<String>> requestProperties = new HashMap<String, List<String>>();
 
-	private Map<String, List<String> > headerFields = new HashMap<String,List<String>>();
+	private Map<String, List<String>> headerFields = new HashMap<String, List<String>>();
 
 	private OutputStream fakedStream = new ByteArrayOutputStream();
 
 	private InputStream fakedInputStream;
 	private String contentType = null;
 	private int fakedResponseCode = HttpURLConnection.HTTP_OK;
-	
-	public void setResponseCode(int c) { fakedResponseCode = c ; }
+
+	public void setResponseCode(int c) {
+		fakedResponseCode = c;
+	}
 
 	@Override
-	public int getResponseCode() {return fakedResponseCode ; }
+	public int getResponseCode() {
+		return fakedResponseCode;
+	}
 
-	public void setContentType(String ct) { contentType = ct; }
+	public void setContentType(String ct) {
+		contentType = ct;
+	}
+
 	@Override
-	public String getContentType() { return contentType; }
+	public String getContentType() {
+		return contentType;
+	}
 
 	protected MockHttpURLConnection() {
 		super(null);
@@ -38,22 +47,22 @@ final class MockHttpURLConnection extends HttpURLConnection {
 	public void disconnect() {
 		return;
 	}
-	
+
 	@Override
 	public boolean usingProxy() {
 		return false;
 	}
-	
+
 	@Override
 	public void connect() throws IOException {
 		return;
 	}
-	
+
 	@Override
 	public OutputStream getOutputStream() {
 		return fakedStream;
 	}
-	
+
 	@Override
 	public void setRequestProperty(String k, String v) {
 		List<String> l = requestProperties.get(k);
@@ -66,11 +75,12 @@ final class MockHttpURLConnection extends HttpURLConnection {
 		l.add(v);
 		requestProperties.put(k, l);
 	}
+
 	@Override
 	public Map<String, List<String>> getRequestProperties() {
 		return requestProperties;
 	}
-	
+
 	public void setHeaderFields(String k, String v) {
 		List<String> l = headerFields.get(k);
 		if (l == null) {
@@ -87,22 +97,30 @@ final class MockHttpURLConnection extends HttpURLConnection {
 	public Map<String, List<String>> getHeaderFields() {
 		return headerFields;
 	}
-	
+
 	public void setInputStream(InputStream stream) {
 		fakedInputStream = stream;
 	}
+
 	@Override
 	public InputStream getInputStream() {
 		return fakedInputStream;
 	}
 
 	public void reset() {
-		requestProperties = new HashMap<String,List<String>>();
-		headerFields = new HashMap<String,List<String>>();
-		try { fakedStream.close(); } catch (Throwable e) {}
+		requestProperties = new HashMap<String, List<String>>();
+		headerFields = new HashMap<String, List<String>>();
+		try {
+			fakedStream.close();
+		} catch (Throwable e) {
+		}
 		fakedStream = new ByteArrayOutputStream();
-		try { fakedInputStream.close(); } catch (Throwable e) {};
+		try {
+			fakedInputStream.close();
+		} catch (Throwable e) {
+		}
+		;
 		contentType = null;
-		fakedResponseCode = HttpURLConnection.HTTP_OK;		
+		fakedResponseCode = HttpURLConnection.HTTP_OK;
 	}
 }

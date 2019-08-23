@@ -36,19 +36,20 @@ import org.georchestra.ogcservstatistics.OGCServStatisticsException;
 import org.georchestra.ogcservstatistics.dataservices.DataServicesConfiguration;
 import org.georchestra.ogcservstatistics.dataservices.InsertCommand;
 
-
 /**
  * This appender is responsible to record the OGC services in the configured
  * database table.
  * <p>
- * <b>Usage:</b>
- * There are two ways of configuring the target database this appender will insert log entries to.
- * The first and preferred one since geOrchestra 18.12, is that the client code calls 
- * {@link OGCServicesAppender#setDataSource(DataSource)} with an appropriately configured 
- * connection pool.
+ * <b>Usage:</b> There are two ways of configuring the target database this
+ * appender will insert log entries to. The first and preferred one since
+ * geOrchestra 18.12, is that the client code calls
+ * {@link OGCServicesAppender#setDataSource(DataSource)} with an appropriately
+ * configured connection pool.
  * <p>
- * Additionally, and for backwards compatibility, the database URL and connection credentials
- * can be set on the {@code log4j.properties} configuration as follows:
+ * Additionally, and for backwards compatibility, the database URL and
+ * connection credentials can be set on the {@code log4j.properties}
+ * configuration as follows:
+ * 
  * <pre>
  * <code>
  * log4j.rootLogger= INFO, OGCSERVICES
@@ -61,28 +62,31 @@ import org.georchestra.ogcservstatistics.dataservices.InsertCommand;
  * </code>
  * </pre>
  * <p>
- * Note: you could improve the performance increasing the <b>bufferSize</b> value.
+ * Note: you could improve the performance increasing the <b>bufferSize</b>
+ * value.
  * </p>
  * 
  * <p>
  * To load the configuration you should include the following code:
  * </p>
+ * 
  * <pre>
  * 
- *	static{
- *		final String file = "[install-dir]/log4j.properties";
- *		PropertyConfigurator.configure(file);
- *	}
+ * static {
+ * 	final String file = "[install-dir]/log4j.properties";
+ * 	PropertyConfigurator.configure(file);
+ * }
  * </pre>
  * <p>
  * To log a message you should use the following idiom:
  * </p>
+ * 
  * <pre>
  * final Date time = calendar.getTime();
  * final String user = getUserName();
  * final String request = "http://ns383241.ovh.net:80/geoserver/wfs/...";
- * String ogcServiceMessage = OGCServiceMessageFormatter.format(user, time,request);
- * LOGGER.info(ogcServiceMessage); 
+ * String ogcServiceMessage = OGCServiceMessageFormatter.format(user, time, request);
+ * LOGGER.info(ogcServiceMessage);
  * </pre>
  * 
  * 
@@ -97,50 +101,47 @@ public class OGCServicesAppender extends AppenderSkeleton {
 	private String jdbcURL = "";
 
 	/**
-	 * Activated 
-	 * true: 	it log ogc services 
-	 * false: 	it does not log ogc services
+	 * Activated true: it log ogc services false: it does not log ogc services
 	 */
 	protected boolean activated = false;
 
 	private static DataServicesConfiguration dataServiceConfiguration = DataServicesConfiguration.getInstance();
 
-
 	public OGCServicesAppender() {
 		super();
 	}
 
-	public String getJdbcURL(){
+	public String getJdbcURL() {
 		return this.jdbcURL;
 	}
-	
-	public void setJdbcURL(String jdbcURL){
+
+	public void setJdbcURL(String jdbcURL) {
 		this.jdbcURL = jdbcURL;
 	}
 
 	public String getDatabaseUser() {
 		return databaseUser;
 	}
-	
+
 	public void setDatabaseUser(String databaseUser) {
 		this.databaseUser = databaseUser;
 	}
-	
+
 	public String getDatabasePassword() {
 		return databasePassword;
 	}
-	
+
 	public void setDatabasePassword(String databasePassword) {
 		this.databasePassword = databasePassword;
 	}
 
-    public @Deprecated int getBufferSize() {
-        return 1;
-    }
+	public @Deprecated int getBufferSize() {
+		return 1;
+	}
 
-    public @Deprecated void setBufferSize(int newBufferSize) {
-    }
-	
+	public @Deprecated void setBufferSize(int newBufferSize) {
+	}
+
 	public boolean isActivated() {
 		return activated;
 	}
@@ -150,73 +151,71 @@ public class OGCServicesAppender extends AppenderSkeleton {
 	}
 
 	/**
-	 * This hook method called after set all appender properties.
-	 * In this case the configuration is set.
-	 *  
+	 * This hook method called after set all appender properties. In this case the
+	 * configuration is set.
+	 * 
 	 */
-    @Override
-    public void activateOptions() {
-        dataServiceConfiguration.initialize(getJdbcURL(), getDatabaseUser(), getDatabasePassword());
-    }
+	@Override
+	public void activateOptions() {
+		dataServiceConfiguration.initialize(getJdbcURL(), getDatabaseUser(), getDatabasePassword());
+	}
 
-    public static void setDataSource(DataSource dataSource) {
-        Objects.requireNonNull(dataSource, "dataSource can't be null");
-        dataServiceConfiguration.initialize(dataSource);
-    }
-	
-    /**
-     * Appends the OGC Service in the table.
-     * 
-     * The string present in buffer is parsed, if it is an interesting OGC service
-     * then extracts the data required to insert a row in the table.
-     * 
-     * @implNote This method is called from inside the {@code synchronized} method
-     *           {@link AppenderSkeleton#doAppend}, as it calls
-     *           {@link OGCServiceParser#parseLog} and runs one
-     *           {@link InsertCommand} per parsed entry, the job is done
-     *           asynchronously on the platforms' default {@link ForkJoinPool} to
-     *           avoid hindering application performance.
-     */
+	public static void setDataSource(DataSource dataSource) {
+		Objects.requireNonNull(dataSource, "dataSource can't be null");
+		dataServiceConfiguration.initialize(dataSource);
+	}
+
+	/**
+	 * Appends the OGC Service in the table.
+	 * 
+	 * The string present in buffer is parsed, if it is an interesting OGC service
+	 * then extracts the data required to insert a row in the table.
+	 * 
+	 * @implNote This method is called from inside the {@code synchronized} method
+	 *           {@link AppenderSkeleton#doAppend}, as it calls
+	 *           {@link OGCServiceParser#parseLog} and runs one
+	 *           {@link InsertCommand} per parsed entry, the job is done
+	 *           asynchronously on the platforms' default {@link ForkJoinPool} to
+	 *           avoid hindering application performance.
+	 */
 	@Override
 	protected void append(final LoggingEvent event) {
-	    //do not run if not activated or closed
+		// do not run if not activated or closed
 		if (!this.activated && !this.closed)
 			return;
-		
-        CompletableFuture.runAsync(() -> {
-            try {
-                // let it finish if the task was issued even if the appender was closed after
-                // the fact
-                if(!this.activated) {
-                    return;
-                }
-                String msg = event.getRenderedMessage();
-                List<Map<String, Object>> logList = OGCServiceParser.parseLog(msg);
-                insert(logList);
-            } catch (Exception ex) {
-                errorHandler.error("Failed to insert the ogc service record", ex, ErrorCode.WRITE_FAILURE);
-            }
-        });
+
+		CompletableFuture.runAsync(() -> {
+			try {
+				// let it finish if the task was issued even if the appender was closed after
+				// the fact
+				if (!this.activated) {
+					return;
+				}
+				String msg = event.getRenderedMessage();
+				List<Map<String, Object>> logList = OGCServiceParser.parseLog(msg);
+				insert(logList);
+			} catch (Exception ex) {
+				errorHandler.error("Failed to insert the ogc service record", ex, ErrorCode.WRITE_FAILURE);
+			}
+		});
 	}
 
+	private void insert(List<Map<String, Object>> ogcServiceRecords) {
 
-	private void insert(List<Map<String, Object>> ogcServiceRecords)  {
-
-		try (Connection c = dataServiceConfiguration.getConnection()){
-            for (Map<String, Object> entry : ogcServiceRecords) {
-                InsertCommand cmd = new InsertCommand();
-                cmd.setConnection(c);
-                cmd.setRowValues(entry);
-                cmd.execute();
-            }
+		try (Connection c = dataServiceConfiguration.getConnection()) {
+			for (Map<String, Object> entry : ogcServiceRecords) {
+				InsertCommand cmd = new InsertCommand();
+				cmd.setConnection(c);
+				cmd.setRowValues(entry);
+				cmd.execute();
+			}
 		} catch (Exception e) {
 
-			errorHandler.error("Failed to insert the log", e,
-					ErrorCode.WRITE_FAILURE);
+			errorHandler.error("Failed to insert the log", e, ErrorCode.WRITE_FAILURE);
 		}
-		
+
 	}
-	
+
 	@Override
 	public void finalize() {
 		close();
@@ -227,13 +226,12 @@ public class OGCServicesAppender extends AppenderSkeleton {
 	 */
 	@Override
 	public void close() {
-	    this.closed = true;
+		this.closed = true;
 	}
 
 	@Override
 	public boolean requiresLayout() {
 		return false; // does not require layout configuration
 	}
-
 
 }

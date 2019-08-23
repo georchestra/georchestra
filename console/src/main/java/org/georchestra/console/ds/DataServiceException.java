@@ -19,14 +19,12 @@
 
 package org.georchestra.console.ds;
 
-
 /**
  *
  * @author Mauricio Pazos
  *
  */
 public class DataServiceException extends Exception {
-
 
 	/**
 	 *
@@ -37,7 +35,7 @@ public class DataServiceException extends Exception {
 		super(e);
 	}
 
-	public DataServiceException(String  msg) {
+	public DataServiceException(String msg) {
 		super(msg);
 	}
 

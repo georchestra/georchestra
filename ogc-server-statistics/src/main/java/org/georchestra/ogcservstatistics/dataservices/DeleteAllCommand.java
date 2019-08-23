@@ -39,7 +39,7 @@ public final class DeleteAllCommand extends AbstractDataCommand {
 	 */
 	@Override
 	public void execute() throws DataCommandException {
-        try (Statement pStmt = this.connection.createStatement()){
+		try (Statement pStmt = this.connection.createStatement()) {
 			pStmt.execute(String.format("DELETE FROM %s", QUALIFIED_TABLE_NAME));
 		} catch (SQLException e) {
 			throw new DataCommandException(e);

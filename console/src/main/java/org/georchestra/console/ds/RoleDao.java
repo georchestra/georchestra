@@ -38,10 +38,11 @@ public interface RoleDao {
 	 * @param userId
 	 * @param originLogin login of admin that generate this request
 	 * @throws NameNotFoundException
-	 * @throws DataServiceException 
+	 * @throws DataServiceException
 	 */
 
-	void addUser(String  roleID, Account user, final String originLogin) throws DataServiceException, NameNotFoundException;
+	void addUser(String roleID, Account user, final String originLogin)
+			throws DataServiceException, NameNotFoundException;
 
 	/**
 	 * Returns all roles. Each roles will contains its list of users.
@@ -66,15 +67,14 @@ public interface RoleDao {
 
 	void modifyUser(Account oldAccount, Account newAccount) throws DataServiceException;
 
-
-
 	/**
 	 * Adds the role
 	 * 
 	 * @param role
 	 * 
-	 * @throws DataServiceException 
-	 * @throws DuplicatedCommonNameException if the role es present in the LDAP store
+	 * @throws DataServiceException
+	 * @throws DuplicatedCommonNameException if the role es present in the LDAP
+	 *                                       store
 	 */
 	void insert(Role role) throws DataServiceException, DuplicatedCommonNameException;
 
@@ -85,10 +85,11 @@ public interface RoleDao {
 	 * @throws DataServiceException
 	 * @throws NameNotFoundException
 	 */
-	void delete(String commonName) throws DataServiceException,	NameNotFoundException;
+	void delete(String commonName) throws DataServiceException, NameNotFoundException;
 
 	/**
 	 * Search the role based on the common name (cn)
+	 * 
 	 * @param commonName
 	 * @return {@link Role}
 	 * 
@@ -103,10 +104,13 @@ public interface RoleDao {
 	 * @param modified
 	 * 
 	 */
-	void update(String roleName, Role modified) throws DataServiceException, NameNotFoundException, DuplicatedCommonNameException;
+	void update(String roleName, Role modified)
+			throws DataServiceException, NameNotFoundException, DuplicatedCommonNameException;
 
-	void addUsersInRoles(List<String> putRole, List<Account> users, final String originLogin)  throws DataServiceException, NameNotFoundException;
+	void addUsersInRoles(List<String> putRole, List<Account> users, final String originLogin)
+			throws DataServiceException, NameNotFoundException;
 
-	void deleteUsersInRoles(List<String> deleteRole, List<Account> users, final String originLogin) throws DataServiceException, NameNotFoundException;
-	
+	void deleteUsersInRoles(List<String> deleteRole, List<Account> users, final String originLogin)
+			throws DataServiceException, NameNotFoundException;
+
 }

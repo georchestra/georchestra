@@ -14,10 +14,10 @@ import org.junit.Test;
 
 public class ExpiredArchiveDaemonTest {
 
-    private static final long   SECOND = 1000;
-    private static final long   MINUTE = 60 * SECOND;
-    private static final long   HOUR   = 60 * MINUTE;
-    private static final long   DAYS   = 24 * HOUR;
+	private static final long SECOND = 1000;
+	private static final long MINUTE = 60 * SECOND;
+	private static final long HOUR = 60 * MINUTE;
+	private static final long DAYS = 24 * HOUR;
 
 	@Test
 	public void testExpiredArchiveDaemon() {
@@ -30,8 +30,8 @@ public class ExpiredArchiveDaemonTest {
 
 			ead.run();
 		} catch (Throwable e) {
-			//TODO: debug
-			fail("Exception running ExpiredArchiveDaemon: " +e.getMessage());
+			// TODO: debug
+			fail("Exception running ExpiredArchiveDaemon: " + e.getMessage());
 		}
 	}
 
@@ -45,9 +45,9 @@ public class ExpiredArchiveDaemonTest {
 		File testFile = new File(storageFile + File.separator + "sample" + ExtractorController.EXTRACTION_ZIP_EXT);
 
 		try {
-	        if (! storageFile.exists()) {
-                org.apache.commons.io.FileUtils.forceMkdir(storageFile);
-	        }
+			if (!storageFile.exists()) {
+				org.apache.commons.io.FileUtils.forceMkdir(storageFile);
+			}
 			testFile.createNewFile();
 		} catch (IOException e) {
 			fail("Unexpected exception: " + e.getMessage());
@@ -69,7 +69,8 @@ public class ExpiredArchiveDaemonTest {
 		// should raise NPE before setting it
 		try {
 			ead.getExpiry();
-		} catch (NullPointerException e) {}
+		} catch (NullPointerException e) {
+		}
 
 		ead.setExpiry(1000);
 		Assert.assertEquals(1000, ead.getExpiry());
@@ -80,14 +81,11 @@ public class ExpiredArchiveDaemonTest {
 		ExpiredArchiveDaemon ead = new ExpiredArchiveDaemon();
 		try {
 			ead.getPeriod();
-		} catch (NullPointerException e) {}
+		} catch (NullPointerException e) {
+		}
 		ead.setPeriod(1000);
 
 		Assert.assertEquals(1000, ead.getPeriod());
 	}
-
-
-
-
 
 }

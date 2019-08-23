@@ -34,9 +34,9 @@ import java.util.List;
  */
 public interface AccountDao {
 
-
 	/**
 	 * Checks if the uid exist.
+	 * 
 	 * @param uid
 	 * @return true if the uid exist, false in other case.
 	 * @throws DataServiceException
@@ -90,10 +90,12 @@ public interface AccountDao {
 	 * @throws DataServiceException
 	 * @throws DuplicatedEmailException
 	 */
-	void insert(final Account account, final String originLogin) throws DataServiceException, DuplicatedUidException, DuplicatedEmailException;
+	void insert(final Account account, final String originLogin)
+			throws DataServiceException, DuplicatedUidException, DuplicatedEmailException;
 
 	/**
 	 * Updates the user account
+	 * 
 	 * @param account
 	 * @param originLogin login of admin that issue this modification
 	 * @throws DataServiceException
@@ -113,7 +115,8 @@ public interface AccountDao {
 	 * @throws DataServiceException
 	 * @throws NameNotFoundException
 	 */
-	void update(Account account, Account modified, String originLogin) throws DataServiceException, DuplicatedEmailException, NameNotFoundException;
+	void update(Account account, Account modified, String originLogin)
+			throws DataServiceException, DuplicatedEmailException, NameNotFoundException;
 
 	/**
 	 * Changes the user password
@@ -122,8 +125,7 @@ public interface AccountDao {
 	 * @param password
 	 * @throws DataServiceException
 	 */
-	void changePassword(final String uid, final String password)throws DataServiceException;
-
+	void changePassword(final String uid, final String password) throws DataServiceException;
 
 	void delete(Account account, final String originLogin) throws DataServiceException, NameNotFoundException;
 
@@ -137,11 +139,12 @@ public interface AccountDao {
 	 * @throws DataServiceException
 	 * @throws NameNotFoundException
 	 */
-	Account findByUID(final String uid)throws DataServiceException, NameNotFoundException;
+	Account findByUID(final String uid) throws DataServiceException, NameNotFoundException;
 
 	/**
-	 * Add the new password. This method is part of the "lost password" workflow to maintan the old password and the new password until the
-	 * user can confirm that he had asked for a new password.   
+	 * Add the new password. This method is part of the "lost password" workflow to
+	 * maintan the old password and the new password until the user can confirm that
+	 * he had asked for a new password.
 	 * 
 	 * @param uid
 	 * @param newPassword
@@ -152,7 +155,7 @@ public interface AccountDao {
 	 * Generates a new Id based on the uid provided as parameter.
 	 * 
 	 * @param uid
-	 *  
+	 * 
 	 * @return a new uid
 	 * 
 	 */
