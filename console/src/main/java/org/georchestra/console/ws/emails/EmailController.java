@@ -76,507 +76,493 @@ import java.util.Properties;
 @Controller
 public class EmailController {
 
-    @Autowired
-    private EmailDao emailRepository;
+	@Autowired
+	private EmailDao emailRepository;
 
-    @Autowired
-    private AttachmentDao attachmentRepo;
+	@Autowired
+	private AttachmentDao attachmentRepo;
 
-    @Autowired
-    private EmailTemplateDao emailTemplateRepo;
+	@Autowired
+	private EmailTemplateDao emailTemplateRepo;
 
-    @Autowired
+	@Autowired
 	private AccountDao accountDao;
 
-    @Autowired
-    private EmailFactory emailFactory;
-
-    @Autowired
-    private AdminLogDao logRepo;
-
-    @Autowired
-    private AdvancedDelegationDao advancedDelegationDao;
-
-    private static final Log LOG = LogFactory.getLog(EmailController.class.getName());
-    private Collection<String> recipientWhiteList;
-
-    /**
-     * Email proxy configuration
-     *
-     * Basically, this webapp can send emails on behalf of LDAP users.
-     * The service endpoint is available at /console/emailProxy
-     * Usage is restricted to users having the MOD_EMAILPROXY role by default,
-     * cf https://github.com/georchestra/datadir/blob/master/security-proxy/security-mappings.xml
-     * see https://github.com/georchestra/georchestra/pull/1572 for more information.
-     *
-     * These restrictions have been implemented to prevent spammers.
-     */
-    @Value("${emailProxyFromAddress:${administratorEmail}}")
-    private String emailProxyFromAddress;
-
-    @Value("${emailProxyMaxRecipient:10}")
-    private String emailProxyMaxRecipient;
-
-    @Value("${emailProxyMaxBodySize:10000}")
-    private String emailProxyMaxBodySize;
-
-    @Value("${emailProxyMaxSubjectSize:200}")
-    private String emailProxyMaxSubjectSize;
-
-    @Value("${emailProxyRecipientWhitelist:${administratorEmail}}")
-    private String emailProxyRecipientWhitelist;
-
-    /*
-     * produces = MediaType.APPLICATION_JSON_VALUE
-     * generate : content type : application/json; charset=UTF-8
-     * WRONG !
-     *
-     * produces = "application/json; charset=utf-8"
-     * generate :  content type :  application/json;charset=utf-8
-     * RIGHT !
-     *
-     */
-
-    /**
-     * Return a JSON list of Emails sent to specified user
-     *
-     * @param recipient recipient login
-     * @return JSON list of Emails sent to specified user
-     * @throws JSONException
-     */
-    @RequestMapping(value="/{recipient}/emails",
-                    method= RequestMethod.GET,
-                    produces = "application/json; charset=UTF-8")
-    @ResponseBody
-    public String emailsList(@PathVariable String recipient) throws JSONException {
-        this.checkAuthorisation(recipient);
-        JSONArray emails = new JSONArray();
-        for(EmailEntry email : this.emailRepository.findByRecipientOrderByDateDesc(recipient))
-            emails.put(email.toJSON());
-        JSONObject res = new JSONObject();
-        res.put("emails", emails);
-
-        return res.toString();
-    }
-
-
-    /**
-     * Send an email and store it in database
-     *
-     * @param recipient recipient login
-     * @param subject subject of email
-     * @param content content of email (text part in html)
-     * @param attachmentsIds comma separated list of attachments identifier
-     * @return identifier of new email sent prefixed by "OK : "
-     * @throws NameNotFoundException if sender cannot be found
-     * @throws DataServiceException if there is issues while contacting LDAP server
-     * @throws MessagingException if email cannot be sent through SMTP protocol
-     * @throws IOException if email cannot be sent through SMTP protocol
-     */
-    @RequestMapping(value="{recipient}/sendEmail", method = RequestMethod.POST)
-    @ResponseBody
-    public String sendEmail(@PathVariable String recipient,
-                            @RequestParam("subject") String subject,
-                            @RequestParam("content") String content,
-                            @RequestParam("attachments") String attachmentsIds,
-                            HttpServletRequest request,
-                            HttpServletResponse response)
-            throws NameNotFoundException, DataServiceException, MessagingException, JSONException {
-
-        this.checkAuthorisation(recipient);
-
-        EmailEntry email = new EmailEntry();
-        String sender = request.getHeader("sec-username");
-        email.setSender(sender);
-        email.setRecipient(recipient);
-        email.setSubject(subject);
-        email.setDate(new Date());
-        email.setBody(content);
-
-        attachmentsIds = attachmentsIds.trim();
-        List<Attachment> attachments = new LinkedList<Attachment>();
-        if (attachmentsIds.length() > 0) {
-            String[] attachmentsIdsList = attachmentsIds.split("\\s?,\\s?");
-            for (String attId : attachmentsIdsList) {
-                Attachment att = this.attachmentRepo.findOne(Long.parseLong(attId));
-                if (att == null)
-                    throw new NameNotFoundException("Unable to find attachment with ID : " + attId);
-                attachments.add(att);
-            }
-        }
-        email.setAttachments(attachments);
-        this.send(email);
-
-        AdminLogEntry log = new AdminLogEntry(sender, recipient, AdminLogType.EMAIL_SENT, new Date());
-        this.emailRepository.save(email);
-        response.setContentType("application/json");
-        return email.toJSON().toString();
-
-    }
-
-
-
-    /**
-     * This service can be used to test email sending
-     * @param recipient login of recipient
-     * @return Html page to test email sending
-     */
-    @RequestMapping(value="{recipient}/sendEmail", method = RequestMethod.GET)
-    @ResponseBody
-    public String sendEmail(@PathVariable String recipient){
-        return "<form method=POST>" +
-                "recipient : " + recipient + "<br>" +
-                "subject : <input type='test' name='subject'><br>" +
-                "content : <textarea name='content'></textarea><br>" +
-                "comma separated list of attachment identifier <input type='text' name='attachments'><br>" +
-                "<input type='submit'>" +
-                "</form>";
-
-    }
-
-
-    /**
-     * List available attachments in database
-     * @return JSON object containing all attachments available in database
-     * @throws JSONException if there is error when encoding to JSON
-     */
-    @RequestMapping(value="/attachments",
-                    method = RequestMethod.GET,
-                    produces = "application/json; charset=UTF-8")
-    @ResponseBody
-    public String attachments() throws JSONException {
-        JSONArray attachments = new JSONArray();
-        for(Attachment att : this.attachmentRepo.findAll()){
-            JSONObject attachment = new JSONObject();
-            attachment.put("id",att.getId());
-            attachment.put("name",att.getName());
-            attachment.put("mimeType",att.getMimeType());
-            attachments.put(attachment);
-        }
-
-        JSONObject res = new JSONObject();
-        res.put("attachments", attachments);
-        return res.toString();
-    }
-
-    /**
-     * Generate a list of template found in database
-     * @return JSON object containing all templates found in database
-     * @throws JSONException if templates cannot be encoded to JSON
-     */
-    @RequestMapping(value="/emailTemplates",
-                    method = RequestMethod.GET,
-                    produces = "application/json; charset=UTF-8")
-    @ResponseBody
-    public String emailTemplates() throws JSONException {
-        JSONArray emailTemplates = new JSONArray();
-        for(EmailTemplate temp : this.emailTemplateRepo.findAll()){
-            JSONObject attachment = new JSONObject();
-            attachment.put("id", temp.getId());
-            attachment.put("name", temp.getName());
-            attachment.put("content", temp.getContent());
-            emailTemplates.put(attachment);
-        }
-
-        JSONObject res = new JSONObject();
-        res.put("templates", emailTemplates);
-        return res.toString();
-    }
-
-    /**
-     * Send an email based on json payload. Recipient should be present in LDAP directory or in configured whitelist.
-     *
-     * Json sent should have following keys :
-     *
-     * - to      : json array of email to send email to ex: ["you@rm.fr", "another-guy@rm.fr"]
-     * - cc      : json array of email to 'CC' email ex: ["him@rm.fr"]
-     * - bcc     : json array of email to add recipient as blind CC ["secret@rm.fr"]
-     * - subject : subject of email
-     * - body    : Body of email
-     *
-     * Either 'to', 'cc' or 'bcc' parameter must be present in request. 'subject' and 'body' are mandatory.
-     *
-     * complete json example :
-     *
-     * {
-     *   "to": ["you@rm.fr", "another-guy@rm.fr"],
-     *   "cc": ["him@rm.fr"],
-     *   "bcc": ["secret@rm.fr"],
-     *   "subject": "test email",
-     *   "body": "Hi, this a test EMail, please do not reply."
-     * }
-     *
-     */
-    @RequestMapping(value = "/emailProxy", method = RequestMethod.POST,
-            produces = "application/json; charset=utf-8", consumes="application/json")
-    @ResponseBody
-    public String emailProxy(@RequestBody String rawRequest, HttpServletRequest request)
-            throws JSONException, MessagingException, UnsupportedEncodingException, DataServiceException {
-
-        JSONObject payload = new JSONObject(rawRequest);
-        InternetAddress[] to = this.populateRecipient("to", payload);
-        InternetAddress[] cc = this.populateRecipient("cc", payload);
-        InternetAddress[] bcc = this.populateRecipient("bcc", payload);
-
-        this.checkSubject(payload);
-        this.checkBody(payload);
-        this.checkRecipient(to, cc, bcc);
-
-        LOG.info("EMail request : user=" + request.getHeader("sec-username")
-                + " to=" + this.extractAddress("to", payload)
-                + " cc=" + this.extractAddress("cc", payload)
-                + " bcc=" + this.extractAddress("bcc", payload)
-                + " roles=" + request.getHeader("sec-roles"));
-
-        LOG.debug("EMail request : " + payload.toString());
-
-        // Instanciate MimeMessage
-        MimeMessage message = this.emailFactory.createEmptyMessage();
-
-        // Generate From header
-        InternetAddress from = new InternetAddress();
-        from.setAddress(emailProxyFromAddress);
-        from.setPersonal(request.getHeader("sec-firstname") + " " + request.getHeader("sec-lastname"));
-        message.setFrom(from);
-
-        // Generate Reply-to header
-        InternetAddress replyTo = new InternetAddress();
-        replyTo.setAddress(request.getHeader("sec-email"));
-        replyTo.setPersonal(request.getHeader("sec-firstname") + " " + request.getHeader("sec-lastname"));
-        message.setReplyTo(new Address[]{replyTo});
-
-        // Generate to, cc and bcc headers
-        if(to.length > 0)
-            message.setRecipients(Message.RecipientType.TO, to);
-        if(cc.length > 0)
-            message.setRecipients(Message.RecipientType.CC, cc);
-        if(bcc.length > 0)
-            message.setRecipients(Message.RecipientType.BCC, bcc);
-
-        // Add subject and body
-        message.setSubject(payload.getString("subject"), "UTF-8");
-        message.setText(payload.getString("body"), "UTF-8", "plain");
-        message.setSentDate(new Date());
-
-        // finally send message
-        Transport.send(message);
-
-        JSONObject res = new JSONObject();
-        res.put("success", true);
-        return res.toString();
-    }
-
-    /**
-     * Checks 'subject' of request against configuration
-     * @param payload JSONObject to search subject in
-     */
-    private void checkSubject(JSONObject payload) throws JSONException {
-
-        // Checks that subject is present
-        if(!payload.has("subject") || payload.getString("subject").length() == 0)
-            throw new JSONException("No subject specified, 'subject' field is required");
-
-        // Check subject size
-        if(payload.getString("subject").length() > Integer.parseInt(emailProxyMaxSubjectSize))
-            throw new IllegalArgumentException("Subject is too long, it should not exceed " +
-                    emailProxyMaxSubjectSize + " bytes");
-    }
-
-    /**
-     * Checks 'body' of request against configuration
-     * @param payload JSONObject to search body in
-     */
-    private void checkBody(JSONObject payload) throws JSONException {
-
-         // Checks that body is present
-        if(!payload.has("body"))
-            throw new JSONException("No body specified, 'body' field is required");
-
-        // Check subject and body size
-        if(payload.getString("body").length() > Integer.parseInt(emailProxyMaxBodySize))
-            throw new IllegalArgumentException("Body is too long, it should not exceed " +
-                    emailProxyMaxBodySize + " bytes");
-
-    }
-
-    /**
-     * Checks recipients of request against configuration
-     * @param to array of recipients for 'to' field
-     * @param cc array of recipients for 'cc' field
-     * @param bcc array of recipients for 'bcc' field
-     */
-    private void checkRecipient(InternetAddress[] to,
-                                InternetAddress[] cc,
-                                InternetAddress[] bcc) throws JSONException, DataServiceException {
-
-        if(to.length == 0 && cc.length == 0 && bcc.length == 0)
-            throw new JSONException("One of 'to', 'cc' or 'bcc' must be present in request");
-
-        // Check recipient count against proxyMaxRecipient
-        if((to.length + cc.length + bcc.length) > Integer.parseInt(emailProxyMaxRecipient))
-            throw new IllegalArgumentException("Too many recipient in request, max recipient : "
-                    + emailProxyMaxRecipient);
-
-        // Check Recipients validity
-        for(int i = 0; i < to.length; i++)
-            if(!this.recipientIsAllowed(to[i].getAddress()))
-                throw new IllegalArgumentException("Recipient not allowed : " + to[i].getAddress());
-        for(int i = 0; i < cc.length; i++)
-            if(!this.recipientIsAllowed(cc[i].getAddress()))
-                throw new IllegalArgumentException("Recipient not allowed : " + cc[i].getAddress());
-        for(int i = 0; i < bcc.length; i++)
-            if(!this.recipientIsAllowed(bcc[i].getAddress()))
-                throw new IllegalArgumentException("Recipient not allowed : " + bcc[i].getAddress());
-
-    }
-
-    /**
-     * Check if recipient is under delegation for delegated admins
-     *
-     * @param recipient
-     * @throws AccessDeniedException if current does not have permissions on recipient
-     */
-    private void checkAuthorisation(String recipient){
-        // check if recipient is under delegation for delegated admins
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if(!auth.getAuthorities().contains(this.advancedDelegationDao.ROLE_SUPERUSER))
-            if(!this.advancedDelegationDao.findUsersUnderDelegation(auth.getName()).contains(recipient))
-                throw new AccessDeniedException("User " + recipient + " not under delegation");
-    }
-
-    /**
-     * Return EMail addresses in JSON array to a String
-     * @param field field name under which EMails are store in payload
-     * @param payload JsonObject to search EMails addresses
-     * @return
-     * @throws JSONException
-     */
-    private String extractAddress(String field, JSONObject payload) throws JSONException {
-        StringBuilder res = new StringBuilder();
-        if(payload.has(field)){
-            JSONArray rawTo = payload.getJSONArray(field);
-            for(int i = 0; i < rawTo.length(); i++){
-                if(i > 0)
-                    res.append(",");
-                res.append(rawTo.getString(i));
-            }
-        }
-        return res.toString();
-    }
-
-    /**
-     * Create an java String list based on json array found in json ojbect
-     *
-     * @param field field name where to find json array to parse
-     * @param request full object where to search for key
-     * @return java list of extracted values
-     */
-    private InternetAddress[] populateRecipient(String field, JSONObject request) throws JSONException, AddressException {
-        List<InternetAddress> res = new LinkedList<InternetAddress>();
-        if(request.has(field)){
-            JSONArray rawTo = request.getJSONArray(field);
-            for(int i = 0; i < rawTo.length(); i++){
-                InternetAddress to = new InternetAddress();
-                to.setAddress(rawTo.getString(i));
-                to.validate();
-                res.add(to);
-            }
-        }
-        return res.toArray(new InternetAddress[res.size()]);
-    }
-
-    private boolean recipientIsAllowed(String recipient) throws DataServiceException {
-        // Load configuration if not already loaded
-        if(this.recipientWhiteList == null)
-            this.recipientWhiteList = Arrays.asList(emailProxyRecipientWhitelist.split("\\s*,\\s*"));
-
-        // Check recipient in whitelist
-        if(this.recipientWhiteList.contains(recipient))
-            return true;
-
-        // Check recipient in LDAP and against delegation for delegated admins
-        try {
-            Account account = this.accountDao.findByEmail(recipient);
-            if(account == null)
-                return false;
-            this.checkAuthorisation(account.getUid());
-            return true;
-        } catch (NameNotFoundException ex){
-            return false;
-        } catch (AccessDeniedException ex){
-            return false;
-        }
-    }
-
-
-    /**
-     * Send EmailEntry to smtp server
-     *
-     * @param email email to send
-     * @throws NameNotFoundException if recipient cannot be found in LDAP server
-     * @throws DataServiceException if LDAP server is not available
-     * @throws MessagingException if some field of email cannot be encoded (malformed email address)
-     */
-    private void send(EmailEntry email) throws NameNotFoundException, DataServiceException, MessagingException {
-
-        final MimeMessage message = this.emailFactory.createEmptyMessage();
-
-        Account recipient = this.accountDao.findByUID(email.getRecipient());
-        InternetAddress[] senders = {new InternetAddress(this.accountDao.findByUID(email.getSender()).getEmail())};
-
-        message.addFrom(senders);
-        message.addRecipient(Message.RecipientType.TO, new InternetAddress(recipient.getEmail()));
-        message.setSubject(email.getSubject());
-        message.setHeader("Date", (new MailDateFormat()).format(email.getDate()));
-
-        // Mail content
-        Multipart multiPart = new MimeMultipart("alternative");
-
-        // attachments
-        for(Attachment att : email.getAttachments()) {
-            MimeBodyPart mbp = new MimeBodyPart();
-            mbp.setDataHandler(new DataHandler(new ByteArrayDataSource(att.getContent(), att.getMimeType())));
-            mbp.setFileName(att.getName());
-            multiPart.addBodyPart(mbp);
-        }
-
-        // html part
-        MimeBodyPart htmlPart = new MimeBodyPart();
-        htmlPart.setContent(email.getBody(), "text/html; charset=utf-8");
-        multiPart.addBodyPart(htmlPart);
-
-        message.setContent(multiPart);
-
-        // Send message
-        Transport.send(message);
-    }
-
-    // Getter for unit tests
-    public AccountDao getAccountDao() {
-        return accountDao;
-    }
-
-    public void setAccountDao(AccountDao accountDao) {
-        this.accountDao = accountDao;
-    }
-
-    public void setEmailProxyFromAddress(String emailProxyFromAddress) {
-        this.emailProxyFromAddress = emailProxyFromAddress;
-    }
-
-    public void setEmailProxyMaxRecipient(String emailProxyMaxRecipient) {
-        this.emailProxyMaxRecipient = emailProxyMaxRecipient;
-    }
-
-    public void setEmailProxyMaxBodySize(String emailProxyMaxBodySize) {
-        this.emailProxyMaxBodySize = emailProxyMaxBodySize;
-    }
-
-    public void setEmailProxyMaxSubjectSize(String emailProxyMaxSubjectSize) {
-        this.emailProxyMaxSubjectSize = emailProxyMaxSubjectSize;
-    }
-
-    public void setEmailProxyRecipientWhitelist(String emailProxyRecipientWhitelist) {
-        this.emailProxyRecipientWhitelist = emailProxyRecipientWhitelist;
-    }
+	@Autowired
+	private EmailFactory emailFactory;
+
+	@Autowired
+	private AdminLogDao logRepo;
+
+	@Autowired
+	private AdvancedDelegationDao advancedDelegationDao;
+
+	private static final Log LOG = LogFactory.getLog(EmailController.class.getName());
+	private Collection<String> recipientWhiteList;
+
+	/**
+	 * Email proxy configuration
+	 *
+	 * Basically, this webapp can send emails on behalf of LDAP users. The service
+	 * endpoint is available at /console/emailProxy Usage is restricted to users
+	 * having the MOD_EMAILPROXY role by default, cf
+	 * https://github.com/georchestra/datadir/blob/master/security-proxy/security-mappings.xml
+	 * see https://github.com/georchestra/georchestra/pull/1572 for more
+	 * information.
+	 *
+	 * These restrictions have been implemented to prevent spammers.
+	 */
+	@Value("${emailProxyFromAddress:${administratorEmail}}")
+	private String emailProxyFromAddress;
+
+	@Value("${emailProxyMaxRecipient:10}")
+	private String emailProxyMaxRecipient;
+
+	@Value("${emailProxyMaxBodySize:10000}")
+	private String emailProxyMaxBodySize;
+
+	@Value("${emailProxyMaxSubjectSize:200}")
+	private String emailProxyMaxSubjectSize;
+
+	@Value("${emailProxyRecipientWhitelist:${administratorEmail}}")
+	private String emailProxyRecipientWhitelist;
+
+	/*
+	 * produces = MediaType.APPLICATION_JSON_VALUE generate : content type :
+	 * application/json; charset=UTF-8 WRONG !
+	 *
+	 * produces = "application/json; charset=utf-8" generate : content type :
+	 * application/json;charset=utf-8 RIGHT !
+	 *
+	 */
+
+	/**
+	 * Return a JSON list of Emails sent to specified user
+	 *
+	 * @param recipient recipient login
+	 * @return JSON list of Emails sent to specified user
+	 * @throws JSONException
+	 */
+	@RequestMapping(value = "/{recipient}/emails", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	@ResponseBody
+	public String emailsList(@PathVariable String recipient) throws JSONException {
+		this.checkAuthorisation(recipient);
+		JSONArray emails = new JSONArray();
+		for (EmailEntry email : this.emailRepository.findByRecipientOrderByDateDesc(recipient))
+			emails.put(email.toJSON());
+		JSONObject res = new JSONObject();
+		res.put("emails", emails);
+
+		return res.toString();
+	}
+
+	/**
+	 * Send an email and store it in database
+	 *
+	 * @param recipient      recipient login
+	 * @param subject        subject of email
+	 * @param content        content of email (text part in html)
+	 * @param attachmentsIds comma separated list of attachments identifier
+	 * @return identifier of new email sent prefixed by "OK : "
+	 * @throws NameNotFoundException if sender cannot be found
+	 * @throws DataServiceException  if there is issues while contacting LDAP server
+	 * @throws MessagingException    if email cannot be sent through SMTP protocol
+	 * @throws IOException           if email cannot be sent through SMTP protocol
+	 */
+	@RequestMapping(value = "{recipient}/sendEmail", method = RequestMethod.POST)
+	@ResponseBody
+	public String sendEmail(@PathVariable String recipient, @RequestParam("subject") String subject,
+			@RequestParam("content") String content, @RequestParam("attachments") String attachmentsIds,
+			HttpServletRequest request, HttpServletResponse response)
+			throws NameNotFoundException, DataServiceException, MessagingException, JSONException {
+
+		this.checkAuthorisation(recipient);
+
+		EmailEntry email = new EmailEntry();
+		String sender = request.getHeader("sec-username");
+		email.setSender(sender);
+		email.setRecipient(recipient);
+		email.setSubject(subject);
+		email.setDate(new Date());
+		email.setBody(content);
+
+		attachmentsIds = attachmentsIds.trim();
+		List<Attachment> attachments = new LinkedList<Attachment>();
+		if (attachmentsIds.length() > 0) {
+			String[] attachmentsIdsList = attachmentsIds.split("\\s?,\\s?");
+			for (String attId : attachmentsIdsList) {
+				Attachment att = this.attachmentRepo.findOne(Long.parseLong(attId));
+				if (att == null)
+					throw new NameNotFoundException("Unable to find attachment with ID : " + attId);
+				attachments.add(att);
+			}
+		}
+		email.setAttachments(attachments);
+		this.send(email);
+
+		AdminLogEntry log = new AdminLogEntry(sender, recipient, AdminLogType.EMAIL_SENT, new Date());
+		this.emailRepository.save(email);
+		response.setContentType("application/json");
+		return email.toJSON().toString();
+
+	}
+
+	/**
+	 * This service can be used to test email sending
+	 * 
+	 * @param recipient login of recipient
+	 * @return Html page to test email sending
+	 */
+	@RequestMapping(value = "{recipient}/sendEmail", method = RequestMethod.GET)
+	@ResponseBody
+	public String sendEmail(@PathVariable String recipient) {
+		return "<form method=POST>" + "recipient : " + recipient + "<br>"
+				+ "subject : <input type='test' name='subject'><br>"
+				+ "content : <textarea name='content'></textarea><br>"
+				+ "comma separated list of attachment identifier <input type='text' name='attachments'><br>"
+				+ "<input type='submit'>" + "</form>";
+
+	}
+
+	/**
+	 * List available attachments in database
+	 * 
+	 * @return JSON object containing all attachments available in database
+	 * @throws JSONException if there is error when encoding to JSON
+	 */
+	@RequestMapping(value = "/attachments", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	@ResponseBody
+	public String attachments() throws JSONException {
+		JSONArray attachments = new JSONArray();
+		for (Attachment att : this.attachmentRepo.findAll()) {
+			JSONObject attachment = new JSONObject();
+			attachment.put("id", att.getId());
+			attachment.put("name", att.getName());
+			attachment.put("mimeType", att.getMimeType());
+			attachments.put(attachment);
+		}
+
+		JSONObject res = new JSONObject();
+		res.put("attachments", attachments);
+		return res.toString();
+	}
+
+	/**
+	 * Generate a list of template found in database
+	 * 
+	 * @return JSON object containing all templates found in database
+	 * @throws JSONException if templates cannot be encoded to JSON
+	 */
+	@RequestMapping(value = "/emailTemplates", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+	@ResponseBody
+	public String emailTemplates() throws JSONException {
+		JSONArray emailTemplates = new JSONArray();
+		for (EmailTemplate temp : this.emailTemplateRepo.findAll()) {
+			JSONObject attachment = new JSONObject();
+			attachment.put("id", temp.getId());
+			attachment.put("name", temp.getName());
+			attachment.put("content", temp.getContent());
+			emailTemplates.put(attachment);
+		}
+
+		JSONObject res = new JSONObject();
+		res.put("templates", emailTemplates);
+		return res.toString();
+	}
+
+	/**
+	 * Send an email based on json payload. Recipient should be present in LDAP
+	 * directory or in configured whitelist.
+	 *
+	 * Json sent should have following keys :
+	 *
+	 * - to : json array of email to send email to ex: ["you@rm.fr",
+	 * "another-guy@rm.fr"] - cc : json array of email to 'CC' email ex:
+	 * ["him@rm.fr"] - bcc : json array of email to add recipient as blind CC
+	 * ["secret@rm.fr"] - subject : subject of email - body : Body of email
+	 *
+	 * Either 'to', 'cc' or 'bcc' parameter must be present in request. 'subject'
+	 * and 'body' are mandatory.
+	 *
+	 * complete json example :
+	 *
+	 * { "to": ["you@rm.fr", "another-guy@rm.fr"], "cc": ["him@rm.fr"], "bcc":
+	 * ["secret@rm.fr"], "subject": "test email", "body": "Hi, this a test EMail,
+	 * please do not reply." }
+	 *
+	 */
+	@RequestMapping(value = "/emailProxy", method = RequestMethod.POST, produces = "application/json; charset=utf-8", consumes = "application/json")
+	@ResponseBody
+	public String emailProxy(@RequestBody String rawRequest, HttpServletRequest request)
+			throws JSONException, MessagingException, UnsupportedEncodingException, DataServiceException {
+
+		JSONObject payload = new JSONObject(rawRequest);
+		InternetAddress[] to = this.populateRecipient("to", payload);
+		InternetAddress[] cc = this.populateRecipient("cc", payload);
+		InternetAddress[] bcc = this.populateRecipient("bcc", payload);
+
+		this.checkSubject(payload);
+		this.checkBody(payload);
+		this.checkRecipient(to, cc, bcc);
+
+		LOG.info("EMail request : user=" + request.getHeader("sec-username") + " to="
+				+ this.extractAddress("to", payload) + " cc=" + this.extractAddress("cc", payload) + " bcc="
+				+ this.extractAddress("bcc", payload) + " roles=" + request.getHeader("sec-roles"));
+
+		LOG.debug("EMail request : " + payload.toString());
+
+		// Instanciate MimeMessage
+		MimeMessage message = this.emailFactory.createEmptyMessage();
+
+		// Generate From header
+		InternetAddress from = new InternetAddress();
+		from.setAddress(emailProxyFromAddress);
+		from.setPersonal(request.getHeader("sec-firstname") + " " + request.getHeader("sec-lastname"));
+		message.setFrom(from);
+
+		// Generate Reply-to header
+		InternetAddress replyTo = new InternetAddress();
+		replyTo.setAddress(request.getHeader("sec-email"));
+		replyTo.setPersonal(request.getHeader("sec-firstname") + " " + request.getHeader("sec-lastname"));
+		message.setReplyTo(new Address[] { replyTo });
+
+		// Generate to, cc and bcc headers
+		if (to.length > 0)
+			message.setRecipients(Message.RecipientType.TO, to);
+		if (cc.length > 0)
+			message.setRecipients(Message.RecipientType.CC, cc);
+		if (bcc.length > 0)
+			message.setRecipients(Message.RecipientType.BCC, bcc);
+
+		// Add subject and body
+		message.setSubject(payload.getString("subject"), "UTF-8");
+		message.setText(payload.getString("body"), "UTF-8", "plain");
+		message.setSentDate(new Date());
+
+		// finally send message
+		Transport.send(message);
+
+		JSONObject res = new JSONObject();
+		res.put("success", true);
+		return res.toString();
+	}
+
+	/**
+	 * Checks 'subject' of request against configuration
+	 * 
+	 * @param payload JSONObject to search subject in
+	 */
+	private void checkSubject(JSONObject payload) throws JSONException {
+
+		// Checks that subject is present
+		if (!payload.has("subject") || payload.getString("subject").length() == 0)
+			throw new JSONException("No subject specified, 'subject' field is required");
+
+		// Check subject size
+		if (payload.getString("subject").length() > Integer.parseInt(emailProxyMaxSubjectSize))
+			throw new IllegalArgumentException(
+					"Subject is too long, it should not exceed " + emailProxyMaxSubjectSize + " bytes");
+	}
+
+	/**
+	 * Checks 'body' of request against configuration
+	 * 
+	 * @param payload JSONObject to search body in
+	 */
+	private void checkBody(JSONObject payload) throws JSONException {
+
+		// Checks that body is present
+		if (!payload.has("body"))
+			throw new JSONException("No body specified, 'body' field is required");
+
+		// Check subject and body size
+		if (payload.getString("body").length() > Integer.parseInt(emailProxyMaxBodySize))
+			throw new IllegalArgumentException(
+					"Body is too long, it should not exceed " + emailProxyMaxBodySize + " bytes");
+
+	}
+
+	/**
+	 * Checks recipients of request against configuration
+	 * 
+	 * @param to  array of recipients for 'to' field
+	 * @param cc  array of recipients for 'cc' field
+	 * @param bcc array of recipients for 'bcc' field
+	 */
+	private void checkRecipient(InternetAddress[] to, InternetAddress[] cc, InternetAddress[] bcc)
+			throws JSONException, DataServiceException {
+
+		if (to.length == 0 && cc.length == 0 && bcc.length == 0)
+			throw new JSONException("One of 'to', 'cc' or 'bcc' must be present in request");
+
+		// Check recipient count against proxyMaxRecipient
+		if ((to.length + cc.length + bcc.length) > Integer.parseInt(emailProxyMaxRecipient))
+			throw new IllegalArgumentException(
+					"Too many recipient in request, max recipient : " + emailProxyMaxRecipient);
+
+		// Check Recipients validity
+		for (int i = 0; i < to.length; i++)
+			if (!this.recipientIsAllowed(to[i].getAddress()))
+				throw new IllegalArgumentException("Recipient not allowed : " + to[i].getAddress());
+		for (int i = 0; i < cc.length; i++)
+			if (!this.recipientIsAllowed(cc[i].getAddress()))
+				throw new IllegalArgumentException("Recipient not allowed : " + cc[i].getAddress());
+		for (int i = 0; i < bcc.length; i++)
+			if (!this.recipientIsAllowed(bcc[i].getAddress()))
+				throw new IllegalArgumentException("Recipient not allowed : " + bcc[i].getAddress());
+
+	}
+
+	/**
+	 * Check if recipient is under delegation for delegated admins
+	 *
+	 * @param recipient
+	 * @throws AccessDeniedException if current does not have permissions on
+	 *                               recipient
+	 */
+	private void checkAuthorisation(String recipient) {
+		// check if recipient is under delegation for delegated admins
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (!auth.getAuthorities().contains(this.advancedDelegationDao.ROLE_SUPERUSER))
+			if (!this.advancedDelegationDao.findUsersUnderDelegation(auth.getName()).contains(recipient))
+				throw new AccessDeniedException("User " + recipient + " not under delegation");
+	}
+
+	/**
+	 * Return EMail addresses in JSON array to a String
+	 * 
+	 * @param field   field name under which EMails are store in payload
+	 * @param payload JsonObject to search EMails addresses
+	 * @return
+	 * @throws JSONException
+	 */
+	private String extractAddress(String field, JSONObject payload) throws JSONException {
+		StringBuilder res = new StringBuilder();
+		if (payload.has(field)) {
+			JSONArray rawTo = payload.getJSONArray(field);
+			for (int i = 0; i < rawTo.length(); i++) {
+				if (i > 0)
+					res.append(",");
+				res.append(rawTo.getString(i));
+			}
+		}
+		return res.toString();
+	}
+
+	/**
+	 * Create an java String list based on json array found in json ojbect
+	 *
+	 * @param field   field name where to find json array to parse
+	 * @param request full object where to search for key
+	 * @return java list of extracted values
+	 */
+	private InternetAddress[] populateRecipient(String field, JSONObject request)
+			throws JSONException, AddressException {
+		List<InternetAddress> res = new LinkedList<InternetAddress>();
+		if (request.has(field)) {
+			JSONArray rawTo = request.getJSONArray(field);
+			for (int i = 0; i < rawTo.length(); i++) {
+				InternetAddress to = new InternetAddress();
+				to.setAddress(rawTo.getString(i));
+				to.validate();
+				res.add(to);
+			}
+		}
+		return res.toArray(new InternetAddress[res.size()]);
+	}
+
+	private boolean recipientIsAllowed(String recipient) throws DataServiceException {
+		// Load configuration if not already loaded
+		if (this.recipientWhiteList == null)
+			this.recipientWhiteList = Arrays.asList(emailProxyRecipientWhitelist.split("\\s*,\\s*"));
+
+		// Check recipient in whitelist
+		if (this.recipientWhiteList.contains(recipient))
+			return true;
+
+		// Check recipient in LDAP and against delegation for delegated admins
+		try {
+			Account account = this.accountDao.findByEmail(recipient);
+			if (account == null)
+				return false;
+			this.checkAuthorisation(account.getUid());
+			return true;
+		} catch (NameNotFoundException ex) {
+			return false;
+		} catch (AccessDeniedException ex) {
+			return false;
+		}
+	}
+
+	/**
+	 * Send EmailEntry to smtp server
+	 *
+	 * @param email email to send
+	 * @throws NameNotFoundException if recipient cannot be found in LDAP server
+	 * @throws DataServiceException  if LDAP server is not available
+	 * @throws MessagingException    if some field of email cannot be encoded
+	 *                               (malformed email address)
+	 */
+	private void send(EmailEntry email) throws NameNotFoundException, DataServiceException, MessagingException {
+
+		final MimeMessage message = this.emailFactory.createEmptyMessage();
+
+		Account recipient = this.accountDao.findByUID(email.getRecipient());
+		InternetAddress[] senders = { new InternetAddress(this.accountDao.findByUID(email.getSender()).getEmail()) };
+
+		message.addFrom(senders);
+		message.addRecipient(Message.RecipientType.TO, new InternetAddress(recipient.getEmail()));
+		message.setSubject(email.getSubject());
+		message.setHeader("Date", (new MailDateFormat()).format(email.getDate()));
+
+		// Mail content
+		Multipart multiPart = new MimeMultipart("alternative");
+
+		// attachments
+		for (Attachment att : email.getAttachments()) {
+			MimeBodyPart mbp = new MimeBodyPart();
+			mbp.setDataHandler(new DataHandler(new ByteArrayDataSource(att.getContent(), att.getMimeType())));
+			mbp.setFileName(att.getName());
+			multiPart.addBodyPart(mbp);
+		}
+
+		// html part
+		MimeBodyPart htmlPart = new MimeBodyPart();
+		htmlPart.setContent(email.getBody(), "text/html; charset=utf-8");
+		multiPart.addBodyPart(htmlPart);
+
+		message.setContent(multiPart);
+
+		// Send message
+		Transport.send(message);
+	}
+
+	// Getter for unit tests
+	public AccountDao getAccountDao() {
+		return accountDao;
+	}
+
+	public void setAccountDao(AccountDao accountDao) {
+		this.accountDao = accountDao;
+	}
+
+	public void setEmailProxyFromAddress(String emailProxyFromAddress) {
+		this.emailProxyFromAddress = emailProxyFromAddress;
+	}
+
+	public void setEmailProxyMaxRecipient(String emailProxyMaxRecipient) {
+		this.emailProxyMaxRecipient = emailProxyMaxRecipient;
+	}
+
+	public void setEmailProxyMaxBodySize(String emailProxyMaxBodySize) {
+		this.emailProxyMaxBodySize = emailProxyMaxBodySize;
+	}
+
+	public void setEmailProxyMaxSubjectSize(String emailProxyMaxSubjectSize) {
+		this.emailProxyMaxSubjectSize = emailProxyMaxSubjectSize;
+	}
+
+	public void setEmailProxyRecipientWhitelist(String emailProxyRecipientWhitelist) {
+		this.emailProxyRecipientWhitelist = emailProxyRecipientWhitelist;
+	}
 }

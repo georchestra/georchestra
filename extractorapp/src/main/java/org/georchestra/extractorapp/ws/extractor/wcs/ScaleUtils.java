@@ -46,15 +46,13 @@ final class ScaleUtils {
 		return crs.getCoordinateSystem().getAxis(0).getUnit();
 	}
 
-	public static double fromMeterToCrs(double value,
-			CoordinateReferenceSystem crs) {
+	public static double fromMeterToCrs(double value, CoordinateReferenceSystem crs) {
 		Unit<Length> unit = (Unit<Length>) getUnit(crs);
 		UnitConverter converter = Units.METRE.getConverterTo(unit);
 		return converter.convert(value);
 	}
 
-	public static double fromCrsToMeter(double value,
-			CoordinateReferenceSystem crs) {
+	public static double fromCrsToMeter(double value, CoordinateReferenceSystem crs) {
 		Unit<Length> unit = (Unit<Length>) getUnit(crs);
 		UnitConverter converter = unit.getConverterTo(Units.METRE);
 		return converter.convert(value);

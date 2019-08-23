@@ -44,11 +44,10 @@ public class BoundWcsRequestTest {
 		getCapabilitiesSample.close();
 	}
 
-
 	private HttpEntity heMocked = Mockito.mock(HttpEntity.class);
 
 	private void setOutputDocument(InputStream f) throws Exception {
-			Mockito.when(heMocked.getContent()).thenReturn(f);
+		Mockito.when(heMocked.getContent()).thenReturn(f);
 	}
 
 	public HttpClient getMockHttpClient() {
@@ -60,13 +59,13 @@ public class BoundWcsRequestTest {
 
 		Header headerMocked = Mockito.mock(Header.class);
 
-
 		Mockito.when(connectionMock.getSchemeRegistry()).thenReturn(SchemeRegistryFactory.createDefault());
 		Mockito.when(hrMocked.getEntity()).thenReturn(heMocked);
 		Mockito.when(mock.getParams()).thenReturn(paramsMock);
 		Mockito.when(mock.getConnectionManager()).thenReturn(connectionMock);
 		try {
-			Mockito.when(mock.execute(Mockito.any(HttpUriRequest.class), Mockito.any(HttpContext.class))).thenReturn(hrMocked);
+			Mockito.when(mock.execute(Mockito.any(HttpUriRequest.class), Mockito.any(HttpContext.class)))
+					.thenReturn(hrMocked);
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -81,7 +80,6 @@ public class BoundWcsRequestTest {
 		return mock;
 	}
 
-
 	@Test
 	public void BoundWcsRequestTest() throws Throwable {
 		WcsReaderRequest rq = new WcsReaderRequestFactory().create("1.0", "myCov", 0, 0, 1, 1, CRS.decode("EPSG:4326"),
@@ -89,10 +87,8 @@ public class BoundWcsRequestTest {
 
 		BoundWcsRequest bwr = new BoundWcsRequest(new URL("http://localhost/"), rq);
 
-
 		HttpClient mockClient = getMockHttpClient();
 		bwr.setHttpClient(mockClient);
-
 
 		// DescribeCoverage related tests
 		setOutputDocument(describeCoverageSample);
@@ -101,7 +97,7 @@ public class BoundWcsRequestTest {
 
 		// supported formats
 		Set<String> fmts = bwr.getSupportedFormats();
-		String[] expectedFmts =  {"jpg", "geotiff", "tif", "jpeg", "png", "gif", "tiff"};
+		String[] expectedFmts = { "jpg", "geotiff", "tif", "jpeg", "png", "gif", "tiff" };
 		Arrays.sort(expectedFmts);
 		Object[] fmtArray = fmts.toArray();
 		Arrays.sort(fmtArray);
@@ -113,7 +109,7 @@ public class BoundWcsRequestTest {
 		assertArrayEquals(expectedResponseCrs, supportedResponseCrs.toArray());
 
 		// num bands
-		int numBands  = bwr.numBands();
+		int numBands = bwr.numBands();
 		assertEquals(numBands, 1);
 
 		// supported request CRS
@@ -135,8 +131,6 @@ public class BoundWcsRequestTest {
 		assertTrue(bwr.numBands() == 1);
 		assertTrue(bwr.getSupportedRequestCRSs() instanceof Set<?>);
 		assertTrue(bwr.getNativeCRSs() instanceof Set<?>);
-
-
 
 		// GetCapabilities related tests
 		setOutputDocument(getCapabilitiesSample);

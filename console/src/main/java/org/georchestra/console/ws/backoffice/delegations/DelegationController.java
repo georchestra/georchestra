@@ -64,7 +64,6 @@ public class DelegationController {
 	@Autowired
 	private AccountDao accountDao;
 
-
 	@ExceptionHandler(Exception.class)
 	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
 	@ResponseBody
@@ -75,7 +74,8 @@ public class DelegationController {
 		throw new IOException(e);
 	}
 
-	@RequestMapping(value=REQUEST_MAPPING + "/delegations", method= RequestMethod.GET, produces = "application/json; charset=utf-8")
+	@RequestMapping(value = REQUEST_MAPPING
+			+ "/delegations", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String findAll() throws JSONException {
 
@@ -83,23 +83,27 @@ public class DelegationController {
 		Iterable<DelegationEntry> delegations = this.delegationDao.findAll();
 
 		JSONArray res = new JSONArray();
-		for(DelegationEntry delegation: delegations)
+		for (DelegationEntry delegation : delegations)
 			res.put(delegation.toJSON());
 
 		return res.toString();
 	}
 
-	@RequestMapping(value=REQUEST_MAPPING + "/{uid}", method= RequestMethod.GET, produces = "application/json; charset=utf-8")
+	@RequestMapping(value = REQUEST_MAPPING
+			+ "/{uid}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String findByUid(@PathVariable String uid) throws JSONException {
 
-		// TODO test if uid correspond to connected user if request came from delegated admin
+		// TODO test if uid correspond to connected user if request came from delegated
+		// admin
 		return this.delegationDao.findOne(uid).toJSON().toString();
 	}
 
-	@RequestMapping(value=REQUEST_MAPPING + "/{uid}", method= RequestMethod.POST, produces = "application/json; charset=utf-8")
+	@RequestMapping(value = REQUEST_MAPPING
+			+ "/{uid}", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String add(HttpServletRequest request, @PathVariable String uid) throws JSONException, IOException, DataServiceException {
+	public String add(HttpServletRequest request, @PathVariable String uid)
+			throws JSONException, IOException, DataServiceException {
 
 		// TODO deny if request came from delegated admin
 		// Parse Json
@@ -118,15 +122,17 @@ public class DelegationController {
 
 	private String[] parseJSONArray(JSONArray array) throws JSONException {
 		List<String> res = new LinkedList<String>();
-		for(int i=0; i< array.length(); i++){
+		for (int i = 0; i < array.length(); i++) {
 			res.add(array.getString(i));
 		}
 		return res.toArray(new String[res.size()]);
 	}
 
-	@RequestMapping(value=REQUEST_MAPPING + "/{uid}", method= RequestMethod.DELETE, produces = "application/json; charset=utf-8")
+	@RequestMapping(value = REQUEST_MAPPING
+			+ "/{uid}", method = RequestMethod.DELETE, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String delete(HttpServletRequest request, @PathVariable String uid) throws JSONException, IOException, DataServiceException {
+	public String delete(HttpServletRequest request, @PathVariable String uid)
+			throws JSONException, IOException, DataServiceException {
 
 		// TODO deny if request came from delegated admin
 		this.delegationDao.delete(uid);

@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 package org.georchestra.security.permissions;
 
 import java.net.InetAddress;
@@ -40,151 +40,151 @@ import com.google.common.collect.Sets;
 @XmlRootElement(name = "urimatcher")
 @XmlAccessorType(XmlAccessType.NONE)
 public class UriMatcher {
-    private int port = -1;
-    private String path;
-    private Pattern pathPattern;
-    private HashSet<InetAddress> hostNames;
-    private String host;
-    private String network;
-    private IpAddressMatcher ipMatcher;
-    private String domain;
-    private Pattern domainPattern;
+	private int port = -1;
+	private String path;
+	private Pattern pathPattern;
+	private HashSet<InetAddress> hostNames;
+	private String host;
+	private String network;
+	private IpAddressMatcher ipMatcher;
+	private String domain;
+	private Pattern domainPattern;
 
-    public UriMatcher() {
-        
-    }
-    public UriMatcher(String domain) {
-        this.domain = domain;
-    }
+	public UriMatcher() {
 
-    public synchronized void init() throws UnknownHostException {
-        this.hostNames = null;
-        if (this.host != null) {
-            this.hostNames = Sets.newHashSet(InetAddress.getAllByName(this.host));
-        }
-        this.pathPattern = null;
-        if (this.path != null) {
-            if (!this.path.startsWith("/")) {
-                this.path = "(/" + this.path + ")|(" + this.path + ")";
-            }
-            this.pathPattern = Pattern.compile(this.path, Pattern.CASE_INSENSITIVE);
-        }
-        this.domainPattern = null;
-        if (this.domain != null) {
-            this.domainPattern = Pattern.compile(this.domain, Pattern.CASE_INSENSITIVE);
-        }
-        if(this.network != null){
-            this.ipMatcher = new IpAddressMatcher(network);
-        }
-    }
+	}
 
-    public boolean matches(URL url) {
-        if (hostNames != null && !matchesHost(url))
-            return false;
-        if (domain != null && !matchesDomain(url))
-            return false;
-        if (port != -1 && !matchesPort(url))
-            return false;
-        if (network != null && !matchesNetwork(url))
-            return false;
-        return !(pathPattern != null && !matchesPath(url));
-    }
+	public UriMatcher(String domain) {
+		this.domain = domain;
+	}
 
-    private boolean matchesPath(URL url) {
-        return this.pathPattern.matcher(url.getPath()).matches();
-    }
+	public synchronized void init() throws UnknownHostException {
+		this.hostNames = null;
+		if (this.host != null) {
+			this.hostNames = Sets.newHashSet(InetAddress.getAllByName(this.host));
+		}
+		this.pathPattern = null;
+		if (this.path != null) {
+			if (!this.path.startsWith("/")) {
+				this.path = "(/" + this.path + ")|(" + this.path + ")";
+			}
+			this.pathPattern = Pattern.compile(this.path, Pattern.CASE_INSENSITIVE);
+		}
+		this.domainPattern = null;
+		if (this.domain != null) {
+			this.domainPattern = Pattern.compile(this.domain, Pattern.CASE_INSENSITIVE);
+		}
+		if (this.network != null) {
+			this.ipMatcher = new IpAddressMatcher(network);
+		}
+	}
 
-    private boolean matchesPort(URL url) {
-        if (url.getPort() == this.port) {
-            return true;
-        }
-        return url.getPort() == -1 && url.getDefaultPort() == this.port;
-    }
+	public boolean matches(URL url) {
+		if (hostNames != null && !matchesHost(url))
+			return false;
+		if (domain != null && !matchesDomain(url))
+			return false;
+		if (port != -1 && !matchesPort(url))
+			return false;
+		if (network != null && !matchesNetwork(url))
+			return false;
+		return !(pathPattern != null && !matchesPath(url));
+	}
 
-    private boolean matchesHost(URL url) {
-        final InetAddress[] allByName;
-        try {
-            allByName = InetAddress.getAllByName(url.getHost());
-        } catch (UnknownHostException e) {
-            return false;
-        }
+	private boolean matchesPath(URL url) {
+		return this.pathPattern.matcher(url.getPath()).matches();
+	}
 
-        for (InetAddress inetAddress : allByName) {
-            if (this.hostNames.contains(inetAddress)) {
-                return true;
-            }
-        }
-        return false;
-    }
+	private boolean matchesPort(URL url) {
+		if (url.getPort() == this.port) {
+			return true;
+		}
+		return url.getPort() == -1 && url.getDefaultPort() == this.port;
+	}
 
-    private boolean matchesNetwork(URL url) {
-        final InetAddress[] allByName;
-        try {
-            allByName = InetAddress.getAllByName(url.getHost());
-        } catch (UnknownHostException e) {
-            return false;
-        }
+	private boolean matchesHost(URL url) {
+		final InetAddress[] allByName;
+		try {
+			allByName = InetAddress.getAllByName(url.getHost());
+		} catch (UnknownHostException e) {
+			return false;
+		}
 
-        for (InetAddress inetAddress : allByName) {
-            if (this.ipMatcher.matches(inetAddress.getHostAddress())) {
-                return true;
-            }
-        }
-        return false;
-    }
+		for (InetAddress inetAddress : allByName) {
+			if (this.hostNames.contains(inetAddress)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-    private boolean matchesDomain(URL url) {
-        return this.domainPattern.matcher(url.getHost()).matches();
-    }
+	private boolean matchesNetwork(URL url) {
+		final InetAddress[] allByName;
+		try {
+			allByName = InetAddress.getAllByName(url.getHost());
+		} catch (UnknownHostException e) {
+			return false;
+		}
 
+		for (InetAddress inetAddress : allByName) {
+			if (this.ipMatcher.matches(inetAddress.getHostAddress())) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-    public void setHost(String host) throws UnknownHostException {
-        this.host = host;
-    }
+	private boolean matchesDomain(URL url) {
+		return this.domainPattern.matcher(url.getHost()).matches();
+	}
 
-    public void setPort(int port) {
-        this.port = port;
-    }
+	public void setHost(String host) throws UnknownHostException {
+		this.host = host;
+	}
 
-    public void setPath(String path) {
-        this.path = path;
-    }
+	public void setPort(int port) {
+		this.port = port;
+	}
 
-    public @XmlElement String getHost() {
-        return host;
-    }
+	public void setPath(String path) {
+		this.path = path;
+	}
 
-    public @XmlElement int getPort() {
-        return port;
-    }
+	public @XmlElement String getHost() {
+		return host;
+	}
 
-    public @XmlElement String getDomain() {
-        return domain;
-    }
+	public @XmlElement int getPort() {
+		return port;
+	}
 
-    public void setDomain(String domain) {
-        this.domain = domain;
-    }
+	public @XmlElement String getDomain() {
+		return domain;
+	}
 
-    public @XmlElement String getPath() {
-        return path;
-    }
+	public void setDomain(String domain) {
+		this.domain = domain;
+	}
 
-    public @XmlElement String getNetwork() {
-        return network;
-    }
+	public @XmlElement String getPath() {
+		return path;
+	}
 
-    public void setNetwork(String network) {
-        this.network = network;
-    }
+	public @XmlElement String getNetwork() {
+		return network;
+	}
 
-    private Object readResolve() {
-        // The Xml unmarshaller will set port to 0 if the port element is missing
-        // so I will assume that this means the port is missing and set to -1 which
-        // is the correct ignore port number
-        if (this.port == 0) {
-            this.port = -1;
-        }
-        return this;
-    }
+	public void setNetwork(String network) {
+		this.network = network;
+	}
+
+	private Object readResolve() {
+		// The Xml unmarshaller will set port to 0 if the port element is missing
+		// so I will assume that this means the port is missing and set to -1 which
+		// is the correct ignore port number
+		if (this.port == 0) {
+			this.port = -1;
+		}
+		return this;
+	}
 }

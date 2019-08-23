@@ -28,22 +28,22 @@ package org.georchestra.console.dto;
  */
 public class RoleFactory {
 
-	private RoleFactory(){}
-	
-	
+	private RoleFactory() {
+	}
+
 	public static Role create() {
-		
+
 		return new RoleImpl();
 	}
 
 	public static Role create(String commonName, String description, Boolean isFavorite) {
-		
+
 		Role g = new RoleImpl();
-		
+
 		g.setName(commonName);
 		g.setDescription(description);
 		g.setFavorite(isFavorite);
-		
+
 		return g;
 	}
 

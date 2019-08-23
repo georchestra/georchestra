@@ -33,42 +33,40 @@ import org.apache.commons.io.FilenameUtils;
  */
 public class FileDescriptor {
 
-    /** file name of upload file */
-    public String       originalFileName;
+	/** file name of upload file */
+	public String originalFileName;
 
-    /** upload file's extension */
-    public String       originalFileExt;
+	/** upload file's extension */
+	public String originalFileExt;
 
-    /** upload file */
-    public File         savedFile;
+	/** upload file */
+	public File savedFile;
 
-    /** the geofile format */
-    public FileFormat   geoFileType;
+	/** the geofile format */
+	public FileFormat geoFileType;
 
-    /** list of the geo file extensions */
-    public List<String> listOfExtensions = new ArrayList<String>();
+	/** list of the geo file extensions */
+	public List<String> listOfExtensions = new ArrayList<String>();
 
-    /** list of files contained in the zip file */
-    public List<String> listOfFiles      = new LinkedList<String>();
+	/** list of files contained in the zip file */
+	public List<String> listOfFiles = new LinkedList<String>();
 
-    public FileDescriptor(final String fileName) {
+	public FileDescriptor(final String fileName) {
 
-        assert fileName != null;
+		assert fileName != null;
 
-        originalFileName = fileName;
-        originalFileExt = FilenameUtils.getExtension(fileName);
-    }
+		originalFileName = fileName;
+		originalFileExt = FilenameUtils.getExtension(fileName);
+	}
 
-    public boolean isValidFormat() {
-        assert originalFileExt != null;
-        return "zip".equalsIgnoreCase(originalFileExt)
-                || "kml".equalsIgnoreCase(originalFileExt)
-                || "gml".equalsIgnoreCase(originalFileExt)
-                || "geojson".equalsIgnoreCase(originalFileExt);
-    }
+	public boolean isValidFormat() {
+		assert originalFileExt != null;
+		return "zip".equalsIgnoreCase(originalFileExt) || "kml".equalsIgnoreCase(originalFileExt)
+				|| "gml".equalsIgnoreCase(originalFileExt) || "geojson".equalsIgnoreCase(originalFileExt);
+	}
 
-    public boolean isZipFile() {
-        return "zip".equalsIgnoreCase(originalFileExt);
-    }
+	public boolean isZipFile() {
+		return "zip".equalsIgnoreCase(originalFileExt);
+	}
 
 }

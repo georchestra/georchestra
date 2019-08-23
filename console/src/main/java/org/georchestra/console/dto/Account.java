@@ -28,7 +28,7 @@ import java.time.LocalDate;
  * @author Mauricio Pazos
  *
  */
-public interface Account extends Comparable<Account>{
+public interface Account extends Comparable<Account> {
 
 	void setUid(String uid);
 
@@ -69,14 +69,14 @@ public interface Account extends Comparable<Account>{
 	void setSurname(String surname);
 
 	/**
-	 * The givenName attribute is used to hold the part of a person’s name which
-	 * is not their surname nor middle name.
+	 * The givenName attribute is used to hold the part of a person’s name which is
+	 * not their surname nor middle name.
 	 */
 	String getGivenName();
 
 	/**
-	 * The givenName attribute is used to hold the part of a person’s name which
-	 * is not their surname nor middle name.
+	 * The givenName attribute is used to hold the part of a person’s name which is
+	 * not their surname nor middle name.
 	 */
 	void setGivenName(String givenName);
 
@@ -145,11 +145,11 @@ public interface Account extends Comparable<Account>{
 	LocalDate getPrivacyPolicyAgreementDate();
 
 	String getManager();
-	
+
 	void setManager(String manager);
-	
+
 	String getContext();
-	
+
 	void setContext(String context);
 
 	boolean isPending();

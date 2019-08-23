@@ -24,36 +24,38 @@ import javax.sql.DataSource;
 /**
  * This service handles the storage and the loading of a Filter Encoding file
  *
- * @author yoann buch  - yoann.buch@gmail.com
+ * @author yoann buch - yoann.buch@gmail.com
  * @author jean-denis giguère - jdenisgiguere@gmail.com
  *
  */
 
 public class FEDocService extends A_DocService {
 
-    public static final String FILE_EXTENSION = ".xml";
-    public static final String MIME_TYPE = "application/xml";
+	public static final String FILE_EXTENSION = ".xml";
+	public static final String MIME_TYPE = "application/xml";
 
-    public FEDocService(final String tempDir, DataSource pgpool) {
-        super(FILE_EXTENSION, MIME_TYPE, tempDir, pgpool);
-    }
+	public FEDocService(final String tempDir, DataSource pgpool) {
+		super(FILE_EXTENSION, MIME_TYPE, tempDir, pgpool);
+	}
 
-    /**
-     * Called before saving the content
-     * @throws DocServiceException
-     */
-    @Override
-    protected void preSave() throws DocServiceException {
-        //We do not perform any action before saving the file.
-    }
+	/**
+	 * Called before saving the content
+	 * 
+	 * @throws DocServiceException
+	 */
+	@Override
+	protected void preSave() throws DocServiceException {
+		// We do not perform any action before saving the file.
+	}
 
-    /**
-     * Called right after the loading of the file content
-     * @throws DocServiceException
-     */
-    @Override
-    protected void postLoad() throws DocServiceException {
-        //We do not perform any action on file once loaded in memory.
-    }
+	/**
+	 * Called right after the loading of the file content
+	 * 
+	 * @throws DocServiceException
+	 */
+	@Override
+	protected void postLoad() throws DocServiceException {
+		// We do not perform any action on file once loaded in memory.
+	}
 
 }

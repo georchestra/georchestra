@@ -22,8 +22,7 @@ public class ScaleUtilsTest {
 		boolean nosuchAuthEx = false;
 		try {
 			ScaleUtils.getUnit(CRS.decode("Wrong:EPSG"));
-		} catch (NoSuchAuthorityCodeException e)
-		{
+		} catch (NoSuchAuthorityCodeException e) {
 			nosuchAuthEx = true;
 		} catch (Throwable e) {
 			fail("Unexpected: " + e.getMessage());
@@ -54,7 +53,5 @@ public class ScaleUtilsTest {
 		}
 		assertTrue("Should have encountered a ConverstionException", convExEncountered);
 	}
-
-
 
 }

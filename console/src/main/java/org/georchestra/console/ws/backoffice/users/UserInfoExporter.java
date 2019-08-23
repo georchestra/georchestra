@@ -6,16 +6,16 @@ import org.springframework.ldap.NameNotFoundException;
 
 public interface UserInfoExporter {
 
-    String exportAsLdif(String user) throws NameNotFoundException, DataServiceException;
+	String exportAsLdif(String user) throws NameNotFoundException, DataServiceException;
 
-    String exportAsLdif(Account account);
+	String exportAsLdif(Account account);
 
-    String toVcf(Account account);
+	String toVcf(Account account);
 
-    String exportUsersAsCsv(String... userNames) throws DataServiceException;
+	String exportUsersAsCsv(String... userNames) throws DataServiceException;
 
-    String exportUsersAsVcard(String... users) throws Exception;
+	String exportUsersAsVcard(String... users) throws Exception;
 
-    String toCsv(Account account);
+	String toCsv(Account account);
 
 }

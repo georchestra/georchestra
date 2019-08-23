@@ -45,6 +45,7 @@ public class ProtectedUserFilter {
 
 	/**
 	 * Adds the uid to the list of protectd users
+	 * 
 	 * @param uid
 	 */
 	public void add(final String uid) {
@@ -53,6 +54,7 @@ public class ProtectedUserFilter {
 
 	/**
 	 * Checks if the uid given as argument is a protected user
+	 * 
 	 * @param uid
 	 * @return true if is protected, false in other case.
 	 */
@@ -66,7 +68,7 @@ public class ProtectedUserFilter {
 		TreeSet<Account> filtered = new TreeSet<Account>();
 
 		for (Account account : users) {
-			if(!this.isProtected(account.getUid())) {
+			if (!this.isProtected(account.getUid())) {
 				filtered.add(account);
 			}
 		}

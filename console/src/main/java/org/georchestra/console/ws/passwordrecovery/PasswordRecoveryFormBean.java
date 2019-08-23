@@ -21,35 +21,36 @@ package org.georchestra.console.ws.passwordrecovery;
 
 import java.io.Serializable;
 
-public class PasswordRecoveryFormBean implements Serializable{
+public class PasswordRecoveryFormBean implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 7773803527246666406L;
-	
+
 	private String email;
 	private String recaptcha_response_field;
-	
+
 	@Override
 	public String toString() {
-		return "PasswordRecoveryFormBean [email=" + email
-				+ ", recaptcha_response_field=" + recaptcha_response_field
+		return "PasswordRecoveryFormBean [email=" + email + ", recaptcha_response_field=" + recaptcha_response_field
 				+ "]";
 	}
-	
-	
+
 	public String getEmail() {
 		return this.email;
 	}
+
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
 	public String getRecaptcha_response_field() {
 		return recaptcha_response_field;
 	}
+
 	public void setRecaptcha_response_field(String recaptcha_response_field) {
 		this.recaptcha_response_field = recaptcha_response_field;
 	}
-	
+
 }
