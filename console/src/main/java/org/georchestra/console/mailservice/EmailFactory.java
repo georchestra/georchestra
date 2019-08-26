@@ -68,23 +68,11 @@ public class EmailFactory {
 	private String publicUrl;
 	private String instanceName;
 
-	public void sendAccountWasCreatedEmail(ServletContext servletContext, String recipient,
-										   String userName, String uid ) throws MessagingException {
-		Email email =  new Email(
-				singletonList(recipient),
-				this.accountWasCreatedEmailSubject,
-				this.smtpHost,
-				this.smtpPort,
-				this.emailHtml,
-				this.replyTo,
-				this.from,
-				this.bodyEncoding,
-				this.subjectEncoding,
-				this.templateEncoding,
-				this.accountWasCreatedEmailFile,
-				servletContext,
-				this.georConfig,
-				this.publicUrl,
+	public void sendAccountWasCreatedEmail(ServletContext servletContext, String recipient, String userName, String uid)
+			throws MessagingException {
+		Email email = new Email(singletonList(recipient), this.accountWasCreatedEmailSubject, this.smtpHost,
+				this.smtpPort, this.emailHtml, this.replyTo, this.from, this.bodyEncoding, this.subjectEncoding,
+				this.templateEncoding, this.accountWasCreatedEmailFile, servletContext, this.georConfig, this.publicUrl,
 				this.instanceName);
 		email.set("name", userName);
 		email.set("uid", uid);
@@ -95,25 +83,13 @@ public class EmailFactory {
 	/**
 	 * e-mail to the user to inform the account requires the moderator's singnup
 	 */
-	public void sendAccountCreationInProcessEmail(ServletContext servletContext, String recipient,
-												  String userName, String uid) throws MessagingException {
+	public void sendAccountCreationInProcessEmail(ServletContext servletContext, String recipient, String userName,
+			String uid) throws MessagingException {
 
-		Email email =  new Email(
-				singletonList(recipient),
-				this.accountCreationInProcessEmailSubject,
-				this.smtpHost,
-				this.smtpPort,
-				this.emailHtml,
-				this.replyTo,
-				this.from,
-				this.bodyEncoding,
-				this.subjectEncoding,
-				this.templateEncoding,
-				this.accountCreationInProcessEmailFile,
-				servletContext,
-				this.georConfig,
-				this.publicUrl,
-				this.instanceName);
+		Email email = new Email(singletonList(recipient), this.accountCreationInProcessEmailSubject, this.smtpHost,
+				this.smtpPort, this.emailHtml, this.replyTo, this.from, this.bodyEncoding, this.subjectEncoding,
+				this.templateEncoding, this.accountCreationInProcessEmailFile, servletContext, this.georConfig,
+				this.publicUrl, this.instanceName);
 		email.set("name", userName);
 		email.set("uid", uid);
 		email.send();
@@ -123,96 +99,50 @@ public class EmailFactory {
 	 * emails to the moderator to inform that a new user is waiting authorization.
 	 */
 
-	public void sendNewAccountRequiresModerationEmail(ServletContext servletContext, List<String>  recipients,
-													  String userName, String uid, String userEmail) throws MessagingException {
+	public void sendNewAccountRequiresModerationEmail(ServletContext servletContext, List<String> recipients,
+			String userName, String uid, String userEmail) throws MessagingException {
 
-		Email email =  new Email(
-				recipients,
-				this.newAccountRequiresModerationEmailSubject,
-				this.smtpHost,
-				this.smtpPort,
-				this.emailHtml,
-				userEmail, // Reply-to
+		Email email = new Email(recipients, this.newAccountRequiresModerationEmailSubject, this.smtpHost, this.smtpPort,
+				this.emailHtml, userEmail, // Reply-to
 				this.from, // From
-				this.bodyEncoding,
-				this.subjectEncoding,
-				this.templateEncoding,
-				this.newAccountRequiresModerationEmailFile,
-				servletContext,
-				this.georConfig,
-				this.publicUrl,
+				this.bodyEncoding, this.subjectEncoding, this.templateEncoding,
+				this.newAccountRequiresModerationEmailFile, servletContext, this.georConfig, this.publicUrl,
 				this.instanceName);
 		email.set("name", userName);
 		email.set("uid", uid);
 		email.send();
 	}
 
-	public void sendChangePasswordEmail(ServletContext servletContext, String recipient,
-										String userName, String uid, String url) throws MessagingException {
-		Email email = new Email(
-				singletonList(recipient),
-				this.changePasswordEmailSubject,
-				this.smtpHost,
-				this.smtpPort,
-				this.emailHtml,
-				this.replyTo,
-				this.from,
-				this.bodyEncoding,
-				this.subjectEncoding,
-				this.templateEncoding,
-				this.changePasswordEmailFile,
-				servletContext,
-				this.georConfig,
-				this.publicUrl,
-				this.instanceName);
+	public void sendChangePasswordEmail(ServletContext servletContext, String recipient, String userName, String uid,
+			String url) throws MessagingException {
+		Email email = new Email(singletonList(recipient), this.changePasswordEmailSubject, this.smtpHost, this.smtpPort,
+				this.emailHtml, this.replyTo, this.from, this.bodyEncoding, this.subjectEncoding, this.templateEncoding,
+				this.changePasswordEmailFile, servletContext, this.georConfig, this.publicUrl, this.instanceName);
 		email.set("name", userName);
 		email.set("uid", uid);
 		email.set("url", url);
 		email.send();
 	}
 
-	public void sendAccountUidRenamedEmail(ServletContext servletContext, String recipient,
-										   String userName, String uid) throws MessagingException {
+	public void sendAccountUidRenamedEmail(ServletContext servletContext, String recipient, String userName, String uid)
+			throws MessagingException {
 
-		Email email = new Email(
-				singletonList(recipient),
-				this.accountUidRenamedEmailSubject,
-				this.smtpHost,
-				this.smtpPort,
-				this.emailHtml,
-				this.replyTo,
-				this.from,
-				this.bodyEncoding,
-				this.subjectEncoding,
-				this.templateEncoding,
-				this.accountUidRenamedEmailFile,
-				servletContext,
-				this.georConfig,
-				this.publicUrl,
+		Email email = new Email(singletonList(recipient), this.accountUidRenamedEmailSubject, this.smtpHost,
+				this.smtpPort, this.emailHtml, this.replyTo, this.from, this.bodyEncoding, this.subjectEncoding,
+				this.templateEncoding, this.accountUidRenamedEmailFile, servletContext, this.georConfig, this.publicUrl,
 				this.instanceName);
 		email.set("name", userName);
 		email.set("uid", uid);
 		email.send();
 	}
 
-	public void sendNewAccountNotificationEmail(ServletContext servletContext, List<String> recipients,
-												String userName, String uid, String userEmail) throws MessagingException {
+	public void sendNewAccountNotificationEmail(ServletContext servletContext, List<String> recipients, String userName,
+			String uid, String userEmail) throws MessagingException {
 
-		Email email =  new Email(
-				recipients,
-				this.newAccountNotificationEmailSubject,
-				this.smtpHost,
-				this.smtpPort,
-				this.emailHtml,
-				userEmail, // Reply-to
-				this.from,
-				this.bodyEncoding,
-				this.subjectEncoding,
-				this.templateEncoding,
-				this.newAccountNotificationEmailFile,
-				servletContext,
-				this.georConfig,
-				this.publicUrl,
+		Email email = new Email(recipients, this.newAccountNotificationEmailSubject, this.smtpHost, this.smtpPort,
+				this.emailHtml, userEmail, // Reply-to
+				this.from, this.bodyEncoding, this.subjectEncoding, this.templateEncoding,
+				this.newAccountNotificationEmailFile, servletContext, this.georConfig, this.publicUrl,
 				this.instanceName);
 		email.set("name", userName);
 		email.set("uid", uid);
@@ -220,7 +150,7 @@ public class EmailFactory {
 		email.send();
 	}
 
-	public MimeMessage createEmptyMessage(){
+	public MimeMessage createEmptyMessage() {
 		// Instanciate MimeMessage
 		final Session session = Session.getInstance(System.getProperties(), null);
 		session.getProperties().setProperty("mail.smtp.host", this.smtpHost);

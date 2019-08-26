@@ -27,5 +27,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EmailTemplateDao extends CrudRepository<EmailTemplate, Long> {
 
-
 }

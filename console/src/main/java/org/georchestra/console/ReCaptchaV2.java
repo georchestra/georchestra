@@ -48,7 +48,8 @@ public class ReCaptchaV2 {
 	 * @param privateKey
 	 * @param gRecaptchaResponse
 	 *
-	 * @return true if validaded on server side by google, false in case of error or if an exception occurs
+	 * @return true if validaded on server side by google, false in case of error or
+	 *         if an exception occurs
 	 */
 	public boolean isValid(String url, String privateKey, String gRecaptchaResponse) {
 		boolean isValid = false;

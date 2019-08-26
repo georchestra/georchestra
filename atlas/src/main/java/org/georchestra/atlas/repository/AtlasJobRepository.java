@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface AtlasJobRepository extends JpaRepository<AtlasJob, Long>  {
+public interface AtlasJobRepository extends JpaRepository<AtlasJob, Long> {
 
-    public AtlasJob findOneByIdAndToken(Long id, String token);
+	public AtlasJob findOneByIdAndToken(Long id, String token);
 }

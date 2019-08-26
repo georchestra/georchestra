@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
  * parameter name in braces : {\w+}
  *
  * Example :
+ * 
  * <pre>
  * <code>
  * String sql = "SELECT * FROM users WHERE group_name = {group} LIMIT {count}";
@@ -35,24 +36,24 @@ import java.util.regex.Pattern;
  */
 public class QueryBuilder {
 
-    private static final Pattern namedParameterPattern = Pattern.compile("\\{(\\w+)\\}");
+	private static final Pattern namedParameterPattern = Pattern.compile("\\{(\\w+)\\}");
 
-    public String generateQuery(String sql, Map<String, String> values) throws SQLException {
-        // Replace named parameter with standard prepared statement parameter : '?'
-        Matcher m = namedParameterPattern.matcher(sql);
-        
-        while (m.find()) {
-            String parameterName = m.group(1);
-            if (!values.containsKey(parameterName)) {
-                throw new IllegalArgumentException(
-                        "No value specified for parameter : " + parameterName + " in " + sql);
-            }
-            String parameterValue = values.get(parameterName);
-            String value = null==parameterValue? "null" : String.format("'%s'", parameterValue);
-            sql = sql.replaceFirst("\\{" + parameterName + "\\}", value);
-            m = namedParameterPattern.matcher(sql);
-        }
+	public String generateQuery(String sql, Map<String, String> values) throws SQLException {
+		// Replace named parameter with standard prepared statement parameter : '?'
+		Matcher m = namedParameterPattern.matcher(sql);
 
-        return sql;
-    }
+		while (m.find()) {
+			String parameterName = m.group(1);
+			if (!values.containsKey(parameterName)) {
+				throw new IllegalArgumentException(
+						"No value specified for parameter : " + parameterName + " in " + sql);
+			}
+			String parameterValue = values.get(parameterName);
+			String value = null == parameterValue ? "null" : String.format("'%s'", parameterValue);
+			sql = sql.replaceFirst("\\{" + parameterName + "\\}", value);
+			m = namedParameterPattern.matcher(sql);
+		}
+
+		return sql;
+	}
 }

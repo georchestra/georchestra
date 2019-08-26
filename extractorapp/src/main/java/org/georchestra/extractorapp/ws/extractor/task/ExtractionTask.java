@@ -55,7 +55,6 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
 
-
 /**
  * Thread responsible for downloading all the data for a single request and
  * emailing the link for obtaining the data.
@@ -63,8 +62,7 @@ import org.opengis.referencing.operation.TransformException;
  * @author jeichar
  */
 public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
-	private static final Log LOG = LogFactory.getLog(ExtractionTask.class
-			.getPackage().getName());
+	private static final Log LOG = LogFactory.getLog(ExtractionTask.class.getPackage().getName());
 	private final DataSource datasource;
 
 	private static final int EXTRACTION_ATTEMPTS = 3;
@@ -77,12 +75,10 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 			throws NoSuchAuthorityCodeException, MalformedURLException, JSONException, FactoryException {
 		this.requestConfig = requestConfig;
 		this.datasource = datasource;
-		this.executionMetadata = new ExecutionMetadata(
-				this.requestConfig.requestUuid,
-				this.requestConfig.username,
-				new Date(),
-				this.requestConfig.strRequest);
+		this.executionMetadata = new ExecutionMetadata(this.requestConfig.requestUuid, this.requestConfig.username,
+				new Date(), this.requestConfig.strRequest);
 	}
+
 	public ExtractionTask(ExtractionTask toCopy) {
 
 		this.requestConfig = toCopy.requestConfig;
@@ -90,23 +86,22 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 		this.executionMetadata = toCopy.executionMetadata;
 	}
 
-
 	@Override
 	public void run() {
 		executionMetadata.setRunning();
 		requestConfig.setThreadLocal();
 		this.statSetRunning();
-		//REVISIT: won't the task be kept in a running state indefinitely if any of the two statements bellow fail?
+		// REVISIT: won't the task be kept in a running state indefinitely if any of the
+		// two statements bellow fail?
 		final File tmpDir = FileUtils.createTempDirectory();
-		final File tmpExtractionBundle = mkDirTmpExtractionBundle(tmpDir, requestConfig.extractionFolderPrefix+requestConfig.requestUuid .toString());
+		final File tmpExtractionBundle = mkDirTmpExtractionBundle(tmpDir,
+				requestConfig.extractionFolderPrefix + requestConfig.requestUuid.toString());
 
 		try {
 			long start = System.currentTimeMillis();
-			LOG.info("Starting extraction into directory: "
-					+ tmpExtractionBundle);
+			LOG.info("Starting extraction into directory: " + tmpExtractionBundle);
 
-			final File failureFile = new File(tmpExtractionBundle,
-					"failures.txt");
+			final File failureFile = new File(tmpExtractionBundle, "failures.txt");
 			final List<String> successes = new ArrayList<String>();
 			final List<String> failures = new ArrayList<String>();
 			final List<String> oversized = new ArrayList<String>();
@@ -116,11 +111,10 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 				while (tries < EXTRACTION_ATTEMPTS) {
 
 					tries++;
-					String name = String.format("%s__%s",
-							request._url.getHost(), request._layerName);
+					String name = String.format("%s__%s", request._url.getHost(), request._layerName);
 					File layerTmpDir = mkDirTmpExtractionBundle(tmpDir, name);
-					LOG.info("Attempt " + tries + " for extracting layer: "
-							+ request._url + " -- " + request._layerName);
+					LOG.info("Attempt " + tries + " for extracting layer: " + request._url + " -- "
+							+ request._layerName);
 
 					try {
 						// extracts the layer in the temporal directory
@@ -133,22 +127,19 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 							newDir = extractWfsLayer(request, layerTmpDir);
 							break;
 						default:
-							throw new IllegalArgumentException(request._owsType
-									+ " not supported");
+							throw new IllegalArgumentException(request._owsType + " not supported");
 						}
 						// extracts the metadata into the temporal directory
-						if(request._isoMetadataURL != null && !"".equals(request._isoMetadataURL) ){
+						if (request._isoMetadataURL != null && !"".equals(request._isoMetadataURL)) {
 							extractMetadata(request, newDir);
 						}
 
 						for (File from : layerTmpDir.listFiles()) {
-							File to = new File(tmpExtractionBundle,
-									from.getName());
+							File to = new File(tmpExtractionBundle, from.getName());
 							FileUtils.moveFile(from, to);
 						}
 						FileUtils.delete(layerTmpDir);
-						LOG.info("Finished extracting layer: " + request._url
-								+ " -- " + request._layerName);
+						LOG.info("Finished extracting layer: " + request._url + " -- " + request._layerName);
 						tries = EXTRACTION_ATTEMPTS + 1;
 						successes.add(name);
 					} catch (OversizedCoverageRequestException e) {
@@ -183,9 +174,9 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 			long fileSize = archive.length();
 			long end = System.currentTimeMillis();
 
-			String msg = String
-					.format("Finished extraction into directory: %s achive is: %s (size : %s bytes) \nExtraction took %s",
-							tmpExtractionBundle, archive, fileSize, time(start, end));
+			String msg = String.format(
+					"Finished extraction into directory: %s achive is: %s (size : %s bytes) \nExtraction took %s",
+					tmpExtractionBundle, archive, fileSize, time(start, end));
 			LOG.info(msg);
 
 			if (!requestConfig.testing) {
@@ -224,6 +215,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 	// ----------------- support methods ----------------- //
 	/**
 	 * Protected to allow unit test to override
+	 * 
 	 * @throws AssertionError
 	 * @throws IOException
 	 */
@@ -231,7 +223,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 
 		File tmpExtractionBundle = new File(tmpDir, FileUtils.toSafeFileName(name));
 		if (!tmpExtractionBundle.mkdirs() && !tmpExtractionBundle.exists()) {
-			throw new RuntimeException("Unable to make directory: "+tmpExtractionBundle);
+			throw new RuntimeException("Unable to make directory: " + tmpExtractionBundle);
 		}
 		return tmpExtractionBundle;
 	}
@@ -242,8 +234,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 	 * @return
 	 */
 	protected File archiveExtraction(File tmpExtractionBundle) {
-		String filename = requestConfig.requestUuid.toString()
-				+ ExtractorController.EXTRACTION_ZIP_EXT;
+		String filename = requestConfig.requestUuid.toString() + ExtractorController.EXTRACTION_ZIP_EXT;
 		File storageFile = FileUtils.storageFile(filename);
 		if (!storageFile.getParentFile().exists()) {
 			storageFile.getParentFile().mkdirs();
@@ -256,15 +247,13 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 		return storageFile;
 	}
 
-	private void handleExtractionException(ExtractorLayerRequest request,
-			Throwable e, File failureFile) {
+	private void handleExtractionException(ExtractorLayerRequest request, Throwable e, File failureFile) {
 
 		this.statSetError(request);
 
 		if (!failureFile.getParentFile().exists()) {
 			throw new AssertionError(
-					"The temporary extraction bundle directory: "
-							+ failureFile.getParentFile() + " does not exist");
+					"The temporary extraction bundle directory: " + failureFile.getParentFile() + " does not exist");
 		}
 
 		String msg = "Exception occurred while extracting data";
@@ -273,25 +262,19 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 		StringWriter stackTrace = new StringWriter();
 		e.printStackTrace(new PrintWriter(stackTrace));
 		openFailuresFile(failureFile);
-		String message = String
-				.format("\nError accessing layer: %s \n"
-						+ "\n"
-						+ " * Service: %s \n"
-						+ " * Layer: %s \n"
-						+ " * Exception: \n"
-						+ " %s \n", request._layerName,
-						request._url, request._layerName, e.getLocalizedMessage().substring(0, Math.min(200,
-						e.getLocalizedMessage().length())),
-						stackTrace.toString());
+		String message = String.format(
+				"\nError accessing layer: %s \n" + "\n" + " * Service: %s \n" + " * Layer: %s \n" + " * Exception: \n"
+						+ " %s \n",
+				request._layerName, request._url, request._layerName,
+				e.getLocalizedMessage().substring(0, Math.min(200, e.getLocalizedMessage().length())),
+				stackTrace.toString());
 		writeToFile(failureFile, message, true);
 	}
 
 	private void openFailuresFile(File failureFile) {
 		if (!failureFile.exists()) {
-			String msg = "There were errors during the extraction process\n"
-					+ "All services have been polled "
-					+ EXTRACTION_ATTEMPTS
-					+ " times.\n";
+			String msg = "There were errors during the extraction process\n" + "All services have been polled "
+					+ EXTRACTION_ATTEMPTS + " times.\n";
 			writeToFile(failureFile, msg, false);
 		}
 	}
@@ -319,7 +302,6 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 		e1.printStackTrace();
 	}
 
-
 	/**
 	 * Creates a directory which contains the extracted layers
 	 *
@@ -331,7 +313,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 	 * @throws TransformException
 	 * @throws FactoryException
 	 */
-	private File  extractWcsLayer(ExtractorLayerRequest request, File requestBaseDir)
+	private File extractWcsLayer(ExtractorLayerRequest request, File requestBaseDir)
 			throws IOException, TransformException, FactoryException {
 
 		WcsExtractor extractor = new WcsExtractor(requestBaseDir, requestConfig);
@@ -343,6 +325,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 
 	/**
 	 * Creates a directory which contains the extracted layers
+	 * 
 	 * @param request
 	 * @param requestBaseDir
 	 *
@@ -355,11 +338,8 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 	private File extractWfsLayer(ExtractorLayerRequest request, File requestBaseDir)
 			throws IOException, TransformException, FactoryException {
 
-		WfsExtractor extractor = new WfsExtractor(requestBaseDir,
-				requestConfig.adminCredentials.getUserName(),
-				requestConfig.adminCredentials.getPassword(),
-				requestConfig.secureHost,
-				requestConfig.userAgent);
+		WfsExtractor extractor = new WfsExtractor(requestBaseDir, requestConfig.adminCredentials.getUserName(),
+				requestConfig.adminCredentials.getPassword(), requestConfig.secureHost, requestConfig.userAgent);
 
 		extractor.checkPermission(request, requestConfig.secureHost, requestConfig.username, requestConfig.roles);
 
@@ -381,12 +361,13 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 
 		String cswHost = request._isoMetadataURL.getHost();
 
-		CSWExtractor extractor = new CSWExtractor(layerDirectory, adminUserName, adminPassword, cswHost, requestConfig.userAgent);
+		CSWExtractor extractor = new CSWExtractor(layerDirectory, adminUserName, adminPassword, cswHost,
+				requestConfig.userAgent);
 
 		try {
 			extractor.checkPermission(request, requestConfig.username, requestConfig.roles);
 			extractor.extract(request._isoMetadataURL);
-		}catch (Exception ex){
+		} catch (Exception ex) {
 			File errorFile = new File(layerDirectory.getAbsolutePath() + File.separatorChar + "metadata_error.txt");
 			FileWriter fw = new FileWriter(errorFile);
 			fw.write(ex.getMessage());
@@ -394,12 +375,10 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 		}
 	}
 
-
 	@Override
 	public int compareTo(ExtractionTask other) {
 
-		return other.executionMetadata.getPriority().compareTo(
-				this.executionMetadata.getPriority());
+		return other.executionMetadata.getPriority().compareTo(this.executionMetadata.getPriority());
 // Replaced because this code order from low to high
 //		return executionMetadata.getPriority().compareTo(
 //				other.executionMetadata.getPriority());
@@ -409,113 +388,110 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 		return requestConfig.requestUuid.toString().equals(uuid);
 	}
 
-
 	/*
 	 * Stats methods
 	 */
 
-    private void statSetRunning() {
+	private void statSetRunning() {
 
-        final String logInsertSql = "INSERT INTO extractorapp.extractor_log " + "(username, " + // 1
-                "roles, " + // 2
-                "org, " + // 3
-                "request_id) " + // 4
-                "VALUES (?, ?, ?, ?)";
-        final String layerLogSql = "INSERT INTO extractorapp.extractor_layer_log " + "(extractor_log_id, " + // 1
-                "projection, " + // 2
-                "resolution, " + // 3
-                "format, " + // 4
-                "bbox, " + // 5, 6, 7, 8
-                "owstype, " + // 9
-                "owsurl, " + // 10
-                "layer_name) " + // 11
-                "VALUES (?, ?, ?, ?, " + "ST_SetSRID(ST_MakeBox2D(ST_Point(?, ?), ST_Point(? ,?)), 4326), "
-                + "?, ?, ?)";
+		final String logInsertSql = "INSERT INTO extractorapp.extractor_log " + "(username, " + // 1
+				"roles, " + // 2
+				"org, " + // 3
+				"request_id) " + // 4
+				"VALUES (?, ?, ?, ?)";
+		final String layerLogSql = "INSERT INTO extractorapp.extractor_layer_log " + "(extractor_log_id, " + // 1
+				"projection, " + // 2
+				"resolution, " + // 3
+				"format, " + // 4
+				"bbox, " + // 5, 6, 7, 8
+				"owstype, " + // 9
+				"owsurl, " + // 10
+				"layer_name) " + // 11
+				"VALUES (?, ?, ?, ?, " + "ST_SetSRID(ST_MakeBox2D(ST_Point(?, ?), ST_Point(? ,?)), 4326), "
+				+ "?, ?, ?)";
 
-        try (Connection c = datasource.getConnection()) {
-            c.setAutoCommit(false);
-            try (PreparedStatement logPst = c.prepareStatement(logInsertSql, Statement.RETURN_GENERATED_KEYS);
-                    PreparedStatement layerPst = c.prepareStatement(layerLogSql, Statement.RETURN_GENERATED_KEYS)) {
+		try (Connection c = datasource.getConnection()) {
+			c.setAutoCommit(false);
+			try (PreparedStatement logPst = c.prepareStatement(logInsertSql, Statement.RETURN_GENERATED_KEYS);
+					PreparedStatement layerPst = c.prepareStatement(layerLogSql, Statement.RETURN_GENERATED_KEYS)) {
 
-                logPst.setString(1, this.requestConfig.username == null ? "" : this.requestConfig.username);
-                logPst.setArray(2, c.createArrayOf("varchar", this.requestConfig.roles == null ? new String[0]
-                        : this.requestConfig.roles.split("\\s*;\\s*")));
-                logPst.setString(3, this.requestConfig.org == null ? "" : this.requestConfig.org);
-                logPst.setString(4, this.requestConfig.requestUuid.toString());
+				logPst.setString(1, this.requestConfig.username == null ? "" : this.requestConfig.username);
+				logPst.setArray(2, c.createArrayOf("varchar", this.requestConfig.roles == null ? new String[0]
+						: this.requestConfig.roles.split("\\s*;\\s*")));
+				logPst.setString(3, this.requestConfig.org == null ? "" : this.requestConfig.org);
+				logPst.setString(4, this.requestConfig.requestUuid.toString());
 
-                this.logId = this.executeAndGetGeneratedKey(logPst);
+				this.logId = this.executeAndGetGeneratedKey(logPst);
 
-                layerPst.setLong(1, this.logId);
-                for (ExtractorLayerRequest layerRequest : this.requestConfig.requests) {
-                    layerPst.setString(2, layerRequest._epsg);
-                    layerPst.setDouble(3, layerRequest._resolution);
-                    layerPst.setString(4, layerRequest._format);
-                    BoundingBox bbox = layerRequest._bbox.toBounds(CRS.decode("EPSG:4326"));
-                    layerPst.setDouble(5, bbox.getMinX());
-                    layerPst.setDouble(6, bbox.getMinY());
-                    layerPst.setDouble(7, bbox.getMaxX());
-                    layerPst.setDouble(8, bbox.getMaxY());
-                    layerPst.setString(9, layerRequest._owsType.toString());
-                    layerPst.setString(10, layerRequest._url.toString());
-                    layerPst.setString(11, layerRequest._layerName);
+				layerPst.setLong(1, this.logId);
+				for (ExtractorLayerRequest layerRequest : this.requestConfig.requests) {
+					layerPst.setString(2, layerRequest._epsg);
+					layerPst.setDouble(3, layerRequest._resolution);
+					layerPst.setString(4, layerRequest._format);
+					BoundingBox bbox = layerRequest._bbox.toBounds(CRS.decode("EPSG:4326"));
+					layerPst.setDouble(5, bbox.getMinX());
+					layerPst.setDouble(6, bbox.getMinY());
+					layerPst.setDouble(7, bbox.getMaxX());
+					layerPst.setDouble(8, bbox.getMaxY());
+					layerPst.setString(9, layerRequest._owsType.toString());
+					layerPst.setString(10, layerRequest._url.toString());
+					layerPst.setString(11, layerRequest._layerName);
 
-                    layerRequest.setDbLogId(this.executeAndGetGeneratedKey(layerPst));
-                }
-                c.commit();
-            } catch (SQLException e) {
-                c.rollback();
-                throw e;
-            } finally {
-                c.setAutoCommit(true);
-            }
-        } catch (Exception e) {
-            LOG.error("Unable to log the extraction parameters in database", e);
-        }
-    }
+					layerRequest.setDbLogId(this.executeAndGetGeneratedKey(layerPst));
+				}
+				c.commit();
+			} catch (SQLException e) {
+				c.rollback();
+				throw e;
+			} finally {
+				c.setAutoCommit(true);
+			}
+		} catch (Exception e) {
+			LOG.error("Unable to log the extraction parameters in database", e);
+		}
+	}
 
 	private void statSetCompleted() {
 
-        final String updateLayerSql = "UPDATE extractorapp.extractor_layer_log " +
-                "SET is_successful = TRUE " +
-                "WHERE extractor_log_id = ? AND is_successful IS NULL";
-        
-        final String updateLogSql = "UPDATE extractorapp.extractor_log " +
-                "SET duration = NOW() - creation_date " +
-                "WHERE id = ?";
-        
-        try (Connection c = this.datasource.getConnection()) {
-            c.setAutoCommit(false);
-            try (PreparedStatement layerPst = c.prepareStatement(updateLayerSql); //
-                    PreparedStatement logPst = c.prepareStatement(updateLogSql)) {
+		final String updateLayerSql = "UPDATE extractorapp.extractor_layer_log " + "SET is_successful = TRUE "
+				+ "WHERE extractor_log_id = ? AND is_successful IS NULL";
 
-                layerPst.setLong(1, this.logId);
-                layerPst.executeUpdate();
+		final String updateLogSql = "UPDATE extractorapp.extractor_log " + "SET duration = NOW() - creation_date "
+				+ "WHERE id = ?";
 
-                // Update duration
-                logPst.setLong(1, this.logId);
-                logPst.executeUpdate();
-                c.commit();
-            }catch(SQLException e) {
-                c.rollback();
-                throw e;
-            }finally {
-                c.setAutoCommit(true);
-            }
-        } catch (SQLException e) {
-            LOG.error("Error occured when trying to set the extraction status to 'completed'", e);
-        }
+		try (Connection c = this.datasource.getConnection()) {
+			c.setAutoCommit(false);
+			try (PreparedStatement layerPst = c.prepareStatement(updateLayerSql); //
+					PreparedStatement logPst = c.prepareStatement(updateLogSql)) {
+
+				layerPst.setLong(1, this.logId);
+				layerPst.executeUpdate();
+
+				// Update duration
+				logPst.setLong(1, this.logId);
+				logPst.executeUpdate();
+				c.commit();
+			} catch (SQLException e) {
+				c.rollback();
+				throw e;
+			} finally {
+				c.setAutoCommit(true);
+			}
+		} catch (SQLException e) {
+			LOG.error("Error occured when trying to set the extraction status to 'completed'", e);
+		}
 	}
 
 	private void statSetError(ExtractorLayerRequest request) {
-        try (Connection c = this.datasource.getConnection();
-                PreparedStatement pst = c.prepareStatement(
-                        "UPDATE extractorapp.extractor_layer_log SET is_successful = FALSE WHERE id = ?")) {
+		try (Connection c = this.datasource.getConnection();
+				PreparedStatement pst = c.prepareStatement(
+						"UPDATE extractorapp.extractor_layer_log SET is_successful = FALSE WHERE id = ?")) {
 
-            pst.setLong(1, request.getDbLogId());
-            pst.executeUpdate();
-        } catch (SQLException e) {
-            LOG.error("Error occured when trying to the set extraction status to 'errored'", e);
-        }
+			pst.setLong(1, request.getDbLogId());
+			pst.executeUpdate();
+		} catch (SQLException e) {
+			LOG.error("Error occured when trying to the set extraction status to 'errored'", e);
+		}
 	}
 
 	private Long executeAndGetGeneratedKey(PreparedStatement pst) throws SQLException {
@@ -526,7 +502,7 @@ public class ExtractionTask implements Runnable, Comparable<ExtractionTask> {
 		}
 		ResultSet generatedKeys = pst.getGeneratedKeys();
 		Long logId;
-		if(generatedKeys.next()) {
+		if (generatedKeys.next()) {
 			logId = generatedKeys.getLong(1);
 		} else {
 			throw new SQLException("Failed to insert new stats");

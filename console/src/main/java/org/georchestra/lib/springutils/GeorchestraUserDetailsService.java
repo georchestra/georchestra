@@ -18,30 +18,25 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-public class GeorchestraUserDetailsService  implements
-AuthenticationUserDetailsService<PreAuthenticatedAuthenticationToken> {
+public class GeorchestraUserDetailsService
+		implements AuthenticationUserDetailsService<PreAuthenticatedAuthenticationToken> {
 
-	public UserDetails loadUserDetails(PreAuthenticatedAuthenticationToken token)
-			throws AuthenticationException {
+	public UserDetails loadUserDetails(PreAuthenticatedAuthenticationToken token) throws AuthenticationException {
 		Assert.notNull(token.getDetails());
 		return createUserDetails(token, null);
 	}
 
-	protected UserDetails createUserDetails(Authentication token,
-			Collection<? extends GrantedAuthority> authorities) {
-		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.
-				currentRequestAttributes()).getRequest();
+	protected UserDetails createUserDetails(Authentication token, Collection<? extends GrantedAuthority> authorities) {
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
+				.getRequest();
 		String secRoles = request.getHeader("sec-roles");
-		List<GrantedAuthority>  auth = StringUtils.isEmpty(secRoles) ?
-				AuthorityUtils.NO_AUTHORITIES :
-				semicolonSeparatedStringToAuthorityList(secRoles);
+		List<GrantedAuthority> auth = StringUtils.isEmpty(secRoles) ? AuthorityUtils.NO_AUTHORITIES
+				: semicolonSeparatedStringToAuthorityList(secRoles);
 
 		return new User(token.getName(), "N/A", true, true, true, true, auth);
 	}
-	
-	public static List<GrantedAuthority> semicolonSeparatedStringToAuthorityList(
-			String authorityString) {
-		return AuthorityUtils.createAuthorityList(StringUtils
-				.tokenizeToStringArray(authorityString, ";"));
+
+	public static List<GrantedAuthority> semicolonSeparatedStringToAuthorityList(String authorityString) {
+		return AuthorityUtils.createAuthorityList(StringUtils.tokenizeToStringArray(authorityString, ";"));
 	}
 }

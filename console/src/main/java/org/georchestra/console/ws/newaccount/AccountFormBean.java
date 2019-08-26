@@ -21,14 +21,13 @@ package org.georchestra.console.ws.newaccount;
 
 import java.io.Serializable;
 
-
 /**
  * This model maintains the account form data.
  *
  * @author Mauricio Pazos
  *
  */
-public class AccountFormBean implements Serializable{
+public class AccountFormBean implements Serializable {
 
 	private static final long serialVersionUID = 6955470190631684934L;
 
@@ -56,109 +55,137 @@ public class AccountFormBean implements Serializable{
 	public String getRecaptcha_response_field() {
 		return recaptcha_response_field;
 	}
+
 	public void setRecaptcha_response_field(String recaptcha_response_field) {
 		this.recaptcha_response_field = recaptcha_response_field;
 	}
+
 	public String getUid() {
 		return uid;
 	}
+
 	public void setUid(String uid) {
 		this.uid = uid;
 	}
+
 	public String getFirstName() {
 		return firstName;
 	}
+
 	public void setFirstName(String name) {
 		this.firstName = name;
 	}
+
 	public String getOrg() {
 		return org;
 	}
+
 	public void setOrg(String org) {
 		this.org = org;
 	}
+
 	public String getTitle() {
 		return title;
 	}
+
 	public void setTitle(String title) {
 		this.title = title;
 	}
+
 	public String getEmail() {
 		return email;
 	}
+
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
 	public String getPhone() {
 		return phone;
 	}
+
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
+
 	public String getDescription() {
 		return description;
 	}
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
 	public String getPassword() {
 		return password;
 	}
+
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
 	public String getConfirmPassword() {
 		return confirmPassword;
 	}
+
 	public void setConfirmPassword(String confirmPassword) {
 		this.confirmPassword = confirmPassword;
 	}
+
 	public String getSurname() {
 		return surname;
 	}
-	public void setSurname(String sn){this.surname = sn;}
+
+	public void setSurname(String sn) {
+		this.surname = sn;
+	}
+
 	public boolean getCreateOrg() {
 		return createOrg;
 	}
+
 	public void setCreateOrg(boolean createOrg) {
 		this.createOrg = createOrg;
 	}
+
 	public String getOrgName() {
 		return orgName;
 	}
+
 	public void setOrgName(String orgName) {
 		this.orgName = orgName;
 	}
+
 	public String getOrgShortName() {
 		return orgShortName;
 	}
+
 	public void setOrgShortName(String orgShortName) {
 		this.orgShortName = orgShortName;
 	}
+
 	public String getOrgAddress() {
 		return orgAddress;
 	}
+
 	public void setOrgAddress(String orgAddress) {
 		this.orgAddress = orgAddress;
 	}
+
 	public String getOrgType() {
 		return orgType;
 	}
+
 	public void setOrgType(String orgType) {
 		this.orgType = orgType;
 	}
 
 	@Override
 	public String toString() {
-		return "AccountFormBean [uid=" + uid + ", firstName=" + firstName
-				+ ", surname=" + surname + ", org=" + org + ", title=" + title
-				+ ", email=" + email
-				+ ", phone=" + phone + ", description=" + description + ", password="
-				+ password + ", confirmPassword=" + confirmPassword
-				+ ", recaptcha_response_field=" + recaptcha_response_field
-				+ "]";
+		return "AccountFormBean [uid=" + uid + ", firstName=" + firstName + ", surname=" + surname + ", org=" + org
+				+ ", title=" + title + ", email=" + email + ", phone=" + phone + ", description=" + description
+				+ ", password=" + password + ", confirmPassword=" + confirmPassword + ", recaptcha_response_field="
+				+ recaptcha_response_field + "]";
 	}
-
-
 
 }

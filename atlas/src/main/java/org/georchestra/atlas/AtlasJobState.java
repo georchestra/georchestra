@@ -1,3 +1,5 @@
 package org.georchestra.atlas;
 
-public enum AtlasJobState {TODO, IN_PROGRESS, DONE, ERROR}
+public enum AtlasJobState {
+	TODO, IN_PROGRESS, DONE, ERROR
+}

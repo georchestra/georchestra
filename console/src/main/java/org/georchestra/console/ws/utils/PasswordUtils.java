@@ -28,7 +28,7 @@ import org.springframework.validation.Errors;
  * @author Mauricio Pazos
  *
  */
-public final class PasswordUtils  {
+public final class PasswordUtils {
 
 	public static final int SIZE = 8;
 
@@ -44,18 +44,20 @@ public final class PasswordUtils  {
 		final String pwd1 = password.trim();
 		final String pwd2 = confirmPassword.trim();
 
-		if(!StringUtils.hasLength(pwd1) && validation.isUserFieldRequired("password"))
+		if (!StringUtils.hasLength(pwd1) && validation.isUserFieldRequired("password"))
 			errors.rejectValue("password", "password.error.required", "required");
 
-		if(!StringUtils.hasLength(pwd2) && validation.isUserFieldRequired("confirmPassword"))
+		if (!StringUtils.hasLength(pwd2) && validation.isUserFieldRequired("confirmPassword"))
 			errors.rejectValue("confirmPassword", "confirmPassword.error.required", "required");
 
-		if(StringUtils.hasLength(pwd1) && StringUtils.hasLength(pwd2)){
-			if(!pwd1.equals(pwd2)){
-				errors.rejectValue("confirmPassword", "confirmPassword.error.pwdNotEquals", "These passwords don't match");
+		if (StringUtils.hasLength(pwd1) && StringUtils.hasLength(pwd2)) {
+			if (!pwd1.equals(pwd2)) {
+				errors.rejectValue("confirmPassword", "confirmPassword.error.pwdNotEquals",
+						"These passwords don't match");
 			} else {
-				if(pwd1.length() < SIZE )
-					errors.rejectValue("password", "password.error.sizeError", "The password does have at least 8 characters");
+				if (pwd1.length() < SIZE)
+					errors.rejectValue("password", "password.error.sizeError",
+							"The password does have at least 8 characters");
 			}
 		}
 	}

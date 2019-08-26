@@ -99,19 +99,18 @@ public class ExtractorControllerTest {
 			storageDirProp = System.getProperty("extractor.storage.dir");
 			// this should not be accessible by a regular user
 			// which runs the testsuite
-            final String unwriteablePath;
-            final String osName = System.getProperty("os.name").toLowerCase();
-            if (osName.contains("windows")) {
-                unwriteablePath = "c:/windows/extractorAppDir";
-            } else {
-                unwriteablePath = "/bin/extractorAppDir";
-            }
+			final String unwriteablePath;
+			final String osName = System.getProperty("os.name").toLowerCase();
+			if (osName.contains("windows")) {
+				unwriteablePath = "c:/windows/extractorAppDir";
+			} else {
+				unwriteablePath = "/bin/extractorAppDir";
+			}
 
-            assumeFalse(new File(unwriteablePath).exists());
-            assumeFalse(new File(unwriteablePath).mkdirs());
+			assumeFalse(new File(unwriteablePath).exists());
+			assumeFalse(new File(unwriteablePath).mkdirs());
 
-            storageDirProp = System.setProperty("extractor.storage.dir",
-                    unwriteablePath);
+			storageDirProp = System.setProperty("extractor.storage.dir", unwriteablePath);
 			ExtractionManager em = new ExtractionManager();
 			ec.setExtractionManager(em);
 			try {
@@ -124,7 +123,7 @@ public class ExtractorControllerTest {
 		} finally {
 			// restores value for storage.dir
 			if (storageDirProp != null) {
-			System.setProperty("extractor.storage.dir", storageDirProp);
+				System.setProperty("extractor.storage.dir", storageDirProp);
 			} else {
 				System.clearProperty("extractor.storage.dir");
 			}
@@ -139,11 +138,9 @@ public class ExtractorControllerTest {
 			MockHttpServletResponse msresp = new MockHttpServletResponse();
 			msr.setParameter(UUID_PARAM, "extractortest");
 			// creating a test file
-			File testfile = FileUtils.storageFile("extractortest"
-					+ ExtractorController.EXTRACTION_ZIP_EXT);
+			File testfile = FileUtils.storageFile("extractortest" + ExtractorController.EXTRACTION_ZIP_EXT);
 			testfile.deleteOnExit();
-			ZipOutputStream out = new ZipOutputStream(new FileOutputStream(
-					testfile));
+			ZipOutputStream out = new ZipOutputStream(new FileOutputStream(testfile));
 			out.putNextEntry(new ZipEntry("test.txt"));
 			out.write("Helloworld test".getBytes());
 			out.close();
@@ -157,8 +154,7 @@ public class ExtractorControllerTest {
 			}
 			// contentType should be application/zip
 			if (!"application/zip".equalsIgnoreCase(msresp.getContentType())) {
-				fail("Content-type 'application/zip' expected, got "
-						+ msresp.getContentType());
+				fail("Content-type 'application/zip' expected, got " + msresp.getContentType());
 			}
 		} catch (IOException e) {
 			fail("Unexpected: " + e.getMessage());
@@ -202,7 +198,7 @@ public class ExtractorControllerTest {
 			JSONObject jObj = new JSONObject();
 			jObj.put("uuid", UUID.randomUUID().toString());
 			jObj.put("priority", 0);
-			jObj.put("status", 	"RUNNING");
+			jObj.put("status", "RUNNING");
 			jObj.put("requestor", "pmauduit");
 			jObj.put("spec", new JSONObject());
 			jObj.put("request_ts", dateFormat.format(new Date()));

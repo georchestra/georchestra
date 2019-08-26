@@ -29,49 +29,50 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 @ContextConfiguration(locations = { "classpath:task-context.xml" })
 public class ExtractionTaskTest {
 
-    @Autowired
-    private ComboPooledDataSource dataSource;
+	@Autowired
+	private ComboPooledDataSource dataSource;
 
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
+	@Rule
+	public TemporaryFolder tempFolder = new TemporaryFolder();
 
-    private boolean pgAvailable;
-    private int beforeCount;
+	private boolean pgAvailable;
+	private int beforeCount;
 
-    @Before
-    public void setUp() throws Exception {
-        try {
-            Connection c = dataSource.getConnection();
-            this.beforeCount = getLayerLogCount(c);
-        } catch(Exception e) {
-            this.pgAvailable = false;
-            return;
-        }
-        this.pgAvailable = true;
-    }
+	@Before
+	public void setUp() throws Exception {
+		try {
+			Connection c = dataSource.getConnection();
+			this.beforeCount = getLayerLogCount(c);
+		} catch (Exception e) {
+			this.pgAvailable = false;
+			return;
+		}
+		this.pgAvailable = true;
+	}
 
-    private int getLayerLogCount(Connection c) throws Exception {
-        Statement s = c.createStatement();
-        ResultSet r = s.executeQuery("SELECT COUNT(*) AS rowCount FROM extractorapp.extractor_log");
-        r.next();
-        int ret = r.getInt("rowCount");
-        r.close();
-        return ret;
-    }
+	private int getLayerLogCount(Connection c) throws Exception {
+		Statement s = c.createStatement();
+		ResultSet r = s.executeQuery("SELECT COUNT(*) AS rowCount FROM extractorapp.extractor_log");
+		r.next();
+		int ret = r.getInt("rowCount");
+		r.close();
+		return ret;
+	}
 
-    @Test
-    public void testAnonymousExtractionRequestStatSetRunning() throws Exception {
-        assumeTrue("No postgresql available for this test", this.pgAvailable);
-        File testDir = tempFolder.newFolder();
-        RequestConfiguration rc = new RequestConfiguration(new ArrayList<ExtractorLayerRequest>(), UUID.randomUUID(), null, null, true, null, null, null, null,
-                "localhost", testDir.toString(), 10000000, true, false, null, null);
-        ExtractionTask et = new ExtractionTask(rc, this.dataSource);
-        Method m = ReflectionUtils.findMethod(et.getClass(), "statSetRunning");
-        m.setAccessible(true);
+	@Test
+	public void testAnonymousExtractionRequestStatSetRunning() throws Exception {
+		assumeTrue("No postgresql available for this test", this.pgAvailable);
+		File testDir = tempFolder.newFolder();
+		RequestConfiguration rc = new RequestConfiguration(new ArrayList<ExtractorLayerRequest>(), UUID.randomUUID(),
+				null, null, true, null, null, null, null, "localhost", testDir.toString(), 10000000, true, false, null,
+				null);
+		ExtractionTask et = new ExtractionTask(rc, this.dataSource);
+		Method m = ReflectionUtils.findMethod(et.getClass(), "statSetRunning");
+		m.setAccessible(true);
 
-        ReflectionUtils.invokeMethod(m, et);
+		ReflectionUtils.invokeMethod(m, et);
 
-        int afterCount = getLayerLogCount(dataSource.getConnection());
-        assertTrue("Expected to have saved at least one record in DB", afterCount > this.beforeCount);
-    }
+		int afterCount = getLayerLogCount(dataSource.getConnection());
+		assertTrue("Expected to have saved at least one record in DB", afterCount > this.beforeCount);
+	}
 }

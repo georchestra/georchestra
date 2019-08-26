@@ -36,12 +36,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class BufferController {
 
-	@RequestMapping(value = "/buffer/{bufferValue}",
-			method = RequestMethod.POST,
-			produces = "application/json")
+	@RequestMapping(value = "/buffer/{bufferValue}", method = RequestMethod.POST, produces = "application/json")
 	@ResponseBody
-	public String computeBuffer(@PathVariable double bufferValue,
-			@RequestBody String wktgeom,
+	public String computeBuffer(@PathVariable double bufferValue, @RequestBody String wktgeom,
 			HttpServletResponse response) throws JSONException {
 
 		JSONObject js = new JSONObject();

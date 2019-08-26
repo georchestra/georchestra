@@ -11,11 +11,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = { "classpath:applicationContext-test.xml" })
 public class SecurityProxyIntegrationTest {
 
-    @Test
-    public void test() {
-        // If you can reach this code, everything went fine :-)
-        // (and transitively, should go fine at runtime also)
-        assertTrue(true);
-    }
+	@Test
+	public void test() {
+		// If you can reach this code, everything went fine :-)
+		// (and transitively, should go fine at runtime also)
+		assertTrue(true);
+	}
 
 }

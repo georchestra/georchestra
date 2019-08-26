@@ -36,39 +36,37 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-
-
 @Controller
 @RequestMapping("/home")
 public class DefaultController {
 
-    @Autowired
-    private ServletContext context;
+	@Autowired
+	private ServletContext context;
 
-    @Autowired
-    private GeorchestraConfiguration georchestraConfiguration;
+	@Autowired
+	private GeorchestraConfiguration georchestraConfiguration;
 
-    @PostConstruct
-    public void replaceLogo() throws IOException {
+	@PostConstruct
+	public void replaceLogo() throws IOException {
 
-        // Try to replace logo with logo from datadir
-        File imgDirectory = new File(this.context.getRealPath("/img"));
-        if(imgDirectory.exists() && imgDirectory.isDirectory() && imgDirectory.canWrite()){
-            File target = new File(imgDirectory, "logo.png");
-            File source = new File(georchestraConfiguration.getContextDataDir() + "/logo.png");
-            if(source.isFile() && source.canRead() && (target.canWrite() || !target.exists()))
-                Files.copy(source.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        }
-    }
+		// Try to replace logo with logo from datadir
+		File imgDirectory = new File(this.context.getRealPath("/img"));
+		if (imgDirectory.exists() && imgDirectory.isDirectory() && imgDirectory.canWrite()) {
+			File target = new File(imgDirectory, "logo.png");
+			File source = new File(georchestraConfiguration.getContextDataDir() + "/logo.png");
+			if (source.isFile() && source.canRead() && (target.canWrite() || !target.exists()))
+				Files.copy(source.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
+		}
+	}
 
-    @RequestMapping(method = RequestMethod.POST)
-    public ModelAndView handlePOSTRequest(HttpServletRequest request, HttpServletResponse response)
-    throws IOException {
-        return new ModelAndView("index");
-    }
-    @RequestMapping(method = RequestMethod.GET)
-    public ModelAndView handleGETRequest(HttpServletRequest request, HttpServletResponse response) {
-        return new ModelAndView("index");
-    }
-	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView handlePOSTRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		return new ModelAndView("index");
+	}
+
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView handleGETRequest(HttpServletRequest request, HttpServletResponse response) {
+		return new ModelAndView("index");
+	}
+
 }

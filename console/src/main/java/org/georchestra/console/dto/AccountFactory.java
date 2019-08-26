@@ -20,10 +20,11 @@
 package org.georchestra.console.dto;
 
 /**
- * Account factory. 
+ * Account factory.
  * 
  * <p>
- * This factory provide the convenient account object (data transfer object) used by this application.
+ * This factory provide the convenient account object (data transfer object)
+ * used by this application.
  * </p>
  * 
  * @author Mauricio Pazos
@@ -31,8 +32,8 @@ package org.georchestra.console.dto;
  */
 public class AccountFactory {
 
-	private AccountFactory(){}
-
+	private AccountFactory() {
+	}
 
 	public static String formatCommonName(String givenName, String surname) {
 		return givenName + " " + surname;
@@ -50,50 +51,35 @@ public class AccountFactory {
 	 * @param description
 	 * @return
 	 */
-	public static Account createBrief(
-			String uid,
-			String password,
-			String firstName, 
-			String surname, 
-			String email, 
-			String phone,
-			String title,
-			String description) {
-		
+	public static Account createBrief(String uid, String password, String firstName, String surname, String email,
+			String phone, String title, String description) {
+
 		Account account = new AccountImpl();
 		account.setUid(uid);
 		account.setPassword(password);
 		account.setGivenName(firstName);
 		account.setSurname(surname);
-		account.setCommonName(formatCommonName(firstName ,surname));
+		account.setCommonName(formatCommonName(firstName, surname));
 		account.setEmail(email);
 		account.setPhone(phone);
 		account.setTitle(title);
 		account.setDescription(description);
-		
+
 		return account;
 	}
 
 	/**
 	 * Creates an account object with detailed data.
 	 */
-	public static Account createDetails(
-			String uid, 
-			String givenName,
-			String surname,
-			String physicalDeliveryOfficeName,
-			String postalAddress, 
-			String postalCode, 
-			String postOfficeBox,
-			String registeredAddress, 
-			String title) {
-		
+	public static Account createDetails(String uid, String givenName, String surname, String physicalDeliveryOfficeName,
+			String postalAddress, String postalCode, String postOfficeBox, String registeredAddress, String title) {
+
 		Account a = new AccountImpl();
-		
+
 		a.setUid(uid);
 		a.setGivenName(givenName);
 		a.setSurname(surname);
-		a.setCommonName(formatCommonName(givenName, surname) );
+		a.setCommonName(formatCommonName(givenName, surname));
 		a.setPhysicalDeliveryOfficeName(physicalDeliveryOfficeName);
 		a.setPostalAddress(postalAddress);
 		a.setPostalCode(postalCode);
@@ -108,9 +94,9 @@ public class AccountFactory {
 	 * Creates an account object with all data.
 	 * 
 	 * @param uid
-	 * @param cn full name
-	 * @param surname surname 
-	 * @param givenName first name
+	 * @param cn                         full name
+	 * @param surname                    surname
+	 * @param givenName                  first name
 	 * @param email
 	 * @param title
 	 * @param phone
@@ -120,8 +106,8 @@ public class AccountFactory {
 	 * @param registeredAddress
 	 * @param postOfficeBox
 	 * @param physicalDeliveryOfficeName
-	 * @param locality 
-	 * @param street 
+	 * @param locality
+	 * @param street
 	 * @param facsimile
 	 * @param homePostalAddress
 	 * @param mobile
@@ -133,34 +119,14 @@ public class AccountFactory {
 	 *
 	 * @return {@link Account}
 	 */
-	public static Account createFull(
-			String uid,
-			String cn, 
-			String surname,
-			String givenName, 
-			String email,
-			String title,
-			String phone, 
-			String description,
-			String postalAddress,
-			String postalCode, 
-			String registeredAddress ,
-			String postOfficeBox, 
-			String physicalDeliveryOfficeName, 
-			String street, 
-			String locality, 
-			String facsimile,
-			String homePostalAddress,
-			String mobile, 
-			String roomNumber,
-			String stateOrProvince,
-			String manager,
-			String context,
-			String org) {
-		
-		
+	public static Account createFull(String uid, String cn, String surname, String givenName, String email,
+			String title, String phone, String description, String postalAddress, String postalCode,
+			String registeredAddress, String postOfficeBox, String physicalDeliveryOfficeName, String street,
+			String locality, String facsimile, String homePostalAddress, String mobile, String roomNumber,
+			String stateOrProvince, String manager, String context, String org) {
+
 		Account a = new AccountImpl();
-		
+
 		a.setUid(uid);
 		a.setCommonName(cn);
 		a.setGivenName(givenName);
@@ -184,7 +150,7 @@ public class AccountFactory {
 		a.setManager(manager);
 		a.setContext(context);
 		a.setOrg(org);
-		
+
 		return a;
 	}
 

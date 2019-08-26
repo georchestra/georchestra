@@ -29,7 +29,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
- * This class is responsible of checking whether the user user does not use the generated token to change his password.
+ * This class is responsible of checking whether the user user does not use the
+ * generated token to change his password.
  *
  * <p>
  * The period to execute this task is configured.
@@ -41,7 +42,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public final class ExpiredTokenManagement {
 
-
 	private static final Log LOG = LogFactory.getLog(ExpiredTokenManagement.class.getName());
 
 	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
@@ -50,7 +50,6 @@ public final class ExpiredTokenManagement {
 	private int delayInDays = -1;
 
 	private ExpiredTokenCleanTask expiredTokenCleanTask;
-
 
 	@Autowired
 	public ExpiredTokenManagement(ExpiredTokenCleanTask expiredTokenCleanTask) {
@@ -65,24 +64,24 @@ public final class ExpiredTokenManagement {
 		this.delayInDays = delayInDays;
 	}
 
-	public void start(){
+	public void start() {
 
-		if(delayInDays == -1 ){
+		if (delayInDays == -1) {
 			throw new IllegalStateException("delayInDays property hasn't been set in the configuration bean.");
 		}
 
 		long delay = toMilliseconds(this.delayInDays);
 
-		//final ExpiredTokenCleanTask expiredTokenCleanTask = new ExpiredTokenCleanTask();
+		// final ExpiredTokenCleanTask expiredTokenCleanTask = new
+		// ExpiredTokenCleanTask();
 		expiredTokenCleanTask.setDelayInMilliseconds(delay);
 
 		this.scheduler.scheduleWithFixedDelay(expiredTokenCleanTask, 0, delay, TimeUnit.MILLISECONDS);
 
-		if(LOG.isDebugEnabled()){
-			LOG.debug("was scheduled - delay (days):" + delayInDays  );
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("was scheduled - delay (days):" + delayInDays);
 		}
 	}
-
 
 	/**
 	 * Converts the days to millisecconds
@@ -94,7 +93,5 @@ public final class ExpiredTokenManagement {
 
 		return 24 * 3600000 * delayInDays;
 	}
-
-
 
 }

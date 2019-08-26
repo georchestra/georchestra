@@ -46,7 +46,6 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-
 /**
  * Maintains the role of users in the ldap store.
  *
@@ -61,17 +60,15 @@ public class RoleDaoImpl implements RoleDao {
 	private LdapTemplate ldapTemplate;
 
 	private String basePath;
-    private String roleSearchBaseDN;
+	private String roleSearchBaseDN;
 
-	public void setBasePath(String basePath)
-    {
+	public void setBasePath(String basePath) {
 		this.basePath = basePath;
 	}
 
-    public void setRoleSearchBaseDN(String roleSearchBaseDN)
-    {
-        this.roleSearchBaseDN = roleSearchBaseDN;
-    }
+	public void setRoleSearchBaseDN(String roleSearchBaseDN) {
+		this.roleSearchBaseDN = roleSearchBaseDN;
+	}
 
 	@Autowired
 	private AdminLogDao logDao;
@@ -86,12 +83,10 @@ public class RoleDaoImpl implements RoleDao {
 		this.ldapTemplate = ldapTemplate;
 	}
 
-
-
 	public Name buildRoleDn(String cn) {
 		try {
 			return LdapNameBuilder.newInstance(this.roleSearchBaseDN).add("cn", cn).build();
-		} catch (org.springframework.ldap.InvalidNameException ex){
+		} catch (org.springframework.ldap.InvalidNameException ex) {
 			throw new IllegalArgumentException(ex.getMessage());
 		}
 	}
@@ -108,14 +103,15 @@ public class RoleDaoImpl implements RoleDao {
 		this.accountDao = accountDao;
 	}
 
-	public void addUser(String roleID, Account user, String originLogin) throws DataServiceException, NameNotFoundException {
+	public void addUser(String roleID, Account user, String originLogin)
+			throws DataServiceException, NameNotFoundException {
 
-
-		/* TODO Add hierarchic behaviour here :
-			* if configuration flag hierarchic_roles is set and,
-			* if role name contain separator (also found in config)
-			* then remove last suffix of current role DSI_RENNES_AGRO_SCENE_VOITURE --> DSI_RENNES_AGRO_SCENE,
-			* and re-call this method addUser(DSI_RENNES_AGRO_SCENE, ...)
+		/*
+		 * TODO Add hierarchic behaviour here : if configuration flag hierarchic_roles
+		 * is set and, if role name contain separator (also found in config) then remove
+		 * last suffix of current role DSI_RENNES_AGRO_SCENE_VOITURE -->
+		 * DSI_RENNES_AGRO_SCENE, and re-call this method addUser(DSI_RENNES_AGRO_SCENE,
+		 * ...)
 		 */
 
 		Name dn = buildRoleDn(roleID);
@@ -129,8 +125,9 @@ public class RoleDaoImpl implements RoleDao {
 			this.ldapTemplate.modifyAttributes(context);
 
 			// Add log entry for this modification
-			if(originLogin != null) {
-				AdminLogType logType = this.roles.isProtected(roleID) ? AdminLogType.SYSTEM_ROLE_CHANGE : AdminLogType.OTHER_ROLE_CHANGE;
+			if (originLogin != null) {
+				AdminLogType logType = this.roles.isProtected(roleID) ? AdminLogType.SYSTEM_ROLE_CHANGE
+						: AdminLogType.OTHER_ROLE_CHANGE;
 				AdminLogEntry log = new AdminLogEntry(originLogin, user.getUid(), logType, new Date());
 				this.logDao.save(log);
 			}
@@ -164,9 +161,9 @@ public class RoleDaoImpl implements RoleDao {
 		this.ldapTemplate.modifyAttributes(ctx);
 
 		// Add log entry for this modification
-		if(originLogin != null) {
+		if (originLogin != null) {
 			AdminLogType logType;
-			if(this.roles.isProtected(roleName)){
+			if (this.roles.isProtected(roleName)) {
 				logType = AdminLogType.SYSTEM_ROLE_CHANGE;
 			} else {
 				logType = AdminLogType.OTHER_ROLE_CHANGE;
@@ -177,8 +174,8 @@ public class RoleDaoImpl implements RoleDao {
 		}
 	}
 
-    @Override
-    public void modifyUser(Account oldAccount, Account newAccount) throws DataServiceException {
+	@Override
+	public void modifyUser(Account oldAccount, Account newAccount) throws DataServiceException {
 		for (Role role : findAllForUser(oldAccount)) {
 			Name dnRole = buildRoleDn(role.getName());
 			String oldUserDn = accountDao.buildFullUserDn(oldAccount);
@@ -188,7 +185,7 @@ public class RoleDaoImpl implements RoleDao {
 			ctx.addAttributeValue("member", newUserDn);
 			this.ldapTemplate.modifyAttributes(ctx);
 		}
-    }
+	}
 
 	public List<Role> findAll() {
 
@@ -209,10 +206,8 @@ public class RoleDaoImpl implements RoleDao {
 		AndFilter filter = new AndFilter();
 		filter.and(grpFilter);
 		filter.and(new EqualsFilter("member", accountDao.buildFullUserDn(account)));
-		return ldapTemplate.search(roleSearchBaseDN, filter.encode(),	new RoleContextMapper());
+		return ldapTemplate.search(roleSearchBaseDN, filter.encode(), new RoleContextMapper());
 	}
-
-
 
 	/**
 	 * Searches the role by common name (cn)
@@ -223,13 +218,13 @@ public class RoleDaoImpl implements RoleDao {
 	@Override
 	public Role findByCommonName(String commonName) throws DataServiceException, NameNotFoundException {
 
-		try{
+		try {
 			Name dn = buildRoleDn(commonName);
 			Role g = (Role) ldapTemplate.lookup(dn, new RoleContextMapper());
 
-			return  g;
+			return g;
 
-		} catch (NameNotFoundException e){
+		} catch (NameNotFoundException e) {
 
 			throw new NameNotFoundException("There is not a role with this common name (cn): " + commonName);
 		}
@@ -277,7 +272,7 @@ public class RoleDaoImpl implements RoleDao {
 
 		private Object[] getUsers(DirContextAdapter context) {
 			Object[] members = context.getObjectAttributes(RoleSchema.MEMBER_KEY);
-			if(members == null){
+			if (members == null) {
 
 				members = new Object[0];
 			}
@@ -288,12 +283,12 @@ public class RoleDaoImpl implements RoleDao {
 	@Override
 	public synchronized void insert(Role role) throws DataServiceException, DuplicatedCommonNameException {
 
-		if( role.getName().length()== 0 ){
+		if (role.getName().length() == 0) {
 			throw new IllegalArgumentException("given name is required");
 		}
 		// checks unique common name
-		try{
-			if(findByCommonName(role.getName()) == null)
+		try {
+			if (findByCommonName(role.getName()) == null)
 				throw new NameNotFoundException("Not found");
 
 			throw new DuplicatedCommonNameException("there is a role with this name: " + role.getName());
@@ -301,18 +296,18 @@ public class RoleDaoImpl implements RoleDao {
 		} catch (NameNotFoundException e1) {
 			// if an role with the specified name cannot be retrieved, then
 			// the new role can be safely added.
-		    LOG.debug("The role with name " + role.getName() + " does not exist yet, it can "
-		            + "then be safely created." );
+			LOG.debug("The role with name " + role.getName() + " does not exist yet, it can "
+					+ "then be safely created.");
 		}
 
-        // inserts the new role
+		// inserts the new role
 		Name dn = buildRoleDn(role.getName());
 
 		DirContextAdapter context = new DirContextAdapter(dn);
 		mapToContext(role, context);
 
 		try {
-		  this.ldapTemplate.bind(dn, context, null);
+			this.ldapTemplate.bind(dn, context, null);
 		} catch (org.springframework.ldap.NamingException e) {
 			LOG.error(e);
 			throw new DataServiceException(e);
@@ -325,15 +320,13 @@ public class RoleDaoImpl implements RoleDao {
 
 		setAccountField(context, RoleSchema.COMMON_NAME_KEY, role.getName());
 		setAccountField(context, RoleSchema.DESCRIPTION_KEY, role.getDescription());
-		context.setAttributeValues(RoleSchema.MEMBER_KEY,role.getUserList().stream()
-				.map(userUid -> {
-					try {
-						return accountDao.findByUID(userUid);
-					} catch (DataServiceException e) {
-						return null;
-					}})
-				.filter(account -> null != account)
-				.map(account -> accountDao.buildFullUserDn(account))
+		context.setAttributeValues(RoleSchema.MEMBER_KEY, role.getUserList().stream().map(userUid -> {
+			try {
+				return accountDao.findByUID(userUid);
+			} catch (DataServiceException e) {
+				return null;
+			}
+		}).filter(account -> null != account).map(account -> accountDao.buildFullUserDn(account))
 				.collect(Collectors.toList()).toArray());
 		if (role.isFavorite()) {
 			setAccountField(context, RoleSchema.FAVORITE_KEY, RoleSchema.FAVORITE_VALUE);
@@ -349,20 +342,21 @@ public class RoleDaoImpl implements RoleDao {
 	 * @param fieldName
 	 * @param value
 	 */
-	private void setAccountField(DirContextOperations context,  String fieldName, Object value) {
+	private void setAccountField(DirContextOperations context, String fieldName, Object value) {
 
-		if( !isNullValue(value) ){
+		if (!isNullValue(value)) {
 			context.setAttributeValue(fieldName, value);
 		}
 	}
 
 	private boolean isNullValue(Object value) {
 
-		if(value == null) return true;
+		if (value == null)
+			return true;
 
-        if (value instanceof String && (((String) value).length() == 0)) {
-            return true;
-        }
+		if (value instanceof String && (((String) value).length() == 0)) {
+			return true;
+		}
 
 		return false;
 	}
@@ -377,39 +371,41 @@ public class RoleDaoImpl implements RoleDao {
 	 * @throws DuplicatedCommonNameException
 	 */
 	@Override
-	public synchronized void update(final String roleName, final Role role) throws DataServiceException, NameNotFoundException, DuplicatedCommonNameException {
+	public synchronized void update(final String roleName, final Role role)
+			throws DataServiceException, NameNotFoundException, DuplicatedCommonNameException {
 
-		if( role.getName().length()== 0 ){
+		if (role.getName().length() == 0) {
 			throw new IllegalArgumentException("given name is required");
 		}
 
 		Name sourceDn = buildRoleDn(roleName);
 		Name destDn = buildRoleDn(role.getName());
 
-        if (!role.getName().equals(roleName)) {
-            // checks unique common name
-            try{
-                findByCommonName(role.getName());
+		if (!role.getName().equals(roleName)) {
+			// checks unique common name
+			try {
+				findByCommonName(role.getName());
 
-                throw new DuplicatedCommonNameException("there is a role with this name: " + role.getName());
+				throw new DuplicatedCommonNameException("there is a role with this name: " + role.getName());
 
-            } catch (NameNotFoundException e1) {
-                // if a role with the specified name cannot be retrieved, then
-                // the new role can be safely renamed.
-                LOG.debug("no account with name " + role.getName() + " can be found, it is then "
-                        + "safe to rename the role.");
-            }
+			} catch (NameNotFoundException e1) {
+				// if a role with the specified name cannot be retrieved, then
+				// the new role can be safely renamed.
+				LOG.debug("no account with name " + role.getName() + " can be found, it is then "
+						+ "safe to rename the role.");
+			}
 
 			ldapTemplate.rename(sourceDn, destDn);
-        }
+		}
 
 		DirContextOperations context = ldapTemplate.lookupContext(destDn);
-        mapToContext(role, context);
+		mapToContext(role, context);
 		ldapTemplate.modifyAttributes(context);
 
 	}
 
-	private void addUsers(String roleName, List<Account> addList, final String originLogin) throws NameNotFoundException, DataServiceException {
+	private void addUsers(String roleName, List<Account> addList, final String originLogin)
+			throws NameNotFoundException, DataServiceException {
 
 		for (Account account : addList) {
 			addUser(roleName, account, originLogin);

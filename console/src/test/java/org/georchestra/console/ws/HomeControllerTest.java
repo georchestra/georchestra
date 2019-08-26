@@ -18,64 +18,65 @@ import org.springframework.mock.web.MockHttpServletResponse;
  */
 public class HomeControllerTest {
 
-    private HomeController ctrl;
-    private ExpiredTokenCleanTask tokenTask = Mockito.mock(ExpiredTokenCleanTask.class);
-    private ExpiredTokenManagement expiredTokenMgmt = new ExpiredTokenManagement(tokenTask);
+	private HomeController ctrl;
+	private ExpiredTokenCleanTask tokenTask = Mockito.mock(ExpiredTokenCleanTask.class);
+	private ExpiredTokenManagement expiredTokenMgmt = new ExpiredTokenManagement(tokenTask);
 
+	@Before
+	public void setUp() {
+		expiredTokenMgmt.setDelayInDays(1);
+		ctrl = new HomeController(expiredTokenMgmt);
+		ctrl.setPublicContextPath("/console");
+	}
 
-    @Before
-    public void setUp() {
-        expiredTokenMgmt.setDelayInDays(1);
-        ctrl = new HomeController(expiredTokenMgmt);
-        ctrl.setPublicContextPath("/console");
-    }
+	@Test
+	public void testHomeControllerAnonymousRedirectToCas() throws Exception {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		MockHttpServletResponse response = new MockHttpServletResponse();
 
-    @Test
-    public void testHomeControllerAnonymousRedirectToCas() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpServletResponse response = new MockHttpServletResponse();
+		ctrl.root(request, response);
 
-        ctrl.root(request, response);
+		assertTrue("expected 302, got " + response.getStatus(),
+				response.getStatus() == HttpServletResponse.SC_MOVED_TEMPORARILY);
+		assertTrue("bad redirectUrl, got " + response.getRedirectedUrl(),
+				response.getRedirectedUrl().contains("/account/userdetails?login"));
+	}
 
-        assertTrue("expected 302, got " + response.getStatus(), response.getStatus() == HttpServletResponse.SC_MOVED_TEMPORARILY);
-        assertTrue("bad redirectUrl, got " + response.getRedirectedUrl(),
-                response.getRedirectedUrl().contains("/account/userdetails?login"));
-    }
+	@Test
+	public void testHomeControllerAnonymous() throws Exception {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		MockHttpServletResponse response = new MockHttpServletResponse();
 
-    @Test
-    public void testHomeControllerAnonymous() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpServletResponse response = new MockHttpServletResponse();
+		ctrl.root(request, response);
 
-        ctrl.root(request, response);
+		assertTrue("expected 302, got " + response.getStatus(),
+				response.getStatus() == HttpServletResponse.SC_MOVED_TEMPORARILY);
+		assertTrue("bad redirectUrl, got " + response.getRedirectedUrl(),
+				response.getRedirectedUrl().contains("/account/userdetails?login"));
+	}
 
-        assertTrue("expected 302, got " + response.getStatus(), response.getStatus() == HttpServletResponse.SC_MOVED_TEMPORARILY);
-        assertTrue("bad redirectUrl, got " + response.getRedirectedUrl(),
-                response.getRedirectedUrl().contains("/account/userdetails?login"));
-    }
+	@Test
+	public void testHomeControllerAuthorized() throws Exception {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		MockHttpServletResponse response = new MockHttpServletResponse();
 
-    @Test
-    public void testHomeControllerAuthorized() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpServletResponse response = new MockHttpServletResponse();
+		request.addHeader("sec-roles", "ROLE_ADMINISTRATOR");
+		ctrl.root(request, response);
 
-        request.addHeader("sec-roles", "ROLE_ADMINISTRATOR");
-        ctrl.root(request, response);
+		assertTrue(response.getRedirectedUrl().endsWith("/account/userdetails"));
 
-        assertTrue(response.getRedirectedUrl().endsWith("/account/userdetails"));
+	}
 
-    }
+	@Test
+	public void testHomeControllerLdapAdmin() throws Exception {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		MockHttpServletResponse response = new MockHttpServletResponse();
 
-    @Test
-    public void testHomeControllerLdapAdmin() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpServletResponse response = new MockHttpServletResponse();
+		request.addHeader("sec-roles", "ROLE_SUPERUSER");
+		ctrl.root(request, response);
 
-        request.addHeader("sec-roles", "ROLE_SUPERUSER");
-        ctrl.root(request, response);
+		assertTrue(response.getRedirectedUrl().endsWith("/manager/"));
 
-        assertTrue(response.getRedirectedUrl().endsWith("/manager/"));
-
-    }
+	}
 
 }

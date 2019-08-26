@@ -24,21 +24,19 @@ import java.sql.SQLException;
 public class DataCommandException extends Exception {
 
 	/**
-	 * for serialization 
+	 * for serialization
 	 */
 	private static final long serialVersionUID = -5196425322579527757L;
-	
 
 	public DataCommandException(String message) {
 		super(message);
 	}
 
-
 	public DataCommandException(SQLException e) {
 		super(e);
 	}
 
-    public DataCommandException(String message, Throwable cause) {
-        super(message, cause);
-    }
+	public DataCommandException(String message, Throwable cause) {
+		super(message, cause);
+	}
 }
