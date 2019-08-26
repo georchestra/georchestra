@@ -36,60 +36,61 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.ServletContextAware;
 
-
 @Controller
 public class TaskControllers implements ServletContextAware {
 
 	private ServletContext servletContext;
 	private ExtractionManager extractionManager;
-    private static final Log LOG = LogFactory.getLog(ExtractionTask.class.getPackage().getName());
+	private static final Log LOG = LogFactory.getLog(ExtractionTask.class.getPackage().getName());
 
-    @RequestMapping(value = "/jobs/list", method = RequestMethod.GET)
-    public void list(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    	LOG.debug("Into /jobs/list");
-    	JSONObject ret = new JSONObject();
-    	OutputStream outpStr = null;
+	@RequestMapping(value = "/jobs/list", method = RequestMethod.GET)
+	public void list(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		LOG.debug("Into /jobs/list");
+		JSONObject ret = new JSONObject();
+		OutputStream outpStr = null;
 
-    	try {
-    		outpStr = response.getOutputStream();
-            LOG.debug("printing output of ExtractionManager state");
+		try {
+			outpStr = response.getOutputStream();
+			LOG.debug("printing output of ExtractionManager state");
 
-            JSONArray jsarr = new JSONArray();
-            List<ExecutionMetadata> lst = extractionManager.getTaskQueue();
+			JSONArray jsarr = new JSONArray();
+			List<ExecutionMetadata> lst = extractionManager.getTaskQueue();
 
-            for (ExecutionMetadata elem : lst) {
-                JSONObject task = new JSONObject();
-                task.put("uuid", elem.getUuid());
-                task.put("state", elem.getState());
-                task.put("priority", elem.getPriority());
+			for (ExecutionMetadata elem : lst) {
+				JSONObject task = new JSONObject();
+				task.put("uuid", elem.getUuid());
+				task.put("state", elem.getState());
+				task.put("priority", elem.getPriority());
 
-                jsarr.put(task);
-            }
-            ret.put("tasks", jsarr);
+				jsarr.put(task);
+			}
+			ret.put("tasks", jsarr);
 
-            ret.put("status", "success");
+			ret.put("status", "success");
 
-    	} catch (Exception e) {
-    		LOG.error("Exception caught while running '/jobs/list' controller: ", e);
+		} catch (Exception e) {
+			LOG.error("Exception caught while running '/jobs/list' controller: ", e);
 
-    	} finally {
+		} finally {
 
 			outpStr.write(ret.toString().getBytes());
-    		if (outpStr != null) outpStr.close();
+			if (outpStr != null)
+				outpStr.close();
 
-    	}
-    	return;
-    }
+		}
+		return;
+	}
 
-    @RequestMapping(value = "/job/change_priority", method = RequestMethod.POST)
-    public void results(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	@RequestMapping(value = "/job/change_priority", method = RequestMethod.POST)
+	public void results(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-    }
+	}
 
 	@Override
 	public void setServletContext(ServletContext _servletContext) {
 		servletContext = _servletContext;
 	}
+
 	public void setExtractionManager(ExtractionManager em) {
 		extractionManager = em;
 	}

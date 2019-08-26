@@ -34,14 +34,14 @@ public class ExtractorException extends RuntimeException {
 	}
 
 	public ExtractorException(String message) {
-        super(message);
-    }
+		super(message);
+	}
 
-    @Override
+	@Override
 	public StackTraceElement[] getStackTrace() {
-        if(getCause() == null) {
-            return super.getStackTrace();
-        }
+		if (getCause() == null) {
+			return super.getStackTrace();
+		}
 		return getCause().getStackTrace();
 	}
 }

@@ -38,22 +38,23 @@ final public class DeleteAllCommand extends AbstractDataCommand {
 	@Override
 	public void execute() throws DataCommandException {
 
-		//PreparedStatement pStmt=null;
-		Statement pStmt=null;
-        try {
+		// PreparedStatement pStmt=null;
+		Statement pStmt = null;
+		try {
 			pStmt = this.connection.createStatement();
 			pStmt.execute("DELETE FROM ogcstatistics.OGC_SERVICES_LOG");
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new DataCommandException(e);
-		} finally{
-            try {
-                if(pStmt != null) pStmt.close();
-                
-            } catch (SQLException e1) {
-                throw new DataCommandException(e1.getMessage());
-            } 
+		} finally {
+			try {
+				if (pStmt != null)
+					pStmt.close();
+
+			} catch (SQLException e1) {
+				throw new DataCommandException(e1.getMessage());
+			}
 		}
 	}
 }

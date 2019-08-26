@@ -21,74 +21,72 @@ import org.mockito.Mockito;
 
 public class QueryUserTokenExpiredCommandTest {
 
-    QueryUserTokenExpiredCommand query = new QueryUserTokenExpiredCommand();
-    Connection c = Mockito.mock(Connection.class);
-    PreparedStatement pstmt = Mockito.mock(PreparedStatement.class);
-    ResultSet resultSet = Mockito.mock(ResultSet.class);
+	QueryUserTokenExpiredCommand query = new QueryUserTokenExpiredCommand();
+	Connection c = Mockito.mock(Connection.class);
+	PreparedStatement pstmt = Mockito.mock(PreparedStatement.class);
+	ResultSet resultSet = Mockito.mock(ResultSet.class);
 
-    @Before
-    public void setUp() throws Exception {
-        query.setConnection(c);
-        Mockito.when(c.prepareStatement(Mockito.anyString())).thenReturn(pstmt);
-        query.setBeforeDate(new Date());
-        Mockito.when(pstmt.executeQuery()).thenReturn(resultSet);
-        Map<String,Object> map = new HashMap<String,Object>();
-        Mockito.when(resultSet.getString(Mockito.anyString())).thenReturn("uid", "token");
-        Mockito.when(resultSet.getTimestamp(Mockito.anyString())).thenReturn(new Timestamp(0));
-        Mockito.when(resultSet.next()).thenReturn(true, false);
-    }
+	@Before
+	public void setUp() throws Exception {
+		query.setConnection(c);
+		Mockito.when(c.prepareStatement(Mockito.anyString())).thenReturn(pstmt);
+		query.setBeforeDate(new Date());
+		Mockito.when(pstmt.executeQuery()).thenReturn(resultSet);
+		Map<String, Object> map = new HashMap<String, Object>();
+		Mockito.when(resultSet.getString(Mockito.anyString())).thenReturn("uid", "token");
+		Mockito.when(resultSet.getTimestamp(Mockito.anyString())).thenReturn(new Timestamp(0));
+		Mockito.when(resultSet.next()).thenReturn(true, false);
+	}
 
-    @After
-    public void tearDown() throws Exception {
-    }
+	@After
+	public void tearDown() throws Exception {
+	}
 
-    @Test
-    public void testPrepareStatement() throws SQLException {
-        PreparedStatement pstmt = query.prepareStatement();
-        // Well, these objects have been mocked, this test
-        // just ensures that everything went well.
-        assertTrue(pstmt != null);
-    }
+	@Test
+	public void testPrepareStatement() throws SQLException {
+		PreparedStatement pstmt = query.prepareStatement();
+		// Well, these objects have been mocked, this test
+		// just ensures that everything went well.
+		assertTrue(pstmt != null);
+	}
 
-    @Test
-    public void testGetRow() throws SQLException {
+	@Test
+	public void testGetRow() throws SQLException {
 
+		Map<String, Object> ret = query.getRow(resultSet);
 
-        Map<String,Object> ret = query.getRow(resultSet);
+		assertEquals(ret.size(), 3);
+		assertEquals(ret.get(DatabaseSchema.UID_COLUMN), "uid");
+		assertEquals(ret.get(DatabaseSchema.TOKEN_COLUMN), "token");
+		assertEquals(0L, ((Timestamp) ret.get(DatabaseSchema.CREATION_DATE_COLUMN)).getTime());
 
-        assertEquals(ret.size(), 3);
-        assertEquals(ret.get(DatabaseSchema.UID_COLUMN), "uid");
-        assertEquals(ret.get(DatabaseSchema.TOKEN_COLUMN), "token");
-        assertEquals(0L, ((Timestamp) ret.get(DatabaseSchema.CREATION_DATE_COLUMN)).getTime());
+	}
 
-    }
+	@Test
+	public void testExecuteNoConnection() throws DataCommandException {
+		query.setConnection(null);
+		try {
+			query.execute();
+		} catch (Throwable e) {
+			// Note: if launched under Eclipse, do not forget
+			// to add "-ea" as VM arguments in launch / debug parameters,
+			// to activate builtin java assertions.
+			assertTrue(e instanceof AssertionError);
+		}
+	}
 
-    @Test
-    public void testExecuteNoConnection() throws DataCommandException {
-        query.setConnection(null);
-        try {
-            query.execute();
-        } catch (Throwable e) {
-            // Note: if launched under Eclipse, do not forget
-            // to add "-ea" as VM arguments in launch / debug parameters,
-            // to activate builtin java assertions.
-            assertTrue(e instanceof AssertionError);
-        }
-    }
+	@Test
+	public void testExecuteAndGetResult() throws DataCommandException {
+		query.setConnection(c);
+		query.execute();
+		List<Map<String, Object>> ret = query.getResult();
 
-    @Test
-    public void testExecuteAndGetResult() throws DataCommandException {
-        query.setConnection(c);
-        query.execute();
-        List<Map<String, Object>> ret = query.getResult();
-
-        // We should retrieve the mocked objects
-        // [{creation_date=1970-01-01 01:00:00.0, uid=uid, token=token}]
-        assertEquals(0L, ((Timestamp) ret.get(0).get(DatabaseSchema.CREATION_DATE_COLUMN)).getTime());
-        assertEquals(ret.get(0).get(DatabaseSchema.UID_COLUMN), "uid");
-        assertEquals(ret.get(0).get(DatabaseSchema.TOKEN_COLUMN),"token");
-        assertEquals(ret.get(0).size(), 3);
-    }
-
+		// We should retrieve the mocked objects
+		// [{creation_date=1970-01-01 01:00:00.0, uid=uid, token=token}]
+		assertEquals(0L, ((Timestamp) ret.get(0).get(DatabaseSchema.CREATION_DATE_COLUMN)).getTime());
+		assertEquals(ret.get(0).get(DatabaseSchema.UID_COLUMN), "uid");
+		assertEquals(ret.get(0).get(DatabaseSchema.TOKEN_COLUMN), "token");
+		assertEquals(ret.get(0).size(), 3);
+	}
 
 }

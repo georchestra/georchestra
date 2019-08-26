@@ -67,11 +67,12 @@ public class LogController {
 
 	/**
 	 * Returns array of logs using json syntax.
+	 * 
 	 * <pre>
 	 *     {"logs": [
 	 *		{
 	 *			"admin": "testadmin",
- 	 *			"date": "2016-03-22T15:26:21.087+0100",
+	 *			"date": "2016-03-22T15:26:21.087+0100",
 	 *			"target": "testeditor",
 	 *			"type": "Email sent"
 	 *		},
@@ -91,41 +92,41 @@ public class LogController {
 	 * </pre>
 	 *
 	 */
-	@RequestMapping(value=REQUEST_MAPPING + "/{target}/{limit}/{page}", method=RequestMethod.GET,
-			produces = "application/json; charset=utf-8")
+	@RequestMapping(value = REQUEST_MAPPING
+			+ "/{target}/{limit}/{page}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public List<AdminLogEntry> find(@PathVariable String target, @PathVariable int limit, @PathVariable int page){
+	public List<AdminLogEntry> find(@PathVariable String target, @PathVariable int limit, @PathVariable int page) {
 
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
 		// Filter logs by orgs users if user is not SUPERUSER
-		if(!auth.getAuthorities().contains(ROLE_SUPERUSER)){
+		if (!auth.getAuthorities().contains(ROLE_SUPERUSER)) {
 			List<String> users = new ArrayList<String>();
 			DelegationEntry delegation = this.delegationDao.findOne(auth.getName());
 			String[] orgs = delegation.getOrgs();
-			for(String org: orgs)
+			for (String org : orgs)
 				users.addAll(this.orgsDao.findByCommonName(org).getMembers());
-			if(!users.contains(target))
+			if (!users.contains(target))
 				throw new AccessDeniedException("User not under delegation");
 		}
 
 		return this.logDao.findByTarget(target, new PageRequest(page, limit, new Sort(Sort.Direction.DESC, "date")));
 	}
 
-
-	@RequestMapping(value=REQUEST_MAPPING + "/{limit}/{page}", method=RequestMethod.GET,
-			produces = "application/json; charset=utf-8")
+	@RequestMapping(value = REQUEST_MAPPING
+			+ "/{limit}/{page}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public List<AdminLogEntry> find( HttpServletRequest request, @PathVariable int limit, @PathVariable int page){
+	public List<AdminLogEntry> find(HttpServletRequest request, @PathVariable int limit, @PathVariable int page) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
 		// Filter logs by orgs users if user is not SUPERUSER
-		if(!auth.getAuthorities().contains(ROLE_SUPERUSER)){
+		if (!auth.getAuthorities().contains(ROLE_SUPERUSER)) {
 			Set<String> users = this.advancedDelegationDao.findUsersUnderDelegation(auth.getName());
 			return this.logDao.myFindByTargets(users,
 					new PageRequest(page, limit, new Sort(Sort.Direction.DESC, "date")));
 		} else {
-			return this.logDao.findAll(new PageRequest(page, limit, new Sort(Sort.Direction.DESC, "date"))).getContent();
+			return this.logDao.findAll(new PageRequest(page, limit, new Sort(Sort.Direction.DESC, "date")))
+					.getContent();
 		}
 
 	}

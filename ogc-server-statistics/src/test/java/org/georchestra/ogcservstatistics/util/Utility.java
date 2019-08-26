@@ -18,20 +18,18 @@ import org.apache.commons.io.FileUtils;
  *
  */
 public class Utility {
-	
-	private Utility(){
-		
+
+	private Utility() {
+
 	}
 
 	public static String loadRequest(String data) {
 
-        try {
-        	return FileUtils.readFileToString(
-                    urlToFile(Utility.class.getResource(data)),
-                    "UTF-8");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+		try {
+			return FileUtils.readFileToString(urlToFile(Utility.class.getResource(data)), "UTF-8");
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private static File urlToFile(URL url) {
@@ -48,8 +46,7 @@ public class Utility {
 		try {
 			string = URLDecoder.decode(string, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(
-					"Could not decode the URL to UTF-8 format", e);
+			throw new RuntimeException("Could not decode the URL to UTF-8 format", e);
 		}
 
 		String path3;
@@ -58,8 +55,7 @@ public class Utility {
 		String standardPrefix = "file://";
 		String os = System.getProperty("os.name");
 
-		if (os.toUpperCase().contains("WINDOWS")
-				&& string.startsWith(standardPrefix)) {
+		if (os.toUpperCase().contains("WINDOWS") && string.startsWith(standardPrefix)) {
 			// win32: host/share reference
 			path3 = string.substring(standardPrefix.length() - 2);
 		} else if (string.startsWith(standardPrefix)) {

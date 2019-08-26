@@ -27,9 +27,9 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class DefaultController {
 
-    @RequestMapping(value="/*", method=RequestMethod.GET)
-    public ModelAndView index(){
-        ModelAndView mv = new ModelAndView("index");
-        return mv;
-    }
+	@RequestMapping(value = "/*", method = RequestMethod.GET)
+	public ModelAndView index() {
+		ModelAndView mv = new ModelAndView("index");
+		return mv;
+	}
 }

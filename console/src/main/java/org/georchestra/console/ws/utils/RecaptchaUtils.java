@@ -26,26 +26,26 @@ import org.georchestra.console.bs.ReCaptchaParameters;
 import org.springframework.validation.Errors;
 
 /**
- * Utility class to manage recaptcha.
- * Updated to use recaptcha V2
+ * Utility class to manage recaptcha. Updated to use recaptcha V2
  * 
  * @author Sylvain Lesage
  *
  */
 public class RecaptchaUtils {
-	
+
 	private static final Log LOG = LogFactory.getLog(RecaptchaUtils.class.getName());
 
 	private RecaptchaUtils() {
-		
+
 	}
 
 	/**
 	 * This validate from server side the captchaV2 response from client
 	 * 
 	 * @param reCaptchaParameters to get url call and captcha private key
-	 * @param gRecaptchaResponse g-recaptcha-reponse from client side
-	 * @param errors Errors already existing, and used to display validation errors
+	 * @param gRecaptchaResponse  g-recaptcha-reponse from client side
+	 * @param errors              Errors already existing, and used to display
+	 *                            validation errors
 	 * 
 	 * @throws IOException
 	 */
@@ -54,9 +54,10 @@ public class RecaptchaUtils {
 		if (gRecaptchaResponse == null || "".equals(gRecaptchaResponse)) {
 			LOG.info("The user response to recaptcha is empty.");
 			errors.rejectValue("recaptcha_response_field", "recaptcha_response_field.error.required", "required");
-		}else{
+		} else {
 			ReCaptchaV2 rec = new ReCaptchaV2();
-			if(!rec.isValid(reCaptchaParameters.getVerifyUrl(), reCaptchaParameters.getPrivateKey(), gRecaptchaResponse)){
+			if (!rec.isValid(reCaptchaParameters.getVerifyUrl(), reCaptchaParameters.getPrivateKey(),
+					gRecaptchaResponse)) {
 				errors.rejectValue("recaptcha_response_field", "recaptcha.incorrect", "Validation error");
 			} else {
 				LOG.debug("The user response to recaptcha is valid.");

@@ -41,46 +41,48 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
 /**
- * This controller is responsible of manage the user interactions required for changing the user account's password.
+ * This controller is responsible of manage the user interactions required for
+ * changing the user account's password.
  * <p>
- * This controller is associated to the changePasswordForm.jsp view and {@link ChangePasswordFormBean}.
+ * This controller is associated to the changePasswordForm.jsp view and
+ * {@link ChangePasswordFormBean}.
  * </p>
  *
  * @author Mauricio Pazos
  */
 @Controller
-@SessionAttributes(types=ChangePasswordFormBean.class)
+@SessionAttributes(types = ChangePasswordFormBean.class)
 public class ChangePasswordFormController {
 
 	private AccountDao accountDao;
 
-
 	@Autowired
-	public ChangePasswordFormController( AccountDao dao){
+	public ChangePasswordFormController(AccountDao dao) {
 		this.accountDao = dao;
 	}
 
 	@InitBinder
-	public void initForm( WebDataBinder dataBinder) {
+	public void initForm(WebDataBinder dataBinder) {
 
-		dataBinder.setAllowedFields(new String[]{"password", "confirmPassword"});
+		dataBinder.setAllowedFields(new String[] { "password", "confirmPassword" });
 	}
 
 	/**
-	 * Initializes the {@link ChangePasswordFormBean} with the uid provided as parameter.
-	 * The changePasswordForm view is provided as result of this method.
+	 * Initializes the {@link ChangePasswordFormBean} with the uid provided as
+	 * parameter. The changePasswordForm view is provided as result of this method.
 	 *
-	 * @param uid	user id
+	 * @param uid   user id
 	 * @param model
 	 *
 	 * @return changePasswordForm view to display
 	 *
 	 * @throws IOException
 	 */
-	@RequestMapping(value="/account/changePassword", method=RequestMethod.GET)
-	public String setupForm(HttpServletRequest request, HttpServletResponse response, @RequestParam("uid") String uid, Model model) throws IOException{
+	@RequestMapping(value = "/account/changePassword", method = RequestMethod.GET)
+	public String setupForm(HttpServletRequest request, HttpServletResponse response, @RequestParam("uid") String uid,
+			Model model) throws IOException {
 		try {
-			if(!request.getHeader("sec-username").equals(uid)){
+			if (!request.getHeader("sec-username").equals(uid)) {
 				response.sendError(HttpServletResponse.SC_FORBIDDEN);
 			}
 		} catch (NullPointerException e) {
@@ -107,29 +109,24 @@ public class ChangePasswordFormController {
 	 *
 	 * @throws IOException
 	 */
-	@RequestMapping(value="/account/changePassword", method=RequestMethod.POST)
-	public String changePassword(
-						HttpServletRequest request,
-						HttpServletResponse response,
-						Model model,
-						@ModelAttribute ChangePasswordFormBean formBean,
-						BindingResult result,
-						SessionStatus sessionStatus)
-						throws IOException {
+	@RequestMapping(value = "/account/changePassword", method = RequestMethod.POST)
+	public String changePassword(HttpServletRequest request, HttpServletResponse response, Model model,
+			@ModelAttribute ChangePasswordFormBean formBean, BindingResult result, SessionStatus sessionStatus)
+			throws IOException {
 		String uid = formBean.getUid();
 		try {
-			if(!request.getHeader("sec-username").equals(uid)){
+			if (!request.getHeader("sec-username").equals(uid)) {
 				response.sendError(HttpServletResponse.SC_FORBIDDEN);
 				return null;
 			}
 		} catch (NullPointerException e) {
 			response.sendError(HttpServletResponse.SC_FORBIDDEN);
-            return null;
+			return null;
 		}
 
-		PasswordUtils.validate( formBean.getPassword(), formBean.getConfirmPassword(), result);
+		PasswordUtils.validate(formBean.getPassword(), formBean.getConfirmPassword(), result);
 
-		if(result.hasErrors()){
+		if (result.hasErrors()) {
 
 			return "changePasswordForm";
 		}
@@ -137,7 +134,7 @@ public class ChangePasswordFormController {
 		// change the user's password
 		try {
 
-			String  password = formBean.getPassword();
+			String password = formBean.getPassword();
 
 			this.accountDao.changePassword(uid, password);
 
@@ -151,7 +148,7 @@ public class ChangePasswordFormController {
 
 		}
 	}
-	
+
 	@ModelAttribute("changePasswordFormBean")
 	public ChangePasswordFormBean getChangePasswordFormBean() {
 		return new ChangePasswordFormBean();

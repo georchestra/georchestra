@@ -31,35 +31,31 @@ import java.util.Map;
  * @author Mauricio Pazos
  *
  */
-final class QueryByTokenCommand extends org.georchestra.lib.sqlcommand.AbstractQueryCommand{
-
+final class QueryByTokenCommand extends org.georchestra.lib.sqlcommand.AbstractQueryCommand {
 
 	private String token;
 
-	
 	public void setToken(String token) {
-	
-		
+
 		this.token = token;
 	}
 
 	/**
-	 * builds the sql query 
+	 * builds the sql query
 	 * 
 	 * @return the sql statement
 	 */
-	private String getSQLStatement(){
+	private String getSQLStatement() {
 
 		StringBuilder sql = new StringBuilder();
 
-		sql.append(" SELECT ")
-				.append(DatabaseSchema.UID_COLUMN).append(",").append(DatabaseSchema.TOKEN_COLUMN ).append(",").append(DatabaseSchema.CREATION_DATE_COLUMN )
-				.append(" FROM ").append(DatabaseSchema.SCHEMA_NAME + "." + DatabaseSchema.TABLE_USER_TOKEN)
-				.append(" WHERE "+ DatabaseSchema.TOKEN_COLUMN + " = ?");
-		
+		sql.append(" SELECT ").append(DatabaseSchema.UID_COLUMN).append(",").append(DatabaseSchema.TOKEN_COLUMN)
+				.append(",").append(DatabaseSchema.CREATION_DATE_COLUMN).append(" FROM ")
+				.append(DatabaseSchema.SCHEMA_NAME + "." + DatabaseSchema.TABLE_USER_TOKEN)
+				.append(" WHERE " + DatabaseSchema.TOKEN_COLUMN + " = ?");
+
 		return sql.toString();
 	}
-	
 
 	@Override
 	protected PreparedStatement prepareStatement() throws SQLException {
@@ -72,14 +68,13 @@ final class QueryByTokenCommand extends org.georchestra.lib.sqlcommand.AbstractQ
 
 	@Override
 	protected Map<String, Object> getRow(ResultSet rs) throws SQLException {
-		
-		Map<String,Object> row = new HashMap<String, Object>(3);
+
+		Map<String, Object> row = new HashMap<String, Object>(3);
 		row.put(DatabaseSchema.UID_COLUMN, rs.getString(DatabaseSchema.UID_COLUMN));
 		row.put(DatabaseSchema.TOKEN_COLUMN, rs.getString(DatabaseSchema.TOKEN_COLUMN));
 		row.put(DatabaseSchema.CREATION_DATE_COLUMN, rs.getTimestamp(DatabaseSchema.CREATION_DATE_COLUMN));
-		
+
 		return row;
 	}
-
 
 }

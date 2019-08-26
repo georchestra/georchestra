@@ -29,7 +29,7 @@ import java.util.List;
  * @author Mauricio Pazos
  */
 public interface Role {
-	
+
 	final String USER = "USER";
 	final String PENDING = "PENDING";
 
@@ -39,25 +39,27 @@ public interface Role {
 	 */
 	@JsonProperty("cn")
 	String getName();
-	void  setName(String cn );
+
+	void setName(String cn);
 
 	/**
 	 * Users of this role
 	 * 
-	 * @return the list of user 
+	 * @return the list of user
 	 */
 	@JsonProperty("users")
 	List<String> getUserList();
-	
-	void  setUserList(List<String> userUidList);
-	
+
+	void setUserList(List<String> userUidList);
+
 	/**
 	 * adds a user to this role
+	 * 
 	 * @param userUid a user dn
 	 */
-	void  addUser(String userUid);
-	
-	void setDescription(String description);	
+	void addUser(String userUid);
+
+	void setDescription(String description);
 
 	String getDescription();
 

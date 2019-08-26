@@ -43,14 +43,14 @@ public class WcsReaderRequestFactoryTest {
 		return WcsReaderRequestFactory.create("1.0", "myCov", 0, 0, 1, 1, CRS.decode("EPSG:4326"),
 				CRS.decode("EPSG:2154"), 1, "GeoTiff", true, true, true, "scott", "tiger");
 	}
-	
+
 	@Test
-	public void testCreate() throws Exception{
-		
-		WcsReaderRequest rq = createRequest();		
-		GeneralParameterValue[] params = rq.getParameters();		
+	public void testCreate() throws Exception {
+
+		WcsReaderRequest rq = createRequest();
+		GeneralParameterValue[] params = rq.getParameters();
 		WcsReaderRequest rqP = WcsReaderRequestFactory.create(params);
-		
+
 		assertEquals(rq.format, rqP.format);
 		assertEquals(rq.usePost, rqP.usePost);
 		assertEquals(rq.responseCRS, rqP.responseCRS);

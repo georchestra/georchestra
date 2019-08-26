@@ -44,11 +44,11 @@ public class RoleResponse {
 		this.role = role;
 		this.filter = filter;
 	}
-	
+
 	public String asJsonString() throws IOException {
-		try{
+		try {
 			JSONObject jsonRole = new JSONObject();
-			
+
 			jsonRole.put(RoleSchema.COMMON_NAME_KEY, this.role.getName());
 			jsonRole.put(RoleSchema.DESCRIPTION_KEY, this.role.getDescription());
 			jsonRole.put(RoleSchema.FAVORITE_JSON_KEY, this.role.isFavorite());
@@ -58,16 +58,16 @@ public class RoleResponse {
 
 			JSONArray membersArray = new JSONArray();
 			int j = 0;
-			for(String userUid: list ){
+			for (String userUid : list) {
 
 				membersArray.put(j, userUid);
 				j++;
 			}
 			jsonRole.put("users", membersArray);
-			
+
 			return jsonRole.toString();
-			
-		} catch (JSONException ex){
+
+		} catch (JSONException ex) {
 
 			throw new IOException(ex);
 		}

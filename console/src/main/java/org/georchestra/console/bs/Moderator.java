@@ -48,4 +48,3 @@ public final class Moderator {
 		return this.moderatedSignup;
 	}
 }
-

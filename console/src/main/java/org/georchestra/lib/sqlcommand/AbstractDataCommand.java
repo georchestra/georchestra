@@ -30,5 +30,4 @@ public abstract class AbstractDataCommand implements DataCommand {
 		this.connection = connection;
 	}
 
-
 }

@@ -52,7 +52,8 @@ public class StatisticsControllerTest {
 	}
 
 	@After
-	public void tearDown() throws Exception {}
+	public void tearDown() throws Exception {
+	}
 
 	@Test
 	public final void testCombinedRequestsNoData() throws Exception {
@@ -65,46 +66,39 @@ public class StatisticsControllerTest {
 		JSONObject posted = new JSONObject("{\"user\": \"testadmin\", \"startDate\": \"2015-01-01\", "
 				+ "\"group\": \"ADMINISTRATOR\", \"endDate\": \"2015-12-01\" }");
 		// -> 400
-		mockMvc.perform(post("/combinedRequests.json").content(posted.toString()))
-			.andExpect(status().isBadRequest());
+		mockMvc.perform(post("/combinedRequests.json").content(posted.toString())).andExpect(status().isBadRequest());
 	}
-	
+
 	@Test
 	public final void testCombinedRequestsNoDateOrBadDate() throws Exception {
 		JSONObject posted = new JSONObject("{\"user\": \"testadmin\"}");
 		// -> 400
-		mockMvc.perform(post("/combinedRequests.json").content(posted.toString()))
-			.andExpect(status().isBadRequest());
-		
-		mockMvc.perform(post("/combinedRequests.json").content(posted.put("startDate", "invalid")
-				.put("endDate", "invalid").toString()))
-		.andExpect(status().isBadRequest());
-	
-	}	
+		mockMvc.perform(post("/combinedRequests.json").content(posted.toString())).andExpect(status().isBadRequest());
 
-	
+		mockMvc.perform(post("/combinedRequests.json")
+				.content(posted.put("startDate", "invalid").put("endDate", "invalid").toString()))
+				.andExpect(status().isBadRequest());
+
+	}
+
 	@Test
 	public final void testCombinedRequestsLegitUser() throws Exception {
 
 		JSONObject posted = new JSONObject("{\"user\": \"testadmin\", \"startDate\": \"2015-01-01\" }");
 
-		Object[] sampleData = {4, "2015-01"};
+		Object[] sampleData = { 4, "2015-01" };
 		ArrayList<Object[]> sample = new ArrayList<Object[]>();
 		sample.add(sampleData);
 
 		mockMvc.perform(post("/combinedRequests.json").content(posted.put("endDate", "2015-01-01").toString()))
-		.andExpect(content().string(containsString("granularity\": \"HOUR\"")))
-		.andExpect(status().isOk());
+				.andExpect(content().string(containsString("granularity\": \"HOUR\""))).andExpect(status().isOk());
 		mockMvc.perform(post("/combinedRequests.json").content(posted.put("endDate", "2015-01-08").toString()))
-		.andExpect(content().string(containsString("granularity\": \"DAY\"")))
-		.andExpect(status().isOk());
+				.andExpect(content().string(containsString("granularity\": \"DAY\""))).andExpect(status().isOk());
 		mockMvc.perform(post("/combinedRequests.json").content(posted.put("endDate", "2015-12-01").toString()))
-		.andExpect(content().string(containsString("granularity\": \"WEEK\"")))
-		.andExpect(status().isOk());
+				.andExpect(content().string(containsString("granularity\": \"WEEK\""))).andExpect(status().isOk());
 		mockMvc.perform(post("/combinedRequests.json").content(posted.put("endDate", "2016-12-01").toString()))
-			.andExpect(content().string(containsString("granularity\": \"MONTH\"")))
-			.andExpect(status().isOk());
-		
+				.andExpect(content().string(containsString("granularity\": \"MONTH\""))).andExpect(status().isOk());
+
 	}
 
 	@Test
@@ -112,172 +106,141 @@ public class StatisticsControllerTest {
 		JSONObject posted = new JSONObject("{\"group\": \"ADMINISTRATOR\", \"startDate\": \"2015-01-01\" }");
 
 		mockMvc.perform(post("/combinedRequests.json").content(posted.put("endDate", "2015-01-01").toString()))
-			.andExpect(content().string(containsString("granularity\": \"HOUR\"")))
-			.andExpect(status().isOk());
+				.andExpect(content().string(containsString("granularity\": \"HOUR\""))).andExpect(status().isOk());
 		mockMvc.perform(post("/combinedRequests.json").content(posted.put("endDate", "2015-01-08").toString()))
-		.andExpect(content().string(containsString("granularity\": \"DAY\"")))
-		.andExpect(status().isOk());
+				.andExpect(content().string(containsString("granularity\": \"DAY\""))).andExpect(status().isOk());
 		mockMvc.perform(post("/combinedRequests.json").content(posted.put("endDate", "2015-05-01").toString()))
-		.andExpect(content().string(containsString("granularity\": \"WEEK\"")))
-		.andExpect(status().isOk());
+				.andExpect(content().string(containsString("granularity\": \"WEEK\""))).andExpect(status().isOk());
 		mockMvc.perform(post("/combinedRequests.json").content(posted.put("endDate", "2016-02-01").toString()))
-		.andExpect(content().string(containsString("granularity\": \"MONTH\"")))
-		.andExpect(status().isOk());
+				.andExpect(content().string(containsString("granularity\": \"MONTH\""))).andExpect(status().isOk());
 	}
-	
+
 	@Test
 	public final void testCombinedRequestsNoUserNorGroup() throws Exception {
 		JSONObject posted = new JSONObject("{\"startDate\": \"2015-01-01\" }");
 
 		mockMvc.perform(post("/combinedRequests.json").content(posted.put("endDate", "2015-01-01").toString()))
-			.andExpect(content().string(containsString("granularity\": \"HOUR\"")))
-			.andExpect(status().isOk());
+				.andExpect(content().string(containsString("granularity\": \"HOUR\""))).andExpect(status().isOk());
 		mockMvc.perform(post("/combinedRequests.json").content(posted.put("endDate", "2015-01-08").toString()))
-		.andExpect(content().string(containsString("granularity\": \"DAY\"")))
-		.andExpect(status().isOk());
+				.andExpect(content().string(containsString("granularity\": \"DAY\""))).andExpect(status().isOk());
 		mockMvc.perform(post("/combinedRequests.json").content(posted.put("endDate", "2015-05-01").toString()))
-		.andExpect(content().string(containsString("granularity\": \"WEEK\"")))
-		.andExpect(status().isOk());
+				.andExpect(content().string(containsString("granularity\": \"WEEK\""))).andExpect(status().isOk());
 		mockMvc.perform(post("/combinedRequests.json").content(posted.put("endDate", "2016-02-01").toString()))
-		.andExpect(content().string(containsString("granularity\": \"MONTH\"")))
-		.andExpect(status().isOk());
+				.andExpect(content().string(containsString("granularity\": \"MONTH\""))).andExpect(status().isOk());
 	}
-	
+
 	@Test
 	public final void testLayersUsage() throws Exception {
 
+		mockMvc.perform(post("/layersUsage.json").content(new JSONObject().put("startDate", "2015-01-01")
+				.put("endDate", "2015-01-01").put("user", "testadmin").put("limit", 10).toString()))
+				.andExpect(content().string(containsString("results"))).andExpect(status().isOk());
+
+		mockMvc.perform(post("/layersUsage.json").content(new JSONObject().put("startDate", "2015-01-01")
+				.put("endDate", "2015-01-01").put("user", "testadmin").toString()))
+				.andExpect(content().string(containsString("results"))).andExpect(status().isOk());
+
+		mockMvc.perform(post("/layersUsage.json").content(new JSONObject().put("startDate", "2015-01-01")
+				.put("endDate", "2015-01-01").put("group", "ADMINISTRATOR").put("limit", 10).toString()))
+				.andExpect(content().string(containsString("results"))).andExpect(status().isOk());
+
+		mockMvc.perform(post("/layersUsage.json").content(new JSONObject().put("startDate", "2015-01-01")
+				.put("endDate", "2015-01-01").put("group", "ADMINISTRATOR").toString()))
+				.andExpect(content().string(containsString("results"))).andExpect(status().isOk());
+
+		mockMvc.perform(post("/layersUsage.json").content(new JSONObject().put("startDate", "2015-01-01")
+				.put("endDate", "2015-01-01").put("limit", 10).toString()))
+				.andExpect(content().string(containsString("results"))).andExpect(status().isOk());
+
 		mockMvc.perform(post("/layersUsage.json")
-				.content(new JSONObject().put("startDate", "2015-01-01")
-						.put("endDate", "2015-01-01")
-						.put("user", "testadmin")
-						.put("limit", 10).toString()))
-				.andExpect(content().string(containsString("results"))).andExpect(status().isOk());
-
-		mockMvc.perform(
-				post("/layersUsage.json").content(new JSONObject()
-						.put("startDate", "2015-01-01")
-						.put("endDate", "2015-01-01")
-						.put("user", "testadmin").toString()))
-						.andExpect(content().string(containsString("results"))).andExpect(status().isOk());
-
-		mockMvc.perform(post("/layersUsage.json").content(
-				new JSONObject()
-						.put("startDate", "2015-01-01")
-						.put("endDate", "2015-01-01")
-						.put("group", "ADMINISTRATOR")
-						.put("limit", 10).toString()))
-				.andExpect(content().string(containsString("results"))).andExpect(status().isOk());
-
-		mockMvc.perform(post("/layersUsage.json").content(
-				new JSONObject()
-						.put("startDate", "2015-01-01")
-						.put("endDate", "2015-01-01")
-						.put("group", "ADMINISTRATOR").toString()))
-				.andExpect(content().string(containsString("results"))).andExpect(status().isOk());
-
-		mockMvc.perform(post("/layersUsage.json").content(
-				new JSONObject()
-						.put("startDate", "2015-01-01")
-						.put("endDate", "2015-01-01")
-						.put("limit", 10).toString()))
-				.andExpect(content().string(containsString("results"))).andExpect(status().isOk());
-
-		mockMvc.perform(post("/layersUsage.json").content(
-				new JSONObject()
-						.put("startDate", "2015-01-01")
-						.put("endDate", "2015-01-01").toString()))
+				.content(new JSONObject().put("startDate", "2015-01-01").put("endDate", "2015-01-01").toString()))
 				.andExpect(content().string(containsString("results"))).andExpect(status().isOk());
 	}
-	
+
 	@Test
 	public final void testLayersUsageNoDate() throws Exception {
 		JSONObject posted = new JSONObject("{\"user\": \"testadmin\"}");
 		// -> 400
-		mockMvc.perform(post("/layersUsage.json").content(posted.toString()))
-			.andExpect(status().isBadRequest());
+		mockMvc.perform(post("/layersUsage.json").content(posted.toString())).andExpect(status().isBadRequest());
 
 		mockMvc.perform(post("/layersUsage.json").content(new JSONObject().put("startDate", "2015-01-01").toString()))
-		.andExpect(status().isBadRequest());
+				.andExpect(status().isBadRequest());
 		mockMvc.perform(post("/layersUsage.json").content(new JSONObject().put("endDate", "2015-01-01").toString()))
-		.andExpect(status().isBadRequest());
-	
-		
-		mockMvc.perform(post("/layersUsage.json").content(posted.put("startDate", "invalid")
-				.put("endDate", "invalid").toString()))
-		.andExpect(status().isBadRequest());
+				.andExpect(status().isBadRequest());
+
+		mockMvc.perform(post("/layersUsage.json")
+				.content(posted.put("startDate", "invalid").put("endDate", "invalid").toString()))
+				.andExpect(status().isBadRequest());
 	}
-	
+
 	@Test
 	public final void testLayersUsageUnparseableInput() throws Exception {
 		mockMvc.perform(post("/layersUsage.json").content("{]{[[|[")).andExpect(status().isBadRequest());
 	}
-	
+
 	@Test
 	public final void testDistinctUsers() throws Exception {
 		JSONObject posted = new JSONObject("{\"startDate\": \"2015-01-01\" }");
 
 		mockMvc.perform(post("/distinctUsers").content(posted.put("endDate", "2015-01-01").toString()))
-			.andExpect(content().string(containsString("results\": ")))
-			.andExpect(status().isOk());
+				.andExpect(content().string(containsString("results\": "))).andExpect(status().isOk());
 
-		mockMvc.perform(post("/distinctUsers").content(posted.put("endDate", "2015-01-08").put("group", "ADMINISTRATOR").toString()))
-		.andExpect(content().string(containsString("results\": ")))
-		.andExpect(status().isOk());
+		mockMvc.perform(post("/distinctUsers")
+				.content(posted.put("endDate", "2015-01-08").put("group", "ADMINISTRATOR").toString()))
+				.andExpect(content().string(containsString("results\": "))).andExpect(status().isOk());
 	}
-	
+
 	@Test
 	public final void testDistinctUsersNoDateOrParseError() throws Exception {
 		JSONObject posted = new JSONObject("{\"startDate\": \"2015-01-01\" }");
 
-		mockMvc.perform(post("/distinctUsers").content(posted.toString()))
-			.andExpect(status().isBadRequest());
+		mockMvc.perform(post("/distinctUsers").content(posted.toString())).andExpect(status().isBadRequest());
 		mockMvc.perform(post("/distinctUsers").content(new JSONObject().put("endDate", "2015-01-08").toString()))
-			.andExpect(status().isBadRequest());
+				.andExpect(status().isBadRequest());
 		mockMvc.perform(post("/distinctUsers").content(new JSONObject().put("group", "ADMINISTRATOR").toString()))
-		.andExpect(status().isBadRequest());
+				.andExpect(status().isBadRequest());
 		mockMvc.perform(post("/distinctUsers").content(new JSONObject().put("endDate", "zefcvsd").toString()))
-		.andExpect(status().isBadRequest());
+				.andExpect(status().isBadRequest());
 	}
 
 	@Test
 	public final void testDistinctUsersUnparseableInput() throws Exception {
-		mockMvc.perform(post("/distinctUsers").content(" [{ }{ ]"))
-			.andExpect(status().isBadRequest());
+		mockMvc.perform(post("/distinctUsers").content(" [{ }{ ]")).andExpect(status().isBadRequest());
 	}
 
 	@Test
 	public final void testGuessGranularity() throws ParseException, PropertyVetoException, SQLException {
 		Method m = ReflectionUtils.findMethod(ctrl.getClass(), "guessGranularity", String.class, String.class);
 		m.setAccessible(true);
-		String startDate ="2015-12-03 10:00:55";
+		String startDate = "2015-12-03 10:00:55";
 
 		// < 2 day => by hour
-		GRANULARITY gran =  (GRANULARITY) ReflectionUtils.invokeMethod(m, ctrl, startDate, "2015-12-04 12:33:00");
+		GRANULARITY gran = (GRANULARITY) ReflectionUtils.invokeMethod(m, ctrl, startDate, "2015-12-04 12:33:00");
 		assertTrue(gran == GRANULARITY.HOUR);
 
-		gran =  (GRANULARITY) ReflectionUtils.invokeMethod(m, ctrl, startDate, "2015-12-05 15:12:54");
+		gran = (GRANULARITY) ReflectionUtils.invokeMethod(m, ctrl, startDate, "2015-12-05 15:12:54");
 		assertTrue(gran == GRANULARITY.DAY);
 
 		// < 1 week => by day
-		gran =  (GRANULARITY) ReflectionUtils.invokeMethod(m, ctrl, startDate, "2015-12-06 16:18:21");
+		gran = (GRANULARITY) ReflectionUtils.invokeMethod(m, ctrl, startDate, "2015-12-06 16:18:21");
 		assertTrue(gran == GRANULARITY.DAY);
 
 		// < 1 month => by day
-		gran =  (GRANULARITY) ReflectionUtils.invokeMethod(m, ctrl, startDate, "2016-01-02 09:14:15");
+		gran = (GRANULARITY) ReflectionUtils.invokeMethod(m, ctrl, startDate, "2016-01-02 09:14:15");
 		assertTrue(gran == GRANULARITY.DAY);
 
 		// < 3 months => by day
-		gran =  (GRANULARITY) ReflectionUtils.invokeMethod(m, ctrl, startDate, "2016-02-05 12:45:11");
+		gran = (GRANULARITY) ReflectionUtils.invokeMethod(m, ctrl, startDate, "2016-02-05 12:45:11");
 		assertTrue(gran == GRANULARITY.DAY);
 
 		// > 3 months < 1year => by week
-		gran =  (GRANULARITY) ReflectionUtils.invokeMethod(m, ctrl, startDate, "2016-03-02 16:17:15");
+		gran = (GRANULARITY) ReflectionUtils.invokeMethod(m, ctrl, startDate, "2016-03-02 16:17:15");
 		assertTrue(gran == GRANULARITY.WEEK);
 
 		// other => by year
-		gran =  (GRANULARITY) ReflectionUtils.invokeMethod(m, ctrl, startDate, "2016-12-03 22:24:54");
+		gran = (GRANULARITY) ReflectionUtils.invokeMethod(m, ctrl, startDate, "2016-12-03 22:24:54");
 		assertTrue(gran == GRANULARITY.MONTH);
-		gran =  (GRANULARITY) ReflectionUtils.invokeMethod(m, ctrl, startDate, "2017-12-03 23:46:17");
+		gran = (GRANULARITY) ReflectionUtils.invokeMethod(m, ctrl, startDate, "2017-12-03 23:46:17");
 		assertTrue(gran == GRANULARITY.MONTH);
 	}
 
@@ -310,7 +273,8 @@ public class StatisticsControllerTest {
 	public final void testConvertUTCDateToLocal() throws PropertyVetoException, SQLException {
 		// Test with Paris timezone (positive offset with DST)
 		StatisticsController ctrl = new StatisticsController("Europe/Paris");
-		Method m = ReflectionUtils.findMethod(ctrl.getClass(), "convertUTCDateToLocal", String.class, GRANULARITY.class);
+		Method m = ReflectionUtils.findMethod(ctrl.getClass(), "convertUTCDateToLocal", String.class,
+				GRANULARITY.class);
 		m.setAccessible(true);
 
 		assertEquals("2016-11-16 00", ReflectionUtils.invokeMethod(m, ctrl, "2016-11-15 23", GRANULARITY.HOUR));

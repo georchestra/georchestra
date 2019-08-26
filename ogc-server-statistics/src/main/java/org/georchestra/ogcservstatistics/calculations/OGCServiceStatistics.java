@@ -32,19 +32,18 @@ import org.georchestra.ogcservstatistics.dataservices.RetrieveMostActiveUsers;
 import org.georchestra.ogcservstatistics.dataservices.RetrieveMostConsultedLayers;
 import org.georchestra.ogcservstatistics.dataservices.RetrieveUserConnectionForLayerCommand;
 
-
 /**
- * This is a facade which provides a set of convenient methods to retrieve 
+ * This is a facade which provides a set of convenient methods to retrieve
  * statistic information about OGC Services.
- *  
+ * 
  * @author Mauricio Pazos
  *
  */
 public final class OGCServiceStatistics {
-	
+
 	private final static DataServicesConfiguration dsConfiguration = DataServicesConfiguration.getInstance();
 
-	private OGCServiceStatistics(){
+	private OGCServiceStatistics() {
 		// utility class
 	}
 
@@ -53,7 +52,7 @@ public final class OGCServiceStatistics {
 	 * 
 	 * @param log4jPropertiesFile
 	 */
-	public static void configure(final String log4jPropertiesFile){
+	public static void configure(final String log4jPropertiesFile) {
 		PropertyConfigurator.configure(log4jPropertiesFile);
 	}
 
@@ -62,18 +61,19 @@ public final class OGCServiceStatistics {
 	 * 
 	 * @return List of pairs (fieldName, fieldValue)
 	 * 
-	 * @throws OGCServStatisticsException 
+	 * @throws OGCServStatisticsException
 	 */
-	public static List<Map<String,Object>> list() throws OGCServStatisticsException {
-		
+	public static List<Map<String, Object>> list() throws OGCServStatisticsException {
+
 		RetrieveAllCommand query = new RetrieveAllCommand();
 		return execute(query);
 	}
-	
+
 	/**
-	 *  For each user : list of layers and number of connections
+	 * For each user : list of layers and number of connections
 	 * 
 	 * Returns a list of map with the following structure:
+	 * 
 	 * <pre>
 	 * key: layer
 	 * value: aLayer
@@ -89,33 +89,35 @@ public final class OGCServiceStatistics {
 	 * @param month
 	 * 
 	 * @return List of pairs (fieldName, fieldValue)
-	 * @throws IllegalArgumentException, OGCServStatisticsException 
+	 * @throws IllegalArgumentException, OGCServStatisticsException
 	 */
-	public static List<Map<String, Object> > retrieveConnectionsForLayer(final int year, final int month) 
-			throws IllegalArgumentException, OGCServStatisticsException{
+	public static List<Map<String, Object>> retrieveConnectionsForLayer(final int year, final int month)
+			throws IllegalArgumentException, OGCServStatisticsException {
 
 		RetrieveLayerConnectionsForUserCommand cmd = new RetrieveLayerConnectionsForUserCommand();
 
-		return execute(cmd,year,month);
+		return execute(cmd, year, month);
 	}
-	
+
 	/**
-	 *  For each user : list of layers and number of connections
+	 * For each user : list of layers and number of connections
+	 * 
 	 * @param year
 	 * @return List of pairs (fieldName, fieldValue)
 	 * @throws IllegalArgumentException
 	 * @throws OGCServStatisticsException
 	 */
-	public static List<Map<String, Object> > retrieveConnectionsForLayer(final int year) 
-			throws IllegalArgumentException, OGCServStatisticsException{
+	public static List<Map<String, Object>> retrieveConnectionsForLayer(final int year)
+			throws IllegalArgumentException, OGCServStatisticsException {
 
 		RetrieveLayerConnectionsForUserCommand cmd = new RetrieveLayerConnectionsForUserCommand();
 
-		return execute(cmd,year);
+		return execute(cmd, year);
 	}
-	
+
 	/**
 	 * For each layer : list of users and number of connections
+	 * 
 	 * <pre>
 	 * 
 	 * key: user
@@ -126,7 +128,7 @@ public final class OGCServiceStatistics {
 	 * 
 	 * key: connections
 	 * value: aLong Value
-	 * </pre> 
+	 * </pre>
 	 * 
 	 * @param year
 	 * @param month
@@ -134,31 +136,34 @@ public final class OGCServiceStatistics {
 	 * 
 	 * @return List of pairs (fieldName, fieldValue)
 	 * 
-	 * @throws IllegalArgumentException, OGCServStatisticsException 
+	 * @throws IllegalArgumentException, OGCServStatisticsException
 	 */
-	public static List<Map<String, Object>> retrieveUserConnectionsForLayer(final int year, final int month) 
+	public static List<Map<String, Object>> retrieveUserConnectionsForLayer(final int year, final int month)
 			throws IllegalArgumentException, OGCServStatisticsException {
 
 		RetrieveUserConnectionForLayerCommand cmd = new RetrieveUserConnectionForLayerCommand();
 		return execute(cmd, year, month);
-	}	
+	}
 
 	/**
 	 * For each layer : list of users and number of connections
+	 * 
 	 * @param year
 	 * @return List of pairs (fieldName, fieldValue)
 	 * @throws IllegalArgumentException
 	 * @throws OGCServStatisticsException
 	 */
-	public static List<Map<String, Object>> retrieveUserConnectionsForLayer(final int year) 
+	public static List<Map<String, Object>> retrieveUserConnectionsForLayer(final int year)
 			throws IllegalArgumentException, OGCServStatisticsException {
 
 		RetrieveUserConnectionForLayerCommand cmd = new RetrieveUserConnectionForLayerCommand();
 		return execute(cmd, year);
-	}	
+	}
+
 	/**
-	 * List of the N most active users.
-	 * Returns a list of map with the following structure:
+	 * List of the N most active users. Returns a list of map with the following
+	 * structure:
+	 * 
 	 * <pre>
 	 * 
 	 * key: user
@@ -168,17 +173,17 @@ public final class OGCServiceStatistics {
 	 * value: aLong Value
 	 * </pre>
 	 * 
-	 * @param year	year
+	 * @param year  year
 	 * @param month month
 	 * @param limit N user most active
 	 * 
 	 * @return List of pairs (fieldName, fieldValue)
 	 * 
-	 * @throws IllegalArgumentException, OGCServStatisticsException 
+	 * @throws IllegalArgumentException, OGCServStatisticsException
 	 */
-	public static List<Map<String, Object>> retrieveMostActiveUsers(final int year, final int month, final int limit) 
+	public static List<Map<String, Object>> retrieveMostActiveUsers(final int year, final int month, final int limit)
 			throws IllegalArgumentException, OGCServStatisticsException {
-		
+
 		RetrieveMostActiveUsers cmd = new RetrieveMostActiveUsers();
 
 		List<Map<String, Object>> result = executeUsingLimit(cmd, year, month, limit);
@@ -186,23 +191,24 @@ public final class OGCServiceStatistics {
 		assert result.size() <= limit;
 
 		return result;
-	}	
+	}
 
-	public static List<Map<String, Object>> retrieveMostActiveUsersForYear(final int year, final int month, final int limit) 
-			throws IllegalArgumentException, OGCServStatisticsException {
-		
+	public static List<Map<String, Object>> retrieveMostActiveUsersForYear(final int year, final int month,
+			final int limit) throws IllegalArgumentException, OGCServStatisticsException {
+
 		RetrieveMostActiveUsers cmd = new RetrieveMostActiveUsers();
 
-		List<Map<String, Object>> result = executeUsingLimit(cmd, year,  limit);
+		List<Map<String, Object>> result = executeUsingLimit(cmd, year, limit);
 
 		assert result.size() <= limit;
 
 		return result;
-	}	
+	}
 
 	/**
-	 * List of the N most consulted layers on month 
-	 * Returns a list of map with the following structure:
+	 * List of the N most consulted layers on month Returns a list of map with the
+	 * following structure:
+	 * 
 	 * <pre>
 	 * key: layer
 	 * value: aLayer
@@ -211,16 +217,16 @@ public final class OGCServiceStatistics {
 	 * value: aLong Value
 	 * </pre>
 	 * 
-	 * @param year year
+	 * @param year  year
 	 * @param month month
 	 * @param limit the n most consulted
 	 * 
 	 * @return List of pairs (fieldName, fieldValue)
 	 * 
-	 * @throws OGCServStatisticsException, IllegalArgumentException 
+	 * @throws OGCServStatisticsException, IllegalArgumentException
 	 */
-	public static List<Map<String, Object>> retrieveMostConsultedLayers(final int year, final int month, final int limit) 
-			throws IllegalArgumentException, OGCServStatisticsException {
+	public static List<Map<String, Object>> retrieveMostConsultedLayers(final int year, final int month,
+			final int limit) throws IllegalArgumentException, OGCServStatisticsException {
 
 		RetrieveMostConsultedLayers cmd = new RetrieveMostConsultedLayers();
 
@@ -229,7 +235,7 @@ public final class OGCServiceStatistics {
 		assert result.size() <= limit;
 
 		return result;
-	}	
+	}
 
 	/**
 	 * List of the N most consulted layers on the year
@@ -240,7 +246,7 @@ public final class OGCServiceStatistics {
 	 * @throws IllegalArgumentException
 	 * @throws OGCServStatisticsException
 	 */
-	public static List<Map<String, Object>> retrieveMostConsultedLayers(final int year, final int limit) 
+	public static List<Map<String, Object>> retrieveMostConsultedLayers(final int year, final int limit)
 			throws IllegalArgumentException, OGCServStatisticsException {
 
 		RetrieveMostConsultedLayers cmd = new RetrieveMostConsultedLayers();
@@ -250,46 +256,51 @@ public final class OGCServiceStatistics {
 		assert result.size() <= limit;
 
 		return result;
-	}	
+	}
+
 	/**
 	 * List of the N most consulted layers
+	 * 
 	 * @param cmd
 	 * @param year
 	 * 
 	 * @return List of pairs (fieldName, fieldValue)
 	 * @throws OGCServStatisticsException, IllegalArgumentException
 	 */
-	private static List<Map<String, Object>> execute(QueryCommand cmd, final int year) throws OGCServStatisticsException, IllegalArgumentException{
-		if(year <= 0){
+	private static List<Map<String, Object>> execute(QueryCommand cmd, final int year)
+			throws OGCServStatisticsException, IllegalArgumentException {
+		if (year <= 0) {
 			throw new IllegalArgumentException("year must be greater than 0");
 		}
 
 		cmd.setYear(year);
-		
+
 		return execute(cmd);
 	}
 
 	/**
 	 * Executes the specified QueryCommand
 	 * 
-	 * @param cmd 
+	 * @param cmd
 	 * @param year
 	 * @param month
 	 * @return List of pairs (fieldName, fieldValue)
 	 * @throws OGCServStatisticsException, IllegalArgumentException
 	 */
-	private static List<Map<String, Object>> execute(QueryCommand cmd, final int year, final int month) throws IllegalArgumentException, OGCServStatisticsException{
-		if(year < 1){
+	private static List<Map<String, Object>> execute(QueryCommand cmd, final int year, final int month)
+			throws IllegalArgumentException, OGCServStatisticsException {
+		if (year < 1) {
 			throw new IllegalArgumentException("year must be greater than 0");
 		}
-		if(month < 1 || month > 12){
+		if (month < 1 || month > 12) {
 			throw new IllegalArgumentException("1 <= month <= 12 is expected");
 		}
 		cmd.setYear(year);
 		cmd.setMonth(month);
-		
+
 		return execute(cmd);
 	}
+
 	/**
 	 * Executes the specified QueryCommand filtering by Year and Month
 	 * 
@@ -300,26 +311,28 @@ public final class OGCServiceStatistics {
 	 * @return List of pairs (fieldName, fieldValue)
 	 * @throws OGCServStatisticsException, IllegalArgumentException
 	 */
-	private static List<Map<String, Object>> executeUsingLimit(QueryCommand cmd, final int year, final int month, final int limit) 
-			throws IllegalArgumentException, OGCServStatisticsException{
-		
-		if(year < 1){
+	private static List<Map<String, Object>> executeUsingLimit(QueryCommand cmd, final int year, final int month,
+			final int limit) throws IllegalArgumentException, OGCServStatisticsException {
+
+		if (year < 1) {
 			throw new IllegalArgumentException("year must be greater than 0");
 		}
-		if(month < 1 || month > 12){
+		if (month < 1 || month > 12) {
 			throw new IllegalArgumentException("1 <= month <= 12 is expected");
 		}
-		if(limit < 1){
+		if (limit < 1) {
 			throw new IllegalArgumentException("limit must be greater than 0");
 		}
 		cmd.setYear(year);
 		cmd.setMonth(month);
 		cmd.setLimit(limit);
-		
+
 		return execute(cmd);
 	}
+
 	/**
 	 * Executes the specified QueryCommand filtering by Year
+	 * 
 	 * @param cmd
 	 * @param year
 	 * @param limit
@@ -327,18 +340,18 @@ public final class OGCServiceStatistics {
 	 * @throws IllegalArgumentException
 	 * @throws OGCServStatisticsException
 	 */
-	private static List<Map<String, Object>> executeUsingLimit(QueryCommand cmd, final int year, final int limit) 
-			throws IllegalArgumentException, OGCServStatisticsException{
-		
-		if(year < 1){
+	private static List<Map<String, Object>> executeUsingLimit(QueryCommand cmd, final int year, final int limit)
+			throws IllegalArgumentException, OGCServStatisticsException {
+
+		if (year < 1) {
 			throw new IllegalArgumentException("year must be greater than 0");
 		}
-		if(limit < 1){
+		if (limit < 1) {
 			throw new IllegalArgumentException("limit must be greater than 0");
 		}
 		cmd.setYear(year);
 		cmd.setLimit(limit);
-		
+
 		return execute(cmd);
 	}
 
@@ -351,20 +364,19 @@ public final class OGCServiceStatistics {
 	 * 
 	 * @throws OGCServStatisticsException
 	 */
-	private static List<Map<String, Object>> execute(QueryCommand cmd) 
-			throws OGCServStatisticsException{
+	private static List<Map<String, Object>> execute(QueryCommand cmd) throws OGCServStatisticsException {
 		try {
 			cmd.setConnection(dsConfiguration.getConnection());
 
 			cmd.execute();
 
 			List<Map<String, Object>> result = cmd.getResult();
-			
+
 			return result;
-			
+
 		} catch (Exception e) {
 			throw new OGCServStatisticsException(e);
 		}
-		
+
 	}
 }

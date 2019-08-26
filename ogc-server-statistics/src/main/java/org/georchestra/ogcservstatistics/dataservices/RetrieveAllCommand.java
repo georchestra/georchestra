@@ -31,7 +31,7 @@ import java.util.Map;
  * @author Mauricio Pazos
  *
  */
-final public class RetrieveAllCommand extends AbstractQueryCommand{
+final public class RetrieveAllCommand extends AbstractQueryCommand {
 
 	final static String DATE_COLUMN = "date";
 	final static String USER__COLUMN = "user_name";
@@ -39,27 +39,26 @@ final public class RetrieveAllCommand extends AbstractQueryCommand{
 	final static String LAYER_COLUMN = "layer";
 	final static String SECROLE_COLUMN = "secrole";
 
-	
-	final static String SQL = " SELECT "+ DATE_COLUMN+ "," + USER__COLUMN +","+ SERVICE_COLUMN+","+LAYER_COLUMN+","+SECROLE_COLUMN  
-							+ " FROM ogcstatistics.OGC_SERVICES_LOG"
-							+ " ORDER BY "+ DATE_COLUMN+ "," + USER__COLUMN +","+ SERVICE_COLUMN+","+LAYER_COLUMN+","+SECROLE_COLUMN;
- 	
-	protected PreparedStatement prepareStatement() throws SQLException{
+	final static String SQL = " SELECT " + DATE_COLUMN + "," + USER__COLUMN + "," + SERVICE_COLUMN + "," + LAYER_COLUMN
+			+ "," + SECROLE_COLUMN + " FROM ogcstatistics.OGC_SERVICES_LOG" + " ORDER BY " + DATE_COLUMN + ","
+			+ USER__COLUMN + "," + SERVICE_COLUMN + "," + LAYER_COLUMN + "," + SECROLE_COLUMN;
+
+	protected PreparedStatement prepareStatement() throws SQLException {
 
 		PreparedStatement pStmt = this.connection.prepareStatement(SQL);
-		
+
 		return pStmt;
 	}
 
-	protected Map<String, Object> getRow(ResultSet rs) throws SQLException{
-		
-		Map<String,Object> row = new HashMap<String, Object>(5);
+	protected Map<String, Object> getRow(ResultSet rs) throws SQLException {
+
+		Map<String, Object> row = new HashMap<String, Object>(5);
 		row.put(DATE_COLUMN, rs.getDate(DATE_COLUMN));
 		row.put(USER__COLUMN, rs.getString(USER__COLUMN));
 		row.put(SERVICE_COLUMN, rs.getString(SERVICE_COLUMN));
 		row.put(LAYER_COLUMN, rs.getString(LAYER_COLUMN));
 		row.put(SECROLE_COLUMN, rs.getString(SECROLE_COLUMN));
-		
+
 		return row;
 	}
 

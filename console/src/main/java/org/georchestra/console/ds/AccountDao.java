@@ -33,15 +33,15 @@ import java.util.List;
  */
 public interface AccountDao {
 
-
 	/**
 	 * Checks if the uid exist.
+	 * 
 	 * @param uid
 	 * @return true if the uid exist, false in other case.
 	 * @throws DataServiceException
 	 */
 	boolean exist(final String uid) throws DataServiceException;
-	
+
 	/**
 	 * Returns all accounts
 	 * 
@@ -49,7 +49,7 @@ public interface AccountDao {
 	 * @throws DataServiceException
 	 */
 	List<Account> findAll() throws DataServiceException;
-	
+
 	/**
 	 * Returns all accounts that accomplish the provided filter.
 	 * 
@@ -68,10 +68,12 @@ public interface AccountDao {
 	 * @throws DataServiceException
 	 * @throws DuplicatedEmailException
 	 */
-	void insert(final Account account, final String roleID, final String originLogin) throws DataServiceException, DuplicatedUidException, DuplicatedEmailException;
+	void insert(final Account account, final String roleID, final String originLogin)
+			throws DataServiceException, DuplicatedUidException, DuplicatedEmailException;
 
 	/**
 	 * Updates the user account
+	 * 
 	 * @param account
 	 * @param originLogin login of admin that issue this modification
 	 * @throws DataServiceException
@@ -91,7 +93,8 @@ public interface AccountDao {
 	 * @throws DataServiceException
 	 * @throws NameNotFoundException
 	 */
-	void update(Account account, Account modified, String originLogin) throws DataServiceException, DuplicatedEmailException, NameNotFoundException;
+	void update(Account account, Account modified, String originLogin)
+			throws DataServiceException, DuplicatedEmailException, NameNotFoundException;
 
 	/**
 	 * Changes the user password
@@ -100,8 +103,7 @@ public interface AccountDao {
 	 * @param password
 	 * @throws DataServiceException
 	 */
-	void changePassword(final String uid, final String password)throws DataServiceException;
-
+	void changePassword(final String uid, final String password) throws DataServiceException;
 
 	/**
 	 * Deletes the account
@@ -123,7 +125,7 @@ public interface AccountDao {
 	 * @throws DataServiceException
 	 * @throws NameNotFoundException
 	 */
-	Account findByUID(final String uid)throws DataServiceException, NameNotFoundException;
+	Account findByUID(final String uid) throws DataServiceException, NameNotFoundException;
 
 	/**
 	 * Returns the account that contains the email provided as parameter.
@@ -148,8 +150,9 @@ public interface AccountDao {
 	List<Account> findByRole(final String role) throws DataServiceException, NameNotFoundException;
 
 	/**
-	 * Add the new password. This method is part of the "lost password" workflow to maintan the old password and the new password until the
-	 * user can confirm that he had asked for a new password.   
+	 * Add the new password. This method is part of the "lost password" workflow to
+	 * maintan the old password and the new password until the user can confirm that
+	 * he had asked for a new password.
 	 * 
 	 * @param uid
 	 * @param newPassword
@@ -160,7 +163,7 @@ public interface AccountDao {
 	 * Generates a new Id based on the uid provided as parameter.
 	 * 
 	 * @param uid
-	 *  
+	 * 
 	 * @return a new uid
 	 * 
 	 * @throws DataServiceException
@@ -179,7 +182,7 @@ public interface AccountDao {
 	 * Finds all accounts given a list of blacklisted users and a LDAP filter
 	 *
 	 * @return List of Account that are not in the ProtectedUserFilter, and which
-	 * complies with the provided LDAP filter.
+	 *         complies with the provided LDAP filter.
 	 */
 	List<Account> find(final ProtectedUserFilter uidFilter, Filter f);
 

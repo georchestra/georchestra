@@ -19,7 +19,6 @@
 
 package org.georchestra.console.ws.backoffice.utils;
 
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -31,15 +30,15 @@ import org.json.JSONObject;
  */
 public class RequestUtil {
 
-
-	private RequestUtil(){
+	private RequestUtil() {
 		// utility class
 	}
 
 	/**
 	 * Returns the value associated to the fieldName.
 	 *
-	 * If the fieldName value is not present in the JSON object a null value is returned.
+	 * If the fieldName value is not present in the JSON object a null value is
+	 * returned.
 	 *
 	 * @param json
 	 * @param fieldName
@@ -48,7 +47,7 @@ public class RequestUtil {
 	 */
 	public static String getFieldValue(final JSONObject json, final String fieldName) {
 		try {
-			if(json.isNull(fieldName))
+			if (json.isNull(fieldName))
 				return null;
 			return json.getString(fieldName);
 		} catch (JSONException e) {
@@ -59,7 +58,8 @@ public class RequestUtil {
 	/**
 	 * Returns the boolean value associated to the fieldName.
 	 *
-	 * If the fieldName value is not present in the JSON object a null value is returned.
+	 * If the fieldName value is not present in the JSON object a null value is
+	 * returned.
 	 *
 	 * @param json
 	 * @param fieldName
