@@ -43,7 +43,7 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
  * @author Mauricio Pazos
  *
  */
-public class AccountImpl implements Serializable, Account{
+public class AccountImpl implements Serializable, Account {
 
 	private static final long serialVersionUID = -8022496448991887664L;
 
@@ -52,10 +52,10 @@ public class AccountImpl implements Serializable, Account{
 	private String uid; // uid
 
 	@JsonProperty(UserSchema.COMMON_NAME_KEY)
-	private String commonName; // cn: person's full name,  mandatory
+	private String commonName; // cn: person's full name, mandatory
 
 	@JsonProperty(UserSchema.SURNAME_KEY)
-	private String surname; // sn  mandatory
+	private String surname; // sn mandatory
 
 	@JsonProperty(UserSchema.MAIL_KEY)
 	private String email;// mail
@@ -72,7 +72,8 @@ public class AccountImpl implements Serializable, Account{
 	private String newPassword;
 
 	// user details
-	// sn, givenName, title, postalAddress, postalCode, registeredAddress, postOfficeBox, physicalDeliveryOfficeName
+	// sn, givenName, title, postalAddress, postalCode, registeredAddress,
+	// postOfficeBox, physicalDeliveryOfficeName
 	@JsonProperty(UserSchema.GIVEN_NAME_KEY)
 	private String givenName; // givenName (optional)
 
@@ -80,19 +81,19 @@ public class AccountImpl implements Serializable, Account{
 	private String title; // title
 
 	@JsonProperty(UserSchema.POSTAL_ADDRESS_KEY)
-	private String postalAddress; //postalAddress
+	private String postalAddress; // postalAddress
 
 	@JsonProperty(UserSchema.POSTAL_CODE_KEY)
 	private String postalCode; // postalCode
 
 	@JsonProperty(UserSchema.REGISTERED_ADDRESS_KEY)
-	private String registeredAddress; //registeredAddress
+	private String registeredAddress; // registeredAddress
 
 	@JsonProperty(UserSchema.POST_OFFICE_BOX_KEY)
 	private String postOfficeBox; // postOfficeBox
 
 	@JsonProperty(UserSchema.PHYSICAL_DELIVERY_OFFICE_NAME_KEY)
-	private String physicalDeliveryOfficeName; //physicalDeliveryOfficeName
+	private String physicalDeliveryOfficeName; // physicalDeliveryOfficeName
 
 	@JsonProperty(UserSchema.STREET_KEY)
 	private String street;
@@ -116,8 +117,7 @@ public class AccountImpl implements Serializable, Account{
 	private String homePostalAddress;
 
 	@JsonProperty(UserSchema.SHADOW_EXPIRE_KEY)
-	@JsonFormat(shape = JsonFormat.Shape.STRING,
-			pattern = "yyyy-MM-dd")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private Date shadowExpire;
 
 	@JsonProperty(UserSchema.PRIVACY_POLICY_AGREEMENT_DATE_KEY)
@@ -126,7 +126,7 @@ public class AccountImpl implements Serializable, Account{
 
 	@JsonProperty(UserSchema.MANAGER_KEY)
 	private String manager;
-	
+
 	@JsonProperty(UserSchema.CONTEXT_KEY)
 	private String context;
 
@@ -137,43 +137,27 @@ public class AccountImpl implements Serializable, Account{
 
 	@Override
 	public String toString() {
-		return "AccountImpl{" +
-				"manager='" + manager + '\'' +
-				", uid='" + uid + '\'' +
-				", commonName='" + commonName + '\'' +
-				", surname='" + surname + '\'' +
-				", email='" + email + '\'' +
-				", phone='" + phone + '\'' +
-				", description='" + description + '\'' +
-				", password='" + password + '\'' +
-				", newPassword='" + newPassword + '\'' +
-				", givenName='" + givenName + '\'' +
-				", title='" + title + '\'' +
-				", postalAddress='" + postalAddress + '\'' +
-				", postalCode='" + postalCode + '\'' +
-				", registeredAddress='" + registeredAddress + '\'' +
-				", postOfficeBox='" + postOfficeBox + '\'' +
-				", physicalDeliveryOfficeName='" + physicalDeliveryOfficeName + '\'' +
-				", street='" + street + '\'' +
-				", locality='" + locality + '\'' +
-				", facsimile='" + facsimile + '\'' +
-				", mobile='" + mobile + '\'' +
-				", roomNumber='" + roomNumber + '\'' +
-				", stateOrProvince='" + stateOrProvince + '\'' +
-				", homePostalAddress='" + homePostalAddress + '\'' +
-				", shadowExpire='" + shadowExpire + '\'' +
-				", privacyPolicyAgreementDate='" + privacyPolicyAgreementDate + '\'' +
-				", context='" + context + '\'' +
-				", org='" + org + '\'' +
-				'}';
+		return "AccountImpl{" + "manager='" + manager + '\'' + ", uid='" + uid + '\'' + ", commonName='" + commonName
+				+ '\'' + ", surname='" + surname + '\'' + ", email='" + email + '\'' + ", phone='" + phone + '\''
+				+ ", description='" + description + '\'' + ", password='" + password + '\'' + ", newPassword='"
+				+ newPassword + '\'' + ", givenName='" + givenName + '\'' + ", title='" + title + '\''
+				+ ", postalAddress='" + postalAddress + '\'' + ", postalCode='" + postalCode + '\''
+				+ ", registeredAddress='" + registeredAddress + '\'' + ", postOfficeBox='" + postOfficeBox + '\''
+				+ ", physicalDeliveryOfficeName='" + physicalDeliveryOfficeName + '\'' + ", street='" + street + '\''
+				+ ", locality='" + locality + '\'' + ", facsimile='" + facsimile + '\'' + ", mobile='" + mobile + '\''
+				+ ", roomNumber='" + roomNumber + '\'' + ", stateOrProvince='" + stateOrProvince + '\''
+				+ ", homePostalAddress='" + homePostalAddress + '\'' + ", shadowExpire='" + shadowExpire + '\''
+				+ ", privacyPolicyAgreementDate='" + privacyPolicyAgreementDate + '\'' + ", context='" + context + '\''
+				+ ", org='" + org + '\'' + '}';
 	}
 
 	@Override
 	public void setUid(String uid) {
 		this.uid = uid;
 	}
+
 	@Override
-	public String getUid(){
+	public String getUid() {
 		return this.uid;
 	}
 
@@ -192,26 +176,32 @@ public class AccountImpl implements Serializable, Account{
 	public void setCommonName(String name) {
 		this.commonName = name;
 	}
+
 	@Override
 	public String getEmail() {
 		return email;
 	}
+
 	@Override
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
 	@Override
 	public String getPhone() {
 		return phone;
 	}
+
 	@Override
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
+
 	@Override
 	public String getDescription() {
 		return description;
 	}
+
 	@Override
 	public void setDescription(String description) {
 		this.description = description;
@@ -220,8 +210,7 @@ public class AccountImpl implements Serializable, Account{
 	@Override
 	public void setPassword(String password) {
 		LdapShaPasswordEncoder lspe = new LdapShaPasswordEncoder();
-		String encrypted = lspe.encodePassword(password,
-					String.valueOf(System.currentTimeMillis()).getBytes());
+		String encrypted = lspe.encodePassword(password, String.valueOf(System.currentTimeMillis()).getBytes());
 		this.password = encrypted;
 	}
 
@@ -233,11 +222,11 @@ public class AccountImpl implements Serializable, Account{
 	@Override
 	public void setNewPassword(String newPassword) {
 		LdapShaPasswordEncoder lspe = new LdapShaPasswordEncoder();
-		String encrypted = lspe.encodePassword(newPassword,
-					String.valueOf(System.currentTimeMillis()).getBytes());
+		String encrypted = lspe.encodePassword(newPassword, String.valueOf(System.currentTimeMillis()).getBytes());
 		this.newPassword = encrypted;
 
 	}
+
 	@Override
 	public String getNewPassword() {
 		return this.newPassword;
@@ -255,7 +244,8 @@ public class AccountImpl implements Serializable, Account{
 	}
 
 	/**
-	 * The givenName attribute is used to hold the part of a person’s name which is not their surname nor middle name.
+	 * The givenName attribute is used to hold the part of a person’s name which is
+	 * not their surname nor middle name.
 	 */
 	@Override
 	public String getGivenName() {
@@ -263,7 +253,8 @@ public class AccountImpl implements Serializable, Account{
 	}
 
 	/**
-	 * The givenName attribute is used to hold the part of a person’s name which is not their surname nor middle name.
+	 * The givenName attribute is used to hold the part of a person’s name which is
+	 * not their surname nor middle name.
 	 */
 	@Override
 	public void setGivenName(String givenName) {
@@ -364,7 +355,7 @@ public class AccountImpl implements Serializable, Account{
 	}
 
 	@Override
-	public void setMobile( String mobile) {
+	public void setMobile(String mobile) {
 		this.mobile = mobile;
 	}
 
@@ -378,27 +369,36 @@ public class AccountImpl implements Serializable, Account{
 
 		this.roomNumber = roomNumber;
 	}
+
 	@Override
 	public String getRoomNumber() {
 		return this.roomNumber;
 	}
 
 	@Override
-	public void  setStateOrProvince(String stateOrProvince) {
+	public void setStateOrProvince(String stateOrProvince) {
 		this.stateOrProvince = stateOrProvince;
 	}
 
 	@Override
-	public void setShadowExpire(Date expireDate) { this.shadowExpire = expireDate; }
+	public void setShadowExpire(Date expireDate) {
+		this.shadowExpire = expireDate;
+	}
 
 	@Override
-	public Date getShadowExpire() { return this.shadowExpire; }
+	public Date getShadowExpire() {
+		return this.shadowExpire;
+	}
 
 	@Override
-	public void setPrivacyPolicyAgreementDate(LocalDate privacyPolicyAgreementDate) { this.privacyPolicyAgreementDate = privacyPolicyAgreementDate; }
+	public void setPrivacyPolicyAgreementDate(LocalDate privacyPolicyAgreementDate) {
+		this.privacyPolicyAgreementDate = privacyPolicyAgreementDate;
+	}
 
 	@Override
-	public LocalDate getPrivacyPolicyAgreementDate() { return this.privacyPolicyAgreementDate; }
+	public LocalDate getPrivacyPolicyAgreementDate() {
+		return this.privacyPolicyAgreementDate;
+	}
 
 	@Override
 	public String getManager() {
@@ -407,7 +407,7 @@ public class AccountImpl implements Serializable, Account{
 
 	@Override
 	public void setManager(String manager) {
-		if (manager == null || manager.length() == 0){
+		if (manager == null || manager.length() == 0) {
 			this.manager = null;
 		} else {
 			try {
@@ -418,7 +418,7 @@ public class AccountImpl implements Serializable, Account{
 			}
 		}
 	}
-	
+
 	@Override
 	public String getContext() {
 		return context;
@@ -429,50 +429,46 @@ public class AccountImpl implements Serializable, Account{
 		this.context = context;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
-    public int hashCode() {
-	    final int prime = 31;
-	    int result = 1;
-	    result = prime * result
-	            + ((givenName == null) ? 0 : givenName.hashCode());
-	    result = prime * result + ((surname == null) ? 0 : surname.hashCode());
-	    result = prime * result + ((uid == null) ? 0 : uid.hashCode());
-	    return result;
-    }
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((givenName == null) ? 0 : givenName.hashCode());
+		result = prime * result + ((surname == null) ? 0 : surname.hashCode());
+		result = prime * result + ((uid == null) ? 0 : uid.hashCode());
+		return result;
+	}
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
 		AccountImpl account = (AccountImpl) o;
-		return Objects.equals(uid, account.uid) &&
-				Objects.equals(commonName, account.commonName) &&
-				Objects.equals(surname, account.surname) &&
-				Objects.equals(email, account.email) &&
-				Objects.equals(phone, account.phone) &&
-				Objects.equals(description, account.description) &&
-				Objects.equals(givenName, account.givenName) &&
-				Objects.equals(title, account.title) &&
-				Objects.equals(postalAddress, account.postalAddress) &&
-				Objects.equals(postalCode, account.postalCode) &&
-				Objects.equals(registeredAddress, account.registeredAddress) &&
-				Objects.equals(postOfficeBox, account.postOfficeBox) &&
-				Objects.equals(physicalDeliveryOfficeName, account.physicalDeliveryOfficeName) &&
-				Objects.equals(street, account.street) &&
-				Objects.equals(locality, account.locality) &&
-				Objects.equals(facsimile, account.facsimile) &&
-				Objects.equals(mobile, account.mobile) &&
-				Objects.equals(roomNumber, account.roomNumber) &&
-				Objects.equals(stateOrProvince, account.stateOrProvince) &&
-				Objects.equals(homePostalAddress, account.homePostalAddress) &&
-				Objects.equals(shadowExpire, account.shadowExpire) &&
-				Objects.equals(privacyPolicyAgreementDate, account.privacyPolicyAgreementDate) &&
-				Objects.equals(manager, account.manager) &&
-				Objects.equals(context, account.context) &&
-				Objects.equals(org, account.org);
+		return Objects.equals(uid, account.uid) && Objects.equals(commonName, account.commonName)
+				&& Objects.equals(surname, account.surname) && Objects.equals(email, account.email)
+				&& Objects.equals(phone, account.phone) && Objects.equals(description, account.description)
+				&& Objects.equals(givenName, account.givenName) && Objects.equals(title, account.title)
+				&& Objects.equals(postalAddress, account.postalAddress)
+				&& Objects.equals(postalCode, account.postalCode)
+				&& Objects.equals(registeredAddress, account.registeredAddress)
+				&& Objects.equals(postOfficeBox, account.postOfficeBox)
+				&& Objects.equals(physicalDeliveryOfficeName, account.physicalDeliveryOfficeName)
+				&& Objects.equals(street, account.street) && Objects.equals(locality, account.locality)
+				&& Objects.equals(facsimile, account.facsimile) && Objects.equals(mobile, account.mobile)
+				&& Objects.equals(roomNumber, account.roomNumber)
+				&& Objects.equals(stateOrProvince, account.stateOrProvince)
+				&& Objects.equals(homePostalAddress, account.homePostalAddress)
+				&& Objects.equals(shadowExpire, account.shadowExpire)
+				&& Objects.equals(privacyPolicyAgreementDate, account.privacyPolicyAgreementDate)
+				&& Objects.equals(manager, account.manager) && Objects.equals(context, account.context)
+				&& Objects.equals(org, account.org);
 	}
 
 	@Override
@@ -498,15 +494,15 @@ public class AccountImpl implements Serializable, Account{
 	@Override
 	@JsonGetter(UserSchema.ORG_KEY)
 	public String getOrg() {
-		if(this.org == null)
+		if (this.org == null)
 			return "";
 		else
 			return this.org;
 	}
 
-    public int compareTo(Account o) {
+	public int compareTo(Account o) {
 		return o.getUid().compareToIgnoreCase(this.uid);
-    }
+	}
 
 	@Override
 	public boolean isPending() {

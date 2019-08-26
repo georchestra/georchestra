@@ -36,7 +36,9 @@ class RoleImpl implements Role, Comparable<Role> {
 	private String description;
 	private boolean isFavorite;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.georchestra.console.dto.Role#getCommonName()
 	 */
 	@Override
@@ -44,7 +46,9 @@ class RoleImpl implements Role, Comparable<Role> {
 		return this.name;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.georchestra.console.dto.Role#setCommonName(java.lang.String)
 	 */
 	@Override
@@ -52,7 +56,9 @@ class RoleImpl implements Role, Comparable<Role> {
 		this.name = cn;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.georchestra.console.dto.Role#getMemberUid()
 	 */
 	@Override
@@ -60,7 +66,9 @@ class RoleImpl implements Role, Comparable<Role> {
 		return this.userList;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.georchestra.console.dto.Role#setMemberUid(java.util.List)
 	 */
 	@Override
@@ -75,7 +83,9 @@ class RoleImpl implements Role, Comparable<Role> {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.georchestra.console.dto.Role#addMemberUid(java.lang.String)
 	 */
 	@Override
@@ -117,53 +127,53 @@ class RoleImpl implements Role, Comparable<Role> {
 
 	@Override
 	public String toString() {
-		return "RoleImpl [name=" + name + ", userList=" + userList
-				+ ", description=" + description
-				+ "]";
+		return "RoleImpl [name=" + name + ", userList=" + userList + ", description=" + description + "]";
 	}
 
-
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
-    @Override
-    public int hashCode() {
-	    final int prime = 31;
-	    int result = 1;
-	    result = prime * result + ((name == null) ? 0 : name.hashCode());
-	    return result;
-    }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		return result;
+	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
-    @Override
-    public boolean equals(Object obj) {
-	    if (this == obj) {
-		    return true;
-	    }
-	    if (obj == null) {
-		    return false;
-	    }
-	    if (!(obj instanceof RoleImpl)) {
-		    return false;
-	    }
-	    RoleImpl other = (RoleImpl) obj;
-	    if (name == null) {
-		    if (other.name != null) {
-			    return false;
-		    }
-	    } else if (!name.equals(other.name)) {
-		    return false;
-	    }
-	    return true;
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof RoleImpl)) {
+			return false;
+		}
+		RoleImpl other = (RoleImpl) obj;
+		if (name == null) {
+			if (other.name != null) {
+				return false;
+			}
+		} else if (!name.equals(other.name)) {
+			return false;
+		}
+		return true;
+	}
 
 	@Override
-    public int compareTo(Role o) {
+	public int compareTo(Role o) {
 
-	    return this.name.compareTo(o.getName());
-    }
+		return this.name.compareTo(o.getName());
+	}
 
 }

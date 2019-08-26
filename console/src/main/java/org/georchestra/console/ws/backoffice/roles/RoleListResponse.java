@@ -45,28 +45,28 @@ final class RoleListResponse {
 		this.roleList = list;
 		this.filter = filter;
 	}
-	
+
 	public JSONArray toJsonArray() throws JSONException {
 		JSONArray jsonRoleArray = new JSONArray();
-    	for (Role role: this.roleList) {
+		for (Role role : this.roleList) {
 
-    		JSONObject jsonRole = new JSONObject();
+			JSONObject jsonRole = new JSONObject();
 
-    		jsonRole.put(RoleSchema.COMMON_NAME_KEY, role.getName());
-    		jsonRole.put(RoleSchema.DESCRIPTION_KEY, role.getDescription());
-    		jsonRole.put(RoleSchema.FAVORITE_JSON_KEY, role.isFavorite());
+			jsonRole.put(RoleSchema.COMMON_NAME_KEY, role.getName());
+			jsonRole.put(RoleSchema.DESCRIPTION_KEY, role.getDescription());
+			jsonRole.put(RoleSchema.FAVORITE_JSON_KEY, role.isFavorite());
 
-    		// adds the list of users
-    		List<String> list = filter.filterStringList(role.getUserList());
+			// adds the list of users
+			List<String> list = filter.filterStringList(role.getUserList());
 
-    		JSONArray membersArray = new JSONArray();
+			JSONArray membersArray = new JSONArray();
 
-    		for(String userUid: list)
-    			membersArray.put(userUid);
+			for (String userUid : list)
+				membersArray.put(userUid);
 
-    		jsonRole.put("users", membersArray);
+			jsonRole.put("users", membersArray);
 
-    		jsonRoleArray.put(jsonRole);
+			jsonRoleArray.put(jsonRole);
 		}
 		return jsonRoleArray;
 	}

@@ -27,8 +27,7 @@ public class OGCServiceParserTest {
 				"anonymousUser|2013/12/18 12:45:00|http://localhost/mapserver?SeRVICE=wFs&REQUEsT=DESCRIBESTOREDQUERIES",
 				"anonymousUser|2013/12/18 12:52:00|http://localhost/mapserver?SeRVICE=wFs&REQUEsT=CREATESTOREDquery",
 				"anonymousUser|2013/12/18 12:53:00|http://localhost/mapserver?SeRVICE=wFs&REQUEsT=DROPSTOREDQUERY",
-				"anonymousUser|2013/12/18 12:57:00|http://localhost/mapserver?SeRVICE=wFs&REQUEsT=DROPSTOREDQUERY",
-		};
+				"anonymousUser|2013/12/18 12:57:00|http://localhost/mapserver?SeRVICE=wFs&REQUEsT=DROPSTOREDQUERY", };
 
 		for (int i = 0; i < REQUESTS_TO_BE_PARSED.length; i++) {
 			Map<String, Object> lst = OGCServiceParser.parseLog(REQUESTS_TO_BE_PARSED[i]).get(0);
@@ -98,7 +97,8 @@ public class OGCServiceParserTest {
 		testResourceRequest("postWfsUpdate.txt", "WFS");
 	}
 
-	private void testResourceRequest(final String resourceName, final String expectedService) throws UnsupportedEncodingException, ParseException {
+	private void testResourceRequest(final String resourceName, final String expectedService)
+			throws UnsupportedEncodingException, ParseException {
 		String request = Utility.loadRequest(resourceName);
 		String user = "user";
 		Date time = new Date();

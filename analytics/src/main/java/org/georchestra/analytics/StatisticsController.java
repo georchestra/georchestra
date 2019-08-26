@@ -59,12 +59,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.google.common.annotations.VisibleForTesting;
 
 /**
- * This controller defines the entry point to return statistics based on user or groups, for a given
- * date period.
+ * This controller defines the entry point to return statistics based on user or
+ * groups, for a given date period.
  *
- * The entry point "/combinedRequests" receives a plain JSON object defined as follows:
+ * The entry point "/combinedRequests" receives a plain JSON object defined as
+ * follows:
  *
  * - search by user:
+ * 
  * <pre>
  * {
  *   "user": "user",
@@ -74,6 +76,7 @@ import com.google.common.annotations.VisibleForTesting;
  * </pre>
  *
  * - search by roles:
+ * 
  * <pre>
  * {
  *   "group": "group",
@@ -99,13 +102,13 @@ import com.google.common.annotations.VisibleForTesting;
  * If neither user nor group is set, global statistics are returned.
  *
  * where granularity will depend on the submitted date, following the algorithm:
- *  if datediff < 2 days   then granularity by hour
- *  if datediff < 1 week   then granularity by day
- *  if datediff < 1 month  then granularity by day
- *  if datediff < 3 months then granularity by week
- *  if datediff < 1 year   then granularity by month
+ * if datediff < 2 days then granularity by hour if datediff < 1 week then
+ * granularity by day if datediff < 1 month then granularity by day if datediff
+ * < 3 months then granularity by week if datediff < 1 year then granularity by
+ * month
  *
  * - The entry point "/layersUsage" receives a JSON object as follows:
+ * 
  * <pre>
  * {
  *   "user"|"group": "user|group",
@@ -114,9 +117,11 @@ import com.google.common.annotations.VisibleForTesting;
  *   "endDate": "YYYY-mm-dd"
  * }
  * </pre>
+ * 
  * User, group and limit are optional parameters.
  * 
  * The returned JSON object will follow the pattern:
+ * 
  * <pre>
  * { "results": [
  *   {
@@ -132,7 +137,7 @@ import com.google.common.annotations.VisibleForTesting;
  * </pre>
  *
  * - the entry point "/distinctUsers" receives a JSON object as follows:
- *  
+ * 
  * <pre>
  * {
  *   "group": "group",
@@ -144,6 +149,7 @@ import com.google.common.annotations.VisibleForTesting;
  * group is optional. If not set, global statistics are returned.
  *
  * The returned object will follow the pattern:
+ * 
  * <pre>
  * {
  *   "results": [
@@ -160,7 +166,7 @@ import com.google.common.annotations.VisibleForTesting;
 
 @Controller
 @Api(name = "Statistics API", description = "Methods to get several statistics "
-        + "related to users and groups, and their use of the infrastructure.")
+		+ "related to users and groups, and their use of the infrastructure.")
 public class StatisticsController {
 
 	@Autowired
@@ -183,36 +189,32 @@ public class StatisticsController {
 	// List of users to ignore in stats
 	private Set<String> excludedUsers;
 
-	private static enum FORMAT { JSON, CSV }
-	private static enum REQUEST_TYPE { USAGE, EXTRACTION }
+	private static enum FORMAT {
+		JSON, CSV
+	}
+
+	private static enum REQUEST_TYPE {
+		USAGE, EXTRACTION
+	}
 
 	public StatisticsController(String localTimezone) throws PropertyVetoException, SQLException {
 		// Parser to convert from local time to DB time (UTC)
-		this.localInputFormatter = DateTimeFormat.forPattern("yyyy-MM-dd")
-				.withZone(DateTimeZone.forID(localTimezone));
-		this.dbOutputFormatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")
-				.withZone(DateTimeZone.forID("UTC"));
+		this.localInputFormatter = DateTimeFormat.forPattern("yyyy-MM-dd").withZone(DateTimeZone.forID(localTimezone));
+		this.dbOutputFormatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").withZone(DateTimeZone.forID("UTC"));
 
 		// Used to parse date from DB based on granularity
-		this.dbHourInputFormatter = DateTimeFormat.forPattern("yyyy-MM-dd HH")
-				.withZone(DateTimeZone.forID("UTC"));
+		this.dbHourInputFormatter = DateTimeFormat.forPattern("yyyy-MM-dd HH").withZone(DateTimeZone.forID("UTC"));
 		this.dbHourOutputFormatter = DateTimeFormat.forPattern("yyyy-MM-dd HH")
 				.withZone(DateTimeZone.forID(localTimezone));
 
-		this.dbDayInputFormatter = DateTimeFormat.forPattern("y-M-d")
-				.withZone(DateTimeZone.forID("UTC"));
-		this.dbDayOutputFormatter = DateTimeFormat.forPattern("yyyy-MM-dd")
-				.withZone(DateTimeZone.forID(localTimezone));
+		this.dbDayInputFormatter = DateTimeFormat.forPattern("y-M-d").withZone(DateTimeZone.forID("UTC"));
+		this.dbDayOutputFormatter = DateTimeFormat.forPattern("yyyy-MM-dd").withZone(DateTimeZone.forID(localTimezone));
 
-		this.dbWeekInputFormatter = DateTimeFormat.forPattern("y-w")
-				.withZone(DateTimeZone.forID("UTC"));
-		this.dbWeekOutputFormatter = DateTimeFormat.forPattern("yyyy-ww")
-				.withZone(DateTimeZone.forID(localTimezone));
+		this.dbWeekInputFormatter = DateTimeFormat.forPattern("y-w").withZone(DateTimeZone.forID("UTC"));
+		this.dbWeekOutputFormatter = DateTimeFormat.forPattern("yyyy-ww").withZone(DateTimeZone.forID(localTimezone));
 
-		this.dbMonthInputFormatter = DateTimeFormat.forPattern("y-M")
-				.withZone(DateTimeZone.forID("UTC"));
-		this.dbMonthOutputFormatter = DateTimeFormat.forPattern("yyyy-MM")
-				.withZone(DateTimeZone.forID(localTimezone));
+		this.dbMonthInputFormatter = DateTimeFormat.forPattern("y-M").withZone(DateTimeZone.forID("UTC"));
+		this.dbMonthOutputFormatter = DateTimeFormat.forPattern("yyyy-MM").withZone(DateTimeZone.forID(localTimezone));
 	}
 
 	// Getter and setter for unit tests
@@ -226,63 +228,63 @@ public class StatisticsController {
 		this.excludedUsers = excludedUsers;
 	}
 
-
-
-	/** Granularity used for the returned date type in combined requests statistics */
-	public static enum GRANULARITY { HOUR, DAY, WEEK, MONTH }
+	/**
+	 * Granularity used for the returned date type in combined requests statistics
+	 */
+	public static enum GRANULARITY {
+		HOUR, DAY, WEEK, MONTH
+	}
 
 	/*
 	 * Test examples :
 	 *
-	 *  combinedRequests with user:
-	 *	 curl -XPOST --data-binary '{"user": "testadmin", "startDate": "2015-01-01", "endDate": "2015-12-01" }' \
-	   -H'Content-Type: application/json'   http://localhost:8280/analytics/ws/combinedRequests -i
+	 * combinedRequests with user: curl -XPOST --data-binary '{"user": "testadmin",
+	 * "startDate": "2015-01-01", "endDate": "2015-12-01" }' \ -H'Content-Type:
+	 * application/json' http://localhost:8280/analytics/ws/combinedRequests -i
 	 *
-	 *  combinedRequests with group:
-	 *   curl -XPOST --data-binary '{"group": "ADMINISTRATOR", "startDate": "2015-10-01", "endDate": "2015-11-01" }' \
-           -H'Content-Type: application/json'   http://localhost:8280/analytics/ws/combinedRequests -i
+	 * combinedRequests with group: curl -XPOST --data-binary '{"group":
+	 * "ADMINISTRATOR", "startDate": "2015-10-01", "endDate": "2015-11-01" }' \
+	 * -H'Content-Type: application/json'
+	 * http://localhost:8280/analytics/ws/combinedRequests -i
 	 *
-	 *  layersUsage with user:
-	 *    curl -XPOST --data-binary '{"user": "testadmin", "limit": 10, "startDate": "2015-01-01", "endDate": "2015-12-01" }' \
-           -H'Content-Type: application/json'   http://localhost:8280/analytics/ws/layersUsage -i
+	 * layersUsage with user: curl -XPOST --data-binary '{"user": "testadmin",
+	 * "limit": 10, "startDate": "2015-01-01", "endDate": "2015-12-01" }' \
+	 * -H'Content-Type: application/json'
+	 * http://localhost:8280/analytics/ws/layersUsage -i
 	 *
-	 *  layersUsage with group:
-	 *    curl -XPOST --data-binary '{"group": "ADMINISTRATOR", "startDate": "2015-01-01", "endDate": "2015-12-01" }' \
-           -H'Content-Type: application/json'   http://localhost:8280/analytics/ws/layersUsage -i
+	 * layersUsage with group: curl -XPOST --data-binary '{"group": "ADMINISTRATOR",
+	 * "startDate": "2015-01-01", "endDate": "2015-12-01" }' \ -H'Content-Type:
+	 * application/json' http://localhost:8280/analytics/ws/layersUsage -i
 	 *
-	 *  layersUsage without filter:
-	 *    curl -XPOST --data-binary '{"limit": 10, "startDate": "2015-01-01", "endDate": "2015-12-01" }' \
-           -H'Content-Type: application/json'   http://localhost:8280/analytics/ws/layersUsage -i
+	 * layersUsage without filter: curl -XPOST --data-binary '{"limit": 10,
+	 * "startDate": "2015-01-01", "endDate": "2015-12-01" }' \ -H'Content-Type:
+	 * application/json' http://localhost:8280/analytics/ws/layersUsage -i
 	 *
-	 *  distinctUsers :
-	 *    curl -XPOST --data-binary '{"group": "ADMINISTRATOR", "startDate": "2015-01-01", "endDate": "2015-12-01" }' \
-	   -H'Content-Type: application/json'   http://localhost:8280/analytics/ws/distinctUsers -i
+	 * distinctUsers : curl -XPOST --data-binary '{"group": "ADMINISTRATOR",
+	 * "startDate": "2015-01-01", "endDate": "2015-12-01" }' \ -H'Content-Type:
+	 * application/json' http://localhost:8280/analytics/ws/distinctUsers -i
 	 */
 	/**
-	 * Total combined requests count group by time interval (hour, day, week or month). May be filtered by a user or a
-	 * group.
+	 * Total combined requests count group by time interval (hour, day, week or
+	 * month). May be filtered by a user or a group.
 	 *
-	 * @param payload the JSON object containing the input parameters
+	 * @param payload  the JSON object containing the input parameters
 	 * @param response the HttpServletResponse object.
-	 * @return a JSON string or CSV doc containing the requested aggregated statistics.
+	 * @return a JSON string or CSV doc containing the requested aggregated
+	 *         statistics.
 	 *
 	 * @throws JSONException
 	 */
-	@RequestMapping(value="/combinedRequests.{format}", method=RequestMethod.POST)
+	@RequestMapping(value = "/combinedRequests.{format}", method = RequestMethod.POST)
 	@ResponseBody
-    @ApiMethod(description="Returns the Total combined requests count group by time interval "
-	            + "(hour, day, week or month). It must be filtered by either a user or a group. "
-	            + "User or group is mandatory, a startDate and an endDate must be specified, ie:"
-	            + "<br/><code>"
-	            + "{ user: testadmin, startDate: 2015-01-01, endDate: 2015-12-01 }"
-	            + "</code><br/>or<br/>"
-	            + "<code>"
-	            + "{ group: ADMINISTRATOR, startDate: 2015-10-01, endDate: 2015-11-01 }"
-	            + "</code><br/>"
-	            + "is a valid request."
-	            + "")
-	public String combinedRequests(@RequestBody String payload, @PathVariable String format, HttpServletResponse response)
-			throws JSONException, ParseException, SQLException {
+	@ApiMethod(description = "Returns the Total combined requests count group by time interval "
+			+ "(hour, day, week or month). It must be filtered by either a user or a group. "
+			+ "User or group is mandatory, a startDate and an endDate must be specified, ie:" + "<br/><code>"
+			+ "{ user: testadmin, startDate: 2015-01-01, endDate: 2015-12-01 }" + "</code><br/>or<br/>" + "<code>"
+			+ "{ group: ADMINISTRATOR, startDate: 2015-10-01, endDate: 2015-11-01 }" + "</code><br/>"
+			+ "is a valid request." + "")
+	public String combinedRequests(@RequestBody String payload, @PathVariable String format,
+			HttpServletResponse response) throws JSONException, ParseException, SQLException {
 
 		JSONObject input = null;
 		Map<String, String> sqlValues = new HashMap<>();
@@ -314,32 +316,32 @@ public class StatisticsController {
 			sqlValues.put("group", "ROLE_" + input.getString("group"));
 
 		// Compute expression to aggregate dates
-		GRANULARITY g = this.guessGranularity((String) sqlValues.get("startDate"),(String) sqlValues.get("endDate"));
+		GRANULARITY g = this.guessGranularity((String) sqlValues.get("startDate"), (String) sqlValues.get("endDate"));
 		String aggregateDate;
 		switch (g) {
-			case HOUR:
-				aggregateDate = "YYYY-mm-dd HH24";
-				break;
-			case DAY:
-				aggregateDate = "YYYY-mm-dd";
-				break;
-			case WEEK:
-				aggregateDate = "YYYY-IW";
-				break;
-			case MONTH:
-				aggregateDate = "YYYY-mm";
-				break;
-			default:
-				throw new IllegalArgumentException("Invalid value for granularity");
+		case HOUR:
+			aggregateDate = "YYYY-mm-dd HH24";
+			break;
+		case DAY:
+			aggregateDate = "YYYY-mm-dd";
+			break;
+		case WEEK:
+			aggregateDate = "YYYY-IW";
+			break;
+		case MONTH:
+			aggregateDate = "YYYY-mm";
+			break;
+		default:
+			throw new IllegalArgumentException("Invalid value for granularity");
 		}
 		sqlValues.put("aggregateDateExpression", aggregateDate);
 
 		// Generate SQL query
-		String sql = "SELECT COUNT(*) AS count," +
-				"            to_char(date, {aggregateDateExpression}) AS aggregate_date " +
-				"     FROM ogcstatistics.ogc_services_log " +
-				"     WHERE date >= CAST({startDate} AS timestamp without time zone) " +
-				"     AND date < CAST({endDate} AS timestamp without time zone) ";
+		String sql = "SELECT COUNT(*) AS count,"
+				+ "            to_char(date, {aggregateDateExpression}) AS aggregate_date "
+				+ "     FROM ogcstatistics.ogc_services_log "
+				+ "     WHERE date >= CAST({startDate} AS timestamp without time zone) "
+				+ "     AND date < CAST({endDate} AS timestamp without time zone) ";
 
 		// Handle user and group
 		if (input.has("user"))
@@ -347,109 +349,117 @@ public class StatisticsController {
 		if (input.has("group"))
 			sql += " AND {group} = ANY (roles) ";
 
-		sql += "GROUP BY to_char(date, {aggregateDateExpression}) " +
-				"ORDER BY to_char(date, {aggregateDateExpression})";
+		sql += "GROUP BY to_char(date, {aggregateDateExpression}) "
+				+ "ORDER BY to_char(date, {aggregateDateExpression})";
 
 		// Fetch and format results
-        final String generatedQuery = queryBuilder.generateQuery(sql, sqlValues);
-        try (Connection c = dataSource.getConnection(); //
-                Statement st = c.createStatement(); //
-                ResultSet res = st.executeQuery(generatedQuery)) {
+		final String generatedQuery = queryBuilder.generateQuery(sql, sqlValues);
+		try (Connection c = dataSource.getConnection(); //
+				Statement st = c.createStatement(); //
+				ResultSet res = st.executeQuery(generatedQuery)) {
 
-            response.setCharacterEncoding("utf-8");
+			response.setCharacterEncoding("utf-8");
 
-            if ("json".equals(format)) {
-                response.setContentType("application/json");
-            } else if ("csv".equals(format)) {
-                response.setContentType("application/csv");
-            } else {
-                throw new IllegalArgumentException("Invalid format : " + format);
-            }
+			if ("json".equals(format)) {
+				response.setContentType("application/json");
+			} else if ("csv".equals(format)) {
+				response.setContentType("application/csv");
+			} else {
+				throw new IllegalArgumentException("Invalid format : " + format);
+			}
 
-            JSONArray results = new JSONArray();
-            StringBuilder csv = new StringBuilder();
-            csv.append("date,count\n");
+			JSONArray results = new JSONArray();
+			StringBuilder csv = new StringBuilder();
+			csv.append("date,count\n");
 
-            while (res.next()) {
-                String date = this.convertUTCDateToLocal(res.getString("aggregate_date"), g);
-                int count = res.getInt("count");
-                if ("json".equals(format)) {
-                    results.put(new JSONObject().put("count", count).put("date", date));
-                } else if ("csv".equals(format)) {
-                    csv.append(date + "," + count + "\n");
-                }
-            }
+			while (res.next()) {
+				String date = this.convertUTCDateToLocal(res.getString("aggregate_date"), g);
+				int count = res.getInt("count");
+				if ("json".equals(format)) {
+					results.put(new JSONObject().put("count", count).put("date", date));
+				} else if ("csv".equals(format)) {
+					csv.append(date + "," + count + "\n");
+				}
+			}
 
-            if ("json".equals(format)) {
-                return new JSONObject().put("results", results).put("granularity", g).toString(4);
-            } else if ("csv".equals(format)) {
-                return csv.toString();
-            } else {
-                throw new IllegalArgumentException("Invalid format : " + format);
-            }
-        }
+			if ("json".equals(format)) {
+				return new JSONObject().put("results", results).put("granularity", g).toString(4);
+			} else if ("csv".equals(format)) {
+				return csv.toString();
+			} else {
+				throw new IllegalArgumentException("Invalid format : " + format);
+			}
+		}
 
 	}
 
 	/**
-	 * Gets statistics for layers consumption in JSON format. May be filtered by a user or a group and limited.
+	 * Gets statistics for layers consumption in JSON format. May be filtered by a
+	 * user or a group and limited.
 	 *
-	 * @param payload the JSON object containing the input parameters
+	 * @param payload  the JSON object containing the input parameters
 	 * @param response the HttpServletResponse object.
 	 * @return a JSON string containing the requested aggregated statistics.
 	 *
-	 * @throws JSONException 
+	 * @throws JSONException
 	 */
-	@RequestMapping(value="/layersUsage.json", method=RequestMethod.POST, produces= "application/json; charset=utf-8")
+	@RequestMapping(value = "/layersUsage.json", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String layersUsageJson(@RequestBody String payload, HttpServletResponse response) throws JSONException, SQLException {
+	public String layersUsageJson(@RequestBody String payload, HttpServletResponse response)
+			throws JSONException, SQLException {
 		return this.generateStats(payload, REQUEST_TYPE.USAGE, response, FORMAT.JSON);
 	}
 
 	/**
-	 * Gets statistics for layers consumption in CSV format. May be filtered by a user or a group and limited.
+	 * Gets statistics for layers consumption in CSV format. May be filtered by a
+	 * user or a group and limited.
 	 *
-	 * @param payload the JSON object containing the input parameters
+	 * @param payload  the JSON object containing the input parameters
 	 * @param response the HttpServletResponse object.
 	 * @return a CSV string containing the requested aggregated statistics.
 	 *
 	 * @throws JSONException
 	 */
-	@RequestMapping(value="/layersUsage.csv", method=RequestMethod.POST, produces= "application/csv; charset=utf-8")
+	@RequestMapping(value = "/layersUsage.csv", method = RequestMethod.POST, produces = "application/csv; charset=utf-8")
 	@ResponseBody
-	public String layersUsage(@RequestBody String payload, HttpServletResponse response) throws JSONException, SQLException {
+	public String layersUsage(@RequestBody String payload, HttpServletResponse response)
+			throws JSONException, SQLException {
 		return this.generateStats(payload, REQUEST_TYPE.USAGE, response, FORMAT.CSV);
 	}
 
 	/**
-	 * Gets statistics for layers extraction in JSON format. May be filtered by a user or a group and limited.
+	 * Gets statistics for layers extraction in JSON format. May be filtered by a
+	 * user or a group and limited.
 	 *
-	 * @param payload the JSON object containing the input parameters
+	 * @param payload  the JSON object containing the input parameters
 	 * @param response the HttpServletResponse object.
 	 * @return a JSON string containing the requested aggregated statistics.
 	 *
 	 * @throws JSONException
 	 */
-	@RequestMapping(value="/layersExtraction.json", method=RequestMethod.POST, produces= "application/json; charset=utf-8")
+	@RequestMapping(value = "/layersExtraction.json", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String layersExtractionJson(@RequestBody String payload, HttpServletResponse response) throws JSONException, SQLException {
+	public String layersExtractionJson(@RequestBody String payload, HttpServletResponse response)
+			throws JSONException, SQLException {
 		return this.generateStats(payload, REQUEST_TYPE.EXTRACTION, response, FORMAT.JSON);
 	}
 
 	/**
-	 * Gets full statistics for layers extraction in JSON format. Compared to previous method, this method will not
-	 * aggregate records and it will contains several new informations : organization, start date, end date, duration ...
+	 * Gets full statistics for layers extraction in JSON format. Compared to
+	 * previous method, this method will not aggregate records and it will contains
+	 * several new informations : organization, start date, end date, duration ...
 	 *
 	 * @param startDate minimum date for stats
-	 * @param endDate maximum date for stats
-	 * @param response the HttpServletResponse object.
+	 * @param endDate   maximum date for stats
+	 * @param response  the HttpServletResponse object.
 	 * @return a JSON string containing the requested statistics.
 	 *
 	 * @throws JSONException
 	 */
-	@RequestMapping(value="/fullLayersExtraction.csv", method=RequestMethod.GET, produces= "application/csv; charset=utf-8")
+	@RequestMapping(value = "/fullLayersExtraction.csv", method = RequestMethod.GET, produces = "application/csv; charset=utf-8")
 	@ResponseBody
-	public String fullLayersExtractionStats(@RequestParam String startDate, @RequestParam String endDate, HttpServletResponse response) throws JSONException, SQLException {
+	public String fullLayersExtractionStats(@RequestParam String startDate, @RequestParam String endDate,
+			HttpServletResponse response) throws JSONException, SQLException {
 
 		try {
 			if (startDate == null || endDate == null) {
@@ -464,60 +474,65 @@ public class StatisticsController {
 		response.setHeader("Content-Disposition", "attachment; filename=data.csv");
 		response.setContentType("application/csv; charset=utf-8");
 
-		String sql = "SELECT username, org, creation_date, CAST(duration AS text), creation_date + duration AS start_date, layer_name, is_successful, " +
-				"       trunc(CAST(ST_XMin(bbox) AS numeric), 5) || ',' || trunc(CAST(ST_YMin(bbox) AS numeric), 5) || ',' || " +
-				"       trunc(CAST(ST_XMax(bbox) AS numeric), 5) || ',' || trunc(CAST(ST_YMax(bbox) AS numeric), 5) AS bbox, " +
-				"       ST_Area(CAST(bbox AS geography), TRUE) / 1000000 AS area_km2 " +
-				"     FROM extractorapp.extractor_layer_log " +
-				"     LEFT JOIN extractorapp.extractor_log " +
-				"	    ON (extractorapp.extractor_log.id = extractorapp.extractor_layer_log.extractor_log_id) " +
-				"     WHERE creation_date >= CAST({startDate} AS timestamp without time zone) AND creation_date < CAST({endDate} AS timestamp without time zone) ";
+		String sql = "SELECT username, org, creation_date, CAST(duration AS text), creation_date + duration AS start_date, layer_name, is_successful, "
+				+ "       trunc(CAST(ST_XMin(bbox) AS numeric), 5) || ',' || trunc(CAST(ST_YMin(bbox) AS numeric), 5) || ',' || "
+				+ "       trunc(CAST(ST_XMax(bbox) AS numeric), 5) || ',' || trunc(CAST(ST_YMax(bbox) AS numeric), 5) AS bbox, "
+				+ "       ST_Area(CAST(bbox AS geography), TRUE) / 1000000 AS area_km2 "
+				+ "     FROM extractorapp.extractor_layer_log " + "     LEFT JOIN extractorapp.extractor_log "
+				+ "	    ON (extractorapp.extractor_log.id = extractorapp.extractor_layer_log.extractor_log_id) "
+				+ "     WHERE creation_date >= CAST({startDate} AS timestamp without time zone) AND creation_date < CAST({endDate} AS timestamp without time zone) ";
 
 		Map<String, String> sqlValues = new HashMap<>();
 		sqlValues.put("startDate", startDate);
 		sqlValues.put("endDate", endDate);
 
-        final String generatedQuery = queryBuilder.generateQuery(sql, sqlValues);
-        try (Connection c = dataSource.getConnection(); //
-                Statement st = c.createStatement(); //
-                ResultSet sqlRes = st.executeQuery(generatedQuery)) {
+		final String generatedQuery = queryBuilder.generateQuery(sql, sqlValues);
+		try (Connection c = dataSource.getConnection(); //
+				Statement st = c.createStatement(); //
+				ResultSet sqlRes = st.executeQuery(generatedQuery)) {
 
-            StringBuilder res = new StringBuilder(
-                    "username;organization;creation_date;duration;end_date;layer_name;is_successful;bbox;area_km2\n");
-            while (sqlRes.next()) {
-                for (int i = 1; i < 9; i++)
-                    res.append(sqlRes.getString(i) + ";");
-                res.append(sqlRes.getString(9) + "\n");
-            }
-            return res.toString();
-        }
+			StringBuilder res = new StringBuilder(
+					"username;organization;creation_date;duration;end_date;layer_name;is_successful;bbox;area_km2\n");
+			while (sqlRes.next()) {
+				for (int i = 1; i < 9; i++)
+					res.append(sqlRes.getString(i) + ";");
+				res.append(sqlRes.getString(9) + "\n");
+			}
+			return res.toString();
+		}
 	}
 
 	/**
-	 * Gets statistics for layers extraction in CSV format. May be filtered by a user or a group and limited.
+	 * Gets statistics for layers extraction in CSV format. May be filtered by a
+	 * user or a group and limited.
 	 *
-	 * @param payload the JSON object containing the input parameters
+	 * @param payload  the JSON object containing the input parameters
 	 * @param response the HttpServletResponse object.
 	 * @return a CSV string containing the requested aggregated statistics.
 	 *
 	 * @throws JSONException
 	 */
-	@RequestMapping(value="/layersExtraction.csv", method=RequestMethod.POST, produces= "application/csv; charset=utf-8")
+	@RequestMapping(value = "/layersExtraction.csv", method = RequestMethod.POST, produces = "application/csv; charset=utf-8")
 	@ResponseBody
-	public String layersExtractionCsv(@RequestBody String payload, HttpServletResponse response) throws JSONException, SQLException {
+	public String layersExtractionCsv(@RequestBody String payload, HttpServletResponse response)
+			throws JSONException, SQLException {
 		return this.generateStats(payload, REQUEST_TYPE.EXTRACTION, response, FORMAT.CSV);
 	}
 
 	/**
-	 *  This method generates stats for layer usage or extraction and return results in CSV or JSON format
-	 * @param payload JSON payload, should contain 'startDate', 'endDate', 'limit', 'group'
-	 * @param type either layer usage 'USAGE' or layer extraction 'EXTRACTION'
+	 * This method generates stats for layer usage or extraction and return results
+	 * in CSV or JSON format
+	 * 
+	 * @param payload  JSON payload, should contain 'startDate', 'endDate', 'limit',
+	 *                 'group'
+	 * @param type     either layer usage 'USAGE' or layer extraction 'EXTRACTION'
 	 * @param response response
 	 * @param format
 	 * @return
 	 * @throws JSONException
 	 */
-	private String generateStats(String payload, REQUEST_TYPE type, HttpServletResponse response, FORMAT format) throws JSONException,SQLException {
+	private String generateStats(String payload, REQUEST_TYPE type, HttpServletResponse response, FORMAT format)
+			throws JSONException, SQLException {
 
 		JSONObject input;
 		String userId, groupId;
@@ -548,87 +563,77 @@ public class StatisticsController {
 		String sql;
 
 		if (type == REQUEST_TYPE.USAGE) {
-			sql = "SELECT layer, COUNT(*) AS count " +
-				  "FROM ogcstatistics.ogc_services_log " +
-				  "WHERE date >= CAST({startDate} AS timestamp without time zone) AND date < CAST({endDate} AS timestamp without time zone) " +
-				  "AND layer != '' ";
-		} else if (type == REQUEST_TYPE.EXTRACTION){
-			sql = "SELECT layer_name AS layer, COUNT(*) AS count " +
-				  "FROM extractorapp.extractor_layer_log " +
-				  "LEFT JOIN extractorapp.extractor_log " +
-				  "	ON (extractorapp.extractor_log.id = extractorapp.extractor_layer_log.extractor_log_id) " +
-			      "WHERE creation_date >= CAST({startDate} AS timestamp without time zone) AND creation_date < CAST({endDate} AS timestamp without time zone) " +
-				  "AND is_successful ";
+			sql = "SELECT layer, COUNT(*) AS count " + "FROM ogcstatistics.ogc_services_log "
+					+ "WHERE date >= CAST({startDate} AS timestamp without time zone) AND date < CAST({endDate} AS timestamp without time zone) "
+					+ "AND layer != '' ";
+		} else if (type == REQUEST_TYPE.EXTRACTION) {
+			sql = "SELECT layer_name AS layer, COUNT(*) AS count " + "FROM extractorapp.extractor_layer_log "
+					+ "LEFT JOIN extractorapp.extractor_log "
+					+ "	ON (extractorapp.extractor_log.id = extractorapp.extractor_layer_log.extractor_log_id) "
+					+ "WHERE creation_date >= CAST({startDate} AS timestamp without time zone) AND creation_date < CAST({endDate} AS timestamp without time zone) "
+					+ "AND is_successful ";
 		} else {
 			throw new IllegalArgumentException("Invalid request type : " + type);
 		}
 
-		if(groupId != null)
+		if (groupId != null)
 			sql += " AND {group} = ANY(roles) ";
-		if(userId != null){
+		if (userId != null) {
 			if (type == REQUEST_TYPE.USAGE) {
 				sql += " AND user_name = {user} ";
-			} else if (type == REQUEST_TYPE.EXTRACTION){
+			} else if (type == REQUEST_TYPE.EXTRACTION) {
 				sql += " AND username = {user} ";
 			} else {
 				throw new IllegalArgumentException("Invalid request type : " + type);
 			}
 		}
 
-
 		if (type == REQUEST_TYPE.USAGE) {
-			sql += " GROUP BY layer " +
-				   " ORDER BY COUNT(*) DESC " ;
-		} else if (type == REQUEST_TYPE.EXTRACTION){
-			sql += " GROUP BY layer_name " +
-				   " ORDER BY COUNT(*) DESC";
+			sql += " GROUP BY layer " + " ORDER BY COUNT(*) DESC ";
+		} else if (type == REQUEST_TYPE.EXTRACTION) {
+			sql += " GROUP BY layer_name " + " ORDER BY COUNT(*) DESC";
 		} else {
 			throw new IllegalArgumentException("Invalid request type : " + type);
 		}
 
-		if(limit != null)
+		if (limit != null)
 			sql += " LIMIT {limit}";
 
-        final String generatedQuery = queryBuilder.generateQuery(sql, sqlValues);
-        try (Connection c = dataSource.getConnection(); //
-                Statement st = c.createStatement(); //
-                ResultSet sqlRes = st.executeQuery(generatedQuery)) {
+		final String generatedQuery = queryBuilder.generateQuery(sql, sqlValues);
+		try (Connection c = dataSource.getConnection(); //
+				Statement st = c.createStatement(); //
+				ResultSet sqlRes = st.executeQuery(generatedQuery)) {
 
-            switch (format) {
-            case JSON:
-                JSONArray results = new JSONArray();
-                while (sqlRes.next())
-                    results.put(new JSONObject().put("layer", sqlRes.getString("layer")).put("count",
-                            sqlRes.getInt("count")));
-                return new JSONObject().put("results", results).toString(4);
-            case CSV:
-                StringBuilder res = new StringBuilder("layer,count\n");
-                while (sqlRes.next())
-                    res.append(sqlRes.getString("layer") + "," + sqlRes.getInt("count") + "\n");
-                return res.toString();
-            default:
-                throw new JSONException("Invalid format " + format);
-            }
-        }
+			switch (format) {
+			case JSON:
+				JSONArray results = new JSONArray();
+				while (sqlRes.next())
+					results.put(new JSONObject().put("layer", sqlRes.getString("layer")).put("count",
+							sqlRes.getInt("count")));
+				return new JSONObject().put("results", results).toString(4);
+			case CSV:
+				StringBuilder res = new StringBuilder("layer,count\n");
+				while (sqlRes.next())
+					res.append(sqlRes.getString("layer") + "," + sqlRes.getInt("count") + "\n");
+				return res.toString();
+			default:
+				throw new JSONException("Invalid format " + format);
+			}
+		}
 	}
 
-
-
-
 	/**
-	 * Gets the statistics by distinct users (number of requests between
-	 * beginDate and endDate).
+	 * Gets the statistics by distinct users (number of requests between beginDate
+	 * and endDate).
 	 *
-	 * @param payload
-	 *            the JSON object containing the parameters
-	 * @param response
-	 *            the HTTP Servlet Response object, used to set the 40x HTTP
-	 *            code in case of errors.
+	 * @param payload  the JSON object containing the parameters
+	 * @param response the HTTP Servlet Response object, used to set the 40x HTTP
+	 *                 code in case of errors.
 	 *
 	 * @return A string representing a JSON object with the requested datas. The
 	 *         output JSON has the following form:
 	 * 
-	 * <pre>
+	 *         <pre>
 	 *    { "results": [
 	 *	    {
 	 *        "nb_requests": 3895,
@@ -637,22 +642,18 @@ public class StatisticsController {
 	 *      }, [...]
 	 *     ]
 	 *    }
-	 * </pre>
+	 *         </pre>
 	 *
 	 * @throws JSONException
 	 */
-	@RequestMapping(value="/distinctUsers", method=RequestMethod.POST)
-        @ApiMethod(description="Returns the distinct active users for a given period. A group can be provided in the query "
-            + "to limit the results to a given group.<br/>"
-            + "Here are 2 valid examples (with and without a group):<br/>"
-            + "<code>"
-            + "{ group: ADMINISTRATOR, startDate: 2015-01-01, endDate: 2015-12-01 }"
-            + "</code><br/>"
-            + "or:<br/>"
-            + "<code>"
-            + "{ startDate: 2015-01-01, endDate: 2015-12-01 }"
-            + "</code>")
-	public void distinctUsers(@RequestBody String payload, HttpServletResponse response) throws JSONException, IOException, InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
+	@RequestMapping(value = "/distinctUsers", method = RequestMethod.POST)
+	@ApiMethod(description = "Returns the distinct active users for a given period. A group can be provided in the query "
+			+ "to limit the results to a given group.<br/>"
+			+ "Here are 2 valid examples (with and without a group):<br/>" + "<code>"
+			+ "{ group: ADMINISTRATOR, startDate: 2015-01-01, endDate: 2015-12-01 }" + "</code><br/>" + "or:<br/>"
+			+ "<code>" + "{ startDate: 2015-01-01, endDate: 2015-12-01 }" + "</code>")
+	public void distinctUsers(@RequestBody String payload, HttpServletResponse response) throws JSONException,
+			IOException, InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
 		JSONObject input;
 		String groupId = null;
 
@@ -680,44 +681,42 @@ public class StatisticsController {
 		}
 
 		// construct SQL query
-		String sql = "SELECT user_name, org, COUNT(*) AS count " +
-				"FROM ogcstatistics.ogc_services_log " +
-				"WHERE date >= CAST({startDate} AS timestamp without time zone) AND date < CAST({endDate} AS timestamp without time zone) ";
+		String sql = "SELECT user_name, org, COUNT(*) AS count " + "FROM ogcstatistics.ogc_services_log "
+				+ "WHERE date >= CAST({startDate} AS timestamp without time zone) AND date < CAST({endDate} AS timestamp without time zone) ";
 
-		if (groupId != null)//REVISIT: dead code
+		if (groupId != null)// REVISIT: dead code
 			sql += " AND {group} = ANY (roles) ";
 
-		sql += "GROUP BY user_name, org " +
-			   "ORDER BY COUNT(*) DESC";
+		sql += "GROUP BY user_name, org " + "ORDER BY COUNT(*) DESC";
 
-        // Fetch and format results
-        final String generatedQuery = queryBuilder.generateQuery(sql, sqlValues);
-        try (Connection c = dataSource.getConnection(); //
-                Statement st = c.createStatement(); //
-                ResultSet res = st.executeQuery(generatedQuery)) {
-            JSONArray results = new JSONArray();
-            while (res.next()) {
-                if (this.excludedUsers.contains(res.getString("user_name")))
-                    continue;
-                JSONObject row = new JSONObject();
-                row.put("user", res.getString("user_name"));
-                row.put("organization", res.getString("org"));
-                row.put("nb_requests", res.getInt("count"));
-                results.put(row);
-            }
-            String jsonOutput = new JSONObject().put("results", results).toString(4);
+		// Fetch and format results
+		final String generatedQuery = queryBuilder.generateQuery(sql, sqlValues);
+		try (Connection c = dataSource.getConnection(); //
+				Statement st = c.createStatement(); //
+				ResultSet res = st.executeQuery(generatedQuery)) {
+			JSONArray results = new JSONArray();
+			while (res.next()) {
+				if (this.excludedUsers.contains(res.getString("user_name")))
+					continue;
+				JSONObject row = new JSONObject();
+				row.put("user", res.getString("user_name"));
+				row.put("organization", res.getString("org"));
+				row.put("nb_requests", res.getInt("count"));
+				results.put(row);
+			}
+			String jsonOutput = new JSONObject().put("results", results).toString(4);
 
-            PrintWriter writer = response.getWriter();
-            writer.print(jsonOutput);
-            writer.close();
-        }
+			PrintWriter writer = response.getWriter();
+			writer.print(jsonOutput);
+			writer.close();
+		}
 	}
-	
+
 	/**
 	 * Calculates the appropriate granularity given the begin date and the end date.
 	 *
 	 * @param beginDate the begin date.
-	 * @param endDate the end date.
+	 * @param endDate   the end date.
 	 * @return the most relevant GRANULARITY.
 	 */
 	private GRANULARITY guessGranularity(String beginDate, String endDate) {
@@ -738,12 +737,14 @@ public class StatisticsController {
 	}
 
 	/**
-	 * Convert Date (with time) from configured local timezone to UTC. This method is used to convert date sent by UI
-	 * to date with same timezone as database records. Ex : "2016-11-15" will be convert to "2016-11-14 23:00:00" if
-	 * your local timezone is Europe/Paris (+01:00)
+	 * Convert Date (with time) from configured local timezone to UTC. This method
+	 * is used to convert date sent by UI to date with same timezone as database
+	 * records. Ex : "2016-11-15" will be convert to "2016-11-14 23:00:00" if your
+	 * local timezone is Europe/Paris (+01:00)
 	 *
 	 * @param rawDate Date to convert, should looks like : 2016-02-12
-	 * @return String representation of datatime convert to UTC timezone with following format : 2016-11-14 23:00:00
+	 * @return String representation of datatime convert to UTC timezone with
+	 *         following format : 2016-11-14 23:00:00
 	 * @throws ParseException if input date is not parsable
 	 */
 
@@ -753,59 +754,62 @@ public class StatisticsController {
 	}
 
 	/**
-	 * Convert date from UTC to local configured timezone. This method is used to convert dates returns by database.
-	 * @param rawDate raw date from database with format : "2016-02-12 23" or "2016-02-12" or "2016-06" or "2016-02"
+	 * Convert date from UTC to local configured timezone. This method is used to
+	 * convert dates returns by database.
+	 * 
+	 * @param rawDate raw date from database with format : "2016-02-12 23" or
+	 *                "2016-02-12" or "2016-06" or "2016-02"
 	 * @return date in local timezone with hour
 	 * @throws ParseException if input date is not parsable
 	 */
 	private String convertUTCDateToLocal(String rawDate, GRANULARITY granularity) throws ParseException {
 		DateTimeFormatter inputFormatter = null;
 		DateTimeFormatter outputFormatter = null;
-		switch (granularity){
-			case HOUR:
-				inputFormatter = this.dbHourInputFormatter;
-				outputFormatter = this.dbHourOutputFormatter;
-				break;
-			case DAY:
-				inputFormatter = this.dbDayInputFormatter;
-				outputFormatter = this.dbDayOutputFormatter;
-				break;
-			case WEEK:
-				inputFormatter = this.dbWeekInputFormatter;
-				outputFormatter = this.dbWeekOutputFormatter;
-				break;
-			case MONTH:
-				inputFormatter = this.dbMonthInputFormatter;
-				outputFormatter = this.dbMonthOutputFormatter;
-				break;
+		switch (granularity) {
+		case HOUR:
+			inputFormatter = this.dbHourInputFormatter;
+			outputFormatter = this.dbHourOutputFormatter;
+			break;
+		case DAY:
+			inputFormatter = this.dbDayInputFormatter;
+			outputFormatter = this.dbDayOutputFormatter;
+			break;
+		case WEEK:
+			inputFormatter = this.dbWeekInputFormatter;
+			outputFormatter = this.dbWeekOutputFormatter;
+			break;
+		case MONTH:
+			inputFormatter = this.dbMonthInputFormatter;
+			outputFormatter = this.dbMonthOutputFormatter;
+			break;
 		}
 		DateTime localDatetime = inputFormatter.parseDateTime(rawDate);
 		return outputFormatter.print(localDatetime.toInstant());
 	}
 
 	private String getGroup(JSONObject payload) throws JSONException {
-		if(payload.has("group"))
+		if (payload.has("group"))
 			return "ROLE_" + payload.getString("group");
 		else
 			return null;
 	}
 
 	private String getUser(JSONObject payload) throws JSONException {
-		if(payload.has("user"))
+		if (payload.has("user"))
 			return payload.getString("user");
 		else
 			return null;
 	}
 
 	private String getLimit(JSONObject payload) throws JSONException {
-		if(payload.has("limit"))
+		if (payload.has("limit"))
 			return String.valueOf(payload.getInt("limit"));
 		else
 			return null;
 	}
 
 	private String getDateField(JSONObject payload, String field) throws JSONException, ParseException {
-		if(payload.has(field))
+		if (payload.has(field))
 			return this.convertLocalDateToUTC(payload.getString(field));
 		else
 			return null;
@@ -820,5 +824,3 @@ public class StatisticsController {
 	}
 
 }
-
-

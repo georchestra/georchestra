@@ -63,443 +63,413 @@ import java.util.stream.StreamSupport;
 @Controller
 public class OrgsController {
 
-    private static final String BASE_MAPPING = "/private";
-    private static final String BASE_RESOURCE = "orgs";
-    private static final String REQUEST_MAPPING = BASE_MAPPING + "/" + BASE_RESOURCE;
-    private static final String PUBLIC_REQUEST_MAPPING = "/public/" + BASE_RESOURCE;
+	private static final String BASE_MAPPING = "/private";
+	private static final String BASE_RESOURCE = "orgs";
+	private static final String REQUEST_MAPPING = BASE_MAPPING + "/" + BASE_RESOURCE;
+	private static final String PUBLIC_REQUEST_MAPPING = "/public/" + BASE_RESOURCE;
 
-    private static GrantedAuthority ROLE_SUPERUSER = new SimpleGrantedAuthority("ROLE_SUPERUSER");
+	private static GrantedAuthority ROLE_SUPERUSER = new SimpleGrantedAuthority("ROLE_SUPERUSER");
 
-    @Autowired
-    private OrgsDao orgDao;
+	@Autowired
+	private OrgsDao orgDao;
 
-    @Autowired
-    protected Validation validation;
+	@Autowired
+	protected Validation validation;
 
-    @Autowired
-    protected DelegationDao delegationDao;
+	@Autowired
+	protected DelegationDao delegationDao;
 
-    @Autowired
-    protected AdvancedDelegationDao advancedDelegationDao;
+	@Autowired
+	protected AdvancedDelegationDao advancedDelegationDao;
 
-    /**
-     * Areas map configuration
-     *
-     * This map appears on the /console/account/new page, when the user checks
-     * the "my org does not exist" checkbox.
-     * Currently the map is configured with the EPSG:4326 SRS.
-     */
+	/**
+	 * Areas map configuration
+	 *
+	 * This map appears on the /console/account/new page, when the user checks the
+	 * "my org does not exist" checkbox. Currently the map is configured with the
+	 * EPSG:4326 SRS.
+	 */
 
-    /* Center of map */
-    @Value("${AreaMapCenter:1.77, 47.3}")
-    private String areaMapCenter;
+	/* Center of map */
+	@Value("${AreaMapCenter:1.77, 47.3}")
+	private String areaMapCenter;
 
-    /* Zoom of map */
-    @Value("${AreaMapZoom:6}")
-    private String areaMapZoom;
+	/* Zoom of map */
+	@Value("${AreaMapZoom:6}")
+	private String areaMapZoom;
 
-    /* URL of a static file or a service with a GeoJSON FeatureCollection
-     * object string in EPSG:4326.
-     *
-     * Example of a "dynamic" areasUrl:
-     *   https://my.server.org/geoserver/ows?SERVICE=WFS&REQUEST=GetFeature&typeName=gadm:gadm_for_countries&outputFormat=json&cql_filter=ISO='FRA' or ISO='BEL'
-     */
-    @Value("${AreasUrl:https://www.geopicardie.fr/public/communes_simplified.json}")
-    private String areasUrl;
+	/*
+	 * URL of a static file or a service with a GeoJSON FeatureCollection object
+	 * string in EPSG:4326.
+	 *
+	 * Example of a "dynamic" areasUrl:
+	 * https://my.server.org/geoserver/ows?SERVICE=WFS&REQUEST=GetFeature&typeName=
+	 * gadm:gadm_for_countries&outputFormat=json&cql_filter=ISO='FRA' or ISO='BEL'
+	 */
+	@Value("${AreasUrl:https://www.geopicardie.fr/public/communes_simplified.json}")
+	private String areasUrl;
 
-    /* The following properties are used to configure the map widget behavior */
+	/* The following properties are used to configure the map widget behavior */
 
-    /* Key stored in the org LDAP record to uniquely identify a feature. */
-    @Value("${AreasKey:INSEE_COM}")
-    private String areasKey;
+	/* Key stored in the org LDAP record to uniquely identify a feature. */
+	@Value("${AreasKey:INSEE_COM}")
+	private String areasKey;
 
-    /* Feature "nice name" which appears in the widget list once selected. */
-    @Value("${AreasValue:NOM_COM}")
-    private String areasValue;
+	/* Feature "nice name" which appears in the widget list once selected. */
+	@Value("${AreasValue:NOM_COM}")
+	private String areasValue;
 
-    /* Feature property which is used to group together areas.
-     *
-     * eg: if the GeoJSON file represents regions, then AreasGroup might be the
-     * property with the "state name".
-     */
-    @Value("${AreasGroup:NOM_DEP}")
-    private String areasGroup;
+	/*
+	 * Feature property which is used to group together areas.
+	 *
+	 * eg: if the GeoJSON file represents regions, then AreasGroup might be the
+	 * property with the "state name".
+	 */
+	@Value("${AreasGroup:NOM_DEP}")
+	private String areasGroup;
 
-    @Autowired
-    public OrgsController(OrgsDao dao) {
-        this.orgDao = dao;
-    }
+	@Autowired
+	public OrgsController(OrgsDao dao) {
+		this.orgDao = dao;
+	}
 
-    /**
-     * Return a list of available organization as json array
-     */
-    @RequestMapping(value = REQUEST_MAPPING, method = RequestMethod.GET, produces="application/json; charset=utf-8")
-    @PostFilter("hasPermission(filterObject, 'read')")
-    @ResponseBody
-    public List<Org> findAll(){
-        List<Org> orgs = this.orgDao.findAll();
-        Collections.sort(orgs);
-        return orgs;
-    }
+	/**
+	 * Return a list of available organization as json array
+	 */
+	@RequestMapping(value = REQUEST_MAPPING, method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+	@PostFilter("hasPermission(filterObject, 'read')")
+	@ResponseBody
+	public List<Org> findAll() {
+		List<Org> orgs = this.orgDao.findAll();
+		Collections.sort(orgs);
+		return orgs;
+	}
 
-    /**
-     * Retreive full information about one org as JSON document. Following keys will be available :
-     *
-     * * 'id' (not used)
-     * * 'name'
-     * * 'shortName'
-     * * 'cities' as json array ex: [654,865498,98364,9834534,984984,6978984,98498]
-     * * 'status'
-     * * 'orgType'
-     * * 'address'
-     * * 'members' as json array ex: ["testadmin", "testuser"]
-     *
-     */
-    @RequestMapping(value = REQUEST_MAPPING + "/{cn:.+}", method = RequestMethod.GET, produces="application/json; charset=utf-8")
-    @ResponseBody
-    public Org getOrgInfos(@PathVariable String cn){
-        this.checkOrgAuthorization(cn);
+	/**
+	 * Retreive full information about one org as JSON document. Following keys will
+	 * be available :
+	 *
+	 * * 'id' (not used) * 'name' * 'shortName' * 'cities' as json array ex:
+	 * [654,865498,98364,9834534,984984,6978984,98498] * 'status' * 'orgType' *
+	 * 'address' * 'members' as json array ex: ["testadmin", "testuser"]
+	 *
+	 */
+	@RequestMapping(value = REQUEST_MAPPING
+			+ "/{cn:.+}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public Org getOrgInfos(@PathVariable String cn) {
+		this.checkOrgAuthorization(cn);
 
-        Org org = this.orgDao.findByCommonName(cn);
-        OrgExt orgExt = this.orgDao.findExtById(cn);
-        org.setOrgExt(orgExt);
-        return org;
-    }
+		Org org = this.orgDao.findByCommonName(cn);
+		OrgExt orgExt = this.orgDao.findExtById(cn);
+		org.setOrgExt(orgExt);
+		return org;
+	}
 
+	/**
+	 * Update information of one org
+	 *
+	 * Request should contain Json formated document containing following keys :
+	 *
+	 * * 'name' * 'shortName' * 'cities' as json array ex:
+	 * [654,865498,98364,9834534,984984,6978984,98498] * 'status' * 'orgType' *
+	 * 'address' * 'members' as json array ex: ["testadmin", "testuser"]
+	 *
+	 * All fields are optional.
+	 *
+	 * Full json example : { "name" : "Office national des forêts", "shortName" :
+	 * "ONF", "cities" : [ 654, 865498, 98364, 9834534, 984984, 6978984, 98498 ],
+	 * "status" : "inscrit", "type" : "association", "address" : "128 rue de la
+	 * plante, 73059 Chambrille", "members": [ "testadmin", "testuser" ] }
+	 *
+	 */
+	@RequestMapping(value = REQUEST_MAPPING
+			+ "/{commonName:.+}", method = RequestMethod.PUT, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public Org updateOrgInfos(@PathVariable String commonName, HttpServletRequest request)
+			throws IOException, JSONException, SQLException {
 
-    /**
-     * Update information of one org
-     *
-     * Request should contain Json formated document containing following keys :
-     *
-     * * 'name'
-     * * 'shortName'
-     * * 'cities' as json array ex: [654,865498,98364,9834534,984984,6978984,98498]
-     * * 'status'
-     * * 'orgType'
-     * * 'address'
-     * * 'members' as json array ex: ["testadmin", "testuser"]
-     *
-     * All fields are optional.
-     *
-     * Full json example :
-     *  {
-     *     "name" : "Office national des forêts",
-     *     "shortName" : "ONF",
-     *     "cities" : [
-     *        654,
-     *        865498,
-     *        98364,
-     *        9834534,
-     *        984984,
-     *        6978984,
-     *        98498
-     *     ],
-     *     "status" : "inscrit",
-     *     "type" : "association",
-     *     "address" : "128 rue de la plante, 73059 Chambrille",
-     *     "members": [
-     *        "testadmin",
-     *        "testuser"
-     *     ]
-     *  }
-     *
-     */
-    @RequestMapping(value = REQUEST_MAPPING + "/{commonName:.+}", method = RequestMethod.PUT, produces="application/json; charset=utf-8")
-    @ResponseBody
-    public Org updateOrgInfos(@PathVariable String commonName, HttpServletRequest request)
-            throws IOException, JSONException, SQLException {
+		this.checkOrgAuthorization(commonName);
 
-        this.checkOrgAuthorization(commonName);
+		// Parse Json
+		JSONObject json = this.parseRequest(request);
 
-        // Parse Json
-        JSONObject json = this.parseRequest(request);
+		// Validate request against required fields for admin part
+		if (!this.validation.validateOrgField("name", json))
+			throw new IOException("required field : name");
 
-        // Validate request against required fields for admin part
-        if (!this.validation.validateOrgField("name", json))
-            throw new IOException("required field : name");
+		if (!this.validation.validateUrl(json.optString(Org.JSON_URL))) {
+			throw new IOException(String.format("bad org url format: %s", json.optString(Org.JSON_URL)));
+		}
 
-        if (!this.validation.validateUrl(json.optString(Org.JSON_URL))) {
-            throw new IOException(String.format("bad org url format: %s", json.optString(Org.JSON_URL)));
-        }
+		// Retrieve current orgs state from ldap
+		Org org = this.orgDao.findByCommonName(commonName);
+		OrgExt orgExt = this.orgDao.findExtById(commonName);
 
-        // Retrieve current orgs state from ldap
-        Org org = this.orgDao.findByCommonName(commonName);
-        OrgExt orgExt = this.orgDao.findExtById(commonName);
+		// Update org and orgExt fields
+		this.updateFromRequest(org, json);
+		orgExt.setId(org.getId());
+		this.updateFromRequest(orgExt, json);
+		// Persist changes to LDAP server
+		this.orgDao.update(org);
 
-        // Update org and orgExt fields
-        this.updateFromRequest(org, json);
-        orgExt.setId(org.getId());
-        this.updateFromRequest(orgExt, json);
-        // Persist changes to LDAP server
-        this.orgDao.update(org);
+		if (!commonName.equals(org.getId())) {
+			for (DelegationEntry delegation : this.advancedDelegationDao.findByOrg(commonName)) {
+				delegation.removeOrg(commonName);
+				delegation.setOrgs(ArrayUtils.add(delegation.getOrgs(), org.getId()));
+				this.delegationDao.save(delegation);
+			}
+		}
 
-        if (!commonName.equals(org.getId())) {
-            for (DelegationEntry delegation : this.advancedDelegationDao.findByOrg(commonName)) {
-                delegation.removeOrg(commonName);
-                delegation.setOrgs(ArrayUtils.add(delegation.getOrgs(), org.getId()));
-                this.delegationDao.save(delegation);
-            }
-        }
+		this.orgDao.update(orgExt);
+		org.setOrgExt(orgExt);
+		return org;
+	}
 
-        this.orgDao.update(orgExt);
-        org.setOrgExt(orgExt);
-        return org;
-    }
+	/**
+	 * Create a new org based on JSON document sent by browser. JSON document may
+	 * contain following keys :
+	 *
+	 * * 'name' * 'shortName' (mandatory) * 'cities' as json array ex:
+	 * [654,865498,98364,9834534,984984,6978984,98498] * 'status' * 'type' *
+	 * 'address' * 'members' as json array ex: ["testadmin", "testuser"]
+	 *
+	 * All fields are optional except 'shortName' which is used to generate
+	 * organization identifier.
+	 *
+	 * A new JSON document will be return to browser with a complete description of
+	 * created org. @see updateOrgInfos() for JSON format.
+	 */
+	@RequestMapping(value = REQUEST_MAPPING, method = RequestMethod.POST, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	@PreAuthorize("hasRole('SUPERUSER')")
+	public Org createOrg(HttpServletRequest request) throws IOException, JSONException {
+		// Parse Json
+		JSONObject json = this.parseRequest(request);
 
-    /**
-     * Create a new org based on JSON document sent by browser. JSON document may contain following keys :
-     *
-     * * 'name'
-     * * 'shortName' (mandatory)
-     * * 'cities' as json array ex: [654,865498,98364,9834534,984984,6978984,98498]
-     * * 'status'
-     * * 'type'
-     * * 'address'
-     * * 'members' as json array ex: ["testadmin", "testuser"]
-     *
-     * All fields are optional except 'shortName' which is used to generate organization identifier.
-     *
-     * A new JSON document will be return to browser with a complete description of created org. @see updateOrgInfos()
-     * for JSON format.
-     */
-    @RequestMapping(value = REQUEST_MAPPING, method = RequestMethod.POST, produces="application/json; charset=utf-8")
-    @ResponseBody
-    @PreAuthorize("hasRole('SUPERUSER')")
-    public Org createOrg(HttpServletRequest request) throws IOException, JSONException {
-        // Parse Json
-        JSONObject json = this.parseRequest(request);
+		// Validate request against required fields for admin part
+		if (!this.validation.validateOrgField("shortName", json))
+			throw new IOException("required field : shortName");
 
-        // Validate request against required fields for admin part
-        if (!this.validation.validateOrgField("shortName", json))
-            throw new IOException("required field : shortName");
+		if (!this.validation.validateUrl(json.optString(Org.JSON_URL))) {
+			throw new IOException(String.format("bad org url format: %s", json.optString(Org.JSON_URL)));
+		}
 
-        if (!this.validation.validateUrl(json.optString(Org.JSON_URL))) {
-            throw new IOException(String.format("bad org url format: %s", json.optString(Org.JSON_URL)));
-        }
+		Org org = new Org();
+		org.setId("");
+		this.updateFromRequest(org, json);
 
-        Org org = new Org();
-        org.setId("");
-        this.updateFromRequest(org, json);
+		OrgExt orgExt = new OrgExt();
+		orgExt.setId(org.getId());
+		this.updateFromRequest(orgExt, json);
 
-        OrgExt orgExt = new OrgExt();
-        orgExt.setId(org.getId());
-        this.updateFromRequest(orgExt, json);
+		// Persist changes to LDAP server
+		this.orgDao.insert(org);
+		this.orgDao.insert(orgExt);
 
-        // Persist changes to LDAP server
-        this.orgDao.insert(org);
-        this.orgDao.insert(orgExt);
+		org.setOrgExt(orgExt);
+		return org;
+	}
 
-        org.setOrgExt(orgExt);
-        return org;
-    }
+	/**
+	 * Delete one org
+	 */
+	@RequestMapping(value = REQUEST_MAPPING + "/{commonName:.+}", method = RequestMethod.DELETE)
+	@PreAuthorize("hasRole('SUPERUSER')")
+	public void deleteOrg(@PathVariable String commonName, HttpServletResponse response)
+			throws IOException, SQLException {
 
+		// Check if this role is part of a delegation
+		for (DelegationEntry delegation : this.advancedDelegationDao.findByOrg(commonName)) {
+			delegation.removeOrg(commonName);
+			this.delegationDao.save(delegation);
+		}
 
-    /**
-     * Delete one org
-     */
-    @RequestMapping(value = REQUEST_MAPPING + "/{commonName:.+}", method = RequestMethod.DELETE)
-    @PreAuthorize("hasRole('SUPERUSER')")
-    public void deleteOrg(@PathVariable String commonName, HttpServletResponse response) throws IOException, SQLException {
+		// delete entities in LDAP server
+		this.orgDao.delete(this.orgDao.findExtById(commonName));
+		this.orgDao.delete(this.orgDao.findByCommonName(commonName));
+		ResponseUtil.writeSuccess(response);
+	}
 
-        // Check if this role is part of a delegation
-        for(DelegationEntry delegation: this.advancedDelegationDao.findByOrg(commonName)){
-            delegation.removeOrg(commonName);
-            this.delegationDao.save(delegation);
-        }
+	@RequestMapping(value = PUBLIC_REQUEST_MAPPING + "/requiredFields", method = RequestMethod.GET)
+	public void getRequiredFieldsForOrgCreation(HttpServletResponse response) throws IOException, JSONException {
+		JSONArray fields = new JSONArray();
+		fields.put("name");
+		fields.put("shortName");
+		ResponseUtil.buildResponse(response, fields.toString(4), HttpServletResponse.SC_OK);
+	}
 
-        // delete entities in LDAP server
-        this.orgDao.delete(this.orgDao.findExtById(commonName));
-        this.orgDao.delete(this.orgDao.findByCommonName(commonName));
-        ResponseUtil.writeSuccess(response);
-    }
+	@RequestMapping(value = PUBLIC_REQUEST_MAPPING + "/orgTypeValues", method = RequestMethod.GET)
+	public void getOrganisationTypePossibleValues(HttpServletResponse response) throws IOException, JSONException {
+		JSONArray fields = new JSONArray();
+		for (String field : this.orgDao.getOrgTypeValues())
+			fields.put(field);
+		ResponseUtil.buildResponse(response, fields.toString(4), HttpServletResponse.SC_OK);
+	}
 
-    @RequestMapping(value = PUBLIC_REQUEST_MAPPING + "/requiredFields", method = RequestMethod.GET)
-    public void getRequiredFieldsForOrgCreation(HttpServletResponse response) throws IOException, JSONException {
-            JSONArray fields = new JSONArray();
-            fields.put("name");
-            fields.put("shortName");
-            ResponseUtil.buildResponse(response, fields.toString(4), HttpServletResponse.SC_OK);
-    }
+	/**
+	 * Return configuration areas UI as json object. Configuration includes
+	 * following values :
+	 *
+	 * - inital map center - initial map zoom - ows service to retrieve area
+	 * geometry 'url' - attribute to use as label 'value' - attribute to use to
+	 * group area 'group' - attribute to use as identifier 'key'
+	 *
+	 * Ex : { "map" : { "center": [49.5468, 5.123486], "zoom": 8}, "areas" : {
+	 * "url": "http://sdi.georchestra.org/geoserver/....;", "key": "insee_code",
+	 * "value": "commune_name", "group": "department_name"} }
+	 */
 
-    @RequestMapping(value = PUBLIC_REQUEST_MAPPING +"/orgTypeValues", method = RequestMethod.GET)
-    public void getOrganisationTypePossibleValues(HttpServletResponse response) throws IOException, JSONException {
-        JSONArray fields = new JSONArray();
-        for(String field : this.orgDao.getOrgTypeValues())
-            fields.put(field);
-        ResponseUtil.buildResponse(response, fields.toString(4), HttpServletResponse.SC_OK);
-    }
+	@RequestMapping(value = PUBLIC_REQUEST_MAPPING + "/areaConfig.json", method = RequestMethod.GET)
+	public void getAreaConfig(HttpServletResponse response) throws IOException, JSONException {
+		JSONObject res = new JSONObject();
+		JSONObject map = new JSONObject();
+		// Parse center
+		try {
+			String[] rawCenter = areaMapCenter.split("\\s*,\\s*");
+			JSONArray center = new JSONArray();
+			center.put(Double.parseDouble(rawCenter[0]));
+			center.put(Double.parseDouble(rawCenter[1]));
+			map.put("center", center);
+			map.put("zoom", areaMapZoom);
+			res.put("map", map);
+		} catch (Exception e) {
+		}
+		JSONObject areas = new JSONObject();
+		areas.put("url", areasUrl);
+		areas.put("key", areasKey);
+		areas.put("value", areasValue);
+		areas.put("group", areasGroup);
+		res.put("areas", areas);
+		ResponseUtil.buildResponse(response, res.toString(4), HttpServletResponse.SC_OK);
+	}
 
-    /**
-     * Return configuration areas UI as json object. Configuration includes following values :
-     *
-     * - inital map center
-     * - initial map zoom
-     * - ows service to retrieve area geometry 'url'
-     * - attribute to use as label 'value'
-     * - attribute to use to group area 'group'
-     * - attribute to use as identifier 'key'
-     *
-     * Ex :
-     * {
-     *   "map" : { "center": [49.5468, 5.123486], "zoom": 8},
-     *   "areas" : { "url": "http://sdi.georchestra.org/geoserver/....;",
-     *               "key": "insee_code",
-     *               "value": "commune_name",
-     *               "group": "department_name"}
-     * }
-     */
+	/**
+	 * Return distribution of orgs by org type as json array or CSV
+	 *
+	 * json array contains objects with following keys: - type : org type - count :
+	 * count of org with specified type
+	 *
+	 * CSV contains two columns one for org type and second for count
+	 *
+	 */
+	@RequestMapping(value = BASE_MAPPING + "/orgsTypeDistribution.{format:(?:csv|json)}", method = RequestMethod.GET)
+	public void orgTypeDistribution(HttpServletResponse response, @PathVariable String format)
+			throws IOException, JSONException {
 
-    @RequestMapping(value = PUBLIC_REQUEST_MAPPING + "/areaConfig.json", method = RequestMethod.GET)
-    public void getAreaConfig(HttpServletResponse response) throws IOException, JSONException {
-        JSONObject res = new JSONObject();
-        JSONObject map = new JSONObject();
-        // Parse center
-        try {
-            String[] rawCenter = areaMapCenter.split("\\s*,\\s*");
-            JSONArray center = new JSONArray();
-            center.put(Double.parseDouble(rawCenter[0]));
-            center.put(Double.parseDouble(rawCenter[1]));
-            map.put("center", center);
-            map.put("zoom", areaMapZoom);
-            res.put("map", map);
-        } catch (Exception e){}
-        JSONObject areas = new JSONObject();
-        areas.put("url", areasUrl);
-        areas.put("key", areasKey);
-        areas.put("value", areasValue);
-        areas.put("group", areasGroup);
-        res.put("areas", areas);
-        ResponseUtil.buildResponse(response, res.toString(4), HttpServletResponse.SC_OK);
-    }
+		Map<String, Integer> distribution = new HashMap();
+		List<OrgExt> orgs = this.orgDao.findAllExt();
 
+		// Filter results if user is not SUPERUSER
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (!auth.getAuthorities().contains(ROLE_SUPERUSER))
+			orgs.retainAll(Arrays.asList(this.delegationDao.findOne(auth.getName()).getOrgs()));
 
-    /**
-     * Return distribution of orgs by org type as json array or CSV
-     *
-     * json array contains objects with following keys:
-     * - type : org type
-     * - count : count of org with specified type
-     *
-     * CSV contains two columns one for org type and second for count
-     *
-     */
-    @RequestMapping(value = BASE_MAPPING + "/orgsTypeDistribution.{format:(?:csv|json)}", method = RequestMethod.GET)
-    public void orgTypeDistribution(HttpServletResponse response,
-                                    @PathVariable String format) throws IOException, JSONException {
+		for (OrgExt org : orgs) {
+			try {
+				distribution.put(org.getOrgType(), distribution.get(org.getOrgType()) + 1);
 
-        Map<String, Integer> distribution = new HashMap();
-        List<OrgExt> orgs = this.orgDao.findAllExt();
+			} catch (NullPointerException e) {
+				distribution.put(org.getOrgType(), 1);
+			}
+		}
 
-        // Filter results if user is not SUPERUSER
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if(!auth.getAuthorities().contains(ROLE_SUPERUSER))
-            orgs.retainAll(Arrays.asList(this.delegationDao.findOne(auth.getName()).getOrgs()));
+		PrintWriter out = response.getWriter();
 
-        for (OrgExt org : orgs) {
-            try {
-                distribution.put(org.getOrgType(), distribution.get(org.getOrgType()) + 1);
+		if (format.equalsIgnoreCase("csv")) {
+			response.setContentType("text/csv");
+			response.setHeader("Content-Disposition", "attachment;filename=orgsTypeDistribution.csv");
 
-            } catch (NullPointerException e) {
-                distribution.put(org.getOrgType(), 1);
-            }
-        }
+			out.println("organisation type, count");
+			for (String type : distribution.keySet())
+				out.println(type + "," + distribution.get(type));
+			out.close();
 
-        PrintWriter out = response.getWriter();
+		} else if (format.equalsIgnoreCase("json")) {
+			response.setContentType("application/json");
 
-        if(format.equalsIgnoreCase("csv")){
-            response.setContentType("text/csv");
-            response.setHeader("Content-Disposition", "attachment;filename=orgsTypeDistribution.csv");
+			JSONArray res = new JSONArray();
+			for (String type : distribution.keySet())
+				res.put(new JSONObject().put("type", type).put("count", distribution.get(type)));
+			out.println(res.toString(4));
+			out.close();
+		}
 
-            out.println("organisation type, count");
-            for(String type : distribution.keySet())
-                out.println(type + "," + distribution.get(type));
-            out.close();
+	}
 
-        } else if(format.equalsIgnoreCase("json")){
-            response.setContentType("application/json");
+	/**
+	 * Check authorization on org. Throw an exception if current user does not have
+	 * rights to edit or delete specified org.
+	 *
+	 * @param org Org identifier
+	 * @throws AccessDeniedException if current user does not have permissions to
+	 *                               edit this org
+	 */
+	private void checkOrgAuthorization(String org) throws AccessDeniedException {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-            JSONArray res = new JSONArray();
-            for(String type : distribution.keySet())
-                res.put(new JSONObject().put("type", type).put("count", distribution.get(type)));
-            out.println(res.toString(4));
-            out.close();
-        }
+		// Verify that org is under delegation if user is not SUPERUSER
+		if (!auth.getAuthorities().contains(ROLE_SUPERUSER)) {
+			DelegationEntry delegation = this.delegationDao.findOne(auth.getName());
+			if (!Arrays.asList(delegation.getOrgs()).contains(org))
+				throw new AccessDeniedException("Org not under delegation");
+		}
+	}
 
-    }
+	/**
+	 * Update org instance based on field found in json object.
+	 *
+	 * All field of Org instance will be updated if corresponding key exists in json
+	 * document except 'members'.
+	 *
+	 * @param org  Org instance to update
+	 * @param json Json document to take information from
+	 * @throws JSONException If something went wrong during information extraction
+	 *                       from json document
+	 */
+	protected void updateFromRequest(Org org, JSONObject json) throws IOException {
+		org.setId(orgDao.reGenerateId(json.optString(Org.JSON_SHORT_NAME), org.getId()));
+		org.setName(json.optString(Org.JSON_NAME));
+		org.setShortName(json.optString(Org.JSON_SHORT_NAME));
+		if (!json.isNull(Org.JSON_CITIES)) {
+			org.setCities(StreamSupport.stream(json.optJSONArray(Org.JSON_CITIES).spliterator(), false)
+					.map(Object::toString).collect(Collectors.toList()));
+		}
+		if (!json.isNull(Org.JSON_MEMBERS)) {
+			org.setMembers(StreamSupport.stream(json.optJSONArray(Org.JSON_MEMBERS).spliterator(), false)
+					.map(Object::toString).collect(Collectors.toList()));
+		}
+		org.setPending(json.optBoolean(Org.JSON_PENDING));
+	}
 
-    /**
-     * Check authorization on org. Throw an exception if current user does not have rights to edit or delete
-     * specified org.
-     *
-     * @param org Org identifier
-     * @throws AccessDeniedException if current user does not have permissions to edit this org
-     */
-    private void checkOrgAuthorization(String org) throws AccessDeniedException{
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	/**
+	 * Update orgExt instance based on field found in json object.
+	 *
+	 * All field of OrgExt instance will be updated if corresponding key exists in
+	 * json document.
+	 *
+	 * @param orgExt OrgExt instance to update
+	 * @param json   Json document to take information from
+	 * @throws JSONException If something went wrong during information extraction
+	 *                       from json document
+	 */
+	private void updateFromRequest(OrgExt orgExt, JSONObject json) {
+		orgExt.setOrgType(json.optString(OrgExt.JSON_ORG_TYPE));
+		orgExt.setAddress(json.optString(OrgExt.JSON_ADDRESS));
+		orgExt.setPending(json.optBoolean(Org.JSON_PENDING));
+		orgExt.setDescription(json.optString(Org.JSON_DESCRIPTION));
+		orgExt.setUrl(json.optString(Org.JSON_URL));
+		orgExt.setLogo(json.optString(Org.JSON_LOGO));
+	}
 
-        // Verify that org is under delegation if user is not SUPERUSER
-        if(!auth.getAuthorities().contains(ROLE_SUPERUSER)){
-            DelegationEntry delegation = this.delegationDao.findOne(auth.getName());
-            if(!Arrays.asList(delegation.getOrgs()).contains(org))
-                throw new AccessDeniedException("Org not under delegation");
-        }
-    }
-
-    /**
-     * Update org instance based on field found in json object.
-     *
-     * All field of Org instance will be updated if corresponding key exists in json document except 'members'.
-     *
-     * @param org Org instance to update
-     * @param json Json document to take information from
-     * @throws JSONException If something went wrong during information extraction from json document
-     */
-    protected void updateFromRequest(Org org, JSONObject json) throws IOException {
-        org.setId(orgDao.reGenerateId(json.optString(Org.JSON_SHORT_NAME), org.getId()));
-        org.setName(json.optString(Org.JSON_NAME));
-        org.setShortName(json.optString(Org.JSON_SHORT_NAME));
-        if (!json.isNull(Org.JSON_CITIES)) {
-            org.setCities(StreamSupport
-                .stream(json.optJSONArray(Org.JSON_CITIES).spliterator(), false)
-                .map(Object::toString)
-                .collect(Collectors.toList()));
-        }
-        if (!json.isNull(Org.JSON_MEMBERS)) {
-            org.setMembers(StreamSupport
-                .stream(json.optJSONArray(Org.JSON_MEMBERS).spliterator(), false)
-                .map(Object::toString)
-                .collect(Collectors.toList()));
-        }
-        org.setPending(json.optBoolean(Org.JSON_PENDING));
-    }
-
-    /**
-     * Update orgExt instance based on field found in json object.
-     *
-     * All field of OrgExt instance will be updated if corresponding key exists in json document.
-     *
-     * @param orgExt OrgExt instance to update
-     * @param json Json document to take information from
-     * @throws JSONException If something went wrong during information extraction from json document
-     */
-    private void updateFromRequest(OrgExt orgExt, JSONObject json) {
-        orgExt.setOrgType(json.optString(OrgExt.JSON_ORG_TYPE));
-        orgExt.setAddress(json.optString(OrgExt.JSON_ADDRESS));
-        orgExt.setPending(json.optBoolean(Org.JSON_PENDING));
-        orgExt.setDescription(json.optString(Org.JSON_DESCRIPTION));
-        orgExt.setUrl(json.optString(Org.JSON_URL));
-        orgExt.setLogo(json.optString(Org.JSON_LOGO));
-    }
-
-    /**
-     * Parse request payload and return a JSON document
-     *
-     * @param request
-     * @return JSON document corresponding to browser request
-     * @throws IOException if error occurs during JSON parsing
-     */
-    private JSONObject parseRequest(HttpServletRequest request) throws IOException, JSONException {
-        return new JSONObject(FileUtils.asString(request.getInputStream()));
-    }
+	/**
+	 * Parse request payload and return a JSON document
+	 *
+	 * @param request
+	 * @return JSON document corresponding to browser request
+	 * @throws IOException if error occurs during JSON parsing
+	 */
+	private JSONObject parseRequest(HttpServletRequest request) throws IOException, JSONException {
+		return new JSONObject(FileUtils.asString(request.getInputStream()));
+	}
 }

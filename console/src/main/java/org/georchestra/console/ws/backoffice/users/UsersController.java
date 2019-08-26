@@ -19,7 +19,6 @@
 
 package org.georchestra.console.ws.backoffice.users;
 
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.dao.AdvancedDelegationDao;
@@ -86,8 +85,9 @@ import java.util.Map;
  * Web Services to maintain the User information.
  *
  * <p>
- * This class provides the operations to access the data layer to update and read the user data.
- * Those operations will be consistent with the business rules.
+ * This class provides the operations to access the data layer to update and
+ * read the user data. Those operations will be consistent with the business
+ * rules.
  * </p>
  *
  * @author Mauricio Pazos
@@ -117,13 +117,13 @@ public class UsersController {
 	@Autowired
 	private AdvancedDelegationDao advancedDelegationDao;
 
-    private @Autowired GDPRAccountWorker gdprInfoWorker;
+	private @Autowired GDPRAccountWorker gdprInfoWorker;
 
 	@Autowired
 	private Boolean warnUserIfUidModified = false;
 
 	private UserRule userRule;
-	
+
 	@Autowired
 	private EmailFactory emailFactory;
 
@@ -142,19 +142,20 @@ public class UsersController {
 	public void setRoleDao(RoleDao roleDao) {
 		this.roleDao = roleDao;
 	}
-	
+
 	public void setWarnUserIfUidModified(boolean warnUserIfUidModified) {
 		this.warnUserIfUidModified = warnUserIfUidModified;
 	}
 
 	@Autowired
-	public UsersController(AccountDao dao, UserRule userRule){
+	public UsersController(AccountDao dao, UserRule userRule) {
 		this.accountDao = dao;
 		this.userRule = userRule;
 	}
 
 	/**
 	 * Returns array of users using json syntax.
+	 * 
 	 * <pre>
 	 *
 	 *	[
@@ -170,23 +171,23 @@ public class UsersController {
 	 *
 	 * @throws IOException
 	 */
-	@RequestMapping(value=REQUEST_MAPPING, method=RequestMethod.GET, produces="application/json; charset=utf-8")
+	@RequestMapping(value = REQUEST_MAPPING, method = RequestMethod.GET, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	@PostFilter("hasPermission(filterObject, 'read')")
 	public List<SimpleAccount> findAll() throws DataServiceException {
 
-		ProtectedUserFilter filter = new ProtectedUserFilter( this.userRule.getListUidProtected() );
+		ProtectedUserFilter filter = new ProtectedUserFilter(this.userRule.getListUidProtected());
 		List<Account> list = this.accountDao.findFilterBy(filter);
 		Collections.sort(list);
 
 		// Retrieve organizations list to display org name instead of org DN
 		List<Org> orgs = this.orgDao.findAll();
 		Map<String, String> orgNames = new HashMap();
-		for(Org org: orgs)
+		for (Org org : orgs)
 			orgNames.put(org.getId(), org.getName());
 
 		List<SimpleAccount> res = new LinkedList();
-		for(Account account: list) {
+		for (Account account : list) {
 			SimpleAccount simpleAccount = new SimpleAccount(account);
 			// Set Org Name with the human readable org name
 			simpleAccount.setOrgName(orgNames.get(account.getOrg()));
@@ -200,7 +201,8 @@ public class UsersController {
 	 * Returns the detailed information of the user.
 	 *
 	 * <p>
-	 * If the user identifier is not present in the ldap store an {@link IOException} will be throw.
+	 * If the user identifier is not present in the ldap store an
+	 * {@link IOException} will be throw.
 	 * </p>
 	 * <p>
 	 * URL Format: [BASE_MAPPING]/users/{uid}
@@ -210,14 +212,14 @@ public class UsersController {
 	 * </p>
 	 *
 	 */
-	@RequestMapping(value=REQUEST_MAPPING+"/{uid:.+}", method=RequestMethod.GET,
-			produces="application/json; charset=utf-8")
+	@RequestMapping(value = REQUEST_MAPPING
+			+ "/{uid:.+}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public AccountImpl findByUid(@PathVariable String uid)
 			throws AccessDeniedException, NameNotFoundException, DataServiceException {
 
 		// Check for protected accounts
-		if(this.userRule.isProtected(uid))
+		if (this.userRule.isProtected(uid))
 			throw new AccessDeniedException("The user is protected: " + uid);
 
 		// Check delegation
@@ -226,7 +228,6 @@ public class UsersController {
 		return (AccountImpl) this.accountDao.findByUID(uid);
 
 	}
-
 
 	/**
 	 * Returns the profile of current user.
@@ -245,7 +246,8 @@ public class UsersController {
 	 * }
 	 * </pre>
 	 */
-	@RequestMapping(value=REQUEST_MAPPING + "/profile", method=RequestMethod.GET, produces="application/json; charset=utf-8")
+	@RequestMapping(value = REQUEST_MAPPING
+			+ "/profile", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String myProfile(HttpServletRequest request) throws DataServiceException, JSONException {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -254,7 +256,7 @@ public class UsersController {
 
 		JSONArray roles = new JSONArray();
 
-		for(Role role: this.roleDao.findAllForUser(user)) {
+		for (Role role : this.roleDao.findAllForUser(user)) {
 			roles.put(role.getName());
 		}
 		JSONObject res = new JSONObject();
@@ -275,20 +277,21 @@ public class UsersController {
 	 *
 	 * user data:
 	 * {
-     *  "sn": "surname",
-     *	"givenName": "first name",
-     *	"mail": "e-mail",
-     * 	"telephoneNumber": "telephone"
-     *	"facsimileTelephoneNumber": "value",
-     * 	"street": "street",
-     * 	"postalCode": "postal code",
-     *	"l": "locality",
-     * 	"postOfficeBox": "the post office box",
-     *  "org": "the_organization"
-     * }
-     *
-     * where <b>sn, givenName, mail</b> are mandatories
+	 *  "sn": "surname",
+	 *	"givenName": "first name",
+	 *	"mail": "e-mail",
+	 * 	"telephoneNumber": "telephone"
+	 *	"facsimileTelephoneNumber": "value",
+	 * 	"street": "street",
+	 * 	"postalCode": "postal code",
+	 *	"l": "locality",
+	 * 	"postOfficeBox": "the post office box",
+	 *  "org": "the_organization"
+	 * }
+	 *
+	 * where <b>sn, givenName, mail</b> are mandatories
 	 * </pre>
+	 * 
 	 * <pre>
 	 * <b>Response</b>
 	 *
@@ -298,16 +301,16 @@ public class UsersController {
 	 * {
 	 * 	<b>"uid": generated uid</b>
 	 *
-     *  "sn": "surname",
-     *	"givenName": "first name",
-     *	"mail": "e-mail",
-     * 	"telephoneNumber": "telephone"
-     *	"facsimileTelephoneNumber": "value",
-     * 	"street": "street",
-     * 	"postalCode": "postal code",
-     *	"l": "locality",
-     * 	"postOfficeBox": "the post office box"
-     * }
+	 *  "sn": "surname",
+	 *	"givenName": "first name",
+	 *	"mail": "e-mail",
+	 * 	"telephoneNumber": "telephone"
+	 *	"facsimileTelephoneNumber": "value",
+	 * 	"street": "street",
+	 * 	"postalCode": "postal code",
+	 *	"l": "locality",
+	 * 	"postOfficeBox": "the post office box"
+	 * }
 	 * </pre>
 	 *
 	 * <pre>
@@ -323,7 +326,7 @@ public class UsersController {
 	 * @param request HTTP POST data contains the user data
 	 * @throws IOException
 	 */
-	@RequestMapping(value=REQUEST_MAPPING, method=RequestMethod.POST, produces="application/json; charset=utf-8")
+	@RequestMapping(value = REQUEST_MAPPING, method = RequestMethod.POST, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public Account create(HttpServletRequest request)
 			throws IOException, DuplicatedEmailException, DataServiceException, DuplicatedUidException {
@@ -333,13 +336,13 @@ public class UsersController {
 
 		// Verify that org is under delegation if user is not SUPERUSER
 		String requestOriginator = auth.getName();
-		if(!auth.getAuthorities().contains(this.advancedDelegationDao.ROLE_SUPERUSER)){
+		if (!auth.getAuthorities().contains(this.advancedDelegationDao.ROLE_SUPERUSER)) {
 			DelegationEntry delegation = this.delegationDao.findOne(requestOriginator);
-			if(!Arrays.asList(delegation.getOrgs()).contains(account.getOrg()))
+			if (!Arrays.asList(delegation.getOrgs()).contains(account.getOrg()))
 				throw new AccessDeniedException("Org not under delegation");
 		}
 
-		if(this.userRule.isProtected(account.getUid()))
+		if (this.userRule.isProtected(account.getUid()))
 			throw new AccessDeniedException("The user is protected: " + account.getUid());
 
 		// Saves the user in the LDAP
@@ -355,18 +358,20 @@ public class UsersController {
 	/**
 	 * Modifies the user data using the fields provided in the request body.
 	 * <p>
-	 * The fields that are not present in the parameters will remain untouched in the LDAP store.
+	 * The fields that are not present in the parameters will remain untouched in
+	 * the LDAP store.
 	 * </p>
 	 * <p>
-	 * The request format is:
-	 * [BASE_MAPPING]/users/{uid}
+	 * The request format is: [BASE_MAPPING]/users/{uid}
 	 * </p>
 	 * <p>
-	 * The request body should contains a the fields to modify using the JSON syntax.
+	 * The request body should contains a the fields to modify using the JSON
+	 * syntax.
 	 * </p>
 	 * <p>
 	 * Example:
 	 * </p>
+	 * 
 	 * <pre>
 	 * <b>Request</b>
 	 * [BASE_MAPPING]/users/hsimpson
@@ -377,26 +382,28 @@ public class UsersController {
 	 *  "mail": "e-mail",
 	 *  "telephoneNumber": "telephone",
 	 *  "facsimileTelephoneNumber": "value",
-     * 	"street": "street",
-     *  "postalCode": "postal code",
-     *  "l": "locality",
-     *  "postOfficeBox": "the post office box"
-     * }
+	 * 	"street": "street",
+	 *  "postalCode": "postal code",
+	 *  "l": "locality",
+	 *  "postOfficeBox": "the post office box"
+	 * }
 	 *
 	 * </pre>
+	 * 
 	 * @param request
 	 *
-	 * @throws IOException if the uid does not exist or fails to access to the LDAP store.
+	 * @throws IOException           if the uid does not exist or fails to access to
+	 *                               the LDAP store.
 	 * @throws NameNotFoundException
 	 */
-	@RequestMapping(value=REQUEST_MAPPING+ "/{uid:.+}", method=RequestMethod.PUT,
-			produces="application/json; charset=utf-8")
+	@RequestMapping(value = REQUEST_MAPPING
+			+ "/{uid:.+}", method = RequestMethod.PUT, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public Account update(@PathVariable String uid, HttpServletRequest request)
-			throws IOException, NameNotFoundException, DataServiceException,
-			DuplicatedEmailException, ParseException, JSONException, MessagingException {
+			throws IOException, NameNotFoundException, DataServiceException, DuplicatedEmailException, ParseException,
+			JSONException, MessagingException {
 
-		if(this.userRule.isProtected(uid) )
+		if (this.userRule.isProtected(uid))
 			throw new AccessDeniedException("The user is protected, it cannot be updated: " + uid);
 
 		// check if user is under delegation for delegated admins
@@ -407,25 +414,27 @@ public class UsersController {
 		Account originalAcount = this.accountDao.findByUID(uid);
 		Account modifiedAccount = modifyAccount(AccountFactory.create(originalAcount), request.getInputStream());
 
-		if(!modifiedAccount.getOrg().equals(originalAcount.getOrg())){
-			if(!auth.getAuthorities().contains(ROLE_SUPERUSER))
-				if(!Arrays.asList(this.delegationDao.findOne(auth.getName()).getOrgs()).contains(originalAcount.getOrg()))
+		if (!modifiedAccount.getOrg().equals(originalAcount.getOrg())) {
+			if (!auth.getAuthorities().contains(ROLE_SUPERUSER))
+				if (!Arrays.asList(this.delegationDao.findOne(auth.getName()).getOrgs())
+						.contains(originalAcount.getOrg()))
 					throw new AccessDeniedException("User not under delegation");
 			orgDao.unlinkUser(originalAcount);
 		}
 
 		accountDao.update(originalAcount, modifiedAccount, auth.getName());
 
-		if(!modifiedAccount.getOrg().equals(originalAcount.getOrg())){
-			if(!auth.getAuthorities().contains(ROLE_SUPERUSER))
-				if(!Arrays.asList(this.delegationDao.findOne(auth.getName()).getOrgs()).contains(modifiedAccount.getOrg()))
+		if (!modifiedAccount.getOrg().equals(originalAcount.getOrg())) {
+			if (!auth.getAuthorities().contains(ROLE_SUPERUSER))
+				if (!Arrays.asList(this.delegationDao.findOne(auth.getName()).getOrgs())
+						.contains(modifiedAccount.getOrg()))
 					throw new AccessDeniedException("User not under delegation");
 			orgDao.linkUser(modifiedAccount);
 		}
 
 		if (accountDao.hasUserDnChanged(originalAcount, modifiedAccount)) {
 			// account was validated by a moderator, notify user
-			if (originalAcount.isPending() && ! modifiedAccount.isPending()) {
+			if (originalAcount.isPending() && !modifiedAccount.isPending()) {
 				this.emailFactory.sendAccountWasCreatedEmail(request.getSession().getServletContext(),
 						modifiedAccount.getEmail(), modifiedAccount.getCommonName(), modifiedAccount.getUid());
 			}
@@ -441,8 +450,8 @@ public class UsersController {
 			}
 		}
 		if (accountDao.hasUserLoginChanged(originalAcount, modifiedAccount) && warnUserIfUidModified) {
-			this.emailFactory.sendAccountUidRenamedEmail(request.getSession().getServletContext(), modifiedAccount.getEmail(),
-					modifiedAccount.getCommonName(), modifiedAccount.getUid());
+			this.emailFactory.sendAccountUidRenamedEmail(request.getSession().getServletContext(),
+					modifiedAccount.getEmail(), modifiedAccount.getCommonName(), modifiedAccount.getUid());
 		}
 		return modifiedAccount;
 	}
@@ -451,6 +460,7 @@ public class UsersController {
 	 * Deletes the user.
 	 *
 	 * The request format is:
+	 * 
 	 * <pre>
 	 * [BASE_MAPPING]/users/{uid}
 	 * </pre>
@@ -459,11 +469,11 @@ public class UsersController {
 	 * @param response
 	 * @throws IOException
 	 */
-	@RequestMapping(value=REQUEST_MAPPING + "/{uid:.+}", method=RequestMethod.DELETE)
+	@RequestMapping(value = REQUEST_MAPPING + "/{uid:.+}", method = RequestMethod.DELETE)
 	public void delete(@PathVariable String uid, HttpServletRequest request, HttpServletResponse response)
 			throws IOException, DataServiceException {
 
-		if(this.userRule.isProtected(uid))
+		if (this.userRule.isProtected(uid))
 			throw new AccessDeniedException("The user is protected, it cannot be deleted: " + uid);
 
 		// check if user is under delegation for delegated admins
@@ -475,7 +485,7 @@ public class UsersController {
 		accountDao.delete(account, requestOriginator);
 
 		// Also delete delegation if exists
-		if(delegationDao.findOne(uid) != null)
+		if (delegationDao.findOne(uid) != null)
 			delegationDao.delete(uid);
 
 		ResponseUtil.writeSuccess(response);
@@ -491,7 +501,7 @@ public class UsersController {
 		if (accountId == null) {
 			accountId = SecurityContextHolder.getContext().getAuthentication().getName();
 		}
-		
+
 		if (this.userRule.isProtected(accountId))
 			throw new AccessDeniedException("The user is protected, it cannot be deleted: " + accountId);
 
@@ -512,22 +522,22 @@ public class UsersController {
 		return new ResponseEntity<>(responseValue, HttpStatus.OK);
 	}
 
-    @RequestMapping(value = PUBLIC_REQUEST_MAPPING + "/requiredFields", method = RequestMethod.GET)
-    public void getUserCreationRequiredFields(HttpServletResponse response) throws IOException{
-        try {
-            JSONArray fields = new JSONArray();
-            fields.put(UserSchema.UID_KEY);
-            fields.put(UserSchema.MAIL_KEY);
-            fields.put(UserSchema.SURNAME_KEY);
-            fields.put(UserSchema.GIVEN_NAME_KEY);
-            ResponseUtil.buildResponse(response, fields.toString(4), HttpServletResponse.SC_OK);
-        } catch (Exception e) {
-            LOG.error(e.getMessage());
-            ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, e.getMessage()),
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throw new IOException(e);
-        }
-    }
+	@RequestMapping(value = PUBLIC_REQUEST_MAPPING + "/requiredFields", method = RequestMethod.GET)
+	public void getUserCreationRequiredFields(HttpServletResponse response) throws IOException {
+		try {
+			JSONArray fields = new JSONArray();
+			fields.put(UserSchema.UID_KEY);
+			fields.put(UserSchema.MAIL_KEY);
+			fields.put(UserSchema.SURNAME_KEY);
+			fields.put(UserSchema.GIVEN_NAME_KEY);
+			ResponseUtil.buildResponse(response, fields.toString(4), HttpServletResponse.SC_OK);
+		} catch (Exception e) {
+			LOG.error(e.getMessage());
+			ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, e.getMessage()),
+					HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			throw new IOException(e);
+		}
+	}
 
 	/**
 	 * Modify only the account's fields that are present in the request body.
@@ -539,7 +549,8 @@ public class UsersController {
 	 *
 	 * @throws IOException
 	 */
-	private Account modifyAccount(Account account, ServletInputStream inputStream) throws IOException, JSONException, ParseException, IllegalArgumentException {
+	private Account modifyAccount(Account account, ServletInputStream inputStream)
+			throws IOException, JSONException, ParseException, IllegalArgumentException {
 
 		String strUser = FileUtils.asString(inputStream);
 		JSONObject json = new JSONObject(strUser);
@@ -611,9 +622,8 @@ public class UsersController {
 		if (context != null) {
 			account.setContext(context);
 		}
-		
-		String commonName = AccountFactory.formatCommonName(
-				account.getGivenName(), account.getSurname());
+
+		String commonName = AccountFactory.formatCommonName(account.getGivenName(), account.getSurname());
 		account.setCommonName(commonName);
 
 		String uid = RequestUtil.getFieldValue(json, UserSchema.UID_KEY);
@@ -622,20 +632,21 @@ public class UsersController {
 		}
 
 		String org = RequestUtil.getFieldValue(json, UserSchema.ORG_KEY);
-		if(org != null)
+		if (org != null)
 			account.setOrg(org);
 
 		String shadowExpire = RequestUtil.getFieldValue(json, UserSchema.SHADOW_EXPIRE_KEY);
-		if(shadowExpire != null) {
-			if("".equals(shadowExpire))
+		if (shadowExpire != null) {
+			if ("".equals(shadowExpire))
 				account.setShadowExpire(null);
 			else
 				account.setShadowExpire((new SimpleDateFormat("yyyy-MM-dd")).parse(shadowExpire));
 		}
 
-		String privacyPolicyAgreementDate = RequestUtil.getFieldValue(json, UserSchema.PRIVACY_POLICY_AGREEMENT_DATE_KEY);
-		if(privacyPolicyAgreementDate != null) {
-			if("".equals(privacyPolicyAgreementDate ))
+		String privacyPolicyAgreementDate = RequestUtil.getFieldValue(json,
+				UserSchema.PRIVACY_POLICY_AGREEMENT_DATE_KEY);
+		if (privacyPolicyAgreementDate != null) {
+			if ("".equals(privacyPolicyAgreementDate))
 				account.setPrivacyPolicyAgreementDate(null);
 			else
 				try {
@@ -667,34 +678,34 @@ public class UsersController {
 			throw new IOException(e);
 		}
 
-		String givenName     = RequestUtil.getFieldValue(json, UserSchema.GIVEN_NAME_KEY);
-		String surname       = RequestUtil.getFieldValue(json, UserSchema.SURNAME_KEY);
-		String email         = RequestUtil.getFieldValue(json, UserSchema.MAIL_KEY);
-		String postalAddress = RequestUtil.getFieldValue(json, UserSchema.POSTAL_ADDRESS_KEY );
-		String postOfficeBox = RequestUtil.getFieldValue(json, UserSchema.POST_OFFICE_BOX_KEY );
-		String postalCode    = RequestUtil.getFieldValue(json, UserSchema.POSTAL_CODE_KEY);
-		String street        = RequestUtil.getFieldValue(json, UserSchema.STREET_KEY);
-		String locality      = RequestUtil.getFieldValue(json, UserSchema.LOCALITY_KEY);
-		String phone         = RequestUtil.getFieldValue(json, UserSchema.TELEPHONE_KEY);
-		String facsimile     = RequestUtil.getFieldValue(json, UserSchema.FACSIMILE_KEY);
-		String title         = RequestUtil.getFieldValue(json, UserSchema.TITLE_KEY);
-		String description   = RequestUtil.getFieldValue(json, UserSchema.DESCRIPTION_KEY);
-		String manager       = RequestUtil.getFieldValue(json, UserSchema.MANAGER_KEY);
-		String context       = RequestUtil.getFieldValue(json, UserSchema.CONTEXT_KEY);
-		String org           = RequestUtil.getFieldValue(json, UserSchema.ORG_KEY);
+		String givenName = RequestUtil.getFieldValue(json, UserSchema.GIVEN_NAME_KEY);
+		String surname = RequestUtil.getFieldValue(json, UserSchema.SURNAME_KEY);
+		String email = RequestUtil.getFieldValue(json, UserSchema.MAIL_KEY);
+		String postalAddress = RequestUtil.getFieldValue(json, UserSchema.POSTAL_ADDRESS_KEY);
+		String postOfficeBox = RequestUtil.getFieldValue(json, UserSchema.POST_OFFICE_BOX_KEY);
+		String postalCode = RequestUtil.getFieldValue(json, UserSchema.POSTAL_CODE_KEY);
+		String street = RequestUtil.getFieldValue(json, UserSchema.STREET_KEY);
+		String locality = RequestUtil.getFieldValue(json, UserSchema.LOCALITY_KEY);
+		String phone = RequestUtil.getFieldValue(json, UserSchema.TELEPHONE_KEY);
+		String facsimile = RequestUtil.getFieldValue(json, UserSchema.FACSIMILE_KEY);
+		String title = RequestUtil.getFieldValue(json, UserSchema.TITLE_KEY);
+		String description = RequestUtil.getFieldValue(json, UserSchema.DESCRIPTION_KEY);
+		String manager = RequestUtil.getFieldValue(json, UserSchema.MANAGER_KEY);
+		String context = RequestUtil.getFieldValue(json, UserSchema.CONTEXT_KEY);
+		String org = RequestUtil.getFieldValue(json, UserSchema.ORG_KEY);
 
-		if(givenName == null)
+		if (givenName == null)
 			throw new IllegalArgumentException("First Name is required");
 
-		if(surname == null)
+		if (surname == null)
 			throw new IllegalArgumentException("Last Name is required");
 
-		if(email == null)
+		if (email == null)
 			throw new IllegalArgumentException("EMail is required");
 
 		// Use specified login if not empty
 		String uid = RequestUtil.getFieldValue(json, UserSchema.UID_KEY);
-		if(!StringUtils.hasLength(uid))
+		if (!StringUtils.hasLength(uid))
 			try {
 				uid = createUid(givenName, surname);
 			} catch (DataServiceException e) {
@@ -718,7 +729,8 @@ public class UsersController {
 			}
 		}
 
-		String privacyPolicyAgreementDate = RequestUtil.getFieldValue(json, UserSchema.PRIVACY_POLICY_AGREEMENT_DATE_KEY);
+		String privacyPolicyAgreementDate = RequestUtil.getFieldValue(json,
+				UserSchema.PRIVACY_POLICY_AGREEMENT_DATE_KEY);
 		if (StringUtils.hasLength(privacyPolicyAgreementDate)) {
 			try {
 				a.setPrivacyPolicyAgreementDate(LocalDate.parse(privacyPolicyAgreementDate));
@@ -744,25 +756,28 @@ public class UsersController {
 
 		String proposedUid = normalizeString(givenName.toLowerCase().charAt(0) + surname.toLowerCase());
 
-		if(! this.accountDao.exist(proposedUid)){
+		if (!this.accountDao.exist(proposedUid)) {
 			return proposedUid;
 		} else {
-			return this.accountDao.generateUid( proposedUid );
+			return this.accountDao.generateUid(proposedUid);
 		}
 	}
 
 	/**
-	 * Check Authorization of current logged user against specified uid and throw a AccessDeniedException
-	 * if current user is not SUPERUSER and user 'uid' is not under the delegation.
+	 * Check Authorization of current logged user against specified uid and throw a
+	 * AccessDeniedException if current user is not SUPERUSER and user 'uid' is not
+	 * under the delegation.
+	 * 
 	 * @param uid Identifier of user to search in delegation of connected user
 	 *
-	 * @throws AccessDeniedException if current user does not have permission to edit user 'uid'
+	 * @throws AccessDeniedException if current user does not have permission to
+	 *                               edit user 'uid'
 	 */
 	private void checkAuthorization(String uid) {
 		// check if user is under delegation for delegated admins
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if(!auth.getAuthorities().contains(this.advancedDelegationDao.ROLE_SUPERUSER))
-			if(!this.advancedDelegationDao.findUsersUnderDelegation(auth.getName()).contains(uid))
+		if (!auth.getAuthorities().contains(this.advancedDelegationDao.ROLE_SUPERUSER))
+			if (!this.advancedDelegationDao.findUsersUnderDelegation(auth.getName()).contains(uid))
 				throw new AccessDeniedException("User " + uid + " not under delegation");
 	}
 
@@ -776,7 +791,6 @@ public class UsersController {
 	 * @return return the deaccentuated string, eg. "Joao"
 	 */
 	public static String normalizeString(String string) {
-		return Normalizer.normalize(string, Normalizer.Form.NFD)
-			.replaceAll("\\W", "");
+		return Normalizer.normalize(string, Normalizer.Form.NFD).replaceAll("\\W", "");
 	}
 }

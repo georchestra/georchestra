@@ -22,34 +22,34 @@ package org.georchestra.extractorapp.ws.extractor;
  * Set of valid formats with theirs driver descriptors associated
  */
 public enum FileFormat {
-    shp {
-        @Override
-        public String getDriver() {
-            return "ESRI shapefile";
-        }
+	shp {
+		@Override
+		public String getDriver() {
+			return "ESRI shapefile";
+		}
 
-    },
-    kml {
-        @Override
-        public String getDriver() {
-            return "KML";
-        }
+	},
+	kml {
+		@Override
+		public String getDriver() {
+			return "KML";
+		}
 
-    };
+	};
 
-    /**
-     * Returns the OGR driver for this format
-     * 
-     * @return the driver
-     */
-    public abstract String getDriver();
+	/**
+	 * Returns the OGR driver for this format
+	 * 
+	 * @return the driver
+	 */
+	public abstract String getDriver();
 
-    /**
-     * Returns the options related with the indicated file format.
-     * 
-     * @return the options for the file format
-     */
-    public String[] getFormatOptions() {
-        return null;
-    }
+	/**
+	 * Returns the options related with the indicated file format.
+	 * 
+	 * @return the options for the file format
+	 */
+	public String[] getFormatOptions() {
+		return null;
+	}
 }

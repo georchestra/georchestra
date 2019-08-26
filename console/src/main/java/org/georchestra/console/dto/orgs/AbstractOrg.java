@@ -6,26 +6,26 @@ import org.springframework.ldap.core.DirContextAdapter;
 
 public abstract class AbstractOrg implements ReferenceAware {
 
-    @JsonIgnore
-    protected boolean isPending;
-    @JsonIgnore
-    private DirContextAdapter reference;
+	@JsonIgnore
+	protected boolean isPending;
+	@JsonIgnore
+	private DirContextAdapter reference;
 
-    public boolean isPending() {
-        return isPending;
-    }
+	public boolean isPending() {
+		return isPending;
+	}
 
-    public void setPending(boolean pending) {
-        isPending = pending;
-    }
+	public void setPending(boolean pending) {
+		isPending = pending;
+	}
 
-    public DirContextAdapter getReference() {
-        return reference;
-    }
+	public DirContextAdapter getReference() {
+		return reference;
+	}
 
-    public void setReference(DirContextAdapter reference) {
-        this.reference = reference;
-    }
+	public void setReference(DirContextAdapter reference) {
+		this.reference = reference;
+	}
 
-    public abstract String getId();
+	public abstract String getId();
 }

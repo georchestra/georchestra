@@ -29,45 +29,48 @@ import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
 /**
  * 
- * This class provides a set of helper methods which allow to format a message that it
- * can be recognized by the OGCServicesAppender.
+ * This class provides a set of helper methods which allow to format a message
+ * that it can be recognized by the OGCServicesAppender.
  * <p>
  * The message format does have the following structure:
  * </p>
+ * 
  * <pre>
- *  
- * userName|yyyy-MM-dd|ogcRequest
- *   
+ * 
+ * userName | yyyy - MM - dd | ogcRequest
+ * 
  * </pre>
  * 
  * @see format
  * @author Mauricio Pazos
  */
 public class OGCServiceMessageFormatter {
-	
+
 	private static Log LOGGER = LogFactory.getLog(OGCServiceMessageFormatter.class.getSimpleName());
-	
+
 	public static final String SEPARATOR = "|";
 	public static final String DATE_FORMAT = "yyyy/MM/dd HH:mm:ss";
 
-	private OGCServiceMessageFormatter(){
+	private OGCServiceMessageFormatter() {
 		// utility class
 	}
 
-	public static String format(final String user, final String request, final String org, final String [] roles) {
-			return format(user, new Date(), request, org, roles);
+	public static String format(final String user, final String request, final String org, final String[] roles) {
+		return format(user, new Date(), request, org, roles);
 	}
+
 	/**
 	 * Builds a formated string that can be recognized by the OGCServicesAppender.
+	 * 
 	 * <pre>
 	 * Produced format:
 	 * 
 	 * user|yyyy-MM-dd|request|roles
 	 * 
 	 * </pre>
+	 * 
 	 * @param user
 	 * @param date
 	 * @param request
@@ -75,9 +78,10 @@ public class OGCServiceMessageFormatter {
 	 * 
 	 * @return The ogcservice message
 	 */
-	public static String format(final String user, final Date date, final String request, final String org, final String [] roles) {
-		
-		if ((user == null )||  "".equals(user)) {
+	public static String format(final String user, final Date date, final String request, final String org,
+			final String[] roles) {
+
+		if ((user == null) || "".equals(user)) {
 			throw new IllegalArgumentException("user cannot be null");
 		}
 		if (date == null) {
@@ -110,15 +114,15 @@ public class OGCServiceMessageFormatter {
 
 		// appends ogc service roles
 		StringBuilder rolesBuilder = new StringBuilder();
-		int i=0;
-		for(String s : roles) {
+		int i = 0;
+		for (String s : roles) {
 			if (i > 0) {
 				rolesBuilder.append(",");
 			}
 			rolesBuilder.append(s);
 			i++;
 		}
-		
+
 		ogcLogBuilder.append(rolesBuilder.toString());
 
 		final String ogcStatisticLog = ogcLogBuilder.toString();
@@ -128,22 +132,22 @@ public class OGCServiceMessageFormatter {
 
 		return ogcStatisticLog;
 	}
-	
+
 	private static void log(final StringBuilder logBuilder) {
 
 		StringBuilder debugLog = new StringBuilder("REQUEST: ");
 		debugLog.append(logBuilder);
 
-		final long divisor = 1048576;//Gb 1073741824 // Mb 1048576
+		final long divisor = 1048576;// Gb 1073741824 // Mb 1048576
 		final String unit = " Mb ";
-		
+
 		debugLog.append(SEPARATOR);
-		
+
 		debugLog.append("MEM -");
 		// available memory
 		long totalMem = Runtime.getRuntime().totalMemory();
 		debugLog.append("Current available: ");
-		debugLog.append(totalMem / divisor ).append(unit);
+		debugLog.append(totalMem / divisor).append(unit);
 		debugLog.append(" - ");
 
 		// available memory
@@ -157,26 +161,26 @@ public class OGCServiceMessageFormatter {
 		debugLog.append("Free: ");
 		debugLog.append(freeMem / divisor).append(unit);
 		debugLog.append(SEPARATOR);
-		 
-		 // cpu usage
-		 debugLog.append("CPU - ");
-		 OperatingSystemMXBean so =   ManagementFactory.getOperatingSystemMXBean();
-		 debugLog.append("Load Average: ").append(so.getSystemLoadAverage());
-		 debugLog.append(" - ");
-		 debugLog.append("Available Processors: ").append(so.getAvailableProcessors());
-		 debugLog.append(SEPARATOR);
 
-		 // disk usage
-		 File[] roots = File.listRoots();
-		 for (File root : roots) {
-			 debugLog.append(" DISK (").append(root.toString()).append(")");
-			 debugLog.append(" - Total: ").append(root.getTotalSpace()/divisor).append(unit);
-			 debugLog.append(" - Usable: ").append(root.getUsableSpace()/divisor).append(unit);
-			 debugLog.append(" - Free: ").append(root.getFreeSpace()/divisor).append(unit);
-			 debugLog.append(SEPARATOR);
-		 }
+		// cpu usage
+		debugLog.append("CPU - ");
+		OperatingSystemMXBean so = ManagementFactory.getOperatingSystemMXBean();
+		debugLog.append("Load Average: ").append(so.getSystemLoadAverage());
+		debugLog.append(" - ");
+		debugLog.append("Available Processors: ").append(so.getAvailableProcessors());
+		debugLog.append(SEPARATOR);
 
-		 LOGGER.debug(debugLog);	
+		// disk usage
+		File[] roots = File.listRoots();
+		for (File root : roots) {
+			debugLog.append(" DISK (").append(root.toString()).append(")");
+			debugLog.append(" - Total: ").append(root.getTotalSpace() / divisor).append(unit);
+			debugLog.append(" - Usable: ").append(root.getUsableSpace() / divisor).append(unit);
+			debugLog.append(" - Free: ").append(root.getFreeSpace() / divisor).append(unit);
+			debugLog.append(SEPARATOR);
+		}
+
+		LOGGER.debug(debugLog);
 	}
 
 }

@@ -8,12 +8,13 @@ import javax.servlet.ServletContext;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.georchestra.extractorapp.ws.Email;
 
-
 public class RequestConfiguration {
 
 	private static final InheritableThreadLocal<RequestConfiguration> instance = new InheritableThreadLocal<RequestConfiguration>();
 
-	public static RequestConfiguration get() { return instance.get(); }
+	public static RequestConfiguration get() {
+		return instance.get();
+	}
 
 	public final List<ExtractorLayerRequest> requests;
 	public final UUID requestUuid;
@@ -33,13 +34,11 @@ public class RequestConfiguration {
 	public final String strRequest;
 	public final String userAgent;
 
-	public RequestConfiguration(List<ExtractorLayerRequest> requests,
-			UUID requestUuid, Email email,
-			ServletContext servletContext, boolean testing, String username,
-			String roles, String org, UsernamePasswordCredentials adminCredentials,
-			String secureHost, String extractionFolderPrefix, long maxCoverageExtractionSize,
-			boolean remoteReproject, boolean useCommandLineGDAL,
-			String strRequest, String userAgent) {
+	public RequestConfiguration(List<ExtractorLayerRequest> requests, UUID requestUuid, Email email,
+			ServletContext servletContext, boolean testing, String username, String roles, String org,
+			UsernamePasswordCredentials adminCredentials, String secureHost, String extractionFolderPrefix,
+			long maxCoverageExtractionSize, boolean remoteReproject, boolean useCommandLineGDAL, String strRequest,
+			String userAgent) {
 		super();
 
 		this.strRequest = strRequest;
@@ -59,6 +58,7 @@ public class RequestConfiguration {
 		this.extractionFolderPrefix = extractionFolderPrefix;
 		this.userAgent = userAgent;
 	}
+
 	public void setThreadLocal() {
 		instance.set(this);
 	}

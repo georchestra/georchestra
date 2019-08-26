@@ -23,7 +23,7 @@ package org.georchestra.extractorapp.ws.extractor;
  * @author Mauricio Pazos
  *
  */
-public final class InvalidPriorityException extends Exception{
+public final class InvalidPriorityException extends Exception {
 
 	/**
 	 * 

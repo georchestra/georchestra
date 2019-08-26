@@ -51,8 +51,7 @@ public class RoleProtected {
 	/**
 	 * True if the Roles is a protected roles
 	 * 
-	 * @param uid
-	 *            uid of role
+	 * @param uid uid of role
 	 * 
 	 * @return True if the Roles is a protected roles
 	 */
