@@ -26,10 +26,11 @@ import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.DataServiceException;
 import org.georchestra.console.ds.DuplicatedEmailException;
 import org.georchestra.console.ds.OrgsDao;
+import org.georchestra.console.ds.RoleDao;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountImpl;
+import org.georchestra.console.dto.Role;
 import org.georchestra.console.dto.orgs.Org;
-import org.georchestra.console.dto.orgs.OrgExt;
 import org.georchestra.console.ws.utils.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -47,27 +48,30 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Support for the Edit Account user interactions.
  *
  * @author Mauricio Pazos
- *
  */
 @Controller
 @SessionAttributes(types = EditUserDetailsFormBean.class)
 public class EditUserDetailsFormController {
 
-    private OrgsDao orgsDao;
-    private AccountDao accountDao;
+    private final RoleDao roleDao;
+    private final OrgsDao orgsDao;
+    private final AccountDao accountDao;
 
     private Validation validation;
 
     @Autowired
-    public EditUserDetailsFormController(AccountDao dao, OrgsDao orgsDao, Validation validation) {
+    public EditUserDetailsFormController(AccountDao dao, OrgsDao orgsDao, RoleDao roleDao, Validation validation) {
         this.accountDao = dao;
         this.orgsDao = orgsDao;
+        this.roleDao = roleDao;
         this.validation = validation;
+
     }
 
     private static final String[] fields = { "uid", "firstName", "surname", "email", "title", "phone", "facsimile",
@@ -84,9 +88,7 @@ public class EditUserDetailsFormController {
      * view.
      *
      * @param model
-     *
      * @return the edit form view
-     *
      * @throws IOException
      */
     @RequestMapping(value = "/account/userdetails", method = RequestMethod.GET)
@@ -99,10 +101,10 @@ public class EditUserDetailsFormController {
 
         try {
             Account userAccount = this.accountDao.findByUID(request.getHeader("sec-username"));
-
             model.addAttribute(createForm(userAccount));
             Org org = orgsDao.findByCommonNameWithExt(userAccount);
             model.addAttribute("org", orgToJson(org));
+            model.addAttribute("isReferentOrSuperUser", isReferentOrSuperUser(userAccount));
 
             HttpSession session = request.getSession();
             for (String f : fields) {
@@ -117,6 +119,11 @@ public class EditUserDetailsFormController {
             e.printStackTrace();
             throw new IOException(e);
         }
+    }
+
+    private boolean isReferentOrSuperUser(Account userAccount) throws DataServiceException {
+        List<Role> roles = roleDao.findAllForUser(userAccount);
+        return roles.stream().anyMatch(n -> (n.getName().equals("SUPERUSER") || n.getName().equals("REFERENT")));
     }
 
     /**
@@ -149,9 +156,7 @@ public class EditUserDetailsFormController {
      * @param formBean      Contains the user's email
      * @param resultErrors  will be updated with the list of found errors.
      * @param sessionStatus
-     *
      * @return the next view
-     *
      * @throws IOException
      */
     @RequestMapping(value = "/account/userdetails", method = RequestMethod.POST)
@@ -210,7 +215,6 @@ public class EditUserDetailsFormController {
      *
      * @param account
      * @param formBean
-     *
      * @return modified account
      */
     private Account modify(Account account, EditUserDetailsFormBean formBean) {

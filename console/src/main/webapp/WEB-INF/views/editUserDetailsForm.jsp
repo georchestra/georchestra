@@ -43,7 +43,7 @@
     <%@ include file="header.jsp" %>
 
 
-    <script>var org= ${org};</script>
+    <script>var org= ${org}; var isReferentOrSuperUser = ${isReferentOrSuperUser};</script>
 
 	<div class="container">
 		<div class="page-header">
@@ -175,15 +175,29 @@
     <div class="col-lg-5 col-lg-offset-1" ng-app="manager" ng-strict-di ng-controller="StandaloneController">
       <fieldset>
         <legend><s:message code="editUserDetailsForm.organisation" /> «{{org.name}}»</legend>
-        <a ng-if="org.url && org.logo" href="{{org.url}}">
-          <img src="data:image/jpeg;base64,{{org.logo}}"/>
-        </a>
-        <a ng-if="org.url && !org.logo" href="{{org.url}}">
-            <s:message code="editUserDetailsForm.url" />
-        </a>
-        <img src="data:image/jpeg;base64,{{org.logo}}" ng-if="!org.url && org.logo"/>
-        <p ng-if="org.description">{{org.description}}</p>
-
+		<ul class="list-group list-group-flush">
+		  <li class="list-group-item" ng-if="isReferentOrSuperUser">
+		    <a class="btn btn-default" href="/console/account/orgdetails">
+			  <s:message code="editUserDetailsForm.editOrg"/>
+			</a>
+		  </li>
+		  <li class="list-group-item" ng-if="org.url && org.logo">
+		    <a href="{{org.url}}">
+		      <img alt="org logo" src="data:image/jpeg;base64,{{org.logo}}"/>
+		    </a>
+		  </li>
+		  <li class="list-group-item" ng-if="org.url && !org.logo">
+		    <a  href="{{org.url}}">
+			  <s:message code="editUserDetailsForm.url" />
+		    </a>
+		  </li>
+		  <li class="list-group-item" ng-if="!org.url && org.logo">
+		    <img alt="logo" src="data:image/jpeg;base64,{{org.logo}}" />
+		  </li>
+		  <li class="list-group-item" ng-if="org.description">
+		    <p>{{org.description}}</p>
+		  </li>
+	  	</ul>
         <h4><s:message code="editUserDetailsForm.areaOfCompetence" /></h4>
         <areas item="org" readonly="'true'"></areas>
         <br>
