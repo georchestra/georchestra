@@ -26,6 +26,6 @@ package org.georchestra.extractorapp.ws.extractor;
  */
 class ExtractorGetTaskQueueRequest {
 
-	public static String operationName = "getTaskQueue";
+    public static String operationName = "getTaskQueue";
 
 }

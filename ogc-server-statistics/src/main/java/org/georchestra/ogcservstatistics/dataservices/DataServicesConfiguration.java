@@ -35,41 +35,41 @@ import org.postgresql.ds.PGSimpleDataSource;
  */
 public final class DataServicesConfiguration {
 
-	private static final DataServicesConfiguration THIS = new DataServicesConfiguration();
+    private static final DataServicesConfiguration THIS = new DataServicesConfiguration();
 
-	private DataSource dataSource;
+    private DataSource dataSource;
 
-	private DataServicesConfiguration() {
+    private DataServicesConfiguration() {
 
-	}
+    }
 
-	public static DataServicesConfiguration getInstance() {
+    public static DataServicesConfiguration getInstance() {
 
-		return THIS;
-	}
+        return THIS;
+    }
 
-	public void initialize(String jdbcURL, String user, String password) {
-		PGSimpleDataSource nonPoolingDS = null;
-		if (jdbcURL != null && !jdbcURL.trim().isEmpty()) {
-			nonPoolingDS = new PGSimpleDataSource();
-			nonPoolingDS.setUrl(jdbcURL);
-			nonPoolingDS.setUser(user);
-			nonPoolingDS.setPassword(password);
-		}
-		this.dataSource = nonPoolingDS;
-	}
+    public void initialize(String jdbcURL, String user, String password) {
+        PGSimpleDataSource nonPoolingDS = null;
+        if (jdbcURL != null && !jdbcURL.trim().isEmpty()) {
+            nonPoolingDS = new PGSimpleDataSource();
+            nonPoolingDS.setUrl(jdbcURL);
+            nonPoolingDS.setUser(user);
+            nonPoolingDS.setPassword(password);
+        }
+        this.dataSource = nonPoolingDS;
+    }
 
-	public void initialize(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
+    public void initialize(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
-	/**
-	 * A connection to database, make sure the client code closes it.
-	 * 
-	 * @return {@link Connection}
-	 * @throws SQLException
-	 */
-	public Connection getConnection() throws SQLException {
-		return dataSource.getConnection();
-	}
+    /**
+     * A connection to database, make sure the client code closes it.
+     * 
+     * @return {@link Connection}
+     * @throws SQLException
+     */
+    public Connection getConnection() throws SQLException {
+        return dataSource.getConnection();
+    }
 }

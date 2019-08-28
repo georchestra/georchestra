@@ -34,24 +34,24 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 public class SecurityRequestHeaderProvider extends HeaderProvider {
 
-	@Override
-	protected Collection<Header> getCustomRequestHeaders(HttpSession session, HttpServletRequest originalRequest) {
+    @Override
+    protected Collection<Header> getCustomRequestHeaders(HttpSession session, HttpServletRequest originalRequest) {
 
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-		List<Header> headers = new ArrayList<Header>();
-		if (authentication.getName().equals("anonymousUser"))
-			return headers;
-		headers.add(new BasicHeader(HeaderNames.SEC_USERNAME, authentication.getName()));
-		StringBuilder roles = new StringBuilder();
-		for (GrantedAuthority grantedAuthority : authorities) {
-			if (roles.length() != 0)
-				roles.append(";");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        List<Header> headers = new ArrayList<Header>();
+        if (authentication.getName().equals("anonymousUser"))
+            return headers;
+        headers.add(new BasicHeader(HeaderNames.SEC_USERNAME, authentication.getName()));
+        StringBuilder roles = new StringBuilder();
+        for (GrantedAuthority grantedAuthority : authorities) {
+            if (roles.length() != 0)
+                roles.append(";");
 
-			roles.append(grantedAuthority.getAuthority());
-		}
-		headers.add(new BasicHeader(HeaderNames.SEC_ROLES, roles.toString()));
+            roles.append(grantedAuthority.getAuthority());
+        }
+        headers.add(new BasicHeader(HeaderNames.SEC_ROLES, roles.toString()));
 
-		return headers;
-	}
+        return headers;
+    }
 }

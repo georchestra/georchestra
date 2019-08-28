@@ -34,61 +34,61 @@ import javax.persistence.Table;
 @Table(schema = "console", name = "delegations")
 public class DelegationEntry {
 
-	@Id
-	private String uid;
-	@Type(type = "org.georchestra.console.model.PostGresArrayStringType")
-	@Column(name = "orgs", columnDefinition = "character varying[]")
-	private String[] orgs;
-	@Type(type = "org.georchestra.console.model.PostGresArrayStringType")
-	@Column(name = "roles", columnDefinition = "character varying[]")
-	private String[] roles;
+    @Id
+    private String uid;
+    @Type(type = "org.georchestra.console.model.PostGresArrayStringType")
+    @Column(name = "orgs", columnDefinition = "character varying[]")
+    private String[] orgs;
+    @Type(type = "org.georchestra.console.model.PostGresArrayStringType")
+    @Column(name = "roles", columnDefinition = "character varying[]")
+    private String[] roles;
 
-	public DelegationEntry() {
-	}
+    public DelegationEntry() {
+    }
 
-	public DelegationEntry(String uid, String[] orgs, String[] roles) {
-		this.uid = uid;
-		this.orgs = orgs;
-		this.roles = roles;
-	}
+    public DelegationEntry(String uid, String[] orgs, String[] roles) {
+        this.uid = uid;
+        this.orgs = orgs;
+        this.roles = roles;
+    }
 
-	synchronized public void removeOrg(String orgToRemove) {
-		this.orgs = ArrayUtils.removeElement(this.orgs, orgToRemove);
-	}
+    synchronized public void removeOrg(String orgToRemove) {
+        this.orgs = ArrayUtils.removeElement(this.orgs, orgToRemove);
+    }
 
-	synchronized public void removeRole(String roleToremove) {
-		this.roles = ArrayUtils.removeElement(this.roles, roleToremove);
-	}
+    synchronized public void removeRole(String roleToremove) {
+        this.roles = ArrayUtils.removeElement(this.roles, roleToremove);
+    }
 
-	public String getUid() {
-		return uid;
-	}
+    public String getUid() {
+        return uid;
+    }
 
-	public void setUid(String uid) {
-		this.uid = uid;
-	}
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
 
-	public String[] getOrgs() {
-		return orgs;
-	}
+    public String[] getOrgs() {
+        return orgs;
+    }
 
-	public void setOrgs(String[] orgs) {
-		this.orgs = orgs;
-	}
+    public void setOrgs(String[] orgs) {
+        this.orgs = orgs;
+    }
 
-	public String[] getRoles() {
-		return roles;
-	}
+    public String[] getRoles() {
+        return roles;
+    }
 
-	public void setRoles(String[] roles) {
-		this.roles = roles;
-	}
+    public void setRoles(String[] roles) {
+        this.roles = roles;
+    }
 
-	public JSONObject toJSON() throws JSONException {
-		JSONObject res = new JSONObject();
-		res.put("uid", this.uid);
-		res.put("orgs", new JSONArray(this.orgs));
-		res.put("roles", new JSONArray(this.roles));
-		return res;
-	}
+    public JSONObject toJSON() throws JSONException {
+        JSONObject res = new JSONObject();
+        res.put("uid", this.uid);
+        res.put("orgs", new JSONArray(this.orgs));
+        res.put("roles", new JSONArray(this.roles));
+        return res;
+    }
 }

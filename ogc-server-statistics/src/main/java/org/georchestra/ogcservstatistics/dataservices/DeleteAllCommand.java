@@ -32,17 +32,17 @@ import java.sql.Statement;
  */
 public final class DeleteAllCommand extends AbstractDataCommand {
 
-	/**
-	 * This method will execute a SQL Delete!
-	 * 
-	 * @see org.georchestra.ogcservstatistics.dataservices.DataCommand#execute()
-	 */
-	@Override
-	public void execute() throws DataCommandException {
-		try (Statement pStmt = this.connection.createStatement()) {
-			pStmt.execute(String.format("DELETE FROM %s", QUALIFIED_TABLE_NAME));
-		} catch (SQLException e) {
-			throw new DataCommandException(e);
-		}
-	}
+    /**
+     * This method will execute a SQL Delete!
+     * 
+     * @see org.georchestra.ogcservstatistics.dataservices.DataCommand#execute()
+     */
+    @Override
+    public void execute() throws DataCommandException {
+        try (Statement pStmt = this.connection.createStatement()) {
+            pStmt.execute(String.format("DELETE FROM %s", QUALIFIED_TABLE_NAME));
+        } catch (SQLException e) {
+            throw new DataCommandException(e);
+        }
+    }
 }

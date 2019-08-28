@@ -14,78 +14,78 @@ import org.junit.Test;
 
 public class ExpiredArchiveDaemonTest {
 
-	private static final long SECOND = 1000;
-	private static final long MINUTE = 60 * SECOND;
-	private static final long HOUR = 60 * MINUTE;
-	private static final long DAYS = 24 * HOUR;
+    private static final long SECOND = 1000;
+    private static final long MINUTE = 60 * SECOND;
+    private static final long HOUR = 60 * MINUTE;
+    private static final long DAYS = 24 * HOUR;
 
-	@Test
-	public void testExpiredArchiveDaemon() {
-		try {
-			ExpiredArchiveDaemon ead = new ExpiredArchiveDaemon();
-			ead.startup();
+    @Test
+    public void testExpiredArchiveDaemon() {
+        try {
+            ExpiredArchiveDaemon ead = new ExpiredArchiveDaemon();
+            ead.startup();
 
-			// we need an extractionManager before trying to call run()
-			ead.setExtractionManager(new ExtractionManager());
+            // we need an extractionManager before trying to call run()
+            ead.setExtractionManager(new ExtractionManager());
 
-			ead.run();
-		} catch (Throwable e) {
-			// TODO: debug
-			fail("Exception running ExpiredArchiveDaemon: " + e.getMessage());
-		}
-	}
+            ead.run();
+        } catch (Throwable e) {
+            // TODO: debug
+            fail("Exception running ExpiredArchiveDaemon: " + e.getMessage());
+        }
+    }
 
-	@Test
-	public void testExpiredArchiveDaemonFileDeletion() {
-		ExpiredArchiveDaemon ead = new ExpiredArchiveDaemon();
-		ead.startup();
-		ead.setExtractionManager(new ExtractionManager());
-		File storageFile = FileUtils.storageFile("");
+    @Test
+    public void testExpiredArchiveDaemonFileDeletion() {
+        ExpiredArchiveDaemon ead = new ExpiredArchiveDaemon();
+        ead.startup();
+        ead.setExtractionManager(new ExtractionManager());
+        File storageFile = FileUtils.storageFile("");
 
-		File testFile = new File(storageFile + File.separator + "sample" + ExtractorController.EXTRACTION_ZIP_EXT);
+        File testFile = new File(storageFile + File.separator + "sample" + ExtractorController.EXTRACTION_ZIP_EXT);
 
-		try {
-			if (!storageFile.exists()) {
-				org.apache.commons.io.FileUtils.forceMkdir(storageFile);
-			}
-			testFile.createNewFile();
-		} catch (IOException e) {
-			fail("Unexpected exception: " + e.getMessage());
-		}
-		testFile.deleteOnExit();
-		ead.run();
-		// With default params, the file should be still here after run
-		assertTrue(testFile.exists());
+        try {
+            if (!storageFile.exists()) {
+                org.apache.commons.io.FileUtils.forceMkdir(storageFile);
+            }
+            testFile.createNewFile();
+        } catch (IOException e) {
+            fail("Unexpected exception: " + e.getMessage());
+        }
+        testFile.deleteOnExit();
+        ead.run();
+        // With default params, the file should be still here after run
+        assertTrue(testFile.exists());
 
-		// With expiry = 0, it should be removed
-		ead.setExpiry(0);
-		ead.run();
-		assertFalse(testFile.exists());
-	}
+        // With expiry = 0, it should be removed
+        ead.setExpiry(0);
+        ead.run();
+        assertFalse(testFile.exists());
+    }
 
-	@Test
-	public void testExpiredArchiveDaemonExpiry() {
-		ExpiredArchiveDaemon ead = new ExpiredArchiveDaemon();
-		// should raise NPE before setting it
-		try {
-			ead.getExpiry();
-		} catch (NullPointerException e) {
-		}
+    @Test
+    public void testExpiredArchiveDaemonExpiry() {
+        ExpiredArchiveDaemon ead = new ExpiredArchiveDaemon();
+        // should raise NPE before setting it
+        try {
+            ead.getExpiry();
+        } catch (NullPointerException e) {
+        }
 
-		ead.setExpiry(1000);
-		Assert.assertEquals(1000, ead.getExpiry());
-	}
+        ead.setExpiry(1000);
+        Assert.assertEquals(1000, ead.getExpiry());
+    }
 
-	@Test
-	public void testExpiredArchiveDaemonPeriod() {
-		ExpiredArchiveDaemon ead = new ExpiredArchiveDaemon();
-		try {
-			ead.getPeriod();
-		} catch (NullPointerException e) {
-		}
-		ead.setPeriod(1000);
+    @Test
+    public void testExpiredArchiveDaemonPeriod() {
+        ExpiredArchiveDaemon ead = new ExpiredArchiveDaemon();
+        try {
+            ead.getPeriod();
+        } catch (NullPointerException e) {
+        }
+        ead.setPeriod(1000);
 
-		Assert.assertEquals(1000, ead.getPeriod());
-	}
+        Assert.assertEquals(1000, ead.getPeriod());
+    }
 
 }

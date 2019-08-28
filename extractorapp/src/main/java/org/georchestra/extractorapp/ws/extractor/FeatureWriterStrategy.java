@@ -33,12 +33,12 @@ import java.io.IOException;
  */
 interface FeatureWriterStrategy {
 
-	/**
-	 * Generates a files that maintain the vector data correspondent to a layer
-	 * 
-	 * @return the generated files
-	 * @throws IOException
-	 */
-	File[] generateFiles() throws IOException;
+    /**
+     * Generates a files that maintain the vector data correspondent to a layer
+     * 
+     * @return the generated files
+     * @throws IOException
+     */
+    File[] generateFiles() throws IOException;
 
 }

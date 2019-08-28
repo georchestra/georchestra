@@ -27,16 +27,16 @@ import javax.sql.DataSource;
  */
 public interface DataCommand {
 
-	/**
-	 * @param dataSource connection provider
-	 */
-	public void setDataSource(DataSource dataSource);
+    /**
+     * @param dataSource connection provider
+     */
+    public void setDataSource(DataSource dataSource);
 
-	/**
-	 * Execute the sql command specified
-	 * 
-	 * @throws DataCommandException
-	 */
-	public void execute() throws DataCommandException;
+    /**
+     * Execute the sql command specified
+     * 
+     * @throws DataCommandException
+     */
+    public void execute() throws DataCommandException;
 
 }

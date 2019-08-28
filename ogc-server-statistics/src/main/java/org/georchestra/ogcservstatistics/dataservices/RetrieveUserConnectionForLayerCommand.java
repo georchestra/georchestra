@@ -38,66 +38,66 @@ import java.util.Map;
  */
 public final class RetrieveUserConnectionForLayerCommand extends AbstractQueryCommand {
 
-	private static final String CONNECTIONS_COLUMN = "connections";
+    private static final String CONNECTIONS_COLUMN = "connections";
 
-	/**
-	 * builds the sql query taking into account if a month is or isn't specified
-	 * 
-	 * @return the sql statement
-	 */
-	private String getSQLStatement() {
+    /**
+     * builds the sql query taking into account if a month is or isn't specified
+     * 
+     * @return the sql statement
+     */
+    private String getSQLStatement() {
 
-		StringBuilder sql = new StringBuilder();
+        StringBuilder sql = new StringBuilder();
 
-		sql.append(" SELECT ").append(LAYER_COLUMN).append(",").append(USER_COLUMN)
-				.append(",count(" + USER_COLUMN + ") as ").append(CONNECTIONS_COLUMN).append(" FROM ")
-				.append(QUALIFIED_TABLE_NAME);
-		if (this.month > 0) {
-			sql.append(" WHERE EXTRACT(ISOYEAR FROM date) = ? AND EXTRACT(MONTH FROM date) = ?");
-		} else {
-			sql.append(" WHERE EXTRACT(ISOYEAR FROM date) = ? ");
-		}
-		sql.append(" GROUP BY ").append(LAYER_COLUMN).append(",").append(USER_COLUMN);
-		sql.append(" ORDER BY ").append(LAYER_COLUMN).append(",").append(USER_COLUMN);
+        sql.append(" SELECT ").append(LAYER_COLUMN).append(",").append(USER_COLUMN)
+                .append(",count(" + USER_COLUMN + ") as ").append(CONNECTIONS_COLUMN).append(" FROM ")
+                .append(QUALIFIED_TABLE_NAME);
+        if (this.month > 0) {
+            sql.append(" WHERE EXTRACT(ISOYEAR FROM date) = ? AND EXTRACT(MONTH FROM date) = ?");
+        } else {
+            sql.append(" WHERE EXTRACT(ISOYEAR FROM date) = ? ");
+        }
+        sql.append(" GROUP BY ").append(LAYER_COLUMN).append(",").append(USER_COLUMN);
+        sql.append(" ORDER BY ").append(LAYER_COLUMN).append(",").append(USER_COLUMN);
 
-		return sql.toString();
-	}
+        return sql.toString();
+    }
 
-	/**
-	 * Creates the {@link PreparedStatement} for the SQL statement.
-	 */
-	@Override
-	protected PreparedStatement prepareStatement() throws SQLException {
+    /**
+     * Creates the {@link PreparedStatement} for the SQL statement.
+     */
+    @Override
+    protected PreparedStatement prepareStatement() throws SQLException {
 
-		assert year > 0 : "year is expected";
+        assert year > 0 : "year is expected";
 
-		PreparedStatement pStmt = this.connection.prepareStatement(getSQLStatement());
-		pStmt.setInt(1, this.year);
+        PreparedStatement pStmt = this.connection.prepareStatement(getSQLStatement());
+        pStmt.setInt(1, this.year);
 
-		// if the month was specified then sets it in the statement
-		if (this.month > 0) {
-			pStmt.setInt(2, this.month);
-		}
+        // if the month was specified then sets it in the statement
+        if (this.month > 0) {
+            pStmt.setInt(2, this.month);
+        }
 
-		return pStmt;
-	}
+        return pStmt;
+    }
 
-	/**
-	 * Assigns the result set values to the map
-	 * 
-	 * @param rs
-	 * 
-	 * @return pair user, connections
-	 */
-	@Override
-	protected Map<String, Object> getRow(ResultSet rs) throws SQLException {
+    /**
+     * Assigns the result set values to the map
+     * 
+     * @param rs
+     * 
+     * @return pair user, connections
+     */
+    @Override
+    protected Map<String, Object> getRow(ResultSet rs) throws SQLException {
 
-		Map<String, Object> row = new HashMap<>(3);
-		row.put(LAYER_COLUMN, rs.getString(LAYER_COLUMN));
-		row.put(USER_COLUMN, rs.getString(USER_COLUMN));
-		row.put(CONNECTIONS_COLUMN, rs.getInt(CONNECTIONS_COLUMN));
+        Map<String, Object> row = new HashMap<>(3);
+        row.put(LAYER_COLUMN, rs.getString(LAYER_COLUMN));
+        row.put(USER_COLUMN, rs.getString(USER_COLUMN));
+        row.put(CONNECTIONS_COLUMN, rs.getInt(CONNECTIONS_COLUMN));
 
-		return row;
-	}
+        return row;
+    }
 
 }

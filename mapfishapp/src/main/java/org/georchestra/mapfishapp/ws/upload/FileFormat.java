@@ -28,18 +28,18 @@ package org.georchestra.mapfishapp.ws.upload;
  */
 public enum FileFormat {
 
-	shp, gml, kml, geojson;
+    shp, gml, kml, geojson;
 
-	public static boolean contains(final String ext) {
+    public static boolean contains(final String ext) {
 
-		String lcExt = ext.toLowerCase();
+        String lcExt = ext.toLowerCase();
 
-		FileFormat[] formats = values();
-		for (FileFormat format : formats) {
-			if (format.toString().equals(lcExt)) {
-				return true;
-			}
-		}
-		return false;
-	}
+        FileFormat[] formats = values();
+        for (FileFormat format : formats) {
+            if (format.toString().equals(lcExt)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

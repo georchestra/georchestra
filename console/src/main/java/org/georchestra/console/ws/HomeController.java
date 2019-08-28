@@ -48,55 +48,55 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class HomeController {
 
-	private static final Log LOG = LogFactory.getLog(HomeController.class.getName());
-	private ExpiredTokenManagement tokenManagement;
+    private static final Log LOG = LogFactory.getLog(HomeController.class.getName());
+    private ExpiredTokenManagement tokenManagement;
 
-	@Value("${publicContextPath:/console}")
-	private String publicContextPath;
+    @Value("${publicContextPath:/console}")
+    private String publicContextPath;
 
-	@Autowired
-	private ServletContext context;
+    @Autowired
+    private ServletContext context;
 
-	@Autowired
-	public HomeController(ExpiredTokenManagement tokenManagment) {
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("home controller initialization");
-		}
+    @Autowired
+    public HomeController(ExpiredTokenManagement tokenManagment) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("home controller initialization");
+        }
 
-		this.tokenManagement = tokenManagment;
-		this.tokenManagement.start();
-	}
+        this.tokenManagement = tokenManagment;
+        this.tokenManagement.start();
+    }
 
-	@RequestMapping(value = "/")
-	public void root(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    @RequestMapping(value = "/")
+    public void root(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-		String roles = request.getHeader("sec-roles");
+        String roles = request.getHeader("sec-roles");
 
-		if (roles != null) {
-			String redirectUrl;
-			List<String> rolesList = Arrays.asList(roles.split(";"));
+        if (roles != null) {
+            String redirectUrl;
+            List<String> rolesList = Arrays.asList(roles.split(";"));
 
-			if (rolesList.contains("ROLE_SUPERUSER") || rolesList.contains("ROLE_ORGADMIN")) {
-				redirectUrl = "/manager/";
-			} else {
-				redirectUrl = "/account/userdetails";
-			}
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("root page request -> redirection to " + publicContextPath + redirectUrl);
-			}
-			response.sendRedirect(publicContextPath + redirectUrl);
-		} else {
-			// redirect to CAS
-			response.sendRedirect(publicContextPath + "/account/userdetails?login");
-		}
-	}
+            if (rolesList.contains("ROLE_SUPERUSER") || rolesList.contains("ROLE_ORGADMIN")) {
+                redirectUrl = "/manager/";
+            } else {
+                redirectUrl = "/account/userdetails";
+            }
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("root page request -> redirection to " + publicContextPath + redirectUrl);
+            }
+            response.sendRedirect(publicContextPath + redirectUrl);
+        } else {
+            // redirect to CAS
+            response.sendRedirect(publicContextPath + "/account/userdetails?login");
+        }
+    }
 
-	@RequestMapping(value = "/manager/")
-	public String consoleHome(HttpServletRequest request) throws IOException {
-		return "managerUi";
-	}
+    @RequestMapping(value = "/manager/")
+    public String consoleHome(HttpServletRequest request) throws IOException {
+        return "managerUi";
+    }
 
-	public void setPublicContextPath(String publicContextPath) {
-		this.publicContextPath = publicContextPath;
-	}
+    public void setPublicContextPath(String publicContextPath) {
+        this.publicContextPath = publicContextPath;
+    }
 }

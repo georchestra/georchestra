@@ -42,28 +42,25 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 public class UsersIT {
 
-    private @Autowired
-    LdapTemplate ldapTemplateSanityCheck;
+    private @Autowired LdapTemplate ldapTemplateSanityCheck;
 
     private @Value("${ldap_port}") int ldapPort;
 
     private @Value("${psql_port}") int psqlPort;
 
-    public @Rule
-    TestName testName = new TestName();
+    public @Rule TestName testName = new TestName();
 
     @Autowired
     private WebApplicationContext wac;
 
     private MockMvc mockMvc;
 
-    public static @BeforeClass
-    void init() {
+    public static @BeforeClass void init() {
     }
 
-    public @Before
-    void before() {
-        System.err.printf("############# %s: psql_port: %s, ldap_port: %s\n", testName.getMethodName(), psqlPort, ldapPort);
+    public @Before void before() {
+        System.err.printf("############# %s: psql_port: %s, ldap_port: %s\n", testName.getMethodName(), psqlPort,
+                ldapPort);
         // pre-flight sanity check
         assertNotNull(ldapTemplateSanityCheck.lookup("cn=admin"));
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
@@ -71,9 +68,9 @@ public class UsersIT {
     }
 
     @WithMockRandomUidUser
-    public @Test
-    void profile() throws Exception {
-        String userName = ((User)(SecurityContextHolder.getContext().getAuthentication().getPrincipal())).getUsername();
+    public @Test void profile() throws Exception {
+        String userName = ((User) (SecurityContextHolder.getContext().getAuthentication().getPrincipal()))
+                .getUsername();
         createUser(userName);
 
         getProfile().andExpect(jsonPath("$.roles[0]").value("USER"));
@@ -82,52 +79,46 @@ public class UsersIT {
         String role2Name = createRole();
         setRole(userName, role1Name, role2Name);
 
-        getProfile()
-                .andExpect(jsonPath("$.roles[1]").value(role1Name))
+        getProfile().andExpect(jsonPath("$.roles[1]").value(role1Name))
                 .andExpect(jsonPath("$.roles[2]").value(role2Name));
 
     }
 
     @WithMockRandomUidUser
-    public @Test
-    void changeOrgAndUid() throws Exception {
+    public @Test void changeOrgAndUid() throws Exception {
         String userName = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
         String newUserName = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
         createUser(userName);
 
-        mockMvc.perform(put("/private/users/" + userName).content(readRessourceToString("/testData/createUserPayload.json")
-                .replace("{uuid}", newUserName)
-                .replace("psc", "cra")));
+        mockMvc.perform(
+                put("/private/users/" + userName).content(readRessourceToString("/testData/createUserPayload.json")
+                        .replace("{uuid}", newUserName).replace("psc", "cra")));
 
-
-        mockMvc.perform(get("/private/users/" + newUserName))
-                .andExpect(jsonPath("$.org").value("cra"))
+        mockMvc.perform(get("/private/users/" + newUserName)).andExpect(jsonPath("$.org").value("cra"))
                 .andExpect(jsonPath("$.uid").value(newUserName));
     }
 
     @WithMockRandomUidUser
-    public @Test
-    void userDetail() throws Exception {
-        String userName = ((User)(SecurityContextHolder.getContext().getAuthentication().getPrincipal())).getUsername();
+    public @Test void userDetail() throws Exception {
+        String userName = ((User) (SecurityContextHolder.getContext().getAuthentication().getPrincipal()))
+                .getUsername();
         createUser(userName);
 
         mockMvc.perform(get("/account/userdetails").header("sec-username", userName)).andExpect(status().isOk());
     }
 
     @WithMockRandomUidUser
-    public @Test
-    void users() throws Exception {
-        String userName = ((User)(SecurityContextHolder.getContext().getAuthentication().getPrincipal())).getUsername();
+    public @Test void users() throws Exception {
+        String userName = ((User) (SecurityContextHolder.getContext().getAuthentication().getPrincipal()))
+                .getUsername();
         createUser(userName);
 
-        mockMvc.perform(get("/private/users"))
-                .andExpect(jsonPath("$[?(@.pending in [false])].['pending']").exists())
+        mockMvc.perform(get("/private/users")).andExpect(jsonPath("$[?(@.pending in [false])].['pending']").exists())
                 .andExpect(jsonPath("$[?(@.pending in [true])].['pending']").exists());
     }
 
     @WithMockRandomUidUser
-    public @Test
-    void updateUsers() throws Exception {
+    public @Test void updateUsers() throws Exception {
         String userName1 = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
         String userName2 = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
         createUser(userName1);
@@ -139,7 +130,8 @@ public class UsersIT {
         setRole(userName1, role1Name, role2Name);
         setRole(userName1, role3Name, role4Name);
 
-        String body = String.format("{ \"users\":[\"%s\",\"%s\"],\"PUT\":[\"%s\",\"%s\"],\"DELETE\":[\"%s\",\"%s\"]}", userName1, userName2, role1Name, role3Name, role2Name, role4Name);
+        String body = String.format("{ \"users\":[\"%s\",\"%s\"],\"PUT\":[\"%s\",\"%s\"],\"DELETE\":[\"%s\",\"%s\"]}",
+                userName1, userName2, role1Name, role3Name, role2Name, role4Name);
         this.mockMvc.perform(post("/private/roles_users").content(body));
 
         mockMvc.perform(get("/private/roles/" + role1Name)).andExpect(jsonPath("$.users[0]").value(userName1));
@@ -151,7 +143,8 @@ public class UsersIT {
     }
 
     private void createUser(String userName) throws Exception {
-        mockMvc.perform(post("/private/users").content(readRessourceToString("/testData/createUserPayload.json").replace("{uuid}", userName)));
+        mockMvc.perform(post("/private/users")
+                .content(readRessourceToString("/testData/createUserPayload.json").replace("{uuid}", userName)));
     }
 
     private ResultActions getProfile() throws Exception {
@@ -166,7 +159,8 @@ public class UsersIT {
     }
 
     private void setRole(String userName, String role1Name, String role2Name) throws Exception {
-        String body = "{ \"users\":[\"" + userName + "\"],\"PUT\":[\""+ role1Name + "\", \"" + role2Name + "\"],\"DELETE\":[]}";
+        String body = "{ \"users\":[\"" + userName + "\"],\"PUT\":[\"" + role1Name + "\", \"" + role2Name
+                + "\"],\"DELETE\":[]}";
         this.mockMvc.perform(post("/private/roles_users").content(body));
     }
 

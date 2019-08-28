@@ -26,11 +26,11 @@ package org.georchestra.console.ds;
  * @author Mauricio Pazos
  */
 public class DuplicatedEmailException extends Exception {
-	private static final long serialVersionUID = -3664679290591393089L;
+    private static final long serialVersionUID = -3664679290591393089L;
 
-	public DuplicatedEmailException(String msg) {
+    public DuplicatedEmailException(String msg) {
 
-		super(msg);
-	}
+        super(msg);
+    }
 
 }

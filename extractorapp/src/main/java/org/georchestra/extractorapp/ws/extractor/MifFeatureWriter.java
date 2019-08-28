@@ -35,28 +35,28 @@ import org.opengis.util.ProgressListener;
  */
 class MifFeatureWriter extends FileFeatureWriter {
 
-	/**
-	 * new instance of MifFeatureWriter
-	 * 
-	 * @param progressListerner
-	 * @param schema
-	 * @param basedir
-	 * @param features
-	 */
-	public MifFeatureWriter(ProgressListener progressListerner, SimpleFeatureType schema, File basedir,
-			SimpleFeatureCollection features) {
+    /**
+     * new instance of MifFeatureWriter
+     * 
+     * @param progressListerner
+     * @param schema
+     * @param basedir
+     * @param features
+     */
+    public MifFeatureWriter(ProgressListener progressListerner, SimpleFeatureType schema, File basedir,
+            SimpleFeatureCollection features) {
 
-		super(progressListerner, schema, basedir, features);
-	}
+        super(progressListerner, schema, basedir, features);
+    }
 
-	/**
-	 * Creates a {@link MifDatastoreFactory}
-	 * 
-	 * @return a {@link MifDatastoreFactory}
-	 */
-	@Override
-	protected DatastoreFactory getDatastoreFactory() {
-		return new MifDatastoreFactory();
-	}
+    /**
+     * Creates a {@link MifDatastoreFactory}
+     * 
+     * @return a {@link MifDatastoreFactory}
+     */
+    @Override
+    protected DatastoreFactory getDatastoreFactory() {
+        return new MifDatastoreFactory();
+    }
 
 }

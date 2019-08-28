@@ -23,10 +23,10 @@ import javax.sql.DataSource;
 
 public abstract class AbstractDataCommand implements DataCommand {
 
-	protected DataSource dataSource;
+    protected DataSource dataSource;
 
-	@Override
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
+    @Override
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 }

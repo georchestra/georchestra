@@ -38,37 +38,37 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 final class RoleListResponse {
 
-	private List<Role> roleList;
-	private ProtectedUserFilter filter;
+    private List<Role> roleList;
+    private ProtectedUserFilter filter;
 
-	public RoleListResponse(List<Role> list, ProtectedUserFilter filter) {
-		this.roleList = list;
-		this.filter = filter;
-	}
+    public RoleListResponse(List<Role> list, ProtectedUserFilter filter) {
+        this.roleList = list;
+        this.filter = filter;
+    }
 
-	public JSONArray toJsonArray() throws JSONException {
-		JSONArray jsonRoleArray = new JSONArray();
-		for (Role role : this.roleList) {
+    public JSONArray toJsonArray() throws JSONException {
+        JSONArray jsonRoleArray = new JSONArray();
+        for (Role role : this.roleList) {
 
-			JSONObject jsonRole = new JSONObject();
+            JSONObject jsonRole = new JSONObject();
 
-			jsonRole.put(RoleSchema.COMMON_NAME_KEY, role.getName());
-			jsonRole.put(RoleSchema.DESCRIPTION_KEY, role.getDescription());
-			jsonRole.put(RoleSchema.FAVORITE_JSON_KEY, role.isFavorite());
+            jsonRole.put(RoleSchema.COMMON_NAME_KEY, role.getName());
+            jsonRole.put(RoleSchema.DESCRIPTION_KEY, role.getDescription());
+            jsonRole.put(RoleSchema.FAVORITE_JSON_KEY, role.isFavorite());
 
-			// adds the list of users
-			List<String> list = filter.filterStringList(role.getUserList());
+            // adds the list of users
+            List<String> list = filter.filterStringList(role.getUserList());
 
-			JSONArray membersArray = new JSONArray();
+            JSONArray membersArray = new JSONArray();
 
-			for (String userUid : list)
-				membersArray.put(userUid);
+            for (String userUid : list)
+                membersArray.put(userUid);
 
-			jsonRole.put("users", membersArray);
+            jsonRole.put("users", membersArray);
 
-			jsonRoleArray.put(jsonRole);
-		}
-		return jsonRoleArray;
-	}
+            jsonRoleArray.put(jsonRole);
+        }
+        return jsonRoleArray;
+    }
 
 }

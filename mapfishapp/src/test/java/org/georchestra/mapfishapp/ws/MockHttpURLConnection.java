@@ -11,116 +11,116 @@ import java.util.List;
 import java.util.Map;
 
 final class MockHttpURLConnection extends HttpURLConnection {
-	private Map<String, List<String>> requestProperties = new HashMap<String, List<String>>();
+    private Map<String, List<String>> requestProperties = new HashMap<String, List<String>>();
 
-	private Map<String, List<String>> headerFields = new HashMap<String, List<String>>();
+    private Map<String, List<String>> headerFields = new HashMap<String, List<String>>();
 
-	private OutputStream fakedStream = new ByteArrayOutputStream();
+    private OutputStream fakedStream = new ByteArrayOutputStream();
 
-	private InputStream fakedInputStream;
-	private String contentType = null;
-	private int fakedResponseCode = HttpURLConnection.HTTP_OK;
+    private InputStream fakedInputStream;
+    private String contentType = null;
+    private int fakedResponseCode = HttpURLConnection.HTTP_OK;
 
-	public void setResponseCode(int c) {
-		fakedResponseCode = c;
-	}
+    public void setResponseCode(int c) {
+        fakedResponseCode = c;
+    }
 
-	@Override
-	public int getResponseCode() {
-		return fakedResponseCode;
-	}
+    @Override
+    public int getResponseCode() {
+        return fakedResponseCode;
+    }
 
-	public void setContentType(String ct) {
-		contentType = ct;
-	}
+    public void setContentType(String ct) {
+        contentType = ct;
+    }
 
-	@Override
-	public String getContentType() {
-		return contentType;
-	}
+    @Override
+    public String getContentType() {
+        return contentType;
+    }
 
-	protected MockHttpURLConnection() {
-		super(null);
-	}
+    protected MockHttpURLConnection() {
+        super(null);
+    }
 
-	@Override
-	public void disconnect() {
-		return;
-	}
+    @Override
+    public void disconnect() {
+        return;
+    }
 
-	@Override
-	public boolean usingProxy() {
-		return false;
-	}
+    @Override
+    public boolean usingProxy() {
+        return false;
+    }
 
-	@Override
-	public void connect() throws IOException {
-		return;
-	}
+    @Override
+    public void connect() throws IOException {
+        return;
+    }
 
-	@Override
-	public OutputStream getOutputStream() {
-		return fakedStream;
-	}
+    @Override
+    public OutputStream getOutputStream() {
+        return fakedStream;
+    }
 
-	@Override
-	public void setRequestProperty(String k, String v) {
-		List<String> l = requestProperties.get(k);
-		if (l == null) {
-			List<String> val = new ArrayList<String>();
-			val.add(v);
-			requestProperties.put(k, val);
-			return;
-		}
-		l.add(v);
-		requestProperties.put(k, l);
-	}
+    @Override
+    public void setRequestProperty(String k, String v) {
+        List<String> l = requestProperties.get(k);
+        if (l == null) {
+            List<String> val = new ArrayList<String>();
+            val.add(v);
+            requestProperties.put(k, val);
+            return;
+        }
+        l.add(v);
+        requestProperties.put(k, l);
+    }
 
-	@Override
-	public Map<String, List<String>> getRequestProperties() {
-		return requestProperties;
-	}
+    @Override
+    public Map<String, List<String>> getRequestProperties() {
+        return requestProperties;
+    }
 
-	public void setHeaderFields(String k, String v) {
-		List<String> l = headerFields.get(k);
-		if (l == null) {
-			List<String> val = new ArrayList<String>();
-			val.add(v);
-			headerFields.put(k, val);
-			return;
-		}
-		l.add(v);
-		headerFields.put(k, l);
-	}
+    public void setHeaderFields(String k, String v) {
+        List<String> l = headerFields.get(k);
+        if (l == null) {
+            List<String> val = new ArrayList<String>();
+            val.add(v);
+            headerFields.put(k, val);
+            return;
+        }
+        l.add(v);
+        headerFields.put(k, l);
+    }
 
-	@Override
-	public Map<String, List<String>> getHeaderFields() {
-		return headerFields;
-	}
+    @Override
+    public Map<String, List<String>> getHeaderFields() {
+        return headerFields;
+    }
 
-	public void setInputStream(InputStream stream) {
-		fakedInputStream = stream;
-	}
+    public void setInputStream(InputStream stream) {
+        fakedInputStream = stream;
+    }
 
-	@Override
-	public InputStream getInputStream() {
-		return fakedInputStream;
-	}
+    @Override
+    public InputStream getInputStream() {
+        return fakedInputStream;
+    }
 
-	public void reset() {
-		requestProperties = new HashMap<String, List<String>>();
-		headerFields = new HashMap<String, List<String>>();
-		try {
-			fakedStream.close();
-		} catch (Throwable e) {
-		}
-		fakedStream = new ByteArrayOutputStream();
-		try {
-			fakedInputStream.close();
-		} catch (Throwable e) {
-		}
-		;
-		contentType = null;
-		fakedResponseCode = HttpURLConnection.HTTP_OK;
-	}
+    public void reset() {
+        requestProperties = new HashMap<String, List<String>>();
+        headerFields = new HashMap<String, List<String>>();
+        try {
+            fakedStream.close();
+        } catch (Throwable e) {
+        }
+        fakedStream = new ByteArrayOutputStream();
+        try {
+            fakedInputStream.close();
+        } catch (Throwable e) {
+        }
+        ;
+        contentType = null;
+        fakedResponseCode = HttpURLConnection.HTTP_OK;
+    }
 }

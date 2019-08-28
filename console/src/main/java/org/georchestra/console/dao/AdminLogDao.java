@@ -32,14 +32,14 @@ import java.util.List;
 @Repository
 public interface AdminLogDao extends PagingAndSortingRepository<AdminLogEntry, Long> {
 
-	@Transactional
-	List<AdminLogEntry> findByAdmin(String admin);
+    @Transactional
+    List<AdminLogEntry> findByAdmin(String admin);
 
-	@Transactional
-	List<AdminLogEntry> findByTarget(String target);
+    @Transactional
+    List<AdminLogEntry> findByTarget(String target);
 
-	List<AdminLogEntry> findByTarget(String target, Pageable range);
+    List<AdminLogEntry> findByTarget(String target, Pageable range);
 
-	List<AdminLogEntry> myFindByTargets(@Param("targets") Collection<String> targets, Pageable range);
+    List<AdminLogEntry> myFindByTargets(@Param("targets") Collection<String> targets, Pageable range);
 
 }

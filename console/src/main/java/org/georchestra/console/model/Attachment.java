@@ -34,67 +34,67 @@ import javax.persistence.Table;
 @Table(schema = "console", name = "admin_attachments")
 public class Attachment {
 
-	@Id
-	@SequenceGenerator(name = "admin_attachments_id_seq", schema = "console", sequenceName = "admin_attachments_id_seq", initialValue = 1, allocationSize = 1)
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "admin_attachments_id_seq")
-	private long id;
-	private String name;
-	@Lob
-	private byte[] content;
-	private String mimeType;
+    @Id
+    @SequenceGenerator(name = "admin_attachments_id_seq", schema = "console", sequenceName = "admin_attachments_id_seq", initialValue = 1, allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "admin_attachments_id_seq")
+    private long id;
+    private String name;
+    @Lob
+    private byte[] content;
+    private String mimeType;
 
-	public Attachment() {
-	}
+    public Attachment() {
+    }
 
-	public Attachment(String name, String mimeType, byte[] content) {
-		this.name = name;
-		this.mimeType = mimeType;
-		this.content = content;
-	}
+    public Attachment(String name, String mimeType, byte[] content) {
+        this.name = name;
+        this.mimeType = mimeType;
+        this.content = content;
+    }
 
-	public JSONObject toJSON() throws JSONException {
-		JSONObject res = new JSONObject();
-		res.put("id", this.getId());
-		res.put("name", this.getName());
-		res.put("mimeType", this.getMimeType());
-		res.put("size", this.content.length);
-		return res;
-	}
+    public JSONObject toJSON() throws JSONException {
+        JSONObject res = new JSONObject();
+        res.put("id", this.getId());
+        res.put("name", this.getName());
+        res.put("mimeType", this.getMimeType());
+        res.put("size", this.content.length);
+        return res;
+    }
 
-	/*
-	 * Generic getter, setter
-	 */
+    /*
+     * Generic getter, setter
+     */
 
-	public long getId() {
-		return id;
-	}
+    public long getId() {
+        return id;
+    }
 
-	public void setId(long id) {
-		this.id = id;
-	}
+    public void setId(long id) {
+        this.id = id;
+    }
 
-	public byte[] getContent() {
-		return content;
-	}
+    public byte[] getContent() {
+        return content;
+    }
 
-	public void setContent(byte[] content) {
-		this.content = content;
-	}
+    public void setContent(byte[] content) {
+        this.content = content;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getMimeType() {
-		return mimeType;
-	}
+    public String getMimeType() {
+        return mimeType;
+    }
 
-	public void setMimeType(String mimeType) {
-		this.mimeType = mimeType;
-	}
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
+    }
 
 }

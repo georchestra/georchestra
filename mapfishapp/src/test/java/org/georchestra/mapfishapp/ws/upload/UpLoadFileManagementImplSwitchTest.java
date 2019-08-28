@@ -13,49 +13,49 @@ import org.junit.Test;
  */
 public class UpLoadFileManagementImplSwitchTest {
 
-	/**
-	 * Tests that the implemantation created provides the minimum set of geoFile
-	 * formats
-	 * 
-	 * Test method for
-	 * {@link org.georchestra.mapfishapp.ws.upload.UpLoadFileManagement#getFormatList()}.
-	 */
-	@Test
-	public void testGetFormatList() {
+    /**
+     * Tests that the implemantation created provides the minimum set of geoFile
+     * formats
+     * 
+     * Test method for
+     * {@link org.georchestra.mapfishapp.ws.upload.UpLoadFileManagement#getFormatList()}.
+     */
+    @Test
+    public void testGetFormatList() {
 
-		UpLoadFileManagement manager = UpLoadFileManagement.create();
+        UpLoadFileManagement manager = UpLoadFileManagement.create();
 
-		FileFormat[] formatList = manager.getFormatList();
+        FileFormat[] formatList = manager.getFormatList();
 
-		FileFormat[] minimumSet = getMinimumFormatSet();
+        FileFormat[] minimumSet = getMinimumFormatSet();
 
-		for (FileFormat reqFormat : minimumSet) {
+        for (FileFormat reqFormat : minimumSet) {
 
-			boolean found = false;
-			for (FileFormat formatImpl : formatList) {
+            boolean found = false;
+            for (FileFormat formatImpl : formatList) {
 
-				if (formatImpl.equals(reqFormat)) {
-					found = true;
-					break;
-				}
-			}
-			if (!found) {
-				fail(reqFormat + " is a required format");
-				break;
-			}
-		}
-	}
+                if (formatImpl.equals(reqFormat)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                fail(reqFormat + " is a required format");
+                break;
+            }
+        }
+    }
 
-	/**
-	 * minimum format set is the geotools implementation
-	 * 
-	 * @return Minimum format
-	 */
-	private FileFormat[] getMinimumFormatSet() {
+    /**
+     * minimum format set is the geotools implementation
+     * 
+     * @return Minimum format
+     */
+    private FileFormat[] getMinimumFormatSet() {
 
-		GeotoolsFeatureReader reader = new GeotoolsFeatureReader();
+        GeotoolsFeatureReader reader = new GeotoolsFeatureReader();
 
-		return reader.getFormatList();
-	}
+        return reader.getFormatList();
+    }
 
 }

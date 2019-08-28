@@ -52,92 +52,92 @@ import java.util.List;
 @Controller
 public class DelegationController {
 
-	private static final Log LOG = LogFactory.getLog(DelegationController.class.getName());
+    private static final Log LOG = LogFactory.getLog(DelegationController.class.getName());
 
-	private static final String BASE_MAPPING = "/private";
-	private static final String REQUEST_MAPPING = BASE_MAPPING + "/delegation";
+    private static final String BASE_MAPPING = "/private";
+    private static final String REQUEST_MAPPING = BASE_MAPPING + "/delegation";
 
-	@Autowired
-	private DelegationDao delegationDao;
-	@Autowired
-	private RoleDao roleDao;
-	@Autowired
-	private AccountDao accountDao;
+    @Autowired
+    private DelegationDao delegationDao;
+    @Autowired
+    private RoleDao roleDao;
+    @Autowired
+    private AccountDao accountDao;
 
-	@ExceptionHandler(Exception.class)
-	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-	@ResponseBody
-	public String handleException(Exception e, HttpServletResponse response) throws IOException {
-		LOG.error(e.getMessage());
-		ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, e.getMessage()),
-				HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-		throw new IOException(e);
-	}
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    public String handleException(Exception e, HttpServletResponse response) throws IOException {
+        LOG.error(e.getMessage());
+        ResponseUtil.buildResponse(response, ResponseUtil.buildResponseMessage(false, e.getMessage()),
+                HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        throw new IOException(e);
+    }
 
-	@RequestMapping(value = REQUEST_MAPPING
-			+ "/delegations", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
-	@ResponseBody
-	public String findAll() throws JSONException {
+    @RequestMapping(value = REQUEST_MAPPING
+            + "/delegations", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+    @ResponseBody
+    public String findAll() throws JSONException {
 
-		// TODO filter if request came from delegated admin
-		Iterable<DelegationEntry> delegations = this.delegationDao.findAll();
+        // TODO filter if request came from delegated admin
+        Iterable<DelegationEntry> delegations = this.delegationDao.findAll();
 
-		JSONArray res = new JSONArray();
-		for (DelegationEntry delegation : delegations)
-			res.put(delegation.toJSON());
+        JSONArray res = new JSONArray();
+        for (DelegationEntry delegation : delegations)
+            res.put(delegation.toJSON());
 
-		return res.toString();
-	}
+        return res.toString();
+    }
 
-	@RequestMapping(value = REQUEST_MAPPING
-			+ "/{uid}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
-	@ResponseBody
-	public String findByUid(@PathVariable String uid) throws JSONException {
+    @RequestMapping(value = REQUEST_MAPPING
+            + "/{uid}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+    @ResponseBody
+    public String findByUid(@PathVariable String uid) throws JSONException {
 
-		// TODO test if uid correspond to connected user if request came from delegated
-		// admin
-		return this.delegationDao.findOne(uid).toJSON().toString();
-	}
+        // TODO test if uid correspond to connected user if request came from delegated
+        // admin
+        return this.delegationDao.findOne(uid).toJSON().toString();
+    }
 
-	@RequestMapping(value = REQUEST_MAPPING
-			+ "/{uid}", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
-	@ResponseBody
-	public String add(HttpServletRequest request, @PathVariable String uid)
-			throws JSONException, IOException, DataServiceException {
+    @RequestMapping(value = REQUEST_MAPPING
+            + "/{uid}", method = RequestMethod.POST, produces = "application/json; charset=utf-8")
+    @ResponseBody
+    public String add(HttpServletRequest request, @PathVariable String uid)
+            throws JSONException, IOException, DataServiceException {
 
-		// TODO deny if request came from delegated admin
-		// Parse Json
-		JSONObject json = new JSONObject(FileUtils.asString(request.getInputStream()));
+        // TODO deny if request came from delegated admin
+        // Parse Json
+        JSONObject json = new JSONObject(FileUtils.asString(request.getInputStream()));
 
-		DelegationEntry delegation = new DelegationEntry();
-		delegation.setUid(uid);
-		delegation.setOrgs(this.parseJSONArray(json.getJSONArray("orgs")));
-		delegation.setRoles(this.parseJSONArray(json.getJSONArray("roles")));
-		this.delegationDao.save(delegation);
-		Account account = accountDao.findByUID(uid);
-		this.roleDao.addUser("ORGADMIN", account, request.getHeader("sec-username"));
+        DelegationEntry delegation = new DelegationEntry();
+        delegation.setUid(uid);
+        delegation.setOrgs(this.parseJSONArray(json.getJSONArray("orgs")));
+        delegation.setRoles(this.parseJSONArray(json.getJSONArray("roles")));
+        this.delegationDao.save(delegation);
+        Account account = accountDao.findByUID(uid);
+        this.roleDao.addUser("ORGADMIN", account, request.getHeader("sec-username"));
 
-		return delegation.toJSON().toString();
-	}
+        return delegation.toJSON().toString();
+    }
 
-	private String[] parseJSONArray(JSONArray array) throws JSONException {
-		List<String> res = new LinkedList<String>();
-		for (int i = 0; i < array.length(); i++) {
-			res.add(array.getString(i));
-		}
-		return res.toArray(new String[res.size()]);
-	}
+    private String[] parseJSONArray(JSONArray array) throws JSONException {
+        List<String> res = new LinkedList<String>();
+        for (int i = 0; i < array.length(); i++) {
+            res.add(array.getString(i));
+        }
+        return res.toArray(new String[res.size()]);
+    }
 
-	@RequestMapping(value = REQUEST_MAPPING
-			+ "/{uid}", method = RequestMethod.DELETE, produces = "application/json; charset=utf-8")
-	@ResponseBody
-	public String delete(HttpServletRequest request, @PathVariable String uid)
-			throws JSONException, IOException, DataServiceException {
+    @RequestMapping(value = REQUEST_MAPPING
+            + "/{uid}", method = RequestMethod.DELETE, produces = "application/json; charset=utf-8")
+    @ResponseBody
+    public String delete(HttpServletRequest request, @PathVariable String uid)
+            throws JSONException, IOException, DataServiceException {
 
-		// TODO deny if request came from delegated admin
-		this.delegationDao.delete(uid);
-		this.roleDao.deleteUser("ORGADMIN", accountDao.findByUID(uid), request.getHeader("sec-username"));
-		return new JSONObject().put("result", "ok").toString();
-	}
+        // TODO deny if request came from delegated admin
+        this.delegationDao.delete(uid);
+        this.roleDao.deleteUser("ORGADMIN", accountDao.findByUID(uid), request.getHeader("sec-username"));
+        return new JSONObject().put("result", "ok").toString();
+    }
 
 }

@@ -28,9 +28,9 @@ import java.net.URL;
  */
 public class AcceptAllRequests implements FilterRequestsStrategy {
 
-	@Override
-	public boolean allowRequest(URL request) {
-		return true;
-	}
+    @Override
+    public boolean allowRequest(URL request) {
+        return true;
+    }
 
 }

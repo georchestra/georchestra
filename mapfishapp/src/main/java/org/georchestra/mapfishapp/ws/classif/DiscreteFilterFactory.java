@@ -35,64 +35,64 @@ import org.opengis.filter.FilterFactory2;
  */
 public class DiscreteFilterFactory implements I_FilterFactory {
 
-	private Set<String> _values;
-	private String _propertyName;
+    private Set<String> _values;
+    private String _propertyName;
 
-	/**
-	 * Provides access to the created Filter objects
-	 */
-	public class InternalIterator implements Iterator<Filter> {
+    /**
+     * Provides access to the created Filter objects
+     */
+    public class InternalIterator implements Iterator<Filter> {
 
-		private Iterator<String> _it;
+        private Iterator<String> _it;
 
-		public InternalIterator() {
-			_it = _values.iterator();
-		}
+        public InternalIterator() {
+            _it = _values.iterator();
+        }
 
-		/**
-		 * Determines if another Filter object exists
-		 */
-		public boolean hasNext() {
-			return _it.hasNext();
-		}
+        /**
+         * Determines if another Filter object exists
+         */
+        public boolean hasNext() {
+            return _it.hasNext();
+        }
 
-		/**
-		 * Gets the next Filter Object
-		 */
-		public Filter next() {
-			FilterFactory2 filterFactory = CommonFactoryFinder.getFilterFactory2(null);
-			String value = _it.next();
-			org.opengis.filter.Filter _filter = filterFactory.equals(filterFactory.property(_propertyName),
-					filterFactory.literal(value));
-			Filter filter = new Filter(_filter, new String(value));
-			return filter;
-		}
+        /**
+         * Gets the next Filter Object
+         */
+        public Filter next() {
+            FilterFactory2 filterFactory = CommonFactoryFinder.getFilterFactory2(null);
+            String value = _it.next();
+            org.opengis.filter.Filter _filter = filterFactory.equals(filterFactory.property(_propertyName),
+                    filterFactory.literal(value));
+            Filter filter = new Filter(_filter, new String(value));
+            return filter;
+        }
 
-		/**
-		 * Unsupported
-		 */
-		public void remove() {
-			throw new UnsupportedOperationException();
-		}
-	}
+        /**
+         * Unsupported
+         */
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+    }
 
-	/**
-	 * Creates Filters objects from the given values. Those objects are then
-	 * accessible via {@link DiscreteFilterFactory#iterator()}
-	 * 
-	 * @param values       one value = one filter
-	 * @param propertyName property name on which the WFS request is made
-	 */
-	public DiscreteFilterFactory(final Set<String> values, final String propertyName) {
-		_values = values;
-		_propertyName = propertyName;
-	}
+    /**
+     * Creates Filters objects from the given values. Those objects are then
+     * accessible via {@link DiscreteFilterFactory#iterator()}
+     * 
+     * @param values       one value = one filter
+     * @param propertyName property name on which the WFS request is made
+     */
+    public DiscreteFilterFactory(final Set<String> values, final String propertyName) {
+        _values = values;
+        _propertyName = propertyName;
+    }
 
-	/**
-	 * Provides an iterator to go through all created Filter objects
-	 */
-	public Iterator<Filter> iterator() {
-		return new InternalIterator();
-	}
+    /**
+     * Provides an iterator to go through all created Filter objects
+     */
+    public Iterator<Filter> iterator() {
+        return new InternalIterator();
+    }
 
 }

@@ -9,13 +9,13 @@ package org.georchestra.extractorapp.ws.extractor;
  */
 public class TaskNotFoundException extends Exception {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -3442453408513381630L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -3442453408513381630L;
 
-	public TaskNotFoundException(String msg) {
-		super(msg);
-	}
+    public TaskNotFoundException(String msg) {
+        super(msg);
+    }
 
 }

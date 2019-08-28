@@ -37,42 +37,42 @@ import java.sql.SQLException;
  */
 public abstract class AbstractUpdateCommand extends AbstractDataCommand {
 
-	/**
-	 * Execute the sql insert to add the new row (uid, token, timestamp)
-	 * 
-	 * @see org.georchestra.ogcservstatistics.dataservices.DataCommand#execute()
-	 */
-	@Override
-	public void execute() throws DataCommandException {
-		assert (this.dataSource != null) : "database connection pool is null, use setDataSource";
+    /**
+     * Execute the sql insert to add the new row (uid, token, timestamp)
+     * 
+     * @see org.georchestra.ogcservstatistics.dataservices.DataCommand#execute()
+     */
+    @Override
+    public void execute() throws DataCommandException {
+        assert (this.dataSource != null) : "database connection pool is null, use setDataSource";
 
-		// executes the sql statement and checks that the update operation will be
-		// inserted one row in the table
-		try (Connection connection = dataSource.getConnection()) {
-			connection.setAutoCommit(false);
-			try (PreparedStatement pStmt = prepareStatement(connection)) {
-				int updatedRows = pStmt.executeUpdate();
-				connection.commit();
-				if (updatedRows < 1) {
-					throw new DataCommandException("Database update produced no changes: " + pStmt.toString());
-				}
-			} catch (SQLException statementError) {
-				connection.rollback();
-				throw new DataCommandException(statementError);
-			} finally {
-				connection.setAutoCommit(true);
-			}
-		} catch (SQLException e) {
-			throw new DataCommandException(e);
-		}
-	}
+        // executes the sql statement and checks that the update operation will be
+        // inserted one row in the table
+        try (Connection connection = dataSource.getConnection()) {
+            connection.setAutoCommit(false);
+            try (PreparedStatement pStmt = prepareStatement(connection)) {
+                int updatedRows = pStmt.executeUpdate();
+                connection.commit();
+                if (updatedRows < 1) {
+                    throw new DataCommandException("Database update produced no changes: " + pStmt.toString());
+                }
+            } catch (SQLException statementError) {
+                connection.rollback();
+                throw new DataCommandException(statementError);
+            } finally {
+                connection.setAutoCommit(true);
+            }
+        } catch (SQLException e) {
+            throw new DataCommandException(e);
+        }
+    }
 
-	/**
-	 * The subclass should provide a method to prepare Insert, Update or Delete
-	 * 
-	 * @return {@link PreparedStatement}
-	 * @throws SQLException
-	 */
-	protected abstract PreparedStatement prepareStatement(Connection connection) throws SQLException;
+    /**
+     * The subclass should provide a method to prepare Insert, Update or Delete
+     * 
+     * @return {@link PreparedStatement}
+     * @throws SQLException
+     */
+    protected abstract PreparedStatement prepareStatement(Connection connection) throws SQLException;
 
 }

@@ -31,31 +31,31 @@ import javax.sql.DataSource;
 
 public class WKTDocService extends A_DocService {
 
-	public static final String FILE_EXTENSION = ".wkt";
-	public static final String MIME_TYPE = "text/plain";
+    public static final String FILE_EXTENSION = ".wkt";
+    public static final String MIME_TYPE = "text/plain";
 
-	public WKTDocService(final String tempDir, DataSource pgpool) {
-		super(FILE_EXTENSION, MIME_TYPE, tempDir, pgpool);
-	}
+    public WKTDocService(final String tempDir, DataSource pgpool) {
+        super(FILE_EXTENSION, MIME_TYPE, tempDir, pgpool);
+    }
 
-	/**
-	 * Called before saving the content
-	 * 
-	 * @throws DocServiceException
-	 */
-	@Override
-	protected void preSave() throws DocServiceException {
+    /**
+     * Called before saving the content
+     * 
+     * @throws DocServiceException
+     */
+    @Override
+    protected void preSave() throws DocServiceException {
 
-	}
+    }
 
-	/**
-	 * Called right after the loading of the file content
-	 * 
-	 * @throws DocServiceException
-	 */
-	@Override
-	protected void postLoad() throws DocServiceException {
+    /**
+     * Called right after the loading of the file content
+     * 
+     * @throws DocServiceException
+     */
+    @Override
+    protected void postLoad() throws DocServiceException {
 
-	}
+    }
 
 }

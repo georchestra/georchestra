@@ -38,51 +38,51 @@ import org.apache.commons.logging.LogFactory;
  */
 public class UserRule {
 
-	private static final Log LOG = LogFactory.getLog(UserRule.class.getName());
+    private static final Log LOG = LogFactory.getLog(UserRule.class.getName());
 
-	private Set<String> listOfprotectedUsers = new HashSet<String>();
+    private Set<String> listOfprotectedUsers = new HashSet<String>();
 
-	public Set<String> getListOfprotectedUsers() {
-		return listOfprotectedUsers;
-	}
+    public Set<String> getListOfprotectedUsers() {
+        return listOfprotectedUsers;
+    }
 
-	public void setListOfprotectedUsers(String[] listOfprotectedUsers) {
+    public void setListOfprotectedUsers(String[] listOfprotectedUsers) {
 
-		HashSet<String> res = new HashSet<String>();
-		res.addAll(Arrays.asList(listOfprotectedUsers));
-		this.listOfprotectedUsers = res;
+        HashSet<String> res = new HashSet<String>();
+        res.addAll(Arrays.asList(listOfprotectedUsers));
+        this.listOfprotectedUsers = res;
 
-	}
+    }
 
-	public UserRule() {
-	}
+    public UserRule() {
+    }
 
-	/**
-	 * True if the uid is a protected user
-	 * 
-	 * @param uid
-	 * @return
-	 */
-	public boolean isProtected(final String uid) {
+    /**
+     * True if the uid is a protected user
+     * 
+     * @param uid
+     * @return
+     */
+    public boolean isProtected(final String uid) {
 
-		assert uid != null;
+        assert uid != null;
 
-		if (this.listOfprotectedUsers.isEmpty()) {
-			UserRule.LOG.warn("There isn't any protected user configured");
-		}
+        if (this.listOfprotectedUsers.isEmpty()) {
+            UserRule.LOG.warn("There isn't any protected user configured");
+        }
 
-		return this.listOfprotectedUsers.contains(uid);
-	}
+        return this.listOfprotectedUsers.contains(uid);
+    }
 
-	public List<String> getListUidProtected() {
+    public List<String> getListUidProtected() {
 
-		if (this.listOfprotectedUsers.isEmpty()) {
-			UserRule.LOG.warn("There isn't any protected user configured");
-		}
-		LinkedList<String> res = new LinkedList<String>();
-		res.addAll(this.listOfprotectedUsers);
+        if (this.listOfprotectedUsers.isEmpty()) {
+            UserRule.LOG.warn("There isn't any protected user configured");
+        }
+        LinkedList<String> res = new LinkedList<String>();
+        res.addAll(this.listOfprotectedUsers);
 
-		return res;
-	}
+        return res;
+    }
 
 }

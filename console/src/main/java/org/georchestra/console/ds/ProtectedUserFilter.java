@@ -31,66 +31,66 @@ import org.georchestra.console.dto.Account;
  */
 public class ProtectedUserFilter {
 
-	private List<String> uidList = new LinkedList<String>();
+    private List<String> uidList = new LinkedList<String>();
 
-	/**
-	 * New instance of filter.
-	 *
-	 * @param listOfUid list of protected users
-	 */
-	public ProtectedUserFilter(final List<String> listOfUid) {
+    /**
+     * New instance of filter.
+     *
+     * @param listOfUid list of protected users
+     */
+    public ProtectedUserFilter(final List<String> listOfUid) {
 
-		uidList.addAll(listOfUid);
-	}
+        uidList.addAll(listOfUid);
+    }
 
-	/**
-	 * Adds the uid to the list of protectd users
-	 * 
-	 * @param uid
-	 */
-	public void add(final String uid) {
-		uidList.add(uid);
-	}
+    /**
+     * Adds the uid to the list of protectd users
+     * 
+     * @param uid
+     */
+    public void add(final String uid) {
+        uidList.add(uid);
+    }
 
-	/**
-	 * Checks if the uid given as argument is a protected user
-	 * 
-	 * @param uid
-	 * @return true if is protected, false in other case.
-	 */
-	public boolean isProtected(final String uid) {
-		return uidList.contains(uid);
-	}
+    /**
+     * Checks if the uid given as argument is a protected user
+     * 
+     * @param uid
+     * @return true if is protected, false in other case.
+     */
+    public boolean isProtected(final String uid) {
+        return uidList.contains(uid);
+    }
 
-	public List<Account> filterUsersList(final List<Account> users) {
+    public List<Account> filterUsersList(final List<Account> users) {
 
-		// removes the protected users.
-		TreeSet<Account> filtered = new TreeSet<Account>();
+        // removes the protected users.
+        TreeSet<Account> filtered = new TreeSet<Account>();
 
-		for (Account account : users) {
-			if (!this.isProtected(account.getUid())) {
-				filtered.add(account);
-			}
-		}
+        for (Account account : users) {
+            if (!this.isProtected(account.getUid())) {
+                filtered.add(account);
+            }
+        }
 
-		List<Account> list = new LinkedList<Account>(filtered);
+        List<Account> list = new LinkedList<Account>(filtered);
 
-		return list;
-	}
+        return list;
+    }
 
-	public List<String> filterStringList(final List<String> users) {
+    public List<String> filterStringList(final List<String> users) {
 
-		// removes the protected users.
-		TreeSet<String> filtered = new TreeSet<String>();
-		for (String uid : users) {
+        // removes the protected users.
+        TreeSet<String> filtered = new TreeSet<String>();
+        for (String uid : users) {
 
-			if (!this.isProtected(uid)) {
-				filtered.add(uid);
-			}
-		}
+            if (!this.isProtected(uid)) {
+                filtered.add(uid);
+            }
+        }
 
-		List<String> list = new LinkedList<String>(filtered);
+        List<String> list = new LinkedList<String>(filtered);
 
-		return list;
-	}
+        return list;
+    }
 }

@@ -31,119 +31,119 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Org implements Comparable<Org>, ReferenceAware {
 
-	public static final String JSON_ID = "id";
-	public static final String JSON_NAME = "name";
-	public static final String JSON_SHORT_NAME = "shortName";
-	public static final String JSON_CITIES = "cities";
-	public static final String JSON_MEMBERS = "members";
-	public static final String JSON_PENDING = "pending";
+    public static final String JSON_ID = "id";
+    public static final String JSON_NAME = "name";
+    public static final String JSON_SHORT_NAME = "shortName";
+    public static final String JSON_CITIES = "cities";
+    public static final String JSON_MEMBERS = "members";
+    public static final String JSON_PENDING = "pending";
 
-	private String id;
-	private String name;
-	private String shortName;
-	private List<String> cities = new LinkedList<String>();
-	private String status;
-	private List<String> members = new LinkedList<String>();
-	private boolean isPending;
+    private String id;
+    private String name;
+    private String shortName;
+    private List<String> cities = new LinkedList<String>();
+    private String status;
+    private List<String> members = new LinkedList<String>();
+    private boolean isPending;
 
-	@JsonIgnore
-	private DirContextAdapter reference;
+    @JsonIgnore
+    private DirContextAdapter reference;
 
-	@JsonIgnore
-	private OrgExt orgExt;
+    @JsonIgnore
+    private OrgExt orgExt;
 
-	@JsonProperty(JSON_ID)
-	public String getId() {
-		return id;
-	}
+    @JsonProperty(JSON_ID)
+    public String getId() {
+        return id;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	@JsonProperty(JSON_NAME)
-	public String getName() {
-		return name;
-	}
+    @JsonProperty(JSON_NAME)
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	@JsonProperty(JSON_SHORT_NAME)
-	public String getShortName() {
-		return shortName;
-	}
+    @JsonProperty(JSON_SHORT_NAME)
+    public String getShortName() {
+        return shortName;
+    }
 
-	public void setShortName(String shortName) {
-		if (shortName != null && shortName.length() > 0)
-			this.shortName = shortName;
-	}
+    public void setShortName(String shortName) {
+        if (shortName != null && shortName.length() > 0)
+            this.shortName = shortName;
+    }
 
-	@JsonProperty(JSON_CITIES)
-	public List<String> getCities() {
-		return cities;
-	}
+    @JsonProperty(JSON_CITIES)
+    public List<String> getCities() {
+        return cities;
+    }
 
-	public void setCities(List<String> cities) {
-		this.cities = cities;
-	}
+    public void setCities(List<String> cities) {
+        this.cities = cities;
+    }
 
-	@JsonProperty(JSON_MEMBERS)
-	public List<String> getMembers() {
-		return members;
-	}
+    @JsonProperty(JSON_MEMBERS)
+    public List<String> getMembers() {
+        return members;
+    }
 
-	public void setMembers(List<String> members) {
-		this.members = members;
-	}
+    public void setMembers(List<String> members) {
+        this.members = members;
+    }
 
-	public OrgExt getOrgExt() {
-		return orgExt;
-	}
+    public OrgExt getOrgExt() {
+        return orgExt;
+    }
 
-	public void setOrgExt(OrgExt orgExt) {
-		this.orgExt = orgExt;
-	}
+    public void setOrgExt(OrgExt orgExt) {
+        this.orgExt = orgExt;
+    }
 
-	@JsonGetter(OrgExt.JSON_ORG_TYPE)
-	public String getOrgType() {
-		if (this.orgExt == null)
-			return null;
-		else
-			return this.orgExt.getOrgType();
-	}
+    @JsonGetter(OrgExt.JSON_ORG_TYPE)
+    public String getOrgType() {
+        if (this.orgExt == null)
+            return null;
+        else
+            return this.orgExt.getOrgType();
+    }
 
-	@JsonGetter(OrgExt.JSON_ADDRESS)
-	public String getOrgAddress() {
-		if (this.orgExt == null)
-			return null;
-		else
-			return this.orgExt.getAddress();
-	}
+    @JsonGetter(OrgExt.JSON_ADDRESS)
+    public String getOrgAddress() {
+        if (this.orgExt == null)
+            return null;
+        else
+            return this.orgExt.getAddress();
+    }
 
-	public String toString() {
-		return this.getName();
-	}
+    public String toString() {
+        return this.getName();
+    }
 
-	public int compareTo(Org org) {
-		return this.getName().compareToIgnoreCase(org.getName());
-	}
+    public int compareTo(Org org) {
+        return this.getName().compareToIgnoreCase(org.getName());
+    }
 
-	public DirContextAdapter getReference() {
-		return reference;
-	}
+    public DirContextAdapter getReference() {
+        return reference;
+    }
 
-	public void setReference(DirContextAdapter reference) {
-		this.reference = reference;
-	}
+    public void setReference(DirContextAdapter reference) {
+        this.reference = reference;
+    }
 
-	@JsonProperty(JSON_PENDING)
-	public boolean isPending() {
-		return isPending;
-	}
+    @JsonProperty(JSON_PENDING)
+    public boolean isPending() {
+        return isPending;
+    }
 
-	public void setPending(boolean pending) {
-		isPending = pending;
-	}
+    public void setPending(boolean pending) {
+        isPending = pending;
+    }
 }

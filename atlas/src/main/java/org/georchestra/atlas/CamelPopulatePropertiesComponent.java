@@ -15,58 +15,58 @@ import java.io.InputStreamReader;
 
 public class CamelPopulatePropertiesComponent {
 
-	/**
-	 * The base URL where the webapp can be reached.
-	 *
-	 */
-	private String baseUrl;
+    /**
+     * The base URL where the webapp can be reached.
+     *
+     */
+    private String baseUrl;
 
-	public String getBaseUrl() {
-		return baseUrl;
-	}
+    public String getBaseUrl() {
+        return baseUrl;
+    }
 
-	public void setBaseUrl(String url) {
-		this.baseUrl = url;
-	}
+    public void setBaseUrl(String url) {
+        this.baseUrl = url;
+    }
 
-	/**
-	 * Generate following key in exchange properties : * layers : List of all layers
-	 * in print request (feature layer and base layers) * legendURL : URL to
-	 * download legend
-	 */
-	@Handler
-	public void merge(Exchange ex) throws JSONException, IOException {
+    /**
+     * Generate following key in exchange properties : * layers : List of all layers
+     * in print request (feature layer and base layers) * legendURL : URL to
+     * download legend
+     */
+    @Handler
+    public void merge(Exchange ex) throws JSONException, IOException {
 
-		String rawJson = ex.getProperty("rawJson", String.class);
-		JSONObject jobSpec = new JSONObject(new JSONTokener(rawJson));
+        String rawJson = ex.getProperty("rawJson", String.class);
+        JSONObject jobSpec = new JSONObject(new JSONTokener(rawJson));
 
-		JSONObject featureLayer = (JSONObject) jobSpec.get("featureLayer");
-		JSONArray baseLayers = (JSONArray) jobSpec.get("baseLayers");
+        JSONObject featureLayer = (JSONObject) jobSpec.get("featureLayer");
+        JSONArray baseLayers = (JSONArray) jobSpec.get("baseLayers");
 
-		JSONArray layers = new JSONArray();
-		layers.put(featureLayer);
+        JSONArray layers = new JSONArray();
+        layers.put(featureLayer);
 
-		for (int i = 0; i < baseLayers.length(); i++)
-			layers.put(baseLayers.get(i));
+        for (int i = 0; i < baseLayers.length(); i++)
+            layers.put(baseLayers.get(i));
 
-		ex.setProperty("layers", layers.toString());
-		ex.setProperty("baseUrl", this.getBaseUrl());
+        ex.setProperty("layers", layers.toString());
+        ex.setProperty("baseUrl", this.getBaseUrl());
 
-		String wmsVersion;
-		try {
-			wmsVersion = featureLayer.getString("version");
-		} catch (JSONException e) {
-			// Used default value of 1.1.1 if version is not specified
-			wmsVersion = "1.1.1";
-		}
+        String wmsVersion;
+        try {
+            wmsVersion = featureLayer.getString("version");
+        } catch (JSONException e) {
+            // Used default value of 1.1.1 if version is not specified
+            wmsVersion = "1.1.1";
+        }
 
-		String legendURL = featureLayer.getString("baseURL");
-		legendURL += "?SERVICE=WMS";
-		legendURL += "&VERSION=" + wmsVersion;
-		legendURL += "&REQUEST=GetLegendGraphic&FORMAT=image/png&TRANSPARENT=true";
-		legendURL += "&LAYER=" + featureLayer.getJSONArray("layers").getString(0);
+        String legendURL = featureLayer.getString("baseURL");
+        legendURL += "?SERVICE=WMS";
+        legendURL += "&VERSION=" + wmsVersion;
+        legendURL += "&REQUEST=GetLegendGraphic&FORMAT=image/png&TRANSPARENT=true";
+        legendURL += "&LAYER=" + featureLayer.getJSONArray("layers").getString(0);
 
-		ex.setProperty("legendURL", legendURL);
+        ex.setProperty("legendURL", legendURL);
 
-	}
+    }
 }

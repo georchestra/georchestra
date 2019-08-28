@@ -39,47 +39,47 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class ExpiredTokenCleanTask implements Runnable {
 
-	private static final Log LOG = LogFactory.getLog(ExpiredTokenCleanTask.class.getName());
+    private static final Log LOG = LogFactory.getLog(ExpiredTokenCleanTask.class.getName());
 
-	private UserTokenDao userTokenDao;
+    private UserTokenDao userTokenDao;
 
-	private long delayInMilliseconds;
+    private long delayInMilliseconds;
 
-	@Autowired
-	public ExpiredTokenCleanTask(UserTokenDao userTokenDao) {
+    @Autowired
+    public ExpiredTokenCleanTask(UserTokenDao userTokenDao) {
 
-		this.userTokenDao = userTokenDao;
-	}
+        this.userTokenDao = userTokenDao;
+    }
 
-	public void setDelayInMilliseconds(long delayInMiliseconds) {
+    public void setDelayInMilliseconds(long delayInMiliseconds) {
 
-		this.delayInMilliseconds = delayInMiliseconds;
-	}
+        this.delayInMilliseconds = delayInMiliseconds;
+    }
 
-	/**
-	 * Removes the expired tokens
-	 *
-	 * This task is scheduled taking into account the delay period.
-	 */
-	@Override
-	public void run() {
+    /**
+     * Removes the expired tokens
+     *
+     * This task is scheduled taking into account the delay period.
+     */
+    @Override
+    public void run() {
 
-		Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
 
-		long now = calendar.getTimeInMillis();
-		Date expired = new Date(now - this.delayInMilliseconds);
+        long now = calendar.getTimeInMillis();
+        Date expired = new Date(now - this.delayInMilliseconds);
 
-		try {
-			List<Map<String, Object>> userTokenToDelete = userTokenDao.findBeforeDate(expired);
-			for (Map<String, Object> userToken : userTokenToDelete) {
-				try {
-					userTokenDao.delete((String) userToken.get("uid"));
-				} catch (Exception e) {
-					LOG.error(e.getMessage());
-				}
-			}
-		} catch (DataServiceException e1) {
-			LOG.error(e1);
-		}
-	}
+        try {
+            List<Map<String, Object>> userTokenToDelete = userTokenDao.findBeforeDate(expired);
+            for (Map<String, Object> userToken : userTokenToDelete) {
+                try {
+                    userTokenDao.delete((String) userToken.get("uid"));
+                } catch (Exception e) {
+                    LOG.error(e.getMessage());
+                }
+            }
+        } catch (DataServiceException e1) {
+            LOG.error(e1);
+        }
+    }
 }

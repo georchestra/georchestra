@@ -26,84 +26,84 @@ import org.springframework.ldap.core.DirContextAdapter;
 
 public class OrgExt implements ReferenceAware {
 
-	public static final String JSON_ADDRESS = "address";
-	public static final String JSON_ID = "id";
-	public static final String JSON_ORG_TYPE = "orgType";
-	private static final String JSON_NUMERIC_ID = "numericId";
+    public static final String JSON_ADDRESS = "address";
+    public static final String JSON_ID = "id";
+    public static final String JSON_ORG_TYPE = "orgType";
+    private static final String JSON_NUMERIC_ID = "numericId";
 
-	private String id;
-	private String orgType;
-	private String address;
-	private Integer numericId;
-	@JsonIgnore
-	private boolean isPending;
+    private String id;
+    private String orgType;
+    private String address;
+    private Integer numericId;
+    @JsonIgnore
+    private boolean isPending;
 
-	@JsonIgnore
-	private DirContextAdapter reference;
+    @JsonIgnore
+    private DirContextAdapter reference;
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public String getOrgType() {
-		return orgType;
-	}
+    public String getOrgType() {
+        return orgType;
+    }
 
-	public void setOrgType(String orgType) {
-		this.orgType = orgType;
-	}
+    public void setOrgType(String orgType) {
+        this.orgType = orgType;
+    }
 
-	public String getAddress() {
-		return address;
-	}
+    public String getAddress() {
+        return address;
+    }
 
-	public void setAddress(String address) {
-		this.address = address;
-	}
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
-	public Integer getNumericId() {
-		return numericId;
-	}
+    public Integer getNumericId() {
+        return numericId;
+    }
 
-	public void setNumericId(Integer numericId) {
-		this.numericId = numericId;
-	}
+    public void setNumericId(Integer numericId) {
+        this.numericId = numericId;
+    }
 
-	public boolean isPending() {
-		return isPending;
-	}
+    public boolean isPending() {
+        return isPending;
+    }
 
-	public void setPending(boolean pending) {
-		isPending = pending;
-	}
+    public void setPending(boolean pending) {
+        isPending = pending;
+    }
 
-	public JSONObject toJson() throws JSONException {
-		JSONObject res = new JSONObject();
-		res.put(JSON_ID, this.getId());
-		if (this.getOrgType() != null)
-			res.put(JSON_ORG_TYPE, this.getOrgType());
-		if (this.getAddress() != null)
-			res.put(JSON_ADDRESS, this.getAddress());
-		if (this.getNumericId() != null)
-			res.put(JSON_NUMERIC_ID, this.getNumericId());
-		return res;
-	}
+    public JSONObject toJson() throws JSONException {
+        JSONObject res = new JSONObject();
+        res.put(JSON_ID, this.getId());
+        if (this.getOrgType() != null)
+            res.put(JSON_ORG_TYPE, this.getOrgType());
+        if (this.getAddress() != null)
+            res.put(JSON_ADDRESS, this.getAddress());
+        if (this.getNumericId() != null)
+            res.put(JSON_NUMERIC_ID, this.getNumericId());
+        return res;
+    }
 
-	@Override
-	public String toString() {
-		return "OrgExt{" + "id='" + id + '\'' + ", orgType='" + orgType + '\'' + ", address='" + address + '\''
-				+ ", numericId='" + numericId + '\'' + '}';
-	}
+    @Override
+    public String toString() {
+        return "OrgExt{" + "id='" + id + '\'' + ", orgType='" + orgType + '\'' + ", address='" + address + '\''
+                + ", numericId='" + numericId + '\'' + '}';
+    }
 
-	public DirContextAdapter getReference() {
-		return reference;
-	}
+    public DirContextAdapter getReference() {
+        return reference;
+    }
 
-	public void setReference(DirContextAdapter reference) {
-		this.reference = reference;
-	}
+    public void setReference(DirContextAdapter reference) {
+        this.reference = reference;
+    }
 }

@@ -41,41 +41,41 @@ import org.opengis.referencing.FactoryException;
  */
 @SuppressWarnings("deprecation")
 abstract class CoverageTransformation<T> {
-	/**
-	 * Entry point for performing a transformation
-	 * 
-	 * @param in        the file to read the coverage from
-	 * @param transform the transformation to apply
-	 * 
-	 * @return result from the transform object
-	 */
-	public static <T> T perform(File in, CoverageTransformation<T> transform) throws IOException {
-		GeneralParameterValue[] params = new GeneralParameterValue[0];
-		AbstractGridFormat gridFormat = lookupFormat(in);
-		GridCoverage coverage = gridFormat.getReader(in).read(params);
-		try {
-			return transform.transform(coverage);
-		} catch (FactoryException e) {
-			throw new ExtractorException(e);
-		}
-	}
+    /**
+     * Entry point for performing a transformation
+     * 
+     * @param in        the file to read the coverage from
+     * @param transform the transformation to apply
+     * 
+     * @return result from the transform object
+     */
+    public static <T> T perform(File in, CoverageTransformation<T> transform) throws IOException {
+        GeneralParameterValue[] params = new GeneralParameterValue[0];
+        AbstractGridFormat gridFormat = lookupFormat(in);
+        GridCoverage coverage = gridFormat.getReader(in).read(params);
+        try {
+            return transform.transform(coverage);
+        } catch (FactoryException e) {
+            throw new ExtractorException(e);
+        }
+    }
 
-	/**
-	 * just a helper method for obtaining a format object
-	 */
-	public static AbstractGridFormat lookupFormat(File in) {
-		Format format = GridFormatFinder.findFormat(in);
+    /**
+     * just a helper method for obtaining a format object
+     */
+    public static AbstractGridFormat lookupFormat(File in) {
+        Format format = GridFormatFinder.findFormat(in);
 
-		if (format instanceof AbstractGridFormat && UnknownFormat.class != format.getClass()) {
-			return (AbstractGridFormat) format;
-		} else {
-			throw new IllegalArgumentException("Current configuration is unable to read coverage of " + in
-					+ " format.  " + "Check that you have the correct geotools plugins");
-		}
-	}
+        if (format instanceof AbstractGridFormat && UnknownFormat.class != format.getClass()) {
+            return (AbstractGridFormat) format;
+        } else {
+            throw new IllegalArgumentException("Current configuration is unable to read coverage of " + in
+                    + " format.  " + "Check that you have the correct geotools plugins");
+        }
+    }
 
-	/**
-	 * The method called by perform to do the actual transformation on the coverage
-	 */
-	public abstract T transform(GridCoverage coverage) throws IOException, FactoryException;
+    /**
+     * The method called by perform to do the actual transformation on the coverage
+     */
+    public abstract T transform(GridCoverage coverage) throws IOException, FactoryException;
 }

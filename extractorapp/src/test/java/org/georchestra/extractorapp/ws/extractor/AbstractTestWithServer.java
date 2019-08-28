@@ -18,49 +18,49 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Jesse on 5/6/2014.
  */
 public abstract class AbstractTestWithServer {
-	private HttpServer server;
+    private HttpServer server;
 
-	private static AtomicInteger portInc = new AtomicInteger(13878);
+    private static AtomicInteger portInc = new AtomicInteger(13878);
 
-	@Before
-	public final void startServer() throws IOException {
-		this.server = HttpServer.create(new InetSocketAddress(portInc.incrementAndGet()), 0);
-		configureContext(this.server);
-		this.server.start();
-	}
+    @Before
+    public final void startServer() throws IOException {
+        this.server = HttpServer.create(new InetSocketAddress(portInc.incrementAndGet()), 0);
+        configureContext(this.server);
+        this.server.start();
+    }
 
-	/**
-	 * Add any contexts to the server that are needed for all tests.
-	 * 
-	 * @param server the server.
-	 */
-	protected abstract void configureContext(HttpServer server);
+    /**
+     * Add any contexts to the server that are needed for all tests.
+     * 
+     * @param server the server.
+     */
+    protected abstract void configureContext(HttpServer server);
 
-	@After
-	public final void stopServer() {
-		this.server.stop(0);
-	}
+    @After
+    public final void stopServer() {
+        this.server.stop(0);
+    }
 
-	public final int getServerPort() {
-		return this.server.getAddress().getPort();
-	}
+    public final int getServerPort() {
+        return this.server.getAddress().getPort();
+    }
 
-	protected final HttpContext setServerContext(String context, HttpHandler handler) {
-		this.server.removeContext(context);
-		return this.server.createContext(context, handler);
-	}
+    protected final HttpContext setServerContext(String context, HttpHandler handler) {
+        this.server.removeContext(context);
+        return this.server.createContext(context, handler);
+    }
 
-	protected void writeResponse(HttpExchange httpExchange, byte[] response) throws IOException {
-		httpExchange.getResponseHeaders().set("Content-Type", "text/xml");
-		httpExchange.sendResponseHeaders(200, response.length);
+    protected void writeResponse(HttpExchange httpExchange, byte[] response) throws IOException {
+        httpExchange.getResponseHeaders().set("Content-Type", "text/xml");
+        httpExchange.sendResponseHeaders(200, response.length);
 
-		httpExchange.getResponseBody().write(response);
-		httpExchange.getResponseBody().close();
-	}
+        httpExchange.getResponseBody().write(response);
+        httpExchange.getResponseBody().close();
+    }
 
-	public void sendError(HttpExchange httpExchange, int status, String errorMessage) throws IOException {
-		final byte[] response = errorMessage.getBytes("UTF-8");
-		httpExchange.sendResponseHeaders(status, response.length);
-		httpExchange.getResponseBody().write(response);
-	}
+    public void sendError(HttpExchange httpExchange, int status, String errorMessage) throws IOException {
+        final byte[] response = errorMessage.getBytes("UTF-8");
+        httpExchange.sendResponseHeaders(status, response.length);
+        httpExchange.getResponseBody().write(response);
+    }
 }

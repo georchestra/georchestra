@@ -34,52 +34,52 @@ import java.net.URL;
  */
 class CSWRequest {
 
-	private URL url = null;
-	private Integer timeout = Integer.valueOf(60000);
-	private String user;
-	private String password;
+    private URL url = null;
+    private Integer timeout = Integer.valueOf(60000);
+    private String user;
+    private String password;
 
-	public URL getUrl() {
-		return url;
-	}
+    public URL getUrl() {
+        return url;
+    }
 
-	public void setUrl(URL url) {
-		this.url = url;
-	}
+    public void setUrl(URL url) {
+        this.url = url;
+    }
 
-	public Integer getTimeout() {
-		return timeout;
-	}
+    public Integer getTimeout() {
+        return timeout;
+    }
 
-	public void setTimeout(Integer timeout) {
-		this.timeout = timeout;
-	}
+    public void setTimeout(Integer timeout) {
+        this.timeout = timeout;
+    }
 
-	public String getUser() {
-		return user;
-	}
+    public String getUser() {
+        return user;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public void setURL(URL url) {
+    public void setURL(URL url) {
 
-		this.url = url;
-	}
+        this.url = url;
+    }
 
-	public void setUser(String userName) {
+    public void setUser(String userName) {
 
-		this.user = userName;
-	}
+        this.user = userName;
+    }
 
-	public void setPassword(String password) {
+    public void setPassword(String password) {
 
-		this.password = password;
-	}
+        this.password = password;
+    }
 
-	public URI buildURI() throws URISyntaxException {
-		return this.url.toURI();
-	}
+    public URI buildURI() throws URISyntaxException {
+        return this.url.toURI();
+    }
 
 }

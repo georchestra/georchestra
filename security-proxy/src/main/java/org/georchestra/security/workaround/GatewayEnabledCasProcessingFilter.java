@@ -26,9 +26,9 @@ import org.springframework.security.cas.web.CasAuthenticationFilter;
 
 public class GatewayEnabledCasProcessingFilter extends CasAuthenticationFilter {
 
-	@Override
-	protected boolean requiresAuthentication(HttpServletRequest request, HttpServletResponse response) {
-		return true;
-	}
+    @Override
+    protected boolean requiresAuthentication(HttpServletRequest request, HttpServletResponse response) {
+        return true;
+    }
 
 }

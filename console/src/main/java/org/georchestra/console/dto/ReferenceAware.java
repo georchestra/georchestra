@@ -3,7 +3,7 @@ package org.georchestra.console.dto;
 import org.springframework.ldap.core.DirContextAdapter;
 
 public interface ReferenceAware {
-	DirContextAdapter getReference();
+    DirContextAdapter getReference();
 
-	void setReference(DirContextAdapter reference);
+    void setReference(DirContextAdapter reference);
 }

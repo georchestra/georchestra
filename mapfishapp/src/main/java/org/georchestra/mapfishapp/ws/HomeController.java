@@ -41,39 +41,39 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/home")
 public class HomeController extends AbstractController {
 
-	/**
-	 * POST entry point.
-	 * 
-	 * @param request  . Must contains information from the layers and services to
-	 *                 be extracted
-	 * @param response .
-	 * @return
-	 * @throws IOException
-	 */
-	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView handlePOSTRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    /**
+     * POST entry point.
+     * 
+     * @param request  . Must contains information from the layers and services to
+     *                 be extracted
+     * @param response .
+     * @return
+     * @throws IOException
+     */
+    @RequestMapping(method = RequestMethod.POST)
+    public ModelAndView handlePOSTRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-		String str = getPostData(request);
+        String str = getPostData(request);
 
-		Map<String, Object> model = createModelFromString(request, str);
+        Map<String, Object> model = createModelFromString(request, str);
 
-		return new ModelAndView("index", "c", model);
-	}
+        return new ModelAndView("index", "c", model);
+    }
 
-	/**
-	 * GET entry point.
-	 * 
-	 * @param request  .
-	 * @param response .
-	 * @return
-	 */
-	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView handleGETRequest(HttpServletRequest request, HttpServletResponse response) {
-		String str = request.getParameter("data");
+    /**
+     * GET entry point.
+     * 
+     * @param request  .
+     * @param response .
+     * @return
+     */
+    @RequestMapping(method = RequestMethod.GET)
+    public ModelAndView handleGETRequest(HttpServletRequest request, HttpServletResponse response) {
+        String str = request.getParameter("data");
 
-		Map<String, Object> model = createModelFromString(request, str);
+        Map<String, Object> model = createModelFromString(request, str);
 
-		return new ModelAndView("index", "c", model);
-	}
+        return new ModelAndView("index", "c", model);
+    }
 
 }

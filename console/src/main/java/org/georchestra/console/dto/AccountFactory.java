@@ -32,164 +32,164 @@ package org.georchestra.console.dto;
  */
 public class AccountFactory {
 
-	private AccountFactory() {
-	}
+    private AccountFactory() {
+    }
 
-	public static String formatCommonName(String givenName, String surname) {
-		return givenName + " " + surname;
-	}
+    public static String formatCommonName(String givenName, String surname) {
+        return givenName + " " + surname;
+    }
 
-	/**
-	 * Brief data
-	 * 
-	 * @param uid
-	 * @param password
-	 * @param firstName
-	 * @param surname
-	 * @param email
-	 * @param phone
-	 * @param description
-	 * @return
-	 */
-	public static Account createBrief(String uid, String password, String firstName, String surname, String email,
-			String phone, String title, String description) {
+    /**
+     * Brief data
+     * 
+     * @param uid
+     * @param password
+     * @param firstName
+     * @param surname
+     * @param email
+     * @param phone
+     * @param description
+     * @return
+     */
+    public static Account createBrief(String uid, String password, String firstName, String surname, String email,
+            String phone, String title, String description) {
 
-		Account account = new AccountImpl();
-		account.setUid(uid);
-		account.setPassword(password);
-		account.setGivenName(firstName);
-		account.setSurname(surname);
-		account.setCommonName(formatCommonName(firstName, surname));
-		account.setEmail(email);
-		account.setPhone(phone);
-		account.setTitle(title);
-		account.setDescription(description);
+        Account account = new AccountImpl();
+        account.setUid(uid);
+        account.setPassword(password);
+        account.setGivenName(firstName);
+        account.setSurname(surname);
+        account.setCommonName(formatCommonName(firstName, surname));
+        account.setEmail(email);
+        account.setPhone(phone);
+        account.setTitle(title);
+        account.setDescription(description);
 
-		return account;
-	}
+        return account;
+    }
 
-	/**
-	 * Creates an account object with detailed data.
-	 */
-	public static Account createDetails(String uid, String givenName, String surname, String physicalDeliveryOfficeName,
-			String postalAddress, String postalCode, String postOfficeBox, String registeredAddress, String title) {
+    /**
+     * Creates an account object with detailed data.
+     */
+    public static Account createDetails(String uid, String givenName, String surname, String physicalDeliveryOfficeName,
+            String postalAddress, String postalCode, String postOfficeBox, String registeredAddress, String title) {
 
-		Account a = new AccountImpl();
+        Account a = new AccountImpl();
 
-		a.setUid(uid);
-		a.setGivenName(givenName);
-		a.setSurname(surname);
-		a.setCommonName(formatCommonName(givenName, surname));
-		a.setPhysicalDeliveryOfficeName(physicalDeliveryOfficeName);
-		a.setPostalAddress(postalAddress);
-		a.setPostalCode(postalCode);
-		a.setPostOfficeBox(postOfficeBox);
-		a.setRegisteredAddress(registeredAddress);
-		a.setTitle(title);
+        a.setUid(uid);
+        a.setGivenName(givenName);
+        a.setSurname(surname);
+        a.setCommonName(formatCommonName(givenName, surname));
+        a.setPhysicalDeliveryOfficeName(physicalDeliveryOfficeName);
+        a.setPostalAddress(postalAddress);
+        a.setPostalCode(postalCode);
+        a.setPostOfficeBox(postOfficeBox);
+        a.setRegisteredAddress(registeredAddress);
+        a.setTitle(title);
 
-		return a;
-	}
+        return a;
+    }
 
-	/**
-	 * Creates an account object with all data.
-	 * 
-	 * @param uid
-	 * @param cn                         full name
-	 * @param surname                    surname
-	 * @param givenName                  first name
-	 * @param email
-	 * @param title
-	 * @param phone
-	 * @param description
-	 * @param postalAddress
-	 * @param postalCode
-	 * @param registeredAddress
-	 * @param postOfficeBox
-	 * @param physicalDeliveryOfficeName
-	 * @param locality
-	 * @param street
-	 * @param facsimile
-	 * @param homePostalAddress
-	 * @param mobile
-	 * @param roomNumber
-	 * @param stateOrProvince
-	 * @param manager
-	 * @param context
-	 * @param org
-	 *
-	 * @return {@link Account}
-	 */
-	public static Account createFull(String uid, String cn, String surname, String givenName, String email,
-			String title, String phone, String description, String postalAddress, String postalCode,
-			String registeredAddress, String postOfficeBox, String physicalDeliveryOfficeName, String street,
-			String locality, String facsimile, String homePostalAddress, String mobile, String roomNumber,
-			String stateOrProvince, String manager, String context, String org) {
+    /**
+     * Creates an account object with all data.
+     * 
+     * @param uid
+     * @param cn                         full name
+     * @param surname                    surname
+     * @param givenName                  first name
+     * @param email
+     * @param title
+     * @param phone
+     * @param description
+     * @param postalAddress
+     * @param postalCode
+     * @param registeredAddress
+     * @param postOfficeBox
+     * @param physicalDeliveryOfficeName
+     * @param locality
+     * @param street
+     * @param facsimile
+     * @param homePostalAddress
+     * @param mobile
+     * @param roomNumber
+     * @param stateOrProvince
+     * @param manager
+     * @param context
+     * @param org
+     *
+     * @return {@link Account}
+     */
+    public static Account createFull(String uid, String cn, String surname, String givenName, String email,
+            String title, String phone, String description, String postalAddress, String postalCode,
+            String registeredAddress, String postOfficeBox, String physicalDeliveryOfficeName, String street,
+            String locality, String facsimile, String homePostalAddress, String mobile, String roomNumber,
+            String stateOrProvince, String manager, String context, String org) {
 
-		Account a = new AccountImpl();
+        Account a = new AccountImpl();
 
-		a.setUid(uid);
-		a.setCommonName(cn);
-		a.setGivenName(givenName);
-		a.setSurname(surname);
-		a.setEmail(email);
-		a.setTitle(title);
-		a.setPhone(phone);
-		a.setDescription(description);
-		a.setStreet(street);
-		a.setLocality(locality);
-		a.setPostalAddress(postalAddress);
-		a.setPostalCode(postalCode);
-		a.setRegisteredAddress(registeredAddress);
-		a.setPostOfficeBox(postOfficeBox);
-		a.setPhysicalDeliveryOfficeName(physicalDeliveryOfficeName);
-		a.setFacsimile(facsimile);
-		a.setHomePostalAddress(homePostalAddress);
-		a.setMobile(mobile);
-		a.setRoomNumber(roomNumber);
-		a.setStateOrProvince(stateOrProvince);
-		a.setManager(manager);
-		a.setContext(context);
-		a.setOrg(org);
+        a.setUid(uid);
+        a.setCommonName(cn);
+        a.setGivenName(givenName);
+        a.setSurname(surname);
+        a.setEmail(email);
+        a.setTitle(title);
+        a.setPhone(phone);
+        a.setDescription(description);
+        a.setStreet(street);
+        a.setLocality(locality);
+        a.setPostalAddress(postalAddress);
+        a.setPostalCode(postalCode);
+        a.setRegisteredAddress(registeredAddress);
+        a.setPostOfficeBox(postOfficeBox);
+        a.setPhysicalDeliveryOfficeName(physicalDeliveryOfficeName);
+        a.setFacsimile(facsimile);
+        a.setHomePostalAddress(homePostalAddress);
+        a.setMobile(mobile);
+        a.setRoomNumber(roomNumber);
+        a.setStateOrProvince(stateOrProvince);
+        a.setManager(manager);
+        a.setContext(context);
+        a.setOrg(org);
 
-		return a;
-	}
+        return a;
+    }
 
-	/**
-	 * Creates an account object from another one, given as argument.
-	 *
-	 * @param o other account to copy
-	 */
-	public static Account create(Account o) {
-		Account a = new AccountImpl();
-		a.setUid(o.getUid());
-		a.setCommonName(o.getCommonName());
-		a.setSurname(o.getSurname());
-		a.setEmail(o.getEmail());
-		a.setPhone(o.getPhone());
-		a.setDescription(o.getDescription());
-		// passwords / new passwords fields voluntarily omitted:
-		// the password update process should not go through this.
-		a.setGivenName(o.getGivenName());
-		a.setTitle(o.getTitle());
-		a.setPostalAddress(o.getPostalAddress());
-		a.setPostalCode(o.getPostalCode());
-		a.setRegisteredAddress(o.getRegisteredAddress());
-		a.setPostOfficeBox(o.getPostOfficeBox());
-		a.setPhysicalDeliveryOfficeName(o.getPhysicalDeliveryOfficeName());
-		a.setStreet(o.getStreet());
-		a.setLocality(o.getLocality());
-		a.setFacsimile(o.getFacsimile());
-		a.setMobile(o.getMobile());
-		a.setRoomNumber(o.getRoomNumber());
-		a.setStateOrProvince(o.getStateOrProvince());
-		a.setHomePostalAddress(o.getHomePostalAddress());
-		a.setManager(o.getManager());
-		a.setShadowExpire(o.getShadowExpire());
-		a.setContext(o.getContext());
-		a.setOrg(o.getOrg());
-		a.setPending(o.isPending());
+    /**
+     * Creates an account object from another one, given as argument.
+     *
+     * @param o other account to copy
+     */
+    public static Account create(Account o) {
+        Account a = new AccountImpl();
+        a.setUid(o.getUid());
+        a.setCommonName(o.getCommonName());
+        a.setSurname(o.getSurname());
+        a.setEmail(o.getEmail());
+        a.setPhone(o.getPhone());
+        a.setDescription(o.getDescription());
+        // passwords / new passwords fields voluntarily omitted:
+        // the password update process should not go through this.
+        a.setGivenName(o.getGivenName());
+        a.setTitle(o.getTitle());
+        a.setPostalAddress(o.getPostalAddress());
+        a.setPostalCode(o.getPostalCode());
+        a.setRegisteredAddress(o.getRegisteredAddress());
+        a.setPostOfficeBox(o.getPostOfficeBox());
+        a.setPhysicalDeliveryOfficeName(o.getPhysicalDeliveryOfficeName());
+        a.setStreet(o.getStreet());
+        a.setLocality(o.getLocality());
+        a.setFacsimile(o.getFacsimile());
+        a.setMobile(o.getMobile());
+        a.setRoomNumber(o.getRoomNumber());
+        a.setStateOrProvince(o.getStateOrProvince());
+        a.setHomePostalAddress(o.getHomePostalAddress());
+        a.setManager(o.getManager());
+        a.setShadowExpire(o.getShadowExpire());
+        a.setContext(o.getContext());
+        a.setOrg(o.getOrg());
+        a.setPending(o.isPending());
 
-		return a;
-	}
+        return a;
+    }
 
 }

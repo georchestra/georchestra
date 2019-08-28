@@ -6,8 +6,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
-@WithSecurityContext(
-        factory = WithMockRandomUidUserSecurityContextFactory.class
-)
+@WithSecurityContext(factory = WithMockRandomUidUserSecurityContextFactory.class)
 public @interface WithMockRandomUidUser {
 }
