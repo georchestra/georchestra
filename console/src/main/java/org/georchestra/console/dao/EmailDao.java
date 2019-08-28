@@ -29,10 +29,10 @@ import java.util.List;
 @Repository
 public interface EmailDao extends CrudRepository<EmailEntry, Long> {
 
-	@Transactional
-	List<EmailEntry> findBySenderOrderByDateDesc(String sender);
+    @Transactional
+    List<EmailEntry> findBySenderOrderByDateDesc(String sender);
 
-	@Transactional
-	List<EmailEntry> findByRecipientOrderByDateDesc(String recipient);
+    @Transactional
+    List<EmailEntry> findByRecipientOrderByDateDesc(String recipient);
 
 }

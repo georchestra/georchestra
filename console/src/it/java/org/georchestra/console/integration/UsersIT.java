@@ -44,146 +44,146 @@ import com.github.database.rider.spring.api.DBRider;
 @DBRider
 public class UsersIT {
 
-	public @Rule @Autowired IntegrationTestSupport support;
+    public @Rule @Autowired IntegrationTestSupport support;
 
-	private @Autowired LdapTemplate ldapTemplateSanityCheck;
+    private @Autowired LdapTemplate ldapTemplateSanityCheck;
 
-	@Autowired
-	private WebApplicationContext wac;
+    @Autowired
+    private WebApplicationContext wac;
 
-	private MockMvc mockMvc;
+    private MockMvc mockMvc;
 
-	public static @BeforeClass void init() {
-	}
+    public static @BeforeClass void init() {
+    }
 
-	public @Before void before() {
-		// pre-flight sanity check
-		assertNotNull(ldapTemplateSanityCheck.lookup("cn=admin"));
-		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
-	}
+    public @Before void before() {
+        // pre-flight sanity check
+        assertNotNull(ldapTemplateSanityCheck.lookup("cn=admin"));
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
+    }
 
-	@WithMockRandomUidUser
-	public @Test void profile() throws Exception {
-		String userName = ((User) (SecurityContextHolder.getContext().getAuthentication().getPrincipal()))
-				.getUsername();
-		createUser(userName);
+    @WithMockRandomUidUser
+    public @Test void profile() throws Exception {
+        String userName = ((User) (SecurityContextHolder.getContext().getAuthentication().getPrincipal()))
+                .getUsername();
+        createUser(userName);
 
-		getProfile().andExpect(jsonPath("$.roles[0]").value("USER"));
+        getProfile().andExpect(jsonPath("$.roles[0]").value("USER"));
 
-		String role1Name = createRole();
-		String role2Name = createRole();
-		setRole(userName, role1Name, role2Name);
+        String role1Name = createRole();
+        String role2Name = createRole();
+        setRole(userName, role1Name, role2Name);
 
-		getProfile().andExpect(jsonPath("$.roles[1]").value(role1Name))
-				.andExpect(jsonPath("$.roles[2]").value(role2Name));
+        getProfile().andExpect(jsonPath("$.roles[1]").value(role1Name))
+                .andExpect(jsonPath("$.roles[2]").value(role2Name));
 
-	}
+    }
 
-	@WithMockRandomUidUser
-	public @Test void changeOrgAndUid() throws Exception {
-		String userName = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
-		String newUserName = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
-		createUser(userName);
+    @WithMockRandomUidUser
+    public @Test void changeOrgAndUid() throws Exception {
+        String userName = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
+        String newUserName = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
+        createUser(userName);
 
-		support.perform(put("/private/users/" + userName)
-				.content(support.readResourceToString("/testData/createUserPayload.json").replace("{uuid}", newUserName)
-						.replace("psc", "cra")));
+        support.perform(put("/private/users/" + userName)
+                .content(support.readResourceToString("/testData/createUserPayload.json").replace("{uuid}", newUserName)
+                        .replace("psc", "cra")));
 
-		support.perform(get("/private/users/" + newUserName)).andExpect(jsonPath("$.org").value("cra"))
-				.andExpect(jsonPath("$.uid").value(newUserName));
-	}
+        support.perform(get("/private/users/" + newUserName)).andExpect(jsonPath("$.org").value("cra"))
+                .andExpect(jsonPath("$.uid").value(newUserName));
+    }
 
-	@WithMockRandomUidUser
-	public @Test void userDetail() throws Exception {
-		String userName = ((User) (SecurityContextHolder.getContext().getAuthentication().getPrincipal()))
-				.getUsername();
-		createUser(userName);
+    @WithMockRandomUidUser
+    public @Test void userDetail() throws Exception {
+        String userName = ((User) (SecurityContextHolder.getContext().getAuthentication().getPrincipal()))
+                .getUsername();
+        createUser(userName);
 
-		support.perform(get("/account/userdetails").header("sec-username", userName)).andExpect(status().isOk());
-	}
+        support.perform(get("/account/userdetails").header("sec-username", userName)).andExpect(status().isOk());
+    }
 
-	@WithMockRandomUidUser
-	public @Test void users() throws Exception {
-		String userName = ((User) (SecurityContextHolder.getContext().getAuthentication().getPrincipal()))
-				.getUsername();
-		createUser(userName);
+    @WithMockRandomUidUser
+    public @Test void users() throws Exception {
+        String userName = ((User) (SecurityContextHolder.getContext().getAuthentication().getPrincipal()))
+                .getUsername();
+        createUser(userName);
 
-		support.perform(get("/private/users")).andExpect(jsonPath("$[?(@.pending in [false])].['pending']").exists())
-				.andExpect(jsonPath("$[?(@.pending in [true])].['pending']").exists());
-	}
+        support.perform(get("/private/users")).andExpect(jsonPath("$[?(@.pending in [false])].['pending']").exists())
+                .andExpect(jsonPath("$[?(@.pending in [true])].['pending']").exists());
+    }
 
-	@WithMockRandomUidUser
-	public @Test void updateUsers() throws Exception {
-		String userName1 = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
-		String userName2 = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
-		createUser(userName1);
-		createUser(userName2);
-		String role1Name = createRole();
-		String role2Name = createRole();
-		String role3Name = createRole();
-		String role4Name = createRole();
-		setRole(userName1, role1Name, role2Name);
-		setRole(userName1, role3Name, role4Name);
+    @WithMockRandomUidUser
+    public @Test void updateUsers() throws Exception {
+        String userName1 = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
+        String userName2 = ("IT_USER_" + RandomStringUtils.randomAlphabetic(8)).toLowerCase();
+        createUser(userName1);
+        createUser(userName2);
+        String role1Name = createRole();
+        String role2Name = createRole();
+        String role3Name = createRole();
+        String role4Name = createRole();
+        setRole(userName1, role1Name, role2Name);
+        setRole(userName1, role3Name, role4Name);
 
-		String body = String.format("{ \"users\":[\"%s\",\"%s\"],\"PUT\":[\"%s\",\"%s\"],\"DELETE\":[\"%s\",\"%s\"]}",
-				userName1, userName2, role1Name, role3Name, role2Name, role4Name);
-		support.perform(post("/private/roles_users").content(body));
+        String body = String.format("{ \"users\":[\"%s\",\"%s\"],\"PUT\":[\"%s\",\"%s\"],\"DELETE\":[\"%s\",\"%s\"]}",
+                userName1, userName2, role1Name, role3Name, role2Name, role4Name);
+        support.perform(post("/private/roles_users").content(body));
 
-		support.perform(get("/private/roles/" + role1Name)).andExpect(jsonPath("$.users[0]").value(userName1));
-		support.perform(get("/private/roles/" + role1Name)).andExpect(jsonPath("$.users[1]").value(userName2));
-		support.perform(get("/private/roles/" + role3Name)).andExpect(jsonPath("$.users[0]").value(userName1));
-		support.perform(get("/private/roles/" + role3Name)).andExpect(jsonPath("$.users[1]").value(userName2));
-		support.perform(get("/private/roles/" + role2Name)).andExpect(jsonPath("$.users").isEmpty());
-		support.perform(get("/private/roles/" + role4Name)).andExpect(jsonPath("$.users").isEmpty());
-	}
+        support.perform(get("/private/roles/" + role1Name)).andExpect(jsonPath("$.users[0]").value(userName1));
+        support.perform(get("/private/roles/" + role1Name)).andExpect(jsonPath("$.users[1]").value(userName2));
+        support.perform(get("/private/roles/" + role3Name)).andExpect(jsonPath("$.users[0]").value(userName1));
+        support.perform(get("/private/roles/" + role3Name)).andExpect(jsonPath("$.users[1]").value(userName2));
+        support.perform(get("/private/roles/" + role2Name)).andExpect(jsonPath("$.users").isEmpty());
+        support.perform(get("/private/roles/" + role4Name)).andExpect(jsonPath("$.users").isEmpty());
+    }
 
-	private void createUser(String userName) throws Exception {
-		support.perform(post("/private/users")
-				.content(support.readResourceToString("/testData/createUserPayload.json").replace("{uuid}", userName)));
-	}
+    private void createUser(String userName) throws Exception {
+        support.perform(post("/private/users")
+                .content(support.readResourceToString("/testData/createUserPayload.json").replace("{uuid}", userName)));
+    }
 
-	private ResultActions getProfile() throws Exception {
-		return support.perform(get("/private/users/profile"));
-	}
+    private ResultActions getProfile() throws Exception {
+        return support.perform(get("/private/users/profile"));
+    }
 
-	private String createRole() throws Exception {
-		String roleName = "IT_ROLE_" + RandomStringUtils.randomAlphabetic(8).toUpperCase();
-		String body = "{ \"cn\": \"" + roleName + "\", \"description\": \"Role Description\", \"isFavorite\": false }";
-		support.perform(post("/private/roles").content(body));
-		return roleName;
-	}
+    private String createRole() throws Exception {
+        String roleName = "IT_ROLE_" + RandomStringUtils.randomAlphabetic(8).toUpperCase();
+        String body = "{ \"cn\": \"" + roleName + "\", \"description\": \"Role Description\", \"isFavorite\": false }";
+        support.perform(post("/private/roles").content(body));
+        return roleName;
+    }
 
-	private void setRole(String userName, String role1Name, String role2Name) throws Exception {
-		String body = "{ \"users\":[\"" + userName + "\"],\"PUT\":[\"" + role1Name + "\", \"" + role2Name
-				+ "\"],\"DELETE\":[]}";
-		support.perform(post("/private/roles_users").content(body));
-	}
+    private void setRole(String userName, String role1Name, String role2Name) throws Exception {
+        String body = "{ \"users\":[\"" + userName + "\"],\"PUT\":[\"" + role1Name + "\", \"" + role2Name
+                + "\"],\"DELETE\":[]}";
+        support.perform(post("/private/roles_users").content(body));
+    }
 
-	@SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
-	@WithMockRandomUidUser
-	@DBUnit(qualifiedTableNames = true, dataTypeFactoryClass = PostgresExtendedDataTypeFactory.class)
-	@DataSet(executeScriptsBefore = "dbunit/geonetwork_ddl.sql", strategy = CLEAN_INSERT, value = { "dbunit/all.csv" })
-	public @Test void testDeleteAccountRecords() throws Exception {
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert")
+    @WithMockRandomUidUser
+    @DBUnit(qualifiedTableNames = true, dataTypeFactoryClass = PostgresExtendedDataTypeFactory.class)
+    @DataSet(executeScriptsBefore = "dbunit/geonetwork_ddl.sql", strategy = CLEAN_INSERT, value = { "dbunit/all.csv" })
+    public @Test void testDeleteAccountRecords() throws Exception {
 
-		createUser("user1");
-		this.mockMvc.perform(post("/private/users/gdpr/delete?uid=user1"))//
-				.andExpect(status().isOk())//
-				.andExpect(content().contentTypeCompatibleWith("application/json"))//
-				// .andDo(print())//
-				.andExpect(jsonPath("$.account").value("user1"))//
-				.andExpect(jsonPath("$.metadata").value(2))//
-				.andExpect(jsonPath("$.extractor").value(2))//
-				.andExpect(jsonPath("$.geodocs").value(3))//
-				.andExpect(jsonPath("$.ogcStats").value(3));
+        createUser("user1");
+        this.mockMvc.perform(post("/private/users/gdpr/delete?uid=user1"))//
+                .andExpect(status().isOk())//
+                .andExpect(content().contentTypeCompatibleWith("application/json"))//
+                // .andDo(print())//
+                .andExpect(jsonPath("$.account").value("user1"))//
+                .andExpect(jsonPath("$.metadata").value(2))//
+                .andExpect(jsonPath("$.extractor").value(2))//
+                .andExpect(jsonPath("$.geodocs").value(3))//
+                .andExpect(jsonPath("$.ogcStats").value(3));
 
-		this.mockMvc.perform(post("/private/users/gdpr/delete?uid=user1"))//
-				.andExpect(status().isOk())//
-				.andExpect(content().contentTypeCompatibleWith("application/json"))//
-				.andExpect(jsonPath("$.account").value("user1"))//
-				.andExpect(jsonPath("$.metadata").value(0))//
-				.andExpect(jsonPath("$.extractor").value(0))//
-				.andExpect(jsonPath("$.geodocs").value(0))//
-				.andExpect(jsonPath("$.ogcStats").value(0));
-	}
+        this.mockMvc.perform(post("/private/users/gdpr/delete?uid=user1"))//
+                .andExpect(status().isOk())//
+                .andExpect(content().contentTypeCompatibleWith("application/json"))//
+                .andExpect(jsonPath("$.account").value("user1"))//
+                .andExpect(jsonPath("$.metadata").value(0))//
+                .andExpect(jsonPath("$.extractor").value(0))//
+                .andExpect(jsonPath("$.geodocs").value(0))//
+                .andExpect(jsonPath("$.ogcStats").value(0));
+    }
 
 }

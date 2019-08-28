@@ -36,41 +36,41 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 public class RoleResponse {
 
-	private Role role;
-	private ProtectedUserFilter filter;
+    private Role role;
+    private ProtectedUserFilter filter;
 
-	public RoleResponse(Role role, ProtectedUserFilter filter) {
+    public RoleResponse(Role role, ProtectedUserFilter filter) {
 
-		this.role = role;
-		this.filter = filter;
-	}
+        this.role = role;
+        this.filter = filter;
+    }
 
-	public String asJsonString() throws IOException {
-		try {
-			JSONObject jsonRole = new JSONObject();
+    public String asJsonString() throws IOException {
+        try {
+            JSONObject jsonRole = new JSONObject();
 
-			jsonRole.put(RoleSchema.COMMON_NAME_KEY, this.role.getName());
-			jsonRole.put(RoleSchema.DESCRIPTION_KEY, this.role.getDescription());
-			jsonRole.put(RoleSchema.FAVORITE_JSON_KEY, this.role.isFavorite());
+            jsonRole.put(RoleSchema.COMMON_NAME_KEY, this.role.getName());
+            jsonRole.put(RoleSchema.DESCRIPTION_KEY, this.role.getDescription());
+            jsonRole.put(RoleSchema.FAVORITE_JSON_KEY, this.role.isFavorite());
 
-			// adds the list of users
-			List<String> list = filter.filterStringList(this.role.getUserList());
+            // adds the list of users
+            List<String> list = filter.filterStringList(this.role.getUserList());
 
-			JSONArray membersArray = new JSONArray();
-			int j = 0;
-			for (String userUid : list) {
+            JSONArray membersArray = new JSONArray();
+            int j = 0;
+            for (String userUid : list) {
 
-				membersArray.put(j, userUid);
-				j++;
-			}
-			jsonRole.put("users", membersArray);
+                membersArray.put(j, userUid);
+                j++;
+            }
+            jsonRole.put("users", membersArray);
 
-			return jsonRole.toString();
+            return jsonRole.toString();
 
-		} catch (JSONException ex) {
+        } catch (JSONException ex) {
 
-			throw new IOException(ex);
-		}
-	}
+            throw new IOException(ex);
+        }
+    }
 
 }

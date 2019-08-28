@@ -56,144 +56,144 @@ import org.springframework.util.Assert;
  */
 public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
 
-	protected static final Log logger = LogFactory
-			.getLog(LdapUserDetailsRequestHeaderProvider.class.getPackage().getName());
+    protected static final Log logger = LogFactory
+            .getLog(LdapUserDetailsRequestHeaderProvider.class.getPackage().getName());
 
-	private LdapUserSearch _userSearch;
-	private Map<String, String> _headerMapping;
-	private Pattern pattern;
-	private String orgSearchBaseDN;
+    private LdapUserSearch _userSearch;
+    private Map<String, String> _headerMapping;
+    private Pattern pattern;
+    private String orgSearchBaseDN;
 
-	@Autowired
-	private LdapTemplate ldapTemplate;
+    @Autowired
+    private LdapTemplate ldapTemplate;
 
-	@Autowired
-	private GeorchestraConfiguration georchestraConfiguration;
+    @Autowired
+    private GeorchestraConfiguration georchestraConfiguration;
 
-	public LdapUserDetailsRequestHeaderProvider(LdapUserSearch userSearch, String orgSearchBaseDN,
-			Map<String, String> headerMapping) {
-		Assert.notNull(userSearch, "userSearch must not be null");
-		Assert.notNull(headerMapping, "headerMapping must not be null");
-		this._userSearch = userSearch;
-		this._headerMapping = headerMapping;
-		this.orgSearchBaseDN = orgSearchBaseDN;
+    public LdapUserDetailsRequestHeaderProvider(LdapUserSearch userSearch, String orgSearchBaseDN,
+            Map<String, String> headerMapping) {
+        Assert.notNull(userSearch, "userSearch must not be null");
+        Assert.notNull(headerMapping, "headerMapping must not be null");
+        this._userSearch = userSearch;
+        this._headerMapping = headerMapping;
+        this.orgSearchBaseDN = orgSearchBaseDN;
 
-		this.pattern = Pattern.compile("([^=,]+)=([^=,]+)," + orgSearchBaseDN + ".*");
-	}
+        this.pattern = Pattern.compile("([^=,]+)=([^=,]+)," + orgSearchBaseDN + ".*");
+    }
 
-	public void init() throws IOException {
-		if ((georchestraConfiguration != null) && (georchestraConfiguration.activated())) {
-			Properties pHmap = georchestraConfiguration.loadCustomPropertiesFile("headers-mapping");
-			_headerMapping.clear();
-			for (String key : pHmap.stringPropertyNames()) {
-				_headerMapping.put(key, pHmap.getProperty(key));
-			}
-		}
-	}
+    public void init() throws IOException {
+        if ((georchestraConfiguration != null) && (georchestraConfiguration.activated())) {
+            Properties pHmap = georchestraConfiguration.loadCustomPropertiesFile("headers-mapping");
+            _headerMapping.clear();
+            for (String key : pHmap.stringPropertyNames()) {
+                _headerMapping.put(key, pHmap.getProperty(key));
+            }
+        }
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	protected Collection<Header> getCustomRequestHeaders(HttpSession session, HttpServletRequest originalRequest) {
+    @SuppressWarnings("unchecked")
+    @Override
+    protected Collection<Header> getCustomRequestHeaders(HttpSession session, HttpServletRequest originalRequest) {
 
-		// Don't use this provider for trusted request
-		if (session.getAttribute("pre-auth") != null) {
-			return Collections.emptyList();
-		}
+        // Don't use this provider for trusted request
+        if (session.getAttribute("pre-auth") != null) {
+            return Collections.emptyList();
+        }
 
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication instanceof AnonymousAuthenticationToken) {
-			return Collections.emptyList();
-		}
-		String username = authentication.getName();
-		DirContextOperations userData;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication instanceof AnonymousAuthenticationToken) {
+            return Collections.emptyList();
+        }
+        String username = authentication.getName();
+        DirContextOperations userData;
 
-		Collection<Header> headers = Collections.emptyList();
+        Collection<Header> headers = Collections.emptyList();
 
-		synchronized (session) {
+        synchronized (session) {
 
-			if (session.getAttribute("security-proxy-cached-attrs") != null) {
-				try {
-					headers = (Collection<Header>) session.getAttribute("security-proxy-cached-attrs");
-					String expectedUsername = (String) session.getAttribute("security-proxy-cached-username");
+            if (session.getAttribute("security-proxy-cached-attrs") != null) {
+                try {
+                    headers = (Collection<Header>) session.getAttribute("security-proxy-cached-attrs");
+                    String expectedUsername = (String) session.getAttribute("security-proxy-cached-username");
 
-					if (username.equals(expectedUsername)) {
-						return headers;
-					}
-				} catch (Exception e) {
-					logger.info("Unable to lookup cached user's attributes for user :" + username, e);
-				}
-			} else {
-				try {
-					userData = _userSearch.searchForUser(username);
-				} catch (Exception e) {
-					logger.info("Unable to lookup user:" + username, e);
-					return Collections.emptyList();
-				}
-				headers = new ArrayList<Header>();
-				for (Map.Entry<String, String> entry : _headerMapping.entrySet()) {
-					try {
-						Attribute attributes = userData.getAttributes().get(entry.getValue());
-						if (attributes != null) {
-							NamingEnumeration<?> all = attributes.getAll();
-							StringBuilder value = new StringBuilder();
-							while (all.hasMore()) {
-								if (value.length() > 0) {
-									value.append(',');
-								}
-								value.append(all.next());
-							}
-							headers.add(new BasicHeader(entry.getKey(), value.toString()));
-						}
-					} catch (javax.naming.NamingException e) {
-						logger.error("problem adding headers for request:" + entry.getKey(), e);
-					}
-				}
+                    if (username.equals(expectedUsername)) {
+                        return headers;
+                    }
+                } catch (Exception e) {
+                    logger.info("Unable to lookup cached user's attributes for user :" + username, e);
+                }
+            } else {
+                try {
+                    userData = _userSearch.searchForUser(username);
+                } catch (Exception e) {
+                    logger.info("Unable to lookup user:" + username, e);
+                    return Collections.emptyList();
+                }
+                headers = new ArrayList<Header>();
+                for (Map.Entry<String, String> entry : _headerMapping.entrySet()) {
+                    try {
+                        Attribute attributes = userData.getAttributes().get(entry.getValue());
+                        if (attributes != null) {
+                            NamingEnumeration<?> all = attributes.getAll();
+                            StringBuilder value = new StringBuilder();
+                            while (all.hasMore()) {
+                                if (value.length() > 0) {
+                                    value.append(',');
+                                }
+                                value.append(all.next());
+                            }
+                            headers.add(new BasicHeader(entry.getKey(), value.toString()));
+                        }
+                    } catch (javax.naming.NamingException e) {
+                        logger.error("problem adding headers for request:" + entry.getKey(), e);
+                    }
+                }
 
-				// Add user organization
-				String orgCn = null;
-				try {
-					// Retreive memberOf attributes
-					String[] attrs = { "memberOf" };
-					((FilterBasedLdapUserSearch) this._userSearch).setReturningAttributes(attrs);
-					userData = _userSearch.searchForUser(username);
-					Attribute attributes = userData.getAttributes().get("memberOf");
-					if (attributes != null) {
-						NamingEnumeration<?> all = attributes.getAll();
+                // Add user organization
+                String orgCn = null;
+                try {
+                    // Retreive memberOf attributes
+                    String[] attrs = { "memberOf" };
+                    ((FilterBasedLdapUserSearch) this._userSearch).setReturningAttributes(attrs);
+                    userData = _userSearch.searchForUser(username);
+                    Attribute attributes = userData.getAttributes().get("memberOf");
+                    if (attributes != null) {
+                        NamingEnumeration<?> all = attributes.getAll();
 
-						while (all.hasMore()) {
-							String memberOf = all.next().toString();
-							Matcher m = this.pattern.matcher(memberOf);
-							if (m.matches()) {
-								orgCn = m.group(2);
-								headers.add(new BasicHeader("sec-org", orgCn));
-								break;
-							}
-						}
-					}
-				} catch (javax.naming.NamingException e) {
-					logger.error("problem adding headers for request: organization", e);
-				} finally {
-					// restore standard attribute list
-					((FilterBasedLdapUserSearch) this._userSearch).setReturningAttributes(null);
-				}
+                        while (all.hasMore()) {
+                            String memberOf = all.next().toString();
+                            Matcher m = this.pattern.matcher(memberOf);
+                            if (m.matches()) {
+                                orgCn = m.group(2);
+                                headers.add(new BasicHeader("sec-org", orgCn));
+                                break;
+                            }
+                        }
+                    }
+                } catch (javax.naming.NamingException e) {
+                    logger.error("problem adding headers for request: organization", e);
+                } finally {
+                    // restore standard attribute list
+                    ((FilterBasedLdapUserSearch) this._userSearch).setReturningAttributes(null);
+                }
 
-				// add sec-orgname
-				if (orgCn != null) {
-					try {
-						DirContextOperations ctx = this.ldapTemplate
-								.lookupContext("cn=" + orgCn + "," + this.orgSearchBaseDN);
-						headers.add(new BasicHeader("sec-orgname", ctx.getStringAttribute("o")));
-					} catch (RuntimeException ex) {
-						logger.warn("Cannot find associated org with cn " + orgCn);
-					}
-				}
+                // add sec-orgname
+                if (orgCn != null) {
+                    try {
+                        DirContextOperations ctx = this.ldapTemplate
+                                .lookupContext("cn=" + orgCn + "," + this.orgSearchBaseDN);
+                        headers.add(new BasicHeader("sec-orgname", ctx.getStringAttribute("o")));
+                    } catch (RuntimeException ex) {
+                        logger.warn("Cannot find associated org with cn " + orgCn);
+                    }
+                }
 
-				logger.info("Storing attributes into session for user :" + username);
-				session.setAttribute("security-proxy-cached-username", username);
-				session.setAttribute("security-proxy-cached-attrs", headers);
-			}
-		}
+                logger.info("Storing attributes into session for user :" + username);
+                session.setAttribute("security-proxy-cached-username", username);
+                session.setAttribute("security-proxy-cached-attrs", headers);
+            }
+        }
 
-		return headers;
-	}
+        return headers;
+    }
 }

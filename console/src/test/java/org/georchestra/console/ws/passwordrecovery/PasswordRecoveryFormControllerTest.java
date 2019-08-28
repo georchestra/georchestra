@@ -32,147 +32,147 @@ import org.springframework.web.bind.support.SessionStatus;
 
 public class PasswordRecoveryFormControllerTest {
 
-	private PasswordRecoveryFormController ctrl;
-	private AccountDao dao = Mockito.mock(AccountDao.class);
-	private RoleDao gdao = Mockito.mock(RoleDao.class);
-	private EmailFactory efi = Mockito.mock(EmailFactory.class);
-	private ReCaptchaV2 rec = Mockito.mock(ReCaptchaV2.class);
-	private ReCaptchaParameters rep = new ReCaptchaParameters();
-	private UserTokenDao utd = Mockito.mock(UserTokenDao.class);
-	private Model model = Mockito.mock(Model.class);
-	private HttpServletRequest request = new MockHttpServletRequest();
-	private PasswordRecoveryFormBean formBean = Mockito.mock(PasswordRecoveryFormBean.class);
-	private BindingResult result = Mockito.mock(BindingResult.class);
-	private SessionStatus status = Mockito.mock(SessionStatus.class);
+    private PasswordRecoveryFormController ctrl;
+    private AccountDao dao = Mockito.mock(AccountDao.class);
+    private RoleDao gdao = Mockito.mock(RoleDao.class);
+    private EmailFactory efi = Mockito.mock(EmailFactory.class);
+    private ReCaptchaV2 rec = Mockito.mock(ReCaptchaV2.class);
+    private ReCaptchaParameters rep = new ReCaptchaParameters();
+    private UserTokenDao utd = Mockito.mock(UserTokenDao.class);
+    private Model model = Mockito.mock(Model.class);
+    private HttpServletRequest request = new MockHttpServletRequest();
+    private PasswordRecoveryFormBean formBean = Mockito.mock(PasswordRecoveryFormBean.class);
+    private BindingResult result = Mockito.mock(BindingResult.class);
+    private SessionStatus status = Mockito.mock(SessionStatus.class);
 
-	@Before
-	public void setUp() throws Exception {
-		ctrl = new PasswordRecoveryFormController(dao, gdao, efi, utd, rep);
-		ctrl.setPublicUrl("https://georchestra.mydomain.org");
-		ctrl.setPublicContextPath("/console");
-	}
+    @Before
+    public void setUp() throws Exception {
+        ctrl = new PasswordRecoveryFormController(dao, gdao, efi, utd, rep);
+        ctrl.setPublicUrl("https://georchestra.mydomain.org");
+        ctrl.setPublicContextPath("/console");
+    }
 
-	@After
-	public void tearDown() throws Exception {
-	}
+    @After
+    public void tearDown() throws Exception {
+    }
 
-	private void prepareLegitRequest() throws Exception {
-		prepareLegitRequest(false);
-	}
+    private void prepareLegitRequest() throws Exception {
+        prepareLegitRequest(false);
+    }
 
-	private void prepareLegitRequest(boolean isPending) throws Exception {
-		request = new MockHttpServletRequest();
-		Mockito.when(formBean.getRecaptcha_response_field()).thenReturn("valid");
-		Account account = Mockito.mock(Account.class);
-		Mockito.when(account.getUid()).thenReturn("1");
-		Mockito.when(account.isPending()).thenReturn(isPending);
-		Mockito.when(dao.findByEmail(Mockito.anyString())).thenReturn(account);
-		Mockito.when(utd.exist(Mockito.anyString())).thenReturn(true);
-	}
+    private void prepareLegitRequest(boolean isPending) throws Exception {
+        request = new MockHttpServletRequest();
+        Mockito.when(formBean.getRecaptcha_response_field()).thenReturn("valid");
+        Account account = Mockito.mock(Account.class);
+        Mockito.when(account.getUid()).thenReturn("1");
+        Mockito.when(account.isPending()).thenReturn(isPending);
+        Mockito.when(dao.findByEmail(Mockito.anyString())).thenReturn(account);
+        Mockito.when(utd.exist(Mockito.anyString())).thenReturn(true);
+    }
 
-	@Test
-	public void testInitForm() {
-		WebDataBinder bind = new WebDataBinder(null);
+    @Test
+    public void testInitForm() {
+        WebDataBinder bind = new WebDataBinder(null);
 
-		ctrl.initForm(bind);
+        ctrl.initForm(bind);
 
-		List<String> expectedFields = Arrays.asList(bind.getAllowedFields());
+        List<String> expectedFields = Arrays.asList(bind.getAllowedFields());
 
-		assertTrue(expectedFields.contains("email"));
-		assertTrue(expectedFields.contains("recaptcha_response_field"));
-	}
+        assertTrue(expectedFields.contains("email"));
+        assertTrue(expectedFields.contains("recaptcha_response_field"));
+    }
 
-	@Test
-	public void testSetupForm() throws Exception {
-		prepareLegitRequest();
+    @Test
+    public void testSetupForm() throws Exception {
+        prepareLegitRequest();
 
-		String ret = ctrl.setupForm(request, "test@localhost.com", model);
+        String ret = ctrl.setupForm(request, "test@localhost.com", model);
 
-		assertTrue(ret.equals("passwordRecoveryForm"));
-	}
+        assertTrue(ret.equals("passwordRecoveryForm"));
+    }
 
-	@Test
-	public void testGenerateTokenWithDataServiceException() throws Exception {
-		prepareLegitRequest();
-		Mockito.when(utd.exist(Mockito.anyString())).thenReturn(false);
+    @Test
+    public void testGenerateTokenWithDataServiceException() throws Exception {
+        prepareLegitRequest();
+        Mockito.when(utd.exist(Mockito.anyString())).thenReturn(false);
 
-		Mockito.doThrow(DataServiceException.class).when(utd).insertToken(Mockito.anyString(), Mockito.anyString());
+        Mockito.doThrow(DataServiceException.class).when(utd).insertToken(Mockito.anyString(), Mockito.anyString());
 
-		try {
-			ctrl.generateToken(request, formBean, result, status);
-		} catch (Throwable e) {
-			assertTrue(e instanceof IOException);
-		}
+        try {
+            ctrl.generateToken(request, formBean, result, status);
+        } catch (Throwable e) {
+            assertTrue(e instanceof IOException);
+        }
 
-	}
+    }
 
-	@Test
-	public void testGenerateTokenWithUserNotFound() throws Exception {
-		prepareLegitRequest();
-		Mockito.when(utd.exist(Mockito.anyString())).thenReturn(false);
-		Mockito.doThrow(NameNotFoundException.class).when(dao).findByEmail(Mockito.anyString());
+    @Test
+    public void testGenerateTokenWithUserNotFound() throws Exception {
+        prepareLegitRequest();
+        Mockito.when(utd.exist(Mockito.anyString())).thenReturn(false);
+        Mockito.doThrow(NameNotFoundException.class).when(dao).findByEmail(Mockito.anyString());
 
-		String ret = ctrl.generateToken(request, formBean, result, status);
-		assertTrue(ret.equals("passwordRecoveryForm"));
-	}
+        String ret = ctrl.generateToken(request, formBean, result, status);
+        assertTrue(ret.equals("passwordRecoveryForm"));
+    }
 
-	@Test
-	public void testGenerateTokenBadEmail() throws Exception {
-		prepareLegitRequest();
-		Mockito.when(result.hasErrors()).thenReturn(true);
+    @Test
+    public void testGenerateTokenBadEmail() throws Exception {
+        prepareLegitRequest();
+        Mockito.when(result.hasErrors()).thenReturn(true);
 
-		String ret = ctrl.generateToken(request, formBean, result, status);
+        String ret = ctrl.generateToken(request, formBean, result, status);
 
-		assertTrue(ret.equals("passwordRecoveryForm"));
-	}
+        assertTrue(ret.equals("passwordRecoveryForm"));
+    }
 
-	@Test
-	public void testGenerateToken() throws Exception {
-		prepareLegitRequest();
+    @Test
+    public void testGenerateToken() throws Exception {
+        prepareLegitRequest();
 
-		String ret = ctrl.generateToken(request, formBean, result, status);
-		assertTrue(ret.equals("emailWasSent"));
-	}
+        String ret = ctrl.generateToken(request, formBean, result, status);
+        assertTrue(ret.equals("emailWasSent"));
+    }
 
-	@Test
-	public void testBadCaptchaGenerateToken() throws Exception {
-		prepareLegitRequest();
-		Mockito.when(result.hasErrors()).thenReturn(true);
-		Mockito.when(rec.isValid(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(false);
+    @Test
+    public void testBadCaptchaGenerateToken() throws Exception {
+        prepareLegitRequest();
+        Mockito.when(result.hasErrors()).thenReturn(true);
+        Mockito.when(rec.isValid(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(false);
 
-		String ret = ctrl.generateToken(request, formBean, result, status);
+        String ret = ctrl.generateToken(request, formBean, result, status);
 
-		assertTrue(ret.equals("passwordRecoveryForm"));
-	}
+        assertTrue(ret.equals("passwordRecoveryForm"));
+    }
 
-	/**
-	 * Test the underlying bean (PasswordRecoveryFormBean).
-	 *
-	 */
-	@Test
-	public void testPasswordRecoveryFormBean() {
-		PasswordRecoveryFormBean b = new PasswordRecoveryFormBean();
+    /**
+     * Test the underlying bean (PasswordRecoveryFormBean).
+     *
+     */
+    @Test
+    public void testPasswordRecoveryFormBean() {
+        PasswordRecoveryFormBean b = new PasswordRecoveryFormBean();
 
-		b.setEmail("test@localhost.com");
-		b.setRecaptcha_response_field("valid");
+        b.setEmail("test@localhost.com");
+        b.setRecaptcha_response_field("valid");
 
-		assertTrue(b.getEmail().equals("test@localhost.com"));
-		assertTrue(b.toString()
-				.equals("PasswordRecoveryFormBean [email=test@localhost.com, " + "recaptcha_response_field=valid]"));
+        assertTrue(b.getEmail().equals("test@localhost.com"));
+        assertTrue(b.toString()
+                .equals("PasswordRecoveryFormBean [email=test@localhost.com, " + "recaptcha_response_field=valid]"));
 
-	}
+    }
 
-	/**
-	 * test for recovery password when user is a pending user
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	public void testPasswordRecoveryWithPendingUser() throws Exception {
-		prepareLegitRequest(true);
-		Mockito.when(result.hasErrors()).thenReturn(false);
-		String ret = ctrl.generateToken(request, formBean, result, status);
+    /**
+     * test for recovery password when user is a pending user
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testPasswordRecoveryWithPendingUser() throws Exception {
+        prepareLegitRequest(true);
+        Mockito.when(result.hasErrors()).thenReturn(false);
+        String ret = ctrl.generateToken(request, formBean, result, status);
 
-		assertTrue(ret.equals("passwordRecoveryForm"));
-	}
+        assertTrue(ret.equals("passwordRecoveryForm"));
+    }
 }

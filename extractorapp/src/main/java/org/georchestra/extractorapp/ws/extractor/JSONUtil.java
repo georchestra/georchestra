@@ -31,18 +31,18 @@ import org.json.JSONTokener;
  */
 final class JSONUtil {
 
-	private JSONUtil() {
-		// utility class
-	}
+    private JSONUtil() {
+        // utility class
+    }
 
-	/**
-	 * Takes a string and parses it to a JSON object structure
-	 */
-	public static JSONObject parseStringToJSon(String jsonData) throws JSONException {
-		final String trimmed = jsonData.trim();
-		final JSONTokener tokener = new JSONTokener(trimmed);
-		JSONObject jsonObject = new JSONObject(tokener);
-		return jsonObject;
-	}
+    /**
+     * Takes a string and parses it to a JSON object structure
+     */
+    public static JSONObject parseStringToJSon(String jsonData) throws JSONException {
+        final String trimmed = jsonData.trim();
+        final JSONTokener tokener = new JSONTokener(trimmed);
+        JSONObject jsonObject = new JSONObject(tokener);
+        return jsonObject;
+    }
 
 }

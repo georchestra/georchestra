@@ -39,74 +39,74 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author jeichar
  */
 public class WcsFormat extends AbstractGridFormat {
-	private final long maxCoverageExtractionSize;
+    private final long maxCoverageExtractionSize;
 
-	public WcsFormat(long maxCoverageExtractionSize) {
-		this.maxCoverageExtractionSize = maxCoverageExtractionSize;
-	}
+    public WcsFormat(long maxCoverageExtractionSize) {
+        this.maxCoverageExtractionSize = maxCoverageExtractionSize;
+    }
 
-	public boolean accepts(Object input, Hints hints) {
-		return accepts(input);
-	}
+    public boolean accepts(Object input, Hints hints) {
+        return accepts(input);
+    }
 
-	public boolean accepts(Object input) {
-		try {
-			return toURL(input) != null;
-		} catch (MalformedURLException e) {
-			return false;
-		}
-	}
+    public boolean accepts(Object input) {
+        try {
+            return toURL(input) != null;
+        } catch (MalformedURLException e) {
+            return false;
+        }
+    }
 
-	@Override
-	public WcsCoverageReader getReader(Object source) {
-		testSource(source);
-		try {
-			return new WcsCoverageReader(toURL(source), maxCoverageExtractionSize);
-		} catch (MalformedURLException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    @Override
+    public WcsCoverageReader getReader(Object source) {
+        testSource(source);
+        try {
+            return new WcsCoverageReader(toURL(source), maxCoverageExtractionSize);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	/*-------------------------  Support methods  --------------------*/
-	private void testSource(Object source) {
-		if (!accepts(source)) {
-			throw new IllegalArgumentException(source + " is not a supported source for a WCS");
-		}
-	}
+    /*-------------------------  Support methods  --------------------*/
+    private void testSource(Object source) {
+        if (!accepts(source)) {
+            throw new IllegalArgumentException(source + " is not a supported source for a WCS");
+        }
+    }
 
-	private URL toURL(Object input) throws MalformedURLException {
-		if (input instanceof String) {
-			return new URL((String) input);
-		} else if (input instanceof URL) {
-			return (URL) input;
-		}
-		return null;
-	}
+    private URL toURL(Object input) throws MalformedURLException {
+        if (input instanceof String) {
+            return new URL((String) input);
+        } else if (input instanceof URL) {
+            return (URL) input;
+        }
+        return null;
+    }
 
-	/*-------------------------  Unsupported methods--------------------*/
-	@Override
-	public ParameterValueGroup getReadParameters() {
-		throw new UnsupportedOperationException("Does not need to be implemented for geOrchestra");
-	}
+    /*-------------------------  Unsupported methods--------------------*/
+    @Override
+    public ParameterValueGroup getReadParameters() {
+        throw new UnsupportedOperationException("Does not need to be implemented for geOrchestra");
+    }
 
-	/*-------------------------  write support is not planned  --------------------*/
-	@Override
-	public GeoToolsWriteParams getDefaultImageIOWriteParameters() {
-		throw new UnsupportedOperationException("Read only support");
-	}
+    /*-------------------------  write support is not planned  --------------------*/
+    @Override
+    public GeoToolsWriteParams getDefaultImageIOWriteParameters() {
+        throw new UnsupportedOperationException("Read only support");
+    }
 
-	@Override
-	public WcsCoverageReader getReader(Object source, Hints hints) {
-		return getReader(source);
-	}
+    @Override
+    public WcsCoverageReader getReader(Object source, Hints hints) {
+        return getReader(source);
+    }
 
-	@Override
-	public GridCoverageWriter getWriter(Object destination) {
-		throw new UnsupportedOperationException("Read only support");
-	}
+    @Override
+    public GridCoverageWriter getWriter(Object destination) {
+        throw new UnsupportedOperationException("Read only support");
+    }
 
-	public GridCoverageWriter getWriter(Object destination, Hints hints) {
-		throw new UnsupportedOperationException("Read only support");
-	}
+    public GridCoverageWriter getWriter(Object destination, Hints hints) {
+        throw new UnsupportedOperationException("Read only support");
+    }
 
 }

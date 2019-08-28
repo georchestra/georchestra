@@ -49,99 +49,99 @@ import lombok.NonNull;
 @Controller
 public class UsersExport {
 
-	private @Autowired GDPRAccountWorker gdprInfoExporter;
+    private @Autowired GDPRAccountWorker gdprInfoExporter;
 
-	private UserInfoExporter accountInfoExporter;
+    private UserInfoExporter accountInfoExporter;
 
-	@Autowired
-	private AdvancedDelegationDao advancedDelegationDao;
+    @Autowired
+    private AdvancedDelegationDao advancedDelegationDao;
 
-	public @Autowired UsersExport(UserInfoExporter accountInfoExporter) {
-		this.accountInfoExporter = accountInfoExporter;
-	}
+    public @Autowired UsersExport(UserInfoExporter accountInfoExporter) {
+        this.accountInfoExporter = accountInfoExporter;
+    }
 
-	/**
-	 * Generates a ZIP file bundle with all the calling user's EU
-	 * <a href="https://eugdpr.org/">General Data Protection Regulation</a>)
-	 * relevant information available on the system.
-	 */
-	@RequestMapping(method = RequestMethod.GET, value = "/private/users/gdpr/download", produces = "application/zip")
-	public void downloadUserData(HttpServletResponse response)
-			throws NameNotFoundException, DataServiceException, IOException {
+    /**
+     * Generates a ZIP file bundle with all the calling user's EU
+     * <a href="https://eugdpr.org/">General Data Protection Regulation</a>)
+     * relevant information available on the system.
+     */
+    @RequestMapping(method = RequestMethod.GET, value = "/private/users/gdpr/download", produces = "application/zip")
+    public void downloadUserData(HttpServletResponse response)
+            throws NameNotFoundException, DataServiceException, IOException {
 
-		final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		final String userId = auth.getName();
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final String userId = auth.getName();
 
-		Resource data = gdprInfoExporter.generateUserData(userId);
+        Resource data = gdprInfoExporter.generateUserData(userId);
 
-		int contentLength;
-		try {
-			File file = data.getFile();
-			contentLength = (int) file.length();
-		} catch (IOException notAFileResource) {
-			contentLength = 0;
-		}
-		try {
-			String fileName = userId + "_account_data.zip";
-			response.setContentType("application/zip");
-			response.setContentLength(contentLength);
-			response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+        int contentLength;
+        try {
+            File file = data.getFile();
+            contentLength = (int) file.length();
+        } catch (IOException notAFileResource) {
+            contentLength = 0;
+        }
+        try {
+            String fileName = userId + "_account_data.zip";
+            response.setContentType("application/zip");
+            response.setContentLength(contentLength);
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
 
-			IOUtils.copy(data.getInputStream(), response.getOutputStream());
-			response.flushBuffer();
-		} finally {
-			gdprInfoExporter.dispose(data);
-		}
-	}
+            IOUtils.copy(data.getInputStream(), response.getOutputStream());
+            response.flushBuffer();
+        } finally {
+            gdprInfoExporter.dispose(data);
+        }
+    }
 
-	@PostMapping(value = "/private/export/users.csv", consumes = MediaType.APPLICATION_JSON_VALUE, produces = "text/csv; charset=utf-8")
-	@ResponseBody
-	public String getUsersAsCsv(@RequestBody String users) throws Exception {
-		String[] parsedUsers = parseUserNamesFromJSONArray(users);
-		checkAccessPermissionToUsersData(parsedUsers);
-		@NonNull
-		String csvUsers = accountInfoExporter.exportUsersAsCsv(parsedUsers);
-		return csvUsers;
-	}
+    @PostMapping(value = "/private/export/users.csv", consumes = MediaType.APPLICATION_JSON_VALUE, produces = "text/csv; charset=utf-8")
+    @ResponseBody
+    public String getUsersAsCsv(@RequestBody String users) throws Exception {
+        String[] parsedUsers = parseUserNamesFromJSONArray(users);
+        checkAccessPermissionToUsersData(parsedUsers);
+        @NonNull
+        String csvUsers = accountInfoExporter.exportUsersAsCsv(parsedUsers);
+        return csvUsers;
+    }
 
-	@PostMapping(value = "/private/export/users.vcf", consumes = MediaType.APPLICATION_JSON_VALUE, produces = "text/x-vcard; charset=utf-8")
-	@ResponseBody
-	public String getUsersAsVcard(@RequestBody String users) throws Exception {
-		String[] parsedUsers = parseUserNamesFromJSONArray(users);
-		checkAccessPermissionToUsersData(parsedUsers);
-		@NonNull
-		String vcards = accountInfoExporter.exportUsersAsVcard(parsedUsers);
-		return vcards;
-	}
+    @PostMapping(value = "/private/export/users.vcf", consumes = MediaType.APPLICATION_JSON_VALUE, produces = "text/x-vcard; charset=utf-8")
+    @ResponseBody
+    public String getUsersAsVcard(@RequestBody String users) throws Exception {
+        String[] parsedUsers = parseUserNamesFromJSONArray(users);
+        checkAccessPermissionToUsersData(parsedUsers);
+        @NonNull
+        String vcards = accountInfoExporter.exportUsersAsVcard(parsedUsers);
+        return vcards;
+    }
 
-	/**
-	 * Parses and returns the user names given as a JSON array (e.g.
-	 * {@code ["admin", "testuser"]})
-	 */
-	private String[] parseUserNamesFromJSONArray(String rawUsers) {
-		JSONArray jsonUsers = new JSONArray(rawUsers);
-		String[] users = StreamSupport.stream(jsonUsers.spliterator(), false).toArray(String[]::new);
-		return users;
-	}
+    /**
+     * Parses and returns the user names given as a JSON array (e.g.
+     * {@code ["admin", "testuser"]})
+     */
+    private String[] parseUserNamesFromJSONArray(String rawUsers) {
+        JSONArray jsonUsers = new JSONArray(rawUsers);
+        String[] users = StreamSupport.stream(jsonUsers.spliterator(), false).toArray(String[]::new);
+        return users;
+    }
 
-	/**
-	 * Checks that the calling user has permissions to view data regarding the
-	 * requested users
-	 *
-	 * @throws AccessDeniedException if current user does not have permissions to
-	 *                               view data of all requested users
-	 */
-	private void checkAccessPermissionToUsersData(String[] users) throws JSONException {
-		// check if user is under delegation for delegated admins
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if (!auth.getAuthorities().contains(AdvancedDelegationDao.ROLE_SUPERUSER)) {
-			Set<String> usersUnderDelegation = this.advancedDelegationDao.findUsersUnderDelegation(auth.getName());
-			List<String> invalid = Arrays.stream(users).filter(u -> !usersUnderDelegation.contains(u))
-					.collect(Collectors.toList());
-			if (!invalid.isEmpty()) {
-				throw new AccessDeniedException("Some users are not under delegation: " + invalid);
-			}
-		}
-	}
+    /**
+     * Checks that the calling user has permissions to view data regarding the
+     * requested users
+     *
+     * @throws AccessDeniedException if current user does not have permissions to
+     *                               view data of all requested users
+     */
+    private void checkAccessPermissionToUsersData(String[] users) throws JSONException {
+        // check if user is under delegation for delegated admins
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (!auth.getAuthorities().contains(AdvancedDelegationDao.ROLE_SUPERUSER)) {
+            Set<String> usersUnderDelegation = this.advancedDelegationDao.findUsersUnderDelegation(auth.getName());
+            List<String> invalid = Arrays.stream(users).filter(u -> !usersUnderDelegation.contains(u))
+                    .collect(Collectors.toList());
+            if (!invalid.isEmpty()) {
+                throw new AccessDeniedException("Some users are not under delegation: " + invalid);
+            }
+        }
+    }
 
 }

@@ -46,294 +46,294 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 public class WfsExtractor1_0_0Test extends AbstractTestWithServer {
-	@Rule
-	public TemporaryFolder testDir = new TemporaryFolder();
+    @Rule
+    public TemporaryFolder testDir = new TemporaryFolder();
 
-	private WFSDataStoreFactory factory;
-	private boolean usesVersion1_0_0;
-	private boolean serverWasCalled = false;
+    private WFSDataStoreFactory factory;
+    private boolean usesVersion1_0_0;
+    private boolean serverWasCalled = false;
 
-	@Before
-	public void before() throws IOException {
-		usesVersion1_0_0 = true;
-		this.factory = new WFSDataStoreFactory();
-	}
+    @Before
+    public void before() throws IOException {
+        usesVersion1_0_0 = true;
+        this.factory = new WFSDataStoreFactory();
+    }
 
-	@Override
-	protected void configureContext(HttpServer server) {
-		server.createContext("/geoserver/wfs", new HttpHandler() {
-			@Override
-			public void handle(HttpExchange httpExchange) throws IOException {
-				final String query = httpExchange.getRequestURI().getQuery().toUpperCase();
-				serverWasCalled = true;
-				usesVersion1_0_0 &= query.contains("VERSION=1.0.0");
-				if (query.contains("REQUEST=GETCAPABILITIES")) {
-					respondWith1_0_0CapabiltiesDocument(httpExchange);
-				} else if (query.contains("REQUEST=DESCRIBEFEATURETYPE")) {
-					respondWith1_0_0DescribeFeatureDocument(httpExchange);
-				} else if (query.contains("REQUEST=GETFEATURE")) {
-					respondWith1_0_0GetFeatureDocument(httpExchange);
-				} else {
-					sendError(httpExchange, 404, "Not a recognized request: " + httpExchange.getRequestURI());
-				}
-			}
-		});
-	}
+    @Override
+    protected void configureContext(HttpServer server) {
+        server.createContext("/geoserver/wfs", new HttpHandler() {
+            @Override
+            public void handle(HttpExchange httpExchange) throws IOException {
+                final String query = httpExchange.getRequestURI().getQuery().toUpperCase();
+                serverWasCalled = true;
+                usesVersion1_0_0 &= query.contains("VERSION=1.0.0");
+                if (query.contains("REQUEST=GETCAPABILITIES")) {
+                    respondWith1_0_0CapabiltiesDocument(httpExchange);
+                } else if (query.contains("REQUEST=DESCRIBEFEATURETYPE")) {
+                    respondWith1_0_0DescribeFeatureDocument(httpExchange);
+                } else if (query.contains("REQUEST=GETFEATURE")) {
+                    respondWith1_0_0GetFeatureDocument(httpExchange);
+                } else {
+                    sendError(httpExchange, 404, "Not a recognized request: " + httpExchange.getRequestURI());
+                }
+            }
+        });
+    }
 
-	@Test(expected = SecurityException.class)
-	public void testCheckPermission_Illegal_Layer() throws Exception {
-		WfsExtractor wfsExtractor = new WfsExtractor(testDir.getRoot());
-		final String layerName = "layerName";
+    @Test(expected = SecurityException.class)
+    public void testCheckPermission_Illegal_Layer() throws Exception {
+        WfsExtractor wfsExtractor = new WfsExtractor(testDir.getRoot());
+        final String layerName = "layerName";
 
-		ExtractorLayerRequest request = createLayerRequestObject(layerName);
-		wfsExtractor.checkPermission(request, "localhost", null, null);
+        ExtractorLayerRequest request = createLayerRequestObject(layerName);
+        wfsExtractor.checkPermission(request, "localhost", null, null);
 
-		assertTrue(this.usesVersion1_0_0);
-		assertTrue(this.serverWasCalled);
-	}
+        assertTrue(this.usesVersion1_0_0);
+        assertTrue(this.serverWasCalled);
+    }
 
-	@Test
-	public void testCheckPermission_Legal_Layer() throws Exception {
-		WfsExtractor wfsExtractor = new WfsExtractor(testDir.getRoot());
+    @Test
+    public void testCheckPermission_Legal_Layer() throws Exception {
+        WfsExtractor wfsExtractor = new WfsExtractor(testDir.getRoot());
 
-		ExtractorLayerRequest request = createLayerRequestObject("sf:archsites");
-		wfsExtractor.checkPermission(request, "localhost", null, null);
-		assertTrue(this.usesVersion1_0_0);
-		assertTrue(this.serverWasCalled);
-	}
+        ExtractorLayerRequest request = createLayerRequestObject("sf:archsites");
+        wfsExtractor.checkPermission(request, "localhost", null, null);
+        assertTrue(this.usesVersion1_0_0);
+        assertTrue(this.serverWasCalled);
+    }
 
-	@Test
-	public void testCheckPermission_Username_and_Password() throws Exception {
-		final String impUser = "impUser";
-		final String extractorappUsername = "extractorapUsername";
-		final String extractorappPassword = "password";
-		setServerContext("/geoserver/wfs", new HttpHandler() {
-			@Override
-			public void handle(HttpExchange httpExchange) throws IOException {
-				serverWasCalled = true;
-				final Headers requestHeaders = httpExchange.getRequestHeaders();
-				final String authorization = requestHeaders.getFirst("Authorization");
-				String authStringEnc = encodeUserNameAndPassForBasicAuth(extractorappUsername, extractorappPassword);
-				if (authorization.equals("Basic " + authStringEnc)
-						&& requestHeaders.getFirst("imp-username").equals(impUser)) {
-					respondWith1_0_0CapabiltiesDocument(httpExchange);
-				} else {
-					sendError(httpExchange, 401, "Illegal Auth");
-				}
+    @Test
+    public void testCheckPermission_Username_and_Password() throws Exception {
+        final String impUser = "impUser";
+        final String extractorappUsername = "extractorapUsername";
+        final String extractorappPassword = "password";
+        setServerContext("/geoserver/wfs", new HttpHandler() {
+            @Override
+            public void handle(HttpExchange httpExchange) throws IOException {
+                serverWasCalled = true;
+                final Headers requestHeaders = httpExchange.getRequestHeaders();
+                final String authorization = requestHeaders.getFirst("Authorization");
+                String authStringEnc = encodeUserNameAndPassForBasicAuth(extractorappUsername, extractorappPassword);
+                if (authorization.equals("Basic " + authStringEnc)
+                        && requestHeaders.getFirst("imp-username").equals(impUser)) {
+                    respondWith1_0_0CapabiltiesDocument(httpExchange);
+                } else {
+                    sendError(httpExchange, 401, "Illegal Auth");
+                }
 
-			}
-		});
+            }
+        });
 
-		WfsExtractor wfsExtractor = new WfsExtractor(testDir.getRoot(), extractorappUsername, extractorappPassword,
-				"localhost", null);
+        WfsExtractor wfsExtractor = new WfsExtractor(testDir.getRoot(), extractorappUsername, extractorappPassword,
+                "localhost", null);
 
-		ExtractorLayerRequest request = createLayerRequestObject("sf:archsites");
-		wfsExtractor.checkPermission(request, "localhost", impUser, "ROLE_GN_ADMIN");
+        ExtractorLayerRequest request = createLayerRequestObject("sf:archsites");
+        wfsExtractor.checkPermission(request, "localhost", impUser, "ROLE_GN_ADMIN");
 
-		assertTrue(this.serverWasCalled);
-	}
+        assertTrue(this.serverWasCalled);
+    }
 
-	@Test
-	public void testExtract_1_0_0_ShapeOutput() throws Exception {
+    @Test
+    public void testExtract_1_0_0_ShapeOutput() throws Exception {
 
-		WfsExtractor wfsExtractor = new WfsExtractor(testDir.getRoot());
-		ExtractorLayerRequest request = createLayerRequestObject("sf:archsites");
+        WfsExtractor wfsExtractor = new WfsExtractor(testDir.getRoot());
+        ExtractorLayerRequest request = createLayerRequestObject("sf:archsites");
 
-		final File extract = wfsExtractor.extract(request);
+        final File extract = wfsExtractor.extract(request);
 
-		assertTrue(this.usesVersion1_0_0);
-		assertTrue(this.serverWasCalled);
+        assertTrue(this.usesVersion1_0_0);
+        assertTrue(this.serverWasCalled);
 
-		final File[] fileNames = extract.listFiles();
-		assertEquals(10, fileNames.length);
-		assertBoundingPolygon(extract);
+        final File[] fileNames = extract.listFiles();
+        assertEquals(10, fileNames.length);
+        assertBoundingPolygon(extract);
 
-		Collection<File> shapefiles = Collections2.filter(Arrays.asList(fileNames), new Predicate<File>() {
-			@Override
-			public boolean apply(File input) {
-				final String fileExtension = Files.getFileExtension(input.getName());
-				return fileExtension.equalsIgnoreCase("shp");
-			}
-		});
+        Collection<File> shapefiles = Collections2.filter(Arrays.asList(fileNames), new Predicate<File>() {
+            @Override
+            public boolean apply(File input) {
+                final String fileExtension = Files.getFileExtension(input.getName());
+                return fileExtension.equalsIgnoreCase("shp");
+            }
+        });
 
-		assertEquals(2, shapefiles.size());
+        assertEquals(2, shapefiles.size());
 
-		final ShapefileDataStoreFactory shapefileDataStoreFactory = new ShapefileDataStoreFactory();
-		FileDataStore bounding = null, data = null;
-		for (File shapefile : shapefiles) {
-			if (shapefile.getName().startsWith("bounding_")) {
-				bounding = shapefileDataStoreFactory.createDataStore(shapefile.toURI().toURL());
-			} else {
-				data = shapefileDataStoreFactory.createDataStore(shapefile.toURI().toURL());
-			}
-		}
+        final ShapefileDataStoreFactory shapefileDataStoreFactory = new ShapefileDataStoreFactory();
+        FileDataStore bounding = null, data = null;
+        for (File shapefile : shapefiles) {
+            if (shapefile.getName().startsWith("bounding_")) {
+                bounding = shapefileDataStoreFactory.createDataStore(shapefile.toURI().toURL());
+            } else {
+                data = shapefileDataStoreFactory.createDataStore(shapefile.toURI().toURL());
+            }
+        }
 
-		assertNotNull(bounding);
-		assertNotNull(data);
+        assertNotNull(bounding);
+        assertNotNull(data);
 
-		Envelope bounds = calculateBounds(bounding.getFeatureSource());
-		assertEquals(23, data.getFeatureSource().getCount(Query.ALL));
+        Envelope bounds = calculateBounds(bounding.getFeatureSource());
+        assertEquals(23, data.getFeatureSource().getCount(Query.ALL));
 
-		assertTrue(bounds.contains(calculateBounds(data.getFeatureSource())));
-	}
+        assertTrue(bounds.contains(calculateBounds(data.getFeatureSource())));
+    }
 
-	@Test
-	public void testExtract_1_0_0_KmlOutput() throws Exception {
+    @Test
+    public void testExtract_1_0_0_KmlOutput() throws Exception {
 
-		WfsExtractor wfsExtractor = new WfsExtractor(testDir.getRoot());
-		ExtractorLayerRequest request = createLayerRequestObject("sf:archsites", "kml");
+        WfsExtractor wfsExtractor = new WfsExtractor(testDir.getRoot());
+        ExtractorLayerRequest request = createLayerRequestObject("sf:archsites", "kml");
 
-		final File extract = wfsExtractor.extract(request);
+        final File extract = wfsExtractor.extract(request);
 
-		assertTrue(this.usesVersion1_0_0);
-		assertTrue(this.serverWasCalled);
+        assertTrue(this.usesVersion1_0_0);
+        assertTrue(this.serverWasCalled);
 
-		List<String> fileNames = Arrays.asList(extract.list());
-		assertEquals(6, extract.listFiles().length);
-		assertBoundingPolygon(extract);
+        List<String> fileNames = Arrays.asList(extract.list());
+        assertEquals(6, extract.listFiles().length);
+        assertBoundingPolygon(extract);
 
-		Collections2.filter(fileNames, new Predicate<String>() {
-			@Override
-			public boolean apply(String input) {
-				return input.toLowerCase().endsWith("kml");
-			}
-		});
-	}
+        Collections2.filter(fileNames, new Predicate<String>() {
+            @Override
+            public boolean apply(String input) {
+                return input.toLowerCase().endsWith("kml");
+            }
+        });
+    }
 
-	@Test
-	public void testExtract_1_0_0_Tab() throws Exception {
+    @Test
+    public void testExtract_1_0_0_Tab() throws Exception {
 
-		WfsExtractor wfsExtractor = new WfsExtractor(testDir.getRoot());
-		ExtractorLayerRequest request = createLayerRequestObject("sf:archsites", "tab");
+        WfsExtractor wfsExtractor = new WfsExtractor(testDir.getRoot());
+        ExtractorLayerRequest request = createLayerRequestObject("sf:archsites", "tab");
 
-		File extract = null;
-		try {
-			extract = wfsExtractor.extract(request);
-		} catch (IllegalStateException e) {
-			Assume.assumeNoException(e);
-		}
+        File extract = null;
+        try {
+            extract = wfsExtractor.extract(request);
+        } catch (IllegalStateException e) {
+            Assume.assumeNoException(e);
+        }
 
-		assertTrue(this.usesVersion1_0_0);
-		assertTrue(this.serverWasCalled);
+        assertTrue(this.usesVersion1_0_0);
+        assertTrue(this.serverWasCalled);
 
-		List<String> fileNames = Arrays.asList(extract.list());
-		assertEquals(8, extract.listFiles().length);
-		assertBoundingPolygon(extract);
+        List<String> fileNames = Arrays.asList(extract.list());
+        assertEquals(8, extract.listFiles().length);
+        assertBoundingPolygon(extract);
 
-		Collections2.filter(fileNames, new Predicate<String>() {
-			@Override
-			public boolean apply(String input) {
-				return input.toLowerCase().endsWith("tab");
-			}
-		});
-	}
+        Collections2.filter(fileNames, new Predicate<String>() {
+            @Override
+            public boolean apply(String input) {
+                return input.toLowerCase().endsWith("tab");
+            }
+        });
+    }
 
-	@Test
-	public void testOgrFeatureWriterFromShapeToKml() throws Exception {
+    @Test
+    public void testOgrFeatureWriterFromShapeToKml() throws Exception {
 
-		DataStore ds = new ShapefileDataStoreFactory().createDataStore(this.getClass().getResource("/shp/savoie.shp"));
+        DataStore ds = new ShapefileDataStoreFactory().createDataStore(this.getClass().getResource("/shp/savoie.shp"));
 
-		SimpleFeatureType schema = ds.getSchema("savoie");
-		SimpleFeatureCollection c = ds.getFeatureSource("savoie").getFeatures();
+        SimpleFeatureType schema = ds.getSchema("savoie");
+        SimpleFeatureCollection c = ds.getFeatureSource("savoie").getFeatures();
 
-		FeatureWriterStrategy fw = new KMLFeatureWriter(new NullProgressListener(), schema,
-				testDir.newFolder("kmltest"), c);
+        FeatureWriterStrategy fw = new KMLFeatureWriter(new NullProgressListener(), schema,
+                testDir.newFolder("kmltest"), c);
 
-		File[] results = {};
-		try {
-			results = fw.generateFiles();
-		} catch (IllegalStateException e) {
-			Assume.assumeNoException(e);
-		}
+        File[] results = {};
+        try {
+            results = fw.generateFiles();
+        } catch (IllegalStateException e) {
+            Assume.assumeNoException(e);
+        }
 
-		for (File i : results) {
-			assertTrue("file does not exist or is empty: " + i.getName(), (i.exists() && i.length() > 0));
-		}
+        for (File i : results) {
+            assertTrue("file does not exist or is empty: " + i.getName(), (i.exists() && i.length() > 0));
+        }
 
-	}
+    }
 
-	private void assertBoundingPolygon(File extractDir) throws IOException {
-		List<String> fileNames = Arrays.asList(extractDir.list());
-		final String shapefileName = "bounding_POLYGON.shp";
-		assertTrue(fileNames.containsAll(
-				Arrays.asList(shapefileName, "bounding_POLYGON.shx", "bounding_POLYGON.dbf", "bounding_POLYGON.prj")));
+    private void assertBoundingPolygon(File extractDir) throws IOException {
+        List<String> fileNames = Arrays.asList(extractDir.list());
+        final String shapefileName = "bounding_POLYGON.shp";
+        assertTrue(fileNames.containsAll(
+                Arrays.asList(shapefileName, "bounding_POLYGON.shx", "bounding_POLYGON.dbf", "bounding_POLYGON.prj")));
 
-		final ShapefileDataStoreFactory shapefileDataStoreFactory = new ShapefileDataStoreFactory();
-		final FileDataStore dataStore = shapefileDataStoreFactory
-				.createDataStore(new File(extractDir, shapefileName).toURI().toURL());
+        final ShapefileDataStoreFactory shapefileDataStoreFactory = new ShapefileDataStoreFactory();
+        final FileDataStore dataStore = shapefileDataStoreFactory
+                .createDataStore(new File(extractDir, shapefileName).toURI().toURL());
 
-		assertEquals(1, dataStore.getFeatureSource().getCount(Query.ALL));
-	}
+        assertEquals(1, dataStore.getFeatureSource().getCount(Query.ALL));
+    }
 
-	private ExtractorLayerRequest createLayerRequestObject(String layerName)
-			throws JSONException, FactoryException, MalformedURLException {
-		return createLayerRequestObject(layerName, "shp");
-	}
+    private ExtractorLayerRequest createLayerRequestObject(String layerName)
+            throws JSONException, FactoryException, MalformedURLException {
+        return createLayerRequestObject(layerName, "shp");
+    }
 
-	private ExtractorLayerRequest createLayerRequestObject(String layerName, String formatType)
-			throws JSONException, FactoryException, MalformedURLException {
-		int port = getServerPort();
-		JSONObject layerJson = new JSONObject();
-		layerJson.put(ExtractorLayerRequest.URL_KEY, "http://localhost:" + port + "/geoserver/wfs");
-		layerJson.put(ExtractorLayerRequest.PROJECTION_KEY, "EPSG:26713");
-		layerJson.put(ExtractorLayerRequest.TYPE_KEY, "WFS");
-		layerJson.put(ExtractorLayerRequest.FORMAT_KEY, formatType);
-		layerJson.put(ExtractorLayerRequest.LAYER_NAME_KEY, layerName);
-		JSONObject bbox = new JSONObject();
-		bbox.put(ExtractorLayerRequest.BBOX_SRS_KEY, "EPSG:26713");
-		JSONArray bboxValue = new JSONArray(
-				"[589851.4376666048,4914490.882968263,608346.4603107043,4926501.8980334345]");
-		bbox.put(ExtractorLayerRequest.BBOX_VALUE_KEY, bboxValue);
-		layerJson.put(ExtractorLayerRequest.BBOX_KEY, bbox);
-		JSONObject globalJson = new JSONObject();
-		JSONArray emails = new JSONArray();
+    private ExtractorLayerRequest createLayerRequestObject(String layerName, String formatType)
+            throws JSONException, FactoryException, MalformedURLException {
+        int port = getServerPort();
+        JSONObject layerJson = new JSONObject();
+        layerJson.put(ExtractorLayerRequest.URL_KEY, "http://localhost:" + port + "/geoserver/wfs");
+        layerJson.put(ExtractorLayerRequest.PROJECTION_KEY, "EPSG:26713");
+        layerJson.put(ExtractorLayerRequest.TYPE_KEY, "WFS");
+        layerJson.put(ExtractorLayerRequest.FORMAT_KEY, formatType);
+        layerJson.put(ExtractorLayerRequest.LAYER_NAME_KEY, layerName);
+        JSONObject bbox = new JSONObject();
+        bbox.put(ExtractorLayerRequest.BBOX_SRS_KEY, "EPSG:26713");
+        JSONArray bboxValue = new JSONArray(
+                "[589851.4376666048,4914490.882968263,608346.4603107043,4926501.8980334345]");
+        bbox.put(ExtractorLayerRequest.BBOX_VALUE_KEY, bboxValue);
+        layerJson.put(ExtractorLayerRequest.BBOX_KEY, bbox);
+        JSONObject globalJson = new JSONObject();
+        JSONArray emails = new JSONArray();
 
-		return new ExtractorLayerRequest(layerJson, globalJson, emails);
-	}
+        return new ExtractorLayerRequest(layerJson, globalJson, emails);
+    }
 
-	private Envelope calculateBounds(SimpleFeatureSource featureSource) throws IOException {
-		Envelope bounds = new Envelope();
-		final SimpleFeatureIterator features = featureSource.getFeatures().features();
-		try {
-			while (features.hasNext()) {
-				SimpleFeature next = features.next();
-				final Geometry defaultGeometry = (Geometry) next.getDefaultGeometry();
-				bounds.expandToInclude(defaultGeometry.getEnvelopeInternal());
-			}
-		} finally {
-			features.close();
-		}
+    private Envelope calculateBounds(SimpleFeatureSource featureSource) throws IOException {
+        Envelope bounds = new Envelope();
+        final SimpleFeatureIterator features = featureSource.getFeatures().features();
+        try {
+            while (features.hasNext()) {
+                SimpleFeature next = features.next();
+                final Geometry defaultGeometry = (Geometry) next.getDefaultGeometry();
+                bounds.expandToInclude(defaultGeometry.getEnvelopeInternal());
+            }
+        } finally {
+            features.close();
+        }
 
-		return bounds;
-	}
+        return bounds;
+    }
 
-	private void respondWith1_0_0DescribeFeatureDocument(HttpExchange httpExchange) throws IOException {
-		final byte[] response = TestResourceUtils.getResourceAsBytes(WfsExtractor1_0_0Test.class,
-				"/wfs/wfs_1_0_0_describeFeatureType-point.xml");
+    private void respondWith1_0_0DescribeFeatureDocument(HttpExchange httpExchange) throws IOException {
+        final byte[] response = TestResourceUtils.getResourceAsBytes(WfsExtractor1_0_0Test.class,
+                "/wfs/wfs_1_0_0_describeFeatureType-point.xml");
 
-		writeResponse(httpExchange, response);
-	}
+        writeResponse(httpExchange, response);
+    }
 
-	private void respondWith1_0_0GetFeatureDocument(HttpExchange httpExchange) throws IOException {
-		final byte[] response = TestResourceUtils.getResourceAsBytes(WfsExtractor1_0_0Test.class,
-				"/wfs/wfs_1_0_0_getFeature-point.xml");
+    private void respondWith1_0_0GetFeatureDocument(HttpExchange httpExchange) throws IOException {
+        final byte[] response = TestResourceUtils.getResourceAsBytes(WfsExtractor1_0_0Test.class,
+                "/wfs/wfs_1_0_0_getFeature-point.xml");
 
-		writeResponse(httpExchange, response);
-	}
+        writeResponse(httpExchange, response);
+    }
 
-	private void respondWith1_0_0CapabiltiesDocument(HttpExchange httpExchange) throws IOException {
-		String capabilities = TestResourceUtils.getResourceAsString(WfsExtractor1_0_0Test.class,
-				"/wfs/wfs_1_0_0_capabilities.xml");
+    private void respondWith1_0_0CapabiltiesDocument(HttpExchange httpExchange) throws IOException {
+        String capabilities = TestResourceUtils.getResourceAsString(WfsExtractor1_0_0Test.class,
+                "/wfs/wfs_1_0_0_capabilities.xml");
 
-		capabilities = capabilities.replace("@@port@@", valueOf(getServerPort()));
-		byte[] response = capabilities.getBytes("UTF-8");
-		writeResponse(httpExchange, response);
-	}
+        capabilities = capabilities.replace("@@port@@", valueOf(getServerPort()));
+        byte[] response = capabilities.getBytes("UTF-8");
+        writeResponse(httpExchange, response);
+    }
 
-	public static String encodeUserNameAndPassForBasicAuth(String extractorappUsername, String extractorappPassword) {
-		String authString = extractorappUsername + ":" + extractorappPassword;
-		byte[] authEncBytes = Base64.encodeBase64(authString.getBytes());
-		return new String(authEncBytes);
-	}
+    public static String encodeUserNameAndPassForBasicAuth(String extractorappUsername, String extractorappPassword) {
+        String authString = extractorappUsername + ":" + extractorappPassword;
+        byte[] authEncBytes = Base64.encodeBase64(authString.getBytes());
+        return new String(authEncBytes);
+    }
 
 }

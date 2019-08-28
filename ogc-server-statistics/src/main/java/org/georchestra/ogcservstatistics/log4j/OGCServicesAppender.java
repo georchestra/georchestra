@@ -73,8 +73,8 @@ import org.georchestra.ogcservstatistics.dataservices.InsertCommand;
  * <pre>
  * 
  * static {
- * 	final String file = "[install-dir]/log4j.properties";
- * 	PropertyConfigurator.configure(file);
+ *     final String file = "[install-dir]/log4j.properties";
+ *     PropertyConfigurator.configure(file);
  * }
  * </pre>
  * <p>
@@ -94,144 +94,144 @@ import org.georchestra.ogcservstatistics.dataservices.InsertCommand;
  */
 public class OGCServicesAppender extends AppenderSkeleton {
 
-	protected String databaseUser = "";
+    protected String databaseUser = "";
 
-	protected String databasePassword = "";
+    protected String databasePassword = "";
 
-	private String jdbcURL = "";
+    private String jdbcURL = "";
 
-	/**
-	 * Activated true: it log ogc services false: it does not log ogc services
-	 */
-	protected boolean activated = false;
+    /**
+     * Activated true: it log ogc services false: it does not log ogc services
+     */
+    protected boolean activated = false;
 
-	private static DataServicesConfiguration dataServiceConfiguration = DataServicesConfiguration.getInstance();
+    private static DataServicesConfiguration dataServiceConfiguration = DataServicesConfiguration.getInstance();
 
-	public OGCServicesAppender() {
-		super();
-	}
+    public OGCServicesAppender() {
+        super();
+    }
 
-	public String getJdbcURL() {
-		return this.jdbcURL;
-	}
+    public String getJdbcURL() {
+        return this.jdbcURL;
+    }
 
-	public void setJdbcURL(String jdbcURL) {
-		this.jdbcURL = jdbcURL;
-	}
+    public void setJdbcURL(String jdbcURL) {
+        this.jdbcURL = jdbcURL;
+    }
 
-	public String getDatabaseUser() {
-		return databaseUser;
-	}
+    public String getDatabaseUser() {
+        return databaseUser;
+    }
 
-	public void setDatabaseUser(String databaseUser) {
-		this.databaseUser = databaseUser;
-	}
+    public void setDatabaseUser(String databaseUser) {
+        this.databaseUser = databaseUser;
+    }
 
-	public String getDatabasePassword() {
-		return databasePassword;
-	}
+    public String getDatabasePassword() {
+        return databasePassword;
+    }
 
-	public void setDatabasePassword(String databasePassword) {
-		this.databasePassword = databasePassword;
-	}
+    public void setDatabasePassword(String databasePassword) {
+        this.databasePassword = databasePassword;
+    }
 
-	public @Deprecated int getBufferSize() {
-		return 1;
-	}
+    public @Deprecated int getBufferSize() {
+        return 1;
+    }
 
-	public @Deprecated void setBufferSize(int newBufferSize) {
-	}
+    public @Deprecated void setBufferSize(int newBufferSize) {
+    }
 
-	public boolean isActivated() {
-		return activated;
-	}
+    public boolean isActivated() {
+        return activated;
+    }
 
-	public void setActivated(boolean activated) {
-		this.activated = activated;
-	}
+    public void setActivated(boolean activated) {
+        this.activated = activated;
+    }
 
-	/**
-	 * This hook method called after set all appender properties. In this case the
-	 * configuration is set.
-	 * 
-	 */
-	@Override
-	public void activateOptions() {
-		dataServiceConfiguration.initialize(getJdbcURL(), getDatabaseUser(), getDatabasePassword());
-	}
+    /**
+     * This hook method called after set all appender properties. In this case the
+     * configuration is set.
+     * 
+     */
+    @Override
+    public void activateOptions() {
+        dataServiceConfiguration.initialize(getJdbcURL(), getDatabaseUser(), getDatabasePassword());
+    }
 
-	public static void setDataSource(DataSource dataSource) {
-		Objects.requireNonNull(dataSource, "dataSource can't be null");
-		dataServiceConfiguration.initialize(dataSource);
-	}
+    public static void setDataSource(DataSource dataSource) {
+        Objects.requireNonNull(dataSource, "dataSource can't be null");
+        dataServiceConfiguration.initialize(dataSource);
+    }
 
-	/**
-	 * Appends the OGC Service in the table.
-	 * 
-	 * The string present in buffer is parsed, if it is an interesting OGC service
-	 * then extracts the data required to insert a row in the table.
-	 * 
-	 * @implNote This method is called from inside the {@code synchronized} method
-	 *           {@link AppenderSkeleton#doAppend}, as it calls
-	 *           {@link OGCServiceParser#parseLog} and runs one
-	 *           {@link InsertCommand} per parsed entry, the job is done
-	 *           asynchronously on the platforms' default {@link ForkJoinPool} to
-	 *           avoid hindering application performance.
-	 */
-	@Override
-	protected void append(final LoggingEvent event) {
-		// do not run if not activated or closed
-		if (!this.activated && !this.closed)
-			return;
+    /**
+     * Appends the OGC Service in the table.
+     * 
+     * The string present in buffer is parsed, if it is an interesting OGC service
+     * then extracts the data required to insert a row in the table.
+     * 
+     * @implNote This method is called from inside the {@code synchronized} method
+     *           {@link AppenderSkeleton#doAppend}, as it calls
+     *           {@link OGCServiceParser#parseLog} and runs one
+     *           {@link InsertCommand} per parsed entry, the job is done
+     *           asynchronously on the platforms' default {@link ForkJoinPool} to
+     *           avoid hindering application performance.
+     */
+    @Override
+    protected void append(final LoggingEvent event) {
+        // do not run if not activated or closed
+        if (!this.activated && !this.closed)
+            return;
 
-		CompletableFuture.runAsync(() -> {
-			try {
-				// let it finish if the task was issued even if the appender was closed after
-				// the fact
-				if (!this.activated) {
-					return;
-				}
-				String msg = event.getRenderedMessage();
-				List<Map<String, Object>> logList = OGCServiceParser.parseLog(msg);
-				insert(logList);
-			} catch (Exception ex) {
-				errorHandler.error("Failed to insert the ogc service record", ex, ErrorCode.WRITE_FAILURE);
-			}
-		});
-	}
+        CompletableFuture.runAsync(() -> {
+            try {
+                // let it finish if the task was issued even if the appender was closed after
+                // the fact
+                if (!this.activated) {
+                    return;
+                }
+                String msg = event.getRenderedMessage();
+                List<Map<String, Object>> logList = OGCServiceParser.parseLog(msg);
+                insert(logList);
+            } catch (Exception ex) {
+                errorHandler.error("Failed to insert the ogc service record", ex, ErrorCode.WRITE_FAILURE);
+            }
+        });
+    }
 
-	private void insert(List<Map<String, Object>> ogcServiceRecords) {
+    private void insert(List<Map<String, Object>> ogcServiceRecords) {
 
-		try (Connection c = dataServiceConfiguration.getConnection()) {
-			for (Map<String, Object> entry : ogcServiceRecords) {
-				InsertCommand cmd = new InsertCommand();
-				cmd.setConnection(c);
-				cmd.setRowValues(entry);
-				cmd.execute();
-			}
-		} catch (Exception e) {
+        try (Connection c = dataServiceConfiguration.getConnection()) {
+            for (Map<String, Object> entry : ogcServiceRecords) {
+                InsertCommand cmd = new InsertCommand();
+                cmd.setConnection(c);
+                cmd.setRowValues(entry);
+                cmd.execute();
+            }
+        } catch (Exception e) {
 
-			errorHandler.error("Failed to insert the log", e, ErrorCode.WRITE_FAILURE);
-		}
+            errorHandler.error("Failed to insert the log", e, ErrorCode.WRITE_FAILURE);
+        }
 
-	}
+    }
 
-	@Override
-	public void finalize() {
-		close();
-	}
+    @Override
+    public void finalize() {
+        close();
+    }
 
-	/**
-	 * Release all the allocated resources
-	 */
-	@Override
-	public void close() {
-		this.closed = true;
-	}
+    /**
+     * Release all the allocated resources
+     */
+    @Override
+    public void close() {
+        this.closed = true;
+    }
 
-	@Override
-	public boolean requiresLayout() {
-		return false; // does not require layout configuration
-	}
+    @Override
+    public boolean requiresLayout() {
+        return false; // does not require layout configuration
+    }
 
 }

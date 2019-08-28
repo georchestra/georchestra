@@ -33,24 +33,24 @@ import org.georchestra.lib.sqlcommand.AbstractUpdateCommand;
  */
 final class DeleteUserTokenCommand extends AbstractUpdateCommand {
 
-	private static final String SQL = "DELETE FROM " + DatabaseSchema.SCHEMA_NAME + "."
-			+ DatabaseSchema.TABLE_USER_TOKEN + " WHERE " + DatabaseSchema.UID_COLUMN + " = ?";
+    private static final String SQL = "DELETE FROM " + DatabaseSchema.SCHEMA_NAME + "."
+            + DatabaseSchema.TABLE_USER_TOKEN + " WHERE " + DatabaseSchema.UID_COLUMN + " = ?";
 
-	private String uid;
+    private String uid;
 
-	public void setUid(String uid) {
+    public void setUid(String uid) {
 
-		this.uid = uid;
-	}
+        this.uid = uid;
+    }
 
-	@Override
-	protected PreparedStatement prepareStatement(Connection connection) throws SQLException {
+    @Override
+    protected PreparedStatement prepareStatement(Connection connection) throws SQLException {
 
-		PreparedStatement pStmt = connection.prepareStatement(SQL);
+        PreparedStatement pStmt = connection.prepareStatement(SQL);
 
-		pStmt.setString(1, this.uid);
+        pStmt.setString(1, this.uid);
 
-		return pStmt;
-	}
+        return pStmt;
+    }
 
 }

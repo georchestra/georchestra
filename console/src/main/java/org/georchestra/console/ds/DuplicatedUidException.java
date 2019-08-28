@@ -28,14 +28,14 @@ package org.georchestra.console.ds;
  */
 public class DuplicatedUidException extends Exception {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -11146356841108209L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -11146356841108209L;
 
-	public DuplicatedUidException(String msg) {
+    public DuplicatedUidException(String msg) {
 
-		super(msg);
-	}
+        super(msg);
+    }
 
 }

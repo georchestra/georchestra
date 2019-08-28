@@ -39,26 +39,26 @@ import static org.geotools.referencing.CRS.lookupEpsgCode;
  */
 public class WcsReaderRequestFactoryTest {
 
-	private WcsReaderRequest createRequest() throws NoSuchAuthorityCodeException, FactoryException {
-		return WcsReaderRequestFactory.create("1.0", "myCov", 0, 0, 1, 1, CRS.decode("EPSG:4326"),
-				CRS.decode("EPSG:2154"), 1, "GeoTiff", true, true, true, "scott", "tiger");
-	}
+    private WcsReaderRequest createRequest() throws NoSuchAuthorityCodeException, FactoryException {
+        return WcsReaderRequestFactory.create("1.0", "myCov", 0, 0, 1, 1, CRS.decode("EPSG:4326"),
+                CRS.decode("EPSG:2154"), 1, "GeoTiff", true, true, true, "scott", "tiger");
+    }
 
-	@Test
-	public void testCreate() throws Exception {
+    @Test
+    public void testCreate() throws Exception {
 
-		WcsReaderRequest rq = createRequest();
-		GeneralParameterValue[] params = rq.getParameters();
-		WcsReaderRequest rqP = WcsReaderRequestFactory.create(params);
+        WcsReaderRequest rq = createRequest();
+        GeneralParameterValue[] params = rq.getParameters();
+        WcsReaderRequest rqP = WcsReaderRequestFactory.create(params);
 
-		assertEquals(rq.format, rqP.format);
-		assertEquals(rq.usePost, rqP.usePost);
-		assertEquals(rq.responseCRS, rqP.responseCRS);
-		assertEquals(rq.username, rqP.username);
-		assertEquals(rq.remoteReproject, rqP.remoteReproject);
-		assertEquals(rq.useCommandLineGDAL, rqP.useCommandLineGDAL);
-		assertEquals(rq.version, rqP.version);
-		assertEquals(rq.coverage, rqP.coverage);
-		assertEquals(rq.requestBbox, rqP.requestBbox);
-	}
+        assertEquals(rq.format, rqP.format);
+        assertEquals(rq.usePost, rqP.usePost);
+        assertEquals(rq.responseCRS, rqP.responseCRS);
+        assertEquals(rq.username, rqP.username);
+        assertEquals(rq.remoteReproject, rqP.remoteReproject);
+        assertEquals(rq.useCommandLineGDAL, rqP.useCommandLineGDAL);
+        assertEquals(rq.version, rqP.version);
+        assertEquals(rq.coverage, rqP.coverage);
+        assertEquals(rq.requestBbox, rqP.requestBbox);
+    }
 }

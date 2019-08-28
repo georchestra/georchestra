@@ -31,64 +31,64 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 public class CamelMapfishPrintComponent {
 
-	private final Logger log = LoggerFactory.getLogger(this.getClass());
-	private MapPrinter mapPrinter = null;
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private MapPrinter mapPrinter = null;
 
-	@Autowired
-	private GeorchestraConfiguration georConfiguration;
+    @Autowired
+    private GeorchestraConfiguration georConfiguration;
 
-	public void init() throws IOException, URISyntaxException {
-		ApplicationContext context = new ClassPathXmlApplicationContext(Main.DEFAULT_SPRING_CONTEXT);
-		this.mapPrinter = context.getBean(MapPrinter.class);
+    public void init() throws IOException, URISyntaxException {
+        ApplicationContext context = new ClassPathXmlApplicationContext(Main.DEFAULT_SPRING_CONTEXT);
+        this.mapPrinter = context.getBean(MapPrinter.class);
 
-		URI configFileUrl = this.getClass().getResource("/atlas/config.yaml").toURI();
-		if (this.georConfiguration != null && this.georConfiguration.activated()) {
-			configFileUrl = new File(this.georConfiguration.getContextDataDir() + "/mapfishprintv3/config.yaml")
-					.toURI();
-		}
-		Assert.notNull(configFileUrl);
-		byte[] configFileData = FileUtils.readFileToByteArray(new File(configFileUrl));
-		this.mapPrinter.setConfiguration(configFileUrl, configFileData);
-	}
+        URI configFileUrl = this.getClass().getResource("/atlas/config.yaml").toURI();
+        if (this.georConfiguration != null && this.georConfiguration.activated()) {
+            configFileUrl = new File(this.georConfiguration.getContextDataDir() + "/mapfishprintv3/config.yaml")
+                    .toURI();
+        }
+        Assert.notNull(configFileUrl);
+        byte[] configFileData = FileUtils.readFileToByteArray(new File(configFileUrl));
+        this.mapPrinter.setConfiguration(configFileUrl, configFileData);
+    }
 
-	public void toMapfishPrintPdf(Exchange ex)
-			throws JSONException, DocumentException, URISyntaxException, IOException {
-		String mfprintJsonSpec = ex.getIn().getBody(String.class);
+    public void toMapfishPrintPdf(Exchange ex)
+            throws JSONException, DocumentException, URISyntaxException, IOException {
+        String mfprintJsonSpec = ex.getIn().getBody(String.class);
 
-		Assert.notNull(this.mapPrinter);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		Message m = ex.getIn();
+        Assert.notNull(this.mapPrinter);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Message m = ex.getIn();
 
-		try {
-			PJsonObject mfSpec = MapPrinter.parseSpec(mfprintJsonSpec);
-			this.mapPrinter.print(mfSpec, baos);
-		} catch (Exception e) {
-			log.error("Error generating PDF, returning a blank pdf with the error message", e);
-			baos = generateErrorPdf(e);
-		} finally {
-			m.setBody(baos.toByteArray());
-			ex.setOut(m);
-		}
-	}
+        try {
+            PJsonObject mfSpec = MapPrinter.parseSpec(mfprintJsonSpec);
+            this.mapPrinter.print(mfSpec, baos);
+        } catch (Exception e) {
+            log.error("Error generating PDF, returning a blank pdf with the error message", e);
+            baos = generateErrorPdf(e);
+        } finally {
+            m.setBody(baos.toByteArray());
+            ex.setOut(m);
+        }
+    }
 
-	@VisibleForTesting
-	public ByteArrayOutputStream generateErrorPdf(Throwable e) throws DocumentException {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		Document d = new Document();
-		PdfWriter.getInstance(d, baos);
-		d.open();
-		d.add(new Paragraph(e.getMessage()));
-		d.close();
-		return baos;
-	}
+    @VisibleForTesting
+    public ByteArrayOutputStream generateErrorPdf(Throwable e) throws DocumentException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Document d = new Document();
+        PdfWriter.getInstance(d, baos);
+        d.open();
+        d.add(new Paragraph(e.getMessage()));
+        d.close();
+        return baos;
+    }
 
-	public void printCapabilities(Exchange ex) throws JSONException {
-		StringWriter strw = new StringWriter();
+    public void printCapabilities(Exchange ex) throws JSONException {
+        StringWriter strw = new StringWriter();
 
-		JSONWriter w = new JSONWriter(strw);
-		w.object();
-		mapPrinter.printClientConfig(w);
-		w.endObject();
-		ex.getOut().setBody(strw.toString());
-	}
+        JSONWriter w = new JSONWriter(strw);
+        w.object();
+        mapPrinter.printClientConfig(w);
+        w.endObject();
+        ex.getOut().setBody(strw.toString());
+    }
 }

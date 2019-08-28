@@ -30,36 +30,36 @@ import org.springframework.beans.factory.annotation.Required;
  */
 public final class ReCaptchaParameters {
 
-	private String privateKey;
+    private String privateKey;
 
-	private String publicKey;
+    private String publicKey;
 
-	private String verifyUrl;
+    private String verifyUrl;
 
-	public String getPublicKey() {
-		return publicKey;
-	}
+    public String getPublicKey() {
+        return publicKey;
+    }
 
-	@Required
-	public void setPublicKey(String publicKey) {
-		this.publicKey = publicKey;
-	}
+    @Required
+    public void setPublicKey(String publicKey) {
+        this.publicKey = publicKey;
+    }
 
-	public String getPrivateKey() {
-		return privateKey;
-	}
+    public String getPrivateKey() {
+        return privateKey;
+    }
 
-	@Required
-	public void setPrivateKey(String privateKey) {
-		this.privateKey = privateKey;
-	}
+    @Required
+    public void setPrivateKey(String privateKey) {
+        this.privateKey = privateKey;
+    }
 
-	public String getVerifyUrl() {
-		return verifyUrl;
-	}
+    public String getVerifyUrl() {
+        return verifyUrl;
+    }
 
-	@Required
-	public void setVerifyUrl(String verifyUrl) {
-		this.verifyUrl = verifyUrl;
-	}
+    @Required
+    public void setVerifyUrl(String verifyUrl) {
+        this.verifyUrl = verifyUrl;
+    }
 }

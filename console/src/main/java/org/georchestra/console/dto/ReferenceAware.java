@@ -5,12 +5,12 @@ import org.georchestra.console.dto.orgs.AbstractOrg;
 import org.springframework.ldap.core.DirContextAdapter;
 
 public interface ReferenceAware<T extends AbstractOrg> {
-	DirContextAdapter getReference();
+    DirContextAdapter getReference();
 
-	void setReference(DirContextAdapter reference);
+    void setReference(DirContextAdapter reference);
 
-	void setPending(boolean pending);
+    void setPending(boolean pending);
 
-	OrgsDao.Extension<T> getExtension(OrgsDao orgDao);
+    OrgsDao.Extension<T> getExtension(OrgsDao orgDao);
 
 }

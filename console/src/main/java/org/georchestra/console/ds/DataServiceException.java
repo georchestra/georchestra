@@ -26,17 +26,17 @@ package org.georchestra.console.ds;
  */
 public class DataServiceException extends Exception {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = 7285966167139584662L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 7285966167139584662L;
 
-	public DataServiceException(Throwable e) {
-		super(e);
-	}
+    public DataServiceException(Throwable e) {
+        super(e);
+    }
 
-	public DataServiceException(String msg) {
-		super(msg);
-	}
+    public DataServiceException(String msg) {
+        super(msg);
+    }
 
 }

@@ -29,42 +29,42 @@ import org.apache.commons.logging.LogFactory;
 
 public class RoleProtected {
 
-	private static final Log LOG = LogFactory.getLog(RoleProtected.class.getName());
+    private static final Log LOG = LogFactory.getLog(RoleProtected.class.getName());
 
-	private Set<String> listOfprotectedRoles = new HashSet<String>();
+    private Set<String> listOfprotectedRoles = new HashSet<String>();
 
-	public RoleProtected() {
-	}
+    public RoleProtected() {
+    }
 
-	public Set<String> getListOfprotectedRoles() {
-		return listOfprotectedRoles;
-	}
+    public Set<String> getListOfprotectedRoles() {
+        return listOfprotectedRoles;
+    }
 
-	public void setListOfprotectedRoles(String[] listOfprotectedRoles) {
+    public void setListOfprotectedRoles(String[] listOfprotectedRoles) {
 
-		HashSet<String> res = new HashSet<String>();
-		res.addAll(Arrays.asList(listOfprotectedRoles));
-		this.listOfprotectedRoles = res;
+        HashSet<String> res = new HashSet<String>();
+        res.addAll(Arrays.asList(listOfprotectedRoles));
+        this.listOfprotectedRoles = res;
 
-	}
+    }
 
-	/**
-	 * True if the Roles is a protected roles
-	 * 
-	 * @param uid uid of role
-	 * 
-	 * @return True if the Roles is a protected roles
-	 */
-	public boolean isProtected(final String uid) {
+    /**
+     * True if the Roles is a protected roles
+     * 
+     * @param uid uid of role
+     * 
+     * @return True if the Roles is a protected roles
+     */
+    public boolean isProtected(final String uid) {
 
-		if (this.listOfprotectedRoles.isEmpty())
-			RoleProtected.LOG.warn("There isn't any protected roles configured");
+        if (this.listOfprotectedRoles.isEmpty())
+            RoleProtected.LOG.warn("There isn't any protected roles configured");
 
-		for (String reg : listOfprotectedRoles) {
-			if (Pattern.matches(reg, uid))
-				return true;
-		}
+        for (String reg : listOfprotectedRoles) {
+            if (Pattern.matches(reg, uid))
+                return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 }

@@ -45,94 +45,94 @@ import org.apache.http.impl.client.HttpClients;
  */
 final class MetadataEntity {
 
-	protected static final Log LOG = LogFactory.getLog(MetadataEntity.class.getPackage().getName());
+    protected static final Log LOG = LogFactory.getLog(MetadataEntity.class.getPackage().getName());
 
-	private CSWRequest request;
+    private CSWRequest request;
 
-	/**
-	 * a new instance of {@link MetadataEntity}.
-	 * 
-	 * @param cswRequest where the metadata is available
-	 */
-	private MetadataEntity(CSWRequest cswRequest) {
+    /**
+     * a new instance of {@link MetadataEntity}.
+     * 
+     * @param cswRequest where the metadata is available
+     */
+    private MetadataEntity(CSWRequest cswRequest) {
 
-		this.request = cswRequest;
-	}
+        this.request = cswRequest;
+    }
 
-	/**
-	 * Crates a new instance of {@link MetadataEntity}. Its values will be retrieved
-	 * from the Catalog service specified in the request parameter.
-	 * 
-	 * @param cswRequest where the metadata is available
-	 */
-	public static MetadataEntity create(final CSWRequest cswRequest) {
+    /**
+     * Crates a new instance of {@link MetadataEntity}. Its values will be retrieved
+     * from the Catalog service specified in the request parameter.
+     * 
+     * @param cswRequest where the metadata is available
+     */
+    public static MetadataEntity create(final CSWRequest cswRequest) {
 
-		return new MetadataEntity(cswRequest);
+        return new MetadataEntity(cswRequest);
 
-	}
+    }
 
-	/**
-	 * Stores the metadata retrieved from CSW using the request value.
-	 * 
-	 * @param fileName file name where the metadata must be saved.
-	 * 
-	 * @throws IOException
-	 */
-	public void save(final String fileName) throws IOException {
+    /**
+     * Stores the metadata retrieved from CSW using the request value.
+     * 
+     * @param fileName file name where the metadata must be saved.
+     * 
+     * @throws IOException
+     */
+    public void save(final String fileName) throws IOException {
 
-		InputStream content = null;
-		BufferedReader reader = null;
-		PrintWriter writer = null;
-		try {
-			writer = new PrintWriter(fileName, "UTF-8");
+        InputStream content = null;
+        BufferedReader reader = null;
+        PrintWriter writer = null;
+        try {
+            writer = new PrintWriter(fileName, "UTF-8");
 
-			HttpGet get = new HttpGet(this.request.buildURI());
-			CloseableHttpClient httpclient = HttpClients.createDefault();
-			HttpClientContext localContext = HttpClientContext.create();
+            HttpGet get = new HttpGet(this.request.buildURI());
+            CloseableHttpClient httpclient = HttpClients.createDefault();
+            HttpClientContext localContext = HttpClientContext.create();
 
-			// if credentials are actually provided, use them to configure
-			// the HttpClient object.
-			try {
-				if (this.request.getUser() != null && request.getPassword() != null) {
-					Credentials credentials = new UsernamePasswordCredentials(request.getUser(), request.getPassword());
-					AuthScope authScope = new AuthScope(get.getURI().getHost(), get.getURI().getPort());
-					CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-					credentialsProvider.setCredentials(authScope, credentials);
-					localContext.setCredentialsProvider(credentialsProvider);
-				}
-			} catch (Exception e) {
-				LOG.error("Unable to set basic-auth on http client to get the Metadata remotely, trying without ...",
-						e);
-			}
-			content = httpclient.execute(get, localContext).getEntity().getContent();
-			reader = new BufferedReader(new InputStreamReader(content));
+            // if credentials are actually provided, use them to configure
+            // the HttpClient object.
+            try {
+                if (this.request.getUser() != null && request.getPassword() != null) {
+                    Credentials credentials = new UsernamePasswordCredentials(request.getUser(), request.getPassword());
+                    AuthScope authScope = new AuthScope(get.getURI().getHost(), get.getURI().getPort());
+                    CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+                    credentialsProvider.setCredentials(authScope, credentials);
+                    localContext.setCredentialsProvider(credentialsProvider);
+                }
+            } catch (Exception e) {
+                LOG.error("Unable to set basic-auth on http client to get the Metadata remotely, trying without ...",
+                        e);
+            }
+            content = httpclient.execute(get, localContext).getEntity().getContent();
+            reader = new BufferedReader(new InputStreamReader(content));
 
-			String line = reader.readLine();
-			while (line != null) {
+            String line = reader.readLine();
+            while (line != null) {
 
-				writer.println(line);
+                writer.println(line);
 
-				line = reader.readLine();
-			}
+                line = reader.readLine();
+            }
 
-		} catch (Exception e) {
+        } catch (Exception e) {
 
-			final String msg = "The metadata could not be extracted";
-			LOG.error(msg, e);
+            final String msg = "The metadata could not be extracted";
+            LOG.error(msg, e);
 
-			throw new IOException(e);
+            throw new IOException(e);
 
-		} finally {
+        } finally {
 
-			if (writer != null)
-				writer.close();
+            if (writer != null)
+                writer.close();
 
-			if (reader != null)
-				reader.close();
+            if (reader != null)
+                reader.close();
 
-			if (content != null)
-				content.close();
-		}
-	}
+            if (content != null)
+                content.close();
+        }
+    }
 
 }

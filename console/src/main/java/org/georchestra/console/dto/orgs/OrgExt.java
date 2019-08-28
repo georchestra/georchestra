@@ -23,72 +23,72 @@ import org.georchestra.console.ds.OrgsDao;
 
 public class OrgExt extends AbstractOrg {
 
-	public static final String JSON_ADDRESS = "address";
-	public static final String JSON_ORG_TYPE = "orgType";
+    public static final String JSON_ADDRESS = "address";
+    public static final String JSON_ORG_TYPE = "orgType";
 
-	private String id;
-	private String orgType;
-	private String address;
-	private String description;
-	private String url;
-	private String logo;
+    private String id;
+    private String orgType;
+    private String address;
+    private String description;
+    private String url;
+    private String logo;
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public String getOrgType() {
-		return orgType;
-	}
+    public String getOrgType() {
+        return orgType;
+    }
 
-	public void setOrgType(String orgType) {
-		this.orgType = orgType;
-	}
+    public void setOrgType(String orgType) {
+        this.orgType = orgType;
+    }
 
-	public String getAddress() {
-		return address;
-	}
+    public String getAddress() {
+        return address;
+    }
 
-	public void setAddress(String address) {
-		this.address = address;
-	}
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public String getUrl() {
-		return url;
-	}
+    public String getUrl() {
+        return url;
+    }
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
-	public String getLogo() {
-		return logo;
-	}
+    public String getLogo() {
+        return logo;
+    }
 
-	public void setLogo(String logo) {
-		this.logo = logo;
-	}
+    public void setLogo(String logo) {
+        this.logo = logo;
+    }
 
-	@Override
-	public String toString() {
-		return "OrgExt{" + "id='" + id + '\'' + ", orgType='" + orgType + '\'' + ", address='" + address + '\''
-				+ ", description='" + description + '\'' + '}';
-	}
+    @Override
+    public String toString() {
+        return "OrgExt{" + "id='" + id + '\'' + ", orgType='" + orgType + '\'' + ", address='" + address + '\''
+                + ", description='" + description + '\'' + '}';
+    }
 
-	@Override
-	public OrgsDao.Extension<OrgExt> getExtension(OrgsDao orgDao) {
-		return orgDao.getExtension(this);
-	}
+    @Override
+    public OrgsDao.Extension<OrgExt> getExtension(OrgsDao orgDao) {
+        return orgDao.getExtension(this);
+    }
 }

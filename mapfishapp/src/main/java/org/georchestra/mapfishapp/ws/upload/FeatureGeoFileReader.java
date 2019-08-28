@@ -39,46 +39,46 @@ import java.io.IOException;
  */
 interface FeatureGeoFileReader {
 
-	/**
-	 * Returns the set of features maintained in the geofile.
-	 *
-	 * @param file
-	 * @param fileFormat
-	 *
-	 * @return {@link SimpleFeatureCollection}
-	 * @throws IOException , UnsupportedGeofileFormatException , ProjectionException
-	 */
-	SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat)
-			throws IOException, UnsupportedGeofileFormatException, ProjectionException;
+    /**
+     * Returns the set of features maintained in the geofile.
+     *
+     * @param file
+     * @param fileFormat
+     *
+     * @return {@link SimpleFeatureCollection}
+     * @throws IOException , UnsupportedGeofileFormatException , ProjectionException
+     */
+    SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat)
+            throws IOException, UnsupportedGeofileFormatException, ProjectionException;
 
-	/**
-	 * Returns the set of features maintained in the geofile, reprojected in the
-	 * target CRS.
-	 *
-	 * @param file       path and file name
-	 * @param fileFormat
-	 * @param targetCrs
-	 *
-	 * @return {@link SimpleFeatureCollection} in the target CRS
-	 *
-	 * @throws IOException , UnsupportedGeofileFormatException
-	 */
-	SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat,
-			final CoordinateReferenceSystem targetCrs)
-			throws IOException, UnsupportedGeofileFormatException, ProjectionException;
+    /**
+     * Returns the set of features maintained in the geofile, reprojected in the
+     * target CRS.
+     *
+     * @param file       path and file name
+     * @param fileFormat
+     * @param targetCrs
+     *
+     * @return {@link SimpleFeatureCollection} in the target CRS
+     *
+     * @throws IOException , UnsupportedGeofileFormatException
+     */
+    SimpleFeatureCollection getFeatureCollection(final File file, final FileFormat fileFormat,
+            final CoordinateReferenceSystem targetCrs)
+            throws IOException, UnsupportedGeofileFormatException, ProjectionException;
 
-	JSONArray getFormatListAsJSON();
+    JSONArray getFormatListAsJSON();
 
-	/**
-	 * @return List of available {@link FileFormat}
-	 */
-	FileFormat[] getFormatList();
+    /**
+     * @return List of available {@link FileFormat}
+     */
+    FileFormat[] getFormatList();
 
-	/**
-	 * Returns true if the file format is supported
-	 *
-	 * @param fileFormat
-	 * @return
-	 */
-	boolean isSupportedFormat(FileFormat fileFormat);
+    /**
+     * Returns true if the file format is supported
+     *
+     * @param fileFormat
+     * @return
+     */
+    boolean isSupportedFormat(FileFormat fileFormat);
 }

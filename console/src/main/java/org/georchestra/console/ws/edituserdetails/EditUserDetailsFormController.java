@@ -58,201 +58,201 @@ import java.io.IOException;
 @SessionAttributes(types = EditUserDetailsFormBean.class)
 public class EditUserDetailsFormController {
 
-	private OrgsDao orgsDao;
-	private AccountDao accountDao;
+    private OrgsDao orgsDao;
+    private AccountDao accountDao;
 
-	private Validation validation;
+    private Validation validation;
 
-	@Autowired
-	public EditUserDetailsFormController(AccountDao dao, OrgsDao orgsDao, Validation validation) {
-		this.accountDao = dao;
-		this.orgsDao = orgsDao;
-		this.validation = validation;
-	}
+    @Autowired
+    public EditUserDetailsFormController(AccountDao dao, OrgsDao orgsDao, Validation validation) {
+        this.accountDao = dao;
+        this.orgsDao = orgsDao;
+        this.validation = validation;
+    }
 
-	private static final String[] fields = { "uid", "firstName", "surname", "email", "title", "phone", "facsimile",
-			"org", "description", "postalAddress" };
+    private static final String[] fields = { "uid", "firstName", "surname", "email", "title", "phone", "facsimile",
+            "org", "description", "postalAddress" };
 
-	@InitBinder
-	public void initForm(WebDataBinder dataBinder) {
+    @InitBinder
+    public void initForm(WebDataBinder dataBinder) {
 
-		dataBinder.setAllowedFields(fields);
-	}
+        dataBinder.setAllowedFields(fields);
+    }
 
-	/**
-	 * Retrieves the account data and sets the model before presenting the edit form
-	 * view.
-	 *
-	 * @param model
-	 *
-	 * @return the edit form view
-	 *
-	 * @throws IOException
-	 */
-	@RequestMapping(value = "/account/userdetails", method = RequestMethod.GET)
-	public String setupForm(HttpServletRequest request, HttpServletResponse response, Model model) throws IOException {
+    /**
+     * Retrieves the account data and sets the model before presenting the edit form
+     * view.
+     *
+     * @param model
+     *
+     * @return the edit form view
+     *
+     * @throws IOException
+     */
+    @RequestMapping(value = "/account/userdetails", method = RequestMethod.GET)
+    public String setupForm(HttpServletRequest request, HttpServletResponse response, Model model) throws IOException {
 
-		if (request.getHeader("sec-username") == null) {
-			response.sendError(HttpServletResponse.SC_FORBIDDEN);
-			return null;
-		}
+        if (request.getHeader("sec-username") == null) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return null;
+        }
 
-		try {
-			Account userAccount = this.accountDao.findByUID(request.getHeader("sec-username"));
+        try {
+            Account userAccount = this.accountDao.findByUID(request.getHeader("sec-username"));
 
-			model.addAttribute(createForm(userAccount));
-			Org org = orgsDao.findByCommonNameWithExt(userAccount);
-			model.addAttribute("org", orgToJson(org));
+            model.addAttribute(createForm(userAccount));
+            Org org = orgsDao.findByCommonNameWithExt(userAccount);
+            model.addAttribute("org", orgToJson(org));
 
-			HttpSession session = request.getSession();
-			for (String f : fields) {
-				if (this.validation.isUserFieldRequired(f)) {
-					session.setAttribute(f + "Required", "true");
-				}
-			}
+            HttpSession session = request.getSession();
+            for (String f : fields) {
+                if (this.validation.isUserFieldRequired(f)) {
+                    session.setAttribute(f + "Required", "true");
+                }
+            }
 
-			return "editUserDetailsForm";
+            return "editUserDetailsForm";
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new IOException(e);
-		}
-	}
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IOException(e);
+        }
+    }
 
-	/**
-	 * Creates a form based on the account data.
-	 *
-	 * @param account input data
-	 */
-	private EditUserDetailsFormBean createForm(final Account account) {
+    /**
+     * Creates a form based on the account data.
+     *
+     * @param account input data
+     */
+    private EditUserDetailsFormBean createForm(final Account account) {
 
-		EditUserDetailsFormBean formBean = new EditUserDetailsFormBean();
+        EditUserDetailsFormBean formBean = new EditUserDetailsFormBean();
 
-		formBean.setUid(account.getUid());
-		formBean.setEmail(account.getEmail());
-		formBean.setFirstName(account.getGivenName());
-		formBean.setSurname(account.getSurname());
-		formBean.setTitle(account.getTitle());
-		formBean.setPhone(account.getPhone());
-		formBean.setFacsimile(account.getFacsimile());
-		formBean.setDescription(account.getDescription());
-		formBean.setPostalAddress(account.getPostalAddress());
-		formBean.setOrg(account.getOrg());
+        formBean.setUid(account.getUid());
+        formBean.setEmail(account.getEmail());
+        formBean.setFirstName(account.getGivenName());
+        formBean.setSurname(account.getSurname());
+        formBean.setTitle(account.getTitle());
+        formBean.setPhone(account.getPhone());
+        formBean.setFacsimile(account.getFacsimile());
+        formBean.setDescription(account.getDescription());
+        formBean.setPostalAddress(account.getPostalAddress());
+        formBean.setOrg(account.getOrg());
 
-		return formBean;
-	}
+        return formBean;
+    }
 
-	/**
-	 * Generates a new password, then an e-mail is sent to the user to inform that a
-	 * new password is available.
-	 *
-	 * @param formBean      Contains the user's email
-	 * @param resultErrors  will be updated with the list of found errors.
-	 * @param sessionStatus
-	 *
-	 * @return the next view
-	 *
-	 * @throws IOException
-	 */
-	@RequestMapping(value = "/account/userdetails", method = RequestMethod.POST)
-	public String edit(HttpServletRequest request, HttpServletResponse response, Model model,
-			@ModelAttribute EditUserDetailsFormBean formBean, BindingResult resultErrors, SessionStatus sessionStatus)
-			throws IOException {
-		String uid = formBean.getUid();
-		try {
-			if (!request.getHeader("sec-username").equals(uid))
-				response.sendError(HttpServletResponse.SC_FORBIDDEN);
-		} catch (NullPointerException e) {
-			response.sendError(HttpServletResponse.SC_FORBIDDEN);
-		}
+    /**
+     * Generates a new password, then an e-mail is sent to the user to inform that a
+     * new password is available.
+     *
+     * @param formBean      Contains the user's email
+     * @param resultErrors  will be updated with the list of found errors.
+     * @param sessionStatus
+     *
+     * @return the next view
+     *
+     * @throws IOException
+     */
+    @RequestMapping(value = "/account/userdetails", method = RequestMethod.POST)
+    public String edit(HttpServletRequest request, HttpServletResponse response, Model model,
+            @ModelAttribute EditUserDetailsFormBean formBean, BindingResult resultErrors, SessionStatus sessionStatus)
+            throws IOException {
+        String uid = formBean.getUid();
+        try {
+            if (!request.getHeader("sec-username").equals(uid))
+                response.sendError(HttpServletResponse.SC_FORBIDDEN);
+        } catch (NullPointerException e) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+        }
 
-		// Validate first name and surname
-		validation.validateUserFieldWithSpecificMsg("firstName", formBean.getFirstName(), resultErrors);
-		validation.validateUserFieldWithSpecificMsg("surname", formBean.getSurname(), resultErrors);
+        // Validate first name and surname
+        validation.validateUserFieldWithSpecificMsg("firstName", formBean.getFirstName(), resultErrors);
+        validation.validateUserFieldWithSpecificMsg("surname", formBean.getSurname(), resultErrors);
 
-		validation.validateUserField("phone", formBean.getPhone(), resultErrors);
-		validation.validateUserField("facsimile", formBean.getFacsimile(), resultErrors);
-		validation.validateUserField("title", formBean.getTitle(), resultErrors);
-		validation.validateUserField("description", formBean.getDescription(), resultErrors);
-		validation.validateUserField("postalAddress", formBean.getPostalAddress(), resultErrors);
+        validation.validateUserField("phone", formBean.getPhone(), resultErrors);
+        validation.validateUserField("facsimile", formBean.getFacsimile(), resultErrors);
+        validation.validateUserField("title", formBean.getTitle(), resultErrors);
+        validation.validateUserField("description", formBean.getDescription(), resultErrors);
+        validation.validateUserField("postalAddress", formBean.getPostalAddress(), resultErrors);
 
-		if (resultErrors.hasErrors())
-			return "editUserDetailsForm";
+        if (resultErrors.hasErrors())
+            return "editUserDetailsForm";
 
-		// updates the account details
-		try {
+        // updates the account details
+        try {
 
-			Account account = modify(this.accountDao.findByUID(request.getHeader("sec-username")), formBean);
-			accountDao.update(account, request.getHeader("sec-username"));
+            Account account = modify(this.accountDao.findByUID(request.getHeader("sec-username")), formBean);
+            accountDao.update(account, request.getHeader("sec-username"));
 
-			model.addAttribute("success", true);
-			Org org = orgsDao.findByCommonName(account.getOrg());
-			model.addAttribute("org", orgToJson(org));
+            model.addAttribute("success", true);
+            Org org = orgsDao.findByCommonName(account.getOrg());
+            model.addAttribute("org", orgToJson(org));
 
-			return "editUserDetailsForm";
+            return "editUserDetailsForm";
 
-		} catch (DuplicatedEmailException e) {
+        } catch (DuplicatedEmailException e) {
 
-			// right now the email cannot be edited (review requirement)
-			// resultErrors.addError(new ObjectError("email", "Exist a user with this
-			// e-mail"));
-			return "createAccountForm";
+            // right now the email cannot be edited (review requirement)
+            // resultErrors.addError(new ObjectError("email", "Exist a user with this
+            // e-mail"));
+            return "createAccountForm";
 
-		} catch (DataServiceException e) {
+        } catch (DataServiceException e) {
 
-			throw new IOException(e);
-		}
+            throw new IOException(e);
+        }
 
-	}
+    }
 
-	/**
-	 * Modifies the account using the values present in the formBean parameter
-	 *
-	 * @param account
-	 * @param formBean
-	 *
-	 * @return modified account
-	 */
-	private Account modify(Account account, EditUserDetailsFormBean formBean) {
+    /**
+     * Modifies the account using the values present in the formBean parameter
+     *
+     * @param account
+     * @param formBean
+     *
+     * @return modified account
+     */
+    private Account modify(Account account, EditUserDetailsFormBean formBean) {
 
-		account.setGivenName(formBean.getFirstName());
-		account.setSurname(formBean.getSurname());
-		account.setTitle(formBean.getTitle());
-		account.setPhone(formBean.getPhone());
-		account.setFacsimile(formBean.getFacsimile());
-		account.setDescription(formBean.getDescription());
-		account.setPostalAddress(formBean.getPostalAddress());
+        account.setGivenName(formBean.getFirstName());
+        account.setSurname(formBean.getSurname());
+        account.setTitle(formBean.getTitle());
+        account.setPhone(formBean.getPhone());
+        account.setFacsimile(formBean.getFacsimile());
+        account.setDescription(formBean.getDescription());
+        account.setPostalAddress(formBean.getPostalAddress());
 
-		return account;
-	}
+        return account;
+    }
 
-	@ModelAttribute("editUserDetailsFormBean")
-	public EditUserDetailsFormBean getEditUserDetailsFormBean() {
-		return new EditUserDetailsFormBean();
-	}
+    @ModelAttribute("editUserDetailsFormBean")
+    public EditUserDetailsFormBean getEditUserDetailsFormBean() {
+        return new EditUserDetailsFormBean();
+    }
 
-	private ObjectNode orgToJson(Org org) {
-		ObjectMapper objectMapper = new ObjectMapper();
-		if (org == null) {
-			return objectMapper.createObjectNode();
-		}
+    private ObjectNode orgToJson(Org org) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        if (org == null) {
+            return objectMapper.createObjectNode();
+        }
 
-		ObjectNode jsonOrg = objectMapper.valueToTree(org);
-		jsonOrg.replace("members",
-				org.getMembers().stream().map(x -> uncheckedFindAccountByUID(x, objectMapper)).collect(
-						() -> new ArrayNode(objectMapper.getNodeFactory()), (col, elem) -> col.add(elem),
-						(col1, col2) -> col1.addAll(col2)));
-		return jsonOrg;
-	}
+        ObjectNode jsonOrg = objectMapper.valueToTree(org);
+        jsonOrg.replace("members",
+                org.getMembers().stream().map(x -> uncheckedFindAccountByUID(x, objectMapper)).collect(
+                        () -> new ArrayNode(objectMapper.getNodeFactory()), (col, elem) -> col.add(elem),
+                        (col1, col2) -> col1.addAll(col2)));
+        return jsonOrg;
+    }
 
-	private ObjectNode uncheckedFindAccountByUID(String uid, ObjectMapper objectMapper) {
-		Account account;
-		try {
-			account = this.accountDao.findByUID(uid);
-		} catch (Exception e) {
-			account = new AccountImpl();
-			account.setUid(uid);
-		}
-		return objectMapper.valueToTree(account);
-	}
+    private ObjectNode uncheckedFindAccountByUID(String uid, ObjectMapper objectMapper) {
+        Account account;
+        try {
+            account = this.accountDao.findByUID(uid);
+        } catch (Exception e) {
+            account = new AccountImpl();
+            account.setUid(uid);
+        }
+        return objectMapper.valueToTree(account);
+    }
 }

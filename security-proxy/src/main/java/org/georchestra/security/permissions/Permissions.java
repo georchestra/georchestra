@@ -43,98 +43,98 @@ import com.google.common.collect.Lists;
 @XmlRootElement(name = "permissions")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class Permissions {
-	private List<UriMatcher> allowed = Lists.newArrayList();
-	private List<UriMatcher> denied = Lists.newArrayList();
-	private boolean allowByDefault;
-	private boolean initialized;
+    private List<UriMatcher> allowed = Lists.newArrayList();
+    private List<UriMatcher> denied = Lists.newArrayList();
+    private boolean allowByDefault;
+    private boolean initialized;
 
-	public void setAllowed(List<UriMatcher> allowed) {
-		this.allowed = allowed;
-	}
+    public void setAllowed(List<UriMatcher> allowed) {
+        this.allowed = allowed;
+    }
 
-	public void setDenied(List<UriMatcher> denied) {
-		this.denied = denied;
-	}
+    public void setDenied(List<UriMatcher> denied) {
+        this.denied = denied;
+    }
 
-	public boolean isDenied(URL url) {
-		if (allowByDefault) {
-			if (checkIfAllowed(url))
-				return false;
-			if (checkIfDenied(url))
-				return true;
-		} else {
-			if (checkIfDenied(url))
-				return true;
-			if (checkIfAllowed(url))
-				return false;
-		}
-		return !allowByDefault;
-	}
+    public boolean isDenied(URL url) {
+        if (allowByDefault) {
+            if (checkIfAllowed(url))
+                return false;
+            if (checkIfDenied(url))
+                return true;
+        } else {
+            if (checkIfDenied(url))
+                return true;
+            if (checkIfAllowed(url))
+                return false;
+        }
+        return !allowByDefault;
+    }
 
-	private boolean checkIfDenied(URL url) {
-		for (UriMatcher uriMatcher : denied) {
-			if (uriMatcher.matches(url)) {
-				return true;
-			}
-		}
-		return false;
-	}
+    private boolean checkIfDenied(URL url) {
+        for (UriMatcher uriMatcher : denied) {
+            if (uriMatcher.matches(url)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	private boolean checkIfAllowed(URL url) {
-		for (UriMatcher uriMatcher : allowed) {
-			if (uriMatcher.matches(url)) {
-				return true;
-			}
-		}
-		return false;
-	}
+    private boolean checkIfAllowed(URL url) {
+        for (UriMatcher uriMatcher : allowed) {
+            if (uriMatcher.matches(url)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	@XmlElementWrapper(name = "allowed")
-	@XmlElementRef(type = UriMatcher.class)
-	public List<UriMatcher> getAllowed() {
-		return allowed;
-	}
+    @XmlElementWrapper(name = "allowed")
+    @XmlElementRef(type = UriMatcher.class)
+    public List<UriMatcher> getAllowed() {
+        return allowed;
+    }
 
-	@XmlElementWrapper(name = "denied")
-	@XmlElementRef(type = UriMatcher.class)
-	public List<UriMatcher> getDenied() {
-		return denied;
-	}
+    @XmlElementWrapper(name = "denied")
+    @XmlElementRef(type = UriMatcher.class)
+    public List<UriMatcher> getDenied() {
+        return denied;
+    }
 
-	@XmlElement
-	public boolean isAllowByDefault() {
-		return allowByDefault;
-	}
+    @XmlElement
+    public boolean isAllowByDefault() {
+        return allowByDefault;
+    }
 
-	public void setAllowByDefault(boolean allowByDefault) {
-		this.allowByDefault = allowByDefault;
-	}
+    public void setAllowByDefault(boolean allowByDefault) {
+        this.allowByDefault = allowByDefault;
+    }
 
-	public synchronized void init() throws UnknownHostException {
-		for (UriMatcher uriMatcher : allowed) {
-			uriMatcher.init();
-		}
+    public synchronized void init() throws UnknownHostException {
+        for (UriMatcher uriMatcher : allowed) {
+            uriMatcher.init();
+        }
 
-		for (UriMatcher uriMatcher : denied) {
-			uriMatcher.init();
-		}
-		initialized = true;
-	}
+        for (UriMatcher uriMatcher : denied) {
+            uriMatcher.init();
+        }
+        initialized = true;
+    }
 
-	public synchronized boolean isInitialized() {
-		return this.initialized;
-	}
+    public synchronized boolean isInitialized() {
+        return this.initialized;
+    }
 
-	public static Permissions parse(InputStream source) throws IOException {
-		try {
-			JAXBContext jaxbContext = JAXBContext.newInstance(Permissions.class, UriMatcher.class);
-			Unmarshaller unamrshaller = jaxbContext.createUnmarshaller();
-			Permissions permissions = (Permissions) unamrshaller.unmarshal(source);
-			permissions.init();
-			return permissions;
-		} catch (JAXBException e) {
-			e.printStackTrace();
-			throw new IOException(e);
-		}
-	}
+    public static Permissions parse(InputStream source) throws IOException {
+        try {
+            JAXBContext jaxbContext = JAXBContext.newInstance(Permissions.class, UriMatcher.class);
+            Unmarshaller unamrshaller = jaxbContext.createUnmarshaller();
+            Permissions permissions = (Permissions) unamrshaller.unmarshal(source);
+            permissions.init();
+            return permissions;
+        } catch (JAXBException e) {
+            e.printStackTrace();
+            throw new IOException(e);
+        }
+    }
 }

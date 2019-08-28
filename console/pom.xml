@@ -412,6 +412,13 @@
       <plugin>
         <groupId>net.revelc.code.formatter</groupId>
         <artifactId>formatter-maven-plugin</artifactId>
+        <configuration>
+          <directories>
+            <directory>${project.build.sourceDirectory}</directory>
+            <directory>${project.build.testSourceDirectory}</directory>
+            <directory>${project.basedir}/src/it/java</directory>
+          </directories>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

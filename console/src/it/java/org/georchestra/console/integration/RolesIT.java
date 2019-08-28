@@ -45,110 +45,110 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:/webmvc-config-test.xml" })
 public class RolesIT {
-	private static Logger LOGGER = Logger.getLogger(RolesIT.class);
+    private static Logger LOGGER = Logger.getLogger(RolesIT.class);
 
-	public @Rule @Autowired IntegrationTestSupport support;
+    public @Rule @Autowired IntegrationTestSupport support;
 
-	private String roleName;
+    private String roleName;
 
-	private void deleteQuiet() {
-		try {
-			delete();
-		} catch (Exception e) {
-			LOGGER.info(String.format("Error deleting role %s at %s", roleName, support.testName()), e);
-		}
-	}
+    private void deleteQuiet() {
+        try {
+            delete();
+        } catch (Exception e) {
+            LOGGER.info(String.format("Error deleting role %s at %s", roleName, support.testName()), e);
+        }
+    }
 
-	private MvcResult delete() throws Exception {
-		return delete(roleName).andReturn();
-	}
+    private MvcResult delete() throws Exception {
+        return delete(roleName).andReturn();
+    }
 
-	private ResultActions delete(String roleName) throws Exception {
-		return support.perform(MockMvcRequestBuilders.delete("/private/roles/{cn}", roleName));
-	}
+    private ResultActions delete(String roleName) throws Exception {
+        return support.perform(MockMvcRequestBuilders.delete("/private/roles/{cn}", roleName));
+    }
 
-	private ResultActions create() throws Exception {
-		roleName = "IT_ROLE_" + RandomStringUtils.randomAlphabetic(8).toUpperCase();
-		return create(roleName);
-	}
+    private ResultActions create() throws Exception {
+        roleName = "IT_ROLE_" + RandomStringUtils.randomAlphabetic(8).toUpperCase();
+        return create(roleName);
+    }
 
-	private ResultActions create(String name) throws Exception {
-		String body = "{ \"cn\": \"" + name + "\", \"description\": \"Role Description\", \"isFavorite\": false }";
-		return support.perform(post("/private/roles").content(body));
-	}
+    private ResultActions create(String name) throws Exception {
+        String body = "{ \"cn\": \"" + name + "\", \"description\": \"Role Description\", \"isFavorite\": false }";
+        return support.perform(post("/private/roles").content(body));
+    }
 
-	private ResultActions update(String name, String description, boolean isFavorite) throws Exception {
-		String body = "{ \"cn\": \"" + name + "\", \"description\": \"" + description + "\", \"isFavorite\": "
-				+ isFavorite + " }";
-		return support.perform(put("/private/roles/{cn}", name).content(body));
-	}
+    private ResultActions update(String name, String description, boolean isFavorite) throws Exception {
+        String body = "{ \"cn\": \"" + name + "\", \"description\": \"" + description + "\", \"isFavorite\": "
+                + isFavorite + " }";
+        return support.perform(put("/private/roles/{cn}", name).content(body));
+    }
 
-	private ResultActions get(String name) throws Exception {
-		return support.perform(MockMvcRequestBuilders.get("/private/roles/{cn}", name));
-	}
+    private ResultActions get(String name) throws Exception {
+        return support.perform(MockMvcRequestBuilders.get("/private/roles/{cn}", name));
+    }
 
-	@WithMockUser(username = "user", roles = "USER")
-	public @Test void testCreateBadUser() throws Exception {
-		create().andExpect(status().isForbidden());
-	}
+    @WithMockUser(username = "user", roles = "USER")
+    public @Test void testCreateBadUser() throws Exception {
+        create().andExpect(status().isForbidden());
+    }
 
-	@WithMockUser(username = "admin", roles = "SUPERUSER")
-	public @Test void testCreate() throws Exception {
-		try {
-			create()//
-					.andExpect(status().isOk())// note: should return 201:CREATED instead?
-					.andExpect(content().contentTypeCompatibleWith("application/json"))//
-					.andExpect(jsonPath("$.cn").value(roleName));
-		} finally {
-			deleteQuiet();
-		}
-	}
+    @WithMockUser(username = "admin", roles = "SUPERUSER")
+    public @Test void testCreate() throws Exception {
+        try {
+            create()//
+                    .andExpect(status().isOk())// note: should return 201:CREATED instead?
+                    .andExpect(content().contentTypeCompatibleWith("application/json"))//
+                    .andExpect(jsonPath("$.cn").value(roleName));
+        } finally {
+            deleteQuiet();
+        }
+    }
 
-	@WithMockUser(username = "admin", roles = "SUPERUSER")
-	public @Test void testUpdateIsFavoriteNoOp() throws Exception {
-		try {
-			create().andExpect(status().isOk());
+    @WithMockUser(username = "admin", roles = "SUPERUSER")
+    public @Test void testUpdateIsFavoriteNoOp() throws Exception {
+        try {
+            create().andExpect(status().isOk());
 
-			update(roleName, "", false)//
-					.andExpect(status().isOk())//
-					.andExpect(content().contentTypeCompatibleWith("application/json"))//
-					.andExpect(jsonPath("$.isFavorite").value(false));
+            update(roleName, "", false)//
+                    .andExpect(status().isOk())//
+                    .andExpect(content().contentTypeCompatibleWith("application/json"))//
+                    .andExpect(jsonPath("$.isFavorite").value(false));
 
-			get(roleName)// update says it was updated, but what does get say?
-					.andExpect(status().isOk())//
-					.andExpect(content().contentTypeCompatibleWith("application/json"))//
-					.andExpect(jsonPath("$.isFavorite").value(false));
-		} finally {
-			deleteQuiet();
-		}
-	}
+            get(roleName)// update says it was updated, but what does get say?
+                    .andExpect(status().isOk())//
+                    .andExpect(content().contentTypeCompatibleWith("application/json"))//
+                    .andExpect(jsonPath("$.isFavorite").value(false));
+        } finally {
+            deleteQuiet();
+        }
+    }
 
-	@WithMockUser(username = "admin", roles = "SUPERUSER")
-	public @Test void testUpdateIsFavorite() throws Exception {
-		try {
-			create().andExpect(status().isOk());
+    @WithMockUser(username = "admin", roles = "SUPERUSER")
+    public @Test void testUpdateIsFavorite() throws Exception {
+        try {
+            create().andExpect(status().isOk());
 
-			update(roleName, "", true)//
-					.andExpect(status().isOk())//
-					.andExpect(content().contentTypeCompatibleWith("application/json"))//
-					.andExpect(jsonPath("$.isFavorite").value(true));
+            update(roleName, "", true)//
+                    .andExpect(status().isOk())//
+                    .andExpect(content().contentTypeCompatibleWith("application/json"))//
+                    .andExpect(jsonPath("$.isFavorite").value(true));
 
-			get(roleName)// update says it was updated, but what does get say?
-					.andExpect(status().isOk())//
-					.andExpect(content().contentTypeCompatibleWith("application/json"))//
-					.andExpect(jsonPath("$.isFavorite").value(true));
+            get(roleName)// update says it was updated, but what does get say?
+                    .andExpect(status().isOk())//
+                    .andExpect(content().contentTypeCompatibleWith("application/json"))//
+                    .andExpect(jsonPath("$.isFavorite").value(true));
 
-			update(roleName, "", false)//
-					.andExpect(status().isOk())//
-					.andExpect(content().contentTypeCompatibleWith("application/json"))//
-					.andExpect(jsonPath("$.isFavorite").value(false));
+            update(roleName, "", false)//
+                    .andExpect(status().isOk())//
+                    .andExpect(content().contentTypeCompatibleWith("application/json"))//
+                    .andExpect(jsonPath("$.isFavorite").value(false));
 
-			get(roleName)// update says it was updated, but what does get say?
-					.andExpect(status().isOk())//
-					.andExpect(content().contentTypeCompatibleWith("application/json"))//
-					.andExpect(jsonPath("$.isFavorite").value(false));
-		} finally {
-			deleteQuiet();
-		}
-	}
+            get(roleName)// update says it was updated, but what does get say?
+                    .andExpect(status().isOk())//
+                    .andExpect(content().contentTypeCompatibleWith("application/json"))//
+                    .andExpect(jsonPath("$.isFavorite").value(false));
+        } finally {
+            deleteQuiet();
+        }
+    }
 }

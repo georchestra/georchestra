@@ -39,82 +39,82 @@ import java.util.Map;
  */
 public abstract class AbstractQueryCommand extends AbstractDataCommand implements QueryCommand {
 
-	private LinkedList<Map<String, Object>> resultList;
+    private LinkedList<Map<String, Object>> resultList;
 
-	protected int year = -1;
-	protected int month = -1;
-	protected int limit = -1;
+    protected int year = -1;
+    protected int month = -1;
+    protected int limit = -1;
 
-	@Override
-	public void setYear(int year) {
+    @Override
+    public void setYear(int year) {
 
-		assert year > 0 : "year is expected";
-		this.year = year;
-	}
+        assert year > 0 : "year is expected";
+        this.year = year;
+    }
 
-	@Override
-	public void setMonth(int month) {
-		assert (month >= 1) && (month <= 12) : "month must be a value between 1 and 12";
-		this.month = month;
-	}
+    @Override
+    public void setMonth(int month) {
+        assert (month >= 1) && (month <= 12) : "month must be a value between 1 and 12";
+        this.month = month;
+    }
 
-	@Override
-	public void setLimit(int limit) {
-		assert limit > 1 : "limit must be greather than 1";
+    @Override
+    public void setLimit(int limit) {
+        assert limit > 1 : "limit must be greather than 1";
 
-		this.limit = limit;
-	}
+        this.limit = limit;
+    }
 
-	/**
-	 * This template method executes the sql statement specified in the
-	 * prepareStatement method.
-	 * 
-	 * @see org.georchestra.ogcservstatistics.dataservices.DataCommand#execute()
-	 */
-	@Override
-	public void execute() throws DataCommandException {
+    /**
+     * This template method executes the sql statement specified in the
+     * prepareStatement method.
+     * 
+     * @see org.georchestra.ogcservstatistics.dataservices.DataCommand#execute()
+     */
+    @Override
+    public void execute() throws DataCommandException {
 
-		assert this.connection != null : "database connection is null, use setConnection";
+        assert this.connection != null : "database connection is null, use setConnection";
 
-		// executes the sql statement and populates the list with the data present in
-		// the result set
-		try (PreparedStatement pStmt = prepareStatement()) {
-			try (ResultSet rs = pStmt.executeQuery()) {
+        // executes the sql statement and populates the list with the data present in
+        // the result set
+        try (PreparedStatement pStmt = prepareStatement()) {
+            try (ResultSet rs = pStmt.executeQuery()) {
 
-				this.resultList = new LinkedList<>();
+                this.resultList = new LinkedList<>();
 
-				while (rs.next()) {
-					this.resultList.add(getRow(rs));
-				}
-			}
-		} catch (SQLException e) {
-			throw new DataCommandException(e);
-		}
-	}
+                while (rs.next()) {
+                    this.resultList.add(getRow(rs));
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataCommandException(e);
+        }
+    }
 
-	/**
-	 * The subclass must to define the sql statement to exectue
-	 * 
-	 * @return {@link PreparedStatement}}
-	 * @throws SQLException
-	 */
-	protected abstract PreparedStatement prepareStatement() throws SQLException;
+    /**
+     * The subclass must to define the sql statement to exectue
+     * 
+     * @return {@link PreparedStatement}}
+     * @throws SQLException
+     */
+    protected abstract PreparedStatement prepareStatement() throws SQLException;
 
-	/**
-	 * Assigns the values of fields present in the {@link ResultSet} to the Map.
-	 * 
-	 * @param rs
-	 * @return a Map<fieldName, fieldValue>
-	 * @throws SQLException
-	 */
-	protected abstract Map<String, Object> getRow(ResultSet rs) throws SQLException;
+    /**
+     * Assigns the values of fields present in the {@link ResultSet} to the Map.
+     * 
+     * @param rs
+     * @return a Map<fieldName, fieldValue>
+     * @throws SQLException
+     */
+    protected abstract Map<String, Object> getRow(ResultSet rs) throws SQLException;
 
-	/**
-	 * @see org.georchestra.ogcservstatistics.dataservices.QueryCommand#getResult()
-	 */
-	@Override
-	public List<Map<String, Object>> getResult() {
-		return this.resultList;
-	}
+    /**
+     * @see org.georchestra.ogcservstatistics.dataservices.QueryCommand#getResult()
+     */
+    @Override
+    public List<Map<String, Object>> getResult() {
+        return this.resultList;
+    }
 
 }

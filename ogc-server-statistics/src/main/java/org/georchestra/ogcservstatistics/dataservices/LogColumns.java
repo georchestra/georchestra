@@ -23,17 +23,17 @@ package org.georchestra.ogcservstatistics.dataservices;
  */
 public final class LogColumns {
 
-	public static final String QUALIFIED_TABLE_NAME = "ogcstatistics.OGC_SERVICES_LOG";
+    public static final String QUALIFIED_TABLE_NAME = "ogcstatistics.OGC_SERVICES_LOG";
 
-	public static final String DATE_COLUMN = "date";
-	public static final String USER_COLUMN = "user_name";
-	public static final String SERVICE_COLUMN = "service";
-	public static final String LAYER_COLUMN = "layer";
-	public static final String REQUEST_COLUMN = "request";
-	public static final String ORG_COLUMN = "org";
-	public static final String SECROLE_COLUMN = "roles";
+    public static final String DATE_COLUMN = "date";
+    public static final String USER_COLUMN = "user_name";
+    public static final String SERVICE_COLUMN = "service";
+    public static final String LAYER_COLUMN = "layer";
+    public static final String REQUEST_COLUMN = "request";
+    public static final String ORG_COLUMN = "org";
+    public static final String SECROLE_COLUMN = "roles";
 
-	private LogColumns() {
-		// private constructor, force class being purely a utility class
-	}
+    private LogColumns() {
+        // private constructor, force class being purely a utility class
+    }
 }

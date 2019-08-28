@@ -46,30 +46,30 @@ import org.apache.commons.io.IOUtils;
  * @author jeichar
  */
 public class Gateway {
-	private final static byte[] TEST_PAGE_BYTES;
-	private static final String CONTENT_TYPE = "text/html;charset=UTF-8";
-	private byte[] loadPageBytes = null;
+    private final static byte[] TEST_PAGE_BYTES;
+    private static final String CONTENT_TYPE = "text/html;charset=UTF-8";
+    private byte[] loadPageBytes = null;
 
-	static {
-		try {
-			TEST_PAGE_BYTES = ("<html><body></body></html>").getBytes("UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			throw new Error("Major programming error.  UTF-8 really should be supported", e);
-		}
-	}
+    static {
+        try {
+            TEST_PAGE_BYTES = ("<html><body></body></html>").getBytes("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new Error("Major programming error.  UTF-8 really should be supported", e);
+        }
+    }
 
-	public void testPage(HttpServletResponse response) throws IOException {
-		response.setContentType(CONTENT_TYPE);
-		IOUtils.write(TEST_PAGE_BYTES, response.getOutputStream());
-	}
+    public void testPage(HttpServletResponse response) throws IOException {
+        response.setContentType(CONTENT_TYPE);
+        IOUtils.write(TEST_PAGE_BYTES, response.getOutputStream());
+    }
 
-	public synchronized void loadCredentialsPage(HttpServletRequest request, HttpServletResponse response)
-			throws IOException {
-		if (loadPageBytes == null) {
-			File loadhtml = new File(request.getSession().getServletContext().getRealPath("/WEB-INF/gateway.html"));
-			loadPageBytes = FileUtils.readFileToString(loadhtml, "UTF-8").getBytes("UTF-8");
-		}
-		response.setContentType(CONTENT_TYPE);
-		IOUtils.write(loadPageBytes, response.getOutputStream());
-	}
+    public synchronized void loadCredentialsPage(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        if (loadPageBytes == null) {
+            File loadhtml = new File(request.getSession().getServletContext().getRealPath("/WEB-INF/gateway.html"));
+            loadPageBytes = FileUtils.readFileToString(loadhtml, "UTF-8").getBytes("UTF-8");
+        }
+        response.setContentType(CONTENT_TYPE);
+        IOUtils.write(loadPageBytes, response.getOutputStream());
+    }
 }

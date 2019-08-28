@@ -28,23 +28,23 @@ import java.util.Map;
  */
 public interface QueryCommand extends DataCommand {
 
-	/**
-	 * Results of query execution
-	 * 
-	 * @return List of pairs fieldName, fieldValue.
-	 */
-	public List<Map<String, Object>> getResult();
+    /**
+     * Results of query execution
+     * 
+     * @return List of pairs fieldName, fieldValue.
+     */
+    public List<Map<String, Object>> getResult();
 
-	/**
-	 * @param year required parameter
-	 */
-	public void setYear(int year);
+    /**
+     * @param year required parameter
+     */
+    public void setYear(int year);
 
-	/**
-	 * 
-	 * @param month optional parameter
-	 */
-	public void setMonth(int month);
+    /**
+     * 
+     * @param month optional parameter
+     */
+    public void setMonth(int month);
 
-	public void setLimit(int limit);
+    public void setLimit(int limit);
 }
