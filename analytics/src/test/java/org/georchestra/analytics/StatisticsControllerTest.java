@@ -64,7 +64,7 @@ public class StatisticsControllerTest {
     @Test
     public final void testCombinedRequestsBothUserAndGroupSet() throws Exception {
         JSONObject posted = new JSONObject("{\"user\": \"testadmin\", \"startDate\": \"2015-01-01\", "
-                + "\"group\": \"ADMINISTRATOR\", \"endDate\": \"2015-12-01\" }");
+                + "\"role\": \"ADMINISTRATOR\", \"endDate\": \"2015-12-01\" }");
         // -> 400
         mockMvc.perform(post("/combinedRequests.json").content(posted.toString())).andExpect(status().isBadRequest());
     }
