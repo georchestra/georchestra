@@ -33,48 +33,48 @@ import java.util.Map;
  */
 final class QueryByTokenCommand extends org.georchestra.lib.sqlcommand.AbstractQueryCommand {
 
-	private String token;
+    private String token;
 
-	public void setToken(String token) {
+    public void setToken(String token) {
 
-		this.token = token;
-	}
+        this.token = token;
+    }
 
-	/**
-	 * builds the sql query
-	 * 
-	 * @return the sql statement
-	 */
-	private String getSQLStatement() {
+    /**
+     * builds the sql query
+     * 
+     * @return the sql statement
+     */
+    private String getSQLStatement() {
 
-		StringBuilder sql = new StringBuilder();
+        StringBuilder sql = new StringBuilder();
 
-		sql.append(" SELECT ").append(DatabaseSchema.UID_COLUMN).append(",").append(DatabaseSchema.TOKEN_COLUMN)
-				.append(",").append(DatabaseSchema.CREATION_DATE_COLUMN).append(" FROM ")
-				.append(DatabaseSchema.SCHEMA_NAME + "." + DatabaseSchema.TABLE_USER_TOKEN)
-				.append(" WHERE " + DatabaseSchema.TOKEN_COLUMN + " = ?");
+        sql.append(" SELECT ").append(DatabaseSchema.UID_COLUMN).append(",").append(DatabaseSchema.TOKEN_COLUMN)
+                .append(",").append(DatabaseSchema.CREATION_DATE_COLUMN).append(" FROM ")
+                .append(DatabaseSchema.SCHEMA_NAME + "." + DatabaseSchema.TABLE_USER_TOKEN)
+                .append(" WHERE " + DatabaseSchema.TOKEN_COLUMN + " = ?");
 
-		return sql.toString();
-	}
+        return sql.toString();
+    }
 
-	@Override
-	protected PreparedStatement prepareStatement() throws SQLException {
-		PreparedStatement pStmt = this.connection.prepareStatement(getSQLStatement());
+    @Override
+    protected PreparedStatement prepareStatement() throws SQLException {
+        PreparedStatement pStmt = this.connection.prepareStatement(getSQLStatement());
 
-		pStmt.setString(1, this.token);
+        pStmt.setString(1, this.token);
 
-		return pStmt;
-	}
+        return pStmt;
+    }
 
-	@Override
-	protected Map<String, Object> getRow(ResultSet rs) throws SQLException {
+    @Override
+    protected Map<String, Object> getRow(ResultSet rs) throws SQLException {
 
-		Map<String, Object> row = new HashMap<String, Object>(3);
-		row.put(DatabaseSchema.UID_COLUMN, rs.getString(DatabaseSchema.UID_COLUMN));
-		row.put(DatabaseSchema.TOKEN_COLUMN, rs.getString(DatabaseSchema.TOKEN_COLUMN));
-		row.put(DatabaseSchema.CREATION_DATE_COLUMN, rs.getTimestamp(DatabaseSchema.CREATION_DATE_COLUMN));
+        Map<String, Object> row = new HashMap<String, Object>(3);
+        row.put(DatabaseSchema.UID_COLUMN, rs.getString(DatabaseSchema.UID_COLUMN));
+        row.put(DatabaseSchema.TOKEN_COLUMN, rs.getString(DatabaseSchema.TOKEN_COLUMN));
+        row.put(DatabaseSchema.CREATION_DATE_COLUMN, rs.getTimestamp(DatabaseSchema.CREATION_DATE_COLUMN));
 
-		return row;
-	}
+        return row;
+    }
 
 }

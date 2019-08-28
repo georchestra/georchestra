@@ -42,56 +42,56 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public final class ExpiredTokenManagement {
 
-	private static final Log LOG = LogFactory.getLog(ExpiredTokenManagement.class.getName());
+    private static final Log LOG = LogFactory.getLog(ExpiredTokenManagement.class.getName());
 
-	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-	/** delay in days to execute the cleaning task */
-	private int delayInDays = -1;
+    /** delay in days to execute the cleaning task */
+    private int delayInDays = -1;
 
-	private ExpiredTokenCleanTask expiredTokenCleanTask;
+    private ExpiredTokenCleanTask expiredTokenCleanTask;
 
-	@Autowired
-	public ExpiredTokenManagement(ExpiredTokenCleanTask expiredTokenCleanTask) {
-		this.expiredTokenCleanTask = expiredTokenCleanTask;
-	}
+    @Autowired
+    public ExpiredTokenManagement(ExpiredTokenCleanTask expiredTokenCleanTask) {
+        this.expiredTokenCleanTask = expiredTokenCleanTask;
+    }
 
-	public int getDelayInDays() {
-		return delayInDays;
-	}
+    public int getDelayInDays() {
+        return delayInDays;
+    }
 
-	public void setDelayInDays(int delayInDays) {
-		this.delayInDays = delayInDays;
-	}
+    public void setDelayInDays(int delayInDays) {
+        this.delayInDays = delayInDays;
+    }
 
-	public void start() {
+    public void start() {
 
-		if (delayInDays == -1) {
-			throw new IllegalStateException("delayInDays property hasn't been set in the configuration bean.");
-		}
+        if (delayInDays == -1) {
+            throw new IllegalStateException("delayInDays property hasn't been set in the configuration bean.");
+        }
 
-		long delay = toMilliseconds(this.delayInDays);
+        long delay = toMilliseconds(this.delayInDays);
 
-		// final ExpiredTokenCleanTask expiredTokenCleanTask = new
-		// ExpiredTokenCleanTask();
-		expiredTokenCleanTask.setDelayInMilliseconds(delay);
+        // final ExpiredTokenCleanTask expiredTokenCleanTask = new
+        // ExpiredTokenCleanTask();
+        expiredTokenCleanTask.setDelayInMilliseconds(delay);
 
-		this.scheduler.scheduleWithFixedDelay(expiredTokenCleanTask, 0, delay, TimeUnit.MILLISECONDS);
+        this.scheduler.scheduleWithFixedDelay(expiredTokenCleanTask, 0, delay, TimeUnit.MILLISECONDS);
 
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("was scheduled - delay (days):" + delayInDays);
-		}
-	}
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("was scheduled - delay (days):" + delayInDays);
+        }
+    }
 
-	/**
-	 * Converts the days to millisecconds
-	 *
-	 * @param delayInDays
-	 * @return the delay days in milliseconds
-	 */
-	private static long toMilliseconds(int delayInDays) {
+    /**
+     * Converts the days to millisecconds
+     *
+     * @param delayInDays
+     * @return the delay days in milliseconds
+     */
+    private static long toMilliseconds(int delayInDays) {
 
-		return 24 * 3600000 * delayInDays;
-	}
+        return 24 * 3600000 * delayInDays;
+    }
 
 }

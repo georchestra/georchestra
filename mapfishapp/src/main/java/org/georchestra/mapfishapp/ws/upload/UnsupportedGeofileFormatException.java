@@ -27,10 +27,10 @@ package org.georchestra.mapfishapp.ws.upload;
  */
 public final class UnsupportedGeofileFormatException extends Exception {
 
-	private static final long serialVersionUID = -9152924743908998721L;
+    private static final long serialVersionUID = -9152924743908998721L;
 
-	public UnsupportedGeofileFormatException(String msg) {
-		super(msg);
-	}
+    public UnsupportedGeofileFormatException(String msg) {
+        super(msg);
+    }
 
 }

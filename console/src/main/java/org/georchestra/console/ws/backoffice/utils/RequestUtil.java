@@ -30,49 +30,49 @@ import org.json.JSONObject;
  */
 public class RequestUtil {
 
-	private RequestUtil() {
-		// utility class
-	}
+    private RequestUtil() {
+        // utility class
+    }
 
-	/**
-	 * Returns the value associated to the fieldName.
-	 *
-	 * If the fieldName value is not present in the JSON object a null value is
-	 * returned.
-	 *
-	 * @param json
-	 * @param fieldName
-	 *
-	 * @return the value
-	 */
-	public static String getFieldValue(final JSONObject json, final String fieldName) {
-		try {
-			if (json.isNull(fieldName))
-				return null;
-			return json.getString(fieldName);
-		} catch (JSONException e) {
-			return null;
-		}
-	}
+    /**
+     * Returns the value associated to the fieldName.
+     *
+     * If the fieldName value is not present in the JSON object a null value is
+     * returned.
+     *
+     * @param json
+     * @param fieldName
+     *
+     * @return the value
+     */
+    public static String getFieldValue(final JSONObject json, final String fieldName) {
+        try {
+            if (json.isNull(fieldName))
+                return null;
+            return json.getString(fieldName);
+        } catch (JSONException e) {
+            return null;
+        }
+    }
 
-	/**
-	 * Returns the boolean value associated to the fieldName.
-	 *
-	 * If the fieldName value is not present in the JSON object a null value is
-	 * returned.
-	 *
-	 * @param json
-	 * @param fieldName
-	 *
-	 * @return the value as boolean
-	 */
-	public static Boolean getBooleanFieldValue(final JSONObject json, final String fieldName) {
-		Boolean value;
-		try {
-			value = json.getBoolean(fieldName);
-		} catch (JSONException e) {
-			return false;
-		}
-		return value;
-	}
+    /**
+     * Returns the boolean value associated to the fieldName.
+     *
+     * If the fieldName value is not present in the JSON object a null value is
+     * returned.
+     *
+     * @param json
+     * @param fieldName
+     *
+     * @return the value as boolean
+     */
+    public static Boolean getBooleanFieldValue(final JSONObject json, final String fieldName) {
+        Boolean value;
+        try {
+            value = json.getBoolean(fieldName);
+        } catch (JSONException e) {
+            return false;
+        }
+        return value;
+    }
 }

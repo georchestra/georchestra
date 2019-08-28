@@ -38,24 +38,24 @@ import com.vividsolutions.jts.geom.Geometry;
 @Controller
 public class BufferController {
 
-	@RequestMapping(value = "/buffer/{bufferValue}", method = RequestMethod.POST, produces = "application/json")
-	@ResponseBody
-	public String computeBuffer(@PathVariable double bufferValue, @RequestBody String wktgeom,
-			HttpServletResponse response) throws JSONException {
+    @RequestMapping(value = "/buffer/{bufferValue}", method = RequestMethod.POST, produces = "application/json")
+    @ResponseBody
+    public String computeBuffer(@PathVariable double bufferValue, @RequestBody String wktgeom,
+            HttpServletResponse response) throws JSONException {
 
-		JSONObject js = new JSONObject();
-		try {
+        JSONObject js = new JSONObject();
+        try {
 
-			WKTReader w = new WKTReader();
-			Geometry g = w.read(wktgeom);
-			g = g.buffer(bufferValue);
-			js.put("geometry", g.toString());
+            WKTReader w = new WKTReader();
+            Geometry g = w.read(wktgeom);
+            g = g.buffer(bufferValue);
+            js.put("geometry", g.toString());
 
-		} catch (ParseException e) {
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			return new JSONObject().put("error", e.getMessage()).toString();
-		}
+        } catch (ParseException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return new JSONObject().put("error", e.getMessage()).toString();
+        }
 
-		return js.toString();
-	}
+        return js.toString();
+    }
 }

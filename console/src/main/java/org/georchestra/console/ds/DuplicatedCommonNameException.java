@@ -27,11 +27,11 @@ package org.georchestra.console.ds;
  */
 public class DuplicatedCommonNameException extends Exception {
 
-	private static final long serialVersionUID = 6399369489493455851L;
+    private static final long serialVersionUID = 6399369489493455851L;
 
-	public DuplicatedCommonNameException(String msg) {
+    public DuplicatedCommonNameException(String msg) {
 
-		super(msg);
-	}
+        super(msg);
+    }
 
 }

@@ -33,36 +33,36 @@ import org.georchestra.lib.sqlcommand.AbstractUpdateCommand;
  */
 final class InsertUserTokenCommand extends AbstractUpdateCommand {
 
-	private static final String SQL_INSERT = "INSERT INTO " + DatabaseSchema.SCHEMA_NAME + "."
-			+ DatabaseSchema.TABLE_USER_TOKEN + " (" + DatabaseSchema.UID_COLUMN + "," + DatabaseSchema.TOKEN_COLUMN
-			+ "," + DatabaseSchema.CREATION_DATE_COLUMN + ") VALUES (?, ?, ?)";
+    private static final String SQL_INSERT = "INSERT INTO " + DatabaseSchema.SCHEMA_NAME + "."
+            + DatabaseSchema.TABLE_USER_TOKEN + " (" + DatabaseSchema.UID_COLUMN + "," + DatabaseSchema.TOKEN_COLUMN
+            + "," + DatabaseSchema.CREATION_DATE_COLUMN + ") VALUES (?, ?, ?)";
 
-	private Map<String, Object> rowValues;
+    private Map<String, Object> rowValues;
 
-	/**
-	 * Sets the uid and token in the command. To
-	 *
-	 * @param row (UID_COLUMN, value)(TOKEN_COLUMN, value) (TIMESTAMP_COLUMN, value)
-	 */
-	public void setRowValues(final Map<String, Object> row) {
+    /**
+     * Sets the uid and token in the command. To
+     *
+     * @param row (UID_COLUMN, value)(TOKEN_COLUMN, value) (TIMESTAMP_COLUMN, value)
+     */
+    public void setRowValues(final Map<String, Object> row) {
 
-		assert row.keySet().size() == 3;
+        assert row.keySet().size() == 3;
 
-		this.rowValues = row;
-	}
+        this.rowValues = row;
+    }
 
-	@Override
-	protected PreparedStatement prepareStatement() throws SQLException {
+    @Override
+    protected PreparedStatement prepareStatement() throws SQLException {
 
-		assert this.connection != null : "database connection is null, use setConnection";
+        assert this.connection != null : "database connection is null, use setConnection";
 
-		PreparedStatement pStmt = this.connection.prepareStatement(SQL_INSERT);
+        PreparedStatement pStmt = this.connection.prepareStatement(SQL_INSERT);
 
-		pStmt.setString(1, (String) this.rowValues.get(DatabaseSchema.UID_COLUMN));
-		pStmt.setString(2, (String) this.rowValues.get(DatabaseSchema.TOKEN_COLUMN));
-		pStmt.setTimestamp(3, (Timestamp) this.rowValues.get(DatabaseSchema.CREATION_DATE_COLUMN));
+        pStmt.setString(1, (String) this.rowValues.get(DatabaseSchema.UID_COLUMN));
+        pStmt.setString(2, (String) this.rowValues.get(DatabaseSchema.TOKEN_COLUMN));
+        pStmt.setTimestamp(3, (Timestamp) this.rowValues.get(DatabaseSchema.CREATION_DATE_COLUMN));
 
-		return pStmt;
-	}
+        return pStmt;
+    }
 
 }

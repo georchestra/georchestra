@@ -30,31 +30,31 @@ import java.sql.Statement;
  */
 final public class DeleteAllCommand extends AbstractDataCommand {
 
-	/**
-	 * This method will execute a SQL Delete!
-	 * 
-	 * @see org.georchestra.ogcservstatistics.dataservices.DataCommand#execute()
-	 */
-	@Override
-	public void execute() throws DataCommandException {
+    /**
+     * This method will execute a SQL Delete!
+     * 
+     * @see org.georchestra.ogcservstatistics.dataservices.DataCommand#execute()
+     */
+    @Override
+    public void execute() throws DataCommandException {
 
-		// PreparedStatement pStmt=null;
-		Statement pStmt = null;
-		try {
-			pStmt = this.connection.createStatement();
-			pStmt.execute("DELETE FROM ogcstatistics.OGC_SERVICES_LOG");
+        // PreparedStatement pStmt=null;
+        Statement pStmt = null;
+        try {
+            pStmt = this.connection.createStatement();
+            pStmt.execute("DELETE FROM ogcstatistics.OGC_SERVICES_LOG");
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw new DataCommandException(e);
-		} finally {
-			try {
-				if (pStmt != null)
-					pStmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DataCommandException(e);
+        } finally {
+            try {
+                if (pStmt != null)
+                    pStmt.close();
 
-			} catch (SQLException e1) {
-				throw new DataCommandException(e1.getMessage());
-			}
-		}
-	}
+            } catch (SQLException e1) {
+                throw new DataCommandException(e1.getMessage());
+            }
+        }
+    }
 }

@@ -9,19 +9,19 @@ import org.opengis.feature.simple.SimpleFeatureType;
 
 public class ShpDatastoreFactory implements DatastoreFactory {
 
-	@Override
-	public DataStore create(File shpfile, SimpleFeatureType schema) throws IOException {
-		ShapefileDataStore ds = new ShapefileDataStore(shpfile.toURI().toURL());
-		if (!shpfile.exists()) {
-			ds.createSchema(schema);
-		}
+    @Override
+    public DataStore create(File shpfile, SimpleFeatureType schema) throws IOException {
+        ShapefileDataStore ds = new ShapefileDataStore(shpfile.toURI().toURL());
+        if (!shpfile.exists()) {
+            ds.createSchema(schema);
+        }
 
-		return ds;
-	}
+        return ds;
+    }
 
-	@Override
-	public String extension() {
-		return "shp";
-	}
+    @Override
+    public String extension() {
+        return "shp";
+    }
 
 }

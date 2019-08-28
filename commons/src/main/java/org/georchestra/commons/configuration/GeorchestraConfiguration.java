@@ -37,127 +37,127 @@ import org.apache.log4j.xml.DOMConfigurator;
 
 public class GeorchestraConfiguration {
 
-	protected String globalDatadir;
-	protected String contextDataDir;
+    protected String globalDatadir;
+    protected String contextDataDir;
 
-	protected String contextName;
-	protected ServletContext ctx;
+    protected String contextName;
+    protected ServletContext ctx;
 
-	protected Properties applicationSpecificProperties = new Properties();
-	protected Properties defaultProperties = new Properties();
+    protected Properties applicationSpecificProperties = new Properties();
+    protected Properties defaultProperties = new Properties();
 
-	public String getContextDataDir() {
-		return contextDataDir;
-	}
+    public String getContextDataDir() {
+        return contextDataDir;
+    }
 
-	private boolean activated = false;
+    private boolean activated = false;
 
-	public void init() {
-	}
+    public void init() {
+    }
 
-	public GeorchestraConfiguration(String context) {
+    public GeorchestraConfiguration(String context) {
 
-		this.contextName = context;
-		globalDatadir = System.getProperty("georchestra.datadir");
-		if (globalDatadir != null) {
-			contextDataDir = new File(String.format("%s%s%s%s", globalDatadir, File.separator, context, File.separator))
-					.getAbsolutePath();
+        this.contextName = context;
+        globalDatadir = System.getProperty("georchestra.datadir");
+        if (globalDatadir != null) {
+            contextDataDir = new File(String.format("%s%s%s%s", globalDatadir, File.separator, context, File.separator))
+                    .getAbsolutePath();
 
-			// Simple check that the path exists
-			if (new File(contextDataDir).exists() == false) {
-				contextDataDir = null;
-				return;
-			}
-			// loads the application context property file
-			try {
-				this.applicationSpecificProperties = this.loadCustomPropertiesFile(context);
-			} catch (Exception e) {
-			}
+            // Simple check that the path exists
+            if (new File(contextDataDir).exists() == false) {
+                contextDataDir = null;
+                return;
+            }
+            // loads the application context property file
+            try {
+                this.applicationSpecificProperties = this.loadCustomPropertiesFile(context);
+            } catch (Exception e) {
+            }
 
-			// loads common context property file
-			try {
-				this.defaultProperties = this.loadPropertiesFile(
-						new File(String.format("%s%s%s", globalDatadir, File.separator, "default.properties")));
-			} catch (Exception e) {
-			}
+            // loads common context property file
+            try {
+                this.defaultProperties = this.loadPropertiesFile(
+                        new File(String.format("%s%s%s", globalDatadir, File.separator, "default.properties")));
+            } catch (Exception e) {
+            }
 
-			// log4j configuration
-			File log4jProperties = new File(contextDataDir, "log4j" + File.separator + "log4j.properties");
-			File log4jXml = new File(contextDataDir, "log4j" + File.separator + "log4j.xml");
-			String log4jConfigurationFile = null;
-			if (log4jProperties.exists()) {
-				log4jConfigurationFile = log4jProperties.getAbsolutePath();
-				PropertyConfigurator.configure(log4jConfigurationFile);
-			} else if (log4jXml.exists()) {
-				log4jConfigurationFile = log4jXml.getAbsolutePath();
-				DOMConfigurator.configure(log4jConfigurationFile);
-			}
-			// everything went well
-			activated = true;
-		}
-	}
+            // log4j configuration
+            File log4jProperties = new File(contextDataDir, "log4j" + File.separator + "log4j.properties");
+            File log4jXml = new File(contextDataDir, "log4j" + File.separator + "log4j.xml");
+            String log4jConfigurationFile = null;
+            if (log4jProperties.exists()) {
+                log4jConfigurationFile = log4jProperties.getAbsolutePath();
+                PropertyConfigurator.configure(log4jConfigurationFile);
+            } else if (log4jXml.exists()) {
+                log4jConfigurationFile = log4jXml.getAbsolutePath();
+                DOMConfigurator.configure(log4jConfigurationFile);
+            }
+            // everything went well
+            activated = true;
+        }
+    }
 
-	/**
-	 * Loads a property file from the context directory
-	 *
-	 * @param key the key file identifier in the context datadir
-	 * @return Properties a properties map from the given key.properties file
-	 * @throws IOException
-	 */
-	public Properties loadCustomPropertiesFile(String key) throws IOException {
-		return this.loadPropertiesFile(new File(contextDataDir, key + ".properties"));
-	}
+    /**
+     * Loads a property file from the context directory
+     *
+     * @param key the key file identifier in the context datadir
+     * @return Properties a properties map from the given key.properties file
+     * @throws IOException
+     */
+    public Properties loadCustomPropertiesFile(String key) throws IOException {
+        return this.loadPropertiesFile(new File(contextDataDir, key + ".properties"));
+    }
 
-	private Properties loadPropertiesFile(File path) throws IOException {
-		Properties prop = new Properties();
-		FileInputStream fisProp = null;
-		try {
-			fisProp = new FileInputStream(path);
-			InputStreamReader isrProp = new InputStreamReader(fisProp, "UTF8");
-			prop.load(isrProp);
-		} finally {
-			if (fisProp != null) {
-				fisProp.close();
-			}
-		}
-		return prop;
-	}
+    private Properties loadPropertiesFile(File path) throws IOException {
+        Properties prop = new Properties();
+        FileInputStream fisProp = null;
+        try {
+            fisProp = new FileInputStream(path);
+            InputStreamReader isrProp = new InputStreamReader(fisProp, "UTF8");
+            prop.load(isrProp);
+        } finally {
+            if (fisProp != null) {
+                fisProp.close();
+            }
+        }
+        return prop;
+    }
 
-	public String getProperty(String key) {
-		if (!this.activated)
-			return null;
-		if (this.applicationSpecificProperties.getProperty(key) != null)
-			return this.applicationSpecificProperties.getProperty(key);
-		return this.defaultProperties.getProperty(key);
-	}
+    public String getProperty(String key) {
+        if (!this.activated)
+            return null;
+        if (this.applicationSpecificProperties.getProperty(key) != null)
+            return this.applicationSpecificProperties.getProperty(key);
+        return this.defaultProperties.getProperty(key);
+    }
 
-	public boolean activated() {
-		return activated;
-	}
+    public boolean activated() {
+        return activated;
+    }
 
-	/**
-	 * This method generate GEOR_custom.js used in Mapfishapp and Extractorapp.
-	 * 
-	 * @param request
-	 * @param response
-	 * @throws Exception
-	 */
-	public void getGeorCustom(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    /**
+     * This method generate GEOR_custom.js used in Mapfishapp and Extractorapp.
+     * 
+     * @param request
+     * @param response
+     * @throws Exception
+     */
+    public void getGeorCustom(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-		response.setContentType("application/javascript");
-		// we could get extra infos from the DB or elsewhere, and
-		// add them to the variables provided by the js file :-)
-		if (contextDataDir != null) {
-			File georCustom = new File(contextDataDir, "js" + File.separator + "GEOR_custom.js");
-			if (georCustom.exists()) {
-				response.getOutputStream().write(FileUtils.readFileToByteArray(georCustom));
-				return;
-			}
-		}
-		// Fallback on the default one provided by the webapp
-		InputStream is = request.getSession().getServletContext().getResourceAsStream("/app/js/GEOR_custom.js");
-		byte[] content = IOUtils.toByteArray(is);
-		response.getOutputStream().write(content);
-		return;
-	}
+        response.setContentType("application/javascript");
+        // we could get extra infos from the DB or elsewhere, and
+        // add them to the variables provided by the js file :-)
+        if (contextDataDir != null) {
+            File georCustom = new File(contextDataDir, "js" + File.separator + "GEOR_custom.js");
+            if (georCustom.exists()) {
+                response.getOutputStream().write(FileUtils.readFileToByteArray(georCustom));
+                return;
+            }
+        }
+        // Fallback on the default one provided by the webapp
+        InputStream is = request.getSession().getServletContext().getResourceAsStream("/app/js/GEOR_custom.js");
+        byte[] content = IOUtils.toByteArray(is);
+        response.getOutputStream().write(content);
+        return;
+    }
 }

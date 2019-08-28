@@ -28,19 +28,19 @@ package org.georchestra.mapfishapp.ws.upload;
  */
 public enum FileFormat {
 
-	shp, mif, gml, kml;
+    shp, mif, gml, kml;
 
-	public static boolean contains(final String ext) {
+    public static boolean contains(final String ext) {
 
-		String lcExt = ext.toLowerCase();
+        String lcExt = ext.toLowerCase();
 
-		FileFormat[] formats = values();
-		for (int i = 0; i < formats.length; i++) {
+        FileFormat[] formats = values();
+        for (int i = 0; i < formats.length; i++) {
 
-			if (formats[i].toString().equals(lcExt)) {
-				return true;
-			}
-		}
-		return false;
-	}
+            if (formats[i].toString().equals(lcExt)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -25,35 +25,35 @@ import org.junit.Test;
  */
 public class DisableLoggingTest {
 
-	private static final Logger LOGGER = Logger.getLogger(OGCServicesAppenderTest.class);
+    private static final Logger LOGGER = Logger.getLogger(OGCServicesAppenderTest.class);
 
-	static {
-		// activated=false in the porperties files
-		String file = "src/test/resources/org/georchestra/ogcservstatistics/log4j-disable.properties";
-		PropertyConfigurator.configure(file);
-	}
+    static {
+        // activated=false in the porperties files
+        String file = "src/test/resources/org/georchestra/ogcservstatistics/log4j-disable.properties";
+        PropertyConfigurator.configure(file);
+    }
 
-	/**
-	 * the following log message is not inserted
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	public void testOGCOperationLogging() throws Exception {
+    /**
+     * the following log message is not inserted
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testOGCOperationLogging() throws Exception {
 
-		List<Map<String, Object>> logList = OGCServiceStatistics.list();
-		final int logSizeBefore = logList.size();
+        List<Map<String, Object>> logList = OGCServiceStatistics.list();
+        final int logSizeBefore = logList.size();
 
-		final Date time = Calendar.getInstance().getTime();
+        final Date time = Calendar.getInstance().getTime();
 
-		final String request = "http://www.someserver.com/geoserver/wfs/WfsDispatcher?REQUEST=DescribeFeatureType&TYPENAME=ign%3Acommune&SERVICE=WFS&VERSION=1.0.0";
-		String[] roles = null;
-		String ogcServiceMessage = OGCServiceMessageFormatter.format("userNoInsert!", request, "", roles);
+        final String request = "http://www.someserver.com/geoserver/wfs/WfsDispatcher?REQUEST=DescribeFeatureType&TYPENAME=ign%3Acommune&SERVICE=WFS&VERSION=1.0.0";
+        String[] roles = null;
+        String ogcServiceMessage = OGCServiceMessageFormatter.format("userNoInsert!", request, "", roles);
 
-		LOGGER.info(ogcServiceMessage);
+        LOGGER.info(ogcServiceMessage);
 
-		logList = OGCServiceStatistics.list();
-		assertEquals(logList.size(), logSizeBefore);
-	}
+        logList = OGCServiceStatistics.list();
+        assertEquals(logList.size(), logSizeBefore);
+    }
 
 }

@@ -30,42 +30,42 @@ import java.util.List;
  */
 public interface Role {
 
-	final String USER = "USER";
-	final String PENDING = "PENDING";
+    final String USER = "USER";
+    final String PENDING = "PENDING";
 
-	/**
-	 * 
-	 * @return the name of this role
-	 */
-	@JsonProperty("cn")
-	String getName();
+    /**
+     * 
+     * @return the name of this role
+     */
+    @JsonProperty("cn")
+    String getName();
 
-	void setName(String cn);
+    void setName(String cn);
 
-	/**
-	 * Users of this role
-	 * 
-	 * @return the list of user
-	 */
-	@JsonProperty("users")
-	List<String> getUserList();
+    /**
+     * Users of this role
+     * 
+     * @return the list of user
+     */
+    @JsonProperty("users")
+    List<String> getUserList();
 
-	void setUserList(List<String> userUidList);
+    void setUserList(List<String> userUidList);
 
-	/**
-	 * adds a user to this role
-	 * 
-	 * @param userUid a user dn
-	 */
-	void addUser(String userUid);
+    /**
+     * adds a user to this role
+     * 
+     * @param userUid a user dn
+     */
+    void addUser(String userUid);
 
-	void setDescription(String description);
+    void setDescription(String description);
 
-	String getDescription();
+    String getDescription();
 
-	void setFavorite(boolean isFavorite);
+    void setFavorite(boolean isFavorite);
 
-	@JsonProperty("isFavorite")
-	boolean isFavorite();
+    @JsonProperty("isFavorite")
+    boolean isFavorite();
 
 }

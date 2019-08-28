@@ -40,76 +40,76 @@ import org.json.JSONObject;
  */
 public class ReCaptchaV2 {
 
-	private static final Log LOG = LogFactory.getLog(ReCaptchaV2.class.getName());
+    private static final Log LOG = LogFactory.getLog(ReCaptchaV2.class.getName());
 
-	/**
-	 *
-	 * @param url
-	 * @param privateKey
-	 * @param gRecaptchaResponse
-	 *
-	 * @return true if validaded on server side by google, false in case of error or
-	 *         if an exception occurs
-	 */
-	public boolean isValid(String url, String privateKey, String gRecaptchaResponse) {
-		boolean isValid = false;
+    /**
+     *
+     * @param url
+     * @param privateKey
+     * @param gRecaptchaResponse
+     *
+     * @return true if validaded on server side by google, false in case of error or
+     *         if an exception occurs
+     */
+    public boolean isValid(String url, String privateKey, String gRecaptchaResponse) {
+        boolean isValid = false;
 
-		try {
-			URL obj = new URL(url);
-			HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
+        try {
+            URL obj = new URL(url);
+            HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
 
-			// add request header
-			con.setRequestMethod("POST");
-			String postParams = "secret=" + privateKey + "&response=" + gRecaptchaResponse;
+            // add request header
+            con.setRequestMethod("POST");
+            String postParams = "secret=" + privateKey + "&response=" + gRecaptchaResponse;
 
-			// Send post request
-			con.setDoOutput(true);
-			DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-			wr.writeBytes(postParams);
-			wr.flush();
-			wr.close();
+            // Send post request
+            con.setDoOutput(true);
+            DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+            wr.writeBytes(postParams);
+            wr.flush();
+            wr.close();
 
-			if (LOG.isDebugEnabled()) {
-				int responseCode = con.getResponseCode();
-				LOG.debug("\nSending 'POST' request to URL : " + url);
-				LOG.debug("Post parameters : " + postParams);
-				LOG.debug("Response Code : " + responseCode);
-			}
+            if (LOG.isDebugEnabled()) {
+                int responseCode = con.getResponseCode();
+                LOG.debug("\nSending 'POST' request to URL : " + url);
+                LOG.debug("Post parameters : " + postParams);
+                LOG.debug("Response Code : " + responseCode);
+            }
 
-			// getResponse
-			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-			String inputLine;
-			StringBuffer response = new StringBuffer();
+            // getResponse
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuffer response = new StringBuffer();
 
-			while ((inputLine = in.readLine()) != null) {
-				response.append(inputLine);
-			}
-			in.close();
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
 
-			// print result
-			LOG.debug(response.toString());
+            // print result
+            LOG.debug(response.toString());
 
-			JSONObject captchaResponse;
-			try {
-				captchaResponse = new JSONObject(response.toString());
+            JSONObject captchaResponse;
+            try {
+                captchaResponse = new JSONObject(response.toString());
 
-				if (captchaResponse.getBoolean("success")) {
-					isValid = true;
-				} else {
-					// Error in response
-					LOG.info("The user response to recaptcha is not valid. The error message is '"
-							+ captchaResponse.getString("error-codes")
-							+ "' - see Error Code Reference at https://developers.google.com/recaptcha/docs/verify.");
-				}
-			} catch (JSONException e) {
-				// Error in response
-				LOG.error("Error while parsing ReCaptcha JSON response", e);
-			}
-		} catch (IOException e) {
-			LOG.error("An error occured when trying to contact google captchaV2", e);
-		}
+                if (captchaResponse.getBoolean("success")) {
+                    isValid = true;
+                } else {
+                    // Error in response
+                    LOG.info("The user response to recaptcha is not valid. The error message is '"
+                            + captchaResponse.getString("error-codes")
+                            + "' - see Error Code Reference at https://developers.google.com/recaptcha/docs/verify.");
+                }
+            } catch (JSONException e) {
+                // Error in response
+                LOG.error("Error while parsing ReCaptcha JSON response", e);
+            }
+        } catch (IOException e) {
+            LOG.error("An error occured when trying to contact google captchaV2", e);
+        }
 
-		return isValid;
-	}
+        return isValid;
+    }
 
 }

@@ -27,43 +27,43 @@ import java.io.Serializable;
  */
 public class ChangePasswordFormBean implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -546015147230737054L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -546015147230737054L;
 
-	private String uid;
-	private String confirmPassword;
-	private String password;
+    private String uid;
+    private String confirmPassword;
+    private String password;
 
-	@Override
-	public String toString() {
-		return "ChangePasswordFormBean [uid=" + uid + ", confirmPassword=" + confirmPassword + ", password=" + password
-				+ "]";
-	}
+    @Override
+    public String toString() {
+        return "ChangePasswordFormBean [uid=" + uid + ", confirmPassword=" + confirmPassword + ", password=" + password
+                + "]";
+    }
 
-	public String getUid() {
-		return uid;
-	}
+    public String getUid() {
+        return uid;
+    }
 
-	public void setUid(String uid) {
-		this.uid = uid;
-	}
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
 
-	public String getConfirmPassword() {
-		return confirmPassword;
-	}
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
 
-	public void setConfirmPassword(String confirmPassword) {
-		this.confirmPassword = confirmPassword;
-	}
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
 }

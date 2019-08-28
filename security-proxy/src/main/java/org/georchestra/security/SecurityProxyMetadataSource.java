@@ -59,89 +59,89 @@ import org.w3c.dom.NodeList;
 
 public class SecurityProxyMetadataSource implements FilterInvocationSecurityMetadataSource {
 
-	private static final Log LOGGER = LogFactory.getLog(SecurityProxyMetadataSource.class.getPackage().getName());
+    private static final Log LOGGER = LogFactory.getLog(SecurityProxyMetadataSource.class.getPackage().getName());
 
-	private Map<RequestMatcher, Collection<ConfigAttribute>> requestMap = new LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>>();
+    private Map<RequestMatcher, Collection<ConfigAttribute>> requestMap = new LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>>();
 
-	public void setRequestMap(Map map) {
-		requestMap.clear();
-		for (String entry : (Set<String>) map.keySet()) {
-			this.requestMap.put(new RegexRequestMatcher(entry, null),
-					SecurityConfig.createListFromCommaDelimitedString(map.get(entry).toString()));
-		}
-	}
+    public void setRequestMap(Map map) {
+        requestMap.clear();
+        for (String entry : (Set<String>) map.keySet()) {
+            this.requestMap.put(new RegexRequestMatcher(entry, null),
+                    SecurityConfig.createListFromCommaDelimitedString(map.get(entry).toString()));
+        }
+    }
 
-	public void remap() {
-		String configPath = System.getProperty("georchestra.datadir");
-		if (configPath == null) {
-			LOGGER.info("No datadir specified, skipping security remapping");
-			return;
-		}
-		// Spring-security related beans are instanciated before the general-purposes
-		// beans
-		// At this state, we cannot rely on the autowiring capacities of Spring.
+    public void remap() {
+        String configPath = System.getProperty("georchestra.datadir");
+        if (configPath == null) {
+            LOGGER.info("No datadir specified, skipping security remapping");
+            return;
+        }
+        // Spring-security related beans are instanciated before the general-purposes
+        // beans
+        // At this state, we cannot rely on the autowiring capacities of Spring.
 
-		File contextDatadir = new File(configPath, "security-proxy");
-		if ((!contextDatadir.exists()) || (!contextDatadir.isDirectory())) {
-			LOGGER.info("Datadir set for security-proxy, but not found is not a directory");
-			throw new RuntimeException("Datadir set for security-proxy, but not found is not a directory: "
-					+ contextDatadir.getAbsolutePath());
-		}
-		File securityMappings = new File(contextDatadir, "security-mappings.xml");
+        File contextDatadir = new File(configPath, "security-proxy");
+        if ((!contextDatadir.exists()) || (!contextDatadir.isDirectory())) {
+            LOGGER.info("Datadir set for security-proxy, but not found is not a directory");
+            throw new RuntimeException("Datadir set for security-proxy, but not found is not a directory: "
+                    + contextDatadir.getAbsolutePath());
+        }
+        File securityMappings = new File(contextDatadir, "security-mappings.xml");
 
-		if (!securityMappings.exists()) {
-			throw new RuntimeException(
-					"Unable to find " + securityMappings.getPath() + ", please check your security-proxy datadir.");
-		}
+        if (!securityMappings.exists()) {
+            throw new RuntimeException(
+                    "Unable to find " + securityMappings.getPath() + ", please check your security-proxy datadir.");
+        }
 
-		try {
-			requestMap.clear();
-			loadSecurityRules(securityMappings);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
+        try {
+            requestMap.clear();
+            loadSecurityRules(securityMappings);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	private void loadSecurityRules(File f) throws Exception {
-		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-		Document doc = dBuilder.parse(f);
+    private void loadSecurityRules(File f) throws Exception {
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+        Document doc = dBuilder.parse(f);
 
-		XPath xPath = XPathFactory.newInstance().newXPath();
-		NodeList l = (NodeList) xPath.compile("//http/intercept-url").evaluate(doc, XPathConstants.NODESET);
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        NodeList l = (NodeList) xPath.compile("//http/intercept-url").evaluate(doc, XPathConstants.NODESET);
 
-		for (int i = 0; i < l.getLength(); ++i) {
-			RequestMatcher rm = new RegexRequestMatcher(
-					l.item(i).getAttributes().getNamedItem("pattern").getTextContent(), null);
-			List<ConfigAttribute> lca = SecurityConfig.createListFromCommaDelimitedString(
-					l.item(i).getAttributes().getNamedItem("access").getTextContent());
-			requestMap.put(rm, lca);
-		}
+        for (int i = 0; i < l.getLength(); ++i) {
+            RequestMatcher rm = new RegexRequestMatcher(
+                    l.item(i).getAttributes().getNamedItem("pattern").getTextContent(), null);
+            List<ConfigAttribute> lca = SecurityConfig.createListFromCommaDelimitedString(
+                    l.item(i).getAttributes().getNamedItem("access").getTextContent());
+            requestMap.put(rm, lca);
+        }
 
-	}
+    }
 
-	public Collection<ConfigAttribute> getAllConfigAttributes() {
-		Set<ConfigAttribute> allAttributes = new HashSet<ConfigAttribute>();
+    public Collection<ConfigAttribute> getAllConfigAttributes() {
+        Set<ConfigAttribute> allAttributes = new HashSet<ConfigAttribute>();
 
-		for (Map.Entry<RequestMatcher, Collection<ConfigAttribute>> entry : requestMap.entrySet()) {
+        for (Map.Entry<RequestMatcher, Collection<ConfigAttribute>> entry : requestMap.entrySet()) {
 
-			allAttributes.addAll(entry.getValue());
-		}
+            allAttributes.addAll(entry.getValue());
+        }
 
-		return allAttributes;
-	}
+        return allAttributes;
+    }
 
-	public Collection<ConfigAttribute> getAttributes(Object object) {
-		final HttpServletRequest request = ((FilterInvocation) object).getRequest();
-		for (Map.Entry<RequestMatcher, Collection<ConfigAttribute>> entry : requestMap.entrySet()) {
-			if (entry.getKey().matches(request)) {
-				return entry.getValue();
-			}
-		}
-		return null;
-	}
+    public Collection<ConfigAttribute> getAttributes(Object object) {
+        final HttpServletRequest request = ((FilterInvocation) object).getRequest();
+        for (Map.Entry<RequestMatcher, Collection<ConfigAttribute>> entry : requestMap.entrySet()) {
+            if (entry.getKey().matches(request)) {
+                return entry.getValue();
+            }
+        }
+        return null;
+    }
 
-	public boolean supports(Class<?> clazz) {
-		return FilterInvocation.class.isAssignableFrom(clazz);
-	}
+    public boolean supports(Class<?> clazz) {
+        return FilterInvocation.class.isAssignableFrom(clazz);
+    }
 }

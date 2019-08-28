@@ -37,37 +37,37 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public final class Configuration {
 
-	protected static final Log LOG = LogFactory.getLog(Configuration.class.getName());
+    protected static final Log LOG = LogFactory.getLog(Configuration.class.getName());
 
-	private String publicContextPath;
+    private String publicContextPath;
 
-	@Autowired
-	private GeorchestraConfiguration georConfig;
+    @Autowired
+    private GeorchestraConfiguration georConfig;
 
-	public String getPublicContextPath() {
+    public String getPublicContextPath() {
 
-		if ((georConfig != null) && (georConfig.activated())) {
-			LOG.debug("GeorchestraConfiguration activated, using publicContextPath from the geOrchestra datadir.");
-			return georConfig.getProperty("publicContextPath");
-		}
+        if ((georConfig != null) && (georConfig.activated())) {
+            LOG.debug("GeorchestraConfiguration activated, using publicContextPath from the geOrchestra datadir.");
+            return georConfig.getProperty("publicContextPath");
+        }
 
-		// Falls back on the original behaviour
-		checkConfiguration();
-		return this.publicContextPath;
-	}
+        // Falls back on the original behaviour
+        checkConfiguration();
+        return this.publicContextPath;
+    }
 
-	private void checkConfiguration() {
+    private void checkConfiguration() {
 
-		if (StringUtils.isEmpty(this.publicContextPath)) {
-			LOG.warn("password recovery context was not configured.");
-			return;
-		}
+        if (StringUtils.isEmpty(this.publicContextPath)) {
+            LOG.warn("password recovery context was not configured.");
+            return;
+        }
 
-		LOG.info("password recovery context was configured: " + this.publicContextPath);
-	}
+        LOG.info("password recovery context was configured: " + this.publicContextPath);
+    }
 
-	public void setPublicContextPath(String publicContextPath) {
-		this.publicContextPath = publicContextPath;
-	}
+    public void setPublicContextPath(String publicContextPath) {
+        this.publicContextPath = publicContextPath;
+    }
 
 }

@@ -23,11 +23,11 @@ import java.sql.Connection;
 
 public abstract class AbstractDataCommand implements DataCommand {
 
-	protected Connection connection;
+    protected Connection connection;
 
-	@Override
-	public void setConnection(Connection connection) {
-		this.connection = connection;
-	}
+    @Override
+    public void setConnection(Connection connection) {
+        this.connection = connection;
+    }
 
 }

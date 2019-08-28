@@ -25,6 +25,6 @@ package org.georchestra.extractorapp.ws.extractor;
  */
 final class ExtractorReomoveTaskRequest {
 
-	public static String operationName = "removeTask";
+    public static String operationName = "removeTask";
 
 }

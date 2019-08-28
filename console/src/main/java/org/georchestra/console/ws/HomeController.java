@@ -49,54 +49,54 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class HomeController {
 
-	private static final Log LOG = LogFactory.getLog(HomeController.class.getName());
-	private ExpiredTokenManagement tokenManagement;
+    private static final Log LOG = LogFactory.getLog(HomeController.class.getName());
+    private ExpiredTokenManagement tokenManagement;
 
-	private Configuration config;
+    private Configuration config;
 
-	@Autowired
-	private GeorchestraConfiguration georConfig;
+    @Autowired
+    private GeorchestraConfiguration georConfig;
 
-	@Autowired
-	private ServletContext context;
+    @Autowired
+    private ServletContext context;
 
-	@Autowired
-	public HomeController(ExpiredTokenManagement tokenManagment, Configuration cfg) {
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("home controller initialization");
-		}
-		this.config = cfg;
+    @Autowired
+    public HomeController(ExpiredTokenManagement tokenManagment, Configuration cfg) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("home controller initialization");
+        }
+        this.config = cfg;
 
-		this.tokenManagement = tokenManagment;
-		this.tokenManagement.start();
-	}
+        this.tokenManagement = tokenManagment;
+        this.tokenManagement.start();
+    }
 
-	@RequestMapping(value = "/")
-	public void root(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    @RequestMapping(value = "/")
+    public void root(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-		String roles = request.getHeader("sec-roles");
+        String roles = request.getHeader("sec-roles");
 
-		if (roles != null) {
-			String redirectUrl;
-			List<String> rolesList = Arrays.asList(roles.split(";"));
+        if (roles != null) {
+            String redirectUrl;
+            List<String> rolesList = Arrays.asList(roles.split(";"));
 
-			if (rolesList.contains("ROLE_SUPERUSER") || rolesList.contains("ROLE_ORGADMIN")) {
-				redirectUrl = "/manager/";
-			} else {
-				redirectUrl = "/account/userdetails";
-			}
-			if (LOG.isDebugEnabled()) {
-				LOG.debug("root page request -> redirection to " + config.getPublicContextPath() + redirectUrl);
-			}
-			response.sendRedirect(config.getPublicContextPath() + redirectUrl);
-		} else {
-			// redirect to CAS
-			response.sendRedirect(config.getPublicContextPath() + "/account/userdetails?login");
-		}
-	}
+            if (rolesList.contains("ROLE_SUPERUSER") || rolesList.contains("ROLE_ORGADMIN")) {
+                redirectUrl = "/manager/";
+            } else {
+                redirectUrl = "/account/userdetails";
+            }
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("root page request -> redirection to " + config.getPublicContextPath() + redirectUrl);
+            }
+            response.sendRedirect(config.getPublicContextPath() + redirectUrl);
+        } else {
+            // redirect to CAS
+            response.sendRedirect(config.getPublicContextPath() + "/account/userdetails?login");
+        }
+    }
 
-	@RequestMapping(value = "/manager/")
-	public String consoleHome(HttpServletRequest request) throws IOException {
-		return "managerUi";
-	}
+    @RequestMapping(value = "/manager/")
+    public String consoleHome(HttpServletRequest request) throws IOException {
+        return "managerUi";
+    }
 }

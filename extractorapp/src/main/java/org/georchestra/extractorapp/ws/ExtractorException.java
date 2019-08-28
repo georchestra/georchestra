@@ -27,21 +27,21 @@ package org.georchestra.extractorapp.ws;
  */
 public class ExtractorException extends RuntimeException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public ExtractorException(Exception cause) {
-		super(cause);
-	}
+    public ExtractorException(Exception cause) {
+        super(cause);
+    }
 
-	public ExtractorException(String message) {
-		super(message);
-	}
+    public ExtractorException(String message) {
+        super(message);
+    }
 
-	@Override
-	public StackTraceElement[] getStackTrace() {
-		if (getCause() == null) {
-			return super.getStackTrace();
-		}
-		return getCause().getStackTrace();
-	}
+    @Override
+    public StackTraceElement[] getStackTrace() {
+        if (getCause() == null) {
+            return super.getStackTrace();
+        }
+        return getCause().getStackTrace();
+    }
 }

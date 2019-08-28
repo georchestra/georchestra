@@ -35,60 +35,60 @@ import java.io.PrintWriter;
  */
 final public class ResponseUtil {
 
-	private ResponseUtil() {
-		// utility class pattern
-	}
+    private ResponseUtil() {
+        // utility class pattern
+    }
 
-	/**
-	 * Build the success message
-	 * 
-	 * @return success message
-	 */
-	public static String buildSuccessMessage() {
-		return buildResponseMessage(Boolean.TRUE, null);
-	}
+    /**
+     * Build the success message
+     * 
+     * @return success message
+     */
+    public static String buildSuccessMessage() {
+        return buildResponseMessage(Boolean.TRUE, null);
+    }
 
-	public static String buildResponseMessage(Boolean status) {
-		return buildResponseMessage(status, null);
-	}
+    public static String buildResponseMessage(Boolean status) {
+        return buildResponseMessage(status, null);
+    }
 
-	public static String buildResponseMessage(Boolean status, String errorMessage) {
+    public static String buildResponseMessage(Boolean status, String errorMessage) {
 
-		JSONObject res = new JSONObject();
-		try {
-			res.put("success", status);
-			if (errorMessage != null) {
-				res.put("error", errorMessage);
-			}
-		} catch (JSONException e) {
-			throw new RuntimeException(e);
-		}
-		return res.toString();
-	}
+        JSONObject res = new JSONObject();
+        try {
+            res.put("success", status);
+            if (errorMessage != null) {
+                res.put("error", errorMessage);
+            }
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        return res.toString();
+    }
 
-	public static void buildResponse(HttpServletResponse response, String jsonData, int sc) throws IOException {
+    public static void buildResponse(HttpServletResponse response, String jsonData, int sc) throws IOException {
 
-		response.setContentType("application/json");
-		response.setStatus(sc);
+        response.setContentType("application/json");
+        response.setStatus(sc);
 
-		PrintWriter out = response.getWriter();
-		try {
-			out.println(jsonData);
+        PrintWriter out = response.getWriter();
+        try {
+            out.println(jsonData);
 
-		} finally {
-			out.close();
-		}
-	}
+        } finally {
+            out.close();
+        }
+    }
 
-	public static void writeSuccess(HttpServletResponse response) throws IOException {
+    public static void writeSuccess(HttpServletResponse response) throws IOException {
 
-		buildResponse(response, ResponseUtil.buildSuccessMessage(), HttpServletResponse.SC_OK);
-	}
+        buildResponse(response, ResponseUtil.buildSuccessMessage(), HttpServletResponse.SC_OK);
+    }
 
-	public static void writeError(HttpServletResponse response, String message) throws IOException {
+    public static void writeError(HttpServletResponse response, String message) throws IOException {
 
-		buildResponse(response, ResponseUtil.buildResponseMessage(Boolean.FALSE, message),
-				HttpServletResponse.SC_NOT_FOUND);
-	}
+        buildResponse(response, ResponseUtil.buildResponseMessage(Boolean.FALSE, message),
+                HttpServletResponse.SC_NOT_FOUND);
+    }
 
 }

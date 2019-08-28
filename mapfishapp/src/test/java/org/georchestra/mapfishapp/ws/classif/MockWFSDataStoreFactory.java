@@ -15,20 +15,20 @@ import org.geotools.ows.ServiceException;
 
 public class MockWFSDataStoreFactory extends WFSDataStoreFactory {
 
-	@Override
-	public WFSContentDataStore createDataStore(Map arg0) throws IOException {
-		// connect to remote WFS
+    @Override
+    public WFSContentDataStore createDataStore(Map arg0) throws IOException {
+        // connect to remote WFS
 
-		WFSConfig conf = WFSConfig.fromParams(arg0);
-		WFSClient wfsclient = null;
-		try {
-			URL getCap = (URL) arg0.get(WFSDataStoreFactory.URL.key);
-			SimpleHttpClient hc = new SimpleHttpClient(); // TODO use TestHTTPClient instead
-			wfsclient = new WFSClient(getCap, hc, conf);
-		} catch (ServiceException e) {
-			fail("Unable to instantiate a WFSClient: " + e.getMessage());
-		}
-		WFSContentDataStore mockDs = new WFSContentDataStore(wfsclient);
-		return mockDs;
-	}
+        WFSConfig conf = WFSConfig.fromParams(arg0);
+        WFSClient wfsclient = null;
+        try {
+            URL getCap = (URL) arg0.get(WFSDataStoreFactory.URL.key);
+            SimpleHttpClient hc = new SimpleHttpClient(); // TODO use TestHTTPClient instead
+            wfsclient = new WFSClient(getCap, hc, conf);
+        } catch (ServiceException e) {
+            fail("Unable to instantiate a WFSClient: " + e.getMessage());
+        }
+        WFSContentDataStore mockDs = new WFSContentDataStore(wfsclient);
+        return mockDs;
+    }
 }

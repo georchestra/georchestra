@@ -32,46 +32,46 @@ import org.json.JSONObject;
  */
 final class ExtractorUpdateAllPrioritiesRequest {
 
-	public static final String operationName = "updateAllPriorities";
-	public static final String UUID_LIST_KEY = "uuidList";
-	public static final String UUID_KEY = "uuid";
+    public static final String operationName = "updateAllPriorities";
+    public static final String UUID_LIST_KEY = "uuidList";
+    public static final String UUID_KEY = "uuid";
 
-	private List<String> uuidList;
+    private List<String> uuidList;
 
-	private ExtractorUpdateAllPrioritiesRequest(List<String> uuids) {
+    private ExtractorUpdateAllPrioritiesRequest(List<String> uuids) {
 
-		assert uuids != null;
+        assert uuids != null;
 
-		uuidList = uuids;
-	}
+        uuidList = uuids;
+    }
 
-	public List<String> asList() {
+    public List<String> asList() {
 
-		return uuidList;
-	}
+        return uuidList;
+    }
 
-	/**
-	 * 
-	 * @param postUuidList format {["uuid1", "uuid2", ....]}
-	 * @return
-	 * @throws JSONException
-	 */
-	public static ExtractorUpdateAllPrioritiesRequest parseJson(String postUuidList) throws JSONException {
+    /**
+     * 
+     * @param postUuidList format {["uuid1", "uuid2", ....]}
+     * @return
+     * @throws JSONException
+     */
+    public static ExtractorUpdateAllPrioritiesRequest parseJson(String postUuidList) throws JSONException {
 
-		JSONObject jsonRequest = JSONUtil.parseStringToJSon(postUuidList);
+        JSONObject jsonRequest = JSONUtil.parseStringToJSon(postUuidList);
 
-		JSONArray uuidArray = jsonRequest.names();
-		List<String> uuids = new LinkedList<String>();
+        JSONArray uuidArray = jsonRequest.names();
+        List<String> uuids = new LinkedList<String>();
 
-		for (int i = 0; i < uuidArray.length(); i++) {
+        for (int i = 0; i < uuidArray.length(); i++) {
 
-			String uuid = uuidArray.getString(i);
-			uuids.add(uuid);
-		}
+            String uuid = uuidArray.getString(i);
+            uuids.add(uuid);
+        }
 
-		ExtractorUpdateAllPrioritiesRequest request = new ExtractorUpdateAllPrioritiesRequest(uuids);
+        ExtractorUpdateAllPrioritiesRequest request = new ExtractorUpdateAllPrioritiesRequest(uuids);
 
-		return request;
-	}
+        return request;
+    }
 
 }

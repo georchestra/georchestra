@@ -43,92 +43,92 @@ import java.util.Set;
 @Controller
 public class UsersExport {
 
-	private AccountDao accountDao;
+    private AccountDao accountDao;
 
-	@Autowired
-	private AdvancedDelegationDao advancedDelegationDao;
+    @Autowired
+    private AdvancedDelegationDao advancedDelegationDao;
 
-	// Used for testing only
-	public void setAccountDao(AccountDao accountDao) {
-		this.accountDao = accountDao;
-	}
+    // Used for testing only
+    public void setAccountDao(AccountDao accountDao) {
+        this.accountDao = accountDao;
+    }
 
-	private static final Log LOG = LogFactory.getLog(UsersController.class.getName());
+    private static final Log LOG = LogFactory.getLog(UsersController.class.getName());
 
-	// Outlook csv header
-	private final String OUTLOOK_CSV_HEADER = "First Name,Middle Name,Last Name,Title,Suffix,Initials,Web Page,Gender,Birthday,Anniversary,"
-			+ "Location,Language,Internet Free Busy,Notes,E-mail Address,E-mail 2 Address,E-mail 3 Address,Primary Phone,Home Phone,"
-			+ "Home Phone 2,Mobile Phone,Pager,Home Fax,Home Address,Home Street,Home Street 2,Home Street 3,Home Address PO Box,Home City,"
-			+ "Home State,Home Postal Code,Home Country,Spouse,Children,Manager's Name,Assistant's Name,Referred By,Company Main Phone,"
-			+ "Business Phone,Business Phone 2,Business Fax,Assistant's Phone,Company,Job Title,Department,Office Location,Organizational ID Number,"
-			+ "Profession,Account,Business Address,Business Street,Business Street 2,Business Street 3,Business Address PO Box,Business City,"
-			+ "Business State,Business Postal Code,Business Country,Other Phone,Other Fax,Other Address,Other Street,Other Street 2,Other Street 3,"
-			+ "Other Address PO Box,Other City,Other State,Other Postal Code,Other Country,Callback,Car Phone,ISDN,Radio Phone,TTY/TDD Phone,Telex,"
-			+ "User 1,User 2,User 3,User 4,Keywords,Mileage,Hobby,Billing Information,Directory Server,Sensitivity,Priority,Private,Categories\r\n";
+    // Outlook csv header
+    private final String OUTLOOK_CSV_HEADER = "First Name,Middle Name,Last Name,Title,Suffix,Initials,Web Page,Gender,Birthday,Anniversary,"
+            + "Location,Language,Internet Free Busy,Notes,E-mail Address,E-mail 2 Address,E-mail 3 Address,Primary Phone,Home Phone,"
+            + "Home Phone 2,Mobile Phone,Pager,Home Fax,Home Address,Home Street,Home Street 2,Home Street 3,Home Address PO Box,Home City,"
+            + "Home State,Home Postal Code,Home Country,Spouse,Children,Manager's Name,Assistant's Name,Referred By,Company Main Phone,"
+            + "Business Phone,Business Phone 2,Business Fax,Assistant's Phone,Company,Job Title,Department,Office Location,Organizational ID Number,"
+            + "Profession,Account,Business Address,Business Street,Business Street 2,Business Street 3,Business Address PO Box,Business City,"
+            + "Business State,Business Postal Code,Business Country,Other Phone,Other Fax,Other Address,Other Street,Other Street 2,Other Street 3,"
+            + "Other Address PO Box,Other City,Other State,Other Postal Code,Other Country,Callback,Car Phone,ISDN,Radio Phone,TTY/TDD Phone,Telex,"
+            + "User 1,User 2,User 3,User 4,Keywords,Mileage,Hobby,Billing Information,Directory Server,Sensitivity,Priority,Private,Categories\r\n";
 
-	@Autowired
-	public UsersExport(AccountDao dao) {
-		this.accountDao = dao;
-	}
+    @Autowired
+    public UsersExport(AccountDao dao) {
+        this.accountDao = dao;
+    }
 
-	@RequestMapping(value = "/private/users.csv", method = RequestMethod.POST, produces = "text/csv; charset=utf-8")
-	@ResponseBody
-	public String getUsersAsCsv(@RequestParam(value = "users") String rawUsers) throws Exception {
-		Set<String> users = this.parseRequest(rawUsers);
-		StringBuilder res = new StringBuilder();
-		res.append(OUTLOOK_CSV_HEADER); // add csv outlook header
+    @RequestMapping(value = "/private/users.csv", method = RequestMethod.POST, produces = "text/csv; charset=utf-8")
+    @ResponseBody
+    public String getUsersAsCsv(@RequestParam(value = "users") String rawUsers) throws Exception {
+        Set<String> users = this.parseRequest(rawUsers);
+        StringBuilder res = new StringBuilder();
+        res.append(OUTLOOK_CSV_HEADER); // add csv outlook header
 
-		for (String user : users) {
-			try {
-				Account a = accountDao.findByUID(user);
-				res.append(a.toCsv());
-			} catch (NameNotFoundException e) {
-				LOG.error(String.format("User [%s] not found, skipping", user), e);
-			}
-		}
+        for (String user : users) {
+            try {
+                Account a = accountDao.findByUID(user);
+                res.append(a.toCsv());
+            } catch (NameNotFoundException e) {
+                LOG.error(String.format("User [%s] not found, skipping", user), e);
+            }
+        }
 
-		return res.toString();
-	}
+        return res.toString();
+    }
 
-	@RequestMapping(value = "/private/users.vcf", method = RequestMethod.POST, produces = "text/x-vcard; charset=utf-8")
-	@ResponseBody
-	public String getUsersAsVcard(@RequestParam(value = "users") String rawUsers) throws Exception {
-		Set<String> users = this.parseRequest(rawUsers);
+    @RequestMapping(value = "/private/users.vcf", method = RequestMethod.POST, produces = "text/x-vcard; charset=utf-8")
+    @ResponseBody
+    public String getUsersAsVcard(@RequestParam(value = "users") String rawUsers) throws Exception {
+        Set<String> users = this.parseRequest(rawUsers);
 
-		StringBuilder ret = new StringBuilder();
-		for (String user : users) {
-			try {
-				Account a = accountDao.findByUID(user);
-				ret.append(a.toVcf());
-			} catch (NameNotFoundException e) {
-				LOG.error(String.format("User [%s] not found, skipping", user), e);
-			}
-		}
+        StringBuilder ret = new StringBuilder();
+        for (String user : users) {
+            try {
+                Account a = accountDao.findByUID(user);
+                ret.append(a.toVcf());
+            } catch (NameNotFoundException e) {
+                LOG.error(String.format("User [%s] not found, skipping", user), e);
+            }
+        }
 
-		return ret.toString();
-	}
+        return ret.toString();
+    }
 
-	/**
-	 * Parse JSON string and check that connected user has permissions to view data
-	 * on requested users
-	 *
-	 * @param rawUsers JSON string to parse
-	 * @return Parsed user list
-	 * @throws AccessDeniedException if current user does not have permissions to
-	 *                               view data of all requested users
-	 */
-	private Set<String> parseRequest(String rawUsers) throws JSONException {
-		JSONArray jsonUsers = new JSONArray(rawUsers);
-		Set<String> users = new HashSet<>();
-		for (int i = 0; i < jsonUsers.length(); i++)
-			users.add(jsonUsers.getString(i));
+    /**
+     * Parse JSON string and check that connected user has permissions to view data
+     * on requested users
+     *
+     * @param rawUsers JSON string to parse
+     * @return Parsed user list
+     * @throws AccessDeniedException if current user does not have permissions to
+     *                               view data of all requested users
+     */
+    private Set<String> parseRequest(String rawUsers) throws JSONException {
+        JSONArray jsonUsers = new JSONArray(rawUsers);
+        Set<String> users = new HashSet<>();
+        for (int i = 0; i < jsonUsers.length(); i++)
+            users.add(jsonUsers.getString(i));
 
-		// check if user is under delegation for delegated admins
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if (auth != null && !auth.getAuthorities().contains(this.advancedDelegationDao.ROLE_SUPERUSER))
-			if (!this.advancedDelegationDao.findUsersUnderDelegation(auth.getName()).containsAll(users))
-				throw new AccessDeniedException("Some user not under delegation");
-		return users;
-	}
+        // check if user is under delegation for delegated admins
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && !auth.getAuthorities().contains(this.advancedDelegationDao.ROLE_SUPERUSER))
+            if (!this.advancedDelegationDao.findUsersUnderDelegation(auth.getName()).containsAll(users))
+                throw new AccessDeniedException("Some user not under delegation");
+        return users;
+    }
 
 }

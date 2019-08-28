@@ -29,125 +29,125 @@ import java.util.Date;
  */
 public interface Account extends Comparable<Account> {
 
-	void setUid(String uid);
+    void setUid(String uid);
 
-	String getUid();
+    String getUid();
 
-	/**
-	 * Person’s full name.
-	 */
-	String getCommonName();
+    /**
+     * Person’s full name.
+     */
+    String getCommonName();
 
-	/**
-	 * Person’s full name.
-	 */
-	void setCommonName(String name);
+    /**
+     * Person’s full name.
+     */
+    void setCommonName(String name);
 
-	String getEmail();
+    String getEmail();
 
-	void setEmail(String email);
+    void setEmail(String email);
 
-	String getPhone();
+    String getPhone();
 
-	void setPhone(String phone);
+    void setPhone(String phone);
 
-	String getDescription();
+    String getDescription();
 
-	void setDescription(String description);
+    void setDescription(String description);
 
-	void setPassword(String password);
+    void setPassword(String password);
 
-	String getPassword();
+    String getPassword();
 
-	void setNewPassword(String newPassword);
+    void setNewPassword(String newPassword);
 
-	String getNewPassword();
+    String getNewPassword();
 
-	String getSurname();
+    String getSurname();
 
-	void setSurname(String surname);
+    void setSurname(String surname);
 
-	/**
-	 * The givenName attribute is used to hold the part of a person’s name which is
-	 * not their surname nor middle name.
-	 */
-	String getGivenName();
+    /**
+     * The givenName attribute is used to hold the part of a person’s name which is
+     * not their surname nor middle name.
+     */
+    String getGivenName();
 
-	/**
-	 * The givenName attribute is used to hold the part of a person’s name which is
-	 * not their surname nor middle name.
-	 */
-	void setGivenName(String givenName);
+    /**
+     * The givenName attribute is used to hold the part of a person’s name which is
+     * not their surname nor middle name.
+     */
+    void setGivenName(String givenName);
 
-	String getTitle();
+    String getTitle();
 
-	void setTitle(String title);
+    void setTitle(String title);
 
-	String getPostalAddress();
+    String getPostalAddress();
 
-	void setPostalAddress(String postalAddress);
+    void setPostalAddress(String postalAddress);
 
-	String getPostalCode();
+    String getPostalCode();
 
-	void setPostalCode(String postalCode);
+    void setPostalCode(String postalCode);
 
-	String getRegisteredAddress();
+    String getRegisteredAddress();
 
-	void setRegisteredAddress(String registeredAddress);
+    void setRegisteredAddress(String registeredAddress);
 
-	String getPostOfficeBox();
+    String getPostOfficeBox();
 
-	void setPostOfficeBox(String postOfficeBox);
+    void setPostOfficeBox(String postOfficeBox);
 
-	String getPhysicalDeliveryOfficeName();
+    String getPhysicalDeliveryOfficeName();
 
-	void setPhysicalDeliveryOfficeName(String physicalDeliveryOfficeName);
+    void setPhysicalDeliveryOfficeName(String physicalDeliveryOfficeName);
 
-	void setStreet(String street);
+    void setStreet(String street);
 
-	String getStreet();
+    String getStreet();
 
-	void setLocality(String locality);
+    void setLocality(String locality);
 
-	String getLocality();
+    String getLocality();
 
-	void setFacsimile(String facsimile);
+    void setFacsimile(String facsimile);
 
-	String getFacsimile();
+    String getFacsimile();
 
-	void setMobile(String mobile);
+    void setMobile(String mobile);
 
-	String getMobile();
+    String getMobile();
 
-	void setRoomNumber(String roomNumber);
+    void setRoomNumber(String roomNumber);
 
-	String getRoomNumber();
+    String getRoomNumber();
 
-	void setStateOrProvince(String stateOrProvince);
+    void setStateOrProvince(String stateOrProvince);
 
-	String getStateOrProvince();
+    String getStateOrProvince();
 
-	void setHomePostalAddress(String homePostalAddress);
+    void setHomePostalAddress(String homePostalAddress);
 
-	String getHomePostalAddress();
+    String getHomePostalAddress();
 
-	void setOrg(String org);
+    void setOrg(String org);
 
-	String getOrg();
+    String getOrg();
 
-	String toVcf();
+    String toVcf();
 
-	String toCsv();
+    String toCsv();
 
-	void setShadowExpire(Date expireDate);
+    void setShadowExpire(Date expireDate);
 
-	Date getShadowExpire();
+    Date getShadowExpire();
 
-	String getManager();
+    String getManager();
 
-	void setManager(String manager);
+    void setManager(String manager);
 
-	String getContext();
+    String getContext();
 
-	void setContext(String context);
+    void setContext(String context);
 }

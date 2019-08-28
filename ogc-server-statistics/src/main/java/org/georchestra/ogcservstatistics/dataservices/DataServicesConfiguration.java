@@ -30,64 +30,64 @@ import java.sql.*;
  */
 public final class DataServicesConfiguration {
 
-	private static final DataServicesConfiguration THIS = new DataServicesConfiguration();
-	private Connection connection;
-	private String user;
-	private String password;
-	private String jdbcURL;
+    private static final DataServicesConfiguration THIS = new DataServicesConfiguration();
+    private Connection connection;
+    private String user;
+    private String password;
+    private String jdbcURL;
 
-	private DataServicesConfiguration() {
+    private DataServicesConfiguration() {
 
-	}
+    }
 
-	public static DataServicesConfiguration getInstance() {
+    public static DataServicesConfiguration getInstance() {
 
-		return THIS;
-	}
+        return THIS;
+    }
 
-	public void setJdbcURL(String jdbcURL) {
-		this.jdbcURL = jdbcURL;
-	}
+    public void setJdbcURL(String jdbcURL) {
+        this.jdbcURL = jdbcURL;
+    }
 
-	public void setUser(String user) {
+    public void setUser(String user) {
 
-		this.user = user;
-	}
+        this.user = user;
+    }
 
-	public void setPassword(String password) {
+    public void setPassword(String password) {
 
-		this.password = password;
-	}
+        this.password = password;
+    }
 
-	/**
-	 * The connection to database
-	 * 
-	 * @return {@link Connection}
-	 * @throws SQLException
-	 */
-	public Connection getConnection() throws SQLException, ClassNotFoundException {
+    /**
+     * The connection to database
+     * 
+     * @return {@link Connection}
+     * @throws SQLException
+     */
+    public Connection getConnection() throws SQLException, ClassNotFoundException {
 
-		Class.forName("org.postgresql.Driver");
+        Class.forName("org.postgresql.Driver");
 
-		if ((this.connection == null) || (this.connection.isClosed())) {
-			synchronized (this) {
-				this.connection = DriverManager.getConnection(this.jdbcURL, this.user, this.password);
-			}
-		}
+        if ((this.connection == null) || (this.connection.isClosed())) {
+            synchronized (this) {
+                this.connection = DriverManager.getConnection(this.jdbcURL, this.user, this.password);
+            }
+        }
 
-		return this.connection;
-	}
+        return this.connection;
+    }
 
-	public void closeConnection() throws SQLException {
+    public void closeConnection() throws SQLException {
 
-		if (this.connection != null) {
-			synchronized (this) {
-				if (!this.connection.isClosed()) {
-					this.connection.close();
-				}
-				this.connection = null;
-			}
-		}
-	}
+        if (this.connection != null) {
+            synchronized (this) {
+                if (!this.connection.isClosed()) {
+                    this.connection.close();
+                }
+                this.connection = null;
+            }
+        }
+    }
 
 }

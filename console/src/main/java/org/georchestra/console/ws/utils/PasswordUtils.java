@@ -30,40 +30,40 @@ import org.springframework.validation.Errors;
  */
 public final class PasswordUtils {
 
-	public static final int SIZE = 8;
+    public static final int SIZE = 8;
 
-	@Autowired
-	private static Validation validation;
+    @Autowired
+    private static Validation validation;
 
-	private PasswordUtils() {
-		// utility class
-	}
+    private PasswordUtils() {
+        // utility class
+    }
 
-	public static void setValidation(Validation validation) {
-		PasswordUtils.validation = validation;
-	}
+    public static void setValidation(Validation validation) {
+        PasswordUtils.validation = validation;
+    }
 
-	public static void validate(final String password, final String confirmPassword, Errors errors) {
+    public static void validate(final String password, final String confirmPassword, Errors errors) {
 
-		final String pwd1 = password.trim();
-		final String pwd2 = confirmPassword.trim();
+        final String pwd1 = password.trim();
+        final String pwd2 = confirmPassword.trim();
 
-		if (!StringUtils.hasLength(pwd1) && PasswordUtils.validation.isUserFieldRequired("password"))
-			errors.rejectValue("password", "password.error.required", "required");
+        if (!StringUtils.hasLength(pwd1) && PasswordUtils.validation.isUserFieldRequired("password"))
+            errors.rejectValue("password", "password.error.required", "required");
 
-		if (!StringUtils.hasLength(pwd2) && PasswordUtils.validation.isUserFieldRequired("confirmPassword"))
-			errors.rejectValue("confirmPassword", "confirmPassword.error.required", "required");
+        if (!StringUtils.hasLength(pwd2) && PasswordUtils.validation.isUserFieldRequired("confirmPassword"))
+            errors.rejectValue("confirmPassword", "confirmPassword.error.required", "required");
 
-		if (StringUtils.hasLength(pwd1) && StringUtils.hasLength(pwd2)) {
-			if (!pwd1.equals(pwd2)) {
-				errors.rejectValue("confirmPassword", "confirmPassword.error.pwdNotEquals",
-						"These passwords don't match");
-			} else {
-				if (pwd1.length() < SIZE)
-					errors.rejectValue("password", "password.error.sizeError",
-							"The password does have at least 8 characters");
-			}
-		}
-	}
+        if (StringUtils.hasLength(pwd1) && StringUtils.hasLength(pwd2)) {
+            if (!pwd1.equals(pwd2)) {
+                errors.rejectValue("confirmPassword", "confirmPassword.error.pwdNotEquals",
+                        "These passwords don't match");
+            } else {
+                if (pwd1.length() < SIZE)
+                    errors.rejectValue("password", "password.error.sizeError",
+                            "The password does have at least 8 characters");
+            }
+        }
+    }
 
 }

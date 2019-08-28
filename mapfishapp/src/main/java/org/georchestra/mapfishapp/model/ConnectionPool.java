@@ -28,52 +28,52 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class ConnectionPool {
 
-	private BasicDataSource basicDataSource;
+    private BasicDataSource basicDataSource;
 
-	@Autowired
-	private GeorchestraConfiguration georchestraConfiguration;
+    @Autowired
+    private GeorchestraConfiguration georchestraConfiguration;
 
-	private String jdbcUrl;
+    private String jdbcUrl;
 
-	public ConnectionPool() {
-	}
+    public ConnectionPool() {
+    }
 
-	public ConnectionPool(String jdbcUrl) {
-		this.jdbcUrl = jdbcUrl;
-	}
+    public ConnectionPool(String jdbcUrl) {
+        this.jdbcUrl = jdbcUrl;
+    }
 
-	public void init() {
-		String actualJdbcUrl = jdbcUrl;
+    public void init() {
+        String actualJdbcUrl = jdbcUrl;
 
-		if (georchestraConfiguration.activated()) {
-			String supersededJdbcUrl = georchestraConfiguration.getProperty("jdbcUrl");
-			if (supersededJdbcUrl != null) {
-				actualJdbcUrl = supersededJdbcUrl;
-			}
-		}
+        if (georchestraConfiguration.activated()) {
+            String supersededJdbcUrl = georchestraConfiguration.getProperty("jdbcUrl");
+            if (supersededJdbcUrl != null) {
+                actualJdbcUrl = supersededJdbcUrl;
+            }
+        }
 
-		basicDataSource = new BasicDataSource();
-		basicDataSource.setDriverClassName("org.postgresql.Driver");
-		basicDataSource.setTestOnBorrow(true);
-		basicDataSource.setPoolPreparedStatements(true);
-		basicDataSource.setMaxOpenPreparedStatements(-1);
-		basicDataSource.setDefaultReadOnly(false);
-		basicDataSource.setDefaultAutoCommit(true);
+        basicDataSource = new BasicDataSource();
+        basicDataSource.setDriverClassName("org.postgresql.Driver");
+        basicDataSource.setTestOnBorrow(true);
+        basicDataSource.setPoolPreparedStatements(true);
+        basicDataSource.setMaxOpenPreparedStatements(-1);
+        basicDataSource.setDefaultReadOnly(false);
+        basicDataSource.setDefaultAutoCommit(true);
 
-		basicDataSource.setUrl(actualJdbcUrl);
-	}
+        basicDataSource.setUrl(actualJdbcUrl);
+    }
 
-	/**
-	 *
-	 * 
-	 * @param jdbcUrl
-	 */
-	public void setJdbcUrl(String jdbcUrl) {
-		this.jdbcUrl = jdbcUrl;
-	}
+    /**
+     *
+     * 
+     * @param jdbcUrl
+     */
+    public void setJdbcUrl(String jdbcUrl) {
+        this.jdbcUrl = jdbcUrl;
+    }
 
-	public Connection getConnection() throws SQLException {
-		return basicDataSource.getConnection();
-	}
+    public Connection getConnection() throws SQLException {
+        return basicDataSource.getConnection();
+    }
 
 }

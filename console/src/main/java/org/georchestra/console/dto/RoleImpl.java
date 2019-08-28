@@ -31,139 +31,139 @@ import java.util.List;
  */
 class RoleImpl implements Role, Comparable<Role> {
 
-	private String name;
-	private List<String> userList = new LinkedList<String>();
-	private String description;
-	private boolean isFavorite;
+    private String name;
+    private List<String> userList = new LinkedList<String>();
+    private String description;
+    private boolean isFavorite;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.georchestra.console.dto.Role#getCommonName()
-	 */
-	@Override
-	public String getName() {
-		return this.name;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.georchestra.console.dto.Role#getCommonName()
+     */
+    @Override
+    public String getName() {
+        return this.name;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.georchestra.console.dto.Role#setCommonName(java.lang.String)
-	 */
-	@Override
-	public void setName(String cn) {
-		this.name = cn;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.georchestra.console.dto.Role#setCommonName(java.lang.String)
+     */
+    @Override
+    public void setName(String cn) {
+        this.name = cn;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.georchestra.console.dto.Role#getMemberUid()
-	 */
-	@Override
-	public List<String> getUserList() {
-		return this.userList;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.georchestra.console.dto.Role#getMemberUid()
+     */
+    @Override
+    public List<String> getUserList() {
+        return this.userList;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.georchestra.console.dto.Role#setMemberUid(java.util.List)
-	 */
-	@Override
-	public void setUserList(List<String> userUidList) {
-		this.userList = userUidList;
-		// The full DN is stored LDAP-side, we only need
-		// the user identifier (uid).
-		Iterator<String> uids = userUidList.iterator();
-		while (uids.hasNext()) {
-			String cur = uids.next();
-			cur = cur.replaceAll("uid=([^,]+).*$", "$1");
-		}
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.georchestra.console.dto.Role#setMemberUid(java.util.List)
+     */
+    @Override
+    public void setUserList(List<String> userUidList) {
+        this.userList = userUidList;
+        // The full DN is stored LDAP-side, we only need
+        // the user identifier (uid).
+        Iterator<String> uids = userUidList.iterator();
+        while (uids.hasNext()) {
+            String cur = uids.next();
+            cur = cur.replaceAll("uid=([^,]+).*$", "$1");
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.georchestra.console.dto.Role#addMemberUid(java.lang.String)
-	 */
-	@Override
-	public void addUser(String userUid) {
-		// Extracting the uid
-		this.userList.add(userUid.replaceAll("uid=([^,]+).*$", "$1"));
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.georchestra.console.dto.Role#addMemberUid(java.lang.String)
+     */
+    @Override
+    public void addUser(String userUid) {
+        // Extracting the uid
+        this.userList.add(userUid.replaceAll("uid=([^,]+).*$", "$1"));
+    }
 
-	@Override
-	public void setDescription(String description) {
-		this.description = description;
+    @Override
+    public void setDescription(String description) {
+        this.description = description;
 
-	}
+    }
 
-	@Override
-	public String getDescription() {
-		return this.description;
-	}
+    @Override
+    public String getDescription() {
+        return this.description;
+    }
 
-	@Override
-	public void setFavorite(boolean isFavorite) {
-		this.isFavorite = isFavorite;
-	}
+    @Override
+    public void setFavorite(boolean isFavorite) {
+        this.isFavorite = isFavorite;
+    }
 
-	@Override
-	public boolean isFavorite() {
-		return this.isFavorite;
-	}
+    @Override
+    public boolean isFavorite() {
+        return this.isFavorite;
+    }
 
-	@Override
-	public String toString() {
-		return "RoleImpl [name=" + name + ", userList=" + userList + ", description=" + description + "]";
-	}
+    @Override
+    public String toString() {
+        return "RoleImpl [name=" + name + ", userList=" + userList + ", description=" + description + "]";
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		return result;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        return result;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (!(obj instanceof RoleImpl)) {
-			return false;
-		}
-		RoleImpl other = (RoleImpl) obj;
-		if (name == null) {
-			if (other.name != null) {
-				return false;
-			}
-		} else if (!name.equals(other.name)) {
-			return false;
-		}
-		return true;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof RoleImpl)) {
+            return false;
+        }
+        RoleImpl other = (RoleImpl) obj;
+        if (name == null) {
+            if (other.name != null) {
+                return false;
+            }
+        } else if (!name.equals(other.name)) {
+            return false;
+        }
+        return true;
+    }
 
-	@Override
-	public int compareTo(Role o) {
+    @Override
+    public int compareTo(Role o) {
 
-		return this.name.compareTo(o.getName());
-	}
+        return this.name.compareTo(o.getName());
+    }
 
 }

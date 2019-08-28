@@ -49,86 +49,86 @@ import java.util.Set;
 @Controller
 public class LogController {
 
-	private static final Log LOG = LogFactory.getLog(LogController.class.getName());
+    private static final Log LOG = LogFactory.getLog(LogController.class.getName());
 
-	private static final String BASE_MAPPING = "/private";
-	private static final String REQUEST_MAPPING = BASE_MAPPING + "/admin_logs";
-	private static GrantedAuthority ROLE_SUPERUSER = new SimpleGrantedAuthority("ROLE_SUPERUSER");
+    private static final String BASE_MAPPING = "/private";
+    private static final String REQUEST_MAPPING = BASE_MAPPING + "/admin_logs";
+    private static GrantedAuthority ROLE_SUPERUSER = new SimpleGrantedAuthority("ROLE_SUPERUSER");
 
-	@Autowired
-	private AdminLogDao logDao;
+    @Autowired
+    private AdminLogDao logDao;
 
-	@Autowired
-	private DelegationDao delegationDao;
-	@Autowired
-	private OrgsDao orgsDao;
-	@Autowired
-	private AdvancedDelegationDao advancedDelegationDao;
+    @Autowired
+    private DelegationDao delegationDao;
+    @Autowired
+    private OrgsDao orgsDao;
+    @Autowired
+    private AdvancedDelegationDao advancedDelegationDao;
 
-	/**
-	 * Returns array of logs using json syntax.
-	 * 
-	 * <pre>
-	 *     {"logs": [
-	 *		{
-	 *			"admin": "testadmin",
-	 *			"date": "2016-03-22T15:26:21.087+0100",
-	 *			"target": "testeditor",
-	 *			"type": "Email sent"
-	 *		},
-	 *		{
-	 *			"admin": "testadmin",
-	 *			"date": "2016-03-21T17:50:09.258+0100",
-	 *			"target": "joe",
-	 *			"type": "Email sent"
-	 *		},
-	 *		{
-	 *			"admin": "testadmin",
-	 *			"date": "2016-03-21T17:50:09.258+0100",
-	 *			"target": "marie",
-	 *			"type": "Email sent"
-	 *		}
-	 *	]}
-	 * </pre>
-	 *
-	 */
-	@RequestMapping(value = REQUEST_MAPPING
-			+ "/{target}/{limit}/{page}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
-	@ResponseBody
-	public List<AdminLogEntry> find(@PathVariable String target, @PathVariable int limit, @PathVariable int page) {
+    /**
+     * Returns array of logs using json syntax.
+     * 
+     * <pre>
+     *     {"logs": [
+     *		{
+     *			"admin": "testadmin",
+     *			"date": "2016-03-22T15:26:21.087+0100",
+     *			"target": "testeditor",
+     *			"type": "Email sent"
+     *		},
+     *		{
+     *			"admin": "testadmin",
+     *			"date": "2016-03-21T17:50:09.258+0100",
+     *			"target": "joe",
+     *			"type": "Email sent"
+     *		},
+     *		{
+     *			"admin": "testadmin",
+     *			"date": "2016-03-21T17:50:09.258+0100",
+     *			"target": "marie",
+     *			"type": "Email sent"
+     *		}
+     *	]}
+     * </pre>
+     *
+     */
+    @RequestMapping(value = REQUEST_MAPPING
+            + "/{target}/{limit}/{page}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+    @ResponseBody
+    public List<AdminLogEntry> find(@PathVariable String target, @PathVariable int limit, @PathVariable int page) {
 
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-		// Filter logs by orgs users if user is not SUPERUSER
-		if (!auth.getAuthorities().contains(ROLE_SUPERUSER)) {
-			List<String> users = new ArrayList<String>();
-			DelegationEntry delegation = this.delegationDao.findOne(auth.getName());
-			String[] orgs = delegation.getOrgs();
-			for (String org : orgs)
-				users.addAll(this.orgsDao.findByCommonName(org).getMembers());
-			if (!users.contains(target))
-				throw new AccessDeniedException("User not under delegation");
-		}
+        // Filter logs by orgs users if user is not SUPERUSER
+        if (!auth.getAuthorities().contains(ROLE_SUPERUSER)) {
+            List<String> users = new ArrayList<String>();
+            DelegationEntry delegation = this.delegationDao.findOne(auth.getName());
+            String[] orgs = delegation.getOrgs();
+            for (String org : orgs)
+                users.addAll(this.orgsDao.findByCommonName(org).getMembers());
+            if (!users.contains(target))
+                throw new AccessDeniedException("User not under delegation");
+        }
 
-		return this.logDao.findByTarget(target, new PageRequest(page, limit, new Sort(Sort.Direction.DESC, "date")));
-	}
+        return this.logDao.findByTarget(target, new PageRequest(page, limit, new Sort(Sort.Direction.DESC, "date")));
+    }
 
-	@RequestMapping(value = REQUEST_MAPPING
-			+ "/{limit}/{page}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
-	@ResponseBody
-	public List<AdminLogEntry> find(HttpServletRequest request, @PathVariable int limit, @PathVariable int page) {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    @RequestMapping(value = REQUEST_MAPPING
+            + "/{limit}/{page}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+    @ResponseBody
+    public List<AdminLogEntry> find(HttpServletRequest request, @PathVariable int limit, @PathVariable int page) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-		// Filter logs by orgs users if user is not SUPERUSER
-		if (!auth.getAuthorities().contains(ROLE_SUPERUSER)) {
-			Set<String> users = this.advancedDelegationDao.findUsersUnderDelegation(auth.getName());
-			return this.logDao.myFindByTargets(users,
-					new PageRequest(page, limit, new Sort(Sort.Direction.DESC, "date")));
-		} else {
-			return this.logDao.findAll(new PageRequest(page, limit, new Sort(Sort.Direction.DESC, "date")))
-					.getContent();
-		}
+        // Filter logs by orgs users if user is not SUPERUSER
+        if (!auth.getAuthorities().contains(ROLE_SUPERUSER)) {
+            Set<String> users = this.advancedDelegationDao.findUsersUnderDelegation(auth.getName());
+            return this.logDao.myFindByTargets(users,
+                    new PageRequest(page, limit, new Sort(Sort.Direction.DESC, "date")));
+        } else {
+            return this.logDao.findAll(new PageRequest(page, limit, new Sort(Sort.Direction.DESC, "date")))
+                    .getContent();
+        }
 
-	}
+    }
 
 }

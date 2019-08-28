@@ -40,24 +40,24 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
  */
 public class ConfigurationInterceptor extends HandlerInterceptorAdapter {
 
-	@Autowired
-	private Configuration config;
+    @Autowired
+    private Configuration config;
 
-	@Autowired
-	private GeorchestraConfiguration georConfig;
+    @Autowired
+    private GeorchestraConfiguration georConfig;
 
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-			throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+            throws Exception {
 
-		HttpSession currentSession = request.getSession();
-		currentSession.setAttribute("publicContextPath", config.getPublicContextPath());
+        HttpSession currentSession = request.getSession();
+        currentSession.setAttribute("publicContextPath", config.getPublicContextPath());
 
-		if ((georConfig != null) && (georConfig.activated())) {
-			currentSession.setAttribute("headerHeight", georConfig.getProperty("headerHeight"));
-		} else {
-			currentSession.setAttribute("headerHeight", "90");
-		}
-		return true;
-	}
+        if ((georConfig != null) && (georConfig.activated())) {
+            currentSession.setAttribute("headerHeight", georConfig.getProperty("headerHeight"));
+        } else {
+            currentSession.setAttribute("headerHeight", "90");
+        }
+        return true;
+    }
 
 }

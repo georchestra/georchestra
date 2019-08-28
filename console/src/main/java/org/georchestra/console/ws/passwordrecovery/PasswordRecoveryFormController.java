@@ -77,138 +77,138 @@ import org.springframework.web.bind.support.SessionStatus;
 @SessionAttributes(types = PasswordRecoveryFormBean.class)
 public class PasswordRecoveryFormController {
 
-	protected static final Log LOG = LogFactory.getLog(PasswordRecoveryFormController.class.getName());
+    protected static final Log LOG = LogFactory.getLog(PasswordRecoveryFormController.class.getName());
 
-	// collaborations
-	private AccountDao accountDao;
-	private RoleDao roleDao;
-	private EmailFactory emailFactory;
-	private UserTokenDao userTokenDao;
-	private Configuration config;
-	private ReCaptchaParameters reCaptchaParameters;
+    // collaborations
+    private AccountDao accountDao;
+    private RoleDao roleDao;
+    private EmailFactory emailFactory;
+    private UserTokenDao userTokenDao;
+    private Configuration config;
+    private ReCaptchaParameters reCaptchaParameters;
 
-	@Autowired
-	private GeorchestraConfiguration georConfig;
+    @Autowired
+    private GeorchestraConfiguration georConfig;
 
-	@Autowired
-	public PasswordRecoveryFormController(AccountDao dao, RoleDao gDao, EmailFactory emailFactory,
-			UserTokenDao userTokenDao, Configuration cfg, ReCaptchaParameters reCaptchaParameters) {
-		this.accountDao = dao;
-		this.roleDao = gDao;
-		this.emailFactory = emailFactory;
-		this.userTokenDao = userTokenDao;
-		this.config = cfg;
-		this.reCaptchaParameters = reCaptchaParameters;
-	}
+    @Autowired
+    public PasswordRecoveryFormController(AccountDao dao, RoleDao gDao, EmailFactory emailFactory,
+            UserTokenDao userTokenDao, Configuration cfg, ReCaptchaParameters reCaptchaParameters) {
+        this.accountDao = dao;
+        this.roleDao = gDao;
+        this.emailFactory = emailFactory;
+        this.userTokenDao = userTokenDao;
+        this.config = cfg;
+        this.reCaptchaParameters = reCaptchaParameters;
+    }
 
-	@InitBinder
-	public void initForm(WebDataBinder dataBinder) {
+    @InitBinder
+    public void initForm(WebDataBinder dataBinder) {
 
-		dataBinder.setAllowedFields(new String[] { "email", "recaptcha_response_field" });
-	}
+        dataBinder.setAllowedFields(new String[] { "email", "recaptcha_response_field" });
+    }
 
-	@RequestMapping(value = "/account/passwordRecovery", method = RequestMethod.GET)
-	public String setupForm(HttpServletRequest request, @RequestParam(value = "email", required = false) String email,
-			Model model) throws IOException {
+    @RequestMapping(value = "/account/passwordRecovery", method = RequestMethod.GET)
+    public String setupForm(HttpServletRequest request, @RequestParam(value = "email", required = false) String email,
+            Model model) throws IOException {
 
-		HttpSession session = request.getSession();
-		PasswordRecoveryFormBean formBean = new PasswordRecoveryFormBean();
-		formBean.setEmail(email);
+        HttpSession session = request.getSession();
+        PasswordRecoveryFormBean formBean = new PasswordRecoveryFormBean();
+        formBean.setEmail(email);
 
-		model.addAttribute(formBean);
-		session.setAttribute("reCaptchaPublicKey", this.reCaptchaParameters.getPublicKey());
+        model.addAttribute(formBean);
+        session.setAttribute("reCaptchaPublicKey", this.reCaptchaParameters.getPublicKey());
 
-		return "passwordRecoveryForm";
-	}
+        return "passwordRecoveryForm";
+    }
 
-	/**
-	 * Generates a new unique http URL based on a token, then an e-mail is sent to
-	 * the user with instruction to change his password.
-	 *
-	 *
-	 * @param formBean      Contains the user's email
-	 * @param resultErrors  will be updated with the list of found errors.
-	 * @param sessionStatus
-	 *
-	 * @return the next view
-	 *
-	 * @throws IOException
-	 */
-	@RequestMapping(value = "/account/passwordRecovery", method = RequestMethod.POST)
-	public String generateToken(HttpServletRequest request, @ModelAttribute PasswordRecoveryFormBean formBean,
-			BindingResult resultErrors, SessionStatus sessionStatus) throws IOException {
+    /**
+     * Generates a new unique http URL based on a token, then an e-mail is sent to
+     * the user with instruction to change his password.
+     *
+     *
+     * @param formBean      Contains the user's email
+     * @param resultErrors  will be updated with the list of found errors.
+     * @param sessionStatus
+     *
+     * @return the next view
+     *
+     * @throws IOException
+     */
+    @RequestMapping(value = "/account/passwordRecovery", method = RequestMethod.POST)
+    public String generateToken(HttpServletRequest request, @ModelAttribute PasswordRecoveryFormBean formBean,
+            BindingResult resultErrors, SessionStatus sessionStatus) throws IOException {
 
-		RecaptchaUtils.validate(reCaptchaParameters, formBean.getRecaptcha_response_field(), resultErrors);
-		if (resultErrors.hasErrors()) {
-			return "passwordRecoveryForm";
-		}
+        RecaptchaUtils.validate(reCaptchaParameters, formBean.getRecaptcha_response_field(), resultErrors);
+        if (resultErrors.hasErrors()) {
+            return "passwordRecoveryForm";
+        }
 
-		try {
-			Account account = this.accountDao.findByEmail(formBean.getEmail());
-			List<Role> role = this.roleDao.findAllForUser(account.getUid());
-			// Finds the user using the email as key, if it exists a new token is generated
-			// to include in the unique http URL.
+        try {
+            Account account = this.accountDao.findByEmail(formBean.getEmail());
+            List<Role> role = this.roleDao.findAllForUser(account.getUid());
+            // Finds the user using the email as key, if it exists a new token is generated
+            // to include in the unique http URL.
 
-			for (Role g : role) {
-				if (g.getName().equals(Role.PENDING)) {
-					throw new NameNotFoundException("User in PENDING role");
-				}
-			}
+            for (Role g : role) {
+                if (g.getName().equals(Role.PENDING)) {
+                    throw new NameNotFoundException("User in PENDING role");
+                }
+            }
 
-			String token = UUID.randomUUID().toString();
+            String token = UUID.randomUUID().toString();
 
-			// if there is a previous token it is removed
-			if (this.userTokenDao.exist(account.getUid())) {
-				this.userTokenDao.delete(account.getUid());
-			}
+            // if there is a previous token it is removed
+            if (this.userTokenDao.exist(account.getUid())) {
+                this.userTokenDao.delete(account.getUid());
+            }
 
-			this.userTokenDao.insertToken(account.getUid(), token);
+            this.userTokenDao.insertToken(account.getUid(), token);
 
-			String contextPath = this.config.getPublicContextPath();
-			String url = makeChangePasswordURL(this.georConfig.getProperty("publicUrl"), contextPath, token);
+            String contextPath = this.config.getPublicContextPath();
+            String url = makeChangePasswordURL(this.georConfig.getProperty("publicUrl"), contextPath, token);
 
-			ServletContext servletContext = request.getSession().getServletContext();
-			this.emailFactory.sendChangePasswordEmail(servletContext, new String[] { account.getEmail() },
-					account.getCommonName(), account.getUid(), url);
-			sessionStatus.setComplete();
+            ServletContext servletContext = request.getSession().getServletContext();
+            this.emailFactory.sendChangePasswordEmail(servletContext, new String[] { account.getEmail() },
+                    account.getCommonName(), account.getUid(), url);
+            sessionStatus.setComplete();
 
-			return "emailWasSent";
+            return "emailWasSent";
 
-		} catch (DataServiceException e) {
-			throw new IOException(e);
-		} catch (NameNotFoundException e) {
-			resultErrors.rejectValue("email", "email.error.notFound", "No user found for this email.");
-			return "passwordRecoveryForm";
-		} catch (MessagingException e) {
-			throw new IOException(e);
-		}
-	}
+        } catch (DataServiceException e) {
+            throw new IOException(e);
+        } catch (NameNotFoundException e) {
+            resultErrors.rejectValue("email", "email.error.notFound", "No user found for this email.");
+            return "passwordRecoveryForm";
+        } catch (MessagingException e) {
+            throw new IOException(e);
+        }
+    }
 
-	/**
-	 * Create the URL to change the password based on the provided token
-	 *
-	 * @return a new URL to change password
-	 */
-	private String makeChangePasswordURL(final String publicUrl, final String contextPath, final String token) {
+    /**
+     * Create the URL to change the password based on the provided token
+     *
+     * @return a new URL to change password
+     */
+    private String makeChangePasswordURL(final String publicUrl, final String contextPath, final String token) {
 
-		StringBuilder strBuilder = new StringBuilder(publicUrl);
-		strBuilder.append(contextPath);
-		strBuilder.append("/account/newPassword?token=").append(token);
-		String url = strBuilder.toString();
+        StringBuilder strBuilder = new StringBuilder(publicUrl);
+        strBuilder.append(contextPath);
+        strBuilder.append("/account/newPassword?token=").append(token);
+        String url = strBuilder.toString();
 
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("generated url:" + url);
-		}
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("generated url:" + url);
+        }
 
-		return url;
-	}
+        return url;
+    }
 
-	@ModelAttribute("passwordRecoveryFormBean")
-	public PasswordRecoveryFormBean getPasswordRecoveryFormBean() {
-		return new PasswordRecoveryFormBean();
-	}
+    @ModelAttribute("passwordRecoveryFormBean")
+    public PasswordRecoveryFormBean getPasswordRecoveryFormBean() {
+        return new PasswordRecoveryFormBean();
+    }
 
-	public void setGeorConfig(GeorchestraConfiguration georConfig) {
-		this.georConfig = georConfig;
-	}
+    public void setGeorConfig(GeorchestraConfiguration georConfig) {
+        this.georConfig = georConfig;
+    }
 }
