@@ -56,7 +56,6 @@ public class EditOrgDetailsFormController {
         this.validation = validation;
     }
 
-
     @InitBinder
     public void initForm(WebDataBinder dataBinder) {
         dataBinder.setAllowedFields(FIELDS);
