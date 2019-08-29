@@ -36,7 +36,6 @@ import static org.junit.Assert.assertTrue;
 
 public class EditOrgDetailsFormControllerTest {
     private EditOrgDetailsFormController ctrl;
-    private AccountDao accountDao = Mockito.mock(AccountDao.class);
     private OrgsDao orgsDao = Mockito.mock(OrgsDao.class);
     private RoleDao rolesDao = Mockito.mock(RoleDao.class);
 
@@ -91,7 +90,7 @@ public class EditOrgDetailsFormControllerTest {
     }
 
     @Test
-    public void testSetupFormChangeUrl() {
+    public void testSetupFormChangeUrl() throws IOException {
         request.addHeader("sec-org", "georTest");
         BindingResult resultErrors = new MapBindingResult(new HashMap<>(), "errors");
         ctrl = new EditOrgDetailsFormController(orgsDao, new Validation(""));
@@ -99,8 +98,6 @@ public class EditOrgDetailsFormControllerTest {
             MultipartFile logo = new MockMultipartFile("image", is);
             formBean.setUrl("https://newurl.com");
             ctrl.edit(request, response, model, formBean, logo, resultErrors, sessionStatus);
-        } catch (IOException e) {
-            e.printStackTrace();
         }
         assertEquals(orgsDao.findExtById("georTest").getUrl(), "https://newurl.com");
     }
