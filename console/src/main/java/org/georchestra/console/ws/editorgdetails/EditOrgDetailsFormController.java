@@ -18,10 +18,8 @@
  */
 package org.georchestra.console.ws.editorgdetails;
 
-import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.DataServiceException;
 import org.georchestra.console.ds.OrgsDao;
-import org.georchestra.console.ds.RoleDao;
 import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.dto.orgs.OrgExt;
 import org.georchestra.console.ws.utils.Validation;
@@ -43,33 +41,25 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Base64;
 
 @Controller
 @SessionAttributes(types = EditOrgDetailsFormBean.class)
 public class EditOrgDetailsFormController {
-
     private OrgsDao orgsDao;
-    private AccountDao accountDao;
-    private RoleDao roleDao;
-
     private Validation validation;
+    private static final String[] FIELDS = { "id", "url", "description", "logo", "name", "address" };
 
     @Autowired
-    public EditOrgDetailsFormController(OrgsDao orgsDao, AccountDao accountDao, RoleDao roleDao,
-            Validation validation) {
+    public EditOrgDetailsFormController(OrgsDao orgsDao, Validation validation) {
         this.orgsDao = orgsDao;
-        this.accountDao = accountDao;
-        this.roleDao = roleDao;
         this.validation = validation;
     }
 
-    private static final String[] fields = { "id", "url", "description", "logo", "name", "address" };
 
     @InitBinder
     public void initForm(WebDataBinder dataBinder) {
-        dataBinder.setAllowedFields(fields);
+        dataBinder.setAllowedFields(FIELDS);
     }
 
     @ModelAttribute("editOrgDetailsFormBean")
@@ -102,7 +92,7 @@ public class EditOrgDetailsFormController {
         model.addAttribute("id", org.getId());
         model.addAttribute("logo", org.getLogo());
         HttpSession session = request.getSession();
-        for (String f : fields) {
+        for (String f : FIELDS) {
             if (validation.isOrgFieldRequired(f)) {
                 session.setAttribute(f + "Required", "true");
             }

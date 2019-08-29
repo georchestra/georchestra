@@ -1,11 +1,9 @@
 package org.georchestra.console.ws.editorgdetails;
 
 import com.google.common.io.ByteStreams;
-import org.apache.commons.io.IOUtils;
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.ds.RoleDao;
-import org.georchestra.console.dto.AccountFactory;
 import org.georchestra.console.dto.Role;
 import org.georchestra.console.dto.RoleFactory;
 import org.georchestra.console.dto.orgs.Org;
@@ -51,11 +49,10 @@ public class EditOrgDetailsFormControllerTest {
     private SessionStatus sessionStatus = Mockito.mock(SessionStatus.class);
 
     private Model model = Mockito.mock(Model.class);
-    private Org mtesterOrg;
 
     @Before
     public void setUp() throws Exception {
-        ctrl = new EditOrgDetailsFormController(orgsDao, accountDao, rolesDao, new Validation(""));
+        ctrl = new EditOrgDetailsFormController(orgsDao, new Validation(""));
         formBean.setDescription("description");
         formBean.setName("geOrchestra testing LLC");
         formBean.setAddress("48 Avenue du Lac du Bourget. 73377 Le Bourget-du-Lac");
@@ -97,9 +94,8 @@ public class EditOrgDetailsFormControllerTest {
     public void testSetupFormChangeUrl() {
         request.addHeader("sec-org", "georTest");
         BindingResult resultErrors = new MapBindingResult(new HashMap<>(), "errors");
-        ctrl = new EditOrgDetailsFormController(orgsDao, accountDao, rolesDao,
-                new Validation("firstName," + "surname,org,orgType"));
-        try (InputStream is = getClass().getResourceAsStream("georchestra_logo.png")) {
+        ctrl = new EditOrgDetailsFormController(orgsDao, new Validation(""));
+        try (InputStream is = getClass().getResourceAsStream("/georchestra_logo.png")) {
             MultipartFile logo = new MockMultipartFile("image", is);
             formBean.setUrl("https://newurl.com");
             ctrl.edit(request, response, model, formBean, logo, resultErrors, sessionStatus);
@@ -110,14 +106,13 @@ public class EditOrgDetailsFormControllerTest {
     }
 
     @Test
-    public void testSetupFormWithImage() {
+    public void testSetupFormWithImage() throws IOException {
         request.addHeader("sec-org", "georTest");
         BindingResult resultErrors = new MapBindingResult(new HashMap<>(), "errors");
-        ctrl = new EditOrgDetailsFormController(orgsDao, accountDao, rolesDao,
-                new Validation("firstName," + "surname,org,orgType"));
+        ctrl = new EditOrgDetailsFormController(orgsDao, new Validation(""));
         ByteArrayOutputStream encoded = new ByteArrayOutputStream();
-        try (InputStream image1 = getClass().getResourceAsStream("georchestra_logo.png");
-                InputStream image2 = getClass().getResourceAsStream("georchestra_logo.png")) {
+        try (InputStream image1 = getClass().getResourceAsStream("/georchestra_logo.png");
+                InputStream image2 = getClass().getResourceAsStream("/georchestra_logo.png")) {
             OutputStream out = Base64.getMimeEncoder().wrap(encoded);
             ByteStreams.copy(image1, out);
             String base64Image = new String(encoded.toByteArray());
@@ -126,8 +121,6 @@ public class EditOrgDetailsFormControllerTest {
             ctrl.edit(request, response, model, formBean, logo, resultErrors, sessionStatus);
 
             assertEquals(orgsDao.findExtById("georTest").getLogo(), base64Image);
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
     }
