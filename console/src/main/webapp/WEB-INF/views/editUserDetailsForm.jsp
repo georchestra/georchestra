@@ -217,9 +217,9 @@
               <s:message code="editUserDetailsForm.deleteMsg" />
             </p>
             <p>
-              <a class="btn btn-danger" href="<c:out value="${publicContextPath}/private/users/gdpr/download" />">
+              <button class="btn btn-danger">
                 <i class="glyphicon glyphicon-exclamation-sign"></i> <s:message code="editUserDetailsForm.delete" />
-              </a>
+              </button>
             </p>
           </div>
         </div>
@@ -231,8 +231,18 @@
 	<%@ include file="validation.jsp" %>
 	<script type="text/javascript">
     (function(){
+      var deleteURI = "<c:out value="${publicContextPath}/private/users/gdpr/delete" />"
       $('.gdpr .btn-danger').on('click', function() {
         if (!window.confirm('<s:message code="editUserDetailsForm.deleteConfirm" />')) return false
+        fetch(deleteURI, { method: 'POST' })
+          .then(function(response) {
+            if(response.ok) {
+              window.location.href='/logout'
+            } else {
+              alert('<s:message code="editUserDetailsForm.deleteFail" />')
+            }
+          })
+          .catch(function() {alert('<s:message code="editUserDetailsForm.deleteFail" />')})
       })
     })()
     /* Validate the form */
