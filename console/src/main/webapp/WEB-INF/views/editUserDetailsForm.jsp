@@ -190,12 +190,39 @@
 
         <h4><s:message code="editUserDetailsForm.members" /></h4>
         <ul>
-        <li dir-paginate="user in users | itemsPerPage: 10">
-          {{::user.sn}} {{::user.givenName}}
-        </li>
+          <li dir-paginate="user in users | itemsPerPage: 10">
+            {{::user.sn}} {{::user.givenName}}
+          </li>
         </ul>
 
         <dir-pagination-controls></dir-pagination-controls>
+      </fieldset>
+      <fieldset class="gdpr">
+        <legend><s:message code="editUserDetailsForm.gdpr" /></legend> <div
+            class="panel panel-default">
+          <div class="panel-body">
+            <p>
+              <s:message code="editUserDetailsForm.downloadMsg" />
+            </p>
+            <p>
+              <a class="btn btn-primary" href="<c:out value="${publicContextPath}/private/users/gdpr/download" />">
+                <i class="glyphicon glyphicon-download-alt"></i> <s:message code="editUserDetailsForm.download" />
+              </a>
+            </p>
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <p>
+              <s:message code="editUserDetailsForm.deleteMsg" />
+            </p>
+            <p>
+              <a class="btn btn-danger" href="<c:out value="${publicContextPath}/private/users/gdpr/download" />">
+                <i class="glyphicon glyphicon-exclamation-sign"></i> <s:message code="editUserDetailsForm.delete" />
+              </a>
+            </p>
+          </div>
+        </div>
       </fieldset>
     </div>
 	</div>
@@ -203,6 +230,11 @@
 	<script src='js/bootstrap.min.js'></script>
 	<%@ include file="validation.jsp" %>
 	<script type="text/javascript">
+    (function(){
+      $('.gdpr .btn-danger').on('click', function() {
+        if (!window.confirm('<s:message code="editUserDetailsForm.deleteConfirm" />')) return false
+      })
+    })()
     /* Validate the form */
     function validate() {
         if (testFirstname() & testSurname() &
