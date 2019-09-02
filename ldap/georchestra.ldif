@@ -194,6 +194,13 @@ cn: CKAN_EDITOR
 description: This role grants metadata edit rights in CKAN, scoped to user's org
 member: uid=testeditor,ou=users,dc=georchestra,dc=org
 
+# REFERENT, roles, georchestra.org
+dn: cn=REFERENT,ou=roles,dc=georchestra,dc=org
+objectClass: top
+objectClass: groupOfMembers
+cn: REFERENT
+description: This role allows users to update their organisation
+
 # USER, roles, georchestra.org
 dn: cn=USER,ou=roles,dc=georchestra,dc=org
 objectClass: top

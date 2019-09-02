@@ -275,6 +275,10 @@
       <artifactId>commons-io</artifactId>
     </dependency>
     <dependency>
+      <groupId>commons-fileupload</groupId>
+      <artifactId>commons-fileupload</artifactId>
+    </dependency>
+    <dependency>
       <groupId>javax.el</groupId>
       <artifactId>el-api</artifactId>
       <scope>provided</scope>

@@ -2,6 +2,7 @@ package org.georchestra.console.ws.edituserdetails;
 
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.OrgsDao;
+import org.georchestra.console.ds.RoleDao;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountFactory;
 import org.georchestra.console.dto.orgs.Org;
@@ -33,6 +34,7 @@ public class EditUserDetailsFormControllerTest {
 
     private AccountDao dao = Mockito.mock(AccountDao.class);
     private OrgsDao orgsDao = Mockito.mock(OrgsDao.class);
+    private RoleDao roleDao = Mockito.mock(RoleDao.class);
 
     private MockHttpServletRequest request = new MockHttpServletRequest();
     private MockHttpServletResponse response = new MockHttpServletResponse();
@@ -48,7 +50,7 @@ public class EditUserDetailsFormControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        ctrl = new EditUserDetailsFormController(dao, orgsDao, new Validation(""));
+        ctrl = new EditUserDetailsFormController(dao, orgsDao, roleDao, new Validation(""));
         formBean.setDescription("description");
         formBean.setEmail("email");
         formBean.setFacsimile("+331234567890");
@@ -188,7 +190,8 @@ public class EditUserDetailsFormControllerTest {
         request.addHeader("sec-username", "mtester");
         EditUserDetailsFormBean formBeanWithMissingField = new EditUserDetailsFormBean();
         BindingResult resultErrors = new MapBindingResult(new HashMap<>(), "errors");
-        ctrl = new EditUserDetailsFormController(dao, orgsDao, new Validation("firstName,surname,org,orgType"));
+        ctrl = new EditUserDetailsFormController(dao, orgsDao, roleDao,
+                new Validation("firstName,surname,org,orgType"));
 
         ctrl.edit(request, response, model, formBeanWithMissingField, resultErrors, sessionStatus);
 
@@ -202,7 +205,7 @@ public class EditUserDetailsFormControllerTest {
         request.addHeader("sec-username", "mtester");
         EditUserDetailsFormBean formBeanWithMissingField = new EditUserDetailsFormBean();
         BindingResult resultErrors = new MapBindingResult(new HashMap<>(), "errors");
-        ctrl = new EditUserDetailsFormController(dao, orgsDao,
+        ctrl = new EditUserDetailsFormController(dao, orgsDao, roleDao,
                 new Validation("phone,facsimile,title,description,postalAddress"));
 
         ctrl.edit(request, response, model, formBeanWithMissingField, resultErrors, sessionStatus);

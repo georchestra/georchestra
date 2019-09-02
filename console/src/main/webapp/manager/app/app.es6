@@ -58,6 +58,7 @@ class StandaloneController {
 
     $scope.org = window.org
     $scope.users = window.org.members
+    $scope.isReferentOrSuperUser = window.isReferentOrSuperUser
   }
 }
 

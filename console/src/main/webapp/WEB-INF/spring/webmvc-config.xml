@@ -106,13 +106,13 @@
     <property name="pendingOrgSearchBaseDN" value="${pendingOrgSearchBaseDN:ou=pendingorgs}"/>
     <property name="roleSearchBaseDN" value="${ldapRolesRdn}"/>
   </bean>
-  
+
   <bean id="AccountGDPRDao" class="org.georchestra.console.ds.AccountGDPRDaoImpl"/>
-  
+
   <bean id="userInfoExporter" class="org.georchestra.console.ws.backoffice.users.UserInfoExporterImpl"/>
-  
+
   <bean id="GDPRAccountWorker" class="org.georchestra.console.ws.backoffice.users.GDPRAccountWorker"/>
-  
+
   <bean class="org.georchestra.console.ws.backoffice.users.UserRule">
     <property name="listOfprotectedUsers">
       <description>Comma separated list of one or more user identifiers (uid) of protected user</description>
@@ -125,7 +125,7 @@
     <property name="listOfprotectedRoles">
       <description>Comma separated list of one or more protected Roles</description>
         <!-- Roles are defined as a comma separated list of Roles name and can be override in data dir with "protectedRolesList" key-->
-      <value>${protectedRolesList:SUPERUSER,ADMINISTRATOR,ORGADMIN,USER,EXTRACTORAPP,GN_.*}</value>
+      <value>${protectedRolesList:ADMINISTRATOR,EXTRACTORAPP,GN_.*,ORGADMIN,REFERENT,USER,SUPERUSER}</value>
     </property>
   </bean>
 
@@ -275,4 +275,11 @@
   <bean id="contentNegotiationManager" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
     <property name="favorPathExtension" value="false" />
   </bean>
+
+  <bean id="multipartResolver"
+        class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+    <property name="maxUploadSize" value="${maxUploadSize:8388608}"/>
+    <property name="maxInMemorySize" value="${maxInMemorySize:10240}"/>
+  </bean>
+
 </beans>

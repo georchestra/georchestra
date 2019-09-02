@@ -19,6 +19,7 @@
 
 package org.georchestra.console.ws.utils;
 
+import org.georchestra.console.dto.Role;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.util.StringUtils;
@@ -27,6 +28,7 @@ import org.springframework.validation.Errors;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
