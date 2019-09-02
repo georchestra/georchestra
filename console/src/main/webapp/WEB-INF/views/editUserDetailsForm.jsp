@@ -183,7 +183,7 @@
 		  </li>
 		  <li class="list-group-item" ng-if="org.url && org.logo">
 		    <a href="{{org.url}}">
-		      <img alt="org logo" src="data:image/jpeg;base64,{{org.logo}}"/>
+		      <img alt="org logo" src="data:image/jpeg;base64,{{org.logo}}" class="org-logo" />
 		    </a>
 		  </li>
 		  <li class="list-group-item" ng-if="org.url && !org.logo">
