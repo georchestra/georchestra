@@ -198,14 +198,6 @@
 		    <p>{{org.description}}</p>
 		  </li>
 	  	</ul>
-        <a ng-if="org.url && org.logo" href="{{org.url}}">
-          <img src="data:image/jpeg;base64,{{org.logo}}" class="org-logo"/>
-        </a>
-        <a ng-if="org.url && !org.logo" href="{{org.url}}">
-            <s:message code="editUserDetailsForm.url" />
-        </a>
-        <img src="data:image/jpeg;base64,{{org.logo}}" ng-if="!org.url && org.logo" class="org-logo"/>
-        <p ng-if="org.description">{{org.description}}</p>
 
         <h4><s:message code="editUserDetailsForm.areaOfCompetence" /></h4>
         <areas item="org" readonly="'true'"></areas>
