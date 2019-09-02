@@ -198,18 +198,54 @@
 		    <p>{{org.description}}</p>
 		  </li>
 	  	</ul>
+        <a ng-if="org.url && org.logo" href="{{org.url}}">
+          <img src="data:image/jpeg;base64,{{org.logo}}" class="org-logo"/>
+        </a>
+        <a ng-if="org.url && !org.logo" href="{{org.url}}">
+            <s:message code="editUserDetailsForm.url" />
+        </a>
+        <img src="data:image/jpeg;base64,{{org.logo}}" ng-if="!org.url && org.logo" class="org-logo"/>
+        <p ng-if="org.description">{{org.description}}</p>
+
         <h4><s:message code="editUserDetailsForm.areaOfCompetence" /></h4>
         <areas item="org" readonly="'true'"></areas>
         <br>
 
         <h4><s:message code="editUserDetailsForm.members" /></h4>
         <ul>
-        <li dir-paginate="user in users | itemsPerPage: 10">
-          {{::user.sn}} {{::user.givenName}}
-        </li>
+          <li dir-paginate="user in users | itemsPerPage: 10">
+            {{::user.sn}} {{::user.givenName}}
+          </li>
         </ul>
 
         <dir-pagination-controls></dir-pagination-controls>
+      </fieldset>
+      <fieldset class="gdpr">
+        <legend><s:message code="editUserDetailsForm.gdpr" /></legend> <div
+            class="panel panel-default">
+          <div class="panel-body">
+            <p>
+              <s:message code="editUserDetailsForm.downloadMsg" />
+            </p>
+            <p>
+              <a class="btn btn-primary" href="<c:out value="${publicContextPath}/private/users/gdpr/download" />">
+                <i class="glyphicon glyphicon-download-alt"></i> <s:message code="editUserDetailsForm.download" />
+              </a>
+            </p>
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <p>
+              <s:message code="editUserDetailsForm.deleteMsg" />
+            </p>
+            <p>
+              <button class="btn btn-danger">
+                <i class="glyphicon glyphicon-exclamation-sign"></i> <s:message code="editUserDetailsForm.delete" />
+              </button>
+            </p>
+          </div>
+        </div>
       </fieldset>
     </div>
 	</div>
@@ -217,6 +253,21 @@
 	<script src='js/bootstrap.min.js'></script>
 	<%@ include file="validation.jsp" %>
 	<script type="text/javascript">
+    (function(){
+      var deleteURI = "<c:out value="${publicContextPath}/private/users/gdpr/delete" />"
+      $('.gdpr .btn-danger').on('click', function() {
+        if (!window.confirm('<s:message code="editUserDetailsForm.deleteConfirm" />')) return false
+        fetch(deleteURI, { method: 'POST' })
+          .then(function(response) {
+            if(response.ok) {
+              window.location.href='/logout'
+            } else {
+              alert('<s:message code="editUserDetailsForm.deleteFail" />')
+            }
+          })
+          .catch(function() {alert('<s:message code="editUserDetailsForm.deleteFail" />')})
+      })
+    })()
     /* Validate the form */
     function validate() {
         if (testFirstname() & testSurname() &
