@@ -288,7 +288,8 @@ Ext.namespace("GEOR");
                     });
                 },
                 'expand': function(panel) {
-                    panel.getActiveTab().raise();
+                    var active = panel.getActiveTab();
+                    active && active.raise();
                 },
                 'tabchange': function(panel, t) {
                     panel.items.each(function(tab) {
