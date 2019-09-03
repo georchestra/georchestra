@@ -29,6 +29,7 @@ angular.module('manager')
       'EXTRACTORAPP',
       'USER',
       'PENDING',
+      'REFERENT',
       'TEMPORARY'
     ]
     return () => adminRoles
