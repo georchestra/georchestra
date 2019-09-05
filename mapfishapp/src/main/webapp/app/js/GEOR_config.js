@@ -109,6 +109,14 @@ GEOR.config = (function() {
         }),
 
         /**
+         * Constant: ALLOW_LAYER_DOWNLOAD
+         * Boolean - If set to false, deactivate layer download via WFS.
+         * Defaults to true
+         */
+        ALLOW_LAYER_DOWNLOAD: getCustomParameter("ALLOW_LAYER_DOWNLOAD",
+            true),
+
+        /**
          * Constant: GEOSERVER_WFS_URL
          * The URL to GeoServer WFS.
          * This is required if and only if the "referentials" module is activated.
