@@ -78,8 +78,9 @@ If **geonetwork** is to be deployed, you need to create a dedicated user and sch
 ```
 createuser -SDRI geonetwork
 psql -d georchestra -c "ALTER USER geonetwork WITH PASSWORD 'georchestra';"
-psql -d georchestra -c 'CREATE SCHEMA AUTHORIZATION geonetwork;'
-psql -d georchestra -c "SELECT change_owner('geonetwork', 'geonetwork');";
+psql -d georchestra -c "CREATE SCHEMA AUTHORIZATION geonetwork;"
+psql -d georchestra -c "SELECT change_owner('geonetwork', 'geonetwork');"
+psql -d georchestra -c "GRANT geonetwork TO georchestra;"
 ```
 
 ## Cleanup maintenance function
