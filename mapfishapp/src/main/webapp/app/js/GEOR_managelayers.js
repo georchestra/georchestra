@@ -842,8 +842,7 @@ GEOR.managelayers = (function() {
             });
         }
 
-
-        if (hasEquivalentWFS || isWFS) {
+        if (GEOR.config.ALLOW_LAYER_DOWNLOAD && (hasEquivalentWFS || isWFS)) {
             menuItems.push({
                 iconCls: 'geor-btn-download',
                 text: tr("Download layer"),
