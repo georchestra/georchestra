@@ -25,16 +25,15 @@ import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Test;
 
-
-
 /**
  * Test for {@link OGCServicesAppender}
- * <p> 
+ * <p>
  * This test case is based in the document ogc_requests.txt
  * </p>
  * <p>
- * WARNING this test will initialize the log table. 
+ * WARNING this test will initialize the log table.
  * </p>
+ * 
  * @author Mauricio Pazos
  *
  */
