@@ -392,7 +392,7 @@ angular.module('manager')
       })
     }
   })])
-  .directive('organizations', [ '$timeout', 'Orgs', ($timeout, Orgs) => ({
+  .directive('organizations', [ '$timeout', '$router', 'Orgs', ($timeout, $router, Orgs) => ({
     link: (scope, elm, attrs, ctrl) => {
       let promise = scope.$eval(attrs['promise'])
       let user = scope.$eval(attrs['model'])
@@ -411,7 +411,14 @@ angular.module('manager')
             })
           }
         })
+        // create template to format selected element
+        const formatSelected = (state) => {
+          if (!state.id) return state.text
+          const route = $router.generate('org', {org: state.id, tab: 'infos'})
+          return $(`<a href="#!${route}">${state.text}</a>`)
+        }
         elm.select2({
+          templateSelection: formatSelected,
           placeholder: '',
           allowClear: true,
           data: selOrgs
