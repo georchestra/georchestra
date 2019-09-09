@@ -72,6 +72,7 @@ class UserController {
     // Load role infos for every tab (for confirmation)
     let Role = this.$injector.get('Role')
     this.roles = Role.query()
+    this.systemRoles = Role.query()
     Role.query(roles => { this.allroles = roles.map(r => r.cn) })
 
     this.user.$promise.then(() => {
