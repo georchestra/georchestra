@@ -14,7 +14,7 @@
   <strong ng-if="(roles.activeRole.cn == role.cn)">
     {{::role.cn}} ({{::role.users.length}})
   </strong>
-  <a ng-link="users({id: role.cn})" ng-if="(roles.activeRole.cn != role.cn)">
+  <a ng-link="users({id: role.cn})" ng-if="(roles.activeRole.cn != role.cn)" title={{::role.description}}>
     {{::role.cn}}
    ({{::role.users.length}})
  </a>
