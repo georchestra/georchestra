@@ -32,7 +32,7 @@
 
       <div class="panel-body" ng-if="role.tab=='users'">
         <input type="text" class="filter-table form-control pull-right ng-pristine ng-untouched ng-valid ng-empty" ng-model="role.q" placeholder="{{'role.filter_users' | translate}}"></input>
-        <i class="glyphicon glyphicon-remove-sign role-filter-table-reset" ng-show="role.q != ''" ng-click="role.q = ''"></i>
+        <i class="glyphicon glyphicon-remove-sign panel-filter-table-reset" ng-show="role.q != ''" ng-click="role.q = ''"></i>
         <h3 class="roles-title">
           <ng-pluralize count="role.users.length"
                         when="{'0': '{{ &quot;role.users_none&quot; | translate }}',
