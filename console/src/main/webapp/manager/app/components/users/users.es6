@@ -34,9 +34,8 @@ class UsersController {
           description: 'users.pending_desc'
         }
       }
-      if (this.activeRole) {
-        this.filter(this.activeRole)
-      }
+      // filter users
+      this.filter(this.activeRole)
       return this.activeRole
     })
     this.selectionFilter = this.selectionFilter.bind(this)
@@ -44,8 +43,10 @@ class UsersController {
 
   filter (role) {
     this.users.$promise.then(() => {
+      // Display no pending users by default
+      this.users = this.allUsers.filter(user => !user.pending)
       // Special case for pending
-      if (role.cn === 'PENDING') {
+      if (role && role.cn === 'PENDING') {
         this.users = this.allUsers.filter(user => user.pending)
         return
       }

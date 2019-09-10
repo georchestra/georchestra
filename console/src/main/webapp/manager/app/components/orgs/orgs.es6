@@ -11,6 +11,9 @@ class OrgsController {
     this.orgs = this.$injector.get('Orgs').query(() => {
       if (this.org === 'pending') {
         this.orgs = this.orgs.filter(o => o.pending)
+      } else {
+        // display no pendings orgs
+        this.orgs = this.orgs.filter(o => !o.pending)
       }
       this.orgs.forEach(org => {
         org.membersCount = org.members.length
