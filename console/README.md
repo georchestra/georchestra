@@ -1,139 +1,129 @@
-Console
-=======
+# geOrchestra's Console
 
-A webapp with a public interface and a private one, which allows to manage users and roles.
+The webapp is made of three parts:
+  * on the public side, it gives the ability to:
+    * create an account (`/console/account/new`)
+    * reset your password (`/console/account/passwordRecovery`)
+  * on the private side known as "the manager" (`/console/manager/`), it allows:
+    * **administrators** to
+        * manage users, organisations, roles with a neat user interface
+        * check platform stats
+    * **delegated administrators** to
+       * manage users & a collection of roles in a custom set of organisations
+       * check platform stats
+  * the user's profile page (`/console/account/userdetails`) allows:
+    * **referents** to modify their organization details
+    * **users** to modify their details
 
-All strings and templates should take into account i18n (3 langs by default: en/es/fr)
-
-Public UI
----------
-
-The public UIs will be accessed:
- * from the CAS login page, by the way of text links: "lost password ?" and "create account".
- * from every SDI page, by clicking on the username: "Edit user details"
-
-These pages should be light (no need to ship ExtJS).
-
-### Lost Password
-
-The page asks for user email. An optional `email` parameter can be passed to preset the email field (eg: /console/account/passwordRecovery?email=user@domain.tld).
-
-If the given email matches one of the LDAP users:
- * an email is sent to this user with a unique https URL to reset his password (eg: /console/account/changePassword?token=54f23f27f6c5f23c68b9b5f9650839dc)
- * the page displays "an email was sent".
- * On the /console/account/changePassword page:
-   * server-side check that token is valid (postgresql storage). If not, HTTP 400.
-   * two fields ask for new password (client-side check for equality)
-   * on form submission:
-     * check that token is valid. If not, HTTP 400.
-     * the old password is discarded and replaced with the new one
-     * the new page shows "password updated".
-
-If the given email does not match one from the LDAP:
- * nothing happens server side
- * the page displays "an email was sent" (even if no email was sent).
-
-### Create account
-
-The page shows a form with typical fields: name, org, title, email, phone nb, details.
-The user will be able to pick a **strong** password (must have at least one of: special char, letters and numbers).
-Password field will be repeated 2 times (client-side check for equality).
-
-There's also a captcha (for instance based on http://www.google.com/recaptcha) to prevent batch form submissions.
-
-Once submitted, the form disappears and a (configurable) message says something like "Your request has been submitted and should be processed in the next hours. Watch your email."
-
-What happens here ?
- * Depending on a "MODERATED_SIGNUP" config option, new users will be recorded in the LDAP and affected to :
-   * the `ou=users` LDAP organizational unit if MODERATED_SIGNUP = false,
-   * the `ou=pendingusers` LDAP organizational unit if MODERATED_SIGNUP = true. An admin will then be able to move them to `ou=users`.
- * An email will be sent to one email address (configurable), saying that new users need an account.
-
-### Edit user details
-
-Two pages:
- * First one (default one): users should be able to edit a subset of LDAP fields, namely: sn, givenName, phone, facsimile, o, title, postalAddress (**not mail**). On this page, there will be a link to the userPassword change page.
- * userPassword change UI: will display 3 fields. The first one is the current user password, the two other ones are for the new one. If the two latest fields do not match (client-side check), the user won't be able to submit the form and the "new password mismatch" message will be displayed. If the current password is wrong (server side check), the form will be redisplayed with clean fields, and a message will display "invalid password".
+To clarify roles:
+ * **administrators** are users holding the `SUPERUSER` role.
+ * **delegated administrators** are special users having the `ORGADMIN` role.
+An administrator has set up a delegation for them. They can access the manager,
+where they can grant a subset of roles to users belonging to a collection of
+organisations.
+ * **referents** are users holding the `REFERENT` role. They are allowed to
+modify several of their organisation fields, namely: name, address, logo,
+description, website.
+ * **users** are regular geOrchestra users, obviously having the `USER` role.
 
 
-### System Requirements
+## Configuration options
 
- * LDAP Server
- * Postgresql
+As for every other geOrchestra webapp, its configuration resides in the
+(ill-named) [data directory](https://github.com/georchestra/datadir/),
+typically something like `/etc/georchestra`, where it expects to find a
+`console` sub-directory.
 
-For the web container: Tomcat 7, or Maven Jetty (no need to install)
+The most important configuration file is probably
+[console.properties](https://github.com/georchestra/datadir/blob/master/console/console.properties),
+where the majority of options are commented out, either because there are
+default, common values already provided by the datadir's
+[default.properties](https://github.com/georchestra/datadir/blob/master/default.properties),
+or because the console code offers sensible, built-in, values.
 
+Below, we go through the most interesting options.
 
-### Get a pair of ReCaptcha keys
+### Moderated signup
 
-By default, geOrchestra uses global keys.
+If the `moderatedSignup` config option is set to `true` (which is the default),
+each time a new user requests an account:
+  * an email is sent to all users having the SUPERUSER role and also to those
+which hold an admin delegation for the declared organisation (if any)
+  * the newly created account is stored inside the "ou=pendingusers" LDAP
+organizational unit (which grants zero rights on the SDI).
 
-To fight spam robots, it may be safer to get a proper pair of keys for your site. Go to https://www.google.com/recaptcha/admin/create and create a pair of private/public keys. Quoting the [documentation](https://developers.google.com/recaptcha/intro), *unless you select the "global key" option, the keys are unique to your domain and sub-domains.*
+If set to `false`, the user is immediately considered as registered, and is
+stored inside the "ou=users" LDAP organizational unit. An email is also sent to
+all SUPERUSER users and delegated admins if any.
 
-Once created, set the following `console` parameters with the value of the keys:
-* `privateKey`
-* `publicKey`
+### Read-Only user identifier
 
-See [the configuration guide](../config/README.md) for details on how to configure these two parameters.
+The `readonlyUid` option, when set to `true`, prevents the user from choosing
+its own username on the registration page. It is set to `false` by default.
 
-### Set of required fields
+If `true`, the username is crafted with the first letter of firstname
+concatenated with the user lastname.
 
-The console configuration, in the config module, contains a `requiredFields` parameter that defaults to `firstName,surname,email,uid,password,confirmPassword`. Adding other fields, separated by commas, will make them mandatory in new account and edit forms. Note that this parameter only affects public UI.
+### Required fields
 
-For example, to impose the "Organisation" and "Title" fields to be not empty, set the following parameter in console config
+The `requiredFields` parameter defaults to
+`firstName,surname,email,uid,password,confirmPassword`.
 
+Adding other fields, separated by commas, will make them mandatory in the user
+account forms. Note that this parameter does not affect the manager.
+
+Example: to make the "Organisation" and "Title" fields mandatory, set it to:
 ```
 requiredFields=firstName,surname,email,uid,password,confirmPassword,org,title
 ```
+The possible values are: `firstName`, `surname`, `phone`, `facsimile`, `org`,
+`title`, `description`, `postalAddress`. **email**, **uid** and **password**
+are always required.
 
-The possible values are: `firstName`, `surname`, `phone`, `facsimile`, `org`, `title`, `description`, `postalAddress`.
+### Organisation types
 
-Note that email, uid, password and confirmPassword are always required.
+Organisations are classified. By default, the console offers the choice between
+Association, Company, NGO, Individual, Other.
 
-### Build
-
-Build:
-
+This can be set to any other values with:
 ```
-mvn install -Dmaven.test.skip=true
-```
-
-Create the eclipse project
-
-```
-mvn eclipse:eclipse
+orgTypeValues=Association,Company,NGO,Individual,Other
 ```
 
+### Custom areas
 
-### Manual Testing
+Organisations may have an area of competence, built from a collection of
+features.
 
-Testing purpose:
+Features are loaded from a custom URL serving a GeoJSON FeatureCollection
+using EPSG:4326.
 
- * deploy in Tomcat7
- * Then add the following url in your Internet navigator:
-   http://localhost:8286/console/manager/
+It defaults to:
+```
+AreasUrl=https://www.geopicardie.fr/public/communes_simplified.json
+```
 
-Alternatively, run with jetty:
+Note that it can be set to a custom WFS request like this one:
+```
+AreasUrl=https://my.server.org/geoserver/ows?SERVICE=WFS&REQUEST=GetFeature&typeName=gadm:gadm_for_countries&outputFormat=json&cql_filter=ISO='FRA'
+```
 
-* the *first* time, you need to previously compile console and all its dependencies
+Please pay attention to these options too: `AreasKey`, `AreasValue`,
+`AreaMapZoom`, `AreaMapCenter`.
 
-  ```
-  $ mvn -Dmaven.test.skip=true -Ptemplate -P-all,console install;
-  ```
+### ReCaptcha
 
-* then, each time you want to test a change in the configuration or the console module:
+To fight robots, get a pair of ReCaptcha keys for your site:
+ * head to [https://www.google.com/recaptcha/admin/create](https://www.google.com/recaptcha/admin/create)
+ * choose reCAPTCHA version 2 with the "I'm not a robot" checkbox
+ * fill in your domain
 
-  ```
-  $ cd config
-  $ mvn -Ptemplate install
-  $ cd ../console
-  $ mvn -Dmaven.test.skip=true -Ptemplate jetty:run
-  ```
- * Then point your navigator to the following address :
-   http://localhost:8286/console/manager/
+Once created, set the following parameters:
+* `privateKey`
+* `publicKey`
 
- Running console with jetty will change web server port to *8286* (in order to integrate with others georchestra
- instance : CAS, security proxy, ...)
+
+## Developer's corner
 
 ### Integration Testing
 
@@ -202,45 +192,3 @@ So final list of protected users will be :
   * hidden_admin_user
   * hidden_admin_user_trash
   * hidden_admin_user_backup
-
-Console UI
-----------
-
-The console UI will be available at /console to users having the SUPERUSER role.
-
-See the wireframe in the current folder.
-
-### Center pane
-
-Dedicated to users:
- * a toolbar with a "new user" button, and a "selected users" menu item (disabled when no user is selected)
- * a scrollable grid, with a checkbox selection model, showing a subset of user attributes
- * on grid item double click, a window pops up (same as "new user" window), which allows user details editing (password change not allowed)
-
-### New User/Edit User window
-
-Featuring:
- * a form for user details,
- * a tree view of roles the user belongs to, with a checkbox selection model to edit.
-
-When creating a new user (and only in this case), a **strong** password will be generated and sent to the new user by email.
-
-
-#### Left pane
-
-Dedicated to roles:
- * tree view of roles, with intermediate nodes for role types (GN_*, EL_*, ...) - role types should be configurable
- * ability to filter users list by one role (on role name click)
- * button to add a new role
- * button to remove a role (users will **not** be deleted)
-
-
-
-Notes
------
-
-All emails sent by the application should be configurable by the way of templates, as for extractorapp.
-
-The application should be able to find roles and users by the way of filters defined using the properties ldapUsersRdn and ldapRolesRdn in [default.properties](https://github.com/georchestra/datadir/blob/master/default.properties)
-
-The userPassword LDAP field should be SSHA encrypted on creation/update.
