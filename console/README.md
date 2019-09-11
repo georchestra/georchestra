@@ -13,7 +13,11 @@ The webapp is made of three parts:
        * check platform stats
   * the user's profile page (`/console/account/userdetails`) allows:
     * **referents** to modify their organization details
-    * **users** to modify their details
+    * **users** to
+      * modify their details
+      * view their organisation's detail
+      * download all the data they created on the platform (as required by the EU General Data Protection Regulation)
+      * delete their account
 
 To clarify roles:
  * **administrators** are users holding the `SUPERUSER` role.
