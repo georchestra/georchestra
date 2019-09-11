@@ -22,9 +22,10 @@ The webapp is made of three parts:
 To clarify roles:
  * **administrators** are users holding the `SUPERUSER` role.
  * **delegated administrators** are special users having the `ORGADMIN` role.
-An administrator has set up a delegation for them. They can access the manager,
-where they can grant a subset of roles to users belonging to a collection of
-organisations.
+An administrator has set up a delegation for them 
+(on page `/console/manager/#!/users/${user_id}/delegations`). They can access 
+the manager, where they can grant a subset of roles to users belonging to a 
+collection of organisations.
  * **referents** are users holding the `REFERENT` role. They are allowed to
 modify several of their organisation fields, namely: name, address, logo,
 description, website.
