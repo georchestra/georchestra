@@ -42,6 +42,8 @@ import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKBReader;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.google.common.annotations.VisibleForTesting;
+
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
@@ -53,10 +55,11 @@ public class AccountGDPRDaoImpl implements AccountGDPRDao {
     /**
      * DatTimeFormatter to parse timestamps we they come in geonetworks' text column
      */
-    private static final DateTimeFormatter GEONETWORK_DATE_FORMAT = new DateTimeFormatterBuilder()//
+    @VisibleForTesting
+    public static final DateTimeFormatter GEONETWORK_DATE_FORMAT = new DateTimeFormatterBuilder()//
             .parseCaseInsensitive()//
             .append(DateTimeFormatter.ISO_LOCAL_DATE)//
-            .appendLiteral(' ')// space instead of 'T'
+            .appendLiteral('T')// 'T' instead of space (http://jkorpela.fi/iso8601.html)
             .append(DateTimeFormatter.ISO_LOCAL_TIME)//
             .toFormatter();
 
