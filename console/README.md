@@ -127,6 +127,15 @@ Once created, set the following parameters:
 * `publicKey`
 
 
+### Protected Users
+
+Several user accounts can be protected against deletion or modification, with the `protectedUsersList` property, which holds a comma separated list of user accounts `uid`. These users also do not show up in the manager.
+
+By default, only `geoserver_privileged_user` (which is internally used by mapfishapp, extractorapp for several operations) is protected:
+```
+protectedUsersList=geoserver_privileged_user
+```
+
 ## Developer's corner
 
 ### Integration Testing
@@ -170,29 +179,3 @@ To do so launch them externally mapping the ports 389 and 5432 as appropriate,  
 When the test case is finished, make sure to run `mvn verify` to check it works properly within the maven build cycle.
 
 Finally, when writing integration tests, make sure they're self contained and would not be affected by any existing data in the external resources.
-
-### Protected Users
-
-You can specify several user accounts that you want to protect against deletion or modification. For this purpose, you
-have 'listOfprotectedUsers' property. This property holds a comma separated list of uid corresponding to users accounts
-that should be protected.
-
-Default value is : 'geoserver_privileged_user' (which is a privileged user, internally used) but you can override this
-in config template with key : "protectedUserList"
-
-Example :
-
-    protectedUserList=geoserver_privileged_user,hidden_admin_user,hidden_admin_user_trash,hidden_admin_user_backup
-
-(Note that there is no space around comma !)
-
-This will add following users to default protected list of users :
-  * hidden_admin_user
-  * hidden_admin_user_trash
-  * hidden_admin_user_backup
-
-So final list of protected users will be :
-  * geoserver_privileged_user
-  * hidden_admin_user
-  * hidden_admin_user_trash
-  * hidden_admin_user_backup
