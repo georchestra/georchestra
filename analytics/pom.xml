@@ -535,6 +535,9 @@
                 <goals>
                   <goal>stop</goal>
                 </goals>
+                <configuration>
+                  <removeVolumes>true</removeVolumes>
+                </configuration>
               </execution>
             </executions>
           </plugin>
@@ -556,8 +559,11 @@
                 <additionalClasspathElement>${project.basedir}/src/main/webapp/WEB-INF/classes</additionalClasspathElement>
               </additionalClasspathElements>
               <environmentVariables>
-                <ldap_port>${ldap_container.port}</ldap_port>
-                <dlJdbcUrlOGC>jdbc:postgresql://localhost:${database_container.port}/georchestra?user=georchestra&amp;password=georchestra</dlJdbcUrlOGC>
+                <pgsqlHost>localhost</pgsqlHost>
+                <pgsqlPort>${database_container.port}</pgsqlPort>
+                <pgsqlDatabase>georchestra</pgsqlDatabase>
+                <pgsqlUser>georchestra</pgsqlUser>
+                <pgsqlPassword>georchestra</pgsqlPassword>
               </environmentVariables>
             </configuration>
           </plugin>

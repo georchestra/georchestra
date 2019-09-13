@@ -10,8 +10,10 @@
     <context:annotation-config/>
 
     <bean id="waitForDb" class="org.georchestra.commons.WaitForDb" init-method="test">
-        <property name="url" value="jdbc:postgresql://${pgsqlHost}:${pgsqlPort}/${pgsqlDatabase}?user=${pgsqlUser}&amp;password=${pgsqlPassword}"/>
-        <property name="driverClassName" value="org.postgresql.Driver"/>
+      <property name="url" value="jdbc:postgresql://${pgsqlHost}:${pgsqlPort}/${pgsqlDatabase}"/>
+      <property name="username" value="${pgsqlUser}"/>
+      <property name="password" value="${pgsqlPassword}"/>
+      <property name="driverClassName" value="org.postgresql.Driver"/>
     </bean>
 
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" depends-on="waitForDb">
