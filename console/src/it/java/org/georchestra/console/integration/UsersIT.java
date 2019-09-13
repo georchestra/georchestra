@@ -166,7 +166,7 @@ public class UsersIT {
     public @Test void testDeleteAccountRecords() throws Exception {
 
         createUser("user1");
-        this.mockMvc.perform(post("/private/users/gdpr/delete?uid=user1"))//
+        this.mockMvc.perform(post("/account/gdpr/delete?uid=user1"))//
                 .andExpect(status().isOk())//
                 .andExpect(content().contentTypeCompatibleWith("application/json"))//
                 // .andDo(print())//
@@ -176,7 +176,7 @@ public class UsersIT {
                 .andExpect(jsonPath("$.geodocs").value(3))//
                 .andExpect(jsonPath("$.ogcStats").value(3));
 
-        this.mockMvc.perform(post("/private/users/gdpr/delete?uid=user1"))//
+        this.mockMvc.perform(post("/account/gdpr/delete?uid=user1"))//
                 .andExpect(status().isOk())//
                 .andExpect(content().contentTypeCompatibleWith("application/json"))//
                 .andExpect(jsonPath("$.account").value("user1"))//

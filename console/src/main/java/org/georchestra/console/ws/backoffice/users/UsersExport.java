@@ -65,7 +65,7 @@ public class UsersExport {
      * <a href="https://eugdpr.org/">General Data Protection Regulation</a>)
      * relevant information available on the system.
      */
-    @RequestMapping(method = RequestMethod.GET, value = "/private/users/gdpr/download", produces = "application/zip")
+    @RequestMapping(method = RequestMethod.GET, value = "/account/gdpr/download", produces = "application/zip")
     public void downloadUserData(HttpServletResponse response)
             throws NameNotFoundException, DataServiceException, IOException {
 

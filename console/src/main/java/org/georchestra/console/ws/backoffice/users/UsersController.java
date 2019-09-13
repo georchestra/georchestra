@@ -491,7 +491,7 @@ public class UsersController {
         ResponseUtil.writeSuccess(response);
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/private/users/gdpr/delete", produces = "application/json")
+    @RequestMapping(method = RequestMethod.POST, value = "/account/gdpr/delete", produces = "application/json")
     public ResponseEntity<DeletedUserDataInfo> deleteUserSensitiveData(//
             @RequestParam(required = false, name = "uid") String uid, //
             HttpServletRequest request, //
