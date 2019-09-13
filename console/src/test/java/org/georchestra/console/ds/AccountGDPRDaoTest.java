@@ -2,9 +2,12 @@ package org.georchestra.console.ds;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import static org.georchestra.console.ds.AccountGDPRDaoImpl.GEONETWORK_DATE_FORMAT;
 
 import java.sql.ResultSet;
 import java.sql.Time;
@@ -12,6 +15,9 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoField;
+import java.time.temporal.TemporalAccessor;
+import java.time.temporal.TemporalField;
 import java.util.Arrays;
 import java.util.List;
 
@@ -105,13 +111,20 @@ public class AccountGDPRDaoTest {
         String documentContent = "<MD_Metadata/>";
         MetadataRecord expected = new MetadataRecord(id, createdDate, schemaId, documentContent, "name", "surname");
 
-        String createDateStr = createdDate.toString().replace('T', ' ');
+        String createDateStr = createdDate.toString();
         ResultSet rs = mockResultset("id", id, "createdate", createDateStr, "schemaid", schemaId, "data",
                 documentContent, "name", "name", "surname", "surname");
 
         MetadataRecord record = AccountGDPRDaoImpl.createMetadataRecord(rs);
         assertNotNull(record);
         assertEquals(expected, record);
+    }
+
+    public @Test void testParseGeonetworkDate() {
+        String date = "2019-09-11T12:41:38";
+        TemporalAccessor parsed = GEONETWORK_DATE_FORMAT.parse(date);
+        // Making sure the date has correctly been parsed
+        assertTrue(parsed.get(ChronoField.DAY_OF_MONTH) == 11 && parsed.get(ChronoField.SECOND_OF_MINUTE) == 38);
     }
 
     private ResultSet mockResultset(Object... kvps) throws Exception {
