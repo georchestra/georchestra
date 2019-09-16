@@ -16,7 +16,10 @@ import org.springframework.ldap.support.LdapNameBuilder;
 
 import javax.naming.Name;
 import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
+import javax.naming.directory.BasicAttribute;
+import javax.naming.directory.BasicAttributes;
 import javax.naming.ldap.LdapName;
 import java.util.Collections;
 import java.util.List;
@@ -179,6 +182,32 @@ public class OrgsDaoTest {
         verify(mockLdapTemplate).modifyAttributes(attributesCaptor.capture());
         assertEquals("uid=momo,ou=users,dc=georchestra,dc=org",
                 attributesCaptor.getValue().getAttributes().get("member").get(0));
+    }
+
+    @Test
+    public void testOrgAttributeMapperCities() throws NamingException {
+        OrgsDao d = new OrgsDao();
+        Attributes orgToDeserialize = new BasicAttributes();
+        orgToDeserialize.put("description", "1,2,3");
+        AttributesMapper<Org> toTest = d.getExtension(new Org()).getAttributeMapper(true);
+
+        Org org = toTest.mapFromAttributes(orgToDeserialize);
+
+        assertTrue("Expected 3 cities", org.getCities().size() == 3);
+    }
+
+    @Test
+    public void testOrgAttributeMapperCitiesMultipleDescAttributes() throws NamingException {
+        OrgsDao d = new OrgsDao();
+        Attributes orgToDeserialize = new BasicAttributes();
+        Attribute desc = new BasicAttribute("description");
+        desc.add("1,2,3");
+        desc.add("4,5,6");
+        orgToDeserialize.put(desc);
+        AttributesMapper<Org> toTest = d.getExtension(new Org()).getAttributeMapper(true);
+
+        Org org = toTest.mapFromAttributes(orgToDeserialize);
+        assertTrue("Expected 6 cities", org.getCities().size() == 6);
     }
 
     private void mockOrgLookupResultDependingOnDn(LdapTemplate mockLdapTemplate, Org returnedOrg, String searchDn) {

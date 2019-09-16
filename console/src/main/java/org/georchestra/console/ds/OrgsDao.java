@@ -43,9 +43,11 @@ import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -185,7 +187,8 @@ public class OrgsDao {
                     org.setId(asStringStream(attrs, "cn").collect(joining(",")));
                     org.setName(asStringStream(attrs, "o").collect(joining(",")));
                     org.setShortName(asStringStream(attrs, "ou").collect(joining(",")));
-                    org.setCities(asStringStream(attrs, "description").collect(Collectors.toList()));
+                    org.setCities(asStringStream(attrs, "description").flatMap(Pattern.compile(",")::splitAsStream)
+                            .collect(Collectors.toList()));
                     org.setMembers(asStringStream(attrs, "member").map(raw -> LdapNameBuilder.newInstance(raw))
                             .map(dn -> dn.build()).map(name -> name.getRdn(name.size() - 1).getValue().toString())
                             .collect(Collectors.toList()));
