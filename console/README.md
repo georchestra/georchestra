@@ -8,8 +8,9 @@ The webapp is made of three parts:
     * **administrators** to
         * manage users, organisations, roles with a neat user interface
         * check platform stats
-    * **delegated administrators** to
-       * manage users & a collection of roles in a custom set of organisations
+    * **delegated administrators** (on a given set of organisations) to
+       * create, update, delete users belonging to these organisations
+       * grant or remove roles (chosen by the administrator) to users belonging to this same set of organisations
        * check platform stats
   * the user's profile page (`/console/account/userdetails`) allows:
     * **referents** to modify their organization details
