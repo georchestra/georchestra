@@ -1,17 +1,28 @@
 package org.georchestra.console.ws.edituserdetails;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.verify;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.ds.RoleDao;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountFactory;
 import org.georchestra.console.dto.orgs.Org;
+import org.georchestra.console.dto.orgs.OrgExt;
 import org.georchestra.console.ws.utils.Validation;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-import org.springframework.ldap.InvalidNameException;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.ui.Model;
@@ -20,13 +31,7 @@ import org.springframework.validation.MapBindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.support.SessionStatus;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
-import static junit.framework.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class EditUserDetailsFormControllerTest {
 
@@ -130,16 +135,32 @@ public class EditUserDetailsFormControllerTest {
 
     /**
      * Testing the general case on EditUserDetail controller, general case.
-     *
+     * 
      * @throws Exception
      */
     @Test
     public void testEdit() throws Exception {
+        String incredibleDesc = "The incredible, marvelous and wonderfull company which tests georchestra";
         request.addHeader("sec-username", "mtester");
+        Org org = new Org();
+        org.setId("georTest");
+        org.setName("geOrchestra testing LLC");
+        OrgExt orgExt = new OrgExt();
+        orgExt.setDescription(incredibleDesc);
+        org.setOrgExt(orgExt);
+        Mockito.when(this.orgsDao.findByCommonNameWithExt(Mockito.any())).thenReturn(org);
 
         String ret = ctrl.edit(request, response, model, formBean, resultErrors, sessionStatus);
 
+        ArgumentCaptor<Boolean> refOrSuCaptor = ArgumentCaptor.forClass(Boolean.class);
+        ArgumentCaptor<ObjectNode> orgWithExtCaptor = ArgumentCaptor.forClass(ObjectNode.class);
+        verify(model).addAttribute(Mockito.eq("isReferentOrSuperUser"), refOrSuCaptor.capture());
+        verify(model).addAttribute(Mockito.eq("org"), orgWithExtCaptor.capture());
         assertTrue(ret.equals("editUserDetailsForm"));
+        assertNotNull("expected a isReferentOrSuperUser in the model, null returned", refOrSuCaptor.getValue());
+        ObjectNode node = orgWithExtCaptor.getValue();
+        String desc = node.get("description").asText();
+        assertEquals("Description unexpected, missing OrgExt attributes ?", desc, incredibleDesc);
     }
 
     @Test

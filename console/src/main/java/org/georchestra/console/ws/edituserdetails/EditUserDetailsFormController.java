@@ -22,6 +22,8 @@ package org.georchestra.console.ws.edituserdetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.annotations.VisibleForTesting;
+
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.DataServiceException;
 import org.georchestra.console.ds.DuplicatedEmailException;
@@ -191,9 +193,9 @@ public class EditUserDetailsFormController {
             accountDao.update(account, request.getHeader("sec-username"));
 
             model.addAttribute("success", true);
-            Org org = orgsDao.findByCommonName(account.getOrg());
+            Org org = orgsDao.findByCommonNameWithExt(account);
             model.addAttribute("org", orgToJson(org));
-
+            model.addAttribute("isReferentOrSuperUser", isReferentOrSuperUser(account));
             return "editUserDetailsForm";
 
         } catch (DuplicatedEmailException e) {
