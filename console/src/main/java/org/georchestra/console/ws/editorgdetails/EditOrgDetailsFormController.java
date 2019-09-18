@@ -116,7 +116,9 @@ public class EditOrgDetailsFormController {
         }
 
         OrgExt orgExt = modifyOrgExt(orgsDao.findExtById(formBean.getId()), formBean);
-        orgExt.setLogo(transformLogoFileToBase64(logo));
+        if (!logo.isEmpty()) {
+            orgExt.setLogo(transformLogoFileToBase64(logo));
+        }
         orgsDao.update(orgExt);
         model.addAttribute("success", true);
 
