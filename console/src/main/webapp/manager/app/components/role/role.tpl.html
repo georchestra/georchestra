@@ -31,14 +31,15 @@
       </div>
 
       <div class="panel-body" ng-if="role.tab=='users'">
+        <input type="text" class="filter-table form-control pull-right ng-pristine ng-untouched ng-valid ng-empty" ng-model="role.q" placeholder="{{'role.filter_users' | translate}}"></input>
+        <i class="glyphicon glyphicon-remove-sign panel-filter-table-reset" ng-show="role.q != ''" ng-click="role.q = ''"></i>
         <h3 class="roles-title">
           <ng-pluralize count="role.users.length"
                         when="{'0': '{{ &quot;role.users_none&quot; | translate }}',
                                '1': '{} {{ &quot;role.user&quot; | translate }}',
                                'other': '{} {{ &quot;role.users&quot; | translate }}'}">
         </h3>
-
-        <form class="form-inline pull-right">
+        <form class="form-inline">
           <div class="form-group">
             <label for="role" translate>role.userlabel</label>
             <select class="pull-right form-control input-sm" ng-model="role.user"
@@ -59,7 +60,7 @@
           </thead>
 
           <tbody>
-            <tr dir-paginate="user in role.users | itemsPerPage: role.itemsPerPage | orderBy : 'sn'">
+            <tr dir-paginate="user in role.users | filter:role.q | itemsPerPage: role.itemsPerPage | orderBy : 'sn'">
               <td>
                 <a ng-link="user({id: user.uid, tab: 'infos'})">{{::user.sn}} {{::user.givenName}}</a>
               </td>
