@@ -306,15 +306,16 @@ public class StatisticsController {
         }
 
         // not both group and user can be defined at the same time
-        if (input.has("user") && input.has("group")) {
+        if (input.has("user") && input.has("role")) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return null;
         }
-        if (input.has("user"))
+        if (input.has("user")) {
             sqlValues.put("user", input.getString("user"));
-        if (input.has("group"))
-            sqlValues.put("group", "ROLE_" + input.getString("group"));
-
+        }
+        if (input.has("role")) {
+            sqlValues.put("role", "ROLE_" + input.getString("role"));
+        }
         // Compute expression to aggregate dates
         GRANULARITY g = this.guessGranularity((String) sqlValues.get("startDate"), (String) sqlValues.get("endDate"));
         String aggregateDate;
@@ -344,11 +345,12 @@ public class StatisticsController {
                 + "     AND date < CAST({endDate} AS timestamp without time zone) ";
 
         // Handle user and group
-        if (input.has("user"))
+        if (input.has("user")) {
             sql += " AND user_name = {user} ";
-        if (input.has("group"))
-            sql += " AND {group} = ANY (roles) ";
-
+        }
+        if (input.has("role")) {
+            sql += " AND {role} = ANY (roles) ";
+        }
         sql += "GROUP BY to_char(date, {aggregateDateExpression}) "
                 + "ORDER BY to_char(date, {aggregateDateExpression})";
 
@@ -822,5 +824,4 @@ public class StatisticsController {
     private String getEndDate(JSONObject payload) throws JSONException, ParseException {
         return this.getDateField(payload, "endDate");
     }
-
 }
