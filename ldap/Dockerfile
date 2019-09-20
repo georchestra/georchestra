@@ -8,6 +8,10 @@ ENV OPENLDAP_VERSION 2.4.44
 ENV RUN_AS_UID 101
 ENV RUN_AS_GID 101
 
+ENV SLAPD_DOMAIN georchestra.org
+ENV SLAPD_PASSWORD secret
+ENV SLAPD_ADDITIONAL_MODULES groupofmembers,openssh
+
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
         slapd=${OPENLDAP_VERSION}* && \
@@ -24,6 +28,7 @@ RUN apt-get update && \
 
 USER openldap
 ADD groupofmembers.ldif /etc/ldap.dist/modules/
+ADD openssh.ldif /etc/ldap.dist/modules/
 ADD docker/indexes.ldif /tmp/
 ADD georchestraSchema.ldif /tmp/
 ADD memberof.ldif /tmp/
