@@ -7,7 +7,7 @@ docker-pull-jetty:
 	docker pull jetty:9-jre8
 
 docker-build-ldap:
-	docker pull debian:stretch
+	docker pull debian:buster
 	cd ldap; \
 	docker build -t georchestra/ldap:${BTAG} .
 
@@ -50,22 +50,22 @@ docker-build-georchestra: build-deps docker-pull-jetty docker-build-database doc
 	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl extractorapp,cas-server-webapp,security-proxy,mapfishapp,header,console,analytics,geowebcache-webapp,atlas
 
 docker-build-smtp:
-	docker pull debian:stretch
+	docker pull debian:buster
 	cd docker/smtp/smtp-sink; \
 	docker build -t camptocamp/smtp-sink .
 
 docker-build-imap:
-	docker pull debian:stretch
+	docker pull debian:buster
 	cd docker/smtp/courier-imap; \
 	docker build -t camptocamp/courier-imap .
 
 docker-build-webmail:
-	docker pull debian:stretch
+	docker pull debian:buster
 	cd docker/smtp/webmail; \
 	docker build -t camptocamp/sqwebmail .
 
 docker-build-geodata:
-	docker pull debian:stretch
+	docker pull debian:buster
 	cd docker/ssh_data; \
 	docker build -t georchestra/ssh_data .
 

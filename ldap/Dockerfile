@@ -2,9 +2,9 @@
 # Dockerfile for the geOrchestra openldap service
 #
 
-FROM debian:stretch
+FROM debian:buster
 
-ENV OPENLDAP_VERSION 2.4.44
+ENV OPENLDAP_VERSION 2.4.47
 ENV RUN_AS_UID 101
 ENV RUN_AS_GID 101
 
