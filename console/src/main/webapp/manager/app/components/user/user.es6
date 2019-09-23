@@ -72,9 +72,14 @@ class UserController {
     // Load role infos for every tab (for confirmation)
     let Role = this.$injector.get('Role')
     this.roles = Role.query()
-    this.systemRoles = Role.query()
-    Role.query(roles => { this.allroles = roles.map(r => r.cn) })
-
+    Role.query(roles => {
+      this.allroles = roles.map(r => r.cn)
+      // get roles informations to get description from template
+      this.systemRoles = {}
+      roles.map(r => {
+        this.systemRoles[r.cn] = r.description
+      })
+    })
     this.user.$promise.then(() => {
       let roleAdminFilter = this.$injector.get('roleAdminFilter')
       let notAdmin = []
