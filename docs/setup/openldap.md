@@ -72,6 +72,14 @@ Caution: by default, we're adding the overlay to the ```{1}mdb,cn=config``` data
 
 The [georchestra.ldif](../../ldap/georchestra.ldif) file creates the default geOrchestra users & groups:
 
+First, add "sshPublicKey" objectClass (needed for sshPublicKey of user testadmin) :
+
+```
+sudo ldapadd -Y EXTERNAL -H ldapi:/// -f openssh.ldif 
+```
+
+Then, you can add georchestra.ldif :
+
 ```
 ldapadd -D"cn=admin,dc=georchestra,dc=org" -W -f georchestra.ldif
 ```
