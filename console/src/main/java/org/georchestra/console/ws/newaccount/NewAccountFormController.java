@@ -156,10 +156,10 @@ public final class NewAccountFormController {
 
     @InitBinder
     public void initForm(WebDataBinder dataBinder) {
-        dataBinder.setAllowedFields(new String[] { "firstName", "surname", "email", "phone", "org", "title",
+        dataBinder.setAllowedFields("firstName", "surname", "email", "phone", "org", "title",
                 "description", "uid", "password", "confirmPassword", "privacyPolicyAgreed", "createOrg", "orgName",
                 "orgShortName", "orgAddress", "orgType", "orgCities", "orgDescription", "orgUrl", "orgLogo",
-                "recaptcha_response_field" });
+                "recaptcha_response_field");
     }
 
     @RequestMapping(value = "/account/new", method = RequestMethod.GET)
@@ -276,7 +276,7 @@ public final class NewAccountFormController {
             final ServletContext servletContext = request.getSession().getServletContext();
 
             // List of recipients for notification email
-            List<String> recipients = accountDao.findByRole("SUPERUSER").stream().map(x -> x.getEmail())
+            List<String> recipients = accountDao.findByRole("SUPERUSER").stream().map(Account::getEmail)
                     .collect(Collectors.toCollection(LinkedList::new));
 
             // Retrieve emails of delegated admin if org is specified
@@ -294,12 +294,12 @@ public final class NewAccountFormController {
             // and send emails
             if (this.moderatedSignup) {
                 emailFactory.sendNewAccountRequiresModerationEmail(servletContext, recipients, account.getCommonName(),
-                        account.getUid(), account.getEmail());
+                        account.getUid(), account.getEmail(), account.getOrg());
                 emailFactory.sendAccountCreationInProcessEmail(servletContext, account.getEmail(),
                         account.getCommonName(), account.getUid());
             } else {
                 emailFactory.sendNewAccountNotificationEmail(servletContext, recipients, account.getCommonName(),
-                        account.getUid(), account.getEmail());
+                        account.getUid(), account.getEmail(), account.getOrg());
                 emailFactory.sendAccountWasCreatedEmail(servletContext, account.getEmail(), account.getCommonName(),
                         account.getUid());
             }

@@ -248,6 +248,7 @@
     <property name="newAccountNotificationEmailSubject" value="${subject.new.account.notification:[${instanceName}] New account created}"/>
     <property name="publicUrl" value="${scheme}://${domainName}"/>
     <property name="instanceName" value="${instanceName}"/>
+    <property name="administratorEmail" value="${administratorEmail}"/>
   </bean>
 
   <bean id="moderatedSignup" class="java.lang.Boolean">
