@@ -67,16 +67,17 @@ sudo ldapadd -Y EXTERNAL -H ldapi:/// -f memberof.ldif
 
 Caution: by default, we're adding the overlay to the ```{1}mdb,cn=config``` database. You may have to customize this if your setup is different (having a look at the ```/etc/ldap/slapd.d/cn=config/``` directory).
 
+## Add "sshPublicKey" objectClass
 
-## geOrchestra users and groups
-
-The [georchestra.ldif](../../ldap/georchestra.ldif) file creates the default geOrchestra users & groups:
-
-First, add "sshPublicKey" objectClass (needed for sshPublicKey of user testadmin) :
+The [openssh.ldif](../../ldap/openssh.ldif) file creates the "sshPublicKey" objectClass needed for sshPublicKey of user "testadmin" in next configuration step:
 
 ```
 sudo ldapadd -Y EXTERNAL -H ldapi:/// -f openssh.ldif 
 ```
+
+## geOrchestra users and groups
+
+The [georchestra.ldif](../../ldap/georchestra.ldif) file creates the default geOrchestra users & groups:
 
 Then, you can add georchestra.ldif :
 
