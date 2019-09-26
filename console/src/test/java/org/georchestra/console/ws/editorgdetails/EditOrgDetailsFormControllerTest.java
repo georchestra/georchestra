@@ -2,6 +2,7 @@ package org.georchestra.console.ws.editorgdetails;
 
 import com.google.common.io.ByteStreams;
 import org.georchestra.console.ds.AccountDao;
+import org.georchestra.console.ds.DataServiceException;
 import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.ds.RoleDao;
 import org.georchestra.console.dto.AccountImpl;
@@ -130,7 +131,13 @@ public class EditOrgDetailsFormControllerTest {
 
             assertEquals(orgsDao.findExtById("georTest").getLogo(), base64Image);
         }
+    }
 
+    @Test(expected = NullPointerException.class)
+    public void testWithoutAnyOrgs() throws IOException, DataServiceException {
+        request.addHeader("sec-org", "");
+        request.addHeader("sec-username", "georTest");
+        ctrl.setupForm(request, response, model);
     }
 
 }
