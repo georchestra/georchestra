@@ -102,7 +102,7 @@ public class EditOrgDetailsFormController {
     @RequestMapping(value = "/account/orgdetails", method = RequestMethod.POST)
     public String edit(HttpServletRequest request, HttpServletResponse response, Model model,
             @ModelAttribute EditOrgDetailsFormBean formBean, @RequestParam(name = "logo") MultipartFile logo,
-            BindingResult resultErrors, SessionStatus sessionStatus) throws IOException {
+            BindingResult resultErrors) throws IOException {
         if (request.getHeader("sec-username") == null && request.getHeader("sec-org") == null) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
             return null;
