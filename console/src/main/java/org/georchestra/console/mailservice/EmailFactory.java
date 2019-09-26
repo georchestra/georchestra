@@ -68,6 +68,8 @@ public class EmailFactory {
     private String publicUrl;
     private String instanceName;
 
+    private String administratorEmail;
+
     public void sendAccountWasCreatedEmail(ServletContext servletContext, String recipient, String userName, String uid)
             throws MessagingException {
         Email email = new Email(singletonList(recipient), this.accountWasCreatedEmailSubject, this.smtpHost,
@@ -98,9 +100,8 @@ public class EmailFactory {
     /**
      * emails to the moderator to inform that a new user is waiting authorization.
      */
-
     public void sendNewAccountRequiresModerationEmail(ServletContext servletContext, List<String> recipients,
-            String userName, String uid, String userEmail) throws MessagingException {
+            String userName, String uid, String userEmail, String userOrg) throws MessagingException {
 
         Email email = new Email(recipients, this.newAccountRequiresModerationEmailSubject, this.smtpHost, this.smtpPort,
                 this.emailHtml, userEmail, // Reply-to
@@ -111,6 +112,7 @@ public class EmailFactory {
         email.set("name", userName);
         email.set("uid", uid);
         email.set("email", userEmail);
+        email.set("orgs", userOrg);
         email.send();
     }
 
@@ -138,7 +140,7 @@ public class EmailFactory {
     }
 
     public void sendNewAccountNotificationEmail(ServletContext servletContext, List<String> recipients, String userName,
-            String uid, String userEmail) throws MessagingException {
+            String uid, String userEmail, String userOrg) throws MessagingException {
 
         Email email = new Email(recipients, this.newAccountNotificationEmailSubject, this.smtpHost, this.smtpPort,
                 this.emailHtml, userEmail, // Reply-to
@@ -148,6 +150,7 @@ public class EmailFactory {
         email.set("name", userName);
         email.set("uid", uid);
         email.set("email", userEmail);
+        email.set("org", userOrg);
         email.send();
     }
 

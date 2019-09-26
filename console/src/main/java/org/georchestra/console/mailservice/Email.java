@@ -56,7 +56,7 @@ public class Email {
 
     private String publicUrl;
     private String instanceName;
-    protected GeorchestraConfiguration georConfig;
+    private GeorchestraConfiguration georConfig;
 
     public Email(List<String> recipients, String emailSubject, String smtpHost, int smtpPort, boolean emailHtml,
             String replyTo, String from, String bodyEncoding, String subjectEncoding, String templateEncoding,
