@@ -112,7 +112,7 @@ public class EmailFactory {
         email.set("name", userName);
         email.set("uid", uid);
         email.set("email", userEmail);
-        email.set("orgs", userOrg);
+        email.set("org", userOrg);
         email.send();
     }
 
@@ -150,6 +150,9 @@ public class EmailFactory {
         email.set("name", userName);
         email.set("uid", uid);
         email.set("email", userEmail);
+        if (userOrg == null) {
+            userOrg = "None";
+        }
         email.set("org", userOrg);
         email.send();
     }
@@ -256,5 +259,9 @@ public class EmailFactory {
 
     public void setInstanceName(String instanceName) {
         this.instanceName = instanceName;
+    }
+
+    public void setAdministratorEmail(String administratorEmail) {
+        this.administratorEmail = administratorEmail;
     }
 }

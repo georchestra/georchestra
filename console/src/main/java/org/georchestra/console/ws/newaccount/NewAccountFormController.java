@@ -156,9 +156,9 @@ public final class NewAccountFormController {
 
     @InitBinder
     public void initForm(WebDataBinder dataBinder) {
-        dataBinder.setAllowedFields("firstName", "surname", "email", "phone", "org", "title",
-                "description", "uid", "password", "confirmPassword", "privacyPolicyAgreed", "createOrg", "orgName",
-                "orgShortName", "orgAddress", "orgType", "orgCities", "orgDescription", "orgUrl", "orgLogo",
+        dataBinder.setAllowedFields("firstName", "surname", "email", "phone", "org", "title", "description", "uid",
+                "password", "confirmPassword", "privacyPolicyAgreed", "createOrg", "orgName", "orgShortName",
+                "orgAddress", "orgType", "orgCities", "orgDescription", "orgUrl", "orgLogo",
                 "recaptcha_response_field");
     }
 
