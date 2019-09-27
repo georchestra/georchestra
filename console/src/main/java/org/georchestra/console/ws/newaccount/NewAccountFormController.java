@@ -292,14 +292,15 @@ public final class NewAccountFormController {
 
             // Select email template based on moderation configuration for admin and user
             // and send emails
+            String orgName = orgDao.findByCommonName(account.getOrg()).getName();
             if (this.moderatedSignup) {
                 emailFactory.sendNewAccountRequiresModerationEmail(servletContext, recipients, account.getCommonName(),
-                        account.getUid(), account.getEmail(), account.getOrg());
+                        account.getUid(), account.getEmail(), orgName);
                 emailFactory.sendAccountCreationInProcessEmail(servletContext, account.getEmail(),
                         account.getCommonName(), account.getUid());
             } else {
                 emailFactory.sendNewAccountNotificationEmail(servletContext, recipients, account.getCommonName(),
-                        account.getUid(), account.getEmail(), account.getOrg());
+                        account.getUid(), account.getEmail(), orgName);
                 emailFactory.sendAccountWasCreatedEmail(servletContext, account.getEmail(), account.getCommonName(),
                         account.getUid());
             }
