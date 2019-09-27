@@ -66,6 +66,18 @@ class UserController {
     return (this.delegation.orgs.length !== 0) && (this.delegation.roles.length !== 0)
   }
 
+  // search each choosen span elements and set title manually
+  // to display roles description on hover
+  setTitle () {
+    if (this.systemRoles) {
+      let selectEls = $('li.search-choice')
+      $(selectEls).each(i => {
+        let text = selectEls[i].firstChild.innerHTML
+        selectEls[i].firstChild.setAttribute('title', this.systemRoles[text])
+      })
+    }
+  }
+
   bindRoles () {
     const TMP_ROLE = 'TEMPORARY'
 
@@ -351,6 +363,8 @@ class UserController {
         }
         if (this.user.adminRoles) {
           previousRoles = roles
+          // to manually display roles description on roles multi select elements
+          this.setTitle()
           return roles
         } else {
           return previousRoles
