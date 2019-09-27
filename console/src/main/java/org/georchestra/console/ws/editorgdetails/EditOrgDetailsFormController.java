@@ -78,7 +78,7 @@ public class EditOrgDetailsFormController {
     public String setupForm(HttpServletRequest request, HttpServletResponse response, Model model)
             throws IOException, DataServiceException {
 
-        if (request.getHeader("sec-username") == null && request.getHeader("sec-org") == null) {
+        if (request.getHeader("sec-username") == null && !request.getHeader("sec-org").equals("ROLE_REFERENT")) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
             return null;
         }
@@ -103,7 +103,7 @@ public class EditOrgDetailsFormController {
     public String edit(HttpServletRequest request, HttpServletResponse response, Model model,
             @ModelAttribute EditOrgDetailsFormBean formBean, @RequestParam(name = "logo") MultipartFile logo,
             BindingResult resultErrors) throws IOException {
-        if (request.getHeader("sec-username") == null && request.getHeader("sec-org") == null) {
+        if (request.getHeader("sec-username") == null && !request.getHeader("sec-org").equals("ROLE_REFERENT")) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
             return null;
         }
