@@ -421,7 +421,7 @@ public final class AccountDaoImpl implements AccountDao {
     private void mapToContext(Account account, DirContextOperations context) {
 
         context.setAttributeValues("objectclass", new String[] { "top", "person", "organizationalPerson",
-                "inetOrgPerson", "shadowAccount", "georchestraUser" });
+                "inetOrgPerson", "shadowAccount", "georchestraUser", "ldapPublicKey" });
 
         // person attributes
         setAccountField(context, UserSchema.SURNAME_KEY, account.getSurname());
