@@ -151,7 +151,7 @@ public class EmailFactory {
         email.set("uid", uid);
         email.set("email", userEmail);
         if (userOrg == null) {
-            userOrg = "None";
+            userOrg = "";
         }
         email.set("org", userOrg);
         email.send();
