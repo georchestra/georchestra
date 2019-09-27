@@ -27,6 +27,11 @@
       <name>geOrchestra maven generated site</name>
       <url>file:///tmp/georchestra-generated-site/</url>
     </site>
+    <repository>
+      <id>github</id>
+      <name>Github geOrchestra Maven repository</name>
+      <url>https://maven.pkg.github.com/georchestra/georchestra</url>
+    </repository>
   </distributionManagement>
   <properties>
     <java.version>1.8</java.version>
