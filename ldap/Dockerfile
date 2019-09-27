@@ -14,31 +14,13 @@ ENV SLAPD_ADDITIONAL_MODULES groupofmembers,openssh
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
-        slapd=${OPENLDAP_VERSION}* && \
+        slapd=${OPENLDAP_VERSION}* ldap-utils procps && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 RUN mv /etc/ldap /etc/ldap.dist
-
-COPY docker/modules/ /etc/ldap.dist/modules
-
-RUN apt-get update && \
-    apt-get install -y ldap-utils procps && \
-    rm -rf /var/lib/apt/lists/*
-
-USER openldap
-ADD groupofmembers.ldif /etc/ldap.dist/modules/
-ADD openssh.ldif /etc/ldap.dist/modules/
-ADD docker/indexes.ldif /tmp/
-ADD georchestraSchema.ldif /tmp/
-ADD memberof.ldif /tmp/
-ADD georchestra.ldif /tmp/
-
-USER root
-RUN mkdir /docker-entrypoint.d
-ADD docker/docker-entrypoint.d/* /docker-entrypoint.d/
-ADD docker/docker-entrypoint.sh /
-RUN chmod +x /docker-entrypoint.d/*
+COPY docker-root /
+RUN chown openldap /*.ldif /etc/ldap.dist/modules/*
 
 EXPOSE 389
 
