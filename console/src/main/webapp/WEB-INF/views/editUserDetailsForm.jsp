@@ -173,7 +173,7 @@
     <!-- /angularjs app dependencies -->
 
     <div class="col-lg-5 col-lg-offset-1" ng-app="manager" ng-strict-di ng-controller="StandaloneController">
-      <fieldset ng-if="Object.hasOwnProperty(org)">
+      <fieldset ng-if="org.id">
         <legend><s:message code="editUserDetailsForm.organisation" /> «{{org.name}}»</legend>
 		<ul class="list-group list-group-flush">
 		  <li class="list-group-item" ng-if="isReferentOrSuperUser">
