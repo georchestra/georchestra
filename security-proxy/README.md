@@ -40,7 +40,7 @@ It is also possible to create a specific role which grants access to the backend
 
 With every request, the proxy adds specific HTTP headers, allowing the application to know:
  * if the request comes from a registered user, or an anonymous one - this is `sec-username` (not provided if anonymous).
- * which roles the user bears - `sec-roles` is a semi-colon separated list of roles (not provided if anonymous).
+ * which roles the user holds - `sec-roles` is a semi-colon separated list of roles (not provided if anonymous).
  * which organisation the user belongs to - `sec-orgname` provides the human-readable organisation title while `sec-org` is mapped onto the organisation id (LDAP's `cn`).
 
 Several other user properties are also provided as headers:
