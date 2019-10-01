@@ -21,7 +21,9 @@ package org.georchestra.console.dto;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 import javax.naming.InvalidNameException;
@@ -130,6 +132,9 @@ public class AccountImpl implements Serializable, Account {
     @JsonProperty(UserSchema.CONTEXT_KEY)
     private String context;
 
+    @JsonProperty(UserSchema.SSH_KEY)
+    private String[] sshKeys;
+
     // Organization from ou=orgs,dc=georchestra,dc=org
     // Json export is defined on the getter getOrg()
     private String org;
@@ -148,7 +153,7 @@ public class AccountImpl implements Serializable, Account {
                 + ", roomNumber='" + roomNumber + '\'' + ", stateOrProvince='" + stateOrProvince + '\''
                 + ", homePostalAddress='" + homePostalAddress + '\'' + ", shadowExpire='" + shadowExpire + '\''
                 + ", privacyPolicyAgreementDate='" + privacyPolicyAgreementDate + '\'' + ", context='" + context + '\''
-                + ", org='" + org + '\'' + '}';
+                + ", org='" + org + '\'' + ", sshKeys='" + sshKeys + "'}";
     }
 
     @Override
@@ -468,7 +473,7 @@ public class AccountImpl implements Serializable, Account {
                 && Objects.equals(shadowExpire, account.shadowExpire)
                 && Objects.equals(privacyPolicyAgreementDate, account.privacyPolicyAgreementDate)
                 && Objects.equals(manager, account.manager) && Objects.equals(context, account.context)
-                && Objects.equals(org, account.org);
+                && Objects.equals(org, account.org) && Arrays.equals(sshKeys, account.sshKeys);
     }
 
     @Override
@@ -512,6 +517,17 @@ public class AccountImpl implements Serializable, Account {
     @Override
     public void setPending(boolean pending) {
         this.pending = pending;
+
+    }
+
+    @Override
+    public String[] getSshKeys() {
+        return this.sshKeys;
+    }
+
+    @Override
+    public void setSshKeys(String[] sshKeys) {
+        this.sshKeys = sshKeys;
 
     }
 }
