@@ -23,7 +23,6 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 
 import javax.naming.InvalidNameException;
@@ -153,7 +152,7 @@ public class AccountImpl implements Serializable, Account {
                 + ", roomNumber='" + roomNumber + '\'' + ", stateOrProvince='" + stateOrProvince + '\''
                 + ", homePostalAddress='" + homePostalAddress + '\'' + ", shadowExpire='" + shadowExpire + '\''
                 + ", privacyPolicyAgreementDate='" + privacyPolicyAgreementDate + '\'' + ", context='" + context + '\''
-                + ", org='" + org + '\'' + ", sshKeys='" + sshKeys + "'}";
+                + ", org='" + org + '\'' + ", sshKeys='" + Arrays.toString(sshKeys) + "'}";
     }
 
     @Override
