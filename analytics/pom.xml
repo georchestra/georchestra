@@ -568,25 +568,6 @@
               </environmentVariables>
             </configuration>
           </plugin>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>build-helper-maven-plugin</artifactId>
-            <version>1.5</version>
-            <executions>
-              <execution>
-                <id>add-test-source</id>
-                <phase>process-resources</phase>
-                <goals>
-                  <goal>add-test-source</goal>
-                </goals>
-                <configuration>
-                  <sources>
-                    <source>src/it/java</source>
-                  </sources>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
         </plugins>
       </build>
     </profile>
