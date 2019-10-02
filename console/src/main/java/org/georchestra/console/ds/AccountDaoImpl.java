@@ -42,10 +42,13 @@ import org.springframework.ldap.filter.PresentFilter;
 import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.security.authentication.encoding.LdapShaPasswordEncoder;
 
+import com.google.common.collect.Lists;
+
 import javax.naming.Name;
 import javax.naming.directory.SearchControls;
 import javax.naming.ldap.LdapName;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -421,13 +424,12 @@ public final class AccountDaoImpl implements AccountDao {
      */
     private void mapToContext(Account account, DirContextOperations context) {
 
-        if (account.getSshKeys().length > 0) {
-            context.setAttributeValues("objectclass", new String[] { "top", "person", "organizationalPerson",
-                    "inetOrgPerson", "shadowAccount", "georchestraUser", "ldapPublicKey" });
-        } else {
-            context.setAttributeValues("objectclass", new String[] { "top", "person", "organizationalPerson",
-                    "inetOrgPerson", "shadowAccount", "georchestraUser" });
+        List<String> values = Lists.newArrayList("top", "person", "organizationalPerson", "inetOrgPerson",
+                "shadowAccount", "georchestraUser", "ldapPublicKey");
+        if (account.getSshKeys().length == 0) {
+            values.remove("ldapPublicKey");
         }
+        context.setAttributeValues("objectclass", values.toArray());
 
         // person attributes
         setAccountField(context, UserSchema.SURNAME_KEY, account.getSurname());
