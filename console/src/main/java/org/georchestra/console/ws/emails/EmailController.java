@@ -21,7 +21,11 @@ package org.georchestra.console.ws.emails;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.console.dao.*;
+import org.georchestra.console.dao.AdminLogDao;
+import org.georchestra.console.dao.AdvancedDelegationDao;
+import org.georchestra.console.dao.AttachmentDao;
+import org.georchestra.console.dao.EmailDao;
+import org.georchestra.console.dao.EmailTemplateDao;
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.DataServiceException;
 import org.georchestra.console.dto.Account;
