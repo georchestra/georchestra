@@ -50,7 +50,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -80,6 +80,8 @@ public class NewAccountFormControllerTest {
     private BindingResult mockedValidationReports = mock(BindingResult.class);
     private SessionStatus status = mock(SessionStatus.class);
 
+    private final String orgName = "geOrchestra testing team";
+
     @Before
     public void setUp() {
 
@@ -96,14 +98,18 @@ public class NewAccountFormControllerTest {
         Account adminAccount = AccountFactory.createBrief("testadmin", "monkey123", "Test", "ADmin",
                 "postmastrer@localhost", "+33123456789", "admin", "");
         request.addHeader("sec-username", "testadmin"); // Set user connected through http header
+        Org mockOrg = new Org();
+        mockOrg.setName(orgName);
         try {
             when(mockAccountDao.findByUID(eq("testadmin"))).thenReturn(adminAccount);
+            when(mockOrgDao.findByCommonName(eq(orgName))).thenReturn(mockOrg);
         } catch (DataServiceException | NameNotFoundException e) {
             assertTrue(false);
         }
 
         String[] orgTypes = { "Association", "Company", "Non-governmental organization" };
         when(mockOrgDao.getOrgTypeValues()).thenReturn(orgTypes);
+
     }
 
     @Test
@@ -406,7 +412,7 @@ public class NewAccountFormControllerTest {
         when(formBean.getRecaptcha_response_field()).thenReturn("abc1234");
         when(formBean.getPhone()).thenReturn("+331234567890");
         when(formBean.getTitle()).thenReturn("+331234567890");
-        when(formBean.getOrg()).thenReturn("geOrchestra testing team");
+        when(formBean.getOrg()).thenReturn(orgName);
         when(formBean.getDescription()).thenReturn("Bot Unit Testing");
         when(formBean.getPrivacyPolicyAgreed()).thenReturn(true);
 
