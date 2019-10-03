@@ -1,4 +1,4 @@
-package org.georchestra.console.ds;
+package org.georchestra.console.integration.ds;
 
 import java.sql.Array;
 import java.sql.Connection;
