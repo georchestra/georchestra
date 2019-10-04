@@ -1,4 +1,4 @@
-package org.georchestra.console.ds;
+package org.georchestra.console.integration.ds;
 
 import static com.github.database.rider.core.api.dataset.SeedStrategy.CLEAN_INSERT;
 import static org.junit.Assert.assertEquals;
@@ -6,6 +6,9 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.georchestra.console.ds.AccountGDPRDao;
+import org.georchestra.console.ds.AccountGDPRDaoImpl;
+import org.georchestra.console.ds.DataServiceException;
 import org.georchestra.console.ds.AccountGDPRDao.DeletedRecords;
 import org.georchestra.console.ds.AccountGDPRDao.ExtractorRecord;
 import org.georchestra.console.ds.AccountGDPRDao.GeodocRecord;

@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.console.dao;
+package org.georchestra.console.integration.dao;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertNotNull;
@@ -30,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.integration.IntegrationTestSupport;
 import org.hamcrest.Matchers;
 import org.junit.Before;

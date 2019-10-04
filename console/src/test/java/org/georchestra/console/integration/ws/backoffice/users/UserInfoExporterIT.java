@@ -1,7 +1,8 @@
-package org.georchestra.console.ws.backoffice.users;
+package org.georchestra.console.integration.ws.backoffice.users;
 
 import static org.junit.Assert.assertNotNull;
 
+import org.georchestra.console.ws.backoffice.users.UserInfoExporter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

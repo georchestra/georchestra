@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along with
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.georchestra.console.ws.passwordrecovery;
+package org.georchestra.console.integration.ws.passwordrecovery;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
@@ -41,6 +41,8 @@ import javax.sql.DataSource;
 
 import org.georchestra.console.integration.IntegrationTestSupport;
 import org.georchestra.console.mailservice.EmailFactory;
+import org.georchestra.console.ws.passwordrecovery.PasswordRecoveryFormBean;
+import org.georchestra.console.ws.passwordrecovery.PasswordRecoveryFormController;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
