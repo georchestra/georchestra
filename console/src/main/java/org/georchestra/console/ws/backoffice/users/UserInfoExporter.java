@@ -10,12 +10,8 @@ public interface UserInfoExporter {
 
     String exportAsLdif(Account account);
 
-    String toVcf(Account account);
-
     String exportUsersAsCsv(String... userNames) throws DataServiceException;
 
     String exportUsersAsVcard(String... users) throws Exception;
-
-    String toCsv(Account account);
 
 }
