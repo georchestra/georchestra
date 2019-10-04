@@ -882,7 +882,7 @@
                           <SLAPD_ORGANISATION>georchestra</SLAPD_ORGANISATION>
                           <SLAPD_DOMAIN>georchestra.org</SLAPD_DOMAIN>
                           <SLAPD_PASSWORD>secret</SLAPD_PASSWORD>
-                          <SLAPD_ADDITIONAL_MODULES>groupofmembers</SLAPD_ADDITIONAL_MODULES>
+                          <SLAPD_ADDITIONAL_MODULES>groupofmembers,openssh</SLAPD_ADDITIONAL_MODULES>
                         </env>
                         <wait>
                           <!-- Need to figure out a good way to make sure 

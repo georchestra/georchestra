@@ -693,16 +693,22 @@ public class UsersController {
         String manager = RequestUtil.getFieldValue(json, UserSchema.MANAGER_KEY);
         String context = RequestUtil.getFieldValue(json, UserSchema.CONTEXT_KEY);
         String org = RequestUtil.getFieldValue(json, UserSchema.ORG_KEY);
+        String sshKeys = RequestUtil.getFieldValue(json, UserSchema.SSH_KEY);
+        String[] sshKeysA = new String[0];
 
-        if (givenName == null)
+        if (!StringUtils.isEmpty(sshKeys)) {
+            sshKeysA = sshKeys.split("\n"); // TODO what would be the most convenient delimiter ?
+        }
+
+        if (givenName == null) {
             throw new IllegalArgumentException("First Name is required");
-
-        if (surname == null)
+        }
+        if (surname == null) {
             throw new IllegalArgumentException("Last Name is required");
-
-        if (email == null)
-            throw new IllegalArgumentException("EMail is required");
-
+        }
+        if (email == null) {
+            throw new IllegalArgumentException("Email is required");
+        }
         // Use specified login if not empty
         String uid = RequestUtil.getFieldValue(json, UserSchema.UID_KEY);
         if (!StringUtils.hasLength(uid))
@@ -717,7 +723,7 @@ public class UsersController {
 
         Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, title, phone, description,
                 postalAddress, postalCode, "", postOfficeBox, "", street, locality, facsimile, "", "", "", "", manager,
-                context, org);
+                context, org, sshKeysA);
 
         String shadowExpire = RequestUtil.getFieldValue(json, UserSchema.SHADOW_EXPIRE_KEY);
         if (StringUtils.hasLength(shadowExpire)) {
