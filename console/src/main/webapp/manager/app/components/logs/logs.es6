@@ -14,7 +14,7 @@ class LogsController {
       limit: 100000,
       page: 0
     }, () => {
-      let extract = (key) => [ ...new Set(this.logs.logs.map(l => l[key])) ]
+      let extract = (key) => [ ...new Set(this.logs.map(l => l[key])) ]
       this.senders = extract('admin')
       this.types = extract('type')
       this.targets = [ { key: 'all', value: i18n.alltarget } ].concat(
