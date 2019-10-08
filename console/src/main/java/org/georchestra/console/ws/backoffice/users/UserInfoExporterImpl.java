@@ -29,6 +29,7 @@ import ezvcard.parameter.TelephoneType;
 import ezvcard.property.Address;
 import ezvcard.property.FormattedName;
 import lombok.NonNull;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -44,6 +45,7 @@ public class UserInfoExporterImpl implements UserInfoExporter {
     private @Value("${ldapUsersRdn:ou=users},${ldapBaseDn:dc=georchestra,dc=org}") String userSearchBaseDn;
 
     private AccountDao accountDao;
+    private @Autowired @Setter CSVAccountExporter CSVAccountExporter;
 
     public @Autowired UserInfoExporterImpl(AccountDao accountDao) {
         this.accountDao = accountDao;
@@ -117,7 +119,7 @@ public class UserInfoExporterImpl implements UserInfoExporter {
         }
         StringBuilder target = new StringBuilder();
         try {
-            new CSVAccountExporter().export(accounts, target);
+            this.CSVAccountExporter.export(accounts, target);
         } catch (IOException e) {
             throw new DataServiceException(e);
         }
@@ -138,11 +140,9 @@ public class UserInfoExporterImpl implements UserInfoExporter {
     public @NonNull String exportUsersAsVcard(@NonNull String... users) throws Exception {
         StringBuilder ret = new StringBuilder();
         for (String user : users) {
-            try {
-                Account a = accountDao.findByUID(user);
+            Account a = getAccount(user);
+            if (a != null) {
                 ret.append(toVcf(a));
-            } catch (NameNotFoundException e) {
-                log.error("User [{}] not found, skipping", user, e);
             }
         }
 

@@ -21,22 +21,34 @@ package org.georchestra.console.ws.backoffice.users;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.QuoteMode;
+import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.dto.Account;
+import org.georchestra.console.dto.orgs.Org;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
+@Service
 @RequiredArgsConstructor
-class CSVAccountExporter {
+public class CSVAccountExporter {
 
-    static enum OutlookCSVHeaderField implements Function<Account, String> {
+    static enum OutlookCSVHeaderField {
         FIRST_NAME("First Name", Account::getCommonName), //
         MIDDLE_NAME("Middle Name"), //
         LAST_NAME("Last Name", Account::getSurname), //
@@ -50,7 +62,7 @@ class CSVAccountExporter {
         LOCATION("Location"), //
         LANG("Language"), //
         INTERNET_FREE_BUSY("Internet Free Busy"), //
-        NOTES("Notes"), //
+        NOTES("Notes", (a, o) -> o == null ? null : o.getDescription()), //
         EMAIL("E-mail Address", Account::getEmail), //
         EMAIL2("E-mail 2 Address"), //
         EMAIL3("E-mail 3 Address"), //
@@ -65,7 +77,7 @@ class CSVAccountExporter {
         HOME_STREET2("Home Street 2"), //
         HOME_STREET3("Home Street 3"), //
         HOME_POBOX("Home Address PO Box"), //
-        HOME_CITY("Home City"), //
+        HOME_CITY("Home City", Account::getLocality), //
         HOME_STATE("Home State"), //
         HOME_PC("Home Postal Code"), //
         HOME_COUNTRY("Home Country"), //
@@ -79,7 +91,7 @@ class CSVAccountExporter {
         BIZ_PHONE2("Business Phone 2"), //
         BIZ_FAX("Business Fax", Account::getFacsimile), //
         ASSISTANT_PHONE("Assistant's Phone"), //
-        COMPANY("Company"), //
+        COMPANY("Company", (a, org) -> org == null ? null : org.getName()), //
         JOB_TITLE("Job Title", Account::getDescription), //
         DEPARTMENT("Department"), //
         OFFICE_LOCATION("Office Location"), //
@@ -91,7 +103,12 @@ class CSVAccountExporter {
         BIZ_ADDR_STREET2("Business Street 2"), //
         BIZ_ADDR_STREET3("Business Street 3"), //
         BIZ_ADDR_POBOX("Business Address PO Box", Account::getPostOfficeBox), //
-        BIZ_CITY("Business City"), //
+        BIZ_CITY("Business City", (a, o) -> {
+            if (o == null || o.getCities() == null) {
+                return null;
+            }
+            return o.getCities().stream().collect(Collectors.joining(","));
+        }), //
         BIZ_STATE("Business State"), //
         BIZ_PC("Business Postal Code", Account::getPostalCode), //
         BIZ_COUNTRY("Business Country", Account::getStateOrProvince), //
@@ -127,20 +144,25 @@ class CSVAccountExporter {
         CATEGORIES("Categories");
 
         private final @NonNull @Getter String name;
-        private final Function<Account, String> valueExtractor;
+        private final BiFunction<Account, Org, String> valueExtractor;
 
         private OutlookCSVHeaderField(String name) {
             this.name = name;
-            this.valueExtractor = a -> null;
+            this.valueExtractor = (a, o) -> null;
         }
 
         private OutlookCSVHeaderField(@NonNull String name, @NonNull Function<Account, String> valueExtractor) {
             this.name = name;
+            this.valueExtractor = (a, o) -> valueExtractor.apply(a);
+        }
+
+        private OutlookCSVHeaderField(@NonNull String name, @NonNull BiFunction<Account, Org, String> valueExtractor) {
+            this.name = name;
             this.valueExtractor = valueExtractor;
         }
 
-        public @Override String apply(Account acc) {
-            return this.valueExtractor.apply(acc);
+        public String apply(Account acc, Org org) {
+            return this.valueExtractor.apply(acc, org);
         }
     }
 
@@ -153,6 +175,8 @@ class CSVAccountExporter {
      */
     static final CSVFormat FORMAT = CSVFormat.RFC4180.withHeader(headerNames()).withQuoteMode(QuoteMode.MINIMAL);
 
+    private @Autowired @Setter OrgsDao orgsDao;
+
     private static final String[] headerNames() {
         return Arrays.stream(OutlookCSVHeaderField.values()).map(OutlookCSVHeaderField::getName).toArray(String[]::new);
     }
@@ -162,19 +186,25 @@ class CSVAccountExporter {
      * provided accounts
      */
     public void export(@NonNull Iterable<Account> accounts, @NonNull Appendable target) throws IOException {
+        Map<String, Org> orgsById = new HashMap<>();
+
         final CSVPrinter printer = FORMAT.print(target);
         for (Account acc : accounts) {
-            printer.printRecord(toRecord(acc));
+            Org org = orgsById.computeIfAbsent(acc.getOrg(), id -> orgsDao.findByCommonNameWithExt(acc));
+            printer.printRecord(toRecord(acc, org));
         }
         printer.flush();
     }
 
-    private Iterable<String> toRecord(@NonNull Account account) {
+    private Iterable<String> toRecord(@NonNull Account account, @Nullable Org org) {
         List<String> values = new ArrayList<>();
         for (OutlookCSVHeaderField header : OutlookCSVHeaderField.values()) {
-            values.add(header.apply(account));
+            values.add(header.apply(account, org));
         }
         return values;
     }
 
+    public static void main(String... args) {
+        Arrays.asList(OutlookCSVHeaderField.values()).forEach(f -> System.err.println(f.getName()));
+    }
 }
