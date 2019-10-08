@@ -68,12 +68,14 @@ class UserController {
 
   // search each choosen span elements and set title manually
   // to display roles description on hover
-  setTitle () {
-    if (this.systemRoles) {
-      let selectEls = $('li.search-choice')
-      $(selectEls).each(i => {
-        let text = selectEls[i].firstChild.innerHTML
-        selectEls[i].firstChild.setAttribute('title', this.systemRoles[text])
+  setTitles () {
+    if (this.roleDescriptions) {
+      let selectEls = document.querySelectorAll('li.search-choice span')
+      selectEls.forEach(span => {
+        let text = span.innerHTML
+        if (this.roleDescriptions[text]) {
+          span.setAttribute('title', this.roleDescriptions[text])
+        }
       })
     }
   }
@@ -87,9 +89,9 @@ class UserController {
     Role.query(roles => {
       this.allroles = roles.map(r => r.cn)
       // get roles informations to get description from template
-      this.systemRoles = {}
+      this.roleDescriptions = {}
       roles.map(r => {
-        this.systemRoles[r.cn] = r.description
+        this.roleDescriptions[r.cn] = r.description
       })
     })
     this.user.$promise.then(() => {
@@ -364,7 +366,7 @@ class UserController {
         if (this.user.adminRoles) {
           previousRoles = roles
           // to manually display roles description on roles multi select elements
-          this.setTitle()
+          this.setTitles()
           return roles
         } else {
           return previousRoles
