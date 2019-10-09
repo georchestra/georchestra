@@ -66,14 +66,31 @@ class UserController {
     return (this.delegation.orgs.length !== 0) && (this.delegation.roles.length !== 0)
   }
 
+  // search each choosen span elements and set title manually
+  // to display roles description on hover
+  setTitles () {
+    if (this.roleDescriptions) {
+      [].forEach.call(
+        document.querySelectorAll('li.search-choice span'),
+        span => span.setAttribute('title', this.roleDescriptions[span.innerHTML])
+      )
+    }
+  }
+
   bindRoles () {
     const TMP_ROLE = 'TEMPORARY'
 
     // Load role infos for every tab (for confirmation)
     let Role = this.$injector.get('Role')
     this.roles = Role.query()
-    Role.query(roles => { this.allroles = roles.map(r => r.cn) })
-
+    Role.query(roles => {
+      this.allroles = roles.map(r => r.cn)
+      // get roles informations to get description from template
+      this.roleDescriptions = {}
+      roles.map(r => {
+        this.roleDescriptions[r.cn] = r.description
+      })
+    })
     this.user.$promise.then(() => {
       let roleAdminFilter = this.$injector.get('roleAdminFilter')
       let notAdmin = []
@@ -345,6 +362,8 @@ class UserController {
         }
         if (this.user.adminRoles) {
           previousRoles = roles
+          // to manually display roles description on roles multi select elements
+          this.setTitles()
           return roles
         } else {
           return previousRoles

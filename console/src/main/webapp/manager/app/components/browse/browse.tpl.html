@@ -14,14 +14,14 @@
   <strong ng-if="(roles.activeRole.cn == role.cn)">
     {{::role.cn}} ({{::role.users.length}})
   </strong>
-  <a ng-link="users({id: role.cn})" ng-if="(roles.activeRole.cn != role.cn)">
+  <a ng-link="users({id: role.cn})" ng-if="(roles.activeRole.cn != role.cn)" title={{::role.description}}>
     {{::role.cn}}
    ({{::role.users.length}})
  </a>
 </div>
 
 <h5 ng-if="roles.q == ''" translate>role.favorites</h5>
-<div ng-repeat="role in roles.roles.filter(roles.favoriteRole)" ng-if="roles.q == ''">
+<div ng-repeat="role in roles.roles.filter(roles.favoriteRole)" ng-if="roles.q == ''" title={{::role.description}}>
   <strong ng-if="(roles.activeRole.cn == role.cn)">
     {{::role.cn}} ({{::role.users.length}})
   </strong>

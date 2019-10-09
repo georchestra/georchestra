@@ -35,7 +35,7 @@
       <tbody>
         <tr dir-paginate="role in roles.roles | filter:roles.q | itemsPerPage: roles.itemsPerPage">
           <td>
-            <a ng-link="role({role: role.cn, tab: 'infos'})">
+            <a ng-link="role({role: role.cn, tab: 'infos'})" title={{::role.description}}>
               {{::role.cn}}
             </a>
             &nbsp;<i class="glyphicon glyphicon-star-empty" ng-if="role.isFavorite && profile === 'SUPERUSER'"></i>
