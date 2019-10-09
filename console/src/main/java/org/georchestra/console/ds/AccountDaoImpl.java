@@ -42,12 +42,17 @@ import org.springframework.ldap.filter.PresentFilter;
 import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.security.authentication.encoding.LdapShaPasswordEncoder;
 
+import com.google.common.collect.Lists;
+
 import javax.naming.Name;
 import javax.naming.directory.SearchControls;
 import javax.naming.ldap.LdapName;
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -419,8 +424,12 @@ public final class AccountDaoImpl implements AccountDao {
      */
     private void mapToContext(Account account, DirContextOperations context) {
 
-        context.setAttributeValues("objectclass",
-                new String[] { "top", "person", "organizationalPerson", "inetOrgPerson", "shadowAccount" });
+        List<String> values = Lists.newArrayList("top", "person", "organizationalPerson", "inetOrgPerson",
+                "shadowAccount", "georchestraUser", "ldapPublicKey");
+        if (account.getSshKeys().length == 0) {
+            values.remove("ldapPublicKey");
+        }
+        context.setAttributeValues("objectclass", values.toArray());
 
         // person attributes
         setAccountField(context, UserSchema.SURNAME_KEY, account.getSurname());
@@ -465,6 +474,9 @@ public final class AccountDaoImpl implements AccountDao {
 
         setAccountField(context, UserSchema.HOME_POSTAL_ADDRESS_KEY, account.getHomePostalAddress());
 
+        if (account.getSshKeys().length > 0) {
+            context.setAttributeValues(UserSchema.SSH_KEY, account.getSshKeys());
+        }
         if (account.getManager() != null)
             setAccountField(context, UserSchema.MANAGER_KEY,
                     "uid=" + account.getManager() + "," + userSearchBaseDN.toString() + "," + basePath);
@@ -513,6 +525,7 @@ public final class AccountDaoImpl implements AccountDao {
         public Object mapFromContext(Object ctx) {
 
             DirContextAdapter context = (DirContextAdapter) ctx;
+            Set<String> sshKeys = context.getAttributeSortedStringSet(UserSchema.SSH_KEY);
 
             Account account = AccountFactory.createFull(context.getStringAttribute(UserSchema.UID_KEY),
                     context.getStringAttribute(UserSchema.COMMON_NAME_KEY),
@@ -534,7 +547,8 @@ public final class AccountDaoImpl implements AccountDao {
                     context.getStringAttribute(UserSchema.ROOM_NUMBER_KEY),
                     context.getStringAttribute(UserSchema.STATE_OR_PROVINCE_KEY),
                     context.getStringAttribute(UserSchema.MANAGER_KEY),
-                    context.getStringAttribute(UserSchema.CONTEXT_KEY), null); // Org will filled later
+                    context.getStringAttribute(UserSchema.CONTEXT_KEY), null, // Org will be filled later
+                    sshKeys == null ? new String[0] : (String[]) sshKeys.toArray(new String[sshKeys.size()]));
 
             String rawShadowExpire = context.getStringAttribute(UserSchema.SHADOW_EXPIRE_KEY);
             if (rawShadowExpire != null) {

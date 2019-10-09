@@ -22,7 +22,7 @@ package org.georchestra.console.dto;
 /**
  * Defines the name of the user fields. They are consistent with the LDAP
  * specification.
- * 
+ *
  * @author Mauricio Pazos
  *
  */
@@ -55,6 +55,7 @@ public interface UserSchema {
     public static final String MANAGER_KEY = "manager";
     public static final String CONTEXT_KEY = "preferredLanguage";
     public static final String MEMBER_OF = "memberOf";
+    public static final String SSH_KEY = "sshPublicKey";
 
     // Only used in JSON output
     public static final String PENDING = "pending";
@@ -65,6 +66,6 @@ public interface UserSchema {
             HOME_POSTAL_ADDRESS_KEY, TITLE_KEY, FACSIMILE_KEY, POSTAL_CODE_KEY, MAIL_KEY, POSTAL_ADDRESS_KEY,
             POST_OFFICE_BOX_KEY, DESCRIPTION_KEY, TELEPHONE_KEY, PHYSICAL_DELIVERY_OFFICE_NAME_KEY, MOBILE_KEY,
             ROOM_NUMBER_KEY, LOCALITY_KEY, STATE_OR_PROVINCE_KEY, ORG_UNIT_KEY, USER_PASSWORD_KEY,
-            REGISTERED_ADDRESS_KEY, SHADOW_EXPIRE_KEY, MANAGER_KEY, CONTEXT_KEY, MEMBER_OF, PENDING };
+            REGISTERED_ADDRESS_KEY, SHADOW_EXPIRE_KEY, MANAGER_KEY, CONTEXT_KEY, MEMBER_OF, SSH_KEY, PENDING };
 
 }

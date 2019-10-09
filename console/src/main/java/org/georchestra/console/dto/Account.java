@@ -19,6 +19,7 @@
 
 package org.georchestra.console.dto;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -152,4 +153,8 @@ public interface Account extends Comparable<Account> {
     boolean isPending();
 
     void setPending(boolean pending);
+
+    String[] getSshKeys();
+
+    void setSshKeys(String[] sshKeys);
 }

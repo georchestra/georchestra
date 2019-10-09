@@ -20,6 +20,8 @@
 package org.georchestra.console.dto;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
 
@@ -129,6 +131,9 @@ public class AccountImpl implements Serializable, Account {
     @JsonProperty(UserSchema.CONTEXT_KEY)
     private String context;
 
+    @JsonProperty(UserSchema.SSH_KEY)
+    private String[] sshKeys;
+
     // Organization from ou=orgs,dc=georchestra,dc=org
     // Json export is defined on the getter getOrg()
     private String org;
@@ -146,7 +151,8 @@ public class AccountImpl implements Serializable, Account {
                 + ", locality='" + locality + '\'' + ", facsimile='" + facsimile + '\'' + ", mobile='" + mobile + '\''
                 + ", roomNumber='" + roomNumber + '\'' + ", stateOrProvince='" + stateOrProvince + '\''
                 + ", homePostalAddress='" + homePostalAddress + '\'' + ", shadowExpire='" + shadowExpire + '\''
-                + ", context='" + context + '\'' + ", org='" + org + '\'' + '}';
+                + ", context='" + context + '\'' + ", org='" + org + '\'' + ", sshKeys='" + Arrays.toString(sshKeys)
+                + "'}";
     }
 
     @Override
@@ -438,7 +444,7 @@ public class AccountImpl implements Serializable, Account {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -473,7 +479,8 @@ public class AccountImpl implements Serializable, Account {
                 && Objects.equals(stateOrProvince, account.stateOrProvince)
                 && Objects.equals(homePostalAddress, account.homePostalAddress)
                 && Objects.equals(shadowExpire, account.shadowExpire) && Objects.equals(manager, account.manager)
-                && Objects.equals(context, account.context) && Objects.equals(org, account.org);
+                && Objects.equals(context, account.context) && Objects.equals(org, account.org)
+                && Arrays.equals(sshKeys, account.sshKeys);
     }
 
     @Override
@@ -517,6 +524,17 @@ public class AccountImpl implements Serializable, Account {
     @Override
     public void setPending(boolean pending) {
         this.pending = pending;
+
+    }
+
+    @Override
+    public String[] getSshKeys() {
+        return this.sshKeys;
+    }
+
+    @Override
+    public void setSshKeys(String[] sshKeys) {
+        this.sshKeys = sshKeys;
 
     }
 }

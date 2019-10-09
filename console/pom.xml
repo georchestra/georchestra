@@ -160,6 +160,10 @@
       <groupId>commons-validator</groupId>
       <artifactId>commons-validator</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+    </dependency>
     <!-- Spring dependencies -->
     <dependency>
       <groupId>org.springframework</groupId>
@@ -837,7 +841,7 @@
                           <SLAPD_ORGANISATION>georchestra</SLAPD_ORGANISATION>
                           <SLAPD_DOMAIN>georchestra.org</SLAPD_DOMAIN>
                           <SLAPD_PASSWORD>secret</SLAPD_PASSWORD>
-                          <SLAPD_ADDITIONAL_MODULES>groupofmembers</SLAPD_ADDITIONAL_MODULES>
+                          <SLAPD_ADDITIONAL_MODULES>groupofmembers,openssh</SLAPD_ADDITIONAL_MODULES>
                         </env>
                         <wait>
                           <!-- Need to figure out a good way to make sure the ldap service is ready before the tests are run. 
