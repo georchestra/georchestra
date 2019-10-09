@@ -70,13 +70,10 @@ class UserController {
   // to display roles description on hover
   setTitles () {
     if (this.roleDescriptions) {
-      let selectEls = document.querySelectorAll('li.search-choice span')
-      selectEls.forEach(span => {
-        let text = span.innerHTML
-        if (this.roleDescriptions[text]) {
-          span.setAttribute('title', this.roleDescriptions[text])
-        }
-      })
+      [].forEach.call(
+        document.querySelectorAll('li.search-choice span'),
+        span => span.setAttribute('title', this.roleDescriptions[span.innerHTML])
+      )
     }
   }
 
