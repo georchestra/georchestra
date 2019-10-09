@@ -21,12 +21,12 @@ package org.georchestra.console.dto;
 
 /**
  * Account factory.
- * 
+ *
  * <p>
  * This factory provide the convenient account object (data transfer object)
  * used by this application.
  * </p>
- * 
+ *
  * @author Mauricio Pazos
  *
  */
@@ -41,7 +41,7 @@ public class AccountFactory {
 
     /**
      * Brief data
-     * 
+     *
      * @param uid
      * @param password
      * @param firstName
@@ -64,35 +64,13 @@ public class AccountFactory {
         account.setPhone(phone);
         account.setTitle(title);
         account.setDescription(description);
-
+        account.setSshKeys(new String[0]);
         return account;
     }
 
     /**
-     * Creates an account object with detailed data.
-     */
-    public static Account createDetails(String uid, String givenName, String surname, String physicalDeliveryOfficeName,
-            String postalAddress, String postalCode, String postOfficeBox, String registeredAddress, String title) {
-
-        Account a = new AccountImpl();
-
-        a.setUid(uid);
-        a.setGivenName(givenName);
-        a.setSurname(surname);
-        a.setCommonName(formatCommonName(givenName, surname));
-        a.setPhysicalDeliveryOfficeName(physicalDeliveryOfficeName);
-        a.setPostalAddress(postalAddress);
-        a.setPostalCode(postalCode);
-        a.setPostOfficeBox(postOfficeBox);
-        a.setRegisteredAddress(registeredAddress);
-        a.setTitle(title);
-
-        return a;
-    }
-
-    /**
      * Creates an account object with all data.
-     * 
+     *
      * @param uid
      * @param cn                         full name
      * @param surname                    surname
@@ -116,6 +94,7 @@ public class AccountFactory {
      * @param manager
      * @param context
      * @param org
+     * @param sshKeys
      *
      * @return {@link Account}
      */
@@ -123,7 +102,7 @@ public class AccountFactory {
             String title, String phone, String description, String postalAddress, String postalCode,
             String registeredAddress, String postOfficeBox, String physicalDeliveryOfficeName, String street,
             String locality, String facsimile, String homePostalAddress, String mobile, String roomNumber,
-            String stateOrProvince, String manager, String context, String org) {
+            String stateOrProvince, String manager, String context, String org, String[] sshKeys) {
 
         Account a = new AccountImpl();
 
@@ -150,6 +129,7 @@ public class AccountFactory {
         a.setManager(manager);
         a.setContext(context);
         a.setOrg(org);
+        a.setSshKeys(sshKeys);
 
         return a;
     }
@@ -187,6 +167,7 @@ public class AccountFactory {
         a.setShadowExpire(o.getShadowExpire());
         a.setContext(o.getContext());
         a.setOrg(o.getOrg());
+        a.setSshKeys(o.getSshKeys());
 
         return a;
     }
