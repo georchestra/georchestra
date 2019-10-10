@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.DataServiceException;
+import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.dto.Account;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.ConnectionConfig;
@@ -29,7 +30,6 @@ import ezvcard.parameter.TelephoneType;
 import ezvcard.property.Address;
 import ezvcard.property.FormattedName;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -45,10 +45,11 @@ public class UserInfoExporterImpl implements UserInfoExporter {
     private @Value("${ldapUsersRdn:ou=users},${ldapBaseDn:dc=georchestra,dc=org}") String userSearchBaseDn;
 
     private AccountDao accountDao;
-    private @Autowired @Setter CSVAccountExporter CSVAccountExporter;
+    private OrgsDao orgsDao;
 
-    public @Autowired UserInfoExporterImpl(AccountDao accountDao) {
+    public @Autowired UserInfoExporterImpl(AccountDao accountDao, OrgsDao orgsDao) {
         this.accountDao = accountDao;
+        this.orgsDao = orgsDao;
     }
 
     @Override
@@ -119,7 +120,7 @@ public class UserInfoExporterImpl implements UserInfoExporter {
         }
         StringBuilder target = new StringBuilder();
         try {
-            this.CSVAccountExporter.export(accounts, target);
+            new CSVAccountExporter(orgsDao).export(accounts, target);
         } catch (IOException e) {
             throw new DataServiceException(e);
         }

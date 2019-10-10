@@ -180,11 +180,7 @@ public class UsersExportTest {
         when(accDao.findByUID(eq(account1.getUid()))).thenReturn(account1);
         when(accDao.findByUID(eq(account2.getUid()))).thenReturn(account2);
 
-        UserInfoExporterImpl exporter = new UserInfoExporterImpl(accDao);
-        CSVAccountExporter csvAccountExporter = new CSVAccountExporter();
-        csvAccountExporter.setOrgsDao(orgDao);
-
-        exporter.setCSVAccountExporter(csvAccountExporter);
+        UserInfoExporterImpl exporter = new UserInfoExporterImpl(accDao, orgDao);
         us = new UsersExport(exporter);
     }
 

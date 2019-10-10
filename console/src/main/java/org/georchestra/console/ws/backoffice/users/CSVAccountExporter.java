@@ -36,16 +36,10 @@ import org.apache.commons.csv.QuoteMode;
 import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.orgs.Org;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
-@Service
-@RequiredArgsConstructor
 public class CSVAccountExporter {
 
     static enum OutlookCSVHeaderField {
@@ -175,7 +169,11 @@ public class CSVAccountExporter {
      */
     static final CSVFormat FORMAT = CSVFormat.RFC4180.withHeader(headerNames()).withQuoteMode(QuoteMode.MINIMAL);
 
-    private @Autowired @Setter OrgsDao orgsDao;
+    private final OrgsDao orgsDao;
+
+    public CSVAccountExporter(@NonNull OrgsDao orgsDao) {
+        this.orgsDao = orgsDao;
+    }
 
     private static final String[] headerNames() {
         return Arrays.stream(OutlookCSVHeaderField.values()).map(OutlookCSVHeaderField::getName).toArray(String[]::new);
