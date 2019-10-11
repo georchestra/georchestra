@@ -4,7 +4,7 @@ We need 3 tomcat instances:
  * one for the proxy and cas webapps
  * an other one for geoserver
  * the last one for the other webapps
- 
+
 ## Prerequisites
 
 ```
@@ -28,7 +28,7 @@ sudo keytool -genkey \
     -keypass STOREPASSWORD \
     -keyalg RSA \
     -keysize 2048 \
-    -dname "CN=localhost, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=FR" 
+    -dname "CN=localhost, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=FR"
 ```
 ... where ```STOREPASSWORD``` is a password you choose, and the ```dname``` string is customized.
 
@@ -59,7 +59,7 @@ keytool -import -alias cert_ssl -file /var/www/georchestra/ssl/georchestra.crt -
 
 ### LDAP SSL
 
-In case the LDAP connection uses SSL (which is not the default in the geOrchestra template configuration), its certificate must be added to the keystore. 
+In case the LDAP connection uses SSL (which is not the default in the geOrchestra template configuration), its certificate must be added to the keystore.
 
 Here's how:
 
@@ -72,7 +72,7 @@ echo "" | openssl s_client -connect LDAPHOST:LDAPPORT -showcerts 2>/dev/null | o
 sudo keytool -import -alias cert_ldap -file /tmp/certfile.txt -keystore /etc/tomcat8/keystore
 ```
 
-### Finally, 
+### Finally,
 verify the list of keys in keystore:
 ```
 keytool -keystore /etc/tomcat8/keystore -list
@@ -111,7 +111,7 @@ Finally, edit the ```/etc/init.d/tomcat-proxycas``` script, find the following l
 
 ### Customize Java options
 
-In ```/etc/default/tomcat-proxycas```, we need to remove the ```-Xmx128m``` option: 
+In ```/etc/default/tomcat-proxycas```, we need to remove the ```-Xmx128m``` option:
 ```
 JAVA_OPTS="-Djava.awt.headless=true -XX:+UseConcMarkSweepGC"
 ```
@@ -134,24 +134,24 @@ JAVA_OPTS="$JAVA_OPTS \
 In case your connection to the internet is proxied, you should also add something like this:
 ```
 JAVA_OPTS="$JAVA_OPTS \
-              -Dhttp.proxyHost=proxy.mycompany.com \ 
+              -Dhttp.proxyHost=proxy.mycompany.com \
               -Dhttp.proxyPort=XXXX \
               -Dhttps.proxyHost=proxy.mycompany.com \
               -Dhttps.proxyPort=XXXX"
 ```
 
-### Configure connectors 
+### Configure connectors
 
 In ```/var/lib/tomcat-proxycas/conf/server.xml```, find the place where the HTTP connector is defined, and change it into:
 ```
-    <Connector port="8180" protocol="HTTP/1.1" 
-               connectionTimeout="20000" 
+    <Connector port="8180" protocol="HTTP/1.1"
+               connectionTimeout="20000"
                URIEncoding="UTF-8"
                redirectPort="8443" />
 
-    <Connector port="8443" protocol="HTTP/1.1" 
-               SSLEnabled="true" 
-               scheme="https" 
+    <Connector port="8443" protocol="HTTP/1.1"
+               SSLEnabled="true"
+               scheme="https"
                secure="true"
                URIEncoding="UTF-8"
                maxThreads="150"
@@ -203,7 +203,7 @@ Finally, edit the ```/etc/init.d/tomcat-georchestra``` script, find the followin
 
 ### Customize Java options
 
-In ```/etc/default/tomcat-georchestra```, we need to remove the ```-Xmx128m``` option: 
+In ```/etc/default/tomcat-georchestra```, we need to remove the ```-Xmx128m``` option:
 ```
 JAVA_OPTS="-Djava.awt.headless=true -XX:+UseConcMarkSweepGC"
 ```
@@ -316,8 +316,8 @@ In case your connection to the internet is proxied, you should also add the ```-
 
 In ```/var/lib/tomcat-georchestra/conf/server.xml```:
 ```
-    <Connector port="8280" protocol="HTTP/1.1" 
-               connectionTimeout="20000" 
+    <Connector port="8280" protocol="HTTP/1.1"
+               connectionTimeout="20000"
                URIEncoding="UTF-8"
                redirectPort="8443" />
 
@@ -358,7 +358,7 @@ Finally, edit the ```/etc/init.d/tomcat-geoserver0``` script, find the following
 
 ### Customize Java options
 
-In ```/etc/default/tomcat-geoserver0```, we need to change: 
+In ```/etc/default/tomcat-geoserver0```, we need to change:
 ```
 JAVA_OPTS="-Djava.awt.headless=true -Xmx128m -XX:+UseConcMarkSweepGC"
 ```
@@ -416,10 +416,10 @@ By default Tomcat assumes 200 threads, but experiments show that 20 is a better 
 
 In ```/var/lib/tomcat-geoserver0/conf/server.xml```:
 ```
-    <Connector port="8380" protocol="HTTP/1.1" 
-               connectionTimeout="20000" 
+    <Connector port="8380" protocol="HTTP/1.1"
+               connectionTimeout="20000"
                URIEncoding="UTF-8"
-               maxThreads="20" 
+               maxThreads="20"
                minSpareThreads="20"
                redirectPort="8443" />
 
