@@ -347,6 +347,17 @@ sudo cp /etc/init.d/tomcat8 /etc/init.d/tomcat-geoserver0
 sudo cp /etc/default/tomcat8 /etc/default/tomcat-geoserver0
 ```
 
+Locate tomcat's `conf/context.xml` and update the `<Context>` tag in order to
+set `useRelativeRedirects` to `false`, eg:
+```xml
+<Context useRelativeRedirects="false">
+    <WatchedResource>WEB-INF/web.xml</WatchedResource>
+    <WatchedResource>${catalina.base}/conf/web.xml</WatchedResource>
+</Context>
+```
+See [#1857](https://github.com/georchestra/georchestra/pull/1847) for the
+motivations.
+
 Finally, edit the ```/etc/init.d/tomcat-geoserver0``` script, find the following line:
 ```
 # Provides:          tomcat8
