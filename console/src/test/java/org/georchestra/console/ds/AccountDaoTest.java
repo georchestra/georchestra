@@ -1,6 +1,5 @@
 package org.georchestra.console.ds;
 
-import org.georchestra.console.dao.AdminLogDao;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountFactory;
 import org.junit.Before;
@@ -73,8 +72,6 @@ public class AccountDaoTest {
         ((AccountDaoImpl) toTest).setPendingOrgSearchBaseDN("ou=pendingorgs");
         ((AccountDaoImpl) toTest).setRoleSearchBaseDN("ou=roles");
         ((AccountDaoImpl) toTest).init();
-
-        ((AccountDaoImpl) toTest).setLogDao(Mockito.mock(AdminLogDao.class));
 
         this.adminAccount = AccountFactory.createBrief("testadmin", "monkey123", "Test", "ADmin",
                 "postmastrer@localhost", "+33123456789", "admin", "");

@@ -1,6 +1,5 @@
 package org.georchestra.console.ws.backoffice.users;
 
-import org.georchestra.console.dao.AdminLogDao;
 import org.georchestra.console.dao.DelegationDao;
 import org.georchestra.console.ds.AccountDaoImpl;
 import org.georchestra.console.ds.DataServiceException;
@@ -79,7 +78,6 @@ public class UsersControllerTest {
         ldapTemplate = mock(LdapTemplate.class);
         contextSource = mock(LdapContextSource.class);
         roles = mock(RoleProtected.class);
-        AdminLogDao logDao = mock(AdminLogDao.class);
 
         when(contextSource.getBaseLdapPath()).thenReturn(new DistinguishedName("dc=georchestra,dc=org"));
         when(ldapTemplate.getContextSource()).thenReturn(contextSource);
@@ -89,7 +87,6 @@ public class UsersControllerTest {
         roleDao = new RoleDaoImpl();
         roleDao.setLdapTemplate(ldapTemplate);
         roleDao.setRoles(this.roles);
-        roleDao.setLogDao(logDao);
         roleDao.setRoleSearchBaseDN("ou=roles");
         roleDao.setBasePath("dc=georchestra,dc=org");
 
@@ -106,7 +103,6 @@ public class UsersControllerTest {
         dao.setOrgSearchBaseDN("ou=orgs");
         dao.setRoleSearchBaseDN("ou=roles");
         dao.setBasePath("dc=georchestra,dc=org");
-        dao.setLogDao(logDao);
         roleDao.setAccountDao(dao);
         orgsDao.setAccountDao(dao);
         usersCtrl = new UsersController(dao, userRule);

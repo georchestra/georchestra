@@ -1,6 +1,5 @@
 package org.georchestra.console.ws.backoffice.roles;
 
-import org.georchestra.console.dao.AdminLogDao;
 import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.dao.DelegationDao;
 import org.georchestra.console.ds.AccountDao;
@@ -72,7 +71,6 @@ public class RolesControllerTest {
     public void setUp() throws Exception {
         ldapTemplate = Mockito.mock(LdapTemplate.class);
         contextSource = Mockito.mock(LdapContextSource.class);
-        AdminLogDao logDao = Mockito.mock(AdminLogDao.class);
 
         Mockito.when(contextSource.getBaseLdapPath()).thenReturn(new DistinguishedName("dc=georchestra,dc=org"));
 
@@ -89,7 +87,6 @@ public class RolesControllerTest {
         // Configures roleDao
         roleDao = new RoleDaoImpl();
         roleDao.setLdapTemplate(ldapTemplate);
-        roleDao.setLogDao(logDao);
         roleDao.setRoles(roles);
         roleDao.setRoleSearchBaseDN("ou=roles");
 
