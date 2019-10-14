@@ -32,7 +32,10 @@ import org.georchestra.console.ds.RoleDao;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountImpl;
 import org.georchestra.console.dto.Role;
+import org.georchestra.console.dto.UserSchema;
 import org.georchestra.console.dto.orgs.Org;
+import org.georchestra.console.model.AdminLogType;
+import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.console.ws.utils.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -67,6 +70,9 @@ public class EditUserDetailsFormController {
     private final AccountDao accountDao;
 
     private Validation validation;
+
+    @Autowired
+    protected LogUtils logUtils;
 
     @Autowired
     public EditUserDetailsFormController(AccountDao dao, OrgsDao orgsDao, RoleDao roleDao, Validation validation) {
@@ -209,6 +215,51 @@ public class EditUserDetailsFormController {
     }
 
     /**
+     * Create log for each modification on user from user details page
+     * 
+     * @param old      Account
+     * @param formBean EditUserDetailsFormBean that contain new informations to
+     *                 update account
+     */
+    protected void logChanges(Account acc, EditUserDetailsFormBean formBean) {
+        // define same type for each logs
+        final AdminLogType type = AdminLogType.USER_ATTRIBUTE_CHANGED;
+        String target = acc.getUid();
+
+        if (!acc.getGivenName().equals(formBean.getFirstName())) {
+            logUtils.createAndLogDetails(target, UserSchema.GIVEN_NAME_KEY, acc.getGivenName(), formBean.getFirstName(),
+                    type);
+        }
+
+        if (!formBean.getSurname().equals(acc.getSurname())) {
+            logUtils.createAndLogDetails(target, UserSchema.SURNAME_KEY, acc.getSurname(), formBean.getSurname(), type);
+        }
+
+        if (!formBean.getPhone().equals(acc.getPhone())) {
+            logUtils.createAndLogDetails(target, UserSchema.TELEPHONE_KEY, acc.getPhone(), formBean.getPhone(), type);
+        }
+
+        if (!formBean.getFacsimile().equals(acc.getFacsimile())) {
+            logUtils.createAndLogDetails(target, UserSchema.FACSIMILE_KEY, acc.getFacsimile(), formBean.getFacsimile(),
+                    type);
+        }
+
+        if (!formBean.getTitle().equals(acc.getTitle())) {
+            logUtils.createAndLogDetails(target, UserSchema.TITLE_KEY, acc.getTitle(), formBean.getTitle(), type);
+        }
+
+        if (!formBean.getDescription().contentEquals(acc.getDescription())) {
+            logUtils.createAndLogDetails(target, UserSchema.DESCRIPTION_KEY, acc.getDescription(),
+                    formBean.getDescription(), type);
+        }
+
+        if (!formBean.getPostalAddress().equals(acc.getPostalAddress())) {
+            logUtils.createAndLogDetails(target, UserSchema.POSTAL_ADDRESS_KEY, acc.getPostalAddress(),
+                    formBean.getPostalAddress(), type);
+        }
+    }
+
+    /**
      * Modifies the account using the values present in the formBean parameter
      *
      * @param account
@@ -216,6 +267,10 @@ public class EditUserDetailsFormController {
      * @return modified account
      */
     private Account modify(Account account, EditUserDetailsFormBean formBean) {
+        // create log for each account modification
+        if (logUtils != null) {
+            this.logChanges(account, formBean);
+        }
 
         account.setGivenName(formBean.getFirstName());
         account.setSurname(formBean.getSurname());

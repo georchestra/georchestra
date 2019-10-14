@@ -20,7 +20,6 @@
 package org.georchestra.console.ws.passwordrecovery;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.UUID;
 
 import javax.mail.MessagingException;
@@ -36,8 +35,9 @@ import org.georchestra.console.ds.DataServiceException;
 import org.georchestra.console.ds.RoleDao;
 import org.georchestra.console.ds.UserTokenDao;
 import org.georchestra.console.dto.Account;
-import org.georchestra.console.dto.Role;
 import org.georchestra.console.mailservice.EmailFactory;
+import org.georchestra.console.model.AdminLogType;
+import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.console.ws.utils.RecaptchaUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -87,6 +87,9 @@ public class PasswordRecoveryFormController {
 
     @Autowired
     private boolean reCaptchaActivated;
+
+    @Autowired
+    private LogUtils logUtils;
 
     @Value("${publicContextPath:/console}")
     private String publicContextPath;
@@ -173,6 +176,11 @@ public class PasswordRecoveryFormController {
             this.emailFactory.sendChangePasswordEmail(servletContext, account.getEmail(), account.getCommonName(),
                     account.getUid(), url);
             sessionStatus.setComplete();
+
+            // log role deleted
+            if (account.getUid() != null && logUtils != null) {
+                logUtils.createLog(account.getUid(), AdminLogType.EMAIL_RECOVERY_SENT, "");
+            }
 
             return "emailWasSent";
 

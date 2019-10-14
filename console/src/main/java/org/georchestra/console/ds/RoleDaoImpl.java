@@ -21,14 +21,14 @@ package org.georchestra.console.ds;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.console.dao.AdminLogDao;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.Role;
 import org.georchestra.console.dto.RoleFactory;
 import org.georchestra.console.dto.RoleSchema;
-import org.georchestra.console.model.AdminLogEntry;
 import org.georchestra.console.model.AdminLogType;
 import org.georchestra.console.ws.backoffice.roles.RoleProtected;
+import org.georchestra.console.ws.utils.LogUtils;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.ContextMapper;
@@ -40,7 +40,6 @@ import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.support.LdapNameBuilder;
 
 import javax.naming.Name;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
@@ -71,7 +70,7 @@ public class RoleDaoImpl implements RoleDao {
     }
 
     @Autowired
-    private AdminLogDao logDao;
+    private LogUtils logUtils;
 
     @Autowired
     private AccountDao accountDao;
@@ -89,10 +88,6 @@ public class RoleDaoImpl implements RoleDao {
         } catch (org.springframework.ldap.InvalidNameException ex) {
             throw new IllegalArgumentException(ex.getMessage());
         }
-    }
-
-    public void setLogDao(AdminLogDao logDao) {
-        this.logDao = logDao;
     }
 
     public void setRoles(RoleProtected roles) {
@@ -124,12 +119,20 @@ public class RoleDaoImpl implements RoleDao {
             context.addAttributeValue("member", accountDao.buildFullUserDn(user), false);
             this.ldapTemplate.modifyAttributes(context);
 
-            // Add log entry for this modification
-            if (originLogin != null) {
-                AdminLogType logType = this.roles.isProtected(roleID) ? AdminLogType.SYSTEM_ROLE_CHANGE
-                        : AdminLogType.OTHER_ROLE_CHANGE;
-                AdminLogEntry log = new AdminLogEntry(originLogin, user.getUid(), logType, new Date());
-                this.logDao.save(log);
+            // Add log entry when role was added
+            if (originLogin != null && logUtils != null) {
+                JSONObject details = new JSONObject();
+                AdminLogType type = AdminLogType.SYSTEM_ROLE_ADDED;
+
+                if (!this.roles.isProtected(roleID)) {
+                    type = AdminLogType.CUSTOM_ROLE_ADDED;
+                }
+
+                details = logUtils.getLogDetails(roleID, null, roleID, type);
+
+                details.put("isRole", true);
+
+                logUtils.createLog(user.getUid(), type, details.toString());
             }
 
         } catch (Exception e) {
@@ -160,17 +163,20 @@ public class RoleDaoImpl implements RoleDao {
 
         this.ldapTemplate.modifyAttributes(ctx);
 
-        // Add log entry for this modification
-        if (originLogin != null) {
-            AdminLogType logType;
-            if (this.roles.isProtected(roleName)) {
-                logType = AdminLogType.SYSTEM_ROLE_CHANGE;
-            } else {
-                logType = AdminLogType.OTHER_ROLE_CHANGE;
-            }
-            AdminLogEntry log = new AdminLogEntry(originLogin, account.getUid(), logType, new Date());
-            this.logDao.save(log);
+        // Add log entry when role was removed
+        if (originLogin != null && logUtils != null) {
+            JSONObject details = new JSONObject();
+            AdminLogType type = AdminLogType.SYSTEM_ROLE_REMOVED;
 
+            if (!this.roles.isProtected(roleName)) {
+                type = AdminLogType.CUSTOM_ROLE_REMOVED;
+            }
+
+            details = logUtils.getLogDetails(roleName, roleName, null, type);
+
+            details.put("isRole", true);
+
+            logUtils.createLog(account.getUid(), type, details.toString());
         }
     }
 

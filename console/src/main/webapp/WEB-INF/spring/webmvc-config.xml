@@ -297,4 +297,6 @@
     <property name="maxInMemorySize" value="${maxInMemorySize:10240}"/>
   </bean>
 
+  <bean id="logUtils" class="org.georchestra.console.ws.utils.LogUtils"/>
+
 </beans>

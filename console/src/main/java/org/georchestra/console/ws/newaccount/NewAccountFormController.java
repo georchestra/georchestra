@@ -36,7 +36,9 @@ import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.dto.orgs.OrgExt;
 import org.georchestra.console.dto.Role;
 import org.georchestra.console.mailservice.EmailFactory;
+import org.georchestra.console.model.AdminLogType;
 import org.georchestra.console.model.DelegationEntry;
+import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.console.ws.utils.PasswordUtils;
 import org.georchestra.console.ws.utils.RecaptchaUtils;
 import org.georchestra.console.ws.utils.Validation;
@@ -113,6 +115,9 @@ public final class NewAccountFormController {
 
     @Autowired
     protected String privacyPolicyAgreementUrl;
+
+    @Autowired
+    private LogUtils logUtils;
 
     @Autowired
     protected Clock clock;
@@ -246,6 +251,11 @@ public final class NewAccountFormController {
 
                 // Set real org identifier in form
                 formBean.setOrg(orgId);
+
+                // log - new pending org was created
+                if (org.isPending() && orgId != null && logUtils != null) {
+                    logUtils.createLog(orgId, AdminLogType.PENDING_ORG_CREATED, null);
+                }
             } catch (Exception e) {
                 LOG.error(e.getMessage());
                 throw new IOException(e);
@@ -305,6 +315,11 @@ public final class NewAccountFormController {
                         account.getUid());
             }
             sessionStatus.setComplete();
+
+            // log - new pending user was created
+            if (logUtils != null && account.isPending() && account.getUid() != null) {
+                logUtils.createLog(account.getUid(), AdminLogType.PENDING_USER_CREATED, null);
+            }
 
             return "welcomeNewUser";
 

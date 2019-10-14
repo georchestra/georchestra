@@ -43,6 +43,7 @@ public class AdminLogEntry {
     private String target;
     private AdminLogType type;
     private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+    private String changed;
 
     @Column(updatable = false, nullable = false)
     @JsonIgnore
@@ -56,6 +57,31 @@ public class AdminLogEntry {
         this.target = target;
         this.type = type;
         this.date = date;
+    }
+
+    /**
+     * Constructor
+     * 
+     * @param admin   String that realized action
+     * @param target  String user concerned by this action
+     * @param type    AdminLogType to identify action
+     * @param date    Date of log
+     * @param changed String to save changed as JSON
+     */
+    public AdminLogEntry(String admin, String target, AdminLogType type, Date date, String changed) {
+        this.admin = admin;
+        this.target = target;
+        this.type = type;
+        this.date = date;
+        this.changed = changed;
+    }
+
+    public String getChanged() {
+        return changed;
+    }
+
+    public void setChanged(String changed) {
+        this.changed = changed;
     }
 
     public long getId() {

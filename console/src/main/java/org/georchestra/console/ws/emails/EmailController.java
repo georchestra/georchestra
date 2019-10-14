@@ -21,7 +21,6 @@ package org.georchestra.console.ws.emails;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.console.dao.AdminLogDao;
 import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.dao.AttachmentDao;
 import org.georchestra.console.dao.EmailDao;
@@ -30,11 +29,11 @@ import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.DataServiceException;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.mailservice.EmailFactory;
-import org.georchestra.console.model.AdminLogEntry;
 import org.georchestra.console.model.AdminLogType;
 import org.georchestra.console.model.Attachment;
 import org.georchestra.console.model.EmailEntry;
 import org.georchestra.console.model.EmailTemplate;
+import org.georchestra.console.ws.utils.LogUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -57,7 +56,6 @@ import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
-import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -75,7 +73,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 
 @Controller
 public class EmailController {
@@ -96,7 +93,7 @@ public class EmailController {
     private EmailFactory emailFactory;
 
     @Autowired
-    private AdminLogDao logRepo;
+    private LogUtils logUtils;
 
     @Autowired
     private AdvancedDelegationDao advancedDelegationDao;
@@ -203,11 +200,16 @@ public class EmailController {
         }
         email.setAttachments(attachments);
         this.send(email);
-
-        AdminLogEntry log = new AdminLogEntry(sender, recipient, AdminLogType.EMAIL_SENT, new Date());
-        this.emailRepository.save(email);
         response.setContentType("application/json");
-        return email.toJSON().toString();
+        this.emailRepository.save(email);
+
+        // log that email was sent
+        String emailString = email.toJSON().toString();
+        if (logUtils != null) {
+            logUtils.createLog(recipient, AdminLogType.EMAIL_SENT, emailString);
+        }
+
+        return emailString;
 
     }
 

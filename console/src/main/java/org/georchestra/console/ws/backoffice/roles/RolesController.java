@@ -33,10 +33,12 @@ import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.Role;
 import org.georchestra.console.dto.RoleFactory;
 import org.georchestra.console.dto.RoleSchema;
+import org.georchestra.console.model.AdminLogType;
 import org.georchestra.console.model.DelegationEntry;
 import org.georchestra.console.ws.backoffice.users.UserRule;
 import org.georchestra.console.ws.backoffice.utils.RequestUtil;
 import org.georchestra.console.ws.backoffice.utils.ResponseUtil;
+import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.lib.file.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -101,6 +103,9 @@ public class RolesController {
 
     @Autowired
     private AccountDao accountDao;
+
+    @Autowired
+    protected LogUtils logUtils;
 
     @Autowired
     private AdvancedDelegationDao advancedDelegationDao;
@@ -249,6 +254,11 @@ public class RolesController {
             String jsonResponse = roleResponse.asJsonString();
             ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_OK);
 
+            // log role creation
+            if (role.getName() != null && logUtils != null) {
+                logUtils.createLog(role.getName(), AdminLogType.ROLE_CREATED, null);
+            }
+
         } catch (DuplicatedCommonNameException emailex) {
 
             String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, DUPLICATED_COMMON_NAME);
@@ -293,6 +303,11 @@ public class RolesController {
             }
 
             this.roleDao.delete(cn);
+
+            // log role deleted
+            if (cn != null && logUtils != null) {
+                logUtils.createLog(cn, AdminLogType.ROLE_DELETED, null);
+            }
 
             ResponseUtil.writeSuccess(response);
 

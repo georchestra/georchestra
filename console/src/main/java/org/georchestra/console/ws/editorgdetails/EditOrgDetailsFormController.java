@@ -18,9 +18,15 @@
  */
 package org.georchestra.console.ws.editorgdetails;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.georchestra.console.ds.DataServiceException;
+
 import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.dto.orgs.OrgExt;
+import org.georchestra.console.model.AdminLogType;
+import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.console.ws.utils.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -48,6 +54,11 @@ public class EditOrgDetailsFormController {
     private OrgsDao orgsDao;
     private Validation validation;
     private static final String[] FIELDS = { "id", "url", "description", "logo", "name", "address" };
+
+    private static final Log LOG = LogFactory.getLog(EditOrgDetailsFormController.class.getName());
+
+    @Autowired
+    protected LogUtils logUtils;
 
     @Autowired
     public EditOrgDetailsFormController(OrgsDao orgsDao, Validation validation) {
@@ -105,7 +116,15 @@ public class EditOrgDetailsFormController {
             return "editOrgDetailsForm";
         }
 
-        OrgExt orgExt = modifyOrgExt(orgsDao.findExtById(formBean.getId()), formBean);
+        OrgExt orgExtOld = orgsDao.findExtById(formBean.getId());
+
+        if (logUtils != null) {
+            // log each attributes modifications
+            logOrgExtChanges(orgExtOld, formBean, logo);
+        }
+
+        OrgExt orgExt = modifyOrgExt(orgExtOld, formBean);
+
         if (!logo.isEmpty()) {
             orgExt.setLogo(transformLogoFileToBase64(logo));
         }
@@ -139,4 +158,39 @@ public class EditOrgDetailsFormController {
         orgExt.setAddress(formBean.getAddress());
         return orgExt;
     }
+
+    /**
+     * Method to compare attributes and create log for each attributes if attribute
+     * changes
+     * 
+     * @param orgExt   OrgExt represent organization to update
+     * @param formBean EditOrgDetailsFormBean to get information about user input
+     * @param logo     MultipartFile spring to treat a picture as logo
+     */
+    protected void logOrgExtChanges(OrgExt orgExt, EditOrgDetailsFormBean formBean, MultipartFile logo) {
+        AdminLogType type = AdminLogType.ORG_ATTRIBUTE_CHANGED;
+        String id = orgExt.getId();
+
+        try {
+            if (logo != null && !orgExt.getLogo().equals(transformLogoFileToBase64(logo))) {
+                logUtils.createAndLogDetails(id, Org.JSON_LOGO, null, null, type);
+            }
+        } catch (IOException e) {
+            LOG.info("Can't create log and detail for logo replacement.");
+        }
+
+        if (!orgExt.getDescription().equals(formBean.getDescription())) {
+            logUtils.createAndLogDetails(id, Org.JSON_DESCRIPTION, orgExt.getDescription(), formBean.getDescription(),
+                    type);
+        }
+
+        if (!orgExt.getUrl().equals(formBean.getUrl())) {
+            logUtils.createAndLogDetails(id, Org.JSON_URL, orgExt.getUrl(), formBean.getUrl(), type);
+        }
+
+        if (!orgExt.getAddress().equals(formBean.getAddress())) {
+            logUtils.createAndLogDetails(id, OrgExt.JSON_ADDRESS, orgExt.getAddress(), formBean.getAddress(), type);
+        }
+    }
+
 }

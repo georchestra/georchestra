@@ -21,6 +21,8 @@ package org.georchestra.console.ws.changepassword;
 
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.DataServiceException;
+import org.georchestra.console.model.AdminLogType;
+import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.console.ws.utils.PasswordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -57,6 +59,9 @@ public class ChangePasswordFormController {
 
     @Autowired
     protected PasswordUtils passwordUtils;
+
+    @Autowired
+    protected LogUtils logUtils;
 
     @Autowired
     public ChangePasswordFormController(AccountDao dao) {
@@ -141,6 +146,11 @@ public class ChangePasswordFormController {
             this.accountDao.changePassword(uid, password);
 
             model.addAttribute("success", true);
+
+            // log that password was changed for this user
+            if (uid != null && logUtils != null) {
+                logUtils.createLog(uid, AdminLogType.USER_PASSWORD_CHANGED, null);
+            }
 
             return "changePasswordForm";
 

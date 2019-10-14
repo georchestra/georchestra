@@ -26,8 +26,10 @@ import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.dto.orgs.OrgExt;
 import org.georchestra.console.model.DelegationEntry;
+import org.georchestra.console.model.AdminLogType;
 import org.georchestra.console.ws.backoffice.utils.ResponseUtil;
 import org.georchestra.console.ws.utils.Validation;
+import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.lib.file.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -60,6 +62,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import java.util.Date;
 
 @Controller
 public class OrgsController {
@@ -83,6 +86,8 @@ public class OrgsController {
     @Autowired
     protected AdvancedDelegationDao advancedDelegationDao;
 
+    @Autowired
+    protected LogUtils logUtils;
     /**
      * Areas map configuration
      *
@@ -207,7 +212,14 @@ public class OrgsController {
         Org org = this.orgDao.findByCommonName(commonName);
         OrgExt orgExt = this.orgDao.findExtById(commonName);
 
+        // get default pending satus
+        Boolean defaultPending = org.isPending();
+
         // Update org and orgExt fields
+        if (org.getName() != null && logUtils != null) {
+            this.logOrgChanged(org, json);
+            this.logOrgExtChanged(orgExt, json);
+        }
         this.updateFromRequest(org, json);
         orgExt.setId(org.getId());
         this.updateFromRequest(orgExt, json);
@@ -224,6 +236,11 @@ public class OrgsController {
 
         this.orgDao.update(orgExt);
         org.setOrgExt(orgExt);
+
+        // log if pending status change
+        if (request.getHeader("sec-username") != null && defaultPending != org.isPending() && logUtils != null) {
+            logUtils.createLog(org.getId(), AdminLogType.PENDING_ORG_ACCEPTED, null);
+        }
         return org;
     }
 
@@ -269,6 +286,12 @@ public class OrgsController {
         this.orgDao.insert(orgExt);
 
         org.setOrgExt(orgExt);
+
+        // log org created
+        String admin = request.getHeader("sec-username");
+        if (admin != null && logUtils != null) {
+            logUtils.createLog(org.getId(), AdminLogType.ORG_CREATED, null);
+        }
         return org;
     }
 
@@ -287,9 +310,19 @@ public class OrgsController {
         }
 
         // delete entities in LDAP server
+        Org org = this.orgDao.findByCommonName(commonName);
+        Boolean isPending = org.isPending();
+
         this.orgDao.delete(this.orgDao.findExtById(commonName));
-        this.orgDao.delete(this.orgDao.findByCommonName(commonName));
+        this.orgDao.delete(org);
         ResponseUtil.writeSuccess(response);
+
+        // get authent info without request
+        if (isPending != null && isPending && logUtils != null) {
+            logUtils.createLog(commonName, AdminLogType.PENDING_ORG_REFUSED, null);
+        } else if (logUtils != null) {
+            logUtils.createLog(commonName, AdminLogType.ORG_DELETED, null);
+        }
     }
 
     @RequestMapping(value = PUBLIC_REQUEST_MAPPING + "/requiredFields", method = RequestMethod.GET)
@@ -408,8 +441,9 @@ public class OrgsController {
     private void checkOrgAuthorization(String org) throws AccessDeniedException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        // Verify that org is under delegation if user is not SUPERUSER
-        if (!auth.getAuthorities().contains(ROLE_SUPERUSER)) {
+        // Verify authent context and that org is under delegation if user is not
+        // SUPERUSER
+        if (auth != null && auth.getName() != null && !auth.getAuthorities().contains(ROLE_SUPERUSER)) {
             DelegationEntry delegation = this.delegationDao.findOne(auth.getName());
             if (delegation != null) {
                 if (!Arrays.asList(delegation.getOrgs()).contains(org)) {
@@ -418,6 +452,83 @@ public class OrgsController {
             } else {
                 throw new AccessDeniedException("Org not under delegation");
             }
+        }
+    }
+
+    /**
+     * Log org update found in json object.
+     * 
+     * @param org  Org instance to update
+     * @param json Json document to take information from
+     * @throws JSONException If something went wrong during information extraction
+     *                       from json document
+     */
+    protected void logOrgChanged(Org org, JSONObject json) throws IOException {
+        final int MAX_CITIES = 32;
+        // log name changed
+        if (!org.getName().equals(json.optString(Org.JSON_NAME))) {
+            logUtils.createAndLogDetails(org.getId(), Org.JSON_NAME, org.getName(), json.optString(Org.JSON_NAME),
+                    AdminLogType.ORG_ATTRIBUTE_CHANGED);
+        }
+        // log short name changed
+        if (!org.getShortName().equals(json.optString(Org.JSON_SHORT_NAME))) {
+            logUtils.createAndLogDetails(json.optString(Org.JSON_SHORT_NAME), Org.JSON_SHORT_NAME, org.getShortName(),
+                    json.optString(Org.JSON_SHORT_NAME), AdminLogType.ORG_ATTRIBUTE_CHANGED);
+        }
+
+        // get area differences beetween old and new list
+        List<String> removed = org.getCities().stream()
+                .filter(p -> !json.optJSONArray(Org.JSON_CITIES).toList().contains(p)).collect(Collectors.toList());
+        List<Object> added = json.optJSONArray(Org.JSON_CITIES).toList().stream()
+                .filter(p -> !org.getCities().contains(p)).collect(Collectors.toList());
+        int rmLen = removed.size();
+        int addLen = added.size();
+        // create log
+        if (removed.size() > 0 || added.size() > 0) {
+            String oldCities = rmLen > 0 && rmLen < MAX_CITIES ? removed.toString() : "";
+            String newCities = addLen > 0 && addLen < MAX_CITIES ? added.toString() : "";
+            JSONObject details = logUtils.getLogDetails(Org.JSON_CITIES, oldCities, newCities,
+                    AdminLogType.ORG_ATTRIBUTE_CHANGED);
+            details.put("added", addLen);
+            details.put("removed", rmLen);
+            logUtils.createLog(json.optString(Org.JSON_SHORT_NAME), AdminLogType.ORG_ATTRIBUTE_CHANGED,
+                    details.toString());
+        }
+    }
+
+    /**
+     * Log update orgExt from json object.
+     *
+     * @param orgExt OrgExt instance to update
+     * @param json   Json document to take information from
+     * @throws JSONException If something went wrong during information extraction
+     *                       from json document
+     */
+    protected void logOrgExtChanged(OrgExt orgExt, JSONObject json) {
+        String orgId = orgExt.getId();
+        AdminLogType type = AdminLogType.ORG_ATTRIBUTE_CHANGED;
+        // log orgType changed
+        if (!orgExt.getOrgType().equals(json.optString(OrgExt.JSON_ORG_TYPE))) {
+            logUtils.createAndLogDetails(orgId, OrgExt.JSON_ORG_TYPE, orgExt.getOrgType(),
+                    json.optString(OrgExt.JSON_ORG_TYPE), type);
+        }
+
+        if (!orgExt.getAddress().equals(json.optString(OrgExt.JSON_ADDRESS))) {
+            logUtils.createAndLogDetails(orgId, OrgExt.JSON_ADDRESS, orgExt.getAddress(),
+                    json.optString(OrgExt.JSON_ADDRESS), type);
+        }
+        // log description changed
+        if (!orgExt.getDescription().equals(json.optString(Org.JSON_DESCRIPTION))) {
+            logUtils.createAndLogDetails(orgId, Org.JSON_DESCRIPTION, orgExt.getDescription(),
+                    json.optString(Org.JSON_DESCRIPTION), type);
+        }
+        // log web site url changed
+        if (!orgExt.getUrl().equals(json.optString(Org.JSON_URL))) {
+            logUtils.createAndLogDetails(orgId, Org.JSON_URL, orgExt.getUrl(), json.optString(Org.JSON_URL), type);
+        }
+        // log logo changed
+        if (!orgExt.getLogo().equals(json.get("logo"))) {
+            logUtils.createAndLogDetails(orgId, Org.JSON_LOGO, null, null, type);
         }
     }
 
