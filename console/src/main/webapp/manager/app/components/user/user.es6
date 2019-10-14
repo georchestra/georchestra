@@ -31,6 +31,14 @@ class UserController {
       } else {
         user.validOrg = true
       }
+      // get orgs infos
+      $injector.get('Orgs').query(orgs => {
+        this.orgs = orgs.filter(o => !o.pending)
+        this.orgsId = {}
+        this.orgs.map(org => {
+          this.orgsId[org.id] = org.name
+        })
+      })
       if (this.tab === 'delegations') {
         const Delegations = $injector.get('Delegations')
         Delegations.query(resp => {
@@ -38,9 +46,7 @@ class UserController {
           const options = deleg || { orgs: [], roles: [], uid: this.user.uid }
           this.delegation = new Delegations(options)
           this.activeDelegation = this.hasDelegation()
-          $injector.get('Orgs').query(orgs => {
-            this.orgs = orgs.filter(o => !o.pending)
-          })
+          Role.query(roles => { this.allRoles = roles.map(r => r.cn) })
         })
       }
       if (this.tab === 'messages') {
@@ -195,7 +201,14 @@ class UserController {
           limit: 100000,
           page: 0
         },
-        () => { this.logs.reverse() },
+        () => {
+          this.logs.reverse()
+          this.logs.map(log => {
+            if (log.changed) {
+              log.changed = JSON.parse(log.changed)
+            }
+          })
+        },
         flash.create.bind(flash, 'danger', i18n.errorload)
       )
     })
@@ -252,6 +265,27 @@ class UserController {
   closeMessage (message) {
     delete this.message
     delete this.compose
+  }
+
+  // beahavior when user open log details
+  openLog (log) {
+    // remove old log if not already deleted
+    if (this.log) { delete this.log }
+    // get messages for this user
+    if (log.changed) {
+      log.changed = log.changed && log.changed.length ? JSON.parse(log.changed) : log.changed
+      if (log.changed.sender) {
+        // only for message
+        log.trusted = this.$injector.get('$sce').trustAsHtml(log.changed.body)
+      }
+      this.log = log
+    }
+  }
+
+  // beahavior when close log
+  closeLog () {
+    // remove log to avoir wrong behavior when log changed
+    delete this.log
   }
 
   loadTemplate () {

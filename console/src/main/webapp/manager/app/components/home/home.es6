@@ -46,6 +46,46 @@ class HomeController {
     }, () => {}, () => {
       flash.create('danger', this.i18n.errorload)
     })
+
+    // get all orgs infos and orgs name
+    this.orgsId = {}
+    $injector.get('Orgs').query(orgs => {
+      orgs.map(org => {
+        this.orgsId[org.id] = org.name
+      })
+      this.orgs = orgs.map(o => o.name)
+    })
+
+    // get all role
+    this.roles = []
+    $injector.get('Role').query(roles => {
+      this.roles = roles.map(role => role.cn)
+    })
+
+    // get all users
+    this.users = []
+    $injector.get('User').query(users => {
+      this.users = users.map(user => user.uid)
+    })
+  }
+
+  // get log info and return log target type or empty string
+  // usefull to get clean and functionnal link
+  getType (log) {
+    let type = ''
+    if (this.roles && this.orgsId && this.users && this.orgs) {
+      if (log.type.indexOf('DELETED') > -1 || log.type.indexOf('REFUSED') > -1) {
+        // avoid to create link for removed items
+        return type
+      } else if (this.roles.indexOf(log.target) > -1) {
+        return 'ROLE'
+      } else if (this.orgs.indexOf(log.target) > -1 || this.orgsId[log.target]) {
+        return 'ORG'
+      } else if (this.users.indexOf(log.target) > -1) {
+        return 'USER'
+      }
+    }
+    return type
   }
 }
 

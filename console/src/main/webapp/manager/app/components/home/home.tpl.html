@@ -77,7 +77,15 @@
           <td>{{::log.date | logDate}}</td>
           <td><a ng-link="user({id: log.admin, tab: 'infos'})">{{::log.admin}}</a></td>
           <td>{{::log.type}}</td>
-          <td><a ng-link="user({id: log.target, tab: 'infos'})">{{::log.target}}</a></td>
+          <td>
+            <a ng-if="home.getType(log) === 'USER'" ng-link="user({id: log.target, tab: 'infos'})" ng-click="home.getInfo(log)">{{::log.target}}</a>
+            <a ng-if="home.getType(log) === 'ORG'" ng-link="org({org: log.target, tab: 'infos'})">
+              <span ng-if="home.orgsId[log.target]">{{::home.orgsId[log.target]}}</span>
+              <span ng-if="!home.orgsId[log.target]">{{::log.target}}</span>
+            </a>
+            <a ng-if="home.getType(log) === 'ROLE'" ng-link="role({role: log.target, tab: 'infos'})" ng-click="home.getInfo(log)">{{::log.target}}</a>
+            <span ng-if= "!home.getType(log)">{{::log.target}}</span>
+          </td>
         </tr>
       </tbody>
     </table>

@@ -119,7 +119,7 @@
                  title="'analytics.extractions'" class="col-md-6" csv-config="user.extractionOptions"/>
         </div>
       </div>
-
+      <!--message tab to list all readables messages-->
       <div class="panel-body user-messages" ng-if="user.tab=='messages'">
 
         <ol class="breadcrumb">
@@ -216,30 +216,110 @@
           </tbody>
         </table>
       </div>
-
+      <!--log breadcrumb-->
       <div class="panel-body" ng-if="user.tab=='logs'">
         <ol class="breadcrumb">
-          <li class="active">
+          <li class="active" ng-if="!user.log">
             <span translate>logs.logs</span> <span class="badge">{{::user.logs.length}}</span>
           </li>
-        </ol>
-        <table class="table table-condensed">
+          <li class="active" ng-if="user.log">
+            <a href="javascript:void(0);" ng-click="user.closeLog()">
+              <span translate>logs.logs</span> <span class="badge">{{::user.logs.length}}</span>
+            </a>
+          </li>
+          <li class="active" ng-if="user.log">{{::user.log.type}}</li>
+        </ol>              
+        <!--logs table-->
+        <table class="table table-condensed" ng-if="!user.log">
           <thead>
             <tr>
               <th translate>logs.date</th>
               <th translate>logs.sender</th>
+              <th translate>logs.target</th>
               <th translate>logs.type</th>
             </tr>
           </thead>
-          <tbody>
-            <tr dir-paginate="log in user.logs | itemsPerPage: 25">
-              <td>{{::log.date | logDate}}</td>
-              <td>{{::log.admin}}</td>
-              <td>{{::log.type}}</td>
+          <tbody >
+            <tr dir-paginate="log in user.logs | itemsPerPage: 25 | orderBy: '-date'">
+              <td>{{::log.date | logDate}}
+              <td><a ng-link="user({id: log.admin, tab: 'infos'})">{{::log.admin}}</a>
+              <td>
+                <a ng-if="!user.orgsId[log.target]" ng-link="user({id: log.target, tab: 'infos'})">{{::log.target}}</a>
+                <a ng-if="user.orgsId[log.target]" ng-link="org({org: log.target, tab: 'infos'})">{{::user.orgsId[log.target]}}</a>
+              </td>
+              <td ng-if="!log.changed"> {{::log.type}}
+              <td ng-if="log.changed">
+                <a ng-if="log.changed" ng-click="user.openLog(log)" href="javascript:void(0);" translate>
+                  {{::log.type + (log.changed.field ? ' ('+log.changed.field+')' : '')}}
+                </a>
+              </td>
             </tr>
           </tbody>
         </table>
-        <dir-pagination-controls></dir-pagination-controls>
+        <!--Log as Email-->
+        <div ng-if="user.log && user.log.changed && user.log.trusted">
+          <h4>
+            <small ng-if="user.log.trusted">
+              <a ng-link="user({id: user.log.changed.sender, tab: 'infos'})">{{::user.log.changed.sender}}</a>
+              <span translate> date.to</span>
+              <a ng-link="user({id: logs.log.changed.recipient, tab: 'infos'})">{{::logs.log.changed.recipient}}</a>, 
+              <span translate>msg.on</span> {{user.log.date | date: 'mediumDate'}}
+            </small>
+          </h4>
+          <!-- Email subject and body-->
+          <h4 ng-if="user.log.changed.subject">
+            {{user.log.changed.subject}}
+          </h4>
+          <p ng-if="user.log.trusted" ng-bind-html="user.log.trusted"></p>
+          <hr ng-if="user.log.changed.attachments.length>0" />
+          <h5 ng-if="user.log.changed.attachments.length>0" translate>msg.attachments</h5>
+          <ul ng-if="user.log.changed.attachments.length>0">
+            <li ng-repeat="attachment in user.log.attachments">
+              {{attachment.name}}
+            </li>
+          </ul>
+        </div>
+        <!--Others logs type-->
+        <div ng-if="user.log && user.log.changed && !user.log.trusted">
+          <h4>
+            <small ng-if=!user.log.trusted>
+              <span translate>logs.target</span> 
+              <!--display user name-->
+              <a ng-if="!user.orgsId[user.log.target]" ng-link="user({id: user.log.target, tab: 'infos'})">{{::user.log.target}}</a>
+              <!--or display org name-->
+              <a ng-if="user.orgsId[user.log.target]" ng-link="org({org: user.log.target, tab: 'infos'})">{{::user.orgsId[user.log.target]}}</a> 
+              <span translate>logs.to</span>
+              <a ng-link="user({id: user.log.admin, tab: 'infos'})">{{::user.log.admin}}</a>, 
+              <span translate>msg.on</span> {{user.log.date | date: 'mediumDate'}}
+            </small>
+          </h4>
+          <!--Display log details-->
+          <h4 ng-if="user.log.changed.type"><i>{{::user.log.changed.type}}.</i></h4>
+          <br>
+          <p ng-if="!user.log.changed.isRole"> 
+              <span translate>logs.modification</span> 
+              <strong>{{::user.log.changed.field}}.</strong>
+            </p>          
+          <!--If value was replaced by another-->
+          <p ng-if="user.log.changed.new.length > 0 && user.log.changed.old"> 
+            <span translate>logs.replace</span> 
+            <strong>{{::user.log.changed.old}}</strong> 
+            <span translate>logs.to</span> 
+            <strong>{{::user.log.changed.new}}</strong>
+          </p>
+          <!--First value was set-->
+          <p ng-if="user.log.changed.new.length > 0 && !user.log.changed.old">
+            <span translate>logs.set</span> 
+            <strong>{{::user.log.changed.new}}.</strong>
+          </p>
+          <!--Field get an empty value-->
+          <p ng-if="!user.log.changed.new">
+            <span translate>logs.clear</span> 
+            <strong>{{::user.log.changed.old}}.</strong>
+          </p>
+        </div>
+        <!--logs pagination : only if user.log-->
+        <dir-pagination-controls ng-if="!user.log"></dir-pagination-controls>
       </div>
 
       <div class="panel-body" ng-if="user.tab=='manage'">
