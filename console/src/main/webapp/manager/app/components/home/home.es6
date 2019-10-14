@@ -79,7 +79,7 @@ class HomeController {
         return type
       } else if (this.roles.indexOf(log.target) > -1) {
         return 'ROLE'
-      } else if (this.orgs.indexOf(log.target) > -1 || this.orgsId[log.target]) {
+      } else if (this.orgsId[log.target]) {
         return 'ORG'
       } else if (this.users.indexOf(log.target) > -1) {
         return 'USER'

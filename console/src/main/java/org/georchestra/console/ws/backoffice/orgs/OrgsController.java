@@ -465,15 +465,16 @@ public class OrgsController {
      */
     protected void logOrgChanged(Org org, JSONObject json) throws IOException {
         final int MAX_CITIES = 32;
+        String id = json.optString(Org.JSON_ID);
         // log name changed
         if (!org.getName().equals(json.optString(Org.JSON_NAME))) {
-            logUtils.createAndLogDetails(org.getId(), Org.JSON_NAME, org.getName(), json.optString(Org.JSON_NAME),
+            logUtils.createAndLogDetails(id, Org.JSON_NAME, org.getName(), json.optString(Org.JSON_NAME),
                     AdminLogType.ORG_ATTRIBUTE_CHANGED);
         }
         // log short name changed
         if (!org.getShortName().equals(json.optString(Org.JSON_SHORT_NAME))) {
             logUtils.createAndLogDetails(json.optString(Org.JSON_SHORT_NAME), Org.JSON_SHORT_NAME, org.getShortName(),
-                    json.optString(Org.JSON_SHORT_NAME), AdminLogType.ORG_ATTRIBUTE_CHANGED);
+                    json.optString(Org.JSON_ID), AdminLogType.ORG_ATTRIBUTE_CHANGED);
         }
 
         // get area differences beetween old and new list
@@ -491,8 +492,7 @@ public class OrgsController {
                     AdminLogType.ORG_ATTRIBUTE_CHANGED);
             details.put("added", addLen);
             details.put("removed", rmLen);
-            logUtils.createLog(json.optString(Org.JSON_SHORT_NAME), AdminLogType.ORG_ATTRIBUTE_CHANGED,
-                    details.toString());
+            logUtils.createLog(id, AdminLogType.ORG_ATTRIBUTE_CHANGED, details.toString());
         }
     }
 
