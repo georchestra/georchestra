@@ -56,6 +56,10 @@
   </servlet-mapping>
   <session-config>
     <session-timeout>1440</session-timeout>
+    <cookie-config>
+        <http-only>true</http-only>
+        <secure>true</secure>
+    </cookie-config>
   </session-config>
 
   <servlet-mapping>
