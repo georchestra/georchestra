@@ -96,7 +96,7 @@ class UsersController {
         default:
           mimetype = `text/${fileType}`
       }
-      const blob = new Blob([result.data], { type: mimetype })
+      const blob = new Blob(['\ufeff', result.data], { type: mimetype })
       const a = document.createElement('a')
       a.href = window.URL.createObjectURL(blob)
       a.target = '_blank'
