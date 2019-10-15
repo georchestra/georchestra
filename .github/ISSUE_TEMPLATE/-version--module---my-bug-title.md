@@ -1,7 +1,7 @@
 ---
 name: "[version] Module - My bug title"
 about: Create a report to help us improve geOrchestra
-title: ''
+title: "[version] Module - My bug title"
 labels: ''
 assignees: ''
 
