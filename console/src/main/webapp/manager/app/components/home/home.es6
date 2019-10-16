@@ -43,7 +43,12 @@ class HomeController {
     this.logs = this.$injector.get('Logs').query({
       limit: LOG_LIMIT,
       page: 0
-    }, () => {}, () => {
+    }, () => {
+      // transform each logs changed value into json to find info during html construction
+      this.logs.map(l => {
+        l.changed = l.changed && l.changed.length ? JSON.parse(l.changed) : l.changed
+      })
+    }, () => {
       flash.create('danger', this.i18n.errorload)
     })
 
@@ -73,7 +78,7 @@ class HomeController {
   // usefull to get clean and functionnal link
   getType (log) {
     let type = ''
-    if (this.roles && this.orgsId && this.users && this.orgs) {
+    if (log && this.roles && this.orgsId && this.users && this.orgs) {
       if (log.type.indexOf('DELETED') > -1 || log.type.indexOf('REFUSED') > -1) {
         // avoid to create link for removed items
         return type
@@ -86,6 +91,27 @@ class HomeController {
       }
     }
     return type
+  }
+
+  // read log to get elements to display
+  openLog (log) {
+    // remove old log if not already deleted
+    if (this.log) { delete this.log }
+    // get messages for this user
+    if (log.changed) {
+      // transform string to json if not already done
+      log.changed = log.changed && log.changed.length ? JSON.parse(log.changed) : log.changed
+      if (log.changed.sender) {
+        // only for mail
+        log.trusted = this.$injector.get('$sce').trustAsHtml(log.changed.body)
+      }
+      this.log = log
+    }
+  }
+
+  closeLog () {
+    // remove log to avoir wrong behavior when log changed
+    delete this.log
   }
 }
 

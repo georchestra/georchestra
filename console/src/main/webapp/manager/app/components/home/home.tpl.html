@@ -34,7 +34,7 @@
                               '1': '{{ &quot;home.connected_user&quot; | translate }}',
                               'other': '{{ &quot;home.connected_users&quot; | translate }}'}">
       </p>
-      <div ng-if="home.connected.results && home.connected.results.length > 0">
+      <div ng-if="home.connected.results && home.connected.results.length > 0">      
         <table class="table table-condensed">
           <thead>
             <tr>
@@ -62,21 +62,29 @@
     <stats data="home.requests" type="'line'" config="['date', 'count']" title="'analytics.requests'"></stats>
 
     <h4 translate>home.logs</h4>
-
-    <table class="table table-condensed">
+    <ol class="breadcrumb" ng-if="home.log">    
+      <li class="active" ng-if="home.log">
+        <a href="javascript:void(0);" ng-click="home.closeLog()">
+          <span translate>logs.all</span> <span class="badge">{{::home.logs.length}}</span>
+        </a>
+      </li>
+      <li class="active" ng-if="home.log.trusted">{{::home.log.changed.subject}}</li>
+      <li class="active" ng-if="!home.log.trusted">{{::home.log.type}}</li>
+    </ol>  
+    <table class="table table-condensed" ng-if="!home.log">
       <thead>
         <tr>
           <th translate>logs.date</th>
           <th translate>logs.sender</th>
-          <th translate>logs.type</th>
           <th translate>logs.target</th>
+          <th translate>logs.type</th>
         </tr>
       </thead>
       <tbody>
         <tr ng-repeat="log in home.logs">
           <td>{{::log.date | logDate}}</td>
-          <td><a ng-link="user({id: log.admin, tab: 'infos'})">{{::log.admin}}</a></td>
-          <td>{{::log.type}}</td>
+          <td><a ng-link="user({id: log.admin, tab: 'infos'})">{{::log.admin}}</a></td>          
+          <!--Targets-->
           <td>
             <a ng-if="home.getType(log) === 'USER'" ng-link="user({id: log.target, tab: 'infos'})" ng-click="home.getInfo(log)">{{::log.target}}</a>
             <a ng-if="home.getType(log) === 'ORG'" ng-link="org({org: log.target, tab: 'infos'})">
@@ -86,10 +94,109 @@
             <a ng-if="home.getType(log) === 'ROLE'" ng-link="role({role: log.target, tab: 'infos'})" ng-click="home.getInfo(log)">{{::log.target}}</a>
             <span ng-if= "!home.getType(log)">{{::log.target}}</span>
           </td>
+          <span ng-if="home.getType(log) === ''">{{::log.target}}</span>
+          <!--Type-->
+          <td ng-if="!log.changed"> {{::log.type}}
+          <td>
+            <a ng-if="log.changed && log.changed.field != log.target" ng-click="home.openLog(log)" href="javascript:void(0);">
+              {{::log.type + (log.changed.field ? ' (' + log.changed.field + ')' : '')}}
+            </a>
+            <span ng-if="log.changed && log.changed.field === log.target">
+                {{::log.type + (log.changed.field ? ' (' + log.changed.field + ')' : '')}}
+            </span>       
+          </td>          
         </tr>
       </tbody>
     </table>
+    <!--Log as Email-->
+    <div ng-if="home.log && home.log.trusted && home.log.changed">
+      <h4>
+        <small ng-if="home.log.trusted">
+          <a ng-link="user({id: home.log.changed.sender, tab: 'infos'})">{{::home.log.changed.sender}}</a>
+          <span translate> date.to</span>
+          <a ng-link="user({id: home.log.changed.recipient, tab: 'infos'})"> {{::home.log.changed.recipient}}</a>,
+          <span translate>msg.on</span> {{home.log.date | date: 'mediumDate'}}
+        </small>
+      </h4>
+      <!-- Email subject and body-->
+      <h4 ng-if="home.log.changed.subject">
+        {{home.log.changed.subject}}
+      </h4>
+      <p ng-if="home.log.trusted" ng-bind-html="home.log.trusted"></p>
+      <hr ng-if="home.log.changed.attachments.length>0" />
+      <h5 ng-if="home.log.changed.attachments.length>0" translate>msg.attachments</h5>
+      <ul ng-if="home.log.changed.attachments.length>0">
+        <li ng-repeat="attachment in home.log.attachments">
+          {{attachment.name}}
+        </li>
+      </ul>
+    </div>
+    <!--Others logs type-->
+    <div ng-if="home.log && home.log.changed && !home.log.trusted">
+      <h4>
+        <small>
+          <span translate>logs.target</span> 
+          <!--display user name-->
+          <a ng-if="home.getType(home.log) === 'USER'" ng-link="user({id: home.log.target, tab: 'infos'})">
+            {{::home.log.target}}
+          </a>
+          <!--or display org name-->
+          <a ng-if="home.getType(home.log) === 'ORG'" ng-link="org({org: home.log.target, tab: 'infos'})">
+            <span ng-if="home.orgsId[log.target]">{{::home.orgsId[home.log.target]}}</span>
+            <span ng-if="!home.orgsId[log.target]">{{::home.log.target}}</span>          
+          </a>
+          <!--or display target only if the target was removed-->
+          <span ng-if="home.getType(home.log) === ''">{{::home.log.target}}</span>
+          <span translate>logs.to</span>
+          <a ng-link="user({id: home.log.admin, tab: 'infos'})">{{::home.log.admin}}</a>, 
+          <span translate>msg.on</span> {{home.log.date | date: 'mediumDate'}}
+        </small>
+      </h4>
+      <!--Display log details-->
+      <h4 ng-if="home.log.changed.type"><i>{{::home.log.changed.type}}.</i></h4>
+      <br>
+      <p ng-if="!home.log.changed.isRole"> 
+        <span translate>logs.modification</span>
+        <strong>{{::home.log.changed.field}}.</strong>
+      </p>
+      <!--If value was replaced by another-->
+      <p ng-if="home.log.changed.new && home.log.changed.old && home.log.changed.field != 'cities'"> 
+        <span translate>logs.replace</span> 
+        <strong>{{::home.log.changed.old}}</strong> 
+        <span translate>logs.to</span> 
+        <strong>{{::home.log.changed.new}}.</strong>
+      </p>
+      <!--First value was set-->
+      <p ng-if="home.log.changed.new && !home.log.changed.old && home.log.changed.field != 'cities'">
+        <span translate>logs.set</span> 
+        <strong ng-if="!home.changed.isRole">{{::home.log.changed.new}}.</strong>
+      </p>
+      <!--Field get an empty value-->
+      <p ng-if="!home.log.changed.new && home.log.changed.old && home.log.changed.field != 'cities'">
+        <span translate>home.clear</span> 
+        <strong>{{::home.log.changed.old}}.</strong>
+      </p>
+      <!--Special display for area modification-->
+      <p ng-if=" home.log.changed.field === 'cities'">
+        <span ng-if="home.log.changed.added"> 
+          {{:: home.log.changed.added}} 
+        </span>
+        <span ng-if="home.log.changed.added" translate>logs.added </span>
+        <span ng-if="home.log.changed.new">: 
+          <br> {{::home.log.changed.new}} <br>
+        </span>
+        <span ng-if="home.log.changed.removed"> 
+          <br>{{::home.log.changed.removed}}
+        </span>
+        <span ng-if="home.log.changed.removed" translate>logs.removed </span>
+        <span ng-if="home.log.changed.old">:
+          </br>{{::home.log.changed.old}}
+        </span>      
+      </p>
+    </div>
 
+
+  <!--// home logs-->
   </div>
 
 </section>
