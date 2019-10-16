@@ -14,8 +14,6 @@
     <maven.test.skip>false</maven.test.skip>
     <!-- Override parent version with 2.1.1-georchestra. Revisit. -->
     <mapfish.version>2.1.1-georchestra</mapfish.version>
-    <!-- Use 21-SNAPSHOT until 21.3 is released with the fix for KML import -->
-    <gt.version>21-SNAPSHOT</gt.version>
     <!--
     	downgrade parent's 20180813 version or org.mapfish.print.servlet.MapPrinterServlet.getInfo
     	throws java.lang.NoSuchMethodError: org.json.JSONWriter.<init>(Ljava/io/Writer;)V
@@ -105,7 +103,6 @@
     <dependency>
       <groupId>org.geotools.xsd</groupId>
       <artifactId>gt-xsd-kml</artifactId>
-      <version>${gt.version}</version>
     </dependency>
 
     <dependency>
