@@ -42,7 +42,7 @@
     <skipUT>false</skipUT>
     <!-- flag to disable integration tests -->
     <skipIT>false</skipIT>
-    <gt.version>21.2</gt.version>
+    <gt.version>21.3</gt.version>
     <guava.version>23.5-jre</guava.version>
     <lombok.version>1.18.4</lombok.version>
     <postgres.version>42.2.5</postgres.version>
@@ -88,7 +88,6 @@
     <developerConnection>scm:git:git@github.com:georchestra/georchestra.git</developerConnection>
   </scm>
   <modules>
-    <!-- <module>gt-ogr</module> now the geotools implementation is used -->
     <module>ogc-server-statistics</module>
     <module>commons</module>
   </modules>
@@ -418,13 +417,28 @@
         <version>${gt.version}</version>
       </dependency>
       <dependency>
+        <groupId>org.geotools</groupId>
+        <artifactId>gt-xml</artifactId>
+        <version>${gt.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.geotools.xsd</groupId>
         <artifactId>gt-xsd-wfs</artifactId>
         <version>${gt.version}</version>
       </dependency>
       <dependency>
         <groupId>org.geotools.xsd</groupId>
+        <artifactId>gt-xsd-kml</artifactId>
+        <version>${gt.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.geotools.xsd</groupId>
         <artifactId>gt-xsd-gml3</artifactId>
+        <version>${gt.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.geotools</groupId>
+        <artifactId>gt-image</artifactId>
         <version>${gt.version}</version>
       </dependency>
       <dependency>
@@ -436,6 +450,19 @@
         <groupId>org.geotools</groupId>
         <artifactId>gt-cql</artifactId>
         <version>${gt.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.geotools</groupId>
+        <artifactId>gt-imageio-ext-gdal</artifactId>
+        <version>${gt.version}</version>
+        <exclusions>
+          <!-- This should be provided by the system because highly dependent of the compiled version -->
+          <!-- of underlying native GDAL/OGR library                                                  -->
+          <exclusion>
+            <groupId>it.geosolutions.imageio-ext</groupId>
+            <artifactId>imageio-ext-gdal-bindings</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>com.google.guava</groupId>
