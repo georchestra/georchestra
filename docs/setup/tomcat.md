@@ -93,6 +93,7 @@ sudo tomcat8-instance-create -p 8180 -c 8105 /var/lib/tomcat-proxycas
 
 Then:
 ```
+sudo cp -r /usr/share/tomcat8 /usr/share/tomcat-proxycas
 sudo mkdir /var/lib/tomcat-proxycas/conf/policy.d
 sudo touch /var/lib/tomcat-proxycas/conf/policy.d/empty.policy
 sudo chown -R tomcat8:tomcat8 /var/lib/tomcat-proxycas
@@ -108,6 +109,17 @@ Finally, edit the ```/etc/init.d/tomcat-proxycas``` script, find the following l
 ```
 # Provides:          tomcat-proxycas
 ```
+
+In that same file, a few lines below :
+replace
+```
+NAME=tomcat8
+```
+with
+```
+NAME=tomcat-proxycas
+```
+
 
 ### Customize Java options
 
@@ -185,6 +197,7 @@ sudo service tomcat-proxycas start
 Same here ... just changing names and ports.
 ```
 sudo tomcat8-instance-create -p 8280 -c 8205 /var/lib/tomcat-georchestra
+sudo cp -r /usr/share/tomcat8 /usr/share/tomcat-georchestra
 sudo mkdir /var/lib/tomcat-georchestra/conf/policy.d
 sudo touch /var/lib/tomcat-georchestra/conf/policy.d/empty.policy
 sudo chown -R tomcat8:tomcat8 /var/lib/tomcat-georchestra
@@ -200,6 +213,17 @@ Finally, edit the ```/etc/init.d/tomcat-georchestra``` script, find the followin
 ```
 # Provides:          tomcat-georchestra
 ```
+
+In that same file, a few lines below :
+replace
+```
+NAME=tomcat8
+```
+with
+```
+NAME=tomcat-georchestra
+```
+
 
 ### Customize Java options
 
@@ -340,6 +364,7 @@ sudo service tomcat-georchestra start
 
 ```
 sudo tomcat8-instance-create -p 8380 -c 8305 /var/lib/tomcat-geoserver0
+sudo cp -r /usr/share/tomcat8 /usr/share/tomcat-geoserver0
 sudo mkdir /var/lib/tomcat-geoserver0/conf/policy.d
 sudo touch /var/lib/tomcat-geoserver0/conf/policy.d/empty.policy
 sudo chown -R tomcat8:tomcat8 /var/lib/tomcat-geoserver0
@@ -365,6 +390,16 @@ Finally, edit the ```/etc/init.d/tomcat-geoserver0``` script, find the following
 ... and replace it with:
 ```
 # Provides:          tomcat-geoserver0
+```
+
+In that same file, a few lines below :
+replace
+```
+NAME=tomcat8
+```
+with
+```
+NAME=tomcat-geoserver0
 ```
 
 ### Customize Java options
