@@ -2,7 +2,6 @@ package org.georchestra.console.ws.editorgdetails;
 
 import com.google.common.io.ByteStreams;
 import org.georchestra.console.ds.AccountDao;
-import org.georchestra.console.ds.DataServiceException;
 import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.ds.RoleDao;
 import org.georchestra.console.dto.AccountImpl;
@@ -15,16 +14,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,12 +40,11 @@ public class EditOrgDetailsFormControllerTest {
     private AccountDao accountDao = Mockito.mock(AccountDao.class);
 
     private MockHttpServletRequest request = new MockHttpServletRequest();
-    private MockHttpServletResponse response = new MockHttpServletResponse();
 
     private EditOrgDetailsFormBean formBean = new EditOrgDetailsFormBean();
-    private BindingResult resultErrors = Mockito.mock(BindingResult.class);
 
     private Model model = Mockito.mock(Model.class);
+
 
     @Before
     public void setUp() throws Exception {
@@ -111,7 +106,7 @@ public class EditOrgDetailsFormControllerTest {
         try (InputStream is = getClass().getResourceAsStream("/georchestra_logo.png")) {
             MultipartFile logo = new MockMultipartFile("image", is);
             formBean.setUrl("https://newurl.com");
-            ctrl.edit(request, response, model, formBean, logo, resultErrors);
+            ctrl.edit(model, formBean, logo, resultErrors);
         }
         assertEquals("https://newurl.com", orgsDao.findExtById("georTest").getUrl());
     }
@@ -131,89 +126,10 @@ public class EditOrgDetailsFormControllerTest {
             String base64Image = new String(encoded.toByteArray());
 
             MultipartFile logo = new MockMultipartFile("image", image2);
-            ctrl.edit(request, response, model, formBean, logo, resultErrors);
+            ctrl.edit(model, formBean, logo, resultErrors);
 
             assertEquals(base64Image, orgsDao.findExtById("georTest").getLogo());
         }
-    }
-
-    @Test
-    public void testWithBlankOrg() throws IOException, DataServiceException {
-        request.addHeader("sec-org", "");
-        request.addHeader("sec-username", "georTest");
-        ctrl.setupForm(request, response, model);
-        assertEquals(HttpServletResponse.SC_FORBIDDEN, response.getStatus());
-    }
-
-    @Test
-    public void testWithBlankUser() throws IOException, DataServiceException {
-        request.addHeader("sec-org", "myorg");
-        request.addHeader("sec-username", "");
-        ctrl.setupForm(request, response, model);
-        assertEquals(HttpServletResponse.SC_FORBIDDEN, response.getStatus());
-    }
-
-    @Test
-    public void testWithoutOrg() throws IOException, DataServiceException {
-        request.addHeader("sec-username", "georTest");
-        ctrl.setupForm(request, response, model);
-        assertEquals(HttpServletResponse.SC_FORBIDDEN, response.getStatus());
-    }
-
-    @Test
-    public void testWithoutUser() throws IOException, DataServiceException {
-        request.addHeader("sec-org", "myorg");
-        ctrl.setupForm(request, response, model);
-        assertEquals(HttpServletResponse.SC_FORBIDDEN, response.getStatus());
-    }
-
-    @Test
-    public void testWithoutRole() throws IOException, DataServiceException {
-        request.addHeader("sec-org", "myorg");
-        request.addHeader("sec-username", "");
-        ctrl.setupForm(request, response, model);
-        assertEquals(HttpServletResponse.SC_FORBIDDEN, response.getStatus());
-    }
-
-    @Test
-    public void testWithBlankRole() throws IOException, DataServiceException {
-        request.addHeader("sec-role", "");
-        request.addHeader("sec-org", "myorg");
-        request.addHeader("sec-username", "michel");
-
-        ctrl.setupForm(request, response, model);
-
-        assertEquals(HttpServletResponse.SC_FORBIDDEN, response.getStatus());
-    }
-
-    @Test
-    public void testSetupNoRole() throws IOException {
-        request.addHeader("sec-org", "georTest");
-        request.addHeader("sec-username", "michel");
-
-        ctrl.edit(request, response, null, null, null, null);
-
-        assertEquals(HttpServletResponse.SC_FORBIDDEN, response.getStatus());
-    }
-
-    @Test
-    public void testSetupNoUser() throws IOException {
-        request.addHeader("sec-org", "georTest");
-        request.addHeader("sec-role", "REFERENT");
-
-        ctrl.edit(request, response, null, null, null, null);
-
-        assertEquals(HttpServletResponse.SC_FORBIDDEN, response.getStatus());
-    }
-
-    @Test
-    public void testSetupNoOrg() throws IOException {
-        request.addHeader("sec-username", "michel");
-        request.addHeader("sec-role", "REFERENT");
-
-        ctrl.edit(request, response, null, null, null, null);
-
-        assertEquals(HttpServletResponse.SC_FORBIDDEN, response.getStatus());
     }
 
 }

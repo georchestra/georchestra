@@ -30,6 +30,4 @@
 	<bean id="authUserDetailsService" class="org.georchestra.lib.springutils.GeorchestraUserDetailsService" />
 
 
-          
-
 </beans>

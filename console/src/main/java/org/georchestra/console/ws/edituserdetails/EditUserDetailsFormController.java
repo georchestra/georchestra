@@ -35,6 +35,7 @@ import org.georchestra.console.dto.Role;
 import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.ws.utils.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -94,13 +95,8 @@ public class EditUserDetailsFormController {
      * @throws IOException
      */
     @RequestMapping(value = "/account/userdetails", method = RequestMethod.GET)
+    @PreAuthorize("isAuthenticated()")
     public String setupForm(HttpServletRequest request, HttpServletResponse response, Model model) throws IOException {
-
-        if (request.getHeader("sec-username") == null) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN);
-            return null;
-        }
-
         try {
             Account userAccount = this.accountDao.findByUID(request.getHeader("sec-username"));
             model.addAttribute(createForm(userAccount));

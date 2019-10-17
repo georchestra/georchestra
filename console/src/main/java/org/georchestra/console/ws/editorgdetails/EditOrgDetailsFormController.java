@@ -18,13 +18,12 @@
  */
 package org.georchestra.console.ws.editorgdetails;
 
-import org.georchestra.console.ds.DataServiceException;
 import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.dto.orgs.OrgExt;
 import org.georchestra.console.ws.utils.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -35,14 +34,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
-import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Base64;
 
 @Controller
@@ -77,10 +74,8 @@ public class EditOrgDetailsFormController {
      * @throws IOException
      */
     @RequestMapping(value = "/account/orgdetails", method = RequestMethod.GET)
-    public String setupForm(HttpServletRequest request, HttpServletResponse response, Model model) throws IOException {
-
-        if (checkHeadersForBan(request, response))
-            return null;
+    @PreAuthorize("hasAnyRole('REFERENT', 'SUPERUSER')")
+    public String setupForm(HttpServletRequest request, Model model) {
         Org org = this.orgsDao.findByCommonName(request.getHeader("sec-org"));
         OrgExt orgExt = this.orgsDao.findExtById(org.getId());
         org.setOrgExt(orgExt);
@@ -99,11 +94,9 @@ public class EditOrgDetailsFormController {
     }
 
     @RequestMapping(value = "/account/orgdetails", method = RequestMethod.POST)
-    public String edit(HttpServletRequest request, HttpServletResponse response, Model model,
-            @ModelAttribute EditOrgDetailsFormBean formBean, @RequestParam(name = "logo") MultipartFile logo,
-            BindingResult resultErrors) throws IOException {
-        if (checkHeadersForBan(request, response))
-            return null;
+    @PreAuthorize("hasAnyRole('REFERENT', 'SUPERUSER')")
+    public String edit(Model model, @ModelAttribute EditOrgDetailsFormBean formBean,
+            @RequestParam(name = "logo") MultipartFile logo, BindingResult resultErrors) throws IOException {
         validation.validateOrgField("url", formBean.getUrl(), resultErrors);
         validation.validateOrgField("address", formBean.getAddress(), resultErrors);
         validation.validateOrgField("description", formBean.getAddress(), resultErrors);
@@ -145,16 +138,5 @@ public class EditOrgDetailsFormController {
         orgExt.setUrl(formBean.getUrl());
         orgExt.setAddress(formBean.getAddress());
         return orgExt;
-    }
-
-    private boolean checkHeadersForBan(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if (request.getHeader("sec-username") == "" || request.getHeader("sec-username") == null
-                || request.getHeader("sec-org") == "" || request.getHeader("sec-org") == null
-                || request.getHeader("sec-role") == null
-                || Arrays.stream(request.getHeader("sec-role").split(",")).noneMatch("REFERENT"::equals)) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN);
-            return true;
-        }
-        return false;
     }
 }
