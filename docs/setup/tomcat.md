@@ -278,7 +278,7 @@ geOrchestra integration has been exported outside the webapp.
 
 ```
 sudo git clone https://github.com/georchestra/config.git /etc/georchestra
-sudo git clone -b gn3.0.x https://github.com/georchestra/geonetwork_minimal_datadir.git /opt/geonetwork_data_dir
+sudo git clone -b gn3.4.1 https://github.com/georchestra/geonetwork_minimal_datadir.git /opt/geonetwork_data_dir
 sudo chown -R tomcat8 /opt/geonetwork_data_dir
 ```
 
