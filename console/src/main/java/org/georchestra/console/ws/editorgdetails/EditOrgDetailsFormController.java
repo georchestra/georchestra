@@ -18,12 +18,12 @@
  */
 package org.georchestra.console.ws.editorgdetails;
 
-import org.georchestra.console.ds.DataServiceException;
 import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.dto.orgs.OrgExt;
 import org.georchestra.console.ws.utils.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -34,7 +34,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
-import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -75,13 +74,8 @@ public class EditOrgDetailsFormController {
      * @throws IOException
      */
     @RequestMapping(value = "/account/orgdetails", method = RequestMethod.GET)
-    public String setupForm(HttpServletRequest request, HttpServletResponse response, Model model)
-            throws IOException, DataServiceException {
-
-        if (request.getHeader("sec-username") == null && request.getHeader("sec-org") == null) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN);
-            return null;
-        }
+    @PreAuthorize("hasAnyRole('REFERENT', 'SUPERUSER')")
+    public String setupForm(HttpServletRequest request, Model model) {
         Org org = this.orgsDao.findByCommonName(request.getHeader("sec-org"));
         OrgExt orgExt = this.orgsDao.findExtById(org.getId());
         org.setOrgExt(orgExt);
@@ -100,13 +94,9 @@ public class EditOrgDetailsFormController {
     }
 
     @RequestMapping(value = "/account/orgdetails", method = RequestMethod.POST)
-    public String edit(HttpServletRequest request, HttpServletResponse response, Model model,
-            @ModelAttribute EditOrgDetailsFormBean formBean, @RequestParam(name = "logo") MultipartFile logo,
-            BindingResult resultErrors, SessionStatus sessionStatus) throws IOException {
-        if (request.getHeader("sec-username") == null && request.getHeader("sec-org") == null) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN);
-            return null;
-        }
+    @PreAuthorize("hasAnyRole('REFERENT', 'SUPERUSER')")
+    public String edit(Model model, @ModelAttribute EditOrgDetailsFormBean formBean,
+            @RequestParam(name = "logo") MultipartFile logo, BindingResult resultErrors) throws IOException {
         validation.validateOrgField("url", formBean.getUrl(), resultErrors);
         validation.validateOrgField("address", formBean.getAddress(), resultErrors);
         validation.validateOrgField("description", formBean.getAddress(), resultErrors);
@@ -141,7 +131,6 @@ public class EditOrgDetailsFormController {
         formBean.setAddress(org.getOrgAddress());
         formBean.setOrgType(org.getOrgType());
         return formBean;
-
     }
 
     private OrgExt modifyOrgExt(OrgExt orgExt, EditOrgDetailsFormBean formBean) {
@@ -150,5 +139,4 @@ public class EditOrgDetailsFormController {
         orgExt.setAddress(formBean.getAddress());
         return orgExt;
     }
-
 }

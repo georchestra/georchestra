@@ -4,6 +4,7 @@ import com.google.common.io.ByteStreams;
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.ds.RoleDao;
+import org.georchestra.console.dto.AccountImpl;
 import org.georchestra.console.dto.Role;
 import org.georchestra.console.dto.RoleFactory;
 import org.georchestra.console.dto.orgs.Org;
@@ -13,13 +14,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
@@ -38,16 +37,14 @@ public class EditOrgDetailsFormControllerTest {
     private EditOrgDetailsFormController ctrl;
     private OrgsDao orgsDao = Mockito.mock(OrgsDao.class);
     private RoleDao rolesDao = Mockito.mock(RoleDao.class);
+    private AccountDao accountDao = Mockito.mock(AccountDao.class);
 
     private MockHttpServletRequest request = new MockHttpServletRequest();
-    private MockHttpServletResponse response = new MockHttpServletResponse();
 
     private EditOrgDetailsFormBean formBean = new EditOrgDetailsFormBean();
-    private BindingResult resultErrors = Mockito.mock(BindingResult.class);
-
-    private SessionStatus sessionStatus = Mockito.mock(SessionStatus.class);
 
     private Model model = Mockito.mock(Model.class);
+
 
     @Before
     public void setUp() throws Exception {
@@ -73,7 +70,17 @@ public class EditOrgDetailsFormControllerTest {
         Mockito.when(this.orgsDao.findExtById(Mockito.eq("georTest"))).thenReturn(orgExt);
         Mockito.when(this.orgsDao.findByCommonName(Mockito.eq(""))).thenReturn(null);
 
+        AccountImpl acc_with_referent = new AccountImpl();
+        acc_with_referent.setUid("user_with_referent");
+        acc_with_referent.setOrg("georTest");
+        AccountImpl acc_with_superuser = new AccountImpl();
+        acc_with_superuser.setUid("user_with_superuser");
+        acc_with_superuser.setOrg("georTest");
+        Mockito.when(this.accountDao.findByUID(Mockito.eq("user_with_referent"))).thenReturn(acc_with_referent);
+        Mockito.when(this.accountDao.findByUID(Mockito.eq("user_with_superuser"))).thenReturn(acc_with_superuser);
+
         Role referentRole = RoleFactory.create("REFERENT", "referent", true);
+        referentRole.addUser("user_with_referent");
         Role superUserRole = RoleFactory.create("SUPERUSER", "superuser", true);
         Mockito.when(this.rolesDao.findByCommonName("REFERENT")).thenReturn(referentRole);
         Mockito.when(this.rolesDao.findByCommonName("SUPERUSER")).thenReturn(superUserRole);
@@ -92,19 +99,23 @@ public class EditOrgDetailsFormControllerTest {
     @Test
     public void testSetupFormChangeUrl() throws IOException {
         request.addHeader("sec-org", "georTest");
+        request.addHeader("sec-username", "georTest");
+        request.addHeader("sec-role", "REFERENT,THE_ADMIN");
         BindingResult resultErrors = new MapBindingResult(new HashMap<>(), "errors");
         ctrl = new EditOrgDetailsFormController(orgsDao, new Validation(""));
         try (InputStream is = getClass().getResourceAsStream("/georchestra_logo.png")) {
             MultipartFile logo = new MockMultipartFile("image", is);
             formBean.setUrl("https://newurl.com");
-            ctrl.edit(request, response, model, formBean, logo, resultErrors, sessionStatus);
+            ctrl.edit(model, formBean, logo, resultErrors);
         }
-        assertEquals(orgsDao.findExtById("georTest").getUrl(), "https://newurl.com");
+        assertEquals("https://newurl.com", orgsDao.findExtById("georTest").getUrl());
     }
 
     @Test
     public void testSetupFormWithImage() throws IOException {
+        request.addHeader("sec-username", "georTest");
         request.addHeader("sec-org", "georTest");
+        request.addHeader("sec-role", "MOMO,REFERENT");
         BindingResult resultErrors = new MapBindingResult(new HashMap<>(), "errors");
         ctrl = new EditOrgDetailsFormController(orgsDao, new Validation(""));
         ByteArrayOutputStream encoded = new ByteArrayOutputStream();
@@ -115,11 +126,10 @@ public class EditOrgDetailsFormControllerTest {
             String base64Image = new String(encoded.toByteArray());
 
             MultipartFile logo = new MockMultipartFile("image", image2);
-            ctrl.edit(request, response, model, formBean, logo, resultErrors, sessionStatus);
+            ctrl.edit(model, formBean, logo, resultErrors);
 
-            assertEquals(orgsDao.findExtById("georTest").getLogo(), base64Image);
+            assertEquals(base64Image, orgsDao.findExtById("georTest").getLogo());
         }
-
     }
 
 }
