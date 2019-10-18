@@ -19,10 +19,12 @@
     <dependency>
       <groupId>org.webjars</groupId>
       <artifactId>extjs</artifactId>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.tuckey</groupId>
       <artifactId>urlrewritefilter</artifactId>
+      <scope>runtime</scope>
       <exclusions>
         <exclusion>
           <groupId>commons-logging</groupId>
@@ -96,7 +98,6 @@
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-image</artifactId>
-      <version>${gt.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
@@ -105,64 +106,16 @@
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-imageio-ext-gdal</artifactId>
-      <version>${gt.version}</version>
-      <exclusions>
-        <!-- This should be provided by the system because highly dependent of the compiled version -->
-        <!-- of underlying native GDAL/OGR library                                                  -->
-        <exclusion>
-          <groupId>it.geosolutions.imageio-ext</groupId>
-          <artifactId>imageio-ext-gdal-bindings</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.geotools.xsd</groupId>
-      <artifactId>gt-xsd-wfs</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gt-wms</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.geotools</groupId>
-      <artifactId>gt-xml</artifactId>
-      <version>${gt.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotools.xsd</groupId>
       <artifactId>gt-xsd-kml</artifactId>
-      <version>${gt.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>xerces</groupId>
-          <artifactId>xercesImpl</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xml-apis</groupId>
-          <artifactId>xml-apis-xerces</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.geotools.ogc</groupId>
-      <artifactId>net.opengis.wfs</artifactId>
-      <version>${gt.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.geotools</groupId>
-          <artifactId>gt2-api</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <!-- geotools - handles ESPG -->
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-epsg-hsql</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>xpp3</groupId>
-      <artifactId>xpp3</artifactId>
-      <version>1.1.3.4.O</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>commons-httpclient</groupId>
@@ -189,28 +142,11 @@
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>com.mchange</groupId>
       <artifactId>c3p0</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>commons-pool</groupId>
-      <artifactId>commons-pool</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-collections</groupId>
-          <artifactId>commons-collections</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xml-apis</groupId>
-          <artifactId>xml-apis</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>xerces</groupId>
-          <artifactId>xercesImpl</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.google.guava</groupId>
@@ -226,14 +162,6 @@
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
       <type>jar</type>
-    </dependency>
-    <dependency>
-      <groupId>xerces</groupId>
-      <artifactId>xercesImpl</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>xalan</groupId>
-      <artifactId>xalan</artifactId>
     </dependency>
     <dependency>
       <groupId>org.georchestra</groupId>
