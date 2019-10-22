@@ -86,7 +86,7 @@ public class EditUserDetailsFormControllerTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
     }
 
     @Test
@@ -95,7 +95,7 @@ public class EditUserDetailsFormControllerTest {
     }
 
     @Test
-    public void testInitForm() throws Exception {
+    public void testInitForm() {
         WebDataBinder dataBinder = new WebDataBinder(null);
 
         ctrl.initForm(dataBinder);
@@ -114,29 +114,16 @@ public class EditUserDetailsFormControllerTest {
     }
 
     @Test
-    public void testSetupFormWithoutSecurityProxyHeaders() throws Exception {
-        Account mockedAccount = Mockito.mock(Account.class);
-        Mockito.when(dao.findByUID(Mockito.anyString())).thenReturn(mockedAccount);
-
-        String ret = ctrl.setupForm(request, response, model);
-
-        assertTrue(ret == null);
-    }
-
-    @Test
     public void testSetupForm() throws Exception {
         request.addHeader("sec-username", "mtester");
         Mockito.when(dao.findByUID(Mockito.anyString())).thenReturn(this.mtesterAccount);
 
         String ret = ctrl.setupForm(request, response, model);
-
-        assertTrue(ret.equals("editUserDetailsForm"));
+        assertEquals("editUserDetailsForm", ret);
     }
 
     /**
      * Testing the general case on EditUserDetail controller, general case.
-     * 
-     * @throws Exception
      */
     @Test
     public void testEdit() throws Exception {
@@ -156,7 +143,7 @@ public class EditUserDetailsFormControllerTest {
         ArgumentCaptor<ObjectNode> orgWithExtCaptor = ArgumentCaptor.forClass(ObjectNode.class);
         verify(model).addAttribute(Mockito.eq("isReferentOrSuperUser"), refOrSuCaptor.capture());
         verify(model).addAttribute(Mockito.eq("org"), orgWithExtCaptor.capture());
-        assertTrue(ret.equals("editUserDetailsForm"));
+        assertEquals("editUserDetailsForm", ret);
         assertNotNull("expected a isReferentOrSuperUser in the model, null returned", refOrSuCaptor.getValue());
         ObjectNode node = orgWithExtCaptor.getValue();
         String desc = node.get("description").asText();
@@ -170,7 +157,7 @@ public class EditUserDetailsFormControllerTest {
 
         String ret = ctrl.setupForm(request, response, model);
 
-        assertTrue(ret.equals("editUserDetailsForm"));
+        assertEquals("editUserDetailsForm", ret);
     }
 
     @Test
@@ -179,7 +166,7 @@ public class EditUserDetailsFormControllerTest {
 
         String ret = ctrl.edit(request, response, model, formBean, resultErrors, sessionStatus);
 
-        assertTrue(ret.equals("editUserDetailsForm"));
+        assertEquals("editUserDetailsForm", ret);
     }
 
     /**
@@ -188,21 +175,21 @@ public class EditUserDetailsFormControllerTest {
     @Test
     public void testEditUserDetailsFormBean() {
 
-        assertTrue(formBean.getUid().equals("mtester"));
-        assertTrue(formBean.getDescription().equals("description"));
-        assertTrue(formBean.getSurname().equals("misterTest"));
-        assertTrue(formBean.getFirstName().equals("testFirst"));
-        assertTrue(formBean.getEmail().equals("email"));
-        assertTrue(formBean.getTitle().equals("test engineer"));
-        assertTrue(formBean.getPhone().equals("+331234567891"));
-        assertTrue(formBean.getFacsimile().equals("+331234567890"));
-        assertTrue(formBean.getOrg().equals("geOrchestra testing LLC"));
-        assertTrue(formBean.getPostalAddress().equals("48 Avenue du Lac du Bourget. 73377 Le Bourget-du-Lac"));
+        assertEquals("mtester", formBean.getUid());
+        assertEquals("description", formBean.getDescription());
+        assertEquals("misterTest", formBean.getSurname());
+        assertEquals("testFirst", formBean.getFirstName());
+        assertEquals("email", formBean.getEmail());
+        assertEquals("test engineer", formBean.getTitle());
+        assertEquals("+331234567891", formBean.getPhone());
+        assertEquals("+331234567890", formBean.getFacsimile());
+        assertEquals("geOrchestra testing LLC", formBean.getOrg());
+        assertEquals("48 Avenue du Lac du Bourget. 73377 Le Bourget-du-Lac", formBean.getPostalAddress());
 
-        assertTrue(formBean.toString().equals("EditUserDetailsFormBean [uid=mtester, surname=misterTest, "
+        assertEquals(formBean.toString(), "EditUserDetailsFormBean [uid=mtester, surname=misterTest, "
                 + "givenName=testFirst, email=email, title=test engineer, phone=+331234567891, facsimile=+331234567890, "
                 + "org=geOrchestra testing LLC, description=description, postalAddress=48 Avenue du Lac du Bourget. 73377 "
-                + "Le Bourget-du-Lac]"));
+                + "Le Bourget-du-Lac]");
 
     }
 
