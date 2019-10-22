@@ -9,6 +9,7 @@ jobs:
       - uses: actions/checkout@v1
         with:
           fetch-depth: 10
+      - uses: textbook/git-checkout-submodule-action@2.0.0
       - uses: actions/setup-java@v1
         with:
           java-version: '8.x'
@@ -16,6 +17,10 @@ jobs:
         run: |
           mkdir $HOME/.m2
           echo "<settings xmlns=\"http://maven.apache.org/SETTINGS/1.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd\"><mirrors><mirror><id>artifactory-georchestra</id><mirrorOf>*</mirrorOf><url>https://packages.georchestra.org/artifactory/maven</url></mirror></mirrors></settings>" > $HOME/.m2/settings.xml
+      - name: installing root pom into .m2
+        run: ./mvnw install --non-recursive
+      - name: installing georchstra-commons into .m2
+        run: ./mvnw install -pl commons
       - name: install
         working-directory: console/
         run: ../mvnw --no-transfer-progress -B -Dfmt.action=validate install -P-all,travis -Dadditionalparam=-Xdoclint:none -DskipTests
