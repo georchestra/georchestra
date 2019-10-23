@@ -45,7 +45,6 @@ public class EditOrgDetailsFormControllerTest {
 
     private Model model = Mockito.mock(Model.class);
 
-
     @Before
     public void setUp() throws Exception {
         ctrl = new EditOrgDetailsFormController(orgsDao, new Validation(""));
