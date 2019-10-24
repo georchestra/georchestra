@@ -27,3 +27,12 @@ jobs:
       - name: run test
         working-directory: console/
         run: ../mvnw --no-transfer-progress verify -Dfmt.skip=true -P-all,travis,it -Dadditionalparam=-Xdoclint:none
+      - name: build docker image
+        working-directory: console/
+        run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: georchestra/console:latest
+          username: georchestra
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
