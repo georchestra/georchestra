@@ -1,0 +1,42 @@
+name: Extractorapp CI
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      #  with:
+      #     submodule: recursive
+      # we use this action because adding submodule: recursive to the checkout action doesn't work with
+      - uses: textbook/git-checkout-submodule-action@2.0.0
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '8.x'
+      - name: add georchestra artifactory to local m2 (temporary, need to move to proper action)
+        run: |
+          mkdir $HOME/.m2
+          echo $M2_SETTINGS_FILE > $HOME/.m2/settings.xml
+        env:
+          M2_SETTINGS_FILE: ${{ secrets.M2_SETTINGS_FILE }}
+      - name: installing root pom into .m2
+        run: ./mvnw install --non-recursive
+      - name: installing georchstra-commons into .m2
+        run: ./mvnw install -pl commons
+      - name: install & check formating
+        working-directory: extractorapp/
+        run: ../mvnw --no-transfer-progress -B -Dfmt.action=validate install -P-all,travis -Dadditionalparam=-Xdoclint:none -DskipTests
+      - name: run test
+        working-directory: extractorapp/
+        run: ../mvnw --no-transfer-progress verify -Dfmt.skip=true -P-all,travis,it -Dadditionalparam=-Xdoclint:none
+      - name: build & publish docker image
+        working-directory: extractorapp/
+        run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker
+      #      This is not working properly right now, commenting.
+      #      - name: publish docker image
+      #        working-directory: console/
+      #        run: ../mvnw --no-transfer-progress docker:push -Pdocker
+      - name: publish on github package repository
+        working-directory: extractorapp/
+        run: ../mvnw --no-transfer-progress deploy -Dtoken={{ secrets.GITHUB_TOKEN }}
