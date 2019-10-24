@@ -5,6 +5,7 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
+    needs: commons
     steps:
       - uses: actions/checkout@v1
       #  with:

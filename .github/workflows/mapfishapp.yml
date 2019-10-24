@@ -15,8 +15,8 @@ jobs:
         with:
           java-version: '8.x'
       - uses: actions/setup-python@v1
-          with:
-            python-version: '2.x'
+        with:
+          python-version: '2.x'
       - name: add georchestra artifactory to local m2 (temporary, need to move to proper action)
         run: |
           mkdir $HOME/.m2
