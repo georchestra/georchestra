@@ -193,6 +193,8 @@
   "users.pending"         : "En attente",
   "users.pending_desc"    : "Utilisateurs en attente de validation",
   "users.filter_selected" : "Afficher la sélection uniquement",
+  "users.ORGADMIN"        : "Administrateurs d'organisme",
+  "users.TEMPORARY"       : "Temporaires",
 
   "sel.all"               : "Tous",
   "sel.none"              : "Aucun",

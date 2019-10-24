@@ -193,6 +193,8 @@
   "users.pending"         : "Pendientes",
   "users.pending_desc"    : "Usuarios pendientes de validación",
   "users.filter_selected" : "Mostrar solo la selección",
+  "users.ORGADMIN"        : "FIXME: TO BE TRANSLATED",
+  "users.TEMPORARY"       : "FIXME: TO BE TRANSLATED",
 
   "sel.all"               : "Todos",
   "sel.none"              : "Ningún",
