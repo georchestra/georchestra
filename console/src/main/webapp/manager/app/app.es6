@@ -19,7 +19,7 @@ class AppController {
         component: 'roles' },
       { path: '/role/:role/:tab',
         component: 'role' },
-      { path: '/delegations/:delegation',
+      { path: '/delegations',
         component: 'delegations' },
       { path: '/browse/:id/users',
         component: 'users' },
