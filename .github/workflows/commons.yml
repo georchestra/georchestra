@@ -3,7 +3,7 @@ name: commons CI
 on: [push]
 
 jobs:
-  build:
+  commons:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
