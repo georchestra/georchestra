@@ -9,7 +9,8 @@ jobs:
       - uses: actions/checkout@v1
         with:
           fetch-depth: 10
-      - uses: textbook/git-checkout-submodule-action@2.0.0
+          submodules: recursive
+      #- uses: textbook/git-checkout-submodule-action@2.0.0
       - uses: actions/setup-java@v1
         with:
           java-version: '8.x'
@@ -23,7 +24,7 @@ jobs:
         run: ./mvnw install --non-recursive
       - name: installing georchstra-commons into .m2
         run: ./mvnw install -pl commons
-      - name: install
+      - name: install & check formating
         working-directory: console/
         run: ../mvnw --no-transfer-progress -B -Dfmt.action=validate install -P-all,travis -Dadditionalparam=-Xdoclint:none -DskipTests
       - name: run test
@@ -31,4 +32,11 @@ jobs:
         run: ../mvnw --no-transfer-progress verify -Dfmt.skip=true -P-all,travis,it -Dadditionalparam=-Xdoclint:none
       - name: build & publish docker image
         working-directory: console/
-        run: ../mvnw --no-transfer-progress clean package docker:build docker:push -Pdocker
+        run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker
+#      This is not working properly right now, commenting.
+#      - name: publish docker image
+#        working-directory: console/
+#        run: ../mvnw --no-transfer-progress docker:push -Pdocker
+      - name: publish on github package repository
+        working-directory: console/
+        run: ../mvnw --no-transfer-progress deploy -Dtoken={{ secrets.GITHUB_TOKEN }}
