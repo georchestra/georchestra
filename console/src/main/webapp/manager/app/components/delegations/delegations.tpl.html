@@ -29,7 +29,7 @@
           </td>
           <td>
             <span ng-repeat="org in delegation.orgs">
-            <a ng-link="org({org: org, tab: 'infos'})">{{ org }}</a>{{$last ? '' : ', '}}
+            <a ng-link="org({org: org, tab: 'infos'})">{{ delegations.orgs[org].name }}</a>{{$last ? '' : ', '}}
             </span>
           </td>
           <td>
