@@ -7,10 +7,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-        with:
-          submodule: recursive
+      #  with:
+      #     submodule: recursive
       # we use this action because adding submodule: recursive to the checkout action doesn't work with
-      # - uses: textbook/git-checkout-submodule-action@2.0.0
+      - uses: textbook/git-checkout-submodule-action@2.0.0
       - uses: actions/setup-java@v1
         with:
           java-version: '8.x'
