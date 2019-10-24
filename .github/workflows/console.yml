@@ -16,7 +16,9 @@ jobs:
       - name: add georchestra artifactory to local m2 (temporary, need to move to proper action)
         run: |
           mkdir $HOME/.m2
-          echo "<settings xmlns=\"http://maven.apache.org/SETTINGS/1.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd\"><mirrors><mirror><id>artifactory-georchestra</id><mirrorOf>*</mirrorOf><url>https://packages.georchestra.org/artifactory/maven</url></mirror></mirrors></settings>" > $HOME/.m2/settings.xml
+          echo $M2_SETTINGS_FILE > $HOME/.m2/settings.xml
+        env:
+          M2_SETTINGS_FILE: ${{ secrets.M2_SETTINGS_FILE }}
       - name: installing root pom into .m2
         run: ./mvnw install --non-recursive
       - name: installing georchstra-commons into .m2
@@ -27,12 +29,6 @@ jobs:
       - name: run test
         working-directory: console/
         run: ../mvnw --no-transfer-progress verify -Dfmt.skip=true -P-all,travis,it -Dadditionalparam=-Xdoclint:none
-      - name: build docker image
+      - name: build & publish docker image
         working-directory: console/
-        run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker
-      - name: Publish to Registry
-        uses: elgohr/Publish-Docker-Github-Action@master
-        with:
-          name: georchestra/console:latest
-          username: georchestra
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+        run: ../mvnw --no-transfer-progress clean package docker:build docker:push -Pdocker
