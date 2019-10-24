@@ -5,23 +5,26 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
-    services:
-      postgis:
-        image: mdillon/postgis:11
-        ports:
-          - 5432:5432
-        # needed because the postgres container does not provide a healthcheck
-        options: --health-cmd pg_isready
-        env:
-          POSTGRES_PASSWORD: georchestra
-          POSTGRES_USER: georchestra
-          POSTGRES_DB: georchestra
+#    services:
+#      postgis:
+#        image: mdillon/postgis:11
+#        ports:
+#          - 5432:5432
+#        # needed because the postgres container does not provide a healthcheck
+#        options: --health-cmd pg_isready
+#        env:
+#          POSTGRES_PASSWORD: georchestra
+#          POSTGRES_USER: georchestra
+#          POSTGRES_DB: georchestra
     steps:
       - uses: actions/checkout@v1
       #  with:
       #     submodule: recursive
       # we use this action because adding submodule: recursive to the checkout action doesn't work with
-      - uses: textbook/git-checkout-submodule-action@2.0.0
+      - uses: srt32/git-actions@v0.0.3
+        working_directory: ogc-server-statistics
+        with:
+          args: git submodule update --init --recursive
       - uses: actions/setup-java@v1
         with:
           java-version: '8.x'
