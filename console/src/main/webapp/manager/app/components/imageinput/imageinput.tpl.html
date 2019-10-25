@@ -10,13 +10,13 @@
       />
     </label>
   </div>
-  <div class="col-md-8" ng-show="imageinput.model[imageinput.attribute]">
+  <div class="col-md-8" ng-show="imageinput.value">
     <button ng-click="imageinput.delete()" class="close delete-logo">
       &times;
     </button>
     <img
       class="preview img-responsive"
-      src="data:image/jpeg;base64,{{imageinput.model[imageinput.attribute]}}"
+      src="data:image/jpeg;base64,{{imageinput.value}}"
     />
   </div>
 </div>
