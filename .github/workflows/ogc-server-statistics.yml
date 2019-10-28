@@ -1,21 +1,15 @@
 name: OGC Server Statistics CI
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
+      - 19.04
+      - 18.06
 
 jobs:
   build:
     runs-on: ubuntu-latest
-#    services:
-#      postgis:
-#        image: mdillon/postgis:11
-#        ports:
-#          - 5432:5432
-#        # needed because the postgres container does not provide a healthcheck
-#        options: --health-cmd pg_isready
-#        env:
-#          POSTGRES_PASSWORD: georchestra
-#          POSTGRES_USER: georchestra
-#          POSTGRES_DB: georchestra
     steps:
       - uses: actions/checkout@v1
       #  with:
@@ -51,4 +45,4 @@ jobs:
       #        run: ../mvnw --no-transfer-progress docker:push -Pdocker
       - name: publish on github package repository
         working-directory: ogc-server-statistics/
-        run: ../mvnw --no-transfer-progress deploy -Dtoken={{ secrets.GITHUB_TOKEN }}
+        run: ../mvnw --no-transfer-progress deploy

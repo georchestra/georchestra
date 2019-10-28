@@ -1,6 +1,11 @@
 name: commons CI
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
+      - 19.04
+      - 18.06
 
 jobs:
   commons:
