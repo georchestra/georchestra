@@ -19,8 +19,10 @@
 
 package org.georchestra.security;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -92,20 +94,23 @@ public class RemoveXForwardedHeaders implements HeaderFilter {
     }
 
     public void setIncludes(List<String> includes) {
-        for (String include : includes) {
-            if (!include.startsWith("(?")) {
-                include = "(?i)" + include;
-            }
-            this.includes.add(Pattern.compile(include));
-        }
+        this.includes = extractPatternFromStrings(includes);
+    }
+
+    public List<Pattern> getIncludes() {
+        return this.includes;
     }
 
     public void setExcludes(List<String> excludes) {
-        for (String exclude : excludes) {
-            if (!exclude.startsWith("(?")) {
-                exclude = "(?i)" + exclude;
+        this.excludes = extractPatternFromStrings(excludes);
+    }
+
+    private List<Pattern> extractPatternFromStrings(List<String> patterns) {
+        return patterns.stream().map(s -> s.split(",")).flatMap(Arrays::stream).map(pattern -> {
+            if (!pattern.startsWith("(?")) {
+                pattern = "(?i)" + pattern;
             }
-            this.excludes.add(Pattern.compile(exclude));
-        }
+            return Pattern.compile(pattern);
+        }).collect(Collectors.toList());
     }
 }

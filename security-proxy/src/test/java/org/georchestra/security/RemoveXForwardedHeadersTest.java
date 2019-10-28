@@ -29,8 +29,16 @@ public class RemoveXForwardedHeadersTest extends TestCase {
         assertTrue(headers.filter(RemoveXForwardedHeaders.FOR, null, createProxyRequest("geoserver/wms?Service=wms")));
     }
 
-    private HttpRequestBase createProxyRequest(String uriFragment) throws URISyntaxException {
-        return new HttpGet(new URI("http://localhost:8080/" + uriFragment));
+    @Test
+    public void testMultipleFilterIncludes() throws Exception {
+        final RemoveXForwardedHeaders headers = new RemoveXForwardedHeaders();
+        headers.setIncludes(Lists.newArrayList(".*geo.admin.ch.*,.*rolnp.fr.*"));
+        assertEquals(2, headers.getIncludes().size());
+        assertTrue(headers.filter(RemoveXForwardedHeaders.HOST, null,
+                createProxyRequest("wmts100.geo.admin.ch", "extractorapp")));
+
+        assertFalse(
+                headers.filter(RemoveXForwardedHeaders.HOST, null, createProxyRequest("example.com", "extractorapp")));
     }
 
     @Test
@@ -64,5 +72,13 @@ public class RemoveXForwardedHeadersTest extends TestCase {
         } catch (IllegalArgumentException e) {
             // good
         }
+    }
+
+    private HttpRequestBase createProxyRequest(String uriFragment) throws URISyntaxException {
+        return createProxyRequest("http://localhost:8080/", uriFragment);
+    }
+
+    private HttpRequestBase createProxyRequest(String uri, String uriFragment) throws URISyntaxException {
+        return new HttpGet(new URI(uri + uriFragment));
     }
 }
