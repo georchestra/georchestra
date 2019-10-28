@@ -1,6 +1,11 @@
 name: Header CI
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
+      - 19.04
+      - 18.06
 
 jobs:
   build:
@@ -39,4 +44,4 @@ jobs:
       #        run: ../mvnw --no-transfer-progress docker:push -Pdocker
       - name: publish on github package repository
         working-directory: header/
-        run: ../mvnw --no-transfer-progress deploy -Dtoken={{ secrets.GITHUB_TOKEN }}
+        run: ../mvnw --no-transfer-progress deploy
