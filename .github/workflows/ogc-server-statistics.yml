@@ -22,7 +22,7 @@ jobs:
       #     submodule: recursive
       # we use this action because adding submodule: recursive to the checkout action doesn't work with
       - uses: srt32/git-actions@v0.0.3
-        working_directory: ogc-server-statistics
+        working-directory: ogc-server-statistics
         with:
           args: git submodule update --init --recursive
       - uses: actions/setup-java@v1
