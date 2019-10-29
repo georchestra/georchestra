@@ -29,12 +29,15 @@ import java.util.stream.StreamSupport;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.annotations.VisibleForTesting;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.apache.commons.io.IOUtils;
 import org.georchestra.console.dao.AdvancedDelegationDao;
 import org.georchestra.console.ds.DataServiceException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.ldap.NameNotFoundException;
@@ -53,6 +56,10 @@ public class UsersExport {
 
     private UserInfoExporter accountInfoExporter;
 
+    @VisibleForTesting
+    @Value("${gdpr.enable}")
+    String gdprEnable;
+
     @Autowired
     private AdvancedDelegationDao advancedDelegationDao;
 
@@ -68,6 +75,15 @@ public class UsersExport {
     @RequestMapping(method = RequestMethod.GET, value = "/account/gdpr/download", produces = "application/zip")
     public void downloadUserData(HttpServletResponse response)
             throws NameNotFoundException, DataServiceException, IOException {
+        /*
+         * Disabling this endpoint is the gdpr.enable property is set to false. we are
+         * not using spring boot, so we cannot disable this endpoint with
+         * the @ConditionalOnProperty annotation.
+         */
+        if (!Boolean.parseBoolean(gdprEnable)) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
 
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final String userId = auth.getName();

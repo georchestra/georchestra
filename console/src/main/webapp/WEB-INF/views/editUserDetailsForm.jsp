@@ -44,7 +44,9 @@
 
 
 <script>var org = ${org};
-var isReferentOrSuperUser = ${isReferentOrSuperUser};</script>
+var isReferentOrSuperUser = ${isReferentOrSuperUser};
+var gdprEnabled = ${gdprEnabled};
+</script>
 
 <div class="container">
   <div class="page-header">
@@ -227,7 +229,7 @@ var isReferentOrSuperUser = ${isReferentOrSuperUser};</script>
 
       <dir-pagination-controls></dir-pagination-controls>
     </fieldset>
-    <fieldset class="gdpr">
+    <fieldset class="gdpr" ng-if="gdprEnabled">
       <legend><s:message code="editUserDetailsForm.gdpr"/></legend>
       <div
           class="panel panel-default">

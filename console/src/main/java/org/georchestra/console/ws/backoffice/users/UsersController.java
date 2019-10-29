@@ -37,6 +37,7 @@ import javax.mail.MessagingException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import com.google.common.annotations.VisibleForTesting;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -109,6 +110,10 @@ public class UsersController {
     private static final String PUBLIC_REQUEST_MAPPING = "/public/users";
     private static GrantedAuthority ROLE_SUPERUSER = AdvancedDelegationDao.ROLE_SUPERUSER;
 
+    @VisibleForTesting
+    @Value("${gdpr.enable}")
+    String gdprEnable;
+
     private AccountDao accountDao;
 
     @Autowired
@@ -165,7 +170,7 @@ public class UsersController {
 
     /**
      * Returns array of users using json syntax.
-     * 
+     *
      * <pre>
      *
      *	[
@@ -296,7 +301,7 @@ public class UsersController {
      *
      * where <b>sn, givenName, mail</b> are mandatories
      * </pre>
-     * 
+     *
      * <pre>
      * <b>Response</b>
      *
@@ -384,7 +389,7 @@ public class UsersController {
      * <p>
      * Example:
      * </p>
-     * 
+     *
      * <pre>
      * <b>Request</b>
      * [BASE_MAPPING]/users/hsimpson
@@ -402,7 +407,7 @@ public class UsersController {
      * }
      *
      * </pre>
-     * 
+     *
      * @param request
      *
      * @throws IOException           if the uid does not exist or fails to access to
@@ -489,7 +494,7 @@ public class UsersController {
      * user.
      * <p>
      * The request format is:
-     * 
+     *
      * <pre>
      * [BASE_MAPPING]/users/{uid}
      * </pre>
@@ -531,7 +536,7 @@ public class UsersController {
     /**
      * Deletes the account of the calling user and obfuscates records of GDPR
      * sensitive information.
-     * 
+     *
      * @return summary of records anonymized as a result
      */
     @RequestMapping(method = RequestMethod.POST, value = "/account/gdpr/delete", produces = "application/json")
@@ -539,13 +544,25 @@ public class UsersController {
             HttpServletRequest request, //
             HttpServletResponse response) throws DataServiceException {
 
-        final String accountId = request.getHeader("sec-username");
-        LOG.info(String.format("GDPR: user %s requested to delete his records", accountId));
+        /*
+         * Disabling this endpoint is the gdpr.enable property is set to false.
+         */
+        if (!Boolean.parseBoolean(gdprEnable)) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return null;
+        }
+
+        String accountId = uid;
+        if (accountId == null) {
+            accountId = SecurityContextHolder.getContext().getAuthentication().getName();
+        }
 
         final Account account = accountDao.findByUID(accountId);
 
         if (this.userRule.isProtected(account.getUid()))
             throw new AccessDeniedException("The user is protected, it cannot be deleted: " + account.getUid());
+
+        LOG.info(String.format("GDPR: user %s requested to delete his records", accountId));
 
         deleteAccount(account, accountId);
 
@@ -829,7 +846,7 @@ public class UsersController {
      * Check Authorization of current logged user against specified uid and throw a
      * AccessDeniedException if current user is not SUPERUSER and user 'uid' is not
      * under the delegation.
-     * 
+     *
      * @param uid Identifier of user to search in delegation of connected user
      *
      * @throws AccessDeniedException if current user does not have permission to

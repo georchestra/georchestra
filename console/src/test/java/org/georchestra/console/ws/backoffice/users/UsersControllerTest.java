@@ -64,6 +64,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContext;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+import org.springframework.test.context.TestPropertySource;
 
 public class UsersControllerTest {
     private LdapTemplate ldapTemplate;
@@ -612,6 +613,12 @@ public class UsersControllerTest {
         assertEquals(parsed.get("uid"), "testadmin");
         assertTrue(
                 parsed.getJSONArray("roles").length() == 1 && parsed.getJSONArray("roles").get(0).equals("SUPERUSER"));
+    }
+
+    public void testGDPRDisabled() throws DataServiceException {
+      usersCtrl.gdprEnable = "false";
+      usersCtrl.deleteUserSensitiveData("test", request, response);
+      assertEquals(response.SC_NOT_FOUND, response.getStatus());
     }
 
     private void mockLookup(String uuid, boolean pending) {
