@@ -425,7 +425,7 @@ public final class AccountDaoImpl implements AccountDao {
     private void mapToContext(Account account, DirContextOperations context) {
 
         List<String> values = Lists.newArrayList("top", "person", "organizationalPerson", "inetOrgPerson",
-                "shadowAccount", "georchestraUser", "ldapPublicKey");
+                "shadowAccount", "ldapPublicKey");
         if (account.getSshKeys().length == 0) {
             values.remove("ldapPublicKey");
         }
