@@ -78,13 +78,15 @@ public class GDPRAccountWorker {
                 account.getUid());
 
         DeletedRecords recs = accountGDPRDao.deleteAccountRecords(account);
-        return DeletedAccountSummary.builder()//
+        DeletedAccountSummary summary = DeletedAccountSummary.builder()//
                 .accountId(recs.getAccountId())//
                 .metadataRecords(recs.getMetadataRecords())//
                 .extractorRecords(recs.getExtractorRecords())//
                 .geodocsRecords(recs.getGeodocsRecords())//
                 .ogcStatsRecords(recs.getOgcStatsRecords())//
                 .build();
+        log.info("GDPR: deleted info summary: {}", summary);
+        return summary;
     }
 
     /**

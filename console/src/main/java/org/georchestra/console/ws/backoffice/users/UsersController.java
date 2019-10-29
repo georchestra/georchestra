@@ -19,6 +19,24 @@
 
 package org.georchestra.console.ws.backoffice.users;
 
+import java.io.IOException;
+import java.text.Normalizer;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import javax.mail.MessagingException;
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.dao.AdvancedDelegationDao;
@@ -33,10 +51,10 @@ import org.georchestra.console.ds.RoleDao;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountFactory;
 import org.georchestra.console.dto.AccountImpl;
-import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.dto.Role;
 import org.georchestra.console.dto.SimpleAccount;
 import org.georchestra.console.dto.UserSchema;
+import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.mailservice.EmailFactory;
 import org.georchestra.console.model.DelegationEntry;
 import org.georchestra.console.ws.backoffice.users.GDPRAccountWorker.DeletedAccountSummary;
@@ -63,23 +81,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.mail.MessagingException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.text.Normalizer;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.format.DateTimeParseException;
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Web Services to maintain the User information.
@@ -491,22 +492,36 @@ public class UsersController {
         ResponseUtil.writeSuccess(response);
     }
 
+    /**
+     * Obfuscates records of GDPR sensitive information for the calling user, or the
+     * requested user id if the calling user is a superuser, and returns a summary
+     * of deleted records
+     * 
+     * @param uid optional, identifier of the user to anonymize records for, only if
+     *            the calling user is a superuser or is under delegation for the
+     *            caller
+     * @return summary of records anonymized as a result
+     */
     @RequestMapping(method = RequestMethod.POST, value = "/account/gdpr/delete", produces = "application/json")
     public ResponseEntity<DeletedUserDataInfo> deleteUserSensitiveData(//
             @RequestParam(required = false, name = "uid") String uid, //
             HttpServletRequest request, //
             HttpServletResponse response) throws DataServiceException {
 
-        String accountId = uid;
-        if (accountId == null) {
-            accountId = SecurityContextHolder.getContext().getAuthentication().getName();
+        final Authentication caller = SecurityContextHolder.getContext().getAuthentication();
+        final String callerName = caller.getName();
+        final String accountId = uid == null ? callerName : uid;
+        if (callerName.equals(accountId)) {
+            // ok, all users have the right to delete their own data
+            LOG.info(String.format("GDPR: user %s requested to delete his records", accountId));
+        } else {
+            // only super users can delete another user's data
+            LOG.info(String.format("GDPR: user %s requested to delete user %s records", callerName, accountId));
+            this.checkAuthorization(accountId);
         }
 
         if (this.userRule.isProtected(accountId))
             throw new AccessDeniedException("The user is protected, it cannot be deleted: " + accountId);
-
-        // check if user is under delegation for delegated admins
-        this.checkAuthorization(accountId);
 
         final Account account = accountDao.findByUID(accountId);
         DeletedAccountSummary summary = gdprInfoWorker.deleteAccountRecords(account);
@@ -782,7 +797,7 @@ public class UsersController {
     private void checkAuthorization(String uid) {
         // check if user is under delegation for delegated admins
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (!auth.getAuthorities().contains(this.advancedDelegationDao.ROLE_SUPERUSER))
+        if (!auth.getAuthorities().contains(AdvancedDelegationDao.ROLE_SUPERUSER))
             if (!this.advancedDelegationDao.findUsersUnderDelegation(auth.getName()).contains(uid))
                 throw new AccessDeniedException("User " + uid + " not under delegation");
     }
