@@ -1,8 +1,9 @@
-name: Cas CI
+name: Geonetwork CI
 
 on:
   push:
     branches:
+      - add-github-actions
       - master
       - 19.04
       - 18.06
@@ -25,23 +26,19 @@ jobs:
           echo $M2_SETTINGS_FILE > $HOME/.m2/settings.xml
         env:
           M2_SETTINGS_FILE: ${{ secrets.M2_SETTINGS_FILE }}
+      # this is usefull for general plugins for example, docker one.
       - name: installing root pom into .m2
-        run: ./mvnw install --non-recursive
-      - name: installing georchstra-commons into .m2
-        run: ./mvnw install -pl commons
+        run: ./mvnw install --no-transfer-progress --non-recursive
       - name: install & check formating
-        working-directory: cas-server-webapp/
-        run: ../mvnw --no-transfer-progress -B -Dfmt.action=validate install -P-all,travis -Dadditionalparam=-Xdoclint:none -DskipTests
-      - name: run test
-        working-directory: cas-server-webapp/
-        run: ../mvnw --no-transfer-progress verify -Dfmt.skip=true -P-all,travis,it -Dadditionalparam=-Xdoclint:none
+        working-directory: geonetwork/
+        run: ../mvnw --no-transfer-progress -B clean install -DskipTests
       - name: build & publish docker image
-        working-directory: cas-server-webapp/
-        run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker
+        working-directory: geonetwork/
+        run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker -pl web
       #      This is not working properly right now, commenting.
       #      - name: publish docker image
-      #        working-directory: console/
+      #        working-directory: geonetwork/
       #        run: ../mvnw --no-transfer-progress docker:push -Pdocker
       - name: publish on github package repository
-        working-directory: cas-server-webapp/
+        working-directory: geonetwork/
         run: ../mvnw --no-transfer-progress deploy -Dtoken=${{ secrets.GITHUB_TOKEN }}

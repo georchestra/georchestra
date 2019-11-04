@@ -1,8 +1,9 @@
-name: Console CI
+name: GeoWebCache CI
 
 on:
   push:
     branches:
+      - add-github-actions
       - master
       - 19.04
       - 18.06
@@ -27,21 +28,19 @@ jobs:
           M2_SETTINGS_FILE: ${{ secrets.M2_SETTINGS_FILE }}
       - name: installing root pom into .m2
         run: ./mvnw install --non-recursive
-      - name: installing georchstra-commons into .m2
-        run: ./mvnw install -pl commons
       - name: install & check formating
-        working-directory: console/
+        working-directory: geowebcache-webapp/
         run: ../mvnw --no-transfer-progress -B -Dfmt.action=validate install -P-all,travis -Dadditionalparam=-Xdoclint:none -DskipTests
       - name: run test
-        working-directory: console/
-        run: ../mvnw --no-transfer-progress verify -Dfmt.skip=true -P-all,travis,it -Dadditionalparam=-Xdoclint:none
+        working-directory: geowebcache-webapp/
+        run: ../mvnw --no-transfer-progress verify -Dfmt.skip=true -P-all,travis -Dadditionalparam=-Xdoclint:none
       - name: build & publish docker image
-        working-directory: console/
+        working-directory: geowebcache-webapp/
         run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker
-#      This is not working properly right now, commenting.
-#      - name: publish docker image
-#        working-directory: console/
-#        run: ../mvnw --no-transfer-progress docker:push -Pdocker
+      #      This is not working properly right now, commenting.
+      #      - name: publish docker image
+      #        working-directory: console/
+      #        run: ../mvnw --no-transfer-progress docker:push -Pdocker
       - name: publish on github package repository
-        working-directory: console/
+        working-directory: geowebcache-webapp/
         run: ../mvnw --no-transfer-progress deploy -Dtoken=${{ secrets.GITHUB_TOKEN }}

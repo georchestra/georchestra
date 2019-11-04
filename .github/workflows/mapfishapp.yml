@@ -47,4 +47,4 @@ jobs:
       #        run: ../mvnw --no-transfer-progress docker:push -Pdocker
       - name: publish on github package repository
         working-directory: mapfishapp/
-        run: ../mvnw --no-transfer-progress deploy
+        run: ../mvnw --no-transfer-progress deploy -Dtoken=${{ secrets.GITHUB_TOKEN }}
