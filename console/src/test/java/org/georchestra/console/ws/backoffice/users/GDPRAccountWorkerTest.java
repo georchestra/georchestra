@@ -73,7 +73,9 @@ public class GDPRAccountWorkerTest {
             ogcstatsRecords.putAll(DELETED_ACCOUNT_USERNAME, ogcstats);
             metadataRecords.putAll(DELETED_ACCOUNT_USERNAME, md);
             extractorRecords.putAll(DELETED_ACCOUNT_USERNAME, extractor);
-            return new DeletedRecords(account.getUid(), md.size(), extractor.size(), geodocs.size(), ogcstats.size());
+            DeletedRecords summary = new DeletedRecords(account.getUid(), md.size(), extractor.size(), geodocs.size(),
+                    ogcstats.size());
+            return summary;
         }
 
         public @Override void visitGeodocsRecords(@NonNull Account owner, @NonNull Consumer<GeodocRecord> consumer) {
