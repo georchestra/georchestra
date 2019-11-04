@@ -29,9 +29,9 @@ jobs:
       # this is usefull for general plugins for example, docker one.
       - name: installing root pom into .m2
         run: ./mvnw install --non-recursive
-      - name: install & check formating
+      - name: install
         working-directory: geoserver/
-        run: ../mvnw --no-transfer-progress -B install -P-all,travis -DskipTests
+        run: ../mvnw --no-transfer-progress -B install -DskipTests
       - name: build & publish docker image
         working-directory: geoserver/
         run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker
