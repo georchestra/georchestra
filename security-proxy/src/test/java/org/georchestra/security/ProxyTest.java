@@ -236,16 +236,6 @@ public class ProxyTest {
     }
 
     @Test
-    public void isCharsetRequiredForContentType() {
-        Proxy toTest = new Proxy();
-        toTest.setRequireCharsetContentTypes(Arrays.asList(new String[] { "zebu", "long" }));
-
-        assertTrue(toTest.isCharsetRequiredForContentType("Zebu;youpi"));
-        assertTrue(toTest.isCharsetRequiredForContentType("LONG"));
-        assertFalse(toTest.isCharsetRequiredForContentType("ascii;long"));
-    }
-
-    @Test
     public void charsetForName() {
         assertEquals("US-ASCII", Charset.forName("us-ascii").displayName());
 
@@ -267,16 +257,4 @@ public class ProxyTest {
         assertTrue(thrown);
     }
 
-    @Test
-    public void attemptingToReadCharsetFromXml() {
-        String toParse = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-        String toParse2 = "<?xml version=\'1.0\' encoding=\'UTF-8\'?>";
-        String toParse3 = "<?xml version=\'1.0\' encoding=\'Ehj_.-\'\"coin\"?>";
-
-        Proxy toTest = new Proxy();
-
-        assertEquals("UTF-8", toTest.extractCharsetAsFromXmlNode(toParse));
-        assertEquals("UTF-8", toTest.extractCharsetAsFromXmlNode(toParse2));
-        assertEquals("Ehj_.-", toTest.extractCharsetAsFromXmlNode(toParse3));
-    }
 }
