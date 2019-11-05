@@ -31,7 +31,7 @@ jobs:
         run: ./mvnw install --non-recursive
       - name: install
         working-directory: geoserver/
-        run: ../mvnw -X --no-transfer-progress -B install -DskipTests
+        run: ../mvnw -X --no-transfer-progress -B clean install -DskipTests
       - name: build & publish docker image
         working-directory: geoserver/
         run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker
