@@ -214,11 +214,11 @@
                   <target>
                     <delete includeemptydirs="true">
                       <fileset defaultexcludes="false" dir="${project.build.directory}/deb/etc/georchestra">
-                        <include name="**/*" />
-                        <exclude name="${project.artifactId}/**" />
+                        <include name="**/*"/>
+                        <exclude name="${project.artifactId}/**"/>
                       </fileset>
                     </delete>
-                 </target>
+                  </target>
                 </configuration>
                 <goals>
                   <goal>run</goal>
@@ -239,7 +239,9 @@
                     </chmod>
                   </target>
                 </configuration>
-                <goals><goal>run</goal></goals>
+                <goals>
+                  <goal>run</goal>
+                </goals>
               </execution>
             </executions>
           </plugin>
@@ -298,11 +300,11 @@
                   <target>
                     <delete includeemptydirs="true">
                       <fileset dir="${project.build.directory}/deb/etc/georchestra">
-                        <include name="**/*" />
-                        <exclude name="${project.artifactId}/**" />
+                        <include name="**/*"/>
+                        <exclude name="${project.artifactId}/**"/>
                       </fileset>
                     </delete>
-                 </target>
+                  </target>
                 </configuration>
                 <id>remove-useless-directories</id>
                 <phase>package</phase>
@@ -404,8 +406,8 @@
                   <include>${project.artifactId}/**</include>
                 </resource>
               </resources>
-             <serverId>docker-hub</serverId>
-             <registryUrl>https://index.docker.io/v1/</registryUrl>
+              <serverId>docker-hub</serverId>
+              <registryUrl>https://index.docker.io/v1/</registryUrl>
             </configuration>
             <dependencies>
               <dependency>
