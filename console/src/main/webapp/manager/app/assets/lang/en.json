@@ -194,7 +194,7 @@
   "users.pending"         : "Waiting validation",
   "users.pending_desc"    : "Users waiting for validation",
   "users.filter_selected" : "View selected only",
-  "users.ORGADMIN"        : "Organism administrators",
+  "users.ORGADMIN"        : "Delegates",
   "users.TEMPORARY"       : "Temporary",
 
   "sel.all"               : "All",

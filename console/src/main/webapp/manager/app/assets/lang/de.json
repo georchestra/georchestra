@@ -193,8 +193,8 @@
   "users.pending"         : "Ausstehende Benutzer",
   "users.pending_desc"    : "Benutzer warten auf Validierung",
   "users.filter_selected" : "Nur Auswahl anzeigen",
-  "users.ORGADMIN"        : "FIXME: TO BE TRANSLATED",
-  "users.TEMPORARY"       : "FIXME: TO BE TRANSLATED",
+  "users.ORGADMIN"        : "Delegierten",
+  "users.TEMPORARY"       : "Temporäre",
 
   "sel.all"               : "Alle",
   "sel.none"              : "Keine",

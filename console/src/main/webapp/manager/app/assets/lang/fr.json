@@ -193,7 +193,7 @@
   "users.pending"         : "À modérer",
   "users.pending_desc"    : "Utilisateurs en attente de validation",
   "users.filter_selected" : "Afficher la sélection uniquement",
-  "users.ORGADMIN"        : "Administrateurs délégués",
+  "users.ORGADMIN"        : "Délégués",
   "users.TEMPORARY"       : "Temporaires",
 
   "sel.all"               : "Tous",
