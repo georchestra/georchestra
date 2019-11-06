@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import javax.annotation.Nullable;
 import javax.sql.DataSource;
 
 import org.georchestra.console.dto.Account;
@@ -285,8 +286,11 @@ public class AccountGDPRDaoImpl implements AccountGDPRDao {
             // createdate character varying(30)
             // e.g. "2019-05-07T00:05:56"
             String createDateString = rs.getString("createdate");
-            TemporalAccessor parsed = GEONETWORK_DATE_FORMAT.parse(createDateString);
-            LocalDateTime dateTime = LocalDateTime.from(parsed);
+            LocalDateTime dateTime = ifNonNull(createDateString, value -> {
+                TemporalAccessor parsed = GEONETWORK_DATE_FORMAT.parse(value);
+                return LocalDateTime.from(parsed);
+            });
+
             builder.createdDate(dateTime);
             builder.schemaId(rs.getString("schemaid"));
             builder.documentContent(rs.getString("data"));
@@ -304,7 +308,7 @@ public class AccountGDPRDaoImpl implements AccountGDPRDao {
             builder.standard(rs.getString("standard"));
             builder.rawFileContent(rs.getString("raw_file_content"));
             builder.fileHash(rs.getString("file_hash"));
-            builder.createdAt(rs.getTimestamp("created_at").toLocalDateTime());
+            builder.createdAt(ifNonNull(rs.getTimestamp("created_at"), Timestamp::toLocalDateTime));
             Timestamp lastAccess = rs.getTimestamp("last_access");
             builder.lastAccess(lastAccess == null ? null : lastAccess.toLocalDateTime());
             builder.accessCount(rs.getInt("access_count"));
@@ -323,7 +327,7 @@ public class AccountGDPRDaoImpl implements AccountGDPRDao {
                 Geometry bbox = bboxReader.read(bytes);
                 builder.bbox(bbox);
             }
-            builder.creationDate(rs.getTimestamp("creation_date").toLocalDateTime());
+            builder.creationDate(ifNonNull(rs.getTimestamp("creation_date"), Timestamp::toLocalDateTime));
             builder.duration(rs.getTime("duration"));
             builder.roles(getStringArray(rs, "roles"));
             builder.org(rs.getString("org"));
@@ -348,7 +352,7 @@ public class AccountGDPRDaoImpl implements AccountGDPRDao {
     public static OgcStatisticsRecord createOgcStatisticsRecord(ResultSet rs) {
         OgcStatisticsRecord.OgcStatisticsRecordBuilder builder = OgcStatisticsRecord.builder();
         try {
-            builder.date(rs.getTimestamp("date").toLocalDateTime());
+            builder.date(ifNonNull(rs.getTimestamp("date"), Timestamp::toLocalDateTime));
             builder.service(rs.getString("service"));
             builder.layer(rs.getString("layer"));
             builder.request(rs.getString("request"));
@@ -369,6 +373,10 @@ public class AccountGDPRDaoImpl implements AccountGDPRDao {
             }
         }
         return Collections.emptyList();
+    }
+
+    private static <V, R> R ifNonNull(@Nullable V value, Function<V, R> mapper) {
+        return value == null ? null : mapper.apply(value);
     }
 
 }
