@@ -135,6 +135,17 @@
                         border-right: 1em solid white;
                         border-bottom: 1em solid white;
                       }
+                      /* can't set orgLogo to input[hidden] <3 */
+                      #div-orgLogo {
+                        display: none;
+                      }
+                      imageinput .col-md-4 {
+                        text-align: right;
+                      }
+                      .preview {
+                        max-width: 100%;
+                        max-height: 300px;
+                      }
                     </style>
                     <script src="/console/manager/public/libraries.js"></script>
                     <script src="/console/manager/public/templates.js"></script>
@@ -142,6 +153,7 @@
                     <script>require('app')</script>
 
                     <div ng-app="manager" ng-strict-di ng-controller="StandaloneController">
+                      <imageinput target="'#orgLogo'" class="form-group"></imageinput>
                       <areas item="org"></areas>
                     </div>
 
