@@ -79,7 +79,7 @@
   "orgs.title_one"        : "organisme",
   "orgs.title_none"       : "Aucun organisme",
   "orgs.allorgs"          : "Tous les organismes",
-  "orgs.pending"          : "En attente",
+  "orgs.pending"          : "A modérer",
   "orgs.neworg"           : "Nouvel organisme",
   "orgs.filter_orgs"      : "Filtrer",
 
