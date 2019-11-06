@@ -1,6 +1,9 @@
 import 'components/browse/browse.tpl'
 import 'services/roles'
 
+const PROTECTED = [ 'TEMPORARY', 'ORGADMIN' ]
+const filter = (protecteds, role) => protecteds ^ !PROTECTED.includes(role)
+
 class BrowseController {
   static $inject = [ '$injector' ]
 
@@ -47,6 +50,14 @@ class BrowseController {
   createRole () {
     let $location = this.$injector.get('$location')
     $location.search('new', 'role')
+  }
+
+  protected (role) {
+    return filter(true, role.cn)
+  }
+
+  unprotected (role) {
+    return filter(false, role.cn)
   }
 }
 

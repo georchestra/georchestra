@@ -79,7 +79,7 @@
   "orgs.title_one"        : "organisme",
   "orgs.title_none"       : "Aucun organisme",
   "orgs.allorgs"          : "Tous les organismes",
-  "orgs.pending"          : "En attente",
+  "orgs.pending"          : "A modérer",
   "orgs.neworg"           : "Nouvel organisme",
   "orgs.filter_orgs"      : "Filtrer",
 
@@ -190,9 +190,11 @@
   "users.login"           : "Login",
   "users.organization"    : "Organisme",
   "users.email"           : "Courriel",
-  "users.pending"         : "En attente",
+  "users.pending"         : "À modérer",
   "users.pending_desc"    : "Utilisateurs en attente de validation",
   "users.filter_selected" : "Afficher la sélection uniquement",
+  "users.ORGADMIN"        : "Délégués",
+  "users.TEMPORARY"       : "Temporaires",
 
   "sel.all"               : "Tous",
   "sel.none"              : "Aucun",

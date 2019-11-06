@@ -1,5 +1,11 @@
 <div class="alert alert-info">
   <a ng-link="users({id: 'all'})" class="category" ng-class="{active: !roles.activeRole}" translate>role.allusers</a>
+  <div ng-repeat="role in roles.adminList | filter: roles.protected">
+    <a ng-link="users({id: role.cn})" class="category" ng-class="{active: roles.activeRole.cn === role.cn}">
+      <span>{{'users.'+role.cn | translate}}</span>
+      ({{::role.users.length}})
+    </a>
+  </div>
   <a ng-link="users({id: 'pending'})" class="category" ng-class="{active: roles.activeRole.cn === 'PENDING'}" translate>users.pending</a>
   <hr>
   <div class="create-btn">
@@ -10,7 +16,7 @@
 <input ng-model="roles.q" class="form-control input-sm" placeholder="{{'role.search' | translate}}">
 
 <h5 ng-if="roles.q == ''" translate>role.system</h5>
-<div ng-repeat="role in roles.adminList" ng-if="roles.q == ''">
+<div ng-repeat="role in roles.adminList | filter: roles.unprotected" ng-if="roles.q == ''">
   <strong ng-if="(roles.activeRole.cn == role.cn)">
     {{::role.cn}} ({{::role.users.length}})
   </strong>

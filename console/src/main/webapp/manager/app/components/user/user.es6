@@ -378,6 +378,10 @@ class UserController {
       this.loadLogs($scope)
     }
   }
+
+  isProtectedRole (role) {
+    return [ 'ORGADMIN', 'TEMPORARY' ].includes(role)
+  }
 }
 
 UserController.prototype.activate.$inject = [ '$scope' ]
