@@ -100,13 +100,7 @@ public class SLDClassifier {
             WFSDataStoreFactory fac) throws DocServiceException {
         this._credentials = credentials;
 
-        // wfs-ng specific: If we do not have the prefix URL, then we need to
-        // use a typename as string where the ":" has been replaced by an
-        // underscore. Since we expect the controller to be called with the
-        // "prefix:layername" pattern and we do not want to add an extra logic
-        // to get the prefix URL in the code, we replace the character by hand.
-
-        _wfsngTypeName = command.getFeatureTypeName().replaceFirst(":", "_");
+        _wfsngTypeName = command.getFeatureTypeName();
         _command = command;
         if (fac != null) {
             _factory = fac;
@@ -268,7 +262,8 @@ public class SLDClassifier {
             // Use FeatureTypeStyle to generate a complete SLD object
             _sld = createSLD(fts);
         } catch (IOException e) {
-            e.printStackTrace(); // could happened when communicating with WFS
+            LOG.error(e.getMessage(), e);
+            throw new DocServiceException(e.getMessage(), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
