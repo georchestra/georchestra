@@ -1,5 +1,10 @@
 name: "Build and publish a SP docker image on github"
-on: [push]
+on:
+  push:
+    paths:
+    - "commons/**"
+    - "ogc-server-statistics/**"
+    - "security-proxy/**"
 jobs:
   build:
     runs-on: ubuntu-latest
