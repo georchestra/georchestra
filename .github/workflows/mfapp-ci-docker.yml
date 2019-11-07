@@ -1,0 +1,51 @@
+name: "Build and publish a mapfishapp docker image on github"
+on:
+  push:
+    paths:
+    - "commons/**"
+    - "mapfishapp/**"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: "Checking out"
+      uses: actions/checkout@v1
+    - name: "Checking out submodules"
+      uses: textbook/git-checkout-submodule-action@2.0.0
+    - name: "Setting up Java"
+      uses: actions/setup-java@v1
+      with:
+        java-version: '8.x'
+    - name: "installing necessary deb packages"
+      run: sudo apt install -y python-virtualenv python-pip
+    - name: "Configuring Maven"
+      run: |
+          mkdir $HOME/.m2
+          echo $M2_SETTINGS_FILE > $HOME/.m2/settings.xml
+      env:
+          M2_SETTINGS_FILE: ${{ secrets.M2_SETTINGS_FILE }}
+    - name: "Logging onto docker-hub"
+      run: docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
+      env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+    - name: "installing geOrchestra root pom"
+      run: ./mvnw install --non-recursive
+    - name: "installing georchestra-commons into .m2"
+      run: ./mvnw install -pl commons
+    - name: "installing & checking formatting"
+      working-directory: mapfishapp/
+      run: ../mvnw --no-transfer-progress -B -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
+    - name: "running the testsuite"
+      working-directory: mapfishapp/
+      run: ../mvnw --no-transfer-progress verify -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
+    - name: "building a docker image"
+      working-directory: mapfishapp/
+      run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker -DdockerImageName=docker.pkg.github.com/georchestra/georchestra/mapfishapp:${GITHUB_REF##*/}
+    - name: "publishing the docker image"
+      run: |
+        docker login docker.pkg.github.com --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
+        docker push docker.pkg.github.com/georchestra/georchestra/mapfishapp:${GITHUB_REF##*/}
+      env:
+          DOCKER_USERNAME: georchestra
+          DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
