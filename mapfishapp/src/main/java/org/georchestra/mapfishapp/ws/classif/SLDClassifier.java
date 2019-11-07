@@ -32,12 +32,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Handler;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.georchestra.mapfishapp.ws.ContextController;
 import org.georchestra.mapfishapp.ws.DocServiceException;
 import org.georchestra.mapfishapp.ws.classif.ClassifierCommand.E_ClassifType;
 import org.geotools.data.DataSourceException;
@@ -57,6 +57,8 @@ import org.geotools.styling.Symbolizer;
 import org.geotools.xml.styling.SLDTransformer;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Provides automatic styling by generating a SLD file given a parameterizable
@@ -78,6 +80,8 @@ public class SLDClassifier {
     private Map<String, UsernamePasswordCredentials> _credentials;
 
     private WFSDataStoreFactory _factory = new WFSDataStoreFactory();
+
+    private static final Logger LOG = LoggerFactory.getLogger(SLDClassifier.class);
 
     public void setWFSDataStoreFactory(WFSDataStoreFactory f) {
         _factory = f;
@@ -106,11 +110,6 @@ public class SLDClassifier {
         _command = command;
         if (fac != null) {
             _factory = fac;
-        }
-        // turn off logger
-        Handler[] handlers = Logger.getLogger("").getHandlers();
-        for (int index = 0; index < handlers.length; index++) {
-            handlers[index].setLevel(Level.OFF);
         }
 
         // start directly the classification
@@ -381,7 +380,8 @@ public class SLDClassifier {
             // happens when wfs url is wrong (missing request or service parameters...)
             throw new DocServiceException(e.getMessage(), HttpServletResponse.SC_BAD_REQUEST);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("I/O error while connecting to the remote WFS", e);
+            throw new DocServiceException(e.getMessage(), HttpServletResponse.SC_BAD_REQUEST);
         }
         return wfs;
     }
