@@ -31,6 +31,9 @@ sudo ldapadd -Y EXTERNAL -H ldapi:/// -f bootstrap.ldif
 
 If successful, the above command should display: ```adding new entry "olcDatabase=mdb,cn=config"```.
 
+Now, be careful : after a fresh slapd install there's already a olcDatabase={1}mdb.ldif
+file in /etc/ldap/slapd.d/cn=config/ and this command has created a new one (most probably olcDatabase={2}mdb.ldif after a fresh slapd install) : you must update memberOf.ldif file with that name in "The "memberOf" overlay" step.
+
 
 ## Root DN
 
