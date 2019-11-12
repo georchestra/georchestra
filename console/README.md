@@ -102,7 +102,7 @@ Organisations may have an area of competence, built from a collection of
 features.
 
 Features are loaded from a custom URL serving a GeoJSON FeatureCollection
-using EPSG:4326.
+using EPSG:4326. The native SRS of the layer MUST be in EPSG:4326 (no on-the-fly transformation).
 
 It defaults to:
 ```
@@ -114,7 +114,7 @@ Note that it can be set to a custom WFS request like this one:
 AreasUrl=https://my.server.org/geoserver/ows?SERVICE=WFS&REQUEST=GetFeature&typeName=gadm:gadm_for_countries&outputFormat=json&cql_filter=ISO='FRA'
 ```
 
-Please pay attention to these options too: `AreasKey`, `AreasValue`,
+Please pay attention to these options too: `AreasKey`, `AreasValue`, `AreasGroup`
 `AreaMapZoom`, `AreaMapCenter`.
 
 ### ReCaptcha
