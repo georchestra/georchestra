@@ -57,7 +57,7 @@ public class CSVUtil {
 
             while (it.hasNext()) {
                 String key = it.next();
-                sBuilder.append(curObj.getString(key));
+                sBuilder.append(curObj.get(key).toString());
                 sBuilder.append(CSV_SEP);
             }
             sBuilder.append("\r\n");
