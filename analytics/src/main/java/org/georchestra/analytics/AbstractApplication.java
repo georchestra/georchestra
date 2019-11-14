@@ -222,12 +222,11 @@ public abstract class AbstractApplication {
                 JSONObject object = strategy.process();
                 csv = CSVUtil.JSONToCSV(object);
                 csvFileName = String.valueOf(year) + "-" + String.format("%02d", month) + "-" + csvFileName;
-
+                respondCSV(csv, csvFileName, response);
             } catch (Exception e) {
                 OutputStream out = response.getOutputStream();
                 reportError(out, response, e);
             }
-            respondCSV(csv, csvFileName, response);
         }
     }
 
