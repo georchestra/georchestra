@@ -62,7 +62,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-import java.util.Date;
 
 @Controller
 public class OrgsController {
@@ -201,8 +200,9 @@ public class OrgsController {
         JSONObject json = this.parseRequest(request);
 
         // Validate request against required fields for admin part
-        if (!this.validation.validateOrgField("name", json))
+        if (!this.validation.validateOrgField("name", json)) {
             throw new IOException("required field : name");
+        }
 
         if (!this.validation.validateUrl(json.optString(Org.JSON_URL))) {
             throw new IOException(String.format("bad org url format: %s", json.optString(Org.JSON_URL)));
@@ -212,7 +212,7 @@ public class OrgsController {
         Org org = this.orgDao.findByCommonName(commonName);
         OrgExt orgExt = this.orgDao.findExtById(commonName);
 
-        // get default pending satus
+        // get default pending status
         Boolean defaultPending = org.isPending();
 
         // Update org and orgExt fields
@@ -315,7 +315,6 @@ public class OrgsController {
 
         this.orgDao.delete(this.orgDao.findExtById(commonName));
         this.orgDao.delete(org);
-        ResponseUtil.writeSuccess(response);
 
         // get authent info without request
         if (isPending != null && isPending && logUtils != null) {
@@ -323,6 +322,8 @@ public class OrgsController {
         } else if (logUtils != null) {
             logUtils.createLog(commonName, AdminLogType.ORG_DELETED, null);
         }
+
+        ResponseUtil.writeSuccess(response);
     }
 
     @RequestMapping(value = PUBLIC_REQUEST_MAPPING + "/requiredFields", method = RequestMethod.GET)
@@ -477,15 +478,24 @@ public class OrgsController {
                     json.optString(Org.JSON_ID), AdminLogType.ORG_ATTRIBUTE_CHANGED);
         }
 
-        // get area differences beetween old and new list
-        List<String> removed = org.getCities().stream()
-                .filter(p -> !json.optJSONArray(Org.JSON_CITIES).toList().contains(p)).collect(Collectors.toList());
-        List<Object> added = json.optJSONArray(Org.JSON_CITIES).toList().stream()
-                .filter(p -> !org.getCities().contains(p)).collect(Collectors.toList());
-        int rmLen = removed.size();
-        int addLen = added.size();
+        // get area differences between old and new list
+        // Make sure Cities exist
+        int rmLen = 0;
+        int addLen = 0;
+        List<String> removed = new ArrayList<>();
+        List<Object> added = new ArrayList<>();
+
+        if (org.getCities() != null && json.optJSONArray(Org.JSON_CITIES) != null) {
+            removed = org.getCities().stream().filter(p -> !json.optJSONArray(Org.JSON_CITIES).toList().contains(p))
+                    .collect(Collectors.toList());
+            rmLen = removed.size();
+            added = json.optJSONArray(Org.JSON_CITIES).toList().stream().filter(p -> !org.getCities().contains(p))
+                    .collect(Collectors.toList());
+            addLen = added.size();
+        }
+
         // create log
-        if (removed.size() > 0 || added.size() > 0) {
+        if (rmLen > 0 || addLen > 0) {
             String oldCities = rmLen > 0 && rmLen < MAX_CITIES ? removed.toString() : "";
             String newCities = addLen > 0 && addLen < MAX_CITIES ? added.toString() : "";
             JSONObject details = logUtils.getLogDetails(Org.JSON_CITIES, oldCities, newCities,
