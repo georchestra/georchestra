@@ -5,19 +5,27 @@ import static java.util.concurrent.CompletableFuture.runAsync;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import javax.annotation.Nullable;
+
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.QuoteMode;
 import org.apache.commons.io.FileUtils;
 import org.georchestra.console.ds.AccountDao;
 import org.georchestra.console.ds.AccountGDPRDao;
@@ -238,37 +246,51 @@ public class GDPRAccountWorker {
     }
 
     private static interface ContentProducer<T> extends Consumer<T>, AutoCloseable {
+        static <V, R> R ifNonNull(@Nullable V value, Function<V, R> mapper) {
+            return value == null ? null : mapper.apply(value);
+        }
     }
 
     private static abstract class CsvContentProducer<T> implements ContentProducer<T> {
 
         private Path csvFile;
-        private PrintStream csvWriter;
+        private CSVPrinter csvWriter;
+
+        static final CSVFormat FORMAT = CSVFormat.RFC4180.withQuoteMode(QuoteMode.MINIMAL);
 
         protected CsvContentProducer(@NonNull Path target) {
             this.csvFile = target;
             try {
                 Files.createDirectories(target.getParent());
                 Files.createFile(csvFile);
-                String header = createHeader();
-                this.csvWriter = new PrintStream(target.toFile());
-                this.csvWriter.println(header);
+                this.csvWriter = FORMAT.print(target, StandardCharsets.UTF_8);
+                this.csvWriter.printRecord(createHeader());
             } catch (IOException e) {
                 throw new IllegalStateException(e);
             }
         }
 
         public @Override void close() {
-            csvWriter.close();
+            try {
+                csvWriter.close();
+            } catch (IOException e) {
+                log.warn(e.getMessage(), e);
+            }
         }
 
         public @Override void accept(T record) {
-            csvWriter.println(encode(record));
+            try {
+                List<Object> values = encode(record);
+                if (!values.isEmpty())
+                    csvWriter.printRecord(values);
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
         }
 
-        protected abstract String createHeader();
+        protected abstract List<String> createHeader();
 
-        protected abstract String encode(T record);
+        protected abstract List<Object> encode(T record);
     }
 
     private @RequiredArgsConstructor static class MetadataProducer implements ContentProducer<MetadataRecord> {
@@ -279,7 +301,11 @@ public class GDPRAccountWorker {
         private final Path directory;
 
         public @Override void accept(MetadataRecord record) {
-            LocalDateTime createdAt = record.getCreatedDate().atZone(ZoneId.systemDefault()).toLocalDateTime();
+            LocalDateTime createdDate = record.getCreatedDate();
+            if (createdDate == null || record.getDocumentContent() == null) {
+                return;
+            }
+            LocalDateTime createdAt = createdDate.atZone(ZoneId.systemDefault()).toLocalDateTime();
             String date = FILENAME_DATE_FORMAT.format(createdAt);
             String fileName = String.format("%s_%s_%d.xml", date, record.getSchemaId(), record.getId());
             Path targetFile = directory.resolve(fileName);
@@ -313,15 +339,18 @@ public class GDPRAccountWorker {
             this.directory = directory;
         }
 
-        protected @Override String createHeader() {
-            return "created_at,last_access,standard,access_count,file_hash";
+        protected @Override List<String> createHeader() {
+            return Arrays.asList("created_at", "last_access", "standard", "access_count", "file_hash");
         }
 
         @Override
-        protected String encode(GeodocRecord record) {
+        protected List<Object> encode(GeodocRecord record) {
             LocalDateTime createdAt = record.getCreatedAt();
+            if (null == createdAt) {
+                return Collections.emptyList();
+            }
             String date = FILENAME_DATE_FORMAT.format(createdAt);
-            String standard = record.getStandard().toLowerCase();
+            String standard = record.getStandard() == null ? "unknown" : record.getStandard().toLowerCase();
             String fileName = String.format("%s_%s.%s", date, record.getFileHash(), standard);
             Path docFile = directory.resolve(fileName);
             try {
@@ -329,9 +358,9 @@ public class GDPRAccountWorker {
             } catch (IOException e) {
                 log.error("Error writing medatata document {}", docFile.toAbsolutePath(), e);
             }
-            return String.format("%s,%s,%s,%d,%s", //
-                    CONTENT_DATE_FORMAT.format(record.getCreatedAt()), //
-                    CONTENT_DATE_FORMAT.format(record.getLastAccess()), //
+            return Arrays.asList(//
+                    ContentProducer.ifNonNull(record.getCreatedAt(), CONTENT_DATE_FORMAT::format), //
+                    ContentProducer.ifNonNull(record.getLastAccess(), CONTENT_DATE_FORMAT::format), //
                     record.getStandard(), //
                     record.getAccessCount(), //
                     record.getFileHash()//
@@ -340,28 +369,32 @@ public class GDPRAccountWorker {
     }
 
     private static class ExtractorProducer extends CsvContentProducer<ExtractorRecord> {
+        private static final WKTWriter WKT_WRITER = new WKTWriter();
+
         protected ExtractorProducer(@NonNull Path target) {
             super(target);
         }
 
-        protected @Override String createHeader() {
-            return "creation_date,duration,organization,roles,success,layer_name,format,projection,resolution,bounding_box,OWS_type,URL";
+        protected @Override List<String> createHeader() {
+            return Arrays.asList("creation_date", "duration", "organization", "roles", "success", "layer_name",
+                    "format", "projection", "resolution", "bounding_box", "OWS_type", "URL");
         }
 
-        protected @Override String encode(ExtractorRecord record) {
-            String bbox = record.getBbox() == null ? "" : new WKTWriter().write(record.getBbox());
+        protected @Override List<Object> encode(ExtractorRecord record) {
+            String bbox = ContentProducer.ifNonNull(record.getBbox(), box -> WKT_WRITER.write(box));
             String owsurl = record.getOwsurl();
-            owsurl = owsurl.replaceAll(",", "%2C");
-            return String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s", //
-                    CONTENT_DATE_FORMAT.format(record.getCreationDate()), //
-                    DateTimeFormatter.ISO_TIME.format(record.getDuration().toLocalTime()), //
+            return Arrays.asList(//
+                    ContentProducer.ifNonNull(record.getCreationDate(), CONTENT_DATE_FORMAT::format), //
+                    ContentProducer.ifNonNull(record.getDuration(),
+                            d -> DateTimeFormatter.ISO_TIME.format(d.toLocalTime())), //
                     record.getOrg(), //
-                    record.getRoles().stream().collect(Collectors.joining("|")), //
+                    ContentProducer.ifNonNull(record.getRoles(),
+                            roles -> roles.stream().collect(Collectors.joining("|"))), //
                     record.isSuccess(), //
                     record.getLayerName(), //
                     record.getFormat(), //
                     record.getProjection(), //
-                    record.getResolution() == null ? "" : record.getResolution(), //
+                    record.getResolution(), //
                     bbox, //
                     record.getOwstype(), //
                     owsurl);
@@ -374,15 +407,16 @@ public class GDPRAccountWorker {
             super(target);
         }
 
-        protected @Override String createHeader() {
-            return "date,organization,roles,layer,service,request";
+        protected @Override List<String> createHeader() {
+            return Arrays.asList("date", "organization", "roles", "layer", "service", "request");
         }
 
-        protected @Override String encode(OgcStatisticsRecord record) {
-            return String.format("%s,%s,%s,%s,%s,%s", //
-                    CONTENT_DATE_FORMAT.format(record.getDate()), //
+        protected @Override List<Object> encode(OgcStatisticsRecord record) {
+            return Arrays.asList(//
+                    ContentProducer.ifNonNull(record.getDate(), CONTENT_DATE_FORMAT::format), //
                     record.getOrg(), //
-                    record.getRoles().stream().collect(Collectors.joining("|")), //
+                    ContentProducer.ifNonNull(record.getRoles(),
+                            roles -> roles.stream().collect(Collectors.joining("|"))), //
                     record.getLayer(), //
                     record.getService(), //
                     record.getRequest());

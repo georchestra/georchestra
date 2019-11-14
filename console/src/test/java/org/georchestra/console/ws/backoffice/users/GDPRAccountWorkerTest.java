@@ -57,6 +57,10 @@ public class GDPRAccountWorkerTest {
     public @Rule TemporaryFolder tmpFolder = new TemporaryFolder();
     public @Rule ExpectedException ex = ExpectedException.none();
 
+    private static String extractorHeader = "creation_date,duration,organization,roles,success,layer_name,format,projection,resolution,bounding_box,OWS_type,URL";
+    private static String ogcstatsHeader = "date,organization,roles,layer,service,request";
+    private static String geodocsHeader = "created_at,last_access,standard,access_count,file_hash";
+
     private static class AccountGDPRDaoStub implements AccountGDPRDao {
 
         private final ListMultimap<String, GeodocRecord> geodocRecords = ArrayListMultimap.create();
@@ -189,6 +193,46 @@ public class GDPRAccountWorkerTest {
         assertBundle(bundle, 0);
     }
 
+    // Test resiliency to unexpected null values, see GSHDF-291
+    public @Test void testBuildUserDataBundleResiliencyToNulls() throws Exception {
+        final String uid1 = account1.getUid();
+
+        final AccountGDPRDaoStub stub = (AccountGDPRDaoStub) daoStub;
+        stub.extractorRecords.clear();
+        stub.metadataRecords.clear();
+        stub.geodocRecords.clear();
+        stub.ogcstatsRecords.clear();
+
+        stub.extractorRecords.put(uid1,
+                new ExtractorRecord(null, null, null, null, null, null, null, null, null, null, null, true));
+        LocalDateTime createdAt = LocalDateTime.now();
+        stub.geodocRecords.put(uid1, new GeodocRecord(null, null, null, createdAt, null, 0));
+        stub.ogcstatsRecords.put(uid1, new OgcStatisticsRecord(null, null, null, null, null, null));
+
+        LocalDateTime mdCreatedAt = createdAt;
+        String mdContent = "<MD_Metadata/>";
+        stub.metadataRecords.put(uid1, new MetadataRecord(1, mdCreatedAt, null, mdContent, null, null));
+        mdContent = null;
+        stub.metadataRecords.put(uid1, new MetadataRecord(2, mdCreatedAt, null, mdContent, null, null));
+        mdCreatedAt = null;
+        mdContent = null;
+        stub.metadataRecords.put(uid1, new MetadataRecord(3, mdCreatedAt, null, mdContent, null, null));
+
+        Path bundleFolder = tmpFolder.newFolder(account1.getUid()).toPath();
+        UserDataBundle bundle = worker.buildUserDataBundle(account1, bundleFolder);
+        assertNotNull(bundle);
+
+        Path extractorCsvFile = bundle.getExtractorCsvFile();
+        Path ogcstatsCsvFile = bundle.getOgcstatsCsvFile();
+        Path geodocsDirectory = bundle.getGeodocsDirectory();
+        Path metadataDirectory = bundle.getMetadataDirectory();
+
+        assertNumCsvRecords(extractorCsvFile, 1, extractorHeader);
+        assertNumCsvRecords(ogcstatsCsvFile, 1, ogcstatsHeader);
+        assertNumCsvRecords(geodocsDirectory.resolve("geodocs.csv"), 1, geodocsHeader);
+        assertMetadtaRecords(metadataDirectory, 1);
+    }
+
     public @Test void testGenerateUserData() throws IOException {
         Resource zipResource = worker.generateUserData(account2);
         assertNotNull(zipResource);
@@ -218,15 +262,13 @@ public class GDPRAccountWorkerTest {
 
     private void assertBundle(Path extractorCsvFile, Path ogcstatsCsvFile, Path geodocsDirectory,
             Path metadataDirectory, int recordsPerUnit) throws IOException {
-        String extractorHeader = "creation_date,duration,organization,roles,success,layer_name,format,projection,resolution,bounding_box,OWS_type,URL";
         assertNumCsvRecords(extractorCsvFile, recordsPerUnit, extractorHeader);
-
-        String ogcstatsHeader = "date,organization,roles,layer,service,request";
         assertNumCsvRecords(ogcstatsCsvFile, recordsPerUnit, ogcstatsHeader);
-
-        String geodocsHeader = "created_at,last_access,standard,access_count,file_hash";
         assertNumCsvRecords(geodocsDirectory.resolve("geodocs.csv"), recordsPerUnit, geodocsHeader);
+        assertMetadtaRecords(metadataDirectory, recordsPerUnit);
+    }
 
+    private void assertMetadtaRecords(Path metadataDirectory, int recordsPerUnit) throws IOException {
         final @Cleanup DirectoryStream<Path> mdfiles = Files.newDirectoryStream(metadataDirectory);
         List<Path> files = Streams.stream(mdfiles).map(Path::getFileName).filter(p -> p.toString().endsWith(".xml"))
                 .collect(Collectors.toList());

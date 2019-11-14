@@ -1,13 +1,12 @@
 package org.georchestra.console.ds;
 
+import static org.georchestra.console.ds.AccountGDPRDaoImpl.GEONETWORK_DATE_FORMAT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
-import static org.georchestra.console.ds.AccountGDPRDaoImpl.GEONETWORK_DATE_FORMAT;
 
 import java.sql.ResultSet;
 import java.sql.Time;
@@ -17,7 +16,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoField;
 import java.time.temporal.TemporalAccessor;
-import java.time.temporal.TemporalField;
 import java.util.Arrays;
 import java.util.List;
 
@@ -126,6 +124,21 @@ public class AccountGDPRDaoTest {
         TemporalAccessor parsed = GEONETWORK_DATE_FORMAT.parse(date);
         // Making sure the date has correctly been parsed
         assertTrue(parsed.get(ChronoField.DAY_OF_MONTH) == 11 && parsed.get(ChronoField.SECOND_OF_MINUTE) == 38);
+    }
+
+    // Test resiliency to unexpected null values, see GSHDF-291
+    public @Test void testParsingNullResiliency() {
+        ResultSet rs = nullsMockResultset();
+        assertNotNull(AccountGDPRDaoImpl.createExtractorRecord(rs));
+        assertNotNull(AccountGDPRDaoImpl.createGeodocRecord(rs));
+        assertNotNull(AccountGDPRDaoImpl.createMetadataRecord(rs));
+        assertNotNull(AccountGDPRDaoImpl.createOgcStatisticsRecord(rs));
+    }
+
+    // returns a ResultSet that returns null for any ResultSet.getXXX() call
+    private ResultSet nullsMockResultset() {
+        ResultSet rs = mock(ResultSet.class);
+        return rs;
     }
 
     private ResultSet mockResultset(Object... kvps) throws Exception {
