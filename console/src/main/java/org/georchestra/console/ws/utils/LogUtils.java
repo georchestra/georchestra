@@ -7,6 +7,7 @@ import org.georchestra.console.model.AdminLogEntry;
 import org.georchestra.console.model.AdminLogType;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.apache.commons.logging.Log;
@@ -42,8 +43,19 @@ public class LogUtils {
             } else {
                 log = new AdminLogEntry(admin, target, type, new Date(), values);
             }
-            if (this.logDao != null) {
-                this.logDao.save(log);
+            if (logDao != null) {
+                try {
+                    logDao.save(log);
+                } catch (DataIntegrityViolationException divex) {
+                    // Value could be to large for field size
+                    LOG.error("Could not save changed values for admin log, reset value : " + values, divex);
+                    JSONObject errorsjson = new JSONObject();
+                    errorsjson.put("error",
+                            "Error while inserting admin log in database, see admin log file for more information");
+                    log.setChanged(errorsjson.toString());
+                    logDao.save(log);
+                }
+
             }
         } else {
             LOG.info("Authentification Security Context is null.");
