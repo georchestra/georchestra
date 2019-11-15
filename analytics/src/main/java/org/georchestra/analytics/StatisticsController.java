@@ -663,6 +663,7 @@ public class StatisticsController {
         response.setCharacterEncoding("UTF-8");
 
         Map<String, String> sqlValues = new HashMap<>();
+        String roleFilter = null;
 
         // Parse input
         try {
@@ -674,8 +675,9 @@ public class StatisticsController {
             sqlValues.put("startDate", this.convertLocalDateToUTC(input.getString("startDate")));
             sqlValues.put("endDate", this.convertLocalDateToUTC(input.getString("endDate")));
 
-            if (input.has("group")) {
-                sqlValues.put("group", "ROLE_" + input.getString("group"));
+            if (input.has("role")) {
+                roleFilter = "ROLE_" + input.getString("role");
+                sqlValues.put("role", roleFilter);
             }
         } catch (Throwable e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -686,8 +688,8 @@ public class StatisticsController {
         String sql = "SELECT user_name, org, COUNT(*) AS count " + "FROM ogcstatistics.ogc_services_log "
                 + "WHERE date >= CAST({startDate} AS timestamp without time zone) AND date < CAST({endDate} AS timestamp without time zone) ";
 
-        if (groupId != null)// REVISIT: dead code
-            sql += " AND {group} = ANY (roles) ";
+        if (roleFilter != null)
+            sql += " AND {role} = ANY (roles) ";
 
         sql += "GROUP BY user_name, org " + "ORDER BY COUNT(*) DESC";
 
@@ -790,10 +792,10 @@ public class StatisticsController {
     }
 
     private String getGroup(JSONObject payload) throws JSONException {
-        if (payload.has("group"))
-            return "ROLE_" + payload.getString("group");
-        else
-            return null;
+        if (payload.has("role")) {
+            return "ROLE_" + payload.getString("role");
+        }
+        return null;
     }
 
     private String getUser(JSONObject payload) throws JSONException {
