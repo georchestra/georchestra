@@ -792,12 +792,8 @@ public class StatisticsController {
     }
 
     private String getGroup(JSONObject payload) throws JSONException {
-        if (payload.has("group"))
-            return "ROLE_" + payload.getString("group");
-        else {
-            if (payload.has("role")) {
-                return "ROLE_" + payload.getString("role");
-            }
+        if (payload.has("role")) {
+            return "ROLE_" + payload.getString("role");
         }
         return null;
     }
