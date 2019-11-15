@@ -43,6 +43,8 @@ public class AdminLogEntry {
     private String target;
     private AdminLogType type;
     private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+
+    @Lob
     private String changed;
 
     @Column(updatable = false, nullable = false)
