@@ -67,6 +67,12 @@ sudo ldapadd -Y EXTERNAL -H ldapi:/// -f memberof.ldif
 
 Caution: by default, we're adding the overlay to the ```{1}mdb,cn=config``` database. You may have to customize this if your setup is different (having a look at the ```/etc/ldap/slapd.d/cn=config/``` directory).
 
+After a fresh slapd install, you might already have a database set up for you, depending on how the package manager of the distribution is configured, or if the package planned to do so.
+
+To check the database number in your LDAP setup, you can go through the /etc/ldap/slapd.d/cn=config/ subdirectory and check the files olcDatabase={x}mdb.ldif". The different files should contain a olcSuffix attribute. The expected geOrchestra database is the one which contains a olcSuffix: dc=georchestra,dc=org.
+
+the memberOf.ldif file should match the expected database number in OpenLDAP, and you might need to adapt this LDIF file.
+
 ## Add "sshPublicKey" objectClass
 
 The [openssh.ldif](../../ldap/openssh.ldif) file creates the "sshPublicKey" objectClass needed for sshPublicKey of user "testadmin" in next configuration step:
