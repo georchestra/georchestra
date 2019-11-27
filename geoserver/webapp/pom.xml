@@ -1003,7 +1003,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-scm-plugin</artifactId>
-            <version>1.9.4</version>
+            <version>1.11.2</version>
             <configuration>
               <checkoutDirectory>${project.build.directory}/deb/etc/georchestra</checkoutDirectory>
               <connectionUrl>scm:git:https://github.com/georchestra/datadir.git</connectionUrl>
@@ -1091,7 +1091,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-scm-plugin</artifactId>
-            <version>1.9.4</version>
+            <version>1.11.2</version>
             <configuration>
               <checkoutDirectory>${project.build.directory}/deb/etc/georchestra</checkoutDirectory>
               <connectionUrl>scm:git:https://github.com/georchestra/datadir.git</connectionUrl>
@@ -1192,7 +1192,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-scm-plugin</artifactId>
-            <version>1.9.4</version>
+            <version>1.11.2</version>
             <executions>
               <execution>
                 <id>checkout-docker-default-datadir</id>
