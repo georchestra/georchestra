@@ -17,10 +17,10 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-Ext.define('Analytics.store.OGCGroups', {
+Ext.define('Analytics.store.OGCOrgs', {
     extend: 'Ext.data.Store',
-    requires: 'Analytics.model.OGCGroup',
-    model: 'Analytics.model.OGCGroup',
+    requires: 'Analytics.model.OGCOrg',
+    model: 'Analytics.model.OGCOrg',
     remoteSort: true,
     remoteFilter: true,
     autoLoad: true,

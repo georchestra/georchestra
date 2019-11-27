@@ -33,7 +33,7 @@ Ext.require([
     'Ext.tab.Panel',
     // 'Analytics.store.*' surprisingly does not work, so:
     'Analytics.store.OGCLayers',
-    'Analytics.store.OGCGroups',
+    'Analytics.store.OGCOrgs',
     'Analytics.store.OGCUsers'
 ]);
 
@@ -41,9 +41,9 @@ Ext.application({
     name: 'Analytics',
     appFolder:'resources/js/app', // strange that it needs to be here // kind of redundant with the above Ext.Loader paths
     autoCreateViewport: true, // By setting autoCreateViewport to true, the framework will, by convention, include the app/view/Viewport.js file
-    models: ['OGCLayer','OGCUser','OGCGroup'],
+    models: ['OGCLayer','OGCUser','OGCOrg'],
     stores: [
-        'OGCLayers','OGCUsers','OGCGroups',
+        'OGCLayers','OGCUsers','OGCOrgs',
         'FilteredOGCLayers','FilteredOGCUsers'
     ],
     controllers: ['OGC', 'Month'],

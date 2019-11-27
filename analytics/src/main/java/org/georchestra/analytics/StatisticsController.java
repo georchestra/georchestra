@@ -66,7 +66,7 @@ import com.google.common.annotations.VisibleForTesting;
  * follows:
  *
  * - search by user:
- * 
+ *
  * <pre>
  * {
  *   "user": "user",
@@ -76,7 +76,7 @@ import com.google.common.annotations.VisibleForTesting;
  * </pre>
  *
  * - search by roles:
- * 
+ *
  * <pre>
  * {
  *   "group": "group",
@@ -98,7 +98,7 @@ import com.google.common.annotations.VisibleForTesting;
  *    ]
  * }
  * </pre>
- * 
+ *
  * If neither user nor group is set, global statistics are returned.
  *
  * where granularity will depend on the submitted date, following the algorithm:
@@ -108,7 +108,7 @@ import com.google.common.annotations.VisibleForTesting;
  * month
  *
  * - The entry point "/layersUsage" receives a JSON object as follows:
- * 
+ *
  * <pre>
  * {
  *   "user"|"group": "user|group",
@@ -117,11 +117,11 @@ import com.google.common.annotations.VisibleForTesting;
  *   "endDate": "YYYY-mm-dd"
  * }
  * </pre>
- * 
+ *
  * User, group and limit are optional parameters.
- * 
+ *
  * The returned JSON object will follow the pattern:
- * 
+ *
  * <pre>
  * { "results": [
  *   {
@@ -137,7 +137,7 @@ import com.google.common.annotations.VisibleForTesting;
  * </pre>
  *
  * - the entry point "/distinctUsers" receives a JSON object as follows:
- * 
+ *
  * <pre>
  * {
  *   "group": "group",
@@ -149,7 +149,7 @@ import com.google.common.annotations.VisibleForTesting;
  * group is optional. If not set, global statistics are returned.
  *
  * The returned object will follow the pattern:
- * 
+ *
  * <pre>
  * {
  *   "results": [
@@ -524,7 +524,7 @@ public class StatisticsController {
     /**
      * This method generates stats for layer usage or extraction and return results
      * in CSV or JSON format
-     * 
+     *
      * @param payload  JSON payload, should contain 'startDate', 'endDate', 'limit',
      *                 'group'
      * @param type     either layer usage 'USAGE' or layer extraction 'EXTRACTION'
@@ -634,7 +634,7 @@ public class StatisticsController {
      *
      * @return A string representing a JSON object with the requested datas. The
      *         output JSON has the following form:
-     * 
+     *
      *         <pre>
      *    { "results": [
      *	    {
@@ -760,7 +760,7 @@ public class StatisticsController {
     /**
      * Convert date from UTC to local configured timezone. This method is used to
      * convert dates returns by database.
-     * 
+     *
      * @param rawDate raw date from database with format : "2016-02-12 23" or
      *                "2016-02-12" or "2016-06" or "2016-02"
      * @return date in local timezone with hour
