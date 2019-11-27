@@ -57,10 +57,7 @@ As the SSL certificate is absolutely required, at least for the CAS module, you 
 keytool -import -alias cert_ssl -file /var/www/georchestra/ssl/georchestra.crt -keystore /etc/tomcat8/keystore
 ```
 
-Or, if you have a Let's Encrypt certificate using Certbot :
-```
-keytool -import -alias cert_ssl -file /etc/letsencrypt/live/[your_sdi_domain_name]/cert.pem -keystore /etc/tomcat8/keystore
-```
+Or, if you have a Let's Encrypt certificate using Certbot, the file to import is : /etc/letsencrypt/live/[your_sdi_domain_name]/cert.pem
 
 ### LDAP SSL
 
