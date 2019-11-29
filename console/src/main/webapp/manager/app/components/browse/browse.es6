@@ -9,6 +9,7 @@ class BrowseController {
 
   constructor ($injector) {
     this.$injector = $injector
+    this.pendingCount = 0
   }
 
   $onInit () {
@@ -41,6 +42,9 @@ class BrowseController {
       }
     }
     this.favoriteRole = this.favoriteRole.bind(this)
+    this.$injector.get('User').query(users => (
+      this.pendingCount = users.filter(u => u.pending).length
+    ))
   }
 
   favoriteRole (role) {
