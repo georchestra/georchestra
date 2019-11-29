@@ -13,7 +13,9 @@
                            'other': '{} {{ &quot;role.users&quot; | translate }}'}">
     </h3>
     <h3 ng-if="users.activeRole" class="roles-title">
-      <span ng-if="users.activeRole.cn!=='PENDING'">{{users.activeRole.cn}}</span>
+      <span ng-if="users.activeRole.cn!=='PENDING'">
+        {{'users.'+users.activeRole.cn | translate}}
+      </span>
       <span ng-if="users.activeRole.cn==='PENDING'" translate>users.pending</span>
     </h3>
     <p ng-if="users.activeRole">
