@@ -12,6 +12,7 @@ ou: pendingusers
 
 # testuser, users, georchestra.org
 dn: uid=testuser,ou=users,dc=georchestra,dc=org
+objectClass: georchestraUser
 objectClass: organizationalPerson
 objectClass: person
 objectClass: inetOrgPerson
@@ -28,6 +29,7 @@ cn: testuser
 
 # testreviewer, users, georchestra.org
 dn: uid=testreviewer,ou=users,dc=georchestra,dc=org
+objectClass: georchestraUser
 objectClass: inetOrgPerson
 objectClass: organizationalPerson
 objectClass: person
@@ -43,6 +45,7 @@ cn: testreviewer
 
 # testeditor, users, georchestra.org
 dn: uid=testeditor,ou=users,dc=georchestra,dc=org
+objectClass: georchestraUser
 objectClass: inetOrgPerson
 objectClass: organizationalPerson
 objectClass: person
@@ -58,6 +61,7 @@ cn: testeditor
 
 # testadmin, users, georchestra.org
 dn: uid=testadmin,ou=users,dc=georchestra,dc=org
+objectClass: georchestraUser
 objectClass: organizationalPerson
 objectClass: person
 objectClass: inetOrgPerson
@@ -76,12 +80,13 @@ cn: testadmin
 
 # geoserver_privileged_user, users, georchestra.org
 dn: uid=geoserver_privileged_user,ou=users,dc=georchestra,dc=org
-sn: geoserver_privileged_user
+objectClass: georchestraUser
 objectClass: organizationalPerson
 objectClass: person
 objectClass: inetOrgPerson
 objectClass: shadowAccount
 objectClass: top
+sn: geoserver_privileged_user
 mail: psc+geoserver_privileged_user@georchestra.org
 uid: geoserver_privileged_user
 cn: geoserver_privileged_user
@@ -90,6 +95,7 @@ userPassword:: e1NIQX1XMlY4d2UrOFdNanpma28rMUtZVDFZcWZFVDQ9
 
 # testpendinguser, pendingusers, georchestra.org
 dn: uid=testpendinguser,ou=pendingusers,dc=georchestra,dc=org
+objectClass: georchestraUser
 objectClass: inetOrgPerson
 objectClass: organizationalPerson
 objectClass: person
@@ -105,6 +111,7 @@ cn: testpendinguser
 
 # testdelegatedadmin, users, georchestra.org
 dn: uid=testdelegatedadmin,ou=users,dc=georchestra,dc=org
+objectClass: georchestraUser
 objectClass: inetOrgPerson
 objectClass: organizationalPerson
 objectClass: person
