@@ -315,9 +315,8 @@
               <dockerDirectory>${project.basedir}/src/docker</dockerDirectory>
               <resources>
                 <resource>
-                  <targetPath>/var/lib/jetty/webapps</targetPath>
-                  <directory>${project.build.directory}</directory>
-                  <include>${project.artifactId}.war</include>
+                  <targetPath>/var/lib/jetty/webapps/${finalName}</targetPath>
+                  <directory>${project.build.directory}/${finalName}</directory>
                 </resource>
                 <resource>
                   <targetPath>/etc/georchestra</targetPath>
