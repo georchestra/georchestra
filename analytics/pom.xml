@@ -469,9 +469,8 @@
               <dockerDirectory>${project.basedir}/src/docker</dockerDirectory>
               <resources>
                 <resource>
-                  <targetPath>/var/lib/jetty/webapps</targetPath>
-                  <directory>${project.build.directory}</directory>
-                  <include>${project.artifactId}.war</include>
+                  <targetPath>/var/lib/jetty/webapps/${project.artifactId}</targetPath>
+                  <directory>${project.build.directory}/${project.artifactId}</directory>
                 </resource>
                 <resource>
                   <targetPath>/etc/georchestra</targetPath>

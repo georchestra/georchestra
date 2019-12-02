@@ -4,15 +4,7 @@ ENV XMS=256M XMX=1G
 
 RUN java -jar "$JETTY_HOME/start.jar" --create-startd --add-to-start=jmx,jmx-remote,stats,http-forwarded
 
-ADD . /
-
-# Temporary switch to root
-USER root
-
-RUN chown jetty:jetty /etc/georchestra
-
-# Restore jetty user
-USER jetty
+COPY --chown=jetty:jetty . /
 
 VOLUME [ "/tmp", "/run/jetty" ]
 
