@@ -13,6 +13,7 @@
     <properties>
         <packageDatadirScmVersion>19.04</packageDatadirScmVersion>
         <server>generic</server>
+        <context.name>atlas</context.name>
     </properties>
     <dependencies>
         <!-- Camel dependencies -->
@@ -529,14 +530,8 @@
                             <dockerDirectory>${project.basedir}/src/docker</dockerDirectory>
                             <resources>
                                 <resource>
-                                    <targetPath>/var/lib/jetty/webapps</targetPath>
-                                    <directory>${project.build.directory}</directory>
-                                    <include>${project.artifactId}.war</include>
-                                </resource>
-                                <resource>
-                                    <targetPath>/etc/georchestra</targetPath>
-                                    <directory>${project.build.directory}/datadir</directory>
-                                    <include>${project.artifactId}/**</include>
+                                    <targetPath>/var/lib/jetty/webapps/${context.name}</targetPath>
+                                    <directory>${project.build.directory}/${context.name}</directory>
                                 </resource>
                             </resources>
                             <!-- This will require to set up the docker-hub credentials correctly
