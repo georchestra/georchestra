@@ -14,6 +14,7 @@
     <maven.test.skip>false</maven.test.skip>
     <server>generic</server>
     <context.name>ROOT</context.name>
+    <packageDatadirScmVersion>master</packageDatadirScmVersion>
   </properties>
   <dependencies>
     <dependency>
@@ -362,7 +363,7 @@
       <properties>
         <dockerImageName>georchestra/${project.artifactId}:${project.version}</dockerImageName>
         <dockerDatadirScmUrl>scm:git:https://github.com/georchestra/datadir.git</dockerDatadirScmUrl>
-        <dockerDatadirScmVersion>docker-master</dockerDatadirScmVersion>
+        <dockerDatadirScmVersion>docker-${packageDatadirScmVersion}</dockerDatadirScmVersion>
       </properties>
       <build>
         <finalName>ROOT</finalName>
