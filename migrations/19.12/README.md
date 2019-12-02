@@ -24,8 +24,8 @@ sed -i 's/objectClass: organization/objectClass: organization\nobjectClass: geor
 
 Finally reimport them:
 ```
-ldapdelete -x -r -D "cn=admin,dc=georchestra,dc=org" -W "ou=users,dc=georchestra,dc=org"
+ldapdelete -H ldap://localhost:389 -x -r -D "cn=admin,dc=georchestra,dc=org" -W "ou=users,dc=georchestra,dc=org"
 ldapadd -D "cn=admin,dc=georchestra,dc=org" -W -f /tmp/users.ldif
-ldapdelete -x -r -D "cn=admin,dc=georchestra,dc=org" -W "ou=orgs,dc=georchestra,dc=org"
+ldapdelete -H ldap://localhost:389 -x -r -D "cn=admin,dc=georchestra,dc=org" -W "ou=orgs,dc=georchestra,dc=org"
 ldapadd -D "cn=admin,dc=georchestra,dc=org" -W -f /tmp/orgs.ldif
 ```
