@@ -14,6 +14,7 @@
     <maven.test.skip>false</maven.test.skip>
     <packageDatadirScmVersion>19.04</packageDatadirScmVersion>
     <server>generic</server>
+    <context.name>${project.artifactId}</context.name>
   </properties>
   <dependencies>
     <dependency>
@@ -431,9 +432,8 @@
               <dockerDirectory>${project.basedir}/src/docker</dockerDirectory>
               <resources>
                 <resource>
-                  <targetPath>/var/lib/jetty/webapps</targetPath>
-                  <directory>${project.build.directory}</directory>
-                  <include>${project.artifactId}.war</include>
+                  <targetPath>/var/lib/jetty/webapps/${context.name}</targetPath>
+                  <directory>${project.build.directory}/${context.name}</directory>
                 </resource>
                 <resource>
                   <targetPath>/etc/georchestra</targetPath>
