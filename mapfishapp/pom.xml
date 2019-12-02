@@ -19,7 +19,7 @@
     	throws java.lang.NoSuchMethodError: org.json.JSONWriter.<init>(Ljava/io/Writer;)V
     -->
     <json.version>20080701</json.version>
-
+    <packageDatadirScmVersion>master</packageDatadirScmVersion>
     <server>generic</server>
   </properties>
   <dependencies>
@@ -540,7 +540,7 @@
       <properties>
         <dockerImageName>georchestra/${project.artifactId}:${project.version}</dockerImageName>
         <dockerDatadirScmUrl>scm:git:https://github.com/georchestra/datadir.git</dockerDatadirScmUrl>
-        <dockerDatadirScmVersion>docker-master</dockerDatadirScmVersion>
+        <dockerDatadirScmVersion>docker-${packageDatadirScmVersion}</dockerDatadirScmVersion>
       </properties>
       <build>
         <finalName>mapfishapp</finalName>
