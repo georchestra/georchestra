@@ -19,6 +19,7 @@
     	throws java.lang.NoSuchMethodError: org.json.JSONWriter.<init>(Ljava/io/Writer;)V
     -->
     <json.version>20080701</json.version>
+    <context.name>${project.artifactId}</context.name>
     <packageDatadirScmVersion>master</packageDatadirScmVersion>
     <server>generic</server>
   </properties>
@@ -575,9 +576,8 @@
               <dockerDirectory>${project.basedir}/src/docker</dockerDirectory>
               <resources>
                 <resource>
-                  <targetPath>/var/lib/jetty/webapps</targetPath>
-                  <directory>${project.build.directory}</directory>
-                  <include>${project.artifactId}.war</include>
+                  <targetPath>/var/lib/jetty/webapps/${context.name}</targetPath>
+                  <directory>${project.build.directory}/${context.name}</directory>
                 </resource>
                 <resource>
                   <targetPath>/etc/georchestra</targetPath>
