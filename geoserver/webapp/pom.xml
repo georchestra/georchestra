@@ -12,6 +12,7 @@
   <properties>
     <packageName>georchestra-geoserver</packageName>
     <packageDatadirScmVersion>master</packageDatadirScmVersion>
+    <context.name>geoserver</context.name>
   </properties>
   <dependencies>
     <dependency>
@@ -1233,9 +1234,8 @@
               <dockerDirectory>${project.basedir}/src/docker</dockerDirectory>
               <resources>
                 <resource>
-                  <targetPath>/var/lib/jetty/webapps</targetPath>
-                  <directory>${project.build.directory}</directory>
-                  <include>geoserver.war</include>
+                  <targetPath>/var/lib/jetty/webapps/${context.name}</targetPath>
+                  <directory>${project.build.directory}/${context.name}</directory>
                 </resource>
                 <resource>
                   <targetPath>/etc/georchestra</targetPath>

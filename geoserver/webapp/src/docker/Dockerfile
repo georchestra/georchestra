@@ -4,7 +4,7 @@ ENV XMS=1536M XMX=8G
 
 RUN java -jar "$JETTY_HOME/start.jar" --create-startd --add-to-start=jmx,jmx-remote,stats,jndi,http-forwarded
 
-ADD . /
+COPY --chown=jetty:jetty . /
 
 # Temporary switch to root
 USER root
