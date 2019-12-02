@@ -4,12 +4,14 @@ ENV XMS=1G XMX=2G
 
 RUN java -jar "$JETTY_HOME/start.jar" --create-startd --add-to-start=jmx,jmx-remote,stats,http-forwarded
 
-ADD . /
+COPY --chown=jetty:jetty . /
 
 # Temporary switch to root
 USER root
 
-RUN mkdir /mnt/geowebcache_tiles /mnt/geowebcache_datadir && \
+RUN mkdir /mnt/geowebcache_tiles /mnt/geowebcache_datadir &&                              \
+    unzip -d /var/lib/jetty/webapps/geowebcache /var/lib/jetty/webapps/geowebcache.war && \
+    rm -f /var/lib/jetty/webapps/geowebcache.war &&                                       \
     chown jetty:jetty /etc/georchestra /mnt/geowebcache_tiles /mnt/geowebcache_datadir
 
 # restore jetty user
