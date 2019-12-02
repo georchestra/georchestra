@@ -13,12 +13,13 @@
   <name>Console</name>
   <url>http://www.georchestra.org</url>
   <properties>
-    <skipIT>true</skipIT> <!-- disable integration tests by default, use the "it" profile to run them 
+    <skipIT>true</skipIT> <!-- disable integration tests by default, use the "it" profile to run them
       which enables them -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <roo.version>1.1.5.RELEASE</roo.version>
     <packageDatadirScmVersion>19.04</packageDatadirScmVersion>
     <server>generic</server>
+    <context.name>${project.artifactId}</context.name>
   </properties>
   <repositories>
     <repository>
@@ -793,9 +794,8 @@
               <dockerDirectory>${project.basedir}/src/docker</dockerDirectory>
               <resources>
                 <resource>
-                  <targetPath>/var/lib/jetty/webapps</targetPath>
-                  <directory>${project.build.directory}</directory>
-                  <include>${project.artifactId}.war</include>
+                  <targetPath>/var/lib/jetty/webapps/${context.name}</targetPath>
+                  <directory>${project.build.directory}/${context.name}</directory>
                 </resource>
                 <resource>
                   <targetPath>/etc/georchestra</targetPath>
@@ -837,8 +837,8 @@
             </executions>
             <configuration>
               <environmentVariables>
-                <!-- expose these two environment variables for Spring to 
-                  resolve the connection URLs to ldap and psql as the mapped ports set up by 
+                <!-- expose these two environment variables for Spring to
+                  resolve the connection URLs to ldap and psql as the mapped ports set up by
                   docker-maven-plugin bellow -->
                 <pgsqlPort>${database_container.port}</pgsqlPort>
                 <ldapPort>${ldap_container.port}</ldapPort>
@@ -885,8 +885,8 @@
                           <SLAPD_ADDITIONAL_MODULES>groupofmembers,openssh</SLAPD_ADDITIONAL_MODULES>
                         </env>
                         <wait>
-                          <!-- Need to figure out a good way to make sure 
-                            the ldap service is ready before the tests are run. The healthy check seems 
+                          <!-- Need to figure out a good way to make sure
+                            the ldap service is ready before the tests are run. The healthy check seems
                             to be good enough but the tests still can't connect -->
                           <time>20000</time>
                           <!-- <healthy>true</healthy> -->
