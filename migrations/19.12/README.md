@@ -3,7 +3,7 @@
 ## LDAP upgrade
 
 With this release, custom new attributes are added to geOrchestra users and organisations in the LDAP, leveraging a custom, [dedicated schema](https://github.com/georchestra/georchestra/blob/master/ldap/docker-root/georchestraSchema.ldif).
-As a result, the LDAP DIT should be upgraded with the provided [upgrade from 19.04 to 19.12 LDIF script](upgrade_ldap_from_19.04_to_19.12.ldif), which creates a new geOrchestra schema with the required objectClasses and attributes
+As a result, the LDAP DIT should be upgraded with the provided [script](upgrade_ldap_from_19.04_to_19.12.ldif), which creates a new geOrchestra schema with the required objectClasses and attributes.
 
 First of all, we recommend that you backup all entries:
 ```
@@ -30,7 +30,7 @@ ldapsearch -x -H ldap://localhost:389 -o ldif-wrap=no -b "ou=orgs,dc=georchestra
     printf "$f\nchangetype:modify\nadd:objectClass\nobjectClass:georchestraOrg\n\n" >> /tmp/modify.ldif
 done
 ```
-Check the `modify.ldif` file is correct. It should look like this:
+Check the generated `modify.ldif` file is correct. It should look like this:
 ```
 dn: uid=aaaaaa,ou=users,dc=georchestra,dc=org
 changetype:modify
@@ -60,4 +60,4 @@ Finally upgrade all entries:
 ldapmodify -H ldap://localhost:389 -D "cn=admin,dc=georchestra,dc=org" -W -f /tmp/modify.ldif
 ```
 
-If anything goes wrong during the upgrade process, you can rollback thanks to the above backup.
+If anything goes wrong during the upgrade process, you can rollback thanks to the above backup (always inserting users first, or the `memberOf` overlay won't work !).
