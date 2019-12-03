@@ -5,9 +5,9 @@ It features a **metadata catalog** (GeoNetwork 3.4), an **OGC server** (GeoServe
 ## Releases
 
 A new release is published every 6 months and is supported during 12 months.
-Stable versions are named by their release date, eg 18.06 (latest stable) was published in June 2018.
+Stable versions are named by their release date, eg 19.04 (latest stable) was published in April 2019.
 
-Have a look at the [release notes](https://github.com/georchestra/georchestra/blob/18.06/RELEASE_NOTES.md) for more information.
+Have a look at the [release notes](https://github.com/georchestra/georchestra/blob/19.04/RELEASE_NOTES.md) for more information.
 
 
 ## Install
