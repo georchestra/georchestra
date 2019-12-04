@@ -205,24 +205,7 @@
               <!-- This obviously requires the geoserver git submodule to be in sync in the source code tree -->
               <directory>${project.basedir}/../geoserver-submodule/src/web/app/src/main/webapp</directory>
             </resource>
-            <resource>
-              <!-- Add any additional dependency that cannot be fetched from a repository.-->
-              <directory>${project.basedir}/../lib/${gs.version}</directory>
-              <targetPath>WEB-INF/lib</targetPath>
-              <include>**</include>
-            </resource>
           </webResources>
-          <!--
-            - imageio-ext-kakadu-1.2.1.jar: we provide a patched version that supports Kakadu 7,
-              as of https://github.com/geosolutions-it/imageio-ext/pull/207
-            - imageio-ext-kakadujni-5.2.6.jar: this is kdu_jni.jar renamed. We exclude it and provide
-              v7.10.6 by lack of a mechanism for the user to easily install the version that comes
-              with his kakadu build.
-           -->
-          <packagingExcludes>
-            WEB-INF/lib/imageio-ext-kakadu-1.2.1.jar,
-            WEB-INF/lib/imageio-ext-kakadujni-5.2.6.jar
-          </packagingExcludes>
         </configuration>
       </plugin>
       <plugin>
