@@ -221,7 +221,7 @@
   "logs.title"            : "Logs d’administration",
   "logs.logs"             : "Logs d’administration",
   "logs.date"             : "Date",
-  "logs.sender"           : "Admin",
+  "logs.sender"           : "Auteur",
   "logs.target"           : "Destinataire",
   "logs.type"             : "Action",
   "logs.target"           : "Cible",

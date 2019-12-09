@@ -221,7 +221,7 @@
   "logs.title"            : "Administrationsprotokoll",
   "logs.logs"             : "Administrationsprotokoll",
   "logs.date"             : "Datum",
-  "logs.sender"           : "Admin",
+  "logs.sender"           : "Autor",
   "logs.target"           : "Empfänger",
   "logs.type"             : "Aktion",
   "logs.target"           : "Ziel",

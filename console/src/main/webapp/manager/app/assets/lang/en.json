@@ -222,7 +222,7 @@
   "logs.title"            : "Administration logs",
   "logs.logs"             : "Admin logs",
   "logs.date"             : "Date",
-  "logs.sender"           : "Admin",
+  "logs.sender"           : "Author",
   "logs.target"           : "Recipient",
   "logs.type"             : "Action",
   "logs.target"           : "Target",
