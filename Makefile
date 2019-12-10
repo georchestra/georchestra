@@ -101,7 +101,7 @@ deb-build-geoserver-geofence: war-build-geoserver-geofence
 	mvn clean package deb:package -PdebianPackage,geofence -Dserver=geofence-generic --pl webapp
 
 deb-build-georchestra: war-build-georchestra build-deps deb-build-geoserver
-	mvn package deb:package -pl atlas,cas-server-webapp,security-proxy,header,mapfishapp,extractorapp,analytics,console,geonetwork/web,geowebcache-webapp -PdebianPackage -DskipTests
+	mvn package deb:package -pl atlas,cas-server-webapp,security-proxy,header,mapfishapp,extractorapp,analytics,console,geonetwork/web,geowebcache-webapp -PdebianPackage -DskipTests ${DEPLOY_OPTS}
 
 # Base geOrchestra config and common modules
 build-deps:
