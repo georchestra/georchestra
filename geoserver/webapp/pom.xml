@@ -11,7 +11,6 @@
   <name>geOrchestra GeoServer Web Application</name>
   <properties>
     <packageName>georchestra-geoserver</packageName>
-    <packageDatadirScmVersion>master</packageDatadirScmVersion>
     <context.name>geoserver</context.name>
   </properties>
   <dependencies>
@@ -996,9 +995,6 @@
     </profile>
     <profile>
       <id>debianPackage</id>
-      <properties>
-        <server>generic</server>
-      </properties>
       <build>
         <plugins>
           <plugin>
