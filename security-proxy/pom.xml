@@ -159,7 +159,7 @@
           <webApp>
             <contextPath>/</contextPath>
             <baseResource implementation="org.eclipse.jetty.util.resource.ResourceCollection">
-              <resourcesAsCSV>${basedir}/src/main/webapp</resourcesAsCSV>
+              <resourcesAsCSV>${project.basedir}/src/main/webapp</resourcesAsCSV>
             </baseResource>
           </webApp>
           <scanIntervalSeconds>5</scanIntervalSeconds>
