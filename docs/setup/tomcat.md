@@ -8,13 +8,13 @@ We need 3 tomcat instances:
 ## Prerequisites
 
 ```
-sudo apt-get install -y tomcat8 tomcat8-user
+sudo apt-get install -y tomcat9 tomcat9-user
 ```
 
 We will deactivate the default tomcat instance, just to be sure:
 ```
-sudo update-rc.d -f tomcat8 remove
-sudo service tomcat8 stop
+sudo update-rc.d -f tomcat9 remove
+sudo service tomcat9 stop
 ```
 
 ## Keystore
@@ -23,7 +23,7 @@ To create a keystore, enter the following:
 ```
 sudo keytool -genkey \
     -alias georchestra_localhost \
-    -keystore /etc/tomcat8/keystore \
+    -keystore /etc/tomcat9/keystore \
     -storepass STOREPASSWORD \
     -keypass STOREPASSWORD \
     -keyalg RSA \
@@ -45,7 +45,7 @@ To do this:
 ```
 sudo keytool -importkeystore \
     -srckeystore /etc/ssl/certs/java/cacerts \
-    -destkeystore /etc/tomcat8/keystore
+    -destkeystore /etc/tomcat9/keystore
 ```
 
 The password of the srckeystore is "changeit" by default, and should be modified in /etc/default/cacerts.
@@ -54,7 +54,7 @@ The password of the srckeystore is "changeit" by default, and should be modified
 
 As the SSL certificate is absolutely required, at least for the CAS module, you must add it to the keystore.
 ```
-keytool -import -alias cert_ssl -file /var/www/georchestra/ssl/georchestra.crt -keystore /etc/tomcat8/keystore
+keytool -import -alias cert_ssl -file /var/www/georchestra/ssl/georchestra.crt -keystore /etc/tomcat9/keystore
 ```
 If you have a Let's Encrypt certificate using Certbot the file to import is : /etc/letsencrypt/live/[your_sdi_domain_name]/cert.pem
 
@@ -70,13 +70,13 @@ echo "" | openssl s_client -connect LDAPHOST:LDAPPORT -showcerts 2>/dev/null | o
 ```
 ... and then add it to the keystore:
 ```
-sudo keytool -import -alias cert_ldap -file /tmp/certfile.txt -keystore /etc/tomcat8/keystore
+sudo keytool -import -alias cert_ldap -file /tmp/certfile.txt -keystore /etc/tomcat9/keystore
 ```
 
 ### Finally, 
 verify the list of keys in keystore:
 ```
-keytool -keystore /etc/tomcat8/keystore -list
+keytool -keystore /etc/tomcat9/keystore -list
 ```
 
 
@@ -87,24 +87,24 @@ keytool -keystore /etc/tomcat8/keystore -list
 Let's create an instance named ```tomcat-proxycas```:
 
 ```
-sudo tomcat8-instance-create -p 8180 -c 8105 /var/lib/tomcat-proxycas
+sudo tomcat9-instance-create -p 8180 -c 8105 /var/lib/tomcat-proxycas
 ```
 8180 will be the HTTP port and 8105 the stop port.
 
 
 Then:
 ```
-sudo cp -r /usr/share/tomcat8 /usr/share/tomcat-proxycas
+sudo cp -r /usr/share/tomcat9 /usr/share/tomcat-proxycas
 sudo mkdir /var/lib/tomcat-proxycas/conf/policy.d
 sudo touch /var/lib/tomcat-proxycas/conf/policy.d/empty.policy
-sudo chown -R tomcat8:tomcat8 /var/lib/tomcat-proxycas
-sudo cp /etc/init.d/tomcat8 /etc/init.d/tomcat-proxycas
-sudo cp /etc/default/tomcat8 /etc/default/tomcat-proxycas
+sudo chown -R tomcat:tomcat /var/lib/tomcat-proxycas
+sudo cp /etc/init.d/tomcat9 /etc/init.d/tomcat-proxycas
+sudo cp /etc/default/tomcat9 /etc/default/tomcat-proxycas
 ```
 
 Finally, edit the ```/etc/init.d/tomcat-proxycas``` script, find the following line:
 ```
-# Provides:          tomcat8
+# Provides:          tomcat9
 ```
 ... and replace it with:
 ```
@@ -114,7 +114,7 @@ Finally, edit the ```/etc/init.d/tomcat-proxycas``` script, find the following l
 In that same file, a few lines below :
 replace
 ```
-NAME=tomcat8
+NAME=tomcat9
 ```
 with
 ```
@@ -140,7 +140,7 @@ JAVA_OPTS="$JAVA_OPTS \
               -XX:MaxPermSize=128m"
 
 JAVA_OPTS="$JAVA_OPTS \
-              -Djavax.net.ssl.trustStore=/etc/tomcat8/keystore \
+              -Djavax.net.ssl.trustStore=/etc/tomcat9/keystore \
               -Djavax.net.ssl.trustStorePassword=STOREPASSWORD"
 ```
 
@@ -169,7 +169,7 @@ In ```/var/lib/tomcat-proxycas/conf/server.xml```, find the place where the HTTP
                URIEncoding="UTF-8"
                maxThreads="150"
                clientAuth="false"
-               keystoreFile="/etc/tomcat8/keystore"
+               keystoreFile="/etc/tomcat9/keystore"
                keystorePass="STOREPASSWORD"
                compression="on"
                compressionMinSize="2048"
@@ -197,18 +197,18 @@ sudo service tomcat-proxycas start
 
 Same here ... just changing names and ports.
 ```
-sudo tomcat8-instance-create -p 8280 -c 8205 /var/lib/tomcat-georchestra
-sudo cp -r /usr/share/tomcat8 /usr/share/tomcat-georchestra
+sudo tomcat9-instance-create -p 8280 -c 8205 /var/lib/tomcat-georchestra
+sudo cp -r /usr/share/tomcat9 /usr/share/tomcat-georchestra
 sudo mkdir /var/lib/tomcat-georchestra/conf/policy.d
 sudo touch /var/lib/tomcat-georchestra/conf/policy.d/empty.policy
-sudo chown -R tomcat8:tomcat8 /var/lib/tomcat-georchestra
-sudo cp /etc/init.d/tomcat8 /etc/init.d/tomcat-georchestra
-sudo cp /etc/default/tomcat8 /etc/default/tomcat-georchestra
+sudo chown -R tomcat:tomcat /var/lib/tomcat-georchestra
+sudo cp /etc/init.d/tomcat9 /etc/init.d/tomcat-georchestra
+sudo cp /etc/default/tomcat9 /etc/default/tomcat-georchestra
 ```
 
 Finally, edit the ```/etc/init.d/tomcat-georchestra``` script, find the following line:
 ```
-# Provides:          tomcat8
+# Provides:          tomcat9
 ```
 ... and replace it with:
 ```
@@ -218,7 +218,7 @@ Finally, edit the ```/etc/init.d/tomcat-georchestra``` script, find the followin
 In that same file, a few lines below :
 replace
 ```
-NAME=tomcat8
+NAME=tomcat9
 ```
 with
 ```
@@ -244,7 +244,7 @@ JAVA_OPTS="$JAVA_OPTS \
               -XX:MaxPermSize=256m"
 
 JAVA_OPTS="$JAVA_OPTS \
-              -Djavax.net.ssl.trustStore=/etc/tomcat8/keystore \
+              -Djavax.net.ssl.trustStore=/etc/tomcat9/keystore \
               -Djavax.net.ssl.trustStorePassword=STOREPASSWORD"
 
 JAVA_OPTS="$JAVA_OPTS \
@@ -262,12 +262,12 @@ JAVA_OPTS="$JAVA_OPTS \
               -Dgeonetwork.schema.dir=/path/to/your/geonetwork_data_dir/config/schema_plugins \
               -Dgeonetwork.jeeves.configuration.overrides.file=/var/lib/tomcat-georchestra/webapps/geonetwork/WEB-INF/config-overrides-georchestra.xml"
 ```
-... where ```/path/to/your/geonetwork_data_dir``` is a directory owned by tomcat8, created by checking out this repository [georchestra/geonetwork_minimal_datadir](https://github.com/georchestra/geonetwork_minimal_datadir)
+... where ```/path/to/your/geonetwork_data_dir``` is a directory owned by tomcat, created by checking out this repository [georchestra/geonetwork_minimal_datadir](https://github.com/georchestra/geonetwork_minimal_datadir)
 
 Example:
 ```
 sudo git clone https://github.com/georchestra/geonetwork_minimal_datadir.git /opt/geonetwork_data_dir
-sudo chown -R tomcat8 /opt/geonetwork_data_dir
+sudo chown -R tomcat /opt/geonetwork_data_dir
 ```
 
 #### GeoNetwork 3.0.x (geOrchestra 15.12 and above)
@@ -280,7 +280,7 @@ geOrchestra integration has been exported outside the webapp.
 ```
 sudo git clone https://github.com/georchestra/config.git /etc/georchestra
 sudo git clone -b gn3.4.1 https://github.com/georchestra/geonetwork_minimal_datadir.git /opt/geonetwork_data_dir
-sudo chown -R tomcat8 /opt/geonetwork_data_dir
+sudo chown -R tomcat /opt/geonetwork_data_dir
 ```
 
 Customize the `/etc/georchestra/geonetwork/geonetwork.properties`, so that the
@@ -325,7 +325,7 @@ JAVA_OPTS="$JAVA_OPTS \
                -Dorg.geotools.referencing.forceXY=true \
                -Dextractor.storage.dir=/path/to/temporary/extracts/"
 ```
-... where ```/path/to/temporary/extracts/``` is a directory owned by tomcat8 in a dedicated server partition.
+... where ```/path/to/temporary/extracts/``` is a directory owned by tomcat in a dedicated server partition.
 
 If one of geonetwork or extractorapp is deployed:
 ```
@@ -364,13 +364,13 @@ sudo service tomcat-georchestra start
 ### Create the instance
 
 ```
-sudo tomcat8-instance-create -p 8380 -c 8305 /var/lib/tomcat-geoserver0
-sudo cp -r /usr/share/tomcat8 /usr/share/tomcat-geoserver0
+sudo tomcat9-instance-create -p 8380 -c 8305 /var/lib/tomcat-geoserver0
+sudo cp -r /usr/share/tomcat9 /usr/share/tomcat-geoserver0
 sudo mkdir /var/lib/tomcat-geoserver0/conf/policy.d
 sudo touch /var/lib/tomcat-geoserver0/conf/policy.d/empty.policy
-sudo chown -R tomcat8:tomcat8 /var/lib/tomcat-geoserver0
-sudo cp /etc/init.d/tomcat8 /etc/init.d/tomcat-geoserver0
-sudo cp /etc/default/tomcat8 /etc/default/tomcat-geoserver0
+sudo chown -R tomcat:tomcat /var/lib/tomcat-geoserver0
+sudo cp /etc/init.d/tomcat9 /etc/init.d/tomcat-geoserver0
+sudo cp /etc/default/tomcat9 /etc/default/tomcat-geoserver0
 ```
 
 Locate tomcat's `conf/context.xml` and update the `<Context>` tag in order to
@@ -386,7 +386,7 @@ motivations.
 
 Finally, edit the ```/etc/init.d/tomcat-geoserver0``` script, find the following line:
 ```
-# Provides:          tomcat8
+# Provides:          tomcat9
 ```
 ... and replace it with:
 ```
@@ -396,7 +396,7 @@ Finally, edit the ```/etc/init.d/tomcat-geoserver0``` script, find the following
 In that same file, a few lines below :
 replace
 ```
-NAME=tomcat8
+NAME=tomcat9
 ```
 with
 ```
@@ -437,12 +437,12 @@ JAVA_OPTS="$JAVA_OPTS \
 ```
 This allocates 2Gb of your server RAM to GeoServer.
 
-The ```/path/to/your/geoserver_data_dir``` directory should be owned by tomcat8, and created by checking out this repository [georchestra/geoserver_minimal_datadir](https://github.com/georchestra/geoserver_minimal_datadir):
+The ```/path/to/your/geoserver_data_dir``` directory should be owned by tomcat, and created by checking out this repository [georchestra/geoserver_minimal_datadir](https://github.com/georchestra/geoserver_minimal_datadir):
 
 Example:
 ```
 sudo git clone -b master https://github.com/georchestra/geoserver_minimal_datadir.git /opt/geoserver_data_dir
-sudo chown -R tomcat8 /opt/geoserver_data_dir
+sudo chown -R tomcat /opt/geoserver_data_dir
 ```
 Note that this data dir holds **several branches**: please refer to the repository [README](https://github.com/georchestra/geoserver_minimal_datadir/blob/master/README.md) in order to **choose the correct one**.
 
@@ -450,7 +450,7 @@ Note that this data dir holds **several branches**: please refer to the reposito
 As before (change the ```STOREPASSWORD``` string):
 ```
 JAVA_OPTS="$JAVA_OPTS \
-              -Djavax.net.ssl.trustStore=/etc/tomcat8/keystore \
+              -Djavax.net.ssl.trustStore=/etc/tomcat9/keystore \
               -Djavax.net.ssl.trustStorePassword=STOREPASSWORD"
 ```
 
