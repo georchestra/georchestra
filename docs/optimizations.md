@@ -12,7 +12,7 @@ Raster operations will be ~ two times faster when the native JAI and imageio are
 
 Add 'non-free' to your sourcelist : 
 ```
-deb http://ftp.fr.debian.org/debian stretch main non-free
+deb http://ftp.fr.debian.org/debian buster main non-free
 ```
 
 And install the library :
@@ -113,7 +113,7 @@ Please refer to the [control-flow module documentation](http://docs.geoserver.or
 
 Add 'contrib' to your sourcelist : 
 ```
-deb http://ftp.fr.debian.org/debian stretch main contrib
+deb http://ftp.fr.debian.org/debian buster main contrib
 ```
 
 And install the fonts : 
