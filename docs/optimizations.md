@@ -12,7 +12,7 @@ Raster operations will be ~ two times faster when the native JAI and imageio are
 
 Add 'non-free' to your sourcelist : 
 ```
-deb http://ftp.fr.debian.org/debian stretch main non-free
+deb http://ftp.fr.debian.org/debian buster main non-free
 ```
 
 And install the library :
@@ -72,7 +72,7 @@ JAVA_OPTS="$JAVA_OPTS \
             -Djava.library.path=/usr/lib/jni:/opt/libjpeg-turbo/lib64/"
 ```
 
-Restart tomcat and check the new libs are taken into account: ```cat /var/log/tomcat8/geoserver0.log | grep turbo``` should display ```[turbojpeg.TurboJPEGMapResponse] - The turbo jpeg encoder is available for usage```
+Restart tomcat and check the new libs are taken into account: ```cat /var/log/tomcat9/geoserver0.log | grep turbo``` should display ```[turbojpeg.TurboJPEGMapResponse] - The turbo jpeg encoder is available for usage```
 
 ### Marlin Renderer
 
@@ -82,12 +82,12 @@ Note that it only works on recent versions of Oracle and OpenJDK (>= 7).
 
 Installing it is not difficult:
  * [grab the latest release](https://github.com/bourgesl/marlin-renderer/releases)
- * put the ```marlin-0.4.5.jar``` file into ```/usr/share/tomcat8/lib/``` (don't forget to chmod a+r marlin*.jar)
+ * put the ```marlin-0.4.5.jar``` file into ```/usr/share/tomcat9/lib/``` (don't forget to chmod a+r marlin*.jar)
  * in ```/etc/defaults/tomcat-geoserver0```, add the following:
 
 ```
 JAVA_OPTS="$JAVA_OPTS \
-            -Xbootclasspath/a:"/usr/share/tomcat8/lib/marlin-0.4.5.jar" \
+            -Xbootclasspath/a:"/usr/share/tomcat9/lib/marlin-0.4.5.jar" \
             -Dsun.java2d.renderer=org.marlin.pisces.PiscesRenderingEngine"
 ```
 
@@ -113,7 +113,7 @@ Please refer to the [control-flow module documentation](http://docs.geoserver.or
 
 Add 'contrib' to your sourcelist : 
 ```
-deb http://ftp.fr.debian.org/debian stretch main contrib
+deb http://ftp.fr.debian.org/debian buster main contrib
 ```
 
 And install the fonts : 

@@ -27,7 +27,7 @@ To do that, when your app is deployed, copy your `gdal.jar` in the **WEB-INF/lib
 
 Notice : this method doesn't allow to have multiple apps with gdal in the same tomcat, but actually we can't get shared classloader to work because gdal load the native and imageio also load them, there is a conflict.
 
-And finally edit your `/etc/default/tomcat8` file to have something like :
+And finally edit your `/etc/default/tomcat9` file to have something like :
 ```
 LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH}"
 JAVA_OPTS="${JAVA_OPTS} -Djava.library.path=$LD_LIBRARY_PATH"
@@ -102,7 +102,7 @@ make
 make install
 ```
 
-In order to run GDAL after installing it is necessary for the shared library to be findable. This can often be accomplished by setting **LD_LIBRARY_PATH** to include /usr/local/lib in `/etc/default/tomcat8`.
+In order to run GDAL after installing it is necessary for the shared library to be findable. This can often be accomplished by setting **LD_LIBRARY_PATH** to include /usr/local/lib in `/etc/default/tomcat9`.
 
 After that, GDAL is installed but not the JAVA bindings, for get them : 
 ```
@@ -122,7 +122,7 @@ To do that, when your app is deployed, copy your `gdal.jar` in the **WEB-INF/lib
 
 Notice : this method doesn't allow to have multiple apps with gdal in the same tomcat, but actually we can't get shared classloader to work because gdal load the native and imageio also load them, there is a conflict.
 
-And finally edit your `/etc/default/tomcat8` file to have something like :
+And finally edit your `/etc/default/tomcat9` file to have something like :
 ```
 LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH}"
 JAVA_OPTS="${JAVA_OPTS} -Djava.library.path=$LD_LIBRARY_PATH"
