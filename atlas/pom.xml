@@ -304,7 +304,7 @@
         </plugins>
         <resources>
             <resource>
-                <directory>${basedir}/src/main/resources</directory>
+                <directory>${project.basedir}/src/main/resources</directory>
             </resource>
         </resources>
     </build>
@@ -363,7 +363,7 @@
                                 <configuration>
                                     <target>
                                         <chmod perm="ugo+x">
-                                            <fileset dir="${basedir}/target/deb">
+                                            <fileset dir="${project.basedir}/target/deb">
                                                 <include name="**/bin/**"/>
                                                 <include name="**/sbin/**"/>
                                                 <include name="DEBIAN/post*"/>

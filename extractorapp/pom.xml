@@ -190,7 +190,6 @@
             <scanTarget>src/main/java</scanTarget>
             <scanTarget>src/main/resources</scanTarget>
           </scanTargets>
-          <!--<webApp>${basedir}/target/extractorapp.war</webApp>-->
           <httpConnector>
             <port>8283</port>
           </httpConnector>

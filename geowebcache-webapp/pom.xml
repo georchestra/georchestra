@@ -132,9 +132,9 @@
           </connectors>
           <webAppConfig>
             <contextPath>/geowebcache</contextPath>
-            <descriptor>${basedir}/src/main/webapp/WEB-INF/web.xml</descriptor>
+            <descriptor>${project.basedir}/src/main/webapp/WEB-INF/web.xml</descriptor>
             <baseResource implementation="org.eclipse.jetty.util.resource.ResourceCollection">
-              <resourcesAsCSV>${basedir}/src/main/webapp,${gwc.unpack.dir}</resourcesAsCSV>
+              <resourcesAsCSV>${project.basedir}/src/main/webapp,${gwc.unpack.dir}</resourcesAsCSV>
             </baseResource>
           </webAppConfig>
           <stopKey>GWC_JETTY_STOP</stopKey>
