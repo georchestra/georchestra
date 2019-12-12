@@ -94,11 +94,11 @@ war-build-georchestra: war-build-gn3 war-build-geoserver
 
 deb-build-geoserver: war-build-geoserver
 	cd geoserver; \
-	mvn clean package deb:package -PdebianPackage --pl webapp
+	mvn clean package deb:package -PdebianPackage ${DEPLOY_OPTS} --pl webapp
 
 deb-build-geoserver-geofence: war-build-geoserver-geofence
 	cd geoserver; \
-	mvn clean package deb:package -PdebianPackage,geofence -Dserver=geofence-generic --pl webapp
+	mvn clean package deb:package -PdebianPackage,geofence -Dserver=geofence-generic ${DEPLOY_OPTS} --pl webapp
 
 deb-build-georchestra: war-build-georchestra build-deps deb-build-geoserver
 	mvn package deb:package -pl atlas,cas-server-webapp,security-proxy,header,mapfishapp,extractorapp,analytics,console,geonetwork/web,geowebcache-webapp -PdebianPackage -DskipTests ${DEPLOY_OPTS}
