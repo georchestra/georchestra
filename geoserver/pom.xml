@@ -10,7 +10,6 @@
   <packaging>pom</packaging>
   <name>GeoServer 2.x root module</name>
   <properties>
-    <server>generic</server>
     <skipTests>true</skipTests>
     <gs.version>2.15.0</gs.version>
     <gt.version>21.0</gt.version>

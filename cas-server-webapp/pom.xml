@@ -28,9 +28,6 @@
   <packaging>war</packaging>
   <name>Jasig CAS Web Application</name>
   <properties>
-    <packageDatadirScmVersion>master</packageDatadirScmVersion>
-    <server>generic</server>
-
     <!-- spring version revert start -->
     <!--
     	See https://github.com/georchestra/georchestra/issues/2492
