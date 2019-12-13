@@ -24,14 +24,14 @@ import static org.georchestra.security.HeaderNames.BASIC_AUTH_HEADER;
 import static org.georchestra.security.HeaderNames.CONTENT_LENGTH;
 import static org.georchestra.security.HeaderNames.COOKIE_ID;
 import static org.georchestra.security.HeaderNames.HOST;
-import static org.georchestra.security.HeaderNames.LOCATION;
+import static org.georchestra.security.HeaderNames.PROTECTED_HEADER_PREFIX;
 import static org.georchestra.security.HeaderNames.REFERER_HEADER_NAME;
 import static org.georchestra.security.HeaderNames.SEC_PROXY;
 import static org.georchestra.security.HeaderNames.SEC_ROLES;
 import static org.georchestra.security.HeaderNames.SEC_USERNAME;
 import static org.georchestra.security.HeaderNames.TRANSFER_ENCODING;
-import static org.georchestra.security.HeaderNames.PROTECTED_HEADER_PREFIX;
 
+import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -44,15 +44,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.message.BasicHeader;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
+
+import com.google.common.annotations.VisibleForTesting;
 
 /**
  * A strategy for copying headers from the request to the proxied request and
@@ -61,7 +62,7 @@ import org.springframework.util.StringUtils;
  * @author jeichar
  */
 public class HeadersManagementStrategy {
-    protected static final Log logger = LogFactory.getLog(Proxy.class.getPackage().getName());
+    protected static final Logger logger = LoggerFactory.getLogger(Proxy.class.getPackage().getName());
 
     /**
      * If true (default is false) AcceptEncoding headers are removed from request
@@ -145,14 +146,13 @@ public class HeadersManagementStrategy {
                 // proxy
                 if (session.getAttribute("pre-auth") != null
                         && (!(provider instanceof TrustedProxyRequestHeaderProvider))) {
-                    logger.debug("Bypassing header provider : " + provider.getClass().toString());
+                    logger.debug("Bypassing header provider : {}", provider.getClass().toString());
                     continue;
                 }
 
                 for (Header header : provider.getCustomRequestHeaders(session, originalRequest)) {
 
-                    logger.debug(
-                            "Processing  header : " + header.getName() + " from " + provider.getClass().toString());
+                    logger.debug("Processing  header  {} from {}", header.getName(), provider.getClass().toString());
 
                     if ((header.getName().equalsIgnoreCase(SEC_USERNAME)
                             || header.getName().equalsIgnoreCase(SEC_ROLES))
@@ -171,8 +171,7 @@ public class HeadersManagementStrategy {
                                 || header.getName().equalsIgnoreCase(HttpHeaders.CONTENT_LENGTH))
                             continue;
 
-                        logger.debug(
-                                "Adding header to proxyed request : " + header.getName() + "=" + header.getValue());
+                        logger.debug("Adding header to proxied request: {} = {}", header.getName(), header.getValue());
                         proxyRequest.addHeader(header);
                         headersLog.append("\t" + header.getName());
                         headersLog.append("=");
@@ -190,7 +189,7 @@ public class HeadersManagementStrategy {
 
     private void addHeaderToRequestAndLog(HttpRequestBase proxyRequest, StringBuilder headersLog, String headerName,
             String value) {
-        logger.debug("Add Header : " + headerName + " = " + value);
+        logger.debug("Add Header: {} = {}", headerName, value);
         proxyRequest.addHeader(new BasicHeader(headerName, value));
         headersLog.append("\t" + headerName);
         headersLog.append("=");
@@ -198,11 +197,31 @@ public class HeadersManagementStrategy {
         headersLog.append("\n");
     }
 
-    private void handleRequestCookies(HttpServletRequest originalRequest, HttpRequestBase proxyRequest,
+    /**
+     * Handles the 'Cookie' header coming from the client.
+     * 
+     * This code gets all the possible values for the cookie sent by the browser,
+     * and reconstructs a new one composed of every key=value except the JSESSIONID.
+     * The reason is that the JSESSIONID sent by the browser could be different from
+     * the one the SP is using to reach the proxified webapp. So we will inject the
+     * expected JSESSIONID later on.
+     * 
+     * Note: we shall usually receive only one cookie header, but the HTTP specs
+     * allows to send the same header key with different values multiple times,
+     * hence the 'while' loop.
+     *
+     * @param originalRequest the request as it comes from the client
+     * @param proxyRequest    the proxified request
+     * @param headersLog      a stringbuilder used in case of debugging / tracing
+     *                        loglevel.
+     */
+    @VisibleForTesting
+    public void handleRequestCookies(HttpServletRequest originalRequest, HttpRequestBase proxyRequest,
             StringBuilder headersLog) {
 
         Enumeration<String> headers = originalRequest.getHeaders(COOKIE_ID);
         StringBuilder cookies = new StringBuilder();
+
         while (headers.hasMoreElements()) {
             String value = headers.nextElement();
             for (String requestCookies : value.split(";")) {
@@ -219,25 +238,16 @@ public class HeadersManagementStrategy {
         HttpSession session = originalRequest.getSession();
         String requestPath = proxyRequest.getURI().getPath();
         if (session != null && session.getAttribute(HeaderNames.JSESSION_ID) != null) {
-            Map<String, String> jessionIds = (Map) session.getAttribute(HeaderNames.JSESSION_ID);
+            Map<String, String> jessionIds = (Map<String, String>) session.getAttribute(HeaderNames.JSESSION_ID);
             String currentPath = null;
             String currentId = null;
             for (String path : jessionIds.keySet()) {
-                // see https://www.owasp.org/index.php/HttpOnly
-                // removing extra suffixes for JSESSIONID cookie ("; HttpOnly")
-                // This is related to some issues with newer versions of tomcat
-                // and session loss, e.g.:
-                // https://github.com/georchestra/georchestra/pull/913
-                String actualPath = path.split(";")[0].trim();
-
                 // the cookie we will use is the cookie with the longest matching path
-                if (requestPath.startsWith(actualPath)) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Found possible matching JSessionId: Path = " + actualPath + " id="
-                                + jessionIds.get(path) + " for " + requestPath + " of uri " + proxyRequest.getURI());
-                    }
-                    if (currentPath == null || currentPath.length() < actualPath.length()) {
-                        currentPath = actualPath;
+                if (requestPath.startsWith(path)) {
+                    logger.debug("Found possible matching JSessionId: Path={} id={} for {} of uri {}", path,
+                            jessionIds.get(path), requestPath, proxyRequest.getURI());
+                    if (currentPath == null || currentPath.length() < path.length()) {
+                        currentPath = path;
                         currentId = jessionIds.get(path);
                     }
                 }
@@ -303,59 +313,114 @@ public class HeadersManagementStrategy {
         }
 
         Header[] cookieHeaders = proxyResponse.getHeaders(HeaderNames.SET_COOKIE_ID);
-        if (cookieHeaders != null) {
+        if (cookieHeaders.length > 0) {
             handleResponseCookies(originalRequestURI, finalResponse, cookieHeaders, session);
         }
     }
 
-    private void handleResponseCookies(String originalRequestURI, HttpServletResponse finalResponse, Header[] headers,
+    /**
+     * Manages the "Set-Cookie" headers coming from security-proxified webapps.
+     * 
+     * If the cookie is a JSESSIONID, then we need to keep it into a map stored into
+     * the current user's session, but not transmit it to the client, as there is
+     * probably already a sessionid between the client and the SP. It will be reused
+     * for later requests to the same proxified webapp.
+     * 
+     * In the other cases, it is probably safe to transmit it to the client, but we
+     * force the path to the currently proxified webapp.
+     *
+     * If the cookie is transmitted to the client, the Path can be mangled to limit
+     * its scope to the proxified webapp.
+     *
+     * @param originalRequestURI the request URI being made. We need it to force the
+     *                           path of the cookies
+     * @param finalResponse      the actual response sent to the client
+     * @param headers            the array of "Set-Cookie" headers
+     * @param session            the current user's session
+     */
+    @VisibleForTesting
+    public void handleResponseCookies(String originalRequestURI, HttpServletResponse finalResponse, Header[] headers,
             HttpSession session) {
-        String originalPath = originalRequestURI.split("/")[0];
+        String overridenPath = null;
+        try {
+            overridenPath = originalRequestURI.split("/")[1];
+        } catch (Exception e) {
+        }
         for (Header header : headers) {
-            String[] parts = header.getValue().split("(?i)Path=", 2);
-
-            StringBuilder cookies = new StringBuilder();
-            for (String cookie : parts[0].split(";")) {
-                if (cookie.trim().length() == 0) {
-                    continue;
+            logger.debug("Parsing header: \"{}\"", header.toString());
+            List<HttpCookie> currentCookies = HttpCookie.parse(header.getValue());
+            // Normally, we should be only interested in the first element of the list.
+            if (currentCookies.isEmpty()) {
+                continue;
+            }
+            HttpCookie currentCookie = currentCookies.get(0);
+            // if the cookie is a JSESSIONID, we need to store it in the session map,
+            // but do not transmit it to the client, as it could disrupt the current
+            // session between the user and the SP (if no path set, for instance).
+            if (currentCookie.getName().equalsIgnoreCase(HeaderNames.JSESSION_ID)) {
+                // Do not store the JSESSIONID in session if no path is provided
+                // Note: by default, Java webapps seem to limit to their own scope.
+                if (currentCookie.getPath() != null) {
+                    logger.debug("Storing the JSESSIONID into session for path {}", currentCookie.getPath());
+                    storeJsessionHeader(session, currentCookie.getPath(), currentCookie.toString());
                 }
-                if (cookie.trim().startsWith(HeaderNames.JSESSION_ID)) {
-                    String path = "";
-                    if (parts.length == 2) {
-                        path = parts[1];
+            }
+            // Else, it has to be transmitted to the client
+            else {
+                String actualHeaderValue = header.getValue().trim();
+                // if path is not set on the cookie and the overridden path does not point to /
+                if (currentCookie.getPath() == null) {
+                    if (overridenPath != null) {
+                        logger.debug("Current cookie has not path set, forcing it to {}", overridenPath);
+                        if (actualHeaderValue.endsWith(";")) {
+                            actualHeaderValue.concat("Path=/" + overridenPath + ";");
+                        } else {
+                            actualHeaderValue.concat(";Path=/" + overridenPath + ";");
+                        }
                     }
-                    storeJsessionHeader(session, path.trim(), cookie);
-                } else {
-                    if (cookies.length() > 0)
-                        cookies.append("; ");
-                    cookies.append(cookie);
                 }
+                // a path is already set on the cookie, but we make sure to limit its scope
+                // to the current proxified webapp
+                else {
+                    logger.debug("Current cookie {} has a path set to {}, forcing it to {}", currentCookie.getName(),
+                            currentCookie.getPath(), overridenPath);
+                    actualHeaderValue = actualHeaderValue.replaceAll("Path=[^;$]+", "Path=/" + overridenPath);
+                }
+                finalResponse.addHeader(HeaderNames.SET_COOKIE_ID, actualHeaderValue);
             }
-
-            if (cookies.length() > 0) {
-                cookies.append("; Path= /" + originalPath);
-                finalResponse.addHeader(HeaderNames.SET_COOKIE_ID, cookies.toString());
-            }
-
         }
     }
 
+    /**
+     * Stores the JSESSION hashes in a Map, and saves it to the current user's
+     * session. If the Map does not exist, it is initialized.
+     * 
+     * The map is saved under the key "JSESSIONID" of the session's attributes, and
+     * the cookies are indexed with the path to the proxified webapps (as seen by
+     * the SP, not by the client).
+     *
+     * If a session id for the given path already exists, or is longer than the one
+     * provided as argument, it is removed from the map.
+     *
+     * @param session the current user's session
+     * @param path    the cookie path
+     * @param cookie  the cookie value, as JSESSIONID=session_id
+     */
     private void storeJsessionHeader(HttpSession session, String path, String cookie) {
         Map<String, String> map = (Map<String, String>) session.getAttribute(HeaderNames.JSESSION_ID);
         if (map == null) {
             map = new HashMap<String, String>();
-            session.setAttribute(HeaderNames.JSESSION_ID, map);
         }
-        if (path.length() > 0) {
-            // clean out session IDs with longer path since this should supercede them
+        if (!StringUtils.isEmpty(path)) {
+            // clean out session IDs with longer path since this should supersede them
             for (String key : new HashMap<String, String>(map).keySet()) {
                 if (key.startsWith(path)) {
                     map.remove(key);
                 }
             }
-
         }
         map.put(path, cookie);
+        session.setAttribute(HeaderNames.JSESSION_ID, map);
     }
 
     private boolean defaultIgnores(Header header) {
