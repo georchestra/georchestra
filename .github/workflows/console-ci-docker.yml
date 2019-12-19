@@ -36,7 +36,7 @@ jobs:
       run: ../mvnw --no-transfer-progress -B -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
     - name: run test
       working-directory: console/
-      run: ../mvnw --no-transfer-progress verify -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
+      run: ../mvnw --no-transfer-progress clean verify -Pit -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
     - name: build a docker image
       working-directory: console/
       run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker -DdockerImageName=docker.pkg.github.com/georchestra/georchestra/console:${GITHUB_REF##*/}
