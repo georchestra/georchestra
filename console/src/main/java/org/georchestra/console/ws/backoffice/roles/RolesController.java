@@ -198,7 +198,7 @@ public class RolesController {
         Date today = Calendar.getInstance().getTime();
 
         this.accountDao.findByShadowExpire().stream().forEach(it -> {
-            if (it.getShadowExpire() != null && today.before(it.getShadowExpire())) {
+            if (it.getShadowExpire() != null && today.after(it.getShadowExpire())) {
                 expiredRole.addUser(it.getUid());
             }
             tempRole.addUser(it.getUid());
