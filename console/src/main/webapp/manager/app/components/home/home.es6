@@ -5,16 +5,12 @@ class HomeController {
 
   constructor ($injector) {
     const LOG_LIMIT = 15
-    const EXPIRED = 'EXPIRED'
+    const EXPIRED_ROLE = $injector.get('expiredRole')
 
     this.$injector = $injector
 
     $injector.get('Role').query(roles => {
-      roles.forEach(role => {
-        if (role.cn === EXPIRED) {
-          this.expired = role
-        }
-      })
+      this.expired = roles.find(r => (r.cn = EXPIRED_ROLE))
     })
     this.pendingCount = 0
     $injector.get('User').query(users => {

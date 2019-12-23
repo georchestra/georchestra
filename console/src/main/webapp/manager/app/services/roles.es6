@@ -41,7 +41,11 @@ angular.module('manager')
       'TEMPORARY',
       'ORGADMIN'
     ]
-    return () => readonlyRoles
-  }]).factory('roleAdminFilter', [ 'roleAdminList', (roleAdminList) =>
+    return readonlyRoles
+  }]).factory(
+    'expiredRole', () => 'EXPIRED'
+  ).factory(
+    'temporaryRole', () => 'TEMPORARY'
+  ).factory('roleAdminFilter', [ 'roleAdminList', (roleAdminList) =>
     (role) => roleAdminList().indexOf(role.cn) >= 0
   ])

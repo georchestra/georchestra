@@ -7,7 +7,7 @@ class BrowseController {
   constructor ($injector) {
     this.$injector = $injector
     this.pendingCount = 0
-    const PROTECTED = this.$injector.get('readonlyRoleList')()
+    const PROTECTED = this.$injector.get('readonlyRoleList')
     this.filterRole = (protecteds, role) => protecteds ^ !PROTECTED.includes(role)
 
     // Rebind method for outer use
