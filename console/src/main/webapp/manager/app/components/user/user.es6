@@ -388,8 +388,8 @@ class UserController {
     }
   }
 
-  isProtectedRole (role) {
-    return [ 'ORGADMIN', TMP_ROLE ].includes(role)
+  isUnassignableRole (role) {
+    return this.$injector.get('readonlyRoleList')().includes(role)
   }
 }
 

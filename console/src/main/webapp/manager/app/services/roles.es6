@@ -29,10 +29,19 @@ angular.module('manager')
       'EXTRACTORAPP',
       'USER',
       'PENDING',
+      'EXPIRED',
       'REFERENT',
       'TEMPORARY'
     ]
     return () => adminRoles
+  }]).factory('readonlyRoleList', [ () => {
+    const readonlyRoles = [
+      'PENDING',
+      'EXPIRED',
+      'TEMPORARY',
+      'ORGADMIN'
+    ]
+    return () => readonlyRoles
   }]).factory('roleAdminFilter', [ 'roleAdminList', (roleAdminList) =>
     (role) => roleAdminList().indexOf(role.cn) >= 0
   ])
