@@ -17,7 +17,7 @@
   </div>
 
   <div class="col-md-10">
-    <div class="panel panel-default" ng-class="{'panel-danger': user.user.pending}">
+    <div class="panel panel-default" ng-class="{'panel-danger': user.user.pending, 'panel-warning': user.user.expired}">
 
       <div class="panel-heading text-center" ng-if="user.user.pending">
         <span translate>user.pendingmsg</span>
@@ -30,6 +30,10 @@
             {{::user.user.orgObj.name || user.user.orgObj.shortName}}
           </a>
         </span>
+      </div>
+
+      <div class="panel-heading text-center" ng-if="user.user.expired">
+        <span translate>user.expiredmsg</span> : {{::user.user.shadowExpire | dateFormat: 'LL'}}
       </div>
 
       <div class="panel-body" ng-if="user.tab=='infos'">

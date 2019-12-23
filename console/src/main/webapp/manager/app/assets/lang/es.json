@@ -65,6 +65,7 @@
   "user.privacyPolicyAgreementDate" : "Fecha de aceptación de las condiciones",
   "user.warning"          : "Cuidado, esta acción no se puede deshacer — ",
   "user.pendingmsg"       : "Usuario en espera de confirmación ",
+  "user.expiredmsg"       : "TO BE TRANSLATED",
   "user.confirm"          : "Confirmar",
   "user.orgFirst"         : "Primero confirmar la organización: ",
   "user.hasdeleg"         : "Se asignó una delegación de administración a este usuario",

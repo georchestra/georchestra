@@ -4,6 +4,7 @@ require('services/util')
 require('services/contexts')
 
 const TMP_ROLE = 'TEMPORARY'
+const EXPIRED_ROLE = 'EXPIRED'
 
 class UserController {
   static $inject = [ '$routeParams', '$injector', 'User', 'Role', 'Orgs' ]
@@ -40,7 +41,10 @@ class UserController {
           $injector.get('Orgs').query(orgs => {
             this.orgs = orgs.filter(o => !o.pending)
           })
-          Role.query(roles => { this.allRoles = roles.map(r => r.cn) })
+          this.roles.$promise.then(roles => {
+            this.allRoles = roles.map(r => r.cn)
+          })
+
         })
       }
       if (this.tab === 'messages') {
@@ -83,13 +87,18 @@ class UserController {
 
     // Load role infos for every tab (for confirmation)
     let Role = this.$injector.get('Role')
-    this.roles = Role.query()
-    Role.query(roles => {
+    this.roles = Role.query(roles => {
       this.allroles = roles.map(r => r.cn)
       // get roles informations to get description from template
       this.roleDescriptions = {}
       roles.map(r => {
         this.roleDescriptions[r.cn] = r.description
+        // Check if user is expired
+        if (r.cn === EXPIRED_ROLE) {
+          this.user.$promise.then(user => {
+            user.expired = r.users.indexOf(user.uid) >= 0
+          })
+        }
       })
     })
     this.user.$promise.then(() => {

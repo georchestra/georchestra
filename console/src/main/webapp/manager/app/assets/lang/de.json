@@ -65,6 +65,7 @@
   "user.privacyPolicyAgreementDate" : "Date of agreement to conditions",
   "user.warning"          : "Achtung, diese Aktion kann nicht rückgängig gemacht werden — ",
   "user.pendingmsg"       : "Ausstehende Benutzer ",
+  "user.expiredmsg"       : "TO BE TRANSLATED",
   "user.confirm"          : "Bestätigen",
   "user.orgFirst"         : "Zuerst Organisation bestätigen  : ",
   "user.hasdeleg"         : "This user holds an admin delegation",
