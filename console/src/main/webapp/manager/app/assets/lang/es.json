@@ -196,6 +196,7 @@
   "users.filter_selected" : "Mostrar solo la selección",
   "users.ORGADMIN"        : "Delegados",
   "users.TEMPORARY"       : "Interinos",
+  "users.EXPIRED"         : "TO BE TRANSLATED",
 
   "sel.all"               : "Todos",
   "sel.none"              : "Ningún",

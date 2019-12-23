@@ -197,6 +197,7 @@
   "users.filter_selected" : "View selected only",
   "users.ORGADMIN"        : "Delegates",
   "users.TEMPORARY"       : "Temporary",
+  "users.EXPIRED"         : "Expired",
 
   "sel.all"               : "All",
   "sel.none"              : "None",
