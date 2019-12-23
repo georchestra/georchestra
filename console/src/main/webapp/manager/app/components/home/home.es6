@@ -5,7 +5,7 @@ class HomeController {
 
   constructor ($injector) {
     const LOG_LIMIT = 15
-    const EXPIRED = 'TEMPORARY'
+    const EXPIRED = 'EXPIRED'
 
     this.$injector = $injector
 
