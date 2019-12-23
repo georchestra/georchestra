@@ -116,6 +116,10 @@ angular.module('manager', [
       $httpProvider.defaults.headers.get['Pragma'] = 'no-cache'
       // }}}
     }])
+  .filter('dateFormat', [ '$translate', ($translate) => {
+    moment.locale($translate.use())
+    return date => moment(date).format('LL')
+  }])
 
 require('components/analytics/analytics')
 require('components/orgs/orgs')
