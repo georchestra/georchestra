@@ -3,6 +3,8 @@ require('components/user/user.tpl')
 require('services/util')
 require('services/contexts')
 
+const TMP_ROLE = 'TEMPORARY'
+
 class UserController {
   static $inject = [ '$routeParams', '$injector', 'User', 'Role', 'Orgs' ]
 
@@ -78,7 +80,6 @@ class UserController {
   }
 
   bindRoles () {
-    const TMP_ROLE = 'TEMPORARY'
 
     // Load role infos for every tab (for confirmation)
     let Role = this.$injector.get('Role')
@@ -307,7 +308,6 @@ class UserController {
   }
 
   activate ($scope) {
-    const TMP_ROLE = 'TEMPORARY'
     let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
     let flash = this.$injector.get('Flash')
 
@@ -380,7 +380,7 @@ class UserController {
   }
 
   isProtectedRole (role) {
-    return [ 'ORGADMIN', 'TEMPORARY' ].includes(role)
+    return [ 'ORGADMIN', TMP_ROLE ].includes(role)
   }
 }
 
