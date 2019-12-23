@@ -85,7 +85,7 @@
       <div class="panel-body" ng-if="user.tab=='delegations' && profile === 'SUPERUSER' && !isSuperUser(user.user)">
         <h4 translate>user.manages_roles</h4>
         <div class="form-group">
-          <select class="form-control" multiple chosen ng-model="user.delegation.roles" ng-options="role for role in user.allRoles"
+          <select class="form-control" multiple chosen ng-model="user.delegation.roles" ng-options="role for role in user.allroles"
           data-placeholder="Select roles">
           </select>
         </div>

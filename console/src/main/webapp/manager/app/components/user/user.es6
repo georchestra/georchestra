@@ -41,10 +41,6 @@ class UserController {
           $injector.get('Orgs').query(orgs => {
             this.orgs = orgs.filter(o => !o.pending)
           })
-          this.roles.$promise.then(roles => {
-            this.allRoles = roles.map(r => r.cn)
-          })
-
         })
       }
       if (this.tab === 'messages') {
