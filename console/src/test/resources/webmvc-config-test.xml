@@ -72,11 +72,15 @@
   </bean>
 
   <!-- LDAP connection -->
-  <bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
+  <bean id="singleContextSource" class="org.springframework.ldap.core.support.LdapContextSource">
     <property name="url" value="${ldapScheme}://${ldapHost}:${ldapPort}"/>
     <property name="base" value="${ldapBaseDn}"/>
     <property name="userDn" value="${ldapAdminDn}"/>
     <property name="password" value="${ldapAdminPassword}"/>
+  </bean>
+
+  <bean id="contextSource" class="org.springframework.ldap.pool.factory.PoolingContextSource" destroy-method="destroy">
+    <property name="contextSource" ref="singleContextSource"/>
   </bean>
 
   <bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate">
