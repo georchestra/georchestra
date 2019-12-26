@@ -23,17 +23,18 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
-import org.geowebcache.config.Configuration;
+import org.geowebcache.config.ServerConfiguration;
 import org.geowebcache.demo.Demo;
 import org.geowebcache.grid.GridSetBroker;
 import org.geowebcache.layer.TileLayerDispatcher;
 import org.geowebcache.stats.RuntimeStats;
+import org.geowebcache.storage.BlobStoreAggregator;
 import org.geowebcache.storage.StorageBroker;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -82,20 +83,15 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher {
 +"    <!-- end of geOrchestra header -->";
     /**
      * Should be invoked through Spring.
-     *
-     * @param tileLayerDispatcher
-     * @param gridSetBroker
-     * @param storageBroker
-     * @param mainConfiguration
-     * @param runtimeStats
      */
     public GeorchestraGeoWebCacheDispatcher(
             TileLayerDispatcher tileLayerDispatcher,
             GridSetBroker gridSetBroker,
             StorageBroker storageBroker,
-            Configuration mainConfiguration,
+            BlobStoreAggregator blobStoreAggregator,
+            ServerConfiguration mainConfiguration,
             RuntimeStats runtimeStats) throws IOException {
-        super(tileLayerDispatcher, gridSetBroker, storageBroker, mainConfiguration, runtimeStats);
+        super(tileLayerDispatcher, gridSetBroker, storageBroker, blobStoreAggregator, mainConfiguration, runtimeStats);
         this.tileLayerDispatcher = tileLayerDispatcher;
         this.gridSetBroker = gridSetBroker;
     }
@@ -160,6 +156,16 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher {
                         @Override
                         public void write(byte[] b, int off, int len) throws IOException {
                             out.write(b, off, len);
+                        }
+
+                        @Override
+                        public boolean isReady() {
+                            return true;
+                        }
+
+                        @Override
+                        public void setWriteListener(WriteListener writeListener) {
+                            throw new UnsupportedOperationException("setWriteListener not implemented, call not expected");
                         }
                     };
                 }

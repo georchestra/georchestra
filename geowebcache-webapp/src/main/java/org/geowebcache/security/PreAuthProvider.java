@@ -19,9 +19,9 @@
 
 package org.geowebcache.security;
 
-import org.acegisecurity.Authentication;
-import org.acegisecurity.AuthenticationException;
-import org.acegisecurity.providers.AuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 
 /**
  * A provider that accepts {@link org.geowebcache.security.PreAuthToken} authentication objects.
@@ -40,7 +40,7 @@ public class PreAuthProvider implements AuthenticationProvider {
     }
 
     @Override
-    public boolean supports(Class authentication) {
+    public boolean supports(Class<?> authentication) {
         return PreAuthToken.class.isAssignableFrom(authentication);
     }
 }

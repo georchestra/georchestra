@@ -19,7 +19,7 @@
 
 package org.geowebcache.util;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * A simple URLMangler that overrides values provided by the servlet engine,
@@ -30,17 +30,18 @@ import org.apache.commons.lang.StringUtils;
  */
 public class GeorchestraURLMangler implements URLMangler {
 
-	private final String baseURL;
-	private final String contextPath;
+    private final String baseURL;
+    private final String contextPath;
 
-	public GeorchestraURLMangler(String baseUrl, String contextPath) {
-		this.baseURL = baseUrl;
-		this.contextPath = contextPath;
-	}
+    public GeorchestraURLMangler(String baseUrl, String contextPath) {
+        this.baseURL = baseUrl;
+        this.contextPath = contextPath;
+    }
 
-	public String buildURL(String baseURL, String contextPath, String path) {
+    @Override
+    public String buildURL(String baseURL, String contextPath, String path) {
         return StringUtils.strip(this.baseURL, "/") + "/" + StringUtils.strip(this.contextPath, "/") + "/"
                 + StringUtils.stripStart(path, "/");
-	}
+    }
 
 }

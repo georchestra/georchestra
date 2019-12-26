@@ -1,7 +1,15 @@
 package org.geowebcache.security;
 
-import org.acegisecurity.Authentication;
-import org.acegisecurity.context.SecurityContextHolder;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.servlet.FilterChain;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,15 +17,11 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import javax.servlet.FilterChain;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author Jesse on 4/24/2014.
@@ -61,9 +65,10 @@ public class PreAuthFilterTest {
         PreAuthToken preAuthToken = (PreAuthToken) auth;
 
         assertEquals(username, preAuthToken.getPrincipal());
-        assertEquals(2, preAuthToken.getAuthorities().length);
-        assertEquals(roleAdmin, preAuthToken.getAuthorities()[0].getAuthority());
-        assertEquals(roleOther, preAuthToken.getAuthorities()[1].getAuthority());
+        assertEquals(2, preAuthToken.getAuthorities().size());
+        List<GrantedAuthority> authorities = preAuthToken.getAuthorities().stream().collect(Collectors.toList());
+        assertEquals(roleAdmin, authorities.get(0).getAuthority());
+        assertEquals(roleOther, authorities.get(1).getAuthority());
 
     }
 

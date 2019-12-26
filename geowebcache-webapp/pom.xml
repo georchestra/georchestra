@@ -13,15 +13,17 @@
     <gwc.unpack.dir>${project.build.directory}/unpacked-webapp</gwc.unpack.dir>
     <geowebcache.war.excludes/>
     <maven.test.skip>false</maven.test.skip>
-    <geowebcache.version>1.8.1</geowebcache.version>
-    <gt.version>14.1</gt.version><!-- must match the version used by gwc@geowebcache.version -->
+    <spring.version>5.1.1.RELEASE</spring.version>
+    <spring-security.version>5.1.1.RELEASE</spring-security.version>
+    <gwc.version>1.16.1</gwc.version>
+    <gt.version>22.1</gt.version><!-- must match the version used by gwc@gwc.version -->
     <context.name>geowebcache</context.name>
   </properties>
   <dependencies>
     <dependency>
       <groupId>org.geowebcache</groupId>
       <artifactId>gwc-web</artifactId>
-      <version>${geowebcache.version}</version>
+      <version>${gwc.version}</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
@@ -45,7 +47,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
-      <version>3.1.1.RELEASE</version>
+      <version>${spring.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -96,7 +98,7 @@
                 <artifactItem>
                   <groupId>org.geowebcache</groupId>
                   <artifactId>gwc-web</artifactId>
-                  <version>${geowebcache.version}</version>
+                  <version>${gwc.version}</version>
                   <type>jar</type>
                 </artifactItem>
               </artifactItems>
