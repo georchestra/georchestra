@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.georchestra</groupId>
-    <artifactId>root</artifactId>
-    <version>19.12-SNAPSHOT</version>
+    <groupId>org.geowebcache</groupId>
+    <artifactId>geowebcache</artifactId>
+    <version>1.16.1</version>
   </parent>
+  <groupId>org.georchestra</groupId>
   <artifactId>geowebcache-webapp</artifactId>
+  <version>19.12-SNAPSHOT</version>
+
   <packaging>jar</packaging>
   <name>geOrchestra GeoWebCache Web Application</name>
   <properties>
     <gwc.unpack.dir>${project.build.directory}/unpacked-webapp</gwc.unpack.dir>
-    <geowebcache.war.excludes/>
+    <geowebcache.war.excludes />
     <maven.test.skip>false</maven.test.skip>
     <spring.version>5.1.1.RELEASE</spring.version>
     <spring-security.version>5.1.1.RELEASE</spring-security.version>
@@ -19,6 +23,18 @@
     <gt.version>22.1</gt.version><!-- must match the version used by gwc@gwc.version -->
     <context.name>geowebcache</context.name>
   </properties>
+  
+  <repositories>
+    <repository>
+      <id>opengeo</id>
+      <name>OpenGeo Maven Repository</name>
+      <url>http://repo.boundlessgeo.com/main/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
   <dependencies>
     <dependency>
       <groupId>org.geowebcache</groupId>
@@ -32,33 +48,31 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.11</version>
-      <scope>test</scope>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>3.1.0</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-all</artifactId>
-      <version>1.9.0</version>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
-      <version>${spring.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>apache-log4j-extras</artifactId>
-      <version>1.1</version>
-      <type>jar</type>
-      <scope>runtime</scope>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>1.10.19</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
+
   <build>
-    <finalName>geowebcache-${server}</finalName>
+    <finalName>geowebcache-generic</finalName>
     <testResources>
       <testResource>
         <directory>src/test/resources</directory>
@@ -190,7 +204,7 @@
                         <exclude name="geowebcache/**" />
                       </fileset>
                     </delete>
-                 </target>
+                  </target>
                 </configuration>
                 <goals>
                   <goal>run</goal>
@@ -203,15 +217,17 @@
                   <target>
                     <chmod perm="ugo+x">
                       <fileset dir="${project.build.directory}/deb">
-                        <include name="**/bin/**"/>
-                        <include name="**/sbin/**"/>
-                        <include name="DEBIAN/post*"/>
-                        <include name="DEBIAN/pre*"/>
+                        <include name="**/bin/**" />
+                        <include name="**/sbin/**" />
+                        <include name="DEBIAN/post*" />
+                        <include name="DEBIAN/pre*" />
                       </fileset>
                     </chmod>
                   </target>
                 </configuration>
-                <goals><goal>run</goal></goals>
+                <goals>
+                  <goal>run</goal>
+                </goals>
               </execution>
             </executions>
           </plugin>
@@ -272,7 +288,7 @@
                         <exclude name="geowebcache/**" />
                       </fileset>
                     </delete>
-                 </target>
+                  </target>
                 </configuration>
                 <id>remove-useless-directories</id>
                 <phase>package</phase>
@@ -375,10 +391,7 @@
                   <include>geowebcache/**</include>
                 </resource>
               </resources>
-              <!-- This will require to set up the docker-hub credentials correctly
-                   into your ~/.m2/settings.xml, see:
-                   https://github.com/spotify/docker-maven-plugin#authenticating-with-private-registries
-              -->
+              <!-- This will require to set up the docker-hub credentials correctly into your ~/.m2/settings.xml, see: https://github.com/spotify/docker-maven-plugin#authenticating-with-private-registries -->
               <serverId>docker-hub</serverId>
               <registryUrl>https://index.docker.io/v1/</registryUrl>
             </configuration>
