@@ -27,7 +27,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author Jesse on 4/24/2014.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:georchestra-acegi-config.xml" })
+@ContextConfiguration({
+    "file*:/webapp/WEB-INF/web.xml",
+    "file*:/webapp/WEB-INF/geowebcache-servlet.xml"
+})
 public class PreAuthFilterTest {
 
     @Autowired

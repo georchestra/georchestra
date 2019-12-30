@@ -1,66 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:context="http://www.springframework.org/schema/context"
-    xsi:schemaLocation="
-http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+    http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
+
   <description>
    Bean configuration file for the gwc-web module
   </description>
-
-  <context:annotation-config/>
 
   <import resource="geowebcache-core-context.xml"/>
   <import resource="geowebcache-georss-context.xml"/>
   <import resource="geowebcache-gmaps-context.xml"/>
   <import resource="geowebcache-kmlservice-context.xml"/>
+  <import resource="geowebcache-wmtsservice-context.xml"/>
   <import resource="geowebcache-rest-context.xml"/>
   <import resource="geowebcache-tmsservice-context.xml"/>
   <import resource="geowebcache-virtualearth-context.xml"/>
   <import resource="geowebcache-wmsservice-context.xml"/>
-  <import resource="geowebcache-wmtsservice-context.xml"/>
+  <import resource="geowebcache-s3storage-context.xml"/>
+  <import resource="geowebcache-sqlite-context.xml"/>
 
   <import resource="geowebcache-diskquota-context.xml"/>
   <import resource="geowebcache-arcgiscache-context.xml"/>
+  <import resource="geowebcache-distributed.xml"/>
+  <import resource="geowebcache-security.xml"/>
 
-  <bean id="gwcUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
-    <property name="alwaysUseFullPath" value="true"/>
-    <property name="mappings">
-      <props>
-        <prop key="/service/**">geowebcacheDispatcher</prop>
-        <prop key="/demo/**">geowebcacheDispatcher</prop>
-        <prop key="/proxy/**">gwcProxyDispatcher</prop>
-        <prop key="/home">geowebcacheDispatcher</prop>
-      </props>
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="location">
+      <value>classpath:application.properties</value>
     </property>
   </bean>
-    <!-- controller for handling all incoming requests -->
-    <bean id="geowebcacheDispatcher" class="org.geowebcache.GeorchestraGeoWebCacheDispatcher" destroy-method="destroy" init-method="init">
-        <constructor-arg ref="gwcTLDispatcher"/>
-        <constructor-arg ref="gwcGridSetBroker"/>
-        <constructor-arg ref="gwcStorageBroker"/>
-        <constructor-arg ref="gwcXmlConfigGeorchestra"/>
-        <constructor-arg ref="gwcRuntimeStats"/>
-        <property name="defaultStorageFinder" ref="gwcDefaultStorageFinder"/>
-        <property name="instanceName" value="${instanceName}"/>
-        <property name="headerUrl" value="${headerUrl}"/>
-        <property name="headerHeight" value="${headerHeight}"/>
-    </bean>
 
-    <!-- The location of a static configuration file for GeoWebCache. -->
-    <bean id="gwcXmlConfigGeorchestra" class="org.geowebcache.config.XMLConfiguration">
-        <constructor-arg ref="gwcAppCtx" />
-        <constructor-arg value="${configurationDir:/tmp/gwc_config}" />
-    </bean>
-
-    <bean id="gwcURLMangler" class="org.geowebcache.util.GeorchestraURLMangler">
-        <constructor-arg value="${scheme}://${domainName}" />
-        <constructor-arg value="${contextPath:/geowebcache}" />
-    </bean>
-
-    <context:property-placeholder location="file:${georchestra.datadir}/default.properties, file:${georchestra.datadir}/geowebcache/geowebcache.properties"
-                                  ignore-resource-not-found="true"
-                                  ignore-unresolvable="true" />
-
+  <context:component-scan base-package="org.geowebcache.controller"/>
 </beans>
