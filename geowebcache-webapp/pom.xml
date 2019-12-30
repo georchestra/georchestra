@@ -72,29 +72,11 @@
   </dependencies>
 
   <build>
+  <!-- 
     <finalName>geowebcache-generic</finalName>
-    <testResources>
-      <testResource>
-        <directory>src/test/resources</directory>
-      </testResource>
-      <testResource>
-        <directory>src/main/webapp/WEB-INF</directory>
-      </testResource>
-    </testResources>
+   -->
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-clean-plugin</artifactId>
-        <version>3.1.0</version>
-        <executions>
-          <execution>
-            <phase>validate</phase>
-            <goals>
-              <goal>clean</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
+      <!-- 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
@@ -120,8 +102,8 @@
           </execution>
         </executions>
       </plugin>
+       -->
       <plugin>
-        <inherited>true</inherited>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
