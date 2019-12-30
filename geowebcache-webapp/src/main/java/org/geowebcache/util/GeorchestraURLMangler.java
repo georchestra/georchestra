@@ -22,9 +22,8 @@ package org.geowebcache.util;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * A simple URLMangler that overrides values provided by the servlet engine,
- * only keeping the most significant parts of the URL (after the hostname and
- * the webapp name).
+ * A simple URLMangler that overrides values provided by the servlet engine, only keeping the most
+ * significant parts of the URL (after the hostname and the webapp name).
  *
  * @author pmauduit
  */
@@ -40,8 +39,10 @@ public class GeorchestraURLMangler implements URLMangler {
 
     @Override
     public String buildURL(String baseURL, String contextPath, String path) {
-        return StringUtils.strip(this.baseURL, "/") + "/" + StringUtils.strip(this.contextPath, "/") + "/"
+        return StringUtils.strip(this.baseURL, "/")
+                + "/"
+                + StringUtils.strip(this.contextPath, "/")
+                + "/"
                 + StringUtils.stripStart(path, "/");
     }
-
 }

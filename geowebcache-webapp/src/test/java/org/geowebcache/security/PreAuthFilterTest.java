@@ -7,9 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
 import javax.servlet.FilterChain;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,9 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-/**
- * @author Jesse on 4/24/2014.
- */
+/** @author Jesse on 4/24/2014. */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({
     "file*:/webapp/WEB-INF/web.xml",
@@ -33,13 +29,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 })
 public class PreAuthFilterTest {
 
-    @Autowired
-    private PreAuthFilter preAuthFilter;
+    @Autowired private PreAuthFilter preAuthFilter;
 
     @BeforeClass
-    public static void before() {
+    public static void before() {}
 
-    }
     @Test
     public void testDoFilter() throws Exception {
         SecurityContextHolder.clearContext();
@@ -69,13 +63,9 @@ public class PreAuthFilterTest {
 
         assertEquals(username, preAuthToken.getPrincipal());
         assertEquals(2, preAuthToken.getAuthorities().size());
-        List<GrantedAuthority> authorities = preAuthToken.getAuthorities().stream().collect(Collectors.toList());
+        List<GrantedAuthority> authorities =
+                preAuthToken.getAuthorities().stream().collect(Collectors.toList());
         assertEquals(roleAdmin, authorities.get(0).getAuthority());
         assertEquals(roleOther, authorities.get(1).getAuthority());
-
     }
-
-
-
-
 }

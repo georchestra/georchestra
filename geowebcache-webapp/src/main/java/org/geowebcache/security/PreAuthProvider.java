@@ -31,7 +31,8 @@ import org.springframework.security.core.AuthenticationException;
 public class PreAuthProvider implements AuthenticationProvider {
 
     @Override
-    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+    public Authentication authenticate(Authentication authentication)
+            throws AuthenticationException {
         if (authentication instanceof PreAuthToken) {
             PreAuthToken authToken = (PreAuthToken) authentication;
             return authToken;
