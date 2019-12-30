@@ -24,7 +24,6 @@
       <groupId>org.geowebcache</groupId>
       <artifactId>gwc-web</artifactId>
       <version>${gwc.version}</version>
-      <scope>provided</scope>
       <exclusions>
         <exclusion>
           <groupId>log4j</groupId>
