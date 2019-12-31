@@ -23,9 +23,9 @@
     <gt.version>22.1</gt.version><!-- must match the version used by gwc@gwc.version -->
     <context.name>geowebcache</context.name>
     <packageDatadirScmVersion>master</packageDatadirScmVersion>
-    
+
   </properties>
-  
+
   <repositories>
     <repository>
       <id>opengeo</id>
@@ -42,6 +42,13 @@
       <groupId>org.georchestra</groupId>
       <artifactId>georchestra-commons</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>apache-log4j-extras</artifactId>
+      <version>1.2.17</version>
+      <type>jar</type>
+      <scope>runtime</scope>
     </dependency>
     
     <dependency>
@@ -154,37 +161,8 @@
   </dependencies>
 
   <build>
-  <!-- 
-    <finalName>geowebcache-generic</finalName>
-   -->
+    <!-- <finalName>geowebcache-generic</finalName> -->
     <plugins>
-      <!-- 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>unpack-geowebcache-war</id>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-            <phase>generate-sources</phase>
-            <configuration>
-              <excludes>**/acegi-config.xml,**/geowebcache-servlet.xml,**/lib/log4j-*.jar,**/log4j.*,**/web.xml,${geowebcache.war.excludes}</excludes>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.geowebcache</groupId>
-                  <artifactId>gwc-web</artifactId>
-                  <version>${gwc.version}</version>
-                  <type>jar</type>
-                </artifactItem>
-              </artifactItems>
-              <outputDirectory>${gwc.unpack.dir}</outputDirectory>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-       -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
