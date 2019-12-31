@@ -447,7 +447,7 @@
                 <resource>
                   <targetPath>/var/lib/jetty/webapps</targetPath>
                   <directory>${project.build.directory}</directory>
-                  <include>geowebcache.war</include>
+                  <include>geowebcache-generic.war</include>
                 </resource>
                 <resource>
                   <targetPath>/etc/georchestra</targetPath>

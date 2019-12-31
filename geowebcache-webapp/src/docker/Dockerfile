@@ -10,7 +10,7 @@ COPY --chown=jetty:jetty . /
 USER root
 
 RUN mkdir /mnt/geowebcache_tiles /mnt/geowebcache_datadir &&                              \
-    unzip -d /var/lib/jetty/webapps/geowebcache /var/lib/jetty/webapps/geowebcache.war && \
+    unzip -d /var/lib/jetty/webapps/geowebcache /var/lib/jetty/webapps/geowebcache*.war && \
     rm -f /var/lib/jetty/webapps/geowebcache.war &&                                       \
     chown jetty:jetty /etc/georchestra /mnt/geowebcache_tiles /mnt/geowebcache_datadir
 
