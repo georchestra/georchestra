@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
-<beans>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+    http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
+
   <description>
    Bean configuration file for the gwc-core module
   </description>
@@ -28,50 +34,6 @@
       </description>
     </property>
   </bean>
-  
-  <!-- If you like to automatically configure GWC from a WMS Getcapabilities document,
-       change the values below. The last constructor-arg lets you specify parameters 
-       that are appended to every WMS request to the backed, for example: 
-       "format_options=regionate_by:auto&amp;bgcolor=0x112233" 
-       -->
-  <!--bean id="gwcWMSConfig" class="org.geowebcache.config.wms.GetCapabilitiesConfiguration">
-  	<constructor-arg ref="gwcGridSetBroker">
-    </constructor-arg>
-    <constructor-arg value="http://demo.mapserver.org/cgi-bin/mapserv?map=/osgeo/mapserver/msautotest/world/world.map&amp;SERVICE=WMS&amp;VERSION=1.1.1&amp;REQUEST=GetCapabilities">
-      <description>The URL to the WMS GetCapabilities document, notice &amp; , port is normally 8080</description>
-    </constructor-arg>
-    <constructor-arg value="image/png">
-      <description>The formats to support for all layers read for the above document</description>
-    </constructor-arg>
-    <constructor-arg value="3x3">
-      <description>Metatiling factors, 3x3 is usually a good compromise for vector data</description>
-    </constructor-arg>
-    <constructor-arg value="map=/osgeo/mapserver/msautotest/world/world.map">
-      <description>
-          Vendor parameters, these are appended to every request sent to the backend.
-          If you use MapServer you probably want to set this to "map=name". Leave the value attribute empty if you don't need
-          to add any vendor specific parameter.
-      </description>
-    </constructor-arg>
-    <constructor-arg>
-      <description>
-        Cached parameters, requests will be cached separately based on the value of these filters.
-        For each cached vender parameter add an entry line between the map tags.
-        The entry's "key" is the parameter key, "value" is the default value which will be used when the parameter isn't included in a request.
-      </description>
-      <map>
-        <entry key="" value="" />
-      </map>
-    </constructor-arg>
-    <constructor-arg value="false">
-      <description>Whether to allow cached=false to specificed for certain requests</description>
-    </constructor-arg>
-    
-    <property name="primaryConfig" ref="gwcXmlConfig">
-      <description>The configuration object with the global defaults to use for new layers</description>
-    </property>
-    
-  </bean-->
   
   <!-- For each configuration bean above, add them below to activate -->
   <bean id="gwcTLDispatcher" class="org.geowebcache.layer.TileLayerDispatcher">
@@ -206,7 +168,30 @@
     <constructor-arg ref="gwcDefaultStorageFinder"/>
   </bean>
 
-  <bean id="gwcURLMangler" class="org.geowebcache.util.NullURLMangler" />
+  <!--<bean id="gwcURLMangler" class="org.geowebcache.util.NullURLMangler" />-->
+  <bean id="gwcURLMangler" class="org.geowebcache.util.GeorchestraURLMangler">
+        <constructor-arg value="${publicUrl}" />
+        <constructor-arg value="${contextPath}" />
+  </bean>
+
+  <!-- geOrchestra Commons -->
+  <bean id="georchestraConfiguration" class="org.georchestra.commons.configuration.GeorchestraConfiguration">
+    <constructor-arg value="geowebcache" />
+  </bean>
+
+  <context:property-placeholder location="classpath:gwc.properties"
+                                ignore-resource-not-found="true"
+                                ignore-unresolvable="true"
+                                order="2" />
+  <context:property-placeholder location="file:${georchestra.datadir}/default.properties"
+                                ignore-resource-not-found="true"
+                                ignore-unresolvable="true"
+                                order="1" />
+  <context:property-placeholder location="file:${georchestra.datadir}/geowebcache/geowebcache.properties"
+                                ignore-resource-not-found="true"
+                                ignore-unresolvable="true"
+                                order="0" />
+  
   
   <bean id="gwcSecurityDispatcher" class="org.geowebcache.filter.security.SecurityDispatcher" />
   

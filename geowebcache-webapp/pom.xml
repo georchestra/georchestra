@@ -37,6 +37,12 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.georchestra</groupId>
+      <artifactId>georchestra-commons</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    
+    <dependency>
       <groupId>org.geowebcache</groupId>
       <artifactId>gwc-core</artifactId>
       <version>${project.parent.version}</version>
