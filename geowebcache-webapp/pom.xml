@@ -22,6 +22,8 @@
     <gwc.version>1.16.1</gwc.version>
     <gt.version>22.1</gt.version><!-- must match the version used by gwc@gwc.version -->
     <context.name>geowebcache</context.name>
+    <packageDatadirScmVersion>master</packageDatadirScmVersion>
+    
   </properties>
   
   <repositories>
@@ -192,7 +194,7 @@
         </configuration>
         <executions>
           <execution>
-            <phase>install</phase>
+            <phase>package</phase>
             <goals>
               <goal>war</goal>
             </goals>
