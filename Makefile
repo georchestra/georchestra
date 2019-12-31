@@ -34,6 +34,9 @@ docker-build-geoserver-geofence: docker-pull-jetty
 	cd webapp; \
 	mvn clean install docker:build -DdockerImageTags=${BTAG} -Pdocker,geofence,${GEOSERVER_EXTENSION_PROFILES} -DskipTests
 
+docker-build-geowebcache: docker-pull-jetty
+	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl geowebcache-webapp
+
 docker-build-proxy: build-deps docker-pull-jetty
 	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl security-proxy
 
@@ -49,7 +52,7 @@ docker-build-analytics: build-deps docker-pull-jetty
 docker-build-mapfishapp: build-deps docker-pull-jetty
 	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl mapfishapp
 
-docker-build-georchestra: build-deps docker-pull-jetty docker-build-database docker-build-ldap docker-build-geoserver docker-build-gn3
+docker-build-georchestra: build-deps docker-pull-jetty docker-build-database docker-build-ldap docker-build-geoserver docker-build-geowebcache docker-build-gn3
 	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl extractorapp,cas-server-webapp,security-proxy,mapfishapp,header,console,analytics,geowebcache-webapp,atlas
 
 docker-build-smtp:
