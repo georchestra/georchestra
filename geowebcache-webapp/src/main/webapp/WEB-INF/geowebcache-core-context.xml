@@ -11,6 +11,22 @@
    Bean configuration file for the gwc-core module
   </description>
 
+
+  <!-- geOrchestra Commons -->
+  <bean id="georchestraConfiguration" class="org.georchestra.commons.configuration.GeorchestraConfiguration">
+    <constructor-arg value="geowebcache" />
+  </bean>
+
+  <context:property-placeholder location="file:${georchestra.datadir}/default.properties"
+                                ignore-resource-not-found="true"
+                                ignore-unresolvable="true"
+                                order="1" />
+  <context:property-placeholder location="file:${georchestra.datadir}/geowebcache/geowebcache.properties"
+                                ignore-resource-not-found="true"
+                                ignore-unresolvable="true"
+                                order="0" />
+  
+  
   <bean id="geoWebCacheExtensions" class="org.geowebcache.GeoWebCacheExtensions"/>
   
   <bean id="geoWebCacheEnvironment" class="org.geowebcache.GeoWebCacheEnvironment" depends-on="geoWebCacheExtensions"/>
@@ -134,6 +150,9 @@
     <constructor-arg ref="gwcRuntimeStats"/>
     <property name="defaultStorageFinder" ref="gwcDefaultStorageFinder"/>
     <property name="securityDispatcher" ref="gwcSecurityDispatcher"/>
+    <property name="instanceName" value="${instanceName}"/>
+    <property name="headerUrl" value="${headerUrl}"/>
+    <property name="headerHeight" value="${headerHeight}"/>
   </bean>
 	
   <!-- Thread pool for seeding -->
@@ -170,29 +189,10 @@
 
   <!--<bean id="gwcURLMangler" class="org.geowebcache.util.NullURLMangler" />-->
   <bean id="gwcURLMangler" class="org.geowebcache.util.GeorchestraURLMangler">
-        <constructor-arg value="${publicUrl}" />
-        <constructor-arg value="${contextPath}" />
+        <constructor-arg value="${publicUrl:${scheme}://${domainName}}" />
+        <constructor-arg value="${contextPath:/geowebcache}" />
   </bean>
 
-  <!-- geOrchestra Commons -->
-  <bean id="georchestraConfiguration" class="org.georchestra.commons.configuration.GeorchestraConfiguration">
-    <constructor-arg value="geowebcache" />
-  </bean>
-
-  <context:property-placeholder location="classpath:gwc.properties"
-                                ignore-resource-not-found="true"
-                                ignore-unresolvable="true"
-                                order="2" />
-  <context:property-placeholder location="file:${georchestra.datadir}/default.properties"
-                                ignore-resource-not-found="true"
-                                ignore-unresolvable="true"
-                                order="1" />
-  <context:property-placeholder location="file:${georchestra.datadir}/geowebcache/geowebcache.properties"
-                                ignore-resource-not-found="true"
-                                ignore-unresolvable="true"
-                                order="0" />
-  
-  
   <bean id="gwcSecurityDispatcher" class="org.geowebcache.filter.security.SecurityDispatcher" />
   
   <bean id="cacheConfiguration" class="org.geowebcache.storage.blobstore.memory.CacheConfiguration">

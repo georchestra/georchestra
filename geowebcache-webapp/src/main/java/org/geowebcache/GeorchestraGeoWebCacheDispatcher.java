@@ -21,6 +21,7 @@ package org.geowebcache;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Objects;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletRequest;
@@ -33,10 +34,12 @@ import org.geowebcache.layer.TileLayerDispatcher;
 import org.geowebcache.stats.RuntimeStats;
 import org.geowebcache.storage.BlobStoreAggregator;
 import org.geowebcache.storage.StorageBroker;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.servlet.ModelAndView;
 
 /** @author Jesse on 4/25/2014. */
-public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher {
+public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher
+        implements InitializingBean {
 
     private final TileLayerDispatcher tileLayerDispatcher;
     private final GridSetBroker gridSetBroker;
@@ -44,18 +47,6 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher {
     private String instanceName;
     private String headerUrl;
     private String headerHeight;
-
-    public void setInstanceName(String instanceName) {
-        this.instanceName = instanceName;
-    }
-
-    public void setHeaderUrl(String headerUrl) {
-        this.headerUrl = headerUrl;
-    }
-
-    public void setHeaderHeight(String headerHeight) {
-        this.headerHeight = headerHeight;
-    }
 
     private String georHeaderInclude =
             "<html>"
@@ -78,6 +69,7 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher {
                     + "      <iframe src=\"@headerUrl@?active=geowebcache\" style=\"width:100%;height:@headerHeight@px;border:none;overflow:hidden;\" scrolling=\"no\" frameborder=\"0\"></iframe>"
                     + "    </div>"
                     + "    <!-- end of geOrchestra header -->";
+
     /** Should be invoked through Spring. */
     public GeorchestraGeoWebCacheDispatcher(
             TileLayerDispatcher tileLayerDispatcher,
@@ -98,7 +90,23 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher {
         this.gridSetBroker = gridSetBroker;
     }
 
-    protected void init() throws IOException {
+    public void setInstanceName(String instanceName) {
+        this.instanceName = instanceName;
+    }
+
+    public void setHeaderUrl(String headerUrl) {
+        this.headerUrl = headerUrl;
+    }
+
+    public void setHeaderHeight(String headerHeight) {
+        this.headerHeight = headerHeight;
+    }
+
+    public void afterPropertiesSet() throws IOException {
+        Objects.requireNonNull(this.instanceName, "property 'instanceName' not initialized");
+        Objects.requireNonNull(this.headerUrl, "property 'headerUrl' not initialized");
+        Objects.requireNonNull(this.headerHeight, "property 'headerHeight' not initialized");
+
         georHeaderInclude = georHeaderInclude.replace("@instanceName@", this.instanceName);
         georHeaderInclude = georHeaderInclude.replace("@headerHeight@", this.headerHeight);
         georHeaderInclude = georHeaderInclude.replace("@headerUrl@", this.headerUrl);
