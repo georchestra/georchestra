@@ -37,7 +37,7 @@
           ng-init="model=org.org;promise=org.org.$promise;required=org.required;orgTypeValues=org.orgTypeValues"></div>
         <hr>
         <div class="pull-right">
-          <button ng-click="org.save()" class="btn btn-primary" translate>org.save</button>
+          <button ng-click="org.save()" class="btn btn-primary" translate ng-disabled="orgForm.$invalid">org.save</button>
         </div>
       </div>
 
