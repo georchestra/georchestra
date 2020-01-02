@@ -97,4 +97,13 @@ class OrgController {
   }
 }
 
-angular.module('manager').controller('OrgController', OrgController)
+angular
+  .module('manager')
+  .controller('OrgController', OrgController)
+  .directive('shortname', () => ({
+    require: 'ngModel',
+    restrict: 'A',
+    link: (scope, elm, attrs, ctrl) => {
+      ctrl.$validators.shortname = name => name && name.match(/^\w*$/)
+    }
+  }))
