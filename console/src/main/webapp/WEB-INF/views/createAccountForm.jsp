@@ -103,6 +103,10 @@
                     <t:input path="orgShortName" required="${orgShortNameRequired}">
                         <jsp:attribute name="label"><s:message code="org.creation.shortLabel"/></jsp:attribute>
                     </t:input>
+                    <script>
+                      document.querySelector('#orgShortName').setAttribute('pattern', '^\\w*$')
+                      document.querySelector('#orgShortName').setAttribute('title', '<s:message code="org.shortNameFormat"/>')
+                    </script>
 
                     <t:textarea path="orgAddress" required="${orgAddressRequired}">
                         <jsp:attribute name="label"><s:message code="org.creation.address"/></jsp:attribute>
@@ -145,6 +149,10 @@
                       .preview {
                         max-width: 100%;
                         max-height: 300px;
+                      }
+                      input:focus:invalid,
+                      input:invalid {
+                        border-color: red;
                       }
                     </style>
                     <script src="/console/manager/public/libraries.js"></script>

@@ -2,6 +2,7 @@ require('components/imageinput/imageinput.tpl')
 
 class ImageinputController {
   static $inject = [ '$element', '$scope' ]
+
   constructor ($element, $scope) {
     this.$element = $element
     this.$scope = $scope
@@ -21,7 +22,7 @@ class ImageinputController {
     })
     // Initial value
     const setValue = () => (this.value = this.model ? this.model[this.attribute] : null)
-    if (this.model.$promise) this.model.$promise.then(setValue)
+    if (this.model && this.model.$promise) this.model.$promise.then(setValue)
     else setValue()
   }
 
