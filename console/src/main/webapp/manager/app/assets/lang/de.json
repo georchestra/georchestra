@@ -65,7 +65,7 @@
   "user.privacyPolicyAgreementDate" : "Date of agreement to conditions",
   "user.warning"          : "Achtung, diese Aktion kann nicht rückgängig gemacht werden — ",
   "user.pendingmsg"       : "Ausstehende Benutzer ",
-  "user.expiredmsg"       : "TO BE TRANSLATED",
+  "user.expiredmsg"       : "Benutzer abgelaufen seit",
   "user.confirm"          : "Bestätigen",
   "user.orgFirst"         : "Zuerst Organisation bestätigen  : ",
   "user.hasdeleg"         : "This user holds an admin delegation",
@@ -196,7 +196,7 @@
   "users.filter_selected" : "Nur Auswahl anzeigen",
   "users.ORGADMIN"        : "Delegierten",
   "users.TEMPORARY"       : "Temporäre",
-  "users.EXPIRED"         : "TO BE TRANSLATED",
+  "users.EXPIRED"         : "Abgelaufen",
 
   "sel.all"               : "Alle",
   "sel.none"              : "Keine",
