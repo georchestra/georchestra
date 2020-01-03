@@ -65,6 +65,7 @@
   "user.privacyPolicyAgreementDate" : "Date d'acceptation des conditions",
   "user.warning"          : "Attention, cette action est irréversible — ",
   "user.pendingmsg"       : "Utilisateur en attente ",
+  "user.expiredmsg"       : "Utilisateur expiré depuis le",
   "user.confirm"          : "Confirmer",
   "user.orgFirst"         : "Confirmer d’abord l’organisme   : ",
   "user.hasdeleg"         : "Une délégation de gestion est active pour cet utilisateur",
@@ -195,6 +196,7 @@
   "users.filter_selected" : "Afficher la sélection uniquement",
   "users.ORGADMIN"        : "Délégués",
   "users.TEMPORARY"       : "Temporaires",
+  "users.EXPIRED"         : "Expirés",
 
   "sel.all"               : "Tous",
   "sel.none"              : "Aucun",

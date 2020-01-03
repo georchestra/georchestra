@@ -1,15 +1,18 @@
 import 'components/browse/browse.tpl'
 import 'services/roles'
 
-const PROTECTED = [ 'TEMPORARY', 'ORGADMIN' ]
-const filter = (protecteds, role) => protecteds ^ !PROTECTED.includes(role)
-
 class BrowseController {
   static $inject = [ '$injector' ]
 
   constructor ($injector) {
     this.$injector = $injector
     this.pendingCount = 0
+    const PROTECTED = this.$injector.get('readonlyRoleList')
+    this.filterRole = (protecteds, role) => protecteds ^ !PROTECTED.includes(role)
+
+    // Rebind method for outer use
+    this.protected = this.protected.bind(this)
+    this.unprotected = this.unprotected.bind(this)
   }
 
   $onInit () {
@@ -57,11 +60,11 @@ class BrowseController {
   }
 
   protected (role) {
-    return filter(true, role.cn)
+    return this.filterRole(true, role.cn)
   }
 
   unprotected (role) {
-    return filter(false, role.cn)
+    return this.filterRole(false, role.cn)
   }
 }
 

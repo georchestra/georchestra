@@ -68,6 +68,7 @@
   "user.privacyPolicyAgreementDate" : "Date of agreement to conditions",
   "user.warning"          : "Warning, this action is irreversible — ",
   "user.pendingmsg"       : "Pending user ",
+  "user.expiredmsg"       : "Expired user since",
   "user.confirm"          : "Confirm",
   "user.orgFirst"         : "Confirm organization first : ",
   "user.hasdeleg"         : "This user holds an admin delegation",
@@ -196,6 +197,7 @@
   "users.filter_selected" : "View selected only",
   "users.ORGADMIN"        : "Delegates",
   "users.TEMPORARY"       : "Temporary",
+  "users.EXPIRED"         : "Expired",
 
   "sel.all"               : "All",
   "sel.none"              : "None",

@@ -65,6 +65,7 @@
   "user.privacyPolicyAgreementDate" : "Fecha de aceptación de las condiciones",
   "user.warning"          : "Cuidado, esta acción no se puede deshacer — ",
   "user.pendingmsg"       : "Usuario en espera de confirmación ",
+  "user.expiredmsg"       : "Usuario expirado desde",
   "user.confirm"          : "Confirmar",
   "user.orgFirst"         : "Primero confirmar la organización: ",
   "user.hasdeleg"         : "Se asignó una delegación de administración a este usuario",
@@ -195,6 +196,7 @@
   "users.filter_selected" : "Mostrar solo la selección",
   "users.ORGADMIN"        : "Delegados",
   "users.TEMPORARY"       : "Interinos",
+  "users.EXPIRED"         : "Caducado",
 
   "sel.all"               : "Todos",
   "sel.none"              : "Ningún",

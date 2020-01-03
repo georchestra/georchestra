@@ -19,6 +19,7 @@
 
 package org.georchestra.console.ws.backoffice.roles;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.dao.AdvancedDelegationDao;
@@ -60,6 +61,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -90,8 +93,11 @@ public class RolesController {
     private static final String USER_NOT_FOUND = "user_not_found";
     private static final String ILLEGAL_CHARACTER = "illegal_character";
 
-    public static final String VIRTUAL_TEMPORARY_ROLE_NAME = "TEMPORARY";
+    private static final String VIRTUAL_TEMPORARY_ROLE_NAME = "TEMPORARY";
     private static final String VIRTUAL_TEMPORARY_ROLE_DESCRIPTION = "Virtual role that contains all temporary users";
+
+    private static final String VIRTUAL_EXPIRED_ROLE_NAME = "EXPIRED";
+    private static final String VIRTUAL_EXPIRED_ROLE_DESCRIPTION = "Virtual role that contains all expired users";
 
     @Autowired
     private AccountDao accountDao;
@@ -141,7 +147,8 @@ public class RolesController {
         list.stream().forEach(role -> {
             role.setUserList(filter.filterStringList(role.getUserList()));
         });
-        list.add(this.generateTemporaryRole());
+        Pair<Role, Role> virtualRoles = this.generateVirtualRoles();
+        list.addAll(Arrays.asList(virtualRoles.getLeft(), virtualRoles.getRight()));
         return list;
     }
 
@@ -169,7 +176,7 @@ public class RolesController {
         Role res;
 
         if (cn.equals(RolesController.VIRTUAL_TEMPORARY_ROLE_NAME))
-            res = this.generateTemporaryRole();
+            res = this.generateVirtualRoles().getLeft();
         else
             res = this.roleDao.findByCommonName(cn);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -181,12 +188,22 @@ public class RolesController {
         return res;
     }
 
-    private Role generateTemporaryRole() {
-        Role res = RoleFactory.create(RolesController.VIRTUAL_TEMPORARY_ROLE_NAME,
+    private Pair<Role, Role> generateVirtualRoles() {
+
+        Role tempRole = RoleFactory.create(RolesController.VIRTUAL_TEMPORARY_ROLE_NAME,
                 RolesController.VIRTUAL_TEMPORARY_ROLE_DESCRIPTION, false);
-        for (Account a : this.accountDao.findByShadowExpire())
-            res.addUser(a.getUid());
-        return res;
+        Role expiredRole = RoleFactory.create(RolesController.VIRTUAL_EXPIRED_ROLE_NAME,
+                RolesController.VIRTUAL_EXPIRED_ROLE_DESCRIPTION, false);
+
+        Date today = Calendar.getInstance().getTime();
+
+        this.accountDao.findByShadowExpire().stream().forEach(it -> {
+            if (it.getShadowExpire() != null && today.after(it.getShadowExpire())) {
+                expiredRole.addUser(it.getUid());
+            }
+            tempRole.addUser(it.getUid());
+        });
+        return Pair.of(tempRole, expiredRole);
     }
 
     /**
