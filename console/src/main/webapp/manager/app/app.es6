@@ -102,7 +102,7 @@ angular.module('manager', [
         })
         .determinePreferredLanguage()
         .fallbackLanguage('en')
-      $location.html5Mode(false)
+      $location.html5Mode(true)
       paginationTemplate.setPath('templates/dirPagination.tpl.html')
       $qP.errorOnUnhandledRejections(false)
       // see https://github.com/georchestra/georchestra/issues/1695 {{{
