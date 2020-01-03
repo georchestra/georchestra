@@ -1,7 +1,7 @@
 require('components/home/home.tpl')
 
 class HomeController {
-  static $inject = [ '$injector' ]
+  static $inject = ['$injector']
 
   constructor ($injector) {
     const LOG_LIMIT = 15
@@ -22,8 +22,8 @@ class HomeController {
 
     const flash = $injector.get('Flash')
 
-    let Analytics = $injector.get('Analytics')
-    let options = {
+    const Analytics = $injector.get('Analytics')
+    const options = {
       service: 'distinctUsers',
       startDate: $injector.get('date').getFromDiff('day'),
       endDate: $injector.get('date').getEnd()

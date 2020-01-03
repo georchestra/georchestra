@@ -2,7 +2,7 @@ require('components/orgs/orgs.tpl')
 require('services/orgs')
 
 class OrgsController {
-  static $inject = [ '$injector', '$routeParams' ]
+  static $inject = ['$injector', '$routeParams']
 
   constructor ($injector, $routeParams) {
     this.$injector = $injector
@@ -24,7 +24,7 @@ class OrgsController {
     this.q = ''
     this.itemsPerPage = 15
 
-    this.newOrg = this.$injector.get('$location').$$search['new'] === 'org'
+    this.newOrg = this.$injector.get('$location').$$search.new === 'org'
     if (this.newOrg) {
       const Org = this.$injector.get('Orgs')
       this.newInstance = new Org({})
@@ -33,7 +33,7 @@ class OrgsController {
     this.required = $injector.get('OrgsRequired').query()
     this.orgTypeValues = $injector.get('OrgsType').query()
 
-    let translate = this.$injector.get('translate')
+    const translate = this.$injector.get('translate')
     this.i18n = {}
     translate('org.created', this.i18n)
     translate('org.updated', this.i18n)
@@ -45,15 +45,15 @@ class OrgsController {
   create () {
     const Org = this.$injector.get('Orgs')
     this.newInstance = new Org({})
-    let $location = this.$injector.get('$location')
+    const $location = this.$injector.get('$location')
     $location.search('new', 'org')
   }
 
   saveOrg () {
-    let flash = this.$injector.get('Flash')
-    let $router = this.$injector.get('$router')
-    let $location = this.$injector.get('$location')
-    let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
+    const flash = this.$injector.get('Flash')
+    const $router = this.$injector.get('$router')
+    const $location = this.$injector.get('$location')
+    const $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
 
     this.newInstance.$save(
       () => {
@@ -71,18 +71,18 @@ class OrgsController {
 
   close () {
     this.newOrg = false
-    let $location = this.$injector.get('$location')
+    const $location = this.$injector.get('$location')
     $location.url($location.path())
   }
 
   activate ($scope) {
-    let $location = this.$injector.get('$location')
-    $scope.$watch(() => $location.search()['new'], (v) => {
+    const $location = this.$injector.get('$location')
+    $scope.$watch(() => $location.search().new, (v) => {
       this.newOrg = v === 'org'
     })
   }
 }
 
-OrgsController.prototype.activate.$inject = [ '$scope' ]
+OrgsController.prototype.activate.$inject = ['$scope']
 
 angular.module('manager').controller('OrgsController', OrgsController)

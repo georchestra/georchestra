@@ -2,7 +2,7 @@ import 'components/roles/roles.tpl'
 import 'services/roles'
 
 class RolesController {
-  static $inject = [ '$injector', '$routeParams' ]
+  static $inject = ['$injector', '$routeParams']
 
   constructor ($injector, $routeParams) {
     this.$injector = $injector
@@ -18,13 +18,13 @@ class RolesController {
     this.q = ''
     this.itemsPerPage = 15
 
-    this.newRole = this.$injector.get('$location').$$search['new'] === 'role'
+    this.newRole = this.$injector.get('$location').$$search.new === 'role'
     if (this.newRole) {
       const Role = this.$injector.get('Role')
       this.newInstance = new Role({})
     }
 
-    let translate = this.$injector.get('translate')
+    const translate = this.$injector.get('translate')
     this.i18n = {}
     translate('role.created', this.i18n)
     translate('role.updated', this.i18n)
@@ -36,15 +36,15 @@ class RolesController {
   create () {
     const Role = this.$injector.get('Role')
     this.newInstance = new Role({})
-    let $location = this.$injector.get('$location')
+    const $location = this.$injector.get('$location')
     $location.search('new', 'role')
   }
 
   saveRole () {
-    let flash = this.$injector.get('Flash')
-    let $router = this.$injector.get('$router')
-    let $location = this.$injector.get('$location')
-    let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
+    const flash = this.$injector.get('Flash')
+    const $router = this.$injector.get('$router')
+    const $location = this.$injector.get('$location')
+    const $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
 
     this.newInstance.$save(
       () => {
@@ -62,18 +62,18 @@ class RolesController {
 
   close () {
     this.newRole = false
-    let $location = this.$injector.get('$location')
+    const $location = this.$injector.get('$location')
     $location.url($location.path())
   }
 
   activate ($scope) {
-    let $location = this.$injector.get('$location')
-    $scope.$watch(() => $location.search()['new'], (v) => {
+    const $location = this.$injector.get('$location')
+    $scope.$watch(() => $location.search().new, (v) => {
       this.newRole = v === 'role'
     })
   }
 }
 
-RolesController.prototype.activate.$inject = [ '$scope' ]
+RolesController.prototype.activate.$inject = ['$scope']
 
 angular.module('manager').controller('RolesController', RolesController)

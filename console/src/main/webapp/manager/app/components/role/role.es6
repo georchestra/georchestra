@@ -3,7 +3,7 @@ import 'templates/roleForm.tpl'
 import 'services/roles'
 
 class RoleController {
-  static $inject = [ '$injector', '$routeParams' ]
+  static $inject = ['$injector', '$routeParams']
 
   constructor ($injector, $routeParams) {
     this.$injector = $injector
@@ -15,7 +15,7 @@ class RoleController {
 
     this.itemsPerPage = 15
 
-    let translate = $injector.get('translate')
+    const translate = $injector.get('translate')
     this.i18n = {}
     translate('role.updated', this.i18n)
     translate('role.error', this.i18n)
@@ -31,7 +31,7 @@ class RoleController {
   loadRoleAndUsers (id) {
     // Save original cn in case we change cn, because we need to
     // use original cn with PUT request
-    this.role = this.$injector.get('Role').get({id: id}, role => {
+    this.role = this.$injector.get('Role').get({ id: id }, role => {
       role.originalID = role.cn
     })
 
@@ -45,9 +45,9 @@ class RoleController {
   }
 
   save () {
-    let flash = this.$injector.get('Flash')
-    let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
-    let $router = this.$injector.get('$router')
+    const flash = this.$injector.get('Flash')
+    const $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
+    const $router = this.$injector.get('$router')
     this.role.$update(() => {
       $httpDefaultCache.removeAll()
       this.role.originalID = this.role.cn
@@ -60,19 +60,19 @@ class RoleController {
   }
 
   delete () {
-    let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
-    let flash = this.$injector.get('Flash')
+    const $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
+    const flash = this.$injector.get('Flash')
     this.role.$delete(() => {
       $httpDefaultCache.removeAll()
-      let $router = this.$injector.get('$router')
+      const $router = this.$injector.get('$router')
       $router.navigate($router.generate('roles', { id: 'all' }))
       flash.create('success', this.i18n.deleted)
     }, flash.create.bind(flash, 'danger', this.i18n.deleteError))
   }
 
   confirm () {
-    let flash = this.$injector.get('Flash')
-    let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
+    const flash = this.$injector.get('Flash')
+    const $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
     this.role.status = 'REGISTERED'
     this.role.$update(() => {
       $httpDefaultCache.removeAll()
@@ -88,7 +88,7 @@ class RoleController {
     const $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
 
     RolesUsers.save({
-      users: [ uid ],
+      users: [uid],
       PUT: unassociate ? [] : [this.role.cn],
       DELETE: unassociate ? [this.role.cn] : []
     }, () => {

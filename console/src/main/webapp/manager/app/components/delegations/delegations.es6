@@ -2,7 +2,7 @@ import 'components/delegations/delegations.tpl'
 import 'services/delegations'
 
 class DelegationsController {
-  static $inject = [ 'Delegations', 'Orgs' ]
+  static $inject = ['Delegations', 'Orgs']
 
   constructor (Delegations, Orgs) {
     this.delegations = Delegations.query()

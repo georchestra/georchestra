@@ -12,13 +12,13 @@ const highlight = feature => {
 }
 
 class AreaController {
-  static $inject = [ '$injector', '$http', '$scope' ]
+  static $inject = ['$injector', '$http', '$scope']
 
   constructor ($injector, $http, $scope) {
     this.$injector = $injector
     this.$scope = $scope
 
-    let translate = $injector.get('translate')
+    const translate = $injector.get('translate')
     this.i18n = {}
     translate('area.updated', this.i18n)
     translate('area.error', this.i18n)
@@ -29,7 +29,7 @@ class AreaController {
     this.maponly = this.readonly === 'true'
     const $http = this.$injector.get('$http')
     const CONFIG_URI = this.$injector.get('CONSOLE_PUBLIC_PATH') + 'orgs/areaConfig.json'
-    let promises = [ $http.get(CONFIG_URI).then(r => r.data) ]
+    const promises = [$http.get(CONFIG_URI).then(r => r.data)]
     this.canExport = this.canExport && this.item.id
     if (this.item.$promise) {
       promises.push(this.item.$promise)
@@ -44,7 +44,7 @@ class AreaController {
 
     const vector = new ol.layer.Vector({
       source: new ol.source.Vector(),
-      style: buildStyle([ 255, 255, 255, 0.1 ], [ 0, 0, 0, 0.2 ])
+      style: buildStyle([255, 255, 255, 0.1], [0, 0, 0, 0.2])
     })
     this.source = vector.getSource()
 
@@ -77,13 +77,13 @@ class AreaController {
         dataProjection: 'EPSG:4326',
         featureProjection: map.getView().getProjection()
       }
-      let selected = []
+      const selected = []
       json.features.forEach(f => {
         f.id = f.properties[config.areas.key].toString()
       })
       vector.getSource().addFeatures(format.readFeatures(json, conf))
       vector.getSource().getFeatures().forEach(f => {
-        let group = f.get(config.areas.group)
+        const group = f.get(config.areas.group)
         if (this.groups.indexOf(group) < 0) {
           this.groups.push(group)
         }
@@ -101,7 +101,7 @@ class AreaController {
       }
 
       if (selected.length > 0) {
-        let extent = ol.extent.createEmpty()
+        const extent = ol.extent.createEmpty()
         selected.forEach(f => ol.extent.extend(extent, f.getGeometry().getExtent()))
         this.map.getView().fit(extent, map.getSize())
       }
@@ -126,7 +126,7 @@ class AreaController {
     map.getInteractions().push(dragBox)
     dragBox.setActive(this.draw = false)
     dragBox.on('boxend', () => {
-      let selected = []
+      const selected = []
       vector.getSource().forEachFeatureIntersectingExtent(
         dragBox.getGeometry().getExtent(),
         (feature) => { selected.push(feature) }
@@ -145,8 +145,8 @@ class AreaController {
       selector: document.querySelector('.search'),
       minChars: 3,
       source: (term, response) => {
-        let matches = []
-        let re = buildRE(term)
+        const matches = []
+        const re = buildRE(term)
         vector.getSource().getFeatures().forEach(f => {
           if (f.get('_label').match(re)) { matches.push(f) }
         })
@@ -162,7 +162,7 @@ class AreaController {
         f.get('_label').replace(buildRE(search), '<b>$1</b>') +
         '</div>',
       onSelect: (e, term, item) => {
-        let f = vector.getSource().getFeatureById(item.getAttribute('data-id'))
+        const f = vector.getSource().getFeatureById(item.getAttribute('data-id'))
         if (select.getFeatures().getArray().indexOf(f) >= 0) {
           select.getFeatures().remove(f)
           this.updateSelection([], true)
@@ -190,7 +190,7 @@ class AreaController {
         return
       }
 
-      let selected = vector.getSource().getFeatures().filter(
+      const selected = vector.getSource().getFeatures().filter(
         f => f.get('_group') === this.group
       )
       this.updateSelection(selected)
@@ -220,8 +220,8 @@ class AreaController {
   }
 
   save () {
-    let flash = this.$injector.get('Flash')
-    let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
+    const flash = this.$injector.get('Flash')
+    const $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
 
     this.item.cities = this.ids
     this.item.$update(() => {
@@ -233,7 +233,7 @@ class AreaController {
   export () {
     const a = document.createElement('a')
     a.href = window.URL.createObjectURL(new Blob(
-      [ this.ids.join('\n') ],
+      [this.ids.join('\n')],
       { type: 'text/csv' }
     ))
     a.download = 'export.csv'
@@ -252,7 +252,7 @@ class AreaController {
     reader.onload = () => this.$scope.$apply(() => {
       reader.result.split('\n').forEach(line => {
         const [id] = line.split(/,|;/)
-        let f = this.source.getFeatureById(id)
+        const f = this.source.getFeatureById(id)
         if (!f) return
         this.collection.push(highlight(f))
         this.ids.push(id)

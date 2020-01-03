@@ -1,6 +1,6 @@
 angular.module('manager')
   .factory('date', () => {
-    let format = 'YYYY-MM-DD'
+    const format = 'YYYY-MM-DD'
 
     return {
 

@@ -6,7 +6,7 @@ require('services/logs')
 require('services/messages')
 
 class UsersController {
-  static $inject = [ '$routeParams', '$injector', 'User', 'Role' ]
+  static $inject = ['$routeParams', '$injector', 'User', 'Role']
 
   constructor ($routeParams, $injector, User, Role) {
     this.$injector = $injector
@@ -16,14 +16,14 @@ class UsersController {
     this.selection = []
     this.filterSelected = false
 
-    this.newRole = this.$injector.get('$location').$$search['new'] === 'role'
+    this.newRole = this.$injector.get('$location').$$search.new === 'role'
     this.newRoleName = ''
 
     this.users = User.query(() => {
       this.allUsers = this.users.slice()
     })
 
-    let active = $routeParams.id
+    const active = $routeParams.id
 
     this.roles = Role.query()
     this.activePromise = this.roles.$promise.then(() => {
@@ -107,7 +107,7 @@ class UsersController {
       a.click() // click the link "a"
       document.body.removeChild(a)
     }).catch(err => {
-      let flash = this.$injector.get('Flash')
+      const flash = this.$injector.get('Flash')
       flash.create('danger', err)
     })
   }
@@ -123,17 +123,17 @@ class UsersController {
   close () {
     this.newRole = false
     this.newRoleName = ''
-    let $location = this.$injector.get('$location')
+    const $location = this.$injector.get('$location')
     $location.url($location.path())
   }
 
   saveRole () {
-    let flash = this.$injector.get('Flash')
-    let $router = this.$injector.get('$router')
-    let $location = this.$injector.get('$location')
-    let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
+    const flash = this.$injector.get('Flash')
+    const $router = this.$injector.get('$router')
+    const $location = this.$injector.get('$location')
+    const $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
 
-    let role = new (this.$injector.get('Role'))()
+    const role = new (this.$injector.get('Role'))()
     role.cn = this.newRoleName
     role.description = this.newRoleDesc
 
@@ -141,7 +141,7 @@ class UsersController {
       () => {
         flash.create('success', this.i18n.created)
         $httpDefaultCache.removeAll()
-        $router.navigate($router.generate('users', {id: role.cn}))
+        $router.navigate($router.generate('users', { id: role.cn }))
         $location.url($location.path())
       },
       flash.create.bind(flash, 'danger', this.i18n.error)
@@ -149,14 +149,14 @@ class UsersController {
   }
 
   activate ($scope) {
-    let $location = this.$injector.get('$location')
-    $scope.$watch(() => $location.search()['new'], (v) => {
+    const $location = this.$injector.get('$location')
+    $scope.$watch(() => $location.search().new, (v) => {
       this.newRole = v === 'role'
     })
   }
 }
 
-UsersController.prototype.activate.$inject = [ '$scope' ]
+UsersController.prototype.activate.$inject = ['$scope']
 
 angular.module('manager')
   .controller('UsersController', UsersController)
@@ -164,8 +164,8 @@ angular.module('manager')
     require: 'ngModel',
     link: (scope, elm, attrs, ctrl) => {
       ctrl.$validators.validateRole = (modelValue, viewValue) => {
-        let roles = scope.$eval(attrs['validateRole'])
-        let prefix = viewValue.substr(0, viewValue.lastIndexOf('_'))
+        const roles = scope.$eval(attrs.validateRole)
+        const prefix = viewValue.substr(0, viewValue.lastIndexOf('_'))
         return prefix === '' || roles.some(g => g.cn === prefix)
       }
     }

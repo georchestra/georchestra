@@ -7,10 +7,10 @@ angular.module('manager')
       }
     })
   ]).factory('Mail', ['$resource', 'CONSOLE_PRIVATE_PATH', ($resource, baseUri) =>
-    $resource(baseUri + '../:id/sendEmail', {id: '@id'}, {
+    $resource(baseUri + '../:id/sendEmail', { id: '@id' }, {
       save: {
         method: 'POST',
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         transformRequest: function (data) {
           return $.param({
             subject: data.subject,

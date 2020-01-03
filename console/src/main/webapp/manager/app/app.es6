@@ -5,30 +5,54 @@ class AppController {
 
   constructor ($scope, $router, $location, $translate, roleAdminList, Profile) {
     $router.config([
-      { path: '/',
-        redirectTo: '/home' },
-      { path: '/home',
-        component: 'home' },
-      { path: '/analytics/:role',
-        component: 'analytics' },
-      { path: '/orgs/:org',
-        component: 'orgs' },
-      { path: '/org/:org/:tab',
-        component: 'org' },
-      { path: '/roles/:role',
-        component: 'roles' },
-      { path: '/role/:role/:tab',
-        component: 'role' },
-      { path: '/delegations',
-        component: 'delegations' },
-      { path: '/browse/:id/users',
-        component: 'users' },
-      { path: '/users/:id/:tab',
-        component: 'user' },
-      { path: '/users/add',
-        component: 'newUser' },
-      { path: '/logs',
-        component: 'logs' }
+      {
+        path: '/',
+        redirectTo: '/home'
+      },
+      {
+        path: '/home',
+        component: 'home'
+      },
+      {
+        path: '/analytics/:role',
+        component: 'analytics'
+      },
+      {
+        path: '/orgs/:org',
+        component: 'orgs'
+      },
+      {
+        path: '/org/:org/:tab',
+        component: 'org'
+      },
+      {
+        path: '/roles/:role',
+        component: 'roles'
+      },
+      {
+        path: '/role/:role/:tab',
+        component: 'role'
+      },
+      {
+        path: '/delegations',
+        component: 'delegations'
+      },
+      {
+        path: '/browse/:id/users',
+        component: 'users'
+      },
+      {
+        path: '/users/:id/:tab',
+        component: 'user'
+      },
+      {
+        path: '/users/add',
+        component: 'newUser'
+      },
+      {
+        path: '/logs',
+        component: 'logs'
+      }
     ])
 
     $scope.isActive = (routes) => routes.some(
@@ -48,7 +72,7 @@ class AppController {
 }
 
 class StandaloneController {
-  static $inject = [ '$scope', 'Orgs', 'User' ]
+  static $inject = ['$scope', 'Orgs', 'User']
 
   constructor ($scope, Org, User) {
     if (!window.org) {
@@ -113,10 +137,10 @@ angular.module('manager', [
       $httpProvider.defaults.headers.get['If-Modified-Since'] = 'Mon, 26 Jul 1997 05:00:00 GMT'
       // extra
       $httpProvider.defaults.headers.get['Cache-Control'] = 'no-cache'
-      $httpProvider.defaults.headers.get['Pragma'] = 'no-cache'
+      $httpProvider.defaults.headers.get.Pragma = 'no-cache'
       // }}}
     }])
-  .filter('dateFormat', [ '$translate', ($translate) => {
+  .filter('dateFormat', ['$translate', ($translate) => {
     moment.locale($translate.use())
     return date => moment(date).format('LL')
   }])

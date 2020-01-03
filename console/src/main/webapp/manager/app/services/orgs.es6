@@ -27,7 +27,7 @@ angular.module('manager')
         method: 'GET',
         cache: true,
         transformResponse: (data) => {
-          let response = {}
+          const response = {}
           JSON.parse(data).forEach(key => { response[key] = true })
           return response
         }

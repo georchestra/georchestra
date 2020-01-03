@@ -34,7 +34,7 @@ angular.module('manager')
         method: 'GET',
         cache: true,
         transformResponse: (data) => {
-          let response = {}
+          const response = {}
           JSON.parse(data).forEach(key => { response[key] = true })
           return response
         },
@@ -49,7 +49,7 @@ angular.module('manager')
         cache: false,
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'text/csv'
+          Accept: 'text/csv'
         }
       })
     }
@@ -60,7 +60,7 @@ angular.module('manager')
         cache: false,
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'text/x-vcard'
+          Accept: 'text/x-vcard'
         }
       })
     }

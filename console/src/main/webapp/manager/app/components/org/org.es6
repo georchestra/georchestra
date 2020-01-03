@@ -5,7 +5,7 @@ require('services/orgs')
 require('components/imageinput/imageinput')
 
 class OrgController {
-  static $inject = [ '$injector', '$routeParams' ]
+  static $inject = ['$injector', '$routeParams']
 
   constructor ($injector, $routeParams) {
     this.$injector = $injector
@@ -17,7 +17,7 @@ class OrgController {
 
     this.itemsPerPage = 15
 
-    let translate = $injector.get('translate')
+    const translate = $injector.get('translate')
     this.i18n = {}
     translate('org.updated', this.i18n)
     translate('org.error', this.i18n)
@@ -49,8 +49,8 @@ class OrgController {
   }
 
   save () {
-    let flash = this.$injector.get('Flash')
-    let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
+    const flash = this.$injector.get('Flash')
+    const $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
     this.org.$update(() => {
       $httpDefaultCache.removeAll()
       flash.create('success', this.i18n.updated)
@@ -58,11 +58,11 @@ class OrgController {
   }
 
   delete () {
-    let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
-    let flash = this.$injector.get('Flash')
+    const $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
+    const flash = this.$injector.get('Flash')
     this.org.$delete(() => {
       $httpDefaultCache.removeAll()
-      let $router = this.$injector.get('$router')
+      const $router = this.$injector.get('$router')
       $router.navigate($router.generate('orgs', { id: 'all' }))
       flash.create('success', this.i18n.deleted)
     }, flash.create.bind(flash, 'danger', this.i18n.deleteError))

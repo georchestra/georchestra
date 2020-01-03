@@ -1,8 +1,7 @@
 require('components/imageinput/imageinput.tpl')
 
 class ImageinputController {
-  static $inject = [ '$element', '$scope' ]
-
+  static $inject = ['$element', '$scope']
   constructor ($element, $scope) {
     this.$element = $element
     this.$scope = $scope

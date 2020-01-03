@@ -1,7 +1,7 @@
 require('components/stats/stats.tpl')
 
 class StatsController {
-  static $inject = [ '$element', '$scope', '$injector' ]
+  static $inject = ['$element', '$scope', '$injector']
 
   constructor ($element, $scope, $injector) {
     this.$injector = $injector
@@ -10,7 +10,7 @@ class StatsController {
   }
 
   $onInit () {
-    let initialize = this.initialize.bind(this)
+    const initialize = this.initialize.bind(this)
     if (this.data) {
       this.data.$promise.then(initialize)
     }
@@ -23,7 +23,7 @@ class StatsController {
   }
 
   initialize () {
-    let $element = this.$element
+    const $element = this.$element
 
     var options
 
@@ -48,7 +48,7 @@ class StatsController {
       }
     } else {
       const formatDay = v => {
-        let splits = v.split('-').reverse()
+        const splits = v.split('-').reverse()
         splits.pop()
         return splits.join('/')
       }
@@ -83,7 +83,7 @@ class StatsController {
 
       }
     }
-    let el = $element.find('.chartist')
+    const el = $element.find('.chartist')
     this.lines = new Chartist[this.type === 'bar' ? 'Bar' : 'Line'](
       el[0], this.parsed, options
     )
@@ -96,11 +96,11 @@ class StatsController {
         let ydiff = 8
         if (data.axis.units.dir === 'vertical') {
           // Align y-axis labels in front of lines
-          let delta = el.height() / (data.axis.ticks.length)
+          const delta = el.height() / (data.axis.ticks.length)
           // For bar graph, move it in front of bar
           ydiff = (this.type === 'bar') ? 18 : delta
         }
-        let text = Chartist.Svg('text', {
+        const text = Chartist.Svg('text', {
           x: data.x,
           y: data.y + ydiff
         }).text(data.text)
@@ -113,7 +113,7 @@ class StatsController {
     this.view = 'graph'
 
     this.exportPNG = () => {
-      let el = $element.find('svg')
+      const el = $element.find('svg')
       el.append($(
         '<style>' + Array.from(
           document.querySelector('.svg-styles').sheet.cssRules
@@ -134,14 +134,14 @@ class StatsController {
   }
 
   parseData () {
-    let data = this.data.results
+    const data = this.data.results
     this.nodata = !data || data.length === 0
     if (this.nodata) { return }
-    let serie = data.map(x => x[this.config[1]])
+    const serie = data.map(x => x[this.config[1]])
     this.serie = (this.type === 'line') ? [].concat(serie).reverse() : serie
     this.parsed = {
       labels: data.map(x => x[this.config[0]]),
-      series: [ [].concat(serie) ]
+      series: [[].concat(serie)]
     }
   }
 }
