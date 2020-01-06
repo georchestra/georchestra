@@ -87,7 +87,7 @@
     <property name="dirContextValidator" ref="ldapContextValidator"/>
     <property name="testOnBorrow" value="${ldap.pool.testOnBorrow:true}"/>
     <property name="maxActive" value="${ldap.pool.maxActive:8}"/>
-    <property name="minIdle" value="${ldap.pool.minIdle:0}"/>
+    <property name="minIdle" value="${ldap.pool.minIdle:1}"/>
     <property name="maxIdle" value="${ldap.pool.maxIdle:8}"/>
     <property name="maxTotal" value="${ldap.pool.maxTotal:-1}"/>
     <property name="maxWait" value="${ldap.pool.maxWait:-1}"/>
