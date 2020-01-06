@@ -72,13 +72,27 @@
   </bean>
 
   <!-- LDAP connection -->
-  <bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
+  <bean id="singleContextSource" class="org.springframework.ldap.core.support.LdapContextSource">
     <property name="url" value="${ldapScheme}://${ldapHost}:${ldapPort}"/>
     <property name="base" value="${ldapBaseDn}"/>
     <property name="userDn" value="${ldapAdminDn}"/>
     <property name="password" value="${ldapAdminPassword}"/>
   </bean>
 
+  <bean id="ldapContextValidator" class="org.springframework.ldap.pool.validation.DefaultDirContextValidator">
+  </bean>
+  
+  <bean id="contextSource" class="org.springframework.ldap.pool.factory.PoolingContextSource" destroy-method="destroy">
+    <property name="contextSource" ref="singleContextSource"/>
+    <property name="dirContextValidator" ref="ldapContextValidator"/>
+    <property name="testOnBorrow" value="${ldap.pool.testOnBorrow:true}"/>
+    <property name="maxActive" value="${ldap.pool.maxActive:8}"/>
+    <property name="minIdle" value="${ldap.pool.minIdle:1}"/>
+    <property name="maxIdle" value="${ldap.pool.maxIdle:8}"/>
+    <property name="maxTotal" value="${ldap.pool.maxTotal:-1}"/>
+    <property name="maxWait" value="${ldap.pool.maxWait:-1}"/>
+  </bean>
+  
   <bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate">
     <constructor-arg ref="contextSource"/>
   </bean>
