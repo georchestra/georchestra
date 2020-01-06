@@ -42,9 +42,14 @@ class AreaController {
     this.ids = this.item.cities || []
     this.groups = []
 
+    this.collection = new ol.Collection()
+
     const vector = new ol.layer.Vector({
       source: new ol.source.Vector(),
-      style: buildStyle([255, 255, 255, 0.1], [0, 0, 0, 0.2])
+      style: f => this.collection.getArray().indexOf(f) >= 0
+        ? buildStyle([0, 159, 227, 0.2], [0, 159, 227, 1], 1.5)
+        : buildStyle([255, 255, 255, 0.1], [0, 0, 0, 0.2])
+
     })
     this.source = vector.getSource()
 
@@ -59,13 +64,21 @@ class AreaController {
       logo: false
     })
     this.map = map
+    this.vector = vector
 
-    const select = new ol.interaction.Select({
-      multi: true,
-      style: buildStyle([0, 159, 227, 0.2], [0, 159, 227, 1], 1.5),
-      toggleCondition: ol.events.condition.always
-    })
-    this.collection = select.getFeatures()
+    if (!this.maponly) {
+      map.on(
+        'click',
+        e => map.forEachFeatureAtPixel(e.pixel, f => {
+          if (this.collection.getArray().indexOf(f) >= 0) {
+            this.collection.remove(f)
+            this.updateSelection([], true)
+          } else {
+            this.updateSelection([f], true)
+          }
+        })
+      )
+    }
 
     const format = new ol.format.GeoJSON()
 
@@ -110,16 +123,6 @@ class AreaController {
       this.loading = false
     })
 
-    map.getInteractions().push(select)
-    if (this.maponly) {
-      select.setActive(false)
-    }
-
-    select.on('select', (e) => {
-      this.updateSelection([], true)
-      e.selected.map(highlight)
-    })
-
     const dragBox = new ol.interaction.DragBox({
       condition: ol.events.condition.always
     })
@@ -133,7 +136,6 @@ class AreaController {
       )
       this.updateSelection(selected, true)
       dragBox.setActive(this.draw = false)
-      select.setActive(true)
     })
 
     const buildRE = (search) => {
@@ -157,14 +159,14 @@ class AreaController {
         'data-val="' + f.get('_label') + '"' +
         'data-id="' + f.getId() + '">' +
         '<span>' +
-        ((select.getFeatures().getArray().indexOf(f) >= 0) ? '✓' : '') +
+        ((this.collection.getArray().indexOf(f) >= 0) ? '✓' : '') +
         '</span>' +
         f.get('_label').replace(buildRE(search), '<b>$1</b>') +
         '</div>',
       onSelect: (e, term, item) => {
         const f = vector.getSource().getFeatureById(item.getAttribute('data-id'))
-        if (select.getFeatures().getArray().indexOf(f) >= 0) {
-          select.getFeatures().remove(f)
+        if (this.collection.getArray().indexOf(f) >= 0) {
+          this.collection.remove(f)
           this.updateSelection([], true)
         } else {
           this.updateSelection([f], true)
@@ -175,7 +177,6 @@ class AreaController {
     })
 
     this.selectBBOX = () => {
-      select.setActive(false)
       dragBox.setActive(this.draw = true)
     }
 
@@ -210,6 +211,7 @@ class AreaController {
       this.collection.getArray().sort(
         (a, b) => a.get('_label').localeCompare(b.get('_label'))
       )
+      this.vector.changed()
     })
   }
 
