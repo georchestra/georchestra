@@ -23,7 +23,7 @@
   <import resource="geowebcache-s3storage-context.xml"/>
   <import resource="geowebcache-sqlite-context.xml"/>
 
-  <!--import resource="geowebcache-diskquota-context.xml"/-->
+  <import resource="geowebcache-diskquota-context.xml"/>
   <import resource="geowebcache-arcgiscache-context.xml"/>
   <import resource="geowebcache-distributed.xml"/>
   <import resource="geowebcache-security.xml"/>
@@ -35,4 +35,5 @@
   </bean>
 
   <context:component-scan base-package="org.geowebcache.controller"/>
+  
 </beans>

@@ -10,12 +10,6 @@
         http://www.springframework.org/schema/util 
         http://www.springframework.org/schema/util/spring-util.xsd">
     
-  
-    <!--  GEORCHESTRA: the georchestra specific beans: -->
-    <bean id="preAuthFilter" class="org.geowebcache.security.PreAuthFilter"/>
-    <bean id="daoAuthenticationProvider" class="org.geowebcache.security.PreAuthProvider"/>
-    <!--  END GEORCHESTRA: the georchestra specific beans: -->
-
     <bean  id="defaultPasswordEncoder" class = "org.springframework.security.crypto.password.NoOpPasswordEncoder">
     </bean>
     

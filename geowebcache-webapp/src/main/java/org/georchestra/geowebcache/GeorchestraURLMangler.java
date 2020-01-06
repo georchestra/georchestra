@@ -17,9 +17,10 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.geowebcache.util;
+package org.georchestra.geowebcache;
 
 import org.apache.commons.lang3.StringUtils;
+import org.geowebcache.util.URLMangler;
 
 /**
  * A simple URLMangler that overrides values provided by the servlet engine, only keeping the most

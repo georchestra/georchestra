@@ -96,7 +96,6 @@
       <artifactId>gwc-wmts</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
-    <!-- 
     <dependency>
       <groupId>org.geowebcache</groupId>
       <artifactId>gwc-diskquota-bdb</artifactId>
@@ -107,7 +106,6 @@
       <artifactId>gwc-diskquota-jdbc</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
-     -->
     <dependency>
       <groupId>org.geowebcache</groupId>
       <artifactId>gwc-arcgiscache</artifactId>

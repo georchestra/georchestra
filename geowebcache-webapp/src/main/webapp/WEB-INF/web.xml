@@ -5,7 +5,7 @@
   <!-- pick up all spring application contexts -->
   <context-param>
     <param-name>contextConfigLocation</param-name>
-    <param-value>/WEB-INF/geowebcache-servlet.xml</param-value>
+    <param-value>/WEB-INF/geowebcache-servlet.xml,/WEB-INF/geowebcache-georchestra.xml</param-value>
   </context-param>
   
   <filter>

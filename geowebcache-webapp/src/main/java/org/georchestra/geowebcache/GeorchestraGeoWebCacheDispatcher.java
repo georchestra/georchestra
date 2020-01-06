@@ -17,7 +17,7 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.geowebcache;
+package org.georchestra.geowebcache;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -27,6 +27,8 @@ import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
+import org.geowebcache.GeoWebCacheDispatcher;
+import org.geowebcache.GeoWebCacheException;
 import org.geowebcache.config.ServerConfiguration;
 import org.geowebcache.demo.Demo;
 import org.geowebcache.grid.GridSetBroker;
@@ -102,7 +104,7 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher
         this.headerHeight = headerHeight;
     }
 
-    public void afterPropertiesSet() throws IOException {
+    public @Override void afterPropertiesSet() throws IOException {
         Objects.requireNonNull(this.instanceName, "property 'instanceName' not initialized");
         Objects.requireNonNull(this.headerUrl, "property 'headerUrl' not initialized");
         Objects.requireNonNull(this.headerHeight, "property 'headerHeight' not initialized");
@@ -115,6 +117,7 @@ public class GeorchestraGeoWebCacheDispatcher extends GeoWebCacheDispatcher
     @Override
     protected ModelAndView handleRequestInternal(
             HttpServletRequest request, HttpServletResponse response) throws Exception {
+        logger.warn("handling " + request.getRequestURI());
 
         // Break the request into components, {type, service name}
         String[] requestComps = null;

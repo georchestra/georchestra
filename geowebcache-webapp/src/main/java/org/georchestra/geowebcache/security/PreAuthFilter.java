@@ -17,7 +17,7 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.geowebcache.security;
+package org.georchestra.geowebcache.security;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
@@ -46,8 +47,14 @@ public class PreAuthFilter implements Filter {
     public static final String SEC_USERNAME = "sec-username";
     public static final String SEC_ROLES = "sec-roles";
 
+    public PreAuthFilter() {
+        logger.warn("PreAuthFilter");
+    }
+
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {}
+    public void init(FilterConfig filterConfig) throws ServletException {
+        logger.warn("PreAuthFilter initialized");
+    }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -56,16 +63,23 @@ public class PreAuthFilter implements Filter {
             HttpServletRequest httpServletRequest = (HttpServletRequest) request;
             final String username = httpServletRequest.getHeader(SEC_USERNAME);
             if (username != null) {
-                SecurityContextHolder.getContext()
-                        .setAuthentication(createAuthentication(httpServletRequest));
+                SecurityContext context = SecurityContextHolder.getContext();
+                Authentication authentication = createAuthentication(httpServletRequest);
+                context.setAuthentication(authentication);
+
+                logger.warn(
+                        "Populated SecurityContextHolder with pre-auth token: '"
+                                + context.getAuthentication()
+                                + "'");
 
                 if (logger.isDebugEnabled()) {
                     logger.debug(
                             "Populated SecurityContextHolder with pre-auth token: '"
-                                    + SecurityContextHolder.getContext().getAuthentication()
+                                    + context.getAuthentication()
                                     + "'");
                 }
             } else {
+                logger.warn("SecurityContextHolder not populated with pre-auth token");
                 if (logger.isDebugEnabled()) {
                     logger.debug("SecurityContextHolder not populated with pre-auth token");
                 }

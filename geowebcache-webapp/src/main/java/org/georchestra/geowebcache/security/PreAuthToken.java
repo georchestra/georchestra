@@ -17,7 +17,7 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.geowebcache.security;
+package org.georchestra.geowebcache.security;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,7 +32,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 /**
  * An authentication that is obtained by reading the credentials from the headers.
  *
- * @see org.geowebcache.security.PreAuthFilter
+ * @see org.georchestra.geowebcache.security.PreAuthFilter
  * @author Jesse on 4/24/2014.
  */
 public class PreAuthToken extends AbstractAuthenticationToken {

@@ -1,4 +1,4 @@
-package org.geowebcache.security;
+package org.georchestra.geowebcache.security;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

@@ -1,4 +1,4 @@
-package org.geowebcache.util;
+package org.georchestra.geowebcache;
 
 import static org.junit.Assert.assertTrue;
 
