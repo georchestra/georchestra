@@ -43,10 +43,10 @@ import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -141,7 +141,7 @@ public class OrgsDao {
                     } catch (DataServiceException e) {
                         return null;
                     }
-                }).filter(account -> null != account).map(account -> accountDao.buildFullUserDn(account))
+                }).filter(Objects::nonNull).map(account -> accountDao.buildFullUserDn(account))
                         .collect(Collectors.toList()).toArray(new String[] {}));
             }
 
@@ -189,8 +189,8 @@ public class OrgsDao {
                     org.setShortName(asStringStream(attrs, "ou").collect(joining(",")));
                     org.setCities(asStringStream(attrs, "description").flatMap(Pattern.compile(",")::splitAsStream)
                             .collect(Collectors.toList()));
-                    org.setMembers(asStringStream(attrs, "member").map(raw -> LdapNameBuilder.newInstance(raw))
-                            .map(dn -> dn.build()).map(name -> name.getRdn(name.size() - 1).getValue().toString())
+                    org.setMembers(asStringStream(attrs, "member").map(LdapNameBuilder::newInstance)
+                            .map(LdapNameBuilder::build).map(name -> name.getRdn(name.size() - 1).getValue().toString())
                             .collect(Collectors.toList()));
                     org.setPending(pending);
                     return org;

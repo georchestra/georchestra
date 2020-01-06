@@ -52,6 +52,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -106,7 +107,7 @@ public class OrgsController {
      * https://my.server.org/geoserver/ows?SERVICE=WFS&REQUEST=GetFeature&typeName=
      * gadm:gadm_for_countries&outputFormat=json&cql_filter=ISO='FRA' or ISO='BEL'
      */
-    @Value("${AreasUrl:https://www.geopicardie.fr/public/communes_simplified.json}")
+    @Value("${AreasUrl:https://www.geo2france.fr/public/communes_zones_competence.geojson}")
     private String areasUrl;
 
     /* The following properties are used to configure the map widget behavior */
@@ -411,8 +412,13 @@ public class OrgsController {
         // Verify that org is under delegation if user is not SUPERUSER
         if (!auth.getAuthorities().contains(ROLE_SUPERUSER)) {
             DelegationEntry delegation = this.delegationDao.findOne(auth.getName());
-            if (!Arrays.asList(delegation.getOrgs()).contains(org))
+            if (delegation != null) {
+                if (!Arrays.asList(delegation.getOrgs()).contains(org)) {
+                    throw new AccessDeniedException("Org not under delegation");
+                }
+            } else {
                 throw new AccessDeniedException("Org not under delegation");
+            }
         }
     }
 
@@ -432,11 +438,15 @@ public class OrgsController {
         org.setName(json.optString(Org.JSON_NAME));
         org.setShortName(json.optString(Org.JSON_SHORT_NAME));
         if (!json.isNull(Org.JSON_CITIES)) {
-            org.setCities(StreamSupport.stream(json.optJSONArray(Org.JSON_CITIES).spliterator(), false)
-                    .map(Object::toString).collect(Collectors.toList()));
+            List<String> cities = new ArrayList<>();
+            if (!json.getJSONArray(Org.JSON_CITIES).isEmpty()) {
+                cities = StreamSupport.stream(json.getJSONArray(Org.JSON_CITIES).spliterator(), false)
+                        .map(Object::toString).collect(Collectors.toList());
+            }
+            org.setCities(cities);
         }
         if (!json.isNull(Org.JSON_MEMBERS)) {
-            org.setMembers(StreamSupport.stream(json.optJSONArray(Org.JSON_MEMBERS).spliterator(), false)
+            org.setMembers(StreamSupport.stream(json.getJSONArray(Org.JSON_MEMBERS).spliterator(), false)
                     .map(Object::toString).collect(Collectors.toList()));
         }
         org.setPending(json.optBoolean(Org.JSON_PENDING));
