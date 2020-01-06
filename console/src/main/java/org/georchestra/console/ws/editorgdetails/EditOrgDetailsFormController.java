@@ -99,7 +99,7 @@ public class EditOrgDetailsFormController {
             @RequestParam(name = "logo") MultipartFile logo, BindingResult resultErrors) throws IOException {
         validation.validateOrgField("url", formBean.getUrl(), resultErrors);
         validation.validateOrgField("address", formBean.getAddress(), resultErrors);
-        validation.validateOrgField("description", formBean.getAddress(), resultErrors);
+        validation.validateOrgField("description", formBean.getDescription(), resultErrors);
 
         if (resultErrors.hasErrors()) {
             return "editOrgDetailsForm";
