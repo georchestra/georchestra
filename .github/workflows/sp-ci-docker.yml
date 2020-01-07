@@ -19,7 +19,7 @@ jobs:
         java-version: '8.x'
     - name: "Configuring Maven"
       run: |
-          mkdir $HOME/.m2
+          mkdir -p $HOME/.m2
           echo $M2_SETTINGS_FILE > $HOME/.m2/settings.xml
       env:
           M2_SETTINGS_FILE: ${{ secrets.M2_SETTINGS_FILE }}
