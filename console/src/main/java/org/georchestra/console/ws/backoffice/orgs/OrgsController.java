@@ -294,8 +294,7 @@ public class OrgsController {
     @RequestMapping(value = PUBLIC_REQUEST_MAPPING + "/requiredFields", method = RequestMethod.GET)
     public void getRequiredFieldsForOrgCreation(HttpServletResponse response) throws IOException, JSONException {
         JSONArray fields = new JSONArray();
-        fields.put("name");
-        fields.put("shortName");
+        validation.getRequiredOrgFields().forEach(fields::put);
         ResponseUtil.buildResponse(response, fields.toString(4), HttpServletResponse.SC_OK);
     }
 
