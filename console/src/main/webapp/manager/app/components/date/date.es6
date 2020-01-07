@@ -1,12 +1,12 @@
 require('components/date/date.tpl')
 
 class DateController {
-  static $inject = [ '$injector', '$scope', '$element' ]
+  static $inject = ['$injector', '$scope', '$element']
 
   constructor ($injector, $scope, $element) {
     this.date = $injector.get('date')
 
-    this.options = [ 'day', 'week', 'month', '3month', 'year', 'custom' ].map(
+    this.options = ['day', 'week', 'month', '3month', 'year', 'custom'].map(
       x => { return { value: x, label: 'date.' + x } }
     )
     this.option = this.options[this.options.length - 2]
@@ -19,7 +19,7 @@ class DateController {
     })
 
     // Reload on custom date changes
-    let dateChanged = (val, old) => {
+    const dateChanged = (val, old) => {
       if (!this.option) { return }
       if (this.option.value === 'custom' && val !== old) { this.callback() }
     }

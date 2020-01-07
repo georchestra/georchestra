@@ -4,7 +4,7 @@ require('services/util')
 require('services/contexts')
 
 class UserController {
-  static $inject = [ '$routeParams', '$injector', 'User', 'Role', 'Orgs' ]
+  static $inject = ['$routeParams', '$injector', 'User', 'Role', 'Orgs']
 
   constructor ($routeParams, $injector, User, Role, Orgs) {
     this.$injector = $injector
@@ -12,20 +12,20 @@ class UserController {
     this.TMP_ROLE = this.$injector.get('temporaryRole')
     this.EXPIRED_ROLE = this.$injector.get('expiredRole')
 
-    let translate = $injector.get('translate')
+    const translate = $injector.get('translate')
     this.i18n = {}
-    let strings = [
+    const strings = [
       'user.updated', 'user.error', 'user.deleted', 'user.content',
-      'org.select', 'delegation.dupdated', 'delegation.ddeleted' ]
+      'org.select', 'delegation.dupdated', 'delegation.ddeleted']
     strings.map(str => translate(str, this.i18n))
 
     this.tabs = ['infos', 'roles', 'analytics', 'messages', 'logs', 'manage']
     this.tab = $routeParams.tab
 
-    this.user = User.get({id: $routeParams.id}, (user) => {
+    this.user = User.get({ id: $routeParams.id }, (user) => {
       user.originalID = user.uid
       if (user.org && user.org !== '') {
-        user.orgObj = Orgs.get({'id': user.org}, org => {
+        user.orgObj = Orgs.get({ id: user.org }, org => {
           user.validOrg = !org.pending
         })
       } else {
@@ -34,8 +34,8 @@ class UserController {
       if (this.tab === 'delegations') {
         const Delegations = $injector.get('Delegations')
         Delegations.query(resp => {
-          let deleg = resp.find(x => x.uid === this.user.uid)
-          let options = deleg || { orgs: [], roles: [], uid: this.user.uid }
+          const deleg = resp.find(x => x.uid === this.user.uid)
+          const options = deleg || { orgs: [], roles: [], uid: this.user.uid }
           this.delegation = new Delegations(options)
           this.activeDelegation = this.hasDelegation()
           $injector.get('Orgs').query(orgs => {
@@ -44,7 +44,7 @@ class UserController {
         })
       }
       if (this.tab === 'messages') {
-        this.messages = this.$injector.get('Email').query({id: this.user.uid})
+        this.messages = this.$injector.get('Email').query({ id: this.user.uid })
       }
     })
     this.adminRoles = this.$injector.get('roleAdminList')()
@@ -81,7 +81,7 @@ class UserController {
 
   bindRoles () {
     // Load role infos for every tab (for confirmation)
-    let Role = this.$injector.get('Role')
+    const Role = this.$injector.get('Role')
     this.roles = Role.query(roles => {
       this.allroles = roles.map(r => r.cn)
       // get roles informations to get description from template
@@ -97,8 +97,8 @@ class UserController {
       })
     })
     this.user.$promise.then(() => {
-      let roleAdminFilter = this.$injector.get('roleAdminFilter')
-      let notAdmin = []
+      const roleAdminFilter = this.$injector.get('roleAdminFilter')
+      const notAdmin = []
       this.$injector.get('$q').all([
         this.user.$promise,
         this.roles.$promise
@@ -123,7 +123,7 @@ class UserController {
   }
 
   loadAnalytics ($scope) {
-    let date = this.$injector.get('date')
+    const date = this.$injector.get('date')
 
     this.date = {
       start: date.getFromDiff('year'),
@@ -131,25 +131,25 @@ class UserController {
     }
 
     this.config = {
-      layers: [ 'layer', 'count' ],
-      requests: [ 'date', 'count' ],
-      extractions: [ 'layer', 'count' ]
+      layers: ['layer', 'count'],
+      requests: ['date', 'count'],
+      extractions: ['layer', 'count']
     }
     this.loadAnalyticsData()
   }
 
   loadAnalyticsData () {
-    let i18n = {}
-    let i18nPromise = this.$injector.get('translate')('analytics.errorload', i18n)
-    let flash = this.$injector.get('Flash')
+    const i18n = {}
+    const i18nPromise = this.$injector.get('translate')('analytics.errorload', i18n)
+    const flash = this.$injector.get('Flash')
 
     this.$injector.get('$q').all([
       this.user.$promise,
       i18nPromise
     ]).then(() => {
-      let error = flash.create.bind(flash, 'danger', i18n.errorload)
-      let Analytics = this.$injector.get('Analytics')
-      let options = {
+      const error = flash.create.bind(flash, 'danger', i18n.errorload)
+      const Analytics = this.$injector.get('Analytics')
+      const options = {
         service: 'combinedRequests.json',
         user: this.user.uid,
         startDate: this.date.start,
@@ -157,7 +157,7 @@ class UserController {
       }
       this.requests = Analytics.get(options, () => {}, error)
 
-      let usageOptions = {
+      const usageOptions = {
         ...options,
         service: 'layersUsage.json',
         limit: 10
@@ -168,7 +168,7 @@ class UserController {
       delete this.usageOptions.limit
       this.usageOptions.service = 'layersUsage.csv'
 
-      let extractionOptions = {
+      const extractionOptions = {
         ...options,
         service: 'layersExtraction.json',
         limit: 10
@@ -182,8 +182,8 @@ class UserController {
   }
 
   loadLogs ($scope) {
-    let i18n = {}
-    let flash = this.$injector.get('Flash')
+    const i18n = {}
+    const flash = this.$injector.get('Flash')
 
     this.$injector.get('$q').all([
       this.user.$promise,
@@ -218,11 +218,11 @@ class UserController {
   }
 
   delete () {
-    let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
-    let flash = this.$injector.get('Flash')
+    const $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
+    const flash = this.$injector.get('Flash')
     this.user.$delete(() => {
       $httpDefaultCache.removeAll()
-      let $router = this.$injector.get('$router')
+      const $router = this.$injector.get('$router')
       $router.navigate($router.generate('users', { id: 'all' }))
       flash.create('success', this.i18n.deleted)
     }, flash.create.bind(flash, 'danger', this.i18n.error))
@@ -232,8 +232,8 @@ class UserController {
     this.quill = new Quill(document.querySelector('#compose_content'), {
       modules: {
         toolbar: [
-          [ { header: [ 1, 2, false ] } ],
-          [ 'bold', 'italic', 'underline', 'image', {'color': []}, {'align': []} ]
+          [{ header: [1, 2, false] }],
+          ['bold', 'italic', 'underline', 'image', { color: [] }, { align: [] }]
         ]
       },
       placeholder: this.i18n.content,
@@ -260,13 +260,13 @@ class UserController {
   }
 
   sendMail () {
-    let flash = this.$injector.get('Flash')
-    let Mail = this.$injector.get('Mail')
-    let i18n = {}
+    const flash = this.$injector.get('Flash')
+    const Mail = this.$injector.get('Mail')
+    const i18n = {}
     this.$injector.get('translate')('msg.sent', i18n)
     this.$injector.get('translate')('msg.error', i18n)
-    let attachments = []
-    for (let attachId in this.compose.attachments) {
+    const attachments = []
+    for (const attachId in this.compose.attachments) {
       if (this.compose.attachments[attachId]) { attachments.push(attachId) }
     }
     (new Mail({
@@ -277,9 +277,9 @@ class UserController {
     })).$save((r) => {
       delete this.compose
       flash.create('success', i18n.sent)
-      let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
+      const $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
       $httpDefaultCache.removeAll()
-      this.messages = this.$injector.get('Email').query({id: this.user.uid})
+      this.messages = this.$injector.get('Email').query({ id: this.user.uid })
     }, () => { flash.create('danger', i18n.error) })
   }
 
@@ -289,8 +289,8 @@ class UserController {
   }
 
   deleteDelegation () {
-    let flash = this.$injector.get('Flash')
-    let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
+    const flash = this.$injector.get('Flash')
+    const $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
     this.delegation.$delete(() => {
       $httpDefaultCache.removeAll()
       flash.create('success', this.i18n.ddeleted)
@@ -302,8 +302,8 @@ class UserController {
   }
 
   saveDelegation () {
-    let flash = this.$injector.get('Flash')
-    let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
+    const flash = this.$injector.get('Flash')
+    const $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
     this.delegation.$update(() => {
       $httpDefaultCache.removeAll()
       flash.create('success', this.i18n.dupdated)
@@ -312,33 +312,33 @@ class UserController {
   }
 
   activate ($scope) {
-    let $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
-    let flash = this.$injector.get('Flash')
+    const $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
+    const flash = this.$injector.get('Flash')
 
     $scope.$watch(() => $scope.profile, p => {
       if (p !== 'SUPERUSER' || this.tabs.indexOf('delegations') !== -1) return
       this.tabs.splice(3, 0, 'delegations')
     })
 
-    let saveRoles = function (newVal, oldVal) {
+    const saveRoles = function (newVal, oldVal) {
       if (!newVal || !oldVal) { return }
-      let removeTmp = g => g !== this.TMP_ROLE
+      const removeTmp = g => g !== this.TMP_ROLE
       newVal = newVal.filter(removeTmp)
       oldVal = oldVal.filter(removeTmp)
 
-      let toPut = newVal.filter(a => oldVal.indexOf(a) === -1)
-      let toDel = oldVal.filter(a => newVal.indexOf(a) === -1)
+      const toPut = newVal.filter(a => oldVal.indexOf(a) === -1)
+      const toDel = oldVal.filter(a => newVal.indexOf(a) === -1)
 
       if (toPut.length === 0 && toDel.length === 0) { return }
       if (toPut.length > 1 && toDel.length === 0) { return } // Wrong artifacts
 
-      let i18n = {}
+      const i18n = {}
       this.$injector.get('translate')('users.roleUpdated', i18n)
       this.$injector.get('translate')('users.roleUpdateError', i18n)
 
       this.rolePromise = this.$injector.get('RolesUsers').save(
         {
-          users: [ this.user.uid ],
+          users: [this.user.uid],
           PUT: toPut,
           DELETE: toDel
         },
@@ -360,8 +360,8 @@ class UserController {
 
       let previousRoles
       $scope.$watchCollection(() => {
-        let roles = []
-        for (let g in this.user.adminRoles) {
+        const roles = []
+        for (const g in this.user.adminRoles) {
           if (this.user.adminRoles[g]) { roles.push(g) }
         }
         if (this.user.adminRoles) {
@@ -388,18 +388,18 @@ class UserController {
   }
 }
 
-UserController.prototype.activate.$inject = [ '$scope' ]
+UserController.prototype.activate.$inject = ['$scope']
 
 angular.module('manager')
   .controller('UserController', UserController)
   .filter('encodeURIComponent', () => window.encodeURIComponent)
-  .directive('managers', [ '$timeout', 'User', ($timeout, User) => ({
+  .directive('managers', ['$timeout', 'User', ($timeout, User) => ({
     link: (scope, elm, attrs, ctrl) => {
-      let promise = scope.$eval(attrs['promise'])
-      let selUsers = []
+      const promise = scope.$eval(attrs.promise)
+      const selUsers = []
       User.query((users) => {
         users.map((u) => {
-          let id = u.uid
+          const id = u.uid
           selUsers.push({
             id: id,
             text: (u.sn || '') + ' ' + (u.givenName || '')
@@ -410,7 +410,7 @@ angular.module('manager')
           allowClear: true,
           data: selUsers
         })
-        let cb = () => { $timeout(() => { elm.trigger('change') }) }
+        const cb = () => { $timeout(() => { elm.trigger('change') }) }
         if (promise) {
           promise.then(cb)
         } else {
@@ -419,16 +419,16 @@ angular.module('manager')
       })
     }
   })])
-  .directive('organizations', [ '$timeout', '$router', 'Orgs', ($timeout, $router, Orgs) => ({
+  .directive('organizations', ['$timeout', '$router', 'Orgs', ($timeout, $router, Orgs) => ({
     link: (scope, elm, attrs, ctrl) => {
-      let promise = scope.$eval(attrs['promise'])
-      let user = scope.$eval(attrs['model'])
+      const promise = scope.$eval(attrs.promise)
+      const user = scope.$eval(attrs.model)
 
       // Initialize pending value for new user
       if (user.pending === undefined) {
         user.pending = false
       }
-      let selOrgs = []
+      const selOrgs = []
       Orgs.query((orgs) => {
         orgs.forEach((o) => {
           if (user.pending || !o.pending) {
@@ -441,7 +441,7 @@ angular.module('manager')
         // create template to format selected element
         const formatSelected = (state) => {
           if (!state.id) return state.text
-          const route = $router.generate('org', {org: state.id, tab: 'infos'})
+          const route = $router.generate('org', { org: state.id, tab: 'infos' })
           return $(`<a href="#!${route}">${state.text}</a>`)
         }
         elm.select2({
@@ -450,7 +450,7 @@ angular.module('manager')
           allowClear: true,
           data: selOrgs
         })
-        let cb = () => {
+        const cb = () => {
           $timeout(() => {
             elm.trigger('change')
           })

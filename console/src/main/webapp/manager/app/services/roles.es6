@@ -18,7 +18,7 @@ angular.module('manager')
         method: 'DELETE'
       }
     })
-  ]).factory('roleAdminList', [ () => {
+  ]).factory('roleAdminList', [() => {
     const adminRoles = [
       'SUPERUSER',
       'ADMINISTRATOR',
@@ -34,7 +34,7 @@ angular.module('manager')
       'TEMPORARY'
     ]
     return () => adminRoles
-  }]).factory('readonlyRoleList', [ () => {
+  }]).factory('readonlyRoleList', [() => {
     const readonlyRoles = [
       'PENDING',
       'EXPIRED',
@@ -46,6 +46,6 @@ angular.module('manager')
     'expiredRole', () => 'EXPIRED'
   ).factory(
     'temporaryRole', () => 'TEMPORARY'
-  ).factory('roleAdminFilter', [ 'roleAdminList', (roleAdminList) =>
+  ).factory('roleAdminFilter', ['roleAdminList', (roleAdminList) =>
     (role) => roleAdminList().indexOf(role.cn) >= 0
   ])

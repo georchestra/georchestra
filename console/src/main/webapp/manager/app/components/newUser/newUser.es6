@@ -5,7 +5,7 @@ require('services/translate')
 require('services/users')
 
 class NewUserController {
-  static $inject = [ '$injector', 'translate', 'User' ]
+  static $inject = ['$injector', 'translate', 'User']
 
   constructor ($injector, translate, User) {
     this.$injector = $injector
@@ -21,8 +21,8 @@ class NewUserController {
   }
 
   save () {
-    let flash = this.$injector.get('Flash')
-    let $router = this.$injector.get('$router')
+    const flash = this.$injector.get('Flash')
+    const $router = this.$injector.get('$router')
     this.user.$save(
       () => {
         flash.create('success', this.i18n.created)

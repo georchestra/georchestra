@@ -14,7 +14,7 @@ angular.module('manager')
         params: { uid: '@uid' },
         method: 'POST'
       },
-      'delete': {
+      delete: {
         url: baseUri + 'delegation/:uid',
         params: { uid: '@uid' },
         method: 'DELETE'

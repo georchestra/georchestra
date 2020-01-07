@@ -1,12 +1,12 @@
 require('components/logs/logs.tpl')
 
 class LogsController {
-  static $inject = [ '$injector' ]
+  static $inject = ['$injector']
 
   constructor ($injector) {
     this.$injector = $injector
     this.itemsPerPage = 15
-    let i18n = {}
+    const i18n = {}
     this.$injector.get('translate')('logs.error', i18n)
     this.$injector.get('translate')('logs.alltarget', i18n)
 
@@ -14,10 +14,10 @@ class LogsController {
       limit: 100000,
       page: 0
     }, () => {
-      let extract = (key) => [ ...new Set(this.logs.map(l => l[key])) ]
+      const extract = (key) => [...new Set(this.logs.map(l => l[key]))]
       this.senders = extract('admin')
       this.types = extract('type')
-      this.targets = [ { key: 'all', value: i18n.alltarget } ].concat(
+      this.targets = [{ key: 'all', value: i18n.alltarget }].concat(
         extract('target').map(g => ({ key: g, value: g }))
       )
     }, () => {
@@ -47,11 +47,11 @@ class LogsController {
   }
 }
 
-let filterLogs = () => {
+const filterLogs = () => {
   return (logs, type, admin, target, date) => {
     if (!logs) { return }
 
-    let filtered = logs.filter(log => {
+    const filtered = logs.filter(log => {
       let valid = true
       if (type && log.type !== type) {
         valid = false
