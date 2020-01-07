@@ -61,3 +61,13 @@ ldapmodify -H ldap://localhost:389 -D "cn=admin,dc=georchestra,dc=org" -W -f /tm
 ```
 
 If anything goes wrong during the upgrade process, you can rollback thanks to the above backup (always inserting users first, or the `memberOf` overlay won't work !).
+
+## Frontend
+
+The following RewriteRule can be safely removed since [georchestra/georchestra#2872](https://github.com/georchestra/georchestra/pull/2872):
+```
+RewriteCond %{REQUEST_URI} !^/console/manager/public/.*$
+RewriteCond %{REQUEST_URI} ^/console/manager/([home|users|org|orgs|role|roles|logs|analytics|delegations].*)$
+RewriteRule .* /console/manager/#!/%1 [NE,R,L]
+```
+It is now managed by the console application itself.
