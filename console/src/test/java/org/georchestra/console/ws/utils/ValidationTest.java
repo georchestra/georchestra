@@ -29,12 +29,13 @@ public class ValidationTest {
     public void testHardCodedOrgFields() {
 
         Validation validation = new Validation("");
-        Set<String> requiredOrgFields = new HashSet<String>();
+        Set<String> expected = new HashSet<String>();
 
-        requiredOrgFields.add("name");
-        requiredOrgFields.add("shortName");
+        expected.add("name");
+        expected.add("shortName");
+        expected.add("type");
 
-        Assert.assertEquals(validation.getRequiredOrgFields(), requiredOrgFields);
+        Assert.assertEquals(validation.getRequiredOrgFields(), expected);
 
     }
 
@@ -93,9 +94,9 @@ public class ValidationTest {
         Assert.assertFalse(v.validateUserField("required_field", (String) null));
 
         // non required org field
-        Assert.assertTrue(v.validateOrgField("type", "josé"));
-        Assert.assertTrue(v.validateOrgField("type", ""));
-        Assert.assertTrue(v.validateOrgField("type", (String) null));
+        Assert.assertTrue(v.validateOrgField("type", "Association"));
+        Assert.assertFalse(v.validateOrgField("type", (String) null));
+        Assert.assertFalse(v.validateOrgField("type", ""));
 
         // required org field (default)
         Assert.assertTrue(v.validateOrgField("name", "josé"));
