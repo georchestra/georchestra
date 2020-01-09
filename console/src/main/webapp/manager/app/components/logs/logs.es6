@@ -18,7 +18,7 @@ class LogsController {
       this.logs.map(l => {
         l.changed = l.changed && l.changed.length ? JSON.parse(l.changed) : l.changed
       })
-      let extract = (key) => [ ...new Set(this.logs.map(l => l[key])) ]
+      const extract = (key) => [...new Set(this.logs.map(l => l[key]))]
       this.senders = extract('admin')
       this.types = extract('type')
       this.targets = [{ key: 'all', value: i18n.alltarget }].concat(
@@ -65,11 +65,11 @@ class LogsController {
         // avoid to create link for removed items
         return type
       } else if (this.roles.indexOf(log.target) > -1) {
-        return 'ROLE'
+        type = 'ROLE'
       } else if (this.orgsId[log.target]) {
-        return 'ORG'
+        type = 'ORG'
       } else if (this.users.indexOf(log.target) > -1) {
-        return 'USER'
+        type = 'USER'
       }
     }
     return type
@@ -113,7 +113,7 @@ class LogsController {
 const filterLogs = () => {
   return (logs, type, admin, target, date) => {
     if (!logs) { return }
-    let filtered = logs.filter(log => {
+    const filtered = logs.filter(log => {
       let valid = true
       if (type && log.type !== type) {
         valid = false

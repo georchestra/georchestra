@@ -83,11 +83,11 @@ class HomeController {
         // avoid to create link for removed items
         return type
       } else if (this.roles.indexOf(log.target) > -1) {
-        return 'ROLE'
+        type = 'ROLE'
       } else if (this.orgsId[log.target]) {
-        return 'ORG'
+        type = 'ORG'
       } else if (this.users.indexOf(log.target) > -1) {
-        return 'USER'
+        type = 'USER'
       }
     }
     return type
