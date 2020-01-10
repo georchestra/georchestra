@@ -21,7 +21,7 @@ package org.georchestra.console.dto.orgs;
 
 import org.georchestra.console.ds.OrgsDao;
 
-public class OrgExt extends AbstractOrg {
+public class OrgExt extends AbstractOrg implements Cloneable {
 
     public static final String JSON_ADDRESS = "address";
     public static final String JSON_ORG_TYPE = "orgType";
@@ -90,5 +90,10 @@ public class OrgExt extends AbstractOrg {
     @Override
     public OrgsDao.Extension<OrgExt> getExtension(OrgsDao orgDao) {
         return orgDao.getExtension(this);
+    }
+
+    @Override
+    public OrgExt clone() throws CloneNotSupportedException {
+        return (OrgExt) super.clone();
     }
 }
