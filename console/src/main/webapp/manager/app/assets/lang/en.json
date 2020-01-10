@@ -78,6 +78,7 @@
   "user.select_role"      : "Select a role",
   "user.action"           : "Action",
   "user.remove"           : "Remove",
+  "user.logs"             : "User logs",
 
   "orgs.title_plural"     : "organizations",
   "orgs.title_one"        : "organization",

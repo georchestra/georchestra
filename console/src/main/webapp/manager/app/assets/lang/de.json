@@ -75,6 +75,7 @@
   "user.select_role"      : "Select a role",
   "user.action"           : "Aktion",
   "user.remove"           : "Entfernen",
+  "user.logs"            : "Benutzerprotokolle",
 
   "orgs.title_plural"     : "Organisationen",
   "orgs.title_one"        : "Organisation",

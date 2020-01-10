@@ -75,6 +75,7 @@
   "user.select_role"      : "Seleccionar un rol",
   "user.action"           : "Operación",
   "user.remove"           : "Eliminar",
+  "user.logs"             : "Logs de usuarios",
 
   "orgs.title_plural"     : "organizaciones",
   "orgs.title_one"        : "organización",

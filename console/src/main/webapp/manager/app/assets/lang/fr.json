@@ -75,6 +75,7 @@
   "user.select_role"      : "Sélectionner un rôle",
   "user.action"           : "Action",
   "user.remove"           : "Retirer",
+  "user.logs"             : "Logs utilisateur",
 
   "orgs.title_plural"     : "organismes",
   "orgs.title_one"        : "organisme",
