@@ -156,6 +156,7 @@ require('components/browse/browse')
 require('components/logs/logs')
 require('components/newUser/newUser')
 require('components/stats/stats')
+require('components/logger/logger')
 require('components/user/user')
 require('components/users/users')
 
