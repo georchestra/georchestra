@@ -21,6 +21,7 @@ class UserController {
 
     this.tabs = ['infos', 'roles', 'analytics', 'messages', 'logs', 'manage']
     this.tab = $routeParams.tab
+    this.uid = $routeParams.id
 
     this.user = User.get({ id: $routeParams.id }, (user) => {
       user.originalID = user.uid
@@ -187,33 +188,6 @@ class UserController {
     })
   }
 
-  loadLogs ($scope) {
-    const i18n = {}
-    const flash = this.$injector.get('Flash')
-
-    this.$injector.get('$q').all([
-      this.user.$promise,
-      this.$injector.get('translate')('analytics.errorload', i18n)
-    ]).then(() => {
-      this.logs = this.$injector.get('UserLogs').query(
-        {
-          id: this.user.uid,
-          limit: 100000,
-          page: 0
-        },
-        () => {
-          this.logs.reverse()
-          this.logs.map(log => {
-            if (log.changed) {
-              log.changed = JSON.parse(log.changed)
-            }
-          })
-        },
-        flash.create.bind(flash, 'danger', i18n.errorload)
-      )
-    })
-  }
-
   save () {
     const flash = this.$injector.get('Flash')
     const $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
@@ -265,27 +239,6 @@ class UserController {
   closeMessage (message) {
     delete this.message
     delete this.compose
-  }
-
-  // beahavior when user open log details
-  openLog (log) {
-    // remove old log if not already deleted
-    if (this.log) { delete this.log }
-    // get messages for this user
-    if (log.changed) {
-      log.changed = log.changed && log.changed.length ? JSON.parse(log.changed) : log.changed
-      if (log.changed.sender) {
-        // only for message
-        log.trusted = this.$injector.get('$sce').trustAsHtml(log.changed.body)
-      }
-      this.log = log
-    }
-  }
-
-  // beahavior when close log
-  closeLog () {
-    // remove log to avoir wrong behavior when log changed
-    delete this.log
   }
 
   loadTemplate () {
@@ -411,9 +364,6 @@ class UserController {
 
     if (this.tab === 'analytics') {
       this.loadAnalytics($scope)
-    }
-    if (this.tab === 'logs') {
-      this.loadLogs($scope)
     }
   }
 
