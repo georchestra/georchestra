@@ -11,29 +11,4 @@
    Bean configuration file for the gwc-web module
   </description>
 
-  <import resource="geowebcache-core-context.xml"/>
-  <import resource="geowebcache-georss-context.xml"/>
-  <import resource="geowebcache-gmaps-context.xml"/>
-  <import resource="geowebcache-kmlservice-context.xml"/>
-  <import resource="geowebcache-wmtsservice-context.xml"/>
-  <import resource="geowebcache-rest-context.xml"/>
-  <import resource="geowebcache-tmsservice-context.xml"/>
-  <import resource="geowebcache-virtualearth-context.xml"/>
-  <import resource="geowebcache-wmsservice-context.xml"/>
-  <import resource="geowebcache-s3storage-context.xml"/>
-  <import resource="geowebcache-sqlite-context.xml"/>
-
-  <import resource="geowebcache-diskquota-context.xml"/>
-  <import resource="geowebcache-arcgiscache-context.xml"/>
-  <import resource="geowebcache-distributed.xml"/>
-  <import resource="geowebcache-security.xml"/>
-
-  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-    <property name="location">
-      <value>classpath:application.properties</value>
-    </property>
-  </bean>
-
-  <context:component-scan base-package="org.geowebcache.controller"/>
-  
 </beans>

@@ -167,7 +167,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
-          <warName>geowebcache-generic</warName>
+          <warName>geowebcache</warName>
           <webappDirectory>${project.build.directory}/geowebcache</webappDirectory>
         </configuration>
         <executions>
@@ -207,7 +207,7 @@
     <profile>
       <id>debianPackage</id>
       <build>
-        <finalName>geowebcache-generic</finalName>
+        <finalName>geowebcache</finalName>
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -293,7 +293,7 @@
     <profile>
       <id>rpmPackage</id>
       <build>
-        <finalName>geowebcache-generic</finalName>
+        <finalName>geowebcache</finalName>
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -364,7 +364,7 @@
                     <source>
                       <location>${project.build.directory}</location>
                       <includes>
-                        <include>geowebcache-generic.war</include>
+                        <include>geowebcache.war</include>
                       </includes>
                     </source>
                   </sources>
@@ -425,7 +425,7 @@
                 <resource>
                   <targetPath>/var/lib/jetty/webapps</targetPath>
                   <directory>${project.build.directory}</directory>
-                  <include>geowebcache-generic.war</include>
+                  <include>geowebcache.war</include>
                 </resource>
                 <resource>
                   <targetPath>/etc/georchestra</targetPath>

@@ -19,10 +19,12 @@
 
 package org.georchestra.geowebcache.security;
 
+import com.google.common.base.Strings;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
+import java.util.Collections;
 import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -92,10 +94,12 @@ public class PreAuthFilter implements Filter {
     private Authentication createAuthentication(HttpServletRequest httpServletRequest) {
         final String username = httpServletRequest.getHeader(SEC_USERNAME);
         final String rolesString = httpServletRequest.getHeader(SEC_ROLES);
-        Set<String> roles = new LinkedHashSet<String>();
-        if (rolesString != null) {
-            roles.addAll(Arrays.asList(rolesString.split(";")));
-        }
+        Set<String> roles =
+                Strings.isNullOrEmpty(rolesString)
+                        ? Collections.emptySet()
+                        : Pattern.compile(";")
+                                .splitAsStream(rolesString)
+                                .collect(Collectors.toSet());
         return new PreAuthToken(username, roles);
     }
 

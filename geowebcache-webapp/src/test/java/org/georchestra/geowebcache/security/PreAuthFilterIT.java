@@ -18,12 +18,14 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 /** @author Jesse on 4/24/2014. */
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
+@ContextConfiguration(locations = "file:src/main/webapp/WEB-INF/applicationContext.xml")
 public class PreAuthFilterIT {
 
     @Autowired private PreAuthFilter preAuthFilter;
