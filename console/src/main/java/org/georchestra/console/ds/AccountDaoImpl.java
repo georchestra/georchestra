@@ -72,7 +72,6 @@ public final class AccountDaoImpl implements AccountDao {
     private String basePath;
     private String orgSearchBaseDN;
     private String pendingOrgSearchBaseDN;
-    private Boolean isPendingChanged;
 
     @Autowired
     public AccountDaoImpl(LdapTemplate ldapTemplate) {
@@ -110,10 +109,6 @@ public final class AccountDaoImpl implements AccountDao {
 
     public void setBasePath(String basePath) {
         this.basePath = basePath;
-    }
-
-    public void setPendingChanged(Boolean isPendingChanged) {
-        this.isPendingChanged = isPendingChanged;
     }
 
     @Override
@@ -205,12 +200,7 @@ public final class AccountDaoImpl implements AccountDao {
         if (hasUserDnChanged(account, modified)) {
             ldapTemplate.rename(buildUserDn(account), buildUserDn(modified));
         }
-        this.setPendingChanged(this.hasUserPendingChanged(account, modified));
         update(modified, originLogin);
-    }
-
-    public boolean hasUserPendingChanged(Account account, Account modified) {
-        return !account.isPending() == (modified.isPending());
     }
 
     @Override
