@@ -21,8 +21,13 @@ package org.georchestra.console.model;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 
 import javax.persistence.*;
+
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -32,6 +37,7 @@ import java.util.Date;
 @NamedQueries({
         @NamedQuery(name = "AdminLogEntry.findByTargetPageable", query = "SELECT l FROM AdminLogEntry l WHERE l.target = :target ORDER BY l.date DESC"),
         @NamedQuery(name = "AdminLogEntry.myFindByTargets", query = "SELECT l FROM AdminLogEntry l WHERE l.target IN :targets ORDER BY l.date DESC") })
+@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 public class AdminLogEntry {
 
     @Id
@@ -44,7 +50,8 @@ public class AdminLogEntry {
     private AdminLogType type;
     private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
-    @Lob
+    @Type(type = "jsonb")
+    @Column(columnDefinition = "jsonb")
     private String changed;
 
     @Column(updatable = false, nullable = false)
