@@ -25,10 +25,7 @@ import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.Role;
 import org.georchestra.console.dto.RoleFactory;
 import org.georchestra.console.dto.RoleSchema;
-import org.georchestra.console.model.AdminLogType;
 import org.georchestra.console.ws.backoffice.roles.RoleProtected;
-import org.georchestra.console.ws.utils.LogUtils;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.ContextMapper;
@@ -68,9 +65,6 @@ public class RoleDaoImpl implements RoleDao {
     public void setRoleSearchBaseDN(String roleSearchBaseDN) {
         this.roleSearchBaseDN = roleSearchBaseDN;
     }
-
-    @Autowired
-    private LogUtils logUtils;
 
     @Autowired
     private AccountDao accountDao;
@@ -119,22 +113,6 @@ public class RoleDaoImpl implements RoleDao {
             context.addAttributeValue("member", accountDao.buildFullUserDn(user), false);
             this.ldapTemplate.modifyAttributes(context);
 
-            // Add log entry when role was added
-            if (originLogin != null && logUtils != null) {
-                JSONObject details = new JSONObject();
-                AdminLogType type = AdminLogType.SYSTEM_ROLE_ADDED;
-
-                if (!this.roles.isProtected(roleID)) {
-                    type = AdminLogType.CUSTOM_ROLE_ADDED;
-                }
-
-                details = logUtils.getLogDetails(roleID, null, roleID, type);
-
-                details.put("isRole", true);
-
-                logUtils.createLog(user.getUid(), type, details.toString());
-            }
-
         } catch (Exception e) {
             LOG.error(e);
             throw new DataServiceException(e);
@@ -162,22 +140,6 @@ public class RoleDaoImpl implements RoleDao {
         ctx.removeAttributeValue("member", accountDao.buildFullUserDn(account));
 
         this.ldapTemplate.modifyAttributes(ctx);
-
-        // Add log entry when role was removed
-        if (originLogin != null && logUtils != null) {
-            JSONObject details = new JSONObject();
-            AdminLogType type = AdminLogType.SYSTEM_ROLE_REMOVED;
-
-            if (!this.roles.isProtected(roleName)) {
-                type = AdminLogType.CUSTOM_ROLE_REMOVED;
-            }
-
-            details = logUtils.getLogDetails(roleName, roleName, null, type);
-
-            details.put("isRole", true);
-
-            logUtils.createLog(account.getUid(), type, details.toString());
-        }
     }
 
     @Override

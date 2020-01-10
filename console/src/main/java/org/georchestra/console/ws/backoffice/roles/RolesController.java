@@ -460,6 +460,11 @@ public class RolesController {
         this.roleDao.addUsersInRoles(putRole, accounts, auth.getName());
         this.roleDao.deleteUsersInRoles(deleteRole, accounts, auth.getName());
 
+        // create log
+        if (logUtils != null) {
+            logUtils.logRolesUsersAction(putRole, deleteRole, accounts);
+        }
+
         ResponseUtil.writeSuccess(response);
     }
 
