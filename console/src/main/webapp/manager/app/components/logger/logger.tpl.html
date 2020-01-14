@@ -81,7 +81,7 @@
     </tbody>
     </table>
     <!--Log as Email-->
-    <div ng-if="logger.getDescription(log) === 'message'">
+    <div ng-if="logger.getDescription(logger.log) === 'message'">
         <h4>
             <small ng-if="logger.log.trusted">
             <a ng-link="user({id: logger.log.changed.sender, tab: 'infos'})" title="">{{::logger.log.changed.sender}}</a>
@@ -104,7 +104,7 @@
         </ul>
     </div>
     <!--Others logs type-->
-    <div ng-if="logger.log && logger.getDescription(log) != 'message'">
+    <div ng-if="logger.log && logger.getDescription(logger.log) != 'message'">
         <h4>
             <small>
             <span translate>logs.target</span> 
@@ -113,7 +113,7 @@
                 {{::logger.log.target}}
             </a>
             <!--or display org name-->
-            <a ng-if="logger.getType(logs.log) === 'ORG'" title="" ng-link="org({org: logger.log.target, tab: 'infos'})">
+            <a ng-if="logger.getType(logger.log) === 'ORG'" title="" ng-link="org({org: logger.log.target, tab: 'infos'})">
                 <span ng-if="logger.orgsId[log.target]">{{::logger.orgsId[logs.log.target]}}</span>
                 <span ng-if="!logger.orgsId[log.target]">{{::logger.log.target}}</span>          
             </a>
@@ -132,24 +132,24 @@
             <strong>{{::logger.log.changed.field}}.</strong>
         </p>
         <!--If value was replaced by another-->
-        <p ng-if="logger.getDescription(log) === updateValue"> 
+        <p ng-if="logger.getDescription(logger.log) === 'updateValue'"> 
             <span translate>logs.replace</span> 
             <strong>{{::logger.log.changed.old}}</strong> 
             <span translate>logs.to</span> 
             <strong>{{::logger.log.changed.new}}.</strong>
         </p>
         <!--First value was set-->
-        <p ng-if="logger.getDescription(log) === 'initValue'">
+        <p ng-if="logger.getDescription(logger.log) === 'initValue'">
             <span translate>logs.set</span> 
             <strong ng-if="!logger.changed.isRole">{{::logger.log.changed.new}}.</strong>
         </p>
         <!--Field get an empty value-->
-        <p ng-if="logger.getDescription(log) === 'clearValue'">
+        <p ng-if="logger.getDescription(logger.log) === 'clearValue'">
             <span translate>logs.clear</span> 
             <strong>{{::logger.log.changed.old}}.</strong>
         </p>
         <!--Special display for area modification-->
-        <p ng-if="logger.getDescription(log) === 'changeArea'">
+        <p ng-if="logger.getDescription(logger.log) === 'changeArea'">
             <span ng-if="logger.log.changed.added"> 
             {{:: logger.log.changed.added}} 
             </span>
