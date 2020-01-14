@@ -109,6 +109,7 @@ public class RolesController {
 
     @Autowired
     private AdvancedDelegationDao advancedDelegationDao;
+
     @Autowired
     private DelegationDao delegationDao;
 
@@ -255,9 +256,7 @@ public class RolesController {
             ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_OK);
 
             // log role creation
-            if (role.getName() != null && logUtils != null) {
-                logUtils.createLog(role.getName(), AdminLogType.ROLE_CREATED, null);
-            }
+            logUtils.createLog(role.getName(), AdminLogType.ROLE_CREATED, null);
 
         } catch (DuplicatedCommonNameException emailex) {
 
@@ -305,9 +304,7 @@ public class RolesController {
             this.roleDao.delete(cn);
 
             // log role deleted
-            if (cn != null && logUtils != null) {
-                logUtils.createLog(cn, AdminLogType.ROLE_DELETED, null);
-            }
+            logUtils.createLog(cn, AdminLogType.ROLE_DELETED, null);
 
             ResponseUtil.writeSuccess(response);
 
@@ -318,7 +315,6 @@ public class RolesController {
             LOG.error(e.getMessage());
             ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
                     HttpServletResponse.SC_BAD_REQUEST);
-
         } catch (Exception e) {
             LOG.error(e.getMessage());
             ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
@@ -445,25 +441,26 @@ public class RolesController {
             try {
                 return accountDao.findByUID(userUuid);
             } catch (DataServiceException e) {
+                LOG.debug(e.getMessage());
                 return null;
             }
         }).filter(account -> null != account).collect(Collectors.toList());
 
         // Don't allow modification of ORGADMIN role
-        if (putRole.contains("ORGADMIN") || deleteRole.contains("ORGADMIN"))
+        if (putRole.contains("ORGADMIN") || deleteRole.contains("ORGADMIN")) {
             throw new IllegalArgumentException("ORGADMIN role cannot be add or delete");
+        }
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_SUPERUSER")))
+        if (!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_SUPERUSER"))) {
             this.checkAuthorization(auth.getName(), users, putRole, deleteRole);
+        }
 
         this.roleDao.addUsersInRoles(putRole, accounts, auth.getName());
         this.roleDao.deleteUsersInRoles(deleteRole, accounts, auth.getName());
 
         // create log
-        if (logUtils != null) {
-            logUtils.logRolesUsersAction(putRole, deleteRole, accounts);
-        }
+        logUtils.logRolesUsersAction(putRole, deleteRole, accounts);
 
         ResponseUtil.writeSuccess(response);
     }

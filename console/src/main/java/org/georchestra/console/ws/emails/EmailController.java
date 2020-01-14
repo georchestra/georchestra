@@ -205,9 +205,7 @@ public class EmailController {
 
         // log that email was sent
         String emailString = email.toJSON().toString();
-        if (logUtils != null) {
-            logUtils.createLog(recipient, AdminLogType.EMAIL_SENT, emailString);
-        }
+        logUtils.createLog(recipient, AdminLogType.EMAIL_SENT, emailString);
 
         return emailString;
 

@@ -20,8 +20,6 @@ package org.georchestra.console.ws.editorgdetails;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.console.ds.DataServiceException;
-
 import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.dto.orgs.OrgExt;
@@ -43,7 +41,6 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Base64;
@@ -116,20 +113,26 @@ public class EditOrgDetailsFormController {
             return "editOrgDetailsForm";
         }
 
-        OrgExt orgExtOld = orgsDao.findExtById(formBean.getId());
-
-        if (logUtils != null) {
-            // log each attributes modifications
-            logOrgExtChanges(orgExtOld, formBean, logo);
+        OrgExt orgExtOrigin = orgsDao.findExtById(formBean.getId());
+        OrgExt orgExtOriginClone = null;
+        try {
+            orgExtOriginClone = orgExtOrigin.clone();
+        } catch (CloneNotSupportedException cloneException) {
+            LOG.info("Log action will fail. Clone org or orgExt is not supported.", cloneException);
         }
 
-        OrgExt orgExt = modifyOrgExt(orgExtOld, formBean);
+        OrgExt orgExt = modifyOrgExt(orgExtOrigin, formBean);
 
         if (!logo.isEmpty()) {
             orgExt.setLogo(transformLogoFileToBase64(logo));
         }
         orgsDao.update(orgExt);
         model.addAttribute("success", true);
+
+        // log each attributes modifications
+        if (orgExtOriginClone != null) {
+            logOrgExtChanges(orgExtOriginClone, formBean, logo);
+        }
 
         return "redirect:/account/userdetails";
 
@@ -172,11 +175,11 @@ public class EditOrgDetailsFormController {
         String id = orgExt.getId();
 
         try {
-            if (logo != null && !orgExt.getLogo().equals(transformLogoFileToBase64(logo))) {
+            if (logo != null && orgExt.getLogo() != null && !orgExt.getLogo().equals(transformLogoFileToBase64(logo))) {
                 logUtils.createAndLogDetails(id, Org.JSON_LOGO, null, null, type);
             }
         } catch (IOException e) {
-            LOG.info("Can't create log and detail for logo replacement.");
+            LOG.info("Can't create admin log and detail for logo replacement.", e);
         }
 
         if (!orgExt.getDescription().equals(formBean.getDescription())) {

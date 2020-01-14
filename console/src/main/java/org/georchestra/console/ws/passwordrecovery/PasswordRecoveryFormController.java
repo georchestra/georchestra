@@ -89,7 +89,7 @@ public class PasswordRecoveryFormController {
     private boolean reCaptchaActivated;
 
     @Autowired
-    private LogUtils logUtils;
+    protected LogUtils logUtils;
 
     @Value("${publicContextPath:/console}")
     private String publicContextPath;
@@ -178,9 +178,7 @@ public class PasswordRecoveryFormController {
             sessionStatus.setComplete();
 
             // log role deleted
-            if (account.getUid() != null && logUtils != null) {
-                logUtils.createLog(account.getUid(), AdminLogType.EMAIL_RECOVERY_SENT, "");
-            }
+            logUtils.createLog(account.getUid(), AdminLogType.EMAIL_RECOVERY_SENT, "");
 
             return "emailWasSent";
 

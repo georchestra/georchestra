@@ -69,7 +69,7 @@ import org.apache.commons.logging.LogFactory;
 @Controller
 public class OrgsController {
 
-    private static final Log LOG = LogFactory.getLog(LogUtils.class.getName());
+    private static final Log LOG = LogFactory.getLog(OrgsController.class.getName());
 
     private static final String BASE_MAPPING = "/private";
     private static final String BASE_RESOURCE = "orgs";
@@ -92,6 +92,7 @@ public class OrgsController {
 
     @Autowired
     protected LogUtils logUtils;
+
     /**
      * Areas map configuration
      *
@@ -226,9 +227,8 @@ public class OrgsController {
         try {
             initialOrg = org.clone();
             initialOrgExt = orgExt.clone();
-        } catch (CloneNotSupportedException e) {
-            LOG.info("Log action will fail. Clone org or orgExt is not supported.");
-            e.printStackTrace();
+        } catch (CloneNotSupportedException cloneException) {
+            LOG.info("Log action will fail. Clone org or orgExt is not supported.", cloneException);
         }
         this.updateFromRequest(org, json);
         orgExt.setId(org.getId());
@@ -248,15 +248,13 @@ public class OrgsController {
         org.setOrgExt(orgExt);
 
         // log org and orgExt changes
-        if (initialOrg != null) {
+        if (initialOrg != null && initialOrgExt != null) {
             logUtils.logOrgChanged(initialOrg, json);
-        }
-        if (initialOrgExt != null) {
             logUtils.logOrgExtChanged(initialOrgExt, json);
         }
 
         // log if pending status change
-        if (request.getHeader("sec-username") != null && defaultPending != org.isPending() && logUtils != null) {
+        if (request.getHeader("sec-username") != null && defaultPending != org.isPending()) {
             logUtils.createLog(org.getId(), AdminLogType.PENDING_ORG_ACCEPTED, null);
         }
         return org;
@@ -284,8 +282,9 @@ public class OrgsController {
         JSONObject json = this.parseRequest(request);
 
         // Validate request against required fields for admin part
-        if (!this.validation.validateOrgField("shortName", json))
+        if (!this.validation.validateOrgField("shortName", json)) {
             throw new IOException("required field : shortName");
+        }
 
         if (!this.validation.validateUrl(json.optString(Org.JSON_URL))) {
             throw new IOException(String.format("bad org url format: %s", json.optString(Org.JSON_URL)));
@@ -305,11 +304,8 @@ public class OrgsController {
 
         org.setOrgExt(orgExt);
 
-        // log org created
-        String admin = request.getHeader("sec-username");
-        if (admin != null && logUtils != null) {
-            logUtils.createLog(org.getId(), AdminLogType.ORG_CREATED, null);
-        }
+        logUtils.createLog(org.getId(), AdminLogType.ORG_CREATED, null);
+
         return org;
     }
 
@@ -335,9 +331,9 @@ public class OrgsController {
         this.orgDao.delete(org);
 
         // get authent info without request
-        if (isPending != null && isPending && logUtils != null) {
+        if (isPending != null && isPending) {
             logUtils.createLog(commonName, AdminLogType.PENDING_ORG_REFUSED, null);
-        } else if (logUtils != null) {
+        } else {
             logUtils.createLog(commonName, AdminLogType.ORG_DELETED, null);
         }
 
@@ -354,8 +350,9 @@ public class OrgsController {
     @RequestMapping(value = PUBLIC_REQUEST_MAPPING + "/orgTypeValues", method = RequestMethod.GET)
     public void getOrganisationTypePossibleValues(HttpServletResponse response) throws IOException, JSONException {
         JSONArray fields = new JSONArray();
-        for (String field : this.orgDao.getOrgTypeValues())
+        for (String field : this.orgDao.getOrgTypeValues()) {
             fields.put(field);
+        }
         ResponseUtil.buildResponse(response, fields.toString(4), HttpServletResponse.SC_OK);
     }
 
@@ -386,6 +383,7 @@ public class OrgsController {
             map.put("zoom", areaMapZoom);
             res.put("map", map);
         } catch (Exception e) {
+            LOG.info("Could not parse value", e);
         }
         JSONObject areas = new JSONObject();
         areas.put("url", areasUrl);

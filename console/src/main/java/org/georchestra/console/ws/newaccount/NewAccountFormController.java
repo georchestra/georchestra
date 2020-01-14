@@ -117,7 +117,7 @@ public final class NewAccountFormController {
     protected String privacyPolicyAgreementUrl;
 
     @Autowired
-    private LogUtils logUtils;
+    protected LogUtils logUtils;
 
     @Autowired
     protected Clock clock;
@@ -253,7 +253,7 @@ public final class NewAccountFormController {
                 formBean.setOrg(orgId);
 
                 // log - new pending org was created
-                if (org.isPending() && orgId != null && logUtils != null) {
+                if (org.isPending()) {
                     logUtils.createLog(orgId, AdminLogType.PENDING_ORG_CREATED, null);
                 }
             } catch (Exception e) {
@@ -317,7 +317,7 @@ public final class NewAccountFormController {
             sessionStatus.setComplete();
 
             // log - new pending user was created
-            if (logUtils != null && account.isPending() && account.getUid() != null) {
+            if (account.isPending()) {
                 logUtils.createLog(account.getUid(), AdminLogType.PENDING_USER_CREATED, null);
             }
 

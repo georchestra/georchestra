@@ -122,7 +122,8 @@ public class UsersController {
     @Autowired
     private AdvancedDelegationDao advancedDelegationDao;
 
-    private @Autowired GDPRAccountWorker gdprInfoWorker;
+    @Autowired
+    private GDPRAccountWorker gdprInfoWorker;
 
     @Autowired
     private Boolean warnUserIfUidModified = false;
@@ -131,6 +132,9 @@ public class UsersController {
 
     @Autowired
     private EmailFactory emailFactory;
+
+    @Autowired
+    protected LogUtils logUtils;
 
     public void setEmailFactory(EmailFactory emailFactory) {
         this.emailFactory = emailFactory;
@@ -157,9 +161,6 @@ public class UsersController {
         this.accountDao = dao;
         this.userRule = userRule;
     }
-
-    @Autowired
-    protected LogUtils logUtils;
 
     /**
      * Returns array of users using json syntax.
@@ -350,8 +351,9 @@ public class UsersController {
                 throw new AccessDeniedException("Org not under delegation");
         }
 
-        if (this.userRule.isProtected(account.getUid()))
+        if (this.userRule.isProtected(account.getUid())) {
             throw new AccessDeniedException("The user is protected: " + account.getUid());
+        }
 
         // Saves the user in the LDAP
         accountDao.insert(account, requestOriginator);
@@ -360,9 +362,7 @@ public class UsersController {
 
         orgDao.linkUser(account);
 
-        if (auth != null && logUtils != null) {
-            logUtils.createLog(account.getUid(), AdminLogType.USER_CREATED, null);
-        }
+        logUtils.createLog(account.getUid(), AdminLogType.USER_CREATED, null);
 
         return account;
     }
@@ -415,8 +415,9 @@ public class UsersController {
             throws IOException, NameNotFoundException, DataServiceException, DuplicatedEmailException, ParseException,
             JSONException, MessagingException {
 
-        if (this.userRule.isProtected(uid))
+        if (this.userRule.isProtected(uid)) {
             throw new AccessDeniedException("The user is protected, it cannot be updated: " + uid);
+        }
 
         // check if user is under delegation for delegated admins
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -436,10 +437,9 @@ public class UsersController {
         }
 
         accountDao.update(originalAcount, modifiedAccount, auth.getName());
+
         // log update modifications
-        if (logUtils != null) {
-            logUtils.logChanges(modifiedAccount, originalAcount);
-        }
+        logUtils.logChanges(modifiedAccount, originalAcount);
 
         if (!modifiedAccount.getOrg().equals(originalAcount.getOrg())) {
             if (!auth.getAuthorities().contains(ROLE_SUPERUSER))
@@ -496,8 +496,9 @@ public class UsersController {
     public void delete(@PathVariable String uid, HttpServletRequest request, HttpServletResponse response)
             throws IOException, DataServiceException {
 
-        if (this.userRule.isProtected(uid))
+        if (this.userRule.isProtected(uid)) {
             throw new AccessDeniedException("The user is protected, it cannot be deleted: " + uid);
+        }
 
         // check if user is under delegation for delegated admins
         this.checkAuthorization(uid);
@@ -508,13 +509,14 @@ public class UsersController {
         roleDao.deleteUser(account, requestOriginator);
 
         // Also delete delegation if exists
-        if (delegationDao.findOne(uid) != null)
+        if (delegationDao.findOne(uid) != null) {
             delegationDao.delete(uid);
+        }
 
         // log when a user is removed according to pending status
-        if (account.isPending() && logUtils != null) {
+        if (account.isPending()) {
             logUtils.createLog(account.getUid(), AdminLogType.PENDING_USER_REFUSED, null);
-        } else if (logUtils != null) {
+        } else {
             logUtils.createLog(account.getUid(), AdminLogType.USER_DELETED, null);
         }
 

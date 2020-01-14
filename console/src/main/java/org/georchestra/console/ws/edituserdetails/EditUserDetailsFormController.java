@@ -268,9 +268,7 @@ public class EditUserDetailsFormController {
      */
     private Account modify(Account account, EditUserDetailsFormBean formBean) {
         // create log for each account modification
-        if (logUtils != null) {
-            this.logChanges(account, formBean);
-        }
+        logChanges(account, formBean);
 
         account.setGivenName(formBean.getFirstName());
         account.setSurname(formBean.getSurname());

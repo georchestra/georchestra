@@ -9,6 +9,7 @@ import org.georchestra.console.dto.Role;
 import org.georchestra.console.dto.RoleFactory;
 import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.dto.orgs.OrgExt;
+import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.console.ws.utils.Validation;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,6 +39,7 @@ public class EditOrgDetailsFormControllerTest {
     private OrgsDao orgsDao = Mockito.mock(OrgsDao.class);
     private RoleDao rolesDao = Mockito.mock(RoleDao.class);
     private AccountDao accountDao = Mockito.mock(AccountDao.class);
+    private LogUtils mockLogUtils = Mockito.mock(LogUtils.class);
 
     private MockHttpServletRequest request = new MockHttpServletRequest();
 
@@ -48,6 +50,8 @@ public class EditOrgDetailsFormControllerTest {
     @Before
     public void setUp() throws Exception {
         ctrl = new EditOrgDetailsFormController(orgsDao, new Validation(""));
+        ctrl.logUtils = mockLogUtils;
+
         formBean.setDescription("description");
         formBean.setName("geOrchestra testing LLC");
         formBean.setAddress("48 Avenue du Lac du Bourget. 73377 Le Bourget-du-Lac");
@@ -102,6 +106,7 @@ public class EditOrgDetailsFormControllerTest {
         request.addHeader("sec-role", "REFERENT,THE_ADMIN");
         BindingResult resultErrors = new MapBindingResult(new HashMap<>(), "errors");
         ctrl = new EditOrgDetailsFormController(orgsDao, new Validation(""));
+        ctrl.logUtils = mockLogUtils;
         try (InputStream is = getClass().getResourceAsStream("/georchestra_logo.png")) {
             MultipartFile logo = new MockMultipartFile("image", is);
             formBean.setUrl("https://newurl.com");
@@ -117,6 +122,7 @@ public class EditOrgDetailsFormControllerTest {
         request.addHeader("sec-role", "MOMO,REFERENT");
         BindingResult resultErrors = new MapBindingResult(new HashMap<>(), "errors");
         ctrl = new EditOrgDetailsFormController(orgsDao, new Validation(""));
+        ctrl.logUtils = mockLogUtils;
         ByteArrayOutputStream encoded = new ByteArrayOutputStream();
         try (InputStream image1 = getClass().getResourceAsStream("/georchestra_logo.png");
                 InputStream image2 = getClass().getResourceAsStream("/georchestra_logo.png")) {

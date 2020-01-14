@@ -13,12 +13,14 @@ import org.georchestra.console.dto.Role;
 import org.georchestra.console.dto.RoleFactory;
 import org.georchestra.console.model.DelegationEntry;
 import org.georchestra.console.ws.backoffice.users.UserRule;
+import org.georchestra.console.ws.utils.LogUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.AttributesMapper;
@@ -61,6 +63,7 @@ public class RolesControllerTest {
     private UserRule userRule;
     private LdapTemplate ldapTemplate;
     private LdapContextSource contextSource;
+    private LogUtils mockLogUtils;
 
     private MockHttpServletRequest request;
     private MockHttpServletResponse response;
@@ -71,6 +74,7 @@ public class RolesControllerTest {
     public void setUp() throws Exception {
         ldapTemplate = Mockito.mock(LdapTemplate.class);
         contextSource = Mockito.mock(LdapContextSource.class);
+        mockLogUtils = Mockito.mock(LogUtils.class);
 
         Mockito.when(contextSource.getBaseLdapPath()).thenReturn(new DistinguishedName("dc=georchestra,dc=org"));
 
@@ -118,6 +122,8 @@ public class RolesControllerTest {
         Mockito.when(advancedDelegationDao.findUsersUnderDelegation(Mockito.eq("testuser")))
                 .thenReturn(usersUnderDelegation);
         roleCtrl.setAdvancedDelegationDao(advancedDelegationDao);
+
+        roleCtrl.logUtils = mockLogUtils;
 
         request = new MockHttpServletRequest();
         response = new MockHttpServletResponse();

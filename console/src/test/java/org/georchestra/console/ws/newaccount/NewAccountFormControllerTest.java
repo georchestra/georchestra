@@ -17,6 +17,7 @@ import org.georchestra.console.dto.orgs.AbstractOrg;
 import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.dto.orgs.OrgExt;
 import org.georchestra.console.mailservice.EmailFactory;
+import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.console.ws.utils.PasswordUtils;
 import org.georchestra.console.ws.utils.Validation;
 import org.junit.Before;
@@ -79,6 +80,7 @@ public class NewAccountFormControllerTest {
     private AccountFormBean formBean = mock(AccountFormBean.class);
     private BindingResult mockedValidationReports = mock(BindingResult.class);
     private SessionStatus status = mock(SessionStatus.class);
+    private LogUtils mockLogUtils = Mockito.mock(LogUtils.class);
 
     private final String orgName = "geOrchestra testing team";
 
@@ -90,6 +92,8 @@ public class NewAccountFormControllerTest {
 
         toTest = createToTest("");
         toTest.setRoleDao(mock(RoleDao.class));
+
+        toTest.logUtils = mockLogUtils;
 
         // Mock admin account
         DistinguishedName dn = new DistinguishedName();

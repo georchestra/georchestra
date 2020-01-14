@@ -148,9 +148,7 @@ public class ChangePasswordFormController {
             model.addAttribute("success", true);
 
             // log that password was changed for this user
-            if (uid != null && logUtils != null) {
-                logUtils.createLog(uid, AdminLogType.USER_PASSWORD_CHANGED, null);
-            }
+            logUtils.createLog(uid, AdminLogType.USER_PASSWORD_CHANGED, null);
 
             return "changePasswordForm";
 

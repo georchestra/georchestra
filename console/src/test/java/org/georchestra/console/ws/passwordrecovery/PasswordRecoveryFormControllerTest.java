@@ -19,6 +19,7 @@ import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.Role;
 import org.georchestra.console.dto.RoleFactory;
 import org.georchestra.console.mailservice.EmailFactory;
+import org.georchestra.console.ws.utils.LogUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,12 +45,14 @@ public class PasswordRecoveryFormControllerTest {
     private PasswordRecoveryFormBean formBean = Mockito.mock(PasswordRecoveryFormBean.class);
     private BindingResult result = Mockito.mock(BindingResult.class);
     private SessionStatus status = Mockito.mock(SessionStatus.class);
+    private LogUtils mockLogUtils = Mockito.mock(LogUtils.class);
 
     @Before
     public void setUp() throws Exception {
         ctrl = new PasswordRecoveryFormController(dao, gdao, efi, utd, rep);
         ctrl.setPublicUrl("https://georchestra.mydomain.org");
         ctrl.setPublicContextPath("/console");
+        ctrl.logUtils = mockLogUtils;
     }
 
     @After
