@@ -68,7 +68,6 @@ public class LogUtils {
                     log.setChanged(errorsjson.toString());
                     logDao.save(log);
                 }
-
             }
         } else {
             LOG.info("Authentification Security Context is null.");
@@ -107,8 +106,12 @@ public class LogUtils {
      */
     public void createAndLogDetails(String target, String attributeName, String oldValue, String newValue,
             AdminLogType type) {
-        JSONObject details = getLogDetails(attributeName, oldValue, newValue, type);
-        createLog(target, type, details.toString());
+        oldValue = oldValue == null ? "" : oldValue;
+        newValue = newValue == null ? "" : newValue;
+        if (oldValue != newValue) {
+            JSONObject details = getLogDetails(attributeName, oldValue, newValue, type);
+            createLog(target, type, details.toString());
+        }
     }
 
     /**
