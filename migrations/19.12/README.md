@@ -1,5 +1,9 @@
 # From 19.04 to 19.12
 
+## Database migration
+
+No manual changes on the model are required to upgrade to the new version.
+
 ## LDAP upgrade
 
 With this release, custom new attributes are added to geOrchestra users and organisations in the LDAP, leveraging a custom, [dedicated schema](https://github.com/georchestra/georchestra/blob/master/ldap/docker-root/georchestraSchema.ldif).
