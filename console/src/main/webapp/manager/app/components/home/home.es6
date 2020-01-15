@@ -10,7 +10,7 @@ class HomeController {
     this.$injector = $injector
 
     $injector.get('Role').query(roles => {
-      this.expired = roles.find(r => (r.cn = EXPIRED_ROLE))
+      this.expired = roles.find(r => (r.cn === EXPIRED_ROLE))
     })
     this.pendingCount = 0
     $injector.get('User').query(users => {
