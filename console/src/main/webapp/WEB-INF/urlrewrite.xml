@@ -4,6 +4,7 @@
     <rule match-type="regex">
         <condition type="request-uri" operator="notequal" next="and">^/.*/manager/public/.*$</condition>
         <condition type="request-uri" operator="notequal" next="and">^/.*/manager/fonts/.*$</condition>
+        <condition type="request-uri" operator="notequal" next="and">^/.*/manager/$</condition>
         <from>^/manager/(.*)$</from>
         <to type="passthrough">/manager/#!/$1</to>
     </rule>
