@@ -202,7 +202,7 @@
             <tr ng-repeat="message in user.messages.emails">
               <td>{{::message.date | date: 'mediumDate'}}</td>
               <td>
-                <a ng-click="user.openMessage(message)" href="javascript:void(0);">
+                <a ng-link="user({id: user.uid, tab: 'messages', queryParams: {msgid: message.id}})">
                   {{::message.subject}}<em ng-if="message.subject==''" translate>msg.nosubject</em>
                 </a>
               </td>

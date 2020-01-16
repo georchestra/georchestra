@@ -4,9 +4,9 @@ require('services/util')
 require('services/contexts')
 
 class UserController {
-  static $inject = ['$routeParams', '$injector', 'User', 'Role', 'Orgs']
+  static $inject = ['$routeParams', '$injector', '$location', 'User', 'Role', 'Orgs']
 
-  constructor ($routeParams, $injector, User, Role, Orgs) {
+  constructor ($routeParams, $injector, $location, User, Role, Orgs) {
     this.$injector = $injector
 
     this.TMP_ROLE = this.$injector.get('temporaryRole')
@@ -45,7 +45,13 @@ class UserController {
         })
       }
       if (this.tab === 'messages') {
-        this.messages = this.$injector.get('Email').query({ id: this.user.uid })
+        this.messages = this.$injector.get('Email').query({ id: this.user.uid }, r => {
+          if ($location.$$path.indexOf('msgid') === -1) return
+          const msgid = new URLSearchParams($location.$$path.split('?').pop()).get('msgid')
+          r.emails.forEach(m => {
+            if (m.id.toString() === msgid) this.message = m
+          })
+        })
       }
     })
     this.adminRoles = this.$injector.get('roleAdminList')()
