@@ -23,7 +23,7 @@ class UserController {
     this.tab = $routeParams.tab
     this.uid = $routeParams.id
 
-    this.user = User.get({ id: $routeParams.id }, (user) => {
+    this.user = User.get({ id: this.uid }, (user) => {
       user.originalID = user.uid
       if (user.org && user.org !== '') {
         user.orgObj = Orgs.get({ id: user.org }, org => {
