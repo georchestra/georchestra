@@ -50,56 +50,45 @@
         </thead>
     <tbody>
         <tr dir-paginate="log in logger.logs | logs: logger.type:logger.admin:logger.target:logger.date | orderBy: '-date' | itemsPerPage: logger.itemsPerPage">
-            <td>{{::log.date | logDate}}
-            <td><a ng-link="user({id: log.admin, tab: 'infos'})" title="">{{::log.admin}}</a>
-            <!--Target-->
-            <td>
+          <td>{{::log.date | logDate}}</td>
+          <td><a ng-link="user({id: log.admin, tab: 'infos'})" title="">{{::log.admin}}</a>
+          <!--Target-->
+          <td>
             <!--user or user's role modification-->
-            <a ng-if="logger.getType(log) === 'USER'" ng-link="user({id: log.target, tab: 'infos'})" title="">{{::log.target}}</a>
+            <a ng-if="logger.getType(log) === 'USER'" ng-link="user({id: log.target, tab: 'infos'})">
+              {{::log.target}}
+            </a>
             <!--org-->
-            <a ng-if="logger.getType(log) === 'ORG'" ng-link="org({org: log.target, tab: 'infos'})" title="">
-                <span ng-if="logger.orgsId[log.target]">{{::logger.orgsId[log.target]}}</span>
-                <span ng-if="!logger.orgsId[log.target]">{{::log.target}}</span>
+            <a ng-if="logger.getType(log) === 'ORG'" ng-link="org({org: log.target, tab: 'infos'})">
+              <span ng-if="logger.orgsId[log.target]">{{::logger.orgsId[log.target]}}</span>
+              <span ng-if="!logger.orgsId[log.target]">{{::log.target}}</span>
             </a>
             <!--role-->
-            <a ng-if="logger.getType(log) === 'ROLE'" ng-link="role({role: log.target, tab: 'infos'})" title="">
-                {{::log.target}}</a>
+            <a ng-if="logger.getType(log) === 'ROLE'" ng-link="role({role: log.target, tab: 'infos'})">
+              {{::log.target}}
+            </a>
             <!--refused or deleted-->
             <span ng-if="logger.getType(log) === ''">{{::log.target}}</span>
-            </td>
-            <!--Type-->
-            <td ng-if="!log.changed"> {{::log.type}}
-            <td>
-            <a ng-if="log.changed" title="" ng-click="logger.openLog(log)" href="javascript:void(0);">
+          </td>
+          <!--Type-->
+          <td ng-if="!log.changed"> {{::log.type}}</td>
+          <td>
+            <span ng-if="log.changed && log.type=='EMAIL_SENT'">
+              <i class="glyphicon glyphicon-envelope"></i>
+              <a ng-link="user({id: log.changed.recipient, tab:'messages', queryParams: {msgid: log.changed.id}})" >
+                {{::log.changed.subject}}
+              </a>
+            </span>
+            <a ng-if="log.changed && log.changed.field != log.target && log.type!='EMAIL_SENT'" ng-click="logger.openLog(log)" href="javascript:void(0);">
                 {{::log.type + (log.changed.field ? ' (' + log.changed.field + ')' : '')}}
-            </a>      
-            </td>
+            </a>
+            <span ng-if="log.changed && log.changed.field === log.target">
+                {{::log.type + (log.changed.field ? ' (' + log.changed.field + ')' : '')}}
+            </span>       
+          </td>
         </tr>
     </tbody>
     </table>
-    <!--Log as Email-->
-    <div ng-if="logger.getDescription(logger.log) === 'message'">
-        <h4>
-            <small ng-if="logger.log.trusted">
-            <a ng-link="user({id: logger.log.changed.sender, tab: 'infos'})" title="">{{::logger.log.changed.sender}}</a>
-            <span translate> date.to</span>
-            <a ng-link="user({id: logger.log.changed.recipient, tab: 'infos'})" title=""> {{::logger.log.changed.recipient}}</a>,
-            <span translate>msg.on</span> {{logger.log.date | date: 'mediumDate'}}
-            </small>
-        </h4>
-        <!-- Email subject and body-->
-        <h4 ng-if="logger.log.changed.subject">
-            {{logger.log.changed.subject}}
-        </h4>
-        <p ng-if="logger.log.trusted" ng-bind-html="logger.log.trusted"></p>
-        <hr ng-if="logger.log.changed.attachments.length>0" />
-        <h5 ng-if="logger.log.changed.attachments.length>0" translate>msg.attachments</h5>
-        <ul ng-if="logger.log.changed.attachments.length>0">
-            <li ng-repeat="attachment in logger.log.attachments">
-            {{attachment.name}}
-            </li>
-        </ul>
-    </div>
     <!--Others logs type-->
     <div ng-if="logger.log && logger.getDescription(logger.log) != 'message'">
         <h4>
@@ -163,5 +152,6 @@
             </span>      
         </p>
     </div>
+
     <dir-pagination-controls ng-if="!logger.log.changed && !logger.log.trusted"></dir-pagination-controls>
 </section>
