@@ -32,14 +32,6 @@ class UserController {
       } else {
         user.validOrg = true
       }
-      // get orgs infos
-      $injector.get('Orgs').query(orgs => {
-        this.orgs = orgs.filter(o => !o.pending)
-        this.orgsId = {}
-        this.orgs.map(org => {
-          this.orgsId[org.id] = org.name
-        })
-      })
       if (this.tab === 'delegations') {
         const Delegations = $injector.get('Delegations')
         Delegations.query(resp => {
@@ -47,7 +39,9 @@ class UserController {
           const options = deleg || { orgs: [], roles: [], uid: this.user.uid }
           this.delegation = new Delegations(options)
           this.activeDelegation = this.hasDelegation()
-          Role.query(roles => { this.allRoles = roles.map(r => r.cn) })
+          $injector.get('Orgs').query(orgs => {
+            this.orgs = orgs.filter(o => !o.pending)
+          })
         })
       }
       if (this.tab === 'messages') {
