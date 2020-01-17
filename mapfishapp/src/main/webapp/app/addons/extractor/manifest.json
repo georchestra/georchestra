@@ -66,6 +66,19 @@
             "Resolution for rasters (cm)": "Layer auflösung in cm",
             "Email": "Email Adresse",
             "No layer is available for extraction.": "No layer is available for extraction."
+        },
+         "nl": {
+            "addon_extractor_popup_title": "Extractie",
+            "Close": "Sluiten",
+            "Extract": "Extract",
+            "The extraction request succeeded, check your email.": "Het extractie-verzoek is geslaagd, controleer uw e-mail.",
+            "The extraction request failed.": "Het extractie-verzoek is mislukt.",
+            "SRS": "SRS",
+            "Format for vectors": "Formaat van vectorlagen",
+            "Format for rasters": "Formaat van rasterlagen",
+            "Resolution for rasters (cm)": "Resolutie voor rasterlagen (in cm)",
+            "Email": "Email",
+            "No layer is available for extraction.": "Geen laag beschikbaar voor extractie."
         }
     }
 }

@@ -47,6 +47,13 @@
             "locateme_unavailable": "Position konnte nicht ermittelt werden",
             "locateme_timedout": "Timeout während der Geolokalisierung",
             "locateme_unknownerror": "Ein unbekannter Fehler ist aufgetreten"
+        },
+        "nl": {
+            "locateme_nosupport": "Uw browser ondersteunt geen geolocatie",
+            "locateme_denied": "Geolocatie uitgeschakeld door de gebruiker",
+            "locateme_unavailable": "Locatie niet beschikbaar",
+            "locateme_timedout": "Er is een time-out opgetreden voor het verzoek",
+            "locateme_unknownerror": "Onbekende fout"
         }
     }
 }
