@@ -53,6 +53,11 @@
             "measure_popuptitle": "Maß",
             "measure_distance": "Distanz messen",
             "measure_area": "Oberfläche messen"
+        },
+        "nl": {
+            "measure_popuptitle": "Meten",
+            "measure_distance": "Afstandsmeting",
+            "measure_area": "Oppervlaktemeting"
         }
     }
 }

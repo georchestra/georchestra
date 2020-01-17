@@ -26,6 +26,9 @@
         },
         "de": {
             "addon_qs_emptyText": "Suchen..."
+        },
+        "nl": {
+            "addon_qs_emptyText": "Zoeken..."
         }
     }
 }
