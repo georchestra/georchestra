@@ -42,6 +42,7 @@ class LoggerController {
           l.title = (l.changed.field === 'cities')
             ? `${l.changed.added} ${i18n.added}: ${l.changed.old}, ${l.changed.removed} ${i18n.removed}: ${l.changed.new}`
             : `${l.changed.old} => ${l.changed.new}`
+          l.changed.fieldI18nKey = l.type.split('_').shift().toLowerCase() + '.' + l.changed.field
         }
       })
       const extract = (key) => [...new Set(this.logs.map(l => l[key]))]

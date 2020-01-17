@@ -88,7 +88,7 @@
                 class="glyphicon glyphicon-edit"
                 title="{{::'logs.modification' | translate}}"></i>
               <strong data-toggle="tooltip" title="{{log.title}}">
-                {{::log.changed.field}}
+                {{::log.changed.fieldI18nKey | translate}}
               </strong>
             </span>
             <span ng-if="log.changed && log.changed.field === log.target">
