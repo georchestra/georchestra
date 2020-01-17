@@ -32,7 +32,6 @@ class LoggerController {
         l.changed = l.changed && l.changed.length ? JSON.parse(l.changed) : l.changed
       })
       const extract = (key) => [...new Set(this.logs.map(l => l[key]))]
-      this.senders = extract('admin')
 
       this.senders = [{ key: 'all', value: i18n.allsender }].concat(
         extract('admin').map(g => ({ key: g, value: g }))
