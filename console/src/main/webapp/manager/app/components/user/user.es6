@@ -49,7 +49,7 @@ class UserController {
           if ($location.$$path.indexOf('msgid') === -1) return
           const msgid = new URLSearchParams($location.$$path.split('?').pop()).get('msgid')
           r.emails.forEach(m => {
-            if (m.id.toString() === msgid) this.message = m
+            if (m.id.toString() === msgid) this.openMessage(m)
           })
         })
       }
@@ -232,11 +232,15 @@ class UserController {
   }
 
   openMessage (message) {
+    const $router = this.$injector.get('$router')
+    $router.navigate($router.generate('user', { id: this.user.uid, tab: 'messages', queryParams: { msgid: message.id } }))
     message.trusted = this.$injector.get('$sce').trustAsHtml(message.body)
     this.message = message
   }
 
   closeMessage (message) {
+    const $router = this.$injector.get('$router')
+    $router.navigate($router.generate('user', { id: this.user.uid, tab: 'messages' }))
     delete this.message
     delete this.compose
   }
