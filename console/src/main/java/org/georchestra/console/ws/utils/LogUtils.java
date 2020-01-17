@@ -153,11 +153,11 @@ public class LogUtils {
                 // get log details
                 if (!this.roles.isProtected(roleName)) {
                     type = action ? AdminLogType.CUSTOM_ROLE_ADDED : AdminLogType.CUSTOM_ROLE_REMOVED;
-                    details = getLogDetails(roleName, null, roleName, type);
                 } else {
                     type = action ? AdminLogType.SYSTEM_ROLE_ADDED : AdminLogType.SYSTEM_ROLE_REMOVED;
-                    details = getLogDetails(roleName, roleName, null, type);
                 }
+                details = action ? getLogDetails(roleName, null, roleName, type)
+                        : getLogDetails(roleName, roleName, null, type);
                 details.put("isRole", true);
                 parseUsers(users, type, details);
             }
