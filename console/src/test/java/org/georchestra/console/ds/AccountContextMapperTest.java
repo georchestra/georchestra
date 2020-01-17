@@ -30,5 +30,6 @@ public class AccountContextMapperTest {
 
         assertEquals("momorg", account.getOrg());
         assertEquals(true, account.isPending());
+        assertEquals(true, account.getSshKeys().length == 0);
     }
 }

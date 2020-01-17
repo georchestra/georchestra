@@ -20,6 +20,8 @@
 package org.georchestra.console.dto;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
 
@@ -129,6 +131,9 @@ public class AccountImpl implements Serializable, Account {
     @JsonProperty(UserSchema.CONTEXT_KEY)
     private String context;
 
+    @JsonProperty(UserSchema.SSH_KEY)
+    private String[] sshKeys;
+
     // Organization from ou=orgs,dc=georchestra,dc=org
     // Json export is defined on the getter getOrg()
     private String org;
@@ -146,7 +151,8 @@ public class AccountImpl implements Serializable, Account {
                 + ", locality='" + locality + '\'' + ", facsimile='" + facsimile + '\'' + ", mobile='" + mobile + '\''
                 + ", roomNumber='" + roomNumber + '\'' + ", stateOrProvince='" + stateOrProvince + '\''
                 + ", homePostalAddress='" + homePostalAddress + '\'' + ", shadowExpire='" + shadowExpire + '\''
-                + ", context='" + context + '\'' + ", org='" + org + '\'' + '}';
+                + ", context='" + context + '\'' + ", org='" + org + '\'' + ", sshKeys='" + Arrays.toString(sshKeys)
+                + "'}";
     }
 
     @Override
@@ -166,133 +172,6 @@ public class AccountImpl implements Serializable, Account {
         v.addTelephoneNumber(mobile, TelephoneType.CELL);
 
         return v.write();
-    }
-
-    public String toFormatedString(String data) {
-
-        String ret = new String("");
-        if (data != null) {
-            ret = data.replace(",", ".");
-        }
-        return ret;
-    }
-
-    private final String CSV_DELIMITER = ",";
-
-    @Override
-    public String toCsv() {
-
-        StringBuilder csv = new StringBuilder();
-
-        csv.append(toFormatedString(commonName));
-        csv.append(CSV_DELIMITER);
-        csv.append(CSV_DELIMITER);// Middle Name
-        csv.append(toFormatedString(surname));
-        csv.append(CSV_DELIMITER);
-        csv.append(toFormatedString(title));
-        csv.append(CSV_DELIMITER);
-        csv.append(CSV_DELIMITER);// Suffix
-        csv.append(CSV_DELIMITER); // Initials
-        csv.append(CSV_DELIMITER);// Web Page
-        csv.append(CSV_DELIMITER); // Gender
-        csv.append(CSV_DELIMITER);// Birthday
-        csv.append(CSV_DELIMITER); // Anniversary
-        csv.append(CSV_DELIMITER);// Location
-        csv.append(CSV_DELIMITER); // Language
-        csv.append(CSV_DELIMITER);// Internet Free Busy
-        csv.append(CSV_DELIMITER); // Notes
-        csv.append(toFormatedString(email));
-        csv.append(CSV_DELIMITER);
-        csv.append(CSV_DELIMITER);// E-mail 2 Address
-        csv.append(CSV_DELIMITER); // E-mail 3 Address
-        csv.append(toFormatedString(phone));// primary phone
-        csv.append(CSV_DELIMITER);
-        csv.append(CSV_DELIMITER);// Home Phone
-        csv.append(CSV_DELIMITER); // Home Phone 2
-        csv.append(toFormatedString(mobile));
-        csv.append(CSV_DELIMITER); // Mobile Phone
-        csv.append(CSV_DELIMITER);// Pager
-        csv.append(CSV_DELIMITER);// Home Fax
-        csv.append(toFormatedString(homePostalAddress));
-        csv.append(CSV_DELIMITER);// Home Address
-        csv.append(CSV_DELIMITER);// Home Street
-        csv.append(CSV_DELIMITER);// Home Street 2
-        csv.append(CSV_DELIMITER);// Home Street 3
-        csv.append(CSV_DELIMITER);// Home Address PO Box
-        csv.append(CSV_DELIMITER); // locality
-        csv.append(CSV_DELIMITER); // Home City
-        csv.append(CSV_DELIMITER);// Home State
-        csv.append(CSV_DELIMITER); // Home Postal Code
-        csv.append(CSV_DELIMITER);// Home Country
-        csv.append(CSV_DELIMITER);// Spouse
-        csv.append(CSV_DELIMITER);// Children
-        csv.append(toFormatedString(manager)); // Manager's Name
-        csv.append(CSV_DELIMITER);// Assistant's Name
-        csv.append(CSV_DELIMITER); // Referred By
-        csv.append(CSV_DELIMITER);// Company Main Phone
-        csv.append(CSV_DELIMITER);// Business Phone
-        csv.append(CSV_DELIMITER);// Business Phone 2
-        csv.append(toFormatedString(facsimile));
-        csv.append(CSV_DELIMITER); // Business Fax
-        csv.append(CSV_DELIMITER);// Assistant's Phone
-        csv.append(CSV_DELIMITER); // Organization
-        csv.append(CSV_DELIMITER); // Company
-        csv.append(toFormatedString(description));
-        csv.append(CSV_DELIMITER);// Job Title
-        csv.append(CSV_DELIMITER);// Department
-        csv.append(CSV_DELIMITER);// Office Location
-        csv.append(CSV_DELIMITER);// Organizational ID Number
-        csv.append(CSV_DELIMITER);// Profession
-        csv.append(CSV_DELIMITER); // Account
-        csv.append(toFormatedString(postalAddress));
-        csv.append(CSV_DELIMITER);// Business Address
-        csv.append(toFormatedString(street));
-        csv.append(CSV_DELIMITER);// Business Street
-        csv.append(CSV_DELIMITER);// Business Street 2
-        csv.append(CSV_DELIMITER); // Business Street 3
-        csv.append(toFormatedString(postOfficeBox));
-        csv.append(CSV_DELIMITER);// Business Address PO Box
-        csv.append(CSV_DELIMITER);// Business City
-        csv.append(CSV_DELIMITER);// Business State
-        csv.append(toFormatedString(postalCode));
-        csv.append(CSV_DELIMITER); // Business Postal Code
-        csv.append(toFormatedString(stateOrProvince));
-        csv.append(CSV_DELIMITER);// Business Country
-        csv.append(CSV_DELIMITER);// Other Phone
-        csv.append(CSV_DELIMITER);// Other Fax
-        csv.append(toFormatedString(registeredAddress));
-        csv.append(CSV_DELIMITER); // Other Address
-        csv.append(toFormatedString(physicalDeliveryOfficeName));
-        csv.append(CSV_DELIMITER);// Other Street
-        csv.append(CSV_DELIMITER);// Other Street 2
-        csv.append(CSV_DELIMITER);// Other Street 3
-        csv.append(CSV_DELIMITER);// Other Address PO Box
-        csv.append(CSV_DELIMITER); // Other City
-        csv.append(CSV_DELIMITER);// Other State
-        csv.append(CSV_DELIMITER);// Other Postal Code
-        csv.append(CSV_DELIMITER);// Other Country
-        csv.append(CSV_DELIMITER); // Callback
-        csv.append(CSV_DELIMITER);// Car Phone
-        csv.append(CSV_DELIMITER);// ISDN
-        csv.append(CSV_DELIMITER);// Radio Phone
-        csv.append(CSV_DELIMITER);// TTY/TDD Phone
-        csv.append(CSV_DELIMITER); // Telex
-        csv.append(CSV_DELIMITER);// User 1
-        csv.append(CSV_DELIMITER);// User 2
-        csv.append(CSV_DELIMITER);// User 3
-        csv.append(CSV_DELIMITER); // User 4
-        csv.append(CSV_DELIMITER);// Keywords
-        csv.append(CSV_DELIMITER);// Mileage
-        csv.append(CSV_DELIMITER);// Hobby
-        csv.append(CSV_DELIMITER);// Billing Information
-        csv.append(CSV_DELIMITER); // Directory Server
-        csv.append(CSV_DELIMITER);// Sensitivity
-        csv.append(CSV_DELIMITER);// Priority
-        csv.append(CSV_DELIMITER);// Private
-        csv.append(CSV_DELIMITER); // Categories
-        csv.append("\r\n"); // CRLF
-        return csv.toString();
-
     }
 
     @Override
@@ -565,7 +444,7 @@ public class AccountImpl implements Serializable, Account {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -600,7 +479,8 @@ public class AccountImpl implements Serializable, Account {
                 && Objects.equals(stateOrProvince, account.stateOrProvince)
                 && Objects.equals(homePostalAddress, account.homePostalAddress)
                 && Objects.equals(shadowExpire, account.shadowExpire) && Objects.equals(manager, account.manager)
-                && Objects.equals(context, account.context) && Objects.equals(org, account.org);
+                && Objects.equals(context, account.context) && Objects.equals(org, account.org)
+                && Arrays.equals(sshKeys, account.sshKeys);
     }
 
     @Override
@@ -644,6 +524,17 @@ public class AccountImpl implements Serializable, Account {
     @Override
     public void setPending(boolean pending) {
         this.pending = pending;
+
+    }
+
+    @Override
+    public String[] getSshKeys() {
+        return this.sshKeys;
+    }
+
+    @Override
+    public void setSshKeys(String[] sshKeys) {
+        this.sshKeys = sshKeys;
 
     }
 }

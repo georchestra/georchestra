@@ -60,6 +60,14 @@
   <dependencies>
     <!-- General dependencies for standard applications -->
     <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-csv</artifactId>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
@@ -151,6 +159,10 @@
     <dependency>
       <groupId>commons-validator</groupId>
       <artifactId>commons-validator</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
     </dependency>
     <!-- Spring dependencies -->
     <dependency>
@@ -361,25 +373,10 @@
   </dependencies>
   <build>
     <finalName>${project.artifactId}-${server}</finalName>
-    <testResources>
-      <testResource>
-        <directory>${project.basedir}/src/test/resources</directory>
-      </testResource>
-      <testResource>
-        <directory>${project.basedir}/src/it/resources</directory>
-      </testResource>
-    </testResources>
     <plugins>
       <plugin>
         <groupId>net.revelc.code.formatter</groupId>
         <artifactId>formatter-maven-plugin</artifactId>
-        <configuration>
-          <directories>
-            <directory>${project.build.sourceDirectory}</directory>
-            <directory>${project.build.testSourceDirectory}</directory>
-            <directory>${project.basedir}/src/it/java</directory>
-          </directories>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -844,7 +841,7 @@
                           <SLAPD_ORGANISATION>georchestra</SLAPD_ORGANISATION>
                           <SLAPD_DOMAIN>georchestra.org</SLAPD_DOMAIN>
                           <SLAPD_PASSWORD>secret</SLAPD_PASSWORD>
-                          <SLAPD_ADDITIONAL_MODULES>groupofmembers</SLAPD_ADDITIONAL_MODULES>
+                          <SLAPD_ADDITIONAL_MODULES>groupofmembers,openssh</SLAPD_ADDITIONAL_MODULES>
                         </env>
                         <wait>
                           <!-- Need to figure out a good way to make sure the ldap service is ready before the tests are run. 
