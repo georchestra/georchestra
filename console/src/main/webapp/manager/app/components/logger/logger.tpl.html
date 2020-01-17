@@ -70,12 +70,9 @@
             <!--Type-->
             <td ng-if="!log.changed"> {{::log.type}}
             <td>
-            <a ng-if="log.changed && log.changed.field != log.target" title="" ng-click="logger.openLog(log)" href="javascript:void(0);">
+            <a ng-if="log.changed" title="" ng-click="logger.openLog(log)" href="javascript:void(0);">
                 {{::log.type + (log.changed.field ? ' (' + log.changed.field + ')' : '')}}
-            </a>
-            <span ng-if="log.changed && log.changed.field === log.target">
-                {{::log.type + (log.changed.field ? ' (' + log.changed.field + ')' : '')}}
-            </span>       
+            </a>      
             </td>
         </tr>
     </tbody>
