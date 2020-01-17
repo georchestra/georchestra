@@ -33,7 +33,7 @@ class LoggerController {
     this.logs = this.$injector.get(typeQuery).query(params, () => {
       // transform each logs changed value into json to find info during html construction
       this.logs.forEach(l => {
-        log.changed = JSON.parse(log.changed)
+        l.changed = JSON.parse(l.changed)
         if (l.type === 'EMAIL_SENT') { l.title = 'msg.sent' }
         if (l.type.indexOf('_ROLE_') >= 0) {
           l.title = 'role.user' + ((l.type.indexOf('ADDED') > 0) ? 'added' : 'removed')
