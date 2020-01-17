@@ -29,7 +29,7 @@ class LoggerController {
     this.logs = this.$injector.get(typeQuery).query(params, () => {
       // transform each logs changed value into json to find info during html construction
       this.logs.map(l => {
-        l.changed = l.changed && l.changed.length ? JSON.parse(l.changed) : l.changed
+        this.logs.forEach(log => (log.changed = JSON.parse(log.changed)))
       })
       const extract = (key) => [...new Set(this.logs.map(l => l[key]))]
 
@@ -113,8 +113,6 @@ class LoggerController {
     if (this.log) { delete this.log }
     // get messages for this user
     if (log && log.changed) {
-      // transform string to json if not already done
-      log.changed = log.changed && log.changed.length ? JSON.parse(log.changed) : log.changed
       if (log.changed.sender) {
         // only for mail
         log.trusted = this.$injector.get('$sce').trustAsHtml(log.changed.body)
