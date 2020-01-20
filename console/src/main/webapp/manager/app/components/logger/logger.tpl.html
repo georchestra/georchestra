@@ -71,15 +71,18 @@
             <span ng-if="logger.getType(log) === ''">{{::log.target}}</span>
           </td>
           <!--Type-->
-          <td ng-if="!log.changed"> {{::log.type}}</td>
           <td>
+            <span ng-if="!log.changed" title="{{::log.title}}">
+                <i class="glyphicon glyphicon-{{::log.icon}}"></i>
+                {{::log.type}}
+            </span>  
             <span ng-if="log.changed && log.type=='EMAIL_SENT'">
               <i class="glyphicon glyphicon-envelope" title="{{::log.title | translate}}"></i>
               <a ng-link="user({id: log.changed.recipient, tab:'messages', queryParams: {msgid: log.changed.id}})" >
                 {{::log.changed.subject}}
               </a>
             </span>
-            <span ng-if="log.type.indexOf('_ROLE_') >= 0" title="{{::log.title | translate}}">
+            <span ng-if="log.type.indexOf('_ROLE_') >= 0" title="{{::log.title}}">
               <i class="glyphicon glyphicon-{{::(log.type.indexOf('_ROLE_ADDED') > 0)?'plus':'minus'}}-sign"></i>
               {{::log.changed.new || log.changed.old}}
             </span>
@@ -93,7 +96,7 @@
             </span>
             <span ng-if="log.changed && log.changed.field === log.target">
                 {{::log.type + (log.changed.field ? ' (' + log.changed.field + ')' : '')}}
-            </span>       
+            </span>
           </td>
         </tr>
     </tbody>
