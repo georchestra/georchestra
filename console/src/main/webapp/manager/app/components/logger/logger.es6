@@ -10,15 +10,38 @@ class LoggerController {
 
   $onInit () {
     this.itemsPerPage = 15
-    const i18n = {}
+    this.i18n = {}
     ;[
-      'logs.error',
-      'logs.alltarget',
-      'logs.allsender',
-      'logs.alltype',
-      'logs.added',
-      'logs.removed'
-    ].forEach(tr => this.$injector.get('translate')(tr, i18n))
+      'error',
+      'alltarget',
+      'allsender',
+      'alltype',
+      'added',
+      'removed',
+      'set',
+      'replace',
+      'to',
+      'clear',
+      'pendingusercreated',
+      'pendinguserrefused',
+      'pendinguseraccepted',
+      'pendingorgcreated',
+      'pendingorgrefused',
+      'pendingorgaccepted',
+      'roledeleted',
+      'roldecreated',
+      'orgcreated',
+      'orgdeleted',
+      'userpasswordchanged',
+      'usercreated',
+      'userdeleted',
+      'system',
+      'custom',
+      'roleadded',
+      'roleremoved',
+      'emailrecoverysent',
+      'rolecreated'
+    ].forEach(tr => this.$injector.get('translate')('logs.' + tr, this.i18n))
     // manage query params to get user's or complete logs
     let typeQuery = 'Logs'
     const params = {
@@ -30,34 +53,73 @@ class LoggerController {
       typeQuery = 'UserLogs'
     }
 
+    this.getCitiesLog = function (log) {
+      let res = ''
+      res += log.changed.added ? `${log.changed.added} ${this.i18n.added}${log.changed.new ? `: ${log.changed.new}.` : '.'}` : ''
+      res += log.changed.removed ? `${log.changed.removed} ${this.i18n.removed}${log.changed.old ? `: ${log.changed.old}.` : '.'}` : '.'
+      return res
+    }
+
+    this.getAttrLog = function (log) {
+      let res = ''
+      res += log.changed.new && !log.changed.old ? `${this.i18n.set} ${log.changed.new}.` : ''
+      res += log.changed.old && !log.changed.new ? `${this.i18n.clear} ${log.changed.old}.` : ''
+      res += log.changed.old && log.changed.new ? `${this.i18n.replace} ${log.changed.old} ${this.i18n.to} ${log.changed.new}.` : ''
+      return res
+    }
+
     this.logs = this.$injector.get(typeQuery).query(params, () => {
       // transform each logs changed value into json to find info during html construction
       this.logs.forEach(l => {
         l.changed = JSON.parse(l.changed)
+        // message
         if (l.type === 'EMAIL_SENT') { l.title = 'msg.sent' }
-        if (l.type.indexOf('_ROLE_') >= 0) {
-          l.title = 'role.user' + ((l.type.indexOf('ADDED') > 0) ? 'added' : 'removed')
-        }
+        // attributs
         if (l.type.indexOf('_ATTRIBUTE_CHANGED') >= 0) {
           l.title = (l.changed.field === 'cities')
-            ? `${l.changed.added} ${i18n.added}: ${l.changed.old}, ${l.changed.removed} ${i18n.removed}: ${l.changed.new}`
-            : `${l.changed.old} => ${l.changed.new}`
+            ? this.getCitiesLog(l)
+            : this.getAttrLog(l)
           l.changed.fieldI18nKey = l.type.split('_').shift().toLowerCase() + '.' + l.changed.field
+        } else {
+          l.title = this.i18n[l.type.split('_').join('').toLowerCase()]
         }
+        // role
+        if (l.type.indexOf('CUSTOM') >= 0 || l.type.indexOf('SYSTEM') >= 0) {
+          // get type for a role as custom or system
+          const i18nType = this.i18n[l.type.split('_')[0].toLowerCase()]
+          // action added or removed
+          const i18nAction = this.i18n[l.type.split('_').slice(1, 3).join('').toLowerCase()]
+          l.title = `${i18nType} ${l.changed.field} ${i18nAction} ${l.target}`
+        }
+        // get icon name
+        let iconName = ''
+        if (l.type.indexOf('CREATED') > -1 || l.type.indexOf('ADDED') > -1) {
+          iconName = l.type.indexOf('PENDING') > -1 ? 'plus' : 'plus-sign'
+        } else if (l.type.indexOf('REFUSED') > -1) {
+          iconName = 'remove'
+        } else if (l.type.indexOf('ACCEPTED') > -1) {
+          iconName = 'ok'
+        } else if (l.type.indexOf('DELETED') > -1 || l.type.indexOf('REMOVED') > -1) {
+          iconName = 'minus-sign'
+        } else {
+          iconName = 'edit'
+        }
+        l.icon = iconName
       })
+
       const extract = (key) => [...new Set(this.logs.map(l => l[key]))]
 
-      this.senders = [{ key: 'all', value: i18n.allsender }].concat(
+      this.senders = [{ key: 'all', value: this.i18n.allsender }].concat(
         extract('admin').map(g => ({ key: g, value: g }))
       )
-      this.types = [{ key: 'all', value: i18n.alltype }].concat(
+      this.types = [{ key: 'all', value: this.i18n.alltype }].concat(
         extract('type').map(g => ({ key: g, value: g }))
       )
-      this.targets = [{ key: 'all', value: i18n.alltarget }].concat(
+      this.targets = [{ key: 'all', value: this.i18n.alltarget }].concat(
         extract('target').map(g => ({ key: g, value: g }))
       )
     }, () => {
-      this.$injector.get('Flash').create('danger', i18n.error)
+      this.$injector.get('Flash').create('danger', this.i18n.error)
     })
 
     this.target = 'all'
@@ -72,7 +134,7 @@ class LoggerController {
     // get all orgs infos and orgs name
     this.orgsId = {}
     this.$injector.get('Orgs').query(orgs => {
-      orgs.forEach(org => {
+      orgs.map(org => {
         this.orgsId[org.id] = org.name
       })
       this.orgs = orgs.map(o => o.name)
@@ -89,13 +151,6 @@ class LoggerController {
     this.$injector.get('User').query(users => {
       this.users = users.map(user => user.uid)
     })
-  }
-
-  getTitle () {
-    if (this.title === undefined) {
-      return true
-    }
-    return this.title
   }
 
   // get log info and return log target type or empty string
