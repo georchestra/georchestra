@@ -11,10 +11,14 @@ class LoggerController {
   $onInit () {
     this.itemsPerPage = 15
     const i18n = {}
-    this.$injector.get('translate')('logs.error', i18n)
-    this.$injector.get('translate')('logs.alltarget', i18n)
-    this.$injector.get('translate')('logs.allsender', i18n)
-    this.$injector.get('translate')('logs.alltype', i18n)
+    ;[
+      'logs.error',
+      'logs.alltarget',
+      'logs.allsender',
+      'logs.alltype',
+      'logs.added',
+      'logs.removed'
+    ].forEach(tr => this.$injector.get('translate')(tr, i18n))
     // manage query params to get user's or complete logs
     let typeQuery = 'Logs'
     const params = {
@@ -28,8 +32,18 @@ class LoggerController {
 
     this.logs = this.$injector.get(typeQuery).query(params, () => {
       // transform each logs changed value into json to find info during html construction
-      this.logs.map(l => {
-        this.logs.forEach(log => (log.changed = JSON.parse(log.changed)))
+      this.logs.forEach(l => {
+        l.changed = JSON.parse(l.changed)
+        if (l.type === 'EMAIL_SENT') { l.title = 'msg.sent' }
+        if (l.type.indexOf('_ROLE_') >= 0) {
+          l.title = 'role.user' + ((l.type.indexOf('ADDED') > 0) ? 'added' : 'removed')
+        }
+        if (l.type.indexOf('_ATTRIBUTE_CHANGED') >= 0) {
+          l.title = (l.changed.field === 'cities')
+            ? `${l.changed.added} ${i18n.added}: ${l.changed.old}, ${l.changed.removed} ${i18n.removed}: ${l.changed.new}`
+            : `${l.changed.old} => ${l.changed.new}`
+          l.changed.fieldI18nKey = l.type.split('_').shift().toLowerCase() + '.' + l.changed.field
+        }
       })
       const extract = (key) => [...new Set(this.logs.map(l => l[key]))]
 
@@ -118,26 +132,6 @@ class LoggerController {
         log.trusted = this.$injector.get('$sce').trustAsHtml(log.changed.body)
       }
       this.log = log
-    }
-  }
-
-  getDescription (log) {
-    if (log && this.log.changed) {
-      if (log.changed.sender) {
-        // only for mail
-        return 'message'
-      } else if (log.changed.field === 'cities') {
-        return 'changeArea'
-      } else if (log.changed.new && log.changed.old) {
-        // old value changed for another
-        return 'updateValue'
-      } else if (log.changed.new && !log.changed.old) {
-        // nothing to compare it's a new value
-        return 'initValue'
-      } else if (!log.changed.new && log.changed.old) {
-        // replace value by nothing
-        return 'clearValue'
-      }
     }
   }
 

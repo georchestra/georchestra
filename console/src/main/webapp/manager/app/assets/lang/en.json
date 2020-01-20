@@ -52,6 +52,7 @@
   "user.cn"               : "Full name",
   "user.mail"             : "E-mail",
   "user.address"          : "Address",
+  "user.postalAddress"    : "Address",
   "user.org"              : "Organization",
   "user.description"      : "Description",
   "user.manager"          : "Manager",
@@ -61,7 +62,9 @@
   "user.password"         : "Password",
   "user.sn"               : "Second Name",
   "user.gn"               : "First Name",
+  "user.givenName"        : "First Name",
   "user.phone"            : "Phone",
+  "user.facsimileTelephoneNumber" : "Phone",
   "user.fax"              : "Fax",
   "user.title"            : "Job title",
   "user.lastcontext"      : "Last context",
@@ -111,6 +114,7 @@
   "org.description"       : "Description",
   "org.url"               : "Website",
   "org.logo"              : "Logo",
+  "org.cities"            : "Area",
 
   "imageinput.label"      : "Upload logo",
 
