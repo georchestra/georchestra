@@ -203,6 +203,13 @@
   "users.ORGADMIN"        : "Delegates",
   "users.TEMPORARY"       : "Temporary",
   "users.EXPIRED"         : "Expired",
+  "user.postalAddress"    : "Address",
+  "user.shadowExpire"     : "Expiration",
+  "user.preferredLanguage"     : "Default language",
+  "user.givenName"        : "Given name",
+  "user.telephoneNumber"  : "Telephon number",
+  "user.facsimileTelephoneNumber"        : "Facsimile",
+  "user.uid"              : "Identifiant",
 
   "sel.all"               : "All",
   "sel.none"              : "None",
