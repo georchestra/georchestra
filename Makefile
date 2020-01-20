@@ -43,6 +43,9 @@ docker-build-cas: build-deps docker-pull-jetty
 docker-build-console: build-deps docker-pull-jetty
 	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl console
 
+docker-build-analytics: build-deps docker-pull-jetty
+	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl analytics
+
 docker-build-mapfishapp: build-deps docker-pull-jetty
 	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl mapfishapp
 
