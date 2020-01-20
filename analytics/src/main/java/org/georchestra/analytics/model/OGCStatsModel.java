@@ -79,8 +79,8 @@ public class OGCStatsModel extends AbstractModel {
         });
     }
 
-    public JSONObject getOrgsStats(final int month, final int year, final int start, final int limit,
-            final String sort, final String filter) throws SQLException, JSONException {
+    public JSONObject getOrgsStats(final int month, final int year, final int start, final int limit, final String sort,
+            final String filter) throws SQLException, JSONException {
 
         return getStats(month, year, start, limit, sort, filter, selectOrgsQ, new StrategyModel() {
             protected JSONArray process(ResultSet rs) throws SQLException, JSONException {

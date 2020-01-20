@@ -65,7 +65,7 @@ public class StatisticsControllerTest {
     }
 
     @Test
-    public final void testCombinedRequestsBothUserAndGroupSet() throws Exception {
+    public final void testCombinedRequestsBothUserAndRoleSet() throws Exception {
         JSONObject posted = new JSONObject("{\"user\": \"testadmin\", \"startDate\": \"2015-01-01\", "
                 + "\"role\": \"ADMINISTRATOR\", \"endDate\": \"2015-12-01\" }");
         // -> 400
@@ -105,8 +105,8 @@ public class StatisticsControllerTest {
     }
 
     @Test
-    public final void testCombinedRequestsLegitGroup() throws Exception {
-        JSONObject posted = new JSONObject("{\"group\": \"ADMINISTRATOR\", \"startDate\": \"2015-01-01\" }");
+    public final void testCombinedRequestsLegitRole() throws Exception {
+        JSONObject posted = new JSONObject("{\"role\": \"ADMINISTRATOR\", \"startDate\": \"2015-01-01\" }");
 
         mockMvc.perform(post("/combinedRequests.json").content(posted.put("endDate", "2015-01-01").toString()))
                 .andExpect(content().string(containsString("granularity\": \"HOUR\""))).andExpect(status().isOk());
@@ -119,7 +119,7 @@ public class StatisticsControllerTest {
     }
 
     @Test
-    public final void testCombinedRequestsNoUserNorGroup() throws Exception {
+    public final void testCombinedRequestsNoUserNorRole() throws Exception {
         JSONObject posted = new JSONObject("{\"startDate\": \"2015-01-01\" }");
 
         mockMvc.perform(post("/combinedRequests.json").content(posted.put("endDate", "2015-01-01").toString()))
@@ -144,11 +144,11 @@ public class StatisticsControllerTest {
                 .andExpect(content().string(containsString("results"))).andExpect(status().isOk());
 
         mockMvc.perform(post("/layersUsage.json").content(new JSONObject().put("startDate", "2015-01-01")
-                .put("endDate", "2015-01-01").put("group", "ADMINISTRATOR").put("limit", 10).toString()))
+                .put("endDate", "2015-01-01").put("role", "ADMINISTRATOR").put("limit", 10).toString()))
                 .andExpect(content().string(containsString("results"))).andExpect(status().isOk());
 
         mockMvc.perform(post("/layersUsage.json").content(new JSONObject().put("startDate", "2015-01-01")
-                .put("endDate", "2015-01-01").put("group", "ADMINISTRATOR").toString()))
+                .put("endDate", "2015-01-01").put("role", "ADMINISTRATOR").toString()))
                 .andExpect(content().string(containsString("results"))).andExpect(status().isOk());
 
         mockMvc.perform(post("/layersUsage.json").content(new JSONObject().put("startDate", "2015-01-01")
@@ -189,7 +189,7 @@ public class StatisticsControllerTest {
                 .andExpect(content().string(containsString("results\": "))).andExpect(status().isOk());
 
         mockMvc.perform(post("/distinctUsers")
-                .content(posted.put("endDate", "2015-01-08").put("group", "ADMINISTRATOR").toString()))
+                .content(posted.put("endDate", "2015-01-08").put("role", "ADMINISTRATOR").toString()))
                 .andExpect(content().string(containsString("results\": "))).andExpect(status().isOk());
     }
 
@@ -200,7 +200,7 @@ public class StatisticsControllerTest {
         mockMvc.perform(post("/distinctUsers").content(posted.toString())).andExpect(status().isBadRequest());
         mockMvc.perform(post("/distinctUsers").content(new JSONObject().put("endDate", "2015-01-08").toString()))
                 .andExpect(status().isBadRequest());
-        mockMvc.perform(post("/distinctUsers").content(new JSONObject().put("group", "ADMINISTRATOR").toString()))
+        mockMvc.perform(post("/distinctUsers").content(new JSONObject().put("role", "ADMINISTRATOR").toString()))
                 .andExpect(status().isBadRequest());
         mockMvc.perform(post("/distinctUsers").content(new JSONObject().put("endDate", "zefcvsd").toString()))
                 .andExpect(status().isBadRequest());
