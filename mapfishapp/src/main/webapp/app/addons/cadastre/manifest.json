@@ -105,6 +105,17 @@
             "tab1field2label": "Sektion",
             "tab2field2label": "Eigentümer",
             "tab1field3label": "Parzelle"
+        },
+        "nl": {
+            "addon_cadastre_popup_title": "Zoeken naar plot",
+            "sync map extent": "synchroniseer de omvang van de kaart",
+            "tab1title": "door verwijzing",
+            "tab2title": "door eigenaar",
+            "tab1field1label": "Gemeente",
+            "tab2field1label": "Gemeente",
+            "tab1field2label": "Sectie",
+            "tab2field2label": "Eigenaar",
+            "tab1field3label": "Plot"
         }
     }
 }

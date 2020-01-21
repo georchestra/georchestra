@@ -36,6 +36,13 @@
             "banGeocoder.field_emptytext": "Ex : 11 Rue Louis de Broglie, 22300 Lannion",
             "banGeocoder.field_label": "Address",
             "Result": "Ergebnis"
+        },
+        "nl": {
+            "banGeocoder.window_title": "Zoeken op adres",
+            "Loading...": "Bezig met laden",
+            "banGeocoder.field_emptytext": "Ex : 11 Rue Louis de Broglie, 22300 Lannion",
+            "banGeocoder.field_label": "Adres",
+            "Result": "Resultaat"
         }
     }
 }

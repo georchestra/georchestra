@@ -38,6 +38,11 @@
             "openls.window_title": "OpenLS rezentrieren",
             "openls.field_emptytext": "z.B.: Hausnummer, Straße, Ort",
             "openls.field_label": "Adresse"
+        },
+        "nl": {
+            "openls.window_title": "Opnieuw focussen op vrij adres (OpenLS)",
+            "openls.field_emptytext": "bv: 13 Rue de Tolbiac, Parijs",
+            "openls.field_label": "Adres"
         }
     }
 }
