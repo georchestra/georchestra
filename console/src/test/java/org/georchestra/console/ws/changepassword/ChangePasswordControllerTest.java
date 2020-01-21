@@ -4,6 +4,7 @@ import org.georchestra.console.ds.AccountDaoImpl;
 import org.georchestra.console.ds.DataServiceException;
 import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.ds.RoleDaoImpl;
+import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.console.ws.utils.PasswordUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,6 +31,7 @@ public class ChangePasswordControllerTest {
 
     private ChangePasswordFormController ctrl;
     private LdapTemplate ldapTemplate;
+    private LogUtils mockLogUtils;
     private MockHttpServletRequest request;
     private MockHttpServletResponse response;
     private Model model;
@@ -61,6 +63,9 @@ public class ChangePasswordControllerTest {
         formBean = new ChangePasswordFormBean();
         result = Mockito.mock(BindingResult.class);
         sessionStatus = Mockito.mock(SessionStatus.class);
+
+        mockLogUtils = Mockito.mock(LogUtils.class);
+        ctrl.logUtils = mockLogUtils;
     }
 
     @Test

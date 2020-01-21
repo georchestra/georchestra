@@ -26,8 +26,10 @@ import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.dto.orgs.OrgExt;
 import org.georchestra.console.model.DelegationEntry;
+import org.georchestra.console.model.AdminLogType;
 import org.georchestra.console.ws.backoffice.utils.ResponseUtil;
 import org.georchestra.console.ws.utils.Validation;
+import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.lib.file.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -61,8 +63,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 @Controller
 public class OrgsController {
+
+    private static final Log LOG = LogFactory.getLog(OrgsController.class.getName());
 
     private static final String BASE_MAPPING = "/private";
     private static final String BASE_RESOURCE = "orgs";
@@ -82,6 +89,9 @@ public class OrgsController {
 
     @Autowired
     protected AdvancedDelegationDao advancedDelegationDao;
+
+    @Autowired
+    protected LogUtils logUtils;
 
     /**
      * Areas map configuration
@@ -196,8 +206,9 @@ public class OrgsController {
         JSONObject json = this.parseRequest(request);
 
         // Validate request against required fields for admin part
-        if (!this.validation.validateOrgField("name", json))
+        if (!this.validation.validateOrgField("name", json)) {
             throw new IOException("required field : name");
+        }
 
         if (!this.validation.validateUrl(json.optString(Org.JSON_URL))) {
             throw new IOException(String.format("bad org url format: %s", json.optString(Org.JSON_URL)));
@@ -206,8 +217,19 @@ public class OrgsController {
         // Retrieve current orgs state from ldap
         Org org = this.orgDao.findByCommonName(commonName);
         OrgExt orgExt = this.orgDao.findExtById(commonName);
+        Org initialOrg = null;
+        OrgExt initialOrgExt = null;
+
+        // get default pending status
+        Boolean defaultPending = org.isPending();
 
         // Update org and orgExt fields
+        try {
+            initialOrg = org.clone();
+            initialOrgExt = orgExt.clone();
+        } catch (CloneNotSupportedException cloneException) {
+            LOG.info("Log action will fail. Clone org or orgExt is not supported.", cloneException);
+        }
         this.updateFromRequest(org, json);
         orgExt.setId(org.getId());
         this.updateFromRequest(orgExt, json);
@@ -224,6 +246,17 @@ public class OrgsController {
 
         this.orgDao.update(orgExt);
         org.setOrgExt(orgExt);
+
+        // log org and orgExt changes
+        if (initialOrg != null && initialOrgExt != null) {
+            logUtils.logOrgChanged(initialOrg, json);
+            logUtils.logOrgExtChanged(initialOrgExt, json);
+        }
+
+        // log if pending status change
+        if (request.getHeader("sec-username") != null && defaultPending != org.isPending()) {
+            logUtils.createLog(org.getId(), AdminLogType.PENDING_ORG_ACCEPTED, null);
+        }
         return org;
     }
 
@@ -249,8 +282,9 @@ public class OrgsController {
         JSONObject json = this.parseRequest(request);
 
         // Validate request against required fields for admin part
-        if (!this.validation.validateOrgField("shortName", json))
+        if (!this.validation.validateOrgField("shortName", json)) {
             throw new IOException("required field : shortName");
+        }
 
         if (!this.validation.validateUrl(json.optString(Org.JSON_URL))) {
             throw new IOException(String.format("bad org url format: %s", json.optString(Org.JSON_URL)));
@@ -269,6 +303,9 @@ public class OrgsController {
         this.orgDao.insert(orgExt);
 
         org.setOrgExt(orgExt);
+
+        logUtils.createLog(org.getId(), AdminLogType.ORG_CREATED, null);
+
         return org;
     }
 
@@ -287,8 +324,19 @@ public class OrgsController {
         }
 
         // delete entities in LDAP server
+        Org org = this.orgDao.findByCommonName(commonName);
+        Boolean isPending = org.isPending();
+
         this.orgDao.delete(this.orgDao.findExtById(commonName));
-        this.orgDao.delete(this.orgDao.findByCommonName(commonName));
+        this.orgDao.delete(org);
+
+        // get authent info without request
+        if (isPending != null && isPending) {
+            logUtils.createLog(commonName, AdminLogType.PENDING_ORG_REFUSED, null);
+        } else {
+            logUtils.createLog(commonName, AdminLogType.ORG_DELETED, null);
+        }
+
         ResponseUtil.writeSuccess(response);
     }
 
@@ -302,8 +350,9 @@ public class OrgsController {
     @RequestMapping(value = PUBLIC_REQUEST_MAPPING + "/orgTypeValues", method = RequestMethod.GET)
     public void getOrganisationTypePossibleValues(HttpServletResponse response) throws IOException, JSONException {
         JSONArray fields = new JSONArray();
-        for (String field : this.orgDao.getOrgTypeValues())
+        for (String field : this.orgDao.getOrgTypeValues()) {
             fields.put(field);
+        }
         ResponseUtil.buildResponse(response, fields.toString(4), HttpServletResponse.SC_OK);
     }
 
@@ -334,6 +383,7 @@ public class OrgsController {
             map.put("zoom", areaMapZoom);
             res.put("map", map);
         } catch (Exception e) {
+            LOG.info("Could not parse value", e);
         }
         JSONObject areas = new JSONObject();
         areas.put("url", areasUrl);
@@ -408,8 +458,9 @@ public class OrgsController {
     private void checkOrgAuthorization(String org) throws AccessDeniedException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        // Verify that org is under delegation if user is not SUPERUSER
-        if (!auth.getAuthorities().contains(ROLE_SUPERUSER)) {
+        // Verify authent context and that org is under delegation if user is not
+        // SUPERUSER
+        if (auth != null && auth.getName() != null && !auth.getAuthorities().contains(ROLE_SUPERUSER)) {
             DelegationEntry delegation = this.delegationDao.findOne(auth.getName());
             if (delegation != null) {
                 if (!Arrays.asList(delegation.getOrgs()).contains(org)) {

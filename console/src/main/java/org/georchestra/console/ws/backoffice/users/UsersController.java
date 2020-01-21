@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Date;
 
 import javax.mail.MessagingException;
 import javax.servlet.ServletInputStream;
@@ -56,10 +57,13 @@ import org.georchestra.console.dto.SimpleAccount;
 import org.georchestra.console.dto.UserSchema;
 import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.mailservice.EmailFactory;
+import org.georchestra.console.model.AdminLogEntry;
+import org.georchestra.console.model.AdminLogType;
 import org.georchestra.console.model.DelegationEntry;
 import org.georchestra.console.ws.backoffice.users.GDPRAccountWorker.DeletedAccountSummary;
 import org.georchestra.console.ws.backoffice.utils.RequestUtil;
 import org.georchestra.console.ws.backoffice.utils.ResponseUtil;
+import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.lib.file.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -118,7 +122,8 @@ public class UsersController {
     @Autowired
     private AdvancedDelegationDao advancedDelegationDao;
 
-    private @Autowired GDPRAccountWorker gdprInfoWorker;
+    @Autowired
+    private GDPRAccountWorker gdprInfoWorker;
 
     @Autowired
     private Boolean warnUserIfUidModified = false;
@@ -127,6 +132,9 @@ public class UsersController {
 
     @Autowired
     private EmailFactory emailFactory;
+
+    @Autowired
+    protected LogUtils logUtils;
 
     public void setEmailFactory(EmailFactory emailFactory) {
         this.emailFactory = emailFactory;
@@ -343,8 +351,9 @@ public class UsersController {
                 throw new AccessDeniedException("Org not under delegation");
         }
 
-        if (this.userRule.isProtected(account.getUid()))
+        if (this.userRule.isProtected(account.getUid())) {
             throw new AccessDeniedException("The user is protected: " + account.getUid());
+        }
 
         // Saves the user in the LDAP
         accountDao.insert(account, requestOriginator);
@@ -352,6 +361,8 @@ public class UsersController {
         roleDao.addUser(Role.USER, account, requestOriginator);
 
         orgDao.linkUser(account);
+
+        logUtils.createLog(account.getUid(), AdminLogType.USER_CREATED, null);
 
         return account;
     }
@@ -404,8 +415,9 @@ public class UsersController {
             throws IOException, NameNotFoundException, DataServiceException, DuplicatedEmailException, ParseException,
             JSONException, MessagingException {
 
-        if (this.userRule.isProtected(uid))
+        if (this.userRule.isProtected(uid)) {
             throw new AccessDeniedException("The user is protected, it cannot be updated: " + uid);
+        }
 
         // check if user is under delegation for delegated admins
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -414,6 +426,7 @@ public class UsersController {
         // searches the account
         Account originalAcount = this.accountDao.findByUID(uid);
         Account modifiedAccount = modifyAccount(AccountFactory.create(originalAcount), request.getInputStream());
+        boolean isPendingValidation = originalAcount.isPending() && !modifiedAccount.isPending();
 
         if (!modifiedAccount.getOrg().equals(originalAcount.getOrg())) {
             if (!auth.getAuthorities().contains(ROLE_SUPERUSER))
@@ -425,6 +438,9 @@ public class UsersController {
 
         accountDao.update(originalAcount, modifiedAccount, auth.getName());
 
+        // log update modifications
+        logUtils.logChanges(modifiedAccount, originalAcount);
+
         if (!modifiedAccount.getOrg().equals(originalAcount.getOrg())) {
             if (!auth.getAuthorities().contains(ROLE_SUPERUSER))
                 if (!Arrays.asList(this.delegationDao.findOne(auth.getName()).getOrgs())
@@ -435,11 +451,17 @@ public class UsersController {
 
         if (accountDao.hasUserDnChanged(originalAcount, modifiedAccount)) {
             // account was validated by a moderator, notify user
-            if (originalAcount.isPending() && !modifiedAccount.isPending()) {
+            if (isPendingValidation) {
+                // send validation email to user
                 this.emailFactory.sendAccountWasCreatedEmail(request.getSession().getServletContext(),
                         modifiedAccount.getEmail(), modifiedAccount.getCommonName(), modifiedAccount.getUid());
             }
             roleDao.modifyUser(originalAcount, modifiedAccount);
+
+            // log pending user validation
+            if (isPendingValidation) {
+                logUtils.createLog(modifiedAccount.getUid(), AdminLogType.PENDING_USER_ACCEPTED, null);
+            }
         }
 
         if (accountDao.hasUserLoginChanged(originalAcount, modifiedAccount)) {
@@ -474,20 +496,29 @@ public class UsersController {
     public void delete(@PathVariable String uid, HttpServletRequest request, HttpServletResponse response)
             throws IOException, DataServiceException {
 
-        if (this.userRule.isProtected(uid))
+        if (this.userRule.isProtected(uid)) {
             throw new AccessDeniedException("The user is protected, it cannot be deleted: " + uid);
+        }
 
         // check if user is under delegation for delegated admins
         this.checkAuthorization(uid);
 
         final Account account = accountDao.findByUID(uid);
         String requestOriginator = request.getHeader("sec-username");
-        roleDao.deleteUser(account, requestOriginator);
         accountDao.delete(account, requestOriginator);
+        roleDao.deleteUser(account, requestOriginator);
 
         // Also delete delegation if exists
-        if (delegationDao.findOne(uid) != null)
+        if (delegationDao.findOne(uid) != null) {
             delegationDao.delete(uid);
+        }
+
+        // log when a user is removed according to pending status
+        if (account.isPending()) {
+            logUtils.createLog(account.getUid(), AdminLogType.PENDING_USER_REFUSED, null);
+        } else {
+            logUtils.createLog(account.getUid(), AdminLogType.USER_DELETED, null);
+        }
 
         ResponseUtil.writeSuccess(response);
     }

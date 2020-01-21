@@ -17,6 +17,7 @@ import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountFactory;
 import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.dto.orgs.OrgExt;
+import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.console.ws.utils.Validation;
 import org.junit.After;
 import org.junit.Before;
@@ -50,12 +51,15 @@ public class EditUserDetailsFormControllerTest {
     private SessionStatus sessionStatus = Mockito.mock(SessionStatus.class);
 
     private Model model = Mockito.mock(Model.class);
+    private LogUtils mockLogUtils = Mockito.mock(LogUtils.class);
     private Account mtesterAccount;
     private Account mtesterAccountNoOrg;
 
     @Before
     public void setUp() throws Exception {
         ctrl = new EditUserDetailsFormController(dao, orgsDao, roleDao, new Validation(""));
+        ctrl.logUtils = mockLogUtils;
+
         formBean.setDescription("description");
         formBean.setEmail("email");
         formBean.setFacsimile("+331234567890");

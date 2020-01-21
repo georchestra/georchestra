@@ -22,12 +22,9 @@ package org.georchestra.console.ds;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.georchestra.console.dao.AdminLogDao;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountFactory;
 import org.georchestra.console.dto.UserSchema;
-import org.georchestra.console.model.AdminLogEntry;
-import org.georchestra.console.model.AdminLogType;
 import org.georchestra.console.ws.newaccount.UidGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.NameNotFoundException;
@@ -77,9 +74,6 @@ public final class AccountDaoImpl implements AccountDao {
     private String pendingOrgSearchBaseDN;
 
     @Autowired
-    private AdminLogDao logDao;
-
-    @Autowired
     public AccountDaoImpl(LdapTemplate ldapTemplate) {
         this.ldapTemplate = ldapTemplate;
     }
@@ -115,10 +109,6 @@ public final class AccountDaoImpl implements AccountDao {
 
     public void setBasePath(String basePath) {
         this.basePath = basePath;
-    }
-
-    public void setLogDao(AdminLogDao logDao) {
-        this.logDao = logDao;
     }
 
     @Override
@@ -202,13 +192,6 @@ public final class AccountDaoImpl implements AccountDao {
         mapToContext(account, context);
 
         ldapTemplate.modifyAttributes(context);
-
-        // Add log entry for this modification
-        if (originLogin != null) {
-            AdminLogEntry log = new AdminLogEntry(originLogin, account.getUid(), AdminLogType.LDAP_ATTRIBUTE_CHANGE,
-                    new Date());
-            this.logDao.save(log);
-        }
     }
 
     @Override

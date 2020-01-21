@@ -34,7 +34,7 @@
                               '1': '{{ &quot;home.connected_user&quot; | translate }}',
                               'other': '{{ &quot;home.connected_users&quot; | translate }}'}">
       </p>
-      <div ng-if="home.connected.results && home.connected.results.length > 0">
+      <div ng-if="home.connected.results && home.connected.results.length > 0">      
         <table class="table table-condensed">
           <thead>
             <tr>
@@ -60,28 +60,7 @@
   <div class="col-md-8">
 
     <stats data="home.requests" type="'line'" config="['date', 'count']" title="'analytics.requests'"></stats>
-
-    <h4 translate>home.logs</h4>
-
-    <table class="table table-condensed">
-      <thead>
-        <tr>
-          <th translate>logs.date</th>
-          <th translate>logs.sender</th>
-          <th translate>logs.type</th>
-          <th translate>logs.target</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr ng-repeat="log in home.logs">
-          <td>{{::log.date | logDate}}</td>
-          <td><a ng-link="user({id: log.admin, tab: 'infos'})">{{::log.admin}}</a></td>
-          <td>{{::log.type}}</td>
-          <td><a ng-link="user({id: log.target, tab: 'infos'})">{{::log.target}}</a></td>
-        </tr>
-      </tbody>
-    </table>
-
+    <logger filter="false" title="true"></logger>
   </div>
 
 </section>

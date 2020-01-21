@@ -1,0 +1,105 @@
+<section class="logger">
+    <button ng-show="logger.isFiltered()" class="reset btn btn-default pull-right" ng-click="logger.reset()">
+    <i class="glyphicon glyphicon-repeat"></i>
+    Reset filters
+    </button>
+    <h4 ng-if="logger.getTitle()" translate>logs.title</h4>
+    <hr>
+    <ol class="breadcrumb" ng-if="logger.log">    
+        <li class="active" ng-if="logger.log">
+            <a href="javascript:void(0);" ng-click="logger.closeLog()" title="">
+            <span translate>logs.all</span> <span class="badge">{{::logger.logs.length}}</span>
+            </a>
+        </li>
+    <li class="active" ng-if="logger.log.trusted">{{::logger.log.changed.subject}}</li>
+    <li class="active" ng-if="!logger.log.trusted">{{::logger.log.type}}</li>
+    </ol>
+    <table class="table table-condensed" ng-if="!logger.log">
+        <thead ng-if="logger.filter">
+            <tr>
+            <th class="header-filter">
+                <date model="logger.date"></date>
+            </th>
+            <th class="header-filter">
+                <select class="pull-right form-control input-sm" ng-model="logger.admin"
+                ng-options="t.key as t.value for t in logger.senders" choosen>
+                </select>
+                <span translate>logs.sender</span>
+            </th>
+            <th class="header-filter">
+                <select class="pull-right form-control input-sm" ng-model="logger.target"
+                ng-options="t.key as t.value for t in logger.targets" chosen>
+                </select>
+                <span translate>logs.target</span>
+            </th>
+            <th class="header-filter">
+                <select class="pull-right form-control input-sm" ng-model="logger.type" 
+                ng-options="t.key as t.value for t in logger.types" chosen>
+                </select>
+                <span translate>logs.type</span>
+            </th>
+            </tr>
+        </thead>
+        <thead ng-if="!logger.filter">
+            <tr>
+                <th translate>logs.date</th>
+                <th translate>logs.sender</th>
+                <th translate>logs.target</th>
+                <th translate>logs.type</th>
+            </tr>
+        </thead>
+    <tbody>
+        <tr dir-paginate="log in logger.logs | logs: logger.type:logger.admin:logger.target:logger.date | orderBy: '-date' | itemsPerPage: logger.itemsPerPage">
+          <td>{{::log.date | logDate}}</td>
+          <td><a ng-link="user({id: log.admin, tab: 'infos'})" title="">{{::log.admin}}</a>
+          <!--Target-->
+          <td>
+            <!--user or user's role modification-->
+            <a ng-if="logger.getType(log) === 'USER'" ng-link="user({id: log.target, tab: 'infos'})">
+              {{::log.target}}
+            </a>
+            <!--org-->
+            <a ng-if="logger.getType(log) === 'ORG'" ng-link="org({org: log.target, tab: 'infos'})">
+              <span ng-if="logger.orgsId[log.target]">{{::logger.orgsId[log.target]}}</span>
+              <span ng-if="!logger.orgsId[log.target]">{{::log.target}}</span>
+            </a>
+            <!--role-->
+            <a ng-if="logger.getType(log) === 'ROLE'" ng-link="role({role: log.target, tab: 'infos'})">
+              {{::log.target}}
+            </a>
+            <!--refused or deleted-->
+            <span ng-if="logger.getType(log) === ''">{{::log.target}}</span>
+          </td>
+          <!--Type-->
+          <td>
+            <span ng-if="!log.changed" title="{{::log.title}}">
+                <i class="glyphicon glyphicon-{{::log.icon}}"></i>
+                {{::log.type}}
+            </span>  
+            <span ng-if="log.changed && log.type=='EMAIL_SENT'">
+              <i class="glyphicon glyphicon-envelope" title="{{::log.title | translate}}"></i>
+              <a ng-link="user({id: log.changed.recipient, tab:'messages', queryParams: {msgid: log.changed.id}})" >
+                {{::log.changed.subject}}
+              </a>
+            </span>
+            <span ng-if="log.type.indexOf('_ROLE_') >= 0" title="{{::log.title}}">
+              <i class="glyphicon glyphicon-{{::(log.type.indexOf('_ROLE_ADDED') > 0)?'plus':'minus'}}-sign"></i>
+              {{::log.changed.new || log.changed.old}}
+            </span>
+            <span ng-if="log.type.indexOf('_ATTRIBUTE_CHANGED') >= 0">
+              <i class="glyphicon glyphicon-edit"
+                title="{{::'logs.modification' | translate}}"></i>
+              <strong data-toggle="tooltip" title="{{log.title}}">
+                {{::log.changed.fieldI18nKey | translate}}
+              </strong>
+            </span>
+            <span ng-if="log.changed && log.changed.field === log.target">
+                {{::log.type + (log.changed.field ? ' (' + log.changed.field + ')' : '')}}
+            </span>
+          </td>
+        </tr>
+    </tbody>
+    </table>
+
+    <dir-pagination-controls ng-if="!logger.log.changed && !logger.log.trusted"></dir-pagination-controls>
+</section>

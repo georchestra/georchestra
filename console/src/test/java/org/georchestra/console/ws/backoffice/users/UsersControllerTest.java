@@ -1,6 +1,5 @@
 package org.georchestra.console.ws.backoffice.users;
 
-import org.georchestra.console.dao.AdminLogDao;
 import org.georchestra.console.dao.DelegationDao;
 import org.georchestra.console.ds.AccountDaoImpl;
 import org.georchestra.console.ds.DataServiceException;
@@ -13,6 +12,7 @@ import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.dto.UserSchema;
 import org.georchestra.console.model.DelegationEntry;
 import org.georchestra.console.ws.backoffice.roles.RoleProtected;
+import org.georchestra.console.ws.utils.LogUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -70,6 +70,7 @@ public class UsersControllerTest {
     private MockHttpServletRequest request;
     private MockHttpServletResponse response;
     private DelegationDao mockDelegationDao;
+    private LogUtils mockLogUtils;
 
     @Before
     public void setUp() {
@@ -79,7 +80,7 @@ public class UsersControllerTest {
         ldapTemplate = mock(LdapTemplate.class);
         contextSource = mock(LdapContextSource.class);
         roles = mock(RoleProtected.class);
-        AdminLogDao logDao = mock(AdminLogDao.class);
+        mockLogUtils = mock(LogUtils.class);
 
         when(contextSource.getBaseLdapPath()).thenReturn(new DistinguishedName("dc=georchestra,dc=org"));
         when(ldapTemplate.getContextSource()).thenReturn(contextSource);
@@ -89,7 +90,6 @@ public class UsersControllerTest {
         roleDao = new RoleDaoImpl();
         roleDao.setLdapTemplate(ldapTemplate);
         roleDao.setRoles(this.roles);
-        roleDao.setLogDao(logDao);
         roleDao.setRoleSearchBaseDN("ou=roles");
         roleDao.setBasePath("dc=georchestra,dc=org");
 
@@ -106,7 +106,6 @@ public class UsersControllerTest {
         dao.setOrgSearchBaseDN("ou=orgs");
         dao.setRoleSearchBaseDN("ou=roles");
         dao.setBasePath("dc=georchestra,dc=org");
-        dao.setLogDao(logDao);
         roleDao.setAccountDao(dao);
         orgsDao.setAccountDao(dao);
         usersCtrl = new UsersController(dao, userRule);
@@ -114,6 +113,8 @@ public class UsersControllerTest {
         mockDelegationDao = mock(DelegationDao.class);
         usersCtrl.setDelegationDao(mockDelegationDao);
         usersCtrl.setRoleDao(roleDao);
+
+        usersCtrl.logUtils = mockLogUtils;
 
         request = new MockHttpServletRequest();
         response = new MockHttpServletResponse();

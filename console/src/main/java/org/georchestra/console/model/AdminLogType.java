@@ -20,9 +20,44 @@
 package org.georchestra.console.model;
 
 public enum AdminLogType {
-
+    /**
+     * Initial events logs types Aborted since 10/2019
+     * 
+     * Databases table with logs before 10/2019 search the code witch correspond to
+     * this old type. Keep this types to retrieve old logs and avoid server error.
+     */
     ACCOUNT_MODERATION("Account moderation"), SYSTEM_ROLE_CHANGE("System role"), OTHER_ROLE_CHANGE("Other role"),
-    LDAP_ATTRIBUTE_CHANGE("User attributes"), EMAIL_SENT("Email sent");
+    LDAP_ATTRIBUTE_CHANGE("User attributes"),
+
+    /**
+     * New events logs types insert since 10/2019
+     * 
+     * Added to get more informations about logs and used to identify the real
+     * modification for each action
+     */
+    CUSTOM_ROLE_ADDED("A custom role was added"), CUSTOM_ROLE_REMOVED("A custom role was removed"),
+
+    EMAIL_SENT("Email sent"), EMAIL_RECOVERY_SENT("Email to recover password sent"),
+
+    ORG_ATTRIBUTE_CHANGED("Attribute was changed for an org"),
+
+    ORG_CREATED("An org was created"), ORG_DELETED("An org was deleted"),
+
+    PENDING_ORG_ACCEPTED("Pending org was accepted"), PENDING_ORG_CREATED("Pending org was created"),
+    PENDING_ORG_REFUSED("Pending org was refused"),
+
+    PENDING_USER_ACCEPTED("Pending user was accepted"), PENDING_USER_CREATED("Pending user was created"),
+    PENDING_USER_REFUSED("Pending user was refused"),
+
+    ROLE_CREATED("A role was created"), ROLE_DELETED("A role was deleted"),
+
+    SYSTEM_ROLE_REMOVED("System role was removed"), SYSTEM_ROLE_ADDED("System role was added"),
+
+    USER_ATTRIBUTE_CHANGED("Attribute was changed for a user"),
+
+    USER_CREATED("A user was created"), USER_DELETED("A user was deleted"),
+
+    USER_PASSWORD_CHANGED("Password was changed for a user");
 
     private String name;
 

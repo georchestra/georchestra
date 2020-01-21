@@ -33,6 +33,7 @@ import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountImpl;
 import org.georchestra.console.dto.Role;
 import org.georchestra.console.dto.orgs.Org;
+import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.console.ws.utils.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -67,6 +68,9 @@ public class EditUserDetailsFormController {
     private final AccountDao accountDao;
 
     private Validation validation;
+
+    @Autowired
+    protected LogUtils logUtils;
 
     @Autowired
     public EditUserDetailsFormController(AccountDao dao, OrgsDao orgsDao, RoleDao roleDao, Validation validation) {
@@ -185,13 +189,20 @@ public class EditUserDetailsFormController {
         // updates the account details
         try {
 
-            Account account = modify(this.accountDao.findByUID(request.getHeader("sec-username")), formBean);
+            Account originalAccount = this.accountDao.findByUID(request.getHeader("sec-username"));
+            Account modifiedAccount = this.accountDao.findByUID(request.getHeader("sec-username"));
+            Account account = modify(modifiedAccount, formBean);
             accountDao.update(account, request.getHeader("sec-username"));
 
             model.addAttribute("success", true);
             Org org = orgsDao.findByCommonNameWithExt(account);
             model.addAttribute("org", orgToJson(org));
             model.addAttribute("isReferentOrSuperUser", isReferentOrSuperUser(account));
+
+            // create log for each account modification
+            if (logUtils != null) {
+                logUtils.logChanges(modifiedAccount, originalAccount);
+            }
             return "editUserDetailsForm";
 
         } catch (DuplicatedEmailException e) {
@@ -216,7 +227,6 @@ public class EditUserDetailsFormController {
      * @return modified account
      */
     private Account modify(Account account, EditUserDetailsFormBean formBean) {
-
         account.setGivenName(formBean.getFirstName());
         account.setSurname(formBean.getSurname());
         account.setTitle(formBean.getTitle());

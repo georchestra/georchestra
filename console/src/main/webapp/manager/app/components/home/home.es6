@@ -4,7 +4,6 @@ class HomeController {
   static $inject = ['$injector']
 
   constructor ($injector) {
-    const LOG_LIMIT = 15
     const EXPIRED_ROLE = $injector.get('expiredRole')
 
     this.$injector = $injector
@@ -36,13 +35,6 @@ class HomeController {
       ...options,
       service: 'combinedRequests.json',
       startDate: $injector.get('date').getFromDiff('week')
-    }, () => {}, () => {
-      flash.create('danger', this.i18n.errorload)
-    })
-
-    this.logs = this.$injector.get('Logs').query({
-      limit: LOG_LIMIT,
-      page: 0
     }, () => {}, () => {
       flash.create('danger', this.i18n.errorload)
     })

@@ -33,10 +33,12 @@ import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.Role;
 import org.georchestra.console.dto.RoleFactory;
 import org.georchestra.console.dto.RoleSchema;
+import org.georchestra.console.model.AdminLogType;
 import org.georchestra.console.model.DelegationEntry;
 import org.georchestra.console.ws.backoffice.users.UserRule;
 import org.georchestra.console.ws.backoffice.utils.RequestUtil;
 import org.georchestra.console.ws.backoffice.utils.ResponseUtil;
+import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.lib.file.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -103,7 +105,11 @@ public class RolesController {
     private AccountDao accountDao;
 
     @Autowired
+    protected LogUtils logUtils;
+
+    @Autowired
     private AdvancedDelegationDao advancedDelegationDao;
+
     @Autowired
     private DelegationDao delegationDao;
 
@@ -249,6 +255,9 @@ public class RolesController {
             String jsonResponse = roleResponse.asJsonString();
             ResponseUtil.buildResponse(response, jsonResponse, HttpServletResponse.SC_OK);
 
+            // log role creation
+            logUtils.createLog(role.getName(), AdminLogType.ROLE_CREATED, null);
+
         } catch (DuplicatedCommonNameException emailex) {
 
             String jsonResponse = ResponseUtil.buildResponseMessage(Boolean.FALSE, DUPLICATED_COMMON_NAME);
@@ -294,6 +303,9 @@ public class RolesController {
 
             this.roleDao.delete(cn);
 
+            // log role deleted
+            logUtils.createLog(cn, AdminLogType.ROLE_DELETED, null);
+
             ResponseUtil.writeSuccess(response);
 
         } catch (NameNotFoundException e) {
@@ -303,7 +315,6 @@ public class RolesController {
             LOG.error(e.getMessage());
             ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
                     HttpServletResponse.SC_BAD_REQUEST);
-
         } catch (Exception e) {
             LOG.error(e.getMessage());
             ResponseUtil.buildResponse(response, buildErrorResponse(e.getMessage()),
@@ -430,20 +441,26 @@ public class RolesController {
             try {
                 return accountDao.findByUID(userUuid);
             } catch (DataServiceException e) {
+                LOG.debug(e.getMessage());
                 return null;
             }
         }).filter(account -> null != account).collect(Collectors.toList());
 
         // Don't allow modification of ORGADMIN role
-        if (putRole.contains("ORGADMIN") || deleteRole.contains("ORGADMIN"))
+        if (putRole.contains("ORGADMIN") || deleteRole.contains("ORGADMIN")) {
             throw new IllegalArgumentException("ORGADMIN role cannot be add or delete");
+        }
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_SUPERUSER")))
+        if (!auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_SUPERUSER"))) {
             this.checkAuthorization(auth.getName(), users, putRole, deleteRole);
+        }
 
         this.roleDao.addUsersInRoles(putRole, accounts, auth.getName());
         this.roleDao.deleteUsersInRoles(deleteRole, accounts, auth.getName());
+
+        // create log
+        logUtils.logRolesUsersAction(putRole, deleteRole, accounts);
 
         ResponseUtil.writeSuccess(response);
     }

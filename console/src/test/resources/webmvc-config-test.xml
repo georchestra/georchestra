@@ -286,5 +286,7 @@
   </bean>
 
   <bean id="passwordUtils" class="org.georchestra.console.ws.utils.PasswordUtils"/>
+  
+  <bean id="logUtils" class="org.georchestra.console.ws.utils.LogUtils"/>
 
 </beans>

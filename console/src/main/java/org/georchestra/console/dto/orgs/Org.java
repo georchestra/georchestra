@@ -29,7 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Org extends AbstractOrg implements Comparable<Org> {
+public class Org extends AbstractOrg implements Comparable<Org>, Cloneable {
 
     public static final String JSON_ID = "id";
     public static final String JSON_NAME = "name";
@@ -155,5 +155,10 @@ public class Org extends AbstractOrg implements Comparable<Org> {
             return null;
         else
             return orgExt.getLogo();
+    }
+
+    @Override
+    public Org clone() throws CloneNotSupportedException {
+        return (Org) super.clone();
     }
 }

@@ -6,18 +6,23 @@ import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.dto.orgs.OrgExt;
 import org.georchestra.console.model.DelegationEntry;
+import org.georchestra.console.ws.utils.LogUtils;
 import org.georchestra.console.ws.utils.Validation;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+
+import lombok.extern.java.Log;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -42,9 +47,11 @@ public class OrgsControllerTest {
     private OrgExt mockOrgExt;
     private OrgsDao mockOrgsDao;
     private DelegationDao delegationDaoMock;
+    private LogUtils mockLogUtils;
 
     @Before
     public void grantRight() {
+        MockitoAnnotations.initMocks(this);
         // Set user connected through spring security
         List<GrantedAuthority> role = new LinkedList<GrantedAuthority>();
         role.add(new SimpleGrantedAuthority("ROLE_SUPERUSER"));
@@ -97,7 +104,6 @@ public class OrgsControllerTest {
         when(mockEntry2.getOrgs()).thenReturn(new String[] {});
         JSONObject reqUsr = new JSONObject().put("shortName", "c2c");
         MockHttpServletRequest request = new MockHttpServletRequest();
-        ;
         request.setContent(reqUsr.toString().getBytes());
 
         toTest.updateOrgInfos("csc", request);
@@ -115,6 +121,7 @@ public class OrgsControllerTest {
     private OrgsController createToTest() throws SQLException {
         mockOrgsDao = mock(OrgsDao.class);
         delegationDaoMock = mock(DelegationDao.class);
+        mockLogUtils = mock(LogUtils.class);
         mockOrg = mock(Org.class);
         mockOrgExt = mock(OrgExt.class);
         AdvancedDelegationDao advancedDelegationDaoMock = mock(AdvancedDelegationDao.class);
@@ -125,6 +132,7 @@ public class OrgsControllerTest {
         toTest.delegationDao = delegationDaoMock;
         toTest.advancedDelegationDao = advancedDelegationDaoMock;
         toTest.validation = mockValidation;
+        toTest.logUtils = mockLogUtils;
         when(mockOrgsDao.findByCommonName("csc")).thenReturn(mockOrg);
         when(mockOrgsDao.findExtById("csc")).thenReturn(mockOrgExt);
         mockEntry1 = mock(DelegationEntry.class);

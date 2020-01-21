@@ -119,7 +119,7 @@
                  title="'analytics.extractions'" class="col-md-6" csv-config="user.extractionOptions"/>
         </div>
       </div>
-
+      <!--message tab to list all readables messages-->
       <div class="panel-body user-messages" ng-if="user.tab=='messages'">
 
         <ol class="breadcrumb">
@@ -202,7 +202,7 @@
             <tr ng-repeat="message in user.messages.emails">
               <td>{{::message.date | date: 'mediumDate'}}</td>
               <td>
-                <a ng-click="user.openMessage(message)" href="javascript:void(0);">
+                <a href="javascript:void(0)" ng-click="user.openMessage(message)">
                   {{::message.subject}}<em ng-if="message.subject==''" translate>msg.nosubject</em>
                 </a>
               </td>
@@ -216,30 +216,11 @@
           </tbody>
         </table>
       </div>
-
+      <!--log breadcrumb-->
       <div class="panel-body" ng-if="user.tab=='logs'">
-        <ol class="breadcrumb">
-          <li class="active">
-            <span translate>logs.logs</span> <span class="badge">{{::user.logs.length}}</span>
-          </li>
-        </ol>
-        <table class="table table-condensed">
-          <thead>
-            <tr>
-              <th translate>logs.date</th>
-              <th translate>logs.sender</th>
-              <th translate>logs.type</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr dir-paginate="log in user.logs | itemsPerPage: 25">
-              <td>{{::log.date | logDate}}</td>
-              <td>{{::log.admin}}</td>
-              <td>{{::log.type}}</td>
-            </tr>
-          </tbody>
-        </table>
-        <dir-pagination-controls></dir-pagination-controls>
+        <h4 translate>user.logs</h4>
+        <!--logs component-->
+        <logger filter="false" title="false" user="user.uid"></logger>
       </div>
 
       <div class="panel-body" ng-if="user.tab=='manage'">

@@ -4,9 +4,9 @@ require('services/util')
 require('services/contexts')
 
 class UserController {
-  static $inject = ['$routeParams', '$injector', 'User', 'Role', 'Orgs']
+  static $inject = ['$routeParams', '$injector', '$location', 'User', 'Role', 'Orgs']
 
-  constructor ($routeParams, $injector, User, Role, Orgs) {
+  constructor ($routeParams, $injector, $location, User, Role, Orgs) {
     this.$injector = $injector
 
     this.TMP_ROLE = this.$injector.get('temporaryRole')
@@ -21,8 +21,9 @@ class UserController {
 
     this.tabs = ['infos', 'roles', 'analytics', 'messages', 'logs', 'manage']
     this.tab = $routeParams.tab
+    this.uid = $routeParams.id
 
-    this.user = User.get({ id: $routeParams.id }, (user) => {
+    this.user = User.get({ id: this.uid }, (user) => {
       user.originalID = user.uid
       if (user.org && user.org !== '') {
         user.orgObj = Orgs.get({ id: user.org }, org => {
@@ -44,7 +45,13 @@ class UserController {
         })
       }
       if (this.tab === 'messages') {
-        this.messages = this.$injector.get('Email').query({ id: this.user.uid })
+        this.messages = this.$injector.get('Email').query({ id: this.user.uid }, r => {
+          if ($location.$$path.indexOf('msgid') === -1) return
+          const msgid = new URLSearchParams($location.$$path.split('?').pop()).get('msgid')
+          r.emails.forEach(m => {
+            if (m.id.toString() === msgid) this.openMessage(m)
+          })
+        })
       }
     })
     this.adminRoles = this.$injector.get('roleAdminList')()
@@ -181,26 +188,6 @@ class UserController {
     })
   }
 
-  loadLogs ($scope) {
-    const i18n = {}
-    const flash = this.$injector.get('Flash')
-
-    this.$injector.get('$q').all([
-      this.user.$promise,
-      this.$injector.get('translate')('analytics.errorload', i18n)
-    ]).then(() => {
-      this.logs = this.$injector.get('UserLogs').query(
-        {
-          id: this.user.uid,
-          limit: 100000,
-          page: 0
-        },
-        () => { this.logs.reverse() },
-        flash.create.bind(flash, 'danger', i18n.errorload)
-      )
-    })
-  }
-
   save () {
     const flash = this.$injector.get('Flash')
     const $httpDefaultCache = this.$injector.get('$cacheFactory').get('$http')
@@ -245,11 +232,15 @@ class UserController {
   }
 
   openMessage (message) {
+    const $router = this.$injector.get('$router')
+    $router.navigate($router.generate('user', { id: this.user.uid, tab: 'messages', queryParams: { msgid: message.id } }))
     message.trusted = this.$injector.get('$sce').trustAsHtml(message.body)
     this.message = message
   }
 
   closeMessage (message) {
+    const $router = this.$injector.get('$router')
+    $router.navigate($router.generate('user', { id: this.user.uid, tab: 'messages' }))
     delete this.message
     delete this.compose
   }
@@ -377,9 +368,6 @@ class UserController {
 
     if (this.tab === 'analytics') {
       this.loadAnalytics($scope)
-    }
-    if (this.tab === 'logs') {
-      this.loadLogs($scope)
     }
   }
 

@@ -21,8 +21,13 @@ package org.georchestra.console.model;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 
 import javax.persistence.*;
+
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -32,6 +37,7 @@ import java.util.Date;
 @NamedQueries({
         @NamedQuery(name = "AdminLogEntry.findByTargetPageable", query = "SELECT l FROM AdminLogEntry l WHERE l.target = :target ORDER BY l.date DESC"),
         @NamedQuery(name = "AdminLogEntry.myFindByTargets", query = "SELECT l FROM AdminLogEntry l WHERE l.target IN :targets ORDER BY l.date DESC") })
+@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 public class AdminLogEntry {
 
     @Id
@@ -43,6 +49,10 @@ public class AdminLogEntry {
     private String target;
     private AdminLogType type;
     private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+
+    @Type(type = "jsonb")
+    @Column(columnDefinition = "jsonb")
+    private String changed;
 
     @Column(updatable = false, nullable = false)
     @JsonIgnore
@@ -56,6 +66,31 @@ public class AdminLogEntry {
         this.target = target;
         this.type = type;
         this.date = date;
+    }
+
+    /**
+     * Constructor
+     * 
+     * @param admin   String that realized action
+     * @param target  String user concerned by this action
+     * @param type    AdminLogType to identify action
+     * @param date    Date of log
+     * @param changed String to save changed as JSON
+     */
+    public AdminLogEntry(String admin, String target, AdminLogType type, Date date, String changed) {
+        this.admin = admin;
+        this.target = target;
+        this.type = type;
+        this.date = date;
+        this.changed = changed;
+    }
+
+    public String getChanged() {
+        return changed;
+    }
+
+    public void setChanged(String changed) {
+        this.changed = changed;
     }
 
     public long getId() {
