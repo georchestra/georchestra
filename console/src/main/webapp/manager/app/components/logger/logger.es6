@@ -134,7 +134,7 @@ class LoggerController {
     // get all orgs infos and orgs name
     this.orgsId = {}
     this.$injector.get('Orgs').query(orgs => {
-      orgs.map(org => {
+      orgs.forEach(org => {
         this.orgsId[org.id] = org.name
       })
       this.orgs = orgs.map(o => o.name)
