@@ -6,12 +6,10 @@
   "nav.logs"              : "Logs",
   "nav.roles"             : "Roles",
   "nav.delegations"       : "Delegations",
-
   "index.SUPERUSER"       : "Administrator",
   "index.DELEGATED"       : "Delegation",
   "index.SUPERUSERtip"    : "Your role allows you to manage all accounts",
   "index.DELEGATEDtip"    : "Your account is allowed to manage users in a selection of Orgs",
-
   "home.users"            : "Manage users",
   "home.waiting_users"    : "waiting users",
   "home.waiting_user"     : "waiting user",
@@ -25,7 +23,6 @@
   "home.user"             : "User",
   "home.org"              : "Org.",
   "home.logs"             : "Admin logs",
-
   "tab.infos"             : "Infos",
   "tab.roles"             : "Roles",
   "tab.delegations"       : "Delegations",
@@ -35,10 +32,6 @@
   "tab.manage"            : "Manage",
   "tab.area"              : "Area",
   "tab.users"             : "Members",
-
-  "area.import"           : "Import CSV",
-  "area.export"           : "Export CSV",
-
   "user.userlist"         : "All users",
   "user.updated"          : "User updated",
   "user.deleted"          : "User deleted",
@@ -64,7 +57,7 @@
   "user.gn"               : "First Name",
   "user.givenName"        : "First Name",
   "user.phone"            : "Phone",
-  "user.facsimileTelephoneNumber" : "Phone",
+  "user.facsimileTelephoneNumber" : "Fax",
   "user.fax"              : "Fax",
   "user.title"            : "Job title",
   "user.lastcontext"      : "Last context",
@@ -82,7 +75,10 @@
   "user.action"           : "Action",
   "user.remove"           : "Remove",
   "user.logs"             : "User logs",
-
+  "user.shadowExpire"     : "Expiration date",
+  "user.preferredLanguage": "Default language",
+  "user.telephoneNumber"  : "Phone number",
+  "user.uid"              : "Identifier",
   "orgs.title_plural"     : "organizations",
   "orgs.title_one"        : "organization",
   "orgs.title_none"       : "No organization",
@@ -90,7 +86,6 @@
   "orgs.pending"          : "Pending",
   "orgs.neworg"           : "New org",
   "orgs.filter_orgs"      : "Filter",
-
   "org.name"              : "Name",
   "org.shortName"         : "Short name",
   "org.type"              : "Type",
@@ -116,16 +111,13 @@
   "org.logo"              : "Logo",
   "org.cities"            : "Area",
   "org.orgType"           : "Organisation type",
-
   "imageinput.label"      : "Upload logo",
-
   "roles.title_plural"    : "roles",
   "roles.title_one"       : "role",
   "roles.title_none"      : "No role",
   "roles.allroles"        : "All roles",
   "roles.newrole"         : "New role",
   "roles.filter_roles"    : "Filter",
-
   "role.save"             : "Save",
   "role.updated"          : "Role has been updated",
   "role.deleted"          : "Role has been deleted",
@@ -141,10 +133,9 @@
   "role.cn"               : "Id",
   "role.favorite"         : "Favorite",
   "role.favorites"        : "Favorites",
-  "role.userremoved"      : "User has been removed from role",
   "role.useradded"        : "User has been added to role",
+  "role.userremoved"      : "User has been removed from role",
   "role.userlabel"        : "Add",
-
   "delegations.title"     : "management delegation",
   "delegations.title_plural" : "management delegations",
   "delegations.title_no_delegations" : "No management delegation",
@@ -154,7 +145,6 @@
   "delegation.ddeleted"   : "Delegation deleted",
   "delegation.derror"     : "Error while updating delegation",
   "delegation.restricted" : "Adding a delegation to a SUPERUSER is not allowed.",
-
   "area.save"             : "Save area",
   "area.updated"          : "Area updated",
   "area.error"            : "Error saving area",
@@ -164,7 +154,8 @@
   "area.all"              : "All",
   "area.none"             : "None",
   "area.search"           : "Search",
-
+  "area.import"           : "CSV Import",
+  "area.export"           : "CSV Export",
   "role.allusers"        : "All users",
   "role.system"          : "geOrchestra roles",
   "role.app"             : "Other roles",
@@ -182,7 +173,6 @@
   "role.search"          : "Search role",
   "role.all"             : "All",
   "role.delete"          : "Delete",
-
   "users.createRole"     : "Create role",
   "users.newRole"        : "Name",
   "users.newRoleName"    : "Role name",
@@ -204,19 +194,10 @@
   "users.ORGADMIN"        : "Delegates",
   "users.TEMPORARY"       : "Temporary",
   "users.EXPIRED"         : "Expired",
-  "user.postalAddress"    : "Address",
-  "user.shadowExpire"     : "Expiration",
-  "user.preferredLanguage"     : "Default language",
-  "user.givenName"        : "Given name",
-  "user.telephoneNumber"  : "Phone number",
-  "user.facsimileTelephoneNumber"        : "Facsimile",
-  "user.uid"              : "Identifier",
-
   "sel.all"               : "All",
   "sel.none"              : "None",
   "sel.export_csv"        : "CSV Export",
   "sel.export_vcard"      : "VCard Export",
-
   "msg.compose"           : "Compose message",
   "msg.date"              : "Date",
   "msg.subject"           : "Subject",
@@ -233,7 +214,6 @@
   "msg.sent"              : "Message sent!",
   "msg.error"             : "Error sending message",
   "msg.empty"             : "No mails",
-
   "logs.title"            : "Administration logs",
   "logs.logs"             : "Admin logs",
   "logs.date"             : "Date",
@@ -245,6 +225,7 @@
   "logs.alltype"          : "All",
   "logs.alltarget"        : "All",
   "logs.error"            : "Error while loading data",
+  "logs.target"           : "Modification of",
   "logs.modification"     : "Modification on the attribute",
   "logs.replace"          : "Replace the value",
   "logs.to"               : "by",
@@ -271,7 +252,6 @@
   "logs.roleremoved"      : "removed from this user",
   "logs.emailrecoverysent": "Password recovery email sent",
   "logs.rolecreated"      : "Role created",
-
   "analytics.title"       : "Analytics",
   "analytics.all"         : "Everyone",
   "analytics.requests"    : "Number of requests",
@@ -287,7 +267,6 @@
   "analytics.extractions" : "Layers extractions",
   "analytics.saveAsPNG"   : "Save as PNG",
   "analytics.saveAsCSV"   : "Save as CSV",
-
   "date.day"              : "Today",
   "date.week"             : "Last week",
   "date.month"            : "Last month",
