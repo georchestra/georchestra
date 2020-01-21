@@ -16,7 +16,7 @@
         "fr": "Édition dans OSM",
         "es": "Edición en OSM",
         "de": "Bearbeiten in OSM",
-		  "nl": "Bewerken in OSM"
+        "nl": "Bewerken in OSM"
     },
     "description": {
         "en": "Lauch an edit session of the collaborative map OpenStreetMap for current geographic extent",
