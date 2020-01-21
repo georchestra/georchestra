@@ -27,6 +27,9 @@
         },
         "de": {
             "addon_template_sample_message": "Beispielmeldungin Deutsch"
+        },
+        "nl": {
+            "addon_template_sample_message": "Voorbeeld van een bericht in het Nederlands"
         }
     }
 }

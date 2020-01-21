@@ -10,12 +10,14 @@
         "en": "Notes: Report map issues",
         "es": "Notas: Reportar anomalias en el mapa",
         "fr": "Notes : Signaler des anomalies cartographiques",
-        "de": "Notes : Report map issues"
+        "de": "Notes : Report map issues",
+        "nl": "Notities : kaartproblemen melden"
     },
     "description": {
         "en": "Create notes to report map issues",
         "es": "Crear notas para reportar anomalias en el mapa",
         "fr": "Créez des notes pour signaler des anomalies cartographiques",
-        "de": "Create notes to report map issues"
+        "de": "Create notes to report map issues",
+        "nl": "Maak notities om kaartproblemen te melden"
     }
 }]
