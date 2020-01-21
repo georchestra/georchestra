@@ -79,13 +79,9 @@
   "user.action"           : "Operación",
   "user.remove"           : "Eliminar",
   "user.logs"             : "Logs de usuarios",
-  "user.logs"             : "Benutzerprotokolle",
-  "user.postalAddress"    : "",
   "user.shadowExpire"     : "",
   "user.preferredLanguage": "",
-  "user.givenName"        : "",
   "user.telephoneNumber"  : "",
-  "user.facsimileTelephoneNumber"        : "",
   "user.uid"              : "",
 
   "orgs.title_plural"     : "organizaciones",
