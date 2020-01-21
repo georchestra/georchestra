@@ -39,15 +39,11 @@ String lang = (String) request.getAttribute("defaultLanguage");
 
 if (forcedLang != null) {
     if (forcedLang.equals("en") || forcedLang.equals("es") || forcedLang.equals("ru") || forcedLang.equals("fr") || forcedLang.equals("de") || forcedLang.equals("nl")) {
-            lang = forcedLang;
-    } else if ( forcedLang.equals("nl-BE") || forcedLang.equals("nl_BE")) {
-        lang = "nl";
-        }
+        lang = forcedLang;
+    }
 } else {
     if (detectedLanguage.equals("en") || detectedLanguage.equals("es") || detectedLanguage.equals("ru") || detectedLanguage.equals("fr") || detectedLanguage.equals("de") || detectedLanguage.equals("nl")) {
         lang = detectedLanguage;
-    } else if ( detectedLanguage.equals("nl-BE") || forcedLang.equals("nl_BE")) {
-        lang = "nl";
     }
 }
 
