@@ -6,13 +6,13 @@
         "en": "Background layers",
         "es": "Capas de fondo",
         "fr": "Fonds de plan",
-		  "nl": "Basislaag"
+        "nl": "Basislaag"
     },
     "description": {
         "en": "Select a background layer",
         "es": "Seleccione una capa de fondo",
         "fr": "Sélectionnez une couche de fond",
-		  "nl": "Selecteer een basislaag"
+        "nl": "Selecteer een basislaag"
     },
     "options": {
         "target": "tbar_12",

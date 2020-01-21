@@ -7,14 +7,14 @@
         "es": "Coordenadas",
         "fr": "Coordonnées",
         "de": "Koordinaten",
-		  "nl": "Coördinaten"
+        "nl": "Coördinaten"
     },
     "description": {
         "en": "Get pixel coordinates",
         "es": "Obtener coordenadas de píxeles",
         "fr": "Obtenir les coordonnées d'un point",
         "de": "Holen Sie sich die Koordinaten eines Punktes",
-		  "nl": "Coördinaten van een punt op de kaart verkrijgen"
+        "nl": "Coördinaten van een punt op de kaart verkrijgen"
     },
     "options": {
         "target": "bbar_3",
