@@ -6,12 +6,10 @@
   "nav.logs"              : "Logs",
   "nav.roles"             : "Rôles",
   "nav.delegations"       : "Délégations",
-
   "index.SUPERUSER"       : "Administrateur",
   "index.DELEGATED"       : "Délégation",
   "index.SUPERUSERtip"    : "Votre rôle permet de modifier l'ensemble des comptes",
   "index.DELEGATEDtip"    : "Votre compte est habilité à gérer les utilisateurs d'une sélection d'organismes",
-
   "home.users"            : "Gérer les utilisateurs",
   "home.waiting_users"    : "utilisateurs en attente",
   "home.waiting_user"     : "utilisateurs en attente",
@@ -25,7 +23,6 @@
   "home.user"             : "Utilisateur",
   "home.org"              : "Org.",
   "home.logs"             : "Logs d’administration",
-
   "tab.infos"             : "Infos",
   "tab.roles"             : "Rôles",
   "tab.delegations"       : "Délégations",
@@ -35,7 +32,6 @@
   "tab.manage"            : "Gérer",
   "tab.area"              : "Zone de compétence",
   "tab.users"             : "Membres",
-
   "user.userlist"         : "Tous les utilisateurs",
   "user.updated"          : "Utilisateur modifié",
   "user.deleted"          : "Utilisateur supprimé",
@@ -49,6 +45,7 @@
   "user.cn"               : "Nom complet",
   "user.mail"             : "Courriel",
   "user.address"          : "Adresse",
+  "user.postalAddress"    : "Adresse",
   "user.org"              : "Organisme",
   "user.description"      : "Description",
   "user.manager"          : "Manager",
@@ -58,7 +55,9 @@
   "user.password"         : "Mot de passe",
   "user.sn"               : "Nom",
   "user.gn"               : "Prénom",
+  "user.givenName"        : "Prénom",
   "user.phone"            : "Téléphone",
+  "user.facsimileTelephoneNumber" : "Fax",
   "user.fax"              : "Fax",
   "user.title"            : "Fonction",
   "user.lastcontext"      : "Dernier contexte",
@@ -76,14 +75,12 @@
   "user.action"           : "Action",
   "user.remove"           : "Retirer",
   "user.logs"             : "Logs utilisateur",
-  "user.postalAddress"    : "Adresse",
   "user.shadowExpire"     : "Date d'expiration",
   "user.preferredLanguage"     : "Langue par défaut",
   "user.givenName"        : "Nom",
   "user.telephoneNumber"  : "Téléphone",
   "user.facsimileTelephoneNumber"        : "Fax",
   "user.uid"              : "Identifiant",
-
   "orgs.title_plural"     : "organismes",
   "orgs.title_one"        : "organisme",
   "orgs.title_none"       : "Aucun organisme",
@@ -91,7 +88,6 @@
   "orgs.pending"          : "A modérer",
   "orgs.neworg"           : "Nouvel organisme",
   "orgs.filter_orgs"      : "Filtrer",
-
   "org.name"              : "Nom",
   "org.shortName"         : "Nom court",
   "org.type"              : "Type d’organisme",
@@ -117,16 +113,13 @@
   "org.logo"              : "Logo",
   "org.cities"            : "Aire de compétence",
   "org.orgType"           : "Type d'organisme",
-
   "imageinput.label"      : "Charger un logo",
-
   "roles.title_plural"    : "rôles",
   "roles.title_one"       : "rôle",
   "roles.title_none"      : "Aucun rôle",
   "roles.allroles"        : "Tous les rôles",
   "roles.newrole"         : "Nouveau rôle",
   "roles.filter_roles"    : "Filtrer",
-
   "role.save"             : "Enregistrer",
   "role.updated"          : "Rôle modifié",
   "role.deleted"          : "Rôle supprimé",
@@ -145,7 +138,6 @@
   "role.useradded"        : "L'utilisateur a été ajouté au rôle.",
   "role.userremoved"      : "L'utilisateur a été supprimé du rôle.",
   "role.userlabel"        : "Ajouter",
-
   "delegations.title"     : "délégation de gestion",
   "delegations.title_plural" : "délégations de gestion",
   "delegations.title_no_delegations" : "Aucune délégation de gestion",
@@ -155,7 +147,6 @@
   "delegation.ddeleted"   : "Délégation supprimée",
   "delegation.derror"     : "Erreur lors de la mise à jour de la délégation",
   "delegation.restricted" : "Impossible d’ajouter une délégation pour un SUPERUSER.",
-
   "area.save"             : "Enregistrer la zone",
   "area.updated"          : "Zone de compétence mise à jour",
   "area.error"            : "Erreur d’enregistrement",
@@ -167,7 +158,6 @@
   "area.search"           : "Rechercher",
   "area.import"           : "Import CSV",
   "area.export"           : "Export CSV",
-
   "role.allusers"        : "Tous les utilisateurs",
   "role.system"          : "Rôles geOrchestra",
   "role.app"             : "Autres rôles",
@@ -185,7 +175,6 @@
   "role.search"          : "Chercher un rôle",
   "role.all"             : "Tous",
   "role.delete"          : "Supprimer",
-
   "users.createRole"     : "Créer un rôle",
   "users.newRole"        : "Nom",
   "users.newRoleName"    : "Nom du rôle",
@@ -207,12 +196,10 @@
   "users.ORGADMIN"        : "Délégués",
   "users.TEMPORARY"       : "Temporaires",
   "users.EXPIRED"         : "Expirés",
-
   "sel.all"               : "Tous",
   "sel.none"              : "Aucun",
   "sel.export_csv"        : "Export CSV",
   "sel.export_vcard"      : "Export VCard",
-
   "msg.compose"           : "Composer un message",
   "msg.date"              : "Date",
   "msg.subject"           : "Sujet",
@@ -229,7 +216,6 @@
   "msg.sent"              : "Message envoyé",
   "msg.error"             : "Erreur lors de l’envoi du message",
   "msg.empty"             : "Pas de messages",
-
   "logs.title"            : "Logs d’administration",
   "logs.logs"             : "Logs d’administration",
   "logs.date"             : "Date",
@@ -268,7 +254,6 @@
   "logs.roleremoved"      : "a été enlevé de l'utilisateur",
   "logs.emailrecoverysent": "Email de récupération du mot de passe envoyé",
   "logs.rolecreated"      : "Role créé",
-  
   "analytics.title"       : "Statistiques",
   "analytics.all"         : "Tout le monde",
   "analytics.requests"    : "Nombre de requêtes",
@@ -284,7 +269,6 @@
   "analytics.extractions" : "Extractions des couches",
   "analytics.saveAsPNG"   : "Enregistrer en PNG",
   "analytics.saveAsCSV"   : "Enregistrer en CSV",
-
   "date.day"              : "Aujourd’hui",
   "date.week"             : "Dernière semaine",
   "date.month"            : "Dernier mois",
