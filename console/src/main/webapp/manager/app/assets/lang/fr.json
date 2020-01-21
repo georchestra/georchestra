@@ -82,7 +82,7 @@
   "user.givenName"        : "Nom",
   "user.telephoneNumber"  : "Téléphone",
   "user.facsimileTelephoneNumber"        : "Fax",
-  "user.uid"              : "Identifiant"
+  "user.uid"              : "Identifiant",
 
   "orgs.title_plural"     : "organismes",
   "orgs.title_one"        : "organisme",
