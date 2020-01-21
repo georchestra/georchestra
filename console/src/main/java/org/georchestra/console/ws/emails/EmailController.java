@@ -106,7 +106,7 @@ public class EmailController {
      *
      * Basically, this webapp can send emails on behalf of LDAP users. The service
      * endpoint is available at /console/emailProxy Usage is restricted to users
-     * having the MOD_EMAILPROXY role by default, cf
+     * having the EMAILPROXY role by default, cf
      * https://github.com/georchestra/datadir/blob/master/security-proxy/security-mappings.xml
      * see https://github.com/georchestra/georchestra/pull/1572 for more
      * information.
