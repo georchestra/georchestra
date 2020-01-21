@@ -265,7 +265,7 @@ public class LogUtils {
         }
         // log logo changed
         if (!orgExt.getLogo().equals(json.get("logo"))) {
-            createAndLogDetails(orgId, Org.JSON_LOGO, null, null, type);
+            createAndLogDetails(orgId, Org.JSON_LOGO, orgExt.getLogo(), json.getString("logo"), type);
         }
     }
 
