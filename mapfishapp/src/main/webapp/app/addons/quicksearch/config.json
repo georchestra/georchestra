@@ -9,7 +9,7 @@
                 "en": "<b>Quick reference search</b><br>Type \"d numero_de_dossier\" to view the folder",
                 "es": "<b>Búsqueda rápida de una referencia</b><br>Ingresar el \"d numero_de_dossier\" para visualizar la carpeta",
                 "de": "...",
-					 "nl": "..."
+                "nl": "..."
             },
             "searches": [{
                 "pattern": "d ([0-9]+)",
@@ -42,13 +42,13 @@
             "fr": "Recherche rapide",
             "es": "Búsqueda rápida",
             "de": "Schnellsuche",
-				"nl": "Snel zoeken"
+            "nl": "Snel zoeken"
         },
         "description": {
             "en": "Quick search your favorite objects",
             "fr": "Trouvez en quelques secondes vos objets",
             "de": "Finden Sie Ihre Artikel innerhalb von Sekunden",
             "es": "Encuentra tus artículos en segundos",
-				"nl": "Snel zoeken naar uw favoriete objecten van WFS-services"
+            "nl": "Snel zoeken naar uw favoriete objecten van WFS-services"
         }
 }]

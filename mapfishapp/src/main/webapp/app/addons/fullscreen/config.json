@@ -7,7 +7,7 @@
         "es": "Pantalla completa",
         "fr": "Plein écran",
         "de": "Vollbild",
-		  "nl": "Volledig scherm"
+        "nl": "Volledig scherm"
     },
     "options": {
         "toolbars": false
@@ -17,6 +17,6 @@
         "es": "Mostrar el mapa en pantalla completa",
         "fr": "Voir la carte en plein écran",
         "de": "Siehe Vollbildkarte",
-		  "nl": "Laat de kaart op volledig scherm draaien"
+        "nl": "Laat de kaart op volledig scherm draaien"
     }
 }]
