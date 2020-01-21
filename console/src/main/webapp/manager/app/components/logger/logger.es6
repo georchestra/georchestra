@@ -62,9 +62,14 @@ class LoggerController {
 
     this.getAttrLog = function (log) {
       let res = ''
-      res += log.changed.new && !log.changed.old ? `${this.i18n.set} ${log.changed.new}.` : ''
-      res += log.changed.old && !log.changed.new ? `${this.i18n.clear} ${log.changed.old}.` : ''
-      res += log.changed.old && log.changed.new ? `${this.i18n.replace} ${log.changed.old} ${this.i18n.to} ${log.changed.new}.` : ''
+      if (log.changed.field === 'logo') {
+        res += log.changed.new ? this.i18n.set : this.i18n.clear
+        res = log.changed.old && log.changed.new ? this.i18n.replace : res
+      } else {
+        res += log.changed.new && !log.changed.old ? `${this.i18n.set} ${log.changed.new}.` : ''
+        res += log.changed.old && !log.changed.new ? `${this.i18n.clear} ${log.changed.old}.` : ''
+        res += log.changed.old && log.changed.new ? `${this.i18n.replace} ${log.changed.old} ${this.i18n.to} ${log.changed.new}.` : ''
+      }
       return res
     }
 
