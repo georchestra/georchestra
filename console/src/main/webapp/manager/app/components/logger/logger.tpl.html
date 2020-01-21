@@ -87,8 +87,7 @@
               {{::log.changed.new || log.changed.old}}
             </span>
             <span ng-if="log.type.indexOf('_ATTRIBUTE_CHANGED') >= 0">
-              <i
-                class="glyphicon glyphicon-edit"
+              <i class="glyphicon glyphicon-edit"
                 title="{{::'logs.modification' | translate}}"></i>
               <strong data-toggle="tooltip" title="{{log.title}}">
                 {{::log.changed.fieldI18nKey | translate}}
