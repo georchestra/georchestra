@@ -4,6 +4,11 @@
 
 No manual changes on the model are required to upgrade to the new version.
 
+Though, for the console, related to the GDPR compliance API [#2613](https://github.com/georchestra/georchestra/pull/2613), you should:
+```
+GRANT geonetwork TO georchestra;
+```
+
 ## LDAP upgrade
 
 With this release, custom new attributes are added to geOrchestra users and organisations in the LDAP, leveraging a custom, [dedicated schema](https://github.com/georchestra/georchestra/blob/master/ldap/docker-root/georchestraSchema.ldif).
