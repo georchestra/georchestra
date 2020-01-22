@@ -44,17 +44,13 @@ String forcedLang = request.getParameter("lang");
 
 String lang = (String) request.getAttribute("defaultLanguage");
 if (forcedLang != null) {
-	if (forcedLang.equals("en") || forcedLang.equals("es") || forcedLang.equals("ru") || forcedLang.equals("fr") || forcedLang.equals("de")) {
-   		lang = forcedLang;
-	} else if ( forcedLang.equals("nl") || forcedLang.equals("nl-BE") || forcedLang.equals("nl_BE")) {
-		lang = "nl";
- 	}
+	if (forcedLang.equals("en") || forcedLang.equals("es") || forcedLang.equals("ru") || forcedLang.equals("fr") || forcedLang.equals("de") || forcedLang.equals("nl")) {
+     lang = forcedLang;
+	} 
 } else {
-	if (detectedLanguage.equals("en") || detectedLanguage.equals("es") || detectedLanguage.equals("ru") || detectedLanguage.equals("fr") || detectedLanguage.equals("de")) {
-		lang = detectedLanguage;
-    } else if ( detectedLanguage.equals("nl") || detectedLanguage.equals("nl-BE") || forcedLang.equals("nl_BE")) {
-		lang = "nl";
-	}
+	if (detectedLanguage.equals("en") || detectedLanguage.equals("es") || detectedLanguage.equals("ru") || detectedLanguage.equals("fr") || detectedLanguage.equals("de") || detectedLanguage.equals("nl")) {
+     lang = detectedLanguage;
+   }
 }
 
 javax.servlet.jsp.jstl.core.Config.set(
