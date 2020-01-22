@@ -5,12 +5,14 @@
   "title": {
     "en": "OSM 2 geOrchestra",
     "es": "OSM 2 geOrchestra",
-    "fr": "OSM 2 geOrchestra"
+    "fr": "OSM 2 geOrchestra",
+    "nl": "OSM 2 geOrchestra"
   },
   "description": {
     "en": "OSM 2 geOrchestra",
     "es": "De OSM a geOrchestra",
-    "fr": "OSM 2 geOrchestra"
+    "fr": "OSM 2 geOrchestra",
+    "nl": "Deze add-on gebruikt de OSM Overpass API om functies live uit de OSM-database op te halen en weer te geven"
   }
 }]
 

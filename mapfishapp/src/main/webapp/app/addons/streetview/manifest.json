@@ -33,6 +33,13 @@
             "Recenter on the marker": "Recentrer la carte sur le marqueur",
             "Move the marker to update the view": "Déplacez le marqueur pour mettre à jour la vue",
             "Click on the map to get a glimpse of the surroundings": "Cliquez sur la carte pour obtenir une vue de l'endroit"
+        },
+        "nl": {
+            "StreetView": "StreetView",
+            "Fullscreen in a new window": "Volledig scherm in een nieuw venster",
+            "Recenter on the marker": "Richt de kaart opnieuw op de marker",
+            "Move the marker to update the view": "Verplaats de marker om de weergave bij te werken",
+            "Click on the map to get a glimpse of the surroundings": "Klik op de kaart om een glimp van de omgeving te krijgen"
         }
     }
 }

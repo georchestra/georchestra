@@ -41,6 +41,9 @@
         },
         "de": {
             "backgrounds.reset": "Keine"
+        },
+        "nl": {
+            "backgrounds.reset": "Geen"
         }
     }
 }

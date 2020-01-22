@@ -17,13 +17,15 @@
             "en": "Addon title in English",
             "fr": "Titre de l'extension en français",
             "es": "Titular en español",
-            "de": "Name in der deutschen"
+            "de": "Name in der deutschen",
+            "nl": "Addon titel in het Nederlands"
         },
         "description": {
             "en": "Description in English",
             "fr": "Description en Français",
             "es": "Descripción en español",
-            "de": "Beschreibung in Deutsch"
+            "de": "Beschreibung in Deutsch",
+            "nl": "Beschrijving in het Nederlands"
         }
     }
 ]

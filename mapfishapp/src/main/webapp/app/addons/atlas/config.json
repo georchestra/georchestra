@@ -17,12 +17,14 @@
         "fr": "Atlas",
         "en": "Atlas",
         "es": "Atlas",
-        "de": "Atlas"
+        "de": "Atlas",
+        "nl": "Atlas",
     },
     "description": {
         "fr": "Génération d'un atlas constitué de plusieurs pages PDF",
         "en": "Create an atlas with several PDF pages",
         "es": "Generar atlas consta de varias páginas PDF",
-        "de": "Einen Atlas generieren"
+        "de": "Einen Atlas generieren",
+        "nl": "Generatie van een atlas bestaande uit meerdere PDF-pagina's"
     }
 }]

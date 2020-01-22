@@ -9,12 +9,14 @@
         "fr": "Localisez moi",
         "en": "Locate me",
         "es": "Localizarme",
-        "de": "Wo bin ich ?"
+        "de": "Wo bin ich ?",
+        "nl": "Zoek mij"
     },
     "description": {
         "fr": "Cet addon permet d'afficher votre position sur la carte",
         "en": "This addon allows you to display your position on the map",
         "es": "Esta herramienta le permite mostrar su posición en el mapa",
-        "de": "Dieses Addon ermöglicht Ihnen, Ihre Position auf der Karte angezeigt werden"
+        "de": "Dieses Addon ermöglicht Ihnen, Ihre Position auf der Karte angezeigt werden",
+        "nl": "Met deze addon kunt u uw huidige positie op de kaart weergeven"
     }
 }]

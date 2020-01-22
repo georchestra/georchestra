@@ -5,12 +5,14 @@
         "title": {
             "fr": "Cadastre",
             "en": "Cadastre",
-            "es": "Catastro"
+            "es": "Catastro",
+            "nl": "Kadaster"
         },
         "description": {
             "fr": "Cet outil permet de chercher des parcelles soit par référence, soit par le nom du propriétaire",
             "en": "This tool allows one to search for land parcels, either by reference, or by owner name",
-            "es": "Esta herramienta permite buscar parcelas ya sea por referencia o por el nombre del propietario"
+            "es": "Esta herramienta permite buscar parcelas ya sea por referencia o por el nombre del propietario",
+            "nl": "Met deze tool kunt u percelen zoeken op referentie of op naam van de eigenaar"
         },
         "options": {
             "roles": {

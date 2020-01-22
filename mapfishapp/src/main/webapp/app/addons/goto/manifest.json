@@ -49,6 +49,14 @@
             "goto.coordinates.xy.1": "Y",
             "goto.coordinates.longlat.0": "Länge",
             "goto.coordinates.longlat.1": "Breite"
+        },
+        "nl": {
+            "goto.title": "Locatie",
+            "goto.srs.label": "Referentiesysteem",
+            "goto.coordinates.xy.0": "X",
+            "goto.coordinates.xy.1": "Y",
+            "goto.coordinates.longlat.0": "Lengte",
+            "goto.coordinates.longlat.1": "Breedte"
         }
     }
 }
