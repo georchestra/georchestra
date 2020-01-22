@@ -22,7 +22,7 @@
  */
 
 /*
- * French translation file
+ * Dutch translation file
  */
 OpenLayers.Lang.nl = OpenLayers.Util.extend(OpenLayers.Lang.nl, {
     /* General purpose strings */
