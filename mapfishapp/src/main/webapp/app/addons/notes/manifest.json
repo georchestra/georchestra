@@ -42,6 +42,16 @@
             "notes_comment": "Kommentar",
             "notes_submit": "Senden",
             "notes_cancel": "Abbrechen"
+        },
+        "nl": {
+            "notes_cannotsave": "Kan de notitie niet opslaan",
+            "notes_saved": "De notitie is opgeslagen",
+            "notes_title": "Een notitie toevoegen",
+            "notes_follow_up": "Behandeling volgen",
+            "notes_email": "Email",
+            "notes_comment": "Opmerkingen",
+            "notes_submit": "Verzenden",
+            "notes_cancel": "Annuleren"
         }
     }
 }

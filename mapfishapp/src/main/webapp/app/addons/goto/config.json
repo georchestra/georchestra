@@ -16,12 +16,14 @@
         "en": "Go to coordinates...",
         "es": "Ir a coordenadas...",
         "fr": "Aller aux coordonnées ...",
-        "de": "Zu Koordinaten gehen"
+        "de": "Zu Koordinaten gehen",
+        "nl": "Ga naar coördinaten..."
     },
     "description": {
         "en": "Go to a location given its coordinates",
         "es": "Ir a un lugar dado sus coordenadas",
         "fr": "Aller à un point de coordonnées données",
-        "de": "Gehen Sie zu einem Ort, der seine Koordinaten gibt"
+        "de": "Gehen Sie zu einem Ort, der seine Koordinaten gibt",
+        "nl": "Ga naar een punt met bekende coördinaten in een bepaald projectiesysteem"
     }
 }]

@@ -36,12 +36,13 @@ String detectedLanguage = rLocale.getLanguage();
 String forcedLang = request.getParameter("lang");
 
 String lang = (String) request.getAttribute("defaultLanguage");
+
 if (forcedLang != null) {
-    if (forcedLang.equals("en") || forcedLang.equals("es") || forcedLang.equals("ru") || forcedLang.equals("fr") || forcedLang.equals("de")) {
+    if (forcedLang.equals("en") || forcedLang.equals("es") || forcedLang.equals("ru") || forcedLang.equals("fr") || forcedLang.equals("de") || forcedLang.equals("nl")) {
         lang = forcedLang;
     }
 } else {
-    if (detectedLanguage.equals("en") || detectedLanguage.equals("es") || detectedLanguage.equals("ru") || detectedLanguage.equals("fr") || detectedLanguage.equals("de")) {
+    if (detectedLanguage.equals("en") || detectedLanguage.equals("es") || detectedLanguage.equals("ru") || detectedLanguage.equals("fr") || detectedLanguage.equals("de") || detectedLanguage.equals("nl")) {
         lang = detectedLanguage;
     }
 }

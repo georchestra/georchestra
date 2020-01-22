@@ -117,11 +117,12 @@ angular.module('manager', [
       $translate
         .useSanitizeValueStrategy('escape')
         .useStaticFilesLoader({ prefix: $uri + 'manager/public/lang/', suffix: '.json' })
-        .registerAvailableLanguageKeys(['en', 'fr', 'de', 'es'], {
+        .registerAvailableLanguageKeys(['en', 'fr', 'de', 'es', 'nl'], {
           'en_*': 'en',
           'fr_*': 'fr',
           'de_*': 'de',
           'es_*': 'es',
+          'nl_*': 'nl',
           '*': 'en'
         })
         .determinePreferredLanguage()

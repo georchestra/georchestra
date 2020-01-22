@@ -5,12 +5,14 @@
         "title": {
             "en": "Extractor",
             "es": "Extractor",
-            "fr": "Extracteur"
+            "fr": "Extracteur",
+            "nl": "Afzuigkap"
         },
         "description": {
             "en": "This addon allows one to download data from the layers visible on the map",
             "es": "Este addon permite descargar datos de las capas visibles en el mapa",
-            "fr": "Cet addon permet de télécharger les données des couches visibles sur la carte"
+            "fr": "Cet addon permet de télécharger les données des couches visibles sur la carte",
+            "nl": "Met deze addon kunnen de gegevens van de zichtbare lagen op de kaart worden gedownload"
         },
         "roles": [
             "ROLE_EXTRACTORAPP"

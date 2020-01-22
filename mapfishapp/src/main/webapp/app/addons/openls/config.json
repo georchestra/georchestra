@@ -5,12 +5,14 @@
         "title": {
             "en": "OpenLS recentering",
             "es": "Centrar con OpenLS",
-            "fr": "Recentrage OpenLS"
+            "fr": "Recentrage OpenLS",
+            "nl": "OpenLS opnieuw focussen"
         },
         "description": {
             "en": "OpenLS recentering",
             "es": "Centrar con OpenLS",
-            "fr": "Recentrage OpenLS"
+            "fr": "Recentrage OpenLS",
+            "nl": "OpenLS opnieuw focussen"
         },
         "options": {
             "serviceURL": "http://my.server.tld/openls"

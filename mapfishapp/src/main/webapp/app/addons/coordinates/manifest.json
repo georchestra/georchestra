@@ -41,6 +41,13 @@
             "coordinates.xy.1": "Y",
             "coordinates.longlat.0": "Länge",
             "coordinates.longlat.1": "Breite"
+        },
+        "nl": {
+            "Coordinates": "Coördinaten",
+            "coordinates.xy.0": "X",
+            "coordinates.xy.1": "Y",
+            "coordinates.longlat.0": "Lengte",
+            "coordinates.longlat.1": "Breedte"
         }
     }
 }

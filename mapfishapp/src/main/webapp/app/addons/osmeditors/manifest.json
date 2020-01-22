@@ -42,6 +42,15 @@
             "Recommended scale is 1:10.000": "Empfohlener Maßstab 1:10000",
             "with Potlatch2": "mit Potlatch2",
             "with Walking Papers": "mit Walking Papers"
+        },
+        "nl": {
+            "Edit in OSM": "Bewerken in OSM",
+            "with JOSM": "met JOSM",
+            "JOSM must be started with the remote control option": "JOSM moet worden gestart met de optie voor afstandsbediening",
+            "with iD": "met iD",
+            "Recommended scale is 1:10.000": "Aanbevolen schaal is 1:10000",
+            "with Potlatch2": "met Potlatch2",
+            "with Walking Papers": "met Walking Papers"
         }
     }
 }

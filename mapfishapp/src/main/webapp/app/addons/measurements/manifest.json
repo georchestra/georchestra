@@ -127,6 +127,17 @@
             "measurements.area.tooltip": "Oberfläche messen",
             "measurements.reset.tooltip": "Remove all measurements (de)",
             "measurements.export.tooltip": "Export measurements to KML (de)"
+        },
+        "nl": {
+            "measurements.tools": "Meten",
+            "measurements.distance": "Afstand",
+            "measurements.area": "Oppervlak",
+            "measurements.reset": "Reset",
+            "measurements.export": "Exporteren",
+            "measurements.distance.tooltip": "Afstandsmeting",
+            "measurements.area.tooltip": "Oppervlaktemeting",
+            "measurements.reset.tooltip": "Alle metingen wissen",
+            "measurements.export.tooltip": "Metingen exporteren als KML"
         }
     }
 }
