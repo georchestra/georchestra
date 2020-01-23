@@ -149,7 +149,12 @@ angular.module('manager', [
     require: 'ngModel',
     restrict: 'A',
     link: (scope, elm, attrs, ctrl) => {
-      ctrl.$validators.shortname = name => name && name.match(/^\w*$/)
+      const alphanum = v => v && v.match(/^\w*$/)
+      let validator = alphanum
+      if (scope.$eval(attrs.uppercased)) {
+        validator = v => alphanum(v) && v.toUpperCase() === v
+      }
+      ctrl.$validators.shortname = validator
     }
   }))
 
