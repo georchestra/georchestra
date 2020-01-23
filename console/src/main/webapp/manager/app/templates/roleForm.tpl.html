@@ -11,7 +11,8 @@
         <label class="col-sm-4" for="cn" translate>role.cn</label>
         <div class="col-sm-8">
           <input ng-model="model.cn" class="form-control" id="cn"
-            placeholder="" ng-required="true" ng-readonly="isProtectedRole(model)">
+            placeholder="" ng-required="true" ng-readonly="isProtectedRole(model)" shortname>
+           <p class="help-block" translate>role.helpFormat</p>
         </div>
       </div>
 

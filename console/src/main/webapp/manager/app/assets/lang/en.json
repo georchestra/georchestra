@@ -136,6 +136,7 @@
   "role.useradded"        : "User has been added to role",
   "role.userremoved"      : "User has been removed from role",
   "role.userlabel"        : "Add",
+  "role.helpFormat"       : "Identifier should only contain alphanumerical characters",
   "delegations.title"     : "management delegation",
   "delegations.title_plural" : "management delegations",
   "delegations.title_no_delegations" : "No management delegation",

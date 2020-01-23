@@ -145,6 +145,13 @@ angular.module('manager', [
     moment.locale($translate.use())
     return date => moment(date).format('LL')
   }])
+  .directive('shortname', () => ({
+    require: 'ngModel',
+    restrict: 'A',
+    link: (scope, elm, attrs, ctrl) => {
+      ctrl.$validators.shortname = name => name && name.match(/^\w*$/)
+    }
+  }))
 
 require('components/analytics/analytics')
 require('components/orgs/orgs')
