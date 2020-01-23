@@ -136,6 +136,7 @@
   "role.useradded"        : "El usuario ha sido añadido al rol.",
   "role.userremoved"      : "El usuario ha sido eliminado del rol.",
   "role.userlabel"        : "Añadir",
+  "role.helpFormat"       : "El identificador solo debe contener caracteres alfanuméricos.",
   "delegations.title"     : "delegación de administración",
   "delegations.title_plural" : "delegaciones de administración",
   "delegations.title_no_delegations" : "Ninguna delegación de administración",

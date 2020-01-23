@@ -128,6 +128,7 @@
   "role.useradded"        : "De gebruiker is toegevoegd aan de rol.",
   "role.userremoved"      : "De gebruiker is verwijderd uit de rol.",
   "role.userlabel"        : "Toevoegen",
+  "role.helpFormat"       : "De identificatie mag alleen alfanumerieke tekens bevatten.",
 
   "delegations.title"     : "beheer delegatie",
   "delegations.title_plural" : "beheer delegaties",
