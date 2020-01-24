@@ -650,10 +650,9 @@ public class StatisticsController {
      */
     @RequestMapping(value = "/distinctUsers", method = RequestMethod.POST)
     @ApiMethod(description = "Returns the distinct active users for a given period. A role can be provided in the query "
-            + "to limit the results to a given role.<br/>"
-            + "Here are 2 valid examples (with and without a role):<br/>" + "<code>"
-            + "{ role: ADMINISTRATOR, startDate: 2015-01-01, endDate: 2015-12-01 }" + "</code><br/>" + "or:<br/>"
-            + "<code>" + "{ startDate: 2015-01-01, endDate: 2015-12-01 }" + "</code>")
+            + "to limit the results to a given role.<br/>" + "Here are 2 valid examples (with and without a role):<br/>"
+            + "<code>" + "{ role: ADMINISTRATOR, startDate: 2015-01-01, endDate: 2015-12-01 }" + "</code><br/>"
+            + "or:<br/>" + "<code>" + "{ startDate: 2015-01-01, endDate: 2015-12-01 }" + "</code>")
     public void distinctUsers(@RequestBody String payload, HttpServletResponse response) throws JSONException,
             IOException, InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
         JSONObject input;

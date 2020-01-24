@@ -41,7 +41,8 @@ import org.ldaptive.SearchResult;
 import org.ldaptive.auth.Authenticator;
 
 /**
- * Extends Ldap authentication handler by checking whether the user has at least one role.
+ * Extends Ldap authentication handler by checking whether the user has at least
+ * one role.
  *
  * @author Jesse on 6/26/2014.
  */
@@ -76,16 +77,14 @@ public class GeorchestraLdapAuthenticationHandler extends LdapAuthenticationHand
     }
 
     /**
-     * Creates a new authentication handler that delegates to the given authenticator.
+     * Creates a new authentication handler that delegates to the given
+     * authenticator.
      *
      * @param authenticator Ldaptive authenticator component.
      */
-    public GeorchestraLdapAuthenticationHandler(@NotNull Authenticator authenticator,
-                                                @NotNull String adminUser,
-                                                @NotNull String adminPassword,
-                                                @NotNull String baseDn,
-                                                @NotNull String roleSearchFilter,
-                                                @NotNull String roleRoleAttribute) {
+    public GeorchestraLdapAuthenticationHandler(@NotNull Authenticator authenticator, @NotNull String adminUser,
+            @NotNull String adminPassword, @NotNull String baseDn, @NotNull String roleSearchFilter,
+            @NotNull String roleRoleAttribute) {
         super(authenticator);
         this.adminUser = adminUser;
         this.adminPassword = adminPassword;
@@ -106,8 +105,8 @@ public class GeorchestraLdapAuthenticationHandler extends LdapAuthenticationHand
 
             SearchOperation search = new SearchOperation(conn);
             final String searchFilter = this.roleSearchFilter.replace("{1}", upc.getUsername());
-            SearchResult result = search.execute(
-                    new SearchRequest(this.baseDn, searchFilter, this.roleRoleAttribute)).getResult();
+            SearchResult result = search.execute(new SearchRequest(this.baseDn, searchFilter, this.roleRoleAttribute))
+                    .getResult();
 
             if (result.getEntries().isEmpty()) {
                 throw new AccountException("User has no roles.");
