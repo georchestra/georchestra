@@ -38,7 +38,7 @@ public class OGCStatsModel extends AbstractModel {
             + "    date < ?::timestamp " + "GROUP BY " + "    user_name " + "ORDER BY " + "    @sort@ "
             + "LIMIT ? OFFSET ?;";
 
-    private final String selectGroupsQ = "SELECT " + "    org" + "    , COUNT(*) AS count " + "FROM "
+    private final String selectOrgsQ = "SELECT " + "    org" + "    , COUNT(*) AS count " + "FROM "
             + "    ogcstatistics.ogc_services_log " + "WHERE " + "    date >= ?::timestamp " + "AND "
             + "    date < ?::timestamp " + "GROUP BY " + "    org " + "ORDER BY " + "    @sort@ " + "LIMIT ? OFFSET ?;";
 
@@ -79,10 +79,10 @@ public class OGCStatsModel extends AbstractModel {
         });
     }
 
-    public JSONObject getGroupsStats(final int month, final int year, final int start, final int limit,
-            final String sort, final String filter) throws SQLException, JSONException {
+    public JSONObject getOrgsStats(final int month, final int year, final int start, final int limit, final String sort,
+            final String filter) throws SQLException, JSONException {
 
-        return getStats(month, year, start, limit, sort, filter, selectGroupsQ, new StrategyModel() {
+        return getStats(month, year, start, limit, sort, filter, selectOrgsQ, new StrategyModel() {
             protected JSONArray process(ResultSet rs) throws SQLException, JSONException {
                 JSONArray jsarr = new JSONArray();
                 while (rs.next()) {

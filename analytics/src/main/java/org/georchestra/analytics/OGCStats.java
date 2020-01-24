@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * ogc layers controller
- * 
+ *
  * @author: fgravin
  */
 
@@ -48,7 +48,7 @@ public class OGCStats extends AbstractApplication {
 
     private final String csvLayers = "OgcLayers";
     private final String csvUsers = "OgcUsers";
-    private final String csvGroups = "OgcGroups";
+    private final String csvOrgs = "OgcOrgs";
 
     @RequestMapping(method = RequestMethod.GET, value = "/ogc/layers")
     public void getOGCLayersStats(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -70,12 +70,12 @@ public class OGCStats extends AbstractApplication {
         });
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/ogc/groups")
-    public void getOGCGroupsStats(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    @RequestMapping(method = RequestMethod.GET, value = "/ogc/orgs")
+    public void getOGCOrgsStats(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         getStats(request, response, new StrategyController() {
             protected JSONObject process() throws SQLException, JSONException {
-                return model.getGroupsStats(month, year, start, limit, sort, filter);
+                return model.getOrgsStats(month, year, start, limit, sort, filter);
             }
         });
     }
@@ -100,12 +100,12 @@ public class OGCStats extends AbstractApplication {
         });
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/export/ogcgroups")
-    public void exportGroups(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    @RequestMapping(method = RequestMethod.GET, value = "/export/ogcorgs")
+    public void exportOrgs(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        exportCSV(request, response, csvGroups, new StrategyController() {
+        exportCSV(request, response, csvOrgs, new StrategyController() {
             protected JSONObject process() throws SQLException, JSONException {
-                return model.getGroupsStats(month, year, 0, Integer.MAX_VALUE, sort, filter);
+                return model.getOrgsStats(month, year, 0, Integer.MAX_VALUE, sort, filter);
             }
         });
     }

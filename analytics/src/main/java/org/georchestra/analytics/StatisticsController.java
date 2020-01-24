@@ -60,13 +60,13 @@ import com.google.common.annotations.VisibleForTesting;
 
 /**
  * This controller defines the entry point to return statistics based on user or
- * groups, for a given date period.
+ * orgs, for a given date period.
  *
  * The entry point "/combinedRequests" receives a plain JSON object defined as
  * follows:
  *
  * - search by user:
- * 
+ *
  * <pre>
  * {
  *   "user": "user",
@@ -76,10 +76,10 @@ import com.google.common.annotations.VisibleForTesting;
  * </pre>
  *
  * - search by roles:
- * 
+ *
  * <pre>
  * {
- *   "group": "group",
+ *   "role": "role",
  *   "startDate": "YYY-mm-dd",
  *   "endDate": "YY-mm-dd"
  * }
@@ -98,8 +98,8 @@ import com.google.common.annotations.VisibleForTesting;
  *    ]
  * }
  * </pre>
- * 
- * If neither user nor group is set, global statistics are returned.
+ *
+ * If neither user nor role is set, global statistics are returned.
  *
  * where granularity will depend on the submitted date, following the algorithm:
  * if datediff < 2 days then granularity by hour if datediff < 1 week then
@@ -108,20 +108,20 @@ import com.google.common.annotations.VisibleForTesting;
  * month
  *
  * - The entry point "/layersUsage" receives a JSON object as follows:
- * 
+ *
  * <pre>
  * {
- *   "user"|"group": "user|group",
+ *   "user"|"role": "user|role",
  *   "limit": integer,
  *   "startDate": "YYYY-mm-dd",
  *   "endDate": "YYYY-mm-dd"
  * }
  * </pre>
- * 
- * User, group and limit are optional parameters.
- * 
+ *
+ * User, role and limit are optional parameters.
+ *
  * The returned JSON object will follow the pattern:
- * 
+ *
  * <pre>
  * { "results": [
  *   {
@@ -137,19 +137,19 @@ import com.google.common.annotations.VisibleForTesting;
  * </pre>
  *
  * - the entry point "/distinctUsers" receives a JSON object as follows:
- * 
+ *
  * <pre>
  * {
- *   "group": "group",
+ *   "role": "role",
  *   "startDate": "YYYY-mm-dd",
  *   "endDate": "YYY-mm-dd"
  * }
  * </pre>
  *
- * group is optional. If not set, global statistics are returned.
+ * role is optional. If not set, global statistics are returned.
  *
  * The returned object will follow the pattern:
- * 
+ *
  * <pre>
  * {
  *   "results": [
@@ -166,7 +166,7 @@ import com.google.common.annotations.VisibleForTesting;
 
 @Controller
 @Api(name = "Statistics API", description = "Methods to get several statistics "
-        + "related to users and groups, and their use of the infrastructure.")
+        + "related to users and roles, and their use of the infrastructure.")
 public class StatisticsController {
 
     @Autowired
@@ -242,7 +242,7 @@ public class StatisticsController {
      * "startDate": "2015-01-01", "endDate": "2015-12-01" }' \ -H'Content-Type:
      * application/json' http://localhost:8280/analytics/ws/combinedRequests -i
      *
-     * combinedRequests with group: curl -XPOST --data-binary '{"group":
+     * combinedRequests with role: curl -XPOST --data-binary '{"role":
      * "ADMINISTRATOR", "startDate": "2015-10-01", "endDate": "2015-11-01" }' \
      * -H'Content-Type: application/json'
      * http://localhost:8280/analytics/ws/combinedRequests -i
@@ -252,7 +252,7 @@ public class StatisticsController {
      * -H'Content-Type: application/json'
      * http://localhost:8280/analytics/ws/layersUsage -i
      *
-     * layersUsage with group: curl -XPOST --data-binary '{"group": "ADMINISTRATOR",
+     * layersUsage with role: curl -XPOST --data-binary '{"role": "ADMINISTRATOR",
      * "startDate": "2015-01-01", "endDate": "2015-12-01" }' \ -H'Content-Type:
      * application/json' http://localhost:8280/analytics/ws/layersUsage -i
      *
@@ -260,13 +260,13 @@ public class StatisticsController {
      * "startDate": "2015-01-01", "endDate": "2015-12-01" }' \ -H'Content-Type:
      * application/json' http://localhost:8280/analytics/ws/layersUsage -i
      *
-     * distinctUsers : curl -XPOST --data-binary '{"group": "ADMINISTRATOR",
+     * distinctUsers : curl -XPOST --data-binary '{"role": "ADMINISTRATOR",
      * "startDate": "2015-01-01", "endDate": "2015-12-01" }' \ -H'Content-Type:
      * application/json' http://localhost:8280/analytics/ws/distinctUsers -i
      */
     /**
-     * Total combined requests count group by time interval (hour, day, week or
-     * month). May be filtered by a user or a group.
+     * Total combined requests count groupped by time interval (hour, day, week or
+     * month). May be filtered by a user or a role.
      *
      * @param payload  the JSON object containing the input parameters
      * @param response the HttpServletResponse object.
@@ -277,11 +277,11 @@ public class StatisticsController {
      */
     @RequestMapping(value = "/combinedRequests.{format}", method = RequestMethod.POST)
     @ResponseBody
-    @ApiMethod(description = "Returns the Total combined requests count group by time interval "
-            + "(hour, day, week or month). It must be filtered by either a user or a group. "
-            + "User or group is mandatory, a startDate and an endDate must be specified, ie:" + "<br/><code>"
+    @ApiMethod(description = "Returns the Total combined requests count groupped by time interval "
+            + "(hour, day, week or month). It must be filtered by either a user or a role. "
+            + "User or role is mandatory, a startDate and an endDate must be specified, ie:" + "<br/><code>"
             + "{ user: testadmin, startDate: 2015-01-01, endDate: 2015-12-01 }" + "</code><br/>or<br/>" + "<code>"
-            + "{ group: ADMINISTRATOR, startDate: 2015-10-01, endDate: 2015-11-01 }" + "</code><br/>"
+            + "{ role: ADMINISTRATOR, startDate: 2015-10-01, endDate: 2015-11-01 }" + "</code><br/>"
             + "is a valid request." + "")
     public String combinedRequests(@RequestBody String payload, @PathVariable String format,
             HttpServletResponse response) throws JSONException, ParseException, SQLException {
@@ -305,7 +305,7 @@ public class StatisticsController {
             return null;
         }
 
-        // not both group and user can be defined at the same time
+        // not both role and user can be defined at the same time
         if (input.has("user") && input.has("role")) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return null;
@@ -344,7 +344,7 @@ public class StatisticsController {
                 + "     WHERE date >= CAST({startDate} AS timestamp without time zone) "
                 + "     AND date < CAST({endDate} AS timestamp without time zone) ";
 
-        // Handle user and group
+        // Handle user and role
         if (input.has("user")) {
             sql += " AND user_name = {user} ";
         }
@@ -397,7 +397,7 @@ public class StatisticsController {
 
     /**
      * Gets statistics for layers consumption in JSON format. May be filtered by a
-     * user or a group and limited.
+     * user or a role and limited.
      *
      * @param payload  the JSON object containing the input parameters
      * @param response the HttpServletResponse object.
@@ -414,7 +414,7 @@ public class StatisticsController {
 
     /**
      * Gets statistics for layers consumption in CSV format. May be filtered by a
-     * user or a group and limited.
+     * user or a role and limited.
      *
      * @param payload  the JSON object containing the input parameters
      * @param response the HttpServletResponse object.
@@ -431,7 +431,7 @@ public class StatisticsController {
 
     /**
      * Gets statistics for layers extraction in JSON format. May be filtered by a
-     * user or a group and limited.
+     * user or a role and limited.
      *
      * @param payload  the JSON object containing the input parameters
      * @param response the HttpServletResponse object.
@@ -506,7 +506,7 @@ public class StatisticsController {
 
     /**
      * Gets statistics for layers extraction in CSV format. May be filtered by a
-     * user or a group and limited.
+     * user or a role and limited.
      *
      * @param payload  the JSON object containing the input parameters
      * @param response the HttpServletResponse object.
@@ -524,9 +524,9 @@ public class StatisticsController {
     /**
      * This method generates stats for layer usage or extraction and return results
      * in CSV or JSON format
-     * 
+     *
      * @param payload  JSON payload, should contain 'startDate', 'endDate', 'limit',
-     *                 'group'
+     *                 'role'
      * @param type     either layer usage 'USAGE' or layer extraction 'EXTRACTION'
      * @param response response
      * @param format
@@ -537,7 +537,7 @@ public class StatisticsController {
             throws JSONException, SQLException {
 
         JSONObject input;
-        String userId, groupId;
+        String userId, roleId;
         String limit;
         Map<String, String> sqlValues = new HashMap<>();
 
@@ -547,8 +547,8 @@ public class StatisticsController {
             sqlValues.put("endDate", this.getEndDate(input));
             limit = this.getLimit(input);
             userId = this.getUser(input);
-            groupId = this.getGroup(input);
-            sqlValues.put("group", groupId);
+            roleId = this.getRole(input);
+            sqlValues.put("role", roleId);
             sqlValues.put("user", userId);
             sqlValues.put("limit", limit);
 
@@ -578,8 +578,8 @@ public class StatisticsController {
             throw new IllegalArgumentException("Invalid request type : " + type);
         }
 
-        if (groupId != null)
-            sql += " AND {group} = ANY(roles) ";
+        if (roleId != null)
+            sql += " AND {role} = ANY(roles) ";
         if (userId != null) {
             if (type == REQUEST_TYPE.USAGE) {
                 sql += " AND user_name = {user} ";
@@ -634,7 +634,7 @@ public class StatisticsController {
      *
      * @return A string representing a JSON object with the requested datas. The
      *         output JSON has the following form:
-     * 
+     *
      *         <pre>
      *    { "results": [
      *	    {
@@ -649,15 +649,14 @@ public class StatisticsController {
      * @throws JSONException
      */
     @RequestMapping(value = "/distinctUsers", method = RequestMethod.POST)
-    @ApiMethod(description = "Returns the distinct active users for a given period. A group can be provided in the query "
-            + "to limit the results to a given group.<br/>"
-            + "Here are 2 valid examples (with and without a group):<br/>" + "<code>"
-            + "{ group: ADMINISTRATOR, startDate: 2015-01-01, endDate: 2015-12-01 }" + "</code><br/>" + "or:<br/>"
-            + "<code>" + "{ startDate: 2015-01-01, endDate: 2015-12-01 }" + "</code>")
+    @ApiMethod(description = "Returns the distinct active users for a given period. A role can be provided in the query "
+            + "to limit the results to a given role.<br/>" + "Here are 2 valid examples (with and without a role):<br/>"
+            + "<code>" + "{ role: ADMINISTRATOR, startDate: 2015-01-01, endDate: 2015-12-01 }" + "</code><br/>"
+            + "or:<br/>" + "<code>" + "{ startDate: 2015-01-01, endDate: 2015-12-01 }" + "</code>")
     public void distinctUsers(@RequestBody String payload, HttpServletResponse response) throws JSONException,
             IOException, InvocationTargetException, SQLException, IllegalAccessException, NoSuchMethodException {
         JSONObject input;
-        String groupId = null;
+        String roleId = null;
 
         response.setContentType("application/json; charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
@@ -760,7 +759,7 @@ public class StatisticsController {
     /**
      * Convert date from UTC to local configured timezone. This method is used to
      * convert dates returns by database.
-     * 
+     *
      * @param rawDate raw date from database with format : "2016-02-12 23" or
      *                "2016-02-12" or "2016-06" or "2016-02"
      * @return date in local timezone with hour
@@ -791,7 +790,7 @@ public class StatisticsController {
         return outputFormatter.print(localDatetime.toInstant());
     }
 
-    private String getGroup(JSONObject payload) throws JSONException {
+    private String getRole(JSONObject payload) throws JSONException {
         if (payload.has("role")) {
             return "ROLE_" + payload.getString("role");
         }

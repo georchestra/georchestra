@@ -17,27 +17,27 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-Ext.define('Analytics.model.OGCGroup', {
-    extend: 'Ext.data.Model',
-    fields: [{
-        name: 'org',
-        type: 'string'
-    }, {
-        name: 'count',
-        type: 'int'
-    }],
-    proxy: {
-        type: 'ajax',
-        url: '/analytics/ws/ogc/groups', 
-        extraParams: {
-            month: Ext.Date.format(new Date(), 'n'),
-            year: Ext.Date.format(new Date(), 'Y')
-        },
-        pageParam: undefined,
-        reader: {
-            type: 'json',
-            root: 'results',
-            totalProperty: 'total'
-        }
+Ext.define('Analytics.view.OGCOrgs', {
+    extend: 'Analytics.view.BaseGridPanel',
+    alias: 'widget.ogcorgslist',
+    store: 'OGCOrgs',
+    
+    initComponent: function() {
+        var tr = Analytics.Lang.i18n;
+        this.columns = Ext.apply(this.columns || {}, {
+            items: [{
+                dataIndex: 'org',
+                flex: 1, // will be resized
+                width: 700, // mandatory with ext 4.1 rc1 (should not be)
+                text: tr('Organism')
+            }, {
+                dataIndex: 'count',
+                flex: 0, // will not be resized
+                width: 130,
+                text: tr('Number of requests')
+            }]
+        });
+        
+        this.callParent();
     }
 });

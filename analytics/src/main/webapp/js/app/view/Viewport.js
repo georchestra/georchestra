@@ -22,7 +22,7 @@ Ext.define('Analytics.view.Viewport', {
     requires: [
         'Analytics.view.OGCLayers',
         'Analytics.view.OGCUsers',
-        'Analytics.view.OGCGroups',
+        'Analytics.view.OGCOrgs',
         'Analytics.view.TimeNavigator'
     ],
     
@@ -54,7 +54,7 @@ Ext.define('Analytics.view.Viewport', {
                     split: true,
                     region: 'east',
                     width: '25%',
-                    xtype: 'ogcgroupslist'
+                    xtype: 'ogcorgslist'
                 }]
             });
         }

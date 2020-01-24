@@ -19,7 +19,7 @@
 
 Ext.define('Analytics.controller.OGC', {
     extend: 'Analytics.controller.Base',
-    stores: ['OGCUsers', 'OGCLayers', 'OGCGroups'],
+    stores: ['OGCUsers', 'OGCLayers', 'OGCOrgs'],
     
     init: function() {
 
@@ -29,7 +29,7 @@ Ext.define('Analytics.controller.OGC', {
         // Use the automatically generated getter to get the stores
         var usersStore = this.getOGCUsersStore();
         var layersStore = this.getOGCLayersStore();
-        var groupsStore = this.getOGCGroupsStore();
+        var orgsStore = this.getOGCOrgsStore();
         
         this.application.on({
             "monthchanged": function(opCfg) {
@@ -37,14 +37,14 @@ Ext.define('Analytics.controller.OGC', {
                 this.year = opCfg.params.year;
             	this.loadStoreWithDate(usersStore, opCfg);
             	this.loadStoreWithDate(layersStore, opCfg);
-            	this.loadStoreWithDate(groupsStore, opCfg);
+            	this.loadStoreWithDate(orgsStore, opCfg);
             },
             "modechanged": function(opCfg) {
                 this.month = opCfg.params.month;
                 this.year = opCfg.params.year;
             	this.loadStoreWithDate(usersStore, opCfg);
             	this.loadStoreWithDate(layersStore, opCfg);
-            	this.loadStoreWithDate(groupsStore, opCfg);
+            	this.loadStoreWithDate(orgsStore, opCfg);
             },
             scope: this
         });
@@ -56,7 +56,7 @@ Ext.define('Analytics.controller.OGC', {
             'ogclayerslist tool': {
                 click: this.handleExport
             },
-            'ogcgroupslist tool': {
+            'ogcorgslist tool': {
                 click: this.handleExport
             },
             'filteredogcuserslist tool': {
