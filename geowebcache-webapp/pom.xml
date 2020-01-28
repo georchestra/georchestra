@@ -3,9 +3,9 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.geowebcache</groupId>
-    <artifactId>geowebcache</artifactId>
-    <version>1.16.1</version>
+    <groupId>org.georchestra</groupId>
+    <artifactId>root</artifactId>
+    <version>19.12-SNAPSHOT</version>
   </parent>
   <groupId>org.georchestra</groupId>
   <artifactId>geowebcache-webapp</artifactId>
@@ -37,6 +37,17 @@
     </repository>
   </repositories>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.geowebcache</groupId>
+        <artifactId>geowebcache</artifactId>
+        <version>${gwc.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   <dependencies>
     <dependency>
       <groupId>org.georchestra</groupId>
@@ -54,77 +65,77 @@
     <dependency>
       <groupId>org.geowebcache</groupId>
       <artifactId>gwc-core</artifactId>
-      <version>${project.parent.version}</version>
+      <version>${gwc.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geowebcache</groupId>
       <artifactId>gwc-georss</artifactId>
-      <version>${project.parent.version}</version>
+      <version>${gwc.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geowebcache</groupId>
       <artifactId>gwc-gmaps</artifactId>
-      <version>${project.parent.version}</version>
+      <version>${gwc.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geowebcache</groupId>
       <artifactId>gwc-kml</artifactId>
-      <version>${project.parent.version}</version>
+      <version>${gwc.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geowebcache</groupId>
       <artifactId>gwc-rest</artifactId>
-      <version>${project.parent.version}</version>
+      <version>${gwc.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geowebcache</groupId>
       <artifactId>gwc-tms</artifactId>
-      <version>${project.parent.version}</version>
+      <version>${gwc.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geowebcache</groupId>
       <artifactId>gwc-ve</artifactId>
-      <version>${project.parent.version}</version>
+      <version>${gwc.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geowebcache</groupId>
       <artifactId>gwc-wms</artifactId>
-      <version>${project.parent.version}</version>
+      <version>${gwc.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geowebcache</groupId>
       <artifactId>gwc-wmts</artifactId>
-      <version>${project.parent.version}</version>
+      <version>${gwc.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geowebcache</groupId>
       <artifactId>gwc-diskquota-bdb</artifactId>
-      <version>${project.parent.version}</version>
+      <version>${gwc.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geowebcache</groupId>
       <artifactId>gwc-diskquota-jdbc</artifactId>
-      <version>${project.parent.version}</version>
+      <version>${gwc.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geowebcache</groupId>
       <artifactId>gwc-arcgiscache</artifactId>
-      <version>${project.parent.version}</version>
+      <version>${gwc.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geowebcache</groupId>
       <artifactId>gwc-distributed</artifactId>
-      <version>${project.parent.version}</version>
+      <version>${gwc.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geowebcache</groupId>
       <artifactId>gwc-aws-s3</artifactId>
-      <version>${project.parent.version}</version>
+      <version>${gwc.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geowebcache</groupId>
       <artifactId>gwc-sqlite</artifactId>
-      <version>${project.parent.version}</version>
+      <version>${gwc.version}</version>
     </dependency>
 
     <dependency>
