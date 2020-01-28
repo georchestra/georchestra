@@ -32,6 +32,7 @@ public class OrgExt extends AbstractOrg implements Cloneable {
     private String description;
     private String url;
     private String logo;
+    private String note;
 
     public String getId() {
         return id;
@@ -79,6 +80,14 @@ public class OrgExt extends AbstractOrg implements Cloneable {
 
     public void setLogo(String logo) {
         this.logo = logo;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 
     @Override
