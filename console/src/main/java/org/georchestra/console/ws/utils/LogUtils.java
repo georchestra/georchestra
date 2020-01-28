@@ -267,6 +267,10 @@ public class LogUtils {
         if (!orgExt.getLogo().equals(json.get("logo"))) {
             createAndLogDetails(orgId, Org.JSON_LOGO, orgExt.getLogo(), json.getString("logo"), type);
         }
+        // log note changed
+        if (!orgExt.getNote().equals(json.optString(Org.JSON_NOTE))) {
+            createAndLogDetails(orgId, Org.JSON_NOTE, orgExt.getNote(), json.optString(Org.JSON_NOTE), type);
+        }
     }
 
     /**
