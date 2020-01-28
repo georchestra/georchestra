@@ -315,6 +315,7 @@ jpegphoto:: /9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBQgMFBofBgYHCg0dHhwHBwgMFB0j
  fFK8aMP3iKw7qw6/gadRQAwW8eMCKML1CYGAR6D2p9FFABRRRQAUUUUAFFFFABRRRQAUUUUAFFF
  FABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAA/9k=
 labeledURI: https://www.georchestra.org/
+knowledgeInformation: Internal notes
 
 dn: cn=psc,ou=orgs,dc=georchestra,dc=org
 objectClass: groupOfMembers
@@ -337,6 +338,7 @@ businessCategory: Company
 postalAddress: 18 Rue du lac Saint André, 73000 Chambéry
 labeledURI: https://www.camptocamp.com/
 description: Camptocamp SAS France
+knowledgeInformation: Notes internes
 
 dn: cn=c2c,ou=orgs,dc=georchestra,dc=org
 objectClass: groupOfMembers
@@ -357,6 +359,7 @@ businessCategory: Company
 postalAddress: Rue Jean Wenger - Valentin, 67000 Strasbourg
 labeledURI: https://www.grandest.fr/
 description: Conseil Régional
+knowledgeInformation: Notes sur l'organisme CRA
 
 dn: cn=cra,ou=orgs,dc=georchestra,dc=org
 objectClass: groupOfMembers
