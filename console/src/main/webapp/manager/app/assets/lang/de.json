@@ -136,7 +136,7 @@
   "role.useradded"        : "Der Benutzer wurde der Rolle hinzugefügt.",
   "role.userremoved"      : "Der Benutzer wurde aus der Rolle entfernt.",
   "role.userlabel"        : "Hinzufügen",
-  "role.helpFormat"       : "Der Bezeichner darf nur alphanumerische Zeichen enthalten.",
+  "role.helpFormat"       : "Der Bezeichner darf nur alphanumerische Großbuchstaben Zeichen enthalten.",
   "delegations.title"     : "Management-Delegation",
   "delegations.title_plural" : "Management-Delegationen",
   "delegations.title_no_delegations" : "Keine Managementdelegation",
