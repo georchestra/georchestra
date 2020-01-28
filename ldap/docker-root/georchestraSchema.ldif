@@ -18,4 +18,4 @@ olcObjectClasses: ( 1.3.6.1.4.1.53611.1.1.2
     DESC 'georchestra org'
     SUP top
     AUXILIARY
-    MAY (jpegphoto $ labeledURI))
+    MAY (jpegphoto $ labeledURI $ knowledgeInformation))
