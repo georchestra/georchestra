@@ -49,6 +49,14 @@
         </div>
       </div>
 
+      <div class="form-group form-group-sm" ng-class="{required: required.note}">
+        <label class="col-sm-4" for="note" translate>org.note</label>
+        <div class="col-sm-8">
+          <textarea ng-model="model.note" class="form-control" id="note"
+            placeholder="" ng-required="required.note"></textarea>
+        </div>
+      </div>
+
       <div class="form-group form-group-sm" ng-class="{required: required.url}">
         <label class="col-sm-4" for="url" translate>org.url</label>
         <div class="col-sm-8">
