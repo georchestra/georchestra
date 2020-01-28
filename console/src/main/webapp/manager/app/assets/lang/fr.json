@@ -109,6 +109,7 @@
   "org.description"       : "Description",
   "org.url"               : "Site web",
   "org.logo"              : "Logo",
+  "org.note"              : "Notes",
   "org.cities"            : "Aire de compétence",
   "org.orgType"           : "Type d'organisme",
   "imageinput.label"      : "Charger un logo",

@@ -109,6 +109,7 @@
   "org.description"       : "Beschreibung",
   "org.url"               : "Webseite",
   "org.logo"              : "Logo",
+  "org.note"              : "Notes",
   "org.cities"            : "Bereich",
   "org.orgType"           : "Organisationstyp",
   "imageinput.label"      : "Logo laden",
