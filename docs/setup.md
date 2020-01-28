@@ -13,7 +13,7 @@ So, here are the steps:
 
  * install the dependencies:
 ```
-sudo apt install postgresql-11-postgis-2.5 slapd ldap-utils apache2 ca-certificates tomcat9 tomcat9-user libgdal-java postfix
+sudo apt install postgresql-11-postgis-2.5 slapd ldap-utils apache2 ca-certificates tomcat9 tomcat9-user libgdal-java postfix git
 ```
  * Install Java8 from adoptopenJDK:
  ```
