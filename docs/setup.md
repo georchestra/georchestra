@@ -45,6 +45,7 @@ JAVA_HOME=/usr/lib/jvm/adoptopenjdk-8-hotspot-amd64
 
  * install the [native libs](setup/native_libs.md)
 
+ * [Deploy the webapps](setup/deploy_wars.md) into each tomcat instances
 
 ## Compatibility notes
 

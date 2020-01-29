@@ -263,6 +263,16 @@ ProxyPassReverse /mapfishapp/ http://localhost:8180/mapfishapp/
 
 Note that mapfishapp provides the option to display local files on the map. To do this, the file is uploaded to the mapfishapp backend. The maximum size of these file can be defined in the [datadir](https://github.com/georchestra/datadir/blob/18.12/mapfishapp/mapfishapp.properties#L23), but in certain cases, the Apache2 proxy could be more restrictive if the [`LimitRequestBody`](https://httpd.apache.org/docs/current/mod/mod_proxy.html#request-bodies) had been set to a lower limit. For a normal usage, you don't need to set the `LimitRequestBody`.
 
+* ```atlas.conf```:
+
+```
+<Proxy http://localhost:8180/atlas/*>
+    Require all granted
+</Proxy>
+ProxyPass /atlas/ http://localhost:8180/atlas/
+ProxyPassReverse /atlas/ http://localhost:8180/atlas/
+```
+
 ## SSL certificate
 
 A SSL certificate is now absolutely required, as the security-proxy is configured to provide "secured" cookie (i.e. which are discarded by the browser if not transmitted over a https connection).

@@ -20,7 +20,7 @@ sudo systemctl disable tomcat9
 
 ## Keystore
 
-To create a keystore, enter the following:
+To create a keystore containing a newly generated key, enter the following:
 ```
 sudo keytool -genkey \
     -alias georchestra_localhost \
@@ -35,29 +35,33 @@ sudo keytool -genkey \
 
 ### CA certificates
 
-If the geOrchestra webapps have to communicate with remote HTTPS services, our keystore/trustore has to include CA certificates.
+If the geOrchestra webapps have to communicate with remote HTTPS services, our keystore/trustore has to include the remote CA certificates.
 
-This will be the case when:
+This will be the case, when e.g.:
+
  * the proxy has to relay an https service
  * geonetwork will harvest remote https nodes
  * geoserver will proxy remote https ogc services
 
-To do this:
+In order to trust the default system certificates from the `cacerts` package into our previously created keystore:
+
 ```
 sudo keytool -importkeystore \
     -srckeystore /etc/ssl/certs/java/cacerts \
     -destkeystore /etc/tomcat9/keystore
 ```
 
-The password of the srckeystore is "changeit" by default, and should be modified in /etc/default/cacerts.
+The password of the srckeystore is "changeit" by default.
 
 ### SSL
 
-As the SSL certificate is absolutely required, at least for the CAS module, you must add it to the keystore.
+To import the certificate used by `Apache2` into our keystore, we shall issue the following command:
 ```
 keytool -import -alias cert_ssl -file /var/www/georchestra/ssl/georchestra.crt -keystore /etc/tomcat9/keystore
 ```
-If you have a Let's Encrypt certificate using Certbot the file to import is : /etc/letsencrypt/live/[your_sdi_domain_name]/cert.pem
+
+If you have a Let's Encrypt certificate using Certbot the file to import is : /etc/letsencrypt/live/[your_sdi_domain_name]/cert.pem. But
+since the LetsEncrypt root certificates were already trusted previously, it should not be necessary to do so.
 
 ### LDAP SSL
 
@@ -75,11 +79,22 @@ sudo keytool -import -alias cert_ldap -file /tmp/certfile.txt -keystore /etc/tom
 ```
 
 ### Finally,
+
 verify the list of keys in keystore:
 ```
 keytool -keystore /etc/tomcat9/keystore -list
 ```
 
+## geOrchestra datadir
+
+Since the 15.12 version, geOrchestra allows its main configuration settings to be done into a specific directory, the "georchestra Datadir".
+
+By convention, we will consider that the path `/etc/georchestra` will be dedicated to this datadir. We can bootstrap a default datadir by
+using the following command:
+
+```
+sudo git clone https://github.com/georchestra/datadir.git /etc/georchestra
+```
 
 ## Tomcat proxycas
 
@@ -108,7 +123,7 @@ sudo cp /usr/libexec/tomcat9/tomcat-start.sh /usr/libexec/tomcat9/tomcat-proxyca
 sudo cp /etc/default/tomcat9 /etc/default/tomcat9-proxycas
 ```
 
-Finally, edit the `/lib/systemd/system/tomcat9-proxycas` script, find the following line, and adapt to the created instance:
+Finally, edit the `/lib/systemd/system/tomcat9-proxycas` script and adapt to the created instance:
 
 ```
 --- tomcat9.service	2019-06-13 21:26:12.000000000 +0000
@@ -135,7 +150,7 @@ Finally, edit the `/lib/systemd/system/tomcat9-proxycas` script, find the follow
  ProtectSystem=strict
  ReadWritePaths=/etc/tomcat9/Catalina/
 -ReadWritePaths=/var/lib/tomcat9/webapps/
-+ReadWritePaths=/var/lib/tomcat9-proxycas/webapps/
++ReadWritePaths=/var/lib/tomcat9-proxycas/
  ReadWritePaths=/var/log/tomcat9/
  RequiresMountsFor=/var/log/tomcat9
 
@@ -147,11 +162,12 @@ And reload the `systemd` configuration:
 sudo systemctl daemon-reload
 ```
 
-### Customize Java options
+### Customize the Java runtime and options
 
-In ```/etc/default/tomcat9-proxycas```, we will adapt the JAVA_OPTS environment variable to suit our needs:
+In ```/etc/default/tomcat9-proxycas```, we will adapt the JAVA_HOME & JAVA_OPTS environment variables to suit our needs:
 
 ```
+JAVA_HOME=/usr/lib/jvm/adoptopenjdk-8-hotspot-amd64
 JAVA_OPTS="-Djava.awt.headless=true -XX:+UseConcMarkSweepGC"
 ```
 
@@ -180,31 +196,25 @@ JAVA_OPTS="$JAVA_OPTS \
               -Dhttps.proxyPort=XXXX"
 ```
 
+Finally, make sure the variables are exported at the end of the script:
+
+```
+export JAVA_HOME
+export JAVA_OPTS
+```
+
 ### Configure connectors
 
-In ```/var/lib/tomcat-proxycas/conf/server.xml```, find the place where the HTTP connector is defined, and change it into:
+In ```/var/lib/tomcat-proxycas/conf/server.xml```, find the place where the HTTP connector is defined, and check that the port is correctly set:
 ```
     <Connector port="8180" protocol="HTTP/1.1"
                connectionTimeout="20000"
                URIEncoding="UTF-8"
-               redirectPort="8443" />
-
-    <Connector port="8443" protocol="HTTP/1.1"
-               SSLEnabled="true"
-               scheme="https"
-               secure="true"
-               URIEncoding="UTF-8"
-               maxThreads="150"
-               clientAuth="false"
-               keystoreFile="/etc/tomcat9/keystore"
-               keystorePass="STOREPASSWORD"
-               compression="on"
-               compressionMinSize="2048"
-               noCompressionUserAgents="gozilla, traviata"
-               compressableMimeType="text/html,text/xml,application/xml,text/javascript,application/x-javascript,application/javascript,text/css" />
+               redirectPort="8443"
+                />
 ```
-... in which you also take care of changing the ```STOREPASSWORD``` string.
 
+... which should have been done by the `tomcat9-instance-create` script.
 
 ### Start the instance
 
@@ -279,11 +289,17 @@ Finally, we need to adapt the systemd unit file for this instance:
  ProtectSystem=strict
  ReadWritePaths=/etc/tomcat9/Catalina/
 -ReadWritePaths=/var/lib/tomcat9/webapps/
-+ReadWritePaths=/var/lib/tomcat9-georchestra/webapps/
++ReadWritePaths=/var/lib/tomcat9-georchestra/
++ReadWritePaths=/opt/geonetwork_data_dir/
++ReadWritePaths=/opt/extracts/
  ReadWritePaths=/var/log/tomcat9/
  RequiresMountsFor=/var/log/tomcat9
 
 ```
+
+Note: the `ReadWritePaths` parameters above should be set in the tomcat unit files accordingly. Here we assumed that
+GeoNetwork (which requires RW access to /opt/geonetwork_data_dir) and extractorapp (/opt/extracts) will be deployed
+in this instance.
 
 Reload the `systemd` configuration:
 
@@ -292,10 +308,11 @@ sudo systemctl daemon-reload
 sudo systemctl enable tomcat9-georchestra
 ```
 
-### Customize Java options
+### Customize Java runtime & options
 
-In ```/etc/default/tomcat9-georchestra```, we need to adapt the JAVA_OPTS variable as well:
+In ```/etc/default/tomcat9-georchestra```, we need to adapt the JAVA_HOME & JAVA_OPTS variables as well:
 ```
+JAVA_HOME=/usr/lib/jvm/adoptopenjdk-8-hotspot-amd64
 JAVA_OPTS="-Djava.awt.headless=true -XX:+UseConcMarkSweepGC"
 ```
 
@@ -319,50 +336,22 @@ JAVA_OPTS="$JAVA_OPTS \
 ```
 This allocates 2GB of your server RAM to all geOrchestra webapps (except proxy, cas and geoserver, which are located in other tomcat instances).
 
-#### GeoNetwork 2.x
-
-If GeoNetwork 2.x (legacy version) is being deployed:
-```
-JAVA_OPTS="$JAVA_OPTS \
-              -Dgeonetwork.dir=/path/to/your/geonetwork_data_dir \
-              -Dgeonetwork.schema.dir=/path/to/your/geonetwork_data_dir/config/schema_plugins \
-              -Dgeonetwork.jeeves.configuration.overrides.file=/var/lib/tomcat-georchestra/webapps/geonetwork/WEB-INF/config-overrides-georchestra.xml"
-```
-... where ```/path/to/your/geonetwork_data_dir``` is a directory owned by tomcat, created by checking out this repository [georchestra/geonetwork_minimal_datadir](https://github.com/georchestra/geonetwork_minimal_datadir)
-
-Example:
-```
-sudo git clone https://github.com/georchestra/geonetwork_minimal_datadir.git /opt/geonetwork_data_dir
-sudo chown -R tomcat /opt/geonetwork_data_dir
-```
-
 #### GeoNetwork 3.x (geOrchestra 15.12 and above)
 
 If GeoNetwork 3.x is deployed, some extra java environment variables will be
 required, because almost everything related to the configuration and the
 geOrchestra integration has been exported outside of the webapp, into the geOrchestra datadir.
 
+GeoNetwork also comes with its own "datadir", to store specific materials related to its own operation (to store uploaded content for example). One
+can create the directory using the following commands:
 
 ```
-sudo git clone https://github.com/georchestra/config.git /etc/georchestra
-sudo git clone -b gn3.4.1 https://github.com/georchestra/geonetwork_minimal_datadir.git /opt/geonetwork_data_dir
+sudo mkdir /opt/geonetwork_data_dir
 sudo chown -R tomcat /opt/geonetwork_data_dir
 ```
 
 Customize the `/etc/georchestra/geonetwork/geonetwork.properties`, so that the
-`geonetwork.dir` reflects the path where you actually cloned the default
-datadir in the previous step, e.g. `/opt/geonetwork_data_dir`.
-
-Then edit the following files in `/etc/georchestra/geonetwork/config`:
-
-- `config-datadir-georchestra.xml`
-- `config-db-georchestra.xml`
-- `config-logging-georchestra.xml`
-- `config-overrides-georchestra.xml`
-- `config-security-georchestra.xml`
-
-
-And replace every occurences of `${georchestra.datadir}` or `${env:georchestra.datadir}` by `/etc/georchestra`, unless you are already used to the datadir-enabled configuration for georchestra, see https://github.com/georchestra/config#georchestra-default-datadir for more info.
+`geonetwork.dir` reflects the path created during the previous step, e.g. `/opt/geonetwork_data_dir`.
 
 Then ensure your tomcat has the following environment variable set:
 
@@ -371,7 +360,7 @@ JAVA_OPTS="$JAVA_OPTS \
               -Dgeonetwork.jeeves.configuration.overrides.file=/etc/georchestra/geonetwork/config/config-overrides-georchestra.xml"
 ```
 
-Note: You can also override every geonetwork sub-data-directories by modifying
+Note: You can also overide every geonetwork sub-data-directories by modifying
 the `/etc/georchestra/geonetwork/geonetwork.properties` file for convenience.
 
 #### Viewer
@@ -402,6 +391,12 @@ JAVA_OPTS="$JAVA_OPTS \
 
 If your connection to the internet requires to pass through a proxy, you should also add the ```-Dhttp.proxy*``` options here.
 
+Finally, export both variables:
+
+```
+export JAVA_HOME
+export JAVA_OPTS
+```
 
 ### Configure connector
 
@@ -475,7 +470,9 @@ And adapt the previously created systemd unit file in `/lib/systemd/system/tomca
  ProtectSystem=strict
  ReadWritePaths=/etc/tomcat9/Catalina/
 -ReadWritePaths=/var/lib/tomcat9/webapps/
-+ReadWritePaths=/var/lib/tomcat9-geoserver0/webapps/
++ReadWritePaths=/var/lib/tomcat9-geoserver0/
++ReadWritePaths=/opt/geoserver_data_dir
++ReadWritePaths=/opt/geowebcache_cache_dir
  ReadWritePaths=/var/log/tomcat9/
  RequiresMountsFor=/var/log/tomcat9
 
@@ -501,7 +498,7 @@ set `useRelativeRedirects` to `false`, eg:
 See [#1857](https://github.com/georchestra/georchestra/pull/1847) for the
 motivations behind setting this parameter.
 
-### Customize Java options
+### Customize Java runtime & options
 
 In ```/etc/default/tomcat9-geoserver0```, we need to change:
 ```
@@ -509,14 +506,15 @@ JAVA_OPTS="-Djava.awt.headless=true -Xmx128m -XX:+UseConcMarkSweepGC"
 ```
 ...into:
 ```
+JAVA_HOME=/usr/lib/jvm/adoptopenjdk-8-hotspot-amd64
 JAVA_OPTS="-Djava.awt.headless=true"
 ```
 
 And later add these lines:
 ```
 JAVA_OPTS="$JAVA_OPTS \
-            -DGEOSERVER_DATA_DIR=/path/to/your/geoserver_data_dir \
-            -DGEOWEBCACHE_CACHE_DIR=/path/to/your/geowebcache_cache_dir"
+            -DGEOSERVER_DATA_DIR=/opt/geoserver_data_dir \
+            -DGEOWEBCACHE_CACHE_DIR=/opt/geowebcache_cache_dir"
 
 JAVA_OPTS="$JAVA_OPTS \
             -Dfile.encoding=UTF8 \
@@ -533,14 +531,16 @@ JAVA_OPTS="$JAVA_OPTS \
             -XX:SoftRefLRUPolicyMSPerMB=36000 \
             -XX:+UseConcMarkSweepGC"
 ```
-This allocates 2Gb of your server RAM to GeoServer.
+This allocates 2GB of your server RAM to GeoServer.
 
-The ```/path/to/your/geoserver_data_dir``` directory should be owned by tomcat, and created by checking out this repository [georchestra/geoserver_minimal_datadir](https://github.com/georchestra/geoserver_minimal_datadir):
+The ```/opt/geoserver_data_dir``` directory should be owned by tomcat, and created by checking out this repository [georchestra/geoserver_minimal_datadir](https://github.com/georchestra/geoserver_minimal_datadir):
 
-Example:
 ```
 sudo git clone -b master https://github.com/georchestra/geoserver_minimal_datadir.git /opt/geoserver_data_dir
 sudo chown -R tomcat /opt/geoserver_data_dir
+sudo mkdir -p /opt/geowebcache_cache_dir
+sudo chown -R tomcat /opt/geowebcache_cache_dir
+
 ```
 Note that this data dir holds **several branches**: please refer to the repository [README](https://github.com/georchestra/geoserver_minimal_datadir/blob/master/README.md) in order to **choose the correct one**.
 
@@ -554,7 +554,46 @@ JAVA_OPTS="$JAVA_OPTS \
 
 In case your connection to the internet needs to pass through a proxy, you should also add the ```-Dhttp.proxy*``` options here.
 
-### Configure connector
+### Notes about the s3-geotiff module
+
+The `s3-geotiff` module which allows to optimally store geotiff files onto s3-compatible buckets is now included by default. If you plan
+to use its features in your GeoServer instance, you will also have to add the following JAVA_OPTS options:
+
+```
+JAVA_OPTS="$JAVA_OPTS \
+            -Ds3.caching.ehCacheConfig=/etc/georchestra/geoserver/s3-geotiff/s3-geotiff-ehcache.xml \
+            -Ds3.properties.location=/etc/georchestra/geoserver/s3-geotiff/s3.properties \"
+```
+
+### Note for geofence users
+
+If geofence is activated in our geoserver, one will require some specific environment variables set. in the `/etc/default/tomcat9-geoserver0` file, consider adding:
+
+```
+JAVA_OPTS="$JAVA_OPTS \
+	      -DGEOSERVER_XSTREAM_WHITELIST=org.geoserver.geoserver.authentication.auth.GeoFenceAuthenticationProviderConfig \
+        -Dgeofence-ovr=file:/etc/georchestra/geoserver/geofence/geofence-datasource-ovr.properties"
+```
+
+### Note for geowebcache users
+
+GeoWebCache can be used either as a standalone webapp or integrated to GeoServer. If we want to go for the first option, we will also require the following JAVA_OPTS options:
+
+```
+	JAVA_OPTS="$JAVA_OPTS -DGEOWEBCACHE_CACHE_DIR=/opt/ "
+```
+
+### Exporting Java variables
+
+Finally, do not forget to export the variables at the end of the script:
+
+```
+export JAVA_HOME
+export JAVA_OPTS
+```
+
+
+### Configure the connector
 
 For GeoServer, it is advised to lower the number of simultaneous threads handling incoming requests.
 By default Tomcat assumes 200 threads, but experiments show that 20 is a better value.
@@ -576,12 +615,30 @@ In ```/var/lib/tomcat9-geoserver0/conf/server.xml```:
 sudo service tomcat9-geoserver0 start
 ```
 
+### In case of troubles with the GeoServer UI
+
+While testing the following setup guide, we stumbled upon a strange behaviour of the geoserver UI. If you
+are encountering some strange response from GeoServer ("400 Bad Request"), it might be due to the following [upstream
+issue](https://osgeo-org.atlassian.net/browse/GEOS-9353).
+
+As described in the issue, this can be solved by changing geoserver's `web.xml` file, and adding the following context variable:
+
+```
+<context-param>
+  <param-name>GEOSERVER_CSRF_WHITELIST</param-name>
+  <param-value>georchestra.mydomain.org</param-value>
+</context-param>
+```
+
+Of course you will have to adapt the parameter to suit your setup. Setups based on the Jetty Servlet Container do not seem to be affected.
+
+
 ## Be careful
 
 Remember that the geOrchestra binaries must be built according to the tomcat configuration described above.
 By default, forking the template configuration should guarantee this.
 
-Since we assume that :
+We assume that :
  - proxy and cas are served by a specific tomcat instance, listening on localhost, port 8180
  - the geOrchestra webapps, except GeoServer, proxy and cas, are served by another tomcat instance, on port 8280
  - GeoServer is served by its own dedicated tomcat instance, which listens on port 8380
