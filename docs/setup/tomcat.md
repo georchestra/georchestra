@@ -630,6 +630,10 @@ As described in the issue, this can be solved by changing geoserver's `web.xml` 
 </context-param>
 ```
 
+As described in the [official GeoServer documentation](https://docs.geoserver.org/stable/en/user/security/webadmin/csrf.html), you should also be able to use
+an JAVA_OPTS environment variable instead of the previous modification.
+
+
 Of course you will have to adapt the parameter to suit your setup. Setups based on the Jetty Servlet Container do not seem to be affected.
 
 
