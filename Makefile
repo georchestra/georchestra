@@ -34,6 +34,9 @@ docker-build-geoserver-geofence: docker-pull-jetty
 	cd webapp; \
 	mvn clean install docker:build -DdockerImageTags=${BTAG} -Pdocker,geofence,${GEOSERVER_EXTENSION_PROFILES} -DskipTests
 
+docker-build-geowebcache: docker-pull-jetty
+	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests -pl geowebcache-webapp
+
 docker-build-proxy: build-deps docker-pull-jetty
 	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl security-proxy
 
@@ -49,8 +52,8 @@ docker-build-analytics: build-deps docker-pull-jetty
 docker-build-mapfishapp: build-deps docker-pull-jetty
 	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl mapfishapp
 
-docker-build-georchestra: build-deps docker-pull-jetty docker-build-database docker-build-ldap docker-build-geoserver docker-build-gn3
-	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl extractorapp,cas-server-webapp,security-proxy,mapfishapp,header,console,analytics,geowebcache-webapp,atlas
+docker-build-georchestra: build-deps docker-pull-jetty docker-build-database docker-build-ldap docker-build-geoserver docker-build-geowebcache docker-build-gn3
+	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl extractorapp,cas-server-webapp,security-proxy,mapfishapp,header,console,analytics,atlas
 
 docker-build-smtp:
 	docker pull debian:buster
@@ -89,7 +92,10 @@ war-build-geoserver-geofence: build-deps
 	cd geoserver/geoserver-submodule/src/; \
 	mvn clean install -DskipTests -Dfmt.skip=true -Dserver=geofence-generic -Pgeofence-server,${GEOSERVER_EXTENSION_PROFILES} ; \
 	cd ../../..; \
-	mvn clean install -pl geoserver/webapp -Pgeofence,${GEOSERVER_EXTENSION_PROFILES}
+	mvn clean install -pl geoserver/webapp -P${GEOSERVER_EXTENSION_PROFILES}
+
+war-build-geowebcache: build-deps
+	mvn clean install -pl geowebcache-webapp -DskipTests -Dfmt.skip=true
 
 war-build-gn3:
 	mvn clean install -f geonetwork/pom.xml -DskipTests
@@ -108,8 +114,11 @@ deb-build-geoserver-geofence: war-build-geoserver-geofence
 	cd geoserver; \
 	mvn clean package deb:package -pl webapp -PdebianPackage,geofence,${GEOSERVER_EXTENSION_PROFILES} ${DEPLOY_OPTS}
 
-deb-build-georchestra: war-build-georchestra build-deps deb-build-geoserver
-	mvn package deb:package -pl atlas,cas-server-webapp,security-proxy,header,mapfishapp,extractorapp,analytics,console,geonetwork/web,geowebcache-webapp -PdebianPackage -DskipTests ${DEPLOY_OPTS}
+deb-build-geowebcache: war-build-geowebcache
+	mvn package deb:package -pl geowebcache-webapp -PdebianPackage -DskipTests -Dfmt.skip=true ${DEPLOY_OPTS}
+
+deb-build-georchestra: war-build-georchestra build-deps deb-build-geoserver deb-build-geowebcache
+	mvn package deb:package -pl atlas,cas-server-webapp,security-proxy,header,mapfishapp,extractorapp,analytics,console,geonetwork/web -PdebianPackage -DskipTests ${DEPLOY_OPTS}
 
 # Base geOrchestra common modules
 build-deps:

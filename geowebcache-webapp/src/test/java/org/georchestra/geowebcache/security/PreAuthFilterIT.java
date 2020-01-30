@@ -1,7 +1,13 @@
-package org.geowebcache.security;
+package org.georchestra.geowebcache.security;
 
-import org.acegisecurity.Authentication;
-import org.acegisecurity.context.SecurityContextHolder;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.servlet.FilterChain;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,30 +15,24 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 
-import javax.servlet.FilterChain;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-/**
- * @author Jesse on 4/24/2014.
- */
+/** @author Jesse on 4/24/2014. */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:georchestra-acegi-config.xml" })
-public class PreAuthFilterTest {
+@WebAppConfiguration
+@ContextConfiguration(locations = "file:src/main/webapp/WEB-INF/applicationContext.xml")
+public class PreAuthFilterIT {
 
-    @Autowired
-    private PreAuthFilter preAuthFilter;
+    @Autowired private PreAuthFilter preAuthFilter;
 
     @BeforeClass
-    public static void before() {
+    public static void before() {}
 
-    }
     @Test
     public void testDoFilter() throws Exception {
         SecurityContextHolder.clearContext();
@@ -61,13 +61,10 @@ public class PreAuthFilterTest {
         PreAuthToken preAuthToken = (PreAuthToken) auth;
 
         assertEquals(username, preAuthToken.getPrincipal());
-        assertEquals(2, preAuthToken.getAuthorities().length);
-        assertEquals(roleAdmin, preAuthToken.getAuthorities()[0].getAuthority());
-        assertEquals(roleOther, preAuthToken.getAuthorities()[1].getAuthority());
-
+        assertEquals(2, preAuthToken.getAuthorities().size());
+        List<GrantedAuthority> authorities =
+                preAuthToken.getAuthorities().stream().collect(Collectors.toList());
+        assertEquals(roleAdmin, authorities.get(0).getAuthority());
+        assertEquals(roleOther, authorities.get(1).getAuthority());
     }
-
-
-
-
 }

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [ -f /mnt/geowebcache_datadir/geowebcache.xml ]
+then
+    echo 'Datadir already initialized'
+else
+    echo 'Initializing datadir'
+
+    cp /docker-entrypoint.d/geowebcache.xml /mnt/geowebcache_datadir/
+fi
