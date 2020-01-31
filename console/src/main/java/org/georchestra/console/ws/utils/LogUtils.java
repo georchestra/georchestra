@@ -356,6 +356,10 @@ public class LogUtils {
             // log context changed
             createAndLogDetails(target, UserSchema.CONTEXT_KEY, original.getContext(), modified.getContext(), type);
         }
+        if (modified.getNote() != null && !modified.getNote().equals(original.getNote())) {
+            // log note changed
+            createAndLogDetails(target, UserSchema.NOTE_KEY, original.getNote(), modified.getNote(), type);
+        }
 
         // special cases when the attribute changed to get null value
         String oldValue;
