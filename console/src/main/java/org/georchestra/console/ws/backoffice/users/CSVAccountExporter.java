@@ -134,7 +134,7 @@ public class CSVAccountExporter {
         DIRECTORY_SERVER("Directory Server"), //
         SENSITIVITY("Sensitivity"), //
         PRIORITY("Priority"), //
-        PRIVATE("Private"), //
+        PRIVATE("Private", Account::getNote), //
         CATEGORIES("Categories");
 
         private final @NonNull @Getter String name;
