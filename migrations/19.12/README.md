@@ -80,3 +80,14 @@ RewriteCond %{REQUEST_URI} ^/console/manager/([home|users|org|orgs|role|roles|lo
 RewriteRule .* /console/manager/#!/%1 [NE,R,L]
 ```
 It is now managed by the console application itself.
+
+## Tomcat for GeoServer
+
+Locate tomcat's `conf/context.xml` and update the `<Context>` tag in order to set `useRelativeRedirects` to `false`, eg:
+```xml
+<Context useRelativeRedirects="false">
+    <WatchedResource>WEB-INF/web.xml</WatchedResource>
+    <WatchedResource>${catalina.base}/conf/web.xml</WatchedResource>
+</Context>
+```
+See [#1857](https://github.com/georchestra/georchestra/pull/1847) for the motivations.
