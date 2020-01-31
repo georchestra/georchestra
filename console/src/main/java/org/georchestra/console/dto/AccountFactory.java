@@ -92,8 +92,8 @@ public class AccountFactory {
      * @param roomNumber
      * @param stateOrProvince
      * @param manager
-     * @param context
      * @param note
+     * @param context
      * @param org
      * @param sshKeys
      *
