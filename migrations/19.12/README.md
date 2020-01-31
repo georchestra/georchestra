@@ -1,6 +1,6 @@
 # From 19.04 to 19.12
 
-## Database migration
+## Database migration
 
 No manual changes on the model are required to upgrade to the new version.
 
