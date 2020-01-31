@@ -79,6 +79,7 @@
   "user.preferredLanguage"     : "Langue par défaut",
   "user.telephoneNumber"  : "Téléphone",
   "user.uid"              : "Identifiant",
+  "user.note"             : "Notes",
   "orgs.title_plural"     : "organismes",
   "orgs.title_one"        : "organisme",
   "orgs.title_none"       : "Aucun organisme",

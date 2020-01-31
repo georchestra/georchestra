@@ -79,6 +79,7 @@
   "user.preferredLanguage": "Default language",
   "user.telephoneNumber"  : "Telefon",
   "user.uid"              : "Kennung",
+  "user.note"              : "Aufzeichnungen",
   "orgs.title_plural"     : "Organisationen",
   "orgs.title_one"        : "Organisation",
   "orgs.title_none"       : "Keine Organisation",
