@@ -538,7 +538,8 @@ public final class AccountDaoImpl implements AccountDao {
                     context.getStringAttribute(UserSchema.MOBILE_KEY),
                     context.getStringAttribute(UserSchema.ROOM_NUMBER_KEY),
                     context.getStringAttribute(UserSchema.STATE_OR_PROVINCE_KEY),
-                    context.getStringAttribute(UserSchema.MANAGER_KEY), context.getStringAttribute(UserSchema.NOTE_KEY),
+                    context.getStringAttribute(UserSchema.MANAGER_KEY),
+                    context.getStringAttribute(UserSchema.NOTE_KEY),
                     context.getStringAttribute(UserSchema.CONTEXT_KEY), null, // Org will be filled later
                     sshKeys == null ? new String[0] : (String[]) sshKeys.toArray(new String[sshKeys.size()]));
 
