@@ -87,14 +87,13 @@ keytool -keystore /etc/tomcat9/keystore -list
 
 ## geOrchestra datadir
 
-Since the 15.12 version, geOrchestra allows its main configuration settings to be done into a specific directory, the "georchestra Datadir".
+geOrchestra gets its configuration settings from specific directory, the "georchestra datadir", which is is usually located in `/etc/georchestra`.
 
-By convention, we will consider that the path `/etc/georchestra` will be dedicated to this datadir. We can bootstrap a default datadir by
-using the following command:
-
+To bootstrap a default datadir:
 ```
-sudo git clone https://github.com/georchestra/datadir.git /etc/georchestra
+sudo git clone -b BRANCH_NAME https://github.com/georchestra/datadir.git /etc/georchestra
 ```
+... where BRANCH_NAME matches the geOrchestra release name (or `master` for development purposes)
 
 ## Tomcat proxycas
 
@@ -125,7 +124,7 @@ sudo cp /etc/default/tomcat9 /etc/default/tomcat9-proxycas
 
 Finally, edit the `/lib/systemd/system/tomcat9-proxycas` script and adapt to the created instance:
 
-```
+```diff
 --- tomcat9.service	2019-06-13 21:26:12.000000000 +0000
 +++ tomcat9-proxycas.service	2020-01-20 13:19:10.728000000 +0000
 @@ -11,14 +11,14 @@
@@ -168,7 +167,6 @@ In ```/etc/default/tomcat9-proxycas```, we will adapt the JAVA_HOME & JAVA_OPTS 
 
 ```
 JAVA_HOME=/usr/lib/jvm/adoptopenjdk-8-hotspot-amd64
-JAVA_OPTS="-Djava.awt.headless=true -XX:+UseConcMarkSweepGC"
 ```
 
 And later add these lines (change the ```STOREPASSWORD``` string):
@@ -177,9 +175,8 @@ JAVA_OPTS="$JAVA_OPTS \
               -Dgeorchestra.datadir=/etc/georchestra"
 
 JAVA_OPTS="$JAVA_OPTS \
-              -Xms256m \
-              -Xmx256m \
-              -XX:MaxPermSize=128m"
+              -Xms1G \
+              -Xmx1G"
 
 JAVA_OPTS="$JAVA_OPTS \
               -Djavax.net.ssl.trustStore=/etc/tomcat9/keystore \
@@ -313,7 +310,6 @@ sudo systemctl enable tomcat9-georchestra
 In ```/etc/default/tomcat9-georchestra```, we need to adapt the JAVA_HOME & JAVA_OPTS variables as well:
 ```
 JAVA_HOME=/usr/lib/jvm/adoptopenjdk-8-hotspot-amd64
-JAVA_OPTS="-Djava.awt.headless=true -XX:+UseConcMarkSweepGC"
 ```
 
 And later add these lines (change the ```STOREPASSWORD``` string):
@@ -322,9 +318,8 @@ JAVA_OPTS="$JAVA_OPTS \
               -Dgeorchestra.datadir=/etc/georchestra"
 
 JAVA_OPTS="$JAVA_OPTS \
-              -Xms2G \
-              -Xmx2G \
-              -XX:MaxPermSize=256m"
+              -Xms6G \
+              -Xmx6G"
 
 JAVA_OPTS="$JAVA_OPTS \
               -Djavax.net.ssl.trustStore=/etc/tomcat9/keystore \
@@ -334,7 +329,7 @@ JAVA_OPTS="$JAVA_OPTS \
               -Djava.util.prefs.userRoot=/tmp \
               -Djava.util.prefs.systemRoot=/tmp"
 ```
-This allocates 2GB of your server RAM to all geOrchestra webapps (except proxy, cas and geoserver, which are located in other tomcat instances).
+This allocates 6GB of your server RAM to all geOrchestra webapps (except proxy, cas and geoserver, which are located in other tomcat instances).
 
 #### GeoNetwork 3.x (geOrchestra 15.12 and above)
 
@@ -360,7 +355,7 @@ JAVA_OPTS="$JAVA_OPTS \
               -Dgeonetwork.jeeves.configuration.overrides.file=/etc/georchestra/geonetwork/config/config-overrides-georchestra.xml"
 ```
 
-Note: You can also overide every geonetwork sub-data-directories by modifying
+Note: You can also override every geonetwork sub-data-directories by modifying
 the `/etc/georchestra/geonetwork/geonetwork.properties` file for convenience.
 
 #### Viewer
@@ -500,14 +495,9 @@ motivations behind setting this parameter.
 
 ### Customize Java runtime & options
 
-In ```/etc/default/tomcat9-geoserver0```, we need to change:
-```
-JAVA_OPTS="-Djava.awt.headless=true -Xmx128m -XX:+UseConcMarkSweepGC"
-```
-...into:
+In ```/etc/default/tomcat9-geoserver0```:
 ```
 JAVA_HOME=/usr/lib/jvm/adoptopenjdk-8-hotspot-amd64
-JAVA_OPTS="-Djava.awt.headless=true"
 ```
 
 And later add these lines:
@@ -522,7 +512,7 @@ JAVA_OPTS="$JAVA_OPTS \
             -Djavax.servlet.response.encoding=UTF-8"
 
 JAVA_OPTS="$JAVA_OPTS \
-            -Xms2G -Xmx2G -XX:PermSize=256M -XX:MaxPermSize=256M"
+            -Xms2G -Xmx2G"
 
 JAVA_OPTS="$JAVA_OPTS \
             -server \
@@ -571,8 +561,7 @@ If geofence is activated in our geoserver, one will require some specific enviro
 
 ```
 JAVA_OPTS="$JAVA_OPTS \
-	      -DGEOSERVER_XSTREAM_WHITELIST=org.geoserver.geoserver.authentication.auth.GeoFenceAuthenticationProviderConfig \
-        -Dgeofence-ovr=file:/etc/georchestra/geoserver/geofence/geofence-datasource-ovr.properties"
+           -Dgeofence-ovr=file:/etc/georchestra/geoserver/geofence/geofence-datasource-ovr.properties"
 ```
 
 ### Note for geowebcache users
@@ -580,7 +569,9 @@ JAVA_OPTS="$JAVA_OPTS \
 GeoWebCache can be used either as a standalone webapp or integrated to GeoServer. If we want to go for the first option, we will also require the following JAVA_OPTS options:
 
 ```
-	JAVA_OPTS="$JAVA_OPTS -DGEOWEBCACHE_CACHE_DIR=/opt/ "
+JAVA_OPTS="$JAVA_OPTS
+           -DGEOWEBCACHE_CONFIG_DIR=/opt/geowebcache_datadir \
+           -DGEOWEBCACHE_CACHE_DIR=/opt/geowebcache_tiles"
 ```
 
 ### Exporting Java variables
@@ -635,16 +626,3 @@ an JAVA_OPTS environment variable instead of the previous modification.
 
 
 Of course you will have to adapt the parameter to suit your setup. Setups based on the Jetty Servlet Container do not seem to be affected.
-
-
-## Be careful
-
-Remember that the geOrchestra binaries must be built according to the tomcat configuration described above.
-By default, forking the template configuration should guarantee this.
-
-We assume that :
- - proxy and cas are served by a specific tomcat instance, listening on localhost, port 8180
- - the geOrchestra webapps, except GeoServer, proxy and cas, are served by another tomcat instance, on port 8280
- - GeoServer is served by its own dedicated tomcat instance, which listens on port 8380
-
-... you should verify that your reverse proxy points to port 8180 (the `tomcat9-proxycas` instance).
