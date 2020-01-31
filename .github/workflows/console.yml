@@ -22,11 +22,7 @@ jobs:
           echo $M2_SETTINGS_FILE > $HOME/.m2/settings.xml
       env:
           M2_SETTINGS_FILE: ${{ secrets.M2_SETTINGS_FILE }}
-    - name: "Logging onto docker-hub"
-      run: docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
-      env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
     - name: "installing geOrchestra root pom"
       run: ./mvnw install --non-recursive
     - name: installing georchestra-commons into .m2

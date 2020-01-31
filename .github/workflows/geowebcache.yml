@@ -1,0 +1,54 @@
+name: "geowebcache actions"
+on:
+  push:
+    paths:
+    - "commons/**"
+    - "geowebcache/**"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: "Checking out"
+      uses: actions/checkout@v1
+    - name: "Checking out submodules"
+      uses: textbook/git-checkout-submodule-action@2.0.0
+    - name: "Setting up Java"
+      uses: actions/setup-java@v1
+      with:
+        java-version: '8.x'
+    - name: "Configuring Maven"
+      run: |
+          mkdir -p $HOME/.m2
+          echo $M2_SETTINGS_FILE > $HOME/.m2/settings.xml
+      env:
+          M2_SETTINGS_FILE: ${{ secrets.M2_SETTINGS_FILE }}
+
+    - name: "installing geOrchestra root pom"
+      run: ./mvnw install --non-recursive
+    - name: installing georchestra-commons into .m2
+      run: ./mvnw install -pl commons
+    - name: install & check formating
+      working-directory: geowebcache-webapp/
+      run: ../mvnw --no-transfer-progress -B -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
+    - name: run test
+      working-directory: geowebcache-webapp/
+      run: ../mvnw --no-transfer-progress clean verify -Pit -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
+    - name: build a docker image
+      working-directory: geowebcache-webapp/
+      run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker -DdockerImageName=docker.pkg.github.com/georchestra/georchestra/geowebcache:${GITHUB_REF##*/}
+    - name: publish the docker image
+      run: |
+        docker login docker.pkg.github.com --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
+        docker push docker.pkg.github.com/georchestra/georchestra/geowebcache:${GITHUB_REF##*/}
+      env:
+          DOCKER_USERNAME: georchestra
+          DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+    - name: publish the docker image on docker-hub
+      run: |
+        docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
+        docker tag docker.pkg.github.com/georchestra/georchestra/geowebcache:${GITHUB_REF##*/} georchestra/geowebcache:latest
+        docker push georchestra/geowebcache:latest
+      if: github.ref == 'refs/heads/master'
+      env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
