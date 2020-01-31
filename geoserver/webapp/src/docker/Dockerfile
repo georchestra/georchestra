@@ -28,8 +28,6 @@ RUN wget https://downloads.sourceforge.net/project/libjpeg-turbo/2.0.4/libjpeg-t
 RUN mkdir /mnt/geoserver_datadir /mnt/geoserver_geodata /mnt/geoserver_tiles /mnt/geoserver_native_libs && \
     chown jetty:jetty /etc/georchestra /mnt/geoserver_datadir /mnt/geoserver_geodata /mnt/geoserver_tiles /mnt/geoserver_native_libs
 
-RUN sed -i 's/threads.max=200/threads.max=50/g' /var/lib/jetty/start.d/server.ini
-
 # Restore jetty user
 USER jetty
 
