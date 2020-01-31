@@ -6,7 +6,6 @@ RUN java -jar "$JETTY_HOME/start.jar" --create-startd --add-to-start=jmx,jmx-rem
 
 COPY --chown=jetty:jetty . /
 
-# Temporary switch to root
 USER root
 
 RUN echo "deb http://httpredir.debian.org/debian buster main contrib" > /etc/apt/sources.list \
@@ -19,18 +18,14 @@ RUN echo "deb http://httpredir.debian.org/debian buster main contrib" > /etc/apt
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
 
-# install libjpeg turbo
-RUN wget https://sourceforge.net/projects/libjpeg-turbo/files/1.5.3/libjpeg-turbo-official_1.5.3_amd64.deb \
-    && dpkg -i libjpeg-turbo-official_1.5.3_amd64.deb \
+RUN wget https://downloads.sourceforge.net/project/libjpeg-turbo/2.0.4/libjpeg-turbo-official_2.0.4_amd64.deb \
+    && dpkg -i libjpeg-turbo-official_2.0.4_amd64.deb \
     && apt-get -f install \
-    && rm libjpeg-turbo-official_1.5.3_amd64.deb
+    && rm libjpeg-turbo-official_2.0.4_amd64.deb
 
 RUN mkdir /mnt/geoserver_datadir /mnt/geoserver_geodata /mnt/geoserver_tiles /mnt/geoserver_native_libs && \
     chown jetty:jetty /etc/georchestra /mnt/geoserver_datadir /mnt/geoserver_geodata /mnt/geoserver_tiles /mnt/geoserver_native_libs
 
-RUN sed -i 's/threads.max=200/threads.max=50/g' /var/lib/jetty/start.d/server.ini
-
-# Restore jetty user
 USER jetty
 
 VOLUME [ "/mnt/geoserver_datadir", "/mnt/geoserver_geodata", "/mnt/geoserver_tiles", "/mnt/geoserver_native_libs", "/tmp", "/run/jetty" ]
@@ -47,7 +42,6 @@ CMD ["sh", "-c", "exec java -Djava.io.tmpdir=/tmp/jetty \
 -DENABLE_JSONP=true \
 -Ds3.caching.ehCacheConfig=/etc/georchestra/geoserver/s3-geotiff/s3-geotiff-ehcache.xml \
 -Ds3.properties.location=/etc/georchestra/geoserver/s3-geotiff/s3.properties \
--Dorg.geotools.coverage.jaiext.enabled=true \
 -Dhttps.protocols=TLSv1,TLSv1.1,TLSv1.2 \
 -Xms$XMS -Xmx$XMX \
 -XX:SoftRefLRUPolicyMSPerMB=36000 \

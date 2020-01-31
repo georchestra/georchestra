@@ -4,7 +4,7 @@
 
 We're going to build the Kakadu 7.10 native libraries from sources, contained in a file called `v7_A_6-01900E.zip`.
 
-The kakadu libraries need to be built with a libc version compatible (equal or older) than the one the geoserver docker container runs, otherwise will get an error message like the following when starting up geoserver:
+The kakadu libraries need to be built with a libc version compatible (equal or older) than the one where the geoserver runs, otherwise will get an error message like the following when starting up geoserver:
 ```
 geoserver_1                 | WARNING: Failed to load the Kakadu native libs. This is not a problem unless you need to use the Kakadu plugin: it won't be enabled.
 java.lang.UnsatisfiedLinkError: /mnt/geoserver_native_libs/libkdu_jni.so: /lib/x86_64-linux-gnu/libm.so.6: version
@@ -70,7 +70,7 @@ Finally, save the built libs for posterity somewhere, I keep them in `/opt/kakad
 ```bash
 groldan@lilith:/opt/kakadu_build/sources$ sudo mkdir -p /opt/kakadu/lib
 groldan@lilith:/opt/kakadu_build/sources$ sudo cp java/kdu_jni.jar ./v7_A_6-01900E/lib/Linux-x86-64-gcc/libkdu_jni.so ./v7_A_6-01900E/lib/Linux-x86-64-gcc/libkdu_v7AR.so ./v7_A_6-01900E/lib/Linux-x86-64-gcc/libkdu_a7AR.so /opt/kakadu/lib/
-groldan@lilith:/opt/kakadu_build/sources$ 
+groldan@lilith:/opt/kakadu_build/sources$
 ```
 
 ## Install on geOrchestra's GeoServer
@@ -105,7 +105,7 @@ $ ls -lh land_shallow_topo_21600.*
 -rw-rw-r-- 1 groldan groldan  73M abr 18 15:35 land_shallow_topo_21600.jp2
 -rw-rw-r-- 1 groldan groldan 174M oct  5  2011 land_shallow_topo_21600.tif
 $
-$ gdalinfo land_shallow_topo_21600.jp2 
+$ gdalinfo land_shallow_topo_21600.jp2
 Driver: JP2OpenJPEG/JPEG-2000 driver based on OpenJPEG library
 Files: land_shallow_topo_21600.jp2
 Size is 21600, 10800
@@ -163,6 +163,3 @@ To set up a layer out of this coverage:
 * Hit the "Save" button, the "New Layer" page will show up listing the `land_shallow_topo_21600` coverage
 * Hit the "publish" link besides the layer name, scroll down to the bottom of the "Edit layer" form page and hit **Save**
 * Finally check the layer is working through the WMS: https://georchestra.mydomain.org/geoserver/wms/reflect?layers=land_shallow_topo_21600&format=application/openlayers
-
-
-

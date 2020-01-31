@@ -74,39 +74,3 @@ Now, let's [prepare the system](setup.md) to receive the webapps.
 
 Are you having problems with the build ? Please ask on IRC [freenode#georchestra](https://kiwiirc.com/client/irc.freenode.net/georchestra).
 Note that if you're connecting to the internet through proxies, you need to [tell maven how to reach public repositories](http://maven.apache.org/guides/mini/guide-proxies.html).
-
-
-## Advanced build options
-
-These options are not required to build geOrchestra but they can make your life easier.
-
-### GeoServer extensions
-
-To build GeoServer with one or several extensions, one can use the profiles defined in the [geoserver/extension](https://github.com/georchestra/geoserver/blob/2.3.2-georchestra/src/extension/pom.xml) and [geoserver/community](https://github.com/georchestra/geoserver/blob/2.3.2-georchestra/src/community/pom.xml) poms.
-
-Example building geoserver only, with the control-flow, css, csw, gdal, inspire, pyramid and wps extensions:
-```
-mvn -P-all,geoserver -Pcontrol-flow,css,csw,gdal,inspire,pyramid,wps -Dmaven.test.skip=true clean install
-```
-
-### geoserver.war.excludes
-
-As the name suggests, the ```geoserver.war.excludes``` property allows you to exclude files from the final GeoServer build.
-
-Typically, you will have the native JAI installed, because it performs far better than the java version.
-As a result, the JAI classes are useless for GeoServer.
-
-Build GeoServer with:
-```
-mvn -P-all,geoserver '-Dgeoserver.war.excludes=WEB-INF/lib/jai_*.jar' -Dmaven.test.skip=true clean install
-```
-
-Another use of the property is when building GeoServer without the integrated GeoWebCache:
-```
-mvn -P-all,geoserver '-Dgeoserver.war.excludes=WEB-INF/lib/*gwc*.jar' -Dmaven.test.skip=true clean install
-```
-
-Both can be combined with:
-```
-mvn -P-all,geoserver '-Dgeoserver.war.excludes=WEB-INF/lib/*gwc*.jar,WEB-INF/lib/jai_*.jar' -Dmaven.test.skip=true clean install
-```

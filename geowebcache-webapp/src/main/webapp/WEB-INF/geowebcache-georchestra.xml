@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:context="http://www.springframework.org/schema/context" xmlns:mvc="http://www.springframework.org/schema/mvc"
+  xmlns:security="http://www.springframework.org/schema/security"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/security
+        http://www.springframework.org/schema/security/spring-security.xsd
+        http://www.springframework.org/schema/mvc 
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+  <description>
+  </description>
+
+  <context:component-scan base-package="org.georchestra.geowebcache.security" />
+
+  <!-- ############################################################################### geOrchestra specific configuration 
+    This file is meant to be imported at the end of geowebcache-servlet.xml in order to provide geOrchestra specific spring bean 
+    definitions, being new components or overrides of previously defined ones in vanilla gwc. ############################################################################### -->
+
+  <!-- geOrchestra Commons -->
+  <bean id="georchestraConfiguration" class="org.georchestra.commons.configuration.GeorchestraConfiguration">
+    <constructor-arg value="geowebcache" />
+  </bean>
+
+  <context:property-placeholder location="file:${georchestra.datadir}/default.properties"
+    ignore-resource-not-found="true" ignore-unresolvable="true" order="1" />
+  <context:property-placeholder
+    location="file:${georchestra.datadir}/geowebcache/geowebcache.properties" ignore-resource-not-found="true"
+    ignore-unresolvable="true" order="0" />
+
+
+  <!-- Override geowebCacheDispatcher defined in core-context.xml -->
+  <bean id="geowebcacheDispatcher" class="org.georchestra.geowebcache.GeorchestraGeoWebCacheDispatcher"
+    destroy-method="destroy">
+    <constructor-arg ref="gwcTLDispatcher" />
+    <constructor-arg ref="gwcGridSetBroker" />
+    <constructor-arg ref="gwcStorageBroker" />
+    <constructor-arg ref="gwcBlobStoreAggregator" />
+    <constructor-arg ref="gwcXmlConfig" />
+    <constructor-arg ref="gwcRuntimeStats" />
+    <property name="defaultStorageFinder" ref="gwcDefaultStorageFinder" />
+    <property name="securityDispatcher" ref="gwcSecurityDispatcher" />
+    <property name="instanceName" value="${instanceName}" />
+    <property name="headerUrl" value="${headerUrl}" />
+    <property name="headerHeight" value="${headerHeight}" />
+  </bean>
+
+  <!-- Override gwcURLMangler defined in core-context.xml -->
+  <bean id="gwcURLMangler" class="org.georchestra.geowebcache.GeorchestraURLMangler">
+    <constructor-arg value="${publicUrl:${scheme}://${domainName}}" />
+    <constructor-arg value="${contextPath:/geowebcache}" />
+  </bean>
+
+  <!-- Servlet filter that checks for geOrchestra's auth headers and sets up the org.springframework.security.core.Authentication 
+    object -->
+  <bean id="preAuthFilter" class="org.georchestra.geowebcache.security.PreAuthFilter" />
+  <bean id="daoAuthenticationProvider" class="org.georchestra.geowebcache.security.PreAuthProvider" />
+
+  <!-- Override the authentication manager configuration defined in geowebcache-security.xml to use our daoAuthenticationProvider 
+    instead -->
+  <security:authentication-manager>
+    <security:authentication-provider ref="daoAuthenticationProvider" />
+  </security:authentication-manager>
+
+  <!-- Override the authentication entry point defined in the <security:http> of geowebcache-security.xml to redirect to 
+    geOrchestra's login page instead of issuing an HTTP Basic challenge response -->
+  <bean id="authenticationEntryPoint"
+    class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+    <constructor-arg name="loginFormUrl" value="/?login" />
+    <property name="forceHttps" value="false" />
+  </bean>
+
+  <security:http>
+    <security:custom-filter after="BASIC_AUTH_FILTER" ref="preAuthFilter" />
+    <security:intercept-url method="GET" pattern="/rest/web/**" access="permitAll" />
+    <security:intercept-url method="GET" pattern="/rest/wmts/WMTSCapabilities.xml"
+      access="permitAll" />
+    <security:intercept-url pattern="/rest/**" access="hasRole('ROLE_ADMINISTRATOR')" />
+
+    <security:http-basic entry-point-ref="authenticationEntryPoint" />
+    <security:csrf disabled="true" /> <!-- TODO Update forms so we can enable this -->
+  </security:http>
+
+</beans>

@@ -46,5 +46,5 @@ sudo openssl x509 -req \
 
 Restart the web server:
 ```
-sudo service apache2 restart
-``` 
+sudo systemctl restart apache2
+```

@@ -8,7 +8,7 @@ Having a mixed SSL/non-SSL setup should work, but will require several changes i
 
 ```
 sudo a2enmod proxy proxy_http ssl rewrite headers deflate
-sudo service apache2 restart
+sudo systemctl restart apache2
 ```
 
 
@@ -16,8 +16,8 @@ sudo service apache2 restart
 
 ```
 sudo mkdir -p /var/www/georchestra/htdocs
-sudo mkdir /var/www/georchestra/conf 
-sudo mkdir /var/www/georchestra/logs 
+sudo mkdir /var/www/georchestra/conf
+sudo mkdir /var/www/georchestra/logs
 sudo mkdir /var/www/georchestra/ssl
 ```
 
@@ -53,8 +53,8 @@ In ```/etc/apache2/sites-available/georchestra.conf```:
     CustomLog /var/www/georchestra/logs/access.log "combined"
     Include /var/www/georchestra/conf/*.conf
     ServerSignature Off
-    RewriteCond %{HTTPS} off 
-    RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} 
+    RewriteCond %{HTTPS} off
+    RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}
 </VirtualHost>
 <VirtualHost *:443>
     ServerName georchestra.mydomain.org
@@ -115,6 +115,10 @@ AddType application/vnd.ogc.context+xml .wmc
 
 ErrorDocument 502 /errors/50x.html
 ErrorDocument 503 /errors/50x.html
+
+# redirects onto the viewer by default
+RewriteRule ^/$ https://%{SERVER_NAME}/mapfishapp/ [R=301,L]
+
 ```
 
 * ```proxy.conf```: replace the ```http://my\.sdi\.org``` string with your server address in the following:
@@ -123,10 +127,10 @@ ErrorDocument 503 /errors/50x.html
 ProxyPass /casfailed.jsp http://localhost:8180/casfailed.jsp
 ProxyPassReverse /casfailed.jsp http://localhost:8180/casfailed.jsp
 
-ProxyPass /login/cas http://localhost:8180/login/cas 
+ProxyPass /login/cas http://localhost:8180/login/cas
 ProxyPassReverse /login/cas http://localhost:8180/login/cas
 
-ProxyPass /logout http://localhost:8180/logout 
+ProxyPass /logout http://localhost:8180/logout
 ProxyPassReverse /logout http://localhost:8180/logout
 
 ProxyPass /gateway http://localhost:8180/gateway
@@ -141,11 +145,11 @@ ProxyPassReverse /testPage http://localhost:8180/testPage
 ProxyPass /_static/ http://localhost:8180/_static/
 ProxyPassReverse /_static/ http://localhost:8180/_static/
 
-SetEnvIf Referer "^https://my\.sdi\.org/" mysdi
+SetEnvIf Referer "^https://georchestra\.mydomain\.org/" mysdi
 <Proxy http://localhost:8180/proxy/*>
     Require env mysdi
 </Proxy>
-ProxyPass /proxy/ http://localhost:8180/proxy/ 
+ProxyPass /proxy/ http://localhost:8180/proxy/
 ProxyPassReverse /proxy/ http://localhost:8180/proxy/
 ```
 
@@ -157,11 +161,11 @@ The cas module should be accessed only through https.
 <Proxy http://localhost:8180/cas/*>
     Require all granted
 </Proxy>
-ProxyPass /cas/ http://localhost:8180/cas/ 
+ProxyPass /cas/ http://localhost:8180/cas/
 ProxyPassReverse /cas/ http://localhost:8180/cas/
 
 RewriteCond %{HTTPS} off
-RewriteCond %{REQUEST_URI} ^/cas/?.*$ 
+RewriteCond %{REQUEST_URI} ^/cas/?.*$
 RewriteRule ^/(.*)$ https://%{SERVER_NAME}/$1 [R=301,L]
 ```
 
@@ -173,7 +177,7 @@ For the other ones, pick only those you need, depending on the modules you plan 
 <Proxy http://localhost:8180/analytics/*>
     Require all granted
 </Proxy>
-ProxyPass /analytics/ http://localhost:8180/analytics/ 
+ProxyPass /analytics/ http://localhost:8180/analytics/
 ProxyPassReverse /analytics/ http://localhost:8180/analytics/
 ```
 
@@ -184,7 +188,7 @@ ProxyPassReverse /analytics/ http://localhost:8180/analytics/
 <Proxy http://localhost:8180/extractorapp/*>
     Require all granted
 </Proxy>
-ProxyPass /extractorapp/ http://localhost:8180/extractorapp/ 
+ProxyPass /extractorapp/ http://localhost:8180/extractorapp/
 ProxyPassReverse /extractorapp/ http://localhost:8180/extractorapp/
 ```
 
@@ -195,7 +199,7 @@ ProxyPassReverse /extractorapp/ http://localhost:8180/extractorapp/
 <Proxy http://localhost:8180/geonetwork/*>
     Require all granted
 </Proxy>
-ProxyPass /geonetwork/ http://localhost:8180/geonetwork/ 
+ProxyPass /geonetwork/ http://localhost:8180/geonetwork/
 ProxyPassReverse /geonetwork/ http://localhost:8180/geonetwork/
 ```
 
@@ -210,19 +214,8 @@ ProxyPassReverse /geonetwork/ http://localhost:8180/geonetwork/
   Header set Access-Control-Allow-Origin "*"
   Header set Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept"
 </Location>
-ProxyPass /geoserver/ http://localhost:8180/geoserver/ 
+ProxyPass /geoserver/ http://localhost:8180/geoserver/
 ProxyPassReverse /geoserver/ http://localhost:8180/geoserver/
-```
-
-
-* ```geofence.conf```:
-
-```
-<Proxy http://localhost:8180/geofence/*>
-    Require all granted
-</Proxy>
-ProxyPass /geofence/ http://localhost:8180/geofence/ 
-ProxyPassReverse /geofence/ http://localhost:8180/geofence/
 ```
 
 
@@ -232,7 +225,7 @@ ProxyPassReverse /geofence/ http://localhost:8180/geofence/
 <Proxy http://localhost:8180/geowebcache/*>
     Require all granted
 </Proxy>
-ProxyPass /geowebcache/ http://localhost:8180/geowebcache/ 
+ProxyPass /geowebcache/ http://localhost:8180/geowebcache/
 ProxyPassReverse /geowebcache/ http://localhost:8180/geowebcache/
 ```
 
@@ -264,13 +257,24 @@ ProxyPassReverse /console/ http://localhost:8180/console/
 <Proxy http://localhost:8180/mapfishapp/*>
     Require all granted
 </Proxy>
-ProxyPass /mapfishapp/ http://localhost:8180/mapfishapp/ 
+ProxyPass /mapfishapp/ http://localhost:8180/mapfishapp/
 ProxyPassReverse /mapfishapp/ http://localhost:8180/mapfishapp/
 ```
 
 Note that mapfishapp provides the option to display local files on the map. To do this, the file is uploaded to the mapfishapp backend. The maximum size of these file can be defined in the [datadir](https://github.com/georchestra/datadir/blob/18.12/mapfishapp/mapfishapp.properties#L23), but in certain cases, the Apache2 proxy could be more restrictive if the [`LimitRequestBody`](https://httpd.apache.org/docs/current/mod/mod_proxy.html#request-bodies) had been set to a lower limit. For a normal usage, you don't need to set the `LimitRequestBody`.
 
+* ```atlas.conf```:
+
+```
+<Proxy http://localhost:8180/atlas/*>
+    Require all granted
+</Proxy>
+ProxyPass /atlas/ http://localhost:8180/atlas/
+ProxyPassReverse /atlas/ http://localhost:8180/atlas/
+```
+
 ## SSL certificate
 
-An SSL certificate is absolutely required, at least for the CAS module.
+A SSL certificate is now absolutely required, as the security-proxy is configured to provide "secured" cookie (i.e. which are discarded by the browser if not transmitted over a https connection).
+
 We recommend using a certificate issued by [Let's Encrypt](https://letsencrypt.org/), but one may also use a [self-signed certificate](../tutorials/self-signed-certificate.md).

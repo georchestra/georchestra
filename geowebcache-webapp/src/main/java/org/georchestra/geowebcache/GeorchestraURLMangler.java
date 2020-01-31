@@ -17,30 +17,33 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.geowebcache.util;
+package org.georchestra.geowebcache;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.geowebcache.util.URLMangler;
 
 /**
- * A simple URLMangler that overrides values provided by the servlet engine,
- * only keeping the most significant parts of the URL (after the hostname and
- * the webapp name).
+ * A simple URLMangler that overrides values provided by the servlet engine, only keeping the most
+ * significant parts of the URL (after the hostname and the webapp name).
  *
  * @author pmauduit
  */
 public class GeorchestraURLMangler implements URLMangler {
 
-	private final String baseURL;
-	private final String contextPath;
+    private final String baseURL;
+    private final String contextPath;
 
-	public GeorchestraURLMangler(String baseUrl, String contextPath) {
-		this.baseURL = baseUrl;
-		this.contextPath = contextPath;
-	}
+    public GeorchestraURLMangler(String baseUrl, String contextPath) {
+        this.baseURL = baseUrl;
+        this.contextPath = contextPath;
+    }
 
-	public String buildURL(String baseURL, String contextPath, String path) {
-        return StringUtils.strip(this.baseURL, "/") + "/" + StringUtils.strip(this.contextPath, "/") + "/"
+    @Override
+    public String buildURL(String baseURL, String contextPath, String path) {
+        return StringUtils.strip(this.baseURL, "/")
+                + "/"
+                + StringUtils.strip(this.contextPath, "/")
+                + "/"
                 + StringUtils.stripStart(path, "/");
-	}
-
+    }
 }

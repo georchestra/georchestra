@@ -1,144 +1,209 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.georchestra</groupId>
     <artifactId>root</artifactId>
     <version>19.12-SNAPSHOT</version>
   </parent>
+  <groupId>org.georchestra</groupId>
   <artifactId>geowebcache-webapp</artifactId>
-  <packaging>war</packaging>
+  <version>19.12-SNAPSHOT</version>
+
+  <packaging>jar</packaging>
   <name>geOrchestra GeoWebCache Web Application</name>
   <properties>
     <gwc.unpack.dir>${project.build.directory}/unpacked-webapp</gwc.unpack.dir>
-    <geowebcache.war.excludes/>
+    <geowebcache.war.excludes />
     <maven.test.skip>false</maven.test.skip>
-    <geowebcache.version>1.8.1</geowebcache.version>
-    <gt.version>14.1</gt.version><!-- must match the version used by gwc@geowebcache.version -->
+    <spring.version>5.1.1.RELEASE</spring.version>
+    <spring-security.version>5.1.1.RELEASE</spring-security.version>
+    <gwc.version>1.16.1</gwc.version>
+    <gt.version>22.1</gt.version><!-- must match the version used by gwc@gwc.version -->
     <context.name>geowebcache</context.name>
+    <packageDatadirScmVersion>master</packageDatadirScmVersion>
+
   </properties>
+
+  <repositories>
+    <repository>
+      <id>opengeo</id>
+      <name>OpenGeo Maven Repository</name>
+      <url>http://repo.boundlessgeo.com/main/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.geowebcache</groupId>
+        <artifactId>geowebcache</artifactId>
+        <version>${gwc.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   <dependencies>
     <dependency>
+      <groupId>org.georchestra</groupId>
+      <artifactId>georchestra-commons</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>apache-log4j-extras</artifactId>
+      <version>1.2.17</version>
+      <type>jar</type>
+      <scope>runtime</scope>
+    </dependency>
+    
+    <dependency>
       <groupId>org.geowebcache</groupId>
-      <artifactId>gwc-web</artifactId>
-      <version>${geowebcache.version}</version>
+      <artifactId>gwc-core</artifactId>
+      <version>${gwc.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geowebcache</groupId>
+      <artifactId>gwc-georss</artifactId>
+      <version>${gwc.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geowebcache</groupId>
+      <artifactId>gwc-gmaps</artifactId>
+      <version>${gwc.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geowebcache</groupId>
+      <artifactId>gwc-kml</artifactId>
+      <version>${gwc.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geowebcache</groupId>
+      <artifactId>gwc-rest</artifactId>
+      <version>${gwc.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geowebcache</groupId>
+      <artifactId>gwc-tms</artifactId>
+      <version>${gwc.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geowebcache</groupId>
+      <artifactId>gwc-ve</artifactId>
+      <version>${gwc.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geowebcache</groupId>
+      <artifactId>gwc-wms</artifactId>
+      <version>${gwc.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geowebcache</groupId>
+      <artifactId>gwc-wmts</artifactId>
+      <version>${gwc.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geowebcache</groupId>
+      <artifactId>gwc-diskquota-bdb</artifactId>
+      <version>${gwc.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geowebcache</groupId>
+      <artifactId>gwc-diskquota-jdbc</artifactId>
+      <version>${gwc.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geowebcache</groupId>
+      <artifactId>gwc-arcgiscache</artifactId>
+      <version>${gwc.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geowebcache</groupId>
+      <artifactId>gwc-distributed</artifactId>
+      <version>${gwc.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geowebcache</groupId>
+      <artifactId>gwc-aws-s3</artifactId>
+      <version>${gwc.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geowebcache</groupId>
+      <artifactId>gwc-sqlite</artifactId>
+      <version>${gwc.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-config</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>3.1.0</version>
       <scope>provided</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>log4j</groupId>
-          <artifactId>log4j</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-all</artifactId>
-      <version>1.9.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
-      <version>3.1.1.RELEASE</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>apache-log4j-extras</artifactId>
-      <version>1.1</version>
-      <type>jar</type>
-      <scope>runtime</scope>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>1.10.19</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
+
   <build>
-    <finalName>geowebcache-${server}</finalName>
-    <testResources>
-      <testResource>
-        <directory>src/test/resources</directory>
-      </testResource>
-      <testResource>
-        <directory>src/main/webapp/WEB-INF</directory>
-      </testResource>
-    </testResources>
+    <!-- <finalName>geowebcache-generic</finalName> -->
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-clean-plugin</artifactId>
-        <version>3.1.0</version>
-        <executions>
-          <execution>
-            <phase>validate</phase>
-            <goals>
-              <goal>clean</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>unpack-geowebcache-war</id>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-            <phase>generate-sources</phase>
-            <configuration>
-              <excludes>**/acegi-config.xml,**/geowebcache-servlet.xml,**/lib/log4j-*.jar,**/log4j.*,**/web.xml,${geowebcache.war.excludes}</excludes>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.geowebcache</groupId>
-                  <artifactId>gwc-web</artifactId>
-                  <version>${geowebcache.version}</version>
-                  <type>jar</type>
-                </artifactItem>
-              </artifactItems>
-              <outputDirectory>${gwc.unpack.dir}</outputDirectory>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.mortbay.jetty</groupId>
-        <artifactId>jetty-maven-plugin</artifactId>
-        <version>7.5.0.v20110901</version>
+        <artifactId>maven-war-plugin</artifactId>
         <configuration>
-          <connectors>
-            <connector implementation="org.eclipse.jetty.server.bio.SocketConnector">
-              <port>8080</port>
-              <maxIdleTime>10000</maxIdleTime>
-              <requestHeaderSize>20000</requestHeaderSize>
-            </connector>
-            <!--<connector implementation="org.eclipse.jetty.server.ssl.SslSocketConnector">-->
-            <!--&lt;!&ndash; Note: If another server needs to communicate with this one with-->
-            <!--https then it needs the environment variables set as follows:-->
-            <!---Djavax.net.ssl.trustStore=keystore.jks -Djavax.net.ssl.trustStorePassword=password-->
-            <!--&ndash;&gt;-->
-            <!--<port>8443</port>-->
-            <!--<keystore>${project.basedir}/keystore.jks</keystore>-->
-            <!--<password>password</password>-->
-            <!--<keyPassword>password</keyPassword>-->
-            <!--<truststore>${project.basedir}/keystore.jks</truststore>-->
-            <!--<trustPassword>password</trustPassword>-->
-            <!--<maxIdleTime>60000</maxIdleTime>-->
-            <!--</connector>-->
-          </connectors>
-          <webAppConfig>
+          <warName>geowebcache</warName>
+          <webappDirectory>${project.build.directory}/geowebcache</webappDirectory>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>war</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>9.4.14.v20181114</version>
+        <configuration>
+          <webApp>
             <contextPath>/geowebcache</contextPath>
-            <descriptor>${project.basedir}/src/main/webapp/WEB-INF/web.xml</descriptor>
-            <baseResource implementation="org.eclipse.jetty.util.resource.ResourceCollection">
-              <resourcesAsCSV>${project.basedir}/src/main/webapp,${gwc.unpack.dir}</resourcesAsCSV>
-            </baseResource>
-          </webAppConfig>
-          <stopKey>GWC_JETTY_STOP</stopKey>
+          </webApp>
+          <scanIntervalSeconds>10</scanIntervalSeconds>
           <stopPort>8090</stopPort>
+          <stopKey>GWC_JETTY_STOP</stopKey>
+          <supportedPackagings>
+            <supportedPackaging>jar</supportedPackaging>
+          </supportedPackagings>
           <systemProperties>
             <systemProperty>
               <name>georchestra.datadir</name>
@@ -153,7 +218,7 @@
     <profile>
       <id>debianPackage</id>
       <build>
-        <finalName>geowebcache-generic</finalName>
+        <finalName>geowebcache</finalName>
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -192,7 +257,7 @@
                         <exclude name="geowebcache/**" />
                       </fileset>
                     </delete>
-                 </target>
+                  </target>
                 </configuration>
                 <goals>
                   <goal>run</goal>
@@ -205,15 +270,17 @@
                   <target>
                     <chmod perm="ugo+x">
                       <fileset dir="${project.build.directory}/deb">
-                        <include name="**/bin/**"/>
-                        <include name="**/sbin/**"/>
-                        <include name="DEBIAN/post*"/>
-                        <include name="DEBIAN/pre*"/>
+                        <include name="**/bin/**" />
+                        <include name="**/sbin/**" />
+                        <include name="DEBIAN/post*" />
+                        <include name="DEBIAN/pre*" />
                       </fileset>
                     </chmod>
                   </target>
                 </configuration>
-                <goals><goal>run</goal></goals>
+                <goals>
+                  <goal>run</goal>
+                </goals>
               </execution>
             </executions>
           </plugin>
@@ -237,7 +304,7 @@
     <profile>
       <id>rpmPackage</id>
       <build>
-        <finalName>geowebcache-generic</finalName>
+        <finalName>geowebcache</finalName>
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -274,7 +341,7 @@
                         <exclude name="geowebcache/**" />
                       </fileset>
                     </delete>
-                 </target>
+                  </target>
                 </configuration>
                 <id>remove-useless-directories</id>
                 <phase>package</phase>
@@ -308,7 +375,7 @@
                     <source>
                       <location>${project.build.directory}</location>
                       <includes>
-                        <include>geowebcache-generic.war</include>
+                        <include>geowebcache.war</include>
                       </includes>
                     </source>
                   </sources>
@@ -377,10 +444,7 @@
                   <include>geowebcache/**</include>
                 </resource>
               </resources>
-              <!-- This will require to set up the docker-hub credentials correctly
-                   into your ~/.m2/settings.xml, see:
-                   https://github.com/spotify/docker-maven-plugin#authenticating-with-private-registries
-              -->
+              <!-- This will require to set up the docker-hub credentials correctly into your ~/.m2/settings.xml, see: https://github.com/spotify/docker-maven-plugin#authenticating-with-private-registries -->
               <serverId>docker-hub</serverId>
               <registryUrl>https://index.docker.io/v1/</registryUrl>
             </configuration>

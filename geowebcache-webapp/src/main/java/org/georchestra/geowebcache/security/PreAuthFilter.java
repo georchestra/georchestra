@@ -17,17 +17,14 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.geowebcache.security;
+package org.georchestra.geowebcache.security;
 
-import org.acegisecurity.Authentication;
-import org.acegisecurity.context.SecurityContextHolder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
+import com.google.common.base.Strings;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
+import java.util.Collections;
 import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -35,10 +32,15 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
- * A filter that checks the headers of the request and determines if the user is already logged in, and therefore
- * the credentials the user is permitted.
+ * A filter that checks the headers of the request and determines if the user is already logged in,
+ * and therefore the credentials the user is permitted.
  *
  * @author Jesse on 4/24/2014.
  */
@@ -47,45 +49,60 @@ public class PreAuthFilter implements Filter {
     public static final String SEC_USERNAME = "sec-username";
     public static final String SEC_ROLES = "sec-roles";
 
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-
+    public PreAuthFilter() {
+        logger.warn("PreAuthFilter");
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void init(FilterConfig filterConfig) throws ServletException {
+        logger.warn("PreAuthFilter initialized");
+    }
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
         if (request instanceof HttpServletRequest) {
             HttpServletRequest httpServletRequest = (HttpServletRequest) request;
             final String username = httpServletRequest.getHeader(SEC_USERNAME);
             if (username != null) {
-                SecurityContextHolder.getContext().setAuthentication(createAuthentication(httpServletRequest));
+                SecurityContext context = SecurityContextHolder.getContext();
+                Authentication authentication = createAuthentication(httpServletRequest);
+                context.setAuthentication(authentication);
+
+                logger.warn(
+                        "Populated SecurityContextHolder with pre-auth token: '"
+                                + context.getAuthentication()
+                                + "'");
 
                 if (logger.isDebugEnabled()) {
-                    logger.debug("Populated SecurityContextHolder with pre-auth token: '"
-                                 + SecurityContextHolder.getContext().getAuthentication() + "'");
+                    logger.debug(
+                            "Populated SecurityContextHolder with pre-auth token: '"
+                                    + context.getAuthentication()
+                                    + "'");
                 }
             } else {
+                logger.warn("SecurityContextHolder not populated with pre-auth token");
                 if (logger.isDebugEnabled()) {
                     logger.debug("SecurityContextHolder not populated with pre-auth token");
                 }
             }
         }
 
-        chain.doFilter(request,response);
+        chain.doFilter(request, response);
     }
 
     private Authentication createAuthentication(HttpServletRequest httpServletRequest) {
         final String username = httpServletRequest.getHeader(SEC_USERNAME);
         final String rolesString = httpServletRequest.getHeader(SEC_ROLES);
-        Set<String> roles = new LinkedHashSet<String>();
-        if (rolesString != null) {
-            roles.addAll(Arrays.asList(rolesString.split(";")));
-        }
+        Set<String> roles =
+                Strings.isNullOrEmpty(rolesString)
+                        ? Collections.emptySet()
+                        : Pattern.compile(";")
+                                .splitAsStream(rolesString)
+                                .collect(Collectors.toSet());
         return new PreAuthToken(username, roles);
     }
 
     @Override
-    public void destroy() {
-
-    }
+    public void destroy() {}
 }

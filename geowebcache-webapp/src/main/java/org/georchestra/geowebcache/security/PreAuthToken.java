@@ -17,24 +17,26 @@
  * geOrchestra.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.geowebcache.security;
+package org.georchestra.geowebcache.security;
 
-import org.acegisecurity.GrantedAuthority;
-import org.acegisecurity.GrantedAuthorityImpl;
-import org.acegisecurity.providers.AbstractAuthenticationToken;
-import org.acegisecurity.userdetails.User;
-import org.acegisecurity.userdetails.UserDetails;
-
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * An authentication that is obtained by reading the credentials from the headers.
  *
- * @see org.geowebcache.security.PreAuthFilter
- *
+ * @see org.georchestra.geowebcache.security.PreAuthFilter
  * @author Jesse on 4/24/2014.
  */
-public class PreAuthToken extends AbstractAuthenticationToken{
+public class PreAuthToken extends AbstractAuthenticationToken {
+    private static final long serialVersionUID = -5711092634457489286L;
 
     private final String principal;
 
@@ -43,19 +45,15 @@ public class PreAuthToken extends AbstractAuthenticationToken{
         this.principal = username;
 
         setAuthenticated(true);
-        UserDetails details = new User(username, "", true, true, true, true, super.getAuthorities());
+        UserDetails details =
+                new User(username, "", true, true, true, true, super.getAuthorities());
         setDetails(details);
-
     }
 
-    private static GrantedAuthority[] createGrantedAuthorities(Set<String> roles) {
-        GrantedAuthority[] authorities = new GrantedAuthority[roles.size()];
-        int i = 0;
-        for (String role : roles) {
-            authorities[i] = new GrantedAuthorityImpl(role);
-            i++;
-        }
-        return authorities;
+    private static List<GrantedAuthority> createGrantedAuthorities(Set<String> roles) {
+        return roles == null
+                ? Collections.emptyList()
+                : roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
 
     @Override

@@ -19,9 +19,12 @@ USER jetty
 
 VOLUME [ "/mnt/geowebcache_datadir", "/mnt/geowebcache_tiles", "/tmp", "/run/jetty" ]
 
+ENTRYPOINT [ "/docker-entrypoint.sh" ]
+
 CMD ["sh", "-c", "exec java \
 -Djava.io.tmpdir=/tmp/jetty \
 -Dgeorchestra.datadir=/etc/georchestra \
+-DGEOWEBCACHE_CONFIG_DIR=/mnt/geowebcache_datadir \
 -DGEOWEBCACHE_CACHE_DIR=/mnt/geowebcache_tiles \
 -Xms$XMS -Xmx$XMX \
 -XX:-UsePerfData \

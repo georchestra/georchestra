@@ -97,3 +97,4 @@ geoserver=http://sp2:8080/geoserver/
 console=http://sp2:8080/console/
 mapfishapp=http://sp2:8080/mapfishapp/
 ```
+
