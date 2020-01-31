@@ -36,18 +36,18 @@ Enhancements:
  * cas, console, proxy - support ldaps
  * console - fragment identifier removed from the manager URLs, allows direct access to the requested page even when authenticating
  * console - organizations now have description, logo, website fields
- * console - pooled connections improve reliability
+ * console - pooled LDAP connections improve reliability
  * console - added a tooltip with role description on role hovering
  * console - order users' list by surname
  * console - do not show pending users/organizations in lists
- * console - documentation overhauled
+ * console - [documentation overhauled](https://github.com/georchestra/georchestra/blob/master/console/README.md)
  * console - clearer system / custom roles attribution
  * console - regexp-validated role names
  * docker - images provide unzipped applications, allowing easy customization
  * documentation - installation doc revisited for Debian 10
  * ldap - supports SSH public key on inetOrgPersons
  * mapfishapp - boolean config option to prevent layer download
- * proxy - allow semicolons in URLs
+ * proxy - allow semicolons in URLs, eg for CKAN resources
  * proxy - cookie management rewritten
 
 Bug fixes:
@@ -67,8 +67,7 @@ Deprecations:
  * epsg-extension module removed
 
 
-Read [how to migrate from 19.04 to 20.1](migrations/19.12/README.md) and list all
-[issues closed](https://github.com/georchestra/georchestra/issues?page=1&q=milestone%3A19.12+is%3Aclosed) for the release.
+Read [how to migrate from 19.04 to 20.1](migrations/19.12/README.md) and list all the [issues closed](https://github.com/georchestra/georchestra/issues?page=1&q=milestone%3A19.12+is%3Aclosed) for the release.
 
 
 Version 19.04
