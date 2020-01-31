@@ -1,4 +1,4 @@
-name: "Build and publish a SP docker image on github"
+name: "security-proxy actions"
 on:
   push:
     paths:

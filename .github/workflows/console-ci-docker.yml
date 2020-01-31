@@ -1,4 +1,4 @@
-name: "Build and publish a Console docker image on github"
+name: "console actions"
 on:
   push:
     paths:
