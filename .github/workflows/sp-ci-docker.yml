@@ -50,3 +50,12 @@ jobs:
       env:
           DOCKER_USERNAME: georchestra
           DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+    - name: publish the docker image on docker-hub
+      run: |
+        docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
+        docker tag docker.pkg.github.com/georchestra/georchestra/security-proxy:${GITHUB_REF##*/} georchestra/security-proxy:latest
+        docker push georchestra/security-proxy:latest
+      if: github.ref == 'refs/heads/master'
+      env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
