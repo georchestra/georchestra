@@ -14,11 +14,12 @@ The key element for calling the GDAL native library from mapfishapp is the **ima
  * a GDAL Java native binding library, based on the JNI framework, named gdaljni, or ogrjni,
  * and the GDAL library.
 
-### Install GDAL from Debian packages : 
+### Install GDAL from Debian packages :
 
-The latter can be installed, in a Debian distribution, with the libgdal packages:
+The latter can be installed, in a Debian distribution, with the `libgdal` packages:
+
 ```
-    apt-get install libgdal1h libgdal-java
+    apt install libgdal-java
 
 ```
 
@@ -52,7 +53,7 @@ For example, in order to enable the support of ECW format, we need to install it
 
 First search `libecwj2-3.3-2006-09-06.zip` on any search engine in order to find the SDK. (no link because it always change)
 
-After you get this zip simply, we'll need to apply some patch to correct the jp2K support and some other bugs and then compile the sources and install it : 
+After you get this zip simply, we'll need to apply some patch to correct the jp2K support and some other bugs and then compile the sources and install it :
 ```
 unzip libecwj2-3.3-2006-09-06.zip
 rm libecwj2-3.3-2006-09-06.zip
@@ -70,7 +71,7 @@ make install
 
 First we need the latest version of GDAL (2.0.1 when written) : https://trac.osgeo.org/gdal/wiki/DownloadSource
 
-Then unzip the sources and get in the extracted folder : 
+Then unzip the sources and get in the extracted folder :
 ```
 wget http://download.osgeo.org/gdal/2.0.1/gdal201.zip
 unzip gdal201.zip
@@ -78,12 +79,12 @@ rm gdal201.zip
 cd gdal-2.0.1
 ```
 
-Install the build dependencies : 
+Install the build dependencies :
 ```
 apt-get build-dep gdal
 ```
 
-And configure the GDAL compilation : 
+And configure the GDAL compilation :
 ```
 ./configure --with-threads --with-grass=no --with-libtiff=internal --with-geotiff=internal \
 --with-java=/usr/lib/jvm/default-java --with-jasper --with-netcdf --with-xerces --with-geos --with-sqlite3 \
@@ -96,7 +97,7 @@ And configure the GDAL compilation :
 **/!\** Adapt the **--with-java**, **--with-ecw**, and other configs to your own configuration.
 After configure is done you have a summary of the format which will be supported after compilation, if the ones you want are set to "No", that's you have a false path in the `./configure` arguments. Search on the web how to set path for differents parts of this string, probably someone asked it before you on some forum.
 
-Then when all formats you want are supported, compile and install GDAL : 
+Then when all formats you want are supported, compile and install GDAL :
 ```
 make
 make install
@@ -104,13 +105,13 @@ make install
 
 In order to run GDAL after installing it is necessary for the shared library to be findable. This can often be accomplished by setting **LD_LIBRARY_PATH** to include /usr/local/lib in `/etc/default/tomcat9`.
 
-After that, GDAL is installed but not the JAVA bindings, for get them : 
+After that, GDAL is installed but not the JAVA bindings, for get them :
 ```
 cd swig/java
 apt-get install ant
 ```
 
-In the `java.opt` file set **JAVA_HOME** to your Java SDK path and run the compilation : 
+In the `java.opt` file set **JAVA_HOME** to your Java SDK path and run the compilation :
 ```
 export JAVA_HOME=<your Java SDK path>
 make

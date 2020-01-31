@@ -81,6 +81,15 @@ The [openssh.ldif](../../ldap/openssh.ldif) file creates the "sshPublicKey" obje
 sudo ldapadd -Y EXTERNAL -H ldapi:/// -f openssh.ldif
 ```
 
+## Add the "georchestra-specific" LDAP schemas
+
+The [georchestraSchema.ldif](../../ldap/georchestraSchema.ldif) file creates the "georchestraUser" and "georchestraOrg" objectClasses:
+
+```
+sudo ldapadd -Y EXTERNAL -H ldapi:/// -f georchestraSchema.ldif
+```
+
+
 ## geOrchestra users and groups
 
 The [georchestra.ldif](../../ldap/georchestra.ldif) file creates the default geOrchestra users & groups:
