@@ -79,7 +79,7 @@
   "user.preferredLanguage": "Default language",
   "user.telephoneNumber"  : "Phone number",
   "user.uid"              : "Identifier",
-  "user.note"             : "Internal Notes",
+  "user.note"             : "Internal notes",
   "orgs.title_plural"     : "organizations",
   "orgs.title_one"        : "organization",
   "orgs.title_none"       : "No organization",
