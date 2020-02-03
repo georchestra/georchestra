@@ -27,6 +27,7 @@ New features:
  * console - GDPR - users can delete their own account
  * console - organization referents are allowed to modify their own organization
  * console - added the ability to search for users in the orgs / roles members tab
+ * console - added internal notes on users and orgs
  * console - send confirmation mail to user on account validation
  * geonetwork - metadata ACLS based on LDAP organizations rather than EL_* roles
  * geoserver - add support for kakadu 7.x JPEG2000 coverages (depends on appropriate libs)
