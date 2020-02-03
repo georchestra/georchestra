@@ -2,8 +2,72 @@ The development branch is master. It can be used for testing and reporting
 errors.
 
 For production systems, you are advised to use the stable branch (currently
-19.04).
+20.1).
 This branch receives bug fixes as they arrive, during 12 months at least.
+
+Version 20.1
+============
+
+Thanks to GeoGrandEst, CRAIG, Geo2France, Rennes Métropole, Camptocamp, JDEV,
+Benoit Degrève, Landry Breuil & Julien Sabatier for their awesome contributions !
+
+Major highlights:
+ * Debian 10 & Tomcat 9 support
+ * GeoNetwork 3.8
+ * GeoServer 2.16
+ * GeoWebCache 1.16
+ * NL translation
+
+New features:
+ * console - users multiple selection
+ * console - CSV / Vcard users export
+ * console - actions log improved
+ * console - GDPR - users have to agree to platforms terms of use
+ * console - GDPR - users can download personal data as an archive
+ * console - GDPR - users can delete their own account
+ * console - organization referents are allowed to modify their own organization
+ * console - added the ability to search for users in the orgs / roles members tab
+ * console - send confirmation mail to user on account validation
+ * geonetwork - metadata ACLS based on LDAP organizations rather than EL_* roles
+ * geoserver - add support for kakadu 7.x JPEG2000 coverages (depends on appropriate libs)
+ * mapfishapp - supports geojson uploads
+
+Enhancements:
+ * cas, console, proxy - support ldaps
+ * console - fragment identifier removed from the manager URLs, allows direct access to the requested page even when authenticating
+ * console - organizations now have description, logo, website fields
+ * console - pooled LDAP connections improve reliability
+ * console - added a tooltip with role description on role hovering
+ * console - order users' list by surname
+ * console - do not show pending users/organizations in lists
+ * console - [documentation overhauled](https://github.com/georchestra/georchestra/blob/master/console/README.md)
+ * console - clearer system / custom roles attribution
+ * console - regexp-validated role names
+ * docker - images provide unzipped applications, allowing easy customization
+ * documentation - installation doc revisited for Debian 10
+ * ldap - supports SSH public key on inetOrgPersons
+ * mapfishapp - boolean config option to prevent layer download
+ * proxy - allow semicolons in URLs, eg for CKAN resources
+ * proxy - cookie management rewritten
+
+Bug fixes:
+ * analytics - fixed filtering by roles
+ * console - fixed empty organization area saving
+ * console - fixed pending & expired user count on homepage
+ * console - fixed organization creation without businessCategory
+ * console - fixed organizations with accented characters in the short name
+ * extractorapp - fixed vector data reprojection
+ * mapfishapp - fixed several issues related with KML uploads
+ * mapfishapp - fixed the raise button on empty results panel breaking the UI
+ * mapfishapp - fixed mini-map printing generating a NullPointerException
+ * proxy - allows a "moved *" HTTP response with a content
+ * proxy - fixed removedXForwardedHeaders list parsing
+
+Deprecations:
+ * epsg-extension module removed
+
+
+Read [how to migrate from 19.04 to 20.1](migrations/19.12/README.md) and list all the [issues closed](https://github.com/georchestra/georchestra/issues?page=1&q=milestone%3A19.12+is%3Aclosed) for the release.
 
 
 Version 19.04
