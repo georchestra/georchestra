@@ -2,7 +2,7 @@
 
 This folder holds the required files to configure and populate an OpenLDAP directory before installing the [geOrchestra](http://www.georchestra.org) SDI.  
 
-Please refer to the [geOrchestra documentation](https://github.com/georchestra/georchestra/blob/master/README.md) for instructions.
+Please refer to the [geOrchestra documentation](https://github.com/georchestra/georchestra/blob/master/docs/setup/openldap.md) for instructions.
 
 ## groupofmembers.ldif
 
