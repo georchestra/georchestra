@@ -358,7 +358,7 @@ public class LogUtils {
         }
         if (modified.getNote() != null && !modified.getNote().equals(original.getNote())) {
             // log note changed
-            createAndLogDetails(target, "user.note", original.getNote(), modified.getNote(), type);
+            createAndLogDetails(target, "note", original.getNote(), modified.getNote(), type);
         }
 
         // special cases when the attribute changed to get null value
