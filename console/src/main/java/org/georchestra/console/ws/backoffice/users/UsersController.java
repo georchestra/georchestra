@@ -664,6 +664,11 @@ public class UsersController {
         String manager = RequestUtil.getFieldValue(json, UserSchema.MANAGER_KEY);
         account.setManager(manager);
 
+        String note = RequestUtil.getFieldValue(json, UserSchema.NOTE_KEY);
+        if (note != null) {
+            account.setNote(note);
+        }
+
         String context = RequestUtil.getFieldValue(json, UserSchema.CONTEXT_KEY);
         if (context != null) {
             account.setContext(context);
@@ -737,6 +742,7 @@ public class UsersController {
         String title = RequestUtil.getFieldValue(json, UserSchema.TITLE_KEY);
         String description = RequestUtil.getFieldValue(json, UserSchema.DESCRIPTION_KEY);
         String manager = RequestUtil.getFieldValue(json, UserSchema.MANAGER_KEY);
+        String note = RequestUtil.getFieldValue(json, UserSchema.NOTE_KEY);
         String context = RequestUtil.getFieldValue(json, UserSchema.CONTEXT_KEY);
         String org = RequestUtil.getFieldValue(json, UserSchema.ORG_KEY);
         String sshKeys = RequestUtil.getFieldValue(json, UserSchema.SSH_KEY);
@@ -769,7 +775,7 @@ public class UsersController {
 
         Account a = AccountFactory.createFull(uid, commonName, surname, givenName, email, title, phone, description,
                 postalAddress, postalCode, "", postOfficeBox, "", street, locality, facsimile, "", "", "", "", manager,
-                context, org, sshKeysA);
+                note, context, org, sshKeysA);
 
         String shadowExpire = RequestUtil.getFieldValue(json, UserSchema.SHADOW_EXPIRE_KEY);
         if (StringUtils.hasLength(shadowExpire)) {

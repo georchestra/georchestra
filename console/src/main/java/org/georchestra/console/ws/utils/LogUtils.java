@@ -267,6 +267,10 @@ public class LogUtils {
         if (!orgExt.getLogo().equals(json.get("logo"))) {
             createAndLogDetails(orgId, Org.JSON_LOGO, orgExt.getLogo(), json.getString("logo"), type);
         }
+        // log note changed
+        if (!orgExt.getNote().equals(json.optString(Org.JSON_NOTE))) {
+            createAndLogDetails(orgId, Org.JSON_NOTE, orgExt.getNote(), json.optString(Org.JSON_NOTE), type);
+        }
     }
 
     /**
@@ -351,6 +355,10 @@ public class LogUtils {
         if (modified.getContext() != null && !modified.getContext().equals(original.getContext())) {
             // log context changed
             createAndLogDetails(target, UserSchema.CONTEXT_KEY, original.getContext(), modified.getContext(), type);
+        }
+        if (modified.getNote() != null && !modified.getNote().equals(original.getNote())) {
+            // log note changed
+            createAndLogDetails(target, "note", original.getNote(), modified.getNote(), type);
         }
 
         // special cases when the attribute changed to get null value

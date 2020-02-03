@@ -25,6 +25,7 @@ sn: USER
 l: SRID=4326;POLYGON((-5.76043921875 48.698689609375,-2.02508765625 50.104939609375,2.45733421875 51.423298984375,7.51104515625 47.644002109375,6.23663109375 45.842244296875,7.29131859375 42.853963046875,3.59991234375 41.975056796875,-2.55243140625 43.601033359375,-5.76043921875 48.698689609375))
 description: USER
 userPassword:: e1NIQX1SY1Z4b1ZiZHp2UVRVYWNUdk4zdVc2ZnBWR0E9
+knowledgeInformation: Internal CRM notes on testuser
 cn: testuser
 
 # testreviewer, users, georchestra.org
@@ -76,6 +77,7 @@ sshPublicKey: AAAAB3NzaC1yc2EAAAADAQABAAABAQDZYjTbscNq9hfHPW9A/yfsr9n+emySaq6NyX
 sshPublicKey: AAAAB3NzaC1yc2EAAAADAQABAAABAQDD3ZcO+iVIVUZQakEFowQ2NR2J6xe2MMV9ezZlxttS7/E/UhLn4dXnqgUETht4yRygwzu3y7BG9K0iT7YF4BMHEshpXiOos6yGG+NSIP6wND+7wj1UoDkcz0Fyis+7okO4l/NHPCYb4VVD/rcocGHDebusHPemccFqtoCdrUTh3xk4pPbqV9D4Ojppfg/oUzQVyo/kbiQ3GGnuokMpf7uAGFWp/jOoKWfIBbNauOmyx+6yNO9PoDP3wD1jf1MpFuJQszHZbPe5r8T7UOk6dhOkbKPfwRLdFqEWaxqI1Fhv8o6WTtffOk+V91MZbmxGx5QJ9/6crg0k+meKSowGHOQB
 userPassword:: e1NIQX1kREU1SkEvMkVpVTRGMFFObUt5eXpuazUrN1E9
 mail: psc+testadmin@georchestra.org
+knowledgeInformation: Internal CRM notes on testadmin
 cn: testadmin
 
 # geoserver_privileged_user, users, georchestra.org
@@ -315,6 +317,7 @@ jpegphoto:: /9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBQgMFBofBgYHCg0dHhwHBwgMFB0j
  fFK8aMP3iKw7qw6/gadRQAwW8eMCKML1CYGAR6D2p9FFABRRRQAUUUUAFFFFABRRRQAUUUUAFFF
  FABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAA/9k=
 labeledURI: https://www.georchestra.org/
+knowledgeInformation: Internal notes
 
 dn: cn=psc,ou=orgs,dc=georchestra,dc=org
 objectClass: groupOfMembers
@@ -337,6 +340,7 @@ businessCategory: Company
 postalAddress: 18 Rue du lac Saint André, 73000 Chambéry
 labeledURI: https://www.camptocamp.com/
 description: Camptocamp SAS France
+knowledgeInformation: Notes internes
 
 dn: cn=c2c,ou=orgs,dc=georchestra,dc=org
 objectClass: groupOfMembers
@@ -357,6 +361,7 @@ businessCategory: Company
 postalAddress: Rue Jean Wenger - Valentin, 67000 Strasbourg
 labeledURI: https://www.grandest.fr/
 description: Conseil Régional
+knowledgeInformation: Notes sur l'organisme CRA
 
 dn: cn=cra,ou=orgs,dc=georchestra,dc=org
 objectClass: groupOfMembers

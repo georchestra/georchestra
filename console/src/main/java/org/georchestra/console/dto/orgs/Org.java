@@ -35,6 +35,7 @@ public class Org extends AbstractOrg implements Comparable<Org>, Cloneable {
     public static final String JSON_NAME = "name";
     public static final String JSON_SHORT_NAME = "shortName";
     public static final String JSON_CITIES = "cities";
+    public static final String JSON_NOTE = "note";
     public static final String JSON_MEMBERS = "members";
     public static final String JSON_PENDING = "pending";
     public static final String JSON_DESCRIPTION = "description";
@@ -139,6 +140,14 @@ public class Org extends AbstractOrg implements Comparable<Org>, Cloneable {
             return null;
         else
             return orgExt.getDescription();
+    }
+
+    @JsonProperty(JSON_NOTE)
+    public String getNote() {
+        if (this.orgExt == null)
+            return null;
+        else
+            return orgExt.getNote();
     }
 
     @JsonProperty(JSON_URL)

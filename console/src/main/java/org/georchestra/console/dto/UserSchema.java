@@ -57,6 +57,7 @@ public interface UserSchema {
     public static final String CONTEXT_KEY = "preferredLanguage";
     public static final String MEMBER_OF = "memberOf";
     public static final String SSH_KEY = "sshPublicKey";
+    public static final String NOTE_KEY = "knowledgeInformation";
 
     // Only used in JSON output
     public static final String PENDING = "pending";
@@ -68,6 +69,6 @@ public interface UserSchema {
             POST_OFFICE_BOX_KEY, DESCRIPTION_KEY, TELEPHONE_KEY, PHYSICAL_DELIVERY_OFFICE_NAME_KEY, MOBILE_KEY,
             ROOM_NUMBER_KEY, LOCALITY_KEY, STATE_OR_PROVINCE_KEY, ORG_UNIT_KEY, USER_PASSWORD_KEY,
             REGISTERED_ADDRESS_KEY, SHADOW_EXPIRE_KEY, PRIVACY_POLICY_AGREEMENT_DATE_KEY, MANAGER_KEY, CONTEXT_KEY,
-            MEMBER_OF, SSH_KEY, PENDING };
+            MEMBER_OF, SSH_KEY, NOTE_KEY, PENDING };
 
 }

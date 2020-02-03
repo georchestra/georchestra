@@ -107,6 +107,13 @@
         </div>
       </div>
 
+      <div class="form-group form-group-sm" ng-class="{required: required.knowledgeInformation}">
+        <label class="col-sm-4" for="knowledgeInformation" translate>user.note</label>
+        <div class="col-sm-8">
+          <textarea ng-model="model.knowledgeInformation" class="form-control" id="knowledgeInformation" placeholder="{{'user.note' | translate}}" ng-required="required.knowledgeInformation"></textarea>
+        </div>
+      </div>
+
       <hr>
 
       <div class="form-group" ng-if="model.$promise" ng-class="{required: required.uid}">

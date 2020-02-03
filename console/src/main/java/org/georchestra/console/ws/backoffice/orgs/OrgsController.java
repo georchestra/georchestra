@@ -518,6 +518,7 @@ public class OrgsController {
         orgExt.setAddress(json.optString(OrgExt.JSON_ADDRESS));
         orgExt.setPending(json.optBoolean(Org.JSON_PENDING));
         orgExt.setDescription(json.optString(Org.JSON_DESCRIPTION));
+        orgExt.setNote(json.optString(Org.JSON_NOTE));
         orgExt.setUrl(json.optString(Org.JSON_URL));
         orgExt.setLogo(json.optString(Org.JSON_LOGO));
     }

@@ -92,6 +92,7 @@ public class AccountFactory {
      * @param roomNumber
      * @param stateOrProvince
      * @param manager
+     * @param note
      * @param context
      * @param org
      * @param sshKeys
@@ -102,7 +103,7 @@ public class AccountFactory {
             String title, String phone, String description, String postalAddress, String postalCode,
             String registeredAddress, String postOfficeBox, String physicalDeliveryOfficeName, String street,
             String locality, String facsimile, String homePostalAddress, String mobile, String roomNumber,
-            String stateOrProvince, String manager, String context, String org, String[] sshKeys) {
+            String stateOrProvince, String manager, String note, String context, String org, String[] sshKeys) {
 
         Account a = new AccountImpl();
 
@@ -127,6 +128,7 @@ public class AccountFactory {
         a.setRoomNumber(roomNumber);
         a.setStateOrProvince(stateOrProvince);
         a.setManager(manager);
+        a.setNote(note);
         a.setContext(context);
         a.setOrg(org);
         a.setSshKeys(sshKeys);
@@ -167,6 +169,7 @@ public class AccountFactory {
         a.setManager(o.getManager());
         a.setShadowExpire(o.getShadowExpire());
         a.setContext(o.getContext());
+        a.setNote(o.getNote());
         a.setOrg(o.getOrg());
         a.setPending(o.isPending());
         a.setSshKeys(o.getSshKeys());

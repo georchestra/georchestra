@@ -148,6 +148,10 @@ public interface Account extends Comparable<Account> {
 
     void setManager(String manager);
 
+    String getNote();
+
+    void setNote(String note);
+
     String getContext();
 
     void setContext(String context);

@@ -128,6 +128,9 @@ public class AccountImpl implements Serializable, Account {
     @JsonProperty(UserSchema.MANAGER_KEY)
     private String manager;
 
+    @JsonProperty(UserSchema.NOTE_KEY)
+    private String note;
+
     @JsonProperty(UserSchema.CONTEXT_KEY)
     private String context;
 
@@ -152,7 +155,7 @@ public class AccountImpl implements Serializable, Account {
                 + ", roomNumber='" + roomNumber + '\'' + ", stateOrProvince='" + stateOrProvince + '\''
                 + ", homePostalAddress='" + homePostalAddress + '\'' + ", shadowExpire='" + shadowExpire + '\''
                 + ", privacyPolicyAgreementDate='" + privacyPolicyAgreementDate + '\'' + ", context='" + context + '\''
-                + ", org='" + org + '\'' + ", sshKeys='" + Arrays.toString(sshKeys) + "'}";
+                + ", note='" + note + '\'' + ", org='" + org + '\'' + ", sshKeys='" + Arrays.toString(sshKeys) + "'}";
     }
 
     @Override
@@ -424,6 +427,16 @@ public class AccountImpl implements Serializable, Account {
     }
 
     @Override
+    public String getNote() {
+        return note;
+    }
+
+    @Override
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    @Override
     public String getContext() {
         return context;
     }
@@ -469,7 +482,7 @@ public class AccountImpl implements Serializable, Account {
                 && Objects.equals(roomNumber, account.roomNumber)
                 && Objects.equals(stateOrProvince, account.stateOrProvince)
                 && Objects.equals(homePostalAddress, account.homePostalAddress)
-                && Objects.equals(shadowExpire, account.shadowExpire)
+                && Objects.equals(shadowExpire, account.shadowExpire) && Objects.equals(note, account.note)
                 && Objects.equals(privacyPolicyAgreementDate, account.privacyPolicyAgreementDate)
                 && Objects.equals(manager, account.manager) && Objects.equals(context, account.context)
                 && Objects.equals(org, account.org) && Arrays.equals(sshKeys, account.sshKeys);
