@@ -9,7 +9,7 @@ Version 20.1
 ============
 
 Thanks to GeoGrandEst, CRAIG, Geo2France, Rennes Métropole, Camptocamp, JDEV,
-Benoit Degrève & Julien Sabatier for their awesome contributions !
+Benoit Degrève, Landry Breuil & Julien Sabatier for their awesome contributions !
 
 Major highlights:
  * Debian 10 & Tomcat 9 support
