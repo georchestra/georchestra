@@ -2,12 +2,12 @@
 
 ## Database migration
 
-No manual changes on the model are required to upgrade to the new version.
-
-Though, for the console, related to the GDPR compliance API [#2613](https://github.com/georchestra/georchestra/pull/2613), you should:
+For the console, related to the GDPR compliance API [#2613](https://github.com/georchestra/georchestra/pull/2613), you should:
 ```
 GRANT geonetwork TO georchestra;
 ```
+
+No other manual changes on the model are required to upgrade to the new version, since hibernate will take care of it.
 
 ## LDAP upgrade
 
@@ -70,6 +70,10 @@ ldapmodify -H ldap://localhost:389 -D "cn=admin,dc=georchestra,dc=org" -W -f /tm
 ```
 
 If anything goes wrong during the upgrade process, you can rollback thanks to the above backup (always inserting users first, or the `memberOf` overlay won't work !).
+
+## Datadir migration
+
+The `security proxy`, `console` and `geonetwork` applications have had several important changes in their configuration files. We provide a [diff](https://gist.github.com/fvanderbiest/e3afb00cd47a406cddaa2991d7171d01) to make your mind between starting from a fresh one, or upgrading yours.
 
 ## Frontend
 
