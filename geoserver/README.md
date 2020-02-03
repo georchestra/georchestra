@@ -23,16 +23,5 @@ make war-build-geoserver-geofence
 
 ## GeoFence
 
-If using GeoFence, make sure the following environment variable is defined before launching your application server:
+See [the documentation](../docs/setup/tomcat.md#note-for-geofence-users).
 
-```
--DGEOSERVER_XSTREAM_WHITELIST=org.geoserver.geoserver.authentication.auth.GeoFenceAuthenticationProviderConfig
-```
-
-The `geofence.dir` variable should also be configured so that `${geofence.dir}/geofence-datasource-ovr.properties` can resolve the correct properties file in the datadir, e.g.
-
-```
--Dgeofence.dir=/etc/georchestra/geoserver/geofence
-```
-
-This extra variable is needed because we did not want to customize a geofence module which then comes in its vanilla version.
