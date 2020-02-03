@@ -1,8 +1,7 @@
-name: "other docker apps actions"
+name: "PostGreSQL"
 on:
   push:
     paths:
-    - "ldap/**"
     - "postgresql/**"
 jobs:
   build:
@@ -13,18 +12,13 @@ jobs:
     - name: "Checking out submodules"
       uses: textbook/git-checkout-submodule-action@2.0.0
 
-    - name: "Docker build LDAP"
-      working-directory: ldap/
-      run: docker build -t docker.pkg.github.com/georchestra/georchestra/ldap:${GITHUB_REF##*/} .
-
     - name: "Docker build Database"
-      working-directory: ldap/
+      working-directory: postgresql/
       run: docker build -t docker.pkg.github.com/georchestra/georchestra/database:${GITHUB_REF##*/} .
 
     - name: publish the docker images
       run: |
         docker login docker.pkg.github.com --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
-        docker push docker.pkg.github.com/georchestra/georchestra/ldap:${GITHUB_REF##*/}
         docker push docker.pkg.github.com/georchestra/georchestra/database:${GITHUB_REF##*/}
       env:
           DOCKER_USERNAME: georchestra
@@ -33,9 +27,7 @@ jobs:
     - name: publish the docker image on docker-hub
       run: |
         docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
-        docker tag docker.pkg.github.com/georchestra/georchestra/ldap:${GITHUB_REF##*/} georchestra/ldap:latest
         docker tag docker.pkg.github.com/georchestra/georchestra/database:${GITHUB_REF##*/} georchestra/database:latest
-        docker push georchestra/ldap:latest
         docker push georchestra/database:latest
       if: github.ref == 'refs/heads/master'
       env:
