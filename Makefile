@@ -1,7 +1,7 @@
 # Docker related targets
 
 GEOSERVER_EXTENSION_PROFILES=colormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,importer,inspire,libjpeg-turbo,monitor,pyramid,wps,css,s3-geotiff,jp2k
-BTAG=20.0-SNAPSHOT
+BTAG=20.0.x
 
 docker-pull-jetty:
 	docker pull jetty:9-jre8
