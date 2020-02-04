@@ -51,7 +51,7 @@ JAVA_HOME=/usr/lib/jvm/adoptopenjdk-8-hotspot-amd64
 
 This guide assumes the OS is **Debian's latest stable** (Buster) and **Tomcat 9** is deployed.
 
-geOrchestra 19.12 has been tested with tomcat 9 on Debian 10 (Buster). This is the recommended setup as of today.
+geOrchestra 20.0.x has been tested with tomcat 9 on Debian 10 (Buster). This is the recommended setup as of today.
 
 geOrchestra 17.12 has been tested with tomcat 8 on Debian 9 (Stretch).
 
