@@ -64,7 +64,7 @@ Deprecations:
  * epsg-extension module removed
 
 
-Read [how to migrate from 19.04 to 20.0.x](migrations/20.0/README.md) and list all the [issues closed](https://github.com/georchestra/georchestra/issues?page=1&q=milestone%3A19.12+is%3Aclosed) for the release.
+Read [how to migrate from 19.04 to 20.0.x](migrations/20.0/README.md) and list all the [issues closed](https://github.com/georchestra/georchestra/issues?page=1&q=milestone%3A20.0+is%3Aclosed) for the release.
 
 
 Version 19.04
