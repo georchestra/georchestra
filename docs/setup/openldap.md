@@ -54,7 +54,7 @@ sudo ldapadd -Y EXTERNAL -H ldapi:/// -f groupofmembers.ldif
 
 ## The "memberof" overlay
 
-The optional "memberof" overlay is great to check if a user is a member of a given group.
+The "memberof" overlay is required to check if a user is a member of a given group.
 Use the [memberof.ldif](../../ldap/memberof.ldif) file to add the module and configure the overlay.
 
 Before inserting it, watch for the database name it targets... currently `olcDatabase={1}mdb,cn=config`.
@@ -71,11 +71,11 @@ After a fresh slapd install, you might already have a database set up for you, d
 
 To check the database number in your LDAP setup, you can go through the /etc/ldap/slapd.d/cn=config/ subdirectory and check the files olcDatabase={x}mdb.ldif". The different files should contain a olcSuffix attribute. The expected geOrchestra database is the one which contains a olcSuffix: dc=georchestra,dc=org.
 
-the memberOf.ldif file should match the expected database number in OpenLDAP, and you might need to adapt this LDIF file.
+The memberOf.ldif file should match the expected database number in OpenLDAP, and you might need to adapt this LDIF file.
 
 ## Add "sshPublicKey" objectClass
 
-The [openssh.ldif](../../ldap/openssh.ldif) file creates the "sshPublicKey" objectClass needed for sshPublicKey of user "testadmin" in next configuration step:
+The [openssh.ldif](../../ldap/openssh.ldif) file optionally creates the "sshPublicKey" objectClass, which is interesting to store `sshPublicKey` in the LDAP:
 
 ```
 sudo ldapadd -Y EXTERNAL -H ldapi:/// -f openssh.ldif
@@ -83,7 +83,7 @@ sudo ldapadd -Y EXTERNAL -H ldapi:/// -f openssh.ldif
 
 ## Add the "georchestra-specific" LDAP schemas
 
-The [georchestraSchema.ldif](../../ldap/georchestraSchema.ldif) file creates the "georchestraUser" and "georchestraOrg" objectClasses:
+The required [georchestraSchema.ldif](../../ldap/georchestraSchema.ldif) file creates the "georchestraUser" and "georchestraOrg" objectClasses:
 
 ```
 sudo ldapadd -Y EXTERNAL -H ldapi:/// -f georchestraSchema.ldif
