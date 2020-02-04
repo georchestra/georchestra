@@ -1,4 +1,4 @@
-# From 19.04 to 19.12
+# From 19.04 to 20.0.x
 
 ## Database migration
 
@@ -12,7 +12,7 @@ No other manual changes on the model are required to upgrade to the new version,
 ## LDAP upgrade
 
 With this release, custom new attributes are added to geOrchestra users and organisations in the LDAP, leveraging a custom, [dedicated schema](https://github.com/georchestra/georchestra/blob/master/ldap/docker-root/georchestraSchema.ldif).
-As a result, the LDAP DIT should be upgraded with the provided [script](upgrade_ldap_from_19.04_to_19.12.ldif), which creates a new geOrchestra schema with the required objectClasses and attributes.
+As a result, the LDAP DIT should be upgraded with the provided [script](upgrade_ldap_from_19.04_to_20.0.ldif), which creates a new geOrchestra schema with the required objectClasses and attributes.
 
 First of all, we recommend that you backup all entries:
 ```
@@ -23,8 +23,8 @@ ldapsearch -H ldap://localhost:389 -xLLL -D "cn=admin,dc=georchestra,dc=org" -b 
 
 Once this is done, you can start adding the new schema:
 ```
-wget https://raw.githubusercontent.com/georchestra/georchestra/master/migrations/19.12/upgrade_ldap_from_19.04_to_19.12.ldif -O /tmp/upgrade_ldap_from_19.04_to_19.12.ldif
-sudo ldapadd -Y EXTERNAL -H ldapi:/// -f /tmp/upgrade_ldap_from_19.04_to_19.12.ldif
+wget https://raw.githubusercontent.com/georchestra/georchestra/master/migrations/20.0.x/upgrade_ldap_from_19.04_to_20.0.ldif -O /tmp/upgrade_ldap_from_19.04_to_20.0.ldif
+sudo ldapadd -Y EXTERNAL -H ldapi:/// -f /tmp/upgrade_ldap_from_19.04_to_20.0.ldif
 ```
 
 Let's prepare a migration LDIF, for users:

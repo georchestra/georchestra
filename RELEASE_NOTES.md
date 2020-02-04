@@ -1,12 +1,8 @@
 The development branch is master. It can be used for testing and reporting
-errors.
+errors. For production systems, it is wise to deploy stable releases.
 
-For production systems, you are advised to use the stable branch (currently
-20.1).
-This branch receives bug fixes as they arrive, during 12 months at least.
-
-Version 20.1
-============
+Version 20.0.0
+==============
 
 Thanks to GeoGrandEst, CRAIG, Geo2France, Rennes Métropole, Camptocamp, JDEV,
 Benoit Degrève, Landry Breuil & Julien Sabatier for their awesome contributions !
@@ -68,7 +64,7 @@ Deprecations:
  * epsg-extension module removed
 
 
-Read [how to migrate from 19.04 to 20.1](migrations/19.12/README.md) and list all the [issues closed](https://github.com/georchestra/georchestra/issues?page=1&q=milestone%3A19.12+is%3Aclosed) for the release.
+Read [how to migrate from 19.04 to 20.0.x](migrations/20.0/README.md) and list all the [issues closed](https://github.com/georchestra/georchestra/issues?page=1&q=milestone%3A19.12+is%3Aclosed) for the release.
 
 
 Version 19.04
