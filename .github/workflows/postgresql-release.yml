@@ -1,18 +1,15 @@
-name: "PostGreSQL"
+name: "PostGreSQL releases"
 on:
-  push:
-    paths:
-    - "postgresql/**"
+  release:
+    types: [published]
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - name: "Checking out"
       uses: actions/checkout@v1
-    - name: "Checking out submodules"
-      uses: textbook/git-checkout-submodule-action@2.0.0
 
-    - name: "Docker build Database"
+    - name: "Docker build database"
       working-directory: postgresql/
       run: docker build -t docker.pkg.github.com/georchestra/georchestra/database:${GITHUB_REF##*/} .
 
@@ -27,9 +24,8 @@ jobs:
     - name: publish the docker image on docker-hub
       run: |
         docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
-        docker tag docker.pkg.github.com/georchestra/georchestra/database:${GITHUB_REF##*/} georchestra/database:latest
-        docker push georchestra/database:latest
-      if: github.ref == 'refs/heads/master'
+        docker tag docker.pkg.github.com/georchestra/georchestra/database:${GITHUB_REF##*/} georchestra/database:${GITHUB_REF##*/}
+        docker push georchestra/database:${GITHUB_REF##*/}
       env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}

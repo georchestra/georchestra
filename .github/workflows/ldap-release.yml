@@ -1,0 +1,31 @@
+name: "LDAP releases"
+on:
+  release:
+    types: [published]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: "Checking out"
+      uses: actions/checkout@v1
+
+    - name: "Docker build LDAP"
+      working-directory: ldap/
+      run: docker build -t docker.pkg.github.com/georchestra/georchestra/ldap:${GITHUB_REF##*/} .
+
+    - name: publish the docker images
+      run: |
+        docker login docker.pkg.github.com --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
+        docker push docker.pkg.github.com/georchestra/georchestra/ldap:${GITHUB_REF##*/}
+      env:
+          DOCKER_USERNAME: georchestra
+          DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: publish the docker image on docker-hub
+      run: |
+        docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
+        docker tag docker.pkg.github.com/georchestra/georchestra/ldap:${GITHUB_REF##*/} georchestra/ldap:${GITHUB_REF##*/}
+        docker push georchestra/ldap:${GITHUB_REF##*/}
+      env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
