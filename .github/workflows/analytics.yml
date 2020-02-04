@@ -10,8 +10,7 @@ jobs:
     steps:
     - name: "Checking out"
       uses: actions/checkout@v1
-    - name: "Checking out submodules"
-      uses: textbook/git-checkout-submodule-action@2.0.0
+
     - name: "Setting up Java"
       uses: actions/setup-java@v1
       with:
