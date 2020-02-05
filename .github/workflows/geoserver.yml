@@ -42,7 +42,7 @@ jobs:
 
     - name: "build a docker image"
       working-directory: geoserver/webapp
-      run: ../../mvnw --no-transfer-progress clean package docker:build -Pdocker,colormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,importer,inspire,libjpeg-turbo,monitor,pyramid,wps,css,s3-geotiff,jp2k -DdockerImageName=docker.pkg.github.com/georchestra/georchestra/geoserver:${GITHUB_REF##*/}
+      run: ../../mvnw --no-transfer-progress clean package docker:build -Pdocker,colormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,importer,inspire,libjpeg-turbo,monitor,pyramid,wps,css,s3-geotiff,jp2k -DdockerImageName=docker.pkg.github.com/georchestra/georchestra/geoserver:${GITHUB_REF##*/} -DskipTests
 
     - name: "publish the docker image"
       run: |
@@ -54,7 +54,7 @@ jobs:
 
     - name: "build a docker image (geofence)"
       working-directory: geoserver/webapp/
-      run: ../../mvnw --no-transfer-progress clean package docker:build -Pdocker,colormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,importer,inspire,libjpeg-turbo,monitor,pyramid,wps,css,s3-geotiff,jp2k,geofence -DdockerImageName=docker.pkg.github.com/georchestra/georchestra/geoserver:${GITHUB_REF##*/}-geofence
+      run: ../../mvnw --no-transfer-progress clean package docker:build -Pdocker,colormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,importer,inspire,libjpeg-turbo,monitor,pyramid,wps,css,s3-geotiff,jp2k,geofence -DdockerImageName=docker.pkg.github.com/georchestra/georchestra/geoserver:${GITHUB_REF##*/}-geofence -DskipTests
 
     - name: "publish the docker image (geofence)"
       run: |

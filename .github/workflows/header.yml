@@ -39,7 +39,7 @@ jobs:
 
     - name: build a docker image
       working-directory: header/
-      run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker -DdockerImageName=docker.pkg.github.com/georchestra/georchestra/header:${GITHUB_REF##*/}
+      run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker -DdockerImageName=docker.pkg.github.com/georchestra/georchestra/header:${GITHUB_REF##*/} -DskipTests
 
     - name: publish the docker image
       run: |

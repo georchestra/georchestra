@@ -43,7 +43,7 @@ jobs:
 
     - name: build a docker image
       working-directory: security-proxy/
-      run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker -DdockerImageName=docker.pkg.github.com/georchestra/georchestra/security-proxy:${GITHUB_REF##*/}
+      run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker -DdockerImageName=docker.pkg.github.com/georchestra/georchestra/security-proxy:${GITHUB_REF##*/} -DskipTests
 
     - name: publish the docker image
       run: |
