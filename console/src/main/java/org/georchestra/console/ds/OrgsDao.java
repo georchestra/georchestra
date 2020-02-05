@@ -207,8 +207,7 @@ public class OrgsDao {
                 context.setAttributeValue("businessCategory", org.getOrgType());
             if (org.getAddress() != null)
                 context.setAttributeValue("postalAddress", org.getAddress());
-            if (org.getNote() != null)
-                context.setAttributeValue("knowledgeInformation", org.getNote());
+            setOrDeleteField(context, "knowledgeInformation", org.getNote());
             setOrDeleteField(context, "description", org.getDescription());
             setOrDeleteField(context, "labeledURI", org.getUrl());
             setOrDeletePhoto(context, "jpegPhoto", org.getLogo());
