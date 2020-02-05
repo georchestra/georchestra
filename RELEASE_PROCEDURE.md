@@ -2,140 +2,104 @@
 
 This is an attempt to write down the procedure to make a release of the geOrchestra SDI.
 
-The use case we describe here is the release of geOrchestra 16.12.
+## Major releases
 
-## Configuration template
+### Datadir
 
-Go to the master branch in your template config repository:
-
+From [master](https://github.com/georchestra/datadir/tree/master), create a new branch:
 ```
-cd georchestra/template
 git checkout master
 git pull origin master
+git checkout -b 20.1
+git push origin 20.1
 ```
 
-Let's create a new branch for the release:
-
+Same has to be done for the `docker` branch:
 ```
-git checkout -b 16.12
-git push origin 16.12
+git checkout docker-master
+git pull origin docker-master
+git checkout -b docker-20.1
+git push origin docker-20.1
 ```
 
-There's nothing more to do here !
+### GeoServer minimal datadir
 
-## Datadir
+From [master](https://github.com/georchestra/geoserver_minimal_datadir/tree/master), create a new branch:
+```
+git checkout master
+git pull origin master
+git checkout -b 20.1
+git push origin 20.1
+```
 
-Same as above !
-We have to create a dedicated branch in https://github.com/georchestra/datadir for the new release.
+Same has to be done for the `geofence` branch:
+```
+git checkout geofence
+git pull origin geofence
+git checkout -b 20.1-geofence
+git push origin 20.1-geofence
+```
 
+### GeoNetwork
 
-## GeoServer minimal datadir
+Create a new branch deriving from `georchestra-gn*-master`, eg `georchestra-gn3.8.2-20.1`.
 
-In https://github.com/georchestra/geoserver_minimal_datadir create 2 new branches:
- * `16.12` from `master`
- * `16.12-geofence` from `geofence`
+In branch `georchestra-gn3.8.2-20.1`, file `web/pom.xml`:
+change `<dockerDatadirScmVersion>docker-master</dockerDatadirScmVersion>` into `<dockerDatadirScmVersion>docker-20.1</dockerDatadirScmVersion>`
 
-Update the default branch to `16.12`.
-
-## GeoNetwork 3
-
-Create a new branch deriving from `georchestra-gn3-master`, eg `georchestra-gn3-16.12`.
-
-In branch `georchestra-gn3-16.12`, in file `web/pom.xml` change `<dockerDatadirScmVersion>docker-master</dockerDatadirScmVersion>` into `<dockerDatadirScmVersion>docker-16.12</dockerDatadirScmVersion>`
-
-Commit and push `georchestra-gn3-16.12`.
-
-Merge `georchestra-gn3-16.12` into `georchestra-gn3-master`, restore `<dockerDatadirScmVersion>docker-master</dockerDatadirScmVersion>` in file `web/pom.xml`.
-Commit and push `georchestra-gn3-master`.
+Commit and push `georchestra-gn3.8.2-20.1`.
 
 We're done for GeoNetwork !
 
+### geOrchestra
 
-## geOrchestra
-
-Go to the master branch in your georchestra repository:
-
+From the master branch of the [georchestra](https://github.com/georchestra/georchestra/tree/master) repository, derive a `20.1.x` branch:
 ```
-cd georchestra/georchestra
 git checkout master
 git pull origin master
-git submodule update --init
-```
-
-Batch change the version to the release version in every pom.xml:
-
-```
-find ./ -name pom.xml -exec sed -i 's/16.12-SNAPSHOT/16.12/' {} \;
-```
-
-Reset changes in every submodule:
-
-```
-git submodule foreach 'git reset --hard'
+git checkout -b 20.1.x
 ```
 
 Update the GeoNetwork submodule to the release commit:
-
 ```
 cd geonetwork
-git checkout georchestra-gn3-16.12
-git pull origin georchestra-gn3-16.12
+git fetch origin
+git checkout georchestra-gn3.8.2-20.1
+git pull origin georchestra-gn3.8.2-20.1
 cd -
 ```
 
-Manually update the files mentionning the current release version (```README.md``` and ```RELEASE_NOTES.md```).
-Also update the branch name for the Travis status logo, and change the `packageDatadirScmVersion` parameter in every `pom.xml` to `docker-16.12`:
-```
-find ./ -name pom.xml -exec sed -i 's#<packageDatadirScmVersion>master</packageDatadirScmVersion>#<packageDatadirScmVersion>16.12</packageDatadirScmVersion>#' {} \;
-```
+Other tasks:
+ * Manually update the files mentionning the current release version (```README.md``` and ```RELEASE_NOTES.md```)
+ * Update the branch name for the Travis status logo
+ * Change the `packageDatadirScmVersion` parameter in the root `pom.xml` to `20.1`
+ * Change the `BTAG` variable in the Makefile to `20.1.x`
+ * Check the submodule branches in `.gitmodules` are correct, since [dependabot](https://app.dependabot.com/accounts/georchestra/) depends on it to update submodules
+ * Setup a [new dependabot job](https://app.dependabot.com/accounts/georchestra/) which takes care of updating the submodules for this new branch
 
 Commit and propagate the changes:
-
 ```
 git add geonetwork
-git commit -am "16.12 release"
-git tag v16.12
-git push origin master --tags
+git commit -am "20.1.x branch"
 ```
 
-Now, let's create the maintenance branch for geOrchestra 16.12:
-
+When the release is ready on branch `20.1.x`, push a tag:
 ```
-git checkout -b 16.12
-git push origin 16.12
+git tag v20.1.0
+git push origin 20.1.x --tags
 ```
 
-... and update the project version in master:
-
+The master branch requires some work too:
 ```
 git checkout master
-find ./ -name pom.xml -exec sed -i 's#<packageDatadirScmVersion>16.12</packageDatadirScmVersion>#<packageDatadirScmVersion>master</packageDatadirScmVersion>#' {} \;
-find ./ -name pom.xml -exec sed -i 's#<version>16.12</version>#<version>17.06-SNAPSHOT</version>#' {} \;
+find ./ -name pom.xml -exec sed -i 's#<version>20.1-SNAPSHOT</version>#<version>20.2-SNAPSHOT</version>#' {} \;
 git submodule foreach 'git reset --hard'
 git commit -am "updated project version in pom.xml"
 ```
 
-Let's update GN submodule too:
-
-```
-cd geonetwork
-git fetch origin
-git checkout georchestra-gn3-master
-git pull origin georchestra-gn3-master
-cd -
-```
-
-Commit and propagate the changes:
-
-```
-git add geonetwork
-git commit -m "updated GeoNetwork submodule"
-git push origin master
-```
-
-geOrchestra 16.12 is now released, congrats !
-
-Finally, change the default branch to latest stable in the [georchestra](https://github.com/georchestra/georchestra/settings), [geonetwork](https://github.com/georchestra/geonetwork/settings), [template](https://github.com/georchestra/template/settings) and [datadir](https://github.com/georchestra/datadir/settings) repositories.
-... and eventually in the geoserver and geofence repositories too.
+geOrchestra 20.1.0 is now released, congrats !
 
 Do not forget to also update the [website](http://www.georchestra.org/software.html) !
+
+
+## Patch releases (TO BE DONE)
