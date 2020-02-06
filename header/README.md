@@ -6,7 +6,7 @@ This module publishes a dynamic header, which is by default incorporated into ev
 
 In case the provided header does not suit, it is possible to call another page via the `headerUrl` [config option](https://github.com/georchestra/datadir/blob/19.04/default.properties#L36-L39).
 
-This page should have the `base` tag in the document `head` configured, in order to open links in the iframe's parent:
+The page should have a `base` tag in the document `head` configured, in order to open links in the iframe's parent:
 ```html
 <base target="_parent" />`
 ```
