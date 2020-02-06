@@ -11,7 +11,7 @@ jobs:
     - name: "Checking out"
       uses: actions/checkout@v1
     - name: "Checking out submodules"
-      uses: textbook/git-checkout-submodule-action@2.0.0
+      run: git submodule update --init --recursive
     - name: "Setting up Java"
       uses: actions/setup-java@v1
       with:
@@ -22,14 +22,13 @@ jobs:
           echo $M2_SETTINGS_FILE > $HOME/.m2/settings.xml
       env:
           M2_SETTINGS_FILE: ${{ secrets.M2_SETTINGS_FILE }}
-
     - name: "installing geOrchestra root pom"
       run: ./mvnw install --non-recursive
     - name: "installing georchestra-commons into .m2"
       run: ./mvnw install -pl commons
     - name: "install"
       working-directory: geoserver/
-      run: ../mvnw --no-transfer-progress -B -Dfmt.skip=true install -Dadditionalparam=-Xdoclint:none -DskipTests
+      run: ../mvnw --no-transfer-progress -B -Dfmt.skip=true clean install -Dadditionalparam=-Xdoclint:none -DskipTests
     - name: "run test"
       working-directory: geoserver/
       run: ../mvnw --no-transfer-progress clean verify -Pit -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
