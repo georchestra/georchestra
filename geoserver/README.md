@@ -1,5 +1,7 @@
 # GeoServer in geOrchestra
 
+![geoserver](https://github.com/georchestra/georchestra/workflows/geoserver/badge.svg)
+
 geOrchestra comes with it's own GeoServer version, which is a very light fork for customization (header & geofence integration, mainly).
 
 If needed, geOrchestra is able to work with an unmodified, standard [GeoServer](http://geoserver.org/) instance, provided the [georchestra/geoserver_minimal_datadir](https://github.com/georchestra/geoserver_minimal_datadir) custom datadir is used.

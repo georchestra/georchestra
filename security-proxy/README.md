@@ -1,5 +1,7 @@
 # security-proxy
 
+![security-proxy](https://github.com/georchestra/georchestra/workflows/security-proxy/badge.svg)
+
 The security-proxy (aka SP) belongs to geOrchestra core, since it is the component which :
  * handles user sessions
  * routes requests to webapps (except CAS)
@@ -97,4 +99,3 @@ geoserver=http://sp2:8080/geoserver/
 console=http://sp2:8080/console/
 mapfishapp=http://sp2:8080/mapfishapp/
 ```
-

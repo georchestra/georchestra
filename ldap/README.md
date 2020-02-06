@@ -1,6 +1,8 @@
 # LDAP
 
-This folder holds the required files to configure and populate an OpenLDAP directory before installing the [geOrchestra](http://www.georchestra.org) SDI.  
+![LDAP](https://github.com/georchestra/georchestra/workflows/LDAP/badge.svg)
+
+This folder holds the required files to configure and populate an OpenLDAP directory before installing the [geOrchestra](http://www.georchestra.org) SDI.
 
 Please refer to the [geOrchestra documentation](https://github.com/georchestra/georchestra/blob/master/docs/setup/openldap.md) for instructions.
 

@@ -1,5 +1,7 @@
 # Atlas
 
+![atlas](https://github.com/georchestra/georchestra/workflows/atlas/badge.svg)
+
 This webapp aims to generate an Atlas as a PDF document, given a WFS layer and
 a base map, presenting one feature on each page, and provides some basic page
 setup options.
@@ -30,7 +32,7 @@ geOrchestra repositories.
 
 ## Datadir
 
-This webapp is compatible with the geOrchestra "datadir-mode".  
+This webapp is compatible with the geOrchestra "datadir-mode".
 It expects to run in a servlet container having the `georchestra.datadir` java option. Read more on the [georchestra/datadir](https://github.com/georchestra/datadir/tree/master) repository, and check the files from the [atlas sub-directory](https://github.com/georchestra/datadir/tree/master/atlas).
 
 ## Configuration
