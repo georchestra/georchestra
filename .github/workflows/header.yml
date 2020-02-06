@@ -1,4 +1,4 @@
-name: "header actions"
+name: "header"
 on:
   push:
     paths:

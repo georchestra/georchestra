@@ -1,4 +1,4 @@
-name: "geoserver actions"
+name: "geoserver"
 on:
   push:
     paths:

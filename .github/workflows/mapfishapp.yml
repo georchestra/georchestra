@@ -1,4 +1,4 @@
-name: "mapfishapp actions"
+name: "mapfishapp"
 on:
   push:
     paths:

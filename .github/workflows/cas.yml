@@ -1,4 +1,4 @@
-name: "cas actions"
+name: "cas"
 on:
   push:
     paths:

@@ -1,4 +1,4 @@
-name: "atlas actions"
+name: "atlas"
 on:
   push:
     paths:

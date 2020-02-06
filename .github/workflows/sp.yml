@@ -1,4 +1,4 @@
-name: "security-proxy actions"
+name: "security-proxy"
 on:
   push:
     paths:

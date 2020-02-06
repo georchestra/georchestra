@@ -1,4 +1,4 @@
-name: "console actions"
+name: "console"
 on:
   push:
     paths:
