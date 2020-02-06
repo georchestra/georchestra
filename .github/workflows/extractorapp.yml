@@ -1,4 +1,4 @@
-name: "extractorapp actions"
+name: "extractorapp"
 on:
   push:
     paths:

@@ -1,4 +1,4 @@
-name: "geowebcache actions"
+name: "geowebcache"
 on:
   push:
     paths:

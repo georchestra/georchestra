@@ -1,4 +1,4 @@
-name: "analytics actions"
+name: "analytics"
 on:
   push:
     paths:
