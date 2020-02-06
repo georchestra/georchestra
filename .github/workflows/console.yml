@@ -26,12 +26,9 @@ jobs:
     - name: "installing geOrchestra root pom"
       run: ./mvnw install --non-recursive
 
-    - name: installing georchestra-commons into .m2
-      run: ./mvnw install -P-all,console -pl commons
-
     - name: install & check formating
       working-directory: console/
-      run: ../mvnw --no-transfer-progress -B -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
+      run: ../mvnw --no-transfer-progress -B -P-all,console -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
 
     - name: run tests
       working-directory: console/

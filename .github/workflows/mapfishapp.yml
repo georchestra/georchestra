@@ -34,12 +34,9 @@ jobs:
     - name: "installing geOrchestra root pom"
       run: ./mvnw install --non-recursive
 
-    - name: installing georchestra-commons into .m2
-      run: ./mvnw install -pl commons
-
     - name: install & check formating
       working-directory: mapfishapp/
-      run: ../mvnw --no-transfer-progress -B -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
+      run: ../mvnw --no-transfer-progress -B -P-all,mapfishapp -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
 
     - name: run tests
       working-directory: mapfishapp/

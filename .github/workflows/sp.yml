@@ -27,15 +27,9 @@ jobs:
     - name: "installing geOrchestra root pom"
       run: ./mvnw install --non-recursive
 
-    - name: installing georchestra-commons into .m2
-      run: ./mvnw install -P-all,proxy -pl commons
-
-    - name: installing ogc-server-statistics into .m2
-      run: ./mvnw install -pl ogc-server-statistics
-
     - name: install & check formating
       working-directory: security-proxy/
-      run: ../mvnw --no-transfer-progress -B -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
+      run: ../mvnw --no-transfer-progress -B -P-all,proxy -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
 
     - name: run tests
       working-directory: security-proxy/
