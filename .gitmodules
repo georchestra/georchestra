@@ -14,10 +14,6 @@
 	path = mapfishapp/src/main/webapp/lib/externals/styler
 	url = https://github.com/georchestra/styler.git
 	branch = master
-[submodule "docker/smtp"]
-	path = docker/smtp
-	url = https://github.com/camptocamp/docker_smtp.git
-	branch = master
 [submodule "mapfishapp/src/main/webapp/lib/externals/ext"]
 	path = mapfishapp/src/main/webapp/lib/externals/ext
 	url = https://github.com/georchestra/extjs.git

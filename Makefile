@@ -55,29 +55,7 @@ docker-build-mapfishapp: build-deps docker-pull-jetty
 docker-build-georchestra: build-deps docker-pull-jetty docker-build-database docker-build-ldap docker-build-geoserver docker-build-geowebcache docker-build-gn3
 	mvn clean package docker:build -DdockerImageTags=${BTAG} -Pdocker -DskipTests --pl extractorapp,cas-server-webapp,security-proxy,mapfishapp,header,console,analytics,atlas
 
-docker-build-smtp:
-	docker pull debian:buster
-	cd docker/smtp/smtp-sink; \
-	docker build -t camptocamp/smtp-sink .
-
-docker-build-imap:
-	docker pull debian:buster
-	cd docker/smtp/courier-imap; \
-	docker build -t camptocamp/courier-imap .
-
-docker-build-webmail:
-	docker pull debian:buster
-	cd docker/smtp/webmail; \
-	docker build -t camptocamp/sqwebmail .
-
-docker-build-geodata:
-	docker pull debian:buster
-	cd docker/ssh_data; \
-	docker build -t georchestra/ssh_data .
-
-docker-build-dev: docker-build-smtp docker-build-imap docker-build-webmail docker-build-geodata
-
-docker-build: docker-build-dev docker-build-gn3 docker-build-geoserver docker-build-georchestra
+docker-build: docker-build-gn3 docker-build-geoserver docker-build-georchestra
 
 
 # WAR related targets
