@@ -9,12 +9,12 @@ venv="${buildpath}/env"
 #
 # Command path definitions
 #
-python="/usr/bin/python2"
-virtualenv="/usr/bin/virtualenv --python=${python}"
-mkdir="/bin/mkdir"
-rm="/bin/rm"
-sh="/bin/sh"
-cp="/bin/cp"
+python=$(/usr/bin/env python2)
+virtualenv=$(/usr/bin/env virtualenv --python=${python})
+mkdir=$(/usr/bin/env mkdir)
+rm=$(/usr/bin/env rm)
+sh=$(/usr/bin/env sh)
+cp=$(/usr/bin/env cp)
 
 #
 # build
