@@ -1,6 +1,8 @@
 Analytics
 =========
 
+![analytics](https://github.com/georchestra/georchestra/workflows/analytics/badge.svg)
+
 Analytics is a GUI which displays **monthly** and **global** statistics on platform usage, through OGC web services monitoring.
 
 It relies on the [ogc-server-statistics](ogc-server-statistics/README.md) module (which is embedded into the security-proxy) to collect figures in a database:

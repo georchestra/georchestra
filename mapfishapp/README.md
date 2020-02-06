@@ -1,12 +1,14 @@
 Mapfishapp
 ==========
 
+![mapfishapp](https://github.com/georchestra/georchestra/workflows/mapfishapp/badge.svg)
+
 Mapfishapp is geOrchestra's advanced viewer and editor.
 
 With it, you can :
  * browse through CSW, WMTS, WMS & WFS services and add any layer to the current map,
  * upload geo files for viewing (shapefile, tab, kml, gml, gpx),
- * create custom SLDs and style WMS layers, 
+ * create custom SLDs and style WMS layers,
  * query layers either with a simple tool or an advanced one supporting conditions on attributes and geometries,
  * share your map with a permalink, or save it as a WMC file and restore it later,
  * load and create custom tools for specific needs (read [how](src/main/webapp/app/addons/README.md)),
@@ -79,18 +81,18 @@ CSWquerier is the function behind the "find in catalog" form. It performs CSW qu
 
 ### Data types
 
-By default, the CSWquerier limits search on ```type = dataset || series```.  
+By default, the CSWquerier limits search on ```type = dataset || series```.
 Other types will be ignored.
 
 ### Words
 
-CSWquerier splits the search phrase into words, using ```,;:/%()!*.[]~&=``` as word separators. 
+CSWquerier splits the search phrase into words, using ```,;:/%()!*.[]~&=``` as word separators.
 Then, it builds filters based on the ```CSW_FILTER_PROPERTIES``` parameter (see GEOR_custom.js).
 
 Such a search phrase:
 
     "edoras cadastral parcel"
-    
+
 ... becomes this filter set:
 
     (Title like edoras*
@@ -111,11 +113,11 @@ Such a search phrase:
     OR Subject like parcel*
     OR OrganisationName like parcel*)
 
-... focusing on specific ISO queryables and avoiding false positive results. 
+... focusing on specific ISO queryables and avoiding false positive results.
 
 If you find it too restrictive, you can opt for the 'AnyText' property :
 
-``` 
+```
     CSW_FILTER_PROPERTIES = ['AnyText']
 ```
 
@@ -125,13 +127,13 @@ Words prefixed with special characters always will limit the search on respectiv
 
  * ```#``` for Subject (keywords) search
    * example ```#Cadastral``` will look for md with subject="Cadastral"
-    
+
  * ```@``` for OrganisationName search
    * example ```@DREAL``` will look for md with OrganisationName="DREAL"
-    
+
  * ```?``` for AnyText search
    * example ```?fishermen``` will look for md with AnyText~"fishermen*"
-    
+
  * ```-``` to exclude a term on AnyText
    * example ```-fishermen``` will exclude md matching AnyText~"fishermen*"
 
@@ -144,17 +146,17 @@ A common usecase is metadata exact match : copy-paste the metadata title, altern
 
 CSWquerier will always add those filters to this end:
 ```
-  OR Title='searchphrase*' 
-  OR AlternateTitle='searchphrase' 
-  OR Identifier='searchphrase' 
-  OR ResourceIdentifier='searchphrase' 
+  OR Title='searchphrase*'
+  OR AlternateTitle='searchphrase'
+  OR Identifier='searchphrase'
+  OR ResourceIdentifier='searchphrase'
 ```
 
 ### Spatial filter
 
 Metadata search may be restricted to a specific extent using the ```CSW_FILTER_SPATIAL``` parameter, for example :
 
-``` 
+```
     CSW_FILTER_SPATIAL = [-5,45,0,55]
 ```
 
@@ -201,7 +203,7 @@ NOTE: the previous **NS_EDIT** config option is deprecated
 Your data in mapfishapp
 ========================
 
-The geOrchestra viewer is able to query your data via OGC webservices. 
+The geOrchestra viewer is able to query your data via OGC webservices.
 This implies that vector data is transmitted as XML over the air (via WMS getFeatureInfo or WFS getFeature).
 
 Before reporting errors, please check that your data is correct.
@@ -209,7 +211,7 @@ Before reporting errors, please check that your data is correct.
 Typically, layer names & field names should not:
  - include spaces nor accentuated chars,
  - start with a number.
- 
+
 Browsers like IE or FF will typically fail, while Chromium might just ignore the incorrect fields.
 
 You should also take care not to insert special chars in the service description fields. Eg: ```"Service WMS de GéoPicardie - Département de l'Oise"``` will break your capabilities for IE, while it will work with ```"Service WMS de GéoPicardie - Département de lʼOise"``` or ```"Service WMS de GéoPicardie - Département de l&apos;Oise"```. GeoServer should do the mapping, but it does not at the moment.
@@ -227,7 +229,7 @@ How to run the viewer without Tomcat ?
 
 This mode is useful for **demo** or **development** purposes.
 
-The *first* time only, you have to compile mapfishapp and it's dependencies.  
+The *first* time only, you have to compile mapfishapp and it's dependencies.
 From the project root:
 
     $ mvn -Dmaven.test.skip=true -P-all,mapfishapp install
@@ -250,5 +252,5 @@ Then, point your browser to [http://localhost:8287/mapfishapp/?noheader=true](ht
 Install the [Modify Headers](https://addons.mozilla.org/en-US/firefox/addon/modify-headers/) Firefox extension, and set the headers to:
  * sec-username = your_desired_login
  * sec-roles = ROLE_USER or ROLE_GN_EDITOR or ROLE_GN_ADMIN
- 
+
 Note: this works only because the security proxy is not runnning.

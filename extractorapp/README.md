@@ -1,8 +1,10 @@
 Extractorapp
 ============
 
+![extractorapp](https://github.com/georchestra/georchestra/workflows/extractorapp/badge.svg)
+
 Extractorapp allows SDI users to download data bundles from existing OGC web services (WFS for vector and WCS for rasters).
-Extraction jobs are queued and can be managed by any admin user. 
+Extraction jobs are queued and can be managed by any admin user.
 The application notifies by email the requesting user that the job has been taken into account, and when it is finished.
 
 The users can extract layers from inside the mapfishapp viewer, thanks to the [extractor addon](../mapfishapp/src/main/webapp/app/addons/extractor/README.md) that shows a "Download" option in the layers, if the user is connected and has the rights to do so (`ROLE_EXTRACTORAPP` role by default).
@@ -50,7 +52,7 @@ Raster resolution
 
 The default raster resolution is set by the value of the ```DEFAULT_RESOLUTION``` config option (defaults to 10 meters).
 
-Note that, since [#726](https://github.com/georchestra/georchestra/issues/726) (released with 14.12), any layer with a MetadataURL pointing to a valid XML document mentioning the raster resolution will be extracted with this native resolution by default.  
+Note that, since [#726](https://github.com/georchestra/georchestra/issues/726) (released with 14.12), any layer with a MetadataURL pointing to a valid XML document mentioning the raster resolution will be extracted with this native resolution by default.
 To this end, administrators will have to make sure that the XPATH expression provided by the ```METADATA_RESOLUTION_XPATH``` config option is correct for their setup.
 
 
@@ -114,7 +116,7 @@ Install the [Modify Headers](https://addons.mozilla.org/en-US/firefox/addon/modi
  * sec-username = your_desired_login
  * sec-email = you@provider.com
  * sec-roles = ROLE_USER or ROLE_GN_EDITOR or ROLE_GN_ADMIN
- 
+
 Note: this works only because the security proxy is not runnning.
 
 
@@ -126,9 +128,9 @@ If you want to actively debug, you have to set the environment variable MAVEN_OP
 
     $ export MAVEN_OPTS="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000"
 
-Then run jetty normally. In eclipse (or other IDE), create a run configuration that attaches to port 8000.  
-In the above configuration the server will run with or without a debugger attached. 
-If you want to debug startup then change 'suspend=n' to 'suspend=y'. 
+Then run jetty normally. In eclipse (or other IDE), create a run configuration that attaches to port 8000.
+In the above configuration the server will run with or without a debugger attached.
+If you want to debug startup then change 'suspend=n' to 'suspend=y'.
 With this configuration, the server will wait for a debugger to attach before starting.
 
 To disable the debugging simply reset MAVEN_OPTS :
@@ -139,9 +141,9 @@ To disable the debugging simply reset MAVEN_OPTS :
 Unit tests
 ==========
 
-The client server unit tests have a timeout of 30 seconds.  It means that if they fail then the tests will take a very long time.  
-Change the time down to 3s instead to debug the tests. Individually, they should normally pass with a 3 second timeout. 
-A few will fail somewhat randomly with that timeout but once the obvious errors are fixed, then increase timeout again to see if they pass. 
+The client server unit tests have a timeout of 30 seconds.  It means that if they fail then the tests will take a very long time.
+Change the time down to 3s instead to debug the tests. Individually, they should normally pass with a 3 second timeout.
+A few will fail somewhat randomly with that timeout but once the obvious errors are fixed, then increase timeout again to see if they pass.
 The timeout is set in ParallelTest.scala.
 
 If you want to debug unit tests you need to do the following:

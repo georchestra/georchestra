@@ -1,5 +1,7 @@
 # GeoWebCache distribution for geOrchestra
 
+![geowebcache](https://github.com/georchestra/georchestra/workflows/geowebcache/badge.svg)
+
 This is a geOrchestra specific re-packaging of GeoWebcache with customized extensions to
 
 - Handle authentication through geOrchestra's authentication HTTP request headers

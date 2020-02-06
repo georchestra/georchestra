@@ -1,5 +1,7 @@
 # geOrchestra's Console
 
+![console](https://github.com/georchestra/georchestra/workflows/console/badge.svg)
+
 The webapp is made of three parts:
   * on the public side, it gives the ability to:
     * create an account (`/console/account/new`)
@@ -23,9 +25,9 @@ The webapp is made of three parts:
 To clarify roles:
  * **administrators** are users holding the `SUPERUSER` role.
  * **delegated administrators** are special users having the `ORGADMIN` role.
-An administrator has set up a delegation for them 
-(on page `/console/manager/#!/users/${user_id}/delegations`). They can access 
-the manager, where they can grant a subset of roles to users belonging to a 
+An administrator has set up a delegation for them
+(on page `/console/manager/#!/users/${user_id}/delegations`). They can access
+the manager, where they can grant a subset of roles to users belonging to a
 collection of organisations.
  * **referents** are users holding the `REFERENT` role. They are allowed to
 modify several of their organisation fields, namely: name, address, logo,
@@ -181,4 +183,3 @@ To do so launch them externally mapping the ports 389 and 5432 as appropriate,  
 When the test case is finished, make sure to run `mvn verify` to check it works properly within the maven build cycle.
 
 Finally, when writing integration tests, make sure they're self contained and would not be affected by any existing data in the external resources.
-
