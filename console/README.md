@@ -130,7 +130,6 @@ Once created, set the following parameters:
 * `privateKey`
 * `publicKey`
 
-
 ### Protected Users
 
 Several user accounts can be protected against deletion or modification, with the `protectedUsersList` property, which holds a comma separated list of user accounts `uid`. These users also do not show up in the manager.
