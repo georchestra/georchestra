@@ -10,7 +10,6 @@ It makes use of Camptocamp's `mapfishprint-v3` component. It queues the print
 requests, generates the PDF file, then sends an email to the user with an URL
 letting him finally get his document.
 
-
 This project was funded by [Rennes-Métropole](https://github.com/sigrennesmetropole/).
 
 ## Compilation
