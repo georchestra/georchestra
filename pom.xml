@@ -891,32 +891,6 @@
       </modules>
     </profile>
     <profile>
-      <id>travis</id>
-      <build>
-        <plugins>
-          <!-- skip plugin, since this fails on travis-ci and this is useless -->
-          <plugin>
-            <groupId>pl.project13.maven</groupId>
-            <artifactId>git-commit-id-plugin</artifactId>
-            <configuration>
-              <skip>true</skip>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-      <modules>
-        <module>ogc-server-statistics</module>
-        <module>extractorapp</module>
-        <module>console</module>
-        <module>mapfishapp</module>
-        <module>security-proxy</module>
-        <module>analytics</module>
-        <module>header</module>
-        <module>atlas</module>
-        <module>geowebcache-webapp</module>
-      </modules>
-    </profile>
-    <profile>
       <id>all</id>
       <activation>
         <file>
