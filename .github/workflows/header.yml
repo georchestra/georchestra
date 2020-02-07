@@ -26,9 +26,9 @@ jobs:
     - name: "Installing & checking formatting"
       run: ./mvnw --no-transfer-progress -B -P-all,header -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
 
-    - name: "Running tests"
-      working-directory: header/
-      run: ../mvnw --no-transfer-progress clean verify -Pit -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
+#    - name: "Running tests"
+#      working-directory: header/
+#      run: ../mvnw --no-transfer-progress clean verify -Pit -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
 
     - name: Getting image tag
       id: get_version
@@ -52,7 +52,6 @@ jobs:
       uses: azure/docker-login@v1
       if: github.ref == 'refs/heads/master' || contains(github.ref, 'refs/heads/fix')
       with:
-        login-server: 'index.docker.io'
         username: '${{ secrets.DOCKER_HUB_USERNAME }}'
         password: '${{ secrets.DOCKER_HUB_PASSWORD }}'
 
