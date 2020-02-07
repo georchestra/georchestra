@@ -23,12 +23,8 @@ jobs:
       env:
           M2_SETTINGS_FILE: ${{ secrets.M2_SETTINGS_FILE }}
 
-    - name: "installing geOrchestra root pom"
-      run: ./mvnw install --non-recursive
-
     - name: install & check formating
-      working-directory: analytics/
-      run: ../mvnw --no-transfer-progress -B -P-all,analytics -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
+      run: ./mvnw --no-transfer-progress -B -P-all,analytics -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
 
     - name: run tests
       working-directory: analytics/

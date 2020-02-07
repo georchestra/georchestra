@@ -24,12 +24,8 @@ jobs:
       env:
           M2_SETTINGS_FILE: ${{ secrets.M2_SETTINGS_FILE }}
 
-    - name: "installing geOrchestra root pom"
-      run: ./mvnw install --non-recursive
-
     - name: install & check formating
-      working-directory: security-proxy/
-      run: ../mvnw --no-transfer-progress -B -P-all,proxy -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
+      run: ./mvnw --no-transfer-progress -B -P-all,proxy -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
 
     - name: run tests
       working-directory: security-proxy/

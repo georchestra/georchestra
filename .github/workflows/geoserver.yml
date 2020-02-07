@@ -25,12 +25,9 @@ jobs:
           echo $M2_SETTINGS_FILE > $HOME/.m2/settings.xml
       env:
           M2_SETTINGS_FILE: ${{ secrets.M2_SETTINGS_FILE }}
-    - name: "installing geOrchestra root pom"
-      run: ./mvnw install --non-recursive
 
     - name: "install"
-      working-directory: geoserver/
-      run: ../mvnw --no-transfer-progress -B -P-all,geoserver -Dfmt.skip=true install -Dadditionalparam=-Xdoclint:none -DskipTests
+      run: ./mvnw --no-transfer-progress -B -P-all,geoserver -Dfmt.skip=true install -Dadditionalparam=-Xdoclint:none -DskipTests
 
     - name: "run test"
       working-directory: geoserver/
