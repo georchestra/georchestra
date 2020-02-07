@@ -19,7 +19,7 @@ jobs:
       with:
         java-version: '8.x'
 
-    - name: setup Python 2.x (for jsbuild)
+    - name: "Setting up Python 2.x for jsbuild"
       uses: actions/setup-python@v1
       with:
         python-version: '2.x'
@@ -31,26 +31,24 @@ jobs:
       env:
           M2_SETTINGS_FILE: ${{ secrets.M2_SETTINGS_FILE }}
 
-    - name: install & check formating
+    - name: "Installing & checking formatting"
       run: ./mvnw --no-transfer-progress -B -P-all,mapfishapp -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
 
-    - name: run tests
+    - name: "Running tests"
       working-directory: mapfishapp/
       run: ../mvnw --no-transfer-progress clean verify -Pit -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
 
-    - name: build a docker image
+    - name: "Building a docker image"
       working-directory: mapfishapp/
       run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker -DdockerImageName=docker.pkg.github.com/georchestra/georchestra/mapfishapp:${GITHUB_REF##*/} -DskipTests
 
-    - name: publish the docker image
-      run: |
-        docker login docker.pkg.github.com --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
-        docker push docker.pkg.github.com/georchestra/georchestra/mapfishapp:${GITHUB_REF##*/}
-      env:
-          DOCKER_USERNAME: georchestra
-          DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+    - name: "Logging in docker.pkg.github.com"
+      run: echo '${{ secrets.$DOCKER_PASSWORD }}' | docker login docker.pkg.github.com --username georchestra --password-stdin
 
-    - name: publish the docker image on docker-hub
+    - name: "Publishing the docker image locally"
+      run: docker push docker.pkg.github.com/georchestra/georchestra/mapfishapp:${GITHUB_REF##*/}
+
+    - name: "Publishing onto Docker Hub"
       run: |
         docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
         docker tag docker.pkg.github.com/georchestra/georchestra/mapfishapp:${GITHUB_REF##*/} georchestra/mapfishapp:latest
