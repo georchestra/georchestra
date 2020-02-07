@@ -26,17 +26,17 @@ jobs:
     - name: "Installing & checking formatting"
       run: ./mvnw --no-transfer-progress -B -P-all,header -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
 
-#    - name: "Running tests"
-#      working-directory: header/
-#      run: ../mvnw --no-transfer-progress clean verify -Pit -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
+    - name: "Running tests"
+      working-directory: header/
+      run: ../mvnw --no-transfer-progress clean verify -Pit -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
 
     - name: Getting image tag
-      id: get_version
+      id: version
       run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
     - name: "Building docker image"
       working-directory: header/
-      run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker -DdockerImageName=docker.pkg.github.com/georchestra/georchestra/header:${{ steps.get_version.outputs.VERSION }} -DskipTests
+      run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker -DdockerImageName=docker.pkg.github.com/georchestra/georchestra/header:${{ steps.version.outputs.VERSION }} -DskipTests
 
     - name: "Logging in docker.pkg.github.com"
       uses: azure/docker-login@v1
@@ -46,17 +46,28 @@ jobs:
         password: '${{ secrets.GITHUB_TOKEN }}'
 
     - name: "Pushing to docker.pkg.github.com"
-      run: docker push docker.pkg.github.com/georchestra/georchestra/header:${{ steps.get_version.outputs.VERSION }}
+      run: docker push docker.pkg.github.com/georchestra/georchestra/header:${{ steps.version.outputs.VERSION }}
 
-    - name: "Logging in index.docker.io"
+    - name: "Logging in docker.io"
       uses: azure/docker-login@v1
-      if: github.ref == 'refs/heads/master' || contains(github.ref, 'refs/heads/fix')
       with:
         username: '${{ secrets.DOCKER_HUB_USERNAME }}'
         password: '${{ secrets.DOCKER_HUB_PASSWORD }}'
 
-    - name: "Pushing to index.docker.io"
-      if: github.ref == 'refs/heads/master' || contains(github.ref, 'refs/heads/fix')
+    - name: "Pushing latest to docker.io"
+      if: github.ref == 'refs/heads/master'
       run: |
-        docker tag docker.pkg.github.com/georchestra/georchestra/header:${{ steps.get_version.outputs.VERSION }} georchestra/header:${{ steps.get_version.outputs.VERSION }}
-        docker push georchestra/header:${{ steps.get_version.outputs.VERSION }}
+        docker tag docker.pkg.github.com/georchestra/georchestra/header:${{ steps.version.outputs.VERSION }} georchestra/header:latest
+        docker push georchestra/header:latest
+
+    - name: "Pushing release branch to docker.io"
+      if: contains(github.ref, 'refs/heads/20.')
+      run: |
+        docker tag docker.pkg.github.com/georchestra/georchestra/header:${{ steps.version.outputs.VERSION }} georchestra/header:${{ steps.version.outputs.VERSION }}
+        docker push georchestra/header:${{ steps.version.outputs.VERSION }}
+
+    - name: "Pushing release tag to docker.io"
+      if: contains(github.ref, 'refs/tags/20.')
+      run: |
+        docker tag docker.pkg.github.com/georchestra/georchestra/header:${{ steps.version.outputs.VERSION }} georchestra/header:${{ steps.version.outputs.VERSION }}
+        docker push georchestra/header:${{ steps.version.outputs.VERSION }}
