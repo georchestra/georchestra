@@ -43,7 +43,7 @@ jobs:
       run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker -DdockerImageName=docker.pkg.github.com/georchestra/georchestra/mapfishapp:${GITHUB_REF##*/} -DskipTests
 
     - name: "Logging in docker.pkg.github.com"
-      run: echo '${{ secrets.$DOCKER_PASSWORD }}' | docker login docker.pkg.github.com --username georchestra --password-stdin
+      run: echo '${{ secrets.DOCKER_PASSWORD }}' | docker login docker.pkg.github.com --username georchestra --password-stdin
 
     - name: "Publishing the docker image locally"
       run: docker push docker.pkg.github.com/georchestra/georchestra/mapfishapp:${GITHUB_REF##*/}
