@@ -36,6 +36,7 @@ jobs:
 
 #    - name: "Logging in docker.pkg.github.com"
 #      uses: azure/docker-login@v1
+#      if: github.event_name == 'pull_request'
 #      with:
 #        login-server: 'docker.pkg.github.com'
 #        username: 'georchestra'
@@ -43,17 +44,18 @@ jobs:
 #
 #    - name: "Pushing to docker.pkg.github.com"
 #      run: docker push docker.pkg.github.com/georchestra/georchestra/header:${GITHUB_REF##*/}
+#      if: github.event_name == 'pull_request'
 
     - name: "Logging in index.docker.io"
       uses: azure/docker-login@v1
-      if: github.ref == 'refs/heads/master' || contains(github.ref, 'refs/heads/20.')
+      if: github.ref == 'refs/heads/master' || contains(github.ref, 'refs/heads/fix')
       with:
         login-server: 'index.docker.io'
         username: '${{ secrets.DOCKER_HUB_USERNAME }}'
         password: '${{ secrets.DOCKER_HUB_PASSWORD }}'
 
     - name: "Pushing to index.docker.io"
-      if: github.ref == 'refs/heads/master' || contains(github.ref, 'refs/heads/20.')
+      if: github.ref == 'refs/heads/master' || contains(github.ref, 'refs/heads/fix')
       run: |
         docker tag docker.pkg.github.com/georchestra/georchestra/header:${GITHUB_REF##*/} georchestra/header:latest
         docker push georchestra/header:latest

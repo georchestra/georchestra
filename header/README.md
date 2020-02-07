@@ -23,4 +23,3 @@ var _headerOnLoad = function(iframe) {
 </script>
 <iframe src="/my/page" onload="_headerOnLoad(this)"></iframe>
 ```
-
