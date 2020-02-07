@@ -254,3 +254,4 @@ Install the [Modify Headers](https://addons.mozilla.org/en-US/firefox/addon/modi
  * sec-roles = ROLE_USER or ROLE_GN_EDITOR or ROLE_GN_ADMIN
 
 Note: this works only because the security proxy is not runnning.
+

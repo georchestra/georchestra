@@ -13,3 +13,4 @@ It relies on the [ogc-server-statistics](ogc-server-statistics/README.md) module
  * organisation, number of requests
 
 Each table can be exported to CSV for easy offline use.
+

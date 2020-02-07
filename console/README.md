@@ -182,3 +182,4 @@ To do so launch them externally mapping the ports 389 and 5432 as appropriate,  
 When the test case is finished, make sure to run `mvn verify` to check it works properly within the maven build cycle.
 
 Finally, when writing integration tests, make sure they're self contained and would not be affected by any existing data in the external resources.
+
