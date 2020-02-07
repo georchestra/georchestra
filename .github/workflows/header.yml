@@ -35,17 +35,25 @@ jobs:
       run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker -DdockerImageName=docker.pkg.github.com/georchestra/georchestra/header:${GITHUB_REF##*/} -DskipTests
 
     - name: "Logging in docker.pkg.github.com"
-      run: echo '${{ secrets.GITHUB_TOKEN }}' | docker login docker.pkg.github.com --username georchestra --password-stdin
+      uses: azure/docker-login@v1
+      with:
+        login-server: 'docker.pkg.github.com'
+        username: 'georchestra'
+        password: '${{ secrets.GITHUB_TOKEN }}'
 
-    - name: "Publishing the docker image locally"
+    - name: "Pushing to docker.pkg.github.com"
       run: docker push docker.pkg.github.com/georchestra/georchestra/header:${GITHUB_REF##*/}
 
-    - name: "Publishing onto Docker Hub"
+    - name: "Logging in index.docker.io"
+      uses: azure/docker-login@v1
+      if: github.ref == 'refs/heads/master'
+      with:
+        login-server: 'index.docker.io'
+        username: '${{ secrets.DOCKER_HUB_USERNAME }}'
+        password: '${{ secrets.DOCKER_HUB_PASSWORD }}'
+
+    - name: "Pushing to index.docker.io"
+      if: github.ref == 'refs/heads/master'
       run: |
-        docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
         docker tag docker.pkg.github.com/georchestra/georchestra/header:${GITHUB_REF##*/} georchestra/header:latest
         docker push georchestra/header:latest
-      if: github.ref == 'refs/heads/master'
-      env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
