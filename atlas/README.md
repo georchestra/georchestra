@@ -47,4 +47,3 @@ You will have to configure several configuration options in the [atlas.propertie
 To use this webapp, a mapfishapp (= geOrchestra viewer) addon has to be activated in the viewer.
 
 This is achieved by editing the [client-side atlas config file](https://github.com/georchestra/datadir/tree/atlas/mapfishapp/addons/atlas) in your datadir.
-
