@@ -11,18 +11,10 @@ jobs:
     - name: "Checking out"
       uses: actions/checkout@v1
 
-    - name: "Checking out submodules"
-      uses: textbook/git-checkout-submodule-action@2.0.0
-
     - name: "Setting up Java"
       uses: actions/setup-java@v1
       with:
         java-version: '8.x'
-
-    - name: "Setting up Python 2.x for jsbuild"
-      uses: actions/setup-python@v1
-      with:
-        python-version: '2.x'
 
     - name: "Configuring Maven"
       run: |
@@ -38,22 +30,44 @@ jobs:
       working-directory: mapfishapp/
       run: ../mvnw --no-transfer-progress clean verify -Pit -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
 
-    - name: "Building a docker image"
+    - name: Getting image tag
+      id: version
+      run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+
+    - name: "Building docker image"
       working-directory: mapfishapp/
-      run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker -DdockerImageName=docker.pkg.github.com/georchestra/georchestra/mapfishapp:${GITHUB_REF##*/} -DskipTests
+      run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker -DdockerImageName=docker.pkg.github.com/georchestra/georchestra/mapfishapp:${{ steps.version.outputs.VERSION }} -DskipTests
 
     - name: "Logging in docker.pkg.github.com"
-      run: echo '${{ secrets.GITHUB_TOKEN }}' | docker login docker.pkg.github.com --username georchestra --password-stdin
+      uses: azure/docker-login@v1
+      with:
+        login-server: 'docker.pkg.github.com'
+        username: 'georchestra'
+        password: '${{ secrets.GITHUB_TOKEN }}'
 
-    - name: "Publishing the docker image locally"
-      run: docker push docker.pkg.github.com/georchestra/georchestra/mapfishapp:${GITHUB_REF##*/}
+    - name: "Pushing to docker.pkg.github.com"
+      run: docker push docker.pkg.github.com/georchestra/georchestra/mapfishapp:${{ steps.version.outputs.VERSION }}
 
-    - name: "Publishing onto Docker Hub"
-      run: |
-        docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
-        docker tag docker.pkg.github.com/georchestra/georchestra/mapfishapp:${GITHUB_REF##*/} georchestra/mapfishapp:latest
-        docker push georchestra/mapfishapp:latest
+    - name: "Logging in docker.io"
+      uses: azure/docker-login@v1
+      with:
+        username: '${{ secrets.DOCKER_HUB_USERNAME }}'
+        password: '${{ secrets.DOCKER_HUB_PASSWORD }}'
+
+    - name: "Pushing latest to docker.io"
       if: github.ref == 'refs/heads/master'
-      env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      run: |
+        docker tag docker.pkg.github.com/georchestra/georchestra/mapfishapp:${{ steps.version.outputs.VERSION }} georchestra/mapfishapp:latest
+        docker push georchestra/mapfishapp:latest
+
+    - name: "Pushing release branch to docker.io"
+      if: contains(github.ref, 'refs/heads/20.')
+      run: |
+        docker tag docker.pkg.github.com/georchestra/georchestra/mapfishapp:${{ steps.version.outputs.VERSION }} georchestra/mapfishapp:${{ steps.version.outputs.VERSION }}
+        docker push georchestra/mapfishapp:${{ steps.version.outputs.VERSION }}
+
+    - name: "Pushing release tag to docker.io"
+      if: contains(github.ref, 'refs/tags/20.')
+      run: |
+        docker tag docker.pkg.github.com/georchestra/georchestra/mapfishapp:${{ steps.version.outputs.VERSION }} georchestra/mapfishapp:${{ steps.version.outputs.VERSION }}
+        docker push georchestra/mapfishapp:${{ steps.version.outputs.VERSION }}

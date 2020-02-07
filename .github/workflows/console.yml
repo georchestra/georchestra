@@ -23,31 +23,51 @@ jobs:
       env:
           M2_SETTINGS_FILE: ${{ secrets.M2_SETTINGS_FILE }}
 
-    - name: install & check formating
+    - name: "Installing & checking formatting"
       run: ./mvnw --no-transfer-progress -B -P-all,console -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
 
-    - name: run tests
+    - name: "Running tests"
       working-directory: console/
       run: ../mvnw --no-transfer-progress clean verify -Pit -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
 
-    - name: build a docker image
+    - name: Getting image tag
+      id: version
+      run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+
+    - name: "Building docker image"
       working-directory: console/
-      run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker -DdockerImageName=docker.pkg.github.com/georchestra/georchestra/console:${GITHUB_REF##*/} -DskipTests
+      run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker -DdockerImageName=docker.pkg.github.com/georchestra/georchestra/console:${{ steps.version.outputs.VERSION }} -DskipTests
 
-    - name: publish the docker image
-      run: |
-        docker login docker.pkg.github.com --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
-        docker push docker.pkg.github.com/georchestra/georchestra/console:${GITHUB_REF##*/}
-      env:
-          DOCKER_USERNAME: georchestra
-          DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+    - name: "Logging in docker.pkg.github.com"
+      uses: azure/docker-login@v1
+      with:
+        login-server: 'docker.pkg.github.com'
+        username: 'georchestra'
+        password: '${{ secrets.GITHUB_TOKEN }}'
 
-    - name: publish the docker image on docker-hub
-      run: |
-        docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
-        docker tag docker.pkg.github.com/georchestra/georchestra/console:${GITHUB_REF##*/} georchestra/console:latest
-        docker push georchestra/console:latest
+    - name: "Pushing to docker.pkg.github.com"
+      run: docker push docker.pkg.github.com/georchestra/georchestra/console:${{ steps.version.outputs.VERSION }}
+
+    - name: "Logging in docker.io"
+      uses: azure/docker-login@v1
+      with:
+        username: '${{ secrets.DOCKER_HUB_USERNAME }}'
+        password: '${{ secrets.DOCKER_HUB_PASSWORD }}'
+
+    - name: "Pushing latest to docker.io"
       if: github.ref == 'refs/heads/master'
-      env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      run: |
+        docker tag docker.pkg.github.com/georchestra/georchestra/console:${{ steps.version.outputs.VERSION }} georchestra/console:latest
+        docker push georchestra/console:latest
+
+    - name: "Pushing release branch to docker.io"
+      if: contains(github.ref, 'refs/heads/20.')
+      run: |
+        docker tag docker.pkg.github.com/georchestra/georchestra/console:${{ steps.version.outputs.VERSION }} georchestra/console:${{ steps.version.outputs.VERSION }}
+        docker push georchestra/console:${{ steps.version.outputs.VERSION }}
+
+    - name: "Pushing release tag to docker.io"
+      if: contains(github.ref, 'refs/tags/20.')
+      run: |
+        docker tag docker.pkg.github.com/georchestra/georchestra/console:${{ steps.version.outputs.VERSION }} georchestra/console:${{ steps.version.outputs.VERSION }}
+        docker push georchestra/console:${{ steps.version.outputs.VERSION }}
