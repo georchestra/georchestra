@@ -46,6 +46,10 @@ jobs:
 #      run: docker push docker.pkg.github.com/georchestra/georchestra/header:${GITHUB_REF##*/}
 #      if: github.event_name == 'pull_request'
 
+    - name: Getting image tag
+      id: get_version
+      run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+
     - name: "Logging in index.docker.io"
       uses: azure/docker-login@v1
       if: github.ref == 'refs/heads/master' || contains(github.ref, 'refs/heads/fix')
@@ -57,5 +61,5 @@ jobs:
     - name: "Pushing to index.docker.io"
       if: github.ref == 'refs/heads/master' || contains(github.ref, 'refs/heads/fix')
       run: |
-        docker tag docker.pkg.github.com/georchestra/georchestra/header:${GITHUB_REF##*/} georchestra/header:latest
-        docker push georchestra/header:latest
+        docker tag docker.pkg.github.com/georchestra/georchestra/header:${GITHUB_REF##*/} georchestra/header:${{ steps.get_version.outputs.VERSION }}
+        docker push georchestra/header:${{ steps.get_version.outputs.VERSION }}
