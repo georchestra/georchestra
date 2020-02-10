@@ -397,7 +397,7 @@ public class Proxy {
         try {
             return InetAddress.getByName(request.getServerName()).equals(InetAddress.getByName(url.getHost()));
         } catch (UnknownHostException e) {
-            logger.error("Unknown host: " + request.getServerName());
+            logger.error(e.getMessage(), e);
             return false;
         }
     }
@@ -709,7 +709,8 @@ public class Proxy {
             doHandleRequest(finalResponse, proxiedResponse);
         } catch (IOException | ExecutionException | InterruptedException | TimeoutException e) {
             // connection problem with the host
-            logger.error("Exception occured when trying to connect to the remote host: ", e);
+            String errMsg = String.format("Exception occured when trying to connect to the remote url '%s'", sURL);
+            logger.error(errMsg, e);
             try {
                 finalResponse.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
             } catch (IOException e2) {
