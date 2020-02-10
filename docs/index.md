@@ -4,10 +4,11 @@ It features a **metadata catalog** (GeoNetwork 3.8), an **OGC server** (GeoServe
 
 ## Releases
 
-A new release is published every 6 months and is supported during 12 months.
-Stable versions are named by their release date, eg 19.04 (latest stable) was published in April 2019.
+There are major and patch releases:
+ * Major releases are supported during 12 months.
+ * Migrating from one patch release to another does not require any configuration change. It is highly recommended.
 
-Have a look at the [release notes](https://github.com/georchestra/georchestra/blob/master/RELEASE_NOTES.md) for more information.
+Have a look at the [version numbering scheme](releases.md) and the [release notes](https://github.com/georchestra/georchestra/blob/master/RELEASE_NOTES.md) for more information.
 
 
 ## Install
@@ -47,5 +48,4 @@ Additional information can be found in the [georchestra.org](http://www.georches
  * [analytics](https://github.com/georchestra/georchestra/blob/master/analytics/README.md): admin-oriented module, a front-end to the [ogc-server-statistics](https://github.com/georchestra/georchestra/blob/master/ogc-server-statistics/README.md) module,
  * [console](https://github.com/georchestra/georchestra/blob/master/console/README.md): also an admin-oriented module, to manage users and groups,
  * [header](https://github.com/georchestra/georchestra/blob/master/header/README.md): the common header which is used by all modules,
- * [epsg-extension](https://github.com/georchestra/georchestra/blob/master/epsg-extension/README.md): a plugin to override the geotools srs definitions.
  * [atlas](https://github.com/georchestra/georchestra/blob/master/atlas/README.md): a server-side component to print multi-page PDF with one geographic feature per page.
