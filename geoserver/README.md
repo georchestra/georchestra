@@ -1,3 +1,4 @@
+
 # GeoServer in geOrchestra
 
 ![geoserver](https://github.com/georchestra/georchestra/workflows/geoserver/badge.svg)
@@ -26,4 +27,3 @@ make war-build-geoserver-geofence
 ## GeoFence
 
 See [the documentation](../docs/setup/tomcat.md#note-for-geofence-users).
-
