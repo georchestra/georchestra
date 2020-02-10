@@ -20,15 +20,15 @@ jobs:
       working-directory: postgresql/
       run: docker build -t docker.pkg.github.com/georchestra/georchestra/database:${{ steps.version.outputs.VERSION }} .
 
-    - name: "Logging in docker.pkg.github.com"
-      uses: azure/docker-login@v1
-      with:
-        login-server: 'docker.pkg.github.com'
-        username: 'georchestra'
-        password: '${{ secrets.GITHUB_TOKEN }}'
-
-    - name: "Pushing to docker.pkg.github.com"
-      run: docker push docker.pkg.github.com/georchestra/georchestra/database:${{ steps.version.outputs.VERSION }}
+#    - name: "Logging in docker.pkg.github.com"
+#      uses: azure/docker-login@v1
+#      with:
+#        login-server: 'docker.pkg.github.com'
+#        username: 'georchestra'
+#        password: '${{ secrets.GITHUB_TOKEN }}'
+#
+#    - name: "Pushing to docker.pkg.github.com"
+#      run: docker push docker.pkg.github.com/georchestra/georchestra/database:${{ steps.version.outputs.VERSION }}
 
     - name: "Logging in docker.io"
       uses: azure/docker-login@v1
