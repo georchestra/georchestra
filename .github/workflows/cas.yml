@@ -27,7 +27,7 @@ jobs:
       run: ./mvnw --no-transfer-progress -B -P-all,cas -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
 
     - name: "Running tests"
-      working-directory: cas/
+      working-directory: cas-server-webapp/
       run: ../mvnw --no-transfer-progress clean verify -Pit -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
 
     - name: Getting image tag
@@ -35,7 +35,7 @@ jobs:
       run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
     - name: "Building docker image"
-      working-directory: cas/
+      working-directory: cas-server-webapp/
       run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker -DdockerImageName=docker.pkg.github.com/georchestra/georchestra/cas:${{ steps.version.outputs.VERSION }} -DskipTests
 
     - name: "Logging in docker.pkg.github.com"
