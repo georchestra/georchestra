@@ -10,6 +10,7 @@ Please refer to the [geOrchestra documentation](https://github.com/georchestra/g
 
 This file imports ```groupOfMembers``` LDAP objectClass into OpenLdap available schemas. It allows to have empty groups, which the default ```groupOfNames``` doesn't permit. ```groupOfMembers``` comes from RFC2037bis and is used in lots of places.
 
+
 ## bootstrap.ldif
 
 This file creates the database, with an LMDB backend (please refer to [issue 856](https://github.com/georchestra/georchestra/issues/856) for more information regarding the backend type).
