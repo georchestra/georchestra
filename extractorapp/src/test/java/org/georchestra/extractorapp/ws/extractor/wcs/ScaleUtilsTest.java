@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import javax.measure.Unit;
+import javax.measure.format.UnitFormat;
 
 import org.geotools.referencing.CRS;
 import org.junit.Test;
@@ -16,7 +17,8 @@ public class ScaleUtilsTest {
     @Test
     public final void testGetUnit() throws NoSuchAuthorityCodeException, FactoryException {
         Unit u1 = ScaleUtils.getUnit(CRS.decode("EPSG:4326"));
-        assertEquals("°", u1.toString());
+        // toString() methodis sensitive to locale, using getName instead
+        assertEquals("Degree Angle", u1.getName());
         Unit u2 = ScaleUtils.getUnit(CRS.decode("EPSG:2154"));
         assertEquals("m", u2.toString());
         boolean nosuchAuthEx = false;
