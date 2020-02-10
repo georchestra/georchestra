@@ -19,7 +19,7 @@
     <maven.test.skip>false</maven.test.skip>
     <spring.version>5.1.1.RELEASE</spring.version>
     <spring-security.version>5.1.1.RELEASE</spring-security.version>
-    <gwc.version>1.16.1</gwc.version>
+    <gwc.version>1.16.2</gwc.version>
     <gt.version>22.1</gt.version><!-- must match the version used by gwc@gwc.version -->
     <context.name>geowebcache</context.name>
     <packageDatadirScmVersion>master</packageDatadirScmVersion>
