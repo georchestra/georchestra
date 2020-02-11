@@ -27,13 +27,13 @@ ${mkdir} -p ${releasepath} ${releasepath}/lang
 
 (cd ${buildpath};
  ${python} -c "import pip"
- if [[ $? != 0 ]]; then
+ if [ $? != 0 ]; then
     curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
     ${python} get-pip.py
     rm get-pip.py
  fi
  ${python} -c "import virtualenv"
- if [[ $? != 0 ]]; then
+ if [ $? != 0 ]; then
    ${python} -m pip install virtualenv
  fi
  ${venv}/bin/jsbuild -h > /dev/null

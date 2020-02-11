@@ -1,6 +1,7 @@
 Mapfishapp
 ==========
 
+
 ![mapfishapp](https://github.com/georchestra/georchestra/workflows/mapfishapp/badge.svg)
 
 Mapfishapp is geOrchestra's advanced viewer and editor.
