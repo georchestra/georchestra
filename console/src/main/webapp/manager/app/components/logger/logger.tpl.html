@@ -50,7 +50,7 @@
         </thead>
     <tbody>
         <tr dir-paginate="log in logger.logs | logs: logger.type:logger.admin:logger.target:logger.date | orderBy: '-date' | itemsPerPage: logger.itemsPerPage">
-          <td>{{::log.date | logDate}}</td>
+          <td><abbr ng-bind-html="log.date | dateFormat"></abbr></td>
           <td><a ng-link="user({id: log.admin, tab: 'infos'})" title="">{{::log.admin}}</a>
           <!--Target-->
           <td>
@@ -74,7 +74,7 @@
           <td>
             <span ng-if="!log.changed" title="{{::log.title}}">
                 <i class="glyphicon glyphicon-{{::log.icon}}"></i>
-                {{::log.type}}
+                {{::'logs.'+log.type.split('_').join('').toLowerCase() | translate}}
             </span>  
             <span ng-if="log.changed && log.type=='EMAIL_SENT'">
               <i class="glyphicon glyphicon-envelope" title="{{::log.title | translate}}"></i>

@@ -33,7 +33,7 @@
       </div>
 
       <div class="panel-heading text-center" ng-if="user.user.expired">
-        <span translate>user.expiredmsg</span> : {{::user.user.shadowExpire | dateFormat: 'LL'}}
+        <span translate>user.expiredmsg</span> : <span ng-bind-html="user.user.shadowExpire | dateFormat: 'LL'"></span>
       </div>
 
       <div class="panel-body" ng-if="user.tab=='infos'">
