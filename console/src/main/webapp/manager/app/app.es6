@@ -143,7 +143,10 @@ angular.module('manager', [
     }])
   .filter('dateFormat', ['$translate', ($translate) => {
     moment.locale($translate.use())
-    return date => moment(date).format('LL')
+    return (date, format) => {
+      const m = moment(date)
+      return `<span title="${m.format('lll')}">${!format ? m.fromNow() : m.format(format)}</span>`
+    }
   }])
   .directive('shortname', () => ({
     require: 'ngModel',
