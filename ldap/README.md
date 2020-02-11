@@ -63,3 +63,4 @@ Finally, it creates 4 organizations:
 Note that for each organization, two objects are created in the LDAP tree:
  * an `organization` object that contains the fields that describe the organization (`o`, `businessCategory`, `postalAddress`)
  * a `groupOfMembers` object that mainly contains one `member` entry for each of its members.
+

@@ -151,3 +151,4 @@ If you want to debug unit tests you need to do the following:
     $ mvn -Dmaven.surefire.debug="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000" test
 
 This is because each test is run in its own process so the MAVEN_OPTS are not passed to the tests. Since suspend=y each test will wait until you attach the debugger.
+

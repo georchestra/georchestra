@@ -41,3 +41,4 @@ For this reason, we instead make `ContextLoaderListener` load from `applicationC
 turn includes `geowebcache-georchestra.xml`, which allows to add new bean definitions as well as to
 override any previously defined bean by name; and let `DispatcherServlet` load from an empty
 `geowebcache-servlet.xml`.
+
