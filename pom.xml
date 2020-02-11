@@ -42,7 +42,7 @@
     <skipUT>false</skipUT>
     <!-- flag to disable integration tests -->
     <skipIT>false</skipIT>
-    <gt.version>21.3</gt.version>
+    <gt.version>22.2</gt.version>
     <guava.version>23.5-jre</guava.version>
     <lombok.version>1.18.4</lombok.version>
     <postgres.version>42.2.5</postgres.version>
