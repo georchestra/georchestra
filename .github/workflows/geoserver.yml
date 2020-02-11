@@ -39,24 +39,12 @@ jobs:
 
     - name: "Building docker image with native security"
       working-directory: geoserver/webapp
-      run: ../../mvnw --no-transfer-progress clean package docker:build -Pdocker,colormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,importer,inspire,libjpeg-turbo,monitor,pyramid,wps,css,s3-geotiff,jp2k -DdockerImageName=docker.pkg.github.com/georchestra/georchestra/geoserver:${{ steps.version.outputs.VERSION }} -DskipTests
+      run: ../../mvnw --no-transfer-progress clean package docker:build -Pdocker,colormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,importer,inspire,libjpeg-turbo,monitor,pyramid,wps,css,s3-geotiff,jp2k -DdockerImageName=georchestra/geoserver:${{ steps.version.outputs.VERSION }} -DskipTests
 
 
     - name: "Building docker image with geofence"
       working-directory: geoserver/webapp
-      run: ../../mvnw --no-transfer-progress clean package docker:build -Pdocker,colormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,importer,inspire,libjpeg-turbo,monitor,pyramid,wps,css,s3-geotiff,jp2k,geofence -DdockerImageName=docker.pkg.github.com/georchestra/georchestra/geoserver:${{ steps.version.outputs.VERSION }}-geofence -DskipTests
-
-#    - name: "Logging in docker.pkg.github.com"
-#      uses: azure/docker-login@v1
-#      with:
-#        login-server: 'docker.pkg.github.com'
-#        username: 'georchestra'
-#        password: '${{ secrets.GITHUB_TOKEN }}'
-#
-#    - name: "Pushing to docker.pkg.github.com"
-#      run: |
-#        docker push docker.pkg.github.com/georchestra/georchestra/geoserver:${{ steps.version.outputs.VERSION }}
-#        docker push docker.pkg.github.com/georchestra/georchestra/geoserver:${{ steps.version.outputs.VERSION }}-geofence
+      run: ../../mvnw --no-transfer-progress clean package docker:build -Pdocker,colormap,mbtiles,wps-download,app-schema,control-flow,csw,feature-pregeneralized,importer,inspire,libjpeg-turbo,monitor,pyramid,wps,css,s3-geotiff,jp2k,geofence -DdockerImageName=georchestra/geoserver:${{ steps.version.outputs.VERSION }}-geofence -DskipTests
 
     - name: "Logging in docker.io"
       uses: azure/docker-login@v1
@@ -67,23 +55,19 @@ jobs:
     - name: "Pushing latest to docker.io"
       if: github.ref == 'refs/heads/master'
       run: |
-        docker tag docker.pkg.github.com/georchestra/georchestra/geoserver:${{ steps.version.outputs.VERSION }} georchestra/geoserver:latest
-        docker tag docker.pkg.github.com/georchestra/georchestra/geoserver:${{ steps.version.outputs.VERSION }}-geofence georchestra/geoserver:geofence
+        docker tag georchestra/geoserver:${{ steps.version.outputs.VERSION }} georchestra/geoserver:latest
+        docker tag georchestra/geoserver:${{ steps.version.outputs.VERSION }}-geofence georchestra/geoserver:geofence
         docker push georchestra/geoserver:latest
         docker push georchestra/geoserver:geofence
 
     - name: "Pushing release branch to docker.io"
       if: contains(github.ref, 'refs/heads/20.')
       run: |
-        docker tag docker.pkg.github.com/georchestra/georchestra/geoserver:${{ steps.version.outputs.VERSION }} georchestra/geoserver:${{ steps.version.outputs.VERSION }}
-        docker tag docker.pkg.github.com/georchestra/georchestra/geoserver:${{ steps.version.outputs.VERSION }}-geofence georchestra/geoserver:${{ steps.version.outputs.VERSION }}-geofence
         docker push georchestra/geoserver:${{ steps.version.outputs.VERSION }}
         docker push georchestra/geoserver:${{ steps.version.outputs.VERSION }}-geofence
 
     - name: "Pushing release tag to docker.io"
       if: contains(github.ref, 'refs/tags/20.')
       run: |
-        docker tag docker.pkg.github.com/georchestra/georchestra/geoserver:${{ steps.version.outputs.VERSION }} georchestra/geoserver:${{ steps.version.outputs.VERSION }}
-        docker tag docker.pkg.github.com/georchestra/georchestra/geoserver:${{ steps.version.outputs.VERSION }}-geofence georchestra/geoserver:${{ steps.version.outputs.VERSION }}-geofence
         docker push georchestra/geoserver:${{ steps.version.outputs.VERSION }}
         docker push georchestra/geoserver:${{ steps.version.outputs.VERSION }}-geofence

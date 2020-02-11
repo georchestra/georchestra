@@ -36,38 +36,20 @@ jobs:
 
     - name: "Building docker image"
       working-directory: analytics/
-      run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker -DdockerImageName=docker.pkg.github.com/georchestra/georchestra/analytics:${{ steps.version.outputs.VERSION }} -DskipTests
-
-#    - name: "Logging in docker.pkg.github.com"
-#      uses: azure/docker-login@v1
-#      with:
-#        login-server: 'docker.pkg.github.com'
-#        username: 'georchestra'
-#        password: '${{ secrets.GITHUB_TOKEN }}'
-#
-#    - name: "Pushing to docker.pkg.github.com"
-#      run: docker push docker.pkg.github.com/georchestra/georchestra/analytics:${{ steps.version.outputs.VERSION }}
-#
-#    - name: "Logging in docker.io"
-#      uses: azure/docker-login@v1
-#      with:
-#        username: '${{ secrets.DOCKER_HUB_USERNAME }}'
-#        password: '${{ secrets.DOCKER_HUB_PASSWORD }}'
+      run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker -DdockerImageName=georchestra/analytics:${{ steps.version.outputs.VERSION }} -DskipTests
 
     - name: "Pushing latest to docker.io"
       if: github.ref == 'refs/heads/master'
       run: |
-        docker tag docker.pkg.github.com/georchestra/georchestra/analytics:${{ steps.version.outputs.VERSION }} georchestra/analytics:latest
+        docker tag georchestra/analytics:${{ steps.version.outputs.VERSION }} georchestra/analytics:latest
         docker push georchestra/analytics:latest
 
     - name: "Pushing release branch to docker.io"
       if: contains(github.ref, 'refs/heads/20.')
       run: |
-        docker tag docker.pkg.github.com/georchestra/georchestra/analytics:${{ steps.version.outputs.VERSION }} georchestra/analytics:${{ steps.version.outputs.VERSION }}
         docker push georchestra/analytics:${{ steps.version.outputs.VERSION }}
 
     - name: "Pushing release tag to docker.io"
       if: contains(github.ref, 'refs/tags/20.')
       run: |
-        docker tag docker.pkg.github.com/georchestra/georchestra/analytics:${{ steps.version.outputs.VERSION }} georchestra/analytics:${{ steps.version.outputs.VERSION }}
         docker push georchestra/analytics:${{ steps.version.outputs.VERSION }}

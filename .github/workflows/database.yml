@@ -18,17 +18,7 @@ jobs:
 
     - name: "Docker build database"
       working-directory: postgresql/
-      run: docker build -t docker.pkg.github.com/georchestra/georchestra/database:${{ steps.version.outputs.VERSION }} .
-
-#    - name: "Logging in docker.pkg.github.com"
-#      uses: azure/docker-login@v1
-#      with:
-#        login-server: 'docker.pkg.github.com'
-#        username: 'georchestra'
-#        password: '${{ secrets.GITHUB_TOKEN }}'
-#
-#    - name: "Pushing to docker.pkg.github.com"
-#      run: docker push docker.pkg.github.com/georchestra/georchestra/database:${{ steps.version.outputs.VERSION }}
+      run: docker build -t georchestra/database:${{ steps.version.outputs.VERSION }} .
 
     - name: "Logging in docker.io"
       uses: azure/docker-login@v1
@@ -39,17 +29,15 @@ jobs:
     - name: "Pushing latest to docker.io"
       if: github.ref == 'refs/heads/master'
       run: |
-        docker tag docker.pkg.github.com/georchestra/georchestra/database:${{ steps.version.outputs.VERSION }} georchestra/database:latest
+        docker tag georchestra/database:${{ steps.version.outputs.VERSION }} georchestra/database:latest
         docker push georchestra/database:latest
 
     - name: "Pushing release branch to docker.io"
       if: contains(github.ref, 'refs/heads/20.')
       run: |
-        docker tag docker.pkg.github.com/georchestra/georchestra/database:${{ steps.version.outputs.VERSION }} georchestra/database:${{ steps.version.outputs.VERSION }}
         docker push georchestra/database:${{ steps.version.outputs.VERSION }}
 
     - name: "Pushing release tag to docker.io"
       if: contains(github.ref, 'refs/tags/20.')
       run: |
-        docker tag docker.pkg.github.com/georchestra/georchestra/database:${{ steps.version.outputs.VERSION }} georchestra/database:${{ steps.version.outputs.VERSION }}
         docker push georchestra/database:${{ steps.version.outputs.VERSION }}
