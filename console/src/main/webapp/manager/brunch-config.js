@@ -38,7 +38,10 @@
               'vendor/ol.js',
               'vendor/FileSaver.js',
               'vendor/promise.min.js',
-              'vendor/fetch.js'
+              'vendor/fetch.js',
+              'vendor/moment-locale-de.js',
+              'vendor/moment-locale-fr.js',
+              'vendor/moment-locale-es.js'
             ]
           }
         },
