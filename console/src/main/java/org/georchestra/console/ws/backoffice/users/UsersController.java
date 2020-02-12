@@ -31,7 +31,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Date;
 
 import javax.mail.MessagingException;
 import javax.servlet.ServletInputStream;
@@ -57,7 +56,6 @@ import org.georchestra.console.dto.SimpleAccount;
 import org.georchestra.console.dto.UserSchema;
 import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.mailservice.EmailFactory;
-import org.georchestra.console.model.AdminLogEntry;
 import org.georchestra.console.model.AdminLogType;
 import org.georchestra.console.model.DelegationEntry;
 import org.georchestra.console.ws.backoffice.users.GDPRAccountWorker.DeletedAccountSummary;
@@ -76,15 +74,15 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import lombok.Setter;
 
 /**
  * Web Services to maintain the User information.
@@ -106,7 +104,7 @@ public class UsersController {
     private static final String BASE_MAPPING = "/private";
     private static final String REQUEST_MAPPING = BASE_MAPPING + "/users";
     private static final String PUBLIC_REQUEST_MAPPING = "/public/users";
-    private static GrantedAuthority ROLE_SUPERUSER = new SimpleGrantedAuthority("ROLE_SUPERUSER");
+    private static GrantedAuthority ROLE_SUPERUSER = AdvancedDelegationDao.ROLE_SUPERUSER;
 
     private AccountDao accountDao;
 
@@ -123,7 +121,7 @@ public class UsersController {
     private AdvancedDelegationDao advancedDelegationDao;
 
     @Autowired
-    private GDPRAccountWorker gdprInfoWorker;
+    private @Setter GDPRAccountWorker gdprInfoWorker;
 
     @Autowired
     private Boolean warnUserIfUidModified = false;
@@ -345,9 +343,9 @@ public class UsersController {
 
         // Verify that org is under delegation if user is not SUPERUSER
         String requestOriginator = auth.getName();
-        if (!auth.getAuthorities().contains(this.advancedDelegationDao.ROLE_SUPERUSER)) {
+        if (!callerIsSuperUser()) {
             DelegationEntry delegation = this.delegationDao.findOne(requestOriginator);
-            if (!Arrays.asList(delegation.getOrgs()).contains(account.getOrg()))
+            if (delegation != null && !Arrays.asList(delegation.getOrgs()).contains(account.getOrg()))
                 throw new AccessDeniedException("Org not under delegation");
         }
 
@@ -365,6 +363,11 @@ public class UsersController {
         logUtils.createLog(account.getUid(), AdminLogType.USER_CREATED, null);
 
         return account;
+    }
+
+    public boolean callerIsSuperUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth != null && auth.getAuthorities().contains(ROLE_SUPERUSER);
     }
 
     /**
@@ -481,20 +484,21 @@ public class UsersController {
 
     /**
      * Deletes the user.
-     *
+     * <p>
+     * The user account and its associated roles are removed from the LDAP database,
+     * as well as any delegation linkage. Additionally, all the GDPR sensitive data
+     * collected for the account is obfuscated so that its untraceable back to the
+     * user.
+     * <p>
      * The request format is:
      * 
      * <pre>
      * [BASE_MAPPING]/users/{uid}
      * </pre>
-     *
-     * @param request
-     * @param response
-     * @throws IOException
      */
-    @RequestMapping(value = REQUEST_MAPPING + "/{uid:.+}", method = RequestMethod.DELETE)
+    @RequestMapping(value = REQUEST_MAPPING + "/{uid:.+}", method = RequestMethod.DELETE, produces = "application/json")
     public void delete(@PathVariable String uid, HttpServletRequest request, HttpServletResponse response)
-            throws IOException, DataServiceException {
+            throws IOException, DataServiceException, NameNotFoundException {
 
         if (this.userRule.isProtected(uid)) {
             throw new AccessDeniedException("The user is protected, it cannot be deleted: " + uid);
@@ -504,13 +508,18 @@ public class UsersController {
         this.checkAuthorization(uid);
 
         final Account account = accountDao.findByUID(uid);
-        String requestOriginator = request.getHeader("sec-username");
+        final String requestOriginator = request.getHeader("sec-username");
+        deleteAccount(account, requestOriginator);
+        ResponseUtil.writeSuccess(response);
+    }
+
+    private void deleteAccount(Account account, String requestOriginator) throws DataServiceException {
         accountDao.delete(account, requestOriginator);
         roleDao.deleteUser(account, requestOriginator);
 
         // Also delete delegation if exists
-        if (delegationDao.findOne(uid) != null) {
-            delegationDao.delete(uid);
+        if (delegationDao.findOne(account.getUid()) != null) {
+            delegationDao.delete(account.getUid());
         }
 
         // log when a user is removed according to pending status
@@ -519,44 +528,37 @@ public class UsersController {
         } else {
             logUtils.createLog(account.getUid(), AdminLogType.USER_DELETED, null);
         }
-
-        ResponseUtil.writeSuccess(response);
     }
 
     /**
-     * Obfuscates records of GDPR sensitive information for the calling user, or the
-     * requested user id if the calling user is a superuser, and returns a summary
-     * of deleted records
+     * Deletes the account of the calling user and obfuscates records of GDPR
+     * sensitive information.
      * 
-     * @param uid optional, identifier of the user to anonymize records for, only if
-     *            the calling user is a superuser or is under delegation for the
-     *            caller
      * @return summary of records anonymized as a result
      */
     @RequestMapping(method = RequestMethod.POST, value = "/account/gdpr/delete", produces = "application/json")
-    public ResponseEntity<DeletedUserDataInfo> deleteUserSensitiveData(//
-            @RequestParam(required = false, name = "uid") String uid, //
+    public ResponseEntity<DeletedUserDataInfo> deleteCurrentUserAndGDPRData(//
             HttpServletRequest request, //
             HttpServletResponse response) throws DataServiceException {
 
-        final Authentication caller = SecurityContextHolder.getContext().getAuthentication();
-        final String callerName = caller.getName();
-        final String accountId = uid == null ? callerName : uid;
-        if (callerName.equals(accountId)) {
-            // ok, all users have the right to delete their own data
-            LOG.info(String.format("GDPR: user %s requested to delete his records", accountId));
-        } else {
-            // only super users can delete another user's data
-            LOG.info(String.format("GDPR: user %s requested to delete user %s records", callerName, accountId));
-            this.checkAuthorization(accountId);
-        }
-
-        if (this.userRule.isProtected(accountId))
-            throw new AccessDeniedException("The user is protected, it cannot be deleted: " + accountId);
+        final String accountId = request.getHeader("sec-username");
+        LOG.info(String.format("GDPR: user %s requested to delete his records", accountId));
 
         final Account account = accountDao.findByUID(accountId);
+
+        if (this.userRule.isProtected(account.getUid()))
+            throw new AccessDeniedException("The user is protected, it cannot be deleted: " + account.getUid());
+
+        deleteAccount(account, accountId);
+
         DeletedAccountSummary summary = gdprInfoWorker.deleteAccountRecords(account);
 
+        DeletedUserDataInfo responseValue = toPresentation(accountId, summary);
+
+        return new ResponseEntity<>(responseValue, HttpStatus.OK);
+    }
+
+    private DeletedUserDataInfo toPresentation(final String accountId, DeletedAccountSummary summary) {
         DeletedUserDataInfo responseValue = DeletedUserDataInfo.builder().account(accountId)//
                 .metadata(summary.getMetadataRecords())//
                 .extractor(summary.getExtractorRecords())//
@@ -564,8 +566,7 @@ public class UsersController {
                 .metadata(summary.getMetadataRecords())//
                 .ogcStats(summary.getOgcStatsRecords())//
                 .build();
-
-        return new ResponseEntity<>(responseValue, HttpStatus.OK);
+        return responseValue;
     }
 
     @RequestMapping(value = PUBLIC_REQUEST_MAPPING + "/requiredFields", method = RequestMethod.GET)

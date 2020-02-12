@@ -12,6 +12,7 @@ import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.dto.UserSchema;
 import org.georchestra.console.model.DelegationEntry;
 import org.georchestra.console.ws.backoffice.roles.RoleProtected;
+import org.georchestra.console.ws.backoffice.users.GDPRAccountWorker.DeletedAccountSummary;
 import org.georchestra.console.ws.utils.LogUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -66,6 +67,7 @@ public class UsersControllerTest {
     private RoleDaoImpl roleDao;
     private UserRule userRule;
     private RoleProtected roles;
+    private GDPRAccountWorker mockGDPR;
 
     private MockHttpServletRequest request;
     private MockHttpServletResponse response;
@@ -73,7 +75,7 @@ public class UsersControllerTest {
     private LogUtils mockLogUtils;
 
     @Before
-    public void setUp() {
+    public void setUp() throws DataServiceException {
         userRule = new UserRule();
         userRule.setListOfprotectedUsers(new String[] { "geoserver_privileged_user" });
 
@@ -115,6 +117,10 @@ public class UsersControllerTest {
         usersCtrl.setRoleDao(roleDao);
 
         usersCtrl.logUtils = mockLogUtils;
+
+        mockGDPR = Mockito.mock(GDPRAccountWorker.class);
+        when(mockGDPR.deleteAccountRecords(any(Account.class))).thenReturn(DeletedAccountSummary.builder().build());
+        usersCtrl.setGdprInfoWorker(mockGDPR);
 
         request = new MockHttpServletRequest();
         response = new MockHttpServletResponse();
