@@ -1,28 +1,50 @@
 package org.georchestra.console.integration;
 
 import static com.github.database.rider.core.api.dataset.SeedStrategy.CLEAN_INSERT;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.logging.LogFactory;
+import org.georchestra.console.dto.Account;
+import org.georchestra.console.dto.AccountImpl;
+import org.georchestra.console.dto.Role;
 import org.georchestra.console.integration.ds.PostgresExtendedDataTypeFactory;
 import org.georchestra.console.integration.instruments.WithMockRandomUidUser;
+import org.georchestra.console.ws.backoffice.users.GDPRAccountWorker;
+import org.georchestra.console.ws.backoffice.users.UsersController;
+import org.georchestra.console.ws.backoffice.users.GDPRAccountWorker.DeletedAccountSummary;
+import org.hamcrest.core.StringContains;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -48,18 +70,33 @@ public class UsersIT {
 
     private @Autowired LdapTemplate ldapTemplateSanityCheck;
 
+    private @Autowired GDPRAccountWorker gdprWorker;
+
     @Autowired
     private WebApplicationContext wac;
 
     private MockMvc mockMvc;
 
+    private Set<String> createdUsers;
+
     public static @BeforeClass void init() {
     }
 
     public @Before void before() {
+        this.createdUsers = new HashSet<>();
         // pre-flight sanity check
         assertNotNull(ldapTemplateSanityCheck.lookup("cn=admin"));
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
+    }
+
+    public @After void cleanUp() {
+        for (String user : new HashSet<>(createdUsers)) {
+            try {
+                deleteUser(user);
+            } catch (Exception e) {
+                LogFactory.getLog(getClass()).error("Error deleting " + user, e);
+            }
+        }
     }
 
     @WithMockRandomUidUser
@@ -140,6 +177,12 @@ public class UsersIT {
     private void createUser(String userName) throws Exception {
         support.perform(post("/private/users")
                 .content(support.readResourceToString("/testData/createUserPayload.json").replace("{uuid}", userName)));
+        this.createdUsers.add(userName);
+    }
+
+    private ResultActions deleteUser(String userName) throws Exception {
+        this.createdUsers.remove(userName);
+        return support.perform(delete("/private/users/" + userName));
     }
 
     private ResultActions getProfile() throws Exception {
@@ -166,7 +209,8 @@ public class UsersIT {
     public @Test void testDeleteAccountRecords() throws Exception {
 
         createUser("user1");
-        this.mockMvc.perform(post("/account/gdpr/delete?uid=user1"))//
+
+        this.mockMvc.perform(post("/account/gdpr/delete").header("sec-username", "user1"))//
                 .andExpect(status().isOk())//
                 .andExpect(content().contentTypeCompatibleWith("application/json"))//
                 // .andDo(print())//
@@ -176,14 +220,28 @@ public class UsersIT {
                 .andExpect(jsonPath("$.geodocs").value(3))//
                 .andExpect(jsonPath("$.ogcStats").value(3));
 
-        this.mockMvc.perform(post("/account/gdpr/delete?uid=user1"))//
-                .andExpect(status().isOk())//
-                .andExpect(content().contentTypeCompatibleWith("application/json"))//
-                .andExpect(jsonPath("$.account").value("user1"))//
-                .andExpect(jsonPath("$.metadata").value(0))//
-                .andExpect(jsonPath("$.extractor").value(0))//
-                .andExpect(jsonPath("$.geodocs").value(0))//
-                .andExpect(jsonPath("$.ogcStats").value(0));
+        this.mockMvc.perform(post("/account/gdpr/delete").header("sec-username", "user1"))//
+                .andExpect(status().isNotFound());
+
     }
 
+    @WithMockRandomUidUser
+    @DBUnit(qualifiedTableNames = true, dataTypeFactoryClass = PostgresExtendedDataTypeFactory.class)
+    @DataSet(executeScriptsBefore = "dbunit/geonetwork_ddl.sql", strategy = CLEAN_INSERT, value = { "dbunit/all.csv" })
+    public @Test void testDeleteUserAsSuperAdminDoesNotDeleteGDPRAccountRecords() throws Exception {
+        createUser("user1");
+
+        deleteUser("user1")//
+                .andExpect(status().isOk());
+
+        Account account = new AccountImpl();
+        account.setUid("user1");
+        DeletedAccountSummary afterDeletion = gdprWorker.deleteAccountRecords(account);
+        assertFalse(isEmpty(afterDeletion));
+    }
+
+    boolean isEmpty(DeletedAccountSummary summary) {
+        return summary.getMetadataRecords() == 0 && summary.getExtractorRecords() == 0
+                && summary.getGeodocsRecords() == 0 && summary.getOgcStatsRecords() == 0;
+    }
 }

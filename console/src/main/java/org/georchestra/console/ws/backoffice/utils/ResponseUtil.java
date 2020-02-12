@@ -22,6 +22,7 @@ package org.georchestra.console.ws.backoffice.utils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -37,6 +38,28 @@ final public class ResponseUtil {
 
     private ResponseUtil() {
         // utility class pattern
+    }
+
+    public static Response success() {
+        return success(null);
+    }
+
+    public static Response success(@Nullable Object payload) {
+        Response response = new Response();
+        response.setSuccess(true);
+        response.setResponse(payload);
+        return response;
+    }
+
+    public static Response failure() {
+        return failure(null);
+    }
+
+    public static Response failure(@Nullable String errorMessage) {
+        Response response = new Response();
+        response.setSuccess(false);
+        response.setError(errorMessage);
+        return response;
     }
 
     /**
