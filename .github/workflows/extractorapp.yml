@@ -1,9 +1,11 @@
 name: "extractorapp"
 on:
-  push:
+  push: &paths
     paths:
     - "commons/**"
     - "extractorapp/**"
+  pull_request: *paths
+
 jobs:
   build:
     runs-on: ubuntu-latest

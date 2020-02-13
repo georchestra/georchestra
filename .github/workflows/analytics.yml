@@ -1,9 +1,11 @@
 name: "analytics"
 on:
-  push:
+  push: &paths
     paths:
     - "commons/**"
     - "analytics/**"
+  pull_request: *paths
+
 jobs:
   build:
     runs-on: ubuntu-latest
