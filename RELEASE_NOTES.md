@@ -13,6 +13,7 @@ Major highlights:
  * GeoServer 2.16
  * GeoWebCache 1.16
  * NL translation
+ * GitHub Actions-powered [CI](https://github.com/georchestra/georchestra/actions)
 
 New features:
  * console - users multiple selection
@@ -26,6 +27,7 @@ New features:
  * console - added internal notes on users and orgs
  * console - send confirmation mail to user on account validation
  * geonetwork - metadata ACLS based on LDAP organizations rather than EL_* roles
+ * geonetwork - summary of active search filters
  * geoserver - add support for kakadu 7.x JPEG2000 coverages (depends on appropriate libs)
  * mapfishapp - supports geojson uploads
 
@@ -42,6 +44,7 @@ Enhancements:
  * console - regexp-validated role names
  * docker - images provide unzipped applications, allowing easy customization
  * documentation - installation doc revisited for Debian 10
+ * geonetwork - facets pagination
  * ldap - supports SSH public key on inetOrgPersons
  * mapfishapp - boolean config option to prevent layer download
  * proxy - allow semicolons in URLs, eg for CKAN resources
