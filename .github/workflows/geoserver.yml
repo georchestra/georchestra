@@ -4,7 +4,7 @@ on:
     paths:
     - "commons/**"
     - "geoserver/**"
-  pull-request:
+  pull_request:
     paths:
       - "commons/**"
       - "geoserver/**"
