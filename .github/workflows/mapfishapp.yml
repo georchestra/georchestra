@@ -1,9 +1,11 @@
 name: "mapfishapp"
 on:
-  push:
+  push: &paths
     paths:
     - "commons/**"
     - "mapfishapp/**"
+  pull_request: *paths
+
 jobs:
   build:
     runs-on: ubuntu-latest

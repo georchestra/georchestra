@@ -1,9 +1,11 @@
 name: "atlas"
 on:
-  push:
+  push: &paths
     paths:
     - "commons/**"
     - "atlas/**"
+  pull_request: *paths
+
 jobs:
   build:
     runs-on: ubuntu-latest

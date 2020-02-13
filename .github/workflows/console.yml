@@ -1,9 +1,11 @@
 name: "console"
 on:
-  push:
+  push: &paths
     paths:
     - "commons/**"
     - "console/**"
+  pull_request: *paths
+
 jobs:
   build:
     runs-on: ubuntu-latest

@@ -1,10 +1,12 @@
 name: "LDAP"
 on:
-  push:
+  push: &paths
     paths:
     - "ldap/**"
+  pull_request: *paths
   release:
     types: [published]
+
 jobs:
   build:
     runs-on: ubuntu-latest

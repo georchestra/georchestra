@@ -1,9 +1,11 @@
 name: "header"
 on:
-  push:
+  push: &paths
     paths:
     - "commons/**"
     - "header/**"
+  pull_request: *paths
+
 jobs:
   build:
     runs-on: ubuntu-latest
