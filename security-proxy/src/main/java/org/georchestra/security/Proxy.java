@@ -397,7 +397,7 @@ public class Proxy {
         try {
             return InetAddress.getByName(request.getServerName()).equals(InetAddress.getByName(url.getHost()));
         } catch (UnknownHostException e) {
-            logger.error("Unknown host: " + request.getServerName());
+            logger.error(e.getMessage(), e);
             return false;
         }
     }
@@ -709,8 +709,15 @@ public class Proxy {
             doHandleRequest(finalResponse, proxiedResponse);
         } catch (IOException | ExecutionException | InterruptedException | TimeoutException e) {
             // connection problem with the host
-            logger.error("Exception occured when trying to connect to the remote host: ", e);
+            String errMsg = String.format("Exception occured when trying to connect to the remote url '%s'", sURL);
+            logger.error(errMsg, e);
             try {
+                if (e.getCause() instanceof java.net.UnknownHostException) {
+                    // If the SP cannot resolve the remote host, it sounds more
+                    // logical to return a 404.
+                    finalResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
+                    return;
+                }
                 finalResponse.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
             } catch (IOException e2) {
                 // error occured while trying to return the "service unavailable status"
@@ -806,7 +813,12 @@ public class Proxy {
         HttpAsyncRequestProducer producer = new BasicAsyncRequestProducer(
                 new HttpHost(proxyingRequest.getURI().getHost(), proxyingRequest.getURI().getPort(),
                         proxyingRequest.getURI().getScheme()),
-                proxyingRequest);
+                proxyingRequest) {
+            @Override
+            public void failed(Exception exc) {
+                future.completeExceptionally(exc);
+            }
+        };
 
         httpclient.execute(producer, consumer, null);
 
