@@ -1,10 +1,13 @@
 name: "console"
 on:
-  push: &paths
+  push:
     paths:
     - "commons/**"
     - "console/**"
-  pull_request: *paths
+  pull_request:
+    paths:
+      - "commons/**"
+      - "console/**"
 
 jobs:
   build:

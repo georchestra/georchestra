@@ -1,10 +1,13 @@
 name: "security-proxy"
 on:
-  push: &paths
+  push:
     paths:
-    - "commons/**"
-    - "security-proxy/**"
-  pull_request: *paths
+      - "commons/**"
+      - "security-proxy/**"
+  pull_request:
+    paths:
+      - "commons/**"
+      - "security-proxy/**"
 
 jobs:
   build:

@@ -1,10 +1,13 @@
 name: "geowebcache"
 on:
-  push: &paths
+  push:
     paths:
     - "commons/**"
     - "geowebcache/**"
-  pull_request: *paths
+  pull_request:
+    paths:
+      - "commons/**"
+      - "geowebcache/**"
 
 jobs:
   build:

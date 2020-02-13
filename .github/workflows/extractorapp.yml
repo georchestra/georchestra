@@ -1,10 +1,13 @@
 name: "extractorapp"
 on:
-  push: &paths
+  push:
     paths:
     - "commons/**"
     - "extractorapp/**"
-  pull_request: *paths
+  pull_request:
+    paths:
+      - "commons/**"
+      - "extractorapp/**"
 
 jobs:
   build:
