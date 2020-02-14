@@ -2,8 +2,15 @@ name: "security-proxy"
 on:
   push:
     paths:
-    - "commons/**"
-    - "security-proxy/**"
+      - "commons/**"
+      - "security-proxy/**"
+  pull_request:
+    paths:
+      - "commons/**"
+      - "security-proxy/**"
+  release:
+    types: [published]
+
 jobs:
   build:
     runs-on: ubuntu-latest

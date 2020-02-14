@@ -2,8 +2,15 @@ name: "geoserver"
 on:
   push:
     paths:
-    - "commons/**"
-    - "geoserver/**"
+      - "commons/**"
+      - "geoserver/**"
+  pull_request:
+    paths:
+      - "commons/**"
+      - "geoserver/**"
+  release:
+    types: [published]
+
 jobs:
   build:
     runs-on: ubuntu-latest

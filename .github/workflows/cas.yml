@@ -2,8 +2,15 @@ name: "cas"
 on:
   push:
     paths:
-    - "commons/**"
-    - "cas-server-webapp/**"
+      - "commons/**"
+      - "cas-server-webapp/**"
+  pull_request:
+    paths:
+      - "commons/**"
+      - "cas-server-webapp/**"
+  release:
+    types: [published]
+
 jobs:
   build:
     runs-on: ubuntu-latest

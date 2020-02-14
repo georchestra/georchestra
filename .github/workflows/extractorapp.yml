@@ -2,8 +2,15 @@ name: "extractorapp"
 on:
   push:
     paths:
-    - "commons/**"
-    - "extractorapp/**"
+      - "commons/**"
+      - "extractorapp/**"
+  pull_request:
+    paths:
+      - "commons/**"
+      - "extractorapp/**"
+  release:
+    types: [published]
+
 jobs:
   build:
     runs-on: ubuntu-latest

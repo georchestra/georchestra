@@ -2,8 +2,15 @@ name: "analytics"
 on:
   push:
     paths:
-    - "commons/**"
-    - "analytics/**"
+      - "commons/**"
+      - "analytics/**"
+  pull_request:
+    paths:
+      - "commons/**"
+      - "analytics/**"
+  release:
+    types: [published]
+
 jobs:
   build:
     runs-on: ubuntu-latest

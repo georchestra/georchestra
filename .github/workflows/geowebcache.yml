@@ -2,8 +2,15 @@ name: "geowebcache"
 on:
   push:
     paths:
-    - "commons/**"
-    - "geowebcache/**"
+      - "commons/**"
+      - "geowebcache/**"
+  pull_request:
+    paths:
+      - "commons/**"
+      - "geowebcache/**"
+  release:
+    types: [published]
+
 jobs:
   build:
     runs-on: ubuntu-latest
