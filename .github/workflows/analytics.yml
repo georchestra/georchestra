@@ -1,10 +1,15 @@
 name: "analytics"
 on:
-  push: &paths
+  push:
     paths:
-    - "commons/**"
-    - "analytics/**"
-  pull_request: *paths
+      - "commons/**"
+      - "analytics/**"
+  pull_request:
+    paths:
+      - "commons/**"
+      - "analytics/**"
+  release:
+    types: [published]
 
 jobs:
   build:

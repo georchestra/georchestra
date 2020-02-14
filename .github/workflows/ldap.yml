@@ -2,7 +2,7 @@ name: "LDAP"
 on:
   push:
     paths:
-    - "ldap/**"
+      - "ldap/**"
   pull_request:
     paths:
       - "ldap/**"

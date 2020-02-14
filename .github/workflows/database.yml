@@ -2,7 +2,7 @@ name: "PostGreSQL"
 on:
   push:
     paths:
-    - "postgresql/**"
+      - "postgresql/**"
   pull_request:
     paths:
       - "postgresql/**"

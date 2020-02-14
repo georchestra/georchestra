@@ -2,12 +2,14 @@ name: "mapfishapp"
 on:
   push:
     paths:
-    - "commons/**"
-    - "mapfishapp/**"
+      - "commons/**"
+      - "mapfishapp/**"
   pull_request:
     paths:
       - "commons/**"
       - "mapfishapp/**"
+  release:
+    types: [published]
 
 jobs:
   build:

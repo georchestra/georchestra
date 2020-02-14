@@ -2,12 +2,14 @@ name: "header"
 on:
   push:
     paths:
-    - "commons/**"
-    - "header/**"
+      - "commons/**"
+      - "header/**"
   pull_request:
     paths:
       - "commons/**"
       - "header/**"
+  release:
+    types: [published]
 
 jobs:
   build:

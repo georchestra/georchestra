@@ -2,12 +2,14 @@ name: "console"
 on:
   push:
     paths:
-    - "commons/**"
-    - "console/**"
+      - "commons/**"
+      - "console/**"
   pull_request:
     paths:
       - "commons/**"
       - "console/**"
+  release:
+    types: [published]
 
 jobs:
   build:
