@@ -3,11 +3,11 @@ on:
   push:
     paths:
       - "commons/**"
-      - "geowebcache/**"
+      - "geowebcache-webapp/**"
   pull_request:
     paths:
       - "commons/**"
-      - "geowebcache/**"
+      - "geowebcache-webapp/**"
   release:
     types: [published]
 
@@ -34,7 +34,7 @@ jobs:
       run: ./mvnw --no-transfer-progress -B -P-all,geowebcache -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
 
     - name: "Running tests"
-      working-directory: geowebcache/
+      working-directory: geowebcache-webapp/
       run: ../mvnw --no-transfer-progress clean verify -Pit -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
 
     - name: Getting image tag
@@ -42,18 +42,9 @@ jobs:
       run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
     - name: "Building docker image"
-      working-directory: geowebcache/
+      working-directory: geowebcache-webapp/
       run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker -DdockerImageName=docker.pkg.github.com/georchestra/georchestra/geowebcache:${{ steps.version.outputs.VERSION }} -DskipTests
 
-#    - name: "Logging in docker.pkg.github.com"
-#      uses: azure/docker-login@v1
-#      with:
-#        login-server: 'docker.pkg.github.com'
-#        username: 'georchestra'
-#        password: '${{ secrets.GITHUB_TOKEN }}'
-#
-#    - name: "Pushing to docker.pkg.github.com"
-#      run: docker push docker.pkg.github.com/georchestra/georchestra/geowebcache:${{ steps.version.outputs.VERSION }}
 
     - name: "Logging in docker.io"
       uses: azure/docker-login@v1
