@@ -1,10 +1,13 @@
 name: "cas"
 on:
-  push: &paths
+  push:
     paths:
     - "commons/**"
     - "cas-server-webapp/**"
-  pull_request: *paths
+  pull_request:
+    paths:
+      - "commons/**"
+      - "cas-server-webapp/**"
 
 jobs:
   build:

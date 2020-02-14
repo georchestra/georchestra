@@ -1,10 +1,13 @@
 name: "header"
 on:
-  push: &paths
+  push:
     paths:
     - "commons/**"
     - "header/**"
-  pull_request: *paths
+  pull_request:
+    paths:
+      - "commons/**"
+      - "header/**"
 
 jobs:
   build:

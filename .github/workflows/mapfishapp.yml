@@ -1,10 +1,13 @@
 name: "mapfishapp"
 on:
-  push: &paths
+  push:
     paths:
     - "commons/**"
     - "mapfishapp/**"
-  pull_request: *paths
+  pull_request:
+    paths:
+      - "commons/**"
+      - "mapfishapp/**"
 
 jobs:
   build:

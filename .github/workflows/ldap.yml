@@ -1,9 +1,11 @@
 name: "LDAP"
 on:
-  push: &paths
+  push:
     paths:
     - "ldap/**"
-  pull_request: *paths
+  pull_request:
+    paths:
+      - "ldap/**"
   release:
     types: [published]
 

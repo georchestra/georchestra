@@ -1,9 +1,11 @@
 name: "PostGreSQL"
 on:
-  push: &paths
+  push:
     paths:
     - "postgresql/**"
-  pull_request: *paths
+  pull_request:
+    paths:
+      - "postgresql/**"
   release:
     types: [published]
 

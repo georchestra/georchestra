@@ -1,10 +1,13 @@
 name: "geoserver"
 on:
-  push: &paths
+  push:
     paths:
     - "commons/**"
     - "geoserver/**"
-    pull-request: *paths
+  pull_request:
+    paths:
+      - "commons/**"
+      - "geoserver/**"
 
 jobs:
   build:
