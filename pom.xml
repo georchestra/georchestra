@@ -15,7 +15,7 @@
   <groupId>org.georchestra</groupId>
   <artifactId>root</artifactId>
   <packaging>pom</packaging>
-  <version>20.0-SNAPSHOT</version>
+  <version>20.0.1</version>
   <name>Root project of the geOrchestra SDI</name>
   <url>http://maven.apache.org</url>
   <organization>
