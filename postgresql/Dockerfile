@@ -7,7 +7,8 @@ FROM postgres:11
 MAINTAINER PSC "psc@georchestra.org"
 
 ENV DEBIAN_FRONTEND=noninteractive \
-    POSTGRES_USER=georchestra
+    POSTGRES_USER=georchestra \
+    POSTGRES_PASSWORD=georchestra
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
