@@ -45,6 +45,12 @@ jobs:
       working-directory: analytics/
       run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker -DdockerImageName=georchestra/analytics:${{ steps.version.outputs.VERSION }} -DskipTests
 
+    - name: "Logging in docker.io"
+      uses: azure/docker-login@v1
+      with:
+        username: '${{ secrets.DOCKER_HUB_USERNAME }}'
+        password: '${{ secrets.DOCKER_HUB_PASSWORD }}'
+
     - name: "Pushing latest to docker.io"
       if: github.ref == 'refs/heads/master'
       run: |
