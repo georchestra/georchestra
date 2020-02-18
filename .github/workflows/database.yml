@@ -43,4 +43,4 @@ jobs:
     - name: "Pushing release tag to docker.io"
       if: contains(github.ref, 'refs/tags/20.')
       run: |
-
+        docker push georchestra/database:${{ steps.version.outputs.VERSION }}
