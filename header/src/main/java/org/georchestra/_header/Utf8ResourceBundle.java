@@ -74,12 +74,7 @@ public class Utf8ResourceBundle {
             String value = (String) bundle.getString(key);
             if (value == null)
                 return null;
-            try {
-                return new String(value.getBytes("ISO-8859-1"), "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                // Shouldn't fail - but should we still add logging message?
-                return null;
-            }
+            return value;
         }
 
     }
