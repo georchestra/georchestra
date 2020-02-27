@@ -49,7 +49,7 @@
     <json.version>20180813</json.version>
     <camel.version>2.25.0</camel.version>
     <camel-extras.version>2.14.1</camel-extras.version>
-    <mapfish.version>3.5.0</mapfish.version>
+    <mapfish.version>3.22.0</mapfish.version>
     <metrics.version>3.0.2</metrics.version>
     <cas.version>4.0.0</cas.version>
     <gmaven.version>1.0</gmaven.version>
