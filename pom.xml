@@ -273,7 +273,7 @@
       <dependency>
         <groupId>org.tuckey</groupId>
         <artifactId>urlrewritefilter</artifactId>
-        <version>3.0.4</version>
+        <version>4.0.4</version>
         <exclusions>
           <exclusion><!-- old 2.3 api -->
             <groupId>javax.servlet</groupId>
