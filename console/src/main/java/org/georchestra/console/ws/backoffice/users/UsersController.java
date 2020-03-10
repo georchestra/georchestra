@@ -259,17 +259,14 @@ public class UsersController {
     public String myProfile(HttpServletRequest request) throws DataServiceException, JSONException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        Account user = this.accountDao.findByUID(auth.getName());
+        String[] rolesHeader = StringUtils.isEmpty(request.getHeader("sec-roles")) ? new String[0]
+                : request.getHeader("sec-roles").split(";");
 
-        JSONArray roles = new JSONArray();
-
-        for (Role role : this.roleDao.findAllForUser(user)) {
-            roles.put(role.getName());
-        }
+        String orgHeader = StringUtils.isEmpty(request.getHeader("sec-org")) ? "" : request.getHeader("sec-org");
         JSONObject res = new JSONObject();
         res.put("uid", auth.getName());
-        res.put("roles", roles);
-        res.put("org", user.getOrg());
+        res.put("roles", rolesHeader);
+        res.put("org", orgHeader);
 
         return res.toString();
     }

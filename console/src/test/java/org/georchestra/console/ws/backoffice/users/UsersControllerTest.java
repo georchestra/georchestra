@@ -1,5 +1,27 @@
 package org.georchestra.console.ws.backoffice.users;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.naming.Name;
+import javax.naming.directory.SearchControls;
+import javax.naming.ldap.LdapName;
+
+import org.apache.commons.lang.StringUtils;
 import org.georchestra.console.dao.DelegationDao;
 import org.georchestra.console.ds.AccountDaoImpl;
 import org.georchestra.console.ds.DataServiceException;
@@ -8,8 +30,8 @@ import org.georchestra.console.ds.OrgsDao;
 import org.georchestra.console.ds.RoleDaoImpl;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountFactory;
-import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.dto.UserSchema;
+import org.georchestra.console.dto.orgs.Org;
 import org.georchestra.console.model.DelegationEntry;
 import org.georchestra.console.ws.backoffice.roles.RoleProtected;
 import org.georchestra.console.ws.backoffice.users.GDPRAccountWorker.DeletedAccountSummary;
@@ -38,25 +60,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
-
-import javax.naming.Name;
-import javax.naming.directory.SearchControls;
-import javax.naming.ldap.LdapName;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.when;
 
 public class UsersControllerTest {
     private LdapTemplate ldapTemplate;
@@ -544,6 +547,49 @@ public class UsersControllerTest {
     public void testResquestProducesDelete() throws Exception {
         mockLookup("pmaudui", false);
         usersCtrl.delete("pmaudui", request, response);
+    }
+
+    @Test
+    public void testGetProfileAnonymous() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+
+        String ret = usersCtrl.myProfile(request);
+
+        JSONObject parsed = new JSONObject(ret);
+        // note: uid = testadmin because of the setUp() call
+        assertEquals(parsed.get("org"), StringUtils.EMPTY);
+        assertTrue(parsed.getJSONArray("roles").isEmpty());
+    }
+
+    @Test
+    public void testGetProfileEmptyRole() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("sec-org", "camptocamp");
+        request.addHeader("sec-roles", ";");
+
+        String ret = usersCtrl.myProfile(request);
+
+        JSONObject parsed = new JSONObject(ret);
+        assertEquals(parsed.get("uid"), "testadmin");
+        assertEquals(parsed.get("org"), "camptocamp");
+        assertTrue(parsed.getJSONArray("roles").isEmpty());
+    }
+
+    @Test
+    public void testGetProfile() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("sec-org", "camptocamp");
+        request.addHeader("sec-roles", "ROLE_SUPERUSER;ROLE_ADMINISTRATOR;ROLE_USER");
+
+        String ret = usersCtrl.myProfile(request);
+
+        JSONObject parsed = new JSONObject(ret);
+        assertEquals(parsed.get("uid"), "testadmin");
+        assertEquals(parsed.get("org"), "camptocamp");
+        assertTrue(parsed.getJSONArray("roles").length() == 3
+                && parsed.getJSONArray("roles").get(0).equals("ROLE_SUPERUSER")
+                && parsed.getJSONArray("roles").get(1).equals("ROLE_ADMINISTRATOR")
+                && parsed.getJSONArray("roles").get(2).equals("ROLE_USER"));
     }
 
     private void mockLookup(String uuid, boolean pending) {
