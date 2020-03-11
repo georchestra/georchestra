@@ -262,6 +262,8 @@ public class UsersController {
         String[] rolesHeader = StringUtils.isEmpty(request.getHeader("sec-roles")) ? new String[0]
                 : request.getHeader("sec-roles").split(";");
 
+        rolesHeader = Arrays.stream(rolesHeader).map(s -> s.replaceFirst("ROLE_", "")).toArray(String[]::new);
+
         String orgHeader = StringUtils.isEmpty(request.getHeader("sec-org")) ? "" : request.getHeader("sec-org");
         JSONObject res = new JSONObject();
         res.put("uid", auth.getName());

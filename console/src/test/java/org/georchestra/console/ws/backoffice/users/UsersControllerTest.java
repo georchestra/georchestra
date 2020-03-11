@@ -586,10 +586,9 @@ public class UsersControllerTest {
         JSONObject parsed = new JSONObject(ret);
         assertEquals(parsed.get("uid"), "testadmin");
         assertEquals(parsed.get("org"), "camptocamp");
-        assertTrue(parsed.getJSONArray("roles").length() == 3
-                && parsed.getJSONArray("roles").get(0).equals("ROLE_SUPERUSER")
-                && parsed.getJSONArray("roles").get(1).equals("ROLE_ADMINISTRATOR")
-                && parsed.getJSONArray("roles").get(2).equals("ROLE_USER"));
+        assertTrue(parsed.getJSONArray("roles").length() == 3 && parsed.getJSONArray("roles").get(0).equals("SUPERUSER")
+                && parsed.getJSONArray("roles").get(1).equals("ADMINISTRATOR")
+                && parsed.getJSONArray("roles").get(2).equals("USER"));
     }
 
     private void mockLookup(String uuid, boolean pending) {
