@@ -36,31 +36,34 @@ jobs:
       run: ../mvnw --no-transfer-progress clean verify -Pit -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
 
     - name: Getting image tag
+      if: github.repository == "georchestra/georchestra"
       id: version
       run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
     - name: "Building docker image"
+      if: github.repository == "georchestra/georchestra"
       working-directory: geowebcache-webapp/
       run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker -DdockerImageName=georchestra/geowebcache:${{ steps.version.outputs.VERSION }} -DskipTests
 
     - name: "Logging in docker.io"
+      if: github.repository == "georchestra/georchestra"
       uses: azure/docker-login@v1
       with:
         username: '${{ secrets.DOCKER_HUB_USERNAME }}'
         password: '${{ secrets.DOCKER_HUB_PASSWORD }}'
 
     - name: "Pushing latest to docker.io"
-      if: github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/master' && github.repository == "georchestra/georchestra"
       run: |
         docker tag georchestra/geowebcache:${{ steps.version.outputs.VERSION }} georchestra/geowebcache:latest
         docker push georchestra/geowebcache:latest
 
     - name: "Pushing release branch to docker.io"
-      if: contains(github.ref, 'refs/heads/20.')
+      if: contains(github.ref, 'refs/heads/20.') && github.repository == "georchestra/georchestra"
       run: |
         docker push georchestra/geowebcache:${{ steps.version.outputs.VERSION }}
 
     - name: "Pushing release tag to docker.io"
-      if: contains(github.ref, 'refs/tags/20.')
+      if: contains(github.ref, 'refs/tags/20.') && github.repository == "georchestra/georchestra"
       run: |
         docker push georchestra/geowebcache:${{ steps.version.outputs.VERSION }}
