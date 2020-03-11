@@ -26,9 +26,7 @@ jobs:
     - name: "Configuring Maven"
       run: |
           mkdir -p $HOME/.m2
-          echo $M2_SETTINGS_FILE > $HOME/.m2/settings.xml
-      env:
-          M2_SETTINGS_FILE: ${{ secrets.M2_SETTINGS_FILE }}
+          cp .github/resources/m2-settings.xml $HOME/.m2/settings.xml
 
     - name: "Installing & checking formatting"
       run: ./mvnw --no-transfer-progress -B -P-all,header -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
