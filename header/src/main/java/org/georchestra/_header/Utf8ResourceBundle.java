@@ -74,12 +74,28 @@ public class Utf8ResourceBundle {
             String value = (String) bundle.getString(key);
             if (value == null)
                 return null;
+
+            String version = System.getProperty("java.version");
+            if (version.startsWith("1.")) {
+                version = version.substring(2, 3);
+            } else {
+                int dot = version.indexOf(".");
+                if (dot != -1) {
+                    version = version.substring(0, dot);
+                }
+            }
+
             try {
-                return new String(value.getBytes("ISO-8859-1"), "UTF-8");
+                if (Integer.parseInt(version) <= 8) {
+                    return new String(value.getBytes("ISO-8859-1"), "UTF-8");
+                }
             } catch (UnsupportedEncodingException e) {
                 // Shouldn't fail - but should we still add logging message?
                 return null;
+            } catch (NumberFormatException e) {
+                // If version not readable, return raw value
             }
+            return value;
         }
 
     }
