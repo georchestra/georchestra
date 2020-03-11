@@ -43,7 +43,7 @@ jobs:
     - name: "Building docker image"
       if: github.repository == "georchestra/georchestra"
       working-directory: geowebcache-webapp/
-      run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker -DdockerImageName=georchestra/geowebcache:${{ steps.version.outputs.VERSION }} -DskipTests
+      run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker,log4j-logstash,sentry-spring -DdockerImageName=georchestra/geowebcache:${{ steps.version.outputs.VERSION }} -DskipTests
 
     - name: "Logging in docker.io"
       if: github.repository == "georchestra/georchestra"
