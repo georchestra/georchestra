@@ -26,9 +26,7 @@ jobs:
     - name: "Configuring Maven"
       run: |
           mkdir -p $HOME/.m2
-          echo $M2_SETTINGS_FILE > $HOME/.m2/settings.xml
-      env:
-          M2_SETTINGS_FILE: ${{ secrets.M2_SETTINGS_FILE }}
+          cp .github/resources/m2-settings.xml $HOME/.m2/settings.xml
 
     - name: "Installing & checking formatting"
       run: ./mvnw --no-transfer-progress -B -P-all,cas -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
@@ -38,31 +36,34 @@ jobs:
       run: ../mvnw --no-transfer-progress clean verify -Pit -Dfmt.skip=true -Dadditionalparam=-Xdoclint:none
 
     - name: Getting image tag
+      if: github.repository == "georchestra/georchestra"
       id: version
       run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
     - name: "Building docker image"
+      if: github.repository == "georchestra/georchestra"
       working-directory: cas-server-webapp/
-      run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker -DdockerImageName=georchestra/cas:${{ steps.version.outputs.VERSION }} -DskipTests
+      run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker,log4j-logstash,sentry-spring  -DdockerImageName=georchestra/cas:${{ steps.version.outputs.VERSION }} -DskipTests
 
     - name: "Logging in docker.io"
+      if: github.repository == "georchestra/georchestra"
       uses: azure/docker-login@v1
       with:
         username: '${{ secrets.DOCKER_HUB_USERNAME }}'
         password: '${{ secrets.DOCKER_HUB_PASSWORD }}'
 
     - name: "Pushing latest to docker.io"
-      if: github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/master' && github.repository == "georchestra/georchestra"
       run: |
         docker tag georchestra/cas:${{ steps.version.outputs.VERSION }} georchestra/cas:latest
         docker push georchestra/cas:latest
 
     - name: "Pushing release branch to docker.io"
-      if: contains(github.ref, 'refs/heads/20.')
+      if: contains(github.ref, 'refs/heads/20.') && github.repository == "georchestra/georchestra"
       run: |
         docker push georchestra/cas:${{ steps.version.outputs.VERSION }}
 
     - name: "Pushing release tag to docker.io"
-      if: contains(github.ref, 'refs/tags/20.')
+      if: contains(github.ref, 'refs/tags/20.') && github.repository == "georchestra/georchestra"
       run: |
         docker push georchestra/cas:${{ steps.version.outputs.VERSION }}
