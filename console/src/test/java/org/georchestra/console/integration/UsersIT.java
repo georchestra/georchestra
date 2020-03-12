@@ -3,18 +3,14 @@ package org.georchestra.console.integration;
 import static com.github.database.rider.core.api.dataset.SeedStrategy.CLEAN_INSERT;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,29 +18,21 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.console.dto.Account;
 import org.georchestra.console.dto.AccountImpl;
-import org.georchestra.console.dto.Role;
 import org.georchestra.console.integration.ds.PostgresExtendedDataTypeFactory;
 import org.georchestra.console.integration.instruments.WithMockRandomUidUser;
 import org.georchestra.console.ws.backoffice.users.GDPRAccountWorker;
-import org.georchestra.console.ws.backoffice.users.UsersController;
 import org.georchestra.console.ws.backoffice.users.GDPRAccountWorker.DeletedAccountSummary;
-import org.hamcrest.core.StringContains;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.ldap.core.LdapTemplate;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -97,23 +85,6 @@ public class UsersIT {
                 LogFactory.getLog(getClass()).error("Error deleting " + user, e);
             }
         }
-    }
-
-    @WithMockRandomUidUser
-    public @Test void profile() throws Exception {
-        String userName = ((User) (SecurityContextHolder.getContext().getAuthentication().getPrincipal()))
-                .getUsername();
-        createUser(userName);
-
-        getProfile().andExpect(jsonPath("$.roles[0]").value("USER"));
-
-        String role1Name = createRole();
-        String role2Name = createRole();
-        setRole(userName, role1Name, role2Name);
-
-        getProfile().andExpect(jsonPath("$.roles[1]").value(role1Name))
-                .andExpect(jsonPath("$.roles[2]").value(role2Name));
-
     }
 
     @WithMockRandomUidUser
