@@ -22,29 +22,29 @@ jobs:
       run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
     - name: "Docker build database"
-      if: github.repository == "georchestra/georchestra"
+      if: github.repository == 'georchestra/georchestra'
       working-directory: postgresql/
       run: docker build -t georchestra/database:${{ steps.version.outputs.VERSION }} .
 
     - name: "Logging in docker.io"
-      if: github.repository == "georchestra/georchestra"
+      if: github.repository == 'georchestra/georchestra'
       uses: azure/docker-login@v1
       with:
         username: '${{ secrets.DOCKER_HUB_USERNAME }}'
         password: '${{ secrets.DOCKER_HUB_PASSWORD }}'
 
     - name: "Pushing latest to docker.io"
-      if: github.ref == 'refs/heads/master' && github.repository == "georchestra/georchestra"
+      if: github.ref == 'refs/heads/master' && github.repository == 'georchestra/georchestra'
       run: |
         docker tag georchestra/database:${{ steps.version.outputs.VERSION }} georchestra/database:latest
         docker push georchestra/database:latest
 
     - name: "Pushing release branch to docker.io"
-      if: contains(github.ref, 'refs/heads/20.') && github.repository == "georchestra/georchestra"
+      if: contains(github.ref, 'refs/heads/20.') && github.repository == 'georchestra/georchestra'
       run: |
         docker push georchestra/database:${{ steps.version.outputs.VERSION }}
 
     - name: "Pushing release tag to docker.io"
-      if: contains(github.ref, 'refs/tags/20.') && github.repository == "georchestra/georchestra"
+      if: contains(github.ref, 'refs/tags/20.') && github.repository == 'georchestra/georchestra'
       run: |
         docker push georchestra/database:${{ steps.version.outputs.VERSION }}
