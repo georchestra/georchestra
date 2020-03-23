@@ -3,6 +3,7 @@ package org.georchestra.atlas;
 import java.io.File;
 import java.io.IOException;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.camel.Exchange;
@@ -27,6 +28,7 @@ public class JobController {
         this.tempDir = tempDir;
     }
 
+    @PostConstruct
     public void init() {
     }
 

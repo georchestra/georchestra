@@ -28,6 +28,7 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.PostConstruct;
 import javax.naming.NamingEnumeration;
 import javax.naming.directory.Attribute;
 import javax.servlet.http.HttpServletRequest;
@@ -81,6 +82,7 @@ public class LdapUserDetailsRequestHeaderProvider extends HeaderProvider {
         this.pattern = Pattern.compile("([^=,]+)=([^=,]+)," + orgSearchBaseDN + ".*");
     }
 
+    @PostConstruct
     public void init() throws IOException {
         if ((georchestraConfiguration != null) && (georchestraConfiguration.activated())) {
             Properties pHmap = georchestraConfiguration.loadCustomPropertiesFile("headers-mapping");

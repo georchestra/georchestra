@@ -24,7 +24,7 @@
         </property>
     </bean>
 
-    <bean id="proxy"  init-method="init" class="org.georchestra.security.Proxy">
+    <bean id="proxy" class="org.georchestra.security.Proxy">
           <property name="publicUrl" value="${scheme}://${domainName}"/>
           <property name="headerManagement" ref="headerManagementBean"/>
           <property name="defaultCharset" value="UTF-8"/>
@@ -79,7 +79,7 @@
                 <bean class="org.georchestra.security.ImpersonateUserRequestHeaderProvider">
                     <property name="trustedUsers" value="${trustedUsers:geoserver_privileged_user}"/>
                 </bean>
-                <bean class="org.georchestra.security.LdapUserDetailsRequestHeaderProvider" init-method="init">
+                <bean class="org.georchestra.security.LdapUserDetailsRequestHeaderProvider">
                     <constructor-arg index="0" ref="ldapUserSearch"/>
                     <constructor-arg index="1" value="${ldapOrgsRdn}"/>
                     <constructor-arg index="2">

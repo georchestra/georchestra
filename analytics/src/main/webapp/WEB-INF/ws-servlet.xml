@@ -9,7 +9,7 @@
 
     <context:annotation-config/>
 
-    <bean id="waitForDb" class="org.georchestra.commons.WaitForDb" init-method="test">
+    <bean id="waitForDb" class="org.georchestra.commons.WaitForDb">
       <property name="url" value="jdbc:postgresql://${pgsqlHost}:${pgsqlPort}/${pgsqlDatabase}"/>
       <property name="username" value="${pgsqlUser}"/>
       <property name="password" value="${pgsqlPassword}"/>

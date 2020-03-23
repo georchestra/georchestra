@@ -41,6 +41,7 @@ import org.springframework.security.authentication.encoding.LdapShaPasswordEncod
 
 import com.google.common.collect.Lists;
 
+import javax.annotation.PostConstruct;
 import javax.naming.Name;
 import javax.naming.directory.SearchControls;
 import javax.naming.ldap.LdapName;
@@ -78,6 +79,7 @@ public final class AccountDaoImpl implements AccountDao {
         this.ldapTemplate = ldapTemplate;
     }
 
+    @PostConstruct
     public void init() {
         this.attributMapper = new AccountContextMapper(pendingUserSearchBaseDN, orgSearchBaseDN + "," + basePath,
                 pendingOrgSearchBaseDN + "," + basePath);

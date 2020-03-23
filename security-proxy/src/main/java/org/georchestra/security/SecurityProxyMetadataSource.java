@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -71,6 +72,7 @@ public class SecurityProxyMetadataSource implements FilterInvocationSecurityMeta
         }
     }
 
+    @PostConstruct
     public void remap() {
         String configPath = System.getProperty("georchestra.datadir");
         if (configPath == null) {

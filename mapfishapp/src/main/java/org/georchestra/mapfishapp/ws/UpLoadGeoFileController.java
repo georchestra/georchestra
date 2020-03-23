@@ -39,6 +39,7 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import javax.annotation.Nullable;
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
@@ -135,6 +136,7 @@ public final class UpLoadGeoFileController implements HandlerExceptionResolver {
         this.allowFileProtocol = allow;
     }
 
+    @PostConstruct
     public void init() {
         if ((georConfig != null) && (georConfig.activated())) {
             File tmpDir = new File(this.docTempDir, "/geoFileUploadsCache");

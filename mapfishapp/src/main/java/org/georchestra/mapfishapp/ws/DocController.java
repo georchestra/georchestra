@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
@@ -136,6 +137,7 @@ public class DocController {
      */
     public static final String WKT_URL = DOC_URL + "wkt/";
 
+    @PostConstruct
     public void init() throws IOException {
         if (georchestraConfiguration.activated()) {
             Properties userPasswordCreds = georchestraConfiguration.loadCustomPropertiesFile("credentials");

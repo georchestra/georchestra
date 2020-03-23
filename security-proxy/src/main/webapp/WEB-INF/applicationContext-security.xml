@@ -54,8 +54,7 @@
 			</bean>
 		</property>
 		<property name="securityMetadataSource">
-			<bean id="spMetadataSource" class="org.georchestra.security.SecurityProxyMetadataSource"
-				init-method="remap">
+			<bean id="spMetadataSource" class="org.georchestra.security.SecurityProxyMetadataSource">
 				<property name="requestMap">
 					<map>
 						<!-- default geOrchestra rules (can be overridden in datadir) -->
@@ -101,7 +100,7 @@
         <property name="credentialsCharset" value="UTF-8"/>
     </bean>
 
-    <bean id="trustAnotherProxy" class="org.georchestra.security.ProxyTrustAnotherProxy" init-method="init">
+    <bean id="trustAnotherProxy" class="org.georchestra.security.ProxyTrustAnotherProxy">
         <property name="authenticationManager" ref="authenticationManager" />
         <!-- Note that the default value of trustedProxy is an empty string. It can only be
              set to a list of trusted proxies through the datadir -->

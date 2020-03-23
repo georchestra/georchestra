@@ -28,6 +28,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.georchestra.extractorapp.ws.extractor.task.ExtractionManager;
 
+import javax.annotation.PostConstruct;
+
 /**
  * This is a bean that starts a timer in the startup method. When the timer task
  * is run (this) all files in the archive storage directory are checked and the
@@ -51,6 +53,7 @@ public class ExpiredArchiveDaemon extends TimerTask implements FilenameFilter {
      * This is the init-method in the spring configuration file so it is called by
      * spring when the bean is configured.
      */
+    @PostConstruct
     public void startup() {
         LOG.info(getClass().getName() + " starting up with an interval of " + (period / MINUTE)
                 + " minutes and expiry of " + (expiry / DAYS) + " days");
