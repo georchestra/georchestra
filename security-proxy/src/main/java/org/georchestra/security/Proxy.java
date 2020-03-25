@@ -195,21 +195,37 @@ public class Proxy {
     private Permissions sameDomainPermissions;
     private String proxyPermissionsFile;
 
+    /**
+     * This variable controls the socketTimeout parameter passed to the httpclient
+     * configuration, used for proxified queries. Relying on HttpClient's
+     * documentation
+     * (https://hc.apache.org/httpcomponents-client-4.2.x/tutorial/html/connmgmt.html),
+     * it corresponds to the max time between two consecutive packets, and is
+     * expressed in milliseconds.
+     *
+     */
     private Integer httpClientTimeout = 300000;
-
-    private final static String setCookieHeader = "Set-Cookie";
-    private HttpAsyncClientBuilder httpAsyncClientBuilder;
 
     public void setHttpClientTimeout(Integer timeout) {
         this.httpClientTimeout = timeout;
     }
 
-    public void setPublicUrl(String publicUrl) {
-        this.publicUrl = publicUrl;
+    /**
+     * This variable holds the timeout in minutes before the proxified HTTP requests
+     * will be discarded, throwing a java.util.concurrent.TimeoutException, see
+     * return of executeHttpRequest() method below.
+     */
+    private Integer httpQueryTimeout = 20;
+
+    public void setHttpQueryTimeout(Integer httpQueryTimeout) {
+        this.httpQueryTimeout = httpQueryTimeout;
     }
 
-    public Integer getHttpClientTimeout() {
-        return httpClientTimeout;
+    private final static String setCookieHeader = "Set-Cookie";
+    private HttpAsyncClientBuilder httpAsyncClientBuilder;
+
+    public void setPublicUrl(String publicUrl) {
+        this.publicUrl = publicUrl;
     }
 
     @PostConstruct
@@ -707,7 +723,19 @@ public class Proxy {
             }
 
             doHandleRequest(finalResponse, proxiedResponse);
-        } catch (IOException | ExecutionException | InterruptedException | TimeoutException e) {
+        } catch (TimeoutException e) {
+            String errMsg = String.format("timeout on [%s] '%s'", request.getMethod(), sURL);
+            logger.error(errMsg, e);
+            try {
+                finalResponse.sendError(HttpServletResponse.SC_GATEWAY_TIMEOUT);
+            } catch (IOException ex2) {
+                // the least we can do is then to log the exception
+                // and set an explicit status
+                logger.error(ex2);
+                finalResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+            return;
+        } catch (IOException | ExecutionException | InterruptedException e) {
             // connection problem with the host
             String errMsg = String.format("Exception occured when trying to connect to the remote url '%s'", sURL);
             logger.error(errMsg, e);
@@ -822,7 +850,7 @@ public class Proxy {
 
         httpclient.execute(producer, consumer, null);
 
-        return future.get(5, TimeUnit.MINUTES);
+        return future.get(this.httpQueryTimeout, TimeUnit.MINUTES);
     }
 
     private @Nullable String extractLocationHeader(HttpResponse proxiedResponse) {
