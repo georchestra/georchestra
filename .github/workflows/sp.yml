@@ -29,6 +29,14 @@ jobs:
           mkdir -p $HOME/.m2
           cp .github/resources/m2-settings.xml $HOME/.m2/settings.xml
 
+    - name: "Maven repository caching"
+      uses: actions/cache@v1
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+
     - name: "Installing & checking formatting"
       run: ./mvnw --no-transfer-progress -B -P-all,security-proxy -Dfmt.action=validate install -Dadditionalparam=-Xdoclint:none -DskipTests
 
@@ -68,3 +76,7 @@ jobs:
       if: contains(github.ref, 'refs/tags/20.') && github.repository == 'georchestra/georchestra'
       run: |
         docker push georchestra/security-proxy:${{ steps.version.outputs.VERSION }}
+
+    - name: "Remove SNAPSHOT jars from repository"
+      run: |
+        find .m2/repository -name "*SNAPSHOT*" -type d | xargs rm -rf {}
