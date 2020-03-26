@@ -133,7 +133,7 @@ public class EditUserDetailsFormController {
      *
      * @param account input data
      */
-    private EditUserDetailsFormBean createForm(final Account account) {
+    EditUserDetailsFormBean createForm(final Account account) {
 
         EditUserDetailsFormBean formBean = new EditUserDetailsFormBean();
 
@@ -146,7 +146,7 @@ public class EditUserDetailsFormController {
         formBean.setFacsimile(account.getFacsimile());
         formBean.setDescription(account.getDescription());
         formBean.setPostalAddress(account.getPostalAddress());
-        formBean.setOrg(account.getOrg());
+        formBean.setOrg(orgsDao.findByCommonName(account.getOrg()).getName());
 
         return formBean;
     }
