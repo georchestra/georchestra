@@ -228,4 +228,15 @@ public class EditUserDetailsFormControllerTest {
         assertEquals("required", resultErrors.getFieldError("description").getDefaultMessage());
         assertEquals("required", resultErrors.getFieldError("postalAddress").getDefaultMessage());
     }
+
+    @Test
+    public void testCreateForm() {
+        ctrl = new EditUserDetailsFormController(dao, orgsDao, roleDao,
+                new Validation("phone,facsimile,title,description,postalAddress"));
+        EditUserDetailsFormBean editUserDetailsFormBean = ctrl.createForm(mtesterAccount);
+        assertEquals("email", editUserDetailsFormBean.getEmail());
+        assertEquals("mtester", editUserDetailsFormBean.getUid());
+        assertEquals("geOrchestra testing LLC", editUserDetailsFormBean.getOrg());
+
+    }
 }
