@@ -159,6 +159,12 @@
       <artifactId>mockito-all</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.ant</groupId>
+      <artifactId>ant</artifactId>
+      <version>1.10.7</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
   <build>
     <finalName>mapfishapp-${server}</finalName>
