@@ -1,5 +1,6 @@
 package org.georchestra.commons;
 
+import javax.annotation.PostConstruct;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -11,6 +12,7 @@ public class WaitForDb {
     private String password;
     private String driverClassName;
 
+    @PostConstruct
     public void test() {
         try {
             Class.forName(driverClassName);

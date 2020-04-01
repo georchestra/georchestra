@@ -39,6 +39,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.PostConstruct;
+
 public class ExtractionManager {
 
     private static final Log LOG = LogFactory.getLog(ExtractionManager.class.getPackage().getName());
@@ -65,16 +67,14 @@ public class ExtractionManager {
     private Map<String, ExtractionTask> pausedTasks = Collections
             .synchronizedMap(new HashMap<String, ExtractionTask>());
 
+    @PostConstruct
     public synchronized void init() {
         BlockingQueue<Runnable> workQueue = new PriorityBlockingQueue<Runnable>();
-        ThreadFactory threadFactory = new ThreadFactory() {
-            @Override
-            public Thread newThread(Runnable r) {
-                Thread thread = new Thread(r);
-                thread.setName("Extractorapp-thread" + System.currentTimeMillis());
-                thread.setDaemon(true);
-                return thread;
-            }
+        ThreadFactory threadFactory = r -> {
+            Thread thread = new Thread(r);
+            thread.setName("Extractorapp-thread" + System.currentTimeMillis());
+            thread.setDaemon(true);
+            return thread;
         };
         executor = new PriorityThreadPoolExecutor(minThreads, maxExtractions, 5, TimeUnit.SECONDS, workQueue,
                 threadFactory);
@@ -91,8 +91,7 @@ public class ExtractionManager {
     /**
      * Submits the task taking into account the task priorities.
      * 
-     * @param newTask
-     * @throws Exception
+     * @param extractor instance of extractor to be submit in queue
      */
     public synchronized void submit(ExtractionTask extractor) {
 

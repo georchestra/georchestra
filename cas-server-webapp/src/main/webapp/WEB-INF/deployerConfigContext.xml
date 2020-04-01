@@ -137,7 +137,7 @@
 
     <bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
 
-    <bean id="waitForLdap" class="org.georchestra.cas.ldap.WaitForLdap" init-method="test">
+    <bean id="waitForLdap" class="org.georchestra.cas.ldap.WaitForLdap">
         <property name="ldapUrl" value="${ldapScheme}://${ldapHost}:${ldapPort}"/>
         <property name="connectTimeout" value="${ldap.connectTimeout:30000}"/>
         <property name="useStartTLS" value="${ldap.useStartTLS:false}"/>

@@ -45,19 +45,19 @@
         <property name="baseUrl" value="${atlas.baseUrl:${scheme}://${domainName}/atlas}"/>
     </bean>
 
-    <bean id="specAsPdf" class="org.georchestra.atlas.CamelMapfishPrintComponent" init-method="init" />
+    <bean id="specAsPdf" class="org.georchestra.atlas.CamelMapfishPrintComponent" />
 
-    <bean id="prepareMail" class="org.georchestra.atlas.AtlasMailComponent" init-method="init">
+    <bean id="prepareMail" class="org.georchestra.atlas.AtlasMailComponent">
         <property name="georBaseUrl" value="${atlas.baseUrl:${scheme}://${domainName}/atlas}" />
         <property name="emailFrom" value="${atlas.emailFrom:${administratorEmail}}" />
         <property name="emailSubject" value="${atlas.emailSubject:[${instanceName}] Your Atlas request}" />
     </bean>
 
-    <bean id="bundlePdf" class="org.georchestra.atlas.BundlePdfComponent" init-method="init">
+    <bean id="bundlePdf" class="org.georchestra.atlas.BundlePdfComponent" >
         <property name="tempDir" value="${atlas.temporaryDirectory:/tmp/atlas}" />
     </bean>
 
-    <bean id="jobController" class="org.georchestra.atlas.JobController" init-method="init">
+    <bean id="jobController" class="org.georchestra.atlas.JobController">
         <property name="tempDir" value="${atlas.temporaryDirectory:/tmp/atlas}" />
     </bean>
 

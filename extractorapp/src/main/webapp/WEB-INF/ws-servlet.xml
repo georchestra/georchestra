@@ -33,13 +33,13 @@
 
     <!--  url mapping is directly handled with the spring annotations written in the following controllers -->
 
-    <bean id="expire-daemon" init-method="startup" class="org.georchestra.extractorapp.ws.extractor.ExpiredArchiveDaemon">
+    <bean id="expire-daemon" class="org.georchestra.extractorapp.ws.extractor.ExpiredArchiveDaemon">
       <property name="expiry" value="10"/> <!-- days -->
       <property name="period" value="10"/> <!-- minutes -->
       <property name="extractionManager" ref="extractionManager"/>
     </bean>
 
-    <bean id="extractor-controller" init-method="validateConfig" class="org.georchestra.extractorapp.ws.extractor.ExtractorController">
+    <bean id="extractor-controller" class="org.georchestra.extractorapp.ws.extractor.ExtractorController">
         <property name="publicUrl" value="${scheme}://${domainName}"/>
         <property name="responseTemplateFile" value="/WEB-INF/templates/extractor-http-response-template.xml"/>
         <property name="emailFactory" ref="emailFactory"/>
@@ -62,13 +62,13 @@
         <property name="extractionManager" ref="extractionManager"/>
     </bean>
 
-    <bean id="extractionManager" class="org.georchestra.extractorapp.ws.extractor.task.ExtractionManager" init-method="init">
+    <bean id="extractionManager" class="org.georchestra.extractorapp.ws.extractor.task.ExtractionManager">
         <property name="minThreads" value="${minThreads:1}"/>
         <property name="maxExtractions" value="${maxExtractions:100}"/>
     </bean>
 
     <!-- Email configuration -->
-    <bean id="emailFactory" class="org.georchestra.extractorapp.ws.EmailFactoryDefault" init-method="init">
+    <bean id="emailFactory" class="org.georchestra.extractorapp.ws.EmailFactoryDefault">
         <property name="smtpHost" value="${smtpHost}"/>
         <property name="smtpPort" value="${smtpPort}"/>
         <property name="emailHtml" value="${emailHtml:false}"/>

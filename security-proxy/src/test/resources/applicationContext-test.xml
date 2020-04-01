@@ -39,8 +39,7 @@
 			</bean>
 		</property>
 		<property name="securityMetadataSource">
-			<bean id="spMetadataSource" class="org.georchestra.security.SecurityProxyMetadataSource"
-				init-method="remap">
+			<bean id="spMetadataSource" class="org.georchestra.security.SecurityProxyMetadataSource">
 				<property name="requestMap">
 					<map>
 						<!-- default geOrchestra rules (can be overriden in datadir) -->

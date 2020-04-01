@@ -111,7 +111,7 @@
     <property name="pendingOrgSearchBaseDN" value="${pendingOrgSearchBaseDN:ou=pendingorgs}"/>
   </bean>
 
-  <bean id="accountDao" class="org.georchestra.console.ds.AccountDaoImpl" init-method="init">
+  <bean id="accountDao" class="org.georchestra.console.ds.AccountDaoImpl">
     <constructor-arg ref="ldapTemplate"/>
     <property name="basePath" value="${ldapBaseDn}"/>
     <property name="userSearchBaseDN" value="${ldapUsersRdn}"/>
@@ -145,7 +145,7 @@
 
   <bean id="userTokenDao" class="org.georchestra.console.ds.UserTokenDao"/>
 
-  <bean id="waitForDb" class="org.georchestra.commons.WaitForDb" init-method="test">
+  <bean id="waitForDb" class="org.georchestra.commons.WaitForDb">
     <property name="url" value="jdbc:postgresql://${pgsqlHost}:${pgsqlPort}/${pgsqlDatabase}"/>
     <property name="username" value="${pgsqlUser}"/>
     <property name="password" value="${pgsqlPassword}"/>

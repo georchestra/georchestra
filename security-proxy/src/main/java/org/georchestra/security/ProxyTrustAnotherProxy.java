@@ -5,6 +5,7 @@ import java.net.UnknownHostException;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
@@ -20,7 +21,8 @@ public class ProxyTrustAnotherProxy extends AbstractPreAuthenticatedProcessingFi
     private String rawProxyValue = "";
     private Set<InetAddress> trustedProxies = new HashSet<InetAddress>();
 
-    public void init() throws UnknownHostException {
+    @PostConstruct
+    public void init() {
         if (rawProxyValue == "") {
             logger.info("\"trustedProxy\" property is not defined. Skipping bean configuration");
             return;

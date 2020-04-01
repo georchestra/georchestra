@@ -29,6 +29,7 @@ import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Properties;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
@@ -62,6 +63,7 @@ public abstract class AbstractEmailFactory {
     @Autowired
     protected GeorchestraConfiguration georConfig;
 
+    @PostConstruct
     public void init() {
         if ((georConfig != null) && (georConfig.activated())) {
             LOG.info("geOrchestra datadir: reconfiguring bean " + this.getClass());

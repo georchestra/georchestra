@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +34,7 @@ public class AtlasMailComponent {
     @Autowired
     private GeorchestraConfiguration georConfiguration;
 
+    @PostConstruct
     public void init() {
         Properties vProp = new Properties();
         vProp.put("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogChute");

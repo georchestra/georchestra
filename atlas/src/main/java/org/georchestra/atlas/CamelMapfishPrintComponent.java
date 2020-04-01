@@ -29,6 +29,8 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 
+import javax.annotation.PostConstruct;
+
 public class CamelMapfishPrintComponent {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
@@ -37,6 +39,7 @@ public class CamelMapfishPrintComponent {
     @Autowired
     private GeorchestraConfiguration georConfiguration;
 
+    @PostConstruct
     public void init() throws IOException, URISyntaxException {
         ApplicationContext context = new ClassPathXmlApplicationContext(Main.DEFAULT_SPRING_CONTEXT);
         this.mapPrinter = context.getBean(MapPrinter.class);

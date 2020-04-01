@@ -61,6 +61,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import javax.annotation.Nullable;
+import javax.annotation.PostConstruct;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -211,10 +212,9 @@ public class Proxy {
         return httpClientTimeout;
     }
 
+    @PostConstruct
     public void init() throws Exception {
-
         OGCServicesAppender.setDataSource(ogcStatsDataSource);
-
         if (targets != null) {
             for (String url : targets.values()) {
                 new URL(url); // test that it is a valid URL

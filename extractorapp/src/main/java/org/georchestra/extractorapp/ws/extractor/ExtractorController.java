@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -94,6 +95,7 @@ public class ExtractorController implements ServletContextAware {
 
     private @Autowired DataSource dataSource;
 
+    @PostConstruct
     public void validateConfig() throws PropertyVetoException, MalformedURLException {
         setSecureHostAndServletUrl(this.publicUrl);
         if (extractionManager == null) {
