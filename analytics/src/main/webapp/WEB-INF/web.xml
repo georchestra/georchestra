@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_3_0.xsd">
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="3.0"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 
     <context-param>
       <param-name>org.eclipse.jetty.servlet.Default.dirAllowed</param-name>
@@ -8,18 +8,6 @@
     </context-param>
 
     <!-- filters -->
-    <filter>
-      <filter-name>encodingFilter</filter-name>
-      <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
-      <init-param>
-        <param-name>encoding</param-name>
-        <param-value>UTF-8</param-value>
-      </init-param>
-      <init-param>
-        <param-name>forceEncoding</param-name>
-        <param-value>true</param-value>
-      </init-param>
-    </filter>
     <filter>
       <filter-name>UrlRewriteFilter</filter-name>
       <filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
@@ -33,10 +21,6 @@
       </init-param>
     </filter>
 
-    <filter-mapping>
-      <filter-name>encodingFilter</filter-name>
-      <url-pattern>/*</url-pattern>
-    </filter-mapping>
     <filter-mapping>
       <filter-name>UrlRewriteFilter</filter-name>
       <url-pattern>/*</url-pattern>
