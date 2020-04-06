@@ -19,13 +19,25 @@
             http://www.springframework.org/schema/mvc
             http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-    <security:global-method-security pre-post-annotations="enabled" >
-	  <security:expression-handler ref="expressionHandler"/>
-	</security:global-method-security>
+  <context:component-scan
+          base-package="org.georchestra.console.ws.backoffice" use-default-filters="false">
+    <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+    <context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice" />
+  </context:component-scan>
 
-	<bean id="expressionHandler" class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
-		<property name="permissionEvaluator" ref="consolePermissionEvaluator"/>
-	</bean>
+  <security:global-method-security pre-post-annotations="enabled" >
+    <security:expression-handler ref="expressionHandler"/>
+  </security:global-method-security>
+
+  <bean id="swagger2Config" class="springfox.documentation.swagger2.configuration.Swagger2DocumentationConfiguration"/>
+  <mvc:resources mapping="swagger-ui.html"
+                 location="classpath:/META-INF/resources/" />
+  <mvc:resources mapping="/webjars/**"
+                 location="classpath:/META-INF/resources/webjars/" />
+
+  <bean id="expressionHandler" class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
+      <property name="permissionEvaluator" ref="consolePermissionEvaluator"/>
+  </bean>
 
   <bean id="consolePermissionEvaluator" class="org.georchestra.console.ConsolePermissionEvaluator" />
 
