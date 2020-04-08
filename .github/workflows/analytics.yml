@@ -52,7 +52,7 @@ jobs:
     - name: "Building docker image"
       if: github.repository == 'georchestra/georchestra'
       working-directory: analytics/
-      run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker,log4j-logstash,sentry-spring -DdockerImageName=georchestra/analytics:${{ steps.version.outputs.VERSION }} -DskipTests
+      run: ../mvnw --no-transfer-progress clean package docker:build -Pdocker,log4j-logstash,sentry-log4j -DdockerImageName=georchestra/analytics:${{ steps.version.outputs.VERSION }} -DskipTests
 
     - name: "Logging in docker.io"
       if: github.repository == 'georchestra/georchestra'
