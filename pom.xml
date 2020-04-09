@@ -51,7 +51,7 @@
     <camel-extras.version>2.14.1</camel-extras.version>
     <mapfish.version>3.5.0</mapfish.version>
     <metrics.version>3.0.2</metrics.version>
-    <cas.version>4.2.7</cas.version>
+    <cas.version>4.0.0</cas.version>
     <gmaven.version>1.0</gmaven.version>
     <gmaven.runtime.version>1.5</gmaven.runtime.version>
     <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
