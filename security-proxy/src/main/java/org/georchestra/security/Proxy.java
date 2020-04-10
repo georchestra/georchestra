@@ -156,6 +156,9 @@ import com.google.common.annotations.VisibleForTesting;
  */
 @Controller
 public class Proxy {
+
+    private final static String SET_COOKIE_HEADER = "Set-Cookie";
+
     protected static final Log logger = LogFactory.getLog(Proxy.class.getPackage().getName());
     protected static final Log statsLogger = LogFactory.getLog(Proxy.class.getPackage().getName() + ".statistics");
     private static final org.apache.http.client.RedirectStrategy NO_REDIRECT_STRATEGY = new org.apache.http.client.RedirectStrategy() {
@@ -204,10 +207,10 @@ public class Proxy {
      * expressed in milliseconds.
      *
      */
-    private Integer httpClientTimeout = 300000;
+    private int httpClientTimeoutMillis = 300000;
 
-    public void setHttpClientTimeout(Integer timeout) {
-        this.httpClientTimeout = timeout;
+    public void setHttpClientTimeout(int timeout) {
+        this.httpClientTimeoutMillis = timeout;
     }
 
     /**
@@ -215,13 +218,12 @@ public class Proxy {
      * will be discarded, throwing a java.util.concurrent.TimeoutException, see
      * return of executeHttpRequest() method below.
      */
-    private Integer httpQueryTimeout = 20;
+    private int entityEnclosedOrEmptyResponseTimeout = 20;
 
-    public void setHttpQueryTimeout(Integer httpQueryTimeout) {
-        this.httpQueryTimeout = httpQueryTimeout;
+    public void setEntityEnclosedOrEmptyResponseTimeout(int entityEnclosedOrEmptyResponseTimeout) {
+        this.entityEnclosedOrEmptyResponseTimeout = entityEnclosedOrEmptyResponseTimeout;
     }
 
-    private final static String setCookieHeader = "Set-Cookie";
     private HttpAsyncClientBuilder httpAsyncClientBuilder;
 
     public void setPublicUrl(String publicUrl) {
@@ -757,7 +759,7 @@ public class Proxy {
     private HttpAsyncClientBuilder createHttpAsyncClientBuilder() {
         HttpAsyncClientBuilder htb = HttpAsyncClients.custom().setRedirectStrategy(NO_REDIRECT_STRATEGY);
 
-        RequestConfig config = RequestConfig.custom().setSocketTimeout(this.httpClientTimeout).build();
+        RequestConfig config = RequestConfig.custom().setSocketTimeout(this.httpClientTimeoutMillis).build();
         htb.setDefaultRequestConfig(config);
 
         // Handle http proxy for external request.
@@ -774,7 +776,7 @@ public class Proxy {
      */
     private Header extractHeaderSetCookie(HttpResponse proxiedResponse) {
         for (Header h : proxiedResponse.getAllHeaders()) {
-            if (h.getName().equalsIgnoreCase(setCookieHeader)) {
+            if (h.getName().equalsIgnoreCase(SET_COOKIE_HEADER)) {
                 return h;
             }
         }
@@ -850,7 +852,7 @@ public class Proxy {
 
         httpclient.execute(producer, consumer, null);
 
-        return future.get(this.httpQueryTimeout, TimeUnit.MINUTES);
+        return future.get(this.entityEnclosedOrEmptyResponseTimeout, TimeUnit.MINUTES);
     }
 
     private @Nullable String extractLocationHeader(HttpResponse proxiedResponse) {
