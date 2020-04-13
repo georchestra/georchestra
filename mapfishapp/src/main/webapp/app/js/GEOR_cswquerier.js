@@ -830,33 +830,27 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
             // data type filters
             // improve relevance of results: (might not be relevant with other csw servers than geonetwork)
             byTypes = new OpenLayers.Filter.Logical({
-                type: "&&",
+                type: "||",
                 filters: [
-                    // do not request dc:type = service, just dc:type = dataset OR series
-                    new OpenLayers.Filter.Logical({
-                        type: "||",
-                        filters: [
-                            new OpenLayers.Filter.Comparison({
-                                type: "==",
-                                property: "Type",
-                                value: 'data'
-                            }),
-                            new OpenLayers.Filter.Comparison({
-                                type: "==",
-                                property: "Type",
-                                value: 'dataset'
-                            }),
-                            new OpenLayers.Filter.Comparison({
-                                type: "==",
-                                property: "Type",
-                                value: 'datasetcollection'
-                            }),
-                            new OpenLayers.Filter.Comparison({
-                                type: "==",
-                                property: "Type",
-                                value: 'series'
-                            })
-                        ]
+                    new OpenLayers.Filter.Comparison({
+                        type: "==",
+                        property: "Type",
+                        value: 'data'
+                    }),
+                    new OpenLayers.Filter.Comparison({
+                        type: "==",
+                        property: "Type",
+                        value: 'dataset'
+                    }),
+                    new OpenLayers.Filter.Comparison({
+                        type: "==",
+                        property: "Type",
+                        value: 'datasetcollection'
+                    }),
+                    new OpenLayers.Filter.Comparison({
+                        type: "==",
+                        property: "Type",
+                        value: 'series'
                     })
                 ]
             }),
@@ -972,7 +966,13 @@ Ext.app.FreetextField = Ext.extend(Ext.form.TwinTriggerField, {
         // spatial filter
         finalFilters.push(GEOR.cswquerier.getSpatialFilter());
 
-        if (byWords.length > 0) {
+        if (byWords.length == 1) {
+            finalFilters.push(new OpenLayers.Filter.Logical({
+                    type: "||",
+                    filters: [byIds, byWords[0]]
+                })
+            );
+        } else if (byWords.length > 1) {
             finalFilters.push(new OpenLayers.Filter.Logical({
                     type: "||",
                     filters: [
