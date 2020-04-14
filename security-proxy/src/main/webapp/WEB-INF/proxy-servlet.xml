@@ -28,6 +28,7 @@
           <property name="publicUrl" value="${scheme}://${domainName}"/>
           <property name="headerManagement" ref="headerManagementBean"/>
           <property name="defaultCharset" value="UTF-8"/>
+          <property name="entityEnclosedOrEmptyResponseTimeout" value="${entityEnclosedOrEmptyResponseTimeout:20}" />
           <property name="defaultTarget" value="${defaultTarget:/header/}" />
           <property name="proxyPermissionsFile" value="permissions.xml"/>
           <property name="httpClientTimeout">
@@ -38,7 +39,7 @@
 
           <property name="targets">
                <map>
-                    
+
                </map>
           </property>
           <property name="requireCharsetContentTypes">
@@ -84,7 +85,7 @@
                     <constructor-arg index="1" value="${ldapOrgsRdn}"/>
                     <constructor-arg index="2">
                         <map>
-                        
+
                         </map>
                     </constructor-arg>
                 </bean>

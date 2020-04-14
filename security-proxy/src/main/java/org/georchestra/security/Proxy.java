@@ -156,6 +156,9 @@ import com.google.common.annotations.VisibleForTesting;
  */
 @Controller
 public class Proxy {
+
+    private final static String SET_COOKIE_HEADER = "Set-Cookie";
+
     protected static final Log logger = LogFactory.getLog(Proxy.class.getPackage().getName());
     protected static final Log statsLogger = LogFactory.getLog(Proxy.class.getPackage().getName() + ".statistics");
     private static final org.apache.http.client.RedirectStrategy NO_REDIRECT_STRATEGY = new org.apache.http.client.RedirectStrategy() {
@@ -195,21 +198,36 @@ public class Proxy {
     private Permissions sameDomainPermissions;
     private String proxyPermissionsFile;
 
-    private Integer httpClientTimeout = 300000;
+    /**
+     * This variable controls the socketTimeout parameter passed to the httpclient
+     * configuration, used for proxified queries. Relying on HttpClient's
+     * documentation
+     * (https://hc.apache.org/httpcomponents-client-4.2.x/tutorial/html/connmgmt.html),
+     * it corresponds to the max time between two consecutive packets, and is
+     * expressed in milliseconds.
+     *
+     */
+    private int httpClientTimeoutMillis = 300000;
 
-    private final static String setCookieHeader = "Set-Cookie";
-    private HttpAsyncClientBuilder httpAsyncClientBuilder;
-
-    public void setHttpClientTimeout(Integer timeout) {
-        this.httpClientTimeout = timeout;
+    public void setHttpClientTimeout(int timeout) {
+        this.httpClientTimeoutMillis = timeout;
     }
+
+    /**
+     * This variable holds the timeout in minutes before the proxified HTTP requests
+     * will be discarded, throwing a java.util.concurrent.TimeoutException, see
+     * return of executeHttpRequest() method below.
+     */
+    private int entityEnclosedOrEmptyResponseTimeout = 20;
+
+    public void setEntityEnclosedOrEmptyResponseTimeout(int entityEnclosedOrEmptyResponseTimeout) {
+        this.entityEnclosedOrEmptyResponseTimeout = entityEnclosedOrEmptyResponseTimeout;
+    }
+
+    private HttpAsyncClientBuilder httpAsyncClientBuilder;
 
     public void setPublicUrl(String publicUrl) {
         this.publicUrl = publicUrl;
-    }
-
-    public Integer getHttpClientTimeout() {
-        return httpClientTimeout;
     }
 
     @PostConstruct
@@ -707,7 +725,19 @@ public class Proxy {
             }
 
             doHandleRequest(finalResponse, proxiedResponse);
-        } catch (IOException | ExecutionException | InterruptedException | TimeoutException e) {
+        } catch (TimeoutException e) {
+            String errMsg = String.format("timeout on [%s] '%s'", request.getMethod(), sURL);
+            logger.error(errMsg, e);
+            try {
+                finalResponse.sendError(HttpServletResponse.SC_GATEWAY_TIMEOUT);
+            } catch (IOException ex2) {
+                // the least we can do is then to log the exception
+                // and set an explicit status
+                logger.error(ex2);
+                finalResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+            return;
+        } catch (IOException | ExecutionException | InterruptedException e) {
             // connection problem with the host
             String errMsg = String.format("Exception occured when trying to connect to the remote url '%s'", sURL);
             logger.error(errMsg, e);
@@ -729,7 +759,7 @@ public class Proxy {
     private HttpAsyncClientBuilder createHttpAsyncClientBuilder() {
         HttpAsyncClientBuilder htb = HttpAsyncClients.custom().setRedirectStrategy(NO_REDIRECT_STRATEGY);
 
-        RequestConfig config = RequestConfig.custom().setSocketTimeout(this.httpClientTimeout).build();
+        RequestConfig config = RequestConfig.custom().setSocketTimeout(this.httpClientTimeoutMillis).build();
         htb.setDefaultRequestConfig(config);
 
         // Handle http proxy for external request.
@@ -746,7 +776,7 @@ public class Proxy {
      */
     private Header extractHeaderSetCookie(HttpResponse proxiedResponse) {
         for (Header h : proxiedResponse.getAllHeaders()) {
-            if (h.getName().equalsIgnoreCase(setCookieHeader)) {
+            if (h.getName().equalsIgnoreCase(SET_COOKIE_HEADER)) {
                 return h;
             }
         }
@@ -822,7 +852,7 @@ public class Proxy {
 
         httpclient.execute(producer, consumer, null);
 
-        return future.get(5, TimeUnit.MINUTES);
+        return future.get(this.entityEnclosedOrEmptyResponseTimeout, TimeUnit.MINUTES);
     }
 
     private @Nullable String extractLocationHeader(HttpResponse proxiedResponse) {
