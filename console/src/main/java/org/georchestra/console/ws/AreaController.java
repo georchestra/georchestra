@@ -1,7 +1,7 @@
 package org.georchestra.console.ws;
 
-import com.google.common.annotations.VisibleForTesting;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
-import java.util.Arrays;
 
 /**
  * A simple controller to serve an area.json file from your datadir.
@@ -24,7 +23,7 @@ import java.util.Arrays;
 @Controller
 public class AreaController {
 
-    @Value("${AreasUrl:https://www.geo2france.fr/public/communes_zones_competence.geojson}")
+    @Value("${AreasUrl:area.geojson}")
     private String areasUrl;
 
     @Value("${georchestra.datadir:/etc/georchestra}")
@@ -37,22 +36,26 @@ public class AreaController {
      * @return json or rediurect to the resource if area is an URL
      * @throws IOException
      */
-    @GetMapping(value = "/area.json", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(value = "/public/area.geojson", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
     public String serveArea(HttpServletResponse response) throws IOException {
+        // if arealUrl in config is an http endpoint, then send it directly.
         if (isURL(areasUrl)) {
             response.sendRedirect(areasUrl);
             return "";
         }
         File areaJsonFile = lookForAreaUrl();
         try (InputStream stream = new FileInputStream(areaJsonFile)) {
-            return StreamUtils.copyToString(stream, StandardCharsets.UTF_8);
+            String jsonString = StreamUtils.copyToString(stream, StandardCharsets.UTF_8);
+            return new JSONObject(jsonString).toString();
         } catch (IOException ioe) {
             // in case there are any errors with the area file, pretend it didn't exist.
             response.setStatus(404);
-            return "{\"error\": \"area.json not found\"}";
+            return "{\"error\": \"area.geojson not found\"}";
+        } catch (JSONException ex) {
+            response.setStatus(500);
+            return "{\"error\": \"specifed file (area.geojson) could not be parsed server side\"}";
         }
-
     }
 
     /**

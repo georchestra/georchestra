@@ -3,6 +3,7 @@ package org.georchestra.console.ws;
 import org.apache.commons.io.FileUtils;
 import org.georchestra.console.bs.ExpiredTokenCleanTask;
 import org.georchestra.console.bs.ExpiredTokenManagement;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -29,7 +30,6 @@ public class AreaControllerTest {
     @Before
     public void setupTest() {
         ctrl = new AreaController();
-
     }
 
     @Test
@@ -43,28 +43,40 @@ public class AreaControllerTest {
     }
 
     @Test
-    public void testAreaUrlInDatadir() throws IOException {
+    public void testInvalidFileInDatadir() throws IOException {
         String datadir = tempFolder.getRoot().toString();
-        final File areaJson = tempFolder.newFile("xyz.json");
+        File areaJson = tempFolder.newFile("xyz.json");
         FileUtils.writeStringToFile(areaJson, "hello world", "UTF-8");
         MockHttpServletResponse response = new MockHttpServletResponse();
         ReflectionTestUtils.setField(ctrl, "areasUrl", areaJson.toString());
         ReflectionTestUtils.setField(ctrl, "datadir", datadir);
         String ret = ctrl.serveArea(response);
-        assertEquals(ret, "hello world");
+        assertEquals(ret, "{\"error\": \"specifed file (area.geojson) could not be parsed server side\"}");
+    }
+
+    @Test
+    public void testAreaUrlInDatadir() throws IOException {
+        String datadir = tempFolder.getRoot().toString();
+        File areaJson = tempFolder.newFile("xyz.json");
+        FileUtils.writeStringToFile(areaJson, "{\"hello\": \"world\" }", "UTF-8");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        ReflectionTestUtils.setField(ctrl, "areasUrl", areaJson.toString());
+        ReflectionTestUtils.setField(ctrl, "datadir", datadir);
+        String ret = ctrl.serveArea(response);
+        assertEquals(ret, "{\"hello\":\"world\"}");
     }
 
     @Test
     public void testAreaUrlInDatadirConsole() throws IOException {
         String datadir = tempFolder.getRoot().toString();
         tempFolder.newFolder("console");
-        final File areaJson = tempFolder.newFile("console/xyz.json");
-        FileUtils.writeStringToFile(areaJson, "hello world", "UTF-8");
+        File areaJson = tempFolder.newFile("console/xyz.json");
+        FileUtils.writeStringToFile(areaJson, "{\"hello\": \"world\" }", "UTF-8");
         MockHttpServletResponse response = new MockHttpServletResponse();
         ReflectionTestUtils.setField(ctrl, "areasUrl", areaJson.toString());
         ReflectionTestUtils.setField(ctrl, "datadir", datadir);
         String ret = ctrl.serveArea(response);
-        assertEquals(ret, "hello world");
+        assertEquals(ret, "{\"hello\":\"world\"}");
     }
 
     @Test
@@ -74,7 +86,7 @@ public class AreaControllerTest {
         ReflectionTestUtils.setField(ctrl, "areasUrl", "i_dont_exists.json");
         ReflectionTestUtils.setField(ctrl, "datadir", datadir);
         String ret = ctrl.serveArea(response);
-        assertEquals(ret, "{\"error\": \"area.json not found\"}");
+        assertEquals(ret, "{\"error\": \"area.geojson not found\"}");
         assertEquals(response.getStatus(), 404);
 
     }
