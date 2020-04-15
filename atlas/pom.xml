@@ -522,7 +522,7 @@
                     <plugin>
                         <groupId>com.spotify</groupId>
                         <artifactId>docker-maven-plugin</artifactId>
-                        <version>0.3.8</version>
+                        <version>1.2.2</version>
                         <configuration>
                             <imageName>${dockerImageName}</imageName>
                             <dockerDirectory>${project.basedir}/src/docker</dockerDirectory>
