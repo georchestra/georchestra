@@ -42,14 +42,15 @@ git push origin 20.1-geofence
 
 ### GeoNetwork
 
-Create a new branch deriving from `georchestra-gn*-master`, eg `georchestra-gn3.8.2-20.1`.
+```
+cd geonetwork
+git checkout georchestra-gn3.10.2
+git pull origin georchestra-gn3.10.2
+git tag 20.1.0
+git push origin 20.1.0
+```
 
-In branch `georchestra-gn3.8.2-20.1`, file `web/pom.xml`:
-change `<dockerDatadirScmVersion>docker-master</dockerDatadirScmVersion>` into `<dockerDatadirScmVersion>docker-20.1</dockerDatadirScmVersion>`
-
-Commit and push `georchestra-gn3.8.2-20.1`.
-
-We're done for GeoNetwork !
+Then [create a new release](https://github.com/georchestra/geonetwork/releases).
 
 ### geOrchestra
 
@@ -64,8 +65,7 @@ Update the GeoNetwork submodule to the release commit:
 ```
 cd geonetwork
 git fetch origin
-git checkout georchestra-gn3.8.2-20.1
-git pull origin georchestra-gn3.8.2-20.1
+git checkout 20.1.0
 cd -
 ```
 
@@ -76,6 +76,7 @@ Other tasks:
  * Change the `BTAG` variable in the Makefile to `20.1.x`
  * Check the submodule branches in `.gitmodules` are correct, since [dependabot](https://app.dependabot.com/accounts/georchestra/) depends on it to update submodules
  * Setup a [new dependabot job](https://app.dependabot.com/accounts/georchestra/) which takes care of updating the submodules for this new branch
+ * Change the default branches in github repositories
 
 Commit and propagate the changes:
 ```
@@ -85,7 +86,7 @@ git commit -am "20.1.x branch"
 
 When the release is ready on branch `20.1.x`, push a tag:
 ```
-git tag v20.1.0
+git tag 20.1.0
 git push origin 20.1.x --tags
 ```
 
@@ -99,7 +100,55 @@ git commit -am "updated project version in pom.xml"
 
 geOrchestra 20.1.0 is now released, congrats !
 
-Do not forget to also update the [website](http://www.georchestra.org/software.html) !
+Do not forget to :
+ * update the [website](http://www.georchestra.org/software.html)
+ * [tweet](https://twitter.com/georchestra) !
+
+## Patch releases
+
+We're taking example on the 20.0.2 release.
+
+### GeoNetwork
+
+```
+cd geonetwork
+git checkout georchestra-gn3.8.2
+git pull origin georchestra-gn3.8.2
+git tag 20.0.2
+git push origin 20.0.2
+```
+
+Then [create a new release](https://github.com/georchestra/geonetwork/releases).
 
 
-## Patch releases (TO BE DONE)
+### geOrchestra
+
+Create the release commit:
+```
+cd georchestra
+git checkout 20.0.x
+git pull origin 20.0.x
+find ./ -name pom.xml -exec sed -i 's#<version>20.0-SNAPSHOT</version>#<version>20.0.2</version>#' {} \;
+cd geonetwork
+git fetch origin
+git checkout 20.0.2
+cd ..
+git add geonetwork
+git add -p
+git commit -m "20.0.2 release"
+git push origin 20.0.x
+git tag 20.0.2
+git push origin 20.0.2
+```
+
+Then [create a new release](https://github.com/georchestra/georchestra/releases).
+
+Finally, revert the maven version back to SNAPSHOT:
+```
+find ./ -name pom.xml -exec sed -i 's#<version>20.0.2</version>#<version>20.0-SNAPSHOT</version>#' {} \;
+git add -p
+git commit -m "back to SNAPSHOT"
+git push origin 20.0.x
+```
+
+[Tweet](https://twitter.com/georchestra) !
