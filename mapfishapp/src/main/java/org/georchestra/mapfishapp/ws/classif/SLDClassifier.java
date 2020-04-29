@@ -102,7 +102,7 @@ public class SLDClassifier {
         // "prefix:layername" pattern and we do not want to add an extra logic
         // to get the prefix URL in the code, we replace the character by hand.
 
-        _wfsngTypeName = command.getFeatureTypeName().replaceFirst(":", "_");
+        _wfsngTypeName = command.getFeatureTypeName();
         _command = command;
         if (fac != null) {
             _factory = fac;
