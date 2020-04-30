@@ -2,7 +2,6 @@ package org.georchestra.mapfishapp.ws.classif;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -15,7 +14,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.geotools.data.wfs.WFSDataStoreFactory;
 import org.json.JSONObject;
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
@@ -31,7 +30,14 @@ public class SLDClassifierTest {
     private static final Map<String, UsernamePasswordCredentials> EMPTY_MAP = Collections
             .<String, UsernamePasswordCredentials>emptyMap();
 
-    private static final String wfsUrl = "https://geobretagne.fr/geoserver/wfs?service=WFS&request=GetCapabilities";
+    // Use version=2.0 to ensure the SLDClassifier downgrades it to 1.1.0
+    private static final String wfsUrl = "https://geobretagne.fr/geoserver/wfs?service=WFS&request=GetCapabilities&VERSION=2.0";
+
+    private WFSDataStoreFactory dataStoreFactory;
+
+    public @Before void before() {
+        dataStoreFactory = new WFSDataStoreFactory();
+    }
 
     @Test
     public void testChoropleths() throws Exception {
@@ -49,7 +55,7 @@ public class SLDClassifierTest {
 
         // create command
         ClassifierCommand command = new ClassifierCommand(jsReq);
-        SLDClassifier classifier = new SLDClassifier(EMPTY_MAP, command, new MockWFSDataStoreFactory());
+        SLDClassifier classifier = new SLDClassifier(EMPTY_MAP, command, dataStoreFactory);
 
         Document doc = createDomDocument(classifier.getSLD());
 
@@ -76,7 +82,7 @@ public class SLDClassifierTest {
 
         // create command
         ClassifierCommand command = new ClassifierCommand(jsReq);
-        SLDClassifier classifier = new SLDClassifier(EMPTY_MAP, command, new MockWFSDataStoreFactory());
+        SLDClassifier classifier = new SLDClassifier(EMPTY_MAP, command, dataStoreFactory);
         Document doc = createDomDocument(classifier.getSLD());
 
         // need as many rules, filters and symbolizers as classes
@@ -99,7 +105,7 @@ public class SLDClassifierTest {
 
         // create command
         ClassifierCommand command = new ClassifierCommand(jsReq);
-        SLDClassifier classifier = new SLDClassifier(EMPTY_MAP, command, new MockWFSDataStoreFactory());
+        SLDClassifier classifier = new SLDClassifier(EMPTY_MAP, command, dataStoreFactory);
 
         Document doc = createDomDocument(classifier.getSLD());
 
