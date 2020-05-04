@@ -95,8 +95,8 @@ public class SLDClassifierTest {
     public void testUniqueValues() throws Exception {
 
         // build JSON request
-        String featureTypeName = "ccvia:abri_velo";
-        String propertyName = "ID";
+        String featureTypeName = "megalis:ZAMII_bzh";
+        String propertyName = "cx_id";
         int paletteID = 1;
 
         JSONObject jsReq = new JSONObject().put("type", "unique_values").put("wfs_url", wfsUrl)
@@ -110,7 +110,7 @@ public class SLDClassifierTest {
         Document doc = createDomDocument(classifier.getSLD());
 
         // should retrieve expected tags
-        assertNotEquals(0, doc.getElementsByTagName("sld:UserLayer").getLength());
+        assertEquals(0, doc.getElementsByTagName("sld:UserLayer").getLength());
         assertNotEquals(0, doc.getElementsByTagName("sld:NamedLayer").getLength());
         assertNotEquals(0, doc.getElementsByTagName("sld:Rule").getLength());
         assertNotEquals(0, doc.getElementsByTagName("ogc:Filter").getLength());
