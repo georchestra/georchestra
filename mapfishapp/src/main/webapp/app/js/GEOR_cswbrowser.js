@@ -412,19 +412,7 @@ GEOR.cswbrowser = (function() {
                 {name: 'name', type: 'string', mapping: 'filename'},
                 {name: 'key', type: 'string', mapping: 'key'}
             ]);
-            var thesauriStore = new Ext.data.Store({
-                autoLoad: true,
-                proxy: new Ext.data.HttpProxy({
-                    url: GEONETWORK_URL + '/xml.thesaurus.getList',
-                    method: 'GET',
-                    disableCaching: false
-                }),
-                reader: new GEOR.XmlReader({
-                    record: 'thesaurus',
-                    id: 'key'
-                }, recordType)
-            });
-
+            var thesauriStore = new Ext.data.Store();
             var combo = new Ext.form.ComboBox({
                 fieldLabel: tr("Thesaurus:"),
                 labelSeparator: '',
@@ -455,17 +443,7 @@ GEOR.cswbrowser = (function() {
                         v['key'] = GEOR.config.THESAURUS_NAME;
                         store.add([new recordType(v)]);
 
-                        var regexp = new RegExp('.rdf');
-                        store.each(function(r) {
-                            r.set('name',
-                                GEOR.util.Capitalize(
-                                    r.get('name')
-                                ).replace(regexp, '')
-                            );
-                        });
-                        store.sort('name');
-
-                        var defKey = GEOR.config.DEFAULT_THESAURUS_KEY;
+                        var defKey = GEOR.config.THESAURUS_NAME;
                         combo.setValue(defKey);
                         var r = store.query('key', defKey).first();
                         combo.fireEvent('select', combo, r);
