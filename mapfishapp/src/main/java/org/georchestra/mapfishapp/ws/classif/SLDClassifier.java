@@ -20,8 +20,11 @@
 package org.georchestra.mapfishapp.ws.classif;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -29,15 +32,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URIBuilder;
 import org.georchestra.mapfishapp.ws.DocServiceException;
 import org.georchestra.mapfishapp.ws.classif.ClassifierCommand.E_ClassifType;
 import org.geotools.data.DataSourceException;
@@ -65,7 +68,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
  * Types of classification: on continuous or discrete values (Quantile method
  * only) <br />
  * Check ClassifierCommand to see all the parameters that need to be provided.
- * 
+ *
  * @see ClassifierCommand
  * @author yoann.buch@gmail.com
  *
@@ -87,7 +90,7 @@ public class SLDClassifier {
      * This classifier can only be requested by a ClassifierCommand given the wide
      * range of cases and different parameters. The SLD is directly generated and be
      * accessed via {@link SLDClassifier#getSLD()}
-     * 
+     *
      * @param command ClassifierCommand provides the type of classification and
      *                display
      * @throws DocServiceException When client request is not valid
@@ -102,15 +105,10 @@ public class SLDClassifier {
         // "prefix:layername" pattern and we do not want to add an extra logic
         // to get the prefix URL in the code, we replace the character by hand.
 
-        _wfsngTypeName = command.getFeatureTypeName().replaceFirst(":", "_");
+        _wfsngTypeName = command.getFeatureTypeName();
         _command = command;
         if (fac != null) {
             _factory = fac;
-        }
-        // turn off logger
-        Handler[] handlers = Logger.getLogger("").getHandlers();
-        for (int index = 0; index < handlers.length; index++) {
-            handlers[index].setLevel(Level.OFF);
         }
 
         // start directly the classification
@@ -119,7 +117,7 @@ public class SLDClassifier {
 
     /**
      * Gets the generated SLD file content
-     * 
+     *
      * @return SLD content as String
      */
     public String getSLD() {
@@ -140,7 +138,7 @@ public class SLDClassifier {
     /**
      * Upload all the features from the WFS and then prepare the factories to
      * fulfill the different type of classifications and displays
-     * 
+     *
      * @throws DocServiceException
      */
     private void doClassification() throws DocServiceException {
@@ -280,7 +278,7 @@ public class SLDClassifier {
      * - I_FilterFactory: gives Filters (tag <ogc:Filter>) <br />
      * - I_SymbolizerFactory: gives Symbolizers (tag: <sld:PolygonSymbolizer> or
      * <sld:PointSymbolizer>) <br />
-     * 
+     *
      * @param filterFact     Filters Factory
      * @param symbolizerFact Symbolizers Factory
      * @return FeatureTypeStyle (List of Rules)
@@ -330,7 +328,7 @@ public class SLDClassifier {
 
     /**
      * Get the data type of the command attribute
-     * 
+     *
      * @param wfs datastore
      * @return data type as Class
      */
@@ -351,29 +349,45 @@ public class SLDClassifier {
 
     /**
      * Gives a connection to a remote WFS
-     * 
-     * @param wfsUrl URL of the WFS. Should be a GetCapabilities request
+     *
+     * @param getCapsUrl URL of the WFS. Should be a GetCapabilities request
      * @return Virtual DataStore. All features can be extracted from it.
      * @throws DocServiceException
      */
-    @SuppressWarnings("unchecked")
-    private WFSDataStore connectToWFS(final URL wfsUrl) throws DocServiceException {
-        WFSDataStore wfs = null;
-        Map m = new HashMap();
+    private WFSDataStore connectToWFS(URL getCapsUrl) throws DocServiceException {
         try {
-            UsernamePasswordCredentials credentials = findCredentials(wfsUrl);
+            // Force WFS version to 1.1.0, if not specified, defaulting to the higest server
+            // version (2.0) will break parsing
+            URIBuilder uribuilder = new URIBuilder(getCapsUrl.toURI());
+            Optional<NameValuePair> version = uribuilder.getQueryParams().stream()
+                    .filter(p -> p.getName().equalsIgnoreCase("version")).findFirst();
+            if (!version.isPresent()) {
+                uribuilder.setParameter("VERSION", "1.1.0");
+            } else if (!"1.1.0".contentEquals(version.get().getValue())) {
+                uribuilder.setParameter(version.get().getName(), "1.1.0");
+            }
+            getCapsUrl = uribuilder.build().toURL();
+        } catch (URISyntaxException | MalformedURLException e) {
+            throw new IllegalArgumentException("Invalid uri: " + getCapsUrl, e);
+        }
+
+        WFSDataStore wfs = null;
+        Map<String, Serializable> m = new HashMap<>();
+        try {
+            UsernamePasswordCredentials credentials = findCredentials(getCapsUrl);
             if (credentials != null) {
                 m.put(WFSDataStoreFactory.USERNAME.key, credentials.getUserName());
                 m.put(WFSDataStoreFactory.PASSWORD.key, credentials.getPassword());
             }
             // connect to remote WFS
-            m.put(WFSDataStoreFactory.URL.key, wfsUrl);
+            m.put(WFSDataStoreFactory.URL.key, getCapsUrl);
             m.put(WFSDataStoreFactory.TIMEOUT.key, 60000); // default: 3000
             // TODO : .key necessary for those two ?
-            m.put(WFSDataStoreFactory.TRY_GZIP, true); // try to optimize communication
-            m.put(WFSDataStoreFactory.ENCODING, "UTF-8"); // try to force UTF-8
+            m.put(WFSDataStoreFactory.TRY_GZIP.key, Boolean.TRUE); // try to optimize communication
+            m.put(WFSDataStoreFactory.ENCODING.key, "UTF-8"); // try to force UTF-8
             // TODO : configurable ?
             m.put(WFSDataStoreFactory.MAXFEATURES.key, 2000);
+            m.put(WFSDataStoreFactory.LENIENT.key, Boolean.TRUE);
             wfs = _factory.createDataStore(m);
         } catch (SocketTimeoutException e) {
             throw new DocServiceException("WFS is unavailable", HttpServletResponse.SC_GATEWAY_TIMEOUT);
@@ -413,7 +427,7 @@ public class SLDClassifier {
      * the same job as
      * {@link SLDClassifier#getStringValues(FeatureIterator, String)} provides
      * comparable values: useful to sort.
-     * 
+     *
      * @param features     Iterator to access all the Features from the WFS request
      * @param propertyName Property Name. Property from which values has to be
      *                     extracted
@@ -430,7 +444,7 @@ public class SLDClassifier {
             }
             String val = feature.getProperty(_command.getPropertyName()).getValue().toString();
             if (!val.trim().isEmpty()) { // don't take into account attributes that are empty, it would corrupt the sld
-                                         // file
+                // file
                 values.add(Double.parseDouble(val));
             }
         }
@@ -444,7 +458,7 @@ public class SLDClassifier {
      * {@link SLDClassifier#getDoubleValues(FeatureIterator, String)} but it is
      * regardless from the type. Values are stored in a Set, it guarantees unique
      * values.
-     * 
+     *
      * @param features     Iterator to access all the Features from the WFS request
      * @param propertyName Property Name. Property from which values has to be
      *                     extracted
@@ -463,7 +477,7 @@ public class SLDClassifier {
                 val = feature.getProperty(_command.getPropertyName()).getValue().toString();
             }
             if (!val.trim().isEmpty()) { // don't take into account attributes that are empty, it would corrupt the sld
-                                         // file
+                // file
                 values.add(val);
             }
         }
@@ -473,7 +487,7 @@ public class SLDClassifier {
     /**
      * Generate SLD file. Creates everything but the FeatureTypeStyle that must be
      * provided.
-     * 
+     *
      * @param fts FeatureTypeStyle. Contains all the rules and therefore the filters
      *            and symbolizers
      * @return StyledLayerDescriptor SLD file
