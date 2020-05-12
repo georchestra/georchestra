@@ -1,6 +1,7 @@
 package org.georchestra.mapfishapp.ws.classif;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -11,14 +12,15 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.geotools.data.wfs.WFSDataStoreFactory;
 import org.json.JSONObject;
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
 /**
  * Test SLDClassifier
- * 
+ *
  * @author yoann buch - yoann.buch@gmail.com
  *
  */
@@ -28,14 +30,21 @@ public class SLDClassifierTest {
     private static final Map<String, UsernamePasswordCredentials> EMPTY_MAP = Collections
             .<String, UsernamePasswordCredentials>emptyMap();
 
+    // Use version=2.0 to ensure the SLDClassifier downgrades it to 1.1.0
+    private static final String wfsUrl = "https://geobretagne.fr/geoserver/ccpbs/wfs?service=WFS&request=GetCapabilities&VERSION=2.0";
+
+    private WFSDataStoreFactory dataStoreFactory;
+
+    public @Before void before() {
+        dataStoreFactory = new WFSDataStoreFactory();
+    }
+
     @Test
-    @Ignore("Moving to wfs-ng, tests are known to be broken")
     public void testChoropleths() throws Exception {
 
         // build JSON request
-        String wfsUrl = "http://sigma.openplans.org/geoserver/wfs?service=WFS&request=GetCapabilities";
-        String featureTypeName = "topp:states";
-        String propertyName = "PERSONS";
+        String featureTypeName = "ccpbs:dechet_zone_collecte";
+        String propertyName = "NUM";
         String firstColor = "#0000ff";
         String lastColor = "#ff0000";
         int classCount = 3;
@@ -46,7 +55,7 @@ public class SLDClassifierTest {
 
         // create command
         ClassifierCommand command = new ClassifierCommand(jsReq);
-        SLDClassifier classifier = new SLDClassifier(EMPTY_MAP, command, new MockWFSDataStoreFactory());
+        SLDClassifier classifier = new SLDClassifier(EMPTY_MAP, command, dataStoreFactory);
 
         Document doc = createDomDocument(classifier.getSLD());
 
@@ -58,13 +67,11 @@ public class SLDClassifierTest {
     }
 
     @Test
-    @Ignore("Moving to wfs-ng, tests are known to be broken")
     public void testSymbols() throws Exception {
 
         // build JSON request
-        String wfsUrl = "http://sigma.openplans.org/geoserver/wfs?service=WFS&request=GetCapabilities";
-        String featureTypeName = "topp:states";
-        String propertyName = "PERSONS";
+        String featureTypeName = "ccpbs:dae_bigouden";
+        String propertyName = "ID";
         int minSize = 4;
         int lastSize = 24;
         int classCount = 3;
@@ -75,7 +82,7 @@ public class SLDClassifierTest {
 
         // create command
         ClassifierCommand command = new ClassifierCommand(jsReq);
-        SLDClassifier classifier = new SLDClassifier(EMPTY_MAP, command, new MockWFSDataStoreFactory());
+        SLDClassifier classifier = new SLDClassifier(EMPTY_MAP, command, dataStoreFactory);
         Document doc = createDomDocument(classifier.getSLD());
 
         // need as many rules, filters and symbolizers as classes
@@ -85,13 +92,11 @@ public class SLDClassifierTest {
     }
 
     @Test
-    @Ignore("Moving to wfs-ng, tests are known to be broken")
     public void testUniqueValues() throws Exception {
 
         // build JSON request
-        String wfsUrl = "http://sigma.openplans.org/geoserver/wfs?service=WFS&request=GetCapabilities";
-        String featureTypeName = "topp:states";
-        String propertyName = "STATE_NAME";
+        String featureTypeName = "ccpbs:dae_bigouden";
+        String propertyName = "ID";
         int paletteID = 1;
 
         JSONObject jsReq = new JSONObject().put("type", "unique_values").put("wfs_url", wfsUrl)
@@ -100,16 +105,16 @@ public class SLDClassifierTest {
 
         // create command
         ClassifierCommand command = new ClassifierCommand(jsReq);
-        SLDClassifier classifier = new SLDClassifier(EMPTY_MAP, command, new MockWFSDataStoreFactory());
+        SLDClassifier classifier = new SLDClassifier(EMPTY_MAP, command, dataStoreFactory);
 
         Document doc = createDomDocument(classifier.getSLD());
 
         // should retrieve expected tags
-        assertEquals(true, doc.getElementsByTagName("sld:UserLayer").getLength() == 0);
-        assertEquals(true, doc.getElementsByTagName("sld:NamedLayer").getLength() != 0);
-        assertEquals(true, doc.getElementsByTagName("sld:Rule").getLength() != 0);
-        assertEquals(true, doc.getElementsByTagName("ogc:Filter").getLength() != 0);
-        assertEquals(true, doc.getElementsByTagName("sld:PolygonSymbolizer").getLength() != 0);
+        assertEquals(0, doc.getElementsByTagName("sld:UserLayer").getLength());
+        assertNotEquals(0, doc.getElementsByTagName("sld:NamedLayer").getLength());
+        assertNotEquals(0, doc.getElementsByTagName("sld:Rule").getLength());
+        assertNotEquals(0, doc.getElementsByTagName("ogc:Filter").getLength());
+        assertNotEquals(0, doc.getElementsByTagName("sld:PolygonSymbolizer").getLength());
     }
 
     private Document createDomDocument(final String content) throws Exception {
@@ -117,7 +122,6 @@ public class SLDClassifierTest {
         final DocumentBuilderFactory lDocumentBuilderFactory = DocumentBuilderFactory.newInstance();
         final DocumentBuilder lDocumentBuilder = lDocumentBuilderFactory.newDocumentBuilder();
         InputStream stream = new ByteArrayInputStream(content.getBytes());
-        Document document = lDocumentBuilder.parse(stream);
-        return document;
+        return lDocumentBuilder.parse(stream);
     }
 }
