@@ -34,9 +34,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.TransformerException;
@@ -99,7 +96,7 @@ public class SLDClassifier {
      * @throws DocServiceException When client request is not valid
      */
     public SLDClassifier(Map<String, UsernamePasswordCredentials> credentials, final ClassifierCommand command,
-                         WFSDataStoreFactory fac) throws DocServiceException {
+            WFSDataStoreFactory fac) throws DocServiceException {
         this._credentials = credentials;
 
         // wfs-ng specific: If we do not have the prefix URL, then we need to
@@ -113,11 +110,6 @@ public class SLDClassifier {
         if (fac != null) {
             _factory = fac;
         }
-        // turn off logger
-//        Handler[] handlers = Logger.getLogger("").getHandlers();
-//        for (int index = 0; index < handlers.length; index++) {
-//            handlers[index].setLevel(Level.OFF);
-//        }
 
         // start directly the classification
         doClassification();
@@ -205,40 +197,40 @@ public class SLDClassifier {
 
                 if (_command.getClassifType() == E_ClassifType.CHOROPLETHS) {
                     switch (_command.getSymbolType()) {
-                        case POLYGON:
-                            symbolizerFact = new PolygonSymbolizerFactory(_command.getClassCount(),
-                                    _command.getFirstColor(), _command.getLastColor());
-                            break;
-                        case LINE:
-                            symbolizerFact = new LineSymbolizerFactory(_command.getClassCount(), _command.getFirstColor(),
-                                    _command.getLastColor());
-                            break;
-                        case POINT:
-                            symbolizerFact = new PointSymbolizerFactory(_command.getClassCount(), _command.getFirstColor(),
-                                    _command.getLastColor());
-                            break;
-                        default:
-                            throw new DocServiceException("Choropleths classification on symbol type: "
-                                    + _command.getSymbolType() + " is not supported.", HttpServletResponse.SC_BAD_REQUEST);
+                    case POLYGON:
+                        symbolizerFact = new PolygonSymbolizerFactory(_command.getClassCount(),
+                                _command.getFirstColor(), _command.getLastColor());
+                        break;
+                    case LINE:
+                        symbolizerFact = new LineSymbolizerFactory(_command.getClassCount(), _command.getFirstColor(),
+                                _command.getLastColor());
+                        break;
+                    case POINT:
+                        symbolizerFact = new PointSymbolizerFactory(_command.getClassCount(), _command.getFirstColor(),
+                                _command.getLastColor());
+                        break;
+                    default:
+                        throw new DocServiceException("Choropleths classification on symbol type: "
+                                + _command.getSymbolType() + " is not supported.", HttpServletResponse.SC_BAD_REQUEST);
                     }
                 } else if (_command.getClassifType() == E_ClassifType.PROP_SYMBOLS) {
                     switch (_command.getSymbolType()) {
-                        case LINE:
-                            symbolizerFact = new LineSymbolizerFactory(_command.getClassCount(), _command.getMinSize(),
-                                    _command.getMaxSize());
-                            // customizing is possible
-                            // symbolizerFact.setColor(Color.BLUE);
-                            break;
-                        case POINT:
-                            symbolizerFact = new PointSymbolizerFactory(_command.getClassCount(), _command.getMinSize(),
-                                    _command.getMaxSize());
-                            // customizing is possible
-                            // symbolizerFact.setColor(Color.BLUE);
-                            // symbolizerFact.setSymbol(StyleBuilder.MARK_CROSS);
-                            break;
-                        default:
-                            throw new DocServiceException("Proportional symbols classification on symbol type: "
-                                    + _command.getSymbolType() + " is not supported.", HttpServletResponse.SC_BAD_REQUEST);
+                    case LINE:
+                        symbolizerFact = new LineSymbolizerFactory(_command.getClassCount(), _command.getMinSize(),
+                                _command.getMaxSize());
+                        // customizing is possible
+                        // symbolizerFact.setColor(Color.BLUE);
+                        break;
+                    case POINT:
+                        symbolizerFact = new PointSymbolizerFactory(_command.getClassCount(), _command.getMinSize(),
+                                _command.getMaxSize());
+                        // customizing is possible
+                        // symbolizerFact.setColor(Color.BLUE);
+                        // symbolizerFact.setSymbol(StyleBuilder.MARK_CROSS);
+                        break;
+                    default:
+                        throw new DocServiceException("Proportional symbols classification on symbol type: "
+                                + _command.getSymbolType() + " is not supported.", HttpServletResponse.SC_BAD_REQUEST);
                     }
                 }
             } else if (_command.getClassifType() == E_ClassifType.UNIQUE_VALUES) {
@@ -248,18 +240,18 @@ public class SLDClassifier {
                 filterFact = new DiscreteFilterFactory(values, _command.getPropertyName());
 
                 switch (_command.getSymbolType()) {
-                    case POLYGON:
-                        symbolizerFact = new PolygonSymbolizerFactory(_command.getPaletteID(), values.size());
-                        break;
-                    case LINE:
-                        symbolizerFact = new LineSymbolizerFactory(_command.getPaletteID(), values.size());
-                        break;
-                    case POINT:
-                        symbolizerFact = new PointSymbolizerFactory(_command.getPaletteID(), values.size());
-                        break;
-                    default:
-                        throw new DocServiceException("Unique values classification on symbol type: "
-                                + _command.getSymbolType() + " is not supported.", HttpServletResponse.SC_BAD_REQUEST);
+                case POLYGON:
+                    symbolizerFact = new PolygonSymbolizerFactory(_command.getPaletteID(), values.size());
+                    break;
+                case LINE:
+                    symbolizerFact = new LineSymbolizerFactory(_command.getPaletteID(), values.size());
+                    break;
+                case POINT:
+                    symbolizerFact = new PointSymbolizerFactory(_command.getPaletteID(), values.size());
+                    break;
+                default:
+                    throw new DocServiceException("Unique values classification on symbol type: "
+                            + _command.getSymbolType() + " is not supported.", HttpServletResponse.SC_BAD_REQUEST);
                 }
             } else {
                 throw new DocServiceException("Unknown classification type: " + _command.getClassifType(),
@@ -442,7 +434,7 @@ public class SLDClassifier {
      * @return List of Double values
      */
     private ArrayList<Double> getDoubleValues(final FeatureIterator<SimpleFeature> features,
-                                              final String propertyName) {
+            final String propertyName) {
         ArrayList<Double> values = new ArrayList<Double>();
 
         while (features.hasNext()) {
@@ -473,7 +465,7 @@ public class SLDClassifier {
      * @return List of String values
      */
     private Set<String> getUniqueStringValues(final FeatureIterator<SimpleFeature> features,
-                                              final String propertyName) {
+            final String propertyName) {
         Set<String> values = new HashSet<String>();
 
         while (features.hasNext()) {
