@@ -203,3 +203,5 @@ insert into geostore.gs_category (id, name) values (1, 'MAP');
 insert into geostore.gs_category (id, name) values (2, 'THUMBNAIL');
 insert into geostore.gs_category (id, name) values (3, 'DETAILS');
 insert into geostore.gs_category (id, name) values (4, 'DASHBOARD');
+insert into geostore.gs_category (id, name) values (5, 'GEOSTORY');
+insert into geostore.gs_category (id, name) values (6, 'CONTEXT');
