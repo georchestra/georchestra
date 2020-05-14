@@ -31,7 +31,7 @@ public class SLDClassifierTest {
             .<String, UsernamePasswordCredentials>emptyMap();
 
     // Use version=2.0 to ensure the SLDClassifier downgrades it to 1.1.0
-    private static final String wfsUrl = "https://geobretagne.fr/geoserver/wfs?service=WFS&request=GetCapabilities&VERSION=2.0";
+    private static final String wfsUrl = "https://geobretagne.fr/geoserver/ccpbs/wfs?service=WFS&request=GetCapabilities&VERSION=2.0";
 
     private WFSDataStoreFactory dataStoreFactory;
 
@@ -43,8 +43,8 @@ public class SLDClassifierTest {
     public void testChoropleths() throws Exception {
 
         // build JSON request
-        String featureTypeName = "megalis:ZAMII_bzh";
-        String propertyName = "cx_id";
+        String featureTypeName = "ccpbs:dechet_zone_collecte";
+        String propertyName = "NUM";
         String firstColor = "#0000ff";
         String lastColor = "#ff0000";
         int classCount = 3;
@@ -70,7 +70,7 @@ public class SLDClassifierTest {
     public void testSymbols() throws Exception {
 
         // build JSON request
-        String featureTypeName = "ccvia:abri_velo";
+        String featureTypeName = "ccpbs:dae_bigouden";
         String propertyName = "ID";
         int minSize = 4;
         int lastSize = 24;
@@ -95,8 +95,8 @@ public class SLDClassifierTest {
     public void testUniqueValues() throws Exception {
 
         // build JSON request
-        String featureTypeName = "megalis:ZAMII_bzh";
-        String propertyName = "cx_id";
+        String featureTypeName = "ccpbs:dae_bigouden";
+        String propertyName = "ID";
         int paletteID = 1;
 
         JSONObject jsReq = new JSONObject().put("type", "unique_values").put("wfs_url", wfsUrl)
