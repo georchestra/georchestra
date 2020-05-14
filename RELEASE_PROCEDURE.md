@@ -151,4 +151,6 @@ git commit -m "back to SNAPSHOT"
 git push origin 20.0.x
 ```
 
+Create new milestones for [georchestra](https://github.com/georchestra/georchestra/milestones) and [geonetwork](https://github.com/georchestra/geonetwork/milestones).
+
 [Tweet](https://twitter.com/georchestra) !
