@@ -189,19 +189,20 @@ GEOR.mapinit = (function() {
      * initState - {Array} GEOR.initstate array
      *
      * Returns:
-     * {Object} a hash with keys "WMSLayer", "WFSLayer", "WFS" and "WMS" indexing arrays of
+     * {Object} a hash with keys "WMSLAYER", "WFSLAYER", "WFS" and "WMS" indexing arrays of
      *          unique WMS/WFS server URLs
      */
     var getUniqueWxsServers = function(initState) {
         var t = {
-            "WMSLayer": [],
+            "WMSLAYER": [],
             "WMS": [],
-            "WFSLayer": [],
+            "WFSLAYER": [],
             "WFS": []
         };
         Ext.each(initState, function(item) {
-            if (item.url && item.type && t[item.type].indexOf(item.url)< 0) {
-                t[item.type].push(item.url);
+            var type = item.type && item.type.toUpperCase();
+            if (item.url && item.type && t[type].indexOf(item.url)< 0) {
+                t[type].push(item.url);
             }
         });
         return t;
@@ -324,7 +325,8 @@ GEOR.mapinit = (function() {
         var records = [], record;
         var errors = [], count = 0;
         Ext.each(initState, function(item) {
-            if ( (item.type == "WMSLayer" || item.type == "WFSLayer") && item.type == type+'Layer' ) {
+            var localType = item.type && item.type.toUpperCase();
+            if ( (localType == "WMSLAYER" || localType == "WFSLAYER") && localType == type+'LAYER' ) {
                 record = stores[item.url].queryBy(function(r) {
                     return (r.get('name') == item.name);
                 }).first();
@@ -498,9 +500,9 @@ GEOR.mapinit = (function() {
      */
     var loadLayers = function(initState) {
         var wxsServers = getUniqueWxsServers(initState);
-        createStores(wxsServers['WMSLayer'], updateStoreFromWxSLayer, "WMS");
+        createStores(wxsServers['WMSLAYER'], updateStoreFromWxSLayer, "WMS");
         createStores(wxsServers['WMS'], updateStoreFromWxS, "WMS");
-        createStores(wxsServers['WFSLayer'], updateStoreFromWxSLayer, "WFS");
+        createStores(wxsServers['WFSLAYER'], updateStoreFromWxSLayer, "WFS");
         createStores(wxsServers['WFS'], updateStoreFromWxS, "WFS");
     };
 
